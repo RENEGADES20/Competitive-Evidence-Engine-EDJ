@@ -3,30 +3,41 @@
 How the tech lead sets up the GitHub Projects v2 board (one time, manual), and the weekly
 checks. Rules for branches: [CLAUDE.md, Branch and PR rules](../CLAUDE.md#branch-and-pr-rules).
 
-## 1. Create the project
+## 1. The project
 
-GitHub -> your org/profile -> Projects -> New project -> Board. Name it
-"Competitive Evidence Engine". Link it to this repo (Project settings -> Manage access / Repositories).
+Board: https://github.com/users/RENEGADES20/projects/3 ("Competitive Evidence Engine", linked to this repo).
+Shared corpus folder (Box, invite-only): https://wustl.box.com/s/m4xze7zodjcqno1rmxla0kmj4kfbke1v
+(`raw/` for raw documents, `snapshot/` for weekly database dumps; see ADR-006).
 
-## 2. Fields
+## 2. Fields (already created)
 
 | Field | Type | Values |
 |---|---|---|
-| Status | Single select (built in) | Todo, In Progress, In Review, Done |
-| Iteration | Iteration | 1-week iterations, 12 of them (W1-W12), starting 2026-09-28 |
+| Status | Single select | Todo, In Progress, Done (finished, PR open, waiting for review), Approved (TL reviewed and merged) |
+| Week | Iteration | W2-W12, 1 week each, W2 starts 2026-09-28. W1 tasks were folded into W2 |
 | Role | Single select | C1, C2, C3, S1, S2, U1, TL |
 | Firm | Single select | MS, SCHW, EDJ, MER, RJF, THEME, ALL |
 | Eval Qs | Text | e.g. `Q4, Q27, Q30` |
 | Size | Single select | S (< half day), M (1-2 days), L (split it) |
 
-## 3. Views
+Status meaning: **Done** = the owner says it is finished and the PR is open. Only the tech
+lead moves a card to **Approved**, after reviewing and merging the PR.
 
-| View | Layout | Setup |
-|---|---|---|
-| Current week | Board | Group by Status; filter `iteration:@current` |
-| By person | Table | Group by Assignee; show Role, Status, Iteration, Eval Qs |
-| Roadmap | Roadmap | Date field = Iteration; group by Role |
-| Review queue | Table | Filter `status:"In Review"`; sort by updated |
+## 3. Views (created by hand in the web UI; the API cannot create views)
+
+| View | Layout | Setup | Who |
+|---|---|---|---|
+| TL - By area | Table | Group by Role; sort by Status descending; filter `-status:Approved`. Each area shows Done on top, then In Progress, then Todo | Tech lead |
+| Approved | Table | Filter `status:Approved`; group by Role | Tech lead (archive) |
+| My tasks | Board | Columns = Status (Todo, In Progress, Done, Approved); filter `assignee:@me` | Every teammate |
+| This week | Board | Columns = Status; filter `week:@current`; group by Role | Everyone |
+
+GitHub keeps one option order per field for all views, so Approved cannot sit at the bottom
+of the TL view; it is filtered out of that view instead and lives in "Approved".
+
+Tech lead review loop: open "TL - By area" -> review the Done cards at the top of each
+area -> merge the PR -> set Status to Approved (or let the merge workflow do it) -> the card
+leaves the view.
 
 ## 4. Labels (repo -> Issues -> Labels)
 
@@ -37,9 +48,26 @@ GitHub -> your org/profile -> Projects -> New project -> Board. Name it
 
 ## 5. Built-in workflows (Project -> ... -> Workflows)
 
-Turn on: **Auto-add to project** (filter `is:issue,pr is:open`), **Item closed -> Done**,
-**Pull request merged -> Done**. Moving to In Progress / In Review is manual (the
-`/start-task` and `/finish-task` commands remind people).
+A warning icon on a workflow means its target Status value no longer exists (the Status
+options were replaced). Open each one, pick the value below, and click **Save and turn on**.
+
+| Workflow | Setting | Why |
+|---|---|---|
+| Item added to project | On -> Status **Todo** | New cards start in Todo |
+| Item reopened | On -> Status **In Progress** | A reopened task is being reworked |
+| Item closed | On -> Status **Approved** | Closing happens when the TL merges ("Closes #N") |
+| Pull request linked to issue | On -> Status **Done** | Opening the PR with "Closes #N" marks the task finished, waiting for review |
+| Code changes requested | On -> Status **In Progress** | TL clicks "Request changes"; the card goes back to the owner |
+| Code review approved | Off | TL approves and merges in one step; merge handles it |
+| Pull request merged | On -> Status **Approved** | Merge = approval; the card leaves the TL view |
+| Auto-close issue | On -> when Status is **Approved** | Closes the issue if the TL sets Approved by hand |
+| Auto-archive items | Off | Archiving would empty the Approved view |
+| Auto-add to project | On -> repo `Competitive-Evidence-Engine-EDJ`, filter `is:issue is:open` | Issues only; PR cards would duplicate their issues |
+| Auto-add sub-issues to project | On | Split tasks stay on the board |
+
+Result: Todo -> (owner runs `/start-task`, moves to In Progress by hand) -> (PR opened) Done ->
+(TL requests changes) In Progress, or (TL merges) Approved + issue closed.
+Only one manual move remains: Todo -> In Progress.
 
 ## 6. Weekly X/30 (from W6)
 
