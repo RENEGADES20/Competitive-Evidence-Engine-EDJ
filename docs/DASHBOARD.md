@@ -48,9 +48,26 @@ leaves the view.
 
 ## 5. Built-in workflows (Project -> ... -> Workflows)
 
-Turn on: **Auto-add to project** (filter `is:issue is:open`), **Item closed -> Approved**,
-**Pull request merged -> Approved**. Moving to In Progress / Done is manual (the
-`/start-task` and `/finish-task` commands remind people).
+A warning icon on a workflow means its target Status value no longer exists (the Status
+options were replaced). Open each one, pick the value below, and click **Save and turn on**.
+
+| Workflow | Setting | Why |
+|---|---|---|
+| Item added to project | On -> Status **Todo** | New cards start in Todo |
+| Item reopened | On -> Status **In Progress** | A reopened task is being reworked |
+| Item closed | On -> Status **Approved** | Closing happens when the TL merges ("Closes #N") |
+| Pull request linked to issue | On -> Status **Done** | Opening the PR with "Closes #N" marks the task finished, waiting for review |
+| Code changes requested | On -> Status **In Progress** | TL clicks "Request changes"; the card goes back to the owner |
+| Code review approved | Off | TL approves and merges in one step; merge handles it |
+| Pull request merged | On -> Status **Approved** | Merge = approval; the card leaves the TL view |
+| Auto-close issue | On -> when Status is **Approved** | Closes the issue if the TL sets Approved by hand |
+| Auto-archive items | Off | Archiving would empty the Approved view |
+| Auto-add to project | On -> repo `Competitive-Evidence-Engine-EDJ`, filter `is:issue is:open` | Issues only; PR cards would duplicate their issues |
+| Auto-add sub-issues to project | On | Split tasks stay on the board |
+
+Result: Todo -> (owner runs `/start-task`, moves to In Progress by hand) -> (PR opened) Done ->
+(TL requests changes) In Progress, or (TL merges) Approved + issue closed.
+Only one manual move remains: Todo -> In Progress.
 
 ## 6. Weekly X/30 (from W6)
 
