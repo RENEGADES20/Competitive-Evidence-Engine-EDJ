@@ -5,8 +5,8 @@ argument-hint: <issue-number>
 
 Start task for issue #$ARGUMENTS. Explain each step to the user in plain language.
 
-Task states: **Todo -> In Progress -> In Review -> Done.** This command moves the task to In Progress;
-`/finish-task` moves it to In Review; merging the PR moves it to Done automatically.
+Task states: **Todo -> In Progress -> Done -> Approved.** This command moves the task to In Progress;
+`/finish-task` moves it to Done (waiting for review); only the tech lead moves it to Approved, by merging the PR.
 
 1. **Read the issue.** Run `gh issue view $ARGUMENTS`. Note the role, week, goal, acceptance,
    linked question IDs and spec link. If the issue is unclear or has no acceptance items, stop

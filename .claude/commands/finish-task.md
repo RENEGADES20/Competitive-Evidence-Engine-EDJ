@@ -23,5 +23,5 @@ failed check; report it and ask the user how to proceed.
 5. **Open the PR:** fill every section of `.github/pull_request_template.md` (including
    `Closes #N`) into a temporary file outside the repo, then:
    `gh pr create --title "<short title> (#N)" --body-file <filled template>`.
-6. **Board:** tell the user "Move issue #N to **In Review**. The tech lead will review; when the PR
-   is merged it moves to Done automatically."
+6. **Board:** tell the user "Move issue #N to **Done**. The tech lead will review; when the PR
+   they set it to Approved."

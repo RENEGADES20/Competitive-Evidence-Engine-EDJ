@@ -27,6 +27,8 @@ different people over the term.
 
 ## Week by week
 
+The term runs W2-W12 on the board (W2 starts 2026-09-28). The W1 and W2 rows below are both scheduled in W2.
+
 | Week | C1 | C2 | C3 | S1 | S2 | U1 | TL |
 |---|---|---|---|---|---|---|---|
 | W1 | Review question bank with project lead; verify core-five facts in entities.yaml | Source feasibility matrix: transcripts, IR, trade press (access, cost, terms) | Feasibility matrix: tier 5 research; library access to Cerulli | Read retrieval spec; draft synonyms list from the 30 questions | Licensing memo draft with TL (ADR-000); read answer spec | Read ui spec; sketch the screens on paper | Build skeleton (plans/0001); repo, board, ADR-000 with C1 |
