@@ -1,0 +1,54 @@
+name: Task
+description: One unit of work for one person (one issue -> one branch -> one PR)
+title: "[W?] "
+labels: []
+body:
+  - type: dropdown
+    id: role
+    attributes:
+      label: Role
+      options: [C1, C2, C3, S1, S2, U1, TL]
+    validations:
+      required: true
+  - type: dropdown
+    id: week
+    attributes:
+      label: Week
+      options: [W1, W2, W3, W4, W5, W6, W7, W8, W9, W10, W11, W12]
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What will be true when this is done, in plain language.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance
+      description: Checkable items. Copy the relevant ones from the spec.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: questions
+    attributes:
+      label: Linked question IDs
+      placeholder: "Q4, Q27, Q30"
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      placeholder: "specs/retrieval.md"
+    validations:
+      required: true
+  - type: dropdown
+    id: size
+    attributes:
+      label: Size
+      options: ["S (under half a day)", "M (1-2 days)", "L (split this issue)"]
+    validations:
+      required: true

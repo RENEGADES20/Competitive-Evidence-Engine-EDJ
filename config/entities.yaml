@@ -1,0 +1,118 @@
+# Entity configuration. Owner: C1 (domain owner).
+# Adding a firm = a new entry here + source_registry rows. No new code.
+# Unverified facts are marked TODO-verify. Never guess a CIK.
+#
+# Fields:
+#   parent          entity whose filings contain this entity (MER -> BAC)
+#   reported_as     segment name under which the parent reports it
+#   equivalence     full | partial  (partial = related but not the same thing)
+#   caveat          text inserted BY CODE whenever an answer uses substitute data
+#   segment_aliases section headings / phrases that map a chunk to a segment tag
+#   reporting_shape how the firm reports (drives what expected_sources look like)
+#   expected_sources doc types that should exist; seeds source_registry
+
+entities:
+  - id: MS
+    name: Morgan Stanley
+    aliases: ["Morgan Stanley", "MS", "Morgan Stanley Wealth Management", "MSWM", "E*TRADE"]
+    ticker: MS
+    cik: TODO-verify
+    parent: null
+    segment_aliases:
+      Wealth Management: ["Wealth Management", "Wealth Management segment"]
+    reported_as: null
+    equivalence: full
+    caveat: null
+    reporting_shape: Public; Wealth Management is a reported segment.
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press, trade, adv]
+
+  - id: SCHW
+    name: The Charles Schwab Corporation
+    aliases: ["Schwab", "Charles Schwab", "SCHW", "Schwab Advisor Services"]
+    ticker: SCHW
+    cik: TODO-verify
+    parent: null
+    segment_aliases:
+      Investor Services: ["Investor Services"]
+      Advisor Services: ["Advisor Services"]
+    reported_as: null
+    equivalence: full
+    caveat: null
+    reporting_shape: Public pure-play; monthly activity reports include net new assets.
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, monthly, deck, press, trade, adv]
+
+  - id: EDJ
+    name: Edward Jones (The Jones Financial Companies, L.L.L.P.)
+    aliases: ["Edward Jones", "Jones Financial", "The Jones Financial Companies", "Edward D. Jones & Co."]
+    ticker: null
+    cik: "815917"
+    parent: null
+    segment_aliases: {}
+    reported_as: null
+    equivalence: full
+    caveat: null
+    reporting_shape: Partnership; files 10-K and 10-Q, no earnings calls.
+    expected_sources: [10-K, 10-Q, 8-K, press, trade, adv]
+
+  - id: BAC
+    name: Bank of America Corporation
+    aliases: ["Bank of America", "BofA", "BAC"]
+    ticker: BAC
+    cik: TODO-verify
+    parent: null
+    segment_aliases:
+      GWIM: ["Global Wealth & Investment Management", "Global Wealth and Investment Management", "GWIM"]
+      Merrill: ["Merrill Lynch Wealth Management", "Merrill Wealth Management"]  # Merrill Edge is reported in Consumer Banking, not GWIM -- do not alias it here (C1 to verify)
+    reported_as: null
+    equivalence: full
+    caveat: null
+    reporting_shape: Public bank; only GWIM-tagged chunks are eligible for Merrill questions.
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press]
+
+  - id: MER
+    name: Merrill
+    aliases: ["Merrill", "Merrill Lynch", "Merrill Wealth Management", "Merrill Lynch Wealth Management"]
+    ticker: null
+    cik: TODO-verify   # Merrill Lynch, Pierce, Fenner & Smith broker-dealer; used for Form ADV only
+    parent: BAC
+    segment_aliases: {}
+    reported_as: GWIM
+    equivalence: partial
+    caveat: "GWIM is not Merrill: the segment also includes Bank of America Private Bank."
+    reporting_shape: No standalone financials; reported inside BAC segment GWIM.
+    expected_sources: [press, trade, adv]   # plus BAC:*#GWIM via parent
+
+  - id: RJF
+    name: Raymond James Financial
+    aliases: ["Raymond James", "RJF", "Raymond James Financial"]
+    ticker: RJF
+    cik: TODO-verify
+    parent: null
+    segment_aliases:
+      Private Client Group: ["Private Client Group", "PCG"]
+    reported_as: null
+    equivalence: full
+    caveat: null
+    reporting_shape: Public; Private Client Group segment; multiple advisor affiliation models.
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press, trade, adv]
+
+# Theme seed list (C3 owns; see specs/thematic.md)
+themes:
+  - {id: advice_future, label: Future of advice delivery}
+  - {id: ai_advice, label: AI in advice delivery}
+  - {id: fees_pricing, label: Fee structures and pricing transparency}
+  - {id: younger_investors, label: Younger investors and clients under 40}
+  - {id: wealth_transfer, label: Generational wealth transfer}
+  - {id: advisor_recruiting, label: Advisor recruiting and retention}
+  - {id: mass_affluent, label: Mass-affluent clients}
+
+# Query synonyms (S1 owns; see specs/retrieval.md)
+synonyms:
+  NNA: ["net new assets"]
+  FA: ["financial advisor", "financial adviser"]
+  RIA: ["registered investment adviser", "independent advisor"]
+  AUM: ["assets under management"]
+  client assets: ["total client assets", "client assets"]
+  headcount: ["number of financial advisors", "advisor count"]
+  attrition: ["regretted attrition", "advisor departures"]
+  GWIM: ["Global Wealth & Investment Management"]

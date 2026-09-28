@@ -1,0 +1,471 @@
+# Question bank - the scoring instrument for every gate after week 2.
+# Written by the project lead. Maintained by the domain owner (C1).
+#
+# APPEND-ONLY RULES (see CLAUDE.md):
+#   - Never delete a question, even one that keeps failing.
+#   - Never rewrite a trap question (Q4, Q27, Q30).
+#   - New failing questions from real use are appended with the next id.
+#   - Keep the share of gap_with_adjacent + refuse questions at least where it is now (5/30).
+#   - A badly posed non-trap question may be reworded via PR; keep the old text in `notes`.
+#
+# Fields:
+#   use_case: entity_brief | head_to_head | mechanism | theme_scan | segment_evidence |
+#             benchmark | recency | honest_miss
+#   tier: 1 (by gate 3, W8) | 2 (by gate 4, W11) | 3 (stretch)      counts: 18 / 3 / 9
+#   gate: 3 for tier 1, 4 for tier 2, null for tier 3
+#   expected_sources: patterns ENTITY:doc_type[#segment]; replaced by concrete doc_ids in W3-5
+#     entities: MS, SCHW, EDJ, MER, BAC, RJF; THEME for thematic research
+#   expected_behavior: answer | answer_with_boundary | gap_with_adjacent | refuse
+#
+# Scoring: four axes (correct, cited, complete, honest), then one verdict:
+# would the project lead forward this answer to the CSO with his name on it? No half credit.
+
+questions:
+  - id: Q1
+    text: What is Morgan Stanley's strategy to increase their net new assets?
+    use_case: entity_brief
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It names the channels management itself credits for net new asset growth, in
+      management's framing, with the emphasis each is given -- and it is dated. Strategy
+      stated in 2024 is not strategy stated today, and an answer that blurs the two has failed.
+    evidence: >-
+      MS earnings-call transcripts (NNA comes up nearly every quarter), 10-K segment
+      discussion, investor-day materials, quarterly financial supplement.
+    expected_sources: ["MS:transcript", "MS:10-K#Wealth Management", "MS:deck", "MS:supplement"]
+    expected_behavior: answer
+
+  - id: Q2
+    text: How is Raymond James positioning itself to recruit advisors away from the wirehouses?
+    use_case: entity_brief
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It gives Raymond James's own recruiting pitch -- affiliation choice, payout, autonomy,
+      platform -- sourced to management statements rather than inferred, plus recruiting
+      results where the firm discloses them.
+    evidence: >-
+      RJF earnings calls, 10-K business description, recruiting press releases, trade press
+      (AdvisorHub and InvestmentNews track advisor moves closely).
+    expected_sources: ["RJF:transcript", "RJF:10-K", "RJF:press", "RJF:trade"]
+    expected_behavior: answer
+
+  - id: Q3
+    text: What is Schwab's strategy for its RIA custody business?
+    use_case: entity_brief
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It describes how Schwab frames the advisor-services business, its stated priorities,
+      and the competitive pressure management acknowledges -- including where they concede ground.
+    evidence: SCHW earnings calls, 10-K segment discussion, investor-day and IMPACT conference materials.
+    expected_sources: ["SCHW:transcript", "SCHW:10-K#Advisor Services", "SCHW:deck"]
+    expected_behavior: answer
+
+  - id: Q4
+    text: What is Merrill's advisor growth strategy, and how has it changed?
+    use_case: entity_brief
+    tier: 1
+    trap: true
+    gate: 3
+    passes_if: >-
+      Every claim is about Merrill specifically -- the advisor development pipeline, headcount
+      trajectory, the stated shift in how advisors are sourced -- and nothing about Bank of
+      America's consumer bank or BAC-wide hiring is presented as Merrill's strategy.
+    evidence: BAC earnings calls (GWIM commentary), BAC 10-K GWIM section, Merrill press releases, trade press.
+    expected_sources: ["BAC:transcript#GWIM", "BAC:10-K#GWIM", "MER:press", "MER:trade"]
+    expected_behavior: answer
+    notes: >-
+      Trap 1 of 3. A failing answer cites BAC-wide hiring or consumer-bank strategy and reads
+      perfectly well doing it. Score it a failure regardless of how good it sounds.
+
+  - id: Q5
+    text: Where is Morgan Stanley investing in technology for its advisors?
+    use_case: entity_brief
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It names actual platforms and initiatives with management's stated purpose for each.
+      Spend figures appear only where disclosed -- never estimated, never rounded from a
+      trade-press characterisation.
+    evidence: MS earnings calls, 10-K, investor day, trade-press coverage of platform launches.
+    expected_sources: ["MS:transcript", "MS:10-K", "MS:deck", "MS:trade"]
+    expected_behavior: answer
+
+  - id: Q6
+    text: What has Raymond James said about its affiliation models, and has the mix shifted?
+    use_case: entity_brief
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It lays out the affiliation options as the firm describes them and reports any disclosed
+      movement in the mix, with the disclosure quoted rather than characterised.
+    evidence: RJF 10-K business description, earnings calls, recruiting material.
+    expected_sources: ["RJF:10-K#Private Client Group", "RJF:transcript", "RJF:press"]
+    expected_behavior: answer
+
+  - id: Q7
+    text: How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?
+    use_case: head_to_head
+    tier: 2
+    trap: false
+    gate: 4
+    passes_if: >-
+      The same dimensions are applied to all three -- recruiting posture, payout philosophy,
+      training pipeline, disclosed retention results -- every cell cited, and empty cells left
+      visibly empty rather than filled with something reasonable.
+    evidence: >-
+      All three firms' calls and filings, plus trade press. Merrill's column carries the same
+      attribution risk as question 4.
+    expected_sources: ["MS:transcript", "MS:10-K", "BAC:transcript#GWIM", "BAC:10-K#GWIM", "RJF:transcript", "RJF:10-K", "MS:trade", "MER:trade", "RJF:trade"]
+    expected_behavior: answer
+
+  - id: Q8
+    text: Compare how Schwab and Raymond James describe their value proposition to independent advisors.
+    use_case: head_to_head
+    tier: 2
+    trap: false
+    gate: 4
+    passes_if: >-
+      It uses each firm's own language and keeps custody and affiliation distinct rather than
+      flattening two different business models into one comparison.
+    evidence: Both firms' investor material, conference presentations, 10-K business descriptions.
+    expected_sources: ["SCHW:deck", "SCHW:10-K", "RJF:deck", "RJF:10-K"]
+    expected_behavior: answer
+
+  - id: Q9
+    text: How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?
+    use_case: head_to_head
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It reports each firm's disclosed segmentation and any stated thresholds, and says plainly
+      where a firm does not disclose thresholds instead of inferring them from marketing language.
+    evidence: MS and BAC 10-Ks, earnings calls, investor days.
+    expected_sources: ["MS:10-K", "MS:transcript", "MS:deck", "BAC:10-K#GWIM", "BAC:transcript#GWIM", "BAC:deck#GWIM"]
+    expected_behavior: answer
+
+  - id: Q10
+    text: Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?
+    use_case: head_to_head
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It shows its work rather than asserting a ranking -- the actual statements, dated, with
+      the basis for calling one firm more explicit than another made visible so the reader can disagree.
+    evidence: All five firms' calls and filings.
+    expected_sources: ["MS:transcript", "SCHW:transcript", "EDJ:10-K", "BAC:transcript#GWIM", "RJF:transcript"]
+    expected_behavior: answer
+    notes: >-
+      A question that requires judgment. The right behaviour is to make the judgment legible,
+      not to avoid making one.
+
+  - id: Q11
+    text: How does each of the five define and report advisor headcount -- and what does each definition include or exclude?
+    use_case: head_to_head
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: Five definitions, quoted from the filings, with the differences between them named explicitly.
+    evidence: Each firm's 10-K footnotes and quarterly supplements.
+    expected_sources: ["MS:10-K", "MS:supplement", "SCHW:10-K", "EDJ:10-K", "BAC:10-K#GWIM", "BAC:supplement#GWIM", "RJF:10-K", "RJF:supplement"]
+    expected_behavior: answer
+    notes: >-
+      Load-bearing for questions 23 and 24. Do this one properly early and the benchmark use
+      case gets much easier; skip it and every cross-firm table is quietly wrong.
+
+  - id: Q12
+    text: How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?
+    use_case: mechanism
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It delivers the evidence half completely -- Schwab's disclosed acquisition channels and
+      economics, what management has claimed about cost of acquisition, and Edward Jones's own
+      disclosed cost structure set alongside -- then explicitly hands off the replication
+      question rather than attempting it.
+    evidence: SCHW earnings calls, 10-K, monthly activity reports; Jones Financial 10-K for our side.
+    expected_sources: ["SCHW:transcript", "SCHW:10-K", "SCHW:monthly", "EDJ:10-K"]
+    expected_behavior: answer_with_boundary
+    notes: >-
+      The single best test in the bank of whether the boundary holds when a question invites
+      crossing it. An answer that ventures a replication strategy fails even if the strategy is good.
+
+  - id: Q13
+    text: How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?
+    use_case: mechanism
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      The channel is described end to end in management's own framing, with any disclosed
+      conversion or funded-account figures attached to the period they were stated in.
+    evidence: MS earnings calls, where this is discussed frequently; 10-K; investor day.
+    expected_sources: ["MS:transcript", "MS:10-K", "MS:deck"]
+    expected_behavior: answer
+    notes: >-
+      Deliberately overlaps question 1 -- same evidence, different altitude. If 1 passes and 13
+      fails, the retrieval is summarising rather than answering.
+
+  - id: Q14
+    text: How does Raymond James's affiliation-choice model work commercially?
+    use_case: mechanism
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It explains what each affiliation option means economically for both the advisor and the
+      firm, sourced to Raymond James's own description rather than to industry commentary about it.
+    evidence: RJF 10-K, earnings calls, recruiting material.
+    expected_sources: ["RJF:10-K#Private Client Group", "RJF:transcript", "RJF:press"]
+    expected_behavior: answer
+
+  - id: Q15
+    text: What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?
+    use_case: mechanism
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It uses disclosed revenue composition for each model and explains the structural
+      difference as a mechanism, not as a ratio. Where the comparison breaks down, it says so.
+    evidence: SCHW 10-K revenue detail; the other four firms' 10-Ks for contrast.
+    expected_sources: ["SCHW:10-K", "MS:10-K", "EDJ:10-K", "BAC:10-K#GWIM", "RJF:10-K"]
+    expected_behavior: answer
+
+  - id: Q16
+    text: What will receiving financial advice in the future look like for clients?
+    use_case: theme_scan
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It presents the spread of positions organised by position rather than by firm, each
+      attributed and dated, and offers no single forecast of its own.
+    evidence: >-
+      Primarily the thematic corpus -- industry research, regulatory direction, published
+      surveys. Management forward-looking statements are secondary.
+    expected_sources: ["THEME:research", "THEME:regulatory", "THEME:survey", "MS:transcript", "SCHW:transcript"]
+    expected_behavior: answer
+    notes: >-
+      Hardest question in the bank, and the one that most depends on the thematic corpus rather
+      than the entity corpus. If the dedicated thematic researcher has not started by week 3,
+      this question decides that in week 10.
+
+  - id: Q17
+    text: What are these firms saying about AI in advice delivery, and who is claiming the most?
+    use_case: theme_scan
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It separates specificity from volume: a named tool actually deployed to advisors is a
+      different claim from an aspiration on an earnings call, and the answer distinguishes them
+      rather than treating both as "investing in AI."
+    evidence: All five firms' earnings calls, press releases, trade press.
+    expected_sources: ["MS:transcript", "SCHW:transcript", "BAC:transcript#GWIM", "RJF:transcript", "MS:press", "SCHW:press", "EDJ:press", "MER:press", "RJF:press", "MS:trade", "MER:trade"]
+    expected_behavior: answer
+
+  - id: Q18
+    text: Where is the industry heading on fee structures and pricing transparency?
+    use_case: theme_scan
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Disclosed pricing changes, regulatory direction and published research are kept distinct
+      from commentary and opinion, each labelled for what it is.
+    evidence: Form ADV Part 2 fee schedules, SEC and DOL material, industry research, firm disclosures.
+    expected_sources: ["MS:adv", "SCHW:adv", "EDJ:adv", "MER:adv", "RJF:adv", "THEME:regulatory", "THEME:research"]
+    expected_behavior: answer
+    notes: >-
+      Unusually tractable for a thematic question: Form ADV fee schedules are free, structured,
+      and filed by every registered adviser -- a rare case where a free source directly answers
+      a theme question.
+
+  - id: Q19
+    text: How should the preferences of younger investors shape Edward Jones's offerings?
+    use_case: segment_evidence
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It assembles published evidence on the cohort's preferences and competitor moves aimed at
+      it, each dated and sourced -- then stops at the word "should" and says so.
+    evidence: Industry research, published investor surveys, competitor product and pricing announcements.
+    expected_sources: ["THEME:research", "THEME:survey", "MS:press", "SCHW:press", "RJF:press", "MER:press"]
+    expected_behavior: answer_with_boundary
+    notes: >-
+      The second boundary test, alongside question 12. The normative half is in the wording on
+      purpose -- leave it there. A question that invites the system to cross the line is the
+      only way to find out whether it will.
+
+  - id: Q20
+    text: What evidence is there about how clients under 40 choose a financial advisor?
+    use_case: segment_evidence
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It returns actual survey findings with their source, sample and date -- not a
+      generalisation about a generation. Two surveys that disagree are reported as disagreeing.
+    evidence: FINRA Foundation, CFP Board, published firm-sponsored investor surveys, industry research.
+    expected_sources: ["THEME:survey", "THEME:research"]
+    expected_behavior: answer
+
+  - id: Q21
+    text: What do we know about the generational wealth transfer, and how are these five preparing for it?
+    use_case: segment_evidence
+    tier: 2
+    trap: false
+    gate: 4
+    passes_if: >-
+      The two halves stay separate: published estimates of the transfer (with each estimate's
+      source and vintage, because these figures get repeated far from their origin) and what
+      each firm has actually said it is doing.
+    evidence: Industry research for the first half; firm calls and filings for the second.
+    expected_sources: ["THEME:research", "MS:transcript", "SCHW:transcript", "EDJ:10-K", "BAC:transcript#GWIM", "RJF:transcript"]
+    expected_behavior: answer
+
+  - id: Q22
+    text: Net new assets by quarter for each of the five, with each firm's own definition of the metric.
+    use_case: benchmark
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      Value, period and source document for every cell, with each firm's definition alongside.
+      A firm that does not report net new assets on this basis is marked as not reporting --
+      never as zero, and never quietly substituted with a near-neighbour metric.
+    evidence: Quarterly supplements, Schwab's monthly activity reports, earnings releases.
+    expected_sources: ["MS:supplement", "SCHW:monthly", "SCHW:supplement", "EDJ:10-Q", "BAC:supplement#GWIM", "RJF:supplement", "MS:press", "RJF:press"]
+    expected_behavior: answer
+    notes: >-
+      The five do not all report NNA on the same basis, and some do not report it at all. The
+      answer that says so is better than the answer that fills the table.
+
+  - id: Q23
+    text: Advisor headcount over the last eight quarters across the five.
+    use_case: benchmark
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      The series is complete and each firm's definition travels with it (see question 11).
+      Where a firm changed its definition mid-series, the break is flagged rather than smoothed.
+    evidence: Quarterly supplements, 10-Ks, earnings releases.
+    expected_sources: ["MS:supplement", "SCHW:10-K", "EDJ:10-Q", "EDJ:10-K", "BAC:supplement#GWIM", "RJF:supplement", "RJF:press"]
+    expected_behavior: answer
+
+  - id: Q24
+    text: Client assets per advisor across the five -- and is that comparison even valid?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      It computes the figure only where both inputs are disclosed on a consistent basis, and
+      answers the second half directly -- naming where the comparison is invalid and why.
+    evidence: Firm disclosures for both numerator and denominator; question 11's definitional work.
+    expected_sources: ["MS:supplement", "SCHW:10-K", "EDJ:10-K", "BAC:supplement#GWIM", "RJF:supplement"]
+    expected_behavior: gap_with_adjacent
+    notes: Tests whether the system will decline a bad comparison. A clean-looking table here is the wrong answer.
+
+  - id: Q25
+    text: What has each of the five actually disclosed about advisor compensation structures?
+    use_case: benchmark
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      It reports what is genuinely disclosed -- which is far less than people assume -- and
+      marks the rest as undisclosed rather than reaching for trade-press reconstructions of payout grids.
+    evidence: 10-K compensation expense (not grids), proxy statements (named executives only), Form ADV.
+    expected_sources: ["MS:10-K", "SCHW:10-K", "EDJ:10-K", "BAC:10-K#GWIM", "RJF:10-K", "MS:DEF 14A", "SCHW:DEF 14A", "BAC:DEF 14A", "RJF:DEF 14A", "MS:adv", "EDJ:adv", "RJF:adv"]
+    expected_behavior: gap_with_adjacent
+    notes: >-
+      Sits deliberately next to question 29, which asks for the part that is genuinely not
+      public. The pair tests whether the system can tell "partially disclosed" from "not disclosed".
+
+  - id: Q26
+    text: What's new on Raymond James in the last 90 days?
+    use_case: recency
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      Items newest first, each with one line on why it might matter and a link that resolves.
+      Nothing older than the window sneaks in.
+    evidence: Whatever entered the corpus inside the window.
+    expected_sources: ["RJF:*"]
+    expected_behavior: answer
+
+  - id: Q27
+    text: What has changed at Merrill since the start of the year?
+    use_case: recency
+    tier: 1
+    trap: true
+    gate: 3
+    passes_if: >-
+      Merrill items only. Bank of America material appears solely where the disclosure is
+      explicitly about GWIM or Merrill, and is labelled as such.
+    evidence: The corpus, filtered correctly.
+    expected_sources: ["MER:*", "BAC:*#GWIM"]
+    expected_behavior: answer
+    notes: >-
+      Trap 2 of 3. The easiest of the three to fail silently -- a BAC-heavy answer looks full
+      rather than wrong, and a reviewer skimming for volume will pass it.
+
+  - id: Q28
+    text: What is Edward Jones's advisor attrition rate compared to Merrill's?
+    use_case: honest_miss
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      "Neither discloses this on a comparable basis." Then what each does disclose that is
+      adjacent -- net headcount change -- with the difference between that and attrition stated plainly.
+    evidence: Nothing sufficient exists. That is the point of the question.
+    expected_sources: ["EDJ:10-K", "BAC:supplement#GWIM", "BAC:10-K#GWIM"]
+    expected_behavior: gap_with_adjacent
+
+  - id: Q29
+    text: What does Morgan Stanley pay its financial advisors?
+    use_case: honest_miss
+    tier: 1
+    trap: false
+    gate: 3
+    passes_if: >-
+      "Payout grids are not public." Then aggregate compensation expense from the 10-K, clearly
+      labelled as a different quantity, and a named source that would answer it if acquired --
+      noting that trade-press reporting on grid changes is indicative, not authoritative.
+    evidence: Partial only, and the answer must say which part.
+    expected_sources: ["MS:10-K#Wealth Management", "MS:trade"]
+    expected_behavior: gap_with_adjacent
+
+  - id: Q30
+    text: What is Merrill's standalone profitability?
+    use_case: honest_miss
+    tier: 1
+    trap: true
+    gate: 3
+    passes_if: >-
+      "Merrill does not report standalone results." Then Bank of America's GWIM segment figures,
+      with an explicit statement that GWIM is not Merrill -- the segment includes the private
+      bank -- so the number answers a related but different question.
+    evidence: BAC 10-K segment reporting.
+    expected_sources: ["BAC:10-K#GWIM"]
+    expected_behavior: gap_with_adjacent
+    notes: >-
+      Trap 3 of 3, and the most sophisticated behaviour the bank asks for. A system that hands
+      over GWIM figures as "Merrill's profitability" has failed the question completely, however
+      accurate the figures are.
