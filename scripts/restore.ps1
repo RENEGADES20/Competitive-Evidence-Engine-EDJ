@@ -17,7 +17,9 @@ if (-not $Dump) {
     $dirs += (Join-Path $RepoRoot "snapshots")
     foreach ($d in $dirs) {
         if (Test-Path $d) {
-            $f = Get-ChildItem $d -Filter "corpus-*.dump" | Sort-Object Name -Descending | Select-Object -First 1
+            # Newest official snapshot; -test builds are only restored when named explicitly.
+            $f = Get-ChildItem $d -Filter "corpus-*.dump" | Where-Object { $_.Name -notlike "*-test.dump" } |
+                Sort-Object LastWriteTime -Descending | Select-Object -First 1
             if ($f) { $Dump = $f.FullName; break }
         }
     }
