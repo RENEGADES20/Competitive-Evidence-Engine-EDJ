@@ -67,11 +67,18 @@ Consequences: The LLM cannot see ineligible chunks. Segment tagging quality (C1)
 critical and must be tested.
 
 ## ADR-005: PDF parsing tool
-Status: Accepted (pending install check in plans/0001)
+Status: Accepted (install check: TL machine done 2026-09-30; other six machines in #14)
 Context: Investor-day decks and supplements are PDFs with tables; page numbers are needed.
 Decision: Use docling. plans/0001 verifies it installs on all 7 team machines (Windows);
 where it does not, fall back to pymupdf. EDGAR documents come via edgartools.
 Consequences: One parser interface; the fallback may lose table structure.
+Install check (`src/cee/ingest/pdf.py`, `parse_pdf(path) -> [(section, page, text)]`):
+- TL machine (Windows 11, Python 3.11.9, docling 2.131.0, CPU only): installs from
+  `requirements-ingest.txt`; a 10-page PDF parsed in ~2 min on first run (model download,
+  ~0.5 GB, goes to `HF_HOME`), every item carries its page number. pymupdf fallback: 8 s,
+  page numbers kept, no table structure.
+- Only corpus owners need docling (`requirements-ingest.txt`); everyone else installs the core
+  `requirements.txt` and works from snapshots, so a failed docling install blocks nobody.
 
 ## ADR-006: Shared corpus
 Status: Accepted
@@ -85,3 +92,13 @@ Decision:
 - Corpus owners debug ingestion locally; changes go through PR and appear in the next snapshot.
 Consequences: Zero cost, reproducible scoring (scores record the snapshot). Corpus changes
 reach others with up to a week of lag.
+Implementation (plans/0001, 2026-09-30):
+- Only the tech lead runs Box Drive (`CORPUS_SHARE_PATH`). Teammates use two Box links shared
+  in the team chat, never in this public repo: a download link and an upload link (File Request).
+- `raw/` is flat (`raw/<doc_id>.<ext>`) because File Request cannot target subfolders;
+  manifest `storage_path` is relative (`raw/<doc_id>.<ext>`). Dumps live in `snapshots/`.
+- File lookup order: `$CORPUS_SHARE_PATH/<storage_path>` (skipped when empty), then
+  `data/<storage_path>` in the repo, else an error that points to the Box link.
+- `scripts\build-snapshot.ps1` checks sha256 for every row before touching the database and
+  stamps the snapshot name on the database (shown by `python -m cee.smoke`);
+  `scripts\restore.ps1` loads the newest dump from Box Drive or `snapshots\`.

@@ -1,0 +1,25 @@
+# Local Postgres for the Competitive Evidence Engine. See docs/RUN.md.
+# db/schema.sql runs only on the first start of an empty volume.
+services:
+  db:
+    image: postgres:16.10
+    container_name: cee-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cee
+      POSTGRES_PASSWORD: cee
+      POSTGRES_DB: cee
+    ports:
+      - "5432:5432"
+    volumes:
+      - cee-pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./snapshots:/snapshots   # staging area for pg_dump / pg_restore
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cee -d cee"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  cee-pgdata:
