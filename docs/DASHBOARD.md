@@ -78,7 +78,7 @@ Only one manual move remains: Todo -> In Progress.
 
 ## 7. Main-branch safety (soft protection)
 
-The repo is GitHub Free private, so branch protection is not available. Protection is:
+The repo is public. We do not use GitHub branch protection rules; protection is:
 the rule in CLAUDE.md, the hook `.claude/hooks/guard-main.py` (blocks commit/push on main in
 Claude Code), and this weekly check by the tech lead:
 

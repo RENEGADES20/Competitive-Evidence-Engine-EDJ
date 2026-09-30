@@ -27,7 +27,7 @@ class FakeAnthropic:
 
     def _create(self, **kwargs):
         self.kwargs = kwargs
-        return SimpleNamespace(content=[SimpleNamespace(type="tool_use", input=OUTPUT)])
+        return SimpleNamespace(content=[SimpleNamespace(type="tool_use", name=llm.TOOL_NAME, input=OUTPUT)])
 
 
 def test_openai_request_uses_strict_structured_outputs():
@@ -39,10 +39,11 @@ def test_openai_request_uses_strict_structured_outputs():
     assert a.llm_called and a.claims[0].chunk_ids == ["EDJ-10K-2025#1"]
 
 
-def test_anthropic_request_forces_the_answer_tool():
+def test_anthropic_request_offers_the_answer_tool():
     client = FakeAnthropic()
     a = llm._anthropic("q?", [hit()], client=client)
-    assert client.kwargs["tool_choice"] == {"type": "tool", "name": llm.TOOL_NAME}
+    assert client.kwargs["tools"][0]["name"] == llm.TOOL_NAME
+    assert "MUST" in client.kwargs["system"]
     assert client.kwargs["tools"][0]["input_schema"]["required"][0] == "answerable"
     assert a.llm_called
 

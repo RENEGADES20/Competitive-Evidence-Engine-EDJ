@@ -61,4 +61,10 @@ it on their own Windows machine by end of W2, so nobody starts W3 from a blank f
   is not workspace-scoped: added optional ANTHROPIC_WORKSPACE_ID.
 - 2026-09-30 - Checks: pytest 11 passed; smoke PASS; restore from Box Drive and from a hand-
   downloaded dump both give documents=1, chunks=335, entities=6; docling parses a 10-page PDF
-  with page numbers on the TL machine (ADR-005). Real Anthropic acceptance call: pending workspace ID.
+  with page numbers on the TL machine (ADR-005).
+- 2026-09-30 - claude-sonnet-5-5 rejects forced tool_choice; switched to tool_choice auto with
+  the prompt requiring submit_answer (a missing tool call raises an error). Added a GitHub
+  Actions workflow running the offline tests on every PR.
+- 2026-09-30 - Acceptance: one real Anthropic call on the EDJ question -> behavior answer,
+  5 claims, every claim cited, no flags; "20,425 financial advisors" is in the cited chunk
+  EDJ-10K-2025#34. All #13 acceptance items met.

@@ -54,10 +54,12 @@ def anthropic_request(question: str, hits: list[Hit]) -> dict:
     return {
         "model": settings().llm_model,
         "max_tokens": 2000,
-        "system": SYSTEM_PROMPT + "\nReturn the result by calling the submit_answer tool.",
+        "system": SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
+                                  " do not answer in plain text.",
         "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.",
                    "input_schema": llm_output_schema()}],
-        "tool_choice": {"type": "tool", "name": TOOL_NAME},
+        # Current Claude models reject forced tool_choice; the prompt requires the tool instead.
+        "tool_choice": {"type": "auto"},
         "messages": [{"role": "user", "content": build_user_message(question, hits)}],
     }
 
@@ -72,7 +74,9 @@ def _anthropic(question: str, hits: list[Hit], client=None) -> Answer:
         ws = os.getenv("ANTHROPIC_WORKSPACE_ID", "").strip()
         client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
     resp = client.messages.create(**anthropic_request(question, hits))
-    block = next(b for b in resp.content if b.type == "tool_use")
+    block = next((b for b in resp.content if b.type == "tool_use" and b.name == TOOL_NAME), None)
+    if block is None:
+        raise RuntimeError(f"Model did not call {TOOL_NAME} (stop_reason={getattr(resp, 'stop_reason', '?')})")
     return Answer(**block.input, llm_called=True)
 
 
