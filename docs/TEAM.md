@@ -7,14 +7,14 @@ Everyone writes code with Claude Code. Rules for how we work: [CLAUDE.md](../CLA
 
 | Role | Name | Owns | Spec | Key questions |
 |---|---|---|---|---|
-| C1 Filings and structured data (also domain owner) | TBD | EDGAR, Form ADV, quarterly supplements, metric definitions, `source_registry`, segment tagging rules, `config/entities.yaml` | [filings](../specs/filings.md) | Q11, Q22-25, Q28-30 |
-| C2 Transcripts and IR | TBD | Earnings calls, investor-day PDFs, press releases, trade press, date field quality | [transcripts-ir](../specs/transcripts-ir.md) | Q1-6, Q13, Q26, Q27 |
-| C3 Thematic research | TBD | Tier 5 sources, topics taxonomy (from W3) | [thematic](../specs/thematic.md) | Q16-21 |
-| S1 Retrieval | TBD | FTS, synonyms, three retrieval modes, segment hard filter, quotas, dedupe, time windows | [retrieval](../specs/retrieval.md) | Q4, Q7, Q21, Q26, Q27, Q30 |
-| S2 Answer and citations | TBD | Prompt, Answer JSON, citation and number checks, caveat insertion, coverage and gaps, the normative boundary | [answer-citations](../specs/answer-citations.md) | Q12, Q19, Q24, Q25, Q28-30 |
-| U1 Interface | TBD | Streamlit, filters, source viewer with page highlight, tier labels, coverage view, feedback button | [ui](../specs/ui.md) | all |
+| C1 Filings and structured data (also domain owner) | Jingran Fang | EDGAR, Form ADV, quarterly supplements, metric definitions, `source_registry`, segment tagging rules, `config/entities.yaml` | [filings](../specs/filings.md) | Q11, Q22-25, Q28-30 |
+| C2 Transcripts and IR | Mingmin Kong | Earnings calls, investor-day PDFs, press releases, trade press, date field quality | [transcripts-ir](../specs/transcripts-ir.md) | Q1-6, Q13, Q26, Q27 |
+| C3 Thematic research | Jieyu Hu | Tier 5 sources, topics taxonomy (from W3) | [thematic](../specs/thematic.md) | Q16-21 |
+| S1 Retrieval | Yi-chen Wu | FTS, synonyms, three retrieval modes, segment hard filter, quotas, dedupe, time windows | [retrieval](../specs/retrieval.md) | Q4, Q7, Q21, Q26, Q27, Q30 |
+| S2 Answer and citations | Jiapeng Liu | Prompt, Answer JSON, citation and number checks, caveat insertion, coverage and gaps, the normative boundary | [answer-citations](../specs/answer-citations.md) | Q12, Q19, Q24, Q25, Q28-30 |
+| U1 Interface | Yiqi Zhang | Streamlit, filters, source viewer with page highlight, tier labels, coverage view, feedback button | [ui](../specs/ui.md) | all |
 
-**Tech lead (TL, TBD):** skeleton, environment, PDF extractors, glue code, weekly corpus
+**Tech lead (TL, Yueyang Du):** skeleton, environment, PDF extractors, glue code, weekly corpus
 snapshot, PR review and merge, main-branch safety net (see [DASHBOARD.md](DASHBOARD.md)).
 Owns no feature area.
 

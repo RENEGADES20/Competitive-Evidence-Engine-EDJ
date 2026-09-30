@@ -7,6 +7,7 @@ Add one line per landed PR or notable event, newest at the bottom. Keep it short
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-09-28 | Skeleton docs created | Licensing question open (ADR-000) | Tech lead builds end-to-end skeleton (plans/0001) |
+| 2026-09-30 | End-to-end skeleton on TL machine (#13): EDJ 10-K (335 chunks), FTS, Answer JSON + citation check, gap/refuse path, Streamlit source view, build-snapshot/restore, smoke check, 11 tests | ADR-000 still open | Install on the other six machines and Gate 1 (#14) |
 
 ## Weekly score (from W6)
 

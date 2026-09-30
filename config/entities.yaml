@@ -96,6 +96,22 @@ entities:
     reporting_shape: Public; Private Client Group segment; multiple advisor affiliation models.
     expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press, trade, adv]
 
+# Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
+# Questions about them get an honest "no evidence" plus the sources that would answer.
+# CIKs are TODO-verify until C1 checks them; nothing here is ingested yet.
+expansion:
+  - {id: AMP,  name: Ameriprise Financial, aliases: ["Ameriprise", "AMP"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
+  - {id: LPLA, name: LPL Financial, aliases: ["LPL Financial", "LPL", "LPLA"], status: mapped, expected_sources: [10-K, 10-Q, transcript, monthly, adv]}
+  - {id: SF,   name: Stifel Financial, aliases: ["Stifel"], status: mapped, expected_sources: [10-K, 10-Q, transcript, adv]}
+  - {id: HOOD, name: Robinhood Markets, aliases: ["Robinhood", "HOOD"], status: mapped, expected_sources: [10-K, 10-Q, transcript, monthly]}
+  - {id: JPM,  name: J.P. Morgan Wealth Management, aliases: ["J.P. Morgan", "JPMorgan", "JPM", "Chase Wealth"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
+  - {id: WFC,  name: Wells Fargo Advisors, aliases: ["Wells Fargo", "WFC", "Wells Fargo Advisors"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
+  - {id: GS,   name: Goldman Sachs Asset & Wealth Management, aliases: ["Goldman Sachs", "Goldman", "GS"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
+  - {id: UBS,  name: UBS Group, aliases: ["UBS"], status: mapped, expected_sources: [20-F, 6-K, transcript, adv]}
+  - {id: RBC,  name: Royal Bank of Canada, aliases: ["RBC", "Royal Bank of Canada", "RBC Wealth Management"], status: mapped, expected_sources: [40-F, 6-K, transcript, adv]}
+  - {id: FID,  name: Fidelity Investments, aliases: ["Fidelity"], status: mapped, expected_sources: [adv, research, press]}
+  - {id: VGD,  name: Vanguard, aliases: ["Vanguard"], status: mapped, expected_sources: [adv, research, press]}
+
 # Theme seed list (C3 owns; see specs/thematic.md)
 themes:
   - {id: advice_future, label: Future of advice delivery}

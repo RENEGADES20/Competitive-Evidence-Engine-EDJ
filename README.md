@@ -11,20 +11,38 @@ Built by a 7-person student team for the strategy function of a wealth-managemen
 
 ## Status
 
-Week 1: documentation skeleton only. No code yet. The end-to-end skeleton is being built in
-[plans/0001-e2e-skeleton.md](plans/0001-e2e-skeleton.md). Weekly progress and the X/30 score
+Week 2: end-to-end skeleton ([plans/0001-e2e-skeleton.md](plans/0001-e2e-skeleton.md)).
+One filing goes through ingest -> Postgres -> full-text search -> one LLM call -> citation
+check -> Streamlit, with a source view for every citation and an honest "no evidence" path. Weekly progress and the X/30 score
 are in [docs/PROGRESS.md](docs/PROGRESS.md).
 
-## Quick start (placeholder until plans/0001 lands)
+## Quick start (Windows PowerShell)
 
-1. Install Docker Desktop, Python 3.11+, Git and the GitHub CLI (`gh`).
-2. Clone this repo and copy `.env.example` to `.env`; fill in your API key and the path to
-   the shared corpus folder.
-3. Start Postgres with Docker Compose and restore the latest corpus snapshot with one
-   `restore` command.
-4. Run the web app and ask a question.
+Full steps and "when it breaks": [docs/RUN.md](docs/RUN.md).
 
-Exact commands and "what to do when it breaks" will be in plans/0001 and then in this file.
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -e .
+Copy-Item .env.example .env          # LLM_PROVIDER=mock works offline
+# download the newest corpus-YYYY-MM-DD.dump from the team Box link into .\snapshots
+powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
+.\.venv\Scripts\python.exe -m cee.smoke   # expect PASS
+.\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
+```
+
+## Code map
+
+| Path | What |
+|---|---|
+| `src/cee/ingest/` | EDGAR fetch, PDF parser, chunking, loading, manifest checks |
+| `src/cee/retrieve/fts.py` | Entity resolution and full-text search with SQL hard filters |
+| `src/cee/answer/` | Answer JSON, the single LLM call (mock / anthropic / openai), citation checks |
+| `src/cee/ask.py` | The end-to-end pipeline, logs every query |
+| `src/cee/app/streamlit_app.py` | Web interface and source view |
+| `db/schema.sql`, `docker-compose.yml` | Database |
+| `scripts/*.ps1` | `restore`, `build-snapshot`, `ingest` |
+| `tests/` | Offline tests (`python -m pytest -q`) |
 
 ## Documentation map
 
@@ -35,6 +53,7 @@ Exact commands and "what to do when it breaks" will be in plans/0001 and then in
 | [docs/BRIEF.md](docs/BRIEF.md) | What we are building, use cases, firms, gates |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline, schema draft, retrieval modes, reference projects |
 | [docs/TEAM.md](docs/TEAM.md) | Roles and week-by-week tasks |
+| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Status log and weekly scores |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture decision records (ADRs) |
 | [docs/DASHBOARD.md](docs/DASHBOARD.md) | Project board setup, weekly checks, snapshot publishing |

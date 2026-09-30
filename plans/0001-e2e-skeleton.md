@@ -1,6 +1,6 @@
 # 0001 - End-to-end skeleton
 
-Issue: #1    Role: TL    Spec: docs/ARCHITECTURE.md, docs/DECISIONS.md (ADR-001, 002, 005, 006)
+Issue: #13    Role: TL    Spec: docs/ARCHITECTURE.md, docs/DECISIONS.md (ADR-001, 002, 005, 006)
 
 ## Goal
 One real document goes all the way through: ingested -> stored -> searched -> answered
@@ -46,3 +46,19 @@ it on their own Windows machine by end of W2, so nobody starts W3 from a blank f
 
 ## Progress log
 - 2026-09-28 - plan written
+- 2026-09-30 - Scope for #13 narrowed to the TL machine; the other six installs and Gate 1 moved to #14.
+- 2026-09-30 - Built: docker-compose (postgres 16.10) + db/schema.sql (no embedding column per
+  ADR-001; chunks.prefix separate from text); EDJ 10-K FY2025 fetched with edgartools into Box
+  raw/ (flat, relative storage_path), 335 chunks split by Item; FTS with SQL entity filter
+  (MER only sees BAC chunks tagged GWIM/Merrill); Answer JSON + citation check (flag, never
+  drop); empty retrieval answers in code without an LLM call (gap_with_adjacent for covered
+  firms, refuse + suggested sources for mapped expansion firms such as Vanguard); Streamlit
+  ask page + source view; build-snapshot/restore/ingest PowerShell scripts; cee.smoke; 11 tests.
+- 2026-09-30 - Surprises: Windows PowerShell 5.1 treats docker's stderr progress as an error
+  (fixed in scripts/_common.ps1); setting an env var to "" in PS 5.1 deletes it, so the
+  teammate route was tested with an .env whose CORPUS_SHARE_PATH is empty; writing HTML with
+  Python text mode changed line endings (now written byte-exact). The Anthropic key in use
+  is not workspace-scoped: added optional ANTHROPIC_WORKSPACE_ID.
+- 2026-09-30 - Checks: pytest 11 passed; smoke PASS; restore from Box Drive and from a hand-
+  downloaded dump both give documents=1, chunks=335, entities=6; docling parses a 10-page PDF
+  with page numbers on the TL machine (ADR-005). Real Anthropic acceptance call: pending workspace ID.

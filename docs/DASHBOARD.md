@@ -6,8 +6,9 @@ checks. Rules for branches: [CLAUDE.md, Branch and PR rules](../CLAUDE.md#branch
 ## 1. The project
 
 Board: https://github.com/users/RENEGADES20/projects/3 ("Competitive Evidence Engine", linked to this repo).
-Shared corpus folder (Box, invite-only): https://wustl.box.com/s/m4xze7zodjcqno1rmxla0kmj4kfbke1v
-(`raw/` for raw documents, `snapshot/` for weekly database dumps; see ADR-006).
+Shared corpus folder (Box): the download link and the upload link are shared in the team
+chat only, never in this repo (the repo is public). `raw/` holds raw documents, `snapshots/`
+the weekly database dumps; see ADR-006 and [RUN.md](RUN.md).
 
 ## 2. Fields (already created)
 
@@ -95,7 +96,8 @@ author, and revert or re-land through a PR if needed.
 - [ ] `git switch main && git pull`
 - [ ] All corpus PRs for the week merged; `data/manifest.csv` has no rows with missing `published_at`
 - [ ] Raw files for every manifest row exist in the shared folder (sha256 matches)
-- [ ] Run `build-snapshot` (rebuilds the database from main, see plans/0001)
-- [ ] Upload `snapshots/corpus-YYYY-MM-DD.dump` to the shared folder
-- [ ] Test `restore` on a clean machine or container
+- [ ] Move files that arrived through the Box upload link into `raw/` (names must be `<doc_id>.<ext>`)
+- [ ] Run `scripts\build-snapshot.ps1` on a clean `main` (checks sha256, rebuilds, dumps, and
+      copies `corpus-YYYY-MM-DD.dump` into the Box `snapshots/` folder; Box Drive uploads it)
+- [ ] Test `scripts\restore.ps1` after `docker compose down -v`, then `python -m cee.smoke` -> PASS
 - [ ] Post the snapshot name in PROGRESS.md and the team chat
