@@ -10,6 +10,7 @@
 #   segment_aliases section headings / phrases that map a chunk to a segment tag
 #   reporting_shape how the firm reports (drives what expected_sources look like)
 #   expected_sources doc types that should exist; seeds source_registry
+#                   (one row per entity + doc type in config/source_registry.csv)
 
 entities:
   - id: MS
@@ -94,11 +95,11 @@ entities:
     equivalence: full
     caveat: null
     reporting_shape: Public; Private Client Group segment; multiple advisor affiliation models.
-    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press, trade, adv]
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, monthly, deck, press, trade, adv]   # monthly: 8-K "RJF OPERATING DATA" (#2)
 
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.
-# CIKs are TODO-verify until C1 checks them; nothing here is ingested yet.
+# Nothing here is ingested yet. Reporting shape and verified CIKs: docs/EXPANSION.md.
 expansion:
   - {id: AMP,  name: Ameriprise Financial, aliases: ["Ameriprise", "AMP"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
   - {id: LPLA, name: LPL Financial, aliases: ["LPL Financial", "LPL", "LPLA"], status: mapped, expected_sources: [10-K, 10-Q, transcript, monthly, adv]}
