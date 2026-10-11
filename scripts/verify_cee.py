@@ -72,6 +72,11 @@ def health(port: int) -> bool:
         return False
 
 
+def snapshot_name() -> str:
+    # Every laptop has its own database; results are only comparable on the same snapshot.
+    return psql(SOURCE_DB, "SELECT obj_description('public.documents'::regclass)") or "none (built locally)"
+
+
 def git_head() -> str:
     r = sh(["git", "rev-parse", "HEAD"], check=False, cwd=REPO)
     return r.stdout.strip() or "unknown"
@@ -111,7 +116,7 @@ def doctor(port: int = PORT) -> bool:
                              and sh(["docker", "info"], check=False).returncode == 0,
                              "running" if shutil.which("docker") else "not installed"))
     check("database", lambda: (psql(SOURCE_DB, "SELECT 1") == "1", f"container {CONTAINER}, db {SOURCE_DB}"))
-    check("corpus", lambda: (lambda n: (n > 0, f"{n} chunks (restore a snapshot if 0)"))(
+    check("corpus", lambda: (lambda n: (n > 0, f"{n} chunks, snapshot {snapshot_name()} (restore one if 0)"))(
         int(psql(SOURCE_DB, "SELECT count(*) FROM chunks"))))
 
     def browser():
@@ -162,7 +167,7 @@ def launch(port: int = PORT) -> dict:
          "--browser.gatherUsageStats", "false"],
         cwd=REPO, env=env, stdout=log, stderr=subprocess.STDOUT, creationflags=flags,
         start_new_session=not WINDOWS)
-    st = {"pid": proc.pid, "port": port, "run_id": run_id, "head": git_head(),
+    st = {"pid": proc.pid, "port": port, "run_id": run_id, "head": git_head(), "snapshot": snapshot_name(),
           "started": datetime.now().isoformat(timespec="seconds")}
     STATE.write_text(json.dumps(st, indent=2), encoding="utf-8")
     for _ in range(60):
@@ -358,7 +363,8 @@ def drive(features: list[str]) -> bool:
         browser.close()
     summary = {**st, "results": results, "finished": datetime.now().isoformat(timespec="seconds")}
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print("\nSUMMARY  " + "  ".join(f"{r['feature']}={r['status']}" for r in results))
+    print(f"\nSnapshot: {st.get('snapshot')}  Commit: {st['head'][:7]}")
+    print("SUMMARY  " + "  ".join(f"{r['feature']}={r['status']}" for r in results))
     print(f"Evidence: {run_dir}")
     return all(r["status"] != "FAIL" for r in results)
 
