@@ -64,8 +64,22 @@ If your change touches two areas, read both specs and mention both in the PR.
   `.claude/commands/start-task.md` and `.claude/commands/finish-task.md`.
 - ExecPlans follow `PLANS.md` and are saved in `plans/NNNN-slug.md`. Tiny config/data-only
   tasks may skip the ExecPlan.
-- PRs use `.github/pull_request_template.md` and include "Closes #N".
+- PRs use `.github/pull_request_template.md` and include "Closes #N" (or "Part of #N" with
+  the open items listed, when the issue is only partly done).
 - The tech lead reviews and merges. Do not merge your own PR.
+
+## Verification
+
+- **Prove it in the running app.** Before `/finish-task`, any change to `src/`, `config/`,
+  the database or the corpus runs the `verify-cee` skill (`.claude/skills/verify-cee/`).
+  Tests passing or "it compiles" is not proof.
+- **Evidence, not opinion.** Report what was run, the result, and where the evidence is.
+  A claim with no evidence is unverified; say "not verified" rather than guess.
+- **A changed user feature updates its recipe** in `.claude/skills/verify-cee/features/`
+  and the driver in `scripts/verify_cee.py` in the same PR.
+- **The mock provider proves the pipeline, not answer quality.** It always answers when
+  retrieval finds something.
+- New teammates: follow `docs/WORKFLOW-SETUP.md` once.
 
 ## Working rules for Claude
 
