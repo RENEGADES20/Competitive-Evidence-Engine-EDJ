@@ -38,7 +38,27 @@ of the TL view; it is filtered out of that view instead and lives in "Approved".
 
 Tech lead review loop: open "TL - By area" -> review the Done cards at the top of each
 area -> merge the PR -> set Status to Approved (or let the merge workflow do it) -> the card
-leaves the view.
+leaves the view -> run `/dispatch after <PR#>` in Claude Code.
+
+## 3a. Dispatching new issues (tech lead)
+
+`/dispatch` (`.claude/commands/dispatch.md`) plans from where the project really is:
+
+| When | Command | What you get |
+|---|---|---|
+| Right after merging a PR | `/dispatch after <PR#>` | Follow-up for what the PR left open, the role's next task, anything the merge unblocked |
+| Weekly (Friday or Sunday) | `/dispatch week W<n>` | Every role for next week: assign, assign with stub, defer (with "revisit when"), or ask you |
+| Any time | `/dispatch inbox` | New teammate comments sorted into questions, blockers, deliverables, proposals; draft replies |
+
+How it decides: `scripts/project_state.py` collects the board, issues with every comment,
+PRs, the week plan, PROGRESS and the local snapshot. Each candidate task is checked against
+what is on `main` now; a missing input means defer or a `blocked_by` link. At most 2 open
+issues per person; two people never change the same files in the same week.
+
+Nothing is created until you approve. The draft is `.dispatch/draft-*.yaml` (not in git);
+edit it if needed, then `python scripts/dispatch_apply.py <draft> --apply` creates the
+issues (labels, assignee from `config/team.yaml`, board fields, blocked-by links) and posts
+the replies. Re-running it never duplicates anything.
 
 ## 4. Labels (repo -> Issues -> Labels)
 
