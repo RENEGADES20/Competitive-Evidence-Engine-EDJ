@@ -164,6 +164,25 @@ def main() -> int:
     def save():
         done_path.write_text(json.dumps(done, indent=2), encoding="utf-8")
 
+    def board_item(number: int, url: str) -> dict:
+        """Add the issue to the board, or find its item when the board's auto-add got there first."""
+        p = TEAM["project"]
+        try:
+            return json.loads(gh(["project", "item-add", str(p["number"]), "--owner", p["owner"],
+                                  "--url", url, "--format", "json"]))
+        except RuntimeError as err:
+            if "already exists" not in str(err):
+                raise
+        owner, name = repo.split("/")
+        q = """query($o:String!,$r:String!,$n:Int!){ repository(owner:$o,name:$r){ issue(number:$n){
+          projectItems(first:20){ nodes{ id project{ id } } } } } }"""
+        data = json.loads(gh(["api", "graphql", "-f", f"query={q}", "-f", f"o={owner}", "-f", f"r={name}",
+                              "-F", f"n={number}"]))
+        for node in data["data"]["repository"]["issue"]["projectItems"]["nodes"]:
+            if node["project"]["id"] == project_id:
+                return {"id": node["id"]}
+        raise RuntimeError(f"#{number} is neither added nor found on the board")
+
     def set_field(item_id: str, name: str, value: str):
         f = fields.get(name)
         if not f or not value:
@@ -203,8 +222,7 @@ def main() -> int:
             print(f"Created #{rec['number']} {url}")
         if not rec.get("board"):
             p = TEAM["project"]
-            item = json.loads(gh(["project", "item-add", str(p["number"]), "--owner", p["owner"],
-                                  "--url", rec["url"], "--format", "json"]))
+            item = board_item(rec["number"], rec["url"])
             for name, value in (("Week", e["week"]), ("Role", e["role"]), ("Size", e["size"]),
                                 ("Eval Qs", e.get("eval_qs", "")), ("Firm", e.get("firm", ""))):
                 set_field(item["id"], name, value)
