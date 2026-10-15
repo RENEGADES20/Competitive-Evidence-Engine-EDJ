@@ -57,7 +57,7 @@ Design test: adding a sixth firm must be configuration and a source list, not ne
 
 | Tier | Label | Contents |
 |---|---|---|
-| 1 | licensed | Capital IQ, Bloomberg (financials, segments, transcripts). Blocked on ADR-000 |
+| 1 | licensed | Capital IQ, Bloomberg (financials, segments, transcripts). Allowed (ADR-007): Bloomberg terminal exports as the team downloads them |
 | 2 | filing | SEC EDGAR (10-K, 10-Q, 8-K, DEF 14A, 20-F, 40-F), Form ADV / IAPD bulk, FINRA BrokerCheck |
 | 3 | IR | Investor-day decks, quarterly supplements, press releases, monthly metrics |
 | 4 | trade press | InvestmentNews, Financial Planning, ThinkAdvisor, RIABiz, AdvisorHub, WealthManagement.com, Barron's Advisor, Citywire RIA. Expect feed rot; re-check monthly |
@@ -98,7 +98,7 @@ W12: harden and hand off, no new capability. Project lead evaluation sessions: W
 | Risk | Mitigation |
 |---|---|
 | Corpus breadth is the long pole and feels boring | Gate 2; three of seven on corpus |
-| Licensing comes back restrictive | Resolve in writing in W1 (ADR-000); tiers 2-5 alone must clear the bar |
+| Licensing comes back restrictive | Resolved by ADR-007 (internal, non-commercial; all sources allowed) |
 | Thematic questions need a corpus nobody built | Tier 5 starts W3, owned by C3 |
 | Segment attribution quietly corrupts answers (BAC news as Merrill) | Three trap questions (Q4, Q27, Q30) scored weekly all term; segment hard filter |
 | A pod stalls because work is outside its skillset | Tech lead unblocks; everyone starts from a running skeleton |
