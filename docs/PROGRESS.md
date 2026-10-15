@@ -11,6 +11,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
+| 2026-10-15 | Core-five CIKs verified on EDGAR (MS, SCHW, BAC, RJF, MER/MLPF&S); Merrill Edge placement in BAC Consumer Banking confirmed from BAC-10K-2024 (#1) (#20) | Question-bank review with project lead pending | C1 holds the review; change requests as append-only PRs |
 
 ### C2
 
