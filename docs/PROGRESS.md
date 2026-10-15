@@ -18,6 +18,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
+| 2026-10-15 | Source feasibility matrix, tiers 3-4 (#3): `docs/source_matrix.csv` (100 rows), `docs/SOURCE_MATRIX.md` (terms quoted, questions T-01..T-64 for ADR-000), monthly URL checker `python -m cee.ingest.check_sources` (#19) | Terms answers from ADR-000 (no site explicitly allows our use; no free transcript archive except BAC's own from 1Q26); 57 blocked/error URLs not yet opened by hand; 19 rows with TODO-verify date field | #4: TL review, manual URL check, pick the first transcripts |
 
 ### C3
 
