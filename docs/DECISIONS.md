@@ -20,7 +20,7 @@ Consequences: what gets easier, what gets harder.
 ---
 
 ## ADR-000: Licensed data terms
-Status: **Open** (owner: tech lead + domain owner C1; due end of W1)
+Status: Superseded by ADR-007 (2026-10-14)
 Context: Capital IQ and Bloomberg (tier 1) are the highest-value sources, but extracting
 data into a tool other people query differs from viewing it at a licensed seat. Trade-press
 sites (tier 4) have terms of service that may forbid scraping or storing full text.
@@ -102,3 +102,36 @@ Implementation (plans/0001, 2026-09-30):
 - `scripts\build-snapshot.ps1` checks sha256 for every row before touching the database and
   stamps the snapshot name on the database (shown by `python -m cee.smoke`);
   `scripts\restore.ps1` loads the newest dump from Box Drive or `snapshots\`.
+
+## ADR-007: Source use for an internal, non-commercial prototype
+Status: Accepted (2026-10-14, tech lead; supersedes ADR-000)
+Context: ADR-000 waited for written terms. The C2 source matrix (PR #19, `docs/SOURCE_MATRIX.md`)
+listed the open terms questions T-01 to T-09 (#9). This is a personal, internal, non-commercial
+student project. It is not an Edward Jones deliverable; if they ever use it, their own staff
+review it for compliance first.
+Decision:
+- T-01 Use: internal and non-commercial. No permission requests are needed.
+- T-02 Permission: none. Firm sites (edwardjones.com included) may be collected.
+- T-03 EDGAR copies: when a document is also filed with the SEC (e.g. 8-K exhibit 99.1), take
+  the EDGAR copy; otherwise the IR site. C1 owns 10-K/10-Q/supplements; C2 owns IR, press and
+  8-K exhibits.
+- T-04 Transcripts: any third-party source or the company IR page; if none exists, we
+  transcribe the call ourselves (webcast audio).
+- T-05 Tier: transcripts are tier 3 (`IR`) whoever published them.
+- T-06 Trade press: full text may be stored. It stays tier 4, "indicative only".
+- T-07 LLM: stored passages may be sent to the LLM at answer time.
+- T-08 Automated access: scraping is allowed, including behind robots.txt disallows and bot
+  walls; manual download is fine too. Be polite (honest user agent, a delay per site) so we
+  are not blocked.
+- T-09 Undated pages: `published_at` comes from the source, in this order: a date printed on
+  the page, page metadata (modified/updated), the HTTP `Last-Modified` header, the earliest
+  Wayback Machine capture. Only when none exists use the download date, and mark the document
+  `date_basis = retrieved` (field added in W5). Such pages are excluded from recency windows
+  (Q26, Q27), and answers say "page content as of <date>".
+- Tier 1: Bloomberg terminal (and Capital IQ) exports may be ingested when the team downloads
+  them; they are stored as tier 1 `licensed` with a manifest row like any other document.
+- Cerulli and other library research (C3) may be stored in full.
+Consequences: No ingestion waits on terms. The design no longer has to clear the bar with
+tiers 2-5 alone. Unchanged: raw documents and dumps never go into this public repository
+(Box only), every document has a manifest row, and every citation shows its tier label.
+

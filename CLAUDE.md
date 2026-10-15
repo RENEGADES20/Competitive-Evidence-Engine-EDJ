@@ -17,8 +17,9 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
 3. **"No evidence" is a correct answer.** The gap path is tested as hard as the happy path.
 4. **No figure that is not traceable to a filing or licensed source.** No estimated AUM,
    no inferred headcount, no numbers from memory.
-5. **Licensed data stays inside its license.** Until ADR-000 closes, design so source
-   tiers 2-5 alone clear the bar (see `docs/DECISIONS.md`).
+5. **Every document is traceable to where it came from.** A manifest row with source and
+   tier for each one; tier 1 (Bloomberg, Capital IQ) is labelled `licensed`. Source use is
+   settled in ADR-007 (`docs/DECISIONS.md`): internal, non-commercial, all sources allowed.
 6. **Nothing normative.** Never say what the home firm should do. Assemble evidence, then
    hand the "should" back to the strategist.
 
