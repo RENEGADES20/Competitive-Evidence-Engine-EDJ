@@ -58,4 +58,8 @@ Q1, Q2, Q3, Q4, Q5, Q6, Q13, Q26, Q27.
 
 ## Open questions
 
+Source feasibility matrix (#3): [docs/SOURCE_MATRIX.md](../docs/SOURCE_MATRIX.md), data in
+[docs/source_matrix.csv](../docs/source_matrix.csv). Its terms questions T-01 to T-09 are answered
+in ADR-007 (see Sources above).
+
 - Speaker labels: worth keeping for "management said" vs analyst question?
