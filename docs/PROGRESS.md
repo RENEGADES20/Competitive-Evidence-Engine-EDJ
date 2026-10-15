@@ -47,6 +47,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-10 | Verification workflow (#22): `verify-cee` skill drives the UI like a user (5 features, screenshots in `.verify-runs/`), wired into `/finish-task` and the PR template; guard hook fixed for macOS; `docs/WORKFLOW-SETUP.md` for teammates | Guard still lets unparsable input through; macOS setup not yet run by a teammate | Teammates run setup and report on #23; next: move ground rules into CI checks |
 | 2026-10-10 | Dispatch (#25): `/dispatch` (after a merge, weekly, inbox) drafts the next issues from the real state (merged PRs, open work, dependencies, comments) with checkable acceptance; `scripts/dispatch_apply.py` applies an approved draft; richer issue template | Corpus still one document; ADR-000 open; three PRs waiting for review | TL approves the W4 draft; review #19-#21 |
 | 2026-10-15 | PROGRESS is written by a bot from each merged PR's progress line; no more PROGRESS conflicts (#29) | - | Merge #27, #20, #21, #19 through it |
+| 2026-10-15 | ADR-007 settles source use (T-01..T-09): all sources allowed, transcripts tier 3, Bloomberg exports tier 1; rule 5 updated (#30) | - | C2 transcripts and IR, C3 thematic ingestion unblocked |
 
 ## Weekly score (from W6)
 
