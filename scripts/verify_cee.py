@@ -1,0 +1,410 @@
+"""Drive the real app like a user and keep the evidence. Works on Windows and macOS.
+
+Used by the verify-cee skill (.claude/skills/verify-cee/SKILL.md). Run with the project venv:
+
+  python scripts/verify_cee.py doctor          # is everything ready to verify?
+  python scripts/verify_cee.py run             # launch, drive every feature, clean up
+  python scripts/verify_cee.py run ask-answer gap-path
+  python scripts/verify_cee.py launch | drive <feature...> | cleanup
+
+It never touches your own database or app: it copies database `cee` to `cee_verify`, starts
+its own Streamlit on port 8599 with the mock provider, and removes both at the end.
+Evidence (screenshots, page text, steps.jsonl) stays in .verify-runs/<run-id>/.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import signal
+import subprocess
+import sys
+import time
+import urllib.request
+from urllib.parse import quote
+from datetime import datetime
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+RUNS = REPO / ".verify-runs"
+STATE = RUNS / "instance.json"
+CONTAINER = "cee-db"
+SOURCE_DB, VERIFY_DB = "cee", "cee_verify"
+PORT = 8599
+WINDOWS = os.name == "nt"
+
+ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
+NO_EVIDENCE_Q = "What does Morgan Stanley's 10-K say about its number of financial advisors?"
+FEATURES = ["ask-answer", "open-citation", "gap-path", "invalid-chunk", "download-document"]
+
+
+# ---------- helpers ----------
+
+def venv_python() -> Path:
+    return REPO / (".venv/Scripts/python.exe" if WINDOWS else ".venv/bin/python")
+
+
+def sh(args: list[str], check: bool = True, **kw) -> subprocess.CompletedProcess:
+    r = subprocess.run(args, capture_output=True, text=True, **kw)
+    if check and r.returncode != 0:
+        raise RuntimeError(f"{' '.join(args[:4])}... failed: {(r.stderr or r.stdout).strip()[:400]}")
+    return r
+
+
+def psql(db: str, sql: str) -> str:
+    return sh(["docker", "exec", CONTAINER, "psql", "-qtA", "-U", "cee", "-d", db, "-c", sql]).stdout.strip()
+
+
+def db_url(db: str) -> str:
+    from cee.config import settings
+    base = settings().database_url
+    return base.rsplit("/", 1)[0] + "/" + db
+
+
+def health(port: int) -> bool:
+    try:
+        with urllib.request.urlopen(f"http://localhost:{port}/_stcore/health", timeout=2) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def snapshot_name() -> str:
+    # Every laptop has its own database; results are only comparable on the same snapshot.
+    return psql(SOURCE_DB, "SELECT obj_description('public.documents'::regclass)") or "none (built locally)"
+
+
+def git_head() -> str:
+    r = sh(["git", "rev-parse", "HEAD"], check=False, cwd=REPO)
+    return r.stdout.strip() or "unknown"
+
+
+def load_state() -> dict | None:
+    return json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else None
+
+
+def pid_alive(pid: int) -> bool:
+    if WINDOWS:
+        r = sh(["tasklist", "/FI", f"PID eq {pid}", "/NH"], check=False)
+        return str(pid) in r.stdout
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+# ---------- doctor ----------
+
+def doctor(port: int = PORT) -> bool:
+    checks: list[tuple[str, bool, str]] = []
+
+    def check(name, fn):
+        try:
+            ok, detail = fn()
+        except Exception as e:
+            ok, detail = False, f"{type(e).__name__}: {e}"
+        checks.append((name, ok, detail))
+        print(f"[{'ok' if ok else 'FAIL'}] {name}: {detail}")
+
+    check("python", lambda: (sys.version_info[:2] == (3, 11),
+                             f"{sys.version.split()[0]} (need 3.11; run with {venv_python().relative_to(REPO)})"))
+    check("docker", lambda: (shutil.which("docker") is not None
+                             and sh(["docker", "info"], check=False).returncode == 0,
+                             "running" if shutil.which("docker") else "not installed"))
+    check("database", lambda: (psql(SOURCE_DB, "SELECT 1") == "1", f"container {CONTAINER}, db {SOURCE_DB}"))
+    check("corpus", lambda: (lambda n: (n > 0, f"{n} chunks, snapshot {snapshot_name()} (restore one if 0)"))(
+        int(psql(SOURCE_DB, "SELECT count(*) FROM chunks"))))
+
+    def browser():
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            b.close()
+        return True, "playwright + chromium ready"
+    check("browser", browser)
+
+    def port_free():
+        st = load_state()
+        if health(port):
+            mine = st and st.get("port") == port and pid_alive(st["pid"])
+            return bool(mine), "our verify instance is up" if mine else f"port {port} used by another program"
+        return True, f"port {port} free"
+    check("port", port_free)
+
+    bad = [c for c in checks if not c[1]]
+    print("DOCTOR " + ("PASS" if not bad else f"FAIL ({', '.join(c[0] for c in bad)})"))
+    return not bad
+
+
+# ---------- launch / cleanup ----------
+
+def launch(port: int = PORT) -> dict:
+    st = load_state()
+    if st and pid_alive(st["pid"]) and health(st["port"]):
+        print(f"Reusing verify instance on port {st['port']} (run {st['run_id']})")
+        return st
+    if health(port):
+        raise RuntimeError(f"Port {port} is used by a program this script did not start. Stop it or pass --port.")
+    RUNS.mkdir(exist_ok=True)
+    run_id = datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + git_head()[:7]
+    print(f"Copying database {SOURCE_DB} -> {VERIFY_DB}")
+    psql("postgres", f"DROP DATABASE IF EXISTS {VERIFY_DB} WITH (FORCE);")
+    psql("postgres", f"CREATE DATABASE {VERIFY_DB};")
+    sh(["docker", "exec", CONTAINER, "sh", "-c",
+        f"pg_dump -U cee -Fc {SOURCE_DB} | pg_restore -U cee -d {VERIFY_DB} --no-owner"])
+    run_dir = RUNS / run_id
+    run_dir.mkdir(parents=True)
+    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock"}
+    log = open(run_dir / "app.log", "w", encoding="utf-8")
+    flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "streamlit", "run", str(REPO / "src/cee/app/streamlit_app.py"),
+         "--server.port", str(port), "--server.headless", "true",
+         "--browser.gatherUsageStats", "false"],
+        cwd=REPO, env=env, stdout=log, stderr=subprocess.STDOUT, creationflags=flags,
+        start_new_session=not WINDOWS)
+    st = {"pid": proc.pid, "port": port, "run_id": run_id, "head": git_head(), "snapshot": snapshot_name(),
+          "started": datetime.now().isoformat(timespec="seconds")}
+    STATE.write_text(json.dumps(st, indent=2), encoding="utf-8")
+    for _ in range(60):
+        if health(port):
+            print(f"App ready at http://localhost:{port} (pid {proc.pid}, run {run_id})")
+            return st
+        if proc.poll() is not None:
+            break
+        time.sleep(1)
+    cleanup()
+    raise RuntimeError(f"App did not start; see {run_dir / 'app.log'}")
+
+
+def cleanup() -> None:
+    st = load_state()
+    if st and pid_alive(st["pid"]):
+        if WINDOWS:
+            sh(["taskkill", "/PID", str(st["pid"]), "/T", "/F"], check=False)
+        else:
+            try:
+                os.killpg(st["pid"], signal.SIGTERM)
+            except OSError:
+                pass
+        print(f"Stopped app pid {st['pid']}")
+    STATE.unlink(missing_ok=True)
+    try:
+        psql("postgres", f"DROP DATABASE IF EXISTS {VERIFY_DB} WITH (FORCE);")
+        print(f"Dropped database {VERIFY_DB}")
+    except RuntimeError as e:
+        print(f"Could not drop {VERIFY_DB}: {e}")
+    if st:
+        print(f"Evidence kept in {RUNS / st['run_id']}")
+
+
+# ---------- drive ----------
+
+class Recorder:
+    def __init__(self, run_dir: Path, feature: str, page):
+        self.dir = run_dir / feature
+        self.dir.mkdir(parents=True, exist_ok=True)
+        self.feature, self.page, self.steps, self.n = feature, page, [], 0
+        self.status = "PASS"
+
+    def step(self, action: str, expected: str, ok: bool, actual: str) -> bool:
+        self.n += 1
+        shot = self.dir / f"{self.n:02d}.png"
+        self.page.screenshot(path=str(shot), full_page=True)
+        (self.dir / f"{self.n:02d}.page.txt").write_text(self.page.locator("body").inner_text(), encoding="utf-8")
+        row = {"feature": self.feature, "step": self.n, "action": action, "expected": expected,
+               "actual": actual, "result": "PASS" if ok else "FAIL", "screenshot": shot.name}
+        self.steps.append(row)
+        if not ok:
+            self.status = "FAIL"
+        print(f"  [{row['result']}] {action} -> {actual}")
+        return ok
+
+    def unreachable(self, why: str) -> None:
+        self.status = "UNREACHABLE"
+        self.steps.append({"feature": self.feature, "result": "UNREACHABLE", "actual": why})
+        print(f"  [UNREACHABLE] {why}")
+
+
+def wait_idle(page) -> None:
+    page.wait_for_load_state("networkidle")
+    page.wait_for_function(
+        "() => !document.querySelector('[data-testid=\"stStatusWidget\"]')", timeout=60000)
+    page.wait_for_timeout(300)
+
+
+def ask(page, base: str, question: str) -> None:
+    page.goto(base)
+    wait_idle(page)
+    page.get_by_role("textbox", name="Question").fill(question)
+    page.get_by_role("button", name="Ask").click()
+    wait_idle(page)
+
+
+def citation_links(page):
+    return page.locator("a[href*='?chunk=']")
+
+
+def feature_ask_answer(page, base, rec, ctx):
+    before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
+    ask(page, base, ANSWERABLE_Q)
+    body = page.locator("body").inner_text()
+    heading = next((h for h in ("Answer (evidence only", "Answer", "Not in the corpus", "No evidence")
+                    if page.get_by_role("heading", name=h).count()), None)
+    rec.step("Ask the EDJ advisors question", "an answer heading", heading is not None, f"heading={heading!r}")
+    n = citation_links(page).count()
+    rec.step("Look at the claims", "at least one citation link", n > 0, f"{n} citation links")
+    rec.step("Read the footer", "mock provider, no LLM call", "LLM called: False" in body,
+             "LLM called: False" if "LLM called: False" in body else "footer missing or LLM called")
+    after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
+    rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
+             f"query_log {before} -> {after}")
+
+
+def feature_open_citation(page, base, rec, ctx):
+    ask(page, base, ANSWERABLE_Q)
+    link = citation_links(page).first
+    if not link.count():
+        rec.step("Find a citation", "a citation link", False, "no citation links")
+        return
+    chunk_id = link.inner_text().strip()
+    # Streamlit opens markdown links in a new tab, as a user would see it.
+    with page.context.expect_page() as new_tab:
+        link.click()
+    source = new_tab.value
+    wait_idle(source)
+    rec.page = source
+    body = source.locator("body").inner_text()
+    rec.step(f"Click citation {chunk_id}", "a new tab with the source page for that chunk",
+             f"Chunk: {chunk_id}" in body and "Stored passage" in body,
+             "source page opened" if "Stored passage" in body else body.strip()[:120])
+    stored = psql(VERIFY_DB, f"SELECT left(text, 200) FROM chunks WHERE chunk_id = '{chunk_id}'")
+    snippet = " ".join(stored.split())[:80]
+    match = bool(snippet) and snippet in " ".join(body.split())
+    rec.step("Compare the source page passage with the database (read-back)", "the stored text",
+             match, f"first 80 chars {'match' if match else 'differ'}")
+    source.close()
+    rec.page = page
+    ctx["chunk_id"] = chunk_id
+
+
+def feature_gap_path(page, base, rec, ctx):
+    ask(page, base, NO_EVIDENCE_Q)
+    body = page.locator("body").inner_text()
+    gap = any(page.get_by_role("heading", name=h).count() for h in ("Not in the corpus", "No evidence"))
+    rec.step("Ask about a firm with no stored filings", "'Not in the corpus' or 'No evidence'", gap,
+             next((h for h in ("Not in the corpus", "No evidence", "Answer") if h in body), "no heading"))
+    rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
+             f"{citation_links(page).count()} citation links")
+    rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+
+
+def feature_invalid_chunk(page, base, rec, ctx):
+    page.goto(base + "?chunk=NOT-A-REAL-CHUNK")
+    wait_idle(page)
+    body = page.locator("body").inner_text()
+    rec.step("Open a chunk ID that does not exist", "a clear 'not in the stored corpus' error",
+             "is not in the stored corpus" in body, "error shown" if "is not in the stored corpus" in body else "no error")
+
+
+def feature_download_document(page, base, rec, ctx):
+    chunk_id = ctx.get("chunk_id") or psql(VERIFY_DB, "SELECT chunk_id FROM chunks LIMIT 1")
+    page.goto(base + "?chunk=" + quote(chunk_id))
+    wait_idle(page)
+    button = page.get_by_role("button", name="Download stored document")
+    if not button.count():
+        body = page.locator("body").inner_text()
+        note = next((l for l in body.splitlines() if "not found locally" in l), "no download button")
+        rec.step("Open the source page", "a download button or a clear 'not found locally' note",
+                 "not found locally" in body, note[:160])
+        rec.unreachable("raw file not in data/raw/ (precondition: copy it from the team Box link)")
+        return
+    with page.expect_download() as d:
+        button.click()
+    path = rec.dir / d.value.suggested_filename
+    d.value.save_as(path)
+    got = hashlib.sha256(path.read_bytes()).hexdigest()
+    want = psql(VERIFY_DB, f"SELECT d.sha256 FROM chunks c JOIN documents d USING (doc_id) WHERE c.chunk_id = '{chunk_id}'")
+    rec.step("Download the stored document", "sha256 matches the documents table", got == want,
+             f"sha256 {'match' if got == want else 'differs'} ({got[:12]})")
+
+
+DRIVERS = {"ask-answer": feature_ask_answer, "open-citation": feature_open_citation,
+           "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
+           "download-document": feature_download_document}
+
+
+def drive(features: list[str]) -> bool:
+    from playwright.sync_api import sync_playwright
+    st = load_state()
+    if not (st and health(st["port"])):
+        raise RuntimeError("No verify instance is running. Run: python scripts/verify_cee.py launch")
+    run_dir = RUNS / st["run_id"]
+    base = f"http://localhost:{st['port']}/"
+    results, ctx = [], {}
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 900}, accept_downloads=True)
+        for f in features:
+            print(f"{f}:")
+            rec = Recorder(run_dir, f, page)
+            try:
+                DRIVERS[f](page, base, rec, ctx)
+            except Exception as e:
+                rec.step(f"Run {f}", "no error", False, f"{type(e).__name__}: {str(e)[:200]}")
+            with open(run_dir / "steps.jsonl", "a", encoding="utf-8") as out:
+                for s in rec.steps:
+                    out.write(json.dumps(s) + "\n")
+            results.append({"feature": f, "status": rec.status})
+        browser.close()
+    summary = {**st, "results": results, "finished": datetime.now().isoformat(timespec="seconds")}
+    (run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    print(f"\nSnapshot: {st.get('snapshot')}  Commit: {st['head'][:7]}")
+    print("SUMMARY  " + "  ".join(f"{r['feature']}={r['status']}" for r in results))
+    print(f"Evidence: {run_dir}")
+    return all(r["status"] != "FAIL" for r in results)
+
+
+# ---------- main ----------
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
+    ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
+    ap.add_argument("--port", type=int, default=PORT)
+    a = ap.parse_args()
+    unknown = [f for f in a.features if f not in DRIVERS]
+    if unknown:
+        ap.error(f"unknown feature(s) {unknown}; choose from {FEATURES}")
+    features = a.features or FEATURES
+    try:
+        if a.command == "doctor":
+            return 0 if doctor(a.port) else 1
+        if a.command == "launch":
+            launch(a.port)
+            return 0
+        if a.command == "drive":
+            return 0 if drive(features) else 1
+        if a.command == "cleanup":
+            cleanup()
+            return 0
+        if not doctor(a.port):
+            return 1
+        try:
+            launch(a.port)
+            ok = drive(features)
+        finally:
+            cleanup()
+        print("VERIFY " + ("PASS" if ok else "FAIL"))
+        return 0 if ok else 1
+    except RuntimeError as e:
+        print(f"ERROR: {e}")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
