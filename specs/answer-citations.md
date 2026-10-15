@@ -47,6 +47,24 @@ suggest_sources(query) -> [source]
 | `gap_with_adjacent` | "Not available / not disclosed" + adjacent data labeled as different + which source would fill it | Q24, Q25, Q28, Q29, Q30 |
 | `refuse` | Nothing in the corpus | none yet |
 
+## Standard wording
+
+Prompt v0 lives in `src/cee/answer/prompt.py` (`PROMPT_VERSION`), which holds these sentences
+as constants. Keep the two in sync. Caveats remain code-owned; this wording does not replace them.
+
+| Case | Questions | Gap (`gaps[].what`) | Adjacent `differs_because` |
+|---|---|---|---|
+| Merrill standalone results | Q30 | "Merrill does not report standalone results." | "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's." |
+| Advisor attrition | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
+| Advisor pay | Q29 | "Payout grids are not public." | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
+
+Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this
+sentence as the last claim:
+
+> The evidence above only provides objective context for the strategic question asked.
+> Whether or how Edward Jones should act is a judgment for the strategy team to make, beyond
+> the scope of this evidence engine.
+
 ## Acceptance
 
 - 100% of claims carry at least one `chunk_id` from the retrieved set, or are flagged.
