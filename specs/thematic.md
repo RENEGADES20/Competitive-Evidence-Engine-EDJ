@@ -47,6 +47,5 @@ Q16, Q17, Q18, Q19, Q20, Q21.
 
 ## Open questions
 
-- Cerulli via WashU library: allowed to store? (ADR-000)
 - Keyword topic tagging enough, or needs review by hand?
 - Form ADV Part 2 fee schedules for Q18: C1 or C3? (proposal: C1 ingests, C3 tags topic)

@@ -1,6 +1,6 @@
 name: Task
 description: One unit of work for one person (one issue -> one branch -> one PR)
-title: "[W?] "
+title: "[W?][ROLE] "
 labels: []
 body:
   - type: dropdown
@@ -18,6 +18,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: The problem, which questions (Q..) or gate this moves, what depends on it.
+    validations:
+      required: true
+  - type: textarea
     id: goal
     attributes:
       label: Goal
@@ -25,14 +32,47 @@ body:
     validations:
       required: true
   - type: textarea
+    id: inputs
+    attributes:
+      label: Inputs
+      description: Files, specs, issues, PRs and comments to read first.
+    validations:
+      required: true
+  - type: textarea
+    id: deliverable
+    attributes:
+      label: Deliverable
+      description: What the PR will contain.
+    validations:
+      required: true
+  - type: textarea
     id: acceptance
     attributes:
       label: Acceptance
-      description: Checkable items. Copy the relevant ones from the spec.
+      description: Items someone else can check - a command and its expected output, a question ID with its expected behavior, a row count, a verify-cee feature that must PASS.
       value: |
         - [ ]
     validations:
       required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: What to run before /finish-task (verify-cee features, retrieval check, pytest) and on which snapshot.
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: What not to touch, so this stays one PR.
+    validations:
+      required: true
+  - type: textarea
+    id: depends_on
+    attributes:
+      label: Depends on
+      description: Issues or PRs that must land first, or "nothing".
   - type: input
     id: questions
     attributes:

@@ -17,8 +17,9 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
 3. **"No evidence" is a correct answer.** The gap path is tested as hard as the happy path.
 4. **No figure that is not traceable to a filing or licensed source.** No estimated AUM,
    no inferred headcount, no numbers from memory.
-5. **Licensed data stays inside its license.** Until ADR-000 closes, design so source
-   tiers 2-5 alone clear the bar (see `docs/DECISIONS.md`).
+5. **Every document is traceable to where it came from.** A manifest row with source and
+   tier for each one; tier 1 (Bloomberg, Capital IQ) is labelled `licensed`. Source use is
+   settled in ADR-007 (`docs/DECISIONS.md`): internal, non-commercial, all sources allowed.
 6. **Nothing normative.** Never say what the home firm should do. Assemble evidence, then
    hand the "should" back to the strategist.
 
@@ -64,8 +65,22 @@ If your change touches two areas, read both specs and mention both in the PR.
   `.claude/commands/start-task.md` and `.claude/commands/finish-task.md`.
 - ExecPlans follow `PLANS.md` and are saved in `plans/NNNN-slug.md`. Tiny config/data-only
   tasks may skip the ExecPlan.
-- PRs use `.github/pull_request_template.md` and include "Closes #N".
+- PRs use `.github/pull_request_template.md` and include "Closes #N" (or "Part of #N" with
+  the open items listed, when the issue is only partly done).
 - The tech lead reviews and merges. Do not merge your own PR.
+
+## Verification
+
+- **Prove it in the running app.** Before `/finish-task`, any change to `src/`, `config/`,
+  the database or the corpus runs the `verify-cee` skill (`.claude/skills/verify-cee/`).
+  Tests passing or "it compiles" is not proof.
+- **Evidence, not opinion.** Report what was run, the result, and where the evidence is.
+  A claim with no evidence is unverified; say "not verified" rather than guess.
+- **A changed user feature updates its recipe** in `.claude/skills/verify-cee/features/`
+  and the driver in `scripts/verify_cee.py` in the same PR.
+- **The mock provider proves the pipeline, not answer quality.** It always answers when
+  retrieval finds something.
+- New teammates: follow `docs/WORKFLOW-SETUP.md` once.
 
 ## Working rules for Claude
 
@@ -77,6 +92,8 @@ If your change touches two areas, read both specs and mention both in the PR.
 - Do not invent entity facts (CIKs, segment names). Mark unknowns `TODO-verify`.
 - When a question ID is relevant, cite it (e.g. Q30) and check it against
   `evals/questions.yaml`.
-- Log what landed in `docs/PROGRESS.md`.
+- Log what landed in the PR description under `## Progress line` (one line:
+  `What landed | Blockers | Next`). A bot copies it into `docs/PROGRESS.md` when the PR is
+  merged. Never edit the Status log in `docs/PROGRESS.md` by hand.
 - Out of scope this term: alerts, live web-browsing agents, recommendations, forecasts,
   any internal or client data, SSO, multi-user, mobile, decks, reports.
