@@ -10,6 +10,7 @@ Add one line per landed PR or notable event, newest at the bottom. Keep it short
 | 2026-09-30 | End-to-end skeleton on TL machine (#13): EDJ 10-K (335 chunks), FTS, Answer JSON + citation check, gap/refuse path, Streamlit source view, build-snapshot/restore, smoke check, 11 tests | ADR-000 still open | Install on the other six machines and Gate 1 (#14) |
 | 2026-09-30 | First official snapshot `corpus-2026-09-30` (1 document, 335 chunks) built from main and published to Box `snapshots/`; restore now skips `-test` dumps | Windows Smart App Control once blocked a pandas DLL during build-snapshot (a retry passed) | Teammates restore it during #14 |
 | 2026-10-10 | Verification workflow (#22): `verify-cee` skill drives the UI like a user (5 features, screenshots in `.verify-runs/`), wired into `/finish-task` and the PR template; guard hook fixed for macOS; `docs/WORKFLOW-SETUP.md` for teammates | Guard still lets unparsable input through; macOS setup not yet run by a teammate | Teammates run setup and report on #23; next: move ground rules into CI checks |
+| 2026-10-10 | Dispatch (#25): `/dispatch after <PR#> | week | inbox` drafts the next issues from the real state (merged PRs, open work, dependencies, comments) with checkable acceptance; `scripts/dispatch_apply.py` applies an approved draft; richer issue template | Corpus still one document; ADR-000 open; three PRs waiting for review | TL approves the W4 draft; review #19-#21 |
 
 ## Weekly score (from W6)
 
