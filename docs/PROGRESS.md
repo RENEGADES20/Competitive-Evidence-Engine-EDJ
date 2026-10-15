@@ -54,6 +54,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | ADR-007 settles source use (T-01..T-09): all sources allowed, transcripts tier 3, Bloomberg exports tier 1; rule 5 updated (#30) | - | C2 transcripts and IR, C3 thematic ingestion unblocked |
 | 2026-10-15 | EDGAR fetch: quarter-aware 10-Q IDs, `--count N`, skips documents already in the manifest; `source_registry` (49 rows) loaded by `cee.ingest.load` (#32) | - | C1 ingests 10-Ks and 10-Qs; S2 can use registry rows for suggested_source |
 | 2026-10-15 | Paid API rule in CLAUDE.md (mock by default, plan and cap real calls, save outputs, no loops, report count); dispatch keeps UI design open and queues several weeks (#34) | - | W4-W6 issues |
+| 2026-10-15 | Dispatch applied W4-W6: 29 issues (#35-#63) with board fields and blocked-by links; apply now survives the board's auto-add (#64) | - | Teammates start W4 issues |
 
 ## Weekly score (from W6)
 
