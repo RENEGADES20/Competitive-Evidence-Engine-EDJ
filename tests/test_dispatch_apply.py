@@ -121,3 +121,23 @@ def test_apply_links_and_resumes(tmp_path, monkeypatch):
     assert reply and reply[0][1] == "see #102"
     state = json.loads((tmp_path / "state.json").read_text(encoding="utf-8"))
     assert state["last_run"] == "2026-10-11T00:00:00+00:00"
+
+
+def test_board_auto_add_race_uses_existing_item(tmp_path, monkeypatch):
+    mod, calls, _ = load(tmp_path, monkeypatch)
+    inner = mod.gh
+
+    def gh(args, input_text=None):
+        if args[:2] == ["project", "item-add"]:
+            calls.append((args, input_text))
+            raise RuntimeError("gh project item-add 3 failed: GraphQL: Content already exists in this project")
+        if args[:2] == ["api", "graphql"]:
+            calls.append((args, input_text))
+            return json.dumps({"data": {"repository": {"issue": {"projectItems": {"nodes": [
+                {"id": "OTHER", "project": {"id": "ELSEWHERE"}}, {"id": "FOUND", "project": {"id": "PROJ"}}]}}}}})
+        return inner(args, input_text)
+
+    monkeypatch.setattr(mod, "gh", gh)
+    assert run(mod, monkeypatch, draft(tmp_path), "--apply") == 0
+    edits = [c[0] for c in calls if c[0][:2] == ["project", "item-edit"]]
+    assert edits and all(e[e.index("--id") + 1] == "FOUND" for e in edits)
