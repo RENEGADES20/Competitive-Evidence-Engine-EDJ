@@ -52,6 +52,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-10 | Dispatch (#25): `/dispatch` (after a merge, weekly, inbox) drafts the next issues from the real state (merged PRs, open work, dependencies, comments) with checkable acceptance; `scripts/dispatch_apply.py` applies an approved draft; richer issue template | Corpus still one document; ADR-000 open; three PRs waiting for review | TL approves the W4 draft; review #19-#21 |
 | 2026-10-15 | PROGRESS is written by a bot from each merged PR's progress line; no more PROGRESS conflicts (#29) | - | Merge #27, #20, #21, #19 through it |
 | 2026-10-15 | ADR-007 settles source use (T-01..T-09): all sources allowed, transcripts tier 3, Bloomberg exports tier 1; rule 5 updated (#30) | - | C2 transcripts and IR, C3 thematic ingestion unblocked |
+| 2026-10-15 | EDGAR fetch: quarter-aware 10-Q IDs, `--count N`, skips documents already in the manifest; `source_registry` (49 rows) loaded by `cee.ingest.load` (#32) | - | C1 ingests 10-Ks and 10-Qs; S2 can use registry rows for suggested_source |
 
 ## Weekly score (from W6)
 
