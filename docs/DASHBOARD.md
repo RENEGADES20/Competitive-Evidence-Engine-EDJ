@@ -38,7 +38,8 @@ of the TL view; it is filtered out of that view instead and lives in "Approved".
 
 Tech lead review loop: open "TL - By area" -> review the Done cards at the top of each
 area -> merge the PR -> set Status to Approved (or let the merge workflow do it) -> the card
-leaves the view -> run `/dispatch after <PR#>` in Claude Code.
+leaves the view -> the `progress` workflow logs the PR's `## Progress line` in
+`docs/PROGRESS.md` (no one edits that log by hand) -> run `/dispatch after <PR#>` in Claude Code.
 
 ## 3a. Dispatching new issues (tech lead)
 
