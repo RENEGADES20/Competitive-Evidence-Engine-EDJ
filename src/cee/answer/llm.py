@@ -7,21 +7,12 @@ from __future__ import annotations
 
 import json
 
+from cee.answer.prompt import SYSTEM_PROMPT
 from cee.answer.schema import Answer, llm_output_schema
 from cee.config import settings
 from cee.retrieve.fts import Hit
 
 TOOL_NAME = "submit_answer"
-
-SYSTEM_PROMPT = """You answer strategic questions about wealth-management firms using ONLY the
-evidence chunks provided. Rules:
-- Every claim must cite one or more chunk_ids from the evidence. No citation, no claim.
-- Use no outside knowledge and no numbers that are not in the cited chunk.
-- If the evidence does not answer the question, set answerable=false and behavior
-  "gap_with_adjacent", put related-but-different evidence in "adjacent" with
-  "differs_because", and name what is missing in "gaps".
-- Never recommend what any firm should do; hand normative questions back to the strategist
-  (behavior "answer_with_boundary")."""
 
 
 def build_user_message(question: str, hits: list[Hit]) -> str:

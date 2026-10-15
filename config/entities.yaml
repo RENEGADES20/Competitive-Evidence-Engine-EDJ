@@ -10,13 +10,14 @@
 #   segment_aliases section headings / phrases that map a chunk to a segment tag
 #   reporting_shape how the firm reports (drives what expected_sources look like)
 #   expected_sources doc types that should exist; seeds source_registry
+#                   (one row per entity + doc type in config/source_registry.csv)
 
 entities:
   - id: MS
     name: Morgan Stanley
     aliases: ["Morgan Stanley", "MS", "Morgan Stanley Wealth Management", "MSWM", "E*TRADE"]
     ticker: MS
-    cik: TODO-verify
+    cik: "895421"   # verified on EDGAR 2026-10-08 (#1)
     parent: null
     segment_aliases:
       Wealth Management: ["Wealth Management", "Wealth Management segment"]
@@ -30,7 +31,7 @@ entities:
     name: The Charles Schwab Corporation
     aliases: ["Schwab", "Charles Schwab", "SCHW", "Schwab Advisor Services"]
     ticker: SCHW
-    cik: TODO-verify
+    cik: "316709"   # verified on EDGAR 2026-10-08 (#1)
     parent: null
     segment_aliases:
       Investor Services: ["Investor Services"]
@@ -58,11 +59,17 @@ entities:
     name: Bank of America Corporation
     aliases: ["Bank of America", "BofA", "BAC"]
     ticker: BAC
-    cik: TODO-verify
+    cik: "70858"   # verified on EDGAR 2026-10-08 (#1)
     parent: null
     segment_aliases:
       GWIM: ["Global Wealth & Investment Management", "Global Wealth and Investment Management", "GWIM"]
-      Merrill: ["Merrill Lynch Wealth Management", "Merrill Wealth Management"]  # Merrill Edge is reported in Consumer Banking, not GWIM -- do not alias it here (C1 to verify)
+      Merrill: ["Merrill Lynch Wealth Management", "Merrill Wealth Management"]
+      # Merrill Edge is in Consumer Banking, not GWIM -- do not alias it here. Verified (#1):
+      #   BAC-10K-2024, Consumer Banking > Deposits: "Consumer Investments serves investment client
+      #   relationships through the Merrill Edge integrated investing and banking service platform".
+      #   BAC-10K-2025 no longer names Merrill Edge; Consumer Banking still lists "investment accounts
+      #   and products", and GWIM "consists of two primary businesses: Merrill Wealth Management and
+      #   Bank of America Private Bank" (supports the MER caveat).
     reported_as: null
     equivalence: full
     caveat: null
@@ -73,7 +80,8 @@ entities:
     name: Merrill
     aliases: ["Merrill", "Merrill Lynch", "Merrill Wealth Management", "Merrill Lynch Wealth Management"]
     ticker: null
-    cik: TODO-verify   # Merrill Lynch, Pierce, Fenner & Smith broker-dealer; used for Form ADV only
+    cik: "728612"   # Merrill Lynch, Pierce, Fenner & Smith Inc.; used for Form ADV only. Verified on EDGAR 2026-10-08 (#1).
+                    # Not 914246 ("...SMITH INC /NY"): last filing 2016, old 40-series applications only.
     parent: BAC
     segment_aliases: {}
     reported_as: GWIM
@@ -86,7 +94,7 @@ entities:
     name: Raymond James Financial
     aliases: ["Raymond James", "RJF", "Raymond James Financial"]
     ticker: RJF
-    cik: TODO-verify
+    cik: "720005"   # verified on EDGAR 2026-10-08 (#1)
     parent: null
     segment_aliases:
       Private Client Group: ["Private Client Group", "PCG"]
@@ -94,11 +102,11 @@ entities:
     equivalence: full
     caveat: null
     reporting_shape: Public; Private Client Group segment; multiple advisor affiliation models.
-    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, deck, press, trade, adv]
+    expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, monthly, deck, press, trade, adv]   # monthly: 8-K "RJF OPERATING DATA" (#2)
 
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.
-# CIKs are TODO-verify until C1 checks them; nothing here is ingested yet.
+# Nothing here is ingested yet. Reporting shape and verified CIKs: docs/EXPANSION.md.
 expansion:
   - {id: AMP,  name: Ameriprise Financial, aliases: ["Ameriprise", "AMP"], status: mapped, expected_sources: [10-K, 10-Q, transcript, supplement, adv]}
   - {id: LPLA, name: LPL Financial, aliases: ["LPL Financial", "LPL", "LPLA"], status: mapped, expected_sources: [10-K, 10-Q, transcript, monthly, adv]}

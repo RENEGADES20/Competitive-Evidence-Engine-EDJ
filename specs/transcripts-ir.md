@@ -29,7 +29,7 @@ parse_pdf(doc_id)        -> sections: [Section{name=slide/section title, page, t
     # parser from the tech lead (docling, pymupdf fallback)
 
 trade_press_item: {doc_id, entity_id, outlet, headline, published_at, url,
-                   storage: "full" | "excerpt"}   # depends on ADR-000 terms
+                   storage: "full" | "excerpt"}   # "full" allowed (ADR-007)
 ```
 
 doc_id examples: `MS-TR-2025Q2`, `RJF-DECK-2025-investor-day`, `SCHW-PR-2026-03-14-01`.
@@ -48,12 +48,18 @@ doc_id examples: `MS-TR-2025Q2`, `RJF-DECK-2025-investor-day`, `SCHW-PR-2026-03-
 
 Q1, Q2, Q3, Q4, Q5, Q6, Q13, Q26, Q27.
 
+## Sources (ADR-007)
+
+- Transcripts: third-party sites or company IR pages; if none, transcribe the webcast
+  ourselves. Always tier 3 (`IR`).
+- Earnings releases also filed as 8-K exhibit 99.1: take the EDGAR copy (tier 2).
+- Trade press: full text stored, tier 4 "indicative only". Scraping allowed; keep a delay per site.
+- Undated pages: date rule in ADR-007 (T-09).
+
 ## Open questions
 
 Source feasibility matrix (#3): [docs/SOURCE_MATRIX.md](../docs/SOURCE_MATRIX.md), data in
-[docs/source_matrix.csv](../docs/source_matrix.csv). Its terms questions (T-01...) go to the ADR-000 owners.
+[docs/source_matrix.csv](../docs/source_matrix.csv). Its terms questions T-01 to T-09 are answered
+in ADR-007 (see Sources above).
 
-- Transcript source without tier 1 license: company IR sites, SEC 8-K exhibits? (ADR-000; matrix T-03, T-04:
-  no core firm offers a free transcript archive; only BAC posts its own, from 1Q26)
-- Which trade-press sites allow full-text storage? (ADR-000; matrix T-06: none found that allow it)
 - Speaker labels: worth keeping for "management said" vs analyst question?
