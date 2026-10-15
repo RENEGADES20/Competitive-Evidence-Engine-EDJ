@@ -1,0 +1,242 @@
+# Topics taxonomy v0 (C3 owns; see specs/thematic.md, plans/0006-topics-taxonomy.md)
+#
+# Indexes thematic material by theme, not by firm. Loads into the `topics` table
+# (topic_id, label, parent_id; docs/ARCHITECTURE.md) and drives tag_topics(chunk) -> chunk_topics.
+#
+# Fields
+#   id          stable topic_id; never rename once chunks are tagged (add a new id instead)
+#   label       short human label
+#   parent      parent topic id, or null for a top-level theme
+#   definition  one neutral sentence: what a chunk must be about to carry this topic
+#   questions   linked question IDs in evals/questions.yaml
+#   keywords    seed terms for keyword tagging (lower case)
+#
+# Tagging rules (for tag_topics)
+#   1. Whole-word / whole-phrase match, case-insensitive. Never substring: "ai" must not hit
+#      "said" or "retail"; "fee" must not hit "feedback". Short or generic keywords ("ai",
+#      "fee", "fees", "pricing", "commission", "trust", "prefer", "launched", "deployed",
+#      "estimated", "projected", "over the next", "over time") depend on this rule.
+#   2. A sub-topic's keywords count only when its parent topic also matches in the same chunk
+#      (on the parent's own keywords). E.g. "wealth transfer" + "trillion" -> transfer_estimates;
+#      "trillion" alone -> nothing. Generic sub-topic keywords are safe only because of this.
+#   3. A chunk tagged with a sub-topic is also tagged with its parent. A chunk may carry
+#      several topics.
+#
+# Shared keywords (intentional; a chunk can belong to more than one topic)
+#   - "best interest" (fee_regulation) overlaps "regulation best interest" (advice_regulation):
+#     Reg BI governs both advice conduct and fee conflicts.
+#   - Each keyword otherwise appears under one topic only; the same word in a parent and its
+#     own child would make rule 2 tag every parent hit with the child. A child phrase that
+#     contains a parent word ("wrap fee" under "fee") is fine: it is narrower than the parent.
+#
+# Top-level ids match the `themes:` seed list in config/entities.yaml; keep the two in step.
+#
+# Coverage of Q16-Q21
+#   Q16  advice_future, advice_delivery_models, advice_regulation
+#   Q17  ai_advice, ai_advisor_tools, ai_strategy_claims
+#   Q18  fees_pricing, fee_disclosures, fee_regulation, fee_industry_trends
+#   Q19  younger_investors, younger_investor_preferences, younger_investor_offerings
+#   Q20  advisor_selection, younger_investors (a chunk needs both to answer for under-40s)
+#   Q21  wealth_transfer, transfer_estimates, transfer_firm_preparation
+
+version: 0
+
+topics:
+  # --- Future of advice delivery (Q16) ---
+  - id: advice_future
+    label: Future of advice delivery
+    parent: null
+    definition: >-
+      How the way clients receive financial advice is described as changing, including
+      channels, service models, technology and regulation.
+    questions: [Q16]
+    keywords: ["future of advice", "advice model", "advice delivery", "wealth management industry outlook"]
+
+  - id: advice_delivery_models
+    label: Advice delivery models and channels
+    parent: advice_future
+    definition: >-
+      The service models through which advice reaches clients, such as human, digital,
+      hybrid, team-based or self-directed, and shifts between them.
+    questions: [Q16]
+    keywords: ["hybrid advice", "robo-advisor", "robo-adviser", "digital advice", "self-directed",
+               "team-based", "virtual advice", "omnichannel"]
+
+  - id: advice_regulation
+    label: Regulatory direction for advice
+    parent: advice_future
+    definition: >-
+      Rules, proposals and guidance from regulators (e.g. SEC, DOL, FINRA) on the standards
+      and conduct that govern investment advice.
+    questions: [Q16, Q18]
+    keywords: ["regulation best interest", "reg bi", "fiduciary rule", "fiduciary standard",
+               "retirement security rule", "form crs", "proposed rule", "finra rule"]
+
+  # --- AI in advice delivery (Q17) ---
+  - id: ai_advice
+    label: AI in advice delivery
+    parent: null
+    definition: >-
+      Use of artificial intelligence, including generative AI and machine learning, in
+      giving or supporting financial advice.
+    questions: [Q17, Q16]
+    keywords: ["artificial intelligence", "ai", "generative ai", "genai", "machine learning",
+               "large language model", "llm"]
+
+  - id: ai_advisor_tools
+    label: AI tools deployed to advisors or clients
+    parent: ai_advice
+    definition: >-
+      A named AI tool or feature stated to be in use by advisors or clients, as opposed to
+      one only planned or described in general terms.
+    questions: [Q17]
+    keywords: ["ai assistant", "copilot", "rolled out", "deployed", "launched", "available to advisors",
+               "meeting notes", "ai-powered"]
+
+  - id: ai_strategy_claims
+    label: AI ambitions and investment statements
+    parent: ai_advice
+    definition: >-
+      Statements of intent, investment or expected benefit from AI that do not name a tool
+      already in use.
+    questions: [Q17]
+    keywords: ["investing in ai", "ai strategy", "ai opportunity", "ai roadmap", "transformational",
+               "productivity gains", "over time"]
+
+  # --- Fees and pricing transparency (Q18) ---
+  - id: fees_pricing
+    label: Fee structures and pricing transparency
+    parent: null
+    definition: >-
+      How advice and investment services are priced and how clearly those prices are
+      disclosed to clients.
+    questions: [Q18]
+    keywords: ["fee", "fees", "pricing", "price transparency", "advisory fee", "commission",
+               "expense ratio"]
+
+  - id: fee_disclosures
+    label: Disclosed fee schedules and pricing changes
+    parent: fees_pricing
+    definition: >-
+      Fee schedules and pricing changes a firm has itself disclosed, such as in Form ADV Part 2
+      brochures or firm announcements.
+    questions: [Q18]
+    keywords: ["fee schedule", "form adv part 2", "brochure", "wrap fee", "asset-based fee",
+               "flat fee", "breakpoint", "cash sweep", "price change"]
+
+  - id: fee_regulation
+    label: Fee and conflict-of-interest regulation
+    parent: fees_pricing
+    definition: >-
+      Regulatory rules, proposals and enforcement on how fees and related conflicts are
+      charged and disclosed.
+    questions: [Q18]
+    keywords: ["fee disclosure rule", "conflicts of interest", "12b-1", "revenue sharing",
+               "enforcement action", "best interest"]
+
+  - id: fee_industry_trends
+    label: Industry research and commentary on pricing
+    parent: fees_pricing
+    definition: >-
+      Published research, surveys or commentary on fee levels and pricing direction across the
+      industry, not tied to one firm's own disclosure.
+    questions: [Q18]
+    keywords: ["fee compression", "fee pressure", "average advisory fee", "pricing trends",
+               "zero commission", "fee survey"]
+
+  # --- Younger investors (Q19, Q20) ---
+  - id: younger_investors
+    label: Younger investors and clients under 40
+    parent: null
+    definition: >-
+      Investors and advice clients in younger age cohorts (generally under 40, including
+      Millennials and Gen Z), as defined by each source.
+    questions: [Q19, Q20]
+    keywords: ["younger investors", "under 40", "millennial", "millennials", "gen z",
+               "generation z", "young adults"]
+
+  - id: younger_investor_preferences
+    label: Younger investor preferences and behaviour
+    parent: younger_investors
+    definition: >-
+      Published findings on what younger investors want, use or do, such as channels, products,
+      fees and trust.
+    questions: [Q19, Q20]
+    keywords: ["prefer", "preference", "survey respondents", "social media", "mobile app",
+               "trust", "financial literacy"]
+
+  - id: younger_investor_offerings
+    label: Firm offerings aimed at younger investors
+    parent: younger_investors
+    definition: >-
+      Products, pricing or service changes a firm has announced that are aimed at younger
+      investors.
+    questions: [Q19]
+    keywords: ["low minimum", "no minimum", "starter", "for young investors", "digital-first",
+               "next-gen clients"]
+
+  # --- How clients choose an advisor (Q20) ---
+  # Top-level, not under younger_investors: most advisor-choice surveys cover all ages, and
+  # rule 2 would drop them unless they also named a younger cohort. Q20 takes chunks that
+  # carry both advisor_selection and younger_investors (or reports by age band).
+  - id: advisor_selection
+    label: How clients choose a financial advisor
+    parent: null
+    definition: >-
+      Published findings on how clients of any age find, compare and choose an advisor,
+      including the factors they report weighing.
+    questions: [Q20]
+    keywords: ["choose an advisor", "choosing an advisor", "choose a financial advisor",
+               "choosing a financial advisor", "select an advisor", "selecting a financial advisor",
+               "find an advisor", "finding a financial advisor", "hire an advisor",
+               "hiring a financial advisor", "reasons for hiring"]
+
+  # --- Generational wealth transfer (Q21) ---
+  - id: wealth_transfer
+    label: Generational wealth transfer
+    parent: null
+    definition: >-
+      The transfer of assets between generations, through inheritance or gifting, as it bears
+      on wealth management.
+    questions: [Q21]
+    keywords: ["wealth transfer", "great wealth transfer", "intergenerational", "inheritance",
+               "heirs", "estate planning", "next generation"]
+
+  - id: transfer_estimates
+    label: Published estimates of the wealth transfer
+    parent: wealth_transfer
+    definition: >-
+      Published estimates of the size or timing of the wealth transfer, each with its own
+      source, method and vintage.
+    questions: [Q21]
+    keywords: ["trillion", "estimated", "projected", "will transfer", "over the next"]
+
+  - id: transfer_firm_preparation
+    label: Firm actions on the wealth transfer
+    parent: wealth_transfer
+    definition: >-
+      What a firm has stated it is doing about the wealth transfer, such as heir engagement,
+      family services or estate offerings.
+    questions: [Q21]
+    keywords: ["heir engagement", "beneficiaries", "family office", "multigenerational", "retain assets",
+               "next-generation clients", "estate services"]
+
+  # --- Seed themes outside Q16-Q21 (kept from config/entities.yaml; sub-topics later) ---
+  - id: advisor_recruiting
+    label: Advisor recruiting and retention
+    parent: null
+    definition: >-
+      Hiring, training, moving and retaining financial advisors, including recruiting deals,
+      advisor departures and payout terms.
+    questions: []
+    keywords: ["recruiting", "recruited", "advisor retention", "attrition", "breakaway",
+               "trainee", "advisor headcount", "transition package"]
+
+  - id: mass_affluent
+    label: Mass-affluent clients
+    parent: null
+    definition: >-
+      Clients with investable assets between the mass market and high net worth, as each source
+      defines the band.
+    questions: []
+    keywords: ["mass affluent", "mass-affluent", "emerging affluent", "affluent clients"]
