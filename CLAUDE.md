@@ -82,6 +82,26 @@ If your change touches two areas, read both specs and mention both in the PR.
   retrieval finds something.
 - New teammates: follow `docs/WORKFLOW-SETUP.md` once.
 
+## Paid API calls (money)
+
+Every real model call (`LLM_PROVIDER=anthropic` or `openai`) and every other paid API costs the
+team money. The default is zero calls. Follow these steps whenever a task might call one.
+
+1. **Not necessary, not called.** Building, debugging, UI, ingestion, retrieval and tests run on
+   the mock provider (`LLM_PROVIDER=mock`) and fake clients. A real model is necessary only to
+   judge answer quality (wording, behavior choice, whether claims match their sources).
+2. **Plan before the first call.** Write down which question IDs, why the mock cannot show it,
+   and how many calls. Use the fewest questions that prove the point (usually 1-5). More than
+   10 calls in one task: ask the user first.
+3. **Make each call count.** Call only on finished code, after every mock check passes. Run the
+   planned questions together in one run. Save every raw response (question, prompt version,
+   model, output) in the run's evidence folder, so nobody pays for the same answer twice;
+   reuse saved outputs before calling again.
+4. **No loops.** Never call a paid API inside tests, CI, or a retry-until-it-passes loop. A
+   wrong answer is a finding: report it, do not re-roll it.
+5. **Report it.** The PR's Verification section states the number of real calls, the model,
+   and why each was needed ("0 real calls" when none).
+
 ## Working rules for Claude
 
 - Explain what you are doing in plain language; most teammates are not software engineers.

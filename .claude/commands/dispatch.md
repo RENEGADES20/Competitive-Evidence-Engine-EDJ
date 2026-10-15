@@ -60,13 +60,19 @@ PR is merged, the local snapshot has the documents, an ADR is decided). Then dec
 - **ask**: needs a decision only the tech lead or the project lead can make.
 
 Rules:
-- At most 2 open issues per person, counting carry-overs. If someone already has 2, defer.
+- At most 2 issues per person per week, counting carry-overs. When planning several weeks,
+  queue later work with its `week` and `blocked_by` so the order is clear.
 - Two people never change the same files in the same week. If tasks overlap, sequence them
   with `blocked_by`.
 - The calendar is a guide. If the project is behind the plan in `docs/TEAM.md`, plan from
   where it is and say how far behind each role is.
 - Size S or M only. Split anything bigger into issues that each end in one PR.
 - Respect the ground rules and the out-of-scope list in `CLAUDE.md`.
+- UI issues fix behavior, not looks: say what the user must be able to do and see, and what
+  proves it. Layout, colors, wording and components are the U1 owner's choice; write "design
+  is yours" instead of prescribing them.
+- Any issue that needs a real model names the question IDs and a call cap, and points to
+  "Paid API calls" in `CLAUDE.md`. Everything else says "mock only".
 
 ## 4. Write each issue
 

@@ -14,6 +14,7 @@ Closes #
 <!-- What you actually ran and what happened. One bullet per check, e.g.
 - verify-cee: ask-answer PASS, open-citation PASS, gap-path PASS (.verify-runs/20261010-2132-abc1234)
 - pytest: 42 passed
+State the number of paid API calls and why ("0 real calls" when none; rules in CLAUDE.md).
 Say how strong each claim is: 1 said so, 2 pointed at the line, 3 reasoned it through,
 4 ran a script, 5 reproduced in the running app. Attach 1-2 screenshots that prove it. -->
 
