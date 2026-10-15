@@ -6,9 +6,10 @@ Usage: python -m cee.ingest.load            (re-ingest every manifest row)
 from __future__ import annotations
 
 import argparse
+import csv
 from pathlib import Path
 
-from cee.config import entities_config
+from cee.config import REPO_ROOT, entities_config
 from cee.db import connect
 from cee.ingest.chunk import chunk_sections, split_10k_sections
 from cee.ingest.manifest import check_files, read_manifest
@@ -26,6 +27,28 @@ def seed_entities(conn) -> None:
                  equivalence = EXCLUDED.equivalence, caveat = EXCLUDED.caveat""",
             (e["id"], e["name"], e.get("parent"), e.get("reported_as"),
              e.get("equivalence"), e.get("caveat")))
+
+
+REGISTRY_PATH = REPO_ROOT / "config" / "source_registry.csv"
+REGISTRY_FIELDS = ["entity_id", "doc_type", "source_name", "url_pattern", "expected_cadence"]
+
+
+def registry_rows(path: Path = REGISTRY_PATH) -> list[tuple]:
+    """config/source_registry.csv (the `note` column stays in the CSV)."""
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8", newline="") as f:
+        return [tuple((r.get(k) or "").strip() or None for k in REGISTRY_FIELDS) for r in csv.DictReader(f)]
+
+
+def seed_registry(conn, path: Path = REGISTRY_PATH) -> int:
+    rows = registry_rows(path)
+    conn.execute("DELETE FROM source_registry")
+    with conn.cursor() as cur:
+        cur.executemany(
+            """INSERT INTO source_registry (entity_id, doc_type, source_name, url_pattern, expected_cadence)
+               VALUES (%s, %s, %s, %s, %s)""", rows)
+    return len(rows)
 
 
 def parse_file(row: dict, path: Path) -> list[tuple[str, str, int | None]]:
@@ -73,6 +96,7 @@ def load_all(only: str | None = None) -> dict[str, int]:
     counts = {}
     with connect() as conn:
         seed_entities(conn)
+        print(f"source_registry: {seed_registry(conn)} rows")
         for row, path in resolved:
             counts[row["doc_id"]] = load_document(conn, row, path)
     return counts
