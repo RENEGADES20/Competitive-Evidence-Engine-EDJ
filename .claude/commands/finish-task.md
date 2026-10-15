@@ -24,7 +24,9 @@ failed check; report it and ask the user how to proceed.
    - [ ] Nothing secret or bulky is staged: no `.env`, no `data/raw/`, `data/interim/`,
          `data/processed/`, no `*.dump`. Check with `git status` and `git diff --cached --stat`.
    - [ ] New documents have rows in `data/manifest.csv` with `published_at` filled.
-   - [ ] One line added to `docs/PROGRESS.md` (date | what landed | blockers | next).
+   - [ ] One progress line ready for the PR description (`What landed | Blockers | Next`).
+         Do not edit `docs/PROGRESS.md`; a bot logs the line when the PR is merged. If the
+         branch already changed it, restore it: `git checkout origin/main -- docs/PROGRESS.md`.
 4. **Commit** remaining changes with a clear message referencing the issue (`#N`).
 5. **Push:** `git push -u origin <current-branch>`.
 6. **Open the PR:** fill every section of `.github/pull_request_template.md` (including

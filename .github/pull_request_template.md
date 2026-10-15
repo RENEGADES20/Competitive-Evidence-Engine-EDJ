@@ -24,8 +24,12 @@ Say how strong each claim is: 1 said so, 2 pointed at the line, 3 reasoned it th
 - [ ] verify-cee run (or "docs only, skipped"); screenshot or log / row counts attached
 - [ ] No `.env`, raw data or `*.dump` committed
 - [ ] New documents in `data/manifest.csv` with `published_at`
-- [ ] Line added to `docs/PROGRESS.md`
+- [ ] Progress line filled in below; `docs/PROGRESS.md` not edited
 - [ ] Ground rules in CLAUDE.md respected
+
+## Progress line
+<!-- One line: What landed | Blockers | Next. A bot adds it to docs/PROGRESS.md on merge. -->
+
 
 ## Eval delta
 <!-- Question IDs affected, before -> after (e.g. Q26: fail -> pass; retrieval hit 2/4 -> 4/4). Snapshot used. -->

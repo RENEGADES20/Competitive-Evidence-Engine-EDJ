@@ -91,6 +91,8 @@ If your change touches two areas, read both specs and mention both in the PR.
 - Do not invent entity facts (CIKs, segment names). Mark unknowns `TODO-verify`.
 - When a question ID is relevant, cite it (e.g. Q30) and check it against
   `evals/questions.yaml`.
-- Log what landed in `docs/PROGRESS.md`.
+- Log what landed in the PR description under `## Progress line` (one line:
+  `What landed | Blockers | Next`). A bot copies it into `docs/PROGRESS.md` when the PR is
+  merged. Never edit the Status log in `docs/PROGRESS.md` by hand.
 - Out of scope this term: alerts, live web-browsing agents, recommendations, forecasts,
   any internal or client data, SSO, multi-user, mobile, decks, reports.
