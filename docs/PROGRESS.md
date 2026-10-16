@@ -26,6 +26,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
+| 2026-10-16 | Topics taxonomy v0 (#6): 19 topics covering Q16-Q21 with definitions, keywords and tagging rules in config/topics.yaml (#65) | C1 review pending | C3 builds keyword tagging (tag_topics) and starts thematic ingestion |
 
 ### S1
 
