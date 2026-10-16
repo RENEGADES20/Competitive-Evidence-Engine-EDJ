@@ -120,23 +120,64 @@ expansion:
   - {id: FID,  name: Fidelity Investments, aliases: ["Fidelity"], status: mapped, expected_sources: [adv, research, press]}
   - {id: VGD,  name: Vanguard, aliases: ["Vanguard"], status: mapped, expected_sources: [adv, research, press]}
 
-# Theme seed list (C3 owns; see specs/thematic.md)
+# Theme seed list (C3 owns; see specs/thematic.md). Full taxonomy with sub-topics,
+# definitions and keywords: config/topics.yaml (top-level ids must match this list).
 themes:
   - {id: advice_future, label: Future of advice delivery}
   - {id: ai_advice, label: AI in advice delivery}
   - {id: fees_pricing, label: Fee structures and pricing transparency}
   - {id: younger_investors, label: Younger investors and clients under 40}
+  - {id: advisor_selection, label: How clients choose a financial advisor}
   - {id: wealth_transfer, label: Generational wealth transfer}
   - {id: advisor_recruiting, label: Advisor recruiting and retention}
   - {id: mass_affluent, label: Mass-affluent clients}
 
-# Query synonyms (S1 owns; see specs/retrieval.md)
+# Query synonyms (S1 owns; see specs/retrieval.md). Draft v0 from the 30 questions (#7).
+# Not read by code yet; expand_synonyms() lands in W3.
+#
+# Rules for this list:
+#   - Same concept only. A neighbour metric is never a synonym: net new assets is not
+#     client assets is not AUM; headcount change is not attrition (Q22, Q24, Q28).
+#   - Plurals and verb forms need no entry: the Postgres english stemmer already folds
+#     advisors -> advisor, recruiting/recruited -> recruit. Add only what it does not fold
+#     (adviser -> advis, custodian -> custodian, retain -> retain).
+#   - Firm-specific names for a metric are marked TODO-verify until seen in a stored chunk.
+#   - Entity and segment names live in entities/segment_aliases above, not here.
 synonyms:
+  # Flows (Q1, Q22)
   NNA: ["net new assets"]
+  net new assets: ["NNA", "core net new assets"]   # EDJ-10K-2025 #130 uses "net new assets"; "core net new assets" is SCHW wording (TODO-verify in SCHW monthly)
+  # Advisors and headcount (Q2, Q4, Q7, Q11, Q23)
   FA: ["financial advisor", "financial adviser"]
-  RIA: ["registered investment adviser", "independent advisor"]
-  AUM: ["assets under management"]
-  client assets: ["total client assets", "client assets"]
-  headcount: ["number of financial advisors", "advisor count"]
+  FAs: ["financial advisors", "financial advisers"]
+  advisor: ["adviser"]
+  headcount: ["number of financial advisors", "advisor count", "financial advisors (actual)"]   # last one: EDJ-10K-2025 #130 table label
+  # Attrition and retention (Q7, Q28). Net headcount change is NOT attrition; do not add it.
   attrition: ["regretted attrition", "advisor departures"]
-  GWIM: ["Global Wealth & Investment Management"]
+  retention: ["retain", "retained"]
+  # Recruiting (Q2, Q4, Q7)
+  recruiting: ["hiring", "transition assistance", "forgivable loans"]
+  # Assets (Q15, Q24). Kept apart on purpose: these are three different quantities.
+  client assets: ["total client assets"]
+  AUM: ["assets under management"]
+  # Advisor channels and custody (Q3, Q6, Q8, Q14)
+  RIA: ["registered investment adviser", "registered investment advisor"]
+  independent advisor: ["independent advisers", "independent contractor"]   # RJF affiliation wording TODO-verify
+  custody: ["custodian", "custodial"]
+  affiliation model: ["affiliation options", "affiliation choice"]   # TODO-verify RJF wording
+  # Pay (Q25, Q29). Gap questions: expansion must not turn a payout-grid story into a fact.
+  pay: ["compensation", "payout"]
+  compensation structure: ["payout grid", "compensation and benefits"]
+  # Profitability (Q30)
+  profitability: ["pretax margin", "pre-tax margin", "income before income taxes", "net income"]
+  # Client segments and themes (Q9, Q10, Q13, Q17, Q18, Q19, Q20, Q21)
+  wealth tier: ["high net worth", "ultra high net worth", "client segment"]
+  mass affluent: ["mass-affluent"]
+  stock plan: ["equity compensation", "workplace"]
+  AI: ["artificial intelligence", "generative AI", "GenAI", "machine learning"]
+  fee structures: ["fee schedule", "advisory fee", "wrap fee"]
+  younger investors: ["millennials", "Gen Z", "younger clients", "under 40"]
+  wealth transfer: ["great wealth transfer", "intergenerational", "heirs"]
+  # Segments named in questions (duplicates segment_aliases for text search only)
+  GWIM: ["Global Wealth & Investment Management", "Global Wealth and Investment Management"]
+  PCG: ["Private Client Group"]

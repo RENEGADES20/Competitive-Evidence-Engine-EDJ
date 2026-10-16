@@ -16,7 +16,10 @@ services:
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./snapshots:/snapshots   # staging area for pg_dump / pg_restore
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cee -d cee"]
+      # Over TCP on purpose: on a new volume the image first runs db/schema.sql on a temporary
+      # server that listens on the Unix socket only, then restarts. Checking the socket would
+      # report "healthy" too early and the next psql call would hit "shutting down".
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U cee -d cee"]
       interval: 2s
       timeout: 3s
       retries: 30

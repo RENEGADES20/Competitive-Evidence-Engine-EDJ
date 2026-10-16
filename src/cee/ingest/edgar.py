@@ -37,7 +37,12 @@ def store_filing(entity_id: str, form: str, filing, added_by: str = "TL",
     storage_path = f"raw/{doc_id}.htm"
     target = write_root() / storage_path
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(filing.html(), encoding="utf-8", newline="")
+    # html() reads the SGML bundle and returns None for some large filings (MS 10-K 2025);
+    # the primary document itself still downloads.
+    html = filing.html() or filing.document.download()
+    if not html:
+        raise SystemExit(f"{doc_id}: no HTML for the primary document ({filing.document.url}).")
+    target.write_text(html, encoding="utf-8", newline="")
     row = {
         "doc_id": doc_id, "entity_id": entity_id, "doc_type": form, "source_tier": 2,
         "published_at": str(filing.filing_date), "period_end": period,

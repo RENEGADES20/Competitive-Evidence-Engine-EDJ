@@ -37,7 +37,7 @@ PORT = 8599
 WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
-NO_EVIDENCE_Q = "What does Morgan Stanley's 10-K say about its number of financial advisors?"
+NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
 FEATURES = ["ask-answer", "open-citation", "gap-path", "invalid-chunk", "download-document"]
 
 
