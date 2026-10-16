@@ -9,7 +9,16 @@ import re
 from dataclasses import dataclass
 
 MAX_CHARS = 1500
-ITEM_HEADING = re.compile(r"(?m)^[ \t]*ITEM[ \t]+(\d+[A-C]?)\.?[^\n]*$")
+# "ITEM 1. BUSINESS" (EDJ, RJF) and "Item 1. Business" (BAC, SCHW).
+ITEM_HEADING = re.compile(r"(?im)^[ \t]*ITEM[ \t]+(\d{1,2}[A-C]?)\b\.?[^\n]*$")
+# Table-of-contents entry: a column gap ("Item 1.      Business") or a page number at the end.
+TOC_LINE = re.compile(r"\S[ \t]{3,}\S|[ \t]{2,}(?:\d{1,3}|page)$", re.I)
+TOC_GAP = 2000      # max non-space chars between two entries of the same table of contents
+HEADING_MAX = 200   # longer lines are prose that happens to start with "Item"
+# Cross-reference table of contents (MS): "Risk Factors        1A 13", "Business   I   1 5".
+XREF_ROW = re.compile(
+    r"(?m)^[ \t]*(\S.*?\S)[ \t]{2,}(?:(?:I|II|III|IV)[ \t]+)?((?:1[0-6]|[1-9])[A-C]?)[ \t]+\d{1,3}[ \t]*$")
+XREF_GAP_LINES = 80  # rows of one table of contents sit this close together
 
 
 @dataclass
@@ -27,15 +36,73 @@ def make_prefix(entity_id: str, segment: str | None, doc_type: str, period: str)
     return f"[{entity_id}|{segment or ''}|{doc_type}|{period}]"
 
 
+def item_headings(text: str) -> list[tuple[int, str]]:
+    """[(offset, item)] for "Item N." heading lines, skipping the table of contents and
+    running page headers ("Item 1. Business, continued")."""
+    cands = []
+    for m in ITEM_HEADING.finditer(text):
+        line = m.group(0).strip()
+        if len(line) > HEADING_MAX or line.lower().endswith("continued"):
+            continue
+        cands.append((m, bool(TOC_LINE.search(line))))
+    # An entry just before a table-of-contents entry is one too, even without a page number
+    # (BAC 10-Q: "Item 2. Management's Discussion ..." heads a list of sub-entries).
+    toc = [is_toc for _, is_toc in cands]
+    for i in range(len(cands) - 2, -1, -1):
+        between = text[cands[i][0].end():cands[i + 1][0].start()]
+        if toc[i + 1] and len("".join(between.split())) < TOC_GAP:
+            toc[i] = True
+    return [(m.start(), m.group(1).upper()) for (m, _), is_toc in zip(cands, toc) if not is_toc]
+
+
+def _norm(s: str) -> str:
+    """Compare titles without case, spacing or a trailing "(Unaudited)"-style note."""
+    return re.sub(r"\s*\([^)]*\)$", "", " ".join(s.split())).casefold()
+
+
+def xref_headings(text: str) -> list[tuple[int, str]]:
+    """[(offset, item)] for filers whose table of contents maps titles to Items (MS) and whose
+    body prints only the titles. Each title is found as a whole line after the table, in
+    table order; a title with no heading line falls back to the next table row's title."""
+    rows, last_line = [], None
+    for m in XREF_ROW.finditer(text):
+        line_no = text.count("\n", 0, m.start())
+        if last_line is not None and line_no - last_line > XREF_GAP_LINES:
+            break  # past the table of contents
+        rows.append(m)
+        last_line = line_no
+    if len(rows) < 3:
+        return []
+    toc_end = rows[-1].end()
+    lines, pos = [], toc_end
+    for raw in text[toc_end:].splitlines(keepends=True):
+        lines.append((pos, _norm(raw)))
+        pos += len(raw)
+    out, i = [], 0
+    for m in rows:
+        titles = [_norm(m.group(1))]
+        nxt = text[m.end():].lstrip("\n").split("\n", 1)[0]
+        if nxt.strip():
+            titles.append(_norm(re.split(r"[ \t]{2,}", nxt.strip())[0]))
+        for title in titles:
+            j = next((k for k in range(i, len(lines)) if lines[k][1] == title), None)
+            if j is not None:
+                out.append((lines[j][0], m.group(2)))
+                i = j + 1
+                break
+    return out if len(out) >= 3 else []
+
+
 def split_10k_sections(text: str) -> list[tuple[str, str]]:
-    """Return [(section, body)]; text before the first ITEM heading is 'Cover'."""
-    matches = list(ITEM_HEADING.finditer(text))
-    if not matches:
+    """Return [(section, body)]; text before the first Item heading is 'Cover'.
+    No Item headings and no cross-reference table of contents -> one 'Document' section."""
+    heads = item_headings(text) or xref_headings(text)
+    if not heads:
         return [("Document", text)]
-    sections = [("Cover", text[: matches[0].start()])]
-    for i, m in enumerate(matches):
-        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
-        sections.append((f"Item {m.group(1)}", text[m.start():end]))
+    sections = [("Cover", text[: heads[0][0]])]
+    for i, (start, item) in enumerate(heads):
+        end = heads[i + 1][0] if i + 1 < len(heads) else len(text)
+        sections.append((f"Item {item}", text[start:end]))
     return sections
 
 
