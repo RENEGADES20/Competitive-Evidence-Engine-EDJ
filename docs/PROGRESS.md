@@ -30,6 +30,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
+| 2026-10-16 | Synonym list v0 drafted in config/entities.yaml; spec open questions posted on #7 (#66) | Firm-specific metric wording unverified (only EDJ in local corpus) | Wire expand_synonyms() into fts.py (W3) |
 
 ### S2
 
