@@ -15,7 +15,7 @@ gap. Ground rule 3: "No evidence" is a correct answer.
 
 ## Driving it
 
-Preconditions: baseline; no Morgan Stanley filings stored.
+Preconditions: baseline; no LPL Financial documents stored.
 
 - **Ask.** Ask the no-evidence question. Heading "Not in the corpus" or "No evidence".
 - **No invented sources.** Zero links containing `?chunk=`.
@@ -23,5 +23,6 @@ Preconditions: baseline; no Morgan Stanley filings stored.
 
 ## Gotchas
 
-- Once MS filings are ingested this question stops being a gap; switch to a firm or
-  topic still missing and update README.md and `NO_EVIDENCE_Q` together.
+- Once LPL documents are ingested this question stops being a gap; switch to a firm or
+  topic still missing and update README.md and `NO_EVIDENCE_Q` together. (MS was the gap
+  firm until #36 stored its filings.)
