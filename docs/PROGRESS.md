@@ -60,6 +60,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | EDGAR fetch: quarter-aware 10-Q IDs, `--count N`, skips documents already in the manifest; `source_registry` (49 rows) loaded by `cee.ingest.load` (#32) | - | C1 ingests 10-Ks and 10-Qs; S2 can use registry rows for suggested_source |
 | 2026-10-15 | Paid API rule in CLAUDE.md (mock by default, plan and cap real calls, save outputs, no loops, report count); dispatch keeps UI design open and queues several weeks (#34) | - | W4-W6 issues |
 | 2026-10-15 | Dispatch applied W4-W6: 29 issues (#35-#63) with board fields and blocked-by links; apply now survives the board's auto-add (#64) | - | Teammates start W4 issues |
+| 2026-10-16 | #72 restore.ps1 now works on the first run after a fresh volume (healthcheck over TCP waits for the real Postgres server) (#73) | none | #44 checklist restore test can be re-run |
 
 ## Weekly score (from W6)
 
