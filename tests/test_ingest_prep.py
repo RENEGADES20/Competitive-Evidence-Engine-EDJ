@@ -45,6 +45,14 @@ def test_two_quarters_of_one_year_are_two_rows_and_rerun_skips(manifest):
     assert rows[1]["published_at"] == "2026-08-01" and rows[1]["period_end"] == "2026-06-30"
 
 
+def test_primary_document_used_when_html_is_none(manifest, tmp_path):
+    f = FakeFiling("2025-12-31", "2026-02-19")
+    f.html = lambda: None
+    f.document.download = lambda: "<html>primary</html>"
+    row = edgar.store_filing("MS", "10-K", f, manifest_path=manifest)
+    assert (tmp_path / row["storage_path"]).read_text(encoding="utf-8") == "<html>primary</html>"
+
+
 def test_fetch_count_uses_latest_n(manifest, monkeypatch):
     filings = [FakeFiling("2026-06-30", "2026-08-01"), FakeFiling("2026-03-31", "2026-05-01")]
     seen = {}

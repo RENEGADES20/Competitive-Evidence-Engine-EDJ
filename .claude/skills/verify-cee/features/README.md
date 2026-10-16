@@ -9,8 +9,9 @@ feature file you need. Drivers live in `scripts/verify_cee.py` (`DRIVERS`).
 - The script copies `cee` to `cee_verify` and starts its own app on port 8599 with the
   mock provider. Every recipe starts from the question page of that app.
 - Questions used: answerable = "What does Edward Jones's 10-K say about its number of
-  financial advisors?"; no evidence = the same question for Morgan Stanley (no MS filings
-  stored yet). When the corpus gains MS filings, change the no-evidence question.
+  financial advisors?"; no evidence = the same question for LPL Financial (an expansion
+  firm with nothing stored; Morgan Stanley was used until its filings arrived in #36). When
+  the corpus gains LPL documents, change the no-evidence question.
 
 ## Driving conventions
 
