@@ -44,3 +44,12 @@ Item 7 boundary to work inside and the source page shows where a passage comes f
 - 2026-10-15 23:40 - plan written. Measured: BAC/SCHW use "Item 1." (BAC 10-K 46 lines
   incl. TOC), EDJ has 100+ "Item 1. Business, continued" page headers, MS has none but its
   TOC has Part/Item/Page columns and each Item title appears once as a body line.
+- 2026-10-15 23:55 - splitter done. Old vs new split on all 25 parsed texts: EDJ and RJF
+  chunk lists identical (so `EDJ-10K-2025#58` keeps its ID); BAC/SCHW/MS now split.
+  Surprise: MS 10-Q TOC says "Consolidated Income Statement (Unaudited)" but the body drops
+  "(Unaudited)", so title matching ignores a trailing parenthetical.
+- 2026-10-16 00:20 - reloaded 25 documents (12,097 chunks, 0 in "Document"); pytest 76 passed;
+  verify_cee run all PASS (mock, 0 paid calls). Note for #37: BAC GWIM text sits in Item 7
+  (10-Q Item 2) and in the segment note of Item 8 (10-Q Item 1), so #37 still needs the GWIM
+  sub-heading inside those Items. Follow-up: 10-Q Part I and Part II both have "Item 1"/"Item 2";
+  labels do not say which Part.
