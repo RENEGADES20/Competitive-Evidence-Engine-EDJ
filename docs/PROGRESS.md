@@ -40,6 +40,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
+| 2026-10-16 | U1 design language and page shell: theme, components, Ask/Coverage/Design nav, placeholders, snapshot footer, DESIGN.md (#68) | none | #42 citation chips on real answers, #41 coverage table |
 
 ### TL
 
