@@ -5,6 +5,7 @@ parse_pdf(path) -> [(section, page, text)]; every item keeps its page number.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 
@@ -22,6 +23,7 @@ def _parse_docling(path: Path) -> list[tuple[str, int, str]]:
     from docling.datamodel.base_models import InputFormat
     from docling.datamodel.pipeline_options import PdfPipelineOptions
     from docling.document_converter import DocumentConverter, PdfFormatOption
+    from docling_core.types.doc import TableItem
 
     opts = PdfPipelineOptions(do_ocr=False)  # investor decks are born-digital
     conv = DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=opts)})
@@ -29,7 +31,11 @@ def _parse_docling(path: Path) -> list[tuple[str, int, str]]:
     out: list[tuple[str, int, str]] = []
     section = "Document"
     for item, _level in doc.iterate_items():
-        text = getattr(item, "text", "") or ""
+        if isinstance(item, TableItem):
+            # Tables have no .text; without this, a supplement loses most of its figures.
+            text = "\n\n".join(table_blocks(item.export_to_markdown(doc=doc)))
+        else:
+            text = getattr(item, "text", "") or ""
         if not text.strip() or not item.prov:
             continue
         label = str(getattr(item, "label", ""))
@@ -42,6 +48,24 @@ def _parse_docling(path: Path) -> list[tuple[str, int, str]]:
         else:
             out.append((section, page, text))
     return out
+
+
+def table_blocks(md: str, limit: int = 1400) -> list[str]:
+    """Split a markdown table into blocks of whole rows, each under `limit` characters and each
+    starting with the header rows, so a chunk of a long table still says what its columns are."""
+    # docling pads cells for alignment; the padding would fill most of a chunk.
+    lines = [re.sub(r"-{3,}", "---", re.sub(r" {2,}", " ", l.strip())) for l in md.strip().splitlines() if l.strip()]
+    head, rows = lines[:2], lines[2:]
+    if not rows:
+        return ["\n".join(head)] if head else []
+    blocks, cur = [], list(head)
+    for row in rows:
+        if len(cur) > len(head) and len("\n".join(cur + [row])) > limit:
+            blocks.append("\n".join(cur))
+            cur = list(head)
+        cur.append(row)
+    blocks.append("\n".join(cur))
+    return blocks
 
 
 def _parse_pymupdf(path: Path) -> list[tuple[str, int, str]]:

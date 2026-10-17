@@ -99,3 +99,22 @@ def test_cross_reference_table_of_contents():
 def test_no_headings_is_one_document_section():
     assert split_10k_sections("Just a press release.\n\nNo items here.") == [
         ("Document", "Just a press release.\n\nNo items here.")]
+
+
+def test_table_blocks_keep_header_and_whole_rows():
+    from cee.ingest.pdf import table_blocks
+
+    head = "| Metric | 2Q26 | 1Q26 |\n|---|---|---|"
+    rows = [f"| Row {i} | {i},000 | {i},100 |" for i in range(60)]
+    blocks = table_blocks(head + "\n" + "\n".join(rows), limit=400)
+    assert len(blocks) > 1
+    assert all(b.startswith(head) and len(b) <= 400 for b in blocks)
+    assert [r for b in blocks for r in b.splitlines()[2:]] == rows   # every row once, in order
+    assert table_blocks(head) == [head]
+
+
+def test_table_blocks_drop_alignment_padding():
+    from cee.ingest.pdf import table_blocks
+
+    md = "| Metric      |   2Q26 |\n|-------------|--------|\n| NNA         |   12.3 |"
+    assert table_blocks(md) == ["| Metric | 2Q26 |\n|---|---|\n| NNA | 12.3 |"]
