@@ -61,6 +61,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Paid API rule in CLAUDE.md (mock by default, plan and cap real calls, save outputs, no loops, report count); dispatch keeps UI design open and queues several weeks (#34) | - | W4-W6 issues |
 | 2026-10-15 | Dispatch applied W4-W6: 29 issues (#35-#63) with board fields and blocked-by links; apply now survives the board's auto-add (#64) | - | Teammates start W4 issues |
 | 2026-10-16 | #72 restore.ps1 now works on the first run after a fresh volume (healthcheck over TCP waits for the real Postgres server) (#73) | none | #44 checklist restore test can be re-run |
+| 2026-10-17 | Specs for Ask progress trace and institutional research (#79) | none | U1 and C3 issues via dispatch |
 
 ## Weekly score (from W6)
 
