@@ -30,7 +30,8 @@ def _parse_docling(path: Path) -> list[tuple[str, int, str]]:
     doc = conv.convert(str(path)).document
     out: list[tuple[str, int, str]] = []
     section = "Document"
-    for item, _level in doc.iterate_items():
+    # Slide text that docling groups under a picture (SCHW decks) is only reached this way.
+    for item, _level in doc.iterate_items(traverse_pictures=True):
         if isinstance(item, TableItem):
             # Tables have no .text; without this, a supplement loses most of its figures.
             text = "\n\n".join(table_blocks(item.export_to_markdown(doc=doc)))
