@@ -21,6 +21,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-10-15 | Source feasibility matrix, tiers 3-4 (#3): `docs/source_matrix.csv` (100 rows), `docs/SOURCE_MATRIX.md` (terms quoted, questions T-01..T-64 for ADR-000), monthly URL checker `python -m cee.ingest.check_sources` (#19) | Terms answers from ADR-000 (no site explicitly allows our use; no free transcript archive except BAC's own from 1Q26); 57 blocked/error URLs not yet opened by hand; 19 rows with TODO-verify date field | #4: TL review, manual URL check, pick the first transcripts |
+| 2026-10-18 | 11 earnings-call transcripts (BAC, MS, SCHW Q1-Q3 2026; RJF two quarters) stored as text with speakers, 535 chunks (#76) | Transcripts rank below 10-K/10-Q chunks in top-8 (#59); 8-quarter backfill (#47) | #45 supplements and #48 decks from the same package; #38 releases via EDGAR |
 
 ### C3
 
