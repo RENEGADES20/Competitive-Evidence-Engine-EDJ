@@ -24,6 +24,15 @@ Page "Ask"
           citation chip = source_label + tier label (filing | licensed | IR | trade press (indicative only) | research)
           caveats box (always visible if present), gaps box with suggested sources, coverage note
   feedback: thumbs up/down + comment -> query_feedback
+  while answering (after "Ask" is clicked, before the answer shows):
+          a progress bar plus a live step trace saying what the system is doing now, e.g.
+            Reading the question: firms MS, EDJ; mode compare; window last 4 quarters
+            Searching the corpus: 14 passages from 6 documents
+            Asking the model (anthropic, one call)   | or: No passages found, no model call
+            Checking citations: 9 matched, 1 flagged
+            Adding caveats and gaps
+          each step reports what the pipeline really did (counts, filters, provider), never
+          invented "reasoning" text; the trace stays readable (collapsed) after the answer
 
 Page "Source"
   input: chunk_id
@@ -41,6 +50,10 @@ Page "Coverage"
 - Caveats and gaps are never collapsed or hidden.
 - Coverage page shows thin areas for all five firms and themes.
 - Feedback writes a row to `query_feedback` linked to the `query_log` row.
+- After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
+  pipeline stages (resolve, retrieve, model call or skip, citation check, caveats/gaps). Each
+  step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
+  The trace adds no extra LLM call (still one call per answer).
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

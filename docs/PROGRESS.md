@@ -15,12 +15,15 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Expansion eleven mapped with reporting shape (`docs/EXPANSION.md`); source registry data for core entities (`config/source_registry.csv`, 49 rows); RJF `monthly` added (#2) (#21) | CSV not yet loaded into the `source_registry` table (needs TL-owned `load.py`); IR URLs and ADV CRDs TODO-verify | TL decides who writes the loader |
 | 2026-10-16 | 10-K and four 10-Qs for all five filers stored (24 rows, 11,977 chunks loaded) (#69) | Q30 needs #37 GWIM tags; BAC/MS/SCHW sections not split (chunk.py Item regex) | #44 snapshot with the new corpus; #37; #45 |
 | 2026-10-16 | C1: BAC, SCHW and MS 10-K/10-Q chunks now split into Item sections (MS via its cross-reference table of contents); EDJ/RJF chunk IDs unchanged (#70) (#71) | Blockers: none | Next: GWIM segment tagging inside BAC Item 7 / 10-Q Item 2 (#37) |
+| 2026-10-18 | 8 quarterly supplements (BAC, MS Q1-Q3 2026; RJF two quarters) stored with page numbers; PDF tables and picture-nested slide text now kept (pdf.py) (#77) | SCHW supplement/monthly missing; Q23 ranks only BAC supplements (#59); docling adds ~4-7 min per PDF to rebuilds | #46 metric definitions from these supplements; snapshot rebuild |
 
 ### C2
 
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-10-15 | Source feasibility matrix, tiers 3-4 (#3): `docs/source_matrix.csv` (100 rows), `docs/SOURCE_MATRIX.md` (terms quoted, questions T-01..T-64 for ADR-000), monthly URL checker `python -m cee.ingest.check_sources` (#19) | Terms answers from ADR-000 (no site explicitly allows our use; no free transcript archive except BAC's own from 1Q26); 57 blocked/error URLs not yet opened by hand; 19 rows with TODO-verify date field | #4: TL review, manual URL check, pick the first transcripts |
+| 2026-10-18 | 11 earnings-call transcripts (BAC, MS, SCHW Q1-Q3 2026; RJF two quarters) stored as text with speakers, 535 chunks (#76) | Transcripts rank below 10-K/10-Q chunks in top-8 (#59); 8-quarter backfill (#47) | #45 supplements and #48 decks from the same package; #38 releases via EDGAR |
+| 2026-10-18 | 8 quarterly earnings presentations (BAC, SCHW Q1-Q3 2026; RJF two quarters) stored with page numbers (#78) | Investor-day decks and Merrill press (MER) still open; decks rank below 10-Ks (#59) | #48 investor-day decks; #38 releases via EDGAR |
 
 ### C3
 
@@ -61,6 +64,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Paid API rule in CLAUDE.md (mock by default, plan and cap real calls, save outputs, no loops, report count); dispatch keeps UI design open and queues several weeks (#34) | - | W4-W6 issues |
 | 2026-10-15 | Dispatch applied W4-W6: 29 issues (#35-#63) with board fields and blocked-by links; apply now survives the board's auto-add (#64) | - | Teammates start W4 issues |
 | 2026-10-16 | #72 restore.ps1 now works on the first run after a fresh volume (healthcheck over TCP waits for the real Postgres server) (#73) | none | #44 checklist restore test can be re-run |
+| 2026-10-17 | Specs for Ask progress trace and institutional research (#79) | none | U1 and C3 issues via dispatch |
 
 ## Weekly score (from W6)
 
