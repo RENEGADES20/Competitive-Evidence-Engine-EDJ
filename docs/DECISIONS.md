@@ -79,6 +79,12 @@ Install check (`src/cee/ingest/pdf.py`, `parse_pdf(path) -> [(section, page, tex
   page numbers kept, no table structure.
 - Only corpus owners need docling (`requirements-ingest.txt`); everyone else installs the core
   `requirements.txt` and works from snapshots, so a failed docling install blocks nobody.
+- Parse cache (#82, plans/0082): docling takes 4-7 min per PDF, so `parse_pdf` stores its
+  output as `parsed/<sha256>-v<PARSER_VERSION>.json` next to `raw/` (Box Drive; `data/parsed/`
+  when `CORPUS_SHARE_PATH` is empty) and reuses it. A changed file has a new sha256 and a bump of
+  `PARSER_VERSION` in `pdf.py` changes every name, so either re-parses; bump it with any change to
+  docling output (e.g. #84). `python -m cee.ingest.load --no-pdf-cache` forces a fresh parse.
+  The pymupdf fallback is not cached. Old cache files are never read again and may be deleted.
 
 ## ADR-006: Shared corpus
 Status: Accepted

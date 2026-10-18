@@ -2,6 +2,7 @@
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 Usage: python -m cee.ingest.load            (re-ingest every manifest row)
+       python -m cee.ingest.load --no-pdf-cache   (run docling again on every PDF, #82)
 """
 from __future__ import annotations
 
@@ -51,7 +52,7 @@ def seed_registry(conn, path: Path = REGISTRY_PATH) -> int:
     return len(rows)
 
 
-def parse_file(row: dict, path: Path) -> list[tuple[str, str, int | None]]:
+def parse_file(row: dict, path: Path, pdf_cache: bool = True) -> list[tuple[str, str, int | None]]:
     suffix = path.suffix.lower()
     if suffix in (".htm", ".html"):
         from edgar.documents import parse_html
@@ -63,14 +64,14 @@ def parse_file(row: dict, path: Path) -> list[tuple[str, str, int | None]]:
     if suffix == ".pdf":
         from cee.ingest.pdf import parse_pdf
 
-        return [(s, t, p) for s, p, t in parse_pdf(path)]
+        return [(s, t, p) for s, p, t in parse_pdf(path, use_cache=pdf_cache)]
     if suffix in (".txt", ".md"):
         return [("Document", path.read_text(encoding="utf-8"), None)]
     raise ValueError(f"{row['doc_id']}: no parser for {suffix}")
 
 
-def load_document(conn, row: dict, path: Path) -> int:
-    sections = parse_file(row, path)
+def load_document(conn, row: dict, path: Path, pdf_cache: bool = True) -> int:
+    sections = parse_file(row, path, pdf_cache)
     chunks = chunk_sections(row["doc_id"], row["entity_id"] or "", row["doc_type"],
                             row["period_end"] or row["published_at"], sections)
     conn.execute("DELETE FROM documents WHERE doc_id = %s", (row["doc_id"],))
@@ -90,7 +91,7 @@ def load_document(conn, row: dict, path: Path) -> int:
     return len(chunks)
 
 
-def load_all(only: str | None = None) -> dict[str, int]:
+def load_all(only: str | None = None, pdf_cache: bool = True) -> dict[str, int]:
     rows = [r for r in read_manifest() if not only or r["doc_id"] == only]
     resolved = check_files(rows)  # stop before touching the DB if any file is missing/bad
     counts = {}
@@ -98,13 +99,15 @@ def load_all(only: str | None = None) -> dict[str, int]:
         seed_entities(conn)
         print(f"source_registry: {seed_registry(conn)} rows")
         for row, path in resolved:
-            counts[row["doc_id"]] = load_document(conn, row, path)
+            counts[row["doc_id"]] = load_document(conn, row, path, pdf_cache)
     return counts
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--doc", help="load only this doc_id")
+    ap.add_argument("--no-pdf-cache", action="store_true",
+                    help="parse every PDF again instead of reusing parsed/ (the cache is still refreshed)")
     args = ap.parse_args()
-    for doc_id, n in load_all(args.doc).items():
+    for doc_id, n in load_all(args.doc, pdf_cache=not args.no_pdf_cache).items():
         print(f"{doc_id}: {n} chunks")

@@ -2,21 +2,78 @@
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 parse_pdf(path) -> [(section, page, text)]; every item keeps its page number.
+
+docling takes minutes per PDF, so its output is cached (#82) in
+<write_root()>/parsed/<sha256>-v<PARSER_VERSION>.json: a changed file gets a new sha256,
+and a parser change bumps PARSER_VERSION; either way that file is parsed again.
 """
 from __future__ import annotations
 
+import hashlib
+import json
+import os
 import re
 from pathlib import Path
 
+from cee.config import write_root
 
-def parse_pdf(path: Path, engine: str = "auto") -> list[tuple[str, int, str]]:
+# Bump whenever _parse_docling (or table_blocks) would produce different output for the same file.
+PARSER_VERSION = 1
+
+
+def parse_pdf(path: Path, engine: str = "auto", use_cache: bool = True,
+              cache_dir: Path | None = None) -> list[tuple[str, int, str]]:
+    """use_cache=False parses again but still refreshes the cache file. Only docling output is
+    cached; the pymupdf fallback takes seconds."""
     if engine in ("auto", "docling"):
+        cache_file = (cache_dir or write_root() / "parsed") / f"{_sha256(path)}-v{PARSER_VERSION}.json"
+        if use_cache:
+            cached = _read_cache(cache_file)
+            if cached is not None:
+                print(f"  {path.name}: parse cache hit ({cache_file.name})", flush=True)
+                return cached
         try:
-            return _parse_docling(path)
+            print(f"  {path.name}: parsing with docling (cache {'off' if not use_cache else 'miss'})", flush=True)
+            items = _parse_docling(path)
         except ImportError:
             if engine == "docling":
                 raise
+        else:
+            _write_cache(cache_file, path, items)
+            return items
     return _parse_pymupdf(path)
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def _read_cache(cache_file: Path) -> list[tuple[str, int, str]] | None:
+    try:
+        with open(cache_file, encoding="utf-8") as f:
+            data = json.load(f)
+        if data["parser_version"] != PARSER_VERSION:
+            return None
+        return [(s, int(p), t) for s, p, t in data["items"]]
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError, KeyError, TypeError) as e:  # half-written or hand-edited file
+        print(f"  ignoring unreadable parse cache {cache_file.name}: {e}", flush=True)
+        return None
+
+
+def _write_cache(cache_file: Path, path: Path, items: list[tuple[str, int, str]]) -> None:
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+    tmp = cache_file.with_suffix(".tmp")
+    # ensure_ascii keeps any odd character (e.g. a lone surrogate from a PDF) round-tripping exactly.
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump({"parser_version": PARSER_VERSION, "engine": "docling", "source": path.name,
+                   "items": items}, f)
+    os.replace(tmp, cache_file)  # a reader never sees a half-written file
 
 
 def _parse_docling(path: Path) -> list[tuple[str, int, str]]:
