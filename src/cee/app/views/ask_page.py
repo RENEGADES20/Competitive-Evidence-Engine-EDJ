@@ -19,6 +19,11 @@ def _plural(n: int, word: str) -> str:
     return f"{n:,} {word}" + ("" if n == 1 else "s")
 
 
+def footer_firms(query) -> str:
+    """Same firms the gap box names (#50); firms we hold nothing for are marked."""
+    return ", ".join(f if f in query.entities else f"{f} (no documents)" for f in query.firms) or "none"
+
+
 def _ticker() -> None:
     s = ui.corpus_stats()
     firms = _plural(s["firms"], "firm")
@@ -58,7 +63,7 @@ def render() -> None:
         ui.caveat_box(cav)
     for g in a.gaps:
         ui.gap_box(g.what, g.suggested_source)
-    st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {", ".join(r.query.entities) or "none"} | '
+    st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
                 f'{len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
     with ui.placeholder("feedback", 62, "Feedback on this answer"):
         c1, c2, c3 = st.columns([1, 1, 4])

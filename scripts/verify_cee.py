@@ -17,6 +17,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -301,6 +302,10 @@ def feature_gap_path(page, base, rec, ctx):
     rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
              f"{citation_links(page).count()} citation links")
     rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+    footer = re.search(r"firms: ([^|]*)\|", body)
+    firms = footer.group(1).strip() if footer else "no footer"
+    rec.step("Read the footer's firms", "the gap firm, e.g. 'LPLA (no documents)', not 'none' (#50)",
+             firms not in ("none", "no footer"), firms)
 
 
 def feature_invalid_chunk(page, base, rec, ctx):
