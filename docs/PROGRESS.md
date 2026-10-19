@@ -68,6 +68,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | #72 restore.ps1 now works on the first run after a fresh volume (healthcheck over TCP waits for the real Postgres server) (#73) | none | #44 checklist restore test can be re-run |
 | 2026-10-17 | Specs for Ask progress trace and institutional research (#79) | none | U1 and C3 issues via dispatch |
 | 2026-10-18 | Corpus line re-planned after TL ingestion: TEAM.md W4-W7 for C1/C2/C3/TL, intake rule, new TL issues #82-#84 (#85) | none | C1 #37, C2 #47, C3 #81 |
+| 2026-10-19 | #82 parse cache: docling and edgartools output stored in Box parsed/ by sha256 + version; warm full load 10.5 s (was ~50 min), build-snapshot 15 s, chunks identical (#86) | none | build the next snapshot with C2's earnings releases (#75); bump PARSER_VERSION in #84 |
 
 ## Weekly score (from W6)
 
