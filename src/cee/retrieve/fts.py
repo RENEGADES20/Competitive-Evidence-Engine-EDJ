@@ -19,6 +19,11 @@ class Query:
     unmapped: list[str] = field(default_factory=list)   # known firms we hold no documents for
     mode: str = "entity"
 
+    @property
+    def firms(self) -> list[str]:
+        """Every firm the question names, covered first. Footer and gap path both read this."""
+        return [*self.entities, *self.unmapped]
+
 
 @dataclass
 class Hit:
