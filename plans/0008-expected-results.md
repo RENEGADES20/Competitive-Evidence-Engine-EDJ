@@ -36,6 +36,8 @@ against it ("hit rate vs expected sources", specs/retrieval.md).
 - [x] All 5 questions (Q1, Q4, Q11, Q22, Q26) list concrete expected documents.
 - [x] Trap included: Q4, with a must-not-return list for BAC chunks without GWIM/Merrill.
 - [x] Each document marked in corpus / not loaded; EDJ entries checked with real queries.
+- [x] Every cited chunk ID (83) exists in a database loaded from main's manifest (68 documents).
+- [x] Today's retrieval run recorded per question (Q26: 7 of 8 hits outside the window).
 - [x] No invented entity facts; unknowns marked `TODO-verify`.
 - [x] `git diff main -- evals/questions.yaml` -> empty.
 - [x] `.venv/bin/python -m pytest -q` -> all pass (no code changed).
@@ -64,3 +66,14 @@ against it ("hit rate vs expected sources", specs/retrieval.md).
   BAC-10K-2025#1041 mixes GWIM and Global Banking. Q26 as of 2026-10-16: only
   RJF-10Q-2026Q2 is in the window. questions.yaml unchanged; pytest 76 passed; no src/
   change, 0 paid calls.
+- 2026-10-19 14:47 - main added transcripts, supplements, decks and earnings releases
+  (#39, #45, #48, #75; manifest 25 -> 68 documents), so "not loaded" rows were stale.
+  Merged main again and refreshed every question from the local DB loaded from main's
+  manifest. New: MS transcripts carry the NNA framing (workplace / stock-plan IPOs) for Q1;
+  BAC transcripts carry Merrill advisor commentary for Q4, but still no stored document
+  gives a Merrill or MS advisor count; BAC reports net client flows / AUM flows, not NNA
+  (Q22); Q26 window as of today (from 2026-07-21) holds 5 RJF documents, 4 of which leave
+  it on 2026-10-21. Recorded today's retrieval runs: Q26 returns 7 of 8 chunks older than
+  the window; Q11 returns 0 expected chunks and 3 BAC chunks outside GWIM; Q4 returns
+  nothing (no segment tags yet). Caught one misread: in RJF decks the value comes before
+  its label. 83 cited chunk IDs all exist; pytest 106 passed; 0 paid calls.
