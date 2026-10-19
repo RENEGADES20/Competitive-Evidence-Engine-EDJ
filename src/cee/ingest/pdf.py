@@ -2,20 +2,40 @@
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 parse_pdf(path) -> [(section, page, text)]; every item keeps its page number.
+
+docling takes minutes per PDF, so its output is cached (#82, cee.ingest.parse_cache) as
+parsed/<sha256>-docling<version>-v<PARSER_VERSION>.json.
 """
 from __future__ import annotations
 
 import re
 from pathlib import Path
 
+from cee.ingest import parse_cache
 
-def parse_pdf(path: Path, engine: str = "auto") -> list[tuple[str, int, str]]:
+# Bump whenever _parse_docling (or table_blocks) would produce different output for the same file.
+PARSER_VERSION = 1
+
+
+def parse_pdf(path: Path, engine: str = "auto", use_cache: bool = True,
+              cache_dir: Path | None = None) -> list[tuple[str, int, str]]:
+    """use_cache=False parses again but still refreshes the cache file. Only docling output is
+    cached; the pymupdf fallback takes seconds."""
     if engine in ("auto", "docling"):
         try:
-            return _parse_docling(path)
-        except ImportError:
+            cache_file = parse_cache.cache_path(path, parse_cache.tag("docling", PARSER_VERSION), cache_dir)
+            cached = parse_cache.read(cache_file, lambda r: [(s, int(p), t) for s, p, t in r]) if use_cache else None
+            if cached is not None:
+                print(f"  {path.name}: parse cache hit ({cache_file.name})", flush=True)
+                return cached
+            print(f"  {path.name}: parsing with docling (cache {'miss' if use_cache else 'off'})", flush=True)
+            items = _parse_docling(path)
+        except ImportError:  # also docling's version lookup when it is not installed
             if engine == "docling":
                 raise
+        else:
+            parse_cache.write(cache_file, path, items)
+            return items
     return _parse_pymupdf(path)
 
 
