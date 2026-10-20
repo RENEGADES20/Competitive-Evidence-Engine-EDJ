@@ -16,7 +16,10 @@ feature file you need. Drivers live in `scripts/verify_cee.py` (`DRIVERS`).
 ## Driving conventions
 
 - Find elements by role and visible name (textbox "Question", button "Ask"), not by CSS.
-- Wait for Streamlit to finish running (status widget gone), never a fixed sleep.
+- Wait for a text only the finished page has, then for Streamlit to finish running (status
+  widget gone); never a fixed sleep. After Ask: the meta line "LLM called:". Source page:
+  "Stored passage" or the not-in-corpus error. The status widget alone can be gone before the
+  rerun starts, so the old page is read (#83). A timeout is reported as "... did not render".
 - Citation links open in a new browser tab.
 
 ## Proof

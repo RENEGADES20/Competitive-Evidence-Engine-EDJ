@@ -231,6 +231,13 @@ class Recorder:
         print(f"  [UNREACHABLE] {why}")
 
 
+RENDER_TIMEOUT_S = 90
+
+
+class RenderTimeout(RuntimeError):
+    pass
+
+
 def wait_idle(page) -> None:
     page.wait_for_load_state("networkidle")
     page.wait_for_function(
@@ -238,12 +245,30 @@ def wait_idle(page) -> None:
     page.wait_for_timeout(300)
 
 
+def wait_for_text(page, texts: list[str], what: str) -> None:
+    """Wait until the page shows a text only the finished render has (#83). wait_idle alone can
+    return before Streamlit starts the rerun (websocket, no status widget yet): old page read."""
+    try:
+        page.wait_for_function("ts => document.body && ts.some(t => document.body.innerText.includes(t))",
+                               arg=texts, timeout=RENDER_TIMEOUT_S * 1000)
+    except Exception:  # playwright TimeoutError
+        raise RenderTimeout(f"{what} did not render within {RENDER_TIMEOUT_S} s "
+                            f"(waited for: {' / '.join(texts)})") from None
+    wait_idle(page)
+
+
 def ask(page, base: str, question: str) -> None:
     page.goto(base)
     wait_idle(page)
-    page.get_by_role("textbox", name="Question").fill(question)
+    box = page.get_by_role("textbox", name="Question")
+    box.wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+    box.fill(question)
     page.get_by_role("button", name="Ask").click()
-    wait_idle(page)
+    # Every behavior (answer, boundary, gap, refuse) ends with the meta line "... | LLM called: ...".
+    wait_for_text(page, ["LLM called:"], "the answer")
+
+
+SOURCE_PAGE_DONE = ["Stored passage", "is not in the stored corpus"]
 
 
 def citation_links(page):
@@ -277,7 +302,7 @@ def feature_open_citation(page, base, rec, ctx):
     with page.context.expect_page() as new_tab:
         link.click()
     source = new_tab.value
-    wait_idle(source)
+    wait_for_text(source, SOURCE_PAGE_DONE, "the source page")
     rec.page = source
     body = source.locator("body").inner_text()
     rec.step(f"Click citation {chunk_id}", "a new tab with the source page for that chunk",
@@ -310,7 +335,7 @@ def feature_gap_path(page, base, rec, ctx):
 
 def feature_invalid_chunk(page, base, rec, ctx):
     page.goto(base + "?chunk=NOT-A-REAL-CHUNK")
-    wait_idle(page)
+    wait_for_text(page, SOURCE_PAGE_DONE, "the source page")
     body = page.locator("body").inner_text()
     rec.step("Open a chunk ID that does not exist", "a clear 'not in the stored corpus' error",
              "is not in the stored corpus" in body, "error shown" if "is not in the stored corpus" in body else "no error")
@@ -319,7 +344,8 @@ def feature_invalid_chunk(page, base, rec, ctx):
 def feature_download_document(page, base, rec, ctx):
     chunk_id = ctx.get("chunk_id") or psql(VERIFY_DB, "SELECT chunk_id FROM chunks LIMIT 1")
     page.goto(base + "?chunk=" + quote(chunk_id))
-    wait_idle(page)
+    wait_for_text(page, ["Download stored document", "not found locally", "is not in the stored corpus"],
+                  "the source page")
     button = page.get_by_role("button", name="Download stored document")
     if not button.count():
         body = page.locator("body").inner_text()
