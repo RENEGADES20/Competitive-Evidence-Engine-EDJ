@@ -28,19 +28,31 @@ def ask(question: str, provider: str | None = None, log: bool = True) -> Result:
     provider = provider or settings().llm_provider
     query = resolve(question)
     hits = search(query)
-    if hits:
-        answer = check_citations(generate(question, hits, provider), hits)
-    else:
-        answer = empty_retrieval_answer(query)
+    answer, _raw = answer_for(question, query, hits, provider)
     result = Result(query, hits, answer)
     if log:
         result.query_id = _log(result, provider)
     return result
 
 
-def _log(r: Result, provider: str) -> int:
+def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
+               raw: Answer | None = None) -> tuple[Answer, Answer | None]:
+    """(checked answer, the model's output before checks). No hits: answered in code, no call.
+    Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43)."""
+    if not hits:
+        return empty_retrieval_answer(query), None
+    if raw is None:
+        raw = generate(question, hits, provider)
+    return check_citations(raw.model_copy(deep=True), hits), raw
+
+
+def model_name(provider: str) -> str:
     s = settings()
-    model = {"anthropic": s.llm_model, "openai": s.openai_model}.get(provider, provider)
+    return {"anthropic": s.llm_model, "openai": s.openai_model}.get(provider, provider)
+
+
+def _log(r: Result, provider: str) -> int:
+    model = model_name(provider)
     with connect() as conn:
         snap = conn.execute("SELECT obj_description('public.documents'::regclass) AS s").fetchone()["s"]
         row = conn.execute(
