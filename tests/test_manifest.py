@@ -48,3 +48,27 @@ def test_check_files_rejects_sha_mismatch_and_missing(dirs):
         check_files([row("A", "0" * 64)], str(share))
     with pytest.raises(ManifestError, match="missing"):
         check_files([row("B", "0" * 64)], str(share))
+
+
+def test_date_basis_defaults_to_source_and_rejects_other_values():
+    from cee.ingest.manifest import date_basis_of
+
+    assert date_basis_of({"doc_id": "A"}) == "source"                      # manifest written before #35
+    assert date_basis_of({"doc_id": "A", "date_basis": ""}) == "source"
+    assert date_basis_of({"doc_id": "A", "date_basis": "retrieved"}) == "retrieved"
+    with pytest.raises(ManifestError, match="date_basis"):
+        date_basis_of({"doc_id": "A", "date_basis": "download"})
+
+
+def test_upsert_adds_the_column_to_an_old_manifest(tmp_path):
+    from cee.ingest.manifest import FIELDS, read_manifest, upsert_row
+
+    path = tmp_path / "manifest.csv"
+    old = [f for f in FIELDS if f != "date_basis"]
+    path.write_text(",".join(old) + "\n" + ",".join("OLD" if f == "doc_id" else "x" for f in old) + "\n",
+                    encoding="utf-8")
+    upsert_row({"doc_id": "NEW", "published_at": "2026-10-01"}, path)
+    upsert_row({"doc_id": "UNDATED", "published_at": "2026-10-19", "date_basis": "retrieved"}, path)
+    rows = {r["doc_id"]: r for r in read_manifest(path)}
+    assert list(rows["OLD"]) == FIELDS
+    assert [rows[d]["date_basis"] for d in ("OLD", "NEW", "UNDATED")] == ["source", "source", "retrieved"]
