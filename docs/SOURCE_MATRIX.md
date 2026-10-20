@@ -1,4 +1,4 @@
-# Source feasibility matrix: transcripts, IR, trade press (tiers 3-4)
+# Source feasibility matrix: transcripts, IR, trade press (tiers 3-4) and thematic research (tier 5)
 
 Owner: C2 (Mingmin Kong). Issue #3; ExecPlan [plans/0003-source-matrix.md](../plans/0003-source-matrix.md); spec [specs/transcripts-ir.md](../specs/transcripts-ir.md). Ground rules: [CLAUDE.md](../CLAUDE.md).
 
@@ -1326,6 +1326,63 @@ Rows: `T4-FACTIVA`, `T4-NEXISUNI`, `T4-NEWSBANK`, `T4-PROQUEST`
   2. WashU Libraries' guide limits library databases to 'noncommercial, educational, scholarly or research use' and prohibits 'providing it to an employer (commercial use)'. Does showing quotes from Factiva, Nexis Uni, NewsBank or ProQuest to Edward Jones's CSO office (via the project lead) count as commercial use or providing to an employer?
   3. WashU Libraries' guide forbids creating 'your own database of materials' without licensor permission. Should library-database items be left out of ingest entirely (manual lookup + citation only), or is metadata + short excerpt + link acceptable?
 
+## Tier 5: thematic research (C3, #5)
+
+Owner: C3 (Jieyu Hu). Issue #5; ExecPlan [plans/0005-thematic-matrix.md](../plans/0005-thematic-matrix.md); spec [specs/thematic.md](../specs/thematic.md). Researched 2026-10-20 from the live sites and search results. **Nothing has been ingested**; ingestion is #81.
+
+39 rows (`T5-*`): 22 research, 12 survey, 5 regulatory. Access: 32 free, 3 free-registration, 1 metered, 1 paywall (Cerulli reports), 2 licensed (Goldman and BofA client research).
+
+How the tier 5 rows differ from tiers 3-4:
+
+- `entity_id` is `THEME` (the pattern `THEME:research` in `evals/questions.yaml`); `doc_type` is `research`; `owner` is C3. In `data/manifest.csv` these documents keep `entity_id` empty and record the publisher (specs/thematic.md).
+- `notes` starts with `Kind: research|survey|regulatory. Themes: <ids>. Questions: <ids>.` Theme ids are the seed list in `config/entities.yaml` `themes:`; `tests/test_source_matrix.py` checks them.
+- For surveys, `notes` records the sample and fieldwork dates as the publisher states them, where found. "Copy at ingest" means the methodology page has to be read when the document is stored.
+- Reports by firms in the competitive set (Goldman, BofA, Morgan Stanley, J.P. Morgan, UBS, Schwab, Fidelity, Edward Jones) are theme evidence only. They are never a source for that firm's own figures (ground rule 4: filings).
+- `terms_read_on` is the date the terms page was located. The clauses were not quoted one by one, because ADR-007 already decides use (see T-65). `earliest_available` is `TODO-verify` throughout: the oldest edition is checked when #81 picks a source.
+- `last_checked` / `url_status` / `sample_status` are left to the URL checker (next monthly run).
+
+### Coverage by theme
+
+A row can serve several themes. The spec target for W5 is at least 3 *documents* from at least 2 publishers per theme. These are *sources*, so the target is checked again after #81 ingests.
+
+| Theme | Rows | Publishers | Strongest rows |
+|---|---|---|---|
+| advice_future | 33 | 28 | broad: most outlooks touch it |
+| ai_advice | 19 | 18 | T5-ACCENTURE-WM (advisor survey), T5-EY-GWRR (client survey), T5-DELOITTE-INSIGHTS, T5-BCG-GWR (2024 GenAI edition), T5-KITCES-RESEARCH (tech use), T5-FINRA-OVERSIGHT / T5-SEC-EXAMS (regulator view) |
+| fees_pricing | 15 | 14 | T5-SEC-REGBI, T5-SEC-EXAMS, T5-DOL-FIDUCIARY, T5-FINRA-OVERSIGHT (regulatory); T5-ICI-FEES, T5-MORNINGSTAR, T5-VANGUARD-RESEARCH (research) |
+| younger_investors | 13 | 12 | T5-FINRAF-NFCS, T5-CFPBOARD-SURVEYS, T5-NM-PP, T5-SCHWAB-MWS, T5-BOFA-PB-STUDY, T5-UBS-NEXTGEN |
+| wealth_transfer | 13 | 11 | T5-CERULLI-WP, T5-CAPGEMINI-WWR, T5-UBS-GWR (published estimates, each with its own vintage); T5-FED-SCF (primary data); T5-BOFA-PB-STUDY, T5-EDJ-AGEWAVE (surveys) |
+| advisor_selection | 7 | 7 | T5-CFPBOARD-SURVEYS, T5-NM-PP, T5-FINRAF-NFCS, T5-JDPOWER-ISS, T5-FIDELITY-III |
+| advisor_recruiting | 6 | 5 | T5-MCKINSEY-INSIGHTS (advisor shortage), T5-FINRA-SNAPSHOT, T5-KITCES-RESEARCH, T5-CERULLI-WP |
+| mass_affluent | 4 | 4 | T5-BOFA-INSTITUTE, T5-FED-SCF, T5-JPM-GTR, T5-CERULLI-REPORTS (thin; not in Q16-Q21) |
+
+### Coverage of Q16-Q21
+
+| Q | Needs (passes_if) | Rows |
+|---|---|---|
+| Q16 | Spread of positions on future advice, attributed and dated | 29 rows; regulatory direction from T5-SEC-*, T5-DOL-FIDUCIARY, T5-FINRA-OVERSIGHT; surveys and consultancies for the rest |
+| Q17 | Named deployed tools vs aspiration | 17 rows. Tier 5 gives the industry and regulator view; the firms' own claims are tier 3 (C2). T5-ACCENTURE-WM and T5-KITCES-RESEARCH are advisor-side evidence of tools in use |
+| Q18 | Disclosed pricing vs regulation vs research vs opinion | 14 rows, labelled by Kind (regulatory / research / survey). Form ADV fee schedules are C1 (`*:adv`) |
+| Q19 | Evidence on younger investors, then stop at "should" | 11 rows |
+| Q20 | Survey findings with source, sample and date; disagreements shown | 10 rows. Surveys with different populations (all adults, investors, wealthy) are noted per row, so disagreements can be explained |
+| Q21 | Published estimates (source and vintage) kept apart from what firms do | 11 rows. Estimates: T5-CERULLI-WP, T5-CAPGEMINI-WWR, T5-UBS-GWR; firm actions are tier 3 (C2) |
+
+### Cerulli: library access
+
+- 2026-10-20: the WashU Libraries Database Finder (<https://libguides.wustl.edu/az/databases>) returns **0 databases for "cerulli"**. No library route has been found so far.
+- Free route: Cerulli white papers (`T5-CERULLI-WP`), behind a short form, incl. its wealth-transfer white paper (October 2025).
+- Written answer: the tech lead decided on 2026-10-20 that no email to the library is needed. The answer on record is the Database Finder result above (no WashU subscription), and Cerulli is used through its free white papers. Paid reports stay out unless the team buys one.
+- Note for any future library route: the WashU responsible-use guide (T-64) bars building "your own database of materials" from licensed content and using it with AI tools, whatever ADR-007 allows on our side.
+
+#### T-65 Tier 5 publishers (C3): terms and ADR-007
+
+Rows: all `T5-*`.
+
+- ADR-007 (2026-10-14) settles use for this internal, non-commercial prototype: no permission requests (T-01, T-02), scraping allowed with a polite user agent (T-08), and "Cerulli and other library research (C3) may be stored in full". The verdict columns are therefore `unclear` (not read clause by clause), not a finding that the sites forbid or allow anything.
+- Where a source's own licence binds a third party, ADR-007 cannot settle it. This applies to anything reached through a WashU library database (T-64) and to client-only research (T5-GS-GIR, T5-BOFA-GR). Those rows stay metadata only until the access question is answered.
+- US federal government works (SEC, DOL, Federal Reserve) are public domain (17 U.S.C. 105). sec.gov and dol.gov answer 403 to scripts without a declared identity.
+- Several sites answer 403, 202 or time out for scripts (bcg.com, pwc.com, ubs.com, ici.org, mckinsey.com, aboutschwab.com, morningstar.com, sec.gov, dol.gov, trust.cfainstitute.org). Under T-08 they are fetched in a browser or with a polite, identified user agent.
+
 ## Considered and rejected
 
 Candidates that were looked at and left out, with the reason. Anything here can come back with a PR that adds a row.
@@ -1406,6 +1463,10 @@ Candidates that were looked at and left out, with the reason. Anything here can 
 | EDJ-NEWSROOM-PRESS-CA (Edward Jones Canada newsroom - news releases; https://www.edwardjones.ca/ca-en/why-edward-jones/news-media/press-releases) | Canadian subsidiary, not one of the core five entities in config/entities.yaml (US comparison set). |
 | EDJ-CISION-PRESS-CA (Edward Jones (Canada) news releases on Cision Canada / newswire.ca; https://www.newswire.ca/news/edward-jones/) | Canadian subsidiary, not one of the core five entities in config/entities.yaml (US comparison set). |
 | RJF-CISION-PRESS-CA (Raymond James Ltd. (Canada) releases on Cision Canada / newswire.ca; https://www.newswire.ca/news/raymond-james-ltd/) | Canadian subsidiary, not one of the core five entities in config/entities.yaml (US comparison set). |
+| Bain & Company (tier 5, C3) | No US wealth-management or advice report found for 2025-2026 (search 2026-10-20 returned private-equity reports only); bain.com answers 403 to scripts. Re-check for #81. |
+| Wells Fargo Investment Institute (tier 5, C3) | Market outlooks, not advice themes; wellsfargo.com/investment-institute/ returned 404 on 2026-10-20. |
+| SIFMA research and Fact Book (tier 5, C3) | Capital-markets statistics; little on the Q16-Q21 themes. |
+| Broadridge insights (tier 5, C3) | broadridge.com/insights returned 404 on 2026-10-20; vendor marketing research. Re-check if a theme is thin. |
 
 ## Monthly URL re-check
 
