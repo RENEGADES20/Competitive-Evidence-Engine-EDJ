@@ -71,6 +71,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | Corpus line re-planned after TL ingestion: TEAM.md W4-W7 for C1/C2/C3/TL, intake rule, new TL issues #82-#84 (#85) | none | C1 #37, C2 #47, C3 #81 |
 | 2026-10-19 | #82 parse cache: docling and edgartools output stored in Box parsed/ by sha256 + version; warm full load 10.5 s (was ~50 min), build-snapshot 15 s, chunks identical (#86) | none | build the next snapshot with C2's earnings releases (#75); bump PARSER_VERSION in #84 |
 | 2026-10-20 | date_basis (source (#88) | retrieved) in the manifest and documents; existing databases gain the column on load; all 68 documents source | none / #49 (S1) time windows can exclude retrieved-dated pages |
+| 2026-10-20 | verify-cee waits for the finished page (answer meta line, source page text) instead of network idle; 5 of 5 runs PASS on the 68-document corpus (#91) | none | merge #90 (eval runner), then Gate 2 (#54) |
 
 ## Weekly score (from W6)
 
