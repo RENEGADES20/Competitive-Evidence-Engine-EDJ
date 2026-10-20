@@ -10,12 +10,24 @@ from pathlib import Path
 
 from cee.config import MANIFEST_PATH, resolve_path
 
-FIELDS = ["doc_id", "entity_id", "doc_type", "source_tier", "published_at", "period_end",
-          "url", "storage_path", "sha256", "added_by", "added_at"]
+FIELDS = ["doc_id", "entity_id", "doc_type", "source_tier", "published_at", "date_basis",
+          "period_end", "url", "storage_path", "sha256", "added_by", "added_at"]
+
+# ADR-007 T-09: where published_at came from. "retrieved" = an undated page dated by its download;
+# such documents stay out of recency windows (#49).
+DATE_BASES = ("source", "retrieved")
 
 
 class ManifestError(Exception):
     pass
+
+
+def date_basis_of(row: dict) -> str:
+    """The row's date_basis; a missing or empty value (rows written before #35) reads "source"."""
+    value = (row.get("date_basis") or "source").strip()
+    if value not in DATE_BASES:
+        raise ManifestError(f"{row.get('doc_id')}: date_basis must be one of {DATE_BASES}, not {value!r}")
+    return value
 
 
 def sha256_file(path: Path) -> str:
@@ -34,6 +46,8 @@ def read_manifest(path: Path = MANIFEST_PATH) -> list[dict]:
 def upsert_row(row: dict, path: Path = MANIFEST_PATH) -> None:
     rows = [r for r in read_manifest(path) if r["doc_id"] != row["doc_id"]]
     rows.append({k: row.get(k, "") for k in FIELDS})
+    for r in rows:
+        r["date_basis"] = date_basis_of(r)
     with open(path, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         w.writeheader()

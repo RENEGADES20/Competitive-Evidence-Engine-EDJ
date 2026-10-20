@@ -54,7 +54,9 @@ Q1, Q2, Q3, Q4, Q5, Q6, Q13, Q26, Q27.
   ourselves. Always tier 3 (`IR`).
 - Earnings releases also filed as 8-K exhibit 99.1: take the EDGAR copy (tier 2).
 - Trade press: full text stored, tier 4 "indicative only". Scraping allowed; keep a delay per site.
-- Undated pages: date rule in ADR-007 (T-09).
+- Undated pages: date rule in ADR-007 (T-09). When only the download date is left, write
+  `date_basis = retrieved` in the manifest row (default `source`, #35); such documents stay
+  out of recency windows.
 
 ## Open questions
 
