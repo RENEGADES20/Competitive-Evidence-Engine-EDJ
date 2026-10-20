@@ -38,6 +38,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 |---|---|---|---|
 | 2026-10-16 | Synonym list v0 drafted in config/entities.yaml; spec open questions posted on #7 (#66) | Firm-specific metric wording unverified (only EDJ in local corpus) | Wire expand_synonyms() into fts.py (W3) |
 | 2026-10-18 | #50 footer and gap box now name the same firms (Query.firms; Vanguard shows "VGD (no documents)") (#74) | none | U1 may restyle the footer marker; mode for unmapped-only questions stays "theme" per spec |
+| 2026-10-20 | S1: hand-written expected results for Q1, Q4, Q11, Q22, Q26 (83 chunk IDs, trap Q4 must-not list, Q26 window) (#87) | Merrill filter returns nothing until GWIM segment tags (#37) | Next: time window in Query (Q26), map "each of the five" (Q11, Q22) |
 
 ### S2
 
