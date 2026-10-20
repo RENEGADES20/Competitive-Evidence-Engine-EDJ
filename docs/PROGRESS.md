@@ -72,6 +72,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-19 | #82 parse cache: docling and edgartools output stored in Box parsed/ by sha256 + version; warm full load 10.5 s (was ~50 min), build-snapshot 15 s, chunks identical (#86) | none | build the next snapshot with C2's earnings releases (#75); bump PARSER_VERSION in #84 |
 | 2026-10-20 | date_basis (source (#88) | retrieved) in the manifest and documents; existing databases gain the column on load; all 68 documents source | none / #49 (S1) time windows can exclude retrieved-dated pages |
 | 2026-10-20 | verify-cee waits for the finished page (answer meta line, source page text) instead of network idle; 5 of 5 runs PASS on the 68-document corpus (#91) | none | merge #90 (eval runner), then Gate 2 (#54) |
+| 2026-10-20 | Eval runner: per-question pattern hits, coverage, forbidden hits and status for all 30 questions, baseline compare, capped and cached real-model mode; corpus-2026-10-18 mock: PASS 7, FAIL 21, N/E 2 (#90) | verify-cee flaky on the 68-document corpus (#83) | #60 hit-rate report, #54 Gate 2, #15 weekly X/30 |
 
 ## Weekly score (from W6)
 
