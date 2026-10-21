@@ -134,12 +134,20 @@ Must not return as advisor counts: BAC-wide headcount (`BAC-10K-2025#16`, `#172`
 FTE employees (`SCHW-10K-2025#178`), RJF total associates (`#24` "19,500 associates") on
 their own, RJF advisor compensation (`RJF-SUPP-2026Q1#14`), BAC award counts (Q4 list).
 
-Today: `resolve` -> `[]`, theme ("each of the five" is not mapped) -> `BAC-10K-2025#1083`
-(Item 9A controls), `RJF-10K-2025#726` (internal control), `RJF-10K-2025#90` (advisor
-departures risk), `BAC-10K-2025#613` (goodwill), `BAC-DECK-2026Q3#54` (trading VaR),
-`MS-10K-2025#871` (internal control), `RJF-10K-2025#27` (succession planning),
-`BAC-DECK-2026Q1#66` (FICC). **0 of 8 expected; 3 BAC chunks outside GWIM** - a trap
-failure as well as a recall failure.
+Before #89: `resolve` -> `[]`, theme ("each of the five" was not mapped) ->
+`BAC-10K-2025#1083` (Item 9A controls), `RJF-10K-2025#726`, `RJF-10K-2025#90`,
+`BAC-10K-2025#613`, `BAC-DECK-2026Q3#54`, `MS-10K-2025#871`, `RJF-10K-2025#27`,
+`BAC-DECK-2026Q1#66`. 0 of 8 expected; 3 BAC chunks outside GWIM.
+
+Today (2026-10-21, #89): `resolve` -> `[MS, SCHW, EDJ, MER, RJF]`, entity; synonyms
+`advisor` -> adviser, `headcount` -> number of financial advisors / advisor count /
+financial advisors (actual). Top-8: `RJF-TR-2026Q2#4`, `#19`, `#24`, `EDJ-10K-2025#21`,
+`RJF-TR-2026Q1#34`, `#4`, `EDJ-10K-2025#42`, `#41`. **No BAC chunk** (trap holds; Merrill
+returns nothing until #37). Top-20 firms: EDJ, RJF, SCHW. **Still 0 of 8 expected**:
+`EDJ-10K-2025#130` and `RJF-10K-2025#227` are not in the top-20 (rank ~125 of 413 EDJ
+matches and ~354 of 1,211 RJF matches before the synonym bonus). Short table chunks lose
+to prose that repeats the question's words; `#227` says "Total advisors", which no
+synonym covers. Needs table-aware ranking (open item on #89), not more synonyms.
 
 ---
 
@@ -166,11 +174,18 @@ Must not return as NNA: BAC net client flows / AUM flows unlabeled; SCHW money-f
 roll-forward (`SCHW-10Q-2026Q2#56`); MS fee-based asset flows (`MS-PR-2026-04-15-01#15`)
 as if NNA; any AUM or client-asset change; BAC chunks outside GWIM.
 
-Today: `resolve` -> `[]`, theme -> `RJF-PR-2026-04-22-01#4`, `#3`,
+Before #89: `resolve` -> `[]`, theme -> `RJF-PR-2026-04-22-01#4`, `#3`,
 `RJF-PR-2026-07-22-01#4`, `#5`, `MS-PR-2026-04-15-01#15`, `MS-10Q-2025Q3#18`,
-`RJF-PR-2026-01-28-01#3`, `MS-10Q-2026Q1#18`. RJF quarters partly right; **no EDJ, SCHW
-or BAC chunk**, no definition chunk, and `MS-PR-2026-04-15-01#15` is the fee-based-flows
-footnote, a neighbour metric.
+`RJF-PR-2026-01-28-01#3`, `MS-10Q-2026Q1#18`. NNA from MS and RJF only.
+
+Today (2026-10-21, #89): `resolve` -> `[MS, SCHW, EDJ, MER, RJF]`, entity; synonyms
+`net new assets` -> NNA / core net new assets. Top-8: `RJF-PR-2026-04-22-01#4`, `#3`,
+`RJF-PR-2026-07-22-01#4`, `#5`, `SCHW-TR-2026Q2#23`, `SCHW-TR-2026Q3#25`,
+`MS-PR-2026-04-15-01#15`, `MS-10Q-2026Q2#58`. **Top-20 holds NNA chunks from MS, RJF and
+SCHW** (SCHW via transcripts, e.g. "more than 5% NNA growth"; also `SCHW-TR-2026Q1#31`).
+No BAC chunk. Still missing: EDJ (`EDJ-10Q-2026Q2#60` etc.), every definition chunk, and
+SCHW's 10-Q figures; `MS-PR-2026-04-15-01#15` is still the fee-based-flows footnote, a
+neighbour metric (finding 7). Per-firm quotas (#59) should bring EDJ in.
 
 ---
 
@@ -210,7 +225,7 @@ delinquency table, is inside). Fails the spec item: `Query` has no time window.
 
 1. **"Each of the five" is not resolved** (Q11, Q22): `resolve()` returns no entities and
    falls back to theme mode, which returns other-firm and off-topic chunks. Expected: all
-   five, with a per-firm quota.
+   five, with a per-firm quota. *Resolved in #89 (peer set); the quota is #59.*
 2. **Q11 misses every number** (`EDJ-10K-2025#130`, `RJF-10K-2025#227`): table chunks rank
    below control-and-procedure boilerplate. Synonyms ("headcount" -> "financial
    advisors") would likely help (#7).

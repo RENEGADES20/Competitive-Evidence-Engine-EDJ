@@ -104,6 +104,14 @@ entities:
     reporting_shape: Public; Private Client Group segment; multiple advisor affiliation models.
     expected_sources: [10-K, 10-Q, 8-K, DEF 14A, transcript, supplement, monthly, deck, press, trade, adv]   # monthly: 8-K "RJF OPERATING DATA" (#2)
 
+# Peer sets: phrases that mean a fixed group of covered firms (S1, #89). A question that
+# uses one is filtered to the members in SQL, like a question that names each firm.
+# Merrill is MER (GWIM-tagged BAC chunks only), not BAC.
+peer_sets:
+  - id: core_five
+    members: [MS, SCHW, EDJ, MER, RJF]
+    phrases: ["each of the five", "across the five", "all five", "the five"]   # Q10, Q11, Q22-Q25
+
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.
 # Nothing here is ingested yet. Reporting shape and verified CIKs: docs/EXPANSION.md.
@@ -133,7 +141,11 @@ themes:
   - {id: mass_affluent, label: Mass-affluent clients}
 
 # Query synonyms (S1 owns; see specs/retrieval.md). Draft v0 from the 30 questions (#7).
-# Not read by code yet; expand_synonyms() lands in W3.
+# Read by expand_synonyms() in src/cee/retrieve/fts.py (#89):
+#   - expansion runs key -> values only, never back;
+#   - all-caps keys (NNA, FA, FAs, AI, ...) match the question in exact case, whole word;
+#     other keys match in any case;
+#   - every value is searched as a phrase, OR'ed with the question's own words.
 #
 # Rules for this list:
 #   - Same concept only. A neighbour metric is never a synonym: net new assets is not
