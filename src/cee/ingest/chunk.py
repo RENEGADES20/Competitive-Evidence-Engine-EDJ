@@ -161,14 +161,19 @@ class SegmentTagger:
             # ("Global Wealth & Investment Management Key Indicators").
             name = None if page in self.mixed_pages else self._section_heading(section)
             self.section, self.current = (section, page), self.headings.get(name)
-        tag = None
-        for i, line in enumerate(l for l in text.splitlines() if l.strip()):
+        lines = [l for l in text.splitlines() if l.strip()]
+        tag, mixed = None, False
+        for i, line in enumerate(lines):
             key = _heading_key(line)
             if key in self.headings:
+                # A heading of another segment with text after it inside this chunk: the chunk
+                # holds two segments (BAC-10K-2025 segment note, GWIM then Global Banking).
+                if i > 0 and i < len(lines) - 1 and self.headings[key] != tag:
+                    mixed = True
                 self.current = self.headings[key]
             if i == 0:
                 tag = self.current
-        return tag
+        return None if mixed else tag
 
     def _section_heading(self, section: str) -> str | None:
         """The alias or stop heading a section title starts with, longest first."""

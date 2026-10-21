@@ -138,3 +138,17 @@ def test_page_with_titles_of_two_segments_is_left_untagged():
     chunks = chunk_sections("X-DECK", "X", "deck", "2026Q1", sections, segment_for=tagger)
     assert [(c.text.split()[0], c.segment) for c in chunks] == [
         ("GW1", "GWIM"), ("CB1", None), ("GM1", None)]
+
+
+def test_chunk_with_another_segment_heading_and_text_after_it_is_untagged():
+    # BAC-10K-2025#1041 (segment note): GWIM paragraph, "Global Banking" heading, Global Banking
+    # paragraph, all in one chunk. Untagged beats mis-tagged.
+    short = "Some text. " * 30
+    text = "\n\n".join([
+        "Global Wealth & Investment Management", f"GW1 {short}",
+        f"GW2 {short}", "Global Banking", f"GB1 {short}",
+        "Global Markets", para("GM1"),
+    ])
+    tags = segments_by_label(text, SegmentTagger(BAC_ALIASES, BAC_STOPS))
+    assert tags[0] == ("Global", None)
+    assert all(seg is None for _, seg in tags)
