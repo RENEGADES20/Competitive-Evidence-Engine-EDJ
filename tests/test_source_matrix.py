@@ -1,5 +1,5 @@
-"""docs/source_matrix.csv (C2, #3): valid values, and every tier 3-4 source the question bank
-expects is covered by at least one row. Reads files only; no network, no database."""
+"""docs/source_matrix.csv (C2, #3; tier 5 rows C3, #5): valid values, and every tier 3-4 source the
+question bank expects is covered by at least one row. Reads files only; no network, no database."""
 import csv
 import re
 
@@ -21,8 +21,8 @@ COLUMNS = ["source_id", "tier", "entity_id", "segment", "doc_type", "source_name
 TIER34_TYPES = {"transcript", "deck", "supplement", "press", "trade", "monthly"}
 ALL_MEANS = {"MS", "SCHW", "EDJ", "MER", "RJF"}     # trade-press rows (entity ALL); BAC only via GWIM
 ENUMS = {
-    "tier": {"3", "4"},
-    "owner": {"C1", "C2"},
+    "tier": {"3", "4", "5"},
+    "owner": {"C1", "C2", "C3"},
     "format": {"html", "pdf", "xlsx", "audio-only", "rss"},
     "access": {"free", "free-registration", "metered", "paywall", "licensed", "library", "unknown"},
     "scraping": {"allowed", "forbidden", "silent", "unclear"},
@@ -30,6 +30,13 @@ ENUMS = {
     "excerpts": {"allowed", "forbidden", "silent", "unclear"},
     "expected_cadence": {"daily", "weekly", "monthly", "quarterly", "annual", "ad hoc"},
 }
+THEMES_IN_NOTES = re.compile(r"^Kind: (research|survey|regulatory)\. Themes: ([a-z_]+(?:; [a-z_]+)*)\.")
+
+
+def THEME_LIST(notes: str) -> set[str]:
+    return set(THEMES_IN_NOTES.match(notes).group(2).split("; "))
+
+
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 PARTIAL_DATE = re.compile(r"^(\d{4}(-\d{2}(-\d{2})?)?|TODO-verify)$")
 
@@ -55,9 +62,17 @@ def test_values_are_valid(rows):
         for col, allowed in ENUMS.items():
             if r[col] not in allowed:
                 problems.append(f"{sid}: {col}={r[col]!r} not in {sorted(allowed)}")
-        if r["entity_id"] not in entities and r["entity_id"] != "ALL":
+        if r["tier"] == "5":
+            # Tier 5 (C3, specs/thematic.md): thematic research, indexed by theme, not by firm.
+            if (r["entity_id"], r["doc_type"], r["owner"]) != ("THEME", "research", "C3"):
+                problems.append(f"{sid}: tier 5 rows are entity THEME, doc_type research, owner C3")
+            if not THEMES_IN_NOTES.search(r["notes"]):
+                problems.append(f"{sid}: tier 5 notes must start with 'Kind: ...' and list 'Themes: ...'")
+            elif not THEME_LIST(r["notes"]) <= {t["id"] for t in entities_config()["themes"]}:
+                problems.append(f"{sid}: unknown theme id in notes")
+        elif r["entity_id"] not in entities and r["entity_id"] != "ALL":
             problems.append(f"{sid}: unknown entity_id {r['entity_id']!r}")
-        if r["doc_type"] not in SOURCE_NAMES or r["doc_type"] not in TIER34_TYPES:
+        elif r["doc_type"] not in SOURCE_NAMES or r["doc_type"] not in TIER34_TYPES:
             problems.append(f"{sid}: doc_type {r['doc_type']!r} is not a tier 3-4 type in validate.SOURCE_NAMES")
         if (r["tier"] == "4") != (r["doc_type"] == "trade"):
             problems.append(f"{sid}: tier 4 if and only if doc_type is trade")
@@ -126,3 +141,15 @@ def test_every_tier34_pattern_in_the_question_bank_is_covered(rows):
     assert patterns, "no tier 3-4 expected_sources found in evals/questions.yaml"
     uncovered = {p: qs for p, qs in patterns.items() if not any(_serves(r, p) for r in rows)}
     assert not uncovered, f"no matrix row for: {uncovered}"
+
+
+def test_every_seed_theme_has_a_tier5_source(rows):
+    """specs/thematic.md: tier 5 is indexed by theme; each seed theme needs at least one source,
+    from at least two publishers."""
+    publishers = {}
+    for r in rows:
+        if r["tier"] == "5" and THEMES_IN_NOTES.match(r["notes"]):
+            for t in THEME_LIST(r["notes"]):
+                publishers.setdefault(t, set()).add(r["publisher"])
+    thin = {t: sorted(publishers.get(t, ())) for t in (x["id"] for x in entities_config()["themes"]) if len(publishers.get(t, ())) < 2}
+    assert not thin, f"themes with fewer than 2 tier 5 publishers: {thin}"
