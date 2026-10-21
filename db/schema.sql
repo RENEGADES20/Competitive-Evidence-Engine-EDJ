@@ -21,6 +21,7 @@ CREATE TABLE documents (
   doc_type      text NOT NULL,
   source_tier   int  NOT NULL CHECK (source_tier BETWEEN 1 AND 6),
   published_at  date NOT NULL,
+  date_basis    text NOT NULL DEFAULT 'source' CHECK (date_basis IN ('source', 'retrieved')),  -- ADR-007 T-09
   period_end    date,
   url           text,
   storage_path  text NOT NULL,
