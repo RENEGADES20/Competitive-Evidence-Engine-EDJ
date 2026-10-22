@@ -221,6 +221,59 @@ delinquency table, is inside). Fails the spec item: `Query` has no time window.
 
 ---
 
+## Gap questions: what must not come back (#60)
+
+Added for refusal accuracy (specs/retrieval.md). Checked 2026-10-22 on corpus-2026-10-18;
+the IDs are in [expected_chunks.yaml](expected_chunks.yaml). "Adjacent" = evidence a
+`gap_with_adjacent` answer should show, labelled as a different quantity; "must not" = text
+that reads like the answer but is another quantity, scope or firm. Other firms' chunks and
+BAC chunks outside GWIM for Merrill are caught by the runner's forbidden check and are not
+listed.
+
+**Q24 - client assets per advisor, and is the comparison valid?** Adjacent: EDJ advisor
+count (`EDJ-10K-2025#130`), RJF total advisors and the definition that makes the ratio
+invalid (`RJF-10K-2025#227`, `#228`: RCS advisors excluded from the count, their assets
+included in PCG AUA), MS advisor-led assets with no count (`MS-SUPP-2026Q1#43` etc.).
+Must not: BAC-wide 213,000 employees (`BAC-10K-2025#16`, `#172`, `BAC-10Q-2025Q2#19`,
+`-2025Q3#19`); SCHW full-time equivalent employees (`SCHW-10K-2025#178`, four 10-Qs, four
+releases); `SCHW-TR-2026Q3#7` ($5.8 trillion held for 16,000 independent RIA firms -
+custody clients, not Schwab advisors); BAC award counts.
+
+**Q25 - advisor compensation structures.** Adjacent/disclosed: RJF employee vs independent
+payout (`RJF-10K-2025#10`, `#11`), EDJ commission basis and partnership bonuses
+(`EDJ-10K-2025#30`, `#264`), MS formulaic payouts (`MS-10K-2025#153`), SCHW only says comp
+rose with financial-consultant headcount (`SCHW-10Q-2026Q2#25`). Must not: "payout" that is
+not advisor pay - dividend payout ratios (RJF 10-K and four 10-Qs, three SCHW decks) and
+MS maximum potential payout on guarantees (`MS-10K-2025#574`, `#687`-`#699`); named
+executive officers' pay (`EDJ-10K-2025#305`, `SCHW-10K-2025#558`); BAC-wide compensation
+philosophy (`BAC-10K-2025#19`).
+
+**Q28 - EDJ vs Merrill advisor attrition.** Adjacent: EDJ **does** disclose an advisor
+attrition % in its 2025 10-Qs (`EDJ-10Q-2025Q2#64`, `#67`: 6.4%; `EDJ-10Q-2025Q3#68`, `#70`:
+6.1%; definition `-2025Q2#66`, `-2025Q3#69`: "annualized number of financial advisors that
+left or retired ... compared to the total"); Merrill gives no rate, only "adviser attrition
+is now at near historic lows" (`BAC-TR-2026Q2#38`, `BAC-TR-2026Q1#48`); net headcount change
+(`EDJ-10K-2025#130`, `EDJ-10Q-2026Q2#60`). Must not: BAC-wide employee turnover 8%
+(`BAC-10K-2025#19`), BAC-wide headcount attrition (`BAC-TR-2026Q1#4`, `#27`, `#29`), client
+and deposit attrition (`BAC-10K-2025#60`, `#97`). Note for C1: Q28's passes_if says
+"neither discloses this on a comparable basis"; one side (EDJ) does disclose a rate, so the
+correct answer is "EDJ: 6.1% (Q3 2025, its definition); Merrill: not disclosed".
+`TODO-verify` whether the 2026 EDJ 10-Qs dropped the line.
+
+**Q29 - what MS pays its financial advisors.** Adjacent: formulaic payouts tied to revenue
+(`MS-10K-2025#153`), compensation expense driven by the WM advisor payout (`MS-10K-2025#128`,
+`#170`; aggregate, not a grid). Must not: maximum potential payout on guarantees and credit
+protection (`MS-10K-2025#574`, `#687`, `#690`, `#692`-`#694`, `#696`, `#699`).
+
+**Q30 - Merrill standalone profitability (trap 3).** Adjacent, with the GWIM-is-not-Merrill
+caveat: GWIM net income $1.4 billion (`BAC-PR-2026-01-14-01#12`), GWIM results
+(`BAC-10K-2025#245`-`#247`). Must not: BAC consolidated net income (`BAC-10K-2025#178`, four
+10-Qs, the four release headlines `BAC-PR-*#2` and `BAC-PR-2026-01-14-01#4`), other segments'
+net income (`BAC-PR-2026-01-14-01#0` Consumer Banking - where Merrill Edge sits - `#15`
+Global Banking, `#18` Global Markets).
+
+---
+
 ## Findings for retrieval work (not fixed in #8)
 
 1. **"Each of the five" is not resolved** (Q11, Q22): `resolve()` returns no entities and
