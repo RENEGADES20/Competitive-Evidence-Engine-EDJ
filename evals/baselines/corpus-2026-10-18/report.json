@@ -1,0 +1,2704 @@
+{
+  "meta": {
+    "run_id": "corpus-2026-10-18-20261022-184408",
+    "snapshot": "corpus-2026-10-18",
+    "commit": "783c83f",
+    "k": 8,
+    "min_coverage": 0.5,
+    "mode": "mock",
+    "baseline": null,
+    "as_of": "2026-10-22",
+    "real_calls": 0,
+    "reused": 0,
+    "max_calls": null
+  },
+  "summary": {
+    "tier1_doc_recall": 0.317,
+    "tier1_passage_recall": 0.139,
+    "tier1_with_key": 9,
+    "tier1_total": 18,
+    "refusal_gap": {
+      "ok": 5,
+      "of": 5,
+      "accuracy": 1.0
+    },
+    "refusal_all": {
+      "ok": 8,
+      "of": 10,
+      "accuracy": 0.8
+    }
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "What is Morgan Stanley's strategy to increase their net new assets?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10Q-2026Q2#58",
+        "MS-PR-2026-01-15-01#18",
+        "MS-PR-2026-04-15-01#15",
+        "MS-10K-2025#166",
+        "MS-10Q-2025Q2#57",
+        "MS-10Q-2025Q3#57",
+        "MS-10Q-2026Q1#50",
+        "MS-SUPP-2026Q1#43"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K#Wealth Management",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "MS-10K-2025#166"
+          ]
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#43"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 1,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": 0.222,
+      "passage_recall": 0.125,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-TR-2026Q2#3"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q2#13",
+              "MS-TR-2026Q2#15"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q3#2",
+              "MS-TR-2026Q3#8"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q1#2",
+              "MS-TR-2026Q1#7",
+              "MS-TR-2026Q1#8"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-PR-2026-10-14-01#5",
+              "MS-PR-2026-07-15-01#5"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#125"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#127",
+              "MS-10K-2025#164",
+              "MS-10K-2025#166"
+            ],
+            "found": [
+              "MS-10K-2025#166"
+            ]
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 8,
+        "passages_found": 1,
+        "passage_recall": 0.125,
+        "expected_docs": [
+          "MS-TR-2026Q2",
+          "MS-TR-2026Q3",
+          "MS-TR-2026Q1",
+          "MS-PR-2026-10-14-01",
+          "MS-PR-2026-07-15-01",
+          "MS-10K-2025",
+          "MS-SUPP-2026Q3",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q1"
+        ],
+        "docs": 9,
+        "docs_found": 2,
+        "doc_recall": 0.222,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q2",
+      "text": "How is Raymond James positioning itself to recruit advisors away from the wirehouses?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#27",
+        "RJF-10K-2025#90",
+        "RJF-10K-2025#452",
+        "RJF-10K-2025#10",
+        "RJF-10Q-2026Q1#307",
+        "RJF-10Q-2026Q2#316",
+        "RJF-TR-2026Q1#17",
+        "RJF-10K-2025#89"
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q1#17"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#27",
+            "RJF-10K-2025#90",
+            "RJF-10K-2025#452",
+            "RJF-10K-2025#10",
+            "RJF-10K-2025#89"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 2,
+      "coverage": 0.667,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q3",
+      "text": "What is Schwab's strategy for its RIA custody business?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-10Q-2026Q2#342",
+        "SCHW-TR-2026Q2#34",
+        "SCHW-10K-2025#26",
+        "SCHW-10Q-2026Q2#343",
+        "SCHW-10K-2025#11",
+        "SCHW-10Q-2026Q2#30",
+        "SCHW-10Q-2026Q2#341",
+        "SCHW-TR-2026Q3#7"
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q2#34",
+            "SCHW-TR-2026Q3#7"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K#Advisor Services",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "SCHW-10K-2025#26",
+            "SCHW-10K-2025#11"
+          ]
+        },
+        {
+          "pattern": "SCHW:deck",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 1,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q4",
+      "text": "What is Merrill's advisor growth strategy, and how has it changed?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "answer",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [],
+      "patterns": [
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 0,
+      "coverage": 0.0,
+      "forbidden": [],
+      "doc_recall": 0.0,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "BAC-TR-2026Q1#20"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q1#48"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#13",
+              "BAC-TR-2026Q2#14"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#38"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q3#13"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#245",
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10Q-2026Q2#88",
+              "BAC-10Q-2026Q2#89",
+              "BAC-10Q-2026Q2#90",
+              "BAC-10Q-2026Q2#91"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 7,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "BAC-TR-2026Q1",
+          "BAC-TR-2026Q2",
+          "BAC-TR-2026Q3",
+          "BAC-10K-2025",
+          "BAC-10Q-2026Q2"
+        ],
+        "docs": 5,
+        "docs_found": 0,
+        "doc_recall": 0.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q5",
+      "text": "Where is Morgan Stanley investing in technology for its advisors?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10K-2025#178",
+        "MS-10K-2025#26",
+        "MS-SUPP-2026Q1#46",
+        "MS-SUPP-2026Q2#40",
+        "MS-SUPP-2026Q3#41",
+        "MS-10K-2025#145",
+        "MS-10K-2025#462",
+        "MS-10Q-2025Q2#398"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#178",
+            "MS-10K-2025#26",
+            "MS-10K-2025#145",
+            "MS-10K-2025#462"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 1,
+      "coverage": 0.5,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q6",
+      "text": "What has Raymond James said about its affiliation models, and has the mix shifted?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#364",
+        "RJF-10K-2025#365",
+        "RJF-TR-2026Q2#22",
+        "RJF-10Q-2025Q2#421",
+        "RJF-10Q-2026Q1#423",
+        "RJF-10Q-2026Q2#434",
+        "RJF-TR-2026Q1#30",
+        "RJF-10K-2025#319"
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:10-K#Private Client Group",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "RJF-10K-2025#364",
+            "RJF-10K-2025#365",
+            "RJF-10K-2025#319"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q2#22",
+            "RJF-TR-2026Q1#30"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 1,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q7",
+      "text": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+      "use_case": "head_to_head",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "RJF-TR-2026Q1#17",
+        "RJF-TR-2026Q2#38",
+        "RJF-TR-2026Q2#19",
+        "RJF-TR-2026Q1#3",
+        "RJF-TR-2026Q2#24",
+        "RJF-TR-2026Q1#34",
+        "RJF-TR-2026Q1#4"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q2#4",
+            "RJF-TR-2026Q1#17",
+            "RJF-TR-2026Q2#38",
+            "RJF-TR-2026Q2#19",
+            "RJF-TR-2026Q1#3",
+            "RJF-TR-2026Q2#24",
+            "RJF-TR-2026Q1#34",
+            "RJF-TR-2026Q1#4"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 6,
+      "hit_patterns": 1,
+      "coverage": 0.167,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q8",
+      "text": "Compare how Schwab and Raymond James describe their value proposition to independent advisors.",
+      "use_case": "head_to_head",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#27",
+        "SCHW-10K-2025#343",
+        "SCHW-10Q-2025Q3#265",
+        "SCHW-10Q-2026Q1#236",
+        "RJF-10K-2025#24",
+        "RJF-10K-2025#521",
+        "RJF-10K-2025#523",
+        "RJF-10K-2025#90"
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:deck",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#343"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:deck",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#27",
+            "RJF-10K-2025#24",
+            "RJF-10K-2025#521",
+            "RJF-10K-2025#523",
+            "RJF-10K-2025#90"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 4,
+      "hit_patterns": 2,
+      "coverage": 0.5,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q9",
+      "text": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+      "use_case": "head_to_head",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10K-2025#310",
+        "MS-10K-2025#166",
+        "MS-10K-2025#190",
+        "MS-10Q-2025Q2#87",
+        "MS-10Q-2025Q3#86",
+        "MS-10K-2025#125",
+        "MS-10K-2025#419",
+        "MS-10Q-2026Q1#16"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#310",
+            "MS-10K-2025#166",
+            "MS-10K-2025#190",
+            "MS-10K-2025#125",
+            "MS-10K-2025#419"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:deck#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q10",
+      "text": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+      "use_case": "head_to_head",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q1#14",
+        "MS-10K-2025#166",
+        "MS-10Q-2025Q3#48",
+        "SCHW-10K-2025#14",
+        "MS-10Q-2025Q2#48",
+        "MS-10Q-2026Q1#51",
+        "MS-TR-2026Q2#3",
+        "SCHW-TR-2026Q1#2"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q2#3"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q1#14",
+            "SCHW-TR-2026Q1#2"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 2,
+      "coverage": 0.4,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q11",
+      "text": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+      "use_case": "head_to_head",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "RJF-TR-2026Q2#19",
+        "RJF-TR-2026Q2#24",
+        "EDJ-10K-2025#21",
+        "RJF-TR-2026Q1#34",
+        "RJF-TR-2026Q1#4",
+        "EDJ-10K-2025#42",
+        "EDJ-10K-2025#41"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#21",
+            "EDJ-10K-2025#42",
+            "EDJ-10K-2025#41"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 8,
+      "hit_patterns": 1,
+      "coverage": 0.125,
+      "forbidden": [],
+      "doc_recall": 0.125,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10K-2025#130"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#131",
+              "EDJ-10K-2025#148"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#29"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#227"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#228"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#24"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#167",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#246"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-10K-2025#18",
+              "SCHW-TR-2026Q1#3"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 10,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "EDJ-10K-2025",
+          "EDJ-10Q-2026Q2",
+          "RJF-10K-2025",
+          "MS-10K-2025",
+          "MS-SUPP-2026Q3",
+          "BAC-10K-2025",
+          "SCHW-10K-2025",
+          "SCHW-TR-2026Q1"
+        ],
+        "docs": 8,
+        "docs_found": 1,
+        "doc_recall": 0.125,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q12",
+      "text": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer_with_boundary",
+      "entities": [
+        "SCHW",
+        "EDJ"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q1#2",
+        "SCHW-10Q-2026Q2#343",
+        "SCHW-TR-2026Q1#14",
+        "SCHW-TR-2026Q2#14",
+        "SCHW-10K-2025#116",
+        "SCHW-10K-2025#14",
+        "SCHW-10K-2025#70",
+        "SCHW-10K-2025#71"
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q1#2",
+            "SCHW-TR-2026Q1#14",
+            "SCHW-TR-2026Q2#14"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#116",
+            "SCHW-10K-2025#14",
+            "SCHW-10K-2025#70",
+            "SCHW-10K-2025#71"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:monthly",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 2,
+      "coverage": 0.667,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q13",
+      "text": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+      "use_case": "mechanism",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10Q-2026Q2#61",
+        "MS-10K-2025#125",
+        "MS-10K-2025#419",
+        "MS-10Q-2025Q2#60",
+        "MS-10Q-2025Q3#60",
+        "MS-10Q-2026Q1#16",
+        "MS-10Q-2026Q1#209",
+        "MS-10Q-2026Q2#16"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#125",
+            "MS-10K-2025#419"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 1,
+      "coverage": 0.5,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q14",
+      "text": "How does Raymond James's affiliation-choice model work commercially?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#364",
+        "RJF-10K-2025#365",
+        "RJF-TR-2026Q2#22",
+        "RJF-10Q-2025Q2#421",
+        "RJF-10Q-2026Q1#423",
+        "RJF-10Q-2026Q2#434",
+        "RJF-TR-2026Q2#19",
+        "RJF-10K-2025#299"
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:10-K#Private Client Group",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "RJF-10K-2025#364",
+            "RJF-10K-2025#365",
+            "RJF-10K-2025#299"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q2#22",
+            "RJF-TR-2026Q2#19"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 1,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q15",
+      "text": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q3#7",
+        "SCHW-TR-2026Q3#2",
+        "SCHW-10K-2025#27",
+        "SCHW-TR-2026Q1#2",
+        "SCHW-TR-2026Q1#44",
+        "SCHW-TR-2026Q3#26",
+        "SCHW-PR-2026-01-21-01#52",
+        "SCHW-PR-2026-07-21-01#54"
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#27"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q16",
+      "text": "What will receiving financial advice in the future look like for clients?",
+      "use_case": "theme_scan",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "RJF-10K-2025#438",
+        "EDJ-10K-2025#239",
+        "BAC-10K-2025#249",
+        "EDJ-10Q-2026Q1#27",
+        "EDJ-10Q-2026Q2#32",
+        "SCHW-10K-2025#361",
+        "MS-10Q-2025Q3#48",
+        "SCHW-TR-2026Q1#14"
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:regulatory",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q1#14"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 1,
+      "coverage": 0.5,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS"
+    },
+    {
+      "id": "Q17",
+      "text": "What are these firms saying about AI in advice delivery, and who is claiming the most?",
+      "use_case": "theme_scan",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "RJF-10K-2025#112",
+        "MS-10K-2025#707",
+        "MS-10Q-2025Q2#412",
+        "MS-10Q-2026Q1#383",
+        "MS-10Q-2026Q2#426",
+        "SCHW-TR-2026Q1#9",
+        "MS-10Q-2025Q3#418",
+        "RJF-10K-2025#58"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q1#9"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 7,
+      "hit_patterns": 1,
+      "coverage": 0.143,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q18",
+      "text": "Where is the industry heading on fee structures and pricing transparency?",
+      "use_case": "theme_scan",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "SCHW-10K-2025#175",
+        "SCHW-10Q-2025Q3#65",
+        "EDJ-10K-2025#24",
+        "SCHW-10K-2025#161",
+        "SCHW-10K-2025#310",
+        "EDJ-10K-2025#236",
+        "EDJ-10K-2025#237",
+        "EDJ-10K-2025#238"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:regulatory",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:research",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 0,
+      "hit_patterns": 0,
+      "coverage": null,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "Q19",
+      "text": "How should the preferences of younger investors shape Edward Jones's offerings?",
+      "use_case": "segment_evidence",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer_with_boundary",
+      "entities": [
+        "EDJ"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "EDJ-10K-2025#265",
+        "EDJ-10Q-2026Q2#39",
+        "EDJ-10K-2025#91",
+        "EDJ-10K-2025#16",
+        "EDJ-10K-2025#26",
+        "EDJ-10K-2025#45",
+        "EDJ-10K-2025#59",
+        "EDJ-10K-2025#147"
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 0,
+      "coverage": 0.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q20",
+      "text": "What evidence is there about how clients under 40 choose a financial advisor?",
+      "use_case": "segment_evidence",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "RJF-TR-2026Q2#24",
+        "RJF-TR-2026Q1#4",
+        "RJF-TR-2026Q2#19",
+        "EDJ-10K-2025#21",
+        "RJF-TR-2026Q1#20",
+        "RJF-TR-2026Q1#3",
+        "RJF-TR-2026Q1#34"
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:research",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 0,
+      "hit_patterns": 0,
+      "coverage": null,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "Q21",
+      "text": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+      "use_case": "segment_evidence",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "SCHW-TR-2026Q3#8",
+        "BAC-10Q-2025Q2#393",
+        "BAC-10Q-2025Q3#395",
+        "BAC-10Q-2026Q2#380",
+        "BAC-10K-2025#668",
+        "BAC-10Q-2026Q1#332",
+        "BAC-10K-2025#246",
+        "BAC-PR-2026-01-14-01#12"
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q3#8"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q22",
+      "text": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-PR-2026-04-22-01#4",
+        "RJF-PR-2026-04-22-01#3",
+        "RJF-PR-2026-07-22-01#4",
+        "RJF-PR-2026-07-22-01#5",
+        "SCHW-TR-2026Q2#23",
+        "SCHW-TR-2026Q3#25",
+        "MS-PR-2026-04-15-01#15",
+        "MS-10Q-2026Q2#58"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:monthly",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:supplement",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-Q",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [
+            "MS-PR-2026-04-15-01#15"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2026-04-22-01#4",
+            "RJF-PR-2026-04-22-01#3",
+            "RJF-PR-2026-07-22-01#4",
+            "RJF-PR-2026-07-22-01#5"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 6,
+      "hit_patterns": 2,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": 0.091,
+      "passage_recall": 0.125,
+      "refusal_ok": false,
+      "misleading": [
+        "MS-PR-2026-04-15-01#15"
+      ],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10Q-2026Q2#60",
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2025Q3#67",
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10K-2025#130"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14",
+              "MS-10Q-2026Q2#57",
+              "MS-10Q-2026Q1#48",
+              "MS-10Q-2025Q3#56",
+              "MS-10Q-2025Q2#56",
+              "MS-PR-2026-01-15-01#2"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q1#42",
+              "MS-10K-2025#166"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-PR-2026-01-21-01#2",
+              "SCHW-PR-2026-07-21-01#2",
+              "SCHW-DECK-2026Q3#7",
+              "SCHW-10Q-2026Q2#16",
+              "SCHW-10Q-2026Q1#16",
+              "SCHW-10Q-2025Q3#16",
+              "SCHW-10Q-2025Q2#16"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-10K-2025#122",
+              "SCHW-10K-2025#119",
+              "SCHW-DECK-2026Q3#20"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-PR-2026-07-22-01#4",
+              "RJF-PR-2026-04-22-01#3",
+              "RJF-PR-2026-01-28-01#3",
+              "RJF-PR-2025-10-22-01#4",
+              "RJF-10Q-2026Q2#305",
+              "RJF-10Q-2026Q1#298",
+              "RJF-10Q-2025Q4#236",
+              "RJF-10Q-2025Q2#294"
+            ],
+            "found": [
+              "RJF-PR-2026-04-22-01#3",
+              "RJF-PR-2026-07-22-01#4"
+            ]
+          },
+          {
+            "ids": [
+              "RJF-10Q-2026Q2#306",
+              "RJF-SUPP-2026Q1#43"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q3#13",
+              "BAC-PR-2026-10-14-01#11"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 8,
+        "passages_found": 1,
+        "passage_recall": 0.125,
+        "expected_docs": [
+          "EDJ-10Q-2026Q2",
+          "EDJ-10Q-2026Q1",
+          "EDJ-10Q-2025Q3",
+          "EDJ-10Q-2025Q2",
+          "EDJ-10K-2025",
+          "MS-SUPP-2026Q3",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q1",
+          "MS-10Q-2026Q2",
+          "MS-10Q-2026Q1",
+          "MS-10Q-2025Q3",
+          "MS-10Q-2025Q2",
+          "MS-PR-2026-01-15-01",
+          "MS-10K-2025",
+          "SCHW-PR-2026-01-21-01",
+          "SCHW-PR-2026-07-21-01",
+          "SCHW-DECK-2026Q3",
+          "SCHW-10Q-2026Q2",
+          "SCHW-10Q-2026Q1",
+          "SCHW-10Q-2025Q3",
+          "SCHW-10Q-2025Q2",
+          "SCHW-10K-2025",
+          "RJF-PR-2026-07-22-01",
+          "RJF-PR-2026-04-22-01",
+          "RJF-PR-2026-01-28-01",
+          "RJF-PR-2025-10-22-01",
+          "RJF-10Q-2026Q2",
+          "RJF-10Q-2026Q1",
+          "RJF-10Q-2025Q4",
+          "RJF-10Q-2025Q2",
+          "RJF-SUPP-2026Q1",
+          "BAC-TR-2026Q3",
+          "BAC-PR-2026-10-14-01"
+        ],
+        "docs": 33,
+        "docs_found": 3,
+        "doc_recall": 0.091,
+        "misleading": [
+          "MS-PR-2026-04-15-01#15"
+        ],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": false,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q23",
+      "text": "Advisor headcount over the last eight quarters across the five.",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "RJF-TR-2026Q1#3",
+        "RJF-TR-2026Q2#19",
+        "RJF-TR-2026Q2#24",
+        "RJF-TR-2026Q1#20",
+        "RJF-TR-2026Q2#3",
+        "RJF-TR-2026Q2#38",
+        "EDJ-10K-2025#21"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-Q",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#21"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 7,
+      "hit_patterns": 1,
+      "coverage": 0.143,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q24",
+      "text": "Client assets per advisor across the five -- and is that comparison even valid?",
+      "use_case": "benchmark",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "MS-10Q-2026Q1#51",
+        "RJF-TR-2026Q1#3",
+        "RJF-TR-2026Q2#24",
+        "MS-SUPP-2026Q1#43",
+        "MS-10K-2025#166",
+        "MS-SUPP-2026Q2#37",
+        "MS-SUPP-2026Q3#38"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#43",
+            "MS-SUPP-2026Q2#37",
+            "MS-SUPP-2026Q3#38"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": 0.6,
+      "passage_recall": 0.25,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10K-2025#130"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#227"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#228"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q1#43",
+              "MS-SUPP-2026Q2#37",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "found": [
+              "MS-SUPP-2026Q1#43",
+              "MS-SUPP-2026Q2#37",
+              "MS-SUPP-2026Q3#38"
+            ]
+          }
+        ],
+        "passages": 4,
+        "passages_found": 1,
+        "passage_recall": 0.25,
+        "expected_docs": [
+          "EDJ-10K-2025",
+          "RJF-10K-2025",
+          "MS-SUPP-2026Q1",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q3"
+        ],
+        "docs": 5,
+        "docs_found": 3,
+        "doc_recall": 0.6,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q25",
+      "text": "What has each of the five actually disclosed about advisor compensation structures?",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#4",
+        "RJF-TR-2026Q2#19",
+        "RJF-TR-2026Q2#24",
+        "RJF-TR-2026Q1#34",
+        "EDJ-10K-2025#21",
+        "RJF-TR-2026Q1#4",
+        "EDJ-10K-2025#42",
+        "RJF-TR-2026Q1#20"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#21",
+            "EDJ-10K-2025#42"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": 0.25,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "RJF-10K-2025#10",
+              "RJF-10K-2025#11"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#30",
+              "EDJ-10K-2025#264"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#153"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-10Q-2026Q2#25"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 4,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "RJF-10K-2025",
+          "EDJ-10K-2025",
+          "MS-10K-2025",
+          "SCHW-10Q-2026Q2"
+        ],
+        "docs": 4,
+        "docs_found": 1,
+        "doc_recall": 0.25,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q26",
+      "text": "What's new on Raymond James in the last 90 days?",
+      "use_case": "recency",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#351",
+        "RJF-10Q-2025Q2#414",
+        "RJF-10Q-2025Q4#343",
+        "RJF-10Q-2026Q1#415",
+        "RJF-10Q-2026Q2#426",
+        "RJF-10K-2025#352",
+        "RJF-10Q-2025Q4#236",
+        "RJF-10Q-2025Q4#344"
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:*",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#351",
+            "RJF-10Q-2025Q2#414",
+            "RJF-10Q-2025Q4#343",
+            "RJF-10Q-2026Q1#415",
+            "RJF-10Q-2026Q2#426",
+            "RJF-10K-2025#352",
+            "RJF-10Q-2025Q4#236",
+            "RJF-10Q-2025Q4#344"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
+      "refusal_ok": false,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "RJF-10Q-2026Q2"
+            ],
+            "found": [
+              "RJF-10Q-2026Q2#426"
+            ]
+          }
+        ],
+        "passages": 1,
+        "passages_found": 1,
+        "passage_recall": 1.0,
+        "expected_docs": [
+          "RJF-10Q-2026Q2"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [
+          "RJF-10K-2025#351",
+          "RJF-10Q-2025Q2#414",
+          "RJF-10Q-2025Q4#343",
+          "RJF-10Q-2026Q1#415",
+          "RJF-10K-2025#352",
+          "RJF-10Q-2025Q4#236",
+          "RJF-10Q-2025Q4#344"
+        ],
+        "window": {
+          "from": "2026-07-24",
+          "to": "2026-10-22"
+        },
+        "refusal_ok": false,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q27",
+      "text": "What has changed at Merrill since the start of the year?",
+      "use_case": "recency",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "answer",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [],
+      "patterns": [
+        {
+          "pattern": "MER:*",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:*#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 0,
+      "coverage": 0.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL"
+    },
+    {
+      "id": "Q28",
+      "text": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "EDJ",
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "EDJ-10K-2025#21",
+        "EDJ-10K-2025#42",
+        "EDJ-10K-2025#71",
+        "EDJ-10K-2025#41",
+        "EDJ-10K-2025#19",
+        "EDJ-10K-2025#61",
+        "EDJ-10K-2025#268",
+        "EDJ-10K-2025#58"
+      ],
+      "patterns": [
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#21",
+            "EDJ-10K-2025#42",
+            "EDJ-10K-2025#71",
+            "EDJ-10K-2025#41",
+            "EDJ-10K-2025#19",
+            "EDJ-10K-2025#61",
+            "EDJ-10K-2025#268",
+            "EDJ-10K-2025#58"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 1,
+      "coverage": 0.333,
+      "forbidden": [],
+      "doc_recall": 0.167,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q2#67",
+              "EDJ-10Q-2025Q3#68",
+              "EDJ-10Q-2025Q3#70"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10Q-2025Q2#66",
+              "EDJ-10Q-2025Q3#69"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#38",
+              "BAC-TR-2026Q1#48"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#130",
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 4,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "EDJ-10Q-2025Q2",
+          "EDJ-10Q-2025Q3",
+          "BAC-TR-2026Q2",
+          "BAC-TR-2026Q1",
+          "EDJ-10K-2025",
+          "EDJ-10Q-2026Q2"
+        ],
+        "docs": 6,
+        "docs_found": 1,
+        "doc_recall": 0.167,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q29",
+      "text": "What does Morgan Stanley pay its financial advisors?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10Q-2025Q2#51",
+        "MS-10Q-2025Q3#51",
+        "MS-10K-2025#462",
+        "MS-10Q-2025Q3#19",
+        "MS-10K-2025#781",
+        "MS-10Q-2025Q2#75",
+        "MS-10Q-2026Q1#213",
+        "MS-10Q-2026Q2#236"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K#Wealth Management",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "MS-10K-2025#462",
+            "MS-10K-2025#781"
+          ]
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 0,
+      "coverage": 0.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-10K-2025#153"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#128",
+              "MS-10K-2025#170"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 2,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "MS-10K-2025"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "Q30",
+      "text": "What is Merrill's standalone profitability?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [],
+      "patterns": [
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 0,
+      "coverage": 0.0,
+      "forbidden": [],
+      "doc_recall": 0.0,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#245",
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 2,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "BAC-PR-2026-01-14-01",
+          "BAC-10K-2025"
+        ],
+        "docs": 2,
+        "docs_found": 0,
+        "doc_recall": 0.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "FAIL"
+    }
+  ]
+}
