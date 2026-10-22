@@ -92,7 +92,9 @@ def inject_css() -> None:
 
 
 def _html(s: str) -> None:
-    st.markdown(s, unsafe_allow_html=True)
+    # One raw-HTML line: a blank line in stored text would end the HTML block and let Markdown
+    # parse the rest ("$407 million to $4.7 billion" became LaTeX, #99). Entities keep the text.
+    st.markdown(s.replace("$", "&#36;").replace("\n", "&#10;"), unsafe_allow_html=True)
 
 
 def tier_badge_html(tier: int | None) -> str:
