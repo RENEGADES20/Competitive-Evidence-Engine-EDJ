@@ -16,6 +16,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | 10-K and four 10-Qs for all five filers stored (24 rows, 11,977 chunks loaded) (#69) | Q30 needs #37 GWIM tags; BAC/MS/SCHW sections not split (chunk.py Item regex) | #44 snapshot with the new corpus; #37; #45 |
 | 2026-10-16 | C1: BAC, SCHW and MS 10-K/10-Q chunks now split into Item sections (MS via its cross-reference table of contents); EDJ/RJF chunk IDs unchanged (#70) (#71) | Blockers: none | Next: GWIM segment tagging inside BAC Item 7 / 10-Q Item 2 (#37) |
 | 2026-10-18 | 8 quarterly supplements (BAC, MS Q1-Q3 2026; RJF two quarters) stored with page numbers; PDF tables and picture-nested slide text now kept (pdf.py) (#77) | SCHW supplement/monthly missing; Q23 ranks only BAC supplements (#59); docling adds ~4-7 min per PDF to rebuilds | #46 metric definitions from these supplements; snapshot rebuild |
+| 2026-10-22 | C1 #37: BAC GWIM segment tags from config (10-K/10-Q MD&A, decks, supplements; 0/20 wrong; mixed chunks untagged) (#96) | none | PR/TR tagging (#95); Q30 retrieval recall (S1) |
 
 ### C2
 
