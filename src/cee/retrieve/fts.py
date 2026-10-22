@@ -2,12 +2,15 @@
 
 Skeleton placeholder, owner: S1 (Yi-chen Wu).
 Synonyms and peer sets ("the five") come from config/entities.yaml (#89).
-Not yet here (S1, W3+): themes, time windows, quotas, dedupe.
+Time windows ("last 90 days", "since the start of the year") are filtered in SQL (#49).
+Not yet here (S1, W3+): themes, quotas, dedupe.
 """
 from __future__ import annotations
 
+import calendar
 import re
 from dataclasses import dataclass, field
+from datetime import date, timedelta
 
 from cee.config import entities_config
 from cee.db import connect
@@ -19,6 +22,7 @@ class Query:
     entities: list[str] = field(default_factory=list)   # covered firms named in the question
     unmapped: list[str] = field(default_factory=list)   # known firms we hold no documents for
     mode: str = "entity"
+    window: tuple[date, date] | None = None              # published_at from..to, both inclusive
 
     @property
     def firms(self) -> list[str]:
@@ -68,18 +72,41 @@ def _peer_members(question: str) -> set[str]:
             for m in s["members"]}
 
 
-def resolve(question: str) -> Query:
+_LAST_N = re.compile(r"\b(?:last|past)\s+(\d+)\s+(day|week|month)s?\b", re.IGNORECASE)
+_START_OF_YEAR = [re.compile(r"\bsince\s+the\s+(?:start|beginning)\s+of\s+the\s+year\b", re.IGNORECASE),
+                  re.compile(r"\byear[\s-]to[\s-]date\b", re.IGNORECASE),
+                  re.compile(r"\bYTD\b")]   # "start of the year" = calendar year (specs/retrieval.md)
+
+
+def _months_back(d: date, n: int) -> date:
+    y, m = divmod(d.year * 12 + d.month - 1 - n, 12)
+    return date(y, m + 1, min(d.day, calendar.monthrange(y, m + 1)[1]))
+
+
+def _window(question: str, today: date) -> tuple[date, date] | None:
+    if m := _LAST_N.search(question):
+        n, unit = int(m.group(1)), m.group(2).lower()
+        start = _months_back(today, n) if unit == "month" else today - timedelta(days=n * (7 if unit == "week" else 1))
+        return start, today
+    if any(p.search(question) for p in _START_OF_YEAR):
+        return date(today.year, 1, 1), today
+    return None
+
+
+def resolve(question: str, today: date | None = None) -> Query:
     cfg = entities_config()
     q = Query(question=question)
     peers = _peer_members(question)
     q.entities = [e["id"] for e in cfg["entities"] if e["id"] in peers or _mentions(question, e)]
     q.unmapped = [e["id"] for e in cfg.get("expansion", []) if _mentions(question, e)]
     q.mode = "entity" if q.entities else "theme"
+    q.window = _window(question, today or date.today())
     return q
 
 
 def _search_terms(q: Query) -> str:
-    """Question minus firm names and peer phrases, as an OR query (ranking does the rest)."""
+    """Question minus firm names, peer phrases and time phrases, as an OR query (ranking does
+    the rest)."""
     text = q.question
     cfg = entities_config()
     for e in cfg["entities"] + cfg.get("expansion", []):
@@ -87,6 +114,8 @@ def _search_terms(q: Query) -> str:
             text = _alias_pattern(a).sub(" ", text)
     for p in _peer_phrases():
         text = _phrase_pattern(p).sub(" ", text)
+    for p in [_LAST_N, *_START_OF_YEAR]:
+        text = p.sub(" ", text)
     return re.sub(r"['’]s\b", "", text)
 
 
@@ -132,6 +161,7 @@ SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
 FROM chunks c JOIN documents d USING (doc_id), q
 WHERE c.tsv @@ q.tsq
   AND {entity_filter}
+  AND {window_filter}
 ORDER BY rank DESC, c.chunk_id
 LIMIT %(k)s
 """
@@ -156,13 +186,25 @@ def entity_filter(entity_ids: list[str]) -> tuple[str, dict]:
     return "(" + " OR ".join(clauses) + ")", params
 
 
+def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
+    """Hard filter. Inside a window only documents dated by the source count: a page dated
+    by its download (date_basis = 'retrieved', ADR-007 T-09) is never "recent"."""
+    if window is None:
+        return "TRUE", {}
+    return ("(d.date_basis = 'source' AND d.published_at BETWEEN %(w_from)s AND %(w_to)s)",
+            {"w_from": window[0], "w_to": window[1]})
+
+
 def search(q: Query, k: int = 8) -> list[Hit]:
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     where, params = entity_filter(q.entities)
+    when, window_params = window_filter(q.window)
     terms = _search_terms(q)
     fragments, syn_params = _tsquery_sql(terms)
+    params.update(window_params)
     params.update(syn_params, terms=terms, k=k)
     with connect() as conn:
-        rows = conn.execute(SQL.format(**fragments, entity_filter=where), params).fetchall()
+        rows = conn.execute(SQL.format(**fragments, entity_filter=where, window_filter=when),
+                            params).fetchall()
     return [Hit(**r) for r in rows]
