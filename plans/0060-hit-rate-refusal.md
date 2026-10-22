@@ -41,10 +41,11 @@ for the current snapshot is committed under `evals/` so later tuning PRs compare
 - A refusal FAIL makes the question's status FAIL (expected_results.md: one trap chunk = fail).
 
 ## Acceptance
-- [ ] Recall per tier-1 question and overall (five #87 questions now; the rest "n/a until #56")
-- [ ] Refusal accuracy for Q24, Q25, Q28, Q29, Q30 (and Q1, Q4, Q11, Q22, Q26)
-- [ ] Baseline report for corpus-2026-10-18 in `evals/baselines/`
-- [ ] `pytest -q` passes; mock only, 0 real calls; no `src/` change (verify-cee not needed)
+- [x] Recall per tier-1 question and overall (9 of 18 tier-1 questions have a key; the other 9
+      show "n/a until #56" and are scored from `expected_doc_ids` once #56 lands - still open)
+- [x] Refusal accuracy for Q24, Q25, Q28, Q29, Q30 (and Q1, Q4, Q11, Q22, Q26)
+- [x] Baseline report for corpus-2026-10-18 in `evals/baselines/`
+- [x] `pytest -q` passes (155); mock only, 0 real calls; no `src/` change (verify-cee not needed)
 
 ## Progress log
 - 2026-10-22 18:38 - plan written; branch s1/60-hit-rate-refusal created from main (783c83f)
