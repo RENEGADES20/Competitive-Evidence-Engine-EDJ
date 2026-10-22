@@ -77,6 +77,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-20 | verify-cee waits for the finished page (answer meta line, source page text) instead of network idle; 5 of 5 runs PASS on the 68-document corpus (#91) | none | merge #90 (eval runner), then Gate 2 (#54) |
 | 2026-10-20 | Eval runner: per-question pattern hits, coverage, forbidden hits and status for all 30 questions, baseline compare, capped and cached real-model mode; corpus-2026-10-18 mock: PASS 7, FAIL 21, N/E 2 (#90) | verify-cee flaky on the 68-document corpus (#83) | #60 hit-rate report, #54 Gate 2, #15 weekly X/30 |
 | 2026-10-22 | Stored text shown literally in the app: dollar amounts no longer render as LaTeX, Markdown no longer parses passages (#99) (#100) | none | none |
+| 2026-10-22 | README: demo GIF, source and gap screenshots, Mermaid architecture diagram, Merrill/GWIM example, status to W5 (#97) (#98) | none | none |
 
 ## Weekly score (from W6)
 
