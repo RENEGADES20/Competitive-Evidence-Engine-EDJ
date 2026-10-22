@@ -128,14 +128,74 @@ def pack_paragraphs(body: str, max_chars: int = MAX_CHARS) -> list[str]:
     return out
 
 
+class SegmentTagger:
+    """segment_for for chunk_sections (#37). A segment starts at a line that is only one of its
+    aliases and ends at a line that is only a stop heading (another segment's name), another
+    alias, or at the next section. Names come from config/entities.yaml, never from code.
+
+    Call once per chunk, in order. A chunk takes the segment in force at its first line, so a
+    chunk that ends with a heading still belongs to the segment before it.
+
+    Pass the document's sections to skip section titles on pages that carry titles of two or
+    more segments: a slide with one column per segment, where the parser hangs one column's
+    heading over another column's text (BAC-DECK-2026Q1 p19). Untagged beats mis-tagged."""
+
+    def __init__(self, segment_aliases: dict[str, list[str]], segment_stops: list[str] = (),
+                 sections: list[tuple[str, str, int | None]] = ()):
+        self.headings = {_heading_key(a): seg
+                         for seg, names in (segment_aliases or {}).items() for a in names}
+        for stop in segment_stops or ():
+            self.headings.setdefault(_heading_key(stop), None)
+        titles: dict[int, set[str]] = {}
+        for section, _, page in sections:
+            name = self._section_heading(section)
+            if page is not None and name is not None:
+                titles.setdefault(page, set()).add(name)
+        self.mixed_pages = {page for page, names in titles.items() if len(names) > 1}
+        self.section = None
+        self.current = None
+
+    def __call__(self, section: str, text: str, page: int | None = None) -> str | None:
+        if (section, page) != self.section:
+            # Deck slides and supplement tables are their own sections: the title is the heading
+            # ("Global Wealth & Investment Management Key Indicators").
+            name = None if page in self.mixed_pages else self._section_heading(section)
+            self.section, self.current = (section, page), self.headings.get(name)
+        lines = [l for l in text.splitlines() if l.strip()]
+        tag, mixed = None, False
+        for i, line in enumerate(lines):
+            key = _heading_key(line)
+            if key in self.headings:
+                # A heading of another segment with text after it inside this chunk: the chunk
+                # holds two segments (BAC-10K-2025 segment note, GWIM then Global Banking).
+                if i > 0 and i < len(lines) - 1 and self.headings[key] != tag:
+                    mixed = True
+                self.current = self.headings[key]
+            if i == 0:
+                tag = self.current
+        return None if mixed else tag
+
+    def _section_heading(self, section: str) -> str | None:
+        """The alias or stop heading a section title starts with, longest first."""
+        key = _heading_key(section)
+        for name in sorted(self.headings, key=len, reverse=True):
+            if key == name or key.startswith(name + " "):
+                return name
+        return None
+
+
+def _heading_key(line: str) -> str:
+    return " ".join(line.split()).casefold()
+
+
 def chunk_sections(doc_id: str, entity_id: str, doc_type: str, period: str,
                    sections: list[tuple[str, str, int | None]],
-                   segment_for=lambda section, text: None) -> list[Chunk]:
+                   segment_for=lambda section, text, page=None: None) -> list[Chunk]:
     """sections: [(section, text, page)]. Page is None for HTML."""
     chunks: list[Chunk] = []
     for section, body, page in sections:
         for piece in pack_paragraphs(body):
-            seg = segment_for(section, piece)
+            seg = segment_for(section, piece, page)
             n = len(chunks)
             chunks.append(Chunk(
                 chunk_id=f"{doc_id}#{n}", seq=n, section=section, segment=seg, page=page,
