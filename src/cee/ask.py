@@ -30,7 +30,7 @@ Progress = Callable[[str, str, str], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
 
-STAGES = ("resolve", "search", "model", "check", "caveats")
+STAGES = ("resolve", "search", "model", "check", "caveats", "log")
 
 
 class _Trace:
@@ -71,7 +71,9 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     answer, _raw = answer_for(question, query, hits, provider, trace=t)
     result = Result(query, hits, answer)
     if log:
-        result.query_id = _log(result, provider)
+        with t.stage("log", "Saving the query"):
+            result.query_id = _log(result, provider)
+        t.report("log", "done", f"Saving the query: query #{result.query_id}")
     return result
 
 
@@ -106,7 +108,7 @@ def _check_text(a: Answer, hits: list[Hit]) -> str:
     cited = [c for claim in [*a.claims, *a.adjacent] for c in claim.chunk_ids]
     matched = sum(c in ids for c in cited)
     flagged = sum(bool(claim.flags) for claim in [*a.claims, *a.adjacent])
-    return f"Checking citations: {matched} matched, {flagged} flagged"
+    return f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
 
 
 def _caveats_text(a: Answer) -> str:

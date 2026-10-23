@@ -321,7 +321,7 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Look above the answer", "a collapsed 'How this answer was built' box",
              status.count() > 0 and hidden, f"box={status.count() > 0}, trace hidden={hidden}")
     lines = open_trace(page)
-    rec.step("Open the trace", "five step lines", len(lines) == 5, " / ".join(lines)[:300])
+    rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
     body = page.locator("body").inner_text()
     n_meta = re.search(r"(\d+) chunks retrieved", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))

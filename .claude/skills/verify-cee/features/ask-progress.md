@@ -2,7 +2,7 @@
 
 From the moment "Ask" is clicked, a progress bar and one line per pipeline stage show what
 the system is doing (reading the question, searching, asking the model or skipping it,
-checking citations, caveats and gaps). Each line states the stage's real output. Once the
+checking citations, caveats and gaps, saving the query). Each line states the stage's real output. Once the
 answer shows, the trace stays on the page, collapsed under "How this answer was built".
 
 ## Sub-features
@@ -26,8 +26,8 @@ Preconditions: baseline.
 - **Early.** Ask the answerable question. As soon as "Asking the model" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).
-- **Collapsed.** A status box labelled "How this answer was built: 5 steps ..." is present
-  and the trace lines are hidden; click the label and the five lines show.
+- **Collapsed.** A status box labelled "How this answer was built: 6 steps ..." is present
+  and the trace lines are hidden; click the label and the six lines show.
 - **Facts.** "Searching the corpus: N passages" equals "N chunks retrieved" in the meta line;
   the model line contains "(mock, one call)"; a "Checking citations: ... matched" line exists.
 - **Skip.** Ask the no-evidence question, open the trace: "No passages found: no model call",

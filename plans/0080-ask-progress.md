@@ -38,3 +38,4 @@ in, not by a screenshot caught mid-run.
 - 2026-10-22 - plan written
 - 2026-10-22 - callback + tests; trace on the Ask page; AppTest covers the failed-stage path
 - 2026-10-22 - verify: a fast mock merges "show bar" and "remove bar" into one Streamlit update, so the bar never drew. Added MOCK_DELAY_S (default 0, verify app 1.5 s) to catch the page mid-run; ask-progress PASS 3 of 3
+- 2026-10-22 - review: saving the query is its own step (a failed INSERT is marked, not just "A step failed"); citation line says "N citations matched, M claims flagged". verify-cee all PASS
