@@ -4,6 +4,8 @@ Skeleton placeholder, owner: TL (Yueyang Du).
 """
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 
 from psycopg.types.json import Jsonb
@@ -24,26 +26,93 @@ class Result:
     query_id: int | None = None
 
 
-def ask(question: str, provider: str | None = None, log: bool = True) -> Result:
+Progress = Callable[[str, str, str], None]
+"""progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
+"running", "done", "skipped" or "failed"; text says what the stage really did."""
+
+STAGES = ("resolve", "search", "model", "check", "caveats", "log")
+
+
+class _Trace:
+    def __init__(self, progress: Progress | None):
+        self.report = progress or (lambda stage, state, text: None)
+
+    @contextmanager
+    def stage(self, stage: str, running: str) -> Iterator[None]:
+        """Report the stage as running; if it raises, report it failed with the error, re-raise."""
+        self.report(stage, "running", running)
+        try:
+            yield
+        except Exception as e:
+            self.report(stage, "failed", f"{running}: failed ({type(e).__name__}: {e})")
+            raise
+
+
+def _n(n: int, word: str) -> str:
+    return f"{n} {word}" + ("" if n == 1 else "s")
+
+
+def describe_query(q: Query) -> str:
+    firms = ", ".join([*q.entities, *(f"{f} (no documents)" for f in q.unmapped)]) or "none named"
+    return f"firms {firms}; mode {q.mode}"
+
+
+def ask(question: str, provider: str | None = None, log: bool = True,
+        progress: Progress | None = None) -> Result:
     provider = provider or settings().llm_provider
-    query = resolve(question)
-    hits = search(query)
-    answer, _raw = answer_for(question, query, hits, provider)
+    t = _Trace(progress)
+    with t.stage("resolve", "Reading the question"):
+        query = resolve(question)
+    t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
+    with t.stage("search", "Searching the corpus"):
+        hits = search(query)
+    docs = len({h.doc_id for h in hits})
+    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}")
+    answer, _raw = answer_for(question, query, hits, provider, trace=t)
     result = Result(query, hits, answer)
     if log:
-        result.query_id = _log(result, provider)
+        with t.stage("log", "Saving the query"):
+            result.query_id = _log(result, provider)
+        t.report("log", "done", f"Saving the query: query #{result.query_id}")
     return result
 
 
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
-               raw: Answer | None = None) -> tuple[Answer, Answer | None]:
+               raw: Answer | None = None, trace: _Trace | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
     Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43)."""
+    t = trace or _Trace(None)
     if not hits:
-        return empty_retrieval_answer(query), None
+        t.report("model", "skipped", "No passages found: no model call")
+        t.report("check", "skipped", "Checking citations: nothing to check")
+        with t.stage("caveats", "Adding caveats and gaps"):
+            answer = empty_retrieval_answer(query)
+        t.report("caveats", "done", _caveats_text(answer))
+        return answer, None
     if raw is None:
-        raw = generate(question, hits, provider)
-    return check_citations(raw.model_copy(deep=True), hits), raw
+        with t.stage("model", f"Asking the model ({provider}, one call)"):
+            raw = generate(question, hits, provider)
+        t.report("model", "done", f"Asking the model ({provider}, one call): "
+                                  f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
+    else:
+        t.report("model", "skipped", "Reusing the saved model output: no model call")
+    with t.stage("check", "Checking citations"):
+        answer = check_citations(raw.model_copy(deep=True), hits)
+    t.report("check", "done", _check_text(answer, hits))
+    t.report("caveats", "done", _caveats_text(answer))
+    return answer, raw
+
+
+def _check_text(a: Answer, hits: list[Hit]) -> str:
+    ids = {h.chunk_id for h in hits}
+    cited = [c for claim in [*a.claims, *a.adjacent] for c in claim.chunk_ids]
+    matched = sum(c in ids for c in cited)
+    flagged = sum(bool(claim.flags) for claim in [*a.claims, *a.adjacent])
+    return f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
+
+
+def _caveats_text(a: Answer) -> str:
+    return f"Adding caveats and gaps: {_n(len(a.caveats), 'caveat')}, {_n(len(a.gaps), 'gap')}"
 
 
 def model_name(provider: str) -> str:

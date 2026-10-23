@@ -6,6 +6,7 @@ mock is offline and free: it cites the top hits verbatim. Use it for development
 from __future__ import annotations
 
 import json
+import time
 
 from cee.answer.prompt import SYSTEM_PROMPT
 from cee.answer.schema import Answer, llm_output_schema
@@ -37,6 +38,7 @@ def generate(question: str, hits: list[Hit], provider: str | None = None) -> Ans
 
 
 def _mock(hits: list[Hit]) -> Answer:
+    time.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80)
     claims = [{"text": " ".join(h.text.split())[:300], "chunk_ids": [h.chunk_id]} for h in hits[:3]]
     return Answer(answerable=True, behavior="answer", claims=claims, llm_called=False)
 
