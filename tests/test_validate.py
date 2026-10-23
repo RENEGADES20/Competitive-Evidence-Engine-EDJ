@@ -80,3 +80,30 @@ def test_core_firms_resolve_unchanged():
 def test_merrill_resolves_to_mer_not_bac():
     q = resolve("How is Merrill recruiting advisors?")
     assert q.entities == ["MER"]
+
+
+def gwim_hit(chunk_id="BAC-10K-2025#244", segment="GWIM"):
+    return Hit(chunk_id=chunk_id, doc_id="BAC-10K-2025", entity_id="BAC", segment=segment,
+               doc_type="10-K", source_tier=2, published_at="2026-02-25",
+               period_end="2025-12-31", section="Item 7", page=None, rank=1.0, text="x")
+
+
+def test_merrill_answer_citing_gwim_gets_the_caveat_from_config():
+    # Q30: the caveat is code-owned, whatever the prompt says.
+    from cee.answer.validate import insert_caveats
+
+    a = Answer(answerable=False, behavior="gap_with_adjacent",
+               adjacent=[{"text": "GWIM pretax income ...", "chunk_ids": ["BAC-10K-2025#244"],
+                          "differs_because": "x"}])
+    out = insert_caveats(a, resolve("What is Merrill's standalone profitability?"), [gwim_hit()])
+    mer = next(e for e in entities_config()["entities"] if e["id"] == "MER")
+    assert out.caveats == [mer["caveat"]]
+
+
+def test_no_caveat_when_nothing_substitute_is_cited():
+    from cee.answer.validate import insert_caveats
+
+    a = Answer(answerable=True, behavior="answer", claims=[{"text": "t", "chunk_ids": ["EDJ-10K-2025#1"]}])
+    assert insert_caveats(a, resolve("What is Merrill's standalone profitability?"), [hit()]).caveats == []
+    b = Answer(answerable=True, behavior="answer", claims=[{"text": "t", "chunk_ids": ["BAC-10K-2025#244"]}])
+    assert insert_caveats(b, resolve("What is Bank of America's net income?"), [gwim_hit()]).caveats == []
