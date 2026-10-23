@@ -1,10 +1,12 @@
 """Ask page: question box, answer with citation chips, caveats and gaps (always visible)."""
 from __future__ import annotations
 
+import time
+
 import streamlit as st
 
 from cee.app import components as ui
-from cee.ask import ask
+from cee.ask import STAGES, Result, ask
 from cee.config import settings
 
 BEHAVIOR_TEXT = {
@@ -32,6 +34,35 @@ def _ticker() -> None:
                "Every claim cites a stored document", "No evidence is a valid answer"])
 
 
+def ask_with_trace(question: str) -> Result | None:
+    """Progress bar + one line per stage while the answer is built (#80). The trace stays on the
+    page, collapsed, once the answer is ready; a failed stage is marked and its error shown."""
+    bar = st.progress(0.0, text="Reading the question")
+    box = st.status("Building the answer", expanded=True)
+    slot = box.empty()
+    steps: dict[str, tuple[str, str]] = {}
+
+    def progress(stage: str, state: str, text: str) -> None:
+        steps[stage] = (state, text)
+        finished = sum(s != "running" for s, _ in steps.values())
+        bar.progress(finished / len(STAGES), text=text)
+        ui.trace_lines(list(steps.values()), slot)
+
+    start = time.perf_counter()
+    try:
+        r = ask(question, progress=progress)
+    except Exception as e:
+        bar.empty()
+        failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
+        box.update(label=failed, state="error", expanded=True)
+        st.error(f"The answer could not be built. {type(e).__name__}: {e}")
+        return None
+    bar.empty()
+    box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
+               state="complete", expanded=False)
+    return r
+
+
 def render() -> None:
     _ticker()
     left, right = st.columns([3, 2], gap="large")
@@ -50,7 +81,9 @@ def render() -> None:
     if not asked or not question.strip():
         ui.empty_state("No question asked yet. Answers appear here, with a citation for every claim.")
         return
-    r = ask(question)
+    r = ask_with_trace(question)
+    if r is None:
+        return
     a = r.answer
     tiers = {h.chunk_id: h.source_tier for h in r.hits}
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
