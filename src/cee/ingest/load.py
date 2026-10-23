@@ -97,7 +97,9 @@ def parse_file(row: dict, path: Path, use_cache: bool = True) -> list[tuple[str,
 def load_document(conn, row: dict, path: Path, use_cache: bool = True) -> int:
     sections = parse_file(row, path, use_cache)
     entity = entity_by_id(row["entity_id"]) or {}
-    tagger = SegmentTagger(entity.get("segment_aliases"), entity.get("segment_stops"), sections)
+    tagger = SegmentTagger(entity.get("segment_aliases"), entity.get("segment_stops"), sections,
+                           entity.get("segment_mentions"), entity.get("mention_stops"),
+                           entity.get("mention_excludes"), entity.get("mention_signals"))
     chunks = chunk_sections(row["doc_id"], row["entity_id"] or "", row["doc_type"],
                             row["period_end"] or row["published_at"], sections,
                             segment_for=tagger)

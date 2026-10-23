@@ -138,14 +138,29 @@ class SegmentTagger:
 
     Pass the document's sections to skip section titles on pages that carry titles of two or
     more segments: a slide with one column per segment, where the parser hangs one column's
-    heading over another column's text (BAC-DECK-2026Q1 p19). Untagged beats mis-tagged."""
+    heading over another column's text (BAC-DECK-2026Q1 p19). Untagged beats mis-tagged.
+
+    Flat documents (one "Document" section: transcripts, press releases) have no headings, so
+    there a chunk is tagged by mentions instead: it names one segment (`segment_mentions`, e.g.
+    "Merrill") and that segment's words (mentions plus `mention_signals`, e.g. "advisers") occur
+    at least twice as often as other businesses' words (`mention_stops`). BAC-TR-2026Q3 #13
+    ("Merrill added about 4,200 net new households") is GWIM; BAC-TR-2026Q2 #13, mostly about
+    consumer banking with one GWIM sentence at the end, stays untagged."""
 
     def __init__(self, segment_aliases: dict[str, list[str]], segment_stops: list[str] = (),
-                 sections: list[tuple[str, str, int | None]] = ()):
+                 sections: list[tuple[str, str, int | None]] = (),
+                 segment_mentions: dict[str, list[str]] | None = None, mention_stops: list[str] = (),
+                 mention_excludes: list[str] = (), mention_signals: dict[str, list[str]] | None = None):
         self.headings = {_heading_key(a): seg
                          for seg, names in (segment_aliases or {}).items() for a in names}
         for stop in segment_stops or ():
             self.headings.setdefault(_heading_key(stop), None)
+        self.mentions = {seg: [_mention_pattern(m) for m in names]
+                         for seg, names in (segment_mentions or {}).items()}
+        self.signals = {seg: [_mention_pattern(m) for m in names]
+                        for seg, names in (mention_signals or {}).items()}
+        self.mention_stops = [_mention_pattern(s) for s in mention_stops or ()]
+        self.mention_excludes = [_mention_pattern(s) for s in mention_excludes or ()]
         titles: dict[int, set[str]] = {}
         for section, _, page in sections:
             name = self._section_heading(section)
@@ -173,7 +188,21 @@ class SegmentTagger:
                 self.current = self.headings[key]
             if i == 0:
                 tag = self.current
-        return None if mixed else tag
+        if mixed:
+            return None
+        if tag is None and section == FLAT_SECTION:
+            return self._mentioned(text)
+        return tag
+
+    def _mentioned(self, text: str) -> str | None:
+        for pattern in self.mention_excludes:   # "Merrill Edge" is Consumer Banking, not GWIM
+            text = pattern.sub(" ", text)
+        found = {seg for seg, patterns in self.mentions.items() if any(p.search(text) for p in patterns)}
+        if len(found) != 1:
+            return None
+        seg = found.pop()
+        own = _count([*self.mentions[seg], *self.signals.get(seg, [])], text)
+        return seg if own >= 2 * _count(self.mention_stops, text) else None
 
     def _section_heading(self, section: str) -> str | None:
         """The alias or stop heading a section title starts with, longest first."""
@@ -186,6 +215,18 @@ class SegmentTagger:
 
 def _heading_key(line: str) -> str:
     return " ".join(line.split()).casefold()
+
+
+FLAT_SECTION = "Document"  # load.parse_file: transcripts, press releases and other unsplit text
+
+
+def _mention_pattern(phrase: str) -> re.Pattern:
+    words = r"\s+".join(re.escape(w) for w in phrase.split())
+    return re.compile(rf"(?<![\w]){words}(?![\w])", re.IGNORECASE)
+
+
+def _count(patterns: list[re.Pattern], text: str) -> int:
+    return sum(len(p.findall(text)) for p in patterns)
 
 
 def chunk_sections(doc_id: str, entity_id: str, doc_type: str, period: str,
