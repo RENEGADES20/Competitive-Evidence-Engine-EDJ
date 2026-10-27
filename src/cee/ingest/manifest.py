@@ -11,7 +11,8 @@ from pathlib import Path
 from cee.config import MANIFEST_PATH, resolve_path
 
 FIELDS = ["doc_id", "entity_id", "doc_type", "source_tier", "published_at", "date_basis",
-          "period_end", "url", "storage_path", "sha256", "added_by", "added_at"]
+          "period_end", "url", "storage_path", "sha256", "added_by", "added_at",
+          "publisher"]  # publisher: tier 5 research (#81); empty for firm documents
 
 # ADR-007 T-09: where published_at came from. "retrieved" = an undated page dated by its download;
 # such documents stay out of recency windows (#49).

@@ -1330,7 +1330,7 @@ Rows: `T4-FACTIVA`, `T4-NEXISUNI`, `T4-NEWSBANK`, `T4-PROQUEST`
 
 Owner: C3 (Jieyu Hu). Issue #5; ExecPlan [plans/0005-thematic-matrix.md](../plans/0005-thematic-matrix.md); spec [specs/thematic.md](../specs/thematic.md). Researched 2026-10-20 from the live sites and search results. **Nothing has been ingested**; ingestion is #81.
 
-39 rows (`T5-*`): 22 research, 12 survey, 5 regulatory. Access: 32 free, 3 free-registration, 1 metered, 1 paywall (Cerulli reports), 2 licensed (Goldman and BofA client research).
+41 rows (`T5-*`; 39 from #5, plus `T5-GSAM-SURVEYS` and `T5-CERULLI-PRESS` from #81): 23 research, 13 survey, 5 regulatory. Access: 34 free, 3 free-registration, 1 metered, 1 paywall (Cerulli reports), 2 licensed (Goldman and BofA client research).
 
 How the tier 5 rows differ from tiers 3-4:
 
