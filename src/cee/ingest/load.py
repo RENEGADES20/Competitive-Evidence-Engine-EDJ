@@ -15,6 +15,7 @@ from cee.db import connect
 from cee.ingest import parse_cache
 from cee.ingest.chunk import SegmentTagger, chunk_sections, split_10k_sections
 from cee.ingest.manifest import check_files, date_basis_of, read_manifest
+from cee.ingest.topics import seed_topics, tag_document
 
 
 def ensure_schema(conn) -> None:
@@ -80,6 +81,10 @@ def html_text(path: Path, use_cache: bool = True) -> str:
 
 def parse_file(row: dict, path: Path, use_cache: bool = True) -> list[tuple[str, str, int | None]]:
     suffix = path.suffix.lower()
+    if suffix in (".htm", ".html") and row["doc_type"] == "research":
+        from cee.ingest.webpage import article_text  # web pages: article body only (C3, #81)
+
+        return [("Document", article_text(path), None)]
     if suffix in (".htm", ".html"):
         text = html_text(path, use_cache)
         if row["doc_type"] in ("10-K", "10-Q"):
@@ -129,9 +134,13 @@ def load_all(only: str | None = None, use_cache: bool = True) -> dict[str, int]:
     with connect() as conn:
         ensure_schema(conn)
         seed_entities(conn)
+        seed_topics(conn)  # before tagging: chunk_topics.topic_id references topics (#81)
         print(f"source_registry: {seed_registry(conn)} rows")
         for row, path in resolved:
             counts[row["doc_id"]] = load_document(conn, row, path, use_cache)
+            if row["source_tier"] == "5":  # thematic research is indexed by topic (C3, #81)
+                n, fb = tag_document(conn, row["doc_id"])
+                print(f"  {row['doc_id']}: topics tagged on {n} chunks ({fb} by fallback)", flush=True)
     return counts
 
 
