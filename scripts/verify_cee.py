@@ -429,7 +429,10 @@ def feature_coverage(page, base, rec, ctx):
     n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at), max(published_at) FROM documents "
                                      "WHERE entity_id = 'EDJ' AND doc_type = '10-K'").split("|")
     n = int(n)
-    state = "EMPTY" if n == 0 else "THIN" if n <= 1 else "COVERED"
+    from cee.app.views.coverage_page import cell_state
+    cadence = psql(VERIFY_DB, "SELECT expected_cadence FROM source_registry "
+                              "WHERE entity_id = 'EDJ' AND doc_type = '10-K' LIMIT 1") or None
+    state = cell_state(n, cadence).upper()
     span = first if first == last else f"{first} to {last}"
     want = f"{state} " + ("0 docs" if n == 0 else f"{n} doc{'' if n == 1 else 's'} {span}")
     rec.step("Read back EDJ 10-K from the database", f"cell '{want}'", want in body,
