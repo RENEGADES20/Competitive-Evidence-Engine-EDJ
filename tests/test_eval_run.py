@@ -247,3 +247,16 @@ def test_answer_key_ids_are_in_the_manifest():
         ids = [i for row in key["must_return"] for i in row] + key["must_not_return"]
         missing = sorted({i.split("#")[0] for i in ids} - docs)
         assert not missing, f"{qid}: not in data/manifest.csv: {missing}"
+
+
+def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
+    # --as-of must end the window retrieval uses, not only the one scoring uses (Q26)
+    from cee.retrieve import fts
+
+    seen = []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
+    monkeypatch.setattr(fts, "search", lambda q, k: [])
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
+    assert seen == [dt.date(2026, 1, 15)]

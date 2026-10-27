@@ -438,7 +438,7 @@ def main(argv: list[str] | None = None) -> int:
 
     records = []
     for q in bank:
-        query = resolve(q["text"])
+        query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
         hits = search(query, k=args.k)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates)
         if real:

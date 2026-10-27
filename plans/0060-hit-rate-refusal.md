@@ -17,7 +17,7 @@ for the current snapshot is committed under `evals/` so later tuning PRs compare
   refusal check, `--as-of` for the Q26 window, report columns and summary; reads
   `expected_doc_ids` from questions.yaml when #56 adds it
 - tests/test_eval_run.py - fake hits, no DB or network
-- evals/baselines/corpus-2026-10-18/report.md + report.json - the baseline
+- evals/baselines/corpus-2026-10-22/report.md + report.json - the baseline
 
 ## Steps
 1. Tests first: recall maths, refusal rule, Q26 window.
@@ -44,7 +44,7 @@ for the current snapshot is committed under `evals/` so later tuning PRs compare
 - [x] Recall per tier-1 question and overall (9 of 18 tier-1 questions have a key; the other 9
       show "n/a until #56" and are scored from `expected_doc_ids` once #56 lands - still open)
 - [x] Refusal accuracy for Q24, Q25, Q28, Q29, Q30 (and Q1, Q4, Q11, Q22, Q26)
-- [x] Baseline report for corpus-2026-10-18 in `evals/baselines/`
+- [x] Baseline report for corpus-2026-10-22 in `evals/baselines/` (first cut on corpus-2026-10-18, see log)
 - [x] `pytest -q` passes (155); mock only, 0 real calls; no `src/` change (verify-cee not needed)
 
 ## Progress log
@@ -63,3 +63,11 @@ for the current snapshot is committed under `evals/` so later tuning PRs compare
   pytest 155 passed. Caveats: Q4/Q30 retrieve nothing (BAC untagged in this snapshot), so
   their refusal "ok" is trivial; document recall is generous for large 10-Ks (Q29 1/1 docs,
   0/2 passages) - read it with passage recall.
+- 2026-10-27 16:48 - TL: merged main (#101 windows, #106 retrieval). Fixed: `main()` resolved
+  questions with today's date while scoring used `--as-of`, so retrieval and scoring windows
+  could differ; `resolve(..., today=args.as_of)` + test. Q4/Q28 answer key: BAC-TR-2026Q1#48 and
+  BAC-TR-2026Q2#38 annotated as untagged on purpose (#95), waiting on #107. Baseline moved to
+  corpus-2026-10-22 (mock, k=20, as of 2026-10-27): PASS 25, FAIL 3 (Q15, Q19, Q29),
+  NOT_EVALUATED 2; tier-1 recall documents 0.809, passages 0.347; refusal accuracy gap 4/5,
+  all keyed 9/10. Q29 refusal FAIL: MS-10K-2025#696 (must-not) now retrieved at k=20, an S1
+  tuning item. Re-run against the baseline: 30 UNCHANGED. pytest 197 passed. 0 real calls.
