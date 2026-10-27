@@ -7,11 +7,12 @@ document, section, tier and filing date.
 
 - `cite-open`: the link opens the source page for that chunk.
 - `cite-match`: the passage shown is the stored text of that chunk.
+- `cite-label`: each citation on the answer page shows its own source label and tier badge.
 - `cite-meta`: entity, document type, period, tier, section and chunk ID are shown.
 
 ## How to get to it (user POV)
 
-- Click any citation link under a claim (opens a new tab).
+- Click any citation link under a claim (each shows source label and tier) (opens a new tab).
 - Paste `?chunk=<chunk_id>` after the app address.
 
 ## Driving it

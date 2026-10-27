@@ -31,7 +31,9 @@ def render() -> None:
 
     _section("Claim card")
     ui.claim_card(1, "Sample Co. describes its advisor network in the annual report.",
-                  [(SAMPLE_ID, 2), ("SAMPLE-PRESS-2025#4", 4)], "Sample Co. 10-K 2025-12-31 [filing]", link=False)
+                  [(SAMPLE_ID, 2, "Sample Co. 10-K 2025-12-31, p.12 [filing]"),
+                   ("SAMPLE-PRESS-2025#4", 4, "Sample Co. trade 2025-11-03 [trade press (indicative only)]")],
+                  link=False)
     ui.claim_card(1, "Sample Co. reports a related segment, not the unit asked about.", [(SAMPLE_ID, 2)],
                   label="ADJACENT EVIDENCE", note="the segment includes a second business line", link=False)
 
