@@ -340,6 +340,72 @@ def feature_ask_progress(page, base, rec, ctx):
              "no model call" in model and "LLM called: False" in body, model)
 
 
+PDF_PAGE_SAMPLES = ["MS-SUPP-2026Q3#16", "SCHW-DECK-2026Q2#53"]  # a table page and a deck page (#53 comment)
+
+
+def check_context(rec, page, chunk_id: str) -> None:
+    """cite-context: the cited chunk is marked and its same-section neighbours are shown."""
+    row = psql(VERIFY_DB, "SELECT doc_id || '|' || seq || '|' || coalesce(section, '') FROM chunks "
+                          f"WHERE chunk_id = '{chunk_id}'")
+    doc_id, seq, section = row.split("|", 2)
+    quoted = "'" + section.replace("'", "''") + "'" if section else "NULL"
+    want = int(psql(VERIFY_DB, f"SELECT count(*) FROM chunks WHERE doc_id = '{doc_id}' AND seq <> {seq} "
+                               f"AND seq BETWEEN {int(seq) - 2} AND {int(seq) + 2} "
+                               f"AND section IS NOT DISTINCT FROM {quoted}"))
+    body = page.locator("body").inner_text()
+    cited = body.count("CITED PASSAGE")
+    neighbours = body.count("NEIGHBOURING PASSAGE")
+    rec.step("Check the passage is shown in context (cite-context)",
+             f"one CITED PASSAGE tag for {chunk_id} and {want} neighbouring passages from the same section",
+             cited == 1 and f"CITED PASSAGE · {chunk_id}" in body and neighbours == want,
+             f"{cited} cited, {neighbours} neighbouring (database: {want})")
+
+
+def words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) > 3}
+
+
+def check_pdf_pages(rec, page) -> None:
+    """cite-page: for PDF chunks the page shown is chunks.page, and that page holds the chunk's text."""
+    import pymupdf
+    from cee.config import FileNotAvailable, resolve_path
+    ids = list(PDF_PAGE_SAMPLES)
+    others = psql(VERIFY_DB, "SELECT c.chunk_id FROM chunks c JOIN documents d USING (doc_id) "
+                             "WHERE c.page IS NOT NULL AND d.doc_type IN ('deck', 'supplement') "
+                             "AND length(c.text) > 300 ORDER BY md5(c.chunk_id) LIMIT 6")
+    ids += [i for i in others.split() if i not in ids][: 5 - len(ids)]
+    checked = 0
+    for cid in ids:
+        row = psql(VERIFY_DB, "SELECT c.page || '|' || d.storage_path FROM chunks c JOIN documents d USING (doc_id) "
+                              f"WHERE c.chunk_id = '{cid}'")
+        if not row:
+            continue
+        n, storage = row.split("|", 1)
+        try:
+            path = resolve_path(storage)
+        except FileNotAvailable:
+            rec.unreachable(f"raw PDF for {cid} not available (precondition: CORPUS_SHARE_PATH or data/raw/)")
+            return
+        page.goto(page.url.split("?")[0] + "?chunk=" + quote(cid))
+        wait_for_text(page, ["Download stored document", "not found locally", "is not in the stored corpus"],
+                      "the source page")
+        body = page.locator("body").inner_text()
+        with pymupdf.open(path) as doc:
+            total = doc.page_count
+            on_page = words(doc[int(n) - 1].get_text("text"))
+        chunk_words = words(psql(VERIFY_DB, f"SELECT text FROM chunks WHERE chunk_id = '{cid}'"))
+        share = len(chunk_words & on_page) / max(len(chunk_words), 1)
+        shown = page.locator('[data-testid="stImage"] img').count()
+        ok = f"Page {n} of {total} of the stored PDF" in body and shown == 1 and share >= 0.8
+        rec.step(f"Check the PDF page for {cid} (cite-page)",
+                 f"page {n} of {total} is shown as an image, and the chunk's words are on that PDF page",
+                 ok, f"caption {'ok' if f'Page {n} of {total}' in body else 'missing'}, {shown} page image, "
+                     f"{share:.0%} of the chunk's words on page {n}")
+        checked += 1
+    if not checked:
+        rec.unreachable("no PDF chunks with a page number in the corpus")
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -368,6 +434,8 @@ def feature_open_citation(page, base, rec, ctx):
     match = bool(snippet) and snippet in " ".join(body.split())
     rec.step("Compare the source page passage with the database (read-back)", "the stored text",
              match, f"first 80 chars {'match' if match else 'differ'}")
+    check_context(rec, source, chunk_id)
+    check_pdf_pages(rec, source)
     source.close()
     rec.page = page
     ctx["chunk_id"] = chunk_id

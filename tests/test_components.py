@@ -25,3 +25,14 @@ def test_claim_caveat_and_gap_are_escaped_the_same_way(monkeypatch):
                  lambda: ui.gap_box("No $ data", "10-K at $0")):
         html = sent(monkeypatch, draw)
         assert "$" not in html and "\n" not in html
+
+
+def test_context_passages_mark_the_cited_chunk_and_escape_text(monkeypatch):
+    items = [{"chunk_id": "D#1", "text": "before $5", "page": None, "cited": False},
+             {"chunk_id": "D#2", "text": "<b>cited</b>\n\n# text", "page": 8, "cited": True}]
+    html = sent(monkeypatch, lambda: ui.context_passages(items))
+    assert html.count("CITED PASSAGE") == 1 and html.count("NEIGHBOURING PASSAGE") == 1
+    assert "CITED PASSAGE · D#2 · page 8" in html
+    assert 'class="cee-ctx cited"' in html and 'class="cee-ctx"' in html
+    assert "<b>cited</b>" not in html and "&lt;b&gt;cited" in html   # stored text is escaped
+    assert "$" not in html and "\n" not in html
