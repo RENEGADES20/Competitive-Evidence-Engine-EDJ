@@ -45,6 +45,7 @@ Radius 12px for cards, 8px buttons, pill (999px) for chips and badges.
 | Claim card | `claim_card` | white card, lime mono number `01`, chips, muted source label; adjacent claims add `ADJACENT EVIDENCE` and **Differs because:** |
 | Source page header | `source_header` | eyebrow `STORED SOURCE`, `h2` title, tier badge, mono meta line (`Section`, `Page`, `Chunk`, `Filed`) |
 | Coverage cell | `coverage_cell` | `COVERED` lime on ink; `THIN` orange on peach; `EMPTY` muted on white, dashed |
+| Coverage grid | `coverage_grid` | table, one row per firm and one column per document type the source registry expects; each cell is a coverage cell with count and earliest-to-latest date; types the registry does not expect read `not tracked`; thin = one document or fewer (`THIN_MAX`) |
 | Placeholder | `placeholder` | sunken, dashed `#A8A29E` border, `TITLE · Coming soon (#N)`, only disabled widgets, pointer events off |
 | Empty state | `empty_state` | dashed line border, centred muted sentence |
 | Footer | `footer` | top rule, mono muted: `SNAPSHOT corpus-YYYY-MM-DD` read from the database |
@@ -60,7 +61,7 @@ Tier badges:
 | 4 | `T4 · TRADE PRESS (INDICATIVE ONLY)` | `#9A3412` / `#FFEDD5` |
 | 5 | `T5 · RESEARCH` | `#6B21A8` / `#F3E8FF` |
 
-Placeholders now: sidebar filters (#63), feedback under an answer (#62), Coverage body (#41),
+Placeholders now: sidebar filters (#63), feedback under an answer (#62),
 passage in context on the source page (#53).
 
 ## Contrast (WCAG AA, 4.5:1 minimum)

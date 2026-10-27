@@ -72,6 +72,14 @@ CSS = f"""
 .cee-cell.covered{{background:{INK};color:{LIME}}}
 .cee-cell.thin{{background:#FFEDD5;color:#9A3412;border:1px solid #FDBA74}}
 .cee-cell.empty{{background:{SURFACE};color:{MUTED};border:1.5px dashed {MUTED}}}
+.cee-grid{{border-collapse:separate;border-spacing:.3rem;width:100%}}
+.cee-grid th{{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.06em;color:{MUTED};text-align:left;font-weight:600;padding:.2rem .3rem}}
+.cee-grid td{{vertical-align:top;padding:0}}
+.cee-grid .cee-cell{{display:block;min-width:0;margin:0;padding:.45rem .5rem;font-size:.68rem;line-height:1.4;white-space:nowrap}}
+.cee-gridwrap{{overflow-x:auto}}
+.cee-grid .rowlbl{{font-family:'Space Grotesk',sans-serif;font-weight:700;color:{INK};padding:.4rem .3rem;white-space:nowrap}}
+.cee-grid .rowlbl small{{display:block;font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.68rem;color:{MUTED};white-space:normal}}
+.cee-grid .na{{display:block;color:{MUTED};font-size:.68rem;padding:.5rem .5rem;white-space:nowrap}}
 .cee-empty{{border:1.5px dashed {LINE};border-radius:12px;padding:1.4rem;color:{MUTED};text-align:center}}
 .cee-footer{{margin-top:3rem;padding-top:.8rem;border-top:1px solid {LINE};display:flex;justify-content:space-between;
   font-family:'JetBrains Mono',monospace;font-size:.75rem;color:{MUTED};letter-spacing:.04em}}
@@ -173,8 +181,9 @@ def passage(text: str) -> None:
 
 
 def coverage_cell_html(state: str, text: str) -> str:
-    """state: covered | thin | empty. The state word is always part of the text."""
-    return f'<span class="cee-cell {state}">{escape(state.upper())} · {escape(text)}</span>'
+    """state: covered | thin | empty. The state word is always part of the text; \\n in text is a line break."""
+    body = escape(text).replace("\n", "<br>")
+    return f'<span class="cee-cell {state}">{escape(state.upper())}<br>{body}</span>'
 
 
 def coverage_cell(state: str, text: str) -> None:
@@ -189,6 +198,20 @@ def trace_lines(steps: list[tuple[str, str]], where=None) -> None:
     rows = "".join(f'<div class="{escape(state)}"><span class="m">{TRACE_MARKS.get(state, "·")}</span>'
                    f'{escape(text)}</div>' for state, text in steps)
     _html(f'<div class="cee-trace">{rows}</div>', where)
+
+
+def coverage_grid(columns: list[str], rows: list[tuple[str, str, list[tuple[str, str] | None]]]) -> None:
+    """rows: (label, note, cells) with one (state, text) per column, or None where the source
+    registry does not expect that document type for the row."""
+    head = "".join(f"<th>{escape(c)}</th>" for c in columns)
+    body = ""
+    for label, note, cells in rows:
+        sub = f"<small>{escape(note)}</small>" if note else ""
+        tds = "".join(f'<td>{coverage_cell_html(*c)}</td>' if c else '<td><span class="na">not tracked</span></td>'
+                      for c in cells)
+        body += f'<tr><th class="rowlbl" scope="row">{escape(label)}{sub}</th>{tds}</tr>'
+    _html(f'<div class="cee-gridwrap"><table class="cee-grid"><thead><tr><th></th>{head}</tr></thead>'
+          f'<tbody>{body}</tbody></table></div>')
 
 
 def empty_state(text: str) -> None:
