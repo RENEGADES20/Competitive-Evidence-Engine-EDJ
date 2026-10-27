@@ -10,11 +10,17 @@ import argparse
 import csv
 from pathlib import Path
 
-from cee.config import REPO_ROOT, entities_config
+from cee.config import REPO_ROOT, entities_config, entity_by_id
 from cee.db import connect
 from cee.ingest import parse_cache
-from cee.ingest.chunk import chunk_sections, split_10k_sections
-from cee.ingest.manifest import check_files, read_manifest
+from cee.ingest.chunk import SegmentTagger, chunk_sections, split_10k_sections
+from cee.ingest.manifest import check_files, date_basis_of, read_manifest
+
+
+def ensure_schema(conn) -> None:
+    """Columns added after a database was created (restored snapshots predate them)."""
+    conn.execute("""ALTER TABLE documents ADD COLUMN IF NOT EXISTS date_basis text NOT NULL
+                    DEFAULT 'source' CHECK (date_basis IN ('source', 'retrieved'))""")  # #35
 
 
 def seed_entities(conn) -> None:
@@ -90,15 +96,20 @@ def parse_file(row: dict, path: Path, use_cache: bool = True) -> list[tuple[str,
 
 def load_document(conn, row: dict, path: Path, use_cache: bool = True) -> int:
     sections = parse_file(row, path, use_cache)
+    entity = entity_by_id(row["entity_id"]) or {}
+    tagger = SegmentTagger(entity.get("segment_aliases"), entity.get("segment_stops"), sections,
+                           entity.get("segment_mentions"), entity.get("mention_stops"),
+                           entity.get("mention_excludes"), entity.get("mention_signals"))
     chunks = chunk_sections(row["doc_id"], row["entity_id"] or "", row["doc_type"],
-                            row["period_end"] or row["published_at"], sections)
+                            row["period_end"] or row["published_at"], sections,
+                            segment_for=tagger)
     conn.execute("DELETE FROM documents WHERE doc_id = %s", (row["doc_id"],))
     conn.execute(
         """INSERT INTO documents (doc_id, entity_id, doc_type, source_tier, published_at,
-                                  period_end, url, storage_path, sha256)
-           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                                  date_basis, period_end, url, storage_path, sha256)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (row["doc_id"], row["entity_id"] or None, row["doc_type"], int(row["source_tier"]),
-         row["published_at"], row["period_end"] or None, row["url"] or None,
+         row["published_at"], date_basis_of(row), row["period_end"] or None, row["url"] or None,
          row["storage_path"], row["sha256"]))
     with conn.cursor() as cur:
         cur.executemany(
@@ -112,8 +123,11 @@ def load_document(conn, row: dict, path: Path, use_cache: bool = True) -> int:
 def load_all(only: str | None = None, use_cache: bool = True) -> dict[str, int]:
     rows = [r for r in read_manifest() if not only or r["doc_id"] == only]
     resolved = check_files(rows)  # stop before touching the DB if any file is missing/bad
+    for r in rows:
+        date_basis_of(r)  # same: a bad date_basis stops the load before any write
     counts = {}
     with connect() as conn:
+        ensure_schema(conn)
         seed_entities(conn)
         print(f"source_registry: {seed_registry(conn)} rows")
         for row, path in resolved:

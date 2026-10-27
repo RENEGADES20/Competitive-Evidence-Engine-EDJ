@@ -28,6 +28,7 @@ class Settings:
     openai_model: str
     corpus_share_path: str
     edgar_identity: str
+    mock_delay_s: float = 0.0  # verify-cee only: the mock waits like a real model would (#80)
 
 
 def settings() -> Settings:
@@ -38,6 +39,7 @@ def settings() -> Settings:
         openai_model=os.getenv("OPENAI_MODEL", "gpt-5"),
         corpus_share_path=os.getenv("CORPUS_SHARE_PATH", "").strip(),
         edgar_identity=os.getenv("EDGAR_IDENTITY", "").strip(),
+        mock_delay_s=float(os.getenv("MOCK_DELAY_S", "0") or 0),
     )
 
 

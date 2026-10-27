@@ -86,6 +86,10 @@ CSS = f"""
 [class*="st-key-placeholder"] label,[class*="st-key-placeholder"] label p{{color:{MUTED} !important;opacity:1 !important}}
 [data-testid="stCaptionContainer"],[data-testid="stCaptionContainer"] p,[data-testid="stCaptionContainer"] a{{color:{MUTED} !important;opacity:1 !important}}
 .cee-soon{{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.06em;color:{MUTED}}}
+.cee-trace{{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:{INK}}}
+.cee-trace .m{{display:inline-block;width:1.5rem;font-weight:700}}
+.cee-trace .running .m{{color:{ORANGE}}} .cee-trace .done .m{{color:#3F6212}}
+.cee-trace .skipped{{color:{MUTED}}} .cee-trace .failed{{color:#B91C1C;font-weight:700}}
 </style>
 """
 
@@ -94,8 +98,10 @@ def inject_css() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
 
 
-def _html(s: str) -> None:
-    st.markdown(s, unsafe_allow_html=True)
+def _html(s: str, where=None) -> None:
+    # One raw-HTML line: a blank line in stored text would end the HTML block and let Markdown
+    # parse the rest ("$407 million to $4.7 billion" became LaTeX, #99). Entities keep the text.
+    (where or st).markdown(s.replace("$", "&#36;").replace("\n", "&#10;"), unsafe_allow_html=True)
 
 
 def tier_badge_html(tier: int | None) -> str:
@@ -183,6 +189,16 @@ def coverage_cell_html(state: str, text: str) -> str:
 
 def coverage_cell(state: str, text: str) -> None:
     _html(coverage_cell_html(state, text))
+
+
+TRACE_MARKS = {"running": "…", "done": "✓", "skipped": "–", "failed": "✗"}
+
+
+def trace_lines(steps: list[tuple[str, str]], where=None) -> None:
+    """One line per pipeline stage: (state, text). The mark is a second cue; the text says it all."""
+    rows = "".join(f'<div class="{escape(state)}"><span class="m">{TRACE_MARKS.get(state, "·")}</span>'
+                   f'{escape(text)}</div>' for state, text in steps)
+    _html(f'<div class="cee-trace">{rows}</div>', where)
 
 
 def empty_state(text: str) -> None:

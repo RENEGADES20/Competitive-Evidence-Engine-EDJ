@@ -39,7 +39,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-FEATURES = ["ask-answer", "open-citation", "gap-path", "invalid-chunk", "download-document"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document"]
 
 
 # ---------- helpers ----------
@@ -159,7 +159,8 @@ def launch(port: int = PORT) -> dict:
         f"pg_dump -U cee -Fc {SOURCE_DB} | pg_restore -U cee -d {VERIFY_DB} --no-owner"])
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True)
-    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock"}
+    # MOCK_DELAY_S: the mock waits like a model would, so the progress trace can be seen mid-run (#80).
+    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5"}
     log = open(run_dir / "app.log", "w", encoding="utf-8")
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0
     proc = subprocess.Popen(
@@ -231,6 +232,13 @@ class Recorder:
         print(f"  [UNREACHABLE] {why}")
 
 
+RENDER_TIMEOUT_S = 90
+
+
+class RenderTimeout(RuntimeError):
+    pass
+
+
 def wait_idle(page) -> None:
     page.wait_for_load_state("networkidle")
     page.wait_for_function(
@@ -238,12 +246,30 @@ def wait_idle(page) -> None:
     page.wait_for_timeout(300)
 
 
+def wait_for_text(page, texts: list[str], what: str) -> None:
+    """Wait until the page shows a text only the finished render has (#83). wait_idle alone can
+    return before Streamlit starts the rerun (websocket, no status widget yet): old page read."""
+    try:
+        page.wait_for_function("ts => document.body && ts.some(t => document.body.innerText.includes(t))",
+                               arg=texts, timeout=RENDER_TIMEOUT_S * 1000)
+    except Exception:  # playwright TimeoutError
+        raise RenderTimeout(f"{what} did not render within {RENDER_TIMEOUT_S} s "
+                            f"(waited for: {' / '.join(texts)})") from None
+    wait_idle(page)
+
+
 def ask(page, base: str, question: str) -> None:
     page.goto(base)
     wait_idle(page)
-    page.get_by_role("textbox", name="Question").fill(question)
+    box = page.get_by_role("textbox", name="Question")
+    box.wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+    box.fill(question)
     page.get_by_role("button", name="Ask").click()
-    wait_idle(page)
+    # Every behavior (answer, boundary, gap, refuse) ends with the meta line "... | LLM called: ...".
+    wait_for_text(page, ["LLM called:"], "the answer")
+
+
+SOURCE_PAGE_DONE = ["Stored passage", "is not in the stored corpus"]
 
 
 def citation_links(page):
@@ -266,6 +292,54 @@ def feature_ask_answer(page, base, rec, ctx):
              f"query_log {before} -> {after}")
 
 
+def open_trace(page) -> list[str]:
+    """Click the collapsed trace open; return its lines."""
+    page.get_by_text("How this answer was built", exact=False).first.click()
+    page.locator(".cee-trace").first.wait_for(state="visible", timeout=10000)
+    # Without the ✓/… marks: they are a visual cue only, and a GBK console cannot print them.
+    lines = page.locator(".cee-trace").first.inner_text().splitlines()
+    return [l.strip().lstrip("…✓–✗·").strip() for l in lines if l.strip()]
+
+
+def feature_ask_progress(page, base, rec, ctx):
+    page.goto(base)
+    wait_idle(page)
+    page.get_by_role("textbox", name="Question").fill(ANSWERABLE_Q)
+    page.get_by_role("button", name="Ask").click()
+    # The verify app's mock waits MOCK_DELAY_S in the model step: the page is caught mid-run.
+    page.wait_for_function("() => document.body.innerText.includes('Asking the model')",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    bar = page.locator('[data-testid="stProgress"]').count() > 0
+    early = bar and "Reading the question:" in body and "LLM called:" not in body
+    rec.step("Ask; look while the answer is being built", "progress bar and step lines, no answer yet",
+             early, f"progress bar={bar}, first step shown={'Reading the question:' in body}, "
+                    f"answer shown={'LLM called:' in body}")
+    wait_for_text(page, ["LLM called:"], "the answer")
+    status = page.get_by_text("How this answer was built", exact=False)
+    hidden = not page.locator(".cee-trace").first.is_visible()
+    rec.step("Look above the answer", "a collapsed 'How this answer was built' box",
+             status.count() > 0 and hidden, f"box={status.count() > 0}, trace hidden={hidden}")
+    lines = open_trace(page)
+    rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
+    body = page.locator("body").inner_text()
+    n_meta = re.search(r"(\d+) chunks retrieved", body)
+    n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
+    same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
+    rec.step("Compare the search line with the footer", "same passage count", same,
+             f"trace {n_trace.group(1) if n_trace else '?'} vs footer {n_meta.group(1) if n_meta else '?'}")
+    model = next((l for l in lines if "model" in l), "")
+    check = next((l for l in lines if "Checking citations" in l), "")
+    rec.step("Read the model and citation lines", "'(mock, one call)' and 'N matched'",
+             "(mock, one call)" in model and "matched" in check, f"{model} | {check}")
+    ask(page, base, NO_EVIDENCE_Q)
+    lines = open_trace(page)
+    model = next((l for l in lines if "model" in l), "")
+    body = page.locator("body").inner_text()
+    rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
+             "no model call" in model and "LLM called: False" in body, model)
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -282,7 +356,7 @@ def feature_open_citation(page, base, rec, ctx):
     with page.context.expect_page() as new_tab:
         link.click()
     source = new_tab.value
-    wait_idle(source)
+    wait_for_text(source, SOURCE_PAGE_DONE, "the source page")
     rec.page = source
     body = source.locator("body").inner_text()
     rec.step(f"Click citation {chunk_id}", "a new tab with the source page for that chunk",
@@ -315,7 +389,7 @@ def feature_gap_path(page, base, rec, ctx):
 
 def feature_invalid_chunk(page, base, rec, ctx):
     page.goto(base + "?chunk=NOT-A-REAL-CHUNK")
-    wait_idle(page)
+    wait_for_text(page, SOURCE_PAGE_DONE, "the source page")
     body = page.locator("body").inner_text()
     rec.step("Open a chunk ID that does not exist", "a clear 'not in the stored corpus' error",
              "is not in the stored corpus" in body, "error shown" if "is not in the stored corpus" in body else "no error")
@@ -324,7 +398,8 @@ def feature_invalid_chunk(page, base, rec, ctx):
 def feature_download_document(page, base, rec, ctx):
     chunk_id = ctx.get("chunk_id") or psql(VERIFY_DB, "SELECT chunk_id FROM chunks LIMIT 1")
     page.goto(base + "?chunk=" + quote(chunk_id))
-    wait_idle(page)
+    wait_for_text(page, ["Download stored document", "not found locally", "is not in the stored corpus"],
+                  "the source page")
     button = page.get_by_role("button", name="Download stored document")
     if not button.count():
         body = page.locator("body").inner_text()
@@ -343,7 +418,8 @@ def feature_download_document(page, base, rec, ctx):
              f"sha256 {'match' if got == want else 'differs'} ({got[:12]})")
 
 
-DRIVERS = {"ask-answer": feature_ask_answer, "open-citation": feature_open_citation,
+DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
+           "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document}
 
