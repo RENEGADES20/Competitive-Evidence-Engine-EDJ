@@ -21,7 +21,7 @@ cd Competitive-Evidence-Engine-EDJ
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip install -e .
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }   # never overwrites an existing .env
 ```
 
 Open `.env` in a text editor. Leave `LLM_PROVIDER=mock` (offline, free) unless you are told

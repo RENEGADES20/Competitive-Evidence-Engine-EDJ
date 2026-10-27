@@ -152,3 +152,63 @@ def test_chunk_with_another_segment_heading_and_text_after_it_is_untagged():
     tags = segments_by_label(text, SegmentTagger(BAC_ALIASES, BAC_STOPS))
     assert tags[0] == ("Global", None)
     assert all(seg is None for _, seg in tags)
+
+
+def bac_mention_tagger():
+    bac = entity_by_id("BAC")
+    return SegmentTagger(bac["segment_aliases"], bac["segment_stops"], (), bac["segment_mentions"],
+                         bac["mention_stops"], bac["mention_excludes"], bac["mention_signals"])
+
+
+def test_transcript_chunk_about_merrill_is_tagged_by_mentions():
+    # Shrunk from BAC-TR-2026Q3#13: no heading, but it is about Merrill advisers and households.
+    text = ("Client balances climbed above $5 trillion, while AUM rose 12%. Merrill added about "
+            "4,200 net new households. The Private Bank added 470 relationships. These results "
+            "reflect demand for advice and our ability to attract experienced advisers. Global "
+            "Banking is next.")
+    assert segments_by_label(text, bac_mention_tagger(), section="Document") == [("Client", "GWIM")]
+
+
+def test_transcript_chunk_mostly_about_other_businesses_is_untagged():
+    # Shrunk from BAC-TR-2026Q2#13: consumer banking, then one GWIM sentence at the end.
+    text = ("Consumers remain resilient as consumer deposits and card spending grew. Consumer credit "
+            "quality remains strong; Consumer Banking shows the power of our scale and deposits. "
+            "Turning to Slide 14. GWIM delivered another outstanding quarter.")
+    assert segments_by_label(text, bac_mention_tagger(), section="Document") == [("Consumers", None)]
+
+
+def test_merrill_edge_is_not_gwim():
+    text = "Merrill Edge self-directed accounts grew, helped by advisers and households."
+    assert segments_by_label(text, bac_mention_tagger(), section="Document") == [("Merrill", None)]
+
+
+def test_mentions_do_not_tag_sectioned_documents():
+    # 10-K/10-Q sections keep heading-only tagging (#37).
+    text = "Merrill added 4,200 households and advisers grew AUM."
+    assert segments_by_label(text, bac_mention_tagger(), section="Item 7") == [("Merrill", None)]
+
+
+def test_press_release_summary_page_and_footnotes_are_untagged():
+    # #95 negatives, shrunk from BAC-PR-2026-04-15-01 #0 (all-segment summary) and #9 (footnote).
+    summary = ("1Q26 Business Segment Highlights Consumer Banking • Net income of $3.1 billion • "
+               "Global Wealth and Investment Management • Net income of $1.3 billion • Global Banking "
+               "• Net income of $2.0 billion • Global Markets • Net income of $1.8 billion")
+    footnote = ("2 Revenue, net of interest expense. 3 The consumer credit card portfolio includes "
+                "Consumer Banking and GWIM. 4 Represents the percentage of consumer checking accounts.")
+    tagger = bac_mention_tagger()
+    assert segments_by_label(summary, tagger, section="Document") == [("1Q26", None)]
+    assert segments_by_label(footnote, tagger, section="Document") == [("2", None)]
+
+
+def test_qa_answer_that_mixes_segments_is_untagged():
+    # Shrunk from BAC-TR-2026Q2#38: Merrill, then commercial loans and Global Banking.
+    text = ("First, the Merrill 5% guide: we added net new households. The loans were up 13%. "
+            "On the commercial side, middle market loans are growing and Global Banking deposits "
+            "grew; commercial loans and card balances keep growing.")
+    assert segments_by_label(text, bac_mention_tagger(), section="Document") == [("First,", None)]
+
+
+def test_another_firm_needs_only_config():
+    tagger = SegmentTagger({}, [], (), {"Wealth": ["Wealth Unit"]}, ["Bank Unit"], [], {"Wealth": ["advisors"]})
+    text = "The Wealth Unit grew, and advisors added clients."
+    assert segments_by_label(text, tagger, section="Document") == [("The", "Wealth")]

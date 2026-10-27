@@ -40,6 +40,7 @@ sys.path.insert(0, str(REPO / "src"))
 import yaml  # noqa: E402
 
 from cee.config import entities_config  # noqa: E402
+from cee.retrieve.fts import K  # noqa: E402
 
 RUNS = REPO / ".eval-runs"
 CACHE = RUNS / "cache"
@@ -400,7 +401,7 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--questions", help="comma-separated IDs, e.g. Q1,Q4 (default: all)")
-    ap.add_argument("--k", type=int, default=8, help="chunks retrieved per question (app default 8)")
+    ap.add_argument("--k", type=int, default=K, help=f"chunks retrieved per question (app default {K})")
     ap.add_argument("--min-coverage", type=float, default=0.5)
     ap.add_argument("--baseline", help="report.json of an earlier run, for UNCHANGED/IMPROVED/REGRESSED")
     ap.add_argument("--real", action="store_true", help="also get model answers (paid; needs --max-calls)")

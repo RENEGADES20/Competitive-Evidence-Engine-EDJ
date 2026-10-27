@@ -85,7 +85,7 @@ Full steps and "when it breaks": [docs/RUN.md](docs/RUN.md).
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip install -e .
-Copy-Item .env.example .env          # LLM_PROVIDER=mock works offline
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }   # keeps an existing .env; mock works offline
 # download the newest corpus-YYYY-MM-DD.dump from the team Box link into .\snapshots
 powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 .\.venv\Scripts\python.exe -m cee.smoke   # expect PASS
