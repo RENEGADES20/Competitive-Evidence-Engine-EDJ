@@ -6,6 +6,7 @@ import time
 import streamlit as st
 
 from cee.app import components as ui
+from cee.answer.validate import source_label
 from cee.ask import STAGES, Result, ask
 from cee.config import settings
 
@@ -85,12 +86,23 @@ def render() -> None:
     if r is None:
         return
     a = r.answer
-    tiers = {h.chunk_id: h.source_tier for h in r.hits}
+    by_id = {h.chunk_id: h for h in r.hits}
+
+    def chips(chunk_ids):
+        """One chip per citation: its own source label and tier. An id that is not in the
+        retrieved set is shown, flagged, and not linked (no composed source)."""
+        out = []
+        for cid in chunk_ids:
+            h = by_id.get(cid)
+            out.append((cid, h.source_tier, source_label(h), True) if h
+                       else (cid, None, "not in the retrieved set", False))
+        return out
+
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
     for i, c in enumerate(a.claims, start=1):
-        ui.claim_card(i, c.text, [(cid, tiers.get(cid)) for cid in c.chunk_ids], c.source_label, c.flags)
+        ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags)
     for i, c in enumerate(a.adjacent, start=1):
-        ui.claim_card(i, c.text, [(cid, tiers.get(cid)) for cid in c.chunk_ids], c.source_label, c.flags,
+        ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags,
                       label="ADJACENT EVIDENCE", note=c.differs_because)
     for cav in a.caveats:
         ui.caveat_box(cav)

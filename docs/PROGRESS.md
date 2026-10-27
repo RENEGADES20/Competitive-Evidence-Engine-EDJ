@@ -42,6 +42,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | #50 footer and gap box now name the same firms (Query.firms; Vanguard shows "VGD (no documents)") (#74) | none | U1 may restyle the footer marker; mode for unmapped-only questions stays "theme" per spec |
 | 2026-10-20 | S1: hand-written expected results for Q1, Q4, Q11, Q22, Q26 (83 chunk IDs, trap Q4 must-not list, Q26 window) (#87) | Merrill filter returns nothing until GWIM segment tags (#37) | Next: time window in Query (Q26), map "each of the five" (Q11, Q22) |
 | 2026-10-21 | Synonyms from config expand search (phrases, exact-case acronyms, 2x match bonus); "the five" resolves to MS, SCHW, EDJ, MER, RJF in SQL; Q22 NNA from 3 of 5 (#89, part) (#94) | Q11 table chunks (EDJ-10K-2025#130, RJF-10K-2025#227) not in top-20: needs table-aware ranking | #49 time windows, then #59 quotas |
+| 2026-10-27 | Time windows filtered in SQL: "last N days/weeks/months", "since the start of the year", YTD; download-dated pages left out of windows; Q26 nothing older than 90 days (#49) (#101) | Q27 returns nothing until BAC GWIM tags (#37) | #59 quotas and dedupe |
+| 2026-10-27 | S1: per-question recall and refusal accuracy in the eval runner, answer key for 10 questions (incl. gap Q24/25/28-30), baseline for corpus-2026-10-22 at k=20 (tier-1 recall 0.809 docs / 0.347 passages; refusal gap 4/5, all 9/10) (#102) | Recall for 9 tier-1 questions waits on #56; Q29 retrieves a must-not chunk (MS-10K-2025#696) | Tune Q29 refusal; BAC Q&A chunks wait on #107 |
 
 ### S2
 
@@ -55,6 +57,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 |---|---|---|---|
 | 2026-10-16 | U1 design language and page shell: theme, components, Ask/Coverage/Design nav, placeholders, snapshot footer, DESIGN.md (#68) | none | #42 citation chips on real answers, #41 coverage table |
 | 2026-10-23 | Ask page shows a progress bar and a step trace built from each stage's real output (firms, counts, model call or skip, citations), kept collapsed after the answer; failed steps shown (#80) (#103) | none | when time windows land (#49), add the window to the "Reading the question" line |
+| 2026-10-27 | U1: every citation on the Ask page shows its own source label and tier badge; unmatched citations are flagged, not linked (#42) (#109) | none | #41 coverage table, #53 source page in context |
 
 ### TL
 

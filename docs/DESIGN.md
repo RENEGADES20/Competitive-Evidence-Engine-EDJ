@@ -37,12 +37,12 @@ Radius 12px for cards, 8px buttons, pill (999px) for chips and badges.
 
 | Component | Function | Look |
 |---|---|---|
-| Citation chip | `citation_chip_html` | pill, ink 1px border, white; link text is exactly the `chunk_id` (opens `?chunk=<id>` in a new tab), followed by the tier badge; lime on hover |
+| Citation chip | `citation_chip_html` | pill, ink 1px border, white; link text is exactly the `chunk_id` (opens `?chunk=<id>` in a new tab), followed by the tier badge, with that citation's own source label under it (`label`); lime on hover. A citation outside the retrieved set is not linked |
 | Tier badge | `tier_badge_html` | mono uppercase pill `T<n> · <label>`; label from `TIER_LABELS` |
 | Caveat box | `caveat_box` | `#FFF7ED`, 4px orange left rule, starts with **Caveat:** |
 | Gap box | `gap_box` | white, 1.5px dashed ink border, starts with **Gap:**, then **Would be filled by:** |
 | Answer behavior header | `behavior_header` | Space Grotesk `h2` (Answer / Answer (evidence only; the judgement is yours) / Not in the corpus / No evidence) plus a mono code tag |
-| Claim card | `claim_card` | white card, lime mono number `01`, chips, muted source label; adjacent claims add `ADJACENT EVIDENCE` and **Differs because:** |
+| Claim card | `claim_card` | white card, lime mono number `01`, chips (each with its source label); adjacent claims add `ADJACENT EVIDENCE` and **Differs because:** |
 | Source page header | `source_header` | eyebrow `STORED SOURCE`, `h2` title, tier badge, mono meta line (`Section`, `Page`, `Chunk`, `Filed`) |
 | Coverage cell | `coverage_cell` | `COVERED` lime on ink; `THIN` orange on peach; `EMPTY` muted on white, dashed |
 | Coverage grid | `coverage_grid` | table, one row per firm and one column per document type the source registry expects; each cell is a coverage cell with count and earliest-to-latest date; types the registry does not expect read `not tracked`; thin = one document or fewer (`THIN_MAX`) |

@@ -346,6 +346,12 @@ def feature_open_citation(page, base, rec, ctx):
     if not link.count():
         rec.step("Find a citation", "a citation link", False, "no citation links")
         return
+    # Count every chip, linked or not: an unmatched citation is shown unlinked but still labelled.
+    n = page.locator(".cee-chip").count()
+    labelled = page.locator(".cee-cite .cee-chip").count()
+    tiered = page.locator(".cee-cite .cee-tier").count()
+    rec.step("Check each citation shows source and tier", "every citation chip has a source label and a tier badge",
+             n > 0 and labelled == n == tiered, f"{n} citations, {labelled} with a source label, {tiered} with a tier")
     chunk_id = link.inner_text().strip()
     # Streamlit opens markdown links in a new tab, as a user would see it.
     with page.context.expect_page() as new_tab:
