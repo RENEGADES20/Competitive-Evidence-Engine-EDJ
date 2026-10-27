@@ -6,6 +6,7 @@ mock is offline and free: it cites the top hits verbatim. Use it for development
 from __future__ import annotations
 
 import json
+import time
 
 from cee.answer.prompt import SYSTEM_PROMPT
 from cee.answer.schema import Answer, llm_output_schema
@@ -18,7 +19,9 @@ TOOL_NAME = "submit_answer"
 def build_user_message(question: str, hits: list[Hit]) -> str:
     parts = [f"Question: {question}", "", "Evidence chunks:"]
     for h in hits:
-        where = f"{h.entity_id} {h.doc_type} {h.period_end or h.published_at}, {h.section or ''}"
+        seg = f", segment {h.segment}" if h.segment else ""
+        where = (f"{h.entity_id or 'Research'} {h.doc_type}{seg}, period {h.period_end or 'n/a'}, "
+                 f"published {h.published_at}, {h.section or ''}")
         if h.page:
             where += f", p.{h.page}"
         parts.append(f'<chunk id="{h.chunk_id}" source="{where}">\n{h.text}\n</chunk>')
@@ -37,6 +40,7 @@ def generate(question: str, hits: list[Hit], provider: str | None = None) -> Ans
 
 
 def _mock(hits: list[Hit]) -> Answer:
+    time.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80)
     claims = [{"text": " ".join(h.text.split())[:300], "chunk_ids": [h.chunk_id]} for h in hits[:3]]
     return Answer(answerable=True, behavior="answer", claims=claims, llm_called=False)
 
@@ -44,7 +48,7 @@ def _mock(hits: list[Hit]) -> Answer:
 def anthropic_request(question: str, hits: list[Hit]) -> dict:
     return {
         "model": settings().llm_model,
-        "max_tokens": 2000,
+        "max_tokens": 4000,  # 20 chunks (fts.K) give longer answers than the 8 of v0
         "system": SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
                                   " do not answer in plain text.",
         "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.",

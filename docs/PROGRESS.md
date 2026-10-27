@@ -16,6 +16,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | 10-K and four 10-Qs for all five filers stored (24 rows, 11,977 chunks loaded) (#69) | Q30 needs #37 GWIM tags; BAC/MS/SCHW sections not split (chunk.py Item regex) | #44 snapshot with the new corpus; #37; #45 |
 | 2026-10-16 | C1: BAC, SCHW and MS 10-K/10-Q chunks now split into Item sections (MS via its cross-reference table of contents); EDJ/RJF chunk IDs unchanged (#70) (#71) | Blockers: none | Next: GWIM segment tagging inside BAC Item 7 / 10-Q Item 2 (#37) |
 | 2026-10-18 | 8 quarterly supplements (BAC, MS Q1-Q3 2026; RJF two quarters) stored with page numbers; PDF tables and picture-nested slide text now kept (pdf.py) (#77) | SCHW supplement/monthly missing; Q23 ranks only BAC supplements (#59); docling adds ~4-7 min per PDF to rebuilds | #46 metric definitions from these supplements; snapshot rebuild |
+| 2026-10-22 | C1 #37: BAC GWIM segment tags from config (10-K/10-Q MD&A, decks, supplements; 0/20 wrong; mixed chunks untagged) (#96) | none | PR/TR tagging (#95); Q30 retrieval recall (S1) |
 
 ### C2
 
@@ -31,6 +32,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-10-16 | Topics taxonomy v0 (#6): 19 topics covering Q16-Q21 with definitions, keywords and tagging rules in config/topics.yaml (#65) | C1 review pending | C3 builds keyword tagging (tag_topics) and starts thematic ingestion |
+| 2026-10-21 | #5 tier 5 source matrix: 39 thematic sources (research/survey/regulatory), all 8 themes with >= 2 publishers, Cerulli via free white papers (no WashU subscription) (#92) | Blockers: none | Next: #81 ingest institutional research from these rows |
 
 ### S1
 
@@ -39,6 +41,9 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | Synonym list v0 drafted in config/entities.yaml; spec open questions posted on #7 (#66) | Firm-specific metric wording unverified (only EDJ in local corpus) | Wire expand_synonyms() into fts.py (W3) |
 | 2026-10-18 | #50 footer and gap box now name the same firms (Query.firms; Vanguard shows "VGD (no documents)") (#74) | none | U1 may restyle the footer marker; mode for unmapped-only questions stays "theme" per spec |
 | 2026-10-20 | S1: hand-written expected results for Q1, Q4, Q11, Q22, Q26 (83 chunk IDs, trap Q4 must-not list, Q26 window) (#87) | Merrill filter returns nothing until GWIM segment tags (#37) | Next: time window in Query (Q26), map "each of the five" (Q11, Q22) |
+| 2026-10-21 | Synonyms from config expand search (phrases, exact-case acronyms, 2x match bonus); "the five" resolves to MS, SCHW, EDJ, MER, RJF in SQL; Q22 NNA from 3 of 5 (#89, part) (#94) | Q11 table chunks (EDJ-10K-2025#130, RJF-10K-2025#227) not in top-20: needs table-aware ranking | #49 time windows, then #59 quotas |
+| 2026-10-27 | Time windows filtered in SQL: "last N days/weeks/months", "since the start of the year", YTD; download-dated pages left out of windows; Q26 nothing older than 90 days (#49) (#101) | Q27 returns nothing until BAC GWIM tags (#37) | #59 quotas and dedupe |
+| 2026-10-27 | S1: per-question recall and refusal accuracy in the eval runner, answer key for 10 questions (incl. gap Q24/25/28-30), baseline for corpus-2026-10-22 at k=20 (tier-1 recall 0.809 docs / 0.347 passages; refusal gap 4/5, all 9/10) (#102) | Recall for 9 tier-1 questions waits on #56; Q29 retrieves a must-not chunk (MS-10K-2025#696) | Tune Q29 refusal; BAC Q&A chunks wait on #107 |
 
 ### S2
 
@@ -51,6 +56,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-10-16 | U1 design language and page shell: theme, components, Ask/Coverage/Design nav, placeholders, snapshot footer, DESIGN.md (#68) | none | #42 citation chips on real answers, #41 coverage table |
+| 2026-10-23 | Ask page shows a progress bar and a step trace built from each stage's real output (firms, counts, model call or skip, citations), kept collapsed after the answer; failed steps shown (#80) (#103) | none | when time windows land (#49), add the window to the "Reading the question" line |
+| 2026-10-27 | U1: every citation on the Ask page shows its own source label and tier badge; unmatched citations are flagged, not linked (#42) (#109) | none | #41 coverage table, #53 source page in context |
 
 ### TL
 
@@ -73,6 +80,10 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-20 | date_basis (source (#88) | retrieved) in the manifest and documents; existing databases gain the column on load; all 68 documents source | none / #49 (S1) time windows can exclude retrieved-dated pages |
 | 2026-10-20 | verify-cee waits for the finished page (answer meta line, source page text) instead of network idle; 5 of 5 runs PASS on the 68-document corpus (#91) | none | merge #90 (eval runner), then Gate 2 (#54) |
 | 2026-10-20 | Eval runner: per-question pattern hits, coverage, forbidden hits and status for all 30 questions, baseline compare, capped and cached real-model mode; corpus-2026-10-18 mock: PASS 7, FAIL 21, N/E 2 (#90) | verify-cee flaky on the 68-document corpus (#83) | #60 hit-rate report, #54 Gate 2, #15 weekly X/30 |
+| 2026-10-22 | Stored text shown literally in the app: dollar amounts no longer render as LaTeX, Markdown no longer parses passages (#99) (#100) | none | none |
+| 2026-10-22 | README: demo GIF, source and gap screenshots, Mermaid architecture diagram, Merrill/GWIM example, status to W5 (#97) (#98) | none | none |
+| 2026-10-23 | Setup step copies .env.example only when .env is missing; re-running the quick start no longer wipes local keys (#104) | none | none |
+| 2026-10-23 | Real-model answers for the 12 mock-passing questions: retrieval per spec + IDF rank, BAC PR/TR GWIM tagging, prompt v1, code caveats (#106) | Snapshot must be rebuilt so teammates get the new GWIM tags | Q5/Q16/Q26 limited by corpus (no MS decks or trade press, no thematic research, only one RJF filing in the last 90 days) |
 
 ## Weekly score (from W6)
 

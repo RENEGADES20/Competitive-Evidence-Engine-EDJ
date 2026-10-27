@@ -1,4 +1,4 @@
-"""Prompt v0 carries the citation rules and the standard wording (plans/0010)."""
+"""The prompt (v1) carries the citation rules and the standard wording (plans/0010)."""
 import re
 
 from cee.answer import prompt
@@ -10,8 +10,8 @@ WORDING = [prompt.BOUNDARY_HANDOFF, prompt.MERRILL_GAP, prompt.GWIM_DIFFERS, pro
 
 
 def test_prompt_is_versioned():
-    assert prompt.PROMPT_VERSION == "v0"
-    assert "Prompt version: v0" in prompt.SYSTEM_PROMPT
+    assert prompt.PROMPT_VERSION == "v1"
+    assert "Prompt version: v1" in prompt.SYSTEM_PROMPT
 
 
 def test_llm_uses_prompt_module():

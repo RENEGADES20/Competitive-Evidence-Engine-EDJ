@@ -55,6 +55,9 @@ CSS = f"""
   border-radius:999px;margin:.5rem .35rem 0 0;background:{SURFACE}}}
 .cee-chip a,.cee-chip .id{{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:{INK} !important;text-decoration:none !important}}
 .cee-chip:hover{{background:{LIME}}}
+.cee-cite{{display:inline-flex;flex-direction:column;vertical-align:top;margin:0 .6rem 0 0}}
+.cee-cite .cee-chip{{margin-right:0;align-self:flex-start}}
+.cee-cite-src{{font-size:.78rem;color:{MUTED};margin:.25rem 0 0 .4rem;max-width:26rem}}
 .cee-tier{{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
   padding:.1rem .5rem;border-radius:999px;font-weight:700;white-space:nowrap}}
 .cee-flag{{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#9A3412;background:#FFEDD5;padding:.1rem .45rem;border-radius:4px}}
@@ -83,6 +86,10 @@ CSS = f"""
 [class*="st-key-placeholder"] label,[class*="st-key-placeholder"] label p{{color:{MUTED} !important;opacity:1 !important}}
 [data-testid="stCaptionContainer"],[data-testid="stCaptionContainer"] p,[data-testid="stCaptionContainer"] a{{color:{MUTED} !important;opacity:1 !important}}
 .cee-soon{{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.06em;color:{MUTED}}}
+.cee-trace{{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:{INK}}}
+.cee-trace .m{{display:inline-block;width:1.5rem;font-weight:700}}
+.cee-trace .running .m{{color:{ORANGE}}} .cee-trace .done .m{{color:#3F6212}}
+.cee-trace .skipped{{color:{MUTED}}} .cee-trace .failed{{color:#B91C1C;font-weight:700}}
 </style>
 """
 
@@ -91,8 +98,10 @@ def inject_css() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
 
 
-def _html(s: str) -> None:
-    st.markdown(s, unsafe_allow_html=True)
+def _html(s: str, where=None) -> None:
+    # One raw-HTML line: a blank line in stored text would end the HTML block and let Markdown
+    # parse the rest ("$407 million to $4.7 billion" became LaTeX, #99). Entities keep the text.
+    (where or st).markdown(s.replace("$", "&#36;").replace("\n", "&#10;"), unsafe_allow_html=True)
 
 
 def tier_badge_html(tier: int | None) -> str:
@@ -102,12 +111,17 @@ def tier_badge_html(tier: int | None) -> str:
     return f'<span class="cee-tier" style="background:{bg};color:{fg}">{prefix}{escape(label)}</span>'
 
 
-def citation_chip_html(chunk_id: str, tier: int | None, link: bool = True) -> str:
-    """The link text is exactly the chunk_id (scripts/verify_cee.py reads it)."""
+def citation_chip_html(chunk_id: str, tier: int | None, link: bool = True, label: str = "") -> str:
+    """The link text is exactly the chunk_id (scripts/verify_cee.py reads it).
+
+    label is this citation's own source label; it sits under the chip so each citation says
+    where it comes from. A citation that is not in the retrieved set gets link=False.
+    """
     cid = escape(chunk_id)
     target = (f'<a href="?chunk={quote(chunk_id)}" target="_blank">{cid}</a>' if link
               else f'<span class="id">{cid}</span>')
-    return f'<span class="cee-chip">{target}{tier_badge_html(tier)}</span>'
+    chip = f'<span class="cee-chip">{target}{tier_badge_html(tier)}</span>'
+    return f'<span class="cee-cite">{chip}<span class="cee-cite-src">{escape(label)}</span></span>' if label else chip
 
 
 def ticker(items: list[str]) -> None:
@@ -134,9 +148,11 @@ def behavior_header(text: str, code: str) -> None:
     _html(f'<div class="cee-behavior"><h2>{escape(text)}</h2><span class="code">{escape(code)}</span></div>')
 
 
-def claim_card(n: int, text: str, chips: list[tuple[str, int | None]], source_label: str = "",
+def claim_card(n: int, text: str, chips: list[tuple], source_label: str = "",
                flags: list[str] | None = None, label: str = "", note: str = "", link: bool = True) -> None:
-    chip_html = "".join(citation_chip_html(cid, t, link) for cid, t in chips)
+    """chips: (chunk_id, tier) or (chunk_id, tier, source_label, linkable) per citation."""
+    chip_html = "".join(citation_chip_html(c[0], c[1], link and (c[3] if len(c) > 3 else True),
+                                           c[2] if len(c) > 2 else "") for c in chips)
     flag_html = "".join(f' <span class="cee-flag">{escape(f)}</span>' for f in flags or [])
     top = f'<div class="lbl">{escape(label)}</div>' if label else ""
     src = f'<div class="src">{escape(source_label)}</div>' if source_label else ""
@@ -173,6 +189,16 @@ def coverage_cell_html(state: str, text: str) -> str:
 
 def coverage_cell(state: str, text: str) -> None:
     _html(coverage_cell_html(state, text))
+
+
+TRACE_MARKS = {"running": "…", "done": "✓", "skipped": "–", "failed": "✗"}
+
+
+def trace_lines(steps: list[tuple[str, str]], where=None) -> None:
+    """One line per pipeline stage: (state, text). The mark is a second cue; the text says it all."""
+    rows = "".join(f'<div class="{escape(state)}"><span class="m">{TRACE_MARKS.get(state, "·")}</span>'
+                   f'{escape(text)}</div>' for state, text in steps)
+    _html(f'<div class="cee-trace">{rows}</div>', where)
 
 
 def empty_state(text: str) -> None:

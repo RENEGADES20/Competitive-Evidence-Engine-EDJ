@@ -1,8 +1,9 @@
 """Code-side checks on every answer (specs/answer-citations.md).
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
-Here: citation check (flag, never drop), code-built source labels, empty-retrieval gap/refuse.
-Not yet (S2, W3+): number check, caveat insertion, coverage note.
+Here: citation check (flag, never drop), code-built source labels, caveat insertion,
+empty-retrieval gap/refuse.
+Not yet (S2, W3+): number check, coverage note.
 """
 from __future__ import annotations
 
@@ -40,6 +41,22 @@ def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
         elif len(known) < len(claim.chunk_ids):
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
+    return answer
+
+
+def insert_caveats(answer: Answer, query: Query, hits: list[Hit]) -> Answer:
+    """Code, not prompt (specs/answer-citations.md): when the answer cites a substitute for a
+    firm the question names (BAC GWIM chunks for MER, equivalence: partial), append that firm's
+    caveat from config/entities.yaml."""
+    by_id = {h.chunk_id: h for h in hits}
+    cited = [by_id[c] for claim in [*answer.claims, *answer.adjacent] for c in claim.chunk_ids if c in by_id]
+    for e in entities_config()["entities"]:
+        if e["id"] not in query.entities or not e.get("caveat") or not e.get("parent"):
+            continue
+        segments = {e.get("reported_as"), e["name"]}
+        if any(h.entity_id == e["parent"] and h.segment in segments for h in cited) \
+                and e["caveat"] not in answer.caveats:
+            answer.caveats.append(e["caveat"])
     return answer
 
 

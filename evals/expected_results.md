@@ -134,12 +134,20 @@ Must not return as advisor counts: BAC-wide headcount (`BAC-10K-2025#16`, `#172`
 FTE employees (`SCHW-10K-2025#178`), RJF total associates (`#24` "19,500 associates") on
 their own, RJF advisor compensation (`RJF-SUPP-2026Q1#14`), BAC award counts (Q4 list).
 
-Today: `resolve` -> `[]`, theme ("each of the five" is not mapped) -> `BAC-10K-2025#1083`
-(Item 9A controls), `RJF-10K-2025#726` (internal control), `RJF-10K-2025#90` (advisor
-departures risk), `BAC-10K-2025#613` (goodwill), `BAC-DECK-2026Q3#54` (trading VaR),
-`MS-10K-2025#871` (internal control), `RJF-10K-2025#27` (succession planning),
-`BAC-DECK-2026Q1#66` (FICC). **0 of 8 expected; 3 BAC chunks outside GWIM** - a trap
-failure as well as a recall failure.
+Before #89: `resolve` -> `[]`, theme ("each of the five" was not mapped) ->
+`BAC-10K-2025#1083` (Item 9A controls), `RJF-10K-2025#726`, `RJF-10K-2025#90`,
+`BAC-10K-2025#613`, `BAC-DECK-2026Q3#54`, `MS-10K-2025#871`, `RJF-10K-2025#27`,
+`BAC-DECK-2026Q1#66`. 0 of 8 expected; 3 BAC chunks outside GWIM.
+
+Today (2026-10-21, #89): `resolve` -> `[MS, SCHW, EDJ, MER, RJF]`, entity; synonyms
+`advisor` -> adviser, `headcount` -> number of financial advisors / advisor count /
+financial advisors (actual). Top-8: `RJF-TR-2026Q2#4`, `#19`, `#24`, `EDJ-10K-2025#21`,
+`RJF-TR-2026Q1#34`, `#4`, `EDJ-10K-2025#42`, `#41`. **No BAC chunk** (trap holds; Merrill
+returns nothing until #37). Top-20 firms: EDJ, RJF, SCHW. **Still 0 of 8 expected**:
+`EDJ-10K-2025#130` and `RJF-10K-2025#227` are not in the top-20 (rank ~125 of 413 EDJ
+matches and ~354 of 1,211 RJF matches before the synonym bonus). Short table chunks lose
+to prose that repeats the question's words; `#227` says "Total advisors", which no
+synonym covers. Needs table-aware ranking (open item on #89), not more synonyms.
 
 ---
 
@@ -166,11 +174,18 @@ Must not return as NNA: BAC net client flows / AUM flows unlabeled; SCHW money-f
 roll-forward (`SCHW-10Q-2026Q2#56`); MS fee-based asset flows (`MS-PR-2026-04-15-01#15`)
 as if NNA; any AUM or client-asset change; BAC chunks outside GWIM.
 
-Today: `resolve` -> `[]`, theme -> `RJF-PR-2026-04-22-01#4`, `#3`,
+Before #89: `resolve` -> `[]`, theme -> `RJF-PR-2026-04-22-01#4`, `#3`,
 `RJF-PR-2026-07-22-01#4`, `#5`, `MS-PR-2026-04-15-01#15`, `MS-10Q-2025Q3#18`,
-`RJF-PR-2026-01-28-01#3`, `MS-10Q-2026Q1#18`. RJF quarters partly right; **no EDJ, SCHW
-or BAC chunk**, no definition chunk, and `MS-PR-2026-04-15-01#15` is the fee-based-flows
-footnote, a neighbour metric.
+`RJF-PR-2026-01-28-01#3`, `MS-10Q-2026Q1#18`. NNA from MS and RJF only.
+
+Today (2026-10-21, #89): `resolve` -> `[MS, SCHW, EDJ, MER, RJF]`, entity; synonyms
+`net new assets` -> NNA / core net new assets. Top-8: `RJF-PR-2026-04-22-01#4`, `#3`,
+`RJF-PR-2026-07-22-01#4`, `#5`, `SCHW-TR-2026Q2#23`, `SCHW-TR-2026Q3#25`,
+`MS-PR-2026-04-15-01#15`, `MS-10Q-2026Q2#58`. **Top-20 holds NNA chunks from MS, RJF and
+SCHW** (SCHW via transcripts, e.g. "more than 5% NNA growth"; also `SCHW-TR-2026Q1#31`).
+No BAC chunk. Still missing: EDJ (`EDJ-10Q-2026Q2#60` etc.), every definition chunk, and
+SCHW's 10-Q figures; `MS-PR-2026-04-15-01#15` is still the fee-based-flows footnote, a
+neighbour metric (finding 7). Per-firm quotas (#59) should bring EDJ in.
 
 ---
 
@@ -206,11 +221,64 @@ delinquency table, is inside). Fails the spec item: `Query` has no time window.
 
 ---
 
+## Gap questions: what must not come back (#60)
+
+Added for refusal accuracy (specs/retrieval.md). Checked 2026-10-22 on corpus-2026-10-18;
+the IDs are in [expected_chunks.yaml](expected_chunks.yaml). "Adjacent" = evidence a
+`gap_with_adjacent` answer should show, labelled as a different quantity; "must not" = text
+that reads like the answer but is another quantity, scope or firm. Other firms' chunks and
+BAC chunks outside GWIM for Merrill are caught by the runner's forbidden check and are not
+listed.
+
+**Q24 - client assets per advisor, and is the comparison valid?** Adjacent: EDJ advisor
+count (`EDJ-10K-2025#130`), RJF total advisors and the definition that makes the ratio
+invalid (`RJF-10K-2025#227`, `#228`: RCS advisors excluded from the count, their assets
+included in PCG AUA), MS advisor-led assets with no count (`MS-SUPP-2026Q1#43` etc.).
+Must not: BAC-wide 213,000 employees (`BAC-10K-2025#16`, `#172`, `BAC-10Q-2025Q2#19`,
+`-2025Q3#19`); SCHW full-time equivalent employees (`SCHW-10K-2025#178`, four 10-Qs, four
+releases); `SCHW-TR-2026Q3#7` ($5.8 trillion held for 16,000 independent RIA firms -
+custody clients, not Schwab advisors); BAC award counts.
+
+**Q25 - advisor compensation structures.** Adjacent/disclosed: RJF employee vs independent
+payout (`RJF-10K-2025#10`, `#11`), EDJ commission basis and partnership bonuses
+(`EDJ-10K-2025#30`, `#264`), MS formulaic payouts (`MS-10K-2025#153`), SCHW only says comp
+rose with financial-consultant headcount (`SCHW-10Q-2026Q2#25`). Must not: "payout" that is
+not advisor pay - dividend payout ratios (RJF 10-K and four 10-Qs, three SCHW decks) and
+MS maximum potential payout on guarantees (`MS-10K-2025#574`, `#687`-`#699`); named
+executive officers' pay (`EDJ-10K-2025#305`, `SCHW-10K-2025#558`); BAC-wide compensation
+philosophy (`BAC-10K-2025#19`).
+
+**Q28 - EDJ vs Merrill advisor attrition.** Adjacent: EDJ **does** disclose an advisor
+attrition % in its 2025 10-Qs (`EDJ-10Q-2025Q2#64`, `#67`: 6.4%; `EDJ-10Q-2025Q3#68`, `#70`:
+6.1%; definition `-2025Q2#66`, `-2025Q3#69`: "annualized number of financial advisors that
+left or retired ... compared to the total"); Merrill gives no rate, only "adviser attrition
+is now at near historic lows" (`BAC-TR-2026Q2#38`, `BAC-TR-2026Q1#48`); net headcount change
+(`EDJ-10K-2025#130`, `EDJ-10Q-2026Q2#60`). Must not: BAC-wide employee turnover 8%
+(`BAC-10K-2025#19`), BAC-wide headcount attrition (`BAC-TR-2026Q1#4`, `#27`, `#29`), client
+and deposit attrition (`BAC-10K-2025#60`, `#97`). Note for C1: Q28's passes_if says
+"neither discloses this on a comparable basis"; one side (EDJ) does disclose a rate, so the
+correct answer is "EDJ: 6.1% (Q3 2025, its definition); Merrill: not disclosed".
+`TODO-verify` whether the 2026 EDJ 10-Qs dropped the line.
+
+**Q29 - what MS pays its financial advisors.** Adjacent: formulaic payouts tied to revenue
+(`MS-10K-2025#153`), compensation expense driven by the WM advisor payout (`MS-10K-2025#128`,
+`#170`; aggregate, not a grid). Must not: maximum potential payout on guarantees and credit
+protection (`MS-10K-2025#574`, `#687`, `#690`, `#692`-`#694`, `#696`, `#699`).
+
+**Q30 - Merrill standalone profitability (trap 3).** Adjacent, with the GWIM-is-not-Merrill
+caveat: GWIM net income $1.4 billion (`BAC-PR-2026-01-14-01#12`), GWIM results
+(`BAC-10K-2025#245`-`#247`). Must not: BAC consolidated net income (`BAC-10K-2025#178`, four
+10-Qs, the four release headlines `BAC-PR-*#2` and `BAC-PR-2026-01-14-01#4`), other segments'
+net income (`BAC-PR-2026-01-14-01#0` Consumer Banking - where Merrill Edge sits - `#15`
+Global Banking, `#18` Global Markets).
+
+---
+
 ## Findings for retrieval work (not fixed in #8)
 
 1. **"Each of the five" is not resolved** (Q11, Q22): `resolve()` returns no entities and
    falls back to theme mode, which returns other-firm and off-topic chunks. Expected: all
-   five, with a per-firm quota.
+   five, with a per-firm quota. *Resolved in #89 (peer set); the quota is #59.*
 2. **Q11 misses every number** (`EDJ-10K-2025#130`, `RJF-10K-2025#227`): table chunks rank
    below control-and-procedure boilerplate. Synonyms ("headcount" -> "financial
    advisors") would likely help (#7).
