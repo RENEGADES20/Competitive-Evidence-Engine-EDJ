@@ -39,7 +39,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage"]
 
 
 # ---------- helpers ----------
@@ -419,10 +419,36 @@ def feature_download_document(page, base, rec, ctx):
              f"sha256 {'match' if got == want else 'differs'} ({got[:12]})")
 
 
+def feature_coverage(page, base, rec, ctx):
+    page.goto(base + "coverage")
+    wait_for_text(page, ["are not shown yet"], "the Coverage page")
+    body = " ".join(page.locator("body").inner_text().split())
+    rec.step("Open the Coverage page", "a table with firms and document types",
+             "EDJ" in body and "10-K" in body,
+             "table shown" if "EDJ" in body else "no table")
+    n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at), max(published_at) FROM documents "
+                                     "WHERE entity_id = 'EDJ' AND doc_type = '10-K'").split("|")
+    n = int(n)
+    from cee.app.views.coverage_page import cell_state
+    cadence = psql(VERIFY_DB, "SELECT expected_cadence FROM source_registry "
+                              "WHERE entity_id = 'EDJ' AND doc_type = '10-K' LIMIT 1") or None
+    state = cell_state(n, cadence).upper()
+    span = first if first == last else f"{first} to {last}"
+    want = f"{state} " + ("0 docs" if n == 0 else f"{n} doc{'' if n == 1 else 's'} {span}")
+    rec.step("Read back EDJ 10-K from the database", f"cell '{want}'", want in body,
+             "cell matches" if want in body else "cell differs from the database")
+    empty = psql(VERIFY_DB, "SELECT count(*) FROM source_registry r WHERE r.entity_id = 'EDJ' AND NOT EXISTS "
+                            "(SELECT 1 FROM documents d WHERE d.entity_id = r.entity_id AND d.doc_type = r.doc_type)")
+    rec.step("Empty combinations are marked", "an EMPTY cell for each registry type with no document",
+             int(empty) == 0 or "EMPTY 0 docs" in body, f"{empty} EDJ types empty in the database")
+    rec.step("Themes note", "says themes are not shown yet", "Themes (tier 5 research) are not shown yet" in body,
+             "note present" if "are not shown yet" in body else "note missing")
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
-           "download-document": feature_download_document}
+           "download-document": feature_download_document, "coverage": feature_coverage}
 
 
 def drive(features: list[str]) -> bool:

@@ -40,6 +40,7 @@ Each file: an H1, one paragraph of user-visible behavior, then exactly these H2s
 - [open-citation](open-citation.md): open the stored passage behind a citation.
 - [gap-path](gap-path.md): no evidence is reported honestly.
 - [invalid-chunk](invalid-chunk.md): unknown chunk IDs fail clearly.
+- [coverage](coverage.md): the Coverage page shows what the corpus holds per firm and document type.
 - [download-document](download-document.md): download the stored source file.
 
 Not mapped yet (not built): coverage view, filters, PDF page view, feedback buttons

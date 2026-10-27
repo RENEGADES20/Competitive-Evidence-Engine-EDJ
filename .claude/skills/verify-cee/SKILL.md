@@ -55,6 +55,7 @@ user-facing feature, how a user reaches it, how the script drives it, what prove
 | `open-citation` | A citation opens the stored passage, and it matches the database |
 | `gap-path` | A question with no stored evidence says so, with no invented citation |
 | `invalid-chunk` | An unknown chunk ID shows a clear error |
+| `coverage` | The Coverage page shows per-firm, per-type counts and dates that match the database |
 | `download-document` | The stored document downloads with the right sha256 |
 
 ## Reading the result
