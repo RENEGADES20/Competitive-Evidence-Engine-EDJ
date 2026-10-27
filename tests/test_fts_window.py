@@ -96,7 +96,9 @@ def dated_db():
             conn.execute(f"INSERT INTO {SCHEMA}.documents VALUES (%s, %s, 'press', 3, %s, %s, NULL)",
                          (doc_id, entity, published, basis))
             conn.execute(f"INSERT INTO {SCHEMA}.chunks VALUES (%s, %s, 0, 'Document', %s, NULL, '', %s)",
-                         (f"{doc_id}#0", doc_id, segment, "The firm changed its plan and has a new advisor program."))
+                         (f"{doc_id}#0", doc_id, segment, "The firm changed its plan and has a new advisor program. "
+                          # distinct words per document, so near-duplicate removal (#106) keeps every row
+                          + " ".join(f"{doc_id.lower()}w{i}" for i in range(12))))
         yield lambda: psycopg.connect(url, row_factory=dict_row, options=f"-c search_path={SCHEMA}")
         conn.execute(f"DROP SCHEMA {SCHEMA} CASCADE")
 

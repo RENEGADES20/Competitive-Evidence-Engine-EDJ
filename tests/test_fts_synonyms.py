@@ -62,11 +62,9 @@ def test_multi_word_synonym_is_searched_as_a_phrase():
     assert sql["tsquery"].count("phraseto_tsquery('english', %(syn") == 4
     assert params["syn1"] == "number of financial advisors"
     assert "plainto_tsquery('english', %(terms)s)" in sql["tsquery"]  # the question's own words stay OR'ed
-    assert sql["bonus"] == " + 2 * ts_rank_cd(c.tsv, q.syn)"
 
 
-def test_no_synonym_leaves_the_query_and_rank_unchanged():
+def test_no_synonym_leaves_the_words_only():
     sql, params = _tsquery_sql("positioning itself to recruit away from wirehouses")
     assert "phraseto_tsquery" not in sql["tsquery"]
-    assert sql["syn"] == sql["bonus"] == ""
     assert params == {}

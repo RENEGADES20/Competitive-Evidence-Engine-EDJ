@@ -8,6 +8,7 @@
 #   equivalence     full | partial  (partial = related but not the same thing)
 #   caveat          text inserted BY CODE whenever an answer uses substitute data
 #   segment_aliases section headings / phrases that map a chunk to a segment tag
+#   segment_stops   optional headings that end a tagged segment (other segments' names)
 #   reporting_shape how the firm reports (drives what expected_sources look like)
 #   expected_sources doc types that should exist; seeds source_registry
 #                   (one row per entity + doc type in config/source_registry.csv)
@@ -70,6 +71,23 @@ entities:
       #   BAC-10K-2025 no longer names Merrill Edge; Consumer Banking still lists "investment accounts
       #   and products", and GWIM "consists of two primary businesses: Merrill Wealth Management and
       #   Bank of America Private Bank" (supports the MER caveat).
+    # Headings that end a tagged segment without tagging (#37). Seen alone on a line in
+    # BAC-10K-2025 Item 7 and BAC-10Q-2026Q2 Item 2: GWIM runs until "Global Banking".
+    segment_stops: ["Consumer Banking", "Global Banking", "Global Markets", "All Other"]
+    # Transcripts and press releases have no headings: a chunk there is GWIM when it names one
+    # of segment_mentions and GWIM words (mentions + signals) occur at least twice as often as
+    # mention_stops (other businesses). Mixed chunks stay untagged (src/cee/ingest/chunk.py).
+    # Checked on BAC-TR-2026Q1..Q3 and BAC-PR-2026-*: Q3 #13 ("Merrill added about 4,200 net new
+    # households") is GWIM; Q2 #13 (consumer banking, then one GWIM sentence) is not.
+    segment_mentions:
+      GWIM: ["GWIM", "Global Wealth", "Merrill", "Private Bank"]
+    mention_signals:
+      GWIM: ["adviser", "advisor", "advisers", "advisors", "households", "AUM", "wealth management",
+             "wealth clients", "client balances", "brokerage"]
+    mention_stops: ["Consumer Banking", "Global Banking", "Global Markets", "All Other",
+                    "consumer", "commercial", "card", "investment banking", "sales and trading",
+                    "markets", "trading", "deposits", "loans", "mortgage"]
+    mention_excludes: ["Merrill Edge"]   # Consumer Banking platform (see the note above)
     reported_as: null
     equivalence: full
     caveat: null
@@ -187,6 +205,7 @@ synonyms:
   mass affluent: ["mass-affluent"]
   stock plan: ["equity compensation", "workplace"]
   AI: ["artificial intelligence", "generative AI", "GenAI", "machine learning"]
+  technology: ["AI", "artificial intelligence", "digital", "platform", "tools"]   # Q5
   fee structures: ["fee schedule", "advisory fee", "wrap fee"]
   younger investors: ["millennials", "Gen Z", "younger clients", "under 40"]
   wealth transfer: ["great wealth transfer", "intergenerational", "heirs"]

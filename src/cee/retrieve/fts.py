@@ -2,13 +2,18 @@
 
 Skeleton placeholder, owner: S1 (Yi-chen Wu).
 Synonyms and peer sets ("the five") come from config/entities.yaml (#89).
-Time windows ("last 90 days", "since the start of the year") are filtered in SQL (#49).
-Not yet here (S1, W3+): themes, quotas, dedupe.
+Time windows ("last 90 days", "since the start of the year") are filtered in SQL (#49). The pool is over-fetched per firm and document type, then
+near-duplicates are dropped and firms, document types and documents take turns (quotas), so
+one filing's boilerplate repeated across four 10-Qs cannot fill the list (Q1: the NNA
+definition took all 8 places; the earnings-call strategy commentary took none).
+Not yet here (S1): themes taxonomy.
 """
 from __future__ import annotations
 
 import calendar
+import math
 import re
+from collections import OrderedDict
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
@@ -73,8 +78,9 @@ def _peer_members(question: str) -> set[str]:
 
 
 _LAST_N = re.compile(r"\b(?:last|past)\s+(\d+)\s+(day|week|month)s?\b", re.IGNORECASE)
-_START_OF_YEAR = [re.compile(r"\bsince\s+the\s+(?:start|beginning)\s+of\s+the\s+year\b", re.IGNORECASE),
+_START_OF_YEAR = [re.compile(r"\bsince\s+the\s+(?:start|beginning)\s+of\s+(?:the|this)\s+year\b", re.IGNORECASE),
                   re.compile(r"\byear[\s-]to[\s-]date\b", re.IGNORECASE),
+                  re.compile(r"\bso\s+far\s+this\s+year\b", re.IGNORECASE),
                   re.compile(r"\bYTD\b")]   # "start of the year" = calendar year (specs/retrieval.md)
 
 
@@ -116,7 +122,14 @@ def _search_terms(q: Query) -> str:
         text = _phrase_pattern(p).sub(" ", text)
     for p in [_LAST_N, *_START_OF_YEAR]:
         text = p.sub(" ", text)
+    text = QUESTION_WORDS.sub(" ", text)
     return re.sub(r"['’]s\b", "", text)
+
+
+# Words that say what to do with the evidence, not what it is about (Q8 "Compare how ... describe"
+# matched a stock-plan note that "describes" the plan).
+QUESTION_WORDS = re.compile(r"\b(?:compare[sd]?|comparison|describe[sd]?|explain|discuss|tell|say|says|"
+                            r"said|summari[sz]e|list|versus|vs|itself|themselves|their|its)\b", re.IGNORECASE)
 
 
 def _synonym_pattern(key: str) -> re.Pattern:
@@ -133,37 +146,75 @@ def expand_synonyms(terms: str) -> list[str]:
     return out
 
 
-SYNONYM_BONUS = 2  # a synonym phrase match ranks 2x on top of the words (#89: Q22 gets NNA from 3 of the five)
-
-
 def _tsquery_sql(terms: str) -> tuple[dict, dict]:
-    """SQL fragments for SQL: the question's words OR'ed, plus each synonym as a phrase, and
-    a rank bonus for synonym matches. No synonym -> words only, rank unchanged."""
+    """SQL fragments for SQL: the question's words OR'ed, plus each synonym as a phrase."""
     words = ("to_tsquery('english',\n"
              "           coalesce(nullif(replace(plainto_tsquery('english', %(terms)s)::text, '&', '|'), ''),\n"
              "                    'zzznomatch'))")
     params = {f"syn{i}": s for i, s in enumerate(expand_synonyms(terms))}
     if not params:
-        return {"tsquery": words, "syn": "", "bonus": ""}, params
+        return {"tsquery": words}, params
     phrases = " || ".join(f"phraseto_tsquery('english', %({name})s)" for name in params)
-    return {"tsquery": f"{words}\n         || {phrases}",
-            "syn": f",\n         {phrases} AS syn",
-            "bonus": f" + {SYNONYM_BONUS} * ts_rank_cd(c.tsv, q.syn)"}, params
+    return {"tsquery": f"{words}\n         || {phrases}"}, params
+
+
+DENSITY_WEIGHT = 0.1  # ts_rank_cd only breaks ties between chunks covering the same words
+
+
+def rank_sql(conn, terms: str, synonyms: dict[str, str]) -> tuple[str, dict]:
+    """Rank = sum of the IDF of every question word and synonym phrase the chunk contains,
+    plus a little term density. ts_rank_cd alone counts "net", "new" and "assets" (in
+    thousands of chunks) like "strategy", so a footnote that defines NNA three times beat the
+    earnings-call passage on NNA strategy (Q1). IDF is counted over the loaded corpus."""
+    lexemes = [r["lexeme"] for r in conn.execute(
+        "SELECT lexeme FROM unnest(to_tsvector('english', %(terms)s))", {"terms": terms}).fetchall()]
+    probes = {f"w{i}": ("%({0})s::tsquery", "'" + lx.replace("'", "''") + "'") for i, lx in enumerate(lexemes)}
+    probes |= {f"p{name}": (f"phraseto_tsquery('english', %({{0}})s)", phrase)
+               for name, phrase in synonyms.items()}
+    if not probes:
+        return f"{DENSITY_WEIGHT} * ts_rank_cd(c.tsv, q.tsq)", {}
+    values = {name: value for name, (_, value) in probes.items()}
+    counts = ", ".join(f"count(*) FILTER (WHERE tsv @@ {tmpl.format(name)}) AS {name}"
+                       for name, (tmpl, _) in probes.items())
+    row = conn.execute(f"SELECT count(*) AS n_all, {counts} FROM chunks", values).fetchone()
+    parts, params = [], {}
+    for name, (tmpl, value) in probes.items():
+        if not row[name]:
+            continue
+        params[name], params[f"{name}_idf"] = value, math.log(row["n_all"] / row[name])
+        parts.append(f"(c.tsv @@ {tmpl.format(name)})::int * %({name}_idf)s")
+    parts.append(f"{DENSITY_WEIGHT} * ts_rank_cd(c.tsv, q.tsq)")
+    params["boilerplate"] = BOILERPLATE
+    return (f"({' + '.join(parts)})\n"
+            f"         * CASE WHEN c.text ~* ANY(%(boilerplate)s) THEN {BOILERPLATE_WEIGHT} ELSE 1 END"), params
+
+
+# Safe-harbor and legend paragraphs name every strategy word and are never evidence
+# (Q12: the "forward-looking statements" slide of every SCHW deck outranked the strategy slides).
+BOILERPLATE = [r"forward-looking statements", r"safe harbor"]
+BOILERPLATE_WEIGHT = 0.2
 
 
 SQL = """
 WITH q AS (
-  SELECT {tsquery} AS tsq{syn}
+  SELECT {tsquery} AS tsq
+), scored AS (
+  SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
+         d.published_at::text AS published_at, d.period_end::text AS period_end,
+         c.section, c.page, {rank} AS rank, c.text
+  FROM chunks c JOIN documents d USING (doc_id), q
+  WHERE {match}
+    AND {entity_filter}
+    AND {window_filter}
+), pooled AS (
+  SELECT *, row_number() OVER (PARTITION BY entity_id, doc_type ORDER BY rank DESC, chunk_id) AS rn
+  FROM scored
 )
-SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
-       d.published_at::text AS published_at, d.period_end::text AS period_end,
-       c.section, c.page, ts_rank_cd(c.tsv, q.tsq){bonus} AS rank, c.text
-FROM chunks c JOIN documents d USING (doc_id), q
-WHERE c.tsv @@ q.tsq
-  AND {entity_filter}
-  AND {window_filter}
-ORDER BY rank DESC, c.chunk_id
-LIMIT %(k)s
+SELECT chunk_id, doc_id, entity_id, segment, doc_type, source_tier, published_at, period_end,
+       section, page, rank, text
+FROM pooled
+WHERE rn <= %(per_group)s
+ORDER BY rank DESC, chunk_id
 """
 
 
@@ -195,16 +246,98 @@ def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
             {"w_from": window[0], "w_to": window[1]})
 
 
-def search(q: Query, k: int = 8) -> list[Hit]:
+K = 20              # chunks handed to the model (specs/retrieval.md)
+POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
+MAX_PER_DOC = 3      # no single document fills the list
+DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
+FLOOR = 0.3          # share of the firm's best rank a chunk needs to take a slot
+WINDOW_MAX_PER_DOC = 8
+# Window questions name no topic ("What's new on Raymond James in the last 90 days?"), so these
+# rank news-like passages (headlines, launches, records) above tables of contents.
+RECENCY_TERMS = "announced launched introduced new record acquisition agreement completed increased hired"
+
+
+def _shingles(text: str, n: int = 5) -> set[tuple[str, ...]]:
+    words = re.findall(r"\w+", text.lower())
+    return {tuple(words[i:i + n]) for i in range(max(1, len(words) - n + 1))}
+
+
+def _similar(a: set, b: set) -> float:
+    return len(a & b) / len(a | b) if a and b else 0.0
+
+
+def select(pool: list[Hit], k: int = K, floor: float | None = None,
+           max_per_doc: int | None = None) -> list[Hit]:
+    """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
+    turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
+    repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
+    FLOOR x its firm's best chunk gets no slot: quotas spread relevant evidence, they do not
+    pad the list with a document type that has nothing on the question."""
+    floor = FLOOR if floor is None else floor
+    max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
+    firms: OrderedDict[str | None, OrderedDict[str, list[Hit]]] = OrderedDict()
+    best: dict[str | None, float] = {}
+    for h in pool:  # first seen = best ranked
+        best.setdefault(h.entity_id, h.rank)
+        if h.rank >= floor * best[h.entity_id]:
+            firms.setdefault(h.entity_id, OrderedDict()).setdefault(h.doc_type, []).append(h)
+    turn = dict.fromkeys(firms, 0)
+    kept: list[Hit] = []
+    kept_shingles: list[set] = []
+    per_doc: dict[str, int] = {}
+
+    def take(firm) -> bool:
+        types = firms[firm]
+        names = [t for t in types if types[t]]
+        for i in range(len(names)):
+            t = names[(turn[firm] + i) % len(names)]
+            while types[t]:
+                h = types[t].pop(0)
+                if per_doc.get(h.doc_id, 0) >= max_per_doc:
+                    continue
+                sh = _shingles(h.text)
+                if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles):
+                    continue
+                kept.append(h)
+                kept_shingles.append(sh)
+                per_doc[h.doc_id] = per_doc.get(h.doc_id, 0) + 1
+                turn[firm] = (turn[firm] + i + 1) % len(names)
+                return True
+        return False
+
+    while len(kept) < k:
+        progressed = False
+        for firm in firms:
+            if len(kept) >= k:
+                break
+            progressed |= take(firm)
+        if not progressed:
+            break
+    return kept
+
+
+def search(q: Query, k: int = K) -> list[Hit]:
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     where, params = entity_filter(q.entities)
-    when, window_params = window_filter(q.window)
+    window, window_params = window_filter(q.window)
     terms = _search_terms(q)
+    if q.window:
+        terms += " " + RECENCY_TERMS
     fragments, syn_params = _tsquery_sql(terms)
-    params.update(window_params)
-    params.update(syn_params, terms=terms, k=k)
+    # A window question ("what's new ... in the last 90 days") asks about everything inside the
+    # window, so there the words only rank; outside a window they must match.
+    match = "TRUE" if q.window else "c.tsv @@ q.tsq"
+    params.update(syn_params)
+    params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
     with connect() as conn:
-        rows = conn.execute(SQL.format(**fragments, entity_filter=where, window_filter=when),
-                            params).fetchall()
-    return [Hit(**r) for r in rows]
+        rank, rank_params = rank_sql(conn, terms, syn_params)
+        params.update(rank_params)
+        sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=where, window_filter=window)
+        rows = conn.execute(sql, params).fetchall()
+    pool = [Hit(**r) for r in rows]
+    # Inside a window every document is on topic, so no floor; one filing may be all there is.
+    hits = select(pool, k, floor=0, max_per_doc=WINDOW_MAX_PER_DOC) if q.window else select(pool, k)
+    if q.window:  # recency questions read newest first (Q26)
+        hits.sort(key=lambda h: h.published_at, reverse=True)
+    return hits

@@ -10,10 +10,10 @@ import argparse
 import csv
 from pathlib import Path
 
-from cee.config import REPO_ROOT, entities_config
+from cee.config import REPO_ROOT, entities_config, entity_by_id
 from cee.db import connect
 from cee.ingest import parse_cache
-from cee.ingest.chunk import chunk_sections, split_10k_sections
+from cee.ingest.chunk import SegmentTagger, chunk_sections, split_10k_sections
 from cee.ingest.manifest import check_files, date_basis_of, read_manifest
 
 
@@ -96,8 +96,13 @@ def parse_file(row: dict, path: Path, use_cache: bool = True) -> list[tuple[str,
 
 def load_document(conn, row: dict, path: Path, use_cache: bool = True) -> int:
     sections = parse_file(row, path, use_cache)
+    entity = entity_by_id(row["entity_id"]) or {}
+    tagger = SegmentTagger(entity.get("segment_aliases"), entity.get("segment_stops"), sections,
+                           entity.get("segment_mentions"), entity.get("mention_stops"),
+                           entity.get("mention_excludes"), entity.get("mention_signals"))
     chunks = chunk_sections(row["doc_id"], row["entity_id"] or "", row["doc_type"],
-                            row["period_end"] or row["published_at"], sections)
+                            row["period_end"] or row["published_at"], sections,
+                            segment_for=tagger)
     conn.execute("DELETE FROM documents WHERE doc_id = %s", (row["doc_id"],))
     conn.execute(
         """INSERT INTO documents (doc_id, entity_id, doc_type, source_tier, published_at,
