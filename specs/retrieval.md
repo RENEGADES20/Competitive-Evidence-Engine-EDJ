@@ -55,6 +55,8 @@ Q4, Q7, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
 
 ## Open questions
 
-- "Since the start of the year" = calendar year of today's date? (proposal: yes)
+- ~~"Since the start of the year" = calendar year of today's date?~~ Settled in #49: yes,
+  1 January of the current calendar year to today. Windows filter `published_at` (both
+  ends inclusive) and leave out `date_basis = retrieved` documents (ADR-007 T-09).
 - Similarity measure for dedupe: trigram (pg_trgm) is simplest.
 - When would hybrid search be justified? Needs a comparison run (ADR-001).

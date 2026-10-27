@@ -2,7 +2,7 @@
 
 Skeleton placeholder, owner: S1 (Yi-chen Wu).
 Synonyms and peer sets ("the five") come from config/entities.yaml (#89).
-Time windows are filtered in SQL. The pool is over-fetched per firm and document type, then
+Time windows ("last 90 days", "since the start of the year") are filtered in SQL (#49). The pool is over-fetched per firm and document type, then
 near-duplicates are dropped and firms, document types and documents take turns (quotas), so
 one filing's boilerplate repeated across four 10-Qs cannot fill the list (Q1: the NNA
 definition took all 8 places; the earnings-call strategy commentary took none).
@@ -10,11 +10,12 @@ Not yet here (S1): themes taxonomy.
 """
 from __future__ import annotations
 
-import datetime as dt
+import calendar
 import math
 import re
 from collections import OrderedDict
 from dataclasses import dataclass, field
+from datetime import date, timedelta
 
 from cee.config import entities_config
 from cee.db import connect
@@ -26,7 +27,7 @@ class Query:
     entities: list[str] = field(default_factory=list)   # covered firms named in the question
     unmapped: list[str] = field(default_factory=list)   # known firms we hold no documents for
     mode: str = "entity"
-    since: str | None = None   # ISO date: only documents published on or after it (SQL)
+    window: tuple[date, date] | None = None              # published_at from..to, both inclusive
 
     @property
     def firms(self) -> list[str]:
@@ -76,37 +77,42 @@ def _peer_members(question: str) -> set[str]:
             for m in s["members"]}
 
 
-WINDOW_DAYS = re.compile(r"\b(?:last|past)\s+(\d+)\s+(day|week|month)s?\b", re.IGNORECASE)
-WINDOW_YEAR = re.compile(r"\b(?:since the (?:start|beginning) of (?:the|this) year|year[- ]to[- ]date|"
-                         r"so far this year)\b", re.IGNORECASE)
-UNIT_DAYS = {"day": 1, "week": 7, "month": 30}
+_LAST_N = re.compile(r"\b(?:last|past)\s+(\d+)\s+(day|week|month)s?\b", re.IGNORECASE)
+_START_OF_YEAR = [re.compile(r"\bsince\s+the\s+(?:start|beginning)\s+of\s+(?:the|this)\s+year\b", re.IGNORECASE),
+                  re.compile(r"\byear[\s-]to[\s-]date\b", re.IGNORECASE),
+                  re.compile(r"\bso\s+far\s+this\s+year\b", re.IGNORECASE),
+                  re.compile(r"\bYTD\b")]   # "start of the year" = calendar year (specs/retrieval.md)
 
 
-def window_since(question: str, today: dt.date | None = None) -> str | None:
-    """"last 90 days" -> today minus 90 days; "since the start of the year" -> 1 January of
-    today's calendar year (specs/retrieval.md). None when the question names no window."""
-    today = today or dt.date.today()
-    m = WINDOW_DAYS.search(question)
-    if m:
-        return (today - dt.timedelta(days=int(m[1]) * UNIT_DAYS[m[2].lower()])).isoformat()
-    if WINDOW_YEAR.search(question):
-        return dt.date(today.year, 1, 1).isoformat()
+def _months_back(d: date, n: int) -> date:
+    y, m = divmod(d.year * 12 + d.month - 1 - n, 12)
+    return date(y, m + 1, min(d.day, calendar.monthrange(y, m + 1)[1]))
+
+
+def _window(question: str, today: date) -> tuple[date, date] | None:
+    if m := _LAST_N.search(question):
+        n, unit = int(m.group(1)), m.group(2).lower()
+        start = _months_back(today, n) if unit == "month" else today - timedelta(days=n * (7 if unit == "week" else 1))
+        return start, today
+    if any(p.search(question) for p in _START_OF_YEAR):
+        return date(today.year, 1, 1), today
     return None
 
 
-def resolve(question: str, today: dt.date | None = None) -> Query:
+def resolve(question: str, today: date | None = None) -> Query:
     cfg = entities_config()
     q = Query(question=question)
     peers = _peer_members(question)
     q.entities = [e["id"] for e in cfg["entities"] if e["id"] in peers or _mentions(question, e)]
     q.unmapped = [e["id"] for e in cfg.get("expansion", []) if _mentions(question, e)]
     q.mode = "entity" if q.entities else "theme"
-    q.since = window_since(question, today)
+    q.window = _window(question, today or date.today())
     return q
 
 
 def _search_terms(q: Query) -> str:
-    """Question minus firm names and peer phrases, as an OR query (ranking does the rest)."""
+    """Question minus firm names, peer phrases and time phrases, as an OR query (ranking does
+    the rest)."""
     text = q.question
     cfg = entities_config()
     for e in cfg["entities"] + cfg.get("expansion", []):
@@ -114,7 +120,8 @@ def _search_terms(q: Query) -> str:
             text = _alias_pattern(a).sub(" ", text)
     for p in _peer_phrases():
         text = _phrase_pattern(p).sub(" ", text)
-    text = WINDOW_YEAR.sub(" ", WINDOW_DAYS.sub(" ", text))
+    for p in [_LAST_N, *_START_OF_YEAR]:
+        text = p.sub(" ", text)
     text = QUESTION_WORDS.sub(" ", text)
     return re.sub(r"['’]s\b", "", text)
 
@@ -211,14 +218,6 @@ ORDER BY rank DESC, chunk_id
 """
 
 
-def window_filter(since: str | None) -> tuple[str, dict]:
-    """Hard filter on publication date. Documents dated by their download (date_basis
-    'retrieved', #49) have no real date, so they never enter a window."""
-    if not since:
-        return "TRUE", {}
-    return "(d.published_at >= %(since)s AND d.date_basis = 'source')", {"since": since}
-
-
 def entity_filter(entity_ids: list[str]) -> tuple[str, dict]:
     """Hard filter. An entity reported inside a parent segment (MER -> BAC GWIM) only sees
     parent chunks tagged with that segment."""
@@ -238,7 +237,16 @@ def entity_filter(entity_ids: list[str]) -> tuple[str, dict]:
     return "(" + " OR ".join(clauses) + ")", params
 
 
-K = 20               # chunks handed to the model (specs/retrieval.md)
+def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
+    """Hard filter. Inside a window only documents dated by the source count: a page dated
+    by its download (date_basis = 'retrieved', ADR-007 T-09) is never "recent"."""
+    if window is None:
+        return "TRUE", {}
+    return ("(d.date_basis = 'source' AND d.published_at BETWEEN %(w_from)s AND %(w_to)s)",
+            {"w_from": window[0], "w_to": window[1]})
+
+
+K = 20              # chunks handed to the model (specs/retrieval.md)
 POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
 MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
@@ -312,14 +320,14 @@ def search(q: Query, k: int = K) -> list[Hit]:
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     where, params = entity_filter(q.entities)
-    window, window_params = window_filter(q.since)
+    window, window_params = window_filter(q.window)
     terms = _search_terms(q)
-    if q.since:
+    if q.window:
         terms += " " + RECENCY_TERMS
     fragments, syn_params = _tsquery_sql(terms)
     # A window question ("what's new ... in the last 90 days") asks about everything inside the
     # window, so there the words only rank; outside a window they must match.
-    match = "TRUE" if q.since else "c.tsv @@ q.tsq"
+    match = "TRUE" if q.window else "c.tsv @@ q.tsq"
     params.update(syn_params)
     params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
     with connect() as conn:
@@ -329,7 +337,7 @@ def search(q: Query, k: int = K) -> list[Hit]:
         rows = conn.execute(sql, params).fetchall()
     pool = [Hit(**r) for r in rows]
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
-    hits = select(pool, k, floor=0, max_per_doc=WINDOW_MAX_PER_DOC) if q.since else select(pool, k)
-    if q.since:  # recency questions read newest first (Q26)
+    hits = select(pool, k, floor=0, max_per_doc=WINDOW_MAX_PER_DOC) if q.window else select(pool, k)
+    if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

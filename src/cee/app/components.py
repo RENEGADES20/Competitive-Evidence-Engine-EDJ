@@ -55,6 +55,9 @@ CSS = f"""
   border-radius:999px;margin:.5rem .35rem 0 0;background:{SURFACE}}}
 .cee-chip a,.cee-chip .id{{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:{INK} !important;text-decoration:none !important}}
 .cee-chip:hover{{background:{LIME}}}
+.cee-cite{{display:inline-flex;flex-direction:column;vertical-align:top;margin:0 .6rem 0 0}}
+.cee-cite .cee-chip{{margin-right:0;align-self:flex-start}}
+.cee-cite-src{{font-size:.78rem;color:{MUTED};margin:.25rem 0 0 .4rem;max-width:26rem}}
 .cee-tier{{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
   padding:.1rem .5rem;border-radius:999px;font-weight:700;white-space:nowrap}}
 .cee-flag{{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#9A3412;background:#FFEDD5;padding:.1rem .45rem;border-radius:4px}}
@@ -72,6 +75,14 @@ CSS = f"""
 .cee-cell.covered{{background:{INK};color:{LIME}}}
 .cee-cell.thin{{background:#FFEDD5;color:#9A3412;border:1px solid #FDBA74}}
 .cee-cell.empty{{background:{SURFACE};color:{MUTED};border:1.5px dashed {MUTED}}}
+.cee-grid{{border-collapse:separate;border-spacing:.3rem;width:100%}}
+.cee-grid th{{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.06em;color:{MUTED};text-align:left;font-weight:600;padding:.2rem .3rem}}
+.cee-grid td{{vertical-align:top;padding:0}}
+.cee-grid .cee-cell{{display:block;min-width:0;margin:0;padding:.45rem .5rem;font-size:.68rem;line-height:1.4;white-space:nowrap}}
+.cee-gridwrap{{overflow-x:auto}}
+.cee-grid .rowlbl{{font-family:'Space Grotesk',sans-serif;font-weight:700;color:{INK};padding:.4rem .3rem;white-space:nowrap}}
+.cee-grid .rowlbl small{{display:block;font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.68rem;color:{MUTED};white-space:normal}}
+.cee-grid .na{{display:block;color:{MUTED};font-size:.68rem;padding:.5rem .5rem;white-space:nowrap}}
 .cee-empty{{border:1.5px dashed {LINE};border-radius:12px;padding:1.4rem;color:{MUTED};text-align:center}}
 .cee-footer{{margin-top:3rem;padding-top:.8rem;border-top:1px solid {LINE};display:flex;justify-content:space-between;
   font-family:'JetBrains Mono',monospace;font-size:.75rem;color:{MUTED};letter-spacing:.04em}}
@@ -108,12 +119,17 @@ def tier_badge_html(tier: int | None) -> str:
     return f'<span class="cee-tier" style="background:{bg};color:{fg}">{prefix}{escape(label)}</span>'
 
 
-def citation_chip_html(chunk_id: str, tier: int | None, link: bool = True) -> str:
-    """The link text is exactly the chunk_id (scripts/verify_cee.py reads it)."""
+def citation_chip_html(chunk_id: str, tier: int | None, link: bool = True, label: str = "") -> str:
+    """The link text is exactly the chunk_id (scripts/verify_cee.py reads it).
+
+    label is this citation's own source label; it sits under the chip so each citation says
+    where it comes from. A citation that is not in the retrieved set gets link=False.
+    """
     cid = escape(chunk_id)
     target = (f'<a href="?chunk={quote(chunk_id)}" target="_blank">{cid}</a>' if link
               else f'<span class="id">{cid}</span>')
-    return f'<span class="cee-chip">{target}{tier_badge_html(tier)}</span>'
+    chip = f'<span class="cee-chip">{target}{tier_badge_html(tier)}</span>'
+    return f'<span class="cee-cite">{chip}<span class="cee-cite-src">{escape(label)}</span></span>' if label else chip
 
 
 def ticker(items: list[str]) -> None:
@@ -140,9 +156,11 @@ def behavior_header(text: str, code: str) -> None:
     _html(f'<div class="cee-behavior"><h2>{escape(text)}</h2><span class="code">{escape(code)}</span></div>')
 
 
-def claim_card(n: int, text: str, chips: list[tuple[str, int | None]], source_label: str = "",
+def claim_card(n: int, text: str, chips: list[tuple], source_label: str = "",
                flags: list[str] | None = None, label: str = "", note: str = "", link: bool = True) -> None:
-    chip_html = "".join(citation_chip_html(cid, t, link) for cid, t in chips)
+    """chips: (chunk_id, tier) or (chunk_id, tier, source_label, linkable) per citation."""
+    chip_html = "".join(citation_chip_html(c[0], c[1], link and (c[3] if len(c) > 3 else True),
+                                           c[2] if len(c) > 2 else "") for c in chips)
     flag_html = "".join(f' <span class="cee-flag">{escape(f)}</span>' for f in flags or [])
     top = f'<div class="lbl">{escape(label)}</div>' if label else ""
     src = f'<div class="src">{escape(source_label)}</div>' if source_label else ""
@@ -173,8 +191,9 @@ def passage(text: str) -> None:
 
 
 def coverage_cell_html(state: str, text: str) -> str:
-    """state: covered | thin | empty. The state word is always part of the text."""
-    return f'<span class="cee-cell {state}">{escape(state.upper())} · {escape(text)}</span>'
+    """state: covered | thin | empty. The state word is always part of the text; \\n in text is a line break."""
+    body = escape(text).replace("\n", "<br>")
+    return f'<span class="cee-cell {state}">{escape(state.upper())}<br>{body}</span>'
 
 
 def coverage_cell(state: str, text: str) -> None:
@@ -189,6 +208,20 @@ def trace_lines(steps: list[tuple[str, str]], where=None) -> None:
     rows = "".join(f'<div class="{escape(state)}"><span class="m">{TRACE_MARKS.get(state, "·")}</span>'
                    f'{escape(text)}</div>' for state, text in steps)
     _html(f'<div class="cee-trace">{rows}</div>', where)
+
+
+def coverage_grid(columns: list[str], rows: list[tuple[str, str, list[tuple[str, str] | None]]]) -> None:
+    """rows: (label, note, cells) with one (state, text) per column, or None where the source
+    registry does not expect that document type for the row."""
+    head = "".join(f"<th>{escape(c)}</th>" for c in columns)
+    body = ""
+    for label, note, cells in rows:
+        sub = f"<small>{escape(note)}</small>" if note else ""
+        tds = "".join(f'<td>{coverage_cell_html(*c)}</td>' if c else '<td><span class="na">not tracked</span></td>'
+                      for c in cells)
+        body += f'<tr><th class="rowlbl" scope="row">{escape(label)}{sub}</th>{tds}</tr>'
+    _html(f'<div class="cee-gridwrap"><table class="cee-grid"><thead><tr><th></th>{head}</tr></thead>'
+          f'<tbody>{body}</tbody></table></div>')
 
 
 def empty_state(text: str) -> None:

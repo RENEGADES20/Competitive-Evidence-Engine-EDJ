@@ -3,7 +3,7 @@ No database: select() works on a ranked pool of Hits."""
 import datetime as dt
 
 from cee.retrieve import fts
-from cee.retrieve.fts import Hit, _search_terms, resolve, select, window_since
+from cee.retrieve.fts import Hit, _search_terms, resolve, select
 
 TODAY = dt.date(2026, 10, 22)
 
@@ -14,20 +14,10 @@ def hit(cid, rank, entity="MS", doc_type="10-Q", text=None, doc=None):
                section=None, page=None, rank=rank, text=text or f"unique words for {cid} " * 5)
 
 
-def test_last_n_days_window():
-    # Q26
-    assert window_since("What's new on Raymond James in the last 90 days?", TODAY) == "2026-07-24"
-    assert window_since("past 2 weeks", TODAY) == "2026-10-08"
-
-
-def test_start_of_year_window():
-    # Q27: calendar year of today's date (specs/retrieval.md open question, proposal: yes)
-    assert window_since("What has changed at Merrill since the start of the year?", TODAY) == "2026-01-01"
-
-
-def test_no_window():
-    assert window_since("What is Morgan Stanley's strategy to increase their net new assets?", TODAY) is None
-    assert resolve("What is Schwab's strategy for its RIA custody business?").since is None
+def test_window_phrasings_from_main():
+    # Q27 phrasing main accepted before #49 landed; windows themselves are tested in test_fts_window.py
+    assert resolve("What has Merrill launched so far this year?", TODAY).window == (dt.date(2026, 1, 1), TODAY)
+    assert resolve("What is Schwab's strategy for its RIA custody business?").window is None
 
 
 def test_window_and_instruction_words_are_not_search_terms():
