@@ -55,6 +55,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 |---|---|---|---|
 | 2026-10-16 | U1 design language and page shell: theme, components, Ask/Coverage/Design nav, placeholders, snapshot footer, DESIGN.md (#68) | none | #42 citation chips on real answers, #41 coverage table |
 | 2026-10-23 | Ask page shows a progress bar and a step trace built from each stage's real output (firms, counts, model call or skip, citations), kept collapsed after the answer; failed steps shown (#80) (#103) | none | when time windows land (#49), add the window to the "Reading the question" line |
+| 2026-10-27 | U1: every citation on the Ask page shows its own source label and tier badge; unmatched citations are flagged, not linked (#42) (#109) | none | #41 coverage table, #53 source page in context |
 
 ### TL
 
