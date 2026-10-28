@@ -285,6 +285,9 @@ def feature_ask_answer(page, base, rec, ctx):
     rec.step("Ask the EDJ advisors question", "an answer heading", heading is not None, f"heading={heading!r}")
     n = citation_links(page).count()
     rec.step("Look at the claims", "at least one citation link", n > 0, f"{n} citation links")
+    rec.step("Read the coverage note", "a visible line starting 'Coverage: searched'",
+             "Coverage: searched" in body,
+             next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note"))
     rec.step("Read the footer", "mock provider, no LLM call", "LLM called: False" in body,
              "LLM called: False" if "LLM called: False" in body else "footer missing or LLM called")
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))

@@ -65,6 +65,7 @@ CSS = f"""
 .cee-box b.l{{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.06em}}
 .cee-caveat{{background:#FFF7ED;border-left:4px solid {ORANGE};color:#7C2D12}}
 .cee-gap{{background:{SURFACE};border:1.5px dashed {INK};color:{INK}}}
+.cee-coverage{{background:{SURFACE};border-left:4px solid {LINE};color:{INK};font-size:.9rem}}
 .cee-behavior{{display:flex;align-items:baseline;gap:.7rem;margin-top:1.2rem}}
 .cee-behavior h2 a{{display:none}} .cee-behavior h2{{width:auto !important;font-family:'Space Grotesk',sans-serif;font-weight:700;color:{INK};padding:0 !important;margin:0}}
 .cee-behavior .code{{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:{INK};border:1px solid {INK};padding:.05rem .4rem;border-radius:4px}}
@@ -177,6 +178,11 @@ def claim_card(n: int, text: str, chips: list[tuple], source_label: str = "",
 def caveat_box(text: str) -> None:
     """Always expanded: never inside an expander, tab or tooltip."""
     _html(f'<div class="cee-box cee-caveat"><b class="l">Caveat:</b> {escape(text)}</div>')
+
+
+def coverage_box(note: str) -> None:
+    """Always expanded. The text starts with 'Coverage:' (scripts/verify_cee.py reads it)."""
+    _html(f'<div class="cee-box cee-coverage">{escape(note)}</div>')
 
 
 def gap_box(what: str, suggested_source: str = "") -> None:

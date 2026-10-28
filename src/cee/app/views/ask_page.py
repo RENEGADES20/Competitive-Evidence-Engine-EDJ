@@ -108,6 +108,8 @@ def render() -> None:
         ui.caveat_box(cav)
     for g in a.gaps:
         ui.gap_box(g.what, g.suggested_source)
+    if a.coverage_note:
+        ui.coverage_box(a.coverage_note)
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
                 f'{len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
     with ui.placeholder("feedback", 62, "Feedback on this answer"):
