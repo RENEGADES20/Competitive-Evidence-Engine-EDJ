@@ -35,6 +35,7 @@ class Answer(BaseModel):
     adjacent: list[Adjacent] = Field(default_factory=list)
     gaps: list[Gap] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)  # inserted by code
+    coverage_note: str = ""                            # built by code from the retrieved hits
     llm_called: bool = False
 
 
