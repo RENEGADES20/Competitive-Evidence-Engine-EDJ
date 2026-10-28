@@ -211,7 +211,7 @@ def context_passages(items: list[dict]) -> None:
 
 def pdf_page(png: bytes, page: int, total: int) -> None:
     """One rendered PDF page. The caption is the page number the chunk was stored with."""
-    st.image(png, caption=f"Page {page} of {total} of the stored PDF", use_container_width=True)
+    st.image(png, caption=f"Page {page} of {total} of the stored PDF", width="stretch")
 
 
 def coverage_cell_html(state: str, text: str) -> str:
