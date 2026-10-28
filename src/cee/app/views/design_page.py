@@ -44,6 +44,13 @@ def render() -> None:
     _section("Source page header")
     ui.source_header("Sample Co. 10-K 2025-12-31", 2, ["Section: Item 1", "Page 4", f"Chunk: {SAMPLE_ID}"])
 
+    _section("Passage in context")
+    ui.context_passages([
+        {"chunk_id": "SAMPLE-DOC-2025#0", "text": "A sample paragraph before the cited one.", "page": None, "cited": False},
+        {"chunk_id": SAMPLE_ID, "text": "The sample paragraph that a citation points to.", "page": None, "cited": True},
+        {"chunk_id": "SAMPLE-DOC-2025#2", "text": "A sample paragraph after the cited one.", "page": None, "cited": False}])
+    st.caption("PDF chunks add the page number to each tag, and the stored PDF page is shown below the passages.")
+
     _section("Coverage cells")
     st.markdown("".join(ui.coverage_cell_html(state, text) for state, text in
                         [("covered", "12 docs"), ("thin", "1 doc"), ("empty", "0 docs")]), unsafe_allow_html=True)
