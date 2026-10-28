@@ -170,3 +170,18 @@ def test_coverage_note_is_not_written_by_the_model():
     from cee.answer.schema import llm_output_schema
 
     assert "coverage_note" not in llm_output_schema()["properties"]
+
+
+def test_coverage_note_states_the_time_window_and_names_research_once():
+    # Q26: hit dates are periods; the note says the window is on publication date
+    import datetime as dt
+
+    from cee.answer.validate import coverage_note
+
+    q = resolve("What's new on Raymond James in the last 90 days?", today=dt.date(2026, 10, 28))
+    assert "Published 2026-07-30 to 2026-10-28 only." in coverage_note(q, [])
+    research = Hit(chunk_id="MCK-X#1", doc_id="MCK-X", entity_id=None, segment=None, doc_type="research",
+                   source_tier=5, published_at="2025-02-10", period_end=None, section="Document", page=1,
+                   rank=1.0, text="x")
+    note = coverage_note(Query(question="q"), [research])
+    assert "research (2025-02-10)" in note and "Research research" not in note

@@ -74,6 +74,9 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
     Describes this question's retrieval only, not the whole corpus."""
     searched = ", ".join(_short_name(e) for e in query.entities) or "all documents (no covered firm named)"
     parts = [f"Coverage: searched {searched}."]
+    window = getattr(query, "window", None)  # dates below are periods; the window is on publication date (#49)
+    if window:
+        parts.append(f"Published {window[0]} to {window[1]} only.")
     if query.unmapped:
         parts.append("No documents in the corpus for "
                      + ", ".join(_short_name(e) for e in query.unmapped) + ".")
@@ -90,7 +93,8 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
     for (entity, doc_type, segment), g in groups.items():
         lo, hi = min(g["dates"]), max(g["dates"])
         seg = f", {segment} segment" if segment else ""
-        sources.append(f"{entity} {doc_type}{seg} ({lo if lo == hi else f'{lo} to {hi}'})")
+        label = doc_type if entity == "Research" and doc_type == "research" else f"{entity} {doc_type}"
+        sources.append(f"{label}{seg} ({lo if lo == hi else f'{lo} to {hi}'})")
     docs = len({h.doc_id for h in hits})
     parts.append(f"{_plural(len(hits), 'passage')} from {_plural(docs, 'document')}: " + "; ".join(sources) + ".")
     hit_entities = {h.entity_id for h in hits}
