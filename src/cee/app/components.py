@@ -65,12 +65,18 @@ CSS = f"""
 .cee-box b.l{{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.06em}}
 .cee-caveat{{background:#FFF7ED;border-left:4px solid {ORANGE};color:#7C2D12}}
 .cee-gap{{background:{SURFACE};border:1.5px dashed {INK};color:{INK}}}
+.cee-coverage{{background:{SURFACE};border-left:4px solid {LINE};color:{INK};font-size:.9rem}}
 .cee-behavior{{display:flex;align-items:baseline;gap:.7rem;margin-top:1.2rem}}
 .cee-behavior h2 a{{display:none}} .cee-behavior h2{{width:auto !important;font-family:'Space Grotesk',sans-serif;font-weight:700;color:{INK};padding:0 !important;margin:0}}
 .cee-behavior .code{{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:{INK};border:1px solid {INK};padding:.05rem .4rem;border-radius:4px}}
 .cee-meta{{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:{MUTED};line-height:1.7}}
 .cee-passage{{background:{SURFACE};border:1px solid {LINE};border-left:4px solid {LIME};border-radius:12px;
   padding:1rem 1.2rem;white-space:pre-wrap;color:{INK};font-size:.95rem;line-height:1.6}}
+.cee-ctx{{background:{SUNKEN};border:1px solid {LINE};border-radius:12px;padding:.8rem 1.1rem;margin:.45rem 0;
+  white-space:pre-wrap;color:{MUTED};font-size:.88rem;line-height:1.55}}
+.cee-ctx.cited{{background:{SURFACE};border:1px solid {LINE};border-left:4px solid {LIME};color:{INK};font-size:.95rem;line-height:1.6;padding:1rem 1.2rem}}
+.cee-ctx .tag{{display:block;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em;color:{MUTED};margin-bottom:.35rem;white-space:normal}}
+.cee-ctx.cited .tag{{color:{INK};font-weight:700}}
 .cee-cell{{font-family:'JetBrains Mono',monospace;font-size:.78rem;border-radius:8px;padding:.5rem .7rem;display:inline-block;min-width:8.5rem;margin:.2rem}}
 .cee-cell.covered{{background:{INK};color:{LIME}}}
 .cee-cell.thin{{background:#FFEDD5;color:#9A3412;border:1px solid #FDBA74}}
@@ -174,6 +180,11 @@ def caveat_box(text: str) -> None:
     _html(f'<div class="cee-box cee-caveat"><b class="l">Caveat:</b> {escape(text)}</div>')
 
 
+def coverage_box(note: str) -> None:
+    """Always expanded. The text starts with 'Coverage:' (scripts/verify_cee.py reads it)."""
+    _html(f'<div class="cee-box cee-coverage">{escape(note)}</div>')
+
+
 def gap_box(what: str, suggested_source: str = "") -> None:
     """Always expanded. Starts with 'Gap:' (scripts/verify_cee.py reads it)."""
     fill = f"<br><b>Would be filled by:</b> {escape(suggested_source)}" if suggested_source else ""
@@ -188,6 +199,25 @@ def source_header(title: str, tier: int | None, meta: list[str]) -> None:
 
 def passage(text: str) -> None:
     _html(f'<div class="cee-passage">{escape(text)}</div>')
+
+
+def context_passages(items: list[dict]) -> None:
+    """The cited chunk and its neighbours in the same section, in reading order.
+
+    items: dicts with chunk_id, text, page (or None) and cited (True for exactly one). The cited
+    chunk is the white card with a lime rule and a CITED tag; neighbours are sunken and muted.
+    """
+    for it in items:
+        cited = bool(it["cited"])
+        tag = ("CITED PASSAGE" if cited else "NEIGHBOURING PASSAGE") + f" · {it['chunk_id']}" \
+              + (f" · page {it['page']}" if it.get("page") else "")
+        _html(f'<div class="cee-ctx{" cited" if cited else ""}"><span class="tag">{escape(tag)}</span>'
+              f'{escape(it["text"])}</div>')
+
+
+def pdf_page(png: bytes, page: int, total: int) -> None:
+    """One rendered PDF page. The caption is the page number the chunk was stored with."""
+    st.image(png, caption=f"Page {page} of {total} of the stored PDF", width="stretch")
 
 
 def coverage_cell_html(state: str, text: str) -> str:

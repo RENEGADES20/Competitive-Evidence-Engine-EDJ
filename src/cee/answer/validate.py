@@ -2,8 +2,8 @@
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 Here: citation check (flag, never drop), code-built source labels, caveat insertion,
-empty-retrieval gap/refuse.
-Not yet (S2, W3+): number check, coverage note.
+coverage note, empty-retrieval gap/refuse.
+Not yet: number check (#52).
 """
 from __future__ import annotations
 
@@ -58,6 +58,51 @@ def insert_caveats(answer: Answer, query: Query, hits: list[Hit]) -> Answer:
                 and e["caveat"] not in answer.caveats:
             answer.caveats.append(e["caveat"])
     return answer
+
+
+def _short_name(entity_id: str) -> str:
+    return _entry(entity_id)["name"].split(" (")[0]
+
+
+def _plural(n: int, word: str) -> str:
+    return f"{n} {word}" + ("" if n == 1 else "s")
+
+
+def coverage_note(query: Query, hits: list[Hit]) -> str:
+    """What this answer rests on, built by code from the retrieved hits (#40): firms searched,
+    then per entity / document type / segment the period covered. Same note for every behavior.
+    Describes this question's retrieval only, not the whole corpus."""
+    searched = ", ".join(_short_name(e) for e in query.entities) or "all documents (no covered firm named)"
+    parts = [f"Coverage: searched {searched}."]
+    window = getattr(query, "window", None)  # dates below are periods; the window is on publication date (#49)
+    if window:
+        parts.append(f"Published {window[0]} to {window[1]} only.")
+    if query.unmapped:
+        parts.append("No documents in the corpus for "
+                     + ", ".join(_short_name(e) for e in query.unmapped) + ".")
+    if not hits:
+        if query.entities or not query.unmapped:
+            parts.append("No stored passage matched this question.")
+        return " ".join(parts)
+    groups: dict[tuple, dict] = {}
+    for h in hits:
+        g = groups.setdefault((h.entity_id or "Research", h.doc_type, h.segment), {"docs": set(), "dates": set()})
+        g["docs"].add(h.doc_id)
+        g["dates"].add(h.period_end or h.published_at)
+    sources = []
+    for (entity, doc_type, segment), g in groups.items():
+        lo, hi = min(g["dates"]), max(g["dates"])
+        seg = f", {segment} segment" if segment else ""
+        label = doc_type if entity == "Research" and doc_type == "research" else f"{entity} {doc_type}"
+        sources.append(f"{label}{seg} ({lo if lo == hi else f'{lo} to {hi}'})")
+    docs = len({h.doc_id for h in hits})
+    parts.append(f"{_plural(len(hits), 'passage')} from {_plural(docs, 'document')}: " + "; ".join(sources) + ".")
+    hit_entities = {h.entity_id for h in hits}
+    missing = [e for e in query.entities
+               if e not in hit_entities and _entry(e).get("parent") not in hit_entities]
+    if missing:
+        parts.append("No passages for " + ", ".join(_short_name(e) for e in missing) + ".")
+    return " ".join(parts)
 
 
 def _entry(entity_id: str) -> dict:

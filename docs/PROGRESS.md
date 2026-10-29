@@ -51,6 +51,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | Date | What landed | Blockers | Next |
 |---|---|---|---|
 | 2026-10-15 | Prompt v0 and standard gap/boundary wording (#10): `src/cee/answer/prompt.py`, wording table in specs/answer-citations.md (Q12, Q19, Q28-Q30) (#27) | Real-model check of Q28-Q30 waits for BAC/MS documents in the corpus | Code-inserted caveats, boundary sentence and number check (S2, W3+) |
+| 2026-10-28 | Coverage note on every answer (#40): `coverage_note()` names firms, document types and periods of the retrieved passages, shown always-visible on the Ask page and checked by verify-cee ask-answer (#112) | - | Number check (#52), registry-based suggested sources (#51) |
 
 ### U1
 
@@ -60,6 +61,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-23 | Ask page shows a progress bar and a step trace built from each stage's real output (firms, counts, model call or skip, citations), kept collapsed after the answer; failed steps shown (#80) (#103) | none | when time windows land (#49), add the window to the "Reading the question" line |
 | 2026-10-27 | U1: every citation on the Ask page shows its own source label and tier badge; unmatched citations are flagged, not linked (#42) (#109) | none | #41 coverage table, #53 source page in context |
 | 2026-10-27 | U1: Coverage page shows documents per firm and document type with counts, date ranges and thin/empty cells (#41) (#110) | none | #53 source page in context; #63 filters |
+| 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
 
 ### TL
 

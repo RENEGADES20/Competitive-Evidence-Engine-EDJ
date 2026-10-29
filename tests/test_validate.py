@@ -107,3 +107,81 @@ def test_no_caveat_when_nothing_substitute_is_cited():
     assert insert_caveats(a, resolve("What is Merrill's standalone profitability?"), [hit()]).caveats == []
     b = Answer(answerable=True, behavior="answer", claims=[{"text": "t", "chunk_ids": ["BAC-10K-2025#244"]}])
     assert insert_caveats(b, resolve("What is Bank of America's net income?"), [gwim_hit()]).caveats == []
+
+
+# Coverage note (#40): every behavior names firms, document types and period, built by code.
+
+def test_coverage_note_names_firm_doc_type_and_period():
+    from cee.answer.validate import coverage_note
+
+    hits = [hit("EDJ-10K-2025#1"), hit("EDJ-10K-2025#2")]
+    note = coverage_note(Query(question="q", entities=["EDJ"]), hits)
+    assert note.startswith("Coverage: searched Edward Jones.")
+    assert "2 passages from 1 document" in note
+    assert "EDJ 10-K (2025-12-31)" in note
+
+
+def test_coverage_note_shows_period_range_and_segment_for_merrill():
+    # Q30: Merrill is answered from BAC GWIM chunks; the note says so.
+    from cee.answer.validate import coverage_note
+
+    older = Hit(chunk_id="BAC-10K-2024#9", doc_id="BAC-10K-2024", entity_id="BAC", segment="GWIM",
+                doc_type="10-K", source_tier=2, published_at="2025-02-25", period_end="2024-12-31",
+                section="Item 7", page=None, rank=1.0, text="x")
+    note = coverage_note(resolve("What is Merrill's standalone profitability?"), [gwim_hit(), older])
+    assert "searched Merrill." in note
+    assert "2 passages from 2 documents" in note
+    assert "BAC 10-K, GWIM segment (2024-12-31 to 2025-12-31)" in note
+    assert "No passages" not in note   # BAC GWIM counts as coverage for MER (parent)
+
+
+def test_coverage_note_names_firm_with_no_passages():
+    from cee.answer.validate import coverage_note
+
+    note = coverage_note(Query(question="q", entities=["EDJ", "MS"]), [hit()])
+    assert "No passages for Morgan Stanley." in note
+
+
+def test_every_behavior_carries_a_coverage_note():
+    # Q24 (gap), Q12/Q19 (boundary), refuse: the note does not depend on the behavior.
+    from cee.ask import answer_for
+
+    q = Query(question="q", entities=["EDJ"])
+    for behavior in ("answer", "answer_with_boundary", "gap_with_adjacent", "refuse"):
+        raw = Answer(answerable=behavior.startswith("answer"), behavior=behavior,
+                     claims=[{"text": "t", "chunk_ids": ["EDJ-10K-2025#1"]}])
+        out, _ = answer_for("q", q, [hit()], "mock", raw=raw)
+        assert out.coverage_note.startswith("Coverage: searched Edward Jones."), behavior
+        assert "10-K" in out.coverage_note and "2025-12-31" in out.coverage_note
+
+
+def test_empty_retrieval_answers_carry_a_coverage_note():
+    from cee.ask import answer_for
+
+    gap, _ = answer_for("q", Query(question="q", entities=["MS"]), [], "mock")
+    assert gap.behavior == "gap_with_adjacent"
+    assert gap.coverage_note == "Coverage: searched Morgan Stanley. No stored passage matched this question."
+    refuse, _ = answer_for("q", resolve("Anything on Vanguard's advisor compensation?"), [], "mock")
+    assert refuse.behavior == "refuse"
+    assert "No documents in the corpus for Vanguard." in refuse.coverage_note
+
+
+def test_coverage_note_is_not_written_by_the_model():
+    from cee.answer.schema import llm_output_schema
+
+    assert "coverage_note" not in llm_output_schema()["properties"]
+
+
+def test_coverage_note_states_the_time_window_and_names_research_once():
+    # Q26: hit dates are periods; the note says the window is on publication date
+    import datetime as dt
+
+    from cee.answer.validate import coverage_note
+
+    q = resolve("What's new on Raymond James in the last 90 days?", today=dt.date(2026, 10, 28))
+    assert "Published 2026-07-30 to 2026-10-28 only." in coverage_note(q, [])
+    research = Hit(chunk_id="MCK-X#1", doc_id="MCK-X", entity_id=None, segment=None, doc_type="research",
+                   source_tier=5, published_at="2025-02-10", period_end=None, section="Document", page=1,
+                   rank=1.0, text="x")
+    note = coverage_note(Query(question="q"), [research])
+    assert "research (2025-02-10)" in note and "Research research" not in note
