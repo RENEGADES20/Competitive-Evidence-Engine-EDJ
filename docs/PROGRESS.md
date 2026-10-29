@@ -26,6 +26,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | 11 earnings-call transcripts (BAC, MS, SCHW Q1-Q3 2026; RJF two quarters) stored as text with speakers, 535 chunks (#76) | Transcripts rank below 10-K/10-Q chunks in top-8 (#59); 8-quarter backfill (#47) | #45 supplements and #48 decks from the same package; #38 releases via EDGAR |
 | 2026-10-18 | 8 quarterly earnings presentations (BAC, SCHW Q1-Q3 2026; RJF two quarters) stored with page numbers (#78) | Investor-day decks and Merrill press (MER) still open; decks rank below 10-Ks (#59) | #48 investor-day decks; #38 releases via EDGAR |
 | 2026-10-18 | C2 #38: 16 quarterly earnings releases (8-K EX-99.1; MS, SCHW, BAC, RJF x 4 quarters) in the manifest via `cee.ingest.releases` (#75) | Q26 still ranks the in-window RJF release 106th until the S1 time window and #59 quotas land | TL moves the 16 raw files into Box `raw/` and rebuilds the snapshot; unblocks #44 and #49 |
+| 2026-10-29 | 21 earnings-call transcripts (BAC/MS/SCHW 2024Q4-2025Q4, RJF 2024Q3-2025Q4) from MarketBeat/Quartr and Roic.ai: eight quarters per firm (#108) | BAC-TR-2025Q3#24 mis-tagged GWIM by the #106 rule (on #95); some mis-transcribed figures in the free transcripts | #107 chunk by speaker turn (new files have no Q&A heading) |
 
 ### C3
 
