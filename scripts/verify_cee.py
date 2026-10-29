@@ -389,13 +389,21 @@ def check_pdf_pages(rec, page) -> None:
         except FileNotAvailable:
             rec.unreachable(f"raw PDF for {cid} not available (precondition: CORPUS_SHARE_PATH or data/raw/)")
             return
-        page.goto(page.url.split("?")[0] + "?chunk=" + quote(cid))
-        wait_for_text(page, ["Download stored document", "not found locally", "is not in the stored corpus"],
-                      "the source page")
-        body = page.locator("body").inner_text()
         with pymupdf.open(path) as doc:
             total = doc.page_count
             on_page = words(doc[int(n) - 1].get_text("text"))
+        page.goto(page.url.split("?")[0] + "?chunk=" + quote(cid))
+        # Texts only this chunk's page has: the previous source page also shows "Download stored
+        # document", so waiting for that could read the old page before the PDF page renders.
+        wait_for_text(page, [f"Page {n} of {total} of the stored PDF", f"Page {n} is not in the stored PDF",
+                             "Could not open the PDF page", "is not in the stored corpus"],
+                      f"the source page for {cid}")
+        image = page.locator('[data-testid="stImage"] img')
+        try:
+            image.first.wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+        except Exception:  # no image: the step below reports it
+            pass
+        body = page.locator("body").inner_text()
         chunk_words = words(psql(VERIFY_DB, f"SELECT text FROM chunks WHERE chunk_id = '{cid}'"))
         share = len(chunk_words & on_page) / max(len(chunk_words), 1)
         shown = page.locator('[data-testid="stImage"] img').count()
