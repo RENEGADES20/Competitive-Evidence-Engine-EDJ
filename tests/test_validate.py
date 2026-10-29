@@ -4,6 +4,19 @@ from cee.answer.validate import check_citations, empty_retrieval_answer
 from cee.config import entities_config
 from cee.retrieve.fts import Hit, Query, resolve
 
+import pytest
+
+from cee.answer import validate
+
+
+@pytest.fixture(autouse=True)
+def no_registry(monkeypatch):
+    """No database in these tests: the registry lookup fails, so gaps use the config fallback.
+    Registry tests below install their own fake lookup."""
+    def unavailable(entity_id):
+        raise ConnectionError("no database in tests")
+    monkeypatch.setattr(validate, "registry_lookup", unavailable)
+
 
 def hit(chunk_id="EDJ-10K-2025#1"):
     return Hit(chunk_id=chunk_id, doc_id="EDJ-10K-2025", entity_id="EDJ", segment=None,
@@ -185,3 +198,82 @@ def test_coverage_note_states_the_time_window_and_names_research_once():
                    rank=1.0, text="x")
     note = coverage_note(Query(question="q"), [research])
     assert "research (2025-02-10)" in note and "Research research" not in note
+
+
+# Registry-based suggested sources (#51): expected in source_registry minus ingested doc types.
+
+MS_REGISTRY = [("10-K", "Morgan Stanley Form 10-K annual report (SEC EDGAR)"),
+               ("10-Q", "Morgan Stanley Form 10-Q quarterly report (SEC EDGAR)"),
+               ("8-K", "Morgan Stanley Form 8-K current report (SEC EDGAR)"),
+               ("DEF 14A", "Morgan Stanley Proxy statement (SEC EDGAR)"),
+               ("adv", "Morgan Stanley Form ADV (SEC IAPD)"),
+               ("deck", "Morgan Stanley Investor-day presentation"),
+               ("press", "Morgan Stanley Company press releases"),
+               ("supplement", "Morgan Stanley Quarterly financial supplement"),
+               ("trade", "Morgan Stanley Trade press (tier 4, indicative)"),
+               ("transcript", "Morgan Stanley Earnings-call transcript")]
+MS_INGESTED = {"10-K", "10-Q", "press", "supplement", "transcript"}
+
+
+def fake_registry(monkeypatch, rows=MS_REGISTRY, have=MS_INGESTED):
+    monkeypatch.setattr(validate, "registry_lookup", lambda e: (rows if e == "MS" else [], have if e == "MS" else set()))
+
+
+def test_registry_suggests_only_what_is_not_ingested(monkeypatch):
+    fake_registry(monkeypatch)
+    text = validate.suggested_sources("MS")
+    for name in ("Form 8-K", "Proxy statement", "Form ADV", "Investor-day presentation", "Trade press"):
+        assert name in text
+    for name in ("Form 10-K", "Form 10-Q", "press releases", "financial supplement", "Earnings-call"):
+        assert name not in text
+
+
+def test_registry_with_every_type_ingested_suggests_nothing(monkeypatch):
+    fake_registry(monkeypatch, have={t for t, _ in MS_REGISTRY})
+    assert validate.suggested_sources("MS") == ""
+
+
+def test_unknown_entity_or_database_error_falls_back(monkeypatch):
+    fake_registry(monkeypatch)
+    assert validate.suggested_sources("VGD").startswith("Vanguard: ")   # not in the registry
+    validate.registry_lookup = None                                     # lookup itself broken
+    assert "Form ADV" in validate.suggested_sources("VGD")
+
+
+def test_q29_gap_gets_an_ms_registry_source(monkeypatch):
+    # Q29: the model leaves suggested_source empty; code fills it from the registry.
+    from cee.ask import answer_for
+
+    fake_registry(monkeypatch)
+    q = resolve("What does Morgan Stanley pay its financial advisors?")
+    raw = Answer(answerable=False, behavior="gap_with_adjacent",
+                 gaps=[{"what": "Payout grids are not public.", "suggested_source": ""}])
+    ms_hit = Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None,
+                 doc_type="10-K", source_tier=2, published_at="2026-02-19", period_end="2025-12-31",
+                 section="Item 8", page=None, rank=1.0, text="x")
+    out, _ = answer_for(q.question, q, [ms_hit], "mock", raw=raw)
+    assert "Morgan Stanley Trade press" in out.gaps[0].suggested_source
+    assert "Form 10-K" not in out.gaps[0].suggested_source
+
+
+def test_model_written_source_is_kept(monkeypatch):
+    fake_registry(monkeypatch)
+    a = Answer(answerable=False, behavior="gap_with_adjacent",
+               gaps=[{"what": "x", "suggested_source": "Morgan Stanley compensation survey"}])
+    out = validate.fill_suggested_sources(a, Query(question="q", entities=["MS"]))
+    assert out.gaps[0].suggested_source == "Morgan Stanley compensation survey"
+
+
+def test_empty_retrieval_gap_uses_the_registry(monkeypatch):
+    fake_registry(monkeypatch)
+    a = empty_retrieval_answer(Query(question="q", entities=["MS"]))
+    assert "Form ADV" in a.gaps[0].suggested_source and "Form 10-K" not in a.gaps[0].suggested_source
+
+
+def test_two_firms_share_one_prefix(monkeypatch):
+    # Q28 names two firms: one "Not yet in the corpus:" list, both firms' sources in it.
+    rows = {"MS": [("adv", "Morgan Stanley Form ADV (SEC IAPD)")], "EDJ": [("adv", "Edward Jones Form ADV (SEC IAPD)")]}
+    monkeypatch.setattr(validate, "registry_lookup", lambda e: (rows.get(e, []), set()))
+    a = Answer(answerable=False, behavior="gap_with_adjacent", gaps=[{"what": "x", "suggested_source": ""}])
+    text = validate.fill_suggested_sources(a, Query(question="q", entities=["EDJ", "MS"])).gaps[0].suggested_source
+    assert text == "Not yet in the corpus: Edward Jones Form ADV (SEC IAPD); Morgan Stanley Form ADV (SEC IAPD)"
