@@ -89,6 +89,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-22 | README: demo GIF, source and gap screenshots, Mermaid architecture diagram, Merrill/GWIM example, status to W5 (#97) (#98) | none | none |
 | 2026-10-23 | Setup step copies .env.example only when .env is missing; re-running the quick start no longer wipes local keys (#104) | none | none |
 | 2026-10-23 | Real-model answers for the 12 mock-passing questions: retrieval per spec + IDF rank, BAC PR/TR GWIM tagging, prompt v1, code caveats (#106) | Snapshot must be rebuilt so teammates get the new GWIM tags | Q5/Q16/Q26 limited by corpus (no MS decks or trade press, no thematic research, only one RJF filing in the last 90 days) |
+| 2026-10-29 | verify-cee cite-page waits for the chunk's own PDF page; no more flaky open-citation (#114) | none | none |
 
 ## Weekly score (from W6)
 
