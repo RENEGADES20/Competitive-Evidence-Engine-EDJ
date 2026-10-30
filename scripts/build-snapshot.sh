@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Rebuild the database from main + the stored raw files, and publish a snapshot (ADR-006).
+# Rebuild the database from main + the stored raw files, embed every chunk (#124), and publish a
+# snapshot (ADR-006).
 # Tech lead only; needs CORPUS_SHARE_PATH (Box Drive folder) in .env. macOS twin of build-snapshot.ps1.
 #
 #   bash scripts/build-snapshot.sh
@@ -28,29 +29,37 @@ else
     echo "WARNING: --allow-branch: test build, do not share this snapshot." >&2
 fi
 
-echo "1/5 Checking every manifest file in $share (exists, sha256 matches)..."
+echo "1/7 Checking every manifest file in $share (exists, sha256 matches)..."
 run "Manifest check" "$PYTHON" -c "from cee.ingest.manifest import check_files, read_manifest; r = check_files(read_manifest()); print(f'   {len(r)} files OK')"
 
-echo "2/5 Recreating the database..."
+echo "2/7 Recreating the database..."
 start_database
 reset_database
 run "Applying schema" docker exec "$CONTAINER" psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/01-schema.sql
 upgrade_schema
 
-echo "3/5 Re-ingesting from the manifest..."
+echo "3/7 Re-ingesting from the manifest..."
 run "Ingestion" "$PYTHON" -m cee.ingest.load
+
+model_cache_env
+echo "4/7 Embedding every chunk (#124; model cache: $FASTEMBED_CACHE_PATH)..."
+run "Embedding (a chunk without a vector stops the build)" "$PYTHON" -m cee.retrieve.embed --missing
 
 name="corpus-$(date +%Y-%m-%d)"
 [ "$ALLOW_BRANCH" -eq 1 ] && name="$name-test"
 run "Stamping snapshot name" docker exec "$CONTAINER" psql -q -U cee -d cee -c "COMMENT ON TABLE documents IS '$name';"
 
-echo "4/5 Dumping $name.dump..."
+echo "5/7 Dumping $name.dump..."
 run "pg_dump" docker exec "$CONTAINER" pg_dump -U cee -d cee -Fc -f "/snapshots/$name.dump"
 
-echo "5/5 Copying to Box..."
+echo "6/7 Copying to Box..."
 dest="$share/snapshots"
 mkdir -p "$dest"
 cp -f "$REPO_ROOT/snapshots/$name.dump" "$dest/"
 
-echo "Done: $dest/$name.dump"
+echo "7/7 Embedding model in Box models/..."
+copy_model_to_share "$share"
+
+mb="$(du -k "$REPO_ROOT/snapshots/$name.dump" | awk '{printf "%.1f", $1/1024}')"
+echo "Done: $dest/$name.dump ($mb MB)"
 echo "Row counts: $(table_counts)"

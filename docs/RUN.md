@@ -43,6 +43,9 @@ Open `.env` in a text editor. Leave `LLM_PROVIDER=mock` (offline, free) unless y
 to test with a real model; then set `LLM_PROVIDER=anthropic` and your `ANTHROPIC_API_KEY`.
 Teammates leave `CORPUS_SHARE_PATH` empty. Never commit `.env`.
 
+`requirements.txt` includes `fastembed` (embeddings, #124; no PyTorch). On an Intel Mac it needs
+macOS 13 or newer (`onnxruntime` 1.23.2 is the last version with Intel Mac builds).
+
 Corpus owners who ingest documents (tech lead, C1, C2) also install
 `pip install -r requirements-ingest.txt` (large: docling pulls in PyTorch) and set
 `EDGAR_IDENTITY` to their name and email.
@@ -58,6 +61,30 @@ docker compose up -d --wait
 ```
 ```bash
 docker compose up -d --wait
+```
+
+### Embedding model (#124, once)
+
+Questions are turned into vectors on your laptop with a small model (`BAAI/bge-small-en-v1.5`,
+about 70 MB). The corpus vectors are already inside the snapshot. The model downloads by itself
+the first time it is used, into `.cache/fastembed` in the repo (or the folder you set as
+`FASTEMBED_CACHE_PATH` in `.env`). Check it (expect `384 dims`):
+```powershell
+.\.venv\Scripts\python.exe -m cee.retrieve.embed --query "test"
+```
+```bash
+.venv/bin/python -m cee.retrieve.embed --query "test"
+```
+No HuggingFace access (the check fails with a download error)? Open the team Box link, download
+the folder `models/models--Qdrant--bge-small-en-v1.5-onnx-Q`, and unzip it so the repo has
+`.cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs` and `.../snapshots`; then run
+the check again. Once the model is there, it works with the network off.
+```powershell
+Test-Path .cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q\refs\main   # True
+efsmain   # True
+```
+```bash
+test -f .cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs/main && echo True
 ```
 
 ## 2. Daily use (teammates)
@@ -104,7 +131,7 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 
 - Box Drive syncs the team folder to `C:\Users\<you>\Box\EDJ` (Windows) or
   `~/Library/CloudStorage/Box-Box/EDJ` (Mac); set that path as `CORPUS_SHARE_PATH` in `.env`.
-  Layout: `raw/<doc_id>.<ext>` (flat) and `snapshots/`.
+  Layout: `raw/<doc_id>.<ext>` (flat), `snapshots/` and `models/` (embedding model, #124).
 - Right-click `raw` and `snapshots` -> **Make available offline**, so scripts never wait on
   cloud-only placeholders.
 - Fetch a filing (writes straight into Box `raw/` and appends to `data/manifest.csv`):
@@ -128,9 +155,10 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
   ```bash
   bash scripts/build-snapshot.sh
   ```
-  It checks every manifest file (exists, sha256 matches), rebuilds the database, dumps
-  `corpus-YYYY-MM-DD.dump`, and copies it into Box `snapshots/`. `-AllowBranch` /
-  `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
+  It checks every manifest file (exists, sha256 matches), rebuilds the database, embeds every
+  chunk (#124; about 20 minutes on a laptop CPU; the build stops if a chunk has no vector), dumps `corpus-YYYY-MM-DD.dump`, copies
+  it into Box `snapshots/`, and puts the embedding model into Box `models/` if it is not there
+  yet. `-AllowBranch` / `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
   and must not be shared.
 - Checklist: [DASHBOARD.md section 8](DASHBOARD.md#8-weekly-snapshot-checklist-tech-lead).
 
@@ -148,6 +176,9 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 | Mac: `permission denied: scripts/restore.sh` | Run it through bash as shown (`bash scripts/restore.sh`), or `chmod +x scripts/*.sh` once |
 | `Upgrading the schema failed` / `extension "vector" is not available` | Your container still runs the old image: `docker compose up -d --wait`, then restore again |
 | `collation version mismatch` | The image's operating system differs from the one that created your data. Start clean: `docker compose down -v`, `docker compose up -d --wait`, then restore the snapshot |
+| `pip install` fails on `onnxruntime` (Intel Mac) | It needs macOS 13 or newer (Apple menu -> About This Mac). Update macOS, or ask the tech lead |
+| `cee.retrieve.embed` fails with a connection or download error | HuggingFace is blocked or you are offline: copy the Box `models/` folder into `.cache/fastembed` (section 1, "Embedding model") |
+| `Embedding ... failed` in build-snapshot | Read the line above it; a chunk without a vector stops the build. Run `python -m cee.retrieve.embed --missing` again (it continues where it stopped) |
 | `No snapshot found` | Download the newest `.dump` from the team Box link into `snapshots/` |
 | smoke says `0 chunks` | Restore a snapshot (section 2, step 3) |
 | `... not found locally. Download it from the team Box link` | The raw file is not in `data\raw\`; download it, or ignore if you only need the passage |
