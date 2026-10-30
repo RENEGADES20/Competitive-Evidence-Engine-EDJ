@@ -118,7 +118,7 @@ author, and revert or re-land through a PR if needed.
 - [ ] All corpus PRs for the week merged; `data/manifest.csv` has no rows with missing `published_at`
 - [ ] Raw files for every manifest row exist in the shared folder (sha256 matches)
 - [ ] Move files that arrived through the Box upload link into `raw/` (names must be `<doc_id>.<ext>`)
-- [ ] Run `scripts\build-snapshot.ps1` on a clean `main` (checks sha256, rebuilds, dumps, and
+- [ ] Run `scripts\build-snapshot.ps1` (Mac: `bash scripts/build-snapshot.sh`) on a clean `main` (checks sha256, rebuilds, dumps, and
       copies `corpus-YYYY-MM-DD.dump` into the Box `snapshots/` folder; Box Drive uploads it)
-- [ ] Test `scripts\restore.ps1` after `docker compose down -v`, then `python -m cee.smoke` -> PASS
+- [ ] Test `scripts\restore.ps1` (Mac: `bash scripts/restore.sh`) after `docker compose down -v`, then `python -m cee.smoke` -> PASS
 - [ ] Post the snapshot name in PROGRESS.md and the team chat
