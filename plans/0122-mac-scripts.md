@@ -24,8 +24,12 @@ same steps as Windows users, without PowerShell.
 - [x] `build-snapshot.sh --allow-branch` full run -> same row counts as the official snapshot
 - [x] Missing file / unknown argument / manifest failure -> clear message, exit 1
 - [x] verify-cee all features PASS (`.verify-runs/20261029-232000-ab70a01`)
-- [ ] `restore.sh` + smoke on a real Mac (needs a teammate)
+- [x] Issue: "Each .sh matches its .ps1 (same arguments, same checks, same exit codes)" -> read side by side: `-Doc`/`--doc`, `-AllowBranch`/`--allow-branch`, same lookup order (CORPUS_SHARE_PATH/snapshots, then ./snapshots, `-test` skipped), same messages, exit 1 on every failure
+- [x] Issue: "RUN.md has a macOS block wherever it has a PowerShell block" -> in `docs/RUN.md` as merged in #130 (c989e76): 8 `powershell` code blocks, 8 `bash` code blocks, each bash block right after its PowerShell twin
+- [ ] Issue: "`restore.sh` + `python -m cee.smoke` PASS on a Mac" -> needs a teammate's Mac
+- [x] Issue: "verify-cee PASS" -> see above
 
 ## Progress log
-- 2026-10-29 23:00 - plan written after the fact: #122 was done and merged (#130) without an ExecPlan (process slip); plan reconstructed from what was done
-- 2026-10-29 23:20 - all Windows/Git Bash checks above pass; real-Mac run still open on #122
+- 2026-10-29 22:55-23:20 - checks above run on Windows / Git Bash for #130, before it was merged (#130 merged 23:21)
+- 2026-10-29 23:33 - plan written after the fact: #122 was done and merged (#130) without an ExecPlan (process slip); plan reconstructed from what was done
+- 2026-10-30 00:05 - reviewer agent returned #132: wrong time on the first log line; two issue items had no acceptance line. Both fixed (lines above); RUN.md block count checked on c989e76
