@@ -32,4 +32,6 @@ same steps as Windows users, without PowerShell.
 ## Progress log
 - 2026-10-29 22:55-23:20 - checks above run on Windows / Git Bash for #130, before it was merged (#130 merged 23:21)
 - 2026-10-29 23:33 - plan written after the fact: #122 was done and merged (#130) without an ExecPlan (process slip); plan reconstructed from what was done
-- 2026-10-30 00:05 - reviewer agent returned #132: wrong time on the first log line; two issue items had no acceptance line. Both fixed (lines above); RUN.md block count checked on c989e76
+- 2026-10-29 23:57 - reviewer agent returned #132 (round 1): wrong time on the first log line; two issue items had no acceptance line
+- 2026-10-29 23:58 - both fixed (lines above); RUN.md block count (indented fences included) checked on c989e76
+- 2026-10-29 23:59 - round 2 returned: the 00:05 time on the round-1 line was wrong (later than its own commit); corrected to the review time 23:57
