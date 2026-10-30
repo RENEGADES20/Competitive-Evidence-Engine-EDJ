@@ -228,3 +228,33 @@ Open items for teammates (not required checks; listed on the issue, "Part of #12
   (HNSW path) and `EXPLAIN` to the exact-scan check, per-question search timing in `eval_run.py`,
   `retrieval_mode` naming, ADR-001 Status-line-only change, a stop rule, the Q26 order check,
   the corrected Q29 dry-run wording and the offline-reranker note.
+- 2026-10-30 10:47 - plan approved (round 2, 2e649c4). Step 1: `embed --missing` started in the
+  background; FTS "before" eval on 2e649c4 code (`p125-fts-before`): PASS 27 / FAIL 3 (Q15, Q19,
+  Q29), tier-1 docs 0.796, passages 0.347, refusal gap 4/5.
+- 2026-10-30 10:56 - steps 2, 3, 5, 6 coded (3f637e6): `load_cached`, mode switch, `synonym_only`,
+  `hybrid.py`, `ask(mode=)`, `eval_run --mode` + timing, verify summary. Deviations: the trace adds
+  " (hybrid)" only in hybrid mode (fts line unchanged); `test_ask_page_trace.py` needed the new
+  `search(q, mode=None)` signature in its fakes. `pytest -q`: 248 passed, 1 skipped.
+- 2026-10-30 10:58 - fts after (`p125-fts-after`, baseline `p125-fts-before`): identical chunk_ids
+  on 29/30, only Q29 differs; PASS 28 / FAIL 2 (Q15, Q19); docs 0.796, passages 0.402; refusal gap
+  5/5, all keyed 10/10; median search 1.19 s (warm-up excluded).
+- 2026-10-30 11:00 - step 7: both rerankers downloaded to D:\ALLPROJECTS\EDJ\cache\fastembed.
+  `--check`: MiniLM-L-12 scores [-1.125, -1.413] (advisor pay vs guarantee), bge-reranker-base
+  [0.295, -2.736].
+- 2026-10-30 11:24 - `embed --missing` done: 17183 embedded, 0 NULL (2166 s).
+- 2026-10-30 11:26 - step 4: per-firm vector leg = exact scan (Q4, Q7, Q26, Q29 identical; EXPLAIN:
+  seq scan + window sort). Theme leg via HNSW differed (ef_search 100: Q16 90/100, Q21 98/100;
+  ef_search 200: Q16 93/100). Per the plan, the theme leg is now exact too
+  (`EXACT_VECTOR_SEARCH = True`): Q16, Q17, Q21 identical; EXPLAIN: seq scan + top-N sort.
+- 2026-10-30 11:45 - step 8, no-floor hybrid evals (baseline `p125-fts-after`):
+  MiniLM-L-12 (`p125-hybrid-minilm-f0`): PASS 17 / FAIL 13, docs 0.471, passages 0.265, refusal
+  gap 4/5 (Q25 `SCHW-10K-2025#558`), median search 8.5 s. bge-reranker-base (`p125-hybrid-bge-f0`):
+  PASS 13 / FAIL 17, docs 0.509, passages 0.271, refusal gap 4/5 (same chunk), median 25.0 s.
+  Forbidden 0 everywhere; Q26 PASS; Q29 refusal ok but coverage 0 (no MS 10-K WM chunk).
+  **Stop rule fired:** both rerankers turn many PASS into FAIL already at floor 0, and a floor only
+  removes hits, so no floor in the grid can meet the rule. Cause found: `select()`'s relative
+  `FLOOR` (0.3 x the firm's best) on sigmoid rerank scores drops most of the pool (e.g. Q30 1 hit,
+  Q19 4, Q4 6 vs fts 20, 12, 11). Diagnostic only (not a fix, not committed as a setting):
+  MiniLM with `select()` floor 0 and no rerank floor (`p125-diag-minilm-noselectfloor`): PASS 24 /
+  FAIL 6, docs 0.693, passages 0.428 (fts 0.402), refusal gap 4/5, median 8.2 s; PASS -> FAIL on
+  Q21, Q24, Q25, Q29. Stopped here: the plan goes back for review before step 9.

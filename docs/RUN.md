@@ -86,6 +86,41 @@ Test-Path .cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q\refs\main   
 test -f .cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs/main && echo True
 ```
 
+### Hybrid retrieval (#125, optional)
+
+The app searches with keywords (`RETRIEVAL_MODE=fts`, the default). The second mode, `hybrid`, also
+searches by meaning (vectors) and lets a small local model (a "reranker") re-order the passages.
+To try it, set `RETRIEVAL_MODE=hybrid` in `.env` and restart the app.
+
+Hybrid needs a vector for every passage. Snapshots published before the first vector snapshot
+(e.g. `corpus-2026-10-29`) have none; hybrid then stops with a message instead of answering.
+Restore a newer snapshot, or fill the vectors on your laptop once (about 20-40 min, offline):
+```powershell
+.\.venv\Scripts\python.exe -m cee.retrieve.embed --missing
+```
+```bash
+.venv/bin/python -m cee.retrieve.embed --missing
+```
+The reranker (`RERANK_MODEL`, default `Xenova/ms-marco-MiniLM-L-12-v2`, about 120 MB) downloads by
+itself into the same model folder the first time hybrid runs. The Box `models/` folder holds only
+the embedding model so far, so this first run needs HuggingFace access. Check it (expect a line
+starting `embedding 384 dims; reranker`):
+```powershell
+.\.venv\Scripts\python.exe -m cee.retrieve.hybrid --check
+```
+```bash
+.venv/bin/python -m cee.retrieve.hybrid --check
+```
+Once it is downloaded, hybrid works with the network off. Compare both modes on the question bank:
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid
+```
+```bash
+.venv/bin/python scripts/eval_run.py --mode fts
+.venv/bin/python scripts/eval_run.py --mode hybrid
+```
+
 ## 2. Daily use (teammates)
 
 1. Start Docker Desktop and wait until it says "Engine running".

@@ -6,7 +6,7 @@ fts.window_filter):
   1. keyword leg: the fts words, synonyms and rank (fts.keyword_terms, fts.rank_sql), top LEG_K
      per named firm (theme questions: top LEG_K overall);
   2. vector leg: cosine distance to the question's embedding (embed.embed_query), top LEG_K per
-     named firm (theme questions: top LEG_K overall, through the HNSW index);
+     named firm (theme questions: top LEG_K overall); exact scan, no approximate index;
   3. RRF: score = sum over legs of 1 / (RRF_K + rank);
   4. rerank: firms take turns down the RRF list until RERANK_N candidates; a local cross-encoder
      scores (question, passage); Hit.rank = sigmoid(score) in 0..1;
@@ -35,7 +35,11 @@ RERANK_N = 50      # candidates the cross-encoder scores
 RERANK_FLOOR = 0.05  # sigmoid score below which a hit is a weak match (outside time windows)
 DEFAULT_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-12-v2"
 RERANK_SIZES = {"Xenova/ms-marco-MiniLM-L-12-v2": "about 120 MB", "BAAI/bge-reranker-base": "about 1 GB"}
-EF_SEARCH = 100    # HNSW candidates for the theme leg; iterative scan fills up to LEG_K under filters
+EF_SEARCH = 200    # HNSW candidates if the index is used (exact=False)
+# The vector leg reads every eligible row (exact). Per-firm questions are exact anyway (the window
+# function sorts all eligible rows); for theme questions the HNSW index missed up to 7 of the top
+# 100 even at ef_search 200 (Q16, plan step 4), and an exact scan of 17k vectors is fast.
+EXACT_VECTOR_SEARCH = True
 
 Scorer = Callable[[str, Sequence[str]], list[float]]
 
@@ -174,7 +178,7 @@ def vector_leg_sql(q: Query, qvec: str) -> tuple[str, dict]:
     return template.format(entity_filter=where, window_filter=window), {**params, "qvec": qvec, "leg_k": LEG_K}
 
 
-def vector_leg(conn, q: Query, qvec: str, exact: bool = False) -> list[dict]:
+def vector_leg(conn, q: Query, qvec: str, exact: bool = EXACT_VECTOR_SEARCH) -> list[dict]:
     sql, params = vector_leg_sql(q, qvec)
     for s in HNSW_SETTINGS:
         conn.execute(s)

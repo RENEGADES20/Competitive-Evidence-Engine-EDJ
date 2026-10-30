@@ -39,6 +39,19 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
+## Retrieval modes (#125, ADR-008)
+
+`search(q, mode=...)` / `ask(..., mode=...)`; default `RETRIEVAL_MODE` in `.env`, else `fts`.
+
+- `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
+- `hybrid` (`src/cee/retrieve/hybrid.py`): inside the same entity / segment / window `WHERE`,
+  keyword top 100 + vector top 100 per named firm -> reciprocal rank fusion (k = 60) -> firms take
+  turns into 50 candidates -> local cross-encoder rerank -> score floor (none inside a time
+  window) -> the same `select()` quotas. The gap path is unchanged: unmapped firms return nothing.
+- Both modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
+  through their synonyms (Q29: "pay any net liquidation amount" is not advisor pay).
+- Constants (`LEG_K`, `RRF_K`, `RERANK_N`, `RERANK_FLOOR`) are tuned per mode in #126.
+
 ## Acceptance
 
 - Time windows filtered in SQL: Q26 returns nothing older than 90 days.
@@ -59,4 +72,5 @@ Q4, Q7, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
   1 January of the current calendar year to today. Windows filter `published_at` (both
   ends inclusive) and leave out `date_basis = retrieved` documents (ADR-007 T-09).
 - Similarity measure for dedupe: trigram (pg_trgm) is simplest.
-- When would hybrid search be justified? Needs a comparison run (ADR-001).
+- ~~When would hybrid search be justified? Needs a comparison run (ADR-001).~~ Comparison run
+  in #125: hybrid is a per-request mode, `fts` stays the default (ADR-008).

@@ -8,7 +8,8 @@ answer shows, the trace stays on the page, collapsed under "How this answer was 
 ## Sub-features
 
 - `progress-early`: the progress bar and the first step line appear before the answer.
-- `progress-facts`: the search line's passage count equals the footer's chunk count; the
+- `progress-facts`: the search line's passage count equals the footer's chunk count (in hybrid
+  mode the line ends with "(hybrid)", #125); the
   model line names the provider and "one call"; the citation line gives matched/flagged.
 - `progress-collapsed`: after the answer the trace is collapsed and opens on click.
 - `progress-skip`: on a question with no passages the model step reads "no model call".
