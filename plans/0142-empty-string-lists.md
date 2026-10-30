@@ -21,7 +21,7 @@ JSON-encoded list, the answer is still built; any other malformed value still fa
 - [x] `claims='[{"text": "x", "chunk_ids": ["MS-10K-2025#1"]}]'` parses into one Claim
 - [x] `claims="not a list"` and `claims='{"text": "x"}'` still raise `ValidationError`
 - [x] Check to run: `python -m pytest tests` (LLM_PROVIDER=mock) -> all pass
-- [ ] Check to run: `scripts/verify_cee.py run` (mock) -> ask features PASS
+- [x] Check to run: `scripts/verify_cee.py run` (mock) -> ask features PASS
 
 ## Paid calls
 0. The crash is reproduced with a hand-written input; asking Q20 again would only re-roll the model.
@@ -31,3 +31,6 @@ JSON-encoded list, the answer is still built; any other malformed value still fa
   in a worktree before the issue existed (out of order: plan written after the code)
 - 2026-10-30 10:45 - pytest on mock: 231 passed, 1 skipped
 - 2026-10-30 11:00 - issue #142 opened, branch renamed `tl/142-empty-string-lists`, plan saved
+- 2026-10-30 10:57 - verify-cee (mock): all features PASS except open-citation UNREACHABLE (no
+  CORPUS_SHARE_PATH in the worktree, raw PDF precondition); re-run with it set: PASS
+  (`.verify-runs/20261030-105712-f8ffa0d`, `.verify-runs/20261030-105959-f8ffa0d`)
