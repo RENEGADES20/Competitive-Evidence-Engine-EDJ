@@ -12,7 +12,8 @@ from psycopg.types.json import Jsonb
 
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
-from cee.answer.validate import check_citations, coverage_note, empty_retrieval_answer, insert_caveats
+from cee.answer.validate import (check_citations, coverage_note, empty_retrieval_answer,
+                                 fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
 from cee.retrieve.fts import Hit, Query, resolve, search
@@ -102,6 +103,7 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
     t.report("check", "done", _check_text(answer, hits))
     with t.stage("caveats", "Adding caveats and gaps"):
         answer = insert_caveats(answer, query, hits)
+        answer = fill_suggested_sources(answer, query)
         answer.coverage_note = coverage_note(query, hits)
     t.report("caveats", "done", _caveats_text(answer))
     return answer, raw

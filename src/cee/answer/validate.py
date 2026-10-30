@@ -2,7 +2,7 @@
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 Here: citation check (flag, never drop), code-built source labels, caveat insertion,
-coverage note, empty-retrieval gap/refuse.
+coverage note, registry-based suggested sources, empty-retrieval gap/refuse.
 Not yet: number check (#52).
 """
 from __future__ import annotations
@@ -110,9 +110,51 @@ def _entry(entity_id: str) -> dict:
     return next(e for e in cfg["entities"] + cfg.get("expansion", []) if e["id"] == entity_id)
 
 
-def suggested_sources(entity_id: str) -> str:
+def _registry_lookup(entity_id: str) -> tuple[list[tuple[str, str]], set[str]]:
+    """(doc_type, source_name) rows in source_registry, and the doc types already ingested."""
+    from cee.db import connect
+
+    with connect() as conn:
+        rows = conn.execute("SELECT doc_type, source_name FROM source_registry WHERE entity_id = %s "
+                            "ORDER BY doc_type, source_name", (entity_id,)).fetchall()
+        have = conn.execute("SELECT DISTINCT doc_type FROM documents WHERE entity_id = %s",
+                            (entity_id,)).fetchall()
+    return [(r["doc_type"], r["source_name"]) for r in rows], {r["doc_type"] for r in have}
+
+
+registry_lookup = _registry_lookup   # tests swap in a fake; no database needed
+
+
+def _config_sources(entity_id: str) -> str:
     e = _entry(entity_id)
     return f"{e['name']}: " + ", ".join(SOURCE_NAMES.get(t, t) for t in e.get("expected_sources", []))
+
+
+def suggested_sources(entity_id: str) -> str:
+    """Registry sources expected for the firm minus doc types already in the corpus (#51).
+    Firm not in the registry, or the registry unreadable: the config list, as before."""
+    try:
+        rows, have = registry_lookup(entity_id)
+    except Exception:
+        rows, have = [], set()
+    if not rows:
+        return _config_sources(entity_id)
+    missing = [name for doc_type, name in rows if doc_type not in have]
+    return "Not yet in the corpus: " + "; ".join(missing) if missing else ""
+
+
+def fill_suggested_sources(answer: Answer, query: Query) -> Answer:
+    """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51)."""
+    empty = [g for g in answer.gaps if not g.suggested_source.strip()]
+    if empty and query.entities:
+        prefix = "Not yet in the corpus: "
+        parts = [t for t in (suggested_sources(e) for e in query.entities) if t]
+        registry = [t[len(prefix):] for t in parts if t.startswith(prefix)]
+        text = "; ".join(([prefix + "; ".join(registry)] if registry else [])
+                         + [t for t in parts if not t.startswith(prefix)])
+        for g in empty:
+            g.suggested_source = text
+    return answer
 
 
 def empty_retrieval_answer(query: Query) -> Answer:
