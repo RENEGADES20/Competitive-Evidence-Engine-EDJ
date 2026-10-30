@@ -5,9 +5,10 @@ The LLM fills claims/adjacent/gaps/behavior; code fills source_label, flags and 
 """
 from __future__ import annotations
 
+import json
 from typing import Literal, get_args
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refuse"]
 
@@ -37,6 +38,22 @@ class Answer(BaseModel):
     caveats: list[str] = Field(default_factory=list)  # inserted by code
     coverage_note: str = ""                            # built by code from the retrieved hits
     llm_called: bool = False
+
+    @field_validator("claims", "adjacent", "gaps", "caveats", mode="before")
+    @classmethod
+    def _list_sent_as_string(cls, v):
+        """The model sometimes sends a list field as "" or as a JSON-encoded string (Q20, real run
+        2026-10-30); a bare "" crashed the whole eval run. Empty -> [], JSON list -> parsed.
+        Any other string is left alone so validation still fails loudly."""
+        if not isinstance(v, str):
+            return v
+        if not v.strip():
+            return []
+        try:
+            parsed = json.loads(v)
+        except ValueError:
+            return v
+        return parsed if isinstance(parsed, list) else v
 
 
 def llm_output_schema() -> dict:
