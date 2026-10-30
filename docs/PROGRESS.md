@@ -92,6 +92,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-23 | Real-model answers for the 12 mock-passing questions: retrieval per spec + IDF rank, BAC PR/TR GWIM tagging, prompt v1, code caveats (#106) | Snapshot must be rebuilt so teammates get the new GWIM tags | Q5/Q16/Q26 limited by corpus (no MS decks or trade press, no thematic research, only one RJF filing in the last 90 days) |
 | 2026-10-29 | verify-cee cite-page waits for the chunk's own PDF page; no more flaky open-citation (#114) | none | none |
 | 2026-10-30 | TL #122: bash twins of restore/ingest/build-snapshot + RUN.md for Windows and macOS; restore and full test build pass in bash, verify-cee PASS (#130) | Not yet run on a real Mac | #123 pgvector, #129 /sync-db |
+| 2026-10-30 | TL #133: /tl-run and /tl-review — TL issues run end to end with an independent reviewer agent that approves plans and merges PRs (#134) | none | Run #124 through /tl-run |
 
 ## Weekly score (from W6)
 
