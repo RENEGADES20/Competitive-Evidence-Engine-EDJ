@@ -28,16 +28,21 @@ network off once the model is cached. Retrieval does not change (vectors are use
   Silicon cp311 wheels.
 
 ## Disk rule (TL machine)
-C: is nearly full. Every download in this task goes under `D:\ALLPROJECTS\EDJ\cache\`; commands
-set the variables explicitly because a running shell may not have the user env vars (this shell has
-`HF_HOME=D:\DevTools\cache\huggingface`, `PIP_CACHE_DIR=D:\DevTools\cache\pip`, no `FASTEMBED_CACHE_PATH`):
+C: is nearly full. Every download in this task goes to D:. pip and HuggingFace use the tech
+lead's shared dev cache (user env vars `PIP_CACHE_DIR=D:\DevTools\cache\pip`,
+`HF_HOME=D:\DevTools\cache\huggingface`); the fastembed model cache is project-specific
+(user env var `FASTEMBED_CACHE_PATH=D:\ALLPROJECTS\EDJ\cache\fastembed`). Commands set all of them
+explicitly because a running shell may not have the user env vars; TMP/TEMP are set per command
+so pip does not unpack wheels on C::
 ```powershell
-$env:PIP_CACHE_DIR = "D:\ALLPROJECTS\EDJ\cache\pip"
-$env:HF_HOME = "D:\ALLPROJECTS\EDJ\cache\huggingface"
+$env:PIP_CACHE_DIR = "D:\DevTools\cache\pip"
+$env:HF_HOME = "D:\DevTools\cache\huggingface"
 $env:FASTEMBED_CACHE_PATH = "D:\ALLPROJECTS\EDJ\cache\fastembed"
 $env:TMP = "D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP = $env:TMP   # pip unpacks wheels in TEMP
 ```
-Git Bash runs use the same paths (`export ...=/d/ALLPROJECTS/EDJ/cache/...`). Teammates: if
+Git Bash runs use the same paths (`export PIP_CACHE_DIR=/d/DevTools/cache/pip
+HF_HOME=/d/DevTools/cache/huggingface FASTEMBED_CACHE_PATH=/d/ALLPROJECTS/EDJ/cache/fastembed
+TMP=/d/ALLPROJECTS/EDJ/cache/tmp TEMP=/d/ALLPROJECTS/EDJ/cache/tmp`). Teammates: if
 `FASTEMBED_CACHE_PATH` is empty in `.env` and the environment, the model goes to
 `<repo>/.cache/fastembed` (git-ignored), so it sits next to the repo, never in a system temp folder.
 
@@ -134,3 +139,4 @@ fastembed's HF download writes anything outside `cache_dir` (step 4 checks); whe
 
 ## Progress log
 - 2026-10-30 00:46 - plan written; branch `tl/124-embeddings` from main 9c33662. Checked fastembed 0.9.1 model table (bge-small-en-v1.5, 384, MIT, 0.067 GB) and onnxruntime wheels (Intel Mac only up to 1.23.2); nothing installed
+- 2026-10-30 00:49 - TL correction: pip and HuggingFace use the shared dev cache (`PIP_CACHE_DIR=D:\DevTools\cache\pip`, `HF_HOME=D:\DevTools\cache\huggingface`), not `D:\ALLPROJECTS\EDJ\cache\`; `FASTEMBED_CACHE_PATH=D:\ALLPROJECTS\EDJ\cache\fastembed` stays project-specific. Disk rule section updated
