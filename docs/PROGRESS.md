@@ -93,6 +93,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-29 | verify-cee cite-page waits for the chunk's own PDF page; no more flaky open-citation (#114) | none | none |
 | 2026-10-30 | TL #122: bash twins of restore/ingest/build-snapshot + RUN.md for Windows and macOS; restore and full test build pass in bash, verify-cee PASS (#130) | Not yet run on a real Mac | #123 pgvector, #129 /sync-db |
 | 2026-10-30 | TL #133: /tl-run and /tl-review — TL issues run end to end with an independent reviewer agent that approves plans and merges PRs (#134) | none | Run #124 through /tl-run |
+| 2026-10-30 | TL #123: database on pgvector (trixie image keeps existing volumes); `db/upgrade.sql` adds chunks.embedding vector(384) + HNSW on every restore; FTS results identical on all 30 (#131) | Teammates run `docker compose up -d --wait` once | #124 embeddings |
 
 ## Weekly score (from W6)
 
