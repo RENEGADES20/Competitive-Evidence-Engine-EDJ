@@ -36,6 +36,11 @@ function Reset-Database {
     Invoke-Native { docker exec $Container psql -q -U cee -d postgres -c "DROP DATABASE IF EXISTS cee WITH (FORCE);" -c "CREATE DATABASE cee;" } "Dropping the database"
 }
 
+function Update-Schema {
+    # db/upgrade.sql: idempotent additions (pgvector column, #123), so older snapshots gain them.
+    Invoke-Native { docker exec $Container psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/02-upgrade.sql } "Upgrading the schema (did you pull the new database image? docker compose up -d)"
+}
+
 function Get-TableCounts {
     $sql = "SELECT 'documents', count(*) FROM documents UNION ALL SELECT 'chunks', count(*) FROM chunks UNION ALL SELECT 'entities', count(*) FROM entities ORDER BY 1;"
     $out = docker exec $Container psql -At -F "=" -U cee -d cee -c $sql

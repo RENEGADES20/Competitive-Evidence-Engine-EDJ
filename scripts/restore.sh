@@ -34,4 +34,5 @@ STAGED="$REPO_ROOT/snapshots/$NAME"
 
 reset_database
 run "pg_restore" docker exec "$CONTAINER" pg_restore -U cee -d cee --no-owner "/snapshots/$NAME"
+upgrade_schema
 echo "Done. Row counts: $(table_counts)"

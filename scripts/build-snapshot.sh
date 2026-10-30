@@ -35,6 +35,7 @@ echo "2/5 Recreating the database..."
 start_database
 reset_database
 run "Applying schema" docker exec "$CONTAINER" psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/01-schema.sql
+upgrade_schema
 
 echo "3/5 Re-ingesting from the manifest..."
 run "Ingestion" "$PYTHON" -m cee.ingest.load
