@@ -156,7 +156,7 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
   bash scripts/build-snapshot.sh
   ```
   It checks every manifest file (exists, sha256 matches), rebuilds the database, embeds every
-  chunk (#124; the build stops if a chunk has no vector), dumps `corpus-YYYY-MM-DD.dump`, copies
+  chunk (#124; about 20 minutes on a laptop CPU; the build stops if a chunk has no vector), dumps `corpus-YYYY-MM-DD.dump`, copies
   it into Box `snapshots/`, and puts the embedding model into Box `models/` if it is not there
   yet. `-AllowBranch` / `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
   and must not be shared.
