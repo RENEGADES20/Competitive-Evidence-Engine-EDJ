@@ -53,6 +53,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 |---|---|---|---|
 | 2026-10-15 | Prompt v0 and standard gap/boundary wording (#10): `src/cee/answer/prompt.py`, wording table in specs/answer-citations.md (Q12, Q19, Q28-Q30) (#27) | Real-model check of Q28-Q30 waits for BAC/MS documents in the corpus | Code-inserted caveats, boundary sentence and number check (S2, W3+) |
 | 2026-10-28 | Coverage note on every answer (#40): `coverage_note()` names firms, document types and periods of the retrieved passages, shown always-visible on the Ask page and checked by verify-cee ask-answer (#112) | - | Number check (#52), registry-based suggested sources (#51) |
+| 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
 
 ### U1
 
