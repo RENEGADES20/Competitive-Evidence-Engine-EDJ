@@ -24,6 +24,8 @@ merged). If not, stop and say why.
    - APPROVED with non-blocking notes: not a return. Pass the notes to the implementer with stage 3.
 3. **Build.** Implementer: "The plan is approved (issue comment). Implement it on the branch, keep
    the Progress log current, then do every step of `.claude/commands/finish-task.md`. Report the PR number."
+   If the plan planned real calls (CLAUDE.md "Paid API calls"), they run last, once, after every mock
+   check passes, with every raw output saved in the run's evidence folder and the count in the PR.
 4. **PR review.** New reviewer: "Run `.claude/commands/tl-review.md` with `pr <PR#>`." It merges on approval.
    - CHANGES REQUESTED (at least one blocking finding): implementer fixes on the same branch and
      pushes; new reviewer. At most **2 blocking returns**.
@@ -36,11 +38,12 @@ merged). If not, stop and say why.
 
 ## Stop and ask the tech lead
 - A third blocking return at either review stage.
-- The reviewer posts ESCALATED TO TL (ADR, paid call, deleted data, ground rules, teammate file, a check it could not run).
+- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned, more than 10 or needed by the reviewer, deleted data, ground rules, teammate file, a check it cannot run).
 - The implementer is blocked or the issue is unclear.
 
 ## Rules
 - Agents run one after another in the same checkout; never two writers at once.
 - The reviewer's only inputs are issue/plan/PR numbers and the repo. That is what makes it independent.
-- Paid API calls: 0 unless the plan already planned them and the tech lead agreed (CLAUDE.md).
+- Paid API calls: 0 unless the approved plan planned them (question IDs, why, 10 or fewer; CLAUDE.md).
+  More than 10 or unplanned calls need the tech lead. The reviewer never makes a paid call.
 - Teammate PRs are not reviewed this way; they stay with the tech lead.

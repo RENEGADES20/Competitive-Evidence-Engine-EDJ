@@ -71,34 +71,36 @@ contradicts CLAUDE.md -> it only restates CLAUDE.md steps 2-5 for review, and CL
 unchanged (checked below).
 
 ## Acceptance
-- [ ] Issue: 3 planned real calls for Q1, Q12, Q26 pass the plan checklist without escalation ->
+- [x] Issue: 3 planned real calls for Q1, Q12, Q26 pass the plan checklist without escalation ->
   `grep -n "Q1, Q12" .claude/commands/tl-review.md` shows the worked example, stating it passes
   plan check 5 and is not escalated.
-- [ ] Issue: 11 planned calls, or calls not in the plan, escalate -> the same section and the
+- [x] Issue: 11 planned calls, or calls not in the plan, escalate -> the same section and the
   "Never merge; escalate" list both name "more than 10" and "not in the approved plan";
   `grep -n -i "more than 10\|not in the approved plan" .claude/commands/tl-review.md`.
-- [ ] Issue: reviewer never calls a paid API (stated) -> `grep -n -i "never make" .claude/commands/tl-review.md`
+- [x] Issue: reviewer never calls a paid API (stated) -> `grep -n -i "never make" .claude/commands/tl-review.md`
   shows it in the Paid API calls section and in PR step 3; the escalation list includes calls
   the reviewer would need to make.
-- [ ] Issue: "Reviewed <sha>" in both verdict formats -> `grep -n "Reviewed <sha>" .claude/commands/tl-review.md`
+- [x] Issue: "Reviewed <sha>" in both verdict formats -> `grep -n "Reviewed <sha>" .claude/commands/tl-review.md`
   returns at least 2 lines (plan-mode verdict and PR-mode verdict).
-- [ ] Issue: check-not-run vs cannot-run rule stated once, no overlap -> `grep -n "^## Check rule" .claude/commands/tl-review.md`
+- [x] Issue: check-not-run vs cannot-run rule stated once, no overlap -> `grep -n "^## Check rule" .claude/commands/tl-review.md`
   returns exactly 1 line and the rule text sits under that heading;
   `grep -n -i "could not run\|cannot run\|not run" .claude/commands/tl-review.md` shows the
   blocking and escalation bullets only pointing to "Check rule", not restating it.
-- [ ] Issue (Deliverable): tl-run.md build stage says planned real calls run last, after mock
+- [x] Issue (Deliverable): tl-run.md build stage says planned real calls run last, after mock
   checks pass -> `grep -n -i "real calls" .claude/commands/tl-run.md` shows it in stage 3.
-- [ ] Issue: CLAUDE.md unchanged -> `git diff main --stat -- CLAUDE.md` prints nothing.
-- [ ] Extra (TL-approved): stray line gone -> `grep -c "efsmain" docs/RUN.md` prints 0, and
+- [x] Issue: CLAUDE.md unchanged -> `git diff main --stat -- CLAUDE.md` prints nothing.
+- [x] Extra (TL-approved): stray line gone -> `grep -c "efsmain" docs/RUN.md` prints 0, and
   `git diff main -- docs/RUN.md` shows exactly one deleted line.
-- [ ] DASHBOARD 3b matches the new rules -> `grep -n -i "a paid API call," docs/DASHBOARD.md`
+- [x] DASHBOARD 3b matches the new rules -> `grep -n -i "a paid API call," docs/DASHBOARD.md`
   prints nothing; `grep -n -i "more than 10\|reviewer cannot run" docs/DASHBOARD.md` shows the
   rewritten escalation sentence in 3b; `git diff main -- docs/DASHBOARD.md` touches only that sentence.
-- [ ] Scope -> `git diff --stat main` lists only tl-review.md, tl-run.md, docs/RUN.md,
+- [x] Scope -> `git diff --stat main` lists only tl-review.md, tl-run.md, docs/RUN.md,
   docs/DASHBOARD.md and this plan.
-- [ ] `.venv\Scripts\python.exe -m pytest -q` (Mac: `.venv/bin/python -m pytest -q`) -> all pass,
-  same count as main. verify-cee and eval skipped: commands/docs only. 0 paid calls.
+- [x] `.venv\Scripts\python.exe -m pytest -q` (Mac: `.venv/bin/python -m pytest -q`) -> all pass,
+  same count as main (227 passed, 1 skipped on main and on this branch). verify-cee and eval
+  skipped: commands/docs only. 0 paid calls.
 
 ## Progress log
 - 2026-10-30 10:11 - plan written; branch tl/139-tl-review-paid-calls from main (8639f20); extra item from the tech lead: delete stray `efsmain   # True` in docs/RUN.md; waiting for the reviewer agent's plan review
 - 2026-10-30 10:14 - reviewer returned the plan (issue comment 6526171054). Blocking fix 1 applied: docs/DASHBOARD.md 3b escalation sentence added to Files to change, step 7, a grep check, and the Scope line. Non-blocking notes applied: the check rule gets its own heading `## Check rule` (acceptance check greps it); the PR body will state that the RUN.md deletion came from the #140 reviewer's note, approved by the tech lead in chat. Waiting for re-review
+- 2026-10-30 10:16 - plan approved by the reviewer agent (round 2, reviewed 8539312; note: the Check rule grep also matches the rule text under the heading - the bullets only point to "Check rule", explained in the PR). Implemented: tl-review.md (Check rule, Paid API calls with Q1/Q12/Q26 worked example, plan check 5, PR step 3, Reviewed <sha> in both verdicts, Later rounds, escalation list), tl-run.md (stage 3 order, Stop and ask, Rules), DASHBOARD 3b sentence, RUN.md stray line. All acceptance greps as expected; pytest 227 passed, 1 skipped (same as main); next: PR

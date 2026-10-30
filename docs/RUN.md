@@ -81,7 +81,6 @@ the folder `models/models--Qdrant--bge-small-en-v1.5-onnx-Q`, and unzip it so th
 the check again. Once the model is there, it works with the network off.
 ```powershell
 Test-Path .cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q\refs\main   # True
-efsmain   # True
 ```
 ```bash
 test -f .cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs/main && echo True
