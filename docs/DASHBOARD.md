@@ -61,6 +61,23 @@ edit it if needed, then `python scripts/dispatch_apply.py <draft> --apply` creat
 issues (labels, assignee from `config/team.yaml`, board fields, blocked-by links) and posts
 the replies. Re-running it never duplicates anything.
 
+## 3b. TL workflow (agent-run)
+
+TL issues (`role:tl`) have no week slot; the tech lead takes them in dependency order.
+Each one runs through `/tl-run <issue#>` (`.claude/commands/tl-run.md`):
+
+1. Implementer agent: `/start-task` steps, ExecPlan committed on `tl/<issue#>-<slug>`.
+2. Reviewer agent (new, independent; sees only the issue, plan and repo): `/tl-review plan <issue#>`,
+   verdict as an issue comment. Up to 2 returns.
+3. Implementer: build, `/finish-task`, PR.
+4. New reviewer agent: `/tl-review pr <PR#>` re-runs pytest / verify-cee / eval itself, posts the
+   verdict on the PR, and squash-merges on approval. Up to 2 returns.
+
+The tech lead is asked only when a reviewer escalates: a third return, an ADR or ground-rule
+change, a paid API call, deleted data or snapshots, a teammate-owned file without their
+review, or a check that could not run. Teammate PRs are still reviewed by the tech lead.
+`/tl-review pr <PR#>` also works alone, e.g. for a TL PR opened by hand.
+
 ## 4. Labels (repo -> Issues -> Labels)
 
 - `role:c1` `role:c2` `role:c3` `role:s1` `role:s2` `role:u1` `role:tl`
