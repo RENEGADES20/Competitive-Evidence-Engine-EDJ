@@ -98,6 +98,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | #136 /tl-review returns only for blocking findings; non-blocking notes ride along with APPROVED; return limits count blocking returns (#137) | none | next TL issue |
 | 2026-10-30 | CLAUDE.md states the TL exception: role:tl PRs are reviewed and merged by the reviewer agent (/tl-run, /tl-review, DASHBOARD 3b); teammate PRs unchanged (#138) | none | none |
 | 2026-10-30 | TL #124: build-snapshot embeds every chunk (bge-small-en-v1.5 via fastembed, 384 dims, ~18 min); test builds ps1+sh 0 NULL of 17,183, dump 37.5 MB (was 4.4 MB); query embedding works offline; model in Box models/ (#140) | Real Mac pip install not yet run (teammate) | First real build-snapshot on clean main publishes the first vector snapshot, which #125 needs on teammates' machines; #125 hybrid retrieval (and ADR-001 rewording) |
+| 2026-10-30 | #139 /tl-review: planned real calls (<=10) pass review as the final acceptance step, the reviewer never pays, verdicts say "Reviewed <sha>", one Check rule; RUN.md stray line removed (#141) | none | next TL issue |
 
 ## Weekly score (from W6)
 
