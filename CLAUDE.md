@@ -67,7 +67,10 @@ If your change touches two areas, read both specs and mention both in the PR.
   tasks may skip the ExecPlan.
 - PRs use `.github/pull_request_template.md` and include "Closes #N" (or "Part of #N" with
   the open items listed, when the issue is only partly done).
-- The tech lead reviews and merges. Do not merge your own PR.
+- The tech lead reviews and merges. Do not merge your own PR. Exception (TL only): PRs for
+  `role:tl` issues are reviewed and merged by an independent reviewer agent through `/tl-run`
+  and `/tl-review` (`.claude/commands/tl-run.md`, `.claude/commands/tl-review.md`; see
+  `docs/DASHBOARD.md` section 3b). Teammate PRs: the tech lead reviews and merges.
 
 ## Verification
 
