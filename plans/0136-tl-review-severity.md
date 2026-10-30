@@ -54,28 +54,31 @@ Risk: "non-blocking" becomes a way to wave through real errors. Mitigation: the 
 names any wrong fact that changes an outcome, and "unsure -> blocking".
 
 ## Acceptance
-- [ ] Issue: blocking examples listed -> check: `grep -n -i "blocking" .claude/commands/tl-review.md`
+- [x] Issue: blocking examples listed -> check: `grep -n -i "blocking" .claude/commands/tl-review.md`
   shows the section, and it names all six: code or stated fact wrong; acceptance item has no
   check or not met; CLAUDE.md rule or invariant broken; check fails or not run;
   tests/verify-cee/eval regress; Windows/Mac twin missing.
-- [ ] Issue: non-blocking examples listed -> same section names Progress-log times off by
+- [x] Issue: non-blocking examples listed -> same section names Progress-log times off by
   minutes, wording, formatting, suggestion outside the PR's scope.
-- [ ] Issue (Deliverable): verdict format lists both -> plan-mode and PR-mode verdict lines in
+- [x] Issue (Deliverable): verdict format lists both -> plan-mode and PR-mode verdict lines in
   tl-review.md each show "Blocking:" and "Non-blocking:".
-- [ ] Issue (Deliverable): later round re-checks only earlier blocking items plus new diff ->
+- [x] Issue (Deliverable): later round re-checks only earlier blocking items plus new diff ->
   "Later rounds" paragraph present in tl-review.md.
-- [ ] Issue (Deliverable): tl-run.md return limits count blocking returns only -> every
+- [x] Issue (Deliverable): tl-run.md return limits count blocking returns only -> every
   "return" limit in tl-run.md (stages 2, 4, "Stop and ask") says blocking; `grep -n "return" .claude/commands/tl-run.md`.
-- [ ] Issue: #132 round-3 re-read classifies both findings as non-blocking -> stated in the PR
+- [x] Issue: #132 round-3 re-read classifies both findings as non-blocking -> stated in the PR
   body: fix 1 (log start time 22:55 vs 23:17) = Progress-log time off by minutes; fix 2
   (verify-cee run noted as on the uncommitted tree, HEAD ab70a01) = provenance note, the check
   ran and passed on the same content, outcome unchanged.
-- [ ] Issue: escalation list unchanged -> `git diff main -- .claude/commands/tl-review.md`
+- [x] Issue: escalation list unchanged -> `git diff main -- .claude/commands/tl-review.md`
   shows no change inside "Never merge; escalate to the tech lead instead"; tl-run.md "Stop and
   ask" keeps all three items (only "third return" gains "blocking").
-- [ ] Out of scope respected -> `git diff --stat main` lists only the four files above.
-- [ ] `.venv\Scripts\python.exe -m pytest -q` -> all pass (222 on main). verify-cee and eval
+- [x] Out of scope respected -> `git diff --stat main` lists only the four files above.
+- [x] `.venv\Scripts\python.exe -m pytest -q` (Mac: `.venv/bin/python -m pytest -q`) -> all pass
+  (222 on main; 222 on this branch). verify-cee and eval
   skipped: commands/docs only. 0 paid calls.
 
 ## Progress log
 - 2026-10-30 00:29 - plan written; branch tl/136-tl-review-severity from main; waiting for the reviewer agent's plan review
+- 2026-10-30 00:31 - reviewer agent approved the plan (blocking: none; 3 non-blocking notes: label every #132 worked example incl. both round-1 fixes, add the Mac pytest command, explain the DASHBOARD 3b escalation wording in the PR). All three applied
+- 2026-10-30 00:33 - tl-review.md (Blocking vs non-blocking, worked examples, verdict lists, Later rounds), tl-run.md (blocking returns), DASHBOARD 3b wording done; pytest 222 passed; escalation section of tl-review.md unchanged in the diff; next: PR
