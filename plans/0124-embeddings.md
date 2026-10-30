@@ -38,9 +38,10 @@ so pip does not unpack wheels on C::
 $env:PIP_CACHE_DIR = "D:\DevTools\cache\pip"
 $env:HF_HOME = "D:\DevTools\cache\huggingface"
 $env:FASTEMBED_CACHE_PATH = "D:\ALLPROJECTS\EDJ\cache\fastembed"
+New-Item -ItemType Directory -Force "D:\ALLPROJECTS\EDJ\cache\tmp" | Out-Null   # must exist before TMP/TEMP point at it
 $env:TMP = "D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP = $env:TMP   # pip unpacks wheels in TEMP
 ```
-Git Bash runs use the same paths (`export PIP_CACHE_DIR=/d/DevTools/cache/pip
+Git Bash runs use the same paths (`mkdir -p /d/ALLPROJECTS/EDJ/cache/tmp` first, then `export PIP_CACHE_DIR=/d/DevTools/cache/pip
 HF_HOME=/d/DevTools/cache/huggingface FASTEMBED_CACHE_PATH=/d/ALLPROJECTS/EDJ/cache/fastembed
 TMP=/d/ALLPROJECTS/EDJ/cache/tmp TEMP=/d/ALLPROJECTS/EDJ/cache/tmp`). Teammates: if
 `FASTEMBED_CACHE_PATH` is empty in `.env` and the environment, the model goes to
@@ -115,9 +116,13 @@ fastembed's HF download writes anything outside `cache_dir` (step 4 checks); whe
 - [ ] **The vectors survive the snapshot:** `restore.ps1` and `restore.sh` of the `-test` dump -> NULL count `0`, `chunks_embedding_idx` present, `python -m cee.smoke` PASS
 - [ ] **pip install, Windows:** step 1 succeeds, `pip check` -> "No broken requirements found"
 - [ ] **pip install, Intel Mac and Apple Silicon (Python 3.11):** step 2 dry runs for `macosx_13_0_x86_64` and `macosx_14_0_arm64` resolve with wheels only (no sdist build). A real install on a teammate's Mac stays an open item if not done before the PR (then the PR says `Part of #124`)
-- [ ] **Query embedding offline:** with sockets blocked in-process and `HF_HUB_OFFLINE=1`:
-      `python -c "import socket; socket.socket.connect=lambda *a,**k: (_ for _ in ()).throw(OSError('network off')); from cee.retrieve.embed import embed_query; v=embed_query('advisor headcount'); print(len(v))"` -> `384`, no error, under 10 s
-- [ ] **Offline from the Box copy:** point `FASTEMBED_CACHE_PATH` at a fresh folder under `D:\ALLPROJECTS\EDJ\cache\` holding only the files copied from `<CORPUS_SHARE_PATH>\models\`; the same blocked-socket command -> `384`; folder deleted afterwards
+- [ ] **Query embedding offline:** `HF_HUB_OFFLINE` and `TRANSFORMERS_OFFLINE` **unset** in the shell
+      (`Remove-Item Env:HF_HUB_OFFLINE, Env:TRANSFORMERS_OFFLINE -ErrorAction SilentlyContinue`; bash `unset HF_HUB_OFFLINE TRANSFORMERS_OFFLINE`),
+      sockets blocked in-process, timed with `Measure-Command` / `time`:
+      `python -c "import socket; socket.socket.connect=lambda *a,**k: (_ for _ in ()).throw(OSError('network off')); from cee.retrieve.embed import embed_query; v=embed_query('advisor headcount'); print(len(v))"` -> `384`, no error, under 10 s.
+      `embed.py` does not set `HF_HUB_OFFLINE` itself; it passes `local_files_only=True` to fastembed on the first load attempt (so a cached model needs no request), and only downloads when that fails
+- [ ] **Offline from the Box copy:** same conditions (`HF_HUB_OFFLINE` unset, sockets blocked); `FASTEMBED_CACHE_PATH` points at a fresh folder under `D:\ALLPROJECTS\EDJ\cache\` holding only the files copied from `<CORPUS_SHARE_PATH>\models\`; the same command -> `384`, no error, under 10 s; folder deleted afterwards
+- [ ] **Linked questions:** none directly (issue). Q1-Q30 must not change: covered by "Retrieval unchanged" below
 - [ ] **Disk rule:** model files only under `D:\ALLPROJECTS\EDJ\cache\fastembed`; no `fastembed_cache` in `%TEMP%` on C:
 - [ ] **Retrieval unchanged:** `eval_run.py --as-of 2026-10-29 --baseline .eval-runs/p123-with-vector/report.json` on the restored `-test` snapshot -> identical `chunk_ids` Q1-Q30 (27 PASS / 3 FAIL), mock provider
 - [ ] **Snapshot size reported in the PR:** size of the `-test` dump vs 4.4 MB for `corpus-2026-10-29.dump`, plus embedding-step and restore times
@@ -137,6 +142,18 @@ fastembed's HF download writes anything outside `cache_dir` (step 4 checks); whe
 - `fastembed` 0.9.1 was released 2026-10-24 (six days ago); if it misbehaves, fall back to 0.8.x
   with the same onnxruntime pin and log it here.
 
+## For the PR body (reviewer notes on the plan, 2026-10-30)
+- ADR-001's sentence "`chunks.embedding` exists but stays NULL" is no longer literally true after
+  this merge (FTS-only retrieval still holds); #125's plan supersedes or rewords it with a new ADR.
+- No published snapshot carries vectors yet (the `-test` dumps are deleted, local DB back on
+  `corpus-2026-10-29`): Progress line "Next" says the first real `build-snapshot` on clean main
+  publishes the first vector snapshot, which #125 needs on teammates' machines.
+- `src/cee/retrieve/embed.py` sits in the retrieval package (S1 area): tag S1 for information; no
+  S1 file is edited.
+- Cleanup keeps Box `models/` on purpose: the `-AllowBranch` build copies the real model there and
+  it is meant to stay.
+
 ## Progress log
 - 2026-10-30 00:46 - plan written; branch `tl/124-embeddings` from main 9c33662. Checked fastembed 0.9.1 model table (bge-small-en-v1.5, 384, MIT, 0.067 GB) and onnxruntime wheels (Intel Mac only up to 1.23.2); nothing installed
 - 2026-10-30 00:49 - TL correction: pip and HuggingFace use the shared dev cache (`PIP_CACHE_DIR=D:\DevTools\cache\pip`, `HF_HOME=D:\DevTools\cache\huggingface`), not `D:\ALLPROJECTS\EDJ\cache\`; `FASTEMBED_CACHE_PATH=D:\ALLPROJECTS\EDJ\cache\fastembed` stays project-specific. Disk rule section updated
+- 2026-10-30 00:52 - plan review round 1 (CHANGES REQUESTED): both offline checks now run with `HF_HUB_OFFLINE` unset (sockets blocked, 384 / no error / under 10 s); embed.py relies on `local_files_only=True`, not the env var. Non-blocking: create `cache\tmp` before TMP/TEMP, Linked questions line added, other notes listed under "For the PR body"
