@@ -32,3 +32,4 @@ verdict is a PR comment (`gh pr review --comment` / `gh pr comment`), headed APP
 ## Progress log
 - 2026-10-29 23:40 - plan written; design approved by the TL in chat (reviewer agent also approves ExecPlans)
 - 2026-10-29 23:50 - tl-review.md, tl-run.md, DASHBOARD 3b written; next: PR and reviewer-agent review of this PR
+- 2026-10-29 23:58 - reviewer agent returned the PR (2 fixes in tl-run.md: run start-task steps 1-6 with the reviewer replacing the user's approval in step 4; close-out covers Part of vs Closes). Both fixed
