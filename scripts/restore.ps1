@@ -35,4 +35,5 @@ if ($Dump -ne $staged) { Copy-Item $Dump $staged -Force }   # the container sees
 
 Reset-Database
 Invoke-Native { docker exec $Container pg_restore -U cee -d cee --no-owner "/snapshots/$name" } "pg_restore"
+Update-Schema
 Write-Host "Done. Row counts: $(Get-TableCounts)"

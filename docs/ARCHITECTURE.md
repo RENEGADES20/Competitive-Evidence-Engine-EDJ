@@ -54,7 +54,7 @@ CREATE TABLE chunks (
   page          int,                       -- PDFs only
   text          text NOT NULL,             -- includes the context prefix
   tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED,
-  embedding     vector NULL                -- unused until ADR-001 is revisited
+  embedding     vector(384) NULL           -- pgvector; filled at snapshot build (#124)
 );
 CREATE INDEX ON chunks USING gin (tsv);
 

@@ -1,8 +1,9 @@
 # Local Postgres for the Competitive Evidence Engine. See docs/RUN.md.
-# db/schema.sql runs only on the first start of an empty volume.
+# db/schema.sql and db/upgrade.sql run on the first start of an empty volume;
+# restore.ps1 / restore.sh run db/upgrade.sql again after every restore.
 services:
   db:
-    image: postgres:16.10
+    image: pgvector/pgvector:0.8.1-pg16-trixie   # Postgres 16 + pgvector (x86 and Apple chip)
     container_name: cee-db
     restart: unless-stopped
     environment:
@@ -14,6 +15,7 @@ services:
     volumes:
       - cee-pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/upgrade.sql:/docker-entrypoint-initdb.d/02-upgrade.sql:ro
       - ./snapshots:/snapshots   # staging area for pg_dump / pg_restore
     healthcheck:
       # Over TCP on purpose: on a new volume the image first runs db/schema.sql on a temporary

@@ -1,8 +1,8 @@
 -- Schema for the Competitive Evidence Engine. Design notes: docs/ARCHITECTURE.md.
 -- Applied automatically on the first start of an empty Docker volume.
 -- Differences from the ARCHITECTURE.md draft:
---   * no chunks.embedding column yet (ADR-001: FTS first; add it with pgvector when a
---     comparison run justifies hybrid search)
+--   * chunks.embedding (pgvector, 384 dims) is added by db/upgrade.sql, which also runs on
+--     every restore so snapshots built before #123 gain the column. NULL until #124 fills it.
 --   * chunks.prefix holds the context prefix; chunks.text holds only the source text,
 --     so the source viewer and the number check see the original words.
 

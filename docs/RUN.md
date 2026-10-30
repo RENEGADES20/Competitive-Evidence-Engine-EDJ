@@ -47,6 +47,19 @@ Corpus owners who ingest documents (tech lead, C1, C2) also install
 `pip install -r requirements-ingest.txt` (large: docling pulls in PyTorch) and set
 `EDGAR_IDENTITY` to their name and email.
 
+### Database image update (#123, once)
+
+The database now runs on `pgvector/pgvector:0.8.1-pg16-trixie` (Postgres 16 with vector
+search). After `git pull`, start Docker Desktop and run this once; Docker downloads the new
+image (about 150 MB) and keeps your data. Then restore the snapshot as in section 2.
+
+```powershell
+docker compose up -d --wait
+```
+```bash
+docker compose up -d --wait
+```
+
 ## 2. Daily use (teammates)
 
 1. Start Docker Desktop and wait until it says "Engine running".
@@ -133,6 +146,8 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 | `python` opens the wrong Python / `Permission denied` | Another tool's Python is first on PATH. Always use `.\.venv\Scripts\python.exe` (Mac: `.venv/bin/python`); create the venv with `py -3.11 -m venv .venv` (Mac: `python3.11 -m venv .venv`) |
 | Mac: `pwsh: command not found` or a `.ps1` opens as text | Use the `.sh` twin: `bash scripts/<name>.sh` |
 | Mac: `permission denied: scripts/restore.sh` | Run it through bash as shown (`bash scripts/restore.sh`), or `chmod +x scripts/*.sh` once |
+| `Upgrading the schema failed` / `extension "vector" is not available` | Your container still runs the old image: `docker compose up -d --wait`, then restore again |
+| `collation version mismatch` | The image's operating system differs from the one that created your data. Start clean: `docker compose down -v`, `docker compose up -d --wait`, then restore the snapshot |
 | `No snapshot found` | Download the newest `.dump` from the team Box link into `snapshots/` |
 | smoke says `0 chunks` | Restore a snapshot (section 2, step 3) |
 | `... not found locally. Download it from the team Box link` | The raw file is not in `data\raw\`; download it, or ignore if you only need the passage |

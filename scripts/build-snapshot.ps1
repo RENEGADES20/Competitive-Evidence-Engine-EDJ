@@ -29,6 +29,7 @@ try {
     Start-Database
     Reset-Database
     Invoke-Native { docker exec $Container psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/01-schema.sql } "Applying schema"
+    Update-Schema
 
     Write-Host "3/5 Re-ingesting from the manifest..."
     Invoke-Native { & $Python -m cee.ingest.load } "Ingestion"

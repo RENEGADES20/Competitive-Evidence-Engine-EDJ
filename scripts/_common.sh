@@ -37,6 +37,12 @@ reset_database() {
         -c "DROP DATABASE IF EXISTS cee WITH (FORCE);" -c "CREATE DATABASE cee;"
 }
 
+upgrade_schema() {
+    # db/upgrade.sql: idempotent additions (pgvector column, #123), so older snapshots gain them.
+    run "Upgrading the schema (did you pull the new database image? docker compose up -d)" \
+        docker exec "$CONTAINER" psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/02-upgrade.sql
+}
+
 table_counts() {
     docker exec "$CONTAINER" psql -At -F "=" -U cee -d cee -c \
         "SELECT 'documents', count(*) FROM documents UNION ALL SELECT 'chunks', count(*) FROM chunks UNION ALL SELECT 'entities', count(*) FROM entities ORDER BY 1;" \
