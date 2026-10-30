@@ -24,8 +24,9 @@ in both modes. The eval compares both modes on the question bank (the comparison
   `MS-10K-2025#153` ("formulaic payouts ... compensation") has `compensation` and `payout`
   -> 8.52. `MAX_PER_DOC` = 3 lets `#170`, `#128`, `#696` in from MS-10K-2025. In filings the bare
   verb "pay" almost always means paying an obligation, not advisor pay. A dry run with the bare
-  word left out of the FTS words (synonyms kept) gives `#153` in, no must-not chunk, and the other
-  MS slots unchanged. `pay` occurs in no other question of `evals/questions.yaml` (only Q29, line
+  word left out of the FTS words (synonyms kept) gives `#153` in and no must-not chunk; in the
+  MS 10-K `#170` and `#128` stay, and two transcript slots change (out `MS-TR-2025Q2#26`,
+  `MS-TR-2024Q4#56`; in `MS-TR-2025Q4#15`, `MS-TR-2025Q4#8`). `pay` occurs in no other question of `evals/questions.yaml` (only Q29, line
   442), so this changes only Q29 in the bank.
 - Rerankers in fastembed 0.9.1 (already pinned, `TextCrossEncoder`, ONNX, no new package, so no
   new wheel question on Windows / Intel Mac / Apple Silicon; onnxruntime stays 1.23.2):
@@ -36,7 +37,9 @@ in both modes. The eval compares both modes on the question bank (the comparison
 - pgvector HNSW with a `WHERE` filter returns at most `hnsw.ef_search` (default 40) rows unless
   iterative scans are on. 0.8.1 has `hnsw.iterative_scan`; we set it per transaction
   (`SET LOCAL hnsw.iterative_scan = strict_order`, `hnsw.ef_search = 100`); `max_scan_tuples`
-  (20,000) exceeds the corpus. Step 4 checks the leg against an exact scan.
+  (20,000) exceeds the corpus. `EXPLAIN` (plan review round 1): the per-firm leg
+  (`PARTITION BY entity_id`) reads every eligible row and sorts, so it is exact; only the
+  no-firm (theme) leg, `ORDER BY ... LIMIT 100`, uses the HNSW index. Step 4 checks both shapes.
 - PR #140 review note 3: `embed.model()` catches every exception from the cached load and then
   downloads, so a broken onnxruntime shows up as a download error. Fixed here (step 2).
 - The stray `efsmain` line in `docs/RUN.md` (#124 open item) is already gone on main.
@@ -100,18 +103,24 @@ are git-ignored.
 - `src/cee/ask.py` - `mode` argument, trace suffix, `retrieval_mode` in the query log.
 - `config/entities.yaml` (synonyms section: S1 reviews; C1 FYI as owner of the file) -
   `synonym_only: [pay]`.
-- `scripts/eval_run.py` - `--mode fts|hybrid` (default `RETRIEVAL_MODE`), recorded in report meta
-  and header.
+- `scripts/eval_run.py` - `--mode fts|hybrid` (default `RETRIEVAL_MODE`), recorded as
+  `retrieval_mode` in report meta and header (the meta key `mode` stays mock/real, the per-question
+  `mode` stays entity/theme). Times `search()` per question (`search_s` in `report.json`) and
+  writes the median to the summary and the report header. Model load is kept out: before the
+  timed loop, one untimed warm-up `search()` on the first question, its time saved as `warmup_s`.
 - `scripts/verify_cee.py` - record `RETRIEVAL_MODE` in `summary.json` (the app subprocess already
   inherits the shell environment).
 - `tests/test_hybrid.py` (new), `tests/test_fts_synonyms.py`, `tests/test_embed.py`,
   `tests/test_ask_progress.py`, `tests/test_eval_run.py` - see Acceptance.
 - `.env.example` - `RETRIEVAL_MODE=fts` with a comment.
 - `docs/RUN.md` - "Hybrid retrieval (#125, optional)": `RETRIEVAL_MODE=hybrid` in `.env`, fill
-  missing vectors, reranker download size, offline check. Every PowerShell block has a bash block.
+  missing vectors, reranker download size, offline check. It says the Box `models/` folder holds
+  only the embedding model, so the first hybrid question needs HuggingFace access to fetch the
+  reranker (adding it to Box is part of the vector-snapshot TL step). Every PowerShell block has a bash block.
 - `docs/DECISIONS.md` - new ADR-008 "Hybrid retrieval as a per-request mode" with the eval numbers;
-  ADR-001 status "Accepted; amended by ADR-008", its stale sentence ("`chunks.embedding` ... stays
-  NULL") reworded. **ADR change: the PR is escalated to the TL**, not merged by the reviewer.
+  ADR-001 body untouched (old ADRs are not edited), only its Status line becomes "Accepted;
+  amended by ADR-008" (ADR-008 states that `chunks.embedding` is now filled). **ADR change: the PR
+  is escalated to the TL**, not merged by the reviewer.
 - `specs/retrieval.md` (S1 reviews) - retrieval modes section, Q29 rule, open question
   "When would hybrid search be justified?" answered with a link to ADR-008.
 - `.claude/skills/verify-cee/features/ask-progress.md` - the search line may end with the mode.
@@ -128,9 +137,12 @@ are git-ignored.
 3. `config.py` + `fts.search` mode switch + `synonym_only`; tests. Run fts eval
    (`--out .eval-runs/p125-fts-after --baseline .eval-runs/p125-fts-before/report.json`) and the
    chunk_id comparison (Acceptance) before going on.
-4. `hybrid.py` legs (SQL builders as functions, so tests can read the filters). Check the vector
-   leg on Q4, Q7, Q26, Q29 against an exact scan (`SET LOCAL enable_indexscan = off`): same
-   chunk_ids in the same order.
+4. `hybrid.py` legs (SQL builders as functions, so tests can read the filters). Save `EXPLAIN`
+   for both leg shapes (per-firm: Q29; theme: Q16) in the Progress log. Check the vector leg
+   against an exact scan (`SET LOCAL enable_indexscan = off`) on Q4, Q7, Q26, Q29 (per-firm) and
+   Q16, Q17, Q21 (theme, the HNSW path): expected identical chunk_ids in the same order. If a theme
+   question differs, raise `hnsw.ef_search` to 200 and re-check; if it still differs, make the
+   theme leg exact too (`SET LOCAL enable_indexscan = off`) and re-check.
 5. `rrf()`, rerank pool (firms take turns), reranker via `load_cached(TextCrossEncoder, ...)`,
    sigmoid, floor, `select()`; unit tests with a fake scorer (no DB, no network).
 6. `ask.py` `mode`, trace suffix, log; `eval_run.py --mode`; `verify_cee.py` summary; tests.
@@ -138,9 +150,12 @@ are git-ignored.
    `RERANK_MODEL` overridden in the shell for the second one) and time them.
 8. Hybrid evals, as of 2026-10-29, baseline `p125-fts-after`: one per reranker with no floor, then
    the chosen reranker with the floor grid. Pick model and floor by the rules in Design; record
-   every number in the Progress log.
+   every number in the Progress log. **Stop rule:** if no floor in the grid meets the rule, or
+   hybrid turns any question from PASS to FAIL against `p125-fts-after`, stop, log the numbers
+   and bring the plan back for review before going on.
 9. `RETRIEVAL_MODE=hybrid` retrieval check for Q4, Q7, Q26, Q27, Q29, Q30 (read the per-question
-   lines of the hybrid report).
+   lines of the hybrid report); for Q26 also check the retrieved list is sorted by `published_at`
+   descending (one-line script over `p125-hybrid/report.json` and the DB dates).
 10. Docs: RUN.md (PowerShell + bash), `.env.example`, ADR-008 + ADR-001 wording, spec section,
     verify-cee recipe line.
 11. `pytest -q`; `verify_cee.py run` with `RETRIEVAL_MODE=fts`, then with `RETRIEVAL_MODE=hybrid`.
@@ -174,14 +189,21 @@ mock provider.
       recall, refusal accuracy (gap and all-keyed), forbidden hits, median search time, per
       reranker. Hybrid: no question PASS -> FAIL vs `p125-fts-after`, refusal accuracy not lower
       (gap 5/5). Recall is reported, not gated (default stays `fts`).
-- [ ] Vector leg = exact scan for Q4, Q7, Q26, Q29 (step 4) -> identical chunk_ids.
+- [ ] Vector leg = exact scan (step 4): Q4, Q7, Q26, Q29 (per-firm shape) and Q16, Q17, Q21
+      (theme shape, HNSW) -> identical chunk_ids in the same order, with the final settings;
+      `EXPLAIN` of both shapes in the Progress log.
+- [ ] Search time: `report.json` of each fts and hybrid run has `search_s` per question,
+      `warmup_s`, and the median in the header; the reranker rule uses these medians.
 - [ ] Tests: `test_hybrid.py` - `rrf()` scores and ties on a hand-worked example; rerank floor
       drops below-floor hits and keeps order; no floor inside a window; unmapped-only question
-      returns `[]` without loading a model; NULL embeddings raise the clear error; mode switch
+      returns `[]` without loading a model; NULL embeddings raise the clear error; window questions
+      come back newest first; mode switch
       (`fts` never imports `hybrid`, `hybrid` calls `hybrid.search`, default from `RETRIEVAL_MODE`
       is `fts`, unknown mode -> `ValueError`). `test_fts_synonyms.py` - `pay` left out of the FTS
       words, `compensation`/`payout` kept. `test_embed.py` - first exception logged and chained.
-      `test_ask_progress.py` - `ask(mode=...)` reaches `search` and the trace suffix. Real-model
+      `test_ask_progress.py` - `ask(mode=...)` reaches `search` and the trace suffix.
+      `test_eval_run.py` - `--mode` lands in meta as `retrieval_mode`; `search_s` and the median
+      are written (fake search, no DB). Real-model
       rerank test only when cached (never downloads).
 - [ ] `pytest -q` -> all pass, none fewer than on main (228 at the PR #140 review).
 - [ ] `python scripts/verify_cee.py run` -> VERIFY PASS, all 7 features, with `RETRIEVAL_MODE=fts`
@@ -196,7 +218,13 @@ mock provider.
 Open items for teammates (not required checks; listed on the issue, "Part of #125" while open):
 - Mac (Intel and Apple Silicon): `python -m cee.retrieve.hybrid --check` and
   `python scripts/eval_run.py --mode hybrid` on a vector snapshot, once the TL publishes one.
+- Offline teammates: hybrid needs the reranker from HuggingFace until the TL adds it to Box
+  `models/` with the vector snapshot (separate TL step).
 
 ## Progress log
 - 2026-10-30 10:38 - plan written on `tl/125-hybrid-retrieval` from main 3fa63a9 (Q29 fts diagnosis
   and the `pay` dry run were read-only queries on the local DB; no file other than this plan changed).
+- 2026-10-30 10:46 - plan review round 1 (e7118f6): changes requested. Added theme questions
+  (HNSW path) and `EXPLAIN` to the exact-scan check, per-question search timing in `eval_run.py`,
+  `retrieval_mode` naming, ADR-001 Status-line-only change, a stop rule, the Q26 order check,
+  the corrected Q29 dry-run wording and the offline-reranker note.
