@@ -8,3 +8,7 @@ pydantic==2.13.5
 PyYAML==6.0.3
 python-dotenv==1.2.3
 pytest==9.1.1
+# Embeddings (#124): ONNX Runtime, no torch. onnxruntime 1.23.2 is the last release with
+# Intel Mac wheels (macOS 13+), so everyone uses it: same runtime for corpus and query vectors.
+fastembed==0.9.1
+onnxruntime==1.23.2

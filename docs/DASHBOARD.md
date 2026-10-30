@@ -137,5 +137,6 @@ author, and revert or re-land through a PR if needed.
 - [ ] Move files that arrived through the Box upload link into `raw/` (names must be `<doc_id>.<ext>`)
 - [ ] Run `scripts\build-snapshot.ps1` (Mac: `bash scripts/build-snapshot.sh`) on a clean `main` (checks sha256, rebuilds, dumps, and
       copies `corpus-YYYY-MM-DD.dump` into the Box `snapshots/` folder; Box Drive uploads it)
+- [ ] Every chunk has a vector (#124): `docker exec cee-db psql -At -U cee -d cee -c "SELECT count(*) FROM chunks WHERE embedding IS NULL"` -> `0`
 - [ ] Test `scripts\restore.ps1` (Mac: `bash scripts/restore.sh`) after `docker compose down -v`, then `python -m cee.smoke` -> PASS
 - [ ] Post the snapshot name in PROGRESS.md and the team chat
