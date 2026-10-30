@@ -26,7 +26,7 @@ Ask: "If this merges as it is, is something wrong or unchecked?" Yes -> blocking
 - An issue acceptance item has no concrete check, or is not met.
 - A CLAUDE.md rule or architecture invariant is broken (includes `.env`, `*.dump`, `data/raw/` in
   the diff, and `Closes #N` while an acceptance item is open).
-- A required check fails or was not run (pytest, verify-cee, eval, as step 3 of PR mode requires).
+- A required check (pytest, verify-cee, eval, as step 3 of PR mode requires) fails or was skipped: see "Check rule".
 - pytest, verify-cee or eval regress against `main` or the baseline.
 - A Windows/Mac twin is missing (`.ps1` without `.sh`, a RUN.md PowerShell block without a bash block).
 - A plan fails plan-mode check 1-6.
@@ -54,10 +54,36 @@ Worked examples (from #132 and #134):
   **blocking** (a stated fact that is wrong and changes what the coordinator does).
 - #134 round 1, note - CLAUDE.md still says only the TL merges: **non-blocking** (outside the PR's scope).
 
+## Check rule
+A required check the reviewer can run itself (pytest, verify-cee, eval, a grep or diff from the
+plan) and that fails or was skipped is **blocking**; the reviewer runs every such check on the
+reviewed head, whatever the PR says. A check the reviewer cannot run (it needs a paid call, a
+teammate's machine, a Mac when the reviewer is on Windows, or access the reviewer does not have)
+is an **escalation** to the tech lead, not a return. Every check falls in exactly one of the two.
+
+## Paid API calls
+CLAUDE.md "Paid API calls (money)" decides. For review that means:
+- **Allowed without the tech lead** when the approved ExecPlan planned them: question IDs, why the
+  mock cannot show it, and a count of 10 or fewer. They run once, last, after every mock check
+  passed; every raw output (question, prompt version, model, output) is saved in the run's
+  evidence folder; the PR's Verification states the count, the model and why.
+- **The reviewer never makes a paid API call.** It reads the saved raw outputs and judges them;
+  it does not re-run them. The count in the PR must match the plan and the saved outputs.
+- **Escalate** when there are more than 10 calls, calls not in the approved plan, or calls the
+  reviewer would need to make to verify the change.
+
+Worked examples:
+- A plan with 3 planned real calls for Q1, Q12, Q26 (IDs, why the mock cannot judge the wording,
+  count 3): passes plan check 5, no escalation. In PR review: 3 saved raw outputs, "3 real calls"
+  in the PR -> fine; the reviewer makes 0 calls.
+- A plan with 11 planned calls: escalate (more than 10).
+- A PR that made calls not in the approved plan (e.g. 3 planned, 5 made, or none planned): escalate.
+
 ## Later rounds
 When a plan or PR comes back after a return, do not review it from scratch:
 - Re-check each blocking item from the earlier verdicts: fixed or not.
-- Review only what changed since the last reviewed commit (`git diff <last reviewed sha>..HEAD`),
+- Review only what changed since the last reviewed commit, the `Reviewed <sha>` line of the last
+  verdict (`git diff <that sha>..HEAD`),
   and re-run the checks (pytest etc.) on the new head.
 - Do not raise new findings on unchanged lines unless they are blocking.
 
@@ -68,11 +94,14 @@ Each of these that does not hold is a blocking finding:
 2. "Files to change" stays inside the issue's scope; nothing from "Out of scope"; no teammate-owned file without naming the owner as reviewer (CLAUDE.md spec table).
 3. No invariant is bent (hard filters in SQL, one LLM call, citations only to retrieved chunks, caveats by code, question bank append-only).
 4. Windows and Mac: any script or setup step has both versions.
-5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why, count).
+5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, count of 10 or fewer, run last after the mock checks); see "Paid API calls".
 6. Steps are small and testable; risks named.
 
-Verdict: post on the issue with `gh issue comment <issue#> --body "..."`. The body always ends with both lists:
+Verdict: post on the issue with `gh issue comment <issue#> --body "..."`. The body starts with the
+branch head you read and always ends with both lists:
 ```
+Reviewed <sha>
+...
 Blocking: <numbered, specific fixes, or "none">
 Non-blocking: <numbered notes (and follow-up issue links), or "none">
 ```
@@ -86,20 +115,22 @@ Non-blocking: <numbered notes (and follow-up issue links), or "none">
    - `pytest -q` (venv Python for this OS).
    - Change touches `src/`, `config/`, the database, scripts or the corpus: `python scripts/verify_cee.py run`.
    - Retrieval or answer change: `python scripts/eval_run.py --as-of <date in PR> --baseline <latest baseline>`; no PASS -> FAIL, refusal accuracy not lower.
-   - Mock only. Never make a paid call during review.
+   - Mock only. Never make a paid API call during review. Planned real calls: check the saved raw
+     outputs in the evidence folder and the count in the PR against the plan; do not re-run them.
 4. Proof of work honest: every ticked box is true; `Closes #N` only if every acceptance item is done, else `Part of #N` with the open items; the ExecPlan Progress log is current; no `.env`, `*.dump`, `data/raw/` in the diff; `docs/PROGRESS.md` untouched.
-5. Verdict as a PR comment (an account cannot approve its own PR on GitHub). The body always ends with
+5. Verdict as a PR comment (an account cannot approve its own PR on GitHub). The body starts with
+   `Reviewed <sha>` (the PR head you checked out and tested) and always ends with
    `Blocking: <numbered fixes, or "none">` and `Non-blocking: <numbered notes (and follow-up issue links), or "none">`.
-   - No blocking finding -> approve: `gh pr review <PR#> --comment --body "APPROVED (reviewer agent): <what you re-ran and saw> ... Blocking: none. Non-blocking: ..."`, then
+   - No blocking finding -> approve: `gh pr review <PR#> --comment --body "APPROVED (reviewer agent) Reviewed <sha>: <what you re-ran and saw> ... Blocking: none. Non-blocking: ..."`, then
      `gh pr merge <PR#> --squash --delete-branch`, `git switch main && git pull`.
      Non-blocking notes do not hold the merge.
      If the PR says `Part of #N`, comment on the issue with what stays open.
-   - At least one blocking finding -> return: `gh pr review <PR#> --comment --body "CHANGES REQUESTED (reviewer agent)"` + both lists; each blocking fix is specific (file, line, what to change, how you will check it). Do not merge.
+   - At least one blocking finding -> return: `gh pr review <PR#> --comment --body "CHANGES REQUESTED (reviewer agent) Reviewed <sha>"` + both lists; each blocking fix is specific (file, line, what to change, how you will check it). Do not merge.
 
 ## Never merge; escalate to the tech lead instead
 - A new or changed ADR, or a change to CLAUDE.md ground rules or invariants.
-- Any paid API call in the change or needed to verify it.
+- Paid API calls: more than 10, not in the approved plan, or ones the reviewer would need to make (see "Paid API calls").
 - Deleting data, documents, snapshots or questions from `evals/questions.yaml`.
 - A teammate-owned file changed without that teammate's review on the PR.
-- A check you could not run, or one that fails on `main` too and the PR does not say so.
+- A check the reviewer cannot run (see "Check rule"), or one that fails on `main` too and the PR does not say so.
 Post "ESCALATED TO TL (reviewer agent): <reason>" on the PR and stop.
