@@ -96,6 +96,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | TL #123: database on pgvector (trixie image keeps existing volumes); `db/upgrade.sql` adds chunks.embedding vector(384) + HNSW on every restore; FTS results identical on all 30 (#131) | Teammates run `docker compose up -d --wait` once | #124 embeddings |
 | 2026-10-30 | TL #122: ExecPlan added after the fact for the Mac scripts (#130) (#132) | Real-Mac restore run still open | #123 merge |
 | 2026-10-30 | #136 /tl-review returns only for blocking findings; non-blocking notes ride along with APPROVED; return limits count blocking returns (#137) | none | next TL issue |
+| 2026-10-30 | CLAUDE.md states the TL exception: role:tl PRs are reviewed and merged by the reviewer agent (/tl-run, /tl-review, DASHBOARD 3b); teammate PRs unchanged (#138) | none | none |
 
 ## Weekly score (from W6)
 
