@@ -93,3 +93,31 @@ def test_real_model_query_is_384_and_unit_length():
     v = embed.embed_query("Morgan Stanley net new assets")
     assert len(v) == embed.DIM
     assert abs(sum(x * x for x in v) - 1.0) < 1e-3
+
+
+def test_load_cached_logs_the_first_error_and_chains_it(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("FASTEMBED_CACHE_PATH", str(tmp_path / "fe"))
+
+    class Broken:
+        def __init__(self, model_name, cache_dir, local_files_only=False):
+            if local_files_only:
+                raise RuntimeError("bad wheel")
+            raise OSError("no network")
+
+    with pytest.raises(OSError, match="no network") as e:
+        embed.load_cached(Broken, "some/model", "1 MB")
+    assert isinstance(e.value.__cause__, RuntimeError)
+    err = capsys.readouterr().err
+    assert "RuntimeError: bad wheel" in err and "Downloading some/model (1 MB)" in err
+
+
+def test_load_cached_uses_the_cache_without_downloading(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("FASTEMBED_CACHE_PATH", str(tmp_path / "fe"))
+    calls = []
+
+    class Cached:
+        def __init__(self, model_name, cache_dir, local_files_only=False):
+            calls.append(local_files_only)
+
+    embed.load_cached(Cached, "some/model", "1 MB")
+    assert calls == [True] and capsys.readouterr().err == ""

@@ -553,9 +553,11 @@ def drive(features: list[str]) -> bool:
                     out.write(json.dumps(s) + "\n")
             results.append({"feature": f, "status": rec.status})
         browser.close()
-    summary = {**st, "results": results, "finished": datetime.now().isoformat(timespec="seconds")}
+    from cee.config import settings  # loads .env as the app does; the app inherits this environment
+    summary = {**st, "retrieval_mode": settings().retrieval_mode, "results": results,
+               "finished": datetime.now().isoformat(timespec="seconds")}
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"\nSnapshot: {st.get('snapshot')}  Commit: {st['head'][:7]}")
+    print(f"\nSnapshot: {st.get('snapshot')}  Commit: {st['head'][:7]}  Retrieval: {summary['retrieval_mode']}")
     print("SUMMARY  " + "  ".join(f"{r['feature']}={r['status']}" for r in results))
     print(f"Evidence: {run_dir}")
     return all(r["status"] != "FAIL" for r in results)

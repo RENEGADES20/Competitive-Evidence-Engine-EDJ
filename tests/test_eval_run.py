@@ -255,8 +255,27 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
 
     seen = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
-    monkeypatch.setattr(fts, "search", lambda q, k: [])
+    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
-    assert seen == [dt.date(2026, 1, 15)]
+    assert seen == [dt.date(2026, 1, 15)] * 2  # untimed warm-up + the timed run
+
+
+def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
+    import json
+    from cee.retrieve import fts
+
+    modes = []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
+    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: modes.append(mode) or [])
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert modes == ["hybrid"] * 3
+    assert report["meta"]["retrieval_mode"] == "hybrid" and report["meta"]["mode"] == "mock"
+    assert report["meta"]["warmup_s"] is not None
+    assert all(isinstance(q["search_s"], float) for q in report["questions"])
+    assert report["summary"]["median_search_s"] is not None
+    assert "retrieval hybrid | median search" in (tmp_path / "report.md").read_text(encoding="utf-8")

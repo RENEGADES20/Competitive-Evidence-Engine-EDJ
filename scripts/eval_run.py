@@ -8,6 +8,11 @@ entities, the retrieved chunk IDs, which `expected_sources` patterns were hit, f
   python scripts/eval_run.py --questions Q1,Q4 --k 20
   python scripts/eval_run.py --baseline .eval-runs/<run>/report.json
   python scripts/eval_run.py --real --max-calls 5 --questions Q28,Q29,Q30
+  python scripts/eval_run.py --mode hybrid         # retrieval mode (#125); default RETRIEVAL_MODE
+
+Search time: every question's `search()` is timed (`search_s`); one untimed warm-up search on the
+first question comes first (`warmup_s`, model loading in hybrid mode), and the median goes into
+the summary and the report header.
 
 --real calls the configured provider (LLM_PROVIDER), at most --max-calls times, and saves every
 model output in .eval-runs/cache/ so the same question + prompt version + snapshot + model +
@@ -29,7 +34,9 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import statistics
 import subprocess
+import time
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -190,7 +197,9 @@ def summarize(records: list[dict]) -> dict:
         return {"ok": ok, "of": len(rs), "accuracy": _ratio(ok, len(rs))}
 
     keyed = [r for r in records if r.get("refusal_ok") is not None]
-    return {"tier1_doc_recall": mean([r["doc_recall"] for r in with_key]),
+    times = [r["search_s"] for r in records if r.get("search_s") is not None]
+    return {"median_search_s": round(statistics.median(times), 3) if times else None,
+            "tier1_doc_recall": mean([r["doc_recall"] for r in with_key]),
             "tier1_passage_recall": mean([r["passage_recall"] for r in with_key if r["passage_recall"] is not None]),
             "tier1_with_key": len(with_key), "tier1_total": len(tier1),
             "refusal_gap": accuracy([r for r in keyed if r.get("expected_behavior") in GAP_BEHAVIORS]),
@@ -343,6 +352,9 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
     lines = [f"# Eval run {meta['run_id']}", "",
              f"Snapshot `{meta['snapshot']}` | commit `{meta['commit']}` | k={meta['k']} | "
              f"min coverage {meta['min_coverage']} | as of {meta['as_of']} | mode {meta['mode']}"
+             f" | retrieval {meta.get('retrieval_mode', 'fts')}"
+             + (f" | median search {summary['median_search_s']} s (warm-up {meta.get('warmup_s')} s)"
+                if summary.get("median_search_s") is not None else "")
              + (f" | real calls {meta['real_calls']} of max {meta['max_calls']}, reused {meta['reused']}"
                 if meta["mode"] == "real" else " | 0 real calls"),
              "", f"**PASS {counts['PASS']} | FAIL {counts['FAIL']} | NOT_EVALUATED {counts['NOT_EVALUATED']}**"
@@ -410,6 +422,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--as-of", type=dt.date.fromisoformat, default=dt.date.today(),
                     help="day the time windows end, YYYY-MM-DD (default today)")
     ap.add_argument("--keys", type=Path, default=KEYS, help="answer key (default evals/expected_chunks.yaml)")
+    ap.add_argument("--mode", choices=("fts", "hybrid"), help="retrieval mode (default RETRIEVAL_MODE, else fts)")
     args = ap.parse_args(argv)
     if args.real and (args.max_calls is None or args.max_calls < 0):
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
@@ -418,6 +431,7 @@ def main(argv: list[str] | None = None) -> int:
 
     from cee.config import settings
     from cee.retrieve.fts import resolve, search
+    retrieval_mode = args.mode or settings().retrieval_mode
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -437,10 +451,18 @@ def main(argv: list[str] | None = None) -> int:
     real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
 
     records = []
+    warmup_s = None
+    if bank:  # untimed: loads models (hybrid) and warms the database cache
+        t = time.perf_counter()
+        search(resolve(bank[0]["text"], today=args.as_of), k=args.k, mode=retrieval_mode)
+        warmup_s = round(time.perf_counter() - t, 3)
     for q in bank:
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
-        hits = search(query, k=args.k)
+        t = time.perf_counter()
+        hits = search(query, k=args.k, mode=retrieval_mode)
+        search_s = round(time.perf_counter() - t, 3)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates)
+        r["search_s"] = search_s
         if real:
             r = apply_real(r, *real.answer(q, query, hits))
         if args.baseline:
@@ -452,12 +474,14 @@ def main(argv: list[str] | None = None) -> int:
 
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit, "k": args.k, "min_coverage": args.min_coverage,
-            "mode": "real" if real else "mock", "baseline": args.baseline, "as_of": args.as_of.isoformat(),
+            "mode": "real" if real else "mock", "retrieval_mode": retrieval_mode, "warmup_s": warmup_s,
+            "baseline": args.baseline, "as_of": args.as_of.isoformat(),
             "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
     write_reports(run_dir, meta, records)
     counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}
     summary = summarize(records)
-    print(f"\n{counts} | tier-1 recall {summary['tier1_doc_recall']} | refusal gap {summary['refusal_gap']['ok']}/"
+    print(f"\n{counts} | {retrieval_mode} | tier-1 recall {summary['tier1_doc_recall']} / passages "
+          f"{summary['tier1_passage_recall']} | median search {summary['median_search_s']} s | refusal gap {summary['refusal_gap']['ok']}/"
           f"{summary['refusal_gap']['of']} | real calls {meta['real_calls']} | report: {run_dir / 'report.md'}")
     return 0
 

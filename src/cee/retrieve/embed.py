@@ -3,7 +3,7 @@
 Model: BAAI/bge-small-en-v1.5 through fastembed (ONNX Runtime, no torch), 384 dims, the
 size of `chunks.embedding` in db/upgrade.sql. Vectors are computed once, at snapshot build
 (scripts/build-snapshot.*), and travel inside the snapshot; teammates only embed questions.
-Nothing here is used by retrieval yet (#125); FTS stays the only mode (ADR-001).
+Hybrid retrieval (#125, src/cee/retrieve/hybrid.py) embeds the question with `embed_query`.
 
 Model cache: FASTEMBED_CACHE_PATH (environment or .env), else <repo>/.cache/fastembed.
 A cached model loads with `local_files_only=True`, so no network request is made; the model
@@ -52,18 +52,31 @@ def cache_dir() -> Path:
     return path
 
 
+def load_cached(cls, name: str, size: str):
+    """Load a fastembed model class (TextEmbedding, TextCrossEncoder) from the cache, without any
+    network request; download it only when the cached load fails.
+
+    The cached load's error is printed first, so a broken install (e.g. an onnxruntime wheel that
+    does not load) is not hidden behind a download error, and it stays chained if the download
+    fails too (PR #140 review)."""
+    path = cache_dir()
+    path.mkdir(parents=True, exist_ok=True)
+    try:  # cached model: no network request at all
+        return cls(model_name=name, cache_dir=str(path), local_files_only=True)
+    except Exception as first:  # not cached yet, incomplete, or the runtime does not load
+        print(f"Could not load {name} from {path}: {type(first).__name__}: {first}", file=sys.stderr, flush=True)
+        print(f"Downloading {name} ({size})...", file=sys.stderr, flush=True)
+        try:
+            return cls(model_name=name, cache_dir=str(path))
+        except Exception as second:
+            raise second from first
+
+
 @lru_cache(maxsize=1)
 def model():
     from fastembed import TextEmbedding  # imported late: tests and --help need no model
 
-    path = cache_dir()
-    path.mkdir(parents=True, exist_ok=True)
-    try:  # cached model: no network request at all
-        return TextEmbedding(model_name=MODEL, cache_dir=str(path), local_files_only=True)
-    except Exception:  # not cached yet (or incomplete): download it
-        print(f"Embedding model not in {path}; downloading {MODEL} (about 70 MB)...",
-              file=sys.stderr, flush=True)
-        return TextEmbedding(model_name=MODEL, cache_dir=str(path))
+    return load_cached(TextEmbedding, MODEL, "about 70 MB")
 
 
 def embed_texts(texts: Sequence[str], batch_size: int = EMBED_BATCH) -> list[list[float]]:

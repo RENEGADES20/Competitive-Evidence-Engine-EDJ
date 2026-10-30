@@ -29,6 +29,7 @@ class Settings:
     corpus_share_path: str
     edgar_identity: str
     mock_delay_s: float = 0.0  # verify-cee only: the mock waits like a real model would (#80)
+    retrieval_mode: str = "fts"  # fts | hybrid (#125); per request: search(q, mode=...)
 
 
 def settings() -> Settings:
@@ -40,6 +41,7 @@ def settings() -> Settings:
         corpus_share_path=os.getenv("CORPUS_SHARE_PATH", "").strip(),
         edgar_identity=os.getenv("EDGAR_IDENTITY", "").strip(),
         mock_delay_s=float(os.getenv("MOCK_DELAY_S", "0") or 0),
+        retrieval_mode=(os.getenv("RETRIEVAL_MODE", "") or "fts").strip().lower(),
     )
 
 
