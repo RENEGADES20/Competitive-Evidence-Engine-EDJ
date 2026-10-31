@@ -18,9 +18,10 @@ table `chunk_embeddings` and no automatic model download.
 - `db/optional/vectors.sql` (new, idempotent, one transaction) - `CREATE EXTENSION IF NOT EXISTS
   vector`; `chunk_embeddings(chunk_id text PRIMARY KEY REFERENCES chunks ON DELETE CASCADE,
   embedding vector(384) NOT NULL)` + HNSW index (`vector_cosine_ops`); one-time move in a `DO`
-  block: if `chunks.embedding` exists, copy its non-NULL rows (`ON CONFLICT DO NOTHING`), compare
-  counts and `RAISE EXCEPTION` on a mismatch (rolls everything back), then drop the column (its
-  index goes with it). Dynamic SQL (`EXECUTE`) so the block parses when the column is gone.
+  block: if `chunks.embedding` exists, copy its non-NULL rows (`ON CONFLICT DO NOTHING`), then
+  check by anti-join that no chunk with a non-NULL `chunks.embedding` lacks a `chunk_embeddings`
+  row (not raw totals, which `ON CONFLICT DO NOTHING` could mask) and `RAISE EXCEPTION` if any
+  does (rolls everything back), then drop the column (its index goes with it). Dynamic SQL (`EXECUTE`) so the block parses when the column is gone.
 - `docker-compose.yml` - keeps the pgvector image (switching on needs no new image); mounts only
   `01-schema.sql` + `02-upgrade.sql` (as today); comment says why the optional SQL is not mounted.
 - `src/cee/config.py` - `vectors_enabled()`: reads `CEE_VECTORS` (env or `.env`); `on|true|1|yes`
@@ -77,7 +78,7 @@ table `chunk_embeddings` and no automatic model download.
 - `docs/RUN.md` - section 1: the default needs nothing extra (no extension, no model, no
   download); the "Database image update" and "Embedding model" blocks become one optional section
   "Vectors (optional, off by default)": install `requirements-vectors.txt`, fetch
-  (`python -m cee.retrieve.embed --fetch`) or copy the Box `models/` folder, set `CEE_VECTORS=on`,
+  (`python -m cee.retrieve.embed --fetch`) or copy the `models/` folder from the shared corpus folder, set `CEE_VECTORS=on`,
   apply the optional SQL (restore does it when on), embed (`--missing`); every step with a
   PowerShell and a bash block. Build-snapshot paragraph and troubleshooting rows updated.
 - `docs/ARCHITECTURE.md` - schema section: `chunks` loses `embedding`; optional `chunk_embeddings`
@@ -89,7 +90,7 @@ table `chunk_embeddings` and no automatic model download.
   `chunk_embeddings` and stays behind `CEE_VECTORS`; the shared local DB was migrated (see below).
 
 Not touched: `src/cee/retrieve/hybrid.py` and branch `tl/125-hybrid-retrieval`, `fts.py`, any
-ranking, synonyms, chunking, other portability work, Box publishing.
+ranking, synonyms, chunking, other portability work, publishing a snapshot.
 
 ## Steps
 0. **Safety and baseline, before any code edit** (branch = `main` ea7d5ac + this plan only).
@@ -133,20 +134,37 @@ ranking, synonyms, chunking, other portability work, Box publishing.
       import pytest; sys.exit(pytest.main(['-q']))"` (local stand-in; CI is the real "without" proof).
    e. `build-snapshot` with vectors off (Acceptance 4). It drops and rebuilds database `cee` and
       copies the dump to `CORPUS_SHARE_PATH`, so: `CORPUS_SHARE_PATH` = a scratch folder
-      `D:\ALLPROJECTS\EDJ\cache\share-144` whose `raw` is a junction (`.ps1` run) / symlink to the
-      real share's `raw` (manifest check reads it; nothing is copied to the real `snapshots/`, so
-      nothing is published); `--allow-branch`; `CEE_VECTORS` unset in env and `.env`; from the
-      worktree with `COMPOSE_PROJECT_NAME=repo` (the running `cee-db` belongs to that compose
-      project; compose may recreate the container with the worktree's mounts, data volume kept).
+      `D:\ALLPROJECTS\EDJ\cache\share-144` (the "scratch share") set up as:
+      - `raw` = a junction (`.ps1` run) / symlink to the shared corpus folder's `raw` (read only:
+        the manifest check and ingestion only read raw files);
+      - `parsed` = a **copy** (not a link) of the shared corpus folder's `parsed/` parse cache
+        (#82; `parse_cache.cache_path` = `<write_root()>/parsed/`, used by `pdf.py` and `load.py`).
+        A copy, so a cache miss writes into the scratch folder, never into the shared corpus
+        folder. Without it every PDF would re-run docling (minutes each) and every filing
+        edgartools: hours.
+      - Record the file count of `share-144\parsed` before the run.
+      Then `--allow-branch`; `CEE_VECTORS` unset in env and `.env`; from the worktree with
+      `COMPOSE_PROJECT_NAME=repo` (the running `cee-db` belongs to that compose project; compose
+      may recreate the container with the worktree's mounts, data volume kept). Nothing is copied
+      to the real `snapshots/`, so nothing is published.
+      **Expected duration and stop rule:** with a full parse cache, step 3 (re-ingest) only reads
+      cached JSON and inserts rows: expected well under 15 minutes. Stop (Ctrl+C) if step 3 runs
+      longer than 30 minutes or any new file appears in `share-144\parsed` (= a re-parse started);
+      then restore `cee` from the backup as below and report it in the Progress log instead of
+      continuing. After the run: **0 new files** in `share-144\parsed` (count equal to before).
       Run the `.ps1` (Windows); run the `.sh` through Git Bash as far as it goes with the same
       settings, or at least `bash -n` plus the skip branch, and say which. Save the log; it must
       show the two "skipped" lines and no model path. Afterwards restore the backup into `cee`
-      (`pg_restore` of `cee-before-144.dump`, so #125 finds its data as before) and re-check
-      `17183|17183`; then `docker compose up -d --wait` from the main checkout's folder to put the
-      container's mounts back (no file there changes). Delete the scratch dump.
-   f. Restore script with vectors off on the backup dump: prints that the optional SQL was skipped.
-      (With vectors on it is covered by 7b's SQL; not re-run on `cee`, which keeps today's column
-      for #125.)
+      with `scripts\restore.ps1 D:\ALLPROJECTS\EDJ\cache\backups\cee-before-144.dump` (it stages
+      the file into the mounted `snapshots/`; a dump left in the container's `/tmp` is gone once
+      compose recreated the container), so #125 finds its data as before, and re-check
+      `17183|17183`. Then `docker compose up -d --wait` from the main checkout's folder
+      (`D:\ALLPROJECTS\EDJ\repo`; the Progress log records the folder each `docker compose up`
+      ran from) to put the container's mounts back (no file there changes). Delete the scratch
+      dump and the scratch share.
+   f. Covered by the restore in 7e: `restore.ps1` with vectors off prints that the optional SQL
+      was skipped. (With vectors on it is covered by 7b's SQL; not re-run on `cee`, which keeps
+      today's column for #125.)
    g. "After" eval on the restored `cee` (same data as "before"): `python scripts/eval_run.py
       --as-of 2026-10-30 --baseline <before>/report.json --out ...\eval-144\after`; plus a short
       inline diff of `chunk_ids` per question between the two `report.json` files (eval_run's
@@ -160,10 +178,16 @@ Unsure / risks:
   `cee` is restored from the backup after the build test. So #125 resumes on unchanged data and
   migrates when it adopts `chunk_embeddings`. The backup stays in `D:\ALLPROJECTS\EDJ\cache\backups`
   until #125 is done.
-- Today's Box snapshot still holds `chunks.embedding` + the `vector` extension. Restoring it
+- Today's published snapshot still holds `chunks.embedding` + the `vector` extension. Restoring it
   keeps working on the pgvector image (unchanged); with vectors off the column is simply unused,
   with vectors on `vectors.sql` moves it. A snapshot built after this lands (vectors off) has
   neither, so it restores on plain Postgres. Not publishing one is in the issue's scope.
+- The build-snapshot check (7e) re-ingests the whole corpus. It relies on a copy of the parse
+  cache in the scratch share; a cache miss (new file or parser version) would start docling or
+  edgartools runs that take hours. The stop rule in 7e (30 minutes or any new file in
+  `share-144\parsed`) ends the check and `cee` is restored from the backup.
+- Wording: the ADR, docs, PR and comments say "shared corpus folder", not the file-sharing
+  service's name.
 - Changing the init mounts needs nothing: they are unchanged; only existing volumes keep the
   old column, which nothing in the core reads.
 
@@ -205,3 +229,7 @@ Unsure / risks:
 - 2026-10-30 19:10 - plan written on branch `tl/144-vectors-optional` from `main` ea7d5ac.
   Local DB: 17183 chunks, 17183 with `chunks.embedding`; pgvector 0.8.1; `postgres:16.10` image
   already local for the plain-Postgres check.
+- 2026-10-30 19:40 - plan review round 1 (CHANGES REQUESTED, 1 blocking): 7e now copies the parse
+  cache `parsed/` into the scratch share, checks 0 new parse files, and has a 30-minute stop rule.
+  Notes folded in: restore via `scripts\restore.ps1 <backup>` (covers 7f), log the folder of each
+  `docker compose up`, generic "shared corpus folder" wording, anti-join check in `vectors.sql`.
