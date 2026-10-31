@@ -135,8 +135,17 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
    e. `build-snapshot` with vectors off (Acceptance 4). It drops and rebuilds database `cee` and
       copies the dump to `CORPUS_SHARE_PATH`, so: `CORPUS_SHARE_PATH` = a scratch folder
       `D:\ALLPROJECTS\EDJ\cache\share-144` (the "scratch share") set up as:
-      - `raw` = a junction (`.ps1` run) / symlink to the shared corpus folder's `raw` (read only:
-        the manifest check and ingestion only read raw files);
+      - `raw` = a **copy** (not a junction or symlink) of the shared corpus folder's `raw/`
+        (measured 2026-10-30: 111 files, 0.22 GB; D: has 28 GB free). Why a copy: the scratch
+        share then contains no link into the shared corpus folder, so deleting it afterwards
+        cannot follow a link and delete shared raw files (PowerShell 5.1 `Remove-Item -Recurse`
+        and `rm -rf` on a link are the risk), and Git Bash `ln -s` without
+        `MSYS=winsymlinks:nativestrict` would silently copy anyway. The manifest check (step 1/7,
+        sha256 of every file) then also proves the copy is complete.
+      - Before copying: record the shared corpus folder's `raw` file count and total size (111
+        files today); after the copy, the scratch `raw` has the same count. Before cleanup, check
+        `share-144` holds no reparse point / symlink (`Get-ChildItem -Recurse -Attributes
+        ReparsePoint` empty) - there should be none, since nothing was linked.
       - `parsed` = a **copy** (not a link) of the shared corpus folder's `parsed/` parse cache
         (#82; `parse_cache.cache_path` = `<write_root()>/parsed/`, used by `pdf.py` and `load.py`).
         A copy, so a cache miss writes into the scratch folder, never into the shared corpus
@@ -152,16 +161,25 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
       longer than 30 minutes or any new file appears in `share-144\parsed` (= a re-parse started);
       then restore `cee` from the backup as below and report it in the Progress log instead of
       continuing. After the run: **0 new files** in `share-144\parsed` (count equal to before).
-      Run the `.ps1` (Windows); run the `.sh` through Git Bash as far as it goes with the same
-      settings, or at least `bash -n` plus the skip branch, and say which. Save the log; it must
-      show the two "skipped" lines and no model path. Afterwards restore the backup into `cee`
+      Run the `.ps1` (Windows) once, fully. **No full run of `build-snapshot.sh`** in this task:
+      it would drop and re-ingest `cee` a second time for no extra proof of the vectors-off
+      branch. The `.sh` twins get a non-destructive check instead: `bash -n` on every changed
+      `.sh`; then, sourcing `scripts/_common.sh` in Git Bash, `vectors_on` with `CEE_VECTORS`
+      unset / `off` / `on` / `bogus` -> off / off / on / stops with the error; and the skip lines
+      in `build-snapshot.sh` / `restore.sh` sit behind that same function (read in the diff).
+      Same for `restore.sh` (no full run; the `.ps1` restore below is the full one). A full
+      macOS run of the `.sh` scripts stays with the next snapshot build (noted in the PR).
+      Save the `.ps1` log; it must show the two "skipped" lines and no model path. Afterwards restore the backup into `cee`
       with `scripts\restore.ps1 D:\ALLPROJECTS\EDJ\cache\backups\cee-before-144.dump` (it stages
       the file into the mounted `snapshots/`; a dump left in the container's `/tmp` is gone once
       compose recreated the container), so #125 finds its data as before, and re-check
       `17183|17183`. Then `docker compose up -d --wait` from the main checkout's folder
       (`D:\ALLPROJECTS\EDJ\repo`; the Progress log records the folder each `docker compose up`
-      ran from) to put the container's mounts back (no file there changes). Delete the scratch
-      dump and the scratch share.
+      ran from) to put the container's mounts back (no file there changes). Cleanup, in order:
+      (1) confirm `share-144` has no reparse point / symlink (see above); (2) count the shared
+      corpus folder's `raw` again -> unchanged (111 files, same size); (3) only then delete
+      `share-144` and the scratch `-test` dump in the main checkout's `snapshots/` (git-ignored);
+      (4) count the shared `raw` once more -> unchanged.
    f. Covered by the restore in 7e: `restore.ps1` with vectors off prints that the optional SQL
       was skipped. (With vectors on it is covered by 7b's SQL; not re-run on `cee`, which keeps
       today's column for #125.)
@@ -186,8 +204,15 @@ Unsure / risks:
   cache in the scratch share; a cache miss (new file or parser version) would start docling or
   edgartools runs that take hours. The stop rule in 7e (30 minutes or any new file in
   `share-144\parsed`) ends the check and `cee` is restored from the backup.
+- Deleting the scratch share must never touch the shared corpus folder. The scratch share holds
+  copies only (`raw`, `parsed`), no junction or symlink; cleanup first checks there is no
+  reparse point and that the shared `raw` count is unchanged, and counts it again after.
+- Only the `.ps1` build-snapshot and restore get a full run here (Windows machine); the `.sh`
+  twins get `bash -n` + the `vectors_on` check. A full `.sh` run happens on the next snapshot
+  build on macOS.
 - Wording: the ADR, docs, PR and comments say "shared corpus folder", not the file-sharing
-  service's name.
+  service's name, and use generic placeholders (`<backup.dump>`, `<scratch folder>`) instead of
+  this machine's local paths. Local paths appear only in this plan's verification steps.
 - Changing the init mounts needs nothing: they are unchanged; only existing volumes keep the
   old column, which nothing in the core reads.
 
@@ -200,7 +225,10 @@ Unsure / risks:
       locally with them installed; green locally with them blocked
 - [ ] `build-snapshot.ps1 --allow-branch` with `CEE_VECTORS` unset: log shows
       `4/7 Embedding skipped (CEE_VECTORS is off)` and `7/7 ... skipped`, no model loaded, nothing
-      written to the real share; `.sh` twin checked as described in step 7e
+      written to the real share; 0 new files in the scratch `parsed`; `.sh` twins: `bash -n` +
+      `vectors_on` check as in step 7e (no full `.sh` run)
+- [ ] Shared corpus folder `raw` file count and size unchanged (before the run, before cleanup,
+      after cleanup: 111 files); the scratch share contained no link
 - [ ] `FASTEMBED_CACHE_PATH` = empty folder (and a missing one): `python -m cee.retrieve.embed
       --query x` exits non-zero, message names `FASTEMBED_CACHE_PATH` and `--fetch`, no download
       attempt (no connection error with the dead `HF_ENDPOINT`), missing folder not created
@@ -233,3 +261,8 @@ Unsure / risks:
   cache `parsed/` into the scratch share, checks 0 new parse files, and has a 30-minute stop rule.
   Notes folded in: restore via `scripts\restore.ps1 <backup>` (covers 7f), log the folder of each
   `docker compose up`, generic "shared corpus folder" wording, anti-join check in `vectors.sql`.
+- 2026-10-30 20:05 - plan review round 2 (CHANGES REQUESTED, 1 blocking): the scratch share now
+  holds a copy of `raw` (0.22 GB) instead of a link, so cleanup cannot reach the shared corpus
+  folder; shared `raw` count checked before the run, before and after cleanup (new Acceptance
+  item). Notes folded in: no full `build-snapshot.sh` run (non-destructive `bash -n` +
+  `vectors_on` check instead, reason given); generic placeholders in PR/ADR text.
