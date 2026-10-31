@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Rebuild the database from main + the stored raw files, embed every chunk (#124), and publish a
-# snapshot (ADR-006).
+# Rebuild the database from main + the stored raw files, and publish a snapshot (ADR-006).
+# With CEE_VECTORS=on (environment or .env; off by default, ADR-009) it also embeds every chunk.
 # Tech lead only; needs CORPUS_SHARE_PATH (Box Drive folder) in .env. macOS twin of build-snapshot.ps1.
 #
 #   bash scripts/build-snapshot.sh
@@ -16,6 +16,8 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+VECTORS=0
+if vectors_on; then VECTORS=1; fi
 share="$(dotenv_value CORPUS_SHARE_PATH)"
 [ -n "$share" ] || die "CORPUS_SHARE_PATH is empty in .env. build-snapshot runs on the tech lead's machine (Box Drive)."
 
@@ -41,9 +43,14 @@ upgrade_schema
 echo "3/7 Re-ingesting from the manifest..."
 run "Ingestion" "$PYTHON" -m cee.ingest.load
 
-model_cache_env
-echo "4/7 Embedding every chunk (#124; model cache: $FASTEMBED_CACHE_PATH)..."
-run "Embedding (a chunk without a vector stops the build)" "$PYTHON" -m cee.retrieve.embed --missing
+if [ "$VECTORS" -eq 1 ]; then
+    model_cache_env
+    echo "4/7 Embedding every chunk (CEE_VECTORS=on; model cache: $FASTEMBED_CACHE_PATH)..."
+    apply_vectors_sql
+    run "Embedding (a chunk without a vector stops the build)" "$PYTHON" -m cee.retrieve.embed --missing
+else
+    echo "4/7 Embedding skipped (CEE_VECTORS is off)"
+fi
 
 name="corpus-$(date +%Y-%m-%d)"
 [ "$ALLOW_BRANCH" -eq 1 ] && name="$name-test"
@@ -57,8 +64,12 @@ dest="$share/snapshots"
 mkdir -p "$dest"
 cp -f "$REPO_ROOT/snapshots/$name.dump" "$dest/"
 
-echo "7/7 Embedding model in Box models/..."
-copy_model_to_share "$share"
+if [ "$VECTORS" -eq 1 ]; then
+    echo "7/7 Embedding model in Box models/..."
+    copy_model_to_share "$share"
+else
+    echo "7/7 Embedding model skipped (CEE_VECTORS is off)"
+fi
 
 mb="$(du -k "$REPO_ROOT/snapshots/$name.dump" | awk '{printf "%.1f", $1/1024}')"
 echo "Done: $dest/$name.dump ($mb MB)"
