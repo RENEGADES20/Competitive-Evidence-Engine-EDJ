@@ -93,13 +93,41 @@ Not touched: `src/cee/retrieve/hybrid.py` and branch `tl/125-hybrid-retrieval`, 
 ranking, synonyms, chunking, other portability work, publishing a snapshot.
 
 ## Steps
+**Python environments (every check below uses one of these two, never the main checkout's venv).**
+The main checkout's `.venv` has `cee` installed editable from the main checkout's `src` (the
+paused #125 branch), and the scripts look for `<worktree>\.venv`. So:
+- **Core venv** `<worktree>\.venv` (git-ignored), its own, not linked to any other venv:
+  `<python 3.11> -m venv .venv`, then the core pins only and `pip install -e .`. At step 0
+  `requirements.txt` still lists fastembed/onnxruntime, so step 0 installs it filtered
+  (`grep -v -E '^(fastembed|onnxruntime)' requirements.txt > <scratch>\req-core.txt`); after step 4
+  `pip install -r requirements.txt` must be a no-op. Plus `requirements-verify.txt` (Playwright)
+  for verify-cee, with `PLAYWRIGHT_BROWSERS_PATH=<cache>\ms-playwright` (browsers already there).
+  This venv **never** gets fastembed/onnxruntime: it is the real "without the vectors extra"
+  environment for pytest, eval, smoke, verify-cee and both `.ps1` script runs.
+- **Vectors venv** `<cache>\venv-144-vectors` (outside the worktree): `requirements.txt` +
+  `requirements-vectors.txt` + `pip install -e <worktree>`. Used only for the vectors-on and model
+  checks: 7b (`--missing`, `--query`), 7c (empty cache with fastembed present, so "no download"
+  is a real test) and pytest "with the extra".
+- pip cache: `PIP_CACHE_DIR` already points to D: (C: is full); `FASTEMBED_CACHE_PATH` stays on
+  `<cache>` via `.env`.
+- Proof: before every check, the same venv prints `python -c "import cee; print(cee.__file__)"`
+  and the line goes into the evidence; it must be `<worktree>\src\cee\__init__.py`. For script
+  runs, the script's own `$Python` is `<worktree>\.venv\Scripts\python.exe`; the check is run with
+  that same interpreter.
+
+Here `<worktree>` = `D:\ALLPROJECTS\EDJ\wt-144`, `<cache>` = `D:\ALLPROJECTS\EDJ\cache`,
+`<main checkout>` = `D:\ALLPROJECTS\EDJ\repo` (never edited).
+
 0. **Safety and baseline, before any code edit** (branch = `main` ea7d5ac + this plan only).
    The local Postgres (`cee-db`, database `cee`) is shared with the paused #125 branch.
+   - Create the core venv (above) and log `cee.__file__`.
+   - Record the main checkout's `snapshots/` listing (name, size, time; 6 dumps today,
+     `corpus-2026-09-30` ... `corpus-2026-10-29`).
    - Record counts: `SELECT count(*), count(embedding) FROM chunks` -> expected `17183|17183`.
    - Back up: `docker exec cee-db pg_dump -U cee -d cee -Fc -f /tmp/cee-before-144.dump`, then
-     `docker cp` it to `D:\ALLPROJECTS\EDJ\cache\backups\cee-before-144.dump` (outside any repo,
+     `docker cp` it to `<cache>\backups\cee-before-144.dump` (outside any repo,
      never committed). Check it lists with `pg_restore -l`.
-   - "Before" eval: `python scripts/eval_run.py --as-of 2026-10-30 --out D:\ALLPROJECTS\EDJ\cache\eval-144\before`
+   - "Before" eval: `python scripts/eval_run.py --as-of 2026-10-30 --out <cache>\eval-144\before`
      (mock, FTS is the only mode on `main`; there is no `RETRIEVAL_MODE` on `main` yet, so
      "fts mode" = the default). Save the console output.
 1. Schema split: `db/upgrade.sql` core only, `db/optional/vectors.sql`, `db/schema.sql` comment,
@@ -119,22 +147,22 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
       `ON_ERROR_STOP=1`. Also show `vectors.sql` fails there with "extension vector is not
       available" (expected: optional module needs the pgvector image). Container removed after.
    b. Migration on a copy of today's local DB (Acceptance 6), without touching `cee`:
+      (SQL via `docker exec`; the Python commands in the vectors venv)
       `CREATE DATABASE cee_vec144`, `pg_restore` the backup into it; counts before (17183
       non-NULL); apply `vectors.sql` twice (second run is a no-op); then
       `count(*) FROM chunk_embeddings` = 17183, `chunks.embedding` absent
       (`information_schema.columns`), HNSW index present. `DATABASE_URL=.../cee_vec144
       CEE_VECTORS=on python -m cee.retrieve.embed --missing` -> `0 embedded, 0 still missing`.
       `python -m cee.retrieve.embed --query "test"` -> `384 dims`. Drop `cee_vec144` afterwards.
-   c. Empty cache (Acceptance 5): `FASTEMBED_CACHE_PATH=D:\ALLPROJECTS\EDJ\cache\empty-144`
+   c. Empty cache (Acceptance 5; vectors venv, so fastembed is importable and could download): `FASTEMBED_CACHE_PATH=<cache>\empty-144`
       (new empty folder) and once a path that does not exist, with `HF_ENDPOINT=http://127.0.0.1:9`
       so any download attempt would show as a connection error: `--query x` exits non-zero with
       the clear error; the non-existent folder is still absent afterwards.
-   d. pytest locally with the extra installed (venv has it); and once with fastembed/onnxruntime
-      blocked: `python -c "import sys; sys.modules['fastembed']=None; sys.modules['onnxruntime']=None;
-      import pytest; sys.exit(pytest.main(['-q']))"` (local stand-in; CI is the real "without" proof).
+   d. pytest in the core venv (no fastembed/onnxruntime installed: the real "without" run, same
+      as CI) and in the vectors venv (with the extra). Both log `cee.__file__` first.
    e. `build-snapshot` with vectors off (Acceptance 4). It drops and rebuilds database `cee` and
       copies the dump to `CORPUS_SHARE_PATH`, so: `CORPUS_SHARE_PATH` = a scratch folder
-      `D:\ALLPROJECTS\EDJ\cache\share-144` (the "scratch share") set up as:
+      `<cache>\share-144` (the "scratch share") set up as:
       - `raw` = a **copy** (not a junction or symlink) of the shared corpus folder's `raw/`
         (measured 2026-10-30: 111 files, 0.22 GB; D: has 28 GB free). Why a copy: the scratch
         share then contains no link into the shared corpus folder, so deleting it afterwards
@@ -170,7 +198,7 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
       Same for `restore.sh` (no full run; the `.ps1` restore below is the full one). A full
       macOS run of the `.sh` scripts stays with the next snapshot build (noted in the PR).
       Save the `.ps1` log; it must show the two "skipped" lines and no model path. Afterwards restore the backup into `cee`
-      with `scripts\restore.ps1 D:\ALLPROJECTS\EDJ\cache\backups\cee-before-144.dump` (it stages
+      with `scripts\restore.ps1 <cache>\backups\cee-before-144.dump` (it stages
       the file into the mounted `snapshots/`; a dump left in the container's `/tmp` is gone once
       compose recreated the container), so #125 finds its data as before, and re-check
       `17183|17183`. Then `docker compose up -d --wait` from the main checkout's folder
@@ -178,8 +206,12 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
       ran from) to put the container's mounts back (no file there changes). Cleanup, in order:
       (1) confirm `share-144` has no reparse point / symlink (see above); (2) count the shared
       corpus folder's `raw` again -> unchanged (111 files, same size); (3) only then delete
-      `share-144` and the scratch `-test` dump in the main checkout's `snapshots/` (git-ignored);
-      (4) count the shared `raw` once more -> unchanged.
+      `share-144`, and in `<worktree>\snapshots\` (git-ignored; compose ran from the worktree, so
+      the `-test` dump and the staged backup land there) only those two files;
+      (4) count the shared `raw` once more -> unchanged; (5) the main checkout's `snapshots/`
+      listing equals the one recorded in step 0 (same 6 dumps, sizes, times, nothing added);
+      (6) after the final `docker compose up -d --wait` from `<main checkout>`, count `cee` again
+      -> `17183|17183`.
    f. Covered by the restore in 7e: `restore.ps1` with vectors off prints that the optional SQL
       was skipped. (With vectors on it is covered by 7b's SQL; not re-run on `cee`, which keeps
       today's column for #125.)
@@ -194,7 +226,7 @@ ranking, synonyms, chunking, other portability work, publishing a snapshot.
 Unsure / risks:
 - The shared local DB: the plan never runs `vectors.sql` on `cee` itself (only on the copy), and
   `cee` is restored from the backup after the build test. So #125 resumes on unchanged data and
-  migrates when it adopts `chunk_embeddings`. The backup stays in `D:\ALLPROJECTS\EDJ\cache\backups`
+  migrates when it adopts `chunk_embeddings`. The backup stays in `<cache>\backups`
   until #125 is done.
 - Today's published snapshot still holds `chunks.embedding` + the `vector` extension. Restoring it
   keeps working on the pgvector image (unchanged); with vectors off the column is simply unused,
@@ -222,7 +254,8 @@ Unsure / risks:
 - [ ] Plain `postgres:16.10` container (no `vector` in `pg_available_extensions`): `schema.sql`,
       `upgrade.sql`, `upgrade.sql` apply with no error, on two fresh databases in a row
 - [ ] pytest green in CI (installs `requirements.txt` only, no fastembed/onnxruntime); green
-      locally with them installed; green locally with them blocked
+      in the core venv (`<worktree>\.venv`, no fastembed/onnxruntime installed); green in the
+      vectors venv (extra installed); `cee.__file__` logged as `<worktree>\src\...` for each
 - [ ] `build-snapshot.ps1 --allow-branch` with `CEE_VECTORS` unset: log shows
       `4/7 Embedding skipped (CEE_VECTORS is off)` and `7/7 ... skipped`, no model loaded, nothing
       written to the real share; 0 new files in the scratch `parsed`; `.sh` twins: `bash -n` +
@@ -235,7 +268,11 @@ Unsure / risks:
 - [ ] Copy of today's local DB (17183 non-NULL `chunks.embedding`): after `db/optional/vectors.sql`
       `chunk_embeddings` has 17183 rows, `chunks.embedding` is gone, a second apply changes
       nothing, `--missing` embeds 0, `--query "test"` prints `384 dims`
-- [ ] Shared `cee` DB after all tests: `17183|17183` as before (restored from backup)
+- [ ] Shared `cee` DB after all tests: `17183|17183` as before (restored from backup) and again after the
+      final `docker compose up -d --wait` from the main checkout
+- [ ] Main checkout's `snapshots/` unchanged (same 6 dumps, sizes, times); scratch dumps only in
+      `<worktree>\snapshots\`, deleted after
+- [ ] Every check ran on the worktree's code: `cee.__file__` -> `<worktree>\src\cee\__init__.py`
 - [ ] `python -m cee.smoke` -> PASS with vectors off
 - [ ] `python scripts/verify_cee.py run` -> PASS (all features, mock, fts)
 - [ ] Core SQL contains no `vector` / `CREATE EXTENSION` (test); compose mounts only core SQL
@@ -266,3 +303,8 @@ Unsure / risks:
   folder; shared `raw` count checked before the run, before and after cleanup (new Acceptance
   item). Notes folded in: no full `build-snapshot.sh` run (non-destructive `bash -n` +
   `vectors_on` check instead, reason given); generic placeholders in PR/ADR text.
+- 2026-10-30 20:30 - plan review round 3 (CHANGES REQUESTED, 2 blocking; tech lead approved one
+  more round): checks now run in a venv of the worktree's own (core, never gets fastembed) plus a
+  separate vectors venv under `<cache>` for the vectors-on/model checks; `cee.__file__` logged per
+  run. Scratch dumps land in `<worktree>\snapshots\` and are deleted there only; main checkout's
+  `snapshots/` (6 dumps) checked unchanged. Note folded in: recount `cee` after the final compose up.
