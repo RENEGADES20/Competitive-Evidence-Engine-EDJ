@@ -43,6 +43,24 @@ def settings() -> Settings:
     )
 
 
+VECTORS_ON = ("on", "true", "1", "yes")
+VECTORS_OFF = ("", "off", "false", "0", "no")
+
+
+def vectors_enabled() -> bool:
+    """CEE_VECTORS (environment or .env): the optional vectors module (ADR-009), off by default.
+
+    on|true|1|yes -> on; empty, off|false|0|no -> off; anything else stops with a clear error.
+    The scripts parse it the same way (scripts/_common.*).
+    """
+    raw = os.getenv("CEE_VECTORS", "").strip().strip('"').strip().lower()
+    if raw in VECTORS_ON:
+        return True
+    if raw in VECTORS_OFF:
+        return False
+    raise ValueError(f"CEE_VECTORS={raw!r} is not understood; use on or off")
+
+
 @lru_cache(maxsize=1)
 def entities_config() -> dict:
     with open(ENTITIES_PATH, encoding="utf-8") as f:

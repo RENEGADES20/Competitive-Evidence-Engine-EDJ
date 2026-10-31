@@ -35,4 +35,10 @@ STAGED="$REPO_ROOT/snapshots/$NAME"
 reset_database
 run "pg_restore" docker exec "$CONTAINER" pg_restore -U cee -d cee --no-owner "/snapshots/$NAME"
 upgrade_schema
+if vectors_on; then
+    echo "Applying db/optional/vectors.sql (CEE_VECTORS=on)..."
+    apply_vectors_sql
+else
+    echo "Vectors module skipped (CEE_VECTORS is off)"
+fi
 echo "Done. Row counts: $(table_counts)"

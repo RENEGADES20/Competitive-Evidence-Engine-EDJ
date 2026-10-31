@@ -36,4 +36,10 @@ if ($Dump -ne $staged) { Copy-Item $Dump $staged -Force }   # the container sees
 Reset-Database
 Invoke-Native { docker exec $Container pg_restore -U cee -d cee --no-owner "/snapshots/$name" } "pg_restore"
 Update-Schema
+if (Test-VectorsOn) {
+    Write-Host "Applying db/optional/vectors.sql (CEE_VECTORS=on)..."
+    Invoke-VectorsSql
+} else {
+    Write-Host "Vectors module skipped (CEE_VECTORS is off)"
+}
 Write-Host "Done. Row counts: $(Get-TableCounts)"

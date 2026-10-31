@@ -1,9 +1,13 @@
 # Local Postgres for the Competitive Evidence Engine. See docs/RUN.md.
 # db/schema.sql and db/upgrade.sql run on the first start of an empty volume;
 # restore.ps1 / restore.sh run db/upgrade.sql again after every restore.
+# Only core SQL is mounted. db/optional/vectors.sql (the optional vectors module, ADR-009) is
+# applied by the scripts only when CEE_VECTORS=on, so it must never be an init file here.
 services:
   db:
     image: pgvector/pgvector:0.8.1-pg16-trixie   # Postgres 16 + pgvector (x86 and Apple chip)
+    # The core needs plain Postgres 16; the image also carries pgvector so that turning vectors on
+    # (CEE_VECTORS=on) needs no new image. The extension is created only by db/optional/vectors.sql.
     container_name: cee-db
     restart: unless-stopped
     environment:
