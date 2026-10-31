@@ -272,38 +272,38 @@ Unsure / risks:
   old column, which nothing in the core reads.
 
 ## Acceptance
-- [ ] Q1-Q30: mock eval after vs before (`--as-of 2026-10-30`, baseline compare + `chunk_ids` diff):
+- [x] Q1-Q30: mock eval after vs before (`--as-of 2026-10-30`, baseline compare + `chunk_ids` diff):
       identical `chunk_ids` on 30/30, same PASS/FAIL (all `UNCHANGED`)
-- [ ] Plain `postgres:16.10` container (no `vector` in `pg_available_extensions`): `schema.sql`,
+- [x] Plain `postgres:16.10` container (no `vector` in `pg_available_extensions`): `schema.sql`,
       `upgrade.sql`, `upgrade.sql` apply with no error, on two fresh databases in a row
-- [ ] pytest green in CI (installs `requirements.txt` only, no fastembed/onnxruntime); green
+- [x] pytest green in CI (installs `requirements.txt` only, no fastembed/onnxruntime); green
       in the core venv (`<worktree>\.venv`, no fastembed/onnxruntime installed); green in the
       vectors venv (extra installed); `cee.__file__` logged as `<worktree>\src\...` for each
-- [ ] `build-snapshot.ps1 --allow-branch` with `CEE_VECTORS` unset: log shows
+- [x] `build-snapshot.ps1 --allow-branch` with `CEE_VECTORS` unset: log shows
       `4/7 Embedding skipped (CEE_VECTORS is off)` and `7/7 ... skipped`, no model loaded, nothing
       written to the real share; 0 new files in the scratch `parsed`; 0 `parsing with docling` /
       `parsing with edgartools` lines, only `parse cache hit`; chunk count 17183 as before; `.sh` twins: `bash -n` +
       `vectors_on` check as in step 7e (no full `.sh` run)
-- [ ] Shared corpus folder `raw` file count and size unchanged (before the run, before cleanup,
+- [x] Shared corpus folder `raw` file count and size unchanged (before the run, before cleanup,
       after cleanup: 111 files); the scratch share contained no link
-- [ ] `FASTEMBED_CACHE_PATH` = empty folder (and a missing one): `python -m cee.retrieve.embed
+- [x] `FASTEMBED_CACHE_PATH` = empty folder (and a missing one): `python -m cee.retrieve.embed
       --query x` exits non-zero, message names `FASTEMBED_CACHE_PATH` and `--fetch`, no download
       attempt (no connection error with the dead `HF_ENDPOINT`), missing folder not created
-- [ ] Copy of today's local DB (17183 non-NULL `chunks.embedding`): after `db/optional/vectors.sql`
+- [x] Copy of today's local DB (17183 non-NULL `chunks.embedding`): after `db/optional/vectors.sql`
       `chunk_embeddings` has 17183 rows, `chunks.embedding` is gone, a second apply changes
       nothing, `--missing` embeds 0, `--query "test"` prints `384 dims`
-- [ ] Shared `cee` DB after all tests: `17183|17183` as before (restored from backup) and again after the
+- [x] Shared `cee` DB after all tests: `17183|17183` as before (restored from backup) and again after the
       final `docker compose up -d --wait` from the main checkout
-- [ ] Main checkout's `snapshots/` unchanged (same 6 dumps, sizes, times); scratch dumps only in
+- [x] Main checkout's `snapshots/` unchanged (same 6 dumps, sizes, times); scratch dumps only in
       `<worktree>\snapshots\`, deleted after
-- [ ] Core venv after the ingest install: `pip show` lists docling 2.131.0 and edgartools 5.59.1,
+- [x] Core venv after the ingest install: `pip show` lists docling 2.131.0 and edgartools 5.59.1,
       and neither fastembed nor onnxruntime (or the deviation is logged as described)
-- [ ] Every check ran on the worktree's code: `cee.__file__` -> `<worktree>\src\cee\__init__.py`
-- [ ] `python -m cee.smoke` -> PASS with vectors off
-- [ ] `python scripts/verify_cee.py run` -> PASS (all features, mock, fts)
-- [ ] Core SQL contains no `vector` / `CREATE EXTENSION` (test); compose mounts only core SQL
-- [ ] Every changed script ships `.ps1` + `.sh`; RUN.md has Windows and macOS blocks for each step
-- [ ] 0 paid API calls
+- [x] Every check ran on the worktree's code: `cee.__file__` -> `<worktree>\src\cee\__init__.py`
+- [x] `python -m cee.smoke` -> PASS with vectors off
+- [x] `python scripts/verify_cee.py run` -> PASS (all features, mock, fts)
+- [x] Core SQL contains no `vector` / `CREATE EXTENSION` (test); compose mounts only core SQL
+- [x] Every changed script ships `.ps1` + `.sh`; RUN.md has Windows and macOS blocks for each step
+- [x] 0 paid API calls
 
 ## Deviations from the issue design
 - "apply twice in a row": `db/schema.sql` is plain `CREATE TABLE` (first start of a volume only,
@@ -339,3 +339,41 @@ Unsure / risks:
   to pymupdf); `pip show` checks pinned docling/edgartools and no fastembed/onnxruntime; pytest
   "without" runs before the ingest install; the build log must show only `parse cache hit` lines
   and the chunk count must match. PR and ADR text keep the same placeholders.
+- 2026-10-30 21:40 - plan approved (round 5). Step 0: core venv `<worktree>\.venv` (core pins only,
+  `cee.__file__` -> `<worktree>\src`); main checkout `snapshots/` listed (6 dumps); `cee` =
+  17183|17183; backup `<cache>ackups\cee-before-144.dump` (8 tables of data); "before" eval on
+  unchanged main code: PASS 27 / FAIL 3, 0 real calls.
+- 2026-10-30 22:10 - steps 1-6 implemented (commit bc5cf52). pytest core venv (no fastembed,
+  onnxruntime, docling): 256 passed, 1 skipped; vectors venv: 257 passed.
+- 2026-10-30 22:15 - 7a plain `postgres:16.10` (vector not available): schema + upgrade + upgrade
+  OK on databases a and b; `vectors.sql` fails there with `extension "vector" is not available`
+  (expected). 7b copy `cee_vec144`: 17183 non-NULL before; `vectors.sql` twice OK (second a no-op);
+  `chunk_embeddings` 17183, `chunks.embedding` gone, HNSW index present; `--missing` (on) ->
+  `0 embedded, 0 still missing`; `--missing` (off) -> exit 2; `--query` -> 384 dims; `cee`
+  untouched; copy dropped. Surprise: the worktree `.env` has no `FASTEMBED_CACHE_PATH`, so the first
+  `--query` hit the default `<worktree>\.cacheastembed` and failed with the new clear error and
+  created no folder (a free extra check); re-run with `FASTEMBED_CACHE_PATH=<cache>astembed`.
+  7c empty and missing cache with dead `HF_ENDPOINT`: exit 1, clear error, no connection error,
+  missing folder not created.
+- 2026-10-30 22:20 - 7d: ingest deps installed in the core venv (docling 2.131.0, edgartools 5.59.1;
+  `pip show fastembed onnxruntime` -> not found); pytest again 256 passed, 1 skipped. `.sh`:
+  `bash -n` OK on the three files; `vectors_on` unset/off/on/bogus -> off/off/on/error exit 1;
+  `.ps1` parse OK and `Test-VectorsOn` same results. No full `.sh` run (as planned).
+- 2026-10-30 22:24 - 7e: scratch share = copies of `raw` (111 files, 236681498 bytes) and `parsed`
+  (73 files), 0 reparse points. Pre-check (note 2): 32 PDFs + 41 filings = 73 expected cache hits,
+  0 predicted misses with the pinned tags. `build-snapshot.ps1 -AllowBranch`, `CEE_VECTORS` unset,
+  compose from `<worktree>` with `COMPOSE_PROJECT_NAME=repo` (container recreated): 40 s; 73
+  `parse cache hit` lines = 73 PDFs + filings, 0 `parsing with docling`, 0 `parsing with
+  edgartools`, 0 unreadable; `4/7 Embedding skipped (CEE_VECTORS is off)`, `7/7 Embedding model
+  skipped (CEE_VECTORS is off)`, no model path; parsed still 73 files; rows chunks=17183,
+  documents=111 (same as backup). Rebuilt `cee` had only `plpgsql` (no vector extension, no
+  `chunks.embedding`); the `-test` dump restored on plain `postgres:16.10` (17183 chunks).
+  7f: `restore.ps1 <backup>` -> `Vectors module skipped (CEE_VECTORS is off)`; `cee` 17183|17183,
+  snapshot `corpus-2026-10-29`.
+- 2026-10-30 22:27 - 7g after eval vs before: 30/30 identical `chunk_ids` (same order), 30/30 same
+  status, all `UNCHANGED`. 7h smoke PASS. 7i verify-cee all 7 features PASS
+  (`.verify-runs/20261030-222638-bc5cf52`).
+- 2026-10-30 22:30 - cleanup: `docker compose up -d --wait` from `<main checkout>` (mounts back to
+  the main checkout), `cee` 17183|17183; 0 reparse points; shared `raw` 111 files / 236681498 bytes
+  before and after deleting `share-144`; the two scratch dumps deleted from `<worktree>\snapshots`;
+  main checkout `snapshots/` listing identical to step 0. Evidence: `<cache>\ev144\`.
