@@ -341,7 +341,7 @@ Unsure / risks:
   and the chunk count must match. PR and ADR text keep the same placeholders.
 - 2026-10-30 21:40 - plan approved (round 5). Step 0: core venv `<worktree>\.venv` (core pins only,
   `cee.__file__` -> `<worktree>\src`); main checkout `snapshots/` listed (6 dumps); `cee` =
-  17183|17183; backup `<cache>ackups\cee-before-144.dump` (8 tables of data); "before" eval on
+  17183|17183; backup `<cache>\backups\cee-before-144.dump` (8 tables of data); "before" eval on
   unchanged main code: PASS 27 / FAIL 3, 0 real calls.
 - 2026-10-30 22:10 - steps 1-6 implemented (commit bc5cf52). pytest core venv (no fastembed,
   onnxruntime, docling): 256 passed, 1 skipped; vectors venv: 257 passed.
@@ -351,8 +351,8 @@ Unsure / risks:
   `chunk_embeddings` 17183, `chunks.embedding` gone, HNSW index present; `--missing` (on) ->
   `0 embedded, 0 still missing`; `--missing` (off) -> exit 2; `--query` -> 384 dims; `cee`
   untouched; copy dropped. Surprise: the worktree `.env` has no `FASTEMBED_CACHE_PATH`, so the first
-  `--query` hit the default `<worktree>\.cacheastembed` and failed with the new clear error and
-  created no folder (a free extra check); re-run with `FASTEMBED_CACHE_PATH=<cache>astembed`.
+  `--query` hit the default `<worktree>\.cache\fastembed` and failed with the new clear error and
+  created no folder (a free extra check); re-run with `FASTEMBED_CACHE_PATH=<cache>\fastembed`.
   7c empty and missing cache with dead `HF_ENDPOINT`: exit 1, clear error, no connection error,
   missing folder not created.
 - 2026-10-30 22:20 - 7d: ingest deps installed in the core venv (docling 2.131.0, edgartools 5.59.1;
