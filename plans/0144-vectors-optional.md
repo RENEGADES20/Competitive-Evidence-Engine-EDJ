@@ -208,6 +208,10 @@ Here `<worktree>` = `D:\ALLPROJECTS\EDJ\wt-144`, `<cache>` = `D:\ALLPROJECTS\EDJ
       `<file>: parse cache hit (<cache file>)` line per PDF and filing; no
       `ignoring unreadable parse cache` line. Row counts at the end match the backup's `cee`
       (documents and chunks; chunk count 17183), so the rebuild used the same parsers.
+      If the counts differ while the log shows only cache hits, the difference comes from the
+      manifest/corpus since the backup was built, not from the parsers: the Progress log then
+      names the differing doc_ids (per-document chunk counts, rebuilt vs backup) instead of
+      calling it a pass or fail by count alone.
       Run the `.ps1` (Windows) once, fully. **No full run of `build-snapshot.sh`** in this task:
       it would drop and re-ingest `cee` a second time for no extra proof of the vectors-off
       branch. The `.sh` twins get a non-destructive check instead: `bash -n` on every changed
