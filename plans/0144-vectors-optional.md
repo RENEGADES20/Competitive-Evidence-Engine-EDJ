@@ -104,6 +104,18 @@ paused #125 branch), and the scripts look for `<worktree>\.venv`. So:
   for verify-cee, with `PLAYWRIGHT_BROWSERS_PATH=<cache>\ms-playwright` (browsers already there).
   This venv **never** gets fastembed/onnxruntime: it is the real "without the vectors extra"
   environment for pytest, eval, smoke, verify-cee and both `.ps1` script runs.
+- **Ingest dependencies in the core venv, before 7e** (build-snapshot re-ingests): after step 4,
+  `pip install -r requirements-ingest.txt` (edgartools==5.59.1, docling==2.131.0; its
+  `-r requirements.txt` no longer pulls fastembed by then; large, docling pulls in PyTorch, all on
+  D:). Why: `parse_cache.tag()` calls `importlib.metadata.version(library)` before reading the
+  cache, so a missing edgartools crashes step 3, and a missing docling is caught as ImportError
+  in `pdf.py` and every PDF silently falls back to pymupdf (different chunks, nothing written to
+  `parsed/`). After the install, `pip show docling edgartools` must show the pinned versions
+  (the cache file tags depend on them) and `pip show fastembed onnxruntime` must find neither.
+  (In the main checkout's venv `onnxruntime` is required only by fastembed, so docling is not
+  expected to pull it.) If it does appear anyway: say so in the Progress log; the "without the
+  extra" pytest run then counts only from before the ingest install (7d runs first, see below)
+  and from CI, and the build-snapshot claim becomes "no embedding step, no model loaded" only.
 - **Vectors venv** `<cache>\venv-144-vectors` (outside the worktree): `requirements.txt` +
   `requirements-vectors.txt` + `pip install -e <worktree>`. Used only for the vectors-on and model
   checks: 7b (`--missing`, `--query`), 7c (empty cache with fastembed present, so "no download"
@@ -158,8 +170,10 @@ Here `<worktree>` = `D:\ALLPROJECTS\EDJ\wt-144`, `<cache>` = `D:\ALLPROJECTS\EDJ
       (new empty folder) and once a path that does not exist, with `HF_ENDPOINT=http://127.0.0.1:9`
       so any download attempt would show as a connection error: `--query x` exits non-zero with
       the clear error; the non-existent folder is still absent afterwards.
-   d. pytest in the core venv (no fastembed/onnxruntime installed: the real "without" run, same
-      as CI) and in the vectors venv (with the extra). Both log `cee.__file__` first.
+   d. pytest in the core venv **before** the ingest dependencies are installed (no fastembed/
+      onnxruntime, no docling: the real "without" run, same as CI) and in the vectors venv (with
+      the extra). Both log `cee.__file__` first. Then install `requirements-ingest.txt` into the
+      core venv with the `pip show` checks above, and run pytest in the core venv once more.
    e. `build-snapshot` with vectors off (Acceptance 4). It drops and rebuilds database `cee` and
       copies the dump to `CORPUS_SHARE_PATH`, so: `CORPUS_SHARE_PATH` = a scratch folder
       `<cache>\share-144` (the "scratch share") set up as:
@@ -188,7 +202,12 @@ Here `<worktree>` = `D:\ALLPROJECTS\EDJ\wt-144`, `<cache>` = `D:\ALLPROJECTS\EDJ
       cached JSON and inserts rows: expected well under 15 minutes. Stop (Ctrl+C) if step 3 runs
       longer than 30 minutes or any new file appears in `share-144\parsed` (= a re-parse started);
       then restore `cee` from the backup as below and report it in the Progress log instead of
-      continuing. After the run: **0 new files** in `share-144\parsed` (count equal to before).
+      continuing. After the run: **0 new files** in `share-144\parsed` (count equal to before),
+      and the build log (step 3) has **0** lines `parsing with docling (cache ...)` and **0**
+      lines `parsing with edgartools (cache ...)` (wording from `pdf.py` / `load.py`), and one
+      `<file>: parse cache hit (<cache file>)` line per PDF and filing; no
+      `ignoring unreadable parse cache` line. Row counts at the end match the backup's `cee`
+      (documents and chunks; chunk count 17183), so the rebuild used the same parsers.
       Run the `.ps1` (Windows) once, fully. **No full run of `build-snapshot.sh`** in this task:
       it would drop and re-ingest `cee` a second time for no extra proof of the vectors-off
       branch. The `.sh` twins get a non-destructive check instead: `bash -n` on every changed
@@ -258,7 +277,8 @@ Unsure / risks:
       vectors venv (extra installed); `cee.__file__` logged as `<worktree>\src\...` for each
 - [ ] `build-snapshot.ps1 --allow-branch` with `CEE_VECTORS` unset: log shows
       `4/7 Embedding skipped (CEE_VECTORS is off)` and `7/7 ... skipped`, no model loaded, nothing
-      written to the real share; 0 new files in the scratch `parsed`; `.sh` twins: `bash -n` +
+      written to the real share; 0 new files in the scratch `parsed`; 0 `parsing with docling` /
+      `parsing with edgartools` lines, only `parse cache hit`; chunk count 17183 as before; `.sh` twins: `bash -n` +
       `vectors_on` check as in step 7e (no full `.sh` run)
 - [ ] Shared corpus folder `raw` file count and size unchanged (before the run, before cleanup,
       after cleanup: 111 files); the scratch share contained no link
@@ -272,6 +292,8 @@ Unsure / risks:
       final `docker compose up -d --wait` from the main checkout
 - [ ] Main checkout's `snapshots/` unchanged (same 6 dumps, sizes, times); scratch dumps only in
       `<worktree>\snapshots\`, deleted after
+- [ ] Core venv after the ingest install: `pip show` lists docling 2.131.0 and edgartools 5.59.1,
+      and neither fastembed nor onnxruntime (or the deviation is logged as described)
 - [ ] Every check ran on the worktree's code: `cee.__file__` -> `<worktree>\src\cee\__init__.py`
 - [ ] `python -m cee.smoke` -> PASS with vectors off
 - [ ] `python scripts/verify_cee.py run` -> PASS (all features, mock, fts)
@@ -308,3 +330,8 @@ Unsure / risks:
   separate vectors venv under `<cache>` for the vectors-on/model checks; `cee.__file__` logged per
   run. Scratch dumps land in `<worktree>\snapshots\` and are deleted there only; main checkout's
   `snapshots/` (6 dumps) checked unchanged. Note folded in: recount `cee` after the final compose up.
+- 2026-10-30 21:00 - plan review round 4 (CHANGES REQUESTED, 1 blocking): the core venv gets
+  `requirements-ingest.txt` after step 4 and before 7e (a missing docling would silently fall back
+  to pymupdf); `pip show` checks pinned docling/edgartools and no fastembed/onnxruntime; pytest
+  "without" runs before the ingest install; the build log must show only `parse cache hit` lines
+  and the chunk count must match. PR and ADR text keep the same placeholders.
