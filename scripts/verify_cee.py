@@ -39,7 +39,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters"]
 
 
 # ---------- helpers ----------
@@ -524,10 +524,63 @@ def feature_coverage(page, base, rec, ctx):
              "note present" if "are not shown yet" in body else "note missing")
 
 
+FILTER_Q = "What do the firms say about advisor recruiting?"
+FILTER_FIRM, FILTER_FROM, FILTER_TO, FILTER_KEYWORD = "RJF", "2026-01-01", "2026-06-30", "advisor"
+
+
+def feature_filters(page, base, rec, ctx):
+    page.goto(base)
+    wait_idle(page)
+    side = page.locator("[data-testid='stSidebar']")
+    side.get_by_text("Filters", exact=True).wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+    side.locator("[data-testid='stMultiSelect'] input").click()
+    page.get_by_role("option", name=re.compile(rf"^{FILTER_FIRM} ")).click()
+    page.keyboard.press("Escape")
+    dates = side.locator("[data-testid='stDateInput'] input")  # this Streamlit: a start and an end date box
+    dates.nth(0).fill(FILTER_FROM)
+    dates.nth(1).fill(FILTER_TO)
+    dates.nth(1).press("Enter")
+    side.get_by_role("textbox", name="Keywords").fill(FILTER_KEYWORD)
+    side.get_by_role("textbox", name="Keywords").press("Enter")
+    wait_idle(page)
+    box = page.get_by_role("textbox", name="Question")
+    box.fill(FILTER_Q)
+    page.get_by_role("button", name="Ask").click()
+    wait_for_text(page, ["LLM called:"], "the filtered answer")
+    body = " ".join(page.locator("body").inner_text().split())
+    want = f"filters: firms {FILTER_FIRM}; dates {FILTER_FROM} to {FILTER_TO}; keywords {FILTER_KEYWORD}"
+    rec.step("Set firm, date range and keyword, then ask", f"meta line '{want}'", want in body,
+             "meta line matches" if want in body else "filters missing from the meta line")
+    ids = [l.inner_text().strip() for l in citation_links(page).all()]
+    rec.step("Look at the claims", "at least one citation link", bool(ids), f"{len(ids)} citation links")
+    rows = psql(VERIFY_DB, "SELECT c.chunk_id, d.entity_id, d.published_at, d.date_basis, "
+                           f"(c.tsv @@ phraseto_tsquery('english', '{FILTER_KEYWORD}')) FROM chunks c "
+                           "JOIN documents d USING (doc_id) WHERE c.chunk_id = ANY(ARRAY["
+                           + ",".join("'" + i.replace("'", "''") + "'" for i in ids) + "]::text[])").splitlines() if ids else []
+    rows = [r.split("|") for r in rows]
+    other = [r[0] for r in rows if r[1] != FILTER_FIRM]
+    rec.step("Read back the cited chunks: firm", f"every cited chunk is {FILTER_FIRM}", not other and bool(rows),
+             f"{len(rows)} cited chunks, {len(other)} from another firm {other[:3]}")
+    outside = [r[0] for r in rows if not (FILTER_FROM <= r[2] <= FILTER_TO and r[3] == "source")]
+    rec.step("Read back the cited chunks: dates", f"published {FILTER_FROM} to {FILTER_TO}", not outside and bool(rows),
+             f"{len(outside)} outside the range {outside[:3]}")
+    nokw = [r[0] for r in rows if r[4] != "t"]
+    rec.step("Read back the cited chunks: keyword", f"every cited chunk contains '{FILTER_KEYWORD}'",
+             not nokw and bool(rows), f"{len(nokw)} without the keyword {nokw[:3]}")
+    logged = psql(VERIFY_DB, "SELECT filters->>'firm_filter', filters->>'date_range', filters->>'keywords' "
+                             "FROM query_log ORDER BY query_id DESC LIMIT 1")
+    rec.step("Check the query log (side effect)", "filters stored with the query",
+             FILTER_FIRM in logged and FILTER_FROM in logged and FILTER_KEYWORD in logged, logged)
+    prompt = (REPO / "src/cee/answer/prompt.py").read_text(encoding="utf-8")
+    rec.step("Filters stay out of the prompt", "prompt.py never reads the filter fields",
+             not any(f in prompt for f in ("firm_filter", "date_range", "keywords")), "prompt.py checked")
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
-           "download-document": feature_download_document, "coverage": feature_coverage}
+           "download-document": feature_download_document, "coverage": feature_coverage,
+           "filters": feature_filters}
 
 
 def drive(features: list[str]) -> bool:
