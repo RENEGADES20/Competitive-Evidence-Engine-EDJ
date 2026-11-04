@@ -6,7 +6,10 @@ Time windows ("last 90 days", "since the start of the year") are filtered in SQL
 near-duplicates are dropped and firms, document types and documents take turns (quotas), so
 one filing's boilerplate repeated across four 10-Qs cannot fill the list (Q1: the NNA
 definition took all 8 places; the earnings-call strategy commentary took none).
-Not yet here (S1): themes taxonomy.
+Themes (#116): a question that names one firm and a topic from config/topics.yaml also gets a
+few tier 5 research chunks tagged with that topic (Q19: the EDJ filter dropped every survey on
+younger investors). Several firms + a topic stay in entity mode until per-firm theme quotas (#117):
+research slots pushed Q23's headcount figures out of the list.
 """
 from __future__ import annotations
 
@@ -19,6 +22,7 @@ from datetime import date, timedelta
 
 from cee.config import entities_config
 from cee.db import connect
+from cee.ingest.topics import load_topics, tag_text
 
 
 @dataclass
@@ -26,6 +30,7 @@ class Query:
     question: str
     entities: list[str] = field(default_factory=list)   # covered firms named in the question
     unmapped: list[str] = field(default_factory=list)   # known firms we hold no documents for
+    themes: list[str] = field(default_factory=list)     # top-level topics named (config/topics.yaml)
     mode: str = "entity"
     window: tuple[date, date] | None = None              # published_at from..to, both inclusive
     # Ask page filters (#63), all hard SQL filters; set them with apply_filters
@@ -109,7 +114,10 @@ def resolve(question: str, today: date | None = None) -> Query:
     peers = _peer_members(question)
     q.entities = [e["id"] for e in cfg["entities"] if e["id"] in peers or _mentions(question, e)]
     q.unmapped = [e["id"] for e in cfg.get("expansion", []) if _mentions(question, e)]
-    q.mode = "entity" if q.entities else "theme"
+    topics = load_topics()
+    named = tag_text(question, topics)
+    q.themes = [t.topic_id for t in topics if t.parent is None and t.topic_id in named]
+    q.mode = ("entity+theme" if q.themes and len(q.firms) == 1 else "entity") if q.entities else "theme"
     q.window = _window(question, today or date.today())
     return q
 
@@ -270,6 +278,14 @@ def entity_filter(entity_ids: list[str]) -> tuple[str, dict]:
     return "(" + " OR ".join(clauses) + ")", params
 
 
+def theme_filter(themes: list[str]) -> tuple[str, dict]:
+    """Hard filter for the research part of entity+theme: no firm, and the chunk tagged with a
+    topic the question names (a sub-topic tag always carries its parent, so top-level is enough)."""
+    return ("(d.entity_id IS NULL AND EXISTS (SELECT 1 FROM chunk_topics t\n"
+            "                                       WHERE t.chunk_id = c.chunk_id AND t.topic_id = ANY(%(themes)s)))",
+            {"themes": themes})
+
+
 def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
     """Hard filter. Inside a window only documents dated by the source count: a page dated
     by its download (date_basis = 'retrieved', ADR-007 T-09) is never "recent"."""
@@ -285,6 +301,8 @@ MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
 FLOOR = 0.3          # share of the firm's best rank a chunk needs to take a slot
 WINDOW_MAX_PER_DOC = 8
+THEME_K = 4          # research slots in entity+theme; the firm keeps the rest (#116)
+THEME_MAX_PER_DOC = 2
 # Window questions name no topic ("What's new on Raymond James in the last 90 days?"), so these
 # rank news-like passages (headlines, launches, records) above tables of contents.
 RECENCY_TERMS = "announced launched introduced new record acquisition agreement completed increased hired"
@@ -367,15 +385,23 @@ def search(q: Query, k: int = K) -> list[Hit]:
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
     params.update(syn_params)
     params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
+    research_rows = []
     with connect() as conn:
         rank, rank_params = rank_sql(conn, terms, syn_params)
         params.update(rank_params)
         sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=where, window_filter=window,
                          filters=filters)
         rows = conn.execute(sql, params).fetchall()
+        if q.mode == "entity+theme":
+            themes, theme_params = theme_filter(q.themes)
+            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window)
+            research_rows = conn.execute(sql, params | theme_params).fetchall()
     pool = [Hit(**r) for r in rows]
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
-    hits = select(pool, k, floor=0, max_per_doc=WINDOW_MAX_PER_DOC) if q.window else select(pool, k)
+    opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC} if q.window else {}
+    research = select([Hit(**r) for r in research_rows], min(THEME_K, k),
+                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC})
+    hits = select(pool, k - len(research), **opts) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

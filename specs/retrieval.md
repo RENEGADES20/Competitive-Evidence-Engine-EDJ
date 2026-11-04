@@ -28,6 +28,9 @@ resolve(question) -> Query{
     mode:     "entity" | "theme" | "entity+theme"
 }
     # rules: entities and no theme -> entity; theme and no entities -> theme; both -> entity+theme
+    # themes: top-level topics from config/topics.yaml, matched with the chunk tagger's rules
+    # entity+theme (#116): one firm + a theme only; several firms + a theme stay entity
+    #   until per-firm theme quotas (#117) - research slots pushed Q23's headcount figures out
 
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
 
@@ -35,7 +38,9 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
     # SQL: WHERE entity/segment filter AND published_at BETWEEN window AND tsv @@ query
     # MER: entity_id='MER' OR (entity_id='BAC' AND segment IN ('GWIM','Merrill'))
-    # quota: k split evenly per entity (entity mode) or per part (entity+theme)
+    # quota: k split evenly per entity (entity mode); entity+theme: up to 4 of k for tier 5
+    #   research tagged with the theme (entity_id IS NULL, chunk_topics), 2 per document,
+    #   the firm keeps the rest; the firm filter still holds for every firm document
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
