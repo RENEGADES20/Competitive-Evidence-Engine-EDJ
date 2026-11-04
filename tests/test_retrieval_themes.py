@@ -9,7 +9,7 @@ from psycopg.rows import dict_row
 
 from cee.config import settings
 from cee.retrieve import fts
-from cee.retrieve.fts import resolve, search
+from cee.retrieve.fts import apply_filters, resolve, search
 
 TODAY = date(2026, 10, 27)
 Q19 = "How should the preferences of younger investors shape Edward Jones's offerings?"
@@ -107,4 +107,18 @@ def test_q19_gets_research_on_its_topic_and_keeps_the_entity_filter(theme_db, mo
 
 def test_firm_question_without_topic_gets_no_research(theme_db, monkeypatch):
     hits = _hits("What do Edward Jones filings say about digital advice and mobile offerings?", theme_db, monkeypatch)
+    assert {h.entity_id for h in hits} == {"EDJ"}
+
+
+def test_ask_page_filters_also_narrow_the_research_part(theme_db, monkeypatch):
+    # #63 + #116: the research query gets the same date/keyword WHERE clauses
+    monkeypatch.setattr(fts, "connect", theme_db)
+    inside = search(apply_filters(resolve(Q19, TODAY), date_range=(date(2026, 1, 1), date(2026, 6, 30))), k=20)
+    assert {h.entity_id for h in inside} == {"EDJ", None}
+    assert search(apply_filters(resolve(Q19, TODAY), date_range=(date(2026, 4, 1), date(2026, 6, 30))), k=20) == []
+
+
+def test_firm_filter_drops_the_research_part(theme_db, monkeypatch):
+    monkeypatch.setattr(fts, "connect", theme_db)
+    hits = search(apply_filters(resolve(Q19, TODAY), firms=["EDJ"]), k=20)
     assert {h.entity_id for h in hits} == {"EDJ"}

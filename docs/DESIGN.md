@@ -63,7 +63,7 @@ Tier badges:
 | 4 | `T4 · TRADE PRESS (INDICATIVE ONLY)` | `#9A3412` / `#FFEDD5` |
 | 5 | `T5 · RESEARCH` | `#6B21A8` / `#F3E8FF` |
 
-Placeholders now: sidebar filters (#63), feedback under an answer (#62).
+Placeholders now: feedback under an answer (#62). The sidebar filters (#63) are live on the Ask page only: firm multiselect, date range, comma-separated keywords; the answer's meta line lists the filters used.
 
 ## Contrast (WCAG AA, 4.5:1 minimum)
 

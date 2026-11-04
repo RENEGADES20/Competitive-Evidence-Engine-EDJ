@@ -33,6 +33,10 @@ class Query:
     themes: list[str] = field(default_factory=list)     # top-level topics named (config/topics.yaml)
     mode: str = "entity"
     window: tuple[date, date] | None = None              # published_at from..to, both inclusive
+    # Ask page filters (#63), all hard SQL filters; set them with apply_filters
+    firm_filter: list[str] = field(default_factory=list)  # only these firms; empty = no firm filter
+    date_range: tuple[date, date] | None = None          # published_at from..to, both inclusive
+    keywords: list[str] = field(default_factory=list)     # every keyword must be in the passage
 
     @property
     def firms(self) -> list[str]:
@@ -116,6 +120,34 @@ def resolve(question: str, today: date | None = None) -> Query:
     q.mode = ("entity+theme" if q.themes and len(q.firms) == 1 else "entity") if q.entities else "theme"
     q.window = _window(question, today or date.today())
     return q
+
+
+def apply_filters(q: Query, firms: list[str] | None = None, date_range: tuple[date, date] | None = None,
+                  keywords: list[str] | None = None) -> Query:
+    """Narrow a resolved question with the Ask page filters (#63). Firms intersect with the
+    firms the question names (none named: the chosen firms); an empty intersection means
+    nothing is eligible, never "every firm"."""
+    if firms:
+        q.firm_filter = list(firms)
+        q.entities = [e for e in q.entities if e in firms] if q.entities else list(firms)
+        q.unmapped = [u for u in q.unmapped if u in firms]
+        q.mode = "entity"  # a firm filter means only these firms: no firm-less research (#116)
+    q.date_range = date_range
+    q.keywords = [k.strip() for k in keywords or [] if k.strip()]
+    return q
+
+
+def filters_sql(q: Query) -> tuple[str, dict]:
+    """Date range and keywords as SQL WHERE clauses (the firm filter is entity_filter). A range
+    counts only documents dated by the source, the same rule as a time window."""
+    clauses, params = [], {}
+    if q.date_range:
+        clauses.append("(d.date_basis = 'source' AND d.published_at BETWEEN %(r_from)s AND %(r_to)s)")
+        params |= {"r_from": q.date_range[0], "r_to": q.date_range[1]}
+    for i, kw in enumerate(q.keywords):
+        clauses.append(f"c.tsv @@ phraseto_tsquery('english', %(kw{i})s)")
+        params[f"kw{i}"] = kw
+    return " AND ".join(clauses) or "TRUE", params
 
 
 def _search_terms(q: Query) -> str:
@@ -214,6 +246,7 @@ WITH q AS (
   WHERE {match}
     AND {entity_filter}
     AND {window_filter}
+    AND {filters}
 ), pooled AS (
   SELECT *, row_number() OVER (PARTITION BY entity_id, doc_type ORDER BY rank DESC, chunk_id) AS rn
   FROM scored
@@ -337,7 +370,11 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
 def search(q: Query, k: int = K) -> list[Hit]:
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
+    if q.firm_filter and not q.entities:
+        return []  # the firm filter leaves none of the firms the question names
     where, params = entity_filter(q.entities)
+    filters, filter_params = filters_sql(q)
+    params.update(filter_params)
     window, window_params = window_filter(q.window)
     terms = _search_terms(q)
     if q.window:
@@ -352,11 +389,13 @@ def search(q: Query, k: int = K) -> list[Hit]:
     with connect() as conn:
         rank, rank_params = rank_sql(conn, terms, syn_params)
         params.update(rank_params)
-        sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=where, window_filter=window)
+        sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=where, window_filter=window,
+                         filters=filters)
         rows = conn.execute(sql, params).fetchall()
         if q.mode == "entity+theme":
             themes, theme_params = theme_filter(q.themes)
-            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window)
+            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window,
+                             filters=filters)
             research_rows = conn.execute(sql, params | theme_params).fetchall()
     pool = [Hit(**r) for r in rows]
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
