@@ -27,6 +27,8 @@ validate(answer, hits) -> Answer
         unknown = claim.chunk_ids not in hits  -> claim.flag = "unmatched_citation"  # flag, never drop
         numbers in claim.text not found in cited chunk text -> claim.flag = "number_not_found"
     source_label built by code from documents (entity, doc_type, date, segment, tier label)
+    date for an undated web page (date_basis = retrieved, ADR-007 T-09): "page content as of <date>" in
+    source_label, coverage_note (own group) and the model's chunk source line, never "published"
 
 insert_caveats(answer, hits, entities_config) -> Answer
     if any cited chunk is a substitute (e.g. BAC GWIM for MER, equivalence: partial):

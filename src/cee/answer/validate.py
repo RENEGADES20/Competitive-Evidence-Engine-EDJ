@@ -25,11 +25,20 @@ SOURCE_NAMES = {
 }
 
 
+def _retrieved(hit) -> bool:
+    """Dated by the stored copy, the page prints no date (ADR-007 T-09). Test hits may lack the field."""
+    return getattr(hit, "date_basis", "source") == "retrieved"
+
+
+def date_label(hit: Hit) -> str:
+    return f"page content as of {hit.published_at}" if _retrieved(hit) else (hit.period_end or hit.published_at)
+
+
 def source_label(hit: Hit) -> str:
     seg = f" - {hit.segment} segment" if hit.segment else ""
     page = f", p.{hit.page}" if hit.page else ""
     tier = TIER_LABELS.get(hit.source_tier, "?")
-    return f"{hit.entity_id or 'Research'} {hit.doc_type}{seg} {hit.period_end or hit.published_at}{page} [{tier}]"
+    return f"{hit.entity_id or 'Research'} {hit.doc_type}{seg} {date_label(hit)}{page} [{tier}]"
 
 
 def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
@@ -86,15 +95,18 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
         return " ".join(parts)
     groups: dict[tuple, dict] = {}
     for h in hits:
-        g = groups.setdefault((h.entity_id or "Research", h.doc_type, h.segment), {"docs": set(), "dates": set()})
+        retrieved = _retrieved(h)  # undated pages form their own group (ADR-007 T-09)
+        g = groups.setdefault((h.entity_id or "Research", h.doc_type, h.segment, retrieved),
+                              {"docs": set(), "dates": set()})
         g["docs"].add(h.doc_id)
-        g["dates"].add(h.period_end or h.published_at)
+        g["dates"].add(h.published_at if retrieved else (h.period_end or h.published_at))
     sources = []
-    for (entity, doc_type, segment), g in groups.items():
+    for (entity, doc_type, segment, retrieved), g in groups.items():
         lo, hi = min(g["dates"]), max(g["dates"])
         seg = f", {segment} segment" if segment else ""
         label = doc_type if entity == "Research" and doc_type == "research" else f"{entity} {doc_type}"
-        sources.append(f"{label}{seg} ({lo if lo == hi else f'{lo} to {hi}'})")
+        basis = "page content as of " if retrieved else ""
+        sources.append(f"{label}{seg} ({basis}{lo if lo == hi else f'{lo} to {hi}'})")
     docs = len({h.doc_id for h in hits})
     parts.append(f"{_plural(len(hits), 'passage')} from {_plural(docs, 'document')}: " + "; ".join(sources) + ".")
     hit_entities = {h.entity_id for h in hits}

@@ -227,7 +227,8 @@ class Recorder:
         return ok
 
     def unreachable(self, why: str) -> None:
-        self.status = "UNREACHABLE"
+        if self.status != "FAIL":  # a step that could not run never hides one that failed
+            self.status = "UNREACHABLE"
         self.steps.append({"feature": self.feature, "result": "UNREACHABLE", "actual": why})
         print(f"  [UNREACHABLE] {why}")
 
@@ -417,6 +418,30 @@ def check_pdf_pages(rec, page) -> None:
         rec.unreachable("no PDF chunks with a page number in the corpus")
 
 
+def check_date_label(rec, page, source_chunk: str) -> None:
+    """cite-date: an undated page (date_basis = retrieved, ADR-007 T-09) says "Page content as of",
+    never "Filed:"; a source-dated chunk still says "Filed:"."""
+    row = psql(VERIFY_DB, "SELECT c.chunk_id || '|' || d.published_at FROM chunks c JOIN documents d USING (doc_id) "
+                          "WHERE d.date_basis = 'retrieved' ORDER BY c.chunk_id LIMIT 1")
+    if not row:
+        rec.unreachable("no date_basis = 'retrieved' document in the database (cite-date)")
+        return
+    cid, published = row.split("|", 1)
+    page.goto(page.url.split("?")[0] + "?chunk=" + quote(cid))
+    wait_for_text(page, [f"Chunk: {cid}", "is not in the stored corpus"], f"the source page for {cid}")
+    body = page.locator("body").inner_text()
+    want = f"Page content as of: {published}"
+    rec.step(f"Open undated page chunk {cid} (cite-date)", f"'{want}' and no 'Filed:'",
+             want in body and "Filed:" not in body,
+             f"'{want}' {'shown' if want in body else 'missing'}, 'Filed:' {'shown' if 'Filed:' in body else 'absent'}")
+    page.goto(page.url.split("?")[0] + "?chunk=" + quote(source_chunk))
+    wait_for_text(page, [f"Chunk: {source_chunk}", "is not in the stored corpus"], f"the source page for {source_chunk}")
+    body = page.locator("body").inner_text()
+    rec.step(f"Reopen source-dated chunk {source_chunk} (cite-date)", "'Filed:' and no 'Page content as of'",
+             "Filed:" in body and "Page content as of" not in body,
+             f"'Filed:' {'shown' if 'Filed:' in body else 'missing'}")
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -447,6 +472,7 @@ def feature_open_citation(page, base, rec, ctx):
              match, f"first 80 chars {'match' if match else 'differ'}")
     check_context(rec, source, chunk_id)
     check_pdf_pages(rec, source)
+    check_date_label(rec, source, chunk_id)
     source.close()
     rec.page = page
     ctx["chunk_id"] = chunk_id
@@ -505,7 +531,8 @@ def feature_coverage(page, base, rec, ctx):
     rec.step("Open the Coverage page", "a table with firms and document types",
              "EDJ" in body and "10-K" in body,
              "table shown" if "EDJ" in body else "no table")
-    n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at), max(published_at) FROM documents "
+    n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at) FILTER (WHERE date_basis = 'source'), "
+                                     "max(published_at) FILTER (WHERE date_basis = 'source') FROM documents "
                                      "WHERE entity_id = 'EDJ' AND doc_type = '10-K'").split("|")
     n = int(n)
     from cee.app.views.coverage_page import cell_state

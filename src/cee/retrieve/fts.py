@@ -49,6 +49,7 @@ class Hit:
     page: int | None
     rank: float
     text: str
+    date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
 
 
 def _alias_pattern(alias: str) -> re.Pattern:
@@ -201,7 +202,7 @@ WITH q AS (
 ), scored AS (
   SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
          d.published_at::text AS published_at, d.period_end::text AS period_end,
-         c.section, c.page, {rank} AS rank, c.text
+         c.section, c.page, {rank} AS rank, c.text, d.date_basis
   FROM chunks c JOIN documents d USING (doc_id), q
   WHERE {match}
     AND {entity_filter}
@@ -211,7 +212,7 @@ WITH q AS (
   FROM scored
 )
 SELECT chunk_id, doc_id, entity_id, segment, doc_type, source_tier, published_at, period_end,
-       section, page, rank, text
+       section, page, rank, text, date_basis
 FROM pooled
 WHERE rn <= %(per_group)s
 ORDER BY rank DESC, chunk_id
