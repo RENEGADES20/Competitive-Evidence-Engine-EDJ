@@ -29,3 +29,4 @@ retrieval only searches matching passages, as SQL `WHERE` clauses (no prompt tex
 ## Progress log
 - 2026-11-03 - plan written, implemented
 - 2026-11-03 - pytest 265 passed; verify-cee all 8 features PASS (run 20261103-101820-f336093); 0 real model calls
+- 2026-11-03 - TL: merged main after #148; theme research query now gets the filter clauses too (missing kwarg raised KeyError on entity+theme questions); firm filter drops firm-less research; 2 tests in test_retrieval_themes.py

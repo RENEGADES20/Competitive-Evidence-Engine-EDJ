@@ -131,7 +131,7 @@ def apply_filters(q: Query, firms: list[str] | None = None, date_range: tuple[da
         q.firm_filter = list(firms)
         q.entities = [e for e in q.entities if e in firms] if q.entities else list(firms)
         q.unmapped = [u for u in q.unmapped if u in firms]
-        q.mode = "entity"
+        q.mode = "entity"  # a firm filter means only these firms: no firm-less research (#116)
     q.date_range = date_range
     q.keywords = [k.strip() for k in keywords or [] if k.strip()]
     return q
@@ -394,7 +394,8 @@ def search(q: Query, k: int = K) -> list[Hit]:
         rows = conn.execute(sql, params).fetchall()
         if q.mode == "entity+theme":
             themes, theme_params = theme_filter(q.themes)
-            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window)
+            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window,
+                             filters=filters)
             research_rows = conn.execute(sql, params | theme_params).fetchall()
     pool = [Hit(**r) for r in rows]
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
