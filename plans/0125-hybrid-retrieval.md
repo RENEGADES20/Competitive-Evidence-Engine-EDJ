@@ -317,36 +317,36 @@ All checks on the PR head, local DB `corpus-2026-10-29` (vectors moved to `chunk
 `--as-of 2026-10-29`, mock provider, 0 real calls.
 
 Correctness gates (must hold):
-- [ ] **Hard filters, unit**: `test_hybrid.py` builds both leg SQLs for MER (finds the
+- [x] **Hard filters, unit**: `test_hybrid.py` builds both leg SQLs for MER (finds the
       `entity_filter` segment clause), for a window query (`window_filter` clause), for Ask
       filters (date range and keyword clauses from `filters_sql`) and for an entity+theme question
       (research part uses `theme_filter`), in each leg.
-- [ ] **Forbidden hits 0 on all 30** in `p125r-hybrid` (eval `forbidden` empty for every question;
+- [x] **Forbidden hits 0 on all 30** in `p125r-hybrid` (eval `forbidden` empty for every question;
       covers Q4, Q27, Q30 Merrill = no BAC chunk without a GWIM/Merrill segment, and Q7).
-- [ ] **Q7**: every named firm (MS, MER, RJF) has at least one hit in hybrid.
-- [ ] **Q26** in hybrid: no hit outside the 90-day window (`outside_window` empty), hits sorted
+- [x] **Q7**: every named firm (MS, MER, RJF) has at least one hit in hybrid.
+- [x] **Q26** in hybrid: no hit outside the 90-day window (`outside_window` empty), hits sorted
       newest first (step 7 script).
-- [ ] **Q29 both modes**: no chunk from its `must_not_return` list in `p125r-fts-after` and
+- [x] **Q29 both modes**: no chunk from its `must_not_return` list in `p125r-fts-after` and
       `p125r-hybrid`; `MS-10K-2025#153` comes back in fts mode.
-- [ ] **fts mode = `main`** except Q29: `p125r-fts-main` vs `p125r-fts-after` -> identical
+- [x] **fts mode = `main`** except Q29: `p125r-fts-main` vs `p125r-fts-after` -> identical
       `chunk_ids` in the same order for 29 of 30 questions; only Q29 differs; no PASS -> FAIL.
-- [ ] **No fastembed with vectors off**: `test_vectors_optional.py` subprocess cases pass, and the
+- [x] **No fastembed with vectors off**: `test_vectors_optional.py` subprocess cases pass, and the
       fts eval (step 4), pytest and verify-cee fts run in the core venv, which has no fastembed.
-- [ ] **Hybrid refuses cleanly**: vectors off -> `HybridUnavailable`; no `chunk_embeddings` table
+- [x] **Hybrid refuses cleanly**: vectors off -> `HybridUnavailable`; no `chunk_embeddings` table
       or a chunk without a row -> `MissingVectors`; reranker not cached -> `RerankerNotCached`
       naming `--fetch`, no download, no model folder created (unit with fakes: the fake `TextCrossEncoder`
       is never called and a cache path that does not exist stays absent; plus the step 9 check:
       exit 1, `RerankerNotCached` message, no `models--Xenova--ms-marco-MiniLM-L-12-v2` subfolder).
-- [ ] **Gap path**: unmapped-only question and an empty firm-filter intersection return `[]`
+- [x] **Gap path**: unmapped-only question and an empty firm-filter intersection return `[]`
       without loading a model or opening a connection (unit).
-- [ ] **Tests**: `rrf()` hand-worked example and ties; (firm, doc type) turn-taking; floor drops
+- [x] **Tests**: `rrf()` hand-worked example and ties; (firm, doc type) turn-taking; floor drops
       below-floor hits, keeps order, none inside a window; `select` called with `floor=0`; window
       newest first; mode switch (fts never imports `hybrid`, default `fts`, unknown -> `ValueError`);
       `pay` left out of FTS words; `ask(mode=...)` and trace suffix; `eval_run --mode`, `search_s`,
       `ranks`. `pytest -q` all pass in both venvs, none fewer than `main`'s count from step 1.
-- [ ] `python scripts/verify_cee.py run` -> VERIFY PASS, all features, fts (vectors off, core venv)
+- [x] `python scripts/verify_cee.py run` -> VERIFY PASS, all features, fts (vectors off, core venv)
       and hybrid (`CEE_VECTORS=on`); each `summary.json` shows `RETRIEVAL_MODE` and `CEE_VECTORS`.
-- [ ] Offline reranker: `--check` with the network blocked in-process (`HF_HUB_OFFLINE`,
+- [x] Offline reranker: `--check` with the network blocked in-process (`HF_HUB_OFFLINE`,
       `TRANSFORMERS_OFFLINE` unset; real cache `D:\ALLPROJECTS\EDJ\cache\fastembed`; vectors venv,
       `PYTHONPATH=<repo>\src`). `ssl` is imported first and only `socket.socket.connect`,
       `socket.create_connection` and `socket.getaddrinfo` are replaced (replacing the class
@@ -381,7 +381,7 @@ EOF
       branch's current code (1e43332): both forms printed `embedding 384 dims; reranker
       Xenova/ms-marco-MiniLM-L-12-v2 scores [-1.125, -1.413]` and `exit 0`; the same block with a
       `urlopen("https://huggingface.co")` gave `<urlopen error network blocked for this check>`.
-- [ ] Every new RUN.md PowerShell block has a bash block.
+- [x] Every new RUN.md PowerShell block has a bash block.
 - [ ] S1 reviews the `fts.py` entry point, `synonym_only` and the spec section ("Part of #125"
       until then). Paid API calls: 0.
 
@@ -483,6 +483,48 @@ Open items for teammates (listed on the issue, not required checks):
   venv, vectors off, no fastembed installed): identical chunk_ids on 29/30, only Q29 differs; status
   change only Q29 FAIL -> PASS; PASS 28 / FAIL 2 (Q15, Q19), docs 0.796, passages 0.402, refusal
   gap 5/5, all keyed 10/10, median search 0.40 s. Step 5: hybrid rewritten per Design, tests;
-  pytest core venv 305 passed / 2 skipped (real-model tests), vectors venv 307 passed. EXPLAIN of the
+  pytest core venv 304 passed / 2 skipped (real-model tests), vectors venv 306 passed. EXPLAIN of the
   vector leg: Q29 = seq scan of chunks + pkey lookups in `chunk_embeddings`, WindowAgg sort; Q16 =
   seq scan of `chunk_embeddings`, WindowAgg sort. No HNSW index scan: exact in both shapes.
+- 2026-11-05 17:00 - **step 6 hybrid evals** (vectors venv, `CEE_VECTORS=on`, MiniLM-L-12, baseline
+  `p125r-fts-after`; RERANK_FLOOR set per run by a scratch wrapper, not in code):
+  | run | PASS/FAIL | docs | passages | refusal gap / all | median search | hits < 20 |
+  |---|---|---|---|---|---|---|
+  | fts-after | 28 / 2 | 0.796 | 0.402 | 5/5, 10/10 | 0.40 s | - |
+  | hybrid floor 0 | 27 / 3 | 0.728 | 0.373 | 5/5, 10/10 | 10.2 s (warm-up 31.8 s) | Q19 16, Q26 8 |
+  | hybrid 0.01 | 22 / 8 | 0.521 | 0.339 | 5/5, 10/10 | 9.7 s | 19 questions |
+  | hybrid 0.05 | 16 / 14 | 0.470 | 0.323 | 5/5, 10/10 | 8.3 s | 21 questions |
+  | hybrid 0.1 | 15 / 15 | 0.451 | 0.310 | 5/5, 10/10 | 9.7 s | 24 questions |
+  Every grid floor loses passage recall against floor 0, so by the rule `RERANK_FLOOR` = **0** (known
+  gap: no absolute floor in the grid keeps the evidence; #126). Floor 0 vs fts: only PASS -> FAIL is
+  **Q29** (FAIL in both: Q15, Q19). Forbidden 0 and misleading 0 on all 30 in every run.
+  `p125r-hybrid` = copy of `p125r-hybrid-f0`. **The pool change fixed Q21, Q24, Q25** (they had
+  failed in the 2026-10-30 diagnostic): Q21 coverage 0.833 (research 3, MS/SCHW/RJF transcripts,
+  EDJ 10-K; BAC GWIM transcript missing), Q24 0.8 (MS supplement back: `MS-SUPP-2026Q3#38`),
+  Q25 refusal ok (`SCHW-10K-2025#558` no longer in the 50-pool: 24 groups share it).
+  So the refusal drop expected in the plan (gap 4/5) did not happen: hybrid gap 5/5.
+- 2026-11-05 17:00 - **step 6 diagnosis** (`.eval-runs/p125r-diag/diag.json`, scratch script): **Q29**: `#153`
+  (keyword rank 12 in MS), `#170` (6) and must-not `#693`/`#699` all reach the 50-pool, but MiniLM
+  scores `#153` 0.0000 (pool rank 47) and `#170` 0.0001 (42) while `#702` (guarantee "payment ...
+  remote") gets 0.95, `#417` 0.90, `#128` 0.73; with `MAX_PER_DOC` 3 the MS 10-K places go to those
+  three, so no Wealth Management 10-K chunk -> coverage 0. The reranker reads "pay" as "payment";
+  a different reranker, reranking without the bare word, or `#702` on the must-not list are #126 /
+  C1 decisions. **Q25** passages still 0/4: `EDJ-10K-2025#30` (vector rank 2), `MS-10K-2025#153`
+  (vector rank 2) and `RJF-10K-2025#10` (kw 74 / vec 52) never reach the pool (5 firms x ~5 types
+  share 50 places). **Q24**: `MS-SUPP-2026Q2#37` in pool (0.22) but not kept; `RJF-10K-2025#227/228`
+  (vector rank 7/8) not in pool. Starting point for #126: `RERANK_N` per group, not per question.
+- 2026-11-05 17:00 - **step 7 retrieval checks** (`p125r-hybrid`): Q4, Q7, Q27, Q30 PASS, forbidden 0 (Merrill =
+  BAC GWIM only); Q7 firms MS, BAC (GWIM = Merrill), RJF all present; Q26 PASS, 8 hits, all
+  `RJF-10Q-2026Q2` 2026-08-05 (`date_basis` source), inside 2026-07-31..2026-10-29, sorted newest
+  first; Q29 refusal ok, misleading [], coverage 0 (above). **Step 8** docs: RUN.md section rewritten
+  for `exp/hybrid` (3 PowerShell + 3 bash blocks), `.env.example`, spec section (no ADR).
+- 2026-11-05 17:00 - **step 9**: pytest core venv (no fastembed) 304 passed / 2 skipped (real-model tests);
+  vectors venv 306 passed (main's floor 276). verify-cee fts (core venv, vectors off): VERIFY PASS,
+  8 features (`.verify-runs/20261105-165620-587109a`, summary fts/off); hybrid (`CEE_VECTORS=on`):
+  VERIFY PASS, 8 features (`.verify-runs/20261105-165759-587109a`, summary hybrid/on, ask-progress
+  page shows "Searching the corpus: 15 passages from 5 documents (hybrid)"). Offline reranker
+  (PowerShell and bash, sockets blocked): `embedding 384 dims; reranker Xenova/ms-marco-MiniLM-L-12-v2
+  scores [-1.125, -1.413]`, `exit 0`. No-cache check (PowerShell and bash): `ERROR: Reranker
+  Xenova/ms-marco-MiniLM-L-12-v2 is not in D:\ALLPROJECTS\EDJ\cache\tmp\rerank-nocache-125
+  (FASTEMBED_CACHE_PATH). It is never downloaded by itself. Get it once with `python -m
+  cee.retrieve.hybrid --fetch` ...`, `exit 1`, `False` (no model subfolder). 0 real calls.

@@ -42,6 +42,8 @@ RRF_K = 60           # reciprocal rank fusion constant
 RERANK_N = 50        # candidates the cross-encoder scores (firm part)
 THEME_RERANK_N = 20  # candidates for the research part of entity+theme questions (#116)
 RERANK_FLOOR = 0.0   # sigmoid score below which a hit is a weak match (outside time windows)
+# 0 = no rerank floor: every grid value lost evidence on corpus-2026-10-29 (tier-1 passages 0.373 at 0,
+# 0.339 / 0.323 / 0.310 at 0.01 / 0.05 / 0.1; #125 plan Progress log). Tuning is #126.
 DEFAULT_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-12-v2"
 # Rerankers this module knows: name -> size. Cache folder: models--<org>--<name>/snapshots/*/onnx/model.onnx
 RERANKERS = {"Xenova/ms-marco-MiniLM-L-12-v2": "about 120 MB", "BAAI/bge-reranker-base": "about 1 GB"}
