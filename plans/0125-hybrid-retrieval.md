@@ -26,7 +26,10 @@ and tuned in #126.
 3. **Sponsor constraint** (portability spec, item 10: no embeddings, pgvector or rerankers on
    `main`; explore semantic retrieval on a branch, documented). Tech lead decision: #124/#125
    hybrid work stays off `main`. Branch `exp/hybrid` was created from `origin/main` 9dc4c9b and
-   pushed (2026-11-05); the #125 PR targets it and the reviewer merges into it.
+   pushed (2026-11-05); the #125 PR targets it and the reviewer merges into it. Decision recorded
+   on #125 (issue comment 2026-11-05); the bodies of #126 and #127 now say the work happens on
+   `exp/hybrid` and #127 records the decision with the #126 numbers (`main` stays `fts` unless the
+   sponsor agrees otherwise; teammate reinstall only if hybrid is adopted).
 4. **Scope cut:** no ADR change in #125 (no ADR-008, no ADR-001 Status line, no escalation for an
    ADR). The decision ADR moves to #127, after the #126 comparison. Docs that say how to run hybrid
    on `exp/hybrid` stay.
@@ -139,7 +142,14 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
   failure) and its test are dropped in the merge: `main`'s loader already surfaces a broken runtime
   directly (the PR #140 concern), and auto-download is what ADR-009 removed.
   `python -m cee.retrieve.hybrid --fetch` is the only path that downloads the reranker;
-  `--check` loads both models from the cache and scores one pair.
+  `--check` loads both models from the cache (embedding model first, then the reranker; order
+  unchanged) and scores one pair. CLI errors as in `embed.main()`: `ModelNotCached`,
+  `RerankerNotCached` or `ValueError` -> one line `ERROR: <message>` on stderr, exit code 1;
+  `ImportError` -> `ERROR: ... pip install -r requirements-vectors.txt`, exit code 1; no traceback.
+  The `RerankerNotCached` message reads: `Reranker <name> is not in <folder> (FASTEMBED_CACHE_PATH).
+  It is never downloaded by itself. Get it once with `python -m cee.retrieve.hybrid --fetch`, or copy
+  the models/ folder from the shared corpus folder into that folder (docs/RUN.md).` The check looks
+  for `<folder>/<model folder>/snapshots/*/onnx/model.onnx` and creates no folder.
 - **`hybrid.search(q, k)`**:
   1. Gap path unchanged: unmapped firms only -> `[]`; firm filter leaves no named firm -> `[]`
      (as `main`'s fts). No model load, no SQL.
@@ -163,11 +173,14 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
      firm part gets `k - len(research)`, as fts.
   `RERANK_FLOOR` rule (step 7): grid {0.01, 0.05, 0.1}; the highest value whose run has the same
   tier-1 passage recall as the floor-0 run and loses no must-return passage the floor-0 run found
-  on Q24, Q25, Q28, Q29, Q30 (drop as much weak text as possible without losing evidence); if none,
-  0.01. Reported with every number; tuning is #126.
+  on Q24, Q25, Q28, Q29, Q30 (drop as much weak text as possible without losing evidence); if no
+  grid value meets the rule, `RERANK_FLOOR` = 0 (no rerank floor) and the PR reports it as a known
+  gap ("no floor in the grid keeps the evidence"). Reported with every number; tuning is #126.
 - **Q29 in both modes**: `config/entities.yaml` `synonym_only: [pay]` (an ambiguous word is searched
   only through its synonyms); `_search_terms` leaves it out of the FTS words after
-  `expand_synonyms` has read it. General rule, not keyed to the answer key.
+  `expand_synonyms` has read it. General rule, not keyed to the answer key. **Q29 on `main` is out
+  of #125's scope:** this fix reaches only `exp/hybrid`; the tech lead handles Q29 on `main`
+  separately (TL decision 2026-11-05), so #125 neither ports it nor opens an issue for it.
 - **`ask(question, provider=None, log=True, progress=None, filters=None, mode=None)`**: passes `mode`
   to `search`; trace line `Searching the corpus: N passages from M documents` + ` (hybrid)` only in
   hybrid mode; `query_log.filters` gets `retrieval_mode`.
@@ -215,7 +228,8 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
 1. **Baseline on `main`'s code, before the merge.** Shell setup (rule above). `git worktree add
    D:\ALLPROJECTS\EDJ\wt-125-main origin/main`; core venv with `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-125-main\src`,
    `CEE_VECTORS` unset; log `cee.__file__`; `python scripts/eval_run.py --as-of 2026-10-29 --out
-   D:\ALLPROJECTS\EDJ\repo\.eval-runs\p125r-fts-main`; `pytest -q` count (the "none fewer" number).
+   D:\ALLPROJECTS\EDJ\repo\.eval-runs\p125r-fts-main`; `pytest -q` count on `main` (the floor for
+   the "none fewer" check; `load_cached`'s test exists only on this branch, so it does not count).
    Remove the worktree.
 2. **Merge** `git merge origin/main` on `tl/125-hybrid-retrieval` (no rebase, no force-push).
    Resolve the three conflicts as in Files; drop `load_cached`; remove ADR-008 wording from
@@ -242,13 +256,40 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
 8. **Docs**: RUN.md (PowerShell + bash), `.env.example`, spec section, verify-cee recipe line.
 9. **Final checks**: `pytest -q` in the core venv and in the vectors venv; `verify_cee.py run` with
    `RETRIEVAL_MODE=fts`, vectors off, core venv; then `RETRIEVAL_MODE=hybrid`, `CEE_VECTORS=on`,
-   vectors venv. Offline reranker check (Acceptance). Reranker never fetched at query time:
-   `--check` with `FASTEMBED_CACHE_PATH` pointed at a new empty folder and
-   `HF_ENDPOINT=http://127.0.0.1:9` -> `RerankerNotCached` naming `--fetch`, the folder not created.
+   vectors venv. Offline reranker check (Acceptance, exact commands there). **Reranker never
+   fetched by itself**: a new folder holding **only the embedding model** (so `--check` passes the
+   embedding load and reaches the reranker), a dead HuggingFace endpoint, vectors venv:
+   ```powershell
+   $d = "D:\ALLPROJECTS\EDJ\cache\tmp\rerank-nocache-125"
+   New-Item -ItemType Directory $d | Out-Null
+   Copy-Item -Recurse "D:\ALLPROJECTS\EDJ\cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q" $d
+   $env:FASTEMBED_CACHE_PATH = $d; $env:HF_ENDPOINT = "http://127.0.0.1:9"
+   .\.venv\Scripts\python.exe -m cee.retrieve.hybrid --check; "exit $LASTEXITCODE"
+   Test-Path "$d\models--Xenova--ms-marco-MiniLM-L-12-v2"
+   ```
+   ```bash
+   d=/d/ALLPROJECTS/EDJ/cache/tmp/rerank-nocache-125
+   mkdir "$d" && cp -r /d/ALLPROJECTS/EDJ/cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q "$d"/
+   FASTEMBED_CACHE_PATH="$d" HF_ENDPOINT=http://127.0.0.1:9 .venv/Scripts/python.exe -m cee.retrieve.hybrid --check; echo "exit $?"
+   test -e "$d/models--Xenova--ms-marco-MiniLM-L-12-v2" && echo True || echo False
+   ```
+   Expected: stderr `ERROR: Reranker Xenova/ms-marco-MiniLM-L-12-v2 is not in <d> (FASTEMBED_CACHE_PATH).
+   ... python -m cee.retrieve.hybrid --fetch ...`, `exit 1`, no connection error (no download was
+   tried), and `False`: the subfolder `models--Xenova--ms-marco-MiniLM-L-12-v2` does not appear in
+   `<d>`. Console output saved in the Progress log; `<d>` deleted afterwards (plain folder, no links).
 10. `/finish-task`: PR **base `exp/hybrid`**, both eval tables, the four-question diagnosis, timings,
     reranker choice, `0 real calls`, S1 (and C1 FYI) review requested. Body says "Part of #125"
     until S1 has reviewed (a merge into a non-default branch does not close an issue anyway; the
     reviewer closes #125 by hand when every item is done). No ADR, no escalation for an ADR.
+    The PR body also states:
+    - the tl-review eval-regression rule applies to **fts mode**: `p125r-fts-after` vs
+      `p125r-fts-main`. The hybrid run's `--baseline p125r-fts-after` "Change" column is a
+      comparison table, not the regression gate;
+    - hybrid has a **known refusal drop**: gap questions 4/5 vs fts 5/5, from Q25
+      `SCHW-10K-2025#558` (executive compensation, scored high by the reranker; diagnosis in Facts),
+      so it is a reported finding for #126, not an unreported regression;
+    - `progress.yml` fires only on merges into `main`, so this PR's `## Progress line` will not
+      reach `docs/PROGRESS.md` (it stays in the PR and on the issue).
 
 **Stop rule (revised):** if a correctness gate in Acceptance fails and the fix is not inside this
 Design (e.g. a hard filter cannot be expressed in a leg, or fts mode differs on a question other
@@ -258,8 +299,8 @@ recall against fts is **not** a stop: it is reported with its diagnosis for #126
 Risks: hybrid keeps losing on some questions (reported, default stays `fts`, #126 tunes); the
 (firm, doc type) pool spreads 50 places thin on theme questions with many groups (reported; #126
 can raise `RERANK_N`); reranker CPU time about 8 s per question (reported); `synonym_only` may be
-renamed by S1; the fts Q29 fix lives only on `exp/hybrid` (see open question in the PR); Mac runs
-need a teammate.
+renamed by S1; the fts Q29 fix lives only on `exp/hybrid` (Q29 on `main`: TL, outside #125); Mac
+runs need a teammate.
 
 ## Acceptance
 All checks on the PR head, local DB `corpus-2026-10-29` (vectors moved to `chunk_embeddings`),
@@ -283,19 +324,41 @@ Correctness gates (must hold):
       fts eval (step 4), pytest and verify-cee fts run in the core venv, which has no fastembed.
 - [ ] **Hybrid refuses cleanly**: vectors off -> `HybridUnavailable`; no `chunk_embeddings` table
       or a chunk without a row -> `MissingVectors`; reranker not cached -> `RerankerNotCached`
-      naming `--fetch`, no download, no folder created (unit with fakes + step 9 check).
+      naming `--fetch`, no download, no folder created (unit with fakes: the fake `TextCrossEncoder`
+      is never called and a cache path that does not exist stays absent; plus the step 9 check:
+      exit 1, `RerankerNotCached` message, no `models--Xenova--ms-marco-MiniLM-L-12-v2` subfolder).
 - [ ] **Gap path**: unmapped-only question and an empty firm-filter intersection return `[]`
       without loading a model or opening a connection (unit).
 - [ ] **Tests**: `rrf()` hand-worked example and ties; (firm, doc type) turn-taking; floor drops
       below-floor hits, keeps order, none inside a window; `select` called with `floor=0`; window
       newest first; mode switch (fts never imports `hybrid`, default `fts`, unknown -> `ValueError`);
       `pay` left out of FTS words; `ask(mode=...)` and trace suffix; `eval_run --mode`, `search_s`,
-      `ranks`. `pytest -q` all pass in both venvs, none fewer than `main` (count from step 1) minus
-      the dropped `load_cached` test.
+      `ranks`. `pytest -q` all pass in both venvs, none fewer than `main`'s count from step 1.
 - [ ] `python scripts/verify_cee.py run` -> VERIFY PASS, all features, fts (vectors off, core venv)
       and hybrid (`CEE_VECTORS=on`); each `summary.json` shows `RETRIEVAL_MODE` and `CEE_VECTORS`.
-- [ ] Offline reranker: `python -m cee.retrieve.hybrid --check` with sockets blocked in-process ->
-      scores printed, no error.
+- [ ] Offline reranker: `--check` with every socket blocked in-process (`HF_HUB_OFFLINE`,
+      `TRANSFORMERS_OFFLINE` unset; real cache `D:\ALLPROJECTS\EDJ\cache\fastembed`; vectors venv,
+      `PYTHONPATH=<repo>\src`) -> `embedding 384 dims; reranker Xenova/ms-marco-MiniLM-L-12-v2 scores
+      [...]`, exit 0:
+      ```powershell
+      @'
+      import runpy, socket, sys
+      def blocked(*a, **k): raise OSError("network blocked for this check")
+      socket.socket = blocked; socket.create_connection = blocked; socket.getaddrinfo = blocked
+      sys.argv = ["cee.retrieve.hybrid", "--check"]
+      runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
+      '@ | .\.venv\Scripts\python.exe -; "exit $LASTEXITCODE"
+      ```
+      ```bash
+      .venv/Scripts/python.exe - <<'EOF'; echo "exit $?"
+      import runpy, socket, sys
+      def blocked(*a, **k): raise OSError("network blocked for this check")
+      socket.socket = blocked; socket.create_connection = blocked; socket.getaddrinfo = blocked
+      sys.argv = ["cee.retrieve.hybrid", "--check"]
+      runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
+      EOF
+      ```
+      (On a Mac the interpreter is `.venv/bin/python`.)
 - [ ] Every new RUN.md PowerShell block has a bash block.
 - [ ] S1 reviews the `fts.py` entry point, `synonym_only` and the spec section ("Part of #125"
       until then). Paid API calls: 0.
@@ -369,3 +432,12 @@ Open items for teammates (listed on the issue, not required checks):
   guarantee chunk not on the must-not list). Read-only facts: merge conflicts in `ask.py`,
   `embed.py`, `fts.py`; DB still `chunks.embedding` 17183, no `chunk_embeddings`, backup in
   `cache\backups`; all three models cached; core venv `wt-144\.venv` has no fastembed.
+- 2026-11-05 16:12 - plan review round 3 (3a23e24): changes requested. Blocking 1 fixed: the step 9
+  "reranker never fetched" check now uses a new folder holding only the embedding model, so
+  `--check` reaches the reranker; expected `ERROR: Reranker ... --fetch` on stderr, exit 1, and no
+  `models--Xenova--ms-marco-MiniLM-L-12-v2` subfolder; the `--check` error handling and the message
+  are now in Design. Non-blocking taken: exact offline-reranker commands (PowerShell + bash);
+  pytest floor = `main`'s count; `RERANK_FLOOR` falls back to 0 and is reported as a known gap;
+  Q29 on `main` is outside #125 (TL); PR body states the fts-only regression gate, the known Q25
+  refusal drop (4/5 vs 5/5) and that `progress.yml` fires only on `main`. Decision posted on #125;
+  #126 and #127 bodies updated for `exp/hybrid`. Still no code change and no merge.
