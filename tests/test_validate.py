@@ -371,3 +371,20 @@ def test_mock_never_cuts_a_figure_in_half():
 
     text = "word " * 58 + "with $11.90 trillion in client assets"
     assert _clip(text).endswith(("$11.90", "with")) and "trilli" not in _clip(text).split()[-1:]
+
+
+# Found in the #61 real-model run: correct figures that the first rule flagged.
+
+def test_table_cell_without_its_unit_header_matches_the_same_digits():
+    # Q25: "$1,875 million" from an EDJ 10-Q table whose "(in millions)" header is in another chunk.
+    assert flags_for("financial advisor compensation was $1,875 million",
+                     "Compensation and benefits: Financial advisor $ 1,875 $ 1,653 13%") == []
+    # Q24: "$11,903.0 billion" from a Schwab table cell "$ 11,903.0".
+    assert flags_for("total client assets were $11,903.0 billion", "Total client assets 18% 3% $ 11,903.0") == []
+    # Still flagged: a different figure, or a unit that contradicts the chunk's own unit.
+    assert flags_for("$1,900 million", "Financial advisor $ 1,875") == ["number_not_found"]
+    assert flags_for("21 thousand households", "21 million households") == ["number_not_found"]
+
+
+def test_numeric_dates_and_section_labels_are_not_checked():
+    assert flags_for("in the quarter ended 12/31/2025 (Item 11, Note 4)", "nothing numeric here") == []

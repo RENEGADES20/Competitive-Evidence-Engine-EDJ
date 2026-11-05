@@ -101,6 +101,7 @@ A claim figure matches a chunk figure when either:
 | 2.9% | 2.88% | match | one decimal, rounded |
 | $7.9 billion | 7,912 under "($ in millions)" | match | table unit header applied |
 | nearly 21 | 21 million | match | a figure written without a unit may match the digits shown |
+| $1,875 million | "$ 1,875" (table header in another chunk) | match | a figure with a unit may match the same digits written without one |
 | $1 billion | $1.4 billion | `number_not_found` | no decimal, 29% apart |
 | 20,000 | 20,425 | `number_not_found` | no decimal, 2% apart |
 | 21% | 20.8% | `number_not_found` | no decimal, 1% apart |
@@ -108,8 +109,8 @@ A claim figure matches a chunk figure when either:
 | 21,000 (planted) | 20,425 | `number_not_found` | not in the chunk |
 
 Scale words: thousand, k, million, mn, billion, bn, trillion. Not checked: years 1990-2099,
-quarter and form labels (Q3, 3Q26, 10-K), day of month after a month name, numbers written as
-words. Derived figures (sums, ratios, per-advisor values) are not in the chunk and are flagged.
+quarter and form labels (Q3, 3Q26, 10-K), section labels (Item 11, Note 4), dates (December 31,
+12/31/2025), numbers written as words. Derived figures (sums, ratios, per-advisor values) are not in the chunk and are flagged.
 
 Limits: a small figure with one decimal can pass rule 2 with a large relative error ("$0.1
 billion" vs $0.14 billion). The check proves a figure is in the cited text, not that it came from

@@ -55,6 +55,8 @@ _NUMBER = re.compile(
     r"(?:\s*(%|percent\b|thousand\b|million\b|billion\b|trillion\b|bn\b|mn\b|k\b))?", re.I)
 _TABLE_SCALE = re.compile(r"in (thousands|millions|billions)\b", re.I)
 _DAY_AFTER_MONTH = re.compile(rf"\b{_MONTHS}\s+\d{{1,2}}\b")
+_NUMERIC_DATE = re.compile(r"\b\d{1,2}/\d{1,2}/\d{2,4}\b")                 # 12/31/2025
+_SECTION_LABEL = re.compile(r"\b(?:Item|Note|Part)\s+\d+[A-Z]?\b", re.I)    # Item 11, Note 4
 
 
 @dataclass
@@ -69,8 +71,9 @@ class Figure:
 
 
 def figures(text: str) -> list[Figure]:
-    """Numbers in the text, skipping years, quarter/form labels and day of month."""
+    """Numbers in the text, skipping years, quarter/form/section labels and dates."""
     text = _DAY_AFTER_MONTH.sub(lambda m: m.group(0).rsplit(" ", 1)[0], text)
+    text = _SECTION_LABEL.sub(" ", _NUMERIC_DATE.sub(" ", text))
     out = []
     for m in _NUMBER.finditer(text):
         whole, frac, unit = m.group(1), m.group(2), (m.group(3) or "").lower()
@@ -112,8 +115,15 @@ def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
             continue                                            # already flagged by the citation check
         scaled = [v for text in cited for v in _chunk_values(text)]
         bare = [v for text in cited for v in _chunk_values(text, unscaled=True)]
-        if any(not any(number_matches(f, v) for v in (bare if f.scale == 1.0 else scaled))
-               for f in figures(claim.text))                 and "number_not_found" not in claim.flags:
+        # Table cells often lose their "(in millions)" header to another chunk: a claim figure with a
+        # unit may match a chunk figure written without one ("$1,875 million" vs "$ 1,875").
+        unitless = [float(f.shown) for text in cited for f in figures(text) if f.scale == 1.0]
+
+        def found(f: Figure) -> bool:
+            values = bare if f.scale == 1.0 else scaled + [v * f.scale for v in unitless]
+            return any(number_matches(f, v) for v in values)
+
+        if not all(found(f) for f in figures(claim.text)) and "number_not_found" not in claim.flags:
             claim.flags.append("number_not_found")
     return answer
 

@@ -53,3 +53,9 @@ from the right table column (MS-SUPP-2026Q3 p.8 case); the source label keeps th
   match the digits shown. Re-run: 87 claims, 195 figures, 0 flagged
 - 2026-11-05 14:02 - pytest 289 passed; smoke PASS on corpus-2026-10-29; verify-cee all 8 features
   PASS (.verify-runs/20261105-140222-9dc4c9b), mock, 0 real calls. Rule written to the spec
+- 2026-11-05 15:10 - #61 real-model run (5 answers) showed 3 false-flag classes on correct figures:
+  table cells whose "(in millions)" header sits in another chunk ("$1,875 million" vs "$ 1,875"),
+  numeric dates (12/31/2025) and section labels (Item 11). Fixed: a claim figure with a unit may
+  match the same digits written without one; numeric dates and Item/Note/Part labels skipped.
+  Cached real answers: 44 figures, 0 flagged (0 new calls); 30 mock questions: 189 figures, 0 flagged;
+  pytest 291 passed
