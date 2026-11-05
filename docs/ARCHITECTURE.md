@@ -53,10 +53,17 @@ CREATE TABLE chunks (
   segment       text NULL,                 -- e.g. GWIM, tagged at chunking time
   page          int,                       -- PDFs only
   text          text NOT NULL,             -- includes the context prefix
-  tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED,
-  embedding     vector(384) NULL           -- pgvector; filled at snapshot build (#124)
+  tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
 );
 CREATE INDEX ON chunks USING gin (tsv);
+
+-- Optional vectors module (ADR-009), off by default: db/optional/vectors.sql, applied only
+-- with CEE_VECTORS=on. The core schema has no extension and no vector type.
+CREATE TABLE chunk_embeddings (
+  chunk_id      text PRIMARY KEY REFERENCES chunks ON DELETE CASCADE,
+  embedding     vector(384) NOT NULL       -- pgvector; BAAI/bge-small-en-v1.5 (#124)
+);
+CREATE INDEX ON chunk_embeddings USING hnsw (embedding vector_cosine_ops);
 
 CREATE TABLE topics       (topic_id text PRIMARY KEY, label text, parent_id text);
 CREATE TABLE chunk_topics (chunk_id text REFERENCES chunks, topic_id text REFERENCES topics,

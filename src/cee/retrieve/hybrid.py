@@ -1,4 +1,4 @@
-"""Hybrid retrieval (#125, ADR-008): keyword + vector candidates, RRF, local rerank, then the
+"""Hybrid retrieval (#125, experimental branch exp/hybrid): keyword + vector candidates, RRF, local rerank, then the
 same quotas as fts mode. Owner: TL (Yueyang Du); fts.py stays S1's.
 
 Inside the same SQL entity / segment / window filters as fts mode (fts.entity_filter,

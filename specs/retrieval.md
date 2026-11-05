@@ -28,6 +28,9 @@ resolve(question) -> Query{
     mode:     "entity" | "theme" | "entity+theme"
 }
     # rules: entities and no theme -> entity; theme and no entities -> theme; both -> entity+theme
+    # themes: top-level topics from config/topics.yaml, matched with the chunk tagger's rules
+    # entity+theme (#116): one firm + a theme only; several firms + a theme stay entity
+    #   until per-firm theme quotas (#117) - research slots pushed Q23's headcount figures out
 
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
 
@@ -35,19 +38,27 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
     # SQL: WHERE entity/segment filter AND published_at BETWEEN window AND tsv @@ query
     # MER: entity_id='MER' OR (entity_id='BAC' AND segment IN ('GWIM','Merrill'))
-    # quota: k split evenly per entity (entity mode) or per part (entity+theme)
+    # quota: k split evenly per entity (entity mode); entity+theme: up to 4 of k for tier 5
+    #   research tagged with the theme (entity_id IS NULL, chunk_topics), 2 per document,
+    #   the firm keeps the rest; the firm filter still holds for every firm document
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
-## Retrieval modes (#125, ADR-008)
+## Retrieval modes (#125, experimental branch `exp/hybrid` only)
+
+`main` has one mode, `fts` (ADR-001, ADR-009). The second mode lives on the branch `exp/hybrid`
+until #127 records a decision with the #126 numbers.
 
 `search(q, mode=...)` / `ask(..., mode=...)`; default `RETRIEVAL_MODE` in `.env`, else `fts`.
 
 - `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
-- `hybrid` (`src/cee/retrieve/hybrid.py`): inside the same entity / segment / window `WHERE`,
-  keyword top 100 + vector top 100 per named firm -> reciprocal rank fusion (k = 60) -> firms take
-  turns into 50 candidates -> local cross-encoder rerank -> score floor (none inside a time
-  window) -> the same `select()` quotas. The gap path is unchanged: unmapped firms return nothing.
+- `hybrid` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table `chunk_embeddings`):
+  inside the same entity / segment / window / Ask-filter `WHERE`, keyword top 100 + vector top 100
+  per firm -> reciprocal rank fusion (k = 60) per firm -> (firm, document type) groups take turns
+  into 50 candidates -> local cross-encoder rerank -> absolute score floor (none inside a time
+  window) -> the same `select()` quotas with no relative floor. Entity+theme questions get the
+  research part the same way, with the theme filter. The gap path is unchanged: unmapped firms
+  return nothing. With vectors off, `hybrid` stops with a clear message; nothing loads a model.
 - Both modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
   through their synonyms (Q29: "pay any net liquidation amount" is not advisor pay).
 - Constants (`LEG_K`, `RRF_K`, `RERANK_N`, `RERANK_FLOOR`) are tuned per mode in #126.
@@ -72,5 +83,4 @@ Q4, Q7, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
   1 January of the current calendar year to today. Windows filter `published_at` (both
   ends inclusive) and leave out `date_basis = retrieved` documents (ADR-007 T-09).
 - Similarity measure for dedupe: trigram (pg_trgm) is simplest.
-- ~~When would hybrid search be justified? Needs a comparison run (ADR-001).~~ Comparison run
-  in #125: hybrid is a per-request mode, `fts` stays the default (ADR-008).
+- When would hybrid search be justified? Needs a comparison run (ADR-001).

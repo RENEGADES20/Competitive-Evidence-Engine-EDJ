@@ -1,6 +1,6 @@
 <#
-Rebuild the database from main + the stored raw files, embed every chunk (#124), and publish a
-snapshot (ADR-006).
+Rebuild the database from main + the stored raw files, and publish a snapshot (ADR-006).
+With CEE_VECTORS=on (environment or .env; off by default, ADR-009) it also embeds every chunk.
 Tech lead only; needs CORPUS_SHARE_PATH (Box Drive folder) in .env.
 
   powershell -ExecutionPolicy Bypass -File scripts\build-snapshot.ps1
@@ -9,6 +9,7 @@ Tech lead only; needs CORPUS_SHARE_PATH (Box Drive folder) in .env.
 param([switch]$AllowBranch)
 . "$PSScriptRoot\_common.ps1"
 
+$vectors = Test-VectorsOn
 $share = Get-DotEnvValue "CORPUS_SHARE_PATH"
 if (-not $share) { throw "CORPUS_SHARE_PATH is empty in .env. build-snapshot runs on the tech lead's machine (Box Drive)." }
 
@@ -35,8 +36,13 @@ try {
     Write-Host "3/7 Re-ingesting from the manifest..."
     Invoke-Native { & $Python -m cee.ingest.load } "Ingestion"
 
-    Write-Host "4/7 Embedding every chunk (#124; model cache: $(Set-ModelCache))..."
-    Invoke-Native { & $Python -m cee.retrieve.embed --missing } "Embedding (a chunk without a vector stops the build)"
+    if ($vectors) {
+        Write-Host "4/7 Embedding every chunk (CEE_VECTORS=on; model cache: $(Set-ModelCache))..."
+        Invoke-VectorsSql
+        Invoke-Native { & $Python -m cee.retrieve.embed --missing } "Embedding (a chunk without a vector stops the build)"
+    } else {
+        Write-Host "4/7 Embedding skipped (CEE_VECTORS is off)"
+    }
 
     $name = "corpus-" + (Get-Date -Format "yyyy-MM-dd")
     if ($AllowBranch) { $name += "-test" }
@@ -50,8 +56,12 @@ try {
     New-Item -ItemType Directory -Force $dest | Out-Null
     Copy-Item (Join-Path $RepoRoot "snapshots\$name.dump") $dest -Force
 
-    Write-Host "7/7 Embedding model in Box models/..."
-    Copy-ModelToShare $share
+    if ($vectors) {
+        Write-Host "7/7 Embedding model in Box models/..."
+        Copy-ModelToShare $share
+    } else {
+        Write-Host "7/7 Embedding model skipped (CEE_VECTORS is off)"
+    }
 
     $mb = [math]::Round((Get-Item (Join-Path $RepoRoot "snapshots\$name.dump")).Length / 1MB, 1)
     Write-Host "Done: $dest\$name.dump ($mb MB)"

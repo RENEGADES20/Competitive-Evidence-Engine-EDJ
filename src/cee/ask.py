@@ -4,6 +4,7 @@ Skeleton placeholder, owner: TL (Yueyang Du).
 """
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
@@ -16,7 +17,7 @@ from cee.answer.validate import (check_citations, coverage_note, empty_retrieval
                                  fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
-from cee.retrieve.fts import Hit, Query, resolve, search
+from cee.retrieve.fts import Hit, Query, apply_filters, resolve, search
 
 
 @dataclass
@@ -56,17 +57,26 @@ def _n(n: int, word: str) -> str:
 
 def describe_query(q: Query) -> str:
     firms = ", ".join([*q.entities, *(f"{f} (no documents)" for f in q.unmapped)]) or "none named"
-    return f"firms {firms}; mode {q.mode}"
+    text = f"firms {firms}; mode {q.mode}"
+    if q.firm_filter:
+        text += f"; firm filter {', '.join(q.firm_filter)}"
+    if q.date_range:
+        text += f"; dates {q.date_range[0]} to {q.date_range[1]}"
+    if q.keywords:
+        text += f"; keywords {', '.join(q.keywords)}"
+    return text
 
 
 def ask(question: str, provider: str | None = None, log: bool = True,
-        progress: Progress | None = None, mode: str | None = None) -> Result:
-    """mode: retrieval mode, "fts" | "hybrid" (#125); None -> RETRIEVAL_MODE (default fts)."""
+        progress: Progress | None = None, filters: dict | None = None,
+        mode: str | None = None) -> Result:
+    """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
+    mode: retrieval mode, "fts" | "hybrid" (#125); None -> RETRIEVAL_MODE (default fts)."""
     provider = provider or settings().llm_provider
     mode = (mode or settings().retrieval_mode).strip().lower()
     t = _Trace(progress)
     with t.stage("resolve", "Reading the question"):
-        query = resolve(question)
+        query = apply_filters(resolve(question), **(filters or {}))
     t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
     with t.stage("search", "Searching the corpus"):
         hits = search(query, mode=mode)
@@ -131,12 +141,15 @@ def model_name(provider: str) -> str:
 
 
 def _log(r: Result, provider: str) -> int:
+    # Dates (window, date_range) are stored as ISO text; they failed the default JSON dump.
     model = model_name(provider)
     with connect() as conn:
         snap = conn.execute("SELECT obj_description('public.documents'::regclass) AS s").fetchone()["s"]
         row = conn.execute(
             """INSERT INTO query_log (question, mode, filters, chunk_ids, answer, snapshot, model)
                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING query_id""",
-            (r.query.question, r.query.mode, Jsonb({**asdict(r.query), "retrieval_mode": r.retrieval_mode}), [h.chunk_id for h in r.hits],
+            (r.query.question, r.query.mode,
+             Jsonb({**asdict(r.query), "retrieval_mode": r.retrieval_mode}, dumps=lambda o: json.dumps(o, default=str)),
+             [h.chunk_id for h in r.hits],
              Jsonb(r.answer.model_dump()), snap, model)).fetchone()
     return row["query_id"]

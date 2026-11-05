@@ -31,7 +31,7 @@ Consequences: If terms are restrictive, tier 1 stays out and trade press may be 
 metadata + excerpt + link only. No code path may depend on tier 1.
 
 ## ADR-001: Postgres full-text search first
-Status: Accepted
+Status: Accepted (vectors: optional module, off by default, see ADR-009)
 Context: The brief says prove the need before adding semantic search. Most questions name
 firms, metrics and terms that FTS handles well with a synonym list.
 Decision: Phase 1 uses Postgres `tsvector` + synonyms only. `chunks.embedding` exists but
@@ -144,3 +144,26 @@ Consequences: No ingestion waits on terms. The design no longer has to clear the
 tiers 2-5 alone. Unchanged: raw documents and dumps never go into this public repository
 (Box only), every document has a manifest row, and every citation shows its tier label.
 
+## ADR-009: Core retrieval stays extension-free and model-free; vectors are optional
+Status: Accepted (tech lead decision 2026-10-30, #144)
+Context: #123/#124 made pgvector, an embedding model and its runtime part of every install:
+`db/upgrade.sql` created the `vector` extension and `chunks.embedding` on every new volume and
+restore, the snapshot build had to embed every chunk, `requirements.txt` required fastembed and
+onnxruntime, and the model downloaded itself when the cache was empty. The sponsor asked that
+the core prototype run on plain PostgreSQL with no extension, no embedding model and no model
+download at runtime. Vector search may exist, but only as something that can be left out.
+Decision: The core (schema, snapshot build, app, eval in `fts` mode) needs none of the vector
+work. Vectors are an optional module, off by default, switched on with `CEE_VECTORS=on`:
+- core SQL (`db/schema.sql`, `db/upgrade.sql`) has no extension and no vector type; the
+  module's SQL is `db/optional/vectors.sql` (pgvector + table `chunk_embeddings`), applied only
+  when on, never by the Docker init mount;
+- `fastembed`/`onnxruntime` live in `requirements-vectors.txt` and the `[vectors]` extra; CI
+  installs `requirements.txt` only;
+- the model loads from the cache only; it is downloaded only by the explicit
+  `python -m cee.retrieve.embed --fetch`;
+- hybrid retrieval (#125) reads `chunk_embeddings` and stays behind `CEE_VECTORS`.
+Consequences: A teammate with plain Postgres and no network for models can build, run and
+evaluate the prototype. Turning vectors on is a documented set of steps (docs/RUN.md). The
+database image keeps pgvector so switching on needs no new image. Snapshots built with vectors
+off restore on plain Postgres; older snapshots still carry `chunks.embedding`, which the core
+ignores and `vectors.sql` moves into `chunk_embeddings`.

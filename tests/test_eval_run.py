@@ -64,6 +64,13 @@ def test_forbidden_other_firm_and_merrill_outside_gwim():
     assert er.forbidden(query([], mode="theme"), hits, SUBS) == []
 
 
+def test_forbidden_allows_research_only_with_a_named_theme():
+    # #116: tier 5 research (no firm) belongs to entity+theme; another firm still leaks
+    hits = [hit("r", None, "research"), hit("x", "RJF", "10-K")]
+    assert er.forbidden(query(["EDJ"], mode="entity+theme"), hits, SUBS) == ["x"]
+    assert er.forbidden(query(["EDJ"]), hits, SUBS) == ["r", "x"]
+
+
 def test_status_rules():
     corpus = {("MS", "10-K"), ("MS", "supplement")}
     two = q("Q1", ["MS:10-K", "MS:supplement", "MS:trade"])

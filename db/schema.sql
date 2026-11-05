@@ -1,8 +1,9 @@
 -- Schema for the Competitive Evidence Engine. Design notes: docs/ARCHITECTURE.md.
 -- Applied automatically on the first start of an empty Docker volume.
 -- Differences from the ARCHITECTURE.md draft:
---   * chunks.embedding (pgvector, 384 dims) is added by db/upgrade.sql, which also runs on
---     every restore so snapshots built before #123 gain the column. NULL until #124 fills it.
+--   * No vector column and no extension (ADR-009): the core runs on plain PostgreSQL.
+--     Vectors are an optional module, off by default: db/optional/vectors.sql (CEE_VECTORS=on)
+--     adds the separate table chunk_embeddings.
 --   * chunks.prefix holds the context prefix; chunks.text holds only the source text,
 --     so the source viewer and the number check see the original words.
 
