@@ -10,6 +10,7 @@ from cee.app import components as ui
 from cee.answer.validate import source_label
 from cee.ask import STAGES, Result, ask
 from cee.config import entities_config, settings
+from cee.feedback import HELPFUL, NOT_HELPFUL, save_feedback
 
 BEHAVIOR_TEXT = {
     "answer": "Answer",
@@ -110,12 +111,20 @@ def render() -> None:
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
                                          ("FIRMS", str(s["firms"]))])
 
-    if not asked or not question.strip():
+    if asked and question.strip():
+        r = ask_with_trace(question, filters)
+        # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.
+        st.session_state["last_answer"] = (r, filters) if r else None
+        if r is None:
+            return
+    last = st.session_state.get("last_answer")
+    if not last:
         ui.empty_state("No question asked yet. Answers appear here, with a citation for every claim.")
         return
-    r = ask_with_trace(question, filters)
-    if r is None:
-        return
+    show_answer(*last)
+
+
+def show_answer(r: Result, filters: dict) -> None:
     a = r.answer
     by_id = {h.chunk_id: h for h in r.hits}
 
@@ -143,9 +152,26 @@ def render() -> None:
         ui.coverage_box(a.coverage_note)
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
                 f'filters: {escape(filters_text(filters))} | {len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
-    with ui.placeholder("feedback", 62, "Feedback on this answer"):
-        c1, c2, c3 = st.columns([1, 1, 4])
-        c1.button("Helpful", disabled=True, key="fb_up")
-        c2.button("Not helpful", disabled=True, key="fb_down")
-        c3.text_input("Comment", disabled=True, key="fb_comment", label_visibility="collapsed",
-                      placeholder="Comment")
+    feedback_form(r.query_id)
+
+
+RATINGS = {"Helpful": HELPFUL, "Not helpful": NOT_HELPFUL}
+
+
+def feedback_form(query_id: int | None) -> None:
+    """Rating + optional comment, stored against the query (#62). Sending again for the same
+    query replaces the earlier feedback (src/cee/feedback.py)."""
+    if query_id is None:
+        return
+    with st.form(key=f"feedback-{query_id}", border=True):
+        st.markdown("**Feedback on this answer**")
+        rating = st.radio("Rating", list(RATINGS), index=None, horizontal=True)
+        comment = st.text_area("Comment (optional)", placeholder="What was wrong or missing?", height=80)
+        sent = st.form_submit_button("Send feedback")
+    if sent:
+        if rating is None:
+            st.warning("Pick Helpful or Not helpful first.")
+        else:
+            how = save_feedback(query_id, RATINGS[rating], comment)
+            st.success(f"Feedback {how} for query #{query_id}"
+                       + (" (replaces the earlier one)." if how == "updated" else "."))
