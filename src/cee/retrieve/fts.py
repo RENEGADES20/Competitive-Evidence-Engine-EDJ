@@ -23,7 +23,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
-from cee.config import entities_config, settings
+from cee.config import entities_config, settings, vectors_enabled
 from cee.db import connect
 from cee.ingest.topics import load_topics, tag_text
 
@@ -393,12 +393,24 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
 MODES = ("fts", "hybrid")
 
 
+class HybridUnavailable(RuntimeError):
+    """Hybrid mode asked for while the optional vectors module is off (ADR-009)."""
+
+
+HYBRID_NEEDS_VECTORS = (
+    "Hybrid retrieval needs the optional vectors module: set CEE_VECTORS=on, install "
+    "requirements-vectors.txt and fill the vectors (docs/RUN.md, 'Hybrid retrieval'), or use "
+    "RETRIEVAL_MODE=fts.")
+
+
 def search(q: Query, k: int = K, mode: str | None = None) -> list[Hit]:
     """Retrieve for one request. mode: "fts" | "hybrid"; None -> RETRIEVAL_MODE (default fts)."""
     mode = (mode or settings().retrieval_mode).strip().lower()
     if mode == "fts":
         return fts_search(q, k)
     if mode == "hybrid":
+        if not vectors_enabled():  # checked before the import: vectors off never loads hybrid
+            raise HybridUnavailable(HYBRID_NEEDS_VECTORS)
         from cee.retrieve import hybrid  # imported late: fts mode never loads a model
         return hybrid.search(q, k)
     raise ValueError(f"unknown retrieval mode {mode!r}; use one of {', '.join(MODES)}")

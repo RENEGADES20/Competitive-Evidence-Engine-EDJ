@@ -234,6 +234,7 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
     return {"id": q["id"], "text": q["text"], "use_case": q.get("use_case"), "tier": q.get("tier"),
             "trap": q.get("trap", False), "expected_behavior": q.get("expected_behavior"), "entities": query.entities,
             "unmapped": query.unmapped, "mode": query.mode, "chunk_ids": [h.chunk_id for h in hits],
+            "ranks": [None if getattr(h, "rank", None) is None else round(float(h.rank), 4) for h in hits],  # score per hit (fts rank or rerank sigmoid), for #126
             "patterns": rows, "available_patterns": len(avail), "hit_patterns": len(hit),
             "coverage": coverage, "forbidden": bad,
             "doc_recall": recall["doc_recall"] if recall else None,

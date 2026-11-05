@@ -473,3 +473,16 @@ Open items for teammates (listed on the issue, not required checks):
   urlopen under the same block -> "network blocked"; step 9 no-cache PowerShell and bash -> reached the
   reranker, `exit 1` (old download fallback's ValueError; planned code: `RerankerNotCached`),
   `False`, temp folder removed. Read-only runs: no code or data changed.
+- 2026-11-05 16:29 - **implementation (revision 2).** Step 1: `p125r-fts-main` on `main` 9dc4c9b (worktree,
+  core venv, `cee.__file__` = wt-125-main\src): PASS 27 / FAIL 3 (Q15, Q19, Q29), docs 0.796,
+  passages 0.347, refusal gap 4/5; `pytest -q` on main: **276 passed, 1 skipped** (the floor).
+  Step 2: merge 3af5960 (two parents; conflicts `ask.py`, `fts.py` docstring, `embed.py` = main's;
+  `load_cached` + its 2 tests dropped; ADR-008 wording removed). Step 3: backup lists (8 TABLE DATA);
+  `CEE_VECTORS=on embed --missing` -> `0 embedded, 0 still missing (26 s)`; `chunk_embeddings` 17183,
+  `chunks.embedding` gone, `chunk_embeddings_hnsw_idx` present. Step 4: `p125r-fts-after` (core
+  venv, vectors off, no fastembed installed): identical chunk_ids on 29/30, only Q29 differs; status
+  change only Q29 FAIL -> PASS; PASS 28 / FAIL 2 (Q15, Q19), docs 0.796, passages 0.402, refusal
+  gap 5/5, all keyed 10/10, median search 0.40 s. Step 5: hybrid rewritten per Design, tests;
+  pytest core venv 305 passed / 2 skipped (real-model tests), vectors venv 307 passed. EXPLAIN of the
+  vector leg: Q29 = seq scan of chunks + pkey lookups in `chunk_embeddings`, WindowAgg sort; Q16 =
+  seq scan of `chunk_embeddings`, WindowAgg sort. No HNSW index scan: exact in both shapes.

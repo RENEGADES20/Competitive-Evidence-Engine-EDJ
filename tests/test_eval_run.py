@@ -286,3 +286,19 @@ def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
     assert all(isinstance(q["search_s"], float) for q in report["questions"])
     assert report["summary"]["median_search_s"] is not None
     assert "retrieval hybrid | median search" in (tmp_path / "report.md").read_text(encoding="utf-8")
+
+
+def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
+    import json
+    from cee.retrieve import fts
+
+    h = fts.Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
+                source_tier=1, published_at="2026-01-01", period_end=None, section=None, page=None,
+                rank=0.123456, text="x")
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
+    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: [h])
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert report["questions"][0]["ranks"] == [0.1235]

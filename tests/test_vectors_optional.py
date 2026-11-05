@@ -49,6 +49,7 @@ def test_core_modules_do_not_import_fastembed():
         "import cee.retrieve.fts, cee.ask, cee.app.components\n"
         "from cee.app.views import ask_page, coverage_page, design_page, source_page\n"
         "import cee.retrieve.embed\n"  # the module itself imports fastembed only when used
+        "import cee.retrieve.hybrid\n"  # #125 (exp/hybrid): models load only when a search runs
         "print('ok')\n"
     )
     r = subprocess.run([sys.executable, "-c", code], cwd=REPO, capture_output=True, text=True,
