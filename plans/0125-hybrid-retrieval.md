@@ -149,7 +149,8 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
   The `RerankerNotCached` message reads: `Reranker <name> is not in <folder> (FASTEMBED_CACHE_PATH).
   It is never downloaded by itself. Get it once with `python -m cee.retrieve.hybrid --fetch`, or copy
   the models/ folder from the shared corpus folder into that folder (docs/RUN.md).` The check looks
-  for `<folder>/<model folder>/snapshots/*/onnx/model.onnx` and creates no folder.
+  for `<folder>/<model folder>/snapshots/*/onnx/model.onnx` and creates no model folder
+  (fastembed may still create `.locks` or `CACHEDIR.TAG`; only the model subfolder counts).
 - **`hybrid.search(q, k)`**:
   1. Gap path unchanged: unmapped firms only -> `[]`; firm filter leaves no named firm -> `[]`
      (as `main`'s fts). No model load, no SQL.
@@ -259,24 +260,33 @@ pip install is planned (all models cached, both venvs exist). `.cache/`, `.eval-
    vectors venv. Offline reranker check (Acceptance, exact commands there). **Reranker never
    fetched by itself**: a new folder holding **only the embedding model** (so `--check` passes the
    embedding load and reaches the reranker), a dead HuggingFace endpoint, vectors venv:
-   ```powershell
-   $d = "D:\ALLPROJECTS\EDJ\cache\tmp\rerank-nocache-125"
-   New-Item -ItemType Directory $d | Out-Null
-   Copy-Item -Recurse "D:\ALLPROJECTS\EDJ\cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q" $d
-   $env:FASTEMBED_CACHE_PATH = $d; $env:HF_ENDPOINT = "http://127.0.0.1:9"
-   .\.venv\Scripts\python.exe -m cee.retrieve.hybrid --check; "exit $LASTEXITCODE"
-   Test-Path "$d\models--Xenova--ms-marco-MiniLM-L-12-v2"
-   ```
-   ```bash
-   d=/d/ALLPROJECTS/EDJ/cache/tmp/rerank-nocache-125
-   mkdir "$d" && cp -r /d/ALLPROJECTS/EDJ/cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q "$d"/
-   FASTEMBED_CACHE_PATH="$d" HF_ENDPOINT=http://127.0.0.1:9 .venv/Scripts/python.exe -m cee.retrieve.hybrid --check; echo "exit $?"
-   test -e "$d/models--Xenova--ms-marco-MiniLM-L-12-v2" && echo True || echo False
-   ```
+   Run from the repo root in a fresh shell (blocks start at column 0 so they paste as written):
+```powershell
+$env:TMP = "D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP = $env:TMP; $env:PYTHONPATH = "D:\ALLPROJECTS\EDJ\repo\src"
+$d = "D:\ALLPROJECTS\EDJ\cache\tmp\rerank-nocache-125"
+New-Item -ItemType Directory $d | Out-Null
+Copy-Item -Recurse "D:\ALLPROJECTS\EDJ\cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q" $d
+$env:FASTEMBED_CACHE_PATH = $d; $env:HF_ENDPOINT = "http://127.0.0.1:9"
+.\.venv\Scripts\python.exe -m cee.retrieve.hybrid --check; "exit $LASTEXITCODE"
+Test-Path "$d\models--Xenova--ms-marco-MiniLM-L-12-v2"
+Remove-Item -Recurse -Force $d
+```
+```bash
+export TMP='D:\ALLPROJECTS\EDJ\cache\tmp' TEMP='D:\ALLPROJECTS\EDJ\cache\tmp' PYTHONPATH='D:\ALLPROJECTS\EDJ\repo\src'
+d=/d/ALLPROJECTS/EDJ/cache/tmp/rerank-nocache-125
+mkdir "$d" && cp -r /d/ALLPROJECTS/EDJ/cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q "$d"/
+FASTEMBED_CACHE_PATH="$d" HF_ENDPOINT=http://127.0.0.1:9 .venv/Scripts/python.exe -m cee.retrieve.hybrid --check; echo "exit $?"
+test -e "$d/models--Xenova--ms-marco-MiniLM-L-12-v2" && echo True || echo False
+rm -rf "$d"
+```
    Expected: stderr `ERROR: Reranker Xenova/ms-marco-MiniLM-L-12-v2 is not in <d> (FASTEMBED_CACHE_PATH).
    ... python -m cee.retrieve.hybrid --fetch ...`, `exit 1`, no connection error (no download was
    tried), and `False`: the subfolder `models--Xenova--ms-marco-MiniLM-L-12-v2` does not appear in
-   `<d>`. Console output saved in the Progress log; `<d>` deleted afterwards (plain folder, no links).
+   `<d>` (the last block line deletes `<d>`, a plain folder with no links). Console output saved in
+   the Progress log. Dry run 2026-11-05 on the branch's current code (1e43332, still with the old
+   download fallback): both forms ran as written, reached the reranker (the embedding load
+   passed), ended `exit 1` (a `ValueError` traceback from the refused download; the planned code
+   gives the one-line `RerankerNotCached` instead) and printed `False`.
 10. `/finish-task`: PR **base `exp/hybrid`**, both eval tables, the four-question diagnosis, timings,
     reranker choice, `0 real calls`, S1 (and C1 FYI) review requested. Body says "Part of #125"
     until S1 has reviewed (a merge into a non-default branch does not close an issue anyway; the
@@ -324,7 +334,7 @@ Correctness gates (must hold):
       fts eval (step 4), pytest and verify-cee fts run in the core venv, which has no fastembed.
 - [ ] **Hybrid refuses cleanly**: vectors off -> `HybridUnavailable`; no `chunk_embeddings` table
       or a chunk without a row -> `MissingVectors`; reranker not cached -> `RerankerNotCached`
-      naming `--fetch`, no download, no folder created (unit with fakes: the fake `TextCrossEncoder`
+      naming `--fetch`, no download, no model folder created (unit with fakes: the fake `TextCrossEncoder`
       is never called and a cache path that does not exist stays absent; plus the step 9 check:
       exit 1, `RerankerNotCached` message, no `models--Xenova--ms-marco-MiniLM-L-12-v2` subfolder).
 - [ ] **Gap path**: unmapped-only question and an empty firm-filter intersection return `[]`
@@ -336,29 +346,41 @@ Correctness gates (must hold):
       `ranks`. `pytest -q` all pass in both venvs, none fewer than `main`'s count from step 1.
 - [ ] `python scripts/verify_cee.py run` -> VERIFY PASS, all features, fts (vectors off, core venv)
       and hybrid (`CEE_VECTORS=on`); each `summary.json` shows `RETRIEVAL_MODE` and `CEE_VECTORS`.
-- [ ] Offline reranker: `--check` with every socket blocked in-process (`HF_HUB_OFFLINE`,
+- [ ] Offline reranker: `--check` with the network blocked in-process (`HF_HUB_OFFLINE`,
       `TRANSFORMERS_OFFLINE` unset; real cache `D:\ALLPROJECTS\EDJ\cache\fastembed`; vectors venv,
-      `PYTHONPATH=<repo>\src`) -> `embedding 384 dims; reranker Xenova/ms-marco-MiniLM-L-12-v2 scores
-      [...]`, exit 0:
-      ```powershell
-      @'
-      import runpy, socket, sys
-      def blocked(*a, **k): raise OSError("network blocked for this check")
-      socket.socket = blocked; socket.create_connection = blocked; socket.getaddrinfo = blocked
-      sys.argv = ["cee.retrieve.hybrid", "--check"]
-      runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
-      '@ | .\.venv\Scripts\python.exe -; "exit $LASTEXITCODE"
-      ```
-      ```bash
-      .venv/Scripts/python.exe - <<'EOF'; echo "exit $?"
-      import runpy, socket, sys
-      def blocked(*a, **k): raise OSError("network blocked for this check")
-      socket.socket = blocked; socket.create_connection = blocked; socket.getaddrinfo = blocked
-      sys.argv = ["cee.retrieve.hybrid", "--check"]
-      runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
-      EOF
-      ```
-      (On a Mac the interpreter is `.venv/bin/python`.)
+      `PYTHONPATH=<repo>\src`). `ssl` is imported first and only `socket.socket.connect`,
+      `socket.create_connection` and `socket.getaddrinfo` are replaced (replacing the class
+      `socket.socket` breaks `ssl`'s `class SSLSocket(socket)` when fastembed imports it). Expected:
+      `embedding 384 dims; reranker Xenova/ms-marco-MiniLM-L-12-v2 scores [...] (... s)` and
+      `exit 0`; the PR's Progress log shows this output. From the repo root, blocks at column 0:
+```powershell
+$env:FASTEMBED_CACHE_PATH = "D:\ALLPROJECTS\EDJ\cache\fastembed"; $env:TMP = "D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP = $env:TMP; $env:PYTHONPATH = "D:\ALLPROJECTS\EDJ\repo\src"
+@'
+import ssl, socket, runpy, sys
+def blocked(*a, **k): raise OSError("network blocked for this check")
+socket.socket.connect = blocked
+socket.create_connection = blocked
+socket.getaddrinfo = blocked
+sys.argv = ["cee.retrieve.hybrid", "--check"]
+runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
+'@ | .\.venv\Scripts\python.exe -; "exit $LASTEXITCODE"
+```
+```bash
+export FASTEMBED_CACHE_PATH='D:\ALLPROJECTS\EDJ\cache\fastembed' TMP='D:\ALLPROJECTS\EDJ\cache\tmp' TEMP='D:\ALLPROJECTS\EDJ\cache\tmp' PYTHONPATH='D:\ALLPROJECTS\EDJ\repo\src'
+.venv/Scripts/python.exe - <<'EOF'; echo "exit $?"
+import ssl, socket, runpy, sys
+def blocked(*a, **k): raise OSError("network blocked for this check")
+socket.socket.connect = blocked
+socket.create_connection = blocked
+socket.getaddrinfo = blocked
+sys.argv = ["cee.retrieve.hybrid", "--check"]
+runpy.run_module("cee.retrieve.hybrid", run_name="__main__")
+EOF
+```
+      (Mac: interpreter `.venv/bin/python`, paths under the repo.) Dry run 2026-11-05 on the
+      branch's current code (1e43332): both forms printed `embedding 384 dims; reranker
+      Xenova/ms-marco-MiniLM-L-12-v2 scores [-1.125, -1.413]` and `exit 0`; the same block with a
+      `urlopen("https://huggingface.co")` gave `<urlopen error network blocked for this check>`.
 - [ ] Every new RUN.md PowerShell block has a bash block.
 - [ ] S1 reviews the `fts.py` entry point, `synonym_only` and the spec section ("Part of #125"
       until then). Paid API calls: 0.
@@ -441,3 +463,13 @@ Open items for teammates (listed on the issue, not required checks):
   Q29 on `main` is outside #125 (TL); PR body states the fts-only regression gate, the known Q25
   refusal drop (4/5 vs 5/5) and that `progress.yml` fires only on `main`. Decision posted on #125;
   #126 and #127 bodies updated for `exp/hybrid`. Still no code change and no merge.
+- 2026-11-05 16:19 - plan review round 4 (4e3e276): changes requested. Blocking 1 fixed: the offline-reranker
+  snippet imports `ssl` first and blocks only `socket.socket.connect`, `socket.create_connection`
+  and `socket.getaddrinfo` (replacing the class broke `ssl`). The PR's Progress log will show its
+  output. Non-blocking: "creates no model folder" (`.locks`/`CACHEDIR.TAG` may appear). All four
+  command blocks in Steps/Acceptance now start at column 0 and set their own env. Each block was
+  pulled from this file and run as written on 1e43332: offline PowerShell and bash ->
+  `embedding 384 dims; reranker Xenova/ms-marco-MiniLM-L-12-v2 scores [-1.125, -1.413]`, `exit 0`;
+  urlopen under the same block -> "network blocked"; step 9 no-cache PowerShell and bash -> reached the
+  reranker, `exit 1` (old download fallback's ValueError; planned code: `RerankerNotCached`),
+  `False`, temp folder removed. Read-only runs: no code or data changed.
