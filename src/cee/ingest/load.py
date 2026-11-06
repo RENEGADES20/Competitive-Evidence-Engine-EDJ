@@ -139,8 +139,11 @@ def load_all(only: str | None = None, use_cache: bool = True) -> dict[str, int]:
         for row, path in resolved:
             counts[row["doc_id"]] = load_document(conn, row, path, use_cache)
             if row["source_tier"] == "5":  # thematic research is indexed by topic (C3, #81)
-                n, fb = tag_document(conn, row["doc_id"])
-                print(f"  {row['doc_id']}: topics tagged on {n} chunks ({fb} by fallback)", flush=True)
+                n, fb, untagged = tag_document(conn, row["doc_id"])
+                print(f"  {row['doc_id']}: topics tagged on {n - untagged} of {n} chunks ({fb} by fallback)", flush=True)
+                if untagged:
+                    print(f"  WARNING {row['doc_id']}: no chunk matched any topic keyword; {untagged} chunks "
+                          "have no topic (check config/topics.yaml or drop the document)", flush=True)
     return counts
 
 

@@ -28,6 +28,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | 8 quarterly earnings presentations (BAC, SCHW Q1-Q3 2026; RJF two quarters) stored with page numbers (#78) | Investor-day decks and Merrill press (MER) still open; decks rank below 10-Ks (#59) | #48 investor-day decks; #38 releases via EDGAR |
 | 2026-10-18 | C2 #38: 16 quarterly earnings releases (8-K EX-99.1; MS, SCHW, BAC, RJF x 4 quarters) in the manifest via `cee.ingest.releases` (#75) | Q26 still ranks the in-window RJF release 106th until the S1 time window and #59 quotas land | TL moves the 16 raw files into Box `raw/` and rebuilds the snapshot; unblocks #44 and #49 |
 | 2026-10-29 | 21 earnings-call transcripts (BAC/MS/SCHW 2024Q4-2025Q4, RJF 2024Q3-2025Q4) from MarketBeat/Quartr and Roic.ai: eight quarters per firm (#108) | BAC-TR-2025Q3#24 mis-tagged GWIM by the #106 rule (on #95); some mis-transcribed figures in the free transcripts | #107 chunk by speaker turn (new files have no Q&A heading) |
+| 2026-11-06 | #48: latest investor-day/strategy decks for MS, SCHW, BAC (GWIM), RJF (2025; 2026 has no PDF) with page numbers, plus the one Merrill release in the last 90 days as entity MER; Q8, Q27, Q4 retrieval checks now pass (#146) | Blockers: none | Next: C1 segment tags for the BAC GWIM deck (128/134 chunks untagged); S1 quota review (MER press takes its own turn; 7 rows regressed); pdf.py cross-page blocks (~4%) |
+| 2026-11-06 | C2 date check (64 rows, 0 mismatches, report docs/C2_DATES.md) + 8 undated RJ/Merrill recruiting pages as date_basis=retrieved with "page content as of" labels (#151) | 8 raw files to Box before merge; S1 firm-turn issue (MER own docs) lowers coverage on Q10/Q11/Q22/Q23 | TL snapshot rebuild after merge; S2 payout wording |
 
 ### C3
 
@@ -36,6 +38,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | Topics taxonomy v0 (#6): 19 topics covering Q16-Q21 with definitions, keywords and tagging rules in config/topics.yaml (#65) | C1 review pending | C3 builds keyword tagging (tag_topics) and starts thematic ingestion |
 | 2026-10-21 | #5 tier 5 source matrix: 39 thematic sources (research/survey/regulatory), all 8 themes with >= 2 publishers, Cerulli via free white papers (no WashU subscription) (#92) | Blockers: none | Next: #81 ingest institutional research from these rows |
 | 2026-10-27 | #81 tier 5 corpus: 22 research docs from 16 publishers (McKinsey, GSAM, FINRA, BofA x2+), topic tagger on every tier 5 chunk (65% fallback), publisher column in manifest (#93) | Blockers: Q19 excludes THEME docs in entity mode (S1); raw files to upload to Box | Next: S1 issue for theme docs in entity questions; TL decision on fallback vs general topic |
+| 2026-11-06 | #81 closed: second FINRA report, theme gaps filled (advisor_selection, mass_affluent), Fidelity date fixed, publisher FINRA Foundation; 25 tier 5 docs from 17 publishers (#152) | Blockers: none (general topic waits for TL) | Next: general-topic PR if approved; C2's #92 test suggestions |
 
 ### S1
 
@@ -56,6 +59,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Prompt v0 and standard gap/boundary wording (#10): `src/cee/answer/prompt.py`, wording table in specs/answer-citations.md (Q12, Q19, Q28-Q30) (#27) | Real-model check of Q28-Q30 waits for BAC/MS documents in the corpus | Code-inserted caveats, boundary sentence and number check (S2, W3+) |
 | 2026-10-28 | Coverage note on every answer (#40): `coverage_note()` names firms, document types and periods of the retrieved passages, shown always-visible on the Ask page and checked by verify-cee ask-answer (#112) | - | Number check (#52), registry-based suggested sources (#51) |
 | 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
+| 2026-11-06 | Real-model run of Q19/Q24/Q25/Q28/Q29 on prompt v1 (#61): 5 calls (claude-sonnet-5-5), all expected behaviors, no normative sentence; number-check false flags fixed in #154 (#157) | Q29 misdated quarter (#155); Q28 passes_if outdated (#156, C1); Q19 lacks competitor moves (S1 retrieval) | #155 date check |
+| 2026-11-06 | Number check (#52): every figure in a claim is matched against its cited chunks (0.1%, or rounded with a decimal; table unit headers), else flagged `number_not_found`; rule in specs/answer-citations.md; mock clips at word boundaries (#154) | Cannot catch a figure from the wrong table column (MS-SUPP-2026Q3 p.8); small one-decimal figures pass loosely | #61 real-model runs will show how often real answers get flagged |
 
 ### U1
 
@@ -67,6 +72,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | U1: Coverage page shows documents per firm and document type with counts, date ranges and thin/empty cells (#41) (#110) | none | #53 source page in context; #63 filters |
 | 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
 | 2026-11-04 | Ask page filters (firm, date range, keywords) as SQL WHERE clauses; query_log date fix (#149) | - | #62 feedback |
+| 2026-11-06 | Feedback on answers (Helpful / Not helpful + comment) stored per query in query_feedback; resend replaces (#153) | - | #119 plain UI pass |
 
 ### TL
 
@@ -104,6 +110,10 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | #139 /tl-review: planned real calls (<=10) pass review as the final acceptance step, the reviewer never pays, verdicts say "Reviewed <sha>", one Check rule; RUN.md stray line removed (#141) | none | next TL issue |
 | 2026-10-30 | Answer tolerates list fields sent as "" or JSON strings (Q20 crash in the 2026-10-30 real run) (#143) | none | Q10/Q23 gap-instead-of-answer and Q15/Q19/Q29 retrieval findings from the same run |
 | 2026-10-31 | #144: vectors are an optional module, off by default (ADR-009); core runs on plain Postgres with no model or download; fts results unchanged 30/30 (#145) | Blockers: none | Next: #125 adopts `chunk_embeddings` behind `CEE_VECTORS`; full `.sh` run on the next macOS snapshot build |
+| 2026-11-06 | TL: README Status brought up to date (121 docs on main, snapshot corpus-2026-10-29 111 docs / 17,183 passages, retrieval check 27/30 with Q15/Q19/Q29 failing, kept apart from the human-scored Gate 4 >= 21/30; full-text search default, hybrid optional on exp/hybrid) (#162) (#163) | none | refresh after the 11/11 freeze snapshot (#120) |
+| 2026-11-06 | TL #127: ADR-010 records the hybrid comparison (#126): fts at main's constants 28/30, hybrid-norerank 28/30, hybrid+MiniLM 28/30 (5.1 s/question, reranker below RRF order at 12/12 grid points); main stays fts-only, hybrid code stays on exp/hybrid (#161) | ADR-009 vectors module on main: open TL/sponsor decision | S1 review of specs/retrieval.md lines |
+| 2026-11-06 | #159 Q29 on main: "pay" searched only through its synonyms (verbatim port of #125's `synonym_only`); Q29 FAIL -> PASS, refusal gap 4/5 -> 5/5, the other 29 questions return identical chunks (#164) | S1 review | Gates 3/4 (#120, #121) score Q29 on main |
+| 2026-11-06 | CI fix: converter header test skips without bs4 (main pytest red after #151) (#165) | - | - |
 
 ## Weekly score (from W6)
 

@@ -20,8 +20,10 @@ def build_user_message(question: str, hits: list[Hit]) -> str:
     parts = [f"Question: {question}", "", "Evidence chunks:"]
     for h in hits:
         seg = f", segment {h.segment}" if h.segment else ""
-        where = (f"{h.entity_id or 'Research'} {h.doc_type}{seg}, period {h.period_end or 'n/a'}, "
-                 f"published {h.published_at}, {h.section or ''}")
+        dated = (f"period n/a, page content as of {h.published_at} (undated web page)"  # ADR-007 T-09
+                 if getattr(h, "date_basis", "source") == "retrieved"
+                 else f"period {h.period_end or 'n/a'}, published {h.published_at}")
+        where = f"{h.entity_id or 'Research'} {h.doc_type}{seg}, {dated}, {h.section or ''}"
         if h.page:
             where += f", p.{h.page}"
         parts.append(f'<chunk id="{h.chunk_id}" source="{where}">\n{h.text}\n</chunk>')
@@ -39,9 +41,14 @@ def generate(question: str, hits: list[Hit], provider: str | None = None) -> Ans
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
+def _clip(text: str, n: int = 300) -> str:
+    """Cut at a word boundary, so a figure or its unit is never cut in half (#52)."""
+    return text if len(text) <= n else text[:n].rsplit(" ", 1)[0]
+
+
 def _mock(hits: list[Hit]) -> Answer:
     time.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80)
-    claims = [{"text": " ".join(h.text.split())[:300], "chunk_ids": [h.chunk_id]} for h in hits[:3]]
+    claims = [{"text": _clip(" ".join(h.text.split())), "chunk_ids": [h.chunk_id]} for h in hits[:3]]
     return Answer(answerable=True, behavior="answer", claims=claims, llm_called=False)
 
 

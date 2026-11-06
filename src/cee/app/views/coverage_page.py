@@ -43,6 +43,8 @@ def cell_state(n: int, cadence: str | None = None) -> str:
 def cell_text(n: int, first, last) -> str:
     if n == 0:
         return "0 docs"
+    if first is None:  # only undated pages (date_basis = retrieved): counted, not dated
+        return f"{n} doc{'' if n == 1 else 's'}\nundated pages"
     span = str(first) if first == last else f"{first}\nto {last}"
     return f"{n} doc{'' if n == 1 else 's'}\n{span}"
 
@@ -77,8 +79,11 @@ def build_grid(docs: list[dict], expected: list[dict], firms: list[tuple[str, st
 
 def load(entities: list[dict]) -> tuple[list[dict], list[dict], dict[str, int]]:
     with connect() as c:
-        docs = c.execute("SELECT entity_id, doc_type, count(*) AS n, min(published_at) AS first, "
-                         "max(published_at) AS last FROM documents GROUP BY 1, 2").fetchall()
+        # undated pages (ADR-007 T-09) count as documents but do not stretch the published span
+        docs = c.execute("SELECT entity_id, doc_type, count(*) AS n, "
+                         "min(published_at) FILTER (WHERE date_basis = 'source') AS first, "
+                         "max(published_at) FILTER (WHERE date_basis = 'source') AS last "
+                         "FROM documents GROUP BY 1, 2").fetchall()
         expected = c.execute("SELECT DISTINCT entity_id, doc_type, expected_cadence FROM source_registry").fetchall()
         # the same rule as the retrieval filter (fts.entity_filter): parent chunks tagged with the segment
         segment_chunks = {
@@ -101,4 +106,4 @@ def render() -> None:
     columns, rows = build_grid(docs, expected, rows_from_config(entities), segment_chunks)
     ui.coverage_grid(columns, rows)
     st.caption("Themes (tier 5 research) are not shown yet; they come with topic tags (#81). "
-               "Dates are published_at, which for some sources is the retrieval date.")
+               "Dates are published dates; undated web pages (dated by their stored copy) are counted, not dated.")

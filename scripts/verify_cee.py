@@ -39,7 +39,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback"]
 
 
 # ---------- helpers ----------
@@ -227,7 +227,8 @@ class Recorder:
         return ok
 
     def unreachable(self, why: str) -> None:
-        self.status = "UNREACHABLE"
+        if self.status != "FAIL":  # a step that could not run never hides one that failed
+            self.status = "UNREACHABLE"
         self.steps.append({"feature": self.feature, "result": "UNREACHABLE", "actual": why})
         print(f"  [UNREACHABLE] {why}")
 
@@ -417,6 +418,30 @@ def check_pdf_pages(rec, page) -> None:
         rec.unreachable("no PDF chunks with a page number in the corpus")
 
 
+def check_date_label(rec, page, source_chunk: str) -> None:
+    """cite-date: an undated page (date_basis = retrieved, ADR-007 T-09) says "Page content as of",
+    never "Filed:"; a source-dated chunk still says "Filed:"."""
+    row = psql(VERIFY_DB, "SELECT c.chunk_id || '|' || d.published_at FROM chunks c JOIN documents d USING (doc_id) "
+                          "WHERE d.date_basis = 'retrieved' ORDER BY c.chunk_id LIMIT 1")
+    if not row:
+        rec.unreachable("no date_basis = 'retrieved' document in the database (cite-date)")
+        return
+    cid, published = row.split("|", 1)
+    page.goto(page.url.split("?")[0] + "?chunk=" + quote(cid))
+    wait_for_text(page, [f"Chunk: {cid}", "is not in the stored corpus"], f"the source page for {cid}")
+    body = page.locator("body").inner_text()
+    want = f"Page content as of: {published}"
+    rec.step(f"Open undated page chunk {cid} (cite-date)", f"'{want}' and no 'Filed:'",
+             want in body and "Filed:" not in body,
+             f"'{want}' {'shown' if want in body else 'missing'}, 'Filed:' {'shown' if 'Filed:' in body else 'absent'}")
+    page.goto(page.url.split("?")[0] + "?chunk=" + quote(source_chunk))
+    wait_for_text(page, [f"Chunk: {source_chunk}", "is not in the stored corpus"], f"the source page for {source_chunk}")
+    body = page.locator("body").inner_text()
+    rec.step(f"Reopen source-dated chunk {source_chunk} (cite-date)", "'Filed:' and no 'Page content as of'",
+             "Filed:" in body and "Page content as of" not in body,
+             f"'Filed:' {'shown' if 'Filed:' in body else 'missing'}")
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -447,6 +472,7 @@ def feature_open_citation(page, base, rec, ctx):
              match, f"first 80 chars {'match' if match else 'differ'}")
     check_context(rec, source, chunk_id)
     check_pdf_pages(rec, source)
+    check_date_label(rec, source, chunk_id)
     source.close()
     rec.page = page
     ctx["chunk_id"] = chunk_id
@@ -505,7 +531,8 @@ def feature_coverage(page, base, rec, ctx):
     rec.step("Open the Coverage page", "a table with firms and document types",
              "EDJ" in body and "10-K" in body,
              "table shown" if "EDJ" in body else "no table")
-    n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at), max(published_at) FROM documents "
+    n, first, last = psql(VERIFY_DB, "SELECT count(*), min(published_at) FILTER (WHERE date_basis = 'source'), "
+                                     "max(published_at) FILTER (WHERE date_basis = 'source') FROM documents "
                                      "WHERE entity_id = 'EDJ' AND doc_type = '10-K'").split("|")
     n = int(n)
     from cee.app.views.coverage_page import cell_state
@@ -576,11 +603,45 @@ def feature_filters(page, base, rec, ctx):
              not any(f in prompt for f in ("firm_filter", "date_range", "keywords")), "prompt.py checked")
 
 
+def send_feedback(page, rating: str, comment: str) -> None:
+    form = page.locator("[data-testid='stForm']")
+    form.get_by_text(rating, exact=True).click()
+    form.get_by_role("textbox", name="Comment (optional)").fill(comment)
+    form.get_by_role("button", name="Send feedback").click()
+    wait_for_text(page, ["Feedback saved for query", "Feedback updated for query"], "the feedback message")
+
+
+def feature_feedback(page, base, rec, ctx):
+    ask(page, base, ANSWERABLE_Q)
+    m = re.search(r"Query #(\d+)", page.locator("body").inner_text())
+    rec.step("Ask the EDJ advisors question", "a query number in the meta line", bool(m),
+             f"query #{m.group(1)}" if m else "no query number")
+    if not m:
+        return
+    qid = m.group(1)
+    rows = lambda: psql(VERIFY_DB, f"SELECT rating, coalesce(comment, '') FROM query_feedback WHERE query_id = {qid}").splitlines()
+    send_feedback(page, "Not helpful", "verify-cee: wrong period")
+    body = page.locator("body").inner_text()
+    rec.step("Send Not helpful with a comment", f"'Feedback saved for query #{qid}'",
+             f"Feedback saved for query #{qid}" in body, "message shown" if "Feedback saved" in body else "no message")
+    got = rows()
+    rec.step("Read back query_feedback", "one row: -1 | verify-cee: wrong period",
+             got == ["-1|verify-cee: wrong period"], f"{got}")
+    rec.step("The answer stays on the page", "claims and citations still shown after sending",
+             citation_links(page).count() > 0, f"{citation_links(page).count()} citation links")
+    send_feedback(page, "Helpful", "")
+    body = page.locator("body").inner_text()
+    rec.step("Send again: Helpful, no comment", "'Feedback updated ... replaces the earlier one'",
+             "replaces the earlier one" in body, "message shown" if "replaces the earlier one" in body else "no message")
+    got = rows()
+    rec.step("Read back query_feedback again", "still one row, now 1 with no comment", got == ["1|"], f"{got}")
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
-           "filters": feature_filters}
+           "filters": feature_filters, "feedback": feature_feedback}
 
 
 def drive(features: list[str]) -> bool:

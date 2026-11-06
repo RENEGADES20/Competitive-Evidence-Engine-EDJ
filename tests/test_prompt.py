@@ -50,3 +50,27 @@ def test_boundary_handoff_is_not_normative():
 def test_both_providers_send_the_prompt():
     assert anthropic_request("q", [])["system"].startswith(prompt.SYSTEM_PROMPT)
     assert openai_request("q", [])["messages"][0]["content"].startswith(prompt.SYSTEM_PROMPT)
+
+
+def _hit(**kw):
+    from cee.retrieve.fts import Hit
+    base = dict(chunk_id="RJF-PR-web-advisor-select#0", doc_id="RJF-PR-web-advisor-select", entity_id="RJF",
+                segment=None, doc_type="press", source_tier=3, published_at="2026-07-12", period_end=None,
+                section="Document", page=None, rank=1.0, text="x")
+    return Hit(**{**base, **kw})
+
+
+def test_user_message_dates_undated_pages_by_content_as_of():
+    # ADR-007 T-09 (#58): an undated page is not "published" on its download date
+    from cee.answer.llm import build_user_message
+
+    msg = build_user_message("q", [_hit(date_basis="retrieved")])
+    assert 'source="RJF press, period n/a, page content as of 2026-07-12 (undated web page), Document"' in msg
+    assert "published" not in msg
+
+
+def test_user_message_source_dated_unchanged():
+    from cee.answer.llm import build_user_message
+
+    msg = build_user_message("q", [_hit(doc_type="10-K", period_end="2025-12-31", section="Item 1", page=4)])
+    assert 'source="RJF 10-K, period 2025-12-31, published 2026-07-12, Item 1, p.4"' in msg

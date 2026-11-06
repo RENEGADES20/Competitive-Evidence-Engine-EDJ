@@ -72,10 +72,39 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-Week 5: the five-firm corpus (68 documents, 14,682 passages: SEC filings, earnings
-releases, decks, supplements, call transcripts), Merrill tagged through the BAC GWIM
-segment, synonym search and "the five" peer set, and an eval runner over the 30-question
-bank. Weekly progress and the X/30 score are in [docs/PROGRESS.md](docs/PROGRESS.md).
+As of 2026-11-05.
+
+**Corpus.** `main`'s manifest lists 121 documents: SEC filings, supplements, monthly
+metrics, decks, call transcripts, press releases and 22 research reports from 16
+publishers. The latest snapshot, `corpus-2026-10-29`, holds 111 documents and 17,183
+passages (documents merged after it arrive with the next snapshot). In review: #152 (three
+more research reports) and #146 (four investor-day decks, one press release). The corpus
+freezes on 2026-11-11.
+
+**Retrieval check (automated, not a gate score).** `scripts/eval_run.py` runs the 30
+questions with the mock model and checks whether search returns the expected passages
+and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-05, snapshot
+`corpus-2026-10-29`, `--as-of 2026-10-29`: 27 PASS / 3 FAIL (Q15, Q19, Q29);
+document recall 0.796 on the 9 of the 18 tier-1 questions that have an answer key; gap
+questions refused correctly 4 of 5; 0 paid calls.
+
+**Gate scores (human-scored).** A person scores each answer at acting quality (one the
+project lead would forward with his name on it), per [docs/BRIEF.md](docs/BRIEF.md).
+Gate 3, checked in week 8 at the corpus freeze (#120): any 18 of the 30 questions at
+acting quality, citations resolve. Gate 4, checked in week 11: at least 21 of 30, and the project lead used it
+unsupervised at least once. Neither is scored yet. The "PASS 7 / FAIL 21" in the 2026-10-20 log
+is the retrieval check on snapshot `corpus-2026-10-18`, not a gate score.
+
+**Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +
+embeddings, local, no external calls) is kept as an optional component on branch
+`exp/hybrid`. In a separate comparison run ([#126 report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/exp/hybrid/evals/hybrid-eval/corpus-2026-10-29/report.md),
+`exp/hybrid` code, which includes a Q29 fix not yet on `main`, so full-text search scores
+28/30 there vs. 27/30 on `main`; each mode at its default before tuning), hybrid without
+the reranker ties full-text search at 28/30; median search time: hybrid 0.363 s,
+full-text 0.342 s. The tech lead keeps it because hand-maintained synonyms scale poorly as the
+corpus grows; it will be re-evaluated on a larger corpus with new questions.
+
+The running log is in [docs/PROGRESS.md](docs/PROGRESS.md).
 
 ## Quick start (Windows PowerShell)
 
