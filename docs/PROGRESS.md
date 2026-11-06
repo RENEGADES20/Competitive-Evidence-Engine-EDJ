@@ -36,6 +36,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | Topics taxonomy v0 (#6): 19 topics covering Q16-Q21 with definitions, keywords and tagging rules in config/topics.yaml (#65) | C1 review pending | C3 builds keyword tagging (tag_topics) and starts thematic ingestion |
 | 2026-10-21 | #5 tier 5 source matrix: 39 thematic sources (research/survey/regulatory), all 8 themes with >= 2 publishers, Cerulli via free white papers (no WashU subscription) (#92) | Blockers: none | Next: #81 ingest institutional research from these rows |
 | 2026-10-27 | #81 tier 5 corpus: 22 research docs from 16 publishers (McKinsey, GSAM, FINRA, BofA x2+), topic tagger on every tier 5 chunk (65% fallback), publisher column in manifest (#93) | Blockers: Q19 excludes THEME docs in entity mode (S1); raw files to upload to Box | Next: S1 issue for theme docs in entity questions; TL decision on fallback vs general topic |
+| 2026-11-06 | #81 closed: second FINRA report, theme gaps filled (advisor_selection, mass_affluent), Fidelity date fixed, publisher FINRA Foundation; 25 tier 5 docs from 17 publishers (#152) | Blockers: none (general topic waits for TL) | Next: general-topic PR if approved; C2's #92 test suggestions |
 
 ### S1
 
