@@ -337,3 +337,15 @@ RRF; any rule added for Q29; changing the answer key; new retrieval features bey
   Non-blocking taken: pg_trgm not installed -> Python re-implementation defined and labelled;
   window cap 8 / research cap 2 unchanged + test; latency sources named (chosen fts grid point,
   hybrid confirmation runs); `p125r-hybrid` ran at 587109a, the `p126-ref-*` runs are the references.
+- 2026-11-05 18:43 - plan approved (round 2, eedec7d). **Step 1**: `pytest -q` on eedec7d (= 795056b
+  code): core venv 304 passed / 2 skipped, vectors venv 306 passed. References (vectors venv,
+  `CEE_VECTORS=on`, `cee.__file__` = repo\src): `p126-ref-fts` PASS 28 / FAIL 2, docs 0.796,
+  passages 0.402, refusal gap 5/5, median 0.35 s; `p126-ref-hybrid` PASS 27 / FAIL 3, docs 0.728,
+  passages 0.373, gap 5/5, median 8.4 s. chunk_ids vs `p125r-fts-after` and vs `p125r-hybrid`:
+  30/30 identical each (gate passed). **Steps 2-3** coded: `hybrid.py` (`rerank=False`, `gate()`,
+  per-mode `FLOOR`/`MAX_PER_DOC`/`DUP_JACCARD`), `fts.py` (mode list, dispatch, `select(dup_jaccard=)`),
+  `eval_run.py` (options, grid, `choose()`, duplicates, p90/max, CPU), `eval_compare.py`, tests,
+  docs. No-change gates: `p126-nochange-fts` (core venv, vectors off) = `p126-ref-fts` 30/30;
+  `p126-nochange-hybrid` = `p126-ref-hybrid` 30/30 (gate passed). Core venv pytest 329 passed / 2
+  skipped. First duplicate numbers (default constants): trigram pairs > 0.9: fts 1 (max 0.911),
+  hybrid 2 (max 0.938); word 5-gram: 0 in both (max 0.58 / 0.59).

@@ -20,6 +20,15 @@ entity+theme questions also get a research part with fts.theme_filter, as in fts
      ts_rank, where 0 means "no match"; on sigmoid scores it dropped most of the pool (#125 plan).
 No LLM call (ADR-003): the reranker is a local ONNX model, retrieval stays deterministic.
 
+Two modes share steps 1-4 (#126): `hybrid` orders the pool by the cross-encoder score;
+`hybrid-norerank` (search(..., rerank=False)) orders it by the RRF score and loads no reranker.
+In both, FLOOR[mode] is a relative floor on the RRF score, applied to the pool before any rerank:
+a candidate below FLOOR x its firm's best RRF score in the pool is dropped (not inside a time
+window). RRF is a ratio-like scale (0 = found by no leg; 2/(RRF_K+1) = first in both legs), so
+"share of the firm's best" means "how much the two legs agree"; the cross-encoder sigmoid is not.
+MAX_PER_DOC[mode] and DUP_JACCARD[mode] go to select() for the firm part; the window cap
+(fts.WINDOW_MAX_PER_DOC) and the research cap (fts.THEME_MAX_PER_DOC) are not per mode.
+
   python -m cee.retrieve.hybrid --fetch      download the reranker into the cache (once)
   python -m cee.retrieve.hybrid --check      load both models from the cache, score one pair
 """
@@ -44,6 +53,11 @@ THEME_RERANK_N = 20  # candidates for the research part of entity+theme question
 RERANK_FLOOR = 0.0   # sigmoid score below which a hit is a weak match (outside time windows)
 # 0 = no rerank floor: every grid value lost evidence on corpus-2026-10-29 (tier-1 passages 0.373 at 0,
 # 0.339 / 0.323 / 0.310 at 0.01 / 0.05 / 0.1; #125 plan Progress log). Tuning is #126.
+# Per mode (#126; values chosen by the selection rule in plans/0126-hybrid-eval.md, report in
+# evals/hybrid-eval/corpus-2026-10-29/report.md).
+FLOOR = {"hybrid": 0.0, "hybrid-norerank": 0.0}        # relative RRF floor on the pool
+MAX_PER_DOC = {"hybrid": 3, "hybrid-norerank": 3}      # firm part; window / research caps unchanged
+DUP_JACCARD = {"hybrid": 0.6, "hybrid-norerank": 0.6}  # word 5-gram overlap that counts as a repeat
 DEFAULT_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-12-v2"
 # Rerankers this module knows: name -> size. Cache folder: models--<org>--<name>/snapshots/*/onnx/model.onnx
 RERANKERS = {"Xenova/ms-marco-MiniLM-L-12-v2": "about 120 MB", "BAAI/bge-reranker-base": "about 1 GB"}
@@ -144,6 +158,18 @@ def take_turns(fused: Sequence[tuple[str, float]], group_of: dict[str, object], 
     return out
 
 
+def gate(ids: Sequence[str], rrf_score: dict[str, float], group_of: dict[str, object], floor: float) -> list[str]:
+    """Pool candidates whose RRF score is at least floor x the best RRF score of their firm in the
+    pool, order kept. floor 0 keeps everything. group_of maps chunk_id -> (firm, doc type)."""
+    if floor <= 0:
+        return list(ids)
+    firm = {c: (group_of.get(c) or (None,))[0] for c in ids}
+    best: dict[object, float] = {}
+    for c in ids:
+        best[firm[c]] = max(best.get(firm[c], 0.0), rrf_score[c])
+    return [c for c in ids if rrf_score[c] >= floor * best[firm[c]]]
+
+
 def apply_floor(pool: list[Hit], floor: float) -> list[Hit]:
     """Pool sorted by rerank score (best first, ties by chunk_id), weak matches dropped."""
     ranked = sorted(pool, key=lambda h: (-h.rank, h.chunk_id))
@@ -234,15 +260,17 @@ def check_vectors(conn) -> None:
 
 # --- search --------------------------------------------------------------------------------------
 
-def candidates(conn, q: Query, qvec: str, n: int, research: bool = False) -> list[str]:
-    """Both legs, RRF per firm, then (firm, document type) groups take turns into n candidates."""
+def candidates(conn, q: Query, qvec: str, n: int,
+               research: bool = False) -> tuple[list[str], dict[str, float], dict[str, object]]:
+    """Both legs, RRF per firm, then (firm, document type) groups take turns into n candidates.
+    Returns (candidates, RRF score per chunk, (firm, doc type) per chunk)."""
     sql, params = keyword_leg_sql(conn, q, research)
     kw = conn.execute(sql, params).fetchall()
     sql, params = vector_leg_sql(q, qvec, research)
     vec = conn.execute(sql, params).fetchall()
     group_of = {r["chunk_id"]: (r["entity_id"], r["doc_type"]) for r in [*kw, *vec]}
     fused = rrf([*_per_firm(kw), *_per_firm(vec)])
-    return take_turns(fused, group_of, n)
+    return take_turns(fused, group_of, n), dict(fused), group_of
 
 
 def _per_firm(rows: list[dict]) -> list[list[str]]:
@@ -254,7 +282,10 @@ def _per_firm(rows: list[dict]) -> list[list[str]]:
     return list(lists.values())
 
 
-def search(q: Query, k: int = K, scorer: Scorer | None = None, timings: dict | None = None) -> list[Hit]:
+def search(q: Query, k: int = K, scorer: Scorer | None = None, timings: dict | None = None,
+           rerank: bool = True) -> list[Hit]:
+    """rerank=True: mode `hybrid` (cross-encoder order); False: `hybrid-norerank` (RRF order)."""
+    mode = "hybrid" if rerank else "hybrid-norerank"
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible (no model, no SQL)
     if q.firm_filter and not q.entities:
@@ -263,31 +294,43 @@ def search(q: Query, k: int = K, scorer: Scorer | None = None, timings: dict | N
     from cee.retrieve.embed import embed_query, vector_literal
 
     scorer = scorer or cross_encoder_scores
+    floor = 0.0 if q.window else FLOOR[mode]  # inside a window every document is on topic
     t0 = time.perf_counter()
     with connect() as conn:
         check_vectors(conn)
         qvec = vector_literal(embed_query(q.question))
-        firm_ids = candidates(conn, q, qvec, RERANK_N)
-        research_ids = candidates(conn, q, qvec, THEME_RERANK_N, research=True) if q.mode == "entity+theme" else []
+        firm_ids, firm_rrf, firm_groups = candidates(conn, q, qvec, RERANK_N)
+        firm_ids = gate(firm_ids, firm_rrf, firm_groups, floor)
+        research_ids, research_rrf = [], {}
+        if q.mode == "entity+theme":
+            research_ids, research_rrf, research_groups = candidates(conn, q, qvec, THEME_RERANK_N, research=True)
+            research_ids = gate(research_ids, research_rrf, research_groups, floor)
         ids = firm_ids + [c for c in research_ids if c not in firm_ids]
         rows = {r["chunk_id"]: r for r in conn.execute(ROWS_SQL, {"ids": ids}).fetchall()}
     t1 = time.perf_counter()
     found = [cid for cid in ids if cid in rows]
-    scores = dict(zip(found, scorer(q.question, [f"{rows[c]['prefix']} {rows[c]['text']}" for c in found])))
+    scores = dict(zip(found, scorer(q.question, [f"{rows[c]['prefix']} {rows[c]['text']}" for c in found]))) \
+        if rerank else {}
     t2 = time.perf_counter()
     if timings is not None:
         timings.update(retrieve_s=t1 - t0, rerank_s=t2 - t1)
 
-    def pool(cids: list[str]) -> list[Hit]:
-        hits = [Hit(**{key: rows[c][key] for key in rows[c] if key != "prefix"}, rank=sigmoid(scores[c]))
-                for c in cids if c in scores]
-        return apply_floor(hits, 0.0 if q.window else RERANK_FLOOR)
+    def pool(cids: list[str], rrf_score: dict[str, float]) -> list[Hit]:
+        """Hits in final order: cross-encoder sigmoid (hybrid) or RRF score (hybrid-norerank)."""
+        if rerank:
+            hits = [Hit(**{key: rows[c][key] for key in rows[c] if key != "prefix"}, rank=sigmoid(scores[c]))
+                    for c in cids if c in scores]
+            return apply_floor(hits, 0.0 if q.window else RERANK_FLOOR)
+        hits = [Hit(**{key: rows[c][key] for key in rows[c] if key != "prefix"}, rank=rrf_score[c])
+                for c in cids if c in rows]
+        return apply_floor(hits, 0.0)  # sorts by RRF score, ties by chunk_id; the gate was the floor
 
     # Inside a window every document is on topic: no floor, one filing may be all there is (as fts).
-    opts = {"floor": 0, "max_per_doc": fts.WINDOW_MAX_PER_DOC} if q.window else {"floor": 0}
-    research = fts.select(pool(research_ids), min(fts.THEME_K, k), **{**opts, "max_per_doc": fts.THEME_MAX_PER_DOC}) \
-        if research_ids else []
-    hits = fts.select(pool(firm_ids), k - len(research), **opts) + research
+    opts = {"floor": 0, "max_per_doc": fts.WINDOW_MAX_PER_DOC if q.window else MAX_PER_DOC[mode],
+            "dup_jaccard": DUP_JACCARD[mode]}
+    research = fts.select(pool(research_ids, research_rrf), min(fts.THEME_K, k),
+                          **{**opts, "max_per_doc": fts.THEME_MAX_PER_DOC}) if research_ids else []
+    hits = fts.select(pool(firm_ids, firm_rrf), k - len(research), **opts) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

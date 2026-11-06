@@ -9,6 +9,16 @@ entities, the retrieved chunk IDs, which `expected_sources` patterns were hit, f
   python scripts/eval_run.py --baseline .eval-runs/<run>/report.json
   python scripts/eval_run.py --real --max-calls 5 --questions Q28,Q29,Q30
   python scripts/eval_run.py --mode hybrid         # retrieval mode (#125); default RETRIEVAL_MODE
+  python scripts/eval_run.py --mode hybrid-norerank --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 \
+      --baseline .eval-runs/<fts reference>/report.json   # grid run and selection rule (#126)
+
+Constants (#126): --floor, --max-per-doc (one value or a comma list each) and --dup-jaccard set the
+mode's constants for the run (fts: fts.FLOOR / fts.MAX_PER_DOC; hybrid modes: hybrid.FLOOR /
+MAX_PER_DOC / DUP_JACCARD [mode]) and are restored afterwards; fts's DUP_JACCARD is never set.
+More than one combination is a grid: one run folder per point (f<floor>-m<max>), the models load
+once, and grid.md / grid.json hold every point and the point choose() picks (SELECTION_RULE).
+Every report records the constants it ran with, the duplicate measure (pairs of hits > 0.9
+similar) and search time median / p90 / max with the CPU it ran on.
 
 Search time: every question's `search()` is timed (`search_s`); one untimed warm-up search on the
 first question comes first (`warmup_s`, model loading in hybrid mode), and the median goes into
@@ -33,7 +43,11 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import itertools
 import json
+import os
+import platform
+import re
 import statistics
 import subprocess
 import time
@@ -47,7 +61,7 @@ sys.path.insert(0, str(REPO / "src"))
 import yaml  # noqa: E402
 
 from cee.config import entities_config  # noqa: E402
-from cee.retrieve.fts import K  # noqa: E402
+from cee.retrieve.fts import K, _shingles, _similar  # noqa: E402
 
 RUNS = REPO / ".eval-runs"
 CACHE = RUNS / "cache"
@@ -55,6 +69,51 @@ QUESTIONS = REPO / "evals" / "questions.yaml"
 KEYS = REPO / "evals" / "expected_chunks.yaml"
 STATUSES = ("PASS", "FAIL", "NOT_EVALUATED")
 GAP_BEHAVIORS = ("gap_with_adjacent", "refuse")
+RETRIEVAL_MODES = ("fts", "hybrid", "hybrid-norerank")
+DUP_LIMIT = 0.9  # specs/retrieval.md: no two hits > 90% similar
+MODE_DEFAULTS = {"fts": (0.3, 3), "hybrid": (0.0, 3), "hybrid-norerank": (0.0, 3)}  # (FLOOR, MAX_PER_DOC) before #126
+SELECTION_RULE = (
+    "1. Eligible: forbidden hits 0 on all questions; refusal accuracy on the gap questions and on all "
+    "keyed questions >= the fts reference run (--baseline). "
+    "2. Among eligible points: highest tier-1 passage recall (3 decimals). "
+    "3. Ties: higher tier-1 doc recall; more PASS; the mode's default before #126 (fts 0.3/3, hybrid "
+    "modes 0/3); higher FLOOR; smaller MAX_PER_DOC. "
+    "4. No eligible point: no tuned constants (defaults stay); the mode fails the refusal acceptance.")
+
+
+# --- duplicate measure (#126) ---------------------------------------------------------------------
+
+def trigrams(text: str) -> set[str]:
+    """Character trigrams as pg_trgm builds them (Python re-implementation: pg_trgm is not installed
+    in cee-db): lower case; words = runs of alphanumeric characters; each word padded with two spaces
+    in front and one behind; every 3-character substring, as a set."""
+    out: set[str] = set()
+    for w in re.findall(r"[^\W_]+", text.lower()):
+        padded = f"  {w} "
+        out.update(padded[i:i + 3] for i in range(len(padded) - 2))
+    return out
+
+
+def trigram_similarity(a: str, b: str) -> float:
+    """pg_trgm similarity(): shared trigrams / all distinct trigrams of both (0 if either is empty)."""
+    ta, tb = trigrams(a), trigrams(b)
+    return len(ta & tb) / len(ta | tb) if ta and tb else 0.0
+
+
+def duplicates(texts: list[str], limit: float = DUP_LIMIT) -> dict:
+    """Every pair of hits: (a) pg_trgm-style trigram similarity, (b) word 5-gram Jaccard (select())."""
+    tri = [trigrams(t) for t in texts]
+    sh = [_shingles(t) for t in texts]
+    max_t = max_s = 0.0
+    over_t = over_s = 0
+    for i, j in itertools.combinations(range(len(texts)), 2):
+        t = len(tri[i] & tri[j]) / len(tri[i] | tri[j]) if tri[i] and tri[j] else 0.0
+        s5 = _similar(sh[i], sh[j])
+        max_t, max_s = max(max_t, t), max(max_s, s5)
+        over_t += t > limit
+        over_s += s5 > limit
+    return {"max_trigram": round(max_t, 3), "pairs_trigram_over": over_t,
+            "max_5gram": round(max_s, 3), "pairs_5gram_over": over_s}
 
 
 @dataclass(frozen=True)
@@ -199,8 +258,19 @@ def summarize(records: list[dict]) -> dict:
         return {"ok": ok, "of": len(rs), "accuracy": _ratio(ok, len(rs))}
 
     keyed = [r for r in records if r.get("refusal_ok") is not None]
-    times = [r["search_s"] for r in records if r.get("search_s") is not None]
+    times = sorted(r["search_s"] for r in records if r.get("search_s") is not None)
+    dups = [r["dup"] for r in records if r.get("dup")]
     return {"median_search_s": round(statistics.median(times), 3) if times else None,
+            "p90_search_s": round(times[max(0, -(-9 * len(times) // 10) - 1)], 3) if times else None,
+            "max_search_s": round(times[-1], 3) if times else None,
+            "dup_questions_trigram_over": sum(d["pairs_trigram_over"] > 0 for d in dups),
+            "dup_pairs_trigram_over": sum(d["pairs_trigram_over"] for d in dups),
+            "dup_max_trigram": max((d["max_trigram"] for d in dups), default=None),
+            "dup_questions_5gram_over": sum(d["pairs_5gram_over"] > 0 for d in dups),
+            "dup_pairs_5gram_over": sum(d["pairs_5gram_over"] for d in dups),
+            "dup_max_5gram": max((d["max_5gram"] for d in dups), default=None),
+            "pass": sum(r.get("status") == "PASS" for r in records),
+            "forbidden_hits": sum(len(r.get("forbidden") or []) for r in records),
             "tier1_doc_recall": mean([r["doc_recall"] for r in with_key]),
             "tier1_passage_recall": mean([r["passage_recall"] for r in with_key if r["passage_recall"] is not None]),
             "tier1_with_key": len(with_key), "tier1_total": len(tier1),
@@ -240,7 +310,8 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
             "doc_recall": recall["doc_recall"] if recall else None,
             "passage_recall": recall["passage_recall"] if recall else None,
             "refusal_ok": recall["refusal_ok"] if recall else None,
-            "misleading": recall["misleading"] if recall else [], "recall": recall, "status": status}
+            "misleading": recall["misleading"] if recall else [], "recall": recall, "status": status,
+            "dup": duplicates([h.text for h in hits if getattr(h, "text", None) is not None])}
 
 
 def _score(r: dict) -> tuple:
@@ -343,6 +414,10 @@ def _refusal(r: dict) -> str:
     return "ok" if r["refusal_ok"] else f"FAIL ({len(rec['misleading']) + len(rec['outside_window'])})"
 
 
+def _constants_text(c: dict | None) -> str:
+    return ", ".join(f"{k} {v}" for k, v in (c or {}).items()) or "-"
+
+
 def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     summary = summarize(records)
@@ -356,7 +431,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"Snapshot `{meta['snapshot']}` | commit `{meta['commit']}` | k={meta['k']} | "
              f"min coverage {meta['min_coverage']} | as of {meta['as_of']} | mode {meta['mode']}"
              f" | retrieval {meta.get('retrieval_mode', 'fts')}"
-             + (f" | median search {summary['median_search_s']} s (warm-up {meta.get('warmup_s')} s)"
+             + (f" | median search {summary['median_search_s']} s (p90 {summary.get('p90_search_s')} s, max "
+                f"{summary.get('max_search_s')} s; warm-up {meta.get('warmup_s')} s)"
                 if summary.get("median_search_s") is not None else "")
              + (f" | real calls {meta['real_calls']} of max {meta['max_calls']}, reused {meta['reused']}"
                 if meta["mode"] == "real" else " | 0 real calls"),
@@ -366,7 +442,13 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"{summary['tier1_passage_recall']} (mean over the {summary['tier1_with_key']} of "
              f"{summary['tier1_total']} tier-1 questions with an answer key; the rest n/a until #56)  ",
              f"**Refusal accuracy**: gap questions ({gap_ids or 'none'}) {_frac(rg['ok'], rg['of'])}; "
-             f"all questions with a key {_frac(ra['ok'], ra['of'])}", "",
+             f"all questions with a key {_frac(ra['ok'], ra['of'])}  ",
+             f"**Constants**: {_constants_text(meta.get('constants'))}  ",
+             f"**Duplicates** (pairs of hits > {DUP_LIMIT} similar): trigram (pg_trgm-style, Python) "
+             f"{summary.get('dup_pairs_trigram_over')} pairs in {summary.get('dup_questions_trigram_over')} questions, "
+             f"max {summary.get('dup_max_trigram')}; word 5-gram {summary.get('dup_pairs_5gram_over')} pairs in "
+             f"{summary.get('dup_questions_5gram_over')} questions, max {summary.get('dup_max_5gram')}  ",
+             f"**CPU**: {meta.get('cpu', '-')}", "",
              "Status: FAIL on any forbidden hit or refusal failure; NOT_EVALUATED when no expected source is in the "
              "corpus; PASS when coverage of the available patterns >= min coverage"
              + ("; real mode also needs behavior == expected." if meta["mode"] == "real" else "."), "",
@@ -425,7 +507,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--as-of", type=dt.date.fromisoformat, default=dt.date.today(),
                     help="day the time windows end, YYYY-MM-DD (default today)")
     ap.add_argument("--keys", type=Path, default=KEYS, help="answer key (default evals/expected_chunks.yaml)")
-    ap.add_argument("--mode", choices=("fts", "hybrid"), help="retrieval mode (default RETRIEVAL_MODE, else fts)")
+    ap.add_argument("--mode", choices=RETRIEVAL_MODES, help="retrieval mode (default RETRIEVAL_MODE, else fts)")
+    ap.add_argument("--floor", help="FLOOR for the mode, one value or a comma list (grid; #126)")
+    ap.add_argument("--max-per-doc", help="MAX_PER_DOC for the mode, one value or a comma list (grid; #126)")
+    ap.add_argument("--dup-jaccard", type=float, help="DUP_JACCARD for a hybrid mode (fts's is never changed)")
     args = ap.parse_args(argv)
     if args.real and (args.max_calls is None or args.max_calls < 0):
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
@@ -435,6 +520,18 @@ def main(argv: list[str] | None = None) -> int:
     from cee.config import settings
     from cee.retrieve.fts import resolve, search
     retrieval_mode = args.mode or settings().retrieval_mode
+    if retrieval_mode not in RETRIEVAL_MODES:
+        ap.error(f"unknown retrieval mode {retrieval_mode!r}")
+    if args.dup_jaccard is not None and retrieval_mode == "fts":
+        ap.error("--dup-jaccard is for the hybrid modes only: fts's DUP_JACCARD is measured, never changed (#126)")
+    try:
+        floors = [float(x) for x in args.floor.split(",")] if args.floor else [None]
+        maxes = [int(x) for x in args.max_per_doc.split(",")] if args.max_per_doc else [None]
+    except ValueError:
+        ap.error("--floor takes numbers and --max-per-doc whole numbers, comma separated")
+    points = list(itertools.product(floors, maxes))
+    if len(points) > 1 and not args.baseline:
+        ap.error("a grid needs --baseline (the fts reference run the selection rule compares refusal with)")
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -446,19 +543,173 @@ def main(argv: list[str] | None = None) -> int:
     corpus, snapshot, doc_dates = corpus_types()
     keys = load_keys(args.keys)
     run_id = f"{snapshot}-{dt.datetime.now():%Y%m%d-%H%M%S}"
-    run_dir = Path(args.out) if args.out else RUNS / run_id
-    base = {}
+    out_dir = Path(args.out) if args.out else RUNS / run_id
+    base, base_summary = {}, None
     if args.baseline:
-        base = {r["id"]: r for r in json.loads(Path(args.baseline).read_text(encoding="utf-8"))["questions"]}
+        base_report = json.loads(Path(args.baseline).read_text(encoding="utf-8"))
+        base = {r["id"]: r for r in base_report["questions"]}
+        base_summary = base_report.get("summary")
     subs = substitutes()
-    real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
 
-    records = []
     warmup_s = None
     if bank:  # untimed: loads models (hybrid) and warms the database cache
         t = time.perf_counter()
         search(resolve(bank[0]["text"], today=args.as_of), k=args.k, mode=retrieval_mode)
         warmup_s = round(time.perf_counter() - t, 3)
+
+    grid = []
+    for floor, max_per_doc in points:
+        run_dir = out_dir / point_name(floor, max_per_doc) if len(points) > 1 else out_dir
+        saved = set_constants(retrieval_mode, floor, max_per_doc, args.dup_jaccard)
+        try:
+            real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
+            records, meta = run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search, resolve,
+                                     run_id, snapshot, warmup_s, doc_dates)
+            meta["constants"] = current_constants(retrieval_mode)
+        finally:
+            restore_constants(retrieval_mode, saved)
+        write_reports(run_dir, meta, records)
+        summary = summarize(records)
+        counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}
+        print(f"\n{counts} | {retrieval_mode} {_constants_text(meta['constants'])} | tier-1 recall "
+              f"{summary['tier1_doc_recall']} / passages {summary['tier1_passage_recall']} | median search "
+              f"{summary['median_search_s']} s | refusal gap {summary['refusal_gap']['ok']}/"
+              f"{summary['refusal_gap']['of']} | real calls {meta['real_calls']} | report: {run_dir / 'report.md'}")
+        grid.append({"floor": meta["constants"]["FLOOR"], "max_per_doc": meta["constants"]["MAX_PER_DOC"],
+                     "constants": meta["constants"], "run": run_dir.name, "summary": summary})
+    if len(points) > 1:
+        write_grid(out_dir, retrieval_mode, grid, base_summary, args.baseline)
+    return 0
+
+
+def point_name(floor, max_per_doc) -> str:
+    return f"f{floor}-m{max_per_doc}"
+
+
+def current_constants(mode: str) -> dict:
+    """The constants a run of this mode uses (also when no option was given)."""
+    from cee.retrieve import fts
+    if mode == "fts":
+        return {"FLOOR": fts.FLOOR, "MAX_PER_DOC": fts.MAX_PER_DOC, "DUP_JACCARD": fts.DUP_JACCARD,
+                "WINDOW_MAX_PER_DOC": fts.WINDOW_MAX_PER_DOC, "THEME_MAX_PER_DOC": fts.THEME_MAX_PER_DOC}
+    from cee.retrieve import hybrid
+    return {"FLOOR": hybrid.FLOOR[mode], "MAX_PER_DOC": hybrid.MAX_PER_DOC[mode],
+            "DUP_JACCARD": hybrid.DUP_JACCARD[mode], "RERANK_FLOOR": hybrid.RERANK_FLOOR,
+            "RERANK_N": hybrid.RERANK_N, "WINDOW_MAX_PER_DOC": fts.WINDOW_MAX_PER_DOC,
+            "THEME_MAX_PER_DOC": fts.THEME_MAX_PER_DOC}
+
+
+def set_constants(mode: str, floor=None, max_per_doc=None, dup_jaccard=None) -> dict:
+    """Set the mode's FLOOR / MAX_PER_DOC / DUP_JACCARD for one run; returns what restore needs.
+    fts: fts.FLOOR, fts.MAX_PER_DOC (fts.DUP_JACCARD is never set); hybrid modes: hybrid.FLOOR[mode],
+    hybrid.MAX_PER_DOC[mode], hybrid.DUP_JACCARD[mode]. None = leave as is."""
+    from cee.retrieve import fts
+    values = {k: v for k, v in (("FLOOR", floor), ("MAX_PER_DOC", max_per_doc), ("DUP_JACCARD", dup_jaccard))
+              if v is not None}
+    if mode == "fts":
+        if "DUP_JACCARD" in values:
+            raise ValueError("fts's DUP_JACCARD is never changed (#126)")
+        saved = {k: getattr(fts, k) for k in values}
+        for k, v in values.items():
+            setattr(fts, k, v)
+        return saved
+    from cee.retrieve import hybrid
+    saved = {k: getattr(hybrid, k)[mode] for k in values}
+    for k, v in values.items():
+        getattr(hybrid, k)[mode] = v
+    return saved
+
+
+def restore_constants(mode: str, saved: dict) -> None:
+    from cee.retrieve import fts
+    if mode == "fts":
+        for k, v in saved.items():
+            setattr(fts, k, v)
+        return
+    from cee.retrieve import hybrid
+    for k, v in saved.items():
+        getattr(hybrid, k)[mode] = v
+
+
+def _acc(block: dict | None) -> float | None:
+    return None if not block or block.get("accuracy") is None else block["accuracy"]
+
+
+def choose(points: list[dict], reference: dict | None, mode: str) -> dict:
+    """The selection rule (SELECTION_RULE), fixed in plans/0126-hybrid-eval.md before any grid run.
+    points: [{"floor", "max_per_doc", "summary"}]; reference: the fts reference run's summary."""
+    ref_gap, ref_all = _acc((reference or {}).get("refusal_gap")), _acc((reference or {}).get("refusal_all"))
+    default = MODE_DEFAULTS.get(mode)
+    eligible, why_not = [], {}
+    for p in points:
+        s, reasons = p["summary"], []
+        if s.get("forbidden_hits"):
+            reasons.append(f"forbidden hits {s['forbidden_hits']}")
+        if ref_gap is not None and (_acc(s.get("refusal_gap")) or 0) < ref_gap:
+            reasons.append(f"refusal gap {s['refusal_gap']['ok']}/{s['refusal_gap']['of']} < fts")
+        if ref_all is not None and (_acc(s.get("refusal_all")) or 0) < ref_all:
+            reasons.append(f"refusal all {s['refusal_all']['ok']}/{s['refusal_all']['of']} < fts")
+        if reasons:
+            why_not[point_name(p["floor"], p["max_per_doc"])] = reasons
+        else:
+            eligible.append(p)
+    if not eligible:
+        return {"pick": None, "reason": "no eligible point: defaults stay; the mode fails the refusal acceptance",
+                "not_eligible": why_not}
+
+    def key(p):
+        s = p["summary"]
+        return (round(s.get("tier1_passage_recall") or 0.0, 3), round(s.get("tier1_doc_recall") or 0.0, 3),
+                s.get("pass", 0), (p["floor"], p["max_per_doc"]) == default, p["floor"], -p["max_per_doc"])
+    ranked = sorted(eligible, key=key, reverse=True)
+    best = ranked[0]
+    reason = (f"eligible {len(eligible)} of {len(points)}; best tier-1 passage recall "
+              f"{best['summary'].get('tier1_passage_recall')}")
+    if len(ranked) > 1:
+        names = ("passage recall", "doc recall", "PASS", "default", "higher FLOOR", "smaller MAX_PER_DOC")
+        k0, k1 = key(best), key(ranked[1])
+        decided = next((n for n, a, b in zip(names, k0, k1) if a != b), "identical keys (first in grid order)")
+        reason += f"; beats the runner-up {point_name(ranked[1]['floor'], ranked[1]['max_per_doc'])} on {decided}"
+    return {"pick": {"floor": best["floor"], "max_per_doc": best["max_per_doc"], "run": best.get("run")},
+            "reason": reason, "not_eligible": why_not}
+
+
+def write_grid(out_dir: Path, mode: str, grid: list[dict], reference: dict | None, baseline: str | None) -> dict:
+    choice = choose(grid, reference, mode)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "grid.json").write_text(json.dumps({"mode": mode, "rule": SELECTION_RULE, "reference": baseline,
+                                                   "reference_summary": reference, "choice": choice,
+                                                   "points": grid}, indent=2), encoding="utf-8")
+    lines = [f"# Grid {mode}", "", f"Reference (fts): `{baseline}`", "", f"Selection rule: {SELECTION_RULE}", "",
+             "| FLOOR | MAX_PER_DOC | PASS | tier-1 docs | passages | refusal gap | refusal all | forbidden "
+             "| dup pairs > 0.9 (trigram / 5-gram) | median s | p90 s | run |",
+             "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for p in grid:
+        s = p["summary"]
+        lines.append(f"| {p['floor']} | {p['max_per_doc']} | {s.get('pass')} | {s['tier1_doc_recall']} | "
+                     f"{s['tier1_passage_recall']} | {_frac(s['refusal_gap']['ok'], s['refusal_gap']['of'])} | "
+                     f"{_frac(s['refusal_all']['ok'], s['refusal_all']['of'])} | {s.get('forbidden_hits')} | "
+                     f"{s.get('dup_pairs_trigram_over')} / {s.get('dup_pairs_5gram_over')} | {s['median_search_s']} | "
+                     f"{s.get('p90_search_s')} | {p['run']} |")
+    pick = choice["pick"]
+    lines += ["", f"**Pick**: " + (f"FLOOR {pick['floor']}, MAX_PER_DOC {pick['max_per_doc']} (`{pick['run']}`)"
+                                    if pick else "none"), "", f"Reason: {choice['reason']}"]
+    for name, reasons in choice["not_eligible"].items():
+        lines.append(f"- not eligible {name}: {'; '.join(reasons)}")
+    (out_dir / "grid.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"grid: pick {pick} ({choice['reason']}) -> {out_dir / 'grid.md'}")
+    return choice
+
+
+def cpu_text() -> str:
+    ort = sys.modules.get("onnxruntime")
+    return (f"{platform.processor() or platform.machine()}, {os.cpu_count()} logical CPUs, {platform.system()}"
+            + (f", onnxruntime {ort.__version__}" if ort is not None and hasattr(ort, "__version__") else ""))
+
+
+def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search, resolve, run_id, snapshot,
+             warmup_s, doc_dates) -> tuple[list[dict], dict]:
+    records = []
     for q in bank:
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
         t = time.perf_counter()
@@ -478,15 +729,9 @@ def main(argv: list[str] | None = None) -> int:
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit, "k": args.k, "min_coverage": args.min_coverage,
             "mode": "real" if real else "mock", "retrieval_mode": retrieval_mode, "warmup_s": warmup_s,
-            "baseline": args.baseline, "as_of": args.as_of.isoformat(),
+            "baseline": args.baseline, "as_of": args.as_of.isoformat(), "cpu": cpu_text(),
             "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
-    write_reports(run_dir, meta, records)
-    counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}
-    summary = summarize(records)
-    print(f"\n{counts} | {retrieval_mode} | tier-1 recall {summary['tier1_doc_recall']} / passages "
-          f"{summary['tier1_passage_recall']} | median search {summary['median_search_s']} s | refusal gap {summary['refusal_gap']['ok']}/"
-          f"{summary['refusal_gap']['of']} | real calls {meta['real_calls']} | report: {run_dir / 'report.md'}")
-    return 0
+    return records, meta
 
 
 if __name__ == "__main__":

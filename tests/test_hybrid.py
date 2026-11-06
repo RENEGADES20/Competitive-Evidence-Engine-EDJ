@@ -218,7 +218,7 @@ def test_entity_theme_adds_the_research_part(monkeypatch):
 def test_mode_switch(monkeypatch):
     calls = []
     monkeypatch.setattr(fts, "fts_search", lambda q, k: calls.append("fts") or [])
-    monkeypatch.setattr(hybrid, "search", lambda q, k: calls.append("hybrid") or [])
+    monkeypatch.setattr(hybrid, "search", lambda q, k, rerank=True: calls.append("hybrid") or [])
     monkeypatch.setenv("CEE_VECTORS", "on")
     q = Query(question="x", entities=["MS"])
     monkeypatch.delenv("RETRIEVAL_MODE", raising=False)
@@ -324,3 +324,124 @@ def test_real_reranker_prefers_advisor_pay_over_a_guarantee(monkeypatch):
                                     ["Advisor compensation is a formulaic payout tied to the revenue they produce.",
                                      "The Firm guarantees the prompt and full payment of its clients' obligations."])
     assert s[0] > s[1]
+
+
+# --- #126: hybrid-norerank, RRF gate, per-mode constants -----------------------------------------
+
+def test_gate_drops_below_floor_share_of_the_firm_best():
+    rrf = {"MS#1": 2 / 61, "MS#2": 1 / 61, "MS#3": 1 / 160, "RJF#1": 1 / 100, "RJF#2": 1 / 400}
+    group = {c: (c.split("#")[0], "10-K") for c in rrf}
+    ids = list(rrf)
+    assert hybrid.gate(ids, rrf, group, 0.0) == ids
+    # MS best 0.0328: 0.3 x -> 0.0098 keeps MS#1, MS#2; RJF best 0.01 -> 0.003 keeps RJF#1 only
+    assert hybrid.gate(ids, rrf, group, 0.3) == ["MS#1", "MS#2", "RJF#1"]
+    assert hybrid.gate(ids, rrf, group, 0.6) == ["MS#1", "RJF#1"]
+
+
+def _boom(*a, **k):
+    raise AssertionError("hybrid-norerank never calls the reranker")
+
+
+def test_norerank_orders_by_rrf_and_never_scores(monkeypatch):
+    rows = [_row(c, "MS") for c in ("MS-A#1", "MS-B#1", "MS-C#1")]
+    # MS-A#1: kw 1 + vec 2 = 1/61 + 1/62; MS-C#1: vec 1 = 1/61; MS-B#1: kw 2 = 1/62
+    _patch(monkeypatch, FakeConn(_leg("MS-A#1", "MS-B#1"), _leg("MS-C#1", "MS-A#1"), rows))
+    monkeypatch.setattr(hybrid, "cross_encoder_scores", _boom)
+    monkeypatch.setattr(hybrid, "reranker", _boom)
+    hits = hybrid.search(Query(question="MS advisor pay?", entities=["MS"]), scorer=_boom, rerank=False)
+    assert [h.chunk_id for h in hits] == ["MS-A#1", "MS-C#1", "MS-B#1"]
+    assert hits[0].rank == pytest.approx(1 / 61 + 1 / 62)
+
+
+def test_both_hybrid_modes_share_the_gated_candidates(monkeypatch):
+    cids = [f"MS-D{i}#1" for i in range(6)]
+    rows = [_row(c, "MS") for c in cids]
+    _patch(monkeypatch, FakeConn(_leg(*cids), _leg(*cids[:2]), rows))
+    monkeypatch.setitem(hybrid.FLOOR, "hybrid", 0.6)
+    monkeypatch.setitem(hybrid.FLOOR, "hybrid-norerank", 0.6)
+    scored = []
+    q = Query(question="MS advisor pay?", entities=["MS"])
+    reranked = hybrid.search(q, scorer=lambda qq, ps: scored.extend(ps) or [0.0] * len(ps))
+    plain = hybrid.search(q, rerank=False)
+    # best: D0 (kw 1 + vec 1 = 2/61); 0.6 x 0.0328 = 0.0197 keeps D0, D1 (both legs) only
+    assert {h.chunk_id for h in plain} == {h.chunk_id for h in reranked} == {"MS-D0#1", "MS-D1#1"}
+    assert len(scored) == 2
+
+
+def test_norerank_window_has_no_floor(monkeypatch):
+    rows = [_row("RJF-A#1", "RJF", "2026-08-01"), _row("RJF-B#1", "RJF", "2026-10-01")]
+    # A: kw 1 + vec 1; B: kw 2 only -> B is far below 0.99 x A's score, but a window has no floor
+    _patch(monkeypatch, FakeConn(_leg("RJF-A#1", "RJF-B#1", entity="RJF"), _leg("RJF-A#1", entity="RJF"), rows))
+    monkeypatch.setitem(hybrid.FLOOR, "hybrid-norerank", 0.99)
+    hits = hybrid.search(WINDOW, rerank=False)
+    assert [h.chunk_id for h in hits] == ["RJF-B#1", "RJF-A#1"]  # weak B kept; newest first
+
+
+@pytest.mark.parametrize("mode", ["hybrid", "hybrid-norerank"])
+@pytest.mark.parametrize("cap", [2, 4])
+def test_per_mode_max_per_doc_leaves_window_and_research_caps(monkeypatch, mode, cap):
+    monkeypatch.setitem(hybrid.MAX_PER_DOC, mode, cap)
+    rerank = mode == "hybrid"
+    scorer = (lambda q, ps: [1.0] * len(ps)) if rerank else _boom
+    # firm part: one document with 10 chunks -> cap chunks
+    firm = [f"MS-DOC#{i}" for i in range(10)]
+    _patch(monkeypatch, FakeConn(_leg(*firm), [], [_row(c, "MS") for c in firm]))
+    hits = hybrid.search(Query(question="MS advisor pay?", entities=["MS"]), scorer=scorer, rerank=rerank)
+    assert len(hits) == cap
+    # window: the window cap (8) applies, not the per-mode cap
+    win = [f"RJF-DOC#{i}" for i in range(10)]
+    _patch(monkeypatch, FakeConn(_leg(*win, entity="RJF"), [], [_row(c, "RJF", "2026-08-01") for c in win]))
+    assert len(hybrid.search(WINDOW, scorer=scorer, rerank=rerank)) == fts.WINDOW_MAX_PER_DOC == 8
+    # entity+theme research part: the research cap (2) applies
+    res = [f"R-STUDY#{i}" for i in range(5)]
+    _patch(monkeypatch, FakeConn([], [], [_row(c, None, doc_type="research") for c in res],
+                                 research_kw=_leg(*res, entity=None, doc_type="research")))
+    assert len(hybrid.search(ENTITY_THEME, scorer=scorer, rerank=rerank)) == fts.THEME_MAX_PER_DOC == 2
+
+
+@pytest.mark.parametrize("mode", ["hybrid", "hybrid-norerank"])
+def test_per_mode_dup_jaccard_reaches_select(monkeypatch, mode):
+    rows = [_row("MS-A#1", "MS"), _row("MS-B#1", "MS")]
+    for r in rows:
+        r["text"] = "the same boilerplate sentence about advisors repeats in every filing word for word"
+    rerank = mode == "hybrid"
+    scorer = (lambda q, ps: [1.0] * len(ps)) if rerank else _boom
+    _patch(monkeypatch, FakeConn(_leg("MS-A#1", "MS-B#1"), [], rows))
+    q = Query(question="MS advisor pay?", entities=["MS"])
+    assert len(hybrid.search(q, scorer=scorer, rerank=rerank)) == 1  # 0.6: the repeat is dropped
+    monkeypatch.setitem(hybrid.DUP_JACCARD, mode, 1.0)
+    assert len(hybrid.search(q, scorer=scorer, rerank=rerank)) == 2
+    assert fts.DUP_JACCARD == 0.6
+
+
+def test_select_without_dup_jaccard_uses_the_fts_constant():
+    from dataclasses import replace
+    text = "one two three four five six seven eight"
+    pool = [replace(hit("A#1", 0.9, doc="A"), text=text), replace(hit("B#1", 0.8, doc="B"), text=text)]
+    assert len(fts.select(pool, floor=0)) == 1                    # DUP_JACCARD 0.6: the repeat is dropped
+    assert len(fts.select(pool, floor=0, dup_jaccard=1.0)) == 2
+
+
+def test_mode_switch_routes_hybrid_norerank(monkeypatch):
+    calls = []
+    monkeypatch.setattr(hybrid, "search", lambda q, k, rerank=True: calls.append(rerank) or [])
+    monkeypatch.setenv("CEE_VECTORS", "on")
+    q = Query(question="x", entities=["MS"])
+    fts.search(q, mode="hybrid")
+    fts.search(q, mode="hybrid-norerank")
+    fts.search(q, mode="HYBRID-NORERANK")
+    assert calls == [True, False, False]
+
+
+def test_hybrid_norerank_with_vectors_off_stops_before_importing_hybrid():
+    code = ("import sys; sys.modules['fastembed'] = None; sys.modules['onnxruntime'] = None\n"
+            "from cee.retrieve import fts\n"
+            "try:\n"
+            "    fts.search(fts.Query(question='x', entities=['MS']), mode='hybrid-norerank')\n"
+            "except fts.HybridUnavailable as e:\n"
+            "    print('refused', 'CEE_VECTORS=on' in str(e))\n"
+            "print('cee.retrieve.hybrid' in sys.modules)\n")
+    env = {**__import__("os").environ, "PYTHONPATH": str(REPO / "src"), "CEE_VECTORS": "off"}
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True,
+                         cwd=REPO, env=env).stdout.split()
+    assert out == ["refused", "True", "False"]

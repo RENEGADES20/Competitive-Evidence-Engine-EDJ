@@ -302,3 +302,145 @@ def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
     er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert report["questions"][0]["ranks"] == [0.1235]
+
+
+# --- #126: third mode, constants, grid, selection rule, duplicate measure ------------------------
+
+def _fake_bank(monkeypatch, seen=None):
+    from cee.retrieve import fts, hybrid
+
+    def search(q, k, mode=None):
+        if seen is not None:
+            seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC),
+                         dict(hybrid.DUP_JACCARD)))
+        return []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
+    monkeypatch.setattr(fts, "search", search)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+
+
+def _baseline(tmp_path):
+    import json
+    path = tmp_path / "ref.json"
+    path.write_text(json.dumps({"questions": [], "summary": {"refusal_gap": {"ok": 0, "of": 0, "accuracy": None},
+                                                            "refusal_all": {"ok": 0, "of": 0, "accuracy": None}}}),
+                    encoding="utf-8")
+    return str(path)
+
+
+def test_hybrid_norerank_mode_is_accepted(monkeypatch, tmp_path):
+    import json
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert {s[0] for s in seen} == {"hybrid-norerank"}
+    assert report["meta"]["retrieval_mode"] == "hybrid-norerank"
+    assert report["meta"]["constants"]["FLOOR"] == 0.0 and report["meta"]["constants"]["MAX_PER_DOC"] == 3
+    assert "logical CPUs" in report["meta"]["cpu"]
+
+
+def test_no_option_leaves_constants_untouched(monkeypatch, tmp_path):
+    from cee.retrieve import fts
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
+    assert {(s[1], s[2]) for s in seen} == {(0.3, 3)}
+    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
+
+
+def test_constants_map_per_mode_and_are_restored(monkeypatch, tmp_path):
+    from cee.retrieve import fts, hybrid
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.4", "--max-per-doc", "2", "--out", str(tmp_path / "a")])
+    assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == {"hybrid": 0.0, "hybrid-norerank": 0.0}
+    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "4", "--dup-jaccard", "0.5",
+             "--out", str(tmp_path / "b")])
+    mode, floor, mpd, hf, hm, hd = seen[-1]
+    assert (floor, mpd) == (0.3, 3)  # fts untouched in a hybrid run
+    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 4 and hd["hybrid"] == 0.5
+    assert hf["hybrid-norerank"] == 0.0 and hm["hybrid-norerank"] == 3 and hd["hybrid-norerank"] == 0.6
+    # restored after the run
+    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
+    assert hybrid.FLOOR["hybrid"] == 0.0 and hybrid.MAX_PER_DOC["hybrid"] == 3 and hybrid.DUP_JACCARD["hybrid"] == 0.6
+
+
+def test_dup_jaccard_is_refused_for_fts(monkeypatch, tmp_path, capsys):
+    _fake_bank(monkeypatch)
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q29", "--mode", "fts", "--dup-jaccard", "0.5", "--out", str(tmp_path)])
+    assert "never changed" in capsys.readouterr().err
+    with pytest.raises(ValueError):
+        er.set_constants("fts", dup_jaccard=0.5)
+
+
+def test_grid_needs_a_baseline(monkeypatch, tmp_path, capsys):
+    _fake_bank(monkeypatch)
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.2,0.3", "--out", str(tmp_path)])
+    assert "--baseline" in capsys.readouterr().err
+
+
+def test_grid_writes_one_folder_per_point_and_a_pick(monkeypatch, tmp_path):
+    import json
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--floor", "0,0.2", "--max-per-doc", "2,3",
+             "--baseline", _baseline(tmp_path), "--out", str(tmp_path / "grid")])
+    names = sorted(p.name for p in (tmp_path / "grid").iterdir() if p.is_dir())
+    assert names == ["f0.0-m2", "f0.0-m3", "f0.2-m2", "f0.2-m3"]
+    grid = json.loads((tmp_path / "grid" / "grid.json").read_text(encoding="utf-8"))
+    assert len(grid["points"]) == 4 and grid["rule"] == er.SELECTION_RULE
+    # all points tie: the mode's default (0/3) wins
+    assert grid["choice"]["pick"]["floor"] == 0.0 and grid["choice"]["pick"]["max_per_doc"] == 3
+    assert "Pick" in (tmp_path / "grid" / "grid.md").read_text(encoding="utf-8")
+    assert len(seen) == 1 + 4  # one warm-up, then one search per point and question
+
+
+def _point(floor, mpd, passages=0.4, docs=0.8, n_pass=28, gap=(5, 5), all_=(10, 10), forbidden=0):
+    acc = lambda ok, of: {"ok": ok, "of": of, "accuracy": round(ok / of, 3)}  # noqa: E731
+    return {"floor": floor, "max_per_doc": mpd, "run": er.point_name(floor, mpd),
+            "summary": {"tier1_passage_recall": passages, "tier1_doc_recall": docs, "pass": n_pass,
+                        "refusal_gap": acc(*gap), "refusal_all": acc(*all_), "forbidden_hits": forbidden}}
+
+
+REF = {"refusal_gap": {"ok": 5, "of": 5, "accuracy": 1.0}, "refusal_all": {"ok": 10, "of": 10, "accuracy": 1.0}}
+
+
+def test_choose_eligibility():
+    pts = [_point(0.2, 2, passages=0.9, forbidden=1), _point(0.3, 2, passages=0.8, gap=(4, 5)),
+           _point(0.4, 2, passages=0.7, all_=(9, 10)), _point(0.4, 3, passages=0.5)]
+    c = er.choose(pts, REF, "fts")
+    assert c["pick"]["floor"] == 0.4 and c["pick"]["max_per_doc"] == 3
+    assert set(c["not_eligible"]) == {"f0.2-m2", "f0.3-m2", "f0.4-m2"}
+    assert er.choose(pts[:3], REF, "fts")["pick"] is None
+
+
+def test_choose_tie_breaks_in_order():
+    pick = lambda pts, mode="fts": (lambda c: (c["pick"]["floor"], c["pick"]["max_per_doc"]))(er.choose(pts, REF, mode))  # noqa: E731
+    assert pick([_point(0.2, 2, passages=0.41), _point(0.3, 3, passages=0.4)]) == (0.2, 2)          # passages
+    assert pick([_point(0.2, 2, docs=0.81), _point(0.3, 3)]) == (0.2, 2)                              # doc recall
+    assert pick([_point(0.2, 2, n_pass=29), _point(0.3, 3)]) == (0.2, 2)                              # PASS
+    assert pick([_point(0.4, 2), _point(0.3, 3)]) == (0.3, 3)                                          # default
+    assert pick([_point(0.2, 3), _point(0.4, 3)], "hybrid") == (0.4, 3)                               # higher FLOOR
+    assert pick([_point(0.2, 4), _point(0.2, 2)], "hybrid") == (0.2, 2)                               # smaller MAX
+    assert pick([_point(0.0, 2), _point(0.0, 3)], "hybrid") == (0.0, 3)                               # hybrid default
+
+
+def test_trigrams_follow_pg_trgm():
+    assert er.trigrams("Cat") == {"  c", " ca", "cat", "at "}
+    assert er.trigrams("a-b") == {"  a", " a ", "  b", " b "}
+    assert er.trigram_similarity("cat", "cat") == 1.0
+    assert er.trigram_similarity("", "cat") == 0.0
+    assert er.trigram_similarity("word", "cord") == pytest.approx(2 / 8)  # "ord", "rd " shared; pg_trgm gives 0.25
+
+
+def test_duplicate_measure_counts_pairs_over_the_limit():
+    base = "net new assets rose in the quarter as advisors joined the firm from competitors"
+    d = er.duplicates([base, base + " today", "something else entirely about bank deposits and rates"])
+    assert d["pairs_trigram_over"] == 1 and d["max_trigram"] > 0.9
+    assert d["pairs_5gram_over"] == 1 and d["max_5gram"] > 0.9
+    assert er.duplicates(["only one"]) == {"max_trigram": 0.0, "pairs_trigram_over": 0, "max_5gram": 0.0,
+                                           "pairs_5gram_over": 0}

@@ -29,7 +29,7 @@ class Settings:
     corpus_share_path: str
     edgar_identity: str
     mock_delay_s: float = 0.0  # verify-cee only: the mock waits like a real model would (#80)
-    retrieval_mode: str = "fts"  # fts | hybrid (#125); per request: search(q, mode=...)
+    retrieval_mode: str = "fts"  # fts | hybrid | hybrid-norerank (#125, #126); per request: search(q, mode=...)
 
 
 def settings() -> Settings:
