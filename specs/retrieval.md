@@ -34,6 +34,8 @@ resolve(question) -> Query{
     #   until per-firm theme quotas (#117) - research slots pushed Q23's headcount figures out
 
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
+    # synonym_only (config/entities.yaml, #159): "pay" is searched only through its synonyms;
+    #   the bare word leaves the FTS words (Q29: "pay any net liquidation amount" is not advisor pay)
 
 retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
