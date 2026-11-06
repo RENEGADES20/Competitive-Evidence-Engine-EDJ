@@ -38,8 +38,14 @@ Documentation only: no code, config, `.env.example`, fts constant or answer-key 
     (0.402 vs 0.405 at the pick; 0.317 vs 0.389 at MAX_PER_DOC 2).
   - Q29: MiniLM scores the guarantee note `MS-10K-2025#702` 0.95 and the answer passages
     `MS-10K-2025#153` / `#170` 0.0000 / 0.0001; Q29 passes at the pick only through `#163`.
-  - Hybrid fixes Q17 (FAIL -> PASS); loses passages on Q4, Q28, Q29. One passage = about 0.02
-    recall; tuned and scored on the same 30 questions (no held-out set).
+  - Q17: fts FAILs it **only at the tuned pick 0.2/3** (coverage 3/7), which is not adopted. At
+    main's defaults 0.3/3 fts PASSes Q17 (coverage 4/7, `inputs/fts-default-f0.3-m3.json`: 0.571),
+    as do both hybrid picks; `main`'s own fts fails Q15, Q19, Q29, not Q17. So against what `main`
+    runs, hybrid fixes no failing question. The report's "hybrid fixes Q17" compares with the fts
+    pick only. Against fts 0.3/3 the hybrid picks have the same PASS (28 / 2, Q15 and Q19),
+    about equal tier-1 passage recall (0.405 / 0.402 vs 0.402) and lower doc recall (0.715 / 0.738
+    vs 0.796). One passage = about 0.02 recall; tuned and
+    scored on the same 30 questions (no held-out set).
 - **Caveat the ADR must state:** the `fts` rows above are `fts` mode on `exp/hybrid`, which equals
   `main`'s fts except the `synonym_only: [pay]` config added in #125 (only Q29 differs, 29/30
   identical chunk_ids). `main`'s own fts on the same snapshot (`p125r-fts-main`, recorded in the
@@ -71,19 +77,33 @@ Documentation only: no code, config, `.env.example`, fts constant or answer-key 
     - Decision: `fts` is the default and only retrieval mode on `main`. The hybrid code
       (`hybrid.py`, mode switch, `RETRIEVAL_MODE`, `synonym_only`) stays on `exp/hybrid` and is not
       merged. The cross-encoder is not reliable on this corpus (lower passage recall than RRF order
-      everywhere, wrong top passage on Q29, ~15x slower). The comparison does not show FTS misses
-      that hybrid fixes beyond noise (Q17 is one question, about 0.02 recall). The fts tuning pick
-      (FLOOR 0.2) is reported, not adopted; any fts constant change is a separate S1 issue with its
-      own eval (pointer for #159-type follow-ups). The optional vectors module of ADR-009 is not
-      changed by this ADR (open question 2).
+      everywhere, wrong top passage on Q29, ~15x slower). The comparison shows no question that
+      fts at `main`'s constants (0.3/3) fails and hybrid passes: both are 28 / 2 (Q15, Q19), and
+      fts has the higher tier-1 doc recall (0.796 vs 0.715 / 0.738) with equal or near-equal
+      passage recall (0.402 vs 0.405 / 0.402). Q17 is named only as the question the unadopted fts
+      pick (0.2/3) loses. The fts tuning pick (FLOOR 0.2) is reported, not adopted; any fts constant
+      change is a separate S1 issue with its own eval, and EJ-10 "Don't change ranking" and the
+      sponsor spec's section 4 Non-goals (no ranking changes for portability reasons) apply to it.
+    - Scope of the EJ-10 statement: only the **retrieval path** on `main` meets EJ-10 (`fts` is the
+      default and only mode; it needs no extension, no embedding model and no reranker). ADR-009's
+      optional vectors module is still on `main`, off by default (`db/optional/vectors.sql` with
+      `CREATE EXTENSION vector`, `src/cee/retrieve/embed.py`, `requirements-vectors.txt`,
+      `CEE_VECTORS`). ADR-010 names it as an **open TL/sponsor decision, outside #127**: when the PR
+      is written, it links the follow-up issue number if one exists; otherwise it says "open
+      decision, tracked by the TL". The implementer opens no issue.
+    - One sentence: ADR-001's "`chunks.embedding` exists but stays NULL" was superseded by ADR-009
+      (vectors in `chunk_embeddings`, optional); ADR-001's body stays as written. One sentence:
+      ADR-008 was reserved for hybrid in the first #125 plan and never used.
     - Revisit when (any one): the sponsor agrees in writing to embeddings on `main`; or a larger or
       held-out question set shows paraphrase questions that fts misses and hybrid finds, by more
       than a few passages, with refusal and forbidden-hit numbers no worse; or a reranker that beats
       RRF order on tier-1 passage recall on this corpus. Any such change needs a new ADR that
       supersedes this one.
-    - Consequences: `main` keeps one debuggable SQL path and meets EJ-10; teammates install nothing
-      new and no reinstall/new snapshot is needed; paraphrase-heavy theme questions (Q17) may still
-      lag; `exp/hybrid` is kept as the record and can be rebased if the question reopens.
+    - Consequences: `main` keeps one debuggable SQL retrieval path that meets EJ-10 (the ADR-009
+      module stays an open decision, above); teammates install nothing new and no reinstall/new
+      snapshot is needed; paraphrase-heavy questions may lag if a larger question set shows it (none
+      in this bank at `main`'s constants); `exp/hybrid` is kept as the record and can be rebased if
+      the question reopens.
   - ADR-001 Status line only: `Accepted (vectors: optional module, off by default, see ADR-009;
     hybrid evaluated, not adopted, see ADR-010)`. Body untouched.
   - ADR-009 Status line only: append `; hybrid retrieval lives on exp/hybrid only, see ADR-010`.
@@ -128,15 +148,28 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
   change, so not run (docs-only), stated in the PR.
 
 ## Acceptance
-- [ ] Linked questions: Q1-Q30 numbers quoted only from #126 `summary.json` at 3449cc5; Q17, Q29
-      named as in the report. No question or answer-key change.
+- [ ] Linked questions: Q1-Q30 numbers quoted only from #126 `summary.json` at 3449cc5 (and the
+      `p125r-fts-main` row from the 0125 plan). No question or answer-key change.
+- [ ] Q17 attributed correctly: `git diff origin/main...HEAD -- docs specs | grep -n Q17` (PowerShell:
+      `git diff origin/main...HEAD -- docs specs | Select-String Q17`) -> every line naming Q17 ties
+      it to the fts **tuned pick 0.2/3** (not adopted); no line says hybrid fixes a question that
+      `main`'s fts or fts at 0.3/3 fails. Checked by reading each hit; hits listed in the Progress log.
+- [ ] EJ-10 scope: the ADR-010 block says the **retrieval path** meets EJ-10 and names the ADR-009
+      module (`db/optional/vectors.sql`, `embed.py`, `requirements-vectors.txt`, `CEE_VECTORS`) as an
+      open TL/sponsor decision with either a follow-up issue number or "open decision, tracked by the
+      TL"; no sentence says `main` as a whole meets EJ-10
+      (`git diff origin/main...HEAD -- docs | grep -n "EJ-10"`, each hit read).
 - [ ] Only allowed files changed: `git diff --name-only origin/main...HEAD` -> exactly
       `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`, `specs/retrieval.md`, `plans/0127-hybrid-adr.md`.
 - [ ] ADR-001 and ADR-009 bodies untouched: `git diff origin/main -- docs/DECISIONS.md` shows, outside
       the new ADR-010 block, only the two `Status:` lines changed (`-`/`+` lines counted: 2 / 2).
 - [ ] Numbers match: a `python -c` that loads `summary.json` from `git show 3449cc5:...` and checks
       that each of the 12 values in the table (PASS/FAIL, docs, passages for the four rows) appears
-      in the ADR-010 block -> prints `all numbers found`. PowerShell and bash forms in the Progress log.
+      in the ADR-010 block -> prints `all numbers found`. The same script also reads
+      `git show 3449cc5:plans/0125-hybrid-retrieval.md` and checks that the `p125r-fts-main` figures
+      quoted in ADR-010 (PASS 27 / FAIL 3, Q15 Q19 Q29, docs 0.796, passages 0.347, refusal gap 4/5)
+      occur there (Progress log lines 476-478 at 3449cc5) -> `p125r-fts-main found`. PowerShell and
+      bash forms in the Progress log.
 - [ ] Pinned links resolve: `gh api repos/RENEGADES20/Competitive-Evidence-Engine-EDJ/contents/evals/hybrid-eval/corpus-2026-10-29/report.md?ref=3449cc52171406a45dfd4d13e39e227adbecd1e3 --jq .sha`
       (and `summary.json`) -> a sha, no 404.
 - [ ] No stale "RRF later" on `main`: `git grep -n -i "RRF later\|later Grounded-Rag-Analyst RRF"` -> nothing.
@@ -147,9 +180,9 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
 1. ADR number: **ADR-010** (as the brief says) leaves ADR-008 as a permanent gap; alternative is to
    fill ADR-008. Plan: ADR-010, with one sentence in ADR-010 that ADR-008 was never used.
 2. EJ-10 also lists "pgvector, embeddings or any embedding model" on `main`; ADR-009's optional
-   vectors module (`db/optional/vectors.sql`, `cee.retrieve.embed`, `requirements-vectors.txt`) is
-   still on `main`, off by default. Out of #127's scope; ADR-010 only notes that it is unchanged.
-   Whether to move it to `exp/hybrid` too is a TL/sponsor call (possible follow-up issue).
+   vectors module is still on `main`, off by default. Out of #127's scope; ADR-010 names it as an
+   open TL/sponsor decision (follow-up issue number if the TL has opened one when the PR is
+   written, else "open decision, tracked by the TL"). The implementer opens no issue.
 3. The fts headline differs by code: #126's fts (exp/hybrid, with `synonym_only`) 28/2 vs `main`'s
    fts 27/3 (Q29 FAIL, refusal gap 4/5). The ADR states both; bringing `synonym_only` to `main`
    stays with the TL's separate Q29 decision.
@@ -158,3 +191,11 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
 - 2026-11-05 20:36 - plan written on `tl/127-hybrid-adr` from `origin/main` 9dc4c9b. Read #125/#126/#127
   and comments, ADR-001/003/009, EJ-10 and section 4 of the sponsor spec, #126 report and
   `summary.json` at 3449cc5 (all quoted numbers verified), plans 0125/0126 on `exp/hybrid`.
+- 2026-11-05 20:55 - plan review round 1: CHANGES REQUESTED (2 blocking). Fixed in the plan:
+  (1) Q17 attribution: fts fails Q17 only at the unadopted pick 0.2/3; at 0.3/3 Q17 PASS (coverage
+  0.571 in `inputs/fts-default-f0.3-m3.json`, checked); ADR text and Facts reworded, Q17 grep check
+  added. (2) EJ-10 scope: only the retrieval path meets EJ-10; ADR-009 module named as open TL/sponsor
+  decision (issue number or "tracked by the TL"); Acceptance check added. Non-blocking taken: fts
+  tuning -> "a separate S1 issue" with EJ-10 "Don't change ranking" and section 4 Non-goals;
+  numbers check extended to `p125r-fts-main` (figures found at 3449cc5 plan lines 476-478); ADR-010
+  notes ADR-009 superseded ADR-001's `chunks.embedding` sentence, ADR-001 body untouched.
