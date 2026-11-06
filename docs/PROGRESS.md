@@ -105,6 +105,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | Answer tolerates list fields sent as "" or JSON strings (Q20 crash in the 2026-10-30 real run) (#143) | none | Q10/Q23 gap-instead-of-answer and Q15/Q19/Q29 retrieval findings from the same run |
 | 2026-10-31 | #144: vectors are an optional module, off by default (ADR-009); core runs on plain Postgres with no model or download; fts results unchanged 30/30 (#145) | Blockers: none | Next: #125 adopts `chunk_embeddings` behind `CEE_VECTORS`; full `.sh` run on the next macOS snapshot build |
 | 2026-11-06 | TL: README Status brought up to date (121 docs on main, snapshot corpus-2026-10-29 111 docs / 17,183 passages, retrieval check 27/30 with Q15/Q19/Q29 failing, kept apart from the human-scored Gate 4 >= 21/30; full-text search default, hybrid optional on exp/hybrid) (#162) (#163) | none | refresh after the 11/11 freeze snapshot (#120) |
+| 2026-11-06 | TL #127: ADR-010 records the hybrid comparison (#126): fts at main's constants 28/30, hybrid-norerank 28/30, hybrid+MiniLM 28/30 (5.1 s/question, reranker below RRF order at 12/12 grid points); main stays fts-only, hybrid code stays on exp/hybrid (#161) | ADR-009 vectors module on main: open TL/sponsor decision | S1 review of specs/retrieval.md lines |
 
 ## Weekly score (from W6)
 
