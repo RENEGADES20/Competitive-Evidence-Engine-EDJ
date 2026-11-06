@@ -149,7 +149,7 @@ MS 10-K chunks each mode returns for Q29 (score = the mode's `Hit.rank`: ts_rank
 - `hybrid-norerank`: PASS, coverage 1.0; MS 10-K: `MS-10K-2025#128` (0.0243), `MS-10K-2025#702` (0.022), `MS-10K-2025#170` (0.0152); `MS-10K-2025#702` returned
 - `hybrid`: PASS, coverage 1.0; MS 10-K: `MS-10K-2025#702` (0.9497), `MS-10K-2025#417` (0.9001), `MS-10K-2025#128` (0.727), `MS-10K-2025#163` (0.2473); `MS-10K-2025#702` returned
 
-Cross-encoder scores in the #125 diagnosis (`.eval-runs/p125r-diag/diag.json`, `hybrid`, 50-candidate pool, MiniLM-L-12, sigmoid):
+Cross-encoder scores in the #125 diagnosis (`p125r-diag`, committed as `inputs/p125r-diag.json`; `hybrid`, 50-candidate pool, MiniLM-L-12, sigmoid):
 
 - top 5 of the pool: `MS-TR-2025Q3#2` 0.988, `MS-10K-2025#702` 0.95, `MS-PR-2026-01-15-01#13` 0.944, `MS-TR-2024Q4#10` 0.914, `MS-10K-2025#417` 0.9
 - `MS-10K-2025#153` (must_return): keyword rank 12, vector rank None, sigmoid 0.0, pool rank 47 of 50, returned False
@@ -262,3 +262,11 @@ Seconds per `search()`; the first, untimed warm-up search (model loading) is exc
 | Q28 | 0.268 | 0.192 | 6.546 |
 | Q29 | 0.18 | 0.178 | 4.675 |
 | Q30 | 0.158 | 0.228 | 6.426 |
+
+## How this report was built
+
+From the repo root, from committed inputs only (no database, no model):
+
+```
+python scripts/eval_compare.py --chosen fts=evals/hybrid-eval/corpus-2026-10-29/fts/report.json --chosen hybrid-norerank=evals/hybrid-eval/corpus-2026-10-29/hybrid-norerank/report.json --chosen hybrid=evals/hybrid-eval/corpus-2026-10-29/hybrid/report.json --default fts=evals/hybrid-eval/corpus-2026-10-29/inputs/fts-default-f0.3-m3.json --default hybrid-norerank=evals/hybrid-eval/corpus-2026-10-29/inputs/hybrid-norerank-default-f0.0-m3.json --default hybrid=evals/hybrid-eval/corpus-2026-10-29/inputs/hybrid-default-f0.0-m3.json --grid fts=evals/hybrid-eval/corpus-2026-10-29/fts/grid.json --grid hybrid-norerank=evals/hybrid-eval/corpus-2026-10-29/hybrid-norerank/grid.json --grid hybrid=evals/hybrid-eval/corpus-2026-10-29/hybrid/grid.json --same-constants evals/hybrid-eval/corpus-2026-10-29/inputs/hybrid-norerank-f0.4-m4.json --diag evals/hybrid-eval/corpus-2026-10-29/inputs/p125r-diag.json --notes evals/hybrid-eval/corpus-2026-10-29/inputs/findings.md --out evals/hybrid-eval/corpus-2026-10-29
+```

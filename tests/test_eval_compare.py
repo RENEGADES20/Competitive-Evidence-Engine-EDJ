@@ -85,3 +85,16 @@ def test_reranker_ablation_uses_the_same_constants():
     text, summary = ec.build(runs, {}, grids, None, None, same)
     assert "| 0.4 | 4 | 1 / 1 |" in text                     # both modes at the same grid point
     assert summary["rerank_vs_norerank"] == {"rerank_more_passages": 0, "rerank_fewer_passages": 0, "same_passages": 2}
+
+
+def test_report_names_its_rebuild_command_and_uses_lf(tmp_path):
+    paths = {}
+    for mode, report in _runs().items():
+        paths[mode] = tmp_path / f"{mode}.json"
+        paths[mode].write_text(json.dumps(report), encoding="utf-8")
+    args = [a for m in ec.MODES for a in ("--chosen", f"{m}={paths[m]}")] + ["--out", str(tmp_path / "out")]
+    ec.main(args)
+    raw = (tmp_path / "out" / "report.md").read_bytes()
+    assert b"\r" not in raw and b"\r" not in (tmp_path / "out" / "summary.json").read_bytes()
+    assert "## How this report was built" in raw.decode("utf-8")
+    assert "python scripts/eval_compare.py --chosen fts=" in raw.decode("utf-8")

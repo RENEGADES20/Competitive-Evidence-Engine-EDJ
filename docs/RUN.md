@@ -159,8 +159,8 @@ Try other constants (#126; the report is `evals/hybrid-eval/corpus-2026-10-29/re
 list makes a grid: one run per combination, then `grid.md` with the point the selection rule picks.
 `--baseline` is the fts run the rule compares refusal accuracy with:
 ```powershell
-.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runsef-fts
-.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-10-29 --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 --baseline .eval-runsef-ftseport.json --out .eval-runs\grid-norerank
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runs\ref-fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-10-29 --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 --baseline .eval-runs\ref-fts\report.json --out .eval-runs\grid-norerank
 ```
 ```bash
 .venv/bin/python scripts/eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runs/ref-fts

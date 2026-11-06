@@ -1,6 +1,6 @@
 # 0126 - Compare fts / hybrid-norerank / hybrid on the question bank; tune per mode
 
-Issue: #126    Role: TL    Spec: specs/retrieval.md (S1 owns `fts.py` and the spec: S1 FYI), ADR-001, ADR-009
+Issue: #126    Role: TL    Spec: specs/retrieval.md (S1 owns `fts.py` and the spec: S1 reviews), ADR-001, ADR-009
 Branch: `tl/126-hybrid-eval` from `origin/exp/hybrid` 795056b -> PR into **`exp/hybrid`** (never `main`;
 sponsor portability spec EJ-10, TL decision on #125)
 
@@ -379,3 +379,12 @@ RRF; any rule added for Q29; changing the answer key; new retrieval features bey
   (`20261105-194220-3950a80`, hybrid-norerank/on, trace "... (hybrid-norerank)"). `git diff
   origin/exp/hybrid -- src/cee/retrieve/fts.py`: no constant line changed. 0 real calls. Open: S1
   review of the `fts.py` dispatch / `select(dup_jaccard=)` and the spec section (PR says `Part of #126`).
+- 2026-11-05 20:22 - **PR #160 review round 1** (changes requested). Blocking 1 fixed: `docs/RUN.md` held three raw
+  CR bytes where `\r` was meant (PowerShell grid block: `.eval-runs\ref-fts`, `...\ref-fts\report.json`);
+  replaced by the literal backslash + r, file back to LF text. Every file the PR touches scanned for 0x0D:
+  none (generated eval files written by Windows were CRLF in the working copy; normalized to LF, and
+  `eval_compare.py` now writes LF). Non-blocking taken: plan header says "S1 reviews"; the report's
+  inputs are committed under `evals/hybrid-eval/corpus-2026-10-29/inputs/` (findings notes, the #125
+  diagnosis `p125r-diag.json`, the three default-constant runs and the norerank run at hybrid's
+  constants, 436 KB), the report ends with the exact rebuild command, and the rebuilt report differs
+  from the previous one only by that section and the diag file name.

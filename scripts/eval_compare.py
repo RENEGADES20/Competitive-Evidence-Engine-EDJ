@@ -165,7 +165,7 @@ def q29_section(chosen: dict[str, dict], diag: dict | None) -> list[str]:
                      f"`{Q29_WATCH}` {'returned' if Q29_WATCH in q['chunk_ids'] else 'not returned'}")
     if diag and diag.get("Q29"):
         d = diag["Q29"]
-        lines += ["", "Cross-encoder scores in the #125 diagnosis (`.eval-runs/p125r-diag/diag.json`, `hybrid`, "
+        lines += ["", "Cross-encoder scores in the #125 diagnosis (`p125r-diag`, committed as `inputs/p125r-diag.json`; `hybrid`, "
                   "50-candidate pool, MiniLM-L-12, sigmoid):", ""]
         lines.append("- top 5 of the pool: " + ", ".join(f"`{c}` {s}" for c, s in d.get("top5", [])))
         for w in d.get("watch", []):
@@ -206,8 +206,9 @@ def latency_table(chosen: dict[str, dict]) -> list[str]:
 
 
 def build(chosen: dict[str, dict], defaults: dict[str, dict], grids: dict[str, dict], diag: dict | None,
-          notes: str | None, same_constants: dict | None = None) -> tuple[str, dict]:
-    """same_constants: a hybrid-norerank run at the constants hybrid picked (same candidates, RRF order)."""
+          notes: str | None, same_constants: dict | None = None, command: str | None = None) -> tuple[str, dict]:
+    """same_constants: a hybrid-norerank run at the constants hybrid picked (same candidates, RRF order).
+    command: the eval_compare.py call that rebuilds this report, printed in it."""
     rows = [mode_row(m, chosen[m]) for m in MODES]
     drows = [mode_row(m, defaults[m]) for m in MODES if m in defaults]
     meta = chosen["fts"]["meta"]
@@ -256,6 +257,10 @@ def build(chosen: dict[str, dict], defaults: dict[str, dict], grids: dict[str, d
     lines += ["## Search time per question, chosen constants (appendix)", "",
               "Seconds per `search()`; the first, untimed warm-up search (model loading) is excluded."
               " fts from its chosen grid point; the hybrid modes from their confirmation runs.", ""] + latency_table(chosen)
+    if command:
+        lines += ["", "## How this report was built", "",
+                  "From the repo root, from committed inputs only (no database, no model):", "",
+                  "```", command, "```"]
     summary = {"chosen": rows, "default": drows, "rerank_vs_norerank": rr, "rule": rule,
                "picks": {m: grids[m]["choice"] for m in grids},
                "per_question": {m: {q["id"]: q["status"] for q in chosen[m]["questions"]} for m in MODES}}
@@ -282,10 +287,12 @@ def main(argv: list[str] | None = None) -> int:
     diag = _load(args.diag) if args.diag else None
     notes = args.notes.read_text(encoding="utf-8") if args.notes else None
     same = _load(args.same_constants) if args.same_constants else None
-    text, summary = build(chosen, defaults, grids, diag, notes, same)
+    raw = sys.argv[1:] if argv is None else argv
+    command = "python scripts/eval_compare.py " + " ".join(a.replace("\\", "/") for a in raw)
+    text, summary = build(chosen, defaults, grids, diag, notes, same, command)
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "report.md").write_text(text, encoding="utf-8")
-    (args.out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (args.out / "report.md").write_bytes(text.encode("utf-8"))  # LF on every OS
+    (args.out / "summary.json").write_bytes((json.dumps(summary, indent=2) + "\n").encode("utf-8"))
     print(f"report: {args.out / 'report.md'}")
     return 0
 
