@@ -337,7 +337,9 @@ def test_hybrid_norerank_mode_is_accepted(monkeypatch, tmp_path):
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert {s[0] for s in seen} == {"hybrid-norerank"}
     assert report["meta"]["retrieval_mode"] == "hybrid-norerank"
-    assert report["meta"]["constants"]["FLOOR"] == 0.0 and report["meta"]["constants"]["MAX_PER_DOC"] == 3
+    from cee.retrieve import hybrid
+    assert report["meta"]["constants"]["FLOOR"] == hybrid.FLOOR["hybrid-norerank"]
+    assert report["meta"]["constants"]["MAX_PER_DOC"] == hybrid.MAX_PER_DOC["hybrid-norerank"]
     assert "logical CPUs" in report["meta"]["cpu"]
 
 
@@ -352,19 +354,21 @@ def test_no_option_leaves_constants_untouched(monkeypatch, tmp_path):
 
 def test_constants_map_per_mode_and_are_restored(monkeypatch, tmp_path):
     from cee.retrieve import fts, hybrid
+    before = (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC), dict(hybrid.DUP_JACCARD))
     seen = []
     _fake_bank(monkeypatch, seen)
     er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.4", "--max-per-doc", "2", "--out", str(tmp_path / "a")])
-    assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == {"hybrid": 0.0, "hybrid-norerank": 0.0}
-    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "4", "--dup-jaccard", "0.5",
+    assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == before[0]
+    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "5", "--dup-jaccard", "0.5",
              "--out", str(tmp_path / "b")])
     mode, floor, mpd, hf, hm, hd = seen[-1]
     assert (floor, mpd) == (0.3, 3)  # fts untouched in a hybrid run
-    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 4 and hd["hybrid"] == 0.5
-    assert hf["hybrid-norerank"] == 0.0 and hm["hybrid-norerank"] == 3 and hd["hybrid-norerank"] == 0.6
+    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 5 and hd["hybrid"] == 0.5
+    assert (hf["hybrid-norerank"], hm["hybrid-norerank"], hd["hybrid-norerank"]) == tuple(
+        b["hybrid-norerank"] for b in before)
     # restored after the run
     assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
-    assert hybrid.FLOOR["hybrid"] == 0.0 and hybrid.MAX_PER_DOC["hybrid"] == 3 and hybrid.DUP_JACCARD["hybrid"] == 0.6
+    assert (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC), dict(hybrid.DUP_JACCARD)) == before
 
 
 def test_dup_jaccard_is_refused_for_fts(monkeypatch, tmp_path, capsys):

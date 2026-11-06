@@ -55,8 +55,8 @@ RERANK_FLOOR = 0.0   # sigmoid score below which a hit is a weak match (outside 
 # 0.339 / 0.323 / 0.310 at 0.01 / 0.05 / 0.1; #125 plan Progress log). Tuning is #126.
 # Per mode (#126; values chosen by the selection rule in plans/0126-hybrid-eval.md, report in
 # evals/hybrid-eval/corpus-2026-10-29/report.md).
-FLOOR = {"hybrid": 0.0, "hybrid-norerank": 0.0}        # relative RRF floor on the pool
-MAX_PER_DOC = {"hybrid": 3, "hybrid-norerank": 3}      # firm part; window / research caps unchanged
+FLOOR = {"hybrid": 0.4, "hybrid-norerank": 0.4}        # relative RRF floor on the pool (#125: 0)
+MAX_PER_DOC = {"hybrid": 4, "hybrid-norerank": 3}      # firm part; window / research caps unchanged (#125: 3)
 DUP_JACCARD = {"hybrid": 0.6, "hybrid-norerank": 0.6}  # word 5-gram overlap that counts as a repeat
 DEFAULT_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-12-v2"
 # Rerankers this module knows: name -> size. Cache folder: models--<org>--<name>/snapshots/*/onnx/model.onnx
