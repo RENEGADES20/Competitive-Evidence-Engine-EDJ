@@ -19,7 +19,7 @@ HITS = [hit("BAC-10K-2025#244", "BAC-10K-2025"), hit("BAC-10K-2025#246", "BAC-10
 def run(monkeypatch, hits, generate=None):
     calls, events = [], []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q: hits)
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: hits)
 
     def fake_generate(question, h, provider):
         calls.append(provider)
@@ -62,7 +62,7 @@ def test_failed_stage_is_reported_then_raised(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
 
-    def broken(q):
+    def broken(q, mode=None):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search", broken)
     with pytest.raises(RuntimeError):
@@ -79,7 +79,7 @@ def test_no_callback_behaves_as_before(monkeypatch):
 def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q: [])
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: [])
 
     def broken(r, p):
         raise RuntimeError("insert failed")
@@ -87,3 +87,16 @@ def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     with pytest.raises(RuntimeError):
         pipeline.ask("q", provider="mock", progress=lambda *e: events.append(e))
     assert events[-1] == ("log", "failed", "Saving the query: failed (RuntimeError: insert failed)")
+
+
+def test_mode_reaches_search_and_the_trace(monkeypatch):
+    modes, events = [], []
+    monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: modes.append(mode) or HITS)
+    pipeline.ask("Merrill profitability?", provider="mock", log=False, mode="hybrid",
+                 progress=lambda *e: events.append(e))
+    assert modes == ["hybrid"]
+    assert done(events)["search"] == "Searching the corpus: 3 passages from 2 documents (hybrid)"
+    monkeypatch.delenv("RETRIEVAL_MODE", raising=False)
+    pipeline.ask("Merrill profitability?", provider="mock", log=False)
+    assert modes[-1] == "fts"

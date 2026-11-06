@@ -110,6 +110,48 @@ Turning vectors on adds embeddings in their own table `chunk_embeddings`. Five s
 
 To turn vectors off again, set `CEE_VECTORS=off`; the core ignores `chunk_embeddings`.
 
+### Hybrid retrieval (experimental branch `exp/hybrid`, #125)
+
+Only on the branch `exp/hybrid`; `main` searches with keywords only (ADR-009; the decision on
+hybrid comes in #127). The app searches with keywords (`RETRIEVAL_MODE=fts`, the default). The
+second mode, `hybrid`, also searches by meaning (vectors) and lets a small local model (a
+"reranker") re-order the passages. Steps, once:
+
+1. Turn vectors on: all five steps of "Vectors (optional, off by default)" above
+   (`CEE_VECTORS=on`, every chunk has a row in `chunk_embeddings`). With vectors off, hybrid stops
+   with a message and the app keeps working in `fts` mode.
+2. Get the reranker (`Xenova/ms-marco-MiniLM-L-12-v2`, about 120 MB). Like the embedding model it
+   is never downloaded by itself; it goes into the same model folder (`FASTEMBED_CACHE_PATH`).
+   Either download it once:
+   ```powershell
+   .\.venv\Scripts\python.exe -m cee.retrieve.hybrid --fetch
+   ```
+   ```bash
+   .venv/bin/python -m cee.retrieve.hybrid --fetch
+   ```
+   or copy the folder `models--Xenova--ms-marco-MiniLM-L-12-v2` (with its `snapshots` inside)
+   into the model folder from a teammate who has it.
+3. Check both models load offline (expect a line starting `embedding 384 dims; reranker`; a missing
+   model prints one `ERROR:` line naming the `--fetch` command):
+   ```powershell
+   .\.venv\Scripts\python.exe -m cee.retrieve.hybrid --check
+   ```
+   ```bash
+   .venv/bin/python -m cee.retrieve.hybrid --check
+   ```
+4. Set `RETRIEVAL_MODE=hybrid` in `.env` and restart the app. Questions take about 8-10 s longer
+   (the reranker runs on the CPU).
+
+Compare both modes on the question bank (hybrid needs `CEE_VECTORS=on`):
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid
+```
+```bash
+.venv/bin/python scripts/eval_run.py --mode fts
+.venv/bin/python scripts/eval_run.py --mode hybrid
+```
+
 ## 2. Daily use (teammates)
 
 1. Start Docker Desktop and wait until it says "Engine running".

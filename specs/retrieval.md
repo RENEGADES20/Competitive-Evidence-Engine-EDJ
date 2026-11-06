@@ -44,6 +44,25 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
+## Retrieval modes (#125, experimental branch `exp/hybrid` only)
+
+`main` has one mode, `fts` (ADR-001, ADR-009). The second mode lives on the branch `exp/hybrid`
+until #127 records a decision with the #126 numbers.
+
+`search(q, mode=...)` / `ask(..., mode=...)`; default `RETRIEVAL_MODE` in `.env`, else `fts`.
+
+- `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
+- `hybrid` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table `chunk_embeddings`):
+  inside the same entity / segment / window / Ask-filter `WHERE`, keyword top 100 + vector top 100
+  per firm -> reciprocal rank fusion (k = 60) per firm -> (firm, document type) groups take turns
+  into 50 candidates -> local cross-encoder rerank -> absolute score floor (none inside a time
+  window) -> the same `select()` quotas with no relative floor. Entity+theme questions get the
+  research part the same way, with the theme filter. The gap path is unchanged: unmapped firms
+  return nothing. With vectors off, `hybrid` stops with a clear message; nothing loads a model.
+- Both modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
+  through their synonyms (Q29: "pay any net liquidation amount" is not advisor pay).
+- Constants (`LEG_K`, `RRF_K`, `RERANK_N`, `RERANK_FLOOR`) are tuned per mode in #126.
+
 ## Acceptance
 
 - Time windows filtered in SQL: Q26 returns nothing older than 90 days.

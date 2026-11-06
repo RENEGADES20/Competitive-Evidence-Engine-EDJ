@@ -26,6 +26,7 @@ class Result:
     hits: list[Hit]
     answer: Answer
     query_id: int | None = None
+    retrieval_mode: str = "fts"
 
 
 Progress = Callable[[str, str, str], None]
@@ -67,19 +68,23 @@ def describe_query(q: Query) -> str:
 
 
 def ask(question: str, provider: str | None = None, log: bool = True,
-        progress: Progress | None = None, filters: dict | None = None) -> Result:
-    """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL."""
+        progress: Progress | None = None, filters: dict | None = None,
+        mode: str | None = None) -> Result:
+    """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
+    mode: retrieval mode, "fts" | "hybrid" (#125); None -> RETRIEVAL_MODE (default fts)."""
     provider = provider or settings().llm_provider
+    mode = (mode or settings().retrieval_mode).strip().lower()
     t = _Trace(progress)
     with t.stage("resolve", "Reading the question"):
         query = apply_filters(resolve(question), **(filters or {}))
     t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
     with t.stage("search", "Searching the corpus"):
-        hits = search(query)
+        hits = search(query, mode=mode)
     docs = len({h.doc_id for h in hits})
-    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}")
+    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
+                               + ("" if mode == "fts" else f" ({mode})"))
     answer, _raw = answer_for(question, query, hits, provider, trace=t)
-    result = Result(query, hits, answer)
+    result = Result(query, hits, answer, retrieval_mode=mode)
     if log:
         with t.stage("log", "Saving the query"):
             result.query_id = _log(result, provider)
@@ -143,6 +148,8 @@ def _log(r: Result, provider: str) -> int:
         row = conn.execute(
             """INSERT INTO query_log (question, mode, filters, chunk_ids, answer, snapshot, model)
                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING query_id""",
-            (r.query.question, r.query.mode, Jsonb(asdict(r.query), dumps=lambda o: json.dumps(o, default=str)), [h.chunk_id for h in r.hits],
+            (r.query.question, r.query.mode,
+             Jsonb({**asdict(r.query), "retrieval_mode": r.retrieval_mode}, dumps=lambda o: json.dumps(o, default=str)),
+             [h.chunk_id for h in r.hits],
              Jsonb(r.answer.model_dump()), snap, model)).fetchone()
     return row["query_id"]

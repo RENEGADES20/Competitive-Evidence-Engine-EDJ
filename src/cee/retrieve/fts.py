@@ -10,6 +10,9 @@ Themes (#116): a question that names one firm and a topic from config/topics.yam
 few tier 5 research chunks tagged with that topic (Q19: the EDJ filter dropped every survey on
 younger investors). Several firms + a topic stay in entity mode until per-firm theme quotas (#117):
 research slots pushed Q23's headcount figures out of the list.
+Two retrieval modes (#125, experimental branch exp/hybrid): `search(q, mode="fts" | "hybrid")`,
+default RETRIEVAL_MODE (fts). Hybrid (src/cee/retrieve/hybrid.py) needs CEE_VECTORS=on and reuses
+this module's filters, keyword terms and select().
 """
 from __future__ import annotations
 
@@ -20,7 +23,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
-from cee.config import entities_config
+from cee.config import entities_config, settings, vectors_enabled
 from cee.db import connect
 from cee.ingest.topics import load_topics, tag_text
 
@@ -186,12 +189,32 @@ def expand_synonyms(terms: str) -> list[str]:
     return out
 
 
-def _tsquery_sql(terms: str) -> tuple[dict, dict]:
+def synonym_only_words() -> list[str]:
+    """Ambiguous words searched only through their synonyms (config `synonym_only`). In filings
+    the bare verb "pay" almost always means paying an obligation, not advisor pay (Q29: a
+    clearing-guarantee note outranked the payout passage)."""
+    return list(entities_config().get("synonym_only") or [])
+
+
+def keyword_terms(q: Query) -> tuple[str, list[str]]:
+    """(words for the FTS query, synonym phrases). Synonyms are read from the whole question;
+    `synonym_only` words are then left out of the words."""
+    terms = _search_terms(q)
+    if q.window:
+        terms += " " + RECENCY_TERMS
+    synonyms = expand_synonyms(terms)
+    for word in synonym_only_words():
+        terms = _synonym_pattern(word).sub(" ", terms)
+    return terms, synonyms
+
+
+def _tsquery_sql(terms: str, synonyms: list[str] | None = None) -> tuple[dict, dict]:
     """SQL fragments for SQL: the question's words OR'ed, plus each synonym as a phrase."""
     words = ("to_tsquery('english',\n"
              "           coalesce(nullif(replace(plainto_tsquery('english', %(terms)s)::text, '&', '|'), ''),\n"
              "                    'zzznomatch'))")
-    params = {f"syn{i}": s for i, s in enumerate(expand_synonyms(terms))}
+    synonyms = expand_synonyms(terms) if synonyms is None else synonyms
+    params = {f"syn{i}": s for i, s in enumerate(synonyms)}
     if not params:
         return {"tsquery": words}, params
     phrases = " || ".join(f"phraseto_tsquery('english', %({name})s)" for name in params)
@@ -367,7 +390,33 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     return kept
 
 
-def search(q: Query, k: int = K) -> list[Hit]:
+MODES = ("fts", "hybrid")
+
+
+class HybridUnavailable(RuntimeError):
+    """Hybrid mode asked for while the optional vectors module is off (ADR-009)."""
+
+
+HYBRID_NEEDS_VECTORS = (
+    "Hybrid retrieval needs the optional vectors module: set CEE_VECTORS=on, install "
+    "requirements-vectors.txt and fill the vectors (docs/RUN.md, 'Hybrid retrieval'), or use "
+    "RETRIEVAL_MODE=fts.")
+
+
+def search(q: Query, k: int = K, mode: str | None = None) -> list[Hit]:
+    """Retrieve for one request. mode: "fts" | "hybrid"; None -> RETRIEVAL_MODE (default fts)."""
+    mode = (mode or settings().retrieval_mode).strip().lower()
+    if mode == "fts":
+        return fts_search(q, k)
+    if mode == "hybrid":
+        if not vectors_enabled():  # checked before the import: vectors off never loads hybrid
+            raise HybridUnavailable(HYBRID_NEEDS_VECTORS)
+        from cee.retrieve import hybrid  # imported late: fts mode never loads a model
+        return hybrid.search(q, k)
+    raise ValueError(f"unknown retrieval mode {mode!r}; use one of {', '.join(MODES)}")
+
+
+def fts_search(q: Query, k: int = K) -> list[Hit]:
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     if q.firm_filter and not q.entities:
@@ -376,10 +425,8 @@ def search(q: Query, k: int = K) -> list[Hit]:
     filters, filter_params = filters_sql(q)
     params.update(filter_params)
     window, window_params = window_filter(q.window)
-    terms = _search_terms(q)
-    if q.window:
-        terms += " " + RECENCY_TERMS
-    fragments, syn_params = _tsquery_sql(terms)
+    terms, synonyms = keyword_terms(q)
+    fragments, syn_params = _tsquery_sql(terms, synonyms)
     # A window question ("what's new ... in the last 90 days") asks about everything inside the
     # window, so there the words only rank; outside a window they must match.
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
