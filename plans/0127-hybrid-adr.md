@@ -191,7 +191,7 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
 - 2026-11-05 20:36 - plan written on `tl/127-hybrid-adr` from `origin/main` 9dc4c9b. Read #125/#126/#127
   and comments, ADR-001/003/009, EJ-10 and section 4 of the sponsor spec, #126 report and
   `summary.json` at 3449cc5 (all quoted numbers verified), plans 0125/0126 on `exp/hybrid`.
-- 2026-11-05 20:55 - plan review round 1: CHANGES REQUESTED (2 blocking). Fixed in the plan:
+- 2026-11-05 20:42 - plan review round 1: CHANGES REQUESTED (2 blocking). Fixed in the plan:
   (1) Q17 attribution: fts fails Q17 only at the unadopted pick 0.2/3; at 0.3/3 Q17 PASS (coverage
   0.571 in `inputs/fts-default-f0.3-m3.json`, checked); ADR text and Facts reworded, Q17 grep check
   added. (2) EJ-10 scope: only the retrieval path meets EJ-10; ADR-009 module named as open TL/sponsor
