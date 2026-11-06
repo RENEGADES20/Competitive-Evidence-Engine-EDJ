@@ -104,6 +104,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | #139 /tl-review: planned real calls (<=10) pass review as the final acceptance step, the reviewer never pays, verdicts say "Reviewed <sha>", one Check rule; RUN.md stray line removed (#141) | none | next TL issue |
 | 2026-10-30 | Answer tolerates list fields sent as "" or JSON strings (Q20 crash in the 2026-10-30 real run) (#143) | none | Q10/Q23 gap-instead-of-answer and Q15/Q19/Q29 retrieval findings from the same run |
 | 2026-10-31 | #144: vectors are an optional module, off by default (ADR-009); core runs on plain Postgres with no model or download; fts results unchanged 30/30 (#145) | Blockers: none | Next: #125 adopts `chunk_embeddings` behind `CEE_VECTORS`; full `.sh` run on the next macOS snapshot build |
+| 2026-11-06 | TL: README Status brought up to date (121 docs on main, snapshot corpus-2026-10-29 111 docs / 17,183 passages, retrieval check 27/30 with Q15/Q19/Q29 failing, kept apart from the human-scored Gate 4 >= 21/30; full-text search default, hybrid optional on exp/hybrid) (#162) (#163) | none | refresh after the 11/11 freeze snapshot (#120) |
 
 ## Weekly score (from W6)
 
