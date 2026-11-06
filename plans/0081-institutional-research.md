@@ -137,3 +137,23 @@ wt wealth_transfer, ar advisor_recruiting, ma mass_affluent. 25 candidates, 19 p
   MCK-ADVISOR-SHORTAGE-2025 (2025-02-10) and MCK-SIGNAL-SELLOFF-2026 (2026-04-08). Totals: 22 documents,
   16 publishers, 1,348 chunks, 0 untagged, 65% fallback. eval_run unchanged (Q18, Q20 PASS; Q19 still
   EDJ-only by entity mode). verify-cee PASS, pytest 129 passed.
+
+## Part 2 (2026-11-04): close #81 before the 11/11 corpus freeze
+Open items from the TL comments on #81 and the PR #93 review: a second report published by FINRA itself;
+publisher "FINRA Foundation" (not FINRA) for the Foundation reports; Fidelity and FINRA Snapshot dates;
+bs4/lxml in requirements-ingest; a warning when a document matches no topic; thematic depth by real gaps.
+Not in this PR (by agreement): the `general` topic (waits for the TL's decision, separate PR) and C2's two
+#92 suggestions (separate small PR).
+
+- 2026-11-04 - Restored corpus-2026-10-29 (111 docs). #116 closed: Q16-Q21 rerun. Q19 now retrieves tier 5
+  (CERULLI-GWT-2025, BOFA-PB-STUDY-2024/2026); Q19 still FAIL overall on MS/SCHW/RJF press patterns.
+- 2026-11-04 - Keyword-only coverage (fallback not counted): advisor_selection and mass_affluent had no
+  document with >= 3 matching chunks. Added, with the user's approval: FINRA-OVERSIGHT-2026 (FINRA, 2025-12-09),
+  CERULLI-MASS-AFFLUENT-2026 (2026-03-25), WEALTHTENDER-ADVISOR-SEARCH-2025 (2025-08-13). Not added: SEC FY2026
+  exam priorities (403 to scripts, fees_pricing already deep), J.D. Power (press release only, no gap).
+- 2026-11-04 - Dates: Fidelity 2026-06-18 -> 2025-10-09 (earliest Wayback capture; page datePublished is an
+  edit date). FINRA Snapshot stays 2026-09-11: the stored file is the September revision (first edition
+  2026-06-01), noted in the matrix.
+- 2026-11-04 - Totals: 25 documents, 17 publishers, 1,683 tier 5 chunks, 0 untagged, 1,091 (65%) fallback.
+  eval Q16, Q17, Q18, Q20, Q21 PASS, Q19 FAIL (see above). verify-cee PASS (open-citation UNREACHABLE: raw MS
+  supplement PDF not on this laptop, same on main). pytest 277 passed.

@@ -41,9 +41,14 @@ def generate(question: str, hits: list[Hit], provider: str | None = None) -> Ans
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
+def _clip(text: str, n: int = 300) -> str:
+    """Cut at a word boundary, so a figure or its unit is never cut in half (#52)."""
+    return text if len(text) <= n else text[:n].rsplit(" ", 1)[0]
+
+
 def _mock(hits: list[Hit]) -> Answer:
     time.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80)
-    claims = [{"text": " ".join(h.text.split())[:300], "chunk_ids": [h.chunk_id]} for h in hits[:3]]
+    claims = [{"text": _clip(" ".join(h.text.split())), "chunk_ids": [h.chunk_id]} for h in hits[:3]]
     return Answer(answerable=True, behavior="answer", claims=claims, llm_called=False)
 
 

@@ -2,10 +2,13 @@
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 Here: citation check (flag, never drop), code-built source labels, caveat insertion,
-coverage note, registry-based suggested sources, empty-retrieval gap/refuse.
-Not yet: number check (#52).
+coverage note, registry-based suggested sources, number check, empty-retrieval gap/refuse.
 """
 from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+from decimal import ROUND_HALF_UP, Decimal
 
 from cee.answer.schema import Answer, Gap
 from cee.config import entities_config
@@ -50,6 +53,87 @@ def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
         elif len(known) < len(claim.chunk_ids):
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
+    return check_numbers(answer, hits)
+
+
+# Number check (#52). Rule in specs/answer-citations.md, "Number check".
+SCALES = {"thousand": 1e3, "k": 1e3, "million": 1e6, "mn": 1e6, "billion": 1e9, "bn": 1e9, "trillion": 1e12}
+_MONTHS = r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
+_NUMBER = re.compile(
+    r"(?<![\w.#/-])(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?(?![\w-]|\.\d)"
+    r"(?:\s*(%|percent\b|thousand\b|million\b|billion\b|trillion\b|bn\b|mn\b|k\b))?", re.I)
+_TABLE_SCALE = re.compile(r"in (thousands|millions|billions)\b", re.I)
+_DAY_AFTER_MONTH = re.compile(rf"\b{_MONTHS}\s+\d{{1,2}}\b")
+_NUMERIC_DATE = re.compile(r"\b\d{1,2}/\d{1,2}/\d{2,4}\b")                 # 12/31/2025
+_SECTION_LABEL = re.compile(r"\b(?:Item|Note|Part)\s+\d+[A-Z]?\b", re.I)    # Item 11, Note 4
+
+
+@dataclass
+class Figure:
+    shown: Decimal      # as written, before scale ("20.4" in "20.4 thousand")
+    scale: float        # 1, 1e3, 1e6, ...
+    decimals: int       # digits after the point as written
+
+    @property
+    def value(self) -> float:
+        return float(self.shown) * self.scale
+
+
+def figures(text: str) -> list[Figure]:
+    """Numbers in the text, skipping years, quarter/form/section labels and dates."""
+    text = _DAY_AFTER_MONTH.sub(lambda m: m.group(0).rsplit(" ", 1)[0], text)
+    text = _SECTION_LABEL.sub(" ", _NUMERIC_DATE.sub(" ", text))
+    out = []
+    for m in _NUMBER.finditer(text):
+        whole, frac, unit = m.group(1), m.group(2), (m.group(3) or "").lower()
+        if not frac and not unit and "," not in whole and 1990 <= int(whole) <= 2099:
+            continue                                            # a year
+        shown = Decimal(whole.replace(",", "") + (f".{frac}" if frac else ""))
+        out.append(Figure(shown, SCALES.get(unit.strip(), 1.0), len(frac or "")))
+    return out
+
+
+def _chunk_values(text: str, unscaled: bool = False) -> list[float]:
+    """Every number in a cited chunk; a "(in millions)" table header also offers bare numbers at that
+    scale. unscaled: a claim figure written without a unit may match the digits shown ("21" vs "21 million")."""
+    values = [f.value for f in figures(text)]
+    if unscaled:
+        values += [float(f.shown) for f in figures(text) if f.scale != 1.0]
+    for word in {m.group(1).lower() for m in _TABLE_SCALE.finditer(text)}:
+        scale = SCALES[word[:-1]]
+        values += [f.value * scale for f in figures(text) if f.scale == 1.0]
+    return values
+
+
+def number_matches(f: Figure, value: float) -> bool:
+    """1) within 0.1% of the chunk number, or 2) shows a decimal and is the chunk number rounded half up."""
+    if abs(f.value - value) <= 0.001 * abs(value):
+        return True
+    if f.decimals >= 1:
+        q = Decimal(1).scaleb(-f.decimals)
+        return Decimal(repr(value / f.scale)).quantize(q, rounding=ROUND_HALF_UP) == f.shown
+    return False
+
+
+def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
+    """Flag (never drop) a claim with a number not found in any chunk it cites (rule 4)."""
+    by_id = {h.chunk_id: h for h in hits}
+    for claim in [*answer.claims, *answer.adjacent]:
+        cited = [by_id[c].text for c in claim.chunk_ids if c in by_id]
+        if not cited:
+            continue                                            # already flagged by the citation check
+        scaled = [v for text in cited for v in _chunk_values(text)]
+        bare = [v for text in cited for v in _chunk_values(text, unscaled=True)]
+        # Table cells often lose their "(in millions)" header to another chunk: a claim figure with a
+        # unit may match a chunk figure written without one ("$1,875 million" vs "$ 1,875").
+        unitless = [float(f.shown) for text in cited for f in figures(text) if f.scale == 1.0]
+
+        def found(f: Figure) -> bool:
+            values = bare if f.scale == 1.0 else scaled + [v * f.scale for v in unitless]
+            return any(number_matches(f, v) for v in values)
+
+        if not all(found(f) for f in figures(claim.text)) and "number_not_found" not in claim.flags:
+            claim.flags.append("number_not_found")
     return answer
 
 

@@ -17,6 +17,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | C1: BAC, SCHW and MS 10-K/10-Q chunks now split into Item sections (MS via its cross-reference table of contents); EDJ/RJF chunk IDs unchanged (#70) (#71) | Blockers: none | Next: GWIM segment tagging inside BAC Item 7 / 10-Q Item 2 (#37) |
 | 2026-10-18 | 8 quarterly supplements (BAC, MS Q1-Q3 2026; RJF two quarters) stored with page numbers; PDF tables and picture-nested slide text now kept (pdf.py) (#77) | SCHW supplement/monthly missing; Q23 ranks only BAC supplements (#59); docling adds ~4-7 min per PDF to rebuilds | #46 metric definitions from these supplements; snapshot rebuild |
 | 2026-10-22 | C1 #37: BAC GWIM segment tags from config (10-K/10-Q MD&A, decks, supplements; 0/20 wrong; mixed chunks untagged) (#96) | none | PR/TR tagging (#95); Q30 retrieval recall (S1) |
+| 2026-11-04 | #45 last-four supplements (MS/BAC 2025Q4, RJF 2025Q3-Q4) and six Schwab monthly reports in the manifest (#147) | Q23 "three firms" waits for #59 | TL moves the 10 PDFs from Box into raw/ |
 
 ### C2
 
@@ -35,6 +36,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-16 | Topics taxonomy v0 (#6): 19 topics covering Q16-Q21 with definitions, keywords and tagging rules in config/topics.yaml (#65) | C1 review pending | C3 builds keyword tagging (tag_topics) and starts thematic ingestion |
 | 2026-10-21 | #5 tier 5 source matrix: 39 thematic sources (research/survey/regulatory), all 8 themes with >= 2 publishers, Cerulli via free white papers (no WashU subscription) (#92) | Blockers: none | Next: #81 ingest institutional research from these rows |
 | 2026-10-27 | #81 tier 5 corpus: 22 research docs from 16 publishers (McKinsey, GSAM, FINRA, BofA x2+), topic tagger on every tier 5 chunk (65% fallback), publisher column in manifest (#93) | Blockers: Q19 excludes THEME docs in entity mode (S1); raw files to upload to Box | Next: S1 issue for theme docs in entity questions; TL decision on fallback vs general topic |
+| 2026-11-06 | #81 closed: second FINRA report, theme gaps filled (advisor_selection, mass_affluent), Fidelity date fixed, publisher FINRA Foundation; 25 tier 5 docs from 17 publishers (#152) | Blockers: none (general topic waits for TL) | Next: general-topic PR if approved; C2's #92 test suggestions |
 
 ### S1
 
@@ -46,6 +48,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-21 | Synonyms from config expand search (phrases, exact-case acronyms, 2x match bonus); "the five" resolves to MS, SCHW, EDJ, MER, RJF in SQL; Q22 NNA from 3 of 5 (#89, part) (#94) | Q11 table chunks (EDJ-10K-2025#130, RJF-10K-2025#227) not in top-20: needs table-aware ranking | #49 time windows, then #59 quotas |
 | 2026-10-27 | Time windows filtered in SQL: "last N days/weeks/months", "since the start of the year", YTD; download-dated pages left out of windows; Q26 nothing older than 90 days (#49) (#101) | Q27 returns nothing until BAC GWIM tags (#37) | #59 quotas and dedupe |
 | 2026-10-27 | S1: per-question recall and refusal accuracy in the eval runner, answer key for 10 questions (incl. gap Q24/25/28-30), baseline for corpus-2026-10-22 at k=20 (tier-1 recall 0.809 docs / 0.347 passages; refusal gap 4/5, all 9/10) (#102) | Recall for 9 tier-1 questions waits on #56; Q29 retrieves a must-not chunk (MS-10K-2025#696) | Tune Q29 refusal; BAC Q&A chunks wait on #107 |
+| 2026-11-04 | S1: one-firm questions that name a theme also retrieve up to 4 tier 5 research chunks on that theme (entity+theme mode); Q19 now gets younger-investor research, EDJ filter intact, no PASS -> FAIL (#116) (#148) | Q19 still FAIL in the eval: its other expected sources (competitor press, THEME:survey) cannot match | #117 per-firm theme quotas for several firms |
 
 ### S2
 
@@ -54,6 +57,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Prompt v0 and standard gap/boundary wording (#10): `src/cee/answer/prompt.py`, wording table in specs/answer-citations.md (Q12, Q19, Q28-Q30) (#27) | Real-model check of Q28-Q30 waits for BAC/MS documents in the corpus | Code-inserted caveats, boundary sentence and number check (S2, W3+) |
 | 2026-10-28 | Coverage note on every answer (#40): `coverage_note()` names firms, document types and periods of the retrieved passages, shown always-visible on the Ask page and checked by verify-cee ask-answer (#112) | - | Number check (#52), registry-based suggested sources (#51) |
 | 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
+| 2026-11-06 | Real-model run of Q19/Q24/Q25/Q28/Q29 on prompt v1 (#61): 5 calls (claude-sonnet-5-5), all expected behaviors, no normative sentence; number-check false flags fixed in #154 (#157) | Q29 misdated quarter (#155); Q28 passes_if outdated (#156, C1); Q19 lacks competitor moves (S1 retrieval) | #155 date check |
+| 2026-11-06 | Number check (#52): every figure in a claim is matched against its cited chunks (0.1%, or rounded with a decimal; table unit headers), else flagged `number_not_found`; rule in specs/answer-citations.md; mock clips at word boundaries (#154) | Cannot catch a figure from the wrong table column (MS-SUPP-2026Q3 p.8); small one-decimal figures pass loosely | #61 real-model runs will show how often real answers get flagged |
 
 ### U1
 
@@ -64,6 +69,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | U1: every citation on the Ask page shows its own source label and tier badge; unmatched citations are flagged, not linked (#42) (#109) | none | #41 coverage table, #53 source page in context |
 | 2026-10-27 | U1: Coverage page shows documents per firm and document type with counts, date ranges and thin/empty cells (#41) (#110) | none | #53 source page in context; #63 filters |
 | 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
+| 2026-11-04 | Ask page filters (firm, date range, keywords) as SQL WHERE clauses; query_log date fix (#149) | - | #62 feedback |
+| 2026-11-06 | Feedback on answers (Helpful / Not helpful + comment) stored per query in query_feedback; resend replaces (#153) | - | #119 plain UI pass |
 
 ### TL
 
@@ -101,6 +108,9 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | #139 /tl-review: planned real calls (<=10) pass review as the final acceptance step, the reviewer never pays, verdicts say "Reviewed <sha>", one Check rule; RUN.md stray line removed (#141) | none | next TL issue |
 | 2026-10-30 | Answer tolerates list fields sent as "" or JSON strings (Q20 crash in the 2026-10-30 real run) (#143) | none | Q10/Q23 gap-instead-of-answer and Q15/Q19/Q29 retrieval findings from the same run |
 | 2026-10-31 | #144: vectors are an optional module, off by default (ADR-009); core runs on plain Postgres with no model or download; fts results unchanged 30/30 (#145) | Blockers: none | Next: #125 adopts `chunk_embeddings` behind `CEE_VECTORS`; full `.sh` run on the next macOS snapshot build |
+| 2026-11-06 | TL: README Status brought up to date (121 docs on main, snapshot corpus-2026-10-29 111 docs / 17,183 passages, retrieval check 27/30 with Q15/Q19/Q29 failing, kept apart from the human-scored Gate 4 >= 21/30; full-text search default, hybrid optional on exp/hybrid) (#162) (#163) | none | refresh after the 11/11 freeze snapshot (#120) |
+| 2026-11-06 | TL #127: ADR-010 records the hybrid comparison (#126): fts at main's constants 28/30, hybrid-norerank 28/30, hybrid+MiniLM 28/30 (5.1 s/question, reranker below RRF order at 12/12 grid points); main stays fts-only, hybrid code stays on exp/hybrid (#161) | ADR-009 vectors module on main: open TL/sponsor decision | S1 review of specs/retrieval.md lines |
+| 2026-11-06 | #159 Q29 on main: "pay" searched only through its synonyms (verbatim port of #125's `synonym_only`); Q29 FAIL -> PASS, refusal gap 4/5 -> 5/5, the other 29 questions return identical chunks (#164) | S1 review | Gates 3/4 (#120, #121) score Q29 on main |
 
 ## Weekly score (from W6)
 

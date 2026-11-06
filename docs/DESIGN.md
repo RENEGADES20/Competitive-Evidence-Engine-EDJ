@@ -63,7 +63,7 @@ Tier badges:
 | 4 | `T4 · TRADE PRESS (INDICATIVE ONLY)` | `#9A3412` / `#FFEDD5` |
 | 5 | `T5 · RESEARCH` | `#6B21A8` / `#F3E8FF` |
 
-Placeholders now: sidebar filters (#63), feedback under an answer (#62).
+No placeholders left. Feedback under an answer (#62) is a bordered Streamlit form: Helpful / Not helpful radio, optional comment, "Send feedback"; sending again for the same query replaces the earlier row. The sidebar filters (#63) are live on the Ask page only: firm multiselect, date range, comma-separated keywords; the answer's meta line lists the filters used.
 
 ## Contrast (WCAG AA, 4.5:1 minimum)
 
