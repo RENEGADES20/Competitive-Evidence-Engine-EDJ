@@ -148,33 +148,33 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
   change, so not run (docs-only), stated in the PR.
 
 ## Acceptance
-- [ ] Linked questions: Q1-Q30 numbers quoted only from #126 `summary.json` at 3449cc5 (and the
+- [x] Linked questions: Q1-Q30 numbers quoted only from #126 `summary.json` at 3449cc5 (and the
       `p125r-fts-main` row from the 0125 plan). No question or answer-key change.
-- [ ] Q17 attributed correctly: `git diff origin/main...HEAD -- docs specs | grep -n Q17` (PowerShell:
+- [x] Q17 attributed correctly: `git diff origin/main...HEAD -- docs specs | grep -n Q17` (PowerShell:
       `git diff origin/main...HEAD -- docs specs | Select-String Q17`) -> every line naming Q17 ties
       it to the fts **tuned pick 0.2/3** (not adopted); no line says hybrid fixes a question that
       `main`'s fts or fts at 0.3/3 fails. Checked by reading each hit; hits listed in the Progress log.
-- [ ] EJ-10 scope: the ADR-010 block says the **retrieval path** meets EJ-10 and names the ADR-009
+- [x] EJ-10 scope: the ADR-010 block says the **retrieval path** meets EJ-10 and names the ADR-009
       module (`db/optional/vectors.sql`, `embed.py`, `requirements-vectors.txt`, `CEE_VECTORS`) as an
       open TL/sponsor decision with either a follow-up issue number or "open decision, tracked by the
       TL"; no sentence says `main` as a whole meets EJ-10
       (`git diff origin/main...HEAD -- docs | grep -n "EJ-10"`, each hit read).
-- [ ] Only allowed files changed: `git diff --name-only origin/main...HEAD` -> exactly
+- [x] Only allowed files changed: `git diff --name-only origin/main...HEAD` -> exactly
       `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`, `specs/retrieval.md`, `plans/0127-hybrid-adr.md`.
-- [ ] ADR-001 and ADR-009 bodies untouched: `git diff origin/main -- docs/DECISIONS.md` shows, outside
+- [x] ADR-001 and ADR-009 bodies untouched: `git diff origin/main -- docs/DECISIONS.md` shows, outside
       the new ADR-010 block, only the two `Status:` lines changed (`-`/`+` lines counted: 2 / 2).
-- [ ] Numbers match: a `python -c` that loads `summary.json` from `git show 3449cc5:...` and checks
+- [x] Numbers match: a `python -c` that loads `summary.json` from `git show 3449cc5:...` and checks
       that each of the 12 values in the table (PASS/FAIL, docs, passages for the four rows) appears
       in the ADR-010 block -> prints `all numbers found`. The same script also reads
       `git show 3449cc5:plans/0125-hybrid-retrieval.md` and checks that the `p125r-fts-main` figures
       quoted in ADR-010 (PASS 27 / FAIL 3, Q15 Q19 Q29, docs 0.796, passages 0.347, refusal gap 4/5)
       occur there (Progress log lines 476-478 at 3449cc5) -> `p125r-fts-main found`. PowerShell and
       bash forms in the Progress log.
-- [ ] Pinned links resolve: `gh api repos/RENEGADES20/Competitive-Evidence-Engine-EDJ/contents/evals/hybrid-eval/corpus-2026-10-29/report.md?ref=3449cc52171406a45dfd4d13e39e227adbecd1e3 --jq .sha`
+- [x] Pinned links resolve: `gh api repos/RENEGADES20/Competitive-Evidence-Engine-EDJ/contents/evals/hybrid-eval/corpus-2026-10-29/report.md?ref=3449cc52171406a45dfd4d13e39e227adbecd1e3 --jq .sha`
       (and `summary.json`) -> a sha, no 404.
-- [ ] No stale "RRF later" on `main`: `git grep -n -i "RRF later\|later Grounded-Rag-Analyst RRF"` -> nothing.
-- [ ] No code/config change: `git diff --stat origin/main...HEAD -- src config db scripts evals .env.example` -> empty.
-- [ ] 0 paid calls; no eval run needed (numbers come from the committed #126 report).
+- [x] No stale "RRF later" on `main`: `git grep -n -i "RRF later\|later Grounded-Rag-Analyst RRF"` -> nothing.
+- [x] No code/config change: `git diff --stat origin/main...HEAD -- src config db scripts evals .env.example` -> empty.
+- [x] 0 paid calls; no eval run needed (numbers come from the committed #126 report).
 
 ## Open questions (for the plan reviewer / TL)
 1. ADR number: **ADR-010** (as the brief says) leaves ADR-008 as a permanent gap; alternative is to
@@ -199,3 +199,17 @@ Not changed: any file under `src/`, `config/`, `db/`, `scripts/`, `evals/` (answ
   tuning -> "a separate S1 issue" with EJ-10 "Don't change ranking" and section 4 Non-goals;
   numbers check extended to `p125r-fts-main` (figures found at 3449cc5 plan lines 476-478); ADR-010
   notes ADR-009 superseded ADR-001's `chunks.embedding` sentence, ADR-001 body untouched.
+- 2026-11-05 20:45 - plan approved (round 2, at c462281). Implemented: ADR-010 appended to
+  `docs/DECISIONS.md`, ADR-001 and ADR-009 Status lines only; `specs/retrieval.md` (header,
+  reference line, open question struck and answered); `docs/ARCHITECTURE.md` Retrieval row.
+  `gh issue list --search "ADR-009 vectors module" --state open` -> no follow-up issue (only #125,
+  #127 match), so ADR-010 says "open decision, tracked by the TL". "Don't change ranking" cited as
+  EJ-10 Tier 2 item 3 with section 4. Checks (bash `.venv/Scripts/python.exe chk127.py`, PowerShell
+  `.\.venv\Scripts\python.exe chk127.py`; script text in the PR): `all numbers found`,
+  `p125r-fts-main found` in both shells. Files vs `origin/main`: the four planned files only.
+  `DECISIONS.md` removed lines: the two old Status lines only. Pinned links: `gh api ...?ref=3449cc5...`
+  -> sha 545d6cc (report.md), 3307d4e (summary.json). `git grep "RRF later|later Grounded-Rag-Analyst RRF"`
+  -> nothing. Q17 grep: one hit, "Q17 fails only at the `fts` tuned pick (coverage 3/7), which is
+  not adopted". EJ-10 grep: 6 hits, each about the retrieval path or the sponsor ask, none says
+  `main` as a whole meets EJ-10. No change under src, config, db, scripts, evals, `.env.example`.
+  Docs only: verify-cee not run (CLAUDE.md Verification). 0 paid calls.
