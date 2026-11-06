@@ -29,6 +29,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | C2 #38: 16 quarterly earnings releases (8-K EX-99.1; MS, SCHW, BAC, RJF x 4 quarters) in the manifest via `cee.ingest.releases` (#75) | Q26 still ranks the in-window RJF release 106th until the S1 time window and #59 quotas land | TL moves the 16 raw files into Box `raw/` and rebuilds the snapshot; unblocks #44 and #49 |
 | 2026-10-29 | 21 earnings-call transcripts (BAC/MS/SCHW 2024Q4-2025Q4, RJF 2024Q3-2025Q4) from MarketBeat/Quartr and Roic.ai: eight quarters per firm (#108) | BAC-TR-2025Q3#24 mis-tagged GWIM by the #106 rule (on #95); some mis-transcribed figures in the free transcripts | #107 chunk by speaker turn (new files have no Q&A heading) |
 | 2026-11-06 | #48: latest investor-day/strategy decks for MS, SCHW, BAC (GWIM), RJF (2025; 2026 has no PDF) with page numbers, plus the one Merrill release in the last 90 days as entity MER; Q8, Q27, Q4 retrieval checks now pass (#146) | Blockers: none | Next: C1 segment tags for the BAC GWIM deck (128/134 chunks untagged); S1 quota review (MER press takes its own turn; 7 rows regressed); pdf.py cross-page blocks (~4%) |
+| 2026-11-06 | C2 date check (64 rows, 0 mismatches, report docs/C2_DATES.md) + 8 undated RJ/Merrill recruiting pages as date_basis=retrieved with "page content as of" labels (#151) | 8 raw files to Box before merge; S1 firm-turn issue (MER own docs) lowers coverage on Q10/Q11/Q22/Q23 | TL snapshot rebuild after merge; S2 payout wording |
 
 ### C3
 
