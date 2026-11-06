@@ -57,18 +57,28 @@ Unsure: whether `main`'s manifest has more rows than the 10-29 snapshot (e.g. #1
 it). The README will state both numbers with their source rather than pick one.
 
 ## Acceptance
-- [ ] Linked questions: Q15, Q19, Q29 are named as the current retrieval-check failures, matching
+- [x] Linked questions: Q15, Q19, Q29 are named as the current retrieval-check failures, matching
       the step 5 re-run (checked against `evals/questions.yaml` IDs).
-- [ ] `grep -n -E "68 documents|14,682|Week 5" README.md` -> no line presents them as current.
-- [ ] Every number in the new Status appears in a command output in the Progress log below
+- [x] `grep -n -E "68 documents|14,682|Week 5" README.md` -> no line presents them as current.
+- [x] Every number in the new Status appears in a command output in the Progress log below
       (manifest count, DB counts, eval run summary).
-- [ ] The retrieval check and the Gate 4 score are named as two different things in the Status text.
-- [ ] Links resolve: `docs/PROGRESS.md` (relative), the `exp/hybrid` report (`git ls-tree
+- [x] The retrieval check and the Gate 4 score are named as two different things in the Status text.
+- [x] Links resolve: `docs/PROGRESS.md` (relative), the `exp/hybrid` report (`git ls-tree
       origin/exp/hybrid` shows the file; GitHub URL uses that path).
-- [ ] No sponsor company, platform or network named: grep the diff for the sponsor's names
-      -> no hits (public repo).
-- [ ] `git diff --stat origin/main` lists only `README.md` and this plan.
-- [ ] 0 real calls (eval run with mock, no `--real`).
+- [x] No sponsor company, platform or network named: grep the diff for the sponsor's names
+      -> 0 hits in prose (public repo).
+- [x] `git diff --stat origin/main` lists only `README.md` and this plan.
+- [x] 0 real calls (eval run with mock, no `--real`).
 
 ## Progress log
 - 2026-11-05 21:06 - plan written on `tl/162-readme-status` (worktree `wt-162`, from origin/main 9dc4c9b).
+- 2026-11-05 21:07 - plan approved by the reviewer agent (issue comment 6675788107) with notes: state Gate 4 in full, name the freeze source, log the snapshot comment, never write the sponsor-name pattern, do not word the hybrid result as decided while ADR-010 (#161) is open.
+- 2026-11-05 21:08 - step 1: `PYTHONPATH=<wt-162>\src`; `python -c "import cee;print(cee.__file__)"` -> `D:\ALLPROJECTS\EDJ\wt-162\src\cee\__init__.py`.
+- 2026-11-05 21:08 - step 2: one-off `csv.DictReader` over `data/manifest.csv` (main 9dc4c9b) -> 121 rows; doc_type: transcript 32, research 22, 10-Q 20, press 16, supplement 12, deck 8, monthly 6, 10-K 5; source_tier: 3 -> 58, 2 -> 41, 5 -> 22; tier 5 = 22 research reports, 16 distinct publishers.
+- 2026-11-05 21:08 - step 3: `docker exec cee-db psql -At` with `SET default_transaction_read_only=on`: `SELECT count(*) FROM documents` -> 111; `SELECT count(*) FROM chunks` -> 17183; `SELECT obj_description('public.documents'::regclass)` -> `corpus-2026-10-29`. The 10 manifest rows not in the snapshot were merged after 10-29 (e.g. #147).
+- 2026-11-05 21:09 - step 4: `gh pr diff` on `data/manifest.csv`: #152 (OPEN, "Second FINRA report, theme gaps, date fixes (#81)") +6/-3 lines = 3 new research rows (FINRA-OVERSIGHT-2026, CERULLI-MASS-AFFLUENT-2026, WEALTHTENDER-ADVISOR-SEARCH-2025) + 3 edited rows; #146 (OPEN, "Investor-day decks and Merrill newsroom release (#48)") +5 = 4 decks (MS, SCHW, BAC, RJF) + 1 MER press release. Neither touched.
+- 2026-11-05 21:09 - freeze date 2026-11-11 from issue #120 "[W8][TL] Corpus freeze 11/11, snapshot, Gate 3 (>= 18/30) and an internal cold test" (OPEN).
+- 2026-11-05 21:09 - step 5: `LLM_PROVIDER=mock python scripts/eval_run.py --as-of 2026-10-29 --out <scratchpad>\eval162` on this branch -> `{'PASS': 27, 'FAIL': 3, 'NOT_EVALUATED': 0} | tier-1 recall 0.796 | refusal gap 4/5 | real calls 0`; FAIL = Q15 (coverage 0.2), Q19 (coverage 0.25), Q29 (refusal FAIL, 1 must-not chunk). report.md: "Tier-1 recall: documents 0.796". Matches the issue's numbers.
+- 2026-11-05 21:09 - step 6: `git ls-tree origin/exp/hybrid evals/hybrid-eval/corpus-2026-10-29/` and `gh api .../contents/...report.md?ref=exp/hybrid` -> file exists. Report table "At each mode's default before #126": fts 28/2, search median 0.342 s; "At the constants the selection rule picked": hybrid-norerank 28/2, median 0.307 s; hybrid with cross-encoder 28/2 but median 5.107 s. So "ties, same speed" holds for hybrid without the reranker; README says so. The 28/30 there is `exp/hybrid`'s code (fts `d784e30`); `main`'s check today is 27/30, both stated with their source. The report says the default-mode decision is #127; README uses the tech lead's wording (kept as optional, re-evaluated later), no decision language, since ADR-010 (#161) is open.
+- 2026-11-05 21:10 - step 7-8: Status rewritten (corpus / retrieval check / gate score / retrieval / log pointer); Gate 4 stated in full from docs/BRIEF.md line 92 and the acceptance bar (line 68-70); `grep -n -E "68|14,682|Week 5|X/30" README.md` -> no output. No other README line stated the old numbers.
+- 2026-11-05 21:10 - step 9 checks: links: `docs/PROGRESS.md`, `docs/BRIEF.md` exist; report URL path confirmed above. Sponsor-name grep on the diff: 0 hits in prose (the only match is the repository's own name inside the #126 report URL, as in the existing URL in `src/cee/ingest/check_sources.py`). `git diff --stat origin/main` -> README.md, plans/0162-readme-status.md. Docs only: verify-cee skipped. 0 real calls.
