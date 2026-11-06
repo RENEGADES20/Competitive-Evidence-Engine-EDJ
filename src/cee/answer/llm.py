@@ -20,8 +20,10 @@ def build_user_message(question: str, hits: list[Hit]) -> str:
     parts = [f"Question: {question}", "", "Evidence chunks:"]
     for h in hits:
         seg = f", segment {h.segment}" if h.segment else ""
-        where = (f"{h.entity_id or 'Research'} {h.doc_type}{seg}, period {h.period_end or 'n/a'}, "
-                 f"published {h.published_at}, {h.section or ''}")
+        dated = (f"period n/a, page content as of {h.published_at} (undated web page)"  # ADR-007 T-09
+                 if getattr(h, "date_basis", "source") == "retrieved"
+                 else f"period {h.period_end or 'n/a'}, published {h.published_at}")
+        where = f"{h.entity_id or 'Research'} {h.doc_type}{seg}, {dated}, {h.section or ''}"
         if h.page:
             where += f", p.{h.page}"
         parts.append(f'<chunk id="{h.chunk_id}" source="{where}">\n{h.text}\n</chunk>')

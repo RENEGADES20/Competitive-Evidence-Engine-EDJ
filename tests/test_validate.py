@@ -279,6 +279,52 @@ def test_two_firms_share_one_prefix(monkeypatch):
     assert text == "Not yet in the corpus: Edward Jones Form ADV (SEC IAPD); Morgan Stanley Form ADV (SEC IAPD)"
 
 
+# Undated pages dated by the stored copy (ADR-007 T-09, #58): the label says so.
+
+def retrieved_hit(chunk_id="RJF-PR-web-advisor-select#0", published="2026-07-12"):
+    return Hit(chunk_id=chunk_id, doc_id=chunk_id.split("#")[0], entity_id="RJF", segment=None,
+               doc_type="press", source_tier=3, published_at=published, period_end=None,
+               section="Document", page=None, rank=1.0, text="x", date_basis="retrieved")
+
+
+def test_retrieved_page_label_says_page_content_as_of():
+    from cee.answer.validate import date_label, source_label
+
+    assert date_label(retrieved_hit()) == "page content as of 2026-07-12"
+    assert source_label(retrieved_hit()) == "RJF press page content as of 2026-07-12 [IR]"
+
+
+def test_source_dated_label_unchanged():
+    from cee.answer.validate import date_label, source_label
+
+    assert hit().date_basis == "source"
+    assert date_label(hit()) == "2025-12-31"
+    assert source_label(hit()) == "EDJ 10-K 2025-12-31 [filing]"
+
+
+def test_coverage_note_groups_retrieved_pages_apart():
+    from cee.answer.validate import coverage_note
+
+    press = Hit(chunk_id="RJF-PR-2025-10-22#0", doc_id="RJF-PR-2025-10-22", entity_id="RJF", segment=None,
+                doc_type="press", source_tier=3, published_at="2025-10-22", period_end=None,
+                section="Document", page=None, rank=1.0, text="x")
+    pages = [retrieved_hit("RJF-PR-web-a#0", "2026-03-11"), retrieved_hit("RJF-PR-web-b#0", "2026-07-12")]
+    note = coverage_note(Query(question="q", entities=["RJF"]), [press, *pages])
+    assert "RJF press (2025-10-22)" in note
+    assert "RJF press (page content as of 2026-03-11 to 2026-07-12)" in note
+
+
+def test_label_works_on_hits_without_date_basis():
+    import types
+
+    from cee.answer.validate import coverage_note, date_label
+
+    h = types.SimpleNamespace(chunk_id="EDJ-10K-2025#1", doc_id="EDJ-10K-2025", entity_id="EDJ", segment=None,
+                              doc_type="10-K", published_at="2026-03-13", period_end="2025-12-31")
+    assert date_label(h) == "2025-12-31"
+    assert "EDJ 10-K (2025-12-31)" in coverage_note(Query(question="q", entities=["EDJ"]), [h])
+
+
 # Number check (#52): every number in a claim must be found in a chunk it cites.
 
 def chunk(text, chunk_id="MS-SUPP-2026Q3#1"):
