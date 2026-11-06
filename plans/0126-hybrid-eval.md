@@ -371,7 +371,7 @@ RRF; any rule added for Q29; changing the answer key; new retrieval features bey
   outside the window, newest first. Q29 in hybrid passes at MAX_PER_DOC 4 only through `MS-10K-2025#163`
   (Wealth Management income table, sigmoid 0.25); `#153`/`#170` still not returned, `#702` still the top
   MS 10-K hit (0.95), and RRF order returns `#702` too. Mock check: `42 runs, all mock, 0 real calls`.
-- 2026-11-05 19:46 - **Steps 9-10**: docs (spec section, RUN.md: third mode + grid command, 1 new
+- 2026-11-05 19:44 - **Steps 9-10**: docs (spec section, RUN.md: third mode + grid command, 1 new
   PowerShell + 1 bash block pair, `.env.example`, ask-progress recipe line). `pytest -q`: core venv 330
   passed / 2 skipped, vectors venv 332 passed (step-1 floor 304 / 306). verify-cee VERIFY PASS, 8
   features each: fts, core venv, vectors off (`.verify-runs/20261105-193845-3950a80`, summary fts/off);
