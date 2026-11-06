@@ -169,6 +169,7 @@ def test_note_on_printed_date_leaves_header_rules_on(monkeypatch):
 
 
 def test_real_converter_header_parses():
+    pytest.importorskip("bs4")  # the converter needs bs4 (requirements-ingest.txt); CI installs requirements.txt only
     spec2 = importlib.util.spec_from_file_location(
         "convert_undated_web", SCRIPT.parent / "convert_undated_web.py")
     cw = importlib.util.module_from_spec(spec2)
