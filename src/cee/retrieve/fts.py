@@ -186,12 +186,32 @@ def expand_synonyms(terms: str) -> list[str]:
     return out
 
 
-def _tsquery_sql(terms: str) -> tuple[dict, dict]:
+def synonym_only_words() -> list[str]:
+    """Ambiguous words searched only through their synonyms (config `synonym_only`). In filings
+    the bare verb "pay" almost always means paying an obligation, not advisor pay (Q29: a
+    clearing-guarantee note outranked the payout passage)."""
+    return list(entities_config().get("synonym_only") or [])
+
+
+def keyword_terms(q: Query) -> tuple[str, list[str]]:
+    """(words for the FTS query, synonym phrases). Synonyms are read from the whole question;
+    `synonym_only` words are then left out of the words."""
+    terms = _search_terms(q)
+    if q.window:
+        terms += " " + RECENCY_TERMS
+    synonyms = expand_synonyms(terms)
+    for word in synonym_only_words():
+        terms = _synonym_pattern(word).sub(" ", terms)
+    return terms, synonyms
+
+
+def _tsquery_sql(terms: str, synonyms: list[str] | None = None) -> tuple[dict, dict]:
     """SQL fragments for SQL: the question's words OR'ed, plus each synonym as a phrase."""
     words = ("to_tsquery('english',\n"
              "           coalesce(nullif(replace(plainto_tsquery('english', %(terms)s)::text, '&', '|'), ''),\n"
              "                    'zzznomatch'))")
-    params = {f"syn{i}": s for i, s in enumerate(expand_synonyms(terms))}
+    synonyms = expand_synonyms(terms) if synonyms is None else synonyms
+    params = {f"syn{i}": s for i, s in enumerate(synonyms)}
     if not params:
         return {"tsquery": words}, params
     phrases = " || ".join(f"phraseto_tsquery('english', %({name})s)" for name in params)
@@ -376,10 +396,8 @@ def search(q: Query, k: int = K) -> list[Hit]:
     filters, filter_params = filters_sql(q)
     params.update(filter_params)
     window, window_params = window_filter(q.window)
-    terms = _search_terms(q)
-    if q.window:
-        terms += " " + RECENCY_TERMS
-    fragments, syn_params = _tsquery_sql(terms)
+    terms, synonyms = keyword_terms(q)
+    fragments, syn_params = _tsquery_sql(terms, synonyms)
     # A window question ("what's new ... in the last 90 days") asks about everything inside the
     # window, so there the words only rank; outside a window they must match.
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
