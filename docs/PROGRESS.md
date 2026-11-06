@@ -69,6 +69,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | U1: Coverage page shows documents per firm and document type with counts, date ranges and thin/empty cells (#41) (#110) | none | #53 source page in context; #63 filters |
 | 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
 | 2026-11-04 | Ask page filters (firm, date range, keywords) as SQL WHERE clauses; query_log date fix (#149) | - | #62 feedback |
+| 2026-11-06 | Feedback on answers (Helpful / Not helpful + comment) stored per query in query_feedback; resend replaces (#153) | - | #119 plain UI pass |
 
 ### TL
 
