@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -14,7 +14,8 @@ retrieval modes chosen by rules, per-entity quotas, near-duplicate removal.
 - [sec_rag_assistant](https://github.com/lazfa04/sec_rag_assistant): filters in the retrieval
   layer, per-company quotas, pitfalls list.
 - [agentic-sec-rag](https://github.com/mr-j90/agentic-sec-rag): deterministic entity/period resolution.
-- [Grounded-Rag-Analyst](https://github.com/Monesh76/Grounded-Rag-Analyst): Postgres FTS; RRF later.
+- [Grounded-Rag-Analyst](https://github.com/Monesh76/Grounded-Rag-Analyst): Postgres FTS; RRF evaluated on `exp/hybrid`,
+  not adopted (ADR-010).
 - [rag-pipeline-sec-filings](https://github.com/avivakahlon/rag-pipeline-sec-filings): over-fetch 3x
   then drop > 90% similar chunks (boilerplate repeated across years).
 
@@ -64,4 +65,6 @@ Q4, Q7, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
   1 January of the current calendar year to today. Windows filter `published_at` (both
   ends inclusive) and leave out `date_basis = retrieved` documents (ADR-007 T-09).
 - Similarity measure for dedupe: trigram (pg_trgm) is simplest.
-- When would hybrid search be justified? Needs a comparison run (ADR-001).
+- ~~When would hybrid search be justified?~~ Compared in #126 on `exp/hybrid`: not on this
+  question bank; `main` stays FTS-only (ADR-010, sponsor spec EJ-10). Report:
+  [evals/hybrid-eval/corpus-2026-10-29/report.md at 3449cc5](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/3449cc52171406a45dfd4d13e39e227adbecd1e3/evals/hybrid-eval/corpus-2026-10-29/report.md).

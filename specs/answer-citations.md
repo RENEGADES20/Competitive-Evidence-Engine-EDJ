@@ -80,7 +80,44 @@ sentence as the last claim:
 
 Q12, Q19, Q24, Q25, Q28, Q29, Q30 (primary); every question.
 
+## Number check
+
+`check_numbers()` in `src/cee/answer/validate.py` (#52) runs after the citation check. Every
+number in a claim or adjacent item is compared with the numbers in the chunks that claim cites
+(not other retrieved chunks). No match: the claim gets the flag `number_not_found`; it is never
+dropped, and the app shows the flag next to the claim.
+
+A claim figure matches a chunk figure when either:
+1. it is within 0.1% of the chunk figure; or
+2. it shows at least one decimal place and equals the chunk figure rounded half up to the
+   claim's shown precision and scale.
+
+| Claim | Cited chunk | Result | Why |
+|---|---|---|---|
+| 20,425 | 20,425 | match | equal |
+| 30,020 | 30,000 | match | 0.07% apart |
+| 20.4 thousand | 20,425 | match | one decimal, rounded |
+| $1.2 billion | $1,234 million | match | one decimal, rounded |
+| 2.9% | 2.88% | match | one decimal, rounded |
+| $7.9 billion | 7,912 under "($ in millions)" | match | table unit header applied |
+| nearly 21 | 21 million | match | a figure written without a unit may match the digits shown |
+| $1,875 million | "$ 1,875" (table header in another chunk) | match | a figure with a unit may match the same digits written without one |
+| $1 billion | $1.4 billion | `number_not_found` | no decimal, 29% apart |
+| 20,000 | 20,425 | `number_not_found` | no decimal, 2% apart |
+| 21% | 20.8% | `number_not_found` | no decimal, 1% apart |
+| 21 thousand | 21 million | `number_not_found` | wrong unit |
+| 21,000 (planted) | 20,425 | `number_not_found` | not in the chunk |
+
+Scale words: thousand, k, million, mn, billion, bn, trillion. Not checked: years 1990-2099,
+quarter and form labels (Q3, 3Q26, 10-K), section labels (Item 11, Note 4), dates (December 31,
+12/31/2025), numbers written as words. Derived figures (sums, ratios, per-advisor values) are not in the chunk and are flagged.
+
+Limits: a small figure with one decimal can pass rule 2 with a large relative error ("$0.1
+billion" vs $0.14 billion). The check proves a figure is in the cited text, not that it came from
+the right table column (MS-SUPP-2026Q3 p.8: a docling cell shift put 2.88% under the wrong
+column); PDF source labels keep the page so the reader can open it.
+
 ## Open questions
 
 - Trade-press claims: allowed only as `adjacent` / labeled indicative? (Q29 suggests labeled)
-- How strict is the number check with rounding and units ("$1.2 trillion" vs "1,200 billion")?
+- ~~How strict is the number check with rounding and units?~~ Settled in "Number check" (#52).

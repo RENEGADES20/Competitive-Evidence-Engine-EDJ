@@ -56,6 +56,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-15 | Prompt v0 and standard gap/boundary wording (#10): `src/cee/answer/prompt.py`, wording table in specs/answer-citations.md (Q12, Q19, Q28-Q30) (#27) | Real-model check of Q28-Q30 waits for BAC/MS documents in the corpus | Code-inserted caveats, boundary sentence and number check (S2, W3+) |
 | 2026-10-28 | Coverage note on every answer (#40): `coverage_note()` names firms, document types and periods of the retrieved passages, shown always-visible on the Ask page and checked by verify-cee ask-answer (#112) | - | Number check (#52), registry-based suggested sources (#51) |
 | 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
+| 2026-11-06 | Real-model run of Q19/Q24/Q25/Q28/Q29 on prompt v1 (#61): 5 calls (claude-sonnet-5-5), all expected behaviors, no normative sentence; number-check false flags fixed in #154 (#157) | Q29 misdated quarter (#155); Q28 passes_if outdated (#156, C1); Q19 lacks competitor moves (S1 retrieval) | #155 date check |
+| 2026-11-06 | Number check (#52): every figure in a claim is matched against its cited chunks (0.1%, or rounded with a decimal; table unit headers), else flagged `number_not_found`; rule in specs/answer-citations.md; mock clips at word boundaries (#154) | Cannot catch a figure from the wrong table column (MS-SUPP-2026Q3 p.8); small one-decimal figures pass loosely | #61 real-model runs will show how often real answers get flagged |
 
 ### U1
 
@@ -104,6 +106,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | #139 /tl-review: planned real calls (<=10) pass review as the final acceptance step, the reviewer never pays, verdicts say "Reviewed <sha>", one Check rule; RUN.md stray line removed (#141) | none | next TL issue |
 | 2026-10-30 | Answer tolerates list fields sent as "" or JSON strings (Q20 crash in the 2026-10-30 real run) (#143) | none | Q10/Q23 gap-instead-of-answer and Q15/Q19/Q29 retrieval findings from the same run |
 | 2026-10-31 | #144: vectors are an optional module, off by default (ADR-009); core runs on plain Postgres with no model or download; fts results unchanged 30/30 (#145) | Blockers: none | Next: #125 adopts `chunk_embeddings` behind `CEE_VECTORS`; full `.sh` run on the next macOS snapshot build |
+| 2026-11-06 | TL: README Status brought up to date (121 docs on main, snapshot corpus-2026-10-29 111 docs / 17,183 passages, retrieval check 27/30 with Q15/Q19/Q29 failing, kept apart from the human-scored Gate 4 >= 21/30; full-text search default, hybrid optional on exp/hybrid) (#162) (#163) | none | refresh after the 11/11 freeze snapshot (#120) |
+| 2026-11-06 | TL #127: ADR-010 records the hybrid comparison (#126): fts at main's constants 28/30, hybrid-norerank 28/30, hybrid+MiniLM 28/30 (5.1 s/question, reranker below RRF order at 12/12 grid points); main stays fts-only, hybrid code stays on exp/hybrid (#161) | ADR-009 vectors module on main: open TL/sponsor decision | S1 review of specs/retrieval.md lines |
 
 ## Weekly score (from W6)
 

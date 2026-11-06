@@ -277,3 +277,114 @@ def test_two_firms_share_one_prefix(monkeypatch):
     a = Answer(answerable=False, behavior="gap_with_adjacent", gaps=[{"what": "x", "suggested_source": ""}])
     text = validate.fill_suggested_sources(a, Query(question="q", entities=["EDJ", "MS"])).gaps[0].suggested_source
     assert text == "Not yet in the corpus: Edward Jones Form ADV (SEC IAPD); Morgan Stanley Form ADV (SEC IAPD)"
+
+
+# Number check (#52): every number in a claim must be found in a chunk it cites.
+
+def chunk(text, chunk_id="MS-SUPP-2026Q3#1"):
+    return Hit(chunk_id=chunk_id, doc_id=chunk_id.split("#")[0], entity_id="MS", segment=None,
+               doc_type="supplement", source_tier=2, published_at="2026-10-15", period_end="2026-09-30",
+               section="p8", page=8, rank=1.0, text=text)
+
+
+def flags_for(claim_text, chunk_text):
+    a = Answer(answerable=True, behavior="answer", claims=[{"text": claim_text, "chunk_ids": ["MS-SUPP-2026Q3#1"]}])
+    return check_citations(a, [chunk(chunk_text)]).claims[0].flags
+
+
+def test_planted_wrong_figure_is_flagged():
+    # Spec: the number check catches a planted wrong figure. Flagged, never dropped.
+    a = Answer(answerable=True, behavior="answer", claims=[
+        {"text": "The firm had 21,000 financial advisors.", "chunk_ids": ["MS-SUPP-2026Q3#1"]}])
+    out = check_citations(a, [chunk("Financial advisors: 20,425 at period end.")])
+    assert out.claims[0].text == "The firm had 21,000 financial advisors."
+    assert out.claims[0].flags == ["number_not_found"]
+
+
+def test_exact_figure_matches():
+    assert flags_for("20,425 advisors", "Financial advisors 20,425") == []
+
+
+def test_within_one_tenth_of_a_percent_matches():
+    assert flags_for("about 30,020 clients", "30,000 clients") == []
+    assert flags_for("about 30,040 clients", "30,000 clients") == ["number_not_found"]
+
+
+def test_rounded_with_a_decimal_matches():
+    assert flags_for("20.4 thousand advisors", "Financial advisors 20,425") == []
+    assert flags_for("$1.2 billion of revenue", "revenue of $1,234 million") == []
+    assert flags_for("a margin of 2.9%", "margin 2.88 %") == []
+
+
+def test_coarse_figure_without_a_decimal_is_flagged():
+    assert flags_for("$1 billion of revenue", "revenue of $1.4 billion") == ["number_not_found"]
+    assert flags_for("20,000 advisors", "Financial advisors 20,425") == ["number_not_found"]
+    assert flags_for("a margin of 21%", "margin 20.8%") == ["number_not_found"]
+
+
+def test_table_unit_header_scales_bare_numbers():
+    assert flags_for("net revenues of $7.9 billion", "($ in millions) Net revenues 7,912") == []
+    assert flags_for("net revenues of $7.9 billion", "Net revenues 7,912") == ["number_not_found"]
+
+
+def test_years_quarters_forms_and_dates_are_not_checked():
+    text = "In the 2025 10-K and on the 3Q26 call (Q3, December 31, 2025), assets were $5.1 trillion."
+    assert flags_for(text, "Total client assets of $5.1 trillion") == []
+
+
+def test_number_found_only_in_an_uncited_chunk_is_flagged():
+    a = Answer(answerable=True, behavior="answer", claims=[{"text": "20,425", "chunk_ids": ["MS-SUPP-2026Q3#1"]}])
+    out = check_citations(a, [chunk("nothing here"), chunk("20,425", "MS-SUPP-2026Q3#2")])
+    assert out.claims[0].flags == ["number_not_found"]
+
+
+def test_adjacent_items_are_checked_too():
+    a = Answer(answerable=False, behavior="gap_with_adjacent", adjacent=[
+        {"text": "Compensation expense was $9.9 billion.", "chunk_ids": ["MS-SUPP-2026Q3#1"], "differs_because": "x"}])
+    out = check_citations(a, [chunk("Compensation and benefits $8,512 million")])
+    assert out.adjacent[0].flags == ["number_not_found"]
+
+
+def test_misplaced_table_cell_still_matches():
+    # TL's case (MS-SUPP-2026Q3 p.8): docling put 2.88% under the wrong column. The check proves the
+    # figure is in the cited text, not that it is the right column; the label keeps the page to open.
+    assert flags_for("Period average yield was 2.88%.", "Period average 2.88% 0.12%") == []
+    assert ", p.8" in validate.source_label(chunk("x"))
+
+
+def test_flag_is_shown_next_to_the_claim(monkeypatch):
+    from cee.app import components
+
+    shown = []
+    monkeypatch.setattr(components, "_html", shown.append)
+    components.claim_card(1, "The firm had 21,000 advisors.", [], "", ["number_not_found"])
+    assert 'class="cee-flag">number_not_found</span>' in shown[0]
+
+
+def test_figure_without_unit_matches_the_digits_but_a_wrong_unit_is_flagged():
+    assert flags_for("serves nearly 21 households", "serves nearly 21 million households") == []
+    assert flags_for("serves nearly 21 thousand households", "serves nearly 21 million households") == ["number_not_found"]
+
+
+def test_mock_never_cuts_a_figure_in_half():
+    from cee.answer.llm import _clip
+
+    text = "word " * 58 + "with $11.90 trillion in client assets"
+    assert _clip(text).endswith(("$11.90", "with")) and "trilli" not in _clip(text).split()[-1:]
+
+
+# Found in the #61 real-model run: correct figures that the first rule flagged.
+
+def test_table_cell_without_its_unit_header_matches_the_same_digits():
+    # Q25: "$1,875 million" from an EDJ 10-Q table whose "(in millions)" header is in another chunk.
+    assert flags_for("financial advisor compensation was $1,875 million",
+                     "Compensation and benefits: Financial advisor $ 1,875 $ 1,653 13%") == []
+    # Q24: "$11,903.0 billion" from a Schwab table cell "$ 11,903.0".
+    assert flags_for("total client assets were $11,903.0 billion", "Total client assets 18% 3% $ 11,903.0") == []
+    # Still flagged: a different figure, or a unit that contradicts the chunk's own unit.
+    assert flags_for("$1,900 million", "Financial advisor $ 1,875") == ["number_not_found"]
+    assert flags_for("21 thousand households", "21 million households") == ["number_not_found"]
+
+
+def test_numeric_dates_and_section_labels_are_not_checked():
+    assert flags_for("in the quarter ended 12/31/2025 (Item 11, Note 4)", "nothing numeric here") == []
