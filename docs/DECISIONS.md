@@ -31,7 +31,7 @@ Consequences: If terms are restrictive, tier 1 stays out and trade press may be 
 metadata + excerpt + link only. No code path may depend on tier 1.
 
 ## ADR-001: Postgres full-text search first
-Status: Accepted (vectors: optional module, off by default, see ADR-009)
+Status: Accepted (vectors: optional module, off by default, see ADR-009; hybrid evaluated, not adopted, see ADR-010)
 Context: The brief says prove the need before adding semantic search. Most questions name
 firms, metrics and terms that FTS handles well with a synonym list.
 Decision: Phase 1 uses Postgres `tsvector` + synonyms only. `chunks.embedding` exists but
@@ -145,7 +145,7 @@ tiers 2-5 alone. Unchanged: raw documents and dumps never go into this public re
 (Box only), every document has a manifest row, and every citation shows its tier label.
 
 ## ADR-009: Core retrieval stays extension-free and model-free; vectors are optional
-Status: Accepted (tech lead decision 2026-10-30, #144)
+Status: Accepted (tech lead decision 2026-10-30, #144; hybrid retrieval lives on exp/hybrid only, see ADR-010)
 Context: #123/#124 made pgvector, an embedding model and its runtime part of every install:
 `db/upgrade.sql` created the `vector` extension and `chunks.embedding` on every new volume and
 restore, the snapshot build had to embed every chunk, `requirements.txt` required fastembed and
@@ -167,3 +167,67 @@ evaluate the prototype. Turning vectors on is a documented set of steps (docs/RU
 database image keeps pgvector so switching on needs no new image. Snapshots built with vectors
 off restore on plain Postgres; older snapshots still carry `chunks.embedding`, which the core
 ignores and `vectors.sql` moves into `chunk_embeddings`.
+
+## ADR-010: Hybrid retrieval evaluated; core stays FTS-only
+Status: Accepted (tech lead decision 2026-11-05, #127)
+Context: ADR-001 allowed hybrid search (pgvector + RRF) only after a comparison run on the
+question bank showed FTS misses. The sponsor portability spec (v1.0, 2026-10-29, EJ-10) asks
+for no pgvector, embeddings, embedding model, PostgreSQL extension or reranker on `main`;
+semantic retrieval may be explored on a branch with the results documented. So #124-#126 built
+and measured hybrid retrieval on the long-lived branch `exp/hybrid`: keyword + vector legs fused
+by RRF per firm (`hybrid-norerank`), and the same candidates reordered by a local cross-encoder,
+Xenova/ms-marco-MiniLM-L-12-v2 (`hybrid`). ADR-003 is unaffected: the cross-encoder is a local
+model, not an LLM call. (ADR-008 was reserved for this decision in an early #125 plan and never
+used.)
+
+Results (#126 report, snapshot `corpus-2026-10-29`, as of 2026-10-29, k=20, mock provider,
+0 real calls, all 30 questions; [report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/3449cc52171406a45dfd4d13e39e227adbecd1e3/evals/hybrid-eval/corpus-2026-10-29/report.md),
+[summary.json](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/3449cc52171406a45dfd4d13e39e227adbecd1e3/evals/hybrid-eval/corpus-2026-10-29/summary.json),
+both at `exp/hybrid` 3449cc5):
+
+| Mode (FLOOR / MAX_PER_DOC) | PASS / FAIL | Tier-1 docs | Tier-1 passages | Refusal gap / all keyed | Forbidden | Median search |
+|---|---|---|---|---|---|---|
+| `fts` at `main`'s constants (0.3 / 3) | 28 / 2 | 0.796 | 0.402 | 5/5, 10/10 | 0 | 0.34 s |
+| `fts`, tuned pick (0.2 / 3), not adopted | 27 / 3 | 0.782 | 0.474 | 5/5, 10/10 | 0 | 0.34 s |
+| `hybrid-norerank`, tuned pick (0.4 / 3) | 28 / 2 | 0.715 | 0.405 | 5/5, 10/10 | 0 | 0.31 s |
+| `hybrid` with MiniLM rerank, tuned pick (0.4 / 4) | 28 / 2 | 0.738 | 0.402 | 5/5, 10/10 | 0 | 5.1 s |
+
+- The `fts` rows are `fts` mode on `exp/hybrid`, which equals `main`'s code except the
+  `synonym_only: [pay]` config from #125 (only Q29 differs). `main`'s own `fts` on the same
+  snapshot (`p125r-fts-main`, Progress log of `plans/0125-hybrid-retrieval.md` on `exp/hybrid`):
+  PASS 27 / FAIL 3 (Q15, Q19, Q29), docs 0.796, passages 0.347, refusal gap 4/5. Q29 on `main`
+  is a separate TL item; this ADR does not move `synonym_only` to `main`.
+- No question that `fts` at `main`'s constants fails is passed by hybrid: both fail Q15 and Q19.
+  `fts` has the higher tier-1 doc recall and about the same passage recall. Q17 fails only at
+  the `fts` tuned pick (coverage 3/7), which is not adopted.
+- The cross-encoder is not reliable on this text. With the same candidates, its tier-1 passage
+  recall is lower than plain RRF order at all 12 grid points (0.402 vs 0.405 at the pick; 0.317
+  vs 0.389 at MAX_PER_DOC 2). On Q29 it scores a guarantee note (`MS-10K-2025#702`) 0.95 and
+  the answer passages `MS-10K-2025#153` and `#170` near 0. It is about 15 times slower on CPU.
+- Tuned and scored on the same 30 questions, with no held-out set: one passage is about 0.02
+  of passage recall, so small differences are weak evidence.
+
+Decision:
+- `fts` is the default and only retrieval mode on `main`. There is no retrieval-mode setting
+  on `main`.
+- The hybrid code (`hybrid.py`, the mode switch, `RETRIEVAL_MODE`, `synonym_only`) stays on
+  `exp/hybrid` and is not merged.
+- The `fts` tuned pick (FLOOR 0.2) is reported only. Any change to `fts` constants is a separate
+  S1 issue with its own eval; EJ-10 Tier 2 item 3 ("Don't change ranking") and section 4 of the
+  sponsor spec (Non-goals: no ranking changes for portability reasons) apply to it.
+- Scope of EJ-10 here: `main`'s retrieval path (one mode, no extension, no embedding model, no
+  reranker) meets EJ-10. ADR-009's optional vectors module is still on `main`, off by default
+  (`db/optional/vectors.sql` with `CREATE EXTENSION vector`, `src/cee/retrieve/embed.py`,
+  `requirements-vectors.txt`, `CEE_VECTORS`). Whether it stays is an open decision, tracked by
+  the TL, outside this ADR.
+- ADR-001's sentence "`chunks.embedding` exists but stays NULL" was already superseded by
+  ADR-009 (vectors in `chunk_embeddings`, optional); ADR-001's body stays as written.
+- Revisit when any of these holds, with a new ADR that supersedes this one: the sponsor agrees
+  in writing to embeddings on `main`; a larger or held-out question set shows questions that
+  `fts` misses and hybrid finds, by more than a few passages, with refusal and forbidden hits no
+  worse; a reranker beats RRF order on tier-1 passage recall on this corpus.
+Consequences: `main` keeps one debuggable SQL retrieval path, and that path meets EJ-10.
+Teammates install nothing new; no reinstall and no new snapshot are needed. Questions that need
+paraphrase matching may lag if a larger question set shows them (none in this bank at `main`'s
+constants). `exp/hybrid` stays as the record and can be brought up to date if the question
+reopens.
