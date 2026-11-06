@@ -72,3 +72,16 @@ def test_main_writes_report_and_summary(tmp_path):
     assert ec.main(args) == 0
     assert (tmp_path / "out" / "report.md").is_file()
     assert json.loads((tmp_path / "out" / "summary.json").read_text(encoding="utf-8"))["chosen"][0]["mode"] == "fts"
+
+
+def test_reranker_ablation_uses_the_same_constants():
+    runs = _runs()
+    point = lambda r, f, m: {"floor": f, "max_per_doc": m, "summary": r["summary"] | {"pass": 1}}  # noqa: E731
+    grids = {m: {"rule": "r", "points": [point(runs[m], 0.4, 4)],
+                 "choice": {"pick": {"floor": 0.4, "max_per_doc": 4}, "reason": "x", "not_eligible": {}}}
+             for m in ("hybrid", "hybrid-norerank")}
+    same = _report("hybrid-norerank", 0.4, [_q("Q1", "PASS", 1, ["A#1"]),
+                                            _q("Q29", "FAIL", 0, ["MS-10K-2025#702"], behavior="gap_with_adjacent")])
+    text, summary = ec.build(runs, {}, grids, None, None, same)
+    assert "| 0.4 | 4 | 1 / 1 |" in text                     # both modes at the same grid point
+    assert summary["rerank_vs_norerank"] == {"rerank_more_passages": 0, "rerank_fewer_passages": 0, "same_passages": 2}

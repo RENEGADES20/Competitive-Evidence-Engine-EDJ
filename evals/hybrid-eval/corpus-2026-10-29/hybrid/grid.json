@@ -1,0 +1,525 @@
+{
+  "mode": "hybrid",
+  "rule": "1. Eligible: forbidden hits 0 on all questions; refusal accuracy on the gap questions and on all keyed questions >= the fts reference run (--baseline). 2. Among eligible points: highest tier-1 passage recall (3 decimals). 3. Ties: higher tier-1 doc recall; more PASS; the mode's default before #126 (fts 0.3/3, hybrid modes 0/3); higher FLOOR; smaller MAX_PER_DOC. 4. No eligible point: no tuned constants (defaults stay); the mode fails the refusal acceptance.",
+  "reference": ".eval-runs/p126-ref-fts/report.json",
+  "reference_summary": {
+    "median_search_s": 0.348,
+    "tier1_doc_recall": 0.796,
+    "tier1_passage_recall": 0.402,
+    "tier1_with_key": 9,
+    "tier1_total": 18,
+    "refusal_gap": {
+      "ok": 5,
+      "of": 5,
+      "accuracy": 1.0
+    },
+    "refusal_all": {
+      "ok": 10,
+      "of": 10,
+      "accuracy": 1.0
+    }
+  },
+  "choice": {
+    "pick": {
+      "floor": 0.4,
+      "max_per_doc": 4,
+      "run": "f0.4-m4"
+    },
+    "reason": "eligible 12 of 12; best tier-1 passage recall 0.402; beats the runner-up f0.4-m3 on PASS",
+    "not_eligible": {}
+  },
+  "points": [
+    {
+      "floor": 0.0,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.0,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.0-m2",
+      "summary": {
+        "median_search_s": 8.046,
+        "p90_search_s": 9.376,
+        "max_search_s": 9.686,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 4,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.728,
+        "tier1_passage_recall": 0.317,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.0,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.0,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.0-m3",
+      "summary": {
+        "median_search_s": 8.186,
+        "p90_search_s": 9.544,
+        "max_search_s": 9.841,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 2,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.728,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.0,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.0,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.0-m4",
+      "summary": {
+        "median_search_s": 8.424,
+        "p90_search_s": 9.411,
+        "max_search_s": 9.699,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 2,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.728,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.2,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m2",
+      "summary": {
+        "median_search_s": 8.229,
+        "p90_search_s": 9.396,
+        "max_search_s": 9.703,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 4,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.317,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.2,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m3",
+      "summary": {
+        "median_search_s": 8.308,
+        "p90_search_s": 9.488,
+        "max_search_s": 9.687,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 2,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.2,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m4",
+      "summary": {
+        "median_search_s": 8.174,
+        "p90_search_s": 9.386,
+        "max_search_s": 9.994,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 2,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m2",
+      "summary": {
+        "median_search_s": 6.692,
+        "p90_search_s": 9.327,
+        "max_search_s": 9.874,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 4,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.317,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m3",
+      "summary": {
+        "median_search_s": 6.617,
+        "p90_search_s": 9.307,
+        "max_search_s": 9.464,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 4,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m4",
+      "summary": {
+        "median_search_s": 6.781,
+        "p90_search_s": 9.361,
+        "max_search_s": 10.55,
+        "dup_questions_trigram_over": 2,
+        "dup_pairs_trigram_over": 4,
+        "dup_max_trigram": 0.938,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.59,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.716,
+        "tier1_passage_recall": 0.373,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m2",
+      "summary": {
+        "median_search_s": 5.796,
+        "p90_search_s": 8.723,
+        "max_search_s": 9.265,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.584,
+        "pass": 26,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.738,
+        "tier1_passage_recall": 0.333,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m3",
+      "summary": {
+        "median_search_s": 5.127,
+        "p90_search_s": 8.113,
+        "max_search_s": 8.899,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.584,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.738,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m4",
+      "summary": {
+        "median_search_s": 5.075,
+        "p90_search_s": 8.067,
+        "max_search_s": 8.738,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.584,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.738,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    }
+  ]
+}

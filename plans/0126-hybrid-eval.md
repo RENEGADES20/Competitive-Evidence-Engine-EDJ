@@ -272,40 +272,40 @@ thread scheduling makes latency vary run to run (median and p90 reported, machin
 
 ## Acceptance
 All on the PR head, local DB `corpus-2026-10-29`, `--as-of 2026-10-29`, mock provider, **0 real calls**.
-- [ ] Report `evals/hybrid-eval/corpus-2026-10-29/report.md` committed on the branch (into
+- [x] Report `evals/hybrid-eval/corpus-2026-10-29/report.md` committed on the branch (into
       `exp/hybrid`) with all three modes: PASS/FAIL per question for Q1-Q30, tier-1 doc and passage
       recall, refusal accuracy on Q24, Q25, Q28, Q29, Q30 and all keyed, forbidden hits, duplicate
       measure, latency (median, p90, max, warm-up), at chosen and at default constants, plus the
       full grid and the selection rule.
-- [ ] **Refusal accuracy in `hybrid` and in `hybrid-norerank` >= fts** at the chosen constants
+- [x] **Refusal accuracy in `hybrid` and in `hybrid-norerank` >= fts** at the chosen constants
       (gap questions Q24, Q25, Q28, Q29, Q30 and all keyed; `summary.json` shows both numbers). If a
       mode cannot meet it, the report says so and the item is reported as not met.
-- [ ] Forbidden hits 0 on all 30 in every chosen run (covers Merrill = BAC GWIM only: Q4, Q27, Q30; Q7).
-- [ ] Q7 (quotas): every named firm has a hit in each chosen run. Q26: no hit outside the window,
+- [x] Forbidden hits 0 on all 30 in every chosen run (covers Merrill = BAC GWIM only: Q4, Q27, Q30; Q7).
+- [x] Q7 (quotas): every named firm has a hit in each chosen run. Q26: no hit outside the window,
       newest first, in each chosen run.
-- [ ] Q29: report lists per mode the MS 10-K chunks returned, `#702`'s presence and the diag scores;
+- [x] Q29: report lists per mode the MS 10-K chunks returned, `#702`'s presence and the diag scores;
       states `#702` is not on the must-not list; no answer-key change, no Q29-specific rule.
-- [ ] Tuned constants per mode chosen by `choose()` (grid.md shows the pick and reason); the hybrid
+- [x] Tuned constants per mode chosen by `choose()` (grid.md shows the pick and reason); the hybrid
       picks are the defaults in `hybrid.py`; confirmation runs reproduce the picked grid points
       (chunk_ids 30/30).
-- [ ] fts unchanged: with no constant options, fts chunk_ids = `p126-ref-fts` (= `p125r-fts-after`)
+- [x] fts unchanged: with no constant options, fts chunk_ids = `p126-ref-fts` (= `p125r-fts-after`)
       on 30/30, core venv, vectors off; and `hybrid` at 0/3 = `p126-ref-hybrid` on 30/30.
-- [ ] Duplicate measure reported per mode (trigram measure labelled as a Python re-implementation
+- [x] Duplicate measure reported per mode (trigram measure labelled as a Python re-implementation
       of pg_trgm); hybrid modes' `DUP_JACCARD` kept or changed by the stated rule; `fts.DUP_JACCARD`
       still 0.6 (`git diff origin/exp/hybrid -- src/cee/retrieve/fts.py` shows no constant line changed).
-- [ ] Window cap 8 and research cap 2 unchanged in every mode (unit test with per-mode
+- [x] Window cap 8 and research cap 2 unchanged in every mode (unit test with per-mode
       `MAX_PER_DOC` set to 2 and 4).
-- [ ] **Mock only**: no command in this plan, the Progress log or the PR uses `--real`; every
+- [x] **Mock only**: no command in this plan, the Progress log or the PR uses `--real`; every
       `report.json` under `.eval-runs/p126-*` and `evals/hybrid-eval/` has `meta.mode == "mock"` and
       `meta.real_calls == 0`. Check (vectors venv, repo root), expected output `N runs, all mock, 0 real calls`:
       `python -c "import json,glob; fs=glob.glob('.eval-runs/p126-*/**/report.json',recursive=True)+glob.glob('evals/hybrid-eval/**/report.json',recursive=True); bad=[f for f in fs if (m:=json.load(open(f,encoding='utf-8'))['meta'])['mode']!='mock' or m['real_calls']!=0]; print(f'{len(fs)} runs, all mock, 0 real calls' if fs and not bad else f'BAD {bad}')"`
       (same line in PowerShell and bash; Mac: `.venv/bin/python`).
 - [ ] S1 has reviewed the `fts.py` changes and the spec section, or the TL has decided it happens
       after the merge (PR says `Part of #126` until then).
-- [ ] `pytest -q` passes in both venvs, none fewer than step 1's counts; new tests as in Files.
-- [ ] `verify_cee.py run` VERIFY PASS in `fts` (core venv), `hybrid` and `hybrid-norerank`.
-- [ ] Every new RUN.md PowerShell block has a bash block.
-- [ ] Linked questions: Q1-Q30 in the report; refusal Q24, Q25, Q28, Q29, Q30; quotas Q7.
+- [x] `pytest -q` passes in both venvs, none fewer than step 1's counts; new tests as in Files.
+- [x] `verify_cee.py run` VERIFY PASS in `fts` (core venv), `hybrid` and `hybrid-norerank`.
+- [x] Every new RUN.md PowerShell block has a bash block.
+- [x] Linked questions: Q1-Q30 in the report; refusal Q24, Q25, Q28, Q29, Q30; quotas Q7.
 
 Out of scope (issue + TL): changing the default mode (#127); alpha-blending the rerank score with
 RRF; any rule added for Q29; changing the answer key; new retrieval features beyond the third mode;
@@ -349,3 +349,33 @@ RRF; any rule added for Q29; changing the answer key; new retrieval features bey
   `p126-nochange-hybrid` = `p126-ref-hybrid` 30/30 (gate passed). Core venv pytest 329 passed / 2
   skipped. First duplicate numbers (default constants): trigram pairs > 0.9: fts 1 (max 0.911),
   hybrid 2 (max 0.938); word 5-gram: 0 in both (max 0.58 / 0.59).
+- 2026-11-05 19:33 - **Step 4 grids** (vectors venv, `CEE_VECTORS=on`, code d784e30, baseline `p126-ref-fts`,
+  18:44-19:32): `p126-grid-fts` (9 points), `p126-grid-norerank` (12), `p126-grid-hybrid` (12). Grid gates:
+  fts 0.3/3 = `p126-ref-fts` 30/30, hybrid 0/3 = `p126-ref-hybrid` 30/30 (passed). **Step 5 picks**
+  (`choose()`, no override): fts **0.2/3** (passages 0.474, PASS 27; 0.x/4 not eligible: refusal 4/5,
+  9/10); hybrid-norerank **0.4/3** (passages 0.405, beats 0.4/4 on smaller MAX_PER_DOC); hybrid
+  **0.4/4** (passages 0.402, beats 0.4/3 on PASS 28 vs 27). All 12 hybrid and 12 norerank points:
+  refusal 5/5, 10/10, forbidden 0. **Step 6**: both hybrid picks have 0 trigram pairs > 0.9 (max 0.893)
+  -> `DUP_JACCARD` 0.6 kept in both hybrid modes, no extra runs. fts pick has 1 pair (Q19, two EDJ 10-Q
+  tables, 0.911; also at fts 0.3/3): reported only. **Step 7**: `hybrid.FLOOR` = 0.4 / 0.4,
+  `MAX_PER_DOC` = 4 (hybrid) / 3 (norerank) in 3950a80; `fts.py` constants untouched. Confirmation runs
+  (one mode per process): `p126-norerank` = grid `f0.4-m3` 30/30, `p126-hybrid` = grid `f0.4-m4` 30/30
+  (gate passed); latency median / p90: norerank 0.31 / 0.53 s, hybrid 5.1 / 8.2 s (warm-up 1.6 s, 4.5 s).
+  Two test assertions read the tuned defaults from `hybrid.py` instead of hard-coding #125's values.
+- 2026-11-05 19:38 - **Step 8**: `eval_compare.py` gained a reranker ablation (both hybrid modes at every
+  grid point, and per question at hybrid's pick with `p126-grid-norerank/f0.4-m4` as `--same-constants`);
+  Q29 text no longer assumes FAIL. Report in `evals/hybrid-eval/corpus-2026-10-29/` (report.md,
+  summary.json, chosen run + grid per mode, 496 KB). Defaults in the report are the grid points fts 0.3/3,
+  norerank 0/3, hybrid 0/3 (same chunk_ids as the references, with the new duplicate and p90 fields).
+  Checks on the chosen runs: forbidden 0, misleading 0; Q7 hits MS, BAC GWIM, RJF; Q26 8 hits, none
+  outside the window, newest first. Q29 in hybrid passes at MAX_PER_DOC 4 only through `MS-10K-2025#163`
+  (Wealth Management income table, sigmoid 0.25); `#153`/`#170` still not returned, `#702` still the top
+  MS 10-K hit (0.95), and RRF order returns `#702` too. Mock check: `42 runs, all mock, 0 real calls`.
+- 2026-11-05 19:46 - **Steps 9-10**: docs (spec section, RUN.md: third mode + grid command, 1 new
+  PowerShell + 1 bash block pair, `.env.example`, ask-progress recipe line). `pytest -q`: core venv 330
+  passed / 2 skipped, vectors venv 332 passed (step-1 floor 304 / 306). verify-cee VERIFY PASS, 8
+  features each: fts, core venv, vectors off (`.verify-runs/20261105-193845-3950a80`, summary fts/off);
+  hybrid (`20261105-194017-3950a80`, hybrid/on, trace "... (hybrid)"); hybrid-norerank
+  (`20261105-194220-3950a80`, hybrid-norerank/on, trace "... (hybrid-norerank)"). `git diff
+  origin/exp/hybrid -- src/cee/retrieve/fts.py`: no constant line changed. 0 real calls. Open: S1
+  review of the `fts.py` dispatch / `select(dup_jaccard=)` and the spec section (PR says `Part of #126`).

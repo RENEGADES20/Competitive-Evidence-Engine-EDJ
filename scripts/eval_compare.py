@@ -113,9 +113,10 @@ def refusal_table(chosen: dict[str, dict]) -> list[str]:
     return lines
 
 
-def rerank_vs_norerank(chosen: dict[str, dict]) -> tuple[list[str], dict]:
-    a = {q["id"]: q for q in chosen["hybrid-norerank"]["questions"]}
-    b = {q["id"]: q for q in chosen["hybrid"]["questions"]}
+def rerank_vs_norerank(norerank: dict, rerank: dict) -> tuple[list[str], dict]:
+    """Per question, two runs with the same candidates and constants: RRF order vs cross-encoder order."""
+    a = {q["id"]: q for q in norerank["questions"]}
+    b = {q["id"]: q for q in rerank["questions"]}
     better = worse = same = 0
     lines = ["| Q | `hybrid-norerank` status, passages | `hybrid` status, passages | Shared hits |",
              "|---|---|---|---|"]
@@ -131,6 +132,23 @@ def rerank_vs_norerank(chosen: dict[str, dict]) -> tuple[list[str], dict]:
             lines.append(f"| {qid} | {qa['status']}, {_passages(qa)} | {qb['status']}, {_passages(qb)} | "
                          f"{shared} of {len(qb['chunk_ids'])} |")
     return lines, {"rerank_more_passages": better, "rerank_fewer_passages": worse, "same_passages": same}
+
+
+def ablation_grid(grids: dict[str, dict]) -> list[str]:
+    """Every grid point both hybrid modes ran: same candidates and constants, only the order differs."""
+    if "hybrid" not in grids or "hybrid-norerank" not in grids:
+        return []
+    plain = {(p["floor"], p["max_per_doc"]): p["summary"] for p in grids["hybrid-norerank"]["points"]}
+    lines = ["| FLOOR | MAX_PER_DOC | PASS (RRF / rerank) | Tier-1 docs (RRF / rerank) | Tier-1 passages (RRF / "
+             "rerank) | Median search s (RRF / rerank) |", "|---|---|---|---|---|---|"]
+    for p in grids["hybrid"]["points"]:
+        a, b = plain.get((p["floor"], p["max_per_doc"])), p["summary"]
+        if a is None:
+            continue
+        lines.append(f"| {p['floor']} | {p['max_per_doc']} | {a.get('pass')} / {b.get('pass')} | "
+                     f"{a['tier1_doc_recall']} / {b['tier1_doc_recall']} | {a['tier1_passage_recall']} / "
+                     f"{b['tier1_passage_recall']} | {a['median_search_s']} / {b['median_search_s']} |")
+    return lines
 
 
 def q29_section(chosen: dict[str, dict], diag: dict | None) -> list[str]:
@@ -151,14 +169,14 @@ def q29_section(chosen: dict[str, dict], diag: dict | None) -> list[str]:
                   "50-candidate pool, MiniLM-L-12, sigmoid):", ""]
         lines.append("- top 5 of the pool: " + ", ".join(f"`{c}` {s}" for c, s in d.get("top5", [])))
         for w in d.get("watch", []):
-            if w.get("in_pool"):
+            if w.get("in_pool") and w.get("role") in ("must_return", "must_not"):
                 lines.append(f"- `{w['chunk']}` ({w['role']}): keyword rank {w['kw_rank_in_firm']}, vector rank "
                              f"{w['vec_rank_in_firm']}, sigmoid {w['sigmoid']}, pool rank {w['pool_rank']} of "
                              f"{d.get('pool_size')}, returned {w['in_hybrid_hits']}")
-    lines += ["", f"`{Q29_WATCH}` is not on Q29's `must_not_return` list in `evals/expected_chunks.yaml`, so it "
-              "counts as neither forbidden nor misleading: it changes only those counts if the key were extended "
-              "(C1's call), never PASS. Q29 fails in `hybrid` on coverage (no Wealth Management 10-K chunk), not on "
-              "refusal. No answer-key change and no Q29-specific rule here."]
+    lines += ["", f"`{Q29_WATCH}` (a guarantee note: \"likelihood of any payment by the Firm under these "
+              "arrangements is remote\") is not on Q29's `must_not_return` list in `evals/expected_chunks.yaml`, so "
+              "it counts as neither forbidden nor misleading: extending the key (C1's call) would change only those "
+              "counts, never PASS, which depends on coverage. No answer-key change and no Q29-specific rule here."]
     return lines
 
 
@@ -188,11 +206,13 @@ def latency_table(chosen: dict[str, dict]) -> list[str]:
 
 
 def build(chosen: dict[str, dict], defaults: dict[str, dict], grids: dict[str, dict], diag: dict | None,
-          notes: str | None) -> tuple[str, dict]:
+          notes: str | None, same_constants: dict | None = None) -> tuple[str, dict]:
+    """same_constants: a hybrid-norerank run at the constants hybrid picked (same candidates, RRF order)."""
     rows = [mode_row(m, chosen[m]) for m in MODES]
     drows = [mode_row(m, defaults[m]) for m in MODES if m in defaults]
     meta = chosen["fts"]["meta"]
-    rr_lines, rr = rerank_vs_norerank(chosen)
+    plain = same_constants or chosen["hybrid-norerank"]
+    rr_lines, rr = rerank_vs_norerank(plain, chosen["hybrid"])
     rule = next(iter(grids.values()))["rule"] if grids else "-"
     lines = ["# Retrieval modes compared: fts, hybrid-norerank, hybrid (#126)", "",
              f"Snapshot `{meta['snapshot']}`, as of {meta['as_of']}, k={meta['k']}, min coverage "
@@ -216,9 +236,12 @@ def build(chosen: dict[str, dict], defaults: dict[str, dict], grids: dict[str, d
               "(answer key), expected-source coverage.", ""] + per_question(chosen)
     lines += ["", "## Refusal questions", ""] + refusal_table(chosen)
     lines += ["", "## Is the cross-encoder reliable on this financial text? (input for #127)", "",
-              f"Same candidates, different order: across the 30 questions the cross-encoder finds more answer "
-              f"passages than RRF order on {rr['rerank_more_passages']}, fewer on {rr['rerank_fewer_passages']}, the "
-              f"same on {rr['same_passages']}. Questions where status or passages differ:", ""] + rr_lines
+              "Both hybrid modes at every grid point (same candidates and constants; only the final order "
+              "differs: RRF score vs cross-encoder):", ""] + ablation_grid(grids) + [
+              "", f"Per question at `hybrid`'s picked constants ({_const(chosen['hybrid']['meta'])}), "
+              f"`hybrid-norerank` run with the same constants: the cross-encoder finds more answer passages on "
+              f"{rr['rerank_more_passages']} questions, fewer on {rr['rerank_fewer_passages']}, the same on "
+              f"{rr['same_passages']}. Questions where status or passages differ:", ""] + rr_lines
     lines += ["", "### Q29 (what Morgan Stanley pays its advisors)", ""] + q29_section(chosen, diag)
     lines += ["", "## Duplicate measure", "",
               "Every pair of final hits per question: (a) character trigram similarity computed like pg_trgm's "
@@ -246,6 +269,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--grid", action="append", help="MODE=grid.json")
     ap.add_argument("--diag", type=Path, help="#125 diagnosis (diag.json)")
     ap.add_argument("--notes", type=Path, help="findings (markdown) placed after the summary")
+    ap.add_argument("--same-constants", type=Path,
+                    help="hybrid-norerank report.json at the constants hybrid picked (reranker ablation)")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
     chosen = {m: _load(p) for m, p in _pairs(args.chosen, "chosen").items()}
@@ -256,7 +281,8 @@ def main(argv: list[str] | None = None) -> int:
     grids = {m: _load(p) for m, p in _pairs(args.grid, "grid").items()}
     diag = _load(args.diag) if args.diag else None
     notes = args.notes.read_text(encoding="utf-8") if args.notes else None
-    text, summary = build(chosen, defaults, grids, diag, notes)
+    same = _load(args.same_constants) if args.same_constants else None
+    text, summary = build(chosen, defaults, grids, diag, notes, same)
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "report.md").write_text(text, encoding="utf-8")
     (args.out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")

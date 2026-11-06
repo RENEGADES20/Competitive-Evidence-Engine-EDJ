@@ -1,0 +1,4228 @@
+{
+  "meta": {
+    "run_id": "corpus-2026-10-29-20261105-184400",
+    "snapshot": "corpus-2026-10-29",
+    "commit": "d784e30",
+    "k": 20,
+    "min_coverage": 0.5,
+    "mode": "mock",
+    "retrieval_mode": "fts",
+    "warmup_s": 0.469,
+    "baseline": ".eval-runs/p126-ref-fts/report.json",
+    "as_of": "2026-10-29",
+    "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel, 12 logical CPUs, Windows",
+    "real_calls": 0,
+    "reused": 0,
+    "max_calls": null,
+    "constants": {
+      "FLOOR": 0.2,
+      "MAX_PER_DOC": 3,
+      "DUP_JACCARD": 0.6,
+      "WINDOW_MAX_PER_DOC": 8,
+      "THEME_MAX_PER_DOC": 2
+    }
+  },
+  "summary": {
+    "median_search_s": 0.336,
+    "p90_search_s": 0.506,
+    "max_search_s": 0.778,
+    "dup_questions_trigram_over": 1,
+    "dup_pairs_trigram_over": 1,
+    "dup_max_trigram": 0.911,
+    "dup_questions_5gram_over": 0,
+    "dup_pairs_5gram_over": 0,
+    "dup_max_5gram": 0.58,
+    "pass": 27,
+    "forbidden_hits": 0,
+    "tier1_doc_recall": 0.782,
+    "tier1_passage_recall": 0.474,
+    "tier1_with_key": 9,
+    "tier1_total": 18,
+    "refusal_gap": {
+      "ok": 5,
+      "of": 5,
+      "accuracy": 1.0
+    },
+    "refusal_all": {
+      "ok": 10,
+      "of": 10,
+      "accuracy": 1.0
+    }
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "What is Morgan Stanley's strategy to increase their net new assets?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-TR-2026Q2#15",
+        "MS-10Q-2026Q1#18",
+        "MS-10K-2025#165",
+        "MS-SUPP-2026Q1#46",
+        "MS-PR-2026-01-15-01#3",
+        "MS-TR-2026Q3#9",
+        "MS-10Q-2026Q2#58",
+        "MS-10K-2025#180",
+        "MS-SUPP-2026Q1#28",
+        "MS-PR-2026-04-15-01#2",
+        "MS-TR-2025Q3#19",
+        "MS-10Q-2025Q2#57",
+        "MS-10K-2025#669",
+        "MS-SUPP-2026Q1#22",
+        "MS-PR-2026-10-14-01#5",
+        "MS-TR-2025Q4#13",
+        "MS-10Q-2025Q2#74",
+        "MS-SUPP-2026Q3#21",
+        "MS-TR-2024Q4#23",
+        "MS-10Q-2026Q1#61"
+      ],
+      "ranks": [
+        12.3225,
+        10.5453,
+        10.1231,
+        8.3559,
+        7.216,
+        12.3025,
+        10.2031,
+        7.9214,
+        8.3059,
+        7.216,
+        11.0941,
+        10.1831,
+        7.146,
+        5.6919,
+        7.206,
+        10.4253,
+        7.9514,
+        5.6619,
+        10.1431,
+        7.9414
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q2#15",
+            "MS-TR-2026Q3#9",
+            "MS-TR-2025Q3#19",
+            "MS-TR-2025Q4#13",
+            "MS-TR-2024Q4#23"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K#Wealth Management",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#165",
+            "MS-10K-2025#180"
+          ],
+          "type_only": [
+            "MS-10K-2025#669"
+          ]
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#46",
+            "MS-SUPP-2026Q1#28",
+            "MS-SUPP-2026Q1#22",
+            "MS-SUPP-2026Q3#21"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 0.667,
+      "passage_recall": 0.25,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-TR-2026Q2#3"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q2#13",
+              "MS-TR-2026Q2#15"
+            ],
+            "found": [
+              "MS-TR-2026Q2#15"
+            ]
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q3#2",
+              "MS-TR-2026Q3#8"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q1#2",
+              "MS-TR-2026Q1#7",
+              "MS-TR-2026Q1#8"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-PR-2026-10-14-01#5",
+              "MS-PR-2026-07-15-01#5"
+            ],
+            "found": [
+              "MS-PR-2026-10-14-01#5"
+            ]
+          },
+          {
+            "ids": [
+              "MS-10K-2025#125"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#127",
+              "MS-10K-2025#164",
+              "MS-10K-2025#166"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 8,
+        "passages_found": 2,
+        "passage_recall": 0.25,
+        "expected_docs": [
+          "MS-TR-2026Q2",
+          "MS-TR-2026Q3",
+          "MS-TR-2026Q1",
+          "MS-PR-2026-10-14-01",
+          "MS-PR-2026-07-15-01",
+          "MS-10K-2025",
+          "MS-SUPP-2026Q3",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q1"
+        ],
+        "docs": 9,
+        "docs_found": 6,
+        "doc_recall": 0.667,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.84,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.511,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.292,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q2",
+      "text": "How is Raymond James positioning itself to recruit advisors away from the wirehouses?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10K-2025#91",
+        "RJF-TR-2026Q1#34",
+        "RJF-10Q-2026Q1#307",
+        "RJF-PR-2025-10-22-01#1",
+        "RJF-SUPP-2026Q1#44",
+        "RJF-10K-2025#175",
+        "RJF-TR-2024Q3#16",
+        "RJF-10Q-2026Q2#316",
+        "RJF-PR-2026-01-28-01#38",
+        "RJF-SUPP-2026Q2#45",
+        "RJF-10K-2025#334",
+        "RJF-TR-2024Q4#22",
+        "RJF-10Q-2025Q2#131",
+        "RJF-PR-2026-01-28-01#71",
+        "RJF-SUPP-2026Q1#14",
+        "RJF-TR-2025Q4#18",
+        "RJF-PR-2026-04-22-01#1",
+        "RJF-SUPP-2026Q2#14",
+        "RJF-TR-2025Q4#49",
+        "RJF-10Q-2025Q4#118"
+      ],
+      "ranks": [
+        10.0916,
+        10.0724,
+        7.2833,
+        7.2433,
+        7.2433,
+        10.0716,
+        10.0716,
+        7.2833,
+        7.2433,
+        7.2433,
+        10.0716,
+        10.0716,
+        7.2633,
+        7.2433,
+        7.2333,
+        10.0716,
+        7.2433,
+        7.2333,
+        10.0716,
+        7.2633
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q1#34",
+            "RJF-TR-2024Q3#16",
+            "RJF-TR-2024Q4#22",
+            "RJF-TR-2025Q4#18",
+            "RJF-TR-2025Q4#49"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#91",
+            "RJF-10K-2025#175",
+            "RJF-10K-2025#334"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2025-10-22-01#1",
+            "RJF-PR-2026-01-28-01#38",
+            "RJF-PR-2026-01-28-01#71",
+            "RJF-PR-2026-04-22-01#1"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.791,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.363,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.151,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q3",
+      "text": "What is Schwab's strategy for its RIA custody business?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q3#2",
+        "SCHW-10K-2025#11",
+        "SCHW-10Q-2026Q2#342",
+        "SCHW-DECK-2026Q2#14",
+        "SCHW-PR-2026-04-16-01#7",
+        "SCHW-TR-2025Q1#8",
+        "SCHW-10K-2025#26",
+        "SCHW-10Q-2026Q2#343",
+        "SCHW-DECK-2026Q3#11",
+        "SCHW-PR-2026-07-21-01#2",
+        "SCHW-TR-2026Q3#7",
+        "SCHW-10K-2025#13",
+        "SCHW-10Q-2025Q2#310",
+        "SCHW-DECK-2026Q3#71",
+        "SCHW-PR-2026-01-21-01#7",
+        "SCHW-TR-2025Q2#7",
+        "SCHW-10Q-2026Q2#30",
+        "SCHW-PR-2026-04-16-01#3",
+        "SCHW-TR-2025Q3#13",
+        "SCHW-10Q-2026Q1#25"
+      ],
+      "ranks": [
+        27.3586,
+        26.858,
+        17.6482,
+        14.8662,
+        10.0528,
+        21.7847,
+        25.917,
+        17.6082,
+        14.8562,
+        10.0528,
+        17.6382,
+        17.9593,
+        16.6402,
+        11.928,
+        10.0428,
+        16.6202,
+        15.8542,
+        10.0428,
+        16.6202,
+        15.8342
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q3#2",
+            "SCHW-TR-2025Q1#8",
+            "SCHW-TR-2026Q3#7",
+            "SCHW-TR-2025Q2#7",
+            "SCHW-TR-2025Q3#13"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K#Advisor Services",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#26"
+          ],
+          "type_only": [
+            "SCHW-10K-2025#11",
+            "SCHW-10K-2025#13"
+          ]
+        },
+        {
+          "pattern": "SCHW:deck",
+          "available": true,
+          "hits": [
+            "SCHW-DECK-2026Q2#14",
+            "SCHW-DECK-2026Q3#11",
+            "SCHW-DECK-2026Q3#71"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.601,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.212,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.302,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q4",
+      "text": "What is Merrill's advisor growth strategy, and how has it changed?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "answer",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "BAC-TR-2026Q3#13",
+        "BAC-10K-2025#246",
+        "BAC-PR-2026-07-14-01#10",
+        "BAC-10Q-2026Q1#72",
+        "BAC-TR-2026Q2#14",
+        "BAC-10K-2025#247",
+        "BAC-PR-2026-01-14-01#12",
+        "BAC-10Q-2026Q2#88",
+        "BAC-TR-2025Q2#31",
+        "BAC-10K-2025#244",
+        "BAC-PR-2026-04-15-01#10",
+        "BAC-10Q-2025Q2#93",
+        "BAC-TR-2025Q1#25",
+        "BAC-PR-2026-10-14-01#11",
+        "BAC-10Q-2025Q2#94",
+        "BAC-TR-2025Q2#32",
+        "BAC-10Q-2025Q3#94",
+        "BAC-TR-2026Q1#20",
+        "BAC-10Q-2025Q3#95",
+        "BAC-TR-2025Q3#24"
+      ],
+      "ranks": [
+        9.3662,
+        5.2004,
+        2.8783,
+        2.3821,
+        6.538,
+        2.3721,
+        2.8683,
+        2.3821,
+        5.2304,
+        1.9974,
+        2.8683,
+        2.3721,
+        5.2204,
+        2.8683,
+        2.3721,
+        5.2204,
+        2.3721,
+        4.1759,
+        2.3721,
+        2.3921
+      ],
+      "patterns": [
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-TR-2026Q3#13",
+            "BAC-TR-2026Q2#14",
+            "BAC-TR-2025Q2#31",
+            "BAC-TR-2025Q1#25",
+            "BAC-TR-2025Q2#32",
+            "BAC-TR-2026Q1#20",
+            "BAC-TR-2025Q3#24"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#247",
+            "BAC-10K-2025#244"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [
+            "BAC-PR-2026-07-14-01#10",
+            "BAC-PR-2026-01-14-01#12",
+            "BAC-PR-2026-04-15-01#10",
+            "BAC-PR-2026-10-14-01#11"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 2,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 0.714,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "BAC-TR-2026Q1#20"
+            ],
+            "found": [
+              "BAC-TR-2026Q1#20"
+            ]
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q1#48"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#13",
+              "BAC-TR-2026Q2#14"
+            ],
+            "found": [
+              "BAC-TR-2026Q2#14"
+            ]
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#38"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q3#13"
+            ],
+            "found": [
+              "BAC-TR-2026Q3#13"
+            ]
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#245",
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "found": [
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ]
+          },
+          {
+            "ids": [
+              "BAC-10Q-2026Q2#88",
+              "BAC-10Q-2026Q2#89",
+              "BAC-10Q-2026Q2#90",
+              "BAC-10Q-2026Q2#91"
+            ],
+            "found": [
+              "BAC-10Q-2026Q2#88"
+            ]
+          }
+        ],
+        "passages": 7,
+        "passages_found": 5,
+        "passage_recall": 0.714,
+        "expected_docs": [
+          "BAC-TR-2026Q1",
+          "BAC-TR-2026Q2",
+          "BAC-TR-2026Q3",
+          "BAC-10K-2025",
+          "BAC-10Q-2026Q2"
+        ],
+        "docs": 5,
+        "docs_found": 5,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.796,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.265,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.189,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q5",
+      "text": "Where is Morgan Stanley investing in technology for its advisors?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-TR-2026Q3#10",
+        "MS-10K-2025#25",
+        "MS-10Q-2026Q2#524",
+        "MS-PR-2026-10-14-01#5",
+        "MS-SUPP-2026Q1#42",
+        "MS-TR-2025Q3#7",
+        "MS-10K-2025#76",
+        "MS-10Q-2025Q3#63",
+        "MS-PR-2026-10-14-01#6",
+        "MS-TR-2025Q4#5",
+        "MS-10K-2025#111",
+        "MS-10Q-2025Q3#64",
+        "MS-PR-2026-01-15-01#11",
+        "MS-TR-2026Q3#5",
+        "MS-10Q-2026Q2#20",
+        "MS-TR-2025Q4#35",
+        "MS-10Q-2026Q2#28",
+        "MS-PR-2026-04-15-01#6",
+        "MS-TR-2025Q3#25",
+        "MS-10Q-2025Q2#139"
+      ],
+      "ranks": [
+        21.0334,
+        19.2617,
+        9.3974,
+        7.526,
+        4.2497,
+        16.7208,
+        16.4135,
+        6.1145,
+        4.7177,
+        16.2394,
+        12.549,
+        6.1145,
+        4.7077,
+        13.3911,
+        6.1145,
+        13.3811,
+        5.3638,
+        4.7077,
+        13.2565,
+        4.751
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q3#10",
+            "MS-TR-2025Q3#7",
+            "MS-TR-2025Q4#5",
+            "MS-TR-2026Q3#5",
+            "MS-TR-2025Q4#35",
+            "MS-TR-2025Q3#25"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#25",
+            "MS-10K-2025#76",
+            "MS-10K-2025#111"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 2,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.71,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.23,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.253,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q6",
+      "text": "What has Raymond James said about its affiliation models, and has the mix shifted?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q1#30",
+        "RJF-10K-2025#462",
+        "RJF-10Q-2026Q1#267",
+        "RJF-PR-2026-01-28-01#6",
+        "RJF-TR-2025Q2#42",
+        "RJF-10K-2025#320",
+        "RJF-10Q-2025Q4#259",
+        "RJF-PR-2026-04-22-01#5",
+        "RJF-TR-2026Q1#29",
+        "RJF-10K-2025#639",
+        "RJF-10Q-2026Q1#243",
+        "RJF-PR-2025-10-22-01#105",
+        "RJF-TR-2024Q3#43",
+        "RJF-10Q-2026Q1#328",
+        "RJF-TR-2024Q4#25",
+        "RJF-10Q-2026Q2#251",
+        "RJF-PR-2026-04-22-01#1",
+        "RJF-TR-2025Q4#35",
+        "RJF-10Q-2026Q2#340",
+        "RJF-PR-2026-04-22-01#101"
+      ],
+      "ranks": [
+        12.8573,
+        11.6258,
+        8.8877,
+        8.8677,
+        12.8473,
+        7.6956,
+        8.8677,
+        8.8677,
+        12.8473,
+        7.1816,
+        8.8677,
+        3.9596,
+        8.8977,
+        8.8677,
+        8.8777,
+        8.8677,
+        3.9596,
+        8.8777,
+        8.8677,
+        3.9596
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:10-K#Private Client Group",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "RJF-10K-2025#462",
+            "RJF-10K-2025#320",
+            "RJF-10K-2025#639"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q1#30",
+            "RJF-TR-2025Q2#42",
+            "RJF-TR-2026Q1#29",
+            "RJF-TR-2024Q3#43",
+            "RJF-TR-2024Q4#25",
+            "RJF-TR-2025Q4#35"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2026-01-28-01#6",
+            "RJF-PR-2026-04-22-01#5",
+            "RJF-PR-2025-10-22-01#105",
+            "RJF-PR-2026-04-22-01#1",
+            "RJF-PR-2026-04-22-01#101"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 2,
+      "coverage": 0.667,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.78,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.362,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.126,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q7",
+      "text": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+      "use_case": "head_to_head",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q2#38",
+        "MS-10K-2025#51",
+        "BAC-TR-2025Q1#25",
+        "RJF-10K-2025#90",
+        "MS-TR-2026Q1#16",
+        "BAC-PR-2026-07-14-01#10",
+        "RJF-10Q-2026Q2#316",
+        "MS-10Q-2026Q1#125",
+        "BAC-10K-2025#246",
+        "RJF-PR-2026-07-22-01#103",
+        "MS-10K-2025#112",
+        "BAC-TR-2025Q2#31",
+        "RJF-SUPP-2026Q1#44",
+        "MS-TR-2026Q2#20",
+        "BAC-PR-2026-01-14-01#12",
+        "RJF-TR-2025Q1#3",
+        "MS-10Q-2025Q2#57",
+        "BAC-TR-2025Q2#32",
+        "RJF-10K-2025#89",
+        "MS-10K-2025#23"
+      ],
+      "ranks": [
+        24.5,
+        22.2836,
+        12.1108,
+        15.2225,
+        16.3602,
+        2.8783,
+        11.5786,
+        11.5775,
+        2.8283,
+        11.5486,
+        13.6033,
+        8.5324,
+        11.5386,
+        12.075,
+        2.8683,
+        22.9167,
+        10.7474,
+        8.5124,
+        15.2025,
+        12.065
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q1#16",
+            "MS-TR-2026Q2#20"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#51",
+            "MS-10K-2025#112",
+            "MS-10K-2025#23"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-TR-2025Q1#25",
+            "BAC-TR-2025Q2#31",
+            "BAC-TR-2025Q2#32"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q2#38",
+            "RJF-TR-2025Q1#3"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#90",
+            "RJF-10K-2025#89"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 6,
+      "hit_patterns": 6,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.6,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.169,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.32,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q8",
+      "text": "Compare how Schwab and Raymond James describe their value proposition to independent advisors.",
+      "use_case": "head_to_head",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2025Q3#8",
+        "SCHW-TR-2026Q1#33",
+        "RJF-10K-2025#27",
+        "SCHW-10K-2025#13",
+        "RJF-10Q-2025Q2#201",
+        "SCHW-DECK-2026Q2#6",
+        "RJF-PR-2026-01-28-01#71",
+        "SCHW-PR-2026-07-21-01#1",
+        "RJF-SUPP-2026Q2#45",
+        "SCHW-10Q-2025Q2#7",
+        "RJF-TR-2025Q4#21",
+        "SCHW-TR-2026Q1#31",
+        "RJF-10K-2025#23",
+        "SCHW-10K-2025#117",
+        "RJF-10Q-2025Q4#171",
+        "SCHW-DECK-2026Q3#12",
+        "RJF-PR-2026-01-28-01#1",
+        "SCHW-PR-2026-10-15-01#1",
+        "RJF-TR-2025Q4#5",
+        "SCHW-10Q-2025Q2#310"
+      ],
+      "ranks": [
+        14.3433,
+        11.4551,
+        8.5906,
+        8.5206,
+        8.5206,
+        7.5223,
+        4.5779,
+        7.5223,
+        4.5779,
+        6.801,
+        14.3433,
+        10.3606,
+        8.5706,
+        8.5106,
+        8.5206,
+        7.5223,
+        3.9327,
+        7.5223,
+        14.3433,
+        6.791
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:deck",
+          "available": true,
+          "hits": [
+            "SCHW-DECK-2026Q2#6",
+            "SCHW-DECK-2026Q3#12"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#13",
+            "SCHW-10K-2025#117"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:deck",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#27",
+            "RJF-10K-2025#23"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 4,
+      "hit_patterns": 3,
+      "coverage": 0.75,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.772,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.359,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.279,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q9",
+      "text": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+      "use_case": "head_to_head",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10K-2025#190",
+        "BAC-10K-2025#246",
+        "MS-10Q-2025Q2#180",
+        "BAC-PR-2026-04-15-01#10",
+        "MS-TR-2026Q3#21",
+        "BAC-10Q-2025Q3#94",
+        "MS-PR-2026-04-15-01#8",
+        "BAC-TR-2026Q2#14",
+        "MS-SUPP-2026Q2#52",
+        "BAC-SUPP-2026Q1#45",
+        "MS-10K-2025#311",
+        "BAC-10K-2025#247",
+        "MS-10Q-2025Q2#87",
+        "BAC-PR-2026-01-14-01#12",
+        "MS-TR-2025Q4#29",
+        "BAC-10Q-2026Q2#88",
+        "MS-PR-2026-07-15-01#8",
+        "BAC-TR-2026Q1#20",
+        "MS-SUPP-2026Q1#49",
+        "BAC-SUPP-2026Q2#55"
+      ],
+      "ranks": [
+        17.2501,
+        14.7697,
+        17.2501,
+        8.927,
+        14.6997,
+        6.3778,
+        9.9757,
+        4.0798,
+        7.955,
+        3.8674,
+        17.2301,
+        6.3778,
+        17.2501,
+        7.3976,
+        7.4353,
+        6.3578,
+        9.9757,
+        3.8574,
+        7.945,
+        3.8574
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#190",
+            "MS-10K-2025#311"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q3#21",
+            "MS-TR-2025Q4#29"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#247"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-TR-2026Q2#14",
+            "BAC-TR-2026Q1#20"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:deck#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 4,
+      "coverage": 0.8,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.893,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.416,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.352,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q10",
+      "text": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+      "use_case": "head_to_head",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2024Q4#23",
+        "RJF-TR-2025Q1#8",
+        "MS-TR-2025Q3#14",
+        "EDJ-10K-2025#0",
+        "BAC-10K-2025#249",
+        "SCHW-DECK-2026Q2#16",
+        "RJF-10K-2025#33",
+        "MS-10K-2025#144",
+        "EDJ-10Q-2025Q2#0",
+        "BAC-PR-2026-01-14-01#13",
+        "SCHW-10K-2025#213",
+        "RJF-10Q-2025Q2#0",
+        "MS-10Q-2025Q2#0",
+        "EDJ-10K-2025#10",
+        "BAC-10Q-2026Q1#75",
+        "SCHW-10Q-2025Q2#193",
+        "RJF-PR-2026-04-22-01#1",
+        "MS-PR-2026-01-15-01#13",
+        "EDJ-10Q-2025Q2#28",
+        "BAC-TR-2026Q3#13"
+      ],
+      "ranks": [
+        10.952,
+        10.922,
+        10.882,
+        5.5132,
+        1.6394,
+        8.2565,
+        7.0526,
+        8.2765,
+        5.5132,
+        1.5994,
+        6.7172,
+        5.5132,
+        5.5132,
+        5.4288,
+        1.5894,
+        6.7172,
+        5.3788,
+        5.3688,
+        5.3888,
+        1.5794
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2025Q3#14"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2024Q4#23"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#0",
+            "EDJ-10K-2025#10"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-TR-2026Q3#13"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2025Q1#8"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 5,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.813,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.565,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.452,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q11",
+      "text": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+      "use_case": "head_to_head",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "EDJ-10Q-2026Q2#60",
+        "RJF-10K-2025#12",
+        "SCHW-10Q-2026Q2#71",
+        "MS-10K-2025#44",
+        "BAC-TR-2026Q3#13",
+        "EDJ-10K-2025#130",
+        "RJF-TR-2025Q3#4",
+        "SCHW-10K-2025#197",
+        "MS-SUPP-2026Q1#30",
+        "BAC-PR-2026-01-14-01#12",
+        "EDJ-10Q-2025Q2#66",
+        "RJF-10Q-2026Q1#239",
+        "SCHW-PR-2026-01-21-01#36",
+        "MS-10Q-2025Q2#59",
+        "BAC-SUPP-2026Q1#44",
+        "EDJ-10K-2025#41",
+        "RJF-PR-2026-04-22-01#1",
+        "SCHW-TR-2026Q1#5",
+        "MS-PR-2026-04-15-01#15",
+        "BAC-10K-2025#246"
+      ],
+      "ranks": [
+        14.0678,
+        13.2614,
+        12.5356,
+        11.9448,
+        8.3087,
+        12.7431,
+        11.8951,
+        11.201,
+        11.8087,
+        6.921,
+        13.2387,
+        11.0669,
+        10.6867,
+        10.5271,
+        4.9507,
+        12.3584,
+        9.219,
+        8.3187,
+        10.0669,
+        4.1629
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#44"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#30"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#197"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#130",
+            "EDJ-10K-2025#41"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-SUPP-2026Q1#44"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#12"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 8,
+      "hit_patterns": 7,
+      "coverage": 0.875,
+      "forbidden": [],
+      "doc_recall": 0.875,
+      "passage_recall": 0.3,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10K-2025#130"
+            ],
+            "found": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#131",
+              "EDJ-10K-2025#148"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "found": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#29"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#227"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#228"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#24"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#167",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#246"
+            ],
+            "found": [
+              "BAC-10K-2025#246"
+            ]
+          },
+          {
+            "ids": [
+              "SCHW-10K-2025#18",
+              "SCHW-TR-2026Q1#3"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 10,
+        "passages_found": 3,
+        "passage_recall": 0.3,
+        "expected_docs": [
+          "EDJ-10K-2025",
+          "EDJ-10Q-2026Q2",
+          "RJF-10K-2025",
+          "MS-10K-2025",
+          "MS-SUPP-2026Q3",
+          "BAC-10K-2025",
+          "SCHW-10K-2025",
+          "SCHW-TR-2026Q1"
+        ],
+        "docs": 8,
+        "docs_found": 7,
+        "doc_recall": 0.875,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.612,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.165,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.778,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q12",
+      "text": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer_with_boundary",
+      "entities": [
+        "SCHW",
+        "EDJ"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q3#6",
+        "EDJ-10K-2025#75",
+        "SCHW-PR-2026-10-15-01#7",
+        "EDJ-10Q-2025Q2#28",
+        "SCHW-10K-2025#13",
+        "EDJ-10K-2025#87",
+        "SCHW-10Q-2025Q2#8",
+        "EDJ-10Q-2025Q2#110",
+        "SCHW-DECK-2026Q1#14",
+        "EDJ-10K-2025#67",
+        "SCHW-TR-2025Q4#9",
+        "EDJ-10Q-2025Q2#100",
+        "SCHW-PR-2026-04-16-01#7",
+        "EDJ-10Q-2025Q3#100",
+        "SCHW-10K-2025#92",
+        "EDJ-10Q-2026Q2#85",
+        "SCHW-10Q-2026Q1#22",
+        "SCHW-DECK-2026Q3#51",
+        "SCHW-TR-2026Q1#16",
+        "SCHW-PR-2026-07-21-01#2"
+      ],
+      "ranks": [
+        19.2663,
+        10.3291,
+        12.1865,
+        4.376,
+        11.8825,
+        10.2793,
+        9.2785,
+        4.366,
+        5.9892,
+        8.7658,
+        15.9969,
+        4.356,
+        12.1665,
+        4.356,
+        10.9986,
+        4.356,
+        8.5631,
+        5.9892,
+        15.1816,
+        11.8925
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q3#6",
+            "SCHW-TR-2025Q4#9",
+            "SCHW-TR-2026Q1#16"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#13",
+            "SCHW-10K-2025#92"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:monthly",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#75",
+            "EDJ-10K-2025#87",
+            "EDJ-10K-2025#67"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.749,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.46,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.445,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q13",
+      "text": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+      "use_case": "mechanism",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10Q-2026Q2#61",
+        "MS-10K-2025#168",
+        "MS-SUPP-2026Q1#42",
+        "MS-TR-2026Q3#33",
+        "MS-PR-2026-07-15-01#5",
+        "MS-10Q-2026Q1#53",
+        "MS-10K-2025#125",
+        "MS-SUPP-2026Q1#14",
+        "MS-TR-2024Q4#25",
+        "MS-PR-2026-01-15-01#3",
+        "MS-10Q-2026Q1#49",
+        "MS-10K-2025#169",
+        "MS-SUPP-2026Q2#16",
+        "MS-TR-2025Q4#5",
+        "MS-PR-2026-04-15-01#3",
+        "MS-10Q-2025Q3#229",
+        "MS-SUPP-2026Q3#16",
+        "MS-PR-2026-07-15-01#3",
+        "MS-10Q-2025Q2#56",
+        "MS-SUPP-2026Q1#43"
+      ],
+      "ranks": [
+        19.2578,
+        19.2278,
+        15.4371,
+        14.0284,
+        9.9372,
+        19.2378,
+        15.4971,
+        15.4071,
+        13.0591,
+        9.7494,
+        15.4671,
+        14.3967,
+        15.4071,
+        12.7743,
+        9.7394,
+        15.4371,
+        15.4071,
+        9.7194,
+        15.4271,
+        14.4267
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q3#33",
+            "MS-TR-2024Q4#25",
+            "MS-TR-2025Q4#5"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#168",
+            "MS-10K-2025#125",
+            "MS-10K-2025#169"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 2,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.854,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.502,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.439,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q14",
+      "text": "How does Raymond James's affiliation-choice model work commercially?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-TR-2026Q1#16",
+        "RJF-10K-2025#91",
+        "RJF-10Q-2025Q4#142",
+        "RJF-PR-2025-10-22-01#105",
+        "RJF-TR-2026Q2#19",
+        "RJF-10K-2025#10",
+        "RJF-10Q-2025Q2#370",
+        "RJF-PR-2026-04-22-01#1",
+        "RJF-TR-2024Q4#8",
+        "RJF-10K-2025#462",
+        "RJF-10Q-2025Q2#132",
+        "RJF-PR-2026-04-22-01#101",
+        "RJF-TR-2026Q1#3",
+        "RJF-10Q-2025Q4#119",
+        "RJF-TR-2026Q2#3",
+        "RJF-10Q-2026Q1#134",
+        "RJF-PR-2025-10-22-01#2",
+        "RJF-TR-2024Q4#20",
+        "RJF-10Q-2026Q2#139",
+        "RJF-PR-2026-07-22-01#2"
+      ],
+      "ranks": [
+        13.264,
+        7.5654,
+        7.1816,
+        3.9596,
+        9.7182,
+        7.5554,
+        5.839,
+        3.9596,
+        9.6782,
+        7.2016,
+        3.9696,
+        3.9596,
+        9.6782,
+        3.9696,
+        9.6782,
+        3.9696,
+        3.5858,
+        7.5454,
+        3.9696,
+        3.2221
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:10-K#Private Client Group",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#10"
+          ],
+          "type_only": [
+            "RJF-10K-2025#91",
+            "RJF-10K-2025#462"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2026Q1#16",
+            "RJF-TR-2026Q2#19",
+            "RJF-TR-2024Q4#8",
+            "RJF-TR-2026Q1#3",
+            "RJF-TR-2026Q2#3",
+            "RJF-TR-2024Q4#20"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2025-10-22-01#105",
+            "RJF-PR-2026-04-22-01#1",
+            "RJF-PR-2026-04-22-01#101",
+            "RJF-PR-2025-10-22-01#2",
+            "RJF-PR-2026-07-22-01#2"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.845,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.369,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.236,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q15",
+      "text": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+      "use_case": "mechanism",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "SCHW"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-PR-2026-07-21-01#2",
+        "SCHW-TR-2026Q1#20",
+        "SCHW-10K-2025#13",
+        "SCHW-10Q-2025Q2#9",
+        "SCHW-DECK-2026Q3#6",
+        "SCHW-PR-2026-10-15-01#2",
+        "SCHW-TR-2026Q3#2",
+        "SCHW-10K-2025#512",
+        "SCHW-10Q-2026Q1#19",
+        "SCHW-DECK-2026Q2#6",
+        "SCHW-PR-2026-01-21-01#1",
+        "SCHW-TR-2026Q1#15",
+        "SCHW-10K-2025#27",
+        "SCHW-10Q-2026Q2#22",
+        "SCHW-DECK-2026Q2#20",
+        "SCHW-PR-2026-04-16-01#3",
+        "SCHW-TR-2026Q3#1",
+        "SCHW-10Q-2026Q1#62",
+        "SCHW-PR-2026-01-21-01#2",
+        "SCHW-TR-2026Q1#5"
+      ],
+      "ranks": [
+        17.7069,
+        15.7551,
+        11.8754,
+        11.8354,
+        11.0951,
+        17.6969,
+        14.6394,
+        11.691,
+        8.2012,
+        11.0851,
+        11.4233,
+        14.2017,
+        11.0108,
+        8.1512,
+        10.9894,
+        11.4033,
+        14.2017,
+        8.1325,
+        11.2878,
+        13.749
+      ],
+      "patterns": [
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#13",
+            "SCHW-10K-2025#512",
+            "SCHW-10K-2025#27"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 1,
+      "coverage": 0.2,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL",
+      "dup": {
+        "max_trigram": 0.712,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.329,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.444,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q16",
+      "text": "What will receiving financial advice in the future look like for clients?",
+      "use_case": "theme_scan",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "SCHW-TR-2026Q3#32",
+        "CERULLI-AFFLUENT-FEE#1",
+        "MS-TR-2025Q1#15",
+        "RJF-TR-2025Q1#40",
+        "EDJ-10K-2025#88",
+        "BAC-TR-2026Q1#11",
+        "SCHW-10K-2025#261",
+        "VANGUARD-VALUE-2025#21",
+        "MS-10K-2025#423",
+        "RJF-10K-2025#91",
+        "EDJ-10Q-2025Q2#57",
+        "BAC-10K-2025#516",
+        "SCHW-10Q-2026Q1#226",
+        "CAPGEMINI-WWR-2026#156",
+        "MS-10Q-2025Q2#404",
+        "RJF-10Q-2025Q2#319",
+        "EDJ-10K-2025#91",
+        "BAC-PR-2026-01-14-01#9",
+        "SCHW-DECK-2026Q2#18",
+        "CERULLI-GWT-2025#19"
+      ],
+      "ranks": [
+        15.8048,
+        12.9011,
+        12.8911,
+        12.8711,
+        12.3798,
+        10.7801,
+        10.1185,
+        12.7699,
+        8.3472,
+        8.8058,
+        6.5741,
+        10.1185,
+        8.4242,
+        12.5611,
+        6.8848,
+        6.5641,
+        9.0295,
+        8.3672,
+        7.5364,
+        12.3598
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": true,
+          "hits": [
+            "CERULLI-AFFLUENT-FEE#1",
+            "VANGUARD-VALUE-2025#21",
+            "CAPGEMINI-WWR-2026#156",
+            "CERULLI-GWT-2025#19"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:regulatory",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2025Q1#15"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2026Q3#32"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 3,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.53,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.033,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.399,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q17",
+      "text": "What are these firms saying about AI in advice delivery, and who is claiming the most?",
+      "use_case": "theme_scan",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "MCK-ADVISOR-SHORTAGE-2025#26",
+        "SCHW-PR-2026-07-21-01#8",
+        "RJF-10K-2025#112",
+        "BAC-DECK-2026Q2#29",
+        "MS-10K-2025#372",
+        "EDJ-10K-2025#26",
+        "DELOITTE-AGENTIC-2026#0",
+        "SCHW-DECK-2026Q3#71",
+        "RJF-TR-2025Q4#6",
+        "BAC-TR-2025Q2#10",
+        "MS-TR-2025Q3#33",
+        "EDJ-10Q-2025Q2#51",
+        "CFPB-MISINFO-2025#5",
+        "SCHW-10K-2025#208",
+        "RJF-10Q-2026Q1#365",
+        "BAC-10K-2025#1078",
+        "MS-10Q-2026Q2#524",
+        "EDJ-10K-2025#56",
+        "CFPB-MISINFO-2025#9",
+        "SCHW-10Q-2026Q1#12"
+      ],
+      "ranks": [
+        23.217,
+        20.5998,
+        18.4458,
+        18.3858,
+        13.5621,
+        11.7834,
+        21.4501,
+        11.7201,
+        11.7301,
+        16.6041,
+        12.1054,
+        6.9853,
+        19.1831,
+        5.495,
+        6.9553,
+        9.3974,
+        9.3974,
+        11.7434,
+        19.1631,
+        5.485
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2025Q3#33"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "BAC-TR-2025Q2#10"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2025Q4#6"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:press",
+          "available": true,
+          "hits": [
+            "SCHW-PR-2026-07-21-01#8"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 7,
+      "hit_patterns": 3,
+      "coverage": 0.429,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL",
+      "dup": {
+        "max_trigram": 0.494,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.116,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.497,
+      "change": "REGRESSED"
+    },
+    {
+      "id": "Q18",
+      "text": "Where is the industry heading on fee structures and pricing transparency?",
+      "use_case": "theme_scan",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "MCK-SIGNAL-SELLOFF-2026#9",
+        "RJF-TR-2026Q1#31",
+        "EDJ-10K-2025#55",
+        "MS-TR-2025Q1#50",
+        "BAC-10Q-2026Q1#31",
+        "SCHW-10K-2025#14",
+        "MCK-SIGNAL-SELLOFF-2026#7",
+        "RJF-10K-2025#100",
+        "EDJ-10Q-2025Q2#67",
+        "MS-10K-2025#276",
+        "BAC-TR-2025Q4#55",
+        "SCHW-10Q-2025Q2#95",
+        "UBS-NEXTGEN-2026#36",
+        "RJF-10Q-2026Q1#244",
+        "EDJ-10K-2025#151",
+        "MS-PR-2026-04-15-01#12",
+        "BAC-10K-2025#246",
+        "SCHW-TR-2025Q3#1",
+        "UBS-NEXTGEN-2026#38",
+        "RJF-SUPP-2026Q1#43"
+      ],
+      "ranks": [
+        18.8327,
+        11.745,
+        11.725,
+        10.9426,
+        10.7088,
+        9.3905,
+        14.1407,
+        11.725,
+        5.1966,
+        8.821,
+        9.4005,
+        8.8429,
+        13.2451,
+        10.6688,
+        8.7757,
+        8.821,
+        8.8429,
+        7.9833,
+        8.831,
+        7.7595
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:regulatory",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:research",
+          "available": true,
+          "hits": [
+            "MCK-SIGNAL-SELLOFF-2026#9",
+            "MCK-SIGNAL-SELLOFF-2026#7",
+            "UBS-NEXTGEN-2026#36",
+            "UBS-NEXTGEN-2026#38"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.459,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.308,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.503,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q19",
+      "text": "How should the preferences of younger investors shape Edward Jones's offerings?",
+      "use_case": "segment_evidence",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "answer_with_boundary",
+      "entities": [
+        "EDJ"
+      ],
+      "unmapped": [],
+      "mode": "entity+theme",
+      "chunk_ids": [
+        "EDJ-10K-2025#304",
+        "EDJ-10Q-2025Q2#28",
+        "EDJ-10K-2025#56",
+        "EDJ-10Q-2025Q2#115",
+        "EDJ-10K-2025#16",
+        "EDJ-10Q-2026Q1#95",
+        "EDJ-10Q-2026Q2#39",
+        "EDJ-10Q-2025Q2#17",
+        "EDJ-10Q-2025Q3#107",
+        "EDJ-10Q-2025Q3#19",
+        "EDJ-10Q-2025Q3#68",
+        "EDJ-10Q-2026Q1#78",
+        "CERULLI-GWT-2025#1",
+        "BOFA-PB-STUDY-2024#0",
+        "BOFA-PB-STUDY-2024#7",
+        "BOFA-PB-STUDY-2026#15"
+      ],
+      "ranks": [
+        6.5348,
+        6.2021,
+        6.5348,
+        3.3482,
+        6.2121,
+        3.3482,
+        3.1357,
+        3.1257,
+        3.1257,
+        3.1257,
+        3.1257,
+        3.1257,
+        26.4713,
+        23.4772,
+        23.4672,
+        23.3256
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": true,
+          "hits": [
+            "CERULLI-GWT-2025#1",
+            "BOFA-PB-STUDY-2024#0",
+            "BOFA-PB-STUDY-2024#7",
+            "BOFA-PB-STUDY-2026#15"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MER:press",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 4,
+      "hit_patterns": 1,
+      "coverage": 0.25,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "FAIL",
+      "dup": {
+        "max_trigram": 0.911,
+        "pairs_trigram_over": 1,
+        "max_5gram": 0.58,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.293,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q20",
+      "text": "What evidence is there about how clients under 40 choose a financial advisor?",
+      "use_case": "segment_evidence",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "UBS-NEXTGEN-2026#82",
+        "EDJ-10K-2025#19",
+        "SCHW-TR-2026Q1#44",
+        "MS-TR-2026Q2#9",
+        "RJF-TR-2026Q2#4",
+        "BAC-DECK-2026Q2#36",
+        "CERULLI-AFFLUENT-FEE#0",
+        "EDJ-10Q-2026Q1#60",
+        "SCHW-PR-2026-01-21-01#36",
+        "MS-10K-2025#44",
+        "RJF-10K-2025#91",
+        "BAC-PR-2026-07-14-01#10",
+        "KITCES-WELLBEING-2023#67",
+        "EDJ-10K-2025#233",
+        "SCHW-10K-2025#80",
+        "MS-SUPP-2026Q2#16",
+        "RJF-PR-2025-10-22-01#2",
+        "BAC-TR-2026Q3#13",
+        "VANGUARD-VALUE-2025#8",
+        "EDJ-10Q-2025Q3#85"
+      ],
+      "ranks": [
+        17.0093,
+        15.423,
+        12.6147,
+        11.7057,
+        11.6057,
+        8.6424,
+        15.423,
+        8.0631,
+        8.5435,
+        8.0731,
+        11.3171,
+        8.6324,
+        14.6129,
+        12.7748,
+        8.4288,
+        7.5534,
+        9.6325,
+        8.5635,
+        12.9648,
+        7.2816
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:survey",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "THEME:research",
+          "available": true,
+          "hits": [
+            "UBS-NEXTGEN-2026#82",
+            "CERULLI-AFFLUENT-FEE#0",
+            "KITCES-WELLBEING-2023#67",
+            "VANGUARD-VALUE-2025#8"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.496,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.197,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.38,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q21",
+      "text": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+      "use_case": "segment_evidence",
+      "tier": 2,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [],
+      "unmapped": [],
+      "mode": "theme",
+      "chunk_ids": [
+        "CERULLI-GWT-2025#23",
+        "SCHW-PR-2026-07-21-01#8",
+        "MS-TR-2026Q3#16",
+        "RJF-TR-2025Q4#29",
+        "BAC-TR-2024Q4#60",
+        "EDJ-10K-2025#56",
+        "CERULLI-GWT-2025#13",
+        "SCHW-TR-2025Q1#36",
+        "MS-10K-2025#206",
+        "RJF-10K-2025#26",
+        "BAC-10Q-2026Q1#596",
+        "EDJ-10Q-2025Q2#67",
+        "CERULLI-GWT-2025#2",
+        "SCHW-DECK-2026Q3#71",
+        "MS-10Q-2025Q2#226",
+        "RJF-10Q-2025Q2#241",
+        "BAC-10K-2025#43",
+        "EDJ-10K-2025#304",
+        "BOFA-PB-STUDY-2026#16",
+        "SCHW-10K-2025#76"
+      ],
+      "ranks": [
+        28.6052,
+        11.745,
+        11.6077,
+        10.5373,
+        10.1796,
+        9.0221,
+        25.2362,
+        10.4648,
+        10.0925,
+        7.6467,
+        7.3715,
+        9.0121,
+        24.1381,
+        9.0221,
+        6.6616,
+        4.3635,
+        7.2542,
+        9.0121,
+        21.0779,
+        7.2442
+      ],
+      "patterns": [
+        {
+          "pattern": "THEME:research",
+          "available": true,
+          "hits": [
+            "CERULLI-GWT-2025#23",
+            "CERULLI-GWT-2025#13",
+            "CERULLI-GWT-2025#2",
+            "BOFA-PB-STUDY-2026#16"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q3#16"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:transcript",
+          "available": true,
+          "hits": [
+            "SCHW-TR-2025Q1#36"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#56",
+            "EDJ-10K-2025#304"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:transcript#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": [
+            "BAC-TR-2024Q4#60"
+          ]
+        },
+        {
+          "pattern": "RJF:transcript",
+          "available": true,
+          "hits": [
+            "RJF-TR-2025Q4#29"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 6,
+      "hit_patterns": 5,
+      "coverage": 0.833,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.473,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.051,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.436,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q22",
+      "text": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q1#2",
+        "MS-SUPP-2026Q1#7",
+        "RJF-TR-2025Q1#4",
+        "EDJ-10Q-2025Q2#66",
+        "BAC-PR-2026-04-15-01#11",
+        "SCHW-PR-2026-04-16-01#3",
+        "MS-TR-2024Q4#23",
+        "RJF-10K-2025#223",
+        "EDJ-10K-2025#207",
+        "BAC-TR-2026Q1#20",
+        "SCHW-DECK-2026Q3#71",
+        "MS-PR-2026-04-15-01#22",
+        "RJF-10Q-2026Q1#323",
+        "EDJ-10Q-2025Q2#67",
+        "BAC-10K-2025#248",
+        "SCHW-10K-2025#136",
+        "MS-10K-2025#165",
+        "RJF-PR-2026-01-28-01#1",
+        "EDJ-10K-2025#182",
+        "BAC-10Q-2026Q1#74"
+      ],
+      "ranks": [
+        18.0778,
+        14.5525,
+        14.533,
+        10.724,
+        6.9538,
+        15.264,
+        14.413,
+        11.1695,
+        7.6167,
+        6.9538,
+        14.473,
+        13.4283,
+        10.814,
+        9.3165,
+        6.1728,
+        12.9813,
+        12.4458,
+        9.3265,
+        7.6067,
+        6.1428
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#7"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:monthly",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:supplement",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-Q",
+          "available": true,
+          "hits": [
+            "EDJ-10Q-2025Q2#66",
+            "EDJ-10Q-2025Q2#67"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:press",
+          "available": true,
+          "hits": [
+            "MS-PR-2026-04-15-01#22"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2026-01-28-01#1"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 6,
+      "hit_patterns": 4,
+      "coverage": 0.667,
+      "forbidden": [],
+      "doc_recall": 0.242,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10Q-2026Q2#60",
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2025Q3#67",
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10K-2025#130"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14",
+              "MS-10Q-2026Q2#57",
+              "MS-10Q-2026Q1#48",
+              "MS-10Q-2025Q3#56",
+              "MS-10Q-2025Q2#56",
+              "MS-PR-2026-01-15-01#2"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q1#42",
+              "MS-10K-2025#166"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-PR-2026-01-21-01#2",
+              "SCHW-PR-2026-07-21-01#2",
+              "SCHW-DECK-2026Q3#7",
+              "SCHW-10Q-2026Q2#16",
+              "SCHW-10Q-2026Q1#16",
+              "SCHW-10Q-2025Q3#16",
+              "SCHW-10Q-2025Q2#16"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-10K-2025#122",
+              "SCHW-10K-2025#119",
+              "SCHW-DECK-2026Q3#20"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-PR-2026-07-22-01#4",
+              "RJF-PR-2026-04-22-01#3",
+              "RJF-PR-2026-01-28-01#3",
+              "RJF-PR-2025-10-22-01#4",
+              "RJF-10Q-2026Q2#305",
+              "RJF-10Q-2026Q1#298",
+              "RJF-10Q-2025Q4#236",
+              "RJF-10Q-2025Q2#294"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10Q-2026Q2#306",
+              "RJF-SUPP-2026Q1#43"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q3#13",
+              "BAC-PR-2026-10-14-01#11"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 8,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "EDJ-10Q-2026Q2",
+          "EDJ-10Q-2026Q1",
+          "EDJ-10Q-2025Q3",
+          "EDJ-10Q-2025Q2",
+          "EDJ-10K-2025",
+          "MS-SUPP-2026Q3",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q1",
+          "MS-10Q-2026Q2",
+          "MS-10Q-2026Q1",
+          "MS-10Q-2025Q3",
+          "MS-10Q-2025Q2",
+          "MS-PR-2026-01-15-01",
+          "MS-10K-2025",
+          "SCHW-PR-2026-01-21-01",
+          "SCHW-PR-2026-07-21-01",
+          "SCHW-DECK-2026Q3",
+          "SCHW-10Q-2026Q2",
+          "SCHW-10Q-2026Q1",
+          "SCHW-10Q-2025Q3",
+          "SCHW-10Q-2025Q2",
+          "SCHW-10K-2025",
+          "RJF-PR-2026-07-22-01",
+          "RJF-PR-2026-04-22-01",
+          "RJF-PR-2026-01-28-01",
+          "RJF-PR-2025-10-22-01",
+          "RJF-10Q-2026Q2",
+          "RJF-10Q-2026Q1",
+          "RJF-10Q-2025Q4",
+          "RJF-10Q-2025Q2",
+          "RJF-SUPP-2026Q1",
+          "BAC-TR-2026Q3",
+          "BAC-PR-2026-10-14-01"
+        ],
+        "docs": 33,
+        "docs_found": 8,
+        "doc_recall": 0.242,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.527,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.195,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.756,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q23",
+      "text": "Advisor headcount over the last eight quarters across the five.",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2026Q1#5",
+        "RJF-TR-2025Q3#8",
+        "EDJ-10Q-2025Q2#66",
+        "MS-TR-2025Q4#4",
+        "BAC-TR-2026Q3#13",
+        "SCHW-10Q-2026Q1#60",
+        "RJF-10K-2025#12",
+        "EDJ-10K-2025#58",
+        "MS-10K-2025#44",
+        "BAC-10K-2025#247",
+        "SCHW-10K-2025#197",
+        "RJF-10Q-2026Q1#239",
+        "EDJ-10Q-2026Q2#60",
+        "MS-10Q-2026Q1#19",
+        "BAC-10Q-2025Q3#95",
+        "SCHW-PR-2026-07-21-01#37",
+        "RJF-PR-2025-10-22-01#2",
+        "EDJ-10K-2025#70",
+        "MS-SUPP-2026Q1#14",
+        "BAC-PR-2026-07-14-01#10"
+      ],
+      "ranks": [
+        12.523,
+        12.5177,
+        12.4577,
+        11.1897,
+        8.9414,
+        10.44,
+        11.8968,
+        10.5705,
+        6.9941,
+        5.6508,
+        10.41,
+        8.9714,
+        11.9622,
+        4.8555,
+        5.6508,
+        8.9314,
+        7.0041,
+        10.5305,
+        4.8055,
+        2.8783
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#14"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#197"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-Q",
+          "available": true,
+          "hits": [
+            "EDJ-10Q-2025Q2#66",
+            "EDJ-10Q-2026Q2#60"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#58",
+            "EDJ-10K-2025#70"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:press",
+          "available": true,
+          "hits": [
+            "RJF-PR-2025-10-22-01#2"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 7,
+      "hit_patterns": 5,
+      "coverage": 0.714,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.562,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.113,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.506,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q24",
+      "text": "Client assets per advisor across the five -- and is that comparison even valid?",
+      "use_case": "benchmark",
+      "tier": 3,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "SCHW-TR-2025Q1#8",
+        "RJF-TR-2025Q1#3",
+        "MS-TR-2025Q4#3",
+        "EDJ-10K-2025#22",
+        "BAC-TR-2026Q3#13",
+        "SCHW-PR-2026-01-21-01#40",
+        "RJF-10Q-2026Q1#244",
+        "MS-SUPP-2026Q1#14",
+        "EDJ-10Q-2026Q1#60",
+        "BAC-10K-2025#246",
+        "SCHW-DECK-2026Q2#20",
+        "RJF-10K-2025#41",
+        "MS-PR-2026-01-15-01#0",
+        "EDJ-10K-2025#267",
+        "BAC-PR-2026-10-14-01#11",
+        "SCHW-10K-2025#42",
+        "RJF-PR-2026-07-22-01#98",
+        "MS-10K-2025#109",
+        "EDJ-10Q-2025Q2#28",
+        "BAC-10Q-2026Q1#75"
+      ],
+      "ranks": [
+        17.5602,
+        15.6982,
+        13.6486,
+        9.7277,
+        9.6977,
+        11.0294,
+        12.3369,
+        11.0894,
+        6.9841,
+        5.5618,
+        10.9894,
+        12.3269,
+        10.8204,
+        9.6677,
+        5.5418,
+        9.9729,
+        10.8204,
+        10.7811,
+        6.8695,
+        2.7536
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:supplement",
+          "available": true,
+          "hits": [
+            "MS-SUPP-2026Q1#14"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#42"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#22",
+            "EDJ-10K-2025#267"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:supplement",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 3,
+      "coverage": 0.6,
+      "forbidden": [],
+      "doc_recall": 0.6,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10K-2025#130"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#227"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "RJF-10K-2025#228"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-SUPP-2026Q1#43",
+              "MS-SUPP-2026Q2#37",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 4,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "EDJ-10K-2025",
+          "RJF-10K-2025",
+          "MS-SUPP-2026Q1",
+          "MS-SUPP-2026Q2",
+          "MS-SUPP-2026Q3"
+        ],
+        "docs": 5,
+        "docs_found": 3,
+        "doc_recall": 0.6,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.434,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.027,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.541,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q25",
+      "text": "What has each of the five actually disclosed about advisor compensation structures?",
+      "use_case": "benchmark",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "EDJ-10K-2025#314",
+        "SCHW-TR-2026Q1#32",
+        "RJF-10Q-2025Q4#199",
+        "MS-10K-2025#521",
+        "BAC-TR-2026Q3#13",
+        "EDJ-10Q-2026Q1#60",
+        "SCHW-10K-2025#512",
+        "RJF-10K-2025#175",
+        "MS-10Q-2026Q1#210",
+        "BAC-10K-2025#246",
+        "EDJ-10K-2025#22",
+        "SCHW-10Q-2025Q2#317",
+        "RJF-TR-2025Q3#19",
+        "MS-TR-2026Q3#13",
+        "BAC-TR-2026Q1#20",
+        "EDJ-10Q-2025Q2#54",
+        "SCHW-PR-2026-01-21-01#36",
+        "RJF-PR-2025-10-22-01#2",
+        "MS-PR-2026-01-15-01#4",
+        "BAC-PR-2026-07-14-01#10"
+      ],
+      "ranks": [
+        10.7663,
+        10.5733,
+        9.68,
+        8.0905,
+        6.9841,
+        9.66,
+        9.0833,
+        9.67,
+        8.0315,
+        6.3874,
+        10.5633,
+        6.3874,
+        9.0143,
+        7.745,
+        4.1759,
+        8.0315,
+        6.9941,
+        7.0041,
+        6.235,
+        2.8783
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#521"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:10-K",
+          "available": true,
+          "hits": [
+            "SCHW-10K-2025#512"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#314",
+            "EDJ-10K-2025#22"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:10-K",
+          "available": true,
+          "hits": [
+            "RJF-10K-2025#175"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "SCHW:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:DEF 14A",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "EDJ:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "RJF:adv",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 5,
+      "hit_patterns": 5,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 0.75,
+      "passage_recall": 0.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "RJF-10K-2025#10",
+              "RJF-10K-2025#11"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#30",
+              "EDJ-10K-2025#264"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "MS-10K-2025#153"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "SCHW-10Q-2026Q2#25"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 4,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "expected_docs": [
+          "RJF-10K-2025",
+          "EDJ-10K-2025",
+          "MS-10K-2025",
+          "SCHW-10Q-2026Q2"
+        ],
+        "docs": 4,
+        "docs_found": 3,
+        "doc_recall": 0.75,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.469,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.088,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.375,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q26",
+      "text": "What's new on Raymond James in the last 90 days?",
+      "use_case": "recency",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "RJF"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "RJF-10Q-2026Q2#322",
+        "RJF-10Q-2026Q2#66",
+        "RJF-10Q-2026Q2#387",
+        "RJF-10Q-2026Q2#34",
+        "RJF-10Q-2026Q2#345",
+        "RJF-10Q-2026Q2#245",
+        "RJF-10Q-2026Q2#38",
+        "RJF-10Q-2026Q2#330"
+      ],
+      "ranks": [
+        9.7097,
+        9.6997,
+        8.6529,
+        8.6329,
+        8.0955,
+        7.9544,
+        7.5803,
+        7.5203
+      ],
+      "patterns": [
+        {
+          "pattern": "RJF:*",
+          "available": true,
+          "hits": [
+            "RJF-10Q-2026Q2#322",
+            "RJF-10Q-2026Q2#66",
+            "RJF-10Q-2026Q2#387",
+            "RJF-10Q-2026Q2#34",
+            "RJF-10Q-2026Q2#345",
+            "RJF-10Q-2026Q2#245",
+            "RJF-10Q-2026Q2#38",
+            "RJF-10Q-2026Q2#330"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "RJF-10Q-2026Q2"
+            ],
+            "found": [
+              "RJF-10Q-2026Q2#322",
+              "RJF-10Q-2026Q2#66",
+              "RJF-10Q-2026Q2#387",
+              "RJF-10Q-2026Q2#34",
+              "RJF-10Q-2026Q2#345",
+              "RJF-10Q-2026Q2#245",
+              "RJF-10Q-2026Q2#38",
+              "RJF-10Q-2026Q2#330"
+            ]
+          }
+        ],
+        "passages": 1,
+        "passages_found": 1,
+        "passage_recall": 1.0,
+        "expected_docs": [
+          "RJF-10Q-2026Q2"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": {
+          "from": "2026-07-31",
+          "to": "2026-10-29"
+        },
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.519,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.027,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.302,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q27",
+      "text": "What has changed at Merrill since the start of the year?",
+      "use_case": "recency",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "answer",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "BAC-TR-2026Q3#13",
+        "BAC-DECK-2026Q3#31",
+        "BAC-PR-2026-10-14-01#12",
+        "BAC-TR-2026Q2#14",
+        "BAC-DECK-2026Q2#20",
+        "BAC-PR-2026-07-14-01#11",
+        "BAC-10Q-2026Q1#71",
+        "BAC-10Q-2026Q1#72",
+        "BAC-10Q-2026Q1#73",
+        "BAC-SUPP-2026Q1#43",
+        "BAC-TR-2026Q1#20",
+        "BAC-DECK-2026Q1#27",
+        "BAC-PR-2026-04-15-01#11",
+        "BAC-SUPP-2026Q1#44",
+        "BAC-SUPP-2026Q1#45",
+        "BAC-10K-2025#249",
+        "BAC-10K-2025#246",
+        "BAC-10K-2025#247",
+        "BAC-10K-2025#244",
+        "BAC-PR-2026-01-14-01#13"
+      ],
+      "ranks": [
+        2.6139,
+        4.7734,
+        4.7834,
+        7.6313,
+        4.7934,
+        4.7834,
+        4.1668,
+        2.1694,
+        2.1694,
+        0.0,
+        7.6213,
+        4.7734,
+        4.7834,
+        0.0,
+        0.0,
+        4.1668,
+        2.1694,
+        2.1694,
+        1.9974,
+        4.7834
+      ],
+      "patterns": [
+        {
+          "pattern": "MER:*",
+          "available": true,
+          "hits": [
+            "BAC-TR-2026Q3#13",
+            "BAC-DECK-2026Q3#31",
+            "BAC-PR-2026-10-14-01#12",
+            "BAC-TR-2026Q2#14",
+            "BAC-DECK-2026Q2#20",
+            "BAC-PR-2026-07-14-01#11",
+            "BAC-10Q-2026Q1#71",
+            "BAC-10Q-2026Q1#72",
+            "BAC-10Q-2026Q1#73",
+            "BAC-SUPP-2026Q1#43",
+            "BAC-TR-2026Q1#20",
+            "BAC-DECK-2026Q1#27",
+            "BAC-PR-2026-04-15-01#11",
+            "BAC-SUPP-2026Q1#44",
+            "BAC-SUPP-2026Q1#45",
+            "BAC-10K-2025#249",
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#247",
+            "BAC-10K-2025#244",
+            "BAC-PR-2026-01-14-01#13"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:*#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-TR-2026Q3#13",
+            "BAC-DECK-2026Q3#31",
+            "BAC-PR-2026-10-14-01#12",
+            "BAC-TR-2026Q2#14",
+            "BAC-DECK-2026Q2#20",
+            "BAC-PR-2026-07-14-01#11",
+            "BAC-10Q-2026Q1#71",
+            "BAC-10Q-2026Q1#72",
+            "BAC-10Q-2026Q1#73",
+            "BAC-SUPP-2026Q1#43",
+            "BAC-TR-2026Q1#20",
+            "BAC-DECK-2026Q1#27",
+            "BAC-PR-2026-04-15-01#11",
+            "BAC-SUPP-2026Q1#44",
+            "BAC-SUPP-2026Q1#45",
+            "BAC-10K-2025#249",
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#247",
+            "BAC-10K-2025#244",
+            "BAC-PR-2026-01-14-01#13"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 2,
+      "hit_patterns": 2,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": null,
+      "passage_recall": null,
+      "refusal_ok": null,
+      "misleading": [],
+      "recall": null,
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.829,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.409,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.222,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q28",
+      "text": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "EDJ",
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "EDJ-10Q-2025Q3#70",
+        "BAC-TR-2026Q3#13",
+        "EDJ-10K-2025#71",
+        "BAC-PR-2026-07-14-01#10",
+        "EDJ-10Q-2025Q2#66",
+        "BAC-10K-2025#246",
+        "EDJ-10K-2025#27",
+        "BAC-10Q-2025Q2#90",
+        "EDJ-10Q-2025Q2#67",
+        "BAC-DECK-2026Q1#26",
+        "EDJ-10K-2025#58",
+        "BAC-TR-2026Q1#20",
+        "EDJ-10Q-2025Q2#64",
+        "BAC-PR-2026-01-14-01#12",
+        "EDJ-10Q-2026Q1#60",
+        "BAC-10K-2025#244",
+        "EDJ-10Q-2025Q3#68",
+        "BAC-DECK-2026Q2#19",
+        "EDJ-10Q-2026Q2#61",
+        "BAC-TR-2026Q2#14"
+      ],
+      "ranks": [
+        20.7874,
+        6.9841,
+        11.1057,
+        2.8783,
+        9.2677,
+        2.8283,
+        11.0157,
+        1.748,
+        9.2677,
+        1.748,
+        9.3277,
+        4.1759,
+        9.2577,
+        2.8683,
+        6.9841,
+        1.748,
+        6.4295,
+        1.748,
+        4.5963,
+        4.1659
+      ],
+      "patterns": [
+        {
+          "pattern": "EDJ:10-K",
+          "available": true,
+          "hits": [
+            "EDJ-10K-2025#71",
+            "EDJ-10K-2025#27",
+            "EDJ-10K-2025#58"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:supplement#GWIM",
+          "available": true,
+          "hits": [],
+          "type_only": []
+        },
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#244"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 3,
+      "hit_patterns": 2,
+      "coverage": 0.667,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 0.5,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q2#67",
+              "EDJ-10Q-2025Q3#68",
+              "EDJ-10Q-2025Q3#70"
+            ],
+            "found": [
+              "EDJ-10Q-2025Q3#70",
+              "EDJ-10Q-2025Q2#67",
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q3#68"
+            ]
+          },
+          {
+            "ids": [
+              "EDJ-10Q-2025Q2#66",
+              "EDJ-10Q-2025Q3#69"
+            ],
+            "found": [
+              "EDJ-10Q-2025Q2#66"
+            ]
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#38",
+              "BAC-TR-2026Q1#48"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "EDJ-10K-2025#130",
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "found": []
+          }
+        ],
+        "passages": 4,
+        "passages_found": 2,
+        "passage_recall": 0.5,
+        "expected_docs": [
+          "EDJ-10Q-2025Q2",
+          "EDJ-10Q-2025Q3",
+          "BAC-TR-2026Q2",
+          "BAC-TR-2026Q1",
+          "EDJ-10K-2025",
+          "EDJ-10Q-2026Q2"
+        ],
+        "docs": 6,
+        "docs_found": 6,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.709,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.195,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.268,
+      "change": "IMPROVED"
+    },
+    {
+      "id": "Q29",
+      "text": "What does Morgan Stanley pay its financial advisors?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "MS-10Q-2026Q2#20",
+        "MS-10K-2025#170",
+        "MS-TR-2025Q1#34",
+        "MS-PR-2026-10-14-01#5",
+        "MS-SUPP-2026Q2#37",
+        "MS-10Q-2025Q3#64",
+        "MS-10K-2025#128",
+        "MS-TR-2025Q4#16",
+        "MS-PR-2026-04-15-01#14",
+        "MS-SUPP-2026Q1#25",
+        "MS-10Q-2026Q2#64",
+        "MS-10K-2025#153",
+        "MS-TR-2025Q3#49",
+        "MS-PR-2026-07-15-01#17",
+        "MS-SUPP-2026Q1#42",
+        "MS-10Q-2025Q3#19",
+        "MS-TR-2025Q4#15",
+        "MS-SUPP-2026Q1#50",
+        "MS-10Q-2025Q3#63",
+        "MS-TR-2025Q4#8"
+      ],
+      "ranks": [
+        12.4145,
+        11.3255,
+        6.6131,
+        5.5341,
+        5.5241,
+        12.4045,
+        11.3155,
+        6.5931,
+        3.8049,
+        5.5141,
+        12.4045,
+        8.5173,
+        5.7914,
+        3.8049,
+        3.9073,
+        11.3655,
+        5.5241,
+        3.8149,
+        11.3455,
+        5.5141
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:10-K#Wealth Management",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#170"
+          ],
+          "type_only": [
+            "MS-10K-2025#128",
+            "MS-10K-2025#153"
+          ]
+        },
+        {
+          "pattern": "MS:trade",
+          "available": false,
+          "hits": [],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-10K-2025#153"
+            ],
+            "found": [
+              "MS-10K-2025#153"
+            ]
+          },
+          {
+            "ids": [
+              "MS-10K-2025#128",
+              "MS-10K-2025#170"
+            ],
+            "found": [
+              "MS-10K-2025#170",
+              "MS-10K-2025#128"
+            ]
+          }
+        ],
+        "passages": 2,
+        "passages_found": 2,
+        "passage_recall": 1.0,
+        "expected_docs": [
+          "MS-10K-2025"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.763,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.407,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.18,
+      "change": "UNCHANGED"
+    },
+    {
+      "id": "Q30",
+      "text": "What is Merrill's standalone profitability?",
+      "use_case": "honest_miss",
+      "tier": 1,
+      "trap": true,
+      "expected_behavior": "gap_with_adjacent",
+      "entities": [
+        "MER"
+      ],
+      "unmapped": [],
+      "mode": "entity",
+      "chunk_ids": [
+        "BAC-TR-2025Q3#24",
+        "BAC-DECK-2026Q1#26",
+        "BAC-PR-2026-04-15-01#10",
+        "BAC-10K-2025#244",
+        "BAC-10Q-2025Q2#90",
+        "BAC-SUPP-2026Q1#43",
+        "BAC-TR-2026Q1#20",
+        "BAC-DECK-2026Q2#19",
+        "BAC-PR-2026-07-14-01#10",
+        "BAC-10K-2025#246",
+        "BAC-10Q-2025Q3#90",
+        "BAC-SUPP-2026Q2#52",
+        "BAC-TR-2026Q2#14",
+        "BAC-DECK-2026Q3#30",
+        "BAC-10K-2025#247",
+        "BAC-SUPP-2026Q3#51",
+        "BAC-TR-2024Q4#25",
+        "BAC-PR-2026-10-14-01#11",
+        "BAC-10Q-2026Q2#85",
+        "BAC-SUPP-2026Q1#44"
+      ],
+      "ranks": [
+        11.5228,
+        9.5699,
+        9.5599,
+        8.0408,
+        8.0408,
+        8.0408,
+        9.5499,
+        9.5699,
+        9.5599,
+        2.8792,
+        8.0408,
+        8.0408,
+        9.5499,
+        9.5699,
+        2.8792,
+        8.0408,
+        2.8792,
+        9.5599,
+        8.0408,
+        2.8792
+      ],
+      "patterns": [
+        {
+          "pattern": "BAC:10-K#GWIM",
+          "available": true,
+          "hits": [
+            "BAC-10K-2025#244",
+            "BAC-10K-2025#246",
+            "BAC-10K-2025#247"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 1,
+      "hit_patterns": 1,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 0.5,
+      "passage_recall": 0.5,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ],
+            "found": []
+          },
+          {
+            "ids": [
+              "BAC-10K-2025#245",
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "found": [
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ]
+          }
+        ],
+        "passages": 2,
+        "passages_found": 1,
+        "passage_recall": 0.5,
+        "expected_docs": [
+          "BAC-PR-2026-01-14-01",
+          "BAC-10K-2025"
+        ],
+        "docs": 2,
+        "docs_found": 1,
+        "doc_recall": 0.5,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
+      "status": "PASS",
+      "dup": {
+        "max_trigram": 0.796,
+        "pairs_trigram_over": 0,
+        "max_5gram": 0.199,
+        "pairs_5gram_over": 0
+      },
+      "search_s": 0.158,
+      "change": "REGRESSED"
+    }
+  ]
+}
