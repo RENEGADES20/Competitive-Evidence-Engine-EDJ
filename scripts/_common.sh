@@ -38,11 +38,31 @@ reset_database() {
 }
 
 upgrade_schema() {
-    # db/upgrade.sql: idempotent additions (pgvector column, #123), so older snapshots gain them.
-    run "Upgrading the schema (did you pull the new database image? docker compose up -d)" \
+    # db/upgrade.sql: idempotent core additions (no extension, ADR-009), so older snapshots gain them.
+    run "Upgrading the schema" \
         docker exec "$CONTAINER" psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/02-upgrade.sql
 }
 
+vectors_on() {
+    # CEE_VECTORS (environment or .env): the optional vectors module (ADR-009), off by default.
+    # Same parsing as cee.config.vectors_enabled(): on|true|1|yes / empty, off|false|0|no.
+    local v
+    v="$(dotenv_value CEE_VECTORS | tr '[:upper:]' '[:lower:]')"
+    case "$v" in
+        on|true|1|yes) return 0 ;;
+        ""|off|false|0|no) return 1 ;;
+        *) die "CEE_VECTORS='$v' is not understood; use on or off" ;;
+    esac
+}
+
+apply_vectors_sql() {
+    # db/optional/vectors.sql (idempotent): pgvector, chunk_embeddings, one-time move of the old
+    # chunks.embedding column. Not mounted in the container on purpose, so it goes in over stdin.
+    run "Applying db/optional/vectors.sql (CEE_VECTORS=on)" \
+        docker exec -i "$CONTAINER" psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f - < "$REPO_ROOT/db/optional/vectors.sql"
+}
+
+# Model helpers below: used only when CEE_VECTORS=on.
 MODEL_FOLDER="models--Qdrant--bge-small-en-v1.5-onnx-Q"   # fastembed cache folder of BAAI/bge-small-en-v1.5
 
 model_cache_env() {

@@ -1,8 +1,6 @@
--- Idempotent schema additions, safe to run any number of times.
+-- Idempotent core schema additions, safe to run any number of times.
 -- Runs after db/schema.sql on a new volume, and after every restore (restore.ps1 / restore.sh),
--- so a snapshot built before the addition still gets it.
-
--- #123: vectors for hybrid retrieval (ADR-001 revisit). 384 dims = BAAI/bge-small-en-v1.5 (#124).
-CREATE EXTENSION IF NOT EXISTS vector;
-ALTER TABLE chunks ADD COLUMN IF NOT EXISTS embedding vector(384);
-CREATE INDEX IF NOT EXISTS chunks_embedding_idx ON chunks USING hnsw (embedding vector_cosine_ops);
+-- so a snapshot built before an addition still gets it.
+--
+-- Core only: no extension, no vector type (ADR-009). Vectors live in db/optional/vectors.sql,
+-- applied only when CEE_VECTORS=on. Nothing to add at the moment.

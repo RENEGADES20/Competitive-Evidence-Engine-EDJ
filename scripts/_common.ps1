@@ -37,10 +37,27 @@ function Reset-Database {
 }
 
 function Update-Schema {
-    # db/upgrade.sql: idempotent additions (pgvector column, #123), so older snapshots gain them.
-    Invoke-Native { docker exec $Container psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/02-upgrade.sql } "Upgrading the schema (did you pull the new database image? docker compose up -d)"
+    # db/upgrade.sql: idempotent core additions (no extension, ADR-009), so older snapshots gain them.
+    Invoke-Native { docker exec $Container psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f /docker-entrypoint-initdb.d/02-upgrade.sql } "Upgrading the schema"
 }
 
+function Test-VectorsOn {
+    # CEE_VECTORS (environment or .env): the optional vectors module (ADR-009), off by default.
+    # Same parsing as cee.config.vectors_enabled(): on|true|1|yes / empty, off|false|0|no.
+    $v = (Get-DotEnvValue "CEE_VECTORS").ToLower()
+    if (@("on", "true", "1", "yes") -contains $v) { return $true }
+    if (@("", "off", "false", "0", "no") -contains $v) { return $false }
+    throw "CEE_VECTORS='$v' is not understood; use on or off"
+}
+
+function Invoke-VectorsSql {
+    # db/optional/vectors.sql (idempotent): pgvector, chunk_embeddings, one-time move of the old
+    # chunks.embedding column. Not mounted in the container on purpose, so it goes in over stdin.
+    $sql = Join-Path $RepoRoot "db/optional/vectors.sql"
+    Invoke-Native { Get-Content -Raw $sql | docker exec -i $Container psql -q -U cee -d cee -v ON_ERROR_STOP=1 -f - } "Applying db/optional/vectors.sql (CEE_VECTORS=on)"
+}
+
+# Model helpers below: used only when CEE_VECTORS=on.
 $ModelFolder = "models--Qdrant--bge-small-en-v1.5-onnx-Q"   # fastembed cache folder of BAAI/bge-small-en-v1.5
 
 function Set-ModelCache {

@@ -108,6 +108,8 @@ def forbidden(query, hits, subs: dict) -> list[str]:
     for h in hits:
         if h.entity_id in allowed:
             continue
+        if h.entity_id is None and query.mode == "entity+theme":
+            continue  # tier 5 research on the named topic (fts.theme_filter, #116)
         via_parent = [e for e in query.entities if e in subs and subs[e][0] == h.entity_id]
         if via_parent and all(_segment_in(h, subs[e][1]) for e in via_parent):
             continue

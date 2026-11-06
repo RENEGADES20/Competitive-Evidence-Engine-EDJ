@@ -43,48 +43,72 @@ Open `.env` in a text editor. Leave `LLM_PROVIDER=mock` (offline, free) unless y
 to test with a real model; then set `LLM_PROVIDER=anthropic` and your `ANTHROPIC_API_KEY`.
 Teammates leave `CORPUS_SHARE_PATH` empty. Never commit `.env`.
 
-`requirements.txt` includes `fastembed` (embeddings, #124; no PyTorch). On an Intel Mac it needs
-macOS 13 or newer (`onnxruntime` 1.23.2 is the last version with Intel Mac builds).
-
 Corpus owners who ingest documents (tech lead, C1, C2) also install
 `pip install -r requirements-ingest.txt` (large: docling pulls in PyTorch) and set
 `EDGAR_IDENTITY` to their name and email.
 
-### Database image update (#123, once)
+The default setup needs no database extension, no embedding model and no download: search is
+Postgres full-text search (ADR-001), and vectors are an optional module that is **off** by
+default (`CEE_VECTORS=off` in `.env`, ADR-009). Skip the next section unless the tech lead asks
+you to turn vectors on.
 
-The database now runs on `pgvector/pgvector:0.8.1-pg16-trixie` (Postgres 16 with vector
-search). After `git pull`, start Docker Desktop and run this once; Docker downloads the new
-image (about 150 MB) and keeps your data. Then restore the snapshot as in section 2.
+### Vectors (optional, off by default)
 
-```powershell
-docker compose up -d --wait
-```
-```bash
-docker compose up -d --wait
-```
+Turning vectors on adds embeddings in their own table `chunk_embeddings`. Five steps, once:
 
-### Embedding model (#124, once)
+1. Install the vectors extra (`fastembed`, `onnxruntime`; no PyTorch). On an Intel Mac it needs
+   macOS 13 or newer (`onnxruntime` 1.23.2 is the last version with Intel Mac builds).
+   ```powershell
+   .\.venv\Scripts\python.exe -m pip install -r requirements-vectors.txt
+   ```
+   ```bash
+   .venv/bin/python -m pip install -r requirements-vectors.txt
+   ```
+2. Get the model (`BAAI/bge-small-en-v1.5`, about 70 MB). It is never downloaded by itself.
+   It goes into `FASTEMBED_CACHE_PATH` from `.env` (empty = `.cache/fastembed` in the repo).
+   Either download it once:
+   ```powershell
+   .\.venv\Scripts\python.exe -m cee.retrieve.embed --fetch
+   ```
+   ```bash
+   .venv/bin/python -m cee.retrieve.embed --fetch
+   ```
+   or, without HuggingFace access, copy the folder `models/models--Qdrant--bge-small-en-v1.5-onnx-Q`
+   from the shared corpus folder (team link) into the cache folder, so it has
+   `models--Qdrant--bge-small-en-v1.5-onnx-Q/refs` and `.../snapshots`:
+   ```powershell
+   Test-Path .cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q\refs\main   # True
+   ```
+   ```bash
+   test -f .cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs/main && echo True
+   ```
+   Check it works offline (expect `384 dims`):
+   ```powershell
+   .\.venv\Scripts\python.exe -m cee.retrieve.embed --query "test"
+   ```
+   ```bash
+   .venv/bin/python -m cee.retrieve.embed --query "test"
+   ```
+3. Set `CEE_VECTORS=on` in `.env`.
+4. Apply the optional SQL (`db/optional/vectors.sql`: pgvector extension + `chunk_embeddings`;
+   an older database's `chunks.embedding` column is moved into it). The restore script does
+   this when vectors are on, so restoring a snapshot (section 2) is enough:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
+   ```
+   ```bash
+   bash scripts/restore.sh
+   ```
+5. Embed every chunk that has no vector yet (also applies the optional SQL; continues where it
+   stopped; prints `0 still missing` when done):
+   ```powershell
+   .\.venv\Scripts\python.exe -m cee.retrieve.embed --missing
+   ```
+   ```bash
+   .venv/bin/python -m cee.retrieve.embed --missing
+   ```
 
-Questions are turned into vectors on your laptop with a small model (`BAAI/bge-small-en-v1.5`,
-about 70 MB). The corpus vectors are already inside the snapshot. The model downloads by itself
-the first time it is used, into `.cache/fastembed` in the repo (or the folder you set as
-`FASTEMBED_CACHE_PATH` in `.env`). Check it (expect `384 dims`):
-```powershell
-.\.venv\Scripts\python.exe -m cee.retrieve.embed --query "test"
-```
-```bash
-.venv/bin/python -m cee.retrieve.embed --query "test"
-```
-No HuggingFace access (the check fails with a download error)? Open the team Box link, download
-the folder `models/models--Qdrant--bge-small-en-v1.5-onnx-Q`, and unzip it so the repo has
-`.cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs` and `.../snapshots`; then run
-the check again. Once the model is there, it works with the network off.
-```powershell
-Test-Path .cache\fastembed\models--Qdrant--bge-small-en-v1.5-onnx-Q\refs\main   # True
-```
-```bash
-test -f .cache/fastembed/models--Qdrant--bge-small-en-v1.5-onnx-Q/refs/main && echo True
-```
+To turn vectors off again, set `CEE_VECTORS=off`; the core ignores `chunk_embeddings`.
 
 ## 2. Daily use (teammates)
 
@@ -154,10 +178,11 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
   ```bash
   bash scripts/build-snapshot.sh
   ```
-  It checks every manifest file (exists, sha256 matches), rebuilds the database, embeds every
-  chunk (#124; about 20 minutes on a laptop CPU; the build stops if a chunk has no vector), dumps `corpus-YYYY-MM-DD.dump`, copies
-  it into Box `snapshots/`, and puts the embedding model into Box `models/` if it is not there
-  yet. `-AllowBranch` / `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
+  It checks every manifest file (exists, sha256 matches), rebuilds the database, dumps
+  `corpus-YYYY-MM-DD.dump` and copies it into Box `snapshots/`. With vectors off (the default)
+  steps 4/7 and 7/7 print `skipped (CEE_VECTORS is off)`. With `CEE_VECTORS=on` it also embeds
+  every chunk (about 20 minutes on a laptop CPU; the build stops if a chunk has no vector) and
+  puts the embedding model into Box `models/` if it is not there yet. `-AllowBranch` / `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
   and must not be shared.
 - Checklist: [DASHBOARD.md section 8](DASHBOARD.md#8-weekly-snapshot-checklist-tech-lead).
 
@@ -173,11 +198,14 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 | `python` opens the wrong Python / `Permission denied` | Another tool's Python is first on PATH. Always use `.\.venv\Scripts\python.exe` (Mac: `.venv/bin/python`); create the venv with `py -3.11 -m venv .venv` (Mac: `python3.11 -m venv .venv`) |
 | Mac: `pwsh: command not found` or a `.ps1` opens as text | Use the `.sh` twin: `bash scripts/<name>.sh` |
 | Mac: `permission denied: scripts/restore.sh` | Run it through bash as shown (`bash scripts/restore.sh`), or `chmod +x scripts/*.sh` once |
-| `Upgrading the schema failed` / `extension "vector" is not available` | Your container still runs the old image: `docker compose up -d --wait`, then restore again |
+| `Applying db/optional/vectors.sql ... failed` / `extension "vector" is not available` | Only with `CEE_VECTORS=on`: the database image needs pgvector. Run `docker compose up -d --wait` (the image in docker-compose.yml has it), then restore again; or set `CEE_VECTORS=off` |
 | `collation version mismatch` | The image's operating system differs from the one that created your data. Start clean: `docker compose down -v`, `docker compose up -d --wait`, then restore the snapshot |
-| `pip install` fails on `onnxruntime` (Intel Mac) | It needs macOS 13 or newer (Apple menu -> About This Mac). Update macOS, or ask the tech lead |
-| `cee.retrieve.embed` fails with a connection or download error | HuggingFace is blocked or you are offline: copy the Box `models/` folder into `.cache/fastembed` (section 1, "Embedding model") |
-| `Embedding ... failed` in build-snapshot | Read the line above it; a chunk without a vector stops the build. Run `python -m cee.retrieve.embed --missing` again (it continues where it stopped) |
+| `pip install -r requirements-vectors.txt` fails on `onnxruntime` (Intel Mac) | It needs macOS 13 or newer (Apple menu -> About This Mac). Update macOS, or leave vectors off |
+| `Embedding model ... is not in ...` from `cee.retrieve.embed` | The model is never downloaded by itself: run `python -m cee.retrieve.embed --fetch`, or copy `models/` from the shared corpus folder (section 1, "Vectors") |
+| `No module named 'fastembed'` / `vectors extra is not installed` | Only needed with vectors on: `pip install -r requirements-vectors.txt` |
+| `Vectors are off (CEE_VECTORS)` | `--missing` only runs with `CEE_VECTORS=on` in `.env` |
+| `CEE_VECTORS='...' is not understood` | Use `CEE_VECTORS=on` or `CEE_VECTORS=off` in `.env` |
+| `Embedding ... failed` in build-snapshot (vectors on) | Read the line above it; a chunk without a vector stops the build. Run `python -m cee.retrieve.embed --missing` again (it continues where it stopped) |
 | `No snapshot found` | Download the newest `.dump` from the team Box link into `snapshots/` |
 | smoke says `0 chunks` | Restore a snapshot (section 2, step 3) |
 | `... not found locally. Download it from the team Box link` | The raw file is not in `data\raw\`; download it, or ignore if you only need the passage |

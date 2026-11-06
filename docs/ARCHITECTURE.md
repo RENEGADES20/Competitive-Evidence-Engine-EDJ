@@ -53,10 +53,17 @@ CREATE TABLE chunks (
   segment       text NULL,                 -- e.g. GWIM, tagged at chunking time
   page          int,                       -- PDFs only
   text          text NOT NULL,             -- includes the context prefix
-  tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED,
-  embedding     vector(384) NULL           -- pgvector; filled at snapshot build (#124)
+  tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
 );
 CREATE INDEX ON chunks USING gin (tsv);
+
+-- Optional vectors module (ADR-009), off by default: db/optional/vectors.sql, applied only
+-- with CEE_VECTORS=on. The core schema has no extension and no vector type.
+CREATE TABLE chunk_embeddings (
+  chunk_id      text PRIMARY KEY REFERENCES chunks ON DELETE CASCADE,
+  embedding     vector(384) NOT NULL       -- pgvector; BAAI/bge-small-en-v1.5 (#124)
+);
+CREATE INDEX ON chunk_embeddings USING hnsw (embedding vector_cosine_ops);
 
 CREATE TABLE topics       (topic_id text PRIMARY KEY, label text, parent_id text);
 CREATE TABLE chunk_topics (chunk_id text REFERENCES chunks, topic_id text REFERENCES topics,
@@ -166,7 +173,7 @@ From the team's OSS research. None is copied whole; together they cover roughly 
 | Parsing and chunking | [sec_rag_assistant](https://github.com/lazfa04/sec_rag_assistant) (3-level chunks, pitfalls), bt4103 (no cross-section chunks) | [agentic-sec-rag](https://github.com/mr-j90/agentic-sec-rag) (chunk prefix), [Financial-Filings-RAG](https://github.com/AshishBhalala11/Financial-Filings-RAG) (page numbers) |
 | Storage | Grounded-Rag-Analyst schema (tsvector first) | bt4103 data layers |
 | Entity resolution and filters | agentic-sec-rag (deterministic resolution), sec_rag_assistant (retrieval-layer filter, per-entity quotas) | Own design: segments |
-| Retrieval | Postgres FTS first; later Grounded-Rag-Analyst RRF | [rag-pipeline-sec-filings](https://github.com/avivakahlon/rag-pipeline-sec-filings) (dedupe), [sec-edgar-rag](https://github.com/ankankisku-lab/sec-edgar-rag) (sub-questions) |
+| Retrieval | Postgres FTS (ADR-001, ADR-010); Grounded-Rag-Analyst RRF evaluated on `exp/hybrid`, not adopted | [rag-pipeline-sec-filings](https://github.com/avivakahlon/rag-pipeline-sec-filings) (dedupe), [sec-edgar-rag](https://github.com/ankankisku-lab/sec-edgar-rag) (sub-questions) |
 | Generation and citations | bt4103 (Pydantic templates), Grounded-Rag-Analyst (citation validator) | agentic-sec-rag (single LLM call) |
 | Evidence gaps | agentic-sec-rag (coverage note), Grounded-Rag-Analyst (insufficient-evidence gate) | Own design: source registry |
 | Front end | earnings-intelligence (Streamlit + feedback) | [sec-insights](https://github.com/run-llama/sec-insights) (highlight cited text) |

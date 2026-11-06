@@ -1,0 +1,6 @@
+# Optional vectors module (ADR-009), off by default; only needed with CEE_VECTORS=on.
+# pip install -r requirements-vectors.txt   (or: pip install -e .[vectors])
+# Embeddings (#124): ONNX Runtime, no torch. onnxruntime 1.23.2 is the last release with
+# Intel Mac wheels (macOS 13+), so everyone uses it: same runtime for corpus and query vectors.
+fastembed==0.9.1
+onnxruntime==1.23.2
