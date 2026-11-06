@@ -44,9 +44,9 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
-## Retrieval modes (#125, experimental branch `exp/hybrid` only)
+## Retrieval modes (#125, #126, experimental branch `exp/hybrid` only)
 
-`main` has one mode, `fts` (ADR-001, ADR-009). The second mode lives on the branch `exp/hybrid`
+`main` has one mode, `fts` (ADR-001, ADR-009). The other two modes live on the branch `exp/hybrid`
 until #127 records a decision with the #126 numbers.
 
 `search(q, mode=...)` / `ask(..., mode=...)`; default `RETRIEVAL_MODE` in `.env`, else `fts`.
@@ -59,9 +59,19 @@ until #127 records a decision with the #126 numbers.
   window) -> the same `select()` quotas with no relative floor. Entity+theme questions get the
   research part the same way, with the theme filter. The gap path is unchanged: unmapped firms
   return nothing. With vectors off, `hybrid` stops with a clear message; nothing loads a model.
-- Both modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
+- `hybrid-norerank` (#126, same requirements): the same candidates as `hybrid`, ordered by the
+  RRF score; no reranker is loaded. It isolates what the reranker adds.
+- Floors (#126): `fts` keeps `FLOOR` x the firm's best `ts_rank`. Both hybrid modes apply
+  `hybrid.FLOOR[mode]` x the firm's best RRF score to the 50 candidates before any rerank (RRF is
+  a ratio-like score: 0 = no leg found it; the cross-encoder sigmoid is not, so `select()` runs with
+  floor 0 there). No floor inside a time window in any mode. `MAX_PER_DOC` and `DUP_JACCARD` are per
+  mode for the hybrid modes (`hybrid.py`); the window cap (8), the research cap (2) and every
+  `fts.py` constant are unchanged.
+- All modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
   through their synonyms (Q29: "pay any net liquidation amount" is not advisor pay).
-- Constants (`LEG_K`, `RRF_K`, `RERANK_N`, `RERANK_FLOOR`) are tuned per mode in #126.
+- Comparison and tuned constants per mode (#126): `evals/hybrid-eval/corpus-2026-10-29/report.md`
+  (picked by a rule fixed before the grid ran, `plans/0126-hybrid-eval.md`). `LEG_K`, `RRF_K`,
+  `RERANK_N` and `RERANK_FLOOR` were not tuned.
 
 ## Acceptance
 

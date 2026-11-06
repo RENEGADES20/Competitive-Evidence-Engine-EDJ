@@ -10,9 +10,10 @@ Themes (#116): a question that names one firm and a topic from config/topics.yam
 few tier 5 research chunks tagged with that topic (Q19: the EDJ filter dropped every survey on
 younger investors). Several firms + a topic stay in entity mode until per-firm theme quotas (#117):
 research slots pushed Q23's headcount figures out of the list.
-Two retrieval modes (#125, experimental branch exp/hybrid): `search(q, mode="fts" | "hybrid")`,
-default RETRIEVAL_MODE (fts). Hybrid (src/cee/retrieve/hybrid.py) needs CEE_VECTORS=on and reuses
-this module's filters, keyword terms and select().
+Three retrieval modes (experimental branch exp/hybrid; #125, #126):
+`search(q, mode="fts" | "hybrid" | "hybrid-norerank")`, default RETRIEVAL_MODE (fts). Both hybrid
+modes (src/cee/retrieve/hybrid.py) need CEE_VECTORS=on and reuse this module's filters, keyword
+terms and select().
 """
 from __future__ import annotations
 
@@ -341,13 +342,16 @@ def _similar(a: set, b: set) -> float:
 
 
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
-           max_per_doc: int | None = None) -> list[Hit]:
+           max_per_doc: int | None = None, dup_jaccard: float | None = None) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
     FLOOR x its firm's best chunk gets no slot: quotas spread relevant evidence, they do not
-    pad the list with a document type that has nothing on the question."""
+    pad the list with a document type that has nothing on the question.
+    floor / max_per_doc / dup_jaccard: None -> FLOOR / MAX_PER_DOC / DUP_JACCARD (hybrid modes pass
+    their own values, #126; fts mode never does)."""
     floor = FLOOR if floor is None else floor
+    dup_jaccard = DUP_JACCARD if dup_jaccard is None else dup_jaccard
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
     firms: OrderedDict[str | None, OrderedDict[str, list[Hit]]] = OrderedDict()
     best: dict[str | None, float] = {}
@@ -370,7 +374,7 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
                 if per_doc.get(h.doc_id, 0) >= max_per_doc:
                     continue
                 sh = _shingles(h.text)
-                if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles):
+                if any(_similar(sh, other) > dup_jaccard for other in kept_shingles):
                     continue
                 kept.append(h)
                 kept_shingles.append(sh)
@@ -390,7 +394,7 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     return kept
 
 
-MODES = ("fts", "hybrid")
+MODES = ("fts", "hybrid", "hybrid-norerank")
 
 
 class HybridUnavailable(RuntimeError):
@@ -404,15 +408,16 @@ HYBRID_NEEDS_VECTORS = (
 
 
 def search(q: Query, k: int = K, mode: str | None = None) -> list[Hit]:
-    """Retrieve for one request. mode: "fts" | "hybrid"; None -> RETRIEVAL_MODE (default fts)."""
+    """Retrieve for one request. mode: "fts" | "hybrid" | "hybrid-norerank"; None -> RETRIEVAL_MODE
+    (default fts). hybrid-norerank (#126): the same candidates as hybrid, final order by RRF score."""
     mode = (mode or settings().retrieval_mode).strip().lower()
     if mode == "fts":
         return fts_search(q, k)
-    if mode == "hybrid":
+    if mode in ("hybrid", "hybrid-norerank"):
         if not vectors_enabled():  # checked before the import: vectors off never loads hybrid
             raise HybridUnavailable(HYBRID_NEEDS_VECTORS)
         from cee.retrieve import hybrid  # imported late: fts mode never loads a model
-        return hybrid.search(q, k)
+        return hybrid.search(q, k) if mode == "hybrid" else hybrid.search(q, k, rerank=False)
     raise ValueError(f"unknown retrieval mode {mode!r}; use one of {', '.join(MODES)}")
 
 

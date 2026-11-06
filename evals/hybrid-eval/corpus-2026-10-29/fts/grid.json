@@ -1,0 +1,397 @@
+{
+  "mode": "fts",
+  "rule": "1. Eligible: forbidden hits 0 on all questions; refusal accuracy on the gap questions and on all keyed questions >= the fts reference run (--baseline). 2. Among eligible points: highest tier-1 passage recall (3 decimals). 3. Ties: higher tier-1 doc recall; more PASS; the mode's default before #126 (fts 0.3/3, hybrid modes 0/3); higher FLOOR; smaller MAX_PER_DOC. 4. No eligible point: no tuned constants (defaults stay); the mode fails the refusal acceptance.",
+  "reference": ".eval-runs/p126-ref-fts/report.json",
+  "reference_summary": {
+    "median_search_s": 0.348,
+    "tier1_doc_recall": 0.796,
+    "tier1_passage_recall": 0.402,
+    "tier1_with_key": 9,
+    "tier1_total": 18,
+    "refusal_gap": {
+      "ok": 5,
+      "of": 5,
+      "accuracy": 1.0
+    },
+    "refusal_all": {
+      "ok": 10,
+      "of": 10,
+      "accuracy": 1.0
+    }
+  },
+  "choice": {
+    "pick": {
+      "floor": 0.2,
+      "max_per_doc": 3,
+      "run": "f0.2-m3"
+    },
+    "reason": "eligible 6 of 9; best tier-1 passage recall 0.474; beats the runner-up f0.2-m2 on passage recall",
+    "not_eligible": {
+      "f0.2-m4": [
+        "refusal gap 4/5 < fts",
+        "refusal all 9/10 < fts"
+      ],
+      "f0.3-m4": [
+        "refusal gap 4/5 < fts",
+        "refusal all 9/10 < fts"
+      ],
+      "f0.4-m4": [
+        "refusal gap 4/5 < fts",
+        "refusal all 9/10 < fts"
+      ]
+    }
+  },
+  "points": [
+    {
+      "floor": 0.2,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m2",
+      "summary": {
+        "median_search_s": 0.385,
+        "p90_search_s": 0.61,
+        "max_search_s": 0.865,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.565,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.794,
+        "tier1_passage_recall": 0.432,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.2,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m3",
+      "summary": {
+        "median_search_s": 0.336,
+        "p90_search_s": 0.506,
+        "max_search_s": 0.778,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.782,
+        "tier1_passage_recall": 0.474,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.2,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.2,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.2-m4",
+      "summary": {
+        "median_search_s": 0.384,
+        "p90_search_s": 0.603,
+        "max_search_s": 1.025,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 26,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.763,
+        "tier1_passage_recall": 0.474,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 4,
+          "of": 5,
+          "accuracy": 0.8
+        },
+        "refusal_all": {
+          "ok": 9,
+          "of": 10,
+          "accuracy": 0.9
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m2",
+      "summary": {
+        "median_search_s": 0.348,
+        "p90_search_s": 0.56,
+        "max_search_s": 0.831,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.565,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.809,
+        "tier1_passage_recall": 0.361,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m3",
+      "summary": {
+        "median_search_s": 0.342,
+        "p90_search_s": 0.687,
+        "max_search_s": 0.867,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.796,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.3,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.3-m4",
+      "summary": {
+        "median_search_s": 0.353,
+        "p90_search_s": 0.739,
+        "max_search_s": 0.874,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.796,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 4,
+          "of": 5,
+          "accuracy": 0.8
+        },
+        "refusal_all": {
+          "ok": 9,
+          "of": 10,
+          "accuracy": 0.9
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 2,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 2,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m2",
+      "summary": {
+        "median_search_s": 0.333,
+        "p90_search_s": 0.65,
+        "max_search_s": 0.821,
+        "dup_questions_trigram_over": 0,
+        "dup_pairs_trigram_over": 0,
+        "dup_max_trigram": 0.893,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.565,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.809,
+        "tier1_passage_recall": 0.361,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 3,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m3",
+      "summary": {
+        "median_search_s": 0.37,
+        "p90_search_s": 0.677,
+        "max_search_s": 0.76,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 28,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.796,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 5,
+          "of": 5,
+          "accuracy": 1.0
+        },
+        "refusal_all": {
+          "ok": 10,
+          "of": 10,
+          "accuracy": 1.0
+        }
+      }
+    },
+    {
+      "floor": 0.4,
+      "max_per_doc": 4,
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "run": "f0.4-m4",
+      "summary": {
+        "median_search_s": 0.372,
+        "p90_search_s": 0.619,
+        "max_search_s": 1.013,
+        "dup_questions_trigram_over": 1,
+        "dup_pairs_trigram_over": 1,
+        "dup_max_trigram": 0.911,
+        "dup_questions_5gram_over": 0,
+        "dup_pairs_5gram_over": 0,
+        "dup_max_5gram": 0.58,
+        "pass": 27,
+        "forbidden_hits": 0,
+        "tier1_doc_recall": 0.796,
+        "tier1_passage_recall": 0.402,
+        "tier1_with_key": 9,
+        "tier1_total": 18,
+        "refusal_gap": {
+          "ok": 4,
+          "of": 5,
+          "accuracy": 0.8
+        },
+        "refusal_all": {
+          "ok": 9,
+          "of": 10,
+          "accuracy": 0.9
+        }
+      }
+    }
+  ]
+}

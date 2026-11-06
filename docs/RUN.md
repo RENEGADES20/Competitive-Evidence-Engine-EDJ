@@ -110,7 +110,7 @@ Turning vectors on adds embeddings in their own table `chunk_embeddings`. Five s
 
 To turn vectors off again, set `CEE_VECTORS=off`; the core ignores `chunk_embeddings`.
 
-### Hybrid retrieval (experimental branch `exp/hybrid`, #125)
+### Hybrid retrieval (experimental branch `exp/hybrid`, #125, #126)
 
 Only on the branch `exp/hybrid`; `main` searches with keywords only (ADR-009; the decision on
 hybrid comes in #127). The app searches with keywords (`RETRIEVAL_MODE=fts`, the default). The
@@ -140,16 +140,31 @@ second mode, `hybrid`, also searches by meaning (vectors) and lets a small local
    .venv/bin/python -m cee.retrieve.hybrid --check
    ```
 4. Set `RETRIEVAL_MODE=hybrid` in `.env` and restart the app. Questions take about 8-10 s longer
-   (the reranker runs on the CPU).
+   (the reranker runs on the CPU). `RETRIEVAL_MODE=hybrid-norerank` uses the same search without
+   the reranker (step 2 not needed): faster, ordered by how well keywords and meaning agree.
 
-Compare both modes on the question bank (hybrid needs `CEE_VECTORS=on`):
+Compare the modes on the question bank (the hybrid modes need `CEE_VECTORS=on`):
 ```powershell
 .\.venv\Scripts\python.exe scripts\eval_run.py --mode fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank
 .\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid
 ```
 ```bash
 .venv/bin/python scripts/eval_run.py --mode fts
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank
 .venv/bin/python scripts/eval_run.py --mode hybrid
+```
+
+Try other constants (#126; the report is `evals/hybrid-eval/corpus-2026-10-29/report.md`). A comma
+list makes a grid: one run per combination, then `grid.md` with the point the selection rule picks.
+`--baseline` is the fts run the rule compares refusal accuracy with:
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runs\ref-fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-10-29 --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 --baseline .eval-runs\ref-fts\report.json --out .eval-runs\grid-norerank
+```
+```bash
+.venv/bin/python scripts/eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runs/ref-fts
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank --as-of 2026-10-29 --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 --baseline .eval-runs/ref-fts/report.json --out .eval-runs/grid-norerank
 ```
 
 ## 2. Daily use (teammates)

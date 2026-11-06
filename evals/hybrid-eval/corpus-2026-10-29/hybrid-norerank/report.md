@@ -1,0 +1,429 @@
+# Eval run corpus-2026-10-29-20261105-193312
+
+Snapshot `corpus-2026-10-29` | commit `3950a80` | k=20 | min coverage 0.5 | as of 2026-10-29 | mode mock | retrieval hybrid-norerank | median search 0.307 s (p90 0.526 s, max 0.66 s; warm-up 1.618 s) | 0 real calls
+
+**PASS 28 | FAIL 2 | NOT_EVALUATED 0** (baseline `.eval-runs/p126-ref-fts/report.json`)
+
+**Tier-1 recall**: documents 0.715, passages 0.405 (mean over the 9 of 18 tier-1 questions with an answer key; the rest n/a until #56)  
+**Refusal accuracy**: gap questions (Q24, Q25, Q28, Q29, Q30) 5/5; all questions with a key 10/10  
+**Constants**: FLOOR 0.4, MAX_PER_DOC 3, DUP_JACCARD 0.6, RERANK_FLOOR 0.0, RERANK_N 50, WINDOW_MAX_PER_DOC 8, THEME_MAX_PER_DOC 2  
+**Duplicates** (pairs of hits > 0.9 similar): trigram (pg_trgm-style, Python) 0 pairs in 0 questions, max 0.893; word 5-gram 0 pairs in 0 questions, max 0.584  
+**CPU**: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel, 12 logical CPUs, Windows, onnxruntime 1.23.2
+
+Status: FAIL on any forbidden hit or refusal failure; NOT_EVALUATED when no expected source is in the corpus; PASS when coverage of the available patterns >= min coverage.
+
+Recall: expected documents (passages) from `evals/expected_chunks.yaml` with at least one retrieved chunk. Refusal: no must-not chunk, no forbidden hit, nothing outside the time window.
+
+| Q | Tier | Use case | Expected | Firms (mode) | Hits | Coverage | Recall docs | Passages | Refusal | Forbidden | Status | Change |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Q1 | 1 | entity_brief | answer | MS (entity) | 20 | 3/3 | 5/9 | 2/8 | ok | 0 | PASS | REGRESSED |
+| Q2 | 1 | entity_brief | answer | RJF (entity) | 15 | 2/3 | - | - | - | 0 | PASS | REGRESSED |
+| Q3 | 1 | entity_brief | answer | SCHW (entity) | 20 | 3/3 | - | - | - | 0 | PASS | UNCHANGED |
+| Q4 (trap) | 1 | entity_brief | answer | MER (entity) | 20 | 2/2 | 4/5 | 4/7 | ok | 0 | PASS | UNCHANGED |
+| Q5 | 1 | entity_brief | answer | MS (entity) | 20 | 2/2 | - | - | - | 0 | PASS | UNCHANGED |
+| Q6 | 1 | entity_brief | answer | RJF (entity) | 20 | 2/3 | - | - | - | 0 | PASS | UNCHANGED |
+| Q7 | 2 | head_to_head | answer | MS, MER, RJF (entity) | 20 | 6/6 | - | - | - | 0 | PASS | IMPROVED |
+| Q8 | 2 | head_to_head | answer | SCHW, RJF (entity) | 20 | 3/4 | - | - | - | 0 | PASS | UNCHANGED |
+| Q9 | 3 | head_to_head | answer | MS, MER (entity) | 20 | 5/5 | - | - | - | 0 | PASS | IMPROVED |
+| Q10 | 3 | head_to_head | answer | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 5/5 | - | - | - | 0 | PASS | UNCHANGED |
+| Q11 | 1 | head_to_head | answer | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 6/8 | 4/8 | 2/10 | ok | 0 | PASS | REGRESSED |
+| Q12 | 3 | mechanism | answer_with_boundary | SCHW, EDJ (entity) | 20 | 3/3 | - | - | - | 0 | PASS | UNCHANGED |
+| Q13 | 1 | mechanism | answer | MS (entity) | 20 | 2/2 | - | - | - | 0 | PASS | UNCHANGED |
+| Q14 | 3 | mechanism | answer | RJF (entity) | 18 | 2/3 | - | - | - | 0 | PASS | UNCHANGED |
+| Q15 | 3 | mechanism | answer | SCHW (entity) | 20 | 1/5 | - | - | - | 0 | FAIL | UNCHANGED |
+| Q16 | 3 | theme_scan | answer | none (theme) | 20 | 3/3 | - | - | - | 0 | PASS | UNCHANGED |
+| Q17 | 1 | theme_scan | answer | none (theme) | 20 | 4/7 | - | - | - | 0 | PASS | UNCHANGED |
+| Q18 | 3 | theme_scan | answer | none (theme) | 20 | 1/1 | - | - | - | 0 | PASS | UNCHANGED |
+| Q19 | 3 | segment_evidence | answer_with_boundary | EDJ (entity+theme) | 8 | 1/4 | - | - | - | 0 | FAIL | UNCHANGED |
+| Q20 | 1 | segment_evidence | answer | none (theme) | 20 | 1/1 | - | - | - | 0 | PASS | UNCHANGED |
+| Q21 | 2 | segment_evidence | answer | none (theme) | 20 | 5/6 | - | - | - | 0 | PASS | IMPROVED |
+| Q22 | 1 | benchmark | answer | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 5/6 | 11/33 | 3/8 | ok | 0 | PASS | IMPROVED |
+| Q23 | 1 | benchmark | answer | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 4/7 | - | - | - | 0 | PASS | REGRESSED |
+| Q24 | 3 | benchmark | gap_with_adjacent | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 4/5 | 3/5 | 2/4 | ok | 0 | PASS | IMPROVED |
+| Q25 | 1 | benchmark | gap_with_adjacent | MS, SCHW, EDJ, MER, RJF (entity) | 20 | 5/5 | 3/4 | 0/4 | ok | 0 | PASS | UNCHANGED |
+| Q26 | 1 | recency | answer | RJF (entity) | 8 | 1/1 | 1/1 | 1/1 | ok | 0 | PASS | UNCHANGED |
+| Q27 (trap) | 1 | recency | answer | MER (entity) | 20 | 2/2 | - | - | - | 0 | PASS | UNCHANGED |
+| Q28 | 1 | honest_miss | gap_with_adjacent | EDJ, MER (entity) | 20 | 2/3 | 3/6 | 1/4 | ok | 0 | PASS | REGRESSED |
+| Q29 | 1 | honest_miss | gap_with_adjacent | MS (entity) | 20 | 1/1 | 1/1 | 1/2 | ok | 0 | PASS | REGRESSED |
+| Q30 (trap) | 1 | honest_miss | gap_with_adjacent | MER (entity) | 20 | 1/1 | 2/2 | 1/2 | ok | 0 | PASS | IMPROVED |
+
+## Per question
+
+### Q1 - PASS
+
+What is Morgan Stanley's strategy to increase their net new assets?
+
+- `MS:transcript`: hit MS-TR-2025Q3#19, MS-TR-2026Q3#9, MS-TR-2026Q2#15, MS-TR-2024Q4#15, MS-TR-2026Q1#16, MS-TR-2025Q1#21, MS-TR-2024Q4#4, MS-TR-2026Q2#2, MS-TR-2026Q2#7, MS-TR-2026Q1#2
+- `MS:10-K#Wealth Management`: hit MS-10K-2025#180, MS-10K-2025#165
+- `MS:deck`: not in corpus
+- `MS:supplement`: hit MS-SUPP-2026Q1#46, MS-SUPP-2026Q1#28
+- Expected `MS-TR-2026Q2#3`: missing
+- Expected `MS-TR-2026Q2#13, MS-TR-2026Q2#15`: found MS-TR-2026Q2#15
+- Expected `MS-TR-2026Q3#2, MS-TR-2026Q3#8`: missing
+- Expected `MS-TR-2026Q1#2, MS-TR-2026Q1#7, MS-TR-2026Q1#8`: found MS-TR-2026Q1#2
+- Expected `MS-PR-2026-10-14-01#5, MS-PR-2026-07-15-01#5`: missing
+- Expected `MS-10K-2025#125`: missing
+- Expected `MS-10K-2025#127, MS-10K-2025#164, MS-10K-2025#166`: missing
+- Expected `MS-SUPP-2026Q3#16, MS-SUPP-2026Q2#16, MS-SUPP-2026Q1#14`: missing
+- Retrieved: MS-TR-2025Q3#19, MS-10Q-2026Q1#61, MS-10K-2025#180, MS-SUPP-2026Q1#46, MS-TR-2026Q3#9, MS-10Q-2025Q2#74, MS-10K-2025#165, MS-TR-2026Q2#15, MS-10Q-2025Q3#74, MS-SUPP-2026Q1#28, MS-TR-2024Q4#15, MS-10Q-2026Q1#18, MS-TR-2026Q1#16, MS-10Q-2026Q2#58, MS-TR-2025Q1#21, MS-10Q-2025Q2#57, MS-TR-2024Q4#4, MS-TR-2026Q2#2, MS-TR-2026Q2#7, MS-TR-2026Q1#2
+
+### Q2 - PASS
+
+How is Raymond James positioning itself to recruit advisors away from the wirehouses?
+
+- `RJF:transcript`: hit RJF-TR-2026Q1#34, RJF-TR-2025Q1#21, RJF-TR-2025Q4#51, RJF-TR-2025Q4#52, RJF-TR-2025Q3#27, RJF-TR-2025Q1#32, RJF-TR-2025Q1#7, RJF-TR-2025Q4#28, RJF-TR-2025Q2#25, RJF-TR-2025Q2#42
+- `RJF:10-K`: hit RJF-10K-2025#27, RJF-10K-2025#334, RJF-10K-2025#89
+- `RJF:press`: no hit
+- `RJF:trade`: not in corpus
+- Retrieved: RJF-TR-2026Q1#34, RJF-10K-2025#27, RJF-10Q-2025Q2#158, RJF-TR-2025Q1#21, RJF-10K-2025#334, RJF-10Q-2026Q2#167, RJF-TR-2025Q4#51, RJF-10K-2025#89, RJF-TR-2025Q4#52, RJF-TR-2025Q3#27, RJF-TR-2025Q1#32, RJF-TR-2025Q1#7, RJF-TR-2025Q4#28, RJF-TR-2025Q2#25, RJF-TR-2025Q2#42
+
+### Q3 - PASS
+
+What is Schwab's strategy for its RIA custody business?
+
+- `SCHW:transcript`: hit SCHW-TR-2026Q3#2, SCHW-TR-2026Q3#7, SCHW-TR-2026Q3#3, SCHW-TR-2025Q3#9, SCHW-TR-2025Q3#13, SCHW-TR-2025Q2#10, SCHW-TR-2026Q1#32, SCHW-TR-2026Q2#5, SCHW-TR-2026Q2#4
+- `SCHW:10-K#Advisor Services`: hit SCHW-10K-2025#26, SCHW-10K-2025#23
+- `SCHW:deck`: hit SCHW-DECK-2026Q2#14, SCHW-DECK-2026Q3#22
+- Retrieved: SCHW-10K-2025#11, SCHW-10Q-2026Q2#30, SCHW-TR-2026Q3#2, SCHW-DECK-2026Q2#14, SCHW-PR-2026-10-15-01#10, SCHW-10K-2025#26, SCHW-10Q-2026Q1#25, SCHW-TR-2026Q3#7, SCHW-DECK-2026Q3#22, SCHW-10K-2025#23, SCHW-10Q-2025Q2#310, SCHW-TR-2026Q3#3, SCHW-PR-2026-04-16-01#3, SCHW-10Q-2026Q2#9, SCHW-TR-2025Q3#9, SCHW-TR-2025Q3#13, SCHW-TR-2025Q2#10, SCHW-TR-2026Q1#32, SCHW-TR-2026Q2#5, SCHW-TR-2026Q2#4
+
+### Q4 - PASS
+
+What is Merrill's advisor growth strategy, and how has it changed?
+
+- `BAC:transcript#GWIM`: hit BAC-TR-2025Q1#25, BAC-TR-2026Q3#13, BAC-TR-2025Q2#31, BAC-TR-2025Q2#32, BAC-TR-2025Q3#24, BAC-TR-2026Q2#14, BAC-TR-2025Q3#25
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246, BAC-10K-2025#247, BAC-10K-2025#249
+- `MER:press`: hit BAC-PR-2026-07-14-01#10, BAC-PR-2026-04-15-01#10, BAC-PR-2026-10-14-01#11, BAC-PR-2026-01-14-01#12
+- `MER:trade`: not in corpus
+- Expected `BAC-TR-2026Q1#20`: missing
+- Expected `BAC-TR-2026Q1#48`: missing
+- Expected `BAC-TR-2026Q2#13, BAC-TR-2026Q2#14`: found BAC-TR-2026Q2#14
+- Expected `BAC-TR-2026Q2#38`: missing
+- Expected `BAC-TR-2026Q3#13`: found BAC-TR-2026Q3#13
+- Expected `BAC-10K-2025#245, BAC-10K-2025#246, BAC-10K-2025#247`: found BAC-10K-2025#246, BAC-10K-2025#247
+- Expected `BAC-10Q-2026Q2#88, BAC-10Q-2026Q2#89, BAC-10Q-2026Q2#90, BAC-10Q-2026Q2#91`: found BAC-10Q-2026Q2#88, BAC-10Q-2026Q2#89
+- Retrieved: BAC-TR-2025Q1#25, BAC-10K-2025#246, BAC-10Q-2026Q1#73, BAC-PR-2026-07-14-01#10, BAC-TR-2026Q3#13, BAC-10K-2025#247, BAC-10Q-2026Q2#88, BAC-PR-2026-04-15-01#10, BAC-TR-2025Q2#31, BAC-10K-2025#249, BAC-10Q-2025Q3#94, BAC-PR-2026-10-14-01#11, BAC-TR-2025Q2#32, BAC-10Q-2025Q2#93, BAC-TR-2025Q3#24, BAC-10Q-2026Q2#89, BAC-PR-2026-01-14-01#12, BAC-TR-2026Q2#14, BAC-10Q-2025Q2#94, BAC-TR-2025Q3#25
+
+### Q5 - PASS
+
+Where is Morgan Stanley investing in technology for its advisors?
+
+- `MS:transcript`: hit MS-TR-2026Q3#13, MS-TR-2025Q4#22, MS-TR-2025Q3#23, MS-TR-2026Q3#20, MS-TR-2026Q3#21, MS-TR-2024Q4#10, MS-TR-2026Q1#3, MS-TR-2025Q1#8, MS-TR-2025Q1#34, MS-TR-2025Q3#19, MS-TR-2024Q4#59, MS-TR-2025Q2#26
+- `MS:10-K`: hit MS-10K-2025#58, MS-10K-2025#25, MS-10K-2025#76
+- `MS:deck`: not in corpus
+- `MS:trade`: not in corpus
+- Retrieved: MS-TR-2026Q3#13, MS-10K-2025#58, MS-PR-2026-01-15-01#13, MS-10Q-2025Q2#14, MS-TR-2025Q4#22, MS-10K-2025#25, MS-PR-2026-07-15-01#8, MS-TR-2025Q3#23, MS-10K-2025#76, MS-PR-2026-10-14-01#8, MS-TR-2026Q3#20, MS-PR-2026-04-15-01#8, MS-TR-2026Q3#21, MS-TR-2024Q4#10, MS-TR-2026Q1#3, MS-TR-2025Q1#8, MS-TR-2025Q1#34, MS-TR-2025Q3#19, MS-TR-2024Q4#59, MS-TR-2025Q2#26
+
+### Q6 - PASS
+
+What has Raymond James said about its affiliation models, and has the mix shifted?
+
+- `RJF:10-K#Private Client Group`: type only (qualifier not met): RJF-10K-2025#9, RJF-10K-2025#462, RJF-10K-2025#250
+- `RJF:transcript`: hit RJF-TR-2026Q2#22, RJF-TR-2025Q2#42, RJF-TR-2026Q1#30, RJF-TR-2026Q2#26, RJF-TR-2026Q2#39, RJF-TR-2025Q4#36, RJF-TR-2025Q1#21, RJF-TR-2025Q2#41
+- `RJF:press`: hit RJF-PR-2026-01-28-01#6, RJF-PR-2026-04-22-01#5
+- Retrieved: RJF-TR-2026Q2#22, RJF-10K-2025#9, RJF-10Q-2025Q4#191, RJF-PR-2026-01-28-01#6, RJF-TR-2025Q2#42, RJF-10K-2025#462, RJF-10Q-2026Q1#267, RJF-PR-2026-04-22-01#5, RJF-TR-2026Q1#30, RJF-10K-2025#250, RJF-10Q-2025Q4#259, RJF-TR-2026Q2#26, RJF-10Q-2026Q1#243, RJF-TR-2026Q2#39, RJF-10Q-2026Q1#328, RJF-TR-2025Q4#36, RJF-10Q-2026Q2#251, RJF-TR-2025Q1#21, RJF-10Q-2026Q2#340, RJF-TR-2025Q2#41
+
+### Q7 - PASS
+
+How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?
+
+- `MS:transcript`: hit MS-TR-2024Q4#59, MS-TR-2024Q4#10, MS-TR-2025Q3#47
+- `MS:10-K`: hit MS-10K-2025#51, MS-10K-2025#112
+- `BAC:transcript#GWIM`: hit BAC-TR-2025Q2#31, BAC-TR-2025Q1#25
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246, BAC-10K-2025#248
+- `RJF:transcript`: hit RJF-TR-2026Q2#4, RJF-TR-2025Q4#28
+- `RJF:10-K`: hit RJF-10K-2025#89, RJF-10K-2025#27
+- `MS:trade`: not in corpus
+- `MER:trade`: not in corpus
+- `RJF:trade`: not in corpus
+- Retrieved: BAC-TR-2025Q2#31, MS-TR-2024Q4#59, RJF-TR-2026Q2#4, BAC-10K-2025#246, MS-10K-2025#51, RJF-10K-2025#89, BAC-PR-2026-04-15-01#10, MS-10Q-2026Q1#125, RJF-10Q-2025Q2#158, BAC-10Q-2026Q2#91, MS-TR-2024Q4#10, RJF-SUPP-2026Q1#44, BAC-DECK-2026Q1#27, MS-10K-2025#112, RJF-TR-2025Q4#28, BAC-TR-2025Q1#25, MS-10Q-2025Q2#57, RJF-10K-2025#27, BAC-10K-2025#248, MS-TR-2025Q3#47
+
+### Q8 - PASS
+
+Compare how Schwab and Raymond James describe their value proposition to independent advisors.
+
+- `SCHW:deck`: hit SCHW-DECK-2026Q3#71, SCHW-DECK-2026Q3#30
+- `SCHW:10-K`: hit SCHW-10K-2025#13, SCHW-10K-2025#19
+- `RJF:deck`: no hit
+- `RJF:10-K`: hit RJF-10K-2025#27, RJF-10K-2025#9, RJF-10K-2025#23
+- Retrieved: SCHW-TR-2026Q1#32, RJF-TR-2024Q4#20, SCHW-10K-2025#13, RJF-10K-2025#27, SCHW-10Q-2026Q1#7, RJF-10Q-2025Q4#191, SCHW-DECK-2026Q3#71, RJF-TR-2025Q1#21, SCHW-PR-2026-10-15-01#10, RJF-10K-2025#9, SCHW-TR-2026Q1#20, RJF-10Q-2026Q1#39, SCHW-10K-2025#19, RJF-TR-2025Q3#28, SCHW-10Q-2025Q2#310, RJF-10K-2025#23, SCHW-DECK-2026Q3#30, RJF-TR-2026Q1#4, SCHW-PR-2026-07-21-01#1, RJF-TR-2026Q2#4
+
+### Q9 - PASS
+
+How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?
+
+- `MS:10-K`: hit MS-10K-2025#190, MS-10K-2025#127, MS-10K-2025#349
+- `MS:transcript`: hit MS-TR-2026Q3#21, MS-TR-2025Q3#3
+- `MS:deck`: not in corpus
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246, BAC-10K-2025#247
+- `BAC:transcript#GWIM`: hit BAC-TR-2025Q3#24, BAC-TR-2025Q2#31
+- `BAC:deck#GWIM`: hit BAC-DECK-2026Q1#27
+- Retrieved: BAC-10K-2025#246, MS-10K-2025#190, BAC-10Q-2025Q2#93, MS-10Q-2025Q2#87, BAC-PR-2026-04-15-01#10, MS-TR-2026Q3#21, BAC-TR-2025Q3#24, MS-PR-2026-07-15-01#8, BAC-SUPP-2026Q1#45, MS-SUPP-2026Q3#27, BAC-DECK-2026Q1#27, MS-10K-2025#127, BAC-10K-2025#247, MS-10Q-2025Q3#18, BAC-10Q-2026Q2#88, MS-TR-2025Q3#3, BAC-PR-2026-01-14-01#13, MS-PR-2026-10-14-01#8, BAC-TR-2025Q2#31, MS-10K-2025#349
+
+### Q10 - PASS
+
+Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?
+
+- `MS:transcript`: hit MS-TR-2026Q2#3, MS-TR-2026Q3#7
+- `SCHW:transcript`: hit SCHW-TR-2024Q4#23
+- `EDJ:10-K`: hit EDJ-10K-2025#88, EDJ-10K-2025#10
+- `BAC:transcript#GWIM`: hit BAC-TR-2026Q3#13
+- `RJF:transcript`: hit RJF-TR-2025Q2#24
+- Retrieved: SCHW-TR-2024Q4#23, BAC-TR-2026Q3#13, EDJ-10K-2025#88, MS-10K-2025#125, RJF-TR-2025Q2#24, SCHW-DECK-2026Q2#34, BAC-10K-2025#249, EDJ-10Q-2025Q2#28, MS-TR-2026Q2#3, RJF-10Q-2026Q2#223, SCHW-10K-2025#213, BAC-PR-2026-04-15-01#11, EDJ-10K-2025#10, MS-TR-2026Q3#7, RJF-10K-2025#9, SCHW-10Q-2025Q2#193, BAC-10Q-2026Q1#75, RJF-PR-2026-04-22-01#48, SCHW-PR-2026-01-21-01#45, BAC-SUPP-2026Q2#55
+
+### Q11 - PASS
+
+How does each of the five define and report advisor headcount -- and what does each definition include or exclude?
+
+- `MS:10-K`: hit MS-10K-2025#167
+- `MS:supplement`: hit MS-SUPP-2026Q1#43
+- `SCHW:10-K`: hit SCHW-10K-2025#197
+- `EDJ:10-K`: hit EDJ-10K-2025#202, EDJ-10K-2025#141
+- `BAC:10-K#GWIM`: no hit
+- `BAC:supplement#GWIM`: hit BAC-SUPP-2026Q1#44
+- `RJF:10-K`: hit RJF-10K-2025#228
+- `RJF:supplement`: no hit
+- Expected `EDJ-10K-2025#130`: missing
+- Expected `EDJ-10K-2025#131, EDJ-10K-2025#148`: missing
+- Expected `EDJ-10Q-2026Q2#60`: missing
+- Expected `EDJ-10K-2025#29`: missing
+- Expected `RJF-10K-2025#227`: missing
+- Expected `RJF-10K-2025#228`: found RJF-10K-2025#228
+- Expected `RJF-10K-2025#24`: missing
+- Expected `MS-10K-2025#167, MS-SUPP-2026Q3#38`: found MS-10K-2025#167
+- Expected `BAC-10K-2025#246`: missing
+- Expected `SCHW-10K-2025#18, SCHW-TR-2026Q1#3`: missing
+- Retrieved: EDJ-10K-2025#202, BAC-SUPP-2026Q1#44, RJF-10K-2025#228, SCHW-10Q-2026Q1#60, MS-SUPP-2026Q1#43, EDJ-10Q-2025Q2#66, BAC-PR-2026-10-14-01#13, RJF-10Q-2025Q2#438, SCHW-10K-2025#197, MS-10Q-2025Q3#85, EDJ-10K-2025#141, BAC-DECK-2026Q1#27, RJF-TR-2025Q3#4, SCHW-DECK-2026Q1#12, MS-10K-2025#167, EDJ-10Q-2025Q3#60, BAC-TR-2026Q3#13, RJF-PR-2026-04-22-01#1, SCHW-PR-2026-07-21-01#8, MS-PR-2026-04-15-01#15
+
+### Q12 - PASS
+
+How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?
+
+- `SCHW:transcript`: hit SCHW-TR-2026Q1#22, SCHW-TR-2026Q3#6, SCHW-TR-2025Q2#13, SCHW-TR-2026Q2#14, SCHW-TR-2025Q4#9, SCHW-TR-2026Q3#7
+- `SCHW:10-K`: hit SCHW-10K-2025#13, SCHW-10K-2025#14, SCHW-10K-2025#19
+- `SCHW:monthly`: not in corpus
+- `EDJ:10-K`: hit EDJ-10K-2025#82, EDJ-10K-2025#92, EDJ-10K-2025#208
+- Retrieved: SCHW-10K-2025#13, EDJ-10K-2025#82, SCHW-TR-2026Q1#22, EDJ-10Q-2026Q2#28, SCHW-10Q-2025Q3#8, EDJ-10K-2025#92, SCHW-PR-2026-10-15-01#7, EDJ-10Q-2025Q2#110, SCHW-DECK-2026Q1#14, EDJ-10K-2025#208, SCHW-10K-2025#14, SCHW-TR-2026Q3#6, SCHW-PR-2026-04-16-01#7, SCHW-10K-2025#19, SCHW-TR-2025Q2#13, SCHW-PR-2026-07-21-01#2, SCHW-TR-2026Q2#14, SCHW-TR-2025Q4#9, SCHW-PR-2026-04-16-01#1, SCHW-TR-2026Q3#7
+
+### Q13 - PASS
+
+How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?
+
+- `MS:transcript`: hit MS-TR-2026Q2#3, MS-TR-2025Q4#22, MS-TR-2024Q4#51, MS-TR-2025Q4#30, MS-TR-2025Q4#8, MS-TR-2026Q3#8, MS-TR-2024Q4#8
+- `MS:10-K`: hit MS-10K-2025#168, MS-10K-2025#165, MS-10K-2025#123
+- `MS:deck`: not in corpus
+- Retrieved: MS-10Q-2026Q1#53, MS-10K-2025#168, MS-TR-2026Q2#3, MS-SUPP-2026Q1#44, MS-PR-2026-07-15-01#8, MS-10Q-2026Q1#209, MS-10K-2025#165, MS-TR-2025Q4#22, MS-SUPP-2026Q1#42, MS-PR-2026-01-15-01#13, MS-10Q-2026Q2#61, MS-10K-2025#123, MS-TR-2024Q4#51, MS-PR-2026-10-14-01#8, MS-10Q-2026Q2#57, MS-TR-2025Q4#30, MS-TR-2025Q4#8, MS-TR-2026Q3#8, MS-PR-2026-04-15-01#8, MS-TR-2024Q4#8
+
+### Q14 - PASS
+
+How does Raymond James's affiliation-choice model work commercially?
+
+- `RJF:10-K#Private Client Group`: hit RJF-10K-2025#10
+- `RJF:transcript`: hit RJF-TR-2026Q2#22, RJF-TR-2026Q2#19, RJF-TR-2024Q4#20, RJF-TR-2026Q2#39, RJF-TR-2025Q1#32, RJF-TR-2025Q2#42, RJF-TR-2025Q1#40, RJF-TR-2026Q1#3, RJF-TR-2026Q1#16, RJF-TR-2024Q4#8, RJF-TR-2026Q1#4, RJF-TR-2025Q3#28
+- `RJF:press`: no hit
+- Retrieved: RJF-TR-2026Q2#22, RJF-10K-2025#9, RJF-10Q-2025Q4#191, RJF-TR-2026Q2#19, RJF-10K-2025#91, RJF-10Q-2025Q4#142, RJF-TR-2024Q4#20, RJF-10K-2025#10, RJF-10Q-2025Q2#370, RJF-TR-2026Q2#39, RJF-TR-2025Q1#32, RJF-TR-2025Q2#42, RJF-TR-2025Q1#40, RJF-TR-2026Q1#3, RJF-TR-2026Q1#16, RJF-TR-2024Q4#8, RJF-TR-2026Q1#4, RJF-TR-2025Q3#28
+
+### Q15 - FAIL
+
+What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?
+
+- `SCHW:10-K`: hit SCHW-10K-2025#13, SCHW-10K-2025#27, SCHW-10K-2025#124
+- `MS:10-K`: no hit
+- `EDJ:10-K`: no hit
+- `BAC:10-K#GWIM`: no hit
+- `RJF:10-K`: no hit
+- Retrieved: SCHW-10K-2025#13, SCHW-TR-2026Q1#2, SCHW-10Q-2025Q2#310, SCHW-PR-2026-07-21-01#2, SCHW-DECK-2026Q2#6, SCHW-10K-2025#27, SCHW-TR-2026Q3#2, SCHW-10Q-2026Q1#8, SCHW-PR-2026-01-21-01#1, SCHW-DECK-2026Q3#6, SCHW-10K-2025#124, SCHW-TR-2026Q1#20, SCHW-10Q-2025Q2#9, SCHW-PR-2026-04-16-01#30, SCHW-DECK-2026Q1#14, SCHW-TR-2026Q1#13, SCHW-PR-2026-10-15-01#2, SCHW-TR-2025Q3#29, SCHW-PR-2026-10-15-01#1, SCHW-TR-2026Q3#6
+
+### Q16 - PASS
+
+What will receiving financial advice in the future look like for clients?
+
+- `THEME:research`: hit VANGUARD-VALUE-2025#21, VANGUARD-VALUE-2025#1, VANGUARD-VALUE-2025#18
+- `THEME:regulatory`: not in corpus
+- `THEME:survey`: not in corpus
+- `MS:transcript`: hit MS-TR-2026Q2#23, MS-TR-2026Q2#20
+- `SCHW:transcript`: hit SCHW-TR-2026Q1#36
+- Retrieved: VANGUARD-VALUE-2025#21, MS-TR-2026Q2#23, RJF-TR-2026Q1#33, EDJ-10K-2025#88, BAC-TR-2025Q1#52, SCHW-TR-2026Q1#36, VANGUARD-VALUE-2025#1, MS-10K-2025#170, RJF-10K-2025#111, EDJ-10Q-2025Q2#66, BAC-10K-2025#482, SCHW-DECK-2026Q3#51, VANGUARD-VALUE-2025#18, MS-TR-2026Q2#20, RJF-10Q-2026Q2#417, EDJ-10K-2025#10, BAC-DECK-2026Q2#55, SCHW-10Q-2026Q2#13, MS-10K-2025#167, RJF-TR-2025Q3#39
+
+### Q17 - PASS
+
+What are these firms saying about AI in advice delivery, and who is claiming the most?
+
+- `MS:transcript`: hit MS-TR-2026Q1#29, MS-TR-2026Q1#42
+- `SCHW:transcript`: hit SCHW-TR-2026Q1#13
+- `BAC:transcript#GWIM`: type only (qualifier not met): BAC-TR-2025Q2#13, BAC-TR-2026Q2#4
+- `RJF:transcript`: hit RJF-TR-2025Q4#6, RJF-TR-2026Q2#39
+- `MS:press`: no hit
+- `SCHW:press`: hit SCHW-PR-2026-07-21-01#8
+- `EDJ:press`: not in corpus
+- `MER:press`: not in corpus
+- `RJF:press`: no hit
+- `MS:trade`: not in corpus
+- `MER:trade`: not in corpus
+- Retrieved: EDJ-10K-2025#26, MS-TR-2026Q1#29, BAC-TR-2025Q2#13, DELOITTE-AGENTIC-2026#0, SCHW-TR-2026Q1#13, RJF-TR-2025Q4#6, EDJ-10Q-2026Q1#46, MS-10K-2025#372, BAC-DECK-2026Q2#29, ACCENTURE-GENAI#12, SCHW-DECK-2026Q1#26, RJF-10K-2025#112, EDJ-10K-2025#56, MS-10Q-2026Q2#524, BAC-TR-2026Q2#4, ACCENTURE-GENAI#10, SCHW-PR-2026-07-21-01#8, RJF-TR-2026Q2#39, EDJ-10K-2025#57, MS-TR-2026Q1#42
+
+### Q18 - PASS
+
+Where is the industry heading on fee structures and pricing transparency?
+
+- `MS:adv`: not in corpus
+- `SCHW:adv`: not in corpus
+- `EDJ:adv`: not in corpus
+- `MER:adv`: not in corpus
+- `RJF:adv`: not in corpus
+- `THEME:regulatory`: not in corpus
+- `THEME:research`: hit MCK-SIGNAL-SELLOFF-2026#9, MCK-SIGNAL-SELLOFF-2026#4, MCK-SIGNAL-SELLOFF-2026#7
+- Retrieved: MCK-SIGNAL-SELLOFF-2026#9, RJF-TR-2026Q1#31, MS-10K-2025#393, SCHW-10K-2025#95, EDJ-10K-2025#151, BAC-10K-2025#621, MCK-SIGNAL-SELLOFF-2026#4, RJF-10K-2025#110, MS-TR-2026Q3#26, SCHW-10Q-2025Q2#72, EDJ-10Q-2026Q1#28, BAC-10Q-2025Q2#652, MCK-SIGNAL-SELLOFF-2026#7, RJF-10Q-2026Q1#18, MS-10Q-2026Q2#509, SCHW-TR-2026Q1#40, EDJ-10K-2025#55, BAC-TR-2025Q2#42, RJF-SUPP-2026Q1#43, MS-PR-2026-04-15-01#12
+
+### Q19 - FAIL
+
+How should the preferences of younger investors shape Edward Jones's offerings?
+
+- `THEME:research`: hit BOFA-PB-STUDY-2026#4, FINRAF-INVESTORS-2025#18, FINRAF-INVESTORS-2025#36, GSAM-ALTERNATIVES-2025#8
+- `THEME:survey`: not in corpus
+- `MS:press`: no hit
+- `SCHW:press`: no hit
+- `RJF:press`: no hit
+- `MER:press`: not in corpus
+- Retrieved: EDJ-10K-2025#204, EDJ-10Q-2025Q2#102, EDJ-10K-2025#41, EDJ-10K-2025#23, BOFA-PB-STUDY-2026#4, FINRAF-INVESTORS-2025#18, FINRAF-INVESTORS-2025#36, GSAM-ALTERNATIVES-2025#8
+
+### Q20 - PASS
+
+What evidence is there about how clients under 40 choose a financial advisor?
+
+- `THEME:survey`: not in corpus
+- `THEME:research`: hit UBS-NEXTGEN-2026#82, GSAM-ALTERNATIVES-2025#24, VANGUARD-VALUE-2025#18
+- Retrieved: UBS-NEXTGEN-2026#82, EDJ-10K-2025#22, SCHW-TR-2026Q1#3, RJF-TR-2026Q1#19, MS-TR-2026Q2#23, BAC-DECK-2026Q3#45, GSAM-ALTERNATIVES-2025#24, EDJ-10Q-2025Q2#66, SCHW-10K-2025#13, RJF-10K-2025#91, MS-10K-2025#125, BAC-TR-2026Q3#13, VANGUARD-VALUE-2025#18, EDJ-10K-2025#20, SCHW-10Q-2025Q2#7, RJF-PR-2025-10-22-01#2, MS-SUPP-2026Q2#16, BAC-10K-2025#626, EDJ-10K-2025#58, SCHW-DECK-2026Q2#20
+
+### Q21 - PASS
+
+What do we know about the generational wealth transfer, and how are these five preparing for it?
+
+- `THEME:research`: hit CERULLI-GWT-2025#13, CERULLI-GWT-2025#2, UBS-NEXTGEN-2026#6
+- `MS:transcript`: hit MS-TR-2024Q4#37, MS-TR-2024Q4#54
+- `SCHW:transcript`: hit SCHW-TR-2026Q3#8
+- `EDJ:10-K`: hit EDJ-10K-2025#304, EDJ-10K-2025#56
+- `BAC:transcript#GWIM`: type only (qualifier not met): BAC-TR-2025Q4#51
+- `RJF:transcript`: hit RJF-TR-2025Q4#51
+- Retrieved: CERULLI-GWT-2025#13, SCHW-TR-2026Q3#8, MS-TR-2024Q4#37, RJF-TR-2025Q4#51, EDJ-10K-2025#304, BAC-TR-2025Q4#51, CERULLI-GWT-2025#2, SCHW-DECK-2026Q3#24, MS-10Q-2025Q2#102, RJF-10Q-2025Q4#84, EDJ-10Q-2025Q3#72, BAC-10Q-2026Q2#156, UBS-NEXTGEN-2026#6, SCHW-10Q-2026Q2#9, MS-10K-2025#679, RJF-10K-2025#26, EDJ-10K-2025#56, BAC-10K-2025#902, SCHW-PR-2026-07-21-01#8, MS-TR-2024Q4#54
+
+### Q22 - PASS
+
+Net new assets by quarter for each of the five, with each firm's own definition of the metric.
+
+- `MS:supplement`: hit MS-SUPP-2026Q3#17
+- `SCHW:monthly`: not in corpus
+- `SCHW:supplement`: not in corpus
+- `EDJ:10-Q`: hit EDJ-10Q-2025Q2#66, EDJ-10Q-2026Q2#60
+- `BAC:supplement#GWIM`: hit BAC-SUPP-2026Q1#44
+- `RJF:supplement`: hit RJF-SUPP-2026Q2#9
+- `MS:press`: no hit
+- `RJF:press`: hit RJF-PR-2025-10-22-01#28
+- Expected `EDJ-10Q-2026Q2#60, EDJ-10Q-2026Q1#51, EDJ-10Q-2025Q3#67, EDJ-10Q-2025Q2#64, EDJ-10K-2025#130`: found EDJ-10K-2025#130, EDJ-10Q-2026Q2#60
+- Expected `MS-SUPP-2026Q3#16, MS-SUPP-2026Q2#16, MS-SUPP-2026Q1#14, MS-10Q-2026Q2#57, MS-10Q-2026Q1#48, MS-10Q-2025Q3#56, MS-10Q-2025Q2#56, MS-PR-2026-01-15-01#2`: missing
+- Expected `MS-SUPP-2026Q1#42, MS-10K-2025#166`: missing
+- Expected `SCHW-PR-2026-01-21-01#2, SCHW-PR-2026-07-21-01#2, SCHW-DECK-2026Q3#7, SCHW-10Q-2026Q2#16, SCHW-10Q-2026Q1#16, SCHW-10Q-2025Q3#16, SCHW-10Q-2025Q2#16`: found SCHW-10Q-2026Q1#16
+- Expected `SCHW-10K-2025#122, SCHW-10K-2025#119, SCHW-DECK-2026Q3#20`: found SCHW-DECK-2026Q3#20
+- Expected `RJF-PR-2026-07-22-01#4, RJF-PR-2026-04-22-01#3, RJF-PR-2026-01-28-01#3, RJF-PR-2025-10-22-01#4, RJF-10Q-2026Q2#305, RJF-10Q-2026Q1#298, RJF-10Q-2025Q4#236, RJF-10Q-2025Q2#294`: missing
+- Expected `RJF-10Q-2026Q2#306, RJF-SUPP-2026Q1#43`: missing
+- Expected `BAC-TR-2026Q3#13, BAC-PR-2026-10-14-01#11`: missing
+- Retrieved: EDJ-10Q-2025Q2#66, RJF-TR-2025Q1#4, BAC-TR-2025Q2#31, MS-10K-2025#165, SCHW-PR-2026-10-15-01#1, EDJ-10K-2025#130, RJF-10Q-2026Q1#323, BAC-SUPP-2026Q1#44, MS-TR-2026Q3#9, SCHW-10Q-2026Q1#16, EDJ-10Q-2026Q2#60, RJF-PR-2025-10-22-01#28, BAC-10K-2025#248, MS-10Q-2026Q2#58, SCHW-10K-2025#124, EDJ-10K-2025#127, RJF-SUPP-2026Q2#9, BAC-10Q-2026Q1#74, MS-SUPP-2026Q3#17, SCHW-DECK-2026Q3#20
+
+### Q23 - PASS
+
+Advisor headcount over the last eight quarters across the five.
+
+- `MS:supplement`: hit MS-SUPP-2026Q3#17
+- `SCHW:10-K`: no hit
+- `EDJ:10-Q`: hit EDJ-10Q-2025Q2#64, EDJ-10Q-2025Q3#67
+- `EDJ:10-K`: hit EDJ-10K-2025#202, EDJ-10K-2025#141
+- `BAC:supplement#GWIM`: hit BAC-SUPP-2026Q2#55
+- `RJF:supplement`: no hit
+- `RJF:press`: no hit
+- Retrieved: RJF-TR-2025Q3#8, BAC-TR-2025Q2#31, EDJ-10Q-2025Q2#64, MS-TR-2025Q3#48, SCHW-TR-2025Q1#6, RJF-10K-2025#228, BAC-PR-2026-10-14-01#11, EDJ-10K-2025#202, MS-SUPP-2026Q3#17, SCHW-PR-2026-10-15-01#36, RJF-10Q-2026Q1#323, BAC-SUPP-2026Q2#55, EDJ-10Q-2025Q3#67, MS-10Q-2026Q1#58, SCHW-10Q-2025Q2#317, RJF-TR-2024Q4#25, BAC-10Q-2025Q3#95, EDJ-10K-2025#141, MS-PR-2026-10-14-01#4, SCHW-DECK-2026Q1#12
+
+### Q24 - PASS
+
+Client assets per advisor across the five -- and is that comparison even valid?
+
+- `MS:supplement`: hit MS-SUPP-2026Q3#38
+- `SCHW:10-K`: hit SCHW-10K-2025#124
+- `EDJ:10-K`: hit EDJ-10K-2025#130, EDJ-10K-2025#131
+- `BAC:supplement#GWIM`: no hit
+- `RJF:supplement`: hit RJF-SUPP-2026Q2#43
+- Expected `EDJ-10K-2025#130`: found EDJ-10K-2025#130
+- Expected `RJF-10K-2025#227`: missing
+- Expected `RJF-10K-2025#228`: missing
+- Expected `MS-SUPP-2026Q1#43, MS-SUPP-2026Q2#37, MS-SUPP-2026Q3#38`: found MS-SUPP-2026Q3#38
+- Retrieved: RJF-TR-2025Q2#5, BAC-10K-2025#249, SCHW-PR-2026-07-21-01#42, MS-TR-2026Q2#13, EDJ-10Q-2025Q2#66, RJF-10K-2025#9, BAC-PR-2026-01-14-01#12, SCHW-DECK-2026Q2#20, MS-10Q-2026Q1#51, EDJ-10K-2025#130, RJF-10Q-2026Q1#239, BAC-TR-2026Q3#13, SCHW-TR-2026Q3#2, MS-10K-2025#167, EDJ-10Q-2026Q1#52, RJF-SUPP-2026Q2#43, BAC-10Q-2026Q1#75, SCHW-10K-2025#124, MS-SUPP-2026Q3#38, EDJ-10K-2025#131
+
+### Q25 - PASS
+
+What has each of the five actually disclosed about advisor compensation structures?
+
+- `MS:10-K`: hit MS-10K-2025#193
+- `SCHW:10-K`: hit SCHW-10K-2025#197
+- `EDJ:10-K`: hit EDJ-10K-2025#141, EDJ-10K-2025#314
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246
+- `RJF:10-K`: hit RJF-10K-2025#29
+- `MS:DEF 14A`: not in corpus
+- `SCHW:DEF 14A`: not in corpus
+- `BAC:DEF 14A`: not in corpus
+- `RJF:DEF 14A`: not in corpus
+- `MS:adv`: not in corpus
+- `EDJ:adv`: not in corpus
+- `RJF:adv`: not in corpus
+- Expected `RJF-10K-2025#10, RJF-10K-2025#11`: missing
+- Expected `EDJ-10K-2025#30, EDJ-10K-2025#264`: missing
+- Expected `MS-10K-2025#153`: missing
+- Expected `SCHW-10Q-2026Q2#25`: missing
+- Retrieved: RJF-TR-2025Q3#19, BAC-PR-2026-04-15-01#10, EDJ-10K-2025#141, MS-10K-2025#193, SCHW-10K-2025#197, RJF-10Q-2025Q4#199, BAC-TR-2025Q2#31, EDJ-10Q-2026Q1#60, MS-10Q-2026Q2#93, SCHW-TR-2026Q1#32, RJF-PR-2026-01-28-01#38, BAC-10K-2025#246, EDJ-10K-2025#314, MS-TR-2025Q1#42, SCHW-10Q-2025Q3#85, RJF-10K-2025#29, BAC-10Q-2025Q2#96, EDJ-10Q-2025Q2#78, MS-SUPP-2026Q1#25, SCHW-PR-2026-10-15-01#31
+
+### Q26 - PASS
+
+What's new on Raymond James in the last 90 days?
+
+- `RJF:*`: hit RJF-10Q-2026Q2#25, RJF-10Q-2026Q2#34, RJF-10Q-2026Q2#315, RJF-10Q-2026Q2#322, RJF-10Q-2026Q2#210, RJF-10Q-2026Q2#331, RJF-10Q-2026Q2#330, RJF-10Q-2026Q2#245
+- Window: 2026-07-31 to 2026-10-29
+- Expected `RJF-10Q-2026Q2`: found RJF-10Q-2026Q2#25, RJF-10Q-2026Q2#34, RJF-10Q-2026Q2#315, RJF-10Q-2026Q2#322, RJF-10Q-2026Q2#210, RJF-10Q-2026Q2#331, RJF-10Q-2026Q2#330, RJF-10Q-2026Q2#245
+- Retrieved: RJF-10Q-2026Q2#25, RJF-10Q-2026Q2#34, RJF-10Q-2026Q2#315, RJF-10Q-2026Q2#322, RJF-10Q-2026Q2#210, RJF-10Q-2026Q2#331, RJF-10Q-2026Q2#330, RJF-10Q-2026Q2#245
+
+### Q27 - PASS
+
+What has changed at Merrill since the start of the year?
+
+- `MER:*`: hit BAC-TR-2026Q3#13, BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#12, BAC-10Q-2026Q2#90, BAC-10Q-2026Q2#88, BAC-DECK-2026Q2#20, BAC-PR-2026-07-14-01#11, BAC-SUPP-2026Q2#55, BAC-TR-2026Q2#14, BAC-10Q-2026Q1#71, BAC-10Q-2026Q1#73, BAC-SUPP-2026Q1#45, BAC-TR-2026Q1#20, BAC-DECK-2026Q1#27, BAC-DECK-2026Q1#26, BAC-10K-2025#247, BAC-10K-2025#246, BAC-10K-2025#248, BAC-10K-2025#249, BAC-PR-2026-01-14-01#13
+- `BAC:*#GWIM`: hit BAC-TR-2026Q3#13, BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#12, BAC-10Q-2026Q2#90, BAC-10Q-2026Q2#88, BAC-DECK-2026Q2#20, BAC-PR-2026-07-14-01#11, BAC-SUPP-2026Q2#55, BAC-TR-2026Q2#14, BAC-10Q-2026Q1#71, BAC-10Q-2026Q1#73, BAC-SUPP-2026Q1#45, BAC-TR-2026Q1#20, BAC-DECK-2026Q1#27, BAC-DECK-2026Q1#26, BAC-10K-2025#247, BAC-10K-2025#246, BAC-10K-2025#248, BAC-10K-2025#249, BAC-PR-2026-01-14-01#13
+- Retrieved: BAC-TR-2026Q3#13, BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#12, BAC-10Q-2026Q2#90, BAC-10Q-2026Q2#88, BAC-DECK-2026Q2#20, BAC-PR-2026-07-14-01#11, BAC-SUPP-2026Q2#55, BAC-TR-2026Q2#14, BAC-10Q-2026Q1#71, BAC-10Q-2026Q1#73, BAC-SUPP-2026Q1#45, BAC-TR-2026Q1#20, BAC-DECK-2026Q1#27, BAC-DECK-2026Q1#26, BAC-10K-2025#247, BAC-10K-2025#246, BAC-10K-2025#248, BAC-10K-2025#249, BAC-PR-2026-01-14-01#13
+
+### Q28 - PASS
+
+What is Edward Jones's advisor attrition rate compared to Merrill's?
+
+- `EDJ:10-K`: hit EDJ-10K-2025#71, EDJ-10K-2025#19, EDJ-10K-2025#141
+- `BAC:supplement#GWIM`: no hit
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246, BAC-10K-2025#244
+- Expected `EDJ-10Q-2025Q2#64, EDJ-10Q-2025Q2#67, EDJ-10Q-2025Q3#68, EDJ-10Q-2025Q3#70`: found EDJ-10Q-2025Q3#70, EDJ-10Q-2025Q2#64, EDJ-10Q-2025Q3#68
+- Expected `EDJ-10Q-2025Q2#66, EDJ-10Q-2025Q3#69`: missing
+- Expected `BAC-TR-2026Q2#38, BAC-TR-2026Q1#48`: missing
+- Expected `EDJ-10K-2025#130, EDJ-10Q-2026Q2#60`: missing
+- Retrieved: BAC-PR-2026-07-14-01#10, EDJ-10K-2025#71, BAC-TR-2026Q3#13, EDJ-10Q-2025Q3#70, BAC-10K-2025#246, EDJ-10K-2025#19, BAC-DECK-2026Q2#19, EDJ-10Q-2025Q2#64, BAC-10Q-2025Q2#90, EDJ-10K-2025#141, BAC-PR-2026-04-15-01#10, EDJ-10Q-2025Q3#68, BAC-TR-2025Q2#31, EDJ-10Q-2026Q1#24, BAC-10K-2025#244, BAC-10Q-2025Q3#90, BAC-PR-2026-10-14-01#11, BAC-TR-2025Q1#25, BAC-DECK-2026Q1#26, BAC-10Q-2026Q2#85
+
+### Q29 - PASS
+
+What does Morgan Stanley pay its financial advisors?
+
+- `MS:10-K#Wealth Management`: hit MS-10K-2025#170
+- `MS:trade`: not in corpus
+- Expected `MS-10K-2025#153`: missing
+- Expected `MS-10K-2025#128, MS-10K-2025#170`: found MS-10K-2025#128, MS-10K-2025#170
+- Retrieved: MS-TR-2024Q4#10, MS-10K-2025#128, MS-10Q-2026Q1#19, MS-PR-2026-01-15-01#13, MS-SUPP-2026Q2#37, MS-TR-2025Q1#34, MS-10K-2025#702, MS-10Q-2026Q2#20, MS-PR-2026-07-15-01#8, MS-SUPP-2026Q1#25, MS-TR-2025Q3#29, MS-10K-2025#170, MS-10Q-2025Q3#64, MS-PR-2026-10-14-01#8, MS-TR-2024Q4#53, MS-10Q-2026Q2#230, MS-TR-2025Q3#2, MS-10Q-2026Q2#64, MS-PR-2026-04-15-01#8, MS-TR-2024Q4#13
+
+### Q30 - PASS
+
+What is Merrill's standalone profitability?
+
+- `BAC:10-K#GWIM`: hit BAC-10K-2025#246, BAC-10K-2025#247, BAC-10K-2025#244
+- Expected `BAC-PR-2026-01-14-01#12`: missing
+- Expected `BAC-10K-2025#245, BAC-10K-2025#246, BAC-10K-2025#247`: found BAC-10K-2025#246, BAC-10K-2025#247
+- Retrieved: BAC-TR-2025Q3#24, BAC-PR-2026-04-15-01#10, BAC-10K-2025#246, BAC-DECK-2026Q1#26, BAC-10Q-2025Q2#93, BAC-SUPP-2026Q1#43, BAC-TR-2025Q1#25, BAC-PR-2026-01-14-01#11, BAC-10K-2025#247, BAC-DECK-2026Q2#19, BAC-10Q-2025Q3#93, BAC-SUPP-2026Q2#52, BAC-TR-2026Q1#20, BAC-PR-2026-07-14-01#10, BAC-10K-2025#244, BAC-DECK-2026Q3#30, BAC-10Q-2026Q2#89, BAC-SUPP-2026Q3#51, BAC-TR-2026Q2#14, BAC-PR-2026-10-14-01#11
+

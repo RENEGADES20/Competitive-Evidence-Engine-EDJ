@@ -71,7 +71,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
         progress: Progress | None = None, filters: dict | None = None,
         mode: str | None = None) -> Result:
     """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
-    mode: retrieval mode, "fts" | "hybrid" (#125); None -> RETRIEVAL_MODE (default fts)."""
+    mode: retrieval mode, "fts" | "hybrid" | "hybrid-norerank" (#125, #126); None -> RETRIEVAL_MODE (default fts)."""
     provider = provider or settings().llm_provider
     mode = (mode or settings().retrieval_mode).strip().lower()
     t = _Trace(progress)
