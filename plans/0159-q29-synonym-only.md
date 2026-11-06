@@ -98,19 +98,19 @@ local DB holds `corpus-2026-10-29` (`PY scripts/verify_cee.py doctor` -> `DOCTOR
    synonyms section and the spec line; Progress line; 0 real calls).
 
 ## Acceptance
-- [ ] Q29 (`p159-after`): refusal `ok`, `MS-10K-2025#153` among the hits, no chunk from its
+- [x] Q29 (`p159-after`): refusal `ok`, `MS-10K-2025#153` among the hits, no chunk from its
       `must_not_return` list (`MS-10K-2025#574, #687, #690, #692, #693, #694, #696, #699`).
-- [ ] `p159-main` vs `p159-after`: identical chunk_ids in the same order on 29/30 questions; only
+- [x] `p159-main` vs `p159-after`: identical chunk_ids in the same order on 29/30 questions; only
       Q29 differs; no PASS -> FAIL (`--baseline` status column: no REGRESSED).
-- [ ] `pytest -q`: all pass, count >= the step-1 count on `main` (+2 expected).
-- [ ] `verify_cee.py run` -> PASS (evidence folder named in the PR).
-- [ ] `git merge-tree --write-tree origin/exp/hybrid HEAD` -> exit 0 (main stays mergeable into
+- [x] `pytest -q`: all pass, count >= the step-1 count on `main` (+2 expected).
+- [x] `verify_cee.py run` -> PASS (evidence folder named in the PR).
+- [x] `git merge-tree --write-tree origin/exp/hybrid HEAD` -> exit 0 (main stays mergeable into
       `exp/hybrid`).
-- [ ] `git diff origin/main -- src/cee/retrieve/fts.py`: only hunks 3 and 6b; no constant changed;
+- [x] `git diff origin/main -- src/cee/retrieve/fts.py`: only hunks 3 and 6b; no constant changed;
       no `mode`, `hybrid`, `vectors_enabled`, `settings` or `dup_jaccard` on `main`.
-- [ ] Spec: the `synonym_only` line in `specs/retrieval.md`.
-- [ ] S1 review on the PR (owner of `fts.py`, the synonyms section and the spec).
-- [ ] Mock only, 0 paid calls.
+- [x] Spec: the `synonym_only` line in `specs/retrieval.md`.
+- [ ] S1 review (requested on the PR) on the PR (owner of `fts.py`, the synonyms section and the spec).
+- [x] Mock only, 0 paid calls.
 
 ## Risks / unsure
 - The spec line is new text on `main` that `exp/hybrid` does not have; its place (interface
@@ -125,3 +125,23 @@ local DB holds `corpus-2026-10-29` (`PY scripts/verify_cee.py doctor` -> `DOCTOR
 - 2026-11-05 21:37 - plan written on `tl/159-q29-synonym-only` from origin/main 20c59cd. Hunk map
   and dry run (scratch worktree under `D:\ALLPROJECTS\EDJ\cache\tmp`, removed; nothing committed
   to any branch) as in Facts. No file other than this plan changed.
+- 2026-11-05 21:39 - plan approved (reviewer comment on #159 at e2076b0, no blocking). Step 1 on
+  this branch at e2076b0 (= main 20c59cd + this plan file, identical code): `p159-main` PASS 27 /
+  FAIL 3 (Q15, Q19, Q29), tier-1 recall 0.796, refusal gap 4/5; Q29 refusal FAIL, misleading
+  [`MS-10K-2025#696`], `#153` not returned. `pytest -q` 277 passed (the floor). `DOCTOR PASS`,
+  corpus-2026-10-29, 17183 chunks.
+- 2026-11-05 21:40 - steps 2-4 (b150f62): `git apply` of the 3449cc5 config + test hunks (+5, +15);
+  `fts.py` hunks 3 and 6b copied from 3449cc5 (+24 / -6); `git diff 3449cc5 -- fts.py` shows only
+  hunks 1, 2, 4, 5, 6a and the `search` name. Spec line added. Step 5: `git merge-tree --write-tree
+  origin/exp/hybrid HEAD` exit 0, no conflicted file.
+- 2026-11-05 21:41 - step 6: `p159-after` (baseline `p159-main`): PASS 28 / FAIL 2 (Q15, Q19),
+  tier-1 recall 0.796, passages 0.402, refusal gap 5/5. Scratch compare of both report.json files:
+  identical chunk_ids (same order) on 29/30, only Q29 differs; PASS -> FAIL none; Q29 PASS, refusal
+  ok, misleading [], `MS-10K-2025#153` returned (also `#128`, `#170`), no must-not chunk.
+- 2026-11-05 21:46 - step 7: `pytest -q` 279 passed (+2). `verify_cee.py run`: first run
+  (`.verify-runs/20261105-214144-b150f62`) open-citation and download-document FAIL with
+  `database "cee_verify" does not exist` mid-run (another agent's concurrent verify run shares and
+  drops `cee_verify`; not this change). Re-run `.verify-runs/20261105-214441-b150f62`: all 8
+  features PASS, VERIFY PASS.
+- 2026-11-05 21:48 - origin/main moved to 8fbf35f (#157: `docs/PROGRESS.md`, `plans/0061-real-run.md`
+  only); merged into this branch (no rebase). No retrieval/config file touched, so no eval re-run.
