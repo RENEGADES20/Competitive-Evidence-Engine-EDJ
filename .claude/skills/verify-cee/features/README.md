@@ -42,6 +42,7 @@ Each file: an H1, one paragraph of user-visible behavior, then exactly these H2s
 - [invalid-chunk](invalid-chunk.md): unknown chunk IDs fail clearly.
 - [coverage](coverage.md): the Coverage page shows what the corpus holds per firm and document type.
 - [download-document](download-document.md): download the stored source file.
+- [filters](filters.md): sidebar filters (firm, date range, keywords) narrow retrieval in SQL.
+- [feedback](feedback.md): rate an answer and comment; one query_feedback row per query.
 
-Not mapped yet (not built): coverage view, filters, PDF page view, feedback buttons
-(specs/ui.md, W3+). Add a file here in the PR that builds each one.
+Every user feature in specs/ui.md is mapped. Add a file here in the PR that builds a new one.

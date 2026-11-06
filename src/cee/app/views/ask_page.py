@@ -2,13 +2,15 @@
 from __future__ import annotations
 
 import time
+from html import escape
 
 import streamlit as st
 
 from cee.app import components as ui
 from cee.answer.validate import source_label
 from cee.ask import STAGES, Result, ask
-from cee.config import settings
+from cee.config import entities_config, settings
+from cee.feedback import HELPFUL, NOT_HELPFUL, save_feedback
 
 BEHAVIOR_TEXT = {
     "answer": "Answer",
@@ -35,7 +37,36 @@ def _ticker() -> None:
                "Every claim cites a stored document", "No evidence is a valid answer"])
 
 
-def ask_with_trace(question: str) -> Result | None:
+def filters_sidebar() -> dict:
+    """Optional filters (#63). They reach retrieval as SQL WHERE clauses, never the prompt."""
+    names = {e["id"]: e["name"] for e in entities_config()["entities"]}
+    with st.sidebar:
+        st.markdown("**Filters**")
+        st.caption("Optional. Only passages that match every filter are searched.")
+        firms = st.multiselect("Firms", list(names), format_func=lambda i: f"{i} · {names[i]}", key="f_firms")
+        dates = st.date_input("Date range", value=(), key="f_dates", format="YYYY-MM-DD",
+                              help="Published date, both ends included. Pick a start and an end.")
+        words = st.text_input("Keywords", key="f_keywords", placeholder="e.g. advisor, net new assets",
+                              help="Comma-separated. Every keyword must appear in the passage.")
+    date_range = tuple(dates) if isinstance(dates, (list, tuple)) and len(dates) == 2 else None
+    if isinstance(dates, (list, tuple)) and len(dates) == 1:
+        st.sidebar.caption("Pick an end date too; the date range is not applied yet.")
+    return {"firms": firms, "date_range": date_range,
+            "keywords": [w.strip() for w in words.split(",") if w.strip()]}
+
+
+def filters_text(f: dict) -> str:
+    parts = []
+    if f.get("firms"):
+        parts.append("firms " + ", ".join(f["firms"]))
+    if f.get("date_range"):
+        parts.append(f"dates {f['date_range'][0]} to {f['date_range'][1]}")
+    if f.get("keywords"):
+        parts.append("keywords " + ", ".join(f["keywords"]))
+    return "; ".join(parts) or "none"
+
+
+def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
     """Progress bar + one line per stage while the answer is built (#80). The trace stays on the
     page, collapsed, once the answer is ready; a failed stage is marked and its error shown."""
     bar = st.progress(0.0, text="Reading the question")
@@ -51,7 +82,7 @@ def ask_with_trace(question: str) -> Result | None:
 
     start = time.perf_counter()
     try:
-        r = ask(question, progress=progress)
+        r = ask(question, progress=progress, filters=filters)
     except Exception as e:
         bar.empty()
         failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
@@ -66,6 +97,7 @@ def ask_with_trace(question: str) -> Result | None:
 
 def render() -> None:
     _ticker()
+    filters = filters_sidebar()
     left, right = st.columns([3, 2], gap="large")
     with left:
         ui.eyebrow("Evidence, not opinion")
@@ -79,12 +111,20 @@ def render() -> None:
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
                                          ("FIRMS", str(s["firms"]))])
 
-    if not asked or not question.strip():
+    if asked and question.strip():
+        r = ask_with_trace(question, filters)
+        # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.
+        st.session_state["last_answer"] = (r, filters) if r else None
+        if r is None:
+            return
+    last = st.session_state.get("last_answer")
+    if not last:
         ui.empty_state("No question asked yet. Answers appear here, with a citation for every claim.")
         return
-    r = ask_with_trace(question)
-    if r is None:
-        return
+    show_answer(*last)
+
+
+def show_answer(r: Result, filters: dict) -> None:
     a = r.answer
     by_id = {h.chunk_id: h for h in r.hits}
 
@@ -111,10 +151,27 @@ def render() -> None:
     if a.coverage_note:
         ui.coverage_box(a.coverage_note)
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
-                f'{len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
-    with ui.placeholder("feedback", 62, "Feedback on this answer"):
-        c1, c2, c3 = st.columns([1, 1, 4])
-        c1.button("Helpful", disabled=True, key="fb_up")
-        c2.button("Not helpful", disabled=True, key="fb_down")
-        c3.text_input("Comment", disabled=True, key="fb_comment", label_visibility="collapsed",
-                      placeholder="Comment")
+                f'filters: {escape(filters_text(filters))} | {len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
+    feedback_form(r.query_id)
+
+
+RATINGS = {"Helpful": HELPFUL, "Not helpful": NOT_HELPFUL}
+
+
+def feedback_form(query_id: int | None) -> None:
+    """Rating + optional comment, stored against the query (#62). Sending again for the same
+    query replaces the earlier feedback (src/cee/feedback.py)."""
+    if query_id is None:
+        return
+    with st.form(key=f"feedback-{query_id}", border=True):
+        st.markdown("**Feedback on this answer**")
+        rating = st.radio("Rating", list(RATINGS), index=None, horizontal=True)
+        comment = st.text_area("Comment (optional)", placeholder="What was wrong or missing?", height=80)
+        sent = st.form_submit_button("Send feedback")
+    if sent:
+        if rating is None:
+            st.warning("Pick Helpful or Not helpful first.")
+        else:
+            how = save_feedback(query_id, RATINGS[rating], comment)
+            st.success(f"Feedback {how} for query #{query_id}"
+                       + (" (replaces the earlier one)." if how == "updated" else "."))
