@@ -93,8 +93,10 @@ makes sense on a score where 0 means "no match" and bigger means "more evidence"
 
 ### `MAX_PER_DOC` grid {2, 3, 4}
 Applied to the firm part of every mode (`fts.MAX_PER_DOC` in fts; per-mode constants in
-`hybrid.py`). `WINDOW_MAX_PER_DOC` (8) and `THEME_MAX_PER_DOC` (2) are not tuned (out of the issue's
-grid; stated in the report).
+`hybrid.py`). The window cap `WINDOW_MAX_PER_DOC` (8, time-window questions) and the research cap
+`THEME_MAX_PER_DOC` (2, research part of entity+theme questions) stay unchanged in every mode and
+are not tuned (out of the issue's grid; stated in the report); a test checks that setting the
+per-mode `MAX_PER_DOC` leaves both caps in force.
 
 Grid size: `fts` 3 x 3 = 9 runs; `hybrid-norerank` and `hybrid` 4 x 3 = 12 runs each; 33 runs of 30
 questions. Estimated time: fts ~2 min, norerank ~15 min, hybrid ~60 min (about 10 s per question).
@@ -115,29 +117,41 @@ evidence.
 
 ### Duplicate measure (`DUP_JACCARD`)
 Per question, over every pair of final hits (firm and research parts together): (a) character
-trigram similarity as pg_trgm computes it (lower-cased words padded with two spaces in front and
-one behind; shared trigrams / union), the spec's suggested measure; (b) word 5-gram Jaccard, the
-measure `select()` dedupes with. Report per run: questions with a pair > 0.9, number of such
-pairs, max pair similarity, on both measures. `select()` drops > 0.6 on (b) within a part, so (b)
-> 0.9 can only appear across the firm/research parts.
-Rule (fixed now): keep `DUP_JACCARD` 0.6 if every mode's chosen point has 0 pairs > 0.9 on (a). If
-not, rerun that mode's chosen point with `DUP_JACCARD` 0.5 and 0.4 and take the highest value that
-gives 0 such pairs without lowering tier-1 passage recall; if none does, keep 0.6 and list the pairs
-in the report.
+trigram similarity, the spec's suggested measure; (b) word 5-gram Jaccard, the measure `select()`
+dedupes with. pg_trgm is **not installed** in `cee-db`, so (a) is a Python re-implementation of
+pg_trgm's `similarity()`, and the report says so: text lower-cased; words = runs of
+alphanumeric characters (everything else is a separator); each word padded with two spaces in front
+and one behind; trigrams = every 3-character substring of a padded word, as a set; similarity =
+shared trigrams / all distinct trigrams of both texts (0 when either set is empty). Report per run:
+questions with a pair > 0.9, number of such pairs, max pair similarity, on both measures.
+`select()` drops > 0.6 on (b) within a part, so (b) > 0.9 can only appear across the
+firm/research parts.
+`DUP_JACCARD` is **per mode for the hybrid modes only**: `hybrid.DUP_JACCARD = {"hybrid": 0.6,
+"hybrid-norerank": 0.6}`, passed to `select()` through a new optional `dup_jaccard` argument
+(default None = `fts.DUP_JACCARD`, so fts mode is untouched). **fts's `DUP_JACCARD` (0.6) is measured
+and reported, never changed** (fts.py constants mirror `main`; S1/#127).
+Rule (fixed now), per hybrid mode: keep 0.6 if the mode's chosen point has 0 pairs > 0.9 on (a). If
+not, rerun that point with `DUP_JACCARD` 0.5 and 0.4 and take the highest value that gives 0 such
+pairs without lowering tier-1 passage recall; if none does, keep 0.6 and list the pairs in the
+report. For fts, any pair > 0.9 is reported as a finding only.
 
 ### Latency (CPU)
 `search_s` per question as today; the warm-up search on the first question (loads the embedding
 model and, in `hybrid`, the reranker; warms the DB cache) is excluded and reported as `warmup_s`.
 Grid points after the first one in the same process are warm too. Summary adds p90 and max next
 to the median; meta adds CPU (`platform.processor()`, `os.cpu_count()`) and the onnxruntime version
-when loaded. Latency is reported from each mode's chosen point; per-question times in the appendix.
+when loaded. Latency in the report comes from: `fts` - the chosen fts grid point's run (inside
+`p126-grid-fts`, fts has no confirmation run since its defaults do not change); `hybrid-norerank`
+and `hybrid` - the confirmation runs `p126-norerank` and `p126-hybrid` (step 7, one mode per
+process, its own warm-up). Per-question times in the appendix.
 
 ### eval_run.py changes
 - `--mode fts|hybrid|hybrid-norerank`.
 - `--floor` and `--max-per-doc` (each one value or a comma list) and `--dup-jaccard` (one value):
   set the mode's constants for the run through one explicit mapping
   (fts: `fts.FLOOR`, `fts.MAX_PER_DOC`; hybrid modes: `hybrid.FLOOR[mode]`,
-  `hybrid.MAX_PER_DOC[mode]`; all: `fts.DUP_JACCARD`), restored after each run. The values used go
+  `hybrid.MAX_PER_DOC[mode]`, `hybrid.DUP_JACCARD[mode]`), restored after each run.
+  `--dup-jaccard` with `--mode fts` is refused (argparse error): fts's value is never changed. The values used go
   into `meta.constants` (always, also with no option, so every report says what it ran with).
 - More than one combination = grid: one run folder per point (`<out>/f<floor>-m<max>/report.md|json`),
   model loaded once, then `<out>/grid.md` and `grid.json` with every point's summary and `choose()`'s
@@ -146,13 +160,16 @@ when loaded. Latency is reported from each mode's chosen point; per-question tim
 - No option given -> constants untouched: fts results identical to `p125r-fts-after` (gate below).
 
 ### hybrid.py changes
-- `FLOOR = {"hybrid": 0.0, "hybrid-norerank": 0.0}` and `MAX_PER_DOC = {"hybrid": 3,
-  "hybrid-norerank": 3}` (start = #125 behavior; set to the chosen values in step 7).
+- `FLOOR = {"hybrid": 0.0, "hybrid-norerank": 0.0}`, `MAX_PER_DOC = {"hybrid": 3,
+  "hybrid-norerank": 3}`, `DUP_JACCARD = {"hybrid": 0.6, "hybrid-norerank": 0.6}` (start = #125
+  behavior; set to the chosen values in step 7). Window and research parts keep
+  `WINDOW_MAX_PER_DOC` / `THEME_MAX_PER_DOC` as now.
 - `candidates()` also returns the RRF score per chunk; `gate(ids, rrf, entity_of, floor)` drops
   chunks below floor x their firm's best RRF score in the pool (no-op at 0 or inside a window).
 - `search(q, k, scorer=None, timings=None, rerank=True)`: `rerank=False` -> no `reranker()` call,
   `Hit.rank` = RRF score, pool sorted by (-RRF, chunk_id); `select(..., floor=0,
-  max_per_doc=MAX_PER_DOC[mode])` in both modes (the gate already applied the floor).
+  max_per_doc=MAX_PER_DOC[mode], dup_jaccard=DUP_JACCARD[mode])` in both modes (the gate already
+  applied the floor).
 
 ### Comparison report
 `scripts/eval_compare.py` (new, small): reads the three modes' chosen `report.json` files and
@@ -175,28 +192,33 @@ under `evals/hybrid-eval/corpus-2026-10-29/<mode>/`.
 - `scripts/eval_run.py` - `--mode hybrid-norerank`, `--floor`/`--max-per-doc`/`--dup-jaccard`, grid
   runs, `choose()`, `meta.constants`, CPU meta, `dup` per question, p90/max search time.
 - `scripts/eval_compare.py` (new) - the three-mode comparison report.
-- `src/cee/retrieve/hybrid.py` - `rerank=False` path, RRF gate, per-mode `FLOOR`/`MAX_PER_DOC`.
-- `src/cee/retrieve/fts.py` (S1 FYI) - `MODES` + dispatch for `hybrid-norerank` behind the vectors
-  gate; no change to fts mode.
+- `src/cee/retrieve/hybrid.py` - `rerank=False` path, RRF gate, per-mode `FLOOR`/`MAX_PER_DOC`/`DUP_JACCARD`.
+- `src/cee/retrieve/fts.py` (**S1 reviews**) - `MODES` + dispatch for `hybrid-norerank` behind the
+  vectors gate; `select()` gets an optional `dup_jaccard=None` argument (None = `DUP_JACCARD`, so
+  every existing caller and fts mode behave as before); no constant changes.
 - `src/cee/ask.py`, `src/cee/config.py` - docstring/comment only: mode list `fts | hybrid |
   hybrid-norerank`.
 - Tests: `tests/test_hybrid.py` (norerank: no reranker call, RRF order, gate drops below FLOOR x
   firm best and keeps window questions, same candidates as rerank mode; `test_mode_switch` with the
-  new mode; vectors off -> `HybridUnavailable` for `hybrid-norerank`, `hybrid` not imported),
+  new mode; vectors off -> `HybridUnavailable` for `hybrid-norerank`, `hybrid` not imported;
+  per-mode `MAX_PER_DOC` 2 and 4 leave the window cap 8 and research cap 2 in force; per-mode
+  `DUP_JACCARD` reaches `select()` while `fts.DUP_JACCARD` stays 0.6; `select()` without
+  `dup_jaccard` behaves as before),
   `tests/test_eval_run.py` (`--mode hybrid-norerank` accepted; constant mapping per mode and restore;
-  no option = constants untouched; grid writes one folder per point + `grid.json`; `choose()` on a
+  no option = constants untouched; `--dup-jaccard` with `--mode fts` refused; grid writes one folder per point + `grid.json`; `choose()` on a
   hand-made grid incl. eligibility and every tie-break; trigram and 5-gram duplicate measure on
   hand-made texts), `tests/test_eval_compare.py` (new; report built from two tiny fake runs).
 - `evals/hybrid-eval/corpus-2026-10-29/` (new) - `report.md`, `summary.json`, per-mode chosen runs
   and grids (as above).
-- `specs/retrieval.md` (S1 FYI) - "Retrieval modes": add `hybrid-norerank`, the floor per mode, and
+- `specs/retrieval.md` (**S1 reviews**) - "Retrieval modes": add `hybrid-norerank`, the floor per mode, and
   a pointer to the report; the open question "When would hybrid search be justified?" stays for #127.
 - `docs/RUN.md` - hybrid section: the third mode and the grid command (PowerShell + bash blocks).
 - `.env.example` - `RETRIEVAL_MODE` comment lists the third value.
 - `.claude/skills/verify-cee/features/ask-progress.md` - search line may end with ` (hybrid)` or
   ` (hybrid-norerank)`.
-- Not changed: `fts.py` constants (`FLOOR`, `MAX_PER_DOC`, `DUP_JACCARD` defaults: the tuned fts
-  values are reported only; changing `main`'s fts is #127/S1), `evals/questions.yaml`,
+- Not changed: `fts.py` constants (`FLOOR`, `MAX_PER_DOC`, `DUP_JACCARD`, `WINDOW_MAX_PER_DOC`,
+  `THEME_MAX_PER_DOC`: fts's tuned values and its duplicate measure are reported only; changing
+  `main`'s fts is #127/S1), `evals/questions.yaml`,
   `evals/expected_chunks.yaml`, `docs/DECISIONS.md` (ADR is #127), DB, corpus, prompts, UI, `main`.
 
 ## Steps
@@ -204,7 +226,9 @@ under `evals/hybrid-eval/corpus-2026-10-29/<mode>/`.
    passed / 2 skipped, vectors 306 passed per #125). Fresh reference runs on 795056b, vectors venv,
    `CEE_VECTORS=on`: `eval_run.py --mode fts --as-of 2026-10-29 --out .eval-runs/p126-ref-fts` and
    `--mode hybrid --out .eval-runs/p126-ref-hybrid`; check chunk_ids equal `p125r-fts-after` /
-   `p125r-hybrid` (30/30 each) so the DB and code are the #125 state.
+   `p125r-hybrid` (30/30 each) so the DB and code are the #125 state. (`p125r-hybrid` ran at
+  587109a, before the #158 squash 795056b; the fresh `p126-ref-*` runs on 795056b are the
+  references every later gate compares against.)
 2. Code: `hybrid.py` (norerank, gate, per-mode constants), `fts.py` dispatch, docstrings, tests.
    `pytest -q` both venvs.
 3. Code: `eval_run.py` (options, grid, `choose()`, dup, latency summary), tests. Then the
@@ -220,17 +244,23 @@ under `evals/hybrid-eval/corpus-2026-10-29/<mode>/`.
 5. Read `choose()`'s pick per mode from each `grid.md`; no manual override (if the pick looks wrong,
    that is a finding for the report, not a reason to change the rule).
 6. Duplicate rule (Design) on the three picks; extra `--dup-jaccard` runs only if it fires.
-7. Set `hybrid.FLOOR` / `hybrid.MAX_PER_DOC` (and `fts.DUP_JACCARD` only if step 6 changed it -
-   then S1 review, and fts reruns) to the picks; confirmation runs with no options
-   (`p126-norerank`, `p126-hybrid`) -> chunk_ids identical to the chosen grid points.
+7. Set `hybrid.FLOOR` / `hybrid.MAX_PER_DOC` / `hybrid.DUP_JACCARD` (the last only if step 6
+   changed it for that mode) to the picks; `fts.py` constants are not touched. Confirmation runs
+   with no options, one mode per process (`p126-norerank`, `p126-hybrid`) -> chunk_ids identical to
+   the chosen grid points (or the step-6 rerun, if it changed `DUP_JACCARD`); their latency is the
+   reported latency.
 8. `eval_compare.py` -> `evals/hybrid-eval/corpus-2026-10-29/`; copy the chosen runs and grids there.
 9. Docs: spec section, RUN.md (PowerShell + bash), `.env.example`, verify-cee recipe line.
 10. Final checks: `pytest -q` both venvs; `verify_cee.py run` with `RETRIEVAL_MODE=fts` (core venv,
     vectors off), `RETRIEVAL_MODE=hybrid` and `RETRIEVAL_MODE=hybrid-norerank` (vectors venv,
     `CEE_VECTORS=on`) -> VERIFY PASS each.
-11. `/finish-task`: PR base **`exp/hybrid`**, "Closes #126" in the body (the merge into a non-default
-    branch does not auto-close: the reviewer closes #126 by hand); the summary table, the picks, 0
-    real calls; says `progress.yml` fires only on `main`, so the Progress line stays in the PR.
+11. `/finish-task`: PR base **`exp/hybrid`**, body says **`Part of #126`** with the open item "S1
+    review of the `fts.py` dispatch / `select(dup_jaccard=)` and the `specs/retrieval.md` section";
+    S1 is requested as reviewer. As with PR #158, the TL decides whether S1 reviews before or after
+    the merge into `exp/hybrid`; if S1 has not reviewed, the PR reviewer escalates that point to
+    the TL instead of deciding it. #126 is closed by hand when every item is done (a merge into a
+    non-default branch does not auto-close). The body has the summary table, the picks, 0 real
+    calls, and says `progress.yml` fires only on `main`, so the Progress line stays in the PR.
 
 Stop rule: if a no-change gate (step 1, 3, 4 or 7) fails, stop, log the diff and bring the plan
 back. A mode with no eligible grid point, or hybrid worse than fts, is **not** a stop: it is the
@@ -260,7 +290,18 @@ All on the PR head, local DB `corpus-2026-10-29`, `--as-of 2026-10-29`, mock pro
       (chunk_ids 30/30).
 - [ ] fts unchanged: with no constant options, fts chunk_ids = `p126-ref-fts` (= `p125r-fts-after`)
       on 30/30, core venv, vectors off; and `hybrid` at 0/3 = `p126-ref-hybrid` on 30/30.
-- [ ] Duplicate measure reported per mode; `DUP_JACCARD` kept or changed by the stated rule.
+- [ ] Duplicate measure reported per mode (trigram measure labelled as a Python re-implementation
+      of pg_trgm); hybrid modes' `DUP_JACCARD` kept or changed by the stated rule; `fts.DUP_JACCARD`
+      still 0.6 (`git diff origin/exp/hybrid -- src/cee/retrieve/fts.py` shows no constant line changed).
+- [ ] Window cap 8 and research cap 2 unchanged in every mode (unit test with per-mode
+      `MAX_PER_DOC` set to 2 and 4).
+- [ ] **Mock only**: no command in this plan, the Progress log or the PR uses `--real`; every
+      `report.json` under `.eval-runs/p126-*` and `evals/hybrid-eval/` has `meta.mode == "mock"` and
+      `meta.real_calls == 0`. Check (vectors venv, repo root), expected output `N runs, all mock, 0 real calls`:
+      `python -c "import json,glob; fs=glob.glob('.eval-runs/p126-*/**/report.json',recursive=True)+glob.glob('evals/hybrid-eval/**/report.json',recursive=True); bad=[f for f in fs if (m:=json.load(open(f,encoding='utf-8'))['meta'])['mode']!='mock' or m['real_calls']!=0]; print(f'{len(fs)} runs, all mock, 0 real calls' if fs and not bad else f'BAD {bad}')"`
+      (same line in PowerShell and bash; Mac: `.venv/bin/python`).
+- [ ] S1 has reviewed the `fts.py` changes and the spec section, or the TL has decided it happens
+      after the merge (PR says `Part of #126` until then).
 - [ ] `pytest -q` passes in both venvs, none fewer than step 1's counts; new tests as in Files.
 - [ ] `verify_cee.py run` VERIFY PASS in `fts` (core venv), `hybrid` and `hybrid-norerank`.
 - [ ] Every new RUN.md PowerShell block has a bash block.
@@ -270,7 +311,7 @@ Out of scope (issue + TL): changing the default mode (#127); alpha-blending the 
 RRF; any rule added for Q29; changing the answer key; new retrieval features beyond the third mode;
 `fts.py` default constants; anything on `main`.
 
-## Open questions
+## Open questions (accepted as planned by plan review round 1)
 1. In `hybrid` mode the FLOOR grid is applied as a relative RRF floor before the rerank (so both
    hybrid modes share the candidates). The alternative reading, an absolute sigmoid `RERANK_FLOOR`
    of 0.2 / 0.3 / 0.4, is not run: #125 showed 0.01-0.1 already lose evidence, and a floor only
@@ -286,3 +327,13 @@ RRF; any rule added for Q29; changing the answer key; new retrieval features bey
   issue #126 (body names `exp/hybrid`, EJ-10), #125 comments and decision record, `plans/0125-hybrid-retrieval.md`
   (Progress log numbers and Q21/Q24/Q25/Q29 diagnosis), closed #59, #127, `hybrid.py`, `fts.py`,
   `eval_run.py`, existing tests. No file other than this plan changed; no run made.
+- 2026-11-05 18:29 - plan review round 1: changes requested; open questions 1-3 accepted as planned.
+  Blocking fixed: (1) `DUP_JACCARD` is per mode in `hybrid.py` only (passed through a new optional
+  `select(dup_jaccard=)`); fts's value is measured and reported, never changed; step 7, Files, Not
+  changed and Acceptance agree. (2) S1 reviews the `fts.py` changes and the spec section; PR says
+  `Part of #126`; TL decides S1 review before/after the merge, the PR reviewer escalates if S1 has
+  not reviewed. (3) Mock-only Acceptance line with a one-line check over every `report.json` (dry
+  run on the 7 `p125r-*` reports, PowerShell and Git Bash: `7 runs, all mock, 0 real calls`).
+  Non-blocking taken: pg_trgm not installed -> Python re-implementation defined and labelled;
+  window cap 8 / research cap 2 unchanged + test; latency sources named (chosen fts grid point,
+  hybrid confirmation runs); `p125r-hybrid` ran at 587109a, the `p126-ref-*` runs are the references.
