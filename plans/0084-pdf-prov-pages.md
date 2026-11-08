@@ -50,7 +50,9 @@ corpus freeze on 11/11 (#120), and answer-key chunk IDs that move are re-pointed
 - `src/cee/ingest/parse_cache.py` - nothing new in the API; the DoclingDocument is stored with the
   existing `write`/`read` as `<sha256>-docling<version>-doc.json` (no `PARSER_VERSION` in the name:
   it is docling's own output). A later post-processing change then needs a version bump only, not
-  another 2.5-hour docling run; this keeps the review loop before 11/11 cheap.
+  another 2.5-hour docling run; this keeps the review loop before 11/11 cheap. Docstring: the name
+  does not encode the pipeline options (`do_ocr=False`); changing them needs a new name (e.g. a
+  `-doc2` suffix), or old docling output would be reused.
 - `tests/test_pdf_pages.py` (new) - fake two-page item `pages [4,4,5]` -> text before the p5
   charspan on p4, the rest on p5, and the p5 part merges with the next p5 item; spans `[4,5,4]` ->
   three parts in order; one-page multi-span item unchanged; bad charspan -> dominant page; table
@@ -60,14 +62,21 @@ corpus freeze on 11/11 (#120), and answer-key chunk IDs that move are re-pointed
   converts again and refreshes both files.
 - `scripts/page_sweep.py` (new) - the sweep above as a script: PDF chunks from the DB
   (`DATABASE_URL`), raw files through `cee.config.resolve_path`; prints per document, the total, and
-  every chunk below 90% with the page that holds most of its tokens. Exit 0 always (a report).
+  every chunk below 90% with the page that holds most of its tokens, marked `PASS-SAMEPAGE` (that
+  page is the stated page) or `MISPLACED` (another page holds more); counts per group (all PDFs;
+  the 16 #77/#78 PDFs). Exit 0 always (a report). Scoring function importable for tests.
 - `scripts/chunk_dump.py` - `remap OLD.json NEW.json ID...`: for each old chunk ID the new ID with
   identical text, else the new chunk(s) of the same document holding the most of its text.
+- `tests/test_chunk_dump.py` (new) - `remap`: identical text -> new ID after a shift; a chunk split
+  in two -> both IDs; another document's chunk never matched. `tests/test_page_sweep.py` (new) -
+  the scoring function on fake page texts: fused words count, `PASS-SAMEPAGE` vs `MISPLACED`.
 - `evals/expected_chunks.yaml`, `evals/expected_results.md` - PDF chunk IDs re-pointed with
   `remap` (ID numbers only; rows, quotes and reasons unchanged). Owners S1/C1; see open question 1.
 - `scripts/verify_cee.py` - `PDF_PAGE_SAMPLES` re-pointed if `SCHW-DECK-2026Q2#53` /
   `MS-SUPP-2026Q3#16` move; `--source-db` (default `cee`, verify copy `<source>_verify`) so verify-cee
-  runs on the private copy and does not collide with #129's verify runs.
+  runs on the private copy and does not collide with #129's verify runs. #129 also edits this file
+  (`CONTAINER` line): whichever PR merges second merges `origin/main` into its branch (never
+  rebase) and re-runs verify-cee.
 - `.claude/skills/verify-cee/features/open-citation.md` - same ID re-pointing; one line for
   `--source-db` in `.claude/skills/verify-cee/SKILL.md`.
 - `docs/DECISIONS.md` ADR-005 - note: pages come from every prov span (#84); docling output cache.
@@ -80,7 +89,7 @@ Shell for every step (Windows; Mac the same with `export`): `TMP`/`TEMP=D:\ALLPR
 `HF_HOME=D:\ALLPROJECTS\EDJ\cache\hf`, `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-84\src`,
 `CORPUS_SHARE_PATH=C:\Users\14370\Box\EDJ`, `DATABASE_URL=postgresql://cee:cee@localhost:5432/cee_84`,
 `LLM_PROVIDER=mock`, `CEE_VECTORS=off`. Work in worktree `D:\ALLPROJECTS\EDJ\wt-84`. The shared `cee`
-is only read.
+is only read; there is no interim write to it at any point (TL decision, plan review round 1).
 
 0. **Private DB and baseline.** Start Docker. `CREATE DATABASE cee_84 TEMPLATE cee` (if `cee` has
    open connections, restore `corpus-2026-10-29.dump` into `cee_84` instead). List its PDF documents.
@@ -102,15 +111,29 @@ is only read.
 5. **Mock eval after:** `eval_run.py --as-of 2026-10-29 --baseline .eval-runs/84-before/report.json
    --out .eval-runs/84-after` with the re-pointed key. Every change against the baseline is
    explained in the PR (expected: UNCHANGED, or a page-split chunk ranking differently).
-6. **The rest of the manifest:** `load --doc` for each manifest PDF not in `cee_84` (the #146 decks,
-   the 10 #147 PDFs, any other; ~1 h). Now all 47 manifest PDFs are in `cee_84` and have v2 and
-   docling-output caches on Box, so the 11/11 freeze build (#120) runs no docling.
-7. **Sweep all PDF chunks** in `cee_84` (`page_sweep.py > sweep-after.txt`). Every chunk below 90%
-   is looked at on the PDF and listed with its cause in the PR.
+6. **The rest of the manifest** (may run in the background alongside steps 4-5): `load --doc` for
+   each manifest PDF not in `cee_84` (the #146 decks, the 10 #147 PDFs, any other; ~1 h). Now all 47
+   manifest PDFs are in `cee_84`, and their v2 and docling-output cache files are on Box `parsed/`
+   well before 11/11 (checked: 47 `-doc.json` and 47 `-v2.json` files matching the manifest
+   sha256s), so the freeze build (#120) runs no docling.
+7. **Sweep all PDF chunks** in `cee_84` (`page_sweep.py > sweep-after.txt`) and apply the pass rule
+   (Acceptance, sweep item). Every `MISPLACED` chunk is fixed, or listed in the PR with a linked
+   follow-up TL issue (opened by me: chunk IDs, stated page, page holding most tokens, cause).
 8. **verify-cee** on the copy: `verify_cee.py run --source-db cee_84 --port 8684` (open-citation
    opens the re-pointed PDF samples at their pages). `pytest -q`. Old v1 parse files stay (main
-   reads them until merge). Drop `cee_84` and `cee_84_verify` after the PR is merged.
-9. ADR-005 note, Progress log, `/finish-task` (PR to main, `Closes #84`, 0 real calls).
+   reads them until merge).
+9. ADR-005 note, Progress log, `/finish-task`: PR to main, `Closes #84`, 0 real calls. The PR body
+   states **"merge together with the #120 build"** and names the review inputs (`cee_84`,
+   `.eval-runs/84-before`). Request S1 and C1 as reviewers as soon as the PR opens (answer-key IDs).
+10. **Review and merge timing (TL decision).** The reviewer approves on `cee_84`
+    (`verify_cee.py run --source-db cee_84`, eval against `.eval-runs/84-before/report.json`).
+    `cee_84` and `.eval-runs/84-before` are kept until the merge. The PR then stays open, approved
+    and not merged, so `cee`, teammates' databases and main's answer key stay consistent with each
+    other. On 11/11 it is merged immediately before the #120 freeze build; that build loads from the
+    manifest and the parse cache with the new parser, so the freeze snapshot carries the re-parsed
+    chunks and the new answer-key IDs together. If main moves before then, merge `origin/main` into
+    the branch (never rebase) and re-run `pytest -q` and verify-cee on `cee_84`. Drop `cee_84` and
+    `cee_84_verify` after the merge.
 
 ## Acceptance
 - [ ] Linked questions: Q8 and Q22 retrieval (mock, `--as-of 2026-10-29`) on `cee_84` not worse
@@ -119,10 +142,17 @@ is only read.
 - [ ] The 6 SCHW chunks (SCHW-DECK-2026Q1 #6 p4, #14 p8, #21 p12, #22 p13; SCHW-DECK-2026Q2 #14 p8;
       SCHW-DECK-2026Q3 #49 p25; today's IDs): each piece of their text is in a chunk whose page is
       where pymupdf finds it, >= 90% tokens on that page; shown in the PR with old ID -> new ID(s).
-- [ ] Sweep of all PDF chunks of all 47 manifest PDFs (`page_sweep.py` on `cee_84`): >= 90% of tokens
-      on the stated page for every chunk, except chunks listed in the PR with the cause seen on the
-      PDF (e.g. text docling reads that pymupdf does not); 0 chunks of the 16 #77/#78 PDFs below.
-      Before (37 cached PDFs): 3,177/3,220.
+- [ ] Sweep of all PDF chunks of all 47 manifest PDFs (`page_sweep.py` on `cee_84`). Pass rule: a
+      chunk passes when >= 90% of its tokens are on its stated page; a chunk below 90% passes only
+      if its stated page is the page the sweep reports as holding most of its tokens
+      (`PASS-SAMEPAGE`). A chunk where another page holds more of its tokens (`MISPLACED`; 17 today)
+      is fixed, or listed in the PR with a linked follow-up issue. The 16 #77/#78 PDFs: 0 chunks
+      below 90%. The PR states before/after counts for both groups (>= 90%, `PASS-SAMEPAGE`,
+      `MISPLACED`). Before, 37 cached PDFs: 3,177/3,220 >= 90%, 43 below, 17 `MISPLACED`; 16 #77/#78
+      PDFs: 1,057/1,063, 6 below, 1 `MISPLACED` (SCHW-DECK-2026Q1#6).
+- [ ] All 47 manifest PDFs have a docling-output and a v2 cache file on Box `parsed/` before 11/11.
+- [ ] PR body says "merge together with the #120 build"; the PR is approved on `cee_84` and is not
+      merged before the #120 freeze build on 11/11; no write to the shared `cee` before then.
 - [ ] `chunk_dump.py compare before after`: every non-PDF chunk identical; PDF documents without a
       cross-page item identical.
 - [ ] Every PDF chunk ID in `evals/expected_chunks.yaml`, `evals/expected_results.md`,
@@ -132,18 +162,20 @@ is only read.
 - [ ] `pytest -q` passes; `verify_cee.py run --source-db cee_84` all PASS; `cee` unchanged
       (document and chunk counts and `obj_description` the same before and after); 0 real calls.
 
-## Open questions
-1. `evals/expected_chunks.yaml` (S1) and `evals/expected_results.md` (C1) are teammate files. The
-   edit is ID renumbering caused by the re-parse, nothing else. Plan: do it here (otherwise the
-   key breaks on the frozen corpus) and name both owners in the PR. Reviewer: escalate if not OK.
-2. The issue's literal criterion is "every chunk >= 90%". Some chunks stay below for reasons that
-   are not the page (word fusion, reading order, docling text pymupdf lacks). Plan accepts a listed
-   remainder with causes, and 0 below for the 16 decks and supplements the issue was written for.
-3. Docling-output cache: a small widening of #82 (one extra cache file per PDF, ~0.5-5 MB on Box).
-   Reason: any review round that changes the post-processing would otherwise cost another ~2.5 h
-   docling run before 11/11.
+## Decisions from plan review round 1
+1. Accepted: `evals/expected_chunks.yaml` (S1) and `evals/expected_results.md` (C1) get the ID
+   renumbering here (nothing else); S1 and C1 are requested as PR reviewers.
+2. Replaced by the concrete sweep pass rule in Acceptance (`PASS-SAMEPAGE` / `MISPLACED`).
+3. Accepted: docling-output cache (one extra file per PDF, ~0.5-5 MB on Box), so a review round
+   that changes the post-processing costs no new ~2.5 h docling run before 11/11.
+4. TL: no interim write to `cee`; approved on `cee_84`, merged on 11/11 right before the #120 build.
 
 ## Progress log
 - 2026-11-08 12:08 - plan written; branch tl/84-pdf-prov-pages (worktree wt-84) from origin/main
   83e9152. Facts above from read-only runs (docling on SCHW-DECK-2026Q1, cached parses, pymupdf);
   no DB touched (Docker was down).
+- 2026-11-08 12:40 - plan review round 1 CHANGES REQUESTED: added merge timing (approved on
+  `cee_84`, merged on 11/11 right before the #120 build, no interim write to `cee`), all 47 docling
+  caches on Box before 11/11, the sweep pass rule with before/after counts per group; notes taken:
+  #129 merge order, tests for `remap`/sweep scoring, cache-name docstring, S1/C1 reviewers, step 6
+  in the background.
