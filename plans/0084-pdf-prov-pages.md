@@ -136,13 +136,13 @@ is only read; there is no interim write to it at any point (TL decision, plan re
     `cee_84_verify` after the merge.
 
 ## Acceptance
-- [ ] Linked questions: Q8 and Q22 retrieval (mock, `--as-of 2026-10-29`) on `cee_84` not worse
+- [x] Linked questions: Q8 and Q22 retrieval (mock, `--as-of 2026-10-29`) on `cee_84` not worse
       than the baseline on the same copy; Q22's PDF rows (MS/RJF supplements, SCHW deck) re-pointed
       and still found if found before. Any change explained.
-- [ ] The 6 SCHW chunks (SCHW-DECK-2026Q1 #6 p4, #14 p8, #21 p12, #22 p13; SCHW-DECK-2026Q2 #14 p8;
+- [x] The 6 SCHW chunks (SCHW-DECK-2026Q1 #6 p4, #14 p8, #21 p12, #22 p13; SCHW-DECK-2026Q2 #14 p8;
       SCHW-DECK-2026Q3 #49 p25; today's IDs): each piece of their text is in a chunk whose page is
       where pymupdf finds it, >= 90% tokens on that page; shown in the PR with old ID -> new ID(s).
-- [ ] Sweep of all PDF chunks of all 47 manifest PDFs (`page_sweep.py` on `cee_84`). Pass rule: a
+- [x] Sweep of all PDF chunks of all 47 manifest PDFs (`page_sweep.py` on `cee_84`). Pass rule: a
       chunk passes when >= 90% of its tokens are on its stated page; a chunk below 90% passes only
       if its stated page is the page the sweep reports as holding most of its tokens
       (`PASS-SAMEPAGE`). A chunk where another page holds more of its tokens (`MISPLACED`; 17 today)
@@ -150,16 +150,16 @@ is only read; there is no interim write to it at any point (TL decision, plan re
       below 90%. The PR states before/after counts for both groups (>= 90%, `PASS-SAMEPAGE`,
       `MISPLACED`). Before, 37 cached PDFs: 3,177/3,220 >= 90%, 43 below, 17 `MISPLACED`; 16 #77/#78
       PDFs: 1,057/1,063, 6 below, 1 `MISPLACED` (SCHW-DECK-2026Q1#6).
-- [ ] All 47 manifest PDFs have a docling-output and a v2 cache file on Box `parsed/` before 11/11.
+- [x] All 47 manifest PDFs have a docling-output and a v2 cache file on Box `parsed/` before 11/11.
 - [ ] PR body says "merge together with the #120 build"; the PR is approved on `cee_84` and is not
       merged before the #120 freeze build on 11/11; no write to the shared `cee` before then.
-- [ ] `chunk_dump.py compare before after`: every non-PDF chunk identical; PDF documents without a
+- [x] `chunk_dump.py compare before after`: every non-PDF chunk identical; PDF documents without a
       cross-page item identical.
-- [ ] Every PDF chunk ID in `evals/expected_chunks.yaml`, `evals/expected_results.md`,
+- [x] Every PDF chunk ID in `evals/expected_chunks.yaml`, `evals/expected_results.md`,
       `scripts/verify_cee.py`, `open-citation.md` points at a chunk with the quoted text (remap table).
-- [ ] Re-load of one PDF after a `PARSER_VERSION` bump in a test: 0 docling conversions (unit test)
+- [x] Re-load of one PDF after a `PARSER_VERSION` bump in a test: 0 docling conversions (unit test)
       and a real reload hits both caches.
-- [ ] `pytest -q` passes; `verify_cee.py run --source-db cee_84` all PASS; `cee` unchanged
+- [x] `pytest -q` passes; `verify_cee.py run --source-db cee_84` all PASS; `cee` unchanged
       (document and chunk counts and `obj_description` the same before and after); 0 real calls.
 
 ## Decisions from plan review round 1
@@ -201,3 +201,13 @@ is only read; there is no interim write to it at any point (TL decision, plan re
   a stricter split rule (the first version listed every chunk sharing common words). Mock eval
   after: 30/30 UNCHANGED (28 PASS, 2 FAIL Q15/Q19 as before, tier-1 recall 0.796); 8 questions
   retrieve different IDs, mostly renumbered chunks. pytest 350 passed.
+- 2026-11-08 19:10 - the 15 manifest PDFs not in `cee_84` (#146 decks, #147 supplements and
+  monthlies, FINRA-OVERSIGHT, MS strategic update) loaded from the cache (all hits). Box `parsed/`:
+  all 47 manifest PDFs have `-doc.json` and `-v2.json`. Sweep on `cee_84`, 47 PDFs: 3,568/3,568
+  >= 90%, 0 PASS-SAMEPAGE, 0 MISPLACED (no follow-up issue needed); 16 #77/#78 PDFs 1,069/1,069.
+  verify-cee `--source-db cee_84 --port 8684`: VERIFY PASS, every feature PASS except open-citation
+  UNREACHABLE at its last step (cite-date: no `date_basis = 'retrieved'` document in the 10-29
+  snapshot, also 0 in `cee`); its five PDF page checks PASS (SCHW-DECK-2026Q2#53 p29,
+  MS-SUPP-2026Q3#16 p8, ...). Run `.verify-runs/20261108-160258-f6d02b8`. `cee` unchanged: 111 docs,
+  17,183 chunks, corpus-2026-10-29. `expected_results.md`, `verify_cee.py` samples and
+  `open-citation.md` needed no ID change. 0 real calls.
