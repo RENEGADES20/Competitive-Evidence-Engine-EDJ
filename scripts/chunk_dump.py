@@ -54,9 +54,10 @@ def _words(text: str) -> list[str]:
 
 
 def remap_ids(old: dict, new: dict, ids: list[str]) -> dict[str, list[str]]:
-    """{old ID: new IDs}. The new chunk of the same document with identical text; else every new
-    chunk of that document holding at least a quarter of the old chunk's words, best first (a chunk
-    split at a page break maps to both parts); [] when nothing matches."""
+    """{old ID: new IDs}. The new chunk of the same document with identical text; else the first
+    new chunk that contains the old text; else the parts of a chunk split at a page break: new chunks
+    of that document made mostly (>= 80%) of the old chunk's words and holding >= 10% of them, best
+    first; [] when nothing matches. Check the result against the passage's quote."""
     out = {}
     for old_id in ids:
         doc = old_id.split("#")[0]
@@ -66,12 +67,21 @@ def remap_ids(old: dict, new: dict, ids: list[str]) -> dict[str, list[str]]:
         if exact:
             out[old_id] = exact[:1]
             continue
-        words = _words(text)
+        # The old text plus a part that moved in from another page (SCHW-DECK-2026Q3#7).
+        holding = sorted((k for k, v in same_doc.items() if text in v["text"]),
+                         key=lambda k: int(k.split("#")[1]))
+        if holding:
+            out[old_id] = holding[:1]
+            continue
+        # Split: the parts are new chunks made mostly of the old chunk's words.
+        words, old_set = _words(text), set(_words(text))
         scored = []
         for k, v in same_doc.items():
-            have = set(_words(v["text"]))
+            new_words = _words(v["text"])
+            have = set(new_words)
             hit = sum(w in have for w in words) / max(len(words), 1)
-            if hit >= 0.25:
+            from_old = sum(w in old_set for w in new_words) / max(len(new_words), 1)
+            if hit >= 0.1 and from_old >= 0.8:
                 scored.append((hit, k))
         out[old_id] = [k for _, k in sorted(scored, key=lambda x: (-x[0], x[1]))]
     return out
@@ -84,10 +94,13 @@ def remap(a: str, b: str, ids: list[str]) -> int:
         new = json.load(f)
     missing = [i for i in ids if i not in old]
     for old_id, new_ids in remap_ids(old, new, [i for i in ids if i not in missing]).items():
-        same = new_ids == [old_id]
-        exact = bool(new_ids) and new[new_ids[0]]["text"] == old[old_id]["text"]
-        print(f"{old_id} -> {', '.join(new_ids) or 'NO MATCH'}"
-              f"{'' if not new_ids else ' (unchanged)' if same else ' (same text)' if exact else ' (text changed)'}")
+        first = new[new_ids[0]]["text"] if new_ids else ""
+        how = ("" if not new_ids else
+               (" (unchanged)" if new_ids == [old_id] else " (same text)") if first == old[old_id]["text"]
+               else " (contains the old text)" if old[old_id]["text"] in first else " (split: parts)")
+        pages = ", ".join(f"p{new[k]['page']}" for k in new_ids)
+        print(f"{old_id} p{old[old_id]['page']} -> {', '.join(new_ids) or 'NO MATCH'}{how}"
+              + (f" [{pages}]" if new_ids else ""))
     for i in missing:
         print(f"{i} -> not in {a}")
     return 0

@@ -189,3 +189,15 @@ is only read; there is no interim write to it at any point (TL decision, plan re
   is slower than in #82 (BAC-SUPP-2026Q1 882 s), so two extra cache-only workers run alongside.
   pytest blocks while a load holds its transaction on `cee_84` (DB tests use scratch schemas
   there); it runs after the loads.
+- 2026-11-08 18:40 - re-parse of the 32 PDFs in `cee_84` done (docling 2-60 min per PDF; tables
+  are slow; one cache-only worker died of a full page file with four workers and was not
+  restarted; no document needed the charspan fallback). `chunk_dump compare`: every non-PDF chunk
+  identical; 22 PDFs identical; 10 changed (SCHW-DECK-2026Q1/Q2/Q3, CAPGEMINI, CERULLI, FINRAF-
+  FINFLUENCERS, KITCES, MCK-ADVISOR-SHORTAGE, NM-PP, UBS-NEXTGEN), 17,183 -> 17,199 chunks.
+  Sweep on `cee_84`: 32 PDFs 2,371/2,371 >= 90%, 0 below. Remap of the 21 PDF chunk IDs in the
+  answer key, verify_cee and open-citation: 19 unchanged, `SCHW-DECK-2026Q3#7` keeps its ID (now
+  also holds the p4 sentence that sits on p5), `SCHW-DECK-2026Q1#40` -> `#44` (same text, only
+  in `expected_chunks.yaml` Q25 must_not_return). `remap` got a "contains the old text" rule and
+  a stricter split rule (the first version listed every chunk sharing common words). Mock eval
+  after: 30/30 UNCHANGED (28 PASS, 2 FAIL Q15/Q19 as before, tier-1 recall 0.796); 8 questions
+  retrieve different IDs, mostly renumbered chunks. pytest 350 passed.

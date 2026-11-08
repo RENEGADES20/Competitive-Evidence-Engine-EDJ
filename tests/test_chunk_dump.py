@@ -35,3 +35,11 @@ def test_other_documents_are_never_matched():
     old = {"D#5": c("only in another document")}
     new = {"E#5": c("only in another document"), "D#0": c("cover")}
     assert cd.remap_ids(old, new, ["D#5"]) == {"D#5": []}
+
+
+def test_chunk_that_gained_a_moved_part_keeps_its_match():
+    old = {"D#7": c("3Q26 vs. 3Q25 Core Net New Assets $190B")}
+    new = {"D#6": c("Schwab is leading today", 4),
+           "D#7": c("Our strategy continues to drive record results.\n\n3Q26 vs. 3Q25 Core Net New Assets $190B", 5),
+           "D#20": c("Core Net New Assets definition")}
+    assert cd.remap_ids(old, new, ["D#7"]) == {"D#7": ["D#7"]}
