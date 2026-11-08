@@ -179,3 +179,13 @@ is only read; there is no interim write to it at any point (TL decision, plan re
   caches on Box before 11/11, the sweep pass rule with before/after counts per group; notes taken:
   #129 merge order, tests for `remap`/sweep scoring, cache-name docstring, S1/C1 reviewers, step 6
   in the background.
+- 2026-11-08 13:05 - plan approved (round 2). `cee` before: 111 docs, 17,183 chunks,
+  corpus-2026-10-29, 32 PDFs. `cee_84` created from it; before dump, `page_sweep.py` on `cee`
+  (read-only): all 32 PDFs 2,335/2,355 >= 90%, 10 PASS-SAMEPAGE, 10 MISPLACED; 16 #77/#78 PDFs
+  1,057/1,063, 5 PASS-SAMEPAGE, 1 MISPLACED. Baseline mock eval `.eval-runs/84-before`: 28 PASS,
+  2 FAIL (Q15, Q19), tier-1 recall 0.796. Code and unit tests written. SCHW-DECK-2026Q1 into
+  `cee_84`: docling 3m37s, 66 chunks; reload hits the v2 file (0.7 s); with the v2 file deleted it
+  hits the docling-output file (2.7 s, 0 converts). Re-parse running in the background; docling
+  is slower than in #82 (BAC-SUPP-2026Q1 882 s), so two extra cache-only workers run alongside.
+  pytest blocks while a load holds its transaction on `cee_84` (DB tests use scratch schemas
+  there); it runs after the loads.

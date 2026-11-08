@@ -88,6 +88,14 @@ Install check (`src/cee/ingest/pdf.py`, `parse_pdf(path) -> [(section, page, tex
   splitting and chunking run after the cache, so they need no bump.
   `python -m cee.ingest.load --no-parse-cache` forces a fresh parse. The pymupdf fallback is not
   cached. Old cache files are never read again and may be deleted.
+- Pages from every provenance span (#84, plans/0084, `PARSER_VERSION` 2): a docling item whose
+  provenance covers two pages (a text block running onto the next slide) is cut at the charspan
+  where the page changes, and each part is stored under its own page. Tables keep their first
+  page. docling's own output (the DoclingDocument) is cached as well, as
+  `parsed/<sha256>-docling<version>-doc.json`, so a `PARSER_VERSION` bump re-runs our code on it in
+  seconds instead of re-running docling. That name does not hold the pipeline options
+  (`do_ocr=False`); changing them needs a new name. `scripts/page_sweep.py` checks every PDF chunk
+  against the PDF page text.
 
 ## ADR-006: Shared corpus
 Status: Accepted
