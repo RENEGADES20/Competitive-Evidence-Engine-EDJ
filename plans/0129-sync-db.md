@@ -38,9 +38,12 @@ link never enter the repo (ADR-007). No paid API call (ops change; mock provider
     `Your database has <x>; the newest snapshot is <name>. Run /sync-db.` and exits 2; Docker or the
     container not running -> one line, exit 1; no `LATEST.json` yet -> says so, exit 0.
   - Normal run:
-    1. `1/4 Updating code`: on branch `main` -> `git pull --ff-only`; on another branch -> warning
-       (`you are on <branch>; switch to main to get the newest LATEST.json`), no switch, no pull
-       (never moves a teammate off their work). Then `pip install -q -r requirements.txt` and
+    1. `1/4 Updating code`: on branch `main` -> `git pull --ff-only`; if that fails (local commits
+       on `main`, conflicts, no network) -> `git pull failed: fix main first (or ask the tech lead),
+       then run /sync-db again`, exit 1, database untouched. On another branch -> warning
+       (`you are on <branch>: not pulling, and this sync uses this branch's snapshots/LATEST.json;
+       switch to main to get the newest one`), no switch, no pull (never moves a teammate off
+       their work). Then `pip install -q -r requirements.txt` and
        `docker compose up -d --wait` (existing `Start-Database` / `start_database`).
     2. Read `LATEST.json` (missing -> clear message, exit 1). Read the database stamp. Equal ->
        `Already up to date: <name>. Nothing to do.` exit 0 (nothing after step 1 runs).
@@ -60,13 +63,16 @@ link never enter the repo (ADR-007). No paid API call (ops change; mock provider
   After the dump: `Write-Host "Writing snapshots/LATEST.json"` via `snapshot_latest.py write` with
   the row counts from the database. `-AllowBranch` / `--allow-branch` builds write
   `snapshots/LATEST-test.json` instead (stays git-ignored, never published), notes default
-  `test build`. The end message says: commit `snapshots/LATEST.json` on a branch and open a PR;
-  merging it is the notice to the team.
+  `test build`. The end message of an official build gives the next commands:
+  `git switch -c tl/snapshot-<name>`, `git add snapshots/LATEST.json`, commit, push, open a PR
+  (the build ran on `main`, which the guard hook never lets you commit to); merging it is the
+  notice to the team.
 - Container name and port become settings, defaults unchanged, so a second, throwaway database can
   run beside the shared one for tests (and a teammate with a busy port 5432 has a cleaner fix):
   `docker-compose.yml` `container_name: ${CEE_DB_CONTAINER:-cee-db}`,
   ports `"${CEE_DB_PORT:-5432}:5432"`; `_common.ps1` / `_common.sh` read `CEE_DB_CONTAINER`
-  (environment or `.env`, default `cee-db`); `scripts/verify_cee.py` reads it from the environment.
+  (environment or `.env`, default `cee-db`); `scripts/verify_cee.py` reads it the same way
+  (environment, then `.env`, default `cee-db`).
 
 ## Files to change
 - `snapshots/LATEST.json` (new, committed) - seeded with the current snapshot `corpus-2026-10-29`
@@ -83,9 +89,11 @@ link never enter the repo (ADR-007). No paid API call (ops change; mock provider
   `snapshot_name` (database stamp, empty when none).
 - `docker-compose.yml` - container name and host port from `CEE_DB_CONTAINER` / `CEE_DB_PORT`
   with today's defaults.
-- `.env.example` - `CEE_DB_CONTAINER=` and `CEE_DB_PORT=` (empty = defaults), with one comment line.
-- `scripts/verify_cee.py` - `CONTAINER = os.getenv("CEE_DB_CONTAINER") or "cee-db"` (one line), so
-  verify-cee can run against the test database.
+- `.env.example` - `CEE_DB_CONTAINER=` and `CEE_DB_PORT=` (empty = defaults), with a comment:
+  `CEE_DB_PORT` must match the port in `DATABASE_URL`.
+- `scripts/verify_cee.py` - `CONTAINER` from `CEE_DB_CONTAINER`: environment, then `.env` (same
+  rule as Compose and `_common`), default `cee-db`; a few lines, so verify-cee can run against the
+  test database.
 - `tests/test_snapshot_latest.py` (new) - `write`: fields, sha256 equals `hashlib` of the file,
   name = stem, UTC `built_at`, exact bytes (no BOM, LF), empty notes and Box URL refused; `show`;
   `locate`: exact name only (`corpus-X-test.dump`, `corpus-X (1).dump` ignored), first matching
@@ -136,8 +144,12 @@ from the worktree `D:\ALLPROJECTS\EDJ\wt-129`:
   `FASTEMBED_CACHE_PATH=D:\ALLPROJECTS\EDJ\cache\tmp\p129-nomodel` (empty folder: proves no model
   is needed), `PYTHONPATH=<wt>\src`, `TMP`/`TEMP=D:\ALLPROJECTS\EDJ\cache\tmp`.
   Own project name -> own volume `cee-synctest_cee-pgdata`; own container name and port; its
-  `/snapshots` mount is `<wt>\snapshots`. If a variable is missing, Compose fails with "name
-  already in use" instead of touching `cee-db` (a safe failure).
+  `/snapshots` mount is `<wt>\snapshots`. Only one case fails safely by itself: a missing
+  `COMPOSE_PROJECT_NAME` or `CEE_DB_CONTAINER` at `docker compose up` stops with "name already in
+  use". Two cases would hit the shared database: (a) Compose gets the variables but `_common` does
+  not resolve `CEE_DB_CONTAINER` -> `Reset-Database` drops `cee` inside `cee-db`; (b) `DATABASE_URL`
+  missing -> `cee.config` defaults to port 5432, so smoke, ingestion (T6) and verify-cee would use
+  the shared `cee`. Hence the pre-flight P0 below.
 - The worktree has no `.env` (so `CORPUS_SHARE_PATH` is empty, like a teammate's fresh clone) and
   no venv: `<wt>\.venv` is a junction to `D:\ALLPROJECTS\EDJ\repo\.venv` (git-ignored; removed at
   the end with `cmd /c rmdir`, which removes the link only). sync-db's `pip install -r
@@ -145,12 +157,25 @@ from the worktree `D:\ALLPROJECTS\EDJ\wt-129`:
   `requirements.txt`, so it installs nothing.
 - Build tests (T6-T7) set `CORPUS_SHARE_PATH=D:\ALLPROJECTS\EDJ\cache\tmp\p129-share`, a folder
   holding junctions `raw` -> `C:\Users\14370\Box\EDJ\raw` and `parsed` -> `...\Box\EDJ\parsed`,
-  so ingestion reads the real files but the build's copy step writes `snapshots/` into the temp
-  folder, never into the team Box folder. Junctions are removed with `cmd /c rmdir` (never
+  so ingestion reads the real files and the build's copy step writes its dump into the temp
+  folder's `snapshots/`, never into the team Box `snapshots/`. A parse-cache miss writes a new
+  `parsed/<sha256>-<tag>.json` into Box `parsed/` through the junction: that is the normal shared
+  parse cache (#82), the same file any build would write, and acceptable. Junctions are removed with `cmd /c rmdir` (never
   `Remove-Item -Recurse`, which can delete through a junction).
 - Before and after everything (T0 / T8): `docker inspect cee-db --format "{{.State.StartedAt}}"`,
   its stamp and `documents`/`chunks`/`entities` counts (read-only `psql` against `cee`).
 - Teardown: `docker compose -p cee-synctest down -v`, junctions and temp folders removed.
+
+### P0 pre-flight (in each shell, PowerShell and Git Bash, before T1 and again before T6)
+Stops the session on any mismatch; no test runs until all three hold:
+1. `_common` resolves the test container: PowerShell `. scripts\_common.ps1; if ($Container -ne
+   "cee-synctest-db") { throw "wrong container: $Container" }`; Git Bash
+   `( . scripts/_common.sh; [ "$CONTAINER" = cee-synctest-db ] ) || echo STOP`.
+2. Python sees the test database: `<venv python> -c "from cee.config import settings;
+   u = settings().database_url; assert ':5433/' in u, u"` -> no error.
+3. Compose sees the test project: `docker compose config` shows `container_name: cee-synctest-db`
+   and `published: "5433"` with `target: 5432`.
+Any failure: fix the shell variables, do not run the test.
 
 ### Tests (each on `sync-db.ps1` in PowerShell and `sync-db.sh` in Git Bash, unless noted)
 - T1 fresh + dump in `snapshots/`: `docker compose -p cee-synctest down -v`; copy
@@ -183,12 +208,20 @@ from the worktree `D:\ALLPROJECTS\EDJ\wt-129`:
   `snapshots/LATEST-test.json` -> ignored; the official `write` call is the same function the
   pytest covers.
 - T8 the shared `cee-db` has the same `StartedAt`, stamp `corpus-2026-10-29` and counts as T0.
+- T9 on-`main` path, in a scratch clone (`git clone D:\ALLPROJECTS\EDJ\wt-129
+  D:\ALLPROJECTS\EDJ\cache\tmp\p129-clone`, so its `origin` is the local worktree, never
+  GitHub; `.venv` junction; same test variables, P0 first): local branch `main` tracking
+  `origin/tl/129-sync-db` -> `sync-db` pulls (nothing new) and reaches "Already up to date:
+  corpus-2026-10-29". Then reset that `main` to `HEAD~1` plus one local commit (diverged) ->
+  `git pull failed ...`, exit 1, test database stamp and counts unchanged. Both twins. Clone and
+  junction removed afterwards.
 
 ## Acceptance
 - [ ] Issue "Fresh clone + dump in `snapshots/` -> `sync-db` ends with smoke PASS on Windows and
       Mac" -> T1 (and T1b) on Windows with `sync-db.ps1`, and `sync-db.sh` in Git Bash: smoke PASS,
       exit 0. **Mac itself needs a teammate's Mac** (`bash scripts/sync-db.sh` on a fresh clone with
-      the dump in `snapshots/` -> PASS); if not done by PR time, the PR says `Part of #129` with this
+      the dump in `snapshots/` -> PASS; then a second run -> "Already up to date" (T2), and
+      `--latest` with a wrong sha256 -> exit 2, database untouched (T3)); if not done by PR time, the PR says `Part of #129` with this
       item open.
 - [ ] Issue "Wrong or old dump -> clear message, database untouched" -> T3: exit 2, message names
       the file and the Box download step; test database stamp and counts identical before/after.
@@ -204,7 +237,8 @@ from the worktree `D:\ALLPROJECTS\EDJ\wt-129`:
       step anywhere (`grep -n "\.txt" docs/RUN.md docs/DASHBOARD.md docs/WORKFLOW-SETUP.md` -> only
       `requirements*.txt`).
 - [ ] Vectors off, no model (ADR-009/010) -> T5.
-- [ ] Shared database untouched -> T8.
+- [ ] Shared database untouched -> P0 passed in both shells before T1 and before T6; T8.
+- [ ] `git pull` on `main` (success and failure) -> T9.
 - [ ] `pytest -q` all pass; `bash -n scripts/*.sh` clean.
 - [ ] Issue "verify-cee all features PASS" -> `python scripts/verify_cee.py run` with
       `CEE_DB_CONTAINER=cee-synctest-db` and `DATABASE_URL` on port 5433, after T1 (snapshot
@@ -228,8 +262,11 @@ from the worktree `D:\ALLPROJECTS\EDJ\wt-129`:
 
 ## Open questions
 - `/start-task` check placement: right after `git pull` (step 2), not literally the first step.
-- On a branch other than `main`, sync-db warns and does not pull/switch. Alternative: refuse to run.
+- On a branch other than `main`, sync-db warns (saying it uses this branch's `LATEST.json`) and
+  does not pull/switch.
 - `LATEST.json` is seeded now with `corpus-2026-10-29` so `/sync-db` works before #120.
+- All three accepted in plan review round 1.
 
 ## Progress log
 - 2026-11-08 12:00 - plan written (worktree `D:\ALLPROJECTS\EDJ\wt-129`, branch `tl/129-sync-db` from origin/main 83e9152); Docker Desktop was not running, so the shared database was not queried; dump sha256 of Box and local `corpus-2026-10-29.dump` read (equal)
+- 2026-11-08 12:10 - plan review round 1 (CHANGES REQUESTED): added P0 pre-flight (container, DATABASE_URL port, compose config) before T1 and T6, corrected the safe-failure sentence; non-blocking notes taken: Mac run includes T2/T3, `git pull` failure behavior + T9 on-main test in a scratch clone, Box `parsed/` cache writes stated, verify_cee reads env then .env, `.env.example` port note, official-build end message gives `git switch -c`; off-main warning names this branch's LATEST.json
