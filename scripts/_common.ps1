@@ -2,7 +2,6 @@
 $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $Python = Join-Path $RepoRoot ".venv\Scripts\python.exe"
-$Container = "cee-db"
 
 function Get-DotEnvValue([string]$Name) {
     # A process environment variable wins over .env (same rule as python-dotenv).
@@ -14,6 +13,11 @@ function Get-DotEnvValue([string]$Name) {
     }
     return ""
 }
+
+# Database container: CEE_DB_CONTAINER (environment or .env), default cee-db; must match
+# container_name in docker-compose.yml, which reads the same variable.
+$Container = Get-DotEnvValue "CEE_DB_CONTAINER"
+if (-not $Container) { $Container = "cee-db" }
 
 function Invoke-Native([scriptblock]$Block, [string]$What) {
     # Docker writes progress to stderr; in Windows PowerShell 5.1 that must not count as an error.
@@ -81,6 +85,16 @@ function Copy-ModelToShare([string]$Share) {
     Copy-Item (Join-Path $src "snapshots") $dest -Recurse -Force
     Copy-Item (Join-Path $src "refs") $dest -Recurse -Force   # refs last: its presence means "complete"
     Write-Host "   copied to $dest"
+}
+
+function Get-SnapshotName {
+    # The snapshot name stamped on the database (COMMENT ON TABLE documents); "" when none.
+    $old = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try { $out = docker exec $Container psql -qtA -U cee -d cee -c "SELECT obj_description('public.documents'::regclass)" 2>$null }
+    finally { $ErrorActionPreference = $old }
+    if ($LASTEXITCODE -ne 0) { throw "Could not read the snapshot name from the database (is Docker running?)" }
+    return ("$out").Trim()
 }
 
 function Get-TableCounts {
