@@ -32,7 +32,23 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 RUNS = REPO / ".verify-runs"
 STATE = RUNS / "instance.json"
-CONTAINER = "cee-db"
+
+
+def _env_value(name: str) -> str:
+    # Same rule as scripts/_common.* and Compose: the environment wins over .env.
+    if os.environ.get(name, "").strip():
+        return os.environ[name].strip().strip('"')
+    env_file = REPO / ".env"
+    value = ""
+    if env_file.is_file():
+        for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+            m = re.match(rf"^\s*{name}\s*=\s*(.*)$", line)
+            if m:
+                value = m.group(1).strip().strip('"')
+    return value
+
+
+CONTAINER = _env_value("CEE_DB_CONTAINER") or "cee-db"   # resolved once, at import (#129)
 SOURCE_DB, VERIFY_DB = "cee", "cee_verify"
 PORT = 8599
 WINDOWS = os.name == "nt"

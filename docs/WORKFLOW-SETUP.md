@@ -92,27 +92,19 @@ Check each; install only what is missing.
 
 ## 4. Newest snapshot in the database
 
-1. Loaded snapshot: `docker exec cee-db psql -qtA -U cee -d cee -c "SELECT obj_description('public.documents'::regclass)"`
-   (empty or an error means none).
-2. Find the newest `corpus-YYYY-MM-DD.dump` (ignore `-test`), in this order:
-   - the repo's `snapshots/` folder;
-   - Box Drive, if installed: macOS `~/Library/CloudStorage/Box-Box*/**/snapshots/`,
-     Windows `~/Box/**/snapshots/` (2 levels deep). A file of 0 bytes is a cloud
-     placeholder: on macOS run `cat <file> > /dev/null` to make Box download it, then check
-     the size again;
-   - the Downloads folder.
-   Copy the newest one into the repo's `snapshots/` folder.
-3. None found, or the tech lead's prompt names a newer one: ask the teammate to open the
-   **Box link from the prompt** and download that `.dump` file (default download folder),
-   then say "done". Find it in Downloads and copy it into `snapshots/`.
-4. If the loaded snapshot equals the newest file name without `.dump`, skip to step 5.
-   Otherwise restore (this replaces this laptop's local database only):
-   - Windows: `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1`
-   - macOS (real file name in place of `corpus-YYYY-MM-DD.dump`):
-     ```
-     docker exec cee-db psql -q -U cee -d postgres -c "DROP DATABASE IF EXISTS cee WITH (FORCE);" -c "CREATE DATABASE cee;"
-     docker exec cee-db pg_restore -U cee -d cee --no-owner /snapshots/corpus-YYYY-MM-DD.dump
-     ```
+The newest snapshot is named in `snapshots/LATEST.json`. The sync script does the rest (finds
+the dump in `snapshots/` or Box Drive, checks its sha256, restores, runs the smoke test; it
+replaces this laptop's local database only, and does nothing when it is already up to date):
+
+1. Run it:
+   - Windows: `powershell -ExecutionPolicy Bypass -File scripts\sync-db.ps1`
+   - macOS: `bash scripts/sync-db.sh`
+2. Exit 2 (`... Download <name>.dump from the Box snapshots folder ...`): look for that exact
+   file in the Downloads folder and copy it into the repo's `snapshots/` folder. Not there: ask
+   the teammate to open the **Box link from the prompt** and download that file (default download
+   folder), then say "done"; copy it into `snapshots/` and run step 1 again. On macOS a 0-byte
+   file in Box Drive is a cloud placeholder; the script reads it once so Box downloads it.
+3. Exit 0: continue with section 5 (the script already ran the smoke test once).
 
 ## 5. Health checks
 
