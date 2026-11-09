@@ -124,9 +124,12 @@ Not changed: `scripts/restore.*` (sync-db calls them as they are), `docs/DECISIO
 ## Steps
 1. `.gitignore`, `snapshot_latest.py` and its pytest file; `pytest -q` green.
 2. `docker-compose.yml`, `.env.example`, `_common.*` (`CEE_DB_CONTAINER`, snapshot-name helper),
-   `verify_cee.py` line. Check: `docker compose config` with no variables shows `cee-db` and
+   `verify_cee.py` (`CONTAINER` resolved once at module level: environment, then `.env`, then
+   `cee-db`; review round 4 note 5). Check: `docker compose config` with no variables shows `cee-db` and
    `5432:5432`; with the test variables shows the test name and port.
-3. `sync-db.ps1` and `sync-db.sh`; `bash -n`; run tests T1-T5 below on both.
+3. `sync-db.ps1` and `sync-db.sh`; `bash -n`; write a provisional `snapshots/LATEST.json`
+   (corpus-2026-10-29, 111 / 17183, round 4 note 1) so T1 has a manifest; run tests T1-T5 below
+   on both; step 5 confirms or corrects the counts from T1.
 4. `build-snapshot.*` changes; tests T6-T7.
 5. Seed `snapshots/LATEST.json` with `snapshot_latest.py write --built-at 2026-10-29T22:32:13Z`
    from the Box copy, counts from the test database after T1.
@@ -235,50 +238,58 @@ and T10, not only the first test of a session.
   `p129-tmp`, `git branch -f main p129-tmp`, `git switch main` -> `sync-db` -> `git pull failed
   ...`, exit 1, test database stamp and counts unchanged. Both twins. Clone and junction removed
   afterwards (junction first, with `cmd /c rmdir`).
+  Before T9 and T10 (round 4 note 2): T6 leaves the test database stamped
+  `corpus-<today>-test`, so a plain `sync-db` (default `LATEST.json`) first brings it back to
+  `corpus-2026-10-29`.
 - T10 verify-cee on the test database (after T1 restored `corpus-2026-10-29` into it), one
   chained command:
   1. P0 (checks 1-4).
   2. Pre-step: `<venv python> scripts/verify_cee.py doctor`, output saved; the gate reads the
      text, not doctor's exit code (which also folds in python, browser and port). It requires the
      line `[ok] database: container cee-synctest-db, db cee`; missing -> stop, exit 1. It then
-     requires `[ok] port: port 8599 free`; otherwise -> stop with `port 8599 is busy (probably the
-     #84 verify run); run T10 again later`, exit 1. No other port is picked (`--port` stays
-     unused), so the evidence matches what the reviewer re-runs.
+     requires `[ok] port: port 8599 free`. If the port line is `[ok] port: our verify instance
+     is up` (a leftover of our own run), run `verify_cee.py cleanup` and repeat the pre-step
+     (round 4 note 4). Any other port line -> stop with `port 8599 is busy (probably the #84
+     verify run); run T10 again later`, exit 1. No other port is picked (`--port` stays unused),
+     so the evidence matches what the reviewer re-runs. In Git Bash the doctor output is taken
+     with `out=$(... doctor) || true`, so `set -e` does not abort on doctor's exit code (round 4
+     note 3).
   3. `<venv python> scripts/verify_cee.py run` -> all features PASS.
   A stopped T10 is retried later by hand, gate and pre-step included; it never runs `run` after a
   failed step.
 
 ## Acceptance
-- [ ] Issue "Fresh clone + dump in `snapshots/` -> `sync-db` ends with smoke PASS on Windows and
-      Mac" -> T1 (and T1b) on Windows with `sync-db.ps1`, and `sync-db.sh` in Git Bash: smoke PASS,
-      exit 0. **Mac itself needs a teammate's Mac** (`bash scripts/sync-db.sh` on a fresh clone with
+- [x] Issue "Fresh clone + dump in `snapshots/` -> `sync-db` ends with smoke PASS on Windows and
+      Mac", Windows part -> T1 (and T1b) on Windows with `sync-db.ps1`, and `sync-db.sh` in Git Bash: smoke PASS,
+      exit 0.
+- [ ] Same item, Mac part. **Needs a teammate's Mac** (`bash scripts/sync-db.sh` on a fresh clone with
       the dump in `snapshots/` -> PASS; then a second run -> "Already up to date" (T2), and
-      `--latest` with a wrong sha256 -> exit 2, database untouched (T3)); if not done by PR time, the PR says `Part of #129` with this
-      item open.
-- [ ] Issue "Wrong or old dump -> clear message, database untouched" -> T3: exit 2, message names
+      `--latest` with a wrong sha256 -> exit 2, database untouched (T3)); not done by PR time, so the
+      PR says `Part of #129` with this item open.
+- [x] Issue "Wrong or old dump -> clear message, database untouched" -> T3: exit 2, message names
       the file and the Box download step; test database stamp and counts identical before/after.
-- [ ] Issue "Second run on an up-to-date machine does nothing but say so" -> T2: one "Already up to
+- [x] Issue "Second run on an up-to-date machine does nothing but say so" -> T2: one "Already up to
       date" line, exit 0, no restore.
-- [ ] Issue "build-snapshot writes a correct `LATEST.json`" -> T6 (real `-AllowBranch` builds, both
+- [x] Issue "build-snapshot writes a correct `LATEST.json`" -> T6 (real `-AllowBranch` builds, both
       twins, fields checked against the dump hash and the database counts) + pytest on `write`
       (exact format) + T7 (official path asks for notes; `LATEST.json` is tracked, dumps are not).
-- [ ] Issue deliverable `/start-task` check -> T4 (`-Check` exit codes) and `start-task.md` step 2
+- [x] Issue deliverable `/start-task` check -> T4 (`-Check` exit codes) and `start-task.md` step 2
       text; `.claude/commands/sync-db.md` exists and names both scripts.
-- [ ] Issue deliverable RUN.md -> section 2 is `/sync-db` or the script; every new `powershell`
+- [x] Issue deliverable RUN.md -> section 2 is `/sync-db` or the script; every new `powershell`
       block is followed by its `bash` twin (count of both fence kinds equal); no snapshot txt is a
       step anywhere (`grep -n "\.txt" docs/RUN.md docs/DASHBOARD.md docs/WORKFLOW-SETUP.md` -> only
       `requirements*.txt`).
-- [ ] Vectors off, no model (ADR-009/010) -> T5.
-- [ ] Shared database untouched -> every test command ran behind the P0 gate (both shells, worktree
+- [x] Vectors off, no model (ADR-009/010) -> T5.
+- [x] Shared database untouched -> every test command ran behind the P0 gate (both shells, worktree
       and T9 clone); T8 (`StartedAt`, stamp, counts of `cee-db` equal to T0).
-- [ ] `git pull` on `main` (success and failure) -> T9.
-- [ ] `pytest -q` all pass; `bash -n scripts/*.sh` clean.
-- [ ] Issue "verify-cee all features PASS" -> T10: P0 check 4 passed, the pre-step's `doctor`
+- [x] `git pull` on `main` (success and failure) -> T9.
+- [x] `pytest -q` all pass; `bash -n scripts/*.sh` clean.
+- [x] Issue "verify-cee all features PASS" -> T10: P0 check 4 passed, the pre-step's `doctor`
       line `[ok] database: container cee-synctest-db, db cee` printed right before
       `verify_cee.py run`, then all features PASS. The PR quotes that line next to the run id.
       (Port 8599 busy -> T10 stops with a clear message and is re-run later on 8599; verify-cee is
       never run on the shared container.)
-- [ ] Paid API calls: 0.
+- [x] Paid API calls: 0.
 
 ## Risks
 - Compose interpolation in `container_name` changes nothing for people without the variables
@@ -306,3 +317,11 @@ and T10, not only the first test of a session.
 - 2026-11-08 12:10 - plan review round 1 (CHANGES REQUESTED): added P0 pre-flight (container, DATABASE_URL port, compose config) before T1 and T6, corrected the safe-failure sentence; non-blocking notes taken: Mac run includes T2/T3, `git pull` failure behavior + T9 on-main test in a scratch clone, Box `parsed/` cache writes stated, verify_cee reads env then .env, `.env.example` port note, official-build end message gives `git switch -c`; off-main warning names this branch's LATEST.json
 - 2026-11-08 12:25 - plan review round 2 (CHANGES REQUESTED): P0 gains check 4 (`verify_cee.py doctor` shows `container cee-synctest-db`) and new T10 for verify-cee with the line quoted in the PR; P0 is now a hard gate script (.ps1/.sh, exit 1, child shells) chained before every test command, not only T1/T6; T9 diverges `main` via a temp branch and `git branch -f`, no commit on `main`; hand-typed Compose commands always use `-p cee-synctest`; re-read every test and acceptance line for steps that could reach `cee-db`/`cee` or stops that only print
 - 2026-11-08 12:45 - plan review round 3 (blocking: the gate's `doctor` check could not pass on an empty test volume): TL chose option (a). P0 check 4 is now a DB-free constant check (`verify_cee.CONTAINER == 'cee-synctest-db'`); the `doctor` line is T10's own pre-step after T1, read by text (database line, then port line), not by exit code; busy port 8599 -> T10 stops with a clear message, no other port
+- 2026-11-08 22:50 - plan approved (round-4 reviewer agent, f2e51b4); its 5 non-blocking notes folded in: provisional `LATEST.json` before T1 (step 3), plain sync-db before T9/T10 (T9), `out=$(...) || true` and `cleanup`-and-retry in the T10 pre-step (T10), `CONTAINER` resolved at module level (step 2)
+- 2026-11-08 22:55 - T0: shared `cee-db` StartedAt 2026-11-08T18:03:26Z, stamp corpus-2026-10-29, 111 / 17183 / 6. P0 gate checked negative first (no variables -> `P0 STOP: _common container is 'cee-db'`, exit 1, both shells), then ok
+- 2026-11-08 22:56 - T1 / T1b PASS on both twins (local dump, then Box only): smoke PASS, 111 documents / 17183 chunks, which confirms the provisional `LATEST.json` counts (kept as written). T2, T3 (wrong sha256, old dump, unknown name: exit 2, test database identical), T4 (0 / 2 / 1), T5 (no model; empty model folder stayed empty) PASS on both
+- 2026-11-08 23:05 - surprise: `bash` called from PowerShell is WSL bash, not Git Bash (paths /mnt/d/...), so the first `.sh` T4 attempt was invalid; the `.sh` checks were re-run from Git Bash itself. Surprise 2: Windows Python in Git Bash cannot read /d/... paths (MSYS_NO_PATHCONV is on), so `_common.sh` gained `native_path` / `posix_path` (cygpath when present, no-op on a Mac), used by sync-db.sh and build-snapshot.sh
+- 2026-11-08 23:50 - T6: `build-snapshot.ps1 -AllowBranch` (45 min: 10 docling parse-cache misses for documents added after 10-29; those 10 cache files went into Box `parsed/` through the junction, as planned) -> `LATEST-test.json` corpus-2026-11-08-test, 137 / 18454, sha256 = Get-FileHash; Box `snapshots/` unchanged; round trip sync PASS. `build-snapshot.sh --allow-branch` (2 min) -> sha256 = sha256sum, same counts, round trip PASS. T7: no / blank notes -> exit 1 before anything, test database unchanged; check-ignore as planned
+- 2026-11-08 23:55 - T9: plain sync back to corpus-2026-10-29 first. Clean pull on `main` -> "Already up to date" both twins. Surprise: `main` = `HEAD~1` + a commit lacked the new scripts (HEAD~1 is the plan commit), and the P0 gate stopped it as designed; instead `main` got one local commit and a local upstream branch `p129-up` with another (temp branches + `git branch -f`, nothing committed on `main`) -> `git pull failed ...`, exit 1, test database unchanged, both twins
+- 2026-11-08 23:58 - T10: doctor `[ok] database: container cee-synctest-db, db cee`, `[ok] port: port 8599 free`; `verify_cee.py run` VERIFY PASS (`.verify-runs/20261108-235753-595a3a2`, CORPUS_SHARE_PATH on the share junction): all PASS except open-citation UNREACHABLE for its cite-date step only (no `date_basis = retrieved` document in corpus-2026-10-29; a data precondition, not this change)
+- 2026-11-08 23:59 - T8: shared `cee-db` identical to T0. Teardown: `docker compose -p cee-synctest down -v`, junctions removed with `cmd /c rmdir`, temp folders and test dumps deleted. pytest 346 passed. Mac run left for a teammate (PR is `Part of #129`)
