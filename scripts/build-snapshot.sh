@@ -3,18 +3,28 @@
 # With CEE_VECTORS=on (environment or .env; off by default, ADR-009) it also embeds every chunk.
 # Tech lead only; needs CORPUS_SHARE_PATH (Box Drive folder) in .env. macOS twin of build-snapshot.ps1.
 #
-#   bash scripts/build-snapshot.sh
-#   bash scripts/build-snapshot.sh --allow-branch   skip the "clean main" check. For testing only;
-#                                                   never publish a snapshot built this way.
+#   bash scripts/build-snapshot.sh --notes "What changed (#108, #111)"
+#   --notes "<text>"   required: what changed, with issue numbers; goes into snapshots/LATEST.json
+#                      (#129). No links (the repo is public).
+#   --allow-branch     skip the "clean main" check. For testing only; never publish a snapshot
+#                      built this way.
 . "$(dirname "$0")/_common.sh"
 
 ALLOW_BRANCH=0
+NOTES=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --allow-branch) ALLOW_BRANCH=1; shift ;;
-        *) die "Unknown argument: $1 (use --allow-branch)" ;;
+        --notes) [ $# -ge 2 ] || die "--notes needs a text"; NOTES="$2"; shift 2 ;;
+        *) die "Unknown argument: $1 (use --notes or --allow-branch)" ;;
     esac
 done
+
+# Checked first, before anything is touched (#129).
+if [ "$ALLOW_BRANCH" -eq 0 ] && [ -z "$(printf '%s' "$NOTES" | tr -d '[:space:]')" ]; then
+    die 'Pass --notes "<what changed, issue numbers>" (it goes into snapshots/LATEST.json).'
+fi
+[ -n "$(printf '%s' "$NOTES" | tr -d '[:space:]')" ] || NOTES="test build"
 
 VECTORS=0
 if vectors_on; then VECTORS=1; fi
@@ -58,6 +68,18 @@ run "Stamping snapshot name" docker exec "$CONTAINER" psql -q -U cee -d cee -c "
 
 echo "5/7 Dumping $name.dump..."
 run "pg_dump" docker exec "$CONTAINER" pg_dump -U cee -d cee -Fc -f "/snapshots/$name.dump"
+# snapshots/LATEST.json names the dump for /sync-db (#129); a test build writes LATEST-test.json (git-ignored).
+latest_name="LATEST.json"
+[ "$ALLOW_BRANCH" -eq 1 ] && latest_name="LATEST-test.json"
+docs="$(docker exec "$CONTAINER" psql -qtA -U cee -d cee -c "SELECT count(*) FROM documents" | tr -d '\r')" \
+    || die "Counting documents failed"
+chunks="$(docker exec "$CONTAINER" psql -qtA -U cee -d cee -c "SELECT count(*) FROM chunks" | tr -d '\r')" \
+    || die "Counting chunks failed"
+echo "   writing snapshots/$latest_name"
+run "Writing snapshots/$latest_name" "$PYTHON" "$(native_path "$REPO_ROOT/scripts/snapshot_latest.py")" write \
+    --out "$(native_path "$REPO_ROOT/snapshots/$latest_name")" \
+    --dump "$(native_path "$REPO_ROOT/snapshots/$name.dump")" \
+    --documents "$docs" --chunks "$chunks" --notes "$NOTES"
 
 echo "6/7 Copying to Box..."
 dest="$share/snapshots"
@@ -74,3 +96,12 @@ fi
 mb="$(du -k "$REPO_ROOT/snapshots/$name.dump" | awk '{printf "%.1f", $1/1024}')"
 echo "Done: $dest/$name.dump ($mb MB)"
 echo "Row counts: $(table_counts)"
+if [ "$ALLOW_BRANCH" -eq 0 ]; then
+    echo ""
+    echo "Next: publish snapshots/LATEST.json through a PR (merging it tells the team to run /sync-db):"
+    echo "  git switch -c tl/snapshot-$name"
+    echo "  git add snapshots/LATEST.json"
+    echo "  git commit -m \"Snapshot $name\""
+    echo "  git push -u origin tl/snapshot-$name"
+    echo "  gh pr create --fill"
+fi
