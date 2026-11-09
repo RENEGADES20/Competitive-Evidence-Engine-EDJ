@@ -132,8 +132,8 @@ Not changed: `scripts/restore.*` (sync-db calls them as they are), `docs/DECISIO
    from the Box copy, counts from the test database after T1.
 6. `.claude/commands/sync-db.md`, `start-task.md`, RUN.md, DASHBOARD.md, WORKFLOW-SETUP.md,
    ARCHITECTURE.md.
-7. pytest; P0 including check 4, then verify-cee against the test database (T10); T8 (shared
-   database unchanged); teardown.
+7. pytest; verify-cee against the test database (T10: P0, then its own `doctor` pre-step); T8
+   (shared database unchanged); teardown.
 
 ### Test setup: a throwaway database, never the shared `cee`
 The shared container `cee-db` (database `cee`, snapshot `corpus-2026-10-29`) is used by others and
@@ -184,9 +184,11 @@ runs in a fresh child shell (`powershell -NoProfile -Command ...`, `bash -c ...`
    u = settings().database_url; assert ':5433/' in u, u"` exits 0.
 3. Compose sees the test project: `docker compose config` contains `container_name:
    cee-synctest-db` and `published: "5433"`, and does not contain `container_name: cee-db`.
-4. verify-cee targets the test container: `<venv python> scripts/verify_cee.py doctor` prints
-   `[ok] database: container cee-synctest-db, db cee` (the line is kept for the PR). Only needed
-   before T10, but cheap, so always run.
+4. verify-cee would target the test container, checked without any database (so it passes on an
+   empty test volume before T1): in the checkout folder, `<venv python> -c "import sys;
+   sys.path.insert(0, 'scripts'); import verify_cee as v; assert v.CONTAINER ==
+   'cee-synctest-db', v.CONTAINER"` exits 0. (`verify_cee.py` imports only the standard library
+   at module level, so this needs no database, browser or port.) No `doctor` call in P0.
 Every test is typed as one chained command, gate first, so a failed gate stops it:
 PowerShell `& D:\ALLPROJECTS\EDJ\cache\tmp\p129-p0.ps1 <dir>; if ($LASTEXITCODE -ne 0) { return }; <test>`,
 Git Bash `bash /d/ALLPROJECTS/EDJ/cache/tmp/p129-p0.sh <dir> && <test>`. This covers T1-T7, T9
@@ -233,10 +235,18 @@ and T10, not only the first test of a session.
   `p129-tmp`, `git branch -f main p129-tmp`, `git switch main` -> `sync-db` -> `git pull failed
   ...`, exit 1, test database stamp and counts unchanged. Both twins. Clone and junction removed
   afterwards (junction first, with `cmd /c rmdir`).
-- T10 verify-cee on the test database (after T1, snapshot `corpus-2026-10-29`): P0 with check 4
-  showing `container cee-synctest-db`, then `<venv python> scripts/verify_cee.py run` in the same
-  chained command. If `doctor` reports port 8599 busy (the #84 session), wait and retry later;
-  never run it with a gate that failed.
+- T10 verify-cee on the test database (after T1 restored `corpus-2026-10-29` into it), one
+  chained command:
+  1. P0 (checks 1-4).
+  2. Pre-step: `<venv python> scripts/verify_cee.py doctor`, output saved; the gate reads the
+     text, not doctor's exit code (which also folds in python, browser and port). It requires the
+     line `[ok] database: container cee-synctest-db, db cee`; missing -> stop, exit 1. It then
+     requires `[ok] port: port 8599 free`; otherwise -> stop with `port 8599 is busy (probably the
+     #84 verify run); run T10 again later`, exit 1. No other port is picked (`--port` stays
+     unused), so the evidence matches what the reviewer re-runs.
+  3. `<venv python> scripts/verify_cee.py run` -> all features PASS.
+  A stopped T10 is retried later by hand, gate and pre-step included; it never runs `run` after a
+  failed step.
 
 ## Acceptance
 - [ ] Issue "Fresh clone + dump in `snapshots/` -> `sync-db` ends with smoke PASS on Windows and
@@ -263,10 +273,11 @@ and T10, not only the first test of a session.
       and T9 clone); T8 (`StartedAt`, stamp, counts of `cee-db` equal to T0).
 - [ ] `git pull` on `main` (success and failure) -> T9.
 - [ ] `pytest -q` all pass; `bash -n scripts/*.sh` clean.
-- [ ] Issue "verify-cee all features PASS" -> T10: the `doctor` line `[ok] database: container
-      cee-synctest-db, db cee` printed by the gate right before `verify_cee.py run`, then all
-      features PASS. The PR quotes that line next to the run id. (Port 8599 busy -> wait and retry;
-      verify-cee is never run on the shared container.)
+- [ ] Issue "verify-cee all features PASS" -> T10: P0 check 4 passed, the pre-step's `doctor`
+      line `[ok] database: container cee-synctest-db, db cee` printed right before
+      `verify_cee.py run`, then all features PASS. The PR quotes that line next to the run id.
+      (Port 8599 busy -> T10 stops with a clear message and is re-run later on 8599; verify-cee is
+      never run on the shared container.)
 - [ ] Paid API calls: 0.
 
 ## Risks
@@ -294,3 +305,4 @@ and T10, not only the first test of a session.
 - 2026-11-08 12:00 - plan written (worktree `D:\ALLPROJECTS\EDJ\wt-129`, branch `tl/129-sync-db` from origin/main 83e9152); Docker Desktop was not running, so the shared database was not queried; dump sha256 of Box and local `corpus-2026-10-29.dump` read (equal)
 - 2026-11-08 12:10 - plan review round 1 (CHANGES REQUESTED): added P0 pre-flight (container, DATABASE_URL port, compose config) before T1 and T6, corrected the safe-failure sentence; non-blocking notes taken: Mac run includes T2/T3, `git pull` failure behavior + T9 on-main test in a scratch clone, Box `parsed/` cache writes stated, verify_cee reads env then .env, `.env.example` port note, official-build end message gives `git switch -c`; off-main warning names this branch's LATEST.json
 - 2026-11-08 12:25 - plan review round 2 (CHANGES REQUESTED): P0 gains check 4 (`verify_cee.py doctor` shows `container cee-synctest-db`) and new T10 for verify-cee with the line quoted in the PR; P0 is now a hard gate script (.ps1/.sh, exit 1, child shells) chained before every test command, not only T1/T6; T9 diverges `main` via a temp branch and `git branch -f`, no commit on `main`; hand-typed Compose commands always use `-p cee-synctest`; re-read every test and acceptance line for steps that could reach `cee-db`/`cee` or stops that only print
+- 2026-11-08 12:45 - plan review round 3 (blocking: the gate's `doctor` check could not pass on an empty test volume): TL chose option (a). P0 check 4 is now a DB-free constant check (`verify_cee.CONTAINER == 'cee-synctest-db'`); the `doctor` line is T10's own pre-step after T1, read by text (database line, then port line), not by exit code; busy port 8599 -> T10 stops with a clear message, no other port
