@@ -35,8 +35,21 @@ tag_segment(entity_id, section) -> segment | None
 chunk(document) -> [Chunk{chunk_id="<doc_id>#<n>", section, segment, page, text}]
     # text starts with "[entity|segment|doc_type|period]"; never crosses a section
 
-metric_definitions.yaml   # later: entity, metric, definition quote, doc_id, valid_from
+metric_definitions.yaml   # config/metric_definitions.yaml (#46): entity, metric, status, quote,
+                          # doc_id, chunk_id, valid_from; tests/test_metric_definitions.py
 ```
+
+### Advisor headcount and NNA definitions (Q11, Q22, Q23)
+
+From `config/metric_definitions.yaml`; quotes are verbatim there.
+
+| Firm | Advisor headcount | Includes / excludes | Net new assets (or closest) |
+|---|---|---|---|
+| EDJ | Count only, no definition (`EDJ-10K-2025#130`) | U.S. + Canada; trainees not stated; all employees | NNA incl. fees and commissions since 2026 (`EDJ-10Q-2026Q2#60`; 10-K 2025 wording differs, `#130`) |
+| MS | Not disclosed in corpus | n/a ("advisor-led" = a WM representative assigned, `MS-SUPP-2025Q4#35`) | NNA excl. fees and commissions (`MS-10K-2025#166`) |
+| SCHW | Not disclosed | Employee Financial/Wealth Consultants; RIAs are clients (`SCHW-10K-2025#18`, `#23`) | Closest: core net new client assets (`SCHW-10K-2025#119`) |
+| BAC | Not disclosed (Merrill inside GWIM; only firmwide headcount) | n/a (`BAC-10K-2025#246`) | Closest: GWIM net client AUM flows, AUM only (`BAC-10K-2025#249`) |
+| RJF | Employees + independent contractors; excludes RCS division (`RJF-10K-2025#228`, `#227`) | Includes trainees moved into production | Domestic PCG NNA, fees counted as outflows (`RJF-10K-2025#224`) |
 
 doc_id convention: `<ENTITY>-<FORM>-<PERIOD>` e.g. `BAC-10K-2025`, `RJF-10Q-2026Q2`.
 

@@ -1,0 +1,153 @@
+# How each firm defines advisor headcount and net new assets (#46; Q11, Q22, Q23).
+# Owner: C1. Chunk IDs from the corpus (snapshot corpus-2026-10-18 or later; the IDs are stable).
+# Checked by tests/test_metric_definitions.py: doc_id in data/manifest.csv, and when the
+# database is up, chunk_id exists and quote is a verbatim substring of that chunk (whitespace
+# collapsed).
+#
+# Fields:
+#   entity, metric      metric: advisor_headcount | net_new_assets
+#   status              quoted        the firm's own definition of this metric
+#                       closest_metric the firm defines a related metric instead (named in note)
+#                       not_disclosed  no definition or count in the corpus; see looked_in
+#   quote               word for word from chunk_id (optional for not_disclosed: then it is the
+#                       nearest related text, not a definition)
+#   doc_id, chunk_id, valid_from (period_end of the document)
+#   includes / excludes what the definition says it covers (headcount: trainees, assistants,
+#                       independents); not_stated lists what the firm does not say
+#   see_also            other chunks with the same or earlier wording
+#   looked_in           documents searched (required for not_disclosed)
+#   note                one line for the reader
+
+definitions:
+  # ---------- Edward Jones ----------
+  - entity: EDJ
+    metric: advisor_headcount
+    status: quoted
+    quote: "Financial advisors (actual): At year end 20,425 20,125 19,232 1% Average 20,331 19,650 18,945 3%"
+    doc_id: EDJ-10K-2025
+    chunk_id: EDJ-10K-2025#130
+    valid_from: 2025-12-31
+    includes: [U.S. and Canada financial advisors (split in EDJ-10K-2025#148)]
+    excludes: []
+    not_stated: [trainees, branch assistants (BOAs), independents (none: all advisors are employees)]
+    see_also: [EDJ-10K-2025#148, EDJ-10Q-2026Q2#60, EDJ-10K-2025#29]
+    note: >-
+      Edward Jones reports a count ("actual", year end and average) with no written definition.
+      Trainees appear in the onboarding text (#29) but the 10-K does not say whether they are counted.
+
+  - entity: EDJ
+    metric: net_new_assets
+    status: quoted
+    quote: "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients."
+    doc_id: EDJ-10Q-2026Q2
+    chunk_id: EDJ-10Q-2026Q2#60
+    valid_from: 2026-06-30
+    see_also: [EDJ-10K-2025#130]
+    note: >-
+      Wording changed in 2026: the 10-K 2025 (#130) has no "including fees and commissions", and the
+      10-Q says prior-year numbers were updated to the new presentation. Compare with care across years.
+
+  # ---------- Morgan Stanley ----------
+  - entity: MS
+    metric: advisor_headcount
+    status: not_disclosed
+    quote: "Advisor-led client assets represent client assets in accounts that have a Wealth Management representative assigned."
+    doc_id: MS-SUPP-2025Q4
+    chunk_id: MS-SUPP-2025Q4#35
+    valid_from: 2025-12-31
+    see_also: [MS-10K-2025#167, MS-SUPP-2026Q3#38]
+    looked_in: [MS-10K-2025, MS-10Q-2025Q2, MS-10Q-2025Q3, MS-10Q-2026Q1, MS-10Q-2026Q2,
+                MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)"]
+    note: >-
+      No advisor count or headcount definition in any loaded MS document. The quote is the nearest
+      text (what "advisor-led" means), not a headcount definition.
+
+  - entity: MS
+    metric: net_new_assets
+    status: quoted
+    quote: "NNA represent client asset inflows, including interest, dividends and asset acquisitions, less client asset outflows, and excluding the impact of business combinations/divestitures and the impact of fees and commissions."
+    doc_id: MS-10K-2025
+    chunk_id: MS-10K-2025#166
+    valid_from: 2025-12-31
+    see_also: [MS-10K-2025#165, MS-SUPP-2025Q4#34]
+    note: >-
+      The heading "Net New Assets (NNA)" is the last line of #165; the definition itself is #166.
+      Excludes fees and commissions (EDJ now includes them).
+
+  # ---------- Charles Schwab ----------
+  - entity: SCHW
+    metric: advisor_headcount
+    status: not_disclosed
+    quote: "Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants provide guidance, relationship management, and specialized support"
+    doc_id: SCHW-10K-2025
+    chunk_id: SCHW-10K-2025#18
+    valid_from: 2025-12-31
+    looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)"]
+    note: >-
+      Schwab does not report an advisor count. Its employee advisers are Financial/Wealth
+      Consultants (#18); independent RIAs it custodies for (SCHW-10K-2025#23) are clients, not staff.
+
+  - entity: SCHW
+    metric: net_new_assets
+    status: closest_metric
+    quote: "Core net new client assets: Net new client assets before significant one-time inflows or outflows, such as acquisitions/divestitures or extraordinary flows (generally greater than $25 billion ($10 billion prior to 2025)) relating to a specific client, and activity from off-platform brokered CDs issued by CSB."
+    doc_id: SCHW-10K-2025
+    chunk_id: SCHW-10K-2025#119
+    valid_from: 2025-12-31
+    see_also: [SCHW-MONTHLY-2026-01#8]
+    note: >-
+      Schwab's headline metric is core net new assets (10-K glossary). The threshold for
+      "extraordinary" flows rose from $10B to $25B in 2025.
+
+  # ---------- Bank of America (Merrill, reported in GWIM) ----------
+  - entity: BAC
+    metric: advisor_headcount
+    status: not_disclosed
+    quote: "Merrill Wealth Management’s advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets."
+    doc_id: BAC-10K-2025
+    chunk_id: BAC-10K-2025#246
+    valid_from: 2025-12-31
+    looked_in: [BAC-10K-2025, BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3,
+                "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)"]
+    note: >-
+      Merrill advisors sit inside GWIM and no count is given in the corpus. The supplement's only
+      headcount is firmwide (BAC-SUPP-2025Q4#8, about 213,000 staff), not advisors.
+
+  - entity: BAC
+    metric: net_new_assets
+    status: closest_metric
+    quote: "The net client AUM flows represent the net change in clients’ AUM balances over a specified period of time, excluding market appreciation/depreciation and other adjustments."
+    doc_id: BAC-10K-2025
+    chunk_id: BAC-10K-2025#249
+    valid_from: 2025-12-31
+    see_also: [BAC-SUPP-2025Q4#58]
+    note: >-
+      BAC has no net-new-assets metric; the closest is GWIM net client AUM flows, which cover AUM
+      only (not brokerage assets or deposits), so they are narrower than the others' NNA.
+
+  # ---------- Raymond James ----------
+  - entity: RJF
+    metric: advisor_headcount
+    status: quoted
+    quote: "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA."
+    doc_id: RJF-10K-2025
+    chunk_id: RJF-10K-2025#228
+    valid_from: 2025-09-30
+    includes: [employee financial advisors, independent contractor advisors, trainees once moved into production roles]
+    excludes: [advisors in the RCS division]
+    not_stated: [assistants]
+    see_also: [RJF-10K-2025#227, RJF-10K-2025#24]
+    note: >-
+      #227 splits the 8,943 total into 3,878 employees and 5,065 independent contractors; #228 says
+      the count grew "as new recruits and trainees that were moved into production roles exceeded
+      departures". The supplement has no headcount (it is in the earnings release, #75).
+
+  - entity: RJF
+    metric: net_new_assets
+    status: quoted
+    quote: "Domestic PCG net new assets represents domestic PCG client inflows, including dividends and interest, less domestic PCG client outflows, including commissions, advisory fees, and other fees."
+    doc_id: RJF-10K-2025
+    chunk_id: RJF-10K-2025#224
+    valid_from: 2025-09-30
+    see_also: [RJF-SUPP-2025Q4#8]
+    note: Domestic Private Client Group only; fees and commissions count as outflows.
