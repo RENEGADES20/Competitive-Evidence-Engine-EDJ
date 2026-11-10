@@ -29,6 +29,13 @@ class Gap(BaseModel):
     suggested_source: str = ""
 
 
+class Withheld(BaseModel):
+    """A claim kept out of the shown answer by code (#118, ground rule 6); kept here for review."""
+    text: str
+    chunk_ids: list[str] = Field(default_factory=list)
+    reason: str = "normative"
+
+
 class Answer(BaseModel):
     answerable: bool
     behavior: Behavior
@@ -37,6 +44,7 @@ class Answer(BaseModel):
     gaps: list[Gap] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)  # inserted by code
     coverage_note: str = ""                            # built by code from the retrieved hits
+    withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
     llm_called: bool = False
 
     @field_validator("claims", "adjacent", "gaps", "caveats", mode="before")

@@ -10,7 +10,8 @@ import re
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
-from cee.answer.schema import Answer, Gap
+from cee.answer.prompt import BOUNDARY_HANDOFF
+from cee.answer.schema import Answer, Claim, Gap, Withheld
 from cee.config import entities_config
 from cee.retrieve.fts import Hit, Query
 
@@ -44,7 +45,70 @@ def source_label(hit: Hit) -> str:
     return f"{hit.entity_id or 'Research'} {hit.doc_type}{seg} {date_label(hit)}{page} [{tier}]"
 
 
+# Boundary (#118, ground rule 6). Rule in specs/answer-citations.md, "Boundary".
+WITHHELD_NOTICE = ("A sentence was withheld because it recommended an action for Edward Jones "
+                   "(ground rule 6). That decision belongs to the strategy team.")
+
+
+def _alternation(names: list[str]) -> str:
+    return "(?:" + "|".join(re.escape(n) for n in sorted(set(names), key=len, reverse=True)) + ")"
+
+
+def _normative_patterns() -> list[re.Pattern]:
+    edj = _entry("EDJ")
+    named = [edj["name"].split(" (")[0], *edj.get("aliases", []), "EJ", "EDJ"]
+    # Not "we" / "you": in transcripts they are the speaking firm or an analyst ("we should expect").
+    addressed = ["the home firm"]
+    firm = _alternation(named + addressed)
+    act = (r"(?:should|ought to|would benefit from|might want to|may want to|"
+           r"could (?:replicate|adopt|copy|emulate|consider|learn from|follow))")
+    # Filings say "Edward Jones must maintain net capital": must / needs to only for addressed subjects.
+    duty = rf"{_alternation(addressed)}\s+(?:must|needs? to)"
+    return [re.compile(rf"\b{firm}\s+{act}\b", re.I),
+            re.compile(rf"\b{duty}\b", re.I),
+            re.compile(r"\b(?:we|I)\s+(?:would\s+)?(?:recommend|suggest|advise)\b", re.I),
+            re.compile(r"\bit (?:would be|is) (?:wise|advisable|prudent|recommended)\b", re.I),
+            re.compile(rf"\b(?:recommend(?:s|ed)?|suggest(?:s|ed)?|advise[sd]?)\s+(?:that\s+)?{firm}\b", re.I)]
+
+
+def is_normative(text: str) -> bool:
+    """A sentence that tells the home firm what to do. The hand-off sentence itself is not."""
+    if text.strip() == BOUNDARY_HANDOFF:
+        return False
+    unquoted = _QUOTED.sub(" ", text)     # a firm's or analyst's own words, quoted, are evidence
+    return any(p.search(unquoted) for p in _normative_patterns())
+
+
+_QUOTED = re.compile(r'"[^"]*"|“[^”]*”')
+
+
+def withhold_normative(answer: Answer) -> Answer:
+    """Keep normative claims out of the shown answer (kept in `withheld`), and re-judge the answer
+    as answer_with_boundary. Never silent: the app shows WITHHELD_NOTICE in their place."""
+    for field in ("claims", "adjacent"):
+        kept = []
+        for claim in getattr(answer, field):
+            if is_normative(claim.text):
+                answer.withheld.append(Withheld(text=claim.text, chunk_ids=claim.chunk_ids))
+            else:
+                kept.append(claim)
+        setattr(answer, field, kept)
+    if answer.withheld and answer.behavior == "answer":
+        answer.behavior = "answer_with_boundary"
+    return answer
+
+
+def ensure_handoff(answer: Answer) -> Answer:
+    """A boundary answer always ends with the hand-off sentence; code adds it when missing."""
+    if answer.behavior != "answer_with_boundary" or any(c.text.strip() == BOUNDARY_HANDOFF for c in answer.claims):
+        return answer
+    cited = list(dict.fromkeys(c for claim in answer.claims for c in claim.chunk_ids))
+    answer.claims.append(Claim(text=BOUNDARY_HANDOFF, chunk_ids=cited))
+    return answer
+
+
 def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
+    answer = ensure_handoff(withhold_normative(answer))
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         known = [c for c in claim.chunk_ids if c in by_id]

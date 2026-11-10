@@ -434,3 +434,79 @@ def test_table_cell_without_its_unit_header_matches_the_same_digits():
 
 def test_numeric_dates_and_section_labels_are_not_checked():
     assert flags_for("in the quarter ended 12/31/2025 (Item 11, Note 4)", "nothing numeric here") == []
+
+
+# Boundary (#118): a claim that tells the home firm what to do is withheld, never shown.
+
+from cee.answer.prompt import BOUNDARY_HANDOFF
+
+
+def boundary_answer(*texts, behavior="answer"):
+    return Answer(answerable=True, behavior=behavior,
+                  claims=[{"text": t, "chunk_ids": ["EDJ-10K-2025#1"]} for t in texts])
+
+
+def test_recommendation_for_the_home_firm_is_withheld_and_rejudged():
+    a = boundary_answer("Schwab grew assets by acquiring clients through its RIA platform.",
+                        "Edward Jones should build a similar low-cost acquisition channel.")
+    out = check_citations(a, [hit()])
+    assert [c.text for c in out.claims] == ["Schwab grew assets by acquiring clients through its RIA platform.",
+                                            BOUNDARY_HANDOFF]
+    assert out.behavior == "answer_with_boundary"
+    assert [w.text for w in out.withheld] == ["Edward Jones should build a similar low-cost acquisition channel."]
+
+
+def test_each_normative_form_is_caught():
+    for text in ("EJ could replicate this by cutting account minimums.",
+                 "We recommend that the firm expands its digital offering.",
+                 "I would suggest Edward Jones targets younger investors.",
+                 "It would be advisable to lower fees for small accounts.",
+                 "The home firm needs to invest in AI tools.",
+                 "Edward Jones would benefit from a self-directed platform.",
+                 "It is recommended that Edward Jones lowers account minimums."):
+        assert validate.is_normative(text), text
+
+
+def test_evidence_with_should_or_recommend_is_not_withheld():
+    for text in (BOUNDARY_HANDOFF,
+                 "Schwab management said clients should be able to move assets easily.",
+                 "The 10-K says financial advisors recommend products suited to each client.",
+                 "Should market conditions worsen, the Partnership's revenue would decline.",
+                 "Cerulli says younger investors prefer to keep more control."):
+        assert not validate.is_normative(text), text
+
+
+def test_boundary_answer_without_handoff_gets_it_once():
+    a = boundary_answer("Evidence claim.", behavior="answer_with_boundary")
+    out = check_citations(a, [hit()])
+    assert out.claims[-1].text == BOUNDARY_HANDOFF and out.claims[-1].chunk_ids == ["EDJ-10K-2025#1"]
+    again = check_citations(out, [hit()])
+    assert [c.text for c in again.claims].count(BOUNDARY_HANDOFF) == 1
+
+
+def test_plain_answer_is_untouched():
+    out = check_citations(boundary_answer("The 2025 10-K lists 20,425 financial advisors."), [hit()])
+    assert out.behavior == "answer" and out.withheld == [] and len(out.claims) == 1
+
+
+def test_withheld_is_code_owned_and_shown_as_a_notice(monkeypatch):
+    from cee.answer.schema import llm_output_schema
+    from cee.app import components
+
+    assert "withheld" not in llm_output_schema()["properties"]
+    shown = []
+    monkeypatch.setattr(components, "_html", shown.append)
+    components.withheld_box(validate.WITHHELD_NOTICE)
+    assert "withheld" in shown[0] and "should" not in shown[0].lower().replace("should act", "")
+
+
+def test_filing_duties_of_the_named_firm_are_not_withheld():
+    assert not validate.is_normative("The 10-K says Edward Jones must maintain minimum net capital under SEC rules.")
+    assert validate.is_normative("The home firm must move faster than Schwab on digital onboarding.")
+
+
+def test_transcript_speech_and_quotes_are_not_withheld():
+    # Q6 (mock copies a transcript): an analyst's "we should expect" is not advice to the home firm.
+    assert not validate.is_normative("Just trying to gauge whether we should expect this mix shift headwind to persist")
+    assert not validate.is_normative('Schwab management said "we should continue to win share from Edward Jones".')
+    assert validate.is_normative('Management said "growth is strong", so Edward Jones should copy the model.')
