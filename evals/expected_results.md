@@ -18,6 +18,9 @@ How to read it:
   - `not loaded`: no such document in the manifest yet. Names are proposals until the
     ingest owner assigns the real `doc_id`.
 - `TODO-verify`: not checked yet; nothing marked so is a fact.
+- Transcript chunk ids changed in #107 (one speaker turn per chunk): the answer-key rows below
+  were remapped by text and quote; ids quoted in run findings ("Top-8: ...") keep the
+  numbering of the run they record.
 
 Checked 2026-10-19 against the local database loaded from main's manifest (68 documents).
 "Today" lines are `resolve()` + `search()` runs on that database the same day.
@@ -31,9 +34,9 @@ Behavior: `answer`. Entity filter: `MS`. Mode: entity.
 | # | chunk_id | Passage that must come back | Status |
 |---|---|---|---|
 | 1 | `MS-TR-2026Q2#3` | Management framing: "a record $148 billion in organic net new assets, driven by large IPOs of late-stage private workplace clients. Growth led by workplace relationships reflects a cornerstone of our client acquisition ..."; "adviser-led and E*TRADE channels" | in corpus |
-| 2 | `MS-TR-2026Q2#13`, `#15` | "investments in our client acquisition funnel"; "Stock plan IPO flows represented just over half of the overall NNA this quarter" | in corpus |
-| 3 | `MS-TR-2026Q3#2`, `#8` | "net new assets of $232 billion"; "In the first 9 months of the year, we have delivered roughly $0.5 trillion of net new assets" | in corpus |
-| 4 | `MS-TR-2026Q1#2`, `#7`, `#8` | "Our client acquisition funnel remains unrivaled ... $118 billion of net new assets"; "contributions across channels" | in corpus |
+| 2 | `MS-TR-2026Q2#14`, `#16` | "investments in our client acquisition funnel"; "Stock plan IPO flows represented just over half of the overall NNA this quarter" | in corpus |
+| 3 | `MS-TR-2026Q3#3`, `#12`, `#13` | "net new assets of $232 billion"; "In the first 9 months of the year, we have delivered roughly $0.5 trillion of net new assets" | in corpus |
+| 4 | `MS-TR-2026Q1#3`, `#9`, `#10`, `#11` | "Our client acquisition funnel remains unrivaled ... $118 billion of net new assets"; "contributions across channels" | in corpus |
 | 5 | `MS-PR-2026-10-14-01#5`, `MS-PR-2026-07-15-01#5` | "Record net new assets were $232 billion, with just over half associated with IPO-related flows"; Q2 same pattern | in corpus |
 | 6 | `MS-10K-2025#125` | "Wealth Management supports clients through three channels: Advisor-Led, Self-Directed and Workplace" | in corpus |
 | 7 | `MS-10K-2025#127`, `#164`, `#166` | FY2025 NNA $356 billion; NNA table 2025/2024/2023; definition + drivers ("our ability to attract and retain financial advisors and clients") | in corpus |
@@ -60,11 +63,11 @@ Behavior: `answer`. Entity filter: Merrill = `entity=MER` OR (`entity=BAC` AND
 
 | # | chunk_id | Passage that must come back | Status |
 |---|---|---|---|
-| 1 | `BAC-TR-2026Q1#20` | "adviser productivity and long-term client relationships. We're driving productivity higher on both newer and existing members of our financial advisers team, and we continue to attract talent" | in corpus |
-| 2 | `BAC-TR-2026Q1#48` | Analyst asks for "recruiting or retention commentary" on the wealth strategy; CEO answer | in corpus |
-| 3 | `BAC-TR-2026Q2#13`, `#14` | "both Merrill and the Private Bank continued to attract talented advisers"; "strong adviser productivity ... AI-enabled tools that help advisers" | in corpus |
-| 4 | `BAC-TR-2026Q2#38` | "keep growing the sales force. Well, adviser attrition is now at near historic lows" | in corpus |
-| 5 | `BAC-TR-2026Q3#13` | Merrill growth: "Merrill added about 4,200 net new households with at least $500,000 in assets" | in corpus |
+| 1 | `BAC-TR-2026Q1#25`, `#26` | "adviser productivity and long-term client relationships. We're driving productivity higher on both newer and existing members of our financial advisers team, and we continue to attract talent" | in corpus |
+| 2 | `BAC-TR-2026Q1#80`, `#81` | Analyst asks for "recruiting or retention commentary" on the wealth strategy; CEO answer | in corpus |
+| 3 | `BAC-TR-2026Q2#20`, `#21`, `#22` | "both Merrill and the Private Bank continued to attract talented advisers"; "strong adviser productivity ... AI-enabled tools that help advisers" | in corpus |
+| 4 | `BAC-TR-2026Q2#63` | "keep growing the sales force. Well, adviser attrition is now at near historic lows" | in corpus |
+| 5 | `BAC-TR-2026Q3#19` | Merrill growth: "Merrill added about 4,200 net new households with at least $500,000 in assets" | in corpus |
 | 6 | `BAC-10K-2025#245`, `#246`, `#247` | GWIM = Merrill Wealth Management + Private Bank; "a network of financial advisors"; Merrill revenue $20.7 billion | in corpus |
 | 7 | `BAC-10Q-2026Q2#88`-`#91` | GWIM: Merrill Wealth Management revenue by quarter | in corpus |
 | 8 | `MER-PR-<date>-NN`, `MER-TRADE-<date>` | Merrill press releases and trade press on advisor development / recruiting | not loaded |
@@ -78,7 +81,7 @@ GWIM supplement pages, decks and earnings releases list balances and flows, and
 - `BAC-10K-2025#18`: "the Corporation hired over 18,000 teammates" / "building a strong
   pipeline of talent" - **BAC-wide hiring, the text that makes a wrong answer read well**.
 - `BAC-10K-2025#16`, `#172`: BAC-wide headcount ("approximately 213,000 employees").
-- `BAC-TR-2026Q1#9`, `BAC-TR-2026Q2#32`, `#33`, `#45`: "pipelines" = investment banking
+- `BAC-TR-2026Q1#11`, `BAC-TR-2026Q2#52`, `#54`, `#78`: "pipelines" = investment banking
   pipelines, not advisor pipelines.
 - `BAC-DECK-2026Q1#55`, `BAC-DECK-2026Q2#36`, `BAC-DECK-2026Q3#45` and the matching
   press-release bullets: award counts, not advisor headcount (may come back only if
@@ -118,7 +121,7 @@ entity, with a quota per firm so no firm fills the list (specs/retrieval.md, Q7 
 | 7 | RJF | `RJF-10K-2025#24` | "approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors" | in corpus |
 | 8 | MS | `MS-10K-2025#167`, `MS-SUPP-2026Q3#38` | Nearest definition: advisor-led client assets are accounts "that have a Wealth Management representative assigned" (no count) | in corpus |
 | 9 | BAC/MER | `BAC-10K-2025#246` | "a network of financial advisors" (no count) | in corpus |
-| 10 | SCHW | `SCHW-10K-2025#18`, `SCHW-TR-2026Q1#3` | Names Financial Consultants / Wealth Consultants; "continuing to hire financial consultants and wealth advisers" (no count) | in corpus |
+| 10 | SCHW | `SCHW-10K-2025#18`, `SCHW-TR-2026Q1#4`, `#5` | Names Financial Consultants / Wealth Consultants; "continuing to hire financial consultants and wealth advisers" (no count) | in corpus |
 
 **Not reported in any stored document** (correct answer says so, not a substitute):
 - **MS**: no advisor count in 10-K, 10-Qs, supplements (three quarters), transcripts or
@@ -163,7 +166,7 @@ metric (questions.yaml).
 | 2 | MS | Supplements `MS-SUPP-2026Q3#16` (232.4), `-2026Q2#16` (148.1), `-2026Q1#14` (118.4; prior quarter 122.3); 10-Qs `MS-10Q-2026Q2#57`, `-2026Q1#48`, `-2025Q3#56`, `-2025Q2#56`; releases `MS-PR-2026-01-15-01#2` (4Q25 $122.3B) | `MS-SUPP-2026Q1#42` / `MS-10K-2025#166`: "client asset inflows, including interest, dividends and asset acquisitions, less client asset outflows, and excluding the impact of business combinations/divestitures and the impact of fees and commissions" | in corpus |
 | 3 | SCHW | Releases `SCHW-PR-2026-01-21-01#2` (4Q25 core $163.9B), `SCHW-PR-2026-07-21-01#2` (2Q26 $119.8B); decks `SCHW-DECK-2026Q3#7`, `#20`; 10-Qs `SCHW-10Q-2026Q2#16`, `-2026Q1#16`, `-2025Q3#16`, `-2025Q2#16` | `SCHW-10K-2025#122` net new client assets "Total inflows of client cash and securities to Schwab less client outflows ... Capital gains distributions are excluded"; `#119` / `SCHW-DECK-2026Q3#20` core = before significant one-time flows | in corpus |
 | 4 | RJF | Releases `RJF-PR-2026-07-22-01#4` ($21.7B fiscal Q3), `RJF-PR-2026-04-22-01#3` ($23.0B), `RJF-PR-2026-01-28-01#3` ($30.8B), `RJF-PR-2025-10-22-01#4` ($17.9B); 10-Qs `RJF-10Q-2026Q2#305`, `-2026Q1#298`, `-2025Q4#236`, `-2025Q2#294` | `RJF-10Q-2026Q2#306`, `RJF-SUPP-2026Q1#43`: domestic PCG "client inflows, including dividends and interest, less ... client outflows, including commissions, advisory fees, and other fees" | in corpus |
-| 5 | BAC/Merrill | **not reporting NNA.** BAC reports "net client flows" and "AUM flows" instead (`BAC-TR-2026Q3#13` "net client flows were about $38 billion, including approximately $20 billion of AUM flows"; `BAC-PR-2026-10-14-01#11`) | - | in corpus (checked) |
+| 5 | BAC/Merrill | **not reporting NNA.** BAC reports "net client flows" and "AUM flows" instead (`BAC-TR-2026Q3#19` "net client flows were about $38 billion, including approximately $20 billion of AUM flows"; `BAC-PR-2026-10-14-01#11`) | - | in corpus (checked) |
 | 6 | SCHW | Monthly activity reports | | not loaded |
 
 Note on bases: EDJ and SCHW exclude capital-gain distributions; MS excludes fees and
@@ -236,7 +239,7 @@ invalid (`RJF-10K-2025#227`, `#228`: RCS advisors excluded from the count, their
 included in PCG AUA), MS advisor-led assets with no count (`MS-SUPP-2026Q1#43` etc.).
 Must not: BAC-wide 213,000 employees (`BAC-10K-2025#16`, `#172`, `BAC-10Q-2025Q2#19`,
 `-2025Q3#19`); SCHW full-time equivalent employees (`SCHW-10K-2025#178`, four 10-Qs, four
-releases); `SCHW-TR-2026Q3#7` ($5.8 trillion held for 16,000 independent RIA firms -
+releases); `SCHW-TR-2026Q3#10` ($5.8 trillion held for 16,000 independent RIA firms -
 custody clients, not Schwab advisors); BAC award counts.
 
 **Q25 - advisor compensation structures.** Adjacent/disclosed: RJF employee vs independent
@@ -252,9 +255,9 @@ philosophy (`BAC-10K-2025#19`).
 attrition % in its 2025 10-Qs (`EDJ-10Q-2025Q2#64`, `#67`: 6.4%; `EDJ-10Q-2025Q3#68`, `#70`:
 6.1%; definition `-2025Q2#66`, `-2025Q3#69`: "annualized number of financial advisors that
 left or retired ... compared to the total"); Merrill gives no rate, only "adviser attrition
-is now at near historic lows" (`BAC-TR-2026Q2#38`, `BAC-TR-2026Q1#48`); net headcount change
+is now at near historic lows" (`BAC-TR-2026Q2#63`, `BAC-TR-2026Q1#80`, `#81`); net headcount change
 (`EDJ-10K-2025#130`, `EDJ-10Q-2026Q2#60`). Must not: BAC-wide employee turnover 8%
-(`BAC-10K-2025#19`), BAC-wide headcount attrition (`BAC-TR-2026Q1#4`, `#27`, `#29`), client
+(`BAC-10K-2025#19`), BAC-wide headcount attrition (`BAC-TR-2026Q1#6`, `#39`, `#42`), client
 and deposit attrition (`BAC-10K-2025#60`, `#97`). Note for C1: Q28's passes_if says
 "neither discloses this on a comparable basis"; one side (EDJ) does disclose a rate, so the
 correct answer is "EDJ: 6.1% (Q3 2025, its definition); Merrill: not disclosed".
