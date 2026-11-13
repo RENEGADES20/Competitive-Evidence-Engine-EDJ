@@ -8,6 +8,9 @@ A user types a question and gets an answer whose claims each link to a stored pa
 - `ask-citations`: each claim carries one or more citation links.
 - `ask-coverage`: a coverage note ("Coverage: searched ...") names the firms, document
   types and period of the retrieved passages; always visible, never collapsed (#40).
+- `ask-withheld`: a claim that recommends an action for the home firm is not shown; a
+  "Withheld:" notice takes its place (#118). The mock never writes one, so this is proven by
+  tests in `tests/test_validate.py`, not driven here.
 - `ask-footer`: the footer shows firms, chunk count and whether an LLM was called.
 - `ask-log`: every asked question writes one `query_log` row.
 
