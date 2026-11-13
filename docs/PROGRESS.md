@@ -18,6 +18,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-18 | 8 quarterly supplements (BAC, MS Q1-Q3 2026; RJF two quarters) stored with page numbers; PDF tables and picture-nested slide text now kept (pdf.py) (#77) | SCHW supplement/monthly missing; Q23 ranks only BAC supplements (#59); docling adds ~4-7 min per PDF to rebuilds | #46 metric definitions from these supplements; snapshot rebuild |
 | 2026-10-22 | C1 #37: BAC GWIM segment tags from config (10-K/10-Q MD&A, decks, supplements; 0/20 wrong; mixed chunks untagged) (#96) | none | PR/TR tagging (#95); Q30 retrieval recall (S1) |
 | 2026-11-04 | #45 last-four supplements (MS/BAC 2025Q4, RJF 2025Q3-Q4) and six Schwab monthly reports in the manifest (#147) | Q23 "three firms" waits for #59 | TL moves the 10 PDFs from Box into raw/ |
+| 2026-11-12 | expected_doc_ids for 18 tier-1 questions (#56), tier-1 mock doc recall 0.656 (#170) | 16 manifest docs not in corpus-2026-10-29 (all MER, RJF web pages, investor-day decks); no trade press, DEF 14A or Form ADV | ingest the missing docs; Q20 and Q27 recall will stay low until then |
 
 ### C2
 
@@ -114,6 +115,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-06 | TL #127: ADR-010 records the hybrid comparison (#126): fts at main's constants 28/30, hybrid-norerank 28/30, hybrid+MiniLM 28/30 (5.1 s/question, reranker below RRF order at 12/12 grid points); main stays fts-only, hybrid code stays on exp/hybrid (#161) | ADR-009 vectors module on main: open TL/sponsor decision | S1 review of specs/retrieval.md lines |
 | 2026-11-06 | #159 Q29 on main: "pay" searched only through its synonyms (verbatim port of #125's `synonym_only`); Q29 FAIL -> PASS, refusal gap 4/5 -> 5/5, the other 29 questions return identical chunks (#164) | S1 review | Gates 3/4 (#120, #121) score Q29 on main |
 | 2026-11-06 | CI fix: converter header test skips without bs4 (main pytest red after #151) (#165) | - | - |
+| 2026-11-09 | /sync-db` + `snapshots/LATEST.json` (Windows and Mac scripts; build-snapshot writes the manifest; tested on a throwaway database) (#129) (#171) | Mac run by a teammate still open | #120 freeze snapshot publishes its LATEST.json through a PR |
 
 ## Weekly score (from W6)
 
