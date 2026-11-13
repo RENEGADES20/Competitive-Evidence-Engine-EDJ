@@ -32,6 +32,8 @@ Never drive an app instance this script did not start.
 One command does all three and always cleans up:
 
 `PY scripts/verify_cee.py run` (all features) or `PY scripts/verify_cee.py run <feature> ...`
+To verify a private database copy instead of `cee` (e.g. a re-parse on `cee_84`), add
+`--source-db cee_84 --port 8684`; the copy is then `cee_84_verify`.
 
 What it does:
 - **Launch:** copies database `cee` to `cee_verify` (your own data is never written), starts

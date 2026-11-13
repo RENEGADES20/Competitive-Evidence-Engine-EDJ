@@ -6,9 +6,11 @@ Used by the verify-cee skill (.claude/skills/verify-cee/SKILL.md). Run with the 
   python scripts/verify_cee.py run             # launch, drive every feature, clean up
   python scripts/verify_cee.py run ask-answer gap-path
   python scripts/verify_cee.py launch | drive <feature...> | cleanup
+  python scripts/verify_cee.py run --source-db cee_84 --port 8684   # a private copy (#84)
 
-It never touches your own database or app: it copies database `cee` to `cee_verify`, starts
-its own Streamlit on port 8599 with the mock provider, and removes both at the end.
+It never touches your own database or app: it copies database `cee` (or --source-db) to
+`cee_verify` (`<source-db>_verify`), starts its own Streamlit on port 8599 (or --port) with the
+mock provider, and removes both at the end. Pass the same --source-db to drive and cleanup.
 Evidence (screenshots, page text, steps.jsonl) stays in .verify-runs/<run-id>/.
 """
 from __future__ import annotations
@@ -693,12 +695,22 @@ def drive(features: list[str]) -> bool:
 
 # ---------- main ----------
 
+def set_source_db(name: str) -> None:
+    global SOURCE_DB, VERIFY_DB
+    SOURCE_DB, VERIFY_DB = name, ("cee_verify" if name == "cee" else f"{name}_verify")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
     ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
     ap.add_argument("--port", type=int, default=PORT)
+    ap.add_argument("--source-db", default=SOURCE_DB,
+                    help=f"database to copy (default {SOURCE_DB}); the copy is <source-db>_verify")
     a = ap.parse_args()
+    if not re.fullmatch(r"[a-z_][a-z0-9_]*", a.source_db):
+        ap.error("--source-db: lower-case letters, digits and _ only")
+    set_source_db(a.source_db)
     unknown = [f for f in a.features if f not in DRIVERS]
     if unknown:
         ap.error(f"unknown feature(s) {unknown}; choose from {FEATURES}")
