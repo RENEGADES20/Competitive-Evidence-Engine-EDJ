@@ -255,9 +255,9 @@ left or retired ... compared to the total"); Merrill gives no rate, only "advise
 is now at near historic lows" (`BAC-TR-2026Q2#38`, `BAC-TR-2026Q1#48`); net headcount change
 (`EDJ-10K-2025#130`, `EDJ-10Q-2026Q2#60`). Must not: BAC-wide employee turnover 8%
 (`BAC-10K-2025#19`), BAC-wide headcount attrition (`BAC-TR-2026Q1#4`, `#27`, `#29`), client
-and deposit attrition (`BAC-10K-2025#60`, `#97`). Note for C1: Q28's passes_if says
-"neither discloses this on a comparable basis"; one side (EDJ) does disclose a rate, so the
-correct answer is "EDJ: 6.1% (Q3 2025, its definition); Merrill: not disclosed".
+and deposit attrition (`BAC-10K-2025#60`, `#97`). Q28's passes_if was reworded in #156: EDJ
+discloses a rate, Merrill does not, so the correct answer is "EDJ: 6.1% (Q3 2025, its
+definition); Merrill: not disclosed".
 `TODO-verify` whether the 2026 EDJ 10-Qs dropped the line.
 
 **Q29 - what MS pays its financial advisors.** Adjacent: formulaic payouts tied to revenue
