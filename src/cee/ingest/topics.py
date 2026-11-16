@@ -83,8 +83,9 @@ def seed_topics(conn, path: Path = TOPICS_PATH) -> int:
     return len(topics)
 
 
-def tag_document(conn, doc_id: str) -> tuple[int, int]:
-    """Replace chunk_topics for one document. Returns (chunks, fallback chunks)."""
+def tag_document(conn, doc_id: str) -> tuple[int, int, int]:
+    """Replace chunk_topics for one document. Returns (chunks, fallback chunks, untagged chunks).
+    Untagged > 0 only when no chunk of the document matched any keyword (no fallback possible)."""
     rows = conn.execute("SELECT chunk_id, text FROM chunks WHERE doc_id = %s ORDER BY seq",
                         (doc_id,)).fetchall()
     tags, n_fallback = tag_chunks([r["text"] for r in rows])
@@ -93,4 +94,4 @@ def tag_document(conn, doc_id: str) -> tuple[int, int]:
     with conn.cursor() as cur:
         cur.executemany("INSERT INTO chunk_topics (chunk_id, topic_id) VALUES (%s, %s)",
                         [(r["chunk_id"], tid) for r, s in zip(rows, tags) for tid in sorted(s)])
-    return len(rows), n_fallback
+    return len(rows), n_fallback, sum(1 for s in tags if not s)

@@ -1,7 +1,8 @@
 # Open a citation
 
 A user clicks a citation and reads the exact stored passage it points to, with its
-document, section, tier and filing date. The passage is shown inside its section (the chunks
+document, section, tier and filing date (for an undated web page: the
+date of the stored copy, labelled "page content as of"). The passage is shown inside its section (the chunks
 next to it), and a PDF citation also shows the cited PDF page.
 
 ## Sub-features
@@ -14,6 +15,8 @@ next to it), and a PDF citation also shows the cited PDF page.
   on each side are shown as `NEIGHBOURING PASSAGE`.
 - `cite-page`: a PDF chunk shows its stored PDF page (`Page N of M of the stored PDF`), and that
   page is `chunks.page`. Without the raw file locally the passage, context and metadata still show.
+- `cite-date`: a chunk of an undated web page (`date_basis = retrieved`, ADR-007 T-09) shows
+  `Page content as of: <published_at>` instead of `Filed:`; source-dated chunks still show `Filed:`.
 
 ## How to get to it (user POV)
 
@@ -33,6 +36,9 @@ Preconditions: baseline; the answerable question returns citations.
   by a fixed hash), open `?chunk=<id>`: the caption is `Page N of M of the stored PDF`, one page image
   is shown, and at least 80% of the chunk's words are in page N of the raw PDF (read with pymupdf).
   Needs the raw PDF (`CORPUS_SHARE_PATH` or `data/raw/`); otherwise the step is UNREACHABLE.
+- **Date label.** Open `?chunk=<id>` for the first chunk (by ID) of a `date_basis = 'retrieved'` document:
+  the page shows `Page content as of: <published_at>` and no `Filed:`. Then reopen the citation clicked
+  in **Open**: it still shows `Filed:`. No retrieved document in the database: the step is UNREACHABLE.
 
 ## Gotchas
 

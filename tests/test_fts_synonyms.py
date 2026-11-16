@@ -68,3 +68,18 @@ def test_no_synonym_leaves_the_words_only():
     sql, params = _tsquery_sql("positioning itself to recruit away from wirehouses")
     assert "phraseto_tsquery" not in sql["tsquery"]
     assert params == {}
+
+
+def test_synonym_only_word_is_searched_through_its_synonyms():
+    # Q29: the bare verb "pay" matched a clearing-guarantee note ("pay any net liquidation amount")
+    from cee.retrieve.fts import keyword_terms, synonym_only_words
+    assert "pay" in synonym_only_words()
+    terms, synonyms = keyword_terms(resolve("What does Morgan Stanley pay its financial advisors?"))
+    assert "pay" not in terms.split() and "financial advisors" in terms
+    assert synonyms[:2] == ["compensation", "payout"]
+
+
+def test_question_without_a_synonym_only_word_keeps_its_terms():
+    from cee.retrieve.fts import keyword_terms
+    q = resolve("What is Morgan Stanley's strategy to increase their net new assets?")
+    assert keyword_terms(q) == (_search_terms(q), expand_synonyms(_search_terms(q)))

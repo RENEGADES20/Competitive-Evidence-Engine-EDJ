@@ -38,9 +38,12 @@ Page "Source"
   input: chunk_id
   output: document metadata, the chunk text highlighted, PDF opened at page, download link
           (file from the shared corpus folder via CORPUS_SHARE_PATH)
+          undated web page (date_basis = retrieved, ADR-007 T-09): "Page content as of: <date>" in place
+          of "Filed:"; the "Latest filing" ticker counts source-dated documents only
 
 Page "Coverage"
   table: entity x doc_type -> count, earliest and latest published_at; empty cells highlighted
+         (undated pages, date_basis = retrieved, are counted but kept out of the date span)
 ```
 
 ## Acceptance

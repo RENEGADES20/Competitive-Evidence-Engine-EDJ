@@ -159,8 +159,10 @@ Every citation shows its tier label: tier 1 `licensed`, 2 `filing`, 3 `IR`,
 3. Corpus owners debug ingestion locally; changes land via PR.
 4. Weekly, the tech lead rebuilds the database from `main` and publishes
    `snapshots/corpus-YYYY-MM-DD.dump` to the shared folder.
-5. Everyone runs one `restore` command to load it into local Docker Postgres. Scores record
-   the snapshot name.
+5. Everyone runs `/sync-db` (`scripts/sync-db.ps1` / `.sh`) to load it into local Docker
+   Postgres: it reads `snapshots/LATEST.json` (committed: name, sha256, row counts, notes; the
+   dump itself stays in the shared folder), checks the dump's sha256, restores it and runs the
+   smoke test. Scores record the snapshot name.
 
 ## Reference projects by module
 
@@ -173,7 +175,7 @@ From the team's OSS research. None is copied whole; together they cover roughly 
 | Parsing and chunking | [sec_rag_assistant](https://github.com/lazfa04/sec_rag_assistant) (3-level chunks, pitfalls), bt4103 (no cross-section chunks) | [agentic-sec-rag](https://github.com/mr-j90/agentic-sec-rag) (chunk prefix), [Financial-Filings-RAG](https://github.com/AshishBhalala11/Financial-Filings-RAG) (page numbers) |
 | Storage | Grounded-Rag-Analyst schema (tsvector first) | bt4103 data layers |
 | Entity resolution and filters | agentic-sec-rag (deterministic resolution), sec_rag_assistant (retrieval-layer filter, per-entity quotas) | Own design: segments |
-| Retrieval | Postgres FTS first; later Grounded-Rag-Analyst RRF | [rag-pipeline-sec-filings](https://github.com/avivakahlon/rag-pipeline-sec-filings) (dedupe), [sec-edgar-rag](https://github.com/ankankisku-lab/sec-edgar-rag) (sub-questions) |
+| Retrieval | Postgres FTS (ADR-001, ADR-010); Grounded-Rag-Analyst RRF evaluated on `exp/hybrid`, not adopted | [rag-pipeline-sec-filings](https://github.com/avivakahlon/rag-pipeline-sec-filings) (dedupe), [sec-edgar-rag](https://github.com/ankankisku-lab/sec-edgar-rag) (sub-questions) |
 | Generation and citations | bt4103 (Pydantic templates), Grounded-Rag-Analyst (citation validator) | agentic-sec-rag (single LLM call) |
 | Evidence gaps | agentic-sec-rag (coverage note), Grounded-Rag-Analyst (insufficient-evidence gate) | Own design: source registry |
 | Front end | earnings-intelligence (Streamlit + feedback) | [sec-insights](https://github.com/run-llama/sec-insights) (highlight cited text) |

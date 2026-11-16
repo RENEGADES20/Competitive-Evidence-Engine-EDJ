@@ -54,3 +54,28 @@ def test_every_keyword_tags_its_own_topic_when_the_parent_is_present():
         for kw in t["keywords"]:
             text = kw if not t.get("parent") else f"{kw}. {first_kw[t['parent']]}."
             assert t["id"] in tag_text(text), (t["id"], kw)
+
+
+def test_tag_document_reports_untagged_chunks():
+    class FakeConn:
+        def __init__(self, texts):
+            self.texts, self.inserted = texts, []
+
+        def execute(self, sql, params=None):
+            rows = [{"chunk_id": f"D#{i}", "text": t} for i, t in enumerate(self.texts)]
+            return type("R", (), {"fetchall": lambda _self: rows})()
+
+        def cursor(self):
+            conn = self
+
+            class Cur:
+                def __enter__(self): return self
+                def __exit__(self, *a): return False
+                def executemany(self, sql, rows): conn.inserted.extend(rows)
+            return Cur()
+
+    from cee.ingest.topics import tag_document
+    assert tag_document(FakeConn(["Table of contents", "Page 2"]), "D") == (2, 0, 2)
+    conn = FakeConn(["Disclaimer.", "Younger investors under 40."])
+    assert tag_document(conn, "D") == (2, 1, 0)
+    assert ("D#0", "younger_investors") in conn.inserted

@@ -212,3 +212,8 @@ synonyms:
   # Segments named in questions (duplicates segment_aliases for text search only)
   GWIM: ["Global Wealth & Investment Management", "Global Wealth and Investment Management"]
   PCG: ["Private Client Group"]
+
+# Ambiguous words searched only through their synonyms (#125). The question's synonyms are still
+# read from the word; the bare word is left out of the full-text words. In filings "pay" is
+# mostly "pay an obligation" (Q29: a clearing-guarantee note outranked the advisor payout passage).
+synonym_only: [pay]

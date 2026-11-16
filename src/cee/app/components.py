@@ -275,7 +275,9 @@ def corpus_stats() -> dict:
     from cee.db import connect
     with connect() as c:
         snap = c.execute("SELECT obj_description('public.documents'::regclass) AS s").fetchone()["s"]
-        d = c.execute("SELECT count(*) n, count(DISTINCT entity_id) e, max(published_at) latest FROM documents").fetchone()
+        # "Latest filing" counts only source-dated documents: an undated page's date is its download (ADR-007 T-09)
+        d = c.execute("SELECT count(*) n, count(DISTINCT entity_id) e, "
+                      "max(published_at) FILTER (WHERE date_basis = 'source') latest FROM documents").fetchone()
         k = c.execute("SELECT count(*) n FROM chunks").fetchone()["n"]
     return {"snapshot": snap or "none (built locally)", "docs": d["n"], "firms": d["e"],
             "latest": str(d["latest"] or "none"), "chunks": k}

@@ -112,26 +112,27 @@ To turn vectors off again, set `CEE_VECTORS=off`; the core ignores `chunk_embedd
 
 ## 2. Daily use (teammates)
 
+The newest snapshot is named in `snapshots/LATEST.json` (name, sha256, row counts, what
+changed). When the tech lead merges a new one, sync your database; no message with steps is
+sent any more.
+
 1. Start Docker Desktop and wait until it says "Engine running".
-2. Get the newest snapshot: open the **team Box link** (pinned in the team chat, never in
-   this repo), go to `snapshots/`, download the newest `corpus-YYYY-MM-DD.dump` into the
-   repo's `snapshots` folder.
-3. Load it (replaces your local database):
+2. In Claude Code type `/sync-db`. Or run the script yourself:
    ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
+   powershell -ExecutionPolicy Bypass -File scripts\sync-db.ps1
    ```
    ```bash
-   bash scripts/restore.sh
+   bash scripts/sync-db.sh
    ```
-4. Check everything works:
-   ```powershell
-   .\.venv\Scripts\python.exe -m cee.smoke
-   ```
-   ```bash
-   .venv/bin/python -m cee.smoke
-   ```
-   Expect five `[ok]` lines and `PASS`.
-5. Start the app and open http://localhost:8501:
+   It pulls `main`, installs the requirements, starts the database, finds the dump in
+   `snapshots/` (or in Box Drive if you have it), checks its sha256, loads it (replaces your
+   local database) and runs the smoke test. It ends with `Synced to corpus-... Smoke PASS.`, or
+   `Already up to date` when there is nothing to do. It needs no embedding model.
+3. If it says `Download corpus-YYYY-MM-DD.dump from the Box snapshots folder ...`: open the
+   **team Box link** (pinned in the team chat, never in this repo), go to `snapshots/`,
+   download that file into the repo's `snapshots` folder, and run step 2 again. Your database
+   was not changed.
+4. Start the app and open http://localhost:8501:
    ```powershell
    .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
    ```
@@ -171,19 +172,23 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
   ```bash
   bash scripts/ingest.sh
   ```
-- Weekly snapshot, from a clean `main`:
+- Weekly snapshot, from a clean `main`, with notes on what changed (issue numbers, no links):
   ```powershell
-  powershell -ExecutionPolicy Bypass -File scripts\build-snapshot.ps1
+  powershell -ExecutionPolicy Bypass -File scripts\build-snapshot.ps1 -Notes "21 transcripts (#108); source context (#111)"
   ```
   ```bash
-  bash scripts/build-snapshot.sh
+  bash scripts/build-snapshot.sh --notes "21 transcripts (#108); source context (#111)"
   ```
   It checks every manifest file (exists, sha256 matches), rebuilds the database, dumps
-  `corpus-YYYY-MM-DD.dump` and copies it into Box `snapshots/`. With vectors off (the default)
+  `corpus-YYYY-MM-DD.dump`, writes `snapshots/LATEST.json` (name, sha256, row counts, build
+  time, notes) and copies the dump into Box `snapshots/`. Then publish `LATEST.json` through a
+  PR (the script prints the `git switch -c ...` commands); merging it is the notice to the
+  team, who run `/sync-db`. No txt with steps is needed. With vectors off (the default)
   steps 4/7 and 7/7 print `skipped (CEE_VECTORS is off)`. With `CEE_VECTORS=on` it also embeds
   every chunk (about 20 minutes on a laptop CPU; the build stops if a chunk has no vector) and
   puts the embedding model into Box `models/` if it is not there yet. `-AllowBranch` / `--allow-branch` skips the clean-main check for testing only; its dump is named `...-test`
-  and must not be shared.
+  and must not be shared; it writes `snapshots/LATEST-test.json` (never committed) instead of
+  `LATEST.json`, and `-Notes` / `--notes` is optional.
 - Checklist: [DASHBOARD.md section 8](DASHBOARD.md#8-weekly-snapshot-checklist-tech-lead).
 
 ## 5. When it breaks
@@ -193,7 +198,7 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 | `running scripts is disabled on this system` | Run scripts as shown: `powershell -ExecutionPolicy Bypass -File scripts\...` |
 | `failed to connect to the docker API` / `Starting the database failed` | Start Docker Desktop, wait for "Engine running", run again |
 | Docker asks for WSL 2 or virtualization | Install WSL (`wsl --install`), restart; enable virtualization (VT-x/SVM) in BIOS |
-| `port is already allocated` on 5432 | Another Postgres is running. Stop it (Services -> postgresql -> Stop) or change `5432:5432` to `5433:5432` in docker-compose.yml and the port in `DATABASE_URL` |
+| `port is already allocated` on 5432 | Another Postgres is running. Stop it (Services -> postgresql -> Stop), or set `CEE_DB_PORT=5433` in `.env` and change the port in `DATABASE_URL` to `5433` too |
 | `connection timeout expired` from Python | The container stopped: `docker compose up -d`, then `docker ps` should show `cee-db` healthy |
 | `python` opens the wrong Python / `Permission denied` | Another tool's Python is first on PATH. Always use `.\.venv\Scripts\python.exe` (Mac: `.venv/bin/python`); create the venv with `py -3.11 -m venv .venv` (Mac: `python3.11 -m venv .venv`) |
 | Mac: `pwsh: command not found` or a `.ps1` opens as text | Use the `.sh` twin: `bash scripts/<name>.sh` |
@@ -207,7 +212,12 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 | `CEE_VECTORS='...' is not understood` | Use `CEE_VECTORS=on` or `CEE_VECTORS=off` in `.env` |
 | `Embedding ... failed` in build-snapshot (vectors on) | Read the line above it; a chunk without a vector stops the build. Run `python -m cee.retrieve.embed --missing` again (it continues where it stopped) |
 | `No snapshot found` | Download the newest `.dump` from the team Box link into `snapshots/` |
-| smoke says `0 chunks` | Restore a snapshot (section 2, step 3) |
+| sync-db: `... is not on this computer. Download ...` | Download that exact file from the team Box link `snapshots/` into the repo's `snapshots` folder, run sync-db again |
+| sync-db: `Found ..., but it differs from the snapshot in LATEST.json` | The file is old, renamed or still downloading. Download it again (wait until Box finishes), run sync-db again. Your database was not changed |
+| sync-db: `git pull failed` | `main` has local changes or commits. Commit them on a branch or ask the tech lead; then run sync-db again |
+| sync-db: `You are on '<branch>': not pulling` | The sync used your branch's `snapshots/LATEST.json`. Switch to `main` (`git switch main`) and run it again for the newest one |
+| sync-db: `snapshots/LATEST.json not found` | No snapshot has been published through the repo yet: put the newest dump in `snapshots/` and run `scripts\restore.ps1` (Mac: `bash scripts/restore.sh`) |
+| smoke says `0 chunks` | Sync a snapshot (section 2, step 2) |
 | `... not found locally. Download it from the team Box link` | The raw file is not in `data\raw\`; download it, or ignore if you only need the passage |
 | `sha256 mismatch` in build-snapshot | The file in Box changed or Box renamed it (e.g. `name (1).htm`). Restore the right file or fix the manifest row via PR |
 | build-snapshot hangs on a file | Box Drive has it cloud-only; mark the folder "Make available offline" |

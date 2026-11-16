@@ -58,6 +58,7 @@ class Hit:
     page: int | None
     rank: float
     text: str
+    date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
 
 
 def _alias_pattern(alias: str) -> re.Pattern:
@@ -186,12 +187,32 @@ def expand_synonyms(terms: str) -> list[str]:
     return out
 
 
-def _tsquery_sql(terms: str) -> tuple[dict, dict]:
+def synonym_only_words() -> list[str]:
+    """Ambiguous words searched only through their synonyms (config `synonym_only`). In filings
+    the bare verb "pay" almost always means paying an obligation, not advisor pay (Q29: a
+    clearing-guarantee note outranked the payout passage)."""
+    return list(entities_config().get("synonym_only") or [])
+
+
+def keyword_terms(q: Query) -> tuple[str, list[str]]:
+    """(words for the FTS query, synonym phrases). Synonyms are read from the whole question;
+    `synonym_only` words are then left out of the words."""
+    terms = _search_terms(q)
+    if q.window:
+        terms += " " + RECENCY_TERMS
+    synonyms = expand_synonyms(terms)
+    for word in synonym_only_words():
+        terms = _synonym_pattern(word).sub(" ", terms)
+    return terms, synonyms
+
+
+def _tsquery_sql(terms: str, synonyms: list[str] | None = None) -> tuple[dict, dict]:
     """SQL fragments for SQL: the question's words OR'ed, plus each synonym as a phrase."""
     words = ("to_tsquery('english',\n"
              "           coalesce(nullif(replace(plainto_tsquery('english', %(terms)s)::text, '&', '|'), ''),\n"
              "                    'zzznomatch'))")
-    params = {f"syn{i}": s for i, s in enumerate(expand_synonyms(terms))}
+    synonyms = expand_synonyms(terms) if synonyms is None else synonyms
+    params = {f"syn{i}": s for i, s in enumerate(synonyms)}
     if not params:
         return {"tsquery": words}, params
     phrases = " || ".join(f"phraseto_tsquery('english', %({name})s)" for name in params)
@@ -241,7 +262,7 @@ WITH q AS (
 ), scored AS (
   SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
          d.published_at::text AS published_at, d.period_end::text AS period_end,
-         c.section, c.page, {rank} AS rank, c.text
+         c.section, c.page, {rank} AS rank, c.text, d.date_basis
   FROM chunks c JOIN documents d USING (doc_id), q
   WHERE {match}
     AND {entity_filter}
@@ -252,7 +273,7 @@ WITH q AS (
   FROM scored
 )
 SELECT chunk_id, doc_id, entity_id, segment, doc_type, source_tier, published_at, period_end,
-       section, page, rank, text
+       section, page, rank, text, date_basis
 FROM pooled
 WHERE rn <= %(per_group)s
 ORDER BY rank DESC, chunk_id
@@ -376,10 +397,8 @@ def search(q: Query, k: int = K) -> list[Hit]:
     filters, filter_params = filters_sql(q)
     params.update(filter_params)
     window, window_params = window_filter(q.window)
-    terms = _search_terms(q)
-    if q.window:
-        terms += " " + RECENCY_TERMS
-    fragments, syn_params = _tsquery_sql(terms)
+    terms, synonyms = keyword_terms(q)
+    fragments, syn_params = _tsquery_sql(terms, synonyms)
     # A window question ("what's new ... in the last 90 days") asks about everything inside the
     # window, so there the words only rank; outside a window they must match.
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
