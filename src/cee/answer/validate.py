@@ -53,7 +53,7 @@ def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
         elif len(known) < len(claim.chunk_ids):
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
-    return check_numbers(answer, hits)
+    return check_dates(check_numbers(answer, hits), hits)
 
 
 # Number check (#52). Rule in specs/answer-citations.md, "Number check".
@@ -134,6 +134,40 @@ def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
 
         if not all(found(f) for f in figures(claim.text)) and "number_not_found" not in claim.flags:
             claim.flags.append("number_not_found")
+    return answer
+
+
+# Date check (#155). Rule in specs/answer-citations.md, "Date check".
+_MONTH_NUMBERS = {m: i for i, m in enumerate(_MONTHS[3:-1].split("|"), start=1)}
+_MONTH_YEAR = rf"({_MONTHS})(?:\s+\d{{1,2}},?)?\s+(\d{{4}})"
+_PERIOD_DATE = re.compile(rf"\b(?:(?:quarter|period|year|months|fiscal year|fiscal quarter)\s+ended|as of)\s+{_MONTH_YEAR}", re.I)
+_PUBLISHED_DATE = re.compile(rf"\bpublished\s+(?:in\s+|on\s+)?{_MONTH_YEAR}", re.I)
+_ANY_DATE = re.compile(_MONTH_YEAR, re.I)
+
+
+def _year_month(iso: str | None) -> tuple[int, int] | None:
+    return (int(str(iso)[:4]), int(str(iso)[5:7])) if iso else None
+
+
+def _stated(m: re.Match) -> tuple[int, int]:
+    return int(m.group(2)), _MONTH_NUMBERS[m.group(1).capitalize()]
+
+
+def check_dates(answer: Answer, hits: list[Hit]) -> Answer:
+    """Flag (never drop) a claim whose stated period or publication month does not match any
+    document it cites. Quarter shorthand (3Q26) is not checked: fiscal and calendar quarters differ."""
+    by_id = {h.chunk_id: h for h in hits}
+    for claim in [*answer.claims, *answer.adjacent]:
+        cited = [by_id[c] for c in claim.chunk_ids if c in by_id]
+        if not cited:
+            continue
+        in_text = {_stated(m) for h in cited for m in _ANY_DATE.finditer(h.text)}
+        periods = {_year_month(h.period_end) for h in cited} | {_year_month(h.published_at) for h in cited}
+        published = {_year_month(h.published_at) for h in cited}
+        wrong = any(_stated(m) not in periods | in_text for m in _PERIOD_DATE.finditer(claim.text)) or \
+            any(_stated(m) not in published | in_text for m in _PUBLISHED_DATE.finditer(claim.text))
+        if wrong and "date_mismatch" not in claim.flags:
+            claim.flags.append("date_mismatch")
     return answer
 
 
