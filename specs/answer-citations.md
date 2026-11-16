@@ -136,6 +136,29 @@ Q29 called the MS 3Q26 release (`period_end` 2026-09-30) "the quarter ended Sept
 Not checked: quarter shorthand ("3Q26", "fiscal 3Q25"), because fiscal and calendar quarters
 differ (Raymond James's fiscal year ends in September); bare years; days of the month.
 
+## Boundary
+
+Ground rule 6 is enforced by code as well as by the prompt (#118). `withhold_normative()` and
+`ensure_handoff()` in `src/cee/answer/validate.py` run at the start of `check_citations`.
+
+- A claim or adjacent item that tells the home firm what to do is **withheld**: it is not shown;
+  the Ask page shows "Withheld: A sentence was withheld because it recommended an action for
+  Edward Jones (ground rule 6). That decision belongs to the strategy team." in its place. The
+  claim is kept in `Answer.withheld` (and so in `query_log`) for review, never silently dropped.
+  A shown recommendation, even flagged, has already reached the reader; that is why it is
+  withheld rather than flagged.
+- An answer with a withheld claim and behavior `answer` is re-judged `answer_with_boundary`.
+- Every `answer_with_boundary` answer ends with the hand-off sentence; code adds it, citing the
+  answer's chunks, when the model left it out.
+
+| Withheld | Not withheld |
+|---|---|
+| "Edward Jones should build a similar channel" (EJ, EDJ, aliases, "the home firm"; should, ought to, would benefit from, might/may want to, could replicate/adopt/copy/emulate/consider/learn from/follow) | the hand-off sentence itself |
+| "The home firm must / needs to ..." | "Edward Jones must maintain minimum net capital" (a filing duty) |
+| "We / I (would) recommend / suggest / advise ..." | text in quotation marks: a firm's or analyst's own words |
+| "It would be wise / advisable / prudent ..."; "It is recommended ..." | "we should expect" in a transcript ("we" / "you" are the speaker, not the home firm) |
+| "recommend(s/ed) / suggest(s/ed) / advise(s/d) (that) Edward Jones ..." | "advisors recommend products suited to each client"; "should market conditions worsen" |
+
 ## Open questions
 
 - Trade-press claims: allowed only as `adjacent` / labeled indicative? (Q29 suggests labeled)
