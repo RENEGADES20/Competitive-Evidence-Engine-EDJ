@@ -9,6 +9,7 @@
 #   caveat          text inserted BY CODE whenever an answer uses substitute data
 #   segment_aliases section headings / phrases that map a chunk to a segment tag
 #   segment_stops   optional headings that end a tagged segment (other segments' names)
+#   crd             FINRA CRD of the firm's main advisory entity (Form ADV Part 2A brochures, #55)
 #   reporting_shape how the firm reports (drives what expected_sources look like)
 #   expected_sources doc types that should exist; seeds source_registry
 #                   (one row per entity + doc type in config/source_registry.csv)
@@ -19,6 +20,7 @@ entities:
     aliases: ["Morgan Stanley", "MS", "Morgan Stanley Wealth Management", "MSWM", "E*TRADE"]
     ticker: MS
     cik: "895421"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "149777"   # main advisory entity: Morgan Stanley Smith Barney LLC ("MORGAN STANLEY"), SEC 801-70103. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Wealth Management: ["Wealth Management", "Wealth Management segment"]
@@ -33,6 +35,7 @@ entities:
     aliases: ["Schwab", "Charles Schwab", "SCHW", "Schwab Advisor Services"]
     ticker: SCHW
     cik: "316709"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "5393"   # main advisory entity: Charles Schwab & Co., Inc., SEC 801-29938. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Investor Services: ["Investor Services"]
@@ -48,6 +51,7 @@ entities:
     aliases: ["Edward Jones", "Jones Financial", "The Jones Financial Companies", "Edward D. Jones & Co."]
     ticker: null
     cik: "815917"
+    crd: "250"   # main advisory entity: Edward D. Jones & Co., L.P. ("EDWARD JONES"), SEC 801-3297. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases: {}
     reported_as: null
@@ -99,6 +103,7 @@ entities:
     aliases: ["Merrill", "Merrill Lynch", "Merrill Wealth Management", "Merrill Lynch Wealth Management"]
     ticker: null
     cik: "728612"   # Merrill Lynch, Pierce, Fenner & Smith Inc.; used for Form ADV only. Verified on EDGAR 2026-10-08 (#1).
+    crd: "7691"   # main advisory entity: Merrill Lynch, Pierce, Fenner & Smith Incorporated, SEC 801-14235. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
                     # Not 914246 ("...SMITH INC /NY"): last filing 2016, old 40-series applications only.
     parent: BAC
     segment_aliases: {}
@@ -113,6 +118,7 @@ entities:
     aliases: ["Raymond James", "RJF", "Raymond James Financial"]
     ticker: RJF
     cik: "720005"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "705"   # main advisory entity: Raymond James & Associates, Inc., SEC 801-10418. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Private Client Group: ["Private Client Group", "PCG"]
