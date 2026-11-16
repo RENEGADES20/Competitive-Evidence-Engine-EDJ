@@ -9,7 +9,7 @@ import streamlit as st
 from cee.app import components as ui
 from cee.answer.validate import source_label
 from cee.ask import STAGES, Result, ask
-from cee.config import entities_config, settings
+from cee.config import entities_config, settings, vectors_enabled
 from cee.feedback import HELPFUL, NOT_HELPFUL, save_feedback
 
 BEHAVIOR_TEXT = {
@@ -55,6 +55,38 @@ def filters_sidebar() -> dict:
             "keywords": [w.strip() for w in words.split(",") if w.strip()]}
 
 
+# The two search modes a user can pick (#128). Plain names only: the UI never says how the
+# search works inside. hybrid-norerank is for comparison runs and is not offered.
+MODE_LABELS = {"fts": "Exact match", "hybrid": "Smart search"}
+MODE_HELP = {"fts": "Finds passages that use the words of your question. Predictable.",
+             "hybrid": "Also finds passages that say the same thing in other words. A few seconds slower."}
+SMART_OFF = "Smart search is not set up on this computer, so Exact match is used."
+
+
+def default_mode() -> str:
+    mode = settings().retrieval_mode
+    return "hybrid" if mode.startswith("hybrid") else "fts"
+
+
+def mode_label(mode: str) -> str:
+    return MODE_LABELS.get(mode, MODE_LABELS["hybrid"] if mode.startswith("hybrid") else mode)
+
+
+def search_mode_sidebar() -> str:
+    """Exact match / Smart search switch (#128); default from RETRIEVAL_MODE. With the optional
+    vectors module off, Smart search cannot run: the switch is locked on Exact match."""
+    smart_ok = vectors_enabled()
+    with st.sidebar:
+        st.markdown("**Search mode**")
+        modes = list(MODE_LABELS)
+        mode = st.radio("Search mode", modes, index=modes.index(default_mode() if smart_ok else "fts"),
+                        format_func=MODE_LABELS.get, key="search_mode", disabled=not smart_ok,
+                        label_visibility="collapsed")
+        mode = mode if smart_ok else "fts"
+        st.caption(MODE_HELP[mode] if smart_ok else SMART_OFF)
+    return mode
+
+
 def filters_text(f: dict) -> str:
     parts = []
     if f.get("firms"):
@@ -66,7 +98,12 @@ def filters_text(f: dict) -> str:
     return "; ".join(parts) or "none"
 
 
-def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
+# Raised by the meaning search when its setup is missing (cee.retrieve.fts / hybrid); matched by
+# name so fts mode never imports the hybrid module.
+SMART_SETUP_ERRORS = {"HybridUnavailable", "MissingVectors", "RerankerNotCached"}
+
+
+def ask_with_trace(question: str, filters: dict | None = None, mode: str = "fts") -> Result | None:
     """Progress bar + one line per stage while the answer is built (#80). The trace stays on the
     page, collapsed, once the answer is ready; a failed stage is marked and its error shown."""
     bar = st.progress(0.0, text="Reading the question")
@@ -75,6 +112,8 @@ def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
     steps: dict[str, tuple[str, str]] = {}
 
     def progress(stage: str, state: str, text: str) -> None:
+        for internal in ("hybrid-norerank", "hybrid"):  # the trace names the mode the user picked
+            text = text.replace(f"({internal})", f"({mode_label(internal)})")
         steps[stage] = (state, text)
         finished = sum(s != "running" for s, _ in steps.values())
         bar.progress(finished / len(STAGES), text=text)
@@ -82,12 +121,16 @@ def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
 
     start = time.perf_counter()
     try:
-        r = ask(question, progress=progress, filters=filters)
+        r = ask(question, progress=progress, filters=filters, mode=mode)
     except Exception as e:
         bar.empty()
         failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
         box.update(label=failed, state="error", expanded=True)
-        st.error(f"The answer could not be built. {type(e).__name__}: {e}")
+        if mode != "fts" and type(e).__name__ in SMART_SETUP_ERRORS:
+            st.error("Smart search is not fully set up on this computer. Switch to Exact match in the "
+                     "sidebar and ask again.")
+        else:
+            st.error(f"The answer could not be built. {type(e).__name__}: {e}")
         return None
     bar.empty()
     box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
@@ -97,6 +140,7 @@ def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
 
 def render() -> None:
     _ticker()
+    mode = search_mode_sidebar()
     filters = filters_sidebar()
     left, right = st.columns([3, 2], gap="large")
     with left:
@@ -112,7 +156,7 @@ def render() -> None:
                                          ("FIRMS", str(s["firms"]))])
 
     if asked and question.strip():
-        r = ask_with_trace(question, filters)
+        r = ask_with_trace(question, filters, mode)
         # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.
         st.session_state["last_answer"] = (r, filters) if r else None
         if r is None:
@@ -139,6 +183,7 @@ def show_answer(r: Result, filters: dict) -> None:
         return out
 
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
+    st.markdown(f'<div class="cee-meta">Found with: {mode_label(r.retrieval_mode)}</div>', unsafe_allow_html=True)
     for i, c in enumerate(a.claims, start=1):
         ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags)
     for i, c in enumerate(a.adjacent, start=1):
@@ -150,7 +195,7 @@ def show_answer(r: Result, filters: dict) -> None:
         ui.gap_box(g.what, g.suggested_source)
     if a.coverage_note:
         ui.coverage_box(a.coverage_note)
-    st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
+    st.markdown(f'<div class="cee-meta">Query #{r.query_id} | search: {mode_label(r.retrieval_mode)} | firms: {footer_firms(r.query)} | '
                 f'filters: {escape(filters_text(filters))} | {len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
     feedback_form(r.query_id)
 
