@@ -7,7 +7,7 @@ from html import escape
 import streamlit as st
 
 from cee.app import components as ui
-from cee.answer.validate import source_label
+from cee.answer.validate import WITHHELD_NOTICE, source_label
 from cee.ask import STAGES, Result, ask
 from cee.config import entities_config, settings
 from cee.feedback import HELPFUL, NOT_HELPFUL, save_feedback
@@ -144,6 +144,8 @@ def show_answer(r: Result, filters: dict) -> None:
     for i, c in enumerate(a.adjacent, start=1):
         ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags,
                       label="ADJACENT EVIDENCE", note=c.differs_because)
+    if a.withheld:
+        ui.withheld_box(WITHHELD_NOTICE)
     for cav in a.caveats:
         ui.caveat_box(cav)
     for g in a.gaps:
