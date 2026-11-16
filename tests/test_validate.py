@@ -436,6 +436,56 @@ def test_numeric_dates_and_section_labels_are_not_checked():
     assert flags_for("in the quarter ended 12/31/2025 (Item 11, Note 4)", "nothing numeric here") == []
 
 
+# Date check (#155): a stated month and year must match the cited document.
+
+def dated(text="x", period_end="2026-09-30", published_at="2026-10-14", chunk_id="MS-PR-2026-10-14-01#5"):
+    return Hit(chunk_id=chunk_id, doc_id=chunk_id.split("#")[0], entity_id="MS", segment=None, doc_type="press",
+               source_tier=3, published_at=published_at, period_end=period_end, section=None, page=None,
+               rank=1.0, text=text)
+
+
+def date_flags(claim, *hits):
+    a = Answer(answerable=False, behavior="gap_with_adjacent", adjacent=[
+        {"text": claim, "chunk_ids": [h.chunk_id for h in hits], "differs_because": "x"}])
+    return check_citations(a, list(hits)).adjacent[0].flags
+
+
+Q29_A4 = ("The Wealth Management press release for the quarter ended September 2025 (published October 2026) "
+          "says compensation expense increased from a year ago, primarily driven by higher compensable revenues.")
+
+
+def test_q29_misdated_quarter_is_flagged():
+    chunk = "Compensation expense increased from a year ago primarily driven by higher compensable revenues."
+    assert date_flags(Q29_A4, dated(chunk)) == ["date_mismatch"]
+    assert date_flags(Q29_A4.replace("September 2025", "September 2026"), dated(chunk)) == []
+
+
+def test_as_of_and_published_dates_are_checked():
+    assert date_flags("Assets as of September 30, 2026 rose.", dated()) == []
+    assert date_flags("Assets as of June 30, 2026 rose.", dated()) == ["date_mismatch"]
+    assert date_flags("The release (published October 2026) says assets rose.", dated()) == []
+    assert date_flags("The release (published in March 2026) says assets rose.", dated()) == ["date_mismatch"]
+
+
+def test_fiscal_year_end_matches_period_end():
+    rjf = dated(period_end="2025-09-30", published_at="2025-11-25", chunk_id="RJF-10K-2025#1")
+    assert date_flags("For the fiscal year ended September 30, 2025, revenues rose.", rjf) == []
+
+
+def test_comparative_column_in_the_chunk_matches():
+    chunk = "Period average 2.88% versus the quarter ended September 30, 2025"
+    assert date_flags("In the quarter ended September 30, 2025 the yield was lower.", dated(chunk)) == []
+
+
+def test_any_cited_document_may_match():
+    older = dated(period_end="2025-09-30", published_at="2025-10-15", chunk_id="MS-PR-2025-10-15-01#5")
+    assert date_flags(Q29_A4.replace(" (published October 2026)", ""), dated(), older) == []
+
+
+def test_quarter_shorthand_and_bare_years_are_not_checked():
+    assert date_flags("On the fiscal 3Q25 call in 2025, management said assets rose.", dated()) == []
+
+
 # Boundary (#118): a claim that tells the home firm what to do is withheld, never shown.
 
 from cee.answer.prompt import BOUNDARY_HANDOFF

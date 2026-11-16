@@ -119,6 +119,23 @@ billion" vs $0.14 billion). The check proves a figure is in the cited text, not 
 the right table column (MS-SUPP-2026Q3 p.8: a docling cell shift put 2.88% under the wrong
 column); PDF source labels keep the page so the reader can open it.
 
+## Date check
+
+`check_dates()` in `src/cee/answer/validate.py` (#155) runs after the number check. A claim that
+dates itself with a month and year is compared with the documents it cites; no match flags the
+claim `date_mismatch` (flagged, never dropped, shown next to the claim). Found in the #61 real run:
+Q29 called the MS 3Q26 release (`period_end` 2026-09-30) "the quarter ended September 2025".
+
+| Claim says | Compared with | Result |
+|---|---|---|
+| "quarter / period / year / months / fiscal year ended <Month> [day,] YYYY", "as of <Month> [day,] YYYY" | a cited document's `period_end` or `published_at` (year and month) | no match: `date_mismatch` |
+| "published [in/on] <Month> [day,] YYYY" | a cited document's `published_at` (year and month) | no match: `date_mismatch` |
+| the same month and year in a cited chunk's text (a comparative column) | chunk text | match |
+| several cited documents | any one matching is enough | |
+
+Not checked: quarter shorthand ("3Q26", "fiscal 3Q25"), because fiscal and calendar quarters
+differ (Raymond James's fiscal year ends in September); bare years; days of the month.
+
 ## Boundary
 
 Ground rule 6 is enforced by code as well as by the prompt (#118). `withhold_normative()` and
