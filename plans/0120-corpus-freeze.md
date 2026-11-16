@@ -19,9 +19,9 @@ TL), so the PR is `Part of #120`.
 (`Get-Date` / `date`), and the build runs on 2026-11-16, so the snapshot is `corpus-2026-11-16`.
 It differs from 11-11 because the build waited for the plan review and for the TL's W7 decision
 of 2026-11-16 (#55 and #107 out, #115 in); nothing was built on 11/11. The corpus documents are
-still those frozen by 11/11: the last manifest change on `main` is 822ead2 (#151, 2026-11-05);
-since then `main` changed only `config/source_registry.csv` (#115, registry names, seeded into
-the snapshot) and docs. Forcing `-11-11` would mean editing the script or renaming the dump and
+still those frozen by 11/11: no manifest change since 822ead2 (#151, 2026-11-05). Since 4236f14
+(the round-1 review) `main` changed only `config/source_registry.csv` (#115, registry names,
+seeded into the snapshot) and docs. Forcing `-11-11` would mean editing the script or renaming the dump and
 its stamp by hand, which breaks the sha256 in `LATEST.json`. If the build runs on another day or
 crosses midnight, the stamped name is used and announced (whatever `COMMENT ON TABLE documents`
 says is the name); every `corpus-2026-11-16` below then means that name.
@@ -84,7 +84,7 @@ says is the name); every `corpus-2026-11-16` below then means that name.
   | W7 issue | Owner | State | In this freeze? |
   |---|---|---|---|
   | #115 registry names in gap answers | C1 | closed, merged as PR #173 (dd92ca7, on 8f92cb1) | **yes** (registry seeded into the snapshot) |
-  | #116 tier-5 docs in entity questions | S1 | closed, merged as PR #148 (2026-11-04) | yes (code, already on main) |
+  | #116 tier-5 docs in entity questions | S1 | closed, merged as PR #148 (2026-11-03 local, 11-04 UTC) | yes (code, already on main) |
   | #55 Form ADV Part 2A brochures (Q18) | C3 | open, PR #178 open | **no, on purpose**: lowers mock eval 27/3 -> 26/4 (`adv` searched for every question) until S1's follow-up; merges right after the build, next snapshot. **Q18 is scored without fee-schedule documents in this snapshot** (accepted by the TL) |
   | #107 speaker-turn chunking | C2 | open, PR #150 open | **no, on purpose**: Q28 fails without #166; merges right after the build, next snapshot |
 
@@ -240,35 +240,99 @@ so the `repo` code (= `main`) is used.
     snapshot `corpus-2026-11-16`; Q18 noted as scored without fee documents).
 11. Progress log, `/finish-task`.
 
+## Findings (2026-11-16, snapshot corpus-2026-11-16, mock, 0 paid calls)
+Evidence: `D:\ALLPROJECTS\EDJ\cache\ev120\` (`build.log`, `page_sweep.txt`, `restore_smoke.txt`,
+`base-1029`, `base-1116`, `freeze-1029`, `freeze-1116`, `freeze-1029-k40`, `cmp-1029.txt`,
+`compare.py`, `verify.log`).
+
+**Mock eval, freeze vs baseline** (`--k 20`; tier-1 recall is now over all 18 tier-1 questions,
+since #170 gave every one a key, so it is not comparable with #168's 0.796/0.753 over 9):
+
+| Run | PASS / FAIL | FAIL IDs | Tier-1 doc / passage recall | Refusal (gap / all keyed) | Forbidden |
+|---|---|---|---|---|---|
+| base-1029 (`corpus-2026-10-29`, as of 10-29) | 28 / 2 | Q15, Q19 | 0.646 / 0.449 | 5/5 / 19/19 | 0 |
+| freeze-1029 (`corpus-2026-11-16`, as of 10-29) | 26 / 4 | Q15, Q19, Q22, Q24 | 0.629 / 0.460 | 5/5 / 19/19 | 0 |
+| base-1116 (`corpus-2026-10-29`, as of 11-16) | 27 / 3 | Q15, Q19, Q26 | 0.626 / 0.417 | 5/5 / 19/19 | 0 |
+| freeze-1116 (`corpus-2026-11-16`, as of 11-16) | 25 / 5 | Q15, Q19, Q22, Q24, Q26 | 0.608 / 0.428 | 5/5 / 19/19 | 0 |
+
+Stop rule not hit: 0 forbidden hits, refusal accuracy unchanged. Q26 at as-of 11-16 fails on
+both snapshots (no RJF passage inside the 90-day window ending 11-16; window behavior, not the
+freeze). Q15 and Q19 failed before the freeze; Q19's chunks are identical, its coverage
+denominator grew 4 -> 5 because `MER:press` now exists in the corpus.
+
+**What changed.** 28 of 30 questions return different chunks (`cmp-1029.txt`). Every gained
+chunk is from one of the 26 new documents, except 10 chunks of documents already in the corpus
+(rank shuffles, mostly the neighbour of the chunk they replace; Q15, Q17, Q20, Q21, Q22, Q24). The
+11 documents not in `cee_84` (the three Merrill pages/release, six RJF web pages, Cerulli,
+Wealthtender) appear in 20 questions.
+
+**Cause of Q24, Q22 and the recall drop: Merrill now fills two firm groups.** Until this
+snapshot Merrill was served only by BAC chunks in GWIM; the freeze adds the first documents with
+`entity_id = MER` (MER-PR-2026-09-15-01, MER-PR-web-advisor-development-program,
+MER-PR-web-becoming-a-merrill-lynch-advisor). In every five-firm question the 20 slots were
+4 x 5 firms; now they are MS 3-4, SCHW 3-4, EDJ 3-4, RJF 3-4, BAC 3 **plus MER 3** (Q10, Q11, Q22,
+Q23, Q24 counted). Merrill gets ~6 slots, and the 4th-ranked chunk of other firms falls out at
+the k=20 cut. With `--k 40` all five questions PASS (`freeze-1029-k40`):
+
+| Q | Status | Dropped chunk (base rank -> rank at k=40) | Took the slot | Class |
+|---|---|---|---|---|
+| Q24 | PASS -> FAIL (coverage 3/5 -> 1/5) | `MS-SUPP-2026Q1#14` (8 -> 21, `MS:supplement`), `SCHW-10K-2025#42` (16 -> 25, `SCHW:10-K`), `EDJ-10K-2025#267` (14 -> 28) | `MS-DECK-2026-strategic-update#28`, `SCHW-DECK-2026-investor-day#25`, `SCHW-MONTHLY-2026-04#6`, MER pages `MER-PR-2026-09-15-01#2`, `MER-PR-web-becoming-a-merrill-lynch-advisor#3/#4` | b |
+| Q22 | PASS -> FAIL (4/6 -> 3/7) | `RJF-PR-2026-01-28-01#1` (18 -> 21, `RJF:press`), `MS-10K-2025#165` (17 -> 26), `EDJ-10K-2025#182` (19 -> 22) | MER pages and release, `MS-DECK-2026-strategic-update#31` | b |
+| Q11 | PASS, doc recall 0.875 -> 0.625 | `BAC-10K-2025#246` (20 -> out of 40, must_return), `BAC-SUPP-2026Q1#44` (15 -> out) | three MER chunks, MS deck/supplement | b |
+| Q10 | PASS, coverage 1.0 -> 0.8 | `BAC-TR-2026Q3#13` (20 -> out, `BAC:transcript#GWIM`), `BAC-10K-2025#249` (5 -> out) | `BAC-DECK-2025-investor-day#8/#9/#12`, MER page | b |
+| Q23 | PASS, doc recall 0.35 -> 0.30 | `MS-SUPP-2026Q1#14` (19 -> out, must_return) | MER pages, BAC deck, RJF web page | b |
+| Q1, Q28 | PASS, doc recall 0.667 -> 0.556, 0.833 -> 0.667 | MS supplements/10-Q; BAC transcripts | MS deck and MS-SUPP-2025Q4; BAC deck and MER pages | a (Q1), b (Q28) |
+| Q2, Q3, Q13, Q27 | PASS, recall unchanged | one must_return doc each (`RJF-PR-2026-04-22-01`, `SCHW-DECK-2026Q3`, `MS-SUPP-2026Q3`, `BAC-SUPP-2026Q1`) | a newer same-firm document that is also in the key (`RJF-PR-web-traditional-employee-advisor`, `SCHW-DECK-2026-investor-day`, `MS-DECK-2026-strategic-update`, `MER-PR-2026-09-15-01`) | a |
+
+Q24's must_return passages (`EDJ-10K-2025#130`, `RJF-10K-2025#227/#228`, the MS-SUPP
+advisor-led-assets rows) were not retrieved on the baseline either (passage recall 0/4 before and
+after, not in the top 40); that is older than the freeze. Q24 still refuses correctly
+(`refusal_ok`, no must_not chunk).
+
+Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in this PR):
+- (b) **S1 - Merrill counted as one firm in the per-firm pool**: `MER` and `BAC`-in-GWIM
+  should share one quota (Merrill = `entity=MER` or `entity=BAC` and segment GWIM/Merrill), so
+  five-firm questions keep 4 slots per firm. Evidence: Q10, Q11, Q22, Q23, Q24, Q28 above;
+  check: freeze mock eval at k=20 back to Q22/Q24 PASS without a new forbidden hit.
+- (a) **C1 - answer keys for documents new in the freeze**: Q1, Q2, Q3, Q13, Q27 now return a
+  newer same-firm document for a fact the key ties to an older one; C1 decides per row whether
+  the new document is an accepted alternative (`evals/expected_chunks.yaml`, never the questions).
+- (c) **C2 - generic Merrill/RJF career web pages** (`MER-PR-web-*`, `RJF-PR-web-*`, undated,
+  #151) rank in benchmark and NNA questions (Q16, Q20, Q22, Q24, Q25) where they carry no
+  figure; C2 checks their segment/doc_type tagging. Lower priority than (b), which removes most
+  of the effect.
+- Q18 (P1): scored without fee-schedule documents; mock PASS on pattern coverage only.
+
 ## Acceptance
-- [ ] P1 check before the build: PR #178 `OPEN`, PR #150 `OPEN`,
+- [x] P1 check before the build: PR #178 `OPEN`, PR #150 `OPEN`,
       `git log 822ead2..HEAD -- data/manifest.csv` empty; `repo` HEAD = `origin/main` (8f92cb1
       or a later sha whose changes are listed and touch no ingest/config/db file).
-- [ ] Build: `EV\build.log` shows `137 files OK`, 0 lines `parsing with docling|edgartools`,
+- [x] Build: `EV\build.log` shows `137 files OK`, 0 lines `parsing with docling|edgartools`,
       88 `parse cache hit`, `Embedding skipped` (or the vector check -> 0), dump
       `corpus-2026-11-16.dump` copied to Box.
-- [ ] `SELECT obj_description('documents'::regclass)` -> `corpus-2026-11-16`; documents = 137,
+- [x] `SELECT obj_description('documents'::regclass)` -> `corpus-2026-11-16`; documents = 137,
       doc_id set = manifest's 137; chunk count recorded in LATEST.json and README.
-- [ ] `python -m cee.smoke` -> PASS; `verify_cee.py doctor` -> DOCTOR PASS;
+- [x] `python -m cee.smoke` -> PASS; `verify_cee.py doctor` -> DOCTOR PASS;
       `verify_cee.py run` -> VERIFY PASS (all features).
-- [ ] `EV\page_sweep.txt`: 47 PDFs, `MISPLACED 0` on every line.
-- [ ] Box dump sha256 = `snapshots/LATEST.json` sha256; `pg_restore --list` exit 0;
+- [x] `EV\page_sweep.txt`: 47 PDFs, `MISPLACED 0` on every line.
+- [x] Box dump sha256 = `snapshots/LATEST.json` sha256; `pg_restore --list` exit 0;
       `sync-db.ps1 -Check` -> exit 0 "up to date: corpus-2026-11-16";
       scratch restore into `cee_restore_120` -> smoke PASS, then dropped.
-- [ ] Mock eval `freeze-1029` vs `base-1029`: 0 forbidden hits; refusal accuracy >= baseline
+- [x] Mock eval `freeze-1029` vs `base-1029`: 0 forbidden hits; refusal accuracy >= baseline
       (5/5 gap questions); PASS/FAIL counts, tier-1 doc/passage recall reported.
-- [ ] Q24: cause named (which pattern/must_return chunk dropped, which new document took the
+- [x] Q24: cause named (which pattern/must_return chunk dropped, which new document took the
       slot, rank at k=40) and classified a/b/c; same for every question whose retrieval changed
       (expected at least Q1, Q10, Q11, Q22, Q23) and for the recall drop (per-question recall
       before/after). One W9 issue draft per class.
-- [ ] `pytest -q` -> all pass, count = step-1 floor.
-- [ ] `snapshots/LATEST.json` on this branch = the build's file; `git status` in `repo` clean
+- [x] `pytest -q` -> all pass, count = step-1 floor.
+- [x] `snapshots/LATEST.json` on this branch = the build's file; `git status` in `repo` clean
       after `git restore snapshots/LATEST.json`; README Status updated; #169, #178, #150 told
       the snapshot name.
-- [ ] Paid calls: 0 until the TL approves step 8; then exactly one run, <= 30 calls; one raw
+- [ ] Paid calls (open: steps 8-9 not approved; this task made 0 calls): 0 until the TL approves step 8; then exactly one run, <= 30 calls; one raw
       file per question with hits in `EV\real-30\raw\` (expected 30), calls + reused + no_call
       = 30; calls/model/`main` sha in the PR.
 - [ ] Scoring pack for all 30 (behavior, citations resolve, number check, provisional verdict).
+      Open: it needs the real-run outputs of step 9.
 - [ ] Open, not done by this task (PR says `Part of #120`): Gate 3 human score X/30 posted in
       PROGRESS (C1/scorers); cold test by two teammates outside S1/S2 (5 new questions each, no
       help) and one issue per failure; TL decision "sixth firm yes/no" (BRIEF: expansion only
@@ -312,3 +376,41 @@ so the `repo` code (= `main`) is used.
   snapshots/LATEST.json` in `repo` after the copy; "publishing" = the LATEST.json PR (dump
   already in Box); exact "no parser ran" grep and the `CEE_VECTORS=on` path. Awaiting the
   reviewer's verdict (P5); nothing built.
+- 2026-11-16 16:01 - reviewer agent on #120 ("Reviewed 980f094f"): **PLAN APPROVED** for steps
+  1-7 and 10; steps 8-9 (30-call real run) **not approved**: 0 paid calls in this task, listed
+  as open. Two non-blocking notes applied (the "since 822ead2" sentence; #148 local date).
+- 2026-11-16 16:03 - P1 checks: PR #178 OPEN, PR #150 OPEN, `git log 822ead2..origin/main --
+  data/manifest.csv` empty. `repo` switched from `tl/159-q29-synonym-only` (clean, squashed into
+  main as #164) to `main`, `git pull --ff-only` -> 8f92cb1 = origin/main; 0 empty `published_at`.
+  Box root holds 5 loose files `EDJ/MER/MS/RJF/SCHW-ADV-2026.pdf` (Nov 16 15:30): exactly the 5
+  manifest rows of PR #178, which the TL left out of this freeze on purpose, so not moved into
+  `raw/` and not a reason to stop (the build reads only manifest rows; they go in with #178).
+- 2026-11-16 16:03 - step 1 baseline on corpus-2026-10-29 (code 8f92cb1 + this plan): pytest 366
+  passed (floor); DOCTOR PASS; base-1029 PASS 28 / FAIL 2 (Q15, Q19), tier-1 doc recall 0.646
+  (18 keyed questions since #170), refusal 5/5; base-1116 27 / 3 (Q15, Q19, Q26).
+- 2026-11-16 16:04 - step 2 build notes (final, in LATEST.json): "Corpus freeze (#120): 137
+  documents, 26 more than corpus-2026-10-29: investor-day and strategy decks and a Merrill release
+  (#146), last-four supplements and six Schwab monthly reports (#147), FINRA and research reports
+  (#152), dated advisor web pages (#151). PDF passages carry the page of every docling span (#84).
+  Registry names cleaned (#115). Not in this snapshot: Form ADV brochures (#55) and speaker-turn
+  transcripts (#107)." Build 16:04:02-16:04:40, exit 0: 137 files OK; 88 `parse cache hit`, 0
+  `parsing with`; embedding skipped (CEE_VECTORS off); `corpus-2026-11-16.dump` 4.5 MB in Box;
+  137 documents, 18,497 chunks; sha256 df1baea3cf8efbd9225fd74519154c330cd38af581f65810d61b1273a0d05602.
+- 2026-11-16 16:05 - step 3: stamp `corpus-2026-11-16`, 137 docs = manifest doc_ids, no
+  `*-ADV-2026`; smoke PASS; DOCTOR PASS; Box and local dump sha256 = LATEST.json; `pg_restore
+  --list` exit 0; `sync-db.ps1 -Check` and `sync-db.sh --check` exit 0 "up to date"; scratch
+  restore `cee_restore_120` smoke PASS, dropped (cee, cee_84, cee_84_rev kept); page sweep 47
+  PDFs, 3,568/3,568 chunks on their page, MISPLACED 0.
+- 2026-11-16 16:05 - step 4: freeze-1029 26 / 4 (Q15, Q19, Q22, Q24), recall 0.629, refusal 5/5,
+  0 forbidden; freeze-1116 25 / 5 (+Q26); pytest 366 passed. Stop rule not hit.
+- 2026-11-16 16:07 - step 5: Findings above (cause: first `entity_id = MER` documents give
+  Merrill a second firm group in five-firm questions; k=40 run passes Q10/Q11/Q22/Q23/Q24).
+- 2026-11-16 16:08 - step 6: `verify_cee.py run` VERIFY PASS, 7 features PASS, open-citation and
+  download-document UNREACHABLE (`.verify-runs/20261116-160728-980f094`): `wt-120` has no
+  `.env`, so no `CORPUS_SHARE_PATH` for raw files (environment). Re-run of those two with
+  `CORPUS_SHARE_PATH` set in the shell (`.verify-runs/20261116-160855-980f094`): both PASS
+  (incl. PDF page checks on 5 PDFs, one from the new RJF investor-day deck).
+- 2026-11-16 16:09 - step 7: LATEST.json copied to this branch; `git restore
+  snapshots/LATEST.json` in `repo` -> clean on `main`. README Status updated. Steps 8-9 not run
+  (not approved; 0 paid calls); step 10 needs their outputs, so open.
+- 2026-11-16 16:10 - #169, #178, #150 told the snapshot name (PR comments). /finish-task.

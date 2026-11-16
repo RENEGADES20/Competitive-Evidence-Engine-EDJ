@@ -72,21 +72,22 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-05.
+As of 2026-11-16.
 
-**Corpus.** `main`'s manifest lists 121 documents: SEC filings, supplements, monthly
-metrics, decks, call transcripts, press releases and 22 research reports from 16
-publishers. The latest snapshot, `corpus-2026-10-29`, holds 111 documents and 17,183
-passages (documents merged after it arrive with the next snapshot). In review: #152 (three
-more research reports) and #146 (four investor-day decks, one press release). The corpus
-freezes on 2026-11-11.
+**Corpus.** The corpus is frozen (#120). Snapshot `corpus-2026-11-16` holds all 137
+documents in `main`'s manifest and 18,497 passages: SEC filings, supplements, monthly
+metrics, investor-day and quarterly decks, call transcripts, press releases, advisor web
+pages and research reports. PDF passages carry the page they are on (#84). Form ADV
+brochures (#55) and speaker-turn transcript chunks (#107) arrive with the next snapshot.
 
 **Retrieval check (automated, not a gate score).** `scripts/eval_run.py` runs the 30
 questions with the mock model and checks whether search returns the expected passages
-and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-05, snapshot
-`corpus-2026-10-29`, `--as-of 2026-10-29`: 27 PASS / 3 FAIL (Q15, Q19, Q29);
-document recall 0.796 on the 9 of the 18 tier-1 questions that have an answer key; gap
-questions refused correctly 4 of 5; 0 paid calls.
+and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-16, snapshot
+`corpus-2026-11-16`, `--as-of 2026-10-29`: 26 PASS / 4 FAIL (Q15, Q19, Q22, Q24);
+document recall 0.629 on the 18 tier-1 questions (all have an answer key); gap questions
+refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. Same check on the previous
+snapshot `corpus-2026-10-29`: 28 PASS / 2 FAIL, recall 0.646. The new Merrill pages take
+search slots from other firms in five-firm questions; the follow-up is tracked in #120.
 
 **Gate scores (human-scored).** A person scores each answer at acting quality (one the
 project lead would forward with his name on it), per [docs/BRIEF.md](docs/BRIEF.md).
