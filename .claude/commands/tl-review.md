@@ -64,19 +64,23 @@ is an **escalation** to the tech lead, not a return. Every check falls in exactl
 ## Paid API calls
 CLAUDE.md "Paid API calls (money)" decides. For review that means:
 - **Allowed without the tech lead** when the approved ExecPlan planned them: question IDs, why the
-  mock cannot show it, and a count of 10 or fewer. They run once, last, after every mock check
+  mock cannot show it, and counts: at most 5 per question, 10 or fewer in the task. They run once, last, after every mock check
   passed; every raw output (question, prompt version, model, output) is saved in the run's
   evidence folder; the PR's Verification states the count, the model and why.
 - **The reviewer never makes a paid API call.** It reads the saved raw outputs and judges them;
   it does not re-run them. The count in the PR must match the plan and the saved outputs.
-- **Escalate** when there are more than 10 calls, calls not in the approved plan, or calls the
-  reviewer would need to make to verify the change.
+- **Escalate** when one question is planned or called more than 5 times, there are more than 10
+  calls in the task, calls not in the approved plan, calls the reviewer would need to make to
+  verify the change, or a 30-question scored run (Gate 3) without a tech-lead go-ahead on the issue.
 
 Worked examples:
 - A plan with 3 planned real calls for Q1, Q12, Q26 (IDs, why the mock cannot judge the wording,
   count 3): passes plan check 5, no escalation. In PR review: 3 saved raw outputs, "3 real calls"
   in the PR -> fine; the reviewer makes 0 calls.
+- A plan that calls Q1 and Q12 5 times each (e.g. five prompt versions; 10 calls): passes, no escalation.
+- A plan with one question planned 6 times (e.g. Q12 with six prompt versions): escalate (more than 5 for one question).
 - A plan with 11 planned calls: escalate (more than 10).
+- A plan for the 30-question scored run (Gate 3) with no tech-lead go-ahead on the issue: escalate, even at 1 call per question.
 - A PR that made calls not in the approved plan (e.g. 3 planned, 5 made, or none planned): escalate.
 
 ## Later rounds
@@ -94,7 +98,7 @@ Each of these that does not hold is a blocking finding:
 2. "Files to change" stays inside the issue's scope; nothing from "Out of scope"; no teammate-owned file without naming the owner as reviewer (CLAUDE.md spec table).
 3. No invariant is bent (hard filters in SQL, one LLM call, citations only to retrieved chunks, caveats by code, question bank append-only).
 4. Windows and Mac: any script or setup step has both versions.
-5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, count of 10 or fewer, run last after the mock checks); see "Paid API calls".
+5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, at most 5 per question and 10 or fewer in the task, run last after the mock checks; no 30-question scored run (Gate 3) without a tech-lead go-ahead); see "Paid API calls".
 6. Steps are small and testable; risks named.
 
 Verdict: post on the issue with `gh issue comment <issue#> --body "..."`. The body starts with the
@@ -129,7 +133,7 @@ Non-blocking: <numbered notes (and follow-up issue links), or "none">
 
 ## Never merge; escalate to the tech lead instead
 - A new or changed ADR, or a change to CLAUDE.md ground rules or invariants.
-- Paid API calls: more than 10, not in the approved plan, or ones the reviewer would need to make (see "Paid API calls").
+- Paid API calls: more than 5 for one question, more than 10 in the task, not in the approved plan, ones the reviewer would need to make, or a 30-question scored run (Gate 3) without a tech-lead go-ahead (see "Paid API calls").
 - Deleting data, documents, snapshots or questions from `evals/questions.yaml`.
 - A teammate-owned file changed without that teammate's review on the PR.
 - A check the reviewer cannot run (see "Check rule"), or one that fails on `main` too and the PR does not say so.

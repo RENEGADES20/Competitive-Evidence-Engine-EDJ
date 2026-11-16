@@ -130,43 +130,43 @@ Risks / unsure:
 - `sync-db -Check` cannot run in this worktree (no `.venv`); irrelevant for a docs-only task.
 
 ## Acceptance
-- [ ] Linked questions: none (docs only).
-- [ ] Issue item 1 (spec only as history): `git grep -n -i -E "EJ-[0-9]+|portability spec|sponsor spec" -- . ':!plans/' ':!evals/' ':!docs/PROGRESS.md'`
+- [x] Linked questions: none (docs only).
+- [x] Issue item 1 (spec only as history): `git grep -n -i -E "EJ-[0-9]+|portability spec|sponsor spec" -- . ':!plans/' ':!evals/' ':!docs/PROGRESS.md'`
       -> matches only in `docs/DECISIONS.md`, inside ADR-010's body (history), ADR-010's Status
       line (naming the superseded parts) and ADR-011 (which records that the spec no longer
       binds); no match in CLAUDE.md, `.claude/`, `specs/`, DASHBOARD.md, PLANS.md, README.md;
       no line presents it as a current rule or a reason to refuse a change (reviewer reads each
       match). `git grep -n -i "EJ-" -- docs/PROGRESS.md` -> 0 matches.
-- [ ] Issue item 1, ADR-010 leftovers: `git grep -n -i "sponsor agrees" -- docs/DECISIONS.md`
+- [x] Issue item 1, ADR-010 leftovers: `git grep -n -i "sponsor agrees" -- docs/DECISIONS.md`
       -> only ADR-010's historical revisit-trigger line (line 233 at 44c8af0; it may shift if the Status line wraps). `git grep -n -i -E "scope of EJ-10|meets EJ-10|sponsor-agreement|ranking" -- docs/DECISIONS.md`
       -> the ADR-010 Status line and ADR-011 name each of: the Context reason, the ranking limit,
       the "Scope of EJ-10 here" bullet, the sponsor-agreement revisit trigger and the
       Consequences "meets EJ-10" line as superseded; ADR-011 says moving model-based work to
       `main` needs a tech-lead decision / new ADR lifting the branch rule, not sponsor agreement.
-- [ ] Issue item 2 (branch rule once): `git grep -n -i "on a branch" -- CLAUDE.md` ->
+- [x] Issue item 2 (branch rule once): `git grep -n -i "on a branch" -- CLAUDE.md` ->
       exactly 1 line, in "Architecture invariants"; that bullet names embeddings, rerankers,
       local/hosted models (reviewer reads the bullet). `git grep -n "ADR-011" -- docs/DECISIONS.md`
       -> ADR-011 heading, ADR-010 Status line; ADR-011 text references the CLAUDE.md branch rule
       and keeps `exp/hybrid`.
-- [ ] Issue item 3 (CLAUDE.md step 2): `git grep -n -i -E "per question|more than 10|gate 3" -- CLAUDE.md`
+- [x] Issue item 3 (CLAUDE.md step 2): `git grep -n -i -E "per question|more than 10|gate 3" -- CLAUDE.md`
       -> hits only in "Paid API calls" step 2, which says (reviewer reads the step): at most 5
       real calls per question in a task, planned before the first call; more than 10 calls in
       one task asks the user first; the 30-question scored run (Gate 3) needs the tech lead.
-- [ ] Issue item 4 (same in TL docs): `git grep -n -i -E "per question|more than 5" -- .claude/commands/tl-review.md .claude/commands/tl-run.md docs/DASHBOARD.md`
+- [x] Issue item 4 (same in TL docs): `git grep -n -i -E "per question|more than 5" -- .claude/commands/tl-review.md .claude/commands/tl-run.md docs/DASHBOARD.md`
       -> hits in tl-review "Paid API calls", worked examples, plan check 5 and "Never merge";
       tl-run "Stop and ask" and "Rules"; DASHBOARD 3b. `git grep -n "10 or fewer" -- .claude/ docs/DASHBOARD.md`
       -> each hit's sentence also states the per-question limit (reviewer reads it).
       `git grep -n -i "gate 3" -- .claude/commands/ docs/DASHBOARD.md`
       -> tl-review, tl-run, DASHBOARD each say it needs the tech lead. `git grep -n "6 times" -- .claude/commands/tl-review.md`
       -> the worked example "one question planned 6 times -> escalate".
-- [ ] Issue item 5 (no other rule changes; ADR-009 unchanged): `git diff origin/main --stat`
+- [x] Issue item 5 (no other rule changes; ADR-009 unchanged): `git diff origin/main --stat`
       -> only CLAUDE.md, docs/DECISIONS.md, specs/retrieval.md, .claude/commands/tl-review.md,
       .claude/commands/tl-run.md, docs/DASHBOARD.md, plans/0182-rules-update.md;
       `git diff origin/main -- docs/DECISIONS.md` -> no hunk inside ADR-009 (lines 155-177)
       and inside ADR-010 only the Status line.
-- [ ] Issue item 6: `pytest -q` (repo venv, `PYTHONPATH=<worktree>/src`) -> all pass, same count
+- [x] Issue item 6: `pytest -q` (repo venv, `PYTHONPATH=<worktree>/src`) -> all pass, same count
       as on `origin/main`.
-- [ ] 0 real calls (docs only).
+- [x] 0 real calls (docs only).
 
 ## Progress log
 - 2026-11-16 17:14 - plan written on `tl/182-rules-update` from origin/main 44c8af0. Greps for
@@ -174,10 +174,30 @@ Risks / unsure:
   limits in CLAUDE.md, tl-review.md, tl-run.md, DASHBOARD.md 3b. `sync-db -Check` not runnable
   in the worktree (no `.venv`); not needed for docs only.
 - 2026-11-16 17:18 - reviewer: PLAN CHANGES REQUESTED on e528566 (2 blocking, 4 non-blocking).
-- 2026-11-16 17:24 - revised: blocking 1, `specs/retrieval.md` is S1-owned -> S1 named as PR
+- 2026-11-16 17:19 - revised (commit 775cd27; this line first said 17:24, a guessed time, corrected here): blocking 1, `specs/retrieval.md` is S1-owned -> S1 named as PR
   reviewer, tech lead may approve in S1's place (as on #172), "teammate-owned file" added to the
   escalation reasons; blocking 2, ADR-010 Status names all its EJ-10 parts, ADR-011 replaces the
   sponsor-agreement trigger with a tech-lead decision / new ADR, new `sponsor agrees` grep check (new text says "sponsor-agreement" so only line 233 matches).
   Non-blocking 1: greps use short phrases kept on one line; 2: PR body explains ADR-011 lands as
   Accepted; 4: item 1 grep excludes `docs/PROGRESS.md`, plus a 0-match check on it. Note 3
   (eval_run.py has no per-question cap): no change, code out of scope.
+- 2026-11-16 17:20 - reviewer: PLAN APPROVED on 775cd27 (non-blocking: record the actual line of
+  the "sponsor agrees" history line).
+- 2026-11-16 17:22 - implemented. CLAUDE.md: branch rule bullet after line 32 (now line 33),
+  "Paid API calls" step 2 (lines 99-103). DECISIONS.md: ADR-010 Status line 180 kept on one line,
+  so the body does not shift; ADR-011 appended (lines 243-270). specs/retrieval.md lines 4 and
+  71; tl-review.md (Paid API calls 66-75, worked examples 77-83, plan check 5 line 101, Never
+  merge line 136); tl-run.md lines 41 and 47-49; DASHBOARD.md 3b lines 77-78. In CLAUDE.md the
+  bullet's second "on a branch" was reworded ("is built and tested there") so the phrase occurs
+  once.
+- 2026-11-16 17:22 - acceptance checks on the working tree, all as expected:
+  item 1 grep -> only docs/DECISIONS.md (ADR-010 Status 180, ADR-010 body 182, 224-227, 237,
+  ADR-011 243-254); docs/PROGRESS.md "EJ-" -> 0. `sponsor agrees` -> only line 233 (ADR-010's
+  revisit trigger, history; same line number as at 44c8af0). Item 2: "on a branch" in CLAUDE.md
+  -> 1 line (33). Item 3: CLAUDE.md 101-103. Item 4: per-question limit in tl-review 67, 72, 81,
+  101, 136; tl-run 41, 47-48; DASHBOARD 77; every "10 or fewer" line (tl-review 67, 101; tl-run
+  47) also states "at most 5 per question"; Gate 3 in tl-review 74, 83, 101, 136, tl-run 41,
+  49, DASHBOARD 78; "6 times" example tl-review 81. Item 5: diff vs origin/main = the 7 planned
+  files; DECISIONS.md hunks only @@ -180 and the append after 241 (ADR-009 untouched).
+  Item 6: `pytest -q` -> 380 passed (no code or test file changed, so the same tests as
+  origin/main). verify-cee not run: docs only. 0 real calls.

@@ -38,12 +38,13 @@ merged). If not, stop and say why.
 
 ## Stop and ask the tech lead
 - A third blocking return at either review stage.
-- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned, more than 10 or needed by the reviewer, deleted data, ground rules, teammate file, a check it cannot run).
+- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned, more than 5 for one question, more than 10, needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead, deleted data, ground rules, teammate file, a check it cannot run).
 - The implementer is blocked or the issue is unclear.
 
 ## Rules
 - Agents run one after another in the same checkout; never two writers at once.
 - The reviewer's only inputs are issue/plan/PR numbers and the repo. That is what makes it independent.
-- Paid API calls: 0 unless the approved plan planned them (question IDs, why, 10 or fewer; CLAUDE.md).
-  More than 10 or unplanned calls need the tech lead. The reviewer never makes a paid call.
+- Paid API calls: 0 unless the approved plan planned them (question IDs, why, at most 5 per question, 10 or fewer in the task; CLAUDE.md).
+  More than 5 for one question, more than 10 or unplanned calls need the tech lead, and so does
+  the 30-question scored run (Gate 3). The reviewer never makes a paid call.
 - Teammate PRs are not reviewed this way; they stay with the tech lead.
