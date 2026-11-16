@@ -41,13 +41,16 @@ def render(chunk_id: str) -> None:
                FROM chunks c JOIN documents d USING (doc_id) WHERE c.chunk_id = %s""",
             (chunk_id,)).fetchone()
         if not row:
-            st.error(f"Chunk {chunk_id} is not in the stored corpus.")
+            st.error(f"Chunk {chunk_id} is not in the stored corpus. The link may be mistyped or come "
+                     "from an older snapshot; go back and ask the question again.")
             return
         context = neighbours(conn, row)
     meta = [f"Section: {row['section']}"] + ([f"Page {row['page']}"] if row["page"] else []) + \
            [f"Chunk: {row['chunk_id']}", f"Filed: {row['published_at']}"]
     ui.source_header(f"{row['entity_id']} {row['doc_type']} {row['period_end'] or row['published_at']}",
                      row["source_tier"], meta)
+    st.caption("The passage a citation points to, exactly as stored, with the passages around it"
+               + (" and the PDF page it is on." if row["page"] else "."))
     st.markdown("**Stored passage**")
     ui.context_passages(context)
 
