@@ -23,8 +23,9 @@ in one line what it shows, and empty or no-evidence results read in plain langua
 - [x] Empty states (before asking, no results, gap answer, unknown chunk) read in plain language
 - [x] verify-cee all features PASS; screenshots in the PR
 - [x] 0 real model calls
-- [ ] After #62 merges: sync with main and rerun verify-cee including `feedback`
+- [x] After #62 merges: sync with main and rerun verify-cee including `feedback`
 
 ## Progress log
 - 2026-11-05 - plan written, implemented
 - 2026-11-05 - pytest 276 passed; verify-cee all 8 features PASS (run 20261105-101955-9dc4c9b); before = run 20261105-101539-9dc4c9b; 0 real model calls
+- 2026-11-16 - merged main (#62 and others); conflicts in ask_page, source_page, coverage_page resolved keeping main's features; pytest 365 passed; verify-cee run 20261116-102837-b3eea29: 8 PASS, open-citation UNREACHABLE only on cite-date (no date_basis = 'retrieved' document in snapshot corpus-2026-10-29; new check from main, not this change)
