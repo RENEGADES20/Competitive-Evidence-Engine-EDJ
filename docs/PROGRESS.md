@@ -118,6 +118,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-06 | CI fix: converter header test skips without bs4 (main pytest red after #151) (#165) | - | - |
 | 2026-11-09 | /sync-db` + `snapshots/LATEST.json` (Windows and Mac scripts; build-snapshot writes the manifest; tested on a throwaway database) (#129) (#171) | Mac run by a teammate still open | #120 freeze snapshot publishes its LATEST.json through a PR |
 | 2026-11-13 | PDF chunks take their page from every docling provenance span (#84): page sweep 3,568/3,568 chunks on their page for all 47 manifest PDFs; docling output cached on Box (#168) | Merge waits for the 11/11 #120 freeze build (approved on cee_84) | #120 builds the freeze from the v2 cache with no docling run |
+| 2026-11-16 | TL: corpus freeze snapshot corpus-2026-11-16 (137 documents, 18,497 passages; #84 pages, #115 registry names; without #55/#107 by TL decision) built, verified and named in LATEST.json; mock check 26/30 (Q15, Q19, Q22, Q24), Merrill's first own documents crowd out other firms in five-firm questions (#120) (#180) | 30-call real run awaits TL approval; Gate 3 human score, cold test, sixth-firm decision open | /sync-db; real run and Gate 3 scoring; S1 per-firm pool fix |
 
 ## Weekly score (from W6)
 
