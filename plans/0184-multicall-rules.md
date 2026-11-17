@@ -160,8 +160,9 @@ Risks / unsure:
   "answer LLM calls", "no per-task total"/"no tech-lead approval", "Gate 3" on one line each, and
   avoids the issue's grep phrases in every planned new text, ADR-012 and the ADR-003 Status line
   included (they say "single-call default"). Checked by running the issue's grep pattern over
-  this plan: every hit is a quote of old text, a check command or this log, none is planned new
-  text. Step 1-3 edits are re-checked with the item 5 grep after editing.
+  this plan: every hit is a quote of old text, a check command, the "Found with" grep in Files
+  to change, or a Progress log entry (the plan-written entry and the reviewer entries); none is
+  planned new text. Step 1-3 edits are re-checked with the item 5 grep after editing.
 - Step 4 of "Paid API calls" ("do not re-roll") and a planned re-run do not conflict: a re-run
   with a different prompt version is planned before the first call; re-calling because the
   answer was wrong stays forbidden.
@@ -169,8 +170,8 @@ Risks / unsure:
   plan check 3 now names it, so a design that makes more than 5 calls per question is blocking.
 
 ## Acceptance
-- [ ] Linked questions: none (docs only).
-- [ ] Issue item 1 (ADR-012, ADR-003 Status): `git grep -n "^## ADR-012" -- docs/DECISIONS.md`
+- [x] Linked questions: none (docs only).
+- [x] Issue item 1 (ADR-012, ADR-003 Status): `git grep -n "^## ADR-012" -- docs/DECISIONS.md`
       -> 1 line, after ADR-011; reviewer reads ADR-012 and finds each issue point: up to 5 per
       question, 1 default, split only into parts with comparisons first, split rule decided by
       the feature issue and measured by eval; filters in SQL for every part, citations only to
@@ -180,31 +181,31 @@ Risks / unsure:
       `git grep -n "ADR-012" -- docs/DECISIONS.md` -> ADR-003 Status line names the superseded
       part. `git diff origin/main -- docs/DECISIONS.md` -> hunks only at ADR-003's Status line
       (@@ -53) and the append after line 270; ADR-003 lines 52, 54-57 unchanged.
-- [ ] Issue item 2 (CLAUDE.md invariant and branch rule): `git grep -n -i "up to 5 llm calls per user question" -- CLAUDE.md`
+- [x] Issue item 2 (CLAUDE.md invariant and branch rule): `git grep -n -i "up to 5 llm calls per user question" -- CLAUDE.md`
       -> 1 line in "Architecture invariants", and that bullet says "See ADR-012";
       `git grep -n "answer LLM calls" -- CLAUDE.md` -> the branch-rule bullet.
-- [ ] Issue item 3 (CLAUDE.md step 2): `git grep -n "At most 5 real calls per question" -- CLAUDE.md` -> 0;
+- [x] Issue item 3 (CLAUDE.md step 2): `git grep -n "At most 5 real calls per question" -- CLAUDE.md` -> 0;
       `git grep -n -i -E "no tech-lead approval|per-task total|planned in the ExecPlan before|gate 3" -- CLAUDE.md`
       -> hits only in "Paid API calls" step 2 (reviewer reads the step: one run through the full
       answer flow up to 5 calls needs no approval; re-running the same question is planned
       before the first call; no per-task total; Gate 3 needs the tech lead).
-- [ ] Issue item 4 (TL docs say the same): `git grep -n -i -E "re-run|per-task total|gate 3" -- .claude/commands/tl-review.md .claude/commands/tl-run.md docs/DASHBOARD.md`
+- [x] Issue item 4 (TL docs say the same): `git grep -n -i -E "re-run|per-task total|gate 3" -- .claude/commands/tl-review.md .claude/commands/tl-run.md docs/DASHBOARD.md`
       -> tl-review "Paid API calls", worked examples, plan check 5, "Never merge"; tl-run "Stop
       and ask" and "Rules"; DASHBOARD 3b. `git grep -n -E "comparison question makes 4 calls|second prompt version that the plan did not list|Gate 3\) with no tech-lead go-ahead" -- .claude/commands/tl-review.md`
       -> the three worked examples. `git grep -n -i "one llm call" -- .claude/commands/tl-review.md` -> 0
       (plan check 3 rewritten). `git grep -n -E "run last, once|run last, together" -- .claude/commands/tl-run.md`
       -> 1 hit, "run last, together" (stage 3); `git grep -n "in one run" -- .claude/commands/tl-review.md`
       -> the "Allowed without the tech lead" bullet.
-- [ ] Issue item 5: `git grep -n -i -E "one llm call|single (answer )?llm call|5 real calls per question|more than 5 for one question" -- CLAUDE.md .claude/ docs/DASHBOARD.md docs/DECISIONS.md`
+- [x] Issue item 5: `git grep -n -i -E "one llm call|single (answer )?llm call|5 real calls per question|more than 5 for one question" -- CLAUDE.md .claude/ docs/DASHBOARD.md docs/DECISIONS.md`
       -> exactly 2 hits, `docs/DECISIONS.md` lines 52 and 55 (ADR-003 heading and body, history);
       no hit in ADR-012, CLAUDE.md, `.claude/` or DASHBOARD.md.
-- [ ] Issue item 6 (no code change): `git diff origin/main --stat` -> only CLAUDE.md,
+- [x] Issue item 6 (no code change): `git diff origin/main --stat` -> only CLAUDE.md,
       docs/DECISIONS.md, .claude/commands/tl-review.md, .claude/commands/tl-run.md,
       docs/DASHBOARD.md, plans/0184-multicall-rules.md; README, docs/ARCHITECTURE.md, specs/,
       src/ untouched.
-- [ ] Issue item 7: `pytest -q` (repo venv, `PYTHONPATH=<worktree>/src`, `cee.__file__` in the
+- [x] Issue item 7: `pytest -q` (repo venv, `PYTHONPATH=<worktree>/src`, `cee.__file__` in the
       worktree) -> all pass, same count as origin/main.
-- [ ] 0 real calls (docs only).
+- [x] 0 real calls (docs only).
 
 ## Progress log
 - 2026-11-16 18:44 - plan written on `tl/184-multicall-rules` from origin/main 0c69153. Greps
@@ -221,3 +222,21 @@ Risks / unsure:
   updated. Non-blocking taken: tl-run.md line 27 "run last, once" -> "run last, together"
   (added to Files to change, Step 3 and item 4); tl-review.md "Allowed" bullet names running the
   planned questions together in one run (CLAUDE.md step 3).
+- 2026-11-16 18:50 - reviewer: PLAN APPROVED on 1102fca (non-blocking: the Risks note should
+  also name the "Found with" grep and the Progress log entries among the grep hits; done).
+- 2026-11-16 18:51 - implemented with exact string replacements (each old text found exactly
+  once). CLAUDE.md: invariant lines 32-33, branch rule line 35, "Paid API calls" step 2 lines
+  101-105. DECISIONS.md: ADR-003 Status line 53 (one line, body unchanged); ADR-012 appended at
+  lines 272-298. tl-review.md: Paid API calls 66-77, worked examples 80-89, plan checks 3 and 5
+  (lines 104, 106), Never merge 141. tl-run.md: lines 27, 41, 47-49. DASHBOARD.md line 77. Only
+  line wrapping differs from the plan's text (ADR-012 Context, tl-review "Allowed" bullet).
+- 2026-11-16 18:51 - acceptance checks, all as expected: item 5 grep -> exactly 2 hits,
+  DECISIONS.md 52 and 55. Item 1: `^## ADR-012` -> line 272; "ADR-012" also on ADR-003 Status
+  line 53; DECISIONS.md diff hunks only @@ -50 (Status line 53 only) and @@ -268 (append).
+  Item 2: CLAUDE.md 32 and 35. Item 3: "At most 5 real calls per question" -> 0; step 2 hits at
+  103-105. Item 4: tl-review 69, 75, 77, 86, 88, 106, 141; tl-run 41, 48-49; DASHBOARD 77-78
+  (other "re-run" hits are unrelated old lines: tl-review 74, 96, 123, 128; DASHBOARD 62, 73);
+  worked examples at tl-review 83, 86, 88; "one llm call" in tl-review -> 0; tl-run 27 "run
+  last, together" (1 hit); "in one run" at tl-review 70. Item 6: diff vs origin/main = the 5
+  docs + this plan. Item 7: `pytest -q` -> 380 passed (same as baseline). verify-cee not run:
+  docs only. 0 real calls.

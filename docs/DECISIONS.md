@@ -50,7 +50,7 @@ enhancement, never a dependency.
 Consequences: Provider can be switched in `.env`. We own the validator code.
 
 ## ADR-003: One LLM call per answer by default
-Status: Accepted
+Status: Accepted; its single-call default and its "multi-call design needs a new ADR" rule are superseded by ADR-012 (up to 5 LLM calls per user question, one by default). "Retrieval is deterministic" stands.
 Context: Multi-step agent chains are slower, harder to debug and harder to cite.
 Decision: Retrieval is deterministic; the answer comes from a single LLM call. Any
 multi-call design (map-reduce, sub-question decomposition, LLM routing) needs a new ADR
@@ -268,3 +268,31 @@ Decision:
 Consequences: Ranking changes on `main` need only their own eval, not a spec check. Retrieval
 work that needs a model still costs a branch and a comparison run before it can reach `main`.
 Teammates install nothing new.
+
+## ADR-012: Up to 5 LLM calls per user question
+Status: Accepted (tech lead decision 2026-11-16, #184); supersedes ADR-003's single-call default
+Context: ADR-003 set a single-call default per answer and asked for a new ADR before any
+multi-call design. Some questions split into parts: a comparison ("How do Edward Jones and
+Morgan Stanley price advice?") needs evidence per firm, and one retrieval and one call over all
+firms can let one firm crowd out the other. On 2026-11-16 the tech lead decided an answer may
+use more than one call when the question splits into parts.
+Decision:
+- One user question uses 0 to 5 LLM calls. One is the default; 0 when the system refuses
+  before calling. More only when the question splits into parts; comparisons across firms are
+  the first case (one part per firm, each retrieved separately, then a final call writes the
+  answer from the parts). The rule that decides when to split belongs to the feature issue and
+  is measured by eval, not assumed.
+- Unchanged invariants: entity, segment and time filters stay in SQL for every part;
+  citations point only at `chunk_id`s retrieved for that question; caveats are built by code;
+  every call is logged; the mock provider covers every call, so tests and CI make 0 real calls.
+- The extra calls use the configured answer model and provider (`LLM_PROVIDER`), so this is
+  not model-based work: it is developed on `main`. ADR-011's branch rule does not apply; it
+  now reads "besides the answer LLM calls" (CLAUDE.md "Architecture invariants").
+- Paid-call testing counts by question run: one run of a planned question through the full
+  answer flow (up to 5 real calls) needs no tech-lead approval; re-running the same question
+  is planned before the first call; no per-task total; the 30-question scored run (Gate 3)
+  needs the tech lead (CLAUDE.md "Paid API calls").
+Consequences: Cost and latency per question can grow up to 5x for split questions. Answers
+must stay reproducible on the mock provider. More calls mean more to log and debug per
+answer. README, `docs/ARCHITECTURE.md`, `specs/answer-citations.md`, `specs/ui.md` and code
+docstrings still describe the one-call code until the feature issue changes them.
