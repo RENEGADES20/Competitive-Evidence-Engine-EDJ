@@ -16,6 +16,24 @@ from cee.retrieve.fts import Hit
 TOOL_NAME = "submit_answer"
 
 
+class ModelOutputError(RuntimeError):
+    """A paid model call returned something that is not a valid Answer (#187).
+
+    `raw` is the provider payload, always JSON-safe, so the caller can save what was paid for
+    (CLAUDE.md "Paid API calls" step 3) instead of losing it with the exception."""
+
+    def __init__(self, message: str, raw, provider: str):
+        super().__init__(message)
+        self.raw, self.provider = raw, provider
+
+
+def _block_dict(b) -> dict:
+    """One Anthropic content block as plain JSON data (SDK objects have model_dump; fakes may not)."""
+    if hasattr(b, "model_dump"):
+        return b.model_dump(mode="json")
+    return {k: getattr(b, k) for k in ("type", "text", "name", "input") if hasattr(b, k)}
+
+
 def build_user_message(question: str, hits: list[Hit]) -> str:
     parts = [f"Question: {question}", "", "Evidence chunks:"]
     for h in hits:
@@ -78,8 +96,13 @@ def _anthropic(question: str, hits: list[Hit], client=None) -> Answer:
     resp = client.messages.create(**anthropic_request(question, hits))
     block = next((b for b in resp.content if b.type == "tool_use" and b.name == TOOL_NAME), None)
     if block is None:
-        raise RuntimeError(f"Model did not call {TOOL_NAME} (stop_reason={getattr(resp, 'stop_reason', '?')})")
-    return Answer(**block.input, llm_called=True)
+        raise ModelOutputError(f"Model did not call {TOOL_NAME} (stop_reason={getattr(resp, 'stop_reason', '?')})",
+                               [_block_dict(b) for b in resp.content], "anthropic")
+    raw = block.input
+    try:
+        return Answer(**raw, llm_called=True)
+    except (ValueError, TypeError) as e:  # pydantic ValidationError is a ValueError
+        raise ModelOutputError(f"Model output is not a valid Answer: {e}", raw, "anthropic") from e
 
 
 def openai_request(question: str, hits: list[Hit]) -> dict:
@@ -101,4 +124,8 @@ def _openai(question: str, hits: list[Hit], client=None) -> Answer:
 
         client = openai.OpenAI()
     resp = client.chat.completions.create(**openai_request(question, hits))
-    return Answer(**json.loads(resp.choices[0].message.content), llm_called=True)
+    content = resp.choices[0].message.content
+    try:
+        return Answer(**json.loads(content), llm_called=True)
+    except (ValueError, TypeError) as e:  # None, not JSON, not an object, or not a valid Answer
+        raise ModelOutputError(f"Model output is not a valid Answer: {e}", content, "openai") from e

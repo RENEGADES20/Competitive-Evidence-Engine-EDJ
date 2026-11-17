@@ -73,30 +73,49 @@ No question IDs are run against a paid model.
 6. `/finish-task`: PR with "Closes #187"; the reviewer agent reviews and merges (`/tl-review`).
 
 ## Acceptance
-- [ ] A fake client returning an invalid payload: the raw payload is on disk (cache file and
+- [x] A fake client returning an invalid payload: the raw payload is on disk (cache file and
   `.eval-runs/<run>/raw/`), the question is reported as `INVALID_OUTPUT`, the run continues
-  (`pytest tests/test_eval_run.py tests/test_llm_openai.py` -> pass)
-- [ ] The paid-call count still includes the failed call (`runner.calls == 1` after one invalid
-  output; report header "real calls 2 of max 2" in the step-4 end-to-end run)
-- [ ] A no-tool-call Anthropic response (fake response with only a `text` block) is saved, not
+  (`pytest tests/test_eval_run.py tests/test_llm_openai.py` -> 35 passed)
+- [x] The paid-call count still includes the failed call (`runner.calls == 2` after an invalid
+  plus a valid output; report header "real calls 2 of max 2" in the step-4 end-to-end run)
+- [x] A no-tool-call Anthropic response (fake response with only a `text` block) is saved, not
   crashed on: `raw` is JSON-safe, the cache file and `raw/` copy are written, `how == "invalid"`,
   the next question is still answered (`pytest tests/test_eval_run.py -k
   test_real_invalid_no_tool_call_is_saved` -> pass)
-- [ ] `_openai` with `content=None`, non-JSON or schema-invalid JSON raises `ModelOutputError`,
-  never a bare `TypeError` / `JSONDecodeError` (`pytest tests/test_llm_openai.py` -> pass)
-- [ ] An invalid output is never re-called: a second run reuses the cached invalid file (0 calls)
-- [ ] Linked questions: Q25, Q29 (the #167 run that lost Q25's output) - step 4 end-to-end run
-  with a fake provider: Q25 `INVALID_OUTPUT`, Q29 evaluated, report written
-- [ ] Valid outputs unchanged: existing `test_real_cap_and_cache` and LLM request tests pass;
-  full `pytest` green; verify-cee on the mock passes; mock eval vs
-  `evals/baselines/corpus-2026-10-22/report.json` shows the same statuses, `INVALID_OUTPUT` 0
-- [ ] 0 real model calls
+- [x] `_openai` with `content=None`, non-JSON, a JSON list or schema-invalid JSON raises
+  `ModelOutputError`, never a bare `TypeError` / `JSONDecodeError` (`pytest tests/test_llm_openai.py` -> pass)
+- [x] An invalid output is never re-called: a second run reuses the cached invalid file (0 calls;
+  unit test and the step-4 re-run: "real calls 0", fake client calls 0)
+- [x] Linked questions: Q25, Q29 (the #167 run that lost Q25's output) - step 4 end-to-end run
+  with a fake provider: Q25 `INVALID_OUTPUT` ("retrieval PASS; model output invalid, see
+  raw/Q25-6d45072357bb70c6bcb301d0.json"), Q29 evaluated (behavior `answer` from the fake),
+  report written
+- [x] Valid outputs unchanged: existing `test_real_cap_and_cache` and LLM request tests pass;
+  full `pytest` 415 passed; mock eval (`--as-of 2026-10-27`) vs
+  `evals/baselines/corpus-2026-10-22/report.json`: 26 PASS / 4 FAIL / 0 NOT_EVALUATED /
+  0 INVALID_OUTPUT, and `report.json` questions + summary identical to the same run on `main`
+  `36dba99`. verify-cee on the mock: 7 PASS, `open-citation` FAIL at step 3 (passage read-back,
+  "first 80 chars differ") which fails the same way on `main` `36dba99` (existing, not this
+  change), `download-document` UNREACHABLE (no `data/raw/` in the worktree)
+- [x] 0 real model calls
 
 ## Progress log
 - 2026-11-17 17:42 - plan written (branch `tl/187-keep-invalid-model-output` from main `36dba99`)
-- 2026-11-17 17:46 - reviewer: PLAN CHANGES REQUESTED. Tagged the S2 files (owner review waived
-  by the TL decision on #187, no S2 review step); `raw` always JSON-safe plus a `default=str`
-  backstop and the named no-tool-call test; `_openai` catches `(ValueError, TypeError)` with a
+- 2026-11-17 17:45 - reviewer verdict received: PLAN CHANGES REQUESTED (S2 ownership,
+  JSON-safe payload for the no-tool-call case).
+- 2026-11-17 17:47 - fixes pushed (`bd2914f`): tagged the S2 files (owner review waived by the
+  TL decision on #187, no S2 review step); `raw` always JSON-safe plus a `default=str` backstop
+  and the named no-tool-call test; `_openai` catches `(ValueError, TypeError)` with a
   `content=None` test; retrieval status kept in the INVALID_OUTPUT note; mock eval vs baseline
   in step 5. Work moved to worktree `D:\ALLPROJECTS\EDJ\wt-187` (the main checkout was
   switched back to `main` by another session).
+- 2026-11-17 17:48 - plan approved (non-blocking: step-5 mock eval with `--as-of 2026-10-27`;
+  split the log line, done above). Implementation started.
+- 2026-11-17 17:51 - steps 1-3 done: `ModelOutputError` in `llm.py`; runner saves invalid
+  outputs, `INVALID_OUTPUT` status. `RealRunner.last_file` names the saved file so the note can
+  point at it (`apply_real` gained an optional `raw_file` argument). Full pytest 415 passed.
+  Ruff is not installed in the venv, so not run.
+- 2026-11-17 17:52 - step 4: fake-client end-to-end run Q25,Q29: Q25 INVALID_OUTPUT with the
+  payload in `raw/`, Q29 evaluated, "real calls 2 of max 2"; re-run reused both (0 calls).
+- 2026-11-17 17:56 - step 5: mock eval identical to `main`; verify-cee 7 PASS, `open-citation`
+  step 3 FAIL also on `main` (existing), `download-document` UNREACHABLE (no raw files).

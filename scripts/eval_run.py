@@ -17,6 +17,10 @@ retrieved chunks is never paid for twice (CLAUDE.md "Paid API calls"). Reports g
 Status (retrieval level): FAIL on any forbidden hit; NOT_EVALUATED when no expected pattern is
 available in the corpus; PASS when coverage of the available patterns >= --min-coverage;
 otherwise FAIL. With --real the answer's behavior must also equal expected_behavior.
+INVALID_OUTPUT (--real only, #187): the model's output was not a valid Answer (e.g. a wrong field
+name, or no answer tool call). The raw payload is still saved in the cache and the run's raw/
+folder, the call still counts against --max-calls, the note keeps the retrieval status, and the
+run moves on. A cached invalid output is reported again, never re-called.
 
 Recall and refusal accuracy (#60), for questions with an answer key in evals/expected_chunks.yaml
 (or, once #56 lands, `expected_doc_ids` in questions.yaml): document and passage recall against
@@ -46,7 +50,7 @@ RUNS = REPO / ".eval-runs"
 CACHE = RUNS / "cache"
 QUESTIONS = REPO / "evals" / "questions.yaml"
 KEYS = REPO / "evals" / "expected_chunks.yaml"
-STATUSES = ("PASS", "FAIL", "NOT_EVALUATED")
+STATUSES = ("PASS", "FAIL", "NOT_EVALUATED", "INVALID_OUTPUT")
 GAP_BEHAVIORS = ("gap_with_adjacent", "refuse")
 
 
@@ -262,45 +266,65 @@ class RealRunner:
             raise SystemExit("--real needs LLM_PROVIDER=anthropic or openai; it is mock.")
         self.provider, self.max_calls, self.snapshot = provider, max_calls, snapshot
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
-        self.calls, self.reused = 0, 0
+        self.calls, self.reused, self.last_file = 0, 0, None
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
     def answer(self, q: dict, query, hits) -> tuple[dict | None, str]:
-        """(answer dict or None, how): how = no_call | cached | called | cap."""
+        """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
+        invalid: the model output (new or cached) is not a valid Answer; its raw payload is in
+        raw/<self.last_file> and the call still counts (#187)."""
+        from cee.answer.llm import ModelOutputError
         from cee.answer.schema import Answer
         from cee.ask import answer_for
 
+        self.last_file = None
         if not hits:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
                         [h.chunk_id for h in hits])
         path = self.cache_dir / f"{q['id']}-{key}.json"
+        self.last_file = path.name
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
-            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]))
             self.reused += 1
             self._copy(path)
+            if saved.get("invalid"):    # a wrong output is a finding: never re-called (CLAUDE.md)
+                return None, "invalid"
+            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]))
             return answer.model_dump(), "cached"
         if self.calls >= self.max_calls:
             return None, "cap"
         self.calls += 1   # counted before the call: a failed call still cost money
-        answer, raw = answer_for(q["text"], query, hits, self.provider)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
-                                    "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                                    "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat(),
-                                    "raw": raw.model_dump()}, indent=2), encoding="utf-8")
-        self._copy(path)
+        meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
+                "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
+                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+        try:
+            answer, raw = answer_for(q["text"], query, hits, self.provider)
+        except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
+            self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw})
+            return None, "invalid"
+        self._save(path, {**meta, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
+
+    def _save(self, path: Path, record: dict) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # default=str: an unexpected payload type must never cost the paid output (#187)
+        path.write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
+        self._copy(path)
 
     def _copy(self, path: Path) -> None:
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         (self.raw_dir / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
 
 
-def apply_real(record: dict, answer: dict | None, how: str) -> dict:
+def apply_real(record: dict, answer: dict | None, how: str, raw_file: str | None = None) -> dict:
     record["model"] = how
+    if how == "invalid":   # the retrieval status is kept in the note (#187)
+        record["note"] = (f"retrieval {record['status']}; model output invalid, see raw/{raw_file}"
+                          if raw_file else f"retrieval {record['status']}; model output invalid")
+        record["status"], record["behavior"] = "INVALID_OUTPUT", None
+        return record
     if answer is None:
         record["status"], record["behavior"] = "NOT_EVALUATED", None
         record["note"] = "not run: --max-calls reached"
@@ -348,7 +372,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"min coverage {meta['min_coverage']} | as of {meta['as_of']} | mode {meta['mode']}"
              + (f" | real calls {meta['real_calls']} of max {meta['max_calls']}, reused {meta['reused']}"
                 if meta["mode"] == "real" else " | 0 real calls"),
-             "", f"**PASS {counts['PASS']} | FAIL {counts['FAIL']} | NOT_EVALUATED {counts['NOT_EVALUATED']}**"
+             "", f"**PASS {counts['PASS']} | FAIL {counts['FAIL']} | NOT_EVALUATED {counts['NOT_EVALUATED']}"
+             f" | INVALID_OUTPUT {counts['INVALID_OUTPUT']}**"
              + (f" (baseline `{meta['baseline']}`)" if meta.get("baseline") else ""), "",
              f"**Tier-1 recall**: documents {summary['tier1_doc_recall']}, passages "
              f"{summary['tier1_passage_recall']} (mean over the {summary['tier1_with_key']} of "
@@ -448,7 +473,7 @@ def main(argv: list[str] | None = None) -> int:
         hits = search(query, k=args.k)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates)
         if real:
-            r = apply_real(r, *real.answer(q, query, hits))
+            r = apply_real(r, *real.answer(q, query, hits), real.last_file)
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         records.append(r)
