@@ -200,6 +200,19 @@ def test_coverage_note_states_the_time_window_and_names_research_once():
     assert "research (2025-02-10)" in note and "Research research" not in note
 
 
+def test_coverage_note_names_firms_with_nothing_on_the_theme():
+    # #117: entity+theme with several firms; the gap is written by code, not left to the model
+    from cee.answer.validate import coverage_note
+
+    q = Query(question="q", entities=["SCHW", "EDJ"], themes=["client_acquisition"], mode="entity+theme")
+    on = Hit(chunk_id="SCHW-TR#1", doc_id="SCHW-TR", entity_id="SCHW", segment=None, doc_type="transcript",
+             source_tier=2, published_at="2026-01-15", period_end=None, section=None, page=None,
+             rank=1.0, text="x", on_theme=True)
+    note = coverage_note(q, [on, hit()])
+    assert note.endswith("No passages on the theme (Client acquisition) for Edward Jones.")
+    assert "No passages on the theme" not in coverage_note(Query(question="q", entities=["EDJ"]), [hit()])
+
+
 # Registry-based suggested sources (#51): expected in source_registry minus ingested doc types.
 
 MS_REGISTRY = [("10-K", "Morgan Stanley Form 10-K annual report (SEC EDGAR)"),

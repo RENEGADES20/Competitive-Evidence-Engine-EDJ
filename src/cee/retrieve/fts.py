@@ -8,8 +8,10 @@ one filing's boilerplate repeated across four 10-Qs cannot fill the list (Q1: th
 definition took all 8 places; the earnings-call strategy commentary took none).
 Themes (#116): a question that names one firm and a topic from config/topics.yaml also gets a
 few tier 5 research chunks tagged with that topic (Q19: the EDJ filter dropped every survey on
-younger investors). Several firms + a topic stay in entity mode until per-firm theme quotas (#117):
-research slots pushed Q23's headcount figures out of the list.
+younger investors).
+Per-firm theme quotas (#117): with several firms + a theme, every firm's chunks on the theme take
+its turns first and a firm with none is reported as a gap (Q21: "these five" and the wealth
+transfer; Q12: Schwab, Edward Jones and client acquisition, a firm theme from config/entities.yaml).
 """
 from __future__ import annotations
 
@@ -22,7 +24,7 @@ from datetime import date, timedelta
 
 from cee.config import entities_config
 from cee.db import connect
-from cee.ingest.topics import load_topics, tag_text
+from cee.ingest.topics import Topic, _pattern, load_topics, tag_text
 
 
 @dataclass
@@ -59,6 +61,7 @@ class Hit:
     rank: float
     text: str
     date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
+    on_theme: bool = False       # entity+theme: a firm chunk with the theme's keywords (#117)
 
 
 def _alias_pattern(alias: str) -> re.Pattern:
@@ -109,6 +112,22 @@ def _window(question: str, today: date) -> tuple[date, date] | None:
     return None
 
 
+def firm_themes() -> tuple[Topic, ...]:
+    """Themes firms talk about that tier 5 research is not indexed by (config `firm_themes`, #117)."""
+    return tuple(Topic(t["id"], t["label"], None, _pattern(t["keywords"]))
+                 for t in entities_config().get("firm_themes") or [])
+
+
+def _themes() -> dict[str, Topic]:
+    """Every theme a question can name: top-level topics, then firm themes."""
+    return {t.topic_id: t for t in [*load_topics(), *firm_themes()] if t.parent is None}
+
+
+def theme_label(q: Query) -> str:
+    themes = _themes()
+    return " / ".join(themes[t].label for t in q.themes if t in themes)
+
+
 def resolve(question: str, today: date | None = None) -> Query:
     cfg = entities_config()
     q = Query(question=question)
@@ -116,9 +135,12 @@ def resolve(question: str, today: date | None = None) -> Query:
     q.entities = [e["id"] for e in cfg["entities"] if e["id"] in peers or _mentions(question, e)]
     q.unmapped = [e["id"] for e in cfg.get("expansion", []) if _mentions(question, e)]
     topics = load_topics()
-    named = tag_text(question, topics)
-    q.themes = [t.topic_id for t in topics if t.parent is None and t.topic_id in named]
-    q.mode = ("entity+theme" if q.themes and len(q.firms) == 1 else "entity") if q.entities else "theme"
+    themed = question
+    for phrase in entities_config().get("metric_phrases") or []:  # a figure, not a theme (Q23)
+        themed = _phrase_pattern(phrase).sub(" ", themed)
+    named = tag_text(themed, topics) | tag_text(themed, firm_themes())
+    q.themes = [t for t in _themes() if t in named]
+    q.mode = ("entity+theme" if q.themes else "entity") if q.entities else "theme"
     q.window = _window(question, today or date.today())
     return q
 
@@ -307,6 +329,14 @@ def theme_filter(themes: list[str]) -> tuple[str, dict]:
             {"themes": themes})
 
 
+def on_theme_filter(themes: list[str]) -> tuple[str, dict]:
+    """The firm chunks on the theme: the text has one of the theme's keywords, matched with the
+    topic tagger's own pattern (Postgres regex, same look-arounds, any case)."""
+    by_id = _themes()
+    pattern = "|".join(f"(?:{by_id[t].pattern.pattern})" for t in themes if t in by_id)
+    return "c.text ~* %(on_theme)s", {"on_theme": pattern or "(?!)"}
+
+
 def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
     """Hard filter. Inside a window only documents dated by the source count: a page dated
     by its download (date_basis = 'retrieved', ADR-007 T-09) is never "recent"."""
@@ -324,6 +354,7 @@ FLOOR = 0.3          # share of the firm's best rank a chunk needs to take a slo
 WINDOW_MAX_PER_DOC = 8
 THEME_K = 4          # research slots in entity+theme; the firm keeps the rest (#116)
 THEME_MAX_PER_DOC = 2
+THEME_FIRST = 1      # entity+theme: each firm's best chunk on the theme is sure of a slot (#117)
 # Window questions name no topic ("What's new on Raymond James in the last 90 days?"), so these
 # rank news-like passages (headlines, launches, records) above tables of contents.
 RECENCY_TERMS = "announced launched introduced new record acquisition agreement completed increased hired"
@@ -344,38 +375,49 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
     FLOOR x its firm's best chunk gets no slot: quotas spread relevant evidence, they do not
-    pad the list with a document type that has nothing on the question."""
+    pad the list with a document type that has nothing on the question. In entity+theme (#117)
+    a firm's first THEME_FIRST turns go to its best chunks on the theme, then rank order again."""
     floor = FLOOR if floor is None else floor
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
-    firms: OrderedDict[str | None, OrderedDict[str, list[Hit]]] = OrderedDict()
+    # tiers[0]: on the theme, tiers[1]: every chunk; each firm -> document type -> rank-ordered hits
+    tiers: tuple[dict, dict] = ({}, {})
     best: dict[str | None, float] = {}
     for h in pool:  # first seen = best ranked
         best.setdefault(h.entity_id, h.rank)
         if h.rank >= floor * best[h.entity_id]:
-            firms.setdefault(h.entity_id, OrderedDict()).setdefault(h.doc_type, []).append(h)
-    turn = dict.fromkeys(firms, 0)
+            for n in ((0, 1) if h.on_theme else (1,)):
+                tiers[n].setdefault(h.entity_id, OrderedDict()).setdefault(h.doc_type, []).append(h)
+    firms = [f for f in best if f in tiers[0] or f in tiers[1]]
+    turn = {(n, f): 0 for n in (0, 1) for f in firms}
     kept: list[Hit] = []
+    kept_ids: set[str] = set()
     kept_shingles: list[set] = []
     per_doc: dict[str, int] = {}
+    on_theme_kept = dict.fromkeys(firms, 0)
 
-    def take(firm) -> bool:
-        types = firms[firm]
+    def take_from(n: int, firm) -> bool:
+        types = tiers[n].get(firm, {})
         names = [t for t in types if types[t]]
         for i in range(len(names)):
-            t = names[(turn[firm] + i) % len(names)]
+            t = names[(turn[n, firm] + i) % len(names)]
             while types[t]:
                 h = types[t].pop(0)
-                if per_doc.get(h.doc_id, 0) >= max_per_doc:
+                if h.chunk_id in kept_ids or per_doc.get(h.doc_id, 0) >= max_per_doc:
                     continue
                 sh = _shingles(h.text)
                 if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles):
                     continue
                 kept.append(h)
+                kept_ids.add(h.chunk_id)
+                on_theme_kept[firm] += h.on_theme
                 kept_shingles.append(sh)
                 per_doc[h.doc_id] = per_doc.get(h.doc_id, 0) + 1
-                turn[firm] = (turn[firm] + i + 1) % len(names)
+                turn[n, firm] = (turn[n, firm] + i + 1) % len(names)
                 return True
         return False
+
+    def take(firm) -> bool:
+        return (on_theme_kept[firm] < THEME_FIRST and take_from(0, firm)) or take_from(1, firm)
 
     while len(kept) < k:
         progressed = False
@@ -404,7 +446,7 @@ def search(q: Query, k: int = K) -> list[Hit]:
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
     params.update(syn_params)
     params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
-    research_rows = []
+    research_rows, on_theme_rows = [], []
     with connect() as conn:
         rank, rank_params = rank_sql(conn, terms, syn_params)
         params.update(rank_params)
@@ -416,7 +458,16 @@ def search(q: Query, k: int = K) -> list[Hit]:
             sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window,
                              filters=filters)
             research_rows = conn.execute(sql, params | theme_params).fetchall()
-    pool = [Hit(**r) for r in rows]
+            # The firms' own chunks on the theme, pooled on their own so a firm's best on-theme
+            # chunks are there even when off-theme chunks fill its usual pool (#117).
+            on_theme, on_theme_params = on_theme_filter(q.themes)
+            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{where} AND {on_theme}",
+                             window_filter=window, filters=filters)
+            on_theme_rows = conn.execute(sql, params | on_theme_params).fetchall()
+    on_ids = {r["chunk_id"] for r in on_theme_rows}
+    merged = {r["chunk_id"]: r for r in [*rows, *on_theme_rows]}
+    pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
+                  key=lambda h: (-h.rank, h.chunk_id))
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
     opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC} if q.window else {}
     research = select([Hit(**r) for r in research_rows], min(THEME_K, k),
@@ -425,3 +476,14 @@ def search(q: Query, k: int = K) -> list[Hit]:
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits
+
+
+def theme_gaps(q: Query, hits: list[Hit]) -> list[str]:
+    """Named firms with no retrieved chunk on the theme (entity+theme, #117). Code reports them as
+    gaps; the model is never left to notice. Merrill counts through BAC GWIM chunks (the entity
+    filter only lets those through)."""
+    if q.mode != "entity+theme":
+        return []
+    covered = {h.entity_id for h in hits if h.on_theme}
+    by_id = {e["id"]: e for e in entities_config()["entities"]}
+    return [e for e in q.entities if e not in covered and by_id.get(e, {}).get("parent") not in covered]

@@ -23,7 +23,7 @@ def hit(chunk_id, entity, doc_type, segment=None):
 
 
 def query(entities=(), mode="entity"):
-    return types.SimpleNamespace(entities=list(entities), unmapped=[], mode=mode)
+    return types.SimpleNamespace(entities=list(entities), unmapped=[], mode=mode, themes=[])
 
 
 def q(qid, sources, behavior="answer"):
@@ -141,7 +141,7 @@ def test_real_cap_and_cache(fake_model, tmp_path):
 
 def test_real_no_hits_makes_no_call(fake_model, tmp_path):
     runner = er.RealRunner("anthropic", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
-    answer, how = runner.answer(q("Q9", []), types.SimpleNamespace(entities=[], unmapped=["VGD"], mode="theme",
+    answer, how = runner.answer(q("Q9", []), types.SimpleNamespace(entities=[], unmapped=["VGD"], mode="theme", themes=[],
                                                                  question="Vanguard?"), [])
     assert how == "no_call" and answer["behavior"] in ("refuse", "gap_with_adjacent") and not fake_model
 

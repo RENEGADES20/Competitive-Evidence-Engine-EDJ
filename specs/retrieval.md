@@ -29,9 +29,11 @@ resolve(question) -> Query{
     mode:     "entity" | "theme" | "entity+theme"
 }
     # rules: entities and no theme -> entity; theme and no entities -> theme; both -> entity+theme
-    # themes: top-level topics from config/topics.yaml, matched with the chunk tagger's rules
-    # entity+theme (#116): one firm + a theme only; several firms + a theme stay entity
-    #   until per-firm theme quotas (#117) - research slots pushed Q23's headcount figures out
+    # themes: top-level topics from config/topics.yaml, plus S1's firm_themes (config/entities.yaml;
+    #   themes firms talk about that tier 5 research is not indexed by, e.g. client_acquisition, Q12),
+    #   matched with the chunk tagger's rules
+    # metric_phrases (config/entities.yaml, #117) name a figure, never a theme: "advisor headcount"
+    #   (Q11, Q23) stays entity - theme slots pushed Q23's supplement and press release out
 
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
     # synonym_only (config/entities.yaml, #159): "pay" is searched only through its synonyms;
@@ -43,7 +45,11 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
     # MER: entity_id='MER' OR (entity_id='BAC' AND segment IN ('GWIM','Merrill'))
     # quota: k split evenly per entity (entity mode); entity+theme: up to 4 of k for tier 5
     #   research tagged with the theme (entity_id IS NULL, chunk_topics), 2 per document,
-    #   the firm keeps the rest; the firm filter still holds for every firm document
+    #   the firms keep the rest; the firm filter still holds for every firm document
+    # entity+theme per firm (#117): a firm chunk is on the theme when its text has one of the
+    #   theme's keywords (pooled in its own SQL pass); each firm's first turn goes to its best
+    #   chunk on the theme (THEME_FIRST = 1), then rank order. A named firm with no chunk on the
+    #   theme is a theme gap: theme_gaps() -> coverage note "No passages on the theme (...) for X."
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
@@ -52,6 +58,7 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
 - Time windows filtered in SQL: Q26 returns nothing older than 90 days.
 - Merrill queries (Q4, Q27, Q30) return zero BAC chunks without a GWIM/Merrill segment.
 - Head-to-head (Q7): every named firm gets its quota; no firm fills the list.
+- Firms on a theme (Q12, Q21): every named firm has a chunk on the theme, or code reports it as a gap.
 - Duplicate rate after dedupe: no two hits > 90% similar.
 - Hit rate vs `expected_sources` in `evals/questions.yaml` reported per question.
 - **Refusal accuracy tracked alongside recall**: for gap questions (Q24, Q25, Q28-30) retrieval
@@ -59,7 +66,7 @@ retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
 
 ## Linked questions
 
-Q4, Q7, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
+Q4, Q7, Q12, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
 
 ## Open questions
 

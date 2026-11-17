@@ -13,7 +13,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from cee.answer.prompt import BOUNDARY_HANDOFF
 from cee.answer.schema import Answer, Claim, Gap, Withheld
 from cee.config import entities_config
-from cee.retrieve.fts import Hit, Query
+from cee.retrieve.fts import Hit, Query, theme_gaps, theme_label
 
 TIER_LABELS = {1: "licensed", 2: "filing", 3: "IR", 4: "trade press (indicative only)",
                5: "research", 6: "signal"}
@@ -296,6 +296,10 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
                if e not in hit_entities and _entry(e).get("parent") not in hit_entities]
     if missing:
         parts.append("No passages for " + ", ".join(_short_name(e) for e in missing) + ".")
+    off_theme = [e for e in theme_gaps(query, hits) if e not in missing]  # entity+theme (#117)
+    if off_theme:
+        parts.append(f"No passages on the theme ({theme_label(query)}) for "
+                     + ", ".join(_short_name(e) for e in off_theme) + ".")
     return " ".join(parts)
 
 
