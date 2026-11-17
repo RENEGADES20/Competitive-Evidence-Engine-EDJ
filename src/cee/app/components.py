@@ -180,6 +180,12 @@ def caveat_box(text: str) -> None:
     _html(f'<div class="cee-box cee-caveat"><b class="l">Caveat:</b> {escape(text)}</div>')
 
 
+def withheld_box(notice: str) -> None:
+    """Always expanded. Shown in place of a claim kept back by ground rule 6 (#118); the claim's
+    own text is never rendered."""
+    _html(f'<div class="cee-box cee-caveat"><b class="l">Withheld:</b> {escape(notice)}</div>')
+
+
 def coverage_box(note: str) -> None:
     """Always expanded. The text starts with 'Coverage:' (scripts/verify_cee.py reads it)."""
     _html(f'<div class="cee-box cee-coverage">{escape(note)}</div>')

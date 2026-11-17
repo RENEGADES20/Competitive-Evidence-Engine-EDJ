@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -75,5 +75,5 @@ Q4, Q7, Q12, Q21, Q26, Q27, Q30 (primary); every question uses retrieval.
   ends inclusive) and leave out `date_basis = retrieved` documents (ADR-007 T-09).
 - Similarity measure for dedupe: trigram (pg_trgm) is simplest.
 - ~~When would hybrid search be justified?~~ Compared in #126 on `exp/hybrid`: not on this
-  question bank; `main` stays FTS-only (ADR-010, sponsor spec EJ-10). Report:
+  question bank; `main` stays FTS-only (ADR-010; model-based retrieval stays on a branch, ADR-011). Report:
   [evals/hybrid-eval/corpus-2026-10-29/report.md at 3449cc5](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/3449cc52171406a45dfd4d13e39e227adbecd1e3/evals/hybrid-eval/corpus-2026-10-29/report.md).
