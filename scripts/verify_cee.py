@@ -55,7 +55,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback", "search-mode"]
 
 
 # ---------- helpers ----------
@@ -177,6 +177,8 @@ def launch(port: int = PORT) -> dict:
     run_dir.mkdir(parents=True)
     # MOCK_DELAY_S: the mock waits like a model would, so the progress trace can be seen mid-run (#80).
     env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5"}
+    if os.environ.get("VERIFY_RETRIEVAL_MODE"):  # --mode: every feature runs in that search mode (#128)
+        env["RETRIEVAL_MODE"] = os.environ["VERIFY_RETRIEVAL_MODE"]
     log = open(run_dir / "app.log", "w", encoding="utf-8")
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0
     proc = subprocess.Popen(
@@ -653,11 +655,54 @@ def feature_feedback(page, base, rec, ctx):
     rec.step("Read back query_feedback again", "still one row, now 1 with no comment", got == ["1|"], f"{got}")
 
 
+UI_INTERNAL_WORDS = re.compile(r"hybrid|rerank|\bFTS\b", re.IGNORECASE)
+
+
+def feature_search_mode(page, base, rec, ctx):
+    """Exact match / Smart search switch (#128). Runs in the mode the app was launched with
+    (RETRIEVAL_MODE); with vectors off the switch is locked on Exact match."""
+    from cee.config import vectors_enabled
+    smart_ok = vectors_enabled()
+    want_mode = os.environ.get("VERIFY_RETRIEVAL_MODE", "fts")
+    want_mode = "hybrid" if want_mode.startswith("hybrid") and smart_ok else "fts"
+    label = {"fts": "Exact match", "hybrid": "Smart search"}[want_mode]
+    page.goto(base)
+    wait_idle(page)
+    side = page.locator("[data-testid='stSidebar']")
+    side.get_by_text("Search mode", exact=True).first.wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+    smart = side.get_by_role("radio", name="Smart search")
+    rec.step("Look at the sidebar", "both modes listed; Smart search locked when it is not set up",
+             side.get_by_role("radio", name="Exact match").count() == 1 and smart.count() == 1
+             and (smart_ok or smart.is_disabled()),
+             f"vectors {'on' if smart_ok else 'off'}; Smart search {'disabled' if smart.is_disabled() else 'enabled'}")
+    if not smart_ok:
+        body = side.inner_text()
+        rec.step("Read the help line", "says Smart search is not set up", "not set up on this computer" in body,
+                 "present" if "not set up on this computer" in body else "missing")
+    ask(page, base, ANSWERABLE_Q)
+    body = page.locator("body").inner_text()
+    rec.step("Ask; read the mode label", f"'Found with: {label}' and 'search: {label}'",
+             f"Found with: {label}" in body and f"search: {label}" in body, "labels shown" if f"Found with: {label}" in body else "label missing")
+    page.get_by_text("How this answer was built", exact=False).first.click()
+    body = page.locator("body").inner_text()
+    hit = UI_INTERNAL_WORDS.search(body)
+    rec.step("Scan the page text", "no 'hybrid', 'rerank' or 'FTS'", hit is None, f"found {hit.group(0)!r}" if hit else "none found")
+    m = re.search(r"Query #(\d+)", body)
+    logged = psql(VERIFY_DB, f"SELECT filters->>'retrieval_mode' FROM query_log WHERE query_id = {m.group(1)}") if m else ""
+    rec.step("Read back query_log", f"retrieval_mode = {want_mode}", logged == want_mode, f"{logged or 'no row'}")
+    if m:
+        send_feedback(page, "Helpful", "verify-cee: mode check")
+        fb = psql(VERIFY_DB, "SELECT l.filters->>'retrieval_mode' FROM query_feedback f JOIN query_log l USING (query_id) "
+                             f"WHERE f.query_id = {m.group(1)}")
+        rec.step("Send feedback; read its mode back", f"feedback row linked to a {want_mode} query", fb == want_mode, fb or "no row")
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
-           "filters": feature_filters, "feedback": feature_feedback}
+           "filters": feature_filters, "feedback": feature_feedback,
+           "search-mode": feature_search_mode}
 
 
 def drive(features: list[str]) -> bool:
@@ -701,7 +746,10 @@ def main() -> int:
     ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
     ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
     ap.add_argument("--port", type=int, default=PORT)
+    ap.add_argument("--mode", choices=["fts", "hybrid"], help="search mode for the app (RETRIEVAL_MODE); default: .env")
     a = ap.parse_args()
+    if a.mode:
+        os.environ["VERIFY_RETRIEVAL_MODE"] = a.mode
     unknown = [f for f in a.features if f not in DRIVERS]
     if unknown:
         ap.error(f"unknown feature(s) {unknown}; choose from {FEATURES}")
