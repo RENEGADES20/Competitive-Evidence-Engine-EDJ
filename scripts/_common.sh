@@ -6,7 +6,6 @@ export MSYS_NO_PATHCONV=1   # Git Bash on Windows: keep /snapshots/... as contai
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [ -x "$REPO_ROOT/.venv/bin/python" ]; then PYTHON="$REPO_ROOT/.venv/bin/python"
 else PYTHON="$REPO_ROOT/.venv/Scripts/python.exe"; fi   # Git Bash on Windows
-CONTAINER="cee-db"
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 
@@ -18,6 +17,21 @@ dotenv_value() {
     [ -f "$env_file" ] || return 0
     sed -n "s/^[[:space:]]*$name[[:space:]]*=[[:space:]]*//p" "$env_file" | tail -1 | tr -d '\r' \
         | sed 's/[[:space:]]*$//; s/^"//; s/"$//'
+}
+
+# Database container: CEE_DB_CONTAINER (environment or .env), default cee-db; must match
+# container_name in docker-compose.yml, which reads the same variable.
+CONTAINER="$(dotenv_value CEE_DB_CONTAINER)"
+[ -n "$CONTAINER" ] || CONTAINER="cee-db"
+
+native_path() {
+    # A path the venv Python understands: Git Bash on Windows needs C:\... (MSYS_NO_PATHCONV is on).
+    if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s' "$1"; fi
+}
+
+posix_path() {
+    # Back from a path printed by Python to one bash tools understand (no-op on a Mac).
+    if command -v cygpath >/dev/null 2>&1; then cygpath -u "$1"; else printf '%s' "$1"; fi
 }
 
 run() {
@@ -88,6 +102,15 @@ copy_model_to_share() {
     cp -RL "$src/snapshots" "$dest/" || die "Copying the model to $dest failed"
     cp -RL "$src/refs" "$dest/" || die "Copying the model to $dest failed"   # refs last: its presence means "complete"
     echo "   copied to $dest"
+}
+
+snapshot_name() {
+    # The snapshot name stamped on the database (COMMENT ON TABLE documents); empty when none.
+    local out
+    out="$(docker exec "$CONTAINER" psql -qtA -U cee -d cee -c \
+        "SELECT obj_description('public.documents'::regclass)" 2>/dev/null)" \
+        || die "Could not read the snapshot name from the database (is Docker running?)"
+    printf '%s' "$out" | tr -d '\r' | sed 's/[[:space:]]*$//'
 }
 
 table_counts() {

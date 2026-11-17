@@ -7,7 +7,7 @@ from html import escape
 import streamlit as st
 
 from cee.app import components as ui
-from cee.answer.validate import source_label
+from cee.answer.validate import WITHHELD_NOTICE, source_label
 from cee.ask import STAGES, Result, ask
 from cee.config import entities_config, settings
 from cee.feedback import HELPFUL, NOT_HELPFUL, save_feedback
@@ -18,6 +18,18 @@ BEHAVIOR_TEXT = {
     "gap_with_adjacent": "Not in the corpus",
     "refuse": "No evidence",
 }
+
+
+# One plain sentence under the heading, so a first-time reader knows what kind of answer this is.
+BEHAVIOR_HELP = {
+    "answer": "Each numbered point below comes from a stored document; click its code to read the passage.",
+    "answer_with_boundary": "These are the facts on record. Deciding what they mean for your firm is left to you.",
+    "gap_with_adjacent": "The stored documents do not answer this directly. Anything close is shown "
+                         "below and marked as adjacent; the box says what is missing.",
+    "refuse": "Nothing in the stored documents answers this. That is a valid result, not an error: "
+              "the box below says what is missing and where it could come from.",
+}
+FILTERS_HINT = "Filters are on in the sidebar; they may be hiding the evidence. Clear them and ask again."
 
 
 def _plural(n: int, word: str) -> str:
@@ -102,8 +114,9 @@ def render() -> None:
     with left:
         ui.eyebrow("Evidence, not opinion")
         ui.hero("What is known, and", "where", "it was said.")
-        st.caption("Ask a plain-language question about the peer set. Every claim links to a stored document; "
-                   f"if nothing is stored, the answer says so. LLM provider: {settings().llm_provider}")
+        st.caption("Ask a question in plain English about Morgan Stanley, Schwab, Edward Jones, Merrill or "
+                   "Raymond James. Every point in the answer links to the stored document it comes from; "
+                   "if nothing is stored, the answer says so.")
         question = st.text_input("Question", placeholder="What does Edward Jones's 10-K say about its number of financial advisors?")
         asked = st.button("Ask", type="primary")
     with right:
@@ -119,7 +132,8 @@ def render() -> None:
             return
     last = st.session_state.get("last_answer")
     if not last:
-        ui.empty_state("No question asked yet. Answers appear here, with a citation for every claim.")
+        ui.empty_state("No question yet. Type one above and click Ask; the answer appears here, "
+                       "with a link to the source of every point.")
         return
     show_answer(*last)
 
@@ -139,11 +153,16 @@ def show_answer(r: Result, filters: dict) -> None:
         return out
 
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
+    st.caption(BEHAVIOR_HELP[a.behavior])
+    if a.behavior in ("refuse", "gap_with_adjacent") and filters_text(filters) != "none":
+        st.info(FILTERS_HINT)
     for i, c in enumerate(a.claims, start=1):
         ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags)
     for i, c in enumerate(a.adjacent, start=1):
         ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags,
                       label="ADJACENT EVIDENCE", note=c.differs_because)
+    if a.withheld:
+        ui.withheld_box(WITHHELD_NOTICE)
     for cav in a.caveats:
         ui.caveat_box(cav)
     for g in a.gaps:
@@ -151,7 +170,7 @@ def show_answer(r: Result, filters: dict) -> None:
     if a.coverage_note:
         ui.coverage_box(a.coverage_note)
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
-                f'filters: {escape(filters_text(filters))} | {len(r.hits)} chunks retrieved | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
+                f'filters: {escape(filters_text(filters))} | {len(r.hits)} passages found | model: {settings().llm_provider} | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
     feedback_form(r.query_id)
 
 

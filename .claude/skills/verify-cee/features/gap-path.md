@@ -10,6 +10,8 @@ gap. Ground rule 3: "No evidence" is a correct answer.
 - `gap-note`: a "Gap:" box, with a suggested source when one is known.
 - `gap-footer`: the footer's `firms:` names the same firm as the gap box, marked
   "(no documents)" when nothing is stored for it; never `none` (#50).
+- `gap-plain`: under the heading, one plain sentence says no evidence is a valid result (#119);
+  with sidebar filters on, a note suggests clearing them.
 
 ## How to get to it (user POV)
 
@@ -22,6 +24,8 @@ Preconditions: baseline; no LPL Financial documents stored.
 - **Ask.** Ask the no-evidence question. Heading "Not in the corpus" or "No evidence".
 - **No invented sources.** Zero links containing `?chunk=`.
 - **Gap note.** Page text contains "Gap:".
+- **Plain line.** Page text contains "That is a valid result, not an error" (or, for a gap with
+  adjacent evidence, "do not answer this directly").
 - **Footer firms.** The footer reads `firms: LPLA (no documents)`, not `firms: none`.
 
 ## Gotchas

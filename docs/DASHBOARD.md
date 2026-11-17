@@ -74,7 +74,8 @@ Each one runs through `/tl-run <issue#>` (`.claude/commands/tl-run.md`):
    verdict on the PR, and squash-merges on approval. Up to 2 blocking returns.
 
 The tech lead is asked only when a reviewer escalates: a third blocking return, an ADR or ground-rule
-change, paid API calls that are unplanned, more than 10, or ones the reviewer would need to make,
+change, paid API calls that are unplanned (including an unplanned re-run of a question) or ones the reviewer would need to make,
+the 30-question scored run (Gate 3) without a tech-lead go-ahead,
 deleted data or snapshots, a teammate-owned file without their review,
 or a check the reviewer cannot run. Teammate PRs are still reviewed by the tech lead.
 `/tl-review pr <PR#>` also works alone, e.g. for a TL PR opened by hand.
@@ -136,8 +137,11 @@ author, and revert or re-land through a PR if needed.
 - [ ] All corpus PRs for the week merged; `data/manifest.csv` has no rows with missing `published_at`
 - [ ] Raw files for every manifest row exist in the shared folder (sha256 matches)
 - [ ] Move files that arrived through the Box upload link into `raw/` (names must be `<doc_id>.<ext>`)
-- [ ] Run `scripts\build-snapshot.ps1` (Mac: `bash scripts/build-snapshot.sh`) on a clean `main` (checks sha256, rebuilds, dumps, and
+- [ ] Run `scripts\build-snapshot.ps1 -Notes "<what changed, issue numbers>"` (Mac: `bash scripts/build-snapshot.sh --notes "..."`)
+      on a clean `main` (checks sha256, rebuilds, dumps, writes `snapshots/LATEST.json`, and
       copies `corpus-YYYY-MM-DD.dump` into the Box `snapshots/` folder; Box Drive uploads it)
+- [ ] Publish `snapshots/LATEST.json` through a PR: `git switch -c tl/snapshot-<name>`, add, commit,
+      push, PR (the script prints the commands). Merging it is the notice; no txt with steps
 - [ ] Only when vectors are on (`CEE_VECTORS=on`, ADR-009): every chunk has a vector: `docker exec cee-db psql -At -U cee -d cee -c "SELECT count(*) FROM chunks c WHERE NOT EXISTS (SELECT 1 FROM chunk_embeddings e WHERE e.chunk_id = c.chunk_id)"` -> `0`
 - [ ] Test `scripts\restore.ps1` (Mac: `bash scripts/restore.sh`) after `docker compose down -v`, then `python -m cee.smoke` -> PASS
-- [ ] Post the snapshot name in PROGRESS.md and the team chat
+- [ ] Post the snapshot name in PROGRESS.md and one line in the team chat: "New snapshot <name>: run /sync-db"

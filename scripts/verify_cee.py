@@ -6,9 +6,11 @@ Used by the verify-cee skill (.claude/skills/verify-cee/SKILL.md). Run with the 
   python scripts/verify_cee.py run             # launch, drive every feature, clean up
   python scripts/verify_cee.py run ask-answer gap-path
   python scripts/verify_cee.py launch | drive <feature...> | cleanup
+  python scripts/verify_cee.py run --source-db cee_84 --port 8684   # a private copy (#84)
 
-It never touches your own database or app: it copies database `cee` to `cee_verify`, starts
-its own Streamlit on port 8599 with the mock provider, and removes both at the end.
+It never touches your own database or app: it copies database `cee` (or --source-db) to
+`cee_verify` (`<source-db>_verify`), starts its own Streamlit on port 8599 (or --port) with the
+mock provider, and removes both at the end. Pass the same --source-db to drive and cleanup.
 Evidence (screenshots, page text, steps.jsonl) stays in .verify-runs/<run-id>/.
 """
 from __future__ import annotations
@@ -32,7 +34,23 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 RUNS = REPO / ".verify-runs"
 STATE = RUNS / "instance.json"
-CONTAINER = "cee-db"
+
+
+def _env_value(name: str) -> str:
+    # Same rule as scripts/_common.* and Compose: the environment wins over .env.
+    if os.environ.get(name, "").strip():
+        return os.environ[name].strip().strip('"')
+    env_file = REPO / ".env"
+    value = ""
+    if env_file.is_file():
+        for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+            m = re.match(rf"^\s*{name}\s*=\s*(.*)$", line)
+            if m:
+                value = m.group(1).strip().strip('"')
+    return value
+
+
+CONTAINER = _env_value("CEE_DB_CONTAINER") or "cee-db"   # resolved once, at import (#129)
 SOURCE_DB, VERIFY_DB = "cee", "cee_verify"
 PORT = 8599
 WINDOWS = os.name == "nt"
@@ -327,7 +345,7 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
     body = page.locator("body").inner_text()
-    n_meta = re.search(r"(\d+) chunks retrieved", body)
+    n_meta = re.search(r"(\d+) passages found", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
@@ -487,6 +505,9 @@ def feature_gap_path(page, base, rec, ctx):
     rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
              f"{citation_links(page).count()} citation links")
     rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+    plain = "That is a valid result, not an error" in body or "do not answer this directly" in body
+    rec.step("Read the line under the heading (#119)", "a plain sentence saying no evidence is a valid result",
+             plain, "present" if plain else "missing")
     footer = re.search(r"firms: ([^|]*)\|", body)
     firms = footer.group(1).strip() if footer else "no footer"
     rec.step("Read the footer's firms", "the gap firm, e.g. 'LPLA (no documents)', not 'none' (#50)",
@@ -677,12 +698,22 @@ def drive(features: list[str]) -> bool:
 
 # ---------- main ----------
 
+def set_source_db(name: str) -> None:
+    global SOURCE_DB, VERIFY_DB
+    SOURCE_DB, VERIFY_DB = name, ("cee_verify" if name == "cee" else f"{name}_verify")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
     ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
     ap.add_argument("--port", type=int, default=PORT)
+    ap.add_argument("--source-db", default=SOURCE_DB,
+                    help=f"database to copy (default {SOURCE_DB}); the copy is <source-db>_verify")
     a = ap.parse_args()
+    if not re.fullmatch(r"[a-z_][a-z0-9_]*", a.source_db):
+        ap.error("--source-db: lower-case letters, digits and _ only")
+    set_source_db(a.source_db)
     unknown = [f for f in a.features if f not in DRIVERS]
     if unknown:
         ap.error(f"unknown feature(s) {unknown}; choose from {FEATURES}")
