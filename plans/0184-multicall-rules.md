@@ -49,8 +49,8 @@ at origin/main 0c69153. Line numbers below are at 0c69153.
     ```
     ## ADR-012: Up to 5 LLM calls per user question
     Status: Accepted (tech lead decision 2026-11-16, #184); supersedes ADR-003's single-call default
-    Context: ADR-003 allowed one LLM call per answer and asked for a new ADR before any multi-call
-    design. Some questions split into parts: a comparison ("How do Edward Jones and Morgan Stanley
+    Context: ADR-003 set a single-call default per answer and asked for a new ADR before any
+    multi-call design. Some questions split into parts: a comparison ("How do Edward Jones and Morgan Stanley
     price advice?") needs evidence per firm, and one retrieval and one call over all firms can let
     one firm crowd out the other. On 2026-11-16 the tech lead decided an answer may use more than
     one call when the question splits into parts.
@@ -84,7 +84,8 @@ at origin/main 0c69153. Line numbers below are at 0c69153.
     - **Allowed without the tech lead** when the approved ExecPlan planned them: question IDs, why the
       mock cannot show it, and how many runs of each. One run of a question goes once through the full
       answer flow (up to 5 calls, ADR-012); a second run of the same question must be in the plan.
-      No per-task total. They run last, after every mock check passed; every raw output (question,
+      No per-task total. They run last, after every mock check passed, with the planned questions
+      run together in one run (CLAUDE.md step 3); every raw output (question,
       prompt version, model, output) is saved in the run's evidence folder; the PR's Verification
       states the count, the model and why.
     ```
@@ -112,6 +113,8 @@ at origin/main 0c69153. Line numbers below are at 0c69153.
   - Plan check 5, line 101 -> `5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, how many runs of each question, a re-run of a question listed before the first call, run last after the mock checks; no 30-question scored run (Gate 3) without a tech-lead go-ahead); see "Paid API calls".`
   - "Never merge" line 136 -> `- Paid API calls: not in the approved plan (including an unplanned re-run of a question), ones the reviewer would need to make, or a 30-question scored run (Gate 3) without a tech-lead go-ahead (see "Paid API calls").`
 - `.claude/commands/tl-run.md`
+  - Stage 3, line 27: `they run last, once, after every mock` -> `they run last, together, after every mock`
+    (planned re-runs of a question are allowed, so "once" no longer fits; line 28 unchanged).
   - "Stop and ask" line 41: `paid calls that are unplanned, more than 5 for one question, needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead`
     -> `paid calls that are unplanned (including an unplanned re-run of a question), needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead`.
   - "Rules" lines 47-49 -> 
@@ -143,7 +146,7 @@ Checked, no change needed:
 2. DECISIONS.md: ADR-003 Status line 53; append ADR-012. Check: `git diff` touches ADR-003 only
    on its Status line and otherwise only appends after line 270.
 3. tl-review.md (Paid API calls, worked examples, plan checks 3 and 5, Never merge), tl-run.md
-   (Stop and ask, Rules), DASHBOARD.md 3b, with the wording above.
+   (stage 3 line 27, Stop and ask, Rules), DASHBOARD.md 3b, with the wording above.
 4. Run the acceptance greps and `pytest -q`; log results in the Progress log.
 5. `/finish-task`: PR "Closes #184", Verification "0 real calls"; the PR body says ADR-012 lands
    as `Accepted` because the tech lead already decided (#184) and that the PR goes to the tech
@@ -155,7 +158,10 @@ Risks / unsure:
 - No teammate-owned file is changed (all files are TL-owned per the CLAUDE.md spec table).
 - Greps match one line at a time. New text keeps "Up to 5 LLM calls per user question",
   "answer LLM calls", "no per-task total"/"no tech-lead approval", "Gate 3" on one line each, and
-  avoids the banned phrases also in ADR-012 (it says "single-call default", not the old phrase).
+  avoids the issue's grep phrases in every planned new text, ADR-012 and the ADR-003 Status line
+  included (they say "single-call default"). Checked by running the issue's grep pattern over
+  this plan: every hit is a quote of old text, a check command or this log, none is planned new
+  text. Step 1-3 edits are re-checked with the item 5 grep after editing.
 - Step 4 of "Paid API calls" ("do not re-roll") and a planned re-run do not conflict: a re-run
   with a different prompt version is planned before the first call; re-calling because the
   answer was wrong stays forbidden.
@@ -186,9 +192,12 @@ Risks / unsure:
       -> tl-review "Paid API calls", worked examples, plan check 5, "Never merge"; tl-run "Stop
       and ask" and "Rules"; DASHBOARD 3b. `git grep -n -E "comparison question makes 4 calls|second prompt version that the plan did not list|Gate 3\) with no tech-lead go-ahead" -- .claude/commands/tl-review.md`
       -> the three worked examples. `git grep -n -i "one llm call" -- .claude/commands/tl-review.md` -> 0
-      (plan check 3 rewritten).
+      (plan check 3 rewritten). `git grep -n -E "run last, once|run last, together" -- .claude/commands/tl-run.md`
+      -> 1 hit, "run last, together" (stage 3); `git grep -n "in one run" -- .claude/commands/tl-review.md`
+      -> the "Allowed without the tech lead" bullet.
 - [ ] Issue item 5: `git grep -n -i -E "one llm call|single (answer )?llm call|5 real calls per question|more than 5 for one question" -- CLAUDE.md .claude/ docs/DASHBOARD.md docs/DECISIONS.md`
-      -> only `docs/DECISIONS.md` lines 52 and 55 (ADR-003 heading and body, history); no other hit.
+      -> exactly 2 hits, `docs/DECISIONS.md` lines 52 and 55 (ADR-003 heading and body, history);
+      no hit in ADR-012, CLAUDE.md, `.claude/` or DASHBOARD.md.
 - [ ] Issue item 6 (no code change): `git diff origin/main --stat` -> only CLAUDE.md,
       docs/DECISIONS.md, .claude/commands/tl-review.md, .claude/commands/tl-run.md,
       docs/DASHBOARD.md, plans/0184-multicall-rules.md; README, docs/ARCHITECTURE.md, specs/,
@@ -204,3 +213,11 @@ Risks / unsure:
   match it), the per-question test limit in CLAUDE.md 101, tl-review 66-84, 99, 101, 136,
   tl-run 41, 47-49, DASHBOARD 77. Baseline `pytest -q` on 0c69153 in the worktree (`cee.__file__`
   in wt-184/src): 380 passed. `sync-db -Check` not needed for docs only.
+- 2026-11-16 18:48 - reviewer: PLAN CHANGES REQUESTED on 396d4d8 (1 blocking, 2 non-blocking).
+  Blocking 1: the planned ADR-012 Context said "ADR-003 allowed one LLM call per answer", which
+  the issue's grep matches. Reworded to "ADR-003 set a single-call default per answer"; ran the
+  issue's grep pattern over this plan: every remaining hit quotes old text or is a check command,
+  none is planned new text; item 5 now expects exactly 2 hits (DECISIONS.md 52, 55); Risks note
+  updated. Non-blocking taken: tl-run.md line 27 "run last, once" -> "run last, together"
+  (added to Files to change, Step 3 and item 4); tl-review.md "Allowed" bullet names running the
+  planned questions together in one run (CLAUDE.md step 3).
