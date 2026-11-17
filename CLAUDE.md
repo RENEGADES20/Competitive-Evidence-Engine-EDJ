@@ -99,7 +99,6 @@ team money. The default is zero calls. Follow these steps whenever a task might 
 2. **Plan before the first call.** Write down which question IDs, why the mock cannot show it,
    and how many calls. Use the fewest questions that prove the point.
    At most 5 real calls per question in a task, all planned before the first call.
-   More than 10 calls in one task: ask the user first.
    The 30-question scored run (Gate 3) needs an explicit go-ahead from the tech lead.
 3. **Make each call count.** Call only on finished code, after every mock check passes. Run the
    planned questions together in one run. Save every raw response (question, prompt version,

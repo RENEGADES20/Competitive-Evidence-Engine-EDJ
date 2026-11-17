@@ -74,7 +74,7 @@ Each one runs through `/tl-run <issue#>` (`.claude/commands/tl-run.md`):
    verdict on the PR, and squash-merges on approval. Up to 2 blocking returns.
 
 The tech lead is asked only when a reviewer escalates: a third blocking return, an ADR or ground-rule
-change, paid API calls that are unplanned, more than 5 for one question, more than 10, or ones the reviewer would need to make,
+change, paid API calls that are unplanned, more than 5 for one question, or ones the reviewer would need to make,
 the 30-question scored run (Gate 3) without a tech-lead go-ahead,
 deleted data or snapshots, a teammate-owned file without their review,
 or a check the reviewer cannot run. Teammate PRs are still reviewed by the tech lead.

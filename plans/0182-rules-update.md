@@ -201,3 +201,9 @@ Risks / unsure:
   files; DECISIONS.md hunks only @@ -180 and the append after 241 (ADR-009 untouched).
   Item 6: `pytest -q` -> 380 passed (no code or test file changed, so the same tests as
   origin/main). verify-cee not run: docs only. 0 real calls.
+- 2026-11-16 - tech-lead change after review: no per-task total. The only call limit is at most
+  5 real calls per question in a task (plus the Gate 3 go-ahead). Removed "more than 10 calls in
+  one task" from CLAUDE.md step 2, tl-review.md (Paid API calls, worked examples, plan check 5,
+  Never merge), tl-run.md (Stop and ask, Rules) and DASHBOARD.md 3b; the "11 planned calls"
+  example became "4 questions x 5 calls (20 calls): passes". Earlier lines of this plan that
+  mention 10 per task are history.
