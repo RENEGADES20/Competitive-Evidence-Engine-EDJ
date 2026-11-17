@@ -24,7 +24,7 @@ merged). If not, stop and say why.
    - APPROVED with non-blocking notes: not a return. Pass the notes to the implementer with stage 3.
 3. **Build.** Implementer: "The plan is approved (issue comment). Implement it on the branch, keep
    the Progress log current, then do every step of `.claude/commands/finish-task.md`. Report the PR number."
-   If the plan planned real calls (CLAUDE.md "Paid API calls"), they run last, once, after every mock
+   If the plan planned real calls (CLAUDE.md "Paid API calls"), they run last, together, after every mock
    check passes, with every raw output saved in the run's evidence folder and the count in the PR.
 4. **PR review.** New reviewer: "Run `.claude/commands/tl-review.md` with `pr <PR#>`." It merges on approval.
    - CHANGES REQUESTED (at least one blocking finding): implementer fixes on the same branch and
@@ -38,13 +38,13 @@ merged). If not, stop and say why.
 
 ## Stop and ask the tech lead
 - A third blocking return at either review stage.
-- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned, more than 5 for one question, needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead, deleted data, ground rules, teammate file, a check it cannot run).
+- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned (including an unplanned re-run of a question), needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead, deleted data, ground rules, teammate file, a check it cannot run).
 - The implementer is blocked or the issue is unclear.
 
 ## Rules
 - Agents run one after another in the same checkout; never two writers at once.
 - The reviewer's only inputs are issue/plan/PR numbers and the repo. That is what makes it independent.
-- Paid API calls: 0 unless the approved plan planned them (question IDs, why, at most 5 per question; CLAUDE.md).
-  More than 5 for one question or unplanned calls need the tech lead, and so does
-  the 30-question scored run (Gate 3). The reviewer never makes a paid call.
+- Paid API calls: 0 unless the approved plan planned them (question IDs, why, runs of each question;
+  one run = the full answer flow, up to 5 calls; no per-task total; CLAUDE.md). Unplanned calls or
+  re-runs need the tech lead, and so does the 30-question scored run (Gate 3). The reviewer never makes a paid call.
 - Teammate PRs are not reviewed this way; they stay with the tech lead.
