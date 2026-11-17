@@ -1,17 +1,17 @@
-"""The prompt (v1) carries the citation rules and the standard wording (plans/0010)."""
+"""The prompt (v2) carries the citation rules and the standard wording (plans/0010, plans/0167)."""
 import re
 
 from cee.answer import prompt
 from cee.answer.llm import SYSTEM_PROMPT, anthropic_request, openai_request
 
 WORDING = [prompt.BOUNDARY_HANDOFF, prompt.MERRILL_GAP, prompt.GWIM_DIFFERS, prompt.ATTRITION_GAP,
-           prompt.HEADCOUNT_DIFFERS, prompt.PAYOUT_GAP, prompt.COMPENSATION_DIFFERS,
-           prompt.TRADE_PRESS_NOTE]
+           prompt.HEADCOUNT_DIFFERS, prompt.PAYOUT_GAP, prompt.PAYOUT_RANGES_PUBLISHED,
+           prompt.COMPENSATION_DIFFERS, prompt.TRADE_PRESS_NOTE]
 
 
 def test_prompt_is_versioned():
-    assert prompt.PROMPT_VERSION == "v1"
-    assert "Prompt version: v1" in prompt.SYSTEM_PROMPT
+    assert prompt.PROMPT_VERSION == "v2"
+    assert "Prompt version: v2" in prompt.SYSTEM_PROMPT
 
 
 def test_llm_uses_prompt_module():
@@ -74,3 +74,13 @@ def test_user_message_source_dated_unchanged():
 
     msg = build_user_message("q", [_hit(doc_type="10-K", period_end="2025-12-31", section="Item 1", page=4)])
     assert 'source="RJF 10-K, period 2025-12-31, published 2026-07-12, Item 1, p.4"' in msg
+
+
+def test_advisor_pay_gap_is_decided_per_firm():
+    # #167: RJF publishes headline payout ranges (recruiting pages, #151); the prompt must not tell
+    # the model to say "payout grids are not public" for a firm whose evidence shows ranges.
+    text = " ".join(prompt.SYSTEM_PROMPT.split())       # ignore line breaks in the prompt
+    assert "firm by firm" in text
+    assert f'Never write "{prompt.PAYOUT_GAP}" for a firm whose cited evidence shows payout ranges' in text
+    assert "page content as of" in text.split("Advisor pay")[1]
+    assert "<date>" in prompt.PAYOUT_RANGES_PUBLISHED and "full payout grid is not public" in prompt.PAYOUT_RANGES_PUBLISHED

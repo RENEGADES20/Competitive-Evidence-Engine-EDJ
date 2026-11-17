@@ -1,4 +1,4 @@
-"""Prompt v0 and standard wording (specs/answer-citations.md, plans/0010).
+"""Prompt and standard wording (specs/answer-citations.md, plans/0010, plans/0167).
 
 Owner: S2 (Jiapeng Liu).
 The prompt only shapes what the model writes. Caveats, source labels and flags stay code-owned
@@ -6,7 +6,8 @@ The prompt only shapes what the model writes. Caveats, source labels and flags s
 """
 from __future__ import annotations
 
-PROMPT_VERSION = "v1"  # v1: strategy from management's own words, partial answers, dated claims
+PROMPT_VERSION = "v2"  # v1: strategy from management's own words, partial answers, dated claims
+                       # v2: advisor-pay gap per firm; published payout ranges reported (#167)
 
 # Standard wording. Keep in sync with "Standard wording" in specs/answer-citations.md.
 BOUNDARY_HANDOFF = (
@@ -22,6 +23,10 @@ GWIM_DIFFERS = (
 ATTRITION_GAP = "Neither firm discloses advisor attrition on a comparable basis."
 HEADCOUNT_DIFFERS = "Net advisor headcount change is not attrition: it nets hires against departures."
 PAYOUT_GAP = "Payout grids are not public."
+PAYOUT_RANGES_PUBLISHED = (
+    "Headline payout ranges are published (company recruiting page, as of <date>); "
+    "the full payout grid is not public."
+)
 COMPENSATION_DIFFERS = (
     "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid."
 )
@@ -69,9 +74,16 @@ Standard gap wording (use verbatim when the case applies)
   with differs_because "{GWIM_DIFFERS}"
 - Advisor attrition: gap "{ATTRITION_GAP}" Net headcount change goes in "adjacent" with
   differs_because "{HEADCOUNT_DIFFERS}"
-- Advisor pay: gap "{PAYOUT_GAP}" Aggregate compensation expense goes in "adjacent" with
-  differs_because "{COMPENSATION_DIFFERS}" Any trade-press claim goes in "adjacent" with
-  differs_because "{TRADE_PRESS_NOTE}"
+- Advisor pay, decided firm by firm:
+  - A firm whose cited chunks state payout percentages or ranges (for example a recruiting page):
+    report them as claims attributed to the firm and dated with the "page content as of" date from
+    the source line, e.g. "Raymond James's recruiting page (page content as of 2026-04-21) lists
+    ...". That firm's gap is "{PAYOUT_RANGES_PUBLISHED}" with <date> filled in. Never write
+    "{PAYOUT_GAP}" for a firm whose cited evidence shows payout ranges.
+  - A firm with nothing published: gap "{PAYOUT_GAP}" (in a multi-firm answer, name the firm
+    first, e.g. "Morgan Stanley: {PAYOUT_GAP}").
+  - Aggregate compensation expense goes in "adjacent" with differs_because "{COMPENSATION_DIFFERS}"
+    Any trade-press claim goes in "adjacent" with differs_because "{TRADE_PRESS_NOTE}"
 
 Never present a substitute (a parent company, a wider segment, a different metric) as the thing
 asked about. Label it as adjacent instead. A chunk whose source line shows segment GWIM is about
