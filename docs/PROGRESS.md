@@ -55,6 +55,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | Time windows filtered in SQL: "last N days/weeks/months", "since the start of the year", YTD; download-dated pages left out of windows; Q26 nothing older than 90 days (#49) (#101) | Q27 returns nothing until BAC GWIM tags (#37) | #59 quotas and dedupe |
 | 2026-10-27 | S1: per-question recall and refusal accuracy in the eval runner, answer key for 10 questions (incl. gap Q24/25/28-30), baseline for corpus-2026-10-22 at k=20 (tier-1 recall 0.809 docs / 0.347 passages; refusal gap 4/5, all 9/10) (#102) | Recall for 9 tier-1 questions waits on #56; Q29 retrieves a must-not chunk (MS-10K-2025#696) | Tune Q29 refusal; BAC Q&A chunks wait on #107 |
 | 2026-11-04 | S1: one-firm questions that name a theme also retrieve up to 4 tier 5 research chunks on that theme (entity+theme mode); Q19 now gets younger-investor research, EDJ filter intact, no PASS -> FAIL (#116) (#148) | Q19 still FAIL in the eval: its other expected sources (competitor press, THEME:survey) cannot match | #117 per-firm theme quotas for several firms |
+| 2026-11-17 | S1: several firms + a theme run in entity+theme mode with a sure on-theme slot per firm, and firms with nothing on the theme are named in the coverage note; Q21 now searches the five (0.667 -> 1.0), Q12's EDJ slots are on client acquisition, no PASS -> FAIL (#117) (#189) | none | C3: confirm firm_themes / metric_phrases fit next to topics.yaml |
 
 ### S2
 
