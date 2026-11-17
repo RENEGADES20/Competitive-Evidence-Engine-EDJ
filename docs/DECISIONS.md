@@ -177,7 +177,7 @@ off restore on plain Postgres; older snapshots still carry `chunks.embedding`, w
 ignores and `vectors.sql` moves into `chunk_embeddings`.
 
 ## ADR-010: Hybrid retrieval evaluated; core stays FTS-only
-Status: Accepted (tech lead decision 2026-11-05, #127)
+Status: Accepted (tech lead decision 2026-11-05, #127); its EJ-10 parts are superseded by ADR-011: the EJ-10 reason in Context, the ranking limit in Decision, the "Scope of EJ-10 here" bullet, the sponsor-agreement revisit trigger and the Consequences "meets EJ-10" line. The outcome (`main` FTS-only, hybrid code on `exp/hybrid`) stands, now under the branch rule.
 Context: ADR-001 allowed hybrid search (pgvector + RRF) only after a comparison run on the
 question bank showed FTS misses. The sponsor portability spec (v1.0, 2026-10-29, EJ-10) asks
 for no pgvector, embeddings, embedding model, PostgreSQL extension or reranker on `main`;
@@ -239,3 +239,32 @@ Teammates install nothing new; no reinstall and no new snapshot are needed. Ques
 paraphrase matching may lag if a larger question set shows them (none in this bank at `main`'s
 constants). `exp/hybrid` stays as the record and can be brought up to date if the question
 reopens.
+
+## ADR-011: Sponsor portability spec no longer binds main; model-based work on a branch
+Status: Accepted (tech lead decision 2026-11-16, #182)
+Context: ADR-010 gave the sponsor portability spec (v1.0, 2026-10-29, EJ-10) as a reason `main`
+stays FTS-only, applied its Tier 2 item 3 and section 4 ("Don't change ranking") to any change
+of the `fts` constants, measured `main` against EJ-10 ("Scope of EJ-10 here", Consequences
+"meets EJ-10") and named sponsor agreement as one revisit trigger. On 2026-11-16 the tech lead
+decided the spec is not a requirement of this project; only model-dependent development is to
+stay off `main`.
+Decision:
+- The portability spec is history. It is not a rule for `main` and not a reason to refuse a
+  change. ADR-010's EJ-10 parts (the Context reason, the ranking limit, the "Scope of EJ-10
+  here" bullet, the sponsor-agreement revisit trigger, the Consequences "meets EJ-10" line) no
+  longer apply.
+- The ranking limit is lifted: a change to ranking or the `fts` constants is an ordinary S1
+  issue with its own eval.
+- Branch rule (CLAUDE.md "Architecture invariants"): work that needs a model besides the single
+  answer LLM call (embeddings, rerankers, any local or hosted model in retrieval or validation)
+  is developed on a branch, not `main`.
+- ADR-010's outcome stands for this reason: `fts` is the only retrieval mode on `main`, and the
+  hybrid code stays on `exp/hybrid`.
+- Moving model-based work to `main` needs a tech-lead decision recorded in a new ADR that lifts
+  the branch rule; sponsor agreement is no longer the trigger. ADR-010's other two revisit
+  triggers (a larger or held-out question set where hybrid finds what `fts` misses; a reranker
+  that beats RRF order) remain evidence such an ADR would cite.
+- ADR-009 (optional vectors module, off by default) is unchanged. Code built for the spec stays.
+Consequences: Ranking changes on `main` need only their own eval, not a spec check. Retrieval
+work that needs a model still costs a branch and a comparison run before it can reach `main`.
+Teammates install nothing new.
