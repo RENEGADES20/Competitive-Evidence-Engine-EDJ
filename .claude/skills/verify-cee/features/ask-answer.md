@@ -34,7 +34,8 @@ Preconditions: baseline.
 - **Theme gap.** Ask Q21 ("What do we know about the generational wealth transfer, and how
   are these five preparing for it?"). The `Coverage:` line contains
   `No passages on the theme (Generational wealth transfer) for` followed by Morgan Stanley
-  (no MS chunk in corpus-2026-10-29 has a wealth-transfer keyword).
+  (corpus-2026-11-16: MS has one wealth-transfer chunk in the corpus, ranked below the 0.3 floor,
+  so none is retrieved).
 
 ## Gotchas
 

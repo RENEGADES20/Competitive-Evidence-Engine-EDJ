@@ -75,3 +75,10 @@ Out of scope: prompt or answer wording (S2).
   VERIFY PASS; ask-answer (incl. new Q21 theme-gap step), ask-progress, gap-path, invalid-chunk,
   coverage, filters, feedback PASS; open-citation and download-document UNREACHABLE (raw files not
   in data/raw/, same as #116). 0 real calls.
+- 2026-11-17 17:40 - reviewer merged main (c4ae0f9, freeze corpus-2026-11-16) into the branch and
+  re-ran: pytest 403 passed; eval mock as of 2026-10-27 vs main's code on the same freeze
+  (`.eval-runs/rev189-main` -> `.eval-runs/rev189-pr`): PASS 26 | FAIL 4 (Q15, Q19, Q22, Q24) on
+  both, only Q21 IMPROVED (0.667 -> 1.0), tier-1 recall 0.629 on both, refusal 5/5. Q22, Q24 FAIL
+  on main too (freeze drift, #120 / #181). verify-cee (`.verify-runs/20261117-173735-c4ae0f9`)
+  VERIFY PASS, all nine features PASS; Q21 theme gaps MS, RJF (MS's one wealth-transfer chunk,
+  `MS-DECK-2026-strategic-update#22`, ranks below the floor). 0 real calls.
