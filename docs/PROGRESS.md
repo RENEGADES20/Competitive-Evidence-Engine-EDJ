@@ -21,6 +21,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-12 | expected_doc_ids for 18 tier-1 questions (#56), tier-1 mock doc recall 0.656 (#170) | 16 manifest docs not in corpus-2026-10-29 (all MER, RJF web pages, investor-day decks); no trade press, DEF 14A or Form ADV | ingest the missing docs; Q20 and Q27 recall will stay low until then |
 | 2026-11-16 | Registry trade rows renamed so gap answers show plain source names, no file paths (#115) (#173) | none | none |
 | 2026-11-17 | 2026-11-17 (#174) | Q28 passes_if/evidence reworded (#156): EDJ discloses an advisor attrition rate (10-Q 2025Q2/Q3), Merrill does not; old text kept in notes; no mock eval line changes | none / S2 may revisit ATTRITION_GAP wording in prompt.py |
+| 2026-11-17 | #46 metric_definitions.yaml: 5 firms x 2 metrics quoted with chunk_ids (MS/SCHW/BAC headcount not disclosed) (#169) | none | S2 uses the definitions in answers; RJF headcount number from the earnings release (#75) |
 
 ### C2
 
