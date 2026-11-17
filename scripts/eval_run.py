@@ -40,7 +40,7 @@ sys.path.insert(0, str(REPO / "src"))
 import yaml  # noqa: E402
 
 from cee.config import entities_config  # noqa: E402
-from cee.retrieve.fts import K  # noqa: E402
+from cee.retrieve.fts import K, theme_gaps  # noqa: E402
 
 RUNS = REPO / ".eval-runs"
 CACHE = RUNS / "cache"
@@ -224,7 +224,8 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
         status = "PASS" if coverage >= min_coverage else "FAIL"
     return {"id": q["id"], "text": q["text"], "use_case": q.get("use_case"), "tier": q.get("tier"),
             "trap": q.get("trap", False), "expected_behavior": q.get("expected_behavior"), "entities": query.entities,
-            "unmapped": query.unmapped, "mode": query.mode, "chunk_ids": [h.chunk_id for h in hits],
+            "unmapped": query.unmapped, "mode": query.mode, "themes": query.themes,
+            "theme_gaps": theme_gaps(query, hits), "chunk_ids": [h.chunk_id for h in hits],
             "patterns": rows, "available_patterns": len(avail), "hit_patterns": len(hit),
             "coverage": coverage, "forbidden": bad,
             "doc_recall": recall["doc_recall"] if recall else None,
@@ -378,6 +379,9 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
     lines += ["", "## Per question", ""]
     for r in records:
         lines += [f"### {r['id']} - {r['status']}", "", r["text"], ""]
+        if r.get("mode") == "entity+theme":  # per-firm theme quota (#117)
+            lines.append(f"- Theme {', '.join(r['themes'])}: no chunk on the theme for "
+                         f"{', '.join(r['theme_gaps']) or 'no firm (every named firm has one)'}")
         for p in r["patterns"]:
             state = ("hit " + ", ".join(p["hits"])) if p["hits"] else (
                 ("type only (qualifier not met): " + ", ".join(p["type_only"])) if p["type_only"] else

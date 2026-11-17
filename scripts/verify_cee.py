@@ -57,6 +57,9 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
+# Q21: five firms + a theme (#117); Morgan Stanley and Raymond James hold no passage on it
+THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
+THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
 FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback"]
 
 
@@ -312,6 +315,12 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
+    ask(page, base, THEME_GAP_Q)
+    body = page.locator("body").inner_text()
+    line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
+    rec.step("Ask the five firms about the wealth transfer (Q21)",
+             f"coverage note says '{THEME_GAP_NOTE} ...' and names Morgan Stanley",
+             THEME_GAP_NOTE in line and "Morgan Stanley" in line.split(THEME_GAP_NOTE)[-1], line)
 
 
 def open_trace(page) -> list[str]:

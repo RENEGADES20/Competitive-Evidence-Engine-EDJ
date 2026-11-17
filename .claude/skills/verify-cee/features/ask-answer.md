@@ -10,6 +10,8 @@ A user types a question and gets an answer whose claims each link to a stored pa
   types and period of the retrieved passages; always visible, never collapsed (#40).
 - `ask-footer`: the footer shows firms, chunk count and whether an LLM was called.
 - `ask-log`: every asked question writes one `query_log` row.
+- `ask-theme-gap`: a question about several firms on one theme (Q21) gets a coverage line
+  "No passages on the theme (...) for X" naming each firm with no passage on it (#117).
 
 ## How to get to it (user POV)
 
@@ -26,6 +28,10 @@ Preconditions: baseline.
 - **Footer.** Page text contains `LLM called: False` (mock).
 - **Side effect.** `SELECT count(*) FROM query_log` in `cee_verify` is one higher than
   before the ask.
+- **Theme gap.** Ask Q21 ("What do we know about the generational wealth transfer, and how
+  are these five preparing for it?"). The `Coverage:` line contains
+  `No passages on the theme (Generational wealth transfer) for` followed by Morgan Stanley
+  (no MS chunk in corpus-2026-10-29 has a wealth-transfer keyword).
 
 ## Gotchas
 

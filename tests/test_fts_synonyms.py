@@ -18,7 +18,7 @@ FIVE = ["MS", "SCHW", "EDJ", "MER", "RJF"]
 def test_peer_phrase_resolves_to_the_five(question):
     q = resolve(question)
     assert q.entities == FIVE
-    assert q.mode == "entity"
+    assert q.mode == ("entity+theme" if q.themes else "entity")   # "recruiting" names a theme (#117)
 
 
 def test_peer_phrase_merges_with_a_named_firm():
