@@ -15,7 +15,7 @@ STATUSES = {"quoted", "closest_metric", "not_disclosed"}
 
 
 def definitions():
-    return yaml.safe_load((REPO_ROOT / "config" / "metric_definitions.yaml").read_text())["definitions"]
+    return yaml.safe_load((REPO_ROOT / "config" / "metric_definitions.yaml").read_text(encoding="utf-8"))["definitions"]
 
 
 def manifest_ids():
