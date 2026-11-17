@@ -51,14 +51,14 @@ suggest_sources(query) -> [source]
 
 ## Standard wording
 
-Prompt v0 lives in `src/cee/answer/prompt.py` (`PROMPT_VERSION`), which holds these sentences
+The prompt lives in `src/cee/answer/prompt.py` (`PROMPT_VERSION`), which holds these sentences
 as constants. Keep the two in sync. Caveats remain code-owned; this wording does not replace them.
 
 | Case | Questions | Gap (`gaps[].what`) | Adjacent `differs_because` |
 |---|---|---|---|
 | Merrill standalone results | Q30 | "Merrill does not report standalone results." | "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's." |
 | Advisor attrition | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
-| Advisor pay | Q29 | "Payout grids are not public." | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
+| Advisor pay (decided per firm, prompt v2, #167) | Q25, Q29 | Firm with nothing published: "Payout grids are not public." (multi-firm answers name the firm first). Firm whose cited chunks publish payout ranges (RJF recruiting pages, #151): the ranges are claims dated "page content as of <date>", and the gap is "Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public." Never "not public" for a firm whose evidence shows ranges. | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
 
 Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this
 sentence as the last claim:
