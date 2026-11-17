@@ -19,7 +19,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-22 | C1 #37: BAC GWIM segment tags from config (10-K/10-Q MD&A, decks, supplements; 0/20 wrong; mixed chunks untagged) (#96) | none | PR/TR tagging (#95); Q30 retrieval recall (S1) |
 | 2026-11-04 | #45 last-four supplements (MS/BAC 2025Q4, RJF 2025Q3-Q4) and six Schwab monthly reports in the manifest (#147) | Q23 "three firms" waits for #59 | TL moves the 10 PDFs from Box into raw/ |
 | 2026-11-12 | expected_doc_ids for 18 tier-1 questions (#56), tier-1 mock doc recall 0.656 (#170) | 16 manifest docs not in corpus-2026-10-29 (all MER, RJF web pages, investor-day decks); no trade press, DEF 14A or Form ADV | ingest the missing docs; Q20 and Q27 recall will stay low until then |
-| 2026-11-14 | Q28 passes_if/evidence reworded (#156): EDJ discloses an advisor attrition rate (10-Q 2025Q2/Q3), Merrill does not; old text kept in notes; no mock eval line changes | none | S2 may revisit ATTRITION_GAP wording in prompt.py |
+| 2026-11-16 | Registry trade rows renamed so gap answers show plain source names, no file paths (#115) (#173) | none | none |
 
 ### C2
 
@@ -63,6 +63,9 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
 | 2026-11-06 | Real-model run of Q19/Q24/Q25/Q28/Q29 on prompt v1 (#61): 5 calls (claude-sonnet-5-5), all expected behaviors, no normative sentence; number-check false flags fixed in #154 (#157) | Q29 misdated quarter (#155); Q28 passes_if outdated (#156, C1); Q19 lacks competitor moves (S1 retrieval) | #155 date check |
 | 2026-11-06 | Number check (#52): every figure in a claim is matched against its cited chunks (0.1%, or rounded with a decimal; table unit headers), else flagged `number_not_found`; rule in specs/answer-citations.md; mock clips at word boundaries (#154) | Cannot catch a figure from the wrong table column (MS-SUPP-2026Q3 p.8); small one-decimal figures pass loosely | #61 real-model runs will show how often real answers get flagged |
+| 2026-11-16 | Boundary enforced by code (#118): claims recommending an action for Edward Jones are withheld (notice shown, kept in Answer.withheld), the answer re-judged answer_with_boundary, hand-off sentence added when missing; Q12/Q19 real: 0 normative (#172) | open-citation cite-date needs a date_basis='retrieved' document in the snapshot | #155 date check |
+| 2026-11-16 | Date check (#155): a claim's stated "quarter ended / as of / published <Month YYYY>" must match a cited document's period_end or published_at, else flagged `date_mismatch`; catches the Q29 misdated quarter, 0 false flags on 40 cached real and 87 mock claims (#175) | Quarter shorthand (3Q26) not checked (fiscal vs calendar) | - |
+| 2026-11-17 | Prompt v2 (#167): advisor-pay gap decided per firm; RJF's published payout ranges reported with their as-of date, "grids not public" only for firms with nothing published; Answer accepts "answer" for "answerable" (#188) | Q25 now chooses `answer` (bank expects gap, raised on #156); runner loses outputs that fail validation (#187) | RJF gap line to name the firm at the next prompt change |
 
 ### U1
 
@@ -75,6 +78,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
 | 2026-11-04 | Ask page filters (firm, date range, keywords) as SQL WHERE clauses; query_log date fix (#149) | - | #62 feedback |
 | 2026-11-06 | Feedback on answers (Helpful / Not helpful + comment) stored per query in query_feedback; resend replaces (#153) | - | #119 plain UI pass |
+| 2026-11-16 | Plain UI pass: one-line explanation on every page, plain no-evidence and empty states, filters hint (#176) | - | Gate 3 cold test feedback |
 
 ### TL
 
@@ -118,6 +122,9 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-06 | CI fix: converter header test skips without bs4 (main pytest red after #151) (#165) | - | - |
 | 2026-11-09 | /sync-db` + `snapshots/LATEST.json` (Windows and Mac scripts; build-snapshot writes the manifest; tested on a throwaway database) (#129) (#171) | Mac run by a teammate still open | #120 freeze snapshot publishes its LATEST.json through a PR |
 | 2026-11-13 | PDF chunks take their page from every docling provenance span (#84): page sweep 3,568/3,568 chunks on their page for all 47 manifest PDFs; docling output cached on Box (#168) | Merge waits for the 11/11 #120 freeze build (approved on cee_84) | #120 builds the freeze from the v2 cache with no docling run |
+| 2026-11-16 | TL: corpus freeze snapshot corpus-2026-11-16 (137 documents, 18,497 passages; #84 pages, #115 registry names; without #55/#107 by TL decision) built, verified and named in LATEST.json; mock check 26/30 (Q15, Q19, Q22, Q24), Merrill's first own documents crowd out other firms in five-firm questions (#120) (#180) | 30-call real run awaits TL approval; Gate 3 human score, cold test, sixth-firm decision open | /sync-db; real run and Gate 3 scoring; S1 per-firm pool fix |
+| 2026-11-17 | TL: rules updated per tech-lead decision of 2026-11-16 (ADR-011; model-based work on a branch; up to 5 real calls per question, Gate 3 run needs the tech lead) (#182) (#183) | - | - |
+| 2026-11-17 | ADR-012: up to 5 LLM calls per user question (one by default), work stays on main; paid-call test budget counts by question run, no per-task total (CLAUDE.md, TL review docs) (#185) | none | multi-call answer feature issue builds on ADR-012 |
 
 ## Weekly score (from W6)
 

@@ -345,7 +345,7 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
     body = page.locator("body").inner_text()
-    n_meta = re.search(r"(\d+) chunks retrieved", body)
+    n_meta = re.search(r"(\d+) passages found", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
@@ -505,6 +505,9 @@ def feature_gap_path(page, base, rec, ctx):
     rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
              f"{citation_links(page).count()} citation links")
     rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+    plain = "That is a valid result, not an error" in body or "do not answer this directly" in body
+    rec.step("Read the line under the heading (#119)", "a plain sentence saying no evidence is a valid result",
+             plain, "present" if plain else "missing")
     footer = re.search(r"firms: ([^|]*)\|", body)
     firms = footer.group(1).strip() if footer else "no footer"
     rec.step("Read the footer's firms", "the gap firm, e.g. 'LPLA (no documents)', not 'none' (#50)",
