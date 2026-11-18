@@ -47,9 +47,12 @@ says after the build; it is announced as is (no renaming: that would break the s
   non-transcript chunks identical to the main-code build.
 - `pytest -q` on 960b742 (repo `.venv`): **479 passed** = the floor.
 - Baseline convention: `evals/baselines/<snapshot>/report.json` + `report.md` from a mock
-  `eval_run.py` run at k=20; one folder at a time (5f43156 replaced `corpus-2026-10-18` with
+  `eval_run.py` run; one folder at a time (5f43156 replaced `corpus-2026-10-18` with
   `corpus-2026-10-22`). `corpus-2026-11-16` (#120) kept its runs in `cache\ev120` only, so the
-  committed baseline is still `corpus-2026-10-22`. This PR replaces it with `SNAP`.
+  committed baseline is still `corpus-2026-10-22` (run at k=20). This PR replaces it with
+  `SNAP`. Since #181 `eval_run.py` without `--k` uses the app's budget by firm count (meta
+  `"k": "by question"`), so the new baseline is "app budget (no `--k`)", not k=20; every run
+  here (base and snap) uses that same default.
 - Open: #199 (C2, transcript slots: doc recall down on Q6/Q11/Q13/Q27 after #150). Measured on
   this snapshot, fixed there, not here. Only open PR: #194 (C1, W9 score, docs).
 
@@ -85,7 +88,9 @@ $env:PYTHONUTF8="1"; $env:TMP="D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP=$env:TMP
 ```
 export PYTHONUTF8=1 LLM_PROVIDER=mock; unset CEE_VECTORS PYTHONPATH
 ```
-`ASOF` = the build date (`SNAP`'s date), fixed before step 1 and used by every eval run.
+`ASOF` = **2026-11-17**, fixed at step 1 (the planned build date) and recorded in the Progress
+log. Every eval run uses it, whatever `SNAP` ends up being called (if the build crosses
+midnight, `SNAP` is `corpus-2026-11-18` and `ASOF` stays 2026-11-17).
 
 1. **Baseline on `corpus-2026-11-16`** (DB `cee`, before the build replaces it), same code:
    - `PY scripts/verify_cee.py doctor` -> `DOCTOR PASS`, snapshot `corpus-2026-11-16`.
@@ -119,8 +124,13 @@ export PYTHONUTF8=1 LLM_PROVIDER=mock; unset CEE_VECTORS PYTHONPATH
    - Chunks: total recorded (expected 21,143); transcript chunks = 2,852; GWIM-tagged transcript
      chunks = 14; `BAC-TR-2026Q2#63` tagged GWIM. Non-transcript chunks of the 137 old documents
      identical to `corpus-2026-11-16` (md5 over chunk_id, segment, section, page, text, compared
-     against a scratch restore of `corpus-2026-11-16.dump` into `cee_prev_200`, dropped after).
-     Any difference -> explained in the findings before publishing.
+     against a scratch restore into `cee_prev_200` of the local
+     `repo\snapshots\corpus-2026-11-16.dump`, the file `LATEST.json` on `main` names, sha256
+     checked against it first; dropped after). Any difference -> explained in the findings
+     before publishing. First suspect: #150 added BAC `mention_excludes: "acquisition of
+     Merrill"` in `config/entities.yaml`, applied by the segment tagger to every BAC chunk, so
+     a non-transcript BAC chunk with that phrase could change segment; also #179/#117/#46/#55
+     config changes since 8f92cb1.
    - `PY -m cee.smoke` -> PASS; `PY scripts/verify_cee.py doctor` -> `DOCTOR PASS`.
    - `PY scripts/page_sweep.py > EV\page_sweep.txt`: all 52 PDFs listed, `MISPLACED 0` on every
      line (always exits 0, so the output is the check).
@@ -161,7 +171,9 @@ export PYTHONUTF8=1 LLM_PROVIDER=mock; unset CEE_VECTORS PYTHONPATH
      `repo\snapshots\` is git-ignored).
    - In `wt-snap`: copy `EV\snap-ASOF\report.json` and `report.md` to `evals/baselines/SNAP/`,
      `git rm -r evals/baselines/corpus-2026-10-22`; README Status (snapshot, 219 documents,
-     chunk count, the latest retrieval check line, Form ADV and speaker-turn sentences updated).
+     chunk count, the latest retrieval check line, Form ADV and speaker-turn sentences updated,
+     and the "Gate scores" sentence: Gate 3 scored 16/30 on `corpus-2026-11-16`, #120 / PR
+     #195; Gate 4 not scored yet).
    - Commit, push, open the PR (`Closes #200`), `/finish-task`. Merging it is the sync note;
      hand the TL one chat line: "New snapshot SNAP: run /sync-db". Comment on #121 and #199
      with the snapshot name.
@@ -185,10 +197,12 @@ export PYTHONUTF8=1 LLM_PROVIDER=mock; unset CEE_VECTORS PYTHONPATH
 - [ ] `sync-db.ps1 -Check` and `sync-db.sh --check` both exit 0 "up to date: SNAP".
 - [ ] Mock eval `snap-ASOF` vs `base-ASOF` (and at 2026-10-29): 0 forbidden hits; refusal
       accuracy >= baseline; PASS/FAIL, tier-1 recall reported; every PASS -> FAIL and recall
-      drop classified; rerun 30 UNCHANGED; saved as `evals/baselines/SNAP/`.
+      drop classified; rerun 30 UNCHANGED; saved as `evals/baselines/SNAP/` (app budget, no
+      `--k`).
 - [ ] `pytest -q` all pass (>= 479).
 - [ ] `snapshots/LATEST.json` on the branch = the build's; `repo` clean on `main`; README
-      Status updated; PR merged = sync note; #121, #199 told the snapshot name.
+      Status updated (incl. Gate 3 = 16/30); PR merged = sync note; one team-chat line handed
+      to the TL ("New snapshot SNAP: run /sync-db"); #121, #199 told the snapshot name.
 - [ ] 0 real calls.
 
 ## Progress log
@@ -197,3 +211,9 @@ export PYTHONUTF8=1 LLM_PROVIDER=mock; unset CEE_VECTORS PYTHONPATH
   `published_at`; parse cache v2 52/52, edgartools v1 41/41; Box root uploads 82/82 identical
   to `raw/`; `cee` = corpus-2026-11-16 (137 docs, 18,497 chunks); both `sync-db` checks exit 0;
   `pytest -q` 479 passed. No file other than this plan changed. Not reviewed yet.
+- 2026-11-17 22:30 - plan reviewed on #200 ("Reviewed 4e415e1"): **PLAN APPROVED** (reviewer
+  agent), https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/200#issuecomment-6969062523 ;
+  0 blocking, 6 non-blocking. Notes 1-5 applied (baseline = app budget, not k=20; `ASOF` fixed
+  at step 1; chat line in Acceptance; `mention_excludes` first suspect and `cee_prev_200` source;
+  README Gate 3 sentence). Note 6 (plan file name) kept as is.
+- 2026-11-17 22:31 - `ASOF` fixed = 2026-11-17. Evidence folder `D:\ALLPROJECTS\EDJ\cache\ev200`.
