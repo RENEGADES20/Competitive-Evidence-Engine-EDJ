@@ -128,27 +128,30 @@ again; then it is designed and measured in a plan update before any code.
    is run by the TL, not here).
 
 ## Acceptance
-- [ ] Mock eval on `corpus-2026-11-17`, `--as-of 2026-11-17`, app budget (no `--k`): named
-      passage in the retrieved set, or explained under "Can't reach" with measured ranks:
-  - [ ] Q6: `RJF-TR-2026Q1#46` in (L1)
-  - [ ] Q13: `MS-TR-2025Q4#20` in (L2)
-  - [ ] Q17: `MS-TR-2025Q3#8` or `MS-TR-2025Q4#35` in (L2)
-  - [ ] Q22: `EDJ-10Q-2026Q2#60` or `EDJ-10Q-2026Q1#66` in (L2b)
-  - [ ] Q2: `RJF-PR-web-affiliation-options#1` in, or the explanation above holds (measured)
-  - [ ] Q20: `FIDELITY-III-2025#0` or `UBS-NEXTGEN-2026#81` in, or the explanation above holds
-- [ ] No PASS -> FAIL against `evals/baselines/corpus-2026-11-17/report.json` (as of 2026-11-17)
+- [x] Mock eval on `corpus-2026-11-17`, `--as-of 2026-11-17`, app budget (no `--k`): named
+      passage in the retrieved set, or explained under "Can't reach" with measured ranks
+      (`cache\ev203\final-1117`, `check-final-1117.txt`):
+  - [x] Q6: `RJF-TR-2026Q1#46` in (L1, right after `#45`)
+  - [x] Q13: `MS-TR-2025Q4#20` in, and `MS-TR-2026Q1#24` (L2)
+  - [x] Q17: `MS-TR-2025Q3#8` in (L2)
+  - [x] Q22: `EDJ-10Q-2026Q2#60` in (L2c table label; L2b alone was not enough, see log)
+  - [x] Q2: `RJF-PR-web-affiliation-options#1` not in; explanation holds (measured: `#0` rank 9,
+        `#1` rank 43 at k=80; `#0` and `advisor-select#0` now in the list)
+  - [x] Q20: neither in; explanation holds (measured: neither in the top 80 on the branch;
+        `UBS-NEXTGEN-2026#83` stays in, plus `CERULLI-GWT-2025#1`, `BOFA-PB-STUDY-2026#15`)
+- [x] No PASS -> FAIL against `evals/baselines/corpus-2026-11-17/report.json` (as of 2026-11-17)
       and against `ev203\main-1029` (as of 2026-10-29); 0 forbidden; refusal 5/5 and 19/19;
       tier-1 doc recall not below 0.727 (as of 2026-11-17); doc/passage recall of Q2, Q6, Q13,
       Q17, Q20, Q22 not below `ev203\main-1117`.
-- [ ] Sentinels Q4, Q27, Q30: no BAC chunk outside GWIM/Merrill in the retrieved set (an answer
+- [x] Sentinels Q4, Q27, Q30: no BAC chunk outside GWIM/Merrill in the retrieved set (an answer
       turn of a BAC call is filtered like any chunk), forbidden 0, refusal ok, status unchanged.
-- [ ] Q25 and Q29 (gap): changed keys and chunk IDs recorded in the progress log; status and
+- [x] Q25 and Q29 (gap): changed keys and chunk IDs recorded in the progress log; status and
       refusal unchanged; if L2a/L2b brings a payout-grid chunk into Q25, `compensation structure`
       is excluded from inflection matching (TL choice: keep Q25 a clean gap) and the step-4 check
       is re-run to show it gone.
-- [ ] `pytest -q` PASS (including the `synonym_only` stripping test for inflected "pays"/"paying");
+- [x] `pytest -q` PASS (including the `synonym_only` stripping test for inflected "pays"/"paying");
       smoke PASS; `verify_cee.py run` VERIFY PASS.
-- [ ] 0 real calls (the real check is #121's combined R2).
+- [x] 0 real calls (the real check is #121's combined R2).
 
 ## Paid calls
 None. Mock eval and unit tests only. Q2, Q6, Q13, Q17, Q20, Q22 and Q4, Q27, Q30 are judged for
@@ -181,3 +184,50 @@ real once, in #121's R2 (run ledger in `plans/0121-gate4.md`).
   DB `cee` = `corpus-2026-11-17` (sync check up to date); diagnosis probes run read-only (above);
   0 real calls.
 - 2026-11-18 00:34 - plan review round 1 (PLAN CHANGES REQUESTED, #203 comment 6971073215). Blocking 1 fixed: Risks name L2a firing on more questions, with Q25 (`compensation structure` -> "payout grid") as the gap case; step 4 prints fired synonym keys main vs branch for all 30 and Q25/Q29 changed chunk IDs with payout chunks; acceptance line for Q25/Q29 with the TL fallback (exclude `compensation structure` from inflection matching if a payout-grid chunk enters Q25). Non-blocking 1-4 taken: `synonym_only` stripping of inflected "pay" stated and tested; config comment block updated in the same PR; ADR number = next free in DECISIONS.md at merge; probes copied to `cache\ev203\probes\`.
+- 2026-11-18 00:35 - plan review round 2: PLAN APPROVED (#203 comment 6971106248). Non-blocking notes taken: step 4 records which "payout" chunks are judged payout-grid vs harmless; ADR number kept in sync across DECISIONS.md, specs/retrieval.md and this plan. Implementation started.
+- 2026-11-18 00:37 - step 1: main mock baselines `cache\ev203\main-1117` 28/2 (Q15, Q19), tier-1 doc
+  recall 0.727, passages 0.523; `main-1029` 28/2, 0.742 / 0.550; 0 forbidden, refusal 5/5 and 19/19
+  at both dates (same as `ev121\mock-main`).
+- 2026-11-18 00:40 - step 2 (L2) run `l2-1117`/`l2-1029`: 28/2 both dates, tier-1 0.788 / 0.800. Q17
+  `MS-TR-2025Q3#8` in. Surprises: (a) Q22 `#60` not in: the probe that put it at rank 2 also had the
+  table label "net new assets for the period" as a value; L2b alone leaves it at 64 -> the label is
+  added to `net new assets` (the issue names it). (b) Q13 `#20` not in: with L2a "stock-plan" now
+  fires `stock plan` (+ phrase + "equity compensation"), lifting the CEO's Carta turn `#12` of the
+  same call above `#20` -> `convert` += "originating from" (fires only on "convert"). (c) Q25: L2a
+  fired `compensation structure`; `RJF-TR-2026Q1#44` entered ("independent payouts are higher ...
+  tiered payout systems ... higher up on the payout grid") = a payout-grid chunk -> TL fallback
+  applied: config `synonym_exact: ["compensation structure"]`; re-run shows Q25's chunk set equal
+  to main (added [], removed []). (d) `affiliation models` now fires `affiliation model` on Q6.
+- 2026-11-18 00:44 - step 3 (L1, `attach`). First run paired 3 turns: Q6 `#45 -> #46` (analyst ->
+  CEO, right), Q8 `SCHW-TR-2026Q1#49 -> #50` and Q17 `BAC-TR-2026Q2#6 -> #7` (a CEO handing over to
+  the CFO with "...?", wrong). Fix: the "?" test does not count under a speaker label with an
+  executive title. After it, the bank keeps one question turn and one pair (Q6), analyst -> CEO
+  (`cache\ev203\pairs-final-1117.txt`). `attach` cost no PASS, so `replace` was not run (built and
+  unit-tested as the fallback).
+- 2026-11-18 00:46 - step 4/5, final runs `final-1117` / `final-1029`: 28 PASS / 2 FAIL (Q15, Q19)
+  at both dates, PASS -> FAIL none, 0 forbidden, refusal 5/5 and 19/19; tier-1 doc recall 0.727 ->
+  0.788 (11-17) and 0.742 -> 0.800 (10-29); passages 0.523 -> 0.607 and 0.550 -> 0.629. Linked doc /
+  passage recall (11-17): Q2 0.556 -> 0.667 / 0.556 -> 0.667; Q6 0.667 -> 1.0 / 0.667 -> 1.0;
+  Q13 0.833 -> 1.0 / 0.833 -> 1.0; Q17 0.333 -> 0.667 / 0.333 -> 0.667; Q20 0.286 -> 0.429 /
+  0.286 -> 0.429; Q22 0.424 -> 0.424 / 0.125 -> 0.375. Other change: Q5 1.0 -> 0.833 (`advisor`
+  now fires on "advisors", PASS kept); Q1 up 0.778 -> 0.889. Traps Q4, Q27, Q30: chunk sets equal
+  to main, no BAC chunk outside GWIM/Merrill, forbidden 0, refusal ok. Changed chunk IDs per
+  linked question: `cache\ev203\diff-final.txt`.
+  Fired keys main -> branch: Q2 [] -> [advisor, recruit]; Q5 [technology] -> [advisor, technology];
+  Q6 [] -> [affiliation model]; Q7 [.., recruiting] -> [.., recruit]; Q8 [] -> [advisor, independent
+  advisor]; Q10 [] -> [mass affluent]; Q13 [] -> [stock plan, convert, workplace]; Q20 [advisor] ->
+  [advisor, under 40]; Q29 [pay] -> [advisor, pay]; Q25 unchanged ([advisor]) after `synonym_exact`.
+  Q25 / Q29 "payout" chunks, judged: Q25 chunk set equal to main; its one payout chunk
+  `RJF-PR-web-affiliation-options#2` (bank & credit union: "competitive compensation package from
+  the financial institution") is on main too, not a grid -> harmless. Q29 added
+  `MS-TR-2026Q2#23`, `MS-TR-2026Q3#36`, removed `MS-PR-2026-01-15-01#1`, `MS-TR-2025Q4#12`; no
+  added chunk mentions payout. Its payout chunks are all on main too: MS "formulaic payout to Wealth
+  Management advisors" (`MS-10Q-2026Q2#20`, `MS-10K-2025#170`, `#153`, `#128`, `MS-10Q-2026Q1#19`,
+  `MS-10Q-2025Q3#64`, `MS-10Q-2025Q2#20`) = the disclosed adjacent that Q29's R1 PASS labels, not a
+  grid -> harmless; `MS-TR-2025Q3#89` (dividend payout) and `MS-TRADE-2026-08-25-RB-01#0` (an
+  editor's payout) unrelated -> harmless. Lever 3 (table rows) not built: not needed for Q22.
+  Baseline not refreshed: no status moved.
+- 2026-11-18 00:50 - step 6: ADR-017 (next free number in `docs/DECISIONS.md`, re-checked against
+  origin/main at this time), `specs/retrieval.md` lines, config comment block. Step 7: `pytest -q`
+  499 passed; smoke PASS; `verify_cee.py run` VERIFY PASS, all 9 features
+  (`.verify-runs\20261118-004733-7f1fa09`, working tree on top of 7f1fa09). 0 real calls.

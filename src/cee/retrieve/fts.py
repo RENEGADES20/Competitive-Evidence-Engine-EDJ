@@ -21,6 +21,9 @@ Slot order inside a firm (#198, #199, ADR-016): trade press takes a turn only wh
 document types have nothing left (a full list still keeps one trade chunk in place of a repeat), and
 a document type gives a new document, the newest among near-equal ranks, before a second chunk of a
 used one (speaker-turn transcripts of one call crowded out the firm's other calls).
+Answer turns and key matching (#203, ADR-017): an analyst's question turn brings management's next
+turn (same hard filters); synonym keys fire hyphenated and inflected, and a multi-word key is also
+searched as a phrase.
 """
 from __future__ import annotations
 
@@ -34,6 +37,7 @@ from datetime import date, timedelta
 from cee.config import entities_config
 from cee.db import connect
 from cee.ingest.topics import Topic, _pattern, load_topics, tag_text
+from cee.ingest.transcript import HEADINGS as TRANSCRIPT_HEADINGS
 
 
 @dataclass
@@ -241,17 +245,33 @@ QUESTION_WORDS = re.compile(r"\b(?:compare[sd]?|comparison|describe[sd]?|explain
                             r"said|summari[sz]e|list|versus|vs|itself|themselves|their|its)\b", re.IGNORECASE)
 
 
+INFLECTION = r"(?:s|es|ed|ing)?"  # a lower-case key's last word also fires inflected (#203)
+
+
 def _synonym_pattern(key: str) -> re.Pattern:
-    flags = 0 if key.removesuffix("s").isupper() else re.IGNORECASE  # NNA, FA, FAs, AI: exact case
-    return re.compile(rf"(?<![\w]){re.escape(key)}(?![\w])", flags)
+    """All-caps keys (NNA, FA, FAs, AI) match whole word in exact case. Other keys match in any
+    case, with a hyphen or spaces between their words ("stock-plan" fires `stock plan`, Q13) and
+    an inflected last word (`recruit` fires on "recruiting", Q2/Q7; #203). Keys in config
+    `synonym_exact` keep the plain whole-phrase match (gap questions, see config)."""
+    if key.removesuffix("s").isupper():
+        return re.compile(rf"(?<![\w]){re.escape(key)}(?![\w])")
+    words = re.split(r"[\s-]+", key.strip())
+    body = r"[\s-]+".join(re.escape(w) for w in words)
+    if key not in (entities_config().get("synonym_exact") or []):
+        body += INFLECTION
+    return re.compile(rf"(?<![\w]){body}(?![\w])", re.IGNORECASE)
 
 
 def expand_synonyms(terms: str) -> list[str]:
-    """Synonyms of every config key found in the terms (key -> values only), in config order."""
+    """Synonyms of every config key found in the terms (key -> values only), in config order.
+    A multi-word key is searched as a phrase too, ahead of its values (#203: "net new assets"
+    in Q22 scored only its three common words, so the table row "Net new assets for the period"
+    lost to prose that repeats "definition" and "metric")."""
     out: list[str] = []
     for key, values in (entities_config().get("synonyms") or {}).items():
         if _synonym_pattern(key).search(terms):
-            out += [v for v in values if v not in out]
+            phrase = [key] if len(re.split(r"[\s-]+", key.strip())) > 1 else []
+            out += [v for v in [*phrase, *values] if v not in out]
     return out
 
 
@@ -425,6 +445,67 @@ NEWEST_BAND = 0.9     # among unused documents ranked within this share of the t
                       # newest wins (Q11: a later call 5% below an older one); None = rank order
 
 
+# Answer turn with its question turn (#203, ADR-017): an analyst's question turn on a call is kept
+# for the question's words, but the answer is in management's next turn (Q6: RJF-TR-2026Q1 #45
+# kept, the CEO's answer #46 a second chunk of the same call and left out). "attach": the answer
+# turn is kept right after its question turn; "replace": in its place; None: no rule.
+PAIR_TURNS: str | None = "attach"
+_HANDOFF = re.compile(r"^(?:Operator|Moderator)$|^Q - [A-Z]")
+# A speaker label with an executive title is management, whose "?" hands over to a colleague
+# ("... Alastair?"), not an analyst's question (#203: BAC-TR-2026Q2 #6, SCHW-TR-2026Q1 #49).
+_EXECUTIVE = re.compile(r"\b(?:CEO|CFO|COO|CIO|CTO|President|Director|Officer|Chair(?:man|woman)?|VP|"
+                        r"Vice President|Executive|Treasurer|Investor Relations|Head of|"
+                        r"Company Representative)\b|^A - [A-Z]")
+
+
+def is_question_turn(h: Hit) -> bool:
+    """A transcript chunk that asks: it carries the operator hand-off ("Operator" / "Moderator"
+    paragraph, Bloomberg "Q - " label) that leads an analyst's turn, or its last paragraph ends
+    with "?" and its speaker label has no executive title."""
+    if h.doc_type != "transcript":
+        return False
+    paras = [p.strip() for p in re.split(r"\n\s*\n", h.text) if p.strip()]
+    if not paras:
+        return False
+    if any(_HANDOFF.match(p) for p in paras):
+        return True
+    label = next((p for p in paras if p not in TRANSCRIPT_HEADINGS), "")
+    return paras[-1].endswith("?") and not _EXECUTIVE.search(label)
+
+
+ANSWER_SQL = """
+SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
+       d.published_at::text AS published_at, d.period_end::text AS period_end,
+       c.section, c.page, c.text, d.date_basis, qt.chunk_id AS question_id
+FROM chunks qt JOIN chunks c ON c.doc_id = qt.doc_id AND c.seq = qt.seq + 1
+     JOIN documents d ON d.doc_id = c.doc_id
+WHERE qt.chunk_id = ANY(%(question_ids)s)
+  AND {entity_filter}
+  AND {window_filter}
+  AND {filters}
+"""
+
+
+def answer_turns(conn, questions: list[Hit], entity_where: str, window: str, filters: str,
+                 params: dict) -> dict[str, Hit]:
+    """{question chunk_id: its answer turn}: the next chunk of the same call, fetched with every
+    hard filter of the main pass (entity/segment, window, date range, keywords, doc-type scope) but
+    no word match, so a turn the filters exclude (a BAC consumer turn in a Merrill question) never
+    comes in. A next chunk that is itself a question turn is not an answer."""
+    if not questions:
+        return {}
+    by_id = {h.chunk_id: h for h in questions}
+    sql = ANSWER_SQL.format(entity_filter=entity_where, window_filter=window, filters=filters)
+    out: dict[str, Hit] = {}
+    for r in conn.execute(sql, params | {"question_ids": list(by_id)}).fetchall():
+        r = dict(r)
+        q = by_id[r.pop("question_id")]
+        a = Hit(**r, rank=q.rank, on_theme=q.on_theme)
+        if not is_question_turn(a):
+            out[q.chunk_id] = a
+    return out
+
+
 def per_firm_budget(n_firms: int) -> int:
     """k for a question naming n >= 2 firms: max(K, PER_FIRM x n), so 2-3 firms keep 20 and the
     five get 30. Chosen from a grid (6, 7, 8 per firm; 20 + 5 per extra firm) as the smallest
@@ -465,7 +546,8 @@ def quota_firms(entity_ids: list[str]) -> dict[str, str]:
 
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
            max_per_doc: int | None = None, firm_of: dict[str, str] | None = None,
-           floor_base: int | None = None, trade_last: bool = True, new_doc_first: bool = True) -> list[Hit]:
+           floor_base: int | None = None, trade_last: bool = True, new_doc_first: bool = True,
+           answers: dict[str, Hit] | None = None) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
@@ -480,8 +562,12 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     gives the firm's best trade chunk the place of a repeated document (TRADE_KEEP); with
     new_doc_first, a document type gives a document not yet in the list, the newest among
     near-equal ranks (NEWEST_BAND), before a second chunk of a used one (NEW_DOC_FIRST;
-    speaker-turn chunks of one call pushed the firm's other calls out of Q6, Q11, Q13, Q27)."""
+    speaker-turn chunks of one call pushed the firm's other calls out of Q6, Q11, Q13, Q27).
+    answers maps a question turn to its answer turn (answer_turns, #203): with PAIR_TURNS "attach"
+    the answer is kept right after its question (same firm, MAX_PER_DOC, near-duplicates and k
+    still apply), with "replace" in its place."""
     floor = FLOOR if floor is None else floor
+    answers = answers or {}
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
     floor_base = FLOOR_BASE if floor_base is None else floor_base
     # tiers[0]: on the theme, tiers[1]: every chunk; each firm -> document type -> rank-ordered hits
@@ -521,6 +607,15 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
         return None if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles) else sh
 
     def keep(h: Hit, sh: set, firm) -> None:
+        a = answers.get(h.chunk_id) if PAIR_TURNS else None
+        if a is not None and PAIR_TURNS == "replace" and (a_sh := eligible(a)) is not None:
+            h, sh = a, a_sh
+            a = None
+        add(h, sh, firm)
+        if a is not None and PAIR_TURNS == "attach" and len(kept) < k and (a_sh := eligible(a)) is not None:
+            add(a, a_sh, firm)
+
+    def add(h: Hit, sh: set, firm) -> None:
         kept_firm.append(firm)
         kept.append(h)
         kept_ids.add(h.chunk_id)
@@ -584,6 +679,9 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
             n_type = {}
             for j in mine:
                 n_type[kept[j].doc_type] = n_type.get(kept[j].doc_type, 0) + 1
+            # An answer turn kept with its question is half of a pair, not a repeat (#203).
+            paired = {a.chunk_id for qid, a in answers.items() if qid in kept_ids}
+            mine = [j for j in mine if kept[j].chunk_id not in paired]
             i = next((j for j in reversed(mine) if per_doc[kept[j].doc_id] > 1), None)
             if i is None:
                 i = next((j for j in reversed(mine) if n_type[kept[j].doc_type] > 1), None)
@@ -663,10 +761,12 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
             sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{where} AND {on_theme}",
                              window_filter=window, filters=filters)
             on_theme_rows = conn.execute(sql, params | on_theme_params).fetchall()
-    on_ids = {r["chunk_id"] for r in on_theme_rows}
-    merged = {r["chunk_id"]: r for r in [*rows, *on_theme_rows]}
-    pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
-                  key=lambda h: (-h.rank, h.chunk_id))
+        on_ids = {r["chunk_id"] for r in on_theme_rows}
+        merged = {r["chunk_id"]: r for r in [*rows, *on_theme_rows]}
+        pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
+                      key=lambda h: (-h.rank, h.chunk_id))
+        answers = answer_turns(conn, [h for h in pool if is_question_turn(h)], where, window, filters,
+                               params) if PAIR_TURNS else {}
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
     # Trade press is not put last there (#198): Q26 reads its 90 days of news as they rank; a new
     # document still comes before a second chunk of a used one (#199, Q27: Merrill since January).
@@ -674,7 +774,7 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
     research = select([Hit(**r) for r in research_rows], min(THEME_K, k),  # research: as before #166
                       **{**opts, "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False, "new_doc_first": False},
                       floor_base=1)
-    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities)) + research
+    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities), answers=answers) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits
