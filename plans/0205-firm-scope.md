@@ -49,7 +49,9 @@ research share stay as they are.
 "advisor-led firms", "an advisor-led firm" (plus the "adviser-led" spellings). `resolve()` already
 unions peer members with named firms (Q15 -> MS, SCHW, EDJ, MER, RJF) and `_search_terms()`
 already strips peer phrases. Indefinite and plural forms only, so "Edward Jones's advisor-led
-model" or "Morgan Stanley's advisor-led channel" names one firm, not the group.
+model" or "Morgan Stanley's advisor-led channel" names one firm, not the group. Deliberate edge:
+"Edward Jones's and Morgan Stanley's advisor-led models" matches the plural phrase and adds MER
+and RJF to the two named firms (the plural names the group; covered by a unit test).
 Member check against how each firm reports (config `reporting_shape`, Q15 `expected_sources`
 MS:10-K, EDJ:10-K, BAC:10-K#GWIM, RJF:10-K): MS Wealth Management reports advisor-led and
 self-directed client assets apart (the only firm using the word, 82 chunks, e.g. `MS-10K-2025#125`);
@@ -72,6 +74,14 @@ ranking gets nothing), then `select()` gives each peer firm at most `PEER_THEME_
 parts are computed exactly as today (k = 20: research <= 4, EDJ the rest); `budget()` adds
 `PEER_THEME_PER_FIRM x len(theme_peers)` on top as the cap. `theme_gaps()` stays on named firms.
 `PEER_THEME_PER_FIRM` (2 or 3) and the floor are chosen in step 4 by measurement.
+Floor edge cases: the cross-peer floor is measured from the 2nd-best peer chunk; a peer pool with
+one chunk uses that chunk (its lowest, like `select`'s FLOOR_BASE rule), so it keeps its slot; an
+empty pool adds nothing. The cross-peer floor is **kept under a time window** (unlike the home
+firm's part, where `opts` sets floor 0): inside a window the peers are still only on-theme
+evidence, and dropping the floor would let the advisor-ranking footnotes back in.
+Explicit k: `search(q, k)` with a given k (eval `--k 80`) adds the peer cap on top of that k, the
+same as `budget()` does on top of K, so the home firm and research parts get the same k with and
+without peers and the "EDJ and research passages unchanged" check compares like with like.
 
 **Shown to the user (code, not prompt).** `coverage_note`: "Coverage: searched Edward Jones;
 on the theme also Morgan Stanley, Schwab, Merrill, Raymond James." and "No passages on the theme
@@ -91,8 +101,13 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
   `budget()` cap; module docstring.
 - `src/cee/answer/validate.py` - coverage note line for peers and peer theme gaps; caveats for peers.
 - `src/cee/app/views/ask_page.py`, `src/cee/ask.py` - firm line shows the peers "on the theme".
-- `scripts/eval_run.py` - `forbidden()` accepts a peer hit only when it is on the theme (and
-  Merrill only through GWIM/Merrill); report records `theme_peers`.
+- `scripts/eval_run.py` - `forbidden()` checks peer hits independently of `search()`: a hit from
+  a firm not named in the question is allowed only when (a) `query.theme_peers` is set and the
+  hit's firm is in it, (b) the hit's text matches the theme pattern recomputed from
+  `config/topics.yaml` (and `firm_themes`) for `query.themes` with the tagger's own pattern
+  (`cee.ingest.topics`), never the `Hit.on_theme` flag, and (c) a BAC hit counts for MER only
+  through the existing `_segment_in` GWIM/Merrill check. Everything else stays forbidden as today.
+  The report records `theme_peers`.
 - `tests/test_retrieval_themes.py` (+ `test_filters.py`, `test_coverage.py`, `test_eval_run.py`
   as needed) - unit tests below.
 - `specs/retrieval.md` - interface sketch lines for D1 and D2, acceptance line for Q15/Q19.
@@ -112,8 +127,20 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
    test DB: peer chunks only on the theme; a peer's off-theme chunk never comes back; a BAC chunk
    outside GWIM never comes back as Merrill; a low-ranked peer is cut by the floor; the home and
    research parts are the same list as without peers; window / date range / keywords / doc-type
-   scope apply to the peer pass.
-3. `eval_run.forbidden()` and the report field; coverage note, caveats, firm line; tests.
+   scope apply to the peer pass; the cross-peer floor still cuts under a time window; a peer pool
+   with one chunk keeps it and an empty pool adds nothing; with an explicit k the peer cap is
+   added on top. Resolve test: "Edward Jones's and Morgan Stanley's advisor-led models" adds
+   MER and RJF (deliberate).
+3. `eval_run.forbidden()` (independent check, see Files to change) and the report field;
+   coverage note, caveats, firm line. Named unit tests in `tests/test_eval_run.py`:
+   - `test_forbidden_peer_hit_off_theme_text_even_if_flagged_on_theme` (a peer hit with
+     `on_theme=True` whose text has no theme keyword is forbidden);
+   - `test_forbidden_bac_non_gwim_hit_with_mer_peer` (a BAC hit without GWIM/Merrill segment is
+     forbidden even with MER in `theme_peers`);
+   - `test_forbidden_non_peer_firm_on_theme_hit` (an on-theme hit of a firm neither named nor in
+     `theme_peers` is forbidden);
+   - `test_forbidden_without_theme_peers_unchanged` (a query without `theme_peers` gives the same
+     result as today's rule on the same hits).
 4. Measure (mock, 0 calls): Q19 with `PEER_THEME_PER_FIRM` 2 and 3 and the floor on/off; Q15
    retrieved set. Pick the smallest setting that brings `SCHW-TR-2025Q4#11` or another Schwab
    cohort chunk in and no ranking footnote. Record the grid in the progress log.
@@ -121,14 +148,14 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
    and at `--as-of 2026-10-29`; refresh the committed baseline if Q15 moves.
 6. Spec lines, ADR, docstring; `pytest -q`; `python -m cee.smoke`; then `verify_cee.py run`
    (filters + coverage features) when the TL says the shared app/DB is free (#204 may be
-   running it).
+   running it); the run is on the head the reviewer reviews, and its run id goes in the PR.
 7. `/finish-task`: PR "Closes #205", Verification with 0 real calls.
 
 ## Acceptance
 - [ ] **Q15** mock FAIL -> PASS at as-of 2026-11-17: entities = MS, SCHW, EDJ, MER, RJF; the
       retrieved set holds 10-K passages of at least two advisor-led firms (expected: MS, EDJ, RJF)
       and still Schwab's; coverage >= 3/5; 0 forbidden.
-- [ ] **Q19** (proposed, D-Q19): `theme_peers` = MS, SCHW, MER, RJF; the retrieved set holds at
+- [ ] **Q19** (D-Q19, accepted by the TL on #205): `theme_peers` = MS, SCHW, MER, RJF; the retrieved set holds at
       least one Schwab passage on the younger-investor theme (`SCHW-TR-2025Q4#11` or another of
       the Schwab cohort chunks listed in Facts) and no advisor-ranking chunk
       (`BAC-PR-*` "Under 40", `MER-PR-web-becoming-a-merrill-lynch-advisor#3`,
@@ -143,7 +170,13 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
       doc recall 0.788 (not below 0.727; unchanged expected, no tier-1 question moves). Same
       checks at as-of 2026-10-29 (0.800).
 - [ ] Firm filter on the Ask page: a home-firm theme question with a firm filter gets no peers.
-- [ ] `pytest -q` PASS; smoke PASS; `verify_cee.py run` VERIFY PASS (filters, coverage features).
+- [ ] `forbidden()` is independent of `search()`: the four named tests in Step 3 pass
+      (off-theme text flagged on_theme -> forbidden; BAC non-GWIM with MER peer -> forbidden;
+      non-peer firm on-theme -> forbidden; no `theme_peers` -> unchanged).
+- [ ] Floor edge cases and explicit k covered by the Step 2 tests (window keeps the cross-peer
+      floor; 0/1-chunk peer pool; peer cap on top of an explicit k); plural-phrase resolve test.
+- [ ] `pytest -q` PASS; smoke PASS; `verify_cee.py run` VERIFY PASS (filters, coverage features)
+      on the reviewed head, run id recorded in the PR.
 - [ ] 0 real calls (Run ledger of #121: Q15 and Q19 are checked once in the combined R2).
 
 ## Risks / unsure
@@ -159,3 +192,9 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
   `corpus-2026-11-17`, sync check up to date; feasibility measured read-only (Q15 4/5 with the
   peer set; Q19 competitor on-theme pool: Schwab only, Merrill/RJF matches are advisor
   rankings); 0 real calls.
+- 2026-11-18 - D-Q19 accepted by the TL (named-passage check, mock stays FAIL). Plan review
+  round 1 (CHANGES REQUESTED, #205 comment 6971644377). Fixed: blocking 1 (`forbidden()` checks
+  peer hits independently: peer list, theme pattern recomputed from config, BAC only via
+  GWIM/Merrill segment; four named tests). Non-blocking 1-4 taken: cross-peer floor kept under a
+  window and 0/1-chunk pool rule; peer cap added on top of an explicit k; verify-cee run id on
+  the reviewed head; plural-phrase test.
