@@ -20,8 +20,10 @@ dependency.
     the eval read it as today).
   - `budget(q) -> int`: k by the number of covered firms the question names (`len(q.entities)`
     after `apply_filters`; MER is already one entity; unmapped firms do not count). 0 or 1 firm ->
-    `K = 20`; 2-5 firms -> the rule chosen in step 3. `search(q, k=None)`: `None` means
-    `budget(q)`; an explicit `k` is honoured as today (tests and `--k` keep working).
+    `K = 20`; 2-5 firms -> `BUDGET_RULE(n)`, a module-level function that a scratch driver can
+    swap for the grid (step 3b); its committed value is the rule chosen in step 3b.
+    `search(q, k=None)`: `None` means `budget(q)`; an explicit `k` is honoured as today (tests
+    and `--k` keep working).
   - `select()` fills the larger budget with the existing rules (firm turns, document-type turns,
     `MAX_PER_DOC`, near-duplicate removal, `FLOOR`, `THEME_FIRST`); `POOL_PER_GROUP` stays 15
     unless step 3 shows a firm running out of pool (then reported, not silently raised).
@@ -44,8 +46,10 @@ dependency.
   the budget rule, Merrill counted once in the quota.
 - `docs/DECISIONS.md` - ADR-013 "Retrieval budget by number of firms" (replaces the spec's fixed
   k=20 for multi-firm questions; the grid results and the chosen rule).
-- `src/cee/answer/llm.py` - the `max_tokens` comment only ("20 chunks (fts.K)"), and `max_tokens`
-  itself only if step 7 shows a truncated answer (then planned in the Progress log first).
+- `src/cee/answer/llm.py` (S2; owner review waived, same #187 comment) - the `max_tokens`
+  comment ("20 chunks (fts.K)"); `max_tokens` itself goes from 4000 to **8000** only if a step-8
+  real call (Q22 or Q24) comes back `INVALID_OUTPUT` from truncation (path (b) in the paid-call
+  plan), then that question is re-run once.
 - `config/entities.yaml` - only if step 4 is kept.
 - `plans/0181-retrieval-budget.md` (this file)
 
@@ -63,6 +67,13 @@ complete, valid answer within `max_tokens` = 4000 (a truncated tool call would b
 `--real --max-calls 2`, raw outputs saved in the run's `raw/` folder and copied to
 `D:\ALLPROJECTS\EDJ\cache\ev181\real`. A wrong answer is a finding, reported, not re-rolled.
 
+Truncation (path (b), pre-approved by the TL): if Q22 or Q24 comes back `INVALID_OUTPUT`
+because the answer was cut off at `max_tokens` (stop reason `max_tokens` / an incomplete tool
+input in the saved raw payload), `max_tokens` in `src/cee/answer/llm.py` goes from 4000 to 8000
+and **only that question is re-run once** (`--real --max-calls 1` per question; **at most 2 more
+calls**, so at most 4 real calls in total). Any other wrong or invalid answer is a finding and is
+not re-run. Raw outputs of the re-run are saved the same way (`...\ev181\real-8000`).
+
 ## Steps
 1. **Baselines (no code change).** On this branch before any edit (= current `main`, `47032d5`),
    DB `corpus-2026-11-16`: mock `eval_run.py --as-of 2026-10-29 --baseline
@@ -75,31 +86,58 @@ complete, valid answer within `max_tokens` = 4000 (a truncated tool call would b
 2. **Merrill counted once** (firm key in `select()`), unit tests. Mock eval at fixed `--k 20`
    against `main-1029`: lists change only for questions naming Merrill (Q4, Q7, Q9, Q10, Q11,
    Q21-Q25, Q27, Q28, Q30); each change listed with its status.
-3. **Budget grid**, measured on the mock at `--as-of 2026-10-29` with step 2 in place (n = named
-   firms; k for n = 2 / 3 / 5):
-   - A: `max(20, 6n)` -> 20 / 20 / 30
-   - B: `max(20, 7n)` -> 20 / 21 / 35
-   - C: `max(20, 8n)` -> 20 / 24 / 40
-   - D: `20 + 5(n - 1)` -> 25 / 30 / 40
-   Implemented as a `--budget A|B|C|D` throwaway switch in a scratch driver (not committed) that
-   sets `fts.budget`. Pick the smallest rule that meets the acceptance items (0 forbidden,
-   refusal 5/5 and 19/19, no REGRESSED, PASS >= 28, recall >= 0.629 / 0.460); ties go to fewer
-   passages. If none meets them, stop and report the grid before going further.
-4. **Per-firm sub-queries (try, keep only on a gain).** Each firm's pool query also ORs that
-   firm's own aliases / `segment_aliases` terms from `config/entities.yaml` as rank terms (not as
-   a new filter). Mock eval vs step 3: kept only with a gain and no REGRESSED; otherwise reverted
-   and reported in the PR with its numbers.
-5. Wire the chosen rule as the default (`budget()`, `search(k=None)`, `eval_run.py --k` default),
-   spec + ADR-013 + llm.py comment. `pytest -q`.
+3. **Budget plumbing, then the grid.**
+   - 3a. Plumbing (committed): `budget(q)` with the swappable `BUDGET_RULE(n)`,
+     `search(q, k=None)` -> `budget(q)`, `eval_run.py --k` default `None`, and per-question `k`,
+     passage count and prompt characters in each JSON record and report row (unit tests in
+     `tests/test_retrieval_budget.py` / `tests/test_eval_run.py`). Until 3b the rule is the
+     fixed `K` (k = 20 for every n), so a mock eval with `--k` omitted must give the same chunk
+     lists as step 2 (diff script: 0 changed lists).
+   - 3b. Grid, mock, `--as-of 2026-10-29`, step 2 in place, `--k` omitted so each question's k
+     comes from `budget(q)` (n = named covered firms; k for n = 2 / 3 / 5):
+     - A: `max(20, 6n)` -> 20 / 20 / 30
+     - B: `max(20, 7n)` -> 20 / 21 / 35
+     - C: `max(20, 8n)` -> 20 / 24 / 40
+     - D: `20 + 5(n - 1)` -> 25 / 30 / 40
+     A scratch driver (not committed, `D:\ALLPROJECTS\EDJ\cache\ev181\grid.py`) sets
+     `fts.BUDGET_RULE` to A..D and calls `eval_run.main([...])`, one run folder per rule.
+     **Check the grid really changed k**, read from each report's per-question `k`: Q22 k =
+     30 / 35 / 40 / 40 under A / B / C / D, Q7 k = 20 / 21 / 24 / 30, Q8 k = 20 / 20 / 20 / 25,
+     Q1 and Q16 k = 20 under every rule; a report that does not show these is discarded.
+     Pick the smallest rule that meets the acceptance items (0 forbidden, refusal 5/5 and 19/19,
+     no REGRESSED, PASS >= 28, recall >= 0.629 / 0.460); ties go to fewer passages. If none
+     meets them, stop and report the grid before going further.
+4. **Per-firm sub-queries (try, keep only on a gain).** Each firm's pool query also uses that
+   firm's own aliases / `segment_aliases` terms from `config/entities.yaml` **in the rank only**:
+   they are added as rank probes, not to the match (`c.tsv @@ q.tsq` stays the question's words
+   and synonyms), so a chunk that only names the firm does not enter the pool. Mock eval vs step
+   3b: kept only with a gain and no REGRESSED; otherwise reverted and reported in the PR with its
+   numbers.
+5. Commit the chosen rule as `BUDGET_RULE`; spec + ADR-013 (consequences include: `THEME_K`
+   stays 4, so tier 5 research's share in five-firm entity+theme questions Q10 / Q21 falls from
+   1/5 to 1/8-1/10; Q21's theme slot is #190) + llm.py comment. `pytest -q`.
 6. **Final mock evals**: `--as-of 2026-10-29` against the freeze report and against `main-1029`;
    `--as-of 2026-11-16` against `main-1116` (information); diff script for single-firm lists and
    prompt size (median / max passages and characters per question type: single-firm entity,
    multi-firm entity, entity+theme, theme, window). Reports in `D:\ALLPROJECTS\EDJ\cache\ev181\`.
 7. **verify-cee** on the mock from this worktree (with `.env` copied and `CORPUS_SHARE_PATH`
    set): ask-answer, coverage, filters at least.
-8. **Real calls last**: Q22, Q24, one run each (paid-call plan above).
-9. `/finish-task`: PR "Closes #181" with before/after tables; the reviewer agent reviews and
-   merges (`/tl-review`).
+8. **Real calls last**: Q22, Q24, one run each (paid-call plan above). If one is
+   `INVALID_OUTPUT` from truncation: `max_tokens` 4000 -> 8000 in `llm.py`, `pytest -q`, re-run
+   only that question once.
+9. `/finish-task`: PR "Closes #181" with before/after tables; the Merrill-only trap questions
+   Q4, Q27, Q30 each listed with their chunk-list change next to their `expected_behavior` and
+   eval status; the reviewer agent reviews and merges (`/tl-review`).
+
+## Risks
+- Pool exhaustion: at k = 30-40 a firm may run out of its `POOL_PER_GROUP` = 15 per document
+  type or fall under FLOOR, so slots go to other firms; reported per question from the grid, not
+  fixed here (FLOOR is #166).
+- Merrill firm key changes the FLOOR base for BAC GWIM chunks (now MER's best): Q4 / Q27 / Q30
+  may lose or gain BAC GWIM chunks; covered by refusal 19/19 and no REGRESSED, listed in the PR.
+- Larger prompts: a five-firm answer may hit `max_tokens`; checked by the step-8 real calls
+  (path (b)).
+- No rule in the grid meets acceptance: stop after 3b and report.
 
 ## Acceptance
 - [ ] Linked questions Q10, Q11, Q22, Q23, Q24: mock eval on `corpus-2026-11-16`,
@@ -121,10 +159,21 @@ complete, valid answer within `max_tokens` = 4000 (a truncated tool call would b
 - [ ] `pytest -q` passes; verify-cee PASS (ask-answer, coverage, filters at least).
 - [ ] `specs/retrieval.md` states the budget rule and Merrill counted once; ADR-013 in
   `docs/DECISIONS.md`.
+- [ ] Grid (step 3b): each rule's report shows the expected per-question k (Q22 30/35/40/40,
+  Q7 20/21/24/30, Q8 20/20/20/25, Q1 and Q16 20); the grid table and the chosen rule are in the
+  PR and ADR-013.
 - [ ] Real calls: 2 (Q22, Q24, one run each), model and outcome reported; raw outputs saved.
+- [ ] Truncation path: either neither Q22 nor Q24 is `INVALID_OUTPUT` from truncation
+  (`max_tokens` stays 4000), or `max_tokens` = 8000 and the re-run of that question (at most 2
+  more calls, at most 4 in total) returns a valid answer; raw outputs of both runs saved, the
+  call count and outcome stated in the PR.
 
 ## Progress log
 - 2026-11-17 18:07 - plan written. Worktree `D:\ALLPROJECTS\EDJ\wt-181`, branch
   `tl/181-retrieval-budget` from `origin/main` 47032d5; local DB = `corpus-2026-11-16`
   (`sync-db --check`). Note: the issue's `retrieve()` is `search()` in `fts.py`; the k=40
   diagnostic is in `D:\ALLPROJECTS\EDJ\cache\ev120\freeze-1029-k40`.
+- 2026-11-17 18:40 - plan revised after review (issuecomment-6964864433): budget plumbing moved
+  before the grid (step 3a) and the grid checks per-question k from the reports (3b);
+  `max_tokens` path (b) chosen (8000, one re-run of a truncated Q22/Q24, at most 2 more calls);
+  step 4 rank-only; Risks section; ADR-013 notes the `THEME_K` share; PR lists Q4/Q27/Q30.
