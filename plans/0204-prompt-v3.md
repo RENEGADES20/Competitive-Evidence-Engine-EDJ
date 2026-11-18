@@ -62,9 +62,8 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   - Rule 2, positions: when the question asks where something is heading, what the future looks
     like or what the range of views is, group claims by position (start each claim with the
     position in a few words), list who holds it and when, and keep firm statements, research and
-    trade press attributed; label each claim for what it is (disclosure, regulation, research,
-    commentary); when two sources disagree on the same point, report both and say that they
-    disagree; offer no forecast or synthesis of your own.
+    trade press attributed, saying whose statement each claim is; when two sources disagree on the
+    same point, report both and say that they disagree; offer no forecast or synthesis of your own.
   - Rule 3, every part: split the question into its parts (each "and", each named firm, each
     named metric, "how has it changed"); cover every part the question asks for, or that a
     question of its type needs, such as headwinds or risks the firm itself names; when the
@@ -204,11 +203,12 @@ The `Answer` schema does not change. The real check is #121's combined R2.
     (estimates with source and vintage; each firm's actions) kept apart.
 
 ## Risks / unsure
-- Rule 3's strategy-question parts and rule 1's default dimensions add gaps to answers that
+- Rule 3's strategy-question parts and rule 1's per-dimension gaps add gaps to answers that
   passed in R1 (Q1, Q4, Q5, Q18, Q26 are not in R2). Wording keeps them additive (a gap, not a
   new behavior), but only #121's R3 shows it. Q18 ("where is the industry heading") falls under
-  rule 2 and is not an R2 sentinel; rule 2 labels each claim (disclosure, regulation, research,
-  commentary) so the position grouping keeps that labelling; flagged to #121 as an R3 risk.
+  rule 2 and is not an R2 sentinel. Rule 2 groups by position and keeps each claim attributed,
+  but it does not restate Q18's labelling rubric (round-2 review), so whether Q18 keeps its R1
+  labelling under the new grouping is shown only by R3; flagged to #121 as an R3 risk.
 - Rule 4's two branches can conflict (Q24: inputs disclosed for some firms). The rule decides by
   "most of the firms asked about" for a quantity and keeps a wider unit adjacent; Q24 in R2 is the
   check.
@@ -230,7 +230,42 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   what the evidence covers for at least one firm); hand check of every rule against the
   `passes_if` of all linked and sentinel questions (and Q18) for paraphrase, in step 1 and
   acceptance. Non-blocking 1-5 taken: home-firm clause reworded ("the home firm's figures on the
-  same dimension, from its own filings"); rule 2 labels each claim as disclosure, regulation,
-  research or commentary; probes noted as template-adjacent (P1~Q7, P2~Q18, P3~Q25, P4~Q20), and a
+  same dimension, from its own filings"); a rule-2 labelling clause was added here and removed
+  in round 2 (it restated Q18's `passes_if`); probes noted as template-adjacent (P1~Q7, P2~Q18, P3~Q25, P4~Q20), and a
   revision must pass the leak test and the hand check; "Part of #204" if verify has not run by PR
   time; "(Q30 trap unchanged)" marked as a plan note, never prompt text.
+- 2026-11-18 01:15 - plan review round 2 (CHANGES REQUESTED, #204 comment 6971351346). Fixed:
+  rule 2's labelling clause dropped (it restated Q18's `passes_if` list and phrase); rule 2 keeps
+  "keep firm statements, research and trade press attributed", now with "saying whose statement
+  each claim is"; Risks bullet and the 01:00 line updated, Q18 still named as an R3 risk.
+  Non-blocking 1 taken (Risks: "rule 1's per-dimension gaps"). Leak check run before pushing
+  (reviewer's `scratchpad\leak.py`, rules 1-4 from this plan, without the rule-4 plan note, vs
+  all 30 `passes_if`, lower-case, punctuation stripped): 6-word runs 0, 5-word 0, 4-word one
+  (Q20 "source sample and date", generic evidence practice the issue asks for, kept). Control:
+  the old 6976a04 rule-3 clause vs Q3 gives 7 six-word runs, so the check catches it.
+  Hand check for paraphrase, every rule against all 30 `passes_if`:
+  - Rule 1 vs Q7: same dimensions for every firm, a gap per empty cell, no filled cell. This is
+    the issue's own grid goal; Q7's four dimensions are not named. Kept. Vs Q22 ("never quietly
+    substituted with a near-neighbour metric"): "never fill a cell with ... an adjacent figure"
+    repeats v2's "Never present a substitute ... as the thing asked about". Kept. Vs Q9 ("says
+    plainly where a firm does not disclose"): v2 already says it. Kept.
+  - Rule 1 vs Q8 (seen and kept): "each firm's cell in its own terms (do not force one firm's
+    business model onto another)" is close to Q8's "each firm's own language ... rather than
+    flattening two different business models". Kept because it is a general principle, not a
+    rubric list; v2 already had "Use each firm's own terms ... do not merge two business models
+    into one statement"; and Q8 is a sentinel the plan wants unchanged inside the new grid.
+  - Rule 2 vs Q16: grouped by position, attributed and dated, no forecast of its own. This is the
+    issue's goal 2 itself (accepted in round 1). Kept. Vs Q20 ("two surveys that disagree"):
+    generic, accepted in round 1. Kept. Vs Q18: no category list, no "for what it is". Vs Q10,
+    Q17, Q21, Q26: no overlap.
+  - Rule 3 vs Q3: one general example ("headwinds or risks the firm itself names"), not Q3's
+    chain. Vs Q12: "the home firm's figures on the same dimension, from its own filings" is the
+    general comparison principle (round-1 non-blocking 1). Kept. Vs Q1, Q2, Q4, Q19, Q21: no item
+    lists restated (Q2's pitch list, Q4's pipeline/headcount/sourcing list, Q19's cohort/competitor
+    pair are not in any rule).
+  - Rule 4 vs Q25: "report what is disclosed as claims, each firm's missing disclosure as a gap"
+    is the issue's goal 4 wording; Q25's "far less than people assume" and trade-press clause are
+    not in it. Kept. Vs Q20: "source, sample and date" (above). Vs Q24, Q28, Q29, Q30: no new
+    overlap; the wider-unit sentence repeats v2's GWIM/substitute rule.
+  - Wording edit (ranges gap names the firm) vs Q25/Q29: standard wording only. No other
+    question touched.
