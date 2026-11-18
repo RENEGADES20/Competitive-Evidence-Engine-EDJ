@@ -5,7 +5,7 @@ entities, the retrieved chunk IDs, which `expected_sources` patterns were hit, f
 (another firm's chunks; BAC chunks outside GWIM for Merrill questions) and a status.
 
   python scripts/eval_run.py                          # all 30, mock
-  python scripts/eval_run.py --questions Q1,Q4 --k 20
+  python scripts/eval_run.py --questions Q1,Q4 --k 20   # fixed k (default: the app's budget by question)
   python scripts/eval_run.py --baseline .eval-runs/<run>/report.json
   python scripts/eval_run.py --real --max-calls 5 --questions Q28,Q29,Q30
 
@@ -17,6 +17,10 @@ retrieved chunks is never paid for twice (CLAUDE.md "Paid API calls"). Reports g
 Status (retrieval level): FAIL on any forbidden hit; NOT_EVALUATED when no expected pattern is
 available in the corpus; PASS when coverage of the available patterns >= --min-coverage;
 otherwise FAIL. With --real the answer's behavior must also equal expected_behavior.
+INVALID_OUTPUT (--real only, #187): the model's output was not a valid Answer (e.g. a wrong field
+name, or no answer tool call). The raw payload is still saved in the cache and the run's raw/
+folder, the call still counts against --max-calls, the note keeps the retrieval status, and the
+run moves on. A cached invalid output is reported again, never re-called.
 
 Recall and refusal accuracy (#60), for questions with an answer key in evals/expected_chunks.yaml
 (or, once #56 lands, `expected_doc_ids` in questions.yaml): document and passage recall against
@@ -40,13 +44,13 @@ sys.path.insert(0, str(REPO / "src"))
 import yaml  # noqa: E402
 
 from cee.config import entities_config  # noqa: E402
-from cee.retrieve.fts import K  # noqa: E402
+from cee.retrieve.fts import theme_gaps  # noqa: E402
 
 RUNS = REPO / ".eval-runs"
 CACHE = RUNS / "cache"
 QUESTIONS = REPO / "evals" / "questions.yaml"
 KEYS = REPO / "evals" / "expected_chunks.yaml"
-STATUSES = ("PASS", "FAIL", "NOT_EVALUATED")
+STATUSES = ("PASS", "FAIL", "NOT_EVALUATED", "INVALID_OUTPUT")
 GAP_BEHAVIORS = ("gap_with_adjacent", "refuse")
 
 
@@ -224,13 +228,19 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
         status = "PASS" if coverage >= min_coverage else "FAIL"
     return {"id": q["id"], "text": q["text"], "use_case": q.get("use_case"), "tier": q.get("tier"),
             "trap": q.get("trap", False), "expected_behavior": q.get("expected_behavior"), "entities": query.entities,
-            "unmapped": query.unmapped, "mode": query.mode, "chunk_ids": [h.chunk_id for h in hits],
+            "unmapped": query.unmapped, "mode": query.mode, "themes": query.themes,
+            "theme_gaps": theme_gaps(query, hits), "chunk_ids": [h.chunk_id for h in hits],
             "patterns": rows, "available_patterns": len(avail), "hit_patterns": len(hit),
             "coverage": coverage, "forbidden": bad,
             "doc_recall": recall["doc_recall"] if recall else None,
             "passage_recall": recall["passage_recall"] if recall else None,
             "refusal_ok": recall["refusal_ok"] if recall else None,
             "misleading": recall["misleading"] if recall else [], "recall": recall, "status": status}
+
+
+def prompt_size(k: int, hits) -> dict:
+    """What the model is handed (#181): the budget k, passages retrieved and their characters."""
+    return {"k": k, "passages": len(hits), "chars": sum(len(h.text) for h in hits)}
 
 
 def _score(r: dict) -> tuple:
@@ -261,45 +271,65 @@ class RealRunner:
             raise SystemExit("--real needs LLM_PROVIDER=anthropic or openai; it is mock.")
         self.provider, self.max_calls, self.snapshot = provider, max_calls, snapshot
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
-        self.calls, self.reused = 0, 0
+        self.calls, self.reused, self.last_file = 0, 0, None
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
     def answer(self, q: dict, query, hits) -> tuple[dict | None, str]:
-        """(answer dict or None, how): how = no_call | cached | called | cap."""
+        """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
+        invalid: the model output (new or cached) is not a valid Answer; its raw payload is in
+        raw/<self.last_file> and the call still counts (#187)."""
+        from cee.answer.llm import ModelOutputError
         from cee.answer.schema import Answer
         from cee.ask import answer_for
 
+        self.last_file = None
         if not hits:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
                         [h.chunk_id for h in hits])
         path = self.cache_dir / f"{q['id']}-{key}.json"
+        self.last_file = path.name
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
-            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]))
             self.reused += 1
             self._copy(path)
+            if saved.get("invalid"):    # a wrong output is a finding: never re-called (CLAUDE.md)
+                return None, "invalid"
+            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]))
             return answer.model_dump(), "cached"
         if self.calls >= self.max_calls:
             return None, "cap"
         self.calls += 1   # counted before the call: a failed call still cost money
-        answer, raw = answer_for(q["text"], query, hits, self.provider)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
-                                    "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                                    "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat(),
-                                    "raw": raw.model_dump()}, indent=2), encoding="utf-8")
-        self._copy(path)
+        meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
+                "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
+                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+        try:
+            answer, raw = answer_for(q["text"], query, hits, self.provider)
+        except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
+            self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw})
+            return None, "invalid"
+        self._save(path, {**meta, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
+
+    def _save(self, path: Path, record: dict) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # default=str: an unexpected payload type must never cost the paid output (#187)
+        path.write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
+        self._copy(path)
 
     def _copy(self, path: Path) -> None:
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         (self.raw_dir / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
 
 
-def apply_real(record: dict, answer: dict | None, how: str) -> dict:
+def apply_real(record: dict, answer: dict | None, how: str, raw_file: str | None = None) -> dict:
     record["model"] = how
+    if how == "invalid":   # the retrieval status is kept in the note (#187)
+        record["note"] = (f"retrieval {record['status']}; model output invalid, see raw/{raw_file}"
+                          if raw_file else f"retrieval {record['status']}; model output invalid")
+        record["status"], record["behavior"] = "INVALID_OUTPUT", None
+        return record
     if answer is None:
         record["status"], record["behavior"] = "NOT_EVALUATED", None
         record["note"] = "not run: --max-calls reached"
@@ -347,7 +377,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"min coverage {meta['min_coverage']} | as of {meta['as_of']} | mode {meta['mode']}"
              + (f" | real calls {meta['real_calls']} of max {meta['max_calls']}, reused {meta['reused']}"
                 if meta["mode"] == "real" else " | 0 real calls"),
-             "", f"**PASS {counts['PASS']} | FAIL {counts['FAIL']} | NOT_EVALUATED {counts['NOT_EVALUATED']}**"
+             "", f"**PASS {counts['PASS']} | FAIL {counts['FAIL']} | NOT_EVALUATED {counts['NOT_EVALUATED']}"
+             f" | INVALID_OUTPUT {counts['INVALID_OUTPUT']}**"
              + (f" (baseline `{meta['baseline']}`)" if meta.get("baseline") else ""), "",
              f"**Tier-1 recall**: documents {summary['tier1_doc_recall']}, passages "
              f"{summary['tier1_passage_recall']} (mean over the {summary['tier1_with_key']} of "
@@ -359,17 +390,18 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              + ("; real mode also needs behavior == expected." if meta["mode"] == "real" else "."), "",
              "Recall: expected documents (passages) from `evals/expected_chunks.yaml` with at least one retrieved "
              "chunk. Refusal: no must-not chunk, no forbidden hit, nothing outside the time window.", "",
-             "| Q | Tier | Use case | Expected | Firms (mode) | Hits | Coverage | Recall docs | Passages | Refusal"
+             "| Q | Tier | Use case | Expected | Firms (mode) | k | Hits | Chars | Coverage | Recall docs | Passages | Refusal"
              " | Forbidden | Status" + (" | Change" if meta.get("baseline") else "")
              + (" | Behavior" if meta["mode"] == "real" else "") + " |",
-             "|---|---|---|---|---|---|---|---|---|---|---|---" + ("|---" if meta.get("baseline") else "")
+             "|---|---|---|---|---|---|---|---|---|---|---|---|---|---" + ("|---" if meta.get("baseline") else "")
              + ("|---" if meta["mode"] == "real" else "") + "|"]
     for r in records:
         cov = "-" if r["coverage"] is None else f"{r['hit_patterns']}/{r['available_patterns']}"
         rec = r.get("recall") or {}
         firms = ", ".join(r["entities"]) or "none"
         lines.append(f"| {r['id']}{' (trap)' if r['trap'] else ''} | {r.get('tier') or '-'} | {r['use_case']} | "
-                     f"{r['expected_behavior']} | {firms} ({r['mode']}) | {len(r['chunk_ids'])} | {cov} | "
+                     f"{r['expected_behavior']} | {firms} ({r['mode']}) | {r.get('k', '-')} | {len(r['chunk_ids'])} | "
+                     f"{r.get('chars', '-')} | {cov} | "
                      f"{_frac(rec.get('docs_found'), rec.get('docs'))} | "
                      f"{_frac(rec.get('passages_found'), rec.get('passages'))} | {_refusal(r)} | "
                      f"{len(r['forbidden'])} | {r['status']}"
@@ -378,6 +410,9 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
     lines += ["", "## Per question", ""]
     for r in records:
         lines += [f"### {r['id']} - {r['status']}", "", r["text"], ""]
+        if r.get("mode") == "entity+theme":  # per-firm theme quota (#117)
+            lines.append(f"- Theme {', '.join(r['themes'])}: no chunk on the theme for "
+                         f"{', '.join(r['theme_gaps']) or 'no firm (every named firm has one)'}")
         for p in r["patterns"]:
             state = ("hit " + ", ".join(p["hits"])) if p["hits"] else (
                 ("type only (qualifier not met): " + ", ".join(p["type_only"])) if p["type_only"] else
@@ -403,7 +438,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--questions", help="comma-separated IDs, e.g. Q1,Q4 (default: all)")
-    ap.add_argument("--k", type=int, default=K, help=f"chunks retrieved per question (app default {K})")
+    ap.add_argument("--k", type=int, default=None,
+                    help="chunks retrieved per question (default: the app's budget by firm count, fts.budget)")
     ap.add_argument("--min-coverage", type=float, default=0.5)
     ap.add_argument("--baseline", help="report.json of an earlier run, for UNCHANGED/IMPROVED/REGRESSED")
     ap.add_argument("--real", action="store_true", help="also get model answers (paid; needs --max-calls)")
@@ -419,7 +455,7 @@ def main(argv: list[str] | None = None) -> int:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
     from cee.config import settings
-    from cee.retrieve.fts import resolve, search
+    from cee.retrieve.fts import budget, resolve, search
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -441,10 +477,12 @@ def main(argv: list[str] | None = None) -> int:
     records = []
     for q in bank:
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
-        hits = search(query, k=args.k)
+        k = budget(query) if args.k is None else args.k
+        hits = search(query, k=k)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates)
+        r |= prompt_size(k, hits)
         if real:
-            r = apply_real(r, *real.answer(q, query, hits))
+            r = apply_real(r, *real.answer(q, query, hits), real.last_file)
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         records.append(r)
@@ -453,7 +491,8 @@ def main(argv: list[str] | None = None) -> int:
               + (f" change {r['change']}" if args.baseline else "") + (f" model {r['model']}" if real else ""))
 
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
-    meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit, "k": args.k, "min_coverage": args.min_coverage,
+    meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit,
+            "k": "by question" if args.k is None else args.k, "min_coverage": args.min_coverage,
             "mode": "real" if real else "mock", "baseline": args.baseline, "as_of": args.as_of.isoformat(),
             "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
     write_reports(run_dir, meta, records)

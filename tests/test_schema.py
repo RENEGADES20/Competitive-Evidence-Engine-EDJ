@@ -20,3 +20,19 @@ def test_json_encoded_list_is_parsed():
 def test_other_strings_still_fail(bad):
     with pytest.raises(ValidationError):
         Answer(answerable=True, behavior="answer", claims=bad)
+
+
+def test_answer_sent_for_answerable_is_accepted():
+    # Q25 real run 2026-11-16 (#167): the model sent "answer": true instead of "answerable".
+    a = Answer(**{"answer": True, "behavior": "gap_with_adjacent", "claims": [], "adjacent": [], "gaps": []})
+    assert a.answerable is True
+
+
+def test_other_missing_answerable_still_fails():
+    import pytest
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        Answer(**{"answer": "yes", "behavior": "answer"})          # not a boolean: no guessing
+    with pytest.raises(ValidationError):
+        Answer(**{"behavior": "answer"})
