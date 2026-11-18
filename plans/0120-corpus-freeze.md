@@ -414,3 +414,22 @@ Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in t
   snapshots/LATEST.json` in `repo` -> clean on `main`. README Status updated. Steps 8-9 not run
   (not approved; 0 paid calls); step 10 needs their outputs, so open.
 - 2026-11-16 16:10 - #169, #178, #150 told the snapshot name (PR comments). /finish-task.
+- 2026-11-17 19:20 - **Tech-lead decisions (the user, 2026-11-17)**, recorded on #120 before any
+  call; branch `tl/120-gate3-score` from origin/main 54a8775 (worktree `wt-120g`):
+  1. Step 8 **approved by the TL**: the 30-question real run, one run, `--max-calls 30`; every
+     real call it needs is pre-approved. Up to 3 runs of the same question are acceptable if a
+     run is lost (e.g. an INVALID_OUTPUT, now saved by #187); any re-run is recorded here with
+     its reason.
+  2. The internal cold test (two teammates, 5 new questions each) is **dropped**.
+  3. The TL has taken over all teammate work, including the Gate 3 human scoring (#15,
+     DASHBOARD section 6): the X/30 is produced from the saved outputs against each question's
+     `passes_if`, labelled "scored by the TL agent (Claude)", with a reason per question. This
+     replaces step 10's "provisional (Claude)" + per-person scoring.
+  4. Run on current `main` against the frozen DB `corpus-2026-11-16`. **The code differs from
+     the freeze build** (8f92cb1 + #180): `main` 54a8775 also has #181/#192 (retrieval budget by
+     firm count, Merrill counted once, ADR-013), #166/#190 (#193, rank floor from a firm's
+     2nd-best chunk, theme slot ignores the floor, ADR-014), #187/#191 (INVALID_OUTPUT kept) and
+     ADR-012 (up to 5 calls per question). Why: these are the retrieval fixes for the freeze
+     findings (class b: Q22/Q24 back to PASS in the #181 mock) and the team ships what is on
+     `main`; the snapshot (data) is unchanged, so the score is "code 54a8775 on
+     corpus-2026-11-16". `sync-db.ps1 -Check` in `repo` -> exit 0 "up to date: corpus-2026-11-16".
