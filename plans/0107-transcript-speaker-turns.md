@@ -73,8 +73,10 @@ cites one speaker. Only transcripts change; all other documents chunk exactly as
 - [x] Q4, Q27 (traps): 0 forbidden hits, no untagged BAC; Q1, Q13: transcript evidence still retrieved.
 - [ ] Mock eval for all 30 (new key, --as-of 2026-10-30): 0 forbidden, no PASS->FAIL, refusal unchanged,
       coverage and doc recall same or better per question; any passage-recall change explained.
-      NOT MET: 0 forbidden and refusal unchanged, but Q28 PASS -> FAIL (coverage 2/3 -> 1/3, passage recall
-      2/4 -> 3/4; S1's per-firm FLOOR) and Q11 doc recall 7/8 -> 6/8. Handed to S1 (user decision).
+      PARTLY MET (re-measured 2026-11-17 on corpus-2026-11-16 + 5 ADV + 77 trade, main with #166/#181/#179):
+      0 forbidden, refusal 5/5, no PASS->FAIL (Q28 now PASS, passages 0.5 -> 0.75). Open: doc recall drops on
+      Q6, Q11, Q13, Q27 (one transcript document each loses its slot to another call of the same firm);
+      follow-up #199.
 - [x] pytest -q passes; verify_cee.py run: all 7 features PASS. 0 paid API calls.
 
 ## Risks
@@ -114,3 +116,12 @@ cites one speaker. Only transcripts change; all other documents chunk exactly as
   (.verify-runs/20261101-194621-f336093; app shows 18,346 passages = 15,494 + 2,852). 0 paid API calls.
 - 2026-11-03 - /finish-task: PR "Part of #107" (open: Q28 / Q11 eval regressions for S1; C1 sign-off on the
   exclude and the carry-over rule).
+- 2026-11-17 - TL takeover (#187): merged origin/main (#166 floor, #181 budget, #179 scope, #178 ADV, #186
+  trade); one conflict in expected_results.md (Q28 note), kept main's wording with the new ids. The remap
+  covers every transcript id in main's key (23 old -> 29 distinct new). Re-measured on scratch DBs:
+  A = corpus-2026-11-16 + 82 new docs with main code; B = same with this branch (non-transcript chunks
+  identical, md5 over 18,291 chunks). Mock eval --as-of 2026-10-29 and 2026-11-17, both: PASS 28 -> 28 (same
+  FAILs Q15, Q19), forbidden 0, refusal 5/5; IMPROVED Q10, Q22, Q28; REGRESSED (still PASS) Q6, Q11, Q13, Q27,
+  doc recall only (transcript slot taken by another call of the same firm) -> #199. Q4 unchanged (docs 0.8,
+  passages 4/7); BAC-TR-2026Q2#63 is GWIM but misses Q4's 20 slots by one (rank 3.87 vs 3.89); Q28 retrieves it.
+  PR stays "Part of #107". Owner reviews (C1 tagger/entities, S1 key) waived by the TL (#187).
