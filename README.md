@@ -98,7 +98,11 @@ with his name on it), per [docs/BRIEF.md](docs/BRIEF.md). Gate 3, checked in wee
 corpus freeze (#120): any 18 of the 30 questions at acting quality, citations resolve. It was
 scored **16/30** on `corpus-2026-11-16` (real run, scored by the TL agent, PR #195). Gate 4,
 checked in week 11 (#121): at least 21 of 30, and the project lead used it unsupervised at
-least once; not scored yet. The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+least once. It was scored **21/30** on the final snapshot `corpus-2026-11-17` (real run on
+2026-11-18, scored by the TL agent; tier 1: 12/18), after the fixes #203, #204 and #205; the
+unsupervised-use part is not checked here. All 30 answers with citations, scores and known gaps:
+[docs/results/gate4-report.md](docs/results/gate4-report.md); next steps:
+[docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
 check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +
@@ -149,7 +153,9 @@ powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 | [docs/BRIEF.md](docs/BRIEF.md) | What we are building, use cases, firms, gates |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline, schema draft, retrieval modes, reference projects |
 | [docs/TEAM.md](docs/TEAM.md) | Roles and week-by-week tasks |
-| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting |
+| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting, Gate 4 run |
+| [docs/results/gate4-report.md](docs/results/gate4-report.md) | Gate 4 results: 30 answers with citations, scores, known gaps |
+| [docs/NEXT.md](docs/NEXT.md) | What to build next |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Status log and weekly scores |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture decision records (ADRs) |
 | [docs/DASHBOARD.md](docs/DASHBOARD.md) | Project board setup, weekly checks, snapshot publishing |
