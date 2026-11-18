@@ -10,8 +10,9 @@ doc-type scope, Ask page filters) and the per-firm quotas, and is a general rule
 entry, never a rule for one question.
 
 ## Diagnosis (2026-11-18, read-only, DB `cee` = `corpus-2026-11-17`, `main` a886741, as of 2026-11-17)
-Probe scripts in the session scratchpad (`diag203.py`, `proto203.py`, `group203.py`,
-`probes203.py`); config mutated in memory only.
+Probe scripts `diag203.py`, `proto203.py`, `group203.py`, `probes203.py` kept in
+`D:\ALLPROJECTS\EDJ\cache\ev203\probes\` (run from the worktree root with PYTHONPATH=`wt-203\src`);
+config mutated in memory only.
 
 | Q | Named passage | Why it misses today | Lever that reaches it (probe) |
 |---|---|---|---|
@@ -44,6 +45,11 @@ again; then it is designed and measured in a plan update before any code.
     ("stock-plan" fires `stock plan`), and a lower-case key's last word also matches with an
     inflection (s, es, ed, ing: `recruit` fires on "recruit", "recruiting", "recruits").
     All-caps keys keep exact case and whole-word match (the "FA" vs "FAs" test stays).
+    `_synonym_pattern` also strips the `synonym_only` words (`pay`) from the full-text words in
+    `keyword_terms`, so with L2a "pays"/"paying" are stripped too. That is consistent (the
+    stemmer folds them to "pay", which is searched only through its synonyms anyway); a unit
+    test pins it. Fallback (TL choice): if L2a/L2b brings a payout-grid chunk into gap question
+    Q25, `compensation structure` is excluded from inflection matching, so Q25 stays a clean gap.
   - L2b: a multi-word key found in the question is searched as a phrase too (its adjacency counts
     as one probe with its own IDF), next to its values. Keys like `net new assets`,
     `advisor headcount`-type metric names are what a benchmark question asks for.
@@ -75,15 +81,19 @@ again; then it is designed and measured in a plan update before any code.
 - `src/cee/retrieve/fts.py` - L1 (`PAIR_TURNS`, question-turn test, answer-turn fetch in
   `search()`, keep-after in `select()`), L2a/L2b in `_synonym_pattern`/`expand_synonyms`/
   `keyword_terms`. Kept small and in one place each, since #205 edits `fts.py` after this.
-- `config/entities.yaml` - L2c entries with question-ID comments.
+- `config/entities.yaml` - L2c entries with question-ID comments; the comment block above
+  `synonyms:` (which describes key matching: case, "plurals and verb forms need no entry") updated
+  for L2a (hyphen/space, inflected last word) and L2b (a multi-word key is also a phrase).
 - `tests/test_fts_synonyms.py` - L2a, L2b, L2c expansions (no DB).
 - `tests/test_retrieval_quotas.py` (or new `tests/test_retrieval_turns.py`) - L1 on hand-built
   pools: answer kept after its question; not when it is a question turn itself; not past
   MAX_PER_DOC or k; `replace` variant; a filtered-out answer turn never appears (fake DB as in
   `test_retrieval_themes.py`).
 - `specs/retrieval.md` - interface lines for L1 and L2a/L2b; ADR-017 in the header list.
-- `docs/DECISIONS.md` - ADR-017 "Answer turn with its question turn; multi-word synonym keys as
-  phrases" (TL-approved, per #121 TL decisions).
+- `docs/DECISIONS.md` - new ADR "Answer turn with its question turn; multi-word synonym keys as
+  phrases" (TL-approved, per #121 TL decisions). Written as ADR-017 here; #204 and #205 are
+  planned in parallel, so the number is the next free one in `docs/DECISIONS.md` order at merge
+  time (renumbered on rebase, with the `specs/retrieval.md` header list and plan text).
 - `evals/baselines/corpus-2026-11-17/` - refreshed only if any status moves (issue Deliverable).
 - `plans/0203-gate4-retrieval.md` - this plan.
 - Not changed: prompt, Answer schema, `evals/questions.yaml`, `evals/expected_chunks.yaml`, corpus.
@@ -98,9 +108,16 @@ again; then it is designed and measured in a plan update before any code.
    Mock eval at both as-of dates -> `ev203\l2-1117`, `ev203\l2-1029`.
 3. **L1 (answer turns), tests first.** Unit tests; then the code. Mock eval `attach` ->
    `ev203\l12-1117`, `ev203\l12-1029`; if `attach` costs a PASS, the same for `replace`.
-4. **Named-passage check.** A scratch script reads each run's `report.json` `chunk_ids` and prints,
-   per linked question, which named passages are in the retrieved set; plus Q4/Q27/Q30: any BAC
-   chunk whose segment is not GWIM/Merrill (must be none).
+4. **Named-passage and gap-question check.** A check script (kept in
+   `D:\ALLPROJECTS\EDJ\cache\ev203\probes\` with the diagnosis probes) reads each run's
+   `report.json` `chunk_ids` and prints:
+   - per linked question, which named passages are in the retrieved set;
+   - Q4/Q27/Q30: any BAC chunk whose segment is not GWIM/Merrill (must be none);
+   - for all 30 questions, the synonym keys that fire on `main` vs the branch
+     (`expand_synonyms` on the `keyword_terms` terms), as a per-question diff;
+   - Q25 and Q29 (gap): the changed chunk IDs against `ev203\main-1117`, with every retrieved
+     chunk whose text contains "payout" listed (ID and the sentence around it).
+   All of it goes into the progress log.
 5. **Decide and record.** Keep the levers that reach a target without a PASS -> FAIL; drop the
    rest. Update "Can't reach" with measured ranks if a probe was wrong. Per-question diff
    (changed chunk IDs) of the six linked questions and the three traps in the progress log.
@@ -125,7 +142,12 @@ again; then it is designed and measured in a plan update before any code.
       Q17, Q20, Q22 not below `ev203\main-1117`.
 - [ ] Sentinels Q4, Q27, Q30: no BAC chunk outside GWIM/Merrill in the retrieved set (an answer
       turn of a BAC call is filtered like any chunk), forbidden 0, refusal ok, status unchanged.
-- [ ] `pytest -q` PASS; smoke PASS; `verify_cee.py run` VERIFY PASS.
+- [ ] Q25 and Q29 (gap): changed keys and chunk IDs recorded in the progress log; status and
+      refusal unchanged; if L2a/L2b brings a payout-grid chunk into Q25, `compensation structure`
+      is excluded from inflection matching (TL choice: keep Q25 a clean gap) and the step-4 check
+      is re-run to show it gone.
+- [ ] `pytest -q` PASS (including the `synonym_only` stripping test for inflected "pays"/"paying");
+      smoke PASS; `verify_cee.py run` VERIFY PASS.
 - [ ] 0 real calls (the real check is #121's combined R2).
 
 ## Paid calls
@@ -141,12 +163,21 @@ real once, in #121's R2 (run ledger in `plans/0121-gate4.md`).
   whose partner is an analyst turn in the step 3 run (spot-check 10).
 - L2b adds a phrase probe to every multi-word key in a question (`net new assets`,
   `client assets`, `wealth transfer`, ...): ranking moves on Q1, Q15, Q21, Q22, Q24. Full run.
+- L2a makes inflected keys fire on more questions than today, not only the new entries:
+  `advisor` -> "adviser" on "advisors" (Q2, Q7, Q20, Q29 and others), and the gap-question case,
+  Q25 "advisor compensation structures", where `compensation structure` starts to fire and adds
+  "payout grid" and "compensation and benefits" (and, with L2b, the phrase "compensation
+  structure"). The config comment on that entry says expansion must not turn a payout-grid story
+  into a fact, and a mock PASS cannot show a gap question drifting (the mock always answers).
+  Checked in step 4 (fired keys main vs branch for all 30; Q25/Q29 changed chunks and payout
+  chunks); fallback above (exclude `compensation structure` from inflection matching).
 - New synonyms widen the match (OR query): more chunks enter the pool; the floor and quotas
   still apply. `payout` under `recruit` must not reach gap questions Q25/Q29 (they do not say
-  "recruit"; checked in step 4).
+  "recruit"; checked in step 4 with the fired-keys diff).
 - #205 edits `fts.py` after this; L1 and L2 stay in their own functions so the rebase is small.
 
 ## Progress log
 - 2026-11-18 00:28 - plan written on `tl/203-gate4-retrieval` (from origin/main a886741);
   DB `cee` = `corpus-2026-11-17` (sync check up to date); diagnosis probes run read-only (above);
   0 real calls.
+- 2026-11-18 00:34 - plan review round 1 (PLAN CHANGES REQUESTED, #203 comment 6971073215). Blocking 1 fixed: Risks name L2a firing on more questions, with Q25 (`compensation structure` -> "payout grid") as the gap case; step 4 prints fired synonym keys main vs branch for all 30 and Q25/Q29 changed chunk IDs with payout chunks; acceptance line for Q25/Q29 with the TL fallback (exclude `compensation structure` from inflection matching if a payout-grid chunk enters Q25). Non-blocking 1-4 taken: `synonym_only` stripping of inflected "pay" stated and tested; config comment block updated in the same PR; ADR number = next free in DECISIONS.md at merge; probes copied to `cache\ev203\probes\`.
