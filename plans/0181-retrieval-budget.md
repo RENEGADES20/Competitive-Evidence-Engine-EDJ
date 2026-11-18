@@ -140,30 +140,30 @@ not re-run. Raw outputs of the re-run are saved the same way (`...\ev181\real-80
 - No rule in the grid meets acceptance: stop after 3b and report.
 
 ## Acceptance
-- [ ] Linked questions Q10, Q11, Q22, Q23, Q24: mock eval on `corpus-2026-11-16`,
+- [x] Linked questions Q10, Q11, Q22, Q23, Q24: mock eval on `corpus-2026-11-16`,
   `--as-of 2026-10-29`, baseline `D:\ALLPROJECTS\EDJ\cache\ev120-rev\freeze-1029\report.json`:
   0 forbidden hits; refusal 5/5 (gap) and 19/19 (all keyed); no question REGRESSED; PASS >= 28
   with Q22 and Q24 PASS; tier-1 document / passage recall >= 0.629 / 0.460. Same run against
   `main-1029` (current main): no REGRESSED.
-- [ ] All 30 as regression: the `--as-of 2026-11-16` run against `main-1116` reported (no
+- [x] All 30 as regression: the `--as-of 2026-11-16` run against `main-1116` reported (no
   REGRESSED expected; any change explained).
-- [ ] Single-firm questions (Q1-Q3, Q5, Q6, Q13-Q15, Q19, Q26, Q29): diff script shows 0 changed
+- [x] Single-firm questions (Q1-Q3, Q5, Q6, Q13-Q15, Q19, Q26, Q29): diff script shows 0 changed
   chunk lists vs `main-1029`. Merrill-only questions (Q4, Q27, Q30) may change through the
   Merrill rule; each change listed with its eval status. Theme-only questions (Q16-Q18, Q20)
   unchanged (k stays 20).
-- [ ] `pytest -q tests/test_retrieval_budget.py`: Merrill counted once (MER + BAC-GWIM one
+- [x] `pytest -q tests/test_retrieval_budget.py`: Merrill counted once (MER + BAC-GWIM one
   share, the other four firms keep theirs); parent-named case; `budget()` rule.
-- [ ] Prompt size: median and max passages and characters per question type, before vs after,
+- [x] Prompt size: median and max passages and characters per question type, before vs after,
   in the PR (multi-firm growth stated as a number).
-- [ ] Step 4: kept with its own eval delta (no REGRESSED) or reported and dropped.
-- [ ] `pytest -q` passes; verify-cee PASS (ask-answer, coverage, filters at least).
-- [ ] `specs/retrieval.md` states the budget rule and Merrill counted once; ADR-013 in
+- [x] Step 4: kept with its own eval delta (no REGRESSED) or reported and dropped.
+- [x] `pytest -q` passes; verify-cee PASS (ask-answer, coverage, filters at least).
+- [x] `specs/retrieval.md` states the budget rule and Merrill counted once; ADR-013 in
   `docs/DECISIONS.md`.
-- [ ] Grid (step 3b): each rule's report shows the expected per-question k (Q22 30/35/40/40,
+- [x] Grid (step 3b): each rule's report shows the expected per-question k (Q22 30/35/40/40,
   Q7 20/21/24/30, Q8 20/20/20/25, Q1 and Q16 20); the grid table and the chosen rule are in the
   PR and ADR-013.
-- [ ] Real calls: 2 (Q22, Q24, one run each), model and outcome reported; raw outputs saved.
-- [ ] Truncation path: either neither Q22 nor Q24 is `INVALID_OUTPUT` from truncation
+- [x] Real calls: 2 (Q22, Q24, one run each), model and outcome reported; raw outputs saved.
+- [x] Truncation path: either neither Q22 nor Q24 is `INVALID_OUTPUT` from truncation
   (`max_tokens` stays 4000), or `max_tokens` = 8000 and the re-run of that question (at most 2
   more calls, at most 4 in total) returns a valid answer; raw outputs of both runs saved, the
   call count and outcome stated in the PR.
@@ -199,3 +199,11 @@ not re-run. Raw outputs of the re-run are saved the same way (`...\ev181\real-80
   19/19, IMPROVED Q11, Q21, Q22, Q24, no REGRESSED; 1116 vs `main-1116` 27 / 3 (Q15, Q19, Q26),
   0.631 / 0.428, no REGRESSED. Single-firm lists: 0 changed (Q1-Q3, Q5, Q6, Q13-Q15, Q19, Q26,
   Q29); theme-only unchanged; Merrill-only Q4 and Q27 changed, Q30 not.
+- 2026-11-17 20:45 - step 7: verify-cee PASS, all 9 features (ask-answer, ask-progress,
+  open-citation, gap-path, invalid-chunk, download-document, coverage, filters, feedback),
+  `.verify-runs/20261117-182303-1ea4c94` in the worktree.
+- 2026-11-17 20:55 - step 8: 2 real calls (claude-sonnet-5-5, prompt v2), `--as-of 2026-10-29`,
+  raw outputs in `D:\ALLPROJECTS\EDJ\cache\ev181ealaw`. Q22 behavior `answer` (expected
+  answer), 12 claims + 1 adjacent citing MS, SCHW, EDJ, RJF and BAC (GWIM) chunks; Q24
+  `gap_with_adjacent` (expected), 2 claims + 4 adjacent, gap on advisor headcount stated. Both
+  valid, not truncated: path (b) not used, `max_tokens` stays 4000, 0 extra calls.
