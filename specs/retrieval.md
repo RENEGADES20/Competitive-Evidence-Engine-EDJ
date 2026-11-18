@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -62,6 +62,13 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     # floor (#166, ADR-014): a chunk below 0.3 x its firm's 2nd-best rank gets no slot (one
     #   outlier does not lift the floor for the whole firm: Q28 with speaker-turn transcripts);
     #   window questions have no floor; the research part keeps the best chunk as its base
+    # doc-type scope (#179, ADR-015; config `doc_type_scope`): Form ADV brochures (`adv`) are
+    #   searched only when the question is on fees / pricing (theme fees_pricing) or names the
+    #   brochure ("Form ADV", "ADV", "brochure"), and never in a question with a time window (a
+    #   brochure revision is not news, Q26 / Q27); a benchmark question (2+ firms and a metric:
+    #   "advisor headcount", "net new assets", "assets per advisor", Q22-Q24) does not search
+    #   tier 4 trade press. A hard SQL filter on every pass; brochures and trade press otherwise
+    #   crowded MS:supplement, SCHW:10-K and RJF:press out of Q23 / Q24 (#178, #186)
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 

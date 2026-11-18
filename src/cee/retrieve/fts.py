@@ -15,6 +15,8 @@ transfer; Q12: Schwab, Edward Jones and client acquisition, a firm theme from co
 Budget (#181, ADR-013): the number of passages grows with the number of firms the question names
 (budget()), and Merrill's own documents plus BAC's GWIM chunks share one firm's quota
 (quota_firms()), so five firms do not each drop to 3 passages when Merrill fills two groups (Q22, Q24).
+Document-type scope (#179, ADR-015): Form ADV brochures only for fee and pricing questions and
+never inside a time window; no trade press (tier 4) for benchmark questions (doc_type_scope()).
 """
 from __future__ import annotations
 
@@ -173,6 +175,41 @@ def filters_sql(q: Query) -> tuple[str, dict]:
     for i, kw in enumerate(q.keywords):
         clauses.append(f"c.tsv @@ phraseto_tsquery('english', %(kw{i})s)")
         params[f"kw{i}"] = kw
+    return " AND ".join(clauses) or "TRUE", params
+
+
+def doc_type_scope(q: Query) -> tuple[list[str], list[int]]:
+    """(document types, source tiers) this question does not search (config `doc_type_scope`,
+    #179, ADR-015). Form ADV brochures (`adv`) answer fee and pricing questions; elsewhere their
+    1,156 chunks crowded out filings, supplements and press releases (Q23, Q24), and a brochure
+    revision is not news, so they are never searched inside a time window (Q26, Q27). Benchmark
+    questions (a reported metric across firms, Q22-Q24) do not search trade press (tier 4)."""
+    cfg = entities_config().get("doc_type_scope") or {}
+    types: list[str] = []
+    tiers: list[int] = []
+    adv = cfg.get("adv")
+    if adv is not None:
+        opens = (any(t in q.themes for t in adv.get("themes") or [])
+                 or any(_alias_pattern(t).search(q.question) for t in adv.get("terms") or []))
+        if not opens or (adv.get("never_in_window") and q.window):
+            types.append("adv")
+    bench = cfg.get("benchmark")
+    if (bench and len(q.entities) >= bench.get("min_firms", 2)
+            and any(_phrase_pattern(p).search(q.question) for p in bench.get("phrases") or [])):
+        tiers += [t for t in bench.get("exclude_tiers") or [] if t not in tiers]
+    return types, tiers
+
+
+def doc_type_scope_sql(q: Query) -> tuple[str, dict]:
+    """doc_type_scope() as a hard SQL filter; TRUE when nothing is left out."""
+    types, tiers = doc_type_scope(q)
+    clauses, params = [], {}
+    if types:
+        clauses.append("d.doc_type <> ALL(%(scope_types)s)")
+        params["scope_types"] = types
+    if tiers:
+        clauses.append("d.source_tier <> ALL(%(scope_tiers)s)")
+        params["scope_tiers"] = tiers
     return " AND ".join(clauses) or "TRUE", params
 
 
@@ -490,6 +527,10 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
     where, params = entity_filter(q.entities)
     filters, filter_params = filters_sql(q)
     params.update(filter_params)
+    scope, scope_params = doc_type_scope_sql(q)  # #179: adv only for fee questions, no tier 4 for benchmarks
+    if scope != "TRUE":
+        filters = f"{filters} AND {scope}"
+        params.update(scope_params)
     window, window_params = window_filter(q.window)
     terms, synonyms = keyword_terms(q)
     fragments, syn_params = _tsquery_sql(terms, synonyms)

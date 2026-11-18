@@ -179,6 +179,26 @@ firm_themes:
 # press release out of Q23 (PASS -> FAIL).
 metric_phrases: ["advisor headcount"]
 
+# Document-type scope per question (S1 owns; #179, ADR-015). Read by doc_type_scope() in
+# src/cee/retrieve/fts.py; a hard SQL filter, like the firm filter.
+#   adv:       Form ADV Part 2A brochures are searched only when the question names a theme in
+#              `themes` (topic keywords, config/topics.yaml) or one of `terms` (all-caps terms
+#              match in exact case), and never in a question with a time window: 1,156 brochure
+#              chunks crowded Q23 / Q24 and filled Q26's 90 days (#178). "compensation": the
+#              brochures disclose how advisors are paid (Q25 expects MS:adv, EDJ:adv, RJF:adv).
+#   benchmark: a question naming at least `min_firms` covered firms and one of `phrases` (a
+#              reported metric across firms, Q22-Q24, Q28) does not search `exclude_tiers` (tier 4
+#              trade press pushed MS:supplement out of Q24 and BAC:supplement out of Q28, #186).
+doc_type_scope:
+  adv:
+    themes: [fees_pricing]
+    terms: ["Form ADV", "ADV", "brochure", "brochures", "compensation"]
+    never_in_window: true
+  benchmark:
+    min_firms: 2
+    phrases: ["advisor headcount", "net new assets", "assets per advisor", "attrition rate"]
+    exclude_tiers: [4]
+
 # Query synonyms (S1 owns; see specs/retrieval.md). Draft v0 from the 30 questions (#7).
 # Read by expand_synonyms() in src/cee/retrieve/fts.py (#89):
 #   - expansion runs key -> values only, never back;

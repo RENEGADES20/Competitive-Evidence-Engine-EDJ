@@ -357,3 +357,38 @@ the floor and takes the turn that held a Schwab transcript chunk). #150 copy: 27
 Q5 back to the freeze corpus's 0.833. Q21 no longer reports Morgan Stanley as a theme gap. The
 recall drops PR #150 causes on Q6, Q13 and Q27 are not floor effects (the chunks clear the floor
 and lose the transcript type's turns at k = 20) and are unchanged here.
+
+## ADR-015: Document-type scope per question: Form ADV only for fee questions, no trade press for benchmarks
+Status: Accepted (tech lead, 2026-11-17, #179); adds a doc-type filter to `specs/retrieval.md`
+Context: retrieval searched every document type for every question. PR #178 adds five Form ADV
+Part 2A brochures (1,156 chunks) and PR #186 adds 77 trade-press articles (tier 4, 327 chunks).
+Measured on the freeze `corpus-2026-11-16` plus those documents with `main` (after ADR-013 /
+ADR-014), mock, `--as-of 2026-10-29`: brochure chunks entered 29 of 30 retrievals and tier-1
+document recall fell 0.646 -> 0.601 (Q1, Q22, Q28, Q30 recall and Q7, Q9, Q11, Q22, Q24
+coverage down); with the trade press too, trade chunks entered all 30, recall fell to 0.533 and
+Q28 went PASS -> FAIL. At `--as-of 2026-11-17` Q26 passed only because RJF brochure chunks filled
+its 90-day window (a brochure revision is not news).
+Decision:
+- A hard SQL filter per question (`fts.doc_type_scope`, config `doc_type_scope` in
+  `config/entities.yaml`), on every retrieval pass, like the firm and window filters.
+- `adv` is searched only when the question names the `fees_pricing` theme (its topic keywords)
+  or one of "Form ADV", "ADV", "brochure(s)", "compensation" (the brochures disclose how
+  advisors are paid; Q25 expects three `*:adv` sources), and never in a question with a time
+  window (Q26, Q27).
+- A benchmark question (at least 2 covered firms and a metric phrase: "advisor headcount",
+  "net new assets", "assets per advisor", "attrition rate"; Q11, Q22-Q24, Q28) does not search
+  tier 4. Trade press stays for every other question, recency windows included (Q2, Q4, Q5, Q7,
+  Q17, Q26, Q29 keep their `*:trade` hits).
+- Measured (mock, both as-of dates) on scratch copies of the freeze with the brochures and with
+  brochures + trade press, against `main` on the same copies. Grid: adv trigger {theme + ADV
+  terms; + "compensation"; + "pay"} x benchmark phrases {none; Q22-Q24; Q22-Q24 without Q11;
+  + "attrition rate"}. "compensation" brought Q25's `*:adv` coverage back (0.625 -> 1.0); "pay"
+  only added brochures to Q29, which does not expect them; "attrition rate" brought Q28 back with
+  the trade press loaded. Chosen: the smallest cell meeting #179's acceptance.
+Consequences: Brochures + trade-press copy, `--as-of 2026-10-29`: 28 PASS (main 27), tier-1
+recall 0.593 / 0.457 (main 0.533 / 0.423), Q18 5/5 `*:adv`, Q22-Q24 coverage back to the freeze
+level. Brochures-only copy: recall equals the freeze without brochures (0.646 / 0.481). The freeze
+`cee` gets the same passages as before (no `adv`, no tier 4 documents). Q2, Q5, Q6 and Q30 still
+lose a passage each to trade chunks compared with the freeze (trade takes the document type's
+turns at k = 20); a fee question worded without any configured term or theme keyword does not
+see the brochures, and the term lists are the place to widen it. Evidence in the #179 PR.
