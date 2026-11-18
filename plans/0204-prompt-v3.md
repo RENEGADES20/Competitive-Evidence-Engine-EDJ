@@ -169,21 +169,21 @@ The `Answer` schema does not change. The real check is #121's combined R2.
    open, or wait for the run.
 
 ## Acceptance
-- [ ] Rendered-prompt tests: rules 1-4 appear; no question ID and no 6-word run of any
+- [x] Rendered-prompt tests: rules 1-4 appear; no question ID and no 6-word run of any
       `passes_if` in the prompt; `PROMPT_VERSION` = v3 ("Prompt version: v3" rendered); every
       standard wording constant and the hand-off sentence still in the prompt.
-- [ ] Leak check proven: the lower-case, punctuation-stripped 6-word test fails when fed the old
+- [x] Leak check proven: the lower-case, punctuation-stripped 6-word test fails when fed the old
       rule-3 strategy clause (commit 6976a04) against Q3's `passes_if`, and passes on the v3 prompt.
-- [ ] Hand check logged: every rule read against the `passes_if` of Q3, Q7, Q12, Q16, Q20, Q25,
+- [x] Hand check logged: every rule read against the `passes_if` of Q3, Q7, Q12, Q16, Q20, Q25,
       Q4, Q8, Q21, Q24, Q27, Q30 and Q18 for paraphrase; no rubric list restated.
-- [ ] Ground rules held (tests): caveats inserted by code (grid test, GWIM caveat), hand-off text
+- [x] Ground rules held (tests): caveats inserted by code (grid test, GWIM caveat), hand-off text
       unchanged, a citation outside the retrieved set is still flagged; `validate.py` and
       `schema.py` unchanged in the diff.
-- [ ] R1 re-validation: 30/30 raw outputs load and validate with the same flags and caveats.
-- [ ] Mock eval on `corpus-2026-11-17`: no status change against
+- [x] R1 re-validation: 30/30 raw outputs load and validate with the same flags and caveats.
+- [x] Mock eval on `corpus-2026-11-17`: no status change against
       `evals/baselines/corpus-2026-11-17/report.json` (28/2, Q15, Q19); smoke PASS.
-- [ ] `pytest -q` PASS; `verify_cee.py run` VERIFY PASS (when the TL frees `cee_verify`).
-- [ ] Probes P1-P4: each pass line met, or the miss reported in the PR; <= 8 probe calls; 0 calls
+- [x] `pytest -q` PASS; `verify_cee.py run` VERIFY PASS (when the TL frees `cee_verify`).
+- [x] Probes P1-P4: each pass line met, or the miss reported in the PR; <= 8 probe calls; 0 calls
       on bank questions.
 - [ ] Expected in #121's R2 (not checkable here; written down so R2 can be read against it):
   - Q7: one grid, the same dimensions for MS, Merrill, RJF, taken from the question's terms and
@@ -273,3 +273,39 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   the three lines above corrected to their commit times (00:43, 00:47, 00:50; they were written
   as 00:45, 01:00, 01:15). Implementation started; `verify_cee.py` held until the TL frees
   `cee_verify` (in use for PR #206).
+- 2026-11-18 00:55 - steps 1-5 done (8d14fb5, base a886741). Prompt v3 written as planned, plus
+  "home firm (Edward Jones)" so the model knows who the home firm is. Leak test: the standard
+  wording constants are exempt (Q28 and Q30 `passes_if` quote "Neither firm discloses advisor
+  attrition on a comparable basis." and "Merrill does not report standalone results." on
+  purpose); the rest of the prompt has 0 six-word and 0 five-word runs against any `passes_if`
+  apart from v2 text (Q30 "bank of america's gwim segment", from the v2 GWIM attribution line);
+  4-word runs only Q20 "source sample and date" and v2 text (Q4, Q8, Q30). Old rule-3 clause is
+  caught (Q3). pytest 498 passed. R1 re-validation (`cache\ev204\revalidate_r1.py`, branch code,
+  pools rebuilt at as-of 2026-11-17 and identical to the saved chunk_ids): 30/30 load, same
+  behavior, flags (Q17 `number_not_found` only) and caveats as R1. Mock eval
+  (`cache\ev204\mock`): 28/2 (Q15, Q19), no status change vs the baseline, 0 forbidden, refusal
+  5/5 and 19/19, tier-1 doc recall 0.727; smoke PASS.
+- 2026-11-18 00:56 - probe run `cache\ev204\probe-v3` (4 real calls, `claude-sonnet-5-5`, v3):
+  P2 PASS (claims grouped by position, attributed and dated, no own forecast; one Schwab claim
+  lacks a position label), P3 PASS (`gap_with_adjacent`, answerable=false, a "<Firm> - client
+  retention rate: not found" gap per firm, Merrill gap in standard wording, advisor/associate
+  retention as adjacent, GWIM caveat by code), P4 PASS (`answer`; UBS findings with date and the
+  group named "next-generation wealth holders, not women investors as a whole"; missing groups as
+  a gap; one Cerulli claim flagged `number_not_found` by the number check, a claim-level finding,
+  not a prompt issue). P1 MISS on two of four pass items: prefix and firm + dimension gaps held,
+  but dimensions differed by firm ("Plan structure" for Edward Jones only, no gap for the
+  others) and claims were not ordered dimension by dimension.
+- 2026-11-18 00:57 - the one allowed revision (69ceda1, general): the grid rule now fixes a short
+  dimension list first, every firm gets a claim or a gap under every dimension ("a dimension
+  never appears for one firm only"), all firms for one dimension before the next. Leak test and
+  hand check re-run on the new sentence: 0 six/five-word runs beyond v2 text; it restates the
+  issue's goal 1 ("Every firm gets a cell per dimension"), no rubric list. Tests extended.
+  Re-run of P1 only (`probe-v3b`, 1 call): PASS, two dimensions, Edward Jones and Raymond James
+  with claims, Morgan Stanley gaps under both, ordered by dimension, plus a named gap for
+  Raymond James's missing plan terms. Probe total 5 calls (<= 8); 0 bank-question calls.
+- 2026-11-18 00:59 - merged origin/main (c5fcfb0, #203 / PR #206, ADR-017) as c857718; no
+  conflict, no ADR added here. pytest 510 passed; smoke PASS; mock eval (`cache\ev204\mock-merged`)
+  28/2 (Q15, Q19), no status change vs the committed baseline, 0 forbidden, refusal 5/5 and 19/19,
+  tier-1 doc recall 0.788 (from #203; the prompt does not touch retrieval). `verify_cee.py run`
+  VERIFY PASS, all 9 features (`.verify-runs\20261118-005913-c857718`); `cee_verify` freed by
+  the TL after PR #206 merged.
