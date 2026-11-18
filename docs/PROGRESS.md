@@ -129,6 +129,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-17 | TL: rules updated per tech-lead decision of 2026-11-16 (ADR-011; model-based work on a branch; up to 5 real calls per question, Gate 3 run needs the tech lead) (#182) (#183) | - | - |
 | 2026-11-17 | ADR-012: up to 5 LLM calls per user question (one by default), work stays on main; paid-call test budget counts by question run, no per-task total (CLAUDE.md, TL review docs) (#185) | none | multi-call answer feature issue builds on ADR-012 |
 | 2026-11-18 | #187: eval runner keeps a paid model output that fails validation (raw payload saved, INVALID_OUTPUT status, call counted, run continues) (#191) | Blockers: none (verify-cee open-citation read-back fails on main too) | Next: track the open-citation read-back failure |
+| 2026-11-18 | TL: retrieval budget by firm count, k = max(20, 6 x firms), Merrill counted once in the quota (ADR-013); mock on corpus-2026-11-16 as of 2026-10-29 26 -> 28 PASS (Q22, Q24 back), tier-1 recall 0.629 -> 0.652 docs / 0.460 passages, refusal 5/5 and 19/19, 0 regressed; 2 real calls (Q22, Q24) valid (#181) (#192) | none | #166 FLOOR / MAX_PER_DOC, #190 Q21 theme slot; revisit PER_FIRM with the #178 / #150 snapshot |
 
 ## Weekly score (from W6)
 
