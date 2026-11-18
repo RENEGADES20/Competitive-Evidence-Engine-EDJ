@@ -573,3 +573,32 @@ def test_transcript_speech_and_quotes_are_not_withheld():
     assert not validate.is_normative("Just trying to gauge whether we should expect this mix shift headwind to persist")
     assert not validate.is_normative('Schwab management said "we should continue to win share from Edward Jones".')
     assert validate.is_normative('Management said "growth is strong", so Edward Jones should copy the model.')
+
+
+def test_grid_shaped_answer_keeps_its_shape_through_the_checks():
+    # #204 (prompt v3): a comparison is written dimension by dimension ("<Dimension> - <Firm>:")
+    # with each empty cell as a gap. The Answer schema and the checks need no change for it:
+    # order and gaps are kept, the GWIM caveat is still code-owned, a forged citation is flagged.
+    from cee.answer.validate import insert_caveats
+
+    hits = [hit("EDJ-10K-2025#1"), gwim_hit()]
+    a = Answer(answerable=True, behavior="answer", claims=[
+        {"text": "Succession - Edward Jones: the 10-K describes a transition program.",
+         "chunk_ids": ["EDJ-10K-2025#1"]},
+        {"text": "Succession - Merrill (via GWIM): the segment describes advisor teams.",
+         "chunk_ids": ["BAC-10K-2025#244"]},
+        {"text": "Results - Edward Jones: the 10-K reports transitions.",
+         "chunk_ids": ["EDJ-10K-2025#999"]},
+    ], gaps=[
+        {"what": "Morgan Stanley - succession: not found in the evidence provided.",
+         "suggested_source": "Morgan Stanley 10-K"},
+        {"what": "Merrill - results: not found in the evidence provided.", "suggested_source": "x"},
+    ])
+    q = resolve("How do Morgan Stanley, Merrill and Edward Jones each describe advisor succession?")
+    out = insert_caveats(check_citations(a, hits), q, hits)
+    assert [c.text.split(":")[0] for c in out.claims] == [
+        "Succession - Edward Jones", "Succession - Merrill (via GWIM)", "Results - Edward Jones"]
+    assert [g.what.split(":")[0] for g in out.gaps] == ["Morgan Stanley - succession", "Merrill - results"]
+    assert out.claims[0].flags == [] and "unmatched_citation" in out.claims[2].flags
+    mer = next(e for e in entities_config()["entities"] if e["id"] == "MER")
+    assert mer["caveat"] in out.caveats
