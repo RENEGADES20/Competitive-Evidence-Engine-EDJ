@@ -151,6 +151,109 @@ def test_real_mode_refuses_mock_provider(tmp_path):
         er.RealRunner("mock", 1, "snap", tmp_path)
 
 
+@pytest.fixture
+def flaky_model(monkeypatch):
+    """First question: an invalid paid output (ModelOutputError); every other question: valid."""
+    from cee import ask
+    from cee.answer import llm
+    from cee.answer.schema import Answer
+
+    calls, state = [], {"error": None}
+
+    def generate(question, hits, provider):
+        calls.append(question)
+        if len(calls) == 1:
+            raise state["error"]
+        return Answer(answerable=True, behavior="answer",
+                      claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}], llm_called=True)
+
+    state["error"] = llm.ModelOutputError("bad", {"answer": "yes"}, "anthropic")
+    monkeypatch.setattr(ask, "generate", generate)
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    return calls, state
+
+
+def saved(folder):
+    import json
+    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(folder.iterdir())]
+
+
+def test_real_invalid_output_is_saved_counted_and_run_continues(flaky_model, tmp_path):
+    calls, _ = flaky_model
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    a, how_a = runner.answer(q("Q25", []), query(["RJF"]), real_hits())
+    b, how_b = runner.answer(q("Q29", []), query(["MS"]), real_hits())
+    assert (a, how_a) == (None, "invalid") and how_b == "called" and b["behavior"] == "answer"
+    assert runner.calls == 2 and len(calls) == 2           # the failed call still counts
+    bad = [s for s in saved(tmp_path / "cache") if s.get("invalid")]
+    assert len(bad) == 1 and bad[0]["raw_payload"] == {"answer": "yes"} and bad[0]["question_id"] == "Q25"
+    assert "raw" not in bad[0] and bad[0]["error"] == "bad"
+    assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
+    # a new run reuses the invalid output: reported again, never re-called
+    again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    c, how_c = again.answer(q("Q25", []), query(["RJF"]), real_hits())
+    assert (c, how_c) == (None, "invalid") and again.calls == 0 and again.reused == 1 and len(calls) == 2
+    assert again.last_file.startswith("Q25-") and list((tmp_path / "run2" / "raw").iterdir())
+
+
+def test_real_invalid_no_tool_call_is_saved(flaky_model, tmp_path):
+    """The payload _anthropic builds from a response with only a text block (SDK-like object)."""
+    from cee.answer import llm
+
+    calls, state = flaky_model
+
+    class TextBlock:
+        type, text = "text", "The answer is yes."
+
+        def model_dump(self, mode="python"):
+            return {"type": self.type, "text": self.text}
+
+    client = types.SimpleNamespace(messages=types.SimpleNamespace(
+        create=lambda **kw: types.SimpleNamespace(content=[TextBlock()], stop_reason="end_turn")))
+    with pytest.raises(llm.ModelOutputError) as e:
+        llm._anthropic("q?", real_hits(), client=client)
+    state["error"] = e.value
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    a, how_a = runner.answer(q("Q25", []), query(["RJF"]), real_hits())
+    b, how_b = runner.answer(q("Q29", []), query(["MS"]), real_hits())
+    assert (a, how_a) == (None, "invalid") and how_b == "called" and runner.calls == 2
+    bad = [s for s in saved(tmp_path / "cache") if s.get("invalid")]
+    assert bad[0]["raw_payload"] == [{"type": "text", "text": "The answer is yes."}]
+    assert "did not call" in bad[0]["error"]
+    assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
+
+
+def test_real_save_never_crashes_on_an_odd_payload(flaky_model, tmp_path):
+    from cee.answer import llm
+
+    _, state = flaky_model
+    state["error"] = llm.ModelOutputError("bad", {"when": dt.date(2026, 1, 2)}, "anthropic")
+    runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.answer(q("Q25", []), query(["RJF"]), real_hits())[1] == "invalid"
+    assert saved(tmp_path / "cache")[0]["raw_payload"] == {"when": "2026-01-02"}
+
+
+def test_invalid_output_status_keeps_retrieval_status(tmp_path):
+    r = {"status": "FAIL", "expected_behavior": "answer"}
+    out = er.apply_real(dict(r), None, "invalid", "Q25-abc.json")
+    assert out["status"] == "INVALID_OUTPUT" and out["behavior"] is None
+    assert out["note"] == "retrieval FAIL; model output invalid, see raw/Q25-abc.json"
+    assert "INVALID_OUTPUT" in er.STATUSES
+
+
+def test_report_counts_invalid_output(tmp_path):
+    import json
+    corpus = {("MS", "10-K")}
+    r = er.evaluate(q("Q29", ["MS:10-K"]), query(["MS"]), [hit("a", "MS", "10-K")], corpus, SUBS, 0.5)
+    r = er.apply_real(r, None, "invalid", "Q29-abc.json")
+    meta = {"run_id": "t", "snapshot": "s", "commit": "c", "k": 20, "min_coverage": 0.5, "as_of": "2026-11-17",
+            "mode": "real", "baseline": None, "real_calls": 1, "reused": 0, "max_calls": 1}
+    er.write_reports(tmp_path, meta, [r])
+    md = (tmp_path / "report.md").read_text(encoding="utf-8")
+    assert "INVALID_OUTPUT 1**" in md and "retrieval PASS; model output invalid, see raw/Q29-abc.json" in md
+    assert json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["questions"][0]["status"] == "INVALID_OUTPUT"
+
+
 def test_behavior_mismatch_fails_in_real_mode():
     r = {"status": "PASS", "expected_behavior": "gap_with_adjacent"}
     assert er.apply_real(dict(r), {"behavior": "answer"}, "called")["status"] == "FAIL"
