@@ -304,8 +304,8 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
     if off_theme:
         parts.append(f"No passages on the theme ({theme_label(query)}) for "
                      + ", ".join(_short_name(e) for e in off_theme) + ".")
-    peer_gaps = [e for e in peers if e not in hit_entities and _entry(e).get("parent") not in
-                 {h.entity_id for h in hits if h.entity_id not in query.entities}]
+    firms_hit = hit_entities - {None}  # research passages (no firm) cover no peer
+    peer_gaps = [e for e in peers if e not in firms_hit and _entry(e).get("parent") not in firms_hit]
     if peer_gaps:
         parts.append(f"No passages on the theme ({theme_label(query)}) for "
                      + ", ".join(_short_name(e) for e in peer_gaps) + " (searched on the theme only).")

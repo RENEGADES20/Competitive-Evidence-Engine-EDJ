@@ -615,7 +615,10 @@ def test_coverage_note_names_theme_peers_and_peers_with_nothing_on_the_theme():
     schw = Hit(chunk_id="SCHW-TR-2025Q4#11", doc_id="SCHW-TR-2025Q4", entity_id="SCHW", segment=None,
                doc_type="transcript", source_tier=2, published_at="2026-01-21", period_end="2025-12-31",
                section=None, page=None, rank=1.0, text="x", on_theme=True)
-    note = coverage_note(resolve(Q19), [hit(), schw, gwim_hit()])
+    research = Hit(chunk_id="CERULLI-GWT-2025#1", doc_id="CERULLI-GWT-2025", entity_id=None, segment=None,
+                   doc_type="research", source_tier=5, published_at="2025-10-29", period_end=None,
+                   section=None, page=None, rank=1.0, text="x")
+    note = coverage_note(resolve(Q19), [hit(), schw, gwim_hit(), research])
     assert note.startswith("Coverage: searched Edward Jones; on the theme also Morgan Stanley, "
                            "The Charles Schwab Corporation, Merrill, Raymond James Financial.")
     # Merrill counts through BAC GWIM; MS and RJF had nothing on the theme
