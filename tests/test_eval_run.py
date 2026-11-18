@@ -370,3 +370,24 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
     assert seen == [dt.date(2026, 1, 15)]
+
+
+def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
+    # #181: without --k each question gets fts.budget(q); the record carries k, passages and chars
+    import json
+
+    from cee.retrieve import fts
+
+    seen = []
+    five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(five))
+    monkeypatch.setattr(fts, "search", lambda q, k: seen.append(k) or real_hits())
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q22", "--out", str(tmp_path / "budget")])
+    er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
+    assert seen == [fts.budget(query(five)), 20] and seen[0] == 30
+    rec = json.loads((tmp_path / "budget" / "report.json").read_text(encoding="utf-8"))
+    assert rec["meta"]["k"] == "by question"
+    assert {k: rec["questions"][0][k] for k in ("k", "passages", "chars")} == {"k": 30, "passages": 1, "chars": 1}
+    assert "| 30 | 1 | 1 |" in (tmp_path / "budget" / "report.md").read_text(encoding="utf-8")

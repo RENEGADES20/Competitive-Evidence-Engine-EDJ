@@ -296,3 +296,33 @@ Consequences: Cost and latency per question can grow up to 5x for split question
 must stay reproducible on the mock provider. More calls mean more to log and debug per
 answer. README, `docs/ARCHITECTURE.md`, `specs/answer-citations.md`, `specs/ui.md` and code
 docstrings still describe the one-call code until the feature issue changes them.
+
+## ADR-013: Retrieval budget by number of firms; Merrill counted once
+Status: Accepted (tech lead, 2026-11-17, #181); replaces the fixed k=20 of `specs/retrieval.md`
+for questions that name several firms
+Context: k=20 was the skeleton's default (2026-09-28) and was never measured against larger
+budgets. On the freeze snapshot `corpus-2026-11-16` (#120) the mock eval fell from 28 to 26 PASS
+(Q22, Q24 fail; Q10, Q11, Q23 lose recall). The cause was the slot budget, not ranking: the
+quota split k=20 evenly over the firms in the pool, and Merrill filled two groups (its own `MER`
+documents and BAC chunks in GWIM), so the other four firms of a five-firm question dropped to 3
+passages each. The hybrid re-run (ADR-010, 126 documents) reached the same conclusion.
+Decision:
+- Merrill counted once: with MER named and BAC not, BAC GWIM/Merrill chunks share MER's quota
+  turns and relevance floor (`fts.quota_firms`, read from `parent` / `reported_as` in
+  `config/entities.yaml`). `entity_id`, the SQL filters and citations are unchanged.
+- Budget by question (`fts.budget`): k = 20 for a question naming 0 or 1 firm; for n >= 2 named
+  firms k = max(20, 6 x n), so 2-3 firms keep 20 and the five get 30. n counts covered firms
+  after the firm filter; firms with no documents take no slots. The existing over-fetch and
+  quota rules (firm and document-type turns, MAX_PER_DOC, near-duplicate removal, FLOOR) fill it.
+- Measured, mock, `--as-of 2026-10-29`, Merrill rule in place, against the freeze report: rules
+  max(20, 6n) / max(20, 7n) / max(20, 8n) / 20 + 5(n - 1) (k for the five: 30 / 35 / 40 / 40)
+  all gave 28 PASS, 0 forbidden, refusal 5/5 and 19/19, no REGRESSED; tier-1 recall documents
+  0.652 / 0.653 / 0.657 / 0.666, passages 0.460 / 0.465 / 0.472 / 0.472; 648 / 684 / 722 / 748
+  passages over the 30 questions. The smallest rule was chosen. Per-firm alias / segment terms in
+  the rank were tried and dropped (Q23 gained, Q11 lost a passage). Evidence in the #181 PR.
+Consequences: Questions naming one firm get the same passages as before (0 changed lists,
+except Merrill-only Q4 / Q27, through the Merrill rule). Five-firm prompts grow from 20 to 30
+passages (median characters about +45%), so cost per answer grows for them. `THEME_K` stays 4,
+so tier 5 research's share in five-firm entity+theme questions (Q10, Q21) falls from 1/5 to
+1/7.5; Q21's theme slot is #190. The rule is revisited when the next snapshot (#178 Form ADV,
+#150 speaker-turn transcripts) pushes evidence out again: a larger PER_FIRM is a one-line change.

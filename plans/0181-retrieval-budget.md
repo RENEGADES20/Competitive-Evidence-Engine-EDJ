@@ -177,3 +177,25 @@ not re-run. Raw outputs of the re-run are saved the same way (`...\ev181\real-80
   before the grid (step 3a) and the grid checks per-question k from the reports (3b);
   `max_tokens` path (b) chosen (8000, one re-run of a truncated Q22/Q24, at most 2 more calls);
   step 4 rank-only; Risks section; ADR-013 notes the `THEME_K` share; PR lists Q4/Q27/Q30.
+- 2026-11-17 19:00 - plan approved by the reviewer agent
+  ([issuecomment-6964907478](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/181#issuecomment-6964907478)).
+- 2026-11-17 19:10 - step 1: `main-1029` = 26 PASS / 4 FAIL (Q15, Q19, Q22, Q24), recall 0.629 /
+  0.460, refusal 5/5 and 19/19 (vs freeze: only Q21 IMPROVED, main moved). `main-1116` = 25 / 5
+  (+Q26), recall 0.608 / 0.428. `evals/baselines/corpus-2026-10-22`: 25 PASS / 3 FAIL / 2 NE,
+  0.809 / 0.347 on 9 keyed questions (older corpus, information only).
+- 2026-11-17 19:25 - step 2 (Merrill counted once, k=20): 27 PASS; Q11, Q22, Q24 IMPROVED (Q22 back
+  to PASS from the Merrill rule alone), no REGRESSED; lists change only for questions naming
+  Merrill. Q4 drops two MER web pages below the merged floor (recall unchanged).
+- 2026-11-17 19:35 - step 3a: plumbing with the fixed rule gives 0 changed lists vs step 2.
+- 2026-11-17 19:55 - step 3b grid (vs freeze): every rule 28 PASS, 0 forbidden, refusal 5/5 and
+  19/19, no REGRESSED (also none vs `main-1029`); docs / passages A 0.652 / 0.460, B 0.653 / 0.465,
+  C 0.657 / 0.472, D 0.666 / 0.472; passages over 30 questions 648 / 684 / 722 / 748; k-check OK
+  for every rule. Chosen: A, max(20, 6n).
+- 2026-11-17 20:10 - step 4 (per-firm alias / segment terms in the rank only): 28 PASS, docs 0.660,
+  passages 0.462; Q7, Q9, Q10, Q23, Q24 IMPROVED but Q11 REGRESSED (passages 2/10 -> 1/10).
+  Dropped per the plan; `fts.py` back to step 3.
+- 2026-11-17 20:30 - step 5-6: rule A committed, spec, ADR-013, llm.py comment; `pytest -q` 423
+  passed. Final mock: 1029 vs freeze 28 PASS / 2 FAIL (Q15, Q19), 0.652 / 0.460, refusal 5/5 and
+  19/19, IMPROVED Q11, Q21, Q22, Q24, no REGRESSED; 1116 vs `main-1116` 27 / 3 (Q15, Q19, Q26),
+  0.631 / 0.428, no REGRESSED. Single-firm lists: 0 changed (Q1-Q3, Q5, Q6, Q13-Q15, Q19, Q26,
+  Q29); theme-only unchanged; Merrill-only Q4 and Q27 changed, Q30 not.
