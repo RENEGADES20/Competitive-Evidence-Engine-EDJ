@@ -433,3 +433,50 @@ filings and IR leave; Q17 loses one MS trade chunk (coverage 0.6 -> 0.5, recall 
 Q6 holds 0.667 rather than its no-trade 0.833 (the newest band prefers RJF's later calls). A newer
 document of the same type can displace an older one ranked up to 10% higher. Evidence in the
 #198 PR.
+
+## ADR-017: Answer turn with its question turn; vocabulary keys match inflected and as phrases
+Status: Accepted (tech lead, 2026-11-18, #203); adds an answer-turn rule and key-matching rules to
+`specs/retrieval.md`
+Context: Gate 4 R1 (#121, real run on `corpus-2026-11-17`, 15/30) had answers that said "not in the
+evidence" for passages the corpus holds. Q6: the analyst's question turn `RJF-TR-2026Q1#45` was kept
+for the question's words, but the CEO's answer `#46` is a second chunk of the same call, and
+new-document-first (ADR-016) gave the slot to other calls. Q13, Q17, Q22: the passages use other
+words than the question ("channel migration", "originating from workplace", "AI-powered", the table
+label "Net new assets for the period"); the key `stock plan` never fired on "stock-plan", nor
+`recruiting` on "recruit"; and a multi-word key such as "net new assets" was searched only through
+its values, so its own adjacency counted for nothing.
+Decision:
+- **Answer turn with its question turn** (`PAIR_TURNS = "attach"`): a kept transcript chunk that is
+  a question turn (an operator hand-off or Bloomberg "Q - " label, or a last paragraph ending in "?"
+  under a speaker label with no executive title) brings the next chunk of the same call, kept right
+  after it in the same firm's turn, inside MAX_PER_DOC, near-duplicate removal and k. The answer
+  turn is fetched with every hard filter of the main pass (entity/segment, window, date range,
+  keywords, doc-type scope) and no word match, so a turn the filters exclude never comes in (a BAC
+  consumer turn in a Merrill question). A next chunk that is itself a question turn is not an
+  answer. TRADE_KEEP does not give up an answer turn kept with its question. `"replace"` (the
+  answer in the question's place) was built as the fallback and not needed.
+- **Key matching**: a lower-case synonym key matches with a hyphen or spaces between its words and
+  an inflected last word (s, es, ed, ing); all-caps keys keep exact case. Keys in config
+  `synonym_exact` keep the plain match: `compensation structure`, so gap question Q25 ("advisor
+  compensation structures") does not pull "payout grid" in (it brought `RJF-TR-2026Q1#44`, a
+  payout-grid call turn).
+- **Multi-word key as a phrase**: a multi-word key found in the question is searched as a phrase
+  too, ahead of its values.
+- **Vocabulary** (`config/entities.yaml`): `recruit` (was `recruiting`) += payout, affiliation
+  options; `convert` -> channel migration, originating from; `workplace` -> originating from
+  workplace, workplace channel; `AI` += AI-powered, AI-enabled, AI tools, AI-driven; `under 40` ->
+  next generation, younger investors, younger clients, millennials, Gen Z; `net new assets` += the
+  EDJ table label "net new assets for the period".
+- Ranking table rows that carry the asked metric (lever 3 of #203) was not built: the table label
+  brought `EDJ-10Q-2026Q2#60` into Q22.
+Consequences: mock, `corpus-2026-11-17`, app budget: 28 PASS / 2 FAIL unchanged (Q15, Q19) at
+`--as-of` 2026-11-17 and 2026-10-29, 0 forbidden, refusal 5/5 and 19/19; tier-1 document recall
+0.727 -> 0.788 (2026-11-17) and 0.742 -> 0.800 (2026-10-29), passage recall 0.523 -> 0.607 and
+0.550 -> 0.629. In the retrieved set now: Q6 `RJF-TR-2026Q1#46`, Q13 `MS-TR-2025Q4#20` and
+`MS-TR-2026Q1#24`, Q17 `MS-TR-2025Q3#8`, Q22 `EDJ-10Q-2026Q2#60`. Not reached: Q2
+`RJF-PR-web-affiliation-options#1` (its page is in through `#0`; `#1` is a second chunk behind
+other press documents, rank 43 at k=80) and Q20 `FIDELITY-III-2025#0` / `UBS-NEXTGEN-2026#81`
+(outside the research part's 3-4 slots in a theme question; `UBS-NEXTGEN-2026#83` stays in).
+The answer-turn rule fires on one question of the bank (Q6); the key matching changes the keys of
+Q2, Q5, Q6, Q7, Q8, Q10, Q13, Q20, Q29 (`advisor` now fires on "advisors"). Cost: Q5 document recall
+1.0 -> 0.833 (PASS kept). Merrill traps Q4, Q27, Q30 unchanged. Evidence in the #203 PR.

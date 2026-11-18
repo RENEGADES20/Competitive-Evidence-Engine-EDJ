@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -38,6 +38,11 @@ resolve(question) -> Query{
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
     # synonym_only (config/entities.yaml, #159): "pay" is searched only through its synonyms;
     #   the bare word leaves the FTS words (Q29: "pay any net liquidation amount" is not advisor pay)
+    # key matching (#203, ADR-017): a lower-case key fires with a hyphen or spaces between its words
+    #   and an inflected last word ("stock-plan" -> `stock plan`, Q13; "recruiting" -> `recruit`);
+    #   all-caps keys exact case; config `synonym_exact` keeps the plain match (`compensation
+    #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
+    #   is searched as a phrase too ("net new assets", Q22)
 
 retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
@@ -81,6 +86,11 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     #     yet in the list before a second chunk of a used one (speaker-turn chunks of one call
     #     pushed the firm's other calls out of Q6, Q11, Q13, Q27); among unused documents ranked
     #     within 0.9 of the type's best, the newest wins (Q11: SCHW-TR-2026Q1 vs 2025Q4)
+    # answer turn with its question turn (#203, ADR-017; PAIR_TURNS = "attach"): a kept transcript
+    #   question turn (operator hand-off, "Q - " label, or "?" at the end under a non-executive
+    #   label) brings the next chunk of the call right after it; fetched with every hard filter
+    #   (entity/segment, window, date range, keywords, doc-type scope), no word match; MAX_PER_DOC,
+    #   dedupe and k still apply (Q6: the CEO's answer RJF-TR-2026Q1#46 after the analyst's #45)
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
