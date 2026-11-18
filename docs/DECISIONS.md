@@ -326,3 +326,34 @@ passages (median characters about +45%), so cost per answer grows for them. `THE
 so tier 5 research's share in five-firm entity+theme questions (Q10, Q21) falls from 1/5 to
 1/7.5; Q21's theme slot is #190. The rule is revisited when the next snapshot (#178 Form ADV,
 #150 speaker-turn transcripts) pushes evidence out again: a larger PER_FIRM is a one-line change.
+
+## ADR-014: Rank floor measured from a firm's 2nd-best chunk; the theme slot ignores the floor
+Status: Accepted (tech lead, 2026-11-17, #166 and #190); changes the relevance floor in
+`specs/retrieval.md`
+Context: `select()` gives no slot to a chunk ranked below FLOOR (0.3) x its firm's best chunk.
+With PR #150's speaker-turn transcript chunks (#107) one short, dense answer can rank far above
+the rest of its firm: for Q28 the Merrill answer `BAC-TR-2026Q2#63` ranks 10.65, Merrill's floor
+rises to 3.20 and `BAC-10K-2025#246` (2.77, the only `BAC:10-K#GWIM` passage) drops, so Q28
+goes PASS -> FAIL (coverage 0.667 -> 0.333). Separately (#190), in entity+theme the floor was
+applied before the THEME_FIRST slot, so a firm's only chunk on the theme below the floor was
+never a candidate and the firm was reported as a theme gap (Q21: `MS-DECK-2026-strategic-update#22`
+at 2.32 vs Morgan Stanley's best 11.66).
+Decision:
+- The floor is FLOOR (0.3) x the firm's 2nd-best rank (`FLOOR_BASE = 2`; a firm with one chunk
+  uses that chunk). One outlier no longer lifts the floor for the whole firm; a firm's two best
+  chunks always pass. Merrill's base is taken over MER and BAC GWIM/Merrill chunks together
+  (ADR-013). The research part of entity+theme keeps the best chunk as its base.
+- The THEME_FIRST slot takes the firm's best chunk on the theme whether or not it clears the
+  floor; rank-order turns keep the floor.
+- Measured (mock, `--as-of 2026-10-29`) on the freeze `corpus-2026-11-16` and on a copy with
+  #150's transcripts re-ingested and #150's answer key. Grid: FLOOR 0.25 / 0.2, floor base 2nd /
+  3rd best, transcript MAX_PER_DOC 4 / 5, and combinations. Every floor rule brought Q28 back
+  with no PASS -> FAIL; the per-document cap alone did not bring Q28 back. The 2nd-best base had
+  the fewest recall drops and is the only one that keeps `BAC-TR-2026Q2#63` (the target of #107)
+  in Q4 on the #150 copy. Grid and per-question delta in the #166 PR.
+Consequences: Freeze corpus: 28 PASS unchanged, 0 forbidden, refusal 5/5; coverage up on Q7,
+Q24, recall up on Q30; Q17 coverage 0.625 -> 0.5 (still PASS: a Schwab 10-K chunk now clears
+the floor and takes the turn that held a Schwab transcript chunk). #150 copy: 27 -> 28 PASS (Q28),
+Q5 back to the freeze corpus's 0.833. Q21 no longer reports Morgan Stanley as a theme gap. The
+recall drops PR #150 causes on Q6, Q13 and Q27 are not floor effects (the chunks clear the floor
+and lose the transcript type's turns at k = 20) and are unchanged here.

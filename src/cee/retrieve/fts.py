@@ -353,7 +353,10 @@ K = 20              # chunks handed to the model for a question naming 0 or 1 fi
 POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
 MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
-FLOOR = 0.3          # share of the firm's best rank a chunk needs to take a slot
+FLOOR = 0.3          # share of the firm's FLOOR_BASE-th best rank a chunk needs to take a slot
+FLOOR_BASE = 2       # the floor is measured from a firm's 2nd-best chunk, so one outlier does not
+                     # lift it for the whole firm (#166, ADR-014: the Merrill answer BAC-TR-2026Q2#63
+                     # at 10.65 dropped BAC-10K-2025#246 at 2.77 from Q28)
 WINDOW_MAX_PER_DOC = 8
 THEME_K = 4          # research slots in entity+theme; the firm keeps the rest (#116)
 THEME_MAX_PER_DOC = 2
@@ -405,26 +408,35 @@ def quota_firms(entity_ids: list[str]) -> dict[str, str]:
 
 
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
-           max_per_doc: int | None = None, firm_of: dict[str, str] | None = None) -> list[Hit]:
+           max_per_doc: int | None = None, firm_of: dict[str, str] | None = None,
+           floor_base: int | None = None) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
-    FLOOR x its firm's best chunk gets no slot: quotas spread relevant evidence, they do not
-    pad the list with a document type that has nothing on the question. In entity+theme (#117)
-    a firm's first THEME_FIRST turns go to its best chunks on the theme, then rank order again.
+    FLOOR x its firm's FLOOR_BASE-th best chunk (its lowest when it has fewer) gets no slot:
+    quotas spread relevant evidence, they do not pad the list with a document type that has
+    nothing on the question. In entity+theme (#117) a firm's first THEME_FIRST turns go to its
+    best chunks on the theme, below the floor too (#190), then rank order again.
     firm_of maps an entity to the firm whose quota it shares (quota_firms: BAC GWIM -> MER)."""
     floor = FLOOR if floor is None else floor
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
+    floor_base = FLOOR_BASE if floor_base is None else floor_base
     # tiers[0]: on the theme, tiers[1]: every chunk; each firm -> document type -> rank-ordered hits
     tiers: tuple[dict, dict] = ({}, {})
-    best: dict[str | None, float] = {}
     firm_of = firm_of or {}
-    for h in pool:  # first seen = best ranked
+    ranks: dict[str | None, list[float]] = {}
+    for h in pool:  # rank-ordered: first seen = best ranked
+        ranks.setdefault(firm_of.get(h.entity_id, h.entity_id), []).append(h.rank)
+    best = {f: r[min(floor_base, len(r)) - 1] for f, r in ranks.items()}  # the floor base
+    for h in pool:
         firm = firm_of.get(h.entity_id, h.entity_id)
-        best.setdefault(firm, h.rank)
-        if h.rank >= floor * best[firm]:
-            for n in ((0, 1) if h.on_theme else (1,)):
-                tiers[n].setdefault(firm, OrderedDict()).setdefault(h.doc_type, []).append(h)
+        above = h.rank >= floor * best[firm]
+        # The theme slot ignores the floor (#190): a firm's best chunk on the theme is its
+        # evidence on the theme even when an off-theme chunk ranks far higher.
+        if h.on_theme:
+            tiers[0].setdefault(firm, OrderedDict()).setdefault(h.doc_type, []).append(h)
+        if above:
+            tiers[1].setdefault(firm, OrderedDict()).setdefault(h.doc_type, []).append(h)
     firms = [f for f in best if f in tiers[0] or f in tiers[1]]
     turn = {(n, f): 0 for n in (0, 1) for f in firms}
     kept: list[Hit] = []
@@ -511,7 +523,7 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
     opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC} if q.window else {}
     research = select([Hit(**r) for r in research_rows], min(THEME_K, k),
-                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC})
+                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC}, floor_base=1)  # research: as before #166
     hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities)) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)

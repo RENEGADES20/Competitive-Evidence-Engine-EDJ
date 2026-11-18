@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -56,6 +56,12 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     #   theme's keywords (pooled in its own SQL pass); each firm's first turn goes to its best
     #   chunk on the theme (THEME_FIRST = 1), then rank order. A named firm with no chunk on the
     #   theme is a theme gap: theme_gaps() -> coverage note "No passages on the theme (...) for X."
+    #   The theme slot is not subject to the rank floor (#190, ADR-014): a firm's best chunk on the
+    #   theme takes it even when it ranks below the floor (Q21: MS's only on-theme chunk, a deck
+    #   slide at 2.32 vs MS's best 11.66); rank-order turns keep the floor.
+    # floor (#166, ADR-014): a chunk below 0.3 x its firm's 2nd-best rank gets no slot (one
+    #   outlier does not lift the floor for the whole firm: Q28 with speaker-turn transcripts);
+    #   window questions have no floor; the research part keeps the best chunk as its base
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
