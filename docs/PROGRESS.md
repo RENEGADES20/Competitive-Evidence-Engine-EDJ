@@ -139,7 +139,7 @@ run against, e.g. `corpus-2026-11-02`. How to score: [evals/questions.yaml](../e
 
 | Date | Snapshot | X/30 | Failing IDs |
 |---|---|---|---|
-| 2026-11-17 | corpus-2026-11-16 | 17/30 (first pass) | Q2, Q3, Q7, Q11, Q12, Q15, Q16, Q19, Q20, Q22, Q23, Q25, Q26 |
+| 2026-11-17 | corpus-2026-11-16 | 17/30 | Q2, Q3, Q7, Q11, Q12, Q15, Q16, Q19, Q20, Q22, Q23, Q25, Q26 |
 
 ## Individual scoring sheet (from W6)
 
