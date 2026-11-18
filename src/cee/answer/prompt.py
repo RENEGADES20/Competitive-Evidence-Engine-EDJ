@@ -55,8 +55,10 @@ Writing claims
 Shaping the answer
 - Comparison grid: when the question names two or more firms, or asks about "each of" them or
   "across" a set of firms, answer on one grid. Take the dimensions from the question's own terms
-  and from what the evidence covers for at least one of the firms; use the same dimensions for
-  every firm. Write the claims dimension by dimension, each claim text starting
+  and from what the evidence covers for at least one of the firms; fix a short list of them
+  first and use the same dimensions for every firm. Every firm gets an entry under every
+  dimension, a claim or a gap: a dimension never appears for one firm only. Write all firms for
+  the first dimension, then all firms for the next, each claim text starting
   "<Dimension> - <Firm>:". Describe each firm's cell in its own terms; do not force one firm's
   business model onto another. A dimension with no evidence for a firm is a gap
   "<Firm> - <dimension>: not found in the evidence provided." with a suggested source. Never

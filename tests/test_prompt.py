@@ -100,6 +100,8 @@ def test_comparison_grid_rule():
     text = _flat()
     assert "answer on one grid" in text
     assert "use the same dimensions for every firm" in text
+    assert "Every firm gets an entry under every dimension, a claim or a gap" in text
+    assert "a dimension never appears for one firm only" in text
     assert '"<Dimension> - <Firm>:"' in text
     assert '"<Firm> - <dimension>: not found in the evidence provided."' in text
     assert "Never fill a cell with an inference" in text
