@@ -1,6 +1,6 @@
 # 0198 - Slot order inside a firm: trade press last, a new document before a second chunk
 
-Issues: #198, #199, #197 (one PR closes all three; also #107, see Acceptance)    Role: TL
+Issues: #198, #199, #197 (one PR closes all three; refs #107, see Acceptance)    Role: TL
 Spec: `specs/retrieval.md` (S1; owner review waived by TL decision 2026-11-17,
 [#187 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/187#issuecomment-6964392200))
 
@@ -25,14 +25,26 @@ Baselines (named, all mock, app budget, no `--k`):
   `D:\ALLPROJECTS\EDJ\cache\ev198\main-2026-10-29` (28/2, tier-1 doc recall 0.573).
 - **No-trade reference** (#198's bar): `corpus-2026-11-16`, `D:\ALLPROJECTS\EDJ\cache\ev200\base-1029`
   (0.646) and `...\ev200\base-1117` (0.625).
-- **Pre-#150 reference** (#199's bar, as of 2026-10-29): Q6 0.667, Q11 0.875, Q13 0.667,
-  Q27 0.444 (issue #199 table).
+- **Pre-#150 reference** (#199's bar and #107's check, as of 2026-10-29):
+  `D:\ALLPROJECTS\EDJ\cache\rev150b\main-2026-10-29\report.json` (main before #150, commit
+  b203d46, length-cut transcripts): Q6 0.667, Q11 0.875, Q13 0.667, Q27 0.444 (issue #199 table).
+
+#107 state: #107 is **already closed** (2026-11-17 22:19 local, reason COMPLETED, no PR
+reference) by the board automation that closes an issue when its card moves to Approved, while
+its last acceptance item ("Mock eval for all 30: no forbidden hits, no regressions") is still
+unchecked. A PR keyword cannot decide a closed issue's state, so the close-out is manual
+(step 9): item holds -> tick it on #107 with the eval evidence, the issue stays closed, the PR
+says `Refs #107`; item fails -> reopen #107 with a comment naming the open item.
 
 ## Files to change
 - `src/cee/retrieve/fts.py` (S1; waiver above) -
   - `select()`: two slot-order rules inside a firm's turn, both off for the time-window path
     (`search()` passes the window options; Q26 reads everything inside its 90 days, newest first,
-    as today) and for the tier 5 research `select()` call (unchanged):
+    as today) and for the tier 5 research `select()` call (unchanged). They apply to the rank
+    turns (`take_from(1, ...)`) and the theme turns (`take_from(0, ...)`, `THEME_FIRST`) alike:
+    the theme turn still gives the firm's best on-theme chunk regardless of the floor (#190),
+    but a trade on-theme chunk only when the firm has no other on-theme chunk, and a new
+    document before a second chunk of a used one:
     - **Tier 4 last** (#198): a firm's document types whose chunks are tier 4 take a turn only
       when no other document type of that firm can give a chunk this turn (variant "cap N":
       at most N tier 4 chunks per firm; chosen in step 3).
@@ -56,6 +68,9 @@ Baselines (named, all mock, app budget, no `--k`):
   - new document first: a transcript type with 3 chunks of call A ranked above 1 chunk of call B
     gives A, B before A's second chunk; with the newest band (if chosen), a slightly lower-ranked
     newer call wins over an older one, and a call far below the band does not.
+  - entity+theme pool: a firm whose best on-theme chunk is trade and next is a 10-K chunk gives
+    the 10-K chunk in its theme slot (`THEME_FIRST`); with only a trade on-theme chunk, that
+    chunk still takes the theme slot, below the floor too (#190 unchanged).
   - The existing tests stay green unchanged; if one encodes the old order, it is updated with a
     one-line reason in the test and named in the PR.
 - `specs/retrieval.md` (S1; waiver above) - interface sketch: the slot-order rules (#198,
@@ -106,6 +121,9 @@ DB `cee` = `corpus-2026-11-17`, read-only (no ingest, no write). No new committe
    **Choice:** the simplest cell (fewest rules on) that meets every Acceptance item at both dates;
    ties -> higher tier-1 doc recall at 2026-10-29, then fewer REGRESSED questions. A pre-plan probe
    (Progress log) suggests "tier 4 last + new document first", with the newest band if Q11 needs it.
+   **Fallback:** if no cell meets every item at both dates, take the cell meeting the most items
+   (ties as above), report the unmet items, and the PR says `Part of #198` / `Part of #199` for
+   the issue(s) with an open item, listing them (CLAUDE.md PR rules); #197 still closes.
 4. **Implement** the chosen cell in `fts.py` with the tests above; `PY -m pytest -q` -> all pass.
 5. **Docs**: spec sketch, `fts.py` docstrings (#197 and the new rules), ADR-016 with the grid
    table and the chosen cell.
@@ -116,19 +134,32 @@ DB `cee` = `corpus-2026-11-17`, read-only (no ingest, no write). No new committe
    Determinism: rerun `final-1117` with itself as baseline -> 30 UNCHANGED.
    Per-question diff (`EV\diff-*.txt`): every question whose chunk list changed, with the chunks
    lost and gained; every lost chunk named in the PR.
+   #107 check (scratch `EV\pre150.py`): for every question with a key (`doc_recall` not null in
+   both reports), `doc_recall` in `EV\final-1029\report.json` vs
+   `D:\ALLPROJECTS\EDJ\cache\rev150b\main-2026-10-29\report.json` -> `EV\diff-pre150.txt`
+   (one line per question: before, after, OK / LOWER). Document level only: #150 changed the
+   transcript chunk IDs, so passage recall and `--baseline` REGRESSED labels against that report
+   compare different passages and are not the measure.
 7. **Verify**: `verify_cee.py run` -> VERIFY PASS (retrieval change; no user feature changes, so
    no recipe update). `pytest -q` count >= main's.
 8. **Baseline file**: the committed baseline is not replaced (the snapshot did not change; the
    PR shows the new numbers against it). Decision recorded in the Progress log.
-9. Progress log, `/finish-task` (PR: `Closes #198`, `Closes #199`, `Closes #197`, and `Closes #107`
-   when the #107 item below is checked; both specs areas named: retrieval).
+9. Progress log, `/finish-task` (PR: `Closes #198`, `Closes #199`, `Closes #197` (or `Part of`
+   per the step-3 fallback), `Refs #107`; area: retrieval). The PR says in one line that #197's
+   "no code or config change" means no change to `doc_type_scope()` code or `config/`; the
+   `select()` change belongs to #198/#199. #107 close-out (it is already closed): if
+   `EV\diff-pre150.txt` has no LOWER line and forbidden is 0 in all 30, after the PR merges tick
+   #107's last item with a comment citing `EV\final-1029`, `EV\final-1117` and
+   `EV\diff-pre150.txt`; otherwise `gh issue reopen 107` with a comment naming the open item and
+   the LOWER questions.
 
 ## Acceptance
 #198 (trade press):
 - [ ] Mock eval on `corpus-2026-11-17` (= corpus-2026-11-16 + ADV + trade + speaker turns):
       tier-1 doc recall >= the no-trade reference at both dates (>= 0.646 at 2026-10-29,
-      >= 0.625 at 2026-11-17); Q2, Q5, Q6, Q30 doc recall each >= its no-trade value (0.444,
-      0.833, 0.833 / see #199 for Q6, 1.0). Check: `EV\final-1029`, `EV\final-1117` summaries.
+      >= 0.625 at 2026-11-17); doc recall at 2026-10-29: Q2 >= 0.444, Q5 >= 0.833, Q30 >= 1.0
+      (no-trade values), Q6 >= 0.667 (#199's bar; its no-trade value 0.833 is reported only, not a
+      bar). Check: `EV\final-1029`, `EV\final-1117` summaries.
 - [ ] No PASS -> FAIL vs B-1029 and B-1117; refusal 5/5 gap and 19/19 all keyed (unchanged);
       forbidden 0 in all 30 at both dates.
 - [ ] Q26 (as of 2026-11-17) still PASS with trade chunks inside the 90-day window (count of
@@ -145,10 +176,12 @@ DB `cee` = `corpus-2026-11-17`, read-only (no ingest, no write). No new committe
 Gate 3 retrieval misses (best effort, no regression):
 - [ ] For Q11, Q13, Q17, Q22, Q23, Q25: each step-2 passage reported as now retrieved or not
       (with rank and what holds the slot); none of the six loses doc recall vs B-1029/B-1117.
-#107 (last item "Mock eval for all 30: no forbidden hits, no regressions"):
-- [ ] Holds when the #199 items above hold and no question is REGRESSED in doc recall vs the
-      pre-#150 values; then the PR says `Closes #107` and the item is ticked on #107 after merge.
-      Otherwise `Part of #107` with the open item named.
+#107 (already closed with its last item open; item "Mock eval for all 30: no forbidden hits,
+no regressions"):
+- [ ] `EV\diff-pre150.txt`: for every keyed question, `doc_recall` in `EV\final-1029` >=
+      `doc_recall` in `D:\ALLPROJECTS\EDJ\cache\rev150b\main-2026-10-29\report.json` (document
+      level only, see step 6), 0 LOWER lines; forbidden 0 in all 30. Holds -> item ticked on #107
+      with that evidence, PR says `Refs #107`. Fails -> #107 reopened naming the open item (step 9).
 Common:
 - [ ] `PY -m pytest -q` -> all pass (count >= main's); new tests for both slot rules pass.
 - [ ] `verify_cee.py run` -> VERIFY PASS.
@@ -174,3 +207,11 @@ Common:
   (Q4 #63 retrieved; Q6 0.833, Q13 0.833, Q27 0.556, Q11 still 0.75; Q30 1.0; Q2 0.556; Q5 1.0;
   Q26 PASS at 11-17; 0.693 at 11-17); both + newest band 0.9: 0.742 (Q11 1.0, Q6 0.667). No PASS
   -> FAIL, refusal 5/5, in any probe cell. The probe only shaped the grid; step 3 decides.
+- 2026-11-17 23:00 - plan review round 1: CHANGES REQUESTED
+  ([#198 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/198#issuecomment-6969534618)).
+  Fixed: #107 is already closed by the board automation with its last item open -> manual
+  close-out (tick or reopen), PR says `Refs #107`; #107 check made concrete (pre-#150 report
+  `rev150b\main-2026-10-29`, `doc_recall` per keyed question, `EV\diff-pre150.txt`, document
+  level only); Q6 bar = 0.667 (#199), 0.833 reported only. Non-blocking taken: #197 one-liner in
+  the PR; both rules apply to theme turns too (+ entity+theme fixture test); step-3 fallback
+  (`Part of` with open items).
