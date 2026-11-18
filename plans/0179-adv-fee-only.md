@@ -31,7 +31,8 @@ get exactly the same passages as today. FTS only, a hard SQL filter; mock eval o
 - `src/cee/retrieve/fts.py` (S1-owned; waiver above):
   - new `doc_type_scope(q) -> (excluded doc types, excluded tiers)` read from config:
     - `adv` excluded unless the question is on fees / pricing (planned: `fees_pricing` or one of
-      its sub-topics in `q.themes`, or a config fee term in the question; whether Q25-type
+      its sub-topics in `q.themes`, or a config fee term in the question, or a question that
+      names the brochure itself: "Form ADV", "ADV", "brochure"; whether Q25-type
       compensation questions also open `adv` is decided by the step-3 grid) - and always
       excluded when `q.window` is set;
     - tier 4 excluded for benchmark questions (planned: two or more covered firms and a
@@ -48,7 +49,9 @@ get exactly the same passages as today. FTS only, a hard SQL filter; mock eval o
 - `tests/test_retrieval_doc_scope.py` (new, no database) - `resolve()` + `doc_type_scope()` on
   the question texts: Q18 opens `adv`; Q23, Q24, Q22, Q1, Q7 do not; Q26 / Q27 never (window),
   also a fee question with "in the last 90 days"; Q22-Q24 exclude tier 4; Q2, Q4, Q7, Q26, Q29
-  keep tier 4; Q25 per the step-3 decision. Plus the SQL fragment: `TRUE` when nothing is
+  keep tier 4; Q25 per the step-3 decision; a question naming the brochure without a fee term
+  ("What does Merrill's Form ADV say about conflicts of interest?") opens `adv`, but not with a
+  window. Plus the SQL fragment: `TRUE` when nothing is
   excluded.
 - `specs/retrieval.md` (S1-owned; waiver above) - interface sketch: doc-type scope rule and why
   (brochures and trade press crowding, #179 / #178 / #186).
@@ -118,37 +121,78 @@ chunking; hybrid retrieval. No new committed script (Windows/Mac pair not needed
 ## Acceptance
 Issue items (each checked on F1 = this branch on `cee_179a`, and F2 = on `cee_179b`, at both
 as-of dates unless stated):
-- [ ] Q18 hits all five `*:adv` patterns (`MS:adv`, `SCHW:adv`, `EDJ:adv`, `MER:adv`, `RJF:adv`)
+- [x] Q18 hits all five `*:adv` patterns (`MS:adv`, `SCHW:adv`, `EDJ:adv`, `MER:adv`, `RJF:adv`)
       and stays PASS.
-- [ ] Q23 and Q24 PASS (vs. FAIL on B1 / B2 where the crowding reproduces; if either already
+- [x] Q23 and Q24 PASS (vs. FAIL on B1 / B2 where the crowding reproduces; if either already
       passes on B1 after #181, it still passes and its `MS:supplement` / `RJF:press` hits stay).
-- [ ] Q26 and Q27: zero `adv` chunks in the retrieved list (recency mode never searches `adv`);
+- [x] Q26 and Q27: zero `adv` chunks in the retrieved list (recency mode never searches `adv`);
       their PASS/FAIL and coverage equal what B0 gives plus any tier 4 trade chunks (trade stays
       allowed in recency); a Q26 PASS that came only from RJF brochure chunks on B1 is reported
       as gone.
-- [ ] Tier-1 recall (documents and passages) on F1 >= B0 at the same as-of date (the level
+- [x] Tier-1 recall (documents and passages) on F1 >= B0 at the same as-of date (the level
       without the brochures; #179 quoted 0.626 on an older DB).
-- [ ] `pytest -q` passes; mock only, 0 real calls.
+- [x] `pytest -q` passes; mock only, 0 real calls.
 Trade-press extension (#179 comment, PR #186):
-- [ ] Q23 and Q24 PASS on F2 (brochures + trade press loaded).
-- [ ] On F2 no `trade` chunk in Q22, Q23, Q24; Q2, Q4, Q7, Q26 and Q29 keep at least the
+- [x] Q23 and Q24 PASS on F2 (brochures + trade press loaded).
+- [x] On F2 no `trade` chunk in Q22, Q23, Q24; Q2, Q4, Q7, Q26 and Q29 keep at least the
       `*:trade` hits they have on B2.
-- [ ] F2 tier-1 recall >= B2; no PASS -> FAIL on F2 vs B0; every per-question recall drop vs B0
+- [x] F2 tier-1 recall >= B2; no PASS -> FAIL on F2 vs B0; every per-question recall drop vs B0
       listed in the PR with its cause.
 No harm elsewhere:
-- [ ] `cee` (no `adv` / tier 4): F0 retrieved lists identical to B0 for all 30 questions
+- [x] `cee` (no `adv` / tier 4): F0 retrieved lists identical to B0 for all 30 questions
       (same chunk ids, same order), at both as-of dates.
-- [ ] F1 vs B1 and F2 vs B2: no PASS -> FAIL; forbidden hits stay 0; refusal accuracy on the gap
+- [x] F1 vs B1 and F2 vs B2: no PASS -> FAIL; forbidden hits stay 0; refusal accuracy on the gap
       questions unchanged; Q25's `*:adv` coverage not lower than on B1 unless the PR explains why
       (the step-3 compensation decision).
-- [ ] `tests/test_retrieval_doc_scope.py` (no DB) covers Q18 / Q23 / Q24 / Q26 / Q27 (and the
+- [x] `tests/test_retrieval_doc_scope.py` (no DB) covers Q18 / Q23 / Q24 / Q26 / Q27 (and the
       tier 4 cases) and fails on `7a70f40`'s code.
-- [ ] `python scripts/verify_cee.py run` PASS on `cee`; `--source-db cee_179b` run reported.
-- [ ] `cee` unchanged (18,497 chunks / 137 documents before and after); `cee_179a`, `cee_179b`
+- [x] `python scripts/verify_cee.py run` PASS on `cee`; `--source-db cee_179b` run reported.
+- [x] `cee` unchanged (18,497 chunks / 137 documents before and after); `cee_179a`, `cee_179b`
       dropped and `wt-179-data` removed at the end.
-- [ ] Spec text and ADR-015 updated; PR closes #179.
+- [x] Spec text and ADR-015 updated; PR closes #179.
+
+## Risks
+- A fee question worded without any configured fee term or theme keyword loses the brochures
+  (silent: no eval question shows it). Mitigation: the theme keywords plus the ADV / brochure
+  terms; the rule lives in config, so a missed phrase is a one-line addition.
+- The benchmark detector is phrase-based: a benchmark question worded differently still gets
+  trade press (today's behavior, no worse).
+- Trade press inside a window (Q26 / Q27) stays allowed and may still crowd filings there;
+  reported, not fixed here.
+- Numbers depend on the as-of date (window questions only); both dates are reported.
+- The acceptance is measured on main + #178 (+ #186) before those PRs merge; if they change
+  their manifest rows before merging, the numbers need a re-run.
 
 ## Progress log
 - 2026-11-17 19:45 - plan written (branch `tl/179-adv-fee-only` from `origin/main` `7a70f40`,
   after #181 / #166 / #190). Scope includes the trade-press extension the TL added to #179
   (PR #186). Raw files for both PRs are in the Box root (5 `*-ADV-2026.pdf`, 77 `*-TRADE-*.txt`).
+- 2026-11-17 20:05 - reviewer of record: PLAN APPROVED on `6011994`
+  ([#179 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/179#issuecomment-6966569365));
+  TL approved ADR-015 and the trade-press part on #179. Non-blocking notes taken: "Form ADV" /
+  "ADV" / "brochure" open `adv` (never in a window) with a test case; Risks list added; the PR
+  states how `eval_run.py` treats documents dated after `--as-of`. Starting step 1.
+- 2026-11-17 20:10 - step 1. `cee` 18,497 / 137, at corpus-2026-11-16. `cee_179a`: +5 brochures,
+  1,156 `adv` chunks (138 / 286 / 90 / 520 / 122), 19,653 / 142. `cee_179b`: + 77 trade documents
+  (327 chunks), 19,980 / 219. Raw sha256 all match. Merging #178 and #186 into `wt-179-data`
+  conflicted only on appended manifest rows (union kept). Baselines (as-of 10-29 / 11-17):
+  B0 28 / 27 PASS, recall 0.646 / 0.625; B1 28 / 28, 0.601 / 0.577 (adv in 29 / 30 questions,
+  Q26 PASS at 11-17 only through 8 RJF brochure chunks); B2 27 / 27, 0.533 / 0.505 (Q28 FAIL).
+  After #181, Q23 and Q24 already PASS on B1 / B2, but Q24 coverage drops 1.0 -> 0.8 / 0.6
+  and Q22 1.0 -> 0.857.
+- 2026-11-17 20:20 - step 2. `doc_type_scope()` + `doc_type_scope_sql()` in `fts.py`, ANDed into
+  `filters` in `search()` (a separate fragment, so `filters_sql` and its test are unchanged);
+  config block; 29 no-DB tests (fail on `7a70f40`: the function does not exist).
+- 2026-11-17 20:40 - step 3 grid (`cache\ev179\grid`). Theme + ADV terms: Q25 `*:adv` coverage
+  1.0 -> 0.625 (lost its brochures). + "compensation": Q25 back to 1.0. + "pay": only adds
+  brochures to Q29 (not expected there) - dropped. Benchmark Q22-Q24 phrases: Q22-Q24 free of
+  trade, but Q28 (EDJ vs Merrill attrition) still FAIL on `cee_179b` as on B2; Q11-excluded
+  variant identical otherwise. + "attrition rate": Q28 PASS. Chosen: theme + ADV terms +
+  "compensation"; benchmark phrases + "attrition rate". Outside the planned grid by one cell
+  (the attrition phrase), still the same rule shape.
+- 2026-11-17 20:50 - step 4/5. Final runs F0 / F1 / F2 identical to the chosen grid cell (30/30
+  lists). F0 = B0 (30/30 identical lists, both dates). F1: 28 / 27 PASS, recall 0.646 / 0.481 and
+  0.625 / 0.451 (= B0); F2: 28 / 28 PASS, 0.593 / 0.457 and 0.569 / 0.425 (B2 0.533 / 0.505).
+  Q26 at 11-17 on F1 FAIL like B0 (the brochure-only PASS is gone); on F2 PASS through 15 RJF
+  trade chunks (news). F1 lists differ from B0 on 18 questions with equal metrics: the rank's
+  IDF counts every chunk in the corpus, brochures included. ADR-015 written.
