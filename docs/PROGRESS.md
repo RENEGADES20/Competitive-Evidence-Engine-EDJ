@@ -44,6 +44,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | #81 tier 5 corpus: 22 research docs from 16 publishers (McKinsey, GSAM, FINRA, BofA x2+), topic tagger on every tier 5 chunk (65% fallback), publisher column in manifest (#93) | Blockers: Q19 excludes THEME docs in entity mode (S1); raw files to upload to Box | Next: S1 issue for theme docs in entity questions; TL decision on fallback vs general topic |
 | 2026-11-06 | #81 closed: second FINRA report, theme gaps filled (advisor_selection, mass_affluent), Fidelity date fixed, publisher FINRA Foundation; 25 tier 5 docs from 17 publishers (#152) | Blockers: none (general topic waits for TL) | Next: general-topic PR if approved; C2's #92 test suggestions |
 | 2026-11-18 | #55 ADV Part 2A brochures for EDJ/MS/SCHW/MER/RJF stored (tier 2, cover dates) and CRDs verified on IAPD; Q18 hits all five (#178) | Blockers: brochures crowd other questions (26/4, recall 0.626 -> 0.587) until retrieval limits `adv` to fee questions (S1) | Next: TL freeze decision; S1 issue |
+| 2026-11-18 | #57 trade press: collector + 77 tier 4 articles (EDJ 4, MS 16, SCHW 25, MER 11, RJF 21) from InvestmentNews, WealthManagement, RIABiz, AdvisorHub; Q26 now passes; verify-cee Q21 gap now read from the database (#186) | Blockers: none (benchmark crowding fixed by #179; tier-1 recall dip tracked in #198) | Next: next corpus snapshot with trade press; #198 |
 
 ### S1
 
