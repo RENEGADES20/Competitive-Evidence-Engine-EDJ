@@ -73,6 +73,22 @@ says `Refs #107`; item fails -> reopen #107 with a comment naming the open item.
     chunk still takes the theme slot, below the floor too (#190 unchanged).
   - The existing tests stay green unchanged; if one encodes the old order, it is updated with a
     one-line reason in the test and named in the PR.
+
+**As built (deviations from the lines above, reasons in the Progress log 23:12-23:35):**
+- New document first also runs inside a time window (Q27 is a window question and stayed 0.333
+  otherwise); trade last stays off there. `select()` takes `trade_last` / `new_doc_first`
+  instead of one flag; the research call passes both False.
+- `TIER_LAST` is an int N (first N trade chunks of a firm take turns, later ones go last; chosen
+  N = 0); the "cap N" variant was dropped (it lowered Q17 / Q25).
+- New `TRADE_KEEP` (chosen on): with trade last and a full list, a firm without a trade chunk gets
+  its best one in place of its last second chunk of a document (else of a document type); a
+  firm's only chunk of a type is never given up. Pure "last" removed every trade chunk from Q2,
+  Q5, Q7, Q29.
+- Committed cell: `TIER_LAST = 0`, `TRADE_KEEP = True`, `NEW_DOC_FIRST = True`,
+  `NEWEST_BAND = 0.9`. Tests: 8 new in `tests/test_retrieval_quotas.py` (trade last, first trade
+  chunk in turn, window keeps trade order, window still gives a new call first, new call before a
+  second turn, newest band, theme slot, keep one trade); no existing test changed.
+- `docs/DECISIONS.md` ADR-016 and `specs/retrieval.md` as planned.
 - `specs/retrieval.md` (S1; waiver above) - interface sketch: the slot-order rules (#198,
   #199, ADR-016) under the quota lines; the doc-type scope comment names "brochures",
   "compensation" (Q25), "attrition rate" and Q11, Q22-Q24, Q28 (#197).
@@ -155,38 +171,57 @@ DB `cee` = `corpus-2026-11-17`, read-only (no ingest, no write). No new committe
 
 ## Acceptance
 #198 (trade press):
-- [ ] Mock eval on `corpus-2026-11-17` (= corpus-2026-11-16 + ADV + trade + speaker turns):
+- [x] Mock eval on `corpus-2026-11-17` (= corpus-2026-11-16 + ADV + trade + speaker turns):
       tier-1 doc recall >= the no-trade reference at both dates (>= 0.646 at 2026-10-29,
       >= 0.625 at 2026-11-17); doc recall at 2026-10-29: Q2 >= 0.444, Q5 >= 0.833, Q30 >= 1.0
       (no-trade values), Q6 >= 0.667 (#199's bar; its no-trade value 0.833 is reported only, not a
       bar). Check: `EV\final-1029`, `EV\final-1117` summaries.
-- [ ] No PASS -> FAIL vs B-1029 and B-1117; refusal 5/5 gap and 19/19 all keyed (unchanged);
-      forbidden 0 in all 30 at both dates.
-- [ ] Q26 (as of 2026-11-17) still PASS with trade chunks inside the 90-day window (count of
+      -> tier-1 doc recall 0.742 (2026-10-29) / 0.727 (2026-11-17); Q2 0.556, Q5 1.0, Q30 1.0,
+      Q6 0.667 (no-trade 0.833, reported) at both dates.
+- [x] No PASS -> FAIL vs B-1029 and B-1117; refusal 5/5 gap and 19/19 all keyed (unchanged);
+      forbidden 0 in all 30 at both dates. -> 28/2 at both dates (Q15, Q19 as before), no
+      PASS -> FAIL, refusal 5/5 and 19/19, forbidden 0. REGRESSED label: Q17 only (coverage 0.6 ->
+      0.5, one MS trade chunk "bullish despite AI turmoil"; doc/passage recall unchanged).
+- [x] Q26 (as of 2026-11-17) still PASS with trade chunks inside the 90-day window (count of
       `*TRADE*` chunk_ids in `final-1117` Q26 >= 1, all dated within the window).
+      -> PASS, 15 of 15 chunks are RJF trade, published 2026-08-26 .. 2026-11-06 (`EV\q26.txt`).
 #199 (transcript slots), as of 2026-10-29:
-- [ ] Doc recall Q6 >= 0.667, Q11 >= 0.875, Q13 >= 0.667, Q27 >= 0.444 (`EV\final-1029`).
-- [ ] Q4 retrieves `BAC-TR-2026Q2#63` (in `final-1029` and `final-1117` Q4 `chunk_ids`), or
-      the PR states the rank and what holds the slot.
+- [x] Doc recall Q6 >= 0.667, Q11 >= 0.875, Q13 >= 0.667, Q27 >= 0.444 (`EV\final-1029`).
+      -> Q6 0.667, Q11 1.0, Q13 0.833, Q27 0.667 (same at 2026-11-17).
+- [x] Q4 retrieves `BAC-TR-2026Q2#63` (in `final-1029` and `final-1117` Q4 `chunk_ids`), or
+      the PR states the rank and what holds the slot. -> retrieved at both dates.
 #197 (docs):
-- [ ] `specs/retrieval.md` doc-type scope comment names "compensation" (Q25) and
+- [x] `specs/retrieval.md` doc-type scope comment names "compensation" (Q25) and
       "attrition rate" (Q28); `fts.doc_type_scope()` docstring names Q11, Q22-Q24, Q28 as
       benchmark questions; no change to `doc_type_scope()` code or `config/entities.yaml`
-      (`git diff origin/main -- config/` empty).
+      (`git diff origin/main -- config/` empty). -> done; config diff empty.
 Gate 3 retrieval misses (best effort, no regression):
-- [ ] For Q11, Q13, Q17, Q22, Q23, Q25: each step-2 passage reported as now retrieved or not
+- [x] For Q11, Q13, Q17, Q22, Q23, Q25: each step-2 passage reported as now retrieved or not
       (with rank and what holds the slot); none of the six loses doc recall vs B-1029/B-1117.
+      -> `EV\gate3-pool.txt`, `EV\gate3-misses.txt`. Doc recall Q11 0.75 -> 1.0, Q13 0.5 ->
+      0.833, Q17 0.333 (same), Q22 0.364 -> 0.424, Q23 0.3 -> 0.35, Q25 0.75 -> 1.0. Of the named
+      passages, newly retrieved: Q23 SCHW-10Q-2026Q2#25 (financial consultants), Q23
+      EDJ-10Q-2025Q3#69 (for 2025Q2#66); Q25 RJF-PR-web-affiliation-options#2 retrieved. The rest
+      are ranking misses, not slot order: outside the pool (top 15 per firm and type) for Q11
+      MS-10K#167, SCHW-10K#18, SCHW-TR-2026Q1#4/#5; Q13 MS-TR-2026Q1#16; Q22 MS-SUPP#16/#42,
+      SCHW-10K#122, RJF-10Q#306; Q25 RJF-10K#10/#11, EDJ-10K#30/#264, MS-10K#153, SCHW-10Q#25; in
+      the pool but ranked below the firm's kept slots for Q11 MS-SUPP-2026Q3#38 (10.24; the
+      supplement type gives #25 first) and BAC-10K#246, Q22 EDJ-10Q-2026Q2#60 and RJF-PR#4, Q23
+      MS-SUPP-2026Q3#38 and BAC-10K#246, Q17 MS-TR-2025Q4#35 (LeadIQ).
 #107 (already closed with its last item open; item "Mock eval for all 30: no forbidden hits,
 no regressions"):
-- [ ] `EV\diff-pre150.txt`: for every keyed question, `doc_recall` in `EV\final-1029` >=
+- [x] `EV\diff-pre150.txt`: for every keyed question, `doc_recall` in `EV\final-1029` >=
       `doc_recall` in `D:\ALLPROJECTS\EDJ\cache\rev150b\main-2026-10-29\report.json` (document
       level only, see step 6), 0 LOWER lines; forbidden 0 in all 30. Holds -> item ticked on #107
       with that evidence, PR says `Refs #107`. Fails -> #107 reopened naming the open item (step 9).
+      -> 19 keyed questions OK, 0 LOWER, 0 SKIPPED (11 have no key in either report); forbidden
+      0. Tick on #107 after merge.
 Common:
-- [ ] `PY -m pytest -q` -> all pass (count >= main's); new tests for both slot rules pass.
-- [ ] `verify_cee.py run` -> VERIFY PASS.
-- [ ] ADR-016 in `docs/DECISIONS.md` with the grid and the chosen cell; spec sketch updated.
-- [ ] 0 real calls (PR Verification says so).
+- [x] `PY -m pytest -q` -> all pass (count >= main's); new tests for both slot rules pass.
+      -> 487 passed (main 479; 8 new).
+- [x] `verify_cee.py run` -> VERIFY PASS (see Progress log for the run folders).
+- [x] ADR-016 in `docs/DECISIONS.md` with the grid and the chosen cell; spec sketch updated.
+- [x] 0 real calls (PR Verification says so).
 
 ## Risks / unsure
 - "Tier 4 last" can starve trade press where it is the only news (window questions keep it, the
@@ -243,3 +278,21 @@ Common:
   (`EV\grid3\`): N in {0, 1, 2} x new doc x band {off, 0.95, 0.9}; `summ.py` now also lists
   passage-recall and coverage drops; choice adds "no coverage drop vs B-1029/B-1117" as a tie
   rule after the acceptance items.
+- 2026-11-17 23:30 - grid round 3 (`EV\grid3\`): N = 1 or 2 trade chunks in turn lose Q30 (0.5)
+  and N = 1 lowers Q17/Q25; N = 0 keeps every number but removes all trade from Q2, Q5, Q7, Q29.
+  Added `TRADE_KEEP` (round 4, `EV\grid4\`): first version (replace the firm's last pick) lost
+  Q30's `BAC-PR-2026-01-14-01` and Q18's MER brochure; final version gives up only a second chunk
+  of a document (else of a type), never a firm's only chunk of a type -> all items met, coverage
+  drop left only on Q17 (one MS trade chunk, off-topic "bullish despite AI turmoil").
+  **Chosen cell:** `TIER_LAST = 0`, `TRADE_KEEP = True`, `NEW_DOC_FIRST = True`,
+  `NEWEST_BAND = 0.9` (band 0.95 gives Q11 0.875 and tier-1 0.735; 0.9 is higher on the tie rule).
+- 2026-11-17 23:35 - committed f6d011b (fts.py, 8 tests, spec, ADR-016). Final evals on f6d011b
+  (`EV\final-1029`, `final-1117`, `final-*-vs-notrade`, `final-1117-rerun` 30 UNCHANGED,
+  `final-1029-vs-precommit` 30 UNCHANGED): 28/2 both dates, tier-1 doc recall 0.742 / 0.727
+  (passage 0.550 / 0.523), refusal 5/5 19/19, forbidden 0; vs no-trade, REGRESSED labels Q6
+  (0.833 -> 0.667, the #199 bar) and Q7 (coverage 1.0 -> 0.889: the no-trade corpus had no
+  `*:trade` pattern to miss; vs main Q7 is unchanged). `EV\diff-pre150.txt`: 0 LOWER.
+  `EV\diff-1029.txt` / `diff-1117.txt`: 29 questions change chunks; lost 65 trade chunks and
+  second chunks of filings/calls, gained other documents (counts in the PR). pytest 487 passed.
+  verify-cee VERIFY PASS on the working tree (`.verify-runs\20261117-233359-fcc7256`); re-run on
+  the pushed commit below. Committed baseline not replaced (snapshot unchanged; step 8).
