@@ -69,7 +69,8 @@ quality and the PR says so.
 - Every command runs with `PYTHONUTF8=1` and `PYTHONPATH=<worktree>/src` (the shared venv has
   `cee` installed editable from `repo/src`); before each step,
   `python -c "import cee; print(cee.__file__)"` must print the worktree's path.
-- Runs on `cee` (freeze): from `wt-166`, default `DATABASE_URL` (`cee`), main's answer key.
+- Runs on `cee` (freeze): from `wt-166`, `DATABASE_URL=postgresql://.../cee` set explicitly
+  (never left to `.env`, so a `cee_166` value in the shell cannot leak in), main's answer key.
 - Runs on `cee_166` after step 1: also from `wt-166` (this branch's retrieval code), with
   `DATABASE_URL=postgresql://.../cee_166` and `--keys D:\ALLPROJECTS\EDJ\wt-166-150\evals\expected_chunks.yaml`
   (#150's remapped key; `eval_run.py` already accepts `--keys`). The chunks in `cee_166` come
@@ -144,3 +145,6 @@ quality and the PR says so.
 - 2026-11-17 18:36 - plan written (branch `tl/166-floor-after-speaker-turns` from `origin/main`
   `6316494`, after #181). #166 and #190 done together: both change how the per-firm floor
   meets the slots in `select()`.
+- 2026-11-17 18:55 - reviewer agent: changes requested (code/key/DB per run, recall-drop
+  baselines), fixed; re-review APPROVED. Non-blocking note applied: explicit `DATABASE_URL`
+  for `cee` runs too.
