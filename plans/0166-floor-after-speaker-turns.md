@@ -37,8 +37,9 @@ must not regress. FTS only; no model, no new dependency; mock eval only, 0 real 
     c. `MAX_PER_DOC` per document type: transcripts (speaker turns, ~1.7x as many chunks) get 4
        (or 5), other types keep 3;
     d. a combination of the above only if no single rule meets the acceptance.
-    (a) is a floor for the firm part only: `search()` passes the floor explicitly for the research
-    part, which keeps 0.3 (research selection unchanged). (b) needs a pre-pass over the pool
+    (a) is a floor for the firm part only: a change to `search()` - it will pass `floor=0.3`
+    explicitly to the research `select()` (today it gets `FLOOR` by default), so the research
+    part stays at 0.3 whichever FLOOR is chosen (research selection unchanged). (b) needs a pre-pass over the pool
     (`best` is set while streaming today); a firm with fewer chunks than the rank used falls back
     to its lowest chunk's rank (i.e. no chunk is dropped), and for MER the base is taken over MER
     and BAC GWIM/Merrill chunks together (`firm_of`). (c) targets the transcript-slot drops
@@ -117,7 +118,8 @@ quality and the PR says so.
 6. **Clean up.** Drop `cee_166`; remove `wt-166-150` and the scratch branch. `cee` never modified
    (row counts of `chunks` / `documents` checked before and after).
 7. `/finish-task`: PR body with the per-question eval delta on both DBs, the grid table, why the
-   change is needed (EJ-10 note), "Closes #166" and "Closes #190".
+   change is needed (EJ-10 note), the scratch-DB method (restored from the freeze dump, not
+   `TEMPLATE cee`) and `--as-of 2026-10-29` for all runs, "Closes #166" and "Closes #190".
 
 ## Acceptance
 - [ ] #166: on `cee_166` (freeze + #150's transcripts, #150's answer key), mock `--as-of
@@ -145,6 +147,13 @@ quality and the PR says so.
 - 2026-11-17 18:36 - plan written (branch `tl/166-floor-after-speaker-turns` from `origin/main`
   `6316494`, after #181). #166 and #190 done together: both change how the per-firm floor
   meets the slots in `select()`.
-- 2026-11-17 18:55 - reviewer agent: changes requested (code/key/DB per run, recall-drop
-  baselines), fixed; re-review APPROVED. Non-blocking note applied: explicit `DATABASE_URL`
-  for `cee` runs too.
+- 2026-11-17 18:55 - in-session reviewer pass, not posted on GitHub (not a verdict of record);
+  changes applied: code/key/DB per run (PYTHONPATH check, `--keys` for `cee_166`), recall-drop
+  baselines named, explicit `DATABASE_URL` for `cee` runs.
+- 2026-11-17 19:20 - reviewer of record: PLAN CHANGES REQUESTED on `88f54a4`
+  ([#166 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/166#issuecomment-6965414978)).
+  Fixed: this log reworded (blocking 1); candidate (a) research floor worded as a change
+  (non-blocking 1). Notes 2 and 3 go into the PR's Verification: the scratch DB is restored
+  from the freeze dump instead of `CREATE DATABASE ... TEMPLATE cee` (same content once
+  `sync-db -Check` confirms `cee` is at the freeze, and `cee` is not locked); `--as-of
+  2026-10-29` for every baseline and final run, #190 included. Plan not yet approved.
