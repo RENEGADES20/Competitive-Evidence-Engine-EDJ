@@ -215,3 +215,31 @@ Common:
   level only); Q6 bar = 0.667 (#199), 0.833 reported only. Non-blocking taken: #197 one-liner in
   the PR; both rules apply to theme turns too (+ entity+theme fixture test); step-3 fallback
   (`Part of` with open items).
+- 2026-11-17 23:04 - plan APPROVED (round 2,
+  [#198 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/198#issuecomment-6969580502)).
+  Non-blocking taken: `EV\diff-pre150.txt` lists questions keyed in only one report as SKIPPED.
+  Step 4 code written first with module switches (`TIER_LAST`, `NEW_DOC_FIRST`, `NEWEST_BAND`)
+  so the step-3 grid (`EV\grid.py`, `EV\grid.sh`) swaps the committed code's switches.
+- 2026-11-17 23:12 - grid round 1 (`EV\grid\summary.txt`, 16 cells x 2 dates; cell off/0/off
+  reproduces B-1029 and B-1117 exactly). With both rules off inside windows, **Q27 stays 0.333 in
+  every cell** (Q27 "since the start of the year" is a window question, so the #199 rule never
+  ran for it; the pre-plan probe had applied new-document-first in windows too and got 0.556).
+  Plan change (deviation, recorded here and in the PR): new-document-first also applies inside a
+  time window; trade-last stays off there (Q26 reads its news as ranked); research part keeps
+  both off. `select()` takes `trade_last` / `new_doc_first` instead of one `slot_order` flag.
+  Grid round 2 (`EV\grid2\`) re-runs the 12 new-document-first cells. Round 1 otherwise: cap1
+  lowers Q17 and Q25 (rejected); "last" is the only tier-4 option bringing Q30 to 1.0; Q11
+  reaches 0.875 only with the newest band.
+- 2026-11-17 23:21 - grid round 2 (`EV\grid2\`): with new-document-first inside windows Q27
+  reaches 0.556-0.667. Cells meeting every numeric item: "tier 4 last + new doc + band 0.95/0.9"
+  (0.742 / 0.727 for band 0.9). Final evals of that cell (`EV\final-*`, first try) showed what the
+  grid summary did not track: pure "last" removes **every** trade chunk from Q2, Q5, Q7, Q29 (and
+  some from Q4, Q17), so their `*:trade` coverage falls (Q7 0.889 -> 0.556, Q29 1.0 -> 0.5,
+  Q2/Q5 1.0 -> 0.75) and eval_run labels Q7, Q17, Q29 REGRESSED. Statuses stay PASS, but #198's
+  goal is "trade press adds evidence without pushing out tier-2/3", not "trade press gone"
+  (ADR-015 kept `*:trade` for these questions). Rule widened: `TIER_LAST = N` = a firm's first N
+  trade chunks take turns like any type, later ones only when nothing else is left (N = 0 is the
+  old "last"; the cap variant dropped, it lowered Q17/Q25 in both rounds). Grid round 3
+  (`EV\grid3\`): N in {0, 1, 2} x new doc x band {off, 0.95, 0.9}; `summ.py` now also lists
+  passage-recall and coverage drops; choice adds "no coverage drop vs B-1029/B-1117" as a tie
+  rule after the acceptance items.

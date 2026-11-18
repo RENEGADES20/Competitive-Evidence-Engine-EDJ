@@ -17,6 +17,10 @@ Budget (#181, ADR-013): the number of passages grows with the number of firms th
 (quota_firms()), so five firms do not each drop to 3 passages when Merrill fills two groups (Q22, Q24).
 Document-type scope (#179, ADR-015): Form ADV brochures only for fee and pricing questions and
 never inside a time window; no trade press (tier 4) for benchmark questions (doc_type_scope()).
+Slot order inside a firm (#198, #199, ADR-016): trade press takes a turn only when the firm's other
+document types have nothing left (a full list still keeps one trade chunk in place of a repeat), and
+a document type gives a new document, the newest among near-equal ranks, before a second chunk of a
+used one (speaker-turn transcripts of one call crowded out the firm's other calls).
 """
 from __future__ import annotations
 
@@ -182,8 +186,10 @@ def doc_type_scope(q: Query) -> tuple[list[str], list[int]]:
     """(document types, source tiers) this question does not search (config `doc_type_scope`,
     #179, ADR-015). Form ADV brochures (`adv`) answer fee and pricing questions; elsewhere their
     1,156 chunks crowded out filings, supplements and press releases (Q23, Q24), and a brochure
-    revision is not news, so they are never searched inside a time window (Q26, Q27). Benchmark
-    questions (a reported metric across firms, Q22-Q24) do not search trade press (tier 4)."""
+    revision is not news, so they are never searched inside a time window (Q26, Q27). They open on
+    the fees_pricing theme or a term: "Form ADV", "ADV", "brochure(s)", "compensation" (Q25).
+    Benchmark questions (a reported metric across firms: "advisor headcount", "net new assets",
+    "assets per advisor", "attrition rate"; Q11, Q22-Q24, Q28) do not search trade press (tier 4)."""
     cfg = entities_config().get("doc_type_scope") or {}
     types: list[str] = []
     tiers: list[int] = []
@@ -405,6 +411,19 @@ RECENCY_TERMS = "announced launched introduced new record acquisition agreement 
 
 PER_FIRM = 6         # passages per named firm once the firms outgrow K (#181, ADR-013)
 
+# Slot order inside a firm's turn (#198, #199, ADR-016); trade press last is off inside a time
+# window, both are off for the tier 5 research part. Module-level so the eval grid can swap them.
+TIER_LAST = 0        # tier 4 trade press: the first TIER_LAST trade chunks of a firm take turns
+                     # like any document type; after that trade takes a turn only when no other
+                     # document type of the firm can give a chunk; None = no rule
+LAST_TIERS = (4,)
+TRADE_KEEP = True    # with TIER_LAST: a firm whose trade chunks all waited and found the list full
+                     # gets its best one in place of a repeated document's chunk (Q7, Q29 keep *:trade)
+NEW_DOC_FIRST = True  # a document type gives a document not yet in the list before a second
+                      # chunk of a used one (speaker-turn transcripts of one call, #199)
+NEWEST_BAND = 0.9     # among unused documents ranked within this share of the type's best, the
+                      # newest wins (Q11: a later call 5% below an older one); None = rank order
+
 
 def per_firm_budget(n_firms: int) -> int:
     """k for a question naming n >= 2 firms: max(K, PER_FIRM x n), so 2-3 firms keep 20 and the
@@ -446,7 +465,7 @@ def quota_firms(entity_ids: list[str]) -> dict[str, str]:
 
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
            max_per_doc: int | None = None, firm_of: dict[str, str] | None = None,
-           floor_base: int | None = None) -> list[Hit]:
+           floor_base: int | None = None, trade_last: bool = True, new_doc_first: bool = True) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
@@ -454,7 +473,14 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     quotas spread relevant evidence, they do not pad the list with a document type that has
     nothing on the question. In entity+theme (#117) a firm's first THEME_FIRST turns go to its
     best chunks on the theme, below the floor too (#190), then rank order again.
-    firm_of maps an entity to the firm whose quota it shares (quota_firms: BAC GWIM -> MER)."""
+    firm_of maps an entity to the firm whose quota it shares (quota_firms: BAC GWIM -> MER).
+    Slot order (#198, #199, ADR-016), in theme and rank turns alike: with trade_last, tier 4 trade
+    press takes a firm's turn only when no other document type of the firm can give a chunk
+    (TIER_LAST; Q2, Q5, Q30 lost filings and transcripts to trade articles), and a full list then
+    gives the firm's best trade chunk the place of a repeated document (TRADE_KEEP); with
+    new_doc_first, a document type gives a document not yet in the list, the newest among
+    near-equal ranks (NEWEST_BAND), before a second chunk of a used one (NEW_DOC_FIRST;
+    speaker-turn chunks of one call pushed the firm's other calls out of Q6, Q11, Q13, Q27)."""
     floor = FLOOR if floor is None else floor
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
     floor_base = FLOOR_BASE if floor_base is None else floor_base
@@ -481,27 +507,105 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     kept_shingles: list[set] = []
     per_doc: dict[str, int] = {}
     on_theme_kept = dict.fromkeys(firms, 0)
+    last_kept = dict.fromkeys(firms, 0)
+    tier_last = TIER_LAST if trade_last else None
+    kept_firm: list = []  # firm of each kept chunk, same order as kept
+    new_doc_first = NEW_DOC_FIRST and new_doc_first
+
+    def eligible(h: Hit) -> set | None:
+        """The chunk's shingles when it may still take a slot, else None (never again: being
+        kept, a full document and a kept near-duplicate only grow)."""
+        if h.chunk_id in kept_ids or per_doc.get(h.doc_id, 0) >= max_per_doc:
+            return None
+        sh = _shingles(h.text)
+        return None if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles) else sh
+
+    def keep(h: Hit, sh: set, firm) -> None:
+        kept_firm.append(firm)
+        kept.append(h)
+        kept_ids.add(h.chunk_id)
+        on_theme_kept[firm] += h.on_theme
+        last_kept[firm] += h.source_tier in LAST_TIERS
+        kept_shingles.append(sh)
+        per_doc[h.doc_id] = per_doc.get(h.doc_id, 0) + 1
+
+    def pick(hits: list[Hit]) -> tuple[Hit, set] | None:
+        """Next chunk of one document type, removed from its list."""
+        if new_doc_first:
+            fresh: list[tuple[int, Hit, set]] = []
+            for j, h in enumerate(hits):
+                if h.doc_id in per_doc:
+                    continue
+                if fresh and (NEWEST_BAND is None or h.rank < NEWEST_BAND * fresh[0][1].rank):
+                    break
+                if (sh := eligible(h)) is not None:
+                    fresh.append((j, h, sh))
+            if fresh:
+                j, h, sh = max(fresh, key=lambda c: (c[1].published_at, c[1].rank)) if NEWEST_BAND else fresh[0]
+                hits.pop(j)
+                return h, sh
+        while hits:
+            h = hits.pop(0)
+            if (sh := eligible(h)) is not None:
+                return h, sh
+        return None
+
+    def take_types(n: int, firm, types: dict, names: list[str]) -> bool:
+        for i in range(len(names)):
+            t = names[(turn[n, firm] + i) % len(names)]
+            if (got := pick(types[t])) is not None:
+                keep(*got, firm)
+                turn[n, firm] = (turn[n, firm] + i + 1) % len(names)
+                return True
+        return False
 
     def take_from(n: int, firm) -> bool:
         types = tiers[n].get(firm, {})
         names = [t for t in types if types[t]]
-        for i in range(len(names)):
-            t = names[(turn[n, firm] + i) % len(names)]
-            while types[t]:
-                h = types[t].pop(0)
-                if h.chunk_id in kept_ids or per_doc.get(h.doc_id, 0) >= max_per_doc:
-                    continue
-                sh = _shingles(h.text)
-                if any(_similar(sh, other) > DUP_JACCARD for other in kept_shingles):
-                    continue
-                kept.append(h)
-                kept_ids.add(h.chunk_id)
-                on_theme_kept[firm] += h.on_theme
-                kept_shingles.append(sh)
-                per_doc[h.doc_id] = per_doc.get(h.doc_id, 0) + 1
-                turn[n, firm] = (turn[n, firm] + i + 1) % len(names)
-                return True
-        return False
+        if tier_last is not None:
+            last = [t for t in names if types[t][0].source_tier in LAST_TIERS]
+            rest = [t for t in names if t not in last]
+            if last_kept[firm] >= tier_last:
+                return take_types(n, firm, types, rest) or take_types(n, firm, types, last)
+        return take_types(n, firm, types, names)
+
+    def keep_one_trade() -> None:
+        """TRADE_KEEP: a firm whose trade press all waited for the other types and found the list
+        full gets its best trade chunk in place of one pick (Q7, Q29 keep a *:trade source)."""
+        for firm in firms:
+            if last_kept[firm] or not (types := tiers[1].get(firm)):
+                continue
+            mine = [i for i, f in enumerate(kept_firm) if f == firm and kept[i].source_tier not in LAST_TIERS]
+            if not mine:
+                continue
+            # The pick to give up: the last second chunk of a document, else the last chunk of a
+            # type with several; none -> no swap: a firm's only chunk of a type stays (Q30's
+            # release, Q18's brochure).
+            n_type = {}
+            for j in mine:
+                n_type[kept[j].doc_type] = n_type.get(kept[j].doc_type, 0) + 1
+            i = next((j for j in reversed(mine) if per_doc[kept[j].doc_id] > 1), None)
+            if i is None:
+                i = next((j for j in reversed(mine) if n_type[kept[j].doc_type] > 1), None)
+            if i is None:
+                continue
+            out = kept.pop(i)
+            kept_firm.pop(i)
+            kept_ids.discard(out.chunk_id)
+            kept_shingles.pop(i)
+            per_doc[out.doc_id] -= 1
+            if not per_doc[out.doc_id]:
+                del per_doc[out.doc_id]  # "in per_doc" means the document is in the list
+            got = next((g for t in types if types[t] and types[t][0].source_tier in LAST_TIERS
+                        if (g := pick(types[t])) is not None), None)
+            if got is None:  # nothing usable: put the pick back where it was
+                kept.insert(i, out)
+                kept_firm.insert(i, firm)
+                kept_ids.add(out.chunk_id)
+                kept_shingles.insert(i, _shingles(out.text))
+                per_doc[out.doc_id] = per_doc.get(out.doc_id, 0) + 1
+                continue
+            keep(*got, firm)
 
     def take(firm) -> bool:
         return (on_theme_kept[firm] < THEME_FIRST and take_from(0, firm)) or take_from(1, firm)
@@ -514,6 +618,8 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
             progressed |= take(firm)
         if not progressed:
             break
+    if tier_last is not None and TRADE_KEEP and len(kept) >= k:
+        keep_one_trade()
     return kept
 
 
@@ -562,9 +668,12 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
     pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
                   key=lambda h: (-h.rank, h.chunk_id))
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
-    opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC} if q.window else {}
-    research = select([Hit(**r) for r in research_rows], min(THEME_K, k),
-                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC}, floor_base=1)  # research: as before #166
+    # Trade press is not put last there (#198): Q26 reads its 90 days of news as they rank; a new
+    # document still comes before a second chunk of a used one (#199, Q27: Merrill since January).
+    opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC, "trade_last": False} if q.window else {}
+    research = select([Hit(**r) for r in research_rows], min(THEME_K, k),  # research: as before #166
+                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False, "new_doc_first": False},
+                      floor_base=1)
     hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities)) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
