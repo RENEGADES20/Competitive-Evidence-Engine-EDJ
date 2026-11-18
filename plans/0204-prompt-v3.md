@@ -51,9 +51,9 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   below. All rules are written in general terms (firms, dimensions, positions, parts, population),
   with no question ID, firm-specific topic or `passes_if` phrase.
   - Rule 1, comparison grid: when the question names two or more firms, or says "each of" /
-    "across the five", pick the dimensions from the question's own terms (for a broad topic: the
-    firm's stated approach, the economics or incentives behind it, the programs that deliver it,
-    and the results it discloses); use the same dimensions for every firm; write the claims
+    "across the five", take the dimensions from the question's own terms and from what the
+    retrieved evidence covers for at least one of the firms (no fixed default list); use the same
+    dimensions for every firm; write the claims
     dimension by dimension, each claim text starting "<Dimension> - <Firm>:"; each firm's cell in
     its own terms (do not force one firm's business model onto another); a dimension with no
     evidence for a firm is a gap "<Firm> - <dimension>: not found in the evidence provided."
@@ -62,14 +62,15 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   - Rule 2, positions: when the question asks where something is heading, what the future looks
     like or what the range of views is, group claims by position (start each claim with the
     position in a few words), list who holds it and when, and keep firm statements, research and
-    trade press attributed; when two sources disagree on the same point, report both and say
-    that they disagree; offer no forecast or synthesis of your own.
+    trade press attributed; label each claim for what it is (disclosure, regulation, research,
+    commentary); when two sources disagree on the same point, report both and say that they
+    disagree; offer no forecast or synthesis of your own.
   - Rule 3, every part: split the question into its parts (each "and", each named firm, each
-    named metric, "how has it changed"); a strategy question also covers how the firm frames the
-    business, its stated priorities and the competitive pressure management acknowledges,
-    including where it concedes ground; when the question sets the home firm against a peer or
-    asks how it could act, the evidence half includes Edward Jones's own disclosed figures on the
-    same dimension. Each part gets at least one claim or a gap that names the part.
+    named metric, "how has it changed"); cover every part the question asks for, or that a
+    question of its type needs, such as headwinds or risks the firm itself names; when the
+    question sets the home firm against a peer or asks how it could act, the evidence half shows
+    the home firm's figures on the same dimension, from its own filings. Each part gets at least
+    one claim or a gap that names the part.
   - Rule 4, behavior choice (added to "Choosing the behavior"): if the asked quantity is not
     disclosed for most of the firms asked about, choose `gap_with_adjacent`, answerable=false;
     report what is disclosed as claims, each firm's missing disclosure as a gap. If evidence
@@ -77,7 +78,8 @@ The `Answer` schema does not change. The real check is #121's combined R2.
     narrower group, some of the quarters), choose `answer`, report each finding with its source,
     sample and date as printed in the chunk, say which group it covers, and list the missing
     parts as gaps. A wider unit that contains the one asked about (a parent company, a segment)
-    is not partial evidence: it stays adjacent (Q30 trap unchanged).
+    is not partial evidence: it stays adjacent. (Plan note only, never in the prompt: this keeps
+    the Q30 trap unchanged; the question-ID test would catch it.)
   - Wording edits: in a multi-firm answer the published-ranges gap also names the firm first
     (PROGRESS.md 2026-11-17 note: "RJF gap line to name the firm at the next prompt change"); the
     "answer" bullet points to rule 4 for the partial case.
@@ -88,7 +90,12 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   with a gap per empty cell, #204). OpenAI request has no cap; unchanged. No other change.
 - `tests/test_prompt.py` - `PROMPT_VERSION == "v3"`; new tests: each of rules 1-4 appears (key
   phrases, whitespace-normalised as in the existing pay test); the prompt holds no question ID
-  (`\bQ\d{1,2}\b`) and no 6-word run of any `passes_if` text from `evals/questions.yaml`; every
+  (`\bQ\d{1,2}\b`) and no 6-word run of any `passes_if` text from `evals/questions.yaml`, both
+  sides tokenised lower-case with punctuation stripped (`re.findall(r"[a-z0-9']+", s.lower())`);
+  a helper test feeds the round-1 plan's rule-3 strategy clause (commit 6976a04: "a strategy
+  question also covers how the firm frames the business, its stated priorities and the
+  competitive pressure management acknowledges, including where it concedes ground") to the same
+  check and asserts it is caught, so the check is shown to work; every
   standard wording constant still appears; the boundary hand-off still appears verbatim and the
   prompt still says "Never recommend"; the published-ranges gap line names the firm;
   `anthropic_request(...)["max_tokens"] == 8000`.
@@ -125,13 +132,21 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   `LLM_PROVIDER=anthropic` set for that command only; `.env` stays on mock) that refuses to run
   more than the 4 texts above and saves per probe: question, prompt version, model, chunk_ids,
   raw model output and checked answer, to `D:\ALLPROJECTS\EDJ\cache\ev204\probe-v3\`.
-  A miss is a finding, reported in the PR. At most one prompt revision may follow, and only the
-  probes whose rule was revised are run once more (`probe-v3b\`): at most 8 probe calls in total.
+  A miss is a finding, reported in the PR. At most one prompt revision may follow, kept general
+  and passed through the fixed leak test and the hand check; only the probes whose rule was
+  revised are run once more (`probe-v3b\`): at most 8 probe calls in total.
+  The probes are template-adjacent to bank questions (P1 ~ Q7, P2 ~ Q18, P3 ~ Q25, P4 ~ Q20; P4
+  shares Q20's UBS pool); "no match" is an exact-text check only. They check rule-following, not
+  scores, and the PR says so.
 - Model = `LLM_MODEL` in `.env`, recorded in each saved file. The PR's Verification section gives
   the call count (0 bank, N probe), the model, and why.
 
 ## Steps
-1. **Prompt v3.** Edit `prompt.py` as in "Files to change"; read the rendered prompt once in full
+1. **Prompt v3.** Edit `prompt.py` as in "Files to change". Hand check, beside the n-gram test:
+   every rule's wording is read against the `passes_if` of every linked and sentinel question
+   (Q3, Q7, Q12, Q16, Q20, Q25; Q4, Q8, Q21, Q24, Q27, Q30) and of Q18, for paraphrase as well as
+   wording (a rule may not restate a rubric's list of items, e.g. Q7's four dimensions or Q3's
+   strategy items); the result is written in the progress log. Read the rendered prompt once in full
    for contradictions with v2 rules (the "answer" bullet vs rule 4; the pay rule vs rule 1 in a
    multi-firm pay answer: the pay rule's wording wins inside the cell, rule 1 decides the layout).
 2. **llm.py cap.** `max_tokens` 8000.
@@ -151,12 +166,17 @@ The `Answer` schema does not change. The real check is #121's combined R2.
    name the prompt version (grep at plan time: only PROGRESS.md and the spec do).
 8. **App check.** `scripts/verify_cee.py run` (mock answer path still renders) only when the TL
    says `cee_verify` and its port are free (shared with the #203 worktree); `/finish-task`, PR
-   with "Closes #204".
+   with "Closes #204" only if that run has passed; otherwise "Part of #204" with the verify item
+   open, or wait for the run.
 
 ## Acceptance
 - [ ] Rendered-prompt tests: rules 1-4 appear; no question ID and no 6-word run of any
       `passes_if` in the prompt; `PROMPT_VERSION` = v3 ("Prompt version: v3" rendered); every
       standard wording constant and the hand-off sentence still in the prompt.
+- [ ] Leak check proven: the lower-case, punctuation-stripped 6-word test fails when fed the old
+      rule-3 strategy clause (commit 6976a04) against Q3's `passes_if`, and passes on the v3 prompt.
+- [ ] Hand check logged: every rule read against the `passes_if` of Q3, Q7, Q12, Q16, Q20, Q25,
+      Q4, Q8, Q21, Q24, Q27, Q30 and Q18 for paraphrase; no rubric list restated.
 - [ ] Ground rules held (tests): caveats inserted by code (grid test, GWIM caveat), hand-off text
       unchanged, a citation outside the retrieved set is still flagged; `validate.py` and
       `schema.py` unchanged in the diff.
@@ -167,12 +187,10 @@ The `Answer` schema does not change. The real check is #121's combined R2.
 - [ ] Probes P1-P4: each pass line met, or the miss reported in the PR; <= 8 probe calls; 0 calls
       on bank questions.
 - [ ] Expected in #121's R2 (not checkable here; written down so R2 can be read against it):
-  - Q7: one grid, the same dimensions for MS, Merrill, RJF (approach, pay/incentives,
-    pipeline/training, disclosed results); each empty cell a firm + dimension gap (payout for all
-    three unless retrieved; MS recruiting posture).
+  - Q7: one grid, the same dimensions for MS, Merrill, RJF, taken from the question's terms and
+    the evidence; each empty cell a firm + dimension gap.
   - Q16: claims grouped by position, each attributed and dated, no forecast of its own.
-  - Q3: a claim on pressure management acknowledges, or a gap "management concedes no ground in
-    the evidence provided" style naming that part.
+  - Q3: headwinds or competition the firm itself names as claims, or a gap naming that part.
   - Q12: EDJ's disclosed cost figures set alongside Schwab's (if retrieved), or a gap naming EDJ's
     cost structure; hand-off last; still `answer_with_boundary`.
   - Q25: `gap_with_adjacent`; RJF's published ranges as a claim; four firms "<Firm>: Payout grids
@@ -189,7 +207,8 @@ The `Answer` schema does not change. The real check is #121's combined R2.
 - Rule 3's strategy-question parts and rule 1's default dimensions add gaps to answers that
   passed in R1 (Q1, Q4, Q5, Q18, Q26 are not in R2). Wording keeps them additive (a gap, not a
   new behavior), but only #121's R3 shows it. Q18 ("where is the industry heading") falls under
-  rule 2 and is not an R2 sentinel; flagged to #121 as an R3 risk.
+  rule 2 and is not an R2 sentinel; rule 2 labels each claim (disclosure, regulation, research,
+  commentary) so the position grouping keeps that labelling; flagged to #121 as an R3 risk.
 - Rule 4's two branches can conflict (Q24: inputs disclosed for some firms). The rule decides by
   "most of the firms asked about" for a quantity and keeps a wider unit adjacent; Q24 in R2 is the
   check.
@@ -203,3 +222,15 @@ The `Answer` schema does not change. The real check is #121's combined R2.
 - 2026-11-18 00:45 - plan written on `tl/204-prompt-v3` (from origin/main a886741) in
   `wt-204`; DB `cee` = `corpus-2026-11-17` (sync check up to date); R1 pack and raw outputs read;
   probe questions P1-P4 picked from mock retrieval (0 calls). 0 real calls so far.
+- 2026-11-18 01:00 - plan review round 1 (CHANGES REQUESTED, #204 comment 6971295493). Fixed:
+  (1) rule 3's strategy clause reworded in general terms (headwinds or risks the firm itself
+  names), with no frames/priorities/pressure/concedes chain; the leak test lower-cases and strips
+  punctuation before 6-word runs; new acceptance line that the test catches the old rule-3 text;
+  (2) rule 1's four-item default dimension list dropped (dimensions from the question's terms and
+  what the evidence covers for at least one firm); hand check of every rule against the
+  `passes_if` of all linked and sentinel questions (and Q18) for paraphrase, in step 1 and
+  acceptance. Non-blocking 1-5 taken: home-firm clause reworded ("the home firm's figures on the
+  same dimension, from its own filings"); rule 2 labels each claim as disclosure, regulation,
+  research or commentary; probes noted as template-adjacent (P1~Q7, P2~Q18, P3~Q25, P4~Q20), and a
+  revision must pass the leak test and the hand check; "Part of #204" if verify has not run by PR
+  time; "(Q30 trap unchanged)" marked as a plan note, never prompt text.
