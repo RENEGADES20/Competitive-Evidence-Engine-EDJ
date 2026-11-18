@@ -152,10 +152,10 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
 7. `/finish-task`: PR "Closes #205", Verification with 0 real calls.
 
 ## Acceptance
-- [ ] **Q15** mock FAIL -> PASS at as-of 2026-11-17: entities = MS, SCHW, EDJ, MER, RJF; the
+- [x] **Q15** mock FAIL -> PASS at as-of 2026-11-17: entities = MS, SCHW, EDJ, MER, RJF; the
       retrieved set holds 10-K passages of at least two advisor-led firms (expected: MS, EDJ, RJF)
       and still Schwab's; coverage >= 3/5; 0 forbidden.
-- [ ] **Q19** (D-Q19, accepted by the TL on #205): `theme_peers` = MS, SCHW, MER, RJF; the retrieved set holds at
+- [x] **Q19** (D-Q19, accepted by the TL on #205): `theme_peers` = MS, SCHW, MER, RJF; the retrieved set holds at
       least one Schwab passage on the younger-investor theme (`SCHW-TR-2025Q4#11` or another of
       the Schwab cohort chunks listed in Facts) and no advisor-ranking chunk
       (`BAC-PR-*` "Under 40", `MER-PR-web-becoming-a-merrill-lynch-advisor#3`,
@@ -163,21 +163,21 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
       passages are the same as on `main`; 0 forbidden. Mock status stays FAIL at coverage 1/5,
       explained in the PR (no competitor press on the theme in the corpus). If the TL wants
       mock PASS instead, that needs a question-bank decision, not this code.
-- [ ] **Q12** keeps entities SCHW, EDJ, no `theme_peers`, same retrieved set as `main`.
-- [ ] Sentinels: Q4, Q27, Q30 unchanged (status, retrieved set, recall, refusal); every other
+- [x] **Q12** keeps entities SCHW, EDJ, no `theme_peers`, same retrieved set as `main`.
+- [x] Sentinels: Q4, Q27, Q30 unchanged (status, retrieved set, recall, refusal); every other
       question's retrieved set unchanged except Q15 and Q19.
-- [ ] Mock 30 at as-of 2026-11-17: no PASS -> FAIL; 0 forbidden; refusal 5/5 and 19/19; tier-1
+- [x] Mock 30 at as-of 2026-11-17: no PASS -> FAIL; 0 forbidden; refusal 5/5 and 19/19; tier-1
       doc recall 0.788 (not below 0.727; unchanged expected, no tier-1 question moves). Same
       checks at as-of 2026-10-29 (0.800).
-- [ ] Firm filter on the Ask page: a home-firm theme question with a firm filter gets no peers.
-- [ ] `forbidden()` is independent of `search()`: the four named tests in Step 3 pass
+- [x] Firm filter on the Ask page: a home-firm theme question with a firm filter gets no peers.
+- [x] `forbidden()` is independent of `search()`: the four named tests in Step 3 pass
       (off-theme text flagged on_theme -> forbidden; BAC non-GWIM with MER peer -> forbidden;
       non-peer firm on-theme -> forbidden; no `theme_peers` -> unchanged).
-- [ ] Floor edge cases and explicit k covered by the Step 2 tests (window keeps the cross-peer
+- [x] Floor edge cases and explicit k covered by the Step 2 tests (window keeps the cross-peer
       floor; 0/1-chunk peer pool; peer cap on top of an explicit k); plural-phrase resolve test.
-- [ ] `pytest -q` PASS; smoke PASS; `verify_cee.py run` VERIFY PASS (filters, coverage features)
+- [x] `pytest -q` PASS; smoke PASS; `verify_cee.py run` VERIFY PASS (filters, coverage features)
       on the reviewed head, run id recorded in the PR.
-- [ ] 0 real calls (Run ledger of #121: Q15 and Q19 are checked once in the combined R2).
+- [x] 0 real calls (Run ledger of #121: Q15 and Q19 are checked once in the combined R2).
 
 ## Risks / unsure
 - Q19's answer can now cite Schwab only (MS and RJF have no cohort passages; Merrill's are
@@ -198,3 +198,27 @@ takes it). ADR-004 and ADR-013 get a "see ADR-0NN" line.
   GWIM/Merrill segment; four named tests). Non-blocking 1-4 taken: cross-peer floor kept under a
   window and 0/1-chunk pool rule; peer cap added on top of an explicit k; verify-cee run id on
   the reviewed head; plural-phrase test.
+- 2026-11-18 01:08 - plan approved (round 2, #205 comment 6971681085). Merged origin/main 6e0d717
+  (#204 prompt v3, PR #207) as 635c542 (merge, no rebase). Mock re-confirmed on the new base
+  (prompt changes do not move mock retrieval): 28 PASS / 2 FAIL (Q15, Q19), tier-1 doc recall
+  0.788 at as-of 2026-11-17 and 0.800 at 2026-10-29, refusal 5/5 and 19/19, 0 forbidden
+  (`cache\ev205\base-1117`, `base-1029`). Firm themes for the eval's pattern come from
+  `config/entities.yaml` (`firm_themes`), topics from `config/topics.yaml`. ADR number: ADR-018
+  (free; #204 added no ADR).
+- 2026-11-18 01:12 - implemented. Step 4 grid on Q19 (mock): cap 2 + cross-peer floor -> SCHW
+  `TR-2026Q3#11`, `TR-2025Q3#11`; cap 3 adds `SCHW-DECK-2026-investor-day#100` (no new firm);
+  floor off lets `BAC-PR-2026-10-14-01#11` / `-07-14-01#10` ("Top 40 Advisors Under 40") in. Chose
+  cap 2 with the floor. Found while testing: "Compare Edward Jones and Vanguard on fees" (EDJ +
+  an unmapped firm) would have got peers; the rule now reads all named firms (`q.firms`), with a
+  test. Eval: `search()` gets budget - peer slots without `--k`, so peers come on top in both cases.
+- 2026-11-18 01:15 - mock 30 (`cache\ev205\final-1117`, `final-1029`): 29 PASS / 1 FAIL (Q19), only
+  Q15 and Q19 retrieved sets change; Q15 FAIL -> PASS (coverage 0.2 -> 0.8, 30 passages: 10-Ks of
+  MS, EDJ, RJF, SCHW); Q19 FAIL (0.2, as decided) with SCHW-TR-2026Q3#11 and SCHW-TR-2025Q3#11, no
+  ranking chunk, EDJ + research passages identical to main, 0 forbidden; Q12, Q4, Q27, Q30
+  identical; tier-1 doc recall 0.788 / 0.800; refusal 5/5 and 19/19. Committed baseline refreshed
+  (it was from 960b742, before #202/#206). pytest 536 passed; smoke PASS.
+- 2026-11-18 01:19 - verify-cee on edb81bf PASS; a mock ask of Q19 then showed the coverage note
+  missing MS and RJF among peers with nothing on the theme (research passages, entity None,
+  counted as a parent). Fixed in validate.py with a test; pytest 538 passed; verify-cee re-run on
+  bd80900: VERIFY PASS, all 9 features (`.verify-runs\20261118-011918-bd80900`, plus
+  `q15-q19-mock-ask.txt` there). 0 real calls.
