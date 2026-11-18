@@ -20,6 +20,7 @@ def page(date_published=None, meta_time=None, headline="Headline", body="word " 
 
 
 def test_date_comes_from_the_page_in_eastern_time():
+    pytest.importorskip("bs4")  # page parsing needs bs4 (requirements-ingest.txt); CI installs requirements.txt only
     # 2026-09-26 01:30 UTC is still 2026-09-25 in New York.
     assert ctp.page_date(page(date_published="2026-09-26T01:30:00Z")) == "2026-09-25"
     assert ctp.page_date(page(meta_time="2026-10-01T14:56:29+00:00")) == "2026-10-01"
@@ -53,6 +54,7 @@ def test_body_needs_three_mentions_when_the_headline_names_no_firm():
 
 
 def test_article_body_skips_asides_and_needs_real_text():
+    pytest.importorskip("bs4")  # page parsing needs bs4 (requirements-ingest.txt); CI installs requirements.txt only
     headline, body = ctp.article(page(headline="Schwab news", body="word " * 100), ctp.INVESTMENTNEWS)
     assert headline == "Schwab news" and "Related" not in body
     with pytest.raises(ValueError):
@@ -60,6 +62,7 @@ def test_article_body_skips_asides_and_needs_real_text():
 
 
 def test_listing_keeps_url_date_and_title():
+    pytest.importorskip("bs4")  # page parsing needs bs4 (requirements-ingest.txt); CI installs requirements.txt only
     html = ('<div class="tool-sublist__item"><a class="tool-sublist__item__img" href="/x/a/1"></a>'
             '<span class="tool-sublist__item__date">NOV 12, 2026</span>'
             '<a class="tool-sublist__item__title" href="/x/a/1">Edward Jones news</a></div>')
@@ -75,6 +78,7 @@ def test_rerun_adds_no_duplicates(monkeypatch):
 
 
 def test_riabiz_dates_follow_its_utc_byline():
+    pytest.importorskip("bs4")  # page parsing needs bs4 (requirements-ingest.txt); CI installs requirements.txt only
     # RIABiz prints "October 7, 2026" for an article stamped 2026-10-07T01:01Z (Oct 6 in New York).
     assert ctp.page_date(page(date_published="2026-10-07T01:01:55Z"), ctp.RIABIZ.date_tz) == "2026-10-07"
     assert ctp.page_date(page(date_published="2026-10-07T01:01:55Z")) == "2026-10-06"
