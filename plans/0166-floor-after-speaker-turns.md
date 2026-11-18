@@ -147,13 +147,17 @@ quality and the PR says so.
 - 2026-11-17 18:36 - plan written (branch `tl/166-floor-after-speaker-turns` from `origin/main`
   `6316494`, after #181). #166 and #190 done together: both change how the per-firm floor
   meets the slots in `select()`.
-- 2026-11-17 18:55 - in-session reviewer pass, not posted on GitHub (not a verdict of record);
+- 2026-11-17 18:40 - in-session reviewer pass, not posted on GitHub (not a verdict of record);
   changes applied: code/key/DB per run (PYTHONPATH check, `--keys` for `cee_166`), recall-drop
   baselines named, explicit `DATABASE_URL` for `cee` runs.
-- 2026-11-17 19:20 - reviewer of record: PLAN CHANGES REQUESTED on `88f54a4`
+- 2026-11-17 18:42 - reviewer of record: PLAN CHANGES REQUESTED on `88f54a4`
   ([#166 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/166#issuecomment-6965414978)).
   Fixed: this log reworded (blocking 1); candidate (a) research floor worded as a change
   (non-blocking 1). Notes 2 and 3 go into the PR's Verification: the scratch DB is restored
   from the freeze dump instead of `CREATE DATABASE ... TEMPLATE cee` (same content once
   `sync-db -Check` confirms `cee` is at the freeze, and `cee` is not locked); `--as-of
   2026-10-29` for every baseline and final run, #190 included. Plan not yet approved.
+- 2026-11-17 18:43 - fixes pushed as `a97014d`.
+- 2026-11-17 18:44 - reviewer of record: PLAN APPROVED on `a97014d`
+  ([#166 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/166#issuecomment-6965440506)).
+  Starting step 1.
