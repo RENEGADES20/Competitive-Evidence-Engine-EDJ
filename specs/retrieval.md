@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -29,6 +29,13 @@ resolve(question) -> Query{
     mode:     "entity" | "theme" | "entity+theme"
 }
     # rules: entities and no theme -> entity; theme and no entities -> theme; both -> entity+theme
+    # peer sets (config `peer_sets`): "the five" -> MS, SCHW, EDJ, MER, RJF; "an advisor-led model",
+    #   "advisor-led models / firms" -> MS, EDJ, MER, RJF (#205, ADR-018; Q15), unioned with the
+    #   firms named; indefinite and plural phrases only ("Edward Jones's advisor-led model" = EDJ)
+    # theme_peers (#205, ADR-018; config `home_firm`): an entity+theme question whose only named
+    #   firm (covered or not) is the home firm (EDJ) also searches the other members of
+    #   `home_firm.theme_peers` (MS, SCHW, MER, RJF) - their chunks on the theme only (Q19). A firm
+    #   filter on the Ask page clears it
     # themes: top-level topics from config/topics.yaml, plus S1's firm_themes (config/entities.yaml;
     #   themes firms talk about that tier 5 research is not indexed by, e.g. client_acquisition, Q12),
     #   matched with the chunk tagger's rules
@@ -38,6 +45,11 @@ resolve(question) -> Query{
 expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial advisor"
     # synonym_only (config/entities.yaml, #159): "pay" is searched only through its synonyms;
     #   the bare word leaves the FTS words (Q29: "pay any net liquidation amount" is not advisor pay)
+    # key matching (#203, ADR-017): a lower-case key fires with a hyphen or spaces between its words
+    #   and an inflected last word ("stock-plan" -> `stock plan`, Q13; "recruiting" -> `recruit`);
+    #   all-caps keys exact case; config `synonym_exact` keeps the plain match (`compensation
+    #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
+    #   is searched as a phrase too ("net new assets", Q22)
 
 retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
@@ -81,6 +93,19 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     #     yet in the list before a second chunk of a used one (speaker-turn chunks of one call
     #     pushed the firm's other calls out of Q6, Q11, Q13, Q27); among unused documents ranked
     #     within 0.9 of the type's best, the newest wins (Q11: SCHW-TR-2026Q1 vs 2025Q4)
+    # answer turn with its question turn (#203, ADR-017; PAIR_TURNS = "attach"): a kept transcript
+    #   question turn (operator hand-off, "Q - " label, or "?" at the end under a non-executive
+    #   label) brings the next chunk of the call right after it; fetched with every hard filter
+    #   (entity/segment, window, date range, keywords, doc-type scope), no word match; MAX_PER_DOC,
+    #   dedupe and k still apply (Q6: the CEO's answer RJF-TR-2026Q1#46 after the analyst's #45)
+    # theme peers (#205, ADR-018): one more SQL pass, entity_filter(theme_peers) AND the on-theme
+    #   keywords AND every other hard filter (window, date range, keywords, doc-type scope), with the
+    #   word match; the pool is cut at FLOOR x its 2nd-best rank across all peers (its only chunk
+    #   with one; also inside a window) so a firm whose only text on the theme is an advisor ranking
+    #   ("Top 40 Advisors Under 40") takes no slot; then up to PEER_THEME_PER_FIRM = 2 per peer firm
+    #   (Merrill counted once). The home firm and research parts are unchanged; the peers' slots
+    #   come on top (budget() = 20 + 2 x 4 = 28 for Q19; an explicit k gets them on top too).
+    #   Coverage note: "on the theme also ..." and the peers with nothing on the theme
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
@@ -90,6 +115,9 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
 - Merrill queries (Q4, Q27, Q30) return zero BAC chunks without a GWIM/Merrill segment.
 - Head-to-head (Q7): every named firm gets its quota; no firm fills the list.
 - Firms on a theme (Q12, Q21): every named firm has a chunk on the theme, or code reports it as a gap.
+- Firm scope (#205): "an advisor-led model" (Q15) searches MS, EDJ, Merrill and RJF next to the named
+  firm; a home-firm theme question (Q19) gets competitor chunks on the theme only, never an
+  off-theme chunk, and Merrill only through BAC GWIM/Merrill.
 - Duplicate rate after dedupe: no two hits > 90% similar.
 - Hit rate vs `expected_sources` in `evals/questions.yaml` reported per question.
 - **Refusal accuracy tracked alongside recall**: for gap questions (Q24, Q25, Q28-30) retrieval

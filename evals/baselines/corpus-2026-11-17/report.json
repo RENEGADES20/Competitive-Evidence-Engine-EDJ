@@ -1,20 +1,20 @@
 {
   "meta": {
-    "run_id": "corpus-2026-11-17-20261117-223334",
+    "run_id": "corpus-2026-11-17-20261118-011512",
     "snapshot": "corpus-2026-11-17",
-    "commit": "960b742",
+    "commit": "635c542",
     "k": "by question",
     "min_coverage": 0.5,
     "mode": "mock",
-    "baseline": null,
+    "baseline": "evals/baselines/corpus-2026-11-17/report.json",
     "as_of": "2026-11-17",
     "real_calls": 0,
     "reused": 0,
     "max_calls": null
   },
   "summary": {
-    "tier1_doc_recall": 0.547,
-    "tier1_passage_recall": 0.42,
+    "tier1_doc_recall": 0.788,
+    "tier1_passage_recall": 0.607,
     "tier1_with_key": 17,
     "tier1_total": 18,
     "refusal_gap": {
@@ -40,39 +40,41 @@
         "MS"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "MS-TR-2026Q2#16",
-        "MS-10Q-2026Q1#18",
-        "MS-DECK-2026-strategic-update#30",
-        "MS-10K-2025#165",
-        "MS-SUPP-2026Q1#46",
-        "MS-PR-2026-01-15-01#3",
-        "MS-TRADE-2026-10-14-WM-01#2",
         "MS-TR-2026Q3#15",
         "MS-10Q-2026Q2#58",
+        "MS-DECK-2026-strategic-update#30",
+        "MS-10K-2025#165",
+        "MS-PR-2026-10-14-01#5",
+        "MS-SUPP-2026Q3#16",
+        "MS-TR-2026Q2#16",
+        "MS-10Q-2026Q1#18",
         "MS-DECK-2026-strategic-update#31",
-        "MS-10K-2025#180",
-        "MS-SUPP-2025Q4#39",
-        "MS-PR-2026-04-15-01#2",
-        "MS-TRADE-2026-10-14-WM-01#0",
-        "MS-TR-2025Q3#24",
-        "MS-10Q-2025Q2#57",
+        "MS-10K-2025#127",
+        "MS-PR-2026-07-15-01#5",
+        "MS-SUPP-2026Q2#16",
+        "MS-TR-2025Q4#19",
+        "MS-10Q-2025Q3#57",
         "MS-DECK-2026-strategic-update#8",
-        "MS-10K-2025#669",
-        "MS-SUPP-2026Q1#28",
-        "MS-PR-2026-10-14-01#5"
+        "MS-PR-2026-04-15-01#2",
+        "MS-SUPP-2026Q1#14",
+        "MS-TR-2025Q3#45",
+        "MS-10Q-2025Q2#18",
+        "MS-TRADE-2026-10-14-WM-01#0"
       ],
       "patterns": [
         {
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2026Q2#16",
             "MS-TR-2026Q3#15",
-            "MS-TR-2025Q3#24"
+            "MS-TR-2026Q2#16",
+            "MS-TR-2025Q4#19",
+            "MS-TR-2025Q3#45"
           ],
           "type_only": []
         },
@@ -80,11 +82,10 @@
           "pattern": "MS:10-K#Wealth Management",
           "available": true,
           "hits": [
-            "MS-10K-2025#165",
-            "MS-10K-2025#180"
+            "MS-10K-2025#165"
           ],
           "type_only": [
-            "MS-10K-2025#669"
+            "MS-10K-2025#127"
           ]
         },
         {
@@ -101,9 +102,9 @@
           "pattern": "MS:supplement",
           "available": true,
           "hits": [
-            "MS-SUPP-2026Q1#46",
-            "MS-SUPP-2025Q4#39",
-            "MS-SUPP-2026Q1#28"
+            "MS-SUPP-2026Q3#16",
+            "MS-SUPP-2026Q2#16",
+            "MS-SUPP-2026Q1#14"
           ],
           "type_only": []
         }
@@ -112,8 +113,8 @@
       "hit_patterns": 4,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.556,
-      "passage_recall": 0.25,
+      "doc_recall": 0.889,
+      "passage_recall": 0.5,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -156,7 +157,8 @@
               "MS-PR-2026-07-15-01#5"
             ],
             "found": [
-              "MS-PR-2026-10-14-01#5"
+              "MS-PR-2026-10-14-01#5",
+              "MS-PR-2026-07-15-01#5"
             ]
           },
           {
@@ -171,7 +173,9 @@
               "MS-10K-2025#164",
               "MS-10K-2025#166"
             ],
-            "found": []
+            "found": [
+              "MS-10K-2025#127"
+            ]
           },
           {
             "ids": [
@@ -179,12 +183,16 @@
               "MS-SUPP-2026Q2#16",
               "MS-SUPP-2026Q1#14"
             ],
-            "found": []
+            "found": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14"
+            ]
           }
         ],
         "passages": 8,
-        "passages_found": 2,
-        "passage_recall": 0.25,
+        "passages_found": 4,
+        "passage_recall": 0.5,
         "expected_docs": [
           "MS-TR-2026Q2",
           "MS-TR-2026Q3",
@@ -197,8 +205,8 @@
           "MS-SUPP-2026Q1"
         ],
         "docs": 9,
-        "docs_found": 5,
-        "doc_recall": 0.556,
+        "docs_found": 8,
+        "doc_recall": 0.889,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -208,7 +216,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 24171
+      "chars": 24182,
+      "change": "IMPROVED"
     },
     {
       "id": "Q2",
@@ -221,30 +230,31 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "RJF-TRADE-2026-09-02-IN-01#2",
         "RJF-TR-2026Q1#54",
-        "RJF-PR-web-bank-and-credit-union-advisors#0",
         "RJF-10K-2025#91",
-        "RJF-10Q-2026Q1#307",
-        "RJF-SUPP-2025Q4#12",
+        "RJF-PR-2026-04-22-01#1",
+        "RJF-10Q-2026Q2#252",
+        "RJF-DECK-2025-investor-day#49",
+        "RJF-SUPP-2026Q2#45",
+        "RJF-TR-2026Q2#6",
+        "RJF-10K-2025#10",
+        "RJF-PR-web-affiliation-options#0",
+        "RJF-10Q-2026Q1#239",
         "RJF-DECK-2025-investor-day#40",
-        "RJF-TRADE-2026-11-04-IN-01#2",
-        "RJF-TR-2024Q3#23",
-        "RJF-PR-web-advisor-select#0",
+        "RJF-SUPP-2026Q1#44",
+        "RJF-TR-2025Q4#44",
         "RJF-10K-2025#175",
-        "RJF-10Q-2026Q2#316",
-        "RJF-SUPP-2025Q4#37",
-        "RJF-DECK-2025-investor-day#42",
-        "RJF-TRADE-2026-11-05-IN-01#2",
-        "RJF-TR-2024Q4#26",
-        "RJF-PR-web-traditional-employee-advisor#0",
-        "RJF-10K-2025#334",
-        "RJF-10Q-2025Q2#131",
-        "RJF-SUPP-2026Q1#44"
+        "RJF-PR-web-advisor-select#0",
+        "RJF-10Q-2025Q4#199",
+        "RJF-TR-2025Q3#20",
+        "RJF-PR-web-bank-and-credit-union-advisors#0",
+        "RJF-SUPP-2025Q4#12",
+        "RJF-TRADE-2026-11-04-IN-01#2"
       ],
       "patterns": [
         {
@@ -252,8 +262,9 @@
           "available": true,
           "hits": [
             "RJF-TR-2026Q1#54",
-            "RJF-TR-2024Q3#23",
-            "RJF-TR-2024Q4#26"
+            "RJF-TR-2026Q2#6",
+            "RJF-TR-2025Q4#44",
+            "RJF-TR-2025Q3#20"
           ],
           "type_only": []
         },
@@ -262,8 +273,8 @@
           "available": true,
           "hits": [
             "RJF-10K-2025#91",
-            "RJF-10K-2025#175",
-            "RJF-10K-2025#334"
+            "RJF-10K-2025#10",
+            "RJF-10K-2025#175"
           ],
           "type_only": []
         },
@@ -271,9 +282,10 @@
           "pattern": "RJF:press",
           "available": true,
           "hits": [
-            "RJF-PR-web-bank-and-credit-union-advisors#0",
+            "RJF-PR-2026-04-22-01#1",
+            "RJF-PR-web-affiliation-options#0",
             "RJF-PR-web-advisor-select#0",
-            "RJF-PR-web-traditional-employee-advisor#0"
+            "RJF-PR-web-bank-and-credit-union-advisors#0"
           ],
           "type_only": []
         },
@@ -281,9 +293,7 @@
           "pattern": "RJF:trade",
           "available": true,
           "hits": [
-            "RJF-TRADE-2026-09-02-IN-01#2",
-            "RJF-TRADE-2026-11-04-IN-01#2",
-            "RJF-TRADE-2026-11-05-IN-01#2"
+            "RJF-TRADE-2026-11-04-IN-01#2"
           ],
           "type_only": []
         }
@@ -292,8 +302,8 @@
       "hit_patterns": 4,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.333,
-      "passage_recall": 0.333,
+      "doc_recall": 0.667,
+      "passage_recall": 0.667,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -304,15 +314,17 @@
             ],
             "found": [
               "RJF-10K-2025#91",
-              "RJF-10K-2025#175",
-              "RJF-10K-2025#334"
+              "RJF-10K-2025#10",
+              "RJF-10K-2025#175"
             ]
           },
           {
             "ids": [
               "RJF-TR-2025Q4"
             ],
-            "found": []
+            "found": [
+              "RJF-TR-2025Q4#44"
+            ]
           },
           {
             "ids": [
@@ -326,13 +338,17 @@
             "ids": [
               "RJF-TR-2026Q2"
             ],
-            "found": []
+            "found": [
+              "RJF-TR-2026Q2#6"
+            ]
           },
           {
             "ids": [
               "RJF-PR-2026-04-22-01"
             ],
-            "found": []
+            "found": [
+              "RJF-PR-2026-04-22-01#1"
+            ]
           },
           {
             "ids": [
@@ -344,15 +360,15 @@
             "ids": [
               "RJF-PR-web-affiliation-options"
             ],
-            "found": []
+            "found": [
+              "RJF-PR-web-affiliation-options#0"
+            ]
           },
           {
             "ids": [
               "RJF-PR-web-traditional-employee-advisor"
             ],
-            "found": [
-              "RJF-PR-web-traditional-employee-advisor#0"
-            ]
+            "found": []
           },
           {
             "ids": [
@@ -362,8 +378,8 @@
           }
         ],
         "passages": 9,
-        "passages_found": 3,
-        "passage_recall": 0.333,
+        "passages_found": 6,
+        "passage_recall": 0.667,
         "expected_docs": [
           "RJF-10K-2025",
           "RJF-TR-2025Q4",
@@ -376,8 +392,8 @@
           "RJF-PR-web-independent-advisor"
         ],
         "docs": 9,
-        "docs_found": 3,
-        "doc_recall": 0.333,
+        "docs_found": 6,
+        "doc_recall": 0.667,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -387,7 +403,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 22106
+      "chars": 22045,
+      "change": "IMPROVED"
     },
     {
       "id": "Q3",
@@ -400,30 +417,31 @@
         "SCHW"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "SCHW-TRADE-2026-10-28-WM-01#0",
         "SCHW-10K-2025#11",
         "SCHW-10Q-2026Q2#342",
         "SCHW-TR-2026Q3#4",
         "SCHW-DECK-2026-investor-day#305",
-        "SCHW-PR-2026-04-16-01#7",
-        "SCHW-MONTHLY-2026-01#3",
-        "SCHW-TRADE-2026-10-29-WM-01#0",
+        "SCHW-PR-2026-10-15-01#10",
+        "SCHW-MONTHLY-2026-05#2",
         "SCHW-10K-2025#26",
-        "SCHW-10Q-2026Q2#343",
+        "SCHW-10Q-2026Q1#275",
         "SCHW-TR-2025Q1#9",
-        "SCHW-DECK-2026Q2#14",
+        "SCHW-DECK-2026Q3#11",
         "SCHW-PR-2026-07-21-01#2",
         "SCHW-MONTHLY-2026-02#4",
-        "SCHW-TRADE-2026-10-15-WM-01#1",
         "SCHW-10K-2025#13",
-        "SCHW-10Q-2025Q2#310",
-        "SCHW-TR-2026Q3#10",
-        "SCHW-DECK-2026-investor-day#119",
-        "SCHW-PR-2026-01-21-01#7"
+        "SCHW-10Q-2025Q3#170",
+        "SCHW-TR-2025Q3#13",
+        "SCHW-DECK-2026Q2#14",
+        "SCHW-PR-2026-04-16-01#7",
+        "SCHW-MONTHLY-2026-02#5",
+        "SCHW-10Q-2025Q2#6",
+        "SCHW-TRADE-2026-10-28-WM-01#0"
       ],
       "patterns": [
         {
@@ -432,7 +450,7 @@
           "hits": [
             "SCHW-TR-2026Q3#4",
             "SCHW-TR-2025Q1#9",
-            "SCHW-TR-2026Q3#10"
+            "SCHW-TR-2025Q3#13"
           ],
           "type_only": []
         },
@@ -452,8 +470,8 @@
           "available": true,
           "hits": [
             "SCHW-DECK-2026-investor-day#305",
-            "SCHW-DECK-2026Q2#14",
-            "SCHW-DECK-2026-investor-day#119"
+            "SCHW-DECK-2026Q3#11",
+            "SCHW-DECK-2026Q2#14"
           ],
           "type_only": []
         }
@@ -462,8 +480,8 @@
       "hit_patterns": 3,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.5,
-      "passage_recall": 0.5,
+      "doc_recall": 0.667,
+      "passage_recall": 0.667,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -495,29 +513,29 @@
               "SCHW-TR-2026Q3"
             ],
             "found": [
-              "SCHW-TR-2026Q3#4",
-              "SCHW-TR-2026Q3#10"
+              "SCHW-TR-2026Q3#4"
             ]
           },
           {
             "ids": [
               "SCHW-DECK-2026Q3"
             ],
-            "found": []
+            "found": [
+              "SCHW-DECK-2026Q3#11"
+            ]
           },
           {
             "ids": [
               "SCHW-DECK-2026-investor-day"
             ],
             "found": [
-              "SCHW-DECK-2026-investor-day#305",
-              "SCHW-DECK-2026-investor-day#119"
+              "SCHW-DECK-2026-investor-day#305"
             ]
           }
         ],
         "passages": 6,
-        "passages_found": 3,
-        "passage_recall": 0.5,
+        "passages_found": 4,
+        "passage_recall": 0.667,
         "expected_docs": [
           "SCHW-10K-2025",
           "SCHW-TR-2026Q1",
@@ -527,8 +545,8 @@
           "SCHW-DECK-2026-investor-day"
         ],
         "docs": 6,
-        "docs_found": 3,
-        "doc_recall": 0.5,
+        "docs_found": 4,
+        "doc_recall": 0.667,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -538,7 +556,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 23160
+      "chars": 21817,
+      "change": "IMPROVED"
     },
     {
       "id": "Q4",
@@ -551,30 +570,31 @@
         "MER"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "BAC-DECK-2025-investor-day#8",
         "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
-        "MER-TRADE-2026-11-03-WM-01#0",
         "BAC-10K-2025#246",
         "BAC-TR-2026Q3#19",
-        "MER-PR-2026-09-15-01#2",
-        "MER-TRADE-2026-11-12-IN-01#0",
-        "BAC-TR-2026Q2#20",
-        "MER-PR-2026-09-15-01#0",
-        "MER-TRADE-2026-10-14-IN-01#2",
-        "BAC-TR-2025Q4#106",
-        "MER-PR-2026-09-15-01#3",
-        "MER-TRADE-2026-10-14-IN-02#2",
-        "BAC-TR-2025Q2#34",
         "MER-PR-web-advisor-development-program#0",
+        "BAC-TR-2026Q2#20",
+        "MER-PR-2026-09-15-01#2",
+        "BAC-TR-2025Q4#106",
+        "MER-PR-2026-09-15-01#0",
+        "BAC-TR-2025Q2#34",
+        "MER-PR-2026-09-15-01#3",
         "BAC-TR-2025Q1#28",
-        "MER-TRADE-2026-11-12-IN-01#1",
+        "BAC-TR-2026Q1#26",
         "BAC-TR-2025Q2#35",
-        "MER-TRADE-2026-11-03-WM-01#2",
-        "BAC-TR-2026Q1#26"
+        "BAC-TR-2026Q2#21",
+        "BAC-TR-2026Q2#63",
+        "MER-TRADE-2026-11-03-WM-01#0",
+        "MER-TRADE-2026-11-12-IN-01#0",
+        "MER-TRADE-2026-10-14-IN-01#2",
+        "MER-TRADE-2026-10-14-IN-02#2"
       ],
       "patterns": [
         {
@@ -586,8 +606,10 @@
             "BAC-TR-2025Q4#106",
             "BAC-TR-2025Q2#34",
             "BAC-TR-2025Q1#28",
+            "BAC-TR-2026Q1#26",
             "BAC-TR-2025Q2#35",
-            "BAC-TR-2026Q1#26"
+            "BAC-TR-2026Q2#21",
+            "BAC-TR-2026Q2#63"
           ],
           "type_only": []
         },
@@ -604,10 +626,10 @@
           "available": true,
           "hits": [
             "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+            "MER-PR-web-advisor-development-program#0",
             "MER-PR-2026-09-15-01#2",
             "MER-PR-2026-09-15-01#0",
-            "MER-PR-2026-09-15-01#3",
-            "MER-PR-web-advisor-development-program#0"
+            "MER-PR-2026-09-15-01#3"
           ],
           "type_only": []
         },
@@ -618,9 +640,7 @@
             "MER-TRADE-2026-11-03-WM-01#0",
             "MER-TRADE-2026-11-12-IN-01#0",
             "MER-TRADE-2026-10-14-IN-01#2",
-            "MER-TRADE-2026-10-14-IN-02#2",
-            "MER-TRADE-2026-11-12-IN-01#1",
-            "MER-TRADE-2026-11-03-WM-01#2"
+            "MER-TRADE-2026-10-14-IN-02#2"
           ],
           "type_only": []
         }
@@ -630,7 +650,7 @@
       "coverage": 1.0,
       "forbidden": [],
       "doc_recall": 0.8,
-      "passage_recall": 0.571,
+      "passage_recall": 0.714,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -658,14 +678,17 @@
               "BAC-TR-2026Q2#22"
             ],
             "found": [
-              "BAC-TR-2026Q2#20"
+              "BAC-TR-2026Q2#20",
+              "BAC-TR-2026Q2#21"
             ]
           },
           {
             "ids": [
               "BAC-TR-2026Q2#63"
             ],
-            "found": []
+            "found": [
+              "BAC-TR-2026Q2#63"
+            ]
           },
           {
             "ids": [
@@ -696,8 +719,8 @@
           }
         ],
         "passages": 7,
-        "passages_found": 4,
-        "passage_recall": 0.571,
+        "passages_found": 5,
+        "passage_recall": 0.714,
         "expected_docs": [
           "BAC-TR-2026Q1",
           "BAC-TR-2026Q2",
@@ -717,7 +740,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 20822
+      "chars": 20700,
+      "change": "IMPROVED"
     },
     {
       "id": "Q5",
@@ -730,30 +754,31 @@
         "MS"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "MS-TR-2026Q3#16",
         "MS-10K-2025#25",
-        "MS-TRADE-2026-11-15-AH-01#0",
         "MS-10Q-2026Q2#524",
         "MS-PR-2026-10-14-01#5",
-        "MS-TR-2025Q3#8",
+        "MS-TR-2026Q1#44",
         "MS-10K-2025#76",
-        "MS-TRADE-2026-10-27-IN-01#2",
         "MS-10Q-2025Q3#63",
         "MS-DECK-2026-strategic-update#10",
         "MS-TR-2025Q4#8",
-        "MS-10K-2025#111",
-        "MS-TRADE-2026-08-22-RB-01#11",
+        "MS-10K-2025#109",
         "MS-10Q-2025Q3#64",
-        "MS-TR-2026Q3#8",
-        "MS-TRADE-2026-10-14-WM-01#2",
-        "MS-TR-2025Q4#65",
-        "MS-TRADE-2026-11-15-AH-01#1",
+        "MS-TR-2025Q3#8",
         "MS-10Q-2026Q2#20",
-        "MS-TR-2025Q3#37"
+        "MS-TR-2025Q1#54",
+        "MS-TR-2026Q3#8",
+        "MS-TR-2025Q4#65",
+        "MS-TR-2025Q3#37",
+        "MS-TR-2026Q1#6",
+        "MS-TR-2026Q3#35",
+        "MS-TRADE-2026-11-15-AH-01#0"
       ],
       "patterns": [
         {
@@ -761,11 +786,15 @@
           "available": true,
           "hits": [
             "MS-TR-2026Q3#16",
-            "MS-TR-2025Q3#8",
+            "MS-TR-2026Q1#44",
             "MS-TR-2025Q4#8",
+            "MS-TR-2025Q3#8",
+            "MS-TR-2025Q1#54",
             "MS-TR-2026Q3#8",
             "MS-TR-2025Q4#65",
-            "MS-TR-2025Q3#37"
+            "MS-TR-2025Q3#37",
+            "MS-TR-2026Q1#6",
+            "MS-TR-2026Q3#35"
           ],
           "type_only": []
         },
@@ -775,7 +804,7 @@
           "hits": [
             "MS-10K-2025#25",
             "MS-10K-2025#76",
-            "MS-10K-2025#111"
+            "MS-10K-2025#109"
           ],
           "type_only": []
         },
@@ -791,11 +820,7 @@
           "pattern": "MS:trade",
           "available": true,
           "hits": [
-            "MS-TRADE-2026-11-15-AH-01#0",
-            "MS-TRADE-2026-10-27-IN-01#2",
-            "MS-TRADE-2026-08-22-RB-01#11",
-            "MS-TRADE-2026-10-14-WM-01#2",
-            "MS-TRADE-2026-11-15-AH-01#1"
+            "MS-TRADE-2026-11-15-AH-01#0"
           ],
           "type_only": []
         }
@@ -804,8 +829,8 @@
       "hit_patterns": 4,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.667,
-      "passage_recall": 0.667,
+      "doc_recall": 0.833,
+      "passage_recall": 0.833,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -817,7 +842,7 @@
             "found": [
               "MS-10K-2025#25",
               "MS-10K-2025#76",
-              "MS-10K-2025#111"
+              "MS-10K-2025#109"
             ]
           },
           {
@@ -833,7 +858,10 @@
             "ids": [
               "MS-TR-2026Q1"
             ],
-            "found": []
+            "found": [
+              "MS-TR-2026Q1#44",
+              "MS-TR-2026Q1#6"
+            ]
           },
           {
             "ids": [
@@ -847,7 +875,8 @@
             ],
             "found": [
               "MS-TR-2026Q3#16",
-              "MS-TR-2026Q3#8"
+              "MS-TR-2026Q3#8",
+              "MS-TR-2026Q3#35"
             ]
           },
           {
@@ -860,8 +889,8 @@
           }
         ],
         "passages": 6,
-        "passages_found": 4,
-        "passage_recall": 0.667,
+        "passages_found": 5,
+        "passage_recall": 0.833,
         "expected_docs": [
           "MS-10K-2025",
           "MS-TR-2025Q4",
@@ -871,8 +900,8 @@
           "MS-DECK-2026-strategic-update"
         ],
         "docs": 6,
-        "docs_found": 4,
-        "doc_recall": 0.667,
+        "docs_found": 5,
+        "doc_recall": 0.833,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -882,7 +911,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 22535
+      "chars": 20740,
+      "change": "IMPROVED"
     },
     {
       "id": "Q6",
@@ -895,40 +925,41 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "RJF-TR-2026Q1#45",
-        "RJF-10K-2025#462",
-        "RJF-TRADE-2026-08-26-IN-01#1",
-        "RJF-10Q-2026Q1#267",
-        "RJF-DECK-2025-investor-day#55",
-        "RJF-PR-2026-01-28-01#6",
         "RJF-TR-2026Q1#46",
-        "RJF-10K-2025#320",
-        "RJF-TRADE-2026-08-19-IN-01#0",
+        "RJF-PR-web-independent-advisor#1",
+        "RJF-10K-2025#462",
+        "RJF-DECK-2025-investor-day#49",
+        "RJF-10Q-2026Q2#251",
+        "RJF-TR-2024Q3#66",
+        "RJF-PR-2026-04-22-01#1",
+        "RJF-10K-2025#10",
+        "RJF-DECK-2025-investor-day#55",
+        "RJF-TR-2026Q2#31",
+        "RJF-PR-web-affiliation-options#0",
+        "RJF-10Q-2026Q1#267",
+        "RJF-TR-2025Q4#50",
+        "RJF-PR-web-advisor-select#0",
         "RJF-10Q-2025Q4#259",
-        "RJF-DECK-2025-investor-day#83",
-        "RJF-TR-2024Q3#79",
-        "RJF-10K-2025#639",
-        "RJF-TRADE-2026-10-27-WM-01#1",
-        "RJF-10Q-2026Q1#243",
-        "RJF-PR-2026-04-22-01#5",
-        "RJF-TR-2025Q4#57",
-        "RJF-TRADE-2026-09-02-IN-01#1",
-        "RJF-PR-web-affiliation-options#1",
-        "RJF-TR-2024Q3#22"
+        "RJF-TR-2025Q2#21",
+        "RJF-PR-2026-01-28-01#6",
+        "RJF-10Q-2025Q2#391",
+        "RJF-TRADE-2026-10-29-WM-01#0"
       ],
       "patterns": [
         {
           "pattern": "RJF:10-K#Private Client Group",
           "available": true,
-          "hits": [],
+          "hits": [
+            "RJF-10K-2025#10"
+          ],
           "type_only": [
-            "RJF-10K-2025#462",
-            "RJF-10K-2025#320",
-            "RJF-10K-2025#639"
+            "RJF-10K-2025#462"
           ]
         },
         {
@@ -937,9 +968,10 @@
           "hits": [
             "RJF-TR-2026Q1#45",
             "RJF-TR-2026Q1#46",
-            "RJF-TR-2024Q3#79",
-            "RJF-TR-2025Q4#57",
-            "RJF-TR-2024Q3#22"
+            "RJF-TR-2024Q3#66",
+            "RJF-TR-2026Q2#31",
+            "RJF-TR-2025Q4#50",
+            "RJF-TR-2025Q2#21"
           ],
           "type_only": []
         },
@@ -947,19 +979,21 @@
           "pattern": "RJF:press",
           "available": true,
           "hits": [
-            "RJF-PR-2026-01-28-01#6",
-            "RJF-PR-2026-04-22-01#5",
-            "RJF-PR-web-affiliation-options#1"
+            "RJF-PR-web-independent-advisor#1",
+            "RJF-PR-2026-04-22-01#1",
+            "RJF-PR-web-affiliation-options#0",
+            "RJF-PR-web-advisor-select#0",
+            "RJF-PR-2026-01-28-01#6"
           ],
           "type_only": []
         }
       ],
       "available_patterns": 3,
-      "hit_patterns": 2,
-      "coverage": 0.667,
+      "hit_patterns": 3,
+      "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.5,
-      "passage_recall": 0.5,
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -970,21 +1004,24 @@
             ],
             "found": [
               "RJF-10K-2025#462",
-              "RJF-10K-2025#320",
-              "RJF-10K-2025#639"
+              "RJF-10K-2025#10"
             ]
           },
           {
             "ids": [
               "RJF-10Q-2026Q2"
             ],
-            "found": []
+            "found": [
+              "RJF-10Q-2026Q2#251"
+            ]
           },
           {
             "ids": [
               "RJF-TR-2025Q2"
             ],
-            "found": []
+            "found": [
+              "RJF-TR-2025Q2#21"
+            ]
           },
           {
             "ids": [
@@ -999,20 +1036,22 @@
             "ids": [
               "RJF-TR-2026Q2"
             ],
-            "found": []
+            "found": [
+              "RJF-TR-2026Q2#31"
+            ]
           },
           {
             "ids": [
               "RJF-PR-web-affiliation-options"
             ],
             "found": [
-              "RJF-PR-web-affiliation-options#1"
+              "RJF-PR-web-affiliation-options#0"
             ]
           }
         ],
         "passages": 6,
-        "passages_found": 3,
-        "passage_recall": 0.5,
+        "passages_found": 6,
+        "passage_recall": 1.0,
         "expected_docs": [
           "RJF-10K-2025",
           "RJF-10Q-2026Q2",
@@ -1022,8 +1061,8 @@
           "RJF-PR-web-affiliation-options"
         ],
         "docs": 6,
-        "docs_found": 3,
-        "doc_recall": 0.5,
+        "docs_found": 6,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -1033,7 +1072,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 21902
+      "chars": 20905,
+      "change": "IMPROVED"
     },
     {
       "id": "Q7",
@@ -1048,28 +1088,29 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity+theme",
       "themes": [
         "advisor_recruiting"
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "MS-TRADE-2026-10-26-IN-01#3",
-        "RJF-TR-2026Q1#25",
-        "MER-TRADE-2026-11-16-AH-01#1",
-        "MS-TRADE-2026-10-27-IN-01#2",
-        "RJF-TR-2026Q2#67",
-        "MER-TRADE-2026-11-03-WM-01#0",
+        "MS-TR-2024Q4#93",
+        "RJF-TR-2025Q3#8",
+        "MER-PR-web-advisor-development-program#0",
         "MS-10K-2025#51",
-        "RJF-10K-2025#90",
         "BAC-TR-2025Q1#28",
         "MS-TR-2026Q1#24",
-        "RJF-TRADE-2026-09-24-IN-01#3",
-        "MER-PR-web-advisor-development-program#2",
-        "MS-10Q-2026Q1#125",
-        "RJF-10Q-2026Q2#316",
+        "RJF-10K-2025#90",
+        "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+        "MS-10Q-2026Q2#144",
+        "RJF-PR-2026-04-22-01#1",
         "BAC-DECK-2025-investor-day#8",
-        "MS-TRADE-2026-10-26-IN-01#1",
+        "RJF-10Q-2026Q2#316",
+        "MS-TR-2026Q3#23",
+        "MS-TRADE-2026-10-26-IN-01#3",
+        "RJF-TRADE-2026-11-06-IN-01#3",
+        "MER-TRADE-2026-11-16-AH-01#1",
         "MCK-ADVISOR-SHORTAGE-2025#30",
         "MCK-ADVISOR-SHORTAGE-2025#12",
         "KITCES-WELLBEING-2023#58",
@@ -1080,7 +1121,9 @@
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2026Q1#24"
+            "MS-TR-2024Q4#93",
+            "MS-TR-2026Q1#24",
+            "MS-TR-2026Q3#23"
           ],
           "type_only": []
         },
@@ -1110,8 +1153,7 @@
           "pattern": "RJF:transcript",
           "available": true,
           "hits": [
-            "RJF-TR-2026Q1#25",
-            "RJF-TR-2026Q2#67"
+            "RJF-TR-2025Q3#8"
           ],
           "type_only": []
         },
@@ -1127,9 +1169,7 @@
           "pattern": "MS:trade",
           "available": true,
           "hits": [
-            "MS-TRADE-2026-10-26-IN-01#3",
-            "MS-TRADE-2026-10-27-IN-01#2",
-            "MS-TRADE-2026-10-26-IN-01#1"
+            "MS-TRADE-2026-10-26-IN-01#3"
           ],
           "type_only": []
         },
@@ -1137,8 +1177,7 @@
           "pattern": "MER:trade",
           "available": true,
           "hits": [
-            "MER-TRADE-2026-11-16-AH-01#1",
-            "MER-TRADE-2026-11-03-WM-01#0"
+            "MER-TRADE-2026-11-16-AH-01#1"
           ],
           "type_only": []
         },
@@ -1146,7 +1185,7 @@
           "pattern": "RJF:trade",
           "available": true,
           "hits": [
-            "RJF-TRADE-2026-09-24-IN-01#3"
+            "RJF-TRADE-2026-11-06-IN-01#3"
           ],
           "type_only": []
         }
@@ -1163,7 +1202,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 21841
+      "chars": 21041,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q8",
@@ -1177,37 +1217,39 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "RJF-TR-2025Q3#8",
         "SCHW-TR-2026Q1#49",
-        "RJF-PR-web-bank-and-credit-union-advisors#3",
-        "SCHW-10K-2025#13",
-        "RJF-10K-2025#27",
-        "SCHW-TRADE-2026-08-26-WM-01#4",
-        "RJF-TRADE-2026-11-06-IN-01#2",
-        "SCHW-DECK-2026-investor-day#16",
-        "RJF-DECK-2025-investor-day#110",
-        "SCHW-PR-2026-07-21-01#1",
-        "RJF-10Q-2025Q2#201",
-        "SCHW-MONTHLY-2026-01#3",
-        "RJF-SUPP-2025Q4#37",
-        "SCHW-10Q-2025Q2#7",
-        "RJF-TR-2025Q4#5",
-        "SCHW-TR-2026Q1#47",
         "RJF-PR-web-independent-advisor#0",
         "SCHW-10K-2025#117",
         "RJF-10K-2025#23",
-        "SCHW-TRADE-2026-08-24-IN-01#1"
+        "SCHW-DECK-2026-investor-day#306",
+        "RJF-TR-2025Q4#50",
+        "SCHW-PR-2026-10-15-01#1",
+        "RJF-DECK-2025-investor-day#38",
+        "SCHW-MONTHLY-2026-08#2",
+        "RJF-10Q-2025Q4#171",
+        "SCHW-10Q-2026Q2#7",
+        "RJF-PR-web-bank-and-credit-union-advisors#3",
+        "SCHW-TR-2026Q3#10",
+        "RJF-10K-2025#24",
+        "RJF-TR-2026Q2#7",
+        "SCHW-DECK-2026Q3#12",
+        "SCHW-PR-2026-07-21-01#1",
+        "RJF-10Q-2025Q2#201",
+        "SCHW-TRADE-2026-10-29-WM-01#0",
+        "RJF-TRADE-2026-11-06-IN-01#2"
       ],
       "patterns": [
         {
           "pattern": "SCHW:deck",
           "available": true,
           "hits": [
-            "SCHW-DECK-2026-investor-day#16"
+            "SCHW-DECK-2026-investor-day#306",
+            "SCHW-DECK-2026Q3#12"
           ],
           "type_only": []
         },
@@ -1215,7 +1257,6 @@
           "pattern": "SCHW:10-K",
           "available": true,
           "hits": [
-            "SCHW-10K-2025#13",
             "SCHW-10K-2025#117"
           ],
           "type_only": []
@@ -1224,7 +1265,7 @@
           "pattern": "RJF:deck",
           "available": true,
           "hits": [
-            "RJF-DECK-2025-investor-day#110"
+            "RJF-DECK-2025-investor-day#38"
           ],
           "type_only": []
         },
@@ -1232,8 +1273,8 @@
           "pattern": "RJF:10-K",
           "available": true,
           "hits": [
-            "RJF-10K-2025#27",
-            "RJF-10K-2025#23"
+            "RJF-10K-2025#23",
+            "RJF-10K-2025#24"
           ],
           "type_only": []
         }
@@ -1250,7 +1291,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 23417
+      "chars": 22305,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q9",
@@ -1264,38 +1306,38 @@
         "MER"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "MER-TRADE-2026-09-08-WM-01#0",
-        "MS-TRADE-2026-10-01-IN-01#0",
         "BAC-10K-2025#246",
         "MS-10K-2025#190",
         "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
-        "MS-10Q-2025Q2#180",
+        "MS-10Q-2026Q2#186",
         "BAC-DECK-2025-investor-day#12",
         "MS-TR-2026Q3#33",
-        "MER-TRADE-2026-11-03-WM-01#1",
-        "MS-PR-2026-04-15-01#8",
-        "BAC-10K-2025#247",
-        "MS-SUPP-2025Q4#42",
-        "BAC-10Q-2025Q3#94",
-        "MS-DECK-2026-strategic-update#34",
-        "MER-TRADE-2026-09-29-RB-01#3",
-        "MS-TRADE-2026-10-01-IN-01#3",
-        "MER-PR-web-advisor-development-program#0",
-        "MS-10K-2025#311",
+        "MS-PR-2026-10-14-01#8",
         "BAC-10Q-2026Q2#88",
-        "MS-10Q-2025Q2#87"
+        "MS-SUPP-2026Q3#53",
+        "MER-PR-web-advisor-development-program#0",
+        "MS-DECK-2026-strategic-update#34",
+        "BAC-10Q-2025Q3#94",
+        "BAC-PR-2026-04-15-01#10",
+        "MS-10Q-2026Q1#208",
+        "BAC-10Q-2026Q1#71",
+        "MS-TR-2026Q2#60",
+        "BAC-PR-2026-01-14-01#12",
+        "MS-PR-2026-07-15-01#8",
+        "MER-TRADE-2026-09-08-WM-01#0",
+        "MS-TRADE-2026-10-01-IN-01#0"
       ],
       "patterns": [
         {
           "pattern": "MS:10-K",
           "available": true,
           "hits": [
-            "MS-10K-2025#190",
-            "MS-10K-2025#311"
+            "MS-10K-2025#190"
           ],
           "type_only": []
         },
@@ -1303,7 +1345,8 @@
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2026Q3#33"
+            "MS-TR-2026Q3#33",
+            "MS-TR-2026Q2#60"
           ],
           "type_only": []
         },
@@ -1319,8 +1362,7 @@
           "pattern": "BAC:10-K#GWIM",
           "available": true,
           "hits": [
-            "BAC-10K-2025#246",
-            "BAC-10K-2025#247"
+            "BAC-10K-2025#246"
           ],
           "type_only": []
         },
@@ -1351,7 +1393,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 25061
+      "chars": 24184,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q10",
@@ -1368,6 +1411,7 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity+theme",
       "themes": [
         "mass_affluent"
@@ -1378,41 +1422,42 @@
       "chunk_ids": [
         "MS-TRADE-2026-10-21-IN-01#3",
         "BAC-DECK-2025-investor-day#12",
-        "RJF-TRADE-2026-09-29-IN-01#3",
-        "SCHW-TRADE-2026-09-03-WM-01#0",
-        "EDJ-TRADE-2026-08-18-IN-01#2",
-        "MS-TRADE-2026-08-25-RB-01#2",
-        "BAC-DECK-2025-investor-day#8",
-        "RJF-TRADE-2026-08-26-IN-01#2",
-        "SCHW-TR-2024Q4#33",
+        "RJF-DECK-2025-investor-day#129",
+        "SCHW-DECK-2026Q2#16",
         "EDJ-10K-2025#0",
         "MS-TR-2025Q3#15",
-        "BAC-TR-2026Q2#20",
+        "BAC-DECK-2025-investor-day#8",
         "RJF-TR-2025Q1#11",
-        "SCHW-TRADE-2026-10-29-WM-01#0",
-        "EDJ-10Q-2025Q2#0",
+        "SCHW-TR-2025Q1#69",
+        "EDJ-10Q-2026Q2#0",
         "MS-10K-2025#144",
-        "MER-PR-web-advisor-development-program#1",
+        "BAC-TR-2026Q2#20",
         "RJF-10K-2025#33",
-        "SCHW-DECK-2026-investor-day#180",
-        "EDJ-TRADE-2026-08-18-IN-01#4",
-        "MS-10Q-2025Q2#0",
-        "BAC-DECK-2025-investor-day#9",
-        "RJF-10Q-2025Q2#0",
-        "SCHW-10K-2025#213",
         "EDJ-10K-2025#10",
-        "MS-PR-2026-01-15-01#13",
+        "MS-10Q-2026Q2#0",
+        "BAC-DECK-2025-investor-day#9",
+        "RJF-10Q-2026Q2#0",
+        "SCHW-10K-2025#213",
+        "EDJ-10Q-2026Q1#24",
+        "MS-PR-2026-10-14-01#8",
+        "MER-PR-web-advisor-development-program#1",
+        "SCHW-10Q-2026Q2#206",
+        "MS-TR-2026Q2#28",
+        "MER-TRADE-2026-09-29-RB-01#4",
+        "RJF-PR-2026-07-22-01#2",
+        "RJF-TRADE-2026-09-29-IN-01#3",
+        "SCHW-TRADE-2026-10-29-WM-01#0",
+        "EDJ-TRADE-2026-08-18-IN-01#2",
         "CERULLI-MASS-AFFLUENT-2026#0",
-        "CERULLI-MASS-AFFLUENT-2026#1",
-        "KITCES-WELLBEING-2023#107",
-        "KITCES-WELLBEING-2023#38"
+        "CERULLI-MASS-AFFLUENT-2026#1"
       ],
       "patterns": [
         {
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2025Q3#15"
+            "MS-TR-2025Q3#15",
+            "MS-TR-2026Q2#28"
           ],
           "type_only": []
         },
@@ -1420,7 +1465,7 @@
           "pattern": "SCHW:transcript",
           "available": true,
           "hits": [
-            "SCHW-TR-2024Q4#33"
+            "SCHW-TR-2025Q1#69"
           ],
           "type_only": []
         },
@@ -1462,7 +1507,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 32654
+      "chars": 32804,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q11",
@@ -1479,6 +1525,7 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
@@ -1490,29 +1537,29 @@
         "BAC-TR-2026Q3#19",
         "EDJ-10K-2025#130",
         "RJF-TR-2025Q3#4",
-        "MS-SUPP-2025Q4#23",
+        "MS-SUPP-2026Q3#25",
         "SCHW-10K-2025#197",
-        "BAC-PR-2026-01-14-01#12",
-        "EDJ-10Q-2025Q2#66",
+        "MER-PR-2026-09-15-01#2",
+        "EDJ-10Q-2025Q3#69",
         "RJF-10Q-2026Q1#239",
-        "MS-10Q-2025Q2#59",
-        "SCHW-PR-2026-01-21-01#36",
+        "MS-10Q-2026Q2#60",
+        "SCHW-PR-2026-10-15-01#36",
         "BAC-DECK-2025-investor-day#8",
         "EDJ-10K-2025#41",
         "RJF-PR-2026-04-22-01#1",
         "MS-10K-2025#44",
-        "SCHW-DECK-2026-investor-day#305",
-        "BAC-SUPP-2025Q4#57",
-        "EDJ-10Q-2025Q2#64",
+        "SCHW-DECK-2026Q3#35",
+        "BAC-SUPP-2026Q3#52",
+        "EDJ-10Q-2026Q1#51",
         "RJF-DECK-2025-investor-day#142",
         "MS-PR-2026-04-15-01#15",
-        "SCHW-TR-2025Q4#5",
+        "SCHW-TR-2026Q1#48",
         "BAC-10K-2025#249",
         "EDJ-10K-2025#320",
-        "RJF-SUPP-2025Q3#25",
-        "MS-TR-2026Q1#10",
-        "SCHW-MONTHLY-2026-01#8",
-        "BAC-10Q-2025Q2#93"
+        "RJF-SUPP-2026Q2#25",
+        "MS-TR-2026Q2#15",
+        "SCHW-MONTHLY-2026-08#7",
+        "BAC-10Q-2026Q2#88"
       ],
       "patterns": [
         {
@@ -1527,7 +1574,7 @@
           "pattern": "MS:supplement",
           "available": true,
           "hits": [
-            "MS-SUPP-2025Q4#23"
+            "MS-SUPP-2026Q3#25"
           ],
           "type_only": []
         },
@@ -1561,7 +1608,7 @@
           "pattern": "BAC:supplement#GWIM",
           "available": true,
           "hits": [
-            "BAC-SUPP-2025Q4#57"
+            "BAC-SUPP-2026Q3#52"
           ],
           "type_only": []
         },
@@ -1577,7 +1624,7 @@
           "pattern": "RJF:supplement",
           "available": true,
           "hits": [
-            "RJF-SUPP-2025Q3#25"
+            "RJF-SUPP-2026Q2#25"
           ],
           "type_only": []
         }
@@ -1586,7 +1633,7 @@
       "hit_patterns": 8,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.75,
+      "doc_recall": 1.0,
       "passage_recall": 0.2,
       "refusal_ok": true,
       "misleading": [],
@@ -1675,8 +1722,8 @@
           "SCHW-TR-2026Q1"
         ],
         "docs": 8,
-        "docs_found": 6,
-        "doc_recall": 0.75,
+        "docs_found": 8,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -1686,7 +1733,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 38461
+      "chars": 38174,
+      "change": "IMPROVED"
     },
     {
       "id": "Q12",
@@ -1700,6 +1748,7 @@
         "EDJ"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity+theme",
       "themes": [
         "client_acquisition"
@@ -1709,23 +1758,23 @@
         "SCHW-TR-2025Q4#11",
         "EDJ-10K-2025#8",
         "SCHW-TR-2026Q3#8",
-        "EDJ-TRADE-2026-11-12-IN-01#1",
-        "SCHW-TRADE-2026-10-15-RB-01#2",
         "EDJ-10K-2025#75",
         "SCHW-PR-2026-10-15-01#7",
-        "EDJ-10Q-2025Q2#28",
+        "EDJ-10Q-2026Q2#28",
         "SCHW-10K-2025#13",
-        "EDJ-TRADE-2026-08-18-IN-01#6",
-        "SCHW-DECK-2026-investor-day#251",
         "EDJ-10K-2025#87",
-        "SCHW-10Q-2025Q2#8",
-        "EDJ-10Q-2025Q2#110",
-        "SCHW-MONTHLY-2026-01#8",
-        "EDJ-TRADE-2026-09-30-WM-01#0",
-        "SCHW-TR-2025Q4#9",
+        "SCHW-DECK-2026-investor-day#251",
+        "EDJ-10Q-2026Q1#90",
+        "SCHW-10Q-2026Q2#8",
+        "EDJ-10Q-2025Q3#100",
+        "SCHW-MONTHLY-2026-08#7",
         "EDJ-10Q-2025Q2#100",
-        "SCHW-TRADE-2026-08-20-RB-01#3",
-        "EDJ-TRADE-2026-09-30-WM-01#1"
+        "SCHW-TR-2026Q2#19",
+        "EDJ-10Q-2026Q2#85",
+        "SCHW-PR-2026-07-21-01#2",
+        "EDJ-10Q-2025Q2#66",
+        "SCHW-TRADE-2026-11-02-RB-01#4",
+        "EDJ-TRADE-2026-11-12-IN-01#1"
       ],
       "patterns": [
         {
@@ -1734,7 +1783,7 @@
           "hits": [
             "SCHW-TR-2025Q4#11",
             "SCHW-TR-2026Q3#8",
-            "SCHW-TR-2025Q4#9"
+            "SCHW-TR-2026Q2#19"
           ],
           "type_only": []
         },
@@ -1750,7 +1799,7 @@
           "pattern": "SCHW:monthly",
           "available": true,
           "hits": [
-            "SCHW-MONTHLY-2026-01#8"
+            "SCHW-MONTHLY-2026-08#7"
           ],
           "type_only": []
         },
@@ -1777,7 +1826,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 24559
+      "chars": 24302,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q13",
@@ -1790,6 +1840,7 @@
         "MS"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
@@ -1798,21 +1849,21 @@
         "MS-10K-2025#168",
         "MS-SUPP-2025Q4#36",
         "MS-DECK-2026-strategic-update#32",
-        "MS-TR-2024Q4#26",
-        "MS-TRADE-2026-09-16-IN-01#0",
+        "MS-TR-2026Q2#16",
         "MS-PR-2026-07-15-01#5",
         "MS-10Q-2026Q1#53",
         "MS-10K-2025#125",
-        "MS-SUPP-2026Q1#42",
+        "MS-SUPP-2026Q3#16",
         "MS-DECK-2026-strategic-update#28",
-        "MS-TR-2025Q4#52",
-        "MS-TRADE-2026-10-14-WM-01#1",
-        "MS-PR-2026-01-15-01#3",
-        "MS-10Q-2026Q1#49",
-        "MS-10K-2025#169",
-        "MS-SUPP-2026Q1#14",
+        "MS-TR-2025Q4#20",
+        "MS-10Q-2025Q3#229",
+        "MS-10K-2025#165",
+        "MS-SUPP-2026Q2#16",
         "MS-DECK-2026-strategic-update#31",
-        "MS-TR-2025Q4#8",
+        "MS-TR-2026Q3#23",
+        "MS-10Q-2025Q2#56",
+        "MS-SUPP-2026Q1#14",
+        "MS-TR-2026Q1#24",
         "MS-TRADE-2026-10-21-IN-01#0"
       ],
       "patterns": [
@@ -1820,9 +1871,10 @@
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2024Q4#26",
-            "MS-TR-2025Q4#52",
-            "MS-TR-2025Q4#8"
+            "MS-TR-2026Q2#16",
+            "MS-TR-2025Q4#20",
+            "MS-TR-2026Q3#23",
+            "MS-TR-2026Q1#24"
           ],
           "type_only": []
         },
@@ -1832,7 +1884,7 @@
           "hits": [
             "MS-10K-2025#168",
             "MS-10K-2025#125",
-            "MS-10K-2025#169"
+            "MS-10K-2025#165"
           ],
           "type_only": []
         },
@@ -1851,8 +1903,8 @@
       "hit_patterns": 3,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.5,
-      "passage_recall": 0.5,
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -1864,35 +1916,40 @@
             "found": [
               "MS-10K-2025#168",
               "MS-10K-2025#125",
-              "MS-10K-2025#169"
+              "MS-10K-2025#165"
             ]
           },
           {
             "ids": [
               "MS-SUPP-2026Q3"
             ],
-            "found": []
+            "found": [
+              "MS-SUPP-2026Q3#16"
+            ]
           },
           {
             "ids": [
               "MS-TR-2025Q4"
             ],
             "found": [
-              "MS-TR-2025Q4#52",
-              "MS-TR-2025Q4#8"
+              "MS-TR-2025Q4#20"
             ]
           },
           {
             "ids": [
               "MS-TR-2026Q2"
             ],
-            "found": []
+            "found": [
+              "MS-TR-2026Q2#16"
+            ]
           },
           {
             "ids": [
               "MS-TR-2026Q3"
             ],
-            "found": []
+            "found": [
+              "MS-TR-2026Q3#23"
+            ]
           },
           {
             "ids": [
@@ -1906,8 +1963,8 @@
           }
         ],
         "passages": 6,
-        "passages_found": 3,
-        "passage_recall": 0.5,
+        "passages_found": 6,
+        "passage_recall": 1.0,
         "expected_docs": [
           "MS-10K-2025",
           "MS-SUPP-2026Q3",
@@ -1917,8 +1974,8 @@
           "MS-DECK-2026-strategic-update"
         ],
         "docs": 6,
-        "docs_found": 3,
-        "doc_recall": 0.5,
+        "docs_found": 6,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -1928,7 +1985,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 25842
+      "chars": 25821,
+      "change": "IMPROVED"
     },
     {
       "id": "Q14",
@@ -1941,30 +1999,31 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "RJF-PR-web-affiliation-options#0",
         "RJF-TR-2026Q1#23",
-        "RJF-TRADE-2026-09-29-IN-01#1",
         "RJF-10K-2025#91",
-        "RJF-10Q-2025Q4#142",
+        "RJF-10Q-2026Q2#380",
         "RJF-DECK-2025-investor-day#125",
-        "RJF-PR-web-affiliation-options#2",
-        "RJF-TR-2026Q2#26",
-        "RJF-TRADE-2026-09-02-IN-01#1",
-        "RJF-10K-2025#10",
-        "RJF-10Q-2025Q2#370",
-        "RJF-PR-web-affiliation-options#1",
-        "RJF-TR-2024Q4#8",
-        "RJF-TRADE-2026-10-27-WM-01#0",
-        "RJF-10K-2025#462",
         "RJF-PR-web-independent-advisor#1",
-        "RJF-TRADE-2026-09-29-WM-01#1",
+        "RJF-TR-2026Q2#26",
+        "RJF-10K-2025#10",
+        "RJF-10Q-2025Q4#142",
+        "RJF-PR-web-affiliation-options#2",
+        "RJF-TR-2024Q4#8",
+        "RJF-10K-2025#462",
+        "RJF-PR-web-affiliation-options#1",
+        "RJF-TR-2025Q4#50",
+        "RJF-TR-2025Q1#79",
+        "RJF-TR-2024Q3#66",
         "RJF-TR-2026Q1#4",
-        "RJF-TRADE-2026-10-27-WM-01#1",
-        "RJF-TR-2026Q2#5"
+        "RJF-TR-2026Q2#5",
+        "RJF-TR-2024Q4#23",
+        "RJF-TRADE-2026-09-29-IN-01#1"
       ],
       "patterns": [
         {
@@ -1985,8 +2044,12 @@
             "RJF-TR-2026Q1#23",
             "RJF-TR-2026Q2#26",
             "RJF-TR-2024Q4#8",
+            "RJF-TR-2025Q4#50",
+            "RJF-TR-2025Q1#79",
+            "RJF-TR-2024Q3#66",
             "RJF-TR-2026Q1#4",
-            "RJF-TR-2026Q2#5"
+            "RJF-TR-2026Q2#5",
+            "RJF-TR-2024Q4#23"
           ],
           "type_only": []
         },
@@ -1995,9 +2058,9 @@
           "available": true,
           "hits": [
             "RJF-PR-web-affiliation-options#0",
+            "RJF-PR-web-independent-advisor#1",
             "RJF-PR-web-affiliation-options#2",
-            "RJF-PR-web-affiliation-options#1",
-            "RJF-PR-web-independent-advisor#1"
+            "RJF-PR-web-affiliation-options#1"
           ],
           "type_only": []
         }
@@ -2014,7 +2077,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 24129
+      "chars": 23082,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q15",
@@ -2024,55 +2088,73 @@
       "trap": false,
       "expected_behavior": "answer",
       "entities": [
-        "SCHW"
+        "MS",
+        "SCHW",
+        "EDJ",
+        "MER",
+        "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
-        "SCHW-PR-2026-07-21-01#2",
-        "SCHW-TR-2026Q1#28",
-        "SCHW-DECK-2026-investor-day#130",
-        "SCHW-TRADE-2026-09-30-IN-01#0",
-        "SCHW-10K-2025#13",
-        "SCHW-10Q-2025Q2#9",
-        "SCHW-MONTHLY-2026-02#2",
+        "MS-TR-2025Q3#3",
         "SCHW-PR-2026-10-15-01#2",
-        "SCHW-TR-2026Q2#24",
-        "SCHW-DECK-2026Q3#6",
-        "SCHW-TRADE-2026-11-02-RB-01#8",
-        "SCHW-10K-2025#512",
-        "SCHW-10Q-2026Q1#62",
+        "RJF-PR-2026-07-22-01#98",
+        "EDJ-10K-2025#20",
+        "BAC-TR-2026Q1#26",
+        "MS-DECK-2026-strategic-update#28",
+        "SCHW-TR-2025Q2#8",
+        "RJF-TR-2024Q4#5",
+        "EDJ-10Q-2026Q2#55",
+        "BAC-SUPP-2026Q3#52",
+        "MS-PR-2026-01-15-01#0",
         "SCHW-MONTHLY-2026-04#9",
-        "SCHW-PR-2026-01-21-01#1",
-        "SCHW-TR-2025Q1#9",
-        "SCHW-DECK-2026Q2#20",
-        "SCHW-TRADE-2026-10-28-WM-01#1",
-        "SCHW-10K-2025#27",
-        "SCHW-10Q-2025Q2#88"
+        "RJF-SUPP-2026Q2#43",
+        "EDJ-10K-2025#23",
+        "BAC-DECK-2025-investor-day#8",
+        "MS-SUPP-2026Q3#16",
+        "SCHW-DECK-2026-investor-day#242",
+        "RJF-10Q-2026Q2#330",
+        "EDJ-10Q-2025Q3#78",
+        "MER-PR-web-advisor-development-program#0",
+        "MS-10K-2025#166",
+        "SCHW-10K-2025#13",
+        "RJF-10K-2025#9",
+        "BAC-10Q-2026Q2#86",
+        "MS-10Q-2026Q2#58",
+        "SCHW-10Q-2026Q2#9",
+        "RJF-DECK-2026Q2#4",
+        "EDJ-10Q-2025Q2#69",
+        "EDJ-TRADE-2026-11-12-IN-01#0",
+        "MER-TRADE-2026-11-12-IN-01#0"
       ],
       "patterns": [
         {
           "pattern": "SCHW:10-K",
           "available": true,
           "hits": [
-            "SCHW-10K-2025#13",
-            "SCHW-10K-2025#512",
-            "SCHW-10K-2025#27"
+            "SCHW-10K-2025#13"
           ],
           "type_only": []
         },
         {
           "pattern": "MS:10-K",
           "available": true,
-          "hits": [],
+          "hits": [
+            "MS-10K-2025#166"
+          ],
           "type_only": []
         },
         {
           "pattern": "EDJ:10-K",
           "available": true,
-          "hits": [],
+          "hits": [
+            "EDJ-10K-2025#20",
+            "EDJ-10K-2025#23"
+          ],
           "type_only": []
         },
         {
@@ -2084,23 +2166,26 @@
         {
           "pattern": "RJF:10-K",
           "available": true,
-          "hits": [],
+          "hits": [
+            "RJF-10K-2025#9"
+          ],
           "type_only": []
         }
       ],
       "available_patterns": 5,
-      "hit_patterns": 1,
-      "coverage": 0.2,
+      "hit_patterns": 4,
+      "coverage": 0.8,
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
-      "status": "FAIL",
-      "k": 20,
-      "passages": 20,
-      "chars": 22930
+      "status": "PASS",
+      "k": 30,
+      "passages": 30,
+      "chars": 33893,
+      "change": "IMPROVED"
     },
     {
       "id": "Q16",
@@ -2111,41 +2196,42 @@
       "expected_behavior": "answer",
       "entities": [],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "theme",
       "themes": [
         "advice_future"
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "CERULLI-AFFLUENT-FEE#1",
+        "CAPGEMINI-WWR-2026#156",
         "MS-TR-2025Q1#15",
-        "SCHW-TRADE-2026-10-15-RB-01#1",
-        "EDJ-10K-2025#88",
-        "BAC-TR-2025Q1#114",
-        "RJF-TR-2025Q1#83",
-        "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
-        "WEALTHTENDER-ADVISOR-SEARCH-2025#62",
-        "MS-TRADE-2026-08-24-IN-01#1",
         "SCHW-TR-2026Q2#13",
-        "EDJ-TRADE-2026-08-18-IN-01#1",
-        "BAC-10K-2025#516",
-        "RJF-PR-web-bank-and-credit-union-advisors#1",
-        "MER-TRADE-2026-10-02-IN-01#0",
-        "WEALTHTENDER-ADVISOR-SEARCH-2025#37",
+        "EDJ-10K-2025#88",
+        "BAC-TR-2026Q1#13",
+        "RJF-TR-2026Q1#51",
+        "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+        "CERULLI-MASS-AFFLUENT-2026#1",
         "MS-10K-2025#423",
         "SCHW-10K-2025#261",
-        "EDJ-10Q-2025Q2#57",
-        "BAC-PR-2026-01-14-01#9",
-        "RJF-10K-2025#91"
+        "EDJ-10Q-2026Q2#53",
+        "BAC-10K-2025#516",
+        "RJF-PR-web-bank-and-credit-union-advisors#1",
+        "CERULLI-GWT-2025#19",
+        "MS-DECK-2026-strategic-update#22",
+        "SCHW-DECK-2026Q3#18",
+        "BAC-PR-2026-10-14-01#9",
+        "RJF-10K-2025#91",
+        "EDJ-TRADE-2026-11-12-IN-01#1",
+        "MER-TRADE-2026-10-14-IN-01#0"
       ],
       "patterns": [
         {
           "pattern": "THEME:research",
           "available": true,
           "hits": [
-            "CERULLI-AFFLUENT-FEE#1",
-            "WEALTHTENDER-ADVISOR-SEARCH-2025#62",
-            "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+            "CAPGEMINI-WWR-2026#156",
+            "CERULLI-MASS-AFFLUENT-2026#1",
+            "CERULLI-GWT-2025#19"
           ],
           "type_only": []
         },
@@ -2190,7 +2276,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 25147
+      "chars": 22645,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q17",
@@ -2201,6 +2288,7 @@
       "expected_behavior": "answer",
       "entities": [],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "theme",
       "themes": [
         "advice_future",
@@ -2208,40 +2296,42 @@
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "FINRA-OVERSIGHT-2026#84",
-        "SCHW-PR-2026-07-21-01#8",
+        "CAPGEMINI-WWR-2026#17",
+        "SCHW-TR-2026Q1#12",
+        "MER-TRADE-2026-10-14-IN-01#2",
+        "MS-TR-2025Q3#8",
         "RJF-10K-2025#112",
         "BAC-DECK-2026Q2#29",
-        "MS-TRADE-2026-11-15-AH-01#0",
-        "MER-TRADE-2026-10-14-IN-01#0",
         "EDJ-10K-2025#26",
-        "MCK-ADVISOR-SHORTAGE-2025#28",
-        "SCHW-TRADE-2026-09-23-IN-01#0",
-        "RJF-TR-2025Q4#6",
-        "BAC-TR-2025Q2#12",
-        "MS-10K-2025#372",
-        "MER-PR-web-advisor-development-program#1",
-        "EDJ-TRADE-2026-09-24-IN-01#0",
         "DELOITTE-AGENTIC-2026#0",
-        "SCHW-DECK-2026Q3#73",
+        "SCHW-PR-2026-07-21-01#8",
+        "MER-TRADE-2026-10-02-IN-01#0",
+        "MS-10K-2025#372",
+        "RJF-TR-2025Q4#6",
+        "BAC-TR-2026Q2#6",
+        "EDJ-10Q-2026Q2#47",
+        "FINRA-OVERSIGHT-2026#84",
+        "SCHW-DECK-2026Q2#22",
+        "MER-TRADE-2026-10-15-WM-01#1",
+        "MS-10Q-2026Q2#524",
         "RJF-DECK-2025-investor-day#121",
-        "BAC-10K-2025#1078",
-        "MS-TR-2025Q3#55",
-        "MER-TRADE-2026-10-02-IN-01#0"
+        "BAC-PR-2026-10-14-01#2"
       ],
       "patterns": [
         {
           "pattern": "MS:transcript",
           "available": true,
           "hits": [
-            "MS-TR-2025Q3#55"
+            "MS-TR-2025Q3#8"
           ],
           "type_only": []
         },
         {
           "pattern": "SCHW:transcript",
           "available": true,
-          "hits": [],
+          "hits": [
+            "SCHW-TR-2026Q1#12"
+          ],
           "type_only": []
         },
         {
@@ -2249,7 +2339,7 @@
           "available": true,
           "hits": [],
           "type_only": [
-            "BAC-TR-2025Q2#12"
+            "BAC-TR-2026Q2#6"
           ]
         },
         {
@@ -2283,9 +2373,7 @@
         {
           "pattern": "MER:press",
           "available": true,
-          "hits": [
-            "MER-PR-web-advisor-development-program#1"
-          ],
+          "hits": [],
           "type_only": []
         },
         {
@@ -2297,27 +2385,26 @@
         {
           "pattern": "MS:trade",
           "available": true,
-          "hits": [
-            "MS-TRADE-2026-11-15-AH-01#0"
-          ],
+          "hits": [],
           "type_only": []
         },
         {
           "pattern": "MER:trade",
           "available": true,
           "hits": [
-            "MER-TRADE-2026-10-14-IN-01#0",
-            "MER-TRADE-2026-10-02-IN-01#0"
+            "MER-TRADE-2026-10-14-IN-01#2",
+            "MER-TRADE-2026-10-02-IN-01#0",
+            "MER-TRADE-2026-10-15-WM-01#1"
           ],
           "type_only": []
         }
       ],
       "available_patterns": 10,
-      "hit_patterns": 6,
-      "coverage": 0.6,
+      "hit_patterns": 5,
+      "coverage": 0.5,
       "forbidden": [],
-      "doc_recall": 0.333,
-      "passage_recall": 0.333,
+      "doc_recall": 0.667,
+      "passage_recall": 0.667,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -2340,19 +2427,25 @@
             "ids": [
               "SCHW-TR-2026Q1"
             ],
-            "found": []
+            "found": [
+              "SCHW-TR-2026Q1#12"
+            ]
           },
           {
             "ids": [
               "SCHW-DECK-2026Q2"
             ],
-            "found": []
+            "found": [
+              "SCHW-DECK-2026Q2#22"
+            ]
           },
           {
             "ids": [
               "BAC-TR-2026Q2"
             ],
-            "found": []
+            "found": [
+              "BAC-TR-2026Q2#6"
+            ]
           },
           {
             "ids": [
@@ -2384,8 +2477,8 @@
           }
         ],
         "passages": 9,
-        "passages_found": 3,
-        "passage_recall": 0.333,
+        "passages_found": 6,
+        "passage_recall": 0.667,
         "expected_docs": [
           "MS-10K-2025",
           "MS-TR-2026Q2",
@@ -2398,8 +2491,8 @@
           "EDJ-10K-2025"
         ],
         "docs": 9,
-        "docs_found": 3,
-        "doc_recall": 0.333,
+        "docs_found": 6,
+        "doc_recall": 0.667,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -2409,7 +2502,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 22588
+      "chars": 22485,
+      "change": "IMPROVED"
     },
     {
       "id": "Q18",
@@ -2420,32 +2514,33 @@
       "expected_behavior": "answer",
       "entities": [],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "theme",
       "themes": [
         "fees_pricing"
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "MCK-SIGNAL-SELLOFF-2026#9",
-        "MS-ADV-2026#127",
-        "RJF-ADV-2026#33",
-        "SCHW-ADV-2026#32",
-        "EDJ-10K-2025#55",
-        "BAC-10Q-2026Q1#31",
-        "MER-PR-2026-09-15-01#2",
         "WEALTHTENDER-ADVISOR-SEARCH-2025#57",
-        "MS-TRADE-2026-10-26-IN-01#3",
+        "EDJ-10K-2025#55",
         "RJF-10K-2025#100",
-        "SCHW-TRADE-2026-09-30-IN-01#4",
+        "MS-ADV-2026#127",
+        "SCHW-ADV-2026#50",
+        "MER-ADV-2026#435",
+        "BAC-TR-2025Q4#53",
+        "MCK-SIGNAL-SELLOFF-2026#9",
         "EDJ-ADV-2026#108",
-        "BAC-TR-2025Q4#118",
-        "MER-ADV-2026#226",
-        "WEALTHTENDER-ADVISOR-SEARCH-2025#21",
+        "RJF-ADV-2026#33",
         "MS-TR-2025Q4#19",
-        "RJF-TR-2026Q1#48",
         "SCHW-10K-2025#14",
-        "EDJ-TRADE-2026-08-18-IN-01#6",
-        "BAC-10K-2025#246"
+        "MER-PR-2026-09-15-01#2",
+        "BAC-10Q-2026Q1#31",
+        "UBS-NEXTGEN-2026#37",
+        "EDJ-10Q-2025Q2#67",
+        "RJF-TR-2026Q1#48",
+        "MS-10K-2025#276",
+        "SCHW-10Q-2026Q2#8",
+        "MER-TRADE-2026-09-29-RB-01#7"
       ],
       "patterns": [
         {
@@ -2460,7 +2555,7 @@
           "pattern": "SCHW:adv",
           "available": true,
           "hits": [
-            "SCHW-ADV-2026#32"
+            "SCHW-ADV-2026#50"
           ],
           "type_only": []
         },
@@ -2476,7 +2571,7 @@
           "pattern": "MER:adv",
           "available": true,
           "hits": [
-            "MER-ADV-2026#226"
+            "MER-ADV-2026#435"
           ],
           "type_only": []
         },
@@ -2498,9 +2593,9 @@
           "pattern": "THEME:research",
           "available": true,
           "hits": [
-            "MCK-SIGNAL-SELLOFF-2026#9",
             "WEALTHTENDER-ADVISOR-SEARCH-2025#57",
-            "WEALTHTENDER-ADVISOR-SEARCH-2025#21"
+            "MCK-SIGNAL-SELLOFF-2026#9",
+            "UBS-NEXTGEN-2026#37"
           ],
           "type_only": []
         }
@@ -2517,7 +2612,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 23631
+      "chars": 22803,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q19",
@@ -2530,6 +2626,12 @@
         "EDJ"
       ],
       "unmapped": [],
+      "theme_peers": [
+        "MS",
+        "SCHW",
+        "MER",
+        "RJF"
+      ],
       "mode": "entity+theme",
       "themes": [
         "younger_investors"
@@ -2539,24 +2641,25 @@
       ],
       "chunk_ids": [
         "EDJ-10K-2025#304",
-        "EDJ-10Q-2025Q2#28",
-        "EDJ-TRADE-2026-08-18-IN-01#1",
+        "EDJ-10Q-2026Q2#28",
         "EDJ-10K-2025#56",
-        "EDJ-10Q-2026Q2#39",
-        "EDJ-TRADE-2026-08-18-IN-01#4",
+        "EDJ-10Q-2026Q1#78",
         "EDJ-10K-2025#16",
-        "EDJ-10Q-2025Q2#17",
-        "EDJ-TRADE-2026-08-18-IN-01#5",
         "EDJ-10Q-2025Q3#107",
+        "EDJ-10Q-2025Q2#17",
+        "EDJ-10Q-2026Q2#39",
         "EDJ-10Q-2025Q3#19",
         "EDJ-10Q-2025Q3#68",
-        "EDJ-10Q-2026Q1#78",
         "EDJ-10Q-2026Q2#11",
-        "EDJ-10Q-2026Q2#30",
+        "EDJ-TRADE-2026-08-18-IN-01#1",
+        "EDJ-TRADE-2026-08-18-IN-01#4",
+        "EDJ-TRADE-2026-08-18-IN-01#5",
         "CERULLI-GWT-2025#1",
         "BOFA-PB-STUDY-2026#15",
         "BOFA-PB-STUDY-2024#0",
-        "BOFA-PB-STUDY-2024#7"
+        "BOFA-PB-STUDY-2024#7",
+        "SCHW-TR-2026Q3#11",
+        "SCHW-TR-2025Q3#11"
       ],
       "patterns": [
         {
@@ -2611,9 +2714,10 @@
       "misleading": [],
       "recall": null,
       "status": "FAIL",
-      "k": 20,
-      "passages": 19,
-      "chars": 24103
+      "k": 28,
+      "passages": 20,
+      "chars": 24271,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q20",
@@ -2624,6 +2728,7 @@
       "expected_behavior": "answer",
       "entities": [],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "theme",
       "themes": [
         "younger_investors",
@@ -2631,26 +2736,26 @@
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "UBS-NEXTGEN-2026#83",
+        "CERULLI-GWT-2025#1",
+        "SCHW-TR-2026Q3#11",
+        "BAC-PR-2026-01-14-01#12",
         "EDJ-10K-2025#19",
-        "SCHW-DECK-2026-investor-day#306",
-        "RJF-TR-2026Q1#5",
+        "RJF-TR-2026Q2#3",
+        "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
         "MS-TR-2026Q2#10",
-        "BAC-DECK-2025-investor-day#8",
-        "MER-TRADE-2026-10-14-IN-01#0",
-        "KITCES-WELLBEING-2023#68",
-        "EDJ-TRADE-2026-11-12-IN-01#1",
-        "SCHW-TR-2026Q1#68",
-        "RJF-TRADE-2026-11-06-IN-01#2",
-        "MS-TRADE-2026-10-30-IN-01#0",
-        "BAC-PR-2026-07-14-01#10",
+        "BOFA-PB-STUDY-2026#15",
+        "SCHW-DECK-2026-investor-day#131",
+        "BAC-DECK-2026Q2#36",
+        "EDJ-10Q-2025Q3#85",
+        "RJF-PR-2026-04-22-01#55",
         "MER-PR-web-advisor-development-program#2",
-        "CERULLI-AFFLUENT-FEE#0",
-        "EDJ-10Q-2026Q1#60",
-        "SCHW-TRADE-2026-11-02-RB-01#3",
-        "RJF-10K-2025#91",
-        "MS-10K-2025#44",
-        "BAC-TR-2026Q3#19"
+        "MS-SUPP-2026Q2#16",
+        "UBS-NEXTGEN-2026#83",
+        "SCHW-MONTHLY-2026-08#4",
+        "BAC-10K-2025#249",
+        "RJF-SUPP-2026Q1#13",
+        "EDJ-TRADE-2026-11-12-IN-01#1",
+        "MER-TRADE-2026-10-14-IN-01#0"
       ],
       "patterns": [
         {
@@ -2663,9 +2768,9 @@
           "pattern": "THEME:research",
           "available": true,
           "hits": [
-            "UBS-NEXTGEN-2026#83",
-            "KITCES-WELLBEING-2023#68",
-            "CERULLI-AFFLUENT-FEE#0"
+            "CERULLI-GWT-2025#1",
+            "BOFA-PB-STUDY-2026#15",
+            "UBS-NEXTGEN-2026#83"
           ],
           "type_only": []
         }
@@ -2674,8 +2779,8 @@
       "hit_patterns": 1,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.286,
-      "passage_recall": 0.286,
+      "doc_recall": 0.429,
+      "passage_recall": 0.429,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -2692,7 +2797,9 @@
             "ids": [
               "CERULLI-GWT-2025"
             ],
-            "found": []
+            "found": [
+              "CERULLI-GWT-2025#1"
+            ]
           },
           {
             "ids": [
@@ -2704,15 +2811,15 @@
             "ids": [
               "KITCES-WELLBEING-2023"
             ],
-            "found": [
-              "KITCES-WELLBEING-2023#68"
-            ]
+            "found": []
           },
           {
             "ids": [
               "BOFA-PB-STUDY-2026"
             ],
-            "found": []
+            "found": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
           },
           {
             "ids": [
@@ -2728,8 +2835,8 @@
           }
         ],
         "passages": 7,
-        "passages_found": 2,
-        "passage_recall": 0.286,
+        "passages_found": 3,
+        "passage_recall": 0.429,
         "expected_docs": [
           "UBS-NEXTGEN-2026",
           "CERULLI-GWT-2025",
@@ -2740,8 +2847,8 @@
           "WEALTHTENDER-ADVISOR-SEARCH-2025"
         ],
         "docs": 7,
-        "docs_found": 2,
-        "doc_recall": 0.286,
+        "docs_found": 3,
+        "doc_recall": 0.429,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -2751,7 +2858,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 24814
+      "chars": 23716,
+      "change": "IMPROVED"
     },
     {
       "id": "Q21",
@@ -2768,38 +2876,39 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity+theme",
       "themes": [
         "wealth_transfer"
       ],
       "theme_gaps": [],
       "chunk_ids": [
-        "MS-TRADE-2026-08-22-RB-01#19",
         "SCHW-DECK-2026Q3#24",
-        "RJF-TRADE-2026-09-29-IN-01#3",
         "EDJ-10K-2025#56",
-        "BAC-PR-2026-01-14-01#12",
-        "MS-TR-2026Q3#25",
-        "SCHW-TRADE-2026-10-29-WM-01#3",
+        "MS-DECK-2026-strategic-update#22",
         "RJF-TRADE-2026-11-06-IN-01#3",
-        "EDJ-10K-2025#304",
-        "BAC-TR-2026Q2#21",
-        "MS-10K-2025#206",
+        "BAC-PR-2026-01-14-01#12",
         "SCHW-TR-2026Q3#11",
-        "RJF-TR-2025Q3#62",
-        "EDJ-10Q-2025Q2#67",
-        "MER-TRADE-2026-09-29-RB-01#5",
-        "MS-10Q-2025Q2#226",
-        "SCHW-DECK-2026Q3#73",
+        "EDJ-10K-2025#304",
+        "MS-TR-2026Q3#25",
+        "RJF-TR-2026Q2#36",
+        "BAC-TR-2026Q2#21",
+        "SCHW-DECK-2026-investor-day#306",
+        "EDJ-10Q-2025Q3#72",
+        "MS-10K-2025#206",
         "RJF-10K-2025#26",
-        "EDJ-TRADE-2026-08-18-IN-01#1",
-        "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
-        "MS-PR-2026-01-15-01#16",
         "SCHW-PR-2026-07-21-01#8",
-        "RJF-PR-web-independent-ria-custody-services#0",
         "EDJ-10K-2025#207",
+        "MS-10Q-2026Q2#97",
+        "RJF-PR-web-independent-ria-custody-services#0",
         "BAC-10K-2025#246",
-        "MS-SUPP-2025Q4#23",
+        "SCHW-10Q-2026Q2#9",
+        "EDJ-10Q-2025Q2#67",
+        "MS-PR-2026-10-14-01#11",
+        "RJF-DECK-2025-investor-day#126",
+        "BAC-DECK-2025-investor-day#9",
+        "SCHW-TRADE-2026-10-29-WM-01#3",
+        "MER-TRADE-2026-11-16-AH-01#0",
         "CERULLI-GWT-2025#24",
         "CERULLI-GWT-2025#2",
         "BOFA-PB-STUDY-2026#16",
@@ -2855,7 +2964,7 @@
           "pattern": "RJF:transcript",
           "available": true,
           "hits": [
-            "RJF-TR-2025Q3#62"
+            "RJF-TR-2026Q2#36"
           ],
           "type_only": []
         }
@@ -2872,7 +2981,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 35528
+      "chars": 32083,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q22",
@@ -2889,47 +2999,48 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "SCHW-TR-2026Q1#3",
-        "MS-DECK-2026-strategic-update#31",
+        "EDJ-10Q-2026Q2#60",
         "RJF-TR-2025Q1#6",
-        "EDJ-10Q-2025Q2#66",
-        "BAC-PR-2026-04-15-01#11",
+        "MS-TR-2026Q3#15",
+        "BAC-PR-2026-10-14-01#12",
         "SCHW-PR-2026-04-16-01#3",
-        "MS-SUPP-2026Q1#7",
+        "EDJ-10K-2025#148",
         "RJF-10K-2025#223",
-        "EDJ-10K-2025#207",
+        "MS-DECK-2026-strategic-update#30",
         "BAC-TR-2026Q3#19",
         "SCHW-DECK-2026Q3#73",
-        "MS-TR-2024Q4#24",
+        "EDJ-10Q-2026Q1#51",
         "RJF-10Q-2026Q1#323",
-        "EDJ-10Q-2025Q2#67",
+        "MS-10K-2025#165",
         "BAC-10K-2025#248",
         "SCHW-10K-2025#136",
-        "MS-PR-2026-04-15-01#22",
-        "RJF-PR-2026-01-28-01#1",
-        "EDJ-10K-2025#182",
-        "BAC-10Q-2026Q1#74",
-        "SCHW-10Q-2026Q1#19",
-        "MS-10K-2025#165",
-        "RJF-SUPP-2025Q3#9",
-        "EDJ-10Q-2026Q2#62",
-        "BAC-DECK-2025-investor-day#10",
-        "SCHW-MONTHLY-2026-02#2",
-        "MS-10Q-2026Q2#58",
-        "RJF-DECK-2025-investor-day#75",
         "EDJ-10K-2025#54",
-        "BAC-SUPP-2025Q4#57"
+        "RJF-PR-2026-07-22-01#25",
+        "MS-10Q-2026Q2#58",
+        "BAC-10Q-2026Q1#74",
+        "SCHW-10Q-2026Q2#22",
+        "EDJ-10Q-2025Q3#67",
+        "RJF-SUPP-2026Q2#9",
+        "MS-SUPP-2026Q3#16",
+        "BAC-DECK-2026Q3#31",
+        "SCHW-MONTHLY-2026-02#2",
+        "EDJ-10K-2025#58",
+        "RJF-DECK-2026Q2#4",
+        "MS-PR-2026-10-14-01#2",
+        "BAC-SUPP-2026Q3#54"
       ],
       "patterns": [
         {
           "pattern": "MS:supplement",
           "available": true,
           "hits": [
-            "MS-SUPP-2026Q1#7"
+            "MS-SUPP-2026Q3#16"
           ],
           "type_only": []
         },
@@ -2951,9 +3062,9 @@
           "pattern": "EDJ:10-Q",
           "available": true,
           "hits": [
-            "EDJ-10Q-2025Q2#66",
-            "EDJ-10Q-2025Q2#67",
-            "EDJ-10Q-2026Q2#62"
+            "EDJ-10Q-2026Q2#60",
+            "EDJ-10Q-2026Q1#51",
+            "EDJ-10Q-2025Q3#67"
           ],
           "type_only": []
         },
@@ -2961,7 +3072,7 @@
           "pattern": "BAC:supplement#GWIM",
           "available": true,
           "hits": [
-            "BAC-SUPP-2025Q4#57"
+            "BAC-SUPP-2026Q3#54"
           ],
           "type_only": []
         },
@@ -2969,7 +3080,7 @@
           "pattern": "RJF:supplement",
           "available": true,
           "hits": [
-            "RJF-SUPP-2025Q3#9"
+            "RJF-SUPP-2026Q2#9"
           ],
           "type_only": []
         },
@@ -2977,7 +3088,7 @@
           "pattern": "MS:press",
           "available": true,
           "hits": [
-            "MS-PR-2026-04-15-01#22"
+            "MS-PR-2026-10-14-01#2"
           ],
           "type_only": []
         },
@@ -2985,7 +3096,7 @@
           "pattern": "RJF:press",
           "available": true,
           "hits": [
-            "RJF-PR-2026-01-28-01#1"
+            "RJF-PR-2026-07-22-01#25"
           ],
           "type_only": []
         }
@@ -2994,8 +3105,8 @@
       "hit_patterns": 7,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.364,
-      "passage_recall": 0.125,
+      "doc_recall": 0.424,
+      "passage_recall": 0.375,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3008,7 +3119,11 @@
               "EDJ-10Q-2025Q2#64",
               "EDJ-10K-2025#130"
             ],
-            "found": []
+            "found": [
+              "EDJ-10Q-2026Q2#60",
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2025Q3#67"
+            ]
           },
           {
             "ids": [
@@ -3021,7 +3136,9 @@
               "MS-10Q-2025Q2#56",
               "MS-PR-2026-01-15-01#2"
             ],
-            "found": []
+            "found": [
+              "MS-SUPP-2026Q3#16"
+            ]
           },
           {
             "ids": [
@@ -3081,8 +3198,8 @@
           }
         ],
         "passages": 8,
-        "passages_found": 1,
-        "passage_recall": 0.125,
+        "passages_found": 3,
+        "passage_recall": 0.375,
         "expected_docs": [
           "EDJ-10Q-2026Q2",
           "EDJ-10Q-2026Q1",
@@ -3119,8 +3236,8 @@
           "BAC-PR-2026-10-14-01"
         ],
         "docs": 33,
-        "docs_found": 12,
-        "doc_recall": 0.364,
+        "docs_found": 14,
+        "doc_recall": 0.424,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -3130,7 +3247,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 37206
+      "chars": 37049,
+      "change": "IMPROVED"
     },
     {
       "id": "Q23",
@@ -3147,39 +3265,40 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "MS-TR-2025Q4#4",
         "RJF-TR-2025Q3#8",
-        "EDJ-10Q-2025Q2#66",
+        "EDJ-10Q-2026Q2#60",
         "SCHW-TR-2026Q1#8",
         "BAC-DECK-2025-investor-day#8",
         "MS-10K-2025#44",
         "RJF-10K-2025#12",
         "EDJ-10K-2025#58",
-        "SCHW-10Q-2026Q1#60",
+        "SCHW-10Q-2026Q2#25",
         "MER-PR-web-advisor-development-program#0",
-        "MS-10Q-2026Q1#19",
+        "MS-10Q-2026Q2#20",
         "RJF-10Q-2026Q1#239",
-        "EDJ-10Q-2026Q2#60",
+        "EDJ-10Q-2025Q3#69",
         "SCHW-10K-2025#197",
         "BAC-10K-2025#247",
         "MS-DECK-2026-strategic-update#31",
-        "RJF-PR-web-affiliation-options#2",
+        "RJF-PR-web-independent-ria-custody-services#0",
         "EDJ-10K-2025#70",
-        "SCHW-PR-2026-07-21-01#37",
+        "SCHW-PR-2026-10-15-01#36",
         "BAC-TR-2026Q2#63",
         "MS-PR-2026-10-14-01#5",
         "RJF-DECK-2025-investor-day#131",
-        "EDJ-10Q-2026Q2#82",
+        "EDJ-10Q-2026Q1#51",
         "SCHW-DECK-2026Q3#73",
         "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
-        "MS-TR-2025Q4#8",
-        "RJF-TR-2025Q3#4",
+        "MS-TR-2025Q1#2",
+        "RJF-TR-2026Q2#70",
         "EDJ-10K-2025#202",
-        "SCHW-TR-2024Q4#3",
+        "SCHW-TR-2026Q2#33",
         "BAC-TR-2026Q3#19"
       ],
       "patterns": [
@@ -3201,9 +3320,9 @@
           "pattern": "EDJ:10-Q",
           "available": true,
           "hits": [
-            "EDJ-10Q-2025Q2#66",
             "EDJ-10Q-2026Q2#60",
-            "EDJ-10Q-2026Q2#82"
+            "EDJ-10Q-2025Q3#69",
+            "EDJ-10Q-2026Q1#51"
           ],
           "type_only": []
         },
@@ -3233,7 +3352,7 @@
           "pattern": "RJF:press",
           "available": true,
           "hits": [
-            "RJF-PR-web-affiliation-options#2"
+            "RJF-PR-web-independent-ria-custody-services#0"
           ],
           "type_only": []
         }
@@ -3242,8 +3361,8 @@
       "hit_patterns": 4,
       "coverage": 0.571,
       "forbidden": [],
-      "doc_recall": 0.3,
-      "passage_recall": 0.3,
+      "doc_recall": 0.35,
+      "passage_recall": 0.35,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3262,29 +3381,30 @@
             "ids": [
               "EDJ-10Q-2025Q2"
             ],
-            "found": [
-              "EDJ-10Q-2025Q2#66"
-            ]
+            "found": []
           },
           {
             "ids": [
               "EDJ-10Q-2025Q3"
             ],
-            "found": []
+            "found": [
+              "EDJ-10Q-2025Q3#69"
+            ]
           },
           {
             "ids": [
               "EDJ-10Q-2026Q1"
             ],
-            "found": []
+            "found": [
+              "EDJ-10Q-2026Q1#51"
+            ]
           },
           {
             "ids": [
               "EDJ-10Q-2026Q2"
             ],
             "found": [
-              "EDJ-10Q-2026Q2#60",
-              "EDJ-10Q-2026Q2#82"
+              "EDJ-10Q-2026Q2#60"
             ]
           },
           {
@@ -3385,8 +3505,8 @@
           }
         ],
         "passages": 20,
-        "passages_found": 6,
-        "passage_recall": 0.3,
+        "passages_found": 7,
+        "passage_recall": 0.35,
         "expected_docs": [
           "EDJ-10K-2025",
           "EDJ-10Q-2025Q2",
@@ -3410,8 +3530,8 @@
           "SCHW-10K-2025"
         ],
         "docs": 20,
-        "docs_found": 6,
-        "doc_recall": 0.3,
+        "docs_found": 7,
+        "doc_recall": 0.35,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -3421,7 +3541,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 35999
+      "chars": 35727,
+      "change": "IMPROVED"
     },
     {
       "id": "Q24",
@@ -3438,47 +3559,48 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "SCHW-TR-2025Q1#9",
         "MS-DECK-2026-strategic-update#28",
-        "RJF-TR-2025Q1#4",
+        "RJF-PR-2026-07-22-01#98",
         "EDJ-10K-2025#23",
         "BAC-TR-2026Q3#19",
         "SCHW-DECK-2026-investor-day#25",
-        "MS-TR-2025Q4#4",
-        "RJF-10Q-2026Q1#244",
-        "EDJ-10Q-2025Q2#102",
+        "MS-TR-2026Q3#18",
+        "RJF-TR-2025Q4#4",
+        "EDJ-10Q-2026Q2#61",
         "BAC-DECK-2025-investor-day#8",
-        "SCHW-PR-2026-07-21-01#54",
+        "SCHW-PR-2026-10-15-01#53",
         "MS-PR-2026-01-15-01#0",
-        "RJF-10K-2025#41",
-        "EDJ-10K-2025#22",
+        "RJF-10K-2025#9",
+        "EDJ-10K-2025#208",
         "BAC-10K-2025#249",
-        "SCHW-MONTHLY-2026-04#6",
-        "MS-SUPP-2026Q1#14",
-        "RJF-PR-2026-07-22-01#98",
-        "EDJ-10Q-2026Q2#43",
-        "MER-PR-2026-09-15-01#2",
-        "SCHW-10K-2025#42",
-        "MS-10K-2025#109",
+        "SCHW-MONTHLY-2026-08#4",
+        "MS-SUPP-2026Q3#16",
         "RJF-SUPP-2026Q2#43",
-        "EDJ-10K-2025#267",
-        "BAC-10Q-2026Q1#75",
-        "SCHW-10Q-2026Q1#19",
-        "MS-10Q-2025Q2#156",
+        "EDJ-10Q-2026Q1#52",
+        "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+        "SCHW-10K-2025#136",
+        "MS-10K-2025#177",
+        "RJF-10Q-2026Q2#330",
+        "EDJ-10K-2025#79",
+        "BAC-10Q-2026Q2#92",
+        "SCHW-10Q-2026Q2#22",
+        "MS-10Q-2026Q2#28",
         "RJF-DECK-2025-investor-day#30",
-        "EDJ-10Q-2025Q2#28",
-        "BAC-SUPP-2025Q4#57"
+        "EDJ-10Q-2025Q3#60",
+        "BAC-SUPP-2026Q3#54"
       ],
       "patterns": [
         {
           "pattern": "MS:supplement",
           "available": true,
           "hits": [
-            "MS-SUPP-2026Q1#14"
+            "MS-SUPP-2026Q3#16"
           ],
           "type_only": []
         },
@@ -3486,7 +3608,7 @@
           "pattern": "SCHW:10-K",
           "available": true,
           "hits": [
-            "SCHW-10K-2025#42"
+            "SCHW-10K-2025#136"
           ],
           "type_only": []
         },
@@ -3495,8 +3617,8 @@
           "available": true,
           "hits": [
             "EDJ-10K-2025#23",
-            "EDJ-10K-2025#22",
-            "EDJ-10K-2025#267"
+            "EDJ-10K-2025#208",
+            "EDJ-10K-2025#79"
           ],
           "type_only": []
         },
@@ -3504,7 +3626,7 @@
           "pattern": "BAC:supplement#GWIM",
           "available": true,
           "hits": [
-            "BAC-SUPP-2025Q4#57"
+            "BAC-SUPP-2026Q3#54"
           ],
           "type_only": []
         },
@@ -3576,7 +3698,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 35068
+      "chars": 34414,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q25",
@@ -3593,6 +3716,7 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
@@ -3601,32 +3725,32 @@
         "MER-ADV-2026#449",
         "MS-ADV-2026#198",
         "EDJ-10K-2025#314",
-        "SCHW-TRADE-2026-10-23-WM-01#4",
-        "RJF-PR-web-affiliation-options#2",
-        "MER-TRADE-2026-09-11-WM-01#1",
-        "MS-TRADE-2026-11-04-RB-01#4",
-        "EDJ-ADV-2026#122",
         "SCHW-ADV-2026#45",
-        "RJF-10Q-2025Q4#199",
+        "RJF-PR-web-affiliation-options#2",
         "BAC-DECK-2025-investor-day#8",
         "MS-10K-2025#420",
-        "EDJ-10Q-2026Q1#60",
+        "EDJ-ADV-2026#122",
         "SCHW-TR-2026Q1#48",
-        "RJF-10K-2025#175",
+        "RJF-10Q-2026Q2#252",
         "MER-PR-2026-09-15-01#2",
         "MS-10Q-2026Q2#454",
-        "EDJ-TRADE-2026-11-12-IN-01#1",
+        "EDJ-10Q-2026Q1#60",
         "SCHW-10K-2025#512",
-        "RJF-TR-2025Q3#20",
+        "RJF-10K-2025#175",
         "BAC-10K-2025#246",
         "MS-TR-2026Q3#58",
         "EDJ-10K-2025#22",
-        "SCHW-10Q-2025Q2#170",
-        "RJF-TRADE-2026-10-16-WM-01#1",
-        "MER-ADV-2026#511",
+        "SCHW-10Q-2026Q2#177",
+        "RJF-TR-2025Q3#20",
         "MS-DECK-2026-strategic-update#31",
-        "EDJ-ADV-2026#92",
-        "SCHW-DECK-2026-investor-day#306"
+        "SCHW-DECK-2026Q3#13",
+        "RJF-SUPP-2026Q2#13",
+        "BAC-TR-2026Q3#19",
+        "MS-SUPP-2026Q3#38",
+        "EDJ-10Q-2026Q2#50",
+        "SCHW-PR-2026-10-15-01#36",
+        "MER-TRADE-2026-09-11-WM-01#1",
+        "EDJ-TRADE-2026-11-12-IN-01#1"
       ],
       "patterns": [
         {
@@ -3706,8 +3830,7 @@
           "pattern": "EDJ:adv",
           "available": true,
           "hits": [
-            "EDJ-ADV-2026#122",
-            "EDJ-ADV-2026#92"
+            "EDJ-ADV-2026#122"
           ],
           "type_only": []
         },
@@ -3724,7 +3847,7 @@
       "hit_patterns": 8,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.75,
+      "doc_recall": 1.0,
       "passage_recall": 0.0,
       "refusal_ok": true,
       "misleading": [],
@@ -3767,8 +3890,8 @@
           "SCHW-10Q-2026Q2"
         ],
         "docs": 4,
-        "docs_found": 3,
-        "doc_recall": 0.75,
+        "docs_found": 4,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -3778,7 +3901,8 @@
       "status": "PASS",
       "k": 30,
       "passages": 30,
-      "chars": 36260
+      "chars": 35900,
+      "change": "IMPROVED"
     },
     {
       "id": "Q26",
@@ -3791,6 +3915,7 @@
         "RJF"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
@@ -3802,8 +3927,8 @@
         "RJF-TRADE-2026-10-16-WM-01#0",
         "RJF-TRADE-2026-10-08-WM-01#0",
         "RJF-TRADE-2026-09-29-IN-01#0",
-        "RJF-TRADE-2026-09-29-IN-01#4",
         "RJF-TRADE-2026-09-29-WM-01#0",
+        "RJF-TRADE-2026-09-29-IN-01#4",
         "RJF-TRADE-2026-09-29-IN-01#2",
         "RJF-TRADE-2026-09-29-WM-01#1",
         "RJF-TRADE-2026-09-24-IN-01#0",
@@ -3823,8 +3948,8 @@
             "RJF-TRADE-2026-10-16-WM-01#0",
             "RJF-TRADE-2026-10-08-WM-01#0",
             "RJF-TRADE-2026-09-29-IN-01#0",
-            "RJF-TRADE-2026-09-29-IN-01#4",
             "RJF-TRADE-2026-09-29-WM-01#0",
+            "RJF-TRADE-2026-09-29-IN-01#4",
             "RJF-TRADE-2026-09-29-IN-01#2",
             "RJF-TRADE-2026-09-29-WM-01#1",
             "RJF-TRADE-2026-09-24-IN-01#0",
@@ -3864,7 +3989,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 15,
-      "chars": 19723
+      "chars": 19723,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q27",
@@ -3877,56 +4003,57 @@
         "MER"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
+        "MER-TRADE-2026-11-16-AH-01#1",
         "MER-TRADE-2026-11-12-IN-01#2",
-        "MER-TRADE-2026-11-03-WM-01#0",
-        "MER-TRADE-2026-10-14-IN-01#2",
         "BAC-DECK-2026Q3#31",
+        "BAC-SUPP-2026Q3#51",
+        "BAC-PR-2026-10-14-01#12",
+        "MER-TRADE-2026-10-14-IN-01#2",
+        "BAC-TR-2026Q3#19",
         "MER-PR-2026-09-15-01#0",
+        "BAC-10Q-2026Q2#88",
         "BAC-TR-2026Q2#21",
         "BAC-DECK-2026Q2#20",
-        "BAC-TR-2026Q2#20",
+        "BAC-SUPP-2026Q2#52",
+        "BAC-PR-2026-07-14-01#11",
         "BAC-10Q-2026Q1#71",
         "BAC-10Q-2026Q1#72",
-        "BAC-10Q-2026Q1#73",
-        "BAC-DECK-2026Q1#27",
-        "BAC-PR-2026-04-15-01#11",
         "BAC-TR-2026Q1#26",
+        "BAC-DECK-2026Q1#27",
         "BAC-10K-2025#249",
         "BAC-10K-2025#246",
-        "BAC-10K-2025#247",
-        "BAC-SUPP-2025Q4#53",
-        "BAC-PR-2026-01-14-01#13",
-        "BAC-SUPP-2025Q4#54"
+        "BAC-10K-2025#247"
       ],
       "patterns": [
         {
           "pattern": "MER:*",
           "available": true,
           "hits": [
+            "MER-TRADE-2026-11-16-AH-01#1",
             "MER-TRADE-2026-11-12-IN-01#2",
-            "MER-TRADE-2026-11-03-WM-01#0",
-            "MER-TRADE-2026-10-14-IN-01#2",
             "BAC-DECK-2026Q3#31",
+            "BAC-SUPP-2026Q3#51",
+            "BAC-PR-2026-10-14-01#12",
+            "MER-TRADE-2026-10-14-IN-01#2",
+            "BAC-TR-2026Q3#19",
             "MER-PR-2026-09-15-01#0",
+            "BAC-10Q-2026Q2#88",
             "BAC-TR-2026Q2#21",
             "BAC-DECK-2026Q2#20",
-            "BAC-TR-2026Q2#20",
+            "BAC-SUPP-2026Q2#52",
+            "BAC-PR-2026-07-14-01#11",
             "BAC-10Q-2026Q1#71",
             "BAC-10Q-2026Q1#72",
-            "BAC-10Q-2026Q1#73",
-            "BAC-DECK-2026Q1#27",
-            "BAC-PR-2026-04-15-01#11",
             "BAC-TR-2026Q1#26",
+            "BAC-DECK-2026Q1#27",
             "BAC-10K-2025#249",
             "BAC-10K-2025#246",
-            "BAC-10K-2025#247",
-            "BAC-SUPP-2025Q4#53",
-            "BAC-PR-2026-01-14-01#13",
-            "BAC-SUPP-2025Q4#54"
+            "BAC-10K-2025#247"
           ],
           "type_only": []
         },
@@ -3935,21 +4062,21 @@
           "available": true,
           "hits": [
             "BAC-DECK-2026Q3#31",
+            "BAC-SUPP-2026Q3#51",
+            "BAC-PR-2026-10-14-01#12",
+            "BAC-TR-2026Q3#19",
+            "BAC-10Q-2026Q2#88",
             "BAC-TR-2026Q2#21",
             "BAC-DECK-2026Q2#20",
-            "BAC-TR-2026Q2#20",
+            "BAC-SUPP-2026Q2#52",
+            "BAC-PR-2026-07-14-01#11",
             "BAC-10Q-2026Q1#71",
             "BAC-10Q-2026Q1#72",
-            "BAC-10Q-2026Q1#73",
-            "BAC-DECK-2026Q1#27",
-            "BAC-PR-2026-04-15-01#11",
             "BAC-TR-2026Q1#26",
+            "BAC-DECK-2026Q1#27",
             "BAC-10K-2025#249",
             "BAC-10K-2025#246",
-            "BAC-10K-2025#247",
-            "BAC-SUPP-2025Q4#53",
-            "BAC-PR-2026-01-14-01#13",
-            "BAC-SUPP-2025Q4#54"
+            "BAC-10K-2025#247"
           ],
           "type_only": []
         }
@@ -3958,8 +4085,8 @@
       "hit_patterns": 2,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.333,
-      "passage_recall": 0.333,
+      "doc_recall": 0.667,
+      "passage_recall": 0.667,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3997,15 +4124,16 @@
               "BAC-TR-2026Q2"
             ],
             "found": [
-              "BAC-TR-2026Q2#21",
-              "BAC-TR-2026Q2#20"
+              "BAC-TR-2026Q2#21"
             ]
           },
           {
             "ids": [
               "BAC-TR-2026Q3"
             ],
-            "found": []
+            "found": [
+              "BAC-TR-2026Q3#19"
+            ]
           },
           {
             "ids": [
@@ -4017,18 +4145,22 @@
             "ids": [
               "BAC-SUPP-2026Q2"
             ],
-            "found": []
+            "found": [
+              "BAC-SUPP-2026Q2#52"
+            ]
           },
           {
             "ids": [
               "BAC-SUPP-2026Q3"
             ],
-            "found": []
+            "found": [
+              "BAC-SUPP-2026Q3#51"
+            ]
           }
         ],
         "passages": 9,
-        "passages_found": 3,
-        "passage_recall": 0.333,
+        "passages_found": 6,
+        "passage_recall": 0.667,
         "expected_docs": [
           "MER-PR-2026-09-15-01",
           "MER-PR-web-advisor-development-program",
@@ -4041,8 +4173,8 @@
           "BAC-SUPP-2026Q3"
         ],
         "docs": 9,
-        "docs_found": 3,
-        "doc_recall": 0.333,
+        "docs_found": 6,
+        "doc_recall": 0.667,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -4052,7 +4184,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 24249
+      "chars": 25592,
+      "change": "IMPROVED"
     },
     {
       "id": "Q28",
@@ -4066,6 +4199,7 @@
         "MER"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity+theme",
       "themes": [
         "advisor_recruiting"
@@ -4078,17 +4212,17 @@
         "BAC-TR-2026Q3#19",
         "EDJ-10K-2025#71",
         "BAC-DECK-2025-investor-day#8",
-        "EDJ-10Q-2025Q2#67",
+        "EDJ-10Q-2026Q1#60",
         "MER-PR-web-advisor-development-program#2",
         "EDJ-10K-2025#27",
         "BAC-10K-2025#246",
-        "EDJ-10Q-2025Q2#64",
+        "EDJ-10Q-2026Q2#61",
         "BAC-TR-2026Q1#26",
         "EDJ-10K-2025#58",
         "BAC-DECK-2025-investor-day#18",
-        "EDJ-10Q-2025Q3#68",
+        "EDJ-10Q-2025Q2#67",
         "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
-        "EDJ-10Q-2026Q1#60",
+        "EDJ-10Q-2025Q2#64",
         "KITCES-WELLBEING-2023#23",
         "KITCES-WELLBEING-2023#17",
         "MCK-ADVISOR-SHORTAGE-2025#25"
@@ -4123,7 +4257,7 @@
       "hit_patterns": 2,
       "coverage": 0.667,
       "forbidden": [],
-      "doc_recall": 0.833,
+      "doc_recall": 1.0,
       "passage_recall": 0.75,
       "refusal_ok": true,
       "misleading": [],
@@ -4139,8 +4273,7 @@
             "found": [
               "EDJ-10Q-2025Q3#70",
               "EDJ-10Q-2025Q2#67",
-              "EDJ-10Q-2025Q2#64",
-              "EDJ-10Q-2025Q3#68"
+              "EDJ-10Q-2025Q2#64"
             ]
           },
           {
@@ -4182,8 +4315,8 @@
           "EDJ-10Q-2026Q2"
         ],
         "docs": 6,
-        "docs_found": 5,
-        "doc_recall": 0.833,
+        "docs_found": 6,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -4193,7 +4326,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 23932
+      "chars": 23823,
+      "change": "IMPROVED"
     },
     {
       "id": "Q29",
@@ -4206,30 +4340,31 @@
         "MS"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "MS-10Q-2026Q2#20",
         "MS-10K-2025#170",
-        "MS-TRADE-2026-08-25-RB-01#0",
         "MS-TR-2025Q4#22",
         "MS-PR-2026-10-14-01#5",
-        "MS-SUPP-2025Q4#36",
-        "MS-10Q-2025Q3#64",
+        "MS-SUPP-2026Q3#38",
+        "MS-10Q-2026Q1#19",
         "MS-10K-2025#128",
-        "MS-TRADE-2026-08-26-RB-01#0",
-        "MS-TR-2025Q1#54",
-        "MS-PR-2026-04-15-01#14",
-        "MS-SUPP-2026Q1#25",
-        "MS-10Q-2026Q2#64",
-        "MS-10K-2025#153",
-        "MS-TRADE-2026-08-26-RB-01#1",
         "MS-TR-2025Q3#89",
         "MS-PR-2026-07-15-01#17",
+        "MS-SUPP-2026Q1#25",
+        "MS-10Q-2025Q3#64",
+        "MS-10K-2025#153",
+        "MS-TR-2025Q1#54",
+        "MS-PR-2026-04-15-01#14",
+        "MS-SUPP-2026Q2#44",
+        "MS-10Q-2025Q2#20",
+        "MS-TR-2026Q3#36",
         "MS-SUPP-2025Q4#42",
-        "MS-10Q-2025Q3#19",
-        "MS-TRADE-2026-11-04-RB-01#5"
+        "MS-TR-2026Q2#23",
+        "MS-TRADE-2026-08-25-RB-01#0"
       ],
       "patterns": [
         {
@@ -4247,10 +4382,7 @@
           "pattern": "MS:trade",
           "available": true,
           "hits": [
-            "MS-TRADE-2026-08-25-RB-01#0",
-            "MS-TRADE-2026-08-26-RB-01#0",
-            "MS-TRADE-2026-08-26-RB-01#1",
-            "MS-TRADE-2026-11-04-RB-01#5"
+            "MS-TRADE-2026-08-25-RB-01#0"
           ],
           "type_only": []
         }
@@ -4302,7 +4434,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 23332
+      "chars": 21418,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q30",
@@ -4315,30 +4448,31 @@
         "MER"
       ],
       "unmapped": [],
+      "theme_peers": [],
       "mode": "entity",
       "themes": [],
       "theme_gaps": [],
       "chunk_ids": [
         "BAC-TR-2025Q3#26",
-        "BAC-DECK-2026Q1#26",
-        "BAC-PR-2026-04-15-01#10",
+        "BAC-DECK-2026Q3#30",
+        "BAC-PR-2026-10-14-01#11",
         "BAC-10K-2025#244",
-        "BAC-10Q-2025Q2#90",
-        "BAC-SUPP-2025Q4#53",
-        "MER-TRADE-2026-10-02-IN-01#1",
+        "BAC-10Q-2026Q2#85",
+        "BAC-SUPP-2026Q3#51",
         "BAC-TR-2026Q2#21",
         "BAC-DECK-2026Q2#19",
         "BAC-PR-2026-07-14-01#10",
         "BAC-10K-2025#246",
         "BAC-10Q-2025Q3#90",
-        "BAC-SUPP-2026Q1#43",
-        "MER-TRADE-2026-10-14-IN-01#1",
-        "BAC-TR-2026Q1#26",
-        "BAC-DECK-2026Q3#30",
-        "BAC-PR-2026-10-14-01#11",
-        "BAC-10K-2025#247",
         "BAC-SUPP-2026Q2#52",
-        "BAC-TR-2026Q2#20"
+        "BAC-TR-2026Q1#26",
+        "BAC-DECK-2026Q1#26",
+        "BAC-PR-2026-04-15-01#10",
+        "BAC-SUPP-2026Q1#43",
+        "BAC-TR-2025Q1#28",
+        "BAC-DECK-2025-investor-day#10",
+        "BAC-PR-2026-01-14-01#11",
+        "MER-TRADE-2026-10-14-IN-01#1"
       ],
       "patterns": [
         {
@@ -4346,8 +4480,7 @@
           "available": true,
           "hits": [
             "BAC-10K-2025#244",
-            "BAC-10K-2025#246",
-            "BAC-10K-2025#247"
+            "BAC-10K-2025#246"
           ],
           "type_only": []
         }
@@ -4356,7 +4489,7 @@
       "hit_patterns": 1,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.5,
+      "doc_recall": 1.0,
       "passage_recall": 0.5,
       "refusal_ok": true,
       "misleading": [],
@@ -4375,8 +4508,7 @@
               "BAC-10K-2025#247"
             ],
             "found": [
-              "BAC-10K-2025#246",
-              "BAC-10K-2025#247"
+              "BAC-10K-2025#246"
             ]
           }
         ],
@@ -4388,8 +4520,8 @@
           "BAC-10K-2025"
         ],
         "docs": 2,
-        "docs_found": 1,
-        "doc_recall": 0.5,
+        "docs_found": 2,
+        "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
         "window": null,
@@ -4399,7 +4531,8 @@
       "status": "PASS",
       "k": 20,
       "passages": 20,
-      "chars": 25582
+      "chars": 25088,
+      "change": "IMPROVED"
     }
   ]
 }

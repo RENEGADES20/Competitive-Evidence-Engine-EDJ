@@ -73,7 +73,7 @@ def _mock(hits: list[Hit]) -> Answer:
 def anthropic_request(question: str, hits: list[Hit]) -> dict:
     return {
         "model": settings().llm_model,
-        "max_tokens": 4000,  # 20-30 chunks (fts.budget, #181) give longer answers than the 8 of v0
+        "max_tokens": 8000,  # 20-30 chunks (#181) and grid answers with a gap per empty cell (#204)
         "system": SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
                                   " do not answer in plain text.",
         "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.",

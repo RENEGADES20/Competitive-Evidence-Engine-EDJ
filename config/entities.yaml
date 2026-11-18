@@ -136,6 +136,24 @@ peer_sets:
   - id: core_five
     members: [MS, SCHW, EDJ, MER, RJF]
     phrases: ["each of the five", "across the five", "all five", "these five", "the five"]   # Q10, Q11, Q21-Q25
+  # The advisor-led firms (#205, Q15: "an advisor-led model" names no firm). Members by how each
+  # firm reports: MS Wealth Management reports advisor-led client assets apart from self-directed
+  # (MS-10K-2025 #125); Edward Jones serves clients only through its financial advisors; Merrill is
+  # GWIM's advisor business (MER filter: BAC GWIM/Merrill only); RJF's Private Client Group is its
+  # advisors in every affiliation model. Schwab (self-directed, RIA custody) is not one. Indefinite
+  # and plural phrases only: "Edward Jones's advisor-led model" names one firm, not the group.
+  - id: advisor_led
+    members: [MS, EDJ, MER, RJF]
+    phrases: ["an advisor-led model", "advisor-led models", "advisor-led firms", "an advisor-led firm",
+              "an adviser-led model", "adviser-led models", "adviser-led firms", "an adviser-led firm"]
+
+# Home firm (#205, ADR-018). A theme question whose only named covered firm is the home firm also
+# searches the other members of `theme_peers` (a peer set id) on that theme: only their chunks on
+# the theme, every hard filter kept (Q19: competitor moves aimed at younger investors). A firm
+# filter on the Ask page turns it off.
+home_firm:
+  id: EDJ
+  theme_peers: core_five
 
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.
@@ -210,21 +228,26 @@ doc_type_scope:
 # Read by expand_synonyms() in src/cee/retrieve/fts.py (#89):
 #   - expansion runs key -> values only, never back;
 #   - all-caps keys (NNA, FA, FAs, AI, ...) match the question in exact case, whole word;
-#     other keys match in any case;
-#   - every value is searched as a phrase, OR'ed with the question's own words.
+#     other keys match in any case, with a hyphen or spaces between their words ("stock-plan"
+#     fires `stock plan`) and an inflected last word (s, es, ed, ing: `recruit` fires on
+#     "recruiting", `advisor` on "advisors"; #203). Keys in `synonym_exact` (below) keep the
+#     plain whole-phrase match;
+#   - every value is searched as a phrase, OR'ed with the question's own words; a multi-word key
+#     found in the question is searched as a phrase too (#203: "net new assets" as one phrase
+#     brought the EDJ table row "Net new assets for the period" into Q22).
 #
 # Rules for this list:
 #   - Same concept only. A neighbour metric is never a synonym: net new assets is not
 #     client assets is not AUM; headcount change is not attrition (Q22, Q24, Q28).
-#   - Plurals and verb forms need no entry: the Postgres english stemmer already folds
-#     advisors -> advisor, recruiting/recruited -> recruit. Add only what it does not fold
-#     (adviser -> advis, custodian -> custodian, retain -> retain).
+#   - Plurals and verb forms need no entry: the key matches them (above) and the Postgres
+#     english stemmer folds the searched words (advisors -> advisor, recruiting -> recruit).
+#     Add only what neither folds (adviser -> advis, custodian -> custodian, retain -> retain).
 #   - Firm-specific names for a metric are marked TODO-verify until seen in a stored chunk.
 #   - Entity and segment names live in entities/segment_aliases above, not here.
 synonyms:
   # Flows (Q1, Q22)
   NNA: ["net new assets"]
-  net new assets: ["NNA", "core net new assets"]   # EDJ-10K-2025 #130 uses "net new assets"; "core net new assets" is SCHW wording (TODO-verify in SCHW monthly)
+  net new assets: ["NNA", "core net new assets", "net new assets for the period"]   # EDJ-10K-2025 #130 uses "net new assets"; "core net new assets" is SCHW wording (TODO-verify in SCHW monthly); last one: EDJ 10-Q table label (Q22, #203: EDJ-10Q-2026Q2 #60)
   # Advisors and headcount (Q2, Q4, Q7, Q11, Q23)
   FA: ["financial advisor", "financial adviser"]
   FAs: ["financial advisors", "financial advisers"]
@@ -233,8 +256,9 @@ synonyms:
   # Attrition and retention (Q7, Q28). Net headcount change is NOT attrition; do not add it.
   attrition: ["regretted attrition", "advisor departures"]
   retention: ["retain", "retained"]
-  # Recruiting (Q2, Q4, Q7)
-  recruiting: ["hiring", "transition assistance", "forgivable loans"]
+  # Recruiting (Q2, Q4, Q7). "recruit" fires on recruit/recruiting/recruits (#203). A recruiting
+  # pitch is told in payout and affiliation terms (Q2: RJF's affiliation pages, "up to 50% payout").
+  recruit: ["hiring", "transition assistance", "forgivable loans", "payout", "affiliation options"]
   # Assets (Q15, Q24). Kept apart on purpose: these are three different quantities.
   client assets: ["total client assets"]
   AUM: ["assets under management"]
@@ -252,10 +276,20 @@ synonyms:
   wealth tier: ["high net worth", "ultra high net worth", "client segment"]
   mass affluent: ["mass-affluent"]
   stock plan: ["equity compensation", "workplace"]
-  AI: ["artificial intelligence", "generative AI", "GenAI", "machine learning"]
+  # Channel conversion (Q13, #203): MS calls it "channel migration" and "advisor-led assets
+  # originating from workplace" (MS-TR-2026Q1 #24, MS-TR-2025Q4 #20). "originating from" fires only
+  # on a question that says "convert", like every value.
+  convert: ["channel migration", "originating from"]
+  workplace: ["originating from workplace", "workplace channel"]
+  # Deployed AI tools are named "AI-powered", "AI-enabled" (Q5, Q17, #203: MS-TR-2025Q3 #8 LeadIQ,
+  # BAC-TR-2026Q2 #21).
+  AI: ["artificial intelligence", "generative AI", "GenAI", "machine learning", "AI-powered", "AI-enabled",
+       "AI tools", "AI-driven"]
   technology: ["AI", "artificial intelligence", "digital", "platform", "tools"]   # Q5
   fee structures: ["fee schedule", "advisory fee", "wrap fee"]
   younger investors: ["millennials", "Gen Z", "younger clients", "under 40"]
+  # Q20 (#203): survey reports say "next generation" for the under-40 cohort.
+  under 40: ["next generation", "younger investors", "younger clients", "millennials", "Gen Z"]
   wealth transfer: ["great wealth transfer", "intergenerational", "heirs"]
   # Segments named in questions (duplicates segment_aliases for text search only)
   GWIM: ["Global Wealth & Investment Management", "Global Wealth and Investment Management"]
@@ -265,3 +299,9 @@ synonyms:
 # read from the word; the bare word is left out of the full-text words. In filings "pay" is
 # mostly "pay an obligation" (Q29: a clearing-guarantee note outranked the advisor payout passage).
 synonym_only: [pay]
+
+# Keys that keep the plain whole-phrase match: no inflected last word, no hyphen form (#203). Q25
+# ("advisor compensation structures") is a gap question; with the inflected match this key brought
+# "payout grid" and an RJF call turn on the payout grid (RJF-TR-2026Q1 #44) into it. Kept out so
+# Q25 stays a clean gap (TL decision, #203 plan review).
+synonym_exact: ["compensation structure"]

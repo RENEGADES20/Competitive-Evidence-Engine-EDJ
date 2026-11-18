@@ -45,16 +45,61 @@ def test_expansion_runs_key_to_values_only():
 
 
 def test_all_caps_key_matches_exact_case_only():
-    assert expand_synonyms("What are firms saying about AI?") == [
+    assert expand_synonyms("What are firms saying about AI?")[:4] == [
         "artificial intelligence", "generative AI", "GenAI", "machine learning"]
-    assert expand_synonyms("What has Raymond James said about its affiliation models?") == []
+    # "ai" inside "said"/"affiliation" never fires `AI`; "affiliation models" fires `affiliation model` (#203)
+    assert expand_synonyms("What has Raymond James said about its affiliation models?") == [
+        "affiliation model", "affiliation options", "affiliation choice"]
     assert expand_synonyms("what about ai in advice") == []
     assert expand_synonyms("FAs and NNA") == [  # config order; "FA" does not fire inside "FAs"
         "net new assets", "financial advisors", "financial advisers"]
 
 
 def test_lower_case_key_matches_any_case():
-    assert expand_synonyms("Net New Assets by quarter") == ["NNA", "core net new assets"]
+    # a multi-word key is searched as a phrase too, ahead of its values (#203)
+    assert expand_synonyms("Net New Assets by quarter") == [
+        "net new assets", "NNA", "core net new assets", "net new assets for the period"]
+
+
+def test_multi_word_key_is_a_phrase_probe():
+    # Q22 (#203): "net new assets" as one phrase, not three common words
+    sql, params = _tsquery_sql("Net new assets by quarter")
+    assert params["syn0"] == "net new assets"
+    assert expand_synonyms("advisor") == ["adviser"]          # a one-word key adds no phrase of itself
+
+
+def test_key_matches_hyphen_and_inflected_last_word():
+    # #203: "stock-plan" (Q13) fires `stock plan`; `recruit` fires on "recruiting" (Q7) and "recruit" (Q2)
+    assert expand_synonyms("stock-plan participants")[:3] == ["stock plan", "equity compensation", "workplace"]
+    assert "payout" in expand_synonyms("approach advisor recruiting and retention")
+    assert "payout" in expand_synonyms("positioning itself to recruit advisors")
+    assert expand_synonyms("advisors") == ["adviser"]
+    assert expand_synonyms("recruitment") == []                 # only s, es, ed, ing
+    assert expand_synonyms("FAS") == []                         # all-caps keys: exact case, whole word
+
+
+def test_new_vocabulary_entries():
+    # #203: Q13 conversion, Q17 deployed AI tools, Q20 under-40 wording
+    assert expand_synonyms("convert workplace participants") == [
+        "channel migration", "originating from", "originating from workplace", "workplace channel"]
+    assert {"AI-powered", "AI-enabled"} <= set(expand_synonyms("AI in advice delivery"))
+    assert "next generation" in expand_synonyms("clients under 40")
+
+
+def test_gap_question_q25_keeps_its_plain_key_match():
+    # #203 plan review: "compensation structures" (Q25, a gap question) must not fire `compensation
+    # structure` -> "payout grid"; the key is in config `synonym_exact`
+    q25 = "What has each of the five actually disclosed about advisor compensation structures?"
+    assert "payout grid" not in expand_synonyms(q25)
+
+
+def test_synonym_exact_key_keeps_the_whole_phrase_match(monkeypatch):
+    from cee.retrieve import fts
+    cfg = dict(fts.entities_config())
+    cfg["synonym_exact"] = ["compensation structure"]
+    monkeypatch.setattr(fts, "entities_config", lambda: cfg)
+    assert "payout grid" not in expand_synonyms("advisor compensation structures")
+    assert "payout grid" in expand_synonyms("advisor compensation structure")
 
 
 def test_multi_word_synonym_is_searched_as_a_phrase():
@@ -65,7 +110,7 @@ def test_multi_word_synonym_is_searched_as_a_phrase():
 
 
 def test_no_synonym_leaves_the_words_only():
-    sql, params = _tsquery_sql("positioning itself to recruit away from wirehouses")
+    sql, params = _tsquery_sql("positioning itself away from wirehouses")
     assert "phraseto_tsquery" not in sql["tsquery"]
     assert params == {}
 
@@ -76,10 +121,43 @@ def test_synonym_only_word_is_searched_through_its_synonyms():
     assert "pay" in synonym_only_words()
     terms, synonyms = keyword_terms(resolve("What does Morgan Stanley pay its financial advisors?"))
     assert "pay" not in terms.split() and "financial advisors" in terms
-    assert synonyms[:2] == ["compensation", "payout"]
+    assert synonyms[:3] == ["adviser", "compensation", "payout"]   # "advisors" fires `advisor` (#203)
 
 
 def test_question_without_a_synonym_only_word_keeps_its_terms():
     from cee.retrieve.fts import keyword_terms
     q = resolve("What is Morgan Stanley's strategy to increase their net new assets?")
     assert keyword_terms(q) == (_search_terms(q), expand_synonyms(_search_terms(q)))
+
+
+def test_inflected_synonym_only_word_is_stripped_too():
+    # #203: with the inflected key match, "pays"/"paying" leave the words like "pay" (the stemmer
+    # folds them to the same lexeme, searched only through its synonyms)
+    from cee.retrieve.fts import keyword_terms
+    terms, synonyms = keyword_terms(resolve("How is Morgan Stanley paying its financial advisors?"))
+    assert "paying" not in terms.split() and "financial advisors" in terms
+    assert "payout" in synonyms
+
+
+# --- the advisor-led model (#205, ADR-018) ------------------------------------------------------
+
+Q15 = "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?"
+
+
+def test_advisor_led_model_adds_the_advisor_led_firms():
+    assert resolve(Q15).entities == FIVE                     # Schwab named + MS, EDJ, MER, RJF
+    assert resolve("How do advisor-led firms price advice?").entities == ["MS", "EDJ", "MER", "RJF"]
+
+
+@pytest.mark.parametrize("question, entities", [
+    ("How does Edward Jones's advisor-led model earn?", ["EDJ"]),
+    ("How big is Morgan Stanley's advisor-led channel?", ["MS"]),
+])
+def test_a_named_firm_s_advisor_led_model_is_that_firm_only(question, entities):
+    assert resolve(question).entities == entities
+
+
+def test_plural_advisor_led_models_names_the_group():
+    # deliberate (#205 plan review): the plural names the group, so MER and RJF join the two firms
+    q = resolve("How do Edward Jones's and Morgan Stanley's advisor-led models differ?")
+    assert q.entities == ["MS", "EDJ", "MER", "RJF"]
