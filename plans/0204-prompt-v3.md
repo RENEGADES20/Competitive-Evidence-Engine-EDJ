@@ -219,10 +219,10 @@ The `Answer` schema does not change. The real check is #121's combined R2.
 - Longer answers cost more output tokens per call (cap 8000); no change in call count.
 
 ## Progress log
-- 2026-11-18 00:45 - plan written on `tl/204-prompt-v3` (from origin/main a886741) in
+- 2026-11-18 00:43 - plan written on `tl/204-prompt-v3` (from origin/main a886741) in
   `wt-204`; DB `cee` = `corpus-2026-11-17` (sync check up to date); R1 pack and raw outputs read;
   probe questions P1-P4 picked from mock retrieval (0 calls). 0 real calls so far.
-- 2026-11-18 01:00 - plan review round 1 (CHANGES REQUESTED, #204 comment 6971295493). Fixed:
+- 2026-11-18 00:47 - plan review round 1 (CHANGES REQUESTED, #204 comment 6971295493). Fixed:
   (1) rule 3's strategy clause reworded in general terms (headwinds or risks the firm itself
   names), with no frames/priorities/pressure/concedes chain; the leak test lower-cases and strips
   punctuation before 6-word runs; new acceptance line that the test catches the old rule-3 text;
@@ -234,10 +234,10 @@ The `Answer` schema does not change. The real check is #121's combined R2.
   in round 2 (it restated Q18's `passes_if`); probes noted as template-adjacent (P1~Q7, P2~Q18, P3~Q25, P4~Q20), and a
   revision must pass the leak test and the hand check; "Part of #204" if verify has not run by PR
   time; "(Q30 trap unchanged)" marked as a plan note, never prompt text.
-- 2026-11-18 01:15 - plan review round 2 (CHANGES REQUESTED, #204 comment 6971351346). Fixed:
+- 2026-11-18 00:50 - plan review round 2 (CHANGES REQUESTED, #204 comment 6971351346). Fixed:
   rule 2's labelling clause dropped (it restated Q18's `passes_if` list and phrase); rule 2 keeps
   "keep firm statements, research and trade press attributed", now with "saying whose statement
-  each claim is"; Risks bullet and the 01:00 line updated, Q18 still named as an R3 risk.
+  each claim is"; Risks bullet and the round-1 log line updated, Q18 still named as an R3 risk.
   Non-blocking 1 taken (Risks: "rule 1's per-dimension gaps"). Leak check run before pushing
   (reviewer's `scratchpad\leak.py`, rules 1-4 from this plan, without the rule-4 plan note, vs
   all 30 `passes_if`, lower-case, punctuation stripped): 6-word runs 0, 5-word 0, 4-word one
@@ -269,3 +269,7 @@ The `Answer` schema does not change. The real check is #121's combined R2.
     overlap; the wider-unit sentence repeats v2's GWIM/substitute rule.
   - Wording edit (ranges gap names the firm) vs Q25/Q29: standard wording only. No other
     question touched.
+- 2026-11-18 00:52 - plan review round 3: PLAN APPROVED (#204 comment 6971390880). Log times of
+  the three lines above corrected to their commit times (00:43, 00:47, 00:50; they were written
+  as 00:45, 01:00, 01:15). Implementation started; `verify_cee.py` held until the TL frees
+  `cee_verify` (in use for PR #206).
