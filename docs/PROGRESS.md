@@ -128,6 +128,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-16 | TL: corpus freeze snapshot corpus-2026-11-16 (137 documents, 18,497 passages; #84 pages, #115 registry names; without #55/#107 by TL decision) built, verified and named in LATEST.json; mock check 26/30 (Q15, Q19, Q22, Q24), Merrill's first own documents crowd out other firms in five-firm questions (#120) (#180) | 30-call real run awaits TL approval; Gate 3 human score, cold test, sixth-firm decision open | /sync-db; real run and Gate 3 scoring; S1 per-firm pool fix |
 | 2026-11-17 | TL: rules updated per tech-lead decision of 2026-11-16 (ADR-011; model-based work on a branch; up to 5 real calls per question, Gate 3 run needs the tech lead) (#182) (#183) | - | - |
 | 2026-11-17 | ADR-012: up to 5 LLM calls per user question (one by default), work stays on main; paid-call test budget counts by question run, no per-task total (CLAUDE.md, TL review docs) (#185) | none | multi-call answer feature issue builds on ADR-012 |
+| 2026-11-18 | #187: eval runner keeps a paid model output that fails validation (raw payload saved, INVALID_OUTPUT status, call counted, run continues) (#191) | Blockers: none (verify-cee open-citation read-back fails on main too) | Next: track the open-citation read-back failure |
 
 ## Weekly score (from W6)
 
