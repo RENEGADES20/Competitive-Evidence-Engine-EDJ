@@ -392,3 +392,44 @@ level. Brochures-only copy: recall equals the freeze without brochures (0.646 / 
 lose a passage each to trade chunks compared with the freeze (trade takes the document type's
 turns at k = 20); a fee question worded without any configured term or theme keyword does not
 see the brochures, and the term lists are the place to widen it. Evidence in the #179 PR.
+
+## ADR-016: Slot order inside a firm: trade press last, a new document before a second chunk
+Status: Accepted (tech lead, 2026-11-17, #198 / #199); adds slot-order rules to `specs/retrieval.md`
+Context: the final snapshot `corpus-2026-11-17` adds 77 trade-press articles (tier 4, #57) and
+cuts the 32 earnings calls at speaker turns (#107: 1,689 -> 2,852 transcript chunks). Inside a
+firm's share, document types took turns in rank order and each type gave its next-best chunk.
+Mock eval (app budget) on that snapshot: tier-1 document recall 0.573 at `--as-of 2026-10-29` and
+0.547 at 2026-11-17, against 0.646 / 0.625 on `corpus-2026-11-16` (no trade press, length-cut
+calls). Trade articles ranked first took the trade turn every round and pushed filings, releases
+and calls out (Q2 `RJF-TR-2025Q4`, Q5 `MS-TR-2026Q1`, Q30 `BAC-PR-2026-01-14-01`), and the
+transcript turn went to a second and third turn of the firm's best call instead of its other calls
+(Q6 `RJF-TR-2025Q2`, Q11 `SCHW-TR-2026Q1`, Q13 `MS-TR-2026Q3`, Q27 `BAC-TR-2026Q3`; Q4 missed the
+Merrill answer `BAC-TR-2026Q2#63` by one slot).
+Decision: `fts.select()` orders slots inside a firm's turn (theme and rank turns alike; never in
+the tier 5 research part):
+- **Trade last** (`TIER_LAST = 0`): a tier 4 document type takes the firm's turn only when no other
+  type of the firm can give a chunk. If the list is then full and the firm has no trade chunk,
+  its best trade chunk replaces its last second chunk of a document, else of a document type
+  (`TRADE_KEEP`); a firm's only chunk of a type is never given up. Off inside a time window
+  (Q26 reads its 90 days of news as ranked).
+- **New document first** (`NEW_DOC_FIRST`): a document type gives a document not yet in the list
+  before a second chunk of a used one; among unused documents whose chunk ranks within 0.9 of the
+  type's best unused chunk, the newest wins (`NEWEST_BAND = 0.9`; Q11's 1Q26 call at 6.31 vs the
+  4Q25 call at 6.64). Also inside a window (Q27 "since the start of the year").
+- Chosen from a mock grid on `corpus-2026-11-17` at both as-of dates (`D:\ALLPROJECTS\EDJ\cache\ev198\grid*`):
+  trade {no rule, last, first 1 or 2 in turn then last, cap 1 or 2} x new document first {off, on}
+  x newest band {off, 0.95, 0.9} x keep one trade {off, on}. Only "last" brought Q30 back to 1.0;
+  caps lowered Q17/Q25; Q11 needed the newest band; pure "last" took every trade chunk out of
+  Q2, Q5, Q7, Q29 (their `*:trade` coverage fell), which the keep-one rule restored without losing
+  Q30's release or Q18's brochure. Chosen: the cell meeting every #198 / #199 acceptance item at
+  both dates with the highest tier-1 recall.
+Consequences: mock, `corpus-2026-11-17`: 28 PASS / 2 FAIL unchanged (Q15, Q19), refusal 5/5 and
+19/19, 0 forbidden; tier-1 document recall 0.573 -> 0.742 (2026-10-29) and 0.547 -> 0.727
+(2026-11-17), above the no-trade level; passage recall 0.453 -> 0.550 and 0.420 -> 0.523. Q2 0.556,
+Q5 1.0, Q30 1.0, Q6 0.667, Q11 1.0, Q13 0.833, Q27 0.667; Q4 gets `BAC-TR-2026Q2#63`; Q26 still
+reads 15 RJF trade chunks inside its window. Every keyed question's document recall is at or
+above `main` before speaker-turn chunking (#107). Cost: a firm's trade press now mostly fills what
+filings and IR leave; Q17 loses one MS trade chunk (coverage 0.6 -> 0.5, recall unchanged), and
+Q6 holds 0.667 rather than its no-trade 0.833 (the newest band prefers RJF's later calls). A newer
+document of the same type can displace an older one ranked up to 10% higher. Evidence in the
+#198 PR.

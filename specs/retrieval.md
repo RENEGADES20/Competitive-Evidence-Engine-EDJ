@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -64,11 +64,23 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     #   window questions have no floor; the research part keeps the best chunk as its base
     # doc-type scope (#179, ADR-015; config `doc_type_scope`): Form ADV brochures (`adv`) are
     #   searched only when the question is on fees / pricing (theme fees_pricing) or names the
-    #   brochure ("Form ADV", "ADV", "brochure"), and never in a question with a time window (a
-    #   brochure revision is not news, Q26 / Q27); a benchmark question (2+ firms and a metric:
-    #   "advisor headcount", "net new assets", "assets per advisor", Q22-Q24) does not search
+    #   brochure ("Form ADV", "ADV", "brochure", "brochures") or "compensation" (how advisors are
+    #   paid, Q25), and never in a question with a time window (a brochure revision is not news,
+    #   Q26 / Q27); a benchmark question (2+ firms and a metric: "advisor headcount", "net new
+    #   assets", "assets per advisor", "attrition rate"; Q11, Q22-Q24, Q28) does not search
     #   tier 4 trade press. A hard SQL filter on every pass; brochures and trade press otherwise
     #   crowded MS:supplement, SCHW:10-K and RJF:press out of Q23 / Q24 (#178, #186)
+    # slot order inside a firm (#198, #199, ADR-016), theme and rank turns alike, never for the
+    #   research part:
+    #   - trade last (not inside a time window: Q26 reads its news as ranked): tier 4 trade press
+    #     takes a firm's turn only when no other document type of the firm can give a chunk (Q2,
+    #     Q5, Q30 lost filings and calls to trade articles); when the list is then full, the
+    #     firm's best trade chunk replaces its last second chunk of a document (or of a document
+    #     type), never its only chunk of a type (Q7, Q29 keep a *:trade source; Q30's release stays)
+    #   - new document first (window questions too, Q27): a document type gives a document not
+    #     yet in the list before a second chunk of a used one (speaker-turn chunks of one call
+    #     pushed the firm's other calls out of Q6, Q11, Q13, Q27); among unused documents ranked
+    #     within 0.9 of the type's best, the newest wins (Q11: SCHW-TR-2026Q1 vs 2025Q4)
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
