@@ -122,26 +122,26 @@ quality and the PR says so.
    `TEMPLATE cee`) and `--as-of 2026-10-29` for all runs, "Closes #166" and "Closes #190".
 
 ## Acceptance
-- [ ] #166: on `cee_166` (freeze + #150's transcripts, #150's answer key), mock `--as-of
+- [x] #166: on `cee_166` (freeze + #150's transcripts, #150's answer key), mock `--as-of
       2026-10-29`: **Q28 PASS**, and no PASS -> FAIL vs. main's code on the same DB
       (`ev166\main-150`). Other recall changes listed and explained in the PR.
-- [ ] #166: on `cee` (freeze `corpus-2026-11-16`, main's answer key), mock `--as-of 2026-10-29`:
+- [x] #166: on `cee` (freeze `corpus-2026-11-16`, main's answer key), mock `--as-of 2026-10-29`:
       no PASS -> FAIL vs. `ev166\main-cee`; forbidden hits stay 0; refusal accuracy on the gap
       questions unchanged.
-- [ ] #166: the #150 review's recall drops (Q4, Q6, Q11, Q13, Q27) re-checked: final
+- [x] #166: the #150 review's recall drops (Q4, Q6, Q11, Q13, Q27) re-checked: final
       `cee_166` run compared with `ev166\main-cee` (the review's comparison: main code + key on
       the freeze vs. #150 code + key on the #150 DB) and with `ev166\main-150`; each drop listed
       as fixed or explained. Note: as-of 2026-10-29 here, 2026-10-30 in the review.
-- [ ] #190: decision recorded in `specs/retrieval.md` (the floor applies to the on-theme slot
+- [x] #190: decision recorded in `specs/retrieval.md` (the floor applies to the on-theme slot
       or not, and why).
-- [ ] #190: on `cee`, Q21 retrieves `MS-DECK-2026-strategic-update#22` (or another MS chunk on
+- [x] #190: on `cee`, Q21 retrieves `MS-DECK-2026-strategic-update#22` (or another MS chunk on
       the theme) and its coverage note no longer reports Morgan Stanley as a theme gap; Q7, Q10,
       Q12, Q19, Q21, Q28 and all others: no PASS -> FAIL vs. main.
-- [ ] Fixture tests: Q28 shape (outlier best chunk does not drop a relevant chunk) and #190
+- [x] Fixture tests: Q28 shape (outlier best chunk does not drop a relevant chunk) and #190
       shape (on-theme chunk below the floor keeps its theme slot, no gap reported).
-- [ ] `pytest -q` passes; `python scripts/verify_cee.py run` PASS; 0 real calls.
-- [ ] `cee` unchanged; `cee_166` dropped and `wt-166-150` removed at the end.
-- [ ] PR closes both #166 and #190.
+- [x] `pytest -q` passes; `python scripts/verify_cee.py run` PASS; 0 real calls.
+- [x] `cee` unchanged; `cee_166` dropped and `wt-166-150` removed at the end.
+- [x] PR closes both #166 and #190.
 
 ## Progress log
 - 2026-11-17 18:36 - plan written (branch `tl/166-floor-after-speaker-turns` from `origin/main`
@@ -161,3 +161,36 @@ quality and the PR says so.
 - 2026-11-17 18:44 - reviewer of record: PLAN APPROVED on `a97014d`
   ([#166 comment](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/166#issuecomment-6965440506)).
   Starting step 1.
+- 2026-11-17 18:50 - step 1. `cee` at corpus-2026-11-16 (sync-db -Check), 18,497 chunks / 137
+  documents. `cee_166` restored from the dump, 32 transcripts re-ingested from `wt-166-150`
+  (`CORPUS_SHARE_PATH` pointed at Box): 2,852 transcript chunks, longest 1,198, 14 GWIM, #63 GWIM,
+  19,660 chunks - #150's numbers. Baselines: `main-cee` 28 PASS (Q15, Q19 fail), `main-150` 27
+  PASS (Q28 FAIL, coverage 0.333). After #181 Q4 is up on the #150 copy (0.571 -> 0.714) and Q11
+  no longer drops; Q6, Q13, Q27 still drop. Q28 cause confirmed: Merrill best 10.65 (#63),
+  floor 3.20, `BAC-10K-2025#246` 2.77. Q21 on `cee`: MS deck #22 at 2.32 vs floor 3.50; RJF has
+  no on-theme chunk in the pool (a true gap).
+- 2026-11-17 18:55 - step 2. #190 alone (theme slot ignores the floor): on both DBs only Q21
+  changes (MS gap gone, `MS-DECK-2026-strategic-update#22` in for one MS chunk); no metric moves.
+- 2026-11-17 19:00 - step 3 grid (on top of #190; `ev166\grid`). All floor rules (FLOOR 0.25,
+  0.2; base 2nd, 3rd) give Q28 PASS and no PASS -> FAIL on both DBs; transcript MAX_PER_DOC 4 / 5
+  alone leaves Q28 FAIL. Recall drops: 0.25 - Q17 (both), Q4 and Q5 (#150 copy); 2nd best -
+  Q17 (both), Q5 (#150 copy, back to the freeze level); 3rd best - none on `cee`, but Q4 loses
+  `BAC-TR-2026Q2#63` (the target of #107) and Q5 drops on the #150 copy. Combinations with
+  cap 4 changed nothing on the #150 copy. Two extra cells outside the planned grid (2nd best with
+  FLOOR 0.35 / 0.38) lost Q5 coverage on `cee` and were dropped. Chosen: floor base = 2nd best
+  (FLOOR stays 0.3, no cap change), fewest drops and keeps #63 in Q4. Shape change -> ADR-014.
+- 2026-11-17 19:02 - step 4. `FLOOR_BASE = 2` with a `floor_base` argument; research keeps
+  base 1 (unchanged). Tests went into `tests/test_retrieval_quotas.py` (the #190 case is a
+  `select()` fixture with no database, so it sits with the other floor tests, not in
+  `test_retrieval_themes.py`); `test_chunks_far_below_the_best_get_no_slot` updated for the
+  new base. The 2 new tests fail on main, pass here. Final runs equal the grid cell exactly.
+- 2026-11-17 19:04 - step 5. pytest 426 passed (441 on the #150 merge). Run from `wt-166-150`
+  merged with `54016c6`: identical to `final-150`. verify-cee first run: ask-answer FAIL at
+  the Q21 step, which expected Morgan Stanley in the theme-gap note - the behavior #190 fixes.
+  Recipe and driver updated (`features/ask-answer.md`, `scripts/verify_cee.py`; CLAUDE.md rule
+  for a changed user feature; outside the plan's file list), re-run: all 9 features PASS
+  (`.verify-runs/20261117-190402-54016c6`).
+- 2026-11-17 19:06 - step 6. `cee` still 18,497 / 137; `cee_166` dropped; `wt-166-150` and its
+  branch removed. Q6 / Q13 / Q27 drops on the #150 copy are not floor effects (the transcript
+  chunks clear the floor and lose the transcript type's turns at k = 20); left for #150 / a
+  later quota issue.

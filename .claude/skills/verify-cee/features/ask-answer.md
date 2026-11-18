@@ -33,9 +33,10 @@ Preconditions: baseline.
   before the ask.
 - **Theme gap.** Ask Q21 ("What do we know about the generational wealth transfer, and how
   are these five preparing for it?"). The `Coverage:` line contains
-  `No passages on the theme (Generational wealth transfer) for` followed by Morgan Stanley
-  (corpus-2026-11-16: MS has one wealth-transfer chunk in the corpus, ranked below the 0.3 floor,
-  so none is retrieved).
+  `No passages on the theme (Generational wealth transfer) for` followed by Raymond James
+  Financial, and not by Morgan Stanley (corpus-2026-11-16: RJF has no wealth-transfer chunk in
+  the pool; MS's one, `MS-DECK-2026-strategic-update#22`, ranks below the floor but takes MS's
+  theme slot since #190).
 
 ## Gotchas
 

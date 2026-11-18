@@ -57,7 +57,8 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-# Q21: five firms + a theme (#117); Morgan Stanley and Raymond James hold no passage on it
+# Q21: five firms + a theme (#117); Raymond James holds no passage on it. Morgan Stanley's one
+# on-theme chunk ranks below the floor but takes its theme slot (#190), so MS is no gap
 THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
 THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
 FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback"]
@@ -319,8 +320,9 @@ def feature_ask_answer(page, base, rec, ctx):
     body = page.locator("body").inner_text()
     line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
     rec.step("Ask the five firms about the wealth transfer (Q21)",
-             f"coverage note says '{THEME_GAP_NOTE} ...' and names Morgan Stanley",
-             THEME_GAP_NOTE in line and "Morgan Stanley" in line.split(THEME_GAP_NOTE)[-1], line)
+             f"coverage note says '{THEME_GAP_NOTE} ...', names Raymond James, not Morgan Stanley",
+             THEME_GAP_NOTE in line and "Raymond James" in line.split(THEME_GAP_NOTE)[-1]
+             and "Morgan Stanley" not in line.split(THEME_GAP_NOTE)[-1], line)
 
 
 def open_trace(page) -> list[str]:
