@@ -232,7 +232,7 @@ so the `repo` code (= `main`) is used.
    eval_run writes each output to `EV\real-30\raw\` (and `repo\.eval-runs\cache\`). Check: one
    raw file per question with hits (expected 30), and calls + reused + no_call = 30. Record
    `main` sha, model, calls used.
-10. **Scoring pack**: from the saved outputs, without new calls: per question expected vs got
+10. (TL 2026-11-17: the X/30 is scored by the TL agent, see Progress log.) **Scoring pack**: from the saved outputs, without new calls: per question expected vs got
     behavior, citations resolve (every cited `chunk_id` was retrieved and exists in the DB), the
     #52 number check, normative sentences quoted, and a provisional verdict against
     `passes_if`, marked "provisional (Claude)". The Gate 3 X/30 is the human score (DASHBOARD
@@ -303,6 +303,68 @@ Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in t
   of the effect.
 - Q18 (P1): scored without fee-schedule documents; mock PASS on pattern coverage only.
 
+## Gate 3 score (2026-11-17): 16/30, scored by the TL agent (Claude)
+
+Run: `D:\ALLPROJECTS\EDJ\cache\ev120\real-30` (snapshot `corpus-2026-11-16`, code `main` 54a8775,
+as of 2026-11-16, model `claude-sonnet-5-5`, prompt v2, 29 real calls, 0 reused, 1 no_call (Q26),
+0 INVALID_OUTPUT). Scoring pack: `D:\ALLPROJECTS\EDJ\cache\ev120\scoring\` (one `Q<n>.md` per
+question with every claim, its cited passages from the DB, flags, gaps, caveats; `summary.csv`).
+Each answer was read against the question's `passes_if` (four axes, one verdict: would the
+project lead forward it to the CSO? No half credit). This is the TL agent's judgement, not a
+teammate's score; it replaces the per-person scoring of DASHBOARD section 6 (TL decision
+2026-11-17).
+
+Checks over all 29 answers: 303 citations, 0 cite a chunk outside the retrieved set or missing
+from the DB; 0 normative claims withheld; Q12 and Q19 hand the "should" back explicitly. Code's
+#52 number check flagged 2 claims: Q17 (an adjacent McKinsey item; no figure in the claim text that
+matters) and Q22 (the RJF NNA row; the values 12,969 / 14,020 / 8,830 / 11,651 / 17,930 and 4.0 /
+4.0 / 2.6 / 3.4 / 5.0 % were checked by hand against `RJF-SUPP-2025Q3#9` and are correct, so a
+checker false positive).
+
+| Q | Tier | Expected -> got | Verdict | Reason |
+|---|---|---|---|---|
+| Q1 | 1 | answer -> answer | PASS | Channels management credits (Workplace "most exciting", advisor channel, self-directed, IPO flows ~half of NNA), in management's words, every claim dated 3Q25-3Q26. |
+| Q2 | 1 | answer -> answer | PASS | RJF's own pitch (affiliation choice, Advisor Select "higher rate on production", "no quotas", book ownership, platform/tech) from its pages and calls, plus recruiting results (recruiting comp $107M, NNA driven by recruiting). |
+| Q3 | 1 | answer -> answer | FAIL | Frames Advisor Services and its priorities, but no competitive pressure management acknowledges and nothing on where it concedes ground; only the 10-K competitor list and "#1 in RIA custody". |
+| Q4 (trap) | 1 | answer -> answer | PASS | No BAC consumer or BAC-wide hiring presented as Merrill; GWIM labelled as Merrill + Private Bank; ADP pipeline from Merrill's pages; the "change" is honestly marked as inferred. Headcount trajectory missing but marked as a gap. |
+| Q5 | 1 | answer -> answer | PASS | Named platforms with stated purpose (LeadIQ, E*TRADE Pro, Carta, Zero Hash; DevGen/Parable marked not advisor-facing); spend only qualitative and no estimate. |
+| Q6 | 1 | answer -> answer | PASS | Options as RJF describes them (payout ranges per model) and the mix shift toward independent recruiting quoted from the April 2026 call; no quantified mix, said so. |
+| Q7 | 2 | answer -> answer | FAIL | No common grid: dimensions differ by firm (RJF posture/retention, Merrill training pipeline, MS only client-migration adjacents); empty cells (Merrill payout, MS/RJF training) not shown as empty. |
+| Q8 | 2 | answer -> answer | PASS | Each firm in its own language; explicitly keeps custody (Schwab) and affiliation (RJF) distinct. |
+| Q9 | 3 | answer -> answer | PASS | MS tiers (HNW/UHNW) with "no thresholds disclosed" said plainly; Merrill $250K advisory threshold and GWIM bands, with the source conflict named. |
+| Q10 | 3 | answer -> answer | PASS | Judgment made legible: only GWIM uses "mass affluent" (dated slide), basis stated, Schwab "affluent" and Cerulli kept as adjacent. Thin, but meets passes_if. |
+| Q11 | 1 | answer -> answer | FAIL | Two of five definitions (EDJ, RJF); MS, Schwab and Merrill marked "not in the evidence" though MS and BAC supplements report advisor counts (retrieval miss). |
+| Q12 | 3 | answer_with_boundary -> same | FAIL | Boundary held (explicit hand-off), but the evidence half is not complete: no Edward Jones cost structure set alongside and little on Schwab's acquisition economics. |
+| Q13 | 1 | answer -> answer | FAIL | Channel pieces and dated participant figures, but not end to end, and the disclosed conversion figure (Workplace -> advisor-led migration, cited in Q7 from MS-TR-2024Q4/2026Q1) is missing. |
+| Q14 | 3 | answer -> answer | PASS | Each option's economics for the advisor (payouts, benefits, entry minimums) from RJF's own page and 10-K; firm side via payout split, advisor loans and NNA attribution; channel profitability marked undisclosed. |
+| Q15 | 3 | answer -> answer | FAIL | Only Schwab's revenue mix; the advisor-led side is missing (gap), so no mechanism comparison. |
+| Q16 | 3 | answer -> answer | FAIL | Organised by source/firm, not by position; no spread of positions synthesised. |
+| Q17 | 1 | answer -> answer | FAIL | The "who claims most" verdict says MS and EDJ make no advice-delivery AI claims (from MS's 10-K only) and the gap names Merrill and EDJ as silent, leaving out MS LeadIQ (Q5) and BAC's AI tools for advisers (Q4), both in the corpus. |
+| Q18 | 3 | answer -> answer | PASS | Pricing changes (lower AUM pricing, Merrill no added fee), research (McKinsey), survey (Wealthtender) and management commentary each labelled. No regulatory item; scored without fee-schedule documents (TL decision, P1). |
+| Q19 | 3 | answer_with_boundary -> same | FAIL | Stops at "should" correctly, but competitor moves aimed at the cohort are missing (e.g. Schwab "built to win across generations", Gen Z share of new accounts) and EDJ's own next-gen platform is not mentioned. |
+| Q20 | 1 | answer -> gap_with_adjacent | FAIL | Behavior mismatch; UBS findings given without sample, Wealthtender study not used; no under-40 finding reported. |
+| Q21 | 2 | answer -> answer | PASS | Two halves separate: Cerulli (Oct 2025) and UBS (Apr 2026) estimates with source and vintage; firm actions (EDJ, Schwab, MS adjacent) with RJF/Merrill gaps. |
+| Q22 | 1 | answer -> answer | FAIL | Honest (GWIM flows labelled, no substitution), but the by-quarter table is not there for 3 of 5: MS 2 quarters, Schwab 2, EDJ percentages only; Schwab and RJF definitions missing. |
+| Q23 | 1 | answer -> gap_with_adjacent | FAIL | Behavior mismatch; no series for any firm though EDJ 10-Qs and MS/BAC/RJF supplements carry the counts. |
+| Q24 | 3 | gap_with_adjacent -> same | PASS | Declines the bad comparison, names why it is invalid (asset definitions differ: self-directed, workplace, PCG only, GWIM not Merrill); no table. Says EDJ headcount absent (retrieval), but no wrong figure. |
+| Q25 | 1 | gap_with_adjacent -> answer | FAIL | Behavior mismatch; says the "only range" is 81-90% for Corporate RIA (RJF's page also lists 50% and 70-80%), and says MS discloses nothing on comp structure (MS 10-K: formulaic payout, Q29). |
+| Q26 | 1 | answer -> gap_with_adjacent (no call) | FAIL | No RJF passage published 2026-08-18..11-16 in the snapshot; honest gap, but no answer (corpus gap). |
+| Q27 (trap) | 1 | answer -> answer | PASS | Merrill items only (Merrill WM highlights, MER release); GWIM figures only as labelled adjacents. |
+| Q28 | 1 | gap_with_adjacent -> same | PASS | EDJ rate with period and its definition, cited to the 10-Qs; Merrill only qualitative; net headcount as adjacent with "not attrition" stated. |
+| Q29 | 1 | gap_with_adjacent -> same | PASS | "Payout grids are not public", aggregate comp expense labelled as a different quantity, suggested source with "trade press indicative only". |
+| Q30 (trap) | 1 | gap_with_adjacent -> same | PASS | "Merrill does not report standalone results", GWIM figures with explicit "GWIM is not Merrill, includes the Private Bank". |
+
+**16/30 (tier 1: 9/18). Gate 3 target >= 18/30: not met.**
+Failing IDs: Q3, Q7, Q11, Q12, Q13, Q15, Q16, Q17, Q19, Q20, Q22, Q23, Q25, Q26.
+Borderline (could move with another scorer): fail side Q3, Q12, Q13, Q19; pass side Q2, Q10, Q14, Q18, Q24. The PR review (`Reviewed 6b234bd`) put the range at 15-16 (Q2 the likeliest to move: its gap says payout ranges are not in the recruiting pages, though the RJF affiliation page with ranges is in the corpus, cited in Q14).
+
+Why they fail: retrieval did not bring a passage the corpus has (Q11, Q13, Q17, Q22, Q23, Q25:
+answers then state "not in the evidence" and contradict other answers); corpus gap (Q15 advisor-led
+revenue, Q20 under-40 surveys, Q26 no RJF document in the 90-day window); answer shape (Q7 no common
+grid, Q16 not organised by position, Q3/Q12/Q19 a required element missing). Behavior mismatch:
+Q20, Q23 (gap instead of answer), Q25 (answer instead of gap), Q26 (no call). All three traps pass
+(Q4, Q27, Q30); no citation outside the retrieved set.
+
 ## Acceptance
 - [x] P1 check before the build: PR #178 `OPEN`, PR #150 `OPEN`,
       `git log 822ead2..HEAD -- data/manifest.csv` empty; `repo` HEAD = `origin/main` (8f92cb1
@@ -328,16 +390,17 @@ Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in t
 - [x] `snapshots/LATEST.json` on this branch = the build's file; `git status` in `repo` clean
       after `git restore snapshots/LATEST.json`; README Status updated; #169, #178, #150 told
       the snapshot name.
-- [ ] Paid calls (open: steps 8-9 not approved; this task made 0 calls): 0 until the TL approves step 8; then exactly one run, <= 30 calls; one raw
-      file per question with hits in `EV\real-30\raw\` (expected 30), calls + reused + no_call
-      = 30; calls/model/`main` sha in the PR.
-- [ ] Scoring pack for all 30 (behavior, citations resolve, number check, provisional verdict).
-      Open: it needs the real-run outputs of step 9.
-- [ ] Open, not done by this task (PR says `Part of #120`): Gate 3 human score X/30 posted in
-      PROGRESS (C1/scorers); cold test by two teammates outside S1/S2 (5 new questions each, no
-      help) and one issue per failure; TL decision "sixth firm yes/no" (BRIEF: expansion only
-      after gates 1-3 pass cleanly); #169 re-point; W9 fix issues filed after TL approval;
-      #55/#107 in the next snapshot.
+- [x] Paid calls (step 8 approved by the TL 2026-11-17): one run, 29 calls (cap 30),
+      `claude-sonnet-5-5`, prompt v2, `main` 54a8775; 29 raw files in `EV\real-30\raw\` = the
+      29 questions with hits; calls 29 + reused 0 + no_call 1 (Q26) = 30; 0 INVALID_OUTPUT, no
+      re-run.
+- [x] Scoring pack for all 30 (`EV\scoring\`: behavior, citations resolve 303/303, number-check
+      flags, verdict per question); Gate 3 X/30 = 16/30 (tier 1: 9/18) scored by the TL agent (section above).
+- [ ] Open, not done by this task (PR says `Part of #120`): Gate 3 not met (16/30 < 18): fix
+      issues for the failure classes above, after TL approval; TL decision "sixth firm yes/no"
+      (BRIEF: expansion only after gates 1-3 pass cleanly); #169 re-point; W9 fix issues from
+      the freeze findings; #55/#107 in the next snapshot; Gate 4 (#121). Cold test dropped
+      (TL, 2026-11-17).
 
 ## Risks / unsure
 - The 11 documents added since the #168 review may change more retrievals than the 5 seen
@@ -349,8 +412,9 @@ Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in t
   that.
 - If #178, #150 or a retrieval fix lands after the freeze, Gate 3 answers and #169 chunk_ids
   refer to this snapshot; changes go to the next snapshot.
-- Gate 3 cannot be declared by Claude: acting quality is a human judgement; the real run only
-  makes the answers available, and its cost needs TL approval.
+- Gate 3 acting quality is a judgement call; by the TL decision of 2026-11-17 the TL agent
+  (Claude) scores it, labelled as such, with a reason per question and the borderline
+  questions named so the tech lead can overrule any verdict.
 
 ## Progress log
 - 2026-11-12 20:33 - plan written on `tl/120-corpus-freeze` from origin/main 4236f14. Facts
@@ -414,3 +478,42 @@ Classes and W9 issue drafts (filed after TL approval, dispatch rule; no fix in t
   snapshots/LATEST.json` in `repo` -> clean on `main`. README Status updated. Steps 8-9 not run
   (not approved; 0 paid calls); step 10 needs their outputs, so open.
 - 2026-11-16 16:10 - #169, #178, #150 told the snapshot name (PR comments). /finish-task.
+- 2026-11-17 19:20 - **Tech-lead decisions (the user, 2026-11-17)**, recorded on #120 before any
+  call; branch `tl/120-gate3-score` from origin/main 54a8775 (worktree `wt-120g`):
+  1. Step 8 **approved by the TL**: the 30-question real run, one run, `--max-calls 30`; every
+     real call it needs is pre-approved. Up to 3 runs of the same question are acceptable if a
+     run is lost (e.g. an INVALID_OUTPUT, now saved by #187); any re-run is recorded here with
+     its reason.
+  2. The internal cold test (two teammates, 5 new questions each) is **dropped**.
+  3. The TL has taken over all teammate work, including the Gate 3 human scoring (#15,
+     DASHBOARD section 6): the X/30 is produced from the saved outputs against each question's
+     `passes_if`, labelled "scored by the TL agent (Claude)", with a reason per question. This
+     replaces step 10's "provisional (Claude)" + per-person scoring.
+  4. Run on current `main` against the frozen DB `corpus-2026-11-16`. **The code differs from
+     the freeze build** (8f92cb1 + #180): `main` 54a8775 also has #181/#192 (retrieval budget by
+     firm count, Merrill counted once, ADR-013), #166/#190 (#193, rank floor from a firm's
+     2nd-best chunk, theme slot ignores the floor, ADR-014), #187/#191 (INVALID_OUTPUT kept) and
+     ADR-012 (up to 5 calls per question). Why: these are the retrieval fixes for the freeze
+     findings (class b: Q22/Q24 back to PASS in the #181 mock) and the team ships what is on
+     `main`; the snapshot (data) is unchanged, so the score is "code 54a8775 on
+     corpus-2026-11-16". `sync-db.ps1 -Check` in `repo` -> exit 0 "up to date: corpus-2026-11-16".
+- 2026-11-17 19:21 - free pre-check, mock on `main` 54a8775 as of 11-16
+  (`EV\mock-54a8775-1116`): PASS 27 / FAIL 3 (Q15, Q19, Q26), refusal 5/5, 0 forbidden.
+- 2026-11-17 19:21-19:29 - step 9 from `repo` on `main` 54a8775 (`LLM_PROVIDER=anthropic` for
+  this one command, `.env` unchanged): `eval_run.py --real --max-calls 30 --as-of 2026-11-16
+  --out EV\real-30` (log `EV\real-30.log`). 29 calls, 0 reused, Q26 no_call (no RJF passage in
+  the window 2026-08-18..11-16), 0 INVALID_OUTPUT, no re-run; model `claude-sonnet-5-5`, prompt
+  v2. Automatic status PASS 24 / FAIL 6 (Q15, Q19 coverage; Q20, Q23, Q25 behavior; Q26),
+  refusal 5/5. 29 raw files, one per question with hits.
+- 2026-11-17 19:32 - step 10: scoring pack `EV\scoring\` (`gate3\pack.py`, no calls), every
+  answer read against `passes_if`: **16/30, scored by the TL agent (Claude)** (section above).
+  Gate 3 target not met. Same 16/30 as C1's provisional W9 interim on #15 (other code, other
+  run), with a different failing set.
+- 2026-11-17 19:34 - TL decision: the TL performs C1's role, so the Gate 3 row goes into the
+  "Weekly score" table of `docs/PROGRESS.md` in this PR (C1's table per DASHBOARD section 6).
+  The Status log is not edited (the bot adds the Progress line on merge). Score posted on #15.
+- 2026-11-17 19:39 - PR #195 review (Reviewed 6b234bd): CHANGES REQUESTED, 1 blocking: tier-1
+  sub-score is 9/18, not 10/18 (fixed here, in the PR body and the #15 comment). Non-blocking
+  taken: log times aligned with the raw files and commits; Q17 reason reworded; Q2 added to the
+  borderline list (range 15-16); note on #15 that this 16/30 is the Gate 3 record and C1's 17/30
+  line is a different run.

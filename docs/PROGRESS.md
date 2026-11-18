@@ -140,7 +140,7 @@ run against, e.g. `corpus-2026-11-02`. How to score: [evals/questions.yaml](../e
 
 | Date | Snapshot | X/30 | Failing IDs |
 |---|---|---|---|
-| | | | |
+| 2026-11-17 | corpus-2026-11-16 | 16/30 (Gate 3, scored by the TL agent; code main 54a8775, claude-sonnet-5-5, #120 / #195) | Q3, Q7, Q11, Q12, Q13, Q15, Q16, Q17, Q19, Q20, Q22, Q23, Q25, Q26 |
 
 ## Individual scoring sheet (from W6)
 
