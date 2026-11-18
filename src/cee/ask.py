@@ -57,6 +57,8 @@ def _n(n: int, word: str) -> str:
 def describe_query(q: Query) -> str:
     firms = ", ".join([*q.entities, *(f"{f} (no documents)" for f in q.unmapped)]) or "none named"
     text = f"firms {firms}; mode {q.mode}"
+    if q.theme_peers:
+        text += f"; on the theme also {', '.join(q.theme_peers)}"
     if q.firm_filter:
         text += f"; firm filter {', '.join(q.firm_filter)}"
     if q.date_range:

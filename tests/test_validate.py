@@ -602,3 +602,30 @@ def test_grid_shaped_answer_keeps_its_shape_through_the_checks():
     assert out.claims[0].flags == [] and "unmatched_citation" in out.claims[2].flags
     mer = next(e for e in entities_config()["entities"] if e["id"] == "MER")
     assert mer["caveat"] in out.caveats
+
+
+# Home-firm theme peers (#205, ADR-018): the note and the caveats cover them, by code.
+
+Q19 = "How should the preferences of younger investors shape Edward Jones's offerings?"
+
+
+def test_coverage_note_names_theme_peers_and_peers_with_nothing_on_the_theme():
+    from cee.answer.validate import coverage_note
+
+    schw = Hit(chunk_id="SCHW-TR-2025Q4#11", doc_id="SCHW-TR-2025Q4", entity_id="SCHW", segment=None,
+               doc_type="transcript", source_tier=2, published_at="2026-01-21", period_end="2025-12-31",
+               section=None, page=None, rank=1.0, text="x", on_theme=True)
+    note = coverage_note(resolve(Q19), [hit(), schw, gwim_hit()])
+    assert note.startswith("Coverage: searched Edward Jones; on the theme also Morgan Stanley, "
+                           "The Charles Schwab Corporation, Merrill, Raymond James Financial.")
+    # Merrill counts through BAC GWIM; MS and RJF had nothing on the theme
+    assert ("for Morgan Stanley, Raymond James Financial (searched on the theme only).") in note
+
+
+def test_peer_merrill_cited_through_gwim_gets_the_caveat():
+    from cee.answer.validate import insert_caveats
+
+    a = Answer(answerable=True, behavior="answer_with_boundary",
+               claims=[{"text": "t", "chunk_ids": ["BAC-10K-2025#244"]}])
+    mer = next(e for e in entities_config()["entities"] if e["id"] == "MER")
+    assert insert_caveats(a, resolve(Q19), [gwim_hit()]).caveats == [mer["caveat"]]

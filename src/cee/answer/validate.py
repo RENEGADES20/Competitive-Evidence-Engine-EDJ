@@ -242,7 +242,7 @@ def insert_caveats(answer: Answer, query: Query, hits: list[Hit]) -> Answer:
     by_id = {h.chunk_id: h for h in hits}
     cited = [by_id[c] for claim in [*answer.claims, *answer.adjacent] for c in claim.chunk_ids if c in by_id]
     for e in entities_config()["entities"]:
-        if e["id"] not in query.entities or not e.get("caveat") or not e.get("parent"):
+        if e["id"] not in [*query.entities, *getattr(query, "theme_peers", [])]                 or not e.get("caveat") or not e.get("parent"):
             continue
         segments = {e.get("reported_as"), e["name"]}
         if any(h.entity_id == e["parent"] and h.segment in segments for h in cited) \
@@ -265,6 +265,10 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
     Describes this question's retrieval only, not the whole corpus."""
     searched = ", ".join(_short_name(e) for e in query.entities) or "all documents (no covered firm named)"
     parts = [f"Coverage: searched {searched}."]
+    peers = getattr(query, "theme_peers", [])
+    if peers:  # home-firm theme rule (#205)
+        parts[0] = (f"Coverage: searched {searched}; on the theme also "
+                    + ", ".join(_short_name(e) for e in peers) + ".")
     window = getattr(query, "window", None)  # dates below are periods; the window is on publication date (#49)
     if window:
         parts.append(f"Published {window[0]} to {window[1]} only.")
@@ -300,6 +304,11 @@ def coverage_note(query: Query, hits: list[Hit]) -> str:
     if off_theme:
         parts.append(f"No passages on the theme ({theme_label(query)}) for "
                      + ", ".join(_short_name(e) for e in off_theme) + ".")
+    peer_gaps = [e for e in peers if e not in hit_entities and _entry(e).get("parent") not in
+                 {h.entity_id for h in hits if h.entity_id not in query.entities}]
+    if peer_gaps:
+        parts.append(f"No passages on the theme ({theme_label(query)}) for "
+                     + ", ".join(_short_name(e) for e in peer_gaps) + " (searched on the theme only).")
     return " ".join(parts)
 
 

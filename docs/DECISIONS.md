@@ -65,6 +65,7 @@ chunking time. Retrieval mode (`entity`, `theme`, `entity+theme`) is chosen by d
 rules. Per-entity quotas in multi-firm questions.
 Consequences: The LLM cannot see ineligible chunks. Segment tagging quality (C1) becomes
 critical and must be tested.
+See ADR-018: a home-firm theme question also searches the other covered firms, on the theme only.
 
 ## ADR-005: PDF parsing tool
 Status: Accepted (install check: TL machine done 2026-09-30; other six machines in #14)
@@ -326,6 +327,7 @@ passages (median characters about +45%), so cost per answer grows for them. `THE
 so tier 5 research's share in five-firm entity+theme questions (Q10, Q21) falls from 1/5 to
 1/7.5; Q21's theme slot is #190. The rule is revisited when the next snapshot (#178 Form ADV,
 #150 speaker-turn transcripts) pushes evidence out again: a larger PER_FIRM is a one-line change.
+See ADR-018: a home-firm theme question's peers (2 slots each) come on top of this budget.
 
 ## ADR-014: Rank floor measured from a firm's 2nd-best chunk; the theme slot ignores the floor
 Status: Accepted (tech lead, 2026-11-17, #166 and #190); changes the relevance floor in
@@ -480,3 +482,41 @@ other press documents, rank 43 at k=80) and Q20 `FIDELITY-III-2025#0` / `UBS-NEX
 The answer-turn rule fires on one question of the bank (Q6); the key matching changes the keys of
 Q2, Q5, Q6, Q7, Q8, Q10, Q13, Q20, Q29 (`advisor` now fires on "advisors"). Cost: Q5 document recall
 1.0 -> 0.833 (PASS kept). Merrill traps Q4, Q27, Q30 unchanged. Evidence in the #203 PR.
+
+## ADR-018: Firm scope: a peer phrase for the advisor-led model; home-firm theme questions also search competitors on the theme
+Status: Accepted (TL, #205, 2026-11-18)
+Context: Gate 4 R1 (#121) failed Q15 and Q19 because retrieval searched the wrong firms. Q15 ("how
+Schwab earns ... and how an advisor-led model earns") names only Schwab, so every passage was
+Schwab's. Q19 ("How should the preferences of younger investors shape Edward Jones's offerings?")
+names only the home firm, so no competitor move aimed at the cohort could be cited (`passes_if`
+asks for them). ADR-004 limits firm documents to the firms a question names.
+Decision:
+- **Peer phrase** (config `peer_sets`, `advisor_led`): "an advisor-led model", "advisor-led models",
+  "advisor-led firms", "an advisor-led firm" (and "adviser-led") mean MS, EDJ, MER and RJF, by how
+  each reports (MS advisor-led vs self-directed client assets; EDJ only through its advisors;
+  Merrill = GWIM's advisor business; RJF's Private Client Group). Schwab is not one. Indefinite and
+  plural phrases only, so "Edward Jones's advisor-led model" names one firm; the plural "Edward
+  Jones's and Morgan Stanley's advisor-led models" names the group (deliberate).
+- **Home-firm theme rule** (config `home_firm: {id: EDJ, theme_peers: core_five}`): an entity+theme
+  question whose only named firm, covered or not, is the home firm gets `Query.theme_peers` = the
+  other members of `core_five`. One more SQL pass returns their chunks with the theme's keywords
+  (the #117 on-theme filter) and every other hard filter (entity/segment - Merrill only through
+  BAC GWIM/Merrill -, window, date range, keywords, doc-type scope) plus the word match. That pool
+  is cut at FLOOR (0.3) x its 2nd-best rank across all peers, inside a time window too, then each
+  peer firm gets at most `PEER_THEME_PER_FIRM` = 2 slots (Merrill counted once). The home firm and
+  research parts are computed as before; the peers' slots come on top (`budget()` + 2 per peer,
+  also on top of an explicit k). A firm filter on the Ask page clears the peers. The coverage note
+  says "on the theme also ..." and names peers with nothing on the theme; caveats cover peers.
+- The eval's forbidden check accepts a peer hit only when its firm is a peer (BAC only through the
+  GWIM/Merrill segment for MER) and its text matches the theme's keyword pattern rebuilt from
+  config, not the flag `search()` sets.
+- Rejected: a per-firm floor for the peers (BAC's "Top 40 Advisors Under 40" footnotes are BAC's
+  own best, so they would stay); 3 slots per peer (adds a Schwab deck slide, no new firm).
+Consequences: only Q15 and Q19 of the bank change. Mock, `corpus-2026-11-17`: Q15 FAIL -> PASS
+(coverage 1/5 -> 4/5: `MS-10K-2025#166`, `EDJ-10K-2025#20/#23`, `RJF-10K-2025#9` next to
+`SCHW-10K-2025#13`; 20 -> 30 passages). Q19 gets `SCHW-TR-2026Q3#11` and `SCHW-TR-2025Q3#11`
+(Gen Z / millennial share of new accounts) and no advisor-ranking chunk; its EDJ and research
+passages are unchanged; it stays a mock FAIL (1/5) because its expected sources are competitor
+press, and no MS, SCHW or RJF press chunk is on the theme (TL decision D-Q19). MS and RJF have no
+chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the floor. Evidence in
+the #205 PR.
