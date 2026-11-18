@@ -72,29 +72,34 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-16.
+As of 2026-11-17.
 
-**Corpus.** The corpus is frozen (#120). Snapshot `corpus-2026-11-16` holds all 137
-documents in `main`'s manifest and 18,497 passages: SEC filings, supplements, monthly
-metrics, investor-day and quarterly decks, call transcripts, press releases, advisor web
-pages and research reports. PDF passages carry the page they are on (#84). Form ADV
-brochures (#55) and speaker-turn transcript chunks (#107) arrive with the next snapshot.
+**Corpus.** Snapshot `corpus-2026-11-17` (#200) holds all 219 documents in `main`'s manifest
+and 21,143 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
+metrics, investor-day and quarterly decks, call transcripts, press releases, 90 days of trade
+press (#57), advisor web pages and research reports. PDF passages carry the page they are on
+(#84); call transcripts are cut by speaker turn, so a question and its answer are separate
+passages (#107). The frozen Gate 3 corpus is `corpus-2026-11-16` (137 documents, #120).
 
 **Retrieval check (automated, not a gate score).** `scripts/eval_run.py` runs the 30
 questions with the mock model and checks whether search returns the expected passages
-and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-16, snapshot
-`corpus-2026-11-16`, `--as-of 2026-10-29`: 26 PASS / 4 FAIL (Q15, Q19, Q22, Q24);
-document recall 0.629 on the 18 tier-1 questions (all have an answer key); gap questions
-refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. Same check on the previous
-snapshot `corpus-2026-10-29`: 28 PASS / 2 FAIL, recall 0.646. The new Merrill pages take
-search slots from other firms in five-firm questions; the follow-up is tracked in #120.
+and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-17, snapshot
+`corpus-2026-11-17`, `--as-of 2026-11-17`, the app's search budget: 28 PASS / 2 FAIL (Q15,
+Q19); document recall 0.547 on the 17 tier-1 questions with an answer key in that window; gap
+questions refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. This is the new
+baseline (`evals/baselines/corpus-2026-11-17/`). Same check on `corpus-2026-11-16`: 27 PASS /
+3 FAIL (Q26 had no Raymond James passage in the last 90 days; trade press now fills it),
+recall 0.625. Trade-press articles and the re-cut transcripts take search slots from primary
+documents in single-firm questions (Q2, Q5, Q6, Q11, Q13, Q27, Q30); follow-ups: #199
+(transcripts) and a retrieval issue for trade press (drafted in #200).
 
-**Gate scores (human-scored).** A person scores each answer at acting quality (one the
-project lead would forward with his name on it), per [docs/BRIEF.md](docs/BRIEF.md).
-Gate 3, checked in week 8 at the corpus freeze (#120): any 18 of the 30 questions at
-acting quality, citations resolve. Gate 4, checked in week 11: at least 21 of 30, and the project lead used it
-unsupervised at least once. Neither is scored yet. The "PASS 7 / FAIL 21" in the 2026-10-20 log
-is the retrieval check on snapshot `corpus-2026-10-18`, not a gate score.
+**Gate scores.** Each answer is scored at acting quality (one the project lead would forward
+with his name on it), per [docs/BRIEF.md](docs/BRIEF.md). Gate 3, checked in week 8 at the
+corpus freeze (#120): any 18 of the 30 questions at acting quality, citations resolve. It was
+scored **16/30** on `corpus-2026-11-16` (real run, scored by the TL agent, PR #195). Gate 4,
+checked in week 11 (#121): at least 21 of 30, and the project lead used it unsupervised at
+least once; not scored yet. The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +
 embeddings, local, no external calls) is kept as an optional component on branch

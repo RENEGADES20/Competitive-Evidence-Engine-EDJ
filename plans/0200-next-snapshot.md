@@ -182,28 +182,96 @@ midnight, `SNAP` is `corpus-2026-11-18` and `ASOF` stays 2026-11-17).
 **Paid calls: none.** Everything runs on the mock provider; the real 30-question run belongs to
 #121.
 
+## Findings (2026-11-17, snapshot corpus-2026-11-17, mock, 0 paid calls)
+Evidence: `D:\ALLPROJECTS\EDJ\cache\ev200\` (`build.log`, `snapcheck.py`/`.txt`, `page_sweep.txt`,
+`sha256.txt`, `smoke.txt`, `restore_smoke.txt`, `doctor-*.txt`, `base-1117`, `base-1029`,
+`snap-1117`, `snap-1117-vs`, `snap-1029-vs`, `snap-1117-rerun`, `compare.py`, `cmp-1117.txt`,
+`cmp-1029.txt`, `recall-drops.txt`, `pytest.txt`, `verify.log`); verify-cee
+`D:\ALLPROJECTS\EDJepo\.verify-runs61117-223554-960b742`.
+
+**Build.** `SNAP` = `corpus-2026-11-17` (built 2026-11-18T04:32:08Z = 22:32 local, so the name
+and `ASOF` agree). Main checkout on `main` 960b742 = origin/main, clean. Log: `219 files OK`,
+0 `parsing with docling|edgartools`, 93 `parse cache hit`, `4/7 Embedding skipped`,
+`5/7 Dumping corpus-2026-11-17.dump`, `6/7 Copying to Box`. sha256
+`47c1ffca0e755a799abab0b5be99d5b998653d846b49213c9dc587aa939bfae1` for the Box dump, the local
+dump and `LATEST.json`.
+
+**Contents.** 219 documents = the manifest's 219 doc_ids (adv 5, trade 77, transcript 32, ...),
+0 documents without chunks; **21,143 chunks** (= PR #150's scratch DB B); transcript chunks
+2,852 (was 1,689), longest 1,198 characters; 14 GWIM transcript chunks; `BAC-TR-2026Q2#63` GWIM,
+901 characters. The 16,808 non-transcript chunks of `corpus-2026-11-16` (restored from the local
+`corpus-2026-11-16.dump`, sha256 = `LATEST.json` on main) are all present and identical (md5 over
+id, segment, section, page, prefix, text): 0 differ, so the `mention_excludes` suspect did not
+fire on any non-transcript chunk.
+
+**Mock eval** (app budget, no `--k`; same code 960b742 on both snapshots):
+
+| Run | PASS / FAIL | FAIL IDs | Tier-1 doc / passage recall | Refusal (gap / all keyed) | Forbidden |
+|---|---|---|---|---|---|
+| base-1117 (`corpus-2026-11-16`, as of 11-17) | 27 / 3 | Q15, Q19, Q26 | 0.625 / 0.424 | 5/5 / 19/19 | 0 |
+| snap-1117 (`corpus-2026-11-17`, as of 11-17) = new baseline | 28 / 2 | Q15, Q19 | 0.547 / 0.420 | 5/5 / 19/19 | 0 |
+| base-1029 (`corpus-2026-11-16`, as of 10-29) | 28 / 2 | Q15, Q19 | 0.646 / 0.456 | 5/5 / 19/19 | 0 |
+| snap-1029-vs (`corpus-2026-11-17`, as of 10-29) | 28 / 2 | Q15, Q19 | 0.573 / 0.453 | 5/5 / 19/19 | 0 |
+
+Stop rule not hit: 0 forbidden hits, refusal unchanged. No PASS -> FAIL. Rerun on `SNAP`:
+30 UNCHANGED. Passage recall on the base side is not comparable for transcript rows: the answer
+key on `main` already uses #150's new transcript `chunk_id`s, which on `corpus-2026-11-16` name
+different passages; document recall is not affected by that.
+
+- **Q26** FAIL -> PASS (as of 11-17): 15 RJF trade-press chunks inside the 90-day window
+  (before, no RJF passage in the window).
+- **Q18**: all five `<firm>:adv` patterns hit (one brochure chunk each); coverage 1.0.
+  `THEME:regulatory` still 0 hits. Q25 (gap_with_adjacent) now also gets 7 ADV chunks
+  (compensation disclosure), refusal still ok.
+- **Q4 / Q28**: passage recall up (Q4 0.143 -> 0.571; Q28 doc 0.667 -> 0.833, passage 0.5 -> 0.75),
+  the speaker-turn chunks doing what #107 meant.
+
+**Tier-1 document recall drop 0.625 -> 0.547** (as of 11-17), seven questions:
+
+| Q | Doc recall | Expected document lost | Took the slots | Class |
+|---|---|---|---|---|
+| Q2 | 0.444 -> 0.333 | `RJF-TR-2025Q4` | 3 RJF trade chunks (ranks 1, 8, 15) | b (trade), maybe a |
+| Q5 | 0.833 -> 0.667 | `MS-TR-2026Q1` | 5 MS trade chunks (rank 3 first) | b (trade) |
+| Q6 | 0.833 -> 0.5 | `RJF-10Q-2026Q2`, `RJF-TR-2025Q2` | 4 RJF trade chunks + re-cut transcripts | t (#199) + b |
+| Q11 | 0.875 -> 0.75 | `SCHW-TR-2026Q1` | other transcript turns (`SCHW-TR-2025Q4#5`), no trade | t (#199) |
+| Q13 | 0.667 -> 0.5 | `MS-TR-2026Q3` | 3 MS trade chunks + re-cut transcripts | t (#199) + b |
+| Q27 | 0.444 -> 0.333 | `BAC-TR-2026Q3` | 3 MER trade chunks at ranks 1-3 | t (#199) + b |
+| Q30 (gap) | 1.0 -> 0.5 | `BAC-PR-2026-01-14-01` | 2 MER trade chunks; refusal still ok | b (trade) |
+
+Q6, Q11, Q13, Q27 are #199's questions (reported there by #150 on the same corpus). New here:
+the trade press (tier 3, 77 documents) ranks high in single-firm questions and pushes out
+primary sources (Q2, Q5, Q30, and part of Q6/Q13/Q27). #179 kept trade press out of benchmark
+questions only.
+
+Issue draft (filed only after TL approval, dispatch rule; no fix in this PR):
+- **S1 - trade press crowds out primary sources in single-firm questions.** Evidence: Q2, Q5,
+  Q30 (and Q6, Q13, Q27 together with #199) above, `cache\ev200ecall-drops.txt`. Check: mock
+  eval on `corpus-2026-11-17` with the fix -> tier-1 doc recall back to >= 0.625 on those
+  questions, Q26 still PASS, 0 forbidden. C1 to decide per row whether a trade article is an
+  accepted alternative in `evals/expected_chunks.yaml` (class a, Q2).
+
 ## Acceptance
-- [ ] P1: build from clean `main` in `repo`, HEAD = `origin/main` (sha recorded); no empty
+- [x] P1: build from clean `main` in `repo`, HEAD = `origin/main` (sha recorded); no empty
       `published_at`; Box root uploads all identical to `raw/`.
-- [ ] Build log: `219 files OK`, 0 `parsing with docling|edgartools`, 93 `parse cache hit`,
+- [x] Build log: `219 files OK`, 0 `parsing with docling|edgartools`, 93 `parse cache hit`,
       `Embedding skipped` (or vector check -> 0), `SNAP.dump` copied to Box.
-- [ ] `obj_description` = `SNAP`; documents = 219, doc_id set = manifest; adv 5, trade 77;
+- [x] `obj_description` = `SNAP`; documents = 219, doc_id set = manifest; adv 5, trade 77;
       chunk count in LATEST.json and README (expected 21,143, difference explained);
       transcript chunks 2,852; `BAC-TR-2026Q2#63` GWIM; old non-transcript chunks unchanged.
-- [ ] `cee.smoke` PASS; `verify_cee.py doctor` DOCTOR PASS; `verify_cee.py run` VERIFY PASS.
-- [ ] `EV\page_sweep.txt`: 52 PDFs, `MISPLACED 0` on every line.
-- [ ] sha256 Box dump = local dump = LATEST.json; `pg_restore --list` exit 0; scratch restore
+- [x] `cee.smoke` PASS; `verify_cee.py doctor` DOCTOR PASS; `verify_cee.py run` VERIFY PASS.
+- [x] `EV\page_sweep.txt`: 52 PDFs, `MISPLACED 0` on every line.
+- [x] sha256 Box dump = local dump = LATEST.json; `pg_restore --list` exit 0; scratch restore
       `cee_restore_200` smoke PASS, dropped.
-- [ ] `sync-db.ps1 -Check` and `sync-db.sh --check` both exit 0 "up to date: SNAP".
-- [ ] Mock eval `snap-ASOF` vs `base-ASOF` (and at 2026-10-29): 0 forbidden hits; refusal
+- [x] `sync-db.ps1 -Check` and `sync-db.sh --check` both exit 0 "up to date: SNAP".
+- [x] Mock eval `snap-ASOF` vs `base-ASOF` (and at 2026-10-29): 0 forbidden hits; refusal
       accuracy >= baseline; PASS/FAIL, tier-1 recall reported; every PASS -> FAIL and recall
       drop classified; rerun 30 UNCHANGED; saved as `evals/baselines/SNAP/` (app budget, no
       `--k`).
-- [ ] `pytest -q` all pass (>= 479).
-- [ ] `snapshots/LATEST.json` on the branch = the build's; `repo` clean on `main`; README
-      Status updated (incl. Gate 3 = 16/30); PR merged = sync note; one team-chat line handed
+- [x] `pytest -q` all pass (>= 479).
+- [x] `snapshots/LATEST.json` on the branch = the build's; `repo` clean on `main`; README
+      Status updated (incl. Gate 3 = 16/30); PR merged = sync note (on merge); one team-chat line handed
       to the TL ("New snapshot SNAP: run /sync-db"); #121, #199 told the snapshot name.
-- [ ] 0 real calls.
+- [x] 0 real calls.
 
 ## Progress log
 - 2026-11-17 22:30 - plan written on `tl/200-next-snapshot` (worktree `D:\ALLPROJECTS\EDJ\wt-snap`)
@@ -217,3 +285,18 @@ midnight, `SNAP` is `corpus-2026-11-18` and `ASOF` stays 2026-11-17).
   at step 1; chat line in Acceptance; `mention_excludes` first suspect and `cee_prev_200` source;
   README Gate 3 sentence). Note 6 (plan file name) kept as is.
 - 2026-11-17 22:31 - `ASOF` fixed = 2026-11-17. Evidence folder `D:\ALLPROJECTS\EDJ\cache\ev200`.
+- 2026-11-17 22:40 - step 1 done (`corpus-2026-11-16`, code 960b742): doctor PASS; mock
+  `base-1117` 27 PASS / 3 FAIL, tier-1 doc recall 0.625, gap 5/5; `base-1029` 28 / 2, 0.646, 5/5.
+  Pre-build: `repo` on `main` = origin/main 960b742, clean; Box root uploads 82/82 identical to
+  `raw/`. Build notes (published in LATEST.json): "219 documents, 82 more than
+  corpus-2026-11-16: Form ADV Part 2A brochures for the core five (#55), 90 days of trade press
+  for the five (#57). Earnings-call transcripts chunked by speaker turn (#107); answer key
+  already remapped. Retrieval since the freeze: budget by firm count with Merrill counted once
+  (#181), rank floor (#166), Form ADV only for fee questions (#179)."
+- 2026-11-17 22:32 - step 2: build on `main` 960b742 -> `corpus-2026-11-17`, exit 0 (log checks
+  above).
+- 2026-11-17 22:45 - steps 3-6 done, all checks pass (Findings). `cee_prev_200` and
+  `cee_restore_200` dropped; `cee`, `cee_84`, `cee_84_rev` kept. verify-cee VERIFY PASS (9
+  features). `pytest -q` 479 passed. `LATEST.json` copied to this branch, `git restore` in
+  `repo` -> clean on `main`. Baseline `evals/baselines/corpus-2026-11-17/` replaces
+  `corpus-2026-10-22`; README Status updated. 0 real calls.
