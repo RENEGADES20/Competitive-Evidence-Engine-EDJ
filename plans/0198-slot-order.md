@@ -296,3 +296,5 @@ Common:
   second chunks of filings/calls, gained other documents (counts in the PR). pytest 487 passed.
   verify-cee VERIFY PASS on the working tree (`.verify-runs\20261117-233359-fcc7256`); re-run on
   the pushed commit below. Committed baseline not replaced (snapshot unchanged; step 8).
+- 2026-11-17 23:49 - verify-cee on pushed 73f081d: VERIFY PASS, all 9 features
+  (`.verify-runs\20261117-233937-73f081d`). `/finish-task`: PR opened, #198/#199/#197 -> Done.
