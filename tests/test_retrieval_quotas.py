@@ -59,5 +59,34 @@ def test_one_document_gives_at_most_max_per_doc():
 
 
 def test_chunks_far_below_the_best_get_no_slot():
-    pool = [hit("MS-TR-A#1", 10, doc_type="transcript"), hit("MS-SUPP-A#1", 1, doc_type="supplement")]
-    assert [h.chunk_id for h in select(pool, k=20)] == ["MS-TR-A#1"]
+    # The floor base is the firm's 2nd-best chunk (#166), so that one always passes.
+    pool = [hit("MS-TR-A#1", 10, doc_type="transcript"), hit("MS-TR-B#1", 9, doc_type="transcript"),
+            hit("MS-SUPP-A#1", 1, doc_type="supplement")]
+    assert [h.chunk_id for h in select(pool, k=20)] == ["MS-TR-A#1", "MS-TR-B#1"]
+
+
+def test_one_outlier_does_not_lift_the_floor():
+    # Q28 with speaker-turn chunks (#166): the Merrill answer ranks far above the rest; the floor
+    # is measured from the firm's 2nd-best chunk, so the 10-K passage stays and junk still goes.
+    pool = [hit("BAC-TR-2026Q2#63", 10.65, "BAC", "transcript"), hit("BAC-DECK-2025#8", 6.96, "BAC", "deck"),
+            hit("BAC-10K-2025#246", 2.77, "BAC", "10-K"), hit("BAC-PR-1#1", 1.0, "BAC", "press")]
+    kept = {h.chunk_id for h in select(pool, k=20, firm_of={"BAC": "MER"})}
+    assert kept == {"BAC-TR-2026Q2#63", "BAC-DECK-2025#8", "BAC-10K-2025#246"}
+    assert 2.77 < fts.FLOOR * 10.65                       # the old base (best chunk) would drop it
+
+
+def test_firm_with_one_chunk_keeps_it():
+    pool = [hit("MS-10Q#1", 9.0), hit("EDJ-10K#1", 0.5, "EDJ", "10-K")]
+    assert {h.chunk_id for h in select(pool, k=20)} == {"MS-10Q#1", "EDJ-10K#1"}
+
+
+def test_theme_slot_is_not_subject_to_the_floor():
+    # Q21 (#190): MS's only chunk on the theme ranks below the floor; it still takes MS's theme
+    # slot, so MS is no theme gap. An off-theme chunk that low still gets no slot.
+    pool = [hit("MS-TR#1", 11.66, doc_type="transcript"), hit("MS-10K#1", 11.0, doc_type="10-K"),
+            hit("MS-DECK#22", 2.32, doc_type="deck"), hit("MS-PR#1", 2.2, doc_type="press")]
+    pool[2].on_theme = True
+    kept = {h.chunk_id for h in select(pool, k=20)}
+    assert kept == {"MS-TR#1", "MS-10K#1", "MS-DECK#22"}
+    q = fts.Query(question="q", entities=["MS"], themes=["wealth_transfer"], mode="entity+theme")
+    assert fts.theme_gaps(q, select(pool, k=20)) == []

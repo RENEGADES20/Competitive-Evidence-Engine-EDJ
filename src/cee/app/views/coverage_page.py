@@ -97,10 +97,10 @@ def load(entities: list[dict]) -> tuple[list[dict], list[dict], dict[str, int]]:
 def render() -> None:
     ui.eyebrow("What the corpus covers")
     st.title("Coverage")
-    st.caption("Stored documents by firm and document type, with earliest and latest published date. "
-               "Thin = fewer documents than one period of the type's expected cadence (4 for quarterly, "
-               "1 for annual); empty = nothing stored. "
-               "Columns are the types the source registry expects for these firms.")
+    st.caption("What the app can answer from: how many documents are stored for each firm and type, "
+               "and from which dates. Gaps here are why some answers say \"No evidence\".")
+    st.caption("COVERED = enough documents; THIN = fewer than one period's worth (4 for quarterly, 1 for "
+               "annual); EMPTY = nothing stored; \"not tracked\" = we do not collect that type for the firm.")
     entities = entities_config()["entities"]
     docs, expected, segment_chunks = load(entities)
     columns, rows = build_grid(docs, expected, rows_from_config(entities), segment_chunks)

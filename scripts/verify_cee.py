@@ -57,6 +57,10 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
+# Q21: five firms + a theme (#117); Raymond James holds no passage on it. Morgan Stanley's one
+# on-theme chunk ranks below the floor but takes its theme slot (#190), so MS is no gap
+THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
+THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
 FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback"]
 
 
@@ -312,6 +316,13 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
+    ask(page, base, THEME_GAP_Q)
+    body = page.locator("body").inner_text()
+    line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
+    rec.step("Ask the five firms about the wealth transfer (Q21)",
+             f"coverage note says '{THEME_GAP_NOTE} ...', names Raymond James, not Morgan Stanley",
+             THEME_GAP_NOTE in line and "Raymond James" in line.split(THEME_GAP_NOTE)[-1]
+             and "Morgan Stanley" not in line.split(THEME_GAP_NOTE)[-1], line)
 
 
 def open_trace(page) -> list[str]:
@@ -345,7 +356,7 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
     body = page.locator("body").inner_text()
-    n_meta = re.search(r"(\d+) chunks retrieved", body)
+    n_meta = re.search(r"(\d+) passages found", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
@@ -505,6 +516,9 @@ def feature_gap_path(page, base, rec, ctx):
     rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
              f"{citation_links(page).count()} citation links")
     rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+    plain = "That is a valid result, not an error" in body or "do not answer this directly" in body
+    rec.step("Read the line under the heading (#119)", "a plain sentence saying no evidence is a valid result",
+             plain, "present" if plain else "missing")
     footer = re.search(r"firms: ([^|]*)\|", body)
     firms = footer.group(1).strip() if footer else "no footer"
     rec.step("Read the footer's firms", "the gap firm, e.g. 'LPLA (no documents)', not 'none' (#50)",

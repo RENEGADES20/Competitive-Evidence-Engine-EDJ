@@ -9,6 +9,7 @@
 #   caveat          text inserted BY CODE whenever an answer uses substitute data
 #   segment_aliases section headings / phrases that map a chunk to a segment tag
 #   segment_stops   optional headings that end a tagged segment (other segments' names)
+#   crd             FINRA CRD of the firm's main advisory entity (Form ADV Part 2A brochures, #55)
 #   reporting_shape how the firm reports (drives what expected_sources look like)
 #   expected_sources doc types that should exist; seeds source_registry
 #                   (one row per entity + doc type in config/source_registry.csv)
@@ -19,6 +20,7 @@ entities:
     aliases: ["Morgan Stanley", "MS", "Morgan Stanley Wealth Management", "MSWM", "E*TRADE"]
     ticker: MS
     cik: "895421"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "149777"   # main advisory entity: Morgan Stanley Smith Barney LLC ("MORGAN STANLEY"), SEC 801-70103. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Wealth Management: ["Wealth Management", "Wealth Management segment"]
@@ -33,6 +35,7 @@ entities:
     aliases: ["Schwab", "Charles Schwab", "SCHW", "Schwab Advisor Services"]
     ticker: SCHW
     cik: "316709"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "5393"   # main advisory entity: Charles Schwab & Co., Inc., SEC 801-29938. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Investor Services: ["Investor Services"]
@@ -48,6 +51,7 @@ entities:
     aliases: ["Edward Jones", "Jones Financial", "The Jones Financial Companies", "Edward D. Jones & Co."]
     ticker: null
     cik: "815917"
+    crd: "250"   # main advisory entity: Edward D. Jones & Co., L.P. ("EDWARD JONES"), SEC 801-3297. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases: {}
     reported_as: null
@@ -100,6 +104,7 @@ entities:
     ticker: null
     cik: "728612"   # Merrill Lynch, Pierce, Fenner & Smith Inc.; used for Form ADV only. Verified on EDGAR 2026-10-08 (#1).
                     # Not 914246 ("...SMITH INC /NY"): last filing 2016, old 40-series applications only.
+    crd: "7691"   # main advisory entity: Merrill Lynch, Pierce, Fenner & Smith Incorporated, SEC 801-14235. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: BAC
     segment_aliases: {}
     reported_as: GWIM
@@ -113,6 +118,7 @@ entities:
     aliases: ["Raymond James", "RJF", "Raymond James Financial"]
     ticker: RJF
     cik: "720005"   # verified on EDGAR 2026-10-08 (#1)
+    crd: "705"   # main advisory entity: Raymond James & Associates, Inc., SEC 801-10418. Verified on IAPD (adviserinfo.sec.gov) 2026-11-16 (#55).
     parent: null
     segment_aliases:
       Private Client Group: ["Private Client Group", "PCG"]
@@ -128,7 +134,7 @@ entities:
 peer_sets:
   - id: core_five
     members: [MS, SCHW, EDJ, MER, RJF]
-    phrases: ["each of the five", "across the five", "all five", "the five"]   # Q10, Q11, Q22-Q25
+    phrases: ["each of the five", "across the five", "all five", "these five", "the five"]   # Q10, Q11, Q21-Q25
 
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.
@@ -157,6 +163,47 @@ themes:
   - {id: wealth_transfer, label: Generational wealth transfer}
   - {id: advisor_recruiting, label: Advisor recruiting and retention}
   - {id: mass_affluent, label: Mass-affluent clients}
+
+# Firm themes (S1 owns; specs/retrieval.md, #117). A theme firms talk about in their own filings
+# and calls that tier 5 research is not indexed by, so it is not a topic in config/topics.yaml and
+# gets no research slots. In entity+theme mode a firm chunk is "on the theme" when its text has one
+# of the keywords (same matching as the topic tagger: whole word or phrase, any case); each named
+# firm's on-theme chunks take its slots first, and a firm with none is reported as a gap.
+#   - Same concept only: "acquisition" alone is M&A, not client acquisition.
+#   - Ids must not clash with config/topics.yaml ids.
+firm_themes:
+  - id: client_acquisition
+    label: Client acquisition
+    questions: [Q12]
+    keywords: ["acquire new clients", "acquiring new clients", "acquire clients", "attract new clients",
+               "client acquisition", "new clients", "new client", "new accounts", "new brokerage accounts",
+               "new households", "new-to-firm", "client growth", "cost to acquire", "cost of acquisition"]
+
+# Metric phrases (S1 owns; #117). Words that name a reported figure, not a theme: they never make a
+# question themed, even when a topic keyword contains them. Q11 and Q23 ask for advisor headcount
+# (a number per firm), not about advisor recruiting; theme slots pushed MS's supplement and RJF's
+# press release out of Q23 (PASS -> FAIL).
+metric_phrases: ["advisor headcount"]
+
+# Document-type scope per question (S1 owns; #179, ADR-015). Read by doc_type_scope() in
+# src/cee/retrieve/fts.py; a hard SQL filter, like the firm filter.
+#   adv:       Form ADV Part 2A brochures are searched only when the question names a theme in
+#              `themes` (topic keywords, config/topics.yaml) or one of `terms` (all-caps terms
+#              match in exact case), and never in a question with a time window: 1,156 brochure
+#              chunks crowded Q23 / Q24 and filled Q26's 90 days (#178). "compensation": the
+#              brochures disclose how advisors are paid (Q25 expects MS:adv, EDJ:adv, RJF:adv).
+#   benchmark: a question naming at least `min_firms` covered firms and one of `phrases` (a
+#              reported metric across firms, Q22-Q24, Q28) does not search `exclude_tiers` (tier 4
+#              trade press pushed MS:supplement out of Q24 and BAC:supplement out of Q28, #186).
+doc_type_scope:
+  adv:
+    themes: [fees_pricing]
+    terms: ["Form ADV", "ADV", "brochure", "brochures", "compensation"]
+    never_in_window: true
+  benchmark:
+    min_firms: 2
+    phrases: ["advisor headcount", "net new assets", "assets per advisor", "attrition rate"]
+    exclude_tiers: [4]
 
 # Query synonyms (S1 owns; see specs/retrieval.md). Draft v0 from the 30 questions (#7).
 # Read by expand_synonyms() in src/cee/retrieve/fts.py (#89):

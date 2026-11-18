@@ -20,6 +20,8 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-04 | #45 last-four supplements (MS/BAC 2025Q4, RJF 2025Q3-Q4) and six Schwab monthly reports in the manifest (#147) | Q23 "three firms" waits for #59 | TL moves the 10 PDFs from Box into raw/ |
 | 2026-11-12 | expected_doc_ids for 18 tier-1 questions (#56), tier-1 mock doc recall 0.656 (#170) | 16 manifest docs not in corpus-2026-10-29 (all MER, RJF web pages, investor-day decks); no trade press, DEF 14A or Form ADV | ingest the missing docs; Q20 and Q27 recall will stay low until then |
 | 2026-11-16 | Registry trade rows renamed so gap answers show plain source names, no file paths (#115) (#173) | none | none |
+| 2026-11-17 | 2026-11-17 (#174) | Q28 passes_if/evidence reworded (#156): EDJ discloses an advisor attrition rate (10-Q 2025Q2/Q3), Merrill does not; old text kept in notes; no mock eval line changes | none / S2 may revisit ATTRITION_GAP wording in prompt.py |
+| 2026-11-17 | #46 metric_definitions.yaml: 5 firms x 2 metrics quoted with chunk_ids (MS/SCHW/BAC headcount not disclosed) (#169) | none | S2 uses the definitions in answers; RJF headcount number from the earnings release (#75) |
 
 ### C2
 
@@ -41,6 +43,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-21 | #5 tier 5 source matrix: 39 thematic sources (research/survey/regulatory), all 8 themes with >= 2 publishers, Cerulli via free white papers (no WashU subscription) (#92) | Blockers: none | Next: #81 ingest institutional research from these rows |
 | 2026-10-27 | #81 tier 5 corpus: 22 research docs from 16 publishers (McKinsey, GSAM, FINRA, BofA x2+), topic tagger on every tier 5 chunk (65% fallback), publisher column in manifest (#93) | Blockers: Q19 excludes THEME docs in entity mode (S1); raw files to upload to Box | Next: S1 issue for theme docs in entity questions; TL decision on fallback vs general topic |
 | 2026-11-06 | #81 closed: second FINRA report, theme gaps filled (advisor_selection, mass_affluent), Fidelity date fixed, publisher FINRA Foundation; 25 tier 5 docs from 17 publishers (#152) | Blockers: none (general topic waits for TL) | Next: general-topic PR if approved; C2's #92 test suggestions |
+| 2026-11-18 | #55 ADV Part 2A brochures for EDJ/MS/SCHW/MER/RJF stored (tier 2, cover dates) and CRDs verified on IAPD; Q18 hits all five (#178) | Blockers: brochures crowd other questions (26/4, recall 0.626 -> 0.587) until retrieval limits `adv` to fee questions (S1) | Next: TL freeze decision; S1 issue |
 
 ### S1
 
@@ -53,6 +56,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-27 | Time windows filtered in SQL: "last N days/weeks/months", "since the start of the year", YTD; download-dated pages left out of windows; Q26 nothing older than 90 days (#49) (#101) | Q27 returns nothing until BAC GWIM tags (#37) | #59 quotas and dedupe |
 | 2026-10-27 | S1: per-question recall and refusal accuracy in the eval runner, answer key for 10 questions (incl. gap Q24/25/28-30), baseline for corpus-2026-10-22 at k=20 (tier-1 recall 0.809 docs / 0.347 passages; refusal gap 4/5, all 9/10) (#102) | Recall for 9 tier-1 questions waits on #56; Q29 retrieves a must-not chunk (MS-10K-2025#696) | Tune Q29 refusal; BAC Q&A chunks wait on #107 |
 | 2026-11-04 | S1: one-firm questions that name a theme also retrieve up to 4 tier 5 research chunks on that theme (entity+theme mode); Q19 now gets younger-investor research, EDJ filter intact, no PASS -> FAIL (#116) (#148) | Q19 still FAIL in the eval: its other expected sources (competitor press, THEME:survey) cannot match | #117 per-firm theme quotas for several firms |
+| 2026-11-17 | S1: several firms + a theme run in entity+theme mode with a sure on-theme slot per firm, and firms with nothing on the theme are named in the coverage note; Q21 now searches the five (0.667 -> 1.0), Q12's EDJ slots are on client acquisition, no PASS -> FAIL (#117) (#189) | none | C3: confirm firm_themes / metric_phrases fit next to topics.yaml |
 
 ### S2
 
@@ -63,6 +67,9 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-30 | Gap answers name the registry sources not yet in the corpus (#51): `suggested_sources()` = source_registry minus ingested doc types, config fallback, fills only empty suggested_source (#113) | Registry trade rows carry "(tier 4, docs/BRIEF.md)" in source_name (C1 data) | Number check (#52); real-model Q28/Q29 in #61 |
 | 2026-11-06 | Real-model run of Q19/Q24/Q25/Q28/Q29 on prompt v1 (#61): 5 calls (claude-sonnet-5-5), all expected behaviors, no normative sentence; number-check false flags fixed in #154 (#157) | Q29 misdated quarter (#155); Q28 passes_if outdated (#156, C1); Q19 lacks competitor moves (S1 retrieval) | #155 date check |
 | 2026-11-06 | Number check (#52): every figure in a claim is matched against its cited chunks (0.1%, or rounded with a decimal; table unit headers), else flagged `number_not_found`; rule in specs/answer-citations.md; mock clips at word boundaries (#154) | Cannot catch a figure from the wrong table column (MS-SUPP-2026Q3 p.8); small one-decimal figures pass loosely | #61 real-model runs will show how often real answers get flagged |
+| 2026-11-16 | Boundary enforced by code (#118): claims recommending an action for Edward Jones are withheld (notice shown, kept in Answer.withheld), the answer re-judged answer_with_boundary, hand-off sentence added when missing; Q12/Q19 real: 0 normative (#172) | open-citation cite-date needs a date_basis='retrieved' document in the snapshot | #155 date check |
+| 2026-11-16 | Date check (#155): a claim's stated "quarter ended / as of / published <Month YYYY>" must match a cited document's period_end or published_at, else flagged `date_mismatch`; catches the Q29 misdated quarter, 0 false flags on 40 cached real and 87 mock claims (#175) | Quarter shorthand (3Q26) not checked (fiscal vs calendar) | - |
+| 2026-11-17 | Prompt v2 (#167): advisor-pay gap decided per firm; RJF's published payout ranges reported with their as-of date, "grids not public" only for firms with nothing published; Answer accepts "answer" for "answerable" (#188) | Q25 now chooses `answer` (bank expects gap, raised on #156); runner loses outputs that fail validation (#187) | RJF gap line to name the firm at the next prompt change |
 
 ### U1
 
@@ -75,6 +82,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-28 | Source page shows the cited passage in its section and PDF citations at the cited page (#53) (#111) | none; filters (#63) and feedback (#62) still open | U1 filters |
 | 2026-11-04 | Ask page filters (firm, date range, keywords) as SQL WHERE clauses; query_log date fix (#149) | - | #62 feedback |
 | 2026-11-06 | Feedback on answers (Helpful / Not helpful + comment) stored per query in query_feedback; resend replaces (#153) | - | #119 plain UI pass |
+| 2026-11-16 | Plain UI pass: one-line explanation on every page, plain no-evidence and empty states, filters hint (#176) | - | Gate 3 cold test feedback |
 
 ### TL
 
@@ -118,6 +126,14 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-06 | CI fix: converter header test skips without bs4 (main pytest red after #151) (#165) | - | - |
 | 2026-11-09 | /sync-db` + `snapshots/LATEST.json` (Windows and Mac scripts; build-snapshot writes the manifest; tested on a throwaway database) (#129) (#171) | Mac run by a teammate still open | #120 freeze snapshot publishes its LATEST.json through a PR |
 | 2026-11-13 | PDF chunks take their page from every docling provenance span (#84): page sweep 3,568/3,568 chunks on their page for all 47 manifest PDFs; docling output cached on Box (#168) | Merge waits for the 11/11 #120 freeze build (approved on cee_84) | #120 builds the freeze from the v2 cache with no docling run |
+| 2026-11-16 | TL: corpus freeze snapshot corpus-2026-11-16 (137 documents, 18,497 passages; #84 pages, #115 registry names; without #55/#107 by TL decision) built, verified and named in LATEST.json; mock check 26/30 (Q15, Q19, Q22, Q24), Merrill's first own documents crowd out other firms in five-firm questions (#120) (#180) | 30-call real run awaits TL approval; Gate 3 human score, cold test, sixth-firm decision open | /sync-db; real run and Gate 3 scoring; S1 per-firm pool fix |
+| 2026-11-17 | TL: rules updated per tech-lead decision of 2026-11-16 (ADR-011; model-based work on a branch; up to 5 real calls per question, Gate 3 run needs the tech lead) (#182) (#183) | - | - |
+| 2026-11-17 | ADR-012: up to 5 LLM calls per user question (one by default), work stays on main; paid-call test budget counts by question run, no per-task total (CLAUDE.md, TL review docs) (#185) | none | multi-call answer feature issue builds on ADR-012 |
+| 2026-11-18 | #187: eval runner keeps a paid model output that fails validation (raw payload saved, INVALID_OUTPUT status, call counted, run continues) (#191) | Blockers: none (verify-cee open-citation read-back fails on main too) | Next: track the open-citation read-back failure |
+| 2026-11-18 | TL: retrieval budget by firm count, k = max(20, 6 x firms), Merrill counted once in the quota (ADR-013); mock on corpus-2026-11-16 as of 2026-10-29 26 -> 28 PASS (Q22, Q24 back), tier-1 recall 0.629 -> 0.652 docs / 0.460 passages, refusal 5/5 and 19/19, 0 regressed; 2 real calls (Q22, Q24) valid (#181) (#192) | none | #166 FLOOR / MAX_PER_DOC, #190 Q21 theme slot; revisit PER_FIRM with the #178 / #150 snapshot |
+| 2026-11-18 | Rank floor from a firm's 2nd-best chunk, theme slot ignores the floor (ADR-014); mock as of 2026-10-29: freeze 28 PASS unchanged, Q21 no longer reports MS as a theme gap; with #150's transcripts 27 -> 28 PASS (Q28 back), 0 forbidden, refusal 5/5, 0 real calls (#166, #190) (#193) | Q6 / Q13 / Q27 recall drops from #150 remain (transcript type turns at k=20, not the floor) | TL merges #150 (C1 sign-off still needed), next snapshot |
+| 2026-11-18 | Gate 3 real run on corpus-2026-11-16 (main 54a8775, 29 calls, claude-sonnet-5-5): Weekly score 2026-11-17 / corpus-2026-11-16 / 16/30 (scored by the TL agent) / failing Q3, Q7, Q11, Q12, Q13, Q15, Q16, Q17, Q19, Q20, Q22, Q23, Q25, Q26 (#195) | Gate 3 not met (target 18/30): retrieval misses of passages in the corpus, corpus gaps (Q15, Q20, Q26), answer shape | Fix issues per failure class after TL approval; Gate 4 (#121) |
+| 2026-11-18 | TL: retrieval doc-type scope per question (ADR-015): Form ADV only for fee/pricing/compensation or ADV-named questions and never in a window, no trade press for benchmark questions; on freeze + #178 tier-1 recall back to the no-brochure level (0.646), Q18 5/5 adv, Q26/Q27 0 adv; with #186 too 27 -> 28 PASS (Q28 back), recall 0.533 -> 0.593; `cee` unchanged; 0 real calls (#179) (#196) | Q21 verify step expects an RJF theme gap that #186's trade press fills | TL merges #178 and #186, update the Q21 verify step with #186, next snapshot |
 
 ## Weekly score (from W6)
 
@@ -127,7 +143,7 @@ run against, e.g. `corpus-2026-11-02`. How to score: [evals/questions.yaml](../e
 
 | Date | Snapshot | X/30 | Failing IDs |
 |---|---|---|---|
-| | | | |
+| 2026-11-17 | corpus-2026-11-16 | 16/30 (Gate 3, scored by the TL agent; code main 54a8775, claude-sonnet-5-5, #120 / #195) | Q3, Q7, Q11, Q12, Q13, Q15, Q16, Q17, Q19, Q20, Q22, Q23, Q25, Q26 |
 
 ## Individual scoring sheet (from W6)
 
