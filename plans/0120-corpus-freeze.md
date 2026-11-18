@@ -339,7 +339,7 @@ checker false positive).
 | Q14 | 3 | answer -> answer | PASS | Each option's economics for the advisor (payouts, benefits, entry minimums) from RJF's own page and 10-K; firm side via payout split, advisor loans and NNA attribution; channel profitability marked undisclosed. |
 | Q15 | 3 | answer -> answer | FAIL | Only Schwab's revenue mix; the advisor-led side is missing (gap), so no mechanism comparison. |
 | Q16 | 3 | answer -> answer | FAIL | Organised by source/firm, not by position; no spread of positions synthesised. |
-| Q17 | 1 | answer -> answer | FAIL | Says MS and Merrill make no advice-delivery AI claims, but MS LeadIQ (Q5) and BAC's AI tools for advisers (Q4) are in the corpus; the "who claims most" verdict rests on that miss. |
+| Q17 | 1 | answer -> answer | FAIL | The "who claims most" verdict says MS and EDJ make no advice-delivery AI claims (from MS's 10-K only) and the gap names Merrill and EDJ as silent, leaving out MS LeadIQ (Q5) and BAC's AI tools for advisers (Q4), both in the corpus. |
 | Q18 | 3 | answer -> answer | PASS | Pricing changes (lower AUM pricing, Merrill no added fee), research (McKinsey), survey (Wealthtender) and management commentary each labelled. No regulatory item; scored without fee-schedule documents (TL decision, P1). |
 | Q19 | 3 | answer_with_boundary -> same | FAIL | Stops at "should" correctly, but competitor moves aimed at the cohort are missing (e.g. Schwab "built to win across generations", Gen Z share of new accounts) and EDJ's own next-gen platform is not mentioned. |
 | Q20 | 1 | answer -> gap_with_adjacent | FAIL | Behavior mismatch; UBS findings given without sample, Wealthtender study not used; no under-40 finding reported. |
@@ -354,9 +354,9 @@ checker false positive).
 | Q29 | 1 | gap_with_adjacent -> same | PASS | "Payout grids are not public", aggregate comp expense labelled as a different quantity, suggested source with "trade press indicative only". |
 | Q30 (trap) | 1 | gap_with_adjacent -> same | PASS | "Merrill does not report standalone results", GWIM figures with explicit "GWIM is not Merrill, includes the Private Bank". |
 
-**16/30 (tier 1: 10/18). Gate 3 target >= 18/30: not met.**
+**16/30 (tier 1: 9/18). Gate 3 target >= 18/30: not met.**
 Failing IDs: Q3, Q7, Q11, Q12, Q13, Q15, Q16, Q17, Q19, Q20, Q22, Q23, Q25, Q26.
-Borderline (could move with another scorer): fail side Q3, Q12, Q13, Q19; pass side Q10, Q14, Q18, Q24.
+Borderline (could move with another scorer): fail side Q3, Q12, Q13, Q19; pass side Q2, Q10, Q14, Q18, Q24. The PR review (`Reviewed 6b234bd`) put the range at 15-16 (Q2 the likeliest to move: its gap says payout ranges are not in the recruiting pages, though the RJF affiliation page with ranges is in the corpus, cited in Q14).
 
 Why they fail: retrieval did not bring a passage the corpus has (Q11, Q13, Q17, Q22, Q23, Q25:
 answers then state "not in the evidence" and contradict other answers); corpus gap (Q15 advisor-led
@@ -395,7 +395,7 @@ Q20, Q23 (gap instead of answer), Q25 (answer instead of gap), Q26 (no call). Al
       29 questions with hits; calls 29 + reused 0 + no_call 1 (Q26) = 30; 0 INVALID_OUTPUT, no
       re-run.
 - [x] Scoring pack for all 30 (`EV\scoring\`: behavior, citations resolve 303/303, number-check
-      flags, verdict per question); Gate 3 X/30 = 16/30 scored by the TL agent (section above).
+      flags, verdict per question); Gate 3 X/30 = 16/30 (tier 1: 9/18) scored by the TL agent (section above).
 - [ ] Open, not done by this task (PR says `Part of #120`): Gate 3 not met (16/30 < 18): fix
       issues for the failure classes above, after TL approval; TL decision "sixth firm yes/no"
       (BRIEF: expansion only after gates 1-3 pass cleanly); #169 re-point; W9 fix issues from
@@ -499,16 +499,21 @@ Q20, Q23 (gap instead of answer), Q25 (answer instead of gap), Q26 (no call). Al
      corpus-2026-11-16". `sync-db.ps1 -Check` in `repo` -> exit 0 "up to date: corpus-2026-11-16".
 - 2026-11-17 19:21 - free pre-check, mock on `main` 54a8775 as of 11-16
   (`EV\mock-54a8775-1116`): PASS 27 / FAIL 3 (Q15, Q19, Q26), refusal 5/5, 0 forbidden.
-- 2026-11-17 19:21-19:40 - step 9 from `repo` on `main` 54a8775 (`LLM_PROVIDER=anthropic` for
+- 2026-11-17 19:21-19:29 - step 9 from `repo` on `main` 54a8775 (`LLM_PROVIDER=anthropic` for
   this one command, `.env` unchanged): `eval_run.py --real --max-calls 30 --as-of 2026-11-16
   --out EV\real-30` (log `EV\real-30.log`). 29 calls, 0 reused, Q26 no_call (no RJF passage in
   the window 2026-08-18..11-16), 0 INVALID_OUTPUT, no re-run; model `claude-sonnet-5-5`, prompt
   v2. Automatic status PASS 24 / FAIL 6 (Q15, Q19 coverage; Q20, Q23, Q25 behavior; Q26),
   refusal 5/5. 29 raw files, one per question with hits.
-- 2026-11-17 19:45 - step 10: scoring pack `EV\scoring\` (`gate3\pack.py`, no calls), every
+- 2026-11-17 19:32 - step 10: scoring pack `EV\scoring\` (`gate3\pack.py`, no calls), every
   answer read against `passes_if`: **16/30, scored by the TL agent (Claude)** (section above).
   Gate 3 target not met. Same 16/30 as C1's provisional W9 interim on #15 (other code, other
   run), with a different failing set.
-- 2026-11-17 20:05 - TL decision: the TL performs C1's role, so the Gate 3 row goes into the
+- 2026-11-17 19:34 - TL decision: the TL performs C1's role, so the Gate 3 row goes into the
   "Weekly score" table of `docs/PROGRESS.md` in this PR (C1's table per DASHBOARD section 6).
   The Status log is not edited (the bot adds the Progress line on merge). Score posted on #15.
+- 2026-11-17 19:39 - PR #195 review (Reviewed 6b234bd): CHANGES REQUESTED, 1 blocking: tier-1
+  sub-score is 9/18, not 10/18 (fixed here, in the PR body and the #15 comment). Non-blocking
+  taken: log times aligned with the raw files and commits; Q17 reason reworded; Q2 added to the
+  borderline list (range 15-16); note on #15 that this 16/30 is the Gate 3 record and C1's 17/30
+  line is a different run.
