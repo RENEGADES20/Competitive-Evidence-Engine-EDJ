@@ -39,7 +39,7 @@ research share stay as they are.
   rankings above. With the rule, the best honest result is research + nothing = 1/5 (unchanged);
   counting a ranking footnote gives 2/5 = 0.4, still FAIL. Appending SCHW:transcript and
   SCHW:deck to `expected_sources` gives 3/7 = 0.43, still FAIL, and editing the bank to fit is
-  wrong anyway. Proposed acceptance for Q19 below (named passages); **TL decision D-Q19**.
+  wrong anyway. Acceptance for Q19 below (named passages): **D-Q19, accepted by the TL** (#205 comment).
 - `scripts/eval_run.py` `forbidden()` flags every hit whose firm is not in `query.entities`, so
   competitor chunks must be declared on the Query (new field) and accepted only when on the theme.
 
