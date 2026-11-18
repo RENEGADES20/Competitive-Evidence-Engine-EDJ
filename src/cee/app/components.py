@@ -180,6 +180,12 @@ def caveat_box(text: str) -> None:
     _html(f'<div class="cee-box cee-caveat"><b class="l">Caveat:</b> {escape(text)}</div>')
 
 
+def withheld_box(notice: str) -> None:
+    """Always expanded. Shown in place of a claim kept back by ground rule 6 (#118); the claim's
+    own text is never rendered."""
+    _html(f'<div class="cee-box cee-caveat"><b class="l">Withheld:</b> {escape(notice)}</div>')
+
+
 def coverage_box(note: str) -> None:
     """Always expanded. The text starts with 'Coverage:' (scripts/verify_cee.py reads it)."""
     _html(f'<div class="cee-box cee-coverage">{escape(note)}</div>')
@@ -275,7 +281,9 @@ def corpus_stats() -> dict:
     from cee.db import connect
     with connect() as c:
         snap = c.execute("SELECT obj_description('public.documents'::regclass) AS s").fetchone()["s"]
-        d = c.execute("SELECT count(*) n, count(DISTINCT entity_id) e, max(published_at) latest FROM documents").fetchone()
+        # "Latest filing" counts only source-dated documents: an undated page's date is its download (ADR-007 T-09)
+        d = c.execute("SELECT count(*) n, count(DISTINCT entity_id) e, "
+                      "max(published_at) FILTER (WHERE date_basis = 'source') latest FROM documents").fetchone()
         k = c.execute("SELECT count(*) n FROM chunks").fetchone()["n"]
     return {"snapshot": snap or "none (built locally)", "docs": d["n"], "firms": d["e"],
             "latest": str(d["latest"] or "none"), "chunks": k}

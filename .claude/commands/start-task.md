@@ -13,6 +13,11 @@ Task states: **Todo -> In Progress -> Done -> Approved.** This command moves the
    and ask the user to clarify it on GitHub first.
 2. **Check the working tree.** Run `git status` and `git switch main && git pull`. If there are
    uncommitted changes, stop and ask the user what to do with them.
+   Then compare the local database with the newest snapshot (read-only):
+   Windows `powershell -ExecutionPolicy Bypass -File scripts\sync-db.ps1 -Check`, Mac
+   `bash scripts/sync-db.sh --check`. Exit 2 ("Run /sync-db"): tell the user their database is
+   behind and suggest `/sync-db` before testing anything. Exit 1: Docker is not running; mention
+   it and continue.
 3. **Find the spec.** Use the table "Which spec to read before touching what" in `CLAUDE.md`.
    Read that spec fully, plus the ground rules in `CLAUDE.md`. Read the linked questions in
    `evals/questions.yaml`.

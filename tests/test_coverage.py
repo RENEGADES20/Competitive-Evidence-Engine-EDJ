@@ -39,3 +39,9 @@ def test_grid_counts_dates_and_not_tracked():
     assert by["BAC"]["transcript"][0] == "thin"
     assert notes["MER"].endswith(": 12 chunks")
     assert "LPLA" not in by
+
+
+def test_undated_pages_are_counted_not_dated():
+    # min/max come from source-dated documents only (load() filters date_basis = 'source')
+    assert cp.cell_text(2, None, None) == "2 docs\nundated pages"
+    assert cp.cell_text(5, "2025-10-22", "2026-07-22") == "5 docs\n2025-10-22\nto 2026-07-22"

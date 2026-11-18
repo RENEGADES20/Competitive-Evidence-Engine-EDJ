@@ -8,14 +8,16 @@ services:
     image: pgvector/pgvector:0.8.1-pg16-trixie   # Postgres 16 + pgvector (x86 and Apple chip)
     # The core needs plain Postgres 16; the image also carries pgvector so that turning vectors on
     # (CEE_VECTORS=on) needs no new image. The extension is created only by db/optional/vectors.sql.
-    container_name: cee-db
+    # CEE_DB_CONTAINER / CEE_DB_PORT (.env or environment): empty = cee-db / 5432. Only for a second
+    # database next to the usual one, or when port 5432 is taken (then DATABASE_URL must use the same port).
+    container_name: ${CEE_DB_CONTAINER:-cee-db}
     restart: unless-stopped
     environment:
       POSTGRES_USER: cee
       POSTGRES_PASSWORD: cee
       POSTGRES_DB: cee
     ports:
-      - "5432:5432"
+      - "${CEE_DB_PORT:-5432}:5432"
     volumes:
       - cee-pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro

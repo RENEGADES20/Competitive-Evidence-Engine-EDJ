@@ -16,7 +16,8 @@ def render() -> None:
     ui.eyebrow("Design language")
     st.title("Design")
     ui.sample_banner()
-    st.caption("Every component used in the app, filled with made-up sample data. See docs/DESIGN.md.")
+    st.caption("For the team: every building block of the app, filled with made-up sample data (not evidence). "
+               "See docs/DESIGN.md.")
 
     _section("Citation chip")
     st.markdown(ui.citation_chip_html(SAMPLE_ID, 2, link=False), unsafe_allow_html=True)

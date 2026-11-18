@@ -57,6 +57,17 @@ Q1, Q2, Q3, Q4, Q5, Q6, Q13, Q26, Q27.
 - Undated pages: date rule in ADR-007 (T-09). When only the download date is left, write
   `date_basis = retrieved` in the manifest row (default `source`, #35); such documents stay
   out of recency windows.
+- Undated pages (#58): `scripts/convert_undated_web.py` fetches the advisor recruiting pages
+  (Merrill careers pages live; raymondjames.com blocks scripts, so its affiliation pages come from
+  the latest HTTP 200 Wayback Machine copy, original bytes) and converts them to `<doc_id>.txt`,
+  doc type `press`, tier 3, `date_basis = retrieved`, `published_at` = the copy date. Each file
+  starts with 5 header lines, then a blank line: the page title; `<Firm> advisor recruiting page -
+  content as of <date>`; `Source: <url> (fetched <date>)` or `Source: <Wayback URL> (Wayback
+  Machine copy <timestamp>)`; `Content as of: <date> (date basis: retrieved; the page prints no
+  date)`; `Date check (ADR-007 T-09): printed date none; page metadata none; HTTP Last-Modified
+  none; earliest Wayback capture <date> (dates the URL, not this text).` Recruiter contacts,
+  director cards, press lists, menus and legal footers are dropped.
+- Date check: `python scripts/check_dates.py --out docs/C2_DATES.md` (#58).
 
 ## Open questions
 

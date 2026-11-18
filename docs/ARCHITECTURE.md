@@ -159,8 +159,10 @@ Every citation shows its tier label: tier 1 `licensed`, 2 `filing`, 3 `IR`,
 3. Corpus owners debug ingestion locally; changes land via PR.
 4. Weekly, the tech lead rebuilds the database from `main` and publishes
    `snapshots/corpus-YYYY-MM-DD.dump` to the shared folder.
-5. Everyone runs one `restore` command to load it into local Docker Postgres. Scores record
-   the snapshot name.
+5. Everyone runs `/sync-db` (`scripts/sync-db.ps1` / `.sh`) to load it into local Docker
+   Postgres: it reads `snapshots/LATEST.json` (committed: name, sha256, row counts, notes; the
+   dump itself stays in the shared folder), checks the dump's sha256, restores it and runs the
+   smoke test. Scores record the snapshot name.
 
 ## Reference projects by module
 

@@ -52,6 +52,11 @@ def test_no_window_no_filter():
     assert window_filter(None) == ("TRUE", {})
 
 
+def test_sql_selects_date_basis():
+    # #58: hits carry the date basis so labels can say "page content as of"
+    assert "d.date_basis" in fts.SQL and fts.SQL.count("date_basis") == 2
+
+
 def test_window_filter_leaves_out_retrieved_dates():
     sql, params = window_filter((date(2026, 1, 1), TODAY))
     assert "d.date_basis = 'source'" in sql
@@ -120,3 +125,10 @@ def test_q27_returns_nothing_before_1_january(dated_db, monkeypatch):
 def test_no_time_phrase_returns_every_date(dated_db, monkeypatch):
     assert _docs("What's new on Raymond James?", dated_db, monkeypatch) == [
         "RJF-EDGE-90D", "RJF-IN-89D", "RJF-OLD-91D", "RJF-RETRIEVED", "RJF-TODAY"]
+
+
+def test_hit_carries_date_basis(dated_db, monkeypatch):
+    # #58: outside a window the undated page is found, and it says how it is dated
+    monkeypatch.setattr(fts, "connect", dated_db)
+    basis = {h.doc_id: h.date_basis for h in search(resolve("What's new on Raymond James?", today=TODAY), k=20)}
+    assert basis["RJF-RETRIEVED"] == "retrieved" and basis["RJF-TODAY"] == "source"

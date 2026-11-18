@@ -19,7 +19,8 @@ combinations stand out.
 Preconditions: baseline.
 
 - **Open.** Go to `<app>/coverage`. Wait for "are not shown yet". Page text has EDJ and 10-K.
-- **Read-back.** Count and min/max `published_at` of EDJ 10-K in `cee_verify` equal the cell
+- **Read-back.** Count and min/max `published_at` (source-dated documents only; undated pages,
+  `date_basis = retrieved`, are counted but not dated) of EDJ 10-K in `cee_verify` equal the cell
   text (`COVERED 1 doc <date>` for one annual 10-K; the state follows `cell_state(n, expected_cadence)`;
   the cell is one line of state, one of count, then dates).
 - **Empty.** If the registry expects an EDJ type with no document, `EMPTY 0 docs` is shown.

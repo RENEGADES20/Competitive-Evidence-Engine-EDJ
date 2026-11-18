@@ -27,6 +27,8 @@ validate(answer, hits) -> Answer
         unknown = claim.chunk_ids not in hits  -> claim.flag = "unmatched_citation"  # flag, never drop
         numbers in claim.text not found in cited chunk text -> claim.flag = "number_not_found"
     source_label built by code from documents (entity, doc_type, date, segment, tier label)
+    date for an undated web page (date_basis = retrieved, ADR-007 T-09): "page content as of <date>" in
+    source_label, coverage_note (own group) and the model's chunk source line, never "published"
 
 insert_caveats(answer, hits, entities_config) -> Answer
     if any cited chunk is a substitute (e.g. BAC GWIM for MER, equivalence: partial):
@@ -49,14 +51,14 @@ suggest_sources(query) -> [source]
 
 ## Standard wording
 
-Prompt v0 lives in `src/cee/answer/prompt.py` (`PROMPT_VERSION`), which holds these sentences
+The prompt lives in `src/cee/answer/prompt.py` (`PROMPT_VERSION`), which holds these sentences
 as constants. Keep the two in sync. Caveats remain code-owned; this wording does not replace them.
 
 | Case | Questions | Gap (`gaps[].what`) | Adjacent `differs_because` |
 |---|---|---|---|
 | Merrill standalone results | Q30 | "Merrill does not report standalone results." | "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's." |
 | Advisor attrition | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
-| Advisor pay | Q29 | "Payout grids are not public." | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
+| Advisor pay (decided per firm, prompt v2, #167) | Q25, Q29 | Firm with nothing published: "Payout grids are not public." (multi-firm answers name the firm first). Firm whose cited chunks publish payout ranges (RJF recruiting pages, #151): the ranges are claims dated "page content as of <date>", and the gap is "Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public." Never "not public" for a firm whose evidence shows ranges. | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
 
 Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this
 sentence as the last claim:
@@ -116,6 +118,46 @@ Limits: a small figure with one decimal can pass rule 2 with a large relative er
 billion" vs $0.14 billion). The check proves a figure is in the cited text, not that it came from
 the right table column (MS-SUPP-2026Q3 p.8: a docling cell shift put 2.88% under the wrong
 column); PDF source labels keep the page so the reader can open it.
+
+## Date check
+
+`check_dates()` in `src/cee/answer/validate.py` (#155) runs after the number check. A claim that
+dates itself with a month and year is compared with the documents it cites; no match flags the
+claim `date_mismatch` (flagged, never dropped, shown next to the claim). Found in the #61 real run:
+Q29 called the MS 3Q26 release (`period_end` 2026-09-30) "the quarter ended September 2025".
+
+| Claim says | Compared with | Result |
+|---|---|---|
+| "quarter / period / year / months / fiscal year ended <Month> [day,] YYYY", "as of <Month> [day,] YYYY" | a cited document's `period_end` or `published_at` (year and month) | no match: `date_mismatch` |
+| "published [in/on] <Month> [day,] YYYY" | a cited document's `published_at` (year and month) | no match: `date_mismatch` |
+| the same month and year in a cited chunk's text (a comparative column) | chunk text | match |
+| several cited documents | any one matching is enough | |
+
+Not checked: quarter shorthand ("3Q26", "fiscal 3Q25"), because fiscal and calendar quarters
+differ (Raymond James's fiscal year ends in September); bare years; days of the month.
+
+## Boundary
+
+Ground rule 6 is enforced by code as well as by the prompt (#118). `withhold_normative()` and
+`ensure_handoff()` in `src/cee/answer/validate.py` run at the start of `check_citations`.
+
+- A claim or adjacent item that tells the home firm what to do is **withheld**: it is not shown;
+  the Ask page shows "Withheld: A sentence was withheld because it recommended an action for
+  Edward Jones (ground rule 6). That decision belongs to the strategy team." in its place. The
+  claim is kept in `Answer.withheld` (and so in `query_log`) for review, never silently dropped.
+  A shown recommendation, even flagged, has already reached the reader; that is why it is
+  withheld rather than flagged.
+- An answer with a withheld claim and behavior `answer` is re-judged `answer_with_boundary`.
+- Every `answer_with_boundary` answer ends with the hand-off sentence; code adds it, citing the
+  answer's chunks, when the model left it out.
+
+| Withheld | Not withheld |
+|---|---|
+| "Edward Jones should build a similar channel" (EJ, EDJ, aliases, "the home firm"; should, ought to, would benefit from, might/may want to, could replicate/adopt/copy/emulate/consider/learn from/follow) | the hand-off sentence itself |
+| "The home firm must / needs to ..." | "Edward Jones must maintain minimum net capital" (a filing duty) |
+| "We / I (would) recommend / suggest / advise ..." | text in quotation marks: a firm's or analyst's own words |
+| "It would be wise / advisable / prudent ..."; "It is recommended ..." | "we should expect" in a transcript ("we" / "you" are the speaker, not the home firm) |
+| "recommend(s/ed) / suggest(s/ed) / advise(s/d) (that) Edward Jones ..." | "advisors recommend products suited to each client"; "should market conditions worsen" |
 
 ## Open questions
 

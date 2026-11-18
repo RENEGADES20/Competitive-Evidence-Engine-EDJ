@@ -1,6 +1,7 @@
-"""Entity questions that name a theme also get tier 5 research on that theme (#116): topic
-parsing without a database, and the research quota on fixture rows in a throwaway schema of the
-local Postgres (skipped if it is down)."""
+"""Entity questions that name a theme also get tier 5 research on that theme (#116), and with
+several firms every firm's chunks on the theme are sure of a slot or the firm is a gap (#117):
+topic parsing without a database, quotas on fixture rows in a throwaway schema of the local
+Postgres (skipped if it is down)."""
 from datetime import date
 
 import psycopg
@@ -9,7 +10,7 @@ from psycopg.rows import dict_row
 
 from cee.config import settings
 from cee.retrieve import fts
-from cee.retrieve.fts import apply_filters, resolve, search
+from cee.retrieve.fts import Hit, Query, apply_filters, resolve, search, theme_gaps
 
 TODAY = date(2026, 10, 27)
 Q19 = "How should the preferences of younger investors shape Edward Jones's offerings?"
@@ -25,14 +26,45 @@ def test_firm_without_topic_stays_entity():
     assert (q.themes, q.mode) == ([], "entity")
 
 
+FIVE = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+
+
+@pytest.mark.parametrize("question, entities, themes", [
+    ("What do we know about the generational wealth transfer, and how are these five preparing for it?",
+     FIVE, ["wealth_transfer"]),                                                    # Q21
+    ("How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones "
+     "replicate a similar strategy?", ["SCHW", "EDJ"], ["client_acquisition"]),      # Q12, firm theme
+    ("What is Edward Jones's advisor attrition rate compared to Merrill's?",
+     ["EDJ", "MER"], ["advisor_recruiting"]),                                       # Q28
+])
+def test_several_firms_and_a_theme_are_entity_plus_theme(question, entities, themes):
+    q = resolve(question, TODAY)
+    assert (q.entities, q.themes, q.mode) == (entities, themes, "entity+theme")
+
+
 @pytest.mark.parametrize("question", [
     "Advisor headcount over the last eight quarters across the five.",               # Q23
-    "What is Edward Jones's advisor attrition rate compared to Merrill's?",          # Q28
+    "How does each of the five define and report advisor headcount -- and what does each "
+    "definition include or exclude?",                                                # Q11
 ])
-def test_several_firms_and_topic_stay_entity(question):
-    # research slots pushed Q23's headcount figures out; per-firm theme quotas are #117
+def test_metric_phrase_names_no_theme(question):
+    # "advisor headcount" is an advisor_recruiting keyword, but asks for a figure: theme slots
+    # pushed Q23's supplement and press release out (config metric_phrases)
     q = resolve(question, TODAY)
-    assert (q.themes, q.mode) == (["advisor_recruiting"], "entity")
+    assert (q.themes, q.mode) == ([], "entity")
+
+
+def _hit(entity_id, on_theme, segment=None):
+    return Hit(chunk_id=f"{entity_id}-X#1", doc_id=f"{entity_id}-X", entity_id=entity_id, segment=segment,
+               doc_type="transcript", source_tier=2, published_at="2026-01-01", period_end=None,
+               section=None, page=None, rank=1.0, text="x", on_theme=on_theme)
+
+
+def test_theme_gaps_are_firms_without_a_chunk_on_the_theme():
+    q = Query(question="q", entities=["MS", "SCHW", "MER"], themes=["wealth_transfer"], mode="entity+theme")
+    hits = [_hit("MS", True), _hit("SCHW", False), _hit("BAC", True, "GWIM"), _hit(None, False)]
+    assert theme_gaps(q, hits) == ["SCHW"]               # Merrill counts through BAC GWIM
+    assert theme_gaps(Query(question="q", entities=["SCHW"], mode="entity"), hits) == []
 
 
 def test_topic_without_firm_stays_theme():
@@ -49,14 +81,20 @@ def test_sub_topic_word_alone_names_no_theme():
 
 SCHEMA = "test_retrieval_themes"
 WORDS = "younger investors prefer digital advice and mobile offerings"
-DOCS = [  # doc_id, entity_id, doc_type, tier, topic, chunks
+DOCS = [  # doc_id, entity_id, doc_type, tier, topic, chunks[, words]
     # 3 per document (MAX_PER_DOC), two types so the pool (POOL_PER_GROUP) can fill 16 slots
     *[(f"EDJ-{t}-{i}", "EDJ", t, 2, None, 3) for t in ("10-K", "10-Q") for i in range(4)],
     ("MS-10K", "MS", "10-K", 2, None, 3),                         # another firm: never returned
     ("SURVEY-A", None, "research", 5, "younger_investors", 4),
     ("SURVEY-B", None, "research", 5, "younger_investors", 4),
     ("FEES-STUDY", None, "research", 5, "fees_pricing", 3),       # research on another topic
+    # #117: Schwab's chunk on client acquisition ranks below its other 10-Q chunks (same document
+    # type, so only the theme can lift it); Raymond James has none
+    *[(f"SCHW-10Q-{i}", "SCHW", "10-Q", 2, None, 1, "acquire client data on new systems") for i in range(3)],
+    ("SCHW-10Q-NEW", "SCHW", "10-Q", 2, None, 1, "we won new clients"),
+    *[(f"RJF-10Q-{i}", "RJF", "10-Q", 2, None, 1, "acquire client data on new systems") for i in range(3)],
 ]
+Q12_LIKE = "How do Schwab and Raymond James acquire new clients?"
 
 
 @pytest.fixture(scope="module")
@@ -77,14 +115,15 @@ def theme_db():
             segment text, page int, prefix text NOT NULL, text text NOT NULL,
             tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', prefix || ' ' || text)) STORED)""")
         conn.execute(f"CREATE TABLE {SCHEMA}.chunk_topics (chunk_id text, topic_id text)")
-        for doc_id, entity, doc_type, tier, topic, n in DOCS:
+        for doc_id, entity, doc_type, tier, topic, n, *words in DOCS:
             conn.execute(f"INSERT INTO {SCHEMA}.documents VALUES (%s, %s, %s, %s, %s, 'source', NULL)",
                          (doc_id, entity, doc_type, tier, date(2026, 3, 1)))
             for i in range(n):
                 cid = f"{doc_id}#{i}"
                 # distinct words per chunk, so near-duplicate removal keeps every row
                 conn.execute(f"INSERT INTO {SCHEMA}.chunks VALUES (%s, %s, %s, 'Document', NULL, NULL, '', %s)",
-                             (cid, doc_id, i, WORDS + " " + " ".join(f"{cid.lower()}w{j}" for j in range(12))))
+                             (cid, doc_id, i, (words or [WORDS])[0] + " "
+                              + " ".join(f"{cid.lower()}w{j}" for j in range(12))))
                 if topic:
                     conn.execute(f"INSERT INTO {SCHEMA}.chunk_topics VALUES (%s, %s)", (cid, topic))
         yield lambda: psycopg.connect(url, row_factory=dict_row, options=f"-c search_path={SCHEMA}")
@@ -122,3 +161,20 @@ def test_firm_filter_drops_the_research_part(theme_db, monkeypatch):
     monkeypatch.setattr(fts, "connect", theme_db)
     hits = search(apply_filters(resolve(Q19, TODAY), firms=["EDJ"]), k=20)
     assert {h.entity_id for h in hits} == {"EDJ"}
+
+
+def test_each_firm_s_chunk_on_the_theme_is_sure_of_a_slot(theme_db, monkeypatch):
+    # #117: two slots each; Schwab's only on-theme chunk ranks last but takes its first turn
+    monkeypatch.setattr(fts, "connect", theme_db)
+    q = resolve(Q12_LIKE, TODAY)
+    assert (q.entities, q.themes, q.mode) == (["SCHW", "RJF"], ["client_acquisition"], "entity+theme")
+    hits = search(q, k=4)
+    assert [h.entity_id for h in hits].count("SCHW") == 2 and [h.entity_id for h in hits].count("RJF") == 2
+    assert [h.doc_id for h in hits if h.on_theme] == ["SCHW-10Q-NEW"]
+    assert theme_gaps(q, hits) == ["RJF"]                # reported, not padded away
+
+
+def test_without_a_theme_rank_order_decides(theme_db, monkeypatch):
+    monkeypatch.setattr(fts, "connect", theme_db)
+    hits = search(resolve("How do Schwab and Raymond James acquire client data?", TODAY), k=4)
+    assert "SCHW-10Q-NEW" not in {h.doc_id for h in hits} and not any(h.on_theme for h in hits)
