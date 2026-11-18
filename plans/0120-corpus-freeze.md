@@ -509,3 +509,6 @@ Q20, Q23 (gap instead of answer), Q25 (answer instead of gap), Q26 (no call). Al
   answer read against `passes_if`: **16/30, scored by the TL agent (Claude)** (section above).
   Gate 3 target not met. Same 16/30 as C1's provisional W9 interim on #15 (other code, other
   run), with a different failing set.
+- 2026-11-17 20:05 - TL decision: the TL performs C1's role, so the Gate 3 row goes into the
+  "Weekly score" table of `docs/PROGRESS.md` in this PR (C1's table per DASHBOARD section 6).
+  The Status log is not edited (the bot adds the Progress line on merge). Score posted on #15.
