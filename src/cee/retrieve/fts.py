@@ -24,6 +24,9 @@ used one (speaker-turn transcripts of one call crowded out the firm's other call
 Answer turns and key matching (#203, ADR-017): an analyst's question turn brings management's next
 turn (same hard filters); synonym keys fire hyphenated and inflected, and a multi-word key is also
 searched as a phrase.
+Firm scope (#205, ADR-018): "an advisor-led model" is a peer phrase (MS, EDJ, Merrill, RJF; Q15),
+and a theme question naming only the home firm (config `home_firm`) also gets the other covered
+firms' chunks on the theme (theme_peers, Q19), filtered in SQL and cut at a floor across them.
 """
 from __future__ import annotations
 
@@ -52,6 +55,8 @@ class Query:
     firm_filter: list[str] = field(default_factory=list)  # only these firms; empty = no firm filter
     date_range: tuple[date, date] | None = None          # published_at from..to, both inclusive
     keywords: list[str] = field(default_factory=list)     # every keyword must be in the passage
+    # Home-firm theme rule (#205, ADR-018): other covered firms searched only on the theme
+    theme_peers: list[str] = field(default_factory=list)
 
     @property
     def firms(self) -> list[str]:
@@ -141,6 +146,19 @@ def theme_label(q: Query) -> str:
     return " / ".join(themes[t].label for t in q.themes if t in themes)
 
 
+def home_theme_peers(firms: list[str], mode: str) -> list[str]:
+    """Covered firms whose chunks on the theme join a theme question that names only the home
+    firm (config `home_firm`, #205, ADR-018): the members of its `theme_peers` peer set minus the
+    home firm (Q19: MS, SCHW, MER, RJF). Empty for any other question, including one that also
+    names a firm we hold no documents for ("Edward Jones and Vanguard on fees")."""
+    cfg = entities_config()
+    home = cfg.get("home_firm") or {}
+    if mode != "entity+theme" or not home.get("id") or firms != [home["id"]]:
+        return []
+    sets = {s["id"]: s["members"] for s in cfg.get("peer_sets", [])}
+    return [m for m in sets.get(home.get("theme_peers"), []) if m != home["id"]]
+
+
 def resolve(question: str, today: date | None = None) -> Query:
     cfg = entities_config()
     q = Query(question=question)
@@ -154,6 +172,7 @@ def resolve(question: str, today: date | None = None) -> Query:
     named = tag_text(themed, topics) | tag_text(themed, firm_themes())
     q.themes = [t for t in _themes() if t in named]
     q.mode = ("entity+theme" if q.themes else "entity") if q.entities else "theme"
+    q.theme_peers = home_theme_peers(q.firms, q.mode)
     q.window = _window(question, today or date.today())
     return q
 
@@ -168,6 +187,7 @@ def apply_filters(q: Query, firms: list[str] | None = None, date_range: tuple[da
         q.entities = [e for e in q.entities if e in firms] if q.entities else list(firms)
         q.unmapped = [u for u in q.unmapped if u in firms]
         q.mode = "entity"  # a firm filter means only these firms: no firm-less research (#116)
+        q.theme_peers = []  # ... and no other firms on the theme (#205)
     q.date_range = date_range
     q.keywords = [k.strip() for k in keywords or [] if k.strip()]
     return q
@@ -368,21 +388,23 @@ ORDER BY rank DESC, chunk_id
 """
 
 
-def entity_filter(entity_ids: list[str]) -> tuple[str, dict]:
+def entity_filter(entity_ids: list[str], prefix: str = "") -> tuple[str, dict]:
     """Hard filter. An entity reported inside a parent segment (MER -> BAC GWIM) only sees
-    parent chunks tagged with that segment."""
+    parent chunks tagged with that segment. prefix keeps the parameter names apart when two
+    entity filters share one query (the theme peers, #205)."""
     if not entity_ids:
         return "TRUE", {}
     clauses, params = [], {}
     by_id = {e["id"]: e for e in entities_config()["entities"]}
     for i, eid in enumerate(entity_ids):
-        params[f"e{i}"] = eid
-        clause = f"d.entity_id = %(e{i})s"
+        e_, p_, s_ = f"{prefix}e{i}", f"{prefix}p{i}", f"{prefix}s{i}"
+        params[e_] = eid
+        clause = f"d.entity_id = %({e_})s"
         e = by_id.get(eid, {})
         if e.get("parent") and e.get("reported_as"):
-            params[f"p{i}"] = e["parent"]
-            params[f"s{i}"] = [e["reported_as"], e["name"]]
-            clause = f"({clause} OR (d.entity_id = %(p{i})s AND c.segment = ANY(%(s{i})s)))"
+            params[p_] = e["parent"]
+            params[s_] = [e["reported_as"], e["name"]]
+            clause = f"({clause} OR (d.entity_id = %({p_})s AND c.segment = ANY(%({s_})s)))"
         clauses.append(clause)
     return "(" + " OR ".join(clauses) + ")", params
 
@@ -520,9 +542,30 @@ BUDGET_RULE = per_firm_budget
 def budget(q: Query) -> int:
     """Passages handed to the model for this question: K for 0 or 1 named firm, more for several
     firms so each keeps its best evidence (#181). Merrill is one firm (q.entities lists MER once);
-    firms we hold no documents for do not count."""
+    firms we hold no documents for do not count. The theme peers' slots (#205) come on top."""
     n = len(q.entities)
-    return K if n <= 1 else max(K, BUDGET_RULE(n))
+    return (K if n <= 1 else max(K, BUDGET_RULE(n))) + peer_slots(q)
+
+
+PEER_THEME_PER_FIRM = 2  # home-firm theme rule (#205): slots per peer firm, on the theme only
+
+
+def peer_slots(q: Query) -> int:
+    """Most passages the theme peers can add (#205); 0 without peers."""
+    return PEER_THEME_PER_FIRM * len(getattr(q, "theme_peers", None) or [])
+
+
+def peer_floor(pool: list[Hit], floor: float | None = None) -> list[Hit]:
+    """The peers' pool cut at FLOOR x its FLOOR_BASE-th best rank across all peers as one group
+    (its lowest with fewer chunks): a firm whose only text on the theme is a footnote (Merrill's
+    "Top 40 Advisors Under 40" rankings at 3.3 vs Schwab's 29.5 in Q19) takes no slot, which a
+    per-firm floor would not do. Kept inside a time window too (#205)."""
+    floor = FLOOR if floor is None else floor
+    ranks = sorted((h.rank for h in pool), reverse=True)
+    if not ranks:
+        return []
+    base = ranks[min(FLOOR_BASE, len(ranks)) - 1]
+    return [h for h in pool if h.rank >= floor * base]
 
 
 def _shingles(text: str, n: int = 5) -> set[tuple[str, ...]]:
@@ -722,8 +765,10 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
 
 
 def search(q: Query, k: int | None = None) -> list[Hit]:
-    """k: passages to return; None = budget(q), the app default."""
-    k = budget(q) if k is None else k
+    """k: passages to return; None = budget(q), the app default. The theme peers' slots (#205)
+    are part of budget(q) and come on top of an explicit k, so the named firms and the research
+    part get the same k with or without peers."""
+    k = budget(q) - peer_slots(q) if k is None else k
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     if q.firm_filter and not q.entities:
@@ -743,7 +788,7 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
     params.update(syn_params)
     params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
-    research_rows, on_theme_rows = [], []
+    research_rows, on_theme_rows, peer_rows = [], [], []
     with connect() as conn:
         rank, rank_params = rank_sql(conn, terms, syn_params)
         params.update(rank_params)
@@ -761,6 +806,11 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
             sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{where} AND {on_theme}",
                              window_filter=window, filters=filters)
             on_theme_rows = conn.execute(sql, params | on_theme_params).fetchall()
+            if q.theme_peers:  # home-firm theme rule (#205): other firms, on the theme only
+                peers, peer_params = entity_filter(q.theme_peers, prefix="peer_")
+                sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{peers} AND {on_theme}",
+                                 window_filter=window, filters=filters)
+                peer_rows = conn.execute(sql, params | on_theme_params | peer_params).fetchall()
         on_ids = {r["chunk_id"] for r in on_theme_rows}
         merged = {r["chunk_id"]: r for r in [*rows, *on_theme_rows]}
         pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
@@ -775,6 +825,21 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
                       **{**opts, "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False, "new_doc_first": False},
                       floor_base=1)
     hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities), answers=answers) + research
+    if peer_rows:
+        # The peers' best chunks on the theme, after the floor across them (kept in a window too);
+        # at most PEER_THEME_PER_FIRM each, never a chunk already in the list.
+        peer_pool = peer_floor([Hit(**r, on_theme=True) for r in peer_rows])
+        firm_of = quota_firms(q.theme_peers)
+        kept = {h.chunk_id for h in hits}
+        peer_hits = select([h for h in peer_pool if h.chunk_id not in kept],
+                           PEER_THEME_PER_FIRM * len({firm_of.get(h.entity_id, h.entity_id) for h in peer_pool}),
+                           floor=0, firm_of=firm_of, trade_last=not q.window)
+        per_firm: dict = {}
+        for h in peer_hits:
+            f = firm_of.get(h.entity_id, h.entity_id)
+            if per_firm.get(f, 0) < PEER_THEME_PER_FIRM:
+                per_firm[f] = per_firm.get(f, 0) + 1
+                hits.append(h)
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

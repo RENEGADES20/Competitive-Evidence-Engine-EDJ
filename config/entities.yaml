@@ -136,6 +136,24 @@ peer_sets:
   - id: core_five
     members: [MS, SCHW, EDJ, MER, RJF]
     phrases: ["each of the five", "across the five", "all five", "these five", "the five"]   # Q10, Q11, Q21-Q25
+  # The advisor-led firms (#205, Q15: "an advisor-led model" names no firm). Members by how each
+  # firm reports: MS Wealth Management reports advisor-led client assets apart from self-directed
+  # (MS-10K-2025 #125); Edward Jones serves clients only through its financial advisors; Merrill is
+  # GWIM's advisor business (MER filter: BAC GWIM/Merrill only); RJF's Private Client Group is its
+  # advisors in every affiliation model. Schwab (self-directed, RIA custody) is not one. Indefinite
+  # and plural phrases only: "Edward Jones's advisor-led model" names one firm, not the group.
+  - id: advisor_led
+    members: [MS, EDJ, MER, RJF]
+    phrases: ["an advisor-led model", "advisor-led models", "advisor-led firms", "an advisor-led firm",
+              "an adviser-led model", "adviser-led models", "adviser-led firms", "an adviser-led firm"]
+
+# Home firm (#205, ADR-018). A theme question whose only named covered firm is the home firm also
+# searches the other members of `theme_peers` (a peer set id) on that theme: only their chunks on
+# the theme, every hard filter kept (Q19: competitor moves aimed at younger investors). A firm
+# filter on the Ask page turns it off.
+home_firm:
+  id: EDJ
+  theme_peers: core_five
 
 # Expansion eleven (docs/BRIEF.md). status: mapped = known to the system but not ingested.
 # Questions about them get an honest "no evidence" plus the sources that would answer.

@@ -103,6 +103,33 @@ def available(p: Pattern, corpus: set[tuple[str | None, str]], subs: dict) -> bo
     return any(e in owners and (p.doc_type is None or t == p.doc_type) for e, t in corpus)
 
 
+def theme_text_pattern(themes: list[str]):
+    """The theme's keyword pattern, rebuilt here from config/topics.yaml (top-level topics) and the
+    firm themes in config/entities.yaml with the tagger's own pattern (cee.ingest.topics), so the
+    eval does not trust the on_theme flag search() sets (#205)."""
+    import re
+    from cee.ingest.topics import _pattern, load_topics
+    words = {t.topic_id: t.pattern.pattern for t in load_topics() if t.parent is None}
+    words |= {t["id"]: _pattern(t["keywords"]).pattern for t in entities_config().get("firm_themes") or []}
+    parts = [f"(?:{words[t]})" for t in themes if t in words]
+    return re.compile("|".join(parts), re.IGNORECASE) if parts else None
+
+
+def _peer_on_theme(query, hit, subs: dict) -> bool:
+    """A hit of a firm the question does not name is allowed only as a home-firm theme peer
+    (#205, ADR-018): its firm is in query.theme_peers (a BAC hit only for MER, through the
+    GWIM/Merrill segment), and its text has one of the theme's keywords."""
+    peers = getattr(query, "theme_peers", None) or []
+    if not peers or hit.entity_id is None:
+        return False
+    if hit.entity_id not in peers:
+        via_parent = [e for e in peers if e in subs and subs[e][0] == hit.entity_id]
+        if not via_parent or not all(_segment_in(hit, subs[e][1]) for e in via_parent):
+            return False
+    pattern = theme_text_pattern(query.themes)
+    return bool(pattern and pattern.search(hit.text))
+
+
 def forbidden(query, hits, subs: dict) -> list[str]:
     """Hits the hard filters should never let through for this question."""
     if not query.entities:
@@ -116,6 +143,8 @@ def forbidden(query, hits, subs: dict) -> list[str]:
             continue  # tier 5 research on the named topic (fts.theme_filter, #116)
         via_parent = [e for e in query.entities if e in subs and subs[e][0] == h.entity_id]
         if via_parent and all(_segment_in(h, subs[e][1]) for e in via_parent):
+            continue
+        if _peer_on_theme(query, h, subs):
             continue
         bad.append(h.chunk_id)
     return bad
@@ -228,7 +257,7 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
         status = "PASS" if coverage >= min_coverage else "FAIL"
     return {"id": q["id"], "text": q["text"], "use_case": q.get("use_case"), "tier": q.get("tier"),
             "trap": q.get("trap", False), "expected_behavior": q.get("expected_behavior"), "entities": query.entities,
-            "unmapped": query.unmapped, "mode": query.mode, "themes": query.themes,
+            "unmapped": query.unmapped, "theme_peers": getattr(query, "theme_peers", []), "mode": query.mode, "themes": query.themes,
             "theme_gaps": theme_gaps(query, hits), "chunk_ids": [h.chunk_id for h in hits],
             "patterns": rows, "available_patterns": len(avail), "hit_patterns": len(hit),
             "coverage": coverage, "forbidden": bad,
@@ -455,7 +484,7 @@ def main(argv: list[str] | None = None) -> int:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
     from cee.config import settings
-    from cee.retrieve.fts import budget, resolve, search
+    from cee.retrieve.fts import budget, peer_slots, resolve, search
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -477,8 +506,9 @@ def main(argv: list[str] | None = None) -> int:
     records = []
     for q in bank:
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
-        k = budget(query) if args.k is None else args.k
-        hits = search(query, k=k)
+        k = budget(query) if args.k is None else args.k  # budget() includes the peers' slots (#205)
+        # search() adds the theme peers' slots on top of the k it is given, as the app does
+        hits = search(query, k=budget(query) - peer_slots(query) if args.k is None else args.k)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates)
         r |= prompt_size(k, hits)
         if real:

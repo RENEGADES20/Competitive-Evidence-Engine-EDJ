@@ -137,3 +137,27 @@ def test_inflected_synonym_only_word_is_stripped_too():
     terms, synonyms = keyword_terms(resolve("How is Morgan Stanley paying its financial advisors?"))
     assert "paying" not in terms.split() and "financial advisors" in terms
     assert "payout" in synonyms
+
+
+# --- the advisor-led model (#205, ADR-018) ------------------------------------------------------
+
+Q15 = "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?"
+
+
+def test_advisor_led_model_adds_the_advisor_led_firms():
+    assert resolve(Q15).entities == FIVE                     # Schwab named + MS, EDJ, MER, RJF
+    assert resolve("How do advisor-led firms price advice?").entities == ["MS", "EDJ", "MER", "RJF"]
+
+
+@pytest.mark.parametrize("question, entities", [
+    ("How does Edward Jones's advisor-led model earn?", ["EDJ"]),
+    ("How big is Morgan Stanley's advisor-led channel?", ["MS"]),
+])
+def test_a_named_firm_s_advisor_led_model_is_that_firm_only(question, entities):
+    assert resolve(question).entities == entities
+
+
+def test_plural_advisor_led_models_names_the_group():
+    # deliberate (#205 plan review): the plural names the group, so MER and RJF join the two firms
+    q = resolve("How do Edward Jones's and Morgan Stanley's advisor-led models differ?")
+    assert q.entities == ["MS", "EDJ", "MER", "RJF"]

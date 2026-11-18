@@ -37,8 +37,11 @@ def _plural(n: int, word: str) -> str:
 
 
 def footer_firms(query) -> str:
-    """Same firms the gap box names (#50); firms we hold nothing for are marked."""
-    return ", ".join(f if f in query.entities else f"{f} (no documents)" for f in query.firms) or "none"
+    """Same firms the gap box names (#50); firms we hold nothing for are marked; firms searched
+    only on the theme (home-firm theme rule, #205) are marked too."""
+    firms = [f if f in query.entities else f"{f} (no documents)" for f in query.firms]
+    firms += [f"{f} (on the theme)" for f in getattr(query, "theme_peers", [])]
+    return ", ".join(firms) or "none"
 
 
 def _ticker() -> None:

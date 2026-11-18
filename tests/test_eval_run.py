@@ -391,3 +391,44 @@ def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
     assert rec["meta"]["k"] == "by question"
     assert {k: rec["questions"][0][k] for k in ("k", "passages", "chars")} == {"k": 30, "passages": 1, "chars": 1}
     assert "| 30 | 1 | 1 |" in (tmp_path / "budget" / "report.md").read_text(encoding="utf-8")
+
+
+# --- home-firm theme peers (#205, ADR-018): checked on the text, not on search()'s flag ---------
+
+YOUNG = "Gen Z investors make up a third of new accounts"
+OFF = "net interest revenue rose on higher balances"
+
+
+def peer_hit(chunk_id, entity, text, segment=None, on_theme=True):
+    return types.SimpleNamespace(chunk_id=chunk_id, entity_id=entity, doc_type="transcript", segment=segment,
+                                 text=text, on_theme=on_theme)
+
+
+def peer_query(peers=("MS", "SCHW", "MER", "RJF")):
+    return types.SimpleNamespace(entities=["EDJ"], unmapped=[], mode="entity+theme", themes=["younger_investors"],
+                                 theme_peers=list(peers))
+
+
+def test_forbidden_allows_a_peer_hit_on_the_theme():
+    hits = [peer_hit("s", "SCHW", YOUNG), peer_hit("g", "BAC", YOUNG, "GWIM")]
+    assert er.forbidden(peer_query(), hits, SUBS) == []
+
+
+def test_forbidden_peer_hit_off_theme_text_even_if_flagged_on_theme():
+    assert er.forbidden(peer_query(), [peer_hit("s", "SCHW", OFF, on_theme=True)], SUBS) == ["s"]
+
+
+def test_forbidden_bac_non_gwim_hit_with_mer_peer():
+    assert er.forbidden(peer_query(), [peer_hit("b", "BAC", YOUNG, segment=None)], SUBS) == ["b"]
+
+
+def test_forbidden_non_peer_firm_on_theme_hit():
+    assert er.forbidden(peer_query(peers=["MS", "MER", "RJF"]), [peer_hit("s", "SCHW", YOUNG)], SUBS) == ["s"]
+
+
+def test_forbidden_without_theme_peers_unchanged():
+    hits = [peer_hit("r", None, YOUNG), peer_hit("s", "SCHW", YOUNG), peer_hit("e", "EDJ", OFF),
+            peer_hit("g", "BAC", YOUNG, "GWIM")]
+    no_peers = peer_query(peers=[])
+    plain = types.SimpleNamespace(entities=["EDJ"], unmapped=[], mode="entity+theme", themes=["younger_investors"])
+    assert er.forbidden(no_peers, hits, SUBS) == er.forbidden(plain, hits, SUBS) == ["s", "g"]
