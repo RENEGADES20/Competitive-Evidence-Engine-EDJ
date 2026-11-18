@@ -12,6 +12,9 @@ younger investors).
 Per-firm theme quotas (#117): with several firms + a theme, every firm's chunks on the theme take
 its turns first and a firm with none is reported as a gap (Q21: "these five" and the wealth
 transfer; Q12: Schwab, Edward Jones and client acquisition, a firm theme from config/entities.yaml).
+Budget (#181, ADR-013): the number of passages grows with the number of firms the question names
+(budget()), and Merrill's own documents plus BAC's GWIM chunks share one firm's quota
+(quota_firms()), so five firms do not each drop to 3 passages when Merrill fills two groups (Q22, Q24).
 """
 from __future__ import annotations
 
@@ -346,7 +349,7 @@ def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
             {"w_from": window[0], "w_to": window[1]})
 
 
-K = 20              # chunks handed to the model (specs/retrieval.md)
+K = 20              # chunks handed to the model for a question naming 0 or 1 firm (specs/retrieval.md)
 POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
 MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
@@ -360,6 +363,28 @@ THEME_FIRST = 1      # entity+theme: each firm's best chunk on the theme is sure
 RECENCY_TERMS = "announced launched introduced new record acquisition agreement completed increased hired"
 
 
+PER_FIRM = 6         # passages per named firm once the firms outgrow K (#181, ADR-013)
+
+
+def per_firm_budget(n_firms: int) -> int:
+    """k for a question naming n >= 2 firms: max(K, PER_FIRM x n), so 2-3 firms keep 20 and the
+    five get 30. Chosen from a grid (6, 7, 8 per firm; 20 + 5 per extra firm) as the smallest
+    rule that brought Q22 and Q24 back with no question worse (#181)."""
+    return max(K, PER_FIRM * n_firms)
+
+
+# Module-level so the eval grid can swap the rule (#181).
+BUDGET_RULE = per_firm_budget
+
+
+def budget(q: Query) -> int:
+    """Passages handed to the model for this question: K for 0 or 1 named firm, more for several
+    firms so each keeps its best evidence (#181). Merrill is one firm (q.entities lists MER once);
+    firms we hold no documents for do not count."""
+    n = len(q.entities)
+    return K if n <= 1 else max(K, BUDGET_RULE(n))
+
+
 def _shingles(text: str, n: int = 5) -> set[tuple[str, ...]]:
     words = re.findall(r"\w+", text.lower())
     return {tuple(words[i:i + n]) for i in range(max(1, len(words) - n + 1))}
@@ -369,24 +394,37 @@ def _similar(a: set, b: set) -> float:
     return len(a & b) / len(a | b) if a and b else 0.0
 
 
+def quota_firms(entity_ids: list[str]) -> dict[str, str]:
+    """{parent: child} for a named firm reported inside a parent's segment whose parent is not
+    named itself (MER -> BAC GWIM/Merrill, #181). The entity filter lets only the child's segment
+    of the parent through, so those parent chunks are the child's evidence and share its quota:
+    the question names one firm, so it takes one firm's slots."""
+    by_id = {e["id"]: e for e in entities_config()["entities"]}
+    return {e["parent"]: eid for eid in entity_ids
+            if (e := by_id.get(eid, {})).get("parent") and e.get("reported_as") and e["parent"] not in entity_ids}
+
+
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
-           max_per_doc: int | None = None) -> list[Hit]:
+           max_per_doc: int | None = None, firm_of: dict[str, str] | None = None) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
     FLOOR x its firm's best chunk gets no slot: quotas spread relevant evidence, they do not
     pad the list with a document type that has nothing on the question. In entity+theme (#117)
-    a firm's first THEME_FIRST turns go to its best chunks on the theme, then rank order again."""
+    a firm's first THEME_FIRST turns go to its best chunks on the theme, then rank order again.
+    firm_of maps an entity to the firm whose quota it shares (quota_firms: BAC GWIM -> MER)."""
     floor = FLOOR if floor is None else floor
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
     # tiers[0]: on the theme, tiers[1]: every chunk; each firm -> document type -> rank-ordered hits
     tiers: tuple[dict, dict] = ({}, {})
     best: dict[str | None, float] = {}
+    firm_of = firm_of or {}
     for h in pool:  # first seen = best ranked
-        best.setdefault(h.entity_id, h.rank)
-        if h.rank >= floor * best[h.entity_id]:
+        firm = firm_of.get(h.entity_id, h.entity_id)
+        best.setdefault(firm, h.rank)
+        if h.rank >= floor * best[firm]:
             for n in ((0, 1) if h.on_theme else (1,)):
-                tiers[n].setdefault(h.entity_id, OrderedDict()).setdefault(h.doc_type, []).append(h)
+                tiers[n].setdefault(firm, OrderedDict()).setdefault(h.doc_type, []).append(h)
     firms = [f for f in best if f in tiers[0] or f in tiers[1]]
     turn = {(n, f): 0 for n in (0, 1) for f in firms}
     kept: list[Hit] = []
@@ -430,7 +468,9 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     return kept
 
 
-def search(q: Query, k: int = K) -> list[Hit]:
+def search(q: Query, k: int | None = None) -> list[Hit]:
+    """k: passages to return; None = budget(q), the app default."""
+    k = budget(q) if k is None else k
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
     if q.firm_filter and not q.entities:
@@ -472,7 +512,7 @@ def search(q: Query, k: int = K) -> list[Hit]:
     opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC} if q.window else {}
     research = select([Hit(**r) for r in research_rows], min(THEME_K, k),
                       **{**opts, "max_per_doc": THEME_MAX_PER_DOC})
-    hits = select(pool, k - len(research), **opts) + research
+    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities)) + research
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

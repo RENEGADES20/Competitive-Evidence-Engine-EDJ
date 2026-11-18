@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -39,10 +39,16 @@ expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial 
     # synonym_only (config/entities.yaml, #159): "pay" is searched only through its synonyms;
     #   the bare word leaves the FTS words (Q29: "pay any net liquidation amount" is not advisor pay)
 
-retrieve(query, k=20) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
+retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
     # SQL: WHERE entity/segment filter AND published_at BETWEEN window AND tsv @@ query
     # MER: entity_id='MER' OR (entity_id='BAC' AND segment IN ('GWIM','Merrill'))
+    # budget (#181, ADR-013): k = 20 for a question naming 0 or 1 firm; n >= 2 firms ->
+    #   k = max(20, 6 x n) (2-3 firms: 20, the five: 30). n counts covered firms after the Ask
+    #   page firm filter; Merrill is one firm; firms we hold no documents for take no slots.
+    #   The pool over-fetch (15 per firm and document type) and every quota rule below fill it.
+    # Merrill counted once (#181): with MER named and BAC not, BAC GWIM/Merrill chunks share MER's
+    #   quota turns and relevance floor (one firm, one share); Hit.entity_id stays BAC
     # quota: k split evenly per entity (entity mode); entity+theme: up to 4 of k for tier 5
     #   research tagged with the theme (entity_id IS NULL, chunk_topics), 2 per document,
     #   the firms keep the rest; the firm filter still holds for every firm document
