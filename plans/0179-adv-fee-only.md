@@ -196,3 +196,12 @@ No harm elsewhere:
   Q26 at 11-17 on F1 FAIL like B0 (the brochure-only PASS is gone); on F2 PASS through 15 RJF
   trade chunks (news). F1 lists differ from B0 on 18 questions with equal metrics: the rank's
   IDF counts every chunk in the corpus, brochures included. ADR-015 written.
+- 2026-11-17 20:40 - step 5. pytest 455 passed. verify-cee on `cee` (commit `eebd1ff`): all 9
+  PASS (`.verify-runs/20261117-203203-eebd1ff`). On `cee_179b`: ask-answer FAIL at the Q21 step
+  (it expects Raymond James as a wealth-transfer theme gap; with #186's trade press RJF has an
+  on-theme trade chunk); `main` code (`7a70f40`) fails the same step on `cee_179b`
+  (`.verify-runs/20261117-203625-7a70f40`), so it is #186's corpus, not this change; the
+  recipe needs updating when #186 merges. The other 8 features PASS.
+- 2026-11-17 20:42 - step 6. `cee_179a` / `cee_179b` dropped; `wt-179-data` (and its local
+  branch) and the baseline worktree `wt-179-base` removed; `cee` still 18,497 / 137. Evidence
+  kept in `D:\ALLPROJECTS\EDJ\cache\ev179\`.
