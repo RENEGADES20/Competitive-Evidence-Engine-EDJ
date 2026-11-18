@@ -32,11 +32,14 @@ Preconditions: baseline.
 - **Side effect.** `SELECT count(*) FROM query_log` in `cee_verify` is one higher than
   before the ask.
 - **Theme gap.** Ask Q21 ("What do we know about the generational wealth transfer, and how
-  are these five preparing for it?"). The `Coverage:` line contains
-  `No passages on the theme (Generational wealth transfer) for` followed by Raymond James
-  Financial, and not by Morgan Stanley (corpus-2026-11-16: RJF has no wealth-transfer chunk in
-  the pool; MS's one, `MS-DECK-2026-strategic-update#22`, ranks below the floor but takes MS's
-  theme slot since #190).
+  are these five preparing for it?"). The firms named after
+  `No passages on the theme (Generational wealth transfer) for` in the `Coverage:` line are
+  exactly the firms with no on-theme chunk in the database (read from `cee_verify` with the
+  question's entity filter, the theme's keyword filter and its document-type scope); with no
+  such firm the phrase is absent. A firm with one on-theme chunk is no gap even when it ranks
+  below the floor (#190: MS's `MS-DECK-2026-strategic-update#22`). corpus-2026-11-16 alone:
+  Raymond James Financial is the gap; with the trade press loaded (#57) RJF has on-theme
+  articles and no firm is.
 
 ## Gotchas
 
