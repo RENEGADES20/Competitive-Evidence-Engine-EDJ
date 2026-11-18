@@ -34,6 +34,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-10-29 | 21 earnings-call transcripts (BAC/MS/SCHW 2024Q4-2025Q4, RJF 2024Q3-2025Q4) from MarketBeat/Quartr and Roic.ai: eight quarters per firm (#108) | BAC-TR-2025Q3#24 mis-tagged GWIM by the #106 rule (on #95); some mis-transcribed figures in the free transcripts | #107 chunk by speaker turn (new files have no Q&A heading) |
 | 2026-11-06 | #48: latest investor-day/strategy decks for MS, SCHW, BAC (GWIM), RJF (2025; 2026 has no PDF) with page numbers, plus the one Merrill release in the last 90 days as entity MER; Q8, Q27, Q4 retrieval checks now pass (#146) | Blockers: none | Next: C1 segment tags for the BAC GWIM deck (128/134 chunks untagged); S1 quota review (MER press takes its own turn; 7 rows regressed); pdf.py cross-page blocks (~4%) |
 | 2026-11-06 | C2 date check (64 rows, 0 mismatches, report docs/C2_DATES.md) + 8 undated RJ/Merrill recruiting pages as date_basis=retrieved with "page content as of" labels (#151) | 8 raw files to Box before merge; S1 firm-turn issue (MER own docs) lowers coverage on Q10/Q11/Q22/Q23 | TL snapshot rebuild after merge; S2 payout wording |
+| 2026-11-18 | Transcripts chunked by speaker turn (1,689 -> 2,852 chunks; Merrill answer BAC-TR-2026Q2#63 now its own GWIM chunk, retrieved for Q28); answer key remapped (#150) | doc recall down on Q6/Q11/Q13/Q27 (transcript slots), #63 misses Q4 by one slot | #199; TL rebuilds the snapshot with the new transcript chunks |
 
 ### C3
 
