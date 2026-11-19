@@ -110,12 +110,22 @@ own output, before code adds part gaps or caveats, and again when the eval reuse
 | No `submit_answer` call, or a tool input that is not a valid Answer | invalid (#187) |
 | Cut at the output cap (Anthropic `stop_reason` `max_tokens`, OpenAI `finish_reason` `length`), even when the partial input validates | invalid; every content block kept |
 | No claims, no adjacent items and no gaps, unless behavior `refuse` with `answerable` false | invalid; the tool input as sent kept (a misnamed key shows) |
+| API `stop_reason` `refusal` (Anthropic, #232), even with a tool input that validates | invalid; every content block kept. Not the model's own answer `behavior: refuse` with `answerable` false, which is a valid answer (row above) |
 
 Every real answer records `stop_reason` and `usage` (input and output tokens; Anthropic also the
 content block types, e.g. `thinking`, `tool_use`), code-owned fields of the Answer, so they reach
 `query_log.answer` and the eval's saved outputs. A tool answer normally stops with `tool_use`. The
 real clients are built with `max_retries=0` (TL, #230): a timeout or transport error is reported,
 never a second paid request.
+
+Strict tool input (#232): on Anthropic the `submit_answer` tool is sent with `strict: true` (the
+planner's `submit_plan` too, ADR-020), so the API itself enforces `llm_output_schema()` on the tool
+input (grammar-constrained); the schema already meets strict mode's rules (every object
+`additionalProperties: false`, every property required, no array limits), checked offline by a test
+and by the SDK's `anthropic.transform_schema`. `tool_choice` stays `auto` (claude-sonnet-5-5 rejects
+forced tool choice), so a response without a tool call is still possible and stays invalid (first
+row). The OpenAI request was already strict. The eval's cache keys carry the Anthropic request
+version `strict-1` (`llm.request_version`); `PROMPT_VERSION` stays v4.1 (prompt text unchanged).
 
 ## Every part answered or named as a gap (code, #215)
 
