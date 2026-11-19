@@ -2,7 +2,8 @@
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 Here: citation check (flag, never drop), code-built source labels, caveat insertion,
-coverage note, registry-based suggested sources, number check, empty-retrieval gap/refuse.
+coverage note, registry-based suggested sources, number check, empty-retrieval gap/refuse,
+uncited grid cells moved to gaps and the per-part check (#215).
 """
 from __future__ import annotations
 
