@@ -296,3 +296,18 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   PASS (30 records; chunk ids = #211's run on 30/30; fails exactly Q19, Q22; hits on 30/30; mock answer
   flow built for 30/30 with the same retrieval), `cee` from `wt-212\src`. Dry run `ev212\dry-0`
   (`--real --max-calls 0`): 30 NOT_EVALUATED, real calls 0, reused 0; no `.eval-runs\cache` in `wt-212`.
+- 2026-11-18 23:55 - step 3 started (`ev212\real_run.ps1`): pre-log `ev212\real-pre.log` shows
+  `check-ignore` -> `.gitignore:2:.env` before the copy, counts 21143/21143, `git status` empty after
+  the copy, `cee` from `D:\ALLPROJECTS\EDJ\wt-212\src\cee\__init__.py`, settings anthropic /
+  claude-sonnet-5-5 / hybrid-norerank.
+- 2026-11-19 00:01 - **the run stopped part-way.** `python.exe` crashed at 00:00:53 in
+  `tokenizers.pyd` (Windows Application log event 1000, exception 0xc0000409), right after Q17's output
+  was saved, i.e. while embedding Q18's search query, before Q18's model call. Real calls made: **17**
+  (Q1-Q17, all `called`); raw files: **17** (`.eval-runs\0212-hybrid-real\raw`, copied to
+  `ev212\real-30\raw` and `ev212\real-30-cache`); Q18-Q30 not called; no report.json was written (the
+  process died before `write_reports`). All 17 raw files: model claude-sonnet-5-5, prompt v3, snapshot
+  corpus-2026-11-17, chunk ids = the mock run's, none invalid (`ev212\raw_check.py`). The wrapper's
+  `finally` did not run (the PowerShell host exited with the crash), so `wt-212\.env` stayed until it
+  was deleted by hand at 00:01:14: `Test-Path D:\ALLPROJECTS\EDJ\wt-212\.env` -> False. A free mock run
+  of Q18-Q30 afterwards (`ev212\mock-q18-30`) finished normally (the crash is not reproducible).
+  Per this plan a completion run needs a new TL decision; stopped here and asked.
