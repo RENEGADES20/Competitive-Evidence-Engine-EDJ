@@ -241,7 +241,7 @@ call path.
   (Q19), refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL, 0 real calls.
 - [x] `pytest -q` passes; verify-cee all features PASS.
 - [x] Spec and the ADR-020 amendment updated.
-- [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
+- [x] (PR #234, pytest pass on 5744e36) `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
 - 2026-11-19 04:32 - plan written. Branch `tl/232-strict-tools` from `main` f9fd055 (PR #231 merged
@@ -308,3 +308,6 @@ call path.
   `lru_cache`d, `settings()` reads only the environment, `config/` is identical on both commits, and
   every saved record carries `request_version` `strict-1` (branch code); `report.json` was written at
   04:50:59 with commit b1f49d4. Not re-run (no re-runs; reported).
+- 2026-11-19 04:58 - step 8 /finish-task: PR #234 opened ("Closes #232"; ADR-020 amendment, the TL
+  merges); `origin/main` unchanged (f9fd055), no merge needed; `gh pr checks 234` pytest pass on
+  5744e36 (35 s).
