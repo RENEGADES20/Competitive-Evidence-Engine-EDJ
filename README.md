@@ -72,28 +72,38 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-05.
+As of 2026-11-17.
 
-**Corpus.** `main`'s manifest lists 121 documents: SEC filings, supplements, monthly
-metrics, decks, call transcripts, press releases and 22 research reports from 16
-publishers. The latest snapshot, `corpus-2026-10-29`, holds 111 documents and 17,183
-passages (documents merged after it arrive with the next snapshot). In review: #152 (three
-more research reports) and #146 (four investor-day decks, one press release). The corpus
-freezes on 2026-11-11.
+**Corpus.** Snapshot `corpus-2026-11-17` (#200) holds all 219 documents in `main`'s manifest
+and 21,143 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
+metrics, investor-day and quarterly decks, call transcripts, press releases, 90 days of trade
+press (#57), advisor web pages and research reports. PDF passages carry the page they are on
+(#84); call transcripts are cut by speaker turn, so a question and its answer are separate
+passages (#107). The frozen Gate 3 corpus is `corpus-2026-11-16` (137 documents, #120).
 
 **Retrieval check (automated, not a gate score).** `scripts/eval_run.py` runs the 30
 questions with the mock model and checks whether search returns the expected passages
-and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-05, snapshot
-`corpus-2026-10-29`, `--as-of 2026-10-29`: 27 PASS / 3 FAIL (Q15, Q19, Q29);
-document recall 0.796 on the 9 of the 18 tier-1 questions that have an answer key; gap
-questions refused correctly 4 of 5; 0 paid calls.
+and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-17, snapshot
+`corpus-2026-11-17`, `--as-of 2026-11-17`, the app's search budget: 28 PASS / 2 FAIL (Q15,
+Q19); document recall 0.547 on the 17 tier-1 questions with an answer key in that window; gap
+questions refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. This is the new
+baseline (`evals/baselines/corpus-2026-11-17/`). Same check on `corpus-2026-11-16`: 27 PASS /
+3 FAIL (Q26 had no Raymond James passage in the last 90 days; trade press now fills it),
+recall 0.625. Trade-press articles and the re-cut transcripts take search slots from primary
+documents in single-firm questions (Q2, Q5, Q6, Q11, Q13, Q27, Q30); follow-ups: #199
+(transcripts) and a retrieval issue for trade press (drafted in #200).
 
-**Gate scores (human-scored).** A person scores each answer at acting quality (one the
-project lead would forward with his name on it), per [docs/BRIEF.md](docs/BRIEF.md).
-Gate 3, checked in week 8 at the corpus freeze (#120): any 18 of the 30 questions at
-acting quality, citations resolve. Gate 4, checked in week 11: at least 21 of 30, and the project lead used it
-unsupervised at least once. Neither is scored yet. The "PASS 7 / FAIL 21" in the 2026-10-20 log
-is the retrieval check on snapshot `corpus-2026-10-18`, not a gate score.
+**Gate scores.** Each answer is scored at acting quality (one the project lead would forward
+with his name on it), per [docs/BRIEF.md](docs/BRIEF.md). Gate 3, checked in week 8 at the
+corpus freeze (#120): any 18 of the 30 questions at acting quality, citations resolve. It was
+scored **16/30** on `corpus-2026-11-16` (real run, scored by the TL agent, PR #195). Gate 4,
+checked in week 11 (#121): at least 21 of 30, and the project lead used it unsupervised at
+least once. It was scored **21/30** on the final snapshot `corpus-2026-11-17` (real run on
+2026-11-18, scored by the TL agent; tier 1: 12/18), after the fixes #203, #204 and #205; the
+unsupervised-use part is not checked here. All 30 answers with citations, scores and known gaps:
+[docs/results/gate4-report.md](docs/results/gate4-report.md); next steps:
+[docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +
 embeddings, local, no external calls) is kept as an optional component on branch
@@ -143,7 +153,9 @@ powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 | [docs/BRIEF.md](docs/BRIEF.md) | What we are building, use cases, firms, gates |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline, schema draft, retrieval modes, reference projects |
 | [docs/TEAM.md](docs/TEAM.md) | Roles and week-by-week tasks |
-| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting |
+| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting, Gate 4 run |
+| [docs/results/gate4-report.md](docs/results/gate4-report.md) | Gate 4 results: 30 answers with citations, scores, known gaps |
+| [docs/NEXT.md](docs/NEXT.md) | What to build next |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Status log and weekly scores |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture decision records (ADRs) |
 | [docs/DASHBOARD.md](docs/DASHBOARD.md) | Project board setup, weekly checks, snapshot publishing |

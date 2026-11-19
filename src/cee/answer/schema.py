@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from typing import Literal, get_args
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refuse"]
 
@@ -29,6 +29,13 @@ class Gap(BaseModel):
     suggested_source: str = ""
 
 
+class Withheld(BaseModel):
+    """A claim kept out of the shown answer by code (#118, ground rule 6); kept here for review."""
+    text: str
+    chunk_ids: list[str] = Field(default_factory=list)
+    reason: str = "normative"
+
+
 class Answer(BaseModel):
     answerable: bool
     behavior: Behavior
@@ -37,7 +44,19 @@ class Answer(BaseModel):
     gaps: list[Gap] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)  # inserted by code
     coverage_note: str = ""                            # built by code from the retrieved hits
+    withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
     llm_called: bool = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def _answer_sent_for_answerable(cls, data):
+        """The model once sent the boolean as "answer" instead of "answerable" (Q25, real run
+        2026-11-16, #167); the eval run crashed and the paid output was lost. Accept that one
+        alias for a boolean; anything else still fails validation."""
+        if isinstance(data, dict) and "answerable" not in data and isinstance(data.get("answer"), bool):
+            data = {**data, "answerable": data["answer"]}
+            data.pop("answer")
+        return data
 
     @field_validator("claims", "adjacent", "gaps", "caveats", mode="before")
     @classmethod

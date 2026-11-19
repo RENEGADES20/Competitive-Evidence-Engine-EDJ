@@ -289,3 +289,44 @@ chat), add the manifest row in your PR, and the tech lead moves the file into `r
 .venv/bin/python -m pytest -q
 ```
 No database or API key needed; the paid providers are tested with fake clients.
+
+## 7. Results: ask with the real model and reproduce the Gate 4 run
+
+The final snapshot is `corpus-2026-11-17` (219 documents). Gate 4 scored **21/30** on it
+(2026-11-18, scored by the TL agent). The report has all 30 answers with their citations, the
+scores and the known gaps: [docs/results/gate4-report.md](results/gate4-report.md). What to
+build next: [docs/NEXT.md](NEXT.md).
+
+**Ask a question with the real model** (paid: about one call per question; CLAUDE.md "Paid API
+calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
+`.env` stays on mock:
+```powershell
+$env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
+```
+```bash
+LLM_PROVIDER=anthropic .venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+```
+Open http://localhost:8501, type a question, and click a citation to see the stored passage.
+The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
+
+**Check retrieval for all 30 questions, free** (mock provider, no calls; compares with the
+committed baseline):
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-17\report.json
+```
+```bash
+.venv/bin/python scripts/eval_run.py --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-17/report.json
+```
+Expected: 29 PASS / 1 FAIL (Q19, a pattern-coverage check; its real answer passes), refusal 5/5.
+
+**Reproduce the Gate 4 answers** (paid: up to 30 calls; needs the tech lead's OK). Every output
+is saved under `.eval-runs\cache\` and reused, so a second run of unchanged code costs nothing:
+```powershell
+$env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 30 --as-of 2026-11-17
+```
+```bash
+LLM_PROVIDER=anthropic .venv/bin/python scripts/eval_run.py --real --max-calls 30 --as-of 2026-11-17
+```
+The run writes `report.md` and `report.json` in its run folder. The model is not deterministic,
+so new answers can differ in wording from the report; the score is a human (or agent) reading of
+each answer against `passes_if` in `evals/questions.yaml`, not a number the script prints.

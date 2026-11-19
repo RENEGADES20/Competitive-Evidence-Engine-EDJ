@@ -6,9 +6,11 @@ Used by the verify-cee skill (.claude/skills/verify-cee/SKILL.md). Run with the 
   python scripts/verify_cee.py run             # launch, drive every feature, clean up
   python scripts/verify_cee.py run ask-answer gap-path
   python scripts/verify_cee.py launch | drive <feature...> | cleanup
+  python scripts/verify_cee.py run --source-db cee_84 --port 8684   # a private copy (#84)
 
-It never touches your own database or app: it copies database `cee` to `cee_verify`, starts
-its own Streamlit on port 8599 with the mock provider, and removes both at the end.
+It never touches your own database or app: it copies database `cee` (or --source-db) to
+`cee_verify` (`<source-db>_verify`), starts its own Streamlit on port 8599 (or --port) with the
+mock provider, and removes both at the end. Pass the same --source-db to drive and cleanup.
 Evidence (screenshots, page text, steps.jsonl) stays in .verify-runs/<run-id>/.
 """
 from __future__ import annotations
@@ -55,6 +57,12 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
+# Q21: five firms + a theme (#117). The firms the coverage note must name are read from the
+# database (theme_gap_expected): exactly those with no on-theme chunk the question may retrieve.
+# A firm with one, even below the floor, takes its theme slot (#190) and is no gap (corpus-2026-11-16:
+# RJF is the gap; with trade press loaded (#57) RJF has on-theme articles and no firm is).
+THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
+THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
 FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback", "search-mode"]
 
 
@@ -79,6 +87,28 @@ def db_url(db: str) -> str:
     from cee.config import settings
     base = settings().database_url
     return base.rsplit("/", 1)[0] + "/" + db
+
+
+def theme_gap_expected(db: str) -> list[str]:
+    """Q21's gap firms, derived from the database, not hard-coded: each firm the question names
+    with no chunk that passes its entity filter, the theme's keyword filter and the question's
+    document-type scope (the same SQL filters search() applies to the on-theme pool, #117)."""
+    import psycopg
+    from cee.answer.validate import _short_name
+    from cee.retrieve.fts import doc_type_scope_sql, entity_filter, on_theme_filter, resolve
+    q = resolve(THEME_GAP_Q)
+    on_theme, on_params = on_theme_filter(q.themes)
+    scope, scope_params = doc_type_scope_sql(q)
+    gaps = []
+    with psycopg.connect(db_url(db)) as conn:
+        for e in q.entities:
+            where, params = entity_filter([e])
+            n = conn.execute(f"SELECT count(*) FROM chunks c JOIN documents d USING (doc_id) "
+                             f"WHERE {where} AND {on_theme} AND {scope}",
+                             params | on_params | scope_params).fetchone()[0]
+            if n == 0:
+                gaps.append(_short_name(e))
+    return gaps
 
 
 def health(port: int) -> bool:
@@ -312,6 +342,18 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
+    ask(page, base, THEME_GAP_Q)
+    body = page.locator("body").inner_text()
+    line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
+    expected = theme_gap_expected(VERIFY_DB)
+    named = (line.split(THEME_GAP_NOTE, 1)[1].split(".")[0].strip().split(", ")
+             if THEME_GAP_NOTE in line else [])  # no short name holds a period
+    want = (f"coverage note says '{THEME_GAP_NOTE} {', '.join(expected)}.'" if expected
+            else f"no '{THEME_GAP_NOTE}' in the coverage note")
+    rec.step("Ask the five firms about the wealth transfer (Q21)",
+             f"{want} (gap firms read from the database: no on-theme chunk)",
+             line != "no coverage note" and sorted(named) == sorted(expected),
+             f"expected gaps {expected}; note: {line}")
 
 
 def open_trace(page) -> list[str]:
@@ -345,7 +387,7 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "six step lines", len(lines) == 6, " / ".join(lines)[:300])
     body = page.locator("body").inner_text()
-    n_meta = re.search(r"(\d+) chunks retrieved", body)
+    n_meta = re.search(r"(\d+) passages found", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
@@ -505,6 +547,9 @@ def feature_gap_path(page, base, rec, ctx):
     rec.step("Look for invented citations", "no citation links", citation_links(page).count() == 0,
              f"{citation_links(page).count()} citation links")
     rec.step("Look for the gap note", "a 'Gap:' box", "Gap:" in body, "present" if "Gap:" in body else "missing")
+    plain = "That is a valid result, not an error" in body or "do not answer this directly" in body
+    rec.step("Read the line under the heading (#119)", "a plain sentence saying no evidence is a valid result",
+             plain, "present" if plain else "missing")
     footer = re.search(r"firms: ([^|]*)\|", body)
     firms = footer.group(1).strip() if footer else "no footer"
     rec.step("Read the footer's firms", "the gap firm, e.g. 'LPLA (no documents)', not 'none' (#50)",
@@ -741,13 +786,23 @@ def drive(features: list[str]) -> bool:
 
 # ---------- main ----------
 
+def set_source_db(name: str) -> None:
+    global SOURCE_DB, VERIFY_DB
+    SOURCE_DB, VERIFY_DB = name, ("cee_verify" if name == "cee" else f"{name}_verify")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
     ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
     ap.add_argument("--port", type=int, default=PORT)
     ap.add_argument("--mode", choices=["fts", "hybrid"], help="search mode for the app (RETRIEVAL_MODE); default: .env")
+    ap.add_argument("--source-db", default=SOURCE_DB,
+                    help=f"database to copy (default {SOURCE_DB}); the copy is <source-db>_verify")
     a = ap.parse_args()
+    if not re.fullmatch(r"[a-z_][a-z0-9_]*", a.source_db):
+        ap.error("--source-db: lower-case letters, digits and _ only")
+    set_source_db(a.source_db)
     if a.mode:
         os.environ["VERIFY_RETRIEVAL_MODE"] = a.mode
     unknown = [f for f in a.features if f not in DRIVERS]

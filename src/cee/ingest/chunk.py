@@ -9,6 +9,9 @@ import re
 from dataclasses import dataclass
 
 MAX_CHARS = 1500
+# Transcripts are packed per speaker turn (#107) with a smaller cap, so one answer that moves from
+# Merrill to commercial loans (BAC-TR-2026Q2) splits and its Merrill part can be tagged GWIM.
+TRANSCRIPT_MAX_CHARS = 1200
 # "ITEM 1. BUSINESS" (EDJ, RJF) and "Item 1. Business" (BAC, SCHW).
 ITEM_HEADING = re.compile(r"(?im)^[ \t]*ITEM[ \t]+(\d{1,2}[A-C]?)\b\.?[^\n]*$")
 # Table-of-contents entry: a column gap ("Item 1.      Business") or a page number at the end.
@@ -145,7 +148,8 @@ class SegmentTagger:
     "Merrill") and that segment's words (mentions plus `mention_signals`, e.g. "advisers") occur
     at least twice as often as other businesses' words (`mention_stops`). BAC-TR-2026Q3 #13
     ("Merrill added about 4,200 net new households") is GWIM; BAC-TR-2026Q2 #13, mostly about
-    consumer banking with one GWIM sentence at the end, stays untagged."""
+    consumer banking with one GWIM sentence at the end, stays untagged (chunk numbers before #107;
+    transcripts are now chunked by speaker turn, see transcript.py and `continues`)."""
 
     def __init__(self, segment_aliases: dict[str, list[str]], segment_stops: list[str] = (),
                  sections: list[tuple[str, str, int | None]] = (),
@@ -204,6 +208,19 @@ class SegmentTagger:
         own = _count([*self.mentions[seg], *self.signals.get(seg, [])], text)
         return seg if own >= 2 * _count(self.mention_stops, text) else None
 
+    def continues(self, segment: str, text: str) -> str | None:
+        """A transcript chunk that continues a speaker's turn after a chunk tagged `segment` (#107).
+        The speaker named the business once ("On Slide 14, we turn to Global Wealth and Investment
+        Management") and goes on without naming it again ("adviser productivity ... attract
+        talent", BAC-TR-2026Q1). Keep the tag when this chunk names no segment itself and that
+        segment's signal words are at least twice the other businesses' words."""
+        for pattern in self.mention_excludes:
+            text = pattern.sub(" ", text)
+        if any(p.search(text) for patterns in self.mentions.values() for p in patterns):
+            return None   # it names a segment: the mention rule above has already decided
+        own = _count(self.signals.get(segment, []), text)
+        return segment if own and own >= 2 * _count(self.mention_stops, text) else None
+
     def _section_heading(self, section: str) -> str | None:
         """The alias or stop heading a section title starts with, longest first."""
         key = _heading_key(section)
@@ -232,11 +249,21 @@ def _count(patterns: list[re.Pattern], text: str) -> int:
 def chunk_sections(doc_id: str, entity_id: str, doc_type: str, period: str,
                    sections: list[tuple[str, str, int | None]],
                    segment_for=lambda section, text, page=None: None) -> list[Chunk]:
-    """sections: [(section, text, page)]. Page is None for HTML."""
+    """sections: [(section, text, page)]. Page is None for HTML.
+    Transcripts: one speaker turn per chunk, the speaker's label on each (transcript.turn_pieces)."""
+    from cee.ingest.transcript import turn_pieces
+
     chunks: list[Chunk] = []
+    continues = getattr(segment_for, "continues", None)
     for section, body, page in sections:
-        for piece in pack_paragraphs(body):
-            seg = segment_for(section, piece, page)
+        if doc_type == "transcript":
+            pieces = turn_pieces(body, pack_paragraphs, TRANSCRIPT_MAX_CHARS)
+        else:
+            pieces = [(piece, piece, False) for piece in pack_paragraphs(body)]
+        for piece, tag_text, same_turn in pieces:
+            seg = segment_for(section, tag_text, page)
+            if seg is None and same_turn and continues and chunks and chunks[-1].segment:
+                seg = continues(chunks[-1].segment, tag_text)
             n = len(chunks)
             chunks.append(Chunk(
                 chunk_id=f"{doc_id}#{n}", seq=n, section=section, segment=seg, page=page,

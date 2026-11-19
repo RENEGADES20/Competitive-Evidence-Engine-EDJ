@@ -19,9 +19,9 @@ questions:
   Q1:
     must_return:
       - [MS-TR-2026Q2#3]
-      - [MS-TR-2026Q2#13, MS-TR-2026Q2#15]
-      - [MS-TR-2026Q3#2, MS-TR-2026Q3#8]
-      - [MS-TR-2026Q1#2, MS-TR-2026Q1#7, MS-TR-2026Q1#8]
+      - [MS-TR-2026Q2#14, MS-TR-2026Q2#16]
+      - [MS-TR-2026Q3#3, MS-TR-2026Q3#12, MS-TR-2026Q3#13]
+      - [MS-TR-2026Q1#3, MS-TR-2026Q1#9, MS-TR-2026Q1#10, MS-TR-2026Q1#11]
       - [MS-PR-2026-10-14-01#5, MS-PR-2026-07-15-01#5]
       - [MS-10K-2025#125]
       - [MS-10K-2025#127, MS-10K-2025#164, MS-10K-2025#166]
@@ -30,21 +30,21 @@ questions:
 
   Q4:   # trap 1 of 3
     must_return:
-      - [BAC-TR-2026Q1#20]
-      - [BAC-TR-2026Q1#48]   # untagged Q&A on purpose (#95); waits on #107 Q&A chunking
-      - [BAC-TR-2026Q2#13, BAC-TR-2026Q2#14]
-      - [BAC-TR-2026Q2#38]   # untagged Q&A on purpose (#95); waits on #107
-      - [BAC-TR-2026Q3#13]
+      - [BAC-TR-2026Q1#25, BAC-TR-2026Q1#26]
+      - [BAC-TR-2026Q1#80, BAC-TR-2026Q1#81]   # question and CEO answer, split by #107; still untagged: no GWIM/Merrill mention
+      - [BAC-TR-2026Q2#20, BAC-TR-2026Q2#21, BAC-TR-2026Q2#22]
+      - [BAC-TR-2026Q2#63]   # Merrill part of the CFO answer, its own GWIM chunk since #107
+      - [BAC-TR-2026Q3#19]
       - [BAC-10K-2025#245, BAC-10K-2025#246, BAC-10K-2025#247]
       - [BAC-10Q-2026Q2#88, BAC-10Q-2026Q2#89, BAC-10Q-2026Q2#90, BAC-10Q-2026Q2#91]
     must_not_return:
       - BAC-10K-2025#18          # BAC-wide hiring: the text that makes a wrong answer read well
       - BAC-10K-2025#16          # BAC-wide headcount
       - BAC-10K-2025#172
-      - BAC-TR-2026Q1#9          # investment-banking pipelines, not advisor pipelines
-      - BAC-TR-2026Q2#32
-      - BAC-TR-2026Q2#33
-      - BAC-TR-2026Q2#45
+      - BAC-TR-2026Q1#11          # investment-banking pipelines, not advisor pipelines
+      - BAC-TR-2026Q2#52
+      - BAC-TR-2026Q2#54
+      - BAC-TR-2026Q2#78
       - BAC-DECK-2026Q1#55       # award counts, not headcount
       - BAC-DECK-2026Q2#36
       - BAC-DECK-2026Q3#45
@@ -62,7 +62,7 @@ questions:
       - [RJF-10K-2025#24]
       - [MS-10K-2025#167, MS-SUPP-2026Q3#38]
       - [BAC-10K-2025#246]
-      - [SCHW-10K-2025#18, SCHW-TR-2026Q1#3]
+      - [SCHW-10K-2025#18, SCHW-TR-2026Q1#4, SCHW-TR-2026Q1#5]
     must_not_return:             # not advisor counts
       - BAC-10K-2025#16          # BAC-wide headcount
       - BAC-10K-2025#172
@@ -84,7 +84,7 @@ questions:
       - [RJF-PR-2026-07-22-01#4, RJF-PR-2026-04-22-01#3, RJF-PR-2026-01-28-01#3, RJF-PR-2025-10-22-01#4,
          RJF-10Q-2026Q2#305, RJF-10Q-2026Q1#298, RJF-10Q-2025Q4#236, RJF-10Q-2025Q2#294]
       - [RJF-10Q-2026Q2#306, RJF-SUPP-2026Q1#43]                              # RJF definition
-      - [BAC-TR-2026Q3#13, BAC-PR-2026-10-14-01#11]                           # BAC: not reporting NNA
+      - [BAC-TR-2026Q3#19, BAC-PR-2026-10-14-01#11]                           # BAC: not reporting NNA
     must_not_return:             # neighbour metrics that read as NNA
       - SCHW-10Q-2026Q2#56       # money-fund roll-forward
       - MS-PR-2026-04-15-01#15   # fee-based asset flows footnote
@@ -98,6 +98,55 @@ questions:
       - [RJF-SUPP-2026Q2]
       - [RJF-DECK-2026Q2]
     must_not_return: []          # anything older than the window, checked by date
+
+  # --- Passages Gate 4 named as missed (#210; docs/results/gate4-report.md "Known gaps").
+  # Every id checked in the chunks table of corpus-2026-11-17 on 2026-11-18. Q17 and Q20 were
+  # scored from `expected_doc_ids` (#56); a hand key replaces that, so their doc rows are kept here.
+
+  Q7:   # MS, Merrill, RJF advisor recruiting and retention
+    must_return:
+      - [MS-10K-2025#153]                      # MS formulaic payouts linked to revenue
+    must_not_return: []
+
+  Q15:  # how Schwab earns on client assets vs an advisor-led model
+    must_return:
+      - [SCHW-10K-2025#27]                     # Schwab revenue composition
+    must_not_return: []
+
+  Q17:  # what the firms say about AI in advice delivery
+    must_return:                             # expected_doc_ids (#56), one row per document
+      - [MS-10K-2025]
+      - [MS-TR-2026Q2]
+      - [SCHW-TR-2026Q1]
+      - [SCHW-DECK-2026Q2]
+      - [BAC-TR-2026Q2]
+      - [BAC-TR-2026Q3]
+      - [RJF-TR-2025Q4]
+      - [RJF-TR-2026Q1]
+      - [EDJ-10K-2025]
+      - [BAC-TR-2026Q2#21]                     # Merrill's AI-tools remark
+    must_not_return: []
+
+  Q19:  # younger investors and Edward Jones's offerings
+    must_return:
+      - [EDJ-10K-2025#88]                      # EDJ next-generation platform investments
+    must_not_return: []
+
+  Q20:  # how clients under 40 choose an advisor
+    must_return:                               # expected_doc_ids (#56), one row per document
+      - [UBS-NEXTGEN-2026]
+      - [CERULLI-GWT-2025]
+      - [FINRAF-INVESTORS-2025]
+      - [KITCES-WELLBEING-2023]
+      - [BOFA-PB-STUDY-2026]
+      - [NM-PP-2026]
+      - [WEALTHTENDER-ADVISOR-SEARCH-2025]
+      - [FIDELITY-III-2025#0]                  # Fidelity 2025 Investor Insights Study: wealthy next-gen
+                                               # households vs boomers (#1 is only related links)
+      - [UBS-NEXTGEN-2026#119, UBS-NEXTGEN-2026#13]   # the UBS sample: #119 names it (two surveys of YIO
+                                               # members, 112 and 63 responses, 10 interviews); #13 its
+                                               # ages (below 21 to above 45, most 26-40) and regions
+    must_not_return: []
 
   # --- Gap questions (#60). must_return here is the labelled ADJACENT evidence a
   # gap_with_adjacent answer needs; must_not_return is what reads like an answer but is a
@@ -123,7 +172,7 @@ questions:
       - SCHW-PR-2026-04-16-01#20
       - SCHW-PR-2026-07-21-01#24
       - SCHW-PR-2026-10-15-01#23
-      - SCHW-TR-2026Q3#7         # $5.8T held for 16,000 independent RIA firms: custody clients, not Schwab advisors
+      - SCHW-TR-2026Q3#10         # $5.8T held for 16,000 independent RIA firms: custody clients, not Schwab advisors
       - BAC-DECK-2026Q1#55       # award counts, not headcount
       - BAC-DECK-2026Q2#36
       - BAC-DECK-2026Q3#45
@@ -133,6 +182,7 @@ questions:
       - [RJF-10K-2025#10, RJF-10K-2025#11]     # employee vs independent payout structure
       - [EDJ-10K-2025#30, EDJ-10K-2025#264]    # commission basis; FA bonuses from partnership profit
       - [MS-10K-2025#153]                      # formulaic payouts linked to revenue
+      - [RJF-PR-web-affiliation-options#1]     # RJF published payout ranges (Gate 4 missed, #210)
       - [SCHW-10Q-2026Q2#25]                   # only: headcount growth incl. financial consultants raises comp
     must_not_return:
       - RJF-10K-2025#652         # dividend payout ratio ("payout", not advisor payout)
@@ -140,7 +190,7 @@ questions:
       - RJF-10Q-2025Q4#153
       - RJF-10Q-2026Q1#172
       - RJF-10Q-2026Q2#178
-      - SCHW-DECK-2026Q1#40      # common dividend payout range
+      - SCHW-DECK-2026Q1#44      # common dividend payout range
       - SCHW-DECK-2026Q2#45
       - SCHW-DECK-2026Q3#47
       - MS-10K-2025#574          # maximum potential payout on guarantees / credit protection
@@ -159,13 +209,13 @@ questions:
     must_return:
       - [EDJ-10Q-2025Q2#64, EDJ-10Q-2025Q2#67, EDJ-10Q-2025Q3#68, EDJ-10Q-2025Q3#70]   # EDJ attrition % (6.4%, 6.1%)
       - [EDJ-10Q-2025Q2#66, EDJ-10Q-2025Q3#69]                     # EDJ attrition % definition
-      - [BAC-TR-2026Q2#38, BAC-TR-2026Q1#48]                       # Merrill: "near historic lows", no rate; untagged Q&A (#95), waits on #107
+      - [BAC-TR-2026Q2#63, BAC-TR-2026Q1#80, BAC-TR-2026Q1#81]                       # Merrill: "near historic lows", no rate; Q2#63 GWIM since #107; Q1#80-81 still untagged
       - [EDJ-10K-2025#130, EDJ-10Q-2026Q2#60]                      # net advisor headcount change (adjacent)
     must_not_return:
       - BAC-10K-2025#19          # BAC-wide employee turnover 8%
-      - BAC-TR-2026Q1#4          # BAC-wide headcount down ~1,070 through attrition
-      - BAC-TR-2026Q1#27         # analyst: BAC-wide "attrition rate is more like 7%"
-      - BAC-TR-2026Q1#29         # BAC hires ~1,300 a month to stay neutral (company-wide)
+      - BAC-TR-2026Q1#6          # BAC-wide headcount down ~1,070 through attrition
+      - BAC-TR-2026Q1#39         # analyst: BAC-wide "attrition rate is more like 7%"
+      - BAC-TR-2026Q1#42         # BAC hires ~1,300 a month to stay neutral (company-wide)
       - BAC-10K-2025#60          # client/deposit attrition
       - BAC-10K-2025#97          # client attrition (risk factor)
 
