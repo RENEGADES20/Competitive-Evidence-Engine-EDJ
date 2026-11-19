@@ -60,6 +60,12 @@ plan_question(query) -> Plan{parts: [Part{id, text, firms, keyword_query}], sour
     #   the cap are cut; empty words -> the part's text; ids p1..pn by code. Window, themes and the
     #   Ask page filters are not in the planner's schema. Not usable (no tool call, wrong shape, cut
     #   at max_tokens) or a failed call -> the rule plan, logged, the call counted, never re-rolled.
+    # prompt plan-v2 (#224): list the asks first (incl. what the question asks without naming it),
+    #   give every ask a part or its own words in a part, keep search words on the asked concept.
+    # neighbour guard (#224): code removes from a part's words every config `neighbour_phrases`
+    #   entry (a different figure sharing a word: "payout ratio" = the dividend payout ratio) the
+    #   question does not name; matched like a synonym key; correction "part N: dropped neighbour
+    #   phrase X"; words left empty -> the question's words. The rule plan is never touched.
     # rule plan (mock provider, PLANNER=off, fallback): one part per named covered firm for 2-4
     #   firms, else one whole-question part (five firms exceed the cap). Passage mode (TOKEN_BUDGET
     #   None or an explicit k): one whole-question part, no planner call.
@@ -72,6 +78,12 @@ search_parts(query, plan) -> [Hit{..., part_id}]
     #   pools and the answer-turn map, then the theme peers once (peer_pass). Budgeted total <=
     #   max(T, R) + one chunk. A one-part plan returns exactly search(query). part_id: p1..pn,
     #   "research", "peers"
+    # unused share is not handed back to earlier parts (#224, ADR-020 "not now"): a 0-call replay
+    #   of #214's Q25 gave p1 its share plus p2/p3's surplus (15.0k -> 33.6k) and p1 still stopped
+    #   at select()'s floor (68 passages, 21.9k) with MS-10K-2025#153 in the pool; in the mock it
+    #   would change Q7, Q9, Q12 with no key row to gain; surplus spent in a weak part buys low-rank
+    #   matches (Q25 p4); a second pass would restate ADR-019's bound. Revisit when a replay with
+    #   the surplus brings a lost key row into the final set.
 
 retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]

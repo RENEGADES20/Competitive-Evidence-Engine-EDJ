@@ -356,3 +356,30 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   an empty folder. Re-read Acceptance: answer-path guard named as `llm.generate(...,
   provider=...)` (no early return on empty hits); replay (a) mismatch = script fault; pytest line
   names both conftest layers.
+- 2026-11-19 02:00 - plan approved by the reviewer agent (issuecomment-7003969874). Step 1:
+  `tests/conftest.py` (stubs + environment), `tests/test_no_paid_calls.py` (3 tests; the guard
+  test builds a token-budget, searchable 2-firm question and asserts `source == "fallback"`,
+  `"blocked" in plan.error`, `calls == 1`, as the approval's non-blocking 1 asked); control records
+  exactly 1 request with `AccessTokenAuth`, guard calls 0. `pytest -q` 618 passed (3d11702).
+- 2026-11-19 02:20 - steps 2-3: `neighbour_phrases` config, `strip_neighbours` in `validate_plan`,
+  prompt plan-v2, `tests/data/planner_v1_0214.json`, tests (planner 41, parts fixture 13), eval
+  test literals. **Deviation, found by the saved-output test**: Q15's v1 p2 ("... financial advisor
+  compensation payout ratio commissions ...") also holds "payout ratio", so the guard changes Q15
+  p2 as well as Q25 p4 (the plan said Q25 p4 only; I had not run the list over Q15). Kept: in this
+  corpus the phrase "payout ratio" occurs in 11 chunks, 10 mention dividends, none mentions
+  advisors, so it can only find the dividend figure; and the replay shows no recall or coverage
+  change for Q15 (below). The test expects exactly those two parts. `pytest -q` 631 passed (7ee312a).
+- 2026-11-19 02:30 - step 4 replay (`D:\ALLPROJECTS\EDJ\cache\ev224\replay.py`, output
+  `replay.txt`, 0 calls): (a) guard off reproduces all six #214 chunk lists (Q3 72, Q7 143, Q12 102,
+  Q15 208, Q25 207, Q28 71, same order). (b) guard on: Q3, Q7, Q12, Q28 identical; Q15 p2 swaps 2 of
+  64 passages (`MS-10K-2025#127`, `BAC-DECK-2026Q1#26` -> `MS-10K-2025#165`, `BAC-10Q-2025Q3#94`),
+  coverage 1.0 / recall@pool 1.0 / recall@final 1.0 / PASS both; Q25 p1-p3 identical, p4 111 -> 107
+  passages, must-not in hits `SCHW-DECK-2026Q3#47`, `SCHW-DECK-2026Q1#44` -> none, refusal False ->
+  True, status FAIL -> PASS, coverage 1.0 / recall@pool 1.0 / recall@final 0.4 unchanged.
+- 2026-11-19 02:35 - step 5 mock (`.eval-runs/0224-mock`, diff `...\ev224\mock-diff.txt`): 30/30
+  chunk lists identical (same order) to the baseline, no status change, 29 PASS / 1 FAIL (Q19),
+  refusal gap 5/5, keyed 22/22, 0 forbidden, recall@pool 0.814 / @final 0.654, tier 1 0.903 /
+  0.808, tokens median 28,311 / max 60,322, 0 real calls. Baseline file not replaced.
+- 2026-11-19 02:41 - step 6: ADR-020 (plan-v2, guard, "not now" reasons 1-4, #224 mock + replay),
+  `specs/retrieval.md`. Step 7 waits: port 8599 is held by the wt-212 agent's Streamlit (pid 9136);
+  not touched.
