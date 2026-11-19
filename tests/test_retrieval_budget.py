@@ -68,3 +68,106 @@ def test_budget_rule_is_swappable(monkeypatch):
 def test_single_firm_list_is_unchanged_by_the_merrill_key():
     pool = [hit(f"MS-D{i}#1", 10 - i, "MS", t) for i, t in enumerate(["10-Q", "10-K", "transcript"] * 4)]
     assert select(pool, k=20, firm_of=quota_firms(["MS"])) == select(pool, k=20)
+
+
+# --- token budget (#213, ADR-019) ------------------------------------------------------------
+
+def thit(cid, rank, n_chars, entity="MS", doc_type="10-Q", tier=2):
+    """A hit of exactly n_chars characters of words found in no other hit (no near-duplicates)."""
+    words = " ".join(f"{cid.lower()}w{j}" for j in range(n_chars))
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type=doc_type,
+               source_tier=tier, published_at="2026-01-01", period_end=None, section=None, page=None,
+               rank=rank, text=words[:n_chars])
+
+
+def tokens_of(hits):
+    return sum(fts.hit_tokens(h) for h in hits)
+
+
+def test_committed_values_are_the_grid_pick():
+    assert (fts.POOL_PER_GROUP, fts.TOKEN_BUDGET) == (30, 40000)              # #213 grid, ADR-019
+    assert fts.budget_tokens(Query("x", entities=["MS"])) == 40000
+    assert fts.budget_tokens(Query("x", entities=FIVE)) == 60000
+
+
+def test_without_a_token_budget_the_passage_rule_is_unchanged(monkeypatch):
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)
+    assert fts.budget_tokens(Query("x", entities=FIVE)) is None
+    pool = five_firm_pool()
+    assert select(pool, k=20, firm_of=quota_firms(FIVE)) == select(pool, k=20, firm_of=quota_firms(FIVE),
+                                                                   tokens=None)
+
+
+def test_budget_tokens_grow_per_firm_like_the_passage_rule(monkeypatch):
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", 20000)
+    assert fts.budget_tokens(Query("x")) == 20000                              # theme: no firm
+    assert fts.budget_tokens(Query("x", entities=["MS"])) == 20000
+    assert fts.budget_tokens(Query("x", entities=["MER"])) == 20000            # Merrill is one firm
+    assert fts.budget_tokens(Query("x", entities=["MS", "MER"])) == 20000
+    assert fts.budget_tokens(Query("x", entities=["MS", "MER", "RJF"])) == 20000
+    assert fts.budget_tokens(Query("x", entities=FIVE)) == 30000               # exactly 1.5 x B
+    assert fts.budget_tokens(Query("x", entities=["MS"], unmapped=["LPLA"])) == 20000
+    q = resolve("Net new assets by quarter for each of the five, with each firm's own definition.")
+    assert fts.budget_tokens(q) == 30000 and fts.budget_tokens(apply_filters(q, firms=["MS", "SCHW"])) == 20000
+    for b in (30000, 40000):
+        monkeypatch.setattr(fts, "TOKEN_BUDGET", b)
+        assert fts.budget_tokens(Query("x", entities=FIVE)) == b * 3 // 2
+
+
+def test_hit_tokens_are_characters_over_four():
+    assert fts.hit_tokens(thit("A#1", 1.0, 10)) == 2.5
+
+
+def test_token_mode_fills_to_the_budget_at_most_one_chunk_over():
+    pool = [thit(f"MS-D{i}#1", 10 - i * 0.01, 400 + 40 * i, doc_type=t)
+            for i, t in enumerate(["10-Q", "10-K", "transcript"] * 6)]
+    for budget in (500, 1000, 1700):
+        kept = select(pool, k=1, tokens=budget)                  # k does not cap a token budget
+        assert tokens_of(kept) >= budget
+        assert tokens_of(kept[:-1]) < budget                     # the last chunk made it full
+        assert tokens_of(kept) <= budget + max(fts.hit_tokens(h) for h in kept)
+
+
+def test_token_mode_stops_short_when_the_pool_runs_out():
+    pool = [thit(f"MS-D{i}#1", 10 - i, 400) for i in range(3)]
+    kept = select(pool, k=20, tokens=10_000)
+    assert len(kept) == 3 and tokens_of(kept) == 300
+
+
+def test_answer_turn_is_not_attached_once_the_budget_is_full(monkeypatch):
+    monkeypatch.setattr(fts, "PAIR_TURNS", "attach")
+    question = thit("MS-TR-1#5", 10.0, 400, doc_type="transcript")
+    answer = thit("MS-TR-1#6", 1.0, 800, doc_type="transcript")
+    pool = [question, thit("MS-10Q-1#1", 9.0, 400)]
+    left: list[str] = []
+    kept = select(pool, k=20, tokens=100, answers={question.chunk_id: answer}, unattached=left)
+    assert [h.chunk_id for h in kept] == ["MS-TR-1#5"] and left == ["MS-TR-1#5"]
+    left = []
+    kept = select(pool, k=20, tokens=150, answers={question.chunk_id: answer}, unattached=left)
+    assert [h.chunk_id for h in kept] == ["MS-TR-1#5", "MS-TR-1#6"] and left == []
+    assert tokens_of(kept) <= 150 + max(fts.hit_tokens(h) for h in kept)
+
+
+def trade_pool(trade_chars):
+    """Three 10-Q documents with two chunks each (100 tokens per chunk) and one trade article that
+    waits for them (TIER_LAST = 0)."""
+    pool = [thit(f"MS-10Q-{d}#{c}", 10 - d * 0.1 - c * 0.01, 400) for d in range(3) for c in (1, 2)]
+    pool.append(thit("MS-TRADE-1#1", 9.0, trade_chars, doc_type="trade", tier=4))
+    return sorted(pool, key=lambda h: (-h.rank, h.chunk_id))
+
+
+def test_trade_keep_in_token_mode_never_makes_the_list_longer():
+    assert fts.TIER_LAST == 0 and fts.TRADE_KEEP
+    long_trade = select(trade_pool(800), k=20, tokens=500)
+    assert "MS-TRADE-1#1" not in {h.chunk_id for h in long_trade} and tokens_of(long_trade) == 500
+    short_trade = select(trade_pool(200), k=20, tokens=500)
+    assert "MS-TRADE-1#1" in {h.chunk_id for h in short_trade} and tokens_of(short_trade) == 450
+    # passage mode: the swap ignores length, as before (#198)
+    assert "MS-TRADE-1#1" in {h.chunk_id for h in select(trade_pool(800), k=5)}
+
+
+def test_explicit_k_keeps_the_passage_rule(monkeypatch):
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", 10)                 # would stop after one chunk
+    pool = five_firm_pool()
+    assert len(select(pool, k=20, firm_of=quota_firms(FIVE))) == 20
+

@@ -365,7 +365,7 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
 
     seen = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
-    monkeypatch.setattr(fts, "search", lambda q, k, trace=None: [])
+    monkeypatch.setattr(fts, "search", lambda q, k=None, trace=None: [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
@@ -380,13 +380,15 @@ def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
 
     seen = []
     five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)   # the passage rule (#213 made tokens the default)
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(five))
-    monkeypatch.setattr(fts, "search", lambda q, k, trace=None: seen.append(k) or real_hits())
+    monkeypatch.setattr(fts, "search", lambda q, k=None, trace=None: seen.append(k) or real_hits())
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q22", "--out", str(tmp_path / "budget")])
     er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
-    assert seen == [fts.budget(query(five)), 20] and seen[0] == 30
+    # #213: without --k the app's own path (k=None); the record still carries the passage budget
+    assert seen == [None, 20]
     rec = json.loads((tmp_path / "budget" / "report.json").read_text(encoding="utf-8"))
     assert rec["meta"]["k"] == "by question"
     assert {k: rec["questions"][0][k] for k in ("k", "passages", "chars")} == {"k": 30, "passages": 1, "chars": 1}
@@ -423,8 +425,11 @@ def test_pool_recall_uses_the_window_rows():
 
 
 def test_tokens_are_characters_over_four():
-    hits = [types.SimpleNamespace(text="x" * 10), types.SimpleNamespace(text="y" * 7)]
-    assert er.prompt_size(20, hits) == {"k": 20, "passages": 2, "chars": 17, "tokens_est": 4}
+    hits = [types.SimpleNamespace(chunk_id="a#1", text="x" * 10), types.SimpleNamespace(chunk_id="b#1", text="y" * 7)]
+    size = er.prompt_size(20, hits)
+    assert {k: size[k] for k in ("k", "passages", "chars", "tokens_est")} == {"k": 20, "passages": 2, "chars": 17,
+                                                                             "tokens_est": 4}
+    assert size["budgeted_chars"] == 17 and size["peer_passages"] == 0 and size["fill"] is None
 
 
 def test_summary_recall_by_stage_and_totals():
@@ -492,3 +497,134 @@ def test_forbidden_without_theme_peers_unchanged():
     no_peers = peer_query(peers=[])
     plain = types.SimpleNamespace(entities=["EDJ"], unmapped=[], mode="entity+theme", themes=["younger_investors"])
     assert er.forbidden(no_peers, hits, SUBS) == er.forbidden(plain, hits, SUBS) == ["s", "g"]
+
+
+# --- #213: token budget, theme peers outside it, search time, max_tokens in the cache key ------
+
+def _tok_hit(cid, entity, n_chars):
+    from cee.retrieve.fts import Hit
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type="10-K",
+               source_tier=2, published_at="2026-02-19", period_end=None, section=None, page=None,
+               rank=1.0, text="x" * n_chars)
+
+
+def _fake_eval(monkeypatch, entities, hits, peer_ids=(), unattached=()):
+    from cee.retrieve import fts
+
+    seen = []
+
+    def search(q, k=None, trace=None):
+        seen.append(k)
+        if trace is not None:
+            trace.peers += list(peer_ids)
+            trace.unattached += list(unattached)
+        return hits
+
+    qry = types.SimpleNamespace(entities=list(entities), unmapped=[], mode="entity", themes=[], theme_peers=[])
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: qry)
+    monkeypatch.setattr(fts, "search", search)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    return seen, qry
+
+
+def _record(folder):
+    import json
+    return json.loads((folder / "report.json").read_text(encoding="utf-8"))
+
+
+def test_token_mode_searches_with_k_none_and_records_the_budget(monkeypatch, tmp_path):
+    from cee.retrieve import fts
+
+    five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    seen, qry = _fake_eval(monkeypatch, five, [_tok_hit("MS-10K-2025#1", "MS", 40000)])
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", 20000)
+    er.main(["--questions", "Q22", "--out", str(tmp_path / "tok")])
+    er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
+    assert seen == [None, 20]
+    rep = _record(tmp_path / "tok")
+    r = rep["questions"][0]
+    assert r["k"] is None and r["budget_tokens"] == fts.budget_tokens(qry) == 30000
+    assert r["fill"] == round(40000 / (4 * 30000), 3) and r["tokens_budgeted"] == 10000
+    assert isinstance(r["search_s"], float) and r["unattached"] == []
+    assert rep["meta"]["token_budget"] == 20000 and rep["meta"]["pool_per_group"] == fts.POOL_PER_GROUP
+    assert rep["summary"]["tokens_median"] == 10000 and rep["summary"]["search_s_max"] is not None
+    fixed = _record(tmp_path / "fixed")
+    assert fixed["questions"][0]["k"] == 20 and fixed["questions"][0]["budget_tokens"] is None
+    assert fixed["meta"]["token_budget"] is None
+    assert "token budget 20000" in (tmp_path / "tok" / "report.md").read_text(encoding="utf-8")
+
+
+def test_passage_mode_records_are_unchanged(monkeypatch, tmp_path):
+    from cee.retrieve import fts
+
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)
+    seen, _ = _fake_eval(monkeypatch, ["MS"], [_tok_hit("MS-10K-2025#1", "MS", 400)])
+    er.main(["--questions", "Q1", "--out", str(tmp_path / "p")])
+    r = _record(tmp_path / "p")["questions"][0]
+    assert seen == [None]
+    assert {k: r[k] for k in ("k", "passages", "chars", "tokens_est")} == {"k": 20, "passages": 1, "chars": 400,
+                                                                          "tokens_est": 100}
+    assert r["budget_tokens"] is None and r["fill"] is None
+
+
+def test_theme_peers_do_not_count_toward_fill(monkeypatch, tmp_path):
+    # Q19-like: the home firm's hits are budgeted, the theme peers' hits come on top (#205)
+    from cee.retrieve import fts
+
+    hits = [_tok_hit("EDJ-10K-2025#1", "EDJ", 8000), _tok_hit("EDJ-10K-2025#2", "EDJ", 2000),
+            _tok_hit("SCHW-TR-2026Q3#11", "SCHW", 6000), _tok_hit("MS-10K-2025#9", "MS", 4000)]
+    _fake_eval(monkeypatch, ["EDJ"], hits, peer_ids=["SCHW-TR-2026Q3#11", "MS-10K-2025#9", "RJF-X#1"],
+               unattached=["EDJ-TR-2026Q1#4"])
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", 2000)
+    er.main(["--questions", "Q19", "--out", str(tmp_path / "q19")])
+    rep = _record(tmp_path / "q19")
+    r = rep["questions"][0]
+    assert r["budget_tokens"] == 2000
+    assert (r["budgeted_chars"], r["tokens_budgeted"], r["max_hit_chars"]) == (10000, 2500, 8000)
+    assert (r["peer_passages"], r["peer_chars"], r["peer_tokens"]) == (2, 10000, 2500)
+    assert r["fill"] == 1.25                                  # firm hits only, peers not counted
+    assert (r["passages"], r["chars"], r["tokens_est"]) == (4, 20000, 5000)   # all hits: what the model reads
+    assert r["unattached"] == ["EDJ-TR-2026Q1#4"] and rep["summary"]["peer_tokens"] == 2500
+
+
+def test_cache_key_takes_max_tokens_only_when_not_8000():
+    import hashlib
+    import json
+    qq = q("Q24", [])
+    args = ("v3", "snap", "anthropic", "m", ["a#1"])
+    today = hashlib.sha256(json.dumps(["Q24", "text Q24", *args]).encode()).hexdigest()[:24]
+    assert er.cache_key(qq, *args) == er.cache_key(qq, *args, 8000) == today   # saved outputs keep their key
+    assert er.cache_key(qq, *args, 16000) != today
+
+
+def test_max_tokens_change_gets_a_fresh_call(flaky_model, monkeypatch, tmp_path):
+    from cee.answer import llm
+
+    calls, state = flaky_model
+    state["error"] = llm.ModelOutputError("cut", {"behavior": "answer"}, "anthropic", "max_tokens")
+    first = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert first.answer(q("Q24", []), query(["MS"]), real_hits())[1] == "invalid"
+    bad = saved(tmp_path / "cache")[0]
+    assert bad["stop_reason"] == "max_tokens" and bad["max_tokens"] == 8000
+    # same setting: the saved invalid output is reported, never re-called
+    again = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert again.answer(q("Q24", []), query(["MS"]), real_hits())[1] == "invalid" and again.calls == 0
+    # the planned run at 16000 is a different request: a fresh call, saved with its setting
+    monkeypatch.setattr(llm, "MAX_TOKENS", 16000)
+    wider = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run3", cache_dir=tmp_path / "cache")
+    a, how = wider.answer(q("Q24", []), query(["MS"]), real_hits())
+    assert how == "called" and wider.calls == 1 and len(calls) == 2
+    assert sorted(s["max_tokens"] for s in saved(tmp_path / "cache")) == [8000, 16000]
+
+
+def test_anthropic_error_carries_stop_reason():
+    from cee.answer import llm
+
+    block = types.SimpleNamespace(type="tool_use", name=llm.TOOL_NAME, input={"claims": "cut off"})
+    client = types.SimpleNamespace(messages=types.SimpleNamespace(
+        create=lambda **kw: types.SimpleNamespace(content=[block], stop_reason="max_tokens")))
+    with pytest.raises(llm.ModelOutputError) as e:
+        llm._anthropic("q?", real_hits(), client=client)
+    assert e.value.stop_reason == "max_tokens"
+    assert llm.anthropic_request("q?", real_hits())["max_tokens"] == llm.MAX_TOKENS == 8000

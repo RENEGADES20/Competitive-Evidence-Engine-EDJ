@@ -15,6 +15,9 @@ transfer; Q12: Schwab, Edward Jones and client acquisition, a firm theme from co
 Budget (#181, ADR-013): the number of passages grows with the number of firms the question names
 (budget()), and Merrill's own documents plus BAC's GWIM chunks share one firm's quota
 (quota_firms()), so five firms do not each drop to 3 passages when Merrill fills two groups (Q22, Q24).
+Token budget (#213, ADR-019): the retrieved set is filled up to an estimated token budget
+(characters / 4, budget_tokens(): 40k, five firms 60k) instead of a passage count, from a pool of
+the best 30 chunks per firm and document type (POOL_PER_GROUP); both chosen from a grid.
 Document-type scope (#179, ADR-015): Form ADV brochures only for fee and pricing questions and
 never inside a time window; no trade press (tier 4) for benchmark questions (doc_type_scope()).
 Slot order inside a firm (#198, #199, ADR-016): trade press takes a turn only when the firm's other
@@ -435,7 +438,7 @@ def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
 
 
 K = 20              # chunks handed to the model for a question naming 0 or 1 firm (specs/retrieval.md)
-POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
+POOL_PER_GROUP = 30  # over-fetch: best chunks per (firm, document type) before quotas (#213: 15 -> 30)
 MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
 FLOOR = 0.3          # share of the firm's FLOOR_BASE-th best rank a chunk needs to take a slot
@@ -452,6 +455,11 @@ RECENCY_TERMS = "announced launched introduced new record acquisition agreement 
 
 
 PER_FIRM = 6         # passages per named firm once the firms outgrow K (#181, ADR-013)
+# Token budget (#213, ADR-019): None = the passage rule above (budget()); an int B = estimated
+# tokens (characters / 4) of the retrieved set for a question naming 0 or 1 firm, growing per firm
+# like the passage rule (budget_tokens()). Module-level so the eval grid can swap it.
+TOKEN_BUDGET: int | None = 40000  # chosen from the #213 grid (ADR-019); five firms get 60000
+CHARS_PER_TOKEN = 4
 
 # Slot order inside a firm's turn (#198, #199, ADR-016); trade press last is off inside a time
 # window, both are off for the tier 5 research part. Module-level so the eval grid can swap them.
@@ -547,6 +555,22 @@ def budget(q: Query) -> int:
     return (K if n <= 1 else max(K, BUDGET_RULE(n))) + peer_slots(q)
 
 
+def budget_tokens(q: Query) -> int | None:
+    """Estimated tokens of the retrieved set (#213, ADR-019), None in passage mode (TOKEN_BUDGET
+    None). ADR-013's growth in tokens: B for 0 or 1 named firm, max(B, B x PER_FIRM x n // K) for
+    n firms (the same 6-of-20 share per firm: 2-3 firms keep B, the five get 1.5 x B). The theme
+    peers' passages (#205) are outside it."""
+    if TOKEN_BUDGET is None:
+        return None
+    n = len(q.entities)
+    return TOKEN_BUDGET if n <= 1 else max(TOKEN_BUDGET, TOKEN_BUDGET * PER_FIRM * n // K)
+
+
+def hit_tokens(h: Hit) -> float:
+    """Estimated tokens of one passage: characters / 4, unrounded (#213)."""
+    return len(h.text) / CHARS_PER_TOKEN
+
+
 PEER_THEME_PER_FIRM = 2  # home-firm theme rule (#205): slots per peer firm, on the theme only
 
 
@@ -590,7 +614,8 @@ def quota_firms(entity_ids: list[str]) -> dict[str, str]:
 def select(pool: list[Hit], k: int = K, floor: float | None = None,
            max_per_doc: int | None = None, firm_of: dict[str, str] | None = None,
            floor_base: int | None = None, trade_last: bool = True, new_doc_first: bool = True,
-           answers: dict[str, Hit] | None = None) -> list[Hit]:
+           answers: dict[str, Hit] | None = None, tokens: float | None = None,
+           unattached: list[str] | None = None) -> list[Hit]:
     """Quotas over a rank-ordered pool: firms take turns; within a firm, document types take
     turns (best-ranked type first); a document gives at most MAX_PER_DOC chunks; a chunk that
     repeats a kept one (the same definition in every 10-Q) is dropped. A chunk ranked below
@@ -608,7 +633,11 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     speaker-turn chunks of one call pushed the firm's other calls out of Q6, Q11, Q13, Q27).
     answers maps a question turn to its answer turn (answer_turns, #203): with PAIR_TURNS "attach"
     the answer is kept right after its question (same firm, MAX_PER_DOC, near-duplicates and k
-    still apply), with "replace" in its place."""
+    still apply), with "replace" in its place.
+    tokens (#213, ADR-019): when set, the list is full once its estimated tokens (hit_tokens) reach
+    `tokens` instead of k passages; an answer turn is attached only while the list is not full (a
+    question turn that fills it is recorded in `unattached`), and TRADE_KEEP swaps only for a trade
+    chunk no longer than the pick it replaces, so the list ends at most one chunk past `tokens`."""
     floor = FLOOR if floor is None else floor
     answers = answers or {}
     max_per_doc = MAX_PER_DOC if max_per_doc is None else max_per_doc
@@ -640,6 +669,10 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     tier_last = TIER_LAST if trade_last else None
     kept_firm: list = []  # firm of each kept chunk, same order as kept
     new_doc_first = NEW_DOC_FIRST and new_doc_first
+    size = [0.0]          # estimated tokens of kept (#213)
+
+    def full() -> bool:
+        return len(kept) >= k if tokens is None else size[0] >= tokens
 
     def eligible(h: Hit) -> set | None:
         """The chunk's shingles when it may still take a slot, else None (never again: being
@@ -655,10 +688,15 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
             h, sh = a, a_sh
             a = None
         add(h, sh, firm)
-        if a is not None and PAIR_TURNS == "attach" and len(kept) < k and (a_sh := eligible(a)) is not None:
-            add(a, a_sh, firm)
+        if a is not None and PAIR_TURNS == "attach":
+            if full():
+                if unattached is not None:
+                    unattached.append(h.chunk_id)
+            elif (a_sh := eligible(a)) is not None:
+                add(a, a_sh, firm)
 
     def add(h: Hit, sh: set, firm) -> None:
+        size[0] += hit_tokens(h)
         kept_firm.append(firm)
         kept.append(h)
         kept_ids.add(h.chunk_id)
@@ -734,12 +772,16 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
             kept_firm.pop(i)
             kept_ids.discard(out.chunk_id)
             kept_shingles.pop(i)
+            size[0] -= hit_tokens(out)
             per_doc[out.doc_id] -= 1
             if not per_doc[out.doc_id]:
                 del per_doc[out.doc_id]  # "in per_doc" means the document is in the list
             got = next((g for t in types if types[t] and types[t][0].source_tier in LAST_TIERS
                         if (g := pick(types[t])) is not None), None)
-            if got is None:  # nothing usable: put the pick back where it was
+            # Token budget (#213): the swap never makes the list longer.
+            if got is None or (tokens is not None and hit_tokens(got[0]) > hit_tokens(out)):
+                # nothing usable: put the pick back where it was
+                size[0] += hit_tokens(out)
                 kept.insert(i, out)
                 kept_firm.insert(i, firm)
                 kept_ids.add(out.chunk_id)
@@ -751,15 +793,15 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     def take(firm) -> bool:
         return (on_theme_kept[firm] < THEME_FIRST and take_from(0, firm)) or take_from(1, firm)
 
-    while len(kept) < k:
+    while not full():
         progressed = False
         for firm in firms:
-            if len(kept) >= k:
+            if full():
                 break
             progressed |= take(firm)
         if not progressed:
             break
-    if tier_last is not None and TRADE_KEEP and len(kept) >= k:
+    if tier_last is not None and TRADE_KEEP and full():
         keep_one_trade()
     return kept
 
@@ -774,16 +816,24 @@ class PoolTrace:
     on_theme: list[str] = field(default_factory=list)   # the firms' own chunks on the theme (#117)
     peers: list[str] = field(default_factory=list)      # theme peers (#205), before peer_floor()
     answers: list[str] = field(default_factory=list)    # answer turns of pooled question turns (#203)
+    # Not a pool (#213): kept question turns whose answer turn was left out because the token
+    # budget was full; not part of ids().
+    unattached: list[str] = field(default_factory=list)
 
     def ids(self) -> set[str]:
         return {*self.firm, *self.research, *self.on_theme, *self.peers, *self.answers}
 
 
 def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> list[Hit]:
-    """k: passages to return; None = budget(q), the app default. The theme peers' slots (#205)
+    """k: passages to return; None = the app default: budget(q) passages in passage mode
+    (TOKEN_BUDGET None), budget_tokens(q) estimated tokens in token mode. The theme peers' slots (#205)
     are part of budget(q) and come on top of an explicit k, so the named firms and the research
     part get the same k with or without peers. trace (#210): filled with the candidate pools'
-    chunk ids; it changes nothing else."""
+    chunk ids; it changes nothing else.
+    Token budget (#213, ADR-019): with k None and TOKEN_BUDGET set, the firm and research parts
+    share budget_tokens(q) (research first, its tokens off the firm part); the peers' passages
+    stay on top. An explicit k is always the passage rule."""
+    tokens = budget_tokens(q) if k is None else None
     k = budget(q) - peer_slots(q) if k is None else k
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
@@ -846,7 +896,9 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> li
     research = select([Hit(**r) for r in research_rows], min(THEME_K, k),  # research: as before #166
                       **{**opts, "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False, "new_doc_first": False},
                       floor_base=1)
-    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities), answers=answers) + research
+    firm_tokens = None if tokens is None else max(0.0, tokens - sum(hit_tokens(h) for h in research))
+    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities), answers=answers,
+                  tokens=firm_tokens, unattached=trace.unattached if trace is not None else None) + research
     if peer_rows:
         # The peers' best chunks on the theme, after the floor across them (kept in a window too);
         # at most PEER_THEME_PER_FIRM each, never a chunk already in the list.
