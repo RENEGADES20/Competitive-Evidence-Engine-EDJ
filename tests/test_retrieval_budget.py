@@ -84,8 +84,14 @@ def tokens_of(hits):
     return sum(fts.hit_tokens(h) for h in hits)
 
 
-def test_defaults_are_the_passage_rule():
-    assert fts.TOKEN_BUDGET is None and fts.POOL_PER_GROUP == 15
+def test_committed_values_are_the_grid_pick():
+    assert (fts.POOL_PER_GROUP, fts.TOKEN_BUDGET) == (30, 40000)              # #213 grid, ADR-019
+    assert fts.budget_tokens(Query("x", entities=["MS"])) == 40000
+    assert fts.budget_tokens(Query("x", entities=FIVE)) == 60000
+
+
+def test_without_a_token_budget_the_passage_rule_is_unchanged(monkeypatch):
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)
     assert fts.budget_tokens(Query("x", entities=FIVE)) is None
     pool = five_firm_pool()
     assert select(pool, k=20, firm_of=quota_firms(FIVE)) == select(pool, k=20, firm_of=quota_firms(FIVE),

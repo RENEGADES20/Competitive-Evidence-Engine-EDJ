@@ -435,7 +435,7 @@ def window_filter(window: tuple[date, date] | None) -> tuple[str, dict]:
 
 
 K = 20              # chunks handed to the model for a question naming 0 or 1 firm (specs/retrieval.md)
-POOL_PER_GROUP = 15  # over-fetch: best chunks per (firm, document type) before quotas
+POOL_PER_GROUP = 30  # over-fetch: best chunks per (firm, document type) before quotas (#213: 15 -> 30)
 MAX_PER_DOC = 3      # no single document fills the list
 DUP_JACCARD = 0.6    # word 5-gram overlap above which a chunk repeats a kept one (boilerplate)
 FLOOR = 0.3          # share of the firm's FLOOR_BASE-th best rank a chunk needs to take a slot
@@ -455,7 +455,7 @@ PER_FIRM = 6         # passages per named firm once the firms outgrow K (#181, A
 # Token budget (#213, ADR-019): None = the passage rule above (budget()); an int B = estimated
 # tokens (characters / 4) of the retrieved set for a question naming 0 or 1 firm, growing per firm
 # like the passage rule (budget_tokens()). Module-level so the eval grid can swap it.
-TOKEN_BUDGET: int | None = None
+TOKEN_BUDGET: int | None = 40000  # chosen from the #213 grid (ADR-019); five firms get 60000
 CHARS_PER_TOKEN = 4
 
 # Slot order inside a firm's turn (#198, #199, ADR-016); trade press last is off inside a time

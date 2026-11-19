@@ -380,6 +380,7 @@ def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
 
     seen = []
     five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)   # the passage rule (#213 made tokens the default)
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(five))
     monkeypatch.setattr(fts, "search", lambda q, k=None, trace=None: seen.append(k) or real_hits())
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
@@ -555,6 +556,9 @@ def test_token_mode_searches_with_k_none_and_records_the_budget(monkeypatch, tmp
 
 
 def test_passage_mode_records_are_unchanged(monkeypatch, tmp_path):
+    from cee.retrieve import fts
+
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)
     seen, _ = _fake_eval(monkeypatch, ["MS"], [_tok_hit("MS-10K-2025#1", "MS", 400)])
     er.main(["--questions", "Q1", "--out", str(tmp_path / "p")])
     r = _record(tmp_path / "p")["questions"][0]
