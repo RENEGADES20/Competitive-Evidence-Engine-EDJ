@@ -70,7 +70,7 @@ Facts this plan rests on (checked on the committed files, no run):
 - `docs/RUN.md` - "Hybrid retrieval" section only: the #212 real-run command (paid, TL go-ahead
   needed) in a PowerShell and a bash block, and a link to the report.
 - `specs/retrieval.md` - "Retrieval modes" section, the "Comparisons" bullet only: one line linking
-  the #212 real run and its score.
+  the #212 real run and its score (owner S1, owner review waived, TL decision 2026-11-17 (#187)).
 Nothing in `src/`, `config/`, `scripts/`, `tests/`, the database or the corpus changes; no prompt
 change, no retrieval change, no re-run of a question (issue "Out of scope"). Local only (not
 committed): `D:\ALLPROJECTS\EDJ\cache\ev212\` (mock run, real-run copy, logs, scoring pack, verdicts,
@@ -98,10 +98,14 @@ comparison helper).
   command.
 - API key for the real run: `config.py` loads `<worktree>/.env`, and `wt-212` has none. The main
   checkout's `.env` is copied as a file (`Copy-Item D:\ALLPROJECTS\EDJ\repo\.env D:\ALLPROJECTS\EDJ\wt-212\.env`),
-  never opened or printed, as the earlier worktrees did (`wt-144` holds one); `git check-ignore .env`
-  confirms it is ignored (`.gitignore:2`), `git status` shows it untracked-and-ignored, and it is
-  deleted from `wt-212` right after the real run (step 4). Its `LLM_PROVIDER` line does not matter:
-  the process variable is set per command.
+  never opened, printed or listed with content, as the earlier worktrees did (`wt-144` holds one).
+  `git check-ignore -v .env` in `wt-212` is run **before** the copy (must name `.gitignore:2`), and
+  `git status` after it shows nothing new. The copy is made right before the paid command and
+  deleted right after it (step 3 "After the run"), also if the run stops part-way; the Progress log
+  records `Test-Path D:\ALLPROJECTS\EDJ\wt-212\.env` -> False. Its `LLM_PROVIDER` line does not
+  matter: the process variable is set per command.
+- Right before the paid command, the resolved `cee.__file__` is logged (expected under
+  `wt-212\src`), proving the run used the branch code and `wt-212\.env`.
 
 ### 2. Mock run of the same 30 questions (0 calls) - every check must pass
 ```powershell
@@ -146,7 +150,9 @@ After the run:
 - The retrieved chunk ids of the real run equal the mock run's (M2) on 30/30; a difference is reported.
 - Each raw file names question, prompt version v3, snapshot, provider, model `claude-sonnet-5-5`,
   chunk ids and time; the model name is checked in all 30.
-- Delete `wt-212\.env`.
+- Delete `wt-212\.env` (also if the run stopped part-way) and log `Test-Path` -> False.
+- If an API error (not a `ModelOutputError`) stopped the run, a call was counted with no raw file:
+  the report and PR state real calls and raw files as two separate numbers.
 
 **A wrong, truncated or invalid output is a finding, not a re-roll.** `INVALID_OUTPUT` (not a valid
 Answer: wrong field, no tool call, truncated JSON), `NOT_EVALUATED` (cap reached), a call error or an
@@ -203,7 +209,8 @@ note where the answer content changed although the verdict did not (e.g. a diffe
 ### 7. Report and summary (committed)
 `evals/hybrid-eval/corpus-2026-11-17/real/report.md`:
 - Score line: hybrid-norerank N/30 (tier 1: n/18) vs Gate 4 21/30 (12/18), scored by the TL agent;
-  the sentence that one run per question cannot separate retrieval from model variation.
+  the sentence that one run per question cannot separate retrieval from model variation, and that
+  Gate 4's own 30 answers came from two runs (11 calls in its final run, 19 reused from R2).
 - "How this was run": snapshot, as of, commit, mode and constants, model, prompt v3, calls made /
   reused / planned, run id, evidence folders (`.eval-runs\0212-hybrid-real`, `D:\ALLPROJECTS\EDJ\cache\ev212\real-30`,
   `real/raw/` on the branch), scoring method (step 5), citation and number-check totals.
@@ -277,3 +284,15 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   committed files: Gate 4 chunk ids = #211 fts mock run 30/30; hybrid-norerank sets differ from
   Gate 4 on 30/30 and all have hits (30 calls planned). Waiting for the reviewer agent's approval
   before step 1. 0 real calls so far.
+- 2026-11-18 23:50 - plan approved by the reviewer agent (issue comment 7001006461, on 095dd24); its
+  non-blocking notes applied: S1 owner tag on `specs/retrieval.md`, `.env` guards (check-ignore
+  before the copy, delete also on a part-way stop, Test-Path logged; step number fixed), real calls vs
+  raw files stated separately on an API error, `cee.__file__` logged before the paid command, Gate 4's
+  two-run origin in the score line.
+- 2026-11-18 23:54 - step 1: pytest 625 passed, 2 skipped (no vectors env); `tests/test_hybrid.py` with
+  `CEE_VECTORS=on` 53 passed (incl. the 2 DB hard-filter tests). Step 2: mock run
+  `D:\ALLPROJECTS\EDJ\cache\ev212\mock-hybrid-norerank` (095dd24, 0 calls): PASS 28 / FAIL 2 (Q19, Q22),
+  tier-1 passages 0.484, forbidden 0, refusal 5/5, tokens~193,085. `ev212\mock_checks.py`: M1-M5 all
+  PASS (30 records; chunk ids = #211's run on 30/30; fails exactly Q19, Q22; hits on 30/30; mock answer
+  flow built for 30/30 with the same retrieval), `cee` from `wt-212\src`. Dry run `ev212\dry-0`
+  (`--real --max-calls 0`): 30 NOT_EVALUATED, real calls 0, reused 0; no `.eval-runs\cache` in `wt-212`.
