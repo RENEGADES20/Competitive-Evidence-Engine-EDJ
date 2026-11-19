@@ -146,6 +146,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-19 | TL: retrieval budget in tokens (40k, five firms 60k) and candidate pool 30, picked from a 12-point mock grid (ADR-019); mock on corpus-2026-11-17 tier-1 recall@final 0.597 -> 0.808, recall@pool 0.803 -> 0.903, 29 PASS unchanged, refusal 5/5 and 22/22; tokens per question median 6,001 -> 33,643; 8 real calls: Q24/Q28-Q30 keep the gap, Q25 now answers (#213) (#220) | none | #215 (Q25 gaps), #214 |
 | 2026-11-19 | Question planner (ADR-020): one planner call splits a question into up to 4 parts, each searched with every SQL filter in a share of the token budget; mock unchanged (recall 0.654 / tier 1 0.808); real: Q15 and Q25 missed passages now cited (#223) | Q3 / Q7 plans miss parts, Q25 retrieves 2 must_not_return chunks (TL) | planner prompt v2 with #215 |
 | 2026-11-19 | Planner prompt v2 + neighbour-phrase guard + paid-call-proof tests (ADR-020 amended); real: Q3 gets a concede-ground part (coverage 0.667 -> 1.0), Q28 recall@final 0.75 -> 1.0, Q12 unchanged (#224) (#226) | Q25 still retrieves 2 dividend-payout chunks via the bare word "payout"; Q7's RJF part lacks training / pay words (TL) | bare "payout" rule or budget/ranking with #215 |
+| 2026-11-19 | CI green again: test_no_paid_calls collects without httpx (#224 follow-up) (#227) | none | - |
 
 ## Weekly score (from W6)
 
