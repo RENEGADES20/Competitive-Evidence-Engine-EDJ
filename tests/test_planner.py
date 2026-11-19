@@ -3,13 +3,15 @@ with fake clients, fallback. No database, never a real API call."""
 import json
 import re
 from datetime import date
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 from cee.retrieve import fts, planner
 from cee.retrieve.fts import Query, resolve
-from tests.test_prompt import _leaks
+from tests.test_prompt import _grams, _leaks
 
 TODAY = date(2026, 11, 17)
 Q7 = "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?"
@@ -229,3 +231,75 @@ def test_planner_prompt_names_no_question_id_and_no_rubric():
     text = planner.system_prompt(4)
     assert not re.search(r"Q\d{1,2}", text)
     assert _leaks(text) == {}
+
+
+# --- prompt v2 and neighbour phrases (#224) ---------------------------------------------------
+
+V1_OUTPUTS = json.loads((Path(__file__).parent / "data" / "planner_v1_0214.json").read_text(encoding="utf-8"))
+BANK = {q["id"]: q for q in yaml.safe_load(
+    (Path(__file__).resolve().parents[1] / "evals" / "questions.yaml").read_text(encoding="utf-8"))["questions"]}
+
+
+def test_planner_version_is_v2_and_changes_the_cache_key(monkeypatch):
+    import tests.test_eval_run  # noqa: F401  (loads scripts/eval_run.py as module eval_run)
+    from eval_run import plan_cache_key
+    assert planner.PLANNER_VERSION == "plan-v2"
+    args = ({"id": "Q25", "text": BANK["Q25"]["text"]}, "corpus-2026-11-17", "anthropic", "claude-sonnet-5-5", 4, {})
+    v2 = plan_cache_key(*args)
+    monkeypatch.setattr(planner, "PLANNER_VERSION", "plan-v1")
+    assert plan_cache_key(*args) != v2
+
+
+def test_planner_prompt_shares_no_six_words_with_any_question_text():
+    mine = _grams(planner.system_prompt(4))
+    assert {qid: hit for qid, q in BANK.items() if (hit := mine & _grams(q["text"]))} == {}
+
+
+def test_planner_prompt_v2_has_the_asked_parts_and_same_concept_rules():
+    text = planner.system_prompt(4)
+    assert "List the asks first" in text and "Cover every ask" in text and "Same concept only" in text
+
+
+# The part whose v1 words held "payout ratio": Q25 p4 (Schwab + RJF, brought the dividend deck
+# chunks in) and Q15 p2 (advisor-led earnings). In the corpus the phrase names the dividend figure
+# only (11 chunks, 10 say "dividend", none says advisor; #224 replay).
+NEIGHBOUR_PARTS = {"Q15": 1, "Q25": 3}
+
+
+@pytest.mark.parametrize("qid", ["Q3", "Q7", "Q12", "Q15", "Q25", "Q28"])
+def test_neighbour_guard_on_the_saved_v1_outputs(qid):
+    """Only the parts whose v1 words said "payout ratio" change, and only by that phrase."""
+    raw = V1_OUTPUTS[qid]
+    parts, notes = planner.validate_plan(raw, resolve(BANK[qid]["text"], TODAY), cap=4)
+    words = [p.keyword_query for p in parts[:len(raw["parts"])]]
+    expected = [p["keyword_query"].strip() for p in raw["parts"]]
+    hit = NEIGHBOUR_PARTS.get(qid)
+    if hit is not None:
+        expected[hit] = " ".join(expected[hit].replace("payout ratio", " ").split())
+        assert "ratio" not in words[hit]
+    assert words == expected
+    assert [n for n in notes if "neighbour" in n or "search words" in n] == (
+        [] if hit is None else [f"part {hit + 1}: dropped neighbour phrase payout ratio"])
+
+
+def test_neighbour_phrase_named_by_the_question_is_kept():
+    q = resolve("What is Raymond James's dividend payout ratio?", TODAY)
+    parts, notes = planner.validate_plan(
+        {"parts": [{"id": "a", "text": "t", "firms": ["RJF"], "keyword_query": "dividend payout ratio"}]}, q, cap=4)
+    assert parts[0].keyword_query == "dividend payout ratio" and not notes
+
+
+def test_neighbour_phrase_forms_are_caught_and_empty_words_use_the_question():
+    words, dropped = planner.strip_neighbours("advisor pay Payout-Ratios grid", "How are advisors paid?")
+    assert words == "advisor pay grid" and dropped == ["payout ratio"]
+    parts, notes = planner.validate_plan(
+        {"parts": [{"id": "a", "text": "t", "firms": ["MS"], "keyword_query": "employee turnover"}]},
+        resolve("How are Morgan Stanley advisors paid?", TODAY), cap=4)
+    assert parts[0].keyword_query is None
+    assert notes == ["part 1: dropped neighbour phrase employee turnover", "part 1: no search words left"]
+
+
+def test_neighbour_guard_never_touches_the_rule_plan():
+    q = resolve(BANK["Q25"]["text"], TODAY)
+    plan = planner.rules_plan(q, cap=4)
+    assert all(p.keyword_query is None for p in plan.parts) and plan.corrections == []

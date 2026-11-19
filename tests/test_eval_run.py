@@ -666,6 +666,7 @@ def _planner_calls(monkeypatch, outcome):
 
 def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     from cee import ask
+    from cee.retrieve import planner
     from cee.retrieve.fts import resolve
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
@@ -679,7 +680,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     files = list((tmp_path / "cache").iterdir())
     assert len(files) == 1 and files[0].name.startswith("Q7-plan-")
     rec = saved(tmp_path / "cache")[0]
-    assert rec["raw"] == raw and rec["planner_version"] == "plan-v1" and rec["max_tokens"] == 2000
+    assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 2000
     assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
     again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
     plan2 = again.plan(question, qry)
@@ -748,4 +749,4 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     r = _record(tmp_path)["questions"][0]
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
     assert r["llm_calls"] == {"planner": 0, "answer": 0} and r["plan"]["source"] == "rules"
-    assert _record(tmp_path)["meta"]["planner_version"] == "plan-v1" and seen[0].source == "rules"
+    assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"

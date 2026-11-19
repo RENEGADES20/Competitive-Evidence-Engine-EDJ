@@ -5,13 +5,17 @@ PLANNER_MAX_PARTS parts, each with its firms and its own search words. Code vali
 firms must be ones resolve() found (unknown or unasked firms are dropped, a dropped resolved firm
 is added back), the window, themes and Ask page filters are not in the planner's schema at all, and
 every part is searched with every hard SQL filter (fts.search on a copy of the resolved query).
+Prompt plan-v2 (#224) asks for a part, or its own search words, for every asked part and keeps
+the words on the asked concept; code then removes any configured neighbour phrase (a different
+figure that shares a word, e.g. "payout ratio") the question does not name (strip_neighbours).
 The mock provider, PLANNER=off and an unusable model output use the rule plan: one part per named
 firm (2 to PLANNER_MAX_PARTS firms), else one part for the whole question. Tests and CI make 0 calls.
 
 Retrieval of a plan (search_parts): the research part (<= THEME_K passages) once per question, then
 the parts in order, sharing the question's ADR-019 token budget minus the research tokens (equal
 shares; what a part leaves flows to the parts after it; chunks kept earlier are excluded), then the
-theme peers once. A one-part plan returns exactly fts.search(q).
+theme peers once. A one-part plan returns exactly fts.search(q). Unused share is not handed back
+to earlier parts (#224: "not now", see ADR-020).
 """
 from __future__ import annotations
 
@@ -22,7 +26,7 @@ from cee.config import entities_config, settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, PoolTrace, Query
 
-PLANNER_VERSION = "plan-v1"
+PLANNER_VERSION = "plan-v2"   # #224: asked-parts and same-concept rules (v1: #214)
 PLANNER_MAX_TOKENS = 2000
 PLAN_TOOL = "submit_plan"
 MAX_QUERY_CHARS = 400
@@ -32,13 +36,29 @@ The search engine runs one full-text search per part you write, over filings, ea
 investor decks, press releases, Form ADV brochures, trade press and research reports. Code applies
 the firm filters, the time window and every other filter; you only choose the parts and the words.
 
-Split the question into the parts it asks about, at most {max_parts} parts:
+List the asks first. Before writing parts, list for yourself everything the question asks for:
 - each named firm or group of firms whose evidence must be found separately;
-- each "and" that joins two asks, each metric or dimension the question names or lists;
-- a part the question implies but does not search for in its own words, for example where a firm
-  concedes ground or faces pressure, how a figure differs from a similar figure, or the home
-  firm's own comparable figures when it is set against a peer.
-A part may cover several firms. A short question with one ask is one part.
+- each "and" joining two asks, each item of a list, each metric or dimension it names;
+- what the question asks without naming it. Example: "What is Firm X's plan for its
+  retirement-plan unit?" also asks how management describes the unit, the priorities it states,
+  the competition it names, and where it says it is losing ground or pulling back. Example: "How do
+  Firm X and Firm Y each handle branch staffing?" asks, for each firm, whom it hires, how it pays
+  them, how it trains them, and the results it reports (staff numbers, departures). A figure that
+  may not be disclosed also asks for the closest figure that is disclosed, as its own part. A firm
+  set against the home firm also asks for the home firm's own comparable figures.
+
+Cover every ask, in at most {max_parts} parts. Every ask gets its own part. With more asks than
+parts, merge asks into one part and give each merged ask its own words in that part's
+keyword_query; no ask is left without words. With several firms and several dimensions, write one
+part per firm with words for every dimension, or one part per dimension with every firm; either way
+every firm gets words for every dimension. Do not spend a part on something the question does not
+ask. A short question with one ask is one part.
+
+Same concept only. Search words name the asked concept: the words filings and calls use for it and
+its exact synonyms. Never add a different figure that shares a word with it, even as context (a
+ratio paid to shareholders is not staff pay; company-wide staff turnover is not one unit's
+turnover; deposits are not client assets). The closest disclosed figure for an undisclosed one goes
+in its own part, never into the words of the asked figure's part.
 
 For each part give:
 - id: a short label;
@@ -119,6 +139,25 @@ def _cut(text: str, n: int = MAX_QUERY_CHARS) -> str:
     return text if len(text) <= n else text[:n].rsplit(" ", 1)[0]
 
 
+def neighbour_phrases() -> list[str]:
+    """Phrases naming a different figure than the asked one (config `neighbour_phrases`, #224)."""
+    return [str(p) for p in entities_config().get("neighbour_phrases") or []]
+
+
+def strip_neighbours(words: str, question: str) -> tuple[str, list[str]]:
+    """The planner's search words without every configured neighbour phrase the question itself
+    does not name (#224, ADR-020): "payout ratio" in a part about advisor pay brought dividend
+    payout chunks into #214's Q25. Matched like a synonym key (any case, hyphen or spaces between
+    words, inflected last word). Returns (words, dropped phrases)."""
+    dropped: list[str] = []
+    for phrase in neighbour_phrases():
+        pattern = fts._synonym_pattern(phrase)
+        if pattern.search(words) and not pattern.search(question):
+            words = pattern.sub(" ", words)
+            dropped.append(phrase)
+    return (" ".join(words.split()) if dropped else words), dropped
+
+
 def validate_plan(raw, q: Query, cap: int | None = None) -> tuple[list[Part], list[str]]:
     """The model's plan corrected by code (ADR-020); raises PlannerOutputError when not usable."""
     cap = max_parts() if cap is None else cap
@@ -149,6 +188,11 @@ def validate_plan(raw, q: Query, cap: int | None = None) -> tuple[list[Part], li
         elif len(words) > MAX_QUERY_CHARS:
             words = _cut(words)
             notes.append(f"part {len(parts) + 1}: search words cut")
+        words, dropped = strip_neighbours(words, q.question)
+        notes += [f"part {len(parts) + 1}: dropped neighbour phrase {d}" for d in dropped]
+        if dropped and not words:
+            words = None
+            notes.append(f"part {len(parts) + 1}: no search words left")
         parts.append(Part("", text or q.question, firms, words))
     if len(parts) > cap:
         parts = parts[:cap]
