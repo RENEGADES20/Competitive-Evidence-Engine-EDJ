@@ -152,6 +152,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-19 | Strict tool use on the Anthropic answer and planner tools (request version strict-1 in eval keys; API refusal stop invalid); Q22 now valid and PASS on passes_if, Q1/Q10/Q21/Q23 as at Gate 4, 10 real calls (#232) (#234) | Q22's retrieval still brings in must-not chunk MS-PR-2026-04-15-01#15 (uncited) | #216, #217 |
 | 2026-11-19 | #216 part A: advisor-count sources for MS (4Q2020 supplement page), Merrill (4Q2023 GWIM page; investor-day ">15K" quoted) and Schwab (none published; Form ADV Part 1A as closest metric), stored as verbatim extracts (#235) | Q23 retrieves no Merrill count chunk; ADV chunks out of scope for benchmark questions (#179) | PR B: snapshot, baseline, definitions for the new chunks |
 | 2026-11-19 | #216 done: snapshot corpus-2026-11-19 (224 docs, 21,161 chunks) with advisor-count sources for MS (4Q2020), Merrill (4Q2023; 3Q25 ">15K") and Schwab (none published; Form ADV closest metric); definitions quote them; new baseline 29/1 (#236) | Q23 has no in-window series for MS/Merrill/Schwab; ADV not searched for benchmark questions (#179), both accepted for #217/NEXT | run /sync-db; exp/hybrid embed --missing at next sync |
+| 2026-11-19 | W10 scored run on corpus-2026-11-19: 24/30 (tier 1 14/18; first read 25, Q19 failed on second read) vs Gate 4 21/30, report + NEXT rewritten, 61 real calls (#238) | none | NEXT items 1 (behavior decision), 2 (cross-firm conclusion) and 8 (planner firm scope) |
 
 ## Weekly score (from W6)
 
