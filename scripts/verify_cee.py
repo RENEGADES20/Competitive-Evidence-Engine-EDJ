@@ -407,17 +407,25 @@ def feature_ask_progress(page, base, rec, ctx):
     body = page.locator("body").inner_text()
     rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
              "no model call" in model and "LLM called: False" in body, model)
-    # plan-parts (#214): a two-firm question is searched in one part per firm, and the plan is logged
+    # plan-parts (#214): a two-firm question is searched in one part per firm, and the plan is logged.
+    # exp/hybrid: the hybrid modes search the whole question as one part, no planner (cee.retrieve.modes)
+    from cee.config import settings  # loads .env as the app does; the app inherits it
+    mode = os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode
+    if mode.startswith("hybrid"):
+        # the page shows the plain label (ask_page.mode_label, #128), not the internal mode name
+        want_plan, want_search, n_parts = "1 part: p1 MS, RJF", "in 1 part (Smart search)", 1
+    else:
+        want_plan, want_search, n_parts = "2 parts: p1 MS; p2 RJF", "in 2 parts", 2
     ask(page, base, TWO_FIRM_Q)
     lines = open_trace(page)
     plan = next((l for l in lines if l.startswith("Planning the search")), "")
     search_line = next((l for l in lines if l.startswith("Searching the corpus")), "")
-    rec.step("Ask a two-firm question, open the trace", "plan line '2 parts: p1 MS; p2 RJF', search 'in 2 parts'",
-             "2 parts: p1 MS; p2 RJF" in plan and search_line.endswith("in 2 parts"), f"{plan} | {search_line}")
+    rec.step("Ask a two-firm question, open the trace", f"plan line '{want_plan}', search '{want_search}'",
+             want_plan in plan and search_line.endswith(want_search), f"{plan} | {search_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
                           " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
-    rec.step("Read the newest query_log row (side effect)", "plan source rules, 2 parts, llm_calls 0 / 0",
-             row.replace(" ", "") == 'rules|2|{"answer":0,"planner":0}', row)
+    rec.step("Read the newest query_log row (side effect)", f"plan source rules, {n_parts} part(s), llm_calls 0 / 0",
+             row.replace(" ", "") == f'rules|{n_parts}|{{"answer":0,"planner":0}}', row)
 
 
 PDF_PAGE_SAMPLES = ["MS-SUPP-2026Q3#16", "SCHW-DECK-2026Q2#53"]  # a table page and a deck page (#53 comment)
