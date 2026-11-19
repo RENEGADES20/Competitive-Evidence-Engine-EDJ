@@ -33,6 +33,26 @@ mock and the one-part identity are unchanged. FTS only, `main`; no new model, no
   and the on-disk default profile (`configs/default.json`), and a profile can carry its own base
   URL; OpenAI also reads `OPENAI_ADMIN_KEY`. So removing key variables alone does not stop a paid
   call on a machine with a profile (it only held here because this machine has none).
+- Transport (checked in `.venv`, 2026-11-19): anthropic 1.9.0 and openai 3.22.1 send through
+  **`httpx2`** 2.13.1: their client wrappers (`SyncHttpxClientWrapper` -> `_DefaultHttpxClient` ->
+  `httpx2.Client`; async: `AsyncHttpxClientWrapper` -> `_DefaultAsyncHttpxClient` ->
+  `httpx2.AsyncClient`) define no `send` of their own, so every request goes through
+  `httpx2.Client.send` / `httpx2.AsyncClient.send`. `httpx2.Client` is not a subclass of
+  `httpx.Client` (httpx 0.28.1 is installed too), so patching `httpx.Client.send` sees nothing.
+- Probe (`D:\ALLPROJECTS\EDJ\cache\ev224\sdk_profile_probe.py`, output `sdk_profile_probe.txt`;
+  run with `python -I`, every `ANTHROPIC_*` / `OPENAI_*` variable removed, `httpx2.Client.send`
+  patched to record and raise `httpx2.ConnectError`, so nothing left the machine):
+  - `ANTHROPIC_CONFIG_DIR` = an empty folder: `anthropic.Anthropic()` raises `CredentialsError`
+    "Config file not found ... configs/default.json" at construction; 0 requests reach `send`.
+  - `ANTHROPIC_CONFIG_DIR` = a folder with `configs/default.json`
+    `{"authentication": {"type": "user_oauth"}, "base_url": "http://127.0.0.1:9"}` and
+    `credentials/default.json` `{"type": "oauth_token", "access_token": "dummy-token",
+    "expires_at": <now + 1 day>}`: `Anthropic(max_retries=0).messages.create(...)` sends exactly 1
+    request to `http://127.0.0.1:9/v1/messages`, reaching `send` with `auth` = the SDK's
+    `AccessTokenAuth` (the profile's token), then `APIConnectionError`. Same with no `base_url` in
+    the profile and `ANTHROPIC_BASE_URL=http://127.0.0.1:9`. (The SDK allows plain http only for
+    localhost / 127.0.0.1 / [::1].)
+  - `openai.OpenAI()` with no key: `OpenAIError` at construction.
 
 ### What each #214 planner output missed (`.eval-runs/0214-real/raw/*-plan-*.json`, plan-v1)
 | Q | Parts (v1) | Missed |
@@ -151,9 +171,13 @@ addition to `LLM_PROVIDER=mock`:
    directly): `delenv` of every variable whose name starts with `ANTHROPIC_` or `OPENAI_` (covers
    the API keys, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_PROFILE`, the workload-identity set,
    `OPENAI_ADMIN_KEY`, org / project ids), then `ANTHROPIC_CONFIG_DIR` = an empty `tmp_path`
-   folder (so no on-disk or `active_config` profile is found) and `ANTHROPIC_BASE_URL` /
-   `OPENAI_BASE_URL` = `http://127.0.0.1:9` (a closed local port).
-Docstring states both layers and why (CLAUDE.md "Paid API calls" rule 4).
+   folder and `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` = `http://127.0.0.1:9` (a closed local
+   port). `ANTHROPIC_CONFIG_DIR` is set, not unset, on purpose: set to an empty folder it is an
+   explicit profile selection, so a directly built `anthropic.Anthropic()` fails at construction
+   with `CredentialsError` (config file not found) instead of falling back to the user's on-disk
+   default profile (probe above). That is the safe direction.
+Docstring states both layers, the `ANTHROPIC_CONFIG_DIR` reason, and why (CLAUDE.md "Paid API
+calls" rule 4).
 
 ## Files to change
 - `src/cee/retrieve/planner.py` - prompt v2, `PLANNER_VERSION = "plan-v2"`, `neighbour_phrases()`,
@@ -199,7 +223,10 @@ A missed acceptance item is reported, not re-rolled. No other call path.
 
 ## Steps
 1. **Guard against paid calls.** `tests/conftest.py` stubs + environment; `tests/test_no_paid_calls.py`
-   (profile format taken from `anthropic/lib/credentials` of the installed SDK). `pytest -q`.
+   with a fixture that patches `httpx2.Client.send` and `httpx2.AsyncClient.send` (also
+   `httpx.Client.send` / `httpx.AsyncClient.send`, which the SDKs do not use today) to record the
+   request and raise `httpx2.ConnectError`; the fake profile is the probe's (Facts), with
+   `base_url` `http://127.0.0.1:9` in `configs/default.json`. `pytest -q`.
 2. **Guard.** `neighbour_phrases` config; `strip_neighbours` + `validate_plan` hook; the saved
    outputs as `tests/data/planner_v1_0214.json`; unit tests and the fixture-schema test. `pytest -q`.
 3. **Prompt v2** + version; leak test over `passes_if` and question text; `test_eval_run.py`
@@ -256,18 +283,26 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   and have a stored chunk to show it go in; each is commented. Same review rule as synonyms.
 
 ## Acceptance
-- [ ] Tests (0 calls): `tests/test_no_paid_calls.py`, with `httpx.Client.send` (and
-  `AsyncClient.send`) patched to count and raise, so any request attempt is seen:
-  - inside a test `LLM_PROVIDER` is `mock`, no `ANTHROPIC_*` / `OPENAI_*` variable is set except
-    `ANTHROPIC_CONFIG_DIR` (an empty folder) and the two closed-port base URLs;
+- [ ] Tests (0 calls): `tests/test_no_paid_calls.py`, with `httpx2.Client.send` and
+  `httpx2.AsyncClient.send` (the transport of anthropic 1.9.0 / openai 3.22.1; also `httpx.*.send`)
+  patched to record each request and raise `httpx2.ConnectError`, so any request attempt is seen
+  and none leaves the machine:
+  - inside a test `LLM_PROVIDER` is `mock`; no `ANTHROPIC_*` / `OPENAI_*` variable is set except
+    `ANTHROPIC_CONFIG_DIR` (an existing, empty folder) and `ANTHROPIC_BASE_URL` /
+    `OPENAI_BASE_URL` = `http://127.0.0.1:9`; a directly built `anthropic.Anthropic()` raises
+    `CredentialsError` (no profile in that folder) and `openai.OpenAI()` raises `OpenAIError`;
+    0 requests recorded;
   - `llm.anthropic_client()` and `llm.openai_client()` raise the "paid API call blocked" error;
-  - **fake on-disk profile**: `ANTHROPIC_CONFIG_DIR` pointed at a tmp folder holding a valid
-    `configs/default.json` with a dummy token (format of the installed SDK). Control: an
-    `anthropic.Anthropic()` built directly there resolves the profile's credentials (its request
-    reaches the patched `send`, counted, raised; nothing leaves the machine). Guard:
-    `planner.plan_question(q, "anthropic")` (no fake client, `PLANNER=on`) returns the rule plan
-    with `source = "fallback"` and the blocked error, and `llm` answer path with provider
-    `anthropic` and no client raises the blocked error; the `send` count for these two is 0.
+  - **fake on-disk profile** (one test, one profile, one patched `send`): `ANTHROPIC_CONFIG_DIR`
+    = a tmp folder with the probe's `configs/default.json` (`"base_url": "http://127.0.0.1:9"`)
+    and `credentials/default.json` (dummy token, expiry one day ahead). Control:
+    `anthropic.Anthropic(max_retries=0).messages.create(...)` built directly records **exactly 1**
+    request, to `http://127.0.0.1:9/v1/messages`, whose `auth` is the SDK's `AccessTokenAuth`
+    (the profile was used), and raises `APIConnectionError`. Guard, same setup:
+    `planner.plan_question(q, "anthropic")` (no client, `PLANNER=on`) returns `source =
+    "fallback"` with the blocked error in `plan.error`; `llm.generate("question", [],
+    provider="anthropic")` and `provider="openai"` raise the blocked error; the requests recorded
+    across the guard calls: **0**.
 - [ ] Tests: on the saved v1 outputs, `validate_plan` drops "payout ratio" from Q25 p4 only (words
   otherwise unchanged, correction `part 4: dropped neighbour phrase payout ratio`), and leaves every
   part of Q3, Q7, Q12, Q15, Q28 and Q25 p1-p3 unchanged; a question that names "payout ratio" keeps
@@ -277,11 +312,14 @@ A missed acceptance item is reported, not re-rolled. No other call path.
 - [ ] Tests: `PLANNER_VERSION == "plan-v2"` and `plan_cache_key` differs from the v1 key for the
   same inputs; the v2 prompt names no question ID and shares no 6-word run with any bank
   `passes_if` or question text.
-- [ ] Replay (step 4): (a) reproduces the six #214 chunk lists; (b) only Q25 p4 changes and Q25's
-  hits hold no `must_not_return` id.
+- [ ] Replay (step 4): (a) reproduces the six #214 chunk lists (a mismatch here is a replay-script
+  fault, fixed in the script to build the query exactly as `eval_run.py` does, before (b) is
+  judged; the Q25 p1 replay already matched); (b) only Q25 p4 changes and Q25's hits hold no
+  `must_not_return` id; Q25 recall@final / coverage (a) vs (b) tabled.
 - [ ] Mock (`.eval-runs/0224-mock`): all 30 chunk lists identical to the baseline (rule plan
   unchanged), refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL.
-- [ ] `pytest -q` passes (mock forced, keys removed by `tests/conftest.py`); verify-cee all PASS.
+- [ ] `pytest -q` passes (mock forced, client builders stubbed and credential environment cleared
+  by `tests/conftest.py`); verify-cee all PASS.
 - [ ] Real (`.eval-runs/0224-real`, <= 10 calls, claude-sonnet-5-5), planner outputs quoted in the
   PR: Q3's plan has a part or search words for where Schwab concedes ground (and for competitive
   pressure); Q7's plan gives each of MS, MER, RJF words for recruiting posture, payout philosophy,
@@ -308,3 +346,13 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   `MS-10K-2025#153` stays in the pool; "not now" kept, revisit trigger sharpened. Non-blocking:
   Q7 in reason 2, synonym "payout" path and in-sample note in Risks, Q25 recall / coverage (a) vs
   (b) in the replay, Q28 adjacent words in any part, log time.
+- 2026-11-19 01:45 - plan revised after review (issuecomment-7002783229, 2nd blocking return): the
+  SDKs send through `httpx2` (anthropic 1.9.0, openai 3.22.1; `httpx2.Client` is not an
+  `httpx.Client`), so the request counter patches `httpx2.Client.send` / `AsyncClient.send`.
+  Probe `ev224\sdk_profile_probe.py` (0 paid calls, `send` patched to raise): empty config dir ->
+  `CredentialsError`, 0 requests; fake profile -> exactly 1 request to 127.0.0.1:9 with the
+  profile's `AccessTokenAuth`. Acceptance uses those exact checks; the fake `default.json` carries
+  `base_url` `http://127.0.0.1:9`; conftest docstring explains why `ANTHROPIC_CONFIG_DIR` is set to
+  an empty folder. Re-read Acceptance: answer-path guard named as `llm.generate(...,
+  provider=...)` (no early return on empty hits); replay (a) mismatch = script fault; pytest line
+  names both conftest layers.
