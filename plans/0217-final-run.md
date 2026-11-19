@@ -185,7 +185,7 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   Attempt N >= 2 always runs on the same commit with `--out .eval-runs\0217-real-N` and log
   `ev217\real-run-N.log`, HEAD logged before and after as in step 3.
   - (a) **Stop outside a model call** (as #212: traceback not from a provider call): the same
-    command (all 30 questions); every question already answered is reused from the cache at 0 calls
+    command with `--out` and `--max-calls` as below (all 30 questions); every question already answered is reused from the cache at 0 calls
     (`how` = cached), never re-called; `--max-calls` = 60 minus calls made.
   - (b) **Stop raised by the answer call** (traceback in the log from the answer request; a planner
     API / network error is caught by `RealRunner.plan` and never stops the process): that
@@ -200,7 +200,9 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   - Counting across attempts: when an attempt wrote no `report.json`, its calls are counted from its
     log and its **new** raw files (#212 precedent: 17 + 13); a resumed run's `raw/` also holds
     copies of reused files, so each attempt's count is its new raw files, not its folder total. The
-    report and PR give calls per attempt and the total (<= 60).
+    report and PR give calls per attempt and the total (<= 60). In the last report a question
+    answered in an earlier attempt shows `how` = cached; step 3's per-question `how` and the cost
+    line take "called" from the attempt whose new raw file appeared, not from the last report.
   - **Source of the scored records**: the **last attempt's `report.json`** (every question except
     the stopped one(s), with code caveats, citation check, part coverage, status, recall, `how` and
     plan), plus, for each question stopped under (b), its log entry (question id, attempt, call
@@ -268,3 +270,5 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   last attempt's `report.json` holds all but the stopped one(s); scored records = that report +
   log entries of (b) stops, used by step 4, step 8 and `w10-report.json`; (b) names the answer
   request only; no commit between step 1 and the end of step 3. 0 calls.
+- 2026-11-19 - plan approved (issuecomment-7010726375, reviewed c206cbe); its two non-blocking notes
+  applied (per-attempt "called"; rule (a) wording). Execution starts after this commit.
