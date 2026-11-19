@@ -150,6 +150,9 @@ and the real runs are skipped (no retrieval change to check; 0 calls).
   and differs at 16000, so a `RealRunner` with a saved invalid output under 8000 makes a fresh
   (fake) call at 16000; an invalid record saves `stop_reason` and `max_tokens`. Fake clients
   only, 0 real calls.
+- `tests/test_retrieval_themes.py` - (added during step 1) token mode on the fixture schema: Q19
+  research keeps THEME_K, research tokens off the firm part, firm part within one chunk of its
+  share, peers the same as in passage mode and on top, explicit k stays the passage rule.
 - `specs/retrieval.md` (S1; waiver above) - budget in tokens, pool size setting, ADR-019 link.
 - `docs/DECISIONS.md` - ADR-019 "Retrieval budget in tokens; pool size from a grid" (replaces
   ADR-013's passage count; Merrill counted once stays); ADR-013 status line notes the
@@ -322,10 +325,18 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   `llm.py` + `eval_run.py` + tests), stated as a planned run with another setting; attach and
   TRADE_KEEP respect the token budget (bound stated, TRADE_KEEP fixture test); gap-question
   finding handling; token figures are characters / 4 estimates.
-- 2026-11-19 00:10 - plan revised after review round 2 (issuecomment-7000902848), in worktree
+- 2026-11-18 23:47 - plan revised after review round 2 (issuecomment-7000902848), in worktree
   `D:\ALLPROJECTS\EDJ\wt-213`: budget covers firm + research only; theme peers (Q19) reported
   separately (`peer_*`), `fill` and the bound use `budgeted_chars` only, test that peers do not
   count toward fill; bound stated in characters with `max_hit_chars` (no rounding failure);
   "token mode ran" check no longer fails when a pool is exhausted (identical lists need
   `fill` < 1); integer 1.5 x B; `unattached` recorded and listed in ADR-019; final run compares
   chunk lists / statuses / recall, not search time; runs use the worktree's `src`.
+- 2026-11-18 23:50 - plan approved by the reviewer agent (issuecomment-7000971188). Worktree
+  `D:\ALLPROJECTS\EDJ\wt-213` on `tl/213-pool-budget`.
+- 2026-11-18 23:54 - step 1: `TOKEN_BUDGET`, `budget_tokens()`, `hit_tokens()`, `select(tokens=,
+  unattached=)`, `search()` wiring, `PoolTrace.unattached`; eval_run k=None search, size / peer /
+  fill / search-time fields, meta settings, `max_tokens` in the cache key; `llm.MAX_TOKENS`,
+  `ModelOutputError.stop_reason`. Tests: 16 new (budget, eval_run, themes fixture DB); the two
+  eval_run fakes now take `k=None`. `pytest -q` 564 passed. One test file added to Files to
+  change (`tests/test_retrieval_themes.py`, the fixture DB lives there).
