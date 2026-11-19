@@ -115,17 +115,27 @@ fresh output and by `RealRunner.answer` on a cached one:
    invalid ("Model output cut at max_tokens (<n> output tokens)"), **even when the partial input
    validates** (a cut answer is never trusted). `raw` = every content block as JSON (thinking and
    the partial tool input), so the cut is diagnosable.
-2. **Empty**: no claims, no adjacent items, no gaps and behavior other than `refuse` -> invalid
-   ("Model output has no claims, adjacent items or gaps"). `raw` = the tool input as the model sent
-   it (before pydantic), so a misnamed key (Fact (b)) is visible. **`refuse` is exempt**: the prompt
-   defines it as "no claims" and no bank question expects it ("none yet"); a cut refusal is still
-   caught by rule 1. Deviation from the issue's wording, named in the PR.
+2. **Empty**: no claims, no adjacent items, no gaps and not a refusal -> invalid ("Model output
+   has no claims, adjacent items or gaps"). `raw` = the tool input as the model sent it (before
+   pydantic), so a misnamed key (Fact (b)) is visible. **A refusal is exempt** only when it is
+   behavior `refuse` **with `answerable` false** (the prompt's definition, reviewer note 3), so an
+   empty `{answerable: true, behavior: "refuse"}` is still invalid; no bank question expects
+   `refuse` ("none yet"); a cut refusal is still caught by rule 1. Deviation from the issue's
+   wording, named in the PR.
 3. Checked on the model's own output, **before** code adds gaps (`check_parts` part gaps, caveats):
    the #229 Q22 answer only looked non-empty because code added 4 `part_gap` gaps.
 4. A cached output that fails rule 2 (or a saved `stop_reason` `max_tokens`) is reported as
    `INVALID_OUTPUT` on reuse, never re-called (same as #187's invalid records).
 In the eval an invalid output is `INVALID_OUTPUT` (the retrieval status kept in the note, #187); in
 the app it is the Ask page's existing error message. Never re-rolled (CLAUDE.md "Paid API calls" 4).
+
+### 3b. No SDK retries on paid calls (TL-requested change, 2026-11-19, after plan approval)
+`llm.anthropic_client()` and `llm.openai_client()` (the only builders; the answer call and the
+planner both use them) build the SDK client with `max_retries=0`. The SDK default (2) would resend
+a request after a transport timeout (at 20000 the non-streaming timeout is the full 600 s), a second
+paid request counted once. Now a timeout or transport error is a reported failure: the eval saves
+it as a failed call (planner: rule-plan fallback) and never repeats it. Test: the built clients get
+`max_retries=0` (fake SDK modules, and the real `anthropic.Anthropic` when installed).
 
 ### 4. Prompt v4.1 (`prompt.py`, `llm.py`)
 `PROMPT_VERSION = "v4.1"`. The rest of v4 stays word for word except:
@@ -310,3 +320,20 @@ open), a failed planner call falls back to the rule plan (counted, a finding). N
   `schema.py`, `ask.answer_for`, `eval_run.py` (`RealRunner`, `cache_key`, invalid records),
   `planner.call_planner`, the #229 Q22 / Q26 raws, plans and `report.json` sizes, earlier Q11 / Q22 /
   Q24 raws, the `anthropic` 1.9.0 non-streaming check.
+- 2026-11-19 04:04 - plan approved by the reviewer agent (issuecomment-7005930218, reviewed
+  08b57d1), no blocking item. Coordinator notes applied: (1) the PR says the ~52 s timing does not
+  favour the cut and attributes Q22 only from `usage.output_tokens`; (2) TL decision: `max_retries=0`
+  on the real Anthropic / OpenAI clients (answer and planner), with a test (Design 3b, a
+  TL-requested change); (3) the refusal exemption needs `answerable` false; (4) the PR justifies the
+  planner bookkeeping by the Goal, behavior unchanged; (5) the PR states adaptive thinking only as
+  far as `usage.blocks` shows a thinking block.
+- 2026-11-19 04:10 - steps 2-3 (commit 0481913): `MAX_TOKENS` 20000, `check_output` (cut / empty,
+  refusal only with `answerable` false), `Answer.stop_reason` / `usage`, `ModelOutputError.usage`,
+  OpenAI `finish_reason` / usage, `max_retries=0` on both client builders, `call_planner(meta=)`,
+  eval: `stop_reason` / `usage` in valid, invalid and plan records, `check_output` on cached outputs,
+  `window` in `cache_key`, `stop_reason` / `output_tokens` in real report records; `ask.answer_window`
+  (window and date range overlap) passed to `generate`; prompt v4.1 (recency rule across parts,
+  oldest-to-newest exception, grouping sentence) and the window line. Tests: 21 new test functions
+  (`test_llm_openai.py` 11, `test_eval_run.py` 7, `test_prompt.py` 3); version and cap pins moved to
+  v4.1 / 20000; test fakes take `window` / `meta`.
+  `pytest -q` 683 passed.

@@ -85,8 +85,37 @@ every claim, adjacent item and gap ("" when none applies).
 | Positions | where something is heading, the future, the range of views | Claims grouped by position (not by firm or source), each starting with the position, then who holds it and when; every claim attributed; two sources that disagree are reported as disagreeing; no forecast or synthesis of its own. |
 | Parts | always | Every claim, adjacent item and gap carries the `part_id` of the plan part it answers; every part gets at least one cited claim or a gap naming what is missing for it; a part with no passages is a gap; a chunk listed under one part may be cited for another; within a part, what a question of its type needs (e.g. headwinds or risks the firm itself names) is covered (v4; v3 split the question itself). A question setting the home firm against a peer, or asking how it could act, shows the home firm's figures on the same dimension from its own filings. |
 
+Time windows (prompt v4.1, #230): in a question about recent change or with a time window, claims
+and adjacent items run newest first across the whole answer (by the date of what each reports),
+not part by part; each keeps its `part_id`; gaps follow. The grouping of the evidence by part is
+how it is listed, not the answer's order. When the resolved query has a window or an Ask page date
+range (both SQL filters; their overlap when both are set), the user message adds one line after the
+question: "Time window: <from> to <to> (only passages dated in it were searched). Order the answer
+newest first across all parts."
+
 The Ask page lists gaps under the claims, with code flags as chips. Answers can be longer: the
-Anthropic output cap is 8000 tokens (`llm.anthropic_request`).
+Anthropic output cap is 20000 tokens for every answer call (`llm.MAX_TOKENS`, ADR-019 amendment
+#230; was 8000), under the SDK's non-streaming limit (21,333). Thinking, when the model runs it,
+shares the cap.
+
+## Invalid model outputs (code, #187, #230)
+
+A paid output that cannot be trusted as an answer raises `ModelOutputError`; it is never shown,
+scored or re-rolled. The eval saves it (`INVALID_OUTPUT`, the provider payload kept); the Ask page
+shows "The answer could not be built" with the reason. Checked by `llm.check_output` on the model's
+own output, before code adds part gaps or caveats, and again when the eval reuses a saved output:
+
+| Output | Result |
+|---|---|
+| No `submit_answer` call, or a tool input that is not a valid Answer | invalid (#187) |
+| Cut at the output cap (Anthropic `stop_reason` `max_tokens`, OpenAI `finish_reason` `length`), even when the partial input validates | invalid; every content block kept |
+| No claims, no adjacent items and no gaps, unless behavior `refuse` with `answerable` false | invalid; the tool input as sent kept (a misnamed key shows) |
+
+Every real answer records `stop_reason` and `usage` (input and output tokens; Anthropic also the
+content block types, e.g. `thinking`, `tool_use`), code-owned fields of the Answer, so they reach
+`query_log.answer` and the eval's saved outputs. A tool answer normally stops with `tool_use`. The
+real clients are built with `max_retries=0` (TL, #230): a timeout or transport error is reported,
+never a second paid request.
 
 ## Every part answered or named as a gap (code, #215)
 
