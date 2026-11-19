@@ -34,7 +34,7 @@ no new model, no new call (still at most 2 calls per question, ADR-012 / ADR-020
   Jones could replicate ..."); Q25 2 model parts (MS + Schwab; EDJ) + code part p3 MER, RJF (whole
   question); Q28 3 parts (EDJ attrition, MER attrition, closest disclosed headcount change for both).
 - #224 real answers (prompt v3): Q3 11 claims, 2 adjacent, **0 gaps** (no competition / concession
-  gap); Q7 dimensions Recruiting, Retention, Advisor pay (**no training dimension**), 5 gaps, no
+  gap); Q7 dimensions Recruiting, Retention, Advisor pay (**no training dimension**), 6 gaps, no
   uncited claim; Q25 behavior **`answer`** (bank: `gap_with_adjacent`), 7 gaps (payout "not public"
   for MS, EDJ, SCHW, MER; RJF ranges), and two **cited** claims that state an absence ("Disclosed
   pay structure - Schwab: not found in the evidence provided ..." citing `SCHW-10K-2025#50`).
@@ -47,6 +47,18 @@ no new model, no new call (still at most 2 calls per question, ADR-012 / ADR-020
   no gap naming it), Q7 (two dimensions, three uncited cells), Q12 (no Edward Jones cost
   structure), Q28 (net headcount vs attrition missing). Gate 4 PASS kept as regression: Q1, Q22,
   Q26, Q30.
+- `fts.search(..., exclude=kept)` drops a chunk an earlier part or the research pass already kept
+  (`fts.py` lines 995, 999), but `PoolTrace` records the candidates **before** that exclusion, and
+  `search_parts` stores their count per part as `plan.searched[i]["pool"]`. So a part can have no
+  hits of its own while its search did find passages (they sit under an earlier part).
+- Leak check today (`tests/test_prompt._grams`, 6-word runs, run offline on v3 `SYSTEM_PROMPT`):
+  against `passes_if` only Q28 / Q30 standard wording (exempt, as today); against **question text**
+  one run, "since the start of the year", in v3's recency example
+  (`Questions about recent change ("what's new", "since the start of the year"): newest first.`),
+  shared with Q27's text.
+- CI (`.github/workflows/tests.yml`) installs `requirements.txt` only, with no Postgres and no
+  model SDK credentials, so a test that reaches the DB or differs from the local `.venv` can pass
+  here and fail there.
 - The Ask page renders `gaps` with `components.gap_box(what, suggested_source)` (no flags); claim
   flags render as chips (`claim_card`).
 
@@ -75,18 +87,28 @@ Evidence chunks, grouped by the part they were found for:
 Part p1 [Morgan Stanley]: <part text>
 <chunk id=... source=...> ... </chunk>
 Part p2 [Merrill]: <part text>
-(no passages were found for this part)
+(no passages were found for this part)            <- part's candidate pool was 0
+Part p3 [Raymond James]: <part text>
+(no further passages; the passages found for this part are listed under an earlier part)
+                                                  <- pool > 0, every candidate kept earlier
 Research passages (found for the whole question):
 ...
 Peer firms on the question's theme:
 ...
 ```
-Within a group the hits keep their order (Q26's newest-first order holds inside each group). With
-no parts given (`parts=None`: a direct `generate` call, tests) the message has one part p1 = the
+The empty-part line is chosen from the part's candidate pool before exclusion
+(`plan.searched[i]["pool"]`), never from its own hits (Facts: `exclude=kept`). Without
+`plan.searched` (passage mode, or a plan not searched by `search_parts`), a part with no hits
+gets the neutral second line. Within a group the hits keep their order (Q26's newest-first order
+holds inside each group). With no parts given (`parts=None`: a direct `generate` call, tests) the message has one part p1 = the
 question and every chunk under it. Firm labels are config short names.
 
-System prompt changes (the rest of v3 stays word for word; final wording may tighten, it must pass
-the leak test):
+System prompt changes (the rest of v3 stays word for word except the two rewordings named below;
+final wording may tighten, it must pass the leak test):
+- **Recency example reworded** (leak, Facts): v3's `Questions about recent change ("what's new",
+  "since the start of the year"): newest first.` becomes `Questions about recent change (what is
+  new, what changed since a given date): newest first.` Same rule, no bank wording. Its check is
+  the Q26 real run (items newest first); the PR names this rewording.
 - **Parts** (replaces v3's "Every part" rule, keeps its home-firm sentence and "what a question of
   its type needs"): "The user message lists the parts of the question (p1, p2, ...) and groups the
   evidence under the part it was found for. Give every claim, adjacent item and gap the part_id of
@@ -94,11 +116,14 @@ the leak test):
   missing for that part; a part with no passages under it is a gap. A chunk listed under one part
   may also answer another part: cite it there with that part's id. Research and peer passages
   belong to no part: cite them under the part they answer."
-- **Comparison grid** (dimensions from the question, NEXT item 4): "Fix the dimensions from the
+- **Comparison grid** (dimensions from the question, NEXT item 4): v3's sentence "Take the
+  dimensions from the question's own terms and from what the evidence covers for at least one of
+  the firms; fix a short list of them first and use the same dimensions for every firm." is
+  **replaced** (it contradicts the new rule) by: "Fix the dimensions from the
   question and its parts before reading the evidence: each dimension a part names (a part asking
   about 'pay, training and results' names three), or each part when the parts are dimensions. Do
   not drop an asked dimension because the evidence is thin, and do not add one only because the
-  evidence offers it." The v3 cell rules stay ("<Dimension> - <Firm>:", every firm under every
+  evidence offers it. Use the same dimensions for every firm." The v3 cell rules stay ("<Dimension> - <Firm>:", every firm under every
   dimension, firm's own terms); added: "An empty cell is only a gap, never a claim: a claim always
   has chunk_ids."
 - **Behavior for disclosure questions** (Q25, TL note 2026-11-19): one sentence added under
@@ -107,8 +132,11 @@ the leak test):
   grids, amounts): when those are not disclosed for most of the firms asked about, choose
   gap_with_adjacent, with the disclosures as claims and each firm's undisclosed specifics as a gap
   that names the firm." v3's "most of the firms" sentence and every standard wording stay verbatim.
-- Tests: the prompt names no question ID; no 6-word run shared with any bank `passes_if` **or
-  question text** (the #224 planner test's check, now applied to the answer prompt too).
+- Tests: the prompt names no question ID; no 6-word run shared with any bank `passes_if` (standard
+  wording exempt, as today: Q28, Q30) **or any question text**, checked on the **whole** v4 prompt
+  with no exception (the recency example is reworded above; the offline check on the planned v4
+  sentences found no other run). This is the #224 planner test's check, now applied to the answer
+  prompt too.
 
 ### Behavior choice: prompt, not a code rule
 Code does not derive the behavior from per-part coverage. Reasons:
@@ -128,11 +156,14 @@ not changed, and item 5's decision stays open (said in the PR).
 1. **Uncited grid cells move to gaps** (`move_uncited_cells`, first step of `check_citations` after
    `withhold_normative` / `ensure_handoff`): a claim with **no** `chunk_ids` whose text starts
    "<Dimension> - <Firm>:" (Firm = a configured entity name or alias, `fts._mentions` rules) leaves
-   `claims` and becomes `Gap(what="<Firm> - <Dimension>: not found in the evidence provided.",
-   part_id=<claim's>, flags=["uncited_cell"], claim_text=<model text>)`. The gap text is built by
-   code (the prompt's standard empty-cell wording), so no uncited model statement is shown. When a
-   gap already starts "<Firm> - <Dimension>:" (case and spacing ignored; Gate 4 Q7 has all three),
-   no second gap is added: that gap gets the flag and `claim_text`. A claim whose citations are
+   `claims` and becomes `Gap(what="<Firm> - <Dimension>: no cited evidence in this answer.",
+   part_id=<claim's>, flags=["uncited_cell"], claim_text=<model text>)`. The text is true by
+   construction: code knows only that the model gave no citation, not that the evidence lacks the
+   fact (a model can drop `chunk_ids` on a true cell), so it never says "not found in the
+   evidence". No uncited model statement is shown; the model text stays in `claim_text` for review.
+   When a model gap already starts "<Firm> - <Dimension>:" (case and spacing ignored; Gate 4 Q7 has
+   all three), no second gap is added: that gap keeps its own text and gets the flag and
+   `claim_text`. A claim whose citations are
    all unmatched is **not** moved (CLAUDE.md: unmatched citations are flagged, never dropped);
    any other uncited claim keeps the `no_citation` flag as today.
 2. **Every part covered** (`check_parts(answer, plan, hits)`, called in `ask.answer_for` after
@@ -147,10 +178,18 @@ not changed, and item 5's decision stays open (said in the PR).
      could replicate ...") is covered by the hand-off sentence (that part is the strategist's).
    An uncovered part gets `Gap(part_id=P, flags=["part_gap"], suggested_source=<the part firms'
    registry sources>)` with `what`:
-   - "No evidence retrieved for: <part>" when no hit has `part_id == P` (the issue's wording);
-   - "Not answered from the evidence retrieved for: <part>" when passages were found for P but no
-     claim, adjacent item or gap uses them. **Deviation from the issue's single wording**: with
-     passages retrieved, "No evidence retrieved" would be a false statement made by code.
+   - "No evidence retrieved for: <part>" when P's candidate pool before exclusion was empty
+     (`plan.searched[i]["pool"] == 0`; the issue's wording);
+   - "Not answered from the evidence retrieved for: <part>" otherwise: P's search found
+     passages (kept under P, or kept earlier under another part or `research` because of
+     `exclude=kept`), but no claim, adjacent item or gap covers P. Also used when the plan has no
+     `searched` record (no pool count known), so code never claims "no evidence" it cannot prove.
+     **Deviation from the issue's single wording**: with passages retrieved, "No evidence
+     retrieved" would be a false statement made by code. The pool, not `hit.part_id`, decides,
+     because a chunk P found can sit under an earlier part.
+   Suggested sources: `check_parts` fills `suggested_source` through `suggested_sources()` ->
+   `registry_lookup` (DB); its tests swap in a fake `registry_lookup` (as `test_validate.py` does
+   today), so they make no DB call and run on CI.
    `<part>` = the part text, plus " (<firm short names>)" when the text equals the question (rule
    plan parts all repeat the question). If the label `is_normative`, it becomes "part P (<firms>)"
    (ground rule 6: code never prints a "should"). Behavior, claims and model gaps are not changed.
@@ -213,13 +252,19 @@ Not changed: retrieval (`fts.py`, `planner.py`), `config/`, `evals/questions.yam
 1. **Schema + tests.** New fields, `llm_output_schema`, the two v3 fixtures parse. `pytest -q`.
 2. **Code check + tests** (0 calls): `move_uncited_cells` (Gate 4 Q7 raw: 3 cells leave `claims`,
    the 3 matching model gaps get `uncited_cell` + `claim_text`, no new gap text; a synthetic
-   uncited cell with no matching gap becomes "<Firm> - <Dimension>: not found in the evidence
-   provided."; a claim with an unmatched citation stays, flagged; an uncited non-grid claim stays,
-   `no_citation`); `check_parts` (a part with no claim and no gap gets the code gap, both wordings;
-   covered by part_id, by citation fallback, by gap, by adjacent; one-part plan; boundary + normative
-   part; normative label replaced; code hand-off not counted; behavior unchanged); `part_coverage`.
-3. **Prompt v4 + user message + mock** and tests (grouping, empty part line, research / peers
-   groups, order kept, leak test over `passes_if` and question text, version, mock part ids).
+   uncited cell with no matching gap becomes "<Firm> - <Dimension>: no cited evidence in this
+   answer."; a claim with an unmatched citation stays, flagged; an uncited non-grid claim stays,
+   `no_citation`); `check_parts` (a part with no claim and no gap gets the code gap, both wordings
+   chosen by the pool; **two parts sharing a chunk**: p2's only candidate was kept by p1, so p2 has
+   no hits, pool 1, and gets "Not answered from the evidence retrieved for", never "No evidence
+   retrieved"; no `searched` record -> "Not answered ..."; covered by part_id, by citation
+   fallback, by gap, by adjacent; one-part plan; boundary + normative part; normative label
+   replaced; code hand-off not counted; behavior unchanged); `part_coverage`. Fake
+   `registry_lookup` in every `check_parts` test (no DB).
+3. **Prompt v4 + user message + mock** and tests (grouping; empty-part line by pool: pool 0 -> "no
+   passages were found", pool > 0 with no hits -> "listed under an earlier part"; research / peers
+   groups; order kept; leak test over `passes_if` and question text on the whole prompt; recency
+   example reworded; v3 grid-dimension sentence gone; version; mock part ids).
 4. **Ask / eval / UI wiring** + tests (`answer_for` with plan; trace texts; `cache_key` without
    parts equals today's literal, with parts differs; gap chips).
 5. **Offline replay (0 calls)**, scratch `D:\ALLPROJECTS\EDJ\cache\ev215\replay.py` (not committed),
@@ -227,7 +272,10 @@ Not changed: retrieval (`fts.py`, `planner.py`), `config/`, `evals/questions.yam
    `check_citations` + `check_parts` (hits rebuilt with `search_parts` from the saved plan, as
    #224's replay did): which parts v3 left uncovered and which code gaps would be added; (b) the
    Gate 4 Q7 raw through `move_uncited_cells`; (c) the v4 user message for Q7 and Q25 written to
-   `ev215\user-message-Q7.txt` / `-Q25.txt` for reading.
+   `ev215\user-message-Q7.txt` / `-Q25.txt` for reading. `replay.txt` states that v3 gaps carry
+   no `part_id` and the gap fallback covers only one-part plans, so on these v3 answers code gaps
+   are added next to model gaps that already name the part (e.g. Q25, Q28): a v3-only over-count,
+   not what a v4 answer gets.
 6. **Mock eval**: `.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline
    evals/baselines/corpus-2026-11-17/report.json --out .eval-runs/0215-mock`; scratch diff: 30/30
    chunk lists identical (same order), 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed 22/22, 0
@@ -237,9 +285,18 @@ Not changed: retrieval (`fts.py`, `planner.py`), `config/`, `evals/questions.yam
    incl. the new `ask-part-gap` steps.
 9. **Real runs last** (paid-call plan), judged; tables in `...\ev215\real-table.txt`.
 10. `/finish-task`: PR "Closes #215" (or "Part of #215" with the missed items) with the part table,
-    replay, mock diff, verify-cee run, real calls and model.
+    replay, mock diff, verify-cee run, real calls and model (actual `real_calls` / `reused` from the
+    report, not the expected 13 / 5), the TL pre-approval comments quoted, the recency rewording
+    named, and the Q7 / Q25 results marked in-sample. **`gh pr checks <PR#>` all green on the PR
+    head** before `/finish-task` completes (CI: `requirements.txt` only, no Postgres, no SDK
+    credentials).
 
 ## Paid-call plan (CLAUDE.md "Paid API calls"; TL pre-approval comments on #215, 2026-11-18/19)
+TL pre-approval, quoted (issue #215 comments): 2026-11-18 "Real calls planned in each approved
+ExecPlan (question IDs, why the mock cannot show it, runs of each) are approved"; 2026-11-19 "One
+more real run (Q25, 1 run) is planned for this issue." Together with the issue's "8 runs, 16 calls"
+that is 9 runs, at most 18 calls, so the `--max-calls 18` note (more than 10 calls) is covered by
+these comments; the PR quotes them.
 Last, on finished code after every mock check, the replay and verify-cee pass: **9 questions, one
 run each, planner + answer = up to 2 calls each, at most 18 calls**: Q3, Q7, Q12, Q28, Q25
 (targets) and Q1, Q22, Q26, Q30 (regression). Model `claude-sonnet-5-5`, prompt v4, planner
@@ -251,7 +308,8 @@ scripts\eval_run.py --real --max-calls 18 --questions Q1,Q3,Q7,Q12,Q22,Q25,Q26,Q
 model, cap and resolved query as #224) are reused, so those questions search exactly #224's parts
 and differ only in the answer prompt; Q1, Q22, Q26, Q30 have no saved plan: 4 planner calls. The
 v4 prompt and the parts in the key miss every saved answer: 9 answer calls. **Expected 13 calls,
-reused 5**; the report's `real_calls` / `reused` are quoted. Raw outputs (planner and answer,
+reused 5**; the report's actual `real_calls` / `reused` are quoted (if the planner reuse misses,
+up to 18 calls, still inside the cap). Raw outputs (planner and answer,
 request meta, `stop_reason`) in the run's `raw/`, copied to `D:\ALLPROJECTS\EDJ\cache\ev215\real`.
 Why the mock cannot show it: the mock never reads the prompt and always cites its top 3 passages,
 so it cannot show whether the model answers each part, takes grid dimensions from the parts, writes
@@ -276,8 +334,12 @@ not re-rolled. No other call path.
   is a finding (`stop_reason` saved), not a re-run.
 - **Mock gaps on multi-firm questions**: a two-firm mock answer now shows a code gap for the part
   the mock did not cite. Intended (honest), stated in the recipe.
-- **In-sample prompt**: Q7 and Q25 drove the grid and disclosure sentences; Q3, Q12, Q28 drove the
-  parts rule. The PR says the target results are in-sample; Q1, Q22, Q26, Q30 are the check.
+- **In-sample prompt**: Q7 and Q25 drove the grid and disclosure sentences (the grid example "pay,
+  training and results" paraphrases Q7's dimensions; "rates, formulas, grids, amounts" mirrors
+  Q25); Q3, Q12, Q28 drove the parts rule. They pass the 6-word check, but the PR marks the Q7 and
+  Q25 results (and Q3, Q12, Q28) as in-sample; Q1, Q22, Q26, Q30 are the check. NEXT item 4 also
+  names Q8 as a grid check; only Q22 runs, matching the issue's list.
+- **Recency rewording**: the v3 example changes wording only; Q26 (newest first) is its check.
 - **Known W10 findings not in scope** (TL decision on #224): Q25's bare "payout" still retrieves its
   `must_not_return` deck chunks, so Q25's retrieval status / refusal check may stay FAIL; Q7's RJF
   part lacks training and pay words, so an RJF training cell may be a gap for retrieval reasons.
@@ -287,29 +349,38 @@ not re-rolled. No other call path.
   Counted in the real table.
 
 ## Acceptance
-- [ ] Tests (0 calls): a part with no claim and no gap gets the code gap ("No evidence retrieved for:
-  <part>" with no passages for it; "Not answered from the evidence retrieved for: <part>" with
-  passages), flag `part_gap`, the part's id and a suggested source; covered parts (by part id,
+- [ ] Tests (0 calls, fake `registry_lookup`, no DB): a part with no claim and no gap gets the code
+  gap ("No evidence retrieved for: <part>" when its candidate pool `plan.searched[i]["pool"]` is 0;
+  "Not answered from the evidence retrieved for: <part>" when the pool is > 0 or unknown), flag
+  `part_gap`, the part's id and a suggested source; two parts sharing a chunk (p2's only candidate
+  kept by p1): p2 gets "Not answered ...", not "No evidence retrieved"; covered parts (by part id,
   citation fallback, gap, adjacent, boundary hand-off for a normative part) get none; behavior and
   model items unchanged; a normative part label is replaced.
-- [ ] Tests: an uncited grid cell becomes a gap "<Firm> - <Dimension>: not found in the evidence
-  provided." with flag `uncited_cell` and the model text in `claim_text`; on the Gate 4 Q7 raw the
-  3 uncited cells leave `claims` and their 3 matching model gaps carry the flag (no duplicate gap);
-  an unmatched-citation claim stays flagged; an uncited non-grid claim keeps `no_citation`.
+- [ ] Tests: an uncited grid cell with no matching model gap becomes a gap "<Firm> - <Dimension>:
+  no cited evidence in this answer." with flag `uncited_cell` and the model text in `claim_text`;
+  on the Gate 4 Q7 raw the 3 uncited cells leave `claims` and their 3 matching model gaps keep
+  their own text and carry the flag and `claim_text` (no duplicate gap); an unmatched-citation
+  claim stays flagged; an uncited non-grid claim keeps `no_citation`.
 - [ ] Tests: saved v3 raws (Gate 4 Q7, #224 Q25) parse; `cache_key` without parts equals today's;
-  `PROMPT_VERSION == "v4"`; the user message groups chunks by part with an empty-part line; the v4
-  prompt names no question ID and shares no 6-word run with any `passes_if` or question text; the
-  mock's claims carry their hit's part id.
+  `PROMPT_VERSION == "v4"`; the user message groups chunks by part, with the empty-part line chosen
+  by pool (0 -> "no passages were found", > 0 -> "listed under an earlier part"); the whole v4
+  prompt names no question ID and shares no 6-word run with any question text (no exception; the
+  recency example is reworded) or `passes_if` (standard wording exempt: Q28, Q30, as today); the
+  v3 grid-dimension sentence is gone; the mock's claims carry their hit's part id.
 - [ ] Replay (0 calls) tabled: per part of Q3, Q7, Q12, Q25, Q28 under #224's v3 answers, covered
   or code gap; Gate 4 Q7 cells moved.
 - [ ] Mock (`.eval-runs/0215-mock`): 30/30 chunk lists identical to the baseline, refusal gap 5/5,
   keyed 22/22, 0 forbidden, no PASS -> FAIL.
 - [ ] `pytest -q` passes; verify-cee all PASS, incl. `ask-part-gap`: the two-firm mock question shows
-  every `part_gap` gap of its logged answer (one per plan part the mock did not cite, read from the
-  newest `query_log` row) with the `part_gap` chip; the one-part question shows none.
+  every `part_gap` gap of its logged answer with the `part_gap` chip, and the logged gaps are
+  exactly one per plan part not covered by the mock's claims (both read from the newest
+  `query_log` row: `filters->plan` parts and `answer` claims / gaps; not hard-coded, since the
+  mock's top 3 passages decide which parts it cites); the one-part question likewise shows exactly
+  its logged `part_gap` gaps (expected none: the mock cites p1 passages there).
 - [ ] Real (`.eval-runs/0215-real`, <= 18 calls, claude-sonnet-5-5): in Q3, Q7, Q12, Q28 every
   planned part has a cited claim, cited adjacent item or a gap (table in the PR: per part, covered
-  by model part id / citation / hand-off / code gap); no uncited claim left in any answer. Judged
+  by model part id / citation / hand-off / code gap); no uncited grid cell left in `claims` (moved
+  by code); any other uncited claim stays flagged `no_citation` and is counted in the table. Judged
   against `passes_if` and reported (not required to pass): Q3 names competition and where Schwab
   concedes ground, or a gap for it; Q7 uses recruiting posture, payout philosophy, training
   pipeline and retention results for all three firms, empty cells in gaps; Q12 shows Edward Jones's
@@ -322,6 +393,7 @@ not re-rolled. No other call path.
 - [ ] Real: Q1, Q22, Q26, Q30 keep their Gate 4 verdicts (PASS) judged against `passes_if`, and
   their expected behavior.
 - [ ] Specs, ARCHITECTURE and ADR-020 updated; verify-cee recipe and driver updated in this PR.
+- [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
 - 2026-11-19 03:04 - plan written. Branch `tl/215-part-gaps` from `main` bdc6523; DB
@@ -330,3 +402,15 @@ not re-rolled. No other call path.
   CLAUDE.md, ADR-012/019/020, NEXT items 3-5, the answer and planner code, eval_run, verify-cee
   ask-answer / gap-path, Gate 4 Q3 / Q7, the #224 real plans and answers (Q3, Q7, Q25), the
   plan-v2 cache entries (5 reusable), the Gate 4 Q7 raw with its 3 uncited cells.
+- 2026-11-19 03:30 - plan revised after review (issuecomment-7004788998, 1st blocking return):
+  (1) leak: v3's recency example "since the start of the year" shares a 6-word run with Q27's
+  text (confirmed offline with `_grams`); reworded (option a), the question-text check covers the
+  whole v4 prompt with no exception, Q26 is the rewording's check. (2) Code gap and empty-part line
+  chosen from the part's candidate pool before exclusion (`plan.searched[i]["pool"]`), with a
+  shared-chunk test. (3) Moved uncited cell text "<Firm> - <Dimension>: no cited evidence in this
+  answer." (true by construction); a matching model gap keeps its own text. (4) `gh pr checks` all
+  green in step 10 and Acceptance; `check_parts` tests use a fake `registry_lookup`. Non-blocking:
+  Q7 #224 has 6 gaps; v3 grid-dimension sentence replaced; Q7 / Q25 in-sample in the PR; replay
+  over-count note; TL pre-approval quoted, actual `real_calls` / `reused` reported. Re-read: the
+  verify-cee part-gap check and the real "no uncited claim" line made derivable / reportable so
+  they cannot fail on correct code.
