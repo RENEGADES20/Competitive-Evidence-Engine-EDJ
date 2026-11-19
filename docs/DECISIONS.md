@@ -734,3 +734,11 @@ only (`llm.request_version`), so no non-strict output is reused by a strict requ
 strict-rule check and are unchanged by the SDK's `anthropic.transform_schema`; mock
 (`corpus-2026-11-17`, `--as-of 2026-11-17`) all 30 chunk lists identical, 29 PASS / 1 FAIL (Q19),
 refusal gap 5/5, keyed 22/22, 0 forbidden.
+Real check (#232, 10 calls: planner + answer for Q1, Q10, Q21, Q22, Q23, claude-sonnet-5-5, prompt
+v4.1, plan-v2, request `strict-1`; no 400, no invalid output, no fallback, every call `tool_use`): Q22
+(#230: `{"answer": null}`) now returns a valid `answer` (11,914 output tokens, 101k input) with NNA
+by quarter and each firm's definition for MS, SCHW, EDJ and RJF, Merrill marked as not reporting
+standalone (GWIM flows only as adjacent); its eval status fails only the retrieval must-not check
+(`MS-PR-2026-04-15-01#15` retrieved, not cited, as in #230). Q1, Q10, Q21 `answer` PASS; Q23
+`gap_with_adjacent` as at Gate 4. Evidence in the #232 PR.
+

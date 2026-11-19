@@ -224,23 +224,23 @@ call path.
   claimed as a fix.
 
 ## Acceptance
-- [ ] Real (`.eval-runs/0232-real`, <= 10 calls): **Q22** returns a valid answer (not
+- [x] (valid `answer`, `tool_use`, 11,914 output tokens, 13 claims / 3 adjacent / 4 gaps, PASS vs `passes_if`; eval status FAIL only on the retrieval must-not check: `MS-PR-2026-04-15-01#15` retrieved, not cited, also in #230's Q22 list; retrieval out of scope) Real (`.eval-runs/0232-real`, <= 10 calls): **Q22** returns a valid answer (not
   `INVALID_OUTPUT`) with claims per firm (every one of the five firms has a claim or a gap; a firm
   that does not report NNA marked as not reporting, never zero, never a substitute presented as
   NNA), `stop_reason` recorded (`tool_use`), judged PASS against `passes_if`.
-- [ ] Real: **Q10, Q21, Q23, Q1** return valid outputs (not `INVALID_OUTPUT`) and keep their Gate 4
+- [x] (Q10 `answer` PASS, Q21 `answer` PASS, Q23 `gap_with_adjacent` as Gate 4, Q1 `answer` PASS; all `tool_use`; 10 real / 0 reused) Real: **Q10, Q21, Q23, Q1** return valid outputs (not `INVALID_OUTPUT`) and keep their Gate 4
   behavior: Q10 `answer` PASS, Q21 `answer` PASS, Q23 `gap_with_adjacent` as at Gate 4 (NEXT item 5),
   Q1 `answer` PASS; `stop_reason` and output tokens recorded for all five; actual `real_calls` /
   `reused` quoted (expected 10 / 0).
-- [ ] Tests: `strict: true` on the Anthropic answer and planner tools (request payload); the
+- [x] Tests: `strict: true` on the Anthropic answer and planner tools (request payload); the
   strict-mode schema check passes offline for both tool schemas (rule walker and SDK
   `transform_schema` fixed point, both locally and in CI) and fails for a `maxItems` schema; a fake `{"answer":
   null}` input, a no-tool response and a `refusal` stop are saved as invalid (planner: fallback),
   never re-called; OpenAI and no-request keys unchanged (literals), Anthropic keys carry `strict-1`.
-- [ ] Mock (`.eval-runs/0232-mock`): 30/30 chunk lists identical to the baseline, 29 PASS / 1 FAIL
+- [x] Mock (`.eval-runs/0232-mock`): 30/30 chunk lists identical to the baseline, 29 PASS / 1 FAIL
   (Q19), refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL, 0 real calls.
-- [ ] `pytest -q` passes; verify-cee all features PASS.
-- [ ] Spec and the ADR-020 amendment updated.
+- [x] `pytest -q` passes; verify-cee all features PASS.
+- [x] Spec and the ADR-020 amendment updated.
 - [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
@@ -277,3 +277,34 @@ call path.
   apart from `behavior: refuse`, strict note), ADR-020 amendment.
 - 2026-11-19 04:44 - step 6 verify-cee (doctor PASS, port 8599 free): all 9 features PASS,
   `.verify-runs/20261119-044306-1702528`. Next: the planned real run.
+- 2026-11-19 04:51 - step 7 real run (started 04:45:08, ended 04:50:59, on commit b1f49d4, after every
+  mock check; `.eval-runs/0232-real`, raw copied to `D:/ALLPROJECTS/EDJ/cache/ev232/real`, table
+  `.../ev232/real-table.txt`, answers `.../ev232/answers-dump.txt`): **10 real calls, 0 reused**, as
+  planned; claude-sonnet-5-5, prompt v4.1, plan-v2, request `strict-1` in every record. No 400, no
+  invalid output, no fallback, every call `tool_use`. Per question (answer output tokens incl.
+  thinking, input tokens, behavior, verdict vs `passes_if`): **Q1** 3,575 / 34.6k, `answer`, 11 claims,
+  PASS (channels management credits: Workplace, self-directed / E*TRADE, the advisor-led funnel;
+  dated per call, 2024 vs 2026 kept apart); **Q10** 7,594 / 98.1k, `answer`, PASS (statements dated,
+  the basis for "most explicit" shown: only Merrill's deck labels "Mass Affluent" with a dollar
+  range); **Q21** 14,095 / 96.2k, `answer`, PASS (Cerulli and UBS estimates with source and vintage,
+  kept apart from what each firm does); **Q22** 11,914 / 101.1k, `answer`, 13 claims, 3 adjacent,
+  4 gaps: NNA by quarter for MS, SCHW, EDJ, RJF with source documents, each firm's definition (and
+  Schwab core vs total, RJF domestic PCG), Merrill marked as not reporting standalone with GWIM flows
+  only as adjacent (differs_because), missing quarters named as gaps: **PASS vs `passes_if`**. The eval
+  status is FAIL on the retrieval refusal check: must-not chunk `MS-PR-2026-04-15-01#15` (fee-based
+  flows footnote) is in the retrieved set (not cited); the #230 Q22 list had it too (plan-driven
+  retrieval, out of scope, a finding). **Q23** 10,085 / 99.6k, `gap_with_adjacent` (21 claims,
+  7 gaps), status FAIL on behavior as at Gate 4 (NEXT item 5). Planner: 5 new plans (Q1 one part,
+  the five-firm questions four parts each); Q1 passage recall 0.75 vs 0.875 in the mock baseline
+  (new one-part plan, 65 passages), Q22's list shares 178 of 209 chunks with #230's (not a clean
+  A/B, as planned).
+- 2026-11-19 04:53 - coordinator warning: another agent's cleanup ran `git switch --detach
+  origin/exp/hybrid` in this repo at 04:48:46 and switched back at 04:49:09 (reflog). Overlap check:
+  no pytest, mock eval, verify-cee or commit ran in that window; the **real run did** (process
+  started 04:45:08). Calls in the window: only the **Q22 answer call** (record stamp 04:48:32, request
+  built and sent before 04:48:46; the next record, Q23's plan, is stamped 04:49:48, after the switch
+  back). Loaded code could not differ: every module the run uses was imported before the window (Q1,
+  Q10, Q21 had already run the planner, search, answer and validation paths), `entities_config` is
+  `lru_cache`d, `settings()` reads only the environment, `config/` is identical on both commits, and
+  every saved record carries `request_version` `strict-1` (branch code); `report.json` was written at
+  04:50:59 with commit b1f49d4. Not re-run (no re-runs; reported).
