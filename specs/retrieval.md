@@ -120,6 +120,16 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
   off-theme chunk, and Merrill only through BAC GWIM/Merrill.
 - Duplicate rate after dedupe: no two hits > 90% similar.
 - Hit rate vs `expected_sources` in `evals/questions.yaml` reported per question.
+- Recall by stage (#210), per question and in the summary of `scripts/eval_run.py`, over the
+  expected passages (rows) in `evals/expected_chunks.yaml` (a row counts when any of its ids
+  is there; `DOC` alone is any chunk of the document; window rows as for passage recall):
+  - **recall@pool** = rows with a chunk in any candidate pool `search()` fetches before
+    `select()` (firm pool, research, firms on the theme, theme peers before their floor,
+    answer turns; recorded by `PoolTrace`) / rows. A row missing here is a recall problem
+    (query, pool size, vectors).
+  - **recall@final** = rows with a chunk in the retrieved set / rows (= passage recall). A row
+    in the pool but not in the final set was lost in `select()` (quotas, floor, budget).
+  Each run also reports passages and estimated tokens (characters / 4) per question and in total.
 - **Refusal accuracy tracked alongside recall**: for gap questions (Q24, Q25, Q28-30) retrieval
   must not surface misleading substitutes unlabeled. Any tuning PR reports both numbers.
 

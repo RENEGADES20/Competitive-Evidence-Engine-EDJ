@@ -1,8 +1,8 @@
 {
   "meta": {
-    "run_id": "corpus-2026-11-17-20261118-011512",
+    "run_id": "corpus-2026-11-17-20261118-220153",
     "snapshot": "corpus-2026-11-17",
-    "commit": "635c542",
+    "commit": "f0ebc30",
     "k": "by question",
     "min_coverage": 0.5,
     "mode": "mock",
@@ -13,18 +13,26 @@
     "max_calls": null
   },
   "summary": {
-    "tier1_doc_recall": 0.788,
-    "tier1_passage_recall": 0.607,
+    "tier1_doc_recall": 0.785,
+    "tier1_passage_recall": 0.597,
     "tier1_with_key": 17,
     "tier1_total": 18,
+    "recall_pool": 0.686,
+    "recall_final": 0.484,
+    "tier1_recall_pool": 0.803,
+    "tier1_recall_final": 0.597,
+    "with_rows": 21,
+    "tier1_with_rows": 17,
+    "passages": 675,
+    "tokens_est": 195683,
     "refusal_gap": {
       "ok": 5,
       "of": 5,
       "accuracy": 1.0
     },
     "refusal_all": {
-      "ok": 19,
-      "of": 19,
+      "ok": 22,
+      "of": 22,
       "accuracy": 1.0
     }
   },
@@ -115,6 +123,9 @@
       "forbidden": [],
       "doc_recall": 0.889,
       "passage_recall": 0.5,
+      "recall_pool": 0.625,
+      "recall_final": 0.5,
+      "pool_size": 105,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -123,7 +134,9 @@
             "ids": [
               "MS-TR-2026Q2#3"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -132,7 +145,12 @@
             ],
             "found": [
               "MS-TR-2026Q2#16"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2026Q2#14",
+              "MS-TR-2026Q2#16"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -140,7 +158,9 @@
               "MS-TR-2026Q3#12",
               "MS-TR-2026Q3#13"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -149,7 +169,12 @@
               "MS-TR-2026Q1#10",
               "MS-TR-2026Q1#11"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-TR-2026Q1#11",
+              "MS-TR-2026Q1#3"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -159,13 +184,20 @@
             "found": [
               "MS-PR-2026-10-14-01#5",
               "MS-PR-2026-07-15-01#5"
-            ]
+            ],
+            "pool": [
+              "MS-PR-2026-07-15-01#5",
+              "MS-PR-2026-10-14-01#5"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MS-10K-2025#125"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -175,7 +207,13 @@
             ],
             "found": [
               "MS-10K-2025#127"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#127",
+              "MS-10K-2025#164",
+              "MS-10K-2025#166"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -187,12 +225,21 @@
               "MS-SUPP-2026Q3#16",
               "MS-SUPP-2026Q2#16",
               "MS-SUPP-2026Q1#14"
-            ]
+            ],
+            "pool": [
+              "MS-SUPP-2026Q1#14",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q3#16"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 8,
         "passages_found": 4,
         "passage_recall": 0.5,
+        "passages_in_pool": 5,
+        "recall_pool": 0.625,
+        "recall_final": 0.5,
         "expected_docs": [
           "MS-TR-2026Q2",
           "MS-TR-2026Q3",
@@ -217,7 +264,8 @@
       "k": 20,
       "passages": 20,
       "chars": 24182,
-      "change": "IMPROVED"
+      "tokens_est": 6046,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q2",
@@ -304,6 +352,9 @@
       "forbidden": [],
       "doc_recall": 0.667,
       "passage_recall": 0.667,
+      "recall_pool": 0.889,
+      "recall_final": 0.667,
+      "pool_size": 100,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -316,7 +367,25 @@
               "RJF-10K-2025#91",
               "RJF-10K-2025#10",
               "RJF-10K-2025#175"
-            ]
+            ],
+            "pool": [
+              "RJF-10K-2025#10",
+              "RJF-10K-2025#11",
+              "RJF-10K-2025#115",
+              "RJF-10K-2025#175",
+              "RJF-10K-2025#228",
+              "RJF-10K-2025#234",
+              "RJF-10K-2025#25",
+              "RJF-10K-2025#27",
+              "RJF-10K-2025#334",
+              "RJF-10K-2025#452",
+              "RJF-10K-2025#521",
+              "RJF-10K-2025#584",
+              "RJF-10K-2025#89",
+              "RJF-10K-2025#90",
+              "RJF-10K-2025#91"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -324,7 +393,11 @@
             ],
             "found": [
               "RJF-TR-2025Q4#44"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2025Q4#44"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -332,7 +405,16 @@
             ],
             "found": [
               "RJF-TR-2026Q1#54"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2026Q1#23",
+              "RJF-TR-2026Q1#25",
+              "RJF-TR-2026Q1#4",
+              "RJF-TR-2026Q1#44",
+              "RJF-TR-2026Q1#54",
+              "RJF-TR-2026Q1#7"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -340,7 +422,14 @@
             ],
             "found": [
               "RJF-TR-2026Q2#6"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2026Q2#27",
+              "RJF-TR-2026Q2#5",
+              "RJF-TR-2026Q2#6",
+              "RJF-TR-2026Q2#60"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -348,13 +437,20 @@
             ],
             "found": [
               "RJF-PR-2026-04-22-01#1"
-            ]
+            ],
+            "pool": [
+              "RJF-PR-2026-04-22-01#1",
+              "RJF-PR-2026-04-22-01#101"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "RJF-PR-2026-07-22-01"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -362,24 +458,41 @@
             ],
             "found": [
               "RJF-PR-web-affiliation-options#0"
-            ]
+            ],
+            "pool": [
+              "RJF-PR-web-affiliation-options#0",
+              "RJF-PR-web-affiliation-options#1",
+              "RJF-PR-web-affiliation-options#2"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "RJF-PR-web-traditional-employee-advisor"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-PR-web-traditional-employee-advisor#0"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-PR-web-independent-advisor"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-PR-web-independent-advisor#0"
+            ],
+            "stage": "pool"
           }
         ],
         "passages": 9,
         "passages_found": 6,
         "passage_recall": 0.667,
+        "passages_in_pool": 8,
+        "recall_pool": 0.889,
+        "recall_final": 0.667,
         "expected_docs": [
           "RJF-10K-2025",
           "RJF-TR-2025Q4",
@@ -404,7 +517,8 @@
       "k": 20,
       "passages": 20,
       "chars": 22045,
-      "change": "IMPROVED"
+      "tokens_est": 5511,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q3",
@@ -482,6 +596,9 @@
       "forbidden": [],
       "doc_recall": 0.667,
       "passage_recall": 0.667,
+      "recall_pool": 1.0,
+      "recall_final": 0.667,
+      "pool_size": 106,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -494,19 +611,47 @@
               "SCHW-10K-2025#11",
               "SCHW-10K-2025#26",
               "SCHW-10K-2025#13"
-            ]
+            ],
+            "pool": [
+              "SCHW-10K-2025#10",
+              "SCHW-10K-2025#11",
+              "SCHW-10K-2025#117",
+              "SCHW-10K-2025#13",
+              "SCHW-10K-2025#20",
+              "SCHW-10K-2025#21",
+              "SCHW-10K-2025#211",
+              "SCHW-10K-2025#23",
+              "SCHW-10K-2025#24",
+              "SCHW-10K-2025#26",
+              "SCHW-10K-2025#509",
+              "SCHW-10K-2025#512",
+              "SCHW-10K-2025#61",
+              "SCHW-10K-2025#72",
+              "SCHW-10K-2025#93"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "SCHW-TR-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "SCHW-TR-2026Q1#48"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "SCHW-TR-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "SCHW-TR-2026Q2#51",
+              "SCHW-TR-2026Q2#52",
+              "SCHW-TR-2026Q2#8"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -514,7 +659,14 @@
             ],
             "found": [
               "SCHW-TR-2026Q3#4"
-            ]
+            ],
+            "pool": [
+              "SCHW-TR-2026Q3#10",
+              "SCHW-TR-2026Q3#4",
+              "SCHW-TR-2026Q3#42",
+              "SCHW-TR-2026Q3#5"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -522,7 +674,14 @@
             ],
             "found": [
               "SCHW-DECK-2026Q3#11"
-            ]
+            ],
+            "pool": [
+              "SCHW-DECK-2026Q3#11",
+              "SCHW-DECK-2026Q3#21",
+              "SCHW-DECK-2026Q3#22",
+              "SCHW-DECK-2026Q3#73"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -530,12 +689,28 @@
             ],
             "found": [
               "SCHW-DECK-2026-investor-day#305"
-            ]
+            ],
+            "pool": [
+              "SCHW-DECK-2026-investor-day#119",
+              "SCHW-DECK-2026-investor-day#12",
+              "SCHW-DECK-2026-investor-day#201",
+              "SCHW-DECK-2026-investor-day#305",
+              "SCHW-DECK-2026-investor-day#306",
+              "SCHW-DECK-2026-investor-day#307",
+              "SCHW-DECK-2026-investor-day#35",
+              "SCHW-DECK-2026-investor-day#62",
+              "SCHW-DECK-2026-investor-day#66",
+              "SCHW-DECK-2026-investor-day#70"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 6,
         "passages_found": 4,
         "passage_recall": 0.667,
+        "passages_in_pool": 6,
+        "recall_pool": 1.0,
+        "recall_final": 0.667,
         "expected_docs": [
           "SCHW-10K-2025",
           "SCHW-TR-2026Q1",
@@ -557,7 +732,8 @@
       "k": 20,
       "passages": 20,
       "chars": 21817,
-      "change": "IMPROVED"
+      "tokens_est": 5454,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q4",
@@ -651,6 +827,9 @@
       "forbidden": [],
       "doc_recall": 0.8,
       "passage_recall": 0.714,
+      "recall_pool": 0.857,
+      "recall_final": 0.714,
+      "pool_size": 66,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -662,14 +841,20 @@
             ],
             "found": [
               "BAC-TR-2026Q1#26"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q1#26"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "BAC-TR-2026Q1#80",
               "BAC-TR-2026Q1#81"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -680,7 +865,13 @@
             "found": [
               "BAC-TR-2026Q2#20",
               "BAC-TR-2026Q2#21"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q2#20",
+              "BAC-TR-2026Q2#21",
+              "BAC-TR-2026Q2#22"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -688,7 +879,11 @@
             ],
             "found": [
               "BAC-TR-2026Q2#63"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q2#63"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -696,7 +891,11 @@
             ],
             "found": [
               "BAC-TR-2026Q3#19"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q3#19"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -706,7 +905,12 @@
             ],
             "found": [
               "BAC-10K-2025#246"
-            ]
+            ],
+            "pool": [
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -715,12 +919,20 @@
               "BAC-10Q-2026Q2#90",
               "BAC-10Q-2026Q2#91"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-10Q-2026Q2#88",
+              "BAC-10Q-2026Q2#89"
+            ],
+            "stage": "pool"
           }
         ],
         "passages": 7,
         "passages_found": 5,
         "passage_recall": 0.714,
+        "passages_in_pool": 6,
+        "recall_pool": 0.857,
+        "recall_final": 0.714,
         "expected_docs": [
           "BAC-TR-2026Q1",
           "BAC-TR-2026Q2",
@@ -741,7 +953,8 @@
       "k": 20,
       "passages": 20,
       "chars": 20700,
-      "change": "IMPROVED"
+      "tokens_est": 5175,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q5",
@@ -831,6 +1044,9 @@
       "forbidden": [],
       "doc_recall": 0.833,
       "passage_recall": 0.833,
+      "recall_pool": 0.833,
+      "recall_final": 0.833,
+      "pool_size": 106,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -843,7 +1059,25 @@
               "MS-10K-2025#25",
               "MS-10K-2025#76",
               "MS-10K-2025#109"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#109",
+              "MS-10K-2025#111",
+              "MS-10K-2025#15",
+              "MS-10K-2025#23",
+              "MS-10K-2025#24",
+              "MS-10K-2025#25",
+              "MS-10K-2025#372",
+              "MS-10K-2025#44",
+              "MS-10K-2025#58",
+              "MS-10K-2025#73",
+              "MS-10K-2025#76",
+              "MS-10K-2025#79",
+              "MS-10K-2025#80",
+              "MS-10K-2025#92",
+              "MS-10K-2025#96"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -852,7 +1086,12 @@
             "found": [
               "MS-TR-2025Q4#8",
               "MS-TR-2025Q4#65"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2025Q4#65",
+              "MS-TR-2025Q4#8"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -861,13 +1100,23 @@
             "found": [
               "MS-TR-2026Q1#44",
               "MS-TR-2026Q1#6"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2026Q1#10",
+              "MS-TR-2026Q1#41",
+              "MS-TR-2026Q1#42",
+              "MS-TR-2026Q1#44",
+              "MS-TR-2026Q1#6"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MS-TR-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -877,7 +1126,15 @@
               "MS-TR-2026Q3#16",
               "MS-TR-2026Q3#8",
               "MS-TR-2026Q3#35"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2026Q3#16",
+              "MS-TR-2026Q3#21",
+              "MS-TR-2026Q3#32",
+              "MS-TR-2026Q3#35",
+              "MS-TR-2026Q3#8"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -885,12 +1142,33 @@
             ],
             "found": [
               "MS-DECK-2026-strategic-update#10"
-            ]
+            ],
+            "pool": [
+              "MS-DECK-2026-strategic-update#10",
+              "MS-DECK-2026-strategic-update#11",
+              "MS-DECK-2026-strategic-update#13",
+              "MS-DECK-2026-strategic-update#17",
+              "MS-DECK-2026-strategic-update#18",
+              "MS-DECK-2026-strategic-update#19",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-DECK-2026-strategic-update#23",
+              "MS-DECK-2026-strategic-update#27",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-DECK-2026-strategic-update#31",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-DECK-2026-strategic-update#34",
+              "MS-DECK-2026-strategic-update#7",
+              "MS-DECK-2026-strategic-update#9"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 6,
         "passages_found": 5,
         "passage_recall": 0.833,
+        "passages_in_pool": 5,
+        "recall_pool": 0.833,
+        "recall_final": 0.833,
         "expected_docs": [
           "MS-10K-2025",
           "MS-TR-2025Q4",
@@ -912,7 +1190,8 @@
       "k": 20,
       "passages": 20,
       "chars": 20740,
-      "change": "IMPROVED"
+      "tokens_est": 5185,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q6",
@@ -994,6 +1273,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 1.0,
+      "recall_pool": 1.0,
+      "recall_final": 1.0,
+      "pool_size": 82,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -1005,7 +1287,25 @@
             "found": [
               "RJF-10K-2025#462",
               "RJF-10K-2025#10"
-            ]
+            ],
+            "pool": [
+              "RJF-10K-2025#10",
+              "RJF-10K-2025#100",
+              "RJF-10K-2025#11",
+              "RJF-10K-2025#110",
+              "RJF-10K-2025#174",
+              "RJF-10K-2025#248",
+              "RJF-10K-2025#320",
+              "RJF-10K-2025#40",
+              "RJF-10K-2025#41",
+              "RJF-10K-2025#43",
+              "RJF-10K-2025#452",
+              "RJF-10K-2025#461",
+              "RJF-10K-2025#462",
+              "RJF-10K-2025#585",
+              "RJF-10K-2025#639"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1013,7 +1313,14 @@
             ],
             "found": [
               "RJF-10Q-2026Q2#251"
-            ]
+            ],
+            "pool": [
+              "RJF-10Q-2026Q2#246",
+              "RJF-10Q-2026Q2#251",
+              "RJF-10Q-2026Q2#340",
+              "RJF-10Q-2026Q2#402"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1021,7 +1328,13 @@
             ],
             "found": [
               "RJF-TR-2025Q2#21"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2025Q2#21",
+              "RJF-TR-2025Q2#30",
+              "RJF-TR-2025Q2#66"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1030,7 +1343,15 @@
             "found": [
               "RJF-TR-2026Q1#45",
               "RJF-TR-2026Q1#46"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2026Q1#22",
+              "RJF-TR-2026Q1#45",
+              "RJF-TR-2026Q1#46",
+              "RJF-TR-2026Q1#47",
+              "RJF-TR-2026Q1#48"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1038,7 +1359,14 @@
             ],
             "found": [
               "RJF-TR-2026Q2#31"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2026Q2#26",
+              "RJF-TR-2026Q2#27",
+              "RJF-TR-2026Q2#31",
+              "RJF-TR-2026Q2#64"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1046,12 +1374,21 @@
             ],
             "found": [
               "RJF-PR-web-affiliation-options#0"
-            ]
+            ],
+            "pool": [
+              "RJF-PR-web-affiliation-options#0",
+              "RJF-PR-web-affiliation-options#1",
+              "RJF-PR-web-affiliation-options#2"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 6,
         "passages_found": 6,
         "passage_recall": 1.0,
+        "passages_in_pool": 6,
+        "recall_pool": 1.0,
+        "recall_final": 1.0,
         "expected_docs": [
           "RJF-10K-2025",
           "RJF-10Q-2026Q2",
@@ -1073,7 +1410,8 @@
       "k": 20,
       "passages": 20,
       "chars": 20905,
-      "change": "IMPROVED"
+      "tokens_est": 5226,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q7",
@@ -1194,16 +1532,48 @@
       "hit_patterns": 8,
       "coverage": 0.889,
       "forbidden": [],
-      "doc_recall": null,
-      "passage_recall": null,
-      "refusal_ok": null,
+      "doc_recall": 1.0,
+      "passage_recall": 0.0,
+      "recall_pool": 0.0,
+      "recall_final": 0.0,
+      "pool_size": 289,
+      "refusal_ok": true,
       "misleading": [],
-      "recall": null,
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-10K-2025#153"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          }
+        ],
+        "passages": 1,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "passages_in_pool": 0,
+        "recall_pool": 0.0,
+        "recall_final": 0.0,
+        "expected_docs": [
+          "MS-10K-2025"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
       "status": "PASS",
       "k": 20,
       "passages": 20,
       "chars": 21041,
-      "change": "UNCHANGED"
+      "tokens_est": 5260,
+      "change": "IMPROVED"
     },
     {
       "id": "Q8",
@@ -1285,6 +1655,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 210,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -1292,6 +1665,7 @@
       "k": 20,
       "passages": 20,
       "chars": 22305,
+      "tokens_est": 5576,
       "change": "UNCHANGED"
     },
     {
@@ -1387,6 +1761,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 195,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -1394,6 +1771,7 @@
       "k": 20,
       "passages": 20,
       "chars": 24184,
+      "tokens_est": 6046,
       "change": "UNCHANGED"
     },
     {
@@ -1501,6 +1879,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 458,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -1508,6 +1889,7 @@
       "k": 30,
       "passages": 30,
       "chars": 32804,
+      "tokens_est": 8201,
       "change": "UNCHANGED"
     },
     {
@@ -1635,6 +2017,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 0.2,
+      "recall_pool": 0.6,
+      "recall_final": 0.2,
+      "pool_size": 363,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -1645,14 +2030,22 @@
             ],
             "found": [
               "EDJ-10K-2025#130"
-            ]
+            ],
+            "pool": [
+              "EDJ-10K-2025#130"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "EDJ-10K-2025#131",
               "EDJ-10K-2025#148"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "EDJ-10K-2025#148"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -1660,44 +2053,66 @@
             ],
             "found": [
               "EDJ-10Q-2026Q2#60"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "EDJ-10K-2025#29"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "RJF-10K-2025#227"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "RJF-10K-2025#228"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-10K-2025#228"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-10K-2025#24"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "MS-10K-2025#167",
               "MS-SUPP-2026Q3#38"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2026Q3#38"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "BAC-10K-2025#246"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-10K-2025#246"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -1705,12 +2120,17 @@
               "SCHW-TR-2026Q1#4",
               "SCHW-TR-2026Q1#5"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           }
         ],
         "passages": 10,
         "passages_found": 2,
         "passage_recall": 0.2,
+        "passages_in_pool": 6,
+        "recall_pool": 0.6,
+        "recall_final": 0.2,
         "expected_docs": [
           "EDJ-10K-2025",
           "EDJ-10Q-2026Q2",
@@ -1734,7 +2154,8 @@
       "k": 30,
       "passages": 30,
       "chars": 38174,
-      "change": "IMPROVED"
+      "tokens_est": 9544,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q12",
@@ -1820,6 +2241,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 234,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -1827,6 +2251,7 @@
       "k": 20,
       "passages": 20,
       "chars": 24302,
+      "tokens_est": 6076,
       "change": "UNCHANGED"
     },
     {
@@ -1905,6 +2330,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 1.0,
+      "recall_pool": 1.0,
+      "recall_final": 1.0,
+      "pool_size": 105,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -1917,7 +2345,25 @@
               "MS-10K-2025#168",
               "MS-10K-2025#125",
               "MS-10K-2025#165"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#125",
+              "MS-10K-2025#165",
+              "MS-10K-2025#168",
+              "MS-10K-2025#169",
+              "MS-10K-2025#244",
+              "MS-10K-2025#25",
+              "MS-10K-2025#264",
+              "MS-10K-2025#419",
+              "MS-10K-2025#461",
+              "MS-10K-2025#50",
+              "MS-10K-2025#51",
+              "MS-10K-2025#781",
+              "MS-10K-2025#786",
+              "MS-10K-2025#887",
+              "MS-10K-2025#889"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1925,7 +2371,14 @@
             ],
             "found": [
               "MS-SUPP-2026Q3#16"
-            ]
+            ],
+            "pool": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q3#37",
+              "MS-SUPP-2026Q3#38",
+              "MS-SUPP-2026Q3#39"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1933,7 +2386,12 @@
             ],
             "found": [
               "MS-TR-2025Q4#20"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2025Q4#12",
+              "MS-TR-2025Q4#20"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1941,7 +2399,11 @@
             ],
             "found": [
               "MS-TR-2026Q2#16"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2026Q2#16"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1949,7 +2411,11 @@
             ],
             "found": [
               "MS-TR-2026Q3#23"
-            ]
+            ],
+            "pool": [
+              "MS-TR-2026Q3#23"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -1959,12 +2425,33 @@
               "MS-DECK-2026-strategic-update#32",
               "MS-DECK-2026-strategic-update#28",
               "MS-DECK-2026-strategic-update#31"
-            ]
+            ],
+            "pool": [
+              "MS-DECK-2026-strategic-update#13",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-DECK-2026-strategic-update#23",
+              "MS-DECK-2026-strategic-update#26",
+              "MS-DECK-2026-strategic-update#27",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-DECK-2026-strategic-update#3",
+              "MS-DECK-2026-strategic-update#30",
+              "MS-DECK-2026-strategic-update#31",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-DECK-2026-strategic-update#33",
+              "MS-DECK-2026-strategic-update#5",
+              "MS-DECK-2026-strategic-update#6",
+              "MS-DECK-2026-strategic-update#7",
+              "MS-DECK-2026-strategic-update#9"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 6,
         "passages_found": 6,
         "passage_recall": 1.0,
+        "passages_in_pool": 6,
+        "recall_pool": 1.0,
+        "recall_final": 1.0,
         "expected_docs": [
           "MS-10K-2025",
           "MS-SUPP-2026Q3",
@@ -1986,7 +2473,8 @@
       "k": 20,
       "passages": 20,
       "chars": 25821,
-      "change": "IMPROVED"
+      "tokens_est": 6455,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q14",
@@ -2071,6 +2559,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 93,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -2078,6 +2569,7 @@
       "k": 20,
       "passages": 20,
       "chars": 23082,
+      "tokens_est": 5770,
       "change": "UNCHANGED"
     },
     {
@@ -2176,15 +2668,47 @@
       "hit_patterns": 4,
       "coverage": 0.8,
       "forbidden": [],
-      "doc_recall": null,
-      "passage_recall": null,
-      "refusal_ok": null,
+      "doc_recall": 1.0,
+      "passage_recall": 0.0,
+      "recall_pool": 0.0,
+      "recall_final": 0.0,
+      "pool_size": 457,
+      "refusal_ok": true,
       "misleading": [],
-      "recall": null,
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "SCHW-10K-2025#27"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          }
+        ],
+        "passages": 1,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "passages_in_pool": 0,
+        "recall_pool": 0.0,
+        "recall_final": 0.0,
+        "expected_docs": [
+          "SCHW-10K-2025"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
       "status": "PASS",
       "k": 30,
       "passages": 30,
       "chars": 33893,
+      "tokens_est": 8473,
       "change": "IMPROVED"
     },
     {
@@ -2270,6 +2794,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 493,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -2277,6 +2804,7 @@
       "k": 20,
       "passages": 20,
       "chars": 22645,
+      "tokens_est": 5661,
       "change": "UNCHANGED"
     },
     {
@@ -2404,7 +2932,10 @@
       "coverage": 0.5,
       "forbidden": [],
       "doc_recall": 0.667,
-      "passage_recall": 0.667,
+      "passage_recall": 0.6,
+      "recall_pool": 1.0,
+      "recall_final": 0.6,
+      "pool_size": 451,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -2415,13 +2946,37 @@
             ],
             "found": [
               "MS-10K-2025#372"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#105",
+              "MS-10K-2025#372",
+              "MS-10K-2025#425",
+              "MS-10K-2025#462",
+              "MS-10K-2025#703",
+              "MS-10K-2025#707",
+              "MS-10K-2025#708",
+              "MS-10K-2025#709",
+              "MS-10K-2025#711",
+              "MS-10K-2025#712",
+              "MS-10K-2025#714",
+              "MS-10K-2025#716",
+              "MS-10K-2025#785",
+              "MS-10K-2025#80",
+              "MS-10K-2025#96"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MS-TR-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-TR-2026Q2#37",
+              "MS-TR-2026Q2#38",
+              "MS-TR-2026Q2#9"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -2429,7 +2984,17 @@
             ],
             "found": [
               "SCHW-TR-2026Q1#12"
-            ]
+            ],
+            "pool": [
+              "SCHW-TR-2026Q1#12",
+              "SCHW-TR-2026Q1#13",
+              "SCHW-TR-2026Q1#14",
+              "SCHW-TR-2026Q1#16",
+              "SCHW-TR-2026Q1#18",
+              "SCHW-TR-2026Q1#19",
+              "SCHW-TR-2026Q1#7"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -2437,7 +3002,13 @@
             ],
             "found": [
               "SCHW-DECK-2026Q2#22"
-            ]
+            ],
+            "pool": [
+              "SCHW-DECK-2026Q2#10",
+              "SCHW-DECK-2026Q2#22",
+              "SCHW-DECK-2026Q2#33"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -2445,13 +3016,26 @@
             ],
             "found": [
               "BAC-TR-2026Q2#6"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q2#14",
+              "BAC-TR-2026Q2#21",
+              "BAC-TR-2026Q2#23",
+              "BAC-TR-2026Q2#5",
+              "BAC-TR-2026Q2#6"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "BAC-TR-2026Q3"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-TR-2026Q3#19",
+              "BAC-TR-2026Q3#21"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -2459,13 +3043,24 @@
             ],
             "found": [
               "RJF-TR-2025Q4#6"
-            ]
+            ],
+            "pool": [
+              "RJF-TR-2025Q4#6",
+              "RJF-TR-2025Q4#73",
+              "RJF-TR-2025Q4#75"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "RJF-TR-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-TR-2026Q1#30",
+              "RJF-TR-2026Q1#51"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -2473,12 +3068,43 @@
             ],
             "found": [
               "EDJ-10K-2025#26"
-            ]
+            ],
+            "pool": [
+              "EDJ-10K-2025#12",
+              "EDJ-10K-2025#125",
+              "EDJ-10K-2025#16",
+              "EDJ-10K-2025#257",
+              "EDJ-10K-2025#26",
+              "EDJ-10K-2025#260",
+              "EDJ-10K-2025#281",
+              "EDJ-10K-2025#29",
+              "EDJ-10K-2025#304",
+              "EDJ-10K-2025#56",
+              "EDJ-10K-2025#57",
+              "EDJ-10K-2025#75",
+              "EDJ-10K-2025#80",
+              "EDJ-10K-2025#83",
+              "EDJ-10K-2025#9"
+            ],
+            "stage": "final"
+          },
+          {
+            "ids": [
+              "BAC-TR-2026Q2#21"
+            ],
+            "found": [],
+            "pool": [
+              "BAC-TR-2026Q2#21"
+            ],
+            "stage": "pool"
           }
         ],
-        "passages": 9,
+        "passages": 10,
         "passages_found": 6,
-        "passage_recall": 0.667,
+        "passage_recall": 0.6,
+        "passages_in_pool": 10,
+        "recall_pool": 1.0,
+        "recall_final": 0.6,
         "expected_docs": [
           "MS-10K-2025",
           "MS-TR-2026Q2",
@@ -2497,13 +3123,14 @@
         "outside_window": [],
         "window": null,
         "refusal_ok": true,
-        "source": "#56"
+        "source": "expected_chunks.yaml"
       },
       "status": "PASS",
       "k": 20,
       "passages": 20,
       "chars": 22485,
-      "change": "IMPROVED"
+      "tokens_est": 5621,
+      "change": "REGRESSED"
     },
     {
       "id": "Q18",
@@ -2606,6 +3233,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 545,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -2613,6 +3243,7 @@
       "k": 20,
       "passages": 20,
       "chars": 22803,
+      "tokens_est": 5701,
       "change": "UNCHANGED"
     },
     {
@@ -2708,16 +3339,48 @@
       "hit_patterns": 1,
       "coverage": 0.2,
       "forbidden": [],
-      "doc_recall": null,
-      "passage_recall": null,
-      "refusal_ok": null,
+      "doc_recall": 1.0,
+      "passage_recall": 0.0,
+      "recall_pool": 0.0,
+      "recall_final": 0.0,
+      "pool_size": 72,
+      "refusal_ok": true,
       "misleading": [],
-      "recall": null,
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "EDJ-10K-2025#88"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          }
+        ],
+        "passages": 1,
+        "passages_found": 0,
+        "passage_recall": 0.0,
+        "passages_in_pool": 0,
+        "recall_pool": 0.0,
+        "recall_final": 0.0,
+        "expected_docs": [
+          "EDJ-10K-2025"
+        ],
+        "docs": 1,
+        "docs_found": 1,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "expected_chunks.yaml"
+      },
       "status": "FAIL",
       "k": 28,
       "passages": 20,
       "chars": 24271,
-      "change": "UNCHANGED"
+      "tokens_est": 6068,
+      "change": "IMPROVED"
     },
     {
       "id": "Q20",
@@ -2779,8 +3442,11 @@
       "hit_patterns": 1,
       "coverage": 1.0,
       "forbidden": [],
-      "doc_recall": 0.429,
-      "passage_recall": 0.429,
+      "doc_recall": 0.375,
+      "passage_recall": 0.333,
+      "recall_pool": 0.444,
+      "recall_final": 0.333,
+      "pool_size": 492,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -2791,7 +3457,11 @@
             ],
             "found": [
               "UBS-NEXTGEN-2026#83"
-            ]
+            ],
+            "pool": [
+              "UBS-NEXTGEN-2026#83"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -2799,19 +3469,28 @@
             ],
             "found": [
               "CERULLI-GWT-2025#1"
-            ]
+            ],
+            "pool": [
+              "CERULLI-GWT-2025#1",
+              "CERULLI-GWT-2025#13"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "FINRAF-INVESTORS-2025"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "KITCES-WELLBEING-2023"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -2819,24 +3498,59 @@
             ],
             "found": [
               "BOFA-PB-STUDY-2026#15"
-            ]
+            ],
+            "pool": [
+              "BOFA-PB-STUDY-2026#14",
+              "BOFA-PB-STUDY-2026#15",
+              "BOFA-PB-STUDY-2026#4",
+              "BOFA-PB-STUDY-2026#5"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "NM-PP-2026"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "NM-PP-2026#17",
+              "NM-PP-2026#22",
+              "NM-PP-2026#36"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "WEALTHTENDER-ADVISOR-SEARCH-2025"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          },
+          {
+            "ids": [
+              "FIDELITY-III-2025#0"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          },
+          {
+            "ids": [
+              "UBS-NEXTGEN-2026#119",
+              "UBS-NEXTGEN-2026#13"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
           }
         ],
-        "passages": 7,
+        "passages": 9,
         "passages_found": 3,
-        "passage_recall": 0.429,
+        "passage_recall": 0.333,
+        "passages_in_pool": 4,
+        "recall_pool": 0.444,
+        "recall_final": 0.333,
         "expected_docs": [
           "UBS-NEXTGEN-2026",
           "CERULLI-GWT-2025",
@@ -2844,22 +3558,24 @@
           "KITCES-WELLBEING-2023",
           "BOFA-PB-STUDY-2026",
           "NM-PP-2026",
-          "WEALTHTENDER-ADVISOR-SEARCH-2025"
+          "WEALTHTENDER-ADVISOR-SEARCH-2025",
+          "FIDELITY-III-2025"
         ],
-        "docs": 7,
+        "docs": 8,
         "docs_found": 3,
-        "doc_recall": 0.429,
+        "doc_recall": 0.375,
         "misleading": [],
         "outside_window": [],
         "window": null,
         "refusal_ok": true,
-        "source": "#56"
+        "source": "expected_chunks.yaml"
       },
       "status": "PASS",
       "k": 20,
       "passages": 20,
       "chars": 23716,
-      "change": "IMPROVED"
+      "tokens_est": 5929,
+      "change": "REGRESSED"
     },
     {
       "id": "Q21",
@@ -2975,6 +3691,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 407,
       "refusal_ok": null,
       "misleading": [],
       "recall": null,
@@ -2982,6 +3701,7 @@
       "k": 30,
       "passages": 30,
       "chars": 32083,
+      "tokens_est": 8021,
       "change": "UNCHANGED"
     },
     {
@@ -3107,6 +3827,9 @@
       "forbidden": [],
       "doc_recall": 0.424,
       "passage_recall": 0.375,
+      "recall_pool": 0.875,
+      "recall_final": 0.375,
+      "pool_size": 382,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3123,7 +3846,15 @@
               "EDJ-10Q-2026Q2#60",
               "EDJ-10Q-2026Q1#51",
               "EDJ-10Q-2025Q3#67"
-            ]
+            ],
+            "pool": [
+              "EDJ-10K-2025#130",
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q3#67",
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2026Q2#60"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -3138,14 +3869,26 @@
             ],
             "found": [
               "MS-SUPP-2026Q3#16"
-            ]
+            ],
+            "pool": [
+              "MS-10Q-2025Q2#56",
+              "MS-10Q-2026Q1#48",
+              "MS-10Q-2026Q2#57",
+              "MS-PR-2026-01-15-01#2",
+              "MS-SUPP-2026Q1#14",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q3#16"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MS-SUPP-2026Q1#42",
               "MS-10K-2025#166"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -3157,7 +3900,17 @@
               "SCHW-10Q-2025Q3#16",
               "SCHW-10Q-2025Q2#16"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "SCHW-10Q-2025Q2#16",
+              "SCHW-10Q-2025Q3#16",
+              "SCHW-10Q-2026Q1#16",
+              "SCHW-10Q-2026Q2#16",
+              "SCHW-DECK-2026Q3#7",
+              "SCHW-PR-2026-01-21-01#2",
+              "SCHW-PR-2026-07-21-01#2"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3165,7 +3918,11 @@
               "SCHW-10K-2025#119",
               "SCHW-DECK-2026Q3#20"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "SCHW-DECK-2026Q3#20"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3178,14 +3935,25 @@
               "RJF-10Q-2025Q4#236",
               "RJF-10Q-2025Q2#294"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-PR-2025-10-22-01#4",
+              "RJF-PR-2026-01-28-01#3",
+              "RJF-PR-2026-04-22-01#3",
+              "RJF-PR-2026-07-22-01#4"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-10Q-2026Q2#306",
               "RJF-SUPP-2026Q1#43"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-SUPP-2026Q1#43"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3194,12 +3962,20 @@
             ],
             "found": [
               "BAC-TR-2026Q3#19"
-            ]
+            ],
+            "pool": [
+              "BAC-PR-2026-10-14-01#11",
+              "BAC-TR-2026Q3#19"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 8,
         "passages_found": 3,
         "passage_recall": 0.375,
+        "passages_in_pool": 7,
+        "recall_pool": 0.875,
+        "recall_final": 0.375,
         "expected_docs": [
           "EDJ-10Q-2026Q2",
           "EDJ-10Q-2026Q1",
@@ -3248,7 +4024,8 @@
       "k": 30,
       "passages": 30,
       "chars": 37049,
-      "change": "IMPROVED"
+      "tokens_est": 9262,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q23",
@@ -3363,6 +4140,9 @@
       "forbidden": [],
       "doc_recall": 0.35,
       "passage_recall": 0.35,
+      "recall_pool": 1.0,
+      "recall_final": 0.35,
+      "pool_size": 361,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3375,13 +4155,39 @@
               "EDJ-10K-2025#58",
               "EDJ-10K-2025#70",
               "EDJ-10K-2025#202"
-            ]
+            ],
+            "pool": [
+              "EDJ-10K-2025#130",
+              "EDJ-10K-2025#141",
+              "EDJ-10K-2025#148",
+              "EDJ-10K-2025#19",
+              "EDJ-10K-2025#202",
+              "EDJ-10K-2025#204",
+              "EDJ-10K-2025#21",
+              "EDJ-10K-2025#22",
+              "EDJ-10K-2025#267",
+              "EDJ-10K-2025#268",
+              "EDJ-10K-2025#41",
+              "EDJ-10K-2025#42",
+              "EDJ-10K-2025#58",
+              "EDJ-10K-2025#70",
+              "EDJ-10K-2025#79"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "EDJ-10Q-2025Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "EDJ-10Q-2025Q2#112",
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q2#66",
+              "EDJ-10Q-2025Q2#86",
+              "EDJ-10Q-2025Q2#89"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3389,7 +4195,14 @@
             ],
             "found": [
               "EDJ-10Q-2025Q3#69"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2025Q3#67",
+              "EDJ-10Q-2025Q3#69",
+              "EDJ-10Q-2025Q3#93",
+              "EDJ-10Q-2025Q3#96"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -3397,7 +4210,13 @@
             ],
             "found": [
               "EDJ-10Q-2026Q1#51"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2026Q1#60",
+              "EDJ-10Q-2026Q1#66"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -3405,31 +4224,64 @@
             ],
             "found": [
               "EDJ-10Q-2026Q2#60"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2026Q2#60",
+              "EDJ-10Q-2026Q2#79",
+              "EDJ-10Q-2026Q2#82"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MS-SUPP-2025Q4"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2025Q4#14",
+              "MS-SUPP-2025Q4#35",
+              "MS-SUPP-2025Q4#36"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "MS-SUPP-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2026Q1#14",
+              "MS-SUPP-2026Q1#22",
+              "MS-SUPP-2026Q1#25",
+              "MS-SUPP-2026Q1#42",
+              "MS-SUPP-2026Q1#43"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "MS-SUPP-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q2#36",
+              "MS-SUPP-2026Q2#37"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "MS-SUPP-2026Q3"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2026Q3#16",
+              "MS-SUPP-2026Q3#21",
+              "MS-SUPP-2026Q3#37",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3437,31 +4289,63 @@
             ],
             "found": [
               "BAC-10K-2025#247"
-            ]
+            ],
+            "pool": [
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "BAC-SUPP-2025Q4"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-SUPP-2025Q4#53",
+              "BAC-SUPP-2025Q4#54",
+              "BAC-SUPP-2025Q4#56",
+              "BAC-SUPP-2025Q4#57"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "BAC-SUPP-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-SUPP-2026Q1#43",
+              "BAC-SUPP-2026Q1#44",
+              "BAC-SUPP-2026Q1#45",
+              "BAC-SUPP-2026Q1#46"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "BAC-SUPP-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-SUPP-2026Q2#52",
+              "BAC-SUPP-2026Q2#53",
+              "BAC-SUPP-2026Q2#55",
+              "BAC-SUPP-2026Q2#56"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "BAC-SUPP-2026Q3"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-SUPP-2026Q3#51",
+              "BAC-SUPP-2026Q3#53",
+              "BAC-SUPP-2026Q3#54"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3469,31 +4353,76 @@
             ],
             "found": [
               "RJF-10K-2025#12"
-            ]
+            ],
+            "pool": [
+              "RJF-10K-2025#12",
+              "RJF-10K-2025#175",
+              "RJF-10K-2025#225",
+              "RJF-10K-2025#227",
+              "RJF-10K-2025#228",
+              "RJF-10K-2025#233",
+              "RJF-10K-2025#248",
+              "RJF-10K-2025#249",
+              "RJF-10K-2025#286",
+              "RJF-10K-2025#3",
+              "RJF-10K-2025#307",
+              "RJF-10K-2025#35",
+              "RJF-10K-2025#41",
+              "RJF-10K-2025#49",
+              "RJF-10K-2025#53"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "RJF-SUPP-2025Q3"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-SUPP-2025Q3#0",
+              "RJF-SUPP-2025Q3#14",
+              "RJF-SUPP-2025Q3#47"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-SUPP-2025Q4"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-SUPP-2025Q4#0",
+              "RJF-SUPP-2025Q4#12",
+              "RJF-SUPP-2025Q4#37",
+              "RJF-SUPP-2025Q4#39"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-SUPP-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-SUPP-2026Q1#13",
+              "RJF-SUPP-2026Q1#14",
+              "RJF-SUPP-2026Q1#44",
+              "RJF-SUPP-2026Q1#46"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-SUPP-2026Q2"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-SUPP-2026Q2#13",
+              "RJF-SUPP-2026Q2#14",
+              "RJF-SUPP-2026Q2#45",
+              "RJF-SUPP-2026Q2#47"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3501,12 +4430,33 @@
             ],
             "found": [
               "SCHW-10K-2025#197"
-            ]
+            ],
+            "pool": [
+              "SCHW-10K-2025#180",
+              "SCHW-10K-2025#197",
+              "SCHW-10K-2025#22",
+              "SCHW-10K-2025#24",
+              "SCHW-10K-2025#33",
+              "SCHW-10K-2025#35",
+              "SCHW-10K-2025#36",
+              "SCHW-10K-2025#37",
+              "SCHW-10K-2025#38",
+              "SCHW-10K-2025#39",
+              "SCHW-10K-2025#402",
+              "SCHW-10K-2025#43",
+              "SCHW-10K-2025#491",
+              "SCHW-10K-2025#51",
+              "SCHW-10K-2025#52"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 20,
         "passages_found": 7,
         "passage_recall": 0.35,
+        "passages_in_pool": 20,
+        "recall_pool": 1.0,
+        "recall_final": 0.35,
         "expected_docs": [
           "EDJ-10K-2025",
           "EDJ-10Q-2025Q2",
@@ -3542,7 +4492,8 @@
       "k": 30,
       "passages": 30,
       "chars": 35727,
-      "change": "IMPROVED"
+      "tokens_est": 8932,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q24",
@@ -3645,6 +4596,9 @@
       "forbidden": [],
       "doc_recall": 0.6,
       "passage_recall": 0.0,
+      "recall_pool": 0.75,
+      "recall_final": 0.0,
+      "pool_size": 383,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3653,19 +4607,29 @@
             "ids": [
               "EDJ-10K-2025#130"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "RJF-10K-2025#227"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-10K-2025#227"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
               "RJF-10K-2025#228"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "RJF-10K-2025#228"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -3673,12 +4637,21 @@
               "MS-SUPP-2026Q2#37",
               "MS-SUPP-2026Q3#38"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "MS-SUPP-2026Q1#43",
+              "MS-SUPP-2026Q2#37",
+              "MS-SUPP-2026Q3#38"
+            ],
+            "stage": "pool"
           }
         ],
         "passages": 4,
         "passages_found": 0,
         "passage_recall": 0.0,
+        "passages_in_pool": 3,
+        "recall_pool": 0.75,
+        "recall_final": 0.0,
         "expected_docs": [
           "EDJ-10K-2025",
           "RJF-10K-2025",
@@ -3699,6 +4672,7 @@
       "k": 30,
       "passages": 30,
       "chars": 34414,
+      "tokens_est": 8604,
       "change": "UNCHANGED"
     },
     {
@@ -3849,6 +4823,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 0.0,
+      "recall_pool": 0.0,
+      "recall_final": 0.0,
+      "pool_size": 458,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3858,39 +4835,59 @@
               "RJF-10K-2025#10",
               "RJF-10K-2025#11"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "EDJ-10K-2025#30",
               "EDJ-10K-2025#264"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "MS-10K-2025#153"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
+          },
+          {
+            "ids": [
+              "RJF-PR-web-affiliation-options#1"
+            ],
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "SCHW-10Q-2026Q2#25"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           }
         ],
-        "passages": 4,
+        "passages": 5,
         "passages_found": 0,
         "passage_recall": 0.0,
+        "passages_in_pool": 0,
+        "recall_pool": 0.0,
+        "recall_final": 0.0,
         "expected_docs": [
           "RJF-10K-2025",
           "EDJ-10K-2025",
           "MS-10K-2025",
+          "RJF-PR-web-affiliation-options",
           "SCHW-10Q-2026Q2"
         ],
-        "docs": 4,
-        "docs_found": 4,
+        "docs": 5,
+        "docs_found": 5,
         "doc_recall": 1.0,
         "misleading": [],
         "outside_window": [],
@@ -3902,7 +4899,8 @@
       "k": 30,
       "passages": 30,
       "chars": 35900,
-      "change": "IMPROVED"
+      "tokens_est": 8975,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q26",
@@ -3966,6 +4964,9 @@
       "forbidden": [],
       "doc_recall": null,
       "passage_recall": null,
+      "recall_pool": null,
+      "recall_final": null,
+      "pool_size": 15,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -3973,6 +4974,9 @@
         "passages": 0,
         "passages_found": 0,
         "passage_recall": null,
+        "passages_in_pool": 0,
+        "recall_pool": null,
+        "recall_final": null,
         "expected_docs": [],
         "docs": 0,
         "docs_found": 0,
@@ -3990,6 +4994,7 @@
       "k": 20,
       "passages": 15,
       "chars": 19723,
+      "tokens_est": 4931,
       "change": "UNCHANGED"
     },
     {
@@ -4087,6 +5092,9 @@
       "forbidden": [],
       "doc_recall": 0.667,
       "passage_recall": 0.667,
+      "recall_pool": 0.778,
+      "recall_final": 0.667,
+      "pool_size": 81,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -4097,19 +5105,30 @@
             ],
             "found": [
               "MER-PR-2026-09-15-01#0"
-            ]
+            ],
+            "pool": [
+              "MER-PR-2026-09-15-01#0",
+              "MER-PR-2026-09-15-01#1",
+              "MER-PR-2026-09-15-01#2",
+              "MER-PR-2026-09-15-01#3"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "MER-PR-web-advisor-development-program"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
               "MER-PR-web-becoming-a-merrill-lynch-advisor"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           },
           {
             "ids": [
@@ -4117,7 +5136,12 @@
             ],
             "found": [
               "BAC-TR-2026Q1#26"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q1#25",
+              "BAC-TR-2026Q1#26"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4125,7 +5149,14 @@
             ],
             "found": [
               "BAC-TR-2026Q2#21"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q2#20",
+              "BAC-TR-2026Q2#21",
+              "BAC-TR-2026Q2#22",
+              "BAC-TR-2026Q2#63"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4133,13 +5164,24 @@
             ],
             "found": [
               "BAC-TR-2026Q3#19"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q3#19"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "BAC-SUPP-2026Q1"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-SUPP-2026Q1#43",
+              "BAC-SUPP-2026Q1#44",
+              "BAC-SUPP-2026Q1#45",
+              "BAC-SUPP-2026Q1#46"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -4147,7 +5189,15 @@
             ],
             "found": [
               "BAC-SUPP-2026Q2#52"
-            ]
+            ],
+            "pool": [
+              "BAC-SUPP-2026Q2#52",
+              "BAC-SUPP-2026Q2#53",
+              "BAC-SUPP-2026Q2#54",
+              "BAC-SUPP-2026Q2#55",
+              "BAC-SUPP-2026Q2#56"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4155,12 +5205,19 @@
             ],
             "found": [
               "BAC-SUPP-2026Q3#51"
-            ]
+            ],
+            "pool": [
+              "BAC-SUPP-2026Q3#51"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 9,
         "passages_found": 6,
         "passage_recall": 0.667,
+        "passages_in_pool": 7,
+        "recall_pool": 0.778,
+        "recall_final": 0.667,
         "expected_docs": [
           "MER-PR-2026-09-15-01",
           "MER-PR-web-advisor-development-program",
@@ -4185,7 +5242,8 @@
       "k": 20,
       "passages": 20,
       "chars": 25592,
-      "change": "IMPROVED"
+      "tokens_est": 6398,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q28",
@@ -4259,6 +5317,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 0.75,
+      "recall_pool": 0.75,
+      "recall_final": 0.75,
+      "pool_size": 82,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -4274,7 +5335,14 @@
               "EDJ-10Q-2025Q3#70",
               "EDJ-10Q-2025Q2#67",
               "EDJ-10Q-2025Q2#64"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2025Q2#64",
+              "EDJ-10Q-2025Q2#67",
+              "EDJ-10Q-2025Q3#68",
+              "EDJ-10Q-2025Q3#70"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4283,7 +5351,12 @@
             ],
             "found": [
               "EDJ-10Q-2025Q2#66"
-            ]
+            ],
+            "pool": [
+              "EDJ-10Q-2025Q2#66",
+              "EDJ-10Q-2025Q3#69"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4293,19 +5366,28 @@
             ],
             "found": [
               "BAC-TR-2026Q2#63"
-            ]
+            ],
+            "pool": [
+              "BAC-TR-2026Q2#63"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
               "EDJ-10K-2025#130",
               "EDJ-10Q-2026Q2#60"
             ],
-            "found": []
+            "found": [],
+            "pool": [],
+            "stage": "none"
           }
         ],
         "passages": 4,
         "passages_found": 3,
         "passage_recall": 0.75,
+        "passages_in_pool": 3,
+        "recall_pool": 0.75,
+        "recall_final": 0.75,
         "expected_docs": [
           "EDJ-10Q-2025Q2",
           "EDJ-10Q-2025Q3",
@@ -4327,7 +5409,8 @@
       "k": 20,
       "passages": 20,
       "chars": 23823,
-      "change": "IMPROVED"
+      "tokens_est": 5956,
+      "change": "UNCHANGED"
     },
     {
       "id": "Q29",
@@ -4393,6 +5476,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 1.0,
+      "recall_pool": 1.0,
+      "recall_final": 1.0,
+      "pool_size": 99,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -4403,7 +5489,11 @@
             ],
             "found": [
               "MS-10K-2025#153"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#153"
+            ],
+            "stage": "final"
           },
           {
             "ids": [
@@ -4413,12 +5503,20 @@
             "found": [
               "MS-10K-2025#170",
               "MS-10K-2025#128"
-            ]
+            ],
+            "pool": [
+              "MS-10K-2025#128",
+              "MS-10K-2025#170"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 2,
         "passages_found": 2,
         "passage_recall": 1.0,
+        "passages_in_pool": 2,
+        "recall_pool": 1.0,
+        "recall_final": 1.0,
         "expected_docs": [
           "MS-10K-2025"
         ],
@@ -4435,6 +5533,7 @@
       "k": 20,
       "passages": 20,
       "chars": 21418,
+      "tokens_est": 5354,
       "change": "UNCHANGED"
     },
     {
@@ -4491,6 +5590,9 @@
       "forbidden": [],
       "doc_recall": 1.0,
       "passage_recall": 0.5,
+      "recall_pool": 1.0,
+      "recall_final": 0.5,
+      "pool_size": 48,
       "refusal_ok": true,
       "misleading": [],
       "recall": {
@@ -4499,7 +5601,11 @@
             "ids": [
               "BAC-PR-2026-01-14-01#12"
             ],
-            "found": []
+            "found": [],
+            "pool": [
+              "BAC-PR-2026-01-14-01#12"
+            ],
+            "stage": "pool"
           },
           {
             "ids": [
@@ -4509,12 +5615,20 @@
             ],
             "found": [
               "BAC-10K-2025#246"
-            ]
+            ],
+            "pool": [
+              "BAC-10K-2025#246",
+              "BAC-10K-2025#247"
+            ],
+            "stage": "final"
           }
         ],
         "passages": 2,
         "passages_found": 1,
         "passage_recall": 0.5,
+        "passages_in_pool": 2,
+        "recall_pool": 1.0,
+        "recall_final": 0.5,
         "expected_docs": [
           "BAC-PR-2026-01-14-01",
           "BAC-10K-2025"
@@ -4532,7 +5646,8 @@
       "k": 20,
       "passages": 20,
       "chars": 25088,
-      "change": "IMPROVED"
+      "tokens_est": 6272,
+      "change": "UNCHANGED"
     }
   ]
 }

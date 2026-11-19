@@ -99,6 +99,55 @@ questions:
       - [RJF-DECK-2026Q2]
     must_not_return: []          # anything older than the window, checked by date
 
+  # --- Passages Gate 4 named as missed (#210; docs/results/gate4-report.md "Known gaps").
+  # Every id checked in the chunks table of corpus-2026-11-17 on 2026-11-18. Q17 and Q20 were
+  # scored from `expected_doc_ids` (#56); a hand key replaces that, so their doc rows are kept here.
+
+  Q7:   # MS, Merrill, RJF advisor recruiting and retention
+    must_return:
+      - [MS-10K-2025#153]                      # MS formulaic payouts linked to revenue
+    must_not_return: []
+
+  Q15:  # how Schwab earns on client assets vs an advisor-led model
+    must_return:
+      - [SCHW-10K-2025#27]                     # Schwab revenue composition
+    must_not_return: []
+
+  Q17:  # what the firms say about AI in advice delivery
+    must_return:                             # expected_doc_ids (#56), one row per document
+      - [MS-10K-2025]
+      - [MS-TR-2026Q2]
+      - [SCHW-TR-2026Q1]
+      - [SCHW-DECK-2026Q2]
+      - [BAC-TR-2026Q2]
+      - [BAC-TR-2026Q3]
+      - [RJF-TR-2025Q4]
+      - [RJF-TR-2026Q1]
+      - [EDJ-10K-2025]
+      - [BAC-TR-2026Q2#21]                     # Merrill's AI-tools remark
+    must_not_return: []
+
+  Q19:  # younger investors and Edward Jones's offerings
+    must_return:
+      - [EDJ-10K-2025#88]                      # EDJ next-generation platform investments
+    must_not_return: []
+
+  Q20:  # how clients under 40 choose an advisor
+    must_return:                               # expected_doc_ids (#56), one row per document
+      - [UBS-NEXTGEN-2026]
+      - [CERULLI-GWT-2025]
+      - [FINRAF-INVESTORS-2025]
+      - [KITCES-WELLBEING-2023]
+      - [BOFA-PB-STUDY-2026]
+      - [NM-PP-2026]
+      - [WEALTHTENDER-ADVISOR-SEARCH-2025]
+      - [FIDELITY-III-2025#0]                  # Fidelity 2025 Investor Insights Study: wealthy next-gen
+                                               # households vs boomers (#1 is only related links)
+      - [UBS-NEXTGEN-2026#119, UBS-NEXTGEN-2026#13]   # the UBS sample: #119 names it (two surveys of YIO
+                                               # members, 112 and 63 responses, 10 interviews); #13 its
+                                               # ages (below 21 to above 45, most 26-40) and regions
+    must_not_return: []
+
   # --- Gap questions (#60). must_return here is the labelled ADJACENT evidence a
   # gap_with_adjacent answer needs; must_not_return is what reads like an answer but is a
   # different quantity, scope or firm. Checked 2026-10-22 on corpus-2026-10-18.
@@ -133,6 +182,7 @@ questions:
       - [RJF-10K-2025#10, RJF-10K-2025#11]     # employee vs independent payout structure
       - [EDJ-10K-2025#30, EDJ-10K-2025#264]    # commission basis; FA bonuses from partnership profit
       - [MS-10K-2025#153]                      # formulaic payouts linked to revenue
+      - [RJF-PR-web-affiliation-options#1]     # RJF published payout ranges (Gate 4 missed, #210)
       - [SCHW-10Q-2026Q2#25]                   # only: headcount growth incl. financial consultants raises comp
     must_not_return:
       - RJF-10K-2025#652         # dividend payout ratio ("payout", not advisor payout)

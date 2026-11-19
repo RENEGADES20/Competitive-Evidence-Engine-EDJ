@@ -365,7 +365,7 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
 
     seen = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
-    monkeypatch.setattr(fts, "search", lambda q, k: [])
+    monkeypatch.setattr(fts, "search", lambda q, k, trace=None: [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
@@ -381,7 +381,7 @@ def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
     seen = []
     five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(five))
-    monkeypatch.setattr(fts, "search", lambda q, k: seen.append(k) or real_hits())
+    monkeypatch.setattr(fts, "search", lambda q, k, trace=None: seen.append(k) or real_hits())
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q22", "--out", str(tmp_path / "budget")])
@@ -391,6 +391,66 @@ def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
     assert rec["meta"]["k"] == "by question"
     assert {k: rec["questions"][0][k] for k in ("k", "passages", "chars")} == {"k": 30, "passages": 1, "chars": 1}
     assert "| 30 | 1 | 1 |" in (tmp_path / "budget" / "report.md").read_text(encoding="utf-8")
+
+
+# --- #210: recall by stage (candidate pool vs final set), estimated tokens ----------------------
+
+def test_rows_get_a_stage_and_pool_recall():
+    key = {"must_return": [["MS-10K-2025#153"], ["SCHW-10K-2025#27"], ["RJF-PR-web-affiliation-options"],
+                           ["EDJ-10K-2025#88"]], "must_not_return": []}
+    hits = [khit("MS-10K-2025#153", "MS")]
+    pool = {"MS-10K-2025#153", "SCHW-10K-2025#27", "RJF-PR-web-affiliation-options#1", "EDJ-10K-2025#87"}
+    s = er.score_key(key, hits, forbidden_ids=[], pool_ids=pool)
+    assert [r["stage"] for r in s["rows"]] == ["final", "pool", "pool", "none"]   # DOC row: any chunk of it
+    assert s["rows"][2]["pool"] == ["RJF-PR-web-affiliation-options#1"]
+    assert (s["passages_in_pool"], s["recall_pool"], s["recall_final"]) == (3, 0.75, 0.25)
+    assert s["recall_final"] == s["passage_recall"]
+
+
+def test_pool_recall_counts_final_hits_without_a_trace():
+    key = {"must_return": [["MS-10K-2025#153"], ["SCHW-10K-2025#27"]], "must_not_return": []}
+    s = er.score_key(key, [khit("MS-10K-2025#153", "MS")], forbidden_ids=[])
+    assert [r["stage"] for r in s["rows"]] == ["final", "none"] and s["recall_pool"] == 0.5
+
+
+def test_pool_recall_uses_the_window_rows():
+    key = {"must_return": [["RJF-10Q-2026Q2"], ["RJF-PR-2026-07-22-01#4"]], "must_not_return": [],
+           "window_days": 90}
+    dates = {"RJF-10Q-2026Q2": "2026-08-05", "RJF-PR-2026-07-22-01": "2026-07-22"}
+    s = er.score_key(key, [], forbidden_ids=[], as_of=dt.date(2026, 10, 21), doc_dates=dates,
+                     pool_ids={"RJF-PR-2026-07-22-01#4", "RJF-10Q-2026Q2#245"})
+    assert s["passages"] == 1 and s["recall_pool"] == 1.0 and s["recall_final"] == 0.0
+
+
+def test_tokens_are_characters_over_four():
+    hits = [types.SimpleNamespace(text="x" * 10), types.SimpleNamespace(text="y" * 7)]
+    assert er.prompt_size(20, hits) == {"k": 20, "passages": 2, "chars": 17, "tokens_est": 4}
+
+
+def test_summary_recall_by_stage_and_totals():
+    recs = [{"id": "Q1", "tier": 1, "recall_pool": 1.0, "recall_final": 0.5, "passages": 20, "tokens_est": 100},
+            {"id": "Q7", "tier": 2, "recall_pool": 0.0, "recall_final": 0.0, "passages": 20, "tokens_est": 50},
+            {"id": "Q2", "tier": 1, "recall_pool": None, "recall_final": None, "passages": 30, "tokens_est": 10}]
+    s = er.summarize(recs)
+    assert (s["recall_pool"], s["recall_final"], s["with_rows"]) == (0.5, 0.25, 2)
+    assert (s["tier1_recall_pool"], s["tier1_recall_final"], s["tier1_with_rows"]) == (1.0, 0.5, 1)
+    assert (s["passages"], s["tokens_est"]) == (70, 160)
+
+
+def test_report_shows_stage_columns_and_summary_row(tmp_path):
+    corpus = {("MS", "10-K")}
+    key = {"must_return": [["MS-10K-2025#153"], ["MS-10K-2025#9"]], "must_not_return": []}
+    r = er.evaluate(dict(q("Q7", ["MS:10-K"]), tier=2), query(["MS"]), [khit("MS-10K-2025#153", "MS")], corpus,
+                    SUBS, 0.5, key=key, pool_ids={"MS-10K-2025#9", "MS-10K-2025#153"})
+    assert (r["recall_pool"], r["recall_final"], r["pool_size"]) == (1.0, 0.5, 2)
+    r |= {"k": 20, "passages": 1, "chars": 8, "tokens_est": 2}
+    meta = {"run_id": "t", "snapshot": "s", "commit": "c", "k": 20, "min_coverage": 0.5, "as_of": "2026-11-17",
+            "mode": "mock", "baseline": None}
+    er.write_reports(tmp_path, meta, [r])
+    md = (tmp_path / "report.md").read_text(encoding="utf-8")
+    assert "| 1/2 | 2/2 |" in md and "recall@pool 1.0, recall@final 0.5" in md
+    assert "missing (in pool, lost in select: MS-10K-2025#9)" in md
+    assert md.count("| **All** |") == 1
 
 
 # --- home-firm theme peers (#205, ADR-018): checked on the text, not on search()'s flag ---------

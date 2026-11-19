@@ -764,10 +764,26 @@ def select(pool: list[Hit], k: int = K, floor: float | None = None,
     return kept
 
 
-def search(q: Query, k: int | None = None) -> list[Hit]:
+@dataclass
+class PoolTrace:
+    """Chunk ids of every candidate pool search() fetches before select() (#210), so the eval can
+    tell a passage that was never a candidate (recall) from one lost in select() (selection).
+    Recording only: search() returns the same hits with or without a trace."""
+    firm: list[str] = field(default_factory=list)       # main pass (named firms, or all in theme mode)
+    research: list[str] = field(default_factory=list)   # tier 5 research on the theme (entity+theme)
+    on_theme: list[str] = field(default_factory=list)   # the firms' own chunks on the theme (#117)
+    peers: list[str] = field(default_factory=list)      # theme peers (#205), before peer_floor()
+    answers: list[str] = field(default_factory=list)    # answer turns of pooled question turns (#203)
+
+    def ids(self) -> set[str]:
+        return {*self.firm, *self.research, *self.on_theme, *self.peers, *self.answers}
+
+
+def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> list[Hit]:
     """k: passages to return; None = budget(q), the app default. The theme peers' slots (#205)
     are part of budget(q) and come on top of an explicit k, so the named firms and the research
-    part get the same k with or without peers."""
+    part get the same k with or without peers. trace (#210): filled with the candidate pools'
+    chunk ids; it changes nothing else."""
     k = budget(q) - peer_slots(q) if k is None else k
     if q.unmapped and not q.entities:
         return []  # firm is known but not in the corpus: nothing is eligible
@@ -817,6 +833,12 @@ def search(q: Query, k: int | None = None) -> list[Hit]:
                       key=lambda h: (-h.rank, h.chunk_id))
         answers = answer_turns(conn, [h for h in pool if is_question_turn(h)], where, window, filters,
                                params) if PAIR_TURNS else {}
+    if trace is not None:
+        trace.firm += [r["chunk_id"] for r in rows]
+        trace.research += [r["chunk_id"] for r in research_rows]
+        trace.on_theme += [r["chunk_id"] for r in on_theme_rows]
+        trace.peers += [r["chunk_id"] for r in peer_rows]
+        trace.answers += [a.chunk_id for a in answers.values()]
     # Inside a window every document is on topic, so no floor; one filing may be all there is.
     # Trade press is not put last there (#198): Q26 reads its 90 days of news as they rank; a new
     # document still comes before a second chunk of a used one (#199, Q27: Merrill since January).
