@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -50,6 +50,28 @@ expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial 
     #   all-caps keys exact case; config `synonym_exact` keeps the plain match (`compensation
     #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
     #   is searched as a phrase too ("net new assets", Q22)
+
+plan_question(query) -> Plan{parts: [Part{id, text, firms, keyword_query}], source, calls}
+    # question planner (#214, ADR-020; src/cee/retrieve/planner.py): with a real provider and
+    #   PLANNER=on, one call (the answer model, tool submit_plan) splits the question into at most
+    #   PLANNER_MAX_PARTS = 4 parts with their firms and rewritten search words. Code validates it:
+    #   firms must be resolve()'s (unknown / unasked / no-document firms dropped; a dropped resolved
+    #   firm comes back as a part, or joins the part with the fewest firms at the cap); more parts than
+    #   the cap are cut; empty words -> the part's text; ids p1..pn by code. Window, themes and the
+    #   Ask page filters are not in the planner's schema. Not usable (no tool call, wrong shape, cut
+    #   at max_tokens) or a failed call -> the rule plan, logged, the call counted, never re-rolled.
+    # rule plan (mock provider, PLANNER=off, fallback): one part per named covered firm for 2-4
+    #   firms, else one whole-question part (five firms exceed the cap). Passage mode (TOKEN_BUDGET
+    #   None or an explicit k): one whole-question part, no planner call.
+search_parts(query, plan) -> [Hit{..., part_id}]
+    # every part searches a copy of the resolved query with its firms and words (Query.terms) and
+    #   the whole question's doc-type scope (Query.scope): every hard SQL filter in every part
+    # research (<= THEME_K = 4 passages) once per question first (research_pass), then the parts in
+    #   order with share_i = max(0, T - R - used) / (parts left) of T = budget_tokens(query) (R =
+    #   research tokens; unused share flows to later parts), chunks kept earlier excluded from the
+    #   pools and the answer-turn map, then the theme peers once (peer_pass). Budgeted total <=
+    #   max(T, R) + one chunk. A one-part plan returns exactly search(query). part_id: p1..pn,
+    #   "research", "peers"
 
 retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
