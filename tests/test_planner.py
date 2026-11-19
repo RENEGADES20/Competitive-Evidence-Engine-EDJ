@@ -178,8 +178,25 @@ def test_anthropic_plan_call():
     assert [p.keyword_query for p in plan.parts] == [PLAN["parts"][0]["keyword_query"], PLAN["parts"][1]["keyword_query"]]
     req = client.kwargs
     assert req["max_tokens"] == planner.PLANNER_MAX_TOKENS and req["tools"][0]["name"] == planner.PLAN_TOOL
-    assert req["tools"][0]["input_schema"]["properties"]["parts"]["maxItems"] == 4
+    # #232: strict tool; strict mode takes no maxItems, the cap is in the prompt and code cuts
+    parts = req["tools"][0]["input_schema"]["properties"]["parts"]
+    assert req["tools"][0]["strict"] is True and parts["minItems"] == 1 and "maxItems" not in parts
+    assert "at most 4 parts" in req["system"] and "Most parts: 4" in req["messages"][0]["content"]
     assert "MER (Merrill)" in req["messages"][0]["content"]
+
+
+def test_refusal_falls_back_even_with_a_valid_plan():
+    client = FakeAnthropic(stop="refusal")
+    plan = planner.plan_question(q7(), "anthropic", client=client, cap=4)
+    assert plan.source == "fallback" and plan.calls == 1 and "refusal" in plan.error
+    assert plan.raw[0]["input"] == PLAN
+
+
+def test_more_parts_than_the_cap_from_a_strict_call_are_cut():
+    many = {"parts": [{"id": str(i), "text": "t", "firms": ["MS"], "keyword_query": "w"} for i in range(6)]}
+    client = FakeAnthropic(blocks=[SimpleNamespace(type="tool_use", name=planner.PLAN_TOOL, input=many)])
+    plan = planner.plan_question(q7(), "anthropic", client=client, cap=4)
+    assert plan.source == "model" and len(plan.parts) == 4 and "cut to 4 parts" in plan.corrections
 
 
 def test_truncated_output_falls_back():

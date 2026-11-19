@@ -210,15 +210,18 @@ def validate_plan(raw, q: Query, cap: int | None = None) -> tuple[list[Part], li
     return parts, notes
 
 
-def plan_schema(strict: bool = False, cap: int | None = None) -> dict:
+def plan_schema(strict: bool = False) -> dict:
+    """strict=True: the OpenAI schema (no array limits). strict=False: the Anthropic tool's schema,
+    also sent with strict: true since #232; Anthropic strict mode accepts minItems 0 or 1 and no
+    maxItems, so the part cap is in the prompt and code cuts extra parts (validate_plan)."""
     part = {"type": "object",
             "properties": {"id": {"type": "string"}, "text": {"type": "string"},
                            "firms": {"type": "array", "items": {"type": "string"}},
                            "keyword_query": {"type": "string"}},
             "required": ["id", "text", "firms", "keyword_query"], "additionalProperties": False}
     parts = {"type": "array", "items": part}
-    if not strict:   # OpenAI strict mode is given no maxItems; code cuts extra parts either way
-        parts |= {"minItems": 1, "maxItems": max_parts() if cap is None else cap}
+    if not strict:
+        parts |= {"minItems": 1}
     return {"type": "object", "properties": {"parts": parts}, "required": ["parts"],
             "additionalProperties": False}
 
@@ -244,8 +247,8 @@ def anthropic_plan_request(q: Query, cap: int) -> dict:
         "model": settings().llm_model,
         "max_tokens": PLANNER_MAX_TOKENS,
         "system": system_prompt(cap),
-        "tools": [{"name": PLAN_TOOL, "description": "Submit the search plan.",
-                   "input_schema": plan_schema(cap=cap)}],
+        "tools": [{"name": PLAN_TOOL, "description": "Submit the search plan.", "strict": True,   # #232
+                   "input_schema": plan_schema()}],
         "tool_choice": {"type": "auto"},
         "messages": [{"role": "user", "content": planner_message(q, cap)}],
     }
@@ -286,6 +289,9 @@ def call_planner(q: Query, provider: str, cap: int, client=None, meta: dict | No
                                      [_block_dict(b) for b in resp.content], stop)
         if stop == "max_tokens":
             raise PlannerOutputError("planner output cut at max_tokens", block.input, stop)
+        if stop == llm.REFUSAL:   # #232: strict's schema guarantee does not hold after a refusal
+            raise PlannerOutputError("planner output stopped by refusal",
+                                     [_block_dict(b) for b in resp.content], stop)
         return block.input
     if provider == "openai":
         client = client or llm.openai_client()
