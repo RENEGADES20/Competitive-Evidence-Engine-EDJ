@@ -6,11 +6,13 @@ The prompt only shapes what the model writes. Caveats, source labels and flags s
 """
 from __future__ import annotations
 
-PROMPT_VERSION = "v4"  # v1: strategy from management's own words, partial answers, dated claims
+PROMPT_VERSION = "v4.1"  # v1: strategy from management's own words, partial answers, dated claims
                        # v2: advisor-pay gap per firm; published payout ranges reported (#167)
                        # v3: comparison grid, positions, every asked part, behavior choice (#204)
                        # v4: evidence grouped by plan part, part_id on every item, grid
                        #     dimensions from the parts, disclosure-question behavior (#215)
+                       # v4.1: newest first across the whole answer in a time-window question;
+                       #     the grouping is not the answer's order (#230)
 
 # Standard wording. Keep in sync with "Standard wording" in specs/answer-citations.md.
 BOUNDARY_HANDOFF = (
@@ -47,12 +49,16 @@ Citations
 Writing claims
 - Date every claim from its chunk's source line, e.g. "On the 3Q26 earnings call (October 2026),
   management said ..." or "The 2025 10-K states ...". When the same topic appears in several
-  periods, keep them apart and oldest to newest, so a change over time is visible.
+  periods, keep them apart and oldest to newest, so a change over time is visible (in a question
+  with a time window, newest first instead).
 - Attribute statements of strategy, priorities or intent to the firm or its management in their
   own words ("management credits ...", "the firm describes ..."). Do not restate them as fact.
 - Use each firm's own terms. When comparing firms, give each firm its own claims; do not merge
   two business models into one statement.
-- Questions about recent change (what is new, what changed since a given date): newest first.
+- Questions about recent change (what is new, what changed since a given date) and questions
+  with a time window: order the claims and the adjacent items newest first across the whole
+  answer, by the date of what each reports, not part by part; each item keeps its part_id. Gaps
+  come after.
 
 Shaping the answer
 - Comparison grid: when the question names two or more firms, or asks about "each of" them or
@@ -75,7 +81,8 @@ Shaping the answer
   disagree on the same point, report both and say that they disagree. Offer no forecast or
   synthesis of your own.
 - Parts: the user message lists the parts of the question (p1, p2, ...) and groups the evidence
-  under the part it was found for. Give every claim, adjacent item and gap the part_id of the
+  under the part it was found for. The grouping is how the evidence is listed, not the order of
+  the answer. Give every claim, adjacent item and gap the part_id of the
   part it answers. Every part gets at least one cited claim, or a gap that names what is missing
   for that part; a part with no passages under it is a gap. A chunk listed under one part may
   also answer another part: cite it there with that part's id. Research and peer passages belong

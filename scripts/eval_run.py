@@ -344,14 +344,17 @@ def compare(record: dict, base: dict | None) -> str:
 
 
 def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
-              max_tokens: int = 8000, plan_parts: list | None = None) -> str:
+              max_tokens: int = 8000, plan_parts: list | None = None, window=None) -> str:
     """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
-    key, and a run with another output cap never reuses one made under 8000."""
+    key, and a run with another output cap never reuses one made under 8000. The window (#230)
+    joins it only when the question has one (the v4.1 user message names it; --as-of moves it)."""
     parts = [q["id"], q["text"], prompt_version, snapshot, provider, model, chunk_ids]
     if max_tokens != 8000:
         parts = [*parts, {"max_tokens": max_tokens}]
     if plan_parts is not None:   # #215: the v4 user message lists the plan's parts
         parts = [*parts, {"parts": plan_parts}]
+    if window:
+        parts = [*parts, {"window": [str(window[0]), str(window[1])]}]
     blob = json.dumps(parts)
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
@@ -395,31 +398,38 @@ class RealRunner:
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
         self.max_tokens = llm.MAX_TOKENS
         self.calls, self.reused, self.last_file = 0, 0, None
+        self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
         invalid: the model output (new or cached) is not a valid Answer; its raw payload is in
         raw/<self.last_file> and the call still counts (#187)."""
-        from cee.answer.llm import ModelOutputError
+        from cee.answer.llm import ModelOutputError, check_output
         from cee.answer.schema import Answer
-        from cee.ask import answer_for
+        from cee.ask import answer_for, answer_window
 
-        self.last_file = None
+        self.last_file, self.last_stop = None, (None, None)
         if not hits:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
-                        [h.chunk_id for h in hits], self.max_tokens, parts_of(plan))
+                        [h.chunk_id for h in hits], self.max_tokens, parts_of(plan), answer_window(query))
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
             self._copy(path)
+            self.last_stop = (saved.get("stop_reason"), (saved.get("usage") or {}).get("output_tokens"))
             if saved.get("invalid"):    # a wrong output is a finding: never re-called (CLAUDE.md)
                 return None, "invalid"
-            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]), plan=plan)
+            raw = Answer(**saved["raw"])
+            try:                        # #230: a saved cut or empty output is invalid on reuse too
+                check_output(raw, saved["raw"], self.provider)
+            except ModelOutputError:
+                return None, "invalid"
+            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=raw, plan=plan)
             return answer.model_dump(), "cached"
         if self.calls >= self.max_calls:
             return None, "cap"
@@ -430,10 +440,13 @@ class RealRunner:
         try:
             answer, raw = answer_for(q["text"], query, hits, self.provider, plan=plan)
         except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
+            usage = getattr(e, "usage", None) or {}
+            self.last_stop = (getattr(e, "stop_reason", None), usage.get("output_tokens"))
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
-                              "stop_reason": getattr(e, "stop_reason", None)})
+                              "stop_reason": getattr(e, "stop_reason", None), "usage": usage})
             return None, "invalid"
-        self._save(path, {**meta, "raw": raw.model_dump()})
+        self.last_stop = (raw.stop_reason or None, raw.usage.get("output_tokens"))
+        self._save(path, {**meta, "stop_reason": raw.stop_reason, "usage": raw.usage, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
 
     def plan(self, q: dict, query):
@@ -465,17 +478,18 @@ class RealRunner:
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model, "max_parts": cap,
                 "max_tokens": planner.PLANNER_MAX_TOKENS, "query": asdict(query),
                 "at": dt.datetime.now().isoformat()}
+        call: dict = {}   # #230: stop_reason and usage of the call, saved with every plan record
         try:
-            raw = planner.call_planner(query, self.provider, cap)
+            raw = planner.call_planner(query, self.provider, cap, meta=call)
         except planner.PlannerOutputError as e:
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
-                              "stop_reason": e.stop_reason})
+                              "stop_reason": e.stop_reason, "usage": call.get("usage")})
             return planner.from_output(query, e.raw, self.provider, cap, error=str(e))
         except Exception as e:   # API / network: the rule plan, the call counted, never re-called
             err = f"{type(e).__name__}: {e}"
             self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None})
             return planner.from_output(query, None, self.provider, cap, error=err)
-        self._save(path, {**meta, "raw": raw})
+        self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"), "raw": raw})
         return planner.from_output(query, raw, self.provider, cap)
 
     def _save(self, path: Path, record: dict) -> None:
@@ -701,6 +715,7 @@ def main(argv: list[str] | None = None) -> int:
                 from cee.answer.validate import part_coverage
                 r["part_coverage"] = part_coverage(Answer(**answer), plan, hits)
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid"))
+            r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         records.append(r)

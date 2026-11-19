@@ -50,6 +50,11 @@ class Answer(BaseModel):
     coverage_note: str = ""                            # built by code from the retrieved hits
     withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
     llm_called: bool = False
+    # Code-owned, from the provider response (#230): why the output stopped (Anthropic stop_reason,
+    # OpenAI finish_reason; "" for the mock and outputs saved before #230) and its token usage
+    # (input_tokens, output_tokens; Anthropic also the content block types, e.g. thinking, tool_use).
+    stop_reason: str = ""
+    usage: dict = Field(default_factory=dict)
 
     @model_validator(mode="before")
     @classmethod
