@@ -310,7 +310,7 @@ open), a failed planner call falls back to the rule plan (counted, a finding). N
   `gap_with_adjacent` as in Gate 4 / v3, bank `answer` known NEXT item 5; Q24 `gap_with_adjacent`;
   Q1 `answer` and PASS against `passes_if`); `stop_reason` and output tokens recorded for all five.
 - [x] Spec, ARCHITECTURE and the ADR-019 amendment updated.
-- [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
+- [x] (PR #231, pytest pass on fbe2fc2) `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
 - 2026-11-19 03:59 - plan written. Branch `tl/230-answer-v41` from `main` bba9acf (PR #229 merged
@@ -371,3 +371,4 @@ open), a failed planner call falls back to the rule plan (counted, a finding). N
   Q1 and Q24 would have been cut at the old 8000 cap (8,099 and 11,885 output tokens). PR is
   "Part of #230" (Q22 open).
   `pytest -q` 683 passed.
+- 2026-11-19 04:22 - step 9 /finish-task: PR #231 opened ("Part of #230", Q22 open; ADR-019 amendment, escalated to the TL for the merge); origin/main unchanged (bba9acf), no merge needed; `gh pr checks 231` pytest pass on fbe2fc2 (38 s).
