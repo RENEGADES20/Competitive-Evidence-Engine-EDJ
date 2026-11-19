@@ -142,7 +142,9 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
   through their synonyms (Q29).
 - Comparisons: #126 on `corpus-2026-10-29` (`evals/hybrid-eval/corpus-2026-10-29/report.md`, tuned
   constants per mode); #211 on `corpus-2026-11-17` (`evals/hybrid-eval/corpus-2026-11-17/report.md`,
-  recall@pool / recall@final per mode and the #212 decision). `LEG_K`, `RRF_K`, `RERANK_N` and
+  recall@pool / recall@final per mode and the #212 decision); #212 real answers with `hybrid-norerank`
+  on `corpus-2026-11-17` (`evals/hybrid-eval/corpus-2026-11-17/real/report.md`, 21/30 at acting
+  quality, as Gate 4's `fts`; Q17 lost, Q28 gained). `LEG_K`, `RRF_K`, `RERANK_N` and
   `RERANK_FLOOR` were not tuned.
 
 ## Acceptance

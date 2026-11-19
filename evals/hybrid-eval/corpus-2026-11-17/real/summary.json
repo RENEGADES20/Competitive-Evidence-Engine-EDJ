@@ -1,0 +1,1228 @@
+{
+ "issue": 212,
+ "snapshot": "corpus-2026-11-17",
+ "as_of": "2026-11-17",
+ "retrieval_mode": "hybrid-norerank",
+ "constants": {
+  "FLOOR": 0.4,
+  "MAX_PER_DOC": 3,
+  "DUP_JACCARD": 0.6,
+  "RERANK_FLOOR": 0.0,
+  "RERANK_N": 50,
+  "WINDOW_MAX_PER_DOC": 8,
+  "THEME_MAX_PER_DOC": 2
+ },
+ "model": "claude-sonnet-5-5",
+ "prompt_version": "v3",
+ "run_id": "corpus-2026-11-17-20261119-000405",
+ "commit": "875edf3",
+ "calls": {
+  "real_calls_total": 30,
+  "attempt_1": {
+   "calls": 17,
+   "questions": "Q1-Q17",
+   "commit": "60af2a4",
+   "stopped": "local tokenizers.pyd crash (0xc0000409) before Q18's model call"
+  },
+  "attempt_2": {
+   "calls": 13,
+   "reused": 17,
+   "questions_called": "Q18-Q30",
+   "commit": "875edf3",
+   "decision": "TL issue comment 7001200270"
+  },
+  "raw_files": 30,
+  "planned": 30
+ },
+ "score": {
+  "hybrid": 21,
+  "gate4": 21,
+  "tier1_hybrid": 12,
+  "tier1_gate4": 12,
+  "tier1_of": 18
+ },
+ "pass_to_fail": [
+  "Q17"
+ ],
+ "fail_to_pass": [
+  "Q28"
+ ],
+ "borderline": {
+  "pass_side": [
+   "Q5",
+   "Q13",
+   "Q14",
+   "Q19",
+   "Q22",
+   "Q26"
+  ],
+  "fail_side": [
+   "Q17"
+  ]
+ },
+ "citations": {
+  "total": 411,
+  "not_in_retrieved_set_or_db": 0,
+  "number_check_flags": {
+   "Q16": "false positive (1,311 and 93% in MS-TRADE-2026-10-21-IN-01#2)",
+   "Q19": "false positive (all figures in BOFA-PB-STUDY-2024#9)"
+  }
+ },
+ "scorer": "TL agent (Claude), one agent, Gate 4 method; blind first (verdicts written before Gate 4's answers were opened)",
+ "questions": {
+  "Q1": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Channels in management's framing (advisor-led drove 2024, Workplace 'most exciting part', self-directed marketing, 'the funnel is working'), each dated 4Q24-3Q26, with the 2026 NNA series and the IPO share.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 11,
+    "only_gate4": 9,
+    "only_hybrid": 9
+   },
+   "passage_recall": {
+    "gate4": 0.5,
+    "hybrid": 0.125
+   },
+   "cited": {
+    "gate4": 14,
+    "hybrid": 12,
+    "both": 5
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q2": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Choice (AdvisorChoice, five options), payout (Advisor Select higher rate; Corporate RIA 81-90% in gaps), autonomy (book ownership, own branch, no quotas), platform ($1.1B tech), results (>$400M FY25 prior production, $460M T12); management-sourced.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 8,
+    "only_gate4": 12,
+    "only_hybrid": 12
+   },
+   "passage_recall": {
+    "gate4": 0.667,
+    "hybrid": 0.667
+   },
+   "cited": {
+    "gate4": 17,
+    "hybrid": 17,
+    "both": 7
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q3": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "s",
+    "hybrid": "s"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Framing and priorities dated (custody 'grow, compete and succeed', support ecosystem beyond custody, lending, small RIAs), but no competitive pressure management acknowledges, nothing on ground conceded, and no gap naming that part.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 7,
+    "only_gate4": 13,
+    "only_hybrid": 13
+   },
+   "passage_recall": {
+    "gate4": 0.667,
+    "hybrid": 0.667
+   },
+   "cited": {
+    "gate4": 10,
+    "hybrid": 13,
+    "both": 5
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q4": {
+   "tier": 1,
+   "trap": true,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Trap held: every claim Merrill-specific or labelled GWIM / Merrill + Private Bank; training pipeline and ADP, sourcing shift quoted ('picking up' experienced recruiting, 'not an enormous part of our strategy'); Merrill-only headcount marked as a gap.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 11,
+    "only_gate4": 9,
+    "only_hybrid": 9
+   },
+   "passage_recall": {
+    "gate4": 0.714,
+    "hybrid": 0.571
+   },
+   "cited": {
+    "gate4": 18,
+    "hybrid": 14,
+    "both": 10
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q5": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "LeadIQ with its purpose (AI lead distribution to advisors), next best action, E*TRADE; DevGen AI / Parable labelled not advisor-facing; no spend figure, named as a gap. Much of the rest is generic 'invest in technology' (borderline).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 6,
+    "only_gate4": 14,
+    "only_hybrid": 14
+   },
+   "passage_recall": {
+    "gate4": 0.833,
+    "hybrid": 0.5
+   },
+   "cited": {
+    "gate4": 11,
+    "hybrid": 10,
+    "both": 3
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q6": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Options as the firm describes them (10-K AdvisorChoice, five options on the recruiting page); movement quoted ('acceleration rate within the independent channel is probably higher', OSJ departures); no quantified mix, said so.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 11,
+    "only_gate4": 9,
+    "only_hybrid": 9
+   },
+   "passage_recall": {
+    "gate4": 1.0,
+    "hybrid": 0.833
+   },
+   "cited": {
+    "gate4": 14,
+    "hybrid": 17,
+    "both": 10
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q7": {
+   "tier": 2,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "s",
+    "hybrid": "s"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Only two dimensions (recruiting, retention); payout philosophy not a dimension, Morgan Stanley's training pipeline neither given nor marked empty; retention results only for Raymond James.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 5,
+    "only_gate4": 15,
+    "only_hybrid": 15
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": 0.0
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 14,
+    "both": 3
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q8": {
+   "tier": 2,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Each firm's own language (Schwab 'industry-leading value proposition', RJ 'best of both worlds', 'A partnership in independence'); Schwab described as custody and support to RIAs, RJ as affiliation options and a self-clearing broker-dealer; not flattened.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 8,
+    "only_gate4": 12,
+    "only_hybrid": 12
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 8,
+    "hybrid": 14,
+    "both": 6
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q9": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Merrill $250K (10-K, 3Q26 deck), Private Bank $3MM+ (labelled), $500K+ household metric; Morgan Stanley: no dollar thresholds, said plainly rather than inferred.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 8,
+    "only_gate4": 12,
+    "only_hybrid": 12
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 7,
+    "both": 3
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q10": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Only GWIM uses the term (investor-day slide, Mass Affluent $500K-$1MM, dated); basis visible; EDJ, MS, Schwab ('affluent' only) and RJ each marked as not using it.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 11,
+    "only_gate4": 19,
+    "only_hybrid": 19
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 7,
+    "both": 4
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q11": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "c, b",
+    "hybrid": "c, b"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "EDJ and RJF definitions only (EDJ period-end and average counts, attrition definition; RJF trainees counted once in production, RCS advisors excluded); MS, Schwab, Merrill not in the corpus; chose gap_with_adjacent, expected answer.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 10,
+    "only_gate4": 20,
+    "only_hybrid": 20
+   },
+   "passage_recall": {
+    "gate4": 0.2,
+    "hybrid": 0.3
+   },
+   "cited": {
+    "gate4": 10,
+    "hybrid": 11,
+    "both": 4
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q12": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer_with_boundary",
+   "behavior": {
+    "gate4": "answer_with_boundary",
+    "hybrid": "answer_with_boundary"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "s",
+    "hybrid": "s"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Schwab half good (scale, cost-to-serve, 'no trade-offs', AEO, account openings; acquisition cost named as a gap) and the hand-off is explicit, but Edward Jones's own cost structure is not set alongside (only its new-client initiatives and household counts) and not named as a gap.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 7,
+    "only_gate4": 13,
+    "only_hybrid": 13
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 10,
+    "both": 3
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q13": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "In management's words: workplace flows into advisor-led ($300B since 2020, 4Q24), 70% of workplace-originated flows are NNA (2Q25), 'the funnel is working' (4Q25), deck definitions, participants and unvested assets by date; operational mechanics named as a gap (borderline).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 9,
+    "only_gate4": 11,
+    "only_hybrid": 11
+   },
+   "passage_recall": {
+    "gate4": 1.0,
+    "hybrid": 0.667
+   },
+   "cited": {
+    "gate4": 11,
+    "hybrid": 11,
+    "both": 5
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q14": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "Advisor economics per option from RJF's own pages and 10-K (employee payout on revenue + benefits; Advisor Select runs the branch P&L for a higher rate; Bank & CU paid by the institution; Corporate RIA 81-90%; RCS terms set with the RIA); the firm side is thin and named as a gap (borderline).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 10,
+    "only_gate4": 10,
+    "only_hybrid": 10
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 14,
+    "hybrid": 15,
+    "both": 8
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q15": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "r, s",
+    "hybrid": "r, s"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "No Schwab revenue composition (named as 'not in the evidence' although the corpus holds it), so no mechanism; the advisor-led side is EDJ/RJF/GWIM fee descriptions; no statement of where the comparison breaks down.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 9,
+    "only_gate4": 21,
+    "only_hybrid": 21
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": 0.0
+   },
+   "cited": {
+    "gate4": 13,
+    "hybrid": 8,
+    "both": 2
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q16": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Organised by position, each attributed and dated, no forecast of its own. Number flag on claim 6 checked: 1,311 and 93% are in the cited passage (false positive).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 5,
+    "only_gate4": 15,
+    "only_hybrid": 15
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 8,
+    "hybrid": 10,
+    "both": 3
+   },
+   "model": "cached",
+   "explanation": null
+  },
+  "Q17": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": "r"
+   },
+   "change": "PASS->FAIL",
+   "borderline": "fail",
+   "reason": "Quantified BAC usage, Schwab's shipped Portfolio Insights and its aspirations, RJ framework and limits are given, but deployed-to-advisors vs aspiration is not labelled claim by claim, and the 'who claims most' puts Morgan Stanley among those that 'say less' because its deployed advisor AI (LeadIQ) was not retrieved (borderline).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 7,
+    "only_gate4": 13,
+    "only_hybrid": 13
+   },
+   "passage_recall": {
+    "gate4": 0.667,
+    "hybrid": 0.5
+   },
+   "cited": {
+    "gate4": 14,
+    "hybrid": 15,
+    "both": 5
+   },
+   "model": "cached",
+   "explanation": {
+    "cause": "retrieval",
+    "passages": [
+     "RJF-DECK-2025-investor-day#121",
+     "MS-TR-2025Q3#8",
+     "RJF-TR-2025Q4#6"
+    ],
+    "why": "Gate 4's PASS rested on named advisor tools (RJF tool list, MS LeadIQ, RJF AI-tools remark); all three passages were in Gate 4's retrieved set and none in hybrid's, so hybrid's answer had no named advisor tool for MS or RJF and ranked MS among those that 'say less'."
+   }
+  },
+  "Q18": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Research, management commentary, risk factors, trade press, vendor research, Form ADV disclosures and the SEC order each labelled for what it is; no consensus forecast, named as a gap.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 5,
+    "only_gate4": 15,
+    "only_hybrid": 15
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 11,
+    "hybrid": 12,
+    "both": 4
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q19": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "answer_with_boundary",
+   "behavior": {
+    "gate4": "answer_with_boundary",
+    "hybrid": "answer_with_boundary"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "Dated, sourced cohort surveys (BofA private bank 2024 and 2026, FINRA Foundation 2025), Schwab's young-client results, EDJ's Quicken stake (trade, labelled); stops at 'should' explicitly. Competitor moves are thin (borderline). Number flag on claim 1 checked: all figures are in BOFA-PB-STUDY-2024#9 (false positive).",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 25,
+    "both": 9,
+    "only_gate4": 11,
+    "only_hybrid": 16
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": 0.0
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 11,
+    "both": 2
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q20": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "r",
+    "hybrid": "r, b"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "No survey on how under-40s choose an advisor; chose gap_with_adjacent (expected answer) with UBS next-gen (not an under-40 sample, said so), CFP Board trust survey and Schwab remarks as adjacent; the Fidelity next-generation study and the UBS sample passages were not retrieved.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 6,
+    "only_gate4": 14,
+    "only_hybrid": 14
+   },
+   "passage_recall": {
+    "gate4": 0.429,
+    "hybrid": 0.111
+   },
+   "cited": {
+    "gate4": 8,
+    "hybrid": 3,
+    "both": 1
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q21": {
+   "tier": 2,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Halves separate: Cerulli (2025-10-29, $123.7T to 2048) and UBS (2026-04-22, $83T global) with source, vintage and the difference named; then each firm's own statements (Schwab ~75% retained, EDJ risk factor and outflows, MS services labelled as not called a transfer response); Merrill and RJ marked not found.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 17,
+    "only_gate4": 13,
+    "only_hybrid": 13
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 12,
+    "hybrid": 15,
+    "both": 10
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q22": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "Cells with value, period and source for EDJ, MS, RJF (Domestic PCG, scope said) and Schwab (core vs total; the call's $158B vs the 10-Q's $140.0B flagged); definitions alongside; Merrill marked as not reporting; missing quarters named as gaps. The must-not passage MS-PR-2026-04-15-01#15 is cited only for its NNA-definition footnote, not as NNA. EDJ's '$0.4 billion' column is reported without saying what it is (borderline).",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 13,
+    "only_gate4": 17,
+    "only_hybrid": 17
+   },
+   "passage_recall": {
+    "gate4": 0.375,
+    "hybrid": 0.375
+   },
+   "cited": {
+    "gate4": 17,
+    "hybrid": 22,
+    "both": 7
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q23": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "c, b",
+    "hybrid": "c, b, r"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Series incomplete: EDJ three points, RJF 'neither source gives the advisor count' although 8,943 is in the corpus; MS, Schwab, Merrill not in the corpus; chose gap_with_adjacent, expected answer.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 11,
+    "only_gate4": 19,
+    "only_hybrid": 19
+   },
+   "passage_recall": {
+    "gate4": 0.35,
+    "hybrid": 0.4
+   },
+   "cited": {
+    "gate4": 4,
+    "hybrid": 9,
+    "both": 3
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q24": {
+   "tier": 3,
+   "trap": false,
+   "expected_behavior": "gap_with_adjacent",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "No ratio computed; answers the second half directly: different asset bases (AUC, PCG AUA, advisor-led, firm-wide custodial), different dates, no advisor counts for MS, Schwab, Merrill; GWIM labelled.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 8,
+    "only_gate4": 22,
+    "only_hybrid": 22
+   },
+   "passage_recall": {
+    "gate4": 0.0,
+    "hybrid": 0.25
+   },
+   "cited": {
+    "gate4": 8,
+    "hybrid": 11,
+    "both": 1
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q25": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "gap_with_adjacent",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "FAIL"
+   },
+   "class": {
+    "gate4": "r",
+    "hybrid": "r, b"
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Genuine disclosures reported (EDJ commission + minimum salary, Merrill ADV revenue-based pay, MS deferred comp 75/25, RJF referral sharing), no trade-press grid; but 'payout grids are not public' for MS and RJF while the corpus holds MS's formulaic-payout disclosure and RJ's published headline payout ranges, neither retrieved; behavior answer, expected gap_with_adjacent.",
+   "retrieved": {
+    "gate4": 30,
+    "hybrid": 30,
+    "both": 7,
+    "only_gate4": 23,
+    "only_hybrid": 23
+   },
+   "passage_recall": {
+    "gate4": 0.0,
+    "hybrid": 0.2
+   },
+   "cited": {
+    "gate4": 9,
+    "hybrid": 12,
+    "both": 2
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q26": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": "pass",
+   "reason": "13 items, all inside the window, source links in the cited passages, trade press labelled and named as a gap; roughly newest first but grouped by topic, and the 'why it matters' line is implicit (borderline).",
+   "retrieved": {
+    "gate4": 15,
+    "hybrid": 20,
+    "both": 12,
+    "only_gate4": 3,
+    "only_hybrid": 8
+   },
+   "passage_recall": {
+    "gate4": null,
+    "hybrid": null
+   },
+   "cited": {
+    "gate4": 13,
+    "hybrid": 19,
+    "both": 11
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q27": {
+   "tier": 1,
+   "trap": true,
+   "expected_behavior": "answer",
+   "behavior": {
+    "gate4": "answer",
+    "hybrid": "answer"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "Trap held: Merrill items only (recruiting, alternatives sales, data fees, TET/DCA, Merrill Wealth Management revenue and balances by quarter); GWIM margin kept as adjacent, labelled.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 13,
+    "only_gate4": 7,
+    "only_hybrid": 7
+   },
+   "passage_recall": {
+    "gate4": 0.667,
+    "hybrid": 0.556
+   },
+   "cited": {
+    "gate4": 11,
+    "hybrid": 13,
+    "both": 7
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q28": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "gap_with_adjacent",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "FAIL",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "s",
+    "hybrid": ""
+   },
+   "change": "FAIL->PASS",
+   "borderline": null,
+   "reason": "EDJ attrition 6.1% (3Q25) / 6.0% (nine months) with its own definition, cited to the 10-Qs; Merrill no rate, only 'near historic lows'; net headcount as adjacent with 'not attrition: it nets hires against departures'.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 9,
+    "only_gate4": 11,
+    "only_hybrid": 11
+   },
+   "passage_recall": {
+    "gate4": 0.75,
+    "hybrid": 0.75
+   },
+   "cited": {
+    "gate4": 5,
+    "hybrid": 7,
+    "both": 3
+   },
+   "model": "called",
+   "explanation": {
+    "cause": "model",
+    "passages": [
+     "EDJ-10Q-2025Q2#64"
+    ],
+    "why": "Gate 4 failed for leaving out the adjacent net headcount change and its difference from attrition. The passage with the net headcount (EDJ-10Q-2025Q2#64, 20,309 vs 19,589) was in both retrieved sets; hybrid's answer used it as adjacent with 'not attrition: it nets hires against departures'. Same evidence, different shape: model, not separable from run-to-run variation."
+   }
+  },
+  "Q29": {
+   "tier": 1,
+   "trap": false,
+   "expected_behavior": "gap_with_adjacent",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "'Payout grids are not public'; formulaic payout named without rates; aggregate comp expense labelled a different quantity; trade press labelled indicative; a named source.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 6,
+    "only_gate4": 14,
+    "only_hybrid": 14
+   },
+   "passage_recall": {
+    "gate4": 1.0,
+    "hybrid": 0.5
+   },
+   "cited": {
+    "gate4": 6,
+    "hybrid": 6,
+    "both": 4
+   },
+   "model": "called",
+   "explanation": null
+  },
+  "Q30": {
+   "tier": 1,
+   "trap": true,
+   "expected_behavior": "gap_with_adjacent",
+   "behavior": {
+    "gate4": "gap_with_adjacent",
+    "hybrid": "gap_with_adjacent"
+   },
+   "verdict": {
+    "gate4": "PASS",
+    "hybrid": "PASS"
+   },
+   "class": {
+    "gate4": "",
+    "hybrid": ""
+   },
+   "change": "same",
+   "borderline": null,
+   "reason": "'Merrill does not report standalone results'; GWIM profit figures by period, each stated as not Merrill; Merrill Wealth Management revenue labelled as revenue, not profit.",
+   "retrieved": {
+    "gate4": 20,
+    "hybrid": 20,
+    "both": 15,
+    "only_gate4": 5,
+    "only_hybrid": 5
+   },
+   "passage_recall": {
+    "gate4": 0.5,
+    "hybrid": 0.5
+   },
+   "cited": {
+    "gate4": 10,
+    "hybrid": 6,
+    "both": 4
+   },
+   "model": "called",
+   "explanation": null
+  }
+ }
+}
