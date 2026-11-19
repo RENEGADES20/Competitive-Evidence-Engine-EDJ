@@ -334,7 +334,8 @@ No database or API key needed; the paid providers are tested with fake clients.
 
 ## 7. Results: ask with the real model and reproduce the Gate 4 run
 
-The final snapshot is `corpus-2026-11-17` (219 documents). Gate 4 scored **21/30** on it
+The current snapshot is `corpus-2026-11-19` (224 documents: `corpus-2026-11-17` plus five
+advisor-headcount sources, #216). Gate 4 was scored **21/30** on `corpus-2026-11-17`
 (2026-11-18, scored by the TL agent). The report has all 30 answers with their citations, the
 scores and the known gaps: [docs/results/gate4-report.md](results/gate4-report.md). What to
 build next: [docs/NEXT.md](NEXT.md).
@@ -352,17 +353,28 @@ Open http://localhost:8501, type a question, and click a citation to see the sto
 The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
 
 **Check retrieval for all 30 questions, free** (mock provider, no calls; compares with the
-committed baseline):
+committed baseline of the current snapshot):
 ```powershell
-.\.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-17\report.json
+.\.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-19\report.json
 ```
 ```bash
-.venv/bin/python scripts/eval_run.py --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-17/report.json
+.venv/bin/python scripts/eval_run.py --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-19/report.json
 ```
 Expected: 29 PASS / 1 FAIL (Q19, a pattern-coverage check; its real answer passes), refusal 5/5.
+The Gate 4 baseline stays in `evals/baselines/corpus-2026-11-17/` (same result on that snapshot).
 
-**Reproduce the Gate 4 answers** (paid: up to 30 calls; needs the tech lead's OK). Every output
-is saved under `.eval-runs\cache\` and reused, so a second run of unchanged code costs nothing:
+**Reproduce the Gate 4 answers** (paid: up to 30 calls; needs the tech lead's OK). Gate 4 ran on
+`corpus-2026-11-17`, so load that snapshot first. Put `corpus-2026-11-17.dump` in the repo's
+`snapshots/` folder (teammates: download it from the team Box link; the tech lead copies it from
+Box `snapshots/`), then restore it:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 snapshots\corpus-2026-11-17.dump
+```
+```bash
+bash scripts/restore.sh snapshots/corpus-2026-11-17.dump
+```
+Every output is saved under `.eval-runs\cache\` and reused, so a second run of unchanged code
+costs nothing:
 ```powershell
 $env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 30 --as-of 2026-11-17
 ```
@@ -372,3 +384,4 @@ LLM_PROVIDER=anthropic .venv/bin/python scripts/eval_run.py --real --max-calls 3
 The run writes `report.md` and `report.json` in its run folder. The model is not deterministic,
 so new answers can differ in wording from the report; the score is a human (or agent) reading of
 each answer against `passes_if` in `evals/questions.yaml`, not a number the script prints.
+When you are done, run `/sync-db` to return to the current snapshot `corpus-2026-11-19`.

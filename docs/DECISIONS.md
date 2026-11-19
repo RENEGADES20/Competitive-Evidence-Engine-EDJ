@@ -719,3 +719,26 @@ out (code added them back as a whole-question part), and the MS + Schwab part's 
 `SCHW-DECK-2026Q3#47` and `SCHW-DECK-2026Q2#45` (dividend payout range) on the one word "payout",
 which the neighbour list does not cover. A finding, not re-run; the narrower rule for the bare word
 in a Schwab part, or the budget / ranking, is the TL's call (with #215).
+Amendment (#232, strict tools): on the Anthropic path both tools are sent with `strict: true` (a
+top-level field of the tool definition; `anthropic` 1.9.0 `ToolParam.strict`), so the API enforces
+the input schema of `submit_plan` and `submit_answer`: an input like #230's Q22 answer
+`{"answer": null}` cannot come back. Strict mode accepts array `minItems` 0 or 1 and no `maxItems`,
+so the planner tool's `parts` keeps `minItems: 1` and drops `maxItems`; the part cap stays in the
+prompt ("in at most N parts", "Most parts: N") and code still cuts extra parts. `tool_choice` stays
+`auto` (claude-sonnet-5-5 rejects forced tool choice), so strict does not force a call: no tool
+call is an unusable output, as before (rule-plan fallback; answer invalid). An API `stop_reason`
+`refusal` is also unusable, even with a tool input (strict's guarantee does not hold there). The
+eval's plan and answer cache keys carry the request version `strict-1` for the anthropic provider
+only (`llm.request_version`), so no non-strict output is reused by a strict request; OpenAI keys,
+`PLANNER_VERSION` (plan-v2) and the prompt texts are unchanged. Offline: both tool schemas pass a
+strict-rule check and are unchanged by the SDK's `anthropic.transform_schema`; mock
+(`corpus-2026-11-17`, `--as-of 2026-11-17`) all 30 chunk lists identical, 29 PASS / 1 FAIL (Q19),
+refusal gap 5/5, keyed 22/22, 0 forbidden.
+Real check (#232, 10 calls: planner + answer for Q1, Q10, Q21, Q22, Q23, claude-sonnet-5-5, prompt
+v4.1, plan-v2, request `strict-1`; no 400, no invalid output, no fallback, every call `tool_use`): Q22
+(#230: `{"answer": null}`) now returns a valid `answer` (11,914 output tokens, 101k input) with NNA
+by quarter and each firm's definition for MS, SCHW, EDJ and RJF, Merrill marked as not reporting
+standalone (GWIM flows only as adjacent); its eval status fails only the retrieval must-not check
+(`MS-PR-2026-04-15-01#15` retrieved, not cited, as in #230). Q1, Q10, Q21 `answer` PASS; Q23
+`gap_with_adjacent` as at Gate 4. Evidence in the #232 PR.
+

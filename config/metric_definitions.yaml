@@ -50,17 +50,31 @@ definitions:
   # ---------- Morgan Stanley ----------
   - entity: MS
     metric: advisor_headcount
-    status: not_disclosed
-    quote: "Advisor-led client assets represent client assets in accounts that have a Wealth Management representative assigned."
-    doc_id: MS-SUPP-2025Q4
-    chunk_id: MS-SUPP-2025Q4#36
-    valid_from: 2025-12-31
-    see_also: [MS-10K-2025#167, MS-SUPP-2026Q3#38]
+    status: quoted
+    quote: "Wealth Management representatives 15,950 15,469 15,468"
+    doc_id: MS-SUPP-2020Q4
+    chunk_id: MS-SUPP-2020Q4#1
+    valid_from: 2020-12-31
+    includes: [Wealth Management representatives (count at Dec 31 2020, Sep 30 2020, Dec 31 2019)]
+    excludes: []
+    not_stated: [a definition of "Wealth Management representatives", trainees, any count after 4Q2020]
+    see_also: [MS-SUPP-2020Q4#3, MS-SUPP-2025Q4#36, MS-SUPP-2026Q3#38, MS-10K-2025#167, MS-ADV1A-2026#1]
     looked_in: [MS-10K-2025, MS-10Q-2025Q2, MS-10Q-2025Q3, MS-10Q-2026Q1, MS-10Q-2026Q2,
-                MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)"]
+                MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)",
+                MS-DECK-2026-strategic-update, MS-ADV-2026,
+                "MS-SUPP-2020Q4 (#216: last supplement with a Wealth Management representatives count)",
+                "MS-ADV1A-2026 (#216: Form ADV Part 1A Item 5, MSSB CRD 149777)",
+                "MS IR supplements 1Q2021, 4Q2021, 4Q2022, 4Q2023, 1Q2024, 4Q2024 (no count; not stored)",
+                "EDGAR full-text search 2018-2026: financial advisors, Wealth Management representatives",
+                "morganstanley.com about-us, wealth-management and about-us-ir pages (no count)"]
     note: >-
-      No advisor count or headcount definition in any loaded MS document. The quote is the nearest
-      text (what "advisor-led" means), not a headcount definition.
+      The last count Morgan Stanley published: the 4Q2020 supplement (page 8; #3 is its note that
+      "advisor-led" means a Wealth Management representative is assigned). From 1Q2021 the
+      supplements drop the line, so there is no MS count inside 2024Q4-2026Q3: a break, not a
+      series. Closest current figure: Form ADV Part 1A for Morgan Stanley Smith Barney LLC
+      (MS-ADV1A-2026#1, 2026-11-04), "employees ... perform investment advisory functions
+      (including research)? 13000" - a Form ADV label, not advisor headcount. #1 has segment NULL
+      (the extract's page heading is not a segment heading line); MS questions use no segment filter.
 
   - entity: MS
     metric: net_new_assets
@@ -77,15 +91,29 @@ definitions:
   # ---------- Charles Schwab ----------
   - entity: SCHW
     metric: advisor_headcount
-    status: not_disclosed
-    quote: "Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants provide guidance, relationship management, and specialized support"
-    doc_id: SCHW-10K-2025
-    chunk_id: SCHW-10K-2025#18
-    valid_from: 2025-12-31
-    looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)"]
+    status: closest_metric
+    quote: "perform investment advisory functions (including research)? 4127"
+    doc_id: SCHW-ADV1A-2026
+    chunk_id: SCHW-ADV1A-2026#1
+    valid_from: 2026-10-21
+    includes: [employees of Charles Schwab & Co., Inc. (CRD 5393) who perform investment advisory functions, including research (Form ADV Part 1A Item 5.B(1))]
+    excludes: [independent RIAs and their advisors (clients, SCHW-10K-2025#23), clerical workers (Item 5.A)]
+    not_stated: [how many are Financial Consultants or Wealth Consultants, other Schwab entities]
+    see_also: [SCHW-10K-2025#18, SCHW-10K-2025#23]
+    looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)",
+                "SCHW-DECK-* (2026Q1-Q3)", SCHW-DECK-2026-investor-day, SCHW-ADV-2026,
+                "SCHW-ADV1A-2026 (#216: Form ADV Part 1A Item 5, Charles Schwab & Co. CRD 5393)",
+                "Schwab 2024 Institutional Investor Day deck (no count; not stored)",
+                "EDGAR full-text search 2023-2026: financial consultants, wealth consultants",
+                "aboutschwab.com home and financial-reports pages (Wayback copies; no count)"]
     note: >-
-      Schwab does not report an advisor count. Its employee advisers are Financial/Wealth
-      Consultants (#18); independent RIAs it custodies for (SCHW-10K-2025#23) are clients, not staff.
+      Schwab publishes no advisor count. Its employee advisers are Financial/Wealth Consultants
+      (SCHW-10K-2025#18); independent RIAs ("16K" in the investor-day deck) are clients, not staff.
+      The closest firm-filed figure is Form ADV Part 1A Item 5 for Charles Schwab & Co., Inc.
+      (amendment 2026-10-21): 4,127 employees perform investment advisory functions, 16,763 are
+      registered representatives of a broker-dealer, 30,690 employees in all. Form ADV labels, one
+      date, not advisor headcount. Form ADV is searched for fee questions only (#179), so Q11/Q23/Q24
+      do not retrieve this chunk (TL decision on #216: accepted as a W10 finding).
 
   - entity: SCHW
     metric: net_new_assets
@@ -102,16 +130,30 @@ definitions:
   # ---------- Bank of America (Merrill, reported in GWIM) ----------
   - entity: BAC
     metric: advisor_headcount
-    status: not_disclosed
-    quote: "Merrill Wealth Management’s advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets."
-    doc_id: BAC-10K-2025
-    chunk_id: BAC-10K-2025#246
-    valid_from: 2025-12-31
+    status: quoted
+    quote: "(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking."
+    doc_id: BAC-SUPP-2023Q4
+    chunk_id: BAC-SUPP-2023Q4#2
+    valid_from: 2023-12-31
+    includes: [advisors across all wealth management businesses in GWIM and Consumer Banking ("Total wealth advisors", 18,916 at Dec 31 2023)]
+    excludes: []
+    not_stated: [a Merrill-only count, trainees, any count after 4Q2023 in the supplements]
+    see_also: [BAC-DECK-2025-investor-day#9, BAC-DECK-2025-investor-day#13, BAC-DECK-2025-investor-day#34, BAC-10K-2025#246, MER-ADV1A-2026#1]
     looked_in: [BAC-10K-2025, BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3,
-                "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)"]
+                "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)", MER-ADV-2026,
+                "BAC-SUPP-2023Q4 (#216: last supplement with a Total wealth advisors count)",
+                "MER-ADV1A-2026 (#216: Form ADV Part 1A Item 5, MLPF&S CRD 7691)",
+                "EDGAR full-text search 2023-2026: financial advisors, wealth advisors, Merrill advisors",
+                "ml.com (no count; about-merrill page 404)"]
     note: >-
-      Merrill advisors sit inside GWIM and no count is given in the corpus. The supplement's only
-      headcount is firmwide (BAC-SUPP-2025Q4#8, about 213,000 staff), not advisors.
+      "Total wealth advisors (3) 18,916" (4Q2023 supplement, page 20, GWIM key indicators) is the
+      last quarterly count; the supplements drop the line from 1Q2024. It spans GWIM and Consumer
+      Banking, so it is wider than Merrill. The only later figure is Investor Day
+      2025-11-05 (#9, "as of 3Q25"): ">15K Wealth Advisors" for Merrill and the Private Bank, rounded,
+      no definition, one point - a different scope, so the two are not a series. Closest current
+      firm-filed figure: Form ADV Part 1A for MLPF&S (MER-ADV1A-2026#1, 2026-11-11), 25,721
+      employees performing investment advisory functions - a Form ADV label, not advisor headcount.
+      GWIM is not Merrill.
 
   - entity: BAC
     metric: net_new_assets
