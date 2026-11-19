@@ -120,13 +120,21 @@ def main(argv=None) -> int:
         f"| | hybrid-norerank (#240) | fts (#217) |", "|---|---|---|",
         f"| All 30 | **{score(hv)}/30** | {score(fvv)}/30 |",
         f"| Tier 1 | **{score(hv, True)}/18** | {score(fvv, True)}/18 |",
-        f"| Run summary: tier-1 passage recall / recall@final (all rows) | {run['summary']['tier1_passage_recall']} / "
-        f"{run['summary']['recall_final']} | {fts['summary']['tier1_passage_recall']} / {fts['summary']['recall_final']} |",
+        f"| Run summary: tier-1 passage recall | {run['summary']['tier1_passage_recall']} | "
+        f"{fts['summary']['tier1_passage_recall']} |",
+        f"| Recall@pool / recall@final (all rows) | {run['summary']['recall_pool']} / {run['summary']['recall_final']} | "
+        f"{fts['summary']['recall_pool']} / {fts['summary']['recall_final']} |",
+        f"| Tier-1 recall@pool / recall@final | {run['summary']['tier1_recall_pool']} / "
+        f"{run['summary']['tier1_recall_final']} | {fts['summary']['tier1_recall_pool']} / "
+        f"{fts['summary']['tier1_recall_final']} |",
         f"| Refusal gap / keyed (retrieval check) | {run['summary']['refusal_gap']['ok']}/5, "
         f"{run['summary']['refusal_all']['ok']}/{run['summary']['refusal_all']['of']} | "
         f"{fts['summary']['refusal_gap']['ok']}/5, {fts['summary']['refusal_all']['ok']}/{fts['summary']['refusal_all']['of']} |",
-        "", "One sample per question and one scorer; a one-question difference is within what model variance and "
-        "reading can move (ADR-010: tuned and scored on the same 30 questions, no held-out set).", "",
+        "", "Scores above are the first (blind) read; the final verdicts after the second read are in "
+        "'Borderline and second read'. fts reaches slightly more expected passages as candidates (recall@pool) and "
+        "hybrid keeps more of them in the final set (recall@final). One sample per question; a one-question "
+        "difference is within what model variance and reading can move (ADR-010: tuned and scored on the same 30 "
+        "questions, no held-out set).", "",
         "## Questions whose verdict differs", ""]
     for q in differ:
         c = comp[q]
@@ -165,14 +173,30 @@ def main(argv=None) -> int:
               "Read twice in PR review (every borderline question of this scoring, every question whose verdict differs "
               "from #217, and #217's borderline set): " + ", ".join(borderline) + ".", ""]
     if second:
-        lines += ["| Q | First read | Second read | Note |", "|---|---|---|---|"]
-        lines += [f"| {q} | {hv[q]} | {second[q]['verdict']} | {second[q].get('note', '')} |" for q in borderline if q in second]
-        s2 = {q: second.get(q, {}).get("verdict", hv[q]) for q in qids}
-        lines += ["", f"Second-read score: {score(s2)}/30 (tier 1 {score(s2, True)}/18). The reported score stays "
-                  f"the first read's ({score(hv)}/30); range {min(score(hv), score(s2))}-{max(score(hv), score(s2))}/30.", ""]
+        lines += ["Second read by the PR-review reviewer agent (PR #241 review round 1), written blind from "
+                  "`questions.yaml` and the raw answers; final verdicts by TL decision 2026-11-19 on #217's bar "
+                  "(like-for-like with the fts verdicts they are compared with).", "",
+                  "| Q | First read (blind) | Second read (reviewer) | Final | #217 final (fts) | Discussed |",
+                  "|---|---|---|---|---|---|"]
+        lines += [f"| {q} | {hv[q]} | {second[q]['reviewer']} | **{second[q]['final']}** | {fvv[q]} | "
+                  f"{second[q].get('note', '')} |" for q in borderline if q in second]
+        fin = {q: second.get(q, {}).get("final", hv[q]) for q in qids}
+        stricter = {**fin, "Q15": "FAIL", "Q17": "FAIL"}
+        fts_stricter = {**fvv, "Q15": "FAIL", "Q17": "FAIL"}
+        lines += ["", f"Agreement: 9 of 12; differences Q15, Q17 (reviewer's stricter bar) and Q26 (reviewer withdrew "
+                  f"its PASS). **Final score: hybrid-norerank {score(fin)}/30 (tier 1 {score(fin, True)}/18) vs #217 fts "
+                  f"{score(fvv)}/30 ({score(fvv, True)}/18).**",
+                  f"Sensitivity: on the reviewer's stricter bar for Q15 and Q17, applied to both modes (their #217 fts "
+                  f"answers have the same shape), the scores are {score(stricter)}/30 (tier 1 {score(stricter, True)}/18) vs "
+                  f"{score(fts_stricter)}/30 ({score(fts_stricter, True)}/18). Either way the gap is +1, all of it Q20, a "
+                  "borderline verdict that one sample per mode cannot separate from model variance.", ""]
     else:
         lines += ["Second read: pending (PR review round 1).", ""]
-    lines += ["## Verdicts (first read, blind)", "", "| Q | Verdict | Class | Reason |", "|---|---|---|---|"]
+    lines += ["## Model findings (not retrieval)", "",
+              "- Q17: the answer calls Raymond James's Raimond assistant's enterprise rollout completed (C4, 3Q26 call) "
+              "and, in an adjacent item, 'in pilot' (InvestmentNews, September 2026) without reconciling the two. A "
+              "wording issue of the model; both passages are cited correctly.", "",
+              "## Verdicts (first read, blind)", "", "| Q | Verdict | Class | Reason |", "|---|---|---|---|"]
     lines += [f"| {q} | {hv[q]} | {blind[q]['class'] or ''} | {blind[q]['reason']} |" for q in qids]
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -181,8 +205,17 @@ def main(argv=None) -> int:
                                              "token_budget", "pool_per_group", "planner_version", "reuse_plans",
                                              "real_calls", "reused", "max_calls")},
               "cost": {"input_tokens": tin, "output_tokens": tout, "usd_estimate": cost, "rates_per_m": [IN_RATE, OUT_RATE]},
-              "score": {"hybrid": {"pass": score(hv), "tier1_pass": score(hv, True)},
+              "score": {"hybrid_first_read": {"pass": score(hv), "tier1_pass": score(hv, True)},
+                        "hybrid_final": ({"pass": score(fin), "tier1_pass": score(fin, True)} if second else None),
+                        "sensitivity_stricter_q15_q17": ({"hybrid": score(stricter), "hybrid_tier1": score(stricter, True),
+                                                          "fts": score(fts_stricter), "fts_tier1": score(fts_stricter, True)}
+                                                         if second else None),
                         "fts_217": {"pass": score(fvv), "tier1_pass": score(fvv, True)}},
+              "recall": {"hybrid": {k: run["summary"][k] for k in ("tier1_passage_recall", "recall_pool", "recall_final",
+                                                                    "tier1_recall_pool", "tier1_recall_final")},
+                         "fts_217": {k: fts["summary"][k] for k in ("tier1_passage_recall", "recall_pool", "recall_final",
+                                                                     "tier1_recall_pool", "tier1_recall_final")}},
+              "model_findings": {"Q17": "Raimond 'enterprise rollout completed' (C4) vs 'in pilot' (adjacent) not reconciled"},
               "differ": {q: {"hybrid": hv[q], "fts": fvv[q], **causes[q]} for q in differ},
               "borderline": borderline, "verdicts": {q: {**blind[q], "fts_217": fv[q]["verdict"],
                                                          "second_read": second.get(q)} for q in qids},

@@ -35,14 +35,43 @@
     ]
   },
   "score": {
-    "hybrid": {
+    "hybrid_first_read": {
       "pass": 25,
       "tier1_pass": 15
+    },
+    "hybrid_final": {
+      "pass": 25,
+      "tier1_pass": 15
+    },
+    "sensitivity_stricter_q15_q17": {
+      "hybrid": 23,
+      "hybrid_tier1": 14,
+      "fts": 22,
+      "fts_tier1": 13
     },
     "fts_217": {
       "pass": 24,
       "tier1_pass": 14
     }
+  },
+  "recall": {
+    "hybrid": {
+      "tier1_passage_recall": 0.875,
+      "recall_pool": 0.965,
+      "recall_final": 0.851,
+      "tier1_recall_pool": 0.957,
+      "tier1_recall_final": 0.875
+    },
+    "fts_217": {
+      "tier1_passage_recall": 0.869,
+      "recall_pool": 0.977,
+      "recall_final": 0.763,
+      "tier1_recall_pool": 0.972,
+      "tier1_recall_final": 0.869
+    }
+  },
+  "model_findings": {
+    "Q17": "Raimond 'enterprise rollout completed' (C4) vs 'in pilot' (adjacent) not reconciled"
   },
   "differ": {
     "Q20": {
@@ -89,7 +118,11 @@
       "borderline": true,
       "reason": "Framing, priorities and named competition covered; the concession is management's 'throttled growth' on long/short plus spokesperson-confirmed SAN minimum hikes, share loss only from an analyst quote (marked as such).",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
     },
     "Q4": {
       "verdict": "PASS",
@@ -105,7 +138,11 @@
       "borderline": true,
       "reason": "Names LeadIQ, E*TRADE build-out, workplace, Parable, DevGen AI with stated purposes; no spend invented. Advisor-specific tools are thin (corpus holds no Debrief/AI@MS chunk).",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS (borderline)",
+        "final": "PASS",
+        "note": "Agree; advisor-specific tools thin in both reads."
+      }
     },
     "Q6": {
       "verdict": "PASS",
@@ -121,7 +158,11 @@
       "borderline": true,
       "reason": "Same dimensions for all three, each cell cited, empty cells shown as gaps (MS training, payout grids, comparable attrition). MS recruiting posture thin; one claim misgenders the BAC CFO.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
     },
     "Q8": {
       "verdict": "PASS",
@@ -185,7 +226,11 @@
       "borderline": true,
       "reason": "Disclosed revenue composition per model (Schwab NII/sweep vs fee-based firms) with drivers; breakdowns named (GWIM not Merrill, grids not public). The mechanism is spread per claim rather than stated in one place.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "FAIL (borderline)",
+        "final": "PASS",
+        "note": "Reviewer's bar is stricter (no single Schwab-vs-advisor-led contrast). #217's fts answer has the same shape and passed; TL decision 2026-11-19: like-for-like on #217's bar, PASS. On the stricter bar both modes fail."
+      }
     },
     "Q16": {
       "verdict": "PASS",
@@ -201,7 +246,11 @@
       "borderline": true,
       "reason": "Deployed named tools (RJF Ray/Raimond, Schwab Charley/Portfolio Insights, MS LeadIQ, BAC AI tools) kept apart from call aspirations and metrics; 'who claims most' answered as not like-for-like. Specificity vs volume is shown per firm, not named as the axis.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "FAIL (borderline)",
+        "final": "PASS",
+        "note": "Reviewer's bar is stricter (deployed-vs-aspiration not made the axis). #217's fts answer has the same per-firm shape and passed; TL decision: PASS like-for-like. On the stricter bar both modes fail. Model finding: Raimond 'enterprise rollout completed' (C4) vs 'in pilot' (adjacent, trade press) is not reconciled; a wording issue, not retrieval."
+      }
     },
     "Q18": {
       "verdict": "PASS",
@@ -217,7 +266,11 @@
       "borderline": true,
       "reason": "Cohort preference surveys dated and sourced and the 'should' handed back, but competitor moves aimed at the cohort are missing (only Schwab's Gen Z share as an adjacent item); all plan parts are EDJ.",
       "fts_217": "FAIL",
-      "second_read": null
+      "second_read": {
+        "reviewer": "FAIL",
+        "final": "FAIL",
+        "note": "Agree: competitor-moves leg missing (s)."
+      }
     },
     "Q20": {
       "verdict": "PASS",
@@ -225,7 +278,11 @@
       "borderline": true,
       "reason": "Actual survey findings with source and date (UBS, Fidelity, Cerulli, CFPB, BofA); samples described by population, sizes not given; most evidence is wealthy next-gen rather than under-40 generally, which the gaps say.",
       "fts_217": "FAIL",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS (borderline)",
+        "final": "PASS",
+        "note": "Agree, borderline. The only cross-mode difference; cause retrieval (UBS-NEXTGEN-2026#83, #84, FIDELITY-III-2025#0 in hybrid's set only). One sample per mode cannot separate it from model variance."
+      }
     },
     "Q21": {
       "verdict": "PASS",
@@ -241,7 +298,11 @@
       "borderline": true,
       "reason": "Value, period, source and each firm's definition for MS, Schwab (core NNA), EDJ, RJF; Merrill marked as not reporting, GWIM AUM flows only as labelled adjacent. Several cells missing (EDJ 4Q25, Schwab 1Q25-2Q25), named as gaps.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
     },
     "Q23": {
       "verdict": "FAIL",
@@ -265,7 +326,11 @@
       "borderline": true,
       "reason": "Reports what each firm discloses (MS formulaic payout and deferral mix, Merrill ADV awards, EDJ commission+salary, Schwab FC conflict note, RJF headline payouts) and marks grids as not public; trade press only as labelled adjacent. Behavior 'answer' vs key gap_with_adjacent.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree; behavior label 'answer' vs key gap_with_adjacent, as in #217."
+      }
     },
     "Q26": {
       "verdict": "FAIL",
@@ -273,7 +338,11 @@
       "borderline": true,
       "reason": "Newest first and nothing older than the window, but items carry no 'why it might matter' line; all items are trade press (no RJF primary document in the window).",
       "fts_217": "FAIL",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS (borderline), withdrawn to FAIL",
+        "final": "FAIL",
+        "note": "Reviewer withdrew PASS: passes_if asks for a 'why it might matter' line per item and none has one; #217 failed fts on the same reading. FAIL in both modes."
+      }
     },
     "Q27": {
       "verdict": "PASS",
@@ -289,7 +358,11 @@
       "borderline": false,
       "reason": "EDJ rate with period and definition from the 10-Q, Merrill only 'near historic lows', net headcount adjacent with the attrition difference stated.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
     },
     "Q29": {
       "verdict": "PASS",
@@ -297,7 +370,11 @@
       "borderline": true,
       "reason": "Disclosed structure (formulaic payout, 75/25 deferral) then 'Payout grids are not public', aggregate comp expense labelled different, trade press indicative. Behavior 'answer' vs key gap_with_adjacent; the named source is generic.",
       "fts_217": "PASS",
-      "second_read": null
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree; named source generic."
+      }
     },
     "Q30": {
       "verdict": "PASS",
@@ -2797,5 +2874,5 @@
   "blind_sha256": "72b24831998c8a09ad0f39adf9e18dabcdc823544934565c044f919c9caec1ec",
   "blind": "{\n  \"run\": \"0240-real (hybrid-norerank, #217 plans reused), scored blind before opening any #217 verdict\",\n  \"rule\": \"PASS only if the project lead would forward the answer with his name on it, read against passes_if; no half credit. Classes: r retrieval, s shape / required part missing, b behavior choice, c corpus gap, i invalid output.\",\n  \"verdicts\": {\n    \"Q1\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Channels management credits (advisors, Workplace, E*TRADE, integrated firm) in its framing, every statement dated by call.\"},\n    \"Q2\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Own pitch (culture, affiliation choice, payout ranges, independence, platform) from management and recruiting pages, plus disclosed recruiting results.\"},\n    \"Q3\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Framing, priorities and named competition covered; the concession is management's 'throttled growth' on long/short plus spokesperson-confirmed SAN minimum hikes, share loss only from an analyst quote (marked as such).\"},\n    \"Q4\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill-specific: ADP pipeline, 5% sales-force aim, experienced-hire shift and its history; GWIM/BAC-wide figures kept as labelled adjacent items.\"},\n    \"Q5\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Names LeadIQ, E*TRADE build-out, workplace, Parable, DevGen AI with stated purposes; no spend invented. Advisor-specific tools are thin (corpus holds no Debrief/AI@MS chunk).\"},\n    \"Q6\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"AdvisorChoice options as described, channel counts FY23-25 and RCS AUA quoted, management's mix-shift remarks quoted with dates.\"},\n    \"Q7\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Same dimensions for all three, each cell cited, empty cells shown as gaps (MS training, payout grids, comparable attrition). MS recruiting posture thin; one claim misgenders the BAC CFO.\"},\n    \"Q8\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Each firm's own language; Schwab custody offer and RJF affiliation/RCS described separately, not flattened.\"},\n    \"Q9\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill's $250K / $500K / $3MM markers cited; says plainly MS discloses no wealth-tier thresholds (channels instead).\"},\n    \"Q10\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Shows the statements with dates and makes the basis visible (Merrill/GWIM the only own use of 'Mass Affluent'; Schwab says 'affluent'); gaps for MS, EDJ, RJF.\"},\n    \"Q11\": {\"verdict\": \"FAIL\", \"class\": \"c\", \"borderline\": false, \"reason\": \"gap_with_adjacent: only RJF (and partly EDJ) definitions quoted; MS only a 2020 label, Schwab none, Merrill only a GWIM footnote. Five quoted definitions not in the corpus; behavior also differs from the key's 'answer'.\"},\n    \"Q12\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Schwab channels, scale/cost-to-serve claims and results, EDJ cost structure (opex, margin, NNA, households) alongside, explicit hand-off of the replication question.\"},\n    \"Q13\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Funnel end to end in management's words (retain vested, migrate to advisor-led, referral model) with each figure tied to the call/filing it was stated in.\"},\n    \"Q14\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Each option's economics for advisor (payout, costs borne) and firm (fees, RCS asset fee, comp ratio, transition assistance) from RJF's own filings, calls and pages.\"},\n    \"Q15\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Disclosed revenue composition per model (Schwab NII/sweep vs fee-based firms) with drivers; breakdowns named (GWIM not Merrill, grids not public). The mechanism is spread per claim rather than stated in one place.\"},\n    \"Q16\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Organised by position, each attributed and dated, no forecast of its own.\"},\n    \"Q17\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Deployed named tools (RJF Ray/Raimond, Schwab Charley/Portfolio Insights, MS LeadIQ, BAC AI tools) kept apart from call aspirations and metrics; 'who claims most' answered as not like-for-like. Specificity vs volume is shown per firm, not named as the axis.\"},\n    \"Q18\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Disclosed pricing (ADV brochures), regulatory items, research and trade press each labelled for what they are.\"},\n    \"Q19\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Cohort preference surveys dated and sourced and the 'should' handed back, but competitor moves aimed at the cohort are missing (only Schwab's Gen Z share as an adjacent item); all plan parts are EDJ.\"},\n    \"Q20\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Actual survey findings with source and date (UBS, Fidelity, Cerulli, CFPB, BofA); samples described by population, sizes not given; most evidence is wealthy next-gen rather than under-40 generally, which the gaps say.\"},\n    \"Q21\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Estimates (Cerulli 2025, UBS 2026) with source and vintage kept apart from each firm's stated actions; gaps where a firm says nothing.\"},\n    \"Q22\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Value, period, source and each firm's definition for MS, Schwab (core NNA), EDJ, RJF; Merrill marked as not reporting, GWIM AUM flows only as labelled adjacent. Several cells missing (EDJ 4Q25, Schwab 1Q25-2Q25), named as gaps.\"},\n    \"Q23\": {\"verdict\": \"FAIL\", \"class\": \"c\", \"borderline\": false, \"reason\": \"Series far from complete (EDJ three points, RJF one, MS/Merrill/Schwab none in window); answered as gap_with_adjacent.\"},\n    \"Q24\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": false, \"reason\": \"Computes no ratio even where both inputs are disclosed on one date (EDJ $2,647B / 20,514 at 2Q26), and never answers 'is the comparison valid' directly; definitions are laid out but the verdict is left implicit.\"},\n    \"Q25\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Reports what each firm discloses (MS formulaic payout and deferral mix, Merrill ADV awards, EDJ commission+salary, Schwab FC conflict note, RJF headline payouts) and marks grids as not public; trade press only as labelled adjacent. Behavior 'answer' vs key gap_with_adjacent.\"},\n    \"Q26\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Newest first and nothing older than the window, but items carry no 'why it might matter' line; all items are trade press (no RJF primary document in the window).\"},\n    \"Q27\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill items only; BAC material only where it is explicitly Merrill/GWIM and labelled; GWIM figures as adjacent.\"},\n    \"Q28\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"EDJ rate with period and definition from the 10-Q, Merrill only 'near historic lows', net headcount adjacent with the attrition difference stated.\"},\n    \"Q29\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Disclosed structure (formulaic payout, 75/25 deferral) then 'Payout grids are not public', aggregate comp expense labelled different, trade press indicative. Behavior 'answer' vs key gap_with_adjacent; the named source is generic.\"},\n    \"Q30\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"States Merrill does not report standalone results, GWIM figures with explicit 'GWIM is not Merrill'.\"}\n  },\n  \"score\": {\"pass\": 25, \"of\": 30, \"tier1_pass\": 15, \"tier1_of\": 18},\n  \"citation_check\": \"1,151 cited chunk ids across the 30 answers: every one is in its question's retrieved set and in the database (answers-ids.txt: 0 NOT-IN-RETRIEVED, 0 NOT IN DB). 10 claims carry the code flag number_not_found (Q6, Q11, Q13 x2, Q16 x2, Q18, Q19, Q26, Q27); none of them decides a verdict.\"\n}\n",
   "scored_records": "run-report.json",
-  "generator_sha256": "1b0173980e202e0299d35f8886efbbfb70befeb12349615cfc8d961484d7fd6d"
+  "generator_sha256": "ee71de191536c64d6b5e4e358ed0f2886613ec96e7093686a834189fe44d3600"
 }
