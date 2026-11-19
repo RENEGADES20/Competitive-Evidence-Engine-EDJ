@@ -57,10 +57,18 @@ definitions:
     valid_from: 2025-12-31
     see_also: [MS-10K-2025#167, MS-SUPP-2026Q3#38]
     looked_in: [MS-10K-2025, MS-10Q-2025Q2, MS-10Q-2025Q3, MS-10Q-2026Q1, MS-10Q-2026Q2,
-                MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)"]
+                MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)",
+                MS-DECK-2026-strategic-update, MS-ADV-2026,
+                "MS-SUPP-2020Q4 (#216: last supplement with a Wealth Management representatives count)",
+                "MS-ADV1A-2026 (#216: Form ADV Part 1A Item 5, MSSB CRD 149777)",
+                "MS IR supplements 1Q2021, 4Q2021, 4Q2022, 4Q2023, 1Q2024, 4Q2024 (no count; not stored)",
+                "EDGAR full-text search 2018-2026: financial advisors, Wealth Management representatives",
+                "morganstanley.com about-us, wealth-management and about-us-ir pages (no count)"]
     note: >-
-      No advisor count or headcount definition in any loaded MS document. The quote is the nearest
-      text (what "advisor-led" means), not a headcount definition.
+      No advisor count inside 2024Q4-2026Q3. The quote is the nearest text (what "advisor-led"
+      means), not a headcount definition. #216 stored the last supplement that prints "Wealth
+      Management representatives" (4Q2020) and the Form ADV Part 1A employee counts; this entry
+      is finalized with their chunks in the snapshot PR of #216.
 
   - entity: MS
     metric: net_new_assets
@@ -82,10 +90,18 @@ definitions:
     doc_id: SCHW-10K-2025
     chunk_id: SCHW-10K-2025#18
     valid_from: 2025-12-31
-    looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)"]
+    looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)",
+                "SCHW-DECK-* (2026Q1-Q3)", SCHW-DECK-2026-investor-day, SCHW-ADV-2026,
+                "SCHW-ADV1A-2026 (#216: Form ADV Part 1A Item 5, Charles Schwab & Co. CRD 5393)",
+                "Schwab 2024 Institutional Investor Day deck (no count; not stored)",
+                "EDGAR full-text search 2023-2026: financial consultants, wealth consultants",
+                "aboutschwab.com home and financial-reports pages (Wayback copies; no count)"]
     note: >-
       Schwab does not report an advisor count. Its employee advisers are Financial/Wealth
-      Consultants (#18); independent RIAs it custodies for (SCHW-10K-2025#23) are clients, not staff.
+      Consultants (#18); independent RIAs it custodies for (SCHW-10K-2025#23; "16K" in the
+      investor-day deck) are clients, not staff. #216 stored the Form ADV Part 1A employee counts
+      (closest metric, Form ADV labels); this entry is finalized with that chunk in the snapshot
+      PR of #216.
 
   - entity: SCHW
     metric: net_new_assets
@@ -102,16 +118,26 @@ definitions:
   # ---------- Bank of America (Merrill, reported in GWIM) ----------
   - entity: BAC
     metric: advisor_headcount
-    status: not_disclosed
-    quote: "Merrill Wealth Management’s advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets."
-    doc_id: BAC-10K-2025
-    chunk_id: BAC-10K-2025#246
-    valid_from: 2025-12-31
+    status: quoted
+    quote: ">15K Wealth Advisors"
+    doc_id: BAC-DECK-2025-investor-day
+    chunk_id: BAC-DECK-2025-investor-day#9
+    valid_from: 2025-09-30
+    includes: [advisors of Merrill Wealth Management and Bank of America Private Bank together (GWIM; slide "Merrill | Private Bank")]
+    excludes: []
+    not_stated: [a definition of "Wealth Advisors", the exact number (">15K" is rounded), whether the 2.4K advisor trainees (#34) are counted, a Merrill-only count]
+    see_also: [BAC-DECK-2025-investor-day#13, BAC-DECK-2025-investor-day#34, BAC-10K-2025#246]
     looked_in: [BAC-10K-2025, BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3,
-                "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)"]
+                "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)", MER-ADV-2026,
+                "BAC-SUPP-2023Q4 (#216: last supplement with a Total wealth advisors count)",
+                "MER-ADV1A-2026 (#216: Form ADV Part 1A Item 5, MLPF&S CRD 7691)",
+                "EDGAR full-text search 2023-2026: financial advisors, wealth advisors, Merrill advisors",
+                "ml.com (no count; about-merrill page 404)"]
     note: >-
-      Merrill advisors sit inside GWIM and no count is given in the corpus. The supplement's only
-      headcount is firmwide (BAC-SUPP-2025Q4#8, about 213,000 staff), not advisors.
+      Investor Day 2025-11-05, "All data presented as of 3Q25": one rounded point for GWIM
+      (Merrill and the Private Bank), not a Merrill-only count and not a series; GWIM is not
+      Merrill. The quarterly supplements stopped printing "Total wealth advisors" after 4Q2023;
+      #216 stored that supplement and the Form ADV Part 1A counts, added here in its snapshot PR.
 
   - entity: BAC
     metric: net_new_assets

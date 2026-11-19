@@ -131,8 +131,8 @@ vectors off, temp and model caches on D:):
 $PY = "D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe"; $env:PYTHONUTF8="1"; $env:TMP="D:\ALLPROJECTS\EDJ\cache\tmp"; $env:TEMP=$env:TMP; $env:HF_HOME="D:\ALLPROJECTS\EDJ\cache\hf"; $env:LLM_PROVIDER="mock"; Remove-Item Env:CEE_VECTORS,Env:PYTHONPATH,Env:DATABASE_URL -ErrorAction SilentlyContinue
 ```
 ```bash
-# macOS (Windows Git Bash: PY=.venv/Scripts/python.exe, HF_HOME=/d/ALLPROJECTS/EDJ/cache/hf)
-PY=.venv/bin/python; export PYTHONUTF8=1 LLM_PROVIDER=mock HF_HOME="$HOME/.cache/huggingface"; unset CEE_VECTORS PYTHONPATH DATABASE_URL
+# macOS (Windows Git Bash: EV=/d/ALLPROJECTS/EDJ/cache/ev216, PY=.venv/Scripts/python.exe, HF_HOME=/d/ALLPROJECTS/EDJ/cache/hf)
+EV=$HOME/cee-ev216; mkdir -p "$EV"; PY=.venv/bin/python; export PYTHONUTF8=1 LLM_PROVIDER=mock HF_HOME="$HOME/.cache/huggingface"; unset CEE_VECTORS PYTHONPATH DATABASE_URL
 ```
 Scratch database on/off (steps 4-7):
 ```powershell
@@ -182,8 +182,8 @@ corpus differs).
       - SCHW: no supplement with headcount; check the latest earnings deck and the 10-K
         "Human Capital" text for an FC/WC count.
    c. **Form ADV Part 1A** (tier 2, IAPD) for the three advisory entities, CRDs from
-      `config/entities.yaml` (verified #55, matching the stored brochures' cover pages; if a
-      cover page disagrees, mark TODO-verify and ask the TL): MSSB 149777, MLPF&S 7691,
+      `config/entities.yaml` (from #55's IAPD check; the stored brochures' cover pages name the same
+      legal entities; if one disagrees, mark TODO-verify and ask the TL): MSSB 149777, MLPF&S 7691,
       Charles Schwab & Co. 5393. URL: `https://reports.adviserinfo.sec.gov/reports/ADV/<CRD>/PDF/<CRD>.pdf`
       (fallback: the firm page `https://adviserinfo.sec.gov/firm/summary/<CRD>` -> "Part 1").
       Item 5.A/5.B: total employees, employees performing investment advisory functions,
@@ -273,7 +273,8 @@ corpus differs).
    DB on (`cee_216`, corpus-2026-11-17 + the N new documents)**; before it, in the same shell,
    `docker exec cee-db psql -At -U cee -d cee_216 -c "SELECT count(*) FROM documents"` ->
    219 + N. Commit, push, PR ("Part of #216"; Verification: 0 real calls, evidence `EV`),
-   `gh pr checks <PR#> --watch` -> all green; reviewed and merged via `/tl-review`.
+   `gh pr checks <PR#> --watch` -> all green; reviewed and merged via `/tl-review`. PR A says
+   that the MS/SCHW (and any BAC) entries quoting new chunks are finalized in PR B.
    **N = 0** (no new document qualifies after a-f): no new snapshot (the corpus does not change);
    PR A carries the BAC `#9` entry, the MS/SCHW `looked_in` and the full documented search, says
    "Closes #216", and reports the snapshot/restore acceptance items as not applicable (nothing to
@@ -334,15 +335,18 @@ corpus differs).
     documents). Gate 4 was scored 21/30 on `corpus-2026-11-17` ..."; the free check uses
     `--baseline evals/baselines/SNAP/report.json` with SNAP's expected result; before "Reproduce
     the Gate 4 answers" add the restore of the old dump, both blocks:
-    `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 <Box>\snapshots\corpus-2026-11-17.dump`
-    / `bash scripts/restore.sh <Box>/snapshots/corpus-2026-11-17.dump` (teammates: download
-    that dump from the team Box link into `snapshots/`), and after it "run `/sync-db` to return
+    `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 snapshots\corpus-2026-11-17.dump`
+    / `bash scripts/restore.sh snapshots/corpus-2026-11-17.dump` (one path: the repo's
+    `snapshots/` folder; teammates download the dump there from the team Box link, the TL copies
+    it there from Box `snapshots/`), and after it "run `/sync-db` to return
     to SNAP". Then `PY -m pytest -q` -> all pass (>= floor); `PY scripts/verify_cee.py run` on
     SNAP -> VERIFY PASS (one re-run on a clearly environmental failure).
 13. **Publish**: branch `tl/216-snapshot-SNAP` from `main`; `LATEST.json` from the build;
     baseline; definitions; RUN.md 7; README Status; plan Progress log; in `repo`
     `git restore snapshots/LATEST.json` on `main` if the build left it modified. PR "Closes
-    #216" (notes: `docker compose down -v` skipped, why; baseline folder kept, why),
+    #216" (notes: `docker compose down -v` skipped, why; baseline folder kept, why; for a firm
+    whose only new evidence is a Form ADV Part 1A `adv` chunk, how "Q11, Q23, Q24 retrieve the new
+    chunks" is met: the step 6 treatment, metric_definitions record plus the reported S1 gap),
     `gh pr checks <PR#> --watch` -> green, `/tl-review`, merge = sync note; one chat line for
     the TL: "New snapshot SNAP: run /sync-db".
 14. **exp/hybrid** (not in these PRs): the next `sync/exp-hybrid-<date>` PR merges `main` and,
@@ -376,7 +380,8 @@ corpus differs).
 - [ ] New baseline `evals/baselines/SNAP/` committed; `corpus-2026-11-17/` kept (Gate 4).
 - [ ] `docs/RUN.md` section 7: `Select-String -Path docs/RUN.md -Pattern "restore.ps1 .*corpus-2026-11-17.dump","restore.sh .*corpus-2026-11-17.dump","sync-db","baselines/SNAP"`
       / `grep -nE "restore\.(ps1|sh) .*corpus-2026-11-17\.dump|sync-db|baselines/SNAP" docs/RUN.md`
-      -> each of the four found in section 7.
+      -> each of the four found, and the PR quotes the `-n` line numbers, all inside the section 7
+      heading range (`## 7.` to end of file).
 - [ ] `git diff --name-only origin/main...HEAD` of PR A and PR B: no `data/raw/`, no `*.dump`.
 - [ ] `gh pr checks` green on PR A and PR B.
 - [ ] exp/hybrid `embed --missing` hand-off noted on #216 (done at the next sync).
@@ -403,3 +408,54 @@ corpus differs).
   and row-count note, prefer source-dated pages, step 9 stop rule, `down -v` skipped, verify-cee
   DB named for PR A. Also found: the metric test allows one entry per (entity, metric), so a
   Part 1A figure is the entry only when no own-label count exists, else `see_also` + note.
+- 2026-11-19 05:20 - round 2 on #216 (reviewed 0c84c7f): **PLAN APPROVED** (reviewer agent),
+  https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/216#issuecomment-7007680892 ;
+  0 blocking, 6 non-blocking. Applied: bash/Mac `EV` line; RUN.md grep quotes `-n` lines inside
+  section 7; one dump path (`snapshots/`) in RUN.md; PR A says the new-chunk entries are
+  finalized in PR B; PR B states how the issue item is met for Form ADV-only evidence; CRD
+  wording (#55's IAPD check).
+- 2026-11-19 05:24 - step 1 done (`cee` = corpus-2026-11-17, read-only): `EV/stored.txt`
+  (35 rows) and `EV/rawgrep.txt` (23 PDFs) = the pre-check; no chunking loss. `pytest -q`
+  on 0da68fd: 698 passed (floor, `EV/pytest-base.txt`).
+- 2026-11-19 05:36 - step 2 done, every try in `EV/sources-tried.md` (EDGAR full-text search
+  `EV/efts.txt`, `EV/efts-ms-early.txt`; contexts `EV/efts-ctx.txt`). Found: MS supplements
+  print "Wealth Management representatives" last in 4Q2020 (8-K Ex.99.2 filed 2021-01-20;
+  1Q2021-4Q2024 and the stored 2025Q4-2026Q3 do not); BAC supplements print "Total wealth
+  advisors (3)" last in 4Q2023 (filed 2024-01-12; footnote "Includes advisors across all wealth
+  management businesses in GWIM and Consumer Banking"); Schwab publishes no FC/WC count (10-K,
+  10-Q, decks incl. the 2024 investor day, aboutschwab.com via Wayback); firm pages none. Form
+  ADV Part 1A Item 5 for MSSB, MLPF&S and Charles Schwab & Co. fetched (390/681/75-page PDFs,
+  18-34 MB; stored as verbatim text extracts of the page 1 header and Item 5.A-5.B, because
+  parsing the full filings would add thousands of unrelated chunks). No count exists inside the
+  Q23 window for MS, Merrill or Schwab under the firms' own labels.
+- 2026-11-19 05:37 - step 3: 5 manifest rows (`MS-SUPP-2020Q4` htm EDGAR Ex.99.2,
+  `BAC-SUPP-2023Q4`, `MS-ADV1A-2026`, `MER-ADV1A-2026`, `SCHW-ADV1A-2026`), files in Box `raw/`,
+  sha256 in `EV/sha256-new.txt`; manifest check 224 files OK, 0 empty `published_at`.
+- 2026-11-19 05:39 - step 4: `cee_216` restored (219 docs, 21,143 chunks) and the 5 docs
+  ingested; smoke PASS. Found: the BAC EDGAR htm parses as one flat section, so the GWIM page
+  chunk had segment NULL (the Merrill filter would drop it) and the count split over two chunks.
+  Switched `BAC-SUPP-2023Q4` to the IR PDF (same as the other BAC supplements, docling headings
+  tag GWIM); htm removed from Box `raw/` and `cee_216`, manifest row updated. The first
+  `ingest.ps1 -Doc MS-SUPP-2020Q4` exited 1 (edgartools cache miss; error text not kept); a
+  rerun of `cee.ingest.load --doc` succeeded (86 chunks).
+- 2026-11-19 05:48 - step 4 done: `BAC-SUPP-2023Q4.pdf` parsed by docling (cache written),
+  109 chunks. `cee_216`: 224 documents, 21,347 chunks (+204: MS-SUPP-2020Q4 86, BAC-SUPP-2023Q4
+  109, three ADV1A 3 each); md5s in `EV/new-chunks.txt` (204 lines). Count chunks:
+  `MS-SUPP-2020Q4#31` (segment Wealth Management) "Wealth Management representatives 15,950
+  15,469 15,468"; `BAC-SUPP-2023Q4#61` (page 20, GWIM) "Total wealth advisors (3) | 18,916 |
+  19,273 | ..." with footnote (3) in `#62` (GWIM); `MS-ADV1A-2026#1`, `MER-ADV1A-2026#1`,
+  `SCHW-ADV1A-2026#1` Item 5.A/5.B. Every count sits with its label in one chunk.
+- 2026-11-19 05:49 - step 5: `config/metric_definitions.yaml` (BAC quotes
+  `BAC-DECK-2025-investor-day#9`; MS/SCHW `looked_in` extended; notes say PR B finalizes),
+  `specs/filings.md` table, `config/source_registry.csv` (MS/BAC supplement URL patterns).
+  `pytest tests/test_metric_definitions.py` on `cee`: 13 passed, 0 skipped; `pytest -q`: 698
+  passed (= floor).
+- 2026-11-19 05:50 - step 6: base (`cee`) 29 PASS / 1 FAIL (Q19); new (`cee_216`) 29 / 1; 0
+  forbidden; refusal 5/5 and 22/22 both; `EV/compare.txt`. Q11 retrieves `BAC-SUPP-2023Q4#61`,
+  `#62`, `BAC-DECK-2025-investor-day#9`; Q23 retrieves `BAC-SUPP-2023Q4#61` (not `#9`); Q24
+  retrieves `MS-SUPP-2020Q4#31`, `BAC-SUPP-2023Q4#61`, `#9`. Not retrieved: `MS-SUPP-2020Q4#31`
+  for Q11 and Q23; the three ADV1A chunks for Q11/Q23/Q24 (expected, `doc_type_scope` #179).
+  **Stop rule hit:** Q17 `recall_final` 1.0 -> 0.9: `BAC-TR-2026Q2#21` (Merrill's AI-tools
+  remark) lost its slot to `BAC-SUPP-2023Q4#10` (2023 income statement, "Information
+  processing and communications" row). Class (b), ranking crowd-out by a new document; Q17
+  stays PASS; no other question moves. Stopped before PR A; reported to the TL.
