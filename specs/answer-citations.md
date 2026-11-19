@@ -5,7 +5,8 @@ Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-002, ADR-003 in 
 
 ## Purpose
 
-Turn retrieved chunks into a cited answer with one LLM call, then check it in code: every
+Turn retrieved chunks into a cited answer with one LLM call (after at most one question-planner call
+before search, ADR-020: 2 calls per question at most), then check it in code: every
 citation resolves, every number appears in a cited chunk, caveats are inserted, gaps are named
 with a source that would fill them, and the answer never crosses into "should".
 

@@ -361,11 +361,12 @@ def test_answer_key_ids_are_in_the_manifest():
 
 def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
     # --as-of must end the window retrieval uses, not only the one scoring uses (Q26)
-    from cee.retrieve import fts, modes
+    from cee.retrieve import fts
 
     seen = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: [])
+    monkeypatch.setattr(fts, "search", lambda q, k=None, trace=None: [])
+    _fake_plan(monkeypatch)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
@@ -378,7 +379,7 @@ def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
 
     seen_modes = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: seen_modes.append(mode) or [])
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: seen_modes.append(mode) or [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
@@ -400,7 +401,8 @@ def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
                 rank=0.123456, text="x")
     from cee.retrieve import modes
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: [h])
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: [h])
+    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
@@ -413,12 +415,13 @@ def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
 def _fake_bank(monkeypatch, seen=None):
     from cee.retrieve import fts, hybrid, modes
 
-    def search(q, k=None, mode=None, trace=None):
+    def search(q, k=None, mode=None, trace=None, **kw):
         if seen is not None:
             seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)))
         return []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
     monkeypatch.setattr(modes, "search", search)
+    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
 
@@ -688,6 +691,17 @@ def _tok_hit(cid, entity, n_chars):
                rank=1.0, text="x" * n_chars)
 
 
+def _fake_plan(monkeypatch):
+    """#214: token mode searches the question's plan; a one-part rule plan through the faked
+    fts.search (k=None, the app's path), so these tests keep seeing what search() was asked."""
+    from cee.retrieve import fts, planner
+
+    monkeypatch.setattr(planner, "plan_question",
+                        lambda q, provider, **kw: planner.Plan(parts=[planner.Part("p1", "", list(q.entities))]))
+    monkeypatch.setattr(planner, "search_parts",
+                        lambda q, plan, trace=None, part_pools=None: fts.search(q, trace=trace))
+
+
 def _fake_eval(monkeypatch, entities, hits, peer_ids=(), unattached=()):
     from cee.retrieve import fts
 
@@ -703,6 +717,7 @@ def _fake_eval(monkeypatch, entities, hits, peer_ids=(), unattached=()):
     qry = types.SimpleNamespace(entities=list(entities), unmapped=[], mode="entity", themes=[], theme_peers=[])
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: qry)
     monkeypatch.setattr(fts, "search", search)
+    _fake_plan(monkeypatch)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     return seen, qry
@@ -808,3 +823,111 @@ def test_anthropic_error_carries_stop_reason():
         llm._anthropic("q?", real_hits(), client=client)
     assert e.value.stop_reason == "max_tokens"
     assert llm.anthropic_request("q?", real_hits())["max_tokens"] == llm.MAX_TOKENS == 8000
+
+
+# --- #214: question planner in the eval (plan cache, call count, parts per expected row) ---------
+
+Q7_TEXT = "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?"
+
+
+def _planner_calls(monkeypatch, outcome):
+    """A fake planner provider call: returns `outcome` or raises it; records each call."""
+    from cee.retrieve import planner
+
+    calls = []
+
+    def call(query, provider, cap, client=None):
+        calls.append(query.question)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+    monkeypatch.setattr(planner, "call_planner", call)
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    return calls
+
+
+def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS", "MER", "RJF"], "keyword_query": "payout grid"}]}
+    calls = _planner_calls(monkeypatch, raw)
+    question = {"id": "Q7", "text": Q7_TEXT}
+    qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    plan = runner.plan(question, qry)
+    assert plan.source == "model" and plan.calls == 1 and runner.calls == 1 and len(calls) == 1
+    files = list((tmp_path / "cache").iterdir())
+    assert len(files) == 1 and files[0].name.startswith("Q7-plan-")
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["raw"] == raw and rec["planner_version"] == "plan-v1" and rec["max_tokens"] == 2000
+    assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
+    again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    plan2 = again.plan(question, qry)
+    assert again.calls == 0 and again.reused == 1 and len(calls) == 1      # reused, not re-called
+    assert [p.keyword_query for p in plan2.parts] == [p.keyword_query for p in plan.parts]
+
+
+def test_failed_planner_call_is_cached_fallback(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    calls = _planner_calls(monkeypatch, ConnectionError("network down"))
+    question = {"id": "Q7", "text": Q7_TEXT}
+    qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    plan = runner.plan(question, qry)
+    assert plan.source == "fallback" and plan.calls == 1 and runner.calls == 1
+    assert saved(tmp_path / "cache")[0]["failed_call"] is True
+    again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert again.plan(question, qry).source == "fallback" and again.calls == 0 and len(calls) == 1
+
+
+def test_planner_call_counts_against_max_calls(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    calls = _planner_calls(monkeypatch, {"parts": []})
+    runner = er.RealRunner("anthropic", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17))) is None
+    assert calls == [] and runner.calls == 0
+
+
+def test_cache_key_of_a_plan_differs_by_cap_and_query():
+    a = er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 3, {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["RJF"]})
+
+
+def test_part_stages_name_the_parts():
+    hits = [khit("MS-10K-2025#153", "MS")]
+    hits[0].part_id = "p2"
+    key = {"must_return": [["MS-10K-2025#153"], ["SCHW-10K-2025#27"], ["EDJ-10K-2025#88"]], "must_not_return": []}
+    s = er.score_key(key, hits, forbidden_ids=[], pool_ids={"SCHW-10K-2025#27"})
+    er.part_stages(s, hits, {"p1": {"SCHW-10K-2025#27"}, "p2": {"MS-10K-2025#153"}, "research": set()})
+    assert [(r["parts_pool"], r["parts_final"]) for r in s["rows"]] == [
+        (["p2"], ["p2"]), (["p1"], []), ([], [])]
+
+
+def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
+    from cee.retrieve import fts, planner
+
+    hits = real_hits()
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
+    seen = []
+
+    def fake_parts(q, plan, trace=None, part_pools=None):
+        seen.append(plan)
+        hits[0].part_id = "p1"
+        return hits
+    monkeypatch.setattr(planner, "search_parts", fake_parts)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q7", "--out", str(tmp_path)])
+    r = _record(tmp_path)["questions"][0]
+    assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
+    assert r["llm_calls"] == {"planner": 0, "answer": 0} and r["plan"]["source"] == "rules"
+    assert _record(tmp_path)["meta"]["planner_version"] == "plan-v1" and seen[0].source == "rules"

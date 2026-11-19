@@ -60,6 +60,10 @@ class Query:
     keywords: list[str] = field(default_factory=list)     # every keyword must be in the passage
     # Home-firm theme rule (#205, ADR-018): other covered firms searched only on the theme
     theme_peers: list[str] = field(default_factory=list)
+    # Question planner (#214, ADR-020): one part of a question searches its own words (None = the
+    # question's) and keeps the whole question's doc-type scope (None = computed from this query).
+    terms: str | None = None
+    scope: tuple[list[str], list[int]] | None = None
 
     @property
     def firms(self) -> list[str]:
@@ -83,6 +87,7 @@ class Hit:
     text: str
     date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
     on_theme: bool = False       # entity+theme: a firm chunk with the theme's keywords (#117)
+    part_id: str | None = None   # #214: the plan part that kept it (p1.., "research", "peers")
 
 
 def _alias_pattern(alias: str) -> re.Pattern:
@@ -234,8 +239,10 @@ def doc_type_scope(q: Query) -> tuple[list[str], list[int]]:
 
 
 def doc_type_scope_sql(q: Query) -> tuple[str, dict]:
-    """doc_type_scope() as a hard SQL filter; TRUE when nothing is left out."""
-    types, tiers = doc_type_scope(q)
+    """doc_type_scope() as a hard SQL filter; TRUE when nothing is left out. A plan part (#214)
+    carries the whole question's scope in q.scope, so a one-firm part of a benchmark question
+    keeps the tier 4 exclusion."""
+    types, tiers = q.scope if q.scope is not None else doc_type_scope(q)
     clauses, params = [], {}
     if types:
         clauses.append("d.doc_type <> ALL(%(scope_types)s)")
@@ -248,8 +255,8 @@ def doc_type_scope_sql(q: Query) -> tuple[str, dict]:
 
 def _search_terms(q: Query) -> str:
     """Question minus firm names, peer phrases and time phrases, as an OR query (ranking does
-    the rest)."""
-    text = q.question
+    the rest). A plan part (#214) searches its own words (q.terms) through the same clean-up."""
+    text = q.question if q.terms is None else q.terms
     cfg = entities_config()
     for e in cfg["entities"] + cfg.get("expansion", []):
         for a in [e["name"], *e.get("aliases", [])]:
@@ -824,21 +831,29 @@ class PoolTrace:
         return {*self.firm, *self.research, *self.on_theme, *self.peers, *self.answers}
 
 
-def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> list[Hit]:
-    """k: passages to return; None = the app default: budget(q) passages in passage mode
-    (TOKEN_BUDGET None), budget_tokens(q) estimated tokens in token mode. The theme peers' slots (#205)
-    are part of budget(q) and come on top of an explicit k, so the named firms and the research
-    part get the same k with or without peers. trace (#210): filled with the candidate pools'
-    chunk ids; it changes nothing else.
-    Token budget (#213, ADR-019): with k None and TOKEN_BUDGET set, the firm and research parts
-    share budget_tokens(q) (research first, its tokens off the firm part); the peers' passages
-    stay on top. An explicit k is always the passage rule."""
-    tokens = budget_tokens(q) if k is None else None
-    k = budget(q) - peer_slots(q) if k is None else k
+def searchable(q: Query) -> bool:
+    """False when code knows nothing is eligible without searching: every named firm is one we
+    hold no documents for, or the Ask page firm filter leaves none of the named firms."""
     if q.unmapped and not q.entities:
-        return []  # firm is known but not in the corpus: nothing is eligible
+        return False  # firm is known but not in the corpus: nothing is eligible
     if q.firm_filter and not q.entities:
-        return []  # the firm filter leaves none of the firms the question names
+        return False  # the firm filter leaves none of the firms the question names
+    return True
+
+
+@dataclass
+class _Ctx:
+    """The SQL pieces every pass of one question shares: hard filters, words, ranking."""
+    where: str
+    filters: str
+    window: str
+    fragments: dict
+    match: str
+    params: dict
+    rank: str
+
+
+def _context(conn, q: Query) -> _Ctx:
     where, params = entity_filter(q.entities)
     filters, filter_params = filters_sql(q)
     params.update(filter_params)
@@ -854,66 +869,147 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> li
     match = "TRUE" if q.window else "c.tsv @@ q.tsq"
     params.update(syn_params)
     params.update(window_params, terms=terms, per_group=POOL_PER_GROUP)
-    research_rows, on_theme_rows, peer_rows = [], [], []
+    rank, rank_params = rank_sql(conn, terms, syn_params)
+    params.update(rank_params)
+    return _Ctx(where, filters, window, fragments, match, params, rank)
+
+
+def _rows(conn, ctx: _Ctx, entity_where: str, extra: dict | None = None) -> list:
+    sql = SQL.format(**ctx.fragments, rank=ctx.rank, match=ctx.match, entity_filter=entity_where,
+                     window_filter=ctx.window, filters=ctx.filters)
+    return conn.execute(sql, ctx.params | (extra or {})).fetchall()
+
+
+def _research_rows(conn, ctx: _Ctx, q: Query) -> list:
+    """Tier 5 research on the theme (entity+theme only; no firm, tagged with a named topic)."""
+    if q.mode != "entity+theme":
+        return []
+    themes, theme_params = theme_filter(q.themes)
+    return _rows(conn, ctx, themes, theme_params)
+
+
+def _peer_rows(conn, ctx: _Ctx, q: Query) -> list:
+    """Home-firm theme rule (#205): the other firms' chunks, on the theme only."""
+    if q.mode != "entity+theme" or not q.theme_peers:
+        return []
+    on_theme, on_theme_params = on_theme_filter(q.themes)
+    peers, peer_params = entity_filter(q.theme_peers, prefix="peer_")
+    return _rows(conn, ctx, f"{peers} AND {on_theme}", on_theme_params | peer_params)
+
+
+def _window_opts(q: Query) -> dict:
+    # Inside a window every document is on topic, so no floor; one filing may be all there is.
+    # Trade press is not put last there (#198): Q26 reads its 90 days of news as they rank; a new
+    # document still comes before a second chunk of a used one (#199, Q27: Merrill since January).
+    return {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC, "trade_last": False} if q.window else {}
+
+
+def _select_research(rows: list, k: int, q: Query) -> list[Hit]:
+    return select([Hit(**r) for r in rows], min(THEME_K, k),  # research: as before #166
+                  **{**_window_opts(q), "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False,
+                     "new_doc_first": False},
+                  floor_base=1)
+
+
+def _select_peers(rows: list, q: Query, kept: set[str]) -> list[Hit]:
+    """The peers' best chunks on the theme, after the floor across them (kept in a window too);
+    at most PEER_THEME_PER_FIRM each, never a chunk already in the list."""
+    if not rows:
+        return []
+    peer_pool = peer_floor([Hit(**r, on_theme=True) for r in rows])
+    firm_of = quota_firms(q.theme_peers)
+    peer_hits = select([h for h in peer_pool if h.chunk_id not in kept],
+                       PEER_THEME_PER_FIRM * len({firm_of.get(h.entity_id, h.entity_id) for h in peer_pool}),
+                       floor=0, firm_of=firm_of, trade_last=not q.window)
+    out, per_firm = [], {}
+    for h in peer_hits:
+        f = firm_of.get(h.entity_id, h.entity_id)
+        if per_firm.get(f, 0) < PEER_THEME_PER_FIRM:
+            per_firm[f] = per_firm.get(f, 0) + 1
+            out.append(h)
+    return out
+
+
+def research_pass(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> list[Hit]:
+    """The research part of search() on its own (#214, ADR-020): run once per question before the
+    plan's parts, from the whole question's query (same filters, scope, window and ranking as
+    search()), so a question keeps at most THEME_K research passages whatever its parts."""
+    if q.mode != "entity+theme" or not searchable(q):
+        return []
+    k = budget(q) - peer_slots(q) if k is None else k
     with connect() as conn:
-        rank, rank_params = rank_sql(conn, terms, syn_params)
-        params.update(rank_params)
-        sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=where, window_filter=window,
-                         filters=filters)
-        rows = conn.execute(sql, params).fetchall()
+        ctx = _context(conn, q)
+        rows = _research_rows(conn, ctx, q)
+    if trace is not None:
+        trace.research += [r["chunk_id"] for r in rows]
+    return _select_research(rows, k, q)
+
+
+def peer_pass(q: Query, kept: set[str], trace: PoolTrace | None = None) -> list[Hit]:
+    """The theme peers of search() on their own (#214, ADR-020): run once per question after the
+    plan's parts, never a chunk in `kept`, on top of the token budget as before."""
+    if q.mode != "entity+theme" or not q.theme_peers or not searchable(q):
+        return []
+    with connect() as conn:
+        ctx = _context(conn, q)
+        rows = _peer_rows(conn, ctx, q)
+    if trace is not None:
+        trace.peers += [r["chunk_id"] for r in rows]
+    return _select_peers(rows, q, kept)
+
+
+def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, tokens: float | None = None,
+           exclude: set[str] | None = None, research: bool = True, peers: bool = True) -> list[Hit]:
+    """k: passages to return; None = the app default: budget(q) passages in passage mode
+    (TOKEN_BUDGET None), budget_tokens(q) estimated tokens in token mode. The theme peers' slots (#205)
+    are part of budget(q) and come on top of an explicit k, so the named firms and the research
+    part get the same k with or without peers. trace (#210): filled with the candidate pools'
+    chunk ids; it changes nothing else.
+    Token budget (#213, ADR-019): with k None and TOKEN_BUDGET set, the firm and research parts
+    share budget_tokens(q) (research first, its tokens off the firm part); the peers' passages
+    stay on top. An explicit k is always the passage rule.
+    Plan parts (#214, ADR-020): `tokens` is an explicit token budget (a part's share); `exclude`
+    holds chunk ids already kept (earlier parts, the research pass): they leave the pools and the
+    answer-turn map, so they are never kept twice; research=False / peers=False leave out the
+    research part and the theme peers (run once per question by research_pass / peer_pass)."""
+    if tokens is None and k is None:
+        tokens = budget_tokens(q)
+    k = budget(q) - peer_slots(q) if k is None else k
+    if not searchable(q):
+        return []
+    exclude = exclude or set()
+    with connect() as conn:
+        ctx = _context(conn, q)
+        rows = _rows(conn, ctx, ctx.where)
+        research_rows = _research_rows(conn, ctx, q) if research else []
+        on_theme_rows = []
         if q.mode == "entity+theme":
-            themes, theme_params = theme_filter(q.themes)
-            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=themes, window_filter=window,
-                             filters=filters)
-            research_rows = conn.execute(sql, params | theme_params).fetchall()
             # The firms' own chunks on the theme, pooled on their own so a firm's best on-theme
             # chunks are there even when off-theme chunks fill its usual pool (#117).
             on_theme, on_theme_params = on_theme_filter(q.themes)
-            sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{where} AND {on_theme}",
-                             window_filter=window, filters=filters)
-            on_theme_rows = conn.execute(sql, params | on_theme_params).fetchall()
-            if q.theme_peers:  # home-firm theme rule (#205): other firms, on the theme only
-                peers, peer_params = entity_filter(q.theme_peers, prefix="peer_")
-                sql = SQL.format(**fragments, rank=rank, match=match, entity_filter=f"{peers} AND {on_theme}",
-                                 window_filter=window, filters=filters)
-                peer_rows = conn.execute(sql, params | on_theme_params | peer_params).fetchall()
+            on_theme_rows = _rows(conn, ctx, f"{ctx.where} AND {on_theme}", on_theme_params)
+        peer_rows = _peer_rows(conn, ctx, q) if peers else []
         on_ids = {r["chunk_id"] for r in on_theme_rows}
         merged = {r["chunk_id"]: r for r in [*rows, *on_theme_rows]}
-        pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()),
+        pool = sorted((Hit(**r, on_theme=r["chunk_id"] in on_ids) for r in merged.values()
+                       if r["chunk_id"] not in exclude),
                       key=lambda h: (-h.rank, h.chunk_id))
-        answers = answer_turns(conn, [h for h in pool if is_question_turn(h)], where, window, filters,
-                               params) if PAIR_TURNS else {}
+        answers = answer_turns(conn, [h for h in pool if is_question_turn(h)], ctx.where, ctx.window,
+                               ctx.filters, ctx.params) if PAIR_TURNS else {}
+        answers = {qid: a for qid, a in answers.items() if a.chunk_id not in exclude}
     if trace is not None:
         trace.firm += [r["chunk_id"] for r in rows]
         trace.research += [r["chunk_id"] for r in research_rows]
         trace.on_theme += [r["chunk_id"] for r in on_theme_rows]
         trace.peers += [r["chunk_id"] for r in peer_rows]
         trace.answers += [a.chunk_id for a in answers.values()]
-    # Inside a window every document is on topic, so no floor; one filing may be all there is.
-    # Trade press is not put last there (#198): Q26 reads its 90 days of news as they rank; a new
-    # document still comes before a second chunk of a used one (#199, Q27: Merrill since January).
-    opts = {"floor": 0, "max_per_doc": WINDOW_MAX_PER_DOC, "trade_last": False} if q.window else {}
-    research = select([Hit(**r) for r in research_rows], min(THEME_K, k),  # research: as before #166
-                      **{**opts, "max_per_doc": THEME_MAX_PER_DOC, "trade_last": False, "new_doc_first": False},
-                      floor_base=1)
-    firm_tokens = None if tokens is None else max(0.0, tokens - sum(hit_tokens(h) for h in research))
-    hits = select(pool, k - len(research), **opts, firm_of=quota_firms(q.entities), answers=answers,
-                  tokens=firm_tokens, unattached=trace.unattached if trace is not None else None) + research
+    opts = _window_opts(q)
+    research_hits = _select_research(research_rows, k, q) if research_rows else []
+    firm_tokens = None if tokens is None else max(0.0, tokens - sum(hit_tokens(h) for h in research_hits))
+    hits = select(pool, k - len(research_hits), **opts, firm_of=quota_firms(q.entities), answers=answers,
+                  tokens=firm_tokens, unattached=trace.unattached if trace is not None else None) + research_hits
     if peer_rows:
-        # The peers' best chunks on the theme, after the floor across them (kept in a window too);
-        # at most PEER_THEME_PER_FIRM each, never a chunk already in the list.
-        peer_pool = peer_floor([Hit(**r, on_theme=True) for r in peer_rows])
-        firm_of = quota_firms(q.theme_peers)
-        kept = {h.chunk_id for h in hits}
-        peer_hits = select([h for h in peer_pool if h.chunk_id not in kept],
-                           PEER_THEME_PER_FIRM * len({firm_of.get(h.entity_id, h.entity_id) for h in peer_pool}),
-                           floor=0, firm_of=firm_of, trade_last=not q.window)
-        per_firm: dict = {}
-        for h in peer_hits:
-            f = firm_of.get(h.entity_id, h.entity_id)
-            if per_firm.get(f, 0) < PEER_THEME_PER_FIRM:
-                per_firm[f] = per_firm.get(f, 0) + 1
-                hits.append(h)
+        hits += _select_peers(peer_rows, q, {h.chunk_id for h in hits})
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits

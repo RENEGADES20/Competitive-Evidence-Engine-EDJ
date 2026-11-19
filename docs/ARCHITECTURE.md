@@ -12,6 +12,7 @@ flowchart LR
     B --> D[(PostgreSQL<br/>documents, chunks, entities, topics)]
     E[Streamlit web interface] --> F[Search and filter<br/>company / date / keywords]
     D --> F
+    P[Question planner<br/>parts + search words, ADR-020] --> F
     F --> G[Answer generation<br/>one LLM call + retrieved evidence]
     G --> H[Citation validation<br/>stored doc and chunk IDs]
     H --> I[Answer + citations<br/>or evidence gap]
