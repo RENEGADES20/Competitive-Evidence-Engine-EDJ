@@ -561,7 +561,7 @@ Decision:
   the slots (0.802 < 0.808).
 - Tokens are characters / 4 estimates everywhere (budget, reports, this ADR), not tokenizer counts.
 Consequences: mock, `corpus-2026-11-17`: 29 PASS / 1 FAIL (Q19) unchanged, no question REGRESSED,
-15 IMPROVED; tier-1 document recall 0.785 -> 0.937. Passages per question grow from 20-30 to
+14 IMPROVED; tier-1 document recall 0.785 -> 0.937. Passages per question grow from 20-30 to
 23-216 (675 -> 3,458 in total); tokens per question median 6,001 -> 33,643, max 9,544 -> 60,322
 (~988k over the 30, ~5x), so input cost per answer grows about 5x and five-firm answers read
 ~60k tokens. 20 of 30 questions stop below the budget because their eligible pool runs out

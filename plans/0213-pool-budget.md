@@ -360,7 +360,7 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   in one run, passed on re-run; it loads a local model while the #212 agent runs its own).
 - 2026-11-19 00:03 - step 5: final mock run `.eval-runs/0213-final` (commit 1da1890, the pick)
   identical to the grid point (30/30 lists, statuses, refusal, recall; `...\ev213\step5-diff.txt`).
-  29 PASS / 1 FAIL (Q19), 15 IMPROVED, 0 REGRESSED; recall@pool 0.814 / recall@final 0.654, tier 1
+  29 PASS / 1 FAIL (Q19), 14 IMPROVED, 0 REGRESSED; recall@pool 0.814 / recall@final 0.654, tier 1
   0.903 / 0.808; tokens per question median 33,643 / max 60,322; largest overshoot 323 tokens; no
   unattached answer turn. Copied to `evals/baselines/corpus-2026-11-17/`.
 - 2026-11-19 00:04 - step 6: ADR-019, ADR-013 status note, spec, fts docstring.
