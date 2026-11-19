@@ -282,34 +282,34 @@ open), a failed planner call falls back to the rule plan (counted, a finding). N
   the PR.
 
 ## Acceptance
-- [ ] Tests (fakes, 0 calls): a fake response with `stop_reason` `max_tokens` is saved as invalid with
+- [x] Tests (fakes, 0 calls): a fake response with `stop_reason` `max_tokens` is saved as invalid with
   its `stop_reason` and `usage`, even when its partial input validates; an empty valid-shaped answer
   (and one with a misnamed list key) is invalid with the input as sent saved; `refuse` with no
   claims stays valid; a valid output saves `stop_reason` and `usage` (answer, cache record, report
   record); a cached empty output is `INVALID_OUTPUT` on reuse with no call; OpenAI `length` is
   invalid; the planner record saves `stop_reason` / `usage`.
-- [ ] Tests: `MAX_TOKENS == 20000` in the request; the SDK's non-streaming check accepts it (skipped
+- [x] Tests: `MAX_TOKENS == 20000` in the request; the SDK's non-streaming check accepts it (skipped
   without the SDK); `cache_key` without window equals today's literal; with window differs;
   `plan_cache_key` unchanged.
-- [ ] Tests: `PROMPT_VERSION == "v4.1"`; new recency rule, oldest-to-newest exception and grouping
+- [x] Tests: `PROMPT_VERSION == "v4.1"`; new recency rule, oldest-to-newest exception and grouping
   sentence present, v4 recency sentence gone; window line only when the query has a window, the
   message without one byte-identical to v4's; leak test (whole v4.1 prompt + window line) passes.
-- [ ] Replay (0 calls): Q22 / Q26 chunk lists equal #229's (209 / 46); the saved #229 Q22 raw is
+- [x] Replay (0 calls): Q22 / Q26 chunk lists equal #229's (209 / 46); the saved #229 Q22 raw is
   invalid under `check_output`, Q26's valid; v4.1 user messages and sizes written.
-- [ ] Mock (`.eval-runs/0230-mock`): 30/30 chunk lists identical to the baseline, 29 PASS / 1 FAIL
+- [x] Mock (`.eval-runs/0230-mock`): 30/30 chunk lists identical to the baseline, 29 PASS / 1 FAIL
   (Q19), refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL, 0 real calls.
-- [ ] `pytest -q` passes; verify-cee all features PASS.
-- [ ] Real (`.eval-runs/0230-real`, <= 10 calls): **Q22** has claims for every firm that reports net
+- [x] `pytest -q` passes; verify-cee all features PASS.
+- [ ] (open: Q22 INVALID_OUTPUT, tool input `{"answer": null}`, `stop_reason` `tool_use`, 4,223 output tokens: not a cut) Real (`.eval-runs/0230-real`, <= 10 calls): **Q22** has claims for every firm that reports net
   new assets, and every one of the five firms has a claim or a gap (a non-reporting firm marked
   as not reporting, never zero, never a substitute presented as NNA); judged PASS against
   `passes_if`; `stop_reason` `tool_use` (or `end_turn`), not `max_tokens`; output tokens recorded.
-- [ ] Real: **Q26** claims are newest first across the whole answer (no inversion of the claims'
+- [x] (0 inversions over 23 claims, parts interleaved; PASS, borderline on "why it might matter") Real: **Q26** claims are newest first across the whole answer (no inversion of the claims'
   newest cited `published_at`, ties allowed; computed in the real-table) and judged PASS against
   `passes_if` (one line on why each item might matter; nothing older than the window).
-- [ ] Real: **Q11, Q24, Q1** are not empty (not `INVALID_OUTPUT`), keep their behavior (Q11
+- [x] (Q1 answer PASS, Q11 gap_with_adjacent as Gate 4, Q24 gap_with_adjacent PASS; all `tool_use`) Real: **Q11, Q24, Q1** are not empty (not `INVALID_OUTPUT`), keep their behavior (Q11
   `gap_with_adjacent` as in Gate 4 / v3, bank `answer` known NEXT item 5; Q24 `gap_with_adjacent`;
   Q1 `answer` and PASS against `passes_if`); `stop_reason` and output tokens recorded for all five.
-- [ ] Spec, ARCHITECTURE and the ADR-019 amendment updated.
+- [x] Spec, ARCHITECTURE and the ADR-019 amendment updated.
 - [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
@@ -336,4 +336,38 @@ open), a failed planner call falls back to the rule plan (counted, a finding). N
   oldest-to-newest exception, grouping sentence) and the window line. Tests: 21 new test functions
   (`test_llm_openai.py` 11, `test_eval_run.py` 7, `test_prompt.py` 3); version and cap pins moved to
   v4.1 / 20000; test fakes take `window` / `meta`.
+- 2026-11-19 04:11 - steps 1 and 4 (`D:/ALLPROJECTS/EDJ/cache/ev230/replay.py`, `diagnosis.txt`,
+  `replay.txt`, 0 calls): the #229 Q22 / Q26 records save no `stop_reason` or usage; answer-call
+  timing Q22 ~52.7 s vs Q25 ~52.4 s (8.9k output characters), Q12 ~51.9 s (12.1k), Q7 ~50.0 s
+  (11.7k): the timing does not favour a cut, Q22 is attributed only from the new
+  `usage.output_tokens`. Q26 v4 claims by newest cited `published_at`: 5 inversions (restarts at
+  each part, and multi-item claims). Replay: Q22 209 / Q26 46 passages, chunk lists identical to
+  #229; v4.1 user messages ~67.4k (Q22) / ~16.3k (Q26) tokens (chars / 4) plus a ~2.2k-token system
+  prompt; Q26's message carries "Time window: 2026-08-19 to 2026-11-17 ..."; the saved #229 Q22 raw
+  is invalid under `check_output` ("no claims, adjacent items or gaps"), Q26's valid.
+- 2026-11-19 04:12 - step 5 mock (`.eval-runs/0230-mock`, `.../ev230/mock-diff.txt`): 30/30 chunk
+  lists identical (same order), 29 PASS / 1 FAIL (Q19), no PASS -> FAIL, refusal gap 5/5, keyed
+  22/22, 0 forbidden, recall@pool 0.814 / @final 0.654, 0 real calls. Step 6 docs (commit ed77643):
+  spec (v4.1 window order, cap 20000, invalid outputs, `max_retries=0`), ARCHITECTURE Answer JSON,
+  ADR-019 amendment.
+- 2026-11-19 04:13 - step 7 verify-cee (`doctor` PASS; port 8599 free): all 9 features PASS,
+  `.verify-runs/20261119-041311-ed77643`.
+- 2026-11-19 04:19 - step 8 real run (started 04:15:14, after every mock check, on commit ed77643;
+  `.eval-runs/0230-real`, raw copied to `D:/ALLPROJECTS/EDJ/cache/ev230/real`, table
+  `.../ev230/real-table.txt`, answers `.../ev230/answers-dump.txt`): **7 real calls, 3 reused**
+  (planner reused for Q1, Q22, Q26; planner called for Q11, Q24; 5 answer calls), as expected;
+  claude-sonnet-5-5, prompt v4.1, cap 20000. Every answer response has a `thinking` block before
+  the tool call (`usage.blocks`); input tokens (tokenizer) 26.8k-102.8k, well above the chars / 4
+  estimates. Per question (stop_reason, output tokens incl. thinking, behavior, verdict vs
+  `passes_if`): **Q1** `tool_use`, 8,099, `answer`, PASS (channels management credits, dated per
+  call, 2024 vs 2026 kept apart); **Q11** `tool_use`, 6,259, `gap_with_adjacent` (as Gate 4 / v3;
+  bank `answer`, NEXT item 5), status FAIL on behavior as in Gate 4, not empty; **Q22** `tool_use`,
+  4,223, **INVALID_OUTPUT**: the tool input was `{"answer": null}` (102,835 input tokens): not a cut,
+  a near-empty tool call after thinking; the empty #229 output was most likely the same failure,
+  not `max_tokens` (attributed from `usage`, as planned); not re-run (finding, item open);
+  **Q24** `tool_use`, **11,885**, `gap_with_adjacent`, PASS (no derived ratio; "not like-for-like"
+  answered with reasons per firm); **Q26** `tool_use`, 7,105, `answer`, 23 claims newest first across
+  parts (0 inversions, earliest 2026-08-19), PASS, borderline on "one line on why it might matter".
+  Q1 and Q24 would have been cut at the old 8000 cap (8,099 and 11,885 output tokens). PR is
+  "Part of #230" (Q22 open).
   `pytest -q` 683 passed.
