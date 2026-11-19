@@ -324,6 +324,31 @@ def citation_links(page):
     return page.locator("a[href*='?chunk=']")
 
 
+def check_part_gaps(rec, page, what: str) -> None:
+    """ask-part-gap (#215): every plan part with no claim of the mock's gets one code-built gap,
+    flagged part_gap, shown on the page with its chip. Expected parts read from the newest
+    query_log row (plan parts, the mock's claim part ids), not hard-coded: the mock's top 3
+    passages decide which parts it cites."""
+    import base64
+    import json as _json
+    # base64: passage text holds non-ASCII characters the console code page cannot decode
+    b64 = psql(VERIFY_DB, "SELECT encode(convert_to(json_build_object('parts', filters->'plan'->'parts', "
+                          "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log ORDER BY query_id DESC LIMIT 1")
+    row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
+    parts = [p["id"] for p in row["parts"] or []]
+    cited = {c.get("part_id") for c in row["answer"]["claims"]}
+    expected = [p for p in parts if p not in cited]
+    gaps = [g for g in row["answer"]["gaps"] if "part_gap" in (g.get("flags") or [])]
+    body = page.locator("body").inner_text()
+    shown = [g["what"] for g in gaps if g["what"] in body]
+    ok = (sorted(g["part_id"] for g in gaps) == sorted(expected) and len(shown) == len(gaps)
+          and body.count("part_gap") == len(gaps))
+    rec.step(f"Read the part gaps of {what}",
+             f"one 'part_gap' gap per plan part without a mock claim ({expected or 'none'}), each shown with its chip",
+             ok, f"parts {parts}; mock claim parts {sorted(p for p in cited if p)}; part gaps "
+                 f"{[(g['part_id'], g['what'][:70]) for g in gaps]}; shown {len(shown)}; chips {body.count('part_gap')}")
+
+
 def feature_ask_answer(page, base, rec, ctx):
     before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     ask(page, base, ANSWERABLE_Q)
@@ -341,6 +366,9 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
+    check_part_gaps(rec, page, "the EDJ advisors question (one part)")
+    ask(page, base, TWO_FIRM_Q)
+    check_part_gaps(rec, page, "the two-firm question (two parts)")
     ask(page, base, THEME_GAP_Q)
     body = page.locator("body").inner_text()
     line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")

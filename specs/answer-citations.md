@@ -57,21 +57,70 @@ part of the asked population, cohort or period (a survey of an overlapping or na
 some of the quarters), the behavior is `answer`: each finding with its source, sample and date as
 printed, the group it covers, and the missing parts as gaps. A wider unit that contains the one
 asked about (a parent company, a segment such as GWIM) is not partial evidence; it stays adjacent.
+Disclosure questions (prompt v4, #215): a question about what firms disclose on a topic is answered
+by the disclosures, but the behavior follows the specifics the topic is about (rates, formulas,
+grids, amounts): not disclosed for most firms asked about -> `gap_with_adjacent`, the disclosures
+as claims, each firm's undisclosed specifics as a gap naming the firm. Code does not derive the
+behavior from per-part coverage (plans/0215: a coverage rule would not fire on Q25, would flip with
+the planner's split, and would touch Q11 / Q23, NEXT item 5, which stays open).
 
-## Answer shape (prompt v3, #204)
+## Answer shape (prompt v4, #215; v3 #204)
 
-General rules in the prompt; no question ID or `passes_if` text (a test checks 6-word runs,
-lower case, punctuation stripped, against every `passes_if`; the standard wording below is
-exempt because the bank quotes it). The `Answer` schema is unchanged.
+General rules in the prompt; no question ID, no `passes_if` text and no question text (a test
+checks 6-word runs, lower case, punctuation stripped, against every `passes_if` and every question
+text; the standard wording below is exempt from the `passes_if` check because the bank quotes it).
+v4 reworded v3's recency example (it shared a run with a question's text).
+
+The user message (prompt v4) lists the plan's parts (`p1 [firms]: text`, ADR-020) and groups the
+evidence under the part it was found for, in hit order; research and peer passages follow under
+their own headings. A part with no passages of its own says why, from its candidate pool before
+exclusion (`plan.searched[i]["pool"]`): pool 0 "(no passages were found for this part)", else
+"(no further passages; the passages found for this part are listed under another part or the
+research passages)". No plan: one part p1, the whole question. The model writes `part_id` on
+every claim, adjacent item and gap ("" when none applies).
 
 | Rule | When | What the answer does |
 |---|---|---|
-| Comparison grid | the question names two or more firms, or "each of" / "across" a set | Dimensions from the question's terms and from what the evidence covers for at least one firm; a short list fixed first and used for every firm, every firm with a claim or a gap under every dimension (no dimension for one firm only); claims dimension by dimension (all firms for one dimension, then the next), each starting "<Dimension> - <Firm>:", each firm in its own terms; an empty cell is a gap "<Firm> - <dimension>: not found in the evidence provided." with a suggested source; never an inference, an adjacent figure or another firm's fact in a cell. |
+| Comparison grid | the question names two or more firms, or "each of" / "across" a set | Dimensions fixed from the question and its parts before reading the evidence (each dimension a part names, or each part when the parts are dimensions); an asked dimension is never dropped because the evidence is thin, none added only because the evidence offers it (v4; v3 also took dimensions from the evidence); the same list for every firm, every firm with a claim or a gap under every dimension (no dimension for one firm only); claims dimension by dimension (all firms for one dimension, then the next), each starting "<Dimension> - <Firm>:", each firm in its own terms; an empty cell is a gap "<Firm> - <dimension>: not found in the evidence provided." with a suggested source; never an inference, an adjacent figure or another firm's fact in a cell; an empty cell is only a gap, never a claim (v4). |
 | Positions | where something is heading, the future, the range of views | Claims grouped by position (not by firm or source), each starting with the position, then who holds it and when; every claim attributed; two sources that disagree are reported as disagreeing; no forecast or synthesis of its own. |
-| Every part | always | Each part of the question (each "and", named firm, named metric, "how has it changed"), and what a question of its type needs (e.g. headwinds or risks the firm itself names), gets a claim or a gap naming the part. A question setting the home firm against a peer, or asking how it could act, shows the home firm's figures on the same dimension from its own filings. |
+| Parts | always | Every claim, adjacent item and gap carries the `part_id` of the plan part it answers; every part gets at least one cited claim or a gap naming what is missing for it; a part with no passages is a gap; a chunk listed under one part may be cited for another; within a part, what a question of its type needs (e.g. headwinds or risks the firm itself names) is covered (v4; v3 split the question itself). A question setting the home firm against a peer, or asking how it could act, shows the home firm's figures on the same dimension from its own filings. |
 
-The Ask page lists gaps under the claims, so empty grid cells are visible without a schema
-field. Answers can be longer: the Anthropic output cap is 8000 tokens (`llm.anthropic_request`).
+The Ask page lists gaps under the claims, with code flags as chips. Answers can be longer: the
+Anthropic output cap is 8000 tokens (`llm.anthropic_request`).
+
+## Every part answered or named as a gap (code, #215)
+
+Ground rules 1, 3 and 6, enforced in `src/cee/answer/validate.py` after the model, never left to
+the prompt. Behavior, claims and the model's own gaps are not changed.
+
+- **Uncited grid cells** (`move_uncited_cells`, in `check_citations`): a claim with **no**
+  `chunk_ids` whose text starts "<Dimension> - <Firm>:" (Firm = a configured name or alias) leaves
+  `claims`. It becomes a gap "<Firm> - <Dimension>: no cited evidence in this answer." (true by
+  construction: code knows only that no citation was given), flag `uncited_cell`, the model's text
+  kept in `claim_text` (logged, not shown). When the model already wrote a gap starting
+  "<Firm> - <Dimension>:", that gap keeps its own text and gets the flag and `claim_text`. A claim
+  with citations, even unmatched ones, is never moved (flagged as before); any other uncited claim
+  keeps `no_citation`.
+- **Every part covered** (`check_parts`, in `ask.answer_for` after the citation check, when a plan
+  is given): part P is covered by a claim or adjacent item with `part_id` P and a citation in the
+  retrieved set, or by a gap with `part_id` P. Items with no or an unknown `part_id` (v3 outputs,
+  the mock) count by citation: they cover the parts whose search found a passage they cite (in a
+  one-part plan, every passage but research / peers; every gap). The hand-off sentence code adds
+  covers no part by citation; in an `answer_with_boundary` answer it covers a part whose text is
+  normative (e.g. "how could Edward Jones replicate ..."). An uncovered part gets a gap flagged
+  `part_gap`, with the part's firms' suggested sources:
+
+| Part's candidate pool before exclusion | Gap (`gaps[].what`) |
+|---|---|
+| 0 (its search found nothing) | "No evidence retrieved for: <part>" |
+| > 0 (passages may sit under another part or research), or unknown | "Not answered from the evidence retrieved for: <part>" |
+
+  `<part>` = the part text (+ " (<firms>)" when it repeats the question, as rule-plan parts do);
+  a normative part text is printed as "part pN (<firms>)" instead (ground rule 6).
+- `part_coverage()` gives each part's state (model / citation / handoff / code_gap) for the eval.
+- Mock: its claims carry their passage's plan part, so the check runs on mock answers too: a
+  two-firm mock answer whose top 3 passages are all one firm's gets a part gap for the other part,
+  with the pool-chosen wording above.
 
 ## Standard wording
 

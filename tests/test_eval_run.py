@@ -106,7 +106,7 @@ def fake_model(monkeypatch, tmp_path):
 
     calls = []
 
-    def generate(question, hits, provider):
+    def generate(question, hits, provider, plan=None):
         calls.append(question)
         return Answer(answerable=True, behavior="answer",
                       claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}], llm_called=True)
@@ -160,7 +160,7 @@ def flaky_model(monkeypatch):
 
     calls, state = [], {"error": None}
 
-    def generate(question, hits, provider):
+    def generate(question, hits, provider, plan=None):
         calls.append(question)
         if len(calls) == 1:
             raise state["error"]

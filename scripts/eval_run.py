@@ -344,12 +344,21 @@ def compare(record: dict, base: dict | None) -> str:
 
 
 def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
-              max_tokens: int = 8000) -> str:
+              max_tokens: int = 8000, plan_parts: list | None = None) -> str:
     """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
     key, and a run with another output cap never reuses one made under 8000."""
     parts = [q["id"], q["text"], prompt_version, snapshot, provider, model, chunk_ids]
-    blob = json.dumps(parts if max_tokens == 8000 else [*parts, {"max_tokens": max_tokens}])
+    if max_tokens != 8000:
+        parts = [*parts, {"max_tokens": max_tokens}]
+    if plan_parts is not None:   # #215: the v4 user message lists the plan's parts
+        parts = [*parts, {"parts": plan_parts}]
+    blob = json.dumps(parts)
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
+
+
+def parts_of(plan) -> list | None:
+    """The plan's parts as the answer cache key sees them (#215): [[id, text, firms], ...]."""
+    return None if plan is None else [[p.id, p.text, list(p.firms)] for p in plan.parts]
 
 
 def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts: int, query: dict) -> str:
@@ -388,7 +397,7 @@ class RealRunner:
         self.calls, self.reused, self.last_file = 0, 0, None
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
-    def answer(self, q: dict, query, hits) -> tuple[dict | None, str]:
+    def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
         invalid: the model output (new or cached) is not a valid Answer; its raw payload is in
         raw/<self.last_file> and the call still counts (#187)."""
@@ -401,7 +410,7 @@ class RealRunner:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
-                        [h.chunk_id for h in hits], self.max_tokens)
+                        [h.chunk_id for h in hits], self.max_tokens, parts_of(plan))
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
@@ -410,7 +419,7 @@ class RealRunner:
             self._copy(path)
             if saved.get("invalid"):    # a wrong output is a finding: never re-called (CLAUDE.md)
                 return None, "invalid"
-            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]))
+            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=Answer(**saved["raw"]), plan=plan)
             return answer.model_dump(), "cached"
         if self.calls >= self.max_calls:
             return None, "cap"
@@ -419,7 +428,7 @@ class RealRunner:
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
         try:
-            answer, raw = answer_for(q["text"], query, hits, self.provider)
+            answer, raw = answer_for(q["text"], query, hits, self.provider, plan=plan)
         except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
                               "stop_reason": getattr(e, "stop_reason", None)})
@@ -685,8 +694,12 @@ def main(argv: list[str] | None = None) -> int:
               "llm_calls": {"planner": plan.calls if plan else 0, "answer": 0}}
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
         if real:
-            answer, how = (None, "cap") if capped else real.answer(q, query, hits)
+            answer, how = (None, "cap") if capped else real.answer(q, query, hits, plan)
             r = apply_real(r, answer, how, real.last_file if not capped else None)
+            if answer is not None and plan is not None:   # #215: how each part was covered
+                from cee.answer.schema import Answer
+                from cee.answer.validate import part_coverage
+                r["part_coverage"] = part_coverage(Answer(**answer), plan, hits)
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid"))
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))

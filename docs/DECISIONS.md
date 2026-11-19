@@ -639,8 +639,12 @@ Decision:
   the mock provider, with `PLANNER=off`, in passage mode, or when code skips search (only firms we
   hold no documents for; a firm filter that leaves no named firm). An unusable planner output (no
   tool call, wrong shape, cut at `max_tokens`) or a failed call (API / network error) falls back to
-  the rule plan; it is logged and the call counts; it is never re-rolled. The answer prompt is
-  unchanged (v3, no part labels; the per-part answer check is #215).
+  the rule plan; it is logged and the call counts; it is never re-rolled. The answer call sees
+  the parts (prompt v4, #215): its user message groups the evidence under each part, every claim,
+  adjacent item and gap carries a `part_id`, and code gives a part with no cited claim or gap a
+  gap flagged `part_gap` ("No evidence retrieved for" when the part's candidate pool was empty,
+  else "Not answered from the evidence retrieved for"); no extra call. The eval's answer cache key
+  includes the parts (specs/answer-citations.md, "Every part answered or named as a gap").
 - **Log**: `query_log.filters` holds the resolved query plus `plan` (parts, corrections, source,
   error, per-part share / passages / tokens) and `llm_calls` {planner, answer}; `llm_calls` counts
   paid provider calls, so a mock row reads 0 / 0 although the trace names the mock's answer step

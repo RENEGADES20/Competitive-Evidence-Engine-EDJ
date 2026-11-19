@@ -191,10 +191,12 @@ def coverage_box(note: str) -> None:
     _html(f'<div class="cee-box cee-coverage">{escape(note)}</div>')
 
 
-def gap_box(what: str, suggested_source: str = "") -> None:
-    """Always expanded. Starts with 'Gap:' (scripts/verify_cee.py reads it)."""
+def gap_box(what: str, suggested_source: str = "", flags: list[str] | None = None) -> None:
+    """Always expanded. Starts with 'Gap:' (scripts/verify_cee.py reads it). Code flags (#215:
+    part_gap, uncited_cell) show as chips, like claim flags."""
     fill = f"<br><b>Would be filled by:</b> {escape(suggested_source)}" if suggested_source else ""
-    _html(f'<div class="cee-box cee-gap"><b class="l">Gap:</b> {escape(what)}{fill}</div>')
+    flag_html = "".join(f' <span class="cee-flag">{escape(f)}</span>' for f in flags or [])
+    _html(f'<div class="cee-box cee-gap"><b class="l">Gap:</b> {escape(what)}{flag_html}{fill}</div>')
 
 
 def source_header(title: str, tier: int | None, meta: list[str]) -> None:

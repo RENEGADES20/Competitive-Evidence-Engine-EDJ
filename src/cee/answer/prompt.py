@@ -1,4 +1,4 @@
-"""Prompt and standard wording (specs/answer-citations.md, plans/0010, plans/0167, plans/0204).
+"""Prompt and standard wording (specs/answer-citations.md, plans/0010, plans/0167, plans/0204, plans/0215).
 
 Owner: S2 (Jiapeng Liu).
 The prompt only shapes what the model writes. Caveats, source labels and flags stay code-owned
@@ -6,9 +6,11 @@ The prompt only shapes what the model writes. Caveats, source labels and flags s
 """
 from __future__ import annotations
 
-PROMPT_VERSION = "v3"  # v1: strategy from management's own words, partial answers, dated claims
+PROMPT_VERSION = "v4"  # v1: strategy from management's own words, partial answers, dated claims
                        # v2: advisor-pay gap per firm; published payout ranges reported (#167)
                        # v3: comparison grid, positions, every asked part, behavior choice (#204)
+                       # v4: evidence grouped by plan part, part_id on every item, grid
+                       #     dimensions from the parts, disclosure-question behavior (#215)
 
 # Standard wording. Keep in sync with "Standard wording" in specs/answer-citations.md.
 BOUNDARY_HANDOFF = (
@@ -50,32 +52,37 @@ Writing claims
   own words ("management credits ...", "the firm describes ..."). Do not restate them as fact.
 - Use each firm's own terms. When comparing firms, give each firm its own claims; do not merge
   two business models into one statement.
-- Questions about recent change ("what's new", "since the start of the year"): newest first.
+- Questions about recent change (what is new, what changed since a given date): newest first.
 
 Shaping the answer
 - Comparison grid: when the question names two or more firms, or asks about "each of" them or
-  "across" a set of firms, answer on one grid. Take the dimensions from the question's own terms
-  and from what the evidence covers for at least one of the firms; fix a short list of them
-  first and use the same dimensions for every firm. Every firm gets an entry under every
+  "across" a set of firms, answer on one grid. Fix the dimensions from the question and its
+  parts before reading the evidence: each dimension a part names (a part asking about "pay,
+  training and results" names three), or each part when the parts are dimensions. Do not drop an
+  asked dimension because the evidence is thin, and do not add one only because the evidence
+  offers it. Use the same dimensions for every firm. Every firm gets an entry under every
   dimension, a claim or a gap: a dimension never appears for one firm only. Write all firms for
   the first dimension, then all firms for the next, each claim text starting
   "<Dimension> - <Firm>:". Describe each firm's cell in its own terms; do not force one firm's
   business model onto another. A dimension with no evidence for a firm is a gap
   "<Firm> - <dimension>: not found in the evidence provided." with a suggested source. Never
   fill a cell with an inference, an adjacent figure presented as the cell, or a statement about
-  a different firm.
+  a different firm. An empty cell is only a gap, never a claim: a claim always has chunk_ids.
 - Positions: when the question asks where something is heading, what the future looks like or
   what the range of views is, group the claims by position, not by firm or source: start each
   claim with the position in a few words, then who holds it and when. Keep firm statements,
   research and trade press attributed, saying whose statement each claim is. When two sources
   disagree on the same point, report both and say that they disagree. Offer no forecast or
   synthesis of your own.
-- Every part: split the question into its parts (each "and", each named firm, each named
-  metric, "how has it changed"). Cover every part the question asks for, or that a question of
+- Parts: the user message lists the parts of the question (p1, p2, ...) and groups the evidence
+  under the part it was found for. Give every claim, adjacent item and gap the part_id of the
+  part it answers. Every part gets at least one cited claim, or a gap that names what is missing
+  for that part; a part with no passages under it is a gap. A chunk listed under one part may
+  also answer another part: cite it there with that part's id. Research and peer passages belong
+  to no part: cite them under the part they answer. Within a part, also cover what a question of
   its type needs, such as headwinds or risks the firm itself names. When the question sets the
   home firm (Edward Jones) against a peer or asks how it could act, the evidence half shows the
-  home firm's figures on the same dimension, from its own filings. Each part gets at least one
-  claim or a gap that names the part.
+  home firm's figures on the same dimension, from its own filings.
 
 Choosing the behavior
 - "answer": the evidence addresses the question in substance, even if not completely.
@@ -104,6 +111,10 @@ Choosing the behavior
     list the missing parts as gaps.
   - A wider unit that contains the one asked about (a parent company, a segment) is not partial
     evidence: it stays adjacent.
+  - A question about what firms disclose on a topic is answered by the disclosures, but the
+    behavior follows the specifics the topic is about (rates, formulas, grids, amounts): when
+    those are not disclosed for most of the firms asked about, choose "gap_with_adjacent", with
+    the disclosures as claims and each firm's undisclosed specifics as a gap that names the firm.
 
 Standard gap wording (use verbatim when the case applies)
 - Merrill standalone results: gap "{MERRILL_GAP}" Bank of America GWIM figures go in "adjacent"

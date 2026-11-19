@@ -14,7 +14,7 @@ from psycopg.types.json import Jsonb
 
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
-from cee.answer.validate import (check_citations, coverage_note, empty_retrieval_answer,
+from cee.answer.validate import (check_citations, check_parts, coverage_note, empty_retrieval_answer,
                                  fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
@@ -87,7 +87,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     docs = len({h.doc_id for h in hits})
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                f" in {_n(len(plan.parts), 'part')}")
-    answer, _raw = answer_for(question, query, hits, provider, trace=t)
+    answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan)
     result = Result(query, hits, answer, plan=plan)
     if log:
         with t.stage("log", "Saving the query"):
@@ -97,9 +97,12 @@ def ask(question: str, provider: str | None = None, log: bool = True,
 
 
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
-               raw: Answer | None = None, trace: _Trace | None = None) -> tuple[Answer, Answer | None]:
+               raw: Answer | None = None, trace: _Trace | None = None,
+               plan: Plan | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
-    Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43)."""
+    Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
+    `plan` (#215): the model sees the evidence grouped by part, and code checks every part has a
+    cited claim or a gap (validate.check_parts); None: no part grouping and no part check."""
     t = trace or _Trace(None)
     if not hits:
         t.report("model", "skipped", "No passages found: no model call")
@@ -111,13 +114,13 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         return answer, None
     if raw is None:
         with t.stage("model", f"Asking the model ({provider}, one call)"):
-            raw = generate(question, hits, provider)
+            raw = generate(question, hits, provider, plan=plan)
         t.report("model", "done", f"Asking the model ({provider}, one call): "
                                   f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
         t.report("model", "skipped", "Reusing the saved model output: no model call")
     with t.stage("check", "Checking citations"):
-        answer = check_citations(raw.model_copy(deep=True), hits)
+        answer = check_parts(check_citations(raw.model_copy(deep=True), hits), plan, hits, question)
     t.report("check", "done", _check_text(answer, hits))
     with t.stage("caveats", "Adding caveats and gaps"):
         answer = insert_caveats(answer, query, hits)
@@ -143,11 +146,15 @@ def _check_text(a: Answer, hits: list[Hit]) -> str:
     cited = [c for claim in [*a.claims, *a.adjacent] for c in claim.chunk_ids]
     matched = sum(c in ids for c in cited)
     flagged = sum(bool(claim.flags) for claim in [*a.claims, *a.adjacent])
-    return f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
+    moved = sum("uncited_cell" in g.flags for g in a.gaps)
+    return (f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
+            + (f", {_n(moved, 'empty cell')} moved to gaps" if moved else ""))
 
 
 def _caveats_text(a: Answer) -> str:
-    return f"Adding caveats and gaps: {_n(len(a.caveats), 'caveat')}, {_n(len(a.gaps), 'gap')}"
+    coded = sum("part_gap" in g.flags for g in a.gaps)
+    return (f"Adding caveats and gaps: {_n(len(a.caveats), 'caveat')}, {_n(len(a.gaps), 'gap')}"
+            + (f" ({coded} added by code for unanswered parts)" if coded else ""))
 
 
 def model_name(provider: str) -> str:
