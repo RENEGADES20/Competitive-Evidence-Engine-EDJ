@@ -585,6 +585,20 @@ Q7, Q15, Q20 answer; no question cites its own Gate 4 missed passage (none of th
 for its question), while Q7, Q20 and Q29 cite other questions' missed passages
 (`RJF-PR-web-affiliation-options#1`, `EDJ-10K-2025#88`, `MS-10K-2025#153`). Grid and real-run
 evidence in the #213 PR.
+Amendment (#230, answer output cap): `llm.MAX_TOKENS` 8000 -> **20000** for every answer call. In
+the #229 real run Q22 (five firms, 209 passages, ~60k input tokens, prompt v4) came back with no
+claims, adjacent items or gaps; the saved output kept neither `stop_reason` nor usage, so a cut at
+8000 was likely but not provable. The request sends no `thinking` field; whether the model thinks
+(and so spends part of the cap on thinking) shows in the saved content block types. One flat cap,
+not a size rule: the cap is a ceiling billed only for tokens produced, and a size rule would still
+miss a small input with a long answer. 20000 is the largest round value under the `anthropic` SDK's
+non-streaming limit (1.9.0 refuses a non-streaming call above 21,333 tokens, its 600 s rule; a test
+runs the SDK's own check). A cut at the cap, or an answer with no claims, adjacent items or gaps
+(a refusal aside), is an invalid output (`llm.check_output`, specs/answer-citations.md), and every
+real output saves `stop_reason` and usage. Cache: the cap joins the eval's answer key when it is not
+8000, so outputs saved at 8000 keep their keys and are never reused at 20000; planner keys do not
+contain it. The real clients get `max_retries=0` (TL decision), so a timeout at the larger cap is
+never resent by the SDK. Real check in the #230 PR.
 
 ## ADR-020: Question planner: one planner call splits a question into parts, each part searched
 Status: Proposed (TL, #214, 2026-11-19); the first use of ADR-012's multi-call rule
@@ -639,8 +653,12 @@ Decision:
   the mock provider, with `PLANNER=off`, in passage mode, or when code skips search (only firms we
   hold no documents for; a firm filter that leaves no named firm). An unusable planner output (no
   tool call, wrong shape, cut at `max_tokens`) or a failed call (API / network error) falls back to
-  the rule plan; it is logged and the call counts; it is never re-rolled. The answer prompt is
-  unchanged (v3, no part labels; the per-part answer check is #215).
+  the rule plan; it is logged and the call counts; it is never re-rolled. The answer call sees
+  the parts (prompt v4, #215): its user message groups the evidence under each part, every claim,
+  adjacent item and gap carries a `part_id`, and code gives a part with no cited claim or gap a
+  gap flagged `part_gap` ("No evidence retrieved for" when the part's candidate pool was empty,
+  else "Not answered from the evidence retrieved for"); no extra call. The eval's answer cache key
+  includes the parts (specs/answer-citations.md, "Every part answered or named as a gap").
 - **Log**: `query_log.filters` holds the resolved query plus `plan` (parts, corrections, source,
   error, per-part share / passages / tokens) and `llm_calls` {planner, answer}; `llm_calls` counts
   paid provider calls, so a mock row reads 0 / 0 although the trace names the mock's answer step

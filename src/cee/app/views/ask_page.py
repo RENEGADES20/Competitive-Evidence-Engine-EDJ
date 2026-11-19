@@ -214,7 +214,7 @@ def show_answer(r: Result, filters: dict) -> None:
     for cav in a.caveats:
         ui.caveat_box(cav)
     for g in a.gaps:
-        ui.gap_box(g.what, g.suggested_source)
+        ui.gap_box(g.what, g.suggested_source, g.flags)
     if a.coverage_note:
         ui.coverage_box(a.coverage_note)
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | search: {mode_label(r.retrieval_mode)} | firms: {footer_firms(r.query)} | '

@@ -22,7 +22,8 @@ Page "Ask"
   inputs: question text, optional filters (company multiselect, date range, keywords)
   output: answer claims, each with numbered citations [1] [2]
           citation chip = source_label + tier label (filing | licensed | IR | trade press (indicative only) | research)
-          caveats box (always visible if present), gaps box with suggested sources, coverage note
+          caveats box (always visible if present), gaps box with suggested sources (code flags
+          such as part_gap / uncited_cell as chips, #215), coverage note
   feedback: thumbs up/down + comment -> query_feedback
   while answering (after "Ask" is clicked, before the answer shows):
           a progress bar plus a live step trace saying what the system is doing now, e.g.

@@ -1,5 +1,5 @@
-"""The prompt (v3) carries the citation rules, the standard wording and the answer-shape rules
-(plans/0010, plans/0167, plans/0204)."""
+"""The prompt (v4.1) carries the citation rules, the standard wording and the answer-shape rules
+(plans/0010, plans/0167, plans/0204, plans/0215, plans/0230)."""
 import re
 from pathlib import Path
 
@@ -14,8 +14,8 @@ WORDING = [prompt.BOUNDARY_HANDOFF, prompt.MERRILL_GAP, prompt.GWIM_DIFFERS, pro
 
 
 def test_prompt_is_versioned():
-    assert prompt.PROMPT_VERSION == "v3"
-    assert "Prompt version: v3" in prompt.SYSTEM_PROMPT
+    assert prompt.PROMPT_VERSION == "v4.1"
+    assert "Prompt version: v4.1." in prompt.SYSTEM_PROMPT
 
 
 def test_llm_uses_prompt_module():
@@ -99,7 +99,12 @@ def _flat() -> str:
 def test_comparison_grid_rule():
     text = _flat()
     assert "answer on one grid" in text
-    assert "use the same dimensions for every firm" in text
+    assert "Use the same dimensions for every firm" in text
+    # v4 (#215): dimensions from the question and its parts, not from the evidence
+    assert "Fix the dimensions from the question and its parts before reading the evidence" in text
+    assert "do not add one only because the evidence offers it" in text
+    assert "from what the evidence covers for at least one of the firms" not in text
+    assert "An empty cell is only a gap, never a claim: a claim always has chunk_ids." in text
     assert "Every firm gets an entry under every dimension, a claim or a gap" in text
     assert "a dimension never appears for one firm only" in text
     assert '"<Dimension> - <Firm>:"' in text
@@ -115,11 +120,69 @@ def test_positions_rule():
     assert "Offer no forecast or synthesis of your own" in text
 
 
-def test_every_part_rule():
+def test_parts_rule():
     text = _flat()
-    assert "Cover every part the question asks for, or that a question of its type needs" in text
+    assert "Give every claim, adjacent item and gap the part_id of the part it answers" in text
+    assert "Every part gets at least one cited claim, or a gap that names what is missing for that part" in text
+    assert "a part with no passages under it is a gap" in text
+    assert "what a question of its type needs" in text
     assert "the home firm's figures on the same dimension, from its own filings" in text
-    assert "Each part gets at least one claim or a gap that names the part" in text
+
+
+def test_disclosure_question_behavior_rule():
+    text = _flat()
+    part = text.split("Partial or missing disclosure:")[1].split("Standard gap wording")[0]
+    assert "A question about what firms disclose on a topic is answered by the disclosures" in part
+    assert 'choose "gap_with_adjacent", with the disclosures as claims' in part
+
+
+def test_recency_example_reworded():
+    # v3's example shared a 6-word run with a bank question's text (#215 review).
+    assert "since the start of the year" not in _flat()
+
+
+def test_time_window_newest_first_across_parts():
+    # v4.1 (#230): v4 grouped Q26's answer by part; newest first now runs across the whole answer.
+    text = _flat()
+    assert "Questions about recent change (what is new, what changed since a given date): newest first." not in text
+    assert ("Questions about recent change (what is new, what changed since a given date) and questions "
+            "with a time window: order the claims and the adjacent items newest first across the whole "
+            "answer, by the date of what each reports, not part by part; each item keeps its part_id. "
+            "Gaps come after.") in text
+    assert "oldest to newest, so a change over time is visible (in a question with a time window, newest first instead)." in text
+    assert "The grouping is how the evidence is listed, not the order of the answer." in text
+
+
+def _plan_two():
+    from cee.retrieve.planner import Part, Plan
+    return Plan(parts=[Part("p1", "Results at Raymond James", ["RJF"]), Part("p2", "News at Raymond James", ["RJF"])])
+
+
+def test_user_message_window_line_only_with_a_window():
+    import datetime as dt
+
+    from cee.answer.llm import build_user_message, window_line
+
+    hits = [_hit(part_id="p1"), _hit(chunk_id="RJF-PR-x#1", part_id="p2")]
+    without = build_user_message("What is new?", hits, _plan_two())
+    assert without == build_user_message("What is new?", hits, _plan_two(), None)
+    assert "Time window" not in without and without.startswith("Question: What is new?\n\nParts of the question")
+    win = (dt.date(2026, 8, 19), dt.date(2026, 11, 17))
+    line = window_line(win)
+    assert line == ("Time window: 2026-08-19 to 2026-11-17 (only passages dated in it were searched). "
+                    "Order the answer newest first across all parts.")
+    withw = build_user_message("What is new?", hits, _plan_two(), win)
+    assert withw == without.replace("Question: What is new?\n", f"Question: What is new?\n{line}\n", 1)
+    assert line in anthropic_request("What is new?", hits, _plan_two(), win)["messages"][0]["content"]
+    assert line in openai_request("What is new?", hits, _plan_two(), win)["messages"][1]["content"]
+
+
+def test_window_line_shares_no_run_with_the_bank():
+    from cee.answer.llm import window_line
+    line = window_line(("2026-08-19", "2026-11-17"))
+    mine = _grams(line)
+    assert {qid for qid, t in _question_texts().items() if mine & _grams(t)} == set()
+    assert _leaks(line) == {}
 
 
 def test_behavior_choice_rule():
@@ -143,8 +206,9 @@ def test_ground_rules_held_in_v3():
     assert "Never cite a chunk_id that is not in the evidence." in text
 
 
-def test_anthropic_output_cap_fits_grid_answers():
-    assert anthropic_request("q", [])["max_tokens"] == 8000
+def test_anthropic_output_cap_fits_large_answers():
+    # #230 (ADR-019): 20000 for every answer call; was 8000 (#229 Q22 came back empty at 8000).
+    assert anthropic_request("q", [])["max_tokens"] == 20000
 
 
 # Leak check: the prompt must not carry the question bank or its scoring rubric.
@@ -166,6 +230,19 @@ def _passes_if() -> dict[str, str]:
 def _leaks(text: str) -> dict[str, set]:
     mine = _grams(text)
     return {qid: hit for qid, p in _passes_if().items() if (hit := mine & _grams(p))}
+
+
+def _question_texts() -> dict[str, str]:
+    data = yaml.safe_load(_BANK.read_text(encoding="utf-8"))
+    qs = data["questions"] if isinstance(data, dict) else data
+    return {q["id"]: str(q.get("text") or "") for q in qs}
+
+
+def test_prompt_shares_no_run_with_question_text():
+    """The whole prompt, no exception (#215; the planner prompt has the same check, #224)."""
+    mine = _grams(prompt.SYSTEM_PROMPT)
+    hits = {qid: h for qid, t in _question_texts().items() if (h := mine & _grams(t))}
+    assert hits == {}
 
 
 def test_prompt_names_no_question_id():

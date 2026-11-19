@@ -16,6 +16,7 @@ Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refus
 class Claim(BaseModel):
     text: str
     chunk_ids: list[str] = Field(default_factory=list)
+    part_id: str = ""                                 # the plan part it answers (prompt v4, #215); "" in v3 outputs
     source_label: str = ""                            # built by code, never by the model
     flags: list[str] = Field(default_factory=list)    # e.g. unmatched_citation
 
@@ -27,6 +28,9 @@ class Adjacent(Claim):
 class Gap(BaseModel):
     what: str
     suggested_source: str = ""
+    part_id: str = ""                                 # the plan part it names (prompt v4, #215)
+    flags: list[str] = Field(default_factory=list)    # code-owned: part_gap, uncited_cell (#215)
+    claim_text: str = ""                              # code-owned: an uncited grid cell's model text, not shown
 
 
 class Withheld(BaseModel):
@@ -46,6 +50,11 @@ class Answer(BaseModel):
     coverage_note: str = ""                            # built by code from the retrieved hits
     withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
     llm_called: bool = False
+    # Code-owned, from the provider response (#230): why the output stopped (Anthropic stop_reason,
+    # OpenAI finish_reason; "" for the mock and outputs saved before #230) and its token usage
+    # (input_tokens, output_tokens; Anthropic also the content block types, e.g. thinking, tool_use).
+    stop_reason: str = ""
+    usage: dict = Field(default_factory=dict)
 
     @model_validator(mode="before")
     @classmethod
@@ -77,16 +86,19 @@ class Answer(BaseModel):
 
 def llm_output_schema() -> dict:
     """JSON schema of the part the model writes (no code-owned fields)."""
+    # part_id (#215): required for OpenAI strict mode; "" when the item answers no listed part.
     claim = {"type": "object", "additionalProperties": False,
              "properties": {"text": {"type": "string"},
-                            "chunk_ids": {"type": "array", "items": {"type": "string"}}},
-             "required": ["text", "chunk_ids"]}
+                            "chunk_ids": {"type": "array", "items": {"type": "string"}},
+                            "part_id": {"type": "string"}},
+             "required": ["text", "chunk_ids", "part_id"]}
     adjacent = {"type": "object", "additionalProperties": False,
                 "properties": {**claim["properties"], "differs_because": {"type": "string"}},
-                "required": ["text", "chunk_ids", "differs_because"]}
+                "required": ["text", "chunk_ids", "part_id", "differs_because"]}
     gap = {"type": "object", "additionalProperties": False,
-           "properties": {"what": {"type": "string"}, "suggested_source": {"type": "string"}},
-           "required": ["what", "suggested_source"]}
+           "properties": {"what": {"type": "string"}, "suggested_source": {"type": "string"},
+                          "part_id": {"type": "string"}},
+           "required": ["what", "suggested_source", "part_id"]}
     return {
         "type": "object", "additionalProperties": False,
         "properties": {
