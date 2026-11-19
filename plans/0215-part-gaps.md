@@ -349,35 +349,35 @@ not re-rolled. No other call path.
   Counted in the real table.
 
 ## Acceptance
-- [ ] Tests (0 calls, fake `registry_lookup`, no DB): a part with no claim and no gap gets the code
+- [x] Tests (0 calls, fake `registry_lookup`, no DB): a part with no claim and no gap gets the code
   gap ("No evidence retrieved for: <part>" when its candidate pool `plan.searched[i]["pool"]` is 0;
   "Not answered from the evidence retrieved for: <part>" when the pool is > 0 or unknown), flag
   `part_gap`, the part's id and a suggested source; two parts sharing a chunk (p2's only candidate
   kept by p1): p2 gets "Not answered ...", not "No evidence retrieved"; covered parts (by part id,
   citation fallback, gap, adjacent, boundary hand-off for a normative part) get none; behavior and
   model items unchanged; a normative part label is replaced.
-- [ ] Tests: an uncited grid cell with no matching model gap becomes a gap "<Firm> - <Dimension>:
+- [x] Tests: an uncited grid cell with no matching model gap becomes a gap "<Firm> - <Dimension>:
   no cited evidence in this answer." with flag `uncited_cell` and the model text in `claim_text`;
   on the Gate 4 Q7 raw the 3 uncited cells leave `claims` and their 3 matching model gaps keep
   their own text and carry the flag and `claim_text` (no duplicate gap); an unmatched-citation
   claim stays flagged; an uncited non-grid claim keeps `no_citation`.
-- [ ] Tests: saved v3 raws (Gate 4 Q7, #224 Q25) parse; `cache_key` without parts equals today's;
+- [x] Tests: saved v3 raws (Gate 4 Q7, #224 Q25) parse; `cache_key` without parts equals today's;
   `PROMPT_VERSION == "v4"`; the user message groups chunks by part, with the empty-part line chosen
   by pool (0 -> "no passages were found", > 0 -> "listed under an earlier part"); the whole v4
   prompt names no question ID and shares no 6-word run with any question text (no exception; the
   recency example is reworded) or `passes_if` (standard wording exempt: Q28, Q30, as today); the
   v3 grid-dimension sentence is gone; the mock's claims carry their hit's part id.
-- [ ] Replay (0 calls) tabled: per part of Q3, Q7, Q12, Q25, Q28 under #224's v3 answers, covered
+- [x] (no code gap on the v3 answers: every part covered by citation, see 04:35) Replay (0 calls) tabled: per part of Q3, Q7, Q12, Q25, Q28 under #224's v3 answers, covered
   or code gap; Gate 4 Q7 cells moved.
-- [ ] Mock (`.eval-runs/0215-mock`): 30/30 chunk lists identical to the baseline, refusal gap 5/5,
+- [x] Mock (`.eval-runs/0215-mock`): 30/30 chunk lists identical to the baseline, refusal gap 5/5,
   keyed 22/22, 0 forbidden, no PASS -> FAIL.
-- [ ] `pytest -q` passes; verify-cee all PASS, incl. `ask-part-gap`: the two-firm mock question shows
+- [x] `pytest -q` passes; verify-cee all PASS, incl. `ask-part-gap`: the two-firm mock question shows
   every `part_gap` gap of its logged answer with the `part_gap` chip, and the logged gaps are
   exactly one per plan part not covered by the mock's claims (both read from the newest
   `query_log` row: `filters->plan` parts and `answer` claims / gaps; not hard-coded, since the
   mock's top 3 passages decide which parts it cites); the one-part question likewise shows exactly
   its logged `part_gap` gaps (expected none: the mock cites p1 passages there).
-- [ ] Real (`.eval-runs/0215-real`, <= 18 calls, claude-sonnet-5-5): in Q3, Q7, Q12, Q28 every
+- [x] (every part model-covered; Q3, Q7, Q12, Q28 judged PASS) Real (`.eval-runs/0215-real`, <= 18 calls, claude-sonnet-5-5): in Q3, Q7, Q12, Q28 every
   planned part has a cited claim, cited adjacent item or a gap (table in the PR: per part, covered
   by model part id / citation / hand-off / code gap); no uncited grid cell left in `claims` (moved
   by code); any other uncited claim stays flagged `no_citation` and is counted in the table. Judged
@@ -386,13 +386,13 @@ not re-rolled. No other call path.
   pipeline and retention results for all three firms, empty cells in gaps; Q12 shows Edward Jones's
   cost structure or a gap for it, then the hand-off; Q28 states the adjacent net headcount change
   and how it differs from attrition.
-- [ ] Real Q25 (TL note 2026-11-19): every undisclosed part per firm is named as a gap (payout grid
+- [ ] (open: behavior `gap_with_adjacent` and no trade press met; 0 gaps, the undisclosed parts are in one cited claim, RJF full grid not named) Real Q25 (TL note 2026-11-19): every undisclosed part per firm is named as a gap (payout grid
   / formula for MS, Merrill, Edward Jones; Schwab's advisor pay; RJF's full grid behind its
   published ranges), no trade-press payout-grid claim (trade press only in `adjacent`), behavior
   `gap_with_adjacent`.
-- [ ] Real: Q1, Q22, Q26, Q30 keep their Gate 4 verdicts (PASS) judged against `passes_if`, and
+- [ ] (open: Q1, Q30 PASS; Q22 FAIL, empty model output; Q26 FAIL borderline, grouped by part not newest first) Real: Q1, Q22, Q26, Q30 keep their Gate 4 verdicts (PASS) judged against `passes_if`, and
   their expected behavior.
-- [ ] Specs, ARCHITECTURE and ADR-020 updated; verify-cee recipe and driver updated in this PR.
+- [x] Specs, ARCHITECTURE and ADR-020 updated; verify-cee recipe and driver updated in this PR.
 - [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
 
 ## Progress log
@@ -437,3 +437,22 @@ not re-rolled. No other call path.
   lists identical (same order), no status change, 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed
   22/22, 0 forbidden, recall@pool 0.814 / @final 0.654, 0 real calls. Step 7 docs: spec, ui spec,
   ARCHITECTURE, ADR-020. Step 8 waits: port 8599 held by the wt-212 agent's Streamlit (pid 20452).
+- 2026-11-19 03:30 - step 8 verify-cee (port 8599 free after the wt-212 agent's run; nothing of
+  theirs touched): first run ask-answer FAIL in the new step (psql output with non-ASCII passage
+  text could not be decoded by the console code page: `stdout` None); driver reads the row as
+  base64 (2d7fd71); full run all 9 features PASS, `.verify-runs/20261119-033009-2d7fd71`
+  (two-firm question: parts p1, p2; mock cited p1 only; one `part_gap` gap for p2, "Not answered
+  from the evidence retrieved for: ...", shown with its chip; EDJ question: none).
+- 2026-11-19 03:40 - step 9 real run (`.eval-runs/0215-real`, raw copied to
+  `D:\ALLPROJECTS\EDJ\cache\ev215eal`, tables + judgement `...\ev215eal-table.txt`, answer dump
+  `answers-dump.txt`): **13 real calls** (4 planner: Q1, Q22, Q26, Q30; 9 answer), **reused 5**
+  (the plan-v2 outputs of Q3, Q7, Q12, Q25, Q28), claude-sonnet-5-5, prompt v4; 0 invalid, 0
+  fallback. Every part of Q3, Q7, Q12, Q28 (and Q1, Q25, Q26, Q30) is covered by the model's own
+  part ids; no code gap there; no uncited grid cell. Verdicts: Q3, Q7 (borderline), Q12, Q28 PASS
+  (all four were Gate 4 FAIL); Q25 `gap_with_adjacent` (bank) with no trade press, but **0 gaps**
+  (the undisclosed parts are one cited "Boundary note" claim; RJF's full grid not named): TL item
+  open. Regression: Q1, Q30 PASS; **Q22 FAIL**: the saved output has no claims, adjacent or gaps
+  (code added 4 `part_gap` gaps, as designed); likely cut at `max_tokens` on a 60k-token,
+  five-firm input, not provable because valid outputs do not save `stop_reason`; its retrieval
+  also fell to doc recall 29/33 under the plan-v2 parts. **Q26 FAIL (borderline)**: items grouped
+  by plan part, not newest first overall. Findings, not re-run. PR is "Part of #215".
