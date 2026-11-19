@@ -22,7 +22,11 @@ extension and no `chunk_embeddings` yet. Both models are already in
 onnxruntime 1.23.2.
 
 ## Files to change
-Hybrid files (the only files allowed to differ from `origin/main` after this issue):
+Hybrid files (the only files allowed to differ from `origin/main` after this issue). Why the mode
+plumbing counts as hybrid: ADR-010's Decision keeps "the hybrid code (`hybrid.py`, the mode switch,
+`RETRIEVAL_MODE`, `synonym_only`)" on `exp/hybrid`; `modes.py`, `ask.py`, `config.py`, `ask_page.py`,
+`verify_cee.py`, `eval_run.py` and `.env.example` differ from `main` only by that mode switch /
+`RETRIEVAL_MODE` (and the #126 eval measures for the modes).
 - `src/cee/retrieve/hybrid.py` - apply main's rules (table below), fill `PoolTrace`, `k=None` budget.
 - `src/cee/retrieve/modes.py` (new) - the mode switch moved out of `fts.py`: `MODES`,
   `HybridUnavailable`, `HYBRID_NEEDS_VECTORS`, `search(q, k=None, mode=None, trace=None)`
@@ -31,18 +35,25 @@ Hybrid files (the only files allowed to differ from `origin/main` after this iss
 - Mode plumbing kept from #125/#126/#128, re-applied on top of `main`'s version of each file, every
   hunk about the retrieval mode only: `src/cee/ask.py` (mode param, `modes.search`, `retrieval_mode`
   in the log), `src/cee/config.py` (`retrieval_mode`), `src/cee/app/views/ask_page.py` (Exact match /
-  Smart search switch, #128), `scripts/verify_cee.py` (search-mode driver), `scripts/eval_run.py`
+  Smart search switch, #128; owner U1, owner review waived, TL decision 2026-11-17 (#187)),
+  `scripts/verify_cee.py` (search-mode driver), `scripts/eval_run.py`
   (`--mode`, search timing and warm-up, duplicate measure, `--floor`/`--max-per-doc` grid; search goes
   through `modes.search(..., trace=...)`), `.env.example` (`RETRIEVAL_MODE`).
-- `scripts/eval_compare.py` - a two-run comparison (fts vs hybrid-norerank, hybrid as reference) with
-  recall@pool, recall@final, the Gate 4 missed-passage stages and the decision line computed by code.
+- `scripts/eval_compare.py` - adds a `--run MODE=report.json` comparison (fts vs hybrid-norerank,
+  hybrid as reference) with recall@pool, recall@final, the Gate 4 missed-passage stages and the
+  decision line computed by code. The #126 interface (`--chosen`, `--default`, `--grid`, `--diag`,
+  `--notes`) is kept unchanged: `evals/hybrid-eval/corpus-2026-10-29/report.md` was written by it at
+  `exp/hybrid` 3449cc5, and its test stays.
 - Tests: `tests/test_hybrid.py`, `tests/test_search_mode.py`, `tests/test_eval_compare.py`,
   `tests/test_vectors_optional.py`, and the mode parts of `tests/test_eval_run.py`,
   `tests/test_ask_page_trace.py`, `tests/test_ask_progress.py`.
-- Docs: `specs/retrieval.md` ("Retrieval modes" section only), `docs/RUN.md` ("Hybrid retrieval"
+- Docs: `specs/retrieval.md` ("Retrieval modes" section only; owner S1, owner review waived, TL
+  decision 2026-11-17 (#187)), `docs/RUN.md` ("Hybrid retrieval"
   section only, PowerShell + bash blocks), `.claude/skills/verify-cee/features/search-mode.md`,
   `features/README.md`, `features/ask-progress.md` (mode line only).
-- Evidence: `evals/hybrid-eval/corpus-2026-11-17/` (report.md, summary.json, inputs/*.json).
+- Evidence: `evals/hybrid-eval/` as a whole is a hybrid path. New: `evals/hybrid-eval/corpus-2026-11-17/`
+  (report.md, summary.json, inputs/*.json). `evals/hybrid-eval/corpus-2026-10-29/` is kept unchanged
+  (the #126 record ADR-010 links to).
 - Plans: `plans/0125-*`, `0126-*`, `0128-*` (already on the branch), this plan.
 Everything else (incl. `src/cee/retrieve/fts.py`, `config/entities.yaml`, `evals/expected_chunks.yaml`)
 equals `origin/main`. Not changed: ADRs, `main`.
@@ -75,7 +86,10 @@ New-Item -ItemType Directory -Force D:\ALLPROJECTS\EDJ\cache\ev211 | Out-Null
 $env:CEE_VECTORS = 'on'; $env:FASTEMBED_CACHE_PATH = 'D:\ALLPROJECTS\EDJ\cache\fastembed'
 .\.venv\Scripts\python.exe -m cee.retrieve.embed --missing *> D:\ALLPROJECTS\EDJ\cache\ev211\embed.log
 ```
-(bash: `CEE_VECTORS=on FASTEMBED_CACHE_PATH=/d/ALLPROJECTS/EDJ/cache/fastembed .venv/Scripts/python.exe -m cee.retrieve.embed --missing > .../embed.log 2>&1`).
+In `docs/RUN.md` the macOS block is
+`CEE_VECTORS=on FASTEMBED_CACHE_PATH="$HOME/cee-cache/fastembed" .venv/bin/python -m cee.retrieve.embed --missing`
+(a Mac cache path, `.venv/bin/python`); the PowerShell block uses a `D:\...\cache\fastembed`-style
+path. The same pairing applies to the eval_run and eval_compare commands of steps 6-7.
 21,143 chunks at about 15 chunks/s on CPU: about 25 minutes, run in the background while step 3 is
 coded; it commits per batch, so a stop resumes. Before: `python -m cee.retrieve.embed --query test`
 with the same env proves the cached model loads (no fetch). After: `SELECT count(*) FROM chunks` =
@@ -88,9 +102,9 @@ with the same env proves the cached model loads (no fetch). After: `SELECT count
 |---|---|---|---|
 | R1 | `doc_type_scope_sql(q)`: no `adv` outside fee/ADV questions and never in a window; no tier 4 for benchmark questions (ADR-015, #179) | not applied | `part_filters()` ANDs `doc_type_scope_sql(q)` into `filters` for every SQL pass: keyword leg, vector leg, firm / research / on-theme / peer parts, answer turns |
 | R2 | budget `k = budget(q) - peer_slots(q)` when `k is None`; `PER_FIRM` 6 x n (ADR-013, #181) | `k = K` (20) | `search(q, k=None, ...)`: same default as `fts.search`. The candidate count scales with it: `RERANK_N x k / K` (50 at k=20, 75 at k=30) so a five-firm question is not starved; nothing else is tuned |
-| R3 | `quota_firms(q.entities)`: Merrill's MER and BAC GWIM chunks share one firm's quota and floor base (ADR-013) | firm = `entity_id` everywhere | a `firm_of` map from `quota_firms` is used for the per-firm RRF lists, the (firm, doc type) turns, the floor and `select(firm_of=...)` |
+| R3 | `quota_firms(q.entities)`: Merrill's MER and BAC GWIM chunks share one firm's quota and floor base (ADR-013) | firm = `entity_id` everywhere | one quota-firm key for everything. The SQL legs partition by it, not by `entity_id`: `row_number() OVER (PARTITION BY {quota_key} ...)` with `{quota_key}` = `CASE WHEN d.entity_id = %(qf_parent0)s THEN %(qf_child0)s ... ELSE d.entity_id END` built from `quota_firms(q.entities)` (`ELSE d.entity_id` alone when the map is empty). So MER and BAC GWIM chunks form one ranked list per leg (ranks 1..n, one rank 1, LEG_K for the pair, not per entity); `_per_firm()`, `group_of` (turns), the floor base and `select(firm_of=...)` use the same key. Test: a Merrill query's legs, rows of MER and BAC interleaved, give one list with one rank 1 per leg and RRF scores on one scale; the SQL contains the CASE key |
 | R4 | `FLOOR` measured from the firm's `FLOOR_BASE`-th (2nd) best rank; research part base 1 (ADR-014, #166) | `gate()`: share of the firm's best RRF | `hybrid-norerank`: no separate gate; the RRF score is `Hit.rank` and `select(floor=FLOOR[mode])` applies the floor with `FLOOR_BASE`, research `floor_base=1`, exactly as `fts`. `hybrid` (reference): the gate before the cross-encoder uses the same 2nd-best base; `select(floor=0)` on sigmoid scores as before |
-| R5 | entity+theme on-theme pool (`on_theme_filter`, #117) and `Hit.on_theme`; THEME_FIRST slot ignores the floor (#190, ADR-014) | no on-theme pool, `on_theme` always False (so `theme_gaps()` would call every named firm a theme gap) | an on-theme part: both legs with `entity_filter AND on_theme_filter`, RRF, turns; merged into the firm pool with `on_theme=True`; the floor in `select()` already exempts the theme slot. `hybrid`: on-theme candidates skip the pre-rerank gate |
+| R5 | entity+theme on-theme pool (`on_theme_filter`, #117) and `Hit.on_theme`; THEME_FIRST slot ignores the floor (#190, ADR-014) | no on-theme pool, `on_theme` always False (so `theme_gaps()` would call every named firm a theme gap) | an on-theme part: both legs with `entity_filter AND on_theme_filter`, RRF, turns; merged into the firm pool with `on_theme=True`; the floor in `select()` already exempts the theme slot. `hybrid`: on-theme candidates skip the pre-rerank gate. Scores where the parts merge (the on-theme part has its own RRF, whose rank 1 would score like the firm part's rank 1): a chunk in both parts keeps its **firm-part** RRF score (`on_theme=True`); an **on-theme-only** chunk gets `rank = m x s / s_max`, where `s` is its on-theme RRF score, `s_max` the best on-theme-only score of its quota firm and `m` the lowest firm-part RRF score of that quota firm in the pool (`1 / (RRF_K + LEG_K)` when the firm has none). So it ranks below every firm-part chunk of its firm, keeps its on-theme order, and cannot move the `FLOOR_BASE` (2nd-best) base of a firm with 2+ firm-part chunks; it reaches the list through the theme slot (tier 0), not rank turns. Test: a firm with firm-part scores 0.032 / 0.030 and an on-theme-only chunk at on-theme rank 1 keeps base 0.030, the on-theme-only chunk ranks below the lowest firm-part chunk, a both-part chunk keeps its firm-part score, and the on-theme-only chunk still takes the THEME_FIRST slot |
 | R6 | answer turns `PAIR_TURNS = "attach"` (`answer_turns`, `is_question_turn`; ADR-017, #203) | not applied | `fts.answer_turns(conn, question turns in the pool, where, window, filters + scope, params)` and `select(answers=...)` |
 | R7 | home-firm theme peers (`q.theme_peers`, `peer_slots`, `peer_floor`, `PEER_THEME_PER_FIRM`; ADR-018, #205) | not applied | a peer part: both legs with `entity_filter(q.theme_peers, prefix="peer_") AND on_theme_filter`, RRF, then `peer_floor(pool, FLOOR[mode])` (hybrid: on the RRF score, before rerank), then main's peer `select()` and 2-per-firm loop, appended after the named firms; kept in a window |
 | R8 | slot order: `TIER_LAST`/`LAST_TIERS`/`TRADE_KEEP` (trade press last, not in a window, not in research) and `NEW_DOC_FIRST`/`NEWEST_BAND` (not in research) (ADR-016, #198, #199) | `select()` was called with no slot-order flags (branch `select()` had none) | pass the same flags as `fts.search`: firm part `trade_last=not q.window`; research `trade_last=False, new_doc_first=False`; peers `trade_last=not q.window` |
@@ -146,8 +160,11 @@ left `fts` untouched). Each mode runs once; nothing is re-run to change a number
 `python scripts/eval_compare.py --run fts=... --run hybrid-norerank=... --run hybrid=... --out
 evals/hybrid-eval/corpus-2026-11-17` writes report.md and summary.json: per mode PASS/FAIL, recall@pool,
 recall@final (all and tier 1), tier-1 doc and passage recall, refusal gap / all keyed, forbidden hits,
-mean pool size, search median / p90 / max and warm-up, CPU; per-question differences (recall@pool,
-recall@final, status); the Gate 4 missed-passage stage table; the decision line (step 5). Commit it.
+mean pool size with the label "recall@pool is not like-for-like: fts pools 15 per (firm, document
+type) with no total cap, hybrid pools RERANK_N candidates per part (scaled by R2)", search median / p90 / max and warm-up, CPU; per-question differences (recall@pool,
+recall@final, status); the Gate 4 missed-passage stage table; the decision line (step 5); and the sentence "0.03 of tier-1
+passage recall is about 1-2 passages on this bank; tuned and scored on the same 30 questions with no
+held-out set (ADR-010), so a difference this size is weak evidence". Commit it.
 
 ### 8. Docs, app check, finish
 - `docs/RUN.md` "Hybrid retrieval": embed command, the three eval runs and the compare command, each
@@ -157,13 +174,36 @@ recall@final, status); the Gate 4 missed-passage stage table; the decision line 
 - pytest on the branch. `/finish-task`: PR to `exp/hybrid` with the decision line; comment the
   outcome on #212 (runs, or closed as not planned per the rule).
 
+## Risks
+- **Merge changed fts (stop rule).** If the `fts` run on the branch (step 6) does not reproduce
+  `main`'s `corpus-2026-11-17` baseline chunk ids on 30/30 questions (same ids, same order): stop,
+  run no hybrid mode, find and fix the merge (fts.py / config / key must equal main), commit the fix
+  and re-run `fts`. No decision line is written from a commit whose `fts` run failed this check; the
+  decision uses only runs from one commit that passed it.
+- **Score comparability.** Hybrid ranks are RRF scores (a different scale from `ts_rank`); where the
+  firm, on-theme and peer parts merge, a part's own rank 1 could look like the firm's best and move
+  the floor base or turn order. R3 / R5 pin one scale per quota firm, with tests. recall@pool is not
+  like-for-like (fts 15 per group, hybrid RERANK_N per part): reported next to the mean pool size,
+  never part of the decision.
+- **Shared local cee-db.** Step 2 adds the `vector` extension and `chunk_embeddings` to the local
+  database every branch uses. `fts` and `main` ignore them (ADR-009); `sync-db -Check` is re-run
+  after. Undo: `DROP TABLE chunk_embeddings; DROP EXTENSION vector;` (docker exec cee-db psql -U cee -d cee).
+  A later `/sync-db` restore drops them too; then step 2 must be run again before a hybrid run.
+- **Small threshold.** +0.03 tier-1 passage recall is about 1-2 passages on this bank, tuned and
+  scored on the same 30 questions with no held-out set (ADR-010). The rule stands as fixed; the report
+  says how weak the evidence is.
+- **Long embed.** About 25 minutes on CPU; it resumes per batch if stopped. No hybrid run starts
+  before the row counts match.
+
 ## Acceptance
 - [ ] Merge, not rebase: the branch has a merge commit with parents (exp/hybrid tip, origin/main tip).
 - [ ] `git diff origin/main --stat` (after the merge into the branch) lists only the hybrid-list files
-      in "Files to change"; `git diff origin/main -- src/cee/retrieve/fts.py config evals/expected_chunks.yaml` is empty.
+      in "Files to change" (`evals/hybrid-eval/` as a whole); `git diff origin/main -- src/cee/retrieve/fts.py config evals/expected_chunks.yaml` is empty;
+      `git diff 965b7f6 -- evals/hybrid-eval/corpus-2026-10-29` is empty.
 - [ ] pytest passes on the branch (count recorded).
 - [ ] `SELECT count(*) FROM chunk_embeddings` = `SELECT count(*) FROM chunks` = 21,143 on corpus-2026-11-17.
-- [ ] `hybrid.py` applies R1-R11; each has a passing unit test in `tests/test_hybrid.py`.
+- [ ] `hybrid.py` applies R1-R11; each has a passing unit test in `tests/test_hybrid.py`, incl. the
+      R3 one-list quota-firm test and the R5 merged-score / floor-base test.
 - [ ] Hard-filter test: Q4 (Merrill) in hybrid mode returns only MER or GWIM/Merrill-tagged BAC chunks;
       Q26 (90-day window) returns only in-window, source-dated documents (step 4, run and passed).
 - [ ] `fts` on the branch reproduces `main`'s `corpus-2026-11-17` baseline chunk ids on 30/30 questions.
@@ -177,3 +217,4 @@ recall@final, status); the Gate 4 missed-passage stage table; the decision line 
 
 ## Progress log
 - 2026-11-18 22:12 - plan written on `tl/211-hybrid-retest` (from `origin/exp/hybrid` 965b7f6; `origin/main` 2a22e23 incl. #210 / PR #218). DB checked: corpus-2026-11-17, 21,143 chunks, no vectors yet; models already cached on D:. Waiting for the reviewer agent's approval before step 1.
+- 2026-11-18 22:40 - revised after review (issue #211 comment 6999547584): `evals/hybrid-eval/` listed whole, 10-29 kept unchanged; R3 quota-firm key in the SQL partition; R5 merged-score rule; Risks section with the fts 30/30 stop rule; owner-waiver tags, ADR-010 citation, Mac RUN.md block, recall@pool label, eval_compare keeps the #126 interface.
