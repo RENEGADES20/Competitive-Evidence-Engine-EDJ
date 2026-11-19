@@ -329,9 +329,12 @@ def check_part_gaps(rec, page, what: str) -> None:
     flagged part_gap, shown on the page with its chip. Expected parts read from the newest
     query_log row (plan parts, the mock's claim part ids), not hard-coded: the mock's top 3
     passages decide which parts it cites."""
+    import base64
     import json as _json
-    row = _json.loads(psql(VERIFY_DB, "SELECT json_build_object('parts', filters->'plan'->'parts', "
-                                      "'answer', answer) FROM query_log ORDER BY query_id DESC LIMIT 1"))
+    # base64: passage text holds non-ASCII characters the console code page cannot decode
+    b64 = psql(VERIFY_DB, "SELECT encode(convert_to(json_build_object('parts', filters->'plan'->'parts', "
+                          "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log ORDER BY query_id DESC LIMIT 1")
+    row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
     cited = {c.get("part_id") for c in row["answer"]["claims"]}
     expected = [p for p in parts if p not in cited]
