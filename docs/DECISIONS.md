@@ -643,3 +643,20 @@ unchanged: Q12's Edward Jones part stops at 7k of its 20k share (its eligible po
 Schwab, searched first, keeps its 20k share; the share Edward Jones leaves is not handed back to an
 earlier part. A real provider pays one more, small call per question (about 1k input, up to 2k
 output tokens).
+Real check (#214, 12 calls: planner + answer for Q3, Q7, Q12, Q15, Q25, Q28, claude-sonnet-5-5,
+answer prompt v3, planner plan-v1; no output truncated or rejected, no fallback, no correction by
+code): every question used 2 calls. Q12 (Schwab's acquisition channels and economics, its claims on
+acquisition cost, Edward Jones's costs) and Q28 (EDJ attrition and its definition, Merrill's
+attrition, net advisor headcount change in the search words) got a part or search words for every
+asked part; Q3 got one part with no words for competitive pressure or conceded ground, and Q7's four
+parts (one per firm plus competitive pressure) name the payout philosophy only as compensation words
+and the training pipeline only for Merrill. Named passages: Q15 `SCHW-10K-2025#27` is now retrieved
+and cited (was lost in select); Q25 `RJF-PR-web-affiliation-options#1` and `RJF-10K-2025#10/#11` are
+now retrieved and cited, `MS-10K-2025#153` became a candidate (Q7 and Q25) but is not selected,
+`EDJ-10K-2025#30/#264` stay candidates and `SCHW-10Q-2026Q2#25` dropped from the final set to the
+pool. Q25's Schwab-and-Raymond-James part brought two `must_not_return` Schwab deck chunks into the
+retrieved set (not cited), so its refusal check fails at retrieval; Q3 lost its Advisor Services
+10-K passage and Q7 its MS and RJF trade-press passages; Q28 reads 20k tokens (was 12.7k) with
+Merrill's part searching "attrition ... departures". Behaviors: Q3, Q7, Q15 `answer`, Q12
+`answer_with_boundary`, Q28 `gap_with_adjacent`, Q25 `answer` with empty gaps (as at the #213 pick;
+#215). Evidence in the #214 PR.

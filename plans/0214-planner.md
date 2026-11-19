@@ -238,6 +238,7 @@ Every correction is listed in `Plan.corrections` (trace line, `query_log`, eval 
 - `evals/baselines/corpus-2026-11-17/report.json`, `report.md` - replaced by the final mock run
   (old one in git history at 5058259) if any chunk list changed.
 - `plans/0214-planner.md` (this file).
+- `tests/conftest.py` (added during step 2) - every test runs with `LLM_PROVIDER=mock`.
 Not changed: `db/schema.sql`, `db/upgrade.sql`, restore scripts (plan in `filters` jsonb), the
 answer prompt (`prompt.py` v3), `evals/questions.yaml`, `evals/expected_chunks.yaml`, UI code
 other than through `STAGES`.
@@ -334,7 +335,7 @@ re-run). No other call path. Any new call needs a new entry here first.
   split; the real runs (Q15, Q25) do, and unit tests cover cap and firm merging.
 
 ## Acceptance
-- [ ] Tests (fixture schema / fake clients, 0 calls): a part with firms [MER] returns only MER or
+- [x] Tests (fixture schema / fake clients, 0 calls): a part with firms [MER] returns only MER or
   BAC GWIM/Merrill-tagged chunks; a window question applies the window in every part (no hit outside
   it, `date_basis = source` only); a planner output naming an unknown firm drops it, one naming an
   asked-but-not-resolved firm drops it, one dropping a resolved firm gets it back (code part or
@@ -349,10 +350,10 @@ re-run). No other call path. Any new call needs a new entry here first.
   truncated planner output and a client exception -> rules plan with `source = "fallback"`, the
   call counted; passage mode (`TOKEN_BUDGET = None`, explicit k) -> one part, no planner call;
   prompt names no question ID and no `passes_if` text.
-- [ ] Mock: all 30 questions (`.eval-runs/0214-mock`), refusal gap 5/5, keyed 22/22, 0 forbidden,
+- [x] Mock: all 30 questions (`.eval-runs/0214-mock`), refusal gap 5/5, keyed 22/22, 0 forbidden,
   no PASS -> FAIL, recall@final >= 0.654 (tier 1 >= 0.808); one-part questions identical to the
   baseline (step 3 diff); Gate 4 missed passages' stage reported.
-- [ ] Real: `.eval-runs/0214-real`, 12 calls, claude-sonnet-5-5: the saved plans have a part for
+- [ ] (open: Q3 and Q7 plans miss parts; finding, see the Progress log) Real: `.eval-runs/0214-real`, 12 calls, claude-sonnet-5-5: the saved plans have a part for
   every asked part, judged from each part's text / `keyword_query` and listed in the PR:
   Q3 (Schwab's framing of the RIA custody / advisor services business, stated priorities,
   competitive pressure, where it concedes ground); Q7 (recruiting posture, payout philosophy,
@@ -362,10 +363,10 @@ re-run). No other call path. Any new call needs a new entry here first.
   disclosure, net advisor headcount change). A missing part is a finding in the PR (the issue item
   stays open: "Part of #214"). For Q7, Q15, Q25 each named Gate 4 passage is reported as cited /
   retrieved, not cited / in pool / not in pool, with its part, against the #213 pick.
-- [ ] At most 2 LLM calls per question, logged: test with counting fakes (planner 1 + answer 1;
+- [x] At most 2 LLM calls per question, logged: test with counting fakes (planner 1 + answer 1;
   0 + 0 on mock; 0 planner calls when code skips search); `query_log.filters->'llm_calls'`
   (verify-cee); per-question `llm_calls` in the real report, all <= 2.
-- [ ] ADR-020 written in `docs/DECISIONS.md` (the reviewer escalates the PR to the TL for the
+- [x] ADR-020 written in `docs/DECISIONS.md` (the reviewer escalates the PR to the TL for the
   merge); `pytest -q` passes; `python scripts\verify_cee.py run` all features PASS with the
   ask-progress recipe and driver updated for the plan stage.
 
@@ -380,3 +381,58 @@ re-run). No other call path. Any new call needs a new entry here first.
   paid provider calls (mock 0); passage mode = one part; five-firm reason repeated for ADR-020;
   #187 waiver noted for `eval_run.py`, `specs/ui.md` and tests. Re-read: step-3 per-part entity
   check now skips research / peer hits; the bound check covers every question.
+- 2026-11-19 00:52 - plan approved by the reviewer agent (issuecomment-7001875161). Step 1:
+  `fts` refactor (`_context`, `research_pass`, `peer_pass`, `search(tokens, exclude, research,
+  peers)`, `Query.terms` / `scope`, `Hit.part_id`); `planner.py`; settings; `llm.py` client
+  helpers. 41 new tests (`test_planner.py` 29, `test_retrieval_parts.py` 12). Step 2: `ask.py`
+  plan stage and `log_filters`; trace tests (7 steps, plan line, 2 calls with counting fakes,
+  fallback line, mock 0 / 0).
+- 2026-11-19 00:52 - **finding, unplanned calls possible**: the local `.env` has
+  `LLM_PROVIDER=anthropic`, and `tests/test_ask_page_trace.py` calls `ask()` with the configured
+  provider; with the new plan stage its two tests reached the real planner (run twice: up to 4
+  planner calls, claude-sonnet-5-5, ~1k input / <= 2k output tokens each; one test timed out at 3 s
+  waiting for it; whether the requests completed is not known, no output was saved). Fixed by
+  `tests/conftest.py` (added to Files to change): every test runs with `LLM_PROVIDER=mock` unless it
+  passes a provider and a fake client itself. `pytest -q` 615 passed.
+- 2026-11-19 00:57 - step 3: `eval_run.py` (planner, `plan` / `parts` / `research_*` /
+  `llm_calls` fields, `part_stages`, plan cache, `plan_cache_key`) + 6 tests; mock run
+  `.eval-runs/0214-mock` (commit c2b59a8), checks `D:\ALLPROJECTS\EDJ\cache\ev214\step3-check.txt`
+  and `step3-entities.txt`: 25 one-part questions identical (same order); Q7, Q8, Q9, Q12, Q28
+  split per firm, every part hit of its part's firms (MER: MER or BAC GWIM), no chunk twice;
+  bound held on every question; research passages unchanged (Q7, Q19, Q21, Q28 4; Q10 2); 29 PASS
+  / 1 FAIL (Q19), refusal 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL; recall@pool 0.814 /
+  recall@final 0.654, tier 1 0.903 / 0.808 (all equal to the #213 pick); tokens median 33,643 ->
+  28,311 (Q12: EDJ part 7k of a 20k share, pool exhausted; SCHW first keeps 20k), max 60,322.
+  Gate 4 missed passages: no stage changed on the mock (it keeps the question's words). Copied to
+  `evals/baselines/corpus-2026-11-17/`.
+- 2026-11-19 00:58 - step 4: ADR-020, ADR-012 note, specs (retrieval, answer-citations, ui),
+  ARCHITECTURE, RUN.
+- 2026-11-19 01:01 - step 5: verify-cee (port 8599 free, no other verify process) all 9 features
+  PASS, `.verify-runs/20261119-005913-7e0c835`; ask-progress shows the plan line, 7 steps, the
+  two-firm question in 2 parts and its `query_log` row `rules|2|{"answer": 0, "planner": 0}`.
+- 2026-11-19 01:07 - step 6: 12 real calls (6 planner + 6 answer, claude-sonnet-5-5, prompt v3,
+  plan-v1, max_tokens 8000 / 2000), `.eval-runs/0214-real` (commit 7e0c835), raw outputs in its
+  `raw/` and `D:\ALLPROJECTS\EDJ\cache\ev214\real`, table `...\ev214\real-table.txt`. Every
+  question 2 calls; no invalid / truncated output, no fallback, no correction by code.
+  Parts per asked part: **Q12 yes** (p1 Schwab acquisition channels, scale economics and "low
+  acquisition cost"; p2 Edward Jones's "client acquisition model, costs and constraints");
+  **Q28 yes** (p1 EDJ attrition rate / turnover, words incl. "net change in financial advisor
+  count"; p2 Merrill attrition / retention, "advisor headcount departures"); **Q3 no, finding**
+  (one part, "Schwab's strategy for its RIA custody business", no words for competitive pressure
+  or where it concedes ground; priorities only as "growth"); **Q7 partly, finding** (p1-p3 one per
+  firm on recruiting and retention, p4 all three on competitive pressure; payout philosophy only as
+  compensation words ("deferred compensation", "compensation plan changes"), training pipeline only
+  in Merrill's part). Named passages vs the #213 pick (mock = same lists): Q7 `MS-10K-2025#153`
+  none -> pool (p1, p4), not selected; Q15 `SCHW-10K-2025#27` pool -> **final, cited** (p1);
+  Q25 `RJF-PR-web-affiliation-options#1` none -> **final, cited** (p4), `RJF-10K-2025#10/#11`
+  pool -> **final, cited**, `MS-10K-2025#153` none -> pool (p1), `EDJ-10K-2025#30/#264` pool ->
+  pool, `SCHW-10Q-2026Q2#25` final -> pool. Behaviors: Q3, Q7, Q15 answer, Q12
+  answer_with_boundary, Q28 gap_with_adjacent (expected); Q25 answer with 0 gaps (expected
+  gap_with_adjacent; as at the #213 pick, moved to #215). **Findings, not re-run**: Q25's p4
+  (Schwab + Raymond James, "compensation and benefits expense") brought `SCHW-DECK-2026Q3#47` and
+  `SCHW-DECK-2026Q1#44` (`must_not_return`) into the retrieved set (not cited), so Q25's refusal
+  check fails at retrieval; Q3 lost `SCHW:10-K#Advisor Services` (coverage 1.0 -> 0.667), Q7 lost
+  MS and RJF trade press (0.889 -> 0.778). The PR is "Part of #214" (the real-run plan item stays
+  open); next steps for the TL: planner prompt v2 (implied parts as their own parts) and the Q25
+  refusal, with #215.
+
