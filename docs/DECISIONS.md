@@ -686,3 +686,18 @@ forbidden. A 0-call replay of the six saved plan-v1 outputs reproduces #214's li
 only Q25 p4 and Q15 p2 (both "payout ratio") change, Q25's two must-not chunks leave (refusal check
 passes, recall unchanged) and Q15's recall and coverage are unchanged. Tests cannot reach a paid
 API: `tests/conftest.py` stubs the two client builders and clears the credential environment.
+Real check (#224, 10 calls: planner + answer for Q3, Q7, Q25, Q12, Q28, claude-sonnet-5-5, answer
+prompt v3, planner plan-v2; no output rejected, no fallback): Q3 now has four Schwab parts, one of
+them "competition Schwab names ... where it is losing ground or pulling back" (coverage 0.667 ->
+1.0). Q7 has one part per firm; MS and Merrill get words for recruiting, compensation, training and
+attrition, Raymond James's part has recruiting, transition assistance and attrition words but no
+training or pay words (coverage 0.778 -> 0.889; `MS-10K-2025#153` still pool). Q12 keeps Schwab's
+acquisition parts and an Edward Jones acquisition part, and spends a fourth part on how Edward Jones
+could replicate the strategy (answer still `answer_with_boundary`). Q28 adds a part of its own for
+the adjacent net headcount change (recall@final 0.75 -> 1.0). **Q25 still fails its refusal
+check**: the planner wrote two parts (MS + Schwab, Edward Jones) and left Merrill and Raymond James
+out (code added them back as a whole-question part), and the MS + Schwab part's words "payout grid
+... production-based payout" plus the `pay` / `recruit` synonym "payout" matched
+`SCHW-DECK-2026Q3#47` and `SCHW-DECK-2026Q2#45` (dividend payout range) on the one word "payout",
+which the neighbour list does not cover. A finding, not re-run; the narrower rule for the bare word
+in a Schwab part, or the budget / ranking, is the TL's call (with #215).

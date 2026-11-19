@@ -283,7 +283,7 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   and have a stored chunk to show it go in; each is commented. Same review rule as synonyms.
 
 ## Acceptance
-- [ ] Tests (0 calls): `tests/test_no_paid_calls.py`, with `httpx2.Client.send` and
+- [x] Tests (0 calls): `tests/test_no_paid_calls.py`, with `httpx2.Client.send` and
   `httpx2.AsyncClient.send` (the transport of anthropic 1.9.0 / openai 3.22.1; also `httpx.*.send`)
   patched to record each request and raise `httpx2.ConnectError`, so any request attempt is seen
   and none leaves the machine:
@@ -303,24 +303,24 @@ A missed acceptance item is reported, not re-rolled. No other call path.
     "fallback"` with the blocked error in `plan.error`; `llm.generate("question", [],
     provider="anthropic")` and `provider="openai"` raise the blocked error; the requests recorded
     across the guard calls: **0**.
-- [ ] Tests: on the saved v1 outputs, `validate_plan` drops "payout ratio" from Q25 p4 only (words
+- [x] (deviation: Q15 p2 too, see 02:20) Tests: on the saved v1 outputs, `validate_plan` drops "payout ratio" from Q25 p4 only (words
   otherwise unchanged, correction `part 4: dropped neighbour phrase payout ratio`), and leaves every
   part of Q3, Q7, Q12, Q15, Q28 and Q25 p1-p3 unchanged; a question that names "payout ratio" keeps
   it; "payout-ratios" is caught; words left empty -> question words with the correction; the rule
   plan is never touched; fixture schema: a "dividend payout range" chunk is a candidate for the
   unguarded p4 words and not for the guarded words.
-- [ ] Tests: `PLANNER_VERSION == "plan-v2"` and `plan_cache_key` differs from the v1 key for the
+- [x] Tests: `PLANNER_VERSION == "plan-v2"` and `plan_cache_key` differs from the v1 key for the
   same inputs; the v2 prompt names no question ID and shares no 6-word run with any bank
   `passes_if` or question text.
-- [ ] Replay (step 4): (a) reproduces the six #214 chunk lists (a mismatch here is a replay-script
+- [x] (Q15 p2 also changes; recall unchanged) Replay (step 4): (a) reproduces the six #214 chunk lists (a mismatch here is a replay-script
   fault, fixed in the script to build the query exactly as `eval_run.py` does, before (b) is
   judged; the Q25 p1 replay already matched); (b) only Q25 p4 changes and Q25's hits hold no
   `must_not_return` id; Q25 recall@final / coverage (a) vs (b) tabled.
-- [ ] Mock (`.eval-runs/0224-mock`): all 30 chunk lists identical to the baseline (rule plan
+- [x] Mock (`.eval-runs/0224-mock`): all 30 chunk lists identical to the baseline (rule plan
   unchanged), refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL.
-- [ ] `pytest -q` passes (mock forced, client builders stubbed and credential environment cleared
+- [x] `pytest -q` passes (mock forced, client builders stubbed and credential environment cleared
   by `tests/conftest.py`); verify-cee all PASS.
-- [ ] Real (`.eval-runs/0224-real`, <= 10 calls, claude-sonnet-5-5), planner outputs quoted in the
+- [ ] (open: Q25 must-not still retrieved; Q7 RJF part lacks training / pay words; findings, see 02:50) Real (`.eval-runs/0224-real`, <= 10 calls, claude-sonnet-5-5), planner outputs quoted in the
   PR: Q3's plan has a part or search words for where Schwab concedes ground (and for competitive
   pressure); Q7's plan gives each of MS, MER, RJF words for recruiting posture, payout philosophy,
   training pipeline and retention results; Q25 retrieves none of its `must_not_return` passages
@@ -328,7 +328,7 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   attrition part, a Merrill part and the adjacent net headcount words (in any part, or a part of
   their own; #214 had them in p1's words). The PR states that Q3, Q7, Q25 are in-sample for the
   prompt.
-- [ ] ADR-020 amended (plan-v2, guard, part order "not now" with reasons, #224 results);
+- [x] ADR-020 amended (plan-v2, guard, part order "not now" with reasons, #224 results);
   `specs/retrieval.md` updated.
 
 ## Progress log
@@ -383,3 +383,27 @@ A missed acceptance item is reported, not re-rolled. No other call path.
 - 2026-11-19 02:41 - step 6: ADR-020 (plan-v2, guard, "not now" reasons 1-4, #224 mock + replay),
   `specs/retrieval.md`. Step 7 waits: port 8599 is held by the wt-212 agent's Streamlit (pid 9136);
   not touched.
+- 2026-11-19 02:44 - step 7: the wt-212 agent's verify run finished (waited, nothing touched);
+  port 8599 free; `scriptserify_cee.py run` all 9 features PASS,
+  `.verify-runs/20261119-024408-72b61d7`.
+- 2026-11-19 02:50 - step 8: 10 real calls (5 planner + 5 answer, claude-sonnet-5-5, prompt v3,
+  plan-v2; `reused` 0), `.eval-runs/0224-real`, raw copied to `D:\ALLPROJECTS\EDJ\cache\ev224eal`,
+  table `...\ev224eal-table.txt`. Every question 2 calls; no invalid output, no fallback.
+  **Q3 yes**: 4 Schwab parts; p2 "Competition Schwab names in RIA custody and where it is losing
+  ground or pulling back" (words "competition ... competitors ... market share pricing pressure
+  outflows attrition"); coverage 0.667 -> 1.0, all 6 rows final. **Q7 partly**: 3 parts, one per
+  firm; MS and MER words cover recruiting, compensation, training ("training program",
+  "development program") and attrition / retention; RJF's words ("recruiting retention total
+  advisors net new advisors independent contractor employee affiliation transition assistance
+  recruiting pipeline attrition advisor choice culture") have no training and no pay / payout words
+  (finding); coverage 0.778 -> 0.889, `MS-10K-2025#153` pool (p1). **Q12 yes** (p1, p2 Schwab
+  acquisition and scale; p3 Edward Jones acquisition; p4 "How Edward Jones could replicate ..." with
+  cost words): behavior `answer_with_boundary` as expected. **Q28 yes**: p1 EDJ, p2 Merrill, p3 the
+  adjacent headcount change for both; recall@final 0.75 -> 1.0, `gap_with_adjacent`. **Q25 no,
+  finding, not re-run**: the planner wrote 2 parts (MS + Schwab; Edward Jones) and left MER and RJF
+  out (code: "added firm MER, RJF", whole-question p3); the MS + Schwab part's words "payout grid
+  formula production-based payout ... recruiting" match `SCHW-DECK-2026Q3#47` and
+  `SCHW-DECK-2026Q2#45` (dividend payout range) on the lexeme `payout`, both as a planner word and as
+  the `pay` / `recruit` synonym phrase (the Risk named in the plan); refusal check still fails;
+  recall@final 0.4 -> 0.2 (`RJF-10K-2025#10/#11` pool, `RJF-PR-web-affiliation-options#1` none,
+  `SCHW-10Q-2026Q2#25` pool, `EDJ-10K-2025#264` final). The PR is "Part of #224".
