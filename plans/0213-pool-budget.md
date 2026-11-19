@@ -288,32 +288,32 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   fill reported, not fixed.
 
 ## Acceptance
-- [ ] Grid report with all 12 points and the selection rule's pick -> step 3 table (12 rows, each
+- [x] Grid report with all 12 points and the selection rule's pick -> step 3 table (12 rows, each
   report's meta settings checked) and the pick by the rule, in the PR and ADR-019.
-- [ ] At the pick, recall@pool and recall@final not lower than the #210 baseline -> final run
+- [x] At the pick, recall@pool and recall@final not lower than the #210 baseline -> final run
   (`.eval-runs/0213-final/report.json`): all rows >= 0.686 / 0.484, tier 1 >= 0.803 / 0.597.
-- [ ] Defaults reproduce today -> step 2 diff: 30/30 identical chunk lists vs the baseline; unit
+- [x] Defaults reproduce today -> step 2 diff: 30/30 identical chunk lists vs the baseline; unit
   test: passage mode `select()` output unchanged.
-- [ ] Token mode really runs in the eval -> unit test (`search` called with k=None when
+- [x] Token mode really runs in the eval -> unit test (`search` called with k=None when
   `fts.TOKEN_BUDGET` is set and `--k` is not given; peer hits do not count toward `fill`) and
   the step-3 per-point checks (budget per question, bound on the budgeted part, token mode ran at
   (15, 20k), pool superset, Q19 peers <= 2 per firm).
-- [ ] Truncation path ready before the first call -> tests: cache key unchanged at 8000 and
+- [x] Truncation path ready before the first call -> tests: cache key unchanged at 8000 and
   different at 16000; a fresh fake call at 16000 despite a saved invalid output; `stop_reason`
   and `max_tokens` saved.
-- [ ] Real run: Q24, Q25, Q28, Q29, Q30 each return `gap_with_adjacent` -> `.eval-runs/0213-real`
+- [ ] (OPEN: Q25 returned `answer`, see log) Real run: Q24, Q25, Q28, Q29, Q30 each return `gap_with_adjacent` -> `.eval-runs/0213-real`
   report.json `behavior`; for Q7, Q15, Q20 the PR lists each named missed passage as "cited",
   "retrieved, not cited" or "not retrieved" (plus Q25's two); model, prompt version, call count
   (8, or up to 16 on the truncation path) and raw output folder stated. Skipped with 0 calls only
   if the pick is today's setting. A gap question without `gap_with_adjacent` -> finding: "Part of
   #213" or the TL picks the next eligible point (paid-call plan).
-- [ ] Tokens per question (median, max; all hits, what the model reads) for the old setting
+- [x] Tokens per question (median, max; all hits, what the model reads) for the old setting
   (6,001 / 9,544) and the new one, and search time median / max for both -> from the step 2 and step 5 reports, in the PR and ADR-019.
-- [ ] Mock at the pick: refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS->FAIL (Q24, Q25,
+- [x] Mock at the pick: refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS->FAIL (Q24, Q25,
   Q28-Q30 refusal_ok True; linked Q7, Q15, Q20 status and recall@final reported).
-- [ ] ADR-019 written in `docs/DECISIONS.md`, ADR-013 marked as replaced in its passage count;
+- [x] ADR-019 written in `docs/DECISIONS.md`, ADR-013 marked as replaced in its passage count;
   `specs/retrieval.md` updated (the reviewer escalates the PR to the TL for the merge).
-- [ ] `pytest -q` passes; `python scripts/verify_cee.py run` all features PASS.
+- [x] `pytest -q` passes; `python scripts/verify_cee.py run` all features PASS.
 
 ## Progress log
 - 2026-11-18 23:36 - plan written. Branch `tl/213-pool-budget` from `main` 2a22e23; DB
@@ -340,3 +340,41 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   `ModelOutputError.stop_reason`. Tests: 16 new (budget, eval_run, themes fixture DB); the two
   eval_run fakes now take `k=None`. `pytest -q` 564 passed. One test file added to Files to
   change (`tests/test_retrieval_themes.py`, the fixture DB lives there).
+- 2026-11-18 23:58 - step 2: defaults (pool 15, passage rule) mock run
+  `D:\ALLPROJECTS\EDJ\cache\ev213\grid\p15-passages`: 30/30 chunk lists identical (same order)
+  to the baseline, statuses / refusal / recall identical (`...\ev213\step2-diff.txt`). 29 PASS,
+  0.686 / 0.484, tier 1 0.803 / 0.597, tokens per question median 6,001 / max 9,544, search time
+  median 0.50 s / max 1.01 s.
+- 2026-11-19 00:00 - step 3: the 11 other grid points (`...\ev213\grid.py`), checked by
+  `...\ev213\check.py` (`...\ev213\grid-check.txt`): meta settings, budget per question (B, and
+  1.5 x B for Q10, Q11, Q15, Q21-Q25), the bound on the budgeted part, pool superset, Q19 peers
+  <= 2 per firm: no problems. (15, 20k): 28 of 30 lists differ from (15, passages); Q19 and Q26 are
+  identical with fill < 1 (pool exhausted), so no finding. All 12 points eligible (29 PASS, 0
+  forbidden, refusal 5/5 and 22/22, no PASS->FAIL, recall >= baseline). Tier-1 recall@final:
+  pool 15: 0.597 / 0.720 / 0.739 / 0.752; pool 30: 0.597 / 0.764 / 0.783 / 0.808; pool 50: 0.597 /
+  0.764 / 0.783 / 0.802 (passages / 20k / 30k / 40k). Search times run while the #212 agent used the
+  same database, so they may be inflated.
+- 2026-11-19 00:01 - step 4: pick by the rule = (pool 30, 40k), tier-1 recall@final 0.808. Committed
+  `POOL_PER_GROUP = 30`, `TOKEN_BUDGET = 40000`; tests that check the passage rule now set
+  `TOKEN_BUDGET = None` themselves. `pytest -q` 565 passed (one flaky `tests/test_embed.py` failure
+  in one run, passed on re-run; it loads a local model while the #212 agent runs its own).
+- 2026-11-19 00:03 - step 5: final mock run `.eval-runs/0213-final` (commit 1da1890, the pick)
+  identical to the grid point (30/30 lists, statuses, refusal, recall; `...\ev213\step5-diff.txt`).
+  29 PASS / 1 FAIL (Q19), 15 IMPROVED, 0 REGRESSED; recall@pool 0.814 / recall@final 0.654, tier 1
+  0.903 / 0.808; tokens per question median 33,643 / max 60,322; largest overshoot 323 tokens; no
+  unattached answer turn. Copied to `evals/baselines/corpus-2026-11-17/`.
+- 2026-11-19 00:04 - step 6: ADR-019, ADR-013 status note, spec, fts docstring.
+- 2026-11-19 00:06 - step 7: verify-cee (port 8599 free, no other `cee_verify`): 7 of 9 PASS,
+  open-citation and download-document FAIL with `docker exec ... out of memory allocating heap
+  arena map` (the host docker CLI, not the app; parallel load); re-run of those two PASS
+  (`.verify-runs/20261119-000442-dce70ba`, `.verify-runs/20261119-000637-dce70ba`).
+- 2026-11-19 00:12 - step 8: 8 real calls (claude-sonnet-5-5, prompt v3, max_tokens 8000),
+  `.eval-runs/0213-real`, raw outputs in its `raw/` and `D:\ALLPROJECTS\EDJ\cache\ev213\real`. No
+  INVALID_OUTPUT, so no truncation run. Q24, Q28, Q29, Q30 `gap_with_adjacent` (expected); **Q25
+  `answer` (expected `gap_with_adjacent`): finding** - with 214 passages (60k) it found Form ADV and
+  filing disclosures of how each firm pays advisors (12 claims, 5 adjacent, 0 gaps); Gate 4 (old
+  setting) had `gap_with_adjacent`. Per the plan it is not re-run; the PR is "Part of #213" and the
+  TL decides (accept, or the next eligible point by the rule: pool 50 / 40k, then 30k). Q7, Q15,
+  Q20 `answer` (expected); their named missed passages are not in the retrieved set (Q15's
+  `SCHW-10K-2025#27` is a candidate lost in select; the others are not candidates), so none is cited.
+
