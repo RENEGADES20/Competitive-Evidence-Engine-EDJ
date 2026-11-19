@@ -142,3 +142,16 @@ def test_retest_report_has_both_recall_columns_gate4_stages_and_the_decision(tmp
     assert q7["stage"] == {"fts": "not in pool", "hybrid-norerank": "retrieved"}
     assert summary["modes"]["fts"]["mean_pool_size"] == 40 and summary["differs"] == ["Q7"]
     assert b"\r\n" not in (tmp_path / "out" / "report.md").read_bytes()
+
+
+def test_retest_pool_note_and_no_decision():
+    # #240 (T11, T11b): the #211 text by default; --pool-note replaces it; no decision section
+    runs = {"fts": _retest(0.597), "hybrid-norerank": _retest(0.6)}
+    text, summary = ec.build_retest(runs)
+    assert ec.NOT_LIKE_FOR_LIKE in text and "## Decision" in text
+    note = "Both modes pool the best 30 per (firm, document type) per part."
+    text2, summary2 = ec.build_retest(runs, pool_note=note, decision_line=False, title="# #240 mock")
+    assert note in text2 and "RERANK_N" not in text2 and "## Decision" not in text2
+    assert text2.startswith("# #240 mock") and summary2["decision"] is None and summary2["pool_note"] == note
+    # the tables are the same either way
+    assert text.split("## Summary", 1)[1] == text2.split("## Summary", 1)[1].replace(note, ec.NOT_LIKE_FOR_LIKE)

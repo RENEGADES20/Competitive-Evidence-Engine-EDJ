@@ -10,14 +10,17 @@ window (fts.window_filter), Ask filters (fts.filters_sql) and the document-type 
 (fts.doc_type_scope_sql: Form ADV only for fee questions and never in a window, no trade press for
 benchmark questions; ADR-015). Each part of a question runs both legs:
   1. keyword leg: the fts words, synonyms and rank, top LEG_K per quota firm;
-  2. vector leg: cosine distance to the question's embedding, top LEG_K per quota firm (exact);
+  2. vector leg: cosine distance to the embedded text (the question, or a plan part's text), top
+     LEG_K per quota firm (exact);
   3. RRF per quota firm: score = sum over legs of 1 / (RRF_K + rank in that firm). The quota firm
      (fts.quota_firms, ADR-013) puts Merrill's MER and BAC GWIM chunks in one ranked list;
-  4. (quota firm, document type) groups take turns down the fused list into the part's candidates
-     (RERANK_N x k / K for the named firms, so a five-firm question with k=30 gets 75).
+  4. the pool (#240, ADR-019's rule): the best fts.POOL_PER_GROUP (30) fused chunks per
+     (entity_id, document type), as fts's pool SQL partitions.
 Parts, as in fts.search(): the named firms; entity+theme also the firms' own chunks on the theme
 (fts.on_theme_filter, #117), tier 5 research on the theme, and the home firm's theme peers on the
 theme (#205, ADR-018). Question turns get their answer turn (fts.answer_turns, PAIR_TURNS, ADR-017).
+Budget and plan (#240): the token budget (fts.budget_tokens, ADR-019) as fts.search, and
+search_parts() searches a question plan (planner parts, ADR-020) exactly as planner.search_parts.
 
 `hybrid-norerank` (rerank=False): Hit.rank = RRF score, and fts.select() does the rest exactly as in
 fts mode: relative floor FLOOR[mode] from the firm's FLOOR_BASE-th best (ADR-014; research base 1;
@@ -53,8 +56,6 @@ from cee.retrieve.modes import HybridUnavailable  # noqa: F401 (re-exported)
 
 LEG_K = 100          # candidates per leg and quota firm
 RRF_K = 60           # reciprocal rank fusion constant
-RERANK_N = 50        # candidates per part at k = K (the named firms, their on-theme chunks, the peers)
-THEME_RERANK_N = 20  # candidates for the research part of entity+theme questions (#116)
 RERANK_FLOOR = 0.0   # sigmoid score below which a hit is a weak match (outside time windows)
 # 0 = no rerank floor: every grid value lost evidence on corpus-2026-10-29 (#125 plan Progress log).
 # Per mode (#126; values chosen by the selection rule in plans/0126-hybrid-eval.md, report in
@@ -145,21 +146,6 @@ def rrf(legs: Sequence[Sequence[str]], k: int = RRF_K) -> list[tuple[str, float]
         for rank, cid in enumerate(leg, start=1):
             scores[cid] = scores.get(cid, 0.0) + 1.0 / (k + rank)
     return sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))
-
-
-def take_turns(fused: Sequence[tuple[str, float]], group_of: dict[str, object], n: int) -> list[str]:
-    """The first n chunk_ids, groups taking turns: each group in its own fused order, the group
-    with the best chunk first. Groups are (quota firm, document type), as fts mode pools them, so
-    every firm and document type with candidates gets a place."""
-    queues: dict[object, list[str]] = {}
-    for cid, _ in fused:
-        queues.setdefault(group_of.get(cid), []).append(cid)
-    out: list[str] = []
-    while len(out) < n and any(queues.values()):
-        for g in queues:
-            if queues[g] and len(out) < n:
-                out.append(queues[g].pop(0))
-    return out
 
 
 def gate(ids: Sequence[str], rrf_score: dict[str, float], group_of: dict[str, object], floor: float,
@@ -346,18 +332,38 @@ Part = tuple[list[str], dict[str, float], dict[str, object]]
 EMPTY: Part = ([], {}, {})
 
 
-def candidates(conn, q: Query, qvec: str, n: int, research: bool = False, part: str | None = None,
+def pool_cut(fused: Sequence[tuple[str, float]], entity_of: dict[str, object], doc_type_of: dict[str, object],
+             per_group: int | None = None) -> list[str]:
+    """The pool of one part (#240, ADR-019's rule): the best `per_group` (fts.POOL_PER_GROUP) chunks
+    of the fused list per (entity_id, doc_type), in fused order, as fts's pool SQL partitions
+    (`PARTITION BY entity_id, doc_type`): MER and BAC GWIM chunks each keep their own groups here,
+    while the RRF lists and select() count them as one quota firm (ADR-013)."""
+    per_group = fts.POOL_PER_GROUP if per_group is None else per_group
+    counts: dict[tuple, int] = {}
+    out: list[str] = []
+    for cid, _ in fused:
+        g = (entity_of.get(cid), doc_type_of.get(cid))
+        if counts.get(g, 0) < per_group:
+            counts[g] = counts.get(g, 0) + 1
+            out.append(cid)
+    return out
+
+
+def candidates(conn, q: Query, qvec: str, research: bool = False, part: str | None = None,
                rank: tuple[str, dict] | None = None) -> Part:
-    """Both legs of one part, RRF per quota firm, then (quota firm, document type) groups take
-    turns into n candidates. Returns (candidates, RRF score per chunk, (quota firm, type) per chunk)."""
+    """Both legs of one part, RRF per quota firm, then the pool cut (pool_cut: POOL_PER_GROUP per
+    (entity, document type)). Returns (candidates in fused order, RRF score per chunk,
+    (quota firm, type) per chunk)."""
     part = part or ("research" if research else "firm")
     sql, params = keyword_leg_sql(conn, q, part=part, rank=rank)
     kw = conn.execute(sql, params).fetchall()
     sql, params = vector_leg_sql(q, qvec, part=part)
     vec = conn.execute(sql, params).fetchall()
     group_of = {r["chunk_id"]: (r["qfirm"], r["doc_type"]) for r in [*kw, *vec]}
+    entity_of = {r["chunk_id"]: r["entity_id"] for r in [*kw, *vec]}
+    doc_type_of = {r["chunk_id"]: r["doc_type"] for r in [*kw, *vec]}
     fused = rrf([*_per_firm(kw), *_per_firm(vec)])
-    return take_turns(fused, group_of, n), dict(fused), group_of
+    return pool_cut(fused, entity_of, doc_type_of), dict(fused), group_of
 
 
 def _per_firm(rows: list[dict]) -> list[list[str]]:
@@ -371,42 +377,56 @@ def _per_firm(rows: list[dict]) -> list[list[str]]:
 
 
 def search(q: Query, k: int | None = None, scorer: Scorer | None = None, timings: dict | None = None,
-           rerank: bool = True, trace: PoolTrace | None = None) -> list[Hit]:
+           rerank: bool = True, trace: PoolTrace | None = None, tokens: float | None = None,
+           exclude: set[str] | None = None, research: bool = True, peers: bool = True,
+           text: str | None = None, checked: bool = False, firm: bool = True,
+           kept: set[str] | None = None) -> list[Hit]:
     """rerank=True: mode `hybrid` (cross-encoder order); False: `hybrid-norerank` (RRF order).
-    k: passages for the named firms and the research part; None = budget(q) - peer_slots(q), as
-    fts.search (the theme peers' slots come on top). trace (#210): the candidate pools before any
-    floor or select(); recording only."""
+    k, tokens, exclude, research, peers as fts.search (#240): k None and tokens None = the app
+    default, the token budget budget_tokens(q) (ADR-019; research first, its tokens off the firm
+    part; peers on top), or budget(q) - peer_slots(q) passages in passage mode; an explicit k is the
+    passage rule; `tokens` is a part's share; `exclude` (chunk ids kept earlier) leaves the firm and
+    on-theme pools after the pool cut, and the answer-turn map. text: what the vector leg embeds and
+    the cross-encoder scores against (a plan part's text; None = the question). checked: the
+    vectors check already ran for this question (search_parts runs it once). firm=False runs only
+    the research and peer parts (research_pass / peer_pass); kept: chunk ids the peers never take.
+    trace (#210): the candidate pools before any floor or select(); recording only."""
     mode = "hybrid" if rerank else "hybrid-norerank"
+    if tokens is None and k is None:
+        tokens = fts.budget_tokens(q)
     k = fts.budget(q) - fts.peer_slots(q) if k is None else k
-    if q.unmapped and not q.entities:
-        return []  # firm is known but not in the corpus: nothing is eligible (no model, no SQL)
-    if q.firm_filter and not q.entities:
-        return []  # the firm filter leaves none of the firms the question names
+    if not fts.searchable(q):
+        return []  # unmapped firm only, or the firm filter leaves none: no model, no SQL
     from cee.db import connect
     from cee.retrieve.embed import embed_query, vector_literal
 
     scorer = scorer or cross_encoder_scores
+    text = text or q.question
+    exclude = exclude or set()
     floor = 0.0 if q.window else FLOOR[mode]  # inside a window every document is on topic
-    n_firm = max(1, math.ceil(RERANK_N * k / K))
     theme_q = q.mode == "entity+theme"
     firm_of = fts.quota_firms(q.entities)
     t0 = time.perf_counter()
     with connect() as conn:
-        check_vectors(conn)
-        qvec = vector_literal(embed_query(q.question))
+        if not checked:
+            check_vectors(conn)
+        qvec = vector_literal(embed_query(text))
         terms, synonyms = fts.keyword_terms(q)
         _, syn_params = fts._tsquery_sql(terms, synonyms)
-        rank = fts.rank_sql(conn, terms, syn_params)  # once per question, shared by every part
-        firm_ids, firm_rrf, groups = candidates(conn, q, qvec, n_firm, part="firm", rank=rank)
-        theme_ids, theme_rrf, theme_groups = (candidates(conn, q, qvec, n_firm, part="on_theme", rank=rank)
-                                              if theme_q else EMPTY)
+        rank = fts.rank_sql(conn, terms, syn_params)  # once per search, shared by every part
+        firm_ids, firm_rrf, groups = (candidates(conn, q, qvec, part="firm", rank=rank) if firm else EMPTY)
+        theme_ids, theme_rrf, theme_groups = (candidates(conn, q, qvec, part="on_theme", rank=rank)
+                                              if firm and theme_q else EMPTY)
         research_ids, research_rrf, research_groups = (
-            candidates(conn, q, qvec, THEME_RERANK_N, part="research", rank=rank) if theme_q else EMPTY)
-        peer_ids, peer_rrf, _ = (candidates(conn, q, qvec, RERANK_N, part="peers", rank=rank)
-                                 if theme_q and q.theme_peers else EMPTY)
+            candidates(conn, q, qvec, part="research", rank=rank) if theme_q and research else EMPTY)
+        peer_ids, peer_rrf, _ = (candidates(conn, q, qvec, part="peers", rank=rank)
+                                 if theme_q and q.theme_peers and peers else EMPTY)
         groups = {**theme_groups, **groups}
-        ids, score = merge_theme(firm_ids, firm_rrf, theme_ids, theme_rrf, groups)
-        on_theme = set(theme_ids)
+        # as fts.search: the pool cut first, then the chunks kept earlier leave the pools (#240)
+        pooled_firm = [c for c in firm_ids if c not in exclude]
+        pooled_theme = [c for c in theme_ids if c not in exclude]
+        ids, score = merge_theme(pooled_firm, firm_rrf, pooled_theme, theme_rrf, groups)
+        on_theme = set(pooled_theme)
         every = list(dict.fromkeys([*ids, *research_ids, *peer_ids]))
         rows = {r["chunk_id"]: dict(r) for r in conn.execute(ROWS_SQL, {"ids": every}).fetchall()}
 
@@ -415,10 +435,11 @@ def search(q: Query, k: int | None = None, scorer: Scorer | None = None, timings
 
         pool = [hit(c, score[c], c in on_theme) for c in ids if c in rows]
         answers = {}
-        if fts.PAIR_TURNS:  # answer turns of the pooled question turns (#203), every hard filter
+        if fts.PAIR_TURNS and firm:  # answer turns of the pooled question turns (#203), every hard filter
             where, window, filters, _, params = part_filters(q, "firm")
             answers = fts.answer_turns(conn, [h for h in pool if fts.is_question_turn(h)], where, window,
                                        filters, params)
+            answers = {qid: a for qid, a in answers.items() if a.chunk_id not in exclude}
     if trace is not None:
         trace.firm += firm_ids
         trace.on_theme += theme_ids
@@ -435,7 +456,7 @@ def search(q: Query, k: int | None = None, scorer: Scorer | None = None, timings
         peer_pool = fts.peer_floor(peer_pool, FLOOR[mode])
         keep |= {h.chunk_id for h in peer_pool}
         found = [c for c in every if c in keep and c in rows]
-        scores = dict(zip(found, scorer(q.question, [f"{rows[c]['prefix']} {rows[c]['text']}" for c in found])))
+        scores = dict(zip(found, scorer(text, [f"{rows[c]['prefix']} {rows[c]['text']}" for c in found])))
         rerank_floor = 0.0 if q.window else RERANK_FLOOR
 
         def rescored(hits: list[Hit]) -> list[Hit]:
@@ -452,18 +473,23 @@ def search(q: Query, k: int | None = None, scorer: Scorer | None = None, timings
         timings.update(retrieve_s=t1 - t0, rerank_s=t2 - t1)
 
     # As fts.search: no floor, the window cap and no trade-last inside a window; research as before
-    # #166 (base 1, no slot-order rules); answer turns; Merrill counted once.
+    # #166 (base 1, no slot-order rules); answer turns; Merrill counted once; the token budget (#240).
     opts = ({"floor": 0, "max_per_doc": fts.WINDOW_MAX_PER_DOC, "trade_last": False} if q.window
             else {"floor": select_floor, "max_per_doc": MAX_PER_DOC[mode]})
-    research = fts.select(research_pool, min(fts.THEME_K, k),
-                          **{**opts, "max_per_doc": fts.THEME_MAX_PER_DOC, "trade_last": False,
-                             "new_doc_first": False}, floor_base=1) if research_pool else []
-    hits = fts.select(pool, k - len(research), **opts, firm_of=firm_of, answers=answers) + research
+    research_hits = fts.select(research_pool, min(fts.THEME_K, k),
+                               **{**opts, "max_per_doc": fts.THEME_MAX_PER_DOC, "trade_last": False,
+                                  "new_doc_first": False}, floor_base=1) if research_pool else []
+    hits: list[Hit] = []
+    if firm:
+        firm_tokens = None if tokens is None else max(0.0, tokens - sum(fts.hit_tokens(h) for h in research_hits))
+        hits = fts.select(pool, k - len(research_hits), **opts, firm_of=firm_of, answers=answers,
+                          tokens=firm_tokens, unattached=trace.unattached if trace is not None else None)
+    hits += research_hits
     if peer_pool:
         # the peers' best chunks on the theme, at most PEER_THEME_PER_FIRM each, never a chunk already kept
         peer_firm_of = fts.quota_firms(q.theme_peers)
-        kept = {h.chunk_id for h in hits}
-        peer_hits = fts.select([h for h in peer_pool if h.chunk_id not in kept],
+        taken = {h.chunk_id for h in hits} | (kept or set())
+        peer_hits = fts.select([h for h in peer_pool if h.chunk_id not in taken],
                                fts.PEER_THEME_PER_FIRM * len({peer_firm_of.get(h.entity_id, h.entity_id)
                                                               for h in peer_pool}),
                                floor=0, firm_of=peer_firm_of, trade_last=not q.window)
@@ -473,10 +499,86 @@ def search(q: Query, k: int | None = None, scorer: Scorer | None = None, timings
             if per_firm.get(f, 0) < fts.PEER_THEME_PER_FIRM:
                 per_firm[f] = per_firm.get(f, 0) + 1
                 hits.append(h)
-    if q.window:  # recency questions read newest first (Q26)
+    if q.window and firm:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits
 
+
+def research_pass(q: Query, rerank: bool = True, trace: PoolTrace | None = None, scorer: Scorer | None = None,
+                  checked: bool = False) -> list[Hit]:
+    """The research part of search() on its own (#240, as fts.research_pass): run once per question
+    before the plan's parts, from the whole question (its words, its embedding)."""
+    if q.mode != "entity+theme" or not fts.searchable(q):
+        return []
+    return search(q, rerank=rerank, trace=trace, scorer=scorer, peers=False, firm=False, checked=checked)
+
+
+def peer_pass(q: Query, kept: set[str], rerank: bool = True, trace: PoolTrace | None = None,
+              scorer: Scorer | None = None, checked: bool = False) -> list[Hit]:
+    """The theme peers of search() on their own (#240, as fts.peer_pass): run once per question after
+    the plan's parts, never a chunk in `kept`, on top of the token budget."""
+    if q.mode != "entity+theme" or not q.theme_peers or not fts.searchable(q):
+        return []
+    return search(q, rerank=rerank, trace=trace, scorer=scorer, research=False, firm=False, kept=kept,
+                  checked=checked)
+
+
+def search_parts(q: Query, plan, rerank: bool = True, trace: PoolTrace | None = None,
+                 part_pools: dict[str, set[str]] | None = None, scorer: Scorer | None = None) -> list[Hit]:
+    """Retrieve a plan in hybrid mode (#240): the same loop as planner.search_parts (ADR-020), which
+    stays byte-equal to main (tests pin its source hash): research once, the parts in order with
+    equal shares of the token budget left (T - research - used so far, divided by the parts left),
+    earlier chunks excluded, the theme peers once. Each part searches planner.part_query(q, part)
+    (its firms and words, every hard filter of the question) and embeds the part's text. Passage
+    mode (TOKEN_BUDGET None) is one whole-question search. `part_pools` (eval) gets each part's
+    candidate ids; `plan.searched` also records each part's `vector_text`."""
+    from cee.retrieve import planner
+
+    total = fts.budget_tokens(q)
+    if total is None or not fts.searchable(q):
+        hits = search(q, rerank=rerank, trace=trace, scorer=scorer)
+        for h in hits:
+            h.part_id = "p1"
+        return hits
+    from cee.db import connect
+    with connect() as conn:
+        check_vectors(conn)  # once per question (#240), not once per part
+    research = research_pass(q, rerank, trace=trace, scorer=scorer, checked=True)
+    for h in research:
+        h.part_id = "research"
+    plan.research_tokens = sum(fts.hit_tokens(h) for h in research)
+    kept = {h.chunk_id for h in research}
+    used = 0.0
+    out: list[Hit] = []
+    plan.searched = []
+    n = len(plan.parts)
+    for i, part in enumerate(plan.parts):
+        share = max(0.0, total - plan.research_tokens - used) / (n - i)
+        part_trace = PoolTrace()
+        hits = search(planner.part_query(q, part), trace=part_trace, tokens=share, exclude=kept,
+                      research=False, peers=False, text=part.text, rerank=rerank, scorer=scorer, checked=True)
+        for h in hits:
+            h.part_id = part.id
+        size = sum(fts.hit_tokens(h) for h in hits)
+        used += size
+        kept |= {h.chunk_id for h in hits}
+        out += hits
+        if trace is not None:
+            for name in ("firm", "on_theme", "answers", "unattached"):
+                getattr(trace, name).extend(getattr(part_trace, name))
+        if part_pools is not None:
+            part_pools[part.id] = part_trace.ids()
+        plan.searched.append({"id": part.id, "share": round(share), "passages": len(hits),
+                              "tokens": round(size), "pool": len(part_trace.ids()),
+                              "chunk_ids": [h.chunk_id for h in hits], "vector_text": part.text})
+    out += research
+    peers = peer_pass(q, kept, rerank, trace=trace, scorer=scorer, checked=True)
+    for h in peers:
+        h.part_id = "peers"
+    out += peers
+    if q.window:  # recency questions read newest first (Q26)
+        out.sort(key=lambda h: h.published_at, reverse=True)
+    return out
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])

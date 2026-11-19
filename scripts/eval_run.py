@@ -9,6 +9,9 @@ entities, the retrieved chunk IDs, which `expected_sources` patterns were hit, f
   python scripts/eval_run.py --baseline .eval-runs/<run>/report.json
   python scripts/eval_run.py --real --max-calls 5 --questions Q28,Q29,Q30
   python scripts/eval_run.py --mode hybrid         # retrieval mode (#125); default RETRIEVAL_MODE
+  python scripts/eval_run.py --mode hybrid-norerank --reuse-plans anthropic:claude-sonnet-5-5
+      # #240: every plan from a saved planner output (.eval-runs/cache), never a planner call; a
+      # missing plan stops the run before any search (exit 2). Also with --real (answers called).
   python scripts/eval_run.py --mode hybrid-norerank --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 \
       --baseline .eval-runs/<fts reference>/report.json   # grid run and selection rule (#126)
 
@@ -461,6 +464,74 @@ def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts:
     return hashlib.sha256(json.dumps(parts, default=str, sort_keys=True).encode()).hexdigest()[:24]
 
 
+def plans_wanted(query, k: int | None = None) -> bool:
+    """True when a run plans this question with a planner call (#214): planner on, the question is
+    searched, token mode and no explicit k. False: plan_question's rule plan, no call, no file."""
+    from cee.config import settings
+    from cee.retrieve import fts
+    return k is None and settings().planner and fts.searchable(query) and fts.budget_tokens(query) is not None
+
+
+def plan_path(cache_dir: Path, q: dict, query, snapshot: str, provider: str, model: str, cap: int,
+              request: str | None) -> Path:
+    """Where a question's planner output is saved (#214); one function for RealRunner.plan and
+    --reuse-plans (#240), so both read the same file. The retrieval mode is not part of it."""
+    from dataclasses import asdict
+    key = plan_cache_key(q, snapshot, provider, model, cap, asdict(query), request)
+    return cache_dir / f"{q['id']}-plan-{key}.json"
+
+
+def plan_from_record(saved: dict, query, provider: str, cap: int):
+    """The Plan of a saved planner record (valid, invalid or a failed call)."""
+    from cee.retrieve import planner
+    if saved.get("invalid"):
+        return planner.from_output(query, saved.get("raw_payload"), provider, cap, error=saved["error"])
+    return planner.from_output(query, saved["raw"], provider, cap)
+
+
+class PlanMissing(RuntimeError):
+    """--reuse-plans: a question's saved planner output is not in the cache (#240)."""
+
+
+def missing_plans(bank: list[dict], resolve, as_of, snapshot: str, provider: str, model: str,
+                  request: str | None, k: int | None = None, cache_dir: Path | None = None) -> list[str]:
+    """Question IDs whose saved plan --reuse-plans would need but cannot find (0 calls)."""
+    from cee.config import settings
+    cap = settings().planner_max_parts
+    cache_dir = cache_dir or CACHE
+    out = []
+    for q in bank:
+        query = resolve(q["text"], today=as_of)
+        if plans_wanted(query, k) and not plan_path(cache_dir, q, query, snapshot, provider, model, cap,
+                                                    request).is_file():
+            out.append(q["id"])
+    return out
+
+
+class SavedPlans:
+    """--reuse-plans in a mock run (#240): each plan from the planner output a real run with this
+    provider / model / request version saved; the planner is never called (no client is built)."""
+
+    def __init__(self, provider: str, model: str, snapshot: str, cache_dir: Path | None = None):
+        from cee.answer import llm
+        self.provider, self.model, self.snapshot, self.cache_dir = provider, model, snapshot, cache_dir or CACHE
+        self.request_version = llm.request_version(provider)
+
+    def plan(self, q: dict, query):
+        from cee.config import settings
+        from cee.retrieve import planner
+        cap = settings().planner_max_parts
+        if not plans_wanted(query):
+            return planner.plan_question(query, "mock", cap=cap)
+        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, cap,
+                         self.request_version)
+        if not path.is_file():
+            raise PlanMissing(f"{q['id']}: no saved plan {path.name}")
+        plan = plan_from_record(json.loads(path.read_text(encoding="utf-8")), query, self.provider, cap)
+        plan.calls = 0   # read from a file in a mock run: no call was made here
+        return plan
+
+
 def part_stages(recall: dict | None, hits, pools: dict[str, set[str]]) -> None:
     """Per expected row (#214): the plan parts whose candidate pool held it (`parts_pool`) and the
     part that kept it (`parts_final`; `research` / `peers` for those passes)."""
@@ -476,7 +547,8 @@ def part_stages(recall: dict | None, hits, pools: dict[str, set[str]]) -> None:
 class RealRunner:
     """Model answers with a hard call cap; every output cached and reused (never re-rolled)."""
 
-    def __init__(self, provider: str, max_calls: int, snapshot: str, run_dir: Path, cache_dir: Path = CACHE):
+    def __init__(self, provider: str, max_calls: int, snapshot: str, run_dir: Path, cache_dir: Path | None = None,
+                 plans_only: bool = False):
         from cee.answer import llm
         from cee.answer.prompt import PROMPT_VERSION
         from cee.ask import model_name
@@ -489,7 +561,8 @@ class RealRunner:
         self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
         self.calls, self.reused, self.last_file = 0, 0, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
-        self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
+        self.cache_dir, self.raw_dir = cache_dir or CACHE, run_dir / "raw"
+        self.plans_only = plans_only   # #240 --reuse-plans: plans only from the cache, never a planner call
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
@@ -545,24 +618,24 @@ class RealRunner:
         """The question's plan (#214, ADR-020) from one planner call, cached like an answer: a saved
         plan (valid, invalid or a failed call) is always reused, so a re-run never calls the planner
         again. None when the call would pass --max-calls. No call when the planner is off, the
-        question is not searched, or passage mode (planner.plan_question decides)."""
+        question is not searched, or passage mode (planner.plan_question decides).
+        plans_only (#240, --reuse-plans): a plan not in the cache raises PlanMissing, never a call."""
         from dataclasses import asdict
 
         from cee.config import settings
-        from cee.retrieve import fts, planner
+        from cee.retrieve import planner
 
         cap = settings().planner_max_parts
-        if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
+        if not plans_wanted(query):
             return planner.plan_question(query, self.provider, cap=cap)
-        key = plan_cache_key(q, self.snapshot, self.provider, self.model, cap, asdict(query), self.request_version)
-        path = self.cache_dir / f"{q['id']}-plan-{key}.json"
+        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, cap, self.request_version)
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
             self._copy(path)
-            if saved.get("invalid"):
-                return planner.from_output(query, saved.get("raw_payload"), self.provider, cap, error=saved["error"])
-            return planner.from_output(query, saved["raw"], self.provider, cap)
+            return plan_from_record(saved, query, self.provider, cap)
+        if self.plans_only:
+            raise PlanMissing(f"{q['id']}: no saved plan {path.name} (--reuse-plans); no call made")
         if self.calls >= self.max_calls:
             return None
         self.calls += 1   # counted before the call: a failed call still cost money
@@ -759,6 +832,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--mode", choices=RETRIEVAL_MODES, help="retrieval mode (default RETRIEVAL_MODE, else fts)")
     ap.add_argument("--floor", help="FLOOR for the mode, one value or a comma list (grid; #126)")
     ap.add_argument("--max-per-doc", help="MAX_PER_DOC for the mode, one value or a comma list (grid; #126)")
+    ap.add_argument("--reuse-plans", metavar="PROVIDER:MODEL",
+                    help="#240: every plan from the planner output saved for this provider and model; never a "
+                         "planner call; a missing plan stops the run before any search (exit 2)")
     args = ap.parse_args(argv)
     if args.real and (args.max_calls is None or args.max_calls < 0):
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
@@ -799,14 +875,32 @@ def main(argv: list[str] | None = None) -> int:
         base_summary = base_report.get("summary")
     subs = substitutes()
 
+    saved_plans = None
+    if args.reuse_plans:  # #240: plans only from saved planner outputs, checked before any search
+        from cee.answer import llm
+        from cee.ask import model_name
+        provider, _, model = args.reuse_plans.partition(":")
+        if not provider or not model:
+            ap.error("--reuse-plans takes PROVIDER:MODEL, e.g. anthropic:claude-sonnet-5-5")
+        if args.real and (provider != settings().llm_provider or model != model_name(provider)):
+            ap.error(f"--reuse-plans {args.reuse_plans} is not this run's provider and model "
+                     f"({settings().llm_provider}:{model_name(settings().llm_provider)}); nothing was called")
+        missing = missing_plans(bank, resolve, args.as_of, snapshot, provider, model,
+                                llm.request_version(provider), args.k)
+        if missing:
+            print(f"--reuse-plans: no saved plan for {', '.join(missing)}; nothing was searched or called.")
+            return 2
+        if not args.real:
+            saved_plans = SavedPlans(provider, model, snapshot)
+
     warmup_s = None
     if bank:  # untimed: loads models (hybrid) and warms the database cache
         from cee.retrieve.fts import budget_tokens
         q0 = resolve(bank[0]["text"], today=args.as_of)
-        # same path as the timed run: fts token mode searches a plan (the mock plan here, 0 planner
-        # calls) through planner.search_parts, as on main; passage / hybrid runs search the whole question
-        plan0 = (plan_question(q0, "mock") if args.k is None and retrieval_mode == "fts"
-                 and budget_tokens(q0) is not None else None)
+        # same path as the timed run: token mode searches a plan (the mock plan here, 0 planner
+        # calls) through planner.search_parts (fts, as on main) or hybrid.search_parts (#240);
+        # passage runs search the whole question
+        plan0 = (plan_question(q0, "mock") if args.k is None and budget_tokens(q0) is not None else None)
         t = time.perf_counter()
         search(q0, k=args.k, mode=retrieval_mode, plan=plan0)
         warmup_s = round(time.perf_counter() - t, 3)
@@ -816,10 +910,11 @@ def main(argv: list[str] | None = None) -> int:
         run_dir = out_dir / point_name(floor, max_per_doc) if len(points) > 1 else out_dir
         saved = set_constants(retrieval_mode, floor, max_per_doc)
         try:
-            real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
+            real = (RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir,
+                               plans_only=bool(args.reuse_plans)) if args.real else None)
             records, meta = run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search, resolve,
                                      run_id, snapshot, warmup_s, doc_dates, plan_question, rules_plan,
-                                     PLANNER_VERSION)
+                                     PLANNER_VERSION, saved_plans=saved_plans)
             meta["constants"] = current_constants(retrieval_mode)
         finally:
             restore_constants(retrieval_mode, saved)
@@ -851,9 +946,12 @@ def current_constants(mode: str) -> dict:
         return {"FLOOR": fts.FLOOR, "MAX_PER_DOC": fts.MAX_PER_DOC, "DUP_JACCARD": fts.DUP_JACCARD,
                 "WINDOW_MAX_PER_DOC": fts.WINDOW_MAX_PER_DOC, "THEME_MAX_PER_DOC": fts.THEME_MAX_PER_DOC}
     from cee.retrieve import hybrid
+    # #240: the hybrid pool rule (fts's POOL_PER_GROUP per (entity, type) after LEG_K per leg and
+    # RRF_K fusion) and the token budget replace the removed RERANK_N
     return {"FLOOR": hybrid.FLOOR[mode], "MAX_PER_DOC": hybrid.MAX_PER_DOC[mode],
             "DUP_JACCARD": fts.DUP_JACCARD, "RERANK_FLOOR": hybrid.RERANK_FLOOR,
-            "RERANK_N": hybrid.RERANK_N, "WINDOW_MAX_PER_DOC": fts.WINDOW_MAX_PER_DOC,
+            "POOL_PER_GROUP": fts.POOL_PER_GROUP, "LEG_K": hybrid.LEG_K, "RRF_K": hybrid.RRF_K,
+            "TOKEN_BUDGET": fts.TOKEN_BUDGET, "WINDOW_MAX_PER_DOC": fts.WINDOW_MAX_PER_DOC,
             "THEME_MAX_PER_DOC": fts.THEME_MAX_PER_DOC}
 
 
@@ -964,7 +1062,8 @@ def cpu_text() -> str:
 
 
 def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search, resolve, run_id, snapshot,
-             warmup_s, doc_dates, plan_question, rules_plan, planner_version) -> tuple[list[dict], dict]:
+             warmup_s, doc_dates, plan_question, rules_plan, planner_version,
+             saved_plans: "SavedPlans | None" = None) -> tuple[list[dict], dict]:
     from cee.config import settings
     from cee.retrieve import fts
     from cee.retrieve.fts import PoolTrace, budget, budget_tokens
@@ -973,16 +1072,17 @@ def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search,
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
         # #213: without --k, search() takes the app's rule (passages, or tokens with TOKEN_BUDGET);
         # an explicit k is the passage rule. budget() includes the peers' slots (#205).
-        # On exp/hybrid only fts takes the token budget; the hybrid modes keep the passage budget.
-        b_tokens = budget_tokens(query) if args.k is None and retrieval_mode == "fts" else None
+        # exp/hybrid (#240): every retrieval mode takes the token budget and plans, as fts on main.
+        b_tokens = budget_tokens(query) if args.k is None else None
         k = args.k if args.k is not None else (budget(query) if b_tokens is None else None)
         trace = PoolTrace()  # #210: the candidate pools before select(), recording only
         # #214 (ADR-020): token mode without --k searches the question's plan (the rule plan on mock,
-        # one planner call with --real); passage mode is one whole-question search, no planner.
-        # On exp/hybrid b_tokens is None in the hybrid modes, so they never plan (cee.retrieve.modes).
+        # one planner call with --real, a saved plan with --reuse-plans); passage mode is one
+        # whole-question search, no planner.
         plan, pools, capped = None, {}, False
         if args.k is None and b_tokens is not None:
-            plan = real.plan(q, query) if real else plan_question(query, "mock")
+            plan = (real.plan(q, query) if real else saved_plans.plan(q, query) if saved_plans
+                    else plan_question(query, "mock"))
             if plan is None:   # the planner call would pass --max-calls: rule plan, no answer call
                 plan, capped = rules_plan(query), True
         t0 = time.perf_counter()
@@ -999,11 +1099,6 @@ def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search,
               "llm_calls": {"planner": plan.calls if plan else 0, "answer": 0}}
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
         if real:
-            # exp/hybrid: the hybrid modes answer with the one-part whole-question plan, as the app does
-            # (cee.ask -> modes.plan_for; no planner call); fts keeps main's rule (plan or none)
-            if retrieval_mode != "fts" and plan is None:
-                from cee.retrieve.modes import plan_for
-                plan = plan_for(query, mode=retrieval_mode)
             answer, how = (None, "cap") if capped else real.answer(q, query, hits, plan)
             r = apply_real(r, answer, how, real.last_file if not capped else None)
             if answer is not None and plan is not None:   # #215: how each part was covered
@@ -1025,7 +1120,8 @@ def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search,
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit,
             "k": "by question" if args.k is None else args.k, "min_coverage": args.min_coverage,
-            "pool_per_group": fts.POOL_PER_GROUP, "token_budget": fts.TOKEN_BUDGET if args.k is None and retrieval_mode == "fts" else None,
+            "pool_per_group": fts.POOL_PER_GROUP, "token_budget": fts.TOKEN_BUDGET if args.k is None else None,
+            "reuse_plans": getattr(args, "reuse_plans", None),
             "planner": settings().planner, "max_parts": settings().planner_max_parts,
             "planner_version": planner_version,
             "mode": "real" if real else "mock", "retrieval_mode": retrieval_mode, "warmup_s": warmup_s,

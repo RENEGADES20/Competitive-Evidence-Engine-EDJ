@@ -22,8 +22,8 @@ was built".
   holds the plan and the call count (`filters->'plan'`, `filters->'llm_calls'`). A real planner
   call ("anthropic, one call") and its fallback line are covered by pytest
   (`tests/test_ask_progress.py`); the verify app runs the mock. On `exp/hybrid` with
-  `--mode hybrid` the hybrid modes do not split the question: one whole-question part, no planner
-  call ("1 part: p1 MS, RJF", search line "in 1 part (Smart search)" on the page, `cee.retrieve.modes`).
+  `--mode hybrid` the hybrid modes plan and search the parts as fts does (#240): "2 parts: p1 MS;
+  p2 RJF", search line "in 2 parts (Smart search)" on the page (`cee.retrieve.modes`).
 
 ## How to get to it (user POV)
 
@@ -48,9 +48,9 @@ Preconditions: baseline.
   the trace: "Planning the search (rules, no model call): 2 parts: p1 MS; p2 RJF" and the search
   line ends "in 2 parts". The newest `query_log` row in `cee_verify` has plan source `rules`, 2
   parts and `llm_calls` `{"answer": 0, "planner": 0}` (the mock makes no paid call).
-  With `--mode hybrid` (exp/hybrid): "Planning the search (rules, no model call): 1 part: p1 MS,
-  RJF", the search line ends "in 1 part (Smart search)" (the page shows the plain mode label), and the row has plan source `rules`, 1 part and
-  `llm_calls` `{"answer": 0, "planner": 0}`. The driver picks the check from `--mode`
+  With `--mode hybrid` (exp/hybrid, #240): the same plan line and row (plan source `rules`, 2 parts,
+  `llm_calls` `{"answer": 0, "planner": 0}`); the search line ends "in 2 parts (Smart search)" (the
+  page shows the plain mode label). The driver picks the check from `--mode`
   (`VERIFY_RETRIEVAL_MODE`, else `RETRIEVAL_MODE`).
 
 ## Gotchas

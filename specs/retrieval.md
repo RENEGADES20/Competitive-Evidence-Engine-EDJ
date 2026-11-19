@@ -151,34 +151,35 @@ retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segme
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
-## Retrieval modes (#125, #126, #211, experimental branch `exp/hybrid` only)
+## Retrieval modes (#125, #126, #211, #240, experimental branch `exp/hybrid` only)
 
 `main` has one mode, `fts` (ADR-010, ADR-011). The other two modes live on the branch `exp/hybrid`.
 
-`cee.retrieve.modes.search(q, k=None, mode=..., trace=None)` / `ask(..., mode=...)`; default
-`RETRIEVAL_MODE` in `.env`, else `fts`. `k=None` is the app default of each mode: `fts` applies
-`fts.search`'s own rule (the token budget `budget_tokens(q)`, #213, ADR-019); the hybrid modes keep
-the passage budget `budget(q) - peer_slots(q)` (their candidate counts scale with k and were not
-tuned for a token budget; synced 2026-11-19 after #220). An explicit k is passages in every mode.
-`fts.py` itself is byte-equal to `main` (#211).
+`cee.retrieve.modes.search(q, k=None, mode=..., trace=None, plan=None)` / `ask(..., mode=...)`;
+default `RETRIEVAL_MODE` in `.env`, else `fts`. `k=None` is the same app default in every mode (#240):
+the token budget `budget_tokens(q)` (#213, ADR-019; research first, its tokens off the firm part,
+peers on top). An explicit k is passages in every mode. `fts.py` and `planner.py` are byte-equal to
+`main` (#211, #240).
 
-Question planner (#214, ADR-020) on this branch: `fts` plans and searches exactly as `main`
-(`modes.plan_for` -> `planner.plan_question`; `modes.search(q, mode="fts", plan=plan)` ->
-`planner.search_parts`: research once, the parts with token shares, the peers once). The hybrid
-modes do not split the question: `plan_for` gives the one-part whole-question plan with no planner
-call, and `modes.search` runs one `hybrid.search` on the whole question (every hit `part_id` "p1"),
-as before #214. `eval_run.py` plans only in `fts` token mode, so a hybrid eval run makes no planner
-call. Per-part hybrid retrieval would need hybrid's candidate counts tuned for token shares; not done
-(synced 2026-11-19 after #223).
-
+Question planner (#214, ADR-020) on this branch, every mode (#240): `modes.plan_for` ->
+`planner.plan_question` (one planner call with a real provider, the rule plan on mock); the mode does
+not change the plan or its cache key. `fts` searches a plan exactly as `main`
+(`planner.search_parts`); the hybrid modes with `hybrid.search_parts`, the same loop (a test pins
+`planner.search_parts`' source hash): research once, each part `planner.part_query(q, part)` (its
+firms and words, every hard SQL filter and the whole question's doc-type scope) under an equal share
+of the token budget left, chunks kept earlier excluded, the peers once. In a part the vector leg
+embeds the part's text (`plan.searched[].vector_text`); research and peers embed the question. So
+`fts` and the hybrid modes differ only in how candidates are found and ranked.
 - `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
 - `hybrid-norerank` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table
   `chunk_embeddings`): inside every hard filter of `fts` (entity / segment, window, Ask filters,
   document-type scope of ADR-015), each part of the question (named firms; for entity+theme also
   the firms' chunks on the theme, tier 5 research on the theme and the home firm's theme peers)
   runs keyword top 100 + vector top 100 per quota firm (Merrill's MER and BAC GWIM chunks are one
-  firm, ADR-013) -> reciprocal rank fusion (k = 60) -> (quota firm, document type) groups take turns
-  into 50 x k / 20 candidates. `Hit.rank` is the RRF score and `fts.select()` does the rest as in
+  firm, ADR-013) -> reciprocal rank fusion (k = 60) per quota firm -> the pool: the best 30
+  (`fts.POOL_PER_GROUP`) fused chunks per (entity, document type), as `fts`'s pool SQL partitions
+  (#240; MER and BAC each keep their own groups; a group can hold fewer than 30 because each leg
+  reaches at most 100 chunks per quota firm across all document types). `Hit.rank` is the RRF score and `fts.select()` does the rest as in
   `fts`: relative floor `hybrid.FLOOR[mode]` from the firm's 2nd-best score (ADR-014; research
   base 1; none in a window), theme slot below the floor, Merrill counted once, trade press last and
   a new document first (ADR-016), answer turns with their question turns (ADR-017), peers 2 per firm
@@ -198,8 +199,9 @@ call. Per-part hybrid retrieval would need hybrid's candidate counts tuned for t
   constants per mode); #211 on `corpus-2026-11-17` (`evals/hybrid-eval/corpus-2026-11-17/report.md`,
   recall@pool / recall@final per mode and the #212 decision); #212 real answers with `hybrid-norerank`
   on `corpus-2026-11-17` (`evals/hybrid-eval/corpus-2026-11-17/real/report.md`, 21/30 at acting
-  quality, as Gate 4's `fts`; Q17 lost, Q28 gained). `LEG_K`, `RRF_K`, `RERANK_N` and
-  `RERANK_FLOOR` were not tuned.
+  quality, as Gate 4's `fts`; Q17 lost, Q28 gained). #240 on `corpus-2026-11-19`: the same plans,
+  token budget and pool as `fts` (`evals/hybrid-eval/corpus-2026-11-19/`, mock and a scored real run
+  against #217). `LEG_K`, `RRF_K` and `RERANK_FLOOR` were not tuned; `RERANK_N` was removed in #240.
 
 ## Acceptance
 

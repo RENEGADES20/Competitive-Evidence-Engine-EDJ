@@ -61,7 +61,8 @@ turns, peers, slot order, `date_basis`, `PoolTrace`.
    `planner.search_parts`.
 3. **`hybrid.search` signature like `fts.search` (D3).** `search(q, k=None, scorer=None,
    timings=None, rerank=True, trace=None, tokens=None, exclude=None, research=True, peers=True,
-   text=None)`. `tokens is None and k is None` -> `tokens = fts.budget_tokens(q)`; research is
+   text=None, checked=False, firm=True, kept=None)` (`checked`: Design 4 / NB8, the vectors check
+   already ran; `firm=False` and `kept` let `research_pass` / `peer_pass` reuse `search`). `tokens is None and k is None` -> `tokens = fts.budget_tokens(q)`; research is
    selected first and its tokens come off the firm part; `fts.select(..., tokens=firm_tokens,
    unattached=...)` as `fts.search` does; peers on top. `exclude` drops kept chunk ids from every
    pool and from the answer-turn map. `research_pass(q, rerank, trace)` and `peer_pass(q, kept,
@@ -330,8 +331,10 @@ result goes back to the user (issue: out of scope).
   timeout can kill it mid-run; review NB3):
   ```powershell
   $wt = 'D:\ALLPROJECTS\EDJ\wt-240'; $h = 'D:\ALLPROJECTS\EDJ\cache\ev240\head-log.txt'
-  $mruns = (Get-Content D:\ALLPROJECTS\EDJ\cache\ev240\mruns-sha.txt).Trim()
+  $mf = 'D:\ALLPROJECTS\EDJ\cache\ev240\mruns-sha.txt'
+  $mruns = if (Test-Path $mf) { (Get-Content $mf -Raw).Trim() } else { '' }
   Set-Location $wt
+  if (-not $mruns -or -not (git cat-file -t "$mruns" 2>$null)) { "STOP: no M-runs sha" | Add-Content $h; exit 3 }   # r2 note 1
   "before $(Get-Date -Format s) HEAD $(git rev-parse HEAD) branch $(git branch --show-current)" | Add-Content $h
   $dirty = git status --short; $drift = git diff $mruns HEAD -- src scripts config evals/questions.yaml evals/expected_chunks.yaml
   "status: [$dirty] diff vs M-runs ${mruns}: [$drift]" | Add-Content $h
@@ -421,3 +424,4 @@ with the same script (code gate, `--reuse-plans`, try / finally `.env` removal, 
 ## Progress log
 - 2026-11-19 14:43 - plan written on `tl/240-hybrid-parity` from `origin/exp/hybrid` 2ca4101 (worktree `D:\ALLPROJECTS\EDJ\wt-240`). Checked: `Query` has no retrieval-mode field and `plan_cache_key` takes none; the 30 #217 plan files are in `repo\.eval-runs\cache` and `ev217\real*` (30 names); `0217-real-2` meta: max_parts 4, pool 30, token budget 40000, plan-v2, as-of 2026-11-17; every question reached the model across #217's two attempts (in `0217-real-2` Q1-Q13 are `cached` from attempt 1). 0 calls. Waiting for the reviewer agent's approval before step 1.
 - 2026-11-19 15:05 - revised after plan review round 1 (issuecomment-7021890960, CHANGES REQUESTED on 60a758e). Blocking: **B1** `eval_run.current_constants` (read `hybrid.RERANK_N`, would crash after the paid calls) records the pool rule instead, and `eval_compare.NOT_LIKE_FOR_LIKE` becomes `--pool-note`; both in Files to change, with tests T8b and T11b. **B2** (TL decision: match fts) pool cut 30 per (`entity_id`, `doc_type`) as fts's `PARTITION BY`, RRF still per quota firm; T8 is now MER 30 + BAC 30 per document type. **B3** M1-M5 run on a committed, clean M-runs sha; the run script logs and requires an empty `git diff <M-runs sha> HEAD -- src scripts config evals/questions.yaml evals/expected_chunks.yaml` and a clean tree before the paid command, else M1 / M3 / M4 are re-run first. Non-blocking, all adopted: NB1 `--reuse-plans` also with `--real` (a planner miss stops with 0 calls; T10); NB2 real chunk lists = M4 on 30/30 (step 8); NB3 try / finally `.env` removal, run in the background, post-run `Test-Path` check; NB4 exclude after the cut (T7); NB5 *LEG_K reach* sub-tag (step 10); NB6 source-hash pin T3b and passage-mode / not-searchable branches in T3; NB7 `vector_text` in `plan.searched`, neighbour phrases in it named; NB8 `check_vectors` once per question; NB9 sync-rule note for the extra eval hunks and the #187 owner waiver for `specs/retrieval.md`; NB10 report generator committed as `real/gen_report.py`; NB11 #217 call wording fixed above. 0 calls.
+- 2026-11-19 15:08 - plan approved (round 2, issuecomment-7021974167, reviewed 93a2f46). Its three notes adopted: the run script stops with exit 3 when `mruns-sha.txt` is missing / empty or `git cat-file -t` fails; `--reuse-plans` with `--real` goes through `RealRunner.plan`'s cache-hit branch (`reused` + copy to `raw/`), asserted in T10; Design 3 lists `checked` / `firm` / `kept`. Build: Design 1-6 and T1-T11b done; the step 3 grep reads `RERANK_N|THEME_RERANK_N|hybrid\.take_turns|def take_turns` because main's `tests/test_retrieval_quotas.py` has fts test names containing `take_turns`. pytest 795 passed, 2 skipped (the 2 DB tests pass with `CEE_VECTORS=on`: 3 passed). Step 1 pre-checks (`ev240\precheck.txt`): sync-db corpus-2026-11-19, chunks = chunk_embeddings = 21,161, both models load from the cache, `v4.1 plan-v2 20000 strict-1`. Step 4: 30 #217 plan files copied into `<wt>\.eval-runs\cache`, sha256 30/30 equal to `ev217\real*` (`ev240\plan-copy.txt`). 0 calls.

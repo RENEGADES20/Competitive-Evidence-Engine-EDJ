@@ -34,3 +34,6 @@ docs/RUN.md "Hybrid retrieval") `verify_cee.py run --mode hybrid`. `--mode` goes
 
 - `RETRIEVAL_MODE=hybrid-norerank` shows as Smart search in the switch default.
 - The pipeline trace says "(hybrid)" internally; the page translates it to "(Smart search)".
+- Since #240 Smart search plans the question like Exact match (the same parts, the same token
+  budget); only how passages are found and ranked differs. The two-firm check in ask-progress
+  expects "in 2 parts (Smart search)".

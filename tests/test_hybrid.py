@@ -35,20 +35,33 @@ def test_rrf_rewards_agreement_between_legs():
     assert fused["both"] > fused["only-kw"] == fused["only-vec"]
 
 
-def test_take_turns_over_firm_and_document_type():
-    fused = [("MS-TR#1", 0.9), ("MS-TR#2", 0.8), ("MS-SUPP#1", 0.3), ("RJF-TR#1", 0.1), (None, 0.0)][:4]
-    group = {"MS-TR#1": ("MS", "transcript"), "MS-TR#2": ("MS", "transcript"),
-             "MS-SUPP#1": ("MS", "supplement"), "RJF-TR#1": ("RJF", "transcript")}
-    # each (firm, type) group gets a turn before any group gets a second place (Q24: tables)
-    assert hybrid.take_turns(fused, group, 3) == ["MS-TR#1", "MS-SUPP#1", "RJF-TR#1"]
-    assert hybrid.take_turns(fused, group, 10) == ["MS-TR#1", "MS-SUPP#1", "RJF-TR#1", "MS-TR#2"]
+def test_pool_cut_keeps_pool_per_group_per_entity_and_document_type():
+    # #240 (T8): 80 fused chunks over two document types of one entity -> 30 + 30, fused order kept
+    fused = [(f"MS-{'TR' if i % 2 else '10K'}#{i}", 1 - i / 1000) for i in range(80)]
+    entity = {c: "MS" for c, _ in fused}
+    dtype = {c: c.split("-")[1].split("#")[0] for c, _ in fused}
+    out = hybrid.pool_cut(fused, entity, dtype)
+    assert fts.POOL_PER_GROUP == 30 and len(out) == 60
+    assert sum(dtype[c] == "TR" for c in out) == 30 and sum(dtype[c] == "10K" for c in out) == 30
+    assert out == [c for c, _ in fused if c in set(out)]  # RRF order kept
+    assert out == [c for c, _ in fused][:60]  # the best of each group
 
 
-def test_take_turns_gives_firms_a_place_in_theme_questions():
-    # Q21: research (no firm) fills the top of the fused list; firm chunks still reach the pool
-    fused = [(f"R#{i}", 1 - i / 100) for i in range(10)] + [("MS#1", 0.01), ("EDJ#1", 0.005)]
-    group = {**{f"R#{i}": (None, "research") for i in range(10)}, "MS#1": ("MS", "10-K"), "EDJ#1": ("EDJ", "10-K")}
-    assert hybrid.take_turns(fused, group, 3) == ["R#0", "MS#1", "EDJ#1"]
+def test_pool_cut_merrill_mer_and_bac_each_keep_their_own_groups():
+    # #240 (B2): fts pools PARTITION BY entity_id, doc_type: one quota firm (MER), but MER 30 + BAC 30
+    fused = [(f"{'MER' if i % 2 else 'BAC'}-10K#{i}", 1 - i / 1000) for i in range(80)]
+    entity = {c: c.split("-")[0] for c, _ in fused}
+    dtype = {c: "10-K" for c, _ in fused}
+    out = hybrid.pool_cut(fused, entity, dtype)
+    assert sum(entity[c] == "MER" for c in out) == 30 and sum(entity[c] == "BAC" for c in out) == 30
+    # research chunks (entity NULL) are cut per document type
+    res = [(f"R#{i}", 1 - i / 100) for i in range(40)]
+    assert len(hybrid.pool_cut(res, {c: None for c, _ in res}, {c: "research" for c, _ in res})) == 30
+
+
+def test_removed_candidate_counts_are_gone():
+    # #240 (B1, T8b): the pool rule replaced RERANK_N / THEME_RERANK_N / take_turns
+    assert not any(hasattr(hybrid, n) for n in ("RERANK_N", "THEME_RERANK_N", "take_turns"))
 
 
 def test_floor_drops_weak_hits_and_keeps_score_order():
@@ -235,7 +248,7 @@ def test_mode_switch(monkeypatch):
     monkeypatch.setattr(fts, "search", lambda q, k, trace=None: calls.append("fts") or [])
     monkeypatch.setattr(hybrid, "search", lambda q, k, trace=None, rerank=True: calls.append("hybrid") or [])
     monkeypatch.setenv("CEE_VECTORS", "on")
-    q = Query(question="x", entities=["MS"])
+    q = Query(question="x", entities=["MS"])  # no plan: one whole-question search in every mode
     monkeypatch.delenv("RETRIEVAL_MODE", raising=False)
     modes.search(q)
     modes.search(q, mode="hybrid")
@@ -477,20 +490,20 @@ def test_r1_doc_type_scope_in_every_leg_and_answer_turns(monkeypatch, rerank):
         assert "d.source_tier <> ALL(%(scope_tiers)s)" in sql and p["scope_tiers"] == [4]
 
 
-def test_r2_k_defaults_to_the_budget_and_scales_the_candidates(monkeypatch):
+def test_r2_budget_is_tokens_by_default_and_passages_with_k(monkeypatch):
+    # #240 (T6): k None -> the token budget (ADR-019) reaches select(); an explicit k -> passage rule
     five = Query(question="Net new assets for each of the five", entities=["MS", "SCHW", "EDJ", "MER", "RJF"])
-    assert fts.budget(five) == 30
+    assert fts.budget_tokens(five) == 60000 and fts.budget(five) == 30
     seen = []
-    real = hybrid.candidates
-
-    def spy(conn, q, qvec, n, research=False, part=None, rank=None):
-        seen.append((part, n))
-        return real(conn, q, qvec, n, research, part, rank)
-    monkeypatch.setattr(hybrid, "candidates", spy)
-    _patch(monkeypatch, FakeConn([], [], []))
+    real = fts.select
+    monkeypatch.setattr(fts, "select", lambda pool, k, **kw: seen.append((k, kw.get("tokens"))) or real(pool, k, **kw))
+    rows = [_row("MS-A#1", "MS")]
+    _patch(monkeypatch, FakeConn(_leg("MS-A#1"), [], rows))
     hybrid.search(five, rerank=False)
     hybrid.search(Query(question="MS pay?", entities=["MS"]), rerank=False)
-    assert seen == [("firm", 75), ("firm", 50)]  # RERANK_N x k / K: 50 x 30 / 20, 50 x 20 / 20
+    hybrid.search(Query(question="MS pay?", entities=["MS"]), rerank=False, tokens=1234.0)
+    hybrid.search(Query(question="MS pay?", entities=["MS"]), k=7, rerank=False)
+    assert seen == [(30, 60000), (20, 40000), (20, 1234.0), (7, None)]
 
 
 def test_r3_merrill_and_bac_gwim_form_one_ranked_list(monkeypatch):
@@ -522,7 +535,7 @@ def test_r4_norerank_floor_from_the_second_best(monkeypatch):
     keep = {"X#1", "Y#1", "Z#1", "W#1"}
     rows = [_row(c["chunk_id"], "MS") for c in kw + vec]
     _patch(monkeypatch, FakeConn(kw, vec, rows))
-    monkeypatch.setattr(hybrid, "RERANK_N", 200)
+    monkeypatch.setattr(fts, "POOL_PER_GROUP", 200)
     hits = hybrid.search(Query(question="MS advisor pay?", entities=["MS"]), k=200, rerank=False)
     assert keep <= {h.chunk_id for h in hits}
     assert hybrid.gate(["X#1", "Y#1", "Z#1"], {"X#1": 2 / 61, "Y#1": 1 / 62, "Z#1": 1 / 90},
@@ -642,13 +655,213 @@ def test_r11_trace_records_the_pools_and_changes_nothing(monkeypatch, rerank):
 
 
 def test_modes_search_passes_budget_and_trace(monkeypatch):
+    # #240: k None is passed on as None, so hybrid.search takes the token budget as fts.search does
     seen = []
     monkeypatch.setattr(hybrid, "search", lambda q, k, trace=None, rerank=True: seen.append((k, trace, rerank)) or [])
     monkeypatch.setenv("CEE_VECTORS", "on")
     q = Query(question="x", entities=["EDJ"], themes=["client_segments"], mode="entity+theme", theme_peers=["MS"])
     t = PoolTrace()
     modes.search(q, mode="hybrid-norerank", trace=t)
-    assert seen == [(fts.budget(q) - fts.peer_slots(q), t, False)] and seen[0][0] == 20
+    modes.search(q, k=12, mode="hybrid", trace=t)
+    assert seen == [(None, t, False), (12, t, True)]
+
+
+# --- #240: plan parts, token budget, pool, exclude, vector text, parity with planner.search_parts ---
+
+from cee.retrieve import planner  # noqa: E402
+
+
+def _fake_hit(cid, entity="MS", chars=400, published="2026-01-01"):
+    h = hit(cid, 1.0, entity=entity, published=published)
+    h.text = "x" * chars
+    return h
+
+
+class _PartSearcher:
+    """One fake per-part searcher for both loops (T3): fixed hits per part query, records each call."""
+
+    def __init__(self):
+        self.calls, self.research_calls, self.peer_calls = [], [], []
+
+    def part(self, q, k=None, trace=None, tokens=None, exclude=None, research=True, peers=True, **kw):
+        self.calls.append({"entities": list(q.entities), "terms": q.terms, "tokens": tokens,
+                           "exclude": set(exclude or ()), "research": research, "peers": peers,
+                           "text": kw.get("text")})
+        firm = q.entities[0] if q.entities else "ALL"
+        hits = [_fake_hit(f"{firm}-{i}#1", entity=firm, chars=4000 * (i + 1),
+                          published=f"2026-0{i + 1}-01") for i in range(3)]
+        out = [h for h in hits if h.chunk_id not in (exclude or set())]
+        if trace is not None:
+            trace.firm += [h.chunk_id for h in hits]
+        return out
+
+    def research(self, q, *a, trace=None, **kw):
+        self.research_calls.append(q.question)
+        return [_fake_hit("R-STUDY#1", entity=None, chars=2000)] if q.mode == "entity+theme" else []
+
+    def peers(self, q, kept, *a, trace=None, **kw):
+        self.peer_calls.append(set(kept))
+        return [_fake_hit("SCHW-P#1", entity="SCHW")] if q.theme_peers else []
+
+
+def _both_loops(monkeypatch, q, plan_parts):
+    """Run planner.search_parts (fts fakes) and hybrid.search_parts (hybrid fakes) on the same plan."""
+    s_fts, s_hyb = _PartSearcher(), _PartSearcher()
+    monkeypatch.setattr(fts, "search", s_fts.part)
+    monkeypatch.setattr(fts, "research_pass", lambda q, k=None, trace=None: s_fts.research(q))
+    monkeypatch.setattr(fts, "peer_pass", lambda q, kept, trace=None: s_fts.peers(q, kept))
+    monkeypatch.setattr(hybrid, "search", s_hyb.part)
+    monkeypatch.setattr(hybrid, "research_pass", lambda q, rerank=True, trace=None, scorer=None, checked=False:
+                        s_hyb.research(q))
+    monkeypatch.setattr(hybrid, "peer_pass", lambda q, kept, rerank=True, trace=None, scorer=None, checked=False:
+                        s_hyb.peers(q, kept))
+    import cee.db
+    monkeypatch.setattr(cee.db, "connect", lambda: FakeConn([], [], []))
+    p1 = planner.Plan(parts=[planner.Part(**vars(p)) for p in plan_parts])
+    p2 = planner.Plan(parts=[planner.Part(**vars(p)) for p in plan_parts])
+    pools1, pools2 = {}, {}
+    a = planner.search_parts(q, p1, part_pools=pools1)
+    b = hybrid.search_parts(q, p2, rerank=False, part_pools=pools2)
+    return (a, p1, s_fts, pools1), (b, p2, s_hyb, pools2)
+
+
+TWO = Query(question="How do MS and RJF recruit?", entities=["MS", "RJF"])
+PLANS = {
+    "one-part": (TWO, [planner.Part("p1", "How do MS and RJF recruit?", ["MS", "RJF"])]),
+    "three-part": (Query(question="MS, RJF and SCHW pay?", entities=["MS", "RJF", "SCHW"]),
+                   [planner.Part("p1", "MS pay", ["MS"], "payout grid"),
+                    planner.Part("p2", "RJF pay", ["RJF"], "payout grid"),
+                    planner.Part("p3", "SCHW pay", ["SCHW"], None)]),
+    "entity+theme": (Query(question="What does Edward Jones do for younger investors?", entities=["EDJ"],
+                           themes=["client_segments"], mode="entity+theme", theme_peers=["SCHW"]),
+                     [planner.Part("p1", "EDJ younger investors", ["EDJ"], "next generation clients")]),
+    "window": (Query(question="What's new on Raymond James in the last 90 days?", entities=["RJF"],
+                     window=(date(2026, 7, 31), date(2026, 10, 29))),
+               [planner.Part("p1", "RJF news", ["RJF"], "announced"), planner.Part("p2", "RJF hires", ["RJF"])]),
+}
+
+
+@pytest.mark.parametrize("name", list(PLANS))
+def test_t3_hybrid_search_parts_mirrors_planner_search_parts(monkeypatch, name):
+    q, parts = PLANS[name]
+    (a, p1, s1, pools1), (b, p2, s2, pools2) = _both_loops(monkeypatch, q, parts)
+    assert [(h.chunk_id, h.part_id) for h in a] == [(h.chunk_id, h.part_id) for h in b]
+    strip = lambda s: [{k: v for k, v in e.items() if k != "vector_text"} for e in s]  # noqa: E731
+    assert strip(p1.searched) == strip(p2.searched) and p1.research_tokens == p2.research_tokens
+    assert [{k: v for k, v in c.items() if k != "text"} for c in s1.calls] == \
+           [{k: v for k, v in c.items() if k != "text"} for c in s2.calls]
+    assert s1.research_calls == s2.research_calls and s1.peer_calls == s2.peer_calls
+    assert pools1 == pools2
+    # T3c / T5: each hybrid part embeds its own text; the searched log names it
+    assert [c["text"] for c in s2.calls] == [p.text for p in parts]
+    assert [e["vector_text"] for e in p2.searched] == [p.text for p in parts]
+    # every part query carries the part's firms and words and the whole question's doc-type scope
+    assert [c["entities"] for c in s2.calls] == [p.firms for p in parts]
+    assert [c["terms"] for c in s2.calls] == [p.keyword_query for p in parts]
+
+
+def test_t3_passage_mode_and_not_searchable_branches(monkeypatch):
+    # passage mode (TOKEN_BUDGET None): one whole-question search, every hit p1, in both loops
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", None)
+    q, parts = PLANS["three-part"]
+    (a, *_), (b, _, s2, _) = _both_loops(monkeypatch, q, parts)
+    assert [(h.chunk_id, h.part_id) for h in a] == [(h.chunk_id, h.part_id) for h in b]
+    assert all(h.part_id == "p1" for h in b) and len(s2.calls) == 1 and s2.calls[0]["entities"] == q.entities
+    monkeypatch.undo()
+    # not searchable (unmapped firm only; firm filter leaving none): [] and no SQL in either loop
+    for nq in (Query(question="What is LPL's strategy?", unmapped=["LPL"]),
+               Query(question="What is Morgan Stanley's strategy?", firm_filter=["RJF"])):
+        plan = planner.Plan(parts=[planner.Part("p1", nq.question, [])])
+        monkeypatch.setitem(sys.modules, "cee.db", None)  # importing cee.db would fail
+        assert hybrid.search_parts(nq, plan, rerank=False) == []
+        monkeypatch.undo()
+
+
+def test_t3b_planner_search_parts_source_is_pinned():
+    import hashlib
+    import inspect
+    digest = hashlib.sha256(inspect.getsource(planner.search_parts).encode()).hexdigest()
+    assert digest == PLANNER_SEARCH_PARTS_SHA256, (
+        "planner.search_parts changed (main sync): update hybrid.search_parts and this hash")
+
+
+PLANNER_SEARCH_PARTS_SHA256 = "39564b4da757517275f1ff3cca38f8c4b5ca439ff84f564215f7d989d97c9c16"
+
+
+def test_t4_part_query_filters_reach_every_hybrid_leg(monkeypatch):
+    # a Merrill part of a two-firm question with a window, firm filter, date range and keywords:
+    # both legs and the answer-turn query carry the part's firms and every hard filter
+    q = fts.apply_filters(fts.resolve("How do Merrill and Raymond James describe advisor recruiting?",
+                                      today=date(2026, 11, 17)),
+                          firms=["MER", "RJF"], date_range=(date(2026, 1, 1), date(2026, 6, 30)),
+                          keywords=["recruiting"])
+    part = planner.Part("p1", "Merrill recruiting", ["MER"], "recruiting experienced advisors")
+    pq = planner.part_query(q, part)
+    conn = FakeConn(_leg("MER-PR#1", entity="MER"), [], [_row("MER-PR#1", "MER")])
+    _patch(monkeypatch, conn)
+    seen = []
+    import cee.retrieve.embed as embed
+    monkeypatch.setattr(embed, "embed_query", lambda t: seen.append(t) or [0.0] * embed.DIM)
+    hybrid.search(pq, rerank=False, text=part.text)
+    legs = _parts(conn)
+    assert len(legs) == 2
+    for sql, p in legs:
+        assert "c.segment = ANY(%(s0)s)" in sql and p["e0"] == "MER" and "e1" not in p  # MER part only
+        assert "BETWEEN %(r_from)s AND %(r_to)s" in sql and "phraseto_tsquery('english', %(kw0)s)" in sql
+        scope, _ = fts.doc_type_scope_sql(pq)
+        assert scope == "TRUE" or scope in sql
+    kw_params = next(p for sql, p in legs if "e.embedding" not in sql)
+    assert kw_params["terms"] == fts.keyword_terms(pq)[0] and "recruiting" in kw_params["terms"]
+    assert seen == ["Merrill recruiting"]  # T5: the vector leg embeds the part's text
+
+
+def test_t5_vector_text_defaults_to_the_question_for_research_and_peers(monkeypatch):
+    q = Query(question="What does Edward Jones do for younger investors?", entities=["EDJ"],
+              themes=["client_segments"], mode="entity+theme", theme_peers=["MS"])
+    seen = []
+    _patch(monkeypatch, FakeConn([], [], []))
+    import cee.retrieve.embed as embed
+    monkeypatch.setattr(embed, "embed_query", lambda t: seen.append(t) or [0.0] * embed.DIM)
+    hybrid.research_pass(q, rerank=False)
+    hybrid.peer_pass(q, set(), rerank=False)
+    hybrid.search(q, rerank=False)
+    assert seen == [q.question] * 3
+
+
+def test_t7_exclude_after_the_pool_cut(monkeypatch):
+    # 31 fused chunks of one (entity, type) group; one of the best 30 excluded -> 29 in the pool
+    # (the 31st does not move up), as fts's SQL cut then exclude; excluded never in answers or hits
+    cids = [f"MS-D#{i:02d}" for i in range(31)]
+    conn = FakeConn(_leg(*cids), [], [_row(c, "MS") for c in cids])
+    _patch(monkeypatch, conn)
+    trace = PoolTrace()
+    monkeypatch.setitem(hybrid.FLOOR, "hybrid-norerank", 0.0)
+    monkeypatch.setitem(hybrid.MAX_PER_DOC, "hybrid-norerank", 100)
+    hits = hybrid.search(Query(question="MS pay?", entities=["MS"]), k=100, rerank=False,
+                         exclude={"MS-D#05"}, trace=trace)
+    ids = {h.chunk_id for h in hits}
+    assert "MS-D#05" not in ids and "MS-D#30" not in ids and len(trace.firm) == 30
+    assert len(ids) == 29
+
+
+def test_t7_excluded_answer_turn_is_not_attached(monkeypatch):
+    q_text = "Jim Smith, Analyst\n\nHow is the affiliation mix shifting?"
+    a = {**_turn_row("RJF-TR#46", "Paul Shoukry, CEO\n\nThe mix has shifted toward independence."),
+         "question_id": "RJF-TR#45"}
+    a.pop("prefix")
+    rows = [_turn_row("RJF-TR#45", q_text), _row("RJF-10K#1", "RJF")]
+    _patch(monkeypatch, FakeConn(_leg("RJF-TR#45", "RJF-10K#1", entity="RJF"), [], rows, answers=[a]))
+    hits = hybrid.search(Query(question="RJF affiliation mix?", entities=["RJF"]), rerank=False,
+                         exclude={"RJF-TR#46"})
+    assert "RJF-TR#46" not in {h.chunk_id for h in hits}
+
+
+def test_vectors_checked_once_per_question_in_search_parts(monkeypatch):
+    q, parts = PLANS["three-part"]
+    conn = FakeConn([], [], [])
+    _patch(monkeypatch, conn)
+    hybrid.search_parts(q, planner.Plan(parts=parts), rerank=False)
+    assert sum("to_regclass" in sql for sql, _ in conn.sql) == 1
 
 
 # --- hard filters against the real database (needs CEE_VECTORS=on and every chunk embedded) -------
@@ -684,3 +897,14 @@ def test_hard_filters_in_hybrid_mode_on_the_database(rerank):
     lo, hi = window.window
     assert all(h.date_basis == "source" and lo.isoformat() <= h.published_at <= hi.isoformat() for h in hits)
     assert all(h.doc_type != "adv" for h in hits)
+    # #240: the same through the plan loop (rule plan, mock): every part keeps the hard filters
+    from cee.retrieve import planner as pl
+    for q in (merrill, window):
+        hits = hybrid.search_parts(q, pl.plan_question(q, "mock"), rerank=rerank)
+        assert hits
+        if q is merrill:
+            assert all(h.entity_id == "MER" or (h.entity_id == "BAC" and h.segment in ("GWIM", "Merrill"))
+                       for h in hits)
+        else:
+            assert all(h.date_basis == "source" and lo.isoformat() <= h.published_at <= hi.isoformat()
+                       and h.doc_type != "adv" for h in hits)

@@ -380,6 +380,7 @@ def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
     seen_modes = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
     monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: seen_modes.append(mode) or [])
+    _fake_plan(monkeypatch)  # #240: hybrid token mode plans first too (rule plan, no call)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
@@ -1136,3 +1137,116 @@ def test_plan_record_carries_the_request_version(monkeypatch, tmp_path):
     rec = saved(tmp_path / "cache")[0]
     assert rec["request_version"] == "strict-1"
 
+
+
+# --- #240: hybrid plans like fts, plan cache independent of the mode, --reuse-plans, constants ------
+
+def _q7():
+    import yaml
+    return next(x for x in yaml.safe_load(er.QUESTIONS.read_text(encoding="utf-8"))["questions"] if x["id"] == "Q7")
+
+
+def _real_env(monkeypatch, tmp_path, fake_calls):
+    """anthropic provider with fake planner / answer calls; search faked; cache in tmp_path."""
+    from cee import ask
+    from cee.retrieve import modes, planner
+    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
+    monkeypatch.setenv("PLANNER", "on")
+    monkeypatch.setenv("PLANNER_MAX_PARTS", "4")
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(er, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, plan=None, part_pools=None:
+                        real_hits())
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    raw = {"parts": [{"id": "a", "text": "recruiting", "firms": ["MS", "MER", "RJF"], "keyword_query": "recruit"}]}
+
+    def call(query, provider, cap, client=None, meta=None):
+        fake_calls.append("planner")
+        return raw
+    monkeypatch.setattr(planner, "call_planner", call)
+    return raw
+
+
+def test_plan_cache_is_shared_by_every_retrieval_mode(fake_model, monkeypatch, tmp_path):
+    # #240 (T9): the planner record path has no retrieval mode: an fts run's plan is reused by a
+    # hybrid-norerank run (and back), so the planner is called once in total
+    planner_calls = []
+    _real_env(monkeypatch, tmp_path, planner_calls)
+    args = ["--questions", "Q7", "--real", "--max-calls", "2", "--as-of", "2026-11-17"]
+    er.main([*args, "--mode", "fts", "--out", str(tmp_path / "fts")])
+    er.main([*args, "--mode", "hybrid-norerank", "--out", str(tmp_path / "hyb")])
+    assert planner_calls == ["planner"]
+    hyb = _record(tmp_path / "hyb")
+    # the fake search returns the same chunks in both modes, so the answer key matches too
+    assert hyb["meta"]["reused"] == 2 and hyb["meta"]["real_calls"] == 0 and len(fake_model) == 1
+    assert hyb["questions"][0]["plan"]["source"] == "model"
+    assert any(p.name.startswith("Q7-plan-") for p in (tmp_path / "hyb" / "raw").iterdir())
+
+
+def test_reuse_plans_with_real_never_calls_the_planner(fake_model, monkeypatch, tmp_path):
+    # #240 (T10, review NB1 / r2 note 2): plans only from the cache, counted as reused and copied to
+    # raw/; a missing plan stops the run before any call (exit 2); a provider / model mismatch exits 2
+    from cee.answer import llm
+    from cee.config import settings
+    from cee.retrieve.fts import resolve
+    planner_calls = []
+    raw = _real_env(monkeypatch, tmp_path, planner_calls)
+    q7 = _q7()
+    path = er.plan_path(tmp_path / "cache", q7, resolve(q7["text"], today=dt.date(2026, 11, 17)), "test",
+                        "anthropic", "fake-model", settings().planner_max_parts, llm.request_version("anthropic"))
+    path.parent.mkdir(parents=True)
+    path.write_text(__import__("json").dumps({"raw": raw}), encoding="utf-8")
+    args = ["--questions", "Q7", "--real", "--max-calls", "1", "--as-of", "2026-11-17",
+            "--mode", "hybrid-norerank", "--reuse-plans", "anthropic:fake-model"]
+    assert er.main([*args, "--out", str(tmp_path / "ok")]) == 0
+    rep = _record(tmp_path / "ok")
+    assert planner_calls == [] and len(fake_model) == 1
+    assert rep["meta"]["reused"] == 1 and rep["meta"]["real_calls"] == 1
+    assert (tmp_path / "ok" / "raw" / path.name).is_file()
+    assert rep["questions"][0]["plan"]["source"] == "model"
+    path.unlink()
+    assert er.main([*args, "--out", str(tmp_path / "missing")]) == 2
+    assert planner_calls == [] and len(fake_model) == 1 and not (tmp_path / "missing").exists()
+    with pytest.raises(SystemExit) as e:
+        er.main([*args[:-1], "anthropic:other-model", "--out", str(tmp_path / "mismatch")])
+    assert e.value.code == 2 and len(fake_model) == 1
+
+
+def test_reuse_plans_in_a_mock_run_reads_the_saved_plan(monkeypatch, tmp_path):
+    # #240 (T10): mock + --reuse-plans: the saved plan, 0 calls (the planner client is never built)
+    from cee.answer import llm
+    from cee.config import settings
+    from cee.retrieve import planner
+    from cee.retrieve.fts import resolve
+    planner_calls = []
+    raw = _real_env(monkeypatch, tmp_path, planner_calls)
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    seen = []
+    from cee.retrieve import modes
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, plan=None, part_pools=None:
+                        seen.append(plan) or [])
+    q7 = _q7()
+    path = er.plan_path(tmp_path / "cache", q7, resolve(q7["text"], today=dt.date(2026, 11, 17)), "test",
+                        "anthropic", "fake-model", settings().planner_max_parts, llm.request_version("anthropic"))
+    path.parent.mkdir(parents=True)
+    path.write_text(__import__("json").dumps({"raw": raw}), encoding="utf-8")
+    assert er.main(["--questions", "Q7", "--as-of", "2026-11-17", "--mode", "fts",
+                    "--reuse-plans", "anthropic:fake-model", "--out", str(tmp_path / "m")]) == 0
+    plan = seen[-1]
+    assert isinstance(plan, planner.Plan) and plan.source == "model" and plan.calls == 0
+    assert [p.keyword_query for p in plan.parts] == ["recruit"] and planner_calls == []
+    assert _record(tmp_path / "m")["meta"]["real_calls"] == 0
+
+
+def test_hybrid_constants_record_the_pool_rule(monkeypatch, tmp_path):
+    # #240 (T8b, review B1): meta.constants of a hybrid run, without the removed RERANK_N
+    import json
+    from cee.retrieve import fts, hybrid
+    _fake_bank(monkeypatch)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
+    c = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["meta"]["constants"]
+    assert "RERANK_N" not in c
+    assert (c["POOL_PER_GROUP"], c["LEG_K"], c["RRF_K"], c["TOKEN_BUDGET"]) == (
+        fts.POOL_PER_GROUP, hybrid.LEG_K, hybrid.RRF_K, fts.TOKEN_BUDGET)
