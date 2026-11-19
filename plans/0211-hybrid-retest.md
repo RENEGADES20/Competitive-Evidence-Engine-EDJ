@@ -196,24 +196,24 @@ held-out set (ADR-010), so a difference this size is weak evidence". Commit it.
   before the row counts match.
 
 ## Acceptance
-- [ ] Merge, not rebase: the branch has a merge commit with parents (exp/hybrid tip, origin/main tip).
-- [ ] `git diff origin/main --stat` (after the merge into the branch) lists only the hybrid-list files
+- [x] Merge, not rebase: the branch has a merge commit with parents (exp/hybrid tip, origin/main tip).
+- [x] `git diff origin/main --stat` (after the merge into the branch) lists only the hybrid-list files
       in "Files to change" (`evals/hybrid-eval/` as a whole); `git diff origin/main -- src/cee/retrieve/fts.py config evals/expected_chunks.yaml` is empty;
       `git diff 965b7f6 -- evals/hybrid-eval/corpus-2026-10-29` is empty.
-- [ ] pytest passes on the branch (count recorded).
-- [ ] `SELECT count(*) FROM chunk_embeddings` = `SELECT count(*) FROM chunks` = 21,143 on corpus-2026-11-17.
-- [ ] `hybrid.py` applies R1-R11; each has a passing unit test in `tests/test_hybrid.py`, incl. the
+- [x] pytest passes on the branch (count recorded).
+- [x] `SELECT count(*) FROM chunk_embeddings` = `SELECT count(*) FROM chunks` = 21,143 on corpus-2026-11-17.
+- [x] `hybrid.py` applies R1-R11; each has a passing unit test in `tests/test_hybrid.py`, incl. the
       R3 one-list quota-firm test and the R5 merged-score / floor-base test.
-- [ ] Hard-filter test: Q4 (Merrill) in hybrid mode returns only MER or GWIM/Merrill-tagged BAC chunks;
+- [x] Hard-filter test: Q4 (Merrill) in hybrid mode returns only MER or GWIM/Merrill-tagged BAC chunks;
       Q26 (90-day window) returns only in-window, source-dated documents (step 4, run and passed).
-- [ ] `fts` on the branch reproduces `main`'s `corpus-2026-11-17` baseline chunk ids on 30/30 questions.
-- [ ] `evals/hybrid-eval/corpus-2026-11-17/report.md` committed with recall@pool and recall@final for
+- [x] `fts` on the branch reproduces `main`'s `corpus-2026-11-17` baseline chunk ids on 30/30 questions.
+- [x] `evals/hybrid-eval/corpus-2026-11-17/report.md` committed with recall@pool and recall@final for
       both modes, tier-1 recall, refusal, forbidden hits, search time, per-question differences, the
       Gate 4 missed-passage stages and the decision line from step 5.
-- [ ] Linked questions Q1-Q30 all run in both modes; gap questions Q24, Q25, Q28-Q30 reported per mode.
-- [ ] Every new run command (embed, eval_run --mode, eval_compare) has a PowerShell and a bash block in `docs/RUN.md`.
-- [ ] verify-cee in hybrid mode (Smart search) passes; evidence folder named in the PR.
-- [ ] 0 real calls (mock only), stated in the PR.
+- [x] Linked questions Q1-Q30 all run in both modes; gap questions Q24, Q25, Q28-Q30 reported per mode.
+- [x] Every new run command (embed, eval_run --mode, eval_compare) has a PowerShell and a bash block in `docs/RUN.md`.
+- [x] verify-cee in hybrid mode (Smart search) passes; evidence folder named in the PR.
+- [x] 0 real calls (mock only), stated in the PR.
 
 ## Progress log
 - 2026-11-18 22:12 - plan written on `tl/211-hybrid-retest` (from `origin/exp/hybrid` 965b7f6; `origin/main` 2a22e23 incl. #210 / PR #218). DB checked: corpus-2026-11-17, 21,143 chunks, no vectors yet; models already cached on D:. Waiting for the reviewer agent's approval before step 1.
@@ -222,4 +222,8 @@ held-out set (ADR-010), so a difference this size is weak evidence". Commit it.
 - 2026-11-18 22:32 - step 1: `git merge --no-ff origin/main` (2a22e23) committed as e4a649a (parents 2e1080d, 2a22e23). Conflicts in fts.py (took main's whole), ask_page.py, verify_cee.py, eval_run.py, test_eval_run.py (main + mode hunks). The mode switch moved to `src/cee/retrieve/modes.py`; `hybrid.DUP_JACCARD` and `--dup-jaccard` removed. The merge commit also carries step 3 (hybrid.py R1-R11 and their tests), because the merged tests needed it. `git diff origin/main --name-only` lists only hybrid-list files; `git diff origin/main -- src/cee/retrieve/fts.py config evals/expected_chunks.yaml` is empty. pytest 623 passed, 2 skipped (the DB hard-filter test skips until the vectors are in).
 - 2026-11-18 22:21 - step 2 started in the background: `embed --query test` loaded the cached model from `D:\ALLPROJECTS\EDJ\cache\fastembed` (384 dims, no fetch); `embed --missing` running (about 13 chunks/s).
 - 2026-11-18 22:33 - stop-rule check: `fts` on e4a649a (`.eval-runs/0211-fts`, mock, as of 2026-11-17) has the same chunk ids as `main`'s baseline on 30/30 questions (PASS 29 / FAIL 1, tier-1 passages 0.597, recall@pool 0.686, refusal 5/5 and 22/22, 0 forbidden). Hybrid runs may start once the vectors are complete.
+- 2026-11-18 22:51 - step 2 done: `embed --missing` exit 0, "21143 embedded, 0 still missing (1789 s, model BAAI/bge-small-en-v1.5, cache D:\ALLPROJECTS\EDJ\cache\fastembed)"; `chunks` = `chunk_embeddings` = 21,143 (log `D:\ALLPROJECTS\EDJ\cache\ev211\embed.log`). Step 4: the DB hard-filter test passed in both hybrid modes (Q4 only MER / BAC GWIM-Merrill; Q26 only source-dated in-window documents, no `adv`).
+- 2026-11-18 22:55 - step 6, all three runs on 7f12f60 (mock, as of 2026-11-17, 0 real calls). Stop rule re-checked on this commit: `fts` = `main`'s baseline chunk ids on 30/30. fts: PASS 29, tier-1 passages 0.597, tier-1 recall@pool 0.803, refusal 5/5 and 22/22, 0 forbidden. hybrid-norerank: PASS 28 (Q19, Q22 FAIL), tier-1 passages 0.484, tier-1 recall@pool 0.623, refusal 5/5 and 21/22 (Q22 retrieves its must-not `MS-PR-2026-04-15-01#15`), 0 forbidden. hybrid (reference): PASS 27, passages 0.479, refusal 4/5 and 20/22, median search 9.0 s. Mean pool size fts 244.6 vs hybrid 64.5 (not like-for-like).
+- 2026-11-18 23:00 - step 7: `evals/hybrid-eval/corpus-2026-11-17/` written by `eval_compare.py --run`. Decision by the fixed rule: **#212 is closed as not planned** (A: 0.484 < 0.627; C: 21/22). Gate 4 missed passages: hybrid finds none of fts's 7 "not in pool" passages except Q25 `MS-10K-2025#153` (in pool, lost in select), and loses Q17 `BAC-TR-2026Q2#21` from the pool. Nothing was re-run or retuned after the numbers came in.
+- 2026-11-18 23:05 - step 8: verify-cee `run --mode hybrid` with `CEE_VECTORS=on` on 7f12f60: all 10 features PASS incl. search-mode (Smart search enabled, `query_log` retrieval_mode = hybrid), evidence `.verify-runs/20261118-225935-7f12f60`. Its summary line says "Retrieval: fts" because it reads the driver's own settings, not the app's; the logged queries show hybrid. pytest 625 passed, 2 skipped (without the vectors env); the 2 DB tests pass with it.
 - 2026-11-18 22:36 - eval_compare `--run` (decision computed by code, Gate 4 stage table, per-question diffs) with tests; RUN.md re-test commands (PowerShell + bash); specs/retrieval.md modes section updated.
