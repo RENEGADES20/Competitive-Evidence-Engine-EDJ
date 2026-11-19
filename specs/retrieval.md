@@ -109,34 +109,41 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
-## Retrieval modes (#125, #126, experimental branch `exp/hybrid` only)
+## Retrieval modes (#125, #126, #211, experimental branch `exp/hybrid` only)
 
-`main` has one mode, `fts` (ADR-001, ADR-009). The other two modes live on the branch `exp/hybrid`
-until #127 records a decision with the #126 numbers.
+`main` has one mode, `fts` (ADR-010, ADR-011). The other two modes live on the branch `exp/hybrid`.
 
-`search(q, mode=...)` / `ask(..., mode=...)`; default `RETRIEVAL_MODE` in `.env`, else `fts`.
+`cee.retrieve.modes.search(q, k=None, mode=..., trace=None)` / `ask(..., mode=...)`; default
+`RETRIEVAL_MODE` in `.env`, else `fts`. `k=None` is `budget(q) - peer_slots(q)` in every mode.
+`fts.py` itself is byte-equal to `main` (#211).
 
 - `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
-- `hybrid` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table `chunk_embeddings`):
-  inside the same entity / segment / window / Ask-filter `WHERE`, keyword top 100 + vector top 100
-  per firm -> reciprocal rank fusion (k = 60) per firm -> (firm, document type) groups take turns
-  into 50 candidates -> local cross-encoder rerank -> absolute score floor (none inside a time
-  window) -> the same `select()` quotas with no relative floor. Entity+theme questions get the
-  research part the same way, with the theme filter. The gap path is unchanged: unmapped firms
-  return nothing. With vectors off, `hybrid` stops with a clear message; nothing loads a model.
-- `hybrid-norerank` (#126, same requirements): the same candidates as `hybrid`, ordered by the
-  RRF score; no reranker is loaded. It isolates what the reranker adds.
-- Floors (#126): `fts` keeps `FLOOR` x the firm's best `ts_rank`. Both hybrid modes apply
-  `hybrid.FLOOR[mode]` x the firm's best RRF score to the 50 candidates before any rerank (RRF is
-  a ratio-like score: 0 = no leg found it; the cross-encoder sigmoid is not, so `select()` runs with
-  floor 0 there). No floor inside a time window in any mode. `MAX_PER_DOC` and `DUP_JACCARD` are per
-  mode for the hybrid modes (`hybrid.py`); the window cap (8), the research cap (2) and every
-  `fts.py` constant are unchanged.
+- `hybrid-norerank` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table
+  `chunk_embeddings`): inside every hard filter of `fts` (entity / segment, window, Ask filters,
+  document-type scope of ADR-015), each part of the question (named firms; for entity+theme also
+  the firms' chunks on the theme, tier 5 research on the theme and the home firm's theme peers)
+  runs keyword top 100 + vector top 100 per quota firm (Merrill's MER and BAC GWIM chunks are one
+  firm, ADR-013) -> reciprocal rank fusion (k = 60) -> (quota firm, document type) groups take turns
+  into 50 x k / 20 candidates. `Hit.rank` is the RRF score and `fts.select()` does the rest as in
+  `fts`: relative floor `hybrid.FLOOR[mode]` from the firm's 2nd-best score (ADR-014; research
+  base 1; none in a window), theme slot below the floor, Merrill counted once, trade press last and
+  a new document first (ADR-016), answer turns with their question turns (ADR-017), peers 2 per firm
+  after `fts.peer_floor()` (ADR-018). An on-theme-only chunk scores 0.99 x its firm's lowest
+  firm-part score x its on-theme score / the best on-theme-only score, so it ranks below every
+  firm-part chunk and never moves the floor base. The gap path is unchanged. With vectors off,
+  both hybrid modes stop with a clear message; nothing loads a model.
+- `hybrid` (same requirements, reference only): the same candidates; the RRF floor is applied
+  before a local cross-encoder (the theme part exempt), whose sigmoid score orders the pool;
+  `select()` runs with floor 0 there (a sigmoid is not a ratio).
+- `MAX_PER_DOC` is per mode for the hybrid modes (`hybrid.py`); near-duplicates use
+  `fts.DUP_JACCARD` in every mode; the window cap (8), the research cap (2) and every `fts.py`
+  constant are unchanged.
 - All modes: words listed under `synonym_only` in `config/entities.yaml` (`pay`) are searched only
-  through their synonyms (Q29: "pay any net liquidation amount" is not advisor pay).
-- Comparison and tuned constants per mode (#126): `evals/hybrid-eval/corpus-2026-10-29/report.md`
-  (picked by a rule fixed before the grid ran, `plans/0126-hybrid-eval.md`). `LEG_K`, `RRF_K`,
-  `RERANK_N` and `RERANK_FLOOR` were not tuned.
+  through their synonyms (Q29).
+- Comparisons: #126 on `corpus-2026-10-29` (`evals/hybrid-eval/corpus-2026-10-29/report.md`, tuned
+  constants per mode); #211 on `corpus-2026-11-17` (`evals/hybrid-eval/corpus-2026-11-17/report.md`,
+  recall@pool / recall@final per mode and the #212 decision). `LEG_K`, `RRF_K`, `RERANK_N` and
+  `RERANK_FLOOR` were not tuned.
 
 ## Acceptance
 

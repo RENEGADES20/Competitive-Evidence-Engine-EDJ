@@ -167,6 +167,33 @@ list makes a grid: one run per combination, then `grid.md` with the point the se
 .venv/bin/python scripts/eval_run.py --mode hybrid-norerank --as-of 2026-10-29 --floor 0,0.2,0.3,0.4 --max-per-doc 2,3,4 --baseline .eval-runs/ref-fts/report.json --out .eval-runs/grid-norerank
 ```
 
+Re-test on `corpus-2026-11-17` (#211; report `evals/hybrid-eval/corpus-2026-11-17/report.md`). Fill
+the vectors for this snapshot first (about 25 minutes on a laptop CPU; it resumes if stopped). The
+two variables apply to this terminal only; `.env` is not changed:
+```powershell
+$env:CEE_VECTORS = 'on'; $env:FASTEMBED_CACHE_PATH = 'D:\ALLPROJECTS\EDJ\cache\fastembed'   # your model folder
+.\.venv\Scripts\python.exe -m cee.retrieve.embed --missing
+```
+```bash
+export CEE_VECTORS=on FASTEMBED_CACHE_PATH="$HOME/cee-cache/fastembed"   # your model folder
+.venv/bin/python -m cee.retrieve.embed --missing
+```
+Then the three mock runs (0 real calls) and the comparison with the #212 decision line. First check
+that the `fts` run equals `main`'s baseline (same chunk ids on 30 of 30 questions); if not, stop:
+```powershell
+$env:LLM_PROVIDER = 'mock'; $base = 'evals/baselines/corpus-2026-11-17/report.json'
+foreach ($m in 'fts', 'hybrid-norerank', 'hybrid') { .\.venv\Scripts\python.exe scripts\eval_run.py --mode $m --as-of 2026-11-17 --baseline $base --out .eval-runs\0211-$m }
+.\.venv\Scripts\python.exe scripts\eval_compare.py --run fts=.eval-runs/0211-fts/report.json --run hybrid-norerank=.eval-runs/0211-hybrid-norerank/report.json --run hybrid=.eval-runs/0211-hybrid/report.json --out evals/hybrid-eval/corpus-2026-11-17
+```
+```bash
+export LLM_PROVIDER=mock; base=evals/baselines/corpus-2026-11-17/report.json
+for m in fts hybrid-norerank hybrid; do .venv/bin/python scripts/eval_run.py --mode $m --as-of 2026-11-17 --baseline $base --out .eval-runs/0211-$m; done
+.venv/bin/python scripts/eval_compare.py --run fts=.eval-runs/0211-fts/report.json --run hybrid-norerank=.eval-runs/0211-hybrid-norerank/report.json --run hybrid=.eval-runs/0211-hybrid/report.json --out evals/hybrid-eval/corpus-2026-11-17
+```
+To take the vectors out of the local database again (fts never reads them):
+`docker exec cee-db psql -U cee -d cee -c "DROP TABLE chunk_embeddings; DROP EXTENSION vector;"`
+(same command in PowerShell and bash).
+
 ## 2. Daily use (teammates)
 
 The newest snapshot is named in `snapshots/LATEST.json` (name, sha256, row counts, what
