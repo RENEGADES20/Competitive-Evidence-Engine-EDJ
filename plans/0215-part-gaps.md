@@ -414,3 +414,26 @@ not re-rolled. No other call path.
   over-count note; TL pre-approval quoted, actual `real_calls` / `reused` reported. Re-read: the
   verify-cee part-gap check and the real "no uncited claim" line made derivable / reportable so
   they cannot fail on correct code.
+- 2026-11-19 03:45 - plan approved by the reviewer agent (issuecomment-7004871527); its two
+  non-blocking notes applied (pool-chosen wording in the Mock text / spec / recipe; empty-part line
+  "listed under another part or the research passages").
+- 2026-11-19 04:20 - steps 1-4: schema (`part_id`, `Gap.flags`, `Gap.claim_text`), prompt v4,
+  grouped user message, mock part ids, `move_uncited_cells`, `check_parts`, `part_coverage`,
+  `answer_for(plan=)`, trace texts, gap chips, eval `cache_key` parts + `part_coverage` in real
+  records; `tests/test_part_check.py` (26 tests, fake `registry_lookup`), prompt tests (v4, parts
+  rule, grid sentence replaced, disclosure sentence, recency reworded, question-text leak check on
+  the whole prompt). Found while wiring: in a one-part plan the citation fallback must count every
+  non-research / non-peer passage for p1 (test fakes and passage mode carry no `part_id`); fixed in
+  `part_coverage`. `pytest -q` 660 passed. Merged `origin/main` (CI hotfix #227, 293e3af).
+- 2026-11-19 04:35 - step 5 replay (`D:\ALLPROJECTS\EDJ\cache\ev215\replay.py`, `replay.txt`, 0 calls):
+  all five #224 chunk lists reproduced; on #224's v3 answers **every part is covered by the citation
+  fallback** (Q3 p1-p4, Q7 p1-p3, Q12 p1-p4, Q25 p1-p3, Q28 p1-p3), so the code adds no gap there
+  (no over-count happened). Finding: for v3 outputs the fallback is too lenient to catch what
+  Gate 4 named (Q3's concession part is "covered" by citations of p2 passages that do not concede
+  anything); the check bites through the model's own `part_id`s (v4) or for parts nobody cites.
+  Gate 4 Q7: 3 uncited cells -> 0, gaps 3 -> 3 (each matching model gap flagged `uncited_cell`
+  with `claim_text`). User messages `user-message-Q7.txt` / `-Q25.txt` written.
+- 2026-11-19 04:40 - step 6 mock (`.eval-runs/0215-mock`, `...\ev215\mock-diff.txt`): 30/30 chunk
+  lists identical (same order), no status change, 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed
+  22/22, 0 forbidden, recall@pool 0.814 / @final 0.654, 0 real calls. Step 7 docs: spec, ui spec,
+  ARCHITECTURE, ADR-020. Step 8 waits: port 8599 held by the wt-212 agent's Streamlit (pid 20452).
