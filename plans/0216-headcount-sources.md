@@ -459,3 +459,37 @@ corpus differs).
   remark) lost its slot to `BAC-SUPP-2023Q4#10` (2023 income statement, "Information
   processing and communications" row). Class (b), ranking crowd-out by a new document; Q17
   stays PASS; no other question moves. Stopped before PR A; reported to the TL.
+- 2026-11-19 05:51 - **TL decision** (relayed by the coordinator; comment on #216
+  https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/216#issuecomment-7008345965):
+  do not accept the drop; store the two old supplements as verbatim page extracts (count page
+  and its footnote/definition, page numbers kept), like the Form ADV Part 1A extracts; keep
+  the BAC count chunk GWIM-tagged; remove the full-document rows/files; re-run step 6.
+- 2026-11-19 05:53 - done. `MS-SUPP-2020Q4.txt` = pages 8 (Wealth Management metrics) and 15
+  (notes) of the 18-page IR PDF `finsup4q2020.pdf`; `BAC-SUPP-2023Q4.txt` = page 20 of the
+  34-page IR PDF (GWIM key indicators, count and footnote (3)); script `EV/scripts/page_extract.py`,
+  each page written as "Page N:" with its exact text. doc_ids unchanged (the ADV1A extracts
+  carry no page suffix either; the manifest url field names the source URL, the pages and
+  that the file is an extract). sha256 of the extracts in the manifest. Removed from Box
+  `raw/`: `MS-SUPP-2020Q4.htm`, `BAC-SUPP-2023Q4.pdf` (the earlier `BAC-SUPP-2023Q4.htm` was
+  removed at 05:39); removed from `cee_216`. Orphaned parse-cache files left in Box `parsed/`:
+  `e6c3efa2...-edgartools5.59.1-v1.json` (MS htm), `e359e686...-edgartools5.59.1-v1.json` (BAC
+  htm), `d2b72cb7...-docling2.131.0-doc.json` and `-v2.json` (BAC PDF). `cee_216`: 224 documents,
+  21,161 chunks (+18: MS-SUPP-2020Q4 6, BAC-SUPP-2023Q4 3, ADV1A 3 x 3); `EV/new-chunks.txt`
+  rewritten (18 lines). Count chunks: `MS-SUPP-2020Q4#1` ("Wealth Management representatives
+  15,950 15,469 15,468"; segment NULL, MS needs no segment filter), `BAC-SUPP-2023Q4#2` (GWIM;
+  "Total wealth advisors (3) 18,916 ..." and footnote (3) in the same chunk); all 3 BAC chunks
+  GWIM (mention rule on the flat text).
+- 2026-11-19 05:54 - step 6 re-run (`EV/new2`, `EV/compare2.txt`; base `EV/base` unchanged,
+  same code 7b0d6ca = 0da68fd + data/config): 29 PASS / 1 FAIL (Q19) on both, **0 questions
+  flagged** (Q17 back to 1.0; no PASS -> FAIL, no `recall_final` lower), 0 forbidden, refusal
+  5/5 and 22/22, overall recall@final 0.654 = base. Q11 retrieves `MS-SUPP-2020Q4#1`,
+  `BAC-SUPP-2023Q4#2`, `BAC-DECK-2025-investor-day#9`; Q23 retrieves `MS-SUPP-2020Q4#1`;
+  Q24 retrieves `MS-SUPP-2020Q4#1`, `BAC-SUPP-2023Q4#1`/`#2`, `#9`. **Open:** Q23 retrieves no
+  Merrill count chunk (`BAC-SUPP-2023Q4#2` and `#9` both outside its final set); the ADV1A
+  chunks are not retrieved for Q11/Q23/Q24 (`doc_type_scope`, #179). Both reported to the TL
+  (S1 follow-up), no retrieval change here.
+- 2026-11-19 05:57 - verify-cee on `cee_216`: `PY scripts/verify_cee.py run --source-db cee_216`
+  (the script copies its source database; `DATABASE_URL` alone is not used for the copy, so the
+  first run at 05:55 tested `cee`): corpus 21,161 chunks, VERIFY PASS (9 features), evidence
+  `.verify-runs/20261119-055719-7b0d6ca`. `pytest -q` on `cee`: 698 passed; manifest check
+  224 files OK. PR A next ("Part of #216").
