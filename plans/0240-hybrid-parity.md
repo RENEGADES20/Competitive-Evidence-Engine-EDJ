@@ -388,20 +388,20 @@ with the same script (code gate, `--reuse-plans`, try / finally `.env` removal, 
 - Scored records: the last attempt's `report.json` plus, per (b) stop, its log entry.
 
 ## Acceptance
-- [ ] fts unchanged: M1 chunk lists = `evals/baselines/corpus-2026-11-19/` on 30/30 (ids and order); M3 = `0217-real-2` on 30/30.
-- [ ] Hybrid modes use the planner parts and the token budget: T1-T8b pass (request path, fake clients, 0 real calls in tests); T3b hash pin passes.
-- [ ] Pool as fts: 30 per (`entity_id`, `doc_type`) after RRF per quota firm, exclude after the cut (T7, T8).
-- [ ] No crash after the paid calls: `meta.constants` written for hybrid runs without `RERANK_N` (T8b, and M2 / M4 report.json); the mock report's like-for-like note is the `--pool-note` text, not the #211 one (T11b).
-- [ ] Code gate: M1-M5 `meta.commit` = the M-runs sha with a clean tree; `git diff <M-runs sha> HEAD -- src scripts config evals/questions.yaml evals/expected_chunks.yaml` logged empty before the paid command.
-- [ ] Determinism: the real run's chunk lists = M4's on 30/30 (`ev240\real-vs-m4.txt`).
-- [ ] Every SQL filter per part in hybrid mode: T4 and the DB-backed Q4 / Q26 test pass.
-- [ ] Planner cache: the retrieval mode is not in the key (T9); M3 finds 30/30 #217 plans.
-- [ ] Mock hybrid run: M2 and M4 refusal gap 5/5 (TL decision 2026-11-19: recorded as "4/5, same as fts on the same plans (Q24)"), no crash, recall table against fts (M1 / M3) for all 30 in `evals/hybrid-eval/corpus-2026-11-19/mock/report.md`.
-- [ ] Real: one answer per question; `real_calls` = new raw answer files = 30 (or fewer with named `no_call`s), 0 planner calls, 30 planner outputs reused (count stated); HEAD before = after.
-- [ ] Report: blind hash committed and pushed before the comparison (commit order); 30 verdicts with class; score and tier-1 score next to #217's; every hybrid / fts verdict difference with its cause and chunk ids; borderline list; second read of borderline and differing questions in the PR review, "Second read" table filled.
-- [ ] `git diff origin/main origin/exp/hybrid --stat` after merge (and the branch's `git diff origin/main --stat` before) lists only hybrid files; fts.py / planner.py / config / keys / questions diff empty.
-- [ ] pytest green; verify-cee `run` and `run --mode hybrid` (Smart search) all PASS; `gh pr checks` green.
-- [ ] `.env` copy removed after every run (checked: `Test-Path <wt>\.env` False, in the Progress log).
+- [x] fts unchanged: M1 chunk lists = `evals/baselines/corpus-2026-11-19/` on 30/30 (ids and order); M3 = `0217-real-2` on 30/30.
+- [x] Hybrid modes use the planner parts and the token budget: T1-T8b pass (request path, fake clients, 0 real calls in tests); T3b hash pin passes.
+- [x] Pool as fts: 30 per (`entity_id`, `doc_type`) after RRF per quota firm, exclude after the cut (T7, T8).
+- [x] No crash after the paid calls: `meta.constants` written for hybrid runs without `RERANK_N` (T8b, and M2 / M4 report.json); the mock report's like-for-like note is the `--pool-note` text, not the #211 one (T11b).
+- [x] Code gate: M1-M5 `meta.commit` = the M-runs sha with a clean tree; `git diff <M-runs sha> HEAD -- src scripts config evals/questions.yaml evals/expected_chunks.yaml` logged empty before the paid command.
+- [x] Determinism: the real run's chunk lists = M4's on 30/30 (`ev240\real-vs-m4.txt`).
+- [x] Every SQL filter per part in hybrid mode: T4 and the DB-backed Q4 / Q26 test pass.
+- [x] Planner cache: the retrieval mode is not in the key (T9); M3 finds 30/30 #217 plans.
+- [x] Mock hybrid run (refusal item as decided): M2 and M4 refusal gap 5/5 (TL decision 2026-11-19: recorded as "4/5, same as fts on the same plans (Q24)"), no crash, recall table against fts (M1 / M3) for all 30 in `evals/hybrid-eval/corpus-2026-11-19/mock/report.md`.
+- [x] Real: one answer per question; `real_calls` = new raw answer files = 30 (or fewer with named `no_call`s), 0 planner calls, 30 planner outputs reused (count stated); HEAD before = after.
+- [ ] (open until PR review: second read) Report: blind hash committed and pushed before the comparison (commit order); 30 verdicts with class; score and tier-1 score next to #217's; every hybrid / fts verdict difference with its cause and chunk ids; borderline list; second read of borderline and differing questions in the PR review, "Second read" table filled.
+- [ ] (after merge) `git diff origin/main origin/exp/hybrid --stat` after merge (and the branch's `git diff origin/main --stat` before) lists only hybrid files; fts.py / planner.py / config / keys / questions diff empty.
+- [ ] (gh pr checks pending) pytest green; verify-cee `run` and `run --mode hybrid` (Smart search) all PASS; `gh pr checks` green.
+- [x] `.env` copy removed after every run (checked: `Test-Path <wt>\.env` False, in the Progress log).
 
 ## Risks
 - **fts drift** (stop rule): M1 or M3 not identical -> no hybrid run until fixed.
@@ -431,3 +431,4 @@ with the same script (code gate, `--reuse-plans`, try / finally `.env` removal, 
 - 2026-11-19 16:00 - step 8: the real run's chunk lists = M4's on 30/30 (`ev240\real-vs-m4.txt`). Outputs copied to `ev240\real\`.
 - 2026-11-19 16:02 - step 9 blind verdicts written before opening any #217 verdict, `w10-report` or #217 answer: `ev240\verdicts-blind.json`, sha256 `72b24831998c8a09ad0f39adf9e18dabcdc823544934565c044f919c9caec1ec`. Blind score 25/30 (tier 1 15/18); FAIL Q11 (c), Q19 (s), Q23 (c), Q24 (s), Q26 (s). Citation check: 1,151 cited chunk ids, all in their retrieved sets and in the database.
 - 2026-11-19 16:20 - steps 10-11 (0 calls): #217's final verdicts opened only after db7cb19 (blind hash) was pushed. hybrid-norerank **25/30 (tier 1 15/18)** vs #217 fts 24/30 (14/18). One verdict differs: **Q20** hybrid PASS / fts FAIL, cause retrieval (then model behavior): hybrid retrieved and cited UBS-NEXTGEN-2026#83, #84 and FIDELITY-III-2025#0, fts retrieved none of them (#83 and FIDELITY-III-2025#0 were fts candidates lost in select(), #84 never a candidate) and answered gap_with_adjacent. No difference comes from a passage only fts found, so no *LEG_K reach* tag. Every other verdict and class matches #217's final reading (Q11 c, Q19 s, Q23 c, Q24 s, Q26 s FAIL in both). Report `evals/hybrid-eval/corpus-2026-11-19/real/` (report.md, report.json with `blind` bytes, run-report.json, raw/ 60 files, gen_report.py). Second-read list (12): Q3, Q5, Q7, Q15, Q17, Q19, Q20, Q22, Q25, Q26, Q28, Q29.
+- 2026-11-19 16:20 - step 13: verify-cee on f4c49bf: `run` (fts, vectors off) and `run --mode hybrid` (CEE_VECTORS=on, Smart search, two-firm question "2 parts: p1 MS; p2 RJF" / "in 2 parts (Smart search)") both VERIFY PASS: 8 features PASS, open-citation and download-document UNREACHABLE because no raw documents are on this machine (`data/raw` absent in the worktree and in `D:\ALLPROJECTS\EDJ\repo`; re-run with `CORPUS_SHARE_PATH` gave the same precondition message), not a code result. Evidence `.verify-runs/20261119-160548-f4c49bf` (fts), `.verify-runs/20261119-160747-f4c49bf` (hybrid). pytest 795 passed, 2 skipped; `tests/test_hybrid.py` with `CEE_VECTORS=on` 65 passed. `git diff origin/main --name-only` outside `evals/hybrid-eval/`: the 26 #211 hybrid-list files + this plan; fts.py / planner.py / config / keys / questions diff empty. `Test-Path <wt>\.env` False. Open: the second read (PR review round 1) and `gh pr checks`.
