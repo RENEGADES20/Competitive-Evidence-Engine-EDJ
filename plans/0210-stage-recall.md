@@ -96,26 +96,53 @@ changes vs the old baseline (e.g. a newly keyed question failing its refusal che
 as findings, not fixed here (#213 owns ranking/selection).
 
 ## Acceptance
-- [ ] `python scripts/eval_run.py --as-of 2026-11-17` (mock) prints recall@pool and recall@final
+- [x] `python scripts/eval_run.py --as-of 2026-11-17` (mock) prints recall@pool and recall@final
   per question (console line and report.md table) and in the summary row -> check: the after
   run's console output and report.md show both, for every keyed question.
-- [ ] No behavior change: final chunk ids of all 30 questions identical before/after -> check:
+- [x] No behavior change: final chunk ids of all 30 questions identical before/after -> check:
   step 5 diff of `.eval-runs/0210-before/report.json` vs `.eval-runs/0210-after/report.json`
   prints 30/30 identical (same ids, same order); plus `tests/test_retrieval_trace.py` (with vs
   without trace, same hits).
-- [ ] PR table of the named missed passages, each "not in pool" or "in pool, lost in select"
+- [x] PR table of the named missed passages, each "not in pool" or "in pool, lost in select"
   (or "in final") -> Q7 `MS-10K-2025#153`, Q15 `SCHW-10K-2025#27`, Q17 `BAC-TR-2026Q2#21`,
   Q19 `EDJ-10K-2025#88`, Q20 Fidelity + UBS sample, Q25 `RJF-PR-web-affiliation-options#1` and
   `MS-10K-2025#153`; stages read from the after run's per-row stage.
-- [ ] Every added id in `evals/expected_chunks.yaml` exists in `chunks` -> check: step 1 query
+- [x] Every added id in `evals/expected_chunks.yaml` exists in `chunks` -> check: step 1 query
   returns every added id (output in the PR).
-- [ ] Linked questions Q7, Q15, Q17, Q19, Q20, Q25 each have a key row for their Gate 4 missed
+- [x] Linked questions Q7, Q15, Q17, Q19, Q20, Q25 each have a key row for their Gate 4 missed
   passage; Q17 and Q20 keep their #56 doc rows.
-- [ ] Estimated tokens (chars / 4) and passages per question and in the summary.
-- [ ] New mock baseline in `evals/baselines/corpus-2026-11-17/`; `specs/retrieval.md` defines
+- [x] Estimated tokens (chars / 4) and passages per question and in the summary.
+- [x] New mock baseline in `evals/baselines/corpus-2026-11-17/`; `specs/retrieval.md` defines
   both metrics.
-- [ ] pytest passes; `python scripts/verify_cee.py run` all features PASS.
-- [ ] 0 real calls (mock only).
+- [x] pytest passes; `python scripts/verify_cee.py run` all features PASS.
+- [x] 0 real calls (mock only).
 
 ## Progress log
 - 2026-11-18 21:51 - plan written (branch `tl/210-stage-recall` from main 40a963a).
+- 2026-11-18 21:56 - plan approved by the reviewer agent (issue comment 6999170726); notes
+  applied: owner-review tags in Files to change, Q20 UBS choice recorded, README numbers left.
+  Step 1, Q20 ids pinned (`SELECT chunk_id, text FROM chunks WHERE chunk_id =
+  ANY(...)`): `FIDELITY-III-2025#0` (the study's summary: wealthy next-generation households vs
+  baby boomers; the document's only other chunk, #1, is related links; no sample size stored).
+  UBS sample row = `UBS-NEXTGEN-2026#119` or `#13`: #119 is the methodology chunk that names the
+  sample ("two global surveys conducted among YIO members", May 2025 "112 responses", Dec 2025 -
+  Jan 2026 "63 responses", "10 deep-dive interviews"); #13 gives its ages ("from below 21 to above
+  45, with the majority being between 26 and 40") and regions. #16 / #28 only say "those
+  surveyed", so they were not picked. Gate 4 failed Q20 for "UBS and BofA give no age cut-off or
+  sample size"; #119 and #13 are the text that has them. Existence check: 8/8 added chunk ids and
+  16/16 carried-over #56 documents found.
+- 2026-11-18 21:57 - step 2, before run on unchanged code: `.eval-runs/0210-before`, 29 PASS / 1
+  FAIL (Q19), same as the Gate 4 baseline.
+- 2026-11-18 21:58 - steps 3-4: `PoolTrace` + `search(trace=)`; eval_run stages, tokens, summary
+  row; key rows; 42 eval_run + trace tests pass.
+- 2026-11-18 22:01 - step 5, after run at f0ebc30 (`.eval-runs/0210-final`, baseline = Gate 4):
+  final chunk ids 30/30 identical to the before run and to the Gate 4 baseline; statuses 30/30
+  unchanged (no PASS -> FAIL). Change labels IMPROVED (Q7, Q15, Q19: newly keyed) and REGRESSED
+  (Q17 passage 0.667 -> 0.6, Q20 0.429 -> 0.333: a new row not retrieved) come from the key only.
+  Summary: recall@pool 0.686, recall@final 0.484 (21 questions with rows); tier 1 0.803 / 0.597;
+  675 passages, ~195,683 tokens.
+- 2026-11-18 22:01 - step 6, named passages: only `BAC-TR-2026Q2#21` (Q17) is in the pool and
+  lost in select; the other seven are not in the pool (recall problems for #211 / #213 / #214).
+- 2026-11-18 22:02 - steps 7-9: baseline replaced by the f0ebc30 run; spec metrics added; pytest
+  549 passed; verify-cee all 9 features PASS (`.verify-runs/20261118-215956-9e554af`, working tree
+  with the change). 0 real calls.
