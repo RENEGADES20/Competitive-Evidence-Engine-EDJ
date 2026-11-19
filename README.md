@@ -102,8 +102,11 @@ checked in week 11 (#121): at least 21 of 30, and the project lead used it unsup
 least once. It was scored **21/30** on the final snapshot `corpus-2026-11-17` (real run on
 2026-11-18, scored by the TL agent; tier 1: 12/18), after the fixes #203, #204 and #205; the
 unsupervised-use part is not checked here. All 30 answers with citations, scores and known gaps:
-[docs/results/gate4-report.md](docs/results/gate4-report.md); next steps:
-[docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+[docs/results/gate4-report.md](docs/results/gate4-report.md). After the W10 changes (search
+budget, question planner, per-part gaps, headcount sources), the same 30 questions scored
+**25/30** on `corpus-2026-11-19` (real run on 2026-11-19, scored by the TL agent; tier 1: 14/18;
+nine borderline verdicts read twice in review): [docs/results/w10-report.md](docs/results/w10-report.md);
+next steps: [docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
 check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +

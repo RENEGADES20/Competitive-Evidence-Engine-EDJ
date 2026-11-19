@@ -211,30 +211,30 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
     `.eval-runs\0217-real\report.json` alone.
 
 ## Acceptance
-- [ ] TL go-ahead before the first call: `gh issue view 217 --comments` shows the 2026-11-18 TL
+- [x] TL go-ahead before the first call: `gh issue view 217 --comments` shows the 2026-11-18 TL
       comment; the real-run log's first line is later (timestamps in Progress log).
-- [ ] Mock first: `.eval-runs\0217-mock\report.md` -> 29 PASS / 1 FAIL (Q19), refusal gap 5/5,
+- [x] Mock first: `.eval-runs\0217-mock\report.md` -> 29 PASS / 1 FAIL (Q19), refusal gap 5/5,
       keyed 22/22, 0 forbidden, no PASS -> FAIL vs `evals/baselines/corpus-2026-11-19`; 30/30 chunk
       lists identical (`ev217\mock-diff.txt`).
-- [ ] Saved raw outputs match the call count: per attempt, calls made (`meta.real_calls`, or the
+- [x] Saved raw outputs match the call count: per attempt, calls made (`meta.real_calls`, or the
       log when the attempt wrote no report) = new raw files that attempt wrote (planner + answer,
       each counted; reused copies excluded) = the files copied to `ev217\real\` for it, except an
       answer call stopped by an API error under resume rule (b), which has a log entry and no file
       (named); total <= 60; the PR states calls per attempt, reused, model, tokens.
-- [ ] The checkout did not move: `git rev-parse HEAD` logged before and after each paid command
+- [x] The checkout did not move: `git rev-parse HEAD` logged before and after each paid command
       equals the step 1 head.
-- [ ] Report: 30 verdicts in `docs/results/w10-report.md` (Q1-Q30, each PASS or FAIL, class for each
+- [x] Report: 30 verdicts in `docs/results/w10-report.md` (Q1-Q30, each PASS or FAIL, class for each
       FAIL), score and tier-1 score; every verdict that differs from Gate 4 has a retrieval /
       pipeline / model label with chunk ids; W10 partial-run verdicts shown where a question was run.
 - [ ] Borderline questions read twice: the reviewer agent's PR comment gives a second verdict for
       every listed borderline question (at least Q7, Q15, Q17, Q19, Q22, Q25, Q26, Q28); the report's
       "Second read" table matches it.
-- [ ] Known findings (step 6) each marked still holds / gone / changed in the report.
-- [ ] `docs/NEXT.md` reflects the new failures: every FAIL question of this run appears in at least
+- [x] Known findings (step 6) each marked still holds / gone / changed in the report.
+- [x] `docs/NEXT.md` reflects the new failures: every FAIL question of this run appears in at least
       one item, and no item rests only on a question that now passes (checked by a scratch script
       listing question IDs per item vs the verdicts).
-- [ ] README Status line updated (date, W10 score, link).
-- [ ] 0 code changes: `git diff origin/main --stat` lists only the five files above.
+- [x] README Status line updated (date, W10 score, link).
+- [x] 0 code changes: `git diff origin/main --stat` lists only the five files above.
 - [ ] `gh pr checks <PR#>` all green on the PR head.
 
 ## Risks
@@ -293,3 +293,12 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   run: `ev217\verdicts-blind.json`, sha256
   `ca89a9e4e70fb65de02220c84314d3def4ad051fa0605727990c56a44d5e958f`. Blind score 25/30 (tier 1 14/18).
   Citation check: every cited chunk is in its retrieved set and in the database.
+- 2026-11-19 14:30 - steps 5-10 (0 calls): comparison with Gate 4 and the W10 partial runs
+  (`ev217\cmp.py`): six FAIL -> PASS (Q3, Q7, Q12, Q15, Q25, Q28), two PASS -> FAIL (Q24 model with the
+  part shape; Q26 scorer reading, Gate 4's answer had the same shape); blind verdicts unchanged.
+  Known findings checked (`ev217\checks.py`, `checks2.py`): Q22's must-not passage holds the NNA
+  definition it cites (key error); Q25 must-not chunks not retrieved; 2 of 7 number flags are real
+  sibling-passage misses (Q1, Q4). Cost (`ev217\cost.json`): 61 calls, 60 raw files, 2,019,681 input
+  / 261,308 output tokens, ~$6.65 at the plan's rates. Report `docs/results/w10-report.md` + `.json`
+  (`ev217\gen_w10.py`), `docs/NEXT.md` rewritten (`ev217\next-check.txt`: every FAIL in an item, no
+  item on passing questions only), README Status. Second read left for PR review round 1.
