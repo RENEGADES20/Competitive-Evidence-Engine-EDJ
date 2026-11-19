@@ -259,3 +259,21 @@ call path.
   difference is stated in Design 5); (3) the spec row keeps the API `stop_reason` `refusal`
   (invalid) apart from the model's `behavior: refuse` with `answerable` false (valid).
   `origin/main` unchanged (f9fd055).
+- 2026-11-19 04:41 - steps 1-2 (commit 775a245): `strict: True` on `submit_answer` and
+  `submit_plan`; planner Anthropic schema `minItems 1`, no `maxItems` (`plan_schema(strict=False)`,
+  `cap` parameter removed); API `stop_reason` `refusal` -> invalid answer / planner fallback;
+  `llm.ANTHROPIC_REQUEST_VERSION = "strict-1"`, `llm.request_version()`; `cache_key` /
+  `plan_cache_key(..., request=None)`, `RealRunner` passes it and saves `request_version` in answer
+  and plan records. Tests: 15 new test functions (`test_llm_openai.py` 8 incl. the strict rule walker
+  and the SDK `transform_schema` check, `test_planner.py` 2, `test_eval_run.py` 5); the planner
+  request test and one reuse test updated. `pytest -q` 698 passed.
+- 2026-11-19 04:42 - step 3 offline proof (`D:/ALLPROJECTS/EDJ/cache/ev232/offline.txt`, 0 calls):
+  both tool dicts as sent carry `"strict": true`; `transform_schema` leaves both schemas unchanged
+  (SDK 1.9.0); the #230 Q22 `raw_payload` `{"answer": null}` fails `Answer(**raw)`: missing
+  `answerable`, `behavior`, `claims`, `adjacent`, `gaps`, unknown `answer`. Step 4 mock
+  (`.eval-runs/0232-mock`, diff `D:/ALLPROJECTS/EDJ/cache/ev232/mock-diff.txt`): 30/30 chunk lists
+  identical (same order), 29 PASS / 1 FAIL (Q19), no PASS -> FAIL, all UNCHANGED, refusal gap 5/5,
+  keyed 22/22, 0 forbidden, 0 real calls. Step 5 docs (commit 1702528): spec (refusal row kept
+  apart from `behavior: refuse`, strict note), ADR-020 amendment.
+- 2026-11-19 04:44 - step 6 verify-cee (doctor PASS, port 8599 free): all 9 features PASS,
+  `.verify-runs/20261119-044306-1702528`. Next: the planned real run.
