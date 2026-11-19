@@ -23,7 +23,7 @@ def hit(chunk_id, entity, doc_type, segment=None):
 
 
 def query(entities=(), mode="entity"):
-    return types.SimpleNamespace(entities=list(entities), unmapped=[], mode=mode)
+    return types.SimpleNamespace(entities=list(entities), unmapped=[], mode=mode, themes=[])
 
 
 def q(qid, sources, behavior="answer"):
@@ -141,7 +141,7 @@ def test_real_cap_and_cache(fake_model, tmp_path):
 
 def test_real_no_hits_makes_no_call(fake_model, tmp_path):
     runner = er.RealRunner("anthropic", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
-    answer, how = runner.answer(q("Q9", []), types.SimpleNamespace(entities=[], unmapped=["VGD"], mode="theme",
+    answer, how = runner.answer(q("Q9", []), types.SimpleNamespace(entities=[], unmapped=["VGD"], mode="theme", themes=[],
                                                                  question="Vanguard?"), [])
     assert how == "no_call" and answer["behavior"] in ("refuse", "gap_with_adjacent") and not fake_model
 
@@ -149,6 +149,109 @@ def test_real_no_hits_makes_no_call(fake_model, tmp_path):
 def test_real_mode_refuses_mock_provider(tmp_path):
     with pytest.raises(SystemExit, match="mock"):
         er.RealRunner("mock", 1, "snap", tmp_path)
+
+
+@pytest.fixture
+def flaky_model(monkeypatch):
+    """First question: an invalid paid output (ModelOutputError); every other question: valid."""
+    from cee import ask
+    from cee.answer import llm
+    from cee.answer.schema import Answer
+
+    calls, state = [], {"error": None}
+
+    def generate(question, hits, provider):
+        calls.append(question)
+        if len(calls) == 1:
+            raise state["error"]
+        return Answer(answerable=True, behavior="answer",
+                      claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}], llm_called=True)
+
+    state["error"] = llm.ModelOutputError("bad", {"answer": "yes"}, "anthropic")
+    monkeypatch.setattr(ask, "generate", generate)
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    return calls, state
+
+
+def saved(folder):
+    import json
+    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(folder.iterdir())]
+
+
+def test_real_invalid_output_is_saved_counted_and_run_continues(flaky_model, tmp_path):
+    calls, _ = flaky_model
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    a, how_a = runner.answer(q("Q25", []), query(["RJF"]), real_hits())
+    b, how_b = runner.answer(q("Q29", []), query(["MS"]), real_hits())
+    assert (a, how_a) == (None, "invalid") and how_b == "called" and b["behavior"] == "answer"
+    assert runner.calls == 2 and len(calls) == 2           # the failed call still counts
+    bad = [s for s in saved(tmp_path / "cache") if s.get("invalid")]
+    assert len(bad) == 1 and bad[0]["raw_payload"] == {"answer": "yes"} and bad[0]["question_id"] == "Q25"
+    assert "raw" not in bad[0] and bad[0]["error"] == "bad"
+    assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
+    # a new run reuses the invalid output: reported again, never re-called
+    again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    c, how_c = again.answer(q("Q25", []), query(["RJF"]), real_hits())
+    assert (c, how_c) == (None, "invalid") and again.calls == 0 and again.reused == 1 and len(calls) == 2
+    assert again.last_file.startswith("Q25-") and list((tmp_path / "run2" / "raw").iterdir())
+
+
+def test_real_invalid_no_tool_call_is_saved(flaky_model, tmp_path):
+    """The payload _anthropic builds from a response with only a text block (SDK-like object)."""
+    from cee.answer import llm
+
+    calls, state = flaky_model
+
+    class TextBlock:
+        type, text = "text", "The answer is yes."
+
+        def model_dump(self, mode="python"):
+            return {"type": self.type, "text": self.text}
+
+    client = types.SimpleNamespace(messages=types.SimpleNamespace(
+        create=lambda **kw: types.SimpleNamespace(content=[TextBlock()], stop_reason="end_turn")))
+    with pytest.raises(llm.ModelOutputError) as e:
+        llm._anthropic("q?", real_hits(), client=client)
+    state["error"] = e.value
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    a, how_a = runner.answer(q("Q25", []), query(["RJF"]), real_hits())
+    b, how_b = runner.answer(q("Q29", []), query(["MS"]), real_hits())
+    assert (a, how_a) == (None, "invalid") and how_b == "called" and runner.calls == 2
+    bad = [s for s in saved(tmp_path / "cache") if s.get("invalid")]
+    assert bad[0]["raw_payload"] == [{"type": "text", "text": "The answer is yes."}]
+    assert "did not call" in bad[0]["error"]
+    assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
+
+
+def test_real_save_never_crashes_on_an_odd_payload(flaky_model, tmp_path):
+    from cee.answer import llm
+
+    _, state = flaky_model
+    state["error"] = llm.ModelOutputError("bad", {"when": dt.date(2026, 1, 2)}, "anthropic")
+    runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.answer(q("Q25", []), query(["RJF"]), real_hits())[1] == "invalid"
+    assert saved(tmp_path / "cache")[0]["raw_payload"] == {"when": "2026-01-02"}
+
+
+def test_invalid_output_status_keeps_retrieval_status(tmp_path):
+    r = {"status": "FAIL", "expected_behavior": "answer"}
+    out = er.apply_real(dict(r), None, "invalid", "Q25-abc.json")
+    assert out["status"] == "INVALID_OUTPUT" and out["behavior"] is None
+    assert out["note"] == "retrieval FAIL; model output invalid, see raw/Q25-abc.json"
+    assert "INVALID_OUTPUT" in er.STATUSES
+
+
+def test_report_counts_invalid_output(tmp_path):
+    import json
+    corpus = {("MS", "10-K")}
+    r = er.evaluate(q("Q29", ["MS:10-K"]), query(["MS"]), [hit("a", "MS", "10-K")], corpus, SUBS, 0.5)
+    r = er.apply_real(r, None, "invalid", "Q29-abc.json")
+    meta = {"run_id": "t", "snapshot": "s", "commit": "c", "k": 20, "min_coverage": 0.5, "as_of": "2026-11-17",
+            "mode": "real", "baseline": None, "real_calls": 1, "reused": 0, "max_calls": 1}
+    er.write_reports(tmp_path, meta, [r])
+    md = (tmp_path / "report.md").read_text(encoding="utf-8")
+    assert "INVALID_OUTPUT 1**" in md and "retrieval PASS; model output invalid, see raw/Q29-abc.json" in md
+    assert json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["questions"][0]["status"] == "INVALID_OUTPUT"
 
 
 def test_behavior_mismatch_fails_in_real_mode():
@@ -258,11 +361,11 @@ def test_answer_key_ids_are_in_the_manifest():
 
 def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
     # --as-of must end the window retrieval uses, not only the one scoring uses (Q26)
-    from cee.retrieve import fts
+    from cee.retrieve import fts, modes
 
     seen = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: seen.append(today) or query())
-    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: [])
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
@@ -271,16 +374,16 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
 
 def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
     import json
-    from cee.retrieve import fts
+    from cee.retrieve import fts, modes
 
-    modes = []
+    seen_modes = []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
-    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: modes.append(mode) or [])
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: seen_modes.append(mode) or [])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    assert modes == ["hybrid"] * 3
+    assert seen_modes == ["hybrid"] * 3
     assert report["meta"]["retrieval_mode"] == "hybrid" and report["meta"]["mode"] == "mock"
     assert report["meta"]["warmup_s"] is not None
     assert all(isinstance(q["search_s"], float) for q in report["questions"])
@@ -295,8 +398,9 @@ def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
     h = fts.Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
                 source_tier=1, published_at="2026-01-01", period_end=None, section=None, page=None,
                 rank=0.123456, text="x")
+    from cee.retrieve import modes
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
-    monkeypatch.setattr(fts, "search", lambda q, k, mode=None: [h])
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None: [h])
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
@@ -307,15 +411,14 @@ def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
 # --- #126: third mode, constants, grid, selection rule, duplicate measure ------------------------
 
 def _fake_bank(monkeypatch, seen=None):
-    from cee.retrieve import fts, hybrid
+    from cee.retrieve import fts, hybrid, modes
 
-    def search(q, k, mode=None):
+    def search(q, k=None, mode=None, trace=None):
         if seen is not None:
-            seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC),
-                         dict(hybrid.DUP_JACCARD)))
+            seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)))
         return []
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
-    monkeypatch.setattr(fts, "search", search)
+    monkeypatch.setattr(modes, "search", search)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
 
@@ -354,30 +457,28 @@ def test_no_option_leaves_constants_untouched(monkeypatch, tmp_path):
 
 def test_constants_map_per_mode_and_are_restored(monkeypatch, tmp_path):
     from cee.retrieve import fts, hybrid
-    before = (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC), dict(hybrid.DUP_JACCARD))
+    before = (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC))
     seen = []
     _fake_bank(monkeypatch, seen)
     er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.4", "--max-per-doc", "2", "--out", str(tmp_path / "a")])
     assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == before[0]
-    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "5", "--dup-jaccard", "0.5",
+    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "5",
              "--out", str(tmp_path / "b")])
-    mode, floor, mpd, hf, hm, hd = seen[-1]
+    mode, floor, mpd, hf, hm = seen[-1]
     assert (floor, mpd) == (0.3, 3)  # fts untouched in a hybrid run
-    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 5 and hd["hybrid"] == 0.5
-    assert (hf["hybrid-norerank"], hm["hybrid-norerank"], hd["hybrid-norerank"]) == tuple(
+    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 5
+    assert (hf["hybrid-norerank"], hm["hybrid-norerank"]) == tuple(
         b["hybrid-norerank"] for b in before)
     # restored after the run
     assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
-    assert (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC), dict(hybrid.DUP_JACCARD)) == before
+    assert (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)) == before
 
 
-def test_dup_jaccard_is_refused_for_fts(monkeypatch, tmp_path, capsys):
+def test_dup_jaccard_option_is_gone(monkeypatch, tmp_path):
+    # #211: DUP_JACCARD is fts.DUP_JACCARD in every mode; the #126 option was removed
     _fake_bank(monkeypatch)
     with pytest.raises(SystemExit):
-        er.main(["--questions", "Q29", "--mode", "fts", "--dup-jaccard", "0.5", "--out", str(tmp_path)])
-    assert "never changed" in capsys.readouterr().err
-    with pytest.raises(ValueError):
-        er.set_constants("fts", dup_jaccard=0.5)
+        er.main(["--questions", "Q29", "--mode", "hybrid", "--dup-jaccard", "0.5", "--out", str(tmp_path)])
 
 
 def test_grid_needs_a_baseline(monkeypatch, tmp_path, capsys):
@@ -448,3 +549,124 @@ def test_duplicate_measure_counts_pairs_over_the_limit():
     assert d["pairs_5gram_over"] == 1 and d["max_5gram"] > 0.9
     assert er.duplicates(["only one"]) == {"max_trigram": 0.0, "pairs_trigram_over": 0, "max_5gram": 0.0,
                                            "pairs_5gram_over": 0}
+def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
+    # #181: without --k each question gets fts.budget(q); the record carries k, passages and chars
+    import json
+
+    from cee.retrieve import fts
+
+    seen = []
+    five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(five))
+    monkeypatch.setattr(fts, "search", lambda q, k, trace=None: seen.append(k) or real_hits())
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q22", "--out", str(tmp_path / "budget")])
+    er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
+    # each run: one untimed warm-up search (#126), then the question
+    assert seen == [fts.budget(query(five))] * 2 + [20, 20] and seen[0] == 30
+    rec = json.loads((tmp_path / "budget" / "report.json").read_text(encoding="utf-8"))
+    assert rec["meta"]["k"] == "by question"
+    assert {k: rec["questions"][0][k] for k in ("k", "passages", "chars")} == {"k": 30, "passages": 1, "chars": 1}
+    assert "| 30 | 1 | 1 |" in (tmp_path / "budget" / "report.md").read_text(encoding="utf-8")
+
+
+# --- #210: recall by stage (candidate pool vs final set), estimated tokens ----------------------
+
+def test_rows_get_a_stage_and_pool_recall():
+    key = {"must_return": [["MS-10K-2025#153"], ["SCHW-10K-2025#27"], ["RJF-PR-web-affiliation-options"],
+                           ["EDJ-10K-2025#88"]], "must_not_return": []}
+    hits = [khit("MS-10K-2025#153", "MS")]
+    pool = {"MS-10K-2025#153", "SCHW-10K-2025#27", "RJF-PR-web-affiliation-options#1", "EDJ-10K-2025#87"}
+    s = er.score_key(key, hits, forbidden_ids=[], pool_ids=pool)
+    assert [r["stage"] for r in s["rows"]] == ["final", "pool", "pool", "none"]   # DOC row: any chunk of it
+    assert s["rows"][2]["pool"] == ["RJF-PR-web-affiliation-options#1"]
+    assert (s["passages_in_pool"], s["recall_pool"], s["recall_final"]) == (3, 0.75, 0.25)
+    assert s["recall_final"] == s["passage_recall"]
+
+
+def test_pool_recall_counts_final_hits_without_a_trace():
+    key = {"must_return": [["MS-10K-2025#153"], ["SCHW-10K-2025#27"]], "must_not_return": []}
+    s = er.score_key(key, [khit("MS-10K-2025#153", "MS")], forbidden_ids=[])
+    assert [r["stage"] for r in s["rows"]] == ["final", "none"] and s["recall_pool"] == 0.5
+
+
+def test_pool_recall_uses_the_window_rows():
+    key = {"must_return": [["RJF-10Q-2026Q2"], ["RJF-PR-2026-07-22-01#4"]], "must_not_return": [],
+           "window_days": 90}
+    dates = {"RJF-10Q-2026Q2": "2026-08-05", "RJF-PR-2026-07-22-01": "2026-07-22"}
+    s = er.score_key(key, [], forbidden_ids=[], as_of=dt.date(2026, 10, 21), doc_dates=dates,
+                     pool_ids={"RJF-PR-2026-07-22-01#4", "RJF-10Q-2026Q2#245"})
+    assert s["passages"] == 1 and s["recall_pool"] == 1.0 and s["recall_final"] == 0.0
+
+
+def test_tokens_are_characters_over_four():
+    hits = [types.SimpleNamespace(text="x" * 10), types.SimpleNamespace(text="y" * 7)]
+    assert er.prompt_size(20, hits) == {"k": 20, "passages": 2, "chars": 17, "tokens_est": 4}
+
+
+def test_summary_recall_by_stage_and_totals():
+    recs = [{"id": "Q1", "tier": 1, "recall_pool": 1.0, "recall_final": 0.5, "passages": 20, "tokens_est": 100},
+            {"id": "Q7", "tier": 2, "recall_pool": 0.0, "recall_final": 0.0, "passages": 20, "tokens_est": 50},
+            {"id": "Q2", "tier": 1, "recall_pool": None, "recall_final": None, "passages": 30, "tokens_est": 10}]
+    s = er.summarize(recs)
+    assert (s["recall_pool"], s["recall_final"], s["with_rows"]) == (0.5, 0.25, 2)
+    assert (s["tier1_recall_pool"], s["tier1_recall_final"], s["tier1_with_rows"]) == (1.0, 0.5, 1)
+    assert (s["passages"], s["tokens_est"]) == (70, 160)
+
+
+def test_report_shows_stage_columns_and_summary_row(tmp_path):
+    corpus = {("MS", "10-K")}
+    key = {"must_return": [["MS-10K-2025#153"], ["MS-10K-2025#9"]], "must_not_return": []}
+    r = er.evaluate(dict(q("Q7", ["MS:10-K"]), tier=2), query(["MS"]), [khit("MS-10K-2025#153", "MS")], corpus,
+                    SUBS, 0.5, key=key, pool_ids={"MS-10K-2025#9", "MS-10K-2025#153"})
+    assert (r["recall_pool"], r["recall_final"], r["pool_size"]) == (1.0, 0.5, 2)
+    r |= {"k": 20, "passages": 1, "chars": 8, "tokens_est": 2}
+    meta = {"run_id": "t", "snapshot": "s", "commit": "c", "k": 20, "min_coverage": 0.5, "as_of": "2026-11-17",
+            "mode": "mock", "baseline": None}
+    er.write_reports(tmp_path, meta, [r])
+    md = (tmp_path / "report.md").read_text(encoding="utf-8")
+    assert "| 1/2 | 2/2 |" in md and "recall@pool 1.0, recall@final 0.5" in md
+    assert "missing (in pool, lost in select: MS-10K-2025#9)" in md
+    assert md.count("| **All** |") == 1
+
+
+# --- home-firm theme peers (#205, ADR-018): checked on the text, not on search()'s flag ---------
+
+YOUNG = "Gen Z investors make up a third of new accounts"
+OFF = "net interest revenue rose on higher balances"
+
+
+def peer_hit(chunk_id, entity, text, segment=None, on_theme=True):
+    return types.SimpleNamespace(chunk_id=chunk_id, entity_id=entity, doc_type="transcript", segment=segment,
+                                 text=text, on_theme=on_theme)
+
+
+def peer_query(peers=("MS", "SCHW", "MER", "RJF")):
+    return types.SimpleNamespace(entities=["EDJ"], unmapped=[], mode="entity+theme", themes=["younger_investors"],
+                                 theme_peers=list(peers))
+
+
+def test_forbidden_allows_a_peer_hit_on_the_theme():
+    hits = [peer_hit("s", "SCHW", YOUNG), peer_hit("g", "BAC", YOUNG, "GWIM")]
+    assert er.forbidden(peer_query(), hits, SUBS) == []
+
+
+def test_forbidden_peer_hit_off_theme_text_even_if_flagged_on_theme():
+    assert er.forbidden(peer_query(), [peer_hit("s", "SCHW", OFF, on_theme=True)], SUBS) == ["s"]
+
+
+def test_forbidden_bac_non_gwim_hit_with_mer_peer():
+    assert er.forbidden(peer_query(), [peer_hit("b", "BAC", YOUNG, segment=None)], SUBS) == ["b"]
+
+
+def test_forbidden_non_peer_firm_on_theme_hit():
+    assert er.forbidden(peer_query(peers=["MS", "MER", "RJF"]), [peer_hit("s", "SCHW", YOUNG)], SUBS) == ["s"]
+
+
+def test_forbidden_without_theme_peers_unchanged():
+    hits = [peer_hit("r", None, YOUNG), peer_hit("s", "SCHW", YOUNG), peer_hit("e", "EDJ", OFF),
+            peer_hit("g", "BAC", YOUNG, "GWIM")]
+    no_peers = peer_query(peers=[])
+    plain = types.SimpleNamespace(entities=["EDJ"], unmapped=[], mode="entity+theme", themes=["younger_investors"])
+    assert er.forbidden(no_peers, hits, SUBS) == er.forbidden(plain, hits, SUBS) == ["s", "g"]

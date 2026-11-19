@@ -98,3 +98,47 @@ def test_report_names_its_rebuild_command_and_uses_lf(tmp_path):
     assert b"\r" not in raw and b"\r" not in (tmp_path / "out" / "summary.json").read_bytes()
     assert "## How this report was built" in raw.decode("utf-8")
     assert "python scripts/eval_compare.py --chosen fts=" in raw.decode("utf-8")
+
+
+# --- #211: --run comparison and the #212 decision -------------------------------------------------
+
+def _retest(passages, gap=(5, 5), keyed=(22, 22), forbidden=0, stage="none"):
+    r = _report("x", 0.3, [{**_q("Q7", "PASS", 0, ["B#1"]), "recall_pool": 0.0, "recall_final": 0.0,
+                            "passage_recall": 0.0, "pool_size": 40,
+                            "recall": {"passages_found": 0, "passages": 1,
+                                       "rows": [{"ids": ["MS-10K-2025#153"], "stage": stage}]}}])
+    r["questions"][0]["forbidden"] = ["X#1"] * forbidden
+    r["summary"] |= {"tier1_passage_recall": passages, "recall_pool": 0.5, "recall_final": 0.4,
+                     "tier1_recall_pool": 0.6, "tier1_recall_final": passages, "with_rows": 1, "tier1_with_rows": 1,
+                     "passages": 20, "tokens_est": 100,
+                     "refusal_gap": {"ok": gap[0], "of": gap[1], "accuracy": gap[0] / gap[1]},
+                     "refusal_all": {"ok": keyed[0], "of": keyed[1], "accuracy": keyed[0] / keyed[1]}}
+    return r
+
+
+def test_decision_needs_all_four_conditions():
+    fts = ec.run_row("fts", _retest(0.597))
+    assert ec.decide(fts, ec.run_row("hybrid-norerank", _retest(0.627)))["runs_212"] is True   # exactly +0.03
+    no = ec.decide(fts, ec.run_row("hybrid-norerank", _retest(0.626)))
+    assert no["runs_212"] is False and "closed as not planned" in no["line"] and "A" in no["line"]
+    for kw, cond in (({"gap": (4, 5)}, "B"), ({"keyed": (21, 22)}, "C"), ({"forbidden": 1}, "D")):
+        d = ec.decide(fts, ec.run_row("hybrid-norerank", _retest(0.7, **kw)))
+        assert d["runs_212"] is False and not d["checks"][cond]["ok"]
+
+
+def test_retest_report_has_both_recall_columns_gate4_stages_and_the_decision(tmp_path):
+    fts, plain = tmp_path / "fts.json", tmp_path / "plain.json"
+    fts.write_text(json.dumps(_retest(0.597)), encoding="utf-8")
+    found = _retest(0.6, stage="final")
+    found["questions"][0] |= {"recall_pool": 1.0, "recall_final": 1.0}
+    plain.write_text(json.dumps(found), encoding="utf-8")
+    assert ec.main(["--run", f"fts={fts}", "--run", f"hybrid-norerank={plain}", "--out", str(tmp_path / "out")]) == 0
+    text = (tmp_path / "out" / "report.md").read_text(encoding="utf-8")
+    summary = json.loads((tmp_path / "out" / "summary.json").read_text(encoding="utf-8"))
+    assert "Tier-1 recall@pool" in text and "Tier-1 recall@final" in text and "not like-for-like" in text
+    assert "**Decision: #212 is closed as not planned** (condition A not met)." in text
+    assert "1-2 passages" in text and "ADR-010" in text
+    q7 = next(g for g in summary["gate4_missed"] if g["q"] == "Q7")
+    assert q7["stage"] == {"fts": "not in pool", "hybrid-norerank": "retrieved"}
+    assert summary["modes"]["fts"]["mean_pool_size"] == 40 and summary["differs"] == ["Q7"]
+    assert b"\r\n" not in (tmp_path / "out" / "report.md").read_bytes()

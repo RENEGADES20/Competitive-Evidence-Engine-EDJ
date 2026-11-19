@@ -29,7 +29,11 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
   SQL `WHERE` clauses, not prompt instructions. Merrill = `entity=MER` or
   (`entity=BAC` and `segment` in GWIM/Merrill).
 - **Time windows are filtered in SQL**, not judged by the LLM.
-- **One LLM call per answer by default.** Multi-call designs need a new ADR.
+- **Up to 5 LLM calls per user question; one by default.** More only when the question splits
+  into parts (e.g. a comparison across firms); every part keeps the SQL filters. See ADR-012.
+- **Model-based work is developed on a branch, not `main`.** Anything that needs a model
+  besides the answer LLM calls (embeddings, rerankers, any local or hosted model in
+  retrieval or validation) is built and tested there (today `exp/hybrid`). See ADR-011.
 - **Chunks never cross a section boundary.** PDFs keep page numbers.
 - **Citations point only at `chunk_id`s** that were in the retrieved set; unmatched
   citations are flagged, never silently dropped.
@@ -94,8 +98,11 @@ team money. The default is zero calls. Follow these steps whenever a task might 
    the mock provider (`LLM_PROVIDER=mock`) and fake clients. A real model is necessary only to
    judge answer quality (wording, behavior choice, whether claims match their sources).
 2. **Plan before the first call.** Write down which question IDs, why the mock cannot show it,
-   and how many calls. Use the fewest questions that prove the point (usually 1-5). More than
-   10 calls in one task: ask the user first.
+   and how many runs of each. Use the fewest questions that prove the point.
+   One run of a planned question through the full answer flow (up to 5 real calls, ADR-012)
+   needs no tech-lead approval. Running the same question again (e.g. a second prompt version)
+   is planned in the ExecPlan before the first call. There is no per-task total.
+   The 30-question scored run (Gate 3) needs an explicit go-ahead from the tech lead.
 3. **Make each call count.** Call only on finished code, after every mock check passes. Run the
    planned questions together in one run. Save every raw response (question, prompt version,
    model, output) in the run's evidence folder, so nobody pays for the same answer twice;

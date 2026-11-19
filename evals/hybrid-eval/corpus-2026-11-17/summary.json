@@ -1,0 +1,311 @@
+{
+  "rule": "hybrid-norerank tier-1 passage recall >= fts + 0.03 (3 decimals), refusal 5/5 on Q24, Q25, Q28, Q29, Q30, refusal correct on every keyed question (the issue's \"10/10 keyed\": every keyed question on today's key) and 0 forbidden hits -> #212 runs; otherwise #212 is closed as not planned. hybrid (with the reranker) is a reference only; recall@pool is reported, not decided on.",
+  "decision": {
+    "runs_212": false,
+    "line": "**Decision: #212 is closed as not planned** (conditions A, C not met).",
+    "checks": {
+      "A": {
+        "ok": false,
+        "text": "tier-1 passage recall 0.484 vs fts 0.597 + 0.03 = 0.627"
+      },
+      "B": {
+        "ok": true,
+        "text": "refusal on Q24, Q25, Q28-Q30 5/5"
+      },
+      "C": {
+        "ok": false,
+        "text": "refusal on every keyed question 21/22"
+      },
+      "D": {
+        "ok": true,
+        "text": "forbidden hits 0"
+      }
+    }
+  },
+  "modes": {
+    "fts": {
+      "mode": "fts",
+      "constants": {
+        "FLOOR": 0.3,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "commit": "7f12f60",
+      "run_id": "corpus-2026-11-17-20261118-225214",
+      "pass": 29,
+      "fail": 1,
+      "tier1_doc_recall": 0.785,
+      "tier1_passage_recall": 0.597,
+      "refusal_gap": {
+        "ok": 5,
+        "of": 5,
+        "accuracy": 1.0
+      },
+      "refusal_all": {
+        "ok": 22,
+        "of": 22,
+        "accuracy": 1.0
+      },
+      "refusal_by_question": {
+        "Q24": true,
+        "Q25": true,
+        "Q28": true,
+        "Q29": true,
+        "Q30": true
+      },
+      "forbidden_hits": 0,
+      "dup_pairs_trigram_over": 1,
+      "dup_max_trigram": 0.911,
+      "dup_pairs_5gram_over": 0,
+      "dup_max_5gram": 0.595,
+      "median_search_s": 0.469,
+      "p90_search_s": 0.871,
+      "max_search_s": 1.129,
+      "warmup_s": 0.701,
+      "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel, 12 logical CPUs, Windows",
+      "real_calls": 0,
+      "provider_mode": "mock",
+      "recall_pool": 0.686,
+      "recall_final": 0.484,
+      "tier1_recall_pool": 0.803,
+      "tier1_recall_final": 0.597,
+      "with_rows": 21,
+      "tier1_with_rows": 17,
+      "mean_pool_size": 244.6,
+      "passages": 675,
+      "tokens_est": 195683,
+      "as_of": "2026-11-17",
+      "snapshot": "corpus-2026-11-17"
+    },
+    "hybrid-norerank": {
+      "mode": "hybrid-norerank",
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 3,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "commit": "7f12f60",
+      "run_id": "corpus-2026-11-17-20261118-225234",
+      "pass": 28,
+      "fail": 2,
+      "tier1_doc_recall": 0.619,
+      "tier1_passage_recall": 0.484,
+      "refusal_gap": {
+        "ok": 5,
+        "of": 5,
+        "accuracy": 1.0
+      },
+      "refusal_all": {
+        "ok": 21,
+        "of": 22,
+        "accuracy": 0.955
+      },
+      "refusal_by_question": {
+        "Q24": true,
+        "Q25": true,
+        "Q28": true,
+        "Q29": true,
+        "Q30": true
+      },
+      "forbidden_hits": 0,
+      "dup_pairs_trigram_over": 1,
+      "dup_max_trigram": 0.911,
+      "dup_pairs_5gram_over": 0,
+      "dup_max_5gram": 0.591,
+      "median_search_s": 0.573,
+      "p90_search_s": 1.281,
+      "max_search_s": 1.605,
+      "warmup_s": 2.018,
+      "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel, 12 logical CPUs, Windows, onnxruntime 1.23.2",
+      "real_calls": 0,
+      "provider_mode": "mock",
+      "recall_pool": 0.528,
+      "recall_final": 0.403,
+      "tier1_recall_pool": 0.623,
+      "tier1_recall_final": 0.484,
+      "with_rows": 21,
+      "tier1_with_rows": 17,
+      "mean_pool_size": 64.5,
+      "passages": 685,
+      "tokens_est": 193085,
+      "as_of": "2026-11-17",
+      "snapshot": "corpus-2026-11-17"
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "constants": {
+        "FLOOR": 0.4,
+        "MAX_PER_DOC": 4,
+        "DUP_JACCARD": 0.6,
+        "RERANK_FLOOR": 0.0,
+        "RERANK_N": 50,
+        "WINDOW_MAX_PER_DOC": 8,
+        "THEME_MAX_PER_DOC": 2
+      },
+      "commit": "7f12f60",
+      "run_id": "corpus-2026-11-17-20261118-225311",
+      "pass": 27,
+      "fail": 3,
+      "tier1_doc_recall": 0.627,
+      "tier1_passage_recall": 0.479,
+      "refusal_gap": {
+        "ok": 4,
+        "of": 5,
+        "accuracy": 0.8
+      },
+      "refusal_all": {
+        "ok": 20,
+        "of": 22,
+        "accuracy": 0.909
+      },
+      "refusal_by_question": {
+        "Q24": true,
+        "Q25": false,
+        "Q28": true,
+        "Q29": true,
+        "Q30": true
+      },
+      "forbidden_hits": 0,
+      "dup_pairs_trigram_over": 1,
+      "dup_max_trigram": 0.911,
+      "dup_pairs_5gram_over": 0,
+      "dup_max_5gram": 0.582,
+      "median_search_s": 9.026,
+      "p90_search_s": 16.019,
+      "max_search_s": 21.798,
+      "warmup_s": 6.68,
+      "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel, 12 logical CPUs, Windows, onnxruntime 1.23.2",
+      "real_calls": 0,
+      "provider_mode": "mock",
+      "recall_pool": 0.528,
+      "recall_final": 0.411,
+      "tier1_recall_pool": 0.623,
+      "tier1_recall_final": 0.479,
+      "with_rows": 21,
+      "tier1_with_rows": 17,
+      "mean_pool_size": 64.5,
+      "passages": 685,
+      "tokens_est": 193158,
+      "as_of": "2026-11-17",
+      "snapshot": "corpus-2026-11-17"
+    }
+  },
+  "gate4_missed": [
+    {
+      "q": "Q7",
+      "ids": [
+        "MS-10K-2025#153"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q15",
+      "ids": [
+        "SCHW-10K-2025#27"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q17",
+      "ids": [
+        "BAC-TR-2026Q2#21"
+      ],
+      "stage": {
+        "fts": "in pool, lost in select",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q19",
+      "ids": [
+        "EDJ-10K-2025#88"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q20",
+      "ids": [
+        "FIDELITY-III-2025#0"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q20",
+      "ids": [
+        "UBS-NEXTGEN-2026#119",
+        "UBS-NEXTGEN-2026#13"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    },
+    {
+      "q": "Q25",
+      "ids": [
+        "MS-10K-2025#153"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "in pool, lost in select",
+        "hybrid": "in pool, lost in select"
+      }
+    },
+    {
+      "q": "Q25",
+      "ids": [
+        "RJF-PR-web-affiliation-options#1"
+      ],
+      "stage": {
+        "fts": "not in pool",
+        "hybrid-norerank": "not in pool",
+        "hybrid": "not in pool"
+      }
+    }
+  ],
+  "differs": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q5",
+    "Q6",
+    "Q11",
+    "Q13",
+    "Q17",
+    "Q20",
+    "Q22",
+    "Q23",
+    "Q24",
+    "Q25",
+    "Q27",
+    "Q29",
+    "Q30"
+  ],
+  "weak_evidence": "0.03 of tier-1 passage recall is about 1-2 passages on this bank; tuned and scored on the same 30 questions with no held-out set (ADR-010), so a difference this size is weak evidence.",
+  "pool_note": "recall@pool is not like-for-like: fts pools 15 per (firm, document type) with no total cap, hybrid pools RERANK_N candidates per part (50 x k / 20)."
+}

@@ -50,7 +50,7 @@ enhancement, never a dependency.
 Consequences: Provider can be switched in `.env`. We own the validator code.
 
 ## ADR-003: One LLM call per answer by default
-Status: Accepted
+Status: Accepted; its single-call default and its "multi-call design needs a new ADR" rule are superseded by ADR-012 (up to 5 LLM calls per user question, one by default). "Retrieval is deterministic" stands.
 Context: Multi-step agent chains are slower, harder to debug and harder to cite.
 Decision: Retrieval is deterministic; the answer comes from a single LLM call. Any
 multi-call design (map-reduce, sub-question decomposition, LLM routing) needs a new ADR
@@ -65,6 +65,7 @@ chunking time. Retrieval mode (`entity`, `theme`, `entity+theme`) is chosen by d
 rules. Per-entity quotas in multi-firm questions.
 Consequences: The LLM cannot see ineligible chunks. Segment tagging quality (C1) becomes
 critical and must be tested.
+See ADR-018: a home-firm theme question also searches the other covered firms, on the theme only.
 
 ## ADR-005: PDF parsing tool
 Status: Accepted (install check: TL machine done 2026-09-30; other six machines in #14)
@@ -88,6 +89,14 @@ Install check (`src/cee/ingest/pdf.py`, `parse_pdf(path) -> [(section, page, tex
   splitting and chunking run after the cache, so they need no bump.
   `python -m cee.ingest.load --no-parse-cache` forces a fresh parse. The pymupdf fallback is not
   cached. Old cache files are never read again and may be deleted.
+- Pages from every provenance span (#84, plans/0084, `PARSER_VERSION` 2): a docling item whose
+  provenance covers two pages (a text block running onto the next slide) is cut at the charspan
+  where the page changes, and each part is stored under its own page. Tables keep their first
+  page. docling's own output (the DoclingDocument) is cached as well, as
+  `parsed/<sha256>-docling<version>-doc.json`, so a `PARSER_VERSION` bump re-runs our code on it in
+  seconds instead of re-running docling. That name does not hold the pipeline options
+  (`do_ocr=False`); changing them needs a new name. `scripts/page_sweep.py` checks every PDF chunk
+  against the PDF page text.
 
 ## ADR-006: Shared corpus
 Status: Accepted
@@ -169,7 +178,7 @@ off restore on plain Postgres; older snapshots still carry `chunks.embedding`, w
 ignores and `vectors.sql` moves into `chunk_embeddings`.
 
 ## ADR-010: Hybrid retrieval evaluated; core stays FTS-only
-Status: Accepted (tech lead decision 2026-11-05, #127)
+Status: Accepted (tech lead decision 2026-11-05, #127); its EJ-10 parts are superseded by ADR-011: the EJ-10 reason in Context, the ranking limit in Decision, the "Scope of EJ-10 here" bullet, the sponsor-agreement revisit trigger and the Consequences "meets EJ-10" line. The outcome (`main` FTS-only, hybrid code on `exp/hybrid`) stands, now under the branch rule.
 Context: ADR-001 allowed hybrid search (pgvector + RRF) only after a comparison run on the
 question bank showed FTS misses. The sponsor portability spec (v1.0, 2026-10-29, EJ-10) asks
 for no pgvector, embeddings, embedding model, PostgreSQL extension or reranker on `main`;
@@ -231,3 +240,283 @@ Teammates install nothing new; no reinstall and no new snapshot are needed. Ques
 paraphrase matching may lag if a larger question set shows them (none in this bank at `main`'s
 constants). `exp/hybrid` stays as the record and can be brought up to date if the question
 reopens.
+
+## ADR-011: Sponsor portability spec no longer binds main; model-based work on a branch
+Status: Accepted (tech lead decision 2026-11-16, #182)
+Context: ADR-010 gave the sponsor portability spec (v1.0, 2026-10-29, EJ-10) as a reason `main`
+stays FTS-only, applied its Tier 2 item 3 and section 4 ("Don't change ranking") to any change
+of the `fts` constants, measured `main` against EJ-10 ("Scope of EJ-10 here", Consequences
+"meets EJ-10") and named sponsor agreement as one revisit trigger. On 2026-11-16 the tech lead
+decided the spec is not a requirement of this project; only model-dependent development is to
+stay off `main`.
+Decision:
+- The portability spec is history. It is not a rule for `main` and not a reason to refuse a
+  change. ADR-010's EJ-10 parts (the Context reason, the ranking limit, the "Scope of EJ-10
+  here" bullet, the sponsor-agreement revisit trigger, the Consequences "meets EJ-10" line) no
+  longer apply.
+- The ranking limit is lifted: a change to ranking or the `fts` constants is an ordinary S1
+  issue with its own eval.
+- Branch rule (CLAUDE.md "Architecture invariants"): work that needs a model besides the single
+  answer LLM call (embeddings, rerankers, any local or hosted model in retrieval or validation)
+  is developed on a branch, not `main`.
+- ADR-010's outcome stands for this reason: `fts` is the only retrieval mode on `main`, and the
+  hybrid code stays on `exp/hybrid`.
+- Moving model-based work to `main` needs a tech-lead decision recorded in a new ADR that lifts
+  the branch rule; sponsor agreement is no longer the trigger. ADR-010's other two revisit
+  triggers (a larger or held-out question set where hybrid finds what `fts` misses; a reranker
+  that beats RRF order) remain evidence such an ADR would cite.
+- ADR-009 (optional vectors module, off by default) is unchanged. Code built for the spec stays.
+Consequences: Ranking changes on `main` need only their own eval, not a spec check. Retrieval
+work that needs a model still costs a branch and a comparison run before it can reach `main`.
+Teammates install nothing new.
+
+## ADR-012: Up to 5 LLM calls per user question
+Status: Accepted (tech lead decision 2026-11-16, #184); supersedes ADR-003's single-call default
+Context: ADR-003 set a single-call default per answer and asked for a new ADR before any
+multi-call design. Some questions split into parts: a comparison ("How do Edward Jones and
+Morgan Stanley price advice?") needs evidence per firm, and one retrieval and one call over all
+firms can let one firm crowd out the other. On 2026-11-16 the tech lead decided an answer may
+use more than one call when the question splits into parts.
+Decision:
+- One user question uses 0 to 5 LLM calls. One is the default; 0 when the system refuses
+  before calling. More only when the question splits into parts; comparisons across firms are
+  the first case (one part per firm, each retrieved separately, then a final call writes the
+  answer from the parts). The rule that decides when to split belongs to the feature issue and
+  is measured by eval, not assumed.
+- Unchanged invariants: entity, segment and time filters stay in SQL for every part;
+  citations point only at `chunk_id`s retrieved for that question; caveats are built by code;
+  every call is logged; the mock provider covers every call, so tests and CI make 0 real calls.
+- The extra calls use the configured answer model and provider (`LLM_PROVIDER`), so this is
+  not model-based work: it is developed on `main`. ADR-011's branch rule does not apply; it
+  now reads "besides the answer LLM calls" (CLAUDE.md "Architecture invariants").
+- Paid-call testing counts by question run: one run of a planned question through the full
+  answer flow (up to 5 real calls) needs no tech-lead approval; re-running the same question
+  is planned before the first call; no per-task total; the 30-question scored run (Gate 3)
+  needs the tech lead (CLAUDE.md "Paid API calls").
+Consequences: Cost and latency per question can grow up to 5x for split questions. Answers
+must stay reproducible on the mock provider. More calls mean more to log and debug per
+answer. README, `docs/ARCHITECTURE.md`, `specs/answer-citations.md`, `specs/ui.md` and code
+docstrings still describe the one-call code until the feature issue changes them.
+
+## ADR-013: Retrieval budget by number of firms; Merrill counted once
+Status: Accepted (tech lead, 2026-11-17, #181); replaces the fixed k=20 of `specs/retrieval.md`
+for questions that name several firms
+Context: k=20 was the skeleton's default (2026-09-28) and was never measured against larger
+budgets. On the freeze snapshot `corpus-2026-11-16` (#120) the mock eval fell from 28 to 26 PASS
+(Q22, Q24 fail; Q10, Q11, Q23 lose recall). The cause was the slot budget, not ranking: the
+quota split k=20 evenly over the firms in the pool, and Merrill filled two groups (its own `MER`
+documents and BAC chunks in GWIM), so the other four firms of a five-firm question dropped to 3
+passages each. The hybrid re-run (ADR-010, 126 documents) reached the same conclusion.
+Decision:
+- Merrill counted once: with MER named and BAC not, BAC GWIM/Merrill chunks share MER's quota
+  turns and relevance floor (`fts.quota_firms`, read from `parent` / `reported_as` in
+  `config/entities.yaml`). `entity_id`, the SQL filters and citations are unchanged.
+- Budget by question (`fts.budget`): k = 20 for a question naming 0 or 1 firm; for n >= 2 named
+  firms k = max(20, 6 x n), so 2-3 firms keep 20 and the five get 30. n counts covered firms
+  after the firm filter; firms with no documents take no slots. The existing over-fetch and
+  quota rules (firm and document-type turns, MAX_PER_DOC, near-duplicate removal, FLOOR) fill it.
+- Measured, mock, `--as-of 2026-10-29`, Merrill rule in place, against the freeze report: rules
+  max(20, 6n) / max(20, 7n) / max(20, 8n) / 20 + 5(n - 1) (k for the five: 30 / 35 / 40 / 40)
+  all gave 28 PASS, 0 forbidden, refusal 5/5 and 19/19, no REGRESSED; tier-1 recall documents
+  0.652 / 0.653 / 0.657 / 0.666, passages 0.460 / 0.465 / 0.472 / 0.472; 648 / 684 / 722 / 748
+  passages over the 30 questions. The smallest rule was chosen. Per-firm alias / segment terms in
+  the rank were tried and dropped (Q23 gained, Q11 lost a passage). Evidence in the #181 PR.
+Consequences: Questions naming one firm get the same passages as before (0 changed lists,
+except Merrill-only Q4 / Q27, through the Merrill rule). Five-firm prompts grow from 20 to 30
+passages (median characters about +45%), so cost per answer grows for them. `THEME_K` stays 4,
+so tier 5 research's share in five-firm entity+theme questions (Q10, Q21) falls from 1/5 to
+1/7.5; Q21's theme slot is #190. The rule is revisited when the next snapshot (#178 Form ADV,
+#150 speaker-turn transcripts) pushes evidence out again: a larger PER_FIRM is a one-line change.
+See ADR-018: a home-firm theme question's peers (2 slots each) come on top of this budget.
+
+## ADR-014: Rank floor measured from a firm's 2nd-best chunk; the theme slot ignores the floor
+Status: Accepted (tech lead, 2026-11-17, #166 and #190); changes the relevance floor in
+`specs/retrieval.md`
+Context: `select()` gives no slot to a chunk ranked below FLOOR (0.3) x its firm's best chunk.
+With PR #150's speaker-turn transcript chunks (#107) one short, dense answer can rank far above
+the rest of its firm: for Q28 the Merrill answer `BAC-TR-2026Q2#63` ranks 10.65, Merrill's floor
+rises to 3.20 and `BAC-10K-2025#246` (2.77, the only `BAC:10-K#GWIM` passage) drops, so Q28
+goes PASS -> FAIL (coverage 0.667 -> 0.333). Separately (#190), in entity+theme the floor was
+applied before the THEME_FIRST slot, so a firm's only chunk on the theme below the floor was
+never a candidate and the firm was reported as a theme gap (Q21: `MS-DECK-2026-strategic-update#22`
+at 2.32 vs Morgan Stanley's best 11.66).
+Decision:
+- The floor is FLOOR (0.3) x the firm's 2nd-best rank (`FLOOR_BASE = 2`; a firm with one chunk
+  uses that chunk). One outlier no longer lifts the floor for the whole firm; a firm's two best
+  chunks always pass. Merrill's base is taken over MER and BAC GWIM/Merrill chunks together
+  (ADR-013). The research part of entity+theme keeps the best chunk as its base.
+- The THEME_FIRST slot takes the firm's best chunk on the theme whether or not it clears the
+  floor; rank-order turns keep the floor.
+- Measured (mock, `--as-of 2026-10-29`) on the freeze `corpus-2026-11-16` and on a copy with
+  #150's transcripts re-ingested and #150's answer key. Grid: FLOOR 0.25 / 0.2, floor base 2nd /
+  3rd best, transcript MAX_PER_DOC 4 / 5, and combinations. Every floor rule brought Q28 back
+  with no PASS -> FAIL; the per-document cap alone did not bring Q28 back. The 2nd-best base had
+  the fewest recall drops and is the only one that keeps `BAC-TR-2026Q2#63` (the target of #107)
+  in Q4 on the #150 copy. Grid and per-question delta in the #166 PR.
+Consequences: Freeze corpus: 28 PASS unchanged, 0 forbidden, refusal 5/5; coverage up on Q7,
+Q24, recall up on Q30; Q17 coverage 0.625 -> 0.5 (still PASS: a Schwab 10-K chunk now clears
+the floor and takes the turn that held a Schwab transcript chunk). #150 copy: 27 -> 28 PASS (Q28),
+Q5 back to the freeze corpus's 0.833. Q21 no longer reports Morgan Stanley as a theme gap. The
+recall drops PR #150 causes on Q6, Q13 and Q27 are not floor effects (the chunks clear the floor
+and lose the transcript type's turns at k = 20) and are unchanged here.
+
+## ADR-015: Document-type scope per question: Form ADV only for fee questions, no trade press for benchmarks
+Status: Accepted (tech lead, 2026-11-17, #179); adds a doc-type filter to `specs/retrieval.md`
+Context: retrieval searched every document type for every question. PR #178 adds five Form ADV
+Part 2A brochures (1,156 chunks) and PR #186 adds 77 trade-press articles (tier 4, 327 chunks).
+Measured on the freeze `corpus-2026-11-16` plus those documents with `main` (after ADR-013 /
+ADR-014), mock, `--as-of 2026-10-29`: brochure chunks entered 29 of 30 retrievals and tier-1
+document recall fell 0.646 -> 0.601 (Q1, Q22, Q28, Q30 recall and Q7, Q9, Q11, Q22, Q24
+coverage down); with the trade press too, trade chunks entered all 30, recall fell to 0.533 and
+Q28 went PASS -> FAIL. At `--as-of 2026-11-17` Q26 passed only because RJF brochure chunks filled
+its 90-day window (a brochure revision is not news).
+Decision:
+- A hard SQL filter per question (`fts.doc_type_scope`, config `doc_type_scope` in
+  `config/entities.yaml`), on every retrieval pass, like the firm and window filters.
+- `adv` is searched only when the question names the `fees_pricing` theme (its topic keywords)
+  or one of "Form ADV", "ADV", "brochure(s)", "compensation" (the brochures disclose how
+  advisors are paid; Q25 expects three `*:adv` sources), and never in a question with a time
+  window (Q26, Q27).
+- A benchmark question (at least 2 covered firms and a metric phrase: "advisor headcount",
+  "net new assets", "assets per advisor", "attrition rate"; Q11, Q22-Q24, Q28) does not search
+  tier 4. Trade press stays for every other question, recency windows included (Q2, Q4, Q5, Q7,
+  Q17, Q26, Q29 keep their `*:trade` hits).
+- Measured (mock, both as-of dates) on scratch copies of the freeze with the brochures and with
+  brochures + trade press, against `main` on the same copies. Grid: adv trigger {theme + ADV
+  terms; + "compensation"; + "pay"} x benchmark phrases {none; Q22-Q24; Q22-Q24 without Q11;
+  + "attrition rate"}. "compensation" brought Q25's `*:adv` coverage back (0.625 -> 1.0); "pay"
+  only added brochures to Q29, which does not expect them; "attrition rate" brought Q28 back with
+  the trade press loaded. Chosen: the smallest cell meeting #179's acceptance.
+Consequences: Brochures + trade-press copy, `--as-of 2026-10-29`: 28 PASS (main 27), tier-1
+recall 0.593 / 0.457 (main 0.533 / 0.423), Q18 5/5 `*:adv`, Q22-Q24 coverage back to the freeze
+level. Brochures-only copy: recall equals the freeze without brochures (0.646 / 0.481). The freeze
+`cee` gets the same passages as before (no `adv`, no tier 4 documents). Q2, Q5, Q6 and Q30 still
+lose a passage each to trade chunks compared with the freeze (trade takes the document type's
+turns at k = 20); a fee question worded without any configured term or theme keyword does not
+see the brochures, and the term lists are the place to widen it. Evidence in the #179 PR.
+
+## ADR-016: Slot order inside a firm: trade press last, a new document before a second chunk
+Status: Accepted (tech lead, 2026-11-17, #198 / #199); adds slot-order rules to `specs/retrieval.md`
+Context: the final snapshot `corpus-2026-11-17` adds 77 trade-press articles (tier 4, #57) and
+cuts the 32 earnings calls at speaker turns (#107: 1,689 -> 2,852 transcript chunks). Inside a
+firm's share, document types took turns in rank order and each type gave its next-best chunk.
+Mock eval (app budget) on that snapshot: tier-1 document recall 0.573 at `--as-of 2026-10-29` and
+0.547 at 2026-11-17, against 0.646 / 0.625 on `corpus-2026-11-16` (no trade press, length-cut
+calls). Trade articles ranked first took the trade turn every round and pushed filings, releases
+and calls out (Q2 `RJF-TR-2025Q4`, Q5 `MS-TR-2026Q1`, Q30 `BAC-PR-2026-01-14-01`), and the
+transcript turn went to a second and third turn of the firm's best call instead of its other calls
+(Q6 `RJF-TR-2025Q2`, Q11 `SCHW-TR-2026Q1`, Q13 `MS-TR-2026Q3`, Q27 `BAC-TR-2026Q3`; Q4 missed the
+Merrill answer `BAC-TR-2026Q2#63` by one slot).
+Decision: `fts.select()` orders slots inside a firm's turn (theme and rank turns alike; never in
+the tier 5 research part):
+- **Trade last** (`TIER_LAST = 0`): a tier 4 document type takes the firm's turn only when no other
+  type of the firm can give a chunk. If the list is then full and the firm has no trade chunk,
+  its best trade chunk replaces its last second chunk of a document, else of a document type
+  (`TRADE_KEEP`); a firm's only chunk of a type is never given up. Off inside a time window
+  (Q26 reads its 90 days of news as ranked).
+- **New document first** (`NEW_DOC_FIRST`): a document type gives a document not yet in the list
+  before a second chunk of a used one; among unused documents whose chunk ranks within 0.9 of the
+  type's best unused chunk, the newest wins (`NEWEST_BAND = 0.9`; Q11's 1Q26 call at 6.31 vs the
+  4Q25 call at 6.64). Also inside a window (Q27 "since the start of the year").
+- Chosen from a mock grid on `corpus-2026-11-17` at both as-of dates (`D:\ALLPROJECTS\EDJ\cache\ev198\grid*`):
+  trade {no rule, last, first 1 or 2 in turn then last, cap 1 or 2} x new document first {off, on}
+  x newest band {off, 0.95, 0.9} x keep one trade {off, on}. Only "last" brought Q30 back to 1.0;
+  caps lowered Q17/Q25; Q11 needed the newest band; pure "last" took every trade chunk out of
+  Q2, Q5, Q7, Q29 (their `*:trade` coverage fell), which the keep-one rule restored without losing
+  Q30's release or Q18's brochure. Chosen: the cell meeting every #198 / #199 acceptance item at
+  both dates with the highest tier-1 recall.
+Consequences: mock, `corpus-2026-11-17`: 28 PASS / 2 FAIL unchanged (Q15, Q19), refusal 5/5 and
+19/19, 0 forbidden; tier-1 document recall 0.573 -> 0.742 (2026-10-29) and 0.547 -> 0.727
+(2026-11-17), above the no-trade level; passage recall 0.453 -> 0.550 and 0.420 -> 0.523. Q2 0.556,
+Q5 1.0, Q30 1.0, Q6 0.667, Q11 1.0, Q13 0.833, Q27 0.667; Q4 gets `BAC-TR-2026Q2#63`; Q26 still
+reads 15 RJF trade chunks inside its window. Every keyed question's document recall is at or
+above `main` before speaker-turn chunking (#107). Cost: a firm's trade press now mostly fills what
+filings and IR leave; Q17 loses one MS trade chunk (coverage 0.6 -> 0.5, recall unchanged), and
+Q6 holds 0.667 rather than its no-trade 0.833 (the newest band prefers RJF's later calls). A newer
+document of the same type can displace an older one ranked up to 10% higher. Evidence in the
+#198 PR.
+
+## ADR-017: Answer turn with its question turn; vocabulary keys match inflected and as phrases
+Status: Accepted (tech lead, 2026-11-18, #203); adds an answer-turn rule and key-matching rules to
+`specs/retrieval.md`
+Context: Gate 4 R1 (#121, real run on `corpus-2026-11-17`, 15/30) had answers that said "not in the
+evidence" for passages the corpus holds. Q6: the analyst's question turn `RJF-TR-2026Q1#45` was kept
+for the question's words, but the CEO's answer `#46` is a second chunk of the same call, and
+new-document-first (ADR-016) gave the slot to other calls. Q13, Q17, Q22: the passages use other
+words than the question ("channel migration", "originating from workplace", "AI-powered", the table
+label "Net new assets for the period"); the key `stock plan` never fired on "stock-plan", nor
+`recruiting` on "recruit"; and a multi-word key such as "net new assets" was searched only through
+its values, so its own adjacency counted for nothing.
+Decision:
+- **Answer turn with its question turn** (`PAIR_TURNS = "attach"`): a kept transcript chunk that is
+  a question turn (an operator hand-off or Bloomberg "Q - " label, or a last paragraph ending in "?"
+  under a speaker label with no executive title) brings the next chunk of the same call, kept right
+  after it in the same firm's turn, inside MAX_PER_DOC, near-duplicate removal and k. The answer
+  turn is fetched with every hard filter of the main pass (entity/segment, window, date range,
+  keywords, doc-type scope) and no word match, so a turn the filters exclude never comes in (a BAC
+  consumer turn in a Merrill question). A next chunk that is itself a question turn is not an
+  answer. TRADE_KEEP does not give up an answer turn kept with its question. `"replace"` (the
+  answer in the question's place) was built as the fallback and not needed.
+- **Key matching**: a lower-case synonym key matches with a hyphen or spaces between its words and
+  an inflected last word (s, es, ed, ing); all-caps keys keep exact case. Keys in config
+  `synonym_exact` keep the plain match: `compensation structure`, so gap question Q25 ("advisor
+  compensation structures") does not pull "payout grid" in (it brought `RJF-TR-2026Q1#44`, a
+  payout-grid call turn).
+- **Multi-word key as a phrase**: a multi-word key found in the question is searched as a phrase
+  too, ahead of its values.
+- **Vocabulary** (`config/entities.yaml`): `recruit` (was `recruiting`) += payout, affiliation
+  options; `convert` -> channel migration, originating from; `workplace` -> originating from
+  workplace, workplace channel; `AI` += AI-powered, AI-enabled, AI tools, AI-driven; `under 40` ->
+  next generation, younger investors, younger clients, millennials, Gen Z; `net new assets` += the
+  EDJ table label "net new assets for the period".
+- Ranking table rows that carry the asked metric (lever 3 of #203) was not built: the table label
+  brought `EDJ-10Q-2026Q2#60` into Q22.
+Consequences: mock, `corpus-2026-11-17`, app budget: 28 PASS / 2 FAIL unchanged (Q15, Q19) at
+`--as-of` 2026-11-17 and 2026-10-29, 0 forbidden, refusal 5/5 and 19/19; tier-1 document recall
+0.727 -> 0.788 (2026-11-17) and 0.742 -> 0.800 (2026-10-29), passage recall 0.523 -> 0.607 and
+0.550 -> 0.629. In the retrieved set now: Q6 `RJF-TR-2026Q1#46`, Q13 `MS-TR-2025Q4#20` and
+`MS-TR-2026Q1#24`, Q17 `MS-TR-2025Q3#8`, Q22 `EDJ-10Q-2026Q2#60`. Not reached: Q2
+`RJF-PR-web-affiliation-options#1` (its page is in through `#0`; `#1` is a second chunk behind
+other press documents, rank 43 at k=80) and Q20 `FIDELITY-III-2025#0` / `UBS-NEXTGEN-2026#81`
+(outside the research part's 3-4 slots in a theme question; `UBS-NEXTGEN-2026#83` stays in).
+The answer-turn rule fires on one question of the bank (Q6); the key matching changes the keys of
+Q2, Q5, Q6, Q7, Q8, Q10, Q13, Q20, Q29 (`advisor` now fires on "advisors"). Cost: Q5 document recall
+1.0 -> 0.833 (PASS kept). Merrill traps Q4, Q27, Q30 unchanged. Evidence in the #203 PR.
+
+## ADR-018: Firm scope: a peer phrase for the advisor-led model; home-firm theme questions also search competitors on the theme
+Status: Accepted (TL, #205, 2026-11-18)
+Context: Gate 4 R1 (#121) failed Q15 and Q19 because retrieval searched the wrong firms. Q15 ("how
+Schwab earns ... and how an advisor-led model earns") names only Schwab, so every passage was
+Schwab's. Q19 ("How should the preferences of younger investors shape Edward Jones's offerings?")
+names only the home firm, so no competitor move aimed at the cohort could be cited (`passes_if`
+asks for them). ADR-004 limits firm documents to the firms a question names.
+Decision:
+- **Peer phrase** (config `peer_sets`, `advisor_led`): "an advisor-led model", "advisor-led models",
+  "advisor-led firms", "an advisor-led firm" (and "adviser-led") mean MS, EDJ, MER and RJF, by how
+  each reports (MS advisor-led vs self-directed client assets; EDJ only through its advisors;
+  Merrill = GWIM's advisor business; RJF's Private Client Group). Schwab is not one. Indefinite and
+  plural phrases only, so "Edward Jones's advisor-led model" names one firm; the plural "Edward
+  Jones's and Morgan Stanley's advisor-led models" names the group (deliberate).
+- **Home-firm theme rule** (config `home_firm: {id: EDJ, theme_peers: core_five}`): an entity+theme
+  question whose only named firm, covered or not, is the home firm gets `Query.theme_peers` = the
+  other members of `core_five`. One more SQL pass returns their chunks with the theme's keywords
+  (the #117 on-theme filter) and every other hard filter (entity/segment - Merrill only through
+  BAC GWIM/Merrill -, window, date range, keywords, doc-type scope) plus the word match. That pool
+  is cut at FLOOR (0.3) x its 2nd-best rank across all peers, inside a time window too, then each
+  peer firm gets at most `PEER_THEME_PER_FIRM` = 2 slots (Merrill counted once). The home firm and
+  research parts are computed as before; the peers' slots come on top (`budget()` + 2 per peer,
+  also on top of an explicit k). A firm filter on the Ask page clears the peers. The coverage note
+  says "on the theme also ..." and names peers with nothing on the theme; caveats cover peers.
+- The eval's forbidden check accepts a peer hit only when its firm is a peer (BAC only through the
+  GWIM/Merrill segment for MER) and its text matches the theme's keyword pattern rebuilt from
+  config, not the flag `search()` sets.
+- Rejected: a per-firm floor for the peers (BAC's "Top 40 Advisors Under 40" footnotes are BAC's
+  own best, so they would stay); 3 slots per peer (adds a Schwab deck slide, no new firm).
+Consequences: only Q15 and Q19 of the bank change. Mock, `corpus-2026-11-17`: Q15 FAIL -> PASS
+(coverage 1/5 -> 4/5: `MS-10K-2025#166`, `EDJ-10K-2025#20/#23`, `RJF-10K-2025#9` next to
+`SCHW-10K-2025#13`; 20 -> 30 passages). Q19 gets `SCHW-TR-2026Q3#11` and `SCHW-TR-2025Q3#11`
+(Gen Z / millennial share of new accounts) and no advisor-ranking chunk; its EDJ and research
+passages are unchanged; it stays a mock FAIL (1/5) because its expected sources are competitor
+press, and no MS, SCHW or RJF press chunk is on the theme (TL decision D-Q19). MS and RJF have no
+chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the floor. Evidence in
+the #205 PR.

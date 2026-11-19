@@ -29,7 +29,7 @@ Preconditions: baseline.
   line "LLM called:" is not (screenshot of the trace mid-run).
 - **Collapsed.** A status box labelled "How this answer was built: 6 steps ..." is present
   and the trace lines are hidden; click the label and the six lines show.
-- **Facts.** "Searching the corpus: N passages" equals "N chunks retrieved" in the meta line;
+- **Facts.** "Searching the corpus: N passages" equals "N passages found" in the meta line;
   the model line contains "(mock, one call)"; a "Checking citations: ... matched" line exists.
 - **Skip.** Ask the no-evidence question, open the trace: "No passages found: no model call",
   and the meta line says "LLM called: False".

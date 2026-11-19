@@ -17,7 +17,8 @@ from cee.answer.validate import (check_citations, coverage_note, empty_retrieval
                                  fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
-from cee.retrieve.fts import Hit, Query, apply_filters, resolve, search
+from cee.retrieve.fts import Hit, Query, apply_filters, resolve
+from cee.retrieve.modes import search
 
 
 @dataclass
@@ -58,6 +59,8 @@ def _n(n: int, word: str) -> str:
 def describe_query(q: Query) -> str:
     firms = ", ".join([*q.entities, *(f"{f} (no documents)" for f in q.unmapped)]) or "none named"
     text = f"firms {firms}; mode {q.mode}"
+    if q.theme_peers:
+        text += f"; on the theme also {', '.join(q.theme_peers)}"
     if q.firm_filter:
         text += f"; firm filter {', '.join(q.firm_filter)}"
     if q.date_range:

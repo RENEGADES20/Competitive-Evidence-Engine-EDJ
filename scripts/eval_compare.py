@@ -7,6 +7,11 @@ selection rule picked and at its default before #126 (all numbers come from eval
       --grid fts=<grid.json> --grid hybrid-norerank=<grid.json> --grid hybrid=<grid.json> \
       --diag .eval-runs/p125r-diag/diag.json --notes <findings.md> --out evals/hybrid-eval/corpus-2026-10-29
 
+#211 (fts vs hybrid-norerank, recall by stage, the #212 decision line):
+
+  python scripts/eval_compare.py --run fts=<report.json> --run hybrid-norerank=<report.json> \
+      [--run hybrid=<report.json>] --out evals/hybrid-eval/corpus-2026-11-17
+
 Writes report.md and summary.json in --out. No database, no model, no network.
 """
 from __future__ import annotations
@@ -267,9 +272,141 @@ def build(chosen: dict[str, dict], defaults: dict[str, dict], grids: dict[str, d
     return "\n".join(lines) + "\n", summary
 
 
+# --- #211: fts vs hybrid-norerank on corpus-2026-11-17, recall by stage, decision on #212 ----------
+
+# The decision rule, fixed in plans/0211-hybrid-retest.md (step 5) before any run.
+DECISION_MARGIN = 0.03
+DECISION_RULE = (
+    "hybrid-norerank tier-1 passage recall >= fts + 0.03 (3 decimals), refusal 5/5 on Q24, Q25, Q28, "
+    "Q29, Q30, refusal correct on every keyed question (the issue's \"10/10 keyed\": every keyed question "
+    "on today's key) and 0 forbidden hits -> #212 runs; otherwise #212 is closed as not planned. hybrid "
+    "(with the reranker) is a reference only; recall@pool is reported, not decided on.")
+WEAK_EVIDENCE = ("0.03 of tier-1 passage recall is about 1-2 passages on this bank; tuned and scored on the "
+                 "same 30 questions with no held-out set (ADR-010), so a difference this size is weak evidence.")
+NOT_LIKE_FOR_LIKE = ("recall@pool is not like-for-like: fts pools 15 per (firm, document type) with no total "
+                     "cap, hybrid pools RERANK_N candidates per part (50 x k / 20).")
+# The passages Gate 4 named as missed (PR #218, "Known gaps"); 7 of 8 were "not in pool" for fts.
+GATE4_MISSED = [("Q7", ["MS-10K-2025#153"]), ("Q15", ["SCHW-10K-2025#27"]), ("Q17", ["BAC-TR-2026Q2#21"]),
+                ("Q19", ["EDJ-10K-2025#88"]), ("Q20", ["FIDELITY-III-2025#0"]),
+                ("Q20", ["UBS-NEXTGEN-2026#119", "UBS-NEXTGEN-2026#13"]), ("Q25", ["MS-10K-2025#153"]),
+                ("Q25", ["RJF-PR-web-affiliation-options#1"])]
+STAGE_TEXT = {"final": "retrieved", "pool": "in pool, lost in select", "none": "not in pool", None: "-"}
+
+
+def run_row(mode: str, report: dict) -> dict:
+    s, m, qs = report["summary"], report["meta"], report["questions"]
+    pools = [q["pool_size"] for q in qs if q.get("pool_size") is not None]
+    return {**mode_row(mode, report),
+            "recall_pool": s.get("recall_pool"), "recall_final": s.get("recall_final"),
+            "tier1_recall_pool": s.get("tier1_recall_pool"), "tier1_recall_final": s.get("tier1_recall_final"),
+            "with_rows": s.get("with_rows"), "tier1_with_rows": s.get("tier1_with_rows"),
+            "mean_pool_size": round(sum(pools) / len(pools), 1) if pools else None,
+            "passages": s.get("passages"), "tokens_est": s.get("tokens_est"), "as_of": m.get("as_of"),
+            "snapshot": m.get("snapshot")}
+
+
+def decide(fts_row: dict, hyb_row: dict) -> dict:
+    """The #212 decision from the fts and hybrid-norerank rows (DECISION_RULE)."""
+    a_fts = round(fts_row["tier1_passage_recall"] or 0.0, 3)
+    a_hyb = round(hyb_row["tier1_passage_recall"] or 0.0, 3)
+    need = round(a_fts + DECISION_MARGIN, 3)
+    gap, keyed = hyb_row["refusal_gap"], hyb_row["refusal_all"]
+    checks = {
+        "A": (a_hyb >= need, f"tier-1 passage recall {a_hyb} vs fts {a_fts} + {DECISION_MARGIN} = {need}"),
+        "B": (gap["of"] == len(REFUSAL_IDS) and gap["ok"] == gap["of"],
+              f"refusal on Q24, Q25, Q28-Q30 {gap['ok']}/{gap['of']}"),
+        "C": (keyed["of"] > 0 and keyed["ok"] == keyed["of"],
+              f"refusal on every keyed question {keyed['ok']}/{keyed['of']}"),
+        "D": (hyb_row["forbidden_hits"] == 0, f"forbidden hits {hyb_row['forbidden_hits']}"),
+    }
+    go = all(ok for ok, _ in checks.values())
+    failed = [k for k, (ok, _) in checks.items() if not ok]
+    line = ("**Decision: #212 runs** (all four conditions hold)." if go else
+            f"**Decision: #212 is closed as not planned** (condition{'s' if len(failed) > 1 else ''} "
+            f"{', '.join(failed)} not met).")
+    return {"runs_212": go, "line": line, "checks": {k: {"ok": ok, "text": t} for k, (ok, t) in checks.items()}}
+
+
+def _stage(report: dict, qid: str, ids: list[str]) -> str:
+    q = next((x for x in report["questions"] if x["id"] == qid), None)
+    rows = ((q or {}).get("recall") or {}).get("rows") or []
+    row = next((r for r in rows if set(r["ids"]) & set(ids)), None)
+    return STAGE_TEXT.get(row.get("stage") if row else None, "-")
+
+
+def build_retest(runs: dict[str, dict], command: str | None = None) -> tuple[str, dict]:
+    rows = {m: run_row(m, r) for m, r in runs.items()}
+    order = [m for m in MODES if m in rows]
+    decision = decide(rows["fts"], rows["hybrid-norerank"])
+    f = rows["fts"]
+    lines = [f"# fts vs hybrid-norerank on {f['snapshot']} (#211)", "",
+             f"Snapshot `{f['snapshot']}`, as of {f['as_of']}, k by question (`fts.budget`), mock provider, "
+             f"{sum(r['real_calls'] or 0 for r in rows.values())} real calls. CPU: {f['cpu']}. Commits: "
+             + ", ".join(f"{m} `{rows[m]['commit']}`" for m in order) + ".", "",
+             "Modes: `fts` = keyword search (equals `main`). `hybrid-norerank` = keyword + vector legs fused by RRF "
+             "per quota firm, with every rule of `main`'s `fts.search()` (plans/0211-hybrid-retest.md R1-R11), "
+             "final order by RRF score. `hybrid` = the same candidates ordered by the local cross-encoder; a "
+             "reference only, it does not decide.", "",
+             "## Decision", "", decision["line"], "", f"Rule (fixed before any run): {DECISION_RULE}", ""]
+    lines += [f"- {k}: {'met' if c['ok'] else 'NOT met'} ({c['text']})" for k, c in decision["checks"].items()]
+    lines += ["", WEAK_EVIDENCE, "", "## Summary", "",
+              "| Mode | PASS / FAIL | Tier-1 docs | Tier-1 passages | Tier-1 recall@pool | Tier-1 recall@final "
+              "| recall@pool / @final (all rows) | Mean pool size | Refusal Q24, Q25, Q28-Q30 | Refusal all keyed "
+              "| Forbidden | Passages | Search s median / p90 / max (warm-up) |",
+              "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for m in order:
+        r = rows[m]
+        lines.append(f"| `{m}` | {r['pass']} / {r['fail']} | {r['tier1_doc_recall']} | {r['tier1_passage_recall']} | "
+                     f"{r['tier1_recall_pool']} | {r['tier1_recall_final']} | {r['recall_pool']} / {r['recall_final']} | "
+                     f"{r['mean_pool_size']} | {_frac(r['refusal_gap'])} | {_frac(r['refusal_all'])} | "
+                     f"{r['forbidden_hits']} | {r['passages']} | {r['median_search_s']} / {r['p90_search_s']} / "
+                     f"{r['max_search_s']} ({r['warmup_s']}) |")
+    lines += ["", "Recall@pool: expected passages with a chunk in a candidate pool before any floor or "
+              f"`select()`; recall@final: in the retrieved set (#210). {NOT_LIKE_FOR_LIKE} Tier 1: "
+              f"{f['tier1_with_rows']} questions with expected passages; all rows: {f['with_rows']} questions.", "",
+              "## Passages Gate 4 named as missed (stage per mode)", "",
+              "| Q | Passage | " + " | ".join(f"`{m}`" for m in order) + " |", "|---|---|" + "---|" * len(order)]
+    gate4 = []
+    for qid, ids in GATE4_MISSED:
+        st = {m: _stage(runs[m], qid, ids) for m in order}
+        gate4.append({"q": qid, "ids": ids, "stage": st})
+        lines.append(f"| {qid} | {' / '.join(f'`{i}`' for i in ids)} | " + " | ".join(st[m] for m in order) + " |")
+    lines += ["", "## Per question", "",
+              "Cells: status / recall@pool / recall@final / passages found.", "",
+              "| Q | " + " | ".join(f"`{m}`" for m in order) + " |", "|---|" + "---|" * len(order)]
+    by_mode = {m: {q["id"]: q for q in runs[m]["questions"]} for m in order}
+    diffs = []
+    for qid in by_mode["fts"]:
+        cells, vals = [], {}
+        for m in order:
+            q = by_mode[m].get(qid) or {}
+            vals[m] = (q.get("status"), q.get("recall_pool"), q.get("recall_final"), q.get("passage_recall"))
+            cells.append(f"{q.get('status')} / {q.get('recall_pool', '-')} / {q.get('recall_final', '-')} / "
+                         f"{_passages(q) if q else '-'}")
+        if vals["fts"] != vals["hybrid-norerank"]:
+            diffs.append(qid)
+        lines.append(f"| {'**' + qid + '**' if qid in diffs else qid} | " + " | ".join(cells) + " |")
+    lines += ["", "Bold: `fts` and `hybrid-norerank` differ in status, recall@pool, recall@final or passage "
+              f"recall ({len(diffs)} questions: {', '.join(diffs) or 'none'}).", ""]
+    if command:
+        lines += [f"Rebuilt with: `{command}`", ""]
+    summary = {"rule": DECISION_RULE, "decision": decision, "modes": rows, "gate4_missed": gate4,
+               "differs": diffs, "weak_evidence": WEAK_EVIDENCE, "pool_note": NOT_LIKE_FOR_LIKE}
+    return "\n".join(lines), summary
+
+
+def write_out(out: Path, text: str, summary: dict) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "report.md").write_bytes(text.encode("utf-8"))  # LF on every OS
+    (out / "summary.json").write_bytes((json.dumps(summary, indent=2) + "\n").encode("utf-8"))
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--chosen", action="append", required=True, help="MODE=report.json at the picked constants")
+    ap.add_argument("--chosen", action="append", help="MODE=report.json at the picked constants (#126)")
+    ap.add_argument("--run", action="append",
+                    help="#211: MODE=report.json for fts and hybrid-norerank (hybrid optional); writes the "
+                         "recall-by-stage comparison and the #212 decision instead of the #126 report")
     ap.add_argument("--default", action="append", help="MODE=report.json at the mode's default before #126")
     ap.add_argument("--grid", action="append", help="MODE=grid.json")
     ap.add_argument("--diag", type=Path, help="#125 diagnosis (diag.json)")
@@ -278,6 +415,19 @@ def main(argv: list[str] | None = None) -> int:
                     help="hybrid-norerank report.json at the constants hybrid picked (reranker ablation)")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
+    raw = sys.argv[1:] if argv is None else argv
+    command = "python scripts/eval_compare.py " + " ".join(a.replace("\\", "/") for a in raw)
+    if args.run:
+        runs = {m: _load(p) for m, p in _pairs(args.run, "run").items()}
+        missing = {"fts", "hybrid-norerank"} - set(runs)
+        if missing:
+            ap.error(f"--run is missing {', '.join(sorted(missing))}")
+        text, summary = build_retest(runs, command)
+        write_out(args.out, text, summary)
+        print(f"{summary['decision']['line']}\nreport: {args.out / 'report.md'}")
+        return 0
+    if not args.chosen:
+        ap.error("give --chosen (the #126 report) or --run (the #211 comparison)")
     chosen = {m: _load(p) for m, p in _pairs(args.chosen, "chosen").items()}
     missing = set(MODES) - set(chosen)
     if missing:
@@ -287,8 +437,6 @@ def main(argv: list[str] | None = None) -> int:
     diag = _load(args.diag) if args.diag else None
     notes = args.notes.read_text(encoding="utf-8") if args.notes else None
     same = _load(args.same_constants) if args.same_constants else None
-    raw = sys.argv[1:] if argv is None else argv
-    command = "python scripts/eval_compare.py " + " ".join(a.replace("\\", "/") for a in raw)
     text, summary = build(chosen, defaults, grids, diag, notes, same, command)
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "report.md").write_bytes(text.encode("utf-8"))  # LF on every OS
