@@ -96,7 +96,9 @@ from `plan_schema` if nothing else uses it. Planner prompt and `PLANNER_VERSION`
   message "Model output stopped by refusal") and planner output rejected (rule-plan fallback), even
   when a tool input is present: the skill says a refusal can stop a tool input mid-way and that the
   input may not match the schema, so strict's guarantee does not hold there. Named in the PR as a
-  small extension of the Goal ("ends without a valid tool call"). Spec table gets the row.
+  small extension of the Goal ("ends without a valid tool call"). Spec table gets the row, which
+  keeps the API's `stop_reason` `refusal` (invalid) apart from the model's own answer `behavior:
+  refuse` with `answerable` false (a valid answer, unchanged).
 - Never re-rolled: `max_retries=0` and the eval's reuse of invalid records are unchanged.
 
 ### 4. Cache keys and request version (`llm.py`, `planner.py`, `eval_run.py`)
@@ -122,12 +124,14 @@ the prompt texts (they are unchanged, and the OpenAI request is unchanged):
   unchanged (strict already).
 - **Strict-mode schema check, offline, two ways**: (a) a small rule walker in the test (no SDK, so it
   runs in CI): every object has `additionalProperties: false` and `required` equal to all its
-  properties; no keyword outside the supported set (`type, properties, required,
-  additionalProperties, items, enum, const, anyOf, allOf, $ref, $defs, description, title, format`
-  with a supported format, `minItems` 0 or 1); no `oneOf`, `maxItems`, `minimum`, `maximum`,
-  `minLength`, `maxLength`, `pattern`; applied to the exact `input_schema` of both Anthropic tools.
-  (b) with the SDK (`pytest.importorskip("anthropic")`, skipped in CI): `anthropic.transform_schema(s)
-  == s` for both tool schemas (the SDK would strip nothing). Plus a negative case: today's
+  properties; no keyword outside the set our schemas use and strict mode supports (`type,
+  properties, required, additionalProperties, items, enum, description, title, format` with a
+  supported format, `minItems` 0 or 1; `const`, `anyOf`, `allOf`, `$ref` are supported by strict mode
+  but deliberately not allowed by the walker, so a schema that starts using them needs a test change
+  first); no `oneOf`, `maxItems`, `minimum`, `maximum`, `minLength`, `maxLength`, `pattern`; applied
+  to the exact `input_schema` of both Anthropic tools. (b) with the SDK
+  (`pytest.importorskip("anthropic")`; `requirements.txt` pins `anthropic==1.9.0`, so it also runs
+  in CI): `anthropic.transform_schema(s) == s` for both tool schemas (the SDK would strip nothing). Plus a negative case: today's
   `plan_schema` with `maxItems` fails both checks.
 - Invalid fakes: a fake Anthropic response whose tool input is `{"answer": None}` (the #230 Q22
   payload, i.e. what a strict API would not send but a fake can) -> `ModelOutputError`, and through
@@ -176,8 +180,8 @@ requests, `MAX_TOKENS`, thinking settings, verify-cee recipe and driver.
    `real_calls` / `reused`, model, per-question `stop_reason` / output tokens / behavior / verdict,
    the TL pre-approval quoted, deviations (refusal row; request version instead of prompt / planner
    version bump; planner cache not reusable). **`gh pr checks <PR#>` all green on the PR head**
-   before `/finish-task` completes (CI: no SDK, so the `transform_schema` test is skipped there and
-   the rule-walker test runs).
+   before `/finish-task` completes (CI installs `requirements.txt`, which pins `anthropic==1.9.0`,
+   so both the rule-walker and the `transform_schema` tests run there).
 
 ## Paid-call plan (CLAUDE.md "Paid API calls"; TL note on #232, 2026-11-19)
 TL note, quoted: "The real calls planned in the approved ExecPlan are approved under the W10
@@ -229,8 +233,8 @@ call path.
   Q1 `answer` PASS; `stop_reason` and output tokens recorded for all five; actual `real_calls` /
   `reused` quoted (expected 10 / 0).
 - [ ] Tests: `strict: true` on the Anthropic answer and planner tools (request payload); the
-  strict-mode schema check passes offline for both tool schemas (rule walker in CI; SDK
-  `transform_schema` fixed point locally) and fails for a `maxItems` schema; a fake `{"answer":
+  strict-mode schema check passes offline for both tool schemas (rule walker and SDK
+  `transform_schema` fixed point, both locally and in CI) and fails for a `maxItems` schema; a fake `{"answer":
   null}` input, a no-tool response and a `refusal` stop are saved as invalid (planner: fallback),
   never re-called; OpenAI and no-request keys unchanged (literals), Anthropic keys carry `strict-1`.
 - [ ] Mock (`.eval-runs/0232-mock`): 30/30 chunk lists identical to the baseline, 29 PASS / 1 FAIL
@@ -248,3 +252,10 @@ call path.
   tool use, structured outputs, forced tool choice on claude-sonnet-5-5) and the live strict tool
   use / structured outputs docs; offline `transform_schema` check of both schemas (answer passes,
   planner fails on `maxItems`).
+- 2026-11-19 04:38 - plan approved by the reviewer agent (issuecomment-7006685532, reviewed
+  7686bf5), no blocking item. Non-blocking notes applied to this plan: (1) the `transform_schema`
+  test runs in CI too (`requirements.txt` pins `anthropic==1.9.0`); (2) the rule walker does not
+  allow `const` / `anyOf` / `allOf` / `$ref` (supported by strict mode, unused by our schemas: the
+  difference is stated in Design 5); (3) the spec row keeps the API `stop_reason` `refusal`
+  (invalid) apart from the model's `behavior: refuse` with `answerable` false (valid).
+  `origin/main` unchanged (f9fd055).

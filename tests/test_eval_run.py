@@ -676,7 +676,7 @@ def test_saved_empty_output_is_invalid_on_reuse(fake_model, tmp_path):
     runner = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     hits = real_hits()
     key = er.cache_key(q("Q22", []), runner.prompt_version, "snap-1", "anthropic", "fake-model",
-                       [h.chunk_id for h in hits], runner.max_tokens, None)
+                       [h.chunk_id for h in hits], runner.max_tokens, None, None, runner.request_version)
     (tmp_path / "cache").mkdir()
     (tmp_path / "cache" / f"Q22-{key}.json").write_text(json.dumps({"raw": {
         "answerable": True, "behavior": "answer", "claims": [], "adjacent": [], "gaps": [], "caveats": [],
@@ -871,3 +871,86 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
     assert r["llm_calls"] == {"planner": 0, "answer": 0} and r["plan"]["source"] == "rules"
     assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"
+
+
+# --- #232: the strict Anthropic request has its own cache keys ------------------------------------
+
+def test_request_version_joins_the_answer_key_only_when_given():
+    import hashlib
+    import json
+    qq = q("Q22", [])
+    args = ("v4.1", "snap", "anthropic", "m", ["a#1"])
+    today = hashlib.sha256(json.dumps(["Q22", "text Q22", *args]).encode()).hexdigest()[:24]
+    assert er.cache_key(qq, *args, 8000, None, None, None) == er.cache_key(qq, *args) == today
+    strict = er.cache_key(qq, *args, 8000, None, None, "strict-1")
+    want = hashlib.sha256(json.dumps(["Q22", "text Q22", *args, {"request": "strict-1"}]).encode()).hexdigest()[:24]
+    assert strict == want != today
+
+
+def test_request_version_joins_the_plan_key_only_when_given():
+    import hashlib
+    import json
+
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
+    base = ["Q7", "t", PLANNER_VERSION, "s", "openai", "m", 4, PLANNER_MAX_TOKENS, {"entities": ["MS"]}]
+    want = hashlib.sha256(json.dumps(base, default=str, sort_keys=True).encode()).hexdigest()[:24]
+    args = ({"id": "Q7", "text": "t"}, "s", "openai", "m", 4, {"entities": ["MS"]})
+    assert er.plan_cache_key(*args) == er.plan_cache_key(*args, None) == want        # OpenAI keys unchanged
+    assert er.plan_cache_key(*args, "strict-1") != want
+
+
+def test_anthropic_runner_does_not_reuse_a_non_strict_output(fake_model, tmp_path):
+    """A record saved under the pre-#232 key (no request version) is not reused by an Anthropic run;
+    an OpenAI run keeps today's key."""
+    import json
+    hits = real_hits()
+    old = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run0", cache_dir=tmp_path / "cache")
+    assert old.request_version == "strict-1"
+    pre = er.cache_key(q("Q22", []), old.prompt_version, "snap-1", "anthropic", "fake-model",
+                       [h.chunk_id for h in hits], old.max_tokens, None)
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / f"Q22-{pre}.json").write_text(json.dumps({"invalid": True, "error": "old",
+                                                                     "raw_payload": {"answer": None}}), encoding="utf-8")
+    a, how = old.answer(q("Q22", []), query(["MS"]), hits)
+    assert how == "called" and old.calls == 1 and old.reused == 0 and len(fake_model) == 1
+    rec = [s for s in saved(tmp_path / "cache") if not s.get("invalid")][0]
+    assert rec["request_version"] == "strict-1"
+    oa = er.RealRunner("openai", 0, "snap-1", tmp_path / "run1", cache_dir=tmp_path / "cache")
+    assert oa.request_version is None
+
+
+def test_strict_invalid_output_is_saved_and_never_recalled(flaky_model, tmp_path):
+    """A response with the #230 Q22 input under the strict request: saved invalid, reported again."""
+    from cee.answer import llm
+
+    calls, state = flaky_model
+    client = types.SimpleNamespace(messages=types.SimpleNamespace(create=lambda **kw: types.SimpleNamespace(
+        content=[types.SimpleNamespace(type="tool_use", name=llm.TOOL_NAME, input={"answer": None})],
+        stop_reason="tool_use", usage=types.SimpleNamespace(input_tokens=102835, output_tokens=4223))))
+    with pytest.raises(llm.ModelOutputError) as e:
+        llm._anthropic("q?", real_hits(), client=client)
+    state["error"] = e.value
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.answer(q("Q22", []), query(["MS"]), real_hits()) == (None, "invalid")
+    bad = saved(tmp_path / "cache")[0]
+    assert bad["invalid"] and bad["raw_payload"] == {"answer": None} and bad["request_version"] == "strict-1"
+    assert bad["stop_reason"] == "tool_use" and bad["usage"]["output_tokens"] == 4223
+    again = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert again.answer(q("Q22", []), query(["MS"]), real_hits()) == (None, "invalid")
+    assert again.calls == 0 and len(calls) == 1
+
+
+def test_plan_record_carries_the_request_version(monkeypatch, tmp_path):
+    from cee.retrieve import fts, planner
+    from cee.retrieve.fts import Query
+
+    monkeypatch.setattr(fts, "searchable", lambda q: True)
+    monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
+    monkeypatch.setattr(planner, "call_planner", lambda *a, **k: {"parts": [
+        {"id": "a", "text": "t", "firms": ["MS"], "keyword_query": "net new assets"}]})
+    runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    plan = runner.plan({"id": "Q1", "text": "t"}, Query(question="t", entities=["MS"]))
+    assert plan.source == "model" and runner.calls == 1
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["request_version"] == "strict-1"
+
