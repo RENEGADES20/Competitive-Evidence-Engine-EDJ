@@ -15,6 +15,9 @@ transfer; Q12: Schwab, Edward Jones and client acquisition, a firm theme from co
 Budget (#181, ADR-013): the number of passages grows with the number of firms the question names
 (budget()), and Merrill's own documents plus BAC's GWIM chunks share one firm's quota
 (quota_firms()), so five firms do not each drop to 3 passages when Merrill fills two groups (Q22, Q24).
+Token budget (#213, ADR-019): the retrieved set is filled up to an estimated token budget
+(characters / 4, budget_tokens(): 40k, five firms 60k) instead of a passage count, from a pool of
+the best 30 chunks per firm and document type (POOL_PER_GROUP); both chosen from a grid.
 Document-type scope (#179, ADR-015): Form ADV brochures only for fee and pricing questions and
 never inside a time window; no trade press (tier 4) for benchmark questions (doc_type_scope()).
 Slot order inside a firm (#198, #199, ADR-016): trade press takes a turn only when the firm's other

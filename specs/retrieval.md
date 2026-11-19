@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -51,14 +51,21 @@ expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial 
     #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
     #   is searched as a phrase too ("net new assets", Q22)
 
-retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
+retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
     # SQL: WHERE entity/segment filter AND published_at BETWEEN window AND tsv @@ query
     # MER: entity_id='MER' OR (entity_id='BAC' AND segment IN ('GWIM','Merrill'))
-    # budget (#181, ADR-013): k = 20 for a question naming 0 or 1 firm; n >= 2 firms ->
-    #   k = max(20, 6 x n) (2-3 firms: 20, the five: 30). n counts covered firms after the Ask
-    #   page firm filter; Merrill is one firm; firms we hold no documents for take no slots.
-    #   The pool over-fetch (15 per firm and document type) and every quota rule below fill it.
+    # budget (#213, ADR-019; replaces ADR-013's passage count): estimated tokens of the retrieved
+    #   set (passage characters / 4, summed in select() order), TOKEN_BUDGET = 40000 for a question
+    #   naming 0 or 1 firm; n >= 2 firms -> max(40000, 40000 x 6 x n // 20) (2-3 firms: 40k, the
+    #   five: 60k). n counts covered firms after the Ask page firm filter; Merrill is one firm;
+    #   firms we hold no documents for take no share. The list ends at most one chunk past the
+    #   budget (an answer turn is attached only while it is not full; the trade swap never makes it
+    #   longer) and stops short when the eligible pool runs out. Research (up to 4 passages) is
+    #   selected first and its tokens come off the firm part; theme peers come on top. An explicit
+    #   k (tests, `eval_run.py --k`) is the old passage rule: k = 20 for 0-1 firm, max(20, 6 x n).
+    #   The pool over-fetch (POOL_PER_GROUP = 30 per firm and document type, #213; was 15) and
+    #   every quota rule below fill it. Both values were picked from a 12-point grid (ADR-019).
     # Merrill counted once (#181): with MER named and BAC not, BAC GWIM/Merrill chunks share MER's
     #   quota turns and relevance floor (one firm, one share); Hit.entity_id stays BAC
     # quota: k split evenly per entity (entity mode); entity+theme: up to 4 of k for tier 5
@@ -104,7 +111,8 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     #   with one; also inside a window) so a firm whose only text on the theme is an advisor ranking
     #   ("Top 40 Advisors Under 40") takes no slot; then up to PEER_THEME_PER_FIRM = 2 per peer firm
     #   (Merrill counted once). The home firm and research parts are unchanged; the peers' slots
-    #   come on top (budget() = 20 + 2 x 4 = 28 for Q19; an explicit k gets them on top too).
+    #   come on top, outside the token budget (passage rule: budget() = 20 + 2 x 4 = 28 for Q19;
+    #   an explicit k gets them on top too).
     #   Coverage note: "on the theme also ..." and the peers with nothing on the theme
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
@@ -129,7 +137,9 @@ retrieve(query, k=budget(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, d
     (query, pool size, vectors).
   - **recall@final** = rows with a chunk in the retrieved set / rows (= passage recall). A row
     in the pool but not in the final set was lost in `select()` (quotas, floor, budget).
-  Each run also reports passages and estimated tokens (characters / 4) per question and in total.
+  Each run also reports passages and estimated tokens (characters / 4) per question and in total,
+  and (#213) the token budget, the budgeted tokens apart from the theme peers', `fill` (budgeted
+  tokens / budget), the search time per question and the pool / budget settings in the run meta.
 - **Refusal accuracy tracked alongside recall**: for gap questions (Q24, Q25, Q28-30) retrieval
   must not surface misleading substitutes unlabeled. Any tuning PR reports both numbers.
 

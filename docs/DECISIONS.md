@@ -300,7 +300,8 @@ docstrings still describe the one-call code until the feature issue changes them
 
 ## ADR-013: Retrieval budget by number of firms; Merrill counted once
 Status: Accepted (tech lead, 2026-11-17, #181); replaces the fixed k=20 of `specs/retrieval.md`
-for questions that name several firms
+for questions that name several firms. Its passage count is replaced by ADR-019's token budget
+(#213); Merrill counted once and the per-firm growth (now in tokens) stay
 Context: k=20 was the skeleton's default (2026-09-28) and was never measured against larger
 budgets. On the freeze snapshot `corpus-2026-11-16` (#120) the mock eval fell from 28 to 26 PASS
 (Q22, Q24 fail; Q10, Q11, Q23 lose recall). The cause was the slot budget, not ranking: the
@@ -520,3 +521,58 @@ passages are unchanged; it stays a mock FAIL (1/5) because its expected sources 
 press, and no MS, SCHW or RJF press chunk is on the theme (TL decision D-Q19). MS and RJF have no
 chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the floor. Evidence in
 the #205 PR.
+
+## ADR-019: Retrieval budget in tokens; candidate pool from a grid
+Status: Proposed (TL, #213, 2026-11-19); replaces ADR-013's passage count (k = 20, five firms 30)
+with a token budget; Merrill counted once (ADR-013) stays
+Context: the model read 20 passages (30 for five firms), about 6k tokens per question (median
+6,001, max 9,544, characters / 4), out of 21,143 chunks, and `select()` saw only the best 15
+chunks per (firm, document type). #210 measured recall by stage on `corpus-2026-11-17`: recall@pool
+0.686 / recall@final 0.484 (tier 1 0.803 / 0.597), and 7 of the 8 passages Gate 4 named as
+missed were never candidates. Current models read 30-40k tokens easily.
+Decision:
+- **Token budget** (`fts.TOKEN_BUDGET = 40000`, `fts.budget_tokens`): `select()` fills the list
+  until its estimated tokens (passage characters / 4, summed in `select()` order) reach the
+  budget, not a passage count. ADR-013's growth in tokens: B for 0 or 1 named firm, max(B,
+  B x 6 x n // 20) for n firms (2-3 firms 40k, the five 60k). The research part (THEME_K = 4
+  passages) is selected first and its tokens come off the firm part; theme peers (ADR-018, Q19)
+  keep 2 passages per peer on top, outside the budget. An answer turn is attached only while the
+  list is not full; TRADE_KEEP swaps only for a trade chunk no longer than the pick it replaces;
+  so the list ends at most one chunk past the budget (largest overshoot at the pick: 323 tokens).
+  An explicit k (`search(q, k=...)`, `eval_run.py --k`) keeps the passage rule; `TOKEN_BUDGET =
+  None` restores it.
+- **Pool** (`fts.POOL_PER_GROUP = 30`): every SQL pass keeps the best 30 chunks per (firm,
+  document type), was 15.
+- **Chosen from a grid by a rule fixed before it ran** (plans/0213-pool-budget.md): pool {15, 30,
+  50} x budget {passage rule, 20k, 30k, 40k}, mock, `--as-of 2026-11-17`, against the #210
+  baseline. Eligible: refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL, recall@pool and
+  recall@final (all rows and tier 1) not below the baseline. Pick: highest tier-1 recall@final,
+  ties to the smaller budget, then the smaller pool. All 12 points were eligible (29 PASS, 0
+  forbidden, refusal 5/5 and 22/22 everywhere). Tier-1 recall@pool / recall@final:
+
+  | Pool \ budget | passages | 20k | 30k | 40k |
+  |---|---|---|---|---|
+  | 15 | 0.803 / 0.597 | 0.803 / 0.720 | 0.803 / 0.739 | 0.803 / 0.752 |
+  | 30 | 0.903 / 0.597 | 0.903 / 0.764 | 0.903 / 0.783 | **0.903 / 0.808** |
+  | 50 | 0.942 / 0.597 | 0.942 / 0.764 | 0.942 / 0.783 | 0.942 / 0.802 |
+
+  All rows: recall@final 0.484 -> 0.654 at the pick (recall@pool 0.686 -> 0.814). Pool 50 reaches
+  more candidates, but at 40k its larger pool lets more mid-rank chunks of other documents take
+  the slots (0.802 < 0.808).
+- Tokens are characters / 4 estimates everywhere (budget, reports, this ADR), not tokenizer counts.
+Consequences: mock, `corpus-2026-11-17`: 29 PASS / 1 FAIL (Q19) unchanged, no question REGRESSED,
+15 IMPROVED; tier-1 document recall 0.785 -> 0.937. Passages per question grow from 20-30 to
+23-216 (675 -> 3,458 in total); tokens per question median 6,001 -> 33,643, max 9,544 -> 60,322
+(~988k over the 30, ~5x), so input cost per answer grows about 5x and five-firm answers read
+~60k tokens. 20 of 30 questions stop below the budget because their eligible pool runs out
+(MAX_PER_DOC 3, the floor; e.g. Q4 at 25 passages, Q19 at 23); that is reported, not padded.
+No question turn lost its answer turn to the budget at the pick. Search time per question
+(mock eval, run while another agent used the same database) median 0.50 -> 0.78 s, max 1.0 ->
+2.3 s: `rank_sql`'s count query is independent of the pool; the cost is more rows and more
+`select()` work. Of the Gate 4 missed passages, Q17 `BAC-TR-2026Q2#21` is now retrieved and Q15
+`SCHW-10K-2025#27` is a candidate lost in `select()`; Q7 `MS-10K-2025#153`, Q19 `EDJ-10K-2025#88`,
+Q20 (Fidelity, UBS sample) and Q25 (`RJF-PR-web-affiliation-options#1`, `MS-10K-2025#153`) are
+still not candidates at pool 30 (pool 50 makes most of them candidates but does not select
+them): a query problem (#214). The answer call's `max_tokens` (8000, `llm.MAX_TOKENS`) joins the
+eval's cache key when it changes. Real check at the pick (8 runs) and the grid evidence are in
+the #213 PR.
