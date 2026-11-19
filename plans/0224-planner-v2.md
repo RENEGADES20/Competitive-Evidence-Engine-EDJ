@@ -23,8 +23,16 @@ mock and the one-part identity are unchanged. FTS only, `main`; no new model, no
 - `eval_run.plan_cache_key` hashes `PLANNER_VERSION`; `tests/test_eval_run.py` asserts the literal
   `"plan-v1"` twice (lines 682, 751).
 - `tests/conftest.py` sets `LLM_PROVIDER=mock` only. `cee.config` calls `load_dotenv(.env)` at
-  import, so a developer's API keys are in `os.environ` during tests; `llm.anthropic_client()` /
-  `openai_client()` read them from the environment.
+  import, so a developer's API keys are in `os.environ` during tests. Every real client in `src/`
+  is built by `cee.answer.llm.anthropic_client()` / `openai_client()` (callers: `llm._anthropic`,
+  `llm._openai`, `planner.call_planner`; every test passes a fake client). The SDKs find
+  credentials beyond the API-key variables: Anthropic 1.9.0 `default_credentials()`
+  (`anthropic/lib/credentials/_chain.py`) goes on to `ANTHROPIC_AUTH_TOKEN`, an explicit profile
+  (`ANTHROPIC_PROFILE` / `ANTHROPIC_CONFIG_DIR` / the `active_config` pointer), workload identity
+  (`ANTHROPIC_FEDERATION_RULE_ID` + `ANTHROPIC_ORGANIZATION_ID` + `ANTHROPIC_IDENTITY_TOKEN[_FILE]`)
+  and the on-disk default profile (`configs/default.json`), and a profile can carry its own base
+  URL; OpenAI also reads `OPENAI_ADMIN_KEY`. So removing key variables alone does not stop a paid
+  call on a machine with a profile (it only held here because this machine has none).
 
 ### What each #214 planner output missed (`.eval-runs/0214-real/raw/*-plan-*.json`, plan-v1)
 | Q | Parts (v1) | Missed |
@@ -103,35 +111,57 @@ rubric wording). Tests: the prompt names no question ID; no 6-word run shared wi
 
 ### Part order and unused budget: **not now** (documented in ADR-020 and `specs/retrieval.md`)
 A second pass that hands a later part's unused share back to earlier parts is not built. Reasons:
-1. No answer-key row was lost for a share that a later part left unused. Real #214: Q7's four parts
-   all used their full share (no surplus to hand back); Q25's rows stuck at "pool"
+1. No answer-key row lost at select would be reached by more share. Real #214: the one row lost
+   in a part whose share ran out while later parts left share unused is Q25's `MS-10K-2025#153`
+   (p1 MS used 15.1k of 15.0k; p2 / p3 left 6.7k / 11.9k). A 0-call replay
+   (`D:\ALLPROJECTS\EDJ\cache\ev224\q25_p1_flowback.py`, output `q25_p1_flowback.txt`; the saved v1
+   plan, `fts.search` on the DB, no model call) reproduces #214's p1 list exactly at 15.0k, then
+   gives p1 its share plus the surplus (33.6k): p1 keeps 68 passages / 21.9k tokens and stops there
+   (`select()`'s floor, not the share; the same 68 with an unlimited share), and `MS-10K-2025#153`
+   stays in the pool, not final (firm-pool position 25 of 227). The other rows stuck at "pool"
    (`EDJ-10K-2025#30/#264` in p3, which used 6.5k of 18.3k; `SCHW-10Q-2026Q2#25` in p4 with 30.2k)
-   sat in parts that had share left, so `select()`'s floor, not the share, stopped them; Q12 and
-   Q28 have coverage 1.0. Mock: recall@final unchanged since #213.
-2. In the mock it changes Q9 and Q12 (p2 left 12.8k / 12.7k while p1 used its full share), which
-   have no answer-key rows, and breaks this issue's "mock as on main" check for no measured gain.
+   sat in parts that had share left. Q7's four parts all used their full share (no surplus); Q12
+   and Q28 have coverage 1.0. Mock: Q7's key row `MS-10K-2025#153` is never a candidate ("none",
+   #213 / #214 stage table), so more share cannot reach it; recall@final unchanged since #213.
+2. In the mock it changes Q7 (p1 used its full 13.0k share while p2 left 6.9k), Q9 and Q12 (p2
+   left 12.8k / 12.7k while p1 used its full share), none of which gains a key row (Q9 and Q12 have
+   no rows; Q7's row is never a candidate), and breaks this issue's "mock as on main" check.
 3. Q25 shows the cost of surplus share: the flow-forward gave p4 twice its equal share and the
    extra 15k went to low-rank matches, which is how the dividend deck chunks got in. A flow-back
    spends surplus the same way in earlier parts.
 4. A second pass lets every earlier part overshoot by one chunk again, so ADR-019's per-question
    bound (T + one chunk) would need restating.
 The one-part identity holds either way (one part has no later part). Revisit when a key row is lost
-at select in a part whose share ran out while a later part left share unused (the eval's per-part
-share / tokens table shows it).
+at select in a part whose share ran out while a later part left share unused **and** a replay with
+the surplus added brings it into the final set (Q25's `MS-10K-2025#153` meets the first condition,
+not the second). The ADR-020 and `specs/retrieval.md` text states reasons 1-4 as above, reason 1
+with the replay numbers, and names Q7, Q9, Q12 in reason 2.
 
 ### Tests cannot reach a paid API (`tests/conftest.py`)
-The autouse fixture also runs `monkeypatch.delenv(name, raising=False)` for `ANTHROPIC_API_KEY`,
-`OPENAI_API_KEY` and `ANTHROPIC_AUTH_TOKEN` (the Anthropic SDK's other credential), so a future test
-that names a real provider without a fake client fails before any request leaves the machine
-(OpenAI: at client construction; Anthropic SDK 1.9.0: at the request, "Could not resolve
-authentication method", raised before connecting). Docstring updated.
+The guard must not depend on where the SDK finds credentials (Facts). The autouse fixture, in
+addition to `LLM_PROVIDER=mock`:
+1. **Stubs the only two client builders** (primary guard): `monkeypatch.setattr` of
+   `cee.answer.llm.anthropic_client` and `cee.answer.llm.openai_client` to a function that raises
+   `RuntimeError("paid API call blocked in tests: pass a fake client")`. `planner.call_planner` and
+   `llm._anthropic` / `_openai` look them up on the module at call time, so any test path without a
+   fake client raises before an SDK client exists (the planner falls back to the rule plan with that
+   error; the answer path raises). Tests that pass a fake client are unaffected. A test that fails
+   after this change is one that built a real client: it gets a fake client, not an exemption.
+2. **Clears the credential environment** (defence in depth, for code that builds an SDK client
+   directly): `delenv` of every variable whose name starts with `ANTHROPIC_` or `OPENAI_` (covers
+   the API keys, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_PROFILE`, the workload-identity set,
+   `OPENAI_ADMIN_KEY`, org / project ids), then `ANTHROPIC_CONFIG_DIR` = an empty `tmp_path`
+   folder (so no on-disk or `active_config` profile is found) and `ANTHROPIC_BASE_URL` /
+   `OPENAI_BASE_URL` = `http://127.0.0.1:9` (a closed local port).
+Docstring states both layers and why (CLAUDE.md "Paid API calls" rule 4).
 
 ## Files to change
 - `src/cee/retrieve/planner.py` - prompt v2, `PLANNER_VERSION = "plan-v2"`, `neighbour_phrases()`,
   `strip_neighbours()`, the guard in `validate_plan`, module docstring.
 - `config/entities.yaml` (S1; #187 waiver) - `neighbour_phrases` with comments.
-- `tests/conftest.py` - delenv the API keys.
-- `tests/test_no_paid_calls.py` (new) - the guard's tests.
+- `tests/conftest.py` - stub the two client builders; clear the `ANTHROPIC_*` / `OPENAI_*`
+  environment, empty `ANTHROPIC_CONFIG_DIR`, closed-port base URLs.
+- `tests/test_no_paid_calls.py` (new) - the guard's tests, incl. a fake on-disk profile.
 - `tests/data/planner_v1_0214.json` (new) - the six saved plan-v1 outputs (`raw` of each
   `.eval-runs/0214-real/raw/*-plan-*.json`, keyed by question ID; `.eval-runs/` is not in git).
 - `tests/test_planner.py` - guard tests on the saved outputs, v2 prompt tests (leak check over
@@ -168,8 +198,8 @@ rule plan (logged, the call counted, a finding); an invalid answer is `INVALID_O
 A missed acceptance item is reported, not re-rolled. No other call path.
 
 ## Steps
-1. **Guard against paid calls.** `tests/conftest.py` delenv; `tests/test_no_paid_calls.py`.
-   `pytest -q`.
+1. **Guard against paid calls.** `tests/conftest.py` stubs + environment; `tests/test_no_paid_calls.py`
+   (profile format taken from `anthropic/lib/credentials` of the installed SDK). `pytest -q`.
 2. **Guard.** `neighbour_phrases` config; `strip_neighbours` + `validate_plan` hook; the saved
    outputs as `tests/data/planner_v1_0214.json`; unit tests and the fixture-schema test. `pytest -q`.
 3. **Prompt v2** + version; leak test over `passes_if` and question text; `test_eval_run.py`
@@ -180,8 +210,13 @@ A missed acceptance item is reported, not re-rolled. No other call path.
    (a) With `neighbour_phrases` patched to `[]`: chunk lists identical (same order) to
    `.eval-runs/0214-real/report.json` for all six (the replay reproduces the real run).
    (b) With the guard: Q3, Q7, Q12, Q15, Q28 identical to (a); Q25 p1-p3 identical, p4 without
-   "payout ratio" in its words, and no `must_not_return` id of Q25 in its hits. Output saved to
-   `...\ev224\replay.txt`. A difference elsewhere stops the work (finding to the reviewer).
+   "payout ratio" in its words, and no `must_not_return` id of Q25 in its hits. Q25's
+   recall@final, recall@pool, coverage and per-row stage tabled for (a) vs (b), so a recall loss
+   from dropping "payout ratio" is visible (reported, not tuned).
+   (c) The part-order evidence: `q25_p1_flowback.py` (already run for the plan, output above) kept
+   with the replay output for the PR.
+   Output saved to `...\ev224\replay.txt`. A difference outside Q25 p4 stops the work (finding to
+   the reviewer).
 5. **Mock eval.** `.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline
    evals/baselines/corpus-2026-11-17/report.json --out .eval-runs/0224-mock`; scratch diff
    `...\ev224\mock-diff.py`: all 30 chunk lists identical, same order, to the baseline; 29 PASS /
@@ -204,6 +239,14 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   alone); it was kept in #214 only because p4 had a 30k share. If the real Q25 still retrieves a
   must-not passage it is a finding (not re-run); the fix would then be the budget flow or ranking
   (out of scope here) or a narrower rule for the bare word, decided by the TL.
+- **Synonyms add "payout" as a phrase** (a second path the guard does not see; it strips planner
+  words, not expansions): a part whose words contain `pay` (`synonyms.pay`) or a form of `recruit`
+  (`synonyms.recruit`) searches the phrase "payout", which matches the dividend-payout chunks in a
+  Schwab / RJF part. The real Q25 judgement names which path (planner word, synonym expansion or
+  neither) brought any must-not chunk in, from the saved plan and `keyword_terms()` of each part.
+- **In-sample prompt**: Q3, Q7 and Q25 drove the v2 rules (the branch-staffing example mirrors Q7's
+  four dimensions; the same-concept examples paraphrase must-not reasons), so their real results
+  are in-sample; the PR says so. Q12 and Q28 are the regression checks.
 - **Prompt v2 makes plans longer or splits differently**: the cap and validation are unchanged, so
   the bound and SQL filters hold; Q12 / Q28 losing a part is a regression finding.
 - **Teaching to the test**: examples use other units and activities; the leak test checks 6-word
@@ -213,13 +256,18 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   and have a stored chunk to show it go in; each is commented. Same review rule as synonyms.
 
 ## Acceptance
-- [ ] Tests (0 calls): `tests/test_no_paid_calls.py`: inside a test `ANTHROPIC_API_KEY`,
-  `OPENAI_API_KEY`, `ANTHROPIC_AUTH_TOKEN` are unset and `LLM_PROVIDER` is `mock`;
-  `llm.openai_client()` raises `OpenAIError` (no key); the Anthropic SDK (1.9.0) builds a client
-  without a key but `messages.create` raises `TypeError` "Could not resolve authentication method"
-  before any connection (checked with `base_url` on an unused local port, `max_retries=0`); and
-  `planner.plan_question(q, "anthropic")` with no fake client returns the fallback rule plan with
-  that error (0 requests sent).
+- [ ] Tests (0 calls): `tests/test_no_paid_calls.py`, with `httpx.Client.send` (and
+  `AsyncClient.send`) patched to count and raise, so any request attempt is seen:
+  - inside a test `LLM_PROVIDER` is `mock`, no `ANTHROPIC_*` / `OPENAI_*` variable is set except
+    `ANTHROPIC_CONFIG_DIR` (an empty folder) and the two closed-port base URLs;
+  - `llm.anthropic_client()` and `llm.openai_client()` raise the "paid API call blocked" error;
+  - **fake on-disk profile**: `ANTHROPIC_CONFIG_DIR` pointed at a tmp folder holding a valid
+    `configs/default.json` with a dummy token (format of the installed SDK). Control: an
+    `anthropic.Anthropic()` built directly there resolves the profile's credentials (its request
+    reaches the patched `send`, counted, raised; nothing leaves the machine). Guard:
+    `planner.plan_question(q, "anthropic")` (no fake client, `PLANNER=on`) returns the rule plan
+    with `source = "fallback"` and the blocked error, and `llm` answer path with provider
+    `anthropic` and no client raises the blocked error; the `send` count for these two is 0.
 - [ ] Tests: on the saved v1 outputs, `validate_plan` drops "payout ratio" from Q25 p4 only (words
   otherwise unchanged, correction `part 4: dropped neighbour phrase payout ratio`), and leaves every
   part of Q3, Q7, Q12, Q15, Q28 and Q25 p1-p3 unchanged; a question that names "payout ratio" keeps
@@ -239,13 +287,24 @@ A missed acceptance item is reported, not re-rolled. No other call path.
   pressure); Q7's plan gives each of MS, MER, RJF words for recruiting posture, payout philosophy,
   training pipeline and retention results; Q25 retrieves none of its `must_not_return` passages
   (refusal check OK); Q12 keeps a Schwab acquisition part and an Edward Jones cost part, Q28 an EDJ
-  attrition part, a Merrill part and the adjacent net headcount words (as in #214).
+  attrition part, a Merrill part and the adjacent net headcount words (in any part, or a part of
+  their own; #214 had them in p1's words). The PR states that Q3, Q7, Q25 are in-sample for the
+  prompt.
 - [ ] ADR-020 amended (plan-v2, guard, part order "not now" with reasons, #224 results);
   `specs/retrieval.md` updated.
 
 ## Progress log
-- 2026-11-19 01:25 - plan written. Branch `tl/224-planner-v2` from `main` 42a96f7; DB
+- 2026-11-19 01:22 - plan written. Branch `tl/224-planner-v2` from `main` 42a96f7; DB
   `corpus-2026-11-17` up to date (`sync-db.ps1 -Check`). Read: the six #214 planner outputs, the Q25
   record (p4 share 30.2k, 111 passages) and the two must-not chunks on the DB (matched by `payout`
   / `ratio` only); the issue's guard measured on the six outputs (fires on 14 of 16 parts, misses
   "payout ratio"), so the plan uses an explicit neighbour-phrase list. Part-order flow-back: not now.
+- 2026-11-19 01:30 - plan revised after review (issuecomment-7002702166, 1st blocking return):
+  (1) the paid-call guard now stubs `llm.anthropic_client` / `openai_client` and clears the whole
+  `ANTHROPIC_*` / `OPENAI_*` environment (empty `ANTHROPIC_CONFIG_DIR`, closed-port base URLs),
+  with a fake on-disk profile test counting requests; facts on the SDK credential chain corrected.
+  (2) Part-order reason 1 restated: 0-call replay `ev224\q25_p1_flowback.py` reproduces #214's Q25
+  p1 list, and with the p2/p3 surplus (33.6k) p1 stops at 68 passages / 21.9k (floor), so
+  `MS-10K-2025#153` stays in the pool; "not now" kept, revisit trigger sharpened. Non-blocking:
+  Q7 in reason 2, synonym "payout" path and in-sample note in Risks, Q25 recall / coverage (a) vs
+  (b) in the replay, Q28 adjacent words in any part, log time.
