@@ -14,7 +14,7 @@ from psycopg.types.json import Jsonb
 
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
-from cee.answer.validate import (check_citations, coverage_note, empty_retrieval_answer,
+from cee.answer.validate import (check_citations, check_parts, coverage_note, empty_retrieval_answer,
                                  fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
@@ -94,7 +94,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                f" in {_n(len(plan.parts), 'part')}"
                                + ("" if mode == "fts" else f" ({mode})"))
-    answer, _raw = answer_for(question, query, hits, provider, trace=t)
+    answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan)
     result = Result(query, hits, answer, plan=plan, retrieval_mode=mode)
     if log:
         with t.stage("log", "Saving the query"):
@@ -104,9 +104,12 @@ def ask(question: str, provider: str | None = None, log: bool = True,
 
 
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
-               raw: Answer | None = None, trace: _Trace | None = None) -> tuple[Answer, Answer | None]:
+               raw: Answer | None = None, trace: _Trace | None = None,
+               plan: Plan | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
-    Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43)."""
+    Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
+    `plan` (#215): the model sees the evidence grouped by part, and code checks every part has a
+    cited claim or a gap (validate.check_parts); None: no part grouping and no part check."""
     t = trace or _Trace(None)
     if not hits:
         t.report("model", "skipped", "No passages found: no model call")
@@ -118,13 +121,13 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         return answer, None
     if raw is None:
         with t.stage("model", f"Asking the model ({provider}, one call)"):
-            raw = generate(question, hits, provider)
+            raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
         t.report("model", "done", f"Asking the model ({provider}, one call): "
                                   f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
         t.report("model", "skipped", "Reusing the saved model output: no model call")
     with t.stage("check", "Checking citations"):
-        answer = check_citations(raw.model_copy(deep=True), hits)
+        answer = check_parts(check_citations(raw.model_copy(deep=True), hits), plan, hits, question)
     t.report("check", "done", _check_text(answer, hits))
     with t.stage("caveats", "Adding caveats and gaps"):
         answer = insert_caveats(answer, query, hits)
@@ -132,6 +135,15 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         answer.coverage_note = coverage_note(query, hits)
     t.report("caveats", "done", _caveats_text(answer))
     return answer, raw
+
+
+def answer_window(query: Query):
+    """(from, to) the answer call is told about (prompt v4.1, #230): the question's time window and
+    the Ask page date range, both SQL filters, so their overlap when both are set; None without."""
+    spans = [s for s in (getattr(query, "window", None), getattr(query, "date_range", None)) if s]
+    if not spans:
+        return None
+    return (max(s[0] for s in spans), min(s[1] for s in spans))
 
 
 def plan_text(plan: Plan) -> str:
@@ -150,11 +162,15 @@ def _check_text(a: Answer, hits: list[Hit]) -> str:
     cited = [c for claim in [*a.claims, *a.adjacent] for c in claim.chunk_ids]
     matched = sum(c in ids for c in cited)
     flagged = sum(bool(claim.flags) for claim in [*a.claims, *a.adjacent])
-    return f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
+    moved = sum("uncited_cell" in g.flags for g in a.gaps)
+    return (f"Checking citations: {_n(matched, 'citation')} matched, {_n(flagged, 'claim')} flagged"
+            + (f", {_n(moved, 'empty cell')} moved to gaps" if moved else ""))
 
 
 def _caveats_text(a: Answer) -> str:
-    return f"Adding caveats and gaps: {_n(len(a.caveats), 'caveat')}, {_n(len(a.gaps), 'gap')}"
+    coded = sum("part_gap" in g.flags for g in a.gaps)
+    return (f"Adding caveats and gaps: {_n(len(a.caveats), 'caveat')}, {_n(len(a.gaps), 'gap')}"
+            + (f" ({coded} added by code for unanswered parts)" if coded else ""))
 
 
 def model_name(provider: str) -> str:

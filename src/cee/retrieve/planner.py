@@ -266,14 +266,20 @@ def _block_dict(b) -> dict:
     return block(b)
 
 
-def call_planner(q: Query, provider: str, cap: int, client=None):
-    """The raw plan from one provider call; PlannerOutputError when the output is not a plan."""
+def call_planner(q: Query, provider: str, cap: int, client=None, meta: dict | None = None):
+    """The raw plan from one provider call; PlannerOutputError when the output is not a plan.
+    `meta` (#230, bookkeeping only): when a dict is passed, it gets the call's stop_reason and usage,
+    so the eval saves why every real output stopped."""
     from cee.answer import llm
 
+    meta = {} if meta is None else meta
     if provider == "anthropic":
         client = client or llm.anthropic_client()
         resp = client.messages.create(**anthropic_plan_request(q, cap))
         stop = getattr(resp, "stop_reason", None)
+        meta["stop_reason"] = stop
+        meta["usage"] = {**llm._usage(resp, "input_tokens", "output_tokens"),
+                         "blocks": [getattr(b, "type", "?") for b in resp.content]}
         block = next((b for b in resp.content if b.type == "tool_use" and b.name == PLAN_TOOL), None)
         if block is None:
             raise PlannerOutputError(f"planner did not call {PLAN_TOOL} (stop_reason={stop})",
@@ -285,6 +291,8 @@ def call_planner(q: Query, provider: str, cap: int, client=None):
         client = client or llm.openai_client()
         resp = client.chat.completions.create(**openai_plan_request(q, cap))
         content = resp.choices[0].message.content
+        meta["stop_reason"] = getattr(resp.choices[0], "finish_reason", None)
+        meta["usage"] = llm._usage(resp, "prompt_tokens", "completion_tokens")
         try:
             return json.loads(content)
         except (TypeError, ValueError) as e:

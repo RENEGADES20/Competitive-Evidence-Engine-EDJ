@@ -21,7 +21,7 @@ def run(monkeypatch, hits, generate=None):
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
     monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: hits)
 
-    def fake_generate(question, h, provider):
+    def fake_generate(question, h, provider, plan=None, window=None):
         calls.append(provider)
         return Answer(answerable=True, behavior="answer", claims=[
             {"text": "a", "chunk_ids": ["BAC-10K-2025#244"]},
@@ -72,7 +72,7 @@ def test_failed_stage_is_reported_then_raised(monkeypatch):
 
 
 def test_no_callback_behaves_as_before(monkeypatch):
-    monkeypatch.setattr(pipeline, "generate", lambda q, h, p: Answer(answerable=True, behavior="answer"))
+    monkeypatch.setattr(pipeline, "generate", lambda q, h, p, plan=None, window=None: Answer(answerable=True, behavior="answer"))
     answer, raw = pipeline.answer_for("q", Query(question="q", entities=["MER"]), HITS, "mock")
     assert raw is not None and answer.behavior == "answer"
 
@@ -108,7 +108,7 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
     seen = []
     monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: seen.append(plan) or HITS)
 
-    def fake_generate(question, h, provider):
+    def fake_generate(question, h, provider, plan=None, window=None):
         calls.append("answer")
         return Answer(answerable=True, behavior="answer", llm_called=True,
                       claims=[{"text": "a", "chunk_ids": ["BAC-10K-2025#244"]}])

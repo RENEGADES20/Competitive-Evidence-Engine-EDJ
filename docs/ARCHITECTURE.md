@@ -135,16 +135,23 @@ In `config/entities.yaml`:
 ## Answer JSON
 
 One LLM call returns this shape (Claude via tool use, OpenAI via Structured Outputs); our
-code validates it. See [specs/answer-citations.md](../specs/answer-citations.md).
+code validates it. See [specs/answer-citations.md](../specs/answer-citations.md). `part_id` names
+the planner part (ADR-020) an item answers (prompt v4, #215; "" in older outputs); a gap's `flags`
+and `claim_text` are code-owned (a part with no claim or gap, an uncited grid cell moved to gaps).
+`stop_reason` and `usage` are code-owned too (#230): why the model's output stopped and its token
+counts, from the provider response ("" / {} for the mock and older outputs). An output cut at the
+output cap, or one with no claims, adjacent items or gaps (a refusal aside), is rejected as invalid.
 
 ```json
 {
   "answerable": true,
   "behavior": "answer | answer_with_boundary | gap_with_adjacent | refuse",
-  "claims":   [{"text": "...", "chunk_ids": ["MS-TR-2025Q2#14"], "source_label": "MS earnings call 2025-07-16"}],
-  "adjacent": [{"text": "...", "chunk_ids": ["..."], "differs_because": "net headcount change is not attrition"}],
-  "gaps":     [{"what": "...", "suggested_source": "..."}],
-  "caveats":  ["inserted by code"]
+  "claims":   [{"text": "...", "chunk_ids": ["MS-TR-2025Q2#14"], "part_id": "p1", "source_label": "MS earnings call 2025-07-16"}],
+  "adjacent": [{"text": "...", "chunk_ids": ["..."], "part_id": "p2", "differs_because": "net headcount change is not attrition"}],
+  "gaps":     [{"what": "...", "suggested_source": "...", "part_id": "p2", "flags": ["part_gap"]}],
+  "caveats":  ["inserted by code"],
+  "stop_reason": "tool_use",
+  "usage":    {"input_tokens": 60000, "output_tokens": 9000, "blocks": ["thinking", "tool_use"]}
 }
 ```
 
