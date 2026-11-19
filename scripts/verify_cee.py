@@ -716,6 +716,9 @@ def feature_search_mode(page, base, rec, ctx):
     side = page.locator("[data-testid='stSidebar']")
     side.get_by_text("Search mode", exact=True).first.wait_for(timeout=RENDER_TIMEOUT_S * 1000)
     smart = side.get_by_role("radio", name="Smart search")
+    # the radios render after the label: wait for both before counting them (#211 review)
+    for name in ("Exact match", "Smart search"):
+        side.get_by_role("radio", name=name).first.wait_for(state="attached", timeout=RENDER_TIMEOUT_S * 1000)
     rec.step("Look at the sidebar", "both modes listed; Smart search locked when it is not set up",
              side.get_by_role("radio", name="Exact match").count() == 1 and smart.count() == 1
              and (smart_ok or smart.is_disabled()),
@@ -774,7 +777,8 @@ def drive(features: list[str]) -> bool:
             results.append({"feature": f, "status": rec.status})
         browser.close()
     from cee.config import settings, vectors_enabled  # loads .env as the app does; the app inherits it
-    summary = {**st, "retrieval_mode": settings().retrieval_mode,
+    # the app's mode: --mode when given, else RETRIEVAL_MODE as the app reads it
+    summary = {**st, "retrieval_mode": os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode,
                "cee_vectors": "on" if vectors_enabled() else "off", "results": results,
                "finished": datetime.now().isoformat(timespec="seconds")}
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
