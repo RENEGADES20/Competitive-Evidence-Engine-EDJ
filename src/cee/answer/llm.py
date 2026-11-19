@@ -1,4 +1,5 @@
-"""One LLM call per answer (ADR-003). Providers: mock | anthropic | openai.
+"""One answer call per question; the question planner (#214, ADR-020) may make one more before
+search, so a question uses at most 2 calls (ADR-012 allows 5). Providers: mock | anthropic | openai.
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 mock is offline and free: it cites the top hits verbatim. Use it for development and tests.
@@ -88,15 +89,27 @@ def anthropic_request(question: str, hits: list[Hit]) -> dict:
     }
 
 
+def anthropic_client():
+    """The Anthropic client for the answer and the planner call (#214)."""
+    import os
+
+    import anthropic
+
+    # Keys not scoped to a workspace must name one in a header.
+    ws = os.getenv("ANTHROPIC_WORKSPACE_ID", "").strip()
+    return anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
+
+
+def openai_client():
+    """The OpenAI client for the answer and the planner call (#214)."""
+    import openai
+
+    return openai.OpenAI()
+
+
 def _anthropic(question: str, hits: list[Hit], client=None) -> Answer:
     if client is None:
-        import os
-
-        import anthropic
-
-        # Keys not scoped to a workspace must name one in a header.
-        ws = os.getenv("ANTHROPIC_WORKSPACE_ID", "").strip()
-        client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
+        client = anthropic_client()
     resp = client.messages.create(**anthropic_request(question, hits))
     block = next((b for b in resp.content if b.type == "tool_use" and b.name == TOOL_NAME), None)
     if block is None:
@@ -126,9 +139,7 @@ def openai_request(question: str, hits: list[Hit]) -> dict:
 
 def _openai(question: str, hits: list[Hit], client=None) -> Answer:
     if client is None:
-        import openai
-
-        client = openai.OpenAI()
+        client = openai_client()
     resp = client.chat.completions.create(**openai_request(question, hits))
     content = resp.choices[0].message.content
     try:

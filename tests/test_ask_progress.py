@@ -19,7 +19,7 @@ HITS = [hit("BAC-10K-2025#244", "BAC-10K-2025"), hit("BAC-10K-2025#246", "BAC-10
 def run(monkeypatch, hits, generate=None):
     calls, events = [], []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: hits)
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: hits)
 
     def fake_generate(question, h, provider):
         calls.append(provider)
@@ -43,7 +43,8 @@ def test_stages_in_order_with_facts_from_their_output(monkeypatch):
     assert order == list(pipeline.STAGES[:-1])                             # log=False: no "log" stage
     d = done(events)
     assert d["resolve"] == "Reading the question: firms MER; mode entity"
-    assert d["search"] == "Searching the corpus: 3 passages from 2 documents"
+    assert d["plan"] == "Planning the search (rules, no model call): 1 part: p1 MER"
+    assert d["search"] == "Searching the corpus: 3 passages from 2 documents in 1 part"
     assert d["model"] == "Asking the model (mock, one call): 2 claims"
     assert d["check"] == "Checking citations: 2 citations matched, 1 claim flagged"
     assert d["caveats"] == "Adding caveats and gaps: 0 caveats, 0 gaps"
@@ -62,7 +63,7 @@ def test_failed_stage_is_reported_then_raised(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
 
-    def broken(q, mode=None):
+    def broken(q, mode=None, plan=None):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search", broken)
     with pytest.raises(RuntimeError):
@@ -79,7 +80,7 @@ def test_no_callback_behaves_as_before(monkeypatch):
 def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: [])
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: [])
 
     def broken(r, p):
         raise RuntimeError("insert failed")
@@ -89,14 +90,68 @@ def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     assert events[-1] == ("log", "failed", "Saving the query: failed (RuntimeError: insert failed)")
 
 
+# --- question planner (#214, ADR-020) ---------------------------------------------------------
+
+def test_plan_stage_and_at_most_two_calls(monkeypatch):
+    """A real provider: one planner call, one answer call (counting fakes), both logged."""
+    from cee.retrieve import planner
+    from cee.retrieve.planner import Part, Plan
+
+    calls = []
+    monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MS", "MER"]))
+
+    def fake_plan(query, provider, mode=None):
+        calls.append("planner")
+        return Plan(parts=[Part("p1", "a", ["MS"], "payout grid"), Part("p2", "b", ["MER"], "recruiting")],
+                    source="model", provider=provider, calls=1)
+    monkeypatch.setattr(pipeline, "plan_for", fake_plan)
+    seen = []
+    monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: seen.append(plan) or HITS)
+
+    def fake_generate(question, h, provider):
+        calls.append("answer")
+        return Answer(answerable=True, behavior="answer", llm_called=True,
+                      claims=[{"text": "a", "chunk_ids": ["BAC-10K-2025#244"]}])
+    monkeypatch.setattr(pipeline, "generate", fake_generate)
+    events = []
+    result = pipeline.ask("q", provider="anthropic", log=False, progress=lambda *e: events.append(e))
+    d = done(events)
+    assert calls == ["planner", "answer"] and len(calls) <= 2
+    assert d["plan"] == "Planning the search (anthropic, one call): 2 parts: p1 MS; p2 MER"
+    assert d["search"].endswith("in 2 parts") and seen[0] is result.plan
+    logged = pipeline.log_filters(result)
+    assert logged["llm_calls"] == {"planner": 1, "answer": 1}
+    assert [p["keyword_query"] for p in logged["plan"]["parts"]] == ["payout grid", "recruiting"]
+    assert logged["entities"] == ["MS", "MER"]                       # the query fields stay
+    assert planner.Plan  # imported module in use
+
+
+def test_fallback_plan_line(monkeypatch):
+    from cee.retrieve.planner import Plan, rules_plan
+
+    q = Query(question="q", entities=["MS", "MER"])
+    plan = rules_plan(q, cap=4)
+    plan.source, plan.provider, plan.error, plan.calls = "fallback", "anthropic", "planner output cut at max_tokens", 1
+    assert pipeline.plan_text(plan) == ("Planning the search (anthropic, one call): output not usable (planner "
+                                        "output cut at max_tokens), using the rule plan: 2 parts: p1 MS; p2 MER")
+    assert isinstance(plan, Plan)
+
+
+def test_mock_logs_zero_calls(monkeypatch):
+    result, events, calls = run(monkeypatch, HITS)
+    logged = pipeline.log_filters(result)
+    assert logged["llm_calls"] == {"planner": 0, "answer": 0} and logged["plan"]["source"] == "rules"
+
+
 def test_mode_reaches_search_and_the_trace(monkeypatch):
-    modes, events = [], []
+    modes, plans, events = [], [], []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q, mode=None: modes.append(mode) or HITS)
+    monkeypatch.setattr(pipeline, "search",
+                        lambda q, mode=None, plan=None: modes.append(mode) or plans.append(plan) or HITS)
     pipeline.ask("Merrill profitability?", provider="mock", log=False, mode="hybrid",
                  progress=lambda *e: events.append(e))
-    assert modes == ["hybrid"]
-    assert done(events)["search"] == "Searching the corpus: 3 passages from 2 documents (hybrid)"
+    assert modes == ["hybrid"] and [p.id for p in plans[0].parts] == ["p1"] and plans[0].calls == 0
+    assert done(events)["search"] == "Searching the corpus: 3 passages from 2 documents in 1 part (hybrid)"
     monkeypatch.delenv("RETRIEVAL_MODE", raising=False)
     pipeline.ask("Merrill profitability?", provider="mock", log=False)
     assert modes[-1] == "fts"
