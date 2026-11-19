@@ -163,6 +163,16 @@ crash), the outputs already saved stay; the report states the calls made and the
 answer as "not answered (run stopped)", FAIL; any completion run would need a new TL decision and is
 not part of this plan.
 
+**Completion run (TL decision, issue comment 7001200270, 2026-11-19, planned before the call).** The
+first attempt stopped after Q17 (local `tokenizers.pyd` crash before Q18's model call; 17 calls, 17
+raw files). The same command is run again with `--max-calls 13` and the same `--out`: the 17 saved
+outputs are reused from `.eval-runs\cache` (same cache key), only Q18-Q30 are called, total 30 calls,
+no answered question is called again. If the crash happens again, the same command is resumed with
+`--max-calls` = 30 minus the calls made so far (remaining questions only, cache reuse, total never
+above 30). The `.env` copy is made before each attempt and deleted as its own step after each
+attempt (not in the attempt's `finally`), with `Test-Path` -> False logged. The last attempt's
+`report.json` covers all 30 questions (reused + called).
+
 ### 4. Scoring pack (free)
 Copy `ev121\pack.py` to `ev212\pack.py` (unchanged) and build `ev212\scoring\Q<n>.md` +
 `summary.csv` from `ev212\real-30`: per question the text, `passes_if`, expected vs got behavior, each
@@ -311,3 +321,6 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   was deleted by hand at 00:01:14: `Test-Path D:\ALLPROJECTS\EDJ\wt-212\.env` -> False. A free mock run
   of Q18-Q30 afterwards (`ev212\mock-q18-30`) finished normally (the crash is not reproducible).
   Per this plan a completion run needs a new TL decision; stopped here and asked.
+- 2026-11-19 00:10 - TL decision (issue comment 7001200270): option A, completion run with
+  `--max-calls 13`, 17 cached answers reused, total 30; resume the same way on another crash. Step 3
+  updated ("Completion run") before the call.
