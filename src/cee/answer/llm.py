@@ -14,6 +14,10 @@ from cee.config import settings
 from cee.retrieve.fts import Hit
 
 TOOL_NAME = "submit_answer"
+# Output cap of the answer call. 8000 covers 20-30 passages (#181), grid answers with a gap per
+# empty cell (#204) and the token budget of the retrieved set (#213, ADR-019); the eval's cache key
+# includes it when it differs from 8000, so a run with another cap never reuses an older output.
+MAX_TOKENS = 8000
 
 
 class ModelOutputError(RuntimeError):
@@ -22,9 +26,9 @@ class ModelOutputError(RuntimeError):
     `raw` is the provider payload, always JSON-safe, so the caller can save what was paid for
     (CLAUDE.md "Paid API calls" step 3) instead of losing it with the exception."""
 
-    def __init__(self, message: str, raw, provider: str):
+    def __init__(self, message: str, raw, provider: str, stop_reason: str | None = None):
         super().__init__(message)
-        self.raw, self.provider = raw, provider
+        self.raw, self.provider, self.stop_reason = raw, provider, stop_reason
 
 
 def _block_dict(b) -> dict:
@@ -73,7 +77,7 @@ def _mock(hits: list[Hit]) -> Answer:
 def anthropic_request(question: str, hits: list[Hit]) -> dict:
     return {
         "model": settings().llm_model,
-        "max_tokens": 8000,  # 20-30 chunks (#181) and grid answers with a gap per empty cell (#204)
+        "max_tokens": MAX_TOKENS,
         "system": SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
                                   " do not answer in plain text.",
         "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.",
@@ -97,12 +101,14 @@ def _anthropic(question: str, hits: list[Hit], client=None) -> Answer:
     block = next((b for b in resp.content if b.type == "tool_use" and b.name == TOOL_NAME), None)
     if block is None:
         raise ModelOutputError(f"Model did not call {TOOL_NAME} (stop_reason={getattr(resp, 'stop_reason', '?')})",
-                               [_block_dict(b) for b in resp.content], "anthropic")
+                               [_block_dict(b) for b in resp.content], "anthropic",
+                               getattr(resp, "stop_reason", None))
     raw = block.input
     try:
         return Answer(**raw, llm_called=True)
     except (ValueError, TypeError) as e:  # pydantic ValidationError is a ValueError
-        raise ModelOutputError(f"Model output is not a valid Answer: {e}", raw, "anthropic") from e
+        raise ModelOutputError(f"Model output is not a valid Answer: {e}", raw, "anthropic",
+                               getattr(resp, "stop_reason", None)) from e
 
 
 def openai_request(question: str, hits: list[Hit]) -> dict:

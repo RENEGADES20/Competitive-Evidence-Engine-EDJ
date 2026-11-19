@@ -269,3 +269,27 @@ def test_peer_floor_kept_inside_a_time_window(theme_db, monkeypatch):
     assert q.window and q.theme_peers == PEERS
     search(q, k=20)
     assert calls and calls[0] > 0
+
+
+# --- token budget (#213, ADR-019) on the fixture rows ------------------------------------
+
+def test_token_budget_research_first_peers_on_top(theme_db, monkeypatch):
+    monkeypatch.setattr(fts, "connect", theme_db)
+    passage_peers = [h.chunk_id for h in search(resolve(Q19, TODAY)) if h.entity_id not in ("EDJ", None)]
+    monkeypatch.setattr(fts, "TOKEN_BUDGET", 600)
+    q = resolve(Q19, TODAY)
+    trace = fts.PoolTrace()
+    hits = search(q, trace=trace)
+    research = [h for h in hits if h.entity_id is None]
+    firm = [h for h in hits if h.entity_id == "EDJ"]
+    peers = [h for h in hits if h.entity_id not in ("EDJ", None)]
+    tok = fts.hit_tokens
+    budgeted = research + firm
+    assert fts.budget_tokens(q) == 600 and len(research) == fts.THEME_K       # research keeps its slots
+    left = 600 - sum(tok(h) for h in research)                                 # research off the firm part
+    assert sum(tok(h) for h in firm) >= left and sum(tok(h) for h in firm[:-1]) < left
+    assert sum(tok(h) for h in budgeted) <= 600 + max(tok(h) for h in budgeted)
+    assert [h.chunk_id for h in peers] == passage_peers and {h.chunk_id for h in peers} <= set(trace.peers)
+    # an explicit k is the passage rule whatever TOKEN_BUDGET says
+    assert len([h for h in search(q, k=20) if h.entity_id in ("EDJ", None)]) == 20
+
