@@ -424,10 +424,13 @@ def compare(record: dict, base: dict | None) -> str:
 
 
 def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
-              max_tokens: int = 8000, plan_parts: list | None = None, window=None) -> str:
+              max_tokens: int = 8000, plan_parts: list | None = None, window=None,
+              request: str | None = None) -> str:
     """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
     key, and a run with another output cap never reuses one made under 8000. The window (#230)
-    joins it only when the question has one (the v4.1 user message names it; --as-of moves it)."""
+    joins it only when the question has one (the v4.1 user message names it; --as-of moves it).
+    The request version (#232, llm.request_version: "strict-1" for anthropic) joins it only when
+    given, so a strict Anthropic request never reuses a non-strict output; other keys unchanged."""
     parts = [q["id"], q["text"], prompt_version, snapshot, provider, model, chunk_ids]
     if max_tokens != 8000:
         parts = [*parts, {"max_tokens": max_tokens}]
@@ -435,6 +438,8 @@ def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model:
         parts = [*parts, {"parts": plan_parts}]
     if window:
         parts = [*parts, {"window": [str(window[0]), str(window[1])]}]
+    if request:
+        parts = [*parts, {"request": request}]
     blob = json.dumps(parts)
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
@@ -444,11 +449,15 @@ def parts_of(plan) -> list | None:
     return None if plan is None else [[p.id, p.text, list(p.firms)] for p in plan.parts]
 
 
-def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts: int, query: dict) -> str:
+def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts: int, query: dict,
+                   request: str | None = None) -> str:
     """Planner outputs (#214) are cached apart from answers: question, planner version, snapshot,
-    provider, model, part cap, the planner's output cap and the resolved query."""
+    provider, model, part cap, the planner's output cap and the resolved query; the request
+    version (#232) only when given."""
     from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
     parts = [q["id"], q["text"], PLANNER_VERSION, snapshot, provider, model, max_parts, PLANNER_MAX_TOKENS, query]
+    if request:
+        parts = [*parts, {"request": request}]
     return hashlib.sha256(json.dumps(parts, default=str, sort_keys=True).encode()).hexdigest()[:24]
 
 
@@ -477,6 +486,7 @@ class RealRunner:
         self.provider, self.max_calls, self.snapshot = provider, max_calls, snapshot
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
         self.max_tokens = llm.MAX_TOKENS
+        self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
         self.calls, self.reused, self.last_file = 0, 0, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
@@ -494,7 +504,8 @@ class RealRunner:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
-                        [h.chunk_id for h in hits], self.max_tokens, parts_of(plan), answer_window(query))
+                        [h.chunk_id for h in hits], self.max_tokens, parts_of(plan), answer_window(query),
+                        self.request_version)
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
@@ -516,7 +527,8 @@ class RealRunner:
         self.calls += 1   # counted before the call: a failed call still cost money
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                "max_tokens": self.max_tokens, "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+                "max_tokens": self.max_tokens, "request_version": self.request_version,
+                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
         try:
             answer, raw = answer_for(q["text"], query, hits, self.provider, plan=plan)
         except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
@@ -542,7 +554,7 @@ class RealRunner:
         cap = settings().planner_max_parts
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
             return planner.plan_question(query, self.provider, cap=cap)
-        key = plan_cache_key(q, self.snapshot, self.provider, self.model, cap, asdict(query))
+        key = plan_cache_key(q, self.snapshot, self.provider, self.model, cap, asdict(query), self.request_version)
         path = self.cache_dir / f"{q['id']}-plan-{key}.json"
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
@@ -556,7 +568,8 @@ class RealRunner:
         self.calls += 1   # counted before the call: a failed call still cost money
         meta = {"question_id": q["id"], "question": q["text"], "planner_version": planner.PLANNER_VERSION,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model, "max_parts": cap,
-                "max_tokens": planner.PLANNER_MAX_TOKENS, "query": asdict(query),
+                "max_tokens": planner.PLANNER_MAX_TOKENS, "request_version": self.request_version,
+                "query": asdict(query),
                 "at": dt.datetime.now().isoformat()}
         call: dict = {}   # #230: stop_reason and usage of the call, saved with every plan record
         try:

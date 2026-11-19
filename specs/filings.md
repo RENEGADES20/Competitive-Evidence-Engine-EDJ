@@ -46,9 +46,9 @@ From `config/metric_definitions.yaml`; quotes are verbatim there.
 | Firm | Advisor headcount | Includes / excludes | Net new assets (or closest) |
 |---|---|---|---|
 | EDJ | Count only, no definition (`EDJ-10K-2025#130`) | U.S. + Canada; trainees not stated; all employees | NNA incl. fees and commissions since 2026 (`EDJ-10Q-2026Q2#60`; 10-K 2025 wording differs, `#130`) |
-| MS | Not disclosed in corpus | n/a ("advisor-led" = a WM representative assigned, `MS-SUPP-2025Q4#35`) | NNA excl. fees and commissions (`MS-10K-2025#166`) |
-| SCHW | Not disclosed | Employee Financial/Wealth Consultants; RIAs are clients (`SCHW-10K-2025#18`, `#23`) | Closest: core net new client assets (`SCHW-10K-2025#119`) |
-| BAC | Not disclosed (Merrill inside GWIM; only firmwide headcount) | n/a (`BAC-10K-2025#246`) | Closest: GWIM net client AUM flows, AUM only (`BAC-10K-2025#249`) |
+| MS | "Wealth Management representatives" 15,950 at 4Q2020, the last count printed (`MS-SUPP-2020Q4#1`); none since 1Q2021. Closest current: Form ADV Part 1A, 13,000 MSSB employees performing investment advisory functions (`MS-ADV1A-2026#1`) | n/a ("advisor-led" = a WM representative assigned, `MS-SUPP-2025Q4#35`) | NNA excl. fees and commissions (`MS-10K-2025#166`) |
+| SCHW | Not disclosed (search in #216). Closest: Form ADV Part 1A, 4,127 Charles Schwab & Co. employees performing investment advisory functions (`SCHW-ADV1A-2026#1`) | Employee Financial/Wealth Consultants; RIAs are clients (`SCHW-10K-2025#18`, `#23`) | Closest: core net new client assets (`SCHW-10K-2025#119`) |
+| BAC | "Total wealth advisors" 18,916 at 4Q2023, the last count printed (`BAC-SUPP-2023Q4#2`); then ">15K Wealth Advisors", Merrill + Private Bank, as of 3Q25, rounded, no definition (`BAC-DECK-2025-investor-day#9`). Closest current: Form ADV Part 1A, 25,721 MLPF&S employees performing investment advisory functions (`MER-ADV1A-2026#1`) | 4Q2023: "advisors across all wealth management businesses in GWIM and Consumer Banking" (`BAC-SUPP-2023Q4#2`); GWIM, not Merrill alone (`BAC-10K-2025#246`) | Closest: GWIM net client AUM flows, AUM only (`BAC-10K-2025#249`) |
 | RJF | Employees + independent contractors; excludes RCS division (`RJF-10K-2025#228`, `#227`) | Includes trainees moved into production | Domestic PCG NNA, fees counted as outflows (`RJF-10K-2025#224`) |
 
 doc_id convention: `<ENTITY>-<FORM>-<PERIOD>` e.g. `BAC-10K-2025`, `RJF-10Q-2026Q2`.

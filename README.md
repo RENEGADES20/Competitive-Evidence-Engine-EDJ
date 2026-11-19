@@ -72,26 +72,27 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-17.
+As of 2026-11-19.
 
-**Corpus.** Snapshot `corpus-2026-11-17` (#200) holds all 219 documents in `main`'s manifest
-and 21,143 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
+**Corpus.** Snapshot `corpus-2026-11-19` (#216) holds all 224 documents in `main`'s manifest
+and 21,161 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
 metrics, investor-day and quarterly decks, call transcripts, press releases, 90 days of trade
-press (#57), advisor web pages and research reports. PDF passages carry the page they are on
-(#84); call transcripts are cut by speaker turn, so a question and its answer are separate
-passages (#107). The frozen Gate 3 corpus is `corpus-2026-11-16` (137 documents, #120).
+press (#57), advisor web pages and research reports. New in it: the last supplement pages that
+print an advisor count for Morgan Stanley (4Q2020) and Bank of America (4Q2023), and Form ADV
+Part 1A employee counts for the Morgan Stanley, Merrill and Schwab advisory firms, stored as
+verbatim page extracts (#216). PDF passages carry the page they are on (#84); call transcripts
+are cut by speaker turn, so a question and its answer are separate passages (#107). Gate 4 ran
+on `corpus-2026-11-17` (219 documents, #200); the frozen Gate 3 corpus is `corpus-2026-11-16`
+(137 documents, #120).
 
 **Retrieval check (automated, not a gate score).** `scripts/eval_run.py` runs the 30
 questions with the mock model and checks whether search returns the expected passages
-and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-17, snapshot
-`corpus-2026-11-17`, `--as-of 2026-11-17`, the app's search budget: 28 PASS / 2 FAIL (Q15,
-Q19); document recall 0.547 on the 17 tier-1 questions with an answer key in that window; gap
-questions refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. This is the new
-baseline (`evals/baselines/corpus-2026-11-17/`). Same check on `corpus-2026-11-16`: 27 PASS /
-3 FAIL (Q26 had no Raymond James passage in the last 90 days; trade press now fills it),
-recall 0.625. Trade-press articles and the re-cut transcripts take search slots from primary
-documents in single-firm questions (Q2, Q5, Q6, Q11, Q13, Q27, Q30); follow-ups: #199
-(transcripts) and a retrieval issue for trade press (drafted in #200).
+and whether gap questions stay clear of wrong evidence. Latest run: 2026-11-19, snapshot
+`corpus-2026-11-19`, `--as-of 2026-11-17`, the app's search budget and question planner:
+29 PASS / 1 FAIL (Q19); document recall 0.937 on the tier-1 questions with an answer key;
+gap questions refused correctly 5 of 5; no wrong-firm passage; 0 paid calls. This is the new
+baseline (`evals/baselines/corpus-2026-11-19/`); each question's status and recall equal the same check
+on `corpus-2026-11-17` (`evals/baselines/corpus-2026-11-17/`, kept for Gate 4).
 
 **Gate scores.** Each answer is scored at acting quality (one the project lead would forward
 with his name on it), per [docs/BRIEF.md](docs/BRIEF.md). Gate 3, checked in week 8 at the

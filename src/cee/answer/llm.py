@@ -21,6 +21,16 @@ TOOL_NAME = "submit_answer"
 # rule; a test checks it). The eval's cache key includes the cap when it differs from 8000, so a
 # run at 20000 never reuses an output made at 8000. A cut at the cap is an invalid output.
 MAX_TOKENS = 20000
+# Anthropic request version (#232): both tools (submit_answer, submit_plan) are sent with
+# `strict: true`, so the API enforces their input schemas. The eval's answer and plan cache keys
+# carry it for the anthropic provider only, so a strict request never reuses a non-strict output;
+# OpenAI keys are unchanged (its requests were already strict). Prompt texts are unchanged.
+ANTHROPIC_REQUEST_VERSION = "strict-1"
+
+
+def request_version(provider: str) -> str | None:
+    """The request version that joins the eval's cache keys (#232): anthropic only."""
+    return ANTHROPIC_REQUEST_VERSION if provider == "anthropic" else None
 
 
 class ModelOutputError(RuntimeError):
@@ -37,6 +47,9 @@ class ModelOutputError(RuntimeError):
 
 
 CUT_REASONS = ("max_tokens", "length")   # Anthropic stop_reason / OpenAI finish_reason at the cap
+# #232: an API refusal can stop a tool input mid-way, and strict mode's schema guarantee does not
+# hold then. Not the model's own answer behavior "refuse" (answerable false), which is valid.
+REFUSAL = "refusal"
 
 
 def check_output(answer: Answer, raw=None, provider: str = "") -> Answer:
@@ -177,7 +190,9 @@ def anthropic_request(question: str, hits: list[Hit], plan=None, window=None) ->
         "max_tokens": MAX_TOKENS,
         "system": SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
                                   " do not answer in plain text.",
-        "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.",
+        # strict (#232): the API enforces the schema on the tool input (llm_output_schema already
+        # meets strict mode's rules; a test checks it). It does not force a call: no call is invalid.
+        "tools": [{"name": TOOL_NAME, "description": "Submit the cited answer.", "strict": True,
                    "input_schema": llm_output_schema()}],
         # Current Claude models reject forced tool_choice; the prompt requires the tool instead.
         "tool_choice": {"type": "auto"},
@@ -219,6 +234,9 @@ def _anthropic(question: str, hits: list[Hit], client=None, plan=None, window=No
     raw = block.input
     if stop in CUT_REASONS:   # #230: a cut answer is never trusted, even when it validates
         raise ModelOutputError(f"Model output cut at max_tokens ({usage['output_tokens']} output tokens)",
+                               [_block_dict(b) for b in resp.content], "anthropic", stop, usage)
+    if stop == REFUSAL:       # #232: never trusted, even when the tool input validates
+        raise ModelOutputError("Model output stopped by refusal (stop_reason refusal)",
                                [_block_dict(b) for b in resp.content], "anthropic", stop, usage)
     try:
         answer = Answer(**raw, llm_called=True)
