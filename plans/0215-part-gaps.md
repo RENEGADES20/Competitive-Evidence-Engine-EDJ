@@ -367,7 +367,7 @@ not re-rolled. No other call path.
   prompt names no question ID and shares no 6-word run with any question text (no exception; the
   recency example is reworded) or `passes_if` (standard wording exempt: Q28, Q30, as today); the
   v3 grid-dimension sentence is gone; the mock's claims carry their hit's part id.
-- [x] (no code gap on the v3 answers: every part covered by citation, see 04:35) Replay (0 calls) tabled: per part of Q3, Q7, Q12, Q25, Q28 under #224's v3 answers, covered
+- [x] (no code gap on the v3 answers: every part covered by citation, see 03:23) Replay (0 calls) tabled: per part of Q3, Q7, Q12, Q25, Q28 under #224's v3 answers, covered
   or code gap; Gate 4 Q7 cells moved.
 - [x] Mock (`.eval-runs/0215-mock`): 30/30 chunk lists identical to the baseline, refusal gap 5/5,
   keyed 22/22, 0 forbidden, no PASS -> FAIL.
@@ -393,7 +393,7 @@ not re-rolled. No other call path.
 - [ ] (open: Q1, Q30 PASS; Q22 FAIL, empty model output; Q26 FAIL borderline, grouped by part not newest first) Real: Q1, Q22, Q26, Q30 keep their Gate 4 verdicts (PASS) judged against `passes_if`, and
   their expected behavior.
 - [x] Specs, ARCHITECTURE and ADR-020 updated; verify-cee recipe and driver updated in this PR.
-- [ ] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes.
+- [x] `gh pr checks <PR#>` all green on the PR head before `/finish-task` completes (PR #229, pytest pass on 5e75491).
 
 ## Progress log
 - 2026-11-19 03:04 - plan written. Branch `tl/215-part-gaps` from `main` bdc6523; DB
@@ -402,7 +402,7 @@ not re-rolled. No other call path.
   CLAUDE.md, ADR-012/019/020, NEXT items 3-5, the answer and planner code, eval_run, verify-cee
   ask-answer / gap-path, Gate 4 Q3 / Q7, the #224 real plans and answers (Q3, Q7, Q25), the
   plan-v2 cache entries (5 reusable), the Gate 4 Q7 raw with its 3 uncited cells.
-- 2026-11-19 03:30 - plan revised after review (issuecomment-7004788998, 1st blocking return):
+- 2026-11-19 03:14 - plan revised after review (issuecomment-7004788998, 1st blocking return):
   (1) leak: v3's recency example "since the start of the year" shares a 6-word run with Q27's
   text (confirmed offline with `_grams`); reworded (option a), the question-text check covers the
   whole v4 prompt with no exception, Q26 is the rewording's check. (2) Code gap and empty-part line
@@ -414,10 +414,10 @@ not re-rolled. No other call path.
   over-count note; TL pre-approval quoted, actual `real_calls` / `reused` reported. Re-read: the
   verify-cee part-gap check and the real "no uncited claim" line made derivable / reportable so
   they cannot fail on correct code.
-- 2026-11-19 03:45 - plan approved by the reviewer agent (issuecomment-7004871527); its two
+- 2026-11-19 03:16 - plan approved by the reviewer agent (issuecomment-7004871527); its two
   non-blocking notes applied (pool-chosen wording in the Mock text / spec / recipe; empty-part line
   "listed under another part or the research passages").
-- 2026-11-19 04:20 - steps 1-4: schema (`part_id`, `Gap.flags`, `Gap.claim_text`), prompt v4,
+- 2026-11-19 03:22 - steps 1-4 (commit d41d3ff): schema (`part_id`, `Gap.flags`, `Gap.claim_text`), prompt v4,
   grouped user message, mock part ids, `move_uncited_cells`, `check_parts`, `part_coverage`,
   `answer_for(plan=)`, trace texts, gap chips, eval `cache_key` parts + `part_coverage` in real
   records; `tests/test_part_check.py` (26 tests, fake `registry_lookup`), prompt tests (v4, parts
@@ -425,7 +425,7 @@ not re-rolled. No other call path.
   the whole prompt). Found while wiring: in a one-part plan the citation fallback must count every
   non-research / non-peer passage for p1 (test fakes and passage mode carry no `part_id`); fixed in
   `part_coverage`. `pytest -q` 660 passed. Merged `origin/main` (CI hotfix #227, 293e3af).
-- 2026-11-19 04:35 - step 5 replay (`D:\ALLPROJECTS\EDJ\cache\ev215\replay.py`, `replay.txt`, 0 calls):
+- 2026-11-19 03:23 - step 5 replay (`D:\ALLPROJECTS\EDJ\cache\ev215\replay.py`, `replay.txt`, 0 calls):
   all five #224 chunk lists reproduced; on #224's v3 answers **every part is covered by the citation
   fallback** (Q3 p1-p4, Q7 p1-p3, Q12 p1-p4, Q25 p1-p3, Q28 p1-p3), so the code adds no gap there
   (no over-count happened). Finding: for v3 outputs the fallback is too lenient to catch what
@@ -433,18 +433,18 @@ not re-rolled. No other call path.
   anything); the check bites through the model's own `part_id`s (v4) or for parts nobody cites.
   Gate 4 Q7: 3 uncited cells -> 0, gaps 3 -> 3 (each matching model gap flagged `uncited_cell`
   with `claim_text`). User messages `user-message-Q7.txt` / `-Q25.txt` written.
-- 2026-11-19 04:40 - step 6 mock (`.eval-runs/0215-mock`, `...\ev215\mock-diff.txt`): 30/30 chunk
+- 2026-11-19 03:24 - step 6 mock (`.eval-runs/0215-mock`, `...\ev215\mock-diff.txt`): 30/30 chunk
   lists identical (same order), no status change, 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed
   22/22, 0 forbidden, recall@pool 0.814 / @final 0.654, 0 real calls. Step 7 docs: spec, ui spec,
-  ARCHITECTURE, ADR-020. Step 8 waits: port 8599 held by the wt-212 agent's Streamlit (pid 20452).
-- 2026-11-19 03:30 - step 8 verify-cee (port 8599 free after the wt-212 agent's run; nothing of
+  ARCHITECTURE, ADR-020 (e1824c5, 03:25). Step 8 waits: port 8599 held by the wt-212 agent's Streamlit (pid 20452).
+- 2026-11-19 03:30 - step 8 verify-cee (03:27 first run, 03:30 full run) (port 8599 free after the wt-212 agent's run; nothing of
   theirs touched): first run ask-answer FAIL in the new step (psql output with non-ASCII passage
   text could not be decoded by the console code page: `stdout` None); driver reads the row as
   base64 (2d7fd71); full run all 9 features PASS, `.verify-runs/20261119-033009-2d7fd71`
   (two-firm question: parts p1, p2; mock cited p1 only; one `part_gap` gap for p2, "Not answered
   from the evidence retrieved for: ...", shown with its chip; EDJ question: none).
-- 2026-11-19 03:40 - step 9 real run (`.eval-runs/0215-real`, raw copied to
-  `D:\ALLPROJECTS\EDJ\cache\ev215eal`, tables + judgement `...\ev215eal-table.txt`, answer dump
+- 2026-11-19 03:38 - step 9 real run (started 03:32, after every mock check; logged 03:40) (`.eval-runs/0215-real`, raw copied to
+  `D:/ALLPROJECTS/EDJ/cache/ev215/real`, tables + judgement `.../ev215/real-table.txt`, answer dump
   `answers-dump.txt`): **13 real calls** (4 planner: Q1, Q22, Q26, Q30; 9 answer), **reused 5**
   (the plan-v2 outputs of Q3, Q7, Q12, Q25, Q28), claude-sonnet-5-5, prompt v4; 0 invalid, 0
   fallback. Every part of Q3, Q7, Q12, Q28 (and Q1, Q25, Q26, Q30) is covered by the model's own
