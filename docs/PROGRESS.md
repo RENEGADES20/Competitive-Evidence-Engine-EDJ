@@ -148,6 +148,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-19 | Planner prompt v2 + neighbour-phrase guard + paid-call-proof tests (ADR-020 amended); real: Q3 gets a concede-ground part (coverage 0.667 -> 1.0), Q28 recall@final 0.75 -> 1.0, Q12 unchanged (#224) (#226) | Q25 still retrieves 2 dividend-payout chunks via the bare word "payout"; Q7's RJF part lacks training / pay words (TL) | bare "payout" rule or budget/ranking with #215 |
 | 2026-11-19 | CI green again: test_no_paid_calls collects without httpx (#224 follow-up) (#227) | none | - |
 | 2026-11-19 | #215 prompt v4 + per-part code check: every plan part has a cited claim or a gap (code-built `part_gap` otherwise), uncited grid cells moved to gaps; real: Q3, Q7 (borderline), Q12, Q28 PASS (were Gate 4 FAIL), 13 calls (#229) | Q25 has no gaps; Q22 empty output, Q26 not newest first | save stop_reason and treat empty answers as invalid; newest-first across parts for windowed questions; Q25 gaps |
+| 2026-11-19 | #230 answer v4.1: cap 20000 (ADR-019), stop_reason + usage saved on every real output, cut or empty outputs invalid, no SDK retries, newest first across parts in time windows; real: Q26 newest first PASS, Q1 / Q24 PASS (both above 8000 output tokens), 7 calls (#231) | Q22 INVALID_OUTPUT: near-empty tool call `{"answer": null}` on a 103k-token input, not a cut | decide the Q22 fix (smaller five-firm input or a schema / prompt change for the tool call) before #217 |
 
 ## Weekly score (from W6)
 
