@@ -298,6 +298,13 @@ def score_key(key: dict, hits, forbidden_ids: list[str], as_of: dt.date | None =
             "source": key.get("source", "expected_chunks.yaml")}
 
 
+def _median(xs: list):
+    if not xs:
+        return None
+    xs, n = sorted(xs), len(xs)
+    return xs[n // 2] if n % 2 else round((xs[n // 2 - 1] + xs[n // 2]) / 2, 3)
+
+
 def summarize(records: list[dict]) -> dict:
     """Tier-1 recall (mean over questions with a key) and refusal accuracy (gap questions, all keyed)."""
     tier1 = [r for r in records if r.get("tier") == 1]
@@ -336,6 +343,12 @@ def summarize(records: list[dict]) -> dict:
             "with_rows": len(staged), "tier1_with_rows": len(staged1),
             "passages": sum(r.get("passages", 0) for r in records),
             "tokens_est": sum(r.get("tokens_est", 0) for r in records),
+            # #213: tokens per question (all hits, what the model reads), peers apart, search time
+            "tokens_median": _median([r["tokens_est"] for r in records if "tokens_est" in r]),
+            "tokens_max": max((r["tokens_est"] for r in records if "tokens_est" in r), default=None),
+            "peer_tokens": sum(r.get("peer_tokens", 0) for r in records),
+            "search_s_median": _median([r["search_s"] for r in records if r.get("search_s") is not None]),
+            "search_s_max": max((r["search_s"] for r in records if r.get("search_s") is not None), default=None),
             "refusal_gap": accuracy([r for r in keyed if r.get("expected_behavior") in GAP_BEHAVIORS]),
             "refusal_all": accuracy(keyed)}
 
@@ -380,11 +393,22 @@ def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict 
             "dup": duplicates([h.text for h in hits if getattr(h, "text", None) is not None])}
 
 
-def prompt_size(k: int, hits) -> dict:
+def prompt_size(k: int | None, hits, budget_tokens: int | None = None, peer_ids=()) -> dict:
     """What the model is handed (#181): the budget k, passages retrieved, their characters and the
-    estimated tokens, characters / 4 (#210)."""
+    estimated tokens, characters / 4 (#210). Token budget (#213): `budget_tokens` (None in passage
+    mode); the theme peers' hits (#205, ids in `peer_ids`) are outside the budget, so they are
+    counted apart and `budgeted_*`, `max_hit_chars` and `fill` cover the other hits only."""
+    peer_ids = set(peer_ids)
     chars = sum(len(h.text) for h in hits)
-    return {"k": k, "passages": len(hits), "chars": chars, "tokens_est": round(chars / 4)}
+    peers = [h for h in hits if h.chunk_id in peer_ids]
+    budgeted = [h for h in hits if h.chunk_id not in peer_ids]
+    b_chars = sum(len(h.text) for h in budgeted)
+    p_chars = chars - b_chars
+    return {"k": k, "passages": len(hits), "chars": chars, "tokens_est": round(chars / 4),
+            "budget_tokens": budget_tokens, "budgeted_chars": b_chars, "tokens_budgeted": round(b_chars / 4),
+            "peer_passages": len(peers), "peer_chars": p_chars, "peer_tokens": round(p_chars / 4),
+            "max_hit_chars": max((len(h.text) for h in budgeted), default=0),
+            "fill": round(b_chars / (4 * budget_tokens), 3) if budget_tokens else None}
 
 
 def _score(r: dict) -> tuple:
@@ -399,8 +423,12 @@ def compare(record: dict, base: dict | None) -> str:
     return "IMPROVED" if a > b else "REGRESSED" if a < b else "UNCHANGED"
 
 
-def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list) -> str:
-    blob = json.dumps([q["id"], q["text"], prompt_version, snapshot, provider, model, chunk_ids])
+def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
+              max_tokens: int = 8000) -> str:
+    """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
+    key, and a run with another output cap never reuses one made under 8000."""
+    parts = [q["id"], q["text"], prompt_version, snapshot, provider, model, chunk_ids]
+    blob = json.dumps(parts if max_tokens == 8000 else [*parts, {"max_tokens": max_tokens}])
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
 
@@ -408,6 +436,7 @@ class RealRunner:
     """Model answers with a hard call cap; every output cached and reused (never re-rolled)."""
 
     def __init__(self, provider: str, max_calls: int, snapshot: str, run_dir: Path, cache_dir: Path = CACHE):
+        from cee.answer import llm
         from cee.answer.prompt import PROMPT_VERSION
         from cee.ask import model_name
 
@@ -415,6 +444,7 @@ class RealRunner:
             raise SystemExit("--real needs LLM_PROVIDER=anthropic or openai; it is mock.")
         self.provider, self.max_calls, self.snapshot = provider, max_calls, snapshot
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
+        self.max_tokens = llm.MAX_TOKENS
         self.calls, self.reused, self.last_file = 0, 0, None
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
@@ -431,7 +461,7 @@ class RealRunner:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
-                        [h.chunk_id for h in hits])
+                        [h.chunk_id for h in hits], self.max_tokens)
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
@@ -447,11 +477,12 @@ class RealRunner:
         self.calls += 1   # counted before the call: a failed call still cost money
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+                "max_tokens": self.max_tokens, "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
         try:
             answer, raw = answer_for(q["text"], query, hits, self.provider)
         except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
-            self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw})
+            self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
+                              "stop_reason": getattr(e, "stop_reason", None)})
             return None, "invalid"
         self._save(path, {**meta, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
@@ -540,7 +571,11 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"({summary['tier1_with_rows']}): recall@pool {summary['tier1_recall_pool']}, recall@final "
              f"{summary['tier1_recall_final']}  ",
              f"**Prompt size**: {summary['passages']} passages, ~{summary['tokens_est']} tokens (characters / 4) "
-             f"over {len(records)} questions  ",
+             f"over {len(records)} questions; per question median {summary.get('tokens_median')}, max "
+             f"{summary.get('tokens_max')}; theme peers ~{summary.get('peer_tokens', 0)} tokens (outside the budget)  ",
+             f"**Settings** (#213): pool {meta.get('pool_per_group', '-')} per firm and document type, token budget "
+             f"{meta.get('token_budget') or 'none (passage rule)'}; search time per question median "
+             f"{summary.get('search_s_median')} s, max {summary.get('search_s_max')} s  ",
              f"**Refusal accuracy**: gap questions ({gap_ids or 'none'}) {_frac(rg['ok'], rg['of'])}; "
              f"all questions with a key {_frac(ra['ok'], ra['of'])}  ",
              f"**Constants**: {_constants_text(meta.get('constants'))}  ",
@@ -824,20 +859,24 @@ def cpu_text() -> str:
 
 def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search, resolve, run_id, snapshot,
              warmup_s, doc_dates) -> tuple[list[dict], dict]:
-    from cee.retrieve.fts import PoolTrace, budget
+    from cee.retrieve import fts
+    from cee.retrieve.fts import PoolTrace, budget, budget_tokens
     records = []
     for q in bank:
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
-        k = budget(query) if args.k is None else args.k  # budget() includes the peers' slots (#205)
-        # search() adds the theme peers' slots on top of the k it is given, as the app does
+        # #213: without --k, search() takes the app's rule (passages, or tokens with TOKEN_BUDGET);
+        # an explicit k is the passage rule. budget() includes the peers' slots (#205).
+        # On exp/hybrid only fts takes the token budget; the hybrid modes keep the passage budget.
+        b_tokens = budget_tokens(query) if args.k is None and retrieval_mode == "fts" else None
+        k = args.k if args.k is not None else (budget(query) if b_tokens is None else None)
         trace = PoolTrace()  # #210: the candidate pools before select(), recording only
-        t = time.perf_counter()
-        hits = search(query, k=args.k, mode=retrieval_mode, trace=trace)  # k None: budget(q) - peer_slots(q)
-        search_s = round(time.perf_counter() - t, 3)
+        t0 = time.perf_counter()
+        hits = search(query, k=args.k, mode=retrieval_mode, trace=trace)  # k None: the app's rule (#213)
+        search_s = round(time.perf_counter() - t0, 3)
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates,
                      trace.ids())
-        r |= prompt_size(k, hits)
-        r["search_s"] = search_s
+        r |= prompt_size(k, hits, b_tokens, trace.peers)
+        r |= {"search_s": search_s, "unattached": list(trace.unattached)}
         if real:
             r = apply_real(r, *real.answer(q, query, hits), real.last_file)
         if args.baseline:
@@ -853,6 +892,7 @@ def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, search,
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit,
             "k": "by question" if args.k is None else args.k, "min_coverage": args.min_coverage,
+            "pool_per_group": fts.POOL_PER_GROUP, "token_budget": fts.TOKEN_BUDGET if args.k is None and retrieval_mode == "fts" else None,
             "mode": "real" if real else "mock", "retrieval_mode": retrieval_mode, "warmup_s": warmup_s,
             "baseline": args.baseline, "as_of": args.as_of.isoformat(), "cpu": cpu_text(),
             "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
