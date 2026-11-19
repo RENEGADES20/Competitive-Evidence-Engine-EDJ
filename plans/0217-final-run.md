@@ -272,3 +272,24 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   request only; no commit between step 1 and the end of step 3. 0 calls.
 - 2026-11-19 - plan approved (issuecomment-7010726375, reviewed c206cbe); its two non-blocking notes
   applied (per-attempt "called"; rule (a) wording). Execution starts after this commit.
+- 2026-11-19 07:37 - step 1 at HEAD 99ac877 (`ev217\asof-check.txt`): `v4.1 plan-v2 20000 strict-1`;
+  224 documents / 21,161 chunks; 0 documents after 2026-11-17; 2026-08-19..20: `RJF-TRADE-2026-08-19-IN-01`
+  (and one SCHW item); the five #216 documents with the expected dates, all `source`; 0 cache
+  entries for `corpus-2026-11-19`.
+- 2026-11-19 07:38 - step 2 mock (`.eval-runs\0217-mock`, 0 calls): 29 PASS / 1 FAIL (Q19), refusal
+  gap 5/5, keyed 22/22, 0 forbidden, no status change; 30/30 chunk lists identical to the baseline
+  (`ev217\mock-diff.txt`).
+- 2026-11-19 07:39-07:52 - step 3 attempt 1 (`.eval-runs\0217-real`, HEAD 99ac877 before and after):
+  stopped at the Q14 answer call with `400 invalid_request_error: credit balance is too low`
+  (req_011ChCQ27M4QAjWSyxH3Z69q), no output, no `report.json`. 28 calls (Q1-Q13 planner + answer,
+  Q14 planner, the rejected Q14 answer), 27 new raw files (`ev217\real\`, `ev217\attempt1-stop.txt`).
+  TL decision on #217 (issuecomment-7011133159): option (ii), a stop outside the model's work; Q14's
+  answer is called again in the resume; the rejected request counts as 1 call with 0 output.
+- 2026-11-19 13:49-14:06 - step 3 attempt 2 (`.eval-runs\0217-real-2`, `--max-calls 34`, HEAD 99ac877
+  before and after, exit 0): `real_calls` 33 (Q14 answer + Q15-Q30 planner and answer), reused 27
+  (Q1-Q13, Q14 plan), 33 new raw files (`ev217\real-2\`). Total 61 calls (60 with output + the
+  rejected one). No invalid output, no planner fallback, every `stop_reason` `tool_use`.
+- 2026-11-19 14:09 - step 4 blind verdicts written before opening any Gate 4 or W10 verdict for this
+  run: `ev217\verdicts-blind.json`, sha256
+  `ca89a9e4e70fb65de02220c84314d3def4ad051fa0605727990c56a44d5e958f`. Blind score 25/30 (tier 1 14/18).
+  Citation check: every cited chunk is in its retrieved set and in the database.
