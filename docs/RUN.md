@@ -240,7 +240,7 @@ The final snapshot is `corpus-2026-11-17` (219 documents). Gate 4 scored **21/30
 scores and the known gaps: [docs/results/gate4-report.md](results/gate4-report.md). What to
 build next: [docs/NEXT.md](NEXT.md).
 
-**Ask a question with the real model** (paid: about one call per question; CLAUDE.md "Paid API
+**Ask a question with the real model** (paid: about two calls per question, the question planner and the answer, ADR-020; CLAUDE.md "Paid API
 calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
 `.env` stays on mock:
 ```powershell

@@ -27,7 +27,8 @@ Page "Ask"
   while answering (after "Ask" is clicked, before the answer shows):
           a progress bar plus a live step trace saying what the system is doing now, e.g.
             Reading the question: firms MS, EDJ; mode compare; window last 4 quarters
-            Searching the corpus: 14 passages from 6 documents
+            Planning the search (anthropic, one call): 2 parts: p1 MS; p2 EDJ
+            Searching the corpus: 14 passages from 6 documents in 2 parts
             Asking the model (anthropic, one call)   | or: No passages found, no model call
             Checking citations: 9 matched, 1 flagged
             Adding caveats and gaps
@@ -54,9 +55,9 @@ Page "Coverage"
 - Coverage page shows thin areas for all five firms and themes.
 - Feedback writes a row to `query_feedback` linked to the `query_log` row.
 - After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
-  pipeline stages (resolve, retrieve, model call or skip, citation check, caveats/gaps). Each
+  pipeline stages (resolve, plan (#214, ADR-020), retrieve, model call or skip, citation check, caveats/gaps). Each
   step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
-  The trace adds no extra LLM call (still one call per answer).
+  The trace adds no extra LLM call (it reports the planner call and the answer call; at most 2 per question, ADR-020).
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

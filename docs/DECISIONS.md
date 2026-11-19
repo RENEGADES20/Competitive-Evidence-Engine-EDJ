@@ -297,6 +297,8 @@ Consequences: Cost and latency per question can grow up to 5x for split question
 must stay reproducible on the mock provider. More calls mean more to log and debug per
 answer. README, `docs/ARCHITECTURE.md`, `specs/answer-citations.md`, `specs/ui.md` and code
 docstrings still describe the one-call code until the feature issue changes them.
+The first feature that uses it is the question planner (#214, ADR-020): one planner call and one
+answer call, at most 2 per question.
 
 ## ADR-013: Retrieval budget by number of firms; Merrill counted once
 Status: Accepted (tech lead, 2026-11-17, #181); replaces the fixed k=20 of `specs/retrieval.md`
@@ -583,3 +585,78 @@ Q7, Q15, Q20 answer; no question cites its own Gate 4 missed passage (none of th
 for its question), while Q7, Q20 and Q29 cite other questions' missed passages
 (`RJF-PR-web-affiliation-options#1`, `EDJ-10K-2025#88`, `MS-10K-2025#153`). Grid and real-run
 evidence in the #213 PR.
+
+## ADR-020: Question planner: one planner call splits a question into parts, each part searched
+Status: Proposed (TL, #214, 2026-11-19); the first use of ADR-012's multi-call rule
+Context: #210 and #213 showed that 7 of the 8 passages Gate 4 named as missed were never
+candidates, and that a larger pool and budget (ADR-019) still left Q7, Q15, Q20 and Q25's own
+missed passages out: the question's words do not match the words of the passage. Four Gate 4
+failures are a part of the question that disappears (Q3 "where they concede ground", Q12 "Edward
+Jones's cost structure", Q28 "net headcount is not attrition", Q7's dimensions), and in multi-firm
+questions one firm's passages crowd out another's (Q7, Q25). One search over the whole question
+cannot target each part.
+Decision:
+- **When a question is split**: every question that reaches retrieval gets a plan. With a real
+  provider (`LLM_PROVIDER` anthropic / openai) and `PLANNER=on` (default), one planner call
+  (`src/cee/retrieve/planner.py`, `PLANNER_VERSION = plan-v1`, the answer model, tool
+  `submit_plan`, `max_tokens` 2000) writes `parts: [{id, text, firms, keyword_query}]`. Otherwise
+  (mock provider, `PLANNER=off`) the **rule plan**: one part per named covered firm when the
+  question names 2-4 firms, else one whole-question part. Five-firm questions (Q10, Q11, Q15,
+  Q21-Q25) stay one part in the rule plan because five firms exceed the part cap of 4; the issue's
+  "one part per named firm" holds for 2-4 firms. Passage mode (`TOKEN_BUDGET = None`, an explicit
+  k) is one whole-question part, no planner call.
+- **Part cap**: `PLANNER_MAX_PARTS = 4` (setting, 1-5).
+- **Code decides the scope**: firms must be ones `resolve()` found (unknown firms, firms not asked
+  and firms we hold no documents for are dropped; a resolved firm the plan left out comes back as a
+  whole-question part, or joins the part with the fewest firms at the cap); extra parts are cut;
+  empty search words become the part's text; ids are `p1..pn`. The window, themes, firm filter, date
+  range and keywords are not in the planner's schema, so it cannot change them. Every part searches
+  a copy of the resolved query with its firms and words, so entity / segment (Merrill = MER or BAC
+  GWIM/Merrill), window, date range, keywords and the whole question's doc-type scope are SQL
+  filters in every part.
+- **Budget split** (ADR-019's caps unchanged: T = 40k, five firms 60k): the research part (tier 5
+  on the theme, at most THEME_K = 4 passages per question, as ADR-019) is selected **once per
+  question** before the parts, R = its tokens; the parts are searched in order, part i of n gets
+  max(0, T - R - used) / (n - i) (equal shares; what a part leaves flows to the parts after it);
+  a chunk kept earlier is excluded from later pools and from the answer-turn map; the theme peers
+  (ADR-018) are searched once, after the parts, on top of the budget. Budgeted total (parts +
+  research) <= max(T, R) + one chunk. A one-part plan returns exactly what `search()` returned
+  before. Hits carry `part_id` (`p1..pn`, `research`, `peers`).
+- **Calls**: planner 1 + answer 1 = at most 2 per question (ADR-012 allows 5). 0 planner calls on
+  the mock provider, with `PLANNER=off`, in passage mode, or when code skips search (only firms we
+  hold no documents for; a firm filter that leaves no named firm). An unusable planner output (no
+  tool call, wrong shape, cut at `max_tokens`) or a failed call (API / network error) falls back to
+  the rule plan; it is logged and the call counts; it is never re-rolled. The answer prompt is
+  unchanged (v3, no part labels; the per-part answer check is #215).
+- **Log**: `query_log.filters` holds the resolved query plus `plan` (parts, corrections, source,
+  error, per-part share / passages / tokens) and `llm_calls` {planner, answer}; `llm_calls` counts
+  paid provider calls, so a mock row reads 0 / 0 although the trace names the mock's answer step
+  "(mock, one call)". No schema change. The Ask page trace has a "plan" stage (7 steps). The eval
+  caches planner outputs apart from answers (key: question, planner version, snapshot, provider,
+  model, part cap, planner `max_tokens`, resolved query) and counts both calls against `--max-calls`.
+Consequences: mock, `corpus-2026-11-17`, `--as-of 2026-11-17`, against the #213 pick: 25 one-part
+questions return identical lists; Q7, Q8, Q9, Q12, Q28 (2-3 firms) are split per firm. 29 PASS / 1
+FAIL (Q19) unchanged, refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS -> FAIL; recall@pool
+0.814 / recall@final 0.654, tier 1 0.903 / 0.808, all unchanged; research passages per question
+unchanged (Q7, Q19, Q21, Q28: 4; Q10: 2). Tokens per question median 33,643 -> 28,311, max 60,322
+unchanged: Q12's Edward Jones part stops at 7k of its 20k share (its eligible pool runs out) while
+Schwab, searched first, keeps its 20k share; the share Edward Jones leaves is not handed back to an
+earlier part. A real provider pays one more, small call per question (about 1k input, up to 2k
+output tokens).
+Real check (#214, 12 calls: planner + answer for Q3, Q7, Q12, Q15, Q25, Q28, claude-sonnet-5-5,
+answer prompt v3, planner plan-v1; no output truncated or rejected, no fallback, no correction by
+code): every question used 2 calls. Q12 (Schwab's acquisition channels and economics, its claims on
+acquisition cost, Edward Jones's costs) and Q28 (EDJ attrition and its definition, Merrill's
+attrition, net advisor headcount change in the search words) got a part or search words for every
+asked part; Q3 got one part with no words for competitive pressure or conceded ground, and Q7's four
+parts (one per firm plus competitive pressure) name the payout philosophy only as compensation words
+and the training pipeline only for Merrill. Named passages: Q15 `SCHW-10K-2025#27` is now retrieved
+and cited (was lost in select); Q25 `RJF-PR-web-affiliation-options#1` and `RJF-10K-2025#10/#11` are
+now retrieved and cited, `MS-10K-2025#153` became a candidate (Q7 and Q25) but is not selected,
+`EDJ-10K-2025#30/#264` stay candidates and `SCHW-10Q-2026Q2#25` dropped from the final set to the
+pool. Q25's Schwab-and-Raymond-James part brought two `must_not_return` Schwab deck chunks into the
+retrieved set (not cited), so its refusal check fails at retrieval; Q3 lost its Advisor Services
+10-K passage and Q7 its MS and RJF trade-press passages; Q28 reads 20k tokens (was 12.7k) with
+Merrill's part searching "attrition ... departures". Behaviors: Q3, Q7, Q15 `answer`, Q12
+`answer_with_boundary`, Q28 `gap_with_adjacent`, Q25 `answer` with empty gaps (as at the #213 pick;
+#215). Evidence in the #214 PR.

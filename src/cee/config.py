@@ -29,6 +29,8 @@ class Settings:
     corpus_share_path: str
     edgar_identity: str
     mock_delay_s: float = 0.0  # verify-cee only: the mock waits like a real model would (#80)
+    planner: bool = True        # question planner (#214, ADR-020): off = the rule plan, no planner call
+    planner_max_parts: int = 4  # most parts a question is split into (1-5)
 
 
 def settings() -> Settings:
@@ -40,6 +42,8 @@ def settings() -> Settings:
         corpus_share_path=os.getenv("CORPUS_SHARE_PATH", "").strip(),
         edgar_identity=os.getenv("EDGAR_IDENTITY", "").strip(),
         mock_delay_s=float(os.getenv("MOCK_DELAY_S", "0") or 0),
+        planner=os.getenv("PLANNER", "on").strip().strip('"').strip().lower() not in ("off", "false", "0", "no"),
+        planner_max_parts=min(5, max(1, int(os.getenv("PLANNER_MAX_PARTS", "4").strip() or 4))),
     )
 
 
