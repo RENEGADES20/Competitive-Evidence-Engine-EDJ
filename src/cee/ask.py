@@ -1,4 +1,5 @@
-"""End-to-end: resolve -> retrieve -> one LLM call (or none) -> validate -> log.
+"""End-to-end: resolve -> plan (at most one planner call, #214, ADR-020) -> retrieve each part ->
+one answer call (or none) -> validate -> log. At most 2 LLM calls per question (ADR-012 allows 5).
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 """
@@ -17,7 +18,8 @@ from cee.answer.validate import (check_citations, coverage_note, empty_retrieval
                                  fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
-from cee.retrieve.fts import Hit, Query, apply_filters, resolve, search
+from cee.retrieve.fts import Hit, Query, apply_filters, resolve
+from cee.retrieve.planner import Plan, describe_plan, plan_question, rules_plan, search_parts
 
 
 @dataclass
@@ -26,13 +28,14 @@ class Result:
     hits: list[Hit]
     answer: Answer
     query_id: int | None = None
+    plan: Plan | None = None
 
 
 Progress = Callable[[str, str, str], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
 
-STAGES = ("resolve", "search", "model", "check", "caveats", "log")
+STAGES = ("resolve", "plan", "search", "model", "check", "caveats", "log")
 
 
 class _Trace:
@@ -76,12 +79,16 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     with t.stage("resolve", "Reading the question"):
         query = apply_filters(resolve(question), **(filters or {}))
     t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
+    with t.stage("plan", "Planning the search"):
+        plan = plan_question(query, provider)
+    t.report("plan", "done", plan_text(plan))
     with t.stage("search", "Searching the corpus"):
-        hits = search(query)
+        hits = search_parts(query, plan)
     docs = len({h.doc_id for h in hits})
-    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}")
+    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
+                               f" in {_n(len(plan.parts), 'part')}")
     answer, _raw = answer_for(question, query, hits, provider, trace=t)
-    result = Result(query, hits, answer)
+    result = Result(query, hits, answer, plan=plan)
     if log:
         with t.stage("log", "Saving the query"):
             result.query_id = _log(result, provider)
@@ -120,6 +127,17 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
     return answer, raw
 
 
+def plan_text(plan: Plan) -> str:
+    """The plan stage's trace line: who planned, how many calls, the parts (#214)."""
+    if plan.source == "rules":
+        return f"Planning the search (rules, no model call): {describe_plan(plan)}"
+    head = f"Planning the search ({plan.provider}, one call)"
+    if plan.source == "fallback":
+        return f"{head}: output not usable ({(plan.error or '')[:120]}), using the rule plan: {describe_plan(plan)}"
+    fixes = f" ({_n(len(plan.corrections), 'correction')} by code)" if plan.corrections else ""
+    return f"{head}: {describe_plan(plan)}{fixes}"
+
+
 def _check_text(a: Answer, hits: list[Hit]) -> str:
     ids = {h.chunk_id for h in hits}
     cited = [c for claim in [*a.claims, *a.adjacent] for c in claim.chunk_ids]
@@ -137,6 +155,16 @@ def model_name(provider: str) -> str:
     return {"anthropic": s.llm_model, "openai": s.openai_model}.get(provider, provider)
 
 
+def log_filters(r: Result) -> dict:
+    """What query_log.filters stores: the resolved query, the plan (#214, ADR-020) and the LLM
+    calls of the question. llm_calls counts paid provider calls (anthropic / openai): the rule plan
+    and the mock answer are 0, so a mock row reads 0 / 0 although the trace names the mock's
+    answer step "(mock, one call)"."""
+    plan = r.plan or rules_plan(r.query)
+    return {**asdict(r.query), "plan": plan.to_log(),
+            "llm_calls": {"planner": plan.calls, "answer": int(bool(r.answer.llm_called))}}
+
+
 def _log(r: Result, provider: str) -> int:
     # Dates (window, date_range) are stored as ISO text; they failed the default JSON dump.
     model = model_name(provider)
@@ -145,6 +173,6 @@ def _log(r: Result, provider: str) -> int:
         row = conn.execute(
             """INSERT INTO query_log (question, mode, filters, chunk_ids, answer, snapshot, model)
                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING query_id""",
-            (r.query.question, r.query.mode, Jsonb(asdict(r.query), dumps=lambda o: json.dumps(o, default=str)), [h.chunk_id for h in r.hits],
+            (r.query.question, r.query.mode, Jsonb(log_filters(r), dumps=lambda o: json.dumps(o, default=str)), [h.chunk_id for h in r.hits],
              Jsonb(r.answer.model_dump()), snap, model)).fetchone()
     return row["query_id"]
