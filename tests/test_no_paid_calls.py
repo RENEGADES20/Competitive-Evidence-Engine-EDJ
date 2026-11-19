@@ -5,16 +5,25 @@ tests prove it with a request counter on the SDKs' transport: anthropic 1.9.0 an
 send through httpx2 (their client wrappers subclass httpx2.Client / httpx2.AsyncClient and define
 no send of their own; httpx2.Client is not an httpx.Client). The counter records every request and
 raises a connection error, so nothing leaves the machine even in the control test.
+
+anthropic, openai and httpx2 are core requirements (requirements.txt), so they are imported
+unconditionally. Plain httpx is not: it only arrives with optional tools (edgartools,
+huggingface_hub), and CI installs requirements.txt only. Its counter is extra cover, patched when
+httpx is installed; without httpx nothing can send through it.
 """
 import json
 import os
 import time
 
 import anthropic
-import httpx
 import httpx2
 import openai
 import pytest
+
+try:
+    import httpx
+except ImportError:  # not a core requirement; see the docstring
+    httpx = None
 
 from cee.answer import llm
 from cee.retrieve import fts, planner
@@ -42,8 +51,9 @@ def sent(monkeypatch):
 
     monkeypatch.setattr(httpx2.Client, "send", record)
     monkeypatch.setattr(httpx2.AsyncClient, "send", arecord)
-    monkeypatch.setattr(httpx.Client, "send", record_httpx)
-    monkeypatch.setattr(httpx.AsyncClient, "send", arecord_httpx)
+    if httpx is not None:
+        monkeypatch.setattr(httpx.Client, "send", record_httpx)
+        monkeypatch.setattr(httpx.AsyncClient, "send", arecord_httpx)
     return seen
 
 
