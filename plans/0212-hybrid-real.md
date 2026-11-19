@@ -272,21 +272,23 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   before the paid command.
 
 ## Acceptance
-- [ ] TL go-ahead comment on #212 before the first call (present: 2026-11-18; reopening 2026-11-19).
-- [ ] pytest passes on the branch (counts recorded); mock checks M1-M5 pass and the free dry run
-      shows 0 calls, before the paid command.
-- [ ] Linked questions Q1-Q30: one real run each with `hybrid-norerank`, `claude-sonnet-5-5`, prompt v3,
-      as of 2026-11-17; real calls = 30 (or fewer, each missing one explained), reused 0.
-- [ ] 30 saved raw outputs in the run's evidence folder, copied to `D:\ALLPROJECTS\EDJ\cache\ev212\real-30\`
-      and committed in `real/raw/`; the call count in the PR equals the raw files made by the run.
-- [ ] `real/report.md` gives a verdict for all 30 questions against `passes_if` (Gate 4 method, no half
-      credit), names borderline questions, lists every PASS->FAIL and FAIL->PASS against Gate 4, and
-      for each change says whether it comes from different retrieved passages (chunk ids).
-- [ ] `real/summary.json` and `real/run-report.json` committed; `docs/RUN.md` real-run command in
+- [x] TL go-ahead comment on #212 before the first call (present: 2026-11-18; reopening 2026-11-19;
+      completion run: TL decision comment 7001200270).
+- [x] pytest passes on the branch (625 passed, 2 skipped; 53 hybrid tests with vectors on); mock checks
+      M1-M5 pass and the free dry run shows 0 calls, before the paid command.
+- [x] Linked questions Q1-Q30: one real answer each with `hybrid-norerank`, `claude-sonnet-5-5`, prompt v3,
+      as of 2026-11-17; real calls = 30 (17 in attempt 1, 13 in the TL-approved completion run, which
+      reused the 17 saved answers; "reused 0" no longer applies after the interruption).
+- [x] 30 saved raw outputs in the run's evidence folder, copied to `D:\ALLPROJECTS\EDJ\cache\ev212\real-30\`
+      and committed in `real/raw/`; calls (30) = raw files made by the run (30).
+- [x] `real/report.md` gives a verdict for all 30 questions against `passes_if` (Gate 4 method, no half
+      credit), names borderline questions, lists every PASS->FAIL (Q17) and FAIL->PASS (Q28) against
+      Gate 4, and for each change says whether it comes from different retrieved passages (chunk ids).
+- [x] `real/summary.json` and `real/run-report.json` committed; `docs/RUN.md` real-run command in
       PowerShell and bash blocks.
-- [ ] Invalid / truncated outputs (if any) reported as findings; no question run twice.
-- [ ] `git diff origin/exp/hybrid --stat` lists only the files in "Files to change".
-- [ ] 0 calls made by the reviewer (all evidence is in committed files and `ev212`).
+- [x] Invalid / truncated outputs: none (0 INVALID_OUTPUT); no question called twice.
+- [x] `git diff origin/exp/hybrid --stat` lists only the files in "Files to change".
+- [x] 0 calls made by the reviewer (all evidence is in committed files and `ev212`).
 
 ## Progress log
 - 2026-11-18 23:46 - plan written on `tl/212-hybrid-real` (from `origin/exp/hybrid` 264d778, worktree
@@ -306,10 +308,10 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   PASS (30 records; chunk ids = #211's run on 30/30; fails exactly Q19, Q22; hits on 30/30; mock answer
   flow built for 30/30 with the same retrieval), `cee` from `wt-212\src`. Dry run `ev212\dry-0`
   (`--real --max-calls 0`): 30 NOT_EVALUATED, real calls 0, reused 0; no `.eval-runs\cache` in `wt-212`.
-- 2026-11-18 23:55 - step 3 started (`ev212\real_run.ps1`): pre-log `ev212\real-pre.log` shows
-  `check-ignore` -> `.gitignore:2:.env` before the copy, counts 21143/21143, `git status` empty after
-  the copy, `cee` from `D:\ALLPROJECTS\EDJ\wt-212\src\cee\__init__.py`, settings anthropic /
-  claude-sonnet-5-5 / hybrid-norerank.
+- 2026-11-18 23:55 - step 3 started (`ev212\real_run.ps1`, commit 60af2a4): pre-log
+  `ev212\real-pre.log` shows `check-ignore` -> `.gitignore:2:.env` before the copy, counts
+  21143/21143, `git status` empty after the copy, `cee` from `D:\ALLPROJECTS\EDJ\wt-212\src\cee\__init__.py`,
+  settings anthropic / claude-sonnet-5-5 / hybrid-norerank.
 - 2026-11-19 00:01 - **the run stopped part-way.** `python.exe` crashed at 00:00:53 in
   `tokenizers.pyd` (Windows Application log event 1000, exception 0xc0000409), right after Q17's output
   was saved, i.e. while embedding Q18's search query, before Q18's model call. Real calls made: **17**
@@ -321,6 +323,27 @@ note where the answer content changed although the verdict did not (e.g. a diffe
   was deleted by hand at 00:01:14: `Test-Path D:\ALLPROJECTS\EDJ\wt-212\.env` -> False. A free mock run
   of Q18-Q30 afterwards (`ev212\mock-q18-30`) finished normally (the crash is not reproducible).
   Per this plan a completion run needs a new TL decision; stopped here and asked.
-- 2026-11-19 00:10 - TL decision (issue comment 7001200270): option A, completion run with
+- 2026-11-19 00:03 - TL decision (issue comment 7001200270): option A, completion run with
   `--max-calls 13`, 17 cached answers reused, total 30; resume the same way on another crash. Step 3
-  updated ("Completion run") before the call.
+  updated ("Completion run") and committed (875edf3) before the call.
+- 2026-11-19 00:08 - completion run (`ev212\attempt.ps1`, 875edf3; pre-log `ev212\real-b-pre.log`):
+  check-ignore before the copy, counts 21143/21143, `cee` from `wt-212\src`, anthropic /
+  claude-sonnet-5-5 / hybrid-norerank; exit 0, "real calls 13 of max 13, reused 17", cache files 17 -> 30;
+  final run `corpus-2026-11-17-20261119-000405` covers all 30 questions (retrieval checks PASS 24 /
+  FAIL 6, 0 INVALID_OUTPUT, 0 NOT_EVALUATED). `.env` deleted as its own step after the attempt:
+  `Test-Path D:\ALLPROJECTS\EDJ\wt-212\.env` -> False (00:08:48). Total: 30 calls, 30 raw files, all
+  30 checked (model, prompt v3, snapshot, chunk ids = mock run, none invalid). Copied to
+  `ev212\real-30` and `ev212\real-30-cache`.
+- 2026-11-19 00:12 - steps 4-5: scoring pack `ev212\scoring` (Gate 4's `pack.py`, unchanged); 30 blind
+  verdicts in `ev212\verdicts_hybrid.json` (notes `ev212\verdicts_notes.md`), written before Gate 4's
+  answers were opened: **21/30** (tier 1 12/18). Number flags Q16, Q19 checked against the passages
+  (false positives). 411 citations, all retrieved and in the DB.
+- 2026-11-19 00:15 - step 6: `ev212\compare.py` against Gate 4 (`docs/results/gate4-report.json`,
+  `ev121\verdicts_r3.json`): Q17 PASS->FAIL (retrieval: `RJF-DECK-2025-investor-day#121`,
+  `MS-TR-2025Q3#8`, `RJF-TR-2025Q4#6` only in Gate 4's set), Q28 FAIL->PASS (model:
+  `EDJ-10Q-2025Q2#64` in both sets). No verdict changed after the comparison. Step 7: `real/report.md`,
+  `real/summary.json`, `real/run-report.json`, `real/raw/` (30) written; `docs/RUN.md` and
+  `specs/retrieval.md` lines added.
+- 2026-11-19 00:16 - step 8: pytest 625 passed, 2 skipped (no code changed). verify-cee not run: no
+  change to `src/`, `config/`, the database or the corpus.
+

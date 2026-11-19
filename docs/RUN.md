@@ -190,6 +190,21 @@ export LLM_PROVIDER=mock; base=evals/baselines/corpus-2026-11-17/report.json
 for m in fts hybrid-norerank hybrid; do .venv/bin/python scripts/eval_run.py --mode $m --as-of 2026-11-17 --baseline $base --out .eval-runs/0211-$m; done
 .venv/bin/python scripts/eval_compare.py --run fts=.eval-runs/0211-fts/report.json --run hybrid-norerank=.eval-runs/0211-hybrid-norerank/report.json --run hybrid=.eval-runs/0211-hybrid/report.json --out evals/hybrid-eval/corpus-2026-11-17
 ```
+Real answers for all 30 questions with `hybrid-norerank` (#212; report
+`evals/hybrid-eval/corpus-2026-11-17/real/report.md`, 21/30 like Gate 4). **Paid: up to 30 calls, needs
+the tech lead's go-ahead** (CLAUDE.md "Paid API calls"). Run the mock command above first. Every output is
+saved under `.eval-runs/cache/` and reused, so an interrupted run resumes without paying twice:
+```powershell
+$env:CEE_VECTORS = 'on'; $env:FASTEMBED_CACHE_PATH = 'D:\ALLPROJECTS\EDJ\cache\fastembed'   # your model folder
+$env:RETRIEVAL_MODE = 'hybrid-norerank'; $env:LLM_MODEL = 'claude-sonnet-5-5'; $env:LLM_PROVIDER = 'anthropic'
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 30 --mode hybrid-norerank --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-17\report.json --out .eval-runs\0212-hybrid-real
+```
+```bash
+export CEE_VECTORS=on FASTEMBED_CACHE_PATH="$HOME/cee-cache/fastembed"   # your model folder
+RETRIEVAL_MODE=hybrid-norerank LLM_MODEL=claude-sonnet-5-5 LLM_PROVIDER=anthropic .venv/bin/python scripts/eval_run.py --real --max-calls 30 --mode hybrid-norerank --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-17/report.json --out .eval-runs/0212-hybrid-real
+```
+The score is a reading of each answer against `passes_if`, not a number the script prints.
+
 To take the vectors out of the local database again (fts never reads them):
 `docker exec cee-db psql -U cee -d cee -c "DROP TABLE chunk_embeddings; DROP EXTENSION vector;"`
 (same command in PowerShell and bash).
