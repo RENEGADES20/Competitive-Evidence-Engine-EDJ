@@ -825,7 +825,8 @@ class PoolTrace:
 
 
 def search(q: Query, k: int | None = None, trace: PoolTrace | None = None) -> list[Hit]:
-    """k: passages to return; None = budget(q), the app default. The theme peers' slots (#205)
+    """k: passages to return; None = the app default: budget(q) passages in passage mode
+    (TOKEN_BUDGET None), budget_tokens(q) estimated tokens in token mode. The theme peers' slots (#205)
     are part of budget(q) and come on top of an explicit k, so the named firms and the research
     part get the same k with or without peers. trace (#210): filled with the candidate pools'
     chunk ids; it changes nothing else.

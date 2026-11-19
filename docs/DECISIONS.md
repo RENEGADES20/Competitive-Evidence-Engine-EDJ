@@ -575,7 +575,11 @@ Q20 (Fidelity, UBS sample) and Q25 (`RJF-PR-web-affiliation-options#1`, `MS-10K-
 still not candidates at pool 30 (pool 50 makes most of them candidates but does not select
 them): a query problem (#214). The answer call's `max_tokens` (8000, `llm.MAX_TOKENS`) joins the
 eval's cache key when it changes. Real check at the pick (8 calls, claude-sonnet-5-5, prompt v3,
-no truncated output): Q24, Q28, Q29, Q30 keep `gap_with_adjacent`; **Q25 answers `answer`** (60k
-tokens of Form ADV and filing text on how each firm pays its advisors; `gap_with_adjacent` in Gate
-4 at the old setting), an open finding for the TL on #213; Q7, Q15, Q20 answer, and their Gate 4
-missed passages are not retrieved, so none is cited. Grid and real-run evidence in the #213 PR.
+no truncated output): Q24, Q28, Q29, Q30 keep `gap_with_adjacent`. Q25 answers `answer` with cited
+disclosures (Form ADV, 10-Q and recruiting-page text on how each firm pays its advisors) and empty
+`gaps` at the pick (`gap_with_adjacent` in Gate 4 at the old setting); accepted by the TL
+2026-11-19 (#213 issuecomment-7001410341), naming the undisclosed parts as gaps moves to #215.
+Q7, Q15, Q20 answer; no question cites its own Gate 4 missed passage (none of them is retrieved
+for its question), while Q7, Q20 and Q29 cite other questions' missed passages
+(`RJF-PR-web-affiliation-options#1`, `EDJ-10K-2025#88`, `MS-10K-2025#153`). Grid and real-run
+evidence in the #213 PR.

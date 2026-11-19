@@ -301,7 +301,7 @@ If the pick is today's setting: 0 real calls (see the selection rule).
 - [x] Truncation path ready before the first call -> tests: cache key unchanged at 8000 and
   different at 16000; a fresh fake call at 16000 despite a saved invalid output; `stop_reason`
   and `max_tokens` saved.
-- [ ] (OPEN: Q25 returned `answer`, see log) Real run: Q24, Q25, Q28, Q29, Q30 each return `gap_with_adjacent` -> `.eval-runs/0213-real`
+- [x] (Q25: moved to #215 by TL decision, [issuecomment-7001410341](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/213#issuecomment-7001410341)) Real run: Q24, Q25, Q28, Q29, Q30 each return `gap_with_adjacent` -> `.eval-runs/0213-real`
   report.json `behavior`; for Q7, Q15, Q20 the PR lists each named missed passage as "cited",
   "retrieved, not cited" or "not retrieved" (plus Q25's two); model, prompt version, call count
   (8, or up to 16 on the truncation path) and raw output folder stated. Skipped with 0 calls only
@@ -318,7 +318,7 @@ If the pick is today's setting: 0 real calls (see the selection rule).
 ## Progress log
 - 2026-11-18 23:36 - plan written. Branch `tl/213-pool-budget` from `main` 2a22e23; DB
   `corpus-2026-11-17` up to date (`sync-db.ps1 -Check`).
-- 2026-11-18 23:55 - plan revised after review (issuecomment-7000843909): eval_run calls
+- 2026-11-18 23:42 - plan revised after review (issuecomment-7000843909): eval_run calls
   `search()` with k=None in rule mode (token mode really runs; test + step-3 checks: budget per
   question, over-budget bound, fill, 20k lists differ); truncation run gets a fresh call
   (`MAX_TOKENS` in the cache key when not 8000 and in the request meta, `stop_reason` saved;
@@ -377,4 +377,12 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   TL decides (accept, or the next eligible point by the rule: pool 50 / 40k, then 30k). Q7, Q15,
   Q20 `answer` (expected); their named missed passages are not in the retrieved set (Q15's
   `SCHW-10K-2025#27` is a candidate lost in select; the others are not candidates), so none is cited.
-
+- 2026-11-19 00:14 - PR #220 opened as "Part of #213" (Q25 open); reviewer approved, ADR-019
+  escalated to the TL.
+- 2026-11-19 00:24 - TL decision 2026-11-19 ([issuecomment-7001410341](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/issues/213#issuecomment-7001410341)):
+  keep the pick (pool 30 / 40k); Q25's answer cites only disclosures but leaves `gaps` empty, so
+  naming the undisclosed parts moves to #215 (Q25 added to its checks); the ~5x input cost is
+  accepted; #213 closes when #220 merges. Reviewer notes applied: ADR-019 / PR text on Q25 and on
+  cited missed passages (no question cites its own; Q7, Q20, Q29 cite other questions':
+  `RJF-PR-web-affiliation-options#1`, `EDJ-10K-2025#88`, `MS-10K-2025#153`), `search()`
+  docstring, log times in order (the round-1 revision was 23:42, not 23:55).
