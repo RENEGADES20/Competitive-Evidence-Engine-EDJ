@@ -33,7 +33,9 @@ passages Gate 4 named as missed. Retrieval behavior does not change: the final c
   unless it carries them over.
 
 ## Files to change
-- `src/cee/retrieve/fts.py` - a small `PoolTrace` dataclass (chunk-id lists `firm`, `research`,
+Owner review waived, TL decision 2026-11-17 (#187): `src/cee/retrieve/fts.py` and
+`specs/retrieval.md` (S1), `evals/expected_chunks.yaml` (C1).
+- `src/cee/retrieve/fts.py` (S1; owner review waived, TL decision 2026-11-17 (#187)) - a small `PoolTrace` dataclass (chunk-id lists `firm`, `research`,
   `on_theme`, `peers`, `answers`; `ids()` = their union) and `search(q, k=None, trace=None)`
   appending the ids of each pool right after it is fetched. Trace only: no SQL, ordering,
   `select()` argument, floor, quota or budget change; `trace=None` (the default, every app
@@ -45,7 +47,8 @@ passages Gate 4 named as missed. Retrieval behavior does not change: the final c
   `tokens_est` (= chars / 4, rounded). Summary: mean recall@pool and recall@final over keyed
   questions (all tiers, and tier 1), total passages and total estimated tokens. Columns in the
   report.md table and the console line; per-question section shows each row's stage.
-- `evals/expected_chunks.yaml` - the Gate 4 missed passages:
+- `evals/expected_chunks.yaml` (C1; owner review waived, TL decision 2026-11-17 (#187)) - the
+  Gate 4 missed passages:
   Q7 new key [`MS-10K-2025#153`]; Q15 new key [`SCHW-10K-2025#27`]; Q17 new key = its 9
   `expected_doc_ids` as one row each + [`BAC-TR-2026Q2#21`]; Q19 new key [`EDJ-10K-2025#88`];
   Q20 new key = its 7 `expected_doc_ids` as one row each + the Fidelity row + the UBS sample row;
@@ -54,7 +57,9 @@ passages Gate 4 named as missed. Retrieval behavior does not change: the final c
   noted in the PR).
 - `evals/baselines/corpus-2026-11-17/report.json`, `report.md` - replaced by the new mock run
   (the old one stays in git history at 40a963a).
-- `specs/retrieval.md` - Acceptance: recall@pool and recall@final defined.
+- `specs/retrieval.md` (S1; owner review waived, TL decision 2026-11-17 (#187)) - Acceptance:
+  recall@pool and recall@final defined.
+- Not changed: README "Retrieval check" numbers (out of scope, reviewer note 3).
 - `tests/test_retrieval_trace.py` (new) - with the fake-connection pattern of
   `tests/test_retrieval_themes.py` (`monkeypatch.setattr(fts, "connect", ...)`): `search()` with
   and without a trace returns the same hits in the same order (entity and entity+theme with
