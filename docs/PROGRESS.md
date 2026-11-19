@@ -147,6 +147,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-19 | Question planner (ADR-020): one planner call splits a question into up to 4 parts, each searched with every SQL filter in a share of the token budget; mock unchanged (recall 0.654 / tier 1 0.808); real: Q15 and Q25 missed passages now cited (#223) | Q3 / Q7 plans miss parts, Q25 retrieves 2 must_not_return chunks (TL) | planner prompt v2 with #215 |
 | 2026-11-19 | Planner prompt v2 + neighbour-phrase guard + paid-call-proof tests (ADR-020 amended); real: Q3 gets a concede-ground part (coverage 0.667 -> 1.0), Q28 recall@final 0.75 -> 1.0, Q12 unchanged (#224) (#226) | Q25 still retrieves 2 dividend-payout chunks via the bare word "payout"; Q7's RJF part lacks training / pay words (TL) | bare "payout" rule or budget/ranking with #215 |
 | 2026-11-19 | CI green again: test_no_paid_calls collects without httpx (#224 follow-up) (#227) | none | - |
+| 2026-11-19 | #215 prompt v4 + per-part code check: every plan part has a cited claim or a gap (code-built `part_gap` otherwise), uncited grid cells moved to gaps; real: Q3, Q7 (borderline), Q12, Q28 PASS (were Gate 4 FAIL), 13 calls (#229) | Q25 has no gaps; Q22 empty output, Q26 not newest first | save stop_reason and treat empty answers as invalid; newest-first across parts for windowed questions; Q25 gaps |
 
 ## Weekly score (from W6)
 
