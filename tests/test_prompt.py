@@ -1,5 +1,5 @@
-"""The prompt (v4) carries the citation rules, the standard wording and the answer-shape rules
-(plans/0010, plans/0167, plans/0204, plans/0215)."""
+"""The prompt (v4.1) carries the citation rules, the standard wording and the answer-shape rules
+(plans/0010, plans/0167, plans/0204, plans/0215, plans/0230)."""
 import re
 from pathlib import Path
 
@@ -14,8 +14,8 @@ WORDING = [prompt.BOUNDARY_HANDOFF, prompt.MERRILL_GAP, prompt.GWIM_DIFFERS, pro
 
 
 def test_prompt_is_versioned():
-    assert prompt.PROMPT_VERSION == "v4"
-    assert "Prompt version: v4" in prompt.SYSTEM_PROMPT
+    assert prompt.PROMPT_VERSION == "v4.1"
+    assert "Prompt version: v4.1." in prompt.SYSTEM_PROMPT
 
 
 def test_llm_uses_prompt_module():
@@ -139,7 +139,50 @@ def test_disclosure_question_behavior_rule():
 def test_recency_example_reworded():
     # v3's example shared a 6-word run with a bank question's text (#215 review).
     assert "since the start of the year" not in _flat()
-    assert "Questions about recent change (what is new, what changed since a given date): newest first." in _flat()
+
+
+def test_time_window_newest_first_across_parts():
+    # v4.1 (#230): v4 grouped Q26's answer by part; newest first now runs across the whole answer.
+    text = _flat()
+    assert "Questions about recent change (what is new, what changed since a given date): newest first." not in text
+    assert ("Questions about recent change (what is new, what changed since a given date) and questions "
+            "with a time window: order the claims and the adjacent items newest first across the whole "
+            "answer, by the date of what each reports, not part by part; each item keeps its part_id. "
+            "Gaps come after.") in text
+    assert "oldest to newest, so a change over time is visible (in a question with a time window, newest first instead)." in text
+    assert "The grouping is how the evidence is listed, not the order of the answer." in text
+
+
+def _plan_two():
+    from cee.retrieve.planner import Part, Plan
+    return Plan(parts=[Part("p1", "Results at Raymond James", ["RJF"]), Part("p2", "News at Raymond James", ["RJF"])])
+
+
+def test_user_message_window_line_only_with_a_window():
+    import datetime as dt
+
+    from cee.answer.llm import build_user_message, window_line
+
+    hits = [_hit(part_id="p1"), _hit(chunk_id="RJF-PR-x#1", part_id="p2")]
+    without = build_user_message("What is new?", hits, _plan_two())
+    assert without == build_user_message("What is new?", hits, _plan_two(), None)
+    assert "Time window" not in without and without.startswith("Question: What is new?\n\nParts of the question")
+    win = (dt.date(2026, 8, 19), dt.date(2026, 11, 17))
+    line = window_line(win)
+    assert line == ("Time window: 2026-08-19 to 2026-11-17 (only passages dated in it were searched). "
+                    "Order the answer newest first across all parts.")
+    withw = build_user_message("What is new?", hits, _plan_two(), win)
+    assert withw == without.replace("Question: What is new?\n", f"Question: What is new?\n{line}\n", 1)
+    assert line in anthropic_request("What is new?", hits, _plan_two(), win)["messages"][0]["content"]
+    assert line in openai_request("What is new?", hits, _plan_two(), win)["messages"][1]["content"]
+
+
+def test_window_line_shares_no_run_with_the_bank():
+    from cee.answer.llm import window_line
+    line = window_line(("2026-08-19", "2026-11-17"))
+    mine = _grams(line)
+    assert {qid for qid, t in _question_texts().items() if mine & _grams(t)} == set()
+    assert _leaks(line) == {}
 
 
 def test_behavior_choice_rule():
@@ -163,8 +206,9 @@ def test_ground_rules_held_in_v3():
     assert "Never cite a chunk_id that is not in the evidence." in text
 
 
-def test_anthropic_output_cap_fits_grid_answers():
-    assert anthropic_request("q", [])["max_tokens"] == 8000
+def test_anthropic_output_cap_fits_large_answers():
+    # #230 (ADR-019): 20000 for every answer call; was 8000 (#229 Q22 came back empty at 8000).
+    assert anthropic_request("q", [])["max_tokens"] == 20000
 
 
 # Leak check: the prompt must not carry the question bank or its scoring rubric.

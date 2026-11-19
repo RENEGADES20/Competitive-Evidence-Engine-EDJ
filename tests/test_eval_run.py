@@ -106,7 +106,7 @@ def fake_model(monkeypatch, tmp_path):
 
     calls = []
 
-    def generate(question, hits, provider, plan=None):
+    def generate(question, hits, provider, plan=None, window=None):
         calls.append(question)
         return Answer(answerable=True, behavior="answer",
                       claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}], llm_called=True)
@@ -160,7 +160,7 @@ def flaky_model(monkeypatch):
 
     calls, state = [], {"error": None}
 
-    def generate(question, hits, provider, plan=None):
+    def generate(question, hits, provider, plan=None, window=None):
         calls.append(question)
         if len(calls) == 1:
             raise state["error"]
@@ -615,11 +615,14 @@ def test_max_tokens_change_gets_a_fresh_call(flaky_model, monkeypatch, tmp_path)
     from cee.answer import llm
 
     calls, state = flaky_model
-    state["error"] = llm.ModelOutputError("cut", {"behavior": "answer"}, "anthropic", "max_tokens")
+    state["error"] = llm.ModelOutputError("cut", {"behavior": "answer"}, "anthropic", "max_tokens",
+                                          {"output_tokens": 20000})
     first = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     assert first.answer(q("Q24", []), query(["MS"]), real_hits())[1] == "invalid"
+    assert first.last_stop == ("max_tokens", 20000)
     bad = saved(tmp_path / "cache")[0]
-    assert bad["stop_reason"] == "max_tokens" and bad["max_tokens"] == 8000
+    assert bad["stop_reason"] == "max_tokens" and bad["max_tokens"] == llm.MAX_TOKENS == 20000
+    assert bad["usage"] == {"output_tokens": 20000}
     # same setting: the saved invalid output is reported, never re-called
     again = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
     assert again.answer(q("Q24", []), query(["MS"]), real_hits())[1] == "invalid" and again.calls == 0
@@ -628,7 +631,7 @@ def test_max_tokens_change_gets_a_fresh_call(flaky_model, monkeypatch, tmp_path)
     wider = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run3", cache_dir=tmp_path / "cache")
     a, how = wider.answer(q("Q24", []), query(["MS"]), real_hits())
     assert how == "called" and wider.calls == 1 and len(calls) == 2
-    assert sorted(s["max_tokens"] for s in saved(tmp_path / "cache")) == [8000, 16000]
+    assert sorted(s["max_tokens"] for s in saved(tmp_path / "cache")) == [16000, 20000]
 
 
 def test_anthropic_error_carries_stop_reason():
@@ -640,7 +643,80 @@ def test_anthropic_error_carries_stop_reason():
     with pytest.raises(llm.ModelOutputError) as e:
         llm._anthropic("q?", real_hits(), client=client)
     assert e.value.stop_reason == "max_tokens"
-    assert llm.anthropic_request("q?", real_hits())["max_tokens"] == llm.MAX_TOKENS == 8000
+    assert llm.anthropic_request("q?", real_hits())["max_tokens"] == llm.MAX_TOKENS == 20000
+
+
+# --- #230: stop_reason and usage on every real output; empty saved outputs are invalid -------------
+
+def test_valid_output_saves_stop_reason_and_usage(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.answer.schema import Answer
+
+    def generate(question, hits, provider, plan=None, window=None):
+        return Answer(answerable=True, behavior="answer", claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}],
+                      llm_called=True, stop_reason="tool_use",
+                      usage={"input_tokens": 100, "output_tokens": 4321, "blocks": ["thinking", "tool_use"]})
+
+    monkeypatch.setattr(ask, "generate", generate)
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    a, how = runner.answer(q("Q22", []), query(["MS"]), real_hits())
+    assert how == "called" and runner.last_stop == ("tool_use", 4321)
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["stop_reason"] == "tool_use" and rec["usage"]["output_tokens"] == 4321
+    assert rec["raw"]["stop_reason"] == "tool_use" and a["stop_reason"] == "tool_use"
+    again = er.RealRunner("anthropic", 0, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert again.answer(q("Q22", []), query(["MS"]), real_hits())[1] == "cached"
+    assert again.last_stop == ("tool_use", 4321)
+
+
+def test_saved_empty_output_is_invalid_on_reuse(fake_model, tmp_path):
+    """The #229 Q22 shape, saved as a valid record before #230: reported INVALID_OUTPUT, no call."""
+    import json
+    runner = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    hits = real_hits()
+    key = er.cache_key(q("Q22", []), runner.prompt_version, "snap-1", "anthropic", "fake-model",
+                       [h.chunk_id for h in hits], runner.max_tokens, None)
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / f"Q22-{key}.json").write_text(json.dumps({"raw": {
+        "answerable": True, "behavior": "answer", "claims": [], "adjacent": [], "gaps": [], "caveats": [],
+        "coverage_note": "", "withheld": [], "llm_called": True}}), encoding="utf-8")
+    a, how = runner.answer(q("Q22", []), query(["MS"]), hits)
+    assert (a, how) == (None, "invalid") and runner.calls == 0 and runner.reused == 1 and fake_model == []
+
+
+def test_cache_key_takes_the_window_only_when_given():
+    import hashlib
+    import json
+    qq = q("Q26", [])
+    args = ("v4.1", "snap", "anthropic", "m", ["a#1"])
+    today = hashlib.sha256(json.dumps(["Q26", "text Q26", *args]).encode()).hexdigest()[:24]
+    assert er.cache_key(qq, *args, 8000, None, None) == er.cache_key(qq, *args) == today
+    win = (dt.date(2026, 8, 19), dt.date(2026, 11, 17))
+    assert er.cache_key(qq, *args, 8000, None, win) != today
+    assert er.cache_key(qq, *args, 8000, None, win) != er.cache_key(qq, *args, 8000, None,
+                                                                     (dt.date(2026, 8, 20), win[1]))
+
+
+def test_answer_gets_the_query_window(monkeypatch):
+    from cee import ask
+
+    seen = []
+    monkeypatch.setattr(ask, "generate", lambda q, h, p, plan=None, window=None: seen.append(window) or
+                        __import__("cee.answer.schema", fromlist=["Answer"]).Answer(
+                            answerable=True, behavior="answer", claims=[{"text": "x", "chunk_ids": ["MS-10K-2025#1"]}]))
+    w = (dt.date(2026, 8, 19), dt.date(2026, 11, 17))
+    base = types.SimpleNamespace(entities=["MS"], unmapped=[], mode="entity", themes=[], question="q",
+                                 window=None, date_range=None, firm_filter=[], keywords=[], theme_peers=[])
+    for window, date_range, want in [(None, None, None), (w, None, w),
+                                     (w, (dt.date(2026, 9, 1), dt.date(2026, 12, 31)), (dt.date(2026, 9, 1), w[1]))]:
+        qry = types.SimpleNamespace(**{**vars(base), "window": window, "date_range": date_range})
+        assert ask.answer_window(qry) == want
+        try:
+            ask.answer_for("q", qry, real_hits(), "anthropic")
+        except Exception:
+            pass   # only the window passed to the model matters here
+        assert seen[-1] == want
 
 
 # --- #214: question planner in the eval (plan cache, call count, parts per expected row) ---------
@@ -654,7 +730,7 @@ def _planner_calls(monkeypatch, outcome):
 
     calls = []
 
-    def call(query, provider, cap, client=None):
+    def call(query, provider, cap, client=None, meta=None):
         calls.append(query.question)
         if isinstance(outcome, Exception):
             raise outcome
@@ -681,6 +757,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     assert len(files) == 1 and files[0].name.startswith("Q7-plan-")
     rec = saved(tmp_path / "cache")[0]
     assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 2000
+    assert rec["stop_reason"] is None and rec["usage"] is None   # the fake fills no meta
     assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
     again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
     plan2 = again.plan(question, qry)
@@ -713,6 +790,50 @@ def test_planner_call_counts_against_max_calls(monkeypatch, tmp_path):
     runner = er.RealRunner("anthropic", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     assert runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17))) is None
     assert calls == [] and runner.calls == 0
+
+
+def test_planner_record_saves_stop_reason_and_usage(monkeypatch, tmp_path):
+    # #230: bookkeeping only; the planner's output and key are unchanged.
+    from cee import ask
+    from cee.retrieve import planner
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+
+    def call(query, provider, cap, client=None, meta=None):
+        meta.update(stop_reason="tool_use", usage={"input_tokens": 900, "output_tokens": 300})
+        return raw
+    monkeypatch.setattr(planner, "call_planner", call)
+    runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["stop_reason"] == "tool_use" and rec["usage"]["output_tokens"] == 300 and rec["raw"] == raw
+
+
+def test_call_planner_fills_meta():
+    from cee.retrieve import planner
+    from cee.retrieve.fts import Query
+
+    block = types.SimpleNamespace(type="tool_use", name=planner.PLAN_TOOL, input={"parts": []})
+    usage = types.SimpleNamespace(input_tokens=900, output_tokens=300)
+    client = types.SimpleNamespace(messages=types.SimpleNamespace(
+        create=lambda **kw: types.SimpleNamespace(content=[block], stop_reason="tool_use", usage=usage)))
+    meta = {}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client, meta=meta) == {"parts": []}
+    assert meta == {"stop_reason": "tool_use", "usage": {"input_tokens": 900, "output_tokens": 300, "blocks": ["tool_use"]}}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client) == {"parts": []}
+
+
+def test_plan_cache_key_unchanged_by_230():
+    import hashlib
+    import json
+
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
+    want = hashlib.sha256(json.dumps(["Q7", "t", PLANNER_VERSION, "s", "anthropic", "m", 4, PLANNER_MAX_TOKENS,
+                                      {"entities": ["MS"]}], default=str, sort_keys=True).encode()).hexdigest()[:24]
+    assert er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]}) == want
 
 
 def test_cache_key_of_a_plan_differs_by_cap_and_query():

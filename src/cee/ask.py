@@ -114,7 +114,7 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         return answer, None
     if raw is None:
         with t.stage("model", f"Asking the model ({provider}, one call)"):
-            raw = generate(question, hits, provider, plan=plan)
+            raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
         t.report("model", "done", f"Asking the model ({provider}, one call): "
                                   f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
@@ -128,6 +128,15 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         answer.coverage_note = coverage_note(query, hits)
     t.report("caveats", "done", _caveats_text(answer))
     return answer, raw
+
+
+def answer_window(query: Query):
+    """(from, to) the answer call is told about (prompt v4.1, #230): the question's time window and
+    the Ask page date range, both SQL filters, so their overlap when both are set; None without."""
+    spans = [s for s in (getattr(query, "window", None), getattr(query, "date_range", None)) if s]
+    if not spans:
+        return None
+    return (max(s[0] for s in spans), min(s[1] for s in spans))
 
 
 def plan_text(plan: Plan) -> str:
