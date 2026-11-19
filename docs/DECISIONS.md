@@ -598,7 +598,7 @@ cannot target each part.
 Decision:
 - **When a question is split**: every question that reaches retrieval gets a plan. With a real
   provider (`LLM_PROVIDER` anthropic / openai) and `PLANNER=on` (default), one planner call
-  (`src/cee/retrieve/planner.py`, `PLANNER_VERSION = plan-v1`, the answer model, tool
+  (`src/cee/retrieve/planner.py`, `PLANNER_VERSION = plan-v2` since #224, the answer model, tool
   `submit_plan`, `max_tokens` 2000) writes `parts: [{id, text, firms, keyword_query}]`. Otherwise
   (mock provider, `PLANNER=off`) the **rule plan**: one part per named covered firm when the
   question names 2-4 firms, else one whole-question part. Five-firm questions (Q10, Q11, Q15,
@@ -610,7 +610,10 @@ Decision:
   and firms we hold no documents for are dropped; a resolved firm the plan left out comes back as a
   whole-question part, or joins the part with the fewest firms at the cap); extra parts are cut;
   empty search words become the part's text; ids are `p1..pn`. The window, themes, firm filter, date
-  range and keywords are not in the planner's schema, so it cannot change them. Every part searches
+  range and keywords are not in the planner's schema, so it cannot change them. Since #224 code
+  also removes from a part's words every `neighbour_phrases` entry (`config/entities.yaml`: a
+  different figure that shares a word with the asked one, e.g. "payout ratio" = the dividend payout
+  ratio) that the question does not name. Every part searches
   a copy of the resolved query with its firms and words, so entity / segment (Merrill = MER or BAC
   GWIM/Merrill), window, date range, keywords and the whole question's doc-type scope are SQL
   filters in every part.
@@ -622,6 +625,16 @@ Decision:
   (ADR-018) are searched once, after the parts, on top of the budget. Budgeted total (parts +
   research) <= max(T, R) + one chunk. A one-part plan returns exactly what `search()` returned
   before. Hits carry `part_id` (`p1..pn`, `research`, `peers`).
+- **Unused share is not handed back** to earlier parts (#224: "not now"). (1) No key row lost at
+  select would be reached: a 0-call replay of #214's Q25 gave p1 (MS) its share plus the 6.7k +
+  11.9k p2 / p3 left (15.0k -> 33.6k); p1 stopped at `select()`'s floor (68 passages, 21.9k; the
+  same with no limit) and `MS-10K-2025#153` stayed in the pool. The other rows stuck at pool sat in
+  parts with share left; Q7's parts used all of theirs. (2) In the mock it would change Q7, Q9 and
+  Q12, none of which gains a key row (Q7's row is never a candidate). (3) Surplus spent in a weak
+  part buys low-rank matches: the flow-forward gave #214's Q25 p4 twice its equal share, and that is
+  how two dividend deck chunks got in. (4) A second pass would let each earlier part overshoot by
+  one chunk again (ADR-019's bound restated). Revisit when a replay with the surplus added brings a
+  lost key row into the final set.
 - **Calls**: planner 1 + answer 1 = at most 2 per question (ADR-012 allows 5). 0 planner calls on
   the mock provider, with `PLANNER=off`, in passage mode, or when code skips search (only firms we
   hold no documents for; a firm filter that leaves no named firm). An unusable planner output (no
@@ -660,3 +673,31 @@ retrieved set (not cited), so its refusal check fails at retrieval; Q3 lost its 
 Merrill's part searching "attrition ... departures". Behaviors: Q3, Q7, Q15 `answer`, Q12
 `answer_with_boundary`, Q28 `gap_with_adjacent`, Q25 `answer` with empty gaps (as at the #213 pick;
 #215). Evidence in the #214 PR.
+Amendment (#224, planner prompt v2): plan-v1 left out asked parts (Q3: one part, nothing on
+competitive pressure or conceded ground; Q7: payout philosophy and training pipeline not for every
+firm) and its Q25 Schwab + Raymond James part searched "payout ratio" (in this corpus the phrase
+occurs in 11 chunks, 10 of them about dividends, none about advisors), which brought
+`SCHW-DECK-2026Q3#47` / `SCHW-DECK-2026Q1#44` in. plan-v2 adds three prompt rules (list the asks
+first, including what a question asks without naming it; give every ask a part or its own words;
+same concept only) with examples on other units and activities, and code removes neighbour phrases
+(above). The rule plan is unchanged: mock (`corpus-2026-11-17`, `--as-of 2026-11-17`) all 30 chunk
+lists identical to the #214 baseline, 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed 22/22, 0
+forbidden. A 0-call replay of the six saved plan-v1 outputs reproduces #214's lists; with the guard
+only Q25 p4 and Q15 p2 (both "payout ratio") change, Q25's two must-not chunks leave (refusal check
+passes, recall unchanged) and Q15's recall and coverage are unchanged. Tests cannot reach a paid
+API: `tests/conftest.py` stubs the two client builders and clears the credential environment.
+Real check (#224, 10 calls: planner + answer for Q3, Q7, Q25, Q12, Q28, claude-sonnet-5-5, answer
+prompt v3, planner plan-v2; no output rejected, no fallback): Q3 now has four Schwab parts, one of
+them "competition Schwab names ... where it is losing ground or pulling back" (coverage 0.667 ->
+1.0). Q7 has one part per firm; MS and Merrill get words for recruiting, compensation, training and
+attrition, Raymond James's part has recruiting, transition assistance and attrition words but no
+training or pay words (coverage 0.778 -> 0.889; `MS-10K-2025#153` still pool). Q12 keeps Schwab's
+acquisition parts and an Edward Jones acquisition part, and spends a fourth part on how Edward Jones
+could replicate the strategy (answer still `answer_with_boundary`). Q28 adds a part of its own for
+the adjacent net headcount change (recall@final 0.75 -> 1.0). **Q25 still fails its refusal
+check**: the planner wrote two parts (MS + Schwab, Edward Jones) and left Merrill and Raymond James
+out (code added them back as a whole-question part), and the MS + Schwab part's words "payout grid
+... production-based payout" plus the `pay` / `recruit` synonym "payout" matched
+`SCHW-DECK-2026Q3#47` and `SCHW-DECK-2026Q2#45` (dividend payout range) on the one word "payout",
+which the neighbour list does not cover. A finding, not re-run; the narrower rule for the bare word
+in a Schwab part, or the budget / ranking, is the TL's call (with #215).

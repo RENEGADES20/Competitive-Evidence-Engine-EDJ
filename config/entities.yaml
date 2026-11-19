@@ -305,3 +305,17 @@ synonym_only: [pay]
 # "payout grid" and an RJF call turn on the payout grid (RJF-TR-2026Q1 #44) into it. Kept out so
 # Q25 stays a clean gap (TL decision, #203 plan review).
 synonym_exact: ["compensation structure"]
+
+# Neighbour phrases (S1 owns; #224, ADR-020). Phrases that share a word with an asked concept but
+# name a different reported figure. The question planner's search words for a part may not add
+# one the question does not name: code removes it (planner.strip_neighbours), the same rule as
+# "a neighbour metric is never a synonym" above. Only phrases with a stored chunk that shows the
+# other figure go here; matched like a synonym key (any case, hyphen or spaces, inflected last word).
+neighbour_phrases:
+  - payout ratio               # the dividend payout ratio (RJF-10K-2025#652; SCHW-DECK-2026Q1#44, Q3#47
+                               # "dividend payout range"): #214's Q25 Schwab + RJF part searched it.
+                               # Advisor pay is "payout", "payout rate", "payout grid".
+  - dividend payout            # same figure
+  - maximum potential payout   # guarantees / credit protection (MS-10K-2025#574 ...)
+  - employee turnover          # firm-wide staff turnover (BAC-10K-2025#19), not advisor attrition
+  - client attrition           # clients leaving (BAC-10K-2025#60, #97), not advisor attrition

@@ -184,3 +184,31 @@ def test_part_ids_and_trace(db):
     assert {h.part_id for h in hits} <= {"p1", "p2", "research", "peers"}
     assert set(ids(hits)) <= trace.ids() and set(pools) == {"p1", "p2"}
     assert {h.chunk_id for h in hits if h.part_id == "p1"} <= pools["p1"]
+
+
+def test_neighbour_guard_keeps_dividend_payout_out_of_a_pay_part(db, parts_db):
+    """#224: #214's Q25 Schwab + RJF part searched "payout ratio" and pulled Schwab's "dividend
+    payout range" deck chunks in. With the guarded words the chunk is no candidate at all."""
+    with parts_db() as conn:
+        conn.execute("INSERT INTO documents VALUES ('SCHW-DECK-DIV', 'SCHW', 'deck', 2, %s, 'source', NULL)", (IN,))
+        conn.execute("INSERT INTO chunks VALUES ('SCHW-DECK-DIV#0', 'SCHW-DECK-DIV', 0, 'Document', NULL, NULL, '', "
+                     "'Support ongoing business growth. Common dividend payout range. Our capital ratios remained strong.')")
+        conn.commit()
+    try:
+        q = resolve("What has Schwab disclosed about advisor compensation structures?", TODAY)
+        words = ("advisor compensation payout ratio affiliation transition assistance compensation and "
+                 "benefits expense salary bonus commissions independent advisors employee advisors")
+        guarded, dropped = planner.strip_neighbours(words, q.question)
+        assert dropped == ["payout ratio"]
+        pools = {}
+        for pid, w in (("raw", words), ("guarded", guarded)):
+            part_pools = {}
+            search_parts(q, Plan(parts=[Part("p1", "t", ["SCHW"], w)]), part_pools=part_pools)
+            pools[pid] = part_pools["p1"]
+        assert "SCHW-DECK-DIV#0" in pools["raw"]
+        assert "SCHW-DECK-DIV#0" not in pools["guarded"]
+    finally:
+        with parts_db() as conn:
+            conn.execute("DELETE FROM chunks WHERE doc_id = 'SCHW-DECK-DIV'")
+            conn.execute("DELETE FROM documents WHERE doc_id = 'SCHW-DECK-DIV'")
+            conn.commit()
