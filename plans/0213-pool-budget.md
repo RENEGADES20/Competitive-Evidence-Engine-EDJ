@@ -33,7 +33,8 @@ passages get cited. FTS only, `main`; no model, no new dependency.
 - Answer call (`src/cee/answer/llm.py`, `prompt.py` v3): `build_user_message()` passes every hit
   with no passage or character cap; Anthropic `max_tokens` = 8000 (output); one call per question
   (ADR-012 one-call flow); model `LLM_MODEL` default `claude-sonnet-5-5`. Input at the largest
-  grid point (five firms, 1.5 x 40k = 60k tokens of passages + ~3k prompt) is well inside the
+  grid point (five firms, 1.5 x 40k = 60k estimated tokens (characters / 4) of passages + ~3k
+  prompt; Q19 adds at most 8 peer passages on top of 40k) is well inside the
   model's context window, so the only limit a larger budget can hit is the 8000-token output
   (truncated tool input -> `INVALID_OUTPUT`). 16000 stays below the SDK's non-streaming guard
   (~21k `max_tokens`), so the fallback below needs no streaming change.
@@ -45,22 +46,36 @@ passages get cited. FTS only, `main`; no model, no new dependency.
 - `TOKEN_BUDGET` (int | None): None = today's passage rule (ADR-013, `budget(q)` passages);
   an int B = the token budget of a question naming 0 or 1 firm.
 - ADR-013's growth in tokens: `budget_tokens(q)` = B for 0-1 named covered firm; for n >= 2,
-  max(B, round(B x PER_FIRM / K x n)) = max(B, 0.3 x B x n). Same ratio as today (6 of 20 per
-  firm): 2-3 firms keep B, the five get 1.5 x B (20k -> 30k, 30k -> 45k, 40k -> 60k). n counts as
-  today (after the firm filter, Merrill once, unmapped firms none).
-- Token count of a hit = `len(text) / 4` (the eval's `tokens_est`; every token figure in this
-  plan, the PR and ADR-019 is this characters / 4 estimate, not a tokenizer count).
-  `select(..., tokens=None)`: with `tokens` set, "full" = tokens of the kept list >= `tokens`
+  max(B, B x PER_FIRM x n // K) (integer arithmetic, = max(B, 0.3 x B x n)). Same ratio as today
+  (6 of 20 per firm): 2-3 firms keep B, the five get 1.5 x B exactly (20k -> 30k, 30k -> 45k,
+  40k -> 60k). n counts as today (after the firm filter, Merrill once, unmapped firms none).
+- Token count of a hit = `len(text) / 4`, unrounded (the eval's `tokens_est` is the rounded sum;
+  every token figure in this plan, the PR and ADR-019 is this characters / 4 estimate, not a
+  tokenizer count). The checks below compare characters (4 x tokens), so rounding cannot fail
+  them.
+- **Budgeted part vs theme peers.** The budget covers the firm part and the research part only.
+  Theme peers (ADR-018) keep their 2 passages per peer on top, outside the budget, in both modes.
+  The only question of the bank with theme peers is **Q19** (EDJ + the four other core firms on
+  the younger-investor theme; `budget_tokens(Q19)` = B, one named firm). Every budget comparison
+  (fill, the bound, the step-3 checks) uses the budgeted part only; peer tokens are reported
+  separately and never compared with the budget.
+- `select(..., tokens=None)`: with `tokens` set, "full" = tokens of the kept list >= `tokens`
   (instead of `len(kept) >= k`); the loop and the answer-turn attach use one `full()` predicate
   (an answer turn is attached only while the list is not full). TRADE_KEEP still fires when
   `full()`, and in token mode it swaps only when the trade chunk is not longer than the pick it
-  replaces (so the swap never raises the total). **Bound**: the list's tokens <= B + the tokens
-  of the one chunk that crossed B (a question turn or its answer turn, or any pick); the largest
-  crossing chunk is measured in step 3 and stated in ADR-019. Unit tests cover the bound,
-  attach at the edge and a TRADE_KEEP fixture in token mode. The research part keeps its `THEME_K` = 4 passages and is
-  selected first; its tokens are taken off the firm part's budget. Theme peers keep their 2
-  passages per peer on top (ADR-018), not counted in the budget. Window questions use the same
-  budget (their floor 0 and `WINDOW_MAX_PER_DOC` unchanged).
+  replaces (so the swap never raises the total). The research part keeps its `THEME_K` = 4
+  passages and is selected first; the firm part gets `max(0, budget_tokens - research tokens)`.
+  `select()` takes an optional `unattached` list and appends the id of each kept question turn
+  whose answer turn was not attached because the list was full (recording only).
+  Window questions use the same budget (their floor 0 and `WINDOW_MAX_PER_DOC` unchanged).
+- **Bound** (what correct code guarantees, and what step 3 checks): the firm part ends at most
+  one chunk past its share (the chunk that made it full; TRADE_KEEP never adds), so budgeted
+  characters <= 4 x max(`budget_tokens`, research tokens) + the characters of the longest
+  budgeted hit of that question. Research tokens are at most 4 chunks, far below 20k, so in
+  practice this is 4 x `budget_tokens` + one chunk; the largest overshoot per point is reported
+  in ADR-019. Unit tests cover the bound, attach at the edge (question turn makes the list full
+  -> its answer is not attached and is recorded in `unattached`), a TRADE_KEEP fixture in token
+  mode, and research taken off the firm part.
 - `search(q, k=None, trace=None)`: `k=None` -> the configured rule (passages or tokens); an
   explicit `k` keeps passage mode with that k (tests, `eval_run.py --k`). `ask.py` and
   `smoke.py` call `search(query)` and are not changed.
@@ -69,11 +84,17 @@ passages get cited. FTS only, `main`; no model, no new dependency.
   it calls `search(query, trace=trace)` (k=None, the app's path, the configured rule; the peers'
   slots stay inside `search()` as today); with `--k` it passes that k as today. The record's
   budget fields: passage mode `k` = `budget(q)` as today and `budget_tokens` = None; token mode
-  `k` = None and `budget_tokens` = `budget_tokens(q)`; `prompt_size()` reports both, plus
-  `fill` = `tokens_est / budget_tokens` (None in passage mode).
+  `k` = None and `budget_tokens` = `budget_tokens(q)`. Size fields in every record (both modes):
+  `chars` / `tokens_est` / `passages` = all hits, what the model reads (as today, peers
+  included; used for "tokens per question" and prompt cost); `peer_chars` / `peer_tokens` /
+  `peer_passages` = the theme-peer hits (hits whose id is in `trace.peers`; firm and research
+  hits can never be there: the firm pass is limited to the named firms, research has no firm);
+  `budgeted_chars` / `tokens_budgeted` = the rest; `max_hit_chars` = the longest budgeted hit;
+  `fill` = `budgeted_chars / (4 x budget_tokens)` in token mode, None in passage mode;
+  `unattached` = question-turn ids whose answer was not attached for lack of budget.
 - FLOOR, FLOOR_BASE, MAX_PER_DOC, THEME_K, slot order, near-duplicate removal: unchanged (out of
   scope); a list that ends below its budget because the eligible pool runs out is reported
-  (fill = tokens / budget per question), not fixed here.
+  (`fill` < 1 per question), not fixed here.
 
 ## Selection rule (fixed before the grid)
 Grid: POOL_PER_GROUP in {15, 30, 50} x budget in {passage rule (today), 20k, 30k, 40k} = 12
@@ -94,12 +115,15 @@ and the real runs are skipped (no retrieval change to check; 0 calls).
 
 ## Files to change
 - `src/cee/retrieve/fts.py` (S1; owner review waived, TL decision 2026-11-17, #187) -
-  `TOKEN_BUDGET`, `budget_tokens(q)`, `hit_tokens(h)`, `select(..., tokens=None)` with the `full()`
-  predicate, `search()` wiring (research tokens off the firm part), docstrings; committed values
-  = the pick.
+  `TOKEN_BUDGET`, `budget_tokens(q)`, `hit_tokens(h)`, `select(..., tokens=None,
+  unattached=None)` with the `full()` predicate, `search()` wiring (research tokens off the firm
+  part), `PoolTrace.unattached` (filled from `select()`; not part of `ids()`), docstrings;
+  committed values = the pick.
 - `scripts/eval_run.py` - without `--k`, `search(query, trace=trace)` with k=None (see Settings);
   per question `search_s` (wall time of `search()`, `time.perf_counter`), `k` / `budget_tokens`
-  / `fill` by mode; summary median / max of tokens per question and of `search_s`; meta
+  by mode, the size fields of Settings (all hits, peers, budgeted, `max_hit_chars`, `fill`,
+  `unattached`); summary median / max of tokens per question (all hits) and of `search_s`,
+  total peer tokens; meta
   `pool_per_group` and `token_budget` read from `fts`, so every grid report proves its settings;
   report.md header / summary line show them. Real runs: `cache_key()` also takes the answer
   call's `max_tokens` (`llm.MAX_TOKENS`), added to the hashed blob only when it is not 8000, so
@@ -109,12 +133,19 @@ and the real runs are skipped (no retrieval change to check; 0 calls).
   (`ModelOutputError.stop_reason`).
 - `tests/test_retrieval_budget.py` - defaults (`TOKEN_BUDGET=None`, pool 15) give the same
   `select()` output as the passage rule on a fixture pool; token mode stops at the budget with at
-  most one chunk over; `budget_tokens()` 0/1/2/3/5 firms, Merrill once, unmapped, firm filter;
-  research tokens taken off the firm part; peers still on top; explicit k keeps passage mode.
+  most one chunk over; attach at the edge (answer not attached, id in `unattached`); TRADE_KEEP
+  fixture in token mode (swap only when the trade chunk is not longer; total never rises);
+  `budget_tokens()` 0/1/2/3/5 firms (5 -> exactly 1.5 x B), Merrill once, unmapped, firm filter;
+  research tokens taken off the firm part; peers still on top and outside the budget; explicit k
+  keeps passage mode.
 - `tests/test_eval_run.py` - with `fts.TOKEN_BUDGET` set and no `--k`, `eval_run.main` calls
   `search` with k=None (fake `search` records its arguments) and the record has `k` None,
   `budget_tokens` = `budget_tokens(q)` and `fill`; with `--k 20` it passes k=20; passage mode
-  without `--k` keeps today's records; `search_s`, summary median / max, meta settings.
+  without `--k` gives the same values as today in every field that exists today; `search_s`,
+  summary median / max, meta settings. **Peers do not count toward fill**: a fake `search` that
+  returns firm hits plus theme-peer hits (ids put in `trace.peers`, a Q19-like query with
+  `theme_peers`) gives `fill` and `budgeted_chars` from the firm hits only, `peer_chars` /
+  `peer_passages` from the peer hits, and `chars` / `tokens_est` from all of them.
   Cache: `cache_key` is unchanged at `max_tokens` 8000 (same hash as today for a fixed input)
   and differs at 16000, so a `RealRunner` with a saved invalid output under 8000 makes a fresh
   (fake) call at 16000; an invalid record saves `stop_reason` and `max_tokens`. Fake clients
@@ -140,7 +171,7 @@ Mock for everything that decides the change. Then, last, on finished code after 
 and verify-cee: **8 real runs, one each, 1 call each (one-call flow) = 8 calls**:
 Q24, Q25, Q28, Q29, Q30 (gap behavior) and Q7, Q15, Q20 (missed passages). Model
 `claude-sonnet-5-5`, prompt v3, `--as-of 2026-11-17`:
-`$env:LLM_PROVIDER='anthropic'; .venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 8
+`$env:LLM_PROVIDER='anthropic'; python scripts\eval_run.py --real --max-calls 8
 --questions Q7,Q15,Q20,Q24,Q25,Q28,Q29,Q30 --as-of 2026-11-17 --baseline
 evals/baselines/corpus-2026-11-17/report.json --out .eval-runs/0213-real`; raw outputs in the
 run's `raw/` folder, copied to `D:\ALLPROJECTS\EDJ\cache\ev213\real`.
@@ -172,8 +203,12 @@ If the pick is today's setting: 0 real calls (see the selection rule).
    wiring; `eval_run.py` k=None search without `--k`, `search_s`, `budget_tokens`, `fill`,
    medians, meta settings; `llm.py` `MAX_TOKENS` constant and `stop_reason`, `eval_run.py`
    cache key / request meta with `max_tokens`; unit tests. `pytest -q`.
+   All work, tests and runs from here on happen in the worktree `D:\ALLPROJECTS\EDJ\wt-213`
+   with `$env:PYTHONPATH='D:\ALLPROJECTS\EDJ\wt-213\src'` and the interpreter
+   `D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe` (written `python` below), so the code
+   under test is this branch's, not the main checkout's.
 2. **Defaults reproduce today.** Mock run at defaults:
-   `.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17 --baseline
+   `python scripts\eval_run.py --as-of 2026-11-17 --baseline
    evals/baselines/corpus-2026-11-17/report.json --out D:\ALLPROJECTS\EDJ\cache\ev213\grid\p15-passages`.
    Diff script (scratch, `D:\ALLPROJECTS\EDJ\cache\ev213\diff.py`, not committed): final chunk ids
    30/30 identical, same order, to the baseline; any difference stops the work.
@@ -184,25 +219,40 @@ If the pick is today's setting: 0 real calls (see the selection rule).
    **Check each report really used its point** (scratch check script, output kept for the PR):
    - meta `pool_per_group` / `token_budget` match the folder;
    - token points: `budget_tokens` = B for every question except Q10, Q11, Q15, Q21-Q25
-     (1.5 x B); `k` None;
-   - token points: every question's `tokens_est` <= `budget_tokens` + the tokens of its crossing
-     chunk (the bound above), and `tokens_est` < `budget_tokens` only where `fill` < 1 because the
-     eligible pool ran out (listed per point with the question IDs);
-   - the (15, 20k) point's chunk lists differ from (15, passages) for at least the questions
-     whose passage list was full (if they are identical, token mode did not run: stop and fix);
-   - pool sizes at pool 30 / 50 >= those at 15 for every question;
+     (1.5 x B); `k` None; passage points: `budget_tokens` None and `k` as in the baseline;
+   - token points, budgeted part only (peers excluded, see Settings): every question's
+     `budgeted_chars` <= 4 x `budget_tokens` + `max_hit_chars` (no question in the bank has
+     research tokens above 20k; if one did, the check uses the bound's max() form). Questions
+     with `fill` < 1 are listed per point (information: the eligible pool ran out; not a check);
+     the largest overshoot (`budgeted_chars` - 4 x `budget_tokens`) per point goes to the table;
+   - token mode really ran: at (15, 20k) at least one question's chunk list differs from
+     (15, passages), and every question whose list is identical there has `fill` < 1 (its
+     eligible pool is exhausted, so both modes take all of it); anything else stops the work;
+   - pool sizes at pool 30 / 50 >= those at 15 for every question (each SQL pass keeps the top N
+     per firm and document type in a fixed order, so a larger N gives a superset);
+   - Q19's peer passages <= 2 per peer firm (Merrill counted once: BAC GWIM/Merrill hits count as
+     MER) at every point (peers stay outside the budget);
    a report that fails a check is discarded and re-run after the fix.
    Grid table per point: PASS, forbidden, refusal gap / all, PASS->FAIL list, recall@pool /
-   recall@final (all rows, tier 1), passages, total tokens, tokens per question median / max,
-   search time per question median / max, eligibility, and the stage of each named missed passage.
+   recall@final (all rows, tier 1), passages, total tokens (all hits) and peer tokens, tokens per
+   question median / max (all hits), largest overshoot, questions with `fill` < 1, questions with
+   an unattached answer turn, search time per question median / max, eligibility, and the stage
+   of each named missed passage.
 4. **Pick** by the selection rule above; commit the pick as the defaults; `pytest -q`.
-5. **Final mock run** at the pick from committed code (`--out .eval-runs/0213-final`): same numbers
-   as its grid point (diff script: 30/30 identical chunk lists). Copy it to
+5. **Final mock run** at the pick from committed code (`--out .eval-runs/0213-final`): same
+   chunk lists (diff script: 30/30 identical, same order), statuses, refusal and recall as its
+   grid point (search times differ run to run and are not compared). Copy it to
    `evals/baselines/corpus-2026-11-17/` (if the pick differs from today).
 6. **Docs.** ADR-019 (grid table, rule, pick, tokens median / max old vs new, search time,
-   largest over-budget chunk, risks seen; states that tokens are characters / 4 estimates), ADR-013 status note, `specs/retrieval.md`, `llm.py` comment.
-7. **verify-cee**: `.venv\Scripts\python.exe scripts\verify_cee.py run`, all features PASS
-   (PYTHONPATH = this checkout's `src`). No user feature recipe change (the Ask page shows more
+   largest overshoot, peers outside the budget (Q19), and the question IDs at the pick where a
+   question turn made the list full and its answer turn was left unattached (from `unattached`;
+   "none" if empty); states that tokens are characters / 4 estimates), ADR-013 status note,
+   `specs/retrieval.md`, `llm.py` comment.
+7. **verify-cee**: from the worktree `D:\ALLPROJECTS\EDJ\wt-213` (the main checkout is used by
+   other issues), `$env:PYTHONPATH='D:\ALLPROJECTS\EDJ\wt-213\src'`, `.env` copied in from the main
+   checkout without reading it (git-ignored, as in #181), `D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe
+   scripts\verify_cee.py run`, all features PASS. Every eval / grid run in this plan uses the same
+   worktree, interpreter and PYTHONPATH. No user feature recipe change (the Ask page shows more
    passages, same features).
 8. **Real runs last** (paid-call plan). Per question: behavior vs expected; for Q7, Q15, Q20 (and
    Q25) which named missed passages are in the retrieved set and which are cited in a claim
@@ -242,8 +292,9 @@ If the pick is today's setting: 0 real calls (see the selection rule).
 - [ ] Defaults reproduce today -> step 2 diff: 30/30 identical chunk lists vs the baseline; unit
   test: passage mode `select()` output unchanged.
 - [ ] Token mode really runs in the eval -> unit test (`search` called with k=None when
-  `fts.TOKEN_BUDGET` is set and `--k` is not given) and the step-3 per-point checks (budget per
-  question, over-budget bound, fill, (15, 20k) lists differ from (15, passages)).
+  `fts.TOKEN_BUDGET` is set and `--k` is not given; peer hits do not count toward `fill`) and
+  the step-3 per-point checks (budget per question, bound on the budgeted part, token mode ran at
+  (15, 20k), pool superset, Q19 peers <= 2 per firm).
 - [ ] Truncation path ready before the first call -> tests: cache key unchanged at 8000 and
   different at 16000; a fresh fake call at 16000 despite a saved invalid output; `stop_reason`
   and `max_tokens` saved.
@@ -253,8 +304,8 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   (8, or up to 16 on the truncation path) and raw output folder stated. Skipped with 0 calls only
   if the pick is today's setting. A gap question without `gap_with_adjacent` -> finding: "Part of
   #213" or the TL picks the next eligible point (paid-call plan).
-- [ ] Tokens per question (median, max) for the old setting (6,001 / 9,544) and the new one, and
-  search time median / max for both -> from the step 2 and step 5 reports, in the PR and ADR-019.
+- [ ] Tokens per question (median, max; all hits, what the model reads) for the old setting
+  (6,001 / 9,544) and the new one, and search time median / max for both -> from the step 2 and step 5 reports, in the PR and ADR-019.
 - [ ] Mock at the pick: refusal gap 5/5, keyed 22/22, 0 forbidden, no PASS->FAIL (Q24, Q25,
   Q28-Q30 refusal_ok True; linked Q7, Q15, Q20 status and recall@final reported).
 - [ ] ADR-019 written in `docs/DECISIONS.md`, ADR-013 marked as replaced in its passage count;
@@ -271,3 +322,10 @@ If the pick is today's setting: 0 real calls (see the selection rule).
   `llm.py` + `eval_run.py` + tests), stated as a planned run with another setting; attach and
   TRADE_KEEP respect the token budget (bound stated, TRADE_KEEP fixture test); gap-question
   finding handling; token figures are characters / 4 estimates.
+- 2026-11-19 00:10 - plan revised after review round 2 (issuecomment-7000902848), in worktree
+  `D:\ALLPROJECTS\EDJ\wt-213`: budget covers firm + research only; theme peers (Q19) reported
+  separately (`peer_*`), `fill` and the bound use `budgeted_chars` only, test that peers do not
+  count toward fill; bound stated in characters with `max_hit_chars` (no rounding failure);
+  "token mode ran" check no longer fails when a pool is exhausted (identical lists need
+  `fill` < 1); integer 1.5 x B; `unattached` recorded and listed in ADR-019; final run compares
+  chunk lists / statuses / recall, not search time; runs use the worktree's `src`.
