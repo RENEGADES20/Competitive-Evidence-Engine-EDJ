@@ -78,7 +78,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
         mode: str | None = None) -> Result:
     """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
     mode: retrieval mode, "fts" | "hybrid" | "hybrid-norerank" (#125, #126); None -> RETRIEVAL_MODE (default fts).
-    Hybrid modes search the whole question as one part, no planner call (cee.retrieve.modes)."""
+    Every mode plans the question the same way; hybrid modes search the plan's parts (cee.retrieve.modes, #240)."""
     provider = provider or settings().llm_provider
     mode = resolve_mode(mode)
     t = _Trace(progress)

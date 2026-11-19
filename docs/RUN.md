@@ -205,6 +205,55 @@ RETRIEVAL_MODE=hybrid-norerank LLM_MODEL=claude-sonnet-5-5 LLM_PROVIDER=anthropi
 ```
 The score is a reading of each answer against `passes_if`, not a number the script prints.
 
+**Like-for-like re-test (#240, `corpus-2026-11-19`).** Since #240 the hybrid modes take the same
+plan, token budget and pool as `fts`. The mock runs (0 real calls) are `fts` and `hybrid-norerank`
+on the rule plans (M1, M2), the same two on #217's saved planner outputs (M3, M4; `--reuse-plans`
+reads them from `.eval-runs/cache/`, never calls the planner, and stops with exit 2 when one is
+missing), and `hybrid` as a smoke run (M5). M1 must equal `evals/baselines/corpus-2026-11-19/` on
+30 of 30 questions; if not, stop. Copy #217's `Q*-plan-*.json` files into `.eval-runs/cache/` first.
+```powershell
+$env:LLM_PROVIDER = 'mock'; $env:CEE_VECTORS = 'on'; $env:PLANNER = 'on'; $env:PLANNER_MAX_PARTS = '4'
+$env:FASTEMBED_CACHE_PATH = 'D:\ALLPROJECTS\EDJ\cache\fastembed'   # your model folder
+$base = 'evals/baselines/corpus-2026-11-19/report.json'; $plans = 'anthropic:claude-sonnet-5-5'
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts --as-of 2026-11-17 --baseline $base --out .eval-runs\0240-m1-fts
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-11-17 --baseline $base --out .eval-runs\0240-m2-hybrid-norerank
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode fts --reuse-plans $plans --as-of 2026-11-17 --baseline $base --out .eval-runs\0240-m3-fts-plans
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --reuse-plans $plans --as-of 2026-11-17 --baseline $base --out .eval-runs\0240-m4-hybrid-norerank-plans
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid --as-of 2026-11-17 --baseline $base --out .eval-runs\0240-m5-hybrid
+```
+```bash
+export LLM_PROVIDER=mock CEE_VECTORS=on PLANNER=on PLANNER_MAX_PARTS=4
+export FASTEMBED_CACHE_PATH="$HOME/cee-cache/fastembed"   # your model folder
+base=evals/baselines/corpus-2026-11-19/report.json; plans=anthropic:claude-sonnet-5-5
+.venv/bin/python scripts/eval_run.py --mode fts --as-of 2026-11-17 --baseline $base --out .eval-runs/0240-m1-fts
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank --as-of 2026-11-17 --baseline $base --out .eval-runs/0240-m2-hybrid-norerank
+.venv/bin/python scripts/eval_run.py --mode fts --reuse-plans $plans --as-of 2026-11-17 --baseline $base --out .eval-runs/0240-m3-fts-plans
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank --reuse-plans $plans --as-of 2026-11-17 --baseline $base --out .eval-runs/0240-m4-hybrid-norerank-plans
+.venv/bin/python scripts/eval_run.py --mode hybrid --as-of 2026-11-17 --baseline $base --out .eval-runs/0240-m5-hybrid
+```
+The mock comparison (`--no-decision`: tables only; `--pool-note` replaces #211's pool sentence) for the
+rule plans; the same with M3 / M4 into `.../mock/planner-plans` (the exact commands are in
+`evals/hybrid-eval/corpus-2026-11-19/mock/*/report.md`, "Rebuilt with"):
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_compare.py --run fts=.eval-runs/0240-m1-fts/report.json --run hybrid-norerank=.eval-runs/0240-m2-hybrid-norerank/report.json --run hybrid=.eval-runs/0240-m5-hybrid/report.json --no-decision --title "# fts vs hybrid-norerank, rule plans (#240)" --pool-note "Both modes pool the best 30 per (firm, document type) per part; fts ranks by ts_rank over every match, hybrid by RRF over its two legs, whose keyword and vector legs each reach at most LEG_K = 100 chunks per quota firm across all document types, so a hybrid group can hold fewer than 30." --out evals/hybrid-eval/corpus-2026-11-19/mock/rule-plans
+```
+```bash
+.venv/bin/python scripts/eval_compare.py --run fts=.eval-runs/0240-m1-fts/report.json --run hybrid-norerank=.eval-runs/0240-m2-hybrid-norerank/report.json --run hybrid=.eval-runs/0240-m5-hybrid/report.json --no-decision --title "# fts vs hybrid-norerank, rule plans (#240)" --pool-note "Both modes pool the best 30 per (firm, document type) per part; fts ranks by ts_rank over every match, hybrid by RRF over its two legs, whose keyword and vector legs each reach at most LEG_K = 100 chunks per quota firm across all document types, so a hybrid group can hold fewer than 30." --out evals/hybrid-eval/corpus-2026-11-19/mock/rule-plans
+```
+The scored real run (#240; **paid: 30 answer calls, 0 planner calls, needs the tech lead's go-ahead**),
+answering from #217's plans. `--reuse-plans` with `--real` stops before any call when a plan is missing.
+The key lives in `.env` at the checkout root; never print it:
+```powershell
+$env:LLM_PROVIDER = 'anthropic'; $env:LLM_MODEL = 'claude-sonnet-5-5'; $env:CEE_VECTORS = 'on'; $env:PLANNER = 'on'; $env:PLANNER_MAX_PARTS = '4'
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 30 --reuse-plans anthropic:claude-sonnet-5-5 --mode hybrid-norerank --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-19\report.json --out .eval-runs\0240-real
+```
+```bash
+LLM_PROVIDER=anthropic LLM_MODEL=claude-sonnet-5-5 CEE_VECTORS=on PLANNER=on PLANNER_MAX_PARTS=4 .venv/bin/python scripts/eval_run.py --real --max-calls 30 --reuse-plans anthropic:claude-sonnet-5-5 --mode hybrid-norerank --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-19/report.json --out .eval-runs/0240-real
+```
+The report (`evals/hybrid-eval/corpus-2026-11-19/real/report.md`) is built by
+`evals/hybrid-eval/corpus-2026-11-19/real/gen_report.py` from the run, the blind verdicts and #217's
+`docs/results/w10-report.json`.
+
 To take the vectors out of the local database again (fts never reads them):
 `docker exec cee-db psql -U cee -d cee -c "DROP TABLE chunk_embeddings; DROP EXTENSION vector;"`
 (same command in PowerShell and bash).

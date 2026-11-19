@@ -370,11 +370,11 @@ def feature_ask_answer(page, base, rec, ctx):
              f"query_log {before} -> {after}")
     check_part_gaps(rec, page, "the EDJ advisors question (one part)")
     ask(page, base, TWO_FIRM_Q)
-    # exp/hybrid: the hybrid modes plan the whole question as one part (cee.retrieve.modes); the
-    # expected gaps come from the logged plan in either mode
+    # exp/hybrid (#240): every mode plans the two-firm question in two parts; the expected gaps come
+    # from the logged plan
     from cee.config import settings  # loads .env as the app does; the app inherits it
     hybrid = (os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode).startswith("hybrid")
-    check_part_gaps(rec, page, "the two-firm question (" + ("one part, hybrid" if hybrid else "two parts") + ")")
+    check_part_gaps(rec, page, "the two-firm question (two parts" + (", hybrid" if hybrid else "") + ")")
     ask(page, base, THEME_GAP_Q)
     body = page.locator("body").inner_text()
     line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
@@ -440,14 +440,12 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
              "no model call" in model and "LLM called: False" in body, model)
     # plan-parts (#214): a two-firm question is searched in one part per firm, and the plan is logged.
-    # exp/hybrid: the hybrid modes search the whole question as one part, no planner (cee.retrieve.modes)
+    # exp/hybrid (#240): the hybrid modes plan and search the parts as fts does (cee.retrieve.modes)
     from cee.config import settings  # loads .env as the app does; the app inherits it
     mode = os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode
-    if mode.startswith("hybrid"):
-        # the page shows the plain label (ask_page.mode_label, #128), not the internal mode name
-        want_plan, want_search, n_parts = "1 part: p1 MS, RJF", "in 1 part (Smart search)", 1
-    else:
-        want_plan, want_search, n_parts = "2 parts: p1 MS; p2 RJF", "in 2 parts", 2
+    want_plan, n_parts = "2 parts: p1 MS; p2 RJF", 2
+    # the page shows the plain label (ask_page.mode_label, #128), not the internal mode name
+    want_search = "in 2 parts (Smart search)" if mode.startswith("hybrid") else "in 2 parts"
     ask(page, base, TWO_FIRM_Q)
     lines = open_trace(page)
     plan = next((l for l in lines if l.startswith("Planning the search")), "")

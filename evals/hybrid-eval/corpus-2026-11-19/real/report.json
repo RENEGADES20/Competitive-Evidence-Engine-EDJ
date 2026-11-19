@@ -1,0 +1,2878 @@
+{
+  "meta": {
+    "run_id": "corpus-2026-11-19-20261119-153212",
+    "snapshot": "corpus-2026-11-19",
+    "commit": "376fadc",
+    "as_of": "2026-11-17",
+    "retrieval_mode": "hybrid-norerank",
+    "constants": {
+      "FLOOR": 0.4,
+      "MAX_PER_DOC": 3,
+      "DUP_JACCARD": 0.6,
+      "RERANK_FLOOR": 0.0,
+      "POOL_PER_GROUP": 30,
+      "LEG_K": 100,
+      "RRF_K": 60,
+      "TOKEN_BUDGET": 40000,
+      "WINDOW_MAX_PER_DOC": 8,
+      "THEME_MAX_PER_DOC": 2
+    },
+    "token_budget": 40000,
+    "pool_per_group": 30,
+    "planner_version": "plan-v2",
+    "reuse_plans": "anthropic:claude-sonnet-5-5",
+    "real_calls": 30,
+    "reused": 30,
+    "max_calls": 30
+  },
+  "cost": {
+    "input_tokens": 1804034,
+    "output_tokens": 235451,
+    "usd_estimate": 5.96,
+    "rates_per_m": [
+      2.0,
+      10.0
+    ]
+  },
+  "score": {
+    "hybrid_first_read": {
+      "pass": 25,
+      "tier1_pass": 15
+    },
+    "hybrid_final": {
+      "pass": 25,
+      "tier1_pass": 15
+    },
+    "sensitivity_stricter_q15_q17": {
+      "hybrid": 23,
+      "hybrid_tier1": 14,
+      "fts": 22,
+      "fts_tier1": 13
+    },
+    "fts_217": {
+      "pass": 24,
+      "tier1_pass": 14
+    }
+  },
+  "recall": {
+    "hybrid": {
+      "tier1_passage_recall": 0.875,
+      "recall_pool": 0.965,
+      "recall_final": 0.851,
+      "tier1_recall_pool": 0.957,
+      "tier1_recall_final": 0.875
+    },
+    "fts_217": {
+      "tier1_passage_recall": 0.869,
+      "recall_pool": 0.977,
+      "recall_final": 0.763,
+      "tier1_recall_pool": 0.972,
+      "tier1_recall_final": 0.869
+    }
+  },
+  "model_findings": {
+    "Q17": "Raimond 'enterprise rollout completed' (C4) vs 'in pilot' (adjacent) not reconciled"
+  },
+  "differ": {
+    "Q20": {
+      "hybrid": "PASS",
+      "fts": "FAIL",
+      "label": "retrieval (then model behavior)",
+      "text": "The deciding survey passages were in hybrid's retrieved set and not in fts's: UBS-NEXTGEN-2026#83 (experience and expertise 79%, gender split), UBS-NEXTGEN-2026#84 (rapport 67%, blended communication 83%) and FIDELITY-III-2025#0 (next-gen holistic planning, compensation transparency); hybrid cites all three (C1, C2, C4, C13, C17). fts on the same plan retrieved none of the three (from the UBS study only UBS-NEXTGEN-2026#81) and answered gap_with_adjacent with survey findings as adjacent items (#217: class b, r). Of the three, #83 and FIDELITY-III-2025#0 were in fts's candidate pool but lost in select(), and #84 was never an fts candidate (FIDELITY-III-2025#0 is a Gate 4 / PR #218 missed passage). Passage recall is the same in both runs (0.556): fts held other keyed passages instead (e.g. NM-PP-2026#22), which it did not cite as findings. With these passages the model answered instead of declining, so the behavior change follows the retrieval change."
+    }
+  },
+  "borderline": [
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q15",
+    "Q17",
+    "Q19",
+    "Q20",
+    "Q22",
+    "Q25",
+    "Q26",
+    "Q28",
+    "Q29"
+  ],
+  "verdicts": {
+    "Q1": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Channels management credits (advisors, Workplace, E*TRADE, integrated firm) in its framing, every statement dated by call.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q2": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Own pitch (culture, affiliation choice, payout ranges, independence, platform) from management and recruiting pages, plus disclosed recruiting results.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q3": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Framing, priorities and named competition covered; the concession is management's 'throttled growth' on long/short plus spokesperson-confirmed SAN minimum hikes, share loss only from an analyst quote (marked as such).",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
+    },
+    "Q4": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Merrill-specific: ADP pipeline, 5% sales-force aim, experienced-hire shift and its history; GWIM/BAC-wide figures kept as labelled adjacent items.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q5": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Names LeadIQ, E*TRADE build-out, workplace, Parable, DevGen AI with stated purposes; no spend invented. Advisor-specific tools are thin (corpus holds no Debrief/AI@MS chunk).",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS (borderline)",
+        "final": "PASS",
+        "note": "Agree; advisor-specific tools thin in both reads."
+      }
+    },
+    "Q6": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "AdvisorChoice options as described, channel counts FY23-25 and RCS AUA quoted, management's mix-shift remarks quoted with dates.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q7": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Same dimensions for all three, each cell cited, empty cells shown as gaps (MS training, payout grids, comparable attrition). MS recruiting posture thin; one claim misgenders the BAC CFO.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
+    },
+    "Q8": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Each firm's own language; Schwab custody offer and RJF affiliation/RCS described separately, not flattened.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q9": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Merrill's $250K / $500K / $3MM markers cited; says plainly MS discloses no wealth-tier thresholds (channels instead).",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q10": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Shows the statements with dates and makes the basis visible (Merrill/GWIM the only own use of 'Mass Affluent'; Schwab says 'affluent'); gaps for MS, EDJ, RJF.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q11": {
+      "verdict": "FAIL",
+      "class": "c",
+      "borderline": false,
+      "reason": "gap_with_adjacent: only RJF (and partly EDJ) definitions quoted; MS only a 2020 label, Schwab none, Merrill only a GWIM footnote. Five quoted definitions not in the corpus; behavior also differs from the key's 'answer'.",
+      "fts_217": "FAIL",
+      "second_read": null
+    },
+    "Q12": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Schwab channels, scale/cost-to-serve claims and results, EDJ cost structure (opex, margin, NNA, households) alongside, explicit hand-off of the replication question.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q13": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Funnel end to end in management's words (retain vested, migrate to advisor-led, referral model) with each figure tied to the call/filing it was stated in.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q14": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Each option's economics for advisor (payout, costs borne) and firm (fees, RCS asset fee, comp ratio, transition assistance) from RJF's own filings, calls and pages.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q15": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Disclosed revenue composition per model (Schwab NII/sweep vs fee-based firms) with drivers; breakdowns named (GWIM not Merrill, grids not public). The mechanism is spread per claim rather than stated in one place.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "FAIL (borderline)",
+        "final": "PASS",
+        "note": "Reviewer's bar is stricter (no single Schwab-vs-advisor-led contrast). #217's fts answer has the same shape and passed; TL decision 2026-11-19: like-for-like on #217's bar, PASS. On the stricter bar both modes fail."
+      }
+    },
+    "Q16": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Organised by position, each attributed and dated, no forecast of its own.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q17": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Deployed named tools (RJF Ray/Raimond, Schwab Charley/Portfolio Insights, MS LeadIQ, BAC AI tools) kept apart from call aspirations and metrics; 'who claims most' answered as not like-for-like. Specificity vs volume is shown per firm, not named as the axis.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "FAIL (borderline)",
+        "final": "PASS",
+        "note": "Reviewer's bar is stricter (deployed-vs-aspiration not made the axis). #217's fts answer has the same per-firm shape and passed; TL decision: PASS like-for-like. On the stricter bar both modes fail. Model finding: Raimond 'enterprise rollout completed' (C4) vs 'in pilot' (adjacent, trade press) is not reconciled; a wording issue, not retrieval."
+      }
+    },
+    "Q18": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Disclosed pricing (ADV brochures), regulatory items, research and trade press each labelled for what they are.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q19": {
+      "verdict": "FAIL",
+      "class": "s",
+      "borderline": true,
+      "reason": "Cohort preference surveys dated and sourced and the 'should' handed back, but competitor moves aimed at the cohort are missing (only Schwab's Gen Z share as an adjacent item); all plan parts are EDJ.",
+      "fts_217": "FAIL",
+      "second_read": {
+        "reviewer": "FAIL",
+        "final": "FAIL",
+        "note": "Agree: competitor-moves leg missing (s)."
+      }
+    },
+    "Q20": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Actual survey findings with source and date (UBS, Fidelity, Cerulli, CFPB, BofA); samples described by population, sizes not given; most evidence is wealthy next-gen rather than under-40 generally, which the gaps say.",
+      "fts_217": "FAIL",
+      "second_read": {
+        "reviewer": "PASS (borderline)",
+        "final": "PASS",
+        "note": "Agree, borderline. The only cross-mode difference; cause retrieval (UBS-NEXTGEN-2026#83, #84, FIDELITY-III-2025#0 in hybrid's set only). One sample per mode cannot separate it from model variance."
+      }
+    },
+    "Q21": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Estimates (Cerulli 2025, UBS 2026) with source and vintage kept apart from each firm's stated actions; gaps where a firm says nothing.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q22": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Value, period, source and each firm's definition for MS, Schwab (core NNA), EDJ, RJF; Merrill marked as not reporting, GWIM AUM flows only as labelled adjacent. Several cells missing (EDJ 4Q25, Schwab 1Q25-2Q25), named as gaps.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
+    },
+    "Q23": {
+      "verdict": "FAIL",
+      "class": "c",
+      "borderline": false,
+      "reason": "Series far from complete (EDJ three points, RJF one, MS/Merrill/Schwab none in window); answered as gap_with_adjacent.",
+      "fts_217": "FAIL",
+      "second_read": null
+    },
+    "Q24": {
+      "verdict": "FAIL",
+      "class": "s",
+      "borderline": false,
+      "reason": "Computes no ratio even where both inputs are disclosed on one date (EDJ $2,647B / 20,514 at 2Q26), and never answers 'is the comparison valid' directly; definitions are laid out but the verdict is left implicit.",
+      "fts_217": "FAIL",
+      "second_read": null
+    },
+    "Q25": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Reports what each firm discloses (MS formulaic payout and deferral mix, Merrill ADV awards, EDJ commission+salary, Schwab FC conflict note, RJF headline payouts) and marks grids as not public; trade press only as labelled adjacent. Behavior 'answer' vs key gap_with_adjacent.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree; behavior label 'answer' vs key gap_with_adjacent, as in #217."
+      }
+    },
+    "Q26": {
+      "verdict": "FAIL",
+      "class": "s",
+      "borderline": true,
+      "reason": "Newest first and nothing older than the window, but items carry no 'why it might matter' line; all items are trade press (no RJF primary document in the window).",
+      "fts_217": "FAIL",
+      "second_read": {
+        "reviewer": "PASS (borderline), withdrawn to FAIL",
+        "final": "FAIL",
+        "note": "Reviewer withdrew PASS: passes_if asks for a 'why it might matter' line per item and none has one; #217 failed fts on the same reading. FAIL in both modes."
+      }
+    },
+    "Q27": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "Merrill items only; BAC material only where it is explicitly Merrill/GWIM and labelled; GWIM figures as adjacent.",
+      "fts_217": "PASS",
+      "second_read": null
+    },
+    "Q28": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "EDJ rate with period and definition from the 10-Q, Merrill only 'near historic lows', net headcount adjacent with the attrition difference stated.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree."
+      }
+    },
+    "Q29": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": true,
+      "reason": "Disclosed structure (formulaic payout, 75/25 deferral) then 'Payout grids are not public', aggregate comp expense labelled different, trade press indicative. Behavior 'answer' vs key gap_with_adjacent; the named source is generic.",
+      "fts_217": "PASS",
+      "second_read": {
+        "reviewer": "PASS",
+        "final": "PASS",
+        "note": "Agree; named source generic."
+      }
+    },
+    "Q30": {
+      "verdict": "PASS",
+      "class": null,
+      "borderline": false,
+      "reason": "States Merrill does not report standalone results, GWIM figures with explicit 'GWIM is not Merrill'.",
+      "fts_217": "PASS",
+      "second_read": null
+    }
+  },
+  "comparison": {
+    "Q1": {
+      "retrieved": {
+        "hybrid": 125,
+        "fts": 134,
+        "both": 79,
+        "hybrid_only": 46,
+        "fts_only": 55
+      },
+      "cited": {
+        "hybrid": 36,
+        "fts": 33,
+        "hybrid_only": [
+          "MS-10K-2025#111",
+          "MS-10Q-2025Q2#62",
+          "MS-10Q-2026Q2#63",
+          "MS-PR-2026-01-15-01#2",
+          "MS-TR-2025Q1#13",
+          "MS-TR-2025Q1#54",
+          "MS-TR-2025Q2#34",
+          "MS-TR-2025Q2#35",
+          "MS-TR-2025Q3#24",
+          "MS-TR-2025Q3#45",
+          "MS-TR-2025Q4#23",
+          "MS-TR-2025Q4#7",
+          "MS-TR-2025Q4#9",
+          "MS-TR-2026Q1#26",
+          "MS-TR-2026Q2#2",
+          "MS-TR-2026Q3#13",
+          "MS-TR-2026Q3#32"
+        ],
+        "fts_only": [
+          "MS-10Q-2026Q1#136",
+          "MS-10Q-2026Q2#71",
+          "MS-DECK-2026-strategic-update#30",
+          "MS-SUPP-2026Q1#14",
+          "MS-SUPP-2026Q2#16",
+          "MS-SUPP-2026Q3#16",
+          "MS-TR-2024Q4#24",
+          "MS-TR-2025Q3#13",
+          "MS-TR-2025Q4#6",
+          "MS-TR-2026Q1#11",
+          "MS-TR-2026Q1#23",
+          "MS-TR-2026Q1#24",
+          "MS-TR-2026Q3#16",
+          "MS-TRADE-2026-10-26-IN-01#2"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "MS-TR-2026Q3#13"
+      ],
+      "expected_chunks_fts_only": [
+        "MS-TR-2026Q1#11",
+        "MS-TR-2026Q3#3"
+      ],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q2": {
+      "retrieved": {
+        "hybrid": 120,
+        "fts": 149,
+        "both": 70,
+        "hybrid_only": 50,
+        "fts_only": 79
+      },
+      "cited": {
+        "hybrid": 44,
+        "fts": 54,
+        "hybrid_only": [
+          "RJF-10K-2025#88",
+          "RJF-TR-2024Q4#23",
+          "RJF-TR-2024Q4#7",
+          "RJF-TR-2025Q1#11",
+          "RJF-TR-2025Q1#34",
+          "RJF-TR-2025Q2#30",
+          "RJF-TR-2025Q3#30",
+          "RJF-TR-2025Q3#31",
+          "RJF-TR-2025Q4#33",
+          "RJF-TR-2025Q4#4",
+          "RJF-TR-2026Q1#22",
+          "RJF-TR-2026Q1#5",
+          "RJF-TRADE-2026-10-29-WM-01#0",
+          "RJF-TRADE-2026-10-29-WM-01#1",
+          "RJF-TRADE-2026-11-04-IN-01#2"
+        ],
+        "fts_only": [
+          "RJF-10K-2025#225",
+          "RJF-10K-2025#228",
+          "RJF-10K-2025#27",
+          "RJF-10K-2025#9",
+          "RJF-10K-2025#91",
+          "RJF-10Q-2025Q2#158",
+          "RJF-10Q-2025Q4#199",
+          "RJF-10Q-2026Q1#334",
+          "RJF-PR-2026-07-22-01#2",
+          "RJF-PR-web-advisor-select#0",
+          "RJF-PR-web-bank-and-credit-union-advisors#1",
+          "RJF-PR-web-independent-advisor#0",
+          "RJF-PR-web-independent-ria-custody-services#0",
+          "RJF-PR-web-independent-ria-custody-services#2",
+          "RJF-SUPP-2026Q1#14",
+          "RJF-SUPP-2026Q2#14",
+          "RJF-SUPP-2026Q2#45",
+          "RJF-TR-2024Q4#6",
+          "RJF-TR-2025Q2#7",
+          "RJF-TR-2025Q3#8",
+          "RJF-TR-2026Q1#23",
+          "RJF-TR-2026Q1#48",
+          "RJF-TR-2026Q2#27",
+          "RJF-TR-2026Q2#63",
+          "RJF-TRADE-2026-11-12-WM-01#1"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "RJF-10K-2025#88",
+        "RJF-PR-web-independent-advisor#1",
+        "RJF-PR-web-traditional-employee-advisor#1",
+        "RJF-TR-2025Q4#33",
+        "RJF-TR-2025Q4#4",
+        "RJF-TR-2025Q4#7",
+        "RJF-TR-2025Q4#97",
+        "RJF-TR-2026Q1#21",
+        "RJF-TR-2026Q1#22",
+        "RJF-TR-2026Q1#49",
+        "RJF-TR-2026Q1#5",
+        "RJF-TR-2026Q1#54",
+        "RJF-TR-2026Q2#23",
+        "RJF-TR-2026Q2#7"
+      ],
+      "expected_chunks_fts_only": [
+        "RJF-10K-2025#12",
+        "RJF-10K-2025#225",
+        "RJF-10K-2025#91",
+        "RJF-PR-2026-04-22-01#101",
+        "RJF-PR-2026-04-22-01#52",
+        "RJF-PR-2026-04-22-01#55",
+        "RJF-PR-2026-07-22-01#103",
+        "RJF-PR-2026-07-22-01#4",
+        "RJF-PR-2026-07-22-01#52",
+        "RJF-PR-2026-07-22-01#55",
+        "RJF-PR-web-independent-advisor#2",
+        "RJF-TR-2025Q4#31",
+        "RJF-TR-2025Q4#32",
+        "RJF-TR-2026Q1#23",
+        "RJF-TR-2026Q1#3",
+        "RJF-TR-2026Q1#7",
+        "RJF-TR-2026Q2#27",
+        "RJF-TR-2026Q2#63",
+        "RJF-TR-2026Q2#67"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "RJF-10K-2025#88",
+        "RJF-PR-web-independent-advisor#1",
+        "RJF-PR-web-traditional-employee-advisor#1",
+        "RJF-TR-2025Q4#33",
+        "RJF-TR-2025Q4#4",
+        "RJF-TR-2025Q4#7",
+        "RJF-TR-2025Q4#97",
+        "RJF-TR-2026Q1#22",
+        "RJF-TR-2026Q1#5",
+        "RJF-TR-2026Q1#54",
+        "RJF-TR-2026Q2#7"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q3": {
+      "retrieved": {
+        "hybrid": 158,
+        "fts": 156,
+        "both": 75,
+        "hybrid_only": 83,
+        "fts_only": 81
+      },
+      "cited": {
+        "hybrid": 50,
+        "fts": 41,
+        "hybrid_only": [
+          "SCHW-10K-2025#187",
+          "SCHW-10K-2025#25",
+          "SCHW-10K-2025#95",
+          "SCHW-DECK-2026-investor-day#183",
+          "SCHW-PR-2026-01-21-01#40",
+          "SCHW-PR-2026-04-16-01#34",
+          "SCHW-PR-2026-07-21-01#42",
+          "SCHW-PR-2026-10-15-01#41",
+          "SCHW-TR-2025Q4#12",
+          "SCHW-TR-2026Q1#29",
+          "SCHW-TR-2026Q1#49",
+          "SCHW-TR-2026Q2#17",
+          "SCHW-TR-2026Q2#32",
+          "SCHW-TR-2026Q2#5",
+          "SCHW-TRADE-2026-08-20-RB-01#0",
+          "SCHW-TRADE-2026-08-24-IN-01#0",
+          "SCHW-TRADE-2026-08-24-IN-01#2",
+          "SCHW-TRADE-2026-08-24-IN-01#3",
+          "SCHW-TRADE-2026-08-26-WM-01#0",
+          "SCHW-TRADE-2026-09-23-RB-01#1",
+          "SCHW-TRADE-2026-10-15-WM-01#2",
+          "SCHW-TRADE-2026-10-15-WM-01#3",
+          "SCHW-TRADE-2026-10-28-IN-01#2",
+          "SCHW-TRADE-2026-10-28-WM-01#1",
+          "SCHW-TRADE-2026-10-28-WM-01#3",
+          "SCHW-TRADE-2026-10-28-WM-02#2",
+          "SCHW-TRADE-2026-10-29-WM-01#0",
+          "SCHW-TRADE-2026-11-02-RB-01#2"
+        ],
+        "fts_only": [
+          "SCHW-10Q-2025Q3#238",
+          "SCHW-DECK-2026-investor-day#41",
+          "SCHW-DECK-2026-investor-day#63",
+          "SCHW-DECK-2026Q2#10",
+          "SCHW-DECK-2026Q3#22",
+          "SCHW-PR-2026-10-15-01#1",
+          "SCHW-PR-2026-10-15-01#3",
+          "SCHW-TR-2025Q4#48",
+          "SCHW-TR-2025Q4#5",
+          "SCHW-TR-2026Q1#30",
+          "SCHW-TR-2026Q1#48",
+          "SCHW-TR-2026Q1#7",
+          "SCHW-TR-2026Q2#14",
+          "SCHW-TR-2026Q2#33",
+          "SCHW-TRADE-2026-08-24-IN-01#1",
+          "SCHW-TRADE-2026-08-26-WM-01#3",
+          "SCHW-TRADE-2026-10-15-WM-01#1",
+          "SCHW-TRADE-2026-10-29-WM-01#2",
+          "SCHW-TRADE-2026-11-03-IN-01#0"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "SCHW-10K-2025#125",
+        "SCHW-10K-2025#141",
+        "SCHW-10K-2025#187",
+        "SCHW-10K-2025#25",
+        "SCHW-10K-2025#95",
+        "SCHW-DECK-2026-investor-day#175",
+        "SCHW-DECK-2026-investor-day#183",
+        "SCHW-DECK-2026-investor-day#200",
+        "SCHW-DECK-2026-investor-day#203",
+        "SCHW-DECK-2026-investor-day#25",
+        "SCHW-DECK-2026-investor-day#26",
+        "SCHW-DECK-2026-investor-day#62",
+        "SCHW-DECK-2026-investor-day#92",
+        "SCHW-DECK-2026Q3#27",
+        "SCHW-TR-2026Q1#28",
+        "SCHW-TR-2026Q1#29",
+        "SCHW-TR-2026Q2#17",
+        "SCHW-TR-2026Q2#32",
+        "SCHW-TR-2026Q3#25",
+        "SCHW-TR-2026Q3#60",
+        "SCHW-TR-2026Q3#61"
+      ],
+      "expected_chunks_fts_only": [
+        "SCHW-10K-2025#116",
+        "SCHW-10K-2025#117",
+        "SCHW-10K-2025#129",
+        "SCHW-10K-2025#136",
+        "SCHW-10K-2025#72",
+        "SCHW-DECK-2026-investor-day#119",
+        "SCHW-DECK-2026-investor-day#126",
+        "SCHW-DECK-2026-investor-day#305",
+        "SCHW-DECK-2026-investor-day#306",
+        "SCHW-DECK-2026-investor-day#38",
+        "SCHW-DECK-2026-investor-day#41",
+        "SCHW-DECK-2026Q3#20",
+        "SCHW-DECK-2026Q3#22",
+        "SCHW-DECK-2026Q3#52",
+        "SCHW-DECK-2026Q3#6",
+        "SCHW-DECK-2026Q3#9",
+        "SCHW-TR-2026Q1#11",
+        "SCHW-TR-2026Q1#13",
+        "SCHW-TR-2026Q1#48",
+        "SCHW-TR-2026Q1#7",
+        "SCHW-TR-2026Q2#13",
+        "SCHW-TR-2026Q2#14",
+        "SCHW-TR-2026Q2#33",
+        "SCHW-TR-2026Q3#27",
+        "SCHW-TR-2026Q3#3"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "SCHW-10K-2025#125",
+        "SCHW-10K-2025#141",
+        "SCHW-10K-2025#187",
+        "SCHW-10K-2025#25",
+        "SCHW-10K-2025#95",
+        "SCHW-DECK-2026-investor-day#183",
+        "SCHW-DECK-2026-investor-day#200",
+        "SCHW-DECK-2026-investor-day#25",
+        "SCHW-DECK-2026-investor-day#26",
+        "SCHW-DECK-2026-investor-day#62",
+        "SCHW-TR-2026Q1#29",
+        "SCHW-TR-2026Q2#32"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q4": {
+      "retrieved": {
+        "hybrid": 111,
+        "fts": 123,
+        "both": 102,
+        "hybrid_only": 9,
+        "fts_only": 21
+      },
+      "cited": {
+        "hybrid": 27,
+        "fts": 28,
+        "hybrid_only": [
+          "BAC-PR-2026-01-14-01#13",
+          "BAC-PR-2026-10-14-01#11",
+          "MER-TRADE-2026-10-14-IN-02#0"
+        ],
+        "fts_only": [
+          "BAC-DECK-2025-investor-day#8",
+          "BAC-TR-2026Q2#21",
+          "MER-TRADE-2026-10-14-IN-02#1",
+          "MER-TRADE-2026-10-14-IN-02#3"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.857,
+          0.857,
+          0.857
+        ],
+        "fts": [
+          0.857,
+          0.857,
+          0.857
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "BAC-10Q-2026Q2#90"
+      ],
+      "expected_chunks_fts_only": [
+        "BAC-TR-2026Q1#25",
+        "BAC-TR-2026Q2#22"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "BAC-10Q-2026Q2#90"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q5": {
+      "retrieved": {
+        "hybrid": 26,
+        "fts": 37,
+        "both": 15,
+        "hybrid_only": 11,
+        "fts_only": 22
+      },
+      "cited": {
+        "hybrid": 14,
+        "fts": 12,
+        "hybrid_only": [
+          "MS-TR-2024Q4#44",
+          "MS-TR-2025Q1#27",
+          "MS-TR-2025Q1#54",
+          "MS-TR-2025Q3#52",
+          "MS-TR-2025Q4#35",
+          "MS-TR-2025Q4#9",
+          "MS-TR-2026Q1#5",
+          "MS-TR-2026Q3#32",
+          "MS-TR-2026Q3#42"
+        ],
+        "fts_only": [
+          "MS-TR-2025Q3#13",
+          "MS-TR-2025Q4#65",
+          "MS-TR-2025Q4#72",
+          "MS-TR-2026Q2#14",
+          "MS-TR-2026Q2#9",
+          "MS-TR-2026Q3#16",
+          "MS-TR-2026Q3#8"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.833,
+          1.0,
+          0.833
+        ],
+        "fts": [
+          0.833,
+          1.0,
+          0.833
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "MS-TR-2025Q4#35",
+        "MS-TR-2025Q4#9",
+        "MS-TR-2026Q1#5",
+        "MS-TR-2026Q3#21",
+        "MS-TR-2026Q3#32"
+      ],
+      "expected_chunks_fts_only": [
+        "MS-TR-2025Q4#65",
+        "MS-TR-2025Q4#72",
+        "MS-TR-2026Q1#41",
+        "MS-TR-2026Q2#14",
+        "MS-TR-2026Q2#9",
+        "MS-TR-2026Q3#16",
+        "MS-TR-2026Q3#8"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "MS-TR-2025Q4#9",
+        "MS-TR-2026Q3#21"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q6": {
+      "retrieved": {
+        "hybrid": 128,
+        "fts": 150,
+        "both": 77,
+        "hybrid_only": 51,
+        "fts_only": 73
+      },
+      "cited": {
+        "hybrid": 53,
+        "fts": 59,
+        "hybrid_only": [
+          "RJF-10K-2025#228",
+          "RJF-10K-2025#91",
+          "RJF-PR-web-affiliation-options#0",
+          "RJF-TR-2024Q3#9",
+          "RJF-TR-2024Q4#7",
+          "RJF-TR-2025Q2#30",
+          "RJF-TR-2025Q2#44",
+          "RJF-TR-2025Q2#47",
+          "RJF-TR-2025Q3#8",
+          "RJF-TR-2026Q1#25",
+          "RJF-TR-2026Q1#45",
+          "RJF-TR-2026Q1#5",
+          "RJF-TRADE-2026-08-21-IN-01#1",
+          "RJF-TRADE-2026-08-26-IN-01#1",
+          "RJF-TRADE-2026-10-29-WM-01#1",
+          "RJF-TRADE-2026-11-05-IN-01#0",
+          "RJF-TRADE-2026-11-05-WM-01#0"
+        ],
+        "fts_only": [
+          "RJF-10K-2025#109",
+          "RJF-10K-2025#11",
+          "RJF-10K-2025#225",
+          "RJF-10Q-2025Q2#293",
+          "RJF-10Q-2026Q1#239",
+          "RJF-10Q-2026Q1#297",
+          "RJF-DECK-2025-investor-day#38",
+          "RJF-PR-web-bank-and-credit-union-advisors#0",
+          "RJF-PR-web-traditional-employee-advisor#0",
+          "RJF-SUPP-2025Q4#12",
+          "RJF-SUPP-2026Q1#14",
+          "RJF-SUPP-2026Q2#14",
+          "RJF-SUPP-2026Q2#9",
+          "RJF-TR-2024Q4#49",
+          "RJF-TR-2025Q3#26",
+          "RJF-TR-2025Q4#25",
+          "RJF-TR-2025Q4#29",
+          "RJF-TR-2025Q4#44",
+          "RJF-TR-2026Q1#23",
+          "RJF-TR-2026Q1#44",
+          "RJF-TR-2026Q2#27",
+          "RJF-TR-2026Q2#63",
+          "RJF-TRADE-2026-11-06-IN-01#0"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "RJF-10K-2025#122",
+        "RJF-10K-2025#123",
+        "RJF-10K-2025#228",
+        "RJF-10K-2025#24",
+        "RJF-10Q-2026Q2#235",
+        "RJF-10Q-2026Q2#250",
+        "RJF-10Q-2026Q2#402",
+        "RJF-TR-2025Q2#30",
+        "RJF-TR-2025Q2#44",
+        "RJF-TR-2025Q2#45",
+        "RJF-TR-2025Q2#47",
+        "RJF-TR-2025Q2#65",
+        "RJF-TR-2026Q1#5",
+        "RJF-TR-2026Q1#53",
+        "RJF-TR-2026Q1#54",
+        "RJF-TR-2026Q2#32",
+        "RJF-TR-2026Q2#33",
+        "RJF-TR-2026Q2#34",
+        "RJF-TR-2026Q2#46",
+        "RJF-TR-2026Q2#67"
+      ],
+      "expected_chunks_fts_only": [
+        "RJF-10K-2025#109",
+        "RJF-10K-2025#11",
+        "RJF-10K-2025#225",
+        "RJF-10K-2025#683",
+        "RJF-10Q-2026Q2#210",
+        "RJF-10Q-2026Q2#306",
+        "RJF-10Q-2026Q2#316",
+        "RJF-10Q-2026Q2#330",
+        "RJF-10Q-2026Q2#377",
+        "RJF-10Q-2026Q2#393",
+        "RJF-TR-2025Q2#4",
+        "RJF-TR-2026Q1#44",
+        "RJF-TR-2026Q1#47",
+        "RJF-TR-2026Q2#27"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "RJF-10K-2025#122",
+        "RJF-10K-2025#123",
+        "RJF-10K-2025#228",
+        "RJF-10K-2025#24",
+        "RJF-10Q-2026Q2#250",
+        "RJF-TR-2025Q2#30",
+        "RJF-TR-2026Q1#5"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q7": {
+      "retrieved": {
+        "hybrid": 146,
+        "fts": 142,
+        "both": 64,
+        "hybrid_only": 82,
+        "fts_only": 78
+      },
+      "cited": {
+        "hybrid": 49,
+        "fts": 45,
+        "hybrid_only": [
+          "BAC-PR-2026-07-14-01#10",
+          "BAC-TR-2026Q2#21",
+          "MS-10K-2025#109",
+          "MS-10K-2025#22",
+          "MS-10Q-2025Q3#19",
+          "MS-10Q-2026Q2#93",
+          "MS-TR-2024Q4#10",
+          "MS-TR-2025Q4#19",
+          "MS-TR-2025Q4#9",
+          "MS-TR-2026Q3#16",
+          "MS-TRADE-2026-10-26-IN-01#1",
+          "MS-TRADE-2026-10-26-IN-01#4",
+          "RJF-10K-2025#9",
+          "RJF-PR-web-affiliation-options#2",
+          "RJF-TR-2025Q3#26",
+          "RJF-TR-2025Q3#46",
+          "RJF-TR-2025Q3#7",
+          "RJF-TR-2025Q4#4",
+          "RJF-TR-2026Q1#22",
+          "RJF-TR-2026Q2#26",
+          "RJF-TRADE-2026-10-29-WM-01#0",
+          "RJF-TRADE-2026-11-04-IN-01#2"
+        ],
+        "fts_only": [
+          "BAC-PR-2026-10-14-01#11",
+          "BAC-TR-2026Q1#26",
+          "BAC-TR-2026Q2#20",
+          "MER-TRADE-2026-09-08-WM-01#1",
+          "MER-TRADE-2026-09-11-WM-01#1",
+          "MER-TRADE-2026-10-14-IN-02#0",
+          "MER-TRADE-2026-11-03-WM-01#0",
+          "MS-10Q-2026Q1#73",
+          "MS-10Q-2026Q2#20",
+          "MS-10Q-2026Q2#409",
+          "MS-TR-2025Q4#22",
+          "MS-TR-2026Q2#23",
+          "MS-TR-2026Q3#36",
+          "RJF-10K-2025#10",
+          "RJF-10Q-2026Q1#161",
+          "RJF-10Q-2026Q2#210",
+          "RJF-SUPP-2026Q2#14",
+          "RJF-TR-2025Q4#25"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "fts": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q8": {
+      "retrieved": {
+        "hybrid": 80,
+        "fts": 142,
+        "both": 64,
+        "hybrid_only": 16,
+        "fts_only": 78
+      },
+      "cited": {
+        "hybrid": 24,
+        "fts": 32,
+        "hybrid_only": [
+          "RJF-10K-2025#27",
+          "RJF-TR-2025Q3#31",
+          "SCHW-DECK-2026-investor-day#214"
+        ],
+        "fts_only": [
+          "RJF-10K-2025#11",
+          "RJF-10K-2025#81",
+          "RJF-DECK-2025-investor-day#110",
+          "RJF-DECK-2025-investor-day#38",
+          "RJF-TR-2025Q1#11",
+          "RJF-TR-2025Q1#26",
+          "SCHW-PR-2026-10-15-01#1",
+          "SCHW-TR-2025Q4#45",
+          "SCHW-TR-2026Q3#4",
+          "SCHW-TRADE-2026-10-28-WM-02#0",
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q9": {
+      "retrieved": {
+        "hybrid": 117,
+        "fts": 98,
+        "both": 65,
+        "hybrid_only": 52,
+        "fts_only": 33
+      },
+      "cited": {
+        "hybrid": 14,
+        "fts": 18,
+        "hybrid_only": [
+          "BAC-DECK-2026Q1#27",
+          "BAC-DECK-2026Q2#20",
+          "BAC-PR-2026-10-14-01#13",
+          "MS-DECK-2026-strategic-update#31",
+          "MS-SUPP-2026Q2#16",
+          "MS-TR-2025Q1#13",
+          "MS-TR-2025Q4#8"
+        ],
+        "fts_only": [
+          "BAC-DECK-2025-investor-day#12",
+          "BAC-PR-2026-01-14-01#11",
+          "BAC-PR-2026-01-14-01#12",
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+          "MER-TRADE-2026-09-08-WM-01#0",
+          "MS-10Q-2025Q3#60",
+          "MS-10Q-2026Q2#381",
+          "MS-SUPP-2026Q3#16",
+          "MS-TR-2025Q4#9",
+          "MS-TR-2026Q3#22",
+          "MS-TR-2026Q3#33"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q10": {
+      "retrieved": {
+        "hybrid": 213,
+        "fts": 207,
+        "both": 100,
+        "hybrid_only": 113,
+        "fts_only": 107
+      },
+      "cited": {
+        "hybrid": 17,
+        "fts": 19,
+        "hybrid_only": [
+          "BAC-DECK-2026Q1#27",
+          "BAC-DECK-2026Q2#20",
+          "MS-10Q-2026Q2#232",
+          "SCHW-DECK-2026-investor-day#180",
+          "SCHW-TR-2025Q4#11",
+          "SCHW-TR-2026Q2#15"
+        ],
+        "fts_only": [
+          "BAC-PR-2026-04-15-01#11",
+          "BAC-PR-2026-07-14-01#11",
+          "BAC-PR-2026-10-14-01#11",
+          "EDJ-10K-2025#8",
+          "MS-10Q-2026Q2#16",
+          "MS-TR-2026Q3#16",
+          "RJF-PR-2026-07-22-01#2",
+          "SCHW-TR-2026Q3#9"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q11": {
+      "retrieved": {
+        "hybrid": 216,
+        "fts": 202,
+        "both": 102,
+        "hybrid_only": 114,
+        "fts_only": 100
+      },
+      "cited": {
+        "hybrid": 33,
+        "fts": 38,
+        "hybrid_only": [
+          "BAC-DECK-2025-investor-day#9",
+          "EDJ-10K-2025#59",
+          "EDJ-10Q-2025Q3#60",
+          "EDJ-10Q-2025Q3#67",
+          "EDJ-10Q-2026Q1#62",
+          "RJF-10K-2025#227",
+          "RJF-10K-2025#24",
+          "RJF-10K-2025#9",
+          "RJF-PR-web-bank-and-credit-union-advisors#0",
+          "RJF-TR-2025Q3#4",
+          "SCHW-10K-2025#117",
+          "SCHW-PR-2026-10-15-01#23",
+          "SCHW-TR-2026Q1#4"
+        ],
+        "fts_only": [
+          "BAC-TR-2026Q2#63",
+          "EDJ-10K-2025#11",
+          "EDJ-10K-2025#148",
+          "EDJ-10K-2025#29",
+          "EDJ-10Q-2025Q2#67",
+          "EDJ-10Q-2026Q2#75",
+          "RJF-10K-2025#10",
+          "RJF-10K-2025#12",
+          "RJF-DECK-2025-investor-day#126",
+          "RJF-TR-2025Q2#6",
+          "RJF-TR-2025Q3#8",
+          "RJF-TR-2026Q1#4",
+          "SCHW-10K-2025#11",
+          "SCHW-10K-2025#120",
+          "SCHW-10Q-2026Q1#22",
+          "SCHW-PR-2026-07-21-01#24",
+          "SCHW-TR-2025Q2#5",
+          "SCHW-TR-2025Q4#4"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.8,
+          1.0,
+          0.8
+        ],
+        "fts": [
+          0.8,
+          1.0,
+          0.8
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "RJF-10K-2025#227": [
+          "RJF-10K-2025#227"
+        ],
+        "RJF-10K-2025#24": [
+          "RJF-10K-2025#24"
+        ]
+      },
+      "expected_rows_fts_only": {
+        "EDJ-10K-2025#131 / EDJ-10K-2025#148": [
+          "EDJ-10K-2025#148"
+        ],
+        "EDJ-10K-2025#29": [
+          "EDJ-10K-2025#29"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "MS-10K-2025#167",
+        "RJF-10K-2025#227",
+        "RJF-10K-2025#24"
+      ],
+      "expected_chunks_fts_only": [
+        "EDJ-10K-2025#148",
+        "EDJ-10K-2025#29"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "MS-10K-2025#167",
+        "RJF-10K-2025#227",
+        "RJF-10K-2025#24"
+      ],
+      "behavior": {
+        "hybrid": "gap_with_adjacent",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q12": {
+      "retrieved": {
+        "hybrid": 109,
+        "fts": 116,
+        "both": 65,
+        "hybrid_only": 44,
+        "fts_only": 51
+      },
+      "cited": {
+        "hybrid": 40,
+        "fts": 42,
+        "hybrid_only": [
+          "EDJ-10K-2025#125",
+          "EDJ-10K-2025#26",
+          "EDJ-10K-2025#8",
+          "EDJ-10Q-2025Q2#68",
+          "EDJ-10Q-2026Q1#53",
+          "EDJ-TRADE-2026-09-30-WM-01#2",
+          "SCHW-10K-2025#17",
+          "SCHW-10K-2025#18",
+          "SCHW-10Q-2026Q2#8",
+          "SCHW-DECK-2026-investor-day#120",
+          "SCHW-DECK-2026-investor-day#38",
+          "SCHW-DECK-2026Q3#34",
+          "SCHW-PR-2026-07-21-01#1",
+          "SCHW-TR-2024Q4#11",
+          "SCHW-TR-2025Q2#11",
+          "SCHW-TR-2025Q4#9"
+        ],
+        "fts_only": [
+          "EDJ-10K-2025#15",
+          "EDJ-10K-2025#58",
+          "EDJ-10K-2025#70",
+          "EDJ-10Q-2025Q3#88",
+          "EDJ-10Q-2026Q1#62",
+          "EDJ-10Q-2026Q2#60",
+          "SCHW-10K-2025#136",
+          "SCHW-10K-2025#19",
+          "SCHW-10K-2025#20",
+          "SCHW-10K-2025#21",
+          "SCHW-10Q-2026Q2#71",
+          "SCHW-DECK-2026-investor-day#130",
+          "SCHW-DECK-2026-investor-day#306",
+          "SCHW-TR-2025Q1#21",
+          "SCHW-TR-2025Q4#28",
+          "SCHW-TR-2026Q2#34",
+          "SCHW-TR-2026Q3#3",
+          "SCHW-TR-2026Q3#43"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer_with_boundary",
+        "fts": "answer_with_boundary"
+      }
+    },
+    "Q13": {
+      "retrieved": {
+        "hybrid": 147,
+        "fts": 142,
+        "both": 81,
+        "hybrid_only": 66,
+        "fts_only": 61
+      },
+      "cited": {
+        "hybrid": 47,
+        "fts": 40,
+        "hybrid_only": [
+          "MS-10K-2025#125",
+          "MS-10Q-2026Q1#53",
+          "MS-DECK-2026-strategic-update#6",
+          "MS-TR-2024Q4#75",
+          "MS-TR-2024Q4#77",
+          "MS-TR-2024Q4#81",
+          "MS-TR-2025Q2#14",
+          "MS-TR-2025Q3#25",
+          "MS-TR-2025Q4#19",
+          "MS-TR-2025Q4#7",
+          "MS-TR-2026Q1#13",
+          "MS-TR-2026Q2#3",
+          "MS-TR-2026Q2#58",
+          "MS-TR-2026Q2#59",
+          "MS-TR-2026Q3#13",
+          "MS-TR-2026Q3#16",
+          "MS-TR-2026Q3#26",
+          "MS-TR-2026Q3#32",
+          "MS-TR-2026Q3#56",
+          "MS-TRADE-2026-10-21-IN-01#1",
+          "MS-TRADE-2026-10-21-IN-01#3"
+        ],
+        "fts_only": [
+          "MS-10Q-2026Q2#16",
+          "MS-DECK-2026-strategic-update#26",
+          "MS-DECK-2026-strategic-update#30",
+          "MS-DECK-2026-strategic-update#31",
+          "MS-DECK-2026-strategic-update#9",
+          "MS-PR-2026-07-15-01#5",
+          "MS-PR-2026-10-14-01#5",
+          "MS-TR-2024Q4#26",
+          "MS-TR-2025Q3#14",
+          "MS-TR-2025Q4#12",
+          "MS-TR-2026Q2#21",
+          "MS-TR-2026Q3#15",
+          "MS-TR-2026Q3#23",
+          "MS-TR-2026Q3#51"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "MS-10K-2025#111",
+        "MS-10K-2025#112",
+        "MS-10K-2025#144",
+        "MS-DECK-2026-strategic-update#11",
+        "MS-DECK-2026-strategic-update#17",
+        "MS-DECK-2026-strategic-update#6",
+        "MS-TR-2025Q4#16",
+        "MS-TR-2025Q4#19",
+        "MS-TR-2025Q4#34",
+        "MS-TR-2025Q4#62",
+        "MS-TR-2025Q4#7",
+        "MS-TR-2026Q2#22",
+        "MS-TR-2026Q2#58",
+        "MS-TR-2026Q2#59",
+        "MS-TR-2026Q3#13",
+        "MS-TR-2026Q3#26",
+        "MS-TR-2026Q3#52",
+        "MS-TR-2026Q3#55",
+        "MS-TR-2026Q3#70"
+      ],
+      "expected_chunks_fts_only": [
+        "MS-10K-2025#127",
+        "MS-10K-2025#149",
+        "MS-10K-2025#167",
+        "MS-10K-2025#40",
+        "MS-10K-2025#73",
+        "MS-DECK-2026-strategic-update#30",
+        "MS-DECK-2026-strategic-update#8",
+        "MS-DECK-2026-strategic-update#9",
+        "MS-TR-2025Q4#12",
+        "MS-TR-2026Q2#15",
+        "MS-TR-2026Q2#20",
+        "MS-TR-2026Q2#21",
+        "MS-TR-2026Q3#15",
+        "MS-TR-2026Q3#23",
+        "MS-TR-2026Q3#51"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "MS-10K-2025#111",
+        "MS-DECK-2026-strategic-update#17",
+        "MS-DECK-2026-strategic-update#6",
+        "MS-TR-2025Q4#19",
+        "MS-TR-2025Q4#7",
+        "MS-TR-2026Q3#52"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q14": {
+      "retrieved": {
+        "hybrid": 129,
+        "fts": 146,
+        "both": 65,
+        "hybrid_only": 64,
+        "fts_only": 81
+      },
+      "cited": {
+        "hybrid": 69,
+        "fts": 45,
+        "hybrid_only": [
+          "RJF-10K-2025#108",
+          "RJF-10K-2025#111",
+          "RJF-10K-2025#216",
+          "RJF-10K-2025#227",
+          "RJF-10K-2025#28",
+          "RJF-10K-2025#89",
+          "RJF-10Q-2026Q1#239",
+          "RJF-10Q-2026Q1#297",
+          "RJF-10Q-2026Q1#300",
+          "RJF-DECK-2025-investor-day#38",
+          "RJF-DECK-2025-investor-day#42",
+          "RJF-PR-2026-01-28-01#71",
+          "RJF-PR-2026-04-22-01#1",
+          "RJF-PR-2026-07-22-01#2",
+          "RJF-PR-web-independent-advisor#1",
+          "RJF-PR-web-independent-ria-custody-services#0",
+          "RJF-PR-web-traditional-employee-advisor#0",
+          "RJF-TR-2024Q3#10",
+          "RJF-TR-2024Q3#66",
+          "RJF-TR-2024Q3#91",
+          "RJF-TR-2024Q4#33",
+          "RJF-TR-2024Q4#7",
+          "RJF-TR-2025Q1#6",
+          "RJF-TR-2025Q2#30",
+          "RJF-TR-2025Q2#6",
+          "RJF-TR-2025Q2#66",
+          "RJF-TR-2025Q3#33",
+          "RJF-TR-2025Q3#46",
+          "RJF-TR-2025Q4#44",
+          "RJF-TR-2026Q1#22",
+          "RJF-TR-2026Q1#23",
+          "RJF-TR-2026Q1#44",
+          "RJF-TR-2026Q1#46",
+          "RJF-TR-2026Q1#5",
+          "RJF-TR-2026Q1#51",
+          "RJF-TR-2026Q2#6",
+          "RJF-TR-2026Q2#64",
+          "RJF-TR-2026Q2#66",
+          "RJF-TRADE-2026-09-29-IN-01#3",
+          "RJF-TRADE-2026-10-08-WM-01#0",
+          "RJF-TRADE-2026-10-27-WM-01#0",
+          "RJF-TRADE-2026-10-29-WM-01#0"
+        ],
+        "fts_only": [
+          "RJF-10K-2025#109",
+          "RJF-10K-2025#12",
+          "RJF-10K-2025#14",
+          "RJF-10K-2025#225",
+          "RJF-10K-2025#228",
+          "RJF-10Q-2026Q1#299",
+          "RJF-10Q-2026Q1#306",
+          "RJF-10Q-2026Q2#307",
+          "RJF-SUPP-2026Q2#14",
+          "RJF-SUPP-2026Q2#45",
+          "RJF-TR-2024Q4#6",
+          "RJF-TR-2025Q3#20",
+          "RJF-TR-2025Q3#30",
+          "RJF-TR-2025Q4#11",
+          "RJF-TR-2026Q1#4",
+          "RJF-TR-2026Q2#13",
+          "RJF-TR-2026Q2#5",
+          "RJF-TRADE-2026-11-05-WM-01#1"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q15": {
+      "retrieved": {
+        "hybrid": 199,
+        "fts": 205,
+        "both": 95,
+        "hybrid_only": 104,
+        "fts_only": 110
+      },
+      "cited": {
+        "hybrid": 35,
+        "fts": 34,
+        "hybrid_only": [
+          "BAC-10Q-2026Q1#73",
+          "BAC-10Q-2026Q2#89",
+          "BAC-DECK-2026Q2#19",
+          "EDJ-10K-2025#18",
+          "MER-TRADE-2026-09-29-RB-01#7",
+          "MS-10K-2025#147",
+          "MS-PR-2026-07-15-01#1",
+          "MS-SUPP-2026Q1#14",
+          "MS-TR-2025Q4#34",
+          "RJF-10K-2025#217",
+          "RJF-10K-2025#233",
+          "RJF-10Q-2025Q2#304",
+          "RJF-10Q-2026Q2#313",
+          "RJF-TR-2026Q1#28",
+          "SCHW-10K-2025#27",
+          "SCHW-10K-2025#310",
+          "SCHW-10K-2025#95",
+          "SCHW-10Q-2026Q1#64",
+          "SCHW-10Q-2026Q2#37",
+          "SCHW-PR-2026-07-21-01#7",
+          "SCHW-TR-2026Q1#53",
+          "SCHW-TRADE-2026-09-30-IN-01#1"
+        ],
+        "fts_only": [
+          "BAC-10K-2025#247",
+          "BAC-10Q-2026Q1#72",
+          "BAC-PR-2026-10-14-01#12",
+          "BAC-SUPP-2026Q3#51",
+          "BAC-TR-2026Q1#26",
+          "EDJ-10Q-2025Q3#38",
+          "EDJ-10Q-2026Q2#105",
+          "EDJ-10Q-2026Q2#63",
+          "MER-TRADE-2026-10-02-IN-01#0",
+          "MS-PR-2026-10-14-01#5",
+          "MS-SUPP-2026Q2#16",
+          "MS-TR-2026Q3#52",
+          "RJF-10Q-2026Q2#314",
+          "RJF-10Q-2026Q2#315",
+          "RJF-TR-2025Q2#16",
+          "SCHW-10K-2025#130",
+          "SCHW-PR-2026-04-16-01#11",
+          "SCHW-PR-2026-10-15-01#12",
+          "SCHW-TR-2026Q2#49",
+          "SCHW-TR-2026Q3#17",
+          "SCHW-TR-2026Q3#18"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "SCHW-10K-2025#27": [
+          "SCHW-10K-2025#27"
+        ]
+      },
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "SCHW-10K-2025#27"
+      ],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [
+        "SCHW-10K-2025#27"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q16": {
+      "retrieved": {
+        "hybrid": 146,
+        "fts": 135,
+        "both": 63,
+        "hybrid_only": 83,
+        "fts_only": 72
+      },
+      "cited": {
+        "hybrid": 37,
+        "fts": 34,
+        "hybrid_only": [
+          "BAC-TR-2025Q2#14",
+          "BAC-TR-2025Q3#65",
+          "CAPGEMINI-WWR-2026#71",
+          "CAPGEMINI-WWR-2026#97",
+          "CERULLI-AFFLUENT-PAY#1",
+          "CERULLI-MASS-AFFLUENT-2026#1",
+          "EDJ-10K-2025#75",
+          "EDJ-10K-2025#86",
+          "MCK-ADVISOR-SHORTAGE-2025#5",
+          "MCK-ADVISOR-SHORTAGE-2025#6",
+          "MER-PR-2026-09-15-01#0",
+          "MER-PR-2026-09-15-01#2",
+          "MER-PR-2026-09-15-01#3",
+          "MS-10Q-2026Q2#16",
+          "MS-TR-2026Q2#28",
+          "MS-TR-2026Q3#35",
+          "MS-TR-2026Q3#52",
+          "RJF-10K-2025#112",
+          "RJF-TR-2026Q1#51",
+          "RJF-TR-2026Q2#34",
+          "RJF-TR-2026Q2#64",
+          "SCHW-DECK-2026-investor-day#179",
+          "SCHW-TR-2026Q2#15",
+          "SCHW-TR-2026Q2#16",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#24"
+        ],
+        "fts_only": [
+          "BAC-PR-2026-10-14-01#12",
+          "BAC-TR-2026Q3#19",
+          "BOFA-PB-STUDY-2026#15",
+          "CAPGEMINI-WWR-2026#106",
+          "CAPGEMINI-WWR-2026#43",
+          "CERULLI-AFFLUENT-FEE#1",
+          "CERULLI-GWT-2025#1",
+          "CERULLI-MASS-AFFLUENT-2026#0",
+          "EDJ-10K-2025#22",
+          "EDJ-TRADE-2026-08-18-IN-01#2",
+          "MS-10K-2025#25",
+          "MS-SUPP-2026Q3#16",
+          "RJF-TR-2026Q1#19",
+          "RJF-TR-2026Q1#48",
+          "RJF-TR-2026Q2#7",
+          "SCHW-10K-2025#19",
+          "SCHW-DECK-2026-investor-day#99",
+          "SCHW-PR-2026-07-21-01#8",
+          "SCHW-TR-2025Q3#11",
+          "SCHW-TR-2026Q3#13",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#2",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#49"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q17": {
+      "retrieved": {
+        "hybrid": 152,
+        "fts": 136,
+        "both": 78,
+        "hybrid_only": 74,
+        "fts_only": 58
+      },
+      "cited": {
+        "hybrid": 46,
+        "fts": 53,
+        "hybrid_only": [
+          "BAC-10K-2025#44",
+          "BAC-10K-2025#95",
+          "BAC-TR-2025Q2#14",
+          "BAC-TR-2025Q2#15",
+          "BAC-TR-2025Q3#65",
+          "BAC-TR-2026Q2#14",
+          "EDJ-10Q-2026Q1#62",
+          "MS-TR-2026Q1#44",
+          "MS-TR-2026Q2#49",
+          "MS-TR-2026Q3#42",
+          "MS-TR-2026Q3#8",
+          "RJF-10K-2025#58",
+          "RJF-DECK-2025-investor-day#122",
+          "RJF-PR-2025-10-22-01#2",
+          "RJF-TR-2025Q1#11",
+          "RJF-TR-2026Q1#38",
+          "RJF-TR-2026Q1#51",
+          "RJF-TR-2026Q2#34",
+          "RJF-TR-2026Q2#63",
+          "RJF-TR-2026Q2#8",
+          "RJF-TRADE-2026-09-29-IN-01#4",
+          "SCHW-TR-2026Q1#14",
+          "SCHW-TR-2026Q1#18",
+          "SCHW-TR-2026Q2#19",
+          "SCHW-TR-2026Q3#6"
+        ],
+        "fts_only": [
+          "BAC-10K-2025#141",
+          "BAC-10K-2025#144",
+          "BAC-DECK-2026Q2#29",
+          "BAC-TR-2026Q3#19",
+          "BOFA-PB-STUDY-2026#17",
+          "CAPGEMINI-WWR-2026#127",
+          "CAPGEMINI-WWR-2026#17",
+          "DELOITTE-AGENTIC-2026#0",
+          "DELOITTE-AGENTIC-2026#4",
+          "EDJ-10Q-2026Q2#63",
+          "FINRA-OVERSIGHT-2026#133",
+          "MCK-ADVISOR-SHORTAGE-2025#27",
+          "MCK-SIGNAL-SELLOFF-2026#4",
+          "MER-PR-2026-09-15-01#0",
+          "MER-TRADE-2026-10-14-IN-01#2",
+          "MS-10K-2025#372",
+          "MS-TR-2026Q1#43",
+          "MS-TR-2026Q3#16",
+          "RJF-DECK-2025-investor-day#115",
+          "RJF-TR-2025Q4#5",
+          "RJF-TR-2025Q4#6",
+          "RJF-TR-2026Q2#33",
+          "RJF-TR-2026Q2#68",
+          "SCHW-DECK-2026Q3#16",
+          "SCHW-DECK-2026Q3#6",
+          "SCHW-PR-2026-07-21-01#3",
+          "SCHW-TR-2026Q1#12",
+          "SCHW-TR-2026Q2#15",
+          "SCHW-TR-2026Q3#14",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#2",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#24",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#26"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.9,
+          1.0,
+          0.9
+        ],
+        "fts": [
+          0.8,
+          1.0,
+          0.8
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "MS-TR-2026Q2": [
+          "MS-TR-2026Q2#49"
+        ],
+        "RJF-TR-2026Q1": [
+          "RJF-TR-2026Q1#38",
+          "RJF-TR-2026Q1#51"
+        ]
+      },
+      "expected_rows_fts_only": {
+        "BAC-TR-2026Q3": [
+          "BAC-TR-2026Q3#19"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "BAC-TR-2026Q2#14",
+        "EDJ-10K-2025#16",
+        "EDJ-10K-2025#22",
+        "EDJ-10K-2025#29",
+        "EDJ-10K-2025#74",
+        "MS-10K-2025#111",
+        "MS-10K-2025#77",
+        "MS-TR-2026Q2#49",
+        "RJF-TR-2025Q4#75",
+        "RJF-TR-2026Q1#38",
+        "RJF-TR-2026Q1#51",
+        "SCHW-DECK-2026Q2#33",
+        "SCHW-TR-2026Q1#13",
+        "SCHW-TR-2026Q1#14",
+        "SCHW-TR-2026Q1#18"
+      ],
+      "expected_chunks_fts_only": [
+        "BAC-TR-2026Q2#23",
+        "BAC-TR-2026Q3#19",
+        "EDJ-10K-2025#204",
+        "EDJ-10K-2025#293",
+        "EDJ-10K-2025#301",
+        "MS-10K-2025#372",
+        "MS-10K-2025#76",
+        "RJF-TR-2025Q4#5",
+        "RJF-TR-2025Q4#6",
+        "SCHW-DECK-2026Q2#10"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "BAC-TR-2026Q2#14",
+        "EDJ-10K-2025#16",
+        "EDJ-10K-2025#22",
+        "EDJ-10K-2025#29",
+        "EDJ-10K-2025#74",
+        "MS-10K-2025#111",
+        "MS-10K-2025#77",
+        "MS-TR-2026Q2#49",
+        "RJF-TR-2025Q4#75",
+        "RJF-TR-2026Q1#38",
+        "RJF-TR-2026Q1#51",
+        "SCHW-DECK-2026Q2#33",
+        "SCHW-TR-2026Q1#13",
+        "SCHW-TR-2026Q1#14",
+        "SCHW-TR-2026Q1#18"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q18": {
+      "retrieved": {
+        "hybrid": 136,
+        "fts": 132,
+        "both": 52,
+        "hybrid_only": 84,
+        "fts_only": 80
+      },
+      "cited": {
+        "hybrid": 51,
+        "fts": 42,
+        "hybrid_only": [
+          "BAC-10K-2025#138",
+          "CERULLI-AFFLUENT-FEE#1",
+          "EDJ-10K-2025#131",
+          "EDJ-10K-2025#57",
+          "EDJ-10K-2025#63",
+          "EDJ-ADV-2026#53",
+          "FINRA-OVERSIGHT-2026#157",
+          "MCK-ADVISOR-SHORTAGE-2025#5",
+          "MCK-SIGNAL-SELLOFF-2026#16",
+          "MER-ADV-2026#412",
+          "MER-ADV-2026#446",
+          "MER-ADV-2026#460",
+          "MER-ADV-2026#462",
+          "MER-ADV-2026#5",
+          "MER-TRADE-2026-09-29-RB-01#3",
+          "MER-TRADE-2026-10-16-IN-01#1",
+          "MS-10K-2025#110",
+          "MS-ADV-2026#127",
+          "MS-ADV-2026#223",
+          "MS-TR-2026Q3#52",
+          "RJF-10K-2025#233",
+          "RJF-10Q-2025Q2#304",
+          "RJF-10Q-2026Q2#333",
+          "RJF-TR-2026Q1#47",
+          "SCHW-10K-2025#309",
+          "SCHW-ADV-2026#34",
+          "SCHW-DECK-2026-investor-day#212",
+          "SCHW-TR-2026Q1#29",
+          "SCHW-TR-2026Q1#30",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "fts_only": [
+          "CAPGEMINI-WWR-2026#45",
+          "CERULLI-AFFLUENT-FEE#0",
+          "EDJ-10K-2025#41",
+          "EDJ-ADV-2026#66",
+          "EDJ-ADV-2026#8",
+          "FINRA-OVERSIGHT-2026#136",
+          "FINRAF-INVESTORS-2025#42",
+          "MCK-SIGNAL-SELLOFF-2026#17",
+          "MER-ADV-2026#414",
+          "MER-ADV-2026#434",
+          "MER-ADV-2026#467",
+          "MER-TRADE-2026-10-02-IN-01#0",
+          "MS-10K-2025#108",
+          "MS-ADV-2026#15",
+          "MS-TR-2026Q3#56",
+          "RJF-10K-2025#109",
+          "RJF-10K-2025#49",
+          "SCHW-10Q-2026Q2#8",
+          "SCHW-ADV-2026#45",
+          "SCHW-TR-2026Q1#54",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#56"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q19": {
+      "retrieved": {
+        "hybrid": 69,
+        "fts": 75,
+        "both": 42,
+        "hybrid_only": 27,
+        "fts_only": 33
+      },
+      "cited": {
+        "hybrid": 29,
+        "fts": 23,
+        "hybrid_only": [
+          "BOFA-PB-STUDY-2024#9",
+          "BOFA-PB-STUDY-2026#4",
+          "EDJ-10K-2025#10",
+          "EDJ-10Q-2025Q2#68",
+          "EDJ-10Q-2025Q3#70",
+          "EDJ-10Q-2025Q3#74",
+          "EDJ-10Q-2026Q1#51",
+          "EDJ-10Q-2026Q1#52",
+          "EDJ-10Q-2026Q2#61",
+          "FINRAF-INVESTORS-2025#18",
+          "FINRAF-INVESTORS-2025#36",
+          "SCHW-TR-2025Q4#11"
+        ],
+        "fts_only": [
+          "BOFA-PB-STUDY-2024#0",
+          "BOFA-PB-STUDY-2026#15",
+          "CERULLI-GWT-2025#1",
+          "EDJ-10K-2025#75",
+          "EDJ-10Q-2026Q1#62",
+          "SCHW-TR-2025Q3#11"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer_with_boundary",
+        "fts": "answer_with_boundary"
+      }
+    },
+    "Q20": {
+      "retrieved": {
+        "hybrid": 139,
+        "fts": 136,
+        "both": 64,
+        "hybrid_only": 75,
+        "fts_only": 72
+      },
+      "cited": {
+        "hybrid": 26,
+        "fts": 13,
+        "hybrid_only": [
+          "BOFA-PB-STUDY-2026#12",
+          "CERULLI-GWT-2025#23",
+          "CERULLI-GWT-2025#24",
+          "EDJ-10K-2025#56",
+          "EDJ-10K-2025#88",
+          "EDJ-10Q-2025Q2#69",
+          "FIDELITY-III-2025#0",
+          "GSAM-ALTERNATIVES-2025#24",
+          "MS-TR-2024Q4#10",
+          "MS-TR-2026Q2#28",
+          "SCHW-TR-2025Q2#9",
+          "SCHW-TR-2025Q4#11",
+          "UBS-NEXTGEN-2026#83",
+          "UBS-NEXTGEN-2026#84",
+          "VANGUARD-VALUE-2025#11",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#2"
+        ],
+        "fts_only": [
+          "BOFA-PB-STUDY-2026#15",
+          "CERULLI-GWT-2025#1",
+          "CFPB-MISINFO-2025#7"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.556,
+          0.778,
+          0.556
+        ],
+        "fts": [
+          0.556,
+          0.889,
+          0.556
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "FIDELITY-III-2025#0": [
+          "FIDELITY-III-2025#0"
+        ]
+      },
+      "expected_rows_fts_only": {
+        "NM-PP-2026": [
+          "NM-PP-2026#22"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "BOFA-PB-STUDY-2026#12",
+        "CERULLI-GWT-2025#23",
+        "CERULLI-GWT-2025#24",
+        "FIDELITY-III-2025#0",
+        "UBS-NEXTGEN-2026#76",
+        "UBS-NEXTGEN-2026#83",
+        "UBS-NEXTGEN-2026#84",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#2",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#62"
+      ],
+      "expected_chunks_fts_only": [
+        "BOFA-PB-STUDY-2026#15",
+        "BOFA-PB-STUDY-2026#5",
+        "CERULLI-GWT-2025#1",
+        "CERULLI-GWT-2025#2",
+        "NM-PP-2026#22",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#49",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#51"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "BOFA-PB-STUDY-2026#12",
+        "CERULLI-GWT-2025#23",
+        "CERULLI-GWT-2025#24",
+        "FIDELITY-III-2025#0",
+        "UBS-NEXTGEN-2026#83",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#2",
+        "WEALTHTENDER-ADVISOR-SEARCH-2025#62"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q21": {
+      "retrieved": {
+        "hybrid": 198,
+        "fts": 193,
+        "both": 80,
+        "hybrid_only": 118,
+        "fts_only": 113
+      },
+      "cited": {
+        "hybrid": 26,
+        "fts": 27,
+        "hybrid_only": [
+          "BAC-PR-2026-07-14-01#10",
+          "BAC-TR-2025Q2#34",
+          "CERULLI-GWT-2025#13",
+          "EDJ-10Q-2025Q2#69",
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+          "RJF-TR-2025Q2#7",
+          "RJF-TR-2025Q2#8",
+          "SCHW-TR-2024Q4#11",
+          "SCHW-TR-2025Q2#12",
+          "SCHW-TR-2025Q3#12",
+          "SCHW-TRADE-2026-10-28-WM-02#2",
+          "UBS-NEXTGEN-2026#12"
+        ],
+        "fts_only": [
+          "BOFA-PB-STUDY-2026#16",
+          "CERULLI-GWT-2025#24",
+          "MER-PR-web-advisor-development-program#2",
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+          "MS-DECK-2026-strategic-update#22",
+          "MS-TR-2025Q4#9",
+          "SCHW-DECK-2026-investor-day#99",
+          "SCHW-DECK-2026Q1#10",
+          "SCHW-DECK-2026Q3#23",
+          "SCHW-TR-2025Q2#9",
+          "SCHW-TR-2025Q3#39",
+          "SCHW-TR-2025Q4#11",
+          "SCHW-TR-2026Q3#12"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q22": {
+      "retrieved": {
+        "hybrid": 204,
+        "fts": 206,
+        "both": 131,
+        "hybrid_only": 73,
+        "fts_only": 75
+      },
+      "cited": {
+        "hybrid": 34,
+        "fts": 34,
+        "hybrid_only": [
+          "BAC-SUPP-2026Q3#54",
+          "EDJ-10Q-2025Q3#69",
+          "MS-10K-2025#166",
+          "MS-10Q-2026Q1#18",
+          "MS-PR-2026-01-15-01#2",
+          "MS-PR-2026-07-15-01#5",
+          "MS-PR-2026-10-14-01#13",
+          "MS-PR-2026-10-14-01#5",
+          "MS-SUPP-2025Q4#14",
+          "MS-TR-2025Q1#12",
+          "MS-TR-2026Q3#15",
+          "RJF-PR-2026-07-22-01#4",
+          "RJF-SUPP-2025Q3#9",
+          "SCHW-10Q-2025Q3#22",
+          "SCHW-PR-2026-01-21-01#2",
+          "SCHW-PR-2026-07-21-01#53",
+          "SCHW-PR-2026-10-15-01#1",
+          "SCHW-TR-2026Q1#3"
+        ],
+        "fts_only": [
+          "BAC-PR-2026-04-15-01#10",
+          "BAC-PR-2026-04-15-01#11",
+          "BAC-PR-2026-07-14-01#11",
+          "BAC-PR-2026-10-14-01#11",
+          "EDJ-10Q-2025Q2#66",
+          "EDJ-10Q-2026Q1#52",
+          "MS-10Q-2026Q2#58",
+          "MS-PR-2026-04-15-01#15",
+          "MS-SUPP-2026Q1#14",
+          "MS-SUPP-2026Q3#38",
+          "RJF-SUPP-2025Q4#8",
+          "SCHW-10K-2025#119",
+          "SCHW-10K-2025#129",
+          "SCHW-MONTHLY-2026-08#1",
+          "SCHW-PR-2026-04-16-01#3",
+          "SCHW-PR-2026-04-16-01#45",
+          "SCHW-TR-2025Q2#6",
+          "SCHW-TR-2025Q3#3"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "MS-PR-2026-01-15-01#2",
+        "RJF-PR-2025-10-22-01#4",
+        "SCHW-PR-2026-01-21-01#2"
+      ],
+      "expected_chunks_fts_only": [
+        "MS-SUPP-2026Q1#14",
+        "SCHW-10K-2025#119",
+        "SCHW-PR-2026-07-21-01#2"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "MS-PR-2026-01-15-01#2",
+        "RJF-PR-2025-10-22-01#4",
+        "SCHW-PR-2026-01-21-01#2"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q23": {
+      "retrieved": {
+        "hybrid": 130,
+        "fts": 186,
+        "both": 71,
+        "hybrid_only": 59,
+        "fts_only": 115
+      },
+      "cited": {
+        "hybrid": 11,
+        "fts": 19,
+        "hybrid_only": [
+          "BAC-SUPP-2023Q4#2",
+          "EDJ-10Q-2025Q2#64",
+          "EDJ-10Q-2025Q3#67",
+          "EDJ-10Q-2026Q2#82",
+          "RJF-10K-2025#9",
+          "SCHW-TR-2026Q1#4"
+        ],
+        "fts_only": [
+          "EDJ-10K-2025#130",
+          "EDJ-10K-2025#131",
+          "EDJ-10Q-2025Q2#67",
+          "EDJ-10Q-2025Q3#70",
+          "EDJ-10Q-2026Q1#52",
+          "EDJ-10Q-2026Q2#60",
+          "EDJ-10Q-2026Q2#61",
+          "RJF-DECK-2025-investor-day#126",
+          "RJF-DECK-2025-investor-day#43",
+          "SCHW-10Q-2026Q1#22",
+          "SCHW-10Q-2026Q2#71",
+          "SCHW-TR-2024Q4#12",
+          "SCHW-TR-2025Q3#13",
+          "SCHW-TR-2025Q4#28"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.6,
+          0.85,
+          0.6
+        ],
+        "fts": [
+          0.85,
+          1.0,
+          0.85
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {
+        "MS-SUPP-2025Q4": [
+          "MS-SUPP-2025Q4#49"
+        ],
+        "MS-SUPP-2026Q2": [
+          "MS-SUPP-2026Q2#17"
+        ],
+        "MS-SUPP-2026Q3": [
+          "MS-SUPP-2026Q3#47"
+        ],
+        "BAC-SUPP-2025Q4": [
+          "BAC-SUPP-2025Q4#56"
+        ],
+        "RJF-SUPP-2026Q1": [
+          "RJF-SUPP-2026Q1#44"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "BAC-10K-2025#245",
+        "EDJ-10K-2025#141",
+        "EDJ-10K-2025#204",
+        "EDJ-10K-2025#268",
+        "EDJ-10Q-2025Q2#64",
+        "EDJ-10Q-2025Q2#70",
+        "EDJ-10Q-2025Q3#67",
+        "EDJ-10Q-2025Q3#71",
+        "EDJ-10Q-2026Q1#51",
+        "EDJ-10Q-2026Q1#60",
+        "EDJ-10Q-2026Q2#63",
+        "EDJ-10Q-2026Q2#75",
+        "MS-SUPP-2026Q1#61",
+        "RJF-10K-2025#27",
+        "RJF-10K-2025#9",
+        "SCHW-10K-2025#23"
+      ],
+      "expected_chunks_fts_only": [
+        "BAC-10K-2025#249",
+        "BAC-SUPP-2025Q4#56",
+        "EDJ-10K-2025#130",
+        "EDJ-10K-2025#131",
+        "EDJ-10K-2025#70",
+        "EDJ-10Q-2025Q2#67",
+        "EDJ-10Q-2025Q2#68",
+        "EDJ-10Q-2025Q3#69",
+        "EDJ-10Q-2025Q3#70",
+        "EDJ-10Q-2026Q1#52",
+        "EDJ-10Q-2026Q1#67",
+        "EDJ-10Q-2026Q2#60",
+        "EDJ-10Q-2026Q2#61",
+        "MS-SUPP-2025Q4#49",
+        "MS-SUPP-2026Q2#17",
+        "MS-SUPP-2026Q3#47",
+        "RJF-10K-2025#11",
+        "RJF-10K-2025#91",
+        "RJF-SUPP-2026Q1#44",
+        "SCHW-10K-2025#13"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "BAC-10K-2025#245",
+        "EDJ-10K-2025#141",
+        "EDJ-10K-2025#204",
+        "EDJ-10K-2025#268",
+        "EDJ-10Q-2025Q2#64",
+        "EDJ-10Q-2025Q3#67",
+        "EDJ-10Q-2025Q3#71",
+        "EDJ-10Q-2026Q1#51",
+        "EDJ-10Q-2026Q1#60",
+        "EDJ-10Q-2026Q2#75",
+        "MS-SUPP-2026Q1#61",
+        "RJF-10K-2025#27",
+        "RJF-10K-2025#9",
+        "SCHW-10K-2025#23"
+      ],
+      "behavior": {
+        "hybrid": "gap_with_adjacent",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q24": {
+      "retrieved": {
+        "hybrid": 203,
+        "fts": 201,
+        "both": 107,
+        "hybrid_only": 96,
+        "fts_only": 94
+      },
+      "cited": {
+        "hybrid": 29,
+        "fts": 23,
+        "hybrid_only": [
+          "BAC-DECK-2025-investor-day#9",
+          "BAC-PR-2026-10-14-01#11",
+          "BAC-TR-2026Q2#21",
+          "EDJ-10K-2025#59",
+          "EDJ-10Q-2026Q2#53",
+          "EDJ-10Q-2026Q2#59",
+          "MS-SUPP-2020Q4#1",
+          "MS-SUPP-2026Q3#37",
+          "RJF-10K-2025#227",
+          "RJF-10K-2025#228",
+          "RJF-SUPP-2026Q2#43",
+          "SCHW-10K-2025#11",
+          "SCHW-10K-2025#117",
+          "SCHW-DECK-2026-investor-day#12",
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "fts_only": [
+          "EDJ-10Q-2026Q1#46",
+          "EDJ-10Q-2026Q2#28",
+          "EDJ-10Q-2026Q2#60",
+          "MS-10K-2025#165",
+          "MS-TR-2026Q3#2",
+          "RJF-10K-2025#10",
+          "RJF-10K-2025#9",
+          "RJF-PR-web-bank-and-credit-union-advisors#0",
+          "SCHW-PR-2026-10-15-01#10"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          0.25,
+          1.0,
+          0.25
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "EDJ-10K-2025#130": [
+          "EDJ-10K-2025#130"
+        ],
+        "RJF-10K-2025#227": [
+          "RJF-10K-2025#227"
+        ],
+        "RJF-10K-2025#228": [
+          "RJF-10K-2025#228"
+        ]
+      },
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "EDJ-10K-2025#130",
+        "MS-SUPP-2026Q1#43",
+        "MS-SUPP-2026Q2#37",
+        "RJF-10K-2025#227",
+        "RJF-10K-2025#228"
+      ],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [
+        "EDJ-10K-2025#130",
+        "MS-SUPP-2026Q1#43",
+        "MS-SUPP-2026Q2#37",
+        "RJF-10K-2025#227",
+        "RJF-10K-2025#228"
+      ],
+      "behavior": {
+        "hybrid": "gap_with_adjacent",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q25": {
+      "retrieved": {
+        "hybrid": 133,
+        "fts": 203,
+        "both": 68,
+        "hybrid_only": 65,
+        "fts_only": 135
+      },
+      "cited": {
+        "hybrid": 29,
+        "fts": 33,
+        "hybrid_only": [
+          "EDJ-10K-2025#30",
+          "EDJ-ADV-2026#121",
+          "EDJ-ADV-2026#129",
+          "MER-ADV-2026#400",
+          "MER-ADV-2026#411",
+          "MER-TRADE-2026-11-16-AH-01#1",
+          "MS-10K-2025#153",
+          "MS-10K-2025#193",
+          "MS-10Q-2026Q1#213",
+          "MS-10Q-2026Q2#93",
+          "MS-ADV-2026#156",
+          "MS-PR-2026-04-15-01#14",
+          "MS-TRADE-2026-10-26-IN-01#4",
+          "RJF-PR-web-advisor-select#0",
+          "SCHW-10Q-2025Q3#67",
+          "SCHW-10Q-2026Q2#71"
+        ],
+        "fts_only": [
+          "BAC-10K-2025#247",
+          "EDJ-10K-2025#144",
+          "EDJ-10K-2025#264",
+          "EDJ-ADV-2026#66",
+          "EDJ-ADV-2026#67",
+          "MER-ADV-2026#241",
+          "MER-ADV-2026#245",
+          "MER-PR-web-advisor-development-program#1",
+          "MS-10K-2025#152",
+          "MS-10K-2025#170",
+          "MS-10Q-2026Q2#20",
+          "MS-ADV-2026#173",
+          "MS-PR-2026-10-14-01#17",
+          "MS-SUPP-2026Q3#45",
+          "RJF-10K-2025#10",
+          "RJF-10K-2025#11",
+          "RJF-ADV-2026#114",
+          "RJF-SUPP-2026Q2#14",
+          "RJF-SUPP-2026Q2#45",
+          "SCHW-10K-2025#177"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.8,
+          1.0,
+          0.8
+        ],
+        "fts": [
+          0.8,
+          1.0,
+          0.8
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "MS-10K-2025#153": [
+          "MS-10K-2025#153"
+        ]
+      },
+      "expected_rows_fts_only": {
+        "RJF-10K-2025#10 / RJF-10K-2025#11": [
+          "RJF-10K-2025#10",
+          "RJF-10K-2025#11"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "EDJ-10K-2025#30",
+        "MS-10K-2025#153"
+      ],
+      "expected_chunks_fts_only": [
+        "EDJ-10K-2025#264",
+        "RJF-10K-2025#10",
+        "RJF-10K-2025#11"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "EDJ-10K-2025#30",
+        "MS-10K-2025#153"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q26": {
+      "retrieved": {
+        "hybrid": 49,
+        "fts": 44,
+        "both": 41,
+        "hybrid_only": 8,
+        "fts_only": 3
+      },
+      "cited": {
+        "hybrid": 29,
+        "fts": 28,
+        "hybrid_only": [
+          "RJF-TRADE-2026-08-26-IN-01#2",
+          "RJF-TRADE-2026-09-24-WM-01#1",
+          "RJF-TRADE-2026-10-19-IN-01#1",
+          "RJF-TRADE-2026-10-23-WM-01#1",
+          "RJF-TRADE-2026-11-05-IN-01#2"
+        ],
+        "fts_only": [
+          "RJF-TRADE-2026-08-26-IN-01#1",
+          "RJF-TRADE-2026-11-05-WM-01#0",
+          "RJF-TRADE-2026-11-05-WM-01#1",
+          "RJF-TRADE-2026-11-12-WM-01#1"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          null,
+          null,
+          null
+        ],
+        "fts": [
+          null,
+          null,
+          null
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q27": {
+      "retrieved": {
+        "hybrid": 105,
+        "fts": 104,
+        "both": 103,
+        "hybrid_only": 2,
+        "fts_only": 1
+      },
+      "cited": {
+        "hybrid": 42,
+        "fts": 38,
+        "hybrid_only": [
+          "BAC-10Q-2026Q1#74",
+          "BAC-10Q-2026Q2#90",
+          "BAC-10Q-2026Q2#91",
+          "BAC-PR-2026-04-15-01#10",
+          "BAC-PR-2026-07-14-01#10",
+          "MER-PR-2026-09-15-01#1",
+          "MER-TRADE-2026-10-15-WM-01#1",
+          "MER-TRADE-2026-11-12-IN-01#0"
+        ],
+        "fts_only": [
+          "BAC-DECK-2026Q1#26",
+          "BAC-SUPP-2026Q1#45",
+          "BAC-SUPP-2026Q2#55",
+          "MER-TRADE-2026-10-15-WM-01#0"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.778,
+          0.778,
+          0.778
+        ],
+        "fts": [
+          0.778,
+          0.778,
+          0.778
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "answer"
+      }
+    },
+    "Q28": {
+      "retrieved": {
+        "hybrid": 115,
+        "fts": 97,
+        "both": 71,
+        "hybrid_only": 44,
+        "fts_only": 26
+      },
+      "cited": {
+        "hybrid": 14,
+        "fts": 16,
+        "hybrid_only": [
+          "BAC-TR-2026Q3#19",
+          "EDJ-10Q-2025Q2#64",
+          "EDJ-10Q-2025Q3#68",
+          "EDJ-10Q-2025Q3#69"
+        ],
+        "fts_only": [
+          "BAC-TR-2026Q2#20",
+          "EDJ-10K-2025#130",
+          "EDJ-10K-2025#27",
+          "EDJ-10K-2025#70",
+          "EDJ-10Q-2025Q2#66",
+          "EDJ-10Q-2026Q2#60"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          0.75,
+          1.0,
+          0.75
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {
+        "EDJ-10K-2025#130 / EDJ-10Q-2026Q2#60": [
+          "EDJ-10K-2025#130",
+          "EDJ-10Q-2026Q2#60"
+        ]
+      },
+      "expected_chunks_hybrid_only": [
+        "EDJ-10Q-2025Q3#68"
+      ],
+      "expected_chunks_fts_only": [
+        "EDJ-10K-2025#130",
+        "EDJ-10Q-2026Q2#60"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "EDJ-10Q-2025Q3#68"
+      ],
+      "behavior": {
+        "hybrid": "gap_with_adjacent",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q29": {
+      "retrieved": {
+        "hybrid": 37,
+        "fts": 83,
+        "both": 24,
+        "hybrid_only": 13,
+        "fts_only": 59
+      },
+      "cited": {
+        "hybrid": 9,
+        "fts": 11,
+        "hybrid_only": [
+          "MS-10K-2025#128",
+          "MS-10K-2025#153",
+          "MS-10K-2025#193",
+          "MS-10Q-2026Q2#93",
+          "MS-SUPP-2026Q3#52",
+          "MS-TRADE-2026-08-28-IN-01#0"
+        ],
+        "fts_only": [
+          "MS-10K-2025#170",
+          "MS-10Q-2026Q1#55",
+          "MS-10Q-2026Q1#73",
+          "MS-PR-2026-01-15-01#10",
+          "MS-PR-2026-10-14-01#5",
+          "MS-SUPP-2026Q2#43",
+          "MS-TR-2025Q1#54",
+          "MS-TRADE-2026-11-10-IN-01#0"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          0.5,
+          1.0,
+          0.5
+        ]
+      },
+      "expected_rows_hybrid_only": {
+        "MS-10K-2025#153": [
+          "MS-10K-2025#153"
+        ]
+      },
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [
+        "MS-10K-2025#153"
+      ],
+      "expected_chunks_fts_only": [
+        "MS-10K-2025#170"
+      ],
+      "fts_pool_had_hybrid_only_expected": [
+        "MS-10K-2025#153"
+      ],
+      "behavior": {
+        "hybrid": "answer",
+        "fts": "gap_with_adjacent"
+      }
+    },
+    "Q30": {
+      "retrieved": {
+        "hybrid": 64,
+        "fts": 44,
+        "both": 34,
+        "hybrid_only": 30,
+        "fts_only": 10
+      },
+      "cited": {
+        "hybrid": 6,
+        "fts": 8,
+        "hybrid_only": [
+          "BAC-10Q-2026Q2#88",
+          "BAC-SUPP-2026Q3#53"
+        ],
+        "fts_only": [
+          "BAC-10K-2025#244",
+          "BAC-10K-2025#247",
+          "BAC-10Q-2026Q2#89",
+          "BAC-DECK-2026Q3#30"
+        ]
+      },
+      "recall": {
+        "hybrid": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fts": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "expected_rows_hybrid_only": {},
+      "expected_rows_fts_only": {},
+      "expected_chunks_hybrid_only": [],
+      "expected_chunks_fts_only": [],
+      "fts_pool_had_hybrid_only_expected": [],
+      "behavior": {
+        "hybrid": "gap_with_adjacent",
+        "fts": "gap_with_adjacent"
+      }
+    }
+  },
+  "blind_sha256": "72b24831998c8a09ad0f39adf9e18dabcdc823544934565c044f919c9caec1ec",
+  "blind": "{\n  \"run\": \"0240-real (hybrid-norerank, #217 plans reused), scored blind before opening any #217 verdict\",\n  \"rule\": \"PASS only if the project lead would forward the answer with his name on it, read against passes_if; no half credit. Classes: r retrieval, s shape / required part missing, b behavior choice, c corpus gap, i invalid output.\",\n  \"verdicts\": {\n    \"Q1\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Channels management credits (advisors, Workplace, E*TRADE, integrated firm) in its framing, every statement dated by call.\"},\n    \"Q2\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Own pitch (culture, affiliation choice, payout ranges, independence, platform) from management and recruiting pages, plus disclosed recruiting results.\"},\n    \"Q3\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Framing, priorities and named competition covered; the concession is management's 'throttled growth' on long/short plus spokesperson-confirmed SAN minimum hikes, share loss only from an analyst quote (marked as such).\"},\n    \"Q4\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill-specific: ADP pipeline, 5% sales-force aim, experienced-hire shift and its history; GWIM/BAC-wide figures kept as labelled adjacent items.\"},\n    \"Q5\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Names LeadIQ, E*TRADE build-out, workplace, Parable, DevGen AI with stated purposes; no spend invented. Advisor-specific tools are thin (corpus holds no Debrief/AI@MS chunk).\"},\n    \"Q6\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"AdvisorChoice options as described, channel counts FY23-25 and RCS AUA quoted, management's mix-shift remarks quoted with dates.\"},\n    \"Q7\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Same dimensions for all three, each cell cited, empty cells shown as gaps (MS training, payout grids, comparable attrition). MS recruiting posture thin; one claim misgenders the BAC CFO.\"},\n    \"Q8\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Each firm's own language; Schwab custody offer and RJF affiliation/RCS described separately, not flattened.\"},\n    \"Q9\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill's $250K / $500K / $3MM markers cited; says plainly MS discloses no wealth-tier thresholds (channels instead).\"},\n    \"Q10\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Shows the statements with dates and makes the basis visible (Merrill/GWIM the only own use of 'Mass Affluent'; Schwab says 'affluent'); gaps for MS, EDJ, RJF.\"},\n    \"Q11\": {\"verdict\": \"FAIL\", \"class\": \"c\", \"borderline\": false, \"reason\": \"gap_with_adjacent: only RJF (and partly EDJ) definitions quoted; MS only a 2020 label, Schwab none, Merrill only a GWIM footnote. Five quoted definitions not in the corpus; behavior also differs from the key's 'answer'.\"},\n    \"Q12\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Schwab channels, scale/cost-to-serve claims and results, EDJ cost structure (opex, margin, NNA, households) alongside, explicit hand-off of the replication question.\"},\n    \"Q13\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Funnel end to end in management's words (retain vested, migrate to advisor-led, referral model) with each figure tied to the call/filing it was stated in.\"},\n    \"Q14\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Each option's economics for advisor (payout, costs borne) and firm (fees, RCS asset fee, comp ratio, transition assistance) from RJF's own filings, calls and pages.\"},\n    \"Q15\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Disclosed revenue composition per model (Schwab NII/sweep vs fee-based firms) with drivers; breakdowns named (GWIM not Merrill, grids not public). The mechanism is spread per claim rather than stated in one place.\"},\n    \"Q16\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Organised by position, each attributed and dated, no forecast of its own.\"},\n    \"Q17\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Deployed named tools (RJF Ray/Raimond, Schwab Charley/Portfolio Insights, MS LeadIQ, BAC AI tools) kept apart from call aspirations and metrics; 'who claims most' answered as not like-for-like. Specificity vs volume is shown per firm, not named as the axis.\"},\n    \"Q18\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Disclosed pricing (ADV brochures), regulatory items, research and trade press each labelled for what they are.\"},\n    \"Q19\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Cohort preference surveys dated and sourced and the 'should' handed back, but competitor moves aimed at the cohort are missing (only Schwab's Gen Z share as an adjacent item); all plan parts are EDJ.\"},\n    \"Q20\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Actual survey findings with source and date (UBS, Fidelity, Cerulli, CFPB, BofA); samples described by population, sizes not given; most evidence is wealthy next-gen rather than under-40 generally, which the gaps say.\"},\n    \"Q21\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Estimates (Cerulli 2025, UBS 2026) with source and vintage kept apart from each firm's stated actions; gaps where a firm says nothing.\"},\n    \"Q22\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Value, period, source and each firm's definition for MS, Schwab (core NNA), EDJ, RJF; Merrill marked as not reporting, GWIM AUM flows only as labelled adjacent. Several cells missing (EDJ 4Q25, Schwab 1Q25-2Q25), named as gaps.\"},\n    \"Q23\": {\"verdict\": \"FAIL\", \"class\": \"c\", \"borderline\": false, \"reason\": \"Series far from complete (EDJ three points, RJF one, MS/Merrill/Schwab none in window); answered as gap_with_adjacent.\"},\n    \"Q24\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": false, \"reason\": \"Computes no ratio even where both inputs are disclosed on one date (EDJ $2,647B / 20,514 at 2Q26), and never answers 'is the comparison valid' directly; definitions are laid out but the verdict is left implicit.\"},\n    \"Q25\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Reports what each firm discloses (MS formulaic payout and deferral mix, Merrill ADV awards, EDJ commission+salary, Schwab FC conflict note, RJF headline payouts) and marks grids as not public; trade press only as labelled adjacent. Behavior 'answer' vs key gap_with_adjacent.\"},\n    \"Q26\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Newest first and nothing older than the window, but items carry no 'why it might matter' line; all items are trade press (no RJF primary document in the window).\"},\n    \"Q27\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"Merrill items only; BAC material only where it is explicitly Merrill/GWIM and labelled; GWIM figures as adjacent.\"},\n    \"Q28\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"EDJ rate with period and definition from the 10-Q, Merrill only 'near historic lows', net headcount adjacent with the attrition difference stated.\"},\n    \"Q29\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": true, \"reason\": \"Disclosed structure (formulaic payout, 75/25 deferral) then 'Payout grids are not public', aggregate comp expense labelled different, trade press indicative. Behavior 'answer' vs key gap_with_adjacent; the named source is generic.\"},\n    \"Q30\": {\"verdict\": \"PASS\", \"class\": null, \"borderline\": false, \"reason\": \"States Merrill does not report standalone results, GWIM figures with explicit 'GWIM is not Merrill'.\"}\n  },\n  \"score\": {\"pass\": 25, \"of\": 30, \"tier1_pass\": 15, \"tier1_of\": 18},\n  \"citation_check\": \"1,151 cited chunk ids across the 30 answers: every one is in its question's retrieved set and in the database (answers-ids.txt: 0 NOT-IN-RETRIEVED, 0 NOT IN DB). 10 claims carry the code flag number_not_found (Q6, Q11, Q13 x2, Q16 x2, Q18, Q19, Q26, Q27); none of them decides a verdict.\"\n}\n",
+  "scored_records": "run-report.json",
+  "generator_sha256": "ee71de191536c64d6b5e4e358ed0f2886613ec96e7093686a834189fe44d3600"
+}

@@ -27,7 +27,7 @@ def test_no_internal_words_in_ui_text():
     assert not re.search(r"hybrid|rerank|\bFTS\b|vector", text, re.IGNORECASE)
 
 
-# --- #214 planner on exp/hybrid: fts plans as main, hybrid modes search the whole question ------
+# --- #214 / #240 planner on exp/hybrid: every mode plans as main; hybrid searches the parts ----
 
 def test_fts_with_a_plan_is_mains_search_parts(monkeypatch):
     from cee.retrieve import modes, planner
@@ -41,11 +41,43 @@ def test_fts_with_a_plan_is_mains_search_parts(monkeypatch):
     assert seen == [(plan, pools)]
 
 
-def test_hybrid_plan_is_one_whole_question_part_without_a_call(monkeypatch):
+def test_every_mode_plans_with_the_planner(monkeypatch):
+    # #240 (T1): plan_for calls planner.plan_question with the same arguments in every mode
     from cee.retrieve import modes, planner
     from cee.retrieve.fts import Query
-    monkeypatch.setattr(planner, "plan_question", lambda *a, **k: pytest.fail("no planner in hybrid modes"))
+    seen = []
+    monkeypatch.setattr(planner, "plan_question", lambda q, provider=None: seen.append((q, provider)) or "plan")
     q = Query(question="Compare MS and RJF", entities=["MS", "RJF"])
-    for mode in ("hybrid", "hybrid-norerank"):
-        plan = modes.plan_for(q, "anthropic", mode)
-        assert [(p.id, p.firms) for p in plan.parts] == [("p1", ["MS", "RJF"])] and plan.calls == 0
+    assert [modes.plan_for(q, "anthropic", m) for m in ("fts", "hybrid", "HYBRID-NORERANK")] == ["plan"] * 3
+    assert seen == [(q, "anthropic")] * 3
+    with pytest.raises(ValueError, match="unknown retrieval mode"):
+        modes.plan_for(q, "anthropic", "vector")
+
+
+def test_hybrid_with_a_plan_is_hybrid_search_parts(monkeypatch):
+    # #240 (T2): a plan and k None -> hybrid.search_parts with the plan, rerank by mode and the pools
+    from cee.retrieve import hybrid, modes, planner
+    from cee.retrieve.fts import Query
+    monkeypatch.setenv("CEE_VECTORS", "on")
+    plan = planner.Plan(parts=[planner.Part("p1", "q", ["MS"]), planner.Part("p2", "q", ["RJF"])])
+    seen = []
+    monkeypatch.setattr(hybrid, "search_parts", lambda q, p, rerank=True, trace=None, part_pools=None:
+                        seen.append((p, rerank, part_pools)) or [])
+    monkeypatch.setattr(hybrid, "search", lambda q, k, trace=None, rerank=True: seen.append(("search", k, rerank)) or [])
+    pools = {}
+    q = Query(question="q", entities=["MS", "RJF"])
+    modes.search(q, mode="hybrid-norerank", plan=plan, part_pools=pools)
+    modes.search(q, mode="hybrid", plan=plan, part_pools=pools)
+    modes.search(q, k=12, mode="hybrid-norerank", plan=plan)   # explicit k: one search, passage rule
+    assert seen == [(plan, False, pools), (plan, True, pools), ("search", 12, False)]
+
+
+def test_hybrid_with_vectors_off_raises_before_import(monkeypatch):
+    import sys
+    from cee.retrieve import modes, planner
+    from cee.retrieve.fts import Query
+    monkeypatch.setenv("CEE_VECTORS", "off")
+    monkeypatch.setitem(sys.modules, "cee.retrieve.hybrid", None)
+    plan = planner.Plan(parts=[planner.Part("p1", "q", ["MS"])])
+    with pytest.raises(modes.HybridUnavailable):
+        modes.search(Query(question="q", entities=["MS"]), mode="hybrid-norerank", plan=plan)
