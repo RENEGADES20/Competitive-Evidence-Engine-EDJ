@@ -108,7 +108,7 @@ def ensure_handoff(answer: Answer) -> Answer:
 
 
 def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
-    answer = ensure_handoff(withhold_normative(answer))
+    answer = move_uncited_cells(ensure_handoff(withhold_normative(answer)))
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         known = [c for c in claim.chunk_ids if c in by_id]
@@ -118,6 +118,127 @@ def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
     return check_dates(check_numbers(answer, hits), hits)
+
+
+# Parts (#215). Rules in specs/answer-citations.md, "Every part answered or named as a gap".
+UNCITED_CELL_GAP = "{firm} - {dimension}: no cited evidence in this answer."
+PART_NO_EVIDENCE = "No evidence retrieved for: {part}"
+PART_NOT_ANSWERED = "Not answered from the evidence retrieved for: {part}"
+_CELL = re.compile(r"^\s*(?P<dim>[^:\n]{1,80}?)\s+[-–—]\s+(?P<firm>[^:\n]{1,80}?)\s*:")
+
+
+def _firm_names() -> list[str]:
+    cfg = entities_config()
+    names = []
+    for e in cfg["entities"] + (cfg.get("expansion") or []):
+        names += [e["name"], e["name"].split(" (")[0], *e.get("aliases", [])]
+    return names
+
+
+def _is_firm(text: str) -> bool:
+    t = " ".join(text.split())
+    for n in _firm_names():
+        if (t == n) if (n.isupper() and len(n) <= 5) else (t.lower() == n.lower()):
+            return True
+    return False
+
+
+def _norm(text: str) -> str:
+    return " ".join(text.lower().split())
+
+
+def move_uncited_cells(answer: Answer) -> Answer:
+    """A grid cell ("<Dimension> - <Firm>: ...") the model wrote with no chunk_ids is not a claim
+    (ground rule 1): it moves to gaps. The gap text is built by code and true by construction (the
+    model gave no citation); the model's text is kept in claim_text, never shown. When the model
+    already wrote a gap for that cell, that gap keeps its text and gets the flag. A claim with
+    citations, even unmatched ones, is never moved (it is flagged in check_citations)."""
+    kept = []
+    for claim in answer.claims:
+        m = _CELL.match(claim.text)
+        if claim.chunk_ids or not m or not _is_firm(m["firm"]):
+            kept.append(claim)
+            continue
+        firm, dim = " ".join(m["firm"].split()), " ".join(m["dim"].split())
+        head = _norm(f"{firm} - {dim}:")
+        same = next((g for g in answer.gaps if _norm(g.what).startswith(head)), None)
+        if same is not None:
+            if "uncited_cell" not in same.flags:
+                same.flags.append("uncited_cell")
+            same.claim_text = "\n".join(t for t in (same.claim_text, claim.text) if t)
+            same.part_id = same.part_id or claim.part_id
+        else:
+            answer.gaps.append(Gap(what=UNCITED_CELL_GAP.format(firm=firm, dimension=dim),
+                                   part_id=claim.part_id, flags=["uncited_cell"], claim_text=claim.text))
+    answer.claims = kept
+    return answer
+
+
+def _part_label(part, question: str) -> str:
+    text = " ".join((part.text or question).split())
+    firms = ", ".join(_short_name(f) for f in part.firms)
+    if firms and question and _norm(text) == _norm(question):
+        text = f"{text} ({firms})"
+    if is_normative(text):   # ground rule 6: code never prints a "should"
+        text = f"part {part.id}" + (f" ({firms})" if firms else "")
+    return text
+
+
+def _part_pools(plan) -> dict[str, int]:
+    """Each part's candidate pool before exclusion (planner.search_parts), when known."""
+    return {s["id"]: s["pool"] for s in getattr(plan, "searched", None) or [] if "pool" in s}
+
+
+def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:
+    """{part_id: model | citation | handoff | code_gap | none} for the plan's parts (#215).
+    model: a cited claim / adjacent item or a gap names the part; citation: an item without a valid
+    part_id cites a passage found for the part (v3 outputs, the mock); handoff: a normative part in
+    a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap."""
+    ids = [p.id for p in plan.parts]
+    known = {h.chunk_id: h for h in hits}
+
+    def found_for(chunk_id: str, pid: str) -> bool:
+        part = getattr(known[chunk_id], "part_id", None)
+        if len(ids) == 1:   # one part: every passage but research / peers was found for it
+            return part not in ("research", "peers")
+        return part == pid
+
+    out = {}
+    items = [*answer.claims, *answer.adjacent]
+    for p in plan.parts:
+        if any(g.part_id == p.id and "part_gap" in g.flags for g in answer.gaps):
+            out[p.id] = "code_gap"
+        elif any(c.part_id == p.id and any(k in known for k in c.chunk_ids) for c in items) \
+                or any(g.part_id == p.id for g in answer.gaps):
+            out[p.id] = "model"
+        elif any(c.part_id not in ids and c.text.strip() != BOUNDARY_HANDOFF
+                 and any(found_for(k, p.id) for k in c.chunk_ids if k in known) for c in items) \
+                or (len(ids) == 1 and any(g.part_id not in ids for g in answer.gaps)):
+            out[p.id] = "citation"
+        elif answer.behavior == "answer_with_boundary" and is_normative(p.text) \
+                and any(c.text.strip() == BOUNDARY_HANDOFF for c in answer.claims):
+            out[p.id] = "handoff"
+        else:
+            out[p.id] = "none"
+    return out
+
+
+def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "") -> Answer:
+    """Every planned part has a cited claim, a cited adjacent item or a gap; a part with none gets
+    a code-built gap flagged part_gap (#215, ground rule 3). The wording comes from the part's
+    candidate pool before exclusion: 0 -> "No evidence retrieved for", else (or unknown) "Not
+    answered from the evidence retrieved for" (its passages may sit under another part). Behavior,
+    claims and the model's gaps are not changed. No plan: nothing to check."""
+    if plan is None or not plan.parts:
+        return answer
+    pools = _part_pools(plan)
+    for p in plan.parts:
+        if part_coverage(answer, plan, hits)[p.id] != "none":
+            continue
+        wording = PART_NO_EVIDENCE if pools.get(p.id) == 0 else PART_NOT_ANSWERED
+        answer.gaps.append(Gap(what=wording.format(part=_part_label(p, question)),
+                               suggested_source=_sources_for(p.firms), part_id=p.id, flags=["part_gap"]))
+    return answer
 
 
 # Number check (#52). Rule in specs/answer-citations.md, "Number check".
@@ -354,14 +475,19 @@ def fill_suggested_sources(answer: Answer, query: Query) -> Answer:
     """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51)."""
     empty = [g for g in answer.gaps if not g.suggested_source.strip()]
     if empty and query.entities:
-        prefix = "Not yet in the corpus: "
-        parts = [t for t in (suggested_sources(e) for e in query.entities) if t]
-        registry = [t[len(prefix):] for t in parts if t.startswith(prefix)]
-        text = "; ".join(([prefix + "; ".join(registry)] if registry else [])
-                         + [t for t in parts if not t.startswith(prefix)])
+        text = _sources_for(query.entities)
         for g in empty:
             g.suggested_source = text
     return answer
+
+
+def _sources_for(entities: list[str]) -> str:
+    """The registry sources of several firms in one line (one "Not yet in the corpus:" prefix)."""
+    prefix = "Not yet in the corpus: "
+    parts = [t for t in (suggested_sources(e) for e in entities) if t]
+    registry = [t[len(prefix):] for t in parts if t.startswith(prefix)]
+    return "; ".join(([prefix + "; ".join(registry)] if registry else [])
+                     + [t for t in parts if not t.startswith(prefix)])
 
 
 def empty_retrieval_answer(query: Query) -> Answer:
