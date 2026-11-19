@@ -226,7 +226,7 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
 - [x] Report: 30 verdicts in `docs/results/w10-report.md` (Q1-Q30, each PASS or FAIL, class for each
       FAIL), score and tier-1 score; every verdict that differs from Gate 4 has a retrieval /
       pipeline / model label with chunk ids; W10 partial-run verdicts shown where a question was run.
-- [ ] Borderline questions read twice: the reviewer agent's PR comment gives a second verdict for
+- [x] Borderline questions read twice: the reviewer agent's PR comment gives a second verdict for
       every listed borderline question (at least Q7, Q15, Q17, Q19, Q22, Q25, Q26, Q28); the report's
       "Second read" table matches it.
 - [x] Known findings (step 6) each marked still holds / gone / changed in the report.
@@ -235,7 +235,7 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
       listing question IDs per item vs the verdicts).
 - [x] README Status line updated (date, W10 score, link).
 - [x] 0 code changes: `git diff origin/main --stat` lists only the five files above.
-- [ ] `gh pr checks <PR#>` all green on the PR head.
+- [x] `gh pr checks <PR#>` all green on the PR head.
 
 ## Risks
 - **Non-determinism**: one sample per question; a verdict change can be model variance. Labelled
@@ -302,3 +302,8 @@ the database changes. Scratch (not committed): `D:\ALLPROJECTS\EDJ\cache\ev217\`
   / 261,308 output tokens, ~$6.65 at the plan's rates. Report `docs/results/w10-report.md` + `.json`
   (`ev217\gen_w10.py`), `docs/NEXT.md` rewritten (`ev217\next-check.txt`: every FAIL in an item, no
   item on passing questions only), README Status. Second read left for PR review round 1.
+- 2026-11-19 15:20 - PR #238 review round 1 (issuecomment-7021166143): second read of 10 questions, 9 agree, Q19 FAIL
+  (competitor-moves leg missing, planner parts all EDJ). TL decision: Q19 FAIL; score 24/30 (first read 25/30),
+  tier 1 14/18. Second-read table filled in `w10-report.md` (+ json `first_read` / `second_read`),
+  NEXT item 8 (planner firm scope) and 6(c) fixed, NEXT item 9 -> 7 references, README wording,
+  `next-check.txt` now reads the Questions column only. CI (pytest) green on 66c85b2. 0 calls.

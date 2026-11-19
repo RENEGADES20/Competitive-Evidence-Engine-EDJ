@@ -1,8 +1,8 @@
 # W10 results: 30 questions on corpus-2026-11-19
 
-**Score: 25/30 at acting quality** (tier 1: 14/18), scored by the TL implementer agent (Claude) on 2026-11-19. Gate 4 (corpus-2026-11-17, 2026-11-18): 21/30 (tier 1 12/18). #212 hybrid-norerank on corpus-2026-11-17: 21/30 (tier 1 12/18).
+**Score: 24/30 at acting quality** (tier 1: 14/18), scored by the TL implementer agent (Claude) on 2026-11-19. Gate 4 (corpus-2026-11-17, 2026-11-18): 21/30 (tier 1 12/18). #212 hybrid-norerank on corpus-2026-11-17: 21/30 (tier 1 12/18).
 
-One sample per question and one scorer; the borderline verdicts are named below and get a second, independent read in the PR review (NEXT item 9).
+The first (blind) read gave 25/30. A second, independent read of ten questions in the PR review (PR #238, issuecomment-7021166143; [docs/NEXT.md](../NEXT.md) item 7) agreed on nine and failed Q19: the `passes_if` leg 'competitor moves aimed at it' is missing and not named as a gap, because the planner scoped every part to Edward Jones. The TL decided Q19 counts as FAIL (2026-11-19), so the score is 24/30; Q19 is tier 3, so tier 1 stays 14/18. One sample per question.
 
 ## How this was run
 
@@ -37,7 +37,7 @@ Classes for failures: r = retrieval missed a passage the corpus holds; s = answe
 | Q16 | 3 | answer -> answer | PASS |  | **PASS** |  | yes |
 | Q17 | 1 | answer -> answer | PASS |  | **PASS** |  | yes |
 | Q18 | 3 | answer -> answer | PASS |  | **PASS** |  |  |
-| Q19 | 3 | answer_with_boundary -> answer_with_boundary | PASS |  | **PASS** |  | yes |
+| Q19 | 3 | answer_with_boundary -> answer_with_boundary | PASS |  | **FAIL** | s | yes |
 | Q20 | 1 | answer -> gap_with_adjacent | FAIL |  | **FAIL** | b, r |  |
 | Q21 | 2 | answer -> answer | PASS | PASS (#232) | **PASS** |  |  |
 | Q22 | 1 | answer -> answer | PASS | FAIL empty (#229), FAIL invalid (#230), PASS (#232) | **PASS** |  | yes |
@@ -50,9 +50,9 @@ Classes for failures: r = retrieval missed a passage the corpus holds; s = answe
 | Q29 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS |  | **PASS** |  |  |
 | Q30 (trap) | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS (#229) | **PASS** |  |  |
 
-Gate 3 (corpus-2026-11-16): 16/30. Gate 4 (corpus-2026-11-17): 21/30. W10 final (corpus-2026-11-19): 25/30; tier 1 14/18.
+Gate 3 (corpus-2026-11-16): 16/30. Gate 4 (corpus-2026-11-17): 21/30. W10 final (corpus-2026-11-19): 24/30; tier 1 14/18.
 
-The eval script's own status column (retrieval checks plus the expected behavior) is not the score: in this run it reads 23 PASS / 7 FAIL; Q19 fails a pattern-coverage check (its answer passes), Q22 and Q24 fail a `must_not_return` check (see known findings), Q11, Q20, Q23, Q25 fail on behavior.
+The eval script's own status column (retrieval checks plus the expected behavior) is not the score: in this run it reads 23 PASS / 7 FAIL; Q19 fails a pattern-coverage check (coverage 0.2), Q22 and Q24 fail a `must_not_return` check (see known findings), Q11, Q20, Q23, Q25 fail on behavior.
 
 ## Changes against Gate 4
 
@@ -66,31 +66,32 @@ Each change is labelled **retrieval** (the deciding passages changed; chunk ids 
 | Q15 | FAIL -> PASS (borderline) | **Retrieval**: revenue composition per model now in the set: `SCHW-10K-2025#130`, `SCHW-PR-2026-10-15-01#12`, `EDJ-10Q-2025Q3#38`, `RJF-10K-2025#696`, `MS-PR-2026-10-14-01#5`. **Pipeline**: a part for 'what drives the difference' (spread vs fee, sweep, cost). Gate 4's named passage `SCHW-10K-2025#27` is still not retrieved. |
 | Q25 | FAIL -> PASS (borderline) | **Retrieval**: `RJF-PR-web-affiliation-options#1` (RJF payout ranges) retrieved and cited (#214), MS formulaic payout via `MS-10K-2025#170` / `MS-10Q-2026Q2#20`, brochure disclosures `MER-ADV-2026#406`, `MS-ADV-2026#173`, `RJF-ADV-2026#50`, `SCHW-ADV-2026#42`. **Pipeline**: v4 per-part gaps now list every undisclosed part (14 gaps; #229 had 0 gaps and a 'boundary note' claim). **Model**: behavior `answer` (bank: `gap_with_adjacent`), as accepted by the TL in #213; the Schwab dividend-deck must-not chunks were not retrieved in this run. |
 | Q28 | FAIL -> PASS | **Pipeline**: parts for each firm's closest headcount figures (#214/#224) and v4 gaps. **Retrieval, new in corpus-2026-11-19**: `BAC-SUPP-2023Q4#2` (18,916 vs 19,273 wealth advisors) as adjacent, with 'net advisor headcount change is not attrition' stated. |
+| Q19 | PASS -> FAIL (borderline; second read and TL decision) | **Pipeline**: the planner scoped all four parts to Edward Jones (`firms=['EDJ']`), so competitor moves aimed at younger investors were never searched; only Schwab's Gen Z / millennial share of new households (`SCHW-TR-2026Q3#11`, `SCHW-TR-2025Q3#11`) reached the answer, as adjacent outcomes. Gate 4's missed passage `EDJ-10K-2025#88` is now retrieved and cited, and the hand-off is kept; the missing leg is not named as a gap. |
 | Q24 | PASS -> FAIL (borderline) | **Model** (with the **pipeline** part shape): the four five-firm parts give per-firm rows of assets, counts and definitions, but no cross-firm statement that the comparison is invalid and no ratio where both inputs are disclosed. Gate 4 said so in one claim (`EDJ-10Q-2026Q2#61`, `RJF-10K-2025#9`: 'not like-for-like ... different asset measures and dates') and a gap. Both inputs are retrieved and cited here, so retrieval did not cause it. The #230 run (v4.1) was scored PASS with the invalidity answered per firm: a reading difference for the second read. |
 | Q26 | PASS -> FAIL (borderline) | **Scorer reading**, not a system change: Gate 4's answer also had no 'why it might matter' line per item and was passed; this blind read applies that part of `passes_if`. **Model**: one inversion (the 2026-11-05 outlook item placed last) and a background item outside the window labelled as such. Window, retrieval of trade press and order across parts otherwise as #230 fixed. |
 
 Unchanged failures: Q11: unchanged FAIL (c, b): `gap_with_adjacent`, definitions only for EDJ and RJF; NEXT item 5. Q20: unchanged FAIL (now b, r): `gap_with_adjacent`; Fidelity next-gen study and UBS sample passages still not retrieved. Q23: unchanged FAIL (c, b): Edward Jones series only; NEXT item 5.
 
-Net: six FAIL -> PASS (Q3, Q7, Q12, Q15, Q25, Q28), two PASS -> FAIL (Q24, Q26), 21 + 6 - 2 = 25. Four of the six gains rest on W10 parts and per-part gaps (Q3, Q7, Q12, Q28: the 'part disappears' failures of Gate 4), two on retrieval reaching passages Gate 4 missed (Q15, Q25). Against the W10 partial runs, every question run there keeps its latest W10 verdict except Q24 (PASS in #230) and Q26 (PASS borderline in #230): both are borderline readings of the same answer shape.
+Net: six FAIL -> PASS (Q3, Q7, Q12, Q15, Q25, Q28), three PASS -> FAIL (Q19, Q24, Q26), 21 + 6 - 3 = 24 (the first read had Q19 PASS: 25). Four of the six gains rest on W10 parts and per-part gaps (Q3, Q7, Q12, Q28: the 'part disappears' failures of Gate 4), two on retrieval reaching passages Gate 4 missed (Q15, Q25). Against the W10 partial runs, every question run there keeps its latest W10 verdict except Q24 (PASS in #230) and Q26 (PASS borderline in #230): both are borderline readings of the same answer shape. Q19 was not run in a W10 partial run.
 
 ## Borderline verdicts and the second read
 
-Borderline in this read: Q7, Q15, Q16, Q17, Q19, Q22, Q24, Q25, Q26. The NEXT item 9 list (Q15, Q17, Q19, Q22, Q25, Q26, Q28) plus Q7 is read twice regardless: Q7, Q15, Q16, Q17, Q19, Q22, Q24, Q25, Q26, Q28.
+Borderline in the first read: Q7, Q15, Q16, Q17, Q19, Q22, Q24, Q25, Q26. Read twice: these plus the Gate 4 borderline list (Gate 4 NEXT item 9: Q15, Q17, Q19, Q22, Q25, Q26, Q28) and Q7: Q7, Q15, Q16, Q17, Q19, Q22, Q24, Q25, Q26, Q28.
 
-Second read: pending (PR review round 1 posts an independent verdict for each of these questions; the table below is filled from that comment in the same PR).
+Second read: the PR-review reviewer agent, round 1 (PR #238, issuecomment-7021166143), written from the answer dump and raw outputs before opening this report or the blind verdicts. It agrees on nine of ten; the one disagreement is Q19. Range implied by the two reads: 24-25/30 (tier 1 14/18 either way). TL decision (2026-11-19): Q19 FAIL; the reported score is 24/30.
 
-| Q | First read | Second read | Discussed |
-|---|---|---|---|
-| Q7 | PASS | pending | |
-| Q15 | PASS | pending | |
-| Q16 | PASS | pending | |
-| Q17 | PASS | pending | |
-| Q19 | PASS | pending | |
-| Q22 | PASS | pending | |
-| Q24 | FAIL | pending | |
-| Q25 | PASS | pending | |
-| Q26 | FAIL | pending | |
-| Q28 | PASS | pending | |
+| Q | First read (blind) | Second read | Final | Discussed |
+|---|---|---|---|---|
+| Q7 | PASS (borderline) | PASS | **PASS** | Agree. Same four dimensions for all three firms, every cell cited, empty cells as gaps. |
+| Q15 | PASS (borderline) | PASS (weak) | **PASS** | Agree. Revenue mix per model and the mechanism through spread/fee, sweep and cost rows; contrast never stated in one place. |
+| Q16 | PASS (borderline) | PASS (weak) | **PASS** | Agree. Attributed and dated, no own forecast; 9 of 20 claims are 'Firm view' blocks. |
+| Q17 | PASS (borderline) | PASS | **PASS** | Agree. Deployed named tools separated from aspirations and research; 'who claims most' only partly answered. |
+| Q19 | PASS (borderline) | FAIL | **FAIL** | **Disagreement.** First read: cohort evidence and hand-off present, competitor moves thin but Schwab's Gen Z share counted. Second read: that is an outcome, not a move, and the missing leg is not named as a gap. Cause: planner parts all `firms=['EDJ']` (pipeline). TL: FAIL. |
+| Q22 | PASS (borderline) | PASS | **PASS** | Agree. Value, period, source and definition per firm; Merrill not reporting; missing quarters named (EDJ 1Q25 neither given nor named). |
+| Q24 | FAIL (borderline) | FAIL | **FAIL** | Agree. No ratio where both inputs are disclosed (EDJ); invalidity only implied firm by firm. |
+| Q25 | PASS (borderline) | PASS | **PASS** | Agree. Genuine disclosures, every undisclosed part a gap, no trade-press grid reconstruction. |
+| Q26 | FAIL (borderline) | FAIL | **FAIL** | Agree. No 'why it might matter' line; 11-05 outlook item out of order at the end. |
+| Q28 | PASS | PASS | **PASS** | Agree. EDJ rate with definition and 10-Q; Merrill qualitative; net headcount with the difference stated. |
 
 ## Cost
 
@@ -1849,7 +1850,7 @@ Tier 3, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retriev
 
 ### Q19: How should the preferences of younger investors shape Edward Jones's offerings?
 
-**Verdict: PASS** - borderline. Cohort evidence dated and sourced, EDJ initiatives (EDJ-10K-2025#88), hand-off at 'should'; competitor moves aimed at the cohort thin (Schwab Gen Z share only as adjacent).
+**Verdict: FAIL** (s) - borderline. Cohort evidence dated and sourced and the 'should' hand-off present, but the 'competitor moves aimed at it' leg is missing and not named as a gap: every planner part was scoped to Edward Jones, so no competitor move was searched (Schwab's Gen Z share of new households is an outcome, not a move). First read PASS (borderline); second read FAIL; TL decision 2026-11-19: FAIL.
 
 Tier 3, use case `segment_evidence`. Expected behavior `answer_with_boundary`, got `answer_with_boundary`. Retrieval: 75 passages (~23655 tokens) in 4 part(s): p1 EDJ: What preferences, needs and behaviors do younger investors and clients under 40 show (digital access, advice, planning, products, values)?; p2 EDJ: What products, services, and advice offerings does the firm provide or plan for younger clients and next-generation investors?; p3 EDJ: What results does the firm report on acquiring and retaining younger clients, including client age mix, new clients, and generational wealth transfer?; p4 EDJ: How does the firm describe competition for younger investors from digital platforms, robo-advisors and online brokers, and its response?.
 
