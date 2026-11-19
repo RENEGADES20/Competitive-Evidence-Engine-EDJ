@@ -765,8 +765,14 @@ def main(argv: list[str] | None = None) -> int:
 
     warmup_s = None
     if bank:  # untimed: loads models (hybrid) and warms the database cache
+        from cee.retrieve.fts import budget_tokens
+        q0 = resolve(bank[0]["text"], today=args.as_of)
+        # same path as the timed run: fts token mode searches a plan (the mock plan here, 0 planner
+        # calls) through planner.search_parts, as on main; passage / hybrid runs search the whole question
+        plan0 = (plan_question(q0, "mock") if args.k is None and retrieval_mode == "fts"
+                 and budget_tokens(q0) is not None else None)
         t = time.perf_counter()
-        search(resolve(bank[0]["text"], today=args.as_of), k=args.k, mode=retrieval_mode)
+        search(q0, k=args.k, mode=retrieval_mode, plan=plan0)
         warmup_s = round(time.perf_counter() - t, 3)
 
     grid = []
