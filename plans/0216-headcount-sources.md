@@ -356,37 +356,37 @@ corpus differs).
 **Paid calls: 0.** Data issue; everything runs on the mock provider.
 
 ## Acceptance
-- [ ] **MS, MER, SCHW each:** a stored chunk that states an advisor count with its own label,
+- [x] **MS, MER, SCHW each:** (MS `MS-SUPP-2020Q4#1`; MER `BAC-SUPP-2023Q4#2` and `BAC-DECK-2025-investor-day#9`; SCHW none published, Form ADV `SCHW-ADV1A-2026#1` as closest_metric) a stored chunk that states an advisor count with its own label,
       definition and date (chunk_id + verbatim quote in `config/metric_definitions.yaml`), or a
       documented search that found none (`looked_in` + `EV/sources-tried.md` + findings list
       every source tried, incl. Form ADV Part 1A). Form ADV Part 1A figures recorded as
       `closest_metric` / `see_also` with their Form ADV label, never as advisor headcount.
       Check: step 4 query prints the chunk per firm; `pytest tests/test_metric_definitions.py`
       passes on `cee` (corpus-2026-11-17) for PR A and on `cee` (SNAP) for PR B.
-- [ ] Stored-corpus check done before any download (`EV/stored.txt`, `EV/rawgrep.txt`); any
+- [x] Stored-corpus check done before any download (`EV/stored.txt`, `EV/rawgrep.txt`); any
       chunking loss reported.
-- [ ] Each new manifest row: source url, tier, `published_at`, `date_basis`, sha256; manifest
+- [x] Each new manifest row: source url, tier, `published_at`, `date_basis`, sha256; manifest
       check `219+N files OK`; 0 empty `published_at`; no inferred or derived figure anywhere.
-- [ ] Mock (step 6 on `cee_216`, step 11 on SNAP): Q11, Q23, Q24 `chunk_ids` contain the new
+- [x] (Q23 Merrill chunk and ADV1A chunks not retrieved: accepted by the TL as W10 findings, #216) Mock (step 6 on `cee_216`, step 11 on SNAP): Q11, Q23, Q24 `chunk_ids` contain the new
       non-`adv` count chunks; the Merrill chunk named in step 6 is reported for Q23; `adv`
       retrieval gap reported to the TL; the other 27 questions: `recall_final` not lower than
       base, 0 PASS -> FAIL, 0 forbidden, refusal accuracy >= base; rerun 30 UNCHANGED.
-- [ ] Snapshot `SNAP` built on clean `main` with `build-snapshot`; log checks pass; documents
+- [x] Snapshot `SNAP` built on clean `main` with `build-snapshot`; log checks pass; documents
       and chunk counts as expected; old chunks identical; new chunks = `EV/new-chunks.txt`;
       sha256 Box = local = `LATEST.json`.
-- [ ] `restore.ps1` + smoke PASS and `restore.sh` + smoke PASS; both `sync-db` checks
+- [x] `restore.ps1` + smoke PASS and `restore.sh` + smoke PASS; both `sync-db` checks
       "up to date: SNAP"; DOCTOR PASS; VERIFY PASS (PR A on `cee_216`, PR B on SNAP);
       `pytest -q` all pass (>= floor) in PR A (on `cee`) and PR B (on SNAP).
-- [ ] New baseline `evals/baselines/SNAP/` committed; `corpus-2026-11-17/` kept (Gate 4).
-- [ ] `docs/RUN.md` section 7: `Select-String -Path docs/RUN.md -Pattern "restore.ps1 .*corpus-2026-11-17.dump","restore.sh .*corpus-2026-11-17.dump","sync-db","baselines/SNAP"`
+- [x] New baseline `evals/baselines/SNAP/` committed; `corpus-2026-11-17/` kept (Gate 4).
+- [x] `docs/RUN.md` section 7: `Select-String -Path docs/RUN.md -Pattern "restore.ps1 .*corpus-2026-11-17.dump","restore.sh .*corpus-2026-11-17.dump","sync-db","baselines/SNAP"`
       / `grep -nE "restore\.(ps1|sh) .*corpus-2026-11-17\.dump|sync-db|baselines/SNAP" docs/RUN.md`
       -> each of the four found, and the PR quotes the `-n` line numbers, all inside the section 7
       heading range (`## 7.` to end of file).
-- [ ] `git diff --name-only origin/main...HEAD` of PR A and PR B: no `data/raw/`, no `*.dump`.
-- [ ] `gh pr checks` green on PR A and PR B.
-- [ ] exp/hybrid `embed --missing` hand-off noted on #216 (done at the next sync).
-- [ ] 0 real model calls (stated in both PRs).
-- [ ] N = 0 case only: PR A closes #216 with the documented search; snapshot items reported
+- [x] `git diff --name-only origin/main...HEAD` of PR A and PR B: no `data/raw/`, no `*.dump`.
+- [x] `gh pr checks` green on PR A (#235: pytest pass) and PR B.
+- [x] exp/hybrid `embed --missing` hand-off noted on #216 (done at the next sync).
+- [x] 0 real model calls (stated in both PRs).
+- [x] (not applicable: N = 5) N = 0 case only: PR A closes #216 with the documented search; snapshot items reported
       not applicable.
 
 ## Progress log
@@ -493,3 +493,47 @@ corpus differs).
   first run at 05:55 tested `cee`): corpus 21,161 chunks, VERIFY PASS (9 features), evidence
   `.verify-runs/20261119-055719-7b0d6ca`. `pytest -q` on `cee`: 698 passed; manifest check
   224 files OK. PR A next ("Part of #216").
+- 2026-11-19 06:00 - PR A #235 approved and merged (7b03b7a). TL decision on #216: Q23's missing
+  Merrill count chunk and the ADV1A chunks outside Q11/Q23/Q24 (#179 scope) are accepted as W10
+  findings (to the #217 report and docs/NEXT.md); PR B may close #216; tag `MS-SUPP-2020Q4#1`
+  Wealth Management only if existing tagging does it without new code.
+- 2026-11-19 06:09 - step 8: `main` f919a36 (= 7b03b7a + PROGRESS line), clean. Build exit 0:
+  `224 files OK`, 0 `parsing with docling|edgartools`, 93 `parse cache hit`, `4/7 Embedding
+  skipped`, `Dumping corpus-2026-11-19.dump`, `Copying to Box`. SNAP = **corpus-2026-11-19**,
+  built 2026-11-19T12:09:55Z, 224 documents, 21,161 chunks, sha256
+  `1d0d34b534cbb14a1bb1654f90d3ee7262b5a6e2305a103a12058cdf60283fb0` (Box dump = local dump =
+  `LATEST.json`).
+- 2026-11-19 06:11 - step 9: name stamped `corpus-2026-11-19`; documents = the manifest's 224
+  doc_ids, none without chunks; `pg_restore --list` exit 0; `corpus-2026-11-17.dump` sha256 =
+  `47c1ffca...bfae1`, restored as `cee_prev_216`: all 21,143 old chunks identical (md5 over
+  chunk_id, segment, section, page, prefix, text), the 18 added chunks = `EV/new-chunks.txt`,
+  and SNAP = `cee_216` chunk for chunk. `page_sweep`: 52 PDFs, `MISPLACED 0` on every line. Stop
+  rule not hit. `cee_prev_216` and `cee_216` dropped (`cee`, `cee_84`, `cee_84_rev` kept).
+  `MS-SUPP-2020Q4#1` keeps segment NULL: its first line is "Page 8:" and the page heading line
+  is not exactly a segment alias, so the existing tagger cannot tag it without new code or
+  non-verbatim text (TL decision: record it). It does not matter for MS questions today (no
+  segment filter); a segment-filtered MS question would drop it.
+- 2026-11-19 06:12 - step 10: `restore.ps1 <Box>/snapshots/corpus-2026-11-19.dump` exit 0 ->
+  smoke PASS (snapshot corpus-2026-11-19, 21,161 chunks); `bash scripts/restore.sh` (Git Bash)
+  same dump exit 0 -> smoke PASS; `sync-db.ps1 -Check` and `sync-db.sh --check` exit 0 "up to
+  date: corpus-2026-11-19"; DOCTOR PASS. `docker compose down -v` not run (it would delete
+  `cee_84`, `cee_84_rev`).
+- 2026-11-19 06:15 - step 11: no code change since 0da68fd (`git diff 0da68fd HEAD -- src scripts
+  config/entities.yaml` empty). `EV/snap` (committed as `evals/baselines/corpus-2026-11-19/`):
+  29 PASS / 1 FAIL (Q19), tier-1 doc recall 0.937, recall@final 0.654, refusal 5/5 and 22/22, 0
+  forbidden. vs `EV/base` (corpus-2026-11-17): 0 flagged (`EV/compare-snap.txt`); `EV/snap` and
+  `EV/new2` have identical `chunk_ids` for all 30 questions; rerun 30 UNCHANGED. Extract chunks in
+  other questions' final sets (`EV/extracts-in-final-sets.txt`): MS-SUPP-2020Q4 in Q1, Q9, Q13,
+  Q15, Q18, Q20, Q21, Q22; BAC-SUPP-2023Q4 in Q21 (incl. its header `#0`), Q22, Q28; ADV1A in
+  Q25 (`MER-ADV1A-2026#1`, `SCHW-ADV1A-2026#0`); no status or recall moved. Definitions quoting
+  new chunks in `config/metric_definitions.yaml` (MS `MS-SUPP-2020Q4#1` quoted; BAC
+  `BAC-SUPP-2023Q4#2` quoted with `#9` in see_also; SCHW `SCHW-ADV1A-2026#1` closest_metric) and
+  `specs/filings.md`; `pytest tests/test_metric_definitions.py` on SNAP: 13 passed.
+- 2026-11-19 06:18 - step 12: RUN.md section 7 (current snapshot, free check on the new
+  baseline, old-dump restore in both shells, `/sync-db` back; grep lines 262, 272, 275, 288, all
+  in section 7 = lines 236-288) and README Status. `pytest -q`: 698 passed; verify-cee on SNAP:
+  VERIFY PASS (9 features), `.verify-runs/20261119-061624-f919a36`. Notes for readers: the 18
+  extract chunks have `page` NULL (text files; the source page is the "Page N:" label in the
+  text; "Page 6:"-style references inside MS page 15 are the supplement's own printed page
+  numbers); each extract's `#0` is the extractor's header (title, source, pages), not source
+  text. Orphaned parse-cache files in Box `parsed/` as listed in PR A.
