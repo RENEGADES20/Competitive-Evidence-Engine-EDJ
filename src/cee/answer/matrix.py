@@ -1180,7 +1180,91 @@ def series_spans(m: EvidenceMatrix) -> list[str]:
     return out
 
 
-def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
+# #247 part 4 item 9 (plan review rounds 1-2): a firm whose latest count of a registered metric is old, while
+# later documents of the same type were read with no count. Scoped to that document type and to what was
+# found and read; never "discontinued" or "last reported".
+LAST_REPORTED = ("{firm} - {metric}: latest count found in the {doc_words}: {date} ({chunk}); no count found in "
+                 "the {doc_words} read since ({docs}).")
+DOC_WORDS = {"supplement": "quarterly financial supplements", "10-K": "Form 10-K annual reports",
+             "10-Q": "Form 10-Q quarterly reports", "deck": "investor presentations",
+             "press": "company press releases", "transcript": "earnings-call transcripts",
+             "monthly": "monthly activity reports", "8-K": "Form 8-K current reports"}
+_COUNT_UNIT = re.compile(r"advis|representative", re.I)   # round 2 nb 5: an item that counts the metric
+_EMPLOYEE_UNIT = re.compile(r"^\s*employees\b", re.I)
+
+
+def _counts_metric(item: Item) -> bool:
+    """A valued counting item whose unit names the counted population (advisors, representatives), not
+    employees, USD or client assets (plan review round 2 nb 5)."""
+    unit = item.unit or ""
+    return bool(item.counts and item.value and _COUNT_UNIT.search(unit) and not _EMPLOYEE_UNIT.search(unit))
+
+
+def _doc_date(h) -> tuple | None:
+    return _period_key(str(h.period_end or h.published_at or "")[:10])
+
+
+def last_reported(m: EvidenceMatrix, as_of=None) -> list[str]:
+    """#247 part 4 item 9: per firm row and registered metric with a counted `contrast.count_date`, when the
+    question has an aspect of that metric. Latest count = the latest dated item counting the metric in the
+    firm's cells of those aspects (fact, derived or different_quantity), or the registry count_date when its
+    chunk was read (in m.hits); its document type T. Old = before the first asked period's first day, else
+    before as_of minus one year. Later documents read = documents of type T with a chunk in m.hits under one
+    of the firm's sub-questions of that metric, dated (period_end, else published_at) after the latest count,
+    none of whose chunks is cited by a counting item. Both hold -> one LAST_REPORTED caveat."""
+    import datetime as _dt
+    as_of = as_of or _dt.date.today()
+    asked = asked_periods(m.question, as_of)
+    if asked:
+        first = asked[1][0]
+        ref = (int(first[:4]), 3 * int(first[-1]) - 2, 1) if "Q" in first else (int(first), 1, 1)
+    else:
+        ref = (as_of.year - 1, as_of.month, as_of.day)
+    out: list[str] = []
+    firms = [r for r in m.rows if r not in ("research", "all")]
+    for metric in dict.fromkeys(a.metric for a in m.aspects if a.metric):
+        aspect_ids = {a.id for a in m.aspects if a.metric == metric}
+        for firm in firms:
+            d = metric_definition(firm, metric)
+            reg = ((d or {}).get("contrast") or {}).get("count_date") or {}
+            if reg.get("value") != "counted":
+                continue
+            cells = [c for c in m.cells.values() if c.entity == firm and c.aspect_id in aspect_ids
+                     and c.role != "research" and c.effective_label in ("fact", "derived", "different_quantity")]
+            sq_ids = {c.id for c in m.cells.values() if c.entity == firm and c.aspect_id in aspect_ids}
+            items = [i for c in cells for i in c.items if _counts_metric(i)]
+            cands = []   # (date key, order, period text, chunk)
+            if reg.get("chunk_id") in m.hits and _period_key(str(reg.get("date"))):
+                cands.append((_period_key(str(reg["date"])), 0, str(reg["date"]), reg["chunk_id"]))
+            for n, i in enumerate(items, 1):
+                k = _period_key(i.period)
+                if k and i.chunk_ids:
+                    cands.append((k, n, i.period, i.chunk_ids[0]))
+            if not cands:
+                continue
+            top = max(c[0] for c in cands)
+            _, _, date, chunk = min((c for c in cands if c[0] == top), key=lambda c: c[1])
+            if top >= ref or chunk not in m.hits:
+                continue
+            doc_type = m.hits[chunk].doc_type
+            cited = {x for i in items for x in i.chunk_ids}
+            later: dict[str, tuple] = {}
+            for cid, h in m.hits.items():
+                if getattr(h, "part_id", None) not in sq_ids or h.doc_type != doc_type or h.doc_id == m.hits[chunk].doc_id:
+                    continue
+                k = _doc_date(h)
+                if k and k > top:
+                    later.setdefault(h.doc_id, k)
+            if not later or any(x.split("#")[0] in later for x in cited):
+                continue
+            docs = sorted(later, key=lambda x: (later[x], x))
+            out.append(LAST_REPORTED.format(firm=firm_label(firm, d), metric=metric.replace("_", " ").capitalize(),
+                                            doc_words=DOC_WORDS.get(doc_type, doc_type), date=date, chunk=chunk,
+                                            docs=", ".join(docs)))
+    return out
+
+
+def build_caveats(m: EvidenceMatrix, query=None, hits=None, as_of=None) -> None:
     """Comparability caveats (rule 2) and the config caveats of cited substitutes (entities.yaml)."""
     by_firm = definitions_by_firm(m)   # #247 part 2 R6a: replaces the comparability caveat of that metric
     replaced = {mk.metric for mk in m.marks.values() if mk.caveat and mk.metric in by_firm}
@@ -1189,6 +1273,7 @@ def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
     m.caveats += [c for c in definitions_contrast(m) if c not in m.caveats]   # #247 part 3 item 1
     m.caveats += [b["caveat"] for b in m.breaks if b["caveat"] not in m.caveats]   # #247 part 2
     m.caveats += [c for c in definition_changes(m) + series_spans(m) if c not in m.caveats]   # R5, R6c
+    m.caveats += [c for c in last_reported(m, as_of) if c not in m.caveats]   # #247 part 4 item 9
     if query is None or not hits:
         return
     from cee.answer.schema import Answer, Claim
@@ -1209,5 +1294,5 @@ def finish(m: EvidenceMatrix, query=None, hits=None, sources=None, as_of=None) -
     decide_behavior(m)
     basis_breaks(m)
     build_gaps(m, sources, as_of)
-    build_caveats(m, query, hits)
+    build_caveats(m, query, hits, as_of)
     return m
