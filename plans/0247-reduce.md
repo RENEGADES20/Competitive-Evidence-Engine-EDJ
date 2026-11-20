@@ -764,3 +764,11 @@ written in sections 3-6 and Tests.
   ask-answer PASS; open-citation read-back FAIL once (passed in the first run): the known #248 render
   race. Code-gate sha for the real runs: 7b9a5b4 (its src / scripts / config diff from the mock-run sha
   b6e0f02 is `scripts/verify_cee.py` only).
+- 2026-11-20 02:46 - phase A: 3 DeepSeek planner calls (Q1, Q3, Q22; plan-v3.1, all valid, no parse
+  flag). Q1 5 aspects (MS), Q3 5 aspects (SCHW; a5 "where Schwab says it is losing ground or pulling
+  back"), Q22 2 aspects (a1 series NNA by quarter, a2 each firm's definition) x 5 firms. The five
+  targets reused their #246 plan records (0 calls).
+- 2026-11-20 02:48 - 0-call count (`--max-calls 0`; 0 made, 0 reserved, 8 plans reused): round 1 =
+  Q1 1, Q3 1, Q11 5, Q19 4, Q22 5, Q23 5, Q24 5, Q26 1 = **27** map calls (bound 30); Q19's code cells
+  were re-searched in the count and `remap.RJF` was capped (no file). Re-extraction bound by firms: 1 +
+  1 + 5 + 5 + 5 + 5 + 5 + 1 = 28. Reduce 8. **Phase B cap 63**; total 3 + 63 = 66 <= 69.
