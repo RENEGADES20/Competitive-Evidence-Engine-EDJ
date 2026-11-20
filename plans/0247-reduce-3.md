@@ -351,6 +351,10 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
 - [ ] Claim texts referring to a removed break or the old wording: counted and reported (nb 6).
 - [ ] Linked questions: Q11, Q22, Q23, Q24 (changed); Q1, Q3, Q19, Q26 (unchanged).
 
+**Outcome (2026-11-20)**: pytest 1033 passed, CI green; mock 35 identical retrieval / claims; verify-cee PASS;
+replays guarded at 0 calls on every run; blind r1 3/5, r2 2/3; **final 7/8** (Q11 PASS, borderline; only Q23 FAIL:
+corpus gap + one retrieval miss, `docs/NEXT.md` items 9-11); no PASS -> FAIL in any round.
+
 ## Risks
 - `HOLE_MAX = 4` is a judgement: a longer missing run is read as two series segments, not a hole. It removes
   the false MS 2024Q2 gap (its figure is in `MS-10Q-2025Q2#56`, outside Q22's pool) and keeps EDJ's Q4 holes.
@@ -396,3 +400,7 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
   Merged main a1341d3 (#248); baseline re-run on it (identical to the 2f568c4 baseline) and branch replay
   (guard OK): Q11 / Q23 / Q24 differ from the scored answers only by the trainees fix -> stopped before
   marking ready; blind-in-r2 (Q11, Q23, Q24) prepared. pytest 1033 passed.
+- 2026-11-20 13:00 - second blind re-check (Q11, Q23, Q24): 2/3 (hash b0712d5). **Final 7/8** (Q11 FAIL -> PASS;
+  only Q23 FAIL: corpus gap + one retrieval miss, RJF-DECK-2025-investor-day#43). Acceptance met: no PASS -> FAIL
+  in any round; Q11 PASS (aim met, borderline); Q23 corpus gap (plus the r miss, NEXT item 10). Follow-ups in
+  NEXT items 9-11. PR stays "Part of #247" (the Q23 r miss is open).

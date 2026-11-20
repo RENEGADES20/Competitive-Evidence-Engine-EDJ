@@ -168,3 +168,25 @@ offers it. No key needed.
   - scorer-prompt-r2.txt c2b1b3b19fca25b3396a83c1a7de4303f17dca2e080724a8d8631af37dc60a3a
 
 verdicts-blind-r2.json sha256 39dd3d7569590a98736ed04caecfdfd7ae164cfa90c8dc831e54b6dd123883c6 (part 3 second re-check, Q11 / Q23 / Q24 after the trainees fix, fresh scorer agent, 0 API calls; committed alone before any comparison).
+
+## 11. Second blind re-check (Q11, Q23, Q24 after the trainees fix) and the final verdicts
+**2/3 PASS** (Q11, Q24 PASS; Q23 FAIL). Fresh scorer agent, inputs only `ev247clind-in-r2\` (section 10);
+file `docs/results/0247c/verdicts-blind-r2.json` (hash above, committed alone in b0712d5).
+
+| Q | Part 1 | Part 2 final | Part 3 r1 | **Part 3 final** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|---|---|
+| Q1 | PASS | PASS | (identical) | **PASS** | | | |
+| Q3 | PASS | PASS | (identical) | **PASS** | | | |
+| Q11 | FAIL | FAIL | FAIL (r, borderline) | **PASS** | | yes | definitions quoted and differences named by dimension; MS definition a gap and its 2020 count not marked as possibly no longer reported |
+| Q19 | PASS (b) | PASS (b) | PASS (b) | **PASS** | | yes | competitor moves almost only Schwab |
+| Q22 | PASS (b) | PASS (b) | PASS | **PASS** | | | EDJ Q4 holes flagged |
+| Q23 | FAIL | FAIL | FAIL (r) | **FAIL** | r, s | | incomplete series; the scorer expects counts in the 2025-26 supplements |
+| Q24 | FAIL | PASS | PASS | **PASS** | | | |
+| Q26 | PASS (b) | PASS (b) | (identical) | **PASS** | | yes | |
+
+**Final for the eight: 7/8** (only Q23 FAIL). Against part 2: 6/8 -> 7/8 (Q11 FAIL -> PASS); no PASS -> FAIL in
+any round. **Q23's failure**: the scorer's "quarterly supplements hold counts" does not hold (section 9b: no
+advisor count in any 2025-26 MS, BAC or RJF supplement): **corpus gap**, plus **one retrieval miss (r)**, RJF
+8,731 at 2025-03-31 in `RJF-DECK-2025-investor-day#43`. Follow-ups in `docs/NEXT.md` items 9-11: a code note
+"last reported count; no count in the documents searched since" for series that end early (Q11 borderline,
+Q23), the RJF investor-day retrieval miss, and the headcount corpus gaps (RJF earnings releases, EDJ 3Q26 10-Q).
