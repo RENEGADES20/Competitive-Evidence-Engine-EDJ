@@ -534,6 +534,17 @@ passages are unchanged; it stays a mock FAIL (1/5) because its expected sources 
 press, and no MS, SCHW or RJF press chunk is on the theme (TL decision D-Q19). MS and RJF have no
 chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the floor. Evidence in
 the #205 PR.
+Amendment (#245, ADR-021 rule 6, competitors as real entities): with a plan (token mode), the theme
+peers of a home-firm market question (Q19) are sub-questions of their own, `SubQuestion(<peer>,
+aspect)` with role competitor and a full sub-question budget, in place of `peer_pass`'s two slots
+per peer. The safeguards stay: their firm pass is on the theme only (`Query.on_theme_only`, a SQL
+AND of the theme's keywords; no answer turn attached), Merrill only through BAC GWIM/Merrill, and
+the floor across the peers (FLOOR x the 2nd-best rank across the competitors of each aspect, applied
+after select; dropped chunk ids logged, a sub-question it empties reads as "no passages found").
+`Query.theme_peers` stays on the resolved query (coverage note, caveats, the eval's forbidden check);
+`peer_pass` runs only without a plan. Mock `corpus-2026-11-19`: Q19 gets 11 Schwab passages on the
+theme (was 2), Merrill's 4 on-theme chunks are cut by the floor, MS and RJF have none; it stays a
+mock FAIL (1/5, its expected competitor press is not on the theme in this corpus).
 
 ## ADR-019: Retrieval budget in tokens; candidate pool from a grid
 Status: Accepted (TL, #213, 2026-11-19); amended by ADR-021 (per-sub-question budget, see the amendment below); replaces ADR-013's passage count (k = 20, five firms 30)
@@ -617,6 +628,26 @@ reported per question. Unchanged: the pool rule (`POOL_PER_GROUP = 30` per firm 
 research selected first (THEME_K), Merrill counted once (ADR-013), tokens as characters / 4, and
 passage mode (`TOKEN_BUDGET = None`, an explicit k). Until #245 lands the code keeps the fixed total
 described above.
+Built (#245): `SUBQUESTION_TOKENS = 40000` (setting, env `SUBQUESTION_TOKENS`), chosen from a mock
+grid by the rule fixed in plans/0245-decompose.md before it ran: points 12000, 20000, 40000
+(`corpus-2026-11-19`, `--as-of 2026-11-17`, rule plan = one whole-question aspect per scoped firm);
+eligible: refusal gap 5/5 and keyed 22/22, 0 forbidden, no PASS -> FAIL, recall@pool and
+recall@final (all rows and tier 1) not below `evals/baselines/corpus-2026-11-19` (its 30
+questions); pick: highest tier-1 recall@final, then all rows, ties to the smaller value.
+
+  | SUBQUESTION_TOKENS | recall@pool | recall@final | tier 1 pool / final | PASS (30) | tokens median / max / total (35) | eligible |
+  |---|---|---|---|---|---|---|
+  | 12000 | 0.814 | 0.593 | 0.903 / 0.733 | 29 | 12,887 / 56,804 / 969,624 | no (recall@final) |
+  | 20000 | 0.814 | 0.640 | 0.903 / 0.790 | 29 | 20,222 / 85,444 / 1,346,283 | no (recall@final) |
+  | **40000** | 0.814 | 0.654 | 0.903 / 0.808 | 29 | 39,953 / 108,780 / 1,519,747 | **yes** |
+
+  At 40000 every one of the 30 baseline questions is UNCHANGED (status, recall, coverage); one-firm
+  questions return the same lists; multi-firm questions read more (Q15 60k -> 88k, Q22 60k -> 81k,
+  Q24 60k -> 76k), since each firm now has its own 40k. Research stays THEME_K passages, outside the
+  sub-question budgets. The grid runs the rule plan (one aspect per firm), so it cannot measure
+  multi-aspect totals; the #245 real planner check reports the totals of real plans. Until #247
+  replaces the single answer call, a temporary input guard trims that call's passages when they
+  pass the model's limit (specs/answer-citations.md, "Interim answer input guard").
 
 ## ADR-020: Question planner: one planner call splits a question into parts, each part searched
 Status: Accepted (TL, #214, 2026-11-19); amended by ADR-021 (no part cap, no fixed call count, see the amendment below); the first use of ADR-012's multi-call rule
@@ -770,6 +801,23 @@ range, keywords and doc-type scope stay SQL filters; the `neighbour_phrases` gua
 and filters stay out of the planner's schema; an unusable or failed planner call falls back to the rule
 plan, is logged, counts and is never re-rolled; passage mode is one whole-question part with no
 planner call. Until #245 lands the code keeps the part cap and the split described above.
+Built (#245): `PLANNER_VERSION = plan-v3`, tool `submit_plan` with the strict schema
+`{aspects: [{id, text, keyword_query, firms, metric, kind}]}` on the anthropic, openai and deepseek
+paths (metric: a registered key of config/metric_definitions.yaml or ""; kind: fact | series |
+recency | comparison); planner output cap 8000 (anthropic / openai; deepseek 8000 thinking off,
+64000 on, TL decision after Q19's planner was cut at 16000). `PLANNER_MAX_PARTS` is removed; no aspect cap, no merge, no dedupe. **Per-aspect firm
+subset** (TL decision D3, #245 plan review): an aspect may carry `firms`, a subset of the firms code
+scoped, filled only when the question itself asks the aspect of some of them (Q12: Schwab's
+acquisition aspects for SCHW only; Q15: "how an advisor-led model earns" for MS, EDJ, MER, RJF only);
+code maps names and aliases, drops firms outside the scope with a note, an emptied list means all
+scoped firms, and on a home-firm market question a list equal to the named firms counts as empty, so
+the competitors stay (Q19). The planner message labels each scoped firm by how code found it (named,
+through a peer phrase, competitor on the theme). Code expands each aspect over its firm set into
+`SubQuestion(entity, aspect)` (ids `<aspect>.<firm>`), each searched through `search_fn` (default
+fts.search; exp/hybrid passes its own) with its own budget (ADR-019 amendment); `corrective_search`
+is the re-search hook for #246. The rule plan is one whole-question aspect for every scoped firm.
+Calls stay planner 1 + answer 1 until #246 / #247; the answer call reads the evidence grouped by
+sub-question (prompt v4.1 unchanged) behind a temporary, logged input guard. Real check in the #245 PR.
 
 ## ADR-021: Answer behavior decided by code; definitions and comparability; sub-question decomposition with no fixed call cap
 Status: Accepted (user decision 2026-11-19, #244); amends ADR-012, ADR-019 and ADR-020; built by #245

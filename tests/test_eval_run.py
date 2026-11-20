@@ -515,8 +515,8 @@ def _fake_plan(monkeypatch):
     from cee.retrieve import fts, planner
 
     monkeypatch.setattr(planner, "plan_question",
-                        lambda q, provider, **kw: planner.Plan(parts=[planner.Part("p1", "", list(q.entities))]))
-    monkeypatch.setattr(planner, "search_parts",
+                        lambda q, provider, **kw: planner.Plan.from_parts([planner.Part("p1", "", list(q.entities))]))
+    monkeypatch.setattr(planner, "search_subquestions",
                         lambda q, plan, trace=None, part_pools=None: fts.search(q, trace=trace))
 
 
@@ -730,7 +730,7 @@ def _planner_calls(monkeypatch, outcome):
 
     calls = []
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         calls.append(query.question)
         if isinstance(outcome, Exception):
             raise outcome
@@ -746,7 +746,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     from cee.retrieve.fts import resolve
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS", "MER", "RJF"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
     calls = _planner_calls(monkeypatch, raw)
     question = {"id": "Q7", "text": Q7_TEXT}
     qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
@@ -756,7 +756,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     files = list((tmp_path / "cache").iterdir())
     assert len(files) == 1 and files[0].name.startswith("Q7-plan-")
     rec = saved(tmp_path / "cache")[0]
-    assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 2000
+    assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 8000
     assert rec["stop_reason"] is None and rec["usage"] is None   # the fake fills no meta
     assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
     again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
@@ -800,9 +800,9 @@ def test_planner_record_saves_stop_reason_and_usage(monkeypatch, tmp_path):
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
     monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         meta.update(stop_reason="tool_use", usage={"input_tokens": 900, "output_tokens": 300})
         return raw
     monkeypatch.setattr(planner, "call_planner", call)
@@ -821,25 +821,26 @@ def test_call_planner_fills_meta():
     client = types.SimpleNamespace(messages=types.SimpleNamespace(
         create=lambda **kw: types.SimpleNamespace(content=[block], stop_reason="tool_use", usage=usage)))
     meta = {}
-    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client, meta=meta) == {"parts": []}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", client=client, meta=meta) == {"parts": []}
     assert meta == {"stop_reason": "tool_use", "usage": {"input_tokens": 900, "output_tokens": 300, "blocks": ["tool_use"]}}
-    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client) == {"parts": []}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", client=client) == {"parts": []}
 
 
 def test_plan_cache_key_unchanged_by_230():
     import hashlib
     import json
 
-    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
-    want = hashlib.sha256(json.dumps(["Q7", "t", PLANNER_VERSION, "s", "anthropic", "m", 4, PLANNER_MAX_TOKENS,
-                                      {"entities": ["MS"]}], default=str, sort_keys=True).encode()).hexdigest()[:24]
-    assert er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]}) == want
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
+    want = hashlib.sha256(json.dumps(["Q7", "t", PLANNER_VERSION, "s", "anthropic", "m", PLANNER_MAX_TOKENS,
+                                      list(metric_keys()), {"entities": ["MS"]}],
+                                     default=str, sort_keys=True).encode()).hexdigest()[:24]
+    assert er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["MS"]}) == want
 
 
-def test_cache_key_of_a_plan_differs_by_cap_and_query():
-    a = er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]})
-    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 3, {"entities": ["MS"]})
-    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["RJF"]})
+def test_cache_key_of_a_plan_differs_by_query_and_model():
+    a = er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m2", {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["RJF"]})
 
 
 def test_part_stages_name_the_parts():
@@ -863,7 +864,7 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
         seen.append(plan)
         hits[0].part_id = "p1"
         return hits
-    monkeypatch.setattr(planner, "search_parts", fake_parts)
+    monkeypatch.setattr(planner, "search_subquestions", fake_parts)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q7", "--out", str(tmp_path)])
@@ -891,10 +892,10 @@ def test_request_version_joins_the_plan_key_only_when_given():
     import hashlib
     import json
 
-    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
-    base = ["Q7", "t", PLANNER_VERSION, "s", "openai", "m", 4, PLANNER_MAX_TOKENS, {"entities": ["MS"]}]
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
+    base = ["Q7", "t", PLANNER_VERSION, "s", "openai", "m", PLANNER_MAX_TOKENS, list(metric_keys()), {"entities": ["MS"]}]
     want = hashlib.sha256(json.dumps(base, default=str, sort_keys=True).encode()).hexdigest()[:24]
-    args = ({"id": "Q7", "text": "t"}, "s", "openai", "m", 4, {"entities": ["MS"]})
+    args = ({"id": "Q7", "text": "t"}, "s", "openai", "m", {"entities": ["MS"]})
     assert er.plan_cache_key(*args) == er.plan_cache_key(*args, None) == want        # OpenAI keys unchanged
     assert er.plan_cache_key(*args, "strict-1") != want
 
@@ -946,8 +947,9 @@ def test_plan_record_carries_the_request_version(monkeypatch, tmp_path):
 
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
-    monkeypatch.setattr(planner, "call_planner", lambda *a, **k: {"parts": [
-        {"id": "a", "text": "t", "firms": ["MS"], "keyword_query": "net new assets"}]})
+    monkeypatch.setattr(planner, "call_planner", lambda *a, **k: {"aspects": [
+        {"id": "a", "text": "t", "keyword_query": "net new assets", "firms": [], "metric": "net_new_assets",
+         "kind": "fact"}]})
     runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     plan = runner.plan({"id": "Q1", "text": "t"}, Query(question="t", entities=["MS"]))
     assert plan.source == "model" and runner.calls == 1
@@ -988,14 +990,14 @@ def test_deepseek_records_carry_version_caps_reasoning_and_timing(deepseek_model
     a, how = runner.answer(q("Q1", []), query(["MS"]), real_hits())
     assert how == "called"
     rec = saved(tmp_path / "cache")[0]
-    assert rec["request_version"] == "ds-strict-1-think-off-a20000-p2000" and rec["max_tokens"] == 20000
+    assert rec["request_version"] == "ds-strict-1-think-off-a20000-p8000" and rec["max_tokens"] == 20000
     assert rec["reasoning_content"] == "secret thoughts"
     assert rec["wall_s"] >= 0 and "tokens_per_s" in rec
     assert "secret thoughts" not in json.dumps(rec["raw"]) and "secret thoughts" not in json.dumps(a)
     # thinking on is another request: its key differs, so nothing is reused
     monkeypatch.setenv("DEEPSEEK_THINKING", "on")
     on = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
-    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p16000"
+    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p64000"
     assert on.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "called" and on.calls == 1
     assert len(deepseek_model[0]) == 2 and len(list((tmp_path / "cache").iterdir())) == 2
 
@@ -1007,16 +1009,16 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
     monkeypatch.setenv("DEEPSEEK_THINKING", "on")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         meta.update(stop_reason="tool_calls", usage={"output_tokens": 900}, reasoning_content="plan thoughts")
         return raw
     monkeypatch.setattr(planner, "call_planner", call)
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 16000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p16000"
+    assert rec["max_tokens"] == 64000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p64000"
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 
@@ -1077,3 +1079,97 @@ def test_timing_helper():
     t = er.timing(time.monotonic() - 2.0, {"output_tokens": 100})
     assert 1.9 <= t["wall_s"] and 40 <= t["tokens_per_s"] <= 52
     assert er.timing(time.monotonic(), None)["tokens_per_s"] is None
+
+
+# --- #245: plan-only real runs, the 400 stop, the interim input guard in the answer key --------
+
+def _plan_only_env(monkeypatch, outcome, cache):
+    from cee import ask
+    from cee.retrieve import fts, planner
+
+    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
+    monkeypatch.setattr(fts, "searchable", lambda q: True)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    monkeypatch.setattr(er, "CACHE", cache)   # never the repo's own cache
+    monkeypatch.setattr(er.RealRunner.__init__, "__defaults__", (cache,))
+    monkeypatch.setattr(ask, "generate", lambda *a, **k: pytest.fail("no answer call in --plan-only"))
+    calls = _planner_calls(monkeypatch, outcome)
+
+    def fake_parts(q, plan, trace=None, part_pools=None):
+        plan.searched = [{"id": s.id, "budget": 1000, "tokens": 250, "pool": 3} for s in plan.subquestions]
+        hits = real_hits()
+        hits[0].part_id = plan.subquestions[0].id
+        return hits
+    monkeypatch.setattr(planner, "search_subquestions", fake_parts)
+    return calls
+
+
+def test_plan_only_makes_planner_calls_and_no_answer_call(monkeypatch, tmp_path):
+    raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": ["RJF"], "metric": "",
+                        "kind": "fact"},
+                       {"id": "b", "text": "hiring", "keyword_query": "recruiting", "firms": [], "metric": "",
+                        "kind": "fact"}]}
+    calls = _plan_only_env(monkeypatch, raw, tmp_path / "cache")
+    er.main(["--questions", "Q7", "--real", "--plan-only", "--max-calls", "1", "--out", str(tmp_path / "run")])
+    rep = _record(tmp_path / "run")
+    r = rep["questions"][0]
+    assert len(calls) == 1 and rep["meta"]["real_calls"] == 1 and rep["meta"]["plan_only"] is True
+    assert r["llm_calls"] == {"planner": 1, "answer": 0} and r["model"] == "plan_only"
+    assert [s["id"] for s in r["plan"]["subquestions"]] == ["a2.MS", "a1.RJF", "a2.RJF"]
+    assert r["aspects"] == 2 and r["subquestions"] == 3
+    assert r["budget_tokens"] == 3000 and r["fill"] == 0.25                  # sum of sub-question budgets
+    assert r["interim_input"]["tokens"] > 0 and r["interim_input"]["would_drop"] == 0
+    assert rep["meta"]["subquestion_tokens"] and "max_parts" not in rep["meta"]
+
+
+def test_plan_only_needs_real(tmp_path):
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q7", "--plan-only", "--out", str(tmp_path)])
+
+
+class _BadRequest(Exception):
+    status_code = 400
+
+
+def test_a_400_on_a_planner_call_stops_the_run(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    calls = _planner_calls(monkeypatch, _BadRequest("schema rejected"))
+    runner = er.RealRunner("deepseek", 9, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    with pytest.raises(SystemExit, match="400"):
+        runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["bad_request"] is True and rec["failed_call"] is True and runner.calls == 1 and len(calls) == 1
+    # a 500 is a counted fallback, as before
+    _planner_calls(monkeypatch, ConnectionError("down"))
+    plan = er.RealRunner("deepseek", 9, "snap-2", tmp_path / "r2", cache_dir=tmp_path / "c2").plan(
+        {"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    assert plan.source == "fallback"
+
+
+def test_guard_trim_joins_the_answer_key(fake_model, monkeypatch, tmp_path):
+    from cee.retrieve.fts import Hit
+    hits = [Hit(chunk_id=f"MS-10K-2025#{i}", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
+                source_tier=2, published_at="2026-02-19", period_end="2025-12-31", section="Item 7", page=None,
+                rank=10.0 - i, text="word " * 400) for i in range(6)]
+    args = (q("Q1", []), "v4.1", "snap", "anthropic", "m", [h.chunk_id for h in hits])
+    plain = er.cache_key(*args)
+    trimmed = er.cache_key(*args, 8000, None, None, None, {"limit": 5000, "dropped": ["MS-10K-2025#5"]})
+    assert trimmed != plain != er.cache_key(*args, 8000, None, None, None, {"limit": 6000, "dropped": ["MS-10K-2025#5"]})
+    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    runner.answer(q("Q1", []), query(["MS"]), hits)
+    assert runner.last_guard is None
+    from cee.answer import llm
+    base = llm.input_tokens("text Q1", hits[:0])
+    monkeypatch.setenv("ANSWER_INPUT_MAX_TOKENS", str(base + 1200))
+    again = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    a, how = again.answer(q("Q1", []), query(["MS"]), hits)
+    assert how == "called" and again.last_guard and again.last_guard["dropped"]       # not the untrimmed output
+    rec = [s for s in saved(tmp_path / "cache") if s.get("input_guard")][0]
+    assert rec["input_guard"]["limit"] == base + 1200

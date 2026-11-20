@@ -19,7 +19,7 @@ HITS = [hit("BAC-10K-2025#244", "BAC-10K-2025"), hit("BAC-10K-2025#246", "BAC-10
 def run(monkeypatch, hits, generate=None):
     calls, events = [], []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search_parts", lambda q, plan: hits)
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: hits)
 
     def fake_generate(question, h, provider, plan=None, window=None):
         calls.append(provider)
@@ -43,8 +43,8 @@ def test_stages_in_order_with_facts_from_their_output(monkeypatch):
     assert order == list(pipeline.STAGES[:-1])                             # log=False: no "log" stage
     d = done(events)
     assert d["resolve"] == "Reading the question: firms MER; mode entity"
-    assert d["plan"] == "Planning the search (rules, no model call): 1 part: p1 MER"
-    assert d["search"] == "Searching the corpus: 3 passages from 2 documents in 1 part"
+    assert d["plan"] == "Planning the search (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.MER"
+    assert d["search"] == "Searching the corpus: 3 passages from 2 documents in 1 sub-question"
     assert d["model"] == "Asking the model (mock, one call): 2 claims"
     assert d["check"] == "Checking citations: 2 citations matched, 1 claim flagged"
     assert d["caveats"] == "Adding caveats and gaps: 0 caveats, 0 gaps"
@@ -65,7 +65,7 @@ def test_failed_stage_is_reported_then_raised(monkeypatch):
 
     def broken(q, plan):
         raise RuntimeError("database is down")
-    monkeypatch.setattr(pipeline, "search_parts", broken)
+    monkeypatch.setattr(pipeline, "search_subquestions", broken)
     with pytest.raises(RuntimeError):
         pipeline.ask("q", provider="mock", log=False, progress=lambda *e: events.append(e))
     assert events[-1] == ("search", "failed", "Searching the corpus: failed (RuntimeError: database is down)")
@@ -80,7 +80,7 @@ def test_no_callback_behaves_as_before(monkeypatch):
 def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search_parts", lambda q, plan: [])
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: [])
 
     def broken(r, p):
         raise RuntimeError("insert failed")
@@ -102,11 +102,11 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
 
     def fake_plan(query, provider):
         calls.append("planner")
-        return Plan(parts=[Part("p1", "a", ["MS"], "payout grid"), Part("p2", "b", ["MER"], "recruiting")],
+        return Plan.from_parts([Part("p1", "a", ["MS"], "payout grid"), Part("p2", "b", ["MER"], "recruiting")],
                     source="model", provider=provider, calls=1)
     monkeypatch.setattr(pipeline, "plan_question", fake_plan)
     seen = []
-    monkeypatch.setattr(pipeline, "search_parts", lambda q, plan: seen.append(plan) or HITS)
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: seen.append(plan) or HITS)
 
     def fake_generate(question, h, provider, plan=None, window=None):
         calls.append("answer")
@@ -117,8 +117,8 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
     result = pipeline.ask("q", provider="anthropic", log=False, progress=lambda *e: events.append(e))
     d = done(events)
     assert calls == ["planner", "answer"] and len(calls) <= 2
-    assert d["plan"] == "Planning the search (anthropic, one call): 2 parts: p1 MS; p2 MER"
-    assert d["search"].endswith("in 2 parts") and seen[0] is result.plan
+    assert d["plan"] == "Planning the search (anthropic, one call): 2 aspects x 2 firms = 2 sub-questions: p1 MS; p2 MER"
+    assert d["search"].endswith("in 2 sub-questions") and seen[0] is result.plan
     logged = pipeline.log_filters(result)
     assert logged["llm_calls"] == {"planner": 1, "answer": 1}
     assert [p["keyword_query"] for p in logged["plan"]["parts"]] == ["payout grid", "recruiting"]
@@ -130,10 +130,10 @@ def test_fallback_plan_line(monkeypatch):
     from cee.retrieve.planner import Plan, rules_plan
 
     q = Query(question="q", entities=["MS", "MER"])
-    plan = rules_plan(q, cap=4)
+    plan = rules_plan(q)
     plan.source, plan.provider, plan.error, plan.calls = "fallback", "anthropic", "planner output cut at max_tokens", 1
     assert pipeline.plan_text(plan) == ("Planning the search (anthropic, one call): output not usable (planner "
-                                        "output cut at max_tokens), using the rule plan: 2 parts: p1 MS; p2 MER")
+                                        "output cut at max_tokens), using the rule plan: 1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.MER")
     assert isinstance(plan, Plan)
 
 

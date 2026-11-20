@@ -276,6 +276,17 @@ If DeepSeek answers 402 (balance used up), 429 (rate limit) or 401 (key rejected
 stops with that message and nothing is saved. Top up, wait or fix the key, then run again; saved
 outputs are reused.
 
+**Check only the question planner** (#245; paid: one planner call per question, no answer call).
+`--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,
+the sub-questions (firm x aspect) and how many tokens the answer call would read:
+```powershell
+$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
+```
+```bash
+LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
+```
+If the provider rejects the planner request itself (HTTP 400), the run stops after that one call.
+
 **Check retrieval for all 30 questions, free** (mock provider, no calls; compares with the
 committed baseline of the current snapshot):
 ```powershell
@@ -284,7 +295,10 @@ committed baseline of the current snapshot):
 ```bash
 .venv/bin/python scripts/eval_run.py --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-19/report.json
 ```
-Expected: 29 PASS / 1 FAIL (Q19, a pattern-coverage check; its real answer passes), refusal 5/5.
+Expected (35 questions since #244, sub-questions since #245): 33 PASS / 2 FAIL. Q19 is a
+pattern-coverage check (its expected competitor press is not on the theme in this corpus); Q33's
+expected sources are research reports, which a five-firm question without a theme does not search.
+Refusal 5/5 on the baseline's keyed gap questions (8/8 with Q31-Q35).
 The Gate 4 baseline stays in `evals/baselines/corpus-2026-11-17/` (same result on that snapshot).
 
 **Reproduce the Gate 4 answers** (paid: up to 30 calls; needs the tech lead's OK). Gate 4 ran on

@@ -57,7 +57,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruiting?"  # #214: 2 plan parts
+TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruiting?"  # #245: 2 sub-questions
 # Q21: five firms + a theme (#117). The firms the coverage note must name are read from the
 # database (theme_gap_expected): exactly those with no on-theme chunk the question may retrieve.
 # A firm with one, even below the floor, takes its theme slot (#190) and is no gap (corpus-2026-11-16:
@@ -366,9 +366,9 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
-    check_part_gaps(rec, page, "the EDJ advisors question (one part)")
+    check_part_gaps(rec, page, "the EDJ advisors question (one sub-question)")
     ask(page, base, TWO_FIRM_Q)
-    check_part_gaps(rec, page, "the two-firm question (two parts)")
+    check_part_gaps(rec, page, "the two-firm question (two sub-questions)")
     ask(page, base, THEME_GAP_Q)
     body = page.locator("body").inner_text()
     line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
@@ -414,8 +414,9 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "seven step lines", len(lines) == 7, " / ".join(lines)[:300])
     plan = next((l for l in lines if l.startswith("Planning the search")), "")
-    rec.step("Read the plan line (#214)", "'Planning the search (rules, no model call): 1 part'",
-             "(rules, no model call): 1 part: p1 EDJ" in plan, plan)
+    rec.step("Read the plan line (#214, #245)",
+             "'Planning the search (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
+             "(rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ" in plan, plan)
     body = page.locator("body").inner_text()
     n_meta = re.search(r"(\d+) passages found", body)
     n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
@@ -433,16 +434,18 @@ def feature_ask_progress(page, base, rec, ctx):
     body = page.locator("body").inner_text()
     rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
              "no model call" in model and "LLM called: False" in body, model)
-    # plan-parts (#214): a two-firm question is searched in one part per firm, and the plan is logged
+    # plan-parts (#214, #245): a two-firm question is one sub-question per firm, and the plan is logged
     ask(page, base, TWO_FIRM_Q)
     lines = open_trace(page)
     plan = next((l for l in lines if l.startswith("Planning the search")), "")
     search_line = next((l for l in lines if l.startswith("Searching the corpus")), "")
-    rec.step("Ask a two-firm question, open the trace", "plan line '2 parts: p1 MS; p2 RJF', search 'in 2 parts'",
-             "2 parts: p1 MS; p2 RJF" in plan and search_line.endswith("in 2 parts"), f"{plan} | {search_line}")
+    rec.step("Ask a two-firm question, open the trace",
+             "plan line '1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF', search 'in 2 sub-questions'",
+             "1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF" in plan
+             and search_line.endswith("in 2 sub-questions"), f"{plan} | {search_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
                           " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
-    rec.step("Read the newest query_log row (side effect)", "plan source rules, 2 parts, llm_calls 0 / 0",
+    rec.step("Read the newest query_log row (side effect)", "plan source rules, 2 sub-questions, llm_calls 0 / 0",
              row.replace(" ", "") == 'rules|2|{"answer":0,"planner":0}', row)
 
 

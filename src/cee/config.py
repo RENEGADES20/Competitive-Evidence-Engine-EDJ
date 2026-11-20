@@ -30,7 +30,12 @@ class Settings:
     edgar_identity: str
     mock_delay_s: float = 0.0  # verify-cee only: the mock waits like a real model would (#80)
     planner: bool = True        # question planner (#214, ADR-020): off = the rule plan, no planner call
-    planner_max_parts: int = 4  # most parts a question is split into (1-5)
+    # Sub-question decomposition (#245, ADR-021 rule 6, ADR-019 amendment): token budget of each
+    # SubQuestion(entity, aspect); the question's total grows with its decomposition. No part cap.
+    subquestion_tokens: int = 40000
+    # Interim answer input guard (#245, temporary until #247 wires the reduce step): most estimated
+    # input tokens of the one answer call; None = the provider's default (llm.answer_input_limit).
+    answer_input_max_tokens: int | None = None
     # DeepSeek (#242): OpenAI-SDK compatible; strict function tools need the /beta base URL.
     deepseek_model: str = "deepseek-v4-pro"
     deepseek_base_url: str = "https://api.deepseek.com/beta"
@@ -57,6 +62,26 @@ def deepseek_thinking() -> bool:
     raise ValueError(f"DEEPSEEK_THINKING={raw!r} is not understood; use on or off")
 
 
+# SUBQUESTION_TOKENS default (#245): picked from the mock grid {12000, 20000, 40000} by the plan's
+# fixed rule (plans/0245-decompose.md; ADR-019 amendment): only 40000 was eligible (12000 and 20000
+# lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
+SUBQUESTION_TOKENS_DEFAULT = 40000
+
+
+def _positive_int(name: str, default: int | None) -> int | None:
+    """An integer setting > 0; empty -> the default; anything else stops with a clear error."""
+    raw = os.getenv(name, "").strip().strip('"').strip()
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        raise ValueError(f"{name}={raw!r} is not a whole number") from None
+    if value <= 0:
+        raise ValueError(f"{name}={raw!r} must be greater than 0")
+    return value
+
+
 def settings() -> Settings:
     return Settings(
         database_url=os.getenv("DATABASE_URL", "postgresql://cee:cee@localhost:5432/cee"),
@@ -67,7 +92,8 @@ def settings() -> Settings:
         edgar_identity=os.getenv("EDGAR_IDENTITY", "").strip(),
         mock_delay_s=float(os.getenv("MOCK_DELAY_S", "0") or 0),
         planner=os.getenv("PLANNER", "on").strip().strip('"').strip().lower() not in ("off", "false", "0", "no"),
-        planner_max_parts=min(5, max(1, int(os.getenv("PLANNER_MAX_PARTS", "4").strip() or 4))),
+        subquestion_tokens=_positive_int("SUBQUESTION_TOKENS", SUBQUESTION_TOKENS_DEFAULT),
+        answer_input_max_tokens=_positive_int("ANSWER_INPUT_MAX_TOKENS", None),
         deepseek_model=os.getenv("DEEPSEEK_MODEL", "").strip() or "deepseek-v4-pro",
         deepseek_base_url=os.getenv("DEEPSEEK_BASE_URL", "").strip() or "https://api.deepseek.com/beta",
         deepseek_thinking=deepseek_thinking(),

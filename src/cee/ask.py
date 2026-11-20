@@ -1,5 +1,8 @@
-"""End-to-end: resolve -> plan (at most one planner call, #214, ADR-020) -> retrieve each part ->
-one answer call (or none) -> validate -> log. At most 2 LLM calls per question (ADR-012 allows 5).
+"""End-to-end: resolve -> plan (at most one planner call; sub-question decomposition, #245,
+ADR-021 rule 6) -> retrieve each sub-question -> one answer call (or none) -> validate -> log.
+Until #246 / #247 replace the single answer call with map and reduce, a question uses at most 2
+calls (planner 1 + answer 1); the answer call reads every sub-question's passages, trimmed only by
+the temporary, logged input guard when they pass the model's limit (guard_input).
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 """
@@ -14,12 +17,12 @@ from psycopg.types.json import Jsonb
 
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
-from cee.answer.validate import (check_citations, check_parts, coverage_note, empty_retrieval_answer,
-                                 fill_suggested_sources, insert_caveats)
+from cee.answer.validate import (GUARD_NOTE, check_citations, check_parts, coverage_note,
+                                 empty_retrieval_answer, fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
 from cee.retrieve.fts import Hit, Query, apply_filters, resolve
-from cee.retrieve.planner import Plan, describe_plan, plan_question, rules_plan, search_parts
+from cee.retrieve.planner import Plan, describe_plan, plan_question, rules_plan, search_subquestions
 
 
 @dataclass
@@ -29,6 +32,7 @@ class Result:
     answer: Answer
     query_id: int | None = None
     plan: Plan | None = None
+    input_guard: dict | None = None   # #245: the interim input guard's trim, when it trimmed
 
 
 Progress = Callable[[str, str, str], None]
@@ -83,12 +87,13 @@ def ask(question: str, provider: str | None = None, log: bool = True,
         plan = plan_question(query, provider)
     t.report("plan", "done", plan_text(plan))
     with t.stage("search", "Searching the corpus"):
-        hits = search_parts(query, plan)
+        hits = search_subquestions(query, plan)
     docs = len({h.doc_id for h in hits})
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
-                               f" in {_n(len(plan.parts), 'part')}")
-    answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan)
-    result = Result(query, hits, answer, plan=plan)
+                               f" in {_n(len(plan.subquestions), 'sub-question')}")
+    guard: dict = {}
+    answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan, guard=guard)
+    result = Result(query, hits, answer, plan=plan, input_guard=guard or None)
     if log:
         with t.stage("log", "Saving the query"):
             result.query_id = _log(result, provider)
@@ -96,14 +101,45 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     return result
 
 
+def guard_input(question: str, query: Query, hits: list[Hit], provider: str,
+                plan: Plan | None = None) -> tuple[list[Hit], dict | None]:
+    """Interim answer input guard (#245; temporary, removed when #247 wires the reduce step): the
+    passages the one answer call reads, and None, when the estimated input (characters / 4) fits
+    llm.answer_input_limit(provider); else the passages kept by validate.fit_input (research first,
+    round-robin over the sub-questions, best rank first) and {limit, before, after, kept, total,
+    dropped chunk ids}. No limit (the mock, unless ANSWER_INPUT_MAX_TOKENS is set): no guard."""
+    from cee.answer import llm
+    from cee.answer.validate import fit_input
+
+    limit = llm.answer_input_limit(provider)
+    if limit is None or not hits:
+        return hits, None
+    window = answer_window(query)
+    before = llm.input_tokens(question, hits, plan, window)
+    if before <= limit:
+        return hits, None
+    base = llm.input_tokens(question, [], plan, window)
+    kept, dropped = fit_input(hits, plan, limit, base, llm.chunk_tokens)
+    return kept, {"limit": limit, "before": before, "after": llm.input_tokens(question, kept, plan, window),
+                  "kept": len(kept), "total": len(hits), "dropped": dropped}
+
+
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
                raw: Answer | None = None, trace: _Trace | None = None,
-               plan: Plan | None = None) -> tuple[Answer, Answer | None]:
+               plan: Plan | None = None, guard: dict | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
     Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
     `plan` (#215): the model sees the evidence grouped by part, and code checks every part has a
-    cited claim or a gap (validate.check_parts); None: no part grouping and no part check."""
+    cited claim or a gap (validate.check_parts); None: no part grouping and no part check.
+    Interim input guard (#245): when the input passes the model's limit, the model, the citation /
+    part / number checks, the caveats, the suggested sources and the coverage note all read the
+    trimmed list (what the model was given); the coverage note says so and `guard` (a dict, when
+    passed) gets {limit, before, after, kept, total, dropped}. Retrieval and its log keep the full list."""
     t = trace or _Trace(None)
+    seen, info = guard_input(question, query, hits, provider, plan) if hits else (hits, None)
+    if info is not None and guard is not None:
+        guard.update(info)
+    hits = seen
     if not hits:
         t.report("model", "skipped", "No passages found: no model call")
         t.report("check", "skipped", "Checking citations: nothing to check")
@@ -112,10 +148,12 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
             answer.coverage_note = coverage_note(query, hits)
         t.report("caveats", "done", _caveats_text(answer))
         return answer, None
+    trimmed = (f"; input over the model's limit: kept {info['kept']} of {info['total']} passages, "
+               f"~{info['after']} of ~{info['before']} tokens" if info else "")
     if raw is None:
-        with t.stage("model", f"Asking the model ({provider}, one call)"):
+        with t.stage("model", f"Asking the model ({provider}, one call{trimmed})"):
             raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
-        t.report("model", "done", f"Asking the model ({provider}, one call): "
+        t.report("model", "done", f"Asking the model ({provider}, one call{trimmed}): "
                                   f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
         t.report("model", "skipped", "Reusing the saved model output: no model call")
@@ -126,6 +164,9 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         answer = insert_caveats(answer, query, hits)
         answer = fill_suggested_sources(answer, query)
         answer.coverage_note = coverage_note(query, hits)
+        if info:
+            answer.coverage_note = " ".join(filter(None, [answer.coverage_note, GUARD_NOTE.format(
+                kept=info["kept"], total=info["total"])]))
     t.report("caveats", "done", _caveats_text(answer))
     return answer, raw
 
@@ -178,8 +219,11 @@ def log_filters(r: Result) -> dict:
     and the mock answer are 0, so a mock row reads 0 / 0 although the trace names the mock's
     answer step "(mock, one call)"."""
     plan = r.plan or rules_plan(r.query)
-    return {**asdict(r.query), "plan": plan.to_log(),
-            "llm_calls": {"planner": plan.calls, "answer": int(bool(r.answer.llm_called))}}
+    out = {**asdict(r.query), "plan": plan.to_log(),
+           "llm_calls": {"planner": plan.calls, "answer": int(bool(r.answer.llm_called))}}
+    if r.input_guard:   # #245: the interim input guard trimmed the answer call's passages
+        out["input_guard"] = r.input_guard
+    return out
 
 
 def _log(r: Result, provider: str) -> int:

@@ -1,0 +1,57 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "planner_version": "plan-v3",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "Advisor headcount over the last eight quarters across the five.",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-19T22:52:20.825224",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1388,
+    "output_tokens": 575,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 236,
+    "reasoning_tokens": 459,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 6.34,
+  "tokens_per_s": 90.69,
+  "reasoning_content": "We need answer with a search plan. Need parse question: \"Advisor headcount over the last eight quarters across the five.\"\n\nFirms chosen: MS, SCHW, EDJ, MER, RJF. Question asks advisor headcount over last eight quarters across the five. It asks one aspect? \"Advisor headcount over the last eight quarters across the five.\" The aspect is advisor headcount, series over eight quarters, for all five firms. Metric advisor_headcount. Need list aspects literally. It names advisor headcount. Over last eight quarters = series. Across the five = all firms (no restriction). So one aspect. But maybe \"advisor headcount over the last eight quarters\" asks a figure over several periods. It may also ask comparison? \"across the five\" maybe asks across firms, but the question itself asks a series for each firm. However instruction: \"a judgement the question asks for across firms or periods (whether figures can be set side by side, which firm says the most) is its own aspect of kind comparison.\" Does \"across the five\" imply comparison? It asks advisor headcount across the five over last eight quarters, not explicitly comparison judgement. The ask is the advisor headcount for each firm, a series. We don't need add comparison unless question asks which firm says the most etc. \"across the five\" means for each of the five. So one aspect.\n\nNeed keyword_query 5 to 25 words filings/calls use: \"advisor headcount financial advisors number of advisors wealth management advisors\". No firm names, no dates. Should include \"advisor headcount\", \"financial advisor headcount\", \"number of financial advisors\", \"total advisors\", \"wealth management advisor count\". 5-25 words.\n\nfirms empty list because all listed firms. metric advisor_headcount. kind series. text one sentence without firm names: \"Advisor headcount for each of the last eight quarters.\" Good.\n\nNeed call submit_plan tool with one aspect. Ensure no extra aspects. Let's craft.\n\nKeyword query: \"advisor headcount financial advisors number of advisors total advisors wealth management advisor headcount\". That's 13 words. Good.\n\nMaybe include \"quarterly advisor headcount\" but no dates. Fine.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "advisor_headcount_last_8_quarters",
+        "text": "Advisor headcount for each of the last eight quarters.",
+        "keyword_query": "advisor headcount financial advisors number of advisors total advisors wealth management advisor headcount",
+        "firms": [],
+        "metric": "advisor_headcount",
+        "kind": "series"
+      }
+    ]
+  }
+}

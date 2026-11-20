@@ -33,7 +33,9 @@ ANTHROPIC_REQUEST_VERSION = "strict-1"
 # gets the API's own thinking default (64K) for the answer and room to reason for the planner; off
 # keeps the project's 20000 / 2000. Quality first (TL, plan review 1).
 DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
-DEEPSEEK_PLANNER_MAX_TOKENS = {False: 2000, True: 16000}
+# #245: plan-v3 has no aspect cap: off 2000 -> 8000; on 16000 -> 64000 (TL decision after the Q19
+# planner was cut at 16000 reasoning tokens; the same as the answer cap and DeepSeek's thinking default)
+DEEPSEEK_PLANNER_MAX_TOKENS = {False: 8000, True: 64000}
 # Read timeout per read, not per request. The docs only say empty lines are sent while a request
 # waits (one not started after 10 minutes is closed); nothing about lines during inference, so the
 # whole generation may be one silent read: 3600 s covers 64000 tokens at about 18 tokens/s.
@@ -60,6 +62,40 @@ def request_version(provider: str) -> str | None:
 def answer_max_tokens(provider: str) -> int:
     """The answer call's output cap (#242): by thinking mode for deepseek, else MAX_TOKENS."""
     return DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking] if provider == "deepseek" else MAX_TOKENS
+
+
+# Interim answer input guard (#245, temporary: removed when #247 wires the reduce step). Context
+# windows from the providers' docs, checked 2026-11-19: DeepSeek deepseek-v4-pro 1M (Models &
+# Pricing page); Claude Sonnet 5.5 1M (Anthropic model table). OpenAI gpt-5: TODO-verify, 400k assumed.
+CONTEXT_WINDOW = {"deepseek": 1_000_000, "anthropic": 1_000_000, "openai": 400_000}
+GUARD_ROUND = 1000
+
+
+def answer_input_limit(provider: str) -> int | None:
+    """Most estimated input tokens (characters / 4) of the interim answer call: ANSWER_INPUT_MAX_TOKENS,
+    else the provider's context window minus its answer output cap minus the fixed prompt overhead
+    (system prompt and tool schema), rounded down to 1k. None (no guard) on the mock."""
+    s = settings().answer_input_max_tokens
+    if s is not None:
+        return s
+    window = CONTEXT_WINDOW.get(provider)
+    if window is None:
+        return None
+    overhead = (len(SYSTEM_PROMPT) + len(json.dumps(llm_output_schema()))) / 4
+    return int((window - answer_max_tokens(provider) - overhead) // GUARD_ROUND * GUARD_ROUND)
+
+
+def input_tokens(question: str, hits: list[Hit], plan=None, window=None) -> int:
+    """Estimated input tokens of the answer call (characters / 4): system prompt, tool schema and
+    the user message as built for these hits."""
+    chars = (len(SYSTEM_PROMPT) + len(json.dumps(llm_output_schema()))
+             + len(build_user_message(question, hits, plan, window)))
+    return round(chars / 4)
+
+
+def chunk_tokens(h: Hit) -> float:
+    """One passage's estimated tokens as the user message prints it (its <chunk> line + newline)."""
+    return (len(_chunk(h)) + 1) / 4
 
 
 class ProviderStop(RuntimeError):
@@ -160,7 +196,9 @@ def build_user_message(question: str, hits: list[Hit], plan=None, window=None) -
         from cee.retrieve.planner import Part
         parts = [Part("p1", question, [])]
     single = len(parts) == 1
-    pools = {s["id"]: s.get("pool") for s in getattr(plan, "searched", None) or []}
+    # #245: a competitor sub-question the floor across competitors emptied reads as nothing found
+    pools = {s["id"]: 0 if s.get("floor_emptied") else s.get("pool")
+             for s in getattr(plan, "searched", None) or []}
 
     def part_of(h: Hit) -> str | None:
         pid = getattr(h, "part_id", None)
