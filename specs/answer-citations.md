@@ -247,7 +247,10 @@ behavior code decided; it cannot change it.
   exclude) and the metric has `contrast_dimensions`, one caveat per dimension places every firm row, grouped by
   value, with the registry's verbatim text and chunk id (one block per metric; all-not-stated dimensions
   skipped). A row whose entry belongs to its parent names it ("Merrill (Bank of America Corporation)"), here
-  and in `DEFINITIONS_BY_FIRM`.
+  and in `DEFINITIONS_BY_FIRM`. `DEFINITIONS_BY_FIRM` prints only verbatim text with the chunk that says it (the
+  entry's quote; what a count includes / excludes from the entry's `contrast` cells) or fixed phrases ("not
+  stated: <dimension labels>"); the registry's free-text includes / excludes / not_stated lists are not printed
+  (tested: outside quotes only fixed words and firm names; every quote verbatim in its cited chunk).
 - `closest_metric` wording: "defines a related metric instead" when the entry's unit equals the quoted
   entries' unit; otherwise "publishes no count of this metric; reports a related figure instead".
 - Quarter holes: a "by quarter" series aspect with no asked range gets a `period_gap` per holding firm cell

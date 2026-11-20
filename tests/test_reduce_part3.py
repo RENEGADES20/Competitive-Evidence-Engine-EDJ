@@ -319,3 +319,49 @@ def test_registry_contrast_texts_are_verbatim_in_their_chunks():
         for key, cell in d["contrast"].items():
             if cell.get("text"):
                 assert squash(cell["text"]) in squash(rows[cell["chunk_id"]]), (d["entity"], key)
+
+
+# --- TL (after the EDJ #148 finding): the per-firm definitions caveat is verbatim or fixed phrases -------
+
+_QUOTED_CITED = re.compile(r"'(.+?)' \(([A-Z0-9][\w.-]*#\d+)\)")
+FIXED_WORDS = set("""as each firm defines it publishes no count of this metric reports a related figure instead
+defines a related metric definition or nearest text not stated registered independent contractor advisors trainees
+business lines in the count excludes advisor headcount net new assets""".split())
+
+
+def _by_firm_caveats():
+    out = []
+    for metric, aspect in (("advisor_headcount", Aspect("a1", "Advisor headcount over the last eight quarters.",
+                                                        metric="advisor_headcount", kind="series")),
+                           ("net_new_assets", NNA)):
+        m = _matrix(Q23 if metric == "advisor_headcount" else Q22, [aspect])
+        out += [x for x in m.caveats if " as each firm defines it: " in x]
+    assert len(out) == 2
+    return out
+
+
+def test_by_firm_caveat_outside_quotes_is_only_fixed_phrases_and_names():
+    names = set(" ".join(["Morgan Stanley", "The Charles Schwab Corporation", "Edward Jones", "Merrill",
+                          "Bank of America Corporation", "Raymond James Financial"]).lower().split())
+    for cav in _by_firm_caveats():
+        rest = _QUOTED_CITED.sub(" ", cav)
+        words = set(re.findall(r"[a-z]+", rest.lower()))
+        assert words <= FIXED_WORDS | names, words - FIXED_WORDS - names
+        assert "#148" not in cav
+
+
+def test_by_firm_caveat_quotes_are_verbatim_in_the_chunk_they_cite():
+    pairs = [(q, cid) for cav in _by_firm_caveats() for q, cid in _QUOTED_CITED.findall(cav)]
+    assert len(pairs) >= 15
+    try:
+        with psycopg.connect(settings().database_url, connect_timeout=3) as conn:
+            rows = dict(conn.execute("SELECT chunk_id, text FROM chunks WHERE chunk_id = ANY(%s)",
+                                     ([c for _, c in pairs],)).fetchall())
+    except psycopg.OperationalError:
+        pytest.skip("database not running")
+    if not rows:
+        pytest.skip("no corpus loaded")
+    squash = lambda t: re.sub(r"\s+", " ", t).strip()   # noqa: E731
+    for q, cid in pairs:
+        q = q[:-3] if q.endswith("...") else q          # a quote clipped at a word boundary (TL D10)
+        assert squash(q) in squash(rows[cid]), (cid, q)

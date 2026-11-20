@@ -246,7 +246,7 @@ def test_r6a_definitions_by_firm_named_without_a_comparison_aspect():
     assert len(cav) == 1
     for name in ("Morgan Stanley:", "Edward Jones:", "Raymond James Financial:", "The Charles Schwab Corporation:"):
         assert name in cav[0]
-    assert "excludes advisors in the RCS division" in cav[0]
+    assert "excludes: 'Advisors in our RCS division are not included' (RJF-10K-2025#228)" in cav[0]   # verbatim
     assert "publishes no count of this metric; reports a related figure instead" in cav[0]   # #247 part 3 item 2
     assert "publishes no definition of this metric" not in cav[0]
     assert not any(x.startswith("Advisor headcount: the firms define it differently") for x in m.caveats)

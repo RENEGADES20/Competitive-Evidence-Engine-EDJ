@@ -965,6 +965,33 @@ def _closest_head(d: dict, quoted_units: set) -> str:
     return RELATED_METRIC
 
 
+SCOPE_DIMS = ("independents", "trainees", "business_lines")   # what a count includes / excludes
+
+
+def _scope_bits(d: dict, metric: str) -> list[str]:
+    """#247 part 3 (TL, after the EDJ #148 finding): what the per-firm definitions caveat says a definition
+    includes or excludes comes only from the entry's `contrast` cells: each a verbatim registry text with
+    the chunk that says it (tested against the database), or a fixed phrase ("not stated: <dimension
+    labels>"). The free-text includes / excludes / not_stated lists are not printed (they stay in the
+    registry for the map's words)."""
+    labels = {x["key"]: x["label"] for x in contrast_dimensions().get(metric) or []}
+    cells = d.get("contrast") or {}
+    out, unstated = [], []
+    for key in SCOPE_DIMS:
+        if key not in labels:
+            continue
+        cell = cells.get(key) or {"value": "not_stated"}
+        label = labels[key][0].lower() + labels[key][1:]
+        if cell["value"] == "not_stated":
+            unstated.append(label)
+        elif cell["value"] != "none" and cell.get("text") and cell.get("chunk_id"):   # none: no count at all
+            verb = "excludes" if cell["value"] == "excluded" else label
+            out.append(f"{verb}: '{cell['text']}' ({cell['chunk_id']})")
+    if unstated:
+        out.append("not stated: " + ", ".join(unstated))
+    return out
+
+
 def firm_label(firm: str, d: dict | None) -> str:
     """#247 part 3 (review nb 1): a row whose registry entry belongs to its parent names the parent, so a
     BAC passage never reads as Merrill's own words: "Merrill (Bank of America)"."""
@@ -995,9 +1022,7 @@ def definitions_by_firm(m: EvidenceMatrix) -> dict[str, str]:
             head = {"quoted": "", "closest_metric": _closest_head(d, units),
                     "not_disclosed": "publishes no definition or count; nearest text "}.get(st, "")
             bits = [f"{head}'{_clip(d.get('quote', ''), CAVEAT_DEF_CHARS)}' ({d.get('chunk_id', '')})"]
-            for k, w in (("includes", "includes"), ("excludes", "excludes"), ("not_stated", "not stated")):
-                if d.get(k):
-                    bits.append(f"{w} {_clip(_list(d[k]), 120)}")
+            bits += _scope_bits(d, metric)   # #247 part 3 (TL): verbatim with its chunk, or a fixed phrase
             parts.append(f"{firm_label(f, d)}: " + "; ".join(bits))
         out[metric] = DEFINITIONS_BY_FIRM.format(metric=metric.replace("_", " ").capitalize(), parts=" | ".join(parts))
     return out
