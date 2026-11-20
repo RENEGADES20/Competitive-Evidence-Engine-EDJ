@@ -314,3 +314,21 @@ def test_population_quotes_verbatim_and_valid_from_is_the_period_end():
         cid, text, period_end, published = by[p["chunk_id"]]
         assert " ".join(p["quote"].split()) in " ".join(text.split()), p["chunk_id"]
         assert str(p["valid_from"]) == str(period_end or published), p["chunk_id"]
+
+
+# --- #247 part 2 revision (R2) ---------------------------------------------------------------------
+
+def test_r2_phrase_after_the_figure_reads_the_whole_quote():
+    m = ratio_matrix("RJF", it("RJF-SUPP#9", "1,730.6", "Client assets under administration | $ 1,730.6"),
+                     it("RJF-10K#9", "8,943", "We had 8,943 employee and independent contractor financial advisors "
+                        "affiliated with us as of September 30, 2025."))
+    assert m.cells["a3.RJF"].items[0].population == "rjf_advisors_excl_rcs"
+    assert m.cells["a1.RJF"].derivation["why"] == "populations differ"
+
+
+def test_r2_registered_ratio_is_not_definition_unverified():
+    m = ratio_matrix("EDJ", it("EDJ-10Q#59", "$2,647", "Client assets under care ($ billions): Total: At period end "
+                               "$ 2,647", period="2026-06-26", unit="USD billions"),
+                     it("EDJ-10Q#60", "20,514", "Financial advisors (actual): At period end 20,514", period="2026-06-26"))
+    assert m.cells["a1.EDJ"].label == "derived" and "definition_unverified" not in m.cells["a1.EDJ"].flags
+    assert m.marks["a1"].status == "none"

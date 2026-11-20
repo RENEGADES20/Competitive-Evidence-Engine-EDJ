@@ -242,7 +242,23 @@ behavior code decided; it cannot change it.
   `behavior_rejudged`, `outside_matrix`, `comparison_missing`, `why_line_missing`, `reordered`,
   `gaps_merged`, `part_gaps`, flags by name, `stop_reason`, `usage` (ADR-021 rule 7).
 
-### Reduce part 2 (#247 part 2, prompt v5.1; plans/0247-reduce-2.md)
+### Reduce part 2 (#247 part 2, prompt v5.2; plans/0247-reduce-2.md)
+Revision after blind scoring (prompt v5.2; plan "Revision after scoring", R1-R6):
+- Why-lines: the item's own stated context, or cited factual background from another matrix passage (the
+  input lists up to 3 "related" items per recency / window item); "the source does not say" only when no
+  passage gives either. Code replaces a restating why-line only when the claim cites no more than one
+  item's chunks; model-written "does not say" lines are counted (`why_line_unsaid`).
+- Populations: when no match phrase stands before the figure, the whole quote is read; a derivation over
+  two registered populations is not "definition unverified".
+- Basis breaks: an item without a population joins its scope's group; an undated one makes no basis.
+- `COMPARISON_MISSING` is added once per aspect; a normative comparison aspect is covered by the hand-off; a
+  model gap where the matrix holds the evidence is dropped (logged `gaps_contradicting`).
+- Code caveats: `DEFINITIONS_BY_FIRM` (each firm's definition, includes / excludes / not stated, or that it
+  publishes none; replaces the comparability caveat of that metric), `DEFINITION_CHANGED` (one firm's
+  wording differs across documents), `SERIES_SPAN` (where each firm's series starts and stops); a
+  different-quantity cell's gap names the closest disclosed figure.
+
+First version (prompt v5.1):
 - **Populations of ratio inputs** (rule 2): `matrix.tag_populations` gives each item of a ratio-input
   aspect (metric `client_assets` / `advisor_headcount`, or a proxy aspect matched by its words) the key
   of the `populations` entry whose phrase stands nearest before its figure, only when the entry's chunk

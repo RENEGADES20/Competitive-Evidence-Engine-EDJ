@@ -122,6 +122,33 @@ def _cell_head(m: EvidenceMatrix, c) -> str:
 
 
 CONTEXT_CHARS = 600   # #247 part 2: the cited passage around a recency / window item's quote
+RELATED_MAX = 3       # #247 part 2 R1: related matrix items offered as cited background for a why-line
+
+
+def related_items(m: EvidenceMatrix, cell, item) -> list:
+    """Up to RELATED_MAX other counting items of the same row (firm, or the research row) citing other
+    chunks and sharing content words with the item, most shared first (#247 part 2 R1)."""
+    mine = _content(item.text)
+    scored = []
+    for c in m.cells.values():
+        if (c.role == "research") != (cell.role == "research") or c.entity != cell.entity:
+            continue
+        for j in c.counting_items:
+            if j is item or set(j.chunk_ids) <= set(item.chunk_ids):
+                continue
+            shared = len(mine & _content(j.text))
+            if shared:
+                scored.append((-shared, j.chunk_ids[0], j))
+    out, seen = [], set()
+    for _, _, j in sorted(scored, key=lambda s: (s[0], s[1])):
+        key = tuple(j.chunk_ids)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(j)
+        if len(out) == RELATED_MAX:
+            break
+    return out
 
 
 def _flat(text) -> str:
@@ -284,6 +311,8 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
                         ctx = item_context(m, i)
                         if ctx:
                             lines.append(f'      context: "{_q(ctx)}"')
+                        for r_ in related_items(m, c, i):   # #247 part 2 R1: background another passage gives
+                            lines.append(f"      related: cite {', '.join(r_.chunk_ids)} | {_q(r_.text)[:160]}")
     lines += ["", "Gaps added by code (do not repeat them):"]
     lines += [f"- [{g['id']}] {g['what']}" for g in m.gaps] or ["- none"]
     lines += ["", "Caveats added by code (do not repeat them):"]
@@ -600,10 +629,23 @@ def check_comparisons(answer: Answer, m: EvidenceMatrix) -> list[str]:
         own = _aspect_ids(m, a.id)
         if any(c.part_id in own and any(k in ids_ok for k in c.chunk_ids) for c in answer.claims):
             continue
+        if any(g.part_id == a.id and "comparison_missing" in g.flags for g in answer.gaps):
+            missing.append(a.id)   # #247 part 2 R4: added once
+            continue
+        if _normative_handoff(answer, a):
+            continue
         missing.append(a.id)
         answer.gaps.append(Gap(what=P.COMPARISON_MISSING.format(aspect=_aspect_text(a)), part_id=a.id,
                                flags=["comparison_missing"]))
     return missing
+
+
+def _normative_handoff(answer: Answer, a) -> bool:
+    """R4: a normative comparison aspect ("how should ...") is answered by the hand-off sentence."""
+    from cee.answer.matrix import normative_question
+    from cee.answer.validate import is_normative
+    return answer.behavior == "answer_with_boundary" and (is_normative(a.text) or normative_question(a.text)) and any(
+        c.text.strip() == P.BOUNDARY_HANDOFF for c in answer.claims)
 
 
 def _why_scope(m: EvidenceMatrix, query, x) -> bool:
@@ -651,7 +693,7 @@ def clean_why_lines(answer: Answer, m: EvidenceMatrix, query) -> dict:
     """#247 part 2: a why-line outside recency / window items is removed (why_line_removed); a why-line
     that restates its claim is replaced with WHY_UNSAID (why_line_restated). The model's text is kept
     in the log (returned)."""
-    log: dict = {"removed": [], "restated": []}
+    log: dict = {"removed": [], "restated": [], "unsaid": []}
     for x in [*answer.claims, *answer.adjacent]:
         if P.WHY_LINE not in x.text:
             continue
@@ -660,11 +702,21 @@ def clean_why_lines(answer: Answer, m: EvidenceMatrix, query) -> dict:
             x.text = body.rstrip()
             x.flags.append("why_line_removed")
             log["removed"].append({"part_id": x.part_id, "why": why.strip()})
-        elif restates(body, why):
+        elif why.strip() == P.WHY_UNSAID[len(P.WHY_LINE):]:
+            log["unsaid"].append({"part_id": x.part_id})   # written by the model (R1: never by default)
+        elif restates(body, why) and not _cites_background(m, x):
             x.text = body.rstrip() + " " + P.WHY_UNSAID
             x.flags.append("why_line_restated")
             log["restated"].append({"part_id": x.part_id, "why": why.strip()})
     return log
+
+
+def _cites_background(m: EvidenceMatrix, x) -> bool:
+    """R1: the claim cites more than any one item's chunks (factual background from another passage)."""
+    c = m.cells.get(x.part_id)
+    items = c.counting_items if c is not None else []
+    cited = set(x.chunk_ids)
+    return bool(items) and not any(cited <= set(i.chunk_ids) for i in items)
 
 
 def check_computability(answer: Answer, m: EvidenceMatrix) -> list[str]:
@@ -799,7 +851,22 @@ def _gap_norm(text: str) -> str:
     return " ".join(str(text or "").lower().split()).rstrip(".")
 
 
-def place_gaps(answer: Answer, m: EvidenceMatrix) -> int:
+def contradicts(m: EvidenceMatrix, g) -> bool:
+    """R4: a model gap on a cell that holds, or on an aspect with a planned firm subset whose firms' cells
+    all hold (Q19: "Morgan Stanley, ... - how Edward Jones management describes ...: not found")."""
+    from cee.answer.matrix import holds
+    c = m.cells.get(g.part_id)
+    if c is not None:
+        return holds(c)
+    a = next((x for x in m.aspects if x.id == g.part_id), None)
+    asked = list(getattr(a, "asked_firms", None) or []) if a is not None else []
+    if not asked or a.kind == "comparison":
+        return False
+    cells = [c for c in m.cells.values() if c.aspect_id == a.id and c.entity in asked]
+    return bool(cells) and all(holds(c) for c in cells)
+
+
+def place_gaps(answer: Answer, m: EvidenceMatrix, log: list | None = None) -> int:
     """The matrix gaps after the model's; a model gap repeating a code gap (same text, or the same
     "<Firm> - <aspect>:" head for the same part) is merged into it: the code gap kept with the flag
     model_also_named, the model's text in claim_text (review note 9). Returns the merged count."""
@@ -807,10 +874,16 @@ def place_gaps(answer: Answer, m: EvidenceMatrix) -> int:
     code = [Gap(what=g["what"], suggested_source=g.get("suggested_source", ""), part_id=g["id"],
                 flags=[f"matrix_{g.get('label', 'gap')}"]) for g in m.gaps]
     kept, merged = [], 0
+    contradicted = log if log is not None else []
     from cee.answer.matrix import in_gap_scope
     folds = {cid: c for g, c in zip(m.gaps, code) for cid in g.get("cells") or []}
+    from cee.answer.matrix import holds
     for g in model:
         cell = m.cells.get(g.part_id)
+        if contradicts(m, g):   # #247 part 2 R4: a gap where the matrix holds the evidence
+            contradicted.append(g.what)
+            merged += 1
+            continue
         if cell is not None:   # #247 part 2 (Q19): no gap outside the aspect's firm scope, folded cells merged
             if not in_gap_scope(m.aspect(cell.aspect_id), cell):
                 merged += 1
@@ -853,6 +926,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     info["code_computability"] = check_computability(answer, m)
     why_log = clean_why_lines(answer, m, query)
     info["why_line_removed"], info["why_line_restated"] = len(why_log["removed"]), len(why_log["restated"])
+    info["why_line_unsaid"] = len(why_log["unsaid"])
     info["why_lines_log"] = why_log
     answer = check_citations(answer, allowed, derived=derived_values(m))
     info["behavior_rejudged"] = answer.behavior != decided
@@ -869,7 +943,8 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     info["why_line_missing"] = check_why_lines(answer, m, query)
     info["reordered"] = order_newest_first(answer, m, query, by_id)
     if not (m.behavior == "refuse" and m.behavior_reason.startswith("1e")):
-        info["gaps_merged"] = place_gaps(answer, m)
+        info["gaps_contradicting"] = []
+        info["gaps_merged"] = place_gaps(answer, m, info["gaps_contradicting"])
     answer.caveats = list(dict.fromkeys([*answer.caveats, *m.caveats]))
     union = list(by_id.values())
     answer = check_parts(answer, plan, union, question, matrix=m)

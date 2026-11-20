@@ -1028,4 +1028,10 @@ comments 7037522138 and 7037650142; prompt v5.1):
   computability checks run again; why-lines only on recency / window items, written from the cited
   passage's context, and a why-line that restates its claim is replaced by "the source does not say"
   (the model's sentence logged); without a window only the recency items are re-sorted newest first.
+- **Revision after blind scoring** (prompt v5.2, TL comments on #247): a why-line is the source's own stated
+  context or cited factual background from another retrieved passage; "the source does not say" only when
+  no passage gives either, and code replaces only a restatement citing nothing beyond its item. Code
+  inserts, from config and the matrix, each firm's definition (or that it publishes none) for a registered
+  metric, a definition-wording change across one firm's documents, and where each firm's disclosed series
+  starts and stops; a firm with only a different quantity has a gap naming that closest figure.
 

@@ -167,3 +167,53 @@ def test_q19_shaped_answer_drops_out_of_scope_model_gaps_and_adds_no_part_gap():
     assert not any(g.part_id == "a7.MS" for g in a.gaps)
     fold = next(g for g in a.gaps if "matrix_competitors_not_found" in g.flags)
     assert "model_also_named" in fold.flags and "a1" == fold.part_id
+
+
+# --- #247 part 2 revision (R1, R4) ---------------------------------------------------------------------
+
+def test_r1_restating_why_kept_when_it_cites_background_and_related_items_rendered():
+    rec = Aspect("a5", "Recent financial results.", kind="recency")
+    m = mat([rec], [Cell("a5.RJF", "RJF", "a5", "named", "fact", items=[
+        Item("Raymond James reported revenue of $4.74 billion.", chunk_ids=["T#1"]),
+        Item("Raymond James reported revenue of $4.20 billion a year earlier.", chunk_ids=["T#2"])])],
+        [H("T#1"), H("T#2")])
+    a = Answer(answerable=True, behavior="answer", claims=[
+        cl("Raymond James reported revenue of $4.74 billion. Why it might matter: revenue was $4.74 billion.",
+           ["T#1"], "a5.RJF"),
+        cl("Raymond James reported revenue of $4.74 billion. Why it might matter: revenue of $4.74 billion.",
+           ["T#1", "T#2"], "a5.RJF"),
+        cl("X. " + P.WHY_UNSAID, ["T#1"], "a5.RJF")])
+    log = R.clean_why_lines(a, m, None)
+    assert "why_line_restated" not in a.claims[1].flags        # cites another passage: kept
+    assert len(log["unsaid"]) == 1                             # model-written, counted, left alone
+    m2 = mat([rec], [Cell("a5.RJF", "RJF", "a5", "named", "fact", items=[
+        Item("Raymond James reported revenue of $4.74 billion.", chunk_ids=["T#1"])])], [H("T#1")])
+    a2 = Answer(answerable=True, behavior="answer", claims=[cl(
+        "Raymond James reported revenue of $4.74 billion. Why it might matter: revenue was $4.74 billion.",
+        ["T#1"], "a5.RJF")])
+    R.clean_why_lines(a2, m2, None)
+    assert "why_line_restated" in a2.claims[0].flags           # only its own chunk: replaced
+    assert "related: cite T#2" in R.reduce_message("q", m)
+
+
+def test_r4_comparison_gap_added_once_and_normative_comparison_covered_by_handoff():
+    from cee.answer.prompt import BOUNDARY_HANDOFF
+    comp = Aspect("a13", "How should younger-investor preferences shape Edward Jones's offerings?", kind="comparison")
+    plain = Aspect("a2", "Whether the comparison is valid.", kind="comparison")
+    m = mat([comp, plain], [Cell("a13.EDJ", "EDJ", "a13", "named", "not_found"),
+                            Cell("a2.EDJ", "EDJ", "a2", "named", "not_found")])
+    a = Answer(answerable=True, behavior="answer_with_boundary", claims=[Claim(text=BOUNDARY_HANDOFF, chunk_ids=[])])
+    assert R.check_comparisons(a, m) == ["a2"] and R.check_comparisons(a, m) == ["a2"]
+    assert sum("comparison_missing" in g.flags for g in a.gaps) == 1
+
+
+def test_r4_model_gap_contradicting_a_found_claim_dropped():
+    own = Aspect("a7", "How does Edward Jones management describe younger investors?", asked_firms=["EDJ"])
+    m = mat([own], [Cell("a7.EDJ", "EDJ", "a7", "named", "fact", items=[Item("t", chunk_ids=["E#1"])]),
+                    Cell("a7.MS", "MS", "a7", "competitor", "not_found")])
+    a = Answer(answerable=True, behavior="answer", gaps=[
+        {"what": "Morgan Stanley, Merrill - how Edward Jones management describes younger investors: not found.",
+         "part_id": "a7"}, {"what": "Edward Jones - a7: not found.", "part_id": "a7.EDJ"}])
+    log = []
+    R.place_gaps(a, m, log)
+    assert len(log) == 2 and not any(g.part_id in ("a7", "a7.EDJ") and not g.flags for g in a.gaps)

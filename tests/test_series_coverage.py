@@ -202,3 +202,63 @@ def test_basis_break_cases(items, kind, expected):
     m = mx.finish(EvidenceMatrix("Net new assets by quarter across the five.", rows=[], aspects=[a],
                                  cells={c.id: c}), sources=NO_SOURCES)
     assert len(m.breaks) == expected
+
+
+# --- #247 part 2 revision (R3, R5, R6) -----------------------------------------------------------------
+
+def test_r3_unkeyed_items_join_their_scope_and_undated_ones_make_no_basis(monkeypatch):
+    a = Aspect("a1", "Advisor headcount over the last eight quarters.", metric="advisor_headcount", kind="series")
+    keyed = Item(text="t", quote="q", chunk_ids=["X#1"], value="8,943", period="2025-09-30", population="rjf_x")
+    split = Item(text="t", quote="q", chunk_ids=["X#2"], value="3,878", period="2025-09-30")
+    pcg = Item(text="t", quote="q", chunk_ids=["X#3"], value="approximately 9,000", scope="domestic wealth management")
+    c = C("a1.RJF", "fact", items=[keyed, split, pcg])
+    monkeypatch.setattr(mx, "tag_populations", lambda m: None)   # keep the hand-set keys
+    m = mx.finish(EvidenceMatrix(Q23, rows=[], aspects=[a], cells={c.id: c}), sources=NO_SOURCES)
+    assert m.breaks == []
+    us = Item(text="t", quote="q", chunk_ids=["X#4"], value="19,674", period="2026Q1", scope="U.S.")
+    c2 = C("a1.EDJ", "fact", items=[Item(text="t", quote="q", chunk_ids=["X#5"], value="20,514", period="2026Q2",
+                                         population="edj_firm"), us])
+    m2 = mx.finish(EvidenceMatrix(Q23, rows=[], aspects=[a], cells={c2.id: c2}), sources=NO_SOURCES)
+    assert len(m2.breaks) == 1   # a dated U.S. point under another scope keeps the EDJ break
+
+
+def test_r5_definition_wording_change_across_documents():
+    a = Aspect("a1", "Net new assets by quarter.", metric="net_new_assets", kind="series")
+    c = C("a1.EDJ", "fact", items=[
+        Item(text="t", chunk_ids=["EDJ-10K-2025#130"], value="$74", period="2025", definition="Net new assets represents "
+             "cash and securities inflows and outflows, excluding mutual fund capital gain distributions."),
+        Item(text="t", chunk_ids=["EDJ-10Q-2026Q2#60"], value="$20", period="2026Q2", definition="Net new assets "
+             "represents cash and securities inflows and outflows, including fees and commissions and excluding ...")])
+    m = mx.finish(EvidenceMatrix("Net new assets by quarter for each of the five.", rows=["EDJ"], aspects=[a],
+                                 cells={c.id: c}), sources=NO_SOURCES)
+    cav = [x for x in m.caveats if "definition wording differs" in x]
+    assert len(cav) == 1 and "EDJ-10K-2025" in cav[0] and "EDJ-10Q-2026Q2" in cav[0]
+
+
+def test_r6a_definitions_by_firm_named_without_a_comparison_aspect():
+    a = Aspect("a1", "How each firm defines advisor headcount.", metric="advisor_headcount")
+    cells = [C(f"a1.{f}", "fact", items=[Item(text="t", chunk_ids=[f"{f}#1"])]) for f in ("MS", "EDJ", "RJF")] \
+        + [C("a1.SCHW", "different_quantity", items=[Item(text="Form ADV: 4,127 employees perform advisory functions",
+                                                          chunk_ids=["SCHW#1"])])]
+    m = mx.finish(EvidenceMatrix("How does each of the five define advisor headcount?", rows=["MS", "EDJ", "RJF", "SCHW"],
+                                 aspects=[a], cells={c.id: c for c in cells}), sources=NO_SOURCES)
+    cav = [x for x in m.caveats if x.startswith("Advisor headcount as each firm defines it:")]
+    assert len(cav) == 1
+    for name in ("Morgan Stanley:", "Edward Jones:", "Raymond James Financial:", "The Charles Schwab Corporation:"):
+        assert name in cav[0]
+    assert "excludes advisors in the RCS division" in cav[0] and "publishes no definition of this metric" in cav[0]
+    assert not any(x.startswith("Advisor headcount: the firms define it differently") for x in m.caveats)
+    gap = next(g for g in m.gaps if g["id"] == "a1.SCHW")
+    assert "the closest disclosed figure is Form ADV: 4,127 employees perform advisory functions (adjacent)" in gap["what"]
+
+
+def test_r6c_series_span_per_holding_firm():
+    a = Aspect("a1", "Advisor headcount over the last eight quarters.", metric="advisor_headcount", kind="series")
+    ms = C("a1.MS", "fact", items=[it("15,950", "2020-12-31"), it("15,469", "2020-09-30"), it("15,468", "2019-12-31")])
+    edj = C("a1.EDJ", "fact", items=[it("20,514", "2026Q2"), it("20,425", "2025-12-31"), it("x", "")])
+    m = mx.finish(EvidenceMatrix(Q23, rows=["MS", "EDJ"], aspects=[a], cells={"a1.MS": ms, "a1.EDJ": edj}),
+                  sources=NO_SOURCES)
+    spans = [x for x in m.caveats if "the series in the documents searched runs from" in x]
+    assert ("Morgan Stanley - Advisor headcount over the last eight quarters: the series in the documents searched "
+            "runs from 2019-12-31 to 2020-12-31 (3 points); no figure after 2020-12-31 was found.") in spans
+    assert any(s.startswith("Edward Jones") and "from 2025-12-31 to 2026Q2 (2 points)" in s for s in spans)
