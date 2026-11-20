@@ -1,0 +1,49 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1",
+  "call_id": "remap.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-10Q-2025Q3#90",
+    "BAC-DECK-2025-investor-day#0"
+  ],
+  "at": "2026-11-20T00:22:49.091540",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2013,
+    "output_tokens": 422,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 2013,
+    "reasoning_tokens": 297,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 6.61,
+  "tokens_per_s": 63.84,
+  "reasoning_content": "Let me analyze this. The question asks about Merrill (MER), sub-question a4.MER: \"What each firm's advisor headcount definition excludes.\"\n\nI need to examine the passages provided. There are only two chunks:\n- BAC-10Q-2025Q3#90: financial data about interest expense, provision for credit losses, noninterest expense, income before income taxes, etc. Nothing about advisor headcount definition or exclusions.\n- BAC-DECK-2025-investor-day#0: just \"1\" - no content.\n\nSo there's nothing about advisor headcount definition exclusions. The passages say nothing about it. So label should be not_found.\n\nLet me confirm: the instructions say:\n- fact: passage states what the sub-question asks\n- different_quantity: no passage states asked quantity but one states different related quantity\n- not_disclosed: passages show firm does not report it\n- not_found: passages say nothing about it\n\nThe passages say nothing about advisor headcount definition or exclusions. So not_found.\n\nI need to submit one cell with subquestion_id a4.MER, label not_found, items empty, differs_because \"\", reason, derivation with operation \"\" and inputs empty.\n\nLet me write the reason: \"The provided passages contain only segment financial statement figures and a deck page number; they say nothing about Merrill's advisor headcount definition or what it excludes.\"\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages contain only GWIM segment financial statement figures and a deck page number; they say nothing about Merrill's advisor headcount definition or what it excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

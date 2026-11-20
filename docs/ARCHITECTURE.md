@@ -12,8 +12,9 @@ flowchart LR
     B --> D[(PostgreSQL<br/>documents, chunks, entities, topics)]
     E[Streamlit web interface] --> F[Search and filter<br/>company / date / keywords]
     D --> F
-    P[Question planner<br/>parts + search words, ADR-020] --> F
-    F --> G[Answer generation<br/>one LLM call + retrieved evidence]
+    P[Question planner<br/>aspects; code: firms x aspects<br/>= sub-questions, ADR-021] --> F
+    F --> M[Map step, #246<br/>extraction per firm + CRAG re-search<br/>evidence matrix; behavior by code]
+    M --> G[Reduce step, #247<br/>one LLM call over the matrix, prompt v5<br/>or an answer built by code]
     G --> H[Citation validation<br/>stored doc and chunk IDs]
     H --> I[Answer + citations<br/>or evidence gap]
     I --> J[Human evaluation<br/>evals/questions.yaml]

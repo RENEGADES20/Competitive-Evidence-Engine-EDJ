@@ -1,0 +1,39 @@
+# Model prices for the cost of each call (#248, ADR-021 rule 7). USD per 1M tokens.
+# Read by src/cee/answer/cost.py. A provider / model not listed here is reported as "unpriced"
+# (cost null), never as $0. The mock provider always costs $0.
+#
+# Peak / off-peak: a call is priced by its completion time (start `at` + `wall_s`, or `finished_at`),
+# in UTC, the rule #243 used. Records written before #248 have a naive `at`; they were written on the
+# TL machine in America/Chicago (UTC-6 in November): price them with --naive-tz America/Chicago.
+
+providers:
+  deepseek:
+    source: >-
+      TL comment on #243 (issuecomment-7030358880): https://api-docs.deepseek.com/quick_start/pricing/
+      read by the TL's research agent on 2026-11-19; re-read 2026-11-20 for
+      docs/results/w11-deepseek-baseline.md, same rates and window.
+    read_on: 2026-11-19
+    # Peak hours, UTC, Monday-Friday; every other time is off-peak (50%).
+    peak_utc: [["01:00", "04:00"], ["06:00", "10:00"]]
+    peak_weekdays: [0, 1, 2, 3, 4]   # Monday = 0
+    # Chinese public holidays are off-peak all day (the page's rule). None falls in the W11 run window;
+    # add dates (YYYY-MM-DD, UTC date) if a run lands on one.
+    holidays: []
+    models:
+      deepseek-v4-pro:
+        peak: {input_cache_hit: 0.044, input_cache_miss: 1.32, output: 3.96}
+        off_peak: {input_cache_hit: 0.022, input_cache_miss: 0.66, output: 1.98}
+      deepseek-flash:
+        peak: {input_cache_hit: 0.006, input_cache_miss: 0.30, output: 1.20}
+        off_peak: {input_cache_hit: 0.003, input_cache_miss: 0.15, output: 0.60}
+  anthropic:
+    source: >-
+      Anthropic model price table (https://platform.claude.com/docs/en/about-claude/pricing), as given by
+      the claude-api reference cached 2026-11-03 and read again by the #248 plan reviewer on 2026-11-20
+      (same row). The #259 report re-reads the page at report time and notes any difference.
+    read_on: 2026-11-20
+    # Default global routing. Not used now: US-only inference_geo costs 1.1x; the 1-hour cache write
+    # costs 4.00. Our requests set no cache_control, so cache read / write tokens are 0 today.
+    models:
+      claude-sonnet-5-5:
+        flat: {input: 2.00, output: 10.00, cache_read: 0.10, cache_write: 2.50}

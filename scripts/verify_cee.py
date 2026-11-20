@@ -57,7 +57,7 @@ WINDOWS = os.name == "nt"
 
 ANSWERABLE_Q = "What does Edward Jones's 10-K say about its number of financial advisors?"
 NO_EVIDENCE_Q = "What does LPL Financial's 10-K say about its number of financial advisors?"
-TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruiting?"  # #214: 2 plan parts
+TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruiting?"  # #245: 2 sub-questions
 # Q21: five firms + a theme (#117). The firms the coverage note must name are read from the
 # database (theme_gap_expected): exactly those with no on-theme chunk the question may retrieve.
 # A firm with one, even below the floor, takes its theme slot (#190) and is no gap (corpus-2026-11-16:
@@ -207,7 +207,9 @@ def launch(port: int = PORT) -> dict:
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True)
     # MOCK_DELAY_S: the mock waits like a model would, so the progress trace can be seen mid-run (#80).
-    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5"}
+    # MAP=on (#247): the default, set explicitly so a teammate's older .env (MAP=off) cannot change the run.
+    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5",
+           "MAP": "on"}
     if os.environ.get("VERIFY_RETRIEVAL_MODE"):  # --mode: every feature runs in that search mode (#128)
         env["RETRIEVAL_MODE"] = os.environ["VERIFY_RETRIEVAL_MODE"]
     log = open(run_dir / "app.log", "w", encoding="utf-8")
@@ -338,8 +340,10 @@ def check_part_gaps(rec, page, what: str) -> None:
                           "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log ORDER BY query_id DESC LIMIT 1")
     row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
-    cited = {c.get("part_id") for c in row["answer"]["claims"]}
-    expected = [p for p in parts if p not in cited]
+    # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
+    cited = {c.get("part_id") for c in [*row["answer"]["claims"], *row["answer"]["adjacent"]]}
+    gapped = {g.get("part_id") for g in row["answer"]["gaps"] if "part_gap" not in (g.get("flags") or [])}
+    expected = [p for p in parts if p not in cited and p not in gapped]
     gaps = [g for g in row["answer"]["gaps"] if "part_gap" in (g.get("flags") or [])]
     body = page.locator("body").inner_text()
     shown = [g["what"] for g in gaps if g["what"] in body]
@@ -368,13 +372,30 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
-    check_part_gaps(rec, page, "the EDJ advisors question (one part)")
+    # #247: the answer is written from the evidence matrix: the shown behavior is the matrix's (or the
+    # documented re-judge by withhold_normative), nothing is cited outside the matrix, every cited id is
+    # in the logged chunk ids (retrieval + corrective re-search, B1) and every citation chip is linked.
+    row = psql(VERIFY_DB,
+               "SELECT (filters->'map'->>'behavior') || '|' || (answer->>'behavior') || '|' || "
+               "coalesce(filters->'reduce'->>'behavior_rejudged', 'none') || '|' || "
+               "coalesce(filters->'reduce'->>'outside_matrix', 'none') || '|' || "
+               "(SELECT count(*) FROM jsonb_array_elements(answer->'claims') c, "
+               "jsonb_array_elements_text(c->'chunk_ids') id WHERE NOT (id = ANY(q.chunk_ids))) "
+               "FROM query_log q ORDER BY query_id DESC LIMIT 1")
+    parts = row.split("|")
+    same = len(parts) == 5 and (parts[0] == parts[1] or (parts[1] == "answer_with_boundary" and parts[2] == "true"))
+    unlinked = "not in the retrieved set" in page.locator("body").inner_text()
+    rec.step("Read the newest query_log row: answer from the evidence matrix (#247)",
+             "shown behavior = filters.map.behavior, 0 outside the matrix, 0 cited ids outside the logged "
+             "chunk ids, no unlinked chip",
+             same and parts[3] == "0" and parts[4] == "0" and not unlinked, f"{row}; unlinked chip={unlinked}")
+    check_part_gaps(rec, page, "the EDJ advisors question (one sub-question)")
     ask(page, base, TWO_FIRM_Q)
-    # exp/hybrid (#240): every mode plans the two-firm question in two parts; the expected gaps come
+    # exp/hybrid (#240, #249): every mode plans the two-firm question in two sub-questions; the expected gaps come
     # from the logged plan
     from cee.config import settings  # loads .env as the app does; the app inherits it
     hybrid = (os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode).startswith("hybrid")
-    check_part_gaps(rec, page, "the two-firm question (two parts" + (", hybrid" if hybrid else "") + ")")
+    check_part_gaps(rec, page, "the two-firm question (two sub-questions" + (", hybrid" if hybrid else "") + ")")
     ask(page, base, THEME_GAP_Q)
     body = page.locator("body").inner_text()
     line = next((l.strip() for l in body.splitlines() if l.strip().startswith("Coverage:")), "no coverage note")
@@ -403,8 +424,9 @@ def feature_ask_progress(page, base, rec, ctx):
     wait_idle(page)
     page.get_by_role("textbox", name="Question").fill(ANSWERABLE_Q)
     page.get_by_role("button", name="Ask").click()
-    # The verify app's mock waits MOCK_DELAY_S in the model step: the page is caught mid-run.
-    page.wait_for_function("() => document.body.innerText.includes('Asking the model')",
+    # The verify app's mock waits MOCK_DELAY_S in the mock map and the mock reduce (#248: the question
+    # takes map.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
+    page.wait_for_function("() => document.body.innerText.includes('Synthesizing the answer')",
                            timeout=RENDER_TIMEOUT_S * 1000)
     body = page.locator("body").inner_text()
     bar = page.locator('[data-testid="stProgress"]').count() > 0
@@ -418,44 +440,64 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Look above the answer", "a collapsed 'How this answer was built' box",
              status.count() > 0 and hidden, f"box={status.count() > 0}, trace hidden={hidden}")
     lines = open_trace(page)
-    rec.step("Open the trace", "seven step lines", len(lines) == 7, " / ".join(lines)[:300])
-    plan = next((l for l in lines if l.startswith("Planning the search")), "")
-    rec.step("Read the plan line (#214)", "'Planning the search (rules, no model call): 1 part'",
-             "(rules, no model call): 1 part: p1 EDJ" in plan, plan)
+    from cee.ask import STAGES   # #248: 9 stages; the count is never a literal
+    rec.step("Open the trace", f"{len(STAGES)} step lines", len(lines) == len(STAGES), " / ".join(lines)[:400])
+    map_line = next((l for l in lines if l.startswith("Map step") or l.startswith("Extracting from")), "")
+    rec.step("Read the extract line (#246, #248)",
+             "'Extracting from 1 firm (mock, no model call): N cells: ...; behavior by code: answer'",
+             map_line.startswith("Extracting from 1 firm (mock, no model call):")
+             and map_line.endswith("behavior by code: answer"), map_line)
+    research = next((l for l in lines if l.startswith("Re-search")), "")
+    rec.step("Read the re-search line (#248)", "'Re-search...' (nothing to re-search, or what was re-searched)",
+             research.startswith(("Re-search: every sub-question has evidence", "Re-searching sub-questions")),
+             research)
+    plan = next((l for l in lines if l.startswith("Decomposing the question")), "")
+    rec.step("Read the decompose line (#214, #245, #248)",
+             "'Decomposing the question (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
+             "(rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ" in plan, plan)
     body = page.locator("body").inner_text()
     n_meta = re.search(r"(\d+) passages found", body)
-    n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
+    n_trace = re.search(r"Searching 1 sub-question: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
              f"trace {n_trace.group(1) if n_trace else '?'} vs footer {n_meta.group(1) if n_meta else '?'}")
-    model = next((l for l in lines if l.startswith("Asking the model") or "no model call" in l
-                  and not l.startswith("Planning")), "")
+    # #248: the synthesize line is the reduce's (the extract line also says "no model call")
+    model = next((l for l in lines if l.startswith("Synthesizing the answer")), "")
     check = next((l for l in lines if "Checking citations" in l), "")
-    rec.step("Read the model and citation lines", "'(mock, one call)' and 'N matched'",
-             "(mock, one call)" in model and "matched" in check, f"{model} | {check}")
+    rec.step("Read the synthesize and citation lines",
+             "'Synthesizing the answer from the evidence matrix (mock, one call)' and 'N matched'",
+             "from the evidence matrix (mock, one call)" in model and "matched" in check, f"{model} | {check}")
     ask(page, base, NO_EVIDENCE_Q)
     lines = open_trace(page)
-    model = next((l for l in lines if "model" in l and not l.startswith("Planning")), "")
+    model = next((l for l in lines if l.startswith("No passages found: no model call")), "")
     body = page.locator("body").inner_text()
     rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
              "no model call" in model and "LLM called: False" in body, model)
-    # plan-parts (#214): a two-firm question is searched in one part per firm, and the plan is logged.
-    # exp/hybrid (#240): the hybrid modes plan and search the parts as fts does (cee.retrieve.modes)
+    # plan-parts (#214, #245): a two-firm question is one sub-question per firm, and the plan is logged
+    # exp/hybrid (#249): the hybrid modes search the sub-questions through main's loop with hybrid.search;
+    # the page shows the plain label (ask_page.mode_label, #128) at the end of the search line
     from cee.config import settings  # loads .env as the app does; the app inherits it
-    mode = os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode
-    want_plan, n_parts = "2 parts: p1 MS; p2 RJF", 2
-    # the page shows the plain label (ask_page.mode_label, #128), not the internal mode name
-    want_search = "in 2 parts (Smart search)" if mode.startswith("hybrid") else "in 2 parts"
+    hybrid = (os.environ.get("VERIFY_RETRIEVAL_MODE") or settings().retrieval_mode).startswith("hybrid")
     ask(page, base, TWO_FIRM_Q)
     lines = open_trace(page)
-    plan = next((l for l in lines if l.startswith("Planning the search")), "")
-    search_line = next((l for l in lines if l.startswith("Searching the corpus")), "")
-    rec.step("Ask a two-firm question, open the trace", f"plan line '{want_plan}', search '{want_search}'",
-             want_plan in plan and search_line.endswith(want_search), f"{plan} | {search_line}")
+    plan = next((l for l in lines if l.startswith("Decomposing the question")), "")
+    search_line = next((l for l in lines if l.startswith("Searching ")), "")
+    extract_line = next((l for l in lines if l.startswith("Extracting from")), "")
+    rec.step("Ask a two-firm question, open the trace",
+             "decompose '1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF', 'Searching 2 sub-questions: ...', "
+             "'Extracting from 2 firms ...'" + (", search line ending '(Smart search)'" if hybrid else ""),
+             "1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF" in plan
+             and search_line.startswith("Searching 2 sub-questions: ") and extract_line.startswith("Extracting from 2 firms")
+             and search_line.endswith("(Smart search)") == hybrid,
+             f"{plan} | {search_line} | {extract_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
-                          " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
-    rec.step("Read the newest query_log row (side effect)", f"plan source rules, {n_parts} part(s), llm_calls 0 / 0",
-             row.replace(" ", "") == f'rules|{n_parts}|{{"answer":0,"planner":0}}', row)
+                          " || '|' || (filters->'llm_calls')::text || '|' || (filters->'cost'->>'calls') || '|' || "
+                          "(filters->'cost'->>'usd') FROM query_log ORDER BY query_id DESC LIMIT 1")
+    rec.step("Read the newest query_log row (side effect)",
+             "plan source rules, 2 sub-questions, llm_calls all 0 and cost 0 calls / $0 (#248; the mock map and "
+             "reduce are not paid calls)",
+             row.replace(" ", "") in ('rules|2|{"map":0,"remap":0,"answer":0,"planner":0}|0|0',
+                                      'rules|2|{"map":0,"remap":0,"answer":0,"planner":0}|0|0.0'), row)
 
 
 PDF_PAGE_SAMPLES = ["MS-SUPP-2026Q3#16", "SCHW-DECK-2026Q2#53"]  # a table page and a deck page (#53 comment)
@@ -556,6 +598,15 @@ def check_date_label(rec, page, source_chunk: str) -> None:
              f"'Filed:' {'shown' if 'Filed:' in body else 'missing'}")
 
 
+def wait_for_cited(page, chunk_id: str) -> None:
+    """#248 (flake in run 20261119-230844): the source page header ('Stored passage') can render before
+    the cited passage; wait for its 'CITED PASSAGE · <id>' tag (or the 'not in the stored corpus' error)
+    with the render timeout, so the body is never read half-drawn. A page that never draws it is a
+    RenderTimeout, not a wrong FAIL."""
+    wait_for_text(page, [f"CITED PASSAGE · {chunk_id}", "is not in the stored corpus"],
+                  f"the cited passage {chunk_id}")
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -574,6 +625,7 @@ def feature_open_citation(page, base, rec, ctx):
         link.click()
     source = new_tab.value
     wait_for_text(source, SOURCE_PAGE_DONE, "the source page")
+    wait_for_cited(source, chunk_id)   # #248: the passage itself renders after the page header
     rec.page = source
     body = source.locator("body").inner_text()
     rec.step(f"Click citation {chunk_id}", "a new tab with the source page for that chunk",

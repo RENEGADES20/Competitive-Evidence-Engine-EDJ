@@ -409,6 +409,13 @@ lose a passage each to trade chunks compared with the freeze (trade takes the do
 turns at k = 20); a fee question worded without any configured term or theme keyword does not
 see the brochures, and the term lists are the place to widen it. Evidence in the #179 PR.
 
+Amendment (#247 part 2, TL ruling D1 on the plan review, issue #247 comment 7037522138): a chunk id
+registered in `config/metric_definitions.yaml` (a definition `chunk_id`, its `see_also`, a
+`populations` source) is fetched by ID for the sub-questions of a registered-metric or ratio-input
+aspect even when its document type is `adv` (one curated Form ADV Part 1A figure crowds nothing out;
+for Schwab it is the only firm-filed figure). The tier-4 exclusion, the window, the date range and the
+entity / segment filters still apply to pinned ids.
+
 ## ADR-016: Slot order inside a firm: trade press last, a new document before a second chunk
 Status: Accepted (tech lead, 2026-11-17, #198 / #199); adds slot-order rules to `specs/retrieval.md`
 Context: the final snapshot `corpus-2026-11-17` adds 77 trade-press articles (tier 4, #57) and
@@ -534,6 +541,17 @@ passages are unchanged; it stays a mock FAIL (1/5) because its expected sources 
 press, and no MS, SCHW or RJF press chunk is on the theme (TL decision D-Q19). MS and RJF have no
 chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the floor. Evidence in
 the #205 PR.
+Amendment (#245, ADR-021 rule 6, competitors as real entities): with a plan (token mode), the theme
+peers of a home-firm market question (Q19) are sub-questions of their own, `SubQuestion(<peer>,
+aspect)` with role competitor and a full sub-question budget, in place of `peer_pass`'s two slots
+per peer. The safeguards stay: their firm pass is on the theme only (`Query.on_theme_only`, a SQL
+AND of the theme's keywords; no answer turn attached), Merrill only through BAC GWIM/Merrill, and
+the floor across the peers (FLOOR x the 2nd-best rank across the competitors of each aspect, applied
+after select; dropped chunk ids logged, a sub-question it empties reads as "no passages found").
+`Query.theme_peers` stays on the resolved query (coverage note, caveats, the eval's forbidden check);
+`peer_pass` runs only without a plan. Mock `corpus-2026-11-19`: Q19 gets 11 Schwab passages on the
+theme (was 2), Merrill's 4 on-theme chunks are cut by the floor, MS and RJF have none; it stays a
+mock FAIL (1/5, its expected competitor press is not on the theme in this corpus).
 
 ## ADR-019: Retrieval budget in tokens; candidate pool from a grid
 Status: Accepted (TL, #213, 2026-11-19); amended by ADR-021 (per-sub-question budget, see the amendment below); replaces ADR-013's passage count (k = 20, five firms 30)
@@ -617,6 +635,26 @@ reported per question. Unchanged: the pool rule (`POOL_PER_GROUP = 30` per firm 
 research selected first (THEME_K), Merrill counted once (ADR-013), tokens as characters / 4, and
 passage mode (`TOKEN_BUDGET = None`, an explicit k). Until #245 lands the code keeps the fixed total
 described above.
+Built (#245): `SUBQUESTION_TOKENS = 40000` (setting, env `SUBQUESTION_TOKENS`), chosen from a mock
+grid by the rule fixed in plans/0245-decompose.md before it ran: points 12000, 20000, 40000
+(`corpus-2026-11-19`, `--as-of 2026-11-17`, rule plan = one whole-question aspect per scoped firm);
+eligible: refusal gap 5/5 and keyed 22/22, 0 forbidden, no PASS -> FAIL, recall@pool and
+recall@final (all rows and tier 1) not below `evals/baselines/corpus-2026-11-19` (its 30
+questions); pick: highest tier-1 recall@final, then all rows, ties to the smaller value.
+
+  | SUBQUESTION_TOKENS | recall@pool | recall@final | tier 1 pool / final | PASS (30) | tokens median / max / total (35) | eligible |
+  |---|---|---|---|---|---|---|
+  | 12000 | 0.814 | 0.593 | 0.903 / 0.733 | 29 | 12,887 / 56,804 / 969,624 | no (recall@final) |
+  | 20000 | 0.814 | 0.640 | 0.903 / 0.790 | 29 | 20,222 / 85,444 / 1,346,283 | no (recall@final) |
+  | **40000** | 0.814 | 0.654 | 0.903 / 0.808 | 29 | 39,953 / 108,780 / 1,519,747 | **yes** |
+
+  At 40000 every one of the 30 baseline questions is UNCHANGED (status, recall, coverage); one-firm
+  questions return the same lists; multi-firm questions read more (Q15 60k -> 88k, Q22 60k -> 81k,
+  Q24 60k -> 76k), since each firm now has its own 40k. Research stays THEME_K passages, outside the
+  sub-question budgets. The grid runs the rule plan (one aspect per firm), so it cannot measure
+  multi-aspect totals; the #245 real planner check reports the totals of real plans. Until #247
+  replaces the single answer call, a temporary input guard trims that call's passages when they
+  pass the model's limit (specs/answer-citations.md, "Interim answer input guard").
 
 ## ADR-020: Question planner: one planner call splits a question into parts, each part searched
 Status: Accepted (TL, #214, 2026-11-19); amended by ADR-021 (no part cap, no fixed call count, see the amendment below); the first use of ADR-012's multi-call rule
@@ -770,6 +808,25 @@ range, keywords and doc-type scope stay SQL filters; the `neighbour_phrases` gua
 and filters stay out of the planner's schema; an unusable or failed planner call falls back to the rule
 plan, is logged, counts and is never re-rolled; passage mode is one whole-question part with no
 planner call. Until #245 lands the code keeps the part cap and the split described above.
+Built (#245): `PLANNER_VERSION = plan-v3`, tool `submit_plan` with the strict schema
+`{aspects: [{id, text, keyword_query, firms, metric, kind}]}` on the anthropic, openai and deepseek
+paths (metric: a registered key of config/metric_definitions.yaml or ""; kind: fact | series |
+recency | comparison); planner output cap 8000 (anthropic / openai; deepseek 8000 thinking off,
+64000 on, TL decision after Q19's planner was cut at 16000). `PLANNER_MAX_PARTS` is removed; no aspect cap, no merge, no dedupe. **Per-aspect firm
+subset** (TL decision D3, #245 plan review): an aspect may carry `firms`, a subset of the firms code
+scoped, filled only when the question itself asks the aspect of some of them (Q12: Schwab's
+acquisition aspects for SCHW only; Q15: "how an advisor-led model earns" for MS, EDJ, MER, RJF only);
+code maps names and aliases, drops firms outside the scope with a note, an emptied list means all
+scoped firms, and on a home-firm market question a list equal to the named firms counts as empty, so
+the competitors stay (Q19). The planner message labels each scoped firm by how code found it (named,
+through a peer phrase, competitor on the theme). Code expands each aspect over its firm set into
+`SubQuestion(entity, aspect)` (ids `<aspect>.<firm>`), each searched through `search_fn` (default
+fts.search; exp/hybrid passes its own) with its own budget (ADR-019 amendment); `corrective_search`
+is the re-search hook for #246. The rule plan is one whole-question aspect for every scoped firm.
+Calls stay planner 1 + answer 1 until #246 / #247; the answer call reads the evidence grouped by
+sub-question (prompt v4.1 unchanged) behind a temporary, logged input guard. Real check in the #245 PR.
+Amendment (#246, plan-v3.1): each aspect carries a required boolean `proxy` (a stand-in for the asked
+quantity: the closest disclosed figure, a numerator or denominator); see ADR-021's #246 amendment.
 
 ## ADR-021: Answer behavior decided by code; definitions and comparability; sub-question decomposition with no fixed call cap
 Status: Accepted (user decision 2026-11-19, #244); amends ADR-012, ADR-019 and ADR-020; built by #245
@@ -864,7 +921,7 @@ what enforces it and the questions it serves.
   |---|---|---|---|---|
   | Q24 | client assets per advisor; is the comparison valid | EDJ assets and advisors in the same 10-Q | `answer` (derived, 1d) + comparison claim + caveats | superseded |
   | Q25 | what each firm discloses on advisor pay | MS, EDJ, RJF, SCHW disclosures (#213, #215) | `answer` + named gaps | superseded |
-  | Q28 | EDJ and Merrill advisor attrition rates | EDJ discloses a rate; Merrill none | `answer` + Merrill gap + adjacent headcount change | superseded |
+  | Q28 | EDJ and Merrill advisor attrition rates | EDJ discloses a rate; Merrill none | `answer` + Merrill gap + adjacent headcount change; also adjacent (#247): `BAC-DECK-2025-investor-day#34`, "Lower outflows from advisor attrition 26% year over year" (an asset-outflow change, not an attrition rate) | superseded |
   | Q29 | what MS pays its advisors (grid, payout) | aggregate compensation expense only | `gap_with_adjacent` | unchanged |
   | Q30 | Merrill standalone profitability | GWIM only (a wider unit) | `gap_with_adjacent` | unchanged |
 
@@ -879,4 +936,103 @@ metric_definitions.yaml` gains `period`, `unit` and `basis` (#246) and only regi
 compared across firms. Until #245-#247 land, the code, `specs/ui.md`, README and
 `docs/ARCHITECTURE.md` describe the current flow (planner 1 + answer 1, prompt v4.1); the specs mark
 each ADR-021 item with the issue that builds it.
+Amendment (#246, map step; TL decisions on the #246 plan, issue #246 comments 7031387523 and
+7031488115): the rules above are built in `src/cee/answer/extract.py` and `matrix.py` with these
+settled details, which ADR-021's text did not fix:
+- **Proxy aspects.** Plan-v3 lists "the closest disclosed figure" as its own aspect. Plan-v3.1 marks
+  such aspects `proxy: true` (a stand-in: the closest figure, a numerator or denominator). A proxy
+  aspect never fires rule 1(a): its cells count as a related quantity for rule 1(b) and feed the
+  adjacent side, and get no gap of their own; they may be inputs of a within-firm derivation
+  (rule 1d), whose cell on a non-proxy aspect does fire 1(a). Extract-v1 states one proxy text: the
+  figure a proxy sub-question names, as the firm reports it, is a fact; a different measure
+  (employees, full-time equivalents, compensation expense, client firms) is `different_quantity`.
+  So Q29, Q30, Q33-Q35 keep `gap_with_adjacent`.
+- **Undecided behavior.** No cell holds the asked quantity and an extraction failed (an invalid
+  output or a failed call): the behavior is not decided (`behavior` None). The answer is shown plainly
+  as incomplete ("This answer is incomplete: ..."), never as `refuse` and never with "The database
+  does not support this today", because a failed extraction cannot show an absence.
+- **Derivations** (rule 1d) are proposed by the extraction model and accepted by code only for cited
+  fact items of the same firm with the same period and scope (the same unit for a sum or
+  difference) and figures found in their chunks; code computes the value.
+- **Retrieved set of a cell**: its sub-question's kept passages plus the chunks in its own candidate
+  pool that a sibling sub-question of the same firm kept; an id outside it is rejected and flagged
+  (never dropped silently). Rejection is per citation, not per output.
+- **Comparison-kind aspects** decide nothing and get no corrective re-search and no gap; the reduce
+  (#247) answers them (rule 4).
+- **Failed calls** (timeout, 5xx, connection, a 401 / 429 outside DeepSeek's ProviderStop, a 400)
+  make that call's cells `failed`; the eval saves a counted record, never called again; a 400 stops
+  an eval run after the round.
+- **`MAP` is off in the app until #247** shows the map's output (no user pays for calls whose output
+  is not shown); the eval turns it on with `--map` / `--map-only`; #247 flips the default.
+- The map call's output cap joins its own cache key; `llm.request_version` is unchanged.
+- **Invalid-output rule, JSON parsing** (TL decision on #246 Q24, after the real check): DeepSeek's
+  strict mode sometimes returns a complete JSON object followed by stray closing braces. One helper
+  (`llm.loads_object`, used by the map, planner and answer paths on DeepSeek and OpenAI) takes the
+  first complete object (`json.JSONDecoder().raw_decode`) and accepts it only when everything after it
+  is whitespace and `}` / `]`; the record carries the flag `trailing_braces`. Any other trailing text
+  stays invalid, and the object still goes through the strict schema validation and every code check
+  (chunk ids, quotes, numbers). Saved records are re-checked under this rule at 0 calls.
+
+Amendment (#247, reduce step; TL decisions on the #247 plan, issue #247 comments 7033895178,
+7033988541 and the TL approval): rules 1, 3, 4 and 5 are completed in `src/cee/answer/reduce.py`
+(prompt v5) with these settled details:
+- **Answers built by code, 0 calls**: `refuse` (rule 1c), a forecast request (rule 1e), an undecided
+  matrix and any matrix with no citable item (in practice a normative question with no fact:
+  `answer_with_boundary` with the hand-off and the gaps). Undecided is shown with a code-only behavior
+  value **`incomplete`** (no model schema offers it); the incomplete note is also shown on a boundary
+  answer when an extraction failed.
+- **The reduce schema is constrained by the matrix**: `behavior` is the one decided value, `part_id`
+  and `chunk_ids` are enums of the matrix's cell / aspect ids and citable chunk ids (a field over the
+  enum limits falls back to a plain string; the code check stays). Code checks citations against the
+  matrix only (`outside_matrix`); the citable passages are the retrieval hits plus the corrective
+  re-search hits, logged with their origin.
+- **Rule 2 in the number check**: a figure equal to an accepted derivation's value is allowed only when
+  the claim cites all its inputs (`computed`).
+- **Rule 3**: extract-v1.1 labels the asked quantity for other periods a fact (partial coverage);
+  code names the asked periods a firm does not cover ("last / past N quarters / years" only; a time
+  window gives none; complete years only, matched by year); code flags an asked figure placed as
+  adjacent and a different quantity placed as a claim.
+- **Rule 4**: one comparison claim per comparison aspect, else the code gap "No cited claim answers
+  the comparison asked: <aspect>."; comparison and proxy parts count as covered by their aspect's
+  claim, item or gap.
+- **Rule 5**: the why-line is inside the claim ("Why it might matter: ...", "the source does not say"
+  allowed); with the question's own window or a recency aspect code re-sorts newest first by the cited
+  documents' published date; an Ask-page date filter alone changes neither.
+- **The comparability mark "definition unverified"** shows only on metric aspects (series, proxy, or
+  holding a derived cell); scope labels are normalised before derivations compare them.
+- **`MAP` is on by default**; `MAP=off` keeps the legacy single answer call (prompt v4.1) for
+  comparison only; the eval maps unless `--legacy`. The #245 interim answer input guard is removed:
+  an input over a provider's window is not sent, never trimmed.
+- After a 400 in an eval run no further call is made (round 2 and the reduce included).
+
+Amendment (#247 part 2; plan `plans/0247-reduce-2.md`, TL approval after review rounds 1-2, issue #247
+comments 7037522138 and 7037650142; prompt v5.1):
+- **Rule 2, populations**: a within-firm ratio (or sum, difference) is computed only when both inputs
+  carry the same registered population (`config/metric_definitions.yaml` `populations`: what each
+  input covers, in the firm's own words, with the chunk that states it and its date `valid_from`) and
+  neither figure is approximate or a bound (matched next to the figure). Code tags each input item from
+  the entry whose phrase stands nearest before its figure (when no phrase stands before it, the whole quote
+  and the item text are read: "We had 8,943 ... financial advisors"), only when that entry's chunk is in the input
+  cell's retrieved set. The population source chunks are pinned into the sub-questions that can hold
+  an input, are citable, and every derivation proposal ends in one claim per firm saying whether the
+  figure is computable, citing both inputs and the sources and quoting them (code writes it when the
+  reduce does not; a source dated in another quarter than an input is labelled with its date).
+- **Series coverage**: series aspects with asked periods get a per-period sub-search (one FTS search
+  per asked period, a hard filter on the document's period end, kept chunks excluded before the cut);
+  registered definition chunks are pinned (ADR-015 amendment above). Both add to the sub-question's
+  passages; the main search lists are unchanged.
+- **Basis breaks**: a firm's series whose items cover different scopes (or populations) gets a code
+  caveat listing each basis with its periods; the reduce states each basis apart.
+- **Noise**: code gaps only inside an aspect's planned firm subset (`asked_firms`, before the
+  home-firm widening); empty competitor cells fold into one gap per aspect; duplicate claims (same
+  chunks, the shorter held in the longer) are removed after the part check, then the comparison and
+  computability checks run again; why-lines only on recency / window items, written from the cited
+  passage's context, and a why-line that restates its claim is replaced by "the source does not say"
+  (the model's sentence logged); without a window only the recency items are re-sorted newest first.
+- **Revision after blind scoring** (prompt v5.2, TL comments on #247): a why-line is the source's own stated
+  context or cited factual background from another retrieved passage; "the source does not say" only when
+  no passage gives either, and code replaces only a restatement citing nothing beyond its item. Code
+  inserts, from config and the matrix, each firm's definition (or that it publishes none) for a registered
+  metric, a definition-wording change across one firm's documents, and where each firm's disclosed series
+  starts and stops; a firm with only a different quantity has a gap naming that closest figure.
 

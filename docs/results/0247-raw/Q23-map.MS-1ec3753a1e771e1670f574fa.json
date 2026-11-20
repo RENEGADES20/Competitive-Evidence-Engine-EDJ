@@ -1,0 +1,150 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.MS",
+  "round": 1,
+  "entity": "MS",
+  "cells": [
+    "a1.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "MS-DECK-2026-strategic-update#32",
+    "MS-SUPP-2026Q3#38",
+    "MS-10K-2025#168",
+    "MS-10Q-2026Q1#52",
+    "MS-TR-2026Q2#41",
+    "MS-PR-2026-04-15-01#5",
+    "MS-DECK-2026-strategic-update#31",
+    "MS-SUPP-2020Q4#3",
+    "MS-10K-2025#44",
+    "MS-10Q-2026Q2#61",
+    "MS-TR-2026Q3#17",
+    "MS-PR-2026-10-14-01#8",
+    "MS-DECK-2026-strategic-update#28",
+    "MS-SUPP-2026Q2#36",
+    "MS-10K-2025#193",
+    "MS-10Q-2025Q3#113",
+    "MS-TR-2025Q1#2",
+    "MS-PR-2026-07-15-01#8",
+    "MS-SUPP-2026Q1#61",
+    "MS-10Q-2025Q2#112",
+    "MS-TR-2026Q1#24",
+    "MS-PR-2026-01-15-01#12",
+    "MS-SUPP-2025Q4#49",
+    "MS-10Q-2026Q1#73",
+    "MS-PR-2026-04-15-01#8",
+    "MS-SUPP-2020Q4#1",
+    "MS-10Q-2026Q1#53",
+    "MS-TR-2025Q3#29",
+    "MS-PR-2026-10-14-01#5",
+    "MS-SUPP-2020Q4#4",
+    "MS-10Q-2026Q2#120",
+    "MS-TR-2024Q4#82",
+    "MS-PR-2026-04-15-01#14",
+    "MS-SUPP-2026Q1#14",
+    "MS-10Q-2025Q2#412",
+    "MS-TR-2025Q4#71",
+    "MS-PR-2026-07-15-01#14",
+    "MS-SUPP-2026Q2#16",
+    "MS-10Q-2026Q2#94",
+    "MS-TR-2025Q2#18",
+    "MS-PR-2026-07-15-01#12",
+    "MS-SUPP-2026Q3#16",
+    "MS-10Q-2025Q2#86",
+    "MS-TR-2026Q2#14",
+    "MS-PR-2026-01-15-01#18",
+    "MS-SUPP-2025Q4#14",
+    "MS-10Q-2025Q3#85",
+    "MS-TR-2026Q3#18",
+    "MS-PR-2026-01-15-01#11",
+    "MS-SUPP-2026Q1#15",
+    "MS-10Q-2025Q3#57",
+    "MS-TR-2026Q3#36",
+    "MS-PR-2026-10-14-01#6",
+    "MS-SUPP-2026Q2#17",
+    "MS-TR-2026Q1#44",
+    "MS-SUPP-2026Q3#17",
+    "MS-TR-2025Q2#30",
+    "MS-SUPP-2025Q4#37",
+    "MS-TR-2024Q4#74",
+    "MS-TR-2025Q3#57",
+    "MS-TR-2026Q1#9",
+    "MS-TR-2026Q2#3",
+    "MS-TR-2025Q2#3",
+    "MS-TR-2024Q4#10",
+    "MS-TR-2025Q4#8",
+    "MS-TR-2025Q3#48"
+  ],
+  "at": "2026-11-20T03:32:30.929817",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 21646,
+    "output_tokens": 4549,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 20366,
+    "reasoning_tokens": 4102,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 52.5,
+  "tokens_per_s": 86.65,
+  "reasoning_content": "Let me analyze this task. I need to extract information about Morgan Stanley's advisor headcount over the last eight quarters.\n\nThe sub-question is a1.MS: Advisor headcount over the last eight quarters. This is a series metric advisor_headcount.\n\nI need to look through the passages for anything about advisor headcount / financial advisor count / wealth management representatives.\n\nKey passages:\n- MS-SUPP-2020Q4#1: \"Wealth Management representatives 15,950 15,469 15,468\" for Dec 31, 2020, Sep 30, 2020, Dec 31, 2019. This is advisor headcount but for 2020, not the last eight quarters. The question asks \"over the last eight quarters\" - relative to the latest data in passages (up to 2026 Q3). So 2020 data is a fact but for a much earlier period, not different_quantity. Actually, the instructions say: \"The asked quantity for periods other than those asked (older or later) is also a fact, for the periods it covers: the item's period says which; it is never different_quantity.\" So this is a fact, but the period is older (2020). However, the sub-question asks \"last eight quarters\" which would be roughly 2025 Q1 through 2026 Q3 (or similar). The 2020 data is for periods other than those asked. So label fact with period 2020-12-31 etc.\n\nWait, but the question says \"Advisor headcount over the last eight quarters.\" The last eight quarters based on the latest document (2026 Q3) would be 2025 Q1 through 2026 Q3? Let me compute: 2026 Q3 is the latest (Sep 30, 2026). Last eight quarters ending 2026 Q3: 2025 Q1 (Mar 31 2025), 2025 Q2 (Jun 30 2025), 2025 Q3 (Sep 30 2025), 2025 Q4 (Dec 31 2025), 2026 Q1 (Mar 31 2026), 2026 Q2 (Jun 30 2026), 2026 Q3 (Sep 30 2026). That's 7 quarters. Hmm, eight quarters would include 2024 Q4 (Dec 31 2024). Actually last eight quarters from Sep 30 2026: Q4 2024 through Q3 2026.\n\nAnyway, I need to find advisor headcount in the passages. Let me search.\n\nThe passages mention \"Wealth Management representatives\" in MS-SUPP-2020Q4#1 with figures for Dec 2020, Sep 2020, Dec 2019. That's the only direct headcount figure.\n\nOther passages mention \"financial advisors\" but not counts. E.g., MS-TR-2026Q3#36 mentions \"adviser retention rate is above 99%\" - not a headcount. MS-TR-2024Q4#10 \"team of world-class financial advisors\" no number.\n\nThe passages contain \"stock plan participants\" which is a different metric (workplace participants, not advisors). Not advisor headcount.\n\nSo for the asked quantity (advisor headcount over last eight quarters), the passages do not state it. The only direct headcount is \"Wealth Management representatives\" for 2020 and 2019, which is the asked quantity but for older periods.\n\nIs \"Wealth Management representatives\" the same as advisor headcount? In Morgan Stanley terminology, \"Wealth Management representatives\" refers to financial advisors. This is the asked quantity (advisor headcount). So it's a fact for the periods it covers (2020 Q4, 2020 Q3, 2019 Q4), but those are older periods, not the last eight quarters.\n\nThe instruction: \"The asked quantity for periods other than those asked (older or later) is also a fact, for the periods it covers: the item's period says which; it is never different_quantity.\"\n\nSo I should include it as a fact with the periods 2020-12-31, 2020-09-30, 2019-12-31.\n\nBut wait - is \"Wealth Management representatives\" the same quantity as \"advisor headcount\"? The sub-question is \"Advisor headcount\". The metric name advisor_headcount. In Morgan Stanley, they call them \"Wealth Management representatives\" (in 2020). I believe it's the same measure. So fact.\n\nHowever, is there any data for the last eight quarters? Let me check the supplements from 2025Q4, 2026Q1, 2026Q2, 2026Q3. These show \"Advisor-led channel\" but they list \"Advisor-led client assets\", \"Fee-based client assets\", \"Fee-based asset flows\", \"Fee-based assets as %\" - no headcount line. The newer supplements apparently dropped \"Wealth Management representatives\" from the page 8 table. So the firm does not report advisor headcount in these recent quarters.\n\nSo the answer: The passages don't show advisor headcount for the last eight quarters. There is an older figure (2020) which is a fact for those periods.\n\nShould I label not_found or fact? The sub-question asks advisor headcount over last eight quarters. I found the asked quantity but for older periods. The instruction says that's a fact. So I include those items.\n\nBut do I also need to indicate that for the last eight quarters, it's not found? The label is at the cell level, not item level. Hmm. The cell has one label. If I have items (facts for older periods), the label is \"fact\". But then the cell is for the sub-question asking last eight quarters; the older facts are \"fact for the periods it covers.\"\n\nActually re-reading: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods...); the item says what it covers (period, scope). The asked quantity for periods other than those asked (older or later) is also a fact, for the periods it covers: the item's period says which; it is never different_quantity.\"\n\nSo yes, the cell should be labeled \"fact\" and include items for the older periods (2020). But should I also note that the last eight quarters are not found? The label is one per cell. If I have fact items for older periods, label is fact. But the sub-question specifically asks \"over the last eight quarters\" and those older periods don't satisfy it. \n\nHmm, but the instructions seem designed for series extraction where code later handles comparison. The cell should return what's available. The label \"fact\" with items covering the periods available (older). The reason can mention that the passages only provide the metric for 2020, not the last eight quarters.\n\nActually, wait. Let me reconsider. Is \"not_found\" more appropriate because the passages say nothing about the last eight quarters? But the instruction explicitly says older periods of the asked quantity are still fact. So I should use fact.\n\nLet me look for any other headcount-ish figures in the passages. The \"number of stock plan participants\" is a different quantity (workplace participants, not advisors). That would be different_quantity if I wanted to include it, but it's not related to advisor headcount in the sense of a wider unit. Actually, stock plan participants are workplace channel participants, not advisors. It's a different measure entirely. The instruction says different_quantity includes \"a different measure (all employees or full-time equivalents for advisors...)\". Stock plan participants are not advisors at all, so it's arguably not_found rather than different_quantity. But there's also \"Number of participants (in millions)\" for workplace channel. These are workplace participants, not advisor headcount.\n\nActually the question is about advisor headcount (financial advisors / wealth management representatives). Stock plan participants are clients/employees of corporate clients, not advisors. So not relevant. I won't include them as different_quantity because they're not a related measure of advisors.\n\nWhat about \"20 million wealth clients\" - clients, not advisors. Not relevant.\n\n\"adviser retention rate is above 99%\" - retention rate, not headcount. Not relevant.\n\n\"our financial advisers\" mentions - no count.\n\nSo the only direct advisor headcount figures are in MS-SUPP-2020Q4#1.\n\nLet me carefully extract those items:\n- \"Wealth Management representatives 15,950\" at Dec 31, 2020\n- \"Wealth Management representatives 15,469\" at Sep 30, 2020\n- \"Wealth Management representatives 15,468\" at Dec 31, 2019\n\nThe table header: \"Quarter Ended ... Dec 31, 2020 Sep 30, 2020 Dec 31, 2019\". So yes.\n\nUnit: \"Wealth Management representatives\" (or \"financial advisors\"). The sub-question metric is advisor_headcount. I'll use unit \"Wealth Management representatives\" as printed.\n\nPeriod: \n- Dec 31, 2020 \u2192 2020-12-31\n- Sep 30, 2020 \u2192 2020-09-30\n- Dec 31, 2019 \u2192 2019-12-31\n\nScope: \"Wealth Management\" segment? The table is \"Wealth Management Financial Information and Statistical Data\". The row \"Wealth Management representatives\" is under Wealth Management metrics. Scope: \"Wealth Management\".\n\nDefinition: The passage doesn't give a definition of \"Wealth Management representatives\" in this chunk. Actually chunk MS-SUPP-2020Q4#3 defines \"Advisor-led client assets represents client assets in accounts that have a Wealth Management representative assigned\" but not the count itself. There's no definition of what constitutes a Wealth Management representative. So definition \"\".\n\nQuote: \"Wealth Management representatives 15,950 15,469 15,468\" - but the instruction says quote supporting each item. I can quote \"Wealth Management representatives 15,950 15,469 15,468 3% 3%\". For each item I'd quote the relevant part. The quote should be exact words. I'll quote the whole line for each item? That might be redundant but fine. Better: quote the specific portion. The passage text: \"Wealth Management representatives 15,950 15,469 15,468 3% 3%\". \n\nFor item 1 (Dec 31, 2020, 15,950): quote \"Wealth Management representatives 15,950 15,469 15,468\". Hmm, that includes all three. Fine, at most 300 chars.\n\nActually I could quote just \"Wealth Management representatives 15,950\" - but the exact words in the passage are in a table row, not necessarily contiguous in that order. The row shows \"Wealth Management representatives 15,950 15,469 15,468\". The value 15,950 is in the Dec 31, 2020 column. Quoting \"Wealth Management representatives 15,950 15,469 15,468\" is accurate.\n\nLet me also double-check whether there is any mention of advisor headcount elsewhere, e.g., \"15,000\" or \"16,000\" in recent transcripts. Search mentally: no.\n\nMS-SUPP-2025Q4#14 shows advisor-led channel metrics but no headcount. MS-SUPP-2026Q1#14, Q2#16, Q3#16 similarly no headcount row.\n\nSo the conclusion: fact for older periods (2020), and the last eight quarters not found.\n\nWait, but the label choice: the cell is for sub-question a1.MS \"Advisor headcount over the last eight quarters.\" If I label \"fact\" but all items are 2019-2020, that seems odd because it doesn't answer the last eight quarters. But per instructions, older periods of asked quantity are fact. I'll label fact.\n\nAlternatively, should the label be \"not_found\" because no passage states it for the last eight quarters, but I still include the older items? The schema allows items only for fact and different_quantity. If label is not_found, items should be empty. That would lose the older facts. The instruction says older periods are fact, so label fact with those items.\n\nHmm, let me re-read more carefully:\n\n\"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods, a narrower group or sample, one of several figures); the item says what it covers (period, scope). The asked quantity for periods other than those asked (older or later) is also a fact, for the periods it covers: the item's period says which; it is never different_quantity.\"\n\nYes, so the older figures are facts. Label fact. The items cover 2020 and 2019.\n\nShould I mention in reason that the last eight quarters are not reported? I can say: \"The passages report 'Wealth Management representatives' only for 2020 and 2019; the recent supplements list advisor-led channel metrics but omit advisor headcount.\"\n\nActually, I should consider whether to include a not_found note. The schema has a single label per cell. Since I have fact items, label is fact. The reason can clarify.\n\nBut wait, is there a possibility the intended answer is \"not_found\" because the firm doesn't report advisor headcount in the last eight quarters? The instructions for not_found: \"the passages say nothing about it.\" But they do say something about it (older periods). So fact with older periods is the right label per instructions.\n\nLet me also consider: \"different_quantity\" - no, because the older figures ARE the asked quantity.\n\nLet me also check the definition. The firm's own definition of \"Wealth Management representatives\" - I don't see a definition in the passages. There's \"Advisor-Led Client Assets represent client assets in accounts that have a WM representative assigned\" but that defines advisor-led client assets, not the representative count. No definition for headcount. So definition \"\".\n\nNow, do I need to compute a derivation? No, because I'm labeling fact, not not_disclosed. The derivation field should be empty operation \"\" and inputs [].\n\nLet me construct the three items.\n\nItem 0:\n- text: \"Morgan Stanley reported Wealth Management representatives of 15,950 at December 31, 2020.\"\n- quote: \"Wealth Management representatives 15,950 15,469 15,468\"\n- value: \"15,950\"\n- unit: \"Wealth Management representatives\"\n- period: \"2020-12-31\"\n- scope: \"Wealth Management\"\n- definition: \"\"\n- chunk_ids: [\"MS-SUPP-2020Q4#1\"]\n\nItem 1:\n- text: \"Morgan Stanley reported Wealth Management representatives of 15,469 at September 30, 2020.\"\n- value: \"15,469\"\n- period: \"2020-09-30\"\n\nItem 2:\n- text: \"Morgan Stanley reported Wealth Management representatives of 15,468 at December 31, 2019.\"\n- value: \"15,468\"\n- period: \"2019-12-31\"\n\ndiffers_because: \"\" (for fact)\nreason: \"The passages report the asked advisor-headcount metric ('Wealth Management representatives') only for 2019-2020; recent quarterly supplements list advisor-led channel asset metrics but do not report advisor headcount for the last eight quarters.\"\n\nHmm wait, should I include a not_found/not_disclosed signal about the last eight quarters? The cell can only have one label. Given older facts exist, label fact. The reason will note the recent periods aren't reported.\n\nActually, let me reconsider once more whether these older figures are \"the asked quantity.\" The sub-question says \"Advisor headcount over the last eight quarters.\" The metric is advisor_headcount. \"Wealth Management representatives\" is Morgan Stanley's term for financial advisors. Is that definitely the same? In 2020 MS reported \"Wealth Management representatives\" as their advisor count. Later, they may use \"financial advisors\" or \"advisors.\" I'm fairly confident \"Wealth Management representatives\" = financial advisors = advisor headcount. So same quantity.\n\nThe instruction also warns: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" Is \"Wealth Management representatives\" the named quantity \"advisor headcount\"? I think yes, it's the firm's name for advisors. The firm's own definition... but no definition given. Still, \"Wealth Management representatives\" is clearly the advisor count (advisors are \"representatives\"). I'll treat as fact.\n\nActually, let me be careful. Could \"Wealth Management representatives\" include non-advisor representatives? Unlikely; historically MS \"Wealth Management representatives\" = financial advisors. I'll treat as fact.\n\nNow, should I also consider the definition from MS-DECK-2026-strategic-update#31: \"Advisor-Led Households represent the total number of households that include at least one account with Advisor-Led Clients Assets. Advisor-Led Client Assets represent client assets in accounts that have a WM representative assigned.\" This defines advisor-led assets, not headcount. Not relevant for the headcount definition.\n\nLet me finalize.\n\nActually, I want to double-check the quote requirement: \"quote: the exact words of the passage that support it, copied, at most about 300 characters\". The table row in chunk MS-SUPP-2020Q4#1 is:\n\n\"Wealth Management representatives 15,950 15,469 15,468 3% 3%\"\n\nI'll quote that. Good.\n\nFor each item, I could quote the full line. That's fine.\n\nLet me also verify the chunk id: \"MS-SUPP-2020Q4#1\". Yes.\n\nLet me write the JSON.\n\nOne more consideration: The instruction says \"a series is one item per period.\" So three items for three periods. Good.\n\nAlso for the \"scope\" field: The figure is within the Wealth Management segment. The passage's table is \"Wealth Management Financial Information and Statistical Data\" and the row is \"Wealth Management representatives.\" So scope \"Wealth Management\" is appropriate. Actually the whole firm's advisors are all in Wealth Management, so scope could be \"\" for whole firm? But the table is clearly the Wealth Management segment. I'll put \"Wealth Management\" to be precise as the passage says.\n\nLet me now also think: is there any possibility the \"last eight quarters\" should be interpreted relative to the question's context, and the 2020 data is too old to be useful? The instruction explicitly handles older periods as fact. So fine.\n\nI'll produce the final tool call with one cell.\n\nLet me write the reason concisely: \"The passages state the asked metric ('Wealth Management representatives') only for 2020 and 2019; no passage reports advisor headcount for the last eight quarters, so I include the older-period facts.\"\n\ndiffers_because: \"\" for fact.\n\nderivation: operation \"\", inputs [].\n\nLet me finalize the JSON structure.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MS",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Morgan Stanley reported Wealth Management representatives of 15,950 at December 31, 2020.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468",
+            "value": "15,950",
+            "unit": "Wealth Management representatives",
+            "period": "2020-12-31",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          },
+          {
+            "text": "Morgan Stanley reported Wealth Management representatives of 15,469 at September 30, 2020.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468",
+            "value": "15,469",
+            "unit": "Wealth Management representatives",
+            "period": "2020-09-30",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          },
+          {
+            "text": "Morgan Stanley reported Wealth Management representatives of 15,468 at December 31, 2019.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468",
+            "value": "15,468",
+            "unit": "Wealth Management representatives",
+            "period": "2019-12-31",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state the asked advisor-headcount metric ('Wealth Management representatives') only for 2020 and 2019; no passage reports it for the last eight quarters, so the older-period facts are included.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

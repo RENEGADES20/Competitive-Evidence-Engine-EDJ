@@ -1,0 +1,81 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "planner_version": "plan-v3",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-19T22:44:28.204403",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1398,
+    "output_tokens": 3093,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 1398,
+    "reasoning_tokens": 2805,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 35.31,
+  "tokens_per_s": 87.6,
+  "reasoning_content": "We need answer by submitting plan. Need parse question. \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\" Firms all five, each aspect for all firms. Need list aspects literally, in order question asks them. It asks: define and report advisor headcount, and what each definition includes or excludes. So aspects likely:\n1. How each defines advisor headcount (definition)\n2. How each reports advisor headcount (reported metric/disclosure)\n3. What each definition includes\n4. What each definition excludes\n\nBut need think about the instruction: an aspect is one thing question asks about. List every one in order. \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\" This asks two main things joined by \"and\": define, report. Then \"include or exclude\" maybe two asks (includes, excludes). Could split into: definition; reporting; inclusion; exclusion. But \"define and report advisor headcount\" maybe one aspect? The instruction says each \"and\" joining two asks, each metric or dimension. So define and report are two asks -> two aspects. \"what does each definition include or exclude\" has \"include or exclude\" perhaps two asks? It's a list of include and exclude; instruction says each item of a list. \"include or exclude\" is an alternative, but asks what definition includes or excludes. Could be one aspect? Hmm.\n\nNeed be careful: The question is \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\" The aspects:\n- how each defines advisor headcount\n- how each reports advisor headcount\n- what each definition includes\n- what each definition excludes\n\nMaybe also advisor headcount as a metric? The question asks \"define and report advisor headcount\" so the advisor headcount figure itself. Metric field: advisor_headcount for aspects that ask exactly for that registered metric. The reporting aspect likely asks for advisor headcount metric exactly. Could set metric advisor_headcount for \"report advisor headcount\" and maybe definition? Metric is \"one of advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric, else ''.\" Definition aspect isn't the metric itself? It asks how define advisor headcount; likely metric advisor_headcount? Hmm. The metric field is for aspects asking exactly for that registered metric. \"report advisor headcount\" asks for that metric. \"define advisor headcount\" also exactly the metric advisor headcount, but the aspect is about definition not the figure. The instruction says metric: advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric. I'd set metric advisor_headcount for the \"report advisor headcount\" aspect because it asks reporting the metric. For definition include/exclude maybe maybe metric advisor_headcount too? It's about advisor headcount definition, so yes maybe. But \"what each definition includes or excludes\" is not the metric; it's about definition components. Hmm.\n\nLet's read the prompt: \"List the aspects literally. An aspect is one thing the question asks about. List every one, in the order the question asks them: - each item of a list, each 'and' joining two asks, each metric or dimension the question names; - what the question asks without naming it. ... metric: one of advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric, else ''.\" So question asks \"advisor headcount\" as a named metric. Aspects that ask for exactly that registered metric = \"report advisor headcount\" and perhaps \"define advisor headcount\" includes the metric term. But I'd assign metric to reporting aspect, maybe not to definition/inclusion/exclusion. Actually define advisor headcount is exactly about advisor_headcount metric. Hmm. The metric field identifies that aspect asks for the registered metric, not just any metric. The definition of advisor headcount is exactly the metric definition. Could set metric advisor_headcount for definition and report? But the instruction says \"when the aspect asks for exactly that registered metric\" not \"about that metric\". The definition aspect doesn't ask for the headcount number but how they define it. Reporting aspect asks for how they report the number, likely the actual headcount figure. I'd set metric advisor_headcount only for report aspect? Let's think of examples. If question: \"What is each firm's advisor headcount and how do they define it?\" Two aspects: advisor headcount (metric advisor_headcount), definition (metric \"\"). Here \"report advisor headcount\" is the metric. \"define advisor headcount\" is not the number. So metric likely only report aspect.\n\nBut \"How does each define and report advisor headcount\" could be one aspect? The phrase \"define and report\" has two asks, so split.\n\nThen include/exclude: \"what does each definition include or exclude?\" This is about definition components. Could split into includes and excludes? The word \"or\" is alternative, but the question asks both include and exclude. The instruction says \"each item of a list, each 'and' joining two asks\". \"include or exclude\" not \"and\", but it's a two-sided question; likely two aspects: what the definition includes, what it excludes. But maybe they are so closely paired that one aspect \"what the definition includes or excludes\" would suffice? The instruction warns: \"Never merge two aspects into one, never drop one, and do not stop at any number: a question with twelve asks has twelve aspects.\" So include and exclude are two asks. Should split into two aspects.\n\nHowever, \"what each definition includes or excludes\" could also be rephrased as one aspect: scope of definition (included and excluded advisor categories). But literal reading: include or exclude = two asks. The instruction explicitly says each item of a list. \"include or exclude\" is a list of two alternatives. I should split: inclusion and exclusion.\n\nAlso possibly the question asks \"How does each of the five define and report advisor headcount\" and \"what does each definition include or exclude\" is further explanation of definition, so aspects: definition, reporting, inclusions, exclusions. Four aspects.\n\nBut could \"how each reports advisor headcount\" include where reported (which filings/disclosures) and the reported number? The aspect text should capture. The code searches filings/calls etc. We should have aspect \"How each firm reports advisor headcount\" with keyword_query about \"advisor headcount\", \"financial advisors\", \"total advisors\", disclosures. metric advisor_headcount.\n\n\"what each definition includes\" keyword: \"includes\", \"included\", \"consists of\", \"comprised of\", \"advisor headcount includes\", \"defined as\". Hmm keywords need 5-25 words documents use. No firm names. We'll craft.\n\nNeed firms: for all aspects, leave empty because question asks each of the five, all firms. So firms: [].\n\nNeed kind: fact (disclosed fact/figure), series, recency, comparison. For definition aspects: fact. Reporting advisor headcount: could be fact or series? The question says \"how ... report advisor headcount\" maybe asks reporting practice and possibly the figure. Since no periods, fact. Include/exclude fact. But maybe reporting aspect asks for the headcount figure (a disclosed fact) - fact. Could be series if over several periods? No.\n\nNeed id short labels. We'll submit.\n\nNeed ensure no firm names in aspect text/words. Good.\n\nLet's craft keyword queries:\n\nAspect 1 id: \"definition_advisor_headcount\". text: \"How each firm defines advisor headcount.\" keyword_query: \"advisor headcount definition define financial advisor total advisors how counted methodology\". Need 5-25 words. Could include \"defines\", \"definition\", \"advisor headcount\", \"financial advisors\", \"total advisors\", \"wealth management advisors\", \"employee advisors\", \"independent advisors\". No firm names. Good.\n\nBut text should not contain firm names. Fine.\n\nAspect 2 id: \"reporting_advisor_headcount\". text: \"How each firm reports advisor headcount.\" keyword_query: \"advisor headcount reported financial advisors total number of advisors disclosures quarterly annual headcount\". Metric advisor_headcount. kind fact.\n\nAspect 3 id: \"included_in_definition\". text: \"What each firm's advisor headcount definition includes.\" keyword_query: \"advisor headcount includes included comprised of consists of financial advisors employee advisors independent advisors registered representatives\". kind fact.\n\nAspect 4 id: \"excluded_from_definition\". text: \"What each firm's advisor headcount definition excludes.\" keyword_query: \"advisor headcount excludes excluded not included does not include excludes support staff trainees retirement plan advisors\". kind fact.\n\nNeed consider maybe \"each definition includes or excludes\" could also refer to inclusion/exclusion in the reported headcount. Fine.\n\nNeed maybe aspect for \"how each of the five define and report advisor headcount\" includes \"advisor headcount\" itself (the number) as an aspect separate from reporting? The question asks \"define and report advisor headcount\" - \"report advisor headcount\" is the metric. Good.\n\nCould there be an aspect of comparison: \"whether definitions can be set side by side\" etc? The question \"How does each ... -- and what does each definition include or exclude?\" It asks across firms, but not explicitly a comparison judgement. The instruction says a judgement the question asks for across firms or periods (whether figures can be set side by side, which firm says the most) is its own aspect of kind comparison. Does this question ask to compare definitions? \"How does each of the five define...\" implies across firms, but not asking which says most or whether comparable. But a user likely wants a side-by-side comparison of definitions. Is that an aspect? The prompt says \"a judgement the question asks for across firms or periods ... is its own aspect of kind comparison.\" Does \"how does each define and report ... and what does each include or exclude\" ask for a comparison? It asks for each firm's definition, so the answer inherently compares. But does it ask \"whether figures can be set side by side\"? Not explicitly. I think no extra comparison aspect unless question explicitly asks \"which firm says the most\" or \"are they comparable\". So not add.\n\nBut maybe \"what does each definition include or exclude\" is an aspect of comparison because comparing definitions. No, the comparison is across firms but the aspect is fact for each. The code handles firms empty all.\n\nLet's verify no merging. We have four aspects. Could include \"where each firm reports advisor headcount\" and \"the headcount figure each reports\" separate? The question says \"define and report advisor headcount\". \"Report\" could ask how they report (disclosure format/venue) and the number itself. The instruction: \"what the question asks without naming it\" could include where they disclose. But \"report advisor headcount\" primarily asks the metric reported. Should we split into \"how each reports advisor headcount\" and \"the advisor headcount figure each reports\"? The metric field suggests the actual metric is asked. The phrase \"define and report advisor headcount\" could be two asks: define the metric, report the metric (the number). If we split \"report\" into how and figure, that may be over-splitting? The prompt says don't merge, but also don't add an aspect not asked. \"report advisor headcount\" is one ask. The actual number is exactly the metric. I'll keep as one aspect with metric advisor_headcount.\n\nMaybe \"How does each of the five define and report advisor headcount\" also asks what the advisor headcount metric is, i.e., the reported figure. The metric field for that. Good.\n\nNeed ensure keyword queries are 5-25 words each. Count words.\n\nAspect1 keyword: advisor(1) headcount(2) definition(3) define(4) financial(5) advisor(6) total(7) advisors(8) how(9) counted(10) methodology(11) includes? Maybe 11. Could add \"reported\" but okay. 5-25.\n\nAspect2: advisor(1) headcount(2) reported(3) financial(4) advisors(5) total(6) number(7) of(8) advisors(9) disclosures(10) quarterly(11) annual(12) headcount(13). Good.\n\nAspect3: advisor(1) headcount(2) includes(3) included(4) comprised(5) of(6) consists(7) of(8) financial(9) advisors(10) employee(11) advisors(12) independent(13) advisors(14) registered(15) representatives(16). Good.\n\nAspect4: advisor(1) headcount(2) excludes(3) excluded(4) not(5) included(6) does(7) not(8) include(9) excludes(10) support(11) staff(12) trainees(13) retirement(14) plan(15) advisors(16). Good.\n\nNeed maybe no dates, no firm names. Fine.\n\nFirms: [] for all.\n\nMetric: \"\" for def/include/exclude; \"advisor_headcount\" for reporting.\n\nKind: fact for all. But maybe reporting could be fact. Yes.\n\nNeed call submit_plan once with aspects array. No answer. Ensure valid JSON and required fields.\n\nLet's produce.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "definition_advisor_headcount",
+        "text": "How each firm defines advisor headcount.",
+        "keyword_query": "advisor headcount definition define financial advisor total advisors how counted methodology",
+        "firms": [],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "reporting_advisor_headcount",
+        "text": "How each firm reports advisor headcount.",
+        "keyword_query": "advisor headcount reported financial advisors total number of advisors disclosures quarterly annual headcount",
+        "firms": [],
+        "metric": "advisor_headcount",
+        "kind": "fact"
+      },
+      {
+        "id": "included_in_definition",
+        "text": "What each firm's advisor headcount definition includes.",
+        "keyword_query": "advisor headcount includes included comprised of consists of financial advisors employee advisors independent advisors registered representatives",
+        "firms": [],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "excluded_from_definition",
+        "text": "What each firm's advisor headcount definition excludes.",
+        "keyword_query": "advisor headcount excludes excluded not included does not include support staff trainees retirement plan advisors",
+        "firms": [],
+        "metric": "",
+        "kind": "fact"
+      }
+    ]
+  }
+}

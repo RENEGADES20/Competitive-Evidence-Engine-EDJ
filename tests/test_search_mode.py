@@ -27,49 +27,57 @@ def test_no_internal_words_in_ui_text():
     assert not re.search(r"hybrid|rerank|\bFTS\b|vector", text, re.IGNORECASE)
 
 
-# --- #214 / #240 planner on exp/hybrid: every mode plans as main; hybrid searches the parts ----
+# --- #245 / #249 sub-questions on exp/hybrid: every mode runs main's loop; hybrid passes its search ----
 
-def test_fts_with_a_plan_is_mains_search_parts(monkeypatch):
+def _loop_spy(monkeypatch):
+    from cee.retrieve import planner
+    seen = []
+    monkeypatch.setattr(planner, "search_subquestions", lambda q, p, **kw: seen.append((p, kw)) or [])
+    return seen
+
+
+def test_fts_with_a_plan_is_mains_search_subquestions(monkeypatch):
     from cee.retrieve import modes, planner
     from cee.retrieve.fts import Query
-    plan = planner.Plan(parts=[planner.Part("p1", "q", ["MS"]), planner.Part("p2", "q", ["RJF"])])
-    seen = []
-    monkeypatch.setattr(planner, "search_parts",
-                        lambda q, p, trace=None, part_pools=None: seen.append((p, part_pools)) or [])
-    pools = {}
-    assert modes.search(Query(question="q", entities=["MS", "RJF"]), mode="fts", plan=plan, part_pools=pools) == []
-    assert seen == [(plan, pools)]
+    q = Query(question="q", entities=["MS", "RJF"])
+    plan, seen, pools = planner.rules_plan(q), _loop_spy(monkeypatch), {}
+    assert modes.search(q, mode="fts", plan=plan, part_pools=pools, as_of="d") == []
+    # main's defaults: no search_fn / research_fn / pin_fn passed
+    assert seen == [(plan, {"trace": None, "part_pools": pools, "as_of": "d"})]
+    assert modes.search_fn("fts") is None
 
 
-def test_every_mode_plans_with_the_planner(monkeypatch):
-    # #240 (T1): plan_for calls planner.plan_question with the same arguments in every mode
-    from cee.retrieve import modes, planner
+@pytest.mark.parametrize("mode, rerank", [("hybrid-norerank", False), ("hybrid", True)])
+def test_hybrid_with_a_plan_passes_hybrid_search_to_the_shared_loop(monkeypatch, mode, rerank):
+    import cee.db
+    from cee.retrieve import fts, hybrid, modes, planner
     from cee.retrieve.fts import Query
-    seen = []
-    monkeypatch.setattr(planner, "plan_question", lambda q, provider=None: seen.append((q, provider)) or "plan")
-    q = Query(question="Compare MS and RJF", entities=["MS", "RJF"])
-    assert [modes.plan_for(q, "anthropic", m) for m in ("fts", "hybrid", "HYBRID-NORERANK")] == ["plan"] * 3
-    assert seen == [(q, "anthropic")] * 3
-    with pytest.raises(ValueError, match="unknown retrieval mode"):
-        modes.plan_for(q, "anthropic", "vector")
+    monkeypatch.setenv("CEE_VECTORS", "on")
+    checks = []
+    monkeypatch.setattr(cee.db, "connect", lambda: type("C", (), {"__enter__": lambda s: s,
+                                                                  "__exit__": lambda s, *a: False})())
+    monkeypatch.setattr(hybrid, "check_vectors", lambda conn: checks.append(1))
+    q = Query(question="q", entities=["MS", "RJF"])
+    plan, seen, pools = planner.rules_plan(q), _loop_spy(monkeypatch), {}
+    modes.search(q, mode=mode, plan=plan, part_pools=pools, as_of="d")
+    (p, kw), = seen
+    assert p is plan and kw["part_pools"] is pools and kw["as_of"] == "d" and checks == [1]
+    assert kw["pin_fn"] is fts.fetch_pinned   # registered chunks by id, the same in every mode (gap 2)
+    for name, fn in (("search_fn", hybrid.search), ("research_fn", hybrid.research_pass)):
+        assert kw[name].func is fn and kw[name].keywords == {"rerank": rerank, "checked": True}
+    sf = modes.search_fn(mode)   # the map's corrective re-search
+    assert sf.func is hybrid.search and sf.keywords == {"rerank": rerank, "checked": False}
 
 
-def test_hybrid_with_a_plan_is_hybrid_search_parts(monkeypatch):
-    # #240 (T2): a plan and k None -> hybrid.search_parts with the plan, rerank by mode and the pools
+def test_hybrid_with_an_explicit_k_is_one_search(monkeypatch):
     from cee.retrieve import hybrid, modes, planner
     from cee.retrieve.fts import Query
     monkeypatch.setenv("CEE_VECTORS", "on")
-    plan = planner.Plan(parts=[planner.Part("p1", "q", ["MS"]), planner.Part("p2", "q", ["RJF"])])
     seen = []
-    monkeypatch.setattr(hybrid, "search_parts", lambda q, p, rerank=True, trace=None, part_pools=None:
-                        seen.append((p, rerank, part_pools)) or [])
-    monkeypatch.setattr(hybrid, "search", lambda q, k, trace=None, rerank=True: seen.append(("search", k, rerank)) or [])
-    pools = {}
-    q = Query(question="q", entities=["MS", "RJF"])
-    modes.search(q, mode="hybrid-norerank", plan=plan, part_pools=pools)
-    modes.search(q, mode="hybrid", plan=plan, part_pools=pools)
-    modes.search(q, k=12, mode="hybrid-norerank", plan=plan)   # explicit k: one search, passage rule
-    assert seen == [(plan, False, pools), (plan, True, pools), ("search", 12, False)]
+    monkeypatch.setattr(hybrid, "search", lambda q, k, trace=None, rerank=True: seen.append((k, rerank)) or [])
+    q = Query(question="q", entities=["MS"])
+    modes.search(q, k=12, mode="hybrid-norerank", plan=planner.rules_plan(q))   # passage rule
+    assert seen == [(12, False)]
 
 
 def test_hybrid_with_vectors_off_raises_before_import(monkeypatch):
@@ -78,6 +86,8 @@ def test_hybrid_with_vectors_off_raises_before_import(monkeypatch):
     from cee.retrieve.fts import Query
     monkeypatch.setenv("CEE_VECTORS", "off")
     monkeypatch.setitem(sys.modules, "cee.retrieve.hybrid", None)
-    plan = planner.Plan(parts=[planner.Part("p1", "q", ["MS"])])
+    q = Query(question="q", entities=["MS"])
     with pytest.raises(modes.HybridUnavailable):
-        modes.search(Query(question="q", entities=["MS"]), mode="hybrid-norerank", plan=plan)
+        modes.search(q, mode="hybrid-norerank", plan=planner.rules_plan(q))
+    with pytest.raises(modes.HybridUnavailable):
+        modes.search_fn("hybrid")

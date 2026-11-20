@@ -370,189 +370,7 @@ def test_as_of_reaches_the_retrieval_window(monkeypatch, tmp_path):
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q26", "--as-of", "2026-01-15", "--out", str(tmp_path)])
-    assert seen == [dt.date(2026, 1, 15)] * 2  # untimed warm-up + the timed run
-
-
-def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
-    import json
-    from cee.retrieve import fts, modes
-
-    seen_modes = []
-    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: seen_modes.append(mode) or [])
-    _fake_plan(monkeypatch)  # #240: hybrid token mode plans first too (rule plan, no call)
-    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
-    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
-    er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
-    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    assert seen_modes == ["hybrid"] * 3
-    assert report["meta"]["retrieval_mode"] == "hybrid" and report["meta"]["mode"] == "mock"
-    assert report["meta"]["warmup_s"] is not None
-    assert all(isinstance(q["search_s"], float) for q in report["questions"])
-    assert report["summary"]["median_search_s"] is not None
-    assert "retrieval hybrid | median search" in (tmp_path / "report.md").read_text(encoding="utf-8")
-
-
-def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
-    import json
-    from cee.retrieve import fts
-
-    h = fts.Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
-                source_tier=1, published_at="2026-01-01", period_end=None, section=None, page=None,
-                rank=0.123456, text="x")
-    from cee.retrieve import modes
-    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: [h])
-    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
-    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
-    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
-    er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
-    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    assert report["questions"][0]["ranks"] == [0.1235]
-
-
-# --- #126: third mode, constants, grid, selection rule, duplicate measure ------------------------
-
-def _fake_bank(monkeypatch, seen=None):
-    from cee.retrieve import fts, hybrid, modes
-
-    def search(q, k=None, mode=None, trace=None, **kw):
-        if seen is not None:
-            seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)))
-        return []
-    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
-    monkeypatch.setattr(modes, "search", search)
-    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
-    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
-    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
-
-
-def _baseline(tmp_path):
-    import json
-    path = tmp_path / "ref.json"
-    path.write_text(json.dumps({"questions": [], "summary": {"refusal_gap": {"ok": 0, "of": 0, "accuracy": None},
-                                                            "refusal_all": {"ok": 0, "of": 0, "accuracy": None}}}),
-                    encoding="utf-8")
-    return str(path)
-
-
-def test_hybrid_norerank_mode_is_accepted(monkeypatch, tmp_path):
-    import json
-    seen = []
-    _fake_bank(monkeypatch, seen)
-    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
-    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    assert {s[0] for s in seen} == {"hybrid-norerank"}
-    assert report["meta"]["retrieval_mode"] == "hybrid-norerank"
-    from cee.retrieve import hybrid
-    assert report["meta"]["constants"]["FLOOR"] == hybrid.FLOOR["hybrid-norerank"]
-    assert report["meta"]["constants"]["MAX_PER_DOC"] == hybrid.MAX_PER_DOC["hybrid-norerank"]
-    assert "logical CPUs" in report["meta"]["cpu"]
-
-
-def test_no_option_leaves_constants_untouched(monkeypatch, tmp_path):
-    from cee.retrieve import fts
-    seen = []
-    _fake_bank(monkeypatch, seen)
-    er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
-    assert {(s[1], s[2]) for s in seen} == {(0.3, 3)}
-    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
-
-
-def test_constants_map_per_mode_and_are_restored(monkeypatch, tmp_path):
-    from cee.retrieve import fts, hybrid
-    before = (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC))
-    seen = []
-    _fake_bank(monkeypatch, seen)
-    er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.4", "--max-per-doc", "2", "--out", str(tmp_path / "a")])
-    assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == before[0]
-    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "5",
-             "--out", str(tmp_path / "b")])
-    mode, floor, mpd, hf, hm = seen[-1]
-    assert (floor, mpd) == (0.3, 3)  # fts untouched in a hybrid run
-    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 5
-    assert (hf["hybrid-norerank"], hm["hybrid-norerank"]) == tuple(
-        b["hybrid-norerank"] for b in before)
-    # restored after the run
-    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
-    assert (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)) == before
-
-
-def test_dup_jaccard_option_is_gone(monkeypatch, tmp_path):
-    # #211: DUP_JACCARD is fts.DUP_JACCARD in every mode; the #126 option was removed
-    _fake_bank(monkeypatch)
-    with pytest.raises(SystemExit):
-        er.main(["--questions", "Q29", "--mode", "hybrid", "--dup-jaccard", "0.5", "--out", str(tmp_path)])
-
-
-def test_grid_needs_a_baseline(monkeypatch, tmp_path, capsys):
-    _fake_bank(monkeypatch)
-    with pytest.raises(SystemExit):
-        er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.2,0.3", "--out", str(tmp_path)])
-    assert "--baseline" in capsys.readouterr().err
-
-
-def test_grid_writes_one_folder_per_point_and_a_pick(monkeypatch, tmp_path):
-    import json
-    seen = []
-    _fake_bank(monkeypatch, seen)
-    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--floor", "0,0.2", "--max-per-doc", "2,3",
-             "--baseline", _baseline(tmp_path), "--out", str(tmp_path / "grid")])
-    names = sorted(p.name for p in (tmp_path / "grid").iterdir() if p.is_dir())
-    assert names == ["f0.0-m2", "f0.0-m3", "f0.2-m2", "f0.2-m3"]
-    grid = json.loads((tmp_path / "grid" / "grid.json").read_text(encoding="utf-8"))
-    assert len(grid["points"]) == 4 and grid["rule"] == er.SELECTION_RULE
-    # all points tie: the mode's default (0/3) wins
-    assert grid["choice"]["pick"]["floor"] == 0.0 and grid["choice"]["pick"]["max_per_doc"] == 3
-    assert "Pick" in (tmp_path / "grid" / "grid.md").read_text(encoding="utf-8")
-    assert len(seen) == 1 + 4  # one warm-up, then one search per point and question
-
-
-def _point(floor, mpd, passages=0.4, docs=0.8, n_pass=28, gap=(5, 5), all_=(10, 10), forbidden=0):
-    acc = lambda ok, of: {"ok": ok, "of": of, "accuracy": round(ok / of, 3)}  # noqa: E731
-    return {"floor": floor, "max_per_doc": mpd, "run": er.point_name(floor, mpd),
-            "summary": {"tier1_passage_recall": passages, "tier1_doc_recall": docs, "pass": n_pass,
-                        "refusal_gap": acc(*gap), "refusal_all": acc(*all_), "forbidden_hits": forbidden}}
-
-
-REF = {"refusal_gap": {"ok": 5, "of": 5, "accuracy": 1.0}, "refusal_all": {"ok": 10, "of": 10, "accuracy": 1.0}}
-
-
-def test_choose_eligibility():
-    pts = [_point(0.2, 2, passages=0.9, forbidden=1), _point(0.3, 2, passages=0.8, gap=(4, 5)),
-           _point(0.4, 2, passages=0.7, all_=(9, 10)), _point(0.4, 3, passages=0.5)]
-    c = er.choose(pts, REF, "fts")
-    assert c["pick"]["floor"] == 0.4 and c["pick"]["max_per_doc"] == 3
-    assert set(c["not_eligible"]) == {"f0.2-m2", "f0.3-m2", "f0.4-m2"}
-    assert er.choose(pts[:3], REF, "fts")["pick"] is None
-
-
-def test_choose_tie_breaks_in_order():
-    pick = lambda pts, mode="fts": (lambda c: (c["pick"]["floor"], c["pick"]["max_per_doc"]))(er.choose(pts, REF, mode))  # noqa: E731
-    assert pick([_point(0.2, 2, passages=0.41), _point(0.3, 3, passages=0.4)]) == (0.2, 2)          # passages
-    assert pick([_point(0.2, 2, docs=0.81), _point(0.3, 3)]) == (0.2, 2)                              # doc recall
-    assert pick([_point(0.2, 2, n_pass=29), _point(0.3, 3)]) == (0.2, 2)                              # PASS
-    assert pick([_point(0.4, 2), _point(0.3, 3)]) == (0.3, 3)                                          # default
-    assert pick([_point(0.2, 3), _point(0.4, 3)], "hybrid") == (0.4, 3)                               # higher FLOOR
-    assert pick([_point(0.2, 4), _point(0.2, 2)], "hybrid") == (0.2, 2)                               # smaller MAX
-    assert pick([_point(0.0, 2), _point(0.0, 3)], "hybrid") == (0.0, 3)                               # hybrid default
-
-
-def test_trigrams_follow_pg_trgm():
-    assert er.trigrams("Cat") == {"  c", " ca", "cat", "at "}
-    assert er.trigrams("a-b") == {"  a", " a ", "  b", " b "}
-    assert er.trigram_similarity("cat", "cat") == 1.0
-    assert er.trigram_similarity("", "cat") == 0.0
-    assert er.trigram_similarity("word", "cord") == pytest.approx(2 / 8)  # "ord", "rd " shared; pg_trgm gives 0.25
-
-
-def test_duplicate_measure_counts_pairs_over_the_limit():
-    base = "net new assets rose in the quarter as advisors joined the firm from competitors"
-    d = er.duplicates([base, base + " today", "something else entirely about bank deposits and rates"])
-    assert d["pairs_trigram_over"] == 1 and d["max_trigram"] > 0.9
-    assert d["pairs_5gram_over"] == 1 and d["max_5gram"] > 0.9
-    assert er.duplicates(["only one"]) == {"max_trigram": 0.0, "pairs_trigram_over": 0, "max_5gram": 0.0,
-                                           "pairs_5gram_over": 0}
+    assert seen == [dt.date(2026, 1, 15)] * 2  # untimed warm-up + the timed run (exp/hybrid, #126)
 
 
 def test_k_defaults_to_the_app_budget_and_is_recorded(monkeypatch, tmp_path):
@@ -698,9 +516,9 @@ def _fake_plan(monkeypatch):
     from cee.retrieve import fts, planner
 
     monkeypatch.setattr(planner, "plan_question",
-                        lambda q, provider, **kw: planner.Plan(parts=[planner.Part("p1", "", list(q.entities))]))
-    monkeypatch.setattr(planner, "search_parts",
-                        lambda q, plan, trace=None, part_pools=None: fts.search(q, trace=trace))
+                        lambda q, provider, **kw: planner.Plan.from_parts([planner.Part("p1", "", list(q.entities))]))
+    monkeypatch.setattr(planner, "search_subquestions",
+                        lambda q, plan, trace=None, part_pools=None, **kw: fts.search(q, trace=trace))
 
 
 def _fake_eval(monkeypatch, entities, hits, peer_ids=(), unattached=()):
@@ -735,7 +553,7 @@ def test_token_mode_searches_with_k_none_and_records_the_budget(monkeypatch, tmp
     five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
     seen, qry = _fake_eval(monkeypatch, five, [_tok_hit("MS-10K-2025#1", "MS", 40000)])
     monkeypatch.setattr(fts, "TOKEN_BUDGET", 20000)
-    er.main(["--questions", "Q22", "--out", str(tmp_path / "tok")])
+    er.main(["--questions", "Q22", "--legacy", "--out", str(tmp_path / "tok")])   # retrieval only (#247)
     er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
     assert seen == [None, None, 20, 20]  # exp/hybrid: an untimed warm-up search before each run (#126)
     rep = _record(tmp_path / "tok")
@@ -773,7 +591,7 @@ def test_theme_peers_do_not_count_toward_fill(monkeypatch, tmp_path):
     _fake_eval(monkeypatch, ["EDJ"], hits, peer_ids=["SCHW-TR-2026Q3#11", "MS-10K-2025#9", "RJF-X#1"],
                unattached=["EDJ-TR-2026Q1#4"])
     monkeypatch.setattr(fts, "TOKEN_BUDGET", 2000)
-    er.main(["--questions", "Q19", "--out", str(tmp_path / "q19")])
+    er.main(["--questions", "Q19", "--legacy", "--out", str(tmp_path / "q19")])   # retrieval only (#247)
     rep = _record(tmp_path / "q19")
     r = rep["questions"][0]
     assert r["budget_tokens"] == 2000
@@ -913,7 +731,7 @@ def _planner_calls(monkeypatch, outcome):
 
     calls = []
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         calls.append(query.question)
         if isinstance(outcome, Exception):
             raise outcome
@@ -929,7 +747,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     from cee.retrieve.fts import resolve
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS", "MER", "RJF"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
     calls = _planner_calls(monkeypatch, raw)
     question = {"id": "Q7", "text": Q7_TEXT}
     qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
@@ -939,7 +757,7 @@ def test_plan_is_cached_and_never_called_twice(monkeypatch, tmp_path):
     files = list((tmp_path / "cache").iterdir())
     assert len(files) == 1 and files[0].name.startswith("Q7-plan-")
     rec = saved(tmp_path / "cache")[0]
-    assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 2000
+    assert rec["raw"] == raw and rec["planner_version"] == planner.PLANNER_VERSION and rec["max_tokens"] == 8000
     assert rec["stop_reason"] is None and rec["usage"] is None   # the fake fills no meta
     assert saved(tmp_path / "run" / "raw") == saved(tmp_path / "cache")
     again = er.RealRunner("anthropic", 5, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
@@ -983,9 +801,9 @@ def test_planner_record_saves_stop_reason_and_usage(monkeypatch, tmp_path):
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
     monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         meta.update(stop_reason="tool_use", usage={"input_tokens": 900, "output_tokens": 300})
         return raw
     monkeypatch.setattr(planner, "call_planner", call)
@@ -1004,25 +822,26 @@ def test_call_planner_fills_meta():
     client = types.SimpleNamespace(messages=types.SimpleNamespace(
         create=lambda **kw: types.SimpleNamespace(content=[block], stop_reason="tool_use", usage=usage)))
     meta = {}
-    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client, meta=meta) == {"parts": []}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", client=client, meta=meta) == {"parts": []}
     assert meta == {"stop_reason": "tool_use", "usage": {"input_tokens": 900, "output_tokens": 300, "blocks": ["tool_use"]}}
-    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", 4, client=client) == {"parts": []}
+    assert planner.call_planner(Query(question="q", entities=["MS"]), "anthropic", client=client) == {"parts": []}
 
 
 def test_plan_cache_key_unchanged_by_230():
     import hashlib
     import json
 
-    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
-    want = hashlib.sha256(json.dumps(["Q7", "t", PLANNER_VERSION, "s", "anthropic", "m", 4, PLANNER_MAX_TOKENS,
-                                      {"entities": ["MS"]}], default=str, sort_keys=True).encode()).hexdigest()[:24]
-    assert er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]}) == want
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
+    want = hashlib.sha256(json.dumps(["Q7", "t", PLANNER_VERSION, "s", "anthropic", "m", PLANNER_MAX_TOKENS,
+                                      list(metric_keys()), {"entities": ["MS"]}],
+                                     default=str, sort_keys=True).encode()).hexdigest()[:24]
+    assert er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["MS"]}) == want
 
 
-def test_cache_key_of_a_plan_differs_by_cap_and_query():
-    a = er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["MS"]})
-    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 3, {"entities": ["MS"]})
-    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", 4, {"entities": ["RJF"]})
+def test_cache_key_of_a_plan_differs_by_query_and_model():
+    a = er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m2", {"entities": ["MS"]})
+    assert a != er.plan_cache_key({"id": "Q7", "text": "t"}, "s", "anthropic", "m", {"entities": ["RJF"]})
 
 
 def test_part_stages_name_the_parts():
@@ -1042,17 +861,19 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     seen = []
 
-    def fake_parts(q, plan, trace=None, part_pools=None):
+    def fake_parts(q, plan, trace=None, part_pools=None, **kw):
         seen.append(plan)
         hits[0].part_id = "p1"
         return hits
-    monkeypatch.setattr(planner, "search_parts", fake_parts)
+    monkeypatch.setattr(planner, "search_subquestions", fake_parts)
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [])   # #247: no database in CI
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q7", "--out", str(tmp_path)])
     r = _record(tmp_path)["questions"][0]
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
-    assert r["llm_calls"] == {"planner": 0, "answer": 0} and r["plan"]["source"] == "rules"
+    assert {k: r["llm_calls"][k] for k in ("planner", "answer")} == {"planner": 0, "answer": 0}   # #247: + map counts
+    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v5.2"   # the mock reduce ran (0 calls)
     assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"
 
 
@@ -1074,10 +895,10 @@ def test_request_version_joins_the_plan_key_only_when_given():
     import hashlib
     import json
 
-    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
-    base = ["Q7", "t", PLANNER_VERSION, "s", "openai", "m", 4, PLANNER_MAX_TOKENS, {"entities": ["MS"]}]
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
+    base = ["Q7", "t", PLANNER_VERSION, "s", "openai", "m", PLANNER_MAX_TOKENS, list(metric_keys()), {"entities": ["MS"]}]
     want = hashlib.sha256(json.dumps(base, default=str, sort_keys=True).encode()).hexdigest()[:24]
-    args = ({"id": "Q7", "text": "t"}, "s", "openai", "m", 4, {"entities": ["MS"]})
+    args = ({"id": "Q7", "text": "t"}, "s", "openai", "m", {"entities": ["MS"]})
     assert er.plan_cache_key(*args) == er.plan_cache_key(*args, None) == want        # OpenAI keys unchanged
     assert er.plan_cache_key(*args, "strict-1") != want
 
@@ -1129,8 +950,9 @@ def test_plan_record_carries_the_request_version(monkeypatch, tmp_path):
 
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
-    monkeypatch.setattr(planner, "call_planner", lambda *a, **k: {"parts": [
-        {"id": "a", "text": "t", "firms": ["MS"], "keyword_query": "net new assets"}]})
+    monkeypatch.setattr(planner, "call_planner", lambda *a, **k: {"aspects": [
+        {"id": "a", "text": "t", "keyword_query": "net new assets", "firms": [], "metric": "net_new_assets",
+         "kind": "fact"}]})
     runner = er.RealRunner("anthropic", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     plan = runner.plan({"id": "Q1", "text": "t"}, Query(question="t", entities=["MS"]))
     assert plan.source == "model" and runner.calls == 1
@@ -1139,117 +961,6 @@ def test_plan_record_carries_the_request_version(monkeypatch, tmp_path):
 
 
 
-# --- #240: hybrid plans like fts, plan cache independent of the mode, --reuse-plans, constants ------
-
-def _q7():
-    import yaml
-    return next(x for x in yaml.safe_load(er.QUESTIONS.read_text(encoding="utf-8"))["questions"] if x["id"] == "Q7")
-
-
-def _real_env(monkeypatch, tmp_path, fake_calls):
-    """anthropic provider with fake planner / answer calls; search faked; cache in tmp_path."""
-    from cee import ask
-    from cee.retrieve import modes, planner
-    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
-    monkeypatch.setenv("PLANNER", "on")
-    monkeypatch.setenv("PLANNER_MAX_PARTS", "4")
-    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
-    monkeypatch.setattr(er, "CACHE", tmp_path / "cache")
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, plan=None, part_pools=None:
-                        real_hits())
-    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
-    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
-    raw = {"parts": [{"id": "a", "text": "recruiting", "firms": ["MS", "MER", "RJF"], "keyword_query": "recruit"}]}
-
-    def call(query, provider, cap, client=None, meta=None):
-        fake_calls.append("planner")
-        return raw
-    monkeypatch.setattr(planner, "call_planner", call)
-    return raw
-
-
-def test_plan_cache_is_shared_by_every_retrieval_mode(fake_model, monkeypatch, tmp_path):
-    # #240 (T9): the planner record path has no retrieval mode: an fts run's plan is reused by a
-    # hybrid-norerank run (and back), so the planner is called once in total
-    planner_calls = []
-    _real_env(monkeypatch, tmp_path, planner_calls)
-    args = ["--questions", "Q7", "--real", "--max-calls", "2", "--as-of", "2026-11-17"]
-    er.main([*args, "--mode", "fts", "--out", str(tmp_path / "fts")])
-    er.main([*args, "--mode", "hybrid-norerank", "--out", str(tmp_path / "hyb")])
-    assert planner_calls == ["planner"]
-    hyb = _record(tmp_path / "hyb")
-    # the fake search returns the same chunks in both modes, so the answer key matches too
-    assert hyb["meta"]["reused"] == 2 and hyb["meta"]["real_calls"] == 0 and len(fake_model) == 1
-    assert hyb["questions"][0]["plan"]["source"] == "model"
-    assert any(p.name.startswith("Q7-plan-") for p in (tmp_path / "hyb" / "raw").iterdir())
-
-
-def test_reuse_plans_with_real_never_calls_the_planner(fake_model, monkeypatch, tmp_path):
-    # #240 (T10, review NB1 / r2 note 2): plans only from the cache, counted as reused and copied to
-    # raw/; a missing plan stops the run before any call (exit 2); a provider / model mismatch exits 2
-    from cee.answer import llm
-    from cee.config import settings
-    from cee.retrieve.fts import resolve
-    planner_calls = []
-    raw = _real_env(monkeypatch, tmp_path, planner_calls)
-    q7 = _q7()
-    path = er.plan_path(tmp_path / "cache", q7, resolve(q7["text"], today=dt.date(2026, 11, 17)), "test",
-                        "anthropic", "fake-model", settings().planner_max_parts, llm.request_version("anthropic"))
-    path.parent.mkdir(parents=True)
-    path.write_text(__import__("json").dumps({"raw": raw}), encoding="utf-8")
-    args = ["--questions", "Q7", "--real", "--max-calls", "1", "--as-of", "2026-11-17",
-            "--mode", "hybrid-norerank", "--reuse-plans", "anthropic:fake-model"]
-    assert er.main([*args, "--out", str(tmp_path / "ok")]) == 0
-    rep = _record(tmp_path / "ok")
-    assert planner_calls == [] and len(fake_model) == 1
-    assert rep["meta"]["reused"] == 1 and rep["meta"]["real_calls"] == 1
-    assert (tmp_path / "ok" / "raw" / path.name).is_file()
-    assert rep["questions"][0]["plan"]["source"] == "model"
-    path.unlink()
-    assert er.main([*args, "--out", str(tmp_path / "missing")]) == 2
-    assert planner_calls == [] and len(fake_model) == 1 and not (tmp_path / "missing").exists()
-    with pytest.raises(SystemExit) as e:
-        er.main([*args[:-1], "anthropic:other-model", "--out", str(tmp_path / "mismatch")])
-    assert e.value.code == 2 and len(fake_model) == 1
-
-
-def test_reuse_plans_in_a_mock_run_reads_the_saved_plan(monkeypatch, tmp_path):
-    # #240 (T10): mock + --reuse-plans: the saved plan, 0 calls (the planner client is never built)
-    from cee.answer import llm
-    from cee.config import settings
-    from cee.retrieve import planner
-    from cee.retrieve.fts import resolve
-    planner_calls = []
-    raw = _real_env(monkeypatch, tmp_path, planner_calls)
-    monkeypatch.setenv("LLM_PROVIDER", "mock")
-    seen = []
-    from cee.retrieve import modes
-    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, plan=None, part_pools=None:
-                        seen.append(plan) or [])
-    q7 = _q7()
-    path = er.plan_path(tmp_path / "cache", q7, resolve(q7["text"], today=dt.date(2026, 11, 17)), "test",
-                        "anthropic", "fake-model", settings().planner_max_parts, llm.request_version("anthropic"))
-    path.parent.mkdir(parents=True)
-    path.write_text(__import__("json").dumps({"raw": raw}), encoding="utf-8")
-    assert er.main(["--questions", "Q7", "--as-of", "2026-11-17", "--mode", "fts",
-                    "--reuse-plans", "anthropic:fake-model", "--out", str(tmp_path / "m")]) == 0
-    plan = seen[-1]
-    assert isinstance(plan, planner.Plan) and plan.source == "model" and plan.calls == 0
-    assert [p.keyword_query for p in plan.parts] == ["recruit"] and planner_calls == []
-    assert _record(tmp_path / "m")["meta"]["real_calls"] == 0
-
-
-def test_hybrid_constants_record_the_pool_rule(monkeypatch, tmp_path):
-    # #240 (T8b, review B1): meta.constants of a hybrid run, without the removed RERANK_N
-    import json
-    from cee.retrieve import fts, hybrid
-    _fake_bank(monkeypatch)
-    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
-    c = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["meta"]["constants"]
-    assert "RERANK_N" not in c
-    assert (c["POOL_PER_GROUP"], c["LEG_K"], c["RRF_K"], c["TOKEN_BUDGET"]) == (
-        fts.POOL_PER_GROUP, hybrid.LEG_K, hybrid.RRF_K, fts.TOKEN_BUDGET)
 # --- DeepSeek (#242) --------------------------------------------------------------------------
 
 @pytest.fixture
@@ -1282,14 +993,14 @@ def test_deepseek_records_carry_version_caps_reasoning_and_timing(deepseek_model
     a, how = runner.answer(q("Q1", []), query(["MS"]), real_hits())
     assert how == "called"
     rec = saved(tmp_path / "cache")[0]
-    assert rec["request_version"] == "ds-strict-1-think-off-a20000-p2000" and rec["max_tokens"] == 20000
+    assert rec["request_version"] == "ds-strict-1-think-off-a20000-p8000" and rec["max_tokens"] == 20000
     assert rec["reasoning_content"] == "secret thoughts"
     assert rec["wall_s"] >= 0 and "tokens_per_s" in rec
     assert "secret thoughts" not in json.dumps(rec["raw"]) and "secret thoughts" not in json.dumps(a)
     # thinking on is another request: its key differs, so nothing is reused
     monkeypatch.setenv("DEEPSEEK_THINKING", "on")
     on = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
-    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p16000"
+    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p64000"
     assert on.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "called" and on.calls == 1
     assert len(deepseek_model[0]) == 2 and len(list((tmp_path / "cache").iterdir())) == 2
 
@@ -1301,16 +1012,16 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
     monkeypatch.setenv("DEEPSEEK_THINKING", "on")
-    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+    raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
-    def call(query, provider, cap, client=None, meta=None):
+    def call(query, provider, client=None, meta=None):
         meta.update(stop_reason="tool_calls", usage={"output_tokens": 900}, reasoning_content="plan thoughts")
         return raw
     monkeypatch.setattr(planner, "call_planner", call)
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 16000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p16000"
+    assert rec["max_tokens"] == 64000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p64000"
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 
@@ -1371,3 +1082,852 @@ def test_timing_helper():
     t = er.timing(time.monotonic() - 2.0, {"output_tokens": 100})
     assert 1.9 <= t["wall_s"] and 40 <= t["tokens_per_s"] <= 52
     assert er.timing(time.monotonic(), None)["tokens_per_s"] is None
+
+
+# --- #245: plan-only real runs, the 400 stop (#247: the interim input guard is gone) ------------
+
+def _plan_only_env(monkeypatch, outcome, cache):
+    from cee import ask
+    from cee.retrieve import fts, planner
+
+    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
+    monkeypatch.setattr(fts, "searchable", lambda q: True)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    monkeypatch.setattr(er, "CACHE", cache)   # never the repo's own cache
+    monkeypatch.setattr(er.RealRunner.__init__, "__defaults__", (cache,))
+    monkeypatch.setattr(ask, "generate", lambda *a, **k: pytest.fail("no answer call in --plan-only"))
+    calls = _planner_calls(monkeypatch, outcome)
+
+    def fake_parts(q, plan, trace=None, part_pools=None, **kw):
+        plan.searched = [{"id": s.id, "budget": 1000, "tokens": 250, "pool": 3} for s in plan.subquestions]
+        hits = real_hits()
+        hits[0].part_id = plan.subquestions[0].id
+        return hits
+    monkeypatch.setattr(planner, "search_subquestions", fake_parts)
+    return calls
+
+
+def test_plan_only_makes_planner_calls_and_no_answer_call(monkeypatch, tmp_path):
+    raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": ["RJF"], "metric": "",
+                        "kind": "fact"},
+                       {"id": "b", "text": "hiring", "keyword_query": "recruiting", "firms": [], "metric": "",
+                        "kind": "fact"}]}
+    calls = _plan_only_env(monkeypatch, raw, tmp_path / "cache")
+    er.main(["--questions", "Q7", "--real", "--plan-only", "--max-calls", "1", "--out", str(tmp_path / "run")])
+    rep = _record(tmp_path / "run")
+    r = rep["questions"][0]
+    assert len(calls) == 1 and rep["meta"]["real_calls"] == 1 and rep["meta"]["plan_only"] is True
+    assert r["llm_calls"] == {"planner": 1, "answer": 0} and r["model"] == "plan_only"
+    assert [s["id"] for s in r["plan"]["subquestions"]] == ["a2.MS", "a1.RJF", "a2.RJF"]
+    assert r["aspects"] == 2 and r["subquestions"] == 3
+    assert r["budget_tokens"] == 3000 and r["fill"] == 0.25                  # sum of sub-question budgets
+    assert rep["meta"]["subquestion_tokens"] and "max_parts" not in rep["meta"]
+
+
+def test_plan_only_needs_real(tmp_path):
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q7", "--plan-only", "--out", str(tmp_path)])
+
+
+class _BadRequest(Exception):
+    status_code = 400
+
+
+def test_a_400_on_a_planner_call_stops_the_run(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    calls = _planner_calls(monkeypatch, _BadRequest("schema rejected"))
+    runner = er.RealRunner("deepseek", 9, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    with pytest.raises(SystemExit, match="400"):
+        runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["bad_request"] is True and rec["failed_call"] is True and runner.calls == 1 and len(calls) == 1
+    # a 500 is a counted fallback, as before
+    _planner_calls(monkeypatch, ConnectionError("down"))
+    plan = er.RealRunner("deepseek", 9, "snap-2", tmp_path / "r2", cache_dir=tmp_path / "c2").plan(
+        {"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    assert plan.source == "fallback"
+
+
+# --- #246: map calls cached, capped exactly, failed calls saved, must-not report ------------------
+
+def _map_setup(monkeypatch, behave=None):
+    """Five firms, one aspect; extract.call_extract replaced by a recorder (0 real calls)."""
+    from cee import ask
+    from cee.answer import extract
+    from cee.retrieve import planner
+    from cee.retrieve.fts import Hit, Query
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    firms = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    qry = Query(question="Advisor headcount across the five.", entities=firms)
+    plan = planner.Plan(aspects=[planner.Aspect("a1", "Advisor headcount.")],
+                        subquestions=[planner.SubQuestion(f"a1.{f}", f, planner.Aspect("a1", "Advisor headcount."))
+                                      for f in firms])
+    plan.subquestions = [planner.SubQuestion(f"a1.{f}", f, plan.aspects[0]) for f in firms]
+    hits = [Hit(chunk_id=f"{f}#1", doc_id=f, entity_id=f, segment=None, doc_type="10-K", source_tier=2,
+                published_at="2026-02-01", period_end="2025-12-31", section=None, page=None, rank=1.0,
+                text=f"{f} reports advisors.", part_id=f"a1.{f}") for f in firms]
+    calls = []
+
+    def fake(question, spec, provider, window=None, firms=None, client=None, meta=None):
+        calls.append(spec.id)
+        if behave:
+            return behave(spec, meta)
+        return extract.mock_extract(spec)
+    monkeypatch.setattr(extract, "call_extract", fake)
+    monkeypatch.setattr(extract.fts, "budget_tokens", lambda q: None)   # no corrective re-search here
+    return {"id": "Q23", "text": qry.question}, qry, plan, hits, calls
+
+
+def test_map_calls_capped_exactly_and_a_capped_call_writes_no_cache_file(monkeypatch, tmp_path):
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch)
+    zero = er.RealRunner("deepseek", 0, "snap", tmp_path / "r0", cache_dir=tmp_path / "cache")
+    m = zero.map(qd, qry, plan, hits)
+    assert calls == [] and zero.map_capped == ["map.MS", "map.SCHW", "map.EDJ", "map.MER", "map.RJF"]
+    assert not (tmp_path / "cache").exists() or not any((tmp_path / "cache").iterdir())   # nothing saved
+    assert all(c.label == "failed" for c in m.cells.values())
+    three = er.RealRunner("deepseek", 3, "snap", tmp_path / "r3", cache_dir=tmp_path / "cache")
+    m = three.map(qd, qry, plan, hits)
+    assert len(calls) == 3 and three.calls == 3 and three.made == 3 and len(three.map_capped) == 2
+    assert sum(c.label == "fact" for c in m.cells.values()) == 3
+    again = er.RealRunner("deepseek", 2, "snap", tmp_path / "r4", cache_dir=tmp_path / "cache")
+    m = again.map(qd, qry, plan, hits)                     # 3 reused (free), 2 new calls within the cap
+    assert len(calls) == 5 and again.reused == 3 and again.made == 2
+    assert all(c.label == "fact" for c in m.cells.values())
+
+
+def test_map_failed_call_is_saved_counted_and_never_called_again(monkeypatch, tmp_path):
+    def behave(spec, meta):
+        if spec.id == "map.SCHW":
+            raise TimeoutError("read timed out")
+        from cee.answer import extract
+        return extract.mock_extract(spec)
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    r = er.RealRunner("deepseek", 9, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    m = r.map(qd, qry, plan, hits)
+    assert m.cells["a1.SCHW"].label == "failed" and r.made == 5 and len(calls) == 5
+    rec = [s for s in saved(tmp_path / "cache") if s.get("failed_call")]
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW" and rec[0]["error"].startswith("TimeoutError")
+    again = er.RealRunner("deepseek", 9, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    m2 = again.map(qd, qry, plan, hits)
+    assert len(calls) == 5 and again.made == 0 and m2.cells["a1.SCHW"].label == "failed"   # reused, not re-called
+
+
+def test_a_400_in_round_1_stops_before_round_2_via_allow(monkeypatch, tmp_path):
+    """#247 (PR #256 review note 1): after a 400 the round's other calls finish and are saved, the
+    corrective re-search may run (database only), but no round-2 call is made."""
+    from cee.answer import extract
+    from cee.retrieve import planner
+    from cee.retrieve.fts import Hit
+
+    def behave(spec, meta):
+        if spec.id == "map.SCHW":
+            raise _BadRequest("schema rejected")
+        raw = extract.mock_extract(spec)
+        if spec.id == "map.MS":   # a not_found cell, so the corrective re-search runs for it
+            for c in raw["cells"]:
+                c["label"], c["items"] = "not_found", []
+        return raw
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    monkeypatch.setattr(extract.fts, "budget_tokens", lambda q: 40000)
+    monkeypatch.setattr(extract.fts, "searchable", lambda q: True)
+    new = Hit(chunk_id="MS#9", doc_id="MS", entity_id="MS", segment=None, doc_type="10-K", source_tier=2,
+              published_at="2026-02-01", period_end="2025-12-31", section=None, page=None, rank=1.0,
+              text="MS reports 15,000 advisors.", part_id="a1.MS")
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [new])
+    r = er.RealRunner("deepseek", 20, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    m = r.map(qd, qry, plan, hits)
+    assert sorted(calls) == ["map.EDJ", "map.MER", "map.MS", "map.RJF", "map.SCHW"]   # round 1 finished
+    assert r.bad_request and r.map_stopped == ["remap.MS"] and "remap.MS" not in calls
+    remap = [c for c in m.calls if c["id"] == "remap.MS"][0]
+    assert remap["skipped"] and remap["error"] == "not run: the run stopped after a 400"
+    rec = [s for s in saved(tmp_path / "cache") if s.get("bad_request")]
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW"
+    assert m.corrective and m.corrective[0].origin == "corrective"   # B1: tagged, kept on the matrix
+
+
+def test_planner_recheck_records_trailing_brace_flags(monkeypatch, tmp_path):
+    """#247 (PR #256 review note 2): a saved plan re-parsed with stray closing braces is flagged."""
+    import json as _json
+
+    from cee import ask
+    from cee.retrieve import fts as _fts
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(_fts, "searchable", lambda q: True)
+    monkeypatch.setattr(_fts, "budget_tokens", lambda q: 40000)
+    calls = _planner_calls(monkeypatch, pytest.fail)
+    qd = {"id": "Q7", "text": Q7_TEXT}
+    qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
+    runner = er.RealRunner("deepseek", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    from dataclasses import asdict
+    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.request_version)
+    raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": [], "metric": "",
+                        "kind": "fact", "proxy": False}]}
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / f"Q7-plan-{key}.json").write_text(_json.dumps({
+        "invalid": True, "error": "planner arguments are not a JSON object: Extra data",
+        "raw_payload": _json.dumps(raw) + "}"}), encoding="utf-8")
+    plan = runner.plan(qd, qry)
+    assert plan.source != "fallback" and runner.last_plan_flags == ["trailing_braces", "rechecked"]
+    assert "trailing_braces" in runner.last_plan_origin and calls == []
+
+
+def test_map_invalid_output_saved_as_invalid_and_reused(monkeypatch, tmp_path):
+    from cee.answer import llm
+
+    def behave(spec, meta):
+        if spec.id == "map.EDJ":
+            raise llm.ModelOutputError("Map output cut at max_tokens (64000 output tokens)", {"partial": 1},
+                                       "deepseek", "length", {"output_tokens": 64000})
+        from cee.answer import extract
+        return extract.mock_extract(spec)
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    er.RealRunner("deepseek", 9, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache").map(qd, qry, plan, hits)
+    rec = [s for s in saved(tmp_path / "cache") if s.get("invalid")][0]
+    assert rec["raw_payload"] == {"partial": 1} and rec["stop_reason"] == "length" and not rec.get("failed_call")
+    again = er.RealRunner("deepseek", 9, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    m = again.map(qd, qry, plan, hits)
+    assert again.made == 0 and m.cells["a1.EDJ"].label == "failed" and len(calls) == 5
+
+
+def test_map_cache_key_changes_with_its_inputs(monkeypatch):
+    from cee.answer import extract
+    qd, qry, plan, hits, _ = _map_setup(monkeypatch)
+    specs, _ = extract.map_specs(qry, plan, hits)
+    base = er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 20000, "rv", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv2", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[1])
+    monkeypatch.setattr(extract, "EXTRACT_VERSION", "extract-v2")
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[0])
+
+
+def test_map_must_not_reports_items_and_derivation_inputs():
+    from cee.answer.matrix import Cell, EvidenceMatrix, Item
+    from cee.retrieve.planner import Aspect
+    m = EvidenceMatrix("q", rows=[], aspects=[Aspect("a1", "x"), Aspect("a3", "y", proxy=True)], cells={
+        "a3.SCHW": Cell("a3.SCHW", "SCHW", "a3", "named", "fact", items=[Item("t", chunk_ids=["BAD#1"])]),
+        "a1.SCHW": Cell("a1.SCHW", "SCHW", "a1", "named", "derived",
+                        derivation={"ok": True, "input_chunk_ids": ["BAD#1", "OK#1"]}),
+        "a3.MS": Cell("a3.MS", "MS", "a3", "named", "different_quantity", items=[Item("t", chunk_ids=["BAD#2"])])})
+    out = er.map_must_not(m, {"must_not_return": ["BAD#1", "BAD#2"]})
+    assert {(o["chunk_id"], o["cell"], o["via"], o["as_fact"]) for o in out} == {
+        ("BAD#1", "a3.SCHW", "item", True), ("BAD#1", "a1.SCHW", "derivation input", True),
+        ("BAD#2", "a3.MS", "item", False)}
+
+
+def test_map_only_needs_real(tmp_path):
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q7", "--map-only", "--out", str(tmp_path)])
+
+# --- #247: reduce calls cached, reused, saved when invalid or failed; a 400 stops the run ----------
+
+from cee.retrieve.fts import Query  # noqa: E402
+
+def _reduce_setup(monkeypatch, behave):
+    from cee.answer import matrix as mx
+    from cee.answer import reduce as R
+    from tests.test_reduce import TEST_POPULATIONS, q24_shaped
+
+    monkeypatch.setattr(mx, "_populations", lambda: TEST_POPULATIONS)   # #247 part 2: one population
+    m = q24_shaped()
+    calls = []
+
+    def fake(question, matrix, query, provider, client=None, meta=None):
+        calls.append(provider)
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage={"output_tokens": 10})
+        return behave(matrix)
+    monkeypatch.setattr(R, "call_reduce", fake)
+    from cee import ask
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    qry = Query(question=m.question, entities=["EDJ", "SCHW", "MS"])
+    return {"id": "Q24", "text": m.question}, qry, m, calls
+
+
+def _good(m):
+    return {"answerable": True, "behavior": "answer", "adjacent": [], "gaps": [], "claims": [
+        {"text": "The comparison is not valid.", "chunk_ids": ["MS-10K#5"], "part_id": "a4"}]}
+
+
+def test_reduce_call_cached_and_reused_with_zero_calls(monkeypatch, tmp_path):
+    from tests.test_reduce import plan_of
+    qd, qry, m, calls = _reduce_setup(monkeypatch, _good)
+    hits = list(m.hits.values())
+    r = er.RealRunner("deepseek", 1, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), hits, m)
+    assert how == "called" and r.made == 1 and a["behavior"] == "answer" and info["comparison_missing"] == []
+    rec = [s for s in saved(tmp_path / "cache") if s.get("reduce_version")][0]
+    assert rec["raw"]["claims"][0]["part_id"] == "a4" and rec["chunk_ids"] == m.chunk_ids()
+    again = er.RealRunner("deepseek", 0, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    a2, how2, _ = again.reduce(qd, qry, plan_of(m), hits, m)
+    assert how2 == "cached" and again.made == 0 and len(calls) == 1 and a2["claims"] == a["claims"]
+    capped = er.RealRunner("deepseek", 0, "snap-2", tmp_path / "r3", cache_dir=tmp_path / "cache")
+    assert capped.reduce(qd, qry, plan_of(m), hits, m)[1] == "cap" and len(calls) == 1
+
+
+def test_reduce_key_changes_with_the_matrix(monkeypatch):
+    from tests.test_reduce import q24_shaped
+    m = q24_shaped()
+    qd = {"id": "Q24", "text": m.question}
+    base = er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m, None)
+    assert base == er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv2", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 20000, "rv", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m,
+                                       Query(question=m.question, entities=[], window=("2026-01-01", "2026-03-31")))
+    m.cells["a1.MS"].label = "not_disclosed"
+    from cee.answer.matrix import finish
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", finish(m), None)
+
+
+def test_invalid_reduce_output_saved_as_invalid_and_never_recalled(monkeypatch, tmp_path):
+    from cee.answer import llm
+    from tests.test_reduce import plan_of
+
+    def bad(m):
+        raise llm.ModelOutputError("Model output cut at max_tokens (64000 output tokens)", {"partial": 1},
+                                   "deepseek", "length", {"output_tokens": 64000})
+    qd, qry, m, calls = _reduce_setup(monkeypatch, bad)
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    assert r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "invalid"
+    rec = [s for s in saved(tmp_path / "cache") if s.get("invalid")][0]
+    assert rec["raw_payload"] == {"partial": 1} and rec["stop_reason"] == "length"
+    again = er.RealRunner("deepseek", 5, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    assert again.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "invalid"
+    assert again.made == 0 and len(calls) == 1
+
+
+def test_failed_reduce_call_saved_and_a_400_stops(monkeypatch, tmp_path):
+    from tests.test_reduce import plan_of
+
+    def boom(m):
+        raise _BadRequest("schema rejected")
+    qd, qry, m, calls = _reduce_setup(monkeypatch, boom)
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)
+    assert a is None and how == "failed" and r.bad_request and r.made == 1
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["failed_call"] and rec["bad_request"] is True
+    other = {"id": "Q11", "text": "other"}
+    assert r.reduce(other, qry, plan_of(m), list(m.hits.values()), m)[1] == "stopped" and len(calls) == 1
+    again = er.RealRunner("deepseek", 5, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    assert again.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "failed" and len(calls) == 1
+
+
+def test_code_built_reduce_makes_no_call_and_writes_no_file(monkeypatch, tmp_path):
+    from tests.test_reduce import H, cell, matrix, plan_of
+    from cee.retrieve.planner import Aspect
+
+    qd, qry, _, calls = _reduce_setup(monkeypatch, _good)
+    m = matrix("Advisor headcount across the five.", [Aspect("a1", "Advisor headcount.")],
+               [cell("a1.EDJ", "not_disclosed"), cell("a1.MS", "not_found")], [H("EDJ-10K#1")])
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)
+    assert how == "code_built" and a["behavior"] == "refuse" and calls == [] and r.made == 0
+    assert not (tmp_path / "cache").exists() or not any((tmp_path / "cache").iterdir())
+
+
+def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
+    """#247: the mock eval runs the map and the mock reduce by default; --legacy runs neither."""
+    from cee.answer import extract
+    from cee.retrieve import planner
+    _plan_only_env(monkeypatch, None, tmp_path / "cache")
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [])   # no database in CI
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    monkeypatch.setenv("MAP", "off")   # an old .env: the eval maps anyway
+    er.main(["--questions", "Q7", "--out", str(tmp_path / "run")])
+    rep = _record(tmp_path / "run")
+    r = rep["questions"][0]
+    assert r["reduce"]["version"] == "v5.2" and r["answer_behavior"] == r["map_behavior"]
+    assert rep["meta"]["map"] is True and rep["meta"]["map_setting"] is False and rep["meta"]["real_calls"] == 0
+    monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
+    er.main(["--questions", "Q7", "--legacy", "--out", str(tmp_path / "legacy")])
+    assert "reduce" not in _record(tmp_path / "legacy")["questions"][0]
+
+
+def test_plan_key_unchanged_by_the_new_retrieval_only_query_fields():
+    """#247 part 2: plans saved before Query.period_range / exclude_ids keep their cache key."""
+    from dataclasses import asdict
+
+    from cee.retrieve.fts import Query
+    d = asdict(Query(question="x", entities=["EDJ"]))
+    old = {k: v for k, v in d.items() if k not in ("period_range", "exclude_ids")}
+    q = {"id": "Q1", "text": "x"}
+    assert er.plan_cache_key(q, "s", "deepseek", "m", d) == er.plan_cache_key(q, "s", "deepseek", "m", old)
+
+
+# --- #248: a resumed run reuses every call; cost per question; --reuse-plans; --naive-tz ---------
+
+USAGE = {"input_tokens": 1_000_000, "output_tokens": 100_000, "cache_hit_tokens": 200_000,
+         "cache_miss_tokens": 800_000, "reasoning_tokens": 50_000}
+RESUME_PLAN = {"aspects": [{"id": "a", "text": "How each firm recruits advisors.", "keyword_query": "recruit advisors",
+                            "firms": [], "metric": "", "kind": "fact"}]}
+
+
+def _hit(cid, entity, text, part_id=None):
+    from cee.retrieve.fts import Hit
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type="10-K",
+               source_tier=2, published_at="2026-02-19", period_end="2025-12-31", section="Item 1", page=None,
+               rank=1.0, text=text, part_id=part_id)
+
+
+def _resume_env(monkeypatch):
+    """Two firms (MS, RJF), one fact aspect; both sub-questions get passages; the fake map returns a
+    fact for MS and not_found for RJF; the fake corrective search adds an RJF passage, so round 2 is one
+    remap.RJF; the fake reduce returns the mock reduce. Every fake counts its calls (0 real calls)."""
+    from cee import ask
+    from cee.answer import extract
+    from cee.answer import reduce as R
+    from cee.retrieve import fts, planner
+
+    monkeypatch.setenv("LLM_PROVIDER", "deepseek")
+    monkeypatch.setenv("MOCK_DELAY_S", "0")
+    monkeypatch.setattr(ask, "model_name", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(planner, "model_for", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
+    monkeypatch.setattr(fts, "searchable", lambda q: True)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    monkeypatch.setattr(ask, "generate", lambda *a, **k: pytest.fail("no legacy answer call"))
+    calls = {"plan": 0, "map": 0, "remap": 0, "reduce": 0, "corrective": 0}
+
+    def call_planner(query, provider, client=None, meta=None):
+        calls["plan"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        return RESUME_PLAN
+    monkeypatch.setattr(planner, "call_planner", call_planner)
+
+    def search(q, plan, trace=None, part_pools=None, **kw):
+        plan.searched = [{"id": s.id, "budget": 1000, "tokens": 20, "pool": 1} for s in plan.subquestions]
+        return [_hit("MS-10K-2025#1", "MS", "Morgan Stanley recruits advisors through its training program.", "a1.MS"),
+                _hit("RJF-10K-2025#1", "RJF", "Raymond James describes its advisor platform.", "a1.RJF")]
+    monkeypatch.setattr(planner, "search_subquestions", search)
+
+    def corrective(q, plan, sq_id, words, exclude, search_fn=None, tokens=None):
+        calls["corrective"] += 1
+        return [_hit("RJF-10K-2025#7", "RJF", "Raymond James recruits advisors from wirehouse firms.")]
+    monkeypatch.setattr(planner, "corrective_search", corrective)
+
+    def call_extract(question, spec, provider, window=None, firms=None, client=None, meta=None):
+        calls["remap" if spec.round == 2 else "map"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        out = extract.mock_extract(spec)
+        if spec.id == "map.RJF":   # round 1: the firm's passage does not answer the aspect
+            out["cells"] = [{**c, "label": "not_found", "items": [], "reason": "not stated"} for c in out["cells"]]
+        return out
+    monkeypatch.setattr(extract, "call_extract", call_extract)
+
+    def call_reduce(question, matrix, query, provider, client=None, meta=None):
+        calls["reduce"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        return R.mock_reduce(matrix, query)
+    monkeypatch.setattr(R, "call_reduce", call_reduce)
+    return calls
+
+
+def _resume(tmp_path, name, cap, *extra):
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", str(cap), "--as-of", "2026-11-17",
+                  "--cache", str(tmp_path / "cache"), "--out", str(tmp_path / name), *extra])
+    rep = _record(tmp_path / name)
+    return rc, rep, rep["questions"][0]
+
+
+def test_a_resumed_run_reuses_every_saved_call(monkeypatch, tmp_path):
+    # #248 acceptance 1 (plan step 3): runs A (cap 3), B (cap 2), C (cap 0); 0 real calls (fakes)
+    from cee.retrieve import planner
+    calls = _resume_env(monkeypatch)
+    # preconditions (round-2 note 2): a fact aspect (a comparison is never re-searched), no research-part
+    # hits (no map.research call), the corrective search is the fake (RealRunner.map passes no search_fn)
+    assert all(a["kind"] != "comparison" for a in RESUME_PLAN["aspects"])
+    assert all(h.part_id != "research" for h in planner.search_subquestions(None, planner.Plan()))
+    assert planner.corrective_search.__name__ == "corrective"
+
+    rc, rep, r = _resume(tmp_path, "A", 3)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "corrective": 1}
+    assert rep["meta"]["real_calls"] == 3 and rep["meta"]["reused"] == 0
+    assert r["map_capped_calls"] == ["remap.RJF"] and r["model"] == "cap"
+    assert r["map_behavior"] == "answer"     # MS's fact passed the checks: the reduce is capped, not code-built
+    assert r["status"] == "NOT_EVALUATED" and r["note"] == "not run: --max-calls reached"
+    assert r["cost"]["by_type"] == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "answer": 0}
+    assert r["cost"]["new"] == 3 and r["cost"]["reused"] == 0
+    assert not any("remap" in p.name or "reduce" in p.name for p in (tmp_path / "cache").iterdir())
+
+    rc, rep, r = _resume(tmp_path, "B", 2)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "corrective": 2}
+    assert rep["meta"]["real_calls"] == 2 and rep["meta"]["reused"] == 3 and r["model"] == "called"
+    assert r["cost"]["by_type"] == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "answer": 0}
+    assert (r["cost"]["new"], r["cost"]["reused"]) == (2, 3)
+    b_cost, b_answer = r["cost"], r["answer"]
+
+    rc, rep, r = _resume(tmp_path, "C", 0)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "corrective": 3}   # no call twice
+    assert rep["meta"]["real_calls"] == 0 and rep["meta"]["calls_reserved"] == 0 and rep["meta"]["reused"] == 5
+    assert r["model"] == "cached" and r["answer"] == b_answer
+    c = r["cost"]
+    assert c["by_type"] == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "answer": 0}
+    assert (c["new"], c["reused"], c["usd_new"]) == (5 - 5, 5, 0)
+    assert c["usd"] == pytest.approx(b_cost["usd"]) and c["usd"] > 0
+    # each call: 0.2M hit, 0.8M miss, 0.1M out (reasoning inside) -> $1.4048 at peak
+    assert c["usd_peak"] == pytest.approx(5 * (0.2 * 0.044 + 0.8 * 1.32 + 0.1 * 3.96))
+    assert c["input_tokens"] == 5_000_000 and c["cache_hit_tokens"] == 1_000_000 and c["reasoning_tokens"] == 250_000
+    assert all(row["cost"]["tz"] == "record offset" for row in c["rows"])   # new records carry their offset
+    assert rep["summary"]["cost"]["usd"] == pytest.approx(c["usd"]) and rep["meta"]["cost"]["usd_new"] == 0
+    assert "**Cost** (#248): 5 calls" in (tmp_path / "C" / "report.md").read_text(encoding="utf-8")
+
+
+def test_max_calls_caps_every_call_type(monkeypatch, tmp_path):
+    calls = _resume_env(monkeypatch)
+    rc, rep, r = _resume(tmp_path, "one", 1)
+    assert calls["plan"] == 1 and calls["map"] == 0 and calls["reduce"] == 0 and rep["meta"]["real_calls"] == 1
+    assert sorted(r["map_capped_calls"]) == ["map.MS", "map.RJF"]
+
+
+def test_legacy_resume_reuses_plan_and_answer(fake_model, monkeypatch, tmp_path):
+    from cee.retrieve import fts
+    calls = _resume_env(monkeypatch)
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS"]))
+    from cee import ask
+    fake_calls = []
+
+    def generate(question, hits, provider, plan=None, window=None):
+        fake_calls.append(question)
+        from cee.answer.schema import Answer
+        return Answer(answerable=True, behavior="answer", claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}],
+                      llm_called=True, usage=dict(USAGE))
+    monkeypatch.setattr(ask, "generate", generate)
+    _, rep, r = _resume(tmp_path, "A1", 1, "--legacy")
+    assert (rep["meta"]["real_calls"], r["model"], calls["plan"], len(fake_calls)) == (1, "cap", 1, 0)
+    _, rep, r = _resume(tmp_path, "B1", 1, "--legacy")
+    assert (rep["meta"]["real_calls"], rep["meta"]["reused"], r["model"], len(fake_calls)) == (1, 1, "called", 1)
+    _, rep, r = _resume(tmp_path, "C1", 0, "--legacy")
+    assert (rep["meta"]["real_calls"], rep["meta"]["reused"], r["model"], len(fake_calls)) == (0, 2, "cached", 1)
+    assert r["cost"]["by_type"]["answer"] == 1 and r["cost"]["by_type"]["plan"] == 1 and calls["plan"] == 1
+
+
+def test_naive_records_need_naive_tz_before_any_call(monkeypatch, tmp_path):
+    import json
+    calls = _resume_env(monkeypatch)
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / "Q1-plan-old.json").write_text(json.dumps({"at": "2026-11-19T21:35:43"}), encoding="utf-8")
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                  "--out", str(tmp_path / "x")])
+    assert rc == 2 and calls["plan"] == 0 and not (tmp_path / "x").exists()
+    with pytest.raises(SystemExit):   # an unknown zone is refused before anything runs
+        er.main(["--questions", "Q7", "--naive-tz", "Not/AZone", "--out", str(tmp_path / "y")])
+    _, rep, r = _resume(tmp_path, "z", 3, "--naive-tz", "America/Chicago")
+    assert rep["meta"]["cost"]["naive_tz"] == "America/Chicago" and calls["plan"] == 1
+
+
+def test_a_replayed_naive_record_is_priced_in_the_given_zone(monkeypatch, tmp_path):
+    # a saved record whose naive `at` is 21:35 in America/Chicago (03:35 UTC Friday): peak
+    import json
+    _resume_env(monkeypatch)
+    _resume(tmp_path, "A", 3)
+    cache = tmp_path / "cache"
+    for f in cache.iterdir():
+        rec = json.loads(f.read_text(encoding="utf-8"))
+        rec["at"], rec["wall_s"] = "2026-11-19T21:35:00", 10
+        f.write_text(json.dumps(rec), encoding="utf-8")
+    _, rep, r = _resume(tmp_path, "chi", 0, "--naive-tz=-06:00")
+    assert r["cost"]["peak_calls"] == 3 and all(x["cost"]["tz"] == "--naive-tz -06:00" for x in r["cost"]["rows"])
+    _, rep, r = _resume(tmp_path, "utc", 0, "--naive-tz", "UTC")   # Thursday 21:35 UTC: off-peak
+    assert r["cost"]["off_peak_calls"] == 3
+
+
+def test_mock_run_cost_is_zero(monkeypatch, tmp_path):
+    _resume_env(monkeypatch)
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    er.main(["--questions", "Q7", "--out", str(tmp_path)])
+    rep = _record(tmp_path)
+    assert rep["questions"][0]["cost"]["calls"] == 0 and rep["summary"]["cost"]["usd"] == 0
+    assert rep["meta"]["cost"]["usd"] == 0
+
+
+def test_plan_cache_is_shared_by_every_retrieval_mode(monkeypatch, tmp_path):
+    # #240 (T9) on main (#248): the planner record path has no retrieval mode; a second run with the
+    # same plan key reuses it, so the planner is called once in total. exp/hybrid (#249): the second run
+    # is hybrid-norerank (the fake search is main's loop, patched), and it reuses the fts run's plan
+    import cee.db
+    from cee.retrieve import hybrid
+    calls = _resume_env(monkeypatch)
+    monkeypatch.setenv("CEE_VECTORS", "on")
+    monkeypatch.setattr(cee.db, "connect", lambda: type("C", (), {"__enter__": lambda s: s,
+                                                                  "__exit__": lambda s, *a: False})())
+    monkeypatch.setattr(hybrid, "check_vectors", lambda conn: None)
+    _resume(tmp_path, "first", 1, "--mode", "fts")
+    _, rep, r = _resume(tmp_path, "second", 0, "--mode", "hybrid-norerank")
+    assert calls["plan"] == 1 and r["plan"]["source"] == "model"
+    assert rep["meta"]["retrieval_mode"] == "hybrid-norerank"
+    assert any(p.name.startswith("Q7-plan-") for p in (tmp_path / "second" / "raw").iterdir())
+
+
+def test_reuse_plans_with_real_never_calls_the_planner(monkeypatch, tmp_path):
+    # #240 (T10) on main: plans only from the cache; a missing plan stops the run before any call
+    # (exit 2); a provider / model mismatch exits 2
+    calls = _resume_env(monkeypatch)
+    _resume(tmp_path, "seed", 1)
+    assert calls["plan"] == 1
+    _, rep, r = _resume(tmp_path, "ok", 2, "--reuse-plans", "deepseek:deepseek-v4-pro")
+    assert calls["plan"] == 1 and calls["map"] == 2 and r["plan"]["source"] == "model"
+    assert rep["meta"]["reuse_plans"] == "deepseek:deepseek-v4-pro"
+    for p in (tmp_path / "cache").glob("Q7-plan-*.json"):
+        p.unlink()
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                  "--reuse-plans", "deepseek:deepseek-v4-pro", "--out", str(tmp_path / "missing")])
+    assert rc == 2 and calls["plan"] == 1 and not (tmp_path / "missing").exists()
+    with pytest.raises(SystemExit) as e:
+        er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                 "--reuse-plans", "deepseek:other-model", "--out", str(tmp_path / "mismatch")])
+    assert e.value.code == 2 and calls["plan"] == 1
+
+
+def test_reuse_plans_in_a_mock_run_reads_the_saved_plan(monkeypatch, tmp_path):
+    # #240 (T10) on main: mock + --reuse-plans: the saved plan, 0 calls (the planner is never called)
+    calls = _resume_env(monkeypatch)
+    _resume(tmp_path, "seed", 1)
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    assert er.main(["--questions", "Q7", "--as-of", "2026-11-17", "--cache", str(tmp_path / "cache"),
+                    "--reuse-plans", "deepseek:deepseek-v4-pro", "--out", str(tmp_path / "m")]) == 0
+    r = _record(tmp_path / "m")["questions"][0]
+    assert r["plan"]["source"] == "model" and r["plan"]["calls"] == 0 and calls["plan"] == 1
+    assert _record(tmp_path / "m")["meta"]["real_calls"] == 0
+
+
+# --- exp/hybrid (#125, #126, #211, #240): retrieval mode, search time, constants, grid, duplicates ---
+
+def _fake_bank(monkeypatch, seen=None):
+    from cee.retrieve import fts, hybrid, modes
+
+    def search(q, k=None, mode=None, trace=None, **kw):
+        if seen is not None:
+            seen.append((mode, fts.FLOOR, fts.MAX_PER_DOC, dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)))
+        return []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
+    monkeypatch.setattr(modes, "search", search)
+    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+
+
+def _baseline(tmp_path):
+    import json
+    path = tmp_path / "ref.json"
+    path.write_text(json.dumps({"questions": [], "summary": {"refusal_gap": {"ok": 0, "of": 0, "accuracy": None},
+                                                            "refusal_all": {"ok": 0, "of": 0, "accuracy": None}}}),
+                    encoding="utf-8")
+    return str(path)
+
+
+def _point(floor, mpd, passages=0.4, docs=0.8, n_pass=28, gap=(5, 5), all_=(10, 10), forbidden=0):
+    acc = lambda ok, of: {"ok": ok, "of": of, "accuracy": round(ok / of, 3)}  # noqa: E731
+    return {"floor": floor, "max_per_doc": mpd, "run": er.point_name(floor, mpd),
+            "summary": {"tier1_passage_recall": passages, "tier1_doc_recall": docs, "pass": n_pass,
+                        "refusal_gap": acc(*gap), "refusal_all": acc(*all_), "forbidden_hits": forbidden}}
+
+
+REF = {"refusal_gap": {"ok": 5, "of": 5, "accuracy": 1.0}, "refusal_all": {"ok": 10, "of": 10, "accuracy": 1.0}}
+
+
+def test_mode_and_search_time_are_recorded(monkeypatch, tmp_path):
+    import json
+    from cee.retrieve import fts, modes
+
+    seen_modes = []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query())
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: seen_modes.append(mode) or [])
+    _fake_plan(monkeypatch)  # #240: hybrid token mode plans first too (rule plan, no call)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q26,Q29", "--mode", "hybrid", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert seen_modes == ["hybrid"] * 3
+    assert report["meta"]["retrieval_mode"] == "hybrid" and report["meta"]["mode"] == "mock"
+    assert report["meta"]["warmup_s"] is not None
+    assert all(isinstance(q["search_s"], float) for q in report["questions"])
+    assert report["summary"]["median_search_s"] is not None
+    assert "retrieval hybrid | median search" in (tmp_path / "report.md").read_text(encoding="utf-8")
+
+
+def test_ranks_are_recorded_per_hit(monkeypatch, tmp_path):
+    import json
+    from cee.retrieve import fts
+
+    h = fts.Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
+                source_tier=1, published_at="2026-01-01", period_end=None, section=None, page=None,
+                rank=0.123456, text="x")
+    from cee.retrieve import modes
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: [h])
+    _fake_plan(monkeypatch)  # #214: fts token mode plans first (rule plan, no call)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    er.main(["--questions", "Q29", "--mode", "fts", "--legacy", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert report["questions"][0]["ranks"] == [0.1235]
+
+
+# --- #126: third mode, constants, grid, selection rule, duplicate measure ------------------------
+
+
+def test_hybrid_norerank_mode_is_accepted(monkeypatch, tmp_path):
+    import json
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert {s[0] for s in seen} == {"hybrid-norerank"}
+    assert report["meta"]["retrieval_mode"] == "hybrid-norerank"
+    from cee.retrieve import hybrid
+    assert report["meta"]["constants"]["FLOOR"] == hybrid.FLOOR["hybrid-norerank"]
+    assert report["meta"]["constants"]["MAX_PER_DOC"] == hybrid.MAX_PER_DOC["hybrid-norerank"]
+    assert "logical CPUs" in report["meta"]["cpu"]
+
+
+def test_no_option_leaves_constants_untouched(monkeypatch, tmp_path):
+    from cee.retrieve import fts
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "fts", "--out", str(tmp_path)])
+    assert {(s[1], s[2]) for s in seen} == {(0.3, 3)}
+    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
+
+
+def test_constants_map_per_mode_and_are_restored(monkeypatch, tmp_path):
+    from cee.retrieve import fts, hybrid
+    before = (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC))
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.4", "--max-per-doc", "2", "--out", str(tmp_path / "a")])
+    assert seen[-1][1:3] == (0.4, 2) and seen[-1][3] == before[0]
+    er.main(["--questions", "Q29", "--mode", "hybrid", "--floor", "0.2", "--max-per-doc", "5",
+             "--out", str(tmp_path / "b")])
+    mode, floor, mpd, hf, hm = seen[-1]
+    assert (floor, mpd) == (0.3, 3)  # fts untouched in a hybrid run
+    assert hf["hybrid"] == 0.2 and hm["hybrid"] == 5
+    assert (hf["hybrid-norerank"], hm["hybrid-norerank"]) == tuple(
+        b["hybrid-norerank"] for b in before)
+    # restored after the run
+    assert (fts.FLOOR, fts.MAX_PER_DOC, fts.DUP_JACCARD) == (0.3, 3, 0.6)
+    assert (dict(hybrid.FLOOR), dict(hybrid.MAX_PER_DOC)) == before
+
+
+def test_dup_jaccard_option_is_gone(monkeypatch, tmp_path):
+    # #211: DUP_JACCARD is fts.DUP_JACCARD in every mode; the #126 option was removed
+    _fake_bank(monkeypatch)
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q29", "--mode", "hybrid", "--dup-jaccard", "0.5", "--out", str(tmp_path)])
+
+
+def test_grid_needs_a_baseline(monkeypatch, tmp_path, capsys):
+    _fake_bank(monkeypatch)
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q29", "--mode", "fts", "--floor", "0.2,0.3", "--out", str(tmp_path)])
+    assert "--baseline" in capsys.readouterr().err
+
+
+def test_grid_writes_one_folder_per_point_and_a_pick(monkeypatch, tmp_path):
+    import json
+    seen = []
+    _fake_bank(monkeypatch, seen)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--floor", "0,0.2", "--max-per-doc", "2,3",
+             "--baseline", _baseline(tmp_path), "--out", str(tmp_path / "grid")])
+    names = sorted(p.name for p in (tmp_path / "grid").iterdir() if p.is_dir())
+    assert names == ["f0.0-m2", "f0.0-m3", "f0.2-m2", "f0.2-m3"]
+    grid = json.loads((tmp_path / "grid" / "grid.json").read_text(encoding="utf-8"))
+    assert len(grid["points"]) == 4 and grid["rule"] == er.SELECTION_RULE
+    # all points tie: the mode's default (0/3) wins
+    assert grid["choice"]["pick"]["floor"] == 0.0 and grid["choice"]["pick"]["max_per_doc"] == 3
+    assert "Pick" in (tmp_path / "grid" / "grid.md").read_text(encoding="utf-8")
+    assert len(seen) == 1 + 4  # one warm-up, then one search per point and question
+
+
+def test_choose_eligibility():
+    pts = [_point(0.2, 2, passages=0.9, forbidden=1), _point(0.3, 2, passages=0.8, gap=(4, 5)),
+           _point(0.4, 2, passages=0.7, all_=(9, 10)), _point(0.4, 3, passages=0.5)]
+    c = er.choose(pts, REF, "fts")
+    assert c["pick"]["floor"] == 0.4 and c["pick"]["max_per_doc"] == 3
+    assert set(c["not_eligible"]) == {"f0.2-m2", "f0.3-m2", "f0.4-m2"}
+    assert er.choose(pts[:3], REF, "fts")["pick"] is None
+
+
+def test_choose_tie_breaks_in_order():
+    pick = lambda pts, mode="fts": (lambda c: (c["pick"]["floor"], c["pick"]["max_per_doc"]))(er.choose(pts, REF, mode))  # noqa: E731
+    assert pick([_point(0.2, 2, passages=0.41), _point(0.3, 3, passages=0.4)]) == (0.2, 2)          # passages
+    assert pick([_point(0.2, 2, docs=0.81), _point(0.3, 3)]) == (0.2, 2)                              # doc recall
+    assert pick([_point(0.2, 2, n_pass=29), _point(0.3, 3)]) == (0.2, 2)                              # PASS
+    assert pick([_point(0.4, 2), _point(0.3, 3)]) == (0.3, 3)                                          # default
+    assert pick([_point(0.2, 3), _point(0.4, 3)], "hybrid") == (0.4, 3)                               # higher FLOOR
+    assert pick([_point(0.2, 4), _point(0.2, 2)], "hybrid") == (0.2, 2)                               # smaller MAX
+    assert pick([_point(0.0, 2), _point(0.0, 3)], "hybrid") == (0.0, 3)                               # hybrid default
+
+
+def test_trigrams_follow_pg_trgm():
+    assert er.trigrams("Cat") == {"  c", " ca", "cat", "at "}
+    assert er.trigrams("a-b") == {"  a", " a ", "  b", " b "}
+    assert er.trigram_similarity("cat", "cat") == 1.0
+    assert er.trigram_similarity("", "cat") == 0.0
+    assert er.trigram_similarity("word", "cord") == pytest.approx(2 / 8)  # "ord", "rd " shared; pg_trgm gives 0.25
+
+
+def test_duplicate_measure_counts_pairs_over_the_limit():
+    base = "net new assets rose in the quarter as advisors joined the firm from competitors"
+    d = er.duplicates([base, base + " today", "something else entirely about bank deposits and rates"])
+    assert d["pairs_trigram_over"] == 1 and d["max_trigram"] > 0.9
+    assert d["pairs_5gram_over"] == 1 and d["max_5gram"] > 0.9
+    assert er.duplicates(["only one"]) == {"max_trigram": 0.0, "pairs_trigram_over": 0, "max_5gram": 0.0,
+                                           "pairs_5gram_over": 0}
+
+
+def test_hybrid_constants_record_the_pool_rule(monkeypatch, tmp_path):
+    # #240 (T8b, review B1): meta.constants of a hybrid run, without the removed RERANK_N
+    import json
+    from cee.retrieve import fts, hybrid
+    _fake_bank(monkeypatch)
+    er.main(["--questions", "Q29", "--mode", "hybrid-norerank", "--out", str(tmp_path)])
+    c = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["meta"]["constants"]
+    assert "RERANK_N" not in c
+    assert (c["POOL_PER_GROUP"], c["LEG_K"], c["RRF_K"], c["TOKEN_BUDGET"]) == (
+        fts.POOL_PER_GROUP, hybrid.LEG_K, hybrid.RRF_K, fts.TOKEN_BUDGET)
+# --- DeepSeek (#242) --------------------------------------------------------------------------
+
+
+class _MapSeen(Exception):
+    pass
+
+
+@pytest.mark.parametrize("mode", ["fts", "hybrid-norerank"])
+def test_the_mock_map_re_search_uses_the_mode_search(monkeypatch, tmp_path, mode):
+    """#249: the map's corrective re-search gets modes.search_fn(mode); fts passes none (main's default)."""
+    import cee.answer.extract as extract
+    from cee.retrieve import fts, modes
+    h = fts.Hit(chunk_id="MS-10K-2025#1", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
+                source_tier=1, published_at="2026-01-01", period_end=None, section=None, page=None, rank=1.0, text="x")
+    sentinel, seen = object(), []
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: query(["MS"]))
+    monkeypatch.setattr(modes, "search", lambda q, k=None, mode=None, trace=None, **kw: [h])
+    monkeypatch.setattr(modes, "search_fn", lambda m: None if m == "fts" else sentinel)
+    _fake_plan(monkeypatch)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+
+    def spy(q, plan, hits, provider, **kw):
+        seen.append(kw.get("search_fn", "default"))
+        raise _MapSeen
+    monkeypatch.setattr(extract, "run_map", spy)
+    with pytest.raises(_MapSeen):
+        er.main(["--questions", "Q29", "--mode", mode, "--out", str(tmp_path)])
+    assert seen == (["default"] if mode == "fts" else [sentinel])

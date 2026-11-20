@@ -1,0 +1,95 @@
+{
+  "question_id": "Q3",
+  "question": "What is Schwab's strategy for its RIA custody business?",
+  "planner_version": "plan-v3",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "What is Schwab's strategy for its RIA custody business?",
+    "entities": [
+      "SCHW"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-19T22:43:43.926235",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1318,
+    "output_tokens": 3749,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 38,
+    "reasoning_tokens": 3353,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 40.97,
+  "tokens_per_s": 91.51,
+  "reasoning_content": "We need answer the user's request. We need produce a search plan, not answer the question. We need call submit_plan with aspects.\n\nQuestion: \"What is Schwab's strategy for its RIA custody business?\"\n\nFirms: SCHW only, named. So aspects all restricted? The question asks only Schwab. So firms for every aspect likely [\"SCHW\"]. But need think: code chose firms, list only SCHW. We need list aspects literally. One question asks strategy for RIA custody business. But the instructions say \"what the question asks without naming it.\" Example: \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, priorities, competition, where losing ground or pulling back. So we need multiple aspects for strategy.\n\nWe need parse question. \"What is Schwab's strategy for its RIA custody business?\" It asks one main aspect: strategy. But the meta-instructions require listing every ask including implicit asks. Let's identify aspects:\n\n- The explicit ask: Schwab's strategy for its RIA custody business. That could be broken into components: how management describes the RIA custody business, the priorities it states, the competition it names, where it says it is losing ground or pulling back, maybe product/service offerings, technology investments, pricing/fees, target clients, growth initiatives.\n\nBut careful: The instructions say \"List the aspects literally. An aspect is one thing the question asks about. List every one, in the order the question asks them: each item of a list, each \"and\" joining two asks, each metric or dimension the question names; what the question asks without naming it.\"\n\nQuestion is just \"What is Schwab's strategy for its RIA custody business?\" So the asked aspect is \"strategy for its RIA custody business.\" The example about plan for retirement-plan unit expands to sub-aspects: how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back. Those are aspects that a strategy question implicitly asks. We should include them as separate aspects? The instruction says \"Example: 'What is Firm X's plan for its retirement-plan unit?' also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back.\" So for \"What is Schwab's strategy for its RIA custody business?\" we should include analogous sub-aspects.\n\nSo aspects:\n1. How management describes the RIA custody business (description).\n2. The priorities Schwab states for its RIA custody business.\n3. The competition Schwab names in RIA custody.\n4. Where Schwab says it is losing ground or pulling back in RIA custody.\nMaybe also: products/services and capabilities it offers/plans; technology; pricing; target clients; growth strategy; financial metrics (net new assets, advisor headcount?) The question asks strategy, not specific metrics. But strategy encompasses initiatives, investments, client segments, competitive positioning. We should not add aspects question does not ask. But the example indicates implicit asks. Could include \"growth initiatives and investments\" as part of priorities? Need be careful to not over-add.\n\nThe instructions emphasize: \"Do not add an aspect the question does not ask.\" So we should only include aspects that the strategy question asks implicitly. The example enumerates four for plan. For strategy, maybe:\n- management's description of the RIA custody business\n- priorities stated for it\n- competition named\n- where losing ground/pulling back\n- strategy itself? Hmm.\n\nCould structure as:\n1. Stated strategy/strategic priorities for the RIA custody business (explicit)\n2. How management describes the RIA custody business and its role\n3. Competitive positioning and competitors named\n4. Areas where Schwab says it is losing ground or pulling back in RIA custody\nMaybe also \"growth initiatives and investments in RIA custody\" because strategy often includes. But that might be part of priorities. The example didn't include growth initiatives, but \"priorities\" includes.\n\nLet's think about search words. We need keyword_query 5-25 words, documents themselves use, no firm names/dates.\n\nAspect 1: strategy priorities for RIA custody. Keywords: \"RIA custody\", \"registered investment advisor custody\", \"custody strategy\", \"strategic priorities\", \"advisor custody\", \"custody business\", \"RIA custody business\", \"growth strategy\", \"strategic initiatives\". But need no firm names. Good.\n\nAspect 2: management description of RIA custody business. Keywords: \"RIA custody\", \"custody business\", \"advisor custody\", \"custody services\", \"registered investment advisor\", \"business description\", \"custody platform\", \"advisor services\".\n\nAspect 3: competition named. Keywords: \"competitive\", \"competitors\", \"competition\", \"market share\", \"RIA custody\", \"custody competitive landscape\", \"competes with\", \"competitive position\".\n\nAspect 4: losing ground/pulling back. Keywords: \"losing\", \"lost\", \"attrition\", \"outflows\", \"pulling back\", \"wind down\", \"exiting\", \"de-emphasize\", \"RIA custody\", \"advisor custody\".\n\nBut maybe we also need aspects for offerings/technology/pricing? The question doesn't name those. The instruction example for retirement-plan unit includes four. Let's follow that pattern exactly: description, priorities, competition, losing ground/pulling back. But \"strategy\" also asks \"what is strategy\" - maybe first aspect \"strategy for RIA custody business\" covers priorities/strategy. We can include an aspect \"the strategy Schwab states for its RIA custody business\" and then sub-aspects? The example \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back. So for plan they list \"the plan\" plus those? Actually it says \"also asks\" meaning the question asks the plan and also those. So we can list \"the stated strategy/plan for the RIA custody business\" as first aspect, then description, priorities, competition, losing ground.\n\nBut \"strategy\" and \"priorities\" overlap. Could have:\n1. Schwab's stated strategy for its RIA custody business (explicit)\n2. How management describes the RIA custody business\n3. The priorities Schwab states for the RIA custody business\n4. The competition Schwab names in RIA custody\n5. Where Schwab says it is losing ground or pulling back in RIA custody\n\nBut is \"stated strategy\" same as \"priorities\"? To avoid duplication maybe combine? The instruction says never merge. The explicit question asks strategy, so aspect 1 is the overall strategy. The implicit asks are description, priorities, competition, losing ground. So five aspects. But maybe \"strategy\" aspect could be \"the strategy and strategic priorities Schwab states for its RIA custody business\" merging explicit and priorities\u2014bad because \"never merge\". Let's separate.\n\nHowever, maybe the question doesn't ask four separate aspects; the example says \"also asks\" those because plan implies them. We'll follow.\n\nCould also add \"closest disclosed figure\" for performance? The question doesn't ask a figure. So no metric. The metric field should be \"\" for all since question doesn't ask advisor_headcount or net_new_assets exactly. But perhaps strategy for RIA custody includes net new assets? No, not explicitly. Don't add.\n\nFirms: all aspects restricted to SCHW? The question is \"What is Schwab's strategy...\" so only Schwab. So firms: [\"SCHW\"] for all aspects.\n\nKind: \n- Strategy/description/priorities/competition/losing ground are all fact or recency? The question asks current strategy. Could be recency? \"recency (what is new inside the time window)\"\u2014the time window? No explicit time window given in question. Since question doesn't mention period, maybe kind \"fact\". The overall strategy is fact. Priorities fact. Description fact. Competition fact. Losing ground maybe fact or recency. Since no time window, fact.\n\nBut the instruction says kind \"recency (what is new inside the time window)\" only if what is new. The question asks strategy, likely fact. So all fact.\n\nNeed ensure keyword_query 5-25 words, no firm names, no dates. We can use terms.\n\nLet's craft each aspect:\n\nAspect 1:\nid: \"ria_custody_strategy\"\ntext: \"What strategy Schwab states for its RIA custody business.\"\nkeyword_query: \"RIA custody strategy strategic priorities custody business advisor custody registered investment advisor custody strategic initiatives growth strategy\"\nfirms: [\"SCHW\"]\nmetric: \"\"\nkind: \"fact\"\n\nWait text should not contain firm names? Instruction says \"text: what the aspect asks, in one sentence, without firm names.\" So text cannot include \"Schwab\". Need write without firm names. \"What strategy the firm states for its RIA custody business.\" Good.\n\nBut id can be label; no firm names maybe ok? \"id: short label\" not prohibited, but use generic.\n\nAspect 2:\nid: \"ria_custody_description\"\ntext: \"How management describes the RIA custody business.\"\nkeyword_query: \"RIA custody custody business advisor custody registered investment advisor custody services custody platform business description advisor services\"\nfirms: [\"SCHW\"]\nmetric: \"\"\nkind: \"fact\"\n\nAspect 3:\nid: \"ria_custody_priorities\"\ntext: \"The priorities the firm states for its RIA custody business.\"\nkeyword_query: \"RIA custody priorities strategic priorities advisor custody priorities custody business focus areas initiatives\"\nfirms: [\"SCHW\"]\nmetric: \"\"\nkind: \"fact\"\n\nAspect 4:\nid: \"ria_custody_competition\"\ntext: \"The competition the firm names in RIA custody.\"\nkeyword_query: \"RIA custody competition competitors competitive landscape competitive position market share custody competitors advisor custody competition\"\nfirms: [\"SCHW\"]\nmetric: \"\"\nkind: \"fact\"\n\nAspect 5:\nid: \"ria_custody_pullback\"\ntext: \"Where the firm says it is losing ground or pulling back in RIA custody.\"\nkeyword_query: \"RIA custody losing ground attrition outflows pulling back exiting wind down de-emphasize advisor custody lost clients\"\nfirms: [\"SCHW\"]\nmetric: \"\"\nkind: \"fact\"\n\nIs \"where the firm says it is losing ground or pulling back\" a valid aspect? The example includes it. Yes.\n\nBut need maybe include aspect for \"strategy\" as one. We have aspect 1. Good.\n\nCould there be aspect \"how management describes the unit\" - we have. Good.\n\nDo we need \"the results they report\" etc.? Example for staffing included metrics. Not applicable.\n\nQuestion: \"What is Schwab's strategy for its RIA custody business?\" The phrase \"RIA custody business\" could be known as \"Advisor Services\" at Schwab. Search words should include \"Advisor Services\" and \"custody of registered investment advisers\". Let's refine keywords.\n\nFor Schwab, RIA custody is part of \"Schwab Advisor Services\" but no firm names. Documents use \"advisor services\", \"RIA custody\", \"custody\", \"registered investment advisor\", \"RIA\", \"custody business\". We can include synonyms: \"advisor custody\", \"RIA custody\", \"custody services\", \"custody platform\", \"registered investment advisor custody\".\n\nNeed be careful \"advisor services\" could be broader but okay.\n\nLet's finalize. Maybe add \"growth initiatives\" to strategy aspect. Fine.\n\nLet's check if we should include \"metric\": \"net_new_assets\" for strategy? The question doesn't ask. No.\n\nCould there be a \"comparison\" aspect because question across firms? No, only Schwab, no comparison. No.\n\nPotential issue: The instruction says \"List the aspects literally... each item of a list, each 'and' joining two asks, each metric or dimension the question names.\" There are no \"and\" or lists. So maybe only one aspect: strategy. But the example strongly suggests expansion. However, it says \"what the question asks without naming it.\" So we expand. Good.\n\nBut \"Do not add an aspect the question does not ask.\" Are the four implicit aspects asked? The example says yes for plan. For strategy, similar. We can justify.\n\nLet's perhaps phrase aspect 1 as \"The strategy the firm states for its RIA custody business\" and aspect 3 as \"The priorities...\" but these overlap. Maybe better to follow the example structure: The question \"What is Schwab's strategy for its RIA custody business?\" asks (a) how management describes the RIA custody business, (b) the strategy/priorities it states, (c) the competition it names, (d) where it says losing ground/pulling back. The explicit ask is \"strategy\" which is captured by (b). We might not need a separate first aspect \"strategy\" if (b) is it. But the instruction \"List the aspects literally\" includes the explicit ask. Hmm.\n\nLet's decide:\nAspects:\n1. The strategy and priorities the firm states for its RIA custody business. (explicit)\n2. How management describes the RIA custody business.\n3. The competition the firm names in RIA custody.\n4. Where the firm says it is losing ground or pulling back in RIA custody.\n\nThis merges strategy and priorities? The instruction says \"never merge two aspects\". Is \"strategy\" and \"priorities\" two aspects? The explicit question asks strategy; priorities is implicit. They are similar but could be considered separate. To be safe, separate:\n1. The strategy the firm states for its RIA custody business.\n2. How management describes the RIA custody business.\n3. The priorities the firm states for its RIA custody business.\n4. The competition the firm names in RIA custody.\n5. Where the firm says it is losing ground or pulling back in RIA custody.\n\nBut is \"priorities\" distinct enough from \"strategy\"? It is a sub-ask of strategy. The example says \"priorities it states\" as separate. So yes.\n\nCould also include \"growth initiatives and investments\" as another aspect? The example didn't include, but strategy question could. Hmm. I think 5 aspects is good.\n\nLet's craft final keyword queries with no firm names, no dates. Use 5-25 words. Count words.\n\nAspect 1 strategy:\n\"RIA custody strategy strategic priorities advisor custody custody business registered investment advisor custody growth strategy strategic initiatives competitive positioning\"\nCount: RIA(1) custody2 strategy3 strategic4 priorities5 advisor6 custody7 custody8 business9 registered10 investment11 advisor12 custody13 growth14 strategy15 strategic16 initiatives17 competitive18 positioning19. Fine.\n\nAspect 2 description:\n\"RIA custody custody business advisor custody registered investment advisor custody services custody platform business description advisor services role\"\nCount fine.\n\nAspect 3 priorities:\n\"RIA custody priorities strategic priorities focus areas initiatives advisor custody custody business objectives goals\"\nCount fine.\n\nAspect 4 competition:\n\"RIA custody competition competitors competitive landscape competitive position market share custody competitors advisor custody competitive dynamics\"\nFine.\n\nAspect 5 pullback:\n\"RIA custody losing ground attrition outflows pulling back exiting wind down de-emphasize advisor custody lost clients declining\"\nFine.\n\nNeed ensure \"firms\" are IDs: [\"SCHW\"]. The question asks only Schwab. Yes.\n\nMetric: \"\" for all.\n\nKind: fact for all. Could strategy be \"recency\"? The question asks current strategy maybe but no time window. Fact.\n\nLet's output by calling submit_plan. We need call tool once with aspects array. No extra text. We can include brief note? The instruction says return plan by calling submit_plan; do not answer. So just call tool.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "ria_custody_strategy",
+        "text": "The strategy the firm states for its RIA custody business.",
+        "keyword_query": "RIA custody strategy strategic priorities advisor custody custody business registered investment advisor custody growth strategy strategic initiatives competitive positioning",
+        "firms": [
+          "SCHW"
+        ],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "ria_custody_description",
+        "text": "How management describes the RIA custody business.",
+        "keyword_query": "RIA custody custody business advisor custody registered investment advisor custody services custody platform business description advisor services role",
+        "firms": [
+          "SCHW"
+        ],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "ria_custody_priorities",
+        "text": "The priorities the firm states for its RIA custody business.",
+        "keyword_query": "RIA custody priorities strategic priorities focus areas initiatives advisor custody custody business objectives goals",
+        "firms": [
+          "SCHW"
+        ],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "ria_custody_competition",
+        "text": "The competition the firm names in RIA custody.",
+        "keyword_query": "RIA custody competition competitors competitive landscape competitive position market share custody competitors advisor custody competitive dynamics",
+        "firms": [
+          "SCHW"
+        ],
+        "metric": "",
+        "kind": "fact"
+      },
+      {
+        "id": "ria_custody_pullback",
+        "text": "Where the firm says it is losing ground or pulling back in RIA custody.",
+        "keyword_query": "RIA custody losing ground attrition outflows pulling back exiting wind down de-emphasize advisor custody lost clients declining",
+        "firms": [
+          "SCHW"
+        ],
+        "metric": "",
+        "kind": "fact"
+      }
+    ]
+  }
+}

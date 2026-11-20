@@ -1,0 +1,192 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a1.MER",
+    "a2.MER",
+    "a3.MER",
+    "a4.MER",
+    "a5.MER",
+    "a6.MER",
+    "a7.MER",
+    "a8.MER",
+    "a9.MER",
+    "a10.MER",
+    "a11.MER",
+    "a12.MER",
+    "a13.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-20T03:11:25.889066",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2825,
+    "output_tokens": 5094,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1545,
+    "reasoning_tokens": 4230,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 69.5,
+  "tokens_per_s": 73.29,
+  "reasoning_content": "We need answer extraction for Merrill (MER). We have only one passage listed under a1.MER. Other sub-questions have no passages. We must return exactly one cell for each sub-question id (a1 through a13). Use only passages below. Never use outside knowledge.\n\nLet's analyze the passage provided.\n\nPassage chunk id \"BAC-PR-2026-01-14-01#12\", source BAC press, segment GWIM, period 2025-12-31, published 2026-01-14.\n\nText: \"Percentage of digitally active Private Bank core relationships across the enterprise ($3MM+ in total balances) as of November 2025. Includes third-party activities and excludes Irrevocable Trust-only relationships, Institutional Philanthropic relationships, and exiting relationships. Continued Business Leadership \u2022 No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025), and Top Wealth Management Teams High Net Worth (2025) \u2022 No. 1 on Barron's Top 1200 Wealth Financial Advisors List (2025) and No. 1 on Barron's Top 100 Women Financial Advisors (2025) \u2022 No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025) \u2022 No. 1 in Managed Personal Trust AUM(b) \u2022 Best Private Bank in the U.S. and Best Private Bank for Philanthropic Services Globally(f) See page 11 for Business Leadership sources. \u2022 Net income of $1.4 billion \u2022 Revenue of $6.6 billion,2 up 10%.\"\n\nThis is about Merrill (Bank of America's GWIM) business leadership, rankings, net income, revenue. Does it state preferences of younger investors? No. Does it state anything about younger investors? It mentions \"Top Next Generation Advisors (2025)\" and \"Top 40 Advisors Under 40 List (2025)\". Those are rankings of advisors, not preferences of younger investors. The sub-questions ask about younger investors' preferences, Edward Jones management descriptions, Edward Jones current offerings etc. Wait firm is Merrill (MER), but sub-questions a7-a13 ask about Edward Jones? That's odd: question is about Edward Jones, but firm is Merrill. The prompt says \"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms.\" The sub-questions a7-a13 ask about Edward Jones, but we're extracting for Merrill. Hmm, perhaps these sub-questions ask Edward Jones as competitor? But firm is Merrill, so we only have Merrill passages. We should not answer Edward Jones. So for a7-a13, probably not_found because passages say nothing about Edward Jones.\n\nBut wait instructions: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" For a1, asked \"What preferences do younger investors and clients under 40 state...\" The passage has no preferences stated. The \"Top 40 Advisors Under 40 List\" is not a preference; it's a ranking of advisors. Could be different_quantity? It's a different, related quantity? Hmm. a1 asks preferences of younger investors/clients under 40 for wealth-management products etc. The passage mentions \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - that's about Merrill advisors under 40, not younger investors' preferences. Is it a related quantity? No, not a preference at all. The instruction: \"a figure that only resembles it is never a fact.\" Different_quantity is for different, related quantity: a wider unit, different measure, etc. This ranking isn't a measure of preferences. So label not_found, because passage says nothing about the asked preferences.\n\nFor a2 through a6: no passages, so not_found.\n\nFor a7 through a13: no passages about Edward Jones in Merrill passage; not_found. But wait a8 asks Edward Jones's current offerings - not_found. a13 comparison asks \"How should younger-investor preferences shape Edward Jones's offerings?\" This is not a factual quantity; but we have no passages. Not_found.\n\nWe need return cells with label and items, differs_because, reason, derivation. For not_found and not_disclosed, items should be empty? The schema requires items array for each cell, can be empty. Also differs_because should be string; for not_found probably \"\". Derivation object with operation \"\", inputs empty.\n\nNeed produce exactly 13 cells.\n\nLet's double-check: The passage under a1 is actually \"Percentage of digitally active Private Bank core relationships...\" This could be relevant to a2 digital/mobile channel preferences? No, it's a percentage of digitally active Private Bank core relationships, not younger investors' stated preferences. But a2 asks \"What digital and mobile channel preferences do younger investors state?\" The passage's \"Percentage of digitally active Private Bank core relationships across the enterprise\" is a metric, not a stated preference. Could it be different_quantity for a2? The instructions: different_quantity: no passage states asked quantity, but one states a different, related quantity: ... a different measure (all employees or full-time equivalents for advisors, compensation expense for a payout grid or a headcount, client firms on a platform for the firm's own advisors, or an industry figure for a firm's own figure). The percentage of digitally active Private Bank core relationships could be a different measure related to digital channel usage, not preferences. But the sub-question a2 asks \"What digital and mobile channel preferences do younger investors state?\" The passage isn't about younger investors nor stated preferences. It's a firm metric of digitally active core relationships. Is it related? It's about digital activity, not preferences. Could be different_quantity for a2? Hmm, but the passage is listed under a1, not a2. We can only use the passages given. The sub-question a2 says \"(no further passages; the passages found for this part are listed under another part or the research passages)\" but actually no research passages provided. We have only one passage. For a2, no passage directly. But the single passage could be relevant to a2 as different_quantity? The instructions say use only the passages below; each passage grouped by sub-question they were found for. The passage is listed under a1. Should we use it for a2? The passages are available to us. We can cite chunk_ids. The grouping says found for a1. But we can use any passage? \"Use only the passages below.\" We have one passage. The sub-question a2 has no further passages, but that doesn't forbid using the a1 passage if relevant. However it's not about younger investors' stated digital preferences. The metric \"Percentage of digitally active Private Bank core relationships across the enterprise ($3MM+ in total balances) as of November 2025\" is about Private Bank (a segment) core relationships, not younger investors. It is a different measure of digital activity, not preference. For a2, label could be different_quantity with item. But does the sub-question ask for a fact: \"What digital and mobile channel preferences do younger investors state?\" The passage doesn't state any preference. A percentage of digitally active relationships is a different quantity: a different measure (digital activity) and different group (Private Bank core relationships, not younger investors). It could be different_quantity.\n\nBut careful: the instruction says \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" For different_quantity, \"no passage states the asked quantity, but one states a different, related quantity: a wider unit..., a different measure..., or an industry figure for a firm's own figure.\" Digital activity vs digital preferences\u2014not exactly a different measure of same thing, but related. Hmm.\n\nSimilarly for a1, the passage mentions Top 40 Advisors Under 40. Is that a different quantity for a1? a1 asks preferences of younger investors/clients under 40. \"Advisors Under 40\" is a different group (advisors, not investors/clients) and a ranking, not preferences. It's not a related quantity; it's unrelated. So not_found for a1 is better.\n\nCould the passage's \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" be a fact for a10 competition? No, a10 asks \"What competition does Edward Jones name in serving younger investors?\" Not relevant.\n\nFor a8 \"What are Edward Jones's current offerings...\" No.\n\nThus likely all not_found.\n\nBut let's consider whether any sub-question asks about Merrill? Wait the sub-questions are mostly about Edward Jones, but the firm is Merrill. That seems strange. Maybe the task is: question is about Edward Jones, and we're extracting for competitor Merrill, so sub-questions a7-a13 are Edward Jones-specific and not answerable from Merrill passages. Sub-questions a1-a6 ask about younger investors generally; we need find what Merrill's documents say about younger investors' preferences. The provided passage doesn't contain such. So not_found all.\n\nBut maybe the passage contains a1-relevant: \"Percentage of digitally active Private Bank core relationships across the enterprise ($3MM+ in total balances) as of November 2025.\" Not younger investors, not stated preference. Not fact.\n\nAlso \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - this is about advisors under 40, but not investor preferences. It's a different quantity. Should we label a1 as different_quantity? Let's reason about instructions: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure (all employees or full-time equivalents for advisors, compensation expense for a payout grid or a headcount, client firms on a platform for the firm's own advisors, or an industry figure for a firm's own figure).\" This is quite specific. The Top 40 Advisors Under 40 ranking is not a preference measure. It's not a wider unit, not a different measure of the asked quantity. It is a recognition of advisors under 40. It doesn't relate to what younger investors prefer. So not_found.\n\nFor a2, \"Percentage of digitally active Private Bank core relationships\" could be a different measure of digital adoption, but a2 asks digital/mobile channel preferences of younger investors. It's not the same population nor a preference. I'd still say not_found, because the passage says nothing about younger investors' stated digital preferences. However the presence of \"digitally active\" could tempt different_quantity. The instruction for different_quantity: \"a different, related quantity: ... a different measure...\" \"Digitally active relationships\" vs \"digital channel preferences\" are different. But is it a different measure of preferences? No. It's a firm's internal metric of client digital activity. Related? Sort of, digital. But the sub-question asks for stated preferences; the passage doesn't state preferences. I think not_found is safer. But the task wants \"When unsure between fact and different_quantity, choose different_quantity and say why.\" That's between fact and different_quantity, not between not_found and different_quantity. Hmm.\n\nLet's re-read: \"not_found: the passages say nothing about it.\" The passage does say something about digital activity, but not about younger investors' digital preferences. Does that count as \"nothing about it\"? It says nothing about younger investors' stated preferences. So not_found.\n\nBut maybe the passage is actually relevant to a2 as a different_quantity: The percentage of digitally active Private Bank core relationships. This is a digital adoption metric, not a stated preference. The sub-question a2 asks \"What digital and mobile channel preferences do younger investors state?\" We don't have any preference. The digital metric is different. I lean not_found for all, because no passage contains anything about younger investors' preferences or Edward Jones.\n\nWait, but the prompt says \"Items (fact and different_quantity only), one per figure or statement\". If we label different_quantity for a2 with the digital metric, we'd need a text, quote, value etc. The value \"6\" percentage? The passage says \"6 Percentage of digitally active Private Bank core relationships...\" Actually the \"6\" might be a footnote marker, not value. The passage says \"6 Percentage of digitally active Private Bank core relationships across the enterprise ($3MM+ in total balances) as of November 2025.\" No actual percentage number given. So no figure. Could still be different_quantity with value \"\". But is it worth it? The item would say \"Merrill/BAC reports the percentage of digitally active Private Bank core relationships...\" but no figure. The sub-question asks for younger investors' digital/mobile preferences. This is not that. I think not_found.\n\nLet's consider a1: The passage says \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\". This is a figure/statement about advisors under 40. Could be relevant to \"clients under 40\"? No, advisors not clients. Not_found.\n\nFor a7 \"How does Edward Jones management describe younger investors...\" The passage is about Bank of America/Merrill, not Edward Jones. Not_found.\n\nFor a8-a13 all Edward Jones specific; not_found.\n\nNeed produce cells. For each cell:\n- subquestion_id\n- label: not_found\n- items: []\n- differs_because: \"\"\n- reason: one short sentence\n- derivation: {operation: \"\", inputs: []}\n\nWe must be careful about \"items\" required for not_found? Schema says items array required. Empty is fine.\n\nLet's craft reasons:\na1: \"The passage discusses Merrill/BAC business leadership, rankings, net income, and revenue; it does not state any younger-investor or under-40 client preferences.\"\nActually it mentions Top 40 Advisors Under 40 but that's advisor ranking. Reason can say \"The only under-40 mention is a ranking of Merrill advisors, not younger investors' stated preferences.\"\n\na2: \"The passage mentions a digitally active Private Bank relationship metric, not younger investors' stated digital/mobile preferences.\" But if not_found, reason: \"No passage states younger investors' digital or mobile channel preferences.\" Since the passage has a digital metric but no preference. I can mention it.\n\na3: \"No passage states fee or pricing preferences of younger investors.\" Not found.\na4: \"No passage states investment product or asset preferences of younger investors.\"\na5: \"No passage states advice model or human interaction preferences of younger investors.\"\na6: \"No passage states communication or financial education preferences of younger investors.\"\na7: \"The Merrill passage does not describe Edward Jones management's views of younger investors.\"\na8: \"No passage describes Edward Jones's current offerings or client experience.\"\na9: \"No passage states Edward Jones's priorities for younger investors.\"\na10: \"No passage names competition Edward Jones faces for younger investors.\"\na11: \"No passage says Edward Jones is losing ground or pulling back among younger investors.\"\na12: \"No passage discloses recent or planned Edward Jones changes for younger investors.\"\na13: \"No passage addresses how younger-investor preferences should shape Edward Jones's offerings.\"\n\nFor not_found, items empty, differs_because \"\". Derivation empty.\n\nLet's ensure we don't mistakenly need label \"different_quantity\" for a1 because of \"Top 40 Advisors Under 40 List\". Hmm. The instruction: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity\". Is \"advisors under 40\" related to \"clients under 40\"? It's a different population (advisors vs clients) and a ranking. Could be a \"different measure\"? Not a measure of preferences. I'd not use it. The prompt: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" This strongly discourages using Top 40 Advisors Under 40 as fact. Different_quantity is for related quantities. A ranking of advisors is not a related quantity to investor preferences. So not_found.\n\nWhat about a2: \"Percentage of digitally active Private Bank core relationships\" - could be different_quantity because it's a digital adoption metric, but the sub-question asks digital/mobile channel preferences of younger investors. The population differs (Private Bank core relationships, not younger investors) and it's an activity metric, not preferences. The instructions for different_quantity include \"a different measure\" but examples are clear (all employees vs advisors, compensation expense vs payout grid/headcount). Here digital activity is a different measure than preferences. But the asked quantity is \"preferences\"; a digital activity percentage is not a measure of preferences at all. It's a related concept but not a different measure of the same quantity. I'd still mark not_found.\n\nActually, let me think about what the evaluator might expect. The passage was found for a1. It includes \"Percentage of digitally active Private Bank core relationships across the enterprise ($3MM+ in total balances) as of November 2025.\" That is likely relevant to some sub-question about digital. The sub-question a2 asks digital/mobile channel preferences. The system placed it under a1, but the passage content might be intended for a2? The prompt says \"Passages, grouped by the sub-question they were found for:\" and only a1 has a passage. The other parts say \"(no further passages; the passages found for this part are listed under another part or the research passages)\". So this single passage is the only evidence. It may be intended as a1? But it doesn't contain a1 content. Maybe this is a negative/not_found case for all.\n\nWait, the passage source: \"BAC press, segment GWIM, period 2025-12-31, published 2026-01-14\". This is Bank of America press release about GWIM (Merrill). It reports net income, revenue, rankings. It doesn't discuss younger investors' preferences or Edward Jones. So likely all not_found.\n\nBut the instruction for not_found: \"the passages say nothing about it.\" Yes.\n\nLet's prepare cells. We need exact JSON.\n\nEach cell requires:\n{\n\"subquestion_id\": \"a1.MER\",\n\"label\": \"not_found\",\n\"items\": [],\n\"differs_because\": \"\",\n\"reason\": \"...\",\n\"derivation\": {\"operation\": \"\", \"inputs\": []}\n}\n\nNeed 13 cells.\n\nLet's produce them in a single submit_extraction call.\n\nDouble-check schema: derivation operation enum includes \"\", \"ratio\", \"sum\", \"difference\"; inputs array of {subquestion_id, item}. For empty derivation use operation \"\", inputs [].\n\ndiffers_because required string; for not_found empty.\n\nreason: short sentence.\n\nItems: for not_found, empty array. Good.\n\nLet's craft reasons concise and accurate.\n\na1: \"The passage only mentions rankings of Merrill advisors, including under-40 advisors, and financial results; it does not state younger investors' or under-40 clients' stated preferences.\" Wait if I say \"only mentions rankings of Merrill advisors...\" that's okay. But maybe reason should justify not_found: no stated preferences. Good.\n\na2: \"The passage's digitally active Private Bank relationship metric is a firm activity metric, not a stated digital or mobile preference of younger investors.\" This explains why not_found despite digital mention.\n\na3-a6: no passage at all.\n\na7-a13: no Edward Jones content.\n\nLet's finalize.\n\nNeed ensure no extra text outside tool call? The instructions: \"Return the cells by calling the submit_extraction tool.\" We can just call tool. We may include a brief sentence? Better just tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage mentions Merrill advisor rankings and financial results, not younger investors' or under-40 clients' stated preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage's digitally active Private Bank relationship metric is a firm activity measure, not a stated digital or mobile preference of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' fee or pricing preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' investment product or asset preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' advice model or human interaction preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' communication or financial education preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage does not describe Edward Jones management's view of younger investors or their needs.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage describes Edward Jones's current offerings, capabilities, or client experience for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states Edward Jones's priorities for serving younger investors or clients under 40.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage names competition Edward Jones faces in serving younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a11.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage says Edward Jones is losing ground or pulling back among younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a12.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses recent or planned Edward Jones changes to offerings for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a13.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage addresses how younger-investor preferences should shape Edward Jones's offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
