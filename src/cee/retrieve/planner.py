@@ -32,7 +32,7 @@ from cee.config import REPO_ROOT, entities_config, settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, PoolTrace, Query
 
-PLANNER_VERSION = "plan-v3"   # #245: aspects, literal, no cap (v2: #224, v1: #214)
+PLANNER_VERSION = "plan-v3.1"   # #246: + proxy per aspect; v3 #245: aspects, literal, no cap (v2: #224, v1: #214)
 PLANNER_MAX_TOKENS = 8000     # #245: no aspect cap, so a long plan needs room (was 2000)
 PLAN_TOOL = "submit_plan"
 MAX_QUERY_CHARS = 400
@@ -55,7 +55,7 @@ order the question asks them:
   Firm X and Firm Y each handle branch staffing?" asks whom they hire, how they pay them, how they
   train them, and the results they report (staff numbers, departures);
 - a figure that may not be disclosed also asks for the closest figure that is disclosed, as its
-  own aspect;
+  own aspect, marked proxy;
 - a judgement the question asks for across firms or periods (whether figures can be set side by
   side, which firm says the most) is its own aspect of kind comparison.
 Never merge two aspects into one, never drop one, and do not stop at any number: a question with
@@ -84,7 +84,10 @@ For each aspect give:
 - firms: firm IDs from the list when the question restricts the aspect to them, else an empty list;
 - metric: one of {metrics} when the aspect asks for exactly that registered metric, else "";
 - kind: fact (a disclosed fact or figure), series (a figure over several periods), recency (what is
-  new inside the time window), comparison (a judgement across firms or periods).
+  new inside the time window), comparison (a judgement across firms or periods);
+- proxy: true when the aspect asks for a stand-in for what the question asks (the closest disclosed
+  figure, a numerator or denominator to compute it, the nearest measure); false for everything the
+  question asks itself.
 Return the plan by calling the {tool} tool; do not answer the question."""
 
 
@@ -114,6 +117,7 @@ class Aspect:
     metric: str | None = None          # a key of config/metric_definitions.yaml
     kind: str = "fact"                 # fact | comparison | recency | series
     firms: list[str] = field(default_factory=list)   # D3: subset of firm_scope(q); empty = all
+    proxy: bool = False                # #246 plan-v3.1: a stand-in for the asked quantity (never rule 1a)
 
 
 @dataclass
@@ -159,6 +163,9 @@ class Plan:
     searched: list[dict] = field(default_factory=list)   # per sub-question (search_subquestions)
     research_tokens: float = 0.0
     competitor_floor: dict[str, float] = field(default_factory=dict)   # aspect id -> rank floor
+    # #246: each sub-question's candidate pool ids (PoolTrace.ids(), the value part_pools gets), for
+    # the map's retrieved-set check; not in to_log() (the pool size is logged in `searched`)
+    pools: dict[str, set[str]] = field(default_factory=dict)
 
     @property
     def parts(self) -> list[Part]:
@@ -357,7 +364,11 @@ def validate_plan(raw, q: Query) -> tuple[list[Aspect], list[str]]:
             notes.append(f"aspect {n}: unknown kind {kind or '(none)'}, fact")
             kind = "fact"
         firms = _aspect_firms(item.get("firms"), q, n, notes)
-        aspects.append(Aspect(f"a{n}", text, words, metric, kind, firms))
+        proxy = item.get("proxy")
+        if not isinstance(proxy, bool):   # #246: strict prevents it; covers replays and fallbacks
+            notes.append(f"aspect {n}: proxy missing or not a boolean, false")
+            proxy = False
+        aspects.append(Aspect(f"a{n}", text, words, metric, kind, firms, proxy))
     return aspects, notes
 
 
@@ -372,8 +383,9 @@ def plan_schema(strict: bool = False) -> dict:
                              "keyword_query": {"type": "string"},
                              "firms": {"type": "array", "items": {"type": "string"}},
                              "metric": {"type": "string", "enum": ["", *metric_keys()]},
-                             "kind": {"type": "string", "enum": list(KINDS)}},
-              "required": ["id", "text", "keyword_query", "firms", "metric", "kind"],
+                             "kind": {"type": "string", "enum": list(KINDS)},
+                             "proxy": {"type": "boolean"}},   # #246 plan-v3.1
+              "required": ["id", "text", "keyword_query", "firms", "metric", "kind", "proxy"],
               "additionalProperties": False}
     aspects = {"type": "array", "items": aspect}
     if not strict:
@@ -588,7 +600,7 @@ def search_subquestions(q: Query, plan: Plan, search_fn=None, research_fn=None,
     plan.research_tokens = sum(fts.hit_tokens(h) for h in research)
     kept = {h.chunk_id for h in research}
     by_sub: dict[str, list[Hit]] = {}
-    plan.searched, plan.competitor_floor = [], {}
+    plan.searched, plan.competitor_floor, plan.pools = [], {}, {}
     for sq in plan.subquestions:
         sub_trace = PoolTrace()
         hits = search_fn(subquestion_query(q, sq), trace=sub_trace, tokens=budget, exclude=kept,
@@ -600,8 +612,9 @@ def search_subquestions(q: Query, plan: Plan, search_fn=None, research_fn=None,
         if trace is not None:
             for name in ("firm", "on_theme", "answers", "unattached"):
                 getattr(trace, name).extend(getattr(sub_trace, name))
+        plan.pools[sq.id] = sub_trace.ids()
         if part_pools is not None:
-            part_pools[sq.id] = sub_trace.ids()
+            part_pools[sq.id] = plan.pools[sq.id]
         plan.searched.append({"id": sq.id, "entity": sq.entity, "aspect": sq.aspect.id, "role": sq.role,
                               "budget": round(budget), "pool": len(sub_trace.ids()),
                               "floor_dropped": [], "floor_emptied": False})

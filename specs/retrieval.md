@@ -58,7 +58,11 @@ plan_question(query) -> Plan{aspects: [Aspect{id, text, keyword_query, metric, k
     #   plan-v3) lists every aspect the question asks, literally: no merge, no cap (PLANNER_MAX_PARTS
     #   removed), implicit asks and "the closest disclosed figure" as their own aspects; kind fact |
     #   series | recency | comparison; metric = a key of config/metric_definitions.yaml or "".
-    # strict schema on every path: {aspects: [{id, text, keyword_query, firms, metric, kind}]}, all
+    # plan-v3.1 (#246): each aspect also carries a required boolean `proxy`: true when it asks for a
+    #   stand-in for the asked quantity (the closest disclosed figure, a numerator or denominator to
+    #   compute it, the nearest measure). Code (the map step) never lets a proxy aspect make the
+    #   behavior `answer` (ADR-021 rule 1a); missing / not a boolean -> false with a note.
+    # strict schema on every path: {aspects: [{id, text, keyword_query, firms, metric, kind, proxy}]}, all
     #   required, additionalProperties false, metric / kind enums ("" = no metric, no nullable type);
     #   anthropic minItems 1, openai / deepseek no array limits. Output cap 8000 (anthropic, openai;
     #   deepseek 8000 thinking off, 64000 on, #242 / #245).
@@ -108,6 +112,13 @@ corrective_search(query, plan, sq_id, extra_words, exclude, search_fn, tokens) -
     #   words for a rule-plan aspect) + extra words, neighbour-guarded, never a chunk in `exclude`,
     #   every SQL filter kept (competitors: on the theme and the aspect's floor); the window is never
     #   widened (adjacent periods enter as words). 0 model calls; "once per not_found" is #246's rule.
+    # #246 uses it once per not_found sub-question of the map step (extract.run_map): exclude = every
+    #   chunk already retrieved for the question (and earlier re-search hits); extra words =
+    #   extract.widen_words (the firm's metric definition entry: quote, includes, the full-text search
+    #   phrases in looked_in; adjacent quarters as words). Its hits feed only the re-extraction (the
+    #   evidence matrix), never the retrieved set, recall or query_log.chunk_ids.
+    #   plan.pools (each sub-question's PoolTrace.ids(), the value part_pools gets) is the map's
+    #   retrieved-set check; answer turns are pooled only after the exclude filter.
 
 retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]

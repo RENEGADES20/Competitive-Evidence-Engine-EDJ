@@ -47,6 +47,14 @@ def test_entry_is_complete(d):
         assert "includes" in d and "excludes" in d
 
 
+@pytest.mark.parametrize("d", definitions(), ids=lambda d: f"{d['entity']}-{d['metric']}")
+def test_comparability_fields(d):
+    """#246 (ADR-021 rule 2): period, unit and basis on every entry; basis a lower-case key."""
+    assert d.get("period") in {"point_in_time", "quarter", "year"}
+    assert str(d.get("unit") or "").strip()
+    assert re.fullmatch(r"[a-z0-9_]+", str(d.get("basis") or ""))
+
+
 def test_doc_ids_are_in_the_manifest():
     known = manifest_ids()
     cited = set()

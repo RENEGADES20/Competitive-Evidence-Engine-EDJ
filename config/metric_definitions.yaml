@@ -12,6 +12,18 @@
 #   quote               word for word from chunk_id (optional for not_disclosed: then it is the
 #                       nearest related text, not a definition)
 #   doc_id, chunk_id, valid_from (period_end of the document)
+#   period / unit / basis  (#246, ADR-021 rule 2; C1 to confirm)
+#                       period: what one figure of this definition covers: point_in_time (a count
+#                         at a date, e.g. advisors at year end) | quarter | year. For a flow metric
+#                         (net new assets) it is the shortest period the firm reports the flow for:
+#                         every firm reports quarterly and annual flows, although the quoted
+#                         definitions (from 10-Ks; BAC: "over a specified period of time") do not
+#                         state it. Shown with the definition; code does not use it to decide
+#                         comparability (that uses basis, unit and the extracted figures' periods).
+#                       unit: what is counted (advisors, employees, USD). MS "Wealth Management
+#                         representatives" are its advisors (its own label, #46): unit advisors.
+#                       basis: a key naming the definition; equal keys = the same basis, so only
+#                         figures with equal basis and unit are compared or combined across firms.
 #   includes / excludes what the definition says it covers (headcount: trainees, assistants,
 #                       independents); not_stated lists what the firm does not say
 #   see_also            other chunks with the same or earlier wording
@@ -27,6 +39,9 @@ definitions:
     doc_id: EDJ-10K-2025
     chunk_id: EDJ-10K-2025#130
     valid_from: 2025-12-31
+    period: point_in_time
+    unit: advisors
+    basis: edj_financial_advisors_actual
     includes: [U.S. and Canada financial advisors (split in EDJ-10K-2025#148)]
     excludes: []
     not_stated: [trainees, branch assistants (BOAs), independents (none: all advisors are employees)]
@@ -42,6 +57,9 @@ definitions:
     doc_id: EDJ-10Q-2026Q2
     chunk_id: EDJ-10Q-2026Q2#60
     valid_from: 2026-06-30
+    period: quarter
+    unit: USD
+    basis: edj_nna_incl_fees_2026
     see_also: [EDJ-10K-2025#130]
     note: >-
       Wording changed in 2026: the 10-K 2025 (#130) has no "including fees and commissions", and the
@@ -55,6 +73,9 @@ definitions:
     doc_id: MS-SUPP-2020Q4
     chunk_id: MS-SUPP-2020Q4#1
     valid_from: 2020-12-31
+    period: point_in_time
+    unit: advisors
+    basis: ms_wealth_management_representatives
     includes: [Wealth Management representatives (count at Dec 31 2020, Sep 30 2020, Dec 31 2019)]
     excludes: []
     not_stated: [a definition of "Wealth Management representatives", trainees, any count after 4Q2020]
@@ -83,6 +104,9 @@ definitions:
     doc_id: MS-10K-2025
     chunk_id: MS-10K-2025#166
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: ms_nna_excl_fees
     see_also: [MS-10K-2025#165, MS-SUPP-2025Q4#34]
     note: >-
       The heading "Net New Assets (NNA)" is the last line of #165; the definition itself is #166.
@@ -96,6 +120,9 @@ definitions:
     doc_id: SCHW-ADV1A-2026
     chunk_id: SCHW-ADV1A-2026#1
     valid_from: 2026-10-21
+    period: point_in_time
+    unit: employees
+    basis: form_adv_item5b1_advisory_employees
     includes: [employees of Charles Schwab & Co., Inc. (CRD 5393) who perform investment advisory functions, including research (Form ADV Part 1A Item 5.B(1))]
     excludes: [independent RIAs and their advisors (clients, SCHW-10K-2025#23), clerical workers (Item 5.A)]
     not_stated: [how many are Financial Consultants or Wealth Consultants, other Schwab entities]
@@ -122,6 +149,9 @@ definitions:
     doc_id: SCHW-10K-2025
     chunk_id: SCHW-10K-2025#119
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: schw_core_net_new_assets
     see_also: [SCHW-MONTHLY-2026-01#8]
     note: >-
       Schwab's headline metric is core net new assets (10-K glossary). The threshold for
@@ -135,6 +165,9 @@ definitions:
     doc_id: BAC-SUPP-2023Q4
     chunk_id: BAC-SUPP-2023Q4#2
     valid_from: 2023-12-31
+    period: point_in_time
+    unit: advisors
+    basis: bac_total_wealth_advisors_gwim_consumer
     includes: [advisors across all wealth management businesses in GWIM and Consumer Banking ("Total wealth advisors", 18,916 at Dec 31 2023)]
     excludes: []
     not_stated: [a Merrill-only count, trainees, any count after 4Q2023 in the supplements]
@@ -162,6 +195,9 @@ definitions:
     doc_id: BAC-10K-2025
     chunk_id: BAC-10K-2025#249
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: bac_gwim_net_client_aum_flows
     see_also: [BAC-SUPP-2025Q4#58]
     note: >-
       BAC has no net-new-assets metric; the closest is GWIM net client AUM flows, which cover AUM
@@ -175,6 +211,9 @@ definitions:
     doc_id: RJF-10K-2025
     chunk_id: RJF-10K-2025#228
     valid_from: 2025-09-30
+    period: point_in_time
+    unit: advisors
+    basis: rjf_financial_advisors_excl_rcs
     includes: [employee financial advisors, independent contractor advisors, trainees once moved into production roles]
     excludes: [advisors in the RCS division]
     not_stated: [assistants]
@@ -191,5 +230,8 @@ definitions:
     doc_id: RJF-10K-2025
     chunk_id: RJF-10K-2025#224
     valid_from: 2025-09-30
+    period: quarter
+    unit: USD
+    basis: rjf_domestic_pcg_nna
     see_also: [RJF-SUPP-2025Q4#8]
     note: Domestic Private Client Group only; fees and commissions count as outflows.

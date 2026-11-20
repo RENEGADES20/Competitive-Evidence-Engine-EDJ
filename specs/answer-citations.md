@@ -89,6 +89,69 @@ year), `unit` and `basis` (a key naming the definition; equal keys = the same ba
 | Across firms, different or unknown basis | Each firm's figure listed with its own definition; code inserts the comparability caveat (Standard wording); never ranked, combined or averaged |
 | Metric not in the file (e.g. client assets) | Within-firm computation allowed with the "definition unverified" mark; never compared across firms |
 
+## Map step and evidence matrix (#246; ADR-021 rules 1-3, 6, 7)
+
+Plan: `plans/0246-map.md`. Code: `src/cee/answer/extract.py` (calls), `src/cee/answer/matrix.py`
+(rules). **Off by default until #247** (`MAP=off`; the eval turns it on with `--map` / `--map-only`):
+with `MAP=on`, `ask()` builds and logs the matrix (`query_log.filters.map`); the interim answer call
+(prompt v4.1) is still the answer shown.
+
+- **Calls (map-reduce, map side).** Round 1: one structured extraction call per firm whose
+  sub-questions kept passages (`map.<FIRM>`), plus `map.research` for the research passages, in
+  parallel (`MAP_CONCURRENCY`, default 6). A firm with no passage gets code cells `not_found`, no call.
+  Prompt `extract-v1`; tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
+  required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
+  supports the object / integer / enum types used, guide checked 2026-11-20).
+- **Cell** (one per sub-question; research: one per aspect, `<aspect>.research`): `label` `fact` |
+  `not_disclosed` | `not_found` | `different_quantity`; `items` (text, verbatim quote, chunk ids,
+  value as printed, unit, period `YYYY-MM-DD` / `YYYYQn` / `FYYYYY` / `YYYY`, scope, definition);
+  `differs_because`; `reason`; `derivation` (operation `ratio` / `sum` / `difference` and input items).
+  Code labels: `derived` (an accepted derivation), `failed` (invalid output or failed call).
+- **Proxy rule (one text, `extract.PROXY_RULE`, in the firm and research prompts).** A sub-question
+  of a `proxy` aspect (plan-v3.1: the closest disclosed figure, a numerator or denominator) names a
+  stand-in figure; that figure as the firm reports it is a fact; a different measure (all employees,
+  full-time equivalents, compensation expense, client firms on a platform) is `different_quantity`.
+  Code never lets a proxy aspect fire rule (a); its cells feed the adjacent side and may be derivation
+  inputs.
+- **Retrieved set of a cell** (code, after every call): the passages its sub-question kept, plus the
+  chunks in its own candidate pool that a sibling sub-question of the same firm kept (a chunk is kept
+  once, under its first sub-question), plus its re-search hits in round 2; research cells: the
+  research passages. Answer turns enter a pool only after the exclude filter, so a sibling-kept answer
+  turn cannot be cited by a later sub-question. A chunk id outside the set is rejected: removed from
+  `chunk_ids`, kept in `rejected_ids`, flag `unmatched_citation`. A fact / different quantity with no
+  cited item left reads `not_found`. Other flags: `quote_not_found`, `number_not_found` (the number
+  check rules below), `period_unparsed`; a missing cell is `not_found` (`missing_cell`).
+- **Invalid map outputs** (saved, never re-rolled; the cells become `failed`): no tool call; cut at
+  the cap; Anthropic refusal; DeepSeek `finish_reason` other than `tool_calls` / `stop`; not JSON; not a
+  valid extraction; no cells. **Failed calls** (timeout, 5xx, connection, a 401 / 429 that is not
+  DeepSeek's `ProviderStop`, a 400): the call's cells `failed`, the round goes on; the eval saves a
+  counted `failed_call` record, reused and never called again; a 400 stops the eval run after the
+  round. A `ProviderStop` stops the question; calls not started are cancelled.
+- **Corrective re-search (CRAG)**: once per `not_found` sub-question (not for failed, research or
+  comparison cells) through `planner.corrective_search`, every chunk already retrieved excluded, words
+  widened by `extract.widen_words` (the firm's metric definition entry: quote, includes, the
+  full-text search phrases in `looked_in`; adjacent quarters as words; the SQL window never widens).
+  Round 2: one re-extraction per firm over only the re-searched sub-questions that found new chunks,
+  and only those chunks; final. A re-extraction's derivation can use only its own cells (its input
+  holds no round-1 item), so derivations are proposed in round 1.
+- **Behavior (rule 1), by code, first match wins**: a request for the system's own forecast ->
+  `refuse`; a normative question (a modal with the home firm as subject, or "how should <x> shape
+  <home firm>"; in the bank Q12 and Q19) -> `answer_with_boundary`; a cell that holds the asked quantity
+  (`fact` or `derived`, not a comparison or proxy aspect, research included) -> `answer`; no fact and a
+  failed extraction -> **undecided** (`behavior` None, `incomplete_note` "This answer is incomplete:
+  ...", shown as incomplete, never as `refuse`, no "does not support" gap for that aspect; TL decision
+  D5); a `different_quantity` cell or a proxy fact -> `gap_with_adjacent`; else `refuse`.
+- **Derivation (rule 1d, rule 2 within-firm)**: the model proposes, code accepts only inputs that are
+  cited fact items of the same firm with the same non-empty period and scope (the same unit for a sum
+  or difference), no `number_not_found`, values that parse; code computes the value and the formula.
+  An unregistered metric's derived cell is flagged `definition_unverified`.
+- **Comparability marks (rule 2)**, per aspect over the firms holding it: registered metric, same
+  `basis` and `unit` -> `same_basis` (+ shared periods); different -> `different_basis` and the
+  comparability caveat (Standard wording; each firm's definition = its entry's quote cut to 160
+  characters and its chunk id; Merrill reads BAC's entry); unregistered metric with a figure ->
+  `unverified` and the unverified mark; qualitative -> none. Config caveats of cited substitutes
+  (GWIM) are added as by `insert_caveats`.
+
 ## Answer shape (prompt v4, #215; v3 #204)
 
 General rules in the prompt; no question ID, no `passes_if` text and no question text (a test
@@ -187,9 +250,10 @@ forced tool choice), so a response without a tool call is still possible and sta
 row). The OpenAI request was already strict. The eval's cache keys carry the Anthropic request
 version `strict-1` (`llm.request_version`); `PROMPT_VERSION` stays v4.1 (prompt text unchanged).
 DeepSeek (#242) sends `submit_answer` and `submit_plan` as strict function tools (`strict: true`
-on the `https://api.deepseek.com/beta` base URL), with an explicit `max_tokens`: 20000 / 2000 with
-thinking off, 64000 / 64000 with thinking on (reasoning shares the cap; planner cap
-2000 -> 8000 off and 16000 -> 64000 on since #245). Thinking off forces the
+on the `https://api.deepseek.com/beta` base URL), with an explicit `max_tokens`: answer 20000 /
+planner 8000 with thinking off, 64000 / 64000 with thinking on (reasoning shares the cap; the planner
+caps were 2000 off and 16000 on before #245). The map step's extraction calls (#246) use the answer
+caps (`extract.extract_max_tokens`). Thinking off forces the
 named function; thinking on uses `tool_choice` auto (a forced choice is a 400 there). A 401 / 402 /
 429 stops the question with a plain message (`ProviderStop`), with no fallback and nothing saved.
 Its request version (`ds-strict-1-think-{on|off}-a{cap}-p{cap}`) joins the eval's cache keys.
@@ -241,6 +305,8 @@ as constants. Keep the two in sync. Caveats remain code-owned; this wording does
 | Database does not support it (ADR-021 rule 1, #247) | Q32-Q35; any aspect no firm holds | "The database does not support this today: <aspect> (<firms>)." | - |
 | Comparability caveat (ADR-021 rule 2, code-inserted, #246 / #247) | Q11, Q22, Q23, Q24, Q31 | Caveat: "<Metric>: the firms define it differently (<firm>: <definition>; ...); figures are listed side by side and not compared or combined (reporting risk)." | - |
 | Unregistered metric (ADR-021 rule 2, #246 / #247) | Q24 (client assets) | Mark: "<Metric> is not in the metric definitions file; its definition is unverified." | - |
+| Map cell gaps (code, #246; #247 places them) | any firm x aspect cell that does not hold its quantity | "<Firm> - <aspect>: not disclosed in the documents searched." / "... not found in the documents searched." (+ " A second search with wider words found nothing new.") / "... not disclosed; a different quantity is listed as adjacent." / "... not extracted (the model output for this firm was invalid or the call failed)." | - |
+| Incomplete (code, #246, TL decision D5) | no fact and a failed extraction | "This answer is incomplete: the evidence for <firms> could not be extracted (the model output was invalid or the call failed). Nothing is concluded about what <firms> disclose." | - |
 | Advisor pay (decided per firm, prompt v2, #167; v3 #204) | Q25, Q29 | Firm with nothing published: "Payout grids are not public." (multi-firm answers name the firm first). Firm whose cited chunks publish payout ranges (RJF recruiting pages, #151): the ranges are claims dated "page content as of <date>", and the gap is "Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public." (multi-firm answers name the firm first, v3). Never "not public" for a firm whose evidence shows ranges. | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
 
 Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this

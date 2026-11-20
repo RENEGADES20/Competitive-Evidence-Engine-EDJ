@@ -120,7 +120,7 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
     assert d["plan"] == "Planning the search (anthropic, one call): 2 aspects x 2 firms = 2 sub-questions: p1 MS; p2 MER"
     assert d["search"].endswith("in 2 sub-questions") and seen[0] is result.plan
     logged = pipeline.log_filters(result)
-    assert logged["llm_calls"] == {"planner": 1, "answer": 1}
+    assert logged["llm_calls"] == {"planner": 1, "map": 0, "remap": 0, "answer": 1}   # MAP off (#246)
     assert [p["keyword_query"] for p in logged["plan"]["parts"]] == ["payout grid", "recruiting"]
     assert logged["entities"] == ["MS", "MER"]                       # the query fields stay
     assert planner.Plan  # imported module in use
@@ -140,4 +140,24 @@ def test_fallback_plan_line(monkeypatch):
 def test_mock_logs_zero_calls(monkeypatch):
     result, events, calls = run(monkeypatch, HITS)
     logged = pipeline.log_filters(result)
-    assert logged["llm_calls"] == {"planner": 0, "answer": 0} and logged["plan"]["source"] == "rules"
+    assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0} and logged["plan"]["source"] == "rules"
+
+
+def test_map_is_off_by_default(monkeypatch):
+    """#246 (TL decision D8): MAP off until #247: the stage is skipped, no extraction, logged off."""
+    import cee.answer.extract as extract
+    monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
+    result, events, calls = run(monkeypatch, HITS)
+    assert ("map", "skipped", "Map step off (MAP=off): no extraction calls") in events
+    assert result.matrix is None and pipeline.log_filters(result)["map"] == {"off": True}
+
+
+def test_map_on_builds_and_logs_the_matrix_on_the_mock(monkeypatch):
+    monkeypatch.setenv("MAP", "on")
+    result, events, calls = run(monkeypatch, HITS)
+    d = done(events)
+    assert d["map"] == ("Extracting per firm (mock, no model call): 1 cell: 1 fact; behavior by code: answer")
+    logged = pipeline.log_filters(result)
+    assert logged["map"]["behavior"] == "answer" and logged["map"]["cells"]["a1.MER"]["label"] == "fact"
+    assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0}   # the mock is not a paid call
+    assert calls == ["mock"]

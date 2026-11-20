@@ -37,6 +37,11 @@ chunk(document) -> [Chunk{chunk_id="<doc_id>#<n>", section, segment, page, text}
 
 metric_definitions.yaml   # config/metric_definitions.yaml (#46): entity, metric, status, quote,
                           # doc_id, chunk_id, valid_from; tests/test_metric_definitions.py
+                          # #246 (ADR-021 rule 2; C1 to confirm): period (point_in_time | quarter |
+                          #   year), unit (advisors, employees, USD), basis (a key naming the
+                          #   definition; equal keys = the same basis, the only figures compared or
+                          #   combined across firms). Today every basis differs, so cross-firm
+                          #   figures carry the comparability caveat (specs/answer-citations.md).
 ```
 
 ### Advisor headcount and NNA definitions (Q11, Q22, Q23)

@@ -259,6 +259,18 @@ def test_prompt_has_no_passes_if_text():
     assert set(_leaks(prompt.SYSTEM_PROMPT)) <= {"Q28", "Q30"}
 
 
+def test_extract_and_planner_prompts_share_no_run_with_questions_or_rubrics():
+    """#246: extract-v1 (firm and research variants) and plan-v3.1 hold no question text, no
+    passes_if text and no question ID."""
+    from cee.answer import extract
+    from cee.retrieve import planner
+    for text in (extract.system_prompt(), extract.system_prompt(research=True), planner.system_prompt()):
+        mine = _grams(text)
+        assert {qid: h for qid, t in _question_texts().items() if (h := mine & _grams(t))} == {}
+        assert _leaks(text) == {}
+        assert not re.search(r"Q\d{1,2}\b", text)
+
+
 def test_leak_check_catches_a_copied_rubric():
     # The rule-3 wording of the first #204 plan draft (6976a04) restated Q3's rubric; the check
     # (lower case, punctuation stripped) must catch it.

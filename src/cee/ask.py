@@ -33,13 +33,14 @@ class Result:
     query_id: int | None = None
     plan: Plan | None = None
     input_guard: dict | None = None   # #245: the interim input guard's trim, when it trimmed
+    matrix: object = None             # #246: the evidence matrix (MAP=on), else None
 
 
 Progress = Callable[[str, str, str], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
 
-STAGES = ("resolve", "plan", "search", "model", "check", "caveats", "log")
+STAGES = ("resolve", "plan", "search", "map", "model", "check", "caveats", "log")
 
 
 class _Trace:
@@ -91,14 +92,50 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     docs = len({h.doc_id for h in hits})
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                f" in {_n(len(plan.subquestions), 'sub-question')}")
+    matrix = map_step(query, plan, hits, provider, t)
     guard: dict = {}
     answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan, guard=guard)
-    result = Result(query, hits, answer, plan=plan, input_guard=guard or None)
+    result = Result(query, hits, answer, plan=plan, input_guard=guard or None, matrix=matrix)
     if log:
         with t.stage("log", "Saving the query"):
             result.query_id = _log(result, provider)
         t.report("log", "done", f"Saving the query: query #{result.query_id}")
     return result
+
+
+def map_text(matrix, provider: str) -> str:
+    """The map stage's trace line (#246)."""
+    made = [c for c in matrix.calls if not c.get("skipped")]
+    remaps = sum(c["round"] == 2 for c in made)
+    who = "mock, no model call" if provider == "mock" else f"{provider}, {_n(len(made) - remaps, 'call')} in parallel"
+    extra = []
+    if matrix.research:
+        extra.append(f"{len(matrix.research)} re-searched")
+    if remaps:
+        extra.append(_n(remaps, "re-extraction"))
+    labels = matrix.counts()["labels"]
+    order = ("fact", "derived", "not_disclosed", "not_found", "different_quantity", "failed")
+    shown = ", ".join(f"{labels[k]} {k.replace('_', ' ')}" for k in order if labels.get(k))
+    return (f"Extracting per firm ({who}{''.join(', ' + e for e in extra)}): {_n(len(matrix.cells), 'cell')}"
+            + (f": {shown}" if shown else "") + f"; behavior by code: {matrix.behavior or 'undecided'}")
+
+
+def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace):
+    """#246: the map step when MAP=on (off by default until #247): extraction per firm, corrective
+    re-search, the evidence matrix (logged; the interim answer stays what the user sees)."""
+    if not settings().map_on:
+        t.report("map", "skipped", "Map step off (MAP=off): no extraction calls")
+        return None
+    if not hits:
+        t.report("map", "skipped", "No passages found: no extraction call")
+        return None
+    import datetime as dt
+
+    from cee.answer.extract import run_map
+    with t.stage("map", "Extracting per firm"):
+        matrix = run_map(query, plan, hits, provider, as_of=dt.date.today())
+    t.report("map", "done", map_text(matrix, provider))
+    return matrix
 
 
 def guard_input(question: str, query: Query, hits: list[Hit], provider: str,
@@ -219,8 +256,14 @@ def log_filters(r: Result) -> dict:
     and the mock answer are 0, so a mock row reads 0 / 0 although the trace names the mock's
     answer step "(mock, one call)"."""
     plan = r.plan or rules_plan(r.query)
+    m = r.matrix
+    made = [c for c in (m.calls if m is not None else []) if not c.get("skipped") and not c.get("cached")
+            and c.get("provider") != "mock"]
     out = {**asdict(r.query), "plan": plan.to_log(),
-           "llm_calls": {"planner": plan.calls, "answer": int(bool(r.answer.llm_called))}}
+           "map": (m.to_log() if m is not None else {"off": True} if not settings().map_on
+                   else {"skipped": "no passages"}),
+           "llm_calls": {"planner": plan.calls, "map": sum(c["round"] == 1 for c in made),
+                         "remap": sum(c["round"] == 2 for c in made), "answer": int(bool(r.answer.llm_called))}}
     if r.input_guard:   # #245: the interim input guard trimmed the answer call's passages
         out["input_guard"] = r.input_guard
     return out
