@@ -46,13 +46,19 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    step 9 from the real check; until then `off` (see "Thinking default").
 2. **`llm.py`.**
    - `deepseek_client()`: `openai.OpenAI(api_key=DEEPSEEK_API_KEY, base_url=settings().deepseek_base_url,
-     max_retries=0, timeout=httpx2-compatible 1200 s read / 30 s connect)` - above the server's
-     10-minute close, and long enough for a 32k-token thinking answer. A missing / empty
+     max_retries=0, timeout=Timeout(2700 s, connect=30 s))`. Why it fits: the httpx read timeout
+     is per read (the longest wait for the next bytes), not per request. While a non-streaming
+     request waits or runs, DeepSeek sends empty keep-alive lines, and each one resets the read
+     timer. 2700 s (45 min) is also above the server's 10-minute close for a request that has not
+     started. Even with no keep-alive line at all, it covers a 64000-token thinking answer at
+     about 25 tokens/s. A timeout is a failed call: reported, not re-rolled (see "Other API errors"). A missing / empty
      `DEEPSEEK_API_KEY` raises a clear `RuntimeError` before any client exists (never falls back to
      `OPENAI_API_KEY`).
-   - Caps by thinking mode: `DEEPSEEK_MAX_TOKENS = {False: 20000, True: 32000}` (answer; off = the
-     project's 20000, on = room for reasoning, since it shares `max_tokens`) and
-     `DEEPSEEK_PLANNER_MAX_TOKENS = {False: 2000, True: 8000}` (off = `PLANNER_MAX_TOKENS`). Helper
+   - Caps by thinking mode: `DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}` (answer; off = the
+     project's 20000; on = the API's own thinking default of 64K, because reasoning shares
+     `max_tokens`; the API allows up to 384K) and
+     `DEEPSEEK_PLANNER_MAX_TOKENS = {False: 2000, True: 16000}` (off = `PLANNER_MAX_TOKENS`; on =
+     room for reasoning at the default effort, high). Quality first (TL decision). Helper
      `answer_max_tokens(provider)` returns these for deepseek and `MAX_TOKENS` otherwise.
    - `deepseek_request(question, hits, plan, window)`: `model`, `max_tokens` (explicit), system
      prompt = `SYSTEM_PROMPT` + the same "MUST call submit_answer" line as Anthropic,
@@ -69,7 +75,17 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
      (tool call or None, finish_reason, usage, payload) where `usage` = `input_tokens`,
      `output_tokens`, `cache_hit_tokens`, `cache_miss_tokens`, `reasoning_tokens`, `tool_calls`
      (count), `thinking` (on/off) and `payload` = `message.model_dump(mode="json")` (content,
-     `reasoning_content`, tool calls; a dict build for fakes).
+     `reasoning_content`, tool calls; a dict build for fakes). **Several tool calls:** the first
+     call named `submit_answer` (`submit_plan` for the planner) wins; the others are ignored, and
+     `usage.tool_calls` keeps the count, so the record shows it happened.
+   - **Reasoning kept for valid outputs too (review NB1).** `Answer` gets a pydantic
+     `PrivateAttr` `_provider_payload` (`schema.py`, one line). It is not a field, so `model_dump`,
+     query_log and the UI never see it. `_deepseek` sets it to `{"reasoning_content": ..., "content":
+     ...}` from the message. RealRunner's answer record adds `"reasoning_content"` from it for valid
+     answers (invalid ones already keep the whole message in `raw_payload`). The planner's `meta`
+     dict gets `reasoning_content`, and RealRunner's plan record saves it. It is not in
+     `Answer.usage`. Each call is single-turn, so the docs' rule to pass `reasoning_content` back
+     does not apply.
    - `_deepseek(question, hits, client=None, plan=None, window=None)`. Invalid (`ModelOutputError`,
      saved, never re-rolled), checked in this order:
      a. `finish_reason` not in (`tool_calls`, `stop`): `length` (cut, even if the arguments parse),
@@ -110,7 +126,10 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    `request_version` already comes from `llm.request_version`. `ProviderStop` in `answer` or `plan`:
    nothing is saved (no output was produced), the run stops with `SystemExit("stopped: <message>")`;
    `plan`'s `except Exception` gets an `except llm.ProviderStop: raise` before it. Docstring line on
-   `--real` names deepseek. `cache_key` / `plan_cache_key` signatures unchanged.
+   `--real` names deepseek. `cache_key` / `plan_cache_key` signatures unchanged; `plan_cache_key`
+   gets a one-line comment: its `PLANNER_MAX_TOKENS` is the constant 2000, and the DeepSeek
+   planner cap is kept apart through the request version (review NB6). Valid answer and plan
+   records also save `reasoning_content` (Design 2).
 6. **`.env.example`.** Provider comment `mock | anthropic | openai | deepseek`; `DEEPSEEK_API_KEY=`,
    `DEEPSEEK_MODEL=deepseek-v4-pro`, `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta` (comment:
    /beta is needed for strict tools), `DEEPSEEK_THINKING=<chosen default>` with one comment line.
@@ -119,9 +138,9 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    (`$env:LLM_PROVIDER="deepseek"` / `LLM_PROVIDER=deepseek ...`), plus a line on 402 / 429.
 8. **Docs naming the provider list** (one-line edits): `specs/answer-citations.md` ("Invalid model
    outputs" table rows for DeepSeek finish reasons, bad-JSON arguments; strict paragraph: DeepSeek
-   strict via /beta, request version; line 191 provider list), `README.md` line 145, CLAUDE.md
-   "Paid API calls" first line (`anthropic`, `openai` or `deepseek`). **Not** `docs/DECISIONS.md`:
-   ADR-012's provider list is left to #244 (ADR-021), named in the PR.
+   strict via /beta, request version; line 191 provider list), `README.md` line 145. **Not** CLAUDE.md
+   and **not** `docs/DECISIONS.md` (TL decision): #244 (ADR-021) owns both. The PR states that the
+   CLAUDE.md "Paid API calls" provider list and ADR-012's provider list go to #244.
 
 ## Test guards (0 real calls)
 - `tests/conftest.py`: also stubs `llm.deepseek_client` with `_blocked`; removes every `DEEPSEEK_*`
@@ -141,8 +160,8 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   `minLength`, `maxLength` anywhere.
 - D2 answer request, thinking off: `strict` true, `parameters == llm_output_schema()`, `max_tokens`
   20000, `tool_choice` names `submit_answer`, `extra_body` thinking disabled, model from settings.
-  Thinking on: `tool_choice == "auto"`, thinking enabled, `max_tokens` 32000.
-- D3 planner request: same checks for `submit_plan` (max_tokens 2000 / 8000).
+  Thinking on: `tool_choice == "auto"`, thinking enabled, `max_tokens` 64000.
+- D3 planner request: same checks for `submit_plan` (max_tokens 2000 / 16000).
 - D4 valid tool call -> Answer, `llm_called`, `stop_reason` `tool_calls`, usage with cache hit / miss
   and reasoning tokens.
 - D5 invalid, each saved with its raw: `finish_reason` `length` with valid arguments; `content_filter`;
@@ -155,15 +174,18 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
 - D7 planner outputs: valid -> dict; length cut, no tool call, bad JSON -> `PlannerOutputError` with
   raw and stop_reason; meta has usage.
 - D8 OpenAI planner: `finish_reason == "length"` with JSON content -> `PlannerOutputError` (new).
-- D9 `request_version`: anthropic `strict-1`, openai `None`, deepseek differs between thinking on
-  and off; `model_name` / `model_for` deepseek -> `deepseek-v4-pro`.
+- D9 `request_version`: anthropic `strict-1`, openai `None`, deepseek
+  `ds-strict-1-think-off-a20000-p2000` and `ds-strict-1-think-on-a64000-p16000`; `model_name` / `model_for` deepseek -> `deepseek-v4-pro`.
 - D10 config: `DEEPSEEK_THINKING` on / off / empty / bad value; defaults of model and base URL.
 - D11 client: the real builder (captured before conftest) with a dummy key: `max_retries == 0`,
-  timeout read > 600 s, base URL `/beta/`; no key -> RuntimeError.
+  timeout read 2700 s (> 600 s) and connect 30 s, base URL `/beta/`; no key -> RuntimeError.
 - D12 eval_run: `RealRunner("deepseek", ...)` with a fake `generate` / planner: the answer and plan
   records carry the deepseek request version and max_tokens; switching `DEEPSEEK_THINKING` changes
-  both keys (no reuse); a `ProviderStop` saves nothing and exits with the message; an invalid
-  output is saved and reused as invalid on a second run (no second call).
+  both keys (no reuse); valid answer and plan records hold `reasoning_content`, and the answer's
+  `model_dump()` / query_log JSON do not; a `ProviderStop` saves nothing and exits with the message;
+  an invalid output is saved and reused as invalid on a second run (no second call).
+- D13 several tool calls: two `submit_answer` calls -> the first one is used, `usage.tool_calls == 2`
+  (same for `submit_plan`).
 
 ## Steps
 1. Code (Design 1-8) and tests; `pytest` with `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-242\src`, all green.
@@ -177,15 +199,27 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    `.env.example` (D10 pins it). The real runs set `DEEPSEEK_THINKING` explicitly, so the placeholder
    default never affects them; the code gate runs before the paid command, so this later commit
    does not touch it. pytest, mock eval and verify-cee are re-run after the change (0 calls).
-7. **App check (2 calls)**: Streamlit with `LLM_PROVIDER=deepseek` and the chosen default, Q1 asked
-   on the Ask page by a small Playwright script in `ev242\` (not committed): screenshot, footer
-   `LLM called: True`, the query_log row's `model = deepseek-v4-pro` and `llm_calls`.
+   Commit and push; record that sha in `ev242\app-sha.txt`.
+7. **App check (2 calls, TL-approved inside the cap of 14).** `ev242\run-app.ps1` (one-off, not
+   committed), same guards as the real runs: a code gate (`git status --short` empty and
+   `git diff <app sha> HEAD -- src scripts config` empty, logged to `ev242\head-log.txt`, exit
+   before `.env` otherwise); then in `try` the `.env` copy, explicit env (`LLM_PROVIDER=deepseek`,
+   `DEEPSEEK_MODEL=deepseek-v4-pro`, `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`,
+   `DEEPSEEK_THINKING=<chosen>`, `PLANNER=on`, `PLANNER_MAX_PARTS=4`, `PYTHONPATH`), the resolved
+   non-secret settings logged; Streamlit on port 8598; a Playwright script asks Q1 on the Ask page
+   once, waits up to 45 min, saves a screenshot and the page text, checks the footer
+   `LLM called: True` and the query_log row (`model = deepseek-v4-pro`, `llm_calls` planner 1 /
+   answer 1); `finally` stops Streamlit, removes `.env` and the variables, logs that `.env` is gone.
+   This is the evidence for acceptance 1. `verify_cee.py` forces `LLM_PROVIDER=mock`, so the PR says
+   the real-provider proof is this one-off check and verify-cee (mock) proves the pipeline (NB4).
 8. Evidence committed: `docs/results/0242-deepseek-check.md` (per run: question, mode, planner
    source, finish_reason, valid / invalid and why, behavior vs expected, citation flags, tokens incl.
-   cache hit / reasoning, wall time; the decision) and `docs/results/0242-deepseek-raw/*.json` (the
-   12 raw records the runs saved). Full run folders and logs in `D:\ALLPROJECTS\EDJ\cache\ev242\`.
-9. `/finish-task`: PR with "Closes #242", Verification lists every real call, DeepSeek named for
-   ADR-012 / #244; `gh pr checks` green.
+   cache hit / reasoning, wall time; cap findings; the decision) and
+   `docs/results/0242-deepseek-raw/*.json` (the raw records the runs saved, `reasoning_content`
+   included). Full run folders and logs in `D:\ALLPROJECTS\EDJ\cache\ev242\`.
+9. `/finish-task`: PR with "Closes #242". Verification lists every real call. The PR states that the
+   CLAUDE.md "Paid API calls" provider list and ADR-012's provider list are left to #244.
+   `gh pr checks` green.
 
 ## Paid-call plan (CLAUDE.md "Paid API calls")
 - **Why the mock cannot show it:** the mock never sends a request; only DeepSeek shows whether
@@ -196,58 +230,85 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   call (all three are searchable in token-budget mode, so the planner is called).
 - **Runs:** R-off `DEEPSEEK_THINKING=off`, then R-on `DEEPSEEK_THINKING=on`, each
   `eval_run.py --real --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17 --baseline ...
-  --out .eval-runs\0242-real-{off|on}`, `PLANNER=on`, `PLANNER_MAX_PARTS=4`, model
-  `deepseek-v4-pro`. **Cap 6 per run, 12 total.** Plus **2 calls** for the app check (step 7, Q1 once
-  more in the chosen mode, planned here). **Total cap: 14 calls.** No re-run: an invalid, cut or
-  failed output is a finding, saved and reported. A 402 / 429 stops the run (no output, nothing to
-  re-roll); continuing after a top-up / wait needs the coordinator, and the cached outputs are reused.
+  --out .eval-runs\0242-real-{off|on}`. **Cap 6 per run, 12 total.** Plus **2 calls** for the app
+  check (step 7, Q1 once more in the chosen mode, TL-approved). **Total cap: 14 calls.** No re-run:
+  an invalid, cut or failed output is a finding, saved and reported. A 402 / 429 stops the run (no
+  output, nothing to re-roll); continuing after a top-up / wait needs the coordinator, and the
+  cached outputs are reused.
+- **Other API errors (NB2).** A non-ProviderStop API error on the answer path (400 schema reject,
+  500, 503, a timeout) propagates and aborts `eval_run` with nothing saved, as it does today for the
+  other providers. The script records the nonzero exit code per run in `head-log.txt`; it is not
+  counted as an output. A planner call that fails this way falls back to the rule plan and is saved
+  as a failed call (existing path). R-on still runs after an R-off abort (separate command).
+  Retrying an aborted run is not re-rolling an output, but it needs the coordinator.
 - **Execution** (as #240's `run-real.ps1`): `D:\ALLPROJECTS\EDJ\cache\ev242\run-real.ps1` logs HEAD,
   `git status --short` (must be empty) and `git diff <mruns sha> HEAD -- src scripts config` (must be
-  empty) to `ev242\head-log.txt`, exits before touching `.env` otherwise; then in `try` copies
-  `D:\ALLPROJECTS\EDJ\repo\.env` to the worktree (never read or printed), sets `PYTHONPATH`,
-  `PLANNER`, `PLANNER_MAX_PARTS`, `DEEPSEEK_THINKING` per run, runs R-off then R-on with output to
-  `ev242\real-{off|on}.log`; `finally` removes the worktree `.env` and the variables and logs that it
-  is gone. Run in the background. Afterwards copy each run folder (`raw/`, `report.json`,
-  `report.md`) to `ev242\real-{off|on}\`.
+  empty) to `ev242\head-log.txt`, exits before touching `.env` otherwise. Then in `try`:
+  - copies `D:\ALLPROJECTS\EDJ\repo\.env` to the worktree (never read or printed);
+  - **pins every run setting explicitly** (review B3; `load_dotenv` never overrides a set variable,
+    so the copied `.env` only supplies `DEEPSEEK_API_KEY` and anything not pinned):
+    `LLM_PROVIDER=deepseek`, `DEEPSEEK_MODEL=deepseek-v4-pro`,
+    `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`, `DEEPSEEK_THINKING` (off, then on),
+    `PLANNER=on`, `PLANNER_MAX_PARTS=4`, `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-242\src`;
+  - logs the resolved non-secret settings per run to `head-log.txt` (a one-line Python print of the
+    `settings()` fields provider, deepseek model / base URL / thinking, planner, max parts,
+    `llm.request_version("deepseek")`, the two caps, and whether a key is set as true / false;
+    never the key);
+  - runs R-off then R-on with output to `ev242\real-{off|on}.log`, exit codes logged.
+  `finally` removes the worktree `.env` and the variables and logs that it is gone. Run in the
+  background. Afterwards copy each run folder (`raw/`, `report.json`, `report.md`) to
+  `ev242\real-{off|on}\`.
 - **Saved:** every planner and answer record (question, prompt / planner version, model, request
-  version, max_tokens, chunk ids, raw output or raw payload, finish_reason, usage with cache hit /
-  miss and reasoning tokens).
+  version, max_tokens, chunk ids, raw output or raw payload, `reasoning_content`, finish_reason,
+  usage with cache hit / miss and reasoning tokens).
 
 ## Thinking default (decision rule, fixed before the calls)
-Compare R-off and R-on, in this order; the first criterion that differs decides:
-1. Valid outputs out of 6 (3 plans with source `model` + 3 valid answers).
-2. Behavior equal to `expected_behavior` (Q1 answer, Q22 answer, Q24 gap_with_adjacent), out of 3.
-3. Citation discipline, summed over the 3 answers: unmatched citations + claims without chunk ids +
+**Cap findings first.** A planner or answer output cut at its cap (`finish_reason` `length`) in
+either mode is reported as a cap finding (question, mode, call, output and reasoning tokens). That
+question is then dropped from criteria 1-3 **for both modes**, not counted against the mode that
+was cut. If every question drops, the comparison has no evidence and the default goes to the
+tie-break (on); the PR says so.
+
+Compare R-off and R-on over the questions left, in this order; the first criterion that differs decides:
+1. Valid outputs (plans with source `model` + valid answers), out of 2 x the questions left.
+2. Behavior equal to `expected_behavior` (Q1 answer, Q22 answer, Q24 gap_with_adjacent).
+3. Citation discipline, summed over the answers: unmatched citations + claims without chunk ids +
    number-check flags + code-added part gaps (fewer is better).
-Tie on all three -> **off** (forced tool call possible, fewer output tokens, faster). The table
-with every number and the reading of the claims goes in the PR. If neither mode gives a valid answer
-on a question, that is reported as a finding; the default still follows the rule.
+Tie on all three -> **on** (quality first, TL decision). `off` is only the placeholder default
+before the check. The table with every number and the reading of the claims (with the saved
+`reasoning_content` where it explains a difference) goes in the PR. If neither mode gives a valid
+answer on a question, that is reported as a finding; the default still follows the rule.
 
 ## Files to change
 - `src/cee/config.py` - three DeepSeek settings.
 - `src/cee/answer/llm.py` - client, requests, `_deepseek`, `ProviderStop`, caps, `request_version`, docstring.
+- `src/cee/answer/schema.py` - one `PrivateAttr` `_provider_payload` on `Answer` (not a field, not dumped).
 - `src/cee/retrieve/planner.py` - deepseek request and branch, OpenAI length cut, `ProviderStop`
-  re-raise, `model_for`, `planner_max_tokens`.
+  re-raise, `model_for`, `planner_max_tokens`, `reasoning_content` in `meta`.
 - `src/cee/ask.py` - `model_name`, docstring.
-- `scripts/eval_run.py` - RealRunner messages, max_tokens records, ProviderStop stop.
+- `scripts/eval_run.py` - RealRunner messages, max_tokens records, `reasoning_content` in records,
+  ProviderStop stop, `plan_cache_key` comment.
 - `tests/conftest.py`, `tests/test_no_paid_calls.py`, `tests/test_llm_deepseek.py` (new),
   `tests/test_planner.py`, `tests/test_eval_run.py`.
-- `.env.example`, `docs/RUN.md`, `specs/answer-citations.md`, `README.md` (one line), `CLAUDE.md`
-  (one line).
+- `.env.example`, `docs/RUN.md`, `specs/answer-citations.md`, `README.md` (one line).
 - `docs/results/0242-deepseek-check.md`, `docs/results/0242-deepseek-raw/` (evidence).
 - `plans/0242-deepseek.md` - this plan.
-Not changed: `docs/DECISIONS.md` (#244), prompts (`PROMPT_VERSION` v4.1, `PLANNER_VERSION` plan-v2),
-`schema.py`, the anthropic / openai answer paths, the anthropic planner, verify-cee driver and
-recipes (no user-facing feature changes; the app check is a one-off script in `ev242`).
+Not changed: `CLAUDE.md` and `docs/DECISIONS.md` (#244 owns both), prompts (`PROMPT_VERSION` v4.1,
+`PLANNER_VERSION` plan-v2), `Answer`'s fields, the anthropic / openai answer paths, the anthropic
+planner, verify-cee driver and recipes (no user-facing feature changes; the app check is a one-off
+script in `ev242`). The one-off scripts in `ev242` are Windows-only and not committed, so they get
+no `.sh` twin; if one is ever committed it gets one.
 
 ## Acceptance
-- [ ] `LLM_PROVIDER=deepseek` answers Q1 in the running app (step 7: screenshot, footer, query_log row).
-- [ ] Tests D1-D12 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
+- [ ] `LLM_PROVIDER=deepseek` answers Q1 in the running app (step 7 one-off Playwright check:
+      screenshot, footer, query_log row; verify-cee's driver is mock-only).
+- [ ] Tests D1-D13 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
       cut, no-tool, bad-JSON and pydantic-failure outputs saved as invalid; 402 / 429 stop; OpenAI
-      planner rejects `length`; 0 real calls (httpx2 counter `sent == []`).
-- [ ] Real: 6 question-runs (Q1, Q22, Q24 x thinking on / off), 12 calls at most, every raw record
-      saved with usage; thinking default chosen by the rule above, evidence in the PR and
-      `docs/results/0242-deepseek-check.md`.
+      planner rejects `length`; `reasoning_content` saved for valid outputs; 0 real calls (httpx2
+      counter `sent == []`).
+- [ ] Real: 6 question-runs (Q1, Q22, Q24 x thinking on / off), 12 calls at most (14 with the app
+      check), every raw record saved with usage; cap findings reported; thinking default chosen by
+      the rule above, evidence in the PR and `docs/results/0242-deepseek-check.md`.
 - [ ] Mock `eval_run.py` 30/30 chunk lists unchanged vs `evals/baselines/corpus-2026-11-19`;
       pytest, verify-cee (mock) and `gh pr checks` green.
 
@@ -255,3 +316,10 @@ recipes (no user-facing feature changes; the app check is a one-off script in `e
 - 2026-11-19 21:12 - plan written; DeepSeek docs re-checked (tool_calls, create-chat-completion,
   thinking_mode, error_codes, rate_limit, models). Worktree `D:\ALLPROJECTS\EDJ\wt-242`, branch
   `tl/242-deepseek` from origin/main af873e6. DB up to date (corpus-2026-11-19).
+- 2026-11-19 21:21 - plan review 1 (CHANGES REQUESTED, issue comment 7029290431) addressed:
+  B1 tie -> on; B2 CLAUDE.md out (#244); B3 every run setting pinned in run-real.ps1 and the app
+  check (own code gate, try/finally, settings logged); B4 thinking caps raised to 64000 / 16000
+  with a 2700 s per-read timeout, plus the cap-finding rule. NB1 `reasoning_content` saved for valid
+  outputs (PrivateAttr, schema.py added), NB2 other API errors, NB3 first tool call wins (D13),
+  NB4 app check is the real-provider proof, NB6 `plan_cache_key` comment. TL approved the 2 app
+  calls (cap 14).
