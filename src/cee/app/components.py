@@ -162,7 +162,11 @@ FLAG_TEXT = {"outside_matrix": "cited outside the evidence matrix",
              "computed": "computed by code from cited inputs",
              "why_line_missing": "no why-it-might-matter line",
              "adjacent_is_fact": "an asked figure shown as adjacent",
-             "claim_from_adjacent": "a different quantity shown as a claim"}
+             "claim_from_adjacent": "a different quantity shown as a claim",
+             # #247 part 2
+             "code_computability": "written by code: computable or not, with the population sources",
+             "why_line_removed": "why-line removed (not a recency item)",
+             "why_line_restated": "why-line replaced: it restated the item"}
 
 
 def behavior_header(text: str, code: str) -> None:

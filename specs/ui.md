@@ -46,6 +46,10 @@ Page "Ask"
           corrective re-search passages too (they are part of the answer's passages). With an Ask-page
           date filter alone the answer keeps its aspect-by-firm order (newest first and the why-line
           check apply only to the question's own time window or a recency aspect).
+          #247 part 2: three more chips: "written by code: computable or not, with the population
+          sources" (a per-firm computation claim code added), "why-line removed (not a recency item)"
+          and "why-line replaced: it restated the item". Without a time window only the recency
+          items move newest first, inside their own slots; the other aspects keep their order.
           each step reports what the pipeline really did (counts, filters, provider), never
           invented "reasoning" text; the trace stays readable (collapsed) after the answer
 

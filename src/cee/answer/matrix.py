@@ -34,6 +34,8 @@ GAP_TEXT = {
     "not_disclosed": "{firm} - {aspect}: not disclosed in the documents searched.",
     "not_found": "{firm} - {aspect}: not found in the documents searched.",
     "different_quantity": "{firm} - {aspect}: not disclosed; a different quantity is listed as adjacent.",
+    # #247 part 2 R6b: the closest figure named
+    "closest": "{firm} - {aspect}: not published in the documents searched; the closest disclosed figure is {closest} (adjacent).",
     "failed": "{firm} - {aspect}: not extracted (the model output for this firm was invalid or the call failed).",
 }
 RESEARCHED_NOTHING = " A second search with wider words found nothing new."
@@ -57,6 +59,10 @@ class Item:
     definition: str = ""
     rejected_ids: list[str] = field(default_factory=list)   # outside the cell's retrieved set
     flags: list[str] = field(default_factory=list)   # unmatched_citation, quote_not_found, number_not_found, period_unparsed
+    # #247 part 2 (code-set, tag_populations): the population key of a ratio input and the chunk that
+    # states it (config/metric_definitions.yaml `populations`); "" = not registered for this item
+    population: str = ""
+    population_source: str = ""
 
     @property
     def counts(self) -> bool:
@@ -124,16 +130,23 @@ class EvidenceMatrix:
     # id (not logged: the ids are in cells and research). `corrective` = the re-search hits, in order.
     hits: dict = field(default_factory=dict, repr=False)
     corrective: list = field(default_factory=list, repr=False)
+    # #247 part 2: each sub-question's retrieved set (plan.pools plus its hits), for the population
+    # tagging rule "only a population chunk in the input cell's pool"; not logged
+    pools: dict = field(default_factory=dict, repr=False)
+    breaks: list[dict] = field(default_factory=list)   # basis breaks inside one firm's series (code)
 
     def aspect(self, aspect_id: str):
         return next(a for a in self.aspects if a.id == aspect_id)
 
     def chunk_ids(self) -> list[str]:
-        """Every valid cited chunk id (items and derivation inputs): what the reduce may cite (#247)."""
+        """Every valid cited chunk id (items, derivation inputs and, #247 part 2, the population source
+        chunks of every derivation proposal): what the reduce may cite (#247)."""
         out: list[str] = []
         for c in self.cells.values():
             for i in c.items:
                 out += [x for x in i.chunk_ids if x not in out]
+        for c in self.cells.values():
+            out += [x for x in (c.derivation or {}).get("population_chunk_ids") or [] if x not in out]
         return out
 
     def counts(self) -> dict:
@@ -163,6 +176,7 @@ class EvidenceMatrix:
                 "marks": {k: asdict(m) for k, m in self.marks.items()},
                 "behavior": self.behavior, "behavior_reason": self.behavior_reason,
                 "incomplete_note": self.incomplete_note, "gaps": self.gaps, "caveats": self.caveats,
+                "breaks": self.breaks,
                 "calls": self.calls, "research": self.research, "counts": self.counts(), "grid": self.grid()}
 
 
@@ -185,6 +199,138 @@ def metric_definition(entity: str | None, metric: str | None) -> dict | None:
         return defs[(entity, metric)]
     parent = next((e.get("parent") for e in entities_config()["entities"] if e["id"] == entity), None)
     return defs.get((parent, metric)) if parent else None
+
+
+# --- populations of ratio inputs (#247 part 2, TL conditions 1-3) -----------------------------------
+
+POPULATION_INPUTS = ("client_assets", "advisor_headcount")
+# The proxy-to-input rule (TL condition 2): a proxy aspect without a metric takes the inputs whose
+# words are in its text or keyword query; none matched -> every input.
+INPUT_WORDS = {"client_assets": ("client assets", "assets under", "aua", "aum", "client balances"),
+               "advisor_headcount": ("advisor", "headcount", "representatives")}
+
+
+@lru_cache(maxsize=1)
+def _populations() -> tuple[dict, ...]:
+    from cee.retrieve.planner import METRIC_DEFINITIONS
+    data = yaml.safe_load(METRIC_DEFINITIONS.read_text(encoding="utf-8")) or {}
+    return tuple(data.get("populations") or [])
+
+
+def _config_entity(entity: str | None) -> str | None:
+    """The entity whose config entries apply (MER -> BAC, `parent` in config/entities.yaml)."""
+    if not entity:
+        return None
+    parent = next((e.get("parent") for e in entities_config()["entities"] if e["id"] == entity), None)
+    return parent or entity
+
+
+def population_inputs(aspect) -> list[str]:
+    """The ratio inputs an aspect can hold (TL condition 2): its metric when that is an input; a proxy
+    aspect: its metric's input, else the inputs named in its words, else every input; else none."""
+    metric = getattr(aspect, "metric", None)
+    if metric in POPULATION_INPUTS:
+        return [metric]
+    if not getattr(aspect, "proxy", False):
+        return []
+    if metric:
+        return []
+    words = f"{getattr(aspect, 'text', '')} {getattr(aspect, 'keyword_query', '') or ''}".lower()
+    named = [k for k, ws in INPUT_WORDS.items() if any(re.search(rf"\b{re.escape(w)}", words) for w in ws)]
+    return named or list(POPULATION_INPUTS)
+
+
+def population_entries(entity: str | None, aspect) -> list[dict]:
+    """The `populations` entries of a firm for the inputs this aspect can hold."""
+    ent, inputs = _config_entity(entity), population_inputs(aspect)
+    if not ent or not inputs:
+        return []
+    own = [p for p in _populations() if p.get("entity") in (entity, ent)]
+    return [p for p in own if p.get("input") in inputs]
+
+
+_DASHES = re.compile(r"[‐‑‒–—]")
+_APPROX_BEFORE = re.compile(r"(?:approximately|about|around|nearly|close\s+to|more\s+than|over|at\s+least|roughly|"
+                            r"almost|upwards\s+of|~|>|<|≈)\s*(?:US)?\$?\s*$", re.I)
+_APPROX_AFTER = re.compile(r"^\s*(?:\+|[kK]\b|\s*plus\b)")
+_CORE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _flat(text: str) -> str:
+    return " ".join(_DASHES.sub("-", str(text or "")).split())
+
+
+def _value_pos(item: Item) -> tuple[str, int, str]:
+    """(the quote, the index of the item's figure in it or -1, the figure's digits)."""
+    m = _CORE.search(item.value or "")
+    core = m.group(0) if m else ""
+    quote = _flat(item.quote)
+    return quote, (quote.find(core) if core else -1), core
+
+
+def approximate(item: Item) -> bool:
+    """A figure given as an estimate or a bound, matched next to the figure only (round-1 note 1): the
+    value field itself, or the words directly before the figure in its quote, or "+" / "K" right after."""
+    v = _flat(item.value)
+    m = _CORE.search(v)
+    if m and (_APPROX_BEFORE.search(v[:m.start()]) or _APPROX_AFTER.match(v[m.end():])):
+        return True
+    quote, pos, core = _value_pos(item)
+    if pos < 0:
+        return False
+    return bool(_APPROX_BEFORE.search(quote[:pos]) or _APPROX_AFTER.match(quote[pos + len(core):]))
+
+
+def _match_entry(item: Item, entries: list[dict]) -> dict | None:
+    """The entry whose match phrase stands nearest before the item's figure in its quote; when no phrase
+    stands before it (or the figure is not in the quote) the whole quote and the item text are read
+    (#247 part 2 R2: "We had 8,943 ... financial advisors"); a scope set on the entry must equal; two
+    keys at the same distance -> none."""
+    quote, pos, _ = _value_pos(item)
+    whole = f"{quote} {_flat(item.text)}".lower()
+    hay = quote[:pos].lower() if pos >= 0 else whole
+    found = _match_in(hay, item, entries)
+    if found is None and pos >= 0:
+        found = _match_in(whole, item, entries)
+    return found
+
+
+def _match_in(hay: str, item: Item, entries: list[dict]) -> dict | None:
+    best: list[tuple[int, dict]] = []
+    for e in entries:
+        if "scope" in e and normalize_scope(e.get("scope") or "") != normalize_scope(item.scope):
+            continue
+        at = max((hay.rfind(_flat(w).lower()) for w in e.get("match") or []), default=-1)
+        if at >= 0:
+            best.append((at, e))
+    if not best:
+        return None
+    top = max(a for a, _ in best)
+    keys = {e["key"] for a, e in best if a == top}
+    return next(e for a, e in best if a == top) if len(keys) == 1 else None
+
+
+def tag_populations(m: EvidenceMatrix) -> None:
+    """Each counting item of a firm cell on a ratio-input aspect gets the population key of its matched
+    entry, only when that entry's chunk is in the cell's retrieved set (m.pools; TL condition 1)."""
+    for c in m.cells.values():
+        if c.role == "research" or not c.entity:
+            continue
+        entries = population_entries(c.entity, m.aspect(c.aspect_id))
+        pool = set(m.pools.get(c.id) or ())
+        for i in c.items:
+            i.population, i.population_source = "", ""
+            if not entries or not i.counts:
+                continue
+            e = _match_entry(i, entries)
+            if e is not None and e.get("chunk_id") in pool:
+                i.population, i.population_source = e["key"], e["chunk_id"]
+
+
+def population_entry(entity: str | None, key: str, chunk_id: str) -> dict | None:
+    ent = _config_entity(entity)
+    return next((p for p in _populations() if p.get("entity") in (entity, ent) and p.get("key") == key
+                 and p.get("chunk_id") == chunk_id), None)
 
 
 def row_name(cell_or_entity) -> str:
@@ -285,6 +431,36 @@ def _fmt(x: float) -> str:
     return f"{x:,.4g}"
 
 
+def _q1(text: str) -> str:
+    return " ".join(str(text or "").split())
+
+
+def _input_label(m: EvidenceMatrix, ref: str) -> str:
+    """'client assets ($2,647, 2026Q2)' style label of a derivation input reference 'a2.EDJ#0'."""
+    cid, _, idx = ref.partition("#")
+    c = m.cells.get(cid)
+    if c is None:
+        return ref
+    i = c.items[int(idx)]
+    a = m.aspect(c.aspect_id)
+    what = (a.metric or "").replace("_", " ") or _aspect_text(a)
+    return f"{what} ({_q1(i.value)}{', ' + i.period if i.period else ''})"
+
+
+def _input_populations(cell: Cell, items) -> list[dict]:
+    """The population source of each input whose source chunk is in the input cell's pool (tagging
+    only sets a key when it is): {ref, key, chunk_id, quote, valid_from, period}. TL condition 1."""
+    out = []
+    for ref, i in items:
+        if not i.population or not i.population_source:
+            continue
+        e = population_entry(cell.entity, i.population, i.population_source) or {}
+        out.append({"ref": ref, "key": i.population, "chunk_id": i.population_source,
+                    "quote": e.get("quote", ""), "valid_from": str(e.get("valid_from") or ""),
+                    "period": i.period, "value": i.value})
+    return out
+
+
 def derive(m: EvidenceMatrix) -> None:
     """Check every derivation the model proposed: inputs are counting items of fact cells (proxy
     aspects allowed) of the same firm, no input flagged number_not_found, the same non-empty period
@@ -330,8 +506,23 @@ def derive(m: EvidenceMatrix) -> None:
                 why = "a value does not parse"
             elif op == "ratio" and values[1] == 0:
                 why = "division by zero"
+        # #247 part 2 (rule 2, populations): both inputs exact, both on one registered population
+        pops = _input_populations(cell, items)
+        if why is None:
+            approx = [ref for ref, i in items if approximate(i)]
+            keys = {i.population for _, i in items}
+            if approx:
+                why = "approximate: " + ", ".join(f"{_input_label(m, ref)} is approximate ({_q1(i.value)})"
+                                                  for ref, i in items if ref in approx)
+            elif "" in keys:
+                missing = [ref for ref, i in items if not i.population]
+                why = "population not stated: " + ", ".join(_input_label(m, r) for r in missing)
+            elif len(keys) != 1:
+                why = "populations differ"
         if why is not None:
-            cell.derivation = {**d, "ok": False, "why": why}
+            cell.derivation = {**d, "ok": False, "why": why, "populations": pops,
+                               "population_chunk_ids": sorted({p["chunk_id"] for p in pops}),
+                               "input_chunk_ids": sorted({c for _, i in items for c in i.chunk_ids})}
             continue
         if op == "ratio":
             result, sign = values[0] / values[1], " / "
@@ -351,10 +542,12 @@ def derive(m: EvidenceMatrix) -> None:
         cell.derivation = {**d, "ok": True, "why": "", "value": result, "value_text": _fmt(result), "unit": unit,
                            "formula": formula, "formula_text": formula_text,
                            "period": items[0][1].period, "scope": items[0][1].scope,
-                           "input_chunk_ids": sorted({c for _, i in items for c in i.chunk_ids})}
+                           "input_chunk_ids": sorted({c for _, i in items for c in i.chunk_ids}),
+                           "populations": pops, "population_chunk_ids": sorted({p["chunk_id"] for p in pops})}
         if cell.label != "fact":
             cell.label = "derived"
-        if m.aspect(cell.aspect_id).metric is None and "definition_unverified" not in cell.flags:
+        registered = len(pops) == len(items) and all(p.get("key") for p in pops)   # #247 part 2 R2
+        if m.aspect(cell.aspect_id).metric is None and not registered and "definition_unverified" not in cell.flags:
             cell.flags.append("definition_unverified")
 
 
@@ -366,6 +559,14 @@ def holds(cell: Cell) -> bool:
 
 
 # --- comparability (rule 2) ---------------------------------------------------------------------
+
+def _registered_ratio(a, cells) -> bool:
+    """#247 part 2 R2: an aspect whose holding cells are all derivations over registered populations (their
+    computation claims quote both population sources): no "definition unverified" mark."""
+    derived = [c for c in cells if c.label == "derived"]
+    return bool(derived) and len(derived) == len(cells) and all(
+        "definition_unverified" not in c.flags for c in derived)
+
 
 def metric_aspect(a, cells) -> bool:
     """An aspect that asks for a quantity (#247, TL D6): kind series, a proxy, or one holding a derived
@@ -400,7 +601,8 @@ def mark_comparability(m: EvidenceMatrix) -> None:
                     mark.caveat = COMPARABILITY_CAVEAT.format(metric=a.metric.replace("_", " ").capitalize(),
                                                               definitions="; ".join(parts))
         elif metric_aspect(a, cells) and (any(i.value for c in cells for i in c.counting_items)
-                                          or any(c.label == "derived" for c in cells)):
+                                          or any(c.label == "derived" for c in cells)) \
+                and not _registered_ratio(a, cells):
             # #247 (#246 finding 5): the mark only on metric aspects (series, proxy, or holding a
             # derived cell); qualitative, recency and comparison aspects that carry a figure get none
             mark.status = "unverified"
@@ -539,6 +741,62 @@ def period_gaps(m: EvidenceMatrix, as_of, source) -> list[dict]:
     return out
 
 
+COMPETITORS_GAP = "Competitors ({firms}) - {aspect}: not found in the documents searched."
+BASIS_BREAK = ("{firm} - {aspect}: the figures cover different bases and are not one series: {groups}. "
+               "The break is flagged, not smoothed.")
+
+
+def in_gap_scope(a, c: Cell) -> bool:
+    """#247 part 2 (Q19): a cell gets a gap only inside its aspect's own firm scope: with a planned
+    subset (`asked_firms`, before the home-firm widening) only those firms' cells; research cells only
+    for aspects without a subset."""
+    asked = list(getattr(a, "asked_firms", None) or [])
+    if not asked:
+        return True
+    return c.role != "research" and c.entity in asked
+
+
+def _breaks_apply(a) -> bool:
+    return a.kind == "series" or (a.kind == "fact" and bool(a.metric) and not getattr(a, "proxy", False))
+
+
+def basis_breaks(m: EvidenceMatrix) -> None:
+    """#247 part 2 (TL item 3): a holding cell of a series aspect (or a registered-metric fact aspect)
+    whose counting items cover more than one basis (normalised scope, population key) gets the flag
+    basis_break and a code caveat listing each basis with its periods. A flow series has no population
+    keys, so only the scope splits it."""
+    m.breaks = []
+    for a in m.aspects:
+        if not _breaks_apply(a):
+            continue
+        for c in m.cells.values():
+            if c.aspect_id != a.id or c.role == "research" or not holds(c):
+                continue
+            groups: dict[tuple[str, str], list[str]] = {}
+            labels: dict[tuple[str, str], str] = {}
+            valued = [i for i in c.counting_items if i.value]
+            keyed = {normalize_scope(i.scope): i.population for i in valued if i.population}
+            for i in valued:
+                k = (normalize_scope(i.scope), i.population)
+                if keyed and not i.population:   # R3: an item without a population ...
+                    if k[0] in keyed:
+                        k = (k[0], keyed[k[0]])   # ... joins its scope's group
+                    elif not i.period:
+                        continue                  # ... and an undated one makes no basis
+                groups.setdefault(k, [])
+                if i.period and i.period not in groups[k]:
+                    groups[k].append(i.period)
+                labels.setdefault(k, _q1(i.scope) or "whole firm")
+            if len(groups) < 2:
+                continue
+            parts = [f"{labels[k]}{' (' + k[1] + ')' if k[1] else ''}: {', '.join(sorted(v)) or 'period not stated'}"
+                     for k, v in groups.items()]
+            text = BASIS_BREAK.format(firm=row_name(c), aspect=_aspect_text(a), groups="; ".join(parts))
+            if "basis_break" not in c.flags:
+                c.flags.append("basis_break")
+            m.breaks.append({"id": c.id, "caveat": text, "groups": parts})
+
+
 def build_gaps(m: EvidenceMatrix, sources=None, as_of=None) -> None:
     """Code-built gaps (#247 places them): one per cell that does not hold its quantity, and the
     'does not support' gap per aspect no row holds; comparison and proxy aspects get none. #247 B4:
@@ -562,26 +820,167 @@ def build_gaps(m: EvidenceMatrix, sources=None, as_of=None) -> None:
         if a.kind == "comparison" or getattr(a, "proxy", False):
             continue
         cells = [c for c in m.cells.values() if c.aspect_id == a.id]
-        for c in cells:
+        scoped = [c for c in cells if in_gap_scope(a, c)]
+        folded = []
+        for c in scoped:
             if holds(c):
                 continue
             label = c.effective_label if c.label != "failed" else "failed"
             label = label if label in GAP_TEXT else "not_found"
+            if c.role == "competitor" and label in ("not_found", "not_disclosed"):
+                folded.append(c)   # TL D3: one gap per aspect for the empty competitor cells
+                continue
             what = GAP_TEXT[label].format(firm=row_name(c), aspect=_aspect_text(a))
+            if label == "different_quantity" and c.counting_items:   # R6b
+                what = GAP_TEXT["closest"].format(firm=row_name(c), aspect=_aspect_text(a),
+                                                  closest=_clip(c.counting_items[0].text, CAVEAT_DEF_CHARS).rstrip("."))
             if label == "not_found" and c.researched and c.research_hits == 0:
                 what += RESEARCHED_NOTHING
             m.gaps.append({"id": c.id, "what": what, "suggested_source": source(c.entity), "label": label})
+        if folded:
+            names = ", ".join(dict.fromkeys(row_name(c) for c in folded))
+            m.gaps.append({"id": a.id, "what": COMPETITORS_GAP.format(firms=names, aspect=_aspect_text(a)),
+                           "suggested_source": "; ".join(dict.fromkeys(s for s in (source(c.entity) for c in folded) if s)),
+                           "label": "competitors_not_found", "cells": [c.id for c in folded]})
         # A failed extraction cannot show an absence (D5): no "does not support" gap for that aspect.
-        if cells and not any(holds(c) for c in cells) and not any(c.label == "failed" for c in cells):
-            firms = ", ".join(dict.fromkeys(row_name(c) for c in cells))
+        if scoped and not any(holds(c) for c in cells) and not any(c.label == "failed" for c in cells):
+            firms = ", ".join(dict.fromkeys(row_name(c) for c in scoped))
             m.gaps.append({"id": a.id, "what": NOT_SUPPORTED.format(aspect=_aspect_text(a), firms=firms),
                            "suggested_source": "", "label": "not_supported"})
     m.gaps += period_gaps(m, as_of, source)
 
 
+DEFINITIONS_BY_FIRM = "{metric} as each firm defines it: {parts}."
+DEFINITION_CHANGED = ("{firm} - {metric}: the definition wording differs between {a} ('{qa}') and {b} ('{qb}'); "
+                      "figures are listed as each document states them.")
+SERIES_SPAN = ("{firm} - {aspect}: the series in the documents searched runs from {first} to {last} ({n} points); "
+               "no figure after {last} was found.")
+
+
+def _list(xs) -> str:
+    return ", ".join(str(x) for x in xs or [])
+
+
+def definitions_by_firm(m: EvidenceMatrix) -> dict[str, str]:
+    """#247 part 2 R6a: per registered metric of the question's aspects, when the firms in the matrix do not
+    all share one quoted basis, one caveat naming each firm's definition (config/metric_definitions.yaml:
+    its own words, includes / excludes / not stated, or that it publishes none)."""
+    out: dict[str, str] = {}
+    firms = [r for r in m.rows if r not in ("research", "all")]
+    for metric in dict.fromkeys(a.metric for a in m.aspects if a.metric):
+        defs = {f: metric_definition(f, metric) for f in firms}
+        bases = {(d or {}).get("basis") for d in defs.values()}
+        if len(firms) < 2 or (len(bases) == 1 and all(d and d.get("status") == "quoted" for d in defs.values())):
+            continue
+        parts = []
+        for f, d in defs.items():
+            if not d:
+                parts.append(f"{row_name(f)}: no registered definition")
+                continue
+            st = d.get("status")
+            head = {"quoted": "", "closest_metric": "publishes no definition of this metric; closest metric ",
+                    "not_disclosed": "publishes no definition or count; nearest text "}.get(st, "")
+            bits = [f"{head}'{_clip(d.get('quote', ''), CAVEAT_DEF_CHARS)}' ({d.get('chunk_id', '')})"]
+            for k, w in (("includes", "includes"), ("excludes", "excludes"), ("not_stated", "not stated")):
+                if d.get(k):
+                    bits.append(f"{w} {_clip(_list(d[k]), 120)}")
+            parts.append(f"{row_name(f)}: " + "; ".join(bits))
+        out[metric] = DEFINITIONS_BY_FIRM.format(metric=metric.replace("_", " ").capitalize(), parts=" | ".join(parts))
+    return out
+
+
+DOC_FAMILY = {"10-K": "periodic filing", "10-Q": "periodic filing"}   # like-for-like definition sources
+
+
+def _definition_aspects(m: EvidenceMatrix) -> dict[str, list]:
+    """Per registered metric, the aspects that hold its definitions: the metric's own aspects and aspects
+    with no metric whose text names the metric ("Each firm's own definition of its net new assets
+    metric", Q22 a2)."""
+    out: dict[str, list] = {}
+    metrics = list(dict.fromkeys(a.metric for a in m.aspects if a.metric))
+    for metric in metrics:
+        words = metric.replace("_", " ")
+        out[metric] = [a for a in m.aspects if a.metric == metric
+                       or (not a.metric and words in a.text.lower() and a.kind not in ("comparison", "recency"))]
+    return out
+
+
+def definition_changes(m: EvidenceMatrix) -> list[str]:
+    """#247 part 2 R5 (PR #261 review fix 2): for one firm and one registered metric, the definitions its
+    fact items quote (`definition`) from like-for-like documents (the same document family, e.g. 10-K and
+    10-Q) that differ after normalising -> a caveat naming both documents and their wording. Only items of
+    cells that hold the asked quantity (no different-quantity cell: no Form ADV wording against a filing)."""
+    out = []
+    for metric, aspects in _definition_aspects(m).items():
+        ids = {a.id for a in aspects}
+        firms = dict.fromkeys(c.entity for c in m.cells.values() if c.aspect_id in ids and c.entity
+                              and c.role != "research")
+        for firm in firms:
+            seen: dict[tuple[str, str], tuple[str, str]] = {}
+            for c in m.cells.values():
+                if c.aspect_id not in ids or c.entity != firm or c.role == "research" or c.effective_label != "fact":
+                    continue
+                for i in c.counting_items:
+                    if not i.definition:
+                        continue
+                    h = m.hits.get(i.chunk_ids[0])
+                    family = DOC_FAMILY.get(getattr(h, "doc_type", ""), getattr(h, "doc_type", "") or "?")
+                    norm = re.sub(r"[^a-z0-9 ]", "", _norm(i.definition))
+                    seen.setdefault((family, norm), (i.chunk_ids[0].split("#")[0], i.definition))
+            by_family: dict[str, list] = {}
+            for (family, _), v in seen.items():
+                by_family.setdefault(family, []).append(v)
+            for docs in by_family.values():
+                if len(docs) >= 2 and docs[0][0] != docs[1][0]:
+                    text = DEFINITION_CHANGED.format(firm=row_name(firm), metric=metric.replace("_", " "),
+                                                     a=docs[0][0], qa=_clip(docs[0][1], CAVEAT_DEF_CHARS),
+                                                     b=docs[1][0], qb=_clip(docs[1][1], CAVEAT_DEF_CHARS))
+                    if text not in out:
+                        out.append(text)
+    return out
+
+
+def _period_key(p: str):
+    s = str(p or "")
+    m_ = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", s)
+    if m_:
+        return (int(m_.group(1)), int(m_.group(2)), int(m_.group(3)))
+    m_ = re.fullmatch(r"(\d{4})Q([1-4])", s)
+    if m_:
+        return (int(m_.group(1)), 3 * int(m_.group(2)), 31)
+    m_ = re.fullmatch(r"(?:FY)?(\d{4})", s)
+    if m_:
+        return (int(m_.group(1)), 12, 31)
+    return None
+
+
+def series_spans(m: EvidenceMatrix) -> list[str]:
+    """#247 part 2 R6c: for a series aspect, each holding firm cell: where its disclosed series starts
+    and stops in the documents searched (the items' own periods; undated items not counted)."""
+    out = []
+    for a in m.aspects:
+        if a.kind != "series":
+            continue
+        for c in m.cells.values():
+            if c.aspect_id != a.id or c.role == "research" or not c.entity or not holds(c):
+                continue
+            periods = sorted({i.period for i in c.counting_items if i.value and _period_key(i.period)},
+                             key=_period_key)
+            if not periods:
+                continue
+            out.append(SERIES_SPAN.format(firm=row_name(c), aspect=_aspect_text(a), first=periods[0],
+                                          last=periods[-1], n=len(periods)))
+    return out
+
+
 def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
     """Comparability caveats (rule 2) and the config caveats of cited substitutes (entities.yaml)."""
-    m.caveats = [mk.caveat for mk in m.marks.values() if mk.caveat]
+    by_firm = definitions_by_firm(m)   # #247 part 2 R6a: replaces the comparability caveat of that metric
+    replaced = {mk.metric for mk in m.marks.values() if mk.caveat and mk.metric in by_firm}
+    m.caveats = [mk.caveat for mk in m.marks.values() if mk.caveat and mk.metric not in replaced]
+    m.caveats += [c for c in by_firm.values() if c not in m.caveats]
+    m.caveats += [b["caveat"] for b in m.breaks if b["caveat"] not in m.caveats]   # #247 part 2
+    m.caveats += [c for c in definition_changes(m) + series_spans(m) if c not in m.caveats]   # R5, R6c
     if query is None or not hits:
         return
     from cee.answer.schema import Answer, Claim
@@ -596,9 +995,11 @@ def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
 
 def finish(m: EvidenceMatrix, query=None, hits=None, sources=None, as_of=None) -> EvidenceMatrix:
     """Run every code rule on a filled matrix, in order."""
+    tag_populations(m)
     derive(m)
     mark_comparability(m)
     decide_behavior(m)
+    basis_breaks(m)
     build_gaps(m, sources, as_of)
     build_caveats(m, query, hits)
     return m

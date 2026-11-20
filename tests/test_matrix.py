@@ -23,8 +23,22 @@ def cell(cid, label, items=(), entity=None, role="named", derivation=None):
     return Cell(cid, entity, aspect, role, label, items=list(items), derivation=derivation)
 
 
+# #247 part 2: derivations need both inputs on one registered population. These tests are about the
+# other derivation rules, so every firm's inputs share one test population whose source chunk is in
+# every cell's pool (the population rules have their own tests in tests/test_populations.py).
+TEST_POPULATIONS = tuple({"entity": e, "input": i, "key": "test_pop", "match": ["q"], "quote": "q",
+                          "chunk_id": "POP#1", "valid_from": "2026-06-30"}
+                         for e in ("EDJ", "MS", "SCHW", "BAC", "RJF") for i in mx.POPULATION_INPUTS)
+
+
+@pytest.fixture(autouse=True)
+def _one_population(monkeypatch):
+    monkeypatch.setattr(mx, "_populations", lambda: TEST_POPULATIONS)
+
+
 def build(question, aspects, cells):
     m = EvidenceMatrix(question, rows=[], aspects=aspects, cells={c.id: c for c in cells})
+    m.pools = {c.id: {"POP#1", *(x for i in c.items for x in i.chunk_ids)} for c in cells}
     return mx.finish(m, sources=NO_SOURCES)
 
 
@@ -99,10 +113,11 @@ def test_q24_shaped_derived_ratio_answers_and_fte_stays_different_quantity():
     assert edj.label == "derived" and edj.derivation["ok"]
     assert edj.derivation["value_text"] == "112,607,099"
     assert edj.derivation["input_chunk_ids"] == ["EDJ-10Q-2026Q2#1", "EDJ-10Q-2026Q2#2"]
-    assert "definition_unverified" in edj.flags                                  # client assets: unregistered
+    # #247 part 2 R2: both inputs on one registered population (the test population): not unverified
+    assert "definition_unverified" not in edj.flags
     assert m.cells["a3.SCHW"].effective_label == "different_quantity"             # never a derivation input
     assert not m.cells["a1.SCHW"].derivation["ok"] and "not a fact" in m.cells["a1.SCHW"].derivation["why"]
-    assert m.marks["a1"].status == "unverified" and "definition is unverified" in m.marks["a1"].mark
+    assert m.marks["a1"].status == "none"
 
 
 # --- the question's own asks --------------------------------------------------------------------
@@ -145,7 +160,8 @@ def test_gap_wording_per_label_and_not_supported():
     assert "not extracted" in {g["id"]: g["what"] for g in failed.gaps}["a1.RJF"]
     assert whats["a1.EDJ"] == "Edward Jones - Advisor headcount as reported: not disclosed in the documents searched."
     assert whats["a1.MS"] == "Morgan Stanley - Advisor headcount as reported: not found in the documents searched."
-    assert whats["a1.SCHW"].endswith("not disclosed; a different quantity is listed as adjacent.")
+    assert whats["a1.SCHW"] == ("The Charles Schwab Corporation - Advisor headcount as reported: not published in "
+                                "the documents searched; the closest disclosed figure is t (adjacent).")   # R6b
     assert whats["a1"] == ("The database does not support this today: Advisor headcount as reported "
                            "(Edward Jones, Morgan Stanley, The Charles Schwab Corporation, Raymond James Financial).")
 

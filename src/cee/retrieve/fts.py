@@ -37,7 +37,7 @@ import calendar
 import math
 import re
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, timedelta
 
 from cee.config import entities_config
@@ -68,6 +68,11 @@ class Query:
     # market question (Q19) searches its firm on the theme only (SQL AND of the theme's keywords on
     # the firm pass, no answer-turn attachment), the ADR-018 safeguard of the theme peers.
     on_theme_only: bool = False
+    # #247 part 2: a per-period sub-search (series aspects) keeps documents whose period_end falls in
+    # this range (both inclusive); a hard SQL filter like the window. Chunk ids in exclude_ids leave the
+    # SQL pool before any cut (only the per-period pass sets it, so the main searches are unchanged).
+    period_range: tuple[date, date] | None = None
+    exclude_ids: list[str] = field(default_factory=list)
 
     @property
     def firms(self) -> list[str]:
@@ -92,7 +97,7 @@ class Hit:
     date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
     on_theme: bool = False       # entity+theme: a firm chunk with the theme's keywords (#117)
     part_id: str | None = None   # #214: the plan part that kept it (p1.., "research", "peers")
-    origin: str = "search"       # #247: "corrective" for a corrective re-search hit (map step, CRAG)
+    origin: str = "search"       # #247: "corrective" (map re-search), "period" (per-period pass), "pinned (registered definition / population chunk)
 
 
 def _alias_pattern(alias: str) -> re.Pattern:
@@ -216,6 +221,12 @@ def filters_sql(q: Query) -> tuple[str, dict]:
     for i, kw in enumerate(q.keywords):
         clauses.append(f"c.tsv @@ phraseto_tsquery('english', %(kw{i})s)")
         params[f"kw{i}"] = kw
+    if q.period_range:   # #247 part 2: per-period sub-search, by the document's period end
+        clauses.append("d.period_end BETWEEN %(pr_from)s AND %(pr_to)s")
+        params |= {"pr_from": q.period_range[0], "pr_to": q.period_range[1]}
+    if q.exclude_ids:    # #247 part 2: kept chunks leave the SQL pool before the cut
+        clauses.append("c.chunk_id <> ALL(%(excl_ids)s)")
+        params["excl_ids"] = list(q.exclude_ids)
     return " AND ".join(clauses) or "TRUE", params
 
 
@@ -241,6 +252,13 @@ def doc_type_scope(q: Query) -> tuple[list[str], list[int]]:
             and any(_phrase_pattern(p).search(q.question) for p in bench.get("phrases") or [])):
         tiers += [t for t in bench.get("exclude_tiers") or [] if t not in tiers]
     return types, tiers
+
+
+def pinned_scope(q: Query) -> tuple[list[str], list[int]]:
+    """The doc-type scope for pinned ids (#247 part 2, TL D1 narrowed): every exclusion except `adv`
+    (a registered Form ADV Part 1A figure is curated, one chunk, and crowds nothing out); tier 4 stays."""
+    types, tiers = q.scope if q.scope is not None else doc_type_scope(q)
+    return [t for t in types if t != "adv"], list(tiers)
 
 
 def doc_type_scope_sql(q: Query) -> tuple[str, dict]:
@@ -1031,6 +1049,42 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, token
     if q.window:  # recency questions read newest first (Q26)
         hits.sort(key=lambda h: h.published_at, reverse=True)
     return hits
+
+
+PIN_SQL = """
+SELECT c.chunk_id, c.doc_id, d.entity_id, c.segment, d.doc_type, d.source_tier,
+       d.published_at::text AS published_at, d.period_end::text AS period_end,
+       c.section, c.page, 0.0::float AS rank, c.text, d.date_basis
+FROM chunks c JOIN documents d USING (doc_id)
+WHERE c.chunk_id = ANY(%(pin_ids)s)
+  AND {entity_filter}
+  AND {window_filter}
+  AND {filters}
+"""
+
+
+def fetch_pinned(q: Query, ids: list[str]) -> list[Hit]:
+    """Registered chunks by ID (#247 part 2): definition and population sources from
+    config/metric_definitions.yaml. Every hard filter of the sub-question applies (entity / segment,
+    window, date range, keywords) and the doc-type scope except the `adv` exclusion (pinned_scope);
+    returned in the order of `ids`."""
+    if not ids or not searchable(q):
+        return []
+    where, params = entity_filter(q.entities)
+    filters, filter_params = filters_sql(replace(q, exclude_ids=[], period_range=None))
+    params.update(filter_params)
+    types, tiers = pinned_scope(q)
+    scope, scope_params = doc_type_scope_sql(replace(q, scope=(types, tiers)))
+    if scope != "TRUE":
+        filters = f"{filters} AND {scope}"
+        params.update(scope_params)
+    window, window_params = window_filter(q.window)
+    params.update(window_params, pin_ids=list(ids))
+    with connect() as conn:
+        rows = conn.execute(PIN_SQL.format(entity_filter=where, window_filter=window, filters=filters),
+                            params).fetchall()
+    by_id = {r["chunk_id"]: r for r in rows}
+    return [Hit(**by_id[i], origin="pinned") for i in ids if i in by_id]
 
 
 def theme_gaps(q: Query, hits: list[Hit]) -> list[str]:

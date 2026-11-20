@@ -117,6 +117,9 @@ class Aspect:
     kind: str = "fact"                 # fact | comparison | recency | series
     firms: list[str] = field(default_factory=list)   # D3: subset of firm_scope(q); empty = all
     proxy: bool = False                # #246 plan-v3.1: a stand-in for the asked quantity (never rule 1a)
+    # #247 part 2: the planner's validated firm subset before the home-firm "competitors kept"
+    # widening (Q19): code gaps only inside it. Not in any cache key.
+    asked_firms: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -302,7 +305,7 @@ def strip_neighbours(words: str, question: str) -> tuple[str, list[str]]:
     return (" ".join(words.split()) if dropped else words), dropped
 
 
-def _aspect_firms(item_firms, q: Query, n: int, notes: list[str]) -> list[str]:
+def _aspect_firms(item_firms, q: Query, n: int, notes: list[str], asked: list[str] | None = None) -> list[str]:
     """The aspect's firm subset (D3), validated: IDs, names or aliases mapped; firms outside the
     scope dropped; nothing left -> all; on a home-firm market question a list equal to the named
     firms counts as empty, so the competitors stay (Q19)."""
@@ -321,10 +324,15 @@ def _aspect_firms(item_firms, q: Query, n: int, notes: list[str]) -> list[str]:
         return []
     if q.theme_peers and set(firms) == set(q.entities):
         notes.append(f"aspect {n}: named firms only on a home-firm market question, competitors kept")
+        if asked is not None:
+            asked[:] = [e for e in scoped if e in firms]
         return []
     if set(firms) == set(scoped):
         return []
-    return [e for e in scoped if e in firms]   # scope order
+    out = [e for e in scoped if e in firms]   # scope order
+    if asked is not None:
+        asked[:] = out
+    return out
 
 
 def validate_plan(raw, q: Query) -> tuple[list[Aspect], list[str]]:
@@ -362,12 +370,13 @@ def validate_plan(raw, q: Query) -> tuple[list[Aspect], list[str]]:
         if kind not in KINDS:
             notes.append(f"aspect {n}: unknown kind {kind or '(none)'}, fact")
             kind = "fact"
-        firms = _aspect_firms(item.get("firms"), q, n, notes)
+        asked: list[str] = []
+        firms = _aspect_firms(item.get("firms"), q, n, notes, asked)
         proxy = item.get("proxy")
         if not isinstance(proxy, bool):   # #246: strict prevents it; covers replays and fallbacks
             notes.append(f"aspect {n}: proxy missing or not a boolean, false")
             proxy = False
-        aspects.append(Aspect(f"a{n}", text, words, metric, kind, firms, proxy))
+        aspects.append(Aspect(f"a{n}", text, words, metric, kind, firms, proxy, asked_firms=asked))
     return aspects, notes
 
 
@@ -584,9 +593,86 @@ def _floor_value(hits: list[Hit]) -> float | None:
     return fts.FLOOR * ranks[min(fts.FLOOR_BASE, len(ranks)) - 1]
 
 
+PERIOD_K = 3   # #247 part 2: passages per asked period in the per-period sub-search
+PIN_MAX = 8    # #247 part 2: pinned ids per sub-question (population sources first)
+
+
+def pinned_ids(entity: str | None, aspect: Aspect) -> tuple[list[str], list[str]]:
+    """(ids to pin, ids cut at PIN_MAX) for one sub-question (#247 part 2, TL conditions 2-3): the
+    firm's population sources for the ratio inputs this aspect can hold, then its registered definition
+    chunk and see_also for a registered metric. Ids are not filtered here (fetch_pinned applies the
+    sub-question's SQL filters, so "same firm" = passes the entity filter)."""
+    from cee.answer.matrix import metric_definition, population_entries
+    if not entity:
+        return [], []
+    ids = [p["chunk_id"] for p in population_entries(entity, aspect) if p.get("chunk_id")]
+    d = metric_definition(entity, aspect.metric) if aspect.metric else None
+    if d:
+        ids += [d.get("chunk_id")] if d.get("chunk_id") else []
+        ids += list(d.get("see_also") or [])
+    ids = list(dict.fromkeys(ids))
+    return ids[:PIN_MAX], ids[PIN_MAX:]
+
+
+def _period_bounds(period: str):
+    """An asked period ("2025Q4" or "2025") as (first day, last day)."""
+    import datetime as dt
+    if "Q" in period:
+        y, n = int(period[:4]), int(period[-1])
+        start = dt.date(y, 3 * n - 2, 1)
+        end = dt.date(y + (n == 4), (3 * n) % 12 + 1, 1) - dt.timedelta(days=1)
+        return start, end
+    y = int(period)
+    return dt.date(y, 1, 1), dt.date(y, 12, 31)
+
+
+def _extra_passes(q: Query, plan: Plan, kept: set[str], as_of, period_fn, pin_fn) -> dict[str, list[Hit]]:
+    """#247 part 2: after every main search, per sub-question the per-period sub-search (series
+    aspects with asked periods) and the pinned registered chunks; every chunk kept so far excluded
+    (in the SQL pool for the period search), added on top of the budget."""
+    from cee.answer.matrix import asked_periods
+    asked = asked_periods(q.question, as_of)
+    out: dict[str, list[Hit]] = {}
+    for sq in plan.subquestions:
+        sub = subquestion_query(q, sq)
+        added: list[Hit] = []
+        entry = next(e for e in plan.searched if e["id"] == sq.id)
+        entry["period_hits"], entry["pinned"], entry["pins_cut"] = [], [], []
+        if sq.aspect.kind == "series" and asked and not q.window and sq.entity:
+            for period in asked[1]:
+                hits = period_fn(replace(sub, period_range=_period_bounds(period), exclude_ids=sorted(kept)),
+                                 k=PERIOD_K, research=False, peers=False, text=sq.text)
+                for h in hits:
+                    if h.chunk_id in kept:
+                        continue
+                    h.part_id, h.origin = sq.id, "period"
+                    kept.add(h.chunk_id)
+                    added.append(h)
+                    entry["period_hits"].append(f"{period}:{h.chunk_id}")
+        ids, cut = pinned_ids(sq.entity, sq.aspect)
+        entry["pins_cut"] = cut
+        shared: set[str] = set()
+        if ids:
+            # every registered id passing this sub-question's filters joins its pool; a chunk another
+            # sub-question already kept is not repeated as a hit, but still counts as retrieved here
+            for h in pin_fn(sub, ids):
+                entry["pinned"].append(h.chunk_id)
+                if h.chunk_id in kept:
+                    shared.add(h.chunk_id)
+                    continue
+                h.part_id, h.origin = sq.id, "pinned"
+                kept.add(h.chunk_id)
+                added.append(h)
+        if added:
+            out[sq.id] = added
+        if added or shared:
+            plan.pools[sq.id] = set(plan.pools.get(sq.id, set())) | {h.chunk_id for h in added} | shared
+    return out
+
+
 def search_subquestions(q: Query, plan: Plan, search_fn=None, research_fn=None,
                         trace: PoolTrace | None = None, part_pools: dict[str, set[str]] | None = None,
-                        tokens: float | None = None) -> list[Hit]:
+                        tokens: float | None = None, as_of=None, period_fn=None, pin_fn=None) -> list[Hit]:
     """Retrieve a plan (#245, ADR-021 rule 6): research once (outside the sub-question budgets), then
     every sub-question in plan order through `search_fn` with its own budget (`tokens`, default
     SUBQUESTION_TOKENS) and every SQL filter; chunks kept earlier excluded; competitor sub-questions
@@ -626,6 +712,14 @@ def search_subquestions(q: Query, plan: Plan, search_fn=None, research_fn=None,
                               "budget": round(budget), "pool": len(sub_trace.ids()),
                               "floor_dropped": [], "floor_emptied": False})
     _competitor_floor(plan, by_sub)
+    kept = {h.chunk_id for hs in by_sub.values() for h in hs} | {h.chunk_id for h in research}
+    # A fake search (tests) gets no database pin fetch unless one is given
+    pin_fn = pin_fn or (fts.fetch_pinned if search_fn is fts.search else (lambda _q, _ids: []))
+    extra = _extra_passes(q, plan, kept, as_of, period_fn or search_fn, pin_fn)
+    for sq_id, hs in extra.items():
+        by_sub[sq_id] = by_sub[sq_id] + hs
+        if part_pools is not None:
+            part_pools[sq_id] = plan.pools[sq_id]
     out: list[Hit] = []
     for entry in plan.searched:
         hits = by_sub[entry["id"]]

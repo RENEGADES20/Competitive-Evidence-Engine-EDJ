@@ -187,6 +187,22 @@ retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segme
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
+### Series coverage passes (#247 part 2)
+After every main sub-question search (unchanged), `planner.search_subquestions` runs two passes per
+sub-question, every chunk kept so far excluded, on top of the budget:
+- **Per-period sub-search**: a `series` aspect with asked periods ("last / past N quarters / years",
+  `matrix.asked_periods`, no window): one FTS search per asked period with `Query.period_range` (a hard
+  SQL filter on `documents.period_end`) and `exclude_ids` (kept chunks leave the SQL pool before the
+  cut), `PERIOD_K = 3` passages. Hits: `origin = "period"`.
+- **Pins** (`fts.fetch_pinned`): the firm's `populations` sources for the ratio inputs the aspect can
+  hold, then its registered definition `chunk_id` and `see_also` for a registered metric, at most
+  `PIN_MAX = 8` (the cut is logged as `pins_cut`), fetched by ID under every hard filter of the
+  sub-question (entity / segment, window, date range, keywords) and the doc-type scope except the `adv`
+  exclusion (ADR-015 amendment). A pinned chunk another sub-question already kept still joins this
+  sub-question's pool. Hits: `origin = "pinned"`.
+Both join `plan.pools` (the map's retrieved-set check) and `plan.searched` (`period_hits`, `pinned`);
+the eval records them as `added_chunk_ids`.
+
 ## Acceptance
 
 - Time windows filtered in SQL: Q26 returns nothing older than 90 days.

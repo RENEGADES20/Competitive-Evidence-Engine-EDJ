@@ -149,12 +149,17 @@ sentence itself names Merrill."""
 # --- Reduce step, prompt v5 (#247, ADR-021 rules 0-5; plans/0247-reduce.md) -------------------------
 # The reduce call writes the answer from the evidence matrix only (cee.answer.reduce). v4.1 above stays
 # for the legacy single-call path (MAP=off). Keep the standard wording in sync with the spec.
-REDUCE_VERSION = "v5"
+REDUCE_VERSION = "v5.2"   # #247 part 2: computation lines, basis breaks; v5.2: why-lines from stated context or cited background
 WHY_LINE = "Why it might matter: "
 WHY_UNSAID = "Why it might matter: the source does not say."
 FORECAST_REFUSAL = ("This asks for a forecast of the engine's own; the engine reports only positions others "
                     "hold, attributed and dated.")
 COMPARISON_MISSING = "No cited claim answers the comparison asked: {aspect}."
+# #247 part 2 (code-added when the reduce omits the per-firm computation claim; TL D5): the inputs and
+# the population sources are cited, the sources quoted in their own words.
+COMPUTED = ("{firm}{aspect}: computed by code from two figures that cover the same population: {formula}"
+            "{period}.{sources}")
+NOT_COMPUTED = "{firm}{aspect}: not computed: {why}.{sources}"
 
 SYSTEM_PROMPT_V5 = f"""You write the answer to a question about wealth-management firms from an evidence matrix that
 code built from stored documents. Code has already decided the behavior; write the answer for it.
@@ -180,6 +185,13 @@ What goes where
   claims, each with differs_because from the cell, in your words with the same meaning.
 - A derived cell is a claim that states the computed figure with its formula as shown in the cell and
   cites both inputs; say the definition is unverified when the cell is marked so.
+- A cell with a "computation" line: write one claim for that firm, with the cell's id as part_id,
+  saying whether the figure is computable on this evidence and why, citing both inputs and every
+  population source shown on the line, and quoting each source's own words in quotation marks exactly
+  as shown. When the line is dated ("population statement dated ..."), say so.
+- A cell with a "basis break" line: state each basis with its own periods; never join them into one
+  series or compare across the break.
+- An item marked "also under" another aspect: write it once, under the first aspect where it appears.
 - Cells with code gaps get no claim; code adds those gaps (listed under "Gaps added by code"). Add a
   gap of your own only for something those gaps do not name. Caveats are added by code; do not repeat
   them.
@@ -195,9 +207,15 @@ Comparison aspects
 
 Recency and order
 - For every item of an aspect marked recency, and every item when the question has a time window, end
-  the claim with "{WHY_LINE}" and one sentence stating only what a cited source says about why it
-  matters, or a fact a cited source states (a figure, a first, a change against an earlier period).
-  When no cited source says why, write "{WHY_UNSAID}" Never your own judgement.
+  the claim with "{WHY_LINE}" and one sentence on why it might matter, from one of two places: what the
+  item's own passage says (its "context" line: a reason or purpose the firm or the writer states, a
+  first, a record, a change against an earlier period, a consequence the source names), or factual
+  background from another passage listed under Sources (its "related" lines, or any item of the same
+  firm or theme: an earlier period's figure, a stated target, the firm's own statement on the subject);
+  then add that passage's chunk id to the claim's chunk_ids. Never restate the item itself. Write
+  "{WHY_UNSAID}" only when no passage listed gives either; it is never the default. Never your own
+  judgement.
+- Never write a why-line on any other item.
 - With a time window, order claims and adjacent items newest first across the whole answer.
 
 Shape

@@ -58,6 +58,13 @@ From `config/metric_definitions.yaml`; quotes are verbatim there.
 
 doc_id convention: `<ENTITY>-<FORM>-<PERIOD>` e.g. `BAC-10K-2025`, `RJF-10Q-2026Q2`.
 
+### Populations of ratio inputs (#247 part 2; Q24)
+`config/metric_definitions.yaml` `populations`: one entry per firm, input (`client_assets` |
+`advisor_headcount`) and population `key` (equal keys = the same population), with `match` phrases,
+optional `scope`, `covers` (a log label), `quote` verbatim from `chunk_id`, and `valid_from` (that
+document's period end). Checked by `tests/test_populations.py`. Not registered today: Schwab (no
+advisor count), Bank of America client assets, Edward Jones U.S. / Canada splits (TODO-verify).
+
 ## Acceptance
 
 - `published_at` coverage 100%: no document without a publication date.

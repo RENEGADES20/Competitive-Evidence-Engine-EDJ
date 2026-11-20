@@ -301,15 +301,18 @@ Plan first, count the map calls for free, then run:
 $env:LLM_PROVIDER="deepseek"
 .\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
 .\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 66 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 ```
 ```bash
 .venv/bin/python scripts/eval_run.py --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 export LLM_PROVIDER=deepseek
 .venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
 .venv/bin/python scripts/eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
-.venv/bin/python scripts/eval_run.py --real --max-calls 66 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 ```
+The cap of the last command is the number the 0-call count gives: its round-1 map calls, plus at
+most one re-extraction per firm with a re-searched cell, plus one reduce call per question; write it
+down before the run (#247 part 2: never a fixed number from an earlier run).
 Every reduce call is saved in `.eval-runs/cache/` (`<Q>-reduce-<key>.json`: valid, invalid or failed)
 and never made again; a 400 stops the run. `--legacy` runs the old single answer call instead.
 
