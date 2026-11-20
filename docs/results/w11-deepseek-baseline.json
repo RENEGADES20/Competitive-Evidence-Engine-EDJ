@@ -1689,6 +1689,7 @@
    "from_242": true,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "MS-TR-2024Q4#9",
     "MS-TR-2025Q1#13",
@@ -1720,6 +1721,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "RJF-10K-2025#10",
     "RJF-10K-2025#11",
@@ -1788,7 +1790,8 @@
    "cause": "**Plan**: DeepSeek's planner returned one part, the question itself (`firms=['SCHW']`); #217 had four, one of them 'competition named and where Schwab is losing ground or pulling back'. **Retrieval** followed: 99 passages vs 156 (59 shared); the SAN minimum raise `SCHW-TRADE-2026-08-24-IN-01#1` was not retrieved, while `SCHW-TR-2026Q3#42` (long/short minimums) was retrieved and cited. **Model**: 0 gaps (#217 named 'Schwab does not say it is losing ground'). Not a scorer reading: #217's answer had the concession leg, this one does not.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "SCHW-10K-2025#13",
     "SCHW-10K-2025#23",
@@ -1825,6 +1828,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "BAC-DECK-2025-investor-day#8",
     "BAC-DECK-2026Q2#20",
@@ -1854,11 +1858,12 @@
    "w217": "PASS",
    "w217_first_read": "PASS",
    "change": "PASS -> FAIL (borderline)",
-   "label": "scorer reading, model",
-   "cause": "**Scorer reading** in part: #217's answer was also mostly call quotes on 'investing in technology / AI' (9 claims, 1 gap) and was passed without a borderline mark; this read fails that shape ('mostly generic quotes'). **Model** in part: claim 4 cites `MS-TR-2025Q4#44`, which is not in the retrieved set and does not hold the quote (code flag `unmatched_citation`, the only one in the run); a 10-K ISG passage is used as Wealth Management. More parts (3 vs 1) and passages (136 vs 37) did not add named platforms beyond Next Best Action and LeadIQ.",
+   "label": "model",
+   "cause": "**Model** (citation error): claim 4's quote is in `MS-TR-2024Q4#44` (4Q24 call, published 2025-01-16), which was in the retrieved set; DeepSeek cited `MS-TR-2025Q4#44` and dated the quote January 2026, a wrong passage and a wrong year (code flag `unmatched_citation`, the only one in the run). That decides Q5. 'Mostly generic quotes' (the blind reason) is not a reason on #217's bar: #217's Q5 was as generic, with the same named set (LeadIQ, Parable, DevGen, Carta, Zero Hash, E*TRADE). The blind note on a 10-K ISG passage used as Wealth Management was a misread (`MS-10K-2025#25` holds the WM sentence); second read, round 1.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "FAIL",
    "cited": [
     "MS-10K-2025#25",
     "MS-DECK-2026-strategic-update#10",
@@ -1900,6 +1905,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "RJF-10K-2025#10",
     "RJF-10K-2025#11",
@@ -1942,7 +1948,8 @@
    "cause": "**Model**: claims are grouped only as Recruiting / Retention per firm; #217 used four dimensions (pay and recruiting incentives, training, results, competitive movement) and put 9 empty cells in gaps; this answer has 0 gaps, so empty cells (MS training, Merrill payout) are not shown. **Plan / retrieval**: 3 parts (one per firm, no cross-firm part) vs 4; RJF payout ranges `RJF-PR-web-affiliation-options#1` and Merrill ADP `MER-PR-web-advisor-development-program#1` were not retrieved (#217 cited both). Not a scorer reading.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-DECK-2025-investor-day#8",
     "BAC-TR-2025Q2#34",
@@ -1995,7 +2002,8 @@
    "cause": "**Model**: this answer imposes a six-dimension grid on both firms and fills Schwab's 'Affiliation/economics' cell with ecosystem items, plus a 'Schwab: payout grids are not public' gap, which treats custody and affiliation as one model (`passes_if`: keep them distinct). #217 listed each firm's value proposition in its own words with no shared grid. Same parts (one per firm) and 116 of 142 passages shared.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "FAIL",
    "cited": [
     "RJF-10K-2025#10",
     "RJF-10K-2025#81",
@@ -2037,6 +2045,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10K-2025#246",
     "BAC-DECK-2025-investor-day#12",
@@ -2062,6 +2071,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10K-2025#246",
     "BAC-DECK-2025-investor-day#12",
@@ -2097,6 +2107,7 @@
    "from_242": false,
    "first_read": "FAIL",
    "second_read": null,
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-10K-2025#246",
     "BAC-DECK-2025-investor-day#9",
@@ -2144,7 +2155,8 @@
    "cause": "**Model**: Edward Jones's cost structure is not set alongside. `EDJ-10Q-2026Q1#62` (advisor compensation), `EDJ-10Q-2026Q2#62/#63` (margin) and `EDJ-10Q-2025Q3#88` (communications expense) are all in this run's retrieved set, but none is cited (#217 cited all four). Same four parts and the hand-off is kept.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "FAIL",
    "cited": [
     "EDJ-10K-2025#170",
     "EDJ-10K-2025#26",
@@ -2190,6 +2202,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "MS-10K-2025#125",
     "MS-10K-2025#168",
@@ -2229,7 +2242,8 @@
    "cause": "",
    "from_242": false,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "PASS bl",
+   "like_for_like": "PASS",
    "cited": [
     "RJF-10K-2025#10",
     "RJF-10K-2025#11",
@@ -2287,7 +2301,8 @@
    "cause": "**Model**: a list of revenue disclosures by document ('The 2025 10-K states ...'), with no mechanism rows; #217 grouped claims as 'Spread vs fee revenue', 'Cash sweep allocation and rates', 'Pricing and cost structure'. **Retrieval**: `SCHW-PR-2026-10-15-01#12` and `EDJ-10Q-2025Q3#38` (#217 cited both) not retrieved; `SCHW-10K-2025#27`, missing in #217, now retrieved and cited. #217's second read already called its Q15 'PASS (weak), contrast never stated in one place', so a scorer-reading share is possible.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-10K-2025#247",
     "BAC-10Q-2026Q2#88",
@@ -2339,7 +2354,8 @@
    "cause": "",
    "from_242": false,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "PASS bl",
+   "like_for_like": "PASS",
    "cited": [
     "ACCENTURE-GENAI#3",
     "BAC-10K-2025#101",
@@ -2390,11 +2406,12 @@
    "w217": "PASS",
    "w217_first_read": "PASS",
    "change": "PASS -> FAIL",
-   "label": "model, scorer reading",
-   "cause": "**Model**: claims are grouped by plan part (21 / 11 / 8 / 19) with no deployed-vs-aspiration split; the 'who claims the most' part lists claims (Schwab 'already an AI-enabled company', BofA company-wide 200,000 users, an MS 2024 tool via a Deloitte endnote) without ranking them, and much is BofA company-wide or third-party research. **Scorer reading** possible: #217's second read also found 'who claims most only partly answered' and passed it. Deciding tools (`BAC-TR-2026Q2#21` Merrill AI tools) retrieved and cited in both.",
+   "label": "model",
+   "cause": "**Model**: claims are grouped by plan part (21 / 11 / 8 / 19) with no deployed-vs-aspiration split; the 'who claims the most' part lists claims (Schwab 'already an AI-enabled company', BofA company-wide 200,000 users, an MS 2024 tool via a Deloitte endnote) without ranking them, and much is BofA company-wide or third-party research. The plan-part prefixes ('p1 - ') leak into the claim text. #217's answer labelled research vs firm claims and named BofA as the most explicit; this one does not, so the change is answer-caused (second read). Deciding tools (`BAC-TR-2026Q2#21` Merrill AI tools) retrieved and cited in both.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "ACCENTURE-GENAI#12",
     "BAC-DECK-2025-investor-day#106",
@@ -2467,7 +2484,8 @@
    "cause": "",
    "from_242": false,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10K-2025#58",
     "BAC-10K-2025#626",
@@ -2517,18 +2535,19 @@
    ]
   },
   "Q19": {
-   "verdict": "PASS",
-   "class": "",
+   "verdict": "FAIL",
+   "class": "s",
    "borderline": false,
    "reason": "Dated, sourced cohort research and Schwab competitor moves plus EDJ's own disclosures, then an explicit stop at 'should' with a hand-off to the strategy team.",
    "w217": "FAIL",
    "w217_first_read": "PASS",
-   "change": "FAIL -> PASS",
+   "change": "unchanged FAIL (blind read PASS)",
    "label": "scorer reading",
-   "cause": "**Scorer reading**: the answer has the same shape that #217's second read and the TL failed. The planner again scoped all four parts to Edward Jones (`firms=['EDJ']`), and the only competitor evidence is again Schwab's Gen Z / millennial share of new households (`SCHW-TR-2026Q3#11`, `SCHW-TR-2025Q3#11`), here as 'Peer context' claims instead of adjacent. No competitor move aimed at the cohort is named or listed as a gap. Under #217's TL decision this is FAIL.",
+   "cause": "**Scorer reading**: the answer has the same shape that #217's second read and the TL failed. The planner again scoped all four parts to Edward Jones (`firms=['EDJ']`), and the only competitor evidence is again Schwab's Gen Z / millennial share of new households (`SCHW-TR-2026Q3#11`, `SCHW-TR-2025Q3#11`), here as 'Peer context' claims instead of adjacent. No competitor move aimed at the cohort is named or listed as a gap. The blind read passed it; on #217's bar (its TL decision) it is FAIL, as the second read found, so it does not change against #217.",
    "from_242": false,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "BOFA-PB-STUDY-2024#0",
     "BOFA-PB-STUDY-2026#15",
@@ -2566,6 +2585,7 @@
    "from_242": false,
    "first_read": "FAIL",
    "second_read": null,
+   "like_for_like": "FAIL",
    "cited": [
     "BOFA-PB-STUDY-2024#4",
     "BOFA-PB-STUDY-2026#14",
@@ -2595,10 +2615,11 @@
    "w217_first_read": "PASS",
    "change": "PASS -> FAIL (borderline)",
    "label": "model",
-   "cause": "**Model**: 50 claims (vs 16) across four five-firm parts; the firm half mixes generic funnel and household-growth items (MS, Merrill) into 'preparation' and names no gap where a firm said nothing specific. #217 kept the estimates apart and named a gap per firm (MS, Merrill, RJF, EDJ). 87 of #217's 193 passages shared.",
+   "cause": "**Model**: 50 claims (vs 16) across four five-firm parts; the firm half mixes generic funnel and household-growth items (MS, Merrill) into 'preparation' and names no gap where a firm said nothing specific. The 'estimates' part also holds Schwab and EDJ firm data (claims 5-8), so the two halves are not separate. #217 kept the estimates apart and named a gap per firm (MS, Merrill, RJF, EDJ). 87 of #217's 193 passages shared.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL bl",
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-10K-2025#246",
     "BAC-TR-2026Q2#20",
@@ -2657,7 +2678,8 @@
    "cause": "",
    "from_242": true,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "PASS bl",
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10K-2025#249",
     "BAC-SUPP-2026Q3#54",
@@ -2704,6 +2726,7 @@
    "from_242": false,
    "first_read": "FAIL",
    "second_read": null,
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-DECK-2025-investor-day#9",
     "BAC-SUPP-2023Q4#2",
@@ -2732,7 +2755,8 @@
    "cause": "FAIL in both (s): #242's answer reused; no ratio where both inputs are disclosed (EDJ) and validity not answered in one place, the #217 finding.",
    "from_242": true,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-10K-2025#246",
     "BAC-10K-2025#248",
@@ -2771,7 +2795,8 @@
    "cause": "",
    "from_242": false,
    "first_read": "PASS",
-   "second_read": null,
+   "second_read": "PASS",
+   "like_for_like": "PASS",
    "cited": [
     "EDJ-10K-2025#58",
     "EDJ-10Q-2026Q2#75",
@@ -2810,7 +2835,8 @@
    "cause": "FAIL in both (s): no 'why it might matter' line per item; newest first holds.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "RJF-TRADE-2026-08-19-IN-01#1",
     "RJF-TRADE-2026-08-21-IN-01#1",
@@ -2852,6 +2878,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10Q-2026Q1#73",
     "BAC-10Q-2026Q2#89",
@@ -2896,7 +2923,8 @@
    "cause": "**Model**: behavior `answer` (bank `gap_with_adjacent`, #217 matched it); the difference between net headcount change and attrition is never stated (#217 stated it); and the Merrill '5% guide' is tied to attrition (#217's answer called it the Merrill growth goal). Same four parts; `BAC-SUPP-2023Q4#2` retrieved and cited in both.",
    "from_242": false,
    "first_read": "FAIL",
-   "second_read": null,
+   "second_read": "FAIL",
+   "like_for_like": "FAIL",
    "cited": [
     "BAC-DECK-2025-investor-day#9",
     "BAC-SUPP-2023Q4#2",
@@ -2921,6 +2949,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "MS-10K-2025#128",
     "MS-10K-2025#153",
@@ -2946,6 +2975,7 @@
    "from_242": false,
    "first_read": "PASS",
    "second_read": null,
+   "like_for_like": "PASS",
    "cited": [
     "BAC-10K-2025#244",
     "BAC-10K-2025#245",
@@ -2962,14 +2992,161 @@
   }
  },
  "score": {
-  "pass": 16,
+  "pass": 15,
   "of": 30,
   "tier1_pass": 10,
   "tier1_of": 18,
+  "basis": "like-for-like on #217's bar after the second read (TL decision 2026-11-20)",
+  "first_read_pass": 16,
+  "first_read_tier1_pass": 10,
   "w217_pass": 24,
   "w217_tier1_pass": 14,
-  "w217_consistent_reading": "17/30 (tier 1 12/18): Q19 FAIL, Q5 and Q17 PASS",
-  "scorer_reading_range": "15-18/30"
+  "sensitivity": "borderline FAIL: Q5, Q15; borderline PASS: Q14, Q16, Q18, Q22",
+  "decision": "TL 2026-11-20: 15/30 like-for-like is the headline; Q19 FAIL per #217's TL decision; Q5 and Q17 FAIL (answer-caused)"
+ },
+ "second_read": {
+  "by": "PR #257 review round 1 (pullrequestreview-5989037548)",
+  "questions": [
+   "Q3",
+   "Q5",
+   "Q7",
+   "Q8",
+   "Q12",
+   "Q14",
+   "Q15",
+   "Q16",
+   "Q17",
+   "Q18",
+   "Q19",
+   "Q21",
+   "Q22",
+   "Q24",
+   "Q25",
+   "Q26",
+   "Q28"
+  ],
+  "table": {
+   "Q3": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer (plan + model). No concession leg and no gap; #217 had both."
+   },
+   "Q5": {
+    "second_read": "FAIL bl",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL bl",
+    "note": "Answer. Claim 4 cites `MS-TR-2025Q4#44` for a quote in `MS-TR-2024Q4#44` (retrieved) and dates it January 2026. 'Mostly generic' is not a reason on #217's bar. The blind 'ISG as WM' note is a misread (`MS-10K-2025#25` holds the WM sentence)."
+   },
+   "Q7": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer. Recruiting / retention grid only, not the four dimensions; no empty cell shown, 0 gaps."
+   },
+   "Q8": {
+    "second_read": "FAIL bl",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer. A shared six-dimension grid plus 'Schwab: payout grids are not public' flattens custody into affiliation; #217 kept each firm's model apart."
+   },
+   "Q12": {
+    "second_read": "FAIL bl",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer. EDJ cost structure retrieved but not cited; the hand-off itself is fine (claim 30)."
+   },
+   "Q14": {
+    "second_read": "PASS bl",
+    "first_read": "PASS",
+    "w217": "PASS",
+    "like_for_like": "PASS",
+    "note": "Payouts, cost burden, qualifications and RCS fees from RJF's own material; firm-side economics thin."
+   },
+   "Q15": {
+    "second_read": "FAIL bl",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL bl",
+    "note": "Mostly answer. Disclosures listed by document, no mechanism rows; #217's weak PASS grouped spread vs fee and cash sweep. A scorer share is possible."
+   },
+   "Q16": {
+    "second_read": "PASS bl",
+    "first_read": "PASS",
+    "w217": "PASS",
+    "like_for_like": "PASS",
+    "note": "By position, attributed and dated, no own forecast; headline wording in the model's voice but attributed."
+   },
+   "Q17": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer, not scorer reading. Grouped by plan part ('p1 - ' prefixes in the text); no deployed vs aspiration split, no ranking of who claims most; #217 had both."
+   },
+   "Q18": {
+    "second_read": "FAIL bl",
+    "first_read": "PASS",
+    "w217": "PASS",
+    "like_for_like": "PASS bl",
+    "note": "The reviewer wanted evidence types in separate blocks; #217 passed the same per-item labelling, so PASS on #217's bar."
+   },
+   "Q19": {
+    "second_read": "FAIL",
+    "first_read": "PASS",
+    "w217": "FAIL",
+    "like_for_like": "FAIL",
+    "note": "Scorer reading. Every part EDJ; the only 'competitor' items are Schwab Gen Z share outcomes, not moves; the shape #217's TL decision failed."
+   },
+   "Q21": {
+    "second_read": "FAIL bl",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer. The 'estimates' section also holds Schwab and EDJ firm data (claims 5-8); the firm half is padded with funnel and household items."
+   },
+   "Q22": {
+    "second_read": "PASS bl",
+    "first_read": "PASS",
+    "w217": "PASS",
+    "like_for_like": "PASS",
+    "note": "Flags on claims 15 and 20 are false positives (`EDJ-10Q-2025Q2#64`, `RJF-SUPP-2026Q2#9` hold the figures); 1Q25 cells missing and not flagged."
+   },
+   "Q24": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "FAIL",
+    "like_for_like": "FAIL",
+    "note": "Unchanged. No EDJ ratio, no direct validity answer."
+   },
+   "Q25": {
+    "second_read": "PASS",
+    "first_read": "PASS",
+    "w217": "PASS",
+    "like_for_like": "PASS",
+    "note": "Disclosed vs not public marked per firm; trade press only adjacent and labelled; no must-not chunk cited."
+   },
+   "Q26": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "FAIL",
+    "like_for_like": "FAIL",
+    "note": "Unchanged. No 'why it might matter' line."
+   },
+   "Q28": {
+    "second_read": "FAIL",
+    "first_read": "FAIL",
+    "w217": "PASS",
+    "like_for_like": "FAIL",
+    "note": "Answer. The 'Merrill 5% guide' is a growth goal in `BAC-TR-2026Q2#63` but claim 4 and the gap put it in the attrition context; headcount vs attrition never stated."
+   }
+  },
+  "result": "15/30, tier 1 10/18"
  },
  "blind_sha256": "7816579dccc700870cc7e244c1a02a894920e90635a970a939b11f7bf17daa24",
  "blind": "{\n  \"Q1\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Workplace, self-directed/E*TRADE and advisor-led channels in management's own words, every claim dated by call from 4Q24 to 3Q26, so 2024 and 2026 framing stay apart.\"},\n  \"Q2\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"RJF's own pitch (AdvisorChoice, published payout ranges, culture and independence, platform) from calls, 10-K and recruiting pages, plus disclosed recruiting results; trade press labelled and gaps named.\"},\n  \"Q3\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Good on Schwab's framing and priorities, but the competitive pressure is only the 10-K competitor list; nothing shows where management concedes ground, which passes_if requires.\"},\n  \"Q4\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Claims are labelled Merrill or 'Merrill and the Private Bank'; the training pipeline, return to experienced hiring and ADP path are cited; BAC/GWIM advisor counts are kept adjacent and the missing standalone headcount is flagged.\"},\n  \"Q5\": {\"verdict\": \"FAIL\", \"class\": \"s, r\", \"borderline\": true, \"reason\": \"Mostly generic 'invest in AI/technology' quotes; few advisor platforms with a stated purpose (LeadIQ, Next Best Action); C4 cites a NOT-IN-RETRIEVED passage that does not support it; a 10-K ISG passage is used as Wealth Management.\"},\n  \"Q6\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Affiliation options as RJF describes them; the mix shift is quoted (FA counts by employee/IC, AUA by channel, RCS growth with the 10-Q transfer language, CEO remarks); gaps named.\"},\n  \"Q7\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": false, \"reason\": \"Organised only as recruiting/retention, not the required common grid (posture, payout philosophy, training pipeline, retention results); empty cells, such as MS training and Merrill payout, are not shown as empty, and there are no gap lines.\"},\n  \"Q8\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Both firms are run through the same dimension grid; Schwab's 'Affiliation/economics' cell is filled with ecosystem items, and a 'Schwab payout grids not public' gap shows custody and affiliation flattened into one model.\"},\n  \"Q9\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Merrill's disclosed thresholds ($250K, $500K+, $10MM+ households) are cited; MS uses labels only and the missing thresholds are stated plainly; the GWIM continuum and the Private Bank $3MM threshold are labelled not-Merrill.\"},\n  \"Q10\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Picks Merrill/GWIM with the basis visible (the only 'Mass Affluent' band with a dollar range); dated statements for each firm, with 'affluent' vs 'mass-affluent' distinguished so the reader can disagree.\"},\n  \"Q11\": {\"verdict\": \"FAIL\", \"class\": \"s, r\", \"borderline\": false, \"reason\": \"No five quoted headcount definitions with the differences named: MS uses a 2020 supplement and its 'exclusions' are self-directed accounts, not advisors; Merrill is GWIM 2023 only; no explicit comparison of definitions.\"},\n  \"Q12\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Schwab channels and cost economics are covered and the hand-off is explicit, but Edward Jones's disclosed cost structure is not set alongside (only NNA, attrition and initiatives).\"},\n  \"Q13\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Funnel described end to end (stock plan/Carta referral, vesting retention, channel migration, referral model) in management's framing, with figures tied to periods ($300B since 2020, $99B 2025, $400B+, IPO share of NNA).\"},\n  \"Q14\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": true, \"reason\": \"Per-option payouts, cost burden, qualifications and the RCS fee basis are sourced to RJF's own materials; the firm-side economics per option are thin, and one gap line wrongly says no employee/IC split is disclosed.\"},\n  \"Q15\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Plenty of disclosed revenue composition for each firm, but no stated mechanism (NII on client cash vs asset-based advisory fees); it is left as a claim dump, and the point where the comparison breaks is not stated beyond gap lines.\"},\n  \"Q16\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": true, \"reason\": \"Organised by position (digital, AI augment vs replace, human role, experience), each attributed and dated, with no single forecast; some filler facts, and one 10-K ISG passage is used as Wealth Management.\"},\n  \"Q17\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": false, \"reason\": \"Named deployed tools (Raimond, Portfolio Insights, LeadIQ) sit beside earnings-call aspirations without being distinguished, and 'who claims the most' is never answered; much of it is BAC company-wide or third-party research.\"},\n  \"Q18\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": true, \"reason\": \"Each item carries its source type (Form ADV disclosure, 10-K/10-Q, regulation, named research, earnings-call remark) and outlook items are marked as such; the separation is by labelling rather than by explicit sections.\"},\n  \"Q19\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Dated, sourced cohort research and Schwab competitor moves plus EDJ's own disclosures, then an explicit stop at 'should' with a hand-off to the strategy team.\"},\n  \"Q20\": {\"verdict\": \"FAIL\", \"class\": \"s, r\", \"borderline\": false, \"reason\": \"Survey samples are mostly missing, the conflicting findings (FINRA Foundation less reliance on professionals vs BofA 65% prefer a human) are not reported as disagreeing, Schwab CEO remarks are mixed in, and UBS next-gen is not used.\"},\n  \"Q21\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"The estimates half is sourced with vintage, but the firm half pads with generic funnel and household-growth items (MS, Merrill) presented as wealth-transfer preparation, with no gap where a firm said nothing specific.\"},\n  \"Q22\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": true, \"reason\": \"Values, periods, sources and own definitions for MS, SCHW, EDJ and RJF; Merrill is marked not reporting and GWIM flows are kept adjacent; quarter coverage is uneven, with some missing cells (e.g. 1Q25) unflagged.\"},\n  \"Q23\": {\"verdict\": \"FAIL\", \"class\": \"r, b\", \"borderline\": false, \"reason\": \"Returned a gap where an answer was expected; the series covers EDJ (5 points) plus one RJF figure; MS uses 2020 and BAC uses 2023 data; available BAC/RJF supplement counts were missed; definitions do not travel with the series.\"},\n  \"Q24\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Computes nothing even where both inputs exist (EDJ), and the 'is it valid' half is never answered directly; comparability issues are only implied through definitional claims.\"},\n  \"Q25\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Reports what is genuinely disclosed (10-K/10-Q, Form ADV compensation sections, RJF published ranges) and marks the grids as not public; trade press is labelled and not used to reconstruct grids.\"},\n  \"Q26\": {\"verdict\": \"FAIL\", \"class\": \"s\", \"borderline\": true, \"reason\": \"Items are newest first and inside the window, but none carries a one-line 'why it matters' and no links are given in the items; nearly all of it is trade press.\"},\n  \"Q27\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Merrill items only; BAC material is limited to Merrill-specific lines or labelled GWIM/'Merrill and the Private Bank' adjacents; the 2023 leadership change is excluded as outside the window.\"},\n  \"Q28\": {\"verdict\": \"FAIL\", \"class\": \"s, b\", \"borderline\": true, \"reason\": \"EDJ 6.4%/6.1% with definition and the Merrill 'near historic lows' are correct, but the difference between headcount change and attrition is never stated; it also ties the Merrill '5% guide' to attrition and is labelled answer, not gap.\"},\n  \"Q29\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"Says payout grids are not public, labels aggregate compensation expense as a different quantity, names a source that would answer it, and labels trade press indicative.\"},\n  \"Q30\": {\"verdict\": \"PASS\", \"class\": \"\", \"borderline\": false, \"reason\": \"States Merrill does not report standalone results; GWIM profit figures are each labelled as including the Private Bank, with only Merrill revenue shown as Merrill-specific.\"}\n}\n",

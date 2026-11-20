@@ -1,8 +1,10 @@
 # W11 DeepSeek baseline: today's pipeline on corpus-2026-11-19
 
-**Score: 16/30 at acting quality** (tier 1: 10/18), blind read by a fresh scorer agent on 2026-11-20. Same pipeline with Claude (#217, `w10-report.md`): 24/30 (tier 1 14/18). One sample per question.
+**Like-for-like with #217: 15/30 at acting quality** (tier 1: 10/18) on #217's bar, after the second read (TL decision 2026-11-20). Same pipeline with Claude (#217, `w10-report.md`): 24/30 (tier 1 14/18). One sample per question.
 
-Against #217: nine PASS -> FAIL (Q3, Q5, Q7, Q8, Q12, Q15, Q17, Q21, Q28), one FAIL -> PASS (Q19), 24 - 9 + 1 = 16. Seven of the nine drops are answer-caused (plan, retrieval or model: the deciding passages or parts differ, or the answer is shaped differently); Q19's gain and part of Q5 and Q17 are scorer reading (the #217 answer had the same shape and was read the other way). Read the way #217 was read on those three (Q19 FAIL, Q5 and Q17 PASS) the score is 17/30 (tier 1 12/18); the blind read's range on them is 15-18/30. The second read in the PR review settles the borderline and changed questions.
+First read (blind, a fresh scorer agent, 2026-11-20): 16/30 (tier 1 10/18). The second read (PR #257 review round 1, 17 questions) differs from it only on Q19: the blind read passed it, but it has the shape #217's TL decision failed (every planner part Edward Jones, no competitor move), so it is FAIL like-for-like. Q19 is tier 3, so tier 1 stays 10/18.
+
+Against #217: nine PASS -> FAIL (Q3, Q5, Q7, Q8, Q12, Q15, Q17, Q21, Q28), no FAIL -> PASS, 24 - 9 = 15. All nine are answer-caused (plan, retrieval or model: the deciding parts or passages differ, or the answer is shaped or cited differently); the second read confirms each, including Q5 and Q17. Sensitivity: Q5 and Q15 are borderline FAILs; Q14, Q16, Q18 and Q22 are borderline PASSes.
 
 ## How this was run
 
@@ -11,47 +13,47 @@ Against #217: nine PASS -> FAIL (Q3, Q5, Q7, Q8, Q12, Q15, Q17, Q21, Q28), one F
 - Model `deepseek-v4-pro` on `https://api.deepseek.com/beta` (strict function tools), thinking on, `tool_choice` auto, answer `max_tokens` 64000, planner 16000, `max_retries=0`, read timeout 3600 s, request `ds-strict-1-think-on-a64000-p16000`. Provider-path differences from #217 (not the model alone): thinking (reasoning shares the output cap), caps 64000 / 16000 vs 20000 / 2000, `tool_choice` auto vs forced.
 - Command: `eval_run.py --real --max-calls 60 --questions Q1,...,Q30 --as-of 2026-11-17 --baseline evals/baselines/corpus-2026-11-19/report.json`, all settings pinned in the run script, `.env` copied in and removed after. One attempt, 2026-11-20 04:27-06:16 UTC: `real_calls` 54, reused 6 (Q1, Q22, Q24 planner + answer from #242's thinking-on run, same settings and keys; TL decision in the plan review), exit 0. Mock check first (0 calls): 29 PASS / 1 FAIL (Q19), refusal 5/5, keyed 22/22, all 30 chunk lists identical to the baseline.
 - Every new call returned `finish_reason` `tool_calls`; no invalid output, no planner fallback, no failed call, no stop rule, no re-run.
-- Scoring: a fresh scorer agent read only `answers-dump.txt`, `questions.yaml` (739cb3c) and the verdict rule (folder `ev243\blind-in\`) and wrote `verdicts-blind.json` (sha256 `7816579dccc700870cc7e244c1a02a894920e90635a970a939b11f7bf17daa24`, committed in the plan's Progress log in 999c223 before any comparison). Scorer prompt sha256 `9a20a12d5b0fa2840407110339c0af6a396d34836d9a538125638994d597c4f6`. The blind file is kept unchanged in the json (`blind`). Verdict rule as #217: PASS only if the project lead would forward the answer against `passes_if`; no half credit.
-- Citations: 961. Every cited passage is in the database; one is outside its retrieved set (Q5 claim 4, `MS-TR-2025Q4#44`, flagged `unmatched_citation` by code). Number checks: 15 `number_not_found` and 1 `date_mismatch`. Three are real misses (the figure is not in the cited passage): Q17 claims 31 ('17%') and 59 ('75%') citing `CFPB-MISINFO-2025#5` / `#9`, and Q24 claim 13 (the 20,514 total, a sum, citing `EDJ-10Q-2026Q2#82`; #242's answer). The rest are dates, quarter labels or figures the checker does not match in tables (Q2, Q3, Q6, Q12, Q16, Q17 c21, Q18, Q22 x3, Q26, Q27 x2).
+- Scoring (first read): a fresh scorer agent read only `answers-dump.txt`, `questions.yaml` (739cb3c) and the verdict rule (folder `ev243\blind-in\`) and wrote `verdicts-blind.json` (sha256 `7816579dccc700870cc7e244c1a02a894920e90635a970a939b11f7bf17daa24`, committed in the plan's Progress log in 999c223 before any comparison). Scorer prompt sha256 `9a20a12d5b0fa2840407110339c0af6a396d34836d9a538125638994d597c4f6`. The blind file is kept unchanged in the json (`blind`). Verdict rule as #217: PASS only if the project lead would forward the answer against `passes_if`; no half credit. Second read and like-for-like verdicts: see 'Borderline verdicts and the second read'.
+- Citations: 961. Every cited passage is in the database; one is outside its retrieved set (Q5 claim 4, `MS-TR-2025Q4#44`, flagged `unmatched_citation` by code: the quote is in `MS-TR-2024Q4#44`, which was retrieved; DeepSeek wrote the wrong year). Number checks: 15 `number_not_found` and 1 `date_mismatch`. One is a real miss: Q24 claim 13 (the 20,514 total, a sum, citing `EDJ-10Q-2026Q2#82`; #242's answer). Two are word-form false positives: Q17 claims 31 and 59 cite `CFPB-MISINFO-2025#5` / `#9`, which write the figures as words ('Seventeen percent', 'Three in four'), and the checker misses them. The rest are dates, quarter labels or figures the checker does not match in tables (Q2, Q3, Q6, Q12, Q16, Q17 c21, Q18, Q22 x3, Q26, Q27 x2).
 
 ## Scores
 
 Classes for failures: r = retrieval missed a passage the corpus holds; s = answer shape or a required part missing; b = behavior choice differs; c = corpus gap; i = invalid output (none).
 
-| Q | Tier | Expected -> got | #217 final | #217 first read | **DeepSeek** | Class | Borderline | Change label | Cost (USD) |
-|---|---|---|---|---|---|---|---|---|---|
-| Q1 | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.080 (#242) |
-| Q2 | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.081 |
-| Q3 | 1 | answer -> answer | PASS | PASS | **FAIL** | s | yes | plan, model | 0.053 |
-| Q4 (trap) | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.060 |
-| Q5 | 1 | answer -> answer | PASS | PASS | **FAIL** | s, r | yes | scorer reading, model | 0.055 |
-| Q6 | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.080 |
-| Q7 | 2 | answer -> answer | PASS | PASS | **FAIL** | s |  | plan, retrieval, model | 0.107 |
-| Q8 | 2 | answer -> answer | PASS | PASS | **FAIL** | s | yes | model | 0.077 |
-| Q9 | 3 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.065 |
-| Q10 | 3 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.097 |
-| Q11 | 1 | answer -> answer | FAIL | FAIL | **FAIL** | s, r |  |  | 0.088 |
-| Q12 | 3 | answer_with_boundary -> answer_with_boundary | PASS | PASS | **FAIL** | s | yes | model | 0.060 |
-| Q13 | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.071 |
-| Q14 | 3 | answer -> answer | PASS | PASS | **PASS** |  | yes |  | 0.101 |
-| Q15 | 3 | answer -> answer | PASS | PASS | **FAIL** | s | yes | model, retrieval | 0.128 |
-| Q16 | 3 | answer -> answer | PASS | PASS | **PASS** |  | yes |  | 0.081 |
-| Q17 | 1 | answer -> answer | PASS | PASS | **FAIL** | s |  | model, scorer reading | 0.128 |
-| Q18 | 3 | answer -> answer | PASS | PASS | **PASS** |  | yes |  | 0.080 |
-| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS | **PASS** |  |  | scorer reading | 0.057 |
-| Q20 | 1 | answer -> answer | FAIL | FAIL | **FAIL** | s, r |  |  | 0.071 |
-| Q21 | 2 | answer -> answer | PASS | PASS | **FAIL** | s | yes | model | 0.122 |
-| Q22 | 1 | answer -> answer | PASS | PASS | **PASS** |  | yes |  | 0.251 (#242) |
-| Q23 | 1 | answer -> gap_with_adjacent | FAIL | FAIL | **FAIL** | r, b |  |  | 0.097 |
-| Q24 | 3 | gap_with_adjacent -> gap_with_adjacent | FAIL | FAIL | **FAIL** | s | yes |  | 0.193 (#242) |
-| Q25 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | **PASS** |  |  |  | 0.106 |
-| Q26 | 1 | answer -> answer | FAIL | FAIL | **FAIL** | s | yes |  | 0.122 |
-| Q27 (trap) | 1 | answer -> answer | PASS | PASS | **PASS** |  |  |  | 0.177 |
-| Q28 | 1 | gap_with_adjacent -> answer | PASS | PASS | **FAIL** | s, b | yes | model | 0.099 |
-| Q29 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | **PASS** |  |  |  | 0.060 |
-| Q30 (trap) | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | **PASS** |  |  |  | 0.142 |
+| Q | Tier | Expected -> got | #217 final | DeepSeek first read (blind) | Second read | **DeepSeek like-for-like** | Class | Borderline | Change label | Cost (USD) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Q1 | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.080 (#242) |
+| Q2 | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.081 |
+| Q3 | 1 | answer -> answer | PASS | FAIL | FAIL | **FAIL** | s | yes | plan, model | 0.053 |
+| Q4 (trap) | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.060 |
+| Q5 | 1 | answer -> answer | PASS | FAIL | FAIL bl | **FAIL** | s, r | yes | model | 0.055 |
+| Q6 | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.080 |
+| Q7 | 2 | answer -> answer | PASS | FAIL | FAIL | **FAIL** | s |  | plan, retrieval, model | 0.107 |
+| Q8 | 2 | answer -> answer | PASS | FAIL | FAIL bl | **FAIL** | s | yes | model | 0.077 |
+| Q9 | 3 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.065 |
+| Q10 | 3 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.097 |
+| Q11 | 1 | answer -> answer | FAIL | FAIL |  | **FAIL** | s, r |  |  | 0.088 |
+| Q12 | 3 | answer_with_boundary -> answer_with_boundary | PASS | FAIL | FAIL bl | **FAIL** | s | yes | model | 0.060 |
+| Q13 | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.071 |
+| Q14 | 3 | answer -> answer | PASS | PASS | PASS bl | **PASS** |  | yes |  | 0.101 |
+| Q15 | 3 | answer -> answer | PASS | FAIL | FAIL bl | **FAIL** | s | yes | model, retrieval | 0.128 |
+| Q16 | 3 | answer -> answer | PASS | PASS | PASS bl | **PASS** |  | yes |  | 0.081 |
+| Q17 | 1 | answer -> answer | PASS | FAIL | FAIL | **FAIL** | s |  | model | 0.128 |
+| Q18 | 3 | answer -> answer | PASS | PASS | FAIL bl | **PASS** |  | yes |  | 0.080 |
+| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS | FAIL | **FAIL** | s |  | scorer reading | 0.057 |
+| Q20 | 1 | answer -> answer | FAIL | FAIL |  | **FAIL** | s, r |  |  | 0.071 |
+| Q21 | 2 | answer -> answer | PASS | FAIL | FAIL bl | **FAIL** | s | yes | model | 0.122 |
+| Q22 | 1 | answer -> answer | PASS | PASS | PASS bl | **PASS** |  | yes |  | 0.251 (#242) |
+| Q23 | 1 | answer -> gap_with_adjacent | FAIL | FAIL |  | **FAIL** | r, b |  |  | 0.097 |
+| Q24 | 3 | gap_with_adjacent -> gap_with_adjacent | FAIL | FAIL | FAIL | **FAIL** | s | yes |  | 0.193 (#242) |
+| Q25 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | PASS | **PASS** |  |  |  | 0.106 |
+| Q26 | 1 | answer -> answer | FAIL | FAIL | FAIL | **FAIL** | s | yes |  | 0.122 |
+| Q27 (trap) | 1 | answer -> answer | PASS | PASS |  | **PASS** |  |  |  | 0.177 |
+| Q28 | 1 | gap_with_adjacent -> answer | PASS | FAIL | FAIL | **FAIL** | s, b | yes | model | 0.099 |
+| Q29 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS |  | **PASS** |  |  |  | 0.060 |
+| Q30 (trap) | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS |  | **PASS** |  |  |  | 0.142 |
 
-#217 (Claude, same pipeline): 24/30, tier 1 14/18. DeepSeek: 16/30, tier 1 10/18.
+#217 (Claude, same pipeline): 24/30, tier 1 14/18. DeepSeek like-for-like: 15/30, tier 1 10/18 (first read 16/30).
 
 The eval script's own status column (retrieval checks plus expected behavior) is not the score: 25 PASS / 5 FAIL. Q19 fails pattern coverage (0.2), Q22 and Q25 fail the `must_not_return` check (retrieved, not cited), Q23 and Q28 on behavior.
 
@@ -61,28 +63,50 @@ Answer size: DeepSeek 800 claims / 69 adjacent / 80 gaps over the 30 answers; #2
 
 Labels: **plan** (DeepSeek's planner gave different parts), **retrieval** (a deciding passage entered or left the retrieved set; chunk ids named), **model** (the deciding passages were retrieved in both runs; DeepSeek wrote differently), **invalid** (none), **scorer reading** (the same answer shape read differently by the two scorers; #217's saved answer compared).
 
-| Q | Change | Label | Cause and evidence |
+| Q | Change (like-for-like) | Label | Cause and evidence |
 |---|---|---|---|
 | Q3 | PASS -> FAIL | plan, model | **Plan**: DeepSeek's planner returned one part, the question itself (`firms=['SCHW']`); #217 had four, one of them 'competition named and where Schwab is losing ground or pulling back'. **Retrieval** followed: 99 passages vs 156 (59 shared); the SAN minimum raise `SCHW-TRADE-2026-08-24-IN-01#1` was not retrieved, while `SCHW-TR-2026Q3#42` (long/short minimums) was retrieved and cited. **Model**: 0 gaps (#217 named 'Schwab does not say it is losing ground'). Not a scorer reading: #217's answer had the concession leg, this one does not. |
-| Q5 | PASS -> FAIL (borderline) | scorer reading, model | **Scorer reading** in part: #217's answer was also mostly call quotes on 'investing in technology / AI' (9 claims, 1 gap) and was passed without a borderline mark; this read fails that shape ('mostly generic quotes'). **Model** in part: claim 4 cites `MS-TR-2025Q4#44`, which is not in the retrieved set and does not hold the quote (code flag `unmatched_citation`, the only one in the run); a 10-K ISG passage is used as Wealth Management. More parts (3 vs 1) and passages (136 vs 37) did not add named platforms beyond Next Best Action and LeadIQ. |
+| Q5 | PASS -> FAIL (borderline) | model | **Model** (citation error): claim 4's quote is in `MS-TR-2024Q4#44` (4Q24 call, published 2025-01-16), which was in the retrieved set; DeepSeek cited `MS-TR-2025Q4#44` and dated the quote January 2026, a wrong passage and a wrong year (code flag `unmatched_citation`, the only one in the run). That decides Q5. 'Mostly generic quotes' (the blind reason) is not a reason on #217's bar: #217's Q5 was as generic, with the same named set (LeadIQ, Parable, DevGen, Carta, Zero Hash, E*TRADE). The blind note on a 10-K ISG passage used as Wealth Management was a misread (`MS-10K-2025#25` holds the WM sentence); second read, round 1. |
 | Q7 | PASS -> FAIL | plan, retrieval, model | **Model**: claims are grouped only as Recruiting / Retention per firm; #217 used four dimensions (pay and recruiting incentives, training, results, competitive movement) and put 9 empty cells in gaps; this answer has 0 gaps, so empty cells (MS training, Merrill payout) are not shown. **Plan / retrieval**: 3 parts (one per firm, no cross-firm part) vs 4; RJF payout ranges `RJF-PR-web-affiliation-options#1` and Merrill ADP `MER-PR-web-advisor-development-program#1` were not retrieved (#217 cited both). Not a scorer reading. |
 | Q8 | PASS -> FAIL (borderline) | model | **Model**: this answer imposes a six-dimension grid on both firms and fills Schwab's 'Affiliation/economics' cell with ecosystem items, plus a 'Schwab: payout grids are not public' gap, which treats custody and affiliation as one model (`passes_if`: keep them distinct). #217 listed each firm's value proposition in its own words with no shared grid. Same parts (one per firm) and 116 of 142 passages shared. |
 | Q12 | PASS -> FAIL (borderline) | model | **Model**: Edward Jones's cost structure is not set alongside. `EDJ-10Q-2026Q1#62` (advisor compensation), `EDJ-10Q-2026Q2#62/#63` (margin) and `EDJ-10Q-2025Q3#88` (communications expense) are all in this run's retrieved set, but none is cited (#217 cited all four). Same four parts and the hand-off is kept. |
 | Q15 | PASS -> FAIL (borderline) | model, retrieval | **Model**: a list of revenue disclosures by document ('The 2025 10-K states ...'), with no mechanism rows; #217 grouped claims as 'Spread vs fee revenue', 'Cash sweep allocation and rates', 'Pricing and cost structure'. **Retrieval**: `SCHW-PR-2026-10-15-01#12` and `EDJ-10Q-2025Q3#38` (#217 cited both) not retrieved; `SCHW-10K-2025#27`, missing in #217, now retrieved and cited. #217's second read already called its Q15 'PASS (weak), contrast never stated in one place', so a scorer-reading share is possible. |
-| Q17 | PASS -> FAIL | model, scorer reading | **Model**: claims are grouped by plan part (21 / 11 / 8 / 19) with no deployed-vs-aspiration split; the 'who claims the most' part lists claims (Schwab 'already an AI-enabled company', BofA company-wide 200,000 users, an MS 2024 tool via a Deloitte endnote) without ranking them, and much is BofA company-wide or third-party research. **Scorer reading** possible: #217's second read also found 'who claims most only partly answered' and passed it. Deciding tools (`BAC-TR-2026Q2#21` Merrill AI tools) retrieved and cited in both. |
-| Q19 | FAIL -> PASS | scorer reading | **Scorer reading**: the answer has the same shape that #217's second read and the TL failed. The planner again scoped all four parts to Edward Jones (`firms=['EDJ']`), and the only competitor evidence is again Schwab's Gen Z / millennial share of new households (`SCHW-TR-2026Q3#11`, `SCHW-TR-2025Q3#11`), here as 'Peer context' claims instead of adjacent. No competitor move aimed at the cohort is named or listed as a gap. Under #217's TL decision this is FAIL. |
-| Q21 | PASS -> FAIL (borderline) | model | **Model**: 50 claims (vs 16) across four five-firm parts; the firm half mixes generic funnel and household-growth items (MS, Merrill) into 'preparation' and names no gap where a firm said nothing specific. #217 kept the estimates apart and named a gap per firm (MS, Merrill, RJF, EDJ). 87 of #217's 193 passages shared. |
+| Q17 | PASS -> FAIL | model | **Model**: claims are grouped by plan part (21 / 11 / 8 / 19) with no deployed-vs-aspiration split; the 'who claims the most' part lists claims (Schwab 'already an AI-enabled company', BofA company-wide 200,000 users, an MS 2024 tool via a Deloitte endnote) without ranking them, and much is BofA company-wide or third-party research. The plan-part prefixes ('p1 - ') leak into the claim text. #217's answer labelled research vs firm claims and named BofA as the most explicit; this one does not, so the change is answer-caused (second read). Deciding tools (`BAC-TR-2026Q2#21` Merrill AI tools) retrieved and cited in both. |
+| Q19 | unchanged FAIL (blind read PASS) | scorer reading | **Scorer reading**: the answer has the same shape that #217's second read and the TL failed. The planner again scoped all four parts to Edward Jones (`firms=['EDJ']`), and the only competitor evidence is again Schwab's Gen Z / millennial share of new households (`SCHW-TR-2026Q3#11`, `SCHW-TR-2025Q3#11`), here as 'Peer context' claims instead of adjacent. No competitor move aimed at the cohort is named or listed as a gap. The blind read passed it; on #217's bar (its TL decision) it is FAIL, as the second read found, so it does not change against #217. |
+| Q21 | PASS -> FAIL (borderline) | model | **Model**: 50 claims (vs 16) across four five-firm parts; the firm half mixes generic funnel and household-growth items (MS, Merrill) into 'preparation' and names no gap where a firm said nothing specific. The 'estimates' part also holds Schwab and EDJ firm data (claims 5-8), so the two halves are not separate. #217 kept the estimates apart and named a gap per firm (MS, Merrill, RJF, EDJ). 87 of #217's 193 passages shared. |
 | Q28 | PASS -> FAIL (borderline) | model | **Model**: behavior `answer` (bank `gap_with_adjacent`, #217 matched it); the difference between net headcount change and attrition is never stated (#217 stated it); and the Merrill '5% guide' is tied to attrition (#217's answer called it the Merrill growth goal). Same four parts; `BAC-SUPP-2023Q4#2` retrieved and cited in both. |
 
 Unchanged failures: **Q11**: FAIL in both (#217 c, b; here s, r): behavior now `answer` as the bank expects, but no five quoted definitions with differences named; MS from a 2020 supplement, Merrill only GWIM 2023. **Q20**: FAIL in both (#217 b, r; here s, r): behavior now `answer`; samples missing, conflicting findings not set against each other; `FIDELITY-III-2025#0`, `UBS-NEXTGEN-2026#119` / `#13` still not retrieved. **Q23**: FAIL in both (r, b): `gap_with_adjacent`; EDJ series plus one RJF figure. **Q24**: FAIL in both (s): #242's answer reused; no ratio where both inputs are disclosed (EDJ) and validity not answered in one place, the #217 finding. **Q26**: FAIL in both (s): no 'why it might matter' line per item; newest first holds.
 
-**Scorer bias check.** For each change the #217 answer (`w10-report.json`) was read next to this one. Q19 is a scorer reading (same shape, same passages, the plan again all Edward Jones). Q5 and Q17 are partly scorer reading (#217's answers had the same weakness and passed); each also has an answer-side defect (Q5's unmatched citation; Q17's unranked claims). Q15 has a possible scorer share (#217's second read called its Q15 weak). Q3, Q7, Q8, Q12, Q21 and Q28 are answer-caused: #217's answer had the missing element and this one does not.
+**Scorer bias check.** For each change the #217 answer (`w10-report.json`) was read next to this one, and the second read applied #217's bar. Q19 is the one scorer reading: the blind read passed the shape #217 failed, so like-for-like it stays FAIL. Q5 (wrong-year citation) and Q17 (no specificity split, no ranking) are answer-caused on the second read. Q15 keeps a possible scorer share (#217's second read called its Q15 weak). Q3, Q7, Q8, Q12, Q21 and Q28 are answer-caused: #217's answer had the missing element and this one does not.
 
 ## Borderline verdicts and the second read
 
 Borderline in the blind read: Q3, Q5, Q8, Q12, Q14, Q15, Q16, Q18, Q21, Q22, Q24, Q26, Q28. Read twice (PR review round 1): these, every change against #217 and #217's borderline list: Q3, Q5, Q7, Q8, Q12, Q14, Q15, Q16, Q17, Q18, Q19, Q21, Q22, Q24, Q25, Q26, Q28.
 
-Second read: pending (PR review round 1).
+Second read: the PR-review reviewer agent, round 1 (PR #257, pullrequestreview-5989037548), read the 17 answers from the answer dump against `passes_if` before opening the blind verdicts, #217's verdicts or this report, checking passages in the database where a verdict depended on them. 'Second read' is its own read; 'like-for-like' applies #217's final bar; bl = borderline.
+
+| Q | Second read | First read (blind) | #217 final | Like-for-like | Cause of any change vs #217, and note |
+|---|---|---|---|---|---|
+| Q3 | FAIL | FAIL bl | PASS | **FAIL** | Answer (plan + model). No concession leg and no gap; #217 had both. |
+| Q5 | FAIL bl | FAIL bl | PASS | **FAIL bl** | Answer. Claim 4 cites `MS-TR-2025Q4#44` for a quote in `MS-TR-2024Q4#44` (retrieved) and dates it January 2026. 'Mostly generic' is not a reason on #217's bar. The blind 'ISG as WM' note is a misread (`MS-10K-2025#25` holds the WM sentence). |
+| Q7 | FAIL | FAIL | PASS bl | **FAIL** | Answer. Recruiting / retention grid only, not the four dimensions; no empty cell shown, 0 gaps. |
+| Q8 | FAIL bl | FAIL bl | PASS | **FAIL** | Answer. A shared six-dimension grid plus 'Schwab: payout grids are not public' flattens custody into affiliation; #217 kept each firm's model apart. |
+| Q12 | FAIL bl | FAIL bl | PASS | **FAIL** | Answer. EDJ cost structure retrieved but not cited; the hand-off itself is fine (claim 30). |
+| Q14 | PASS bl | PASS bl | PASS | **PASS** | Payouts, cost burden, qualifications and RCS fees from RJF's own material; firm-side economics thin. |
+| Q15 | FAIL bl | FAIL bl | PASS bl | **FAIL bl** | Mostly answer. Disclosures listed by document, no mechanism rows; #217's weak PASS grouped spread vs fee and cash sweep. A scorer share is possible. |
+| Q16 | PASS bl | PASS bl | PASS bl | **PASS** | By position, attributed and dated, no own forecast; headline wording in the model's voice but attributed. |
+| Q17 | FAIL | FAIL | PASS bl | **FAIL** | Answer, not scorer reading. Grouped by plan part ('p1 - ' prefixes in the text); no deployed vs aspiration split, no ranking of who claims most; #217 had both. |
+| Q18 | FAIL bl | PASS bl | PASS | **PASS bl** | The reviewer wanted evidence types in separate blocks; #217 passed the same per-item labelling, so PASS on #217's bar. |
+| Q19 | FAIL | PASS | FAIL bl | **FAIL** | Scorer reading. Every part EDJ; the only 'competitor' items are Schwab Gen Z share outcomes, not moves; the shape #217's TL decision failed. |
+| Q21 | FAIL bl | FAIL bl | PASS | **FAIL** | Answer. The 'estimates' section also holds Schwab and EDJ firm data (claims 5-8); the firm half is padded with funnel and household items. |
+| Q22 | PASS bl | PASS bl | PASS bl | **PASS** | Flags on claims 15 and 20 are false positives (`EDJ-10Q-2025Q2#64`, `RJF-SUPP-2026Q2#9` hold the figures); 1Q25 cells missing and not flagged. |
+| Q24 | FAIL | FAIL bl | FAIL bl | **FAIL** | Unchanged. No EDJ ratio, no direct validity answer. |
+| Q25 | PASS | PASS | PASS bl | **PASS** | Disclosed vs not public marked per firm; trade press only adjacent and labelled; no must-not chunk cited. |
+| Q26 | FAIL | FAIL bl | FAIL bl | **FAIL** | Unchanged. No 'why it might matter' line. |
+| Q28 | FAIL | FAIL bl | PASS | **FAIL** | Answer. The 'Merrill 5% guide' is a growth goal in `BAC-TR-2026Q2#63` but claim 4 and the gap put it in the attrition context; headcount vs attrition never stated. |
+
+**Like-for-like score on #217's bar: 15/30, tier 1 10/18** (the blind 16/30 minus Q19). Disagreement with the blind read: Q19 only (PASS -> FAIL, per #217's TL decision); on Q18 the reviewer's own read was a borderline FAIL, but on #217's bar it agrees with the blind PASS. TL decision (2026-11-20): the like-for-like 15/30 is the comparison headline and the blind 16/30 the first read; Q19 FAIL; Q5 and Q17 FAIL (answer-caused). Remaining uncertainty: Q5 and Q15 borderline FAIL; Q14, Q16, Q18 and Q22 borderline PASS.
 
 ## Cost
 
@@ -107,7 +131,7 @@ Cap use: largest output Q17 answer 50,286 / 64,000 (79%), then Q7 62%, Q21 57%; 
 - **Q19 planner scopes every part to Edward Jones** (#217): still holds (all four parts `firms=['EDJ']`).
 - **Q24 no cross-firm validity statement, no ratio where both inputs are disclosed** (#217): still holds (#242's answer).
 - **Q26 no 'why it might matter' line** (#217): still holds; newest first holds.
-- **Q22 Schwab 3Q26 core NNA `SCHW-PR-2026-10-15-01#3` not retrieved** (#217): still holds.
+- **Q22 Schwab 3Q26 core NNA `SCHW-PR-2026-10-15-01#3` not retrieved** (#217): still holds, but the Schwab 3Q26 cell is now filled ($190.4 billion, cited to `SCHW-PR-2026-10-15-01#0` / `#1`); the 1Q25 cells are missing and not named.
 - **Q22 must-not `MS-PR-2026-04-15-01#15`** (answer-key error, #217): retrieved, not cited; the eval's refusal check fails on it again.
 - **Q24 must-not `SCHW-TR-2026Q3#10` cited** (#217): gone (not retrieved).
 - **Q25 Schwab dividend-deck must-not chunks** (#224): back. `SCHW-DECK-2026Q3#47` and `SCHW-DECK-2026Q2#45` (and `EDJ-10K-2025#305`) are retrieved under DeepSeek's one-part plan, not cited; the eval's refusal check fails. `RJF-PR-web-affiliation-options#1` not retrieved for Q25 (cited by #217).
@@ -115,13 +139,15 @@ Cap use: largest output Q17 answer 50,286 / 64,000 (79%), then Q7 62%, Q21 57%; 
 - **Q15 `SCHW-10K-2025#27` not retrieved** (#217): gone (retrieved and cited).
 - **Q7 `MS-10K-2025#153` not retrieved** (#217): still holds.
 - **Q11 / Q23 behavior** (#217 NEXT item 5): changed for Q11 (now `answer`, as the bank expects; still FAIL on shape); Q23 still `gap_with_adjacent`.
-- **Number-check false positives** (#217): still holds (dates, quarter labels); 3 real misses listed above.
+- **Number-check false positives** (#217): still holds (dates, quarter labels), and figures written as words are missed (Q17 claims 31, 59); 1 real miss (Q24 claim 13), above.
 - **Strict-mode arguments that are not JSON** (#242, thinking off): not seen; 0 invalid outputs in 54 thinking-on calls.
 - **`number_not_found` flags under DeepSeek** (#242: Q22 x3, Q24 x1): Q22 and Q24 reuse #242's answers, so the same flags; 15 in total over 30 answers (#217: 7).
 - **#242 / #232 Q1 one-part plan**: Q1 is #242's answer (one part, passage recall 0.875); PASS.
 - **New: DeepSeek's planner makes fewer parts on single-firm strategy questions** (Q3, Q1 and Q25 one part), which drops the 'where it concedes' and per-firm aspects #217's plans searched.
 - **New: fewer named gaps** (see Scores); the drops on Q3, Q7, Q21 and Q28 are missing 'not disclosed' / 'not comparable' statements.
-- **New: one unmatched citation** (Q5 claim 4, `MS-TR-2025Q4#44`), flagged by code and shown on the Ask page; #217 had none.
+- **New: one wrong-year citation** (Q5 claim 4): the quote is in `MS-TR-2024Q4#44` (4Q24 call, published 2025-01-16, retrieved), but DeepSeek cited `MS-TR-2025Q4#44` and dated it January 2026. Code flags it `unmatched_citation` and the Ask page shows the flag; #217 had none.
+- **New: Q26 unreconciled trade-press items**: claim 6 ('record 8,943 advisors') and claim 10 ('no longer reports advisor headcount') sit side by side without comment. No verdict change.
+- **`CFPB-MISINFO-2025` attributed to 'the CFPB'** (Q17 claims 31, 59; Q20 claims 6, 9, 10): the document is a CFP Board report; #217's Q20 did the same, so it comes from the corpus doc_id, not the model. Follow-up #258.
 
 Raw outputs: `D:\ALLPROJECTS\EDJ\cache\ev243\real` (the TL's machine) and `.eval-runs/0243-real`; per-call usage and cost in `w11-deepseek-baseline.json` (`cost`).
 
@@ -131,7 +157,7 @@ Each answer as the system returned it: claims with the part they answer and the 
 
 ### Q1: What is Morgan Stanley's strategy to increase their net new assets?
 
-**Verdict: PASS**. Workplace, self-directed/E*TRADE and advisor-led channels in management's own words, every claim dated by call from 4Q24 to 3Q26, so 2024 and 2026 framing stay apart. #217: PASS. Answer reused from #242 (same settings).
+**Verdict: PASS**. First read: Workplace, self-directed/E*TRADE and advisor-led channels in management's own words, every claim dated by call from 4Q24 to 3Q26, so 2024 and 2026 framing stay apart. #217: PASS. Answer reused from #242 (same settings).
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 69 passages (~20484 tokens) in 1 part(s): p1 MS: What is Morgan Stanley's stated strategy, initiatives, and priorities to increase net new assets?.
 
@@ -171,7 +197,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q2: How is Raymond James positioning itself to recruit advisors away from the wirehouses?
 
-**Verdict: PASS**. RJF's own pitch (AdvisorChoice, published payout ranges, culture and independence, platform) from calls, 10-K and recruiting pages, plus disclosed recruiting results; trade press labelled and gaps named. #217: PASS.
+**Verdict: PASS**. First read: RJF's own pitch (AdvisorChoice, published payout ranges, culture and independence, platform) from calls, 10-K and recruiting pages, plus disclosed recruiting results; trade press labelled and gaps named. #217: PASS.
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 152 passages (~40044 tokens) in 4 part(s): p1 RJF: How Raymond James describes its strategy and value proposition for recruiting financial advisors from wirehouses.; p2 RJF: What transition packages, compensation, and support Raymond James offers to attract wirehouse advisors.; p3 RJF: What advisor recruiting and movement metrics Raymond James reports, including recruited advisor counts and assets from wirehouses.; p4 RJF: How management describes the wirehouse competitive environment and Raymond James's employee, independent, and RIA platform positioning for advisor movement..
 
@@ -303,7 +329,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q3: What is Schwab's strategy for its RIA custody business?
 
-**Verdict: FAIL** (s) - borderline. Good on Schwab's framing and priorities, but the competitive pressure is only the 10-K competitor list; nothing shows where management concedes ground, which passes_if requires. #217: PASS.
+**Verdict: FAIL** (s) - borderline. First read: Good on Schwab's framing and priorities, but the competitive pressure is only the 10-K competitor list; nothing shows where management concedes ground, which passes_if requires. Second read: Answer (plan + model). No concession leg and no gap; #217 had both. #217: PASS.
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 99 passages (~28584 tokens) in 1 part(s): p1 SCHW: What is Schwab's strategy for its RIA custody business?.
 
@@ -363,7 +389,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q4 (trap): What is Merrill's advisor growth strategy, and how has it changed?
 
-**Verdict: PASS**. Claims are labelled Merrill or 'Merrill and the Private Bank'; the training pipeline, return to experienced hiring and ADP path are cited; BAC/GWIM advisor counts are kept adjacent and the missing standalone headcount is flagged. #217: PASS.
+**Verdict: PASS**. First read: Claims are labelled Merrill or 'Merrill and the Private Bank'; the training pipeline, return to experienced hiring and ADP path are cited; BAC/GWIM advisor counts are kept adjacent and the missing standalone headcount is flagged. #217: PASS.
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 69 passages (~20359 tokens) in 4 part(s): p1 MER: What is Merrill's current strategy for growing its financial advisor force, including recruiting, retention, and development priorities?; p2 MER: What advisor headcount, net new advisor figures, or growth targets has Merrill disclosed?; p3 MER: How has Merrill's advisor growth strategy changed over time, including shifts away from or toward experienced advisor recruiting versus organic growth?; p4 MER: What training and development programs does Merrill use to grow new and next-generation advisors?.
 
@@ -439,7 +465,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q5: Where is Morgan Stanley investing in technology for its advisors?
 
-**Verdict: FAIL** (s, r) - borderline. Mostly generic 'invest in AI/technology' quotes; few advisor platforms with a stated purpose (LeadIQ, Next Best Action); C4 cites a NOT-IN-RETRIEVED passage that does not support it; a 10-K ISG passage is used as Wealth Management. #217: PASS.
+**Verdict: FAIL** (s, r) - borderline. First read: Mostly generic 'invest in AI/technology' quotes; few advisor platforms with a stated purpose (LeadIQ, Next Best Action); C4 cites a NOT-IN-RETRIEVED passage that does not support it; a 10-K ISG passage is used as Wealth Management. Second read: Answer. Claim 4 cites `MS-TR-2025Q4#44` for a quote in `MS-TR-2024Q4#44` (retrieved) and dates it January 2026. 'Mostly generic' is not a reason on #217's bar. The blind 'ISG as WM' note is a misread (`MS-10K-2025#25` holds the WM sentence). #217: PASS.
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 136 passages (~40098 tokens) in 3 part(s): p1 MS: What technology investments and initiatives is Morgan Stanley making for its financial advisors?; p2 MS: What AI, machine learning, and analytics tools is Morgan Stanley deploying for its advisors?; p3 MS: How is Morgan Stanley modernizing its advisor workstation, financial planning, and portfolio tools?.
 
@@ -514,7 +540,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q6: What has Raymond James said about its affiliation models, and has the mix shifted?
 
-**Verdict: PASS**. Affiliation options as RJF describes them; the mix shift is quoted (FA counts by employee/IC, AUA by channel, RCS growth with the 10-Q transfer language, CEO remarks); gaps named. #217: PASS.
+**Verdict: PASS**. First read: Affiliation options as RJF describes them; the mix shift is quoted (FA counts by employee/IC, AUA by channel, RCS growth with the 10-Q transfer language, CEO remarks); gaps named. #217: PASS.
 
 Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retrieval: 148 passages (~40070 tokens) in 4 part(s): p1 RJF: What Raymond James has said about its affiliation models and their strategic positioning.; p2 RJF: How the number and mix of financial advisors across employee, independent contractor, and RIA affiliation models has shifted.; p3 RJF: How client assets and revenues by affiliation model have shifted in mix.; p4 RJF: What Raymond James has said about advisors moving or converting between affiliation models and about the evolving mix..
 
@@ -603,7 +629,7 @@ Tier 1, use case `entity_brief`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q7: How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?
 
-**Verdict: FAIL** (s). Organised only as recruiting/retention, not the required common grid (posture, payout philosophy, training pipeline, retention results); empty cells, such as MS training and Merrill payout, are not shown as empty, and there are no gap lines. #217: PASS.
+**Verdict: FAIL** (s). First read: Organised only as recruiting/retention, not the required common grid (posture, payout philosophy, training pipeline, retention results); empty cells, such as MS training and Merrill payout, are not shown as empty, and there are no gap lines. Second read: Answer. Recruiting / retention grid only, not the four dimensions; no empty cell shown, 0 gaps. #217: PASS.
 
 Tier 2, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retrieval: 144 passages (~40137 tokens) in 3 part(s): p1 MS: What is Morgan Stanley's approach to recruiting and retaining financial advisors?; p2 MER: What is Merrill's approach to recruiting and retaining financial advisors?; p3 RJF: What is Raymond James's approach to recruiting and retaining financial advisors?.
 
@@ -701,7 +727,7 @@ Tier 2, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q8: Compare how Schwab and Raymond James describe their value proposition to independent advisors.
 
-**Verdict: FAIL** (s) - borderline. Both firms are run through the same dimension grid; Schwab's 'Affiliation/economics' cell is filled with ecosystem items, and a 'Schwab payout grids not public' gap shows custody and affiliation flattened into one model. #217: PASS.
+**Verdict: FAIL** (s) - borderline. First read: Both firms are run through the same dimension grid; Schwab's 'Affiliation/economics' cell is filled with ecosystem items, and a 'Schwab payout grids not public' gap shows custody and affiliation flattened into one model. Second read: Answer. A shared six-dimension grid plus 'Schwab: payout grids are not public' flattens custody into affiliation; #217 kept each firm's model apart. #217: PASS.
 
 Tier 2, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retrieval: 142 passages (~40230 tokens) in 2 part(s): p1 SCHW: How Schwab describes its value proposition to independent advisors, including custody, platform, technology, practice management, transition support, and affiliation/economics.; p2 RJF: How Raymond James describes its value proposition to independent advisors, including affiliation models, custody, platform, technology, practice management, transition support, and economics..
 
@@ -779,7 +805,7 @@ Tier 2, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q9: How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?
 
-**Verdict: PASS**. Merrill's disclosed thresholds ($250K, $500K+, $10MM+ households) are cited; MS uses labels only and the missing thresholds are stated plainly; the GWIM continuum and the Private Bank $3MM threshold are labelled not-Merrill. #217: PASS.
+**Verdict: PASS**. First read: Merrill's disclosed thresholds ($250K, $500K+, $10MM+ households) are cited; MS uses labels only and the missing thresholds are stated plainly; the GWIM continuum and the Private Bank $3MM threshold are labelled not-Merrill. #217: PASS.
 
 Tier 3, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retrieval: 72 passages (~22522 tokens) in 2 part(s): p1 MS: How Morgan Stanley segments its wealth management clients by wealth tier, including the tier labels, asset or net worth thresholds, and criteria it discloses.; p2 MER: How Merrill segments its wealth management clients by wealth tier, including the tier labels, asset or net worth thresholds, and criteria it discloses..
 
@@ -828,7 +854,7 @@ Tier 3, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q10: Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?
 
-**Verdict: PASS**. Picks Merrill/GWIM with the basis visible (the only 'Mass Affluent' band with a dollar range); dated statements for each firm, with 'affluent' vs 'mass-affluent' distinguished so the reader can disagree. #217: PASS.
+**Verdict: PASS**. First read: Picks Merrill/GWIM with the basis visible (the only 'Mass Affluent' band with a dollar range); dated statements for each firm, with 'affluent' vs 'mass-affluent' distinguished so the reader can disagree. #217: PASS.
 
 Tier 3, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retrieval: 210 passages (~60091 tokens) in 4 part(s): p1 MS/SCHW: Find Morgan Stanley's and Schwab's statements, quotes, and disclosures about serving mass-affluent clients, including how they define and target that segment.; p2 EDJ/MER: Find Edward Jones's and Merrill's statements, quotes, and disclosures about serving mass-affluent clients, including how they define and target that segment.; p3 RJF: Find Raymond James's statements, quotes, and disclosures about serving mass-affluent clients, including how it defines and targets that segment.; p4 MS/SCHW/EDJ/MER/RJF: Find any explicit, self-described, or comparative statements by the five firms about focusing on, prioritizing, committing to, or leading in serving mass-affluent clients, to assess which has been most explicit..
 
@@ -904,7 +930,7 @@ Tier 3, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q11: How does each of the five define and report advisor headcount -- and what does each definition include or exclude?
 
-**Verdict: FAIL** (s, r). No five quoted headcount definitions with the differences named: MS uses a 2020 supplement and its 'exclusions' are self-directed accounts, not advisors; Merrill is GWIM 2023 only; no explicit comparison of definitions. #217: FAIL.
+**Verdict: FAIL** (s, r). First read: No five quoted headcount definitions with the differences named: MS uses a 2020 supplement and its 'exclusions' are self-directed accounts, not advisors; Merrill is GWIM 2023 only; no explicit comparison of definitions. #217: FAIL.
 
 Tier 1, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retrieval: 204 passages (~60044 tokens) in 4 part(s): p1 MS/SCHW/EDJ/MER/RJF: How each firm defines advisor headcount and names the metric it uses.; p2 MS/SCHW/EDJ/MER/RJF: How each firm reports advisor headcount, including where and how the figure is disclosed.; p3 MS/SCHW/EDJ/MER/RJF: Which roles each firm's advisor headcount definition includes and counts as advisors.; p4 MS/SCHW/EDJ/MER/RJF: Which roles each firm's advisor headcount definition excludes or does not count as advisors..
 
@@ -998,7 +1024,7 @@ Tier 1, use case `head_to_head`. Expected behavior `answer`, got `answer`. Retri
 
 ### Q12: How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?
 
-**Verdict: FAIL** (s) - borderline. Schwab channels and cost economics are covered and the hand-off is explicit, but Edward Jones's disclosed cost structure is not set alongside (only NNA, attrition and initiatives). #217: PASS.
+**Verdict: FAIL** (s) - borderline. First read: Schwab channels and cost economics are covered and the hand-off is explicit, but Edward Jones's disclosed cost structure is not set alongside (only NNA, attrition and initiatives). Second read: Answer. EDJ cost structure retrieved but not cited; the hand-off itself is fine (claim 30). #217: PASS.
 
 Tier 3, use case `mechanism`. Expected behavior `answer_with_boundary`, got `answer_with_boundary`. Retrieval: 111 passages (~31778 tokens) in 4 part(s): p1 SCHW: How Schwab uses its scale (platform, brand, distribution, pricing) to acquire new clients at low cost.; p2 SCHW: What Schwab reports about the cost and volume of new client acquisition and the scale benefits it cites.; p3 EDJ: How Edward Jones currently acquires new clients through its advisor and branch network and what it says about client acquisition costs or constraints.; p4 EDJ: How Edward Jones could replicate a scale-driven, low-cost digital client acquisition strategy and what it discloses about digital capabilities, scale limitations, and strategic plans..
 
@@ -1082,7 +1108,7 @@ Tier 3, use case `mechanism`. Expected behavior `answer_with_boundary`, got `ans
 
 ### Q13: How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?
 
-**Verdict: PASS**. Funnel described end to end (stock plan/Carta referral, vesting retention, channel migration, referral model) in management's framing, with figures tied to periods ($300B since 2020, $99B 2025, $400B+, IPO share of NNA). #217: PASS.
+**Verdict: PASS**. First read: Funnel described end to end (stock plan/Carta referral, vesting retention, channel migration, referral model) in management's framing, with figures tied to periods ($300B since 2020, $99B 2025, $400B+, IPO share of NNA). #217: PASS.
 
 Tier 1, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieval: 141 passages (~40286 tokens) in 4 part(s): p1 MS: How Morgan Stanley converts workplace retirement plan participants into wealth management clients.; p2 MS: How Morgan Stanley converts stock plan and equity compensation participants into wealth management clients.; p3 MS: What results and metrics Morgan Stanley reports for converting workplace and stock plan participants into wealth management clients.; p4 MS: What strategy, priorities, and initiatives Morgan Stanley describes for converting participants into wealth management clients..
 
@@ -1157,7 +1183,7 @@ Tier 1, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieva
 
 ### Q14: How does Raymond James's affiliation-choice model work commercially?
 
-**Verdict: PASS** - borderline. Per-option payouts, cost burden, qualifications and the RCS fee basis are sourced to RJF's own materials; the firm-side economics per option are thin, and one gap line wrongly says no employee/IC split is disclosed. #217: PASS.
+**Verdict: PASS** - borderline. First read: Per-option payouts, cost burden, qualifications and the RCS fee basis are sourced to RJF's own materials; the firm-side economics per option are thin, and one gap line wrongly says no employee/IC split is disclosed. Second read: Payouts, cost burden, qualifications and RCS fees from RJF's own material; firm-side economics thin. #217: PASS.
 
 Tier 3, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieval: 148 passages (~40204 tokens) in 4 part(s): p1 RJF: What affiliation options and channels does Raymond James offer advisors and how does it describe each model?; p2 RJF: What commercial terms and economics does Raymond James offer advisors under each affiliation option?; p3 RJF: How does Raymond James describe the commercial rationale and competitive advantages of offering advisors affiliation choice?; p4 RJF: What commercial results does Raymond James report for its affiliation channels, such as advisor headcount, client assets, and revenue?.
 
@@ -1279,7 +1305,7 @@ Tier 3, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieva
 
 ### Q15: What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?
 
-**Verdict: FAIL** (s) - borderline. Plenty of disclosed revenue composition for each firm, but no stated mechanism (NII on client cash vs asset-based advisory fees); it is left as a claim dump, and the point where the comparison breaks is not stated beyond gap lines. #217: PASS.
+**Verdict: FAIL** (s) - borderline. First read: Plenty of disclosed revenue composition for each firm, but no stated mechanism (NII on client cash vs asset-based advisory fees); it is left as a claim dump, and the point where the comparison breaks is not stated beyond gap lines. Second read: Mostly answer. Disclosures listed by document, no mechanism rows; #217's weak PASS grouped spread vs fee and cash sweep. A scorer share is possible. #217: PASS.
 
 Tier 3, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieval: 207 passages (~60284 tokens) in 4 part(s): p1 SCHW: How Schwab earns on client assets, including revenue sources, yields, net interest on client cash, asset-based fees, and trading revenue.; p2 MS/EDJ/MER/RJF: How advisor-led wealth management firms earn on client assets, including advisory fees, commissions, sweep and net interest income.; p3 MS/SCHW/EDJ/MER/RJF: What drives the difference between Schwab's self-directed/discount brokerage economics on client assets and advisor-led wealth management economics.; p4 MS/SCHW/EDJ/MER/RJF: The closest disclosed metric for earnings per dollar of client assets, such as revenue yield, fee rate, or net interest margin, for Schwab and the advisor-led firms..
 
@@ -1403,7 +1429,7 @@ Tier 3, use case `mechanism`. Expected behavior `answer`, got `answer`. Retrieva
 
 ### Q16: What will receiving financial advice in the future look like for clients?
 
-**Verdict: PASS** - borderline. Organised by position (digital, AI augment vs replace, human role, experience), each attributed and dated, with no single forecast; some filler facts, and one 10-K ISG passage is used as Wealth Management. #217: PASS.
+**Verdict: PASS** - borderline. First read: Organised by position (digital, AI augment vs replace, human role, experience), each attributed and dated, with no single forecast; some filler facts, and one 10-K ISG passage is used as Wealth Management. Second read: By position, attributed and dated, no own forecast; headline wording in the model's voice but attributed. #217: PASS.
 
 Tier 3, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retrieval: 133 passages (~40071 tokens) in 4 part(s): p1 all: How will financial advice be delivered to clients through digital and virtual channels?; p2 all: How will technology such as AI, automation, and robo-advisors change the advice clients receive?; p3 all: What will the role of human advisors be in future advice delivery alongside technology?; p4 all: What will the client experience and engagement look like in future financial advice?.
 
@@ -1495,7 +1521,7 @@ Tier 3, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retriev
 
 ### Q17: What are these firms saying about AI in advice delivery, and who is claiming the most?
 
-**Verdict: FAIL** (s). Named deployed tools (Raimond, Portfolio Insights, LeadIQ) sit beside earnings-call aspirations without being distinguished, and 'who claims the most' is never answered; much of it is BAC company-wide or third-party research. #217: PASS.
+**Verdict: FAIL** (s). First read: Named deployed tools (Raimond, Portfolio Insights, LeadIQ) sit beside earnings-call aspirations without being distinguished, and 'who claims the most' is never answered; much of it is BAC company-wide or third-party research. Second read: Answer, not scorer reading. Grouped by plan part ('p1 - ' prefixes in the text); no deployed vs aspiration split, no ranking of who claims most; #217 had both. #217: PASS.
 
 Tier 1, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retrieval: 137 passages (~40090 tokens) in 4 part(s): p1 all: What are wealth-management firms saying about their AI capabilities, tools, and announcements in advice delivery?; p2 all: What adoption, usage, and scale metrics are firms disclosing for AI in advice delivery?; p3 all: Which firms are claiming the most, earliest, largest, or leading AI advice delivery capabilities?; p4 all: What are firms saying about the future of advice delivery and the role of AI in that future?.
 
@@ -1664,7 +1690,7 @@ Tier 1, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retriev
 
 ### Q18: Where is the industry heading on fee structures and pricing transparency?
 
-**Verdict: PASS** - borderline. Each item carries its source type (Form ADV disclosure, 10-K/10-Q, regulation, named research, earnings-call remark) and outlook items are marked as such; the separation is by labelling rather than by explicit sections. #217: PASS.
+**Verdict: PASS** - borderline. First read: Each item carries its source type (Form ADV disclosure, 10-K/10-Q, regulation, named research, earnings-call remark) and outlook items are marked as such; the separation is by labelling rather than by explicit sections. Second read: The reviewer wanted evidence types in separate blocks; #217 passed the same per-item labelling, so PASS on #217's bar. #217: PASS.
 
 Tier 3, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retrieval: 132 passages (~40172 tokens) in 4 part(s): p1 all: What shifts in wealth-management fee structures are underway, such as moving from commission-based to fee-based advisory or flat and subscription pricing?; p2 all: What evidence shows fee compression and pricing pressure on wealth-management fees?; p3 all: How are firms improving pricing transparency through fee disclosure, unbundled pricing and total cost reporting?; p4 all: What regulatory changes and industry outlooks signal where fee structures and pricing transparency are heading?.
 
@@ -1775,7 +1801,7 @@ Tier 3, use case `theme_scan`. Expected behavior `answer`, got `answer`. Retriev
 
 ### Q19: How should the preferences of younger investors shape Edward Jones's offerings?
 
-**Verdict: PASS**. Dated, sourced cohort research and Schwab competitor moves plus EDJ's own disclosures, then an explicit stop at 'should' with a hand-off to the strategy team. #217: FAIL.
+**Verdict: FAIL** (s) (first read PASS; second read FAIL). First read: Dated, sourced cohort research and Schwab competitor moves plus EDJ's own disclosures, then an explicit stop at 'should' with a hand-off to the strategy team. Second read: Scorer reading. Every part EDJ; the only 'competitor' items are Schwab Gen Z share outcomes, not moves; the shape #217's TL decision failed. #217: FAIL.
 
 Tier 3, use case `segment_evidence`. Expected behavior `answer_with_boundary`, got `answer_with_boundary`. Retrieval: 80 passages (~25683 tokens) in 4 part(s): p1 EDJ: What preferences, expectations, and priorities do younger investors and clients under 40 express regarding wealth management, advice, digital tools, fees, values, and products?; p2 EDJ: How does Edward Jones currently describe its offerings, service model, technology, and products for serving younger and next-generation clients?; p3 EDJ: What has Edward Jones said about its strategy, priorities, and plans for attracting and serving younger investors and clients under 40?; p4 EDJ: What figures has Edward Jones disclosed about younger clients, new households, client demographics under 40, asset flows, or results tied to younger investor initiatives?.
 
@@ -1859,7 +1885,7 @@ Tier 3, use case `segment_evidence`. Expected behavior `answer_with_boundary`, g
 
 ### Q20: What evidence is there about how clients under 40 choose a financial advisor?
 
-**Verdict: FAIL** (s, r). Survey samples are mostly missing, the conflicting findings (FINRA Foundation less reliance on professionals vs BofA 65% prefer a human) are not reported as disagreeing, Schwab CEO remarks are mixed in, and UBS next-gen is not used. #217: FAIL.
+**Verdict: FAIL** (s, r). First read: Survey samples are mostly missing, the conflicting findings (FINRA Foundation less reliance on professionals vs BofA 65% prefer a human) are not reported as disagreeing, Schwab CEO remarks are mixed in, and UBS next-gen is not used. #217: FAIL.
 
 Tier 1, use case `segment_evidence`. Expected behavior `answer`, got `answer`. Retrieval: 135 passages (~40065 tokens) in 4 part(s): p1 all: What evidence shows how clients under 40 find and initially evaluate financial advisors, including online search, reviews, social media and referrals?; p2 all: What evidence shows which criteria clients under 40 prioritize when selecting a financial advisor, such as fees, fiduciary status, credentials, expertise and values?; p3 all: What evidence shows whether clients under 40 prefer digital, virtual, hybrid or in-person human financial advice when choosing an advisor?; p4 all: What evidence shows how social media, influencers, peer recommendations and financial content affect trust and advisor choice among clients under 40?.
 
@@ -1919,7 +1945,7 @@ Tier 1, use case `segment_evidence`. Expected behavior `answer`, got `answer`. R
 
 ### Q21: What do we know about the generational wealth transfer, and how are these five preparing for it?
 
-**Verdict: FAIL** (s) - borderline. The estimates half is sourced with vintage, but the firm half pads with generic funnel and household-growth items (MS, Merrill) presented as wealth-transfer preparation, with no gap where a firm said nothing specific. #217: PASS.
+**Verdict: FAIL** (s) - borderline. First read: The estimates half is sourced with vintage, but the firm half pads with generic funnel and household-growth items (MS, Merrill) presented as wealth-transfer preparation, with no gap where a firm said nothing specific. Second read: Answer. The 'estimates' section also holds Schwab and EDJ firm data (claims 5-8); the firm half is padded with funnel and household items. #217: PASS.
 
 Tier 2, use case `segment_evidence`. Expected behavior `answer`, got `answer`. Retrieval: 210 passages (~60082 tokens) in 4 part(s): p1 MS/SCHW/EDJ/MER/RJF: What is known about the generational wealth transfer, including its size, timing, demographics, and the assets expected to change hands?; p2 MS/SCHW/EDJ/MER/RJF: How are the five firms preparing for the generational wealth transfer through strategy, next-generation client acquisition, and retention of inherited assets?; p3 MS/SCHW/EDJ/MER/RJF: How are the five firms preparing through products and services such as estate planning, trust services, family wealth, and inherited account solutions?; p4 MS/SCHW/EDJ/MER/RJF: How are the five firms preparing their advisor force and digital platforms, including advisor training, next-generation advisor recruiting, advisor succession, and digital advice tools?.
 
@@ -2040,7 +2066,7 @@ Tier 2, use case `segment_evidence`. Expected behavior `answer`, got `answer`. R
 
 ### Q22: Net new assets by quarter for each of the five, with each firm's own definition of the metric.
 
-**Verdict: PASS** - borderline. Values, periods, sources and own definitions for MS, SCHW, EDJ and RJF; Merrill is marked not reporting and GWIM flows are kept adjacent; quarter coverage is uneven, with some missing cells (e.g. 1Q25) unflagged. #217: PASS. Answer reused from #242 (same settings).
+**Verdict: PASS** - borderline. First read: Values, periods, sources and own definitions for MS, SCHW, EDJ and RJF; Merrill is marked not reporting and GWIM flows are kept adjacent; quarter coverage is uneven, with some missing cells (e.g. 1Q25) unflagged. Second read: Flags on claims 15 and 20 are false positives (`EDJ-10Q-2025Q2#64`, `RJF-SUPP-2026Q2#9` hold the figures); 1Q25 cells missing and not flagged. #217: PASS. Answer reused from #242 (same settings).
 
 Tier 1, use case `benchmark`. Expected behavior `answer`, got `answer`. Retrieval: 208 passages (~60095 tokens) in 4 part(s): p1 MS/SCHW: Quarterly net new assets reported by Morgan Stanley and Schwab, using each firm's own metric name (net new assets for Morgan Stanley, core net new assets for Schwab).; p2 MS/SCHW: Morgan Stanley's and Schwab's own definitions of their net new assets metrics, including what is included and excluded.; p3 EDJ/MER/RJF: Quarterly net new assets reported by Edward Jones, Merrill and Raymond James, using each firm's own metric name (net new assets, net client flows, net new asset growth).; p4 EDJ/MER/RJF: Edward Jones', Merrill's and Raymond James' own definitions of their net new assets metrics, including what is included and excluded..
 
@@ -2131,7 +2157,7 @@ Tier 1, use case `benchmark`. Expected behavior `answer`, got `answer`. Retrieva
 
 ### Q23: Advisor headcount over the last eight quarters across the five.
 
-**Verdict: FAIL** (r, b). Returned a gap where an answer was expected; the series covers EDJ (5 points) plus one RJF figure; MS uses 2020 and BAC uses 2023 data; available BAC/RJF supplement counts were missed; definitions do not travel with the series. #217: FAIL.
+**Verdict: FAIL** (r, b). First read: Returned a gap where an answer was expected; the series covers EDJ (5 points) plus one RJF figure; MS uses 2020 and BAC uses 2023 data; available BAC/RJF supplement counts were missed; definitions do not travel with the series. #217: FAIL.
 
 Tier 1, use case `benchmark`. Expected behavior `answer`, got `gap_with_adjacent`. Retrieval: 207 passages (~60160 tokens) in 1 part(s): p1 MS/SCHW/EDJ/MER/RJF: Advisor headcount for Morgan Stanley, Charles Schwab, Edward Jones, Merrill, and Raymond James over the last eight quarters..
 
@@ -2186,7 +2212,7 @@ Tier 1, use case `benchmark`. Expected behavior `answer`, got `gap_with_adjacent
 
 ### Q24: Client assets per advisor across the five -- and is that comparison even valid?
 
-**Verdict: FAIL** (s) - borderline. Computes nothing even where both inputs exist (EDJ), and the 'is it valid' half is never answered directly; comparability issues are only implied through definitional claims. #217: FAIL. Answer reused from #242 (same settings).
+**Verdict: FAIL** (s) - borderline. First read: Computes nothing even where both inputs exist (EDJ), and the 'is it valid' half is never answered directly; comparability issues are only implied through definitional claims. Second read: Unchanged. No EDJ ratio, no direct validity answer. #217: FAIL. Answer reused from #242 (same settings).
 
 Tier 3, use case `benchmark`. Expected behavior `gap_with_adjacent`, got `gap_with_adjacent`. Retrieval: 204 passages (~60129 tokens) in 4 part(s): p1 MS/SCHW/EDJ/MER/RJF: Find each firm's disclosed client assets per advisor or average client assets per advisor metric across Morgan Stanley, Schwab, Edward Jones, Merrill and Raymond James.; p2 MS/SCHW/EDJ/MER/RJF: Find each firm's total client assets or closest disclosed client asset measure to use as the numerator for the per-advisor comparison.; p3 MS/SCHW/EDJ/MER/RJF: Find each firm's number of financial advisors or closest disclosed advisor headcount to use as the denominator for the per-advisor comparison.; p4 MS/SCHW/EDJ/MER/RJF: Find disclosures and commentary on how each firm defines client assets and advisor headcount, and whether the per-advisor comparison across the five firms is valid or distorted by differences in advisor channels, asset definitions, and calculation methods..
 
@@ -2268,7 +2294,7 @@ Tier 3, use case `benchmark`. Expected behavior `gap_with_adjacent`, got `gap_wi
 
 ### Q25: What has each of the five actually disclosed about advisor compensation structures?
 
-**Verdict: PASS**. Reports what is genuinely disclosed (10-K/10-Q, Form ADV compensation sections, RJF published ranges) and marks the grids as not public; trade press is labelled and not used to reconstruct grids. #217: PASS.
+**Verdict: PASS**. First read: Reports what is genuinely disclosed (10-K/10-Q, Form ADV compensation sections, RJF published ranges) and marks the grids as not public; trade press is labelled and not used to reconstruct grids. Second read: Disclosed vs not public marked per firm; trade press only adjacent and labelled; no must-not chunk cited. #217: PASS.
 
 Tier 1, use case `benchmark`. Expected behavior `gap_with_adjacent`, got `gap_with_adjacent`. Retrieval: 202 passages (~60046 tokens) in 1 part(s): p1 MS/SCHW/EDJ/MER/RJF: What has each of Morgan Stanley, Charles Schwab, Edward Jones, Merrill, and Raymond James disclosed about their advisor compensation structures?.
 
@@ -2341,7 +2367,7 @@ Tier 1, use case `benchmark`. Expected behavior `gap_with_adjacent`, got `gap_wi
 
 ### Q26: What's new on Raymond James in the last 90 days?
 
-**Verdict: FAIL** (s) - borderline. Items are newest first and inside the window, but none carries a one-line 'why it matters' and no links are given in the items; nearly all of it is trade press. #217: FAIL.
+**Verdict: FAIL** (s) - borderline. First read: Items are newest first and inside the window, but none carries a one-line 'why it matters' and no links are given in the items; nearly all of it is trade press. Second read: Unchanged. No 'why it might matter' line. #217: FAIL.
 
 Tier 1, use case `recency`. Expected behavior `answer`, got `answer`. Retrieval: 48 passages (~15321 tokens) in 4 part(s): p1 RJF: What recent financial results, earnings, and business metrics has Raymond James reported?; p2 RJF: What strategic moves, acquisitions, partnerships, expansion, or advisor recruiting has Raymond James announced?; p3 RJF: What executive appointments, departures, promotions, board changes, or organizational restructuring has Raymond James disclosed?; p4 RJF: What regulatory, legal, compliance, or product and service developments has Raymond James reported?.
 
@@ -2414,7 +2440,7 @@ Tier 1, use case `recency`. Expected behavior `answer`, got `answer`. Retrieval:
 
 ### Q27 (trap): What has changed at Merrill since the start of the year?
 
-**Verdict: PASS**. Merrill items only; BAC material is limited to Merrill-specific lines or labelled GWIM/'Merrill and the Private Bank' adjacents; the 2023 leadership change is excluded as outside the window. #217: PASS.
+**Verdict: PASS**. First read: Merrill items only; BAC material is limited to Merrill-specific lines or labelled GWIM/'Merrill and the Private Bank' adjacents; the 2023 leadership change is excluded as outside the window. #217: PASS.
 
 Tier 1, use case `recency`. Expected behavior `answer`, got `answer`. Retrieval: 103 passages (~31403 tokens) in 4 part(s): p1 MER: What leadership and management changes has Merrill announced since the start of the year?; p2 MER: What strategic, business, and operational changes has Merrill announced since the start of the year?; p3 MER: What changes in Merrill's financial advisor workforce has it reported since the start of the year?; p4 MER: What changes in Merrill's financial results, client balances, and flows has it reported since the start of the year?.
 
@@ -2505,7 +2531,7 @@ Tier 1, use case `recency`. Expected behavior `answer`, got `answer`. Retrieval:
 
 ### Q28: What is Edward Jones's advisor attrition rate compared to Merrill's?
 
-**Verdict: FAIL** (s, b) - borderline. EDJ 6.4%/6.1% with definition and the Merrill 'near historic lows' are correct, but the difference between headcount change and attrition is never stated; it also ties the Merrill '5% guide' to attrition and is labelled answer, not gap. #217: PASS.
+**Verdict: FAIL** (s, b) - borderline. First read: EDJ 6.4%/6.1% with definition and the Merrill 'near historic lows' are correct, but the difference between headcount change and attrition is never stated; it also ties the Merrill '5% guide' to attrition and is labelled answer, not gap. Second read: Answer. The 'Merrill 5% guide' is a growth goal in `BAC-TR-2026Q2#63` but claim 4 and the gap put it in the attrition context; headcount vs attrition never stated. #217: PASS.
 
 Tier 1, use case `honest_miss`. Expected behavior `gap_with_adjacent`, got `answer`. Retrieval: 87 passages (~24830 tokens) in 4 part(s): p1 EDJ: Find Edward Jones's disclosed financial advisor attrition rate, retention rate, or turnover rate.; p2 MER: Find Merrill's disclosed financial advisor attrition rate, retention rate, or turnover rate.; p3 EDJ: Find Edward Jones's disclosed advisor headcount, net new advisors, or advisor departures as the closest figures if an attrition rate is not stated.; p4 MER: Find Merrill's disclosed advisor headcount, net new advisors, or advisor departures as the closest figures if an attrition rate is not stated..
 
@@ -2550,7 +2576,7 @@ Tier 1, use case `honest_miss`. Expected behavior `gap_with_adjacent`, got `answ
 
 ### Q29: What does Morgan Stanley pay its financial advisors?
 
-**Verdict: PASS**. Says payout grids are not public, labels aggregate compensation expense as a different quantity, names a source that would answer it, and labels trade press indicative. #217: PASS.
+**Verdict: PASS**. First read: Says payout grids are not public, labels aggregate compensation expense as a different quantity, names a source that would answer it, and labels trade press indicative. #217: PASS.
 
 Tier 1, use case `honest_miss`. Expected behavior `gap_with_adjacent`, got `gap_with_adjacent`. Retrieval: 69 passages (~20967 tokens) in 1 part(s): p1 MS: What Morgan Stanley pays its financial advisors, including salary, commissions, bonuses, deferred compensation, and any disclosed average or total advisor compensation figures..
 
@@ -2590,7 +2616,7 @@ Tier 1, use case `honest_miss`. Expected behavior `gap_with_adjacent`, got `gap_
 
 ### Q30 (trap): What is Merrill's standalone profitability?
 
-**Verdict: PASS**. States Merrill does not report standalone results; GWIM profit figures are each labelled as including the Private Bank, with only Merrill revenue shown as Merrill-specific. #217: PASS.
+**Verdict: PASS**. First read: States Merrill does not report standalone results; GWIM profit figures are each labelled as including the Private Bank, with only Merrill revenue shown as Merrill-specific. #217: PASS.
 
 Tier 1, use case `honest_miss`. Expected behavior `gap_with_adjacent`, got `gap_with_adjacent`. Retrieval: 110 passages (~33894 tokens) in 2 part(s): p1 MER: Find Merrill's standalone profitability, including net income, pre-tax earnings, and other profit measures disclosed for the Merrill entity or business.; p2 MER: Find the closest disclosed profitability metrics for Merrill's wealth-management segment if Merrill standalone profitability is not separately reported..
 

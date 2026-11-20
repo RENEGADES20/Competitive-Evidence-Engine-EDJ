@@ -257,14 +257,14 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
       Progress-log blind line names `scorer-prompt.txt` with its sha256 and the input hashes.
 - [x] Cost uses the rates and peak window of issuecomment-7030358880 (or the page's, if it renders
       at report time, with differences noted); the report states which.
-- [ ] Blind hash committed before the comparison (Progress-log commit precedes any comparison
+- [x] Blind hash committed before the comparison (Progress-log commit precedes any comparison
       commit; hash recomputable from the json's `blind`); second read of the borderline questions
       in PR review round 1, and the report's "Second read" table matches the reviewer's comment.
 - [x] Report lists all 30 verdicts (PASS / FAIL, class for each FAIL), score and tier-1 score, and
       every change against #217 with its label and evidence; cost per question and total in dollars
       (rule above), tokens incl. cache hit and reasoning.
 - [x] 0 code changes: `git diff origin/main...HEAD --stat` lists only the three files above.
-- [ ] `gh pr checks <PR#>` all green on the PR head.
+- [x] `gh pr checks <PR#>` all green on the PR head (PR #257; green on 57bb713 and on the round-1 head).
 
 ## Risks
 - **Non-determinism**: one sample per question; a change against #217 may be variance. Labelled, not
@@ -330,9 +330,18 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   PASS -> FAIL (Q3 plan + model; Q5 scorer reading + model; Q7 plan + retrieval + model; Q8, Q12, Q21, Q28
   model; Q15 model + retrieval; Q17 model + scorer reading), one FAIL -> PASS (Q19, scorer reading: same
   shape #217's TL decision failed). Blind verdicts unchanged; a #217-consistent reading on Q5 / Q17 / Q19
-  gives 17/30, the range on them 15-18/30. Number flags checked against passages (3 real misses: Q17 c31,
-  c59, Q24 c13); one unmatched citation (Q5 c4). Pricing page re-read 2026-11-20: same rates and peak
+  gave 17/30 in the first draft (withdrawn in review round 1; see below). Number flags checked against passages (1 real miss: Q24 c13; Q17 c31,
+  c59 are word-form false positives, corrected in review round 1); one unmatched citation (Q5 c4). Pricing page re-read 2026-11-20: same rates and peak
   window as issuecomment-7030358880; billing time not stated, completion time used. Cost (`ev243\cost.py`):
   new spend $2.46 (54 calls; 9 at peak, Q26 answer across 06:00 UTC), all 30 incl. #242's three $2.99.
   Report `docs/results/w11-deepseek-baseline.md` + `.json` (`ev243\gen_w11.py`); blind hash recomputes
   from the json. Second read (17 questions) left for PR review round 1.
+- 2026-11-20 02:40 - PR #257 review round 1 (pullrequestreview-5989037548, CHANGES REQUESTED as planned):
+  second read of 17 questions; differs from the blind read only on Q19. TL decisions: the like-for-like
+  score on #217's bar, **15/30 (tier 1 10/18)**, is the comparison headline; the blind 16/30 is the first
+  read; Q19 FAIL (per #217's TL decision); Q5 and Q17 FAIL (answer-caused); the "#217-consistent 17/30"
+  figure removed everywhere. Fixed: "Second read" table and result in the md and json (`second_read`);
+  number checks now 1 real miss (Q24 c13), Q17 c31 / c59 word-form false positives ("Seventeen
+  percent", "Three in four"); Q5's evidence is the wrong-year citation (`MS-TR-2024Q4#44` cited as
+  `MS-TR-2025Q4#44`), the "ISG as WM" note removed. Non-blocking added as findings: Q22 Schwab 3Q26 cell
+  now filled, Q26 unreconciled trade-press items, CFPB naming (#258). 0 calls.
