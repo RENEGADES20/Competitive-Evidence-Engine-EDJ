@@ -361,3 +361,6 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
   records in `docs/results/0247d-raw/` (6215d58). RJF cell holds 8,731 at 2025-03-31 (#43); the answer lists it
   (C9); no RJF basis break. Final replay (guard OK, 50 reused): Q23 = the real run. Blind inputs for Q11, Q23, Q24
   prepared (`ev247dlind-in\`, hashes in the results doc); stopped before scoring.
+- 2026-11-20 13:30 - blind re-score 1/3 (hash 163437a, verdicts 525f2d1): Q24 PASS; Q23 FAIL (r, c); **Q11 PASS -> FAIL
+  (borderline)**. Its answer differs from part 3's scored one only by the two new notes (0-call diff, results doc section 7).
+  The acceptance "no PASS -> FAIL" is not met: merge stopped, PR #265 stays a draft, the TL adjudicates Q11.
