@@ -1,0 +1,215 @@
+{
+  "question_id": "Q3",
+  "question": "What is Schwab's strategy for its RIA custody business?",
+  "reduce_version": "v5",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "answer",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-10K-2025#23",
+    "SCHW-TRADE-2026-10-28-WM-01#0",
+    "SCHW-DECK-2026-investor-day#35",
+    "SCHW-TRADE-2026-10-29-WM-01#0",
+    "SCHW-10Q-2026Q2#7",
+    "SCHW-10K-2025#26",
+    "SCHW-10K-2025#24",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-MONTHLY-2026-07#3",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-10K-2025#13",
+    "SCHW-TR-2025Q4#48",
+    "SCHW-TR-2026Q3#42",
+    "SCHW-TRADE-2026-10-28-WM-01#1",
+    "SCHW-10K-2025#141"
+  ],
+  "schema_fallback": [],
+  "enum_values": 68,
+  "at": "2026-11-20T02:58:27.171054",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5840,
+    "output_tokens": 9270,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 5840,
+    "reasoning_tokens": 6989,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 96.83,
+  "tokens_per_s": 95.73,
+  "reasoning_content": "We need answer. We must follow instructions. Need produce claims, adjacent, gaps via submit_answer. One firm: aspect by aspect. Question: What is Schwab's strategy for its RIA custody business? No time window? Question doesn't specify time window. So no recency requirement? Actually recency items none. No time window given, so no \"Why it might matter\" sentences. No comparison aspects (all fact). So answer aspect by aspect, one firm, claims.\n\nWe need write claims from each cell. Each claim with part_id a1.SCHW etc. Cite chunk ids only. Date every claim from source line. Attribute strategy to firm/management. Never write cell ids etc. Each claim starting \"The Charles Schwab Corporation: \" for multi? \"Several firms\" but only one firm: \"One firm: aspect by aspect.\" Does each claim start with firm? Shape says \"Several firms: aspect by aspect ... each claim starting '<Firm>: '. One firm: aspect by aspect.\" So for one firm, no need start with firm? It says one firm aspect by aspect, probably can just write claims. But part_id carries firm. We can still name Schwab in claim. Let's write naturally.\n\nNeed include all items for each aspect? Each fact cell is a claim. We should write one claim per item (cell). The matrix shows a1 has items 1-6, a2 items 1-6, a3 items 3-6 (why no items 1,2? only 3-6 present). a4 items 1-3, a5 items 1-4. We write claims for each.\n\nNeed handle \"quote not verbatim: never put it in quotation marks.\" For those items, do not use quotation marks; paraphrase. For others, we can use quotes? Instructions say a fact cell is a claim. We can quote but need attribution. We can use quotation marks for verbatim quotes only. Let's include quotes where verbatim.\n\nNeed date each claim from its source line. Source lines give period/published. E.g., \"The 2Q26 10-Q (period ended June 26, 2026) states ...\" Wait source SCHW-10Q-2026Q2 period 2026-06-30, published 2026-08-07. Use wording: \"The 2Q26 10-Q (period ended June 30, 2026) states ...\" Fine.\n\nFor transcripts: \"The 3Q26 earnings call (October 2026)\" but published 2026-10-15; period 2026-09-30. Use \"On the 3Q26 earnings call (period ended September 30, 2026)...\" or \"Schwab's 3Q26 earnings call transcript (period ended September 30, 2026)\". Better.\n\nTrade press: source from SCHW trade, period n/a, published. Attribute trade press? Instruction: A trade-press item is a claim when its cell is a fact, attributed (\"trade press reports ...\"). Wait \"trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\". The sources SCHW-TRADE are trade publications? They are \"SCHW trade\" likely trade press. We should attribute to trade press reporting. E.g., \"Trade press reporting on Schwab Impact (October 28, 2026) reports that...\" Since cell is fact. We should use \"trade press reports ...\". For items from SCHW-TRADE, attribute to trade press, not management? The instruction says attribute strategy to firm/management in their own words, but trade press items... We can say \"Trade press reports that Schwab CEO Rick Wurster said ...\" That's fine, attributing the report.\n\nFor SCHW-DECK investor day, period n/a, published 2026-05-14. Use \"Schwab's 2026 investor day presentation (May 2026) states ...\" It's a deck. \"In the May 2026 investor day deck, Schwab states ...\"\n\nFor monthly: \"Schwab's July 2026 monthly activity report (published August 14, 2026) describes ...\"\n\nLet's draft claims.\n\nAspect a1:\n1. Schwab states it has built adviser business around helping independent advisers grow, compete and succeed. Cite SCHW-TR-2026Q3#10. Date: 3Q26 earnings call (period ended Sept 30, 2026). Quote verbatim: \"We have built our adviser business around helping independent advisers grow, compete and succeed.\"\nClaim: \"On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated: 'We have built our adviser business around helping independent advisers grow, compete and succeed.'\"\n\n2. 10-K 2025, period 2025-12-31, published 2026-02-25. Quote: \"Management believes that we can maintain our competitive position primarily through the efforts of our sales, support, technology, and business consulting teams, which are dedicated to helping RIAs grow, compete, and succeed in serving their clients.\"\nClaim with date: \"The 2025 10-K (period ended December 31, 2025) states ...\"\n\n3. Trade press 2026-10-28. \"Trade press reporting from Schwab Impact (October 28, 2026) reports that Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM, according to President and CEO Rick Wurster.\" This is factual. quote verbatim? The cell's quote is \"Schwab will continue to focus ...\". We can quote partially: \"Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM.\" But source is trade press. We can say \"trade press reports that President and CEO Rick Wurster told an audience of advisors at Schwab Impact: 'Schwab will continue...'\". Actually the quote text includes \"President and CEO Rick Wurster told...\" We can quote just Wurster's words. But the quoted source is the trade press article, not verbatim transcript? It's a quote in the article. Fine. We'll attribute to trade press.\n\n4. Trade press quote: Wurster said \"Our job and our role is to provide a platform and a support ecosystem that helps you support your clients and helps your firm thrive.\"\n\n5. Deck investor day quote: \"The leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment / lending products, & technology in addition to custody & service\"\n\n6. Trade press quote: Schwab wants to give RIAs equal or better access than wirehouse counterparts to banking services such as lending, private market investing, long-short.\n\nAspect a2:\n1. 10-Q 2026Q2 quote about Advisor Services segment.\n2. TR 3Q26 quote serving >16,000 firms, $5.8T.\n3. 10-K 2025 quote about no custody fee.\n4. 10-K 2025 quote proprietary software.\n5. Deck quote position of strength.\n6. Monthly quote custodial operational trading support.\n\nAspect a3:\nItems 3-6 only. Need not mention items 1,2 absent.\n3. TR 2025Q3 quote deepening relationships...\n4. 10-K 2025#23 quote not verbatim; paraphrase. \"In addition to focusing on superior service, Schwab says it utilizes technology to provide RIAs with a highly-developed, scalable platform for administering clients' assets easily and efficiently.\" No quotation marks. Wait this is same source as a1 item2 (SCHW-10K-2025#23). Fine.\n5. Trade press 2026-10-29 quote Wurster cited focus areas.\n6. TR 2024Q4 quote adding support capabilities.\n\nAspect a4:\n1. 10-K 2025#13 quote compete with institutional custodians...\n2. Trade press 2026-10-29 quote not verbatim. Paraphrase: CEO Rick Wurster says independent advisors are competing against wirehouses that typically have strong banks attached to their advice.\n3. TR 2025Q4 quote: \"They do, from time to time, compete against the wealth divisions of wirehouses.\" CEO Rick Wurster.\n\nAspect a5:\n1. TR 2026Q3 quote changed minimums for long/short and throttled growth.\n2. Trade press 2026-10-28 quote limited long-short offerings to clients with at least $10M.\n3. Trade press 2026-10-28 quote reduced Schwab Advisor Network referral network by raising bar to clients >$5M and RIAs >=$500M AUM.\n4. 10-K 2025#141 quote Ameritrade integration expected attrition.\n\nNeed decide how to date trade press: \"Trade press reporting published October 28, 2026...\" We can say \"In trade press reporting published October 28, 2026, ...\". For 10-K published 2026-02-25 but period 2025-12-31. Use \"The 2025 Form 10-K (period ended December 31, 2025) states ...\" \n\nNeed citations: chunk_ids arrays with correct ids. part_id for each claim = a1.SCHW etc.\n\nNo adjacent, no gaps. answerable true. behavior \"answer\".\n\nNow need ensure every claim carries part_id. Since one firm, part ids are a1.SCHW etc. We don't need \"\" for spanning. Use a1.SCHW etc.\n\nCheck standard wording: no relevant. Trade press items: \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\". So for SCHW-TRADE items, begin \"Trade press reports ...\". But note these trade-press items might report what CEO said, and we attribute. We'll use \"Trade press reporting (October 28, 2026) reports ...\" Good.\n\nAlso \"attribute strategy, priorities and intent to the firm or its management in their own words.\" For trade press, it's the article's reporting, but quotes are Wurster's words. Good.\n\nNeed not write \"code gaps\" etc.\n\nLet's write all claims in order: a1 (6 items), a2 (6), a3 (4), a4 (3), a5 (4). Each claim one sentence maybe. Use quotes. Avoid cell ids.\n\nLet's ensure exact quoting. For item quotes verbatim, we may put in quotation marks exactly as given. Need be careful with text from matrix.\n\nLet's write:\n\na1.SCHW claims:\n1. \"On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated: 'We have built our adviser business around helping independent advisers grow, compete and succeed.'\"\n2. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'Management believes that we can maintain our competitive position primarily through the efforts of our sales, support, technology, and business consulting teams, which are dedicated to helping RIAs grow, compete, and succeed in serving their clients.'\"\n3. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that President and CEO Rick Wurster told an audience of advisors that Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM.\" Hmm this paraphrases the quote. But quote is \"Schwab will continue to focus ...\" We could quote directly: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports: 'Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM, President and CEO Rick Wurster told an audience of advisors at Schwab Impact.'\" That's exact but awkward. Better: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that President and CEO Rick Wurster told an audience of advisors that 'Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM.'\" This inserts quote within. Good.\n4. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said: 'Our job and our role is to provide a platform and a support ecosystem that helps you support your clients and helps your firm thrive.'\"\n5. \"In its May 2026 investor day presentation, Schwab stated its strategy includes being 'the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment / lending products, & technology in addition to custody & service.'\"\n6. \"Trade press reporting published October 29, 2026 reports that 'Schwab wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies.'\"\n\na2:\n1. \"The 2Q26 Form 10-Q (period ended June 30, 2026) describes the Advisor Services segment as providing 'custodial, trading, banking and trust, and support services to independent registered investment advisors (RIAs), independent retirement advisors, and recordkeepers.'\"\n2. \"On the 3Q26 earnings call (period ended September 30, 2026), Schwab said: 'we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.'\"\n3. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'By functioning as the custodian, Schwab earns revenue associated with the underlying client assets, predominantly through net interest revenue and asset management and administration fees. In this capacity, we do not charge the RIA or end client a custody fee.'\"\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'RIAs who custody client accounts at Schwab may use proprietary software that provides them with up-to-date client account information as well as trading capabilities. The Advisor Services website is the core platform for RIAs to conduct daily business activities online with Schwab.'\"\n5. \"In its May 2026 investor day presentation, Schwab described Advisor Services as being 'in a position of strength & remains a driving force for Schwab,' with '$5.2T Client Assets, 16K Advisory Firms, Households 3.9M' and '#1 in RIA Custodial Assets.'\" Need careful exact quote: \"$5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1\". Could quote whole: \"Advisor Services is in a position of strength & remains a driving force for Schwab. $5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1\". Fine.\n6. \"Schwab's July 2026 monthly activity report (published August 14, 2026) describes its offering to independent, fee-based investment advisors as 'custodial, operational and trading support for independent, fee-based investment advisors through Schwab Advisor Services TM.'\"\n\na3:\n3. \"On the 3Q25 earnings call (period ended September 30, 2025), Schwab said: 'In our advisor services business, we're deepening relationships with the 16,000 RIA firms we serve by building a broader support ecosystem that extends beyond custody alone to add value for RIAs. We've grown our lending support, alternatives capability, and expanded our institutional no-transaction fee mutual fund platform.'\"\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states that in addition to focusing on superior service, Schwab utilizes technology to provide RIAs with a highly-developed, scalable platform for administering their clients' assets easily and efficiently.\" (no quotes)\n5. \"Trade press reporting published October 29, 2026 reports that Wurster cited 'the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses' as focus areas for its custody offerings.\" Wait quote is \"Wurster cited the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses as focus areas for its custody offerings.\" That entire sentence includes \"Wurster cited\". We can quote the whole thing. But better: \"Trade press reporting published October 29, 2026 reports that Wurster cited the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses as focus areas for its custody offerings.\" No need inner quotes; this paraphrases with exact. But since cell quote is verbatim, can use quotation marks around whole: \"Trade press reporting published October 29, 2026 reports: 'Wurster cited the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses as focus areas for its custody offerings.'\"\n6. \"On the 4Q24 earnings call (period ended December 31, 2024), Schwab said: 'In advisor services, we are adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.'\"\n\na4:\n1. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'In the Advisor Services arena, we compete with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.'\"\n2. \"Trade press reporting published October 29, 2026 reports that CEO Rick Wurster says independent advisors are competing against wirehouses that typically have strong banks attached to their advice.\" No quotes (quote not verbatim). Good.\n3. \"On the 4Q25 earnings call (period ended December 31, 2025), CEO Rick Wurster said of RIAs: 'They do, from time to time, compete against the wealth divisions of wirehouses.'\"\n\na5:\n1. \"On the 3Q26 earnings call (period ended September 30, 2026), CEO Rick Wurster said: 'as we look to October, where we have changed the minimums for long/short and throttled growth to some extent, the growth has in no way slowed at all in terms of AS NNA.'\"\n2. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said the firm limited long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.\" Or quote: \"That led the firm to limit long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.\" It's trade press. We can quote exact. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports: 'That led the firm to limit long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.'\" But who is \"that\"? maybe okay. Better attribute: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab limited long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.\" That's not verbatim but okay; cell quote is verbatim but we can paraphrase? Instruction: quote verbatim is fine; not required to quote. For fact cell, we can state. But the matrix provides exact quote; we can use or paraphrase. Only if quote not verbatim never use quotes. For verbatim, either quote or paraphrase is fine. I'll paraphrase some.\n\n3. Trade press: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab reduced the Schwab Advisor Network referral network by raising the bar for participation to only clients with over $5 million and RIAs with at least $500 million in AUM.\"\n\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states that during the Ameritrade integration Schwab experienced some expected attrition of client assets from retail accounts and RIAs, though such attrition was below its initial estimates.\" Could quote exact: \"we experienced some expected attrition of client assets from retail accounts and RIAs, though such attrition was below our initial estimates\". Let's include quote.\n\nNeed citations for each. part_id corresponds.\n\nLet's consider if we should include \"The Charles Schwab Corporation: \" prefix? Shape says one firm aspect by aspect, not each claim starting with firm. I think no prefix needed. But maybe safe to not.\n\nNeed \"Every claim, adjacent item and gap carries the part_id of the cell it comes from.\" So part_id for each claim = a1.SCHW etc. We'll set.\n\nNow submit_answer with claims array. No adjacent/gaps.\n\nCheck enum chunk_ids includes all. Yes.\n\nLet's ensure no citation of item not in sources. All cited are in source list. Good.\n\nNow think about whether we need to \"date every claim from its source line\". We have dates for all. For trade press period n/a published date used. For deck period n/a published 2026-05-14; use \"May 2026 investor day presentation (published May 14, 2026)\"? We said May 2026 investor day presentation. Good enough maybe include published date? We'll include \"published May 14, 2026\". For monthly period 2026-07-31 published 2026-08-14. We can say \"July 2026 monthly activity report (published August 14, 2026)\". Good.\n\nLet's refine all text.\n\nClaim 1a1: \"On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated: 'We have built our adviser business around helping independent advisers grow, compete and succeed.'\"\n\nClaim 2a1: \"The 2025 Form 10-K (period ended December 31, 2025) states: 'Management believes that we can maintain our competitive position primarily through the efforts of our sales, support, technology, and business consulting teams, which are dedicated to helping RIAs grow, compete, and succeed in serving their clients.'\"\n\nClaim 3a1: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that President and CEO Rick Wurster told an audience of advisors that 'Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM.'\"\n\nClaim 4a1: \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said: 'Our job and our role is to provide a platform and a support ecosystem that helps you support your clients and helps your firm thrive.'\"\n\nClaim 5a1: \"In its May 2026 investor day presentation (published May 14, 2026), Schwab stated its strategy includes being 'the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment / lending products, & technology in addition to custody & service.'\"\n\nClaim 6a1: \"Trade press reporting published October 29, 2026 reports: 'Schwab wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies.'\"\n\na2:\n1. \"The 2Q26 Form 10-Q (period ended June 30, 2026) describes the Advisor Services segment as providing 'custodial, trading, banking and trust, and support services to independent registered investment advisors (RIAs), independent retirement advisors, and recordkeepers.'\"\n2. \"On the 3Q26 earnings call (period ended September 30, 2026), Schwab said: 'we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.'\"\n3. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'By functioning as the custodian, Schwab earns revenue associated with the underlying client assets, predominantly through net interest revenue and asset management and administration fees. In this capacity, we do not charge the RIA or end client a custody fee.'\"\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'RIAs who custody client accounts at Schwab may use proprietary software that provides them with up-to-date client account information as well as trading capabilities. The Advisor Services website is the core platform for RIAs to conduct daily business activities online with Schwab.'\"\n5. \"In its May 2026 investor day presentation (published May 14, 2026), Schwab described Advisor Services as being 'in a position of strength & remains a driving force for Schwab,' with '$5.2T Client Assets, 16K Advisory Firms, Households 3.9M' and '#1 in RIA Custodial Assets.'\" Hmm quote says \"Households 3.9M in RIA Custodial Assets #1\" without \"and\". Let's quote exact whole: \"Advisor Services is in a position of strength & remains a driving force for Schwab. $5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1\". Use full quote. \n6. \"Schwab's July 2026 monthly activity report (published August 14, 2026) describes its offering to independent, fee-based investment advisors as 'custodial, operational and trading support for independent, fee-based investment advisors through Schwab Advisor Services TM.'\"\n\na3:\n3. \"On the 3Q25 earnings call (period ended September 30, 2025), Schwab said: 'In our advisor services business, we're deepening relationships with the 16,000 RIA firms we serve by building a broader support ecosystem that extends beyond custody alone to add value for RIAs. We've grown our lending support, alternatives capability, and expanded our institutional no-transaction fee mutual fund platform.'\"\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states that in addition to focusing on superior service, Schwab utilizes technology to provide RIAs with a highly-developed, scalable platform for administering their clients' assets easily and efficiently.\" (no quotes)\n5. \"Trade press reporting published October 29, 2026 reports: 'Wurster cited the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses as focus areas for its custody offerings.'\"\n6. \"On the 4Q24 earnings call (period ended December 31, 2024), Schwab said: 'In advisor services, we are adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.'\"\n\na4:\n1. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'In the Advisor Services arena, we compete with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.'\"\n2. \"Trade press reporting published October 29, 2026 reports that CEO Rick Wurster says independent advisors are competing against wirehouses that typically have strong banks attached to their advice.\" no quotes.\n3. \"On the 4Q25 earnings call (period ended December 31, 2025), CEO Rick Wurster said of RIAs: 'They do, from time to time, compete against the wealth divisions of wirehouses.'\"\n\na5:\n1. \"On the 3Q26 earnings call (period ended September 30, 2026), CEO Rick Wurster said: 'as we look to October, where we have changed the minimums for long/short and throttled growth to some extent, the growth has in no way slowed at all in terms of AS NNA.'\"\n2. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab limited long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.\" \n3. \"Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab reduced the Schwab Advisor Network referral network by raising the bar for participation to only clients with over $5 million and RIAs with at least $500 million in AUM.\"\n4. \"The 2025 Form 10-K (period ended December 31, 2025) states: 'we experienced some expected attrition of client assets from retail accounts and RIAs, though such attrition was below our initial estimates.'\"\n\nCheck a5 item2 quote: \"That led the firm to limit long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.\" We paraphrased to Wurster said Schwab limited... This is okay; cell fact. But source says \"Wurster said Schwab limited...\"? Matrix item 2: \"Wurster said Schwab limited long-short offerings to clients with at least $10 million in assets, curtailing their use by many advisors.\" The quote is \"That led the firm to limit...\" So our paraphrase fine.\n\nItem3 quote: \"reducing the Schwab Advisor Network referral network by raising the bar for participation to only clients with over $5 million and RIAs with at least $500 million in AUM.\" We paraphrase Wurster said Schwab reduced... Good.\n\nNow citations per claim:\na1: \n1 chunk [\"SCHW-TR-2026Q3#10\"]\n2 [\"SCHW-10K-2025#23\"]\n3 [\"SCHW-TRADE-2026-10-28-WM-01#0\"]\n4 [\"SCHW-TRADE-2026-10-28-WM-01#0\"]\n5 [\"SCHW-DECK-2026-investor-day#35\"]\n6 [\"SCHW-TRADE-2026-10-29-WM-01#0\"]\n\na2:\n1 [\"SCHW-10Q-2026Q2#7\"]\n2 [\"SCHW-TR-2026Q3#10\"]\n3 [\"SCHW-10K-2025#26\"]\n4 [\"SCHW-10K-2025#24\"]\n5 [\"SCHW-DECK-2026-investor-day#62\"]\n6 [\"SCHW-MONTHLY-2026-07#3\"]\n\na3:\n3 [\"SCHW-TR-2025Q3#13\"]\n4 [\"SCHW-10K-2025#23\"]\n5 [\"SCHW-TRADE-2026-10-29-WM-01#0\"]\n6 [\"SCHW-TR-2024Q4#13\"]\n\na4:\n1 [\"SCHW-10K-2025#13\"]\n2 [\"SCHW-TRADE-2026-10-29-WM-01#0\"]\n3 [\"SCHW-TR-2025Q4#48\"]\n\na5:\n1 [\"SCHW-TR-2026Q3#42\"]\n2 [\"SCHW-TRADE-2026-10-28-WM-01#1\"]\n3 [\"SCHW-TRADE-2026-10-28-WM-01#1\"]\n4 [\"SCHW-10K-2025#141\"]\n\npart_id each a1.SCHW etc.\n\nNo adjacent/gaps.\n\nNeed output via tool. Let's construct JSON.\n\nDouble check answerable true, behavior \"answer\".\n\nPotential issue: Instructions say \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\" Since one firm, part_id a1.SCHW etc. Good.\n\nPotential issue: For a3, items 1 and 2 are missing; no claims for them. Should we add gap? Code gaps none. \"Cells with code gaps get no claim; code adds those gaps.\" Not relevant. Fine.\n\nPotential issue: Are we supposed to include \"Why it might matter\" for recency? No time window and no recency aspects. Fine.\n\nPotential issue: \"answer_with_boundary\" not relevant; behavior answer.\n\nLet's now call submit_answer.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated: \"We have built our adviser business around helping independent advisers grow, compete and succeed.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states: \"Management believes that we can maintain our competitive position primarily through the efforts of our sales, support, technology, and business consulting teams, which are dedicated to helping RIAs grow, compete, and succeed in serving their clients.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Trade press reporting from Schwab Impact (published October 28, 2026) reports that President and CEO Rick Wurster told an audience of advisors that \"Schwab will continue to focus on its custody services for registered investment advisors with under $100 million AUM.\"",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said: \"Our job and our role is to provide a platform and a support ecosystem that helps you support your clients and helps your firm thrive.\"",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "In its May 2026 investor day presentation (published May 14, 2026), Schwab stated its strategy includes being \"the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment / lending products, & technology in addition to custody & service.\"",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#35"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Trade press reporting published October 29, 2026 reports: \"Schwab wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies.\"",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The 2Q26 Form 10-Q (period ended June 30, 2026) describes the Advisor Services segment as providing \"custodial, trading, banking and trust, and support services to independent registered investment advisors (RIAs), independent retirement advisors, and recordkeepers.\"",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#7"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), Schwab said: \"we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states: \"By functioning as the custodian, Schwab earns revenue associated with the underlying client assets, predominantly through net interest revenue and asset management and administration fees. In this capacity, we do not charge the RIA or end client a custody fee.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#26"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states: \"RIAs who custody client accounts at Schwab may use proprietary software that provides them with up-to-date client account information as well as trading capabilities. The Advisor Services website is the core platform for RIAs to conduct daily business activities online with Schwab.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#24"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "In its May 2026 investor day presentation (published May 14, 2026), Schwab described Advisor Services as: \"Advisor Services is in a position of strength & remains a driving force for Schwab. $5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1.\"",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's July 2026 monthly activity report (published August 14, 2026) describes its offering to independent, fee-based investment advisors as \"custodial, operational and trading support for independent, fee-based investment advisors through Schwab Advisor Services TM.\"",
+        "chunk_ids": [
+          "SCHW-MONTHLY-2026-07#3"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Schwab said: \"In our advisor services business, we're deepening relationships with the 16,000 RIA firms we serve by building a broader support ecosystem that extends beyond custody alone to add value for RIAs. We've grown our lending support, alternatives capability, and expanded our institutional no-transaction fee mutual fund platform.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states that in addition to focusing on superior service, Schwab utilizes technology to provide RIAs with a highly-developed, scalable platform for administering their clients' assets easily and efficiently.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press reporting published October 29, 2026 reports: \"Wurster cited the growing use of pledged-asset lending balances, the demand for long-short investment strategies, and the need to make private-market investing more accessible to the masses as focus areas for its custody offerings.\"",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Schwab said: \"In advisor services, we are adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.\"",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states: \"In the Advisor Services arena, we compete with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Trade press reporting published October 29, 2026 reports that CEO Rick Wurster says independent advisors are competing against wirehouses that typically have strong banks attached to their advice.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), CEO Rick Wurster said of RIAs: \"They do, from time to time, compete against the wealth divisions of wirehouses.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#48"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), CEO Rick Wurster said: \"as we look to October, where we have changed the minimums for long/short and throttled growth to some extent, the growth has in no way slowed at all in terms of AS NNA.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#42"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab limited long-short offerings only to clients with at least $10 million in assets, curtailing their use by many advisors.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#1"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Trade press reporting from Schwab Impact (published October 28, 2026) reports that Wurster said Schwab reduced the Schwab Advisor Network referral network by raising the bar for participation to only clients with over $5 million and RIAs with at least $500 million in AUM.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#1"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "The 2025 Form 10-K (period ended December 31, 2025) states: \"we experienced some expected attrition of client assets from retail accounts and RIAs, though such attrition was below our initial estimates.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#141"
+        ],
+        "part_id": "a5.SCHW"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

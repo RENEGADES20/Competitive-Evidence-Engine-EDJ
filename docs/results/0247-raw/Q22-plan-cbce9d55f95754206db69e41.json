@@ -1,0 +1,67 @@
+{
+  "question_id": "Q22",
+  "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-20T02:46:09.731436",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1460,
+    "output_tokens": 1504,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 180,
+    "reasoning_tokens": 1291,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 20.69,
+  "tokens_per_s": 72.69,
+  "reasoning_content": "The user wants me to create a search plan for a question about net new assets by quarter for five firms, with each firm's own definition of the metric.\n\nLet me analyze the question carefully.\n\nQuestion: \"Net new assets by quarter for each of the five, with each firm's own definition of the metric.\"\n\nThe question asks for:\n1. Net new assets by quarter for each of the five firms (a series - figure over several periods)\n2. Each firm's own definition of the metric (net new assets)\n\nSo aspects:\n- Net new assets by quarter (metric: net_new_assets, kind: series) - for all five firms\n- Each firm's own definition of the net new assets metric (fact) - for all five firms\n\nWait, let me think about the aspects more carefully.\n\n\"Net new assets by quarter for each of the five\" - this is the metric net_new_assets by quarter. This is a series over several periods.\n\n\"with each firm's own definition of the metric\" - this asks for the definition of net new assets for each firm.\n\nSo two aspects:\n1. Net new assets by quarter (metric: net_new_assets, kind: series, firms: all five)\n2. Definition of net new assets metric (kind: fact, firms: all five)\n\nThe metric field: \"net_new_assets\" when the aspect asks for exactly that registered metric. So the net new assets by quarter aspect gets metric \"net_new_assets\".\n\nFor the definition aspect, metric should be \"\" because it's asking for the definition, not the metric itself.\n\nLet me write the keyword queries.\n\nFor net new assets:\n- \"net new assets\" \"net new asset flows\" \"net new money\" \"net flows\" \"client asset flows\" \"asset gathering\" \"net new client assets\"\n\nFor definition:\n- \"definition of net new assets\" \"net new assets defined as\" \"we define net new assets\" \"net new assets includes\" \"net new assets consists of\"\n\nFirms: all five firms for both aspects. The question says \"for each of the five\" - so all five firms. No restriction on which firms. So firms = empty list (code searches for all).\n\nWait, but the instruction says: \"Firms of an aspect. Leave firms empty when the question asks the aspect of every listed firm; code then searches it for all of them.\"\n\nSo firms = empty list for both aspects.\n\nLet me think about whether there are more aspects. The question is straightforward: \"Net new assets by quarter for each of the five, with each firm's own definition of the metric.\"\n\nTwo asks joined by \"with\":\n1. Net new assets by quarter (the series)\n2. Each firm's own definition of the metric\n\nActually, \"with each firm's own definition of the metric\" could be interpreted as asking for the definition alongside the metric. This is a separate aspect: the definition.\n\nLet me also consider whether \"by quarter\" implies a series kind. Yes, \"by quarter\" = figure over several periods = series.\n\nThe metric field: for the net new assets aspect, metric = \"net_new_assets\".\n\nFor definition: metric = \"\".\n\nKind:\n1. Net new assets by quarter: series\n2. Definition: fact\n\nProxy: both false, since we're asking exactly what the question asks.\n\nLet me finalize.\n\nActually, should I also consider that \"net new assets\" might need a proxy for firms that don't disclose exactly \"net new assets\"? The instructions say: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\"\n\nBut net new assets is a registered metric (metric: net_new_assets). So no proxy needed. Each firm does disclose net new assets (well, some may have different names like \"core net new assets\" for Schwab, \"net new assets\" for Morgan Stanley, etc.). But the metric is registered as net_new_assets.\n\nActually, let me think. Schwab reports \"core net new assets\". Morgan Stanley reports \"net new assets\" or \"total client inflows\". Merrill (Bank of America) reports net flows? Edward Jones reports net new assets? Raymond James reports \"domestic private client group net new assets\" etc.\n\nThe question says \"with each firm's own definition of the metric\" - so it acknowledges each firm defines it differently. So the metric aspect should search for each firm's own net new assets.\n\nSo two aspects are sufficient:\n1. Net new assets by quarter (series, metric: net_new_assets, all firms)\n2. Definition of net new assets (fact, all firms)\n\nLet me write the keyword queries carefully.\n\nAspect 1: Net new assets by quarter\n- text: \"Net new assets by quarter, as each firm reports the metric.\"\n- keyword_query: \"net new assets net new asset flows net flows net new money client asset flows asset inflows core net new assets quarterly\"\n- firms: []\n- metric: \"net_new_assets\"\n- kind: \"series\"\n- proxy: false\n\nAspect 2: Definition of net new assets\n- text: \"Each firm's own definition of its net new assets metric.\"\n- keyword_query: \"define net new assets definition of net new assets net new assets defined as net new assets includes net new assets consists of net new assets comprises\"\n- firms: []\n- metric: \"\"\n- kind: \"fact\"\n- proxy: false\n\nShould the definition aspect also include the metric? No, metric field is for the actual metric. Definition is not the metric itself.\n\nI think this is a clean two-aspect plan. Let me submit.\n\nActually, wait - let me reconsider whether \"by quarter\" needs to be reflected. The keyword query shouldn't include dates. \"quarterly\" is fine as it's not a date. Actually, \"quarterly\" is a period descriptor. The instruction says \"no dates\". \"quarterly\" is not a date, it's a frequency word. I'll include it.\n\nLet me also think about whether there could be a third aspect about \"each of the five\" - no, that's just the firm scope.\n\nLet me finalize with two aspects.\n\nI should not answer the question, just submit the plan.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "nna_quarterly",
+        "text": "Net new assets by quarter, as each firm reports the metric.",
+        "keyword_query": "net new assets net new asset flows net new money net flows client asset flows asset inflows core net new assets quarterly net new client assets",
+        "firms": [],
+        "metric": "net_new_assets",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "nna_definition",
+        "text": "Each firm's own definition of its net new assets metric.",
+        "keyword_query": "net new assets defined as definition of net new assets we define net new assets net new assets includes net new assets consists of net new assets comprises net new assets represents",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      }
+    ]
+  }
+}

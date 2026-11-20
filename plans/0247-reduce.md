@@ -772,3 +772,11 @@ written in sections 3-6 and Tests.
   Q1 1, Q3 1, Q11 5, Q19 4, Q22 5, Q23 5, Q24 5, Q26 1 = **27** map calls (bound 30); Q19's code cells
   were re-searched in the count and `remap.RJF` was capped (no file). Re-extraction bound by firms: 1 +
   1 + 5 + 5 + 5 + 5 + 5 + 1 = 28. Reduce 8. **Phase B cap 63**; total 3 + 63 = 66 <= 69.
+- 2026-11-20 04:08 - phase B (cap 63): 43 calls made (27 map, 8 re-extraction, 8 reduce); total 46 of
+  69; no ProviderStop, no 400, no failed or invalid output; 5 map outputs `trailing_braces` (accepted).
+  About $4.28 (43 of 46 calls at peak). Behaviors: Q1, Q3, Q11, Q22, Q23, Q24, Q26 `answer`, Q19
+  `answer_with_boundary` (all as effective expected); 0 outside the matrix, 0 part gaps, 0 comparison
+  claims missing, 0 why-lines missing, 0 code-built. Q24: comparison claim present; EDJ, MS and RJF
+  ratios derived (`computed`). Q23: MS 2020 counts are claims; period gaps named. Must-not:
+  `SCHW-TR-2026Q3#10` is a fact under Q24's comparison aspect a4 (also `different_quantity` under a3).
+  Findings in `docs/results/0247-reduce-check.md`. Stopped before scoring (TL starts the blind scorer).

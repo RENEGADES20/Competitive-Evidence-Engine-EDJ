@@ -1,0 +1,316 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "reduce_version": "v5",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-SUPP-2020Q4#1",
+    "SCHW-10K-2025#120",
+    "SCHW-10Q-2026Q1#22",
+    "SCHW-10Q-2026Q2#71",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-TR-2025Q2#5",
+    "SCHW-DECK-2026-investor-day#306",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#202",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9",
+    "RJF-10K-2025#10",
+    "RJF-10K-2025#228",
+    "RJF-TR-2025Q3#4",
+    "RJF-TR-2025Q3#8",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-10K-2025#12"
+  ],
+  "schema_fallback": [],
+  "enum_values": 116,
+  "at": "2026-11-20T03:08:14.817752",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9857,
+    "output_tokens": 16139,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 8321,
+    "reasoning_tokens": 12655,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 161.41,
+  "tokens_per_s": 99.99,
+  "reasoning_content": "Let me analyze this task. I need to write the answer based on the evidence matrix. The behavior is \"answer\", which means I write claims, adjacent items, and gaps.\n\nLet me understand the structure:\n- Firms: Morgan Stanley (MS), Charles Schwab (SCHW), Edward Jones (EDJ), Merrill (MER), Raymond James (RJF)\n- Aspects: a1 (definition), a2 (reporting), a3 (includes), a4 (excludes)\n- Part ids for firm-specific cells: a1.MS, a2.MS, etc. For comparison aspects: a1, a2, a3, a4 (aspect ids are part ids for claims that span firms).\n\nWait, let me re-read: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself.\"\n\nBut the aspects here are marked \"fact, metric advisor_headcount\" not \"comparison\". Let me check. The aspects say:\n- a1 [fact, metric advisor_headcount]\n- a2 [fact, metric advisor_headcount]\n- a3 [fact, metric advisor_headcount]\n- a4 [fact, metric advisor_headcount]\n\nSo these are fact aspects, not comparison aspects. But the Comparability (code) lines say \"different_basis: ...\" \u2014 but those are caveats added by code, which I should not repeat. The instruction says \"Caveats are added by code; do not repeat them.\"\n\nSo the comparison aspect instruction doesn't apply because these are fact aspects. The \"different_basis\" caveats are added by code and I should not repeat them.\n\nWait, but there are aspect ids a1, a2, a3, a4 as part ids. Let me re-read the part_id enum: it includes a1, a2, a3, a4, and firm-specific ones. But for fact aspects, I write claims with the firm-specific part ids (a1.MS etc.).\n\nActually, let me re-read: \"A fact cell is a claim, also when it is partial... A cell marked 'adjacent only'... goes in adjacent.\" And \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nSo for fact cells, the part_id is the cell id (e.g., a1.MER, a1.RJF, a2.MS, etc.). For adjacent items, part_id is the cell id. For gaps, part_id is the cell id.\n\nThe \"aspect id for a claim that spans firms\" refers to comparison aspects. Since these are fact aspects, no spanning claims needed.\n\nLet me go through each cell:\n\nAspect a1 (definition):\n- a1.MS: not found \u2192 code gap (don't repeat, but wait, I need to add gaps? The instruction says \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo code gaps are added by code; I should NOT repeat them. Hmm, but the gaps array in submit_answer \u2014 do I include the code gaps? Let me re-read.\n\n\"Gaps added by code (do not repeat them)\" \u2014 these are listed. So I should NOT add them to my gaps array. The gaps array in my answer should only include gaps I add myself, which are only for something those gaps do not name.\n\nWait, but actually the submit_answer tool has a \"gaps\" field. The code will add the code gaps automatically? Let me think. The instruction says \"code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo the code gaps are added by code automatically, and I should not include them. I only add gaps for things not covered by the listed code gaps.\n\nHmm, but let me consider the standard wording items. There's standard wording about advisor pay, but this question is about advisor headcount, not pay. So not applicable.\n\nStandard wording about \"Bank of America GWIM figures for Merrill go in adjacent\" \u2014 wait, there's a caveat \"GWIM is not Merrill: the segment also includes Bank of America Private Bank.\" But the Merrill figures are in fact cells for a2.MER (BAC-SUPP-2023Q4#2), which report \"Total wealth advisors\" across GWIM and Consumer Banking. The definition itself says \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" So these are claims, not adjacent. The GWIM-Merrill caveat is added by code (\"GWIM is not Merrill: the segment also includes Bank of America Private Bank.\"). I should not repeat caveats.\n\nBut wait, item 7 of a2.MER (BAC-DECK-2025-investor-day#9) reports \"more than 15,000 wealth advisors for Merrill and Private Bank\" \u2014 scope Merrill | Private Bank. That's still a fact cell, a claim.\n\nLet me now check the standard wording about \"Net advisor headcount change for attrition\" \u2014 not relevant here.\n\nOK so let me construct the answer.\n\nLet me go through the cells and write claims.\n\nAspect a1:\n- a1.MS: not found \u2192 code gap, no claim, don't repeat gap.\n- a1.SCHW: adjacent only (full-time equivalent employees definition). Adjacent item with differs_because.\n- a1.EDJ: not found \u2192 code gap, no claim.\n- a1.MER: fact, item 1. Claim.\n- a1.RJF: fact, items 1 and 2. Claims.\n\nAspect a2:\n- a2.MS: fact, items 1-3. Claims.\n- a2.SCHW: adjacent only, items 1-4. Adjacent items.\n- a2.EDJ: fact, items 1-7. Claims.\n- a2.MER: fact, items 1-7. Claims.\n- a2.RJF: fact, items 1-4. Claims.\n\nAspect a3:\n- a3.MS: not found \u2192 code gap, no claim.\n- a3.SCHW: adjacent only, item 1. Adjacent.\n- a3.EDJ: not found \u2192 code gap.\n- a3.MER: fact, item 1. Claim.\n- a3.RJF: fact, items 1-2. Claims.\n\nAspect a4:\n- a4.MS: not found \u2192 code gap.\n- a4.SCHW: fact, item 1. Claim.\n- a4.EDJ: not found \u2192 code gap.\n- a4.MER: not found \u2192 code gap.\n- a4.RJF: fact, items 1-2. Claims.\n\nNow, the instructions say: \"With a time window, order claims and adjacent items newest first across the whole answer.\" There's no time window in the question. So no time window ordering needed. Just aspect by aspect, firms in order.\n\nActually wait, the question itself is \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\" No time window.\n\n\"Recency and order\": \"For every item of an aspect marked recency, and every item when the question has a time window...\" None of the aspects are marked recency, and no time window. So no \"Why it might matter\" needed.\n\n\"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nSo I'll structure: aspect a1, then firms in order: MS, SCHW, EDJ, MER, RJF. Within each firm, claims/adjacent/gaps.\n\nFor each claim starting \"<Firm>: \".\n\nLet me draft claims.\n\nNote about dating: \"Date every claim from its source line.\" So I should include the source period/publish info. E.g., \"The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) states ...\"\n\nLet me write each claim.\n\nAspect a1:\n\na1.MS: code gap, no claim, don't add gap (already in code gaps).\n\na1.SCHW: adjacent item. Differs_because: 'The passage defines full-time equivalent employees (total workforce hours), not advisor headcount.'\n\nText: \"The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) defines full-time equivalent employees as the total number of hours worked divided by a 40-hour work week for full-time, part-time, and temporary employees and persons employed on a contract basis.\"\n\npart_id: a1.SCHW. chunk_ids: SCHW-10K-2025#120. differs_because: \"The passage defines full-time equivalent employees (total workforce hours), not advisor headcount.\"\n\na1.EDJ: code gap, no claim.\n\na1.MER: fact. Claim.\n\"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states that Bank of America's reported advisor headcount is 'Total wealth advisors,' a metric that includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\npart_id: a1.MER, chunk_ids: BAC-SUPP-2023Q4#2.\n\na1.RJF: fact, items 1 and 2. Two claims.\n\nItem 1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party Registered Investment Advisors ('RIAs') and broker-dealers to which the firm provides services through its RIA and Custody Services ('RCS') division.\"\n\nItem 2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that advisors in the RCS division are not included in the firm's financial advisor metric, although their client assets are included in PCG AUA.\"\n\nBoth part_id a1.RJF. chunk_ids: item 1 RJF-10K-2025#10; item 2 RJF-10K-2025#228.\n\nAspect a2:\n\na2.MS: fact, items 1-3. Three claims.\n\nItem 1: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,950 Wealth Management representatives at December 31, 2020 in its Wealth Management advisor-led channel.\"\nItem 2: \"... reports 15,469 Wealth Management representatives at September 30, 2020 ...\"\nItem 3: \"... reports 15,468 Wealth Management representatives at December 31, 2019 ...\"\n\npart_id: a2.MS, chunk_ids: MS-SUPP-2020Q4#1.\n\na2.SCHW: adjacent only, items 1-4. Four adjacent items. Differs_because: 'Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount.'\n\nItem 1: \"The Charles Schwab Corporation: The 10-Q (period March 31, 2026, published May 8, 2026) attributes higher first-quarter 2026 compensation and benefits expense to growth in headcount, including financial consultants and wealth advisors, to support its expanding client base.\" chunk SCHW-10Q-2026Q1#22.\nItem 2: \"The Charles Schwab Corporation: The 10-Q (period June 30, 2026, published August 7, 2026) attributes higher second-quarter and first-six-months 2026 compensation and benefits expense to growth in headcount, including growth in financial consultants and wealth advisors and the acquisition of Forge.\" chunk SCHW-10Q-2026Q2#71.\nItem 3: \"The Charles Schwab Corporation: On the third-quarter 2026 earnings call (published October 15, 2026), management stated the firm serves more than 16,000 firms representing $5.8 trillion in assets on its advisor platform.\" chunk SCHW-TR-2026Q3#10.\nItem 4: \"The Charles Schwab Corporation: On the second-quarter 2025 earnings call (published July 18, 2025), management stated the firm helped nearly 16,000 advisors support their clients.\" chunk SCHW-TR-2025Q2#5.\n\npart_id: a2.SCHW for all.\n\na2.EDJ: fact, items 1-7. Seven claims. Some are partial. Let me write each.\n\nItem 1: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) presents the metric as 'Financial advisors (actual)' and reports it on an 'At period end' and 'Average' basis.\" chunk EDJ-10Q-2026Q2#60.\nItem 2: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports 20,514 financial advisors at period end as of June 26, 2026.\" chunk EDJ-10Q-2026Q2#60.\nItem 3: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports an average of 20,537 financial advisors for the second quarter of 2026.\" chunk EDJ-10Q-2026Q2#60.\nItem 4: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports 20,425 financial advisors at year end December 31, 2025.\" chunk EDJ-10K-2025#130.\nItem 5: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 19,540 financial advisors in the U.S.\" chunk EDJ-10K-2025#148.\nItem 6: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 885 financial advisors in Canada.\" chunk EDJ-10K-2025#148.\nItem 7: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) states the consolidated financial statements are presented in dollars in millions, except per unit information and the number of financial advisors.\" chunk EDJ-10K-2025#202.\n\npart_id: a2.EDJ.\n\na2.MER: fact, items 1-7. Seven claims.\n\nItem 1: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports advisor headcount in Global Wealth & Investment Management Key Indicators under the line 'Advisors, at period end' as 'Total wealth advisors,' including advisors across all wealth management businesses in GWIM and Consumer Banking.\" chunk BAC-SUPP-2023Q4#2.\nItem 2: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 18,916 total wealth advisors at period end December 31, 2023 (fourth quarter 2023 and fiscal year 2023).\" chunk BAC-SUPP-2023Q4#2.\nItem 3: \"Merrill: ... reports 19,130 total wealth advisors at period end September 30, 2023 (third quarter 2023).\"\nItem 4: \"Merrill: ... reports 19,099 total wealth advisors at period end June 30, 2023 (second quarter 2023).\"\nItem 5: \"Merrill: ... reports 19,243 total wealth advisors at period end March 31, 2023 (first quarter 2023).\"\nItem 6: \"Merrill: ... reports 19,273 total wealth advisors at period end December 31, 2022 (fourth quarter 2022).\"\nItem 7: \"Merrill: The Global Wealth & Investment Management investor day deck (published November 5, 2025) reports more than 15,000 wealth advisors for Merrill and Private Bank.\" chunk BAC-DECK-2025-investor-day#9.\n\npart_id: a2.MER.\n\nNote about item 7 scope: \"Merrill and Private Bank\". I should say what it covers: \"more than 15,000 wealth advisors for Merrill and Private Bank.\" Good.\n\na2.RJF: fact, items 1-4. Four claims.\n\nItem 1: \"Raymond James Financial: The fiscal 2025 Q3 earnings call (published October 22, 2025) reports the firm ended fiscal year 2025 with a record number of financial advisors of 8,943.\" chunk RJF-TR-2025Q3#4.\nItem 2: \"Raymond James Financial: The fiscal 2025 Q3 earnings call (published October 22, 2025) reports the firm ended the fiscal year with a record number of financial advisors, 2% higher than the prior year.\" chunk RJF-TR-2025Q3#8.\nItem 3: \"Raymond James Financial: The investor day deck (published June 5, 2025) reports the firm's Private Client Group domestic wealth management businesses include approximately 9,000 employee and independent financial advisors.\" chunk RJF-DECK-2025-investor-day#126.\nItem 4: \"Raymond James Financial: The press/web page (page content as of May 17, 2026) reports the Financial Institutions Division has 940 advisors across 160 financial institutions.\" chunk RJF-PR-web-bank-and-credit-union-advisors#0.\n\npart_id: a2.RJF.\n\nAspect a3:\n\na3.MS: code gap, no claim.\na3.SCHW: adjacent only, item 1. Adjacent.\n\"The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) states its full-time equivalent employee definition includes full-time, part-time, and temporary employees and persons employed on a contract basis.\"\ndiffers_because: \"The inclusion categories are for Schwab's full-time equivalent employee measure, not for an advisor headcount definition.\"\npart_id: a3.SCHW, chunk SCHW-10K-2025#120.\n\na3.EDJ: code gap, no claim.\na3.MER: fact, item 1. Claim.\n\"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states the advisor headcount definition includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\npart_id: a3.MER, chunk BAC-SUPP-2023Q4#2.\n\na3.RJF: fact, items 1-2. Two claims.\nItem 1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor headcount includes financial advisors who affiliate with the firm directly as either employees or independent contractors.\" chunk RJF-10K-2025#10.\nItem 2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor count reflects advisors in production roles: the number increased as new recruits and trainees that were moved into production roles exceeded departures and planned retirements.\" chunk RJF-10K-2025#228.\n\npart_id: a3.RJF.\n\nAspect a4:\n\na4.MS: code gap, no claim.\na4.SCHW: fact, item 1. Claim.\n\"The Charles Schwab Corporation: The investor day deck (published May 14, 2026) states that Schwab Advisor Network (SAN) advisors are independent and are not employees or agents of Charles Schwab & Co., Inc.\"\npart_id: a4.SCHW, chunk SCHW-DECK-2026-investor-day#306.\n\na4.EDJ: code gap, no claim.\na4.MER: code gap, no claim.\na4.RJF: fact, items 1-2. Two claims.\nItem 1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states financial advisor counts exclude financial advisors associated with firms in the RCS division, although their client assets are included in AUA.\" chunk RJF-10K-2025#12.\nItem 2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the financial advisor metric excludes advisors in the RCS division, although their client assets are included in PCG AUA.\" chunk RJF-10K-2025#228.\n\npart_id: a4.RJF.\n\nNow, gaps: I should not repeat code gaps. Are there any additional gaps I need to add? Let me think.\n\nThe instruction: \"Add a gap of your own only for something those gaps do not name.\"\n\nThe code gaps cover all the \"not found\" cells:\n- a1.MS, a1.SCHW (different quantity), a1.EDJ, a2.SCHW (different quantity), a3.MS, a3.SCHW (different quantity), a3.EDJ, a4.MS, a4.EDJ, a4.MER.\n\nThese are all covered. Do I need any additional gap? The standard wording items about advisor pay don't apply. The \"Net advisor headcount change\" doesn't apply.\n\nHmm, but wait \u2014 what about the caveat \"GWIM is not Merrill\"? That's a caveat added by code, don't repeat.\n\nWhat about a4.MER \u2014 Merrill's definition excludes. Code gap covers it. Good.\n\nI think there are no additional gaps I need to add. But let me double-check: The gaps array is required. I can pass an empty array.\n\nActually, wait \u2014 should I add gaps for the \"not found\" items? The instructions clearly say \"do not repeat them\" for code gaps. So empty gaps array is fine.\n\nHmm, but let me reconsider. Actually re-reading: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo yes, empty gaps array.\n\nNow about the comparison aspect instruction. The aspects are fact, not comparison. But there's also the \"Comparability (code): different_basis\" lines. These are caveats added by code. Do I need to write comparison claims? The instruction for comparison aspects says \"For each aspect marked comparison...\" These aspects are not marked comparison (they're marked fact). So no comparison claims.\n\nBut wait \u2014 the part_id enum includes a1, a2, a3, a4 (aspect ids). These are for \"a claim that spans firms\" which is comparison aspects. Since these are fact aspects, I don't write spanning claims. So I won't use part_id a1, a2, a3, a4 bare.\n\nActually, hold on. Let me reconsider whether I should write the comparability claims anyway. The aspects are marked \"fact\" in the aspect headers: \"a1 [fact, metric advisor_headcount]\". So they are fact aspects. The comparison instruction doesn't apply.\n\nOK.\n\nNow, let me also double check the \"Why it might matter\" requirement. No recency aspects, no time window. So skip.\n\nAlso \"Positions about the future that others hold\" \u2014 not relevant.\n\n\"answer_with_boundary\" \u2014 not the behavior here (behavior is \"answer\"). So no hand-off sentence.\n\nLet me now also verify the dating requirement more carefully. \"Date every claim from its source line.\" I need to use source line dates. Let me map source dates:\n\n- MS-SUPP-2020Q4#1: \"MS supplement, period 2020-12-31, published 2021-01-20\"\n- SCHW-10K-2025#120: \"SCHW 10-K, period 2025-12-31, published 2026-02-25\"\n- SCHW-10Q-2026Q1#22: \"period 2026-03-31, published 2026-05-08\"\n- SCHW-10Q-2026Q2#71: \"period 2026-06-30, published 2026-08-07\"\n- SCHW-TR-2026Q3#10: \"period 2026-09-30, published 2026-10-15\"\n- SCHW-TR-2025Q2#5: \"period 2025-06-30, published 2025-07-18\"\n- SCHW-DECK-2026-investor-day#306: \"period n/a, published 2026-05-14\"\n- EDJ-10Q-2026Q2#60: \"period 2026-06-26, published 2026-08-07\"\n- EDJ-10K-2025#130: \"period 2025-12-31, published 2026-03-13\"\n- EDJ-10K-2025#148: \"period 2025-12-31, published 2026-03-13\"\n- EDJ-10K-2025#202: \"period 2025-12-31, published 2026-03-13\"\n- BAC-SUPP-2023Q4#2: \"period 2023-12-31, published 2024-01-12\"\n- BAC-DECK-2025-investor-day#9: \"period n/a, published 2025-11-05\"\n- RJF-10K-2025#10: \"period 2025-09-30, published 2025-11-25\"\n- RJF-10K-2025#228: \"period 2025-09-30, published 2025-11-25\"\n- RJF-TR-2025Q3#4: \"period 2025-09-30, published 2025-10-22\"\n- RJF-TR-2025Q3#8: \"period 2025-09-30, published 2025-10-22\"\n- RJF-DECK-2025-investor-day#126: \"period n/a, published 2025-06-05\"\n- RJF-PR-web-bank-and-credit-union-advisors#0: \"period n/a, page content as of 2026-05-17\"\n- RJF-10K-2025#12: \"period 2025-09-30, published 2025-11-25\"\n\nGood.\n\nNow let me write the claims with proper dating. I'll use a consistent format.\n\nLet me also note: for \"RJF-TR-2025Q3#4\" and \"#8\", the period is 2025-09-30 but it's a transcript (earnings call for fiscal Q3 2025, published 2025-10-22). The instruction says \"On the 3Q26 earnings call (October 2026), management said ...\". So for earnings calls, I could say \"On the fiscal 2025 fourth-quarter earnings call (October 2025)\". Actually fiscal year ends September 30, 2025, so Q3 transcript is for the quarter ending June 2025? Wait, RJF fiscal year ends September 30. So Q3 of fiscal 2025 would be quarter ending June 30, 2025. Hmm. The transcript label \"RJF-TR-2025Q3\" with period 2025-09-30. That's a bit odd. The source line says \"period 2025-09-30, published 2025-10-22\". I'll just say \"On the earnings call published October 22, 2025 (period September 30, 2025)\".\n\nActually, simpler and safe: \"The transcript (published October 22, 2025) reports...\" I'll attribute to the transcript and date.\n\nLet me use the example wording from instructions: \"On the 3Q26 earnings call (October 2026), management said ...\". But I need to be careful about quarter labeling. I'll just say \"On the earnings call published October 22, 2025, management said...\" That's safe and dates the claim.\n\nLet me finalize wording.\n\nFor transcripts, I'll write \"On the earnings call published [date], management said...\".\n\nFor press/web page: \"The press page (content as of May 17, 2026) states...\"\n\nNow, one more consideration: The instruction says for adjacent trade-press items: \"adjacent trade-press items carry differs_because 'Trade-press reporting is indicative, not authoritative.'\" Is any of my adjacent items trade-press? The SCHW items are from 10-K, 10-Q, transcripts \u2014 not trade press. The RJF-PR item is a press release from the company, not trade press. So no.\n\nBut wait, the RJF-PR-web item \u2014 is it a fact cell or adjacent? Looking at a2.RJF item 4, it's a fact cell. So it's a claim, not adjacent. Fine.\n\nNow, let me consider the \"quote not verbatim\" instruction: \"An item marked 'quote not verbatim' is never put in quotation marks.\" None of the items are marked \"quote not verbatim\" explicitly. But some items have quotes. I should be careful: the quotes provided in the matrix are verbatim. I can use them in quotation marks. Actually, the instruction says use \"quote\" fields verbatim in quotation marks where applicable. For fact cells, I state claims; I can quote. Let me use quotes where the item has a \"quote\" field and it's verbatim.\n\nActually, let me re-read: \"A fact cell is a claim... State only the periods an item has.\" And \"Attribute strategy, priorities and intent to the firm or its management in their own words.\" For facts, I can paraphrase or quote.\n\nI think it's fine to include short verbatim quotes in quotation marks for key terms like 'Total wealth advisors', 'Financial advisors (actual)', 'At period end', 'Average', etc.\n\nLet me now also check: \"Never write cell ids, aspect ids, part ids or item numbers in the text.\" So no \"a1.MER\" etc. in text.\n\n\"Every claim, adjacent item and gap carries the part_id of the cell it comes from.\" Good.\n\nLet me write the final answer now.\n\nOne more thing: \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window, so order is aspect by aspect, firm order, and within firm, item order as given. I'll keep item order as given in the matrix.\n\nNow let me also think about whether I need to add \"Why it might matter\" \u2014 no.\n\nLet me also double check: \"One firm: aspect by aspect.\" Multiple firms here, so \"aspect by aspect in the order listed, firms in the order listed.\"\n\nLet me draft the claims text carefully with firm prefix.\n\nAspect a1:\n\nClaims:\n1. a1.MER: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states that Bank of America defines the advisor headcount it reports as 'Total wealth advisors,' a metric that includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\n2. a1.RJF item1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party Registered Investment Advisors ('RIAs') and broker-dealers to which the firm provides services through its RIA and Custody Services ('RCS') division.\"\n\n3. a1.RJF item2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that advisors in the RCS division are not included in the firm's financial advisor metric, although their client assets are included in PCG AUA.\"\n\nAdjacent:\n- a1.SCHW: \"The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) defines full-time equivalent employees as the total number of hours worked divided by a 40-hour work week for full-time, part-time, and temporary employees and persons employed on a contract basis.\"\ndiffers_because: \"The passage defines full-time equivalent employees (total workforce hours), not advisor headcount.\"\n\nAspect a2:\n\nClaims:\na2.MS item1: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,950 Wealth Management representatives at December 31, 2020 in its Wealth Management advisor-led channel.\"\na2.MS item2: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,469 Wealth Management representatives at September 30, 2020 in its Wealth Management advisor-led channel.\"\na2.MS item3: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,468 Wealth Management representatives at December 31, 2019 in its Wealth Management advisor-led channel.\"\n\na2.EDJ items 1-7 (as drafted above).\n\na2.MER items 1-7.\n\na2.RJF items 1-4.\n\nAdjacent a2.SCHW items 1-4.\n\nAspect a3:\n\nClaims a3.MER item1, a3.RJF items 1-2.\nAdjacent a3.SCHW item1.\n\nAspect a4:\n\nClaims a4.SCHW item1, a4.RJF items 1-2.\n\nNo additional gaps.\n\nLet me write the final JSON.\n\nWait, I need to double-check the ordering within each aspect: \"firms in the order listed\" = MS, SCHW, EDJ, MER, RJF.\n\nSo for aspect a1:\n- MS: code gap (no claim, no adjacent, no gap in my output)\n- SCHW: adjacent\n- EDJ: code gap\n- MER: claim\n- RJF: claims\n\nFor aspect a2:\n- MS: claims\n- SCHW: adjacent\n- EDJ: claims\n- MER: claims\n- RJF: claims\n\nFor aspect a3:\n- MS: gap (code)\n- SCHW: adjacent\n- EDJ: gap (code)\n- MER: claim\n- RJF: claims\n\nFor aspect a4:\n- MS: gap (code)\n- SCHW: claim\n- EDJ: gap (code)\n- MER: gap (code)\n- RJF: claims\n\nBut wait \u2014 the claims and adjacent arrays in the JSON are flat arrays, not grouped by aspect. The instruction says \"aspect by aspect in the order listed, firms in the order listed.\" So I should order the items in the claims array by aspect then firm. But the adjacent items are in a separate array. Should I interleave? The tool has separate arrays for claims and adjacent. I think the order within each array should follow aspect-then-firm order. The claims array: order claims by aspect (a1, a2, a3, a4), then firm order within aspect. Same for adjacent.\n\nActually, since claims and adjacent are separate arrays, I'll order each array by aspect then firm. The claims array will have: a1.MER, a1.RJF (x2), a2.MS (x3), a2.EDJ (x7), a2.MER (x7), a2.RJF (x4), a3.MER, a3.RJF (x2), a4.SCHW, a4.RJF (x2).\n\nAdjacent array: a1.SCHW, a2.SCHW (x4), a3.SCHW.\n\nWait, but a1.SCHW and a3.SCHW and a2.SCHW are all SCHW adjacent. Order by aspect: a1.SCHW first, then a2.SCHW (x4), then a3.SCHW.\n\nHmm, but actually within adjacent array, order matters. Let me order: a1.SCHW (1 item), a2.SCHW (4 items), a3.SCHW (1 item).\n\nNow let me count claims:\n- a1: MER (1), RJF (2) = 3\n- a2: MS (3), EDJ (7), MER (7), RJF (4) = 21\n- a3: MER (1), RJF (2) = 3\n- a4: SCHW (1), RJF (2) = 3\nTotal claims = 30.\n\nAdjacent:\n- a1.SCHW (1), a2.SCHW (4), a3.SCHW (1) = 6.\n\nGaps: empty.\n\nNow, let me be careful about the part_id enum. For a4.SCHW claim, part_id is \"a4.SCHW\". Yes it's in enum.\n\nNow let me write everything out.\n\nLet me double check the chunk ids allowed. All chunk ids I use must be in the enum list. Let me verify each:\n\n- MS-SUPP-2020Q4#1 \u2713\n- SCHW-10K-2025#120 \u2713\n- SCHW-10Q-2026Q1#22 \u2713\n- SCHW-10Q-2026Q2#71 \u2713\n- SCHW-TR-2026Q3#10 \u2713\n- SCHW-TR-2025Q2#5 \u2713\n- SCHW-DECK-2026-investor-day#306 \u2713\n- EDJ-10Q-2026Q2#60 \u2713\n- EDJ-10K-2025#130 \u2713\n- EDJ-10K-2025#148 \u2713\n- EDJ-10K-2025#202 \u2713\n- BAC-SUPP-2023Q4#2 \u2713\n- BAC-DECK-2025-investor-day#9 \u2713\n- RJF-10K-2025#10 \u2713\n- RJF-10K-2025#228 \u2713\n- RJF-TR-2025Q3#4 \u2713\n- RJF-TR-2025Q3#8 \u2713\n- RJF-DECK-2025-investor-day#126 \u2713\n- RJF-PR-web-bank-and-credit-union-advisors#0 \u2713\n- RJF-10K-2025#12 \u2713\n\nAll good.\n\nNow, let me also think about whether I should write the \"Why it might matter\" sentences. No recency, no time window. Skip.\n\nLet me also verify the \"adjacent\" differs_because text. The instruction says \"in your words with the same meaning.\" The matrix gives differs_because text for each adjacent item. I should use those meanings. Let me use them mostly verbatim but they're already phrased as the reason. Actually the matrix lists:\n\na1.SCHW: differs because 'The passage defines full-time equivalent employees (total workforce hours), not advisor headcount.'\na2.SCHW: differs because 'Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount.'\na3.SCHW: differs because 'The inclusion categories are for Schwab's full-time equivalent employee measure, not for an advisor headcount definition.'\n\nI'll use these as differs_because.\n\nNow write the JSON.\n\nFor a2.SCHW, I have 4 adjacent items, each with the same differs_because (the cell-level differs_because). The instruction: \"A cell marked 'adjacent only' ... goes in adjacent, never in claims, each with differs_because from the cell.\" So each adjacent item gets the differs_because. I'll apply the same cell-level differs_because to each of the 4 items.\n\nActually wait, does each item get the differs_because, or just the cell? The cell a2.SCHW has one differs_because for the whole cell with 4 items. \"each with differs_because from the cell\" suggests each item carries it. I'll add the same differs_because to each item.\n\nSimilarly a1.SCHW and a3.SCHW each have one item.\n\nNow let me finalize.\n\nLet me write the claims text more carefully, making sure each starts with \"<Firm>: \".\n\nFor MER firm name \u2014 the question lists \"Merrill (MER)\". So firm prefix \"Merrill:\".\n\nFor SCHW \u2014 \"The Charles Schwab Corporation\".\n\nFor EDJ \u2014 \"Edward Jones\".\n\nFor RJF \u2014 \"Raymond James Financial\".\n\nFor MS \u2014 \"Morgan Stanley\".\n\nNow, one nuance: For MER claims, the source is BAC supplement. The firm is Merrill. I should attribute to Bank of America reporting. The matrix item 1 says \"Bank of America defines...\" and \"Bank of America reports...\". I'll say \"Merrill:\" then \"Bank of America ...\" Actually the firm prefix is \"Merrill:\". Then within text, mention Bank of America as the reporter. That's fine.\n\nLet me write a2.MER items:\n\nItem 1: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports advisor headcount in its Global Wealth & Investment Management Key Indicators under the line 'Advisors, at period end' as 'Total wealth advisors,' a measure that includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nHmm, \"its\" is ambiguous. Better: \"Bank of America's Global Wealth & Investment Management Key Indicators\". Let me write: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports advisor headcount in Bank of America's Global Wealth & Investment Management Key Indicators under the line 'Advisors, at period end' as 'Total wealth advisors,' which includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nItems 2-6: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 18,916 total wealth advisors at period end December 31, 2023 (fourth quarter 2023 and fiscal year 2023).\"\n\nItem 7: \"Merrill: The Global Wealth & Investment Management investor day deck (published November 5, 2025) reports more than 15,000 wealth advisors for Merrill and Private Bank.\"\n\nGood.\n\nNow a1.MER: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states that Bank of America defines the advisor headcount it reports as 'Total wealth advisors,' a metric that includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\na3.MER: \"Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states the advisor headcount definition includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nGood.\n\nNow RJF items.\n\na1.RJF item1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party Registered Investment Advisors ('RIAs') and broker-dealers to which the firm provides services through its RIA and Custody Services ('RCS') division.\"\n\na1.RJF item2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that advisors in the RCS division are not included in the firm's financial advisor metric, although their client assets are included in PCG AUA.\"\n\na2.RJF items:\n1: \"Raymond James Financial: On the earnings call published October 22, 2025 (period September 30, 2025), management said the firm ended fiscal year 2025 with a record number of financial advisors of 8,943.\"\n2: \"Raymond James Financial: On the earnings call published October 22, 2025 (period September 30, 2025), management said the firm ended the fiscal year with a record number of financial advisors, 2% higher than the prior year.\"\n3: \"Raymond James Financial: The investor day deck (published June 5, 2025) reports that the firm's Private Client Group domestic wealth management businesses include approximately 9,000 employee and independent financial advisors.\"\n4: \"Raymond James Financial: The press page (content as of May 17, 2026) reports that the Financial Institutions Division has 940 advisors across 160 financial institutions.\"\n\na3.RJF items:\n1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor headcount includes financial advisors who affiliate with the firm directly as either employees or independent contractors.\"\n2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor count reflects advisors in production roles: the number increased as new recruits and trainees that were moved into production roles exceeded departures and planned retirements.\"\n\na4.RJF items:\n1: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states financial advisor counts exclude financial advisors associated with firms in the RCS division, although their client assets are included in AUA.\"\n2: \"Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the financial advisor metric excludes advisors in the RCS division, although their client assets are included in PCG AUA.\"\n\nSCHW items.\n\na4.SCHW: \"The Charles Schwab Corporation: The investor day deck (published May 14, 2026) states that Schwab Advisor Network (SAN) advisors are independent and are not employees or agents of Charles Schwab & Co., Inc.\"\n\na1.SCHW adjacent: \"The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) defines full-time equivalent employees as the total number of hours worked divided by a 40-hour work week for full-time, part-time, and temporary employees and persons employed on a contract basis.\"\n\na2.SCHW adjacent items:\n1: \"The Charles Schwab Corporation: The 10-Q (period March 31, 2026, published May 8, 2026) attributes higher first-quarter 2026 compensation and benefits expense to growth in headcount, including financial consultants and wealth advisors, to support its expanding client base.\"\n2: \"The Charles Schwab Corporation: The 10-Q (period June 30, 2026, published August 7, 2026) attributes higher second-quarter and first-six-months 2026 compensation and benefits expense to growth in headcount, including growth in financial consultants and wealth advisors and the acquisition of Forge.\"\n3: \"The Charles Schwab Corporation: On the earnings call published October 15, 2026 (period September 30, 2026), management said the firm serves more than 16,000 firms representing $5.8 trillion in assets on its advisor platform.\"\n4: \"The Charles Schwab Corporation: On the earnings call published July 18, 2025 (period June 30, 2025), management said the firm helped nearly 16,000 advisors support their clients.\"\n\nWait, for SCHW-TR-2026Q3#10, source says period 2026-09-30, published 2026-10-15. For SCHW-TR-2025Q2#5, period 2025-06-30, published 2025-07-18. Good.\n\na3.SCHW adjacent: \"The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) states its full-time equivalent employee definition includes full-time, part-time, and temporary employees and persons employed on a contract basis.\"\n\nEDJ items.\n\na2.EDJ:\n1: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) presents the metric as 'Financial advisors (actual)' and reports it on an 'At period end' and 'Average' basis.\"\n2: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports 20,514 financial advisors at period end as of June 26, 2026.\"\n3: \"Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports an average of 20,537 financial advisors for the second quarter of 2026.\"\n4: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports 20,425 financial advisors at year end December 31, 2025.\"\n5: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 19,540 financial advisors in the U.S.\"\n6: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 885 financial advisors in Canada.\"\n7: \"Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) states the consolidated financial statements are presented in dollars in millions, except per unit information and the number of financial advisors.\"\n\nMS items.\n\na2.MS:\n1: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,950 Wealth Management representatives at December 31, 2020 in its Wealth Management advisor-led channel.\"\n2: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,469 Wealth Management representatives at September 30, 2020 in its Wealth Management advisor-led channel.\"\n3: \"Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,468 Wealth Management representatives at December 31, 2019 in its Wealth Management advisor-led channel.\"\n\nAll good.\n\nNow, one concern: For EDJ item 1, the quote in the matrix is: \"Financial advisors (actual): At period end 20,514 20,309 1% 20,514 20,309 1% Average 20,537 20,316 1% 20,517 20,265 1%\" (EDJ-10Q-2026Q2#60). But the item text says \"presents the metric as 'Financial advisors (actual)' and reports it on an 'At period end' and 'Average' basis.\" This is fine, quoting just the terms.\n\nNow let me make sure I'm not violating \"State only the periods an item has.\" The items list specific periods; I've included them.\n\nFor EDJ item 1 (reporting basis), no specific period beyond the 10-Q period. I dated it. Good.\n\nLet me also make sure not to \"compute a figure myself.\" I'm just stating figures from the matrix. Good.\n\nNow, about the \"answerable\" field. It should be true since we have evidence for many cells. I'll set answerable true.\n\nActually wait, let me reconsider. The question is \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\" We have partial coverage with gaps. But answerable=true because we're providing the answer with claims, adjacent, gaps. The behavior is \"answer\". So answerable true.\n\nNow let me also reconsider the gaps field. Should I include gaps that aren't code gaps? The code gaps cover all not-found cells. But there might be a subtlety: the standard wording about advisor pay says a firm with nothing published gets a specific gap. That's for advisor pay, not headcount. Not applicable.\n\nIs there any \"figure not found\" or \"quote not verbatim\" markers? None visible in matrix. Good.\n\nLet me also check: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" None marked.\n\nI think I'm ready.\n\nLet me construct the final JSON payload.\n\nClaims array (30 items), adjacent array (6 items), gaps array (empty).\n\nLet me write each with part_id and chunk_ids.\n\nDouble-check part_id enum includes all my part ids: a1.MER, a1.RJF, a2.MS, a2.EDJ, a2.MER, a2.RJF, a3.MER, a3.RJF, a4.SCHW, a4.RJF, a1.SCHW, a2.SCHW, a3.SCHW. All present. \u2713\n\nLet me write the final answer.\n\nFor the JSON, I need to be careful with quotes in text. I'll use straight quotes. Within JSON strings, I need to escape double quotes. I'll use unicode quotes? The text contains quotes like 'Total wealth advisors'. I could use single quotes or escaped double quotes. The instruction examples use straight double quotes in text. I'll use typographic or single quotes to avoid escaping issues? Actually in JSON I must escape double quotes. I'll use the actual quotes as double quotes and escape them, or use single quotes in text. The matrix uses double quotes for terms like \"Total wealth advisors\". I'll render them with double quotes and escape in JSON. Actually, to keep it simple and valid, I'll use the term in double quotes with escaped quotes.\n\nHmm, but the instruction says use verbatim quotes in quotation marks. I'll use double quotation marks in the text and escape them in JSON.\n\nLet me write out the JSON carefully.\n\nActually, since I'm producing the tool call, I'll write valid JSON with escaped quotes where needed. For terms like 'Total wealth advisors', I'll write \\\"Total wealth advisors\\\".\n\nLet me finalize.\n\nI'll now produce the submit_answer call.\n\nLet me write claims in order:\n\nOrder claims by aspect:\na1: MER, RJF, RJF\na2: MS(3), EDJ(7), MER(7), RJF(4)\na3: MER, RJF, RJF\na4: SCHW, RJF, RJF\n\nAdjacent order:\na1.SCHW, a2.SCHW(4), a3.SCHW\n\nLet me write.\n\nActually, I realize I should double check: does the instruction require me to add any gap of my own for a1.MS etc.? No \u2014 code adds them. I'll leave gaps empty.\n\nBut wait, re-reading again: \"Gaps added by code (do not repeat them): ...\" and the submit tool has gaps array. Since code adds them automatically, I should not add. But is it possible the \"gaps\" array is where I'm supposed to list gaps and code just won't list theirs? The phrase \"code adds those gaps\" suggests the system adds them. And \"do not repeat them\" means don't include in my gaps array. So empty gaps.\n\nHmm, but let me reconsider \u2014 maybe I should include the gaps anyway since the tool requires a gaps array and the code gaps are \"added by code\" separately. But \"do not repeat them\" is explicit. I'll leave empty.\n\nActually, let me think about whether there could be additional gaps I should add. The question asks \"what does each definition include or exclude?\" For MS, EDJ, MER (excludes), we have \"not found\". Those are code gaps. For SCHW definition, \"not disclosed; different quantity adjacent\". Code gap. All covered.\n\nI think empty gaps is correct.\n\nLet me now write the final tool call.\n\nOne more check on wording for transcripts: The instruction example \"On the 3Q26 earnings call (October 2026), management said ...\". I'll write \"On the earnings call published October 22, 2025 (period ended September 30, 2025), management said...\" That's fine and dated.\n\nLet me also reconsider: For RJF-TR-2025Q3, the period is fiscal 2025-09-30, published 2025-10-22. This is the fiscal Q4 2025 earnings call (since fiscal year ends Sep 30). The label says \"2025Q3\" but period is 2025-09-30. To be safe, I'll not label the quarter, just say \"On the earnings call published October 22, 2025 (period September 30, 2025)\".\n\nSimilarly SCHW-TR-2026Q3 period 2026-09-30 published 2026-10-15 \u2014 that's the Q3 2026 earnings call. I'll say \"On the earnings call published October 15, 2026 (period September 30, 2026)\".\n\nSCHW-TR-2025Q2 period 2025-06-30 published 2025-07-18 \u2014 \"On the earnings call published July 18, 2025 (period June 30, 2025)\".\n\nGood.\n\nNow finalize.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states that Bank of America defines the advisor headcount it reports as \"Total wealth advisors,\" a metric that includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party Registered Investment Advisors (\"RIAs\") and broker-dealers to which the firm provides services through its RIA and Custody Services (\"RCS\") division.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states that advisors in the RCS division are not included in the firm's financial advisor metric, although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,950 Wealth Management representatives at December 31, 2020 in its Wealth Management advisor-led channel.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,469 Wealth Management representatives at September 30, 2020 in its Wealth Management advisor-led channel.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2020 Q4 supplement (period December 31, 2020, published January 20, 2021) reports 15,468 Wealth Management representatives at December 31, 2019 in its Wealth Management advisor-led channel.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) presents the metric as \"Financial advisors (actual)\" and reports it on an \"At period end\" and \"Average\" basis.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports 20,514 financial advisors at period end as of June 26, 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-Q (period June 26, 2026, published August 7, 2026) reports an average of 20,537 financial advisors for the second quarter of 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports 20,425 financial advisors at year end December 31, 2025.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 19,540 financial advisors in the U.S.",
+        "chunk_ids": [
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) reports financial advisors by segment; at year end December 31, 2025 it reported 885 financial advisors in Canada.",
+        "chunk_ids": [
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-K (period December 31, 2025, published March 13, 2026) states the consolidated financial statements are presented in dollars in millions, except per unit information and the number of financial advisors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#202"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports advisor headcount in Bank of America's Global Wealth & Investment Management Key Indicators under the line \"Advisors, at period end\" as \"Total wealth advisors,\" which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 18,916 total wealth advisors at period end December 31, 2023 (fourth quarter 2023 and fiscal year 2023).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 19,130 total wealth advisors at period end September 30, 2023 (third quarter 2023).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 19,099 total wealth advisors at period end June 30, 2023 (second quarter 2023).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 19,243 total wealth advisors at period end March 31, 2023 (first quarter 2023).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) reports 19,273 total wealth advisors at period end December 31, 2022 (fourth quarter 2022).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The Global Wealth & Investment Management investor day deck (published November 5, 2025) reports more than 15,000 wealth advisors for Merrill and Private Bank.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Raymond James Financial: On the earnings call published October 22, 2025 (period September 30, 2025), management said the firm ended fiscal year 2025 with a record number of financial advisors of 8,943.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#4"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James Financial: On the earnings call published October 22, 2025 (period September 30, 2025), management said the firm ended the fiscal year with a record number of financial advisors, 2% higher than the prior year.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The investor day deck (published June 5, 2025) reports that the firm's Private Client Group domestic wealth management businesses include approximately 9,000 employee and independent financial advisors.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#126"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The press page (content as of May 17, 2026) reports that the Financial Institutions Division has 940 advisors across 160 financial institutions.",
+        "chunk_ids": [
+          "RJF-PR-web-bank-and-credit-union-advisors#0"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Merrill: The 2023 Q4 supplement (period December 31, 2023, published January 12, 2024) states the advisor headcount definition includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor headcount includes financial advisors who affiliate with the firm directly as either employees or independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the advisor count reflects advisors in production roles: the number increased as new recruits and trainees that were moved into production roles exceeded departures and planned retirements.",
+        "chunk_ids": [
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The investor day deck (published May 14, 2026) states that Schwab Advisor Network (SAN) advisors are independent and are not employees or agents of Charles Schwab & Co., Inc.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#306"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states financial advisor counts exclude financial advisors associated with firms in the RCS division, although their client assets are included in AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#12"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 10-K (period September 30, 2025, published November 25, 2025) states the financial advisor metric excludes advisors in the RCS division, although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a4.RJF"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) defines full-time equivalent employees as the total number of hours worked divided by a 40-hour work week for full-time, part-time, and temporary employees and persons employed on a contract basis.",
+        "chunk_ids": [
+          "SCHW-10K-2025#120"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "The passage defines full-time equivalent employees (total workforce hours), not advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 10-Q (period March 31, 2026, published May 8, 2026) attributes higher first-quarter 2026 compensation and benefits expense to growth in headcount, including financial consultants and wealth advisors, to support its expanding client base.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#22"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 10-Q (period June 30, 2026, published August 7, 2026) attributes higher second-quarter and first-six-months 2026 compensation and benefits expense to growth in headcount, including growth in financial consultants and wealth advisors and the acquisition of Forge.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#71"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the earnings call published October 15, 2026 (period September 30, 2026), management said the firm serves more than 16,000 firms representing $5.8 trillion in assets on its advisor platform.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the earnings call published July 18, 2025 (period June 30, 2025), management said the firm helped nearly 16,000 advisors support their clients.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#5"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Items report total headcount (all employees, of which financial consultants and wealth advisors are a component) and the number of independent advisory firms/advisors served, not Schwab's own advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 10-K (period December 31, 2025, published February 25, 2026) states its full-time equivalent employee definition includes full-time, part-time, and temporary employees and persons employed on a contract basis.",
+        "chunk_ids": [
+          "SCHW-10K-2025#120"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "The inclusion categories are for Schwab's full-time equivalent employee measure, not for an advisor headcount definition."
+      }
+    ],
+    "gaps": []
+  }
+}
