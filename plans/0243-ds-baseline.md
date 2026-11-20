@@ -295,3 +295,25 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   before the paid command, and a `meta.snapshot` / `as_of` acceptance check; cap overflow goes to
   the TL; any traceback from inside `answer_for` after the request is rule (b), never re-called;
   the reused calls' UTC offset taken from this machine. 0 calls.
+- 2026-11-19 22:26 - step 1 at HEAD 08b7718 (`ev243\precheck.txt`): clean, no diff vs 739cb3c in
+  `src scripts config evals`; sync check exit 0 (`corpus-2026-11-19`); `v4.1 plan-v2`; settings line
+  as planned (`key_set=False db=localhost:5432/cee`); cache absent before the seed, 6 #242 R-on files
+  copied in, sha256 equal to the source.
+- 2026-11-19 22:27 - step 2 mock (`.eval-runs\0243-mock`, Q1-Q30, 0 calls): 29 PASS / 1 FAIL (Q19),
+  refusal gap 5/5, keyed 22/22, 0 forbidden, no status change; 30/30 chunk lists identical to the
+  baseline (`ev243\mock-diff.txt`).
+- 2026-11-19 22:27 to 2026-11-20 00:16 (UTC-6) - step 3, one attempt (`ev243\run-real.ps1`, gates
+  passed, settings line `key_set=True db=localhost:5432/cee`, HEAD 08b7718 before and after, `.env`
+  removed, exit 0): `real_calls` 54, reused 6 (Q1, Q22, Q24 plan + answer from #242, `how` cached,
+  bytes unchanged), 60 raw files = 54 new + 6 reused. `meta.snapshot` corpus-2026-11-19, `as_of`
+  2026-11-17, Q1-Q30 exactly. Every new call `finish_reason` `tool_calls`; 0 invalid, 0 planner
+  fallback, 0 failed call, no stop rule. New calls: 1,171,072 input (100,224 cache hit), 735,902
+  output (640,737 reasoning), 6,416 s summed wall time; largest cap use Q17 answer 50,286 / 64,000
+  (79%). Copied to `ev243\real\`.
+- 2026-11-20 00:17 - step 4 inputs: `ev243\answers-dump.txt` (`ev243\dump243.py`, no run metadata or
+  earlier verdicts) and `ev243\blind-in\` with exactly `answers-dump.txt`, `questions.yaml`
+  (739cb3c), `verdict-rule.txt`; prompt `ev243\scorer-prompt.txt`. sha256 (`ev243\blind-in-hashes.txt`):
+  dump 0c3ee232b3048bd38e03097c84bddad06482747ae8bd239c4cd74455dd948815, questions
+  0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b, rule
+  f7ef795bb63ef19899454ca9dc937c508a08607321577bd08984017ab8a9d8b2, prompt
+  9a20a12d5b0fa2840407110339c0af6a396d34836d9a538125638994d597c4f6. Scorer started by the coordinator.
