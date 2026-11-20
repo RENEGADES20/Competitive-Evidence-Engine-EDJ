@@ -22,6 +22,22 @@ gaps and caveats. The interim answer input guard (#245) goes. The bar is the Dee
 (`docs/results/w11-deepseek-baseline.md`, 15/30 like-for-like): Q11, Q19, Q23, Q24 and Q26 failed there
 on shape, Q3 on a missing concession leg.
 
+## TL approval conditions (issuecomment after review round 2; binding, written in before any code)
+1. **Window rule**: a time window (a publication-date filter) gives **no asked periods**. Recency
+   questions (Q26, Q27) are judged by the newest-first and why-line rules, never by period gaps.
+2. **Years rule**: "last / past N years" counts **complete** years only (the unfinished current year
+   never counts: at 2026-11-17, "past 3 years" = 2023, 2024, 2025), matched **by year**: any item whose
+   period falls in that year (`YYYY-MM-DD`, `YYYYQn`, `YYYY`, `FYYYYY` by its year) covers it.
+3. **Tests**: Q26-shaped (window, a 10-Q published in the window with an earlier period: no period
+   gap), years-shaped (a year-end reporter with `YYYY-12-31` items: no Q1-Q3 gaps, no gap for the
+   current year), Q23-shaped (unchanged: the named quarters). Word numbers parse ("eight").
+4. **Round-2 notes adopted**: (a) the eval's `part_coverage` reads the union of hits (scoring fields
+   stay retrieval-only); (b) code-built answers (refuse, undecided, empty citable set) go through the
+   comparison check and the B3 part coverage too, so Q19's a13 gets no false part gap; (c) the
+   `incomplete_note` also shows on an `answer_with_boundary` (and any behavior) as a warning box above
+   the claims on the Ask page (`st.warning`), asserted in the B2 test; (d) in a "last N quarters" ask a
+   `YYYY` item covers no quarter (only a years ask counts it).
+
 ## Industry terms used
 Map-reduce (this issue = reduce), constrained decoding (strict tool schema with enums), grounded
 generation over a structured context (the matrix, not raw passages), post-hoc attribution check.
@@ -324,16 +340,16 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
    asked quantity is not a different quantity." (TL D1: re-map accepted under the cap.) The reduce
    writes it as a claim stating only the periods it has. **Code names the uncovered periods** (B4,
    option b; `matrix.period_gaps`, part of `build_gaps`):
-   - **Asked periods** (`matrix.asked_periods(question, window, as_of)`, deterministic): "last / past N
-     quarters" in the question -> the N most recent calendar quarters ending before `as_of` (Q23 at
-     2026-11-17: 2024Q4-2026Q3); "last / past N years" -> the N most recent calendar years; else the
-     question's own window -> the calendar quarters it overlaps; else none (e.g. Q22 "by quarter" names
-     no range: no period gap, the reduce lists what each firm has).
+   - **Asked periods** (`matrix.asked_periods(question, as_of)`, deterministic): "last / past N
+     quarters" in the question (N a digit or a word) -> the N most recent calendar quarters ending before
+     `as_of` (Q23 at 2026-11-17: 2024Q4-2026Q3); "last / past N years" -> the N most recent complete
+     years, matched by year (approval condition 2); a time window gives **none** (condition 1); else
+     none (e.g. Q22 "by quarter" names no range: no period gap, the reduce lists what each firm has).
    - **Applies to** aspects of kind `series`, and `fact` aspects with a registered metric, when asked
      periods exist; not to recency, comparison or proxy aspects.
    - **Per holding cell** (fact / derived, research excluded): its counting items' periods mapped to
-     calendar quarters (`YYYY-MM-DD` -> its quarter, `YYYYQn` as is, `YYYY` -> its four quarters;
-     `FYYYYY` and unparsed periods cover nothing, since fiscal and calendar quarters differ). Uncovered =
+     calendar quarters (`YYYY-MM-DD` -> its quarter, `YYYYQn` as is; `YYYY`, `FYYYYY` and unparsed
+     periods cover no quarter, condition 4d), or, for a years ask, to years. Uncovered =
      asked - covered. When non-empty, a code gap "<Firm> - <aspect>: not found for <2024Q4, 2025Q4,
      2026Q3> in the documents searched." (all asked periods uncovered: "not found for the asked periods
      (2024Q4-2026Q3) in the documents searched; figures for other periods are listed."), label
@@ -707,3 +723,8 @@ written in sections 3-6 and Tests.
   test; system-prompt sha in the reduce key; `incomplete` UI test and design page; re-judged behavior
   allowed in the eval and verify; gap dedupe; owners and Risks; `stop_reason` / `usage` in
   `log_filters.reduce`. Call cap unchanged: **69** (phase B <= 66); B2 can only lower the reduce count.
+- 2026-11-20 - plan review 2 (issuecomment-7033988541) and TL approval at d8b273d with conditions,
+  written in before any code (section "TL approval conditions"): a window gives no asked periods;
+  "last N years" by complete years, matched by year; Q26-, years- and Q23-shaped tests; round-2 notes
+  adopted (eval part_coverage on the union, code-built answers through the comparison and part checks,
+  incomplete_note shown as a warning on any behavior, a YYYY item covers no quarter). Cap 69. Build starts.
