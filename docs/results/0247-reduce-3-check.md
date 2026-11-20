@@ -1,9 +1,9 @@
 # #247 part 3 checks: definition contrast, related-metric wording, quarter holes, gap sources (0 API calls)
 
-Plan: `plans/0247-reduce-3.md` (approved at 9313a22 with the TL conditions written in at 0db59f2). Code at
-`22a6555` (02a57c2 + the TL fix in section 6). Snapshot `corpus-2026-11-19`, `--as-of 2026-11-17`. **0 API calls** in this part: no plan, map or
+Plan: `plans/0247-reduce-3.md` (approved at 9313a22 with the TL conditions written in at 0db59f2). Final code at
+`653fdb2` (02a57c2, the TL caveat fix 22a6555 in section 6, the trainees fix b101ab4 in section 9, the main merge 7300621 in section 10). Snapshot `corpus-2026-11-19`, `--as-of 2026-11-17`. **0 API calls** in this part: no plan, map or
 reduce call; `.env` never read or copied; no key set. Evidence folder `D:\ALLPROJECTS\EDJ\cache\ev247c\`.
-**Blind scoring: not done yet** (the TL starts a fresh scorer; inputs in section 4).
+**Blind scoring done**: r1 3/5 (section 8), r2 2/3 (section 11); **final 7/8** (only Q23 FAIL). pytest 1033 passed at the head; verify-cee VERIFY PASS at 653fdb2 (`.verify-runs/20261120-115231-653fdb2`, PR review round 1).
 
 ## 1. Zero-call checks
 - **pytest**: 972 passed on main 2f568c4 before any change; 998 at 02a57c2 (26 new in
@@ -66,7 +66,7 @@ Private Bank basis (period not stated)"), in the "GWIM is not Merrill" config ca
 business-lines line for Bank of America ('all wealth management businesses in GWIM and Consumer Banking').
 In Q23 it is the a1.MER gap's closest figure ("... combines Merrill and the Private Bank ...").
 
-## 4. Blind inputs (prepared, not scored)
+## 4. Blind inputs, round 1 (scored in section 8)
 `D:\ALLPROJECTS\EDJ\cache\ev247c\blind-in\`: `answers-dump.txt` with only the answers that differ from the
 baseline (Q11, Q19, Q22, Q23, Q24, from the branch replay), `questions.yaml` (from `evals/questions.yaml`),
 `verdict-rule.txt` (r3's rule, question list Q11, Q19, Q22, Q23, Q24; Q24 against `answer` per
@@ -96,7 +96,8 @@ Re-replay (0 calls, guard OK) and re-diff against the baseline: Q1, Q3, Q26 iden
 from 02a57c2; Q11, Q23, Q24 differ from 02a57c2 only in that caveat; no "#148" in any caveat. Blind inputs
 rebuilt (hashes in section 4).
 
-## 7. Notes (not changed in this part)
+## 7. Notes
+None beyond section 11 (the follow-ups are `docs/NEXT.md` items 9-11).
 
 verdicts-blind.json sha256 c050ae7cb32a641fde588e9f5943c36ce44cefb8355b378ca05159f3a9d76c69 (part 3 re-check, five changed answers, fresh scorer agent, 0 API calls; committed alone before any comparison).
 
@@ -159,7 +160,7 @@ offers it. No key needed.
     reads "not stated: trainees" for RJF instead of the #228 trainees quote, and Q11 loses the contrast's
     Trainees caveat (every firm not stated).
 - pytest after the merge: 1033 passed.
-- Second blind inputs prepared for these three (not scored): `ev247c\blind-in-r2\` (answers-dump.txt with Q11,
+- Second blind inputs for these three (scored in section 11): `ev247c\blind-in-r2\` (answers-dump.txt with Q11,
   Q23, Q24 from `replay`; questions.yaml; verdict-rule.txt for the three) and `ev247c\scorer-prompt-r2.txt`
   (writes `ev247c\verdicts-blind-r2.json`). Hashes (`ev247c\blind-in-r2-hashes.txt`):
   - answers-dump.txt ae69afb968c53240057fd7749b7c30c11383703e5e957f1d5cfd5b37ffdab156
@@ -170,7 +171,7 @@ offers it. No key needed.
 verdicts-blind-r2.json sha256 39dd3d7569590a98736ed04caecfdfd7ae164cfa90c8dc831e54b6dd123883c6 (part 3 second re-check, Q11 / Q23 / Q24 after the trainees fix, fresh scorer agent, 0 API calls; committed alone before any comparison).
 
 ## 11. Second blind re-check (Q11, Q23, Q24 after the trainees fix) and the final verdicts
-**2/3 PASS** (Q11, Q24 PASS; Q23 FAIL). Fresh scorer agent, inputs only `ev247clind-in-r2\` (section 10);
+**2/3 PASS** (Q11, Q24 PASS; Q23 FAIL). Fresh scorer agent, inputs only `ev247c\blind-in-r2\` (section 10);
 file `docs/results/0247c/verdicts-blind-r2.json` (hash above, committed alone in b0712d5).
 
 | Q | Part 1 | Part 2 final | Part 3 r1 | **Part 3 final** | Class | Borderline | Reason (scorer, short) |

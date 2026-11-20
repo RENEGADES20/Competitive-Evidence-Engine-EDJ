@@ -325,31 +325,34 @@ guards, diffs; the results doc. 8. Prepare the blind inputs (section 9) and stop
 the verdict hash alone, then verdicts and comparison; `/finish-task`.
 
 ## Acceptance
-- [ ] pytest passes (count before and after recorded, DB tests included); `gh pr checks` green.
-- [ ] Mock 35 vs main 2f568c4: every chunk list identical (no retrieval change), statuses and refusal
-      unchanged, mock answer code checks 0.
-- [ ] verify-cee VERIFY PASS (open-citation / download-document may be UNREACHABLE without raw files, as in
+- [x] pytest passes (count before and after recorded, DB tests included); `gh pr checks` green.
+- [x] Mock 35 vs main 2f568c4: every chunk list identical (no retrieval change), statuses and refusal
+      unchanged, mock answer code checks 0. (Re-checked by the PR reviewer against main a1341d3 after the merge.)
+- [x] verify-cee VERIFY PASS (open-citation / download-document may be UNREACHABLE without raw files, as in
       part 2).
-- [ ] Replay guard 1-4 holds on both runs: **0 API calls**, 50 records reused, no new raw record.
-- [ ] Branch replay vs baseline replay: Q1, Q3, Q19, Q26 byte-identical; Q11, Q22, Q23, Q24 change only as in
+- [x] Replay guard 1-4 holds on both runs: **0 API calls**, 50 records reused, no new raw record.
+- [x] Branch replay vs baseline replay: Q1, Q3, Q19, Q26 byte-identical; Q11, Q22, Q23, Q24 change only as in
       section 8; dedupe removals as in the baseline (Q11 2, Q19 4, Q26 1). Baseline vs scored dumps: only the
-      known part-2 differences (Q1 a4.MS gap wording, Q24 separator).
-- [ ] Every contrast `text` verbatim in its chunk (DB test) or a fixed phrase; every `business_lines` cell
+      known part-2 differences (Q1 a4.MS gap wording, Q24 separator). **Deviation**: Q19 also changed (its folded
+      competitor gap rows carry Merrill's parent sources, item 5), so it joined the re-score (PASS).
+- [x] Every contrast `text` verbatim in its chunk (DB test) or a fixed phrase; every `business_lines` cell
       has a value code; no "last" / "wider" / "none: all advisors are employees" in any answer; EDJ
       independents shown with the `EDJ-10K-2025#35` quote, and EDJ's "not stated" list (Q11, Q23, Q24) has no
       independents item.
-- [ ] Q11: the answer has the code contrast (each dimension, every firm placed, chunk ids, one block) and the
+- [x] Q11: the answer has the code contrast (each dimension, every firm placed, chunk ids, one block) and the
       unit-aware wording, and no a2.EDJ / a2.MER break caveat. **Aim: PASS** on the fresh blind re-score. A
       FAIL is reported with the scorer's reason, and what is corpus (no written MS / EDJ definition, no Schwab
       count; section 5 of the part-2 doc) and what is answer is stated.
-- [ ] Q22: EDJ 2024Q4 / 2025Q4 holes named, no MS 2024Q2 gap, MS span by segment.
-- [ ] Q23: RJF break caveat gone, Merrill row sources. It **stays a corpus gap** (MS after 4Q2020, RJF
+- [x] Q22: EDJ 2024Q4 / 2025Q4 holes named, no MS 2024Q2 gap, MS span by segment.
+- [x] Q23: RJF break caveat gone, Merrill row sources. It **stays a corpus gap** (MS after 4Q2020, RJF
       quarterly, BAC after 4Q2023, EDJ 3Q26) unless the re-score passes it; a FAIL of class c is expected
-      and is not a regression.
-- [ ] **No PASS -> FAIL** on the re-score (Q22, Q24 keep PASS). A PASS -> FAIL stops the merge and goes to
+      and is not a regression. **Outcome**: FAIL (scorer r, s); by the SQL check a corpus gap plus one retrieval
+      miss (`RJF-DECK-2025-investor-day#43`, NEXT item 10).
+- [x] **No PASS -> FAIL** on the re-score (Q22, Q24 keep PASS). A PASS -> FAIL stops the merge and goes to
       the TL with the scorer's reason; nothing is re-rolled.
-- [ ] Claim texts referring to a removed break or the old wording: counted and reported (nb 6).
-- [ ] Linked questions: Q11, Q22, Q23, Q24 (changed); Q1, Q3, Q19, Q26 (unchanged).
+- [x] Claim texts referring to a removed break or the old wording: counted and reported (nb 6).
+- [x] Linked questions: Q11, Q22, Q23, Q24 (changed); Q1, Q3, Q19, Q26 (unchanged). **Deviation**: Q19 changed
+      too (gap sources only), see above.
 
 **Outcome (2026-11-20)**: pytest 1033 passed, CI green; mock 35 identical retrieval / claims; verify-cee PASS;
 replays guarded at 0 calls on every run; blind r1 3/5, r2 2/3; **final 7/8** (Q11 PASS, borderline; only Q23 FAIL:
@@ -369,38 +372,45 @@ corpus gap + one retrieval miss, `docs/NEXT.md` items 9-11); no PASS -> FAIL in 
 ## Progress log
 - 2026-11-20 09:55 - plan written (0 calls). Diagnosis with 0 calls: the replay inputs (`replay-final`
   matrices), the dedupe removals under the year rule, the MER registry (`suggested_sources("MER") == ""`).
-- 2026-11-20 10:40 - plan review round 1 RETURN (issuecomment-7044195120); TL rulings adopted (all blocking
+- 2026-11-20 10:04 - plan review round 1 RETURN (issuecomment-7044195120); TL rulings adopted (all blocking
   1-5, non-blocking 1-8; nb 5 applied to `SERIES_SPAN`). Checked in the DB (0 calls): `EDJ-10K-2025#145` holds
   "the U.S. and Canada"; `RJF-10K-2025#227` "Independent contractors 5,065 ... Total advisors 8,943";
   `BAC-SUPP-2023Q4#2` "Total wealth advisors (3) 18,916"; `SCHW-10K-2025#23` "support services to RIAs and their
   clients". Amended: sections 1-9, Files, Steps, Acceptance, Risks.
-- 2026-11-20 11:20 - plan review round 2 RETURN (7044411488); TL approved at 9313a22 on conditions
+- 2026-11-20 10:13 - plan review round 2 RETURN (7044411488); TL approved at 9313a22 on conditions
   (7044420979), written in above (TL approval conditions 1-3; sections 1, 4, 6, 8, Acceptance) before any code.
-- 2026-11-20 11:10 - code at 02a57c2 (items 1-6 with the TL conditions). Tests: the new cases are in one new
+- 2026-11-20 11:12 - code at 02a57c2 (items 1-6 with the TL conditions). Tests: the new cases are in one new
   file, `tests/test_reduce_part3.py` (26 tests: contrast, wording, holes / segments, breaks, years, gap
   sources, registry shape and the DB verbatim check), instead of spreading them over `test_series_coverage.py`,
   `test_reduce_noise.py`, `test_validate.py`, `test_metric_definitions.py`; `test_series_coverage.py` has the
   one updated r6a assertion. pytest 972 -> 998 (one Streamlit timing flake in `test_ask_page_trace.py`,
   passed on re-run).
-- 2026-11-20 11:30 - mock 35 vs main 2f568c4: retrieval, statuses and claims identical; verify-cee VERIFY PASS
+- 2026-11-20 11:21 - mock 35 vs main 2f568c4: retrieval, statuses and claims identical; verify-cee VERIFY PASS
   (`.verify-runs/20261120-111924-02a57c2`). Baseline replay (main, `wt-247c-base`) and branch replay: guard OK
   on both (0 calls, 50 reused, 8/8 cached, raw records identical to the committed blobs). Diff: Q1, Q3, Q26
   identical; Q11, Q22, Q23, Q24 as section 8; **Q19 also changed** (not in section 8): the folded competitor
   gap rows now carry Merrill's parent sources (item 5 via `COMPETITORS_GAP`), so Q19 joins the blind set.
   Blind inputs prepared (`ev247c\blind-in\`: Q11, Q19, Q22, Q23, Q24); stopped before scoring.
-- 2026-11-20 11:35 - TL fix before scoring: the per-firm definitions caveat printed the registry's free-text
+- 2026-11-20 11:28 - TL fix before scoring: the per-firm definitions caveat printed the registry's free-text
   includes (EDJ "U.S. and Canada ... (split in EDJ-10K-2025#148)": #148 has no "Canada"). Now it prints only
   verbatim contrast texts with their chunks (EDJ #145) or "not stated: <labels>"; free-text lists stay in the
   registry for the map's words (pins and map inputs unchanged). Two new tests (fixed words outside quotes;
   every quote verbatim in its cited chunk, DB). 22a6555: pytest 1000 passed; branch replay re-run (guard OK),
   re-diffed: only Q11 / Q23 / Q24 caveat text changed vs 02a57c2; blind inputs rebuilt.
-- 2026-11-20 12:20 - blind 3/5 (hash 676eb3c, verdicts b101ab4); final 6/8, no PASS -> FAIL. Scorer claims
+- 2026-11-20 11:41 - blind 3/5 (hash 676eb3c, verdicts b101ab4); final 6/8, no PASS -> FAIL. Scorer claims
   checked (0 calls): RJF trainees cell overstated -> `not_stated` (one config line); 2025-26 MS / BAC / RJF
   supplements carry no advisor count (corpus gap); RJF 2025Q1 (investor-day deck #43) is a Q23 retrieval miss.
   Merged main a1341d3 (#248); baseline re-run on it (identical to the 2f568c4 baseline) and branch replay
   (guard OK): Q11 / Q23 / Q24 differ from the scored answers only by the trainees fix -> stopped before
   marking ready; blind-in-r2 (Q11, Q23, Q24) prepared. pytest 1033 passed.
-- 2026-11-20 13:00 - second blind re-check (Q11, Q23, Q24): 2/3 (hash b0712d5). **Final 7/8** (Q11 FAIL -> PASS;
+- 2026-11-20 11:45 - second blind re-check (Q11, Q23, Q24): 2/3 (hash b0712d5). **Final 7/8** (Q11 FAIL -> PASS;
   only Q23 FAIL: corpus gap + one retrieval miss, RJF-DECK-2025-investor-day#43). Acceptance met: no PASS -> FAIL
   in any round; Q11 PASS (aim met, borderline); Q23 corpus gap (plus the r miss, NEXT item 10). Follow-ups in
   NEXT items 9-11. PR stays "Part of #247" (the Q23 r miss is open).
+- 2026-11-20 11:12 (noted at PR review round 1) - **deviation from section 6 / TL condition 3**: the split rule
+  lets a scoped part with **no** population key fall into any whole-firm group (a keyed part only into the
+  whole-firm group of its own key). The plan said "the same population key"; the Q11 EDJ case needs it (whole
+  firm keyed `edj_firm`, U.S. / Canada unkeyed). Two different keys still never merge. The spec says "the same
+  or no population key"; tests cover both (`tests/test_reduce_part3.py`).
+- 2026-11-20 12:00 - PR review round 1 (docs only): NEXT rows 9-11 moved into the table, stale results-doc and
+  PR-body statements, the control character, these boxes and times, the registry header for `none` cells.
