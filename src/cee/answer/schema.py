@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from typing import Literal, get_args
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, PrivateAttr, field_validator, model_validator
 
 Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refuse"]
 
@@ -55,6 +55,9 @@ class Answer(BaseModel):
     # (input_tokens, output_tokens; Anthropic also the content block types, e.g. thinking, tool_use).
     stop_reason: str = ""
     usage: dict = Field(default_factory=dict)
+    # Not a field (#242): the provider message (DeepSeek reasoning_content, content) for the eval's
+    # saved record only. Never dumped, so query_log and the UI never see it.
+    _provider_payload: dict | None = PrivateAttr(default=None)
 
     @model_validator(mode="before")
     @classmethod

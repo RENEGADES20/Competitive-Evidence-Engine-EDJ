@@ -1,5 +1,6 @@
 """One answer call per question; the question planner (#214, ADR-020) may make one more before
-search, so a question uses at most 2 calls (ADR-012 allows 5). Providers: mock | anthropic | openai.
+search, so a question uses at most 2 calls (ADR-012 allows 5). Providers: mock | anthropic | openai |
+deepseek (#242: OpenAI SDK, strict function tools on the /beta base URL, thinking on or off).
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 mock is offline and free: it cites the top hits verbatim. Use it for development and tests.
@@ -28,9 +29,42 @@ MAX_TOKENS = 20000
 ANTHROPIC_REQUEST_VERSION = "strict-1"
 
 
+# DeepSeek (#242). Output caps by thinking mode (True = on): reasoning shares max_tokens, so thinking
+# gets the API's own thinking default (64K) for the answer and room to reason for the planner; off
+# keeps the project's 20000 / 2000. Quality first (TL, plan review 1).
+DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
+DEEPSEEK_PLANNER_MAX_TOKENS = {False: 2000, True: 16000}
+# Read timeout per read, not per request. The docs only say empty lines are sent while a request
+# waits (one not started after 10 minutes is closed); nothing about lines during inference, so the
+# whole generation may be one silent read: 3600 s covers 64000 tokens at about 18 tokens/s.
+DEEPSEEK_TIMEOUT_S, DEEPSEEK_CONNECT_S = 3600.0, 30.0
+DEEPSEEK_OK = ("tool_calls", "stop")   # finish_reason of a usable tool answer (forced choice: stop)
+DEEPSEEK_STOP_CODES = {401: "the API key was rejected (401); check DEEPSEEK_API_KEY in .env",
+                       402: "insufficient balance (402); top up the DeepSeek account, then run again",
+                       429: "rate limit reached (429); wait, then run again"}
+
+
 def request_version(provider: str) -> str | None:
-    """The request version that joins the eval's cache keys (#232): anthropic only."""
-    return ANTHROPIC_REQUEST_VERSION if provider == "anthropic" else None
+    """The request version that joins the eval's cache keys (#232): anthropic strict-1; deepseek
+    (#242) names the thinking mode and both caps, so an output made in one mode is never reused for
+    the other; openai none."""
+    if provider == "anthropic":
+        return ANTHROPIC_REQUEST_VERSION
+    if provider == "deepseek":
+        on = settings().deepseek_thinking
+        return (f"ds-strict-1-think-{'on' if on else 'off'}"
+                f"-a{DEEPSEEK_MAX_TOKENS[on]}-p{DEEPSEEK_PLANNER_MAX_TOKENS[on]}")
+    return None
+
+
+def answer_max_tokens(provider: str) -> int:
+    """The answer call's output cap (#242): by thinking mode for deepseek, else MAX_TOKENS."""
+    return DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking] if provider == "deepseek" else MAX_TOKENS
+
+
+class ProviderStop(RuntimeError):
+    """The provider refused the request before any output (#242: DeepSeek 401 / 402 / 429). Never a
+    fallback and never saved: the question (or the eval run) stops with this message."""
 
 
 class ModelOutputError(RuntimeError):
@@ -166,6 +200,8 @@ def generate(question: str, hits: list[Hit], provider: str | None = None, plan=N
         return _anthropic(question, hits, plan=plan, window=window)
     if provider == "openai":
         return _openai(question, hits, plan=plan, window=window)
+    if provider == "deepseek":
+        return _deepseek(question, hits, plan=plan, window=window)
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
@@ -218,6 +254,134 @@ def openai_client():
     import openai
 
     return openai.OpenAI(max_retries=0)   # TL, #230: the SDK never repeats a paid request
+
+
+def deepseek_client():
+    """The DeepSeek client for the answer and the planner call (#242): the OpenAI SDK on
+    DEEPSEEK_BASE_URL (default /beta, needed for strict tools), max_retries=0 (never a second paid
+    request), read timeout DEEPSEEK_TIMEOUT_S. Needs DEEPSEEK_API_KEY; never uses OPENAI_API_KEY."""
+    import os
+
+    import openai
+
+    key = os.getenv("DEEPSEEK_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("DEEPSEEK_API_KEY is not set; put it in .env (see .env.example)")
+    return openai.OpenAI(api_key=key, base_url=settings().deepseek_base_url, max_retries=0,
+                         timeout=openai.Timeout(DEEPSEEK_TIMEOUT_S, connect=DEEPSEEK_CONNECT_S))
+
+
+def deepseek_tool_request(name: str, description: str, schema: dict, system: str, user: str,
+                          max_tokens: int) -> dict:
+    """One strict function tool (#242). Thinking off: the named function is forced. Thinking on:
+    tool_choice auto (a forced choice is a 400 in thinking mode); the prompt requires the tool."""
+    s = settings()
+    on = s.deepseek_thinking
+    return {
+        "model": s.deepseek_model,
+        "max_tokens": max_tokens,
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        "tools": [{"type": "function", "function": {"name": name, "description": description,
+                                                    "strict": True, "parameters": schema}}],
+        "tool_choice": "auto" if on else {"type": "function", "function": {"name": name}},
+        "extra_body": {"thinking": {"type": "enabled" if on else "disabled"}},
+    }
+
+
+def deepseek_request(question: str, hits: list[Hit], plan=None, window=None) -> dict:
+    return deepseek_tool_request(
+        TOOL_NAME, "Submit the cited answer.", llm_output_schema(),
+        SYSTEM_PROMPT + "\nYou MUST return the result by calling the submit_answer tool;"
+                        " do not answer in plain text.",
+        build_user_message(question, hits, plan, window), answer_max_tokens("deepseek"))
+
+
+def deepseek_create(client, request: dict):
+    """Send one DeepSeek request; 401 / 402 / 429 become ProviderStop with a plain message."""
+    import openai
+
+    try:
+        return client.chat.completions.create(**request)
+    except openai.APIStatusError as e:
+        why = DEEPSEEK_STOP_CODES.get(getattr(e, "status_code", None))
+        if why:
+            raise ProviderStop(f"DeepSeek: {why}") from e
+        raise
+
+
+def _jsonable(obj):
+    """SDK objects (model_dump), dicts, lists and test fakes (SimpleNamespace) as JSON data."""
+    if obj is None or isinstance(obj, (str, int, float, bool)):
+        return obj
+    if hasattr(obj, "model_dump"):
+        return obj.model_dump(mode="json")
+    if isinstance(obj, dict):
+        return {k: _jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_jsonable(v) for v in obj]
+    if hasattr(obj, "__dict__"):
+        return {k: _jsonable(v) for k, v in vars(obj).items()}
+    return str(obj)
+
+
+def deepseek_tool_call(resp, name: str):
+    """(first tool call named `name` or None, finish_reason, usage, payload) of one response.
+    usage: input / output tokens, cache hit / miss, reasoning tokens, tool call count, thinking mode.
+    payload: the whole message as JSON data (content, reasoning_content, tool calls)."""
+    choice = resp.choices[0]
+    msg = choice.message
+    stop = getattr(choice, "finish_reason", None)
+    calls = list(getattr(msg, "tool_calls", None) or [])
+    u = getattr(resp, "usage", None)
+    details = getattr(u, "completion_tokens_details", None)
+    usage = {"input_tokens": getattr(u, "prompt_tokens", None),
+             "output_tokens": getattr(u, "completion_tokens", None),
+             "cache_hit_tokens": getattr(u, "prompt_cache_hit_tokens", None),
+             "cache_miss_tokens": getattr(u, "prompt_cache_miss_tokens", None),
+             "reasoning_tokens": getattr(details, "reasoning_tokens", None),
+             "tool_calls": len(calls),
+             "thinking": "on" if settings().deepseek_thinking else "off"}
+    call = next((c for c in calls if getattr(getattr(c, "function", None), "name", None) == name), None)
+    return call, stop, usage, _jsonable(msg)
+
+
+def deepseek_arguments(call) -> dict:
+    """The call's arguments parsed; ValueError when not a JSON object (DeepSeek may send bad JSON)."""
+    args = json.loads(call.function.arguments)
+    if not isinstance(args, dict):
+        raise ValueError(f"arguments are a JSON {type(args).__name__}, not an object")
+    return args
+
+
+def _deepseek(question: str, hits: list[Hit], client=None, plan=None, window=None) -> Answer:
+    """#242. Invalid (ModelOutputError, saved, never re-rolled), in this order: finish_reason not
+    tool_calls / stop (length = cut, content_filter, insufficient_system_resource, aborted); no
+    submit_answer call; arguments not JSON or not an object; not a valid Answer; check_output."""
+    if client is None:
+        client = deepseek_client()
+    resp = deepseek_create(client, deepseek_request(question, hits, plan, window))
+    call, stop, usage, payload = deepseek_tool_call(resp, TOOL_NAME)
+    if stop in CUT_REASONS:
+        raise ModelOutputError(f"Model output cut at max_tokens ({usage['output_tokens']} output tokens)",
+                               payload, "deepseek", stop, usage)
+    if stop not in DEEPSEEK_OK:
+        raise ModelOutputError(f"Model output stopped by finish_reason {stop}", payload, "deepseek", stop, usage)
+    if call is None:
+        raise ModelOutputError(f"Model did not call {TOOL_NAME} (finish_reason={stop or '?'})",
+                               payload, "deepseek", stop, usage)
+    text = call.function.arguments
+    try:
+        raw = deepseek_arguments(call)
+    except (TypeError, ValueError) as e:
+        raise ModelOutputError(f"Model arguments are not a JSON object: {e}", text, "deepseek", stop, usage) from e
+    try:
+        answer = Answer(**raw, llm_called=True)
+    except (ValueError, TypeError) as e:
+        raise ModelOutputError(f"Model output is not a valid Answer: {e}", raw, "deepseek", stop, usage) from e
+    answer.stop_reason, answer.usage = stop or "", usage
+    msg = payload if isinstance(payload, dict) else {}
+    answer._provider_payload = {"reasoning_content": msg.get("reasoning_content"), "content": msg.get("content")}
+    return check_output(answer, raw, "deepseek")
 
 
 def _anthropic(question: str, hits: list[Hit], client=None, plan=None, window=None) -> Answer:
