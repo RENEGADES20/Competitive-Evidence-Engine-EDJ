@@ -345,7 +345,7 @@ def compare(record: dict, base: dict | None) -> str:
 
 def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
               max_tokens: int = 8000, plan_parts: list | None = None, window=None,
-              request: str | None = None) -> str:
+              request: str | None = None, guard: dict | None = None) -> str:
     """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
     key, and a run with another output cap never reuses one made under 8000. The window (#230)
     joins it only when the question has one (the v4.1 user message names it; --as-of moves it).
@@ -360,6 +360,9 @@ def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model:
         parts = [*parts, {"window": [str(window[0]), str(window[1])]}]
     if request:
         parts = [*parts, {"request": request}]
+    if guard:   # #245: the interim input guard trimmed the passages: its limit and the kept ids
+        kept = [c for c in chunk_ids if c not in set(guard.get("dropped") or [])]
+        parts = [*parts, {"input_guard": [guard["limit"], kept]}]
     blob = json.dumps(parts)
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
@@ -376,15 +379,16 @@ def parts_of(plan) -> list | None:
     return None if plan is None else [[p.id, p.text, list(p.firms)] for p in plan.parts]
 
 
-def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts: int, query: dict,
+def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, query: dict,
                    request: str | None = None) -> str:
     """Planner outputs (#214) are cached apart from answers: question, planner version, snapshot,
-    provider, model, part cap, the planner's output cap and the resolved query; the request
-    version (#232) only when given."""
-    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
-    # PLANNER_MAX_TOKENS is the constant 2000; the DeepSeek planner cap (by thinking mode, #242) is
-    # kept apart through the request version (llm.request_version), so the key stays as it was.
-    parts = [q["id"], q["text"], PLANNER_VERSION, snapshot, provider, model, max_parts, PLANNER_MAX_TOKENS, query]
+    provider, model, the planner's output cap, the registered metric keys (the schema's enum, #245)
+    and the resolved query; the request version (#232) only when given. No part cap since plan-v3."""
+    from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
+    # PLANNER_MAX_TOKENS is the anthropic / openai cap; the DeepSeek planner cap (by thinking mode,
+    # #242) is kept apart through the request version (llm.request_version).
+    parts = [q["id"], q["text"], PLANNER_VERSION, snapshot, provider, model, PLANNER_MAX_TOKENS,
+             list(metric_keys()), query]
     if request:
         parts = [*parts, {"request": request}]
     return hashlib.sha256(json.dumps(parts, default=str, sort_keys=True).encode()).hexdigest()[:24]
@@ -416,7 +420,7 @@ class RealRunner:
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
         self.max_tokens = llm.answer_max_tokens(provider)   # #242: deepseek by thinking mode
         self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
-        self.calls, self.reused, self.last_file = 0, 0, None
+        self.calls, self.reused, self.last_file, self.last_guard = 0, 0, None, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
 
@@ -426,15 +430,17 @@ class RealRunner:
         raw/<self.last_file> and the call still counts (#187)."""
         from cee.answer.llm import ModelOutputError, check_output
         from cee.answer.schema import Answer
-        from cee.ask import answer_for, answer_window
+        from cee.ask import answer_for, answer_window, guard_input
 
-        self.last_file, self.last_stop = None, (None, None)
+        self.last_file, self.last_stop, self.last_guard = None, (None, None), None
         if not hits:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
+        _, guard = guard_input(q["text"], query, hits, self.provider, plan)   # #245 interim guard
+        self.last_guard = guard
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
                         [h.chunk_id for h in hits], self.max_tokens, parts_of(plan), answer_window(query),
-                        self.request_version)
+                        self.request_version, guard)
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
@@ -457,7 +463,8 @@ class RealRunner:
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "request_version": self.request_version,
-                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+                "chunk_ids": [h.chunk_id for h in hits], "input_guard": guard,
+                "at": dt.datetime.now().isoformat()}
         from cee.answer.llm import ProviderStop
 
         t0 = time.monotonic()
@@ -492,23 +499,22 @@ class RealRunner:
         from cee.config import settings
         from cee.retrieve import fts, planner
 
-        cap = settings().planner_max_parts
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
-            return planner.plan_question(query, self.provider, cap=cap)
-        key = plan_cache_key(q, self.snapshot, self.provider, self.model, cap, asdict(query), self.request_version)
+            return planner.plan_question(query, self.provider)
+        key = plan_cache_key(q, self.snapshot, self.provider, self.model, asdict(query), self.request_version)
         path = self.cache_dir / f"{q['id']}-plan-{key}.json"
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
             self._copy(path)
             if saved.get("invalid"):
-                return planner.from_output(query, saved.get("raw_payload"), self.provider, cap, error=saved["error"])
-            return planner.from_output(query, saved["raw"], self.provider, cap)
+                return planner.from_output(query, saved.get("raw_payload"), self.provider, error=saved["error"])
+            return planner.from_output(query, saved["raw"], self.provider)
         if self.calls >= self.max_calls:
             return None
         self.calls += 1   # counted before the call: a failed call still cost money
         meta = {"question_id": q["id"], "question": q["text"], "planner_version": planner.PLANNER_VERSION,
-                "snapshot": self.snapshot, "provider": self.provider, "model": self.model, "max_parts": cap,
+                "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.request_version,
                 "query": asdict(query),
                 "at": dt.datetime.now().isoformat()}
@@ -517,22 +523,26 @@ class RealRunner:
         call: dict = {}   # #230: stop_reason and usage of the call, saved with every plan record
         t0 = time.monotonic()
         try:
-            raw = planner.call_planner(query, self.provider, cap, meta=call)
+            raw = planner.call_planner(query, self.provider, meta=call)
         except ProviderStop as e:   # #242: refused before any output: nothing to save, the run stops
             raise SystemExit(f"stopped: {e}") from e
         except planner.PlannerOutputError as e:
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
                               "stop_reason": e.stop_reason, "usage": call.get("usage"),
                               **timing(t0, call.get("usage")), **self._reasoning(call)})
-            return planner.from_output(query, e.raw, self.provider, cap, error=str(e))
+            return planner.from_output(query, e.raw, self.provider, error=str(e))
         except Exception as e:   # API / network: the rule plan, the call counted, never re-called
             err = f"{type(e).__name__}: {e}"
+            bad_request = getattr(e, "status_code", None) == 400
             self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
-                              **timing(t0, None)})
-            return planner.from_output(query, None, self.provider, cap, error=err)
+                              "bad_request": bad_request, **timing(t0, None)})
+            if bad_request:   # #245: the provider rejected the request itself (e.g. the schema);
+                # every planned call would fail the same way, so the run stops (saved, counted once)
+                raise SystemExit(f"stopped: planner request rejected with 400 ({err})") from e
+            return planner.from_output(query, None, self.provider, error=err)
         self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"),
                           **timing(t0, call.get("usage")), **self._reasoning(call), "raw": raw})
-        return planner.from_output(query, raw, self.provider, cap)
+        return planner.from_output(query, raw, self.provider)
 
     @staticmethod
     def _reasoning(call: dict) -> dict:
@@ -692,6 +702,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--baseline", help="report.json of an earlier run, for UNCHANGED/IMPROVED/REGRESSED")
     ap.add_argument("--real", action="store_true", help="also get model answers (paid; needs --max-calls)")
     ap.add_argument("--max-calls", type=int, help="hard cap on paid model calls in this run")
+    ap.add_argument("--plan-only", action="store_true",
+                    help="with --real: planner calls only, then the 0-call search of each plan; no answer call (#245)")
     ap.add_argument("--out", help="run folder (default .eval-runs/<snapshot>-<time>)")
     ap.add_argument("--as-of", type=dt.date.fromisoformat, default=dt.date.today(),
                     help="day the time windows end, YYYY-MM-DD (default today)")
@@ -699,13 +711,20 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     if args.real and (args.max_calls is None or args.max_calls < 0):
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
+    if args.plan_only and not args.real:
+        ap.error("--plan-only needs --real (the mock planner makes no call)")
     if args.max_calls is not None and args.max_calls > 10:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
     from cee.config import settings
     from cee.retrieve import fts
     from cee.retrieve.fts import PoolTrace, budget, budget_tokens, resolve, search
-    from cee.retrieve.planner import PLANNER_VERSION, plan_question, rules_plan, search_parts
+    from cee.answer import llm
+    from cee.ask import answer_window, guard_input
+    from cee.retrieve.planner import PLANNER_VERSION, plan_question, rules_plan, search_subquestions
+    # #245: the interim answer input of every question, against the guard limit of the run's provider
+    # (the mock has none: measured against deepseek, the app's provider)
+    guard_provider = settings().llm_provider if settings().llm_provider != "mock" else "deepseek"
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -741,7 +760,7 @@ def main(argv: list[str] | None = None) -> int:
                 plan, capped = rules_plan(query), True
         t0 = time.perf_counter()
         if plan is not None:
-            hits = search_parts(query, plan, trace=trace, part_pools=pools)
+            hits = search_subquestions(query, plan, trace=trace, part_pools=pools)
         else:
             hits = search(query, trace=trace) if args.k is None else search(query, k=args.k, trace=trace)
         search_s = round(time.perf_counter() - t0, 3)
@@ -751,10 +770,24 @@ def main(argv: list[str] | None = None) -> int:
         r |= {"search_s": search_s, "unattached": list(trace.unattached)}
         research = [h for h in hits if h.part_id == "research"]
         r |= {"plan": plan.to_log() if plan else None, "parts": len(plan.parts) if plan else 1,
+              "aspects": len(plan.aspects) if plan else 1, "subquestions": len(plan.subquestions) if plan else 1,
               "research_passages": len(research), "research_tokens": round(sum(len(h.text) for h in research) / 4),
               "llm_calls": {"planner": plan.calls if plan else 0, "answer": 0}}
+        if plan is not None and plan.searched:   # #245: the budget is per sub-question
+            sub_budget = sum(s["budget"] for s in plan.searched)
+            sub_tokens = sum(s.get("tokens", 0) for s in plan.searched)
+            r |= {"budget_tokens": sub_budget, "subquestion_tokens": sub_tokens,
+                  "fill": round(sub_tokens / sub_budget, 3) if sub_budget else None}
+        if hits:   # #245: what the one interim answer call would read, and the guard's trim (0 calls)
+            limit = llm.answer_input_limit(guard_provider)
+            _, g = guard_input(q["text"], query, hits, guard_provider, plan)
+            r["interim_input"] = {"provider": guard_provider, "limit": limit,
+                                  "tokens": llm.input_tokens(q["text"], hits, plan, answer_window(query)),
+                                  "would_drop": len(g["dropped"]) if g else 0}
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
-        if real:
+        if real and args.plan_only:
+            r["model"] = "plan_only"
+        elif real:
             answer, how = (None, "cap") if capped else real.answer(q, query, hits, plan)
             r = apply_real(r, answer, how, real.last_file if not capped else None)
             if answer is not None and plan is not None:   # #215: how each part was covered
@@ -763,6 +796,8 @@ def main(argv: list[str] | None = None) -> int:
                 r["part_coverage"] = part_coverage(Answer(**answer), plan, hits)
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid"))
             r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
+            if real.last_guard and not capped:   # #245: the interim input guard trimmed this answer
+                r["input_guard"] = real.last_guard
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         records.append(r)
@@ -770,15 +805,16 @@ def main(argv: list[str] | None = None) -> int:
               + (f" recall {r['doc_recall']} refusal {_refusal(r)}" if r["recall"] else "")
               + (f" recall@pool {r['recall_pool']} recall@final {r['recall_final']}"
                  if r["recall_pool"] is not None else "")
-              + f" passages {r['passages']} tokens~{r['tokens_est']} parts {r['parts']}"
+              + f" passages {r['passages']} tokens~{r['tokens_est']} sub-questions {r['subquestions']}"
               + (f" change {r['change']}" if args.baseline else "") + (f" model {r['model']}" if real else ""))
 
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     meta = {"run_id": run_id, "snapshot": snapshot, "commit": commit,
             "k": "by question" if args.k is None else args.k, "min_coverage": args.min_coverage,
             "pool_per_group": fts.POOL_PER_GROUP, "token_budget": fts.TOKEN_BUDGET if args.k is None else None,
-            "planner": settings().planner, "max_parts": settings().planner_max_parts,
-            "planner_version": PLANNER_VERSION,
+            "planner": settings().planner, "subquestion_tokens": settings().subquestion_tokens,
+            "planner_version": PLANNER_VERSION, "plan_only": args.plan_only,
+            "guard_provider": guard_provider, "answer_input_limit": llm.answer_input_limit(guard_provider),
             "mode": "real" if real else "mock", "baseline": args.baseline, "as_of": args.as_of.isoformat(),
             "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
     write_reports(run_dir, meta, records)

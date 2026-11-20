@@ -16,7 +16,7 @@ def trace_text(at) -> str:
 
 def test_trace_stays_collapsed_after_the_answer(monkeypatch):
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search_parts", lambda q, plan: [])
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: [])
     monkeypatch.setattr(pipeline, "_log", lambda r, p: 1)
     at = AppTest.from_function(page).run()
     assert not at.exception and not at.error
@@ -30,7 +30,7 @@ def test_failed_stage_is_marked_and_error_shown(monkeypatch):
 
     def broken(q, plan):
         raise RuntimeError("database is down")
-    monkeypatch.setattr(pipeline, "search_parts", broken)
+    monkeypatch.setattr(pipeline, "search_subquestions", broken)
     at = AppTest.from_function(page).run()
     assert at.get("status")[0].label == "Searching the corpus: failed (RuntimeError: database is down)"
     assert 'class="failed"' in trace_text(at)

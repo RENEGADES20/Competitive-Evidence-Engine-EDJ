@@ -186,8 +186,58 @@ def _part_label(part, question: str) -> str:
 
 
 def _part_pools(plan) -> dict[str, int]:
-    """Each part's candidate pool before exclusion (planner.search_parts), when known."""
-    return {s["id"]: s["pool"] for s in getattr(plan, "searched", None) or [] if "pool" in s}
+    """Each part's candidate pool before exclusion (planner.search_subquestions), when known. A
+    competitor sub-question the floor across competitors emptied (#245) reads as 0: its candidates
+    were below the floor, so nothing usable was found for it."""
+    return {s["id"]: 0 if s.get("floor_emptied") else s["pool"]
+            for s in getattr(plan, "searched", None) or [] if "pool" in s}
+
+
+# Interim answer input guard (#245; temporary, removed when #247 wires the reduce step).
+GUARD_NOTE = ("The answer read {kept} of {total} retrieved passages: the input was trimmed to the "
+              "model's limit; the passages left out are listed in the log.")
+
+
+def fit_input(hits: list[Hit], plan, limit: int, base: float, cost) -> tuple[list[Hit], list[str]]:
+    """(kept hits in their original order, dropped chunk ids) so that base + sum(cost(kept)) <= limit.
+    Research passages first, then round-robin over the plan's sub-questions in plan order, each
+    sub-question's best rank first. Greedy stop rule: a passage that would pass the limit is skipped
+    and the round-robin goes on; it ends when a full round adds nothing. `base` is the estimated
+    input with no passage (system prompt, tool schema, the user message's fixed lines) and
+    `cost(hit)` one passage's tokens as the user message prints it (llm.chunk_tokens)."""
+    order = [p.id for p in getattr(plan, "parts", None) or []]
+    queues: dict[str, list[Hit]] = {}
+    for h in sorted(hits, key=lambda h: -h.rank):
+        pid = h.part_id if h.part_id in order else ("research" if h.part_id == "research" else "other")
+        queues.setdefault(pid, []).append(h)
+    kept: list[Hit] = []
+    total = base
+
+    def fits(h: Hit) -> bool:
+        nonlocal total
+        if total + cost(h) > limit:
+            return False
+        total += cost(h)
+        return True
+
+    for h in queues.pop("research", []):
+        if fits(h):
+            kept.append(h)
+    rounds = [pid for pid in order if pid in queues] + (["other"] if "other" in queues else [])
+    while True:
+        added = False
+        for pid in rounds:
+            queue = queues.get(pid) or []
+            while queue:
+                h = queue.pop(0)
+                if fits(h):
+                    kept.append(h)
+                    added = True
+                    break
+        if not added:
+            break
+    ids = {h.chunk_id for h in kept}
+    return [h for h in hits if h.chunk_id in ids], [h.chunk_id for h in hits if h.chunk_id not in ids]
 
 
 def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:

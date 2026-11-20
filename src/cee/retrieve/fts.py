@@ -64,6 +64,10 @@ class Query:
     # question's) and keeps the whole question's doc-type scope (None = computed from this query).
     terms: str | None = None
     scope: tuple[list[str], list[int]] | None = None
+    # Sub-question decomposition (#245, ADR-021 rule 6): a competitor sub-question of a home-firm
+    # market question (Q19) searches its firm on the theme only (SQL AND of the theme's keywords on
+    # the firm pass, no answer-turn attachment), the ADR-018 safeguard of the theme peers.
+    on_theme_only: bool = False
 
     @property
     def firms(self) -> list[str]:
@@ -959,7 +963,8 @@ def peer_pass(q: Query, kept: set[str], trace: PoolTrace | None = None) -> list[
 
 
 def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, tokens: float | None = None,
-           exclude: set[str] | None = None, research: bool = True, peers: bool = True) -> list[Hit]:
+           exclude: set[str] | None = None, research: bool = True, peers: bool = True,
+           text: str | None = None) -> list[Hit]:
     """k: passages to return; None = the app default: budget(q) passages in passage mode
     (TOKEN_BUDGET None), budget_tokens(q) estimated tokens in token mode. The theme peers' slots (#205)
     are part of budget(q) and come on top of an explicit k, so the named firms and the research
@@ -971,7 +976,12 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, token
     Plan parts (#214, ADR-020): `tokens` is an explicit token budget (a part's share); `exclude`
     holds chunk ids already kept (earlier parts, the research pass): they leave the pools and the
     answer-turn map, so they are never kept twice; research=False / peers=False leave out the
-    research part and the theme peers (run once per question by research_pass / peer_pass)."""
+    research part and the theme peers (run once per question by research_pass / peer_pass).
+    Sub-questions (#245): `text` (the sub-question's text) is accepted and ignored: FTS ranks on
+    words; the hybrid search on exp/hybrid embeds it, so both fit planner.search_subquestions'
+    `search_fn`. `q.on_theme_only` (a competitor sub-question, entity+theme): the firm pass keeps
+    only chunks with the theme's keywords and no answer turn is attached (an answer turn is fetched
+    without the word match and may be off the theme)."""
     if tokens is None and k is None:
         tokens = budget_tokens(q)
     k = budget(q) - peer_slots(q) if k is None else k
@@ -980,10 +990,17 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, token
     exclude = exclude or set()
     with connect() as conn:
         ctx = _context(conn, q)
-        rows = _rows(conn, ctx, ctx.where)
+        theme_only = q.on_theme_only and q.mode == "entity+theme" and bool(q.themes)
+        if theme_only:   # #245: competitor sub-question, on the theme only (ADR-018 safeguard)
+            on_theme, on_theme_params = on_theme_filter(q.themes)
+            rows = _rows(conn, ctx, f"{ctx.where} AND {on_theme}", on_theme_params)
+        else:
+            rows = _rows(conn, ctx, ctx.where)
         research_rows = _research_rows(conn, ctx, q) if research else []
         on_theme_rows = []
-        if q.mode == "entity+theme":
+        if theme_only:
+            on_theme_rows = rows
+        elif q.mode == "entity+theme":
             # The firms' own chunks on the theme, pooled on their own so a firm's best on-theme
             # chunks are there even when off-theme chunks fill its usual pool (#117).
             on_theme, on_theme_params = on_theme_filter(q.themes)
@@ -995,7 +1012,7 @@ def search(q: Query, k: int | None = None, trace: PoolTrace | None = None, token
                        if r["chunk_id"] not in exclude),
                       key=lambda h: (-h.rank, h.chunk_id))
         answers = answer_turns(conn, [h for h in pool if is_question_turn(h)], ctx.where, ctx.window,
-                               ctx.filters, ctx.params) if PAIR_TURNS else {}
+                               ctx.filters, ctx.params) if PAIR_TURNS and not theme_only else {}
         answers = {qid: a for qid, a in answers.items() if a.chunk_id not in exclude}
     if trace is not None:
         trace.firm += [r["chunk_id"] for r in rows]

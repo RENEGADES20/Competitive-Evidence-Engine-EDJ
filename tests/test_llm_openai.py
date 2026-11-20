@@ -276,7 +276,7 @@ def anthropic_tool_schemas() -> dict:
     from cee.retrieve import planner
     from cee.retrieve.fts import Query
     answer = llm.anthropic_request("q?", [hit()])["tools"][0]
-    plan = planner.anthropic_plan_request(Query(question="q", entities=["MS"]), 4)["tools"][0]
+    plan = planner.anthropic_plan_request(Query(question="q", entities=["MS"]))["tools"][0]
     return {answer["name"]: answer, plan["name"]: plan}
 
 
@@ -286,7 +286,7 @@ def test_anthropic_tools_are_strict_and_tool_choice_stays_auto():
     for tool_def in anthropic_tool_schemas().values():
         assert tool_def["strict"] is True
     assert llm.anthropic_request("q?", [hit()])["tool_choice"] == {"type": "auto"}   # forced is a 400
-    assert planner.anthropic_plan_request(Query(question="q", entities=["MS"]), 4)["tool_choice"] == {"type": "auto"}
+    assert planner.anthropic_plan_request(Query(question="q", entities=["MS"]))["tool_choice"] == {"type": "auto"}
     client = FakeAnthropic()
     llm._anthropic("q?", [hit()], client=client)
     assert client.kwargs["tools"][0]["strict"] is True                              # what is sent
@@ -306,8 +306,8 @@ def test_sdk_strict_transform_leaves_both_schemas_unchanged():
 def test_a_max_items_schema_fails_both_checks():
     from cee.retrieve import planner
     old = planner.plan_schema()
-    old["properties"]["parts"]["maxItems"] = 4                                       # the pre-#232 schema
-    assert strict_problems(old) == ["$.parts: maxItems not allowed"]
+    old["properties"]["aspects"]["maxItems"] = 4                                       # the pre-#232 schema
+    assert strict_problems(old) == ["$.aspects: maxItems not allowed"]
     anthropic = pytest.importorskip("anthropic")
     assert anthropic.transform_schema(old) != old
 

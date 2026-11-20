@@ -155,7 +155,7 @@ def test_time_window_newest_first_across_parts():
 
 def _plan_two():
     from cee.retrieve.planner import Part, Plan
-    return Plan(parts=[Part("p1", "Results at Raymond James", ["RJF"]), Part("p2", "News at Raymond James", ["RJF"])])
+    return Plan.from_parts([Part("p1", "Results at Raymond James", ["RJF"]), Part("p2", "News at Raymond James", ["RJF"])])
 
 
 def test_user_message_window_line_only_with_a_window():
