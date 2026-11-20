@@ -2,10 +2,10 @@
 # own CLI and the seed in <wt>\.eval-runs\cache, under diag\map_msg_hash.py (message hashes then).
 #   powershell -File hist-replay.ps1 -Wt <detached worktree at the commit> -Seed <cache dir> -Questions Q1,Q3 -Out <name>
 param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Seed, [Parameter(Mandatory)][string]$Questions,
-      [Parameter(Mandatory)][string]$Out, [string]$Ev = 'D:\ALLPROJECTS\EDJ\cache\ev250',
+      [Parameter(Mandatory)][string]$Out, [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev250',
       [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$h = Join-Path $Ev "$Out.head-log.txt"; $outDir = Join-Path $Ev $Out; $cache = "$Wt\.eval-runs\cache"
+$h = Join-Path $EvDir "$Out.head-log.txt"; $outDir = Join-Path $EvDir $Out; $cache = "$Wt\.eval-runs\cache"
 Set-Location $Wt
 "hist $Out before $(Get-Date -Format o) HEAD $(git rev-parse HEAD) env-file $(Test-Path "$Wt\.env")" | Add-Content $h
 if ((Test-Path "$Wt\.env") -or (Test-Path $outDir) -or (Test-Path $cache)) { "STOP: .env, out dir or cache exists" | Add-Content $h; exit 3 }

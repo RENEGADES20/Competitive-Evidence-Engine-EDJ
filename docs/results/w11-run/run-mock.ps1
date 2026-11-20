@@ -4,8 +4,8 @@
 #     [-Questions Q1,...] [-FastembedPath <dir>]
 param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [string]$Mode = '', [string]$ReusePlans = '',
       [string]$Cache = '', [string]$Questions = '', [string]$FastembedPath = '',
-      [string]$Ev = 'D:\ALLPROJECTS\EDJ\cache\ev250', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
-$outDir = Join-Path $Ev $Out
+      [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev250', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
+$outDir = Join-Path $EvDir $Out
 if (Test-Path $outDir) { Write-Output "STOP: $outDir exists"; exit 3 }
 if (Test-Path "$Wt\.env") { Write-Output "STOP: $Wt\.env exists"; exit 3 }
 Set-Location $Wt

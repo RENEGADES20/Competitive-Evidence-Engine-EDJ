@@ -10,9 +10,9 @@ param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Pa
       [Parameter(Mandatory)][string]$GateSha, [string]$GateExclude = '', [string]$Mode = '', [switch]$ReusePlans,
       [string]$FastembedPath = '', [string]$EnvFile = 'D:\ALLPROJECTS\EDJ\repo\.env', [switch]$Diag,
       [string]$Questions = ((1..30 | ForEach-Object { "Q$_" }) -join ','),
-      [string]$Ev = 'D:\ALLPROJECTS\EDJ\cache\ev250', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
+      [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev250', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$h = Join-Path $Ev "$Out.head-log.txt"; $outDir = Join-Path $Ev $Out
+$h = Join-Path $EvDir "$Out.head-log.txt"; $outDir = Join-Path $EvDir $Out
 if ($Phase -eq 'count') { $MaxCalls = 0 }
 if ($Diag -and $Phase -ne 'count') { Write-Output 'STOP: -Diag only with -Phase count'; exit 3 }
 Set-Location $Wt
