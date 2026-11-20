@@ -53,11 +53,18 @@ change that #245 will bring. No code changes.
   Classes: r retrieval, s shape / part missing, b behavior choice, c corpus gap, i invalid output
   (cut, empty, no tool call, bad JSON, `content_filter`, `insufficient_system_resource`, API error on
   the answer call): FAIL, a finding, never re-run.
-- **Blind scorer.** The implementer read `w10-report.md` while writing this plan, so it does not
-  score. Step 4's blind verdicts are written by a **fresh scorer agent** whose only inputs are the
-  answers dump, `evals/questions.yaml` and the verdict rule above; it is told not to open
-  `docs/results/w10-report.*`, `gate4-report.*`, `D:\ALLPROJECTS\EDJ\cache\ev217\` or
-  `docs/results/0242-deepseek-check.md`. The implementer commits the hash before step 5.
+- **Blind scorer (allowlist; TL decision 2, review issuecomment-7030351022).** The implementer read
+  `w10-report.md` while writing this plan, so it does not score. Step 4's blind verdicts are written
+  by a **fresh scorer agent** that reads **only** the folder `D:\ALLPROJECTS\EDJ\cache\ev243\blind-in\`
+  and writes **only** `D:\ALLPROJECTS\EDJ\cache\ev243\verdicts-blind.json`. The folder holds exactly
+  three files, copied there by the implementer: `answers-dump.txt` (this run's answers, no #217 or
+  #242 data), `questions.yaml` (`git show 739cb3c:evals/questions.yaml`) and `verdict-rule.txt` (the
+  verdict rule and failure classes above, word for word, with the output format: per question
+  verdict, class, borderline, one-line reason). Everything else is off limits, named in the prompt:
+  the repo (this plan, `plans/`, `docs/`, incl. `PROGRESS.md`, `NEXT.md`, `results/`), every other
+  folder under `D:\ALLPROJECTS\EDJ\cache\`, `.eval-runs\`, GitHub issues and PRs. The prompt is saved
+  as `ev243\scorer-prompt.txt` before the agent starts; its sha256 and the sha256 of the three input
+  files are logged next to the blind hash. The implementer commits the hashes before step 5.
 - **Change labels** against #217's final verdicts (after its second read, 24/30; the #217 blind
   first read is shown beside them): **plan** (DeepSeek's planner gave different parts: firms or
   aspects searched differ; part texts named), **retrieval** (a deciding passage entered or left the
@@ -65,14 +72,24 @@ change that #245 will bring. No code changes.
   sets; DeepSeek chose or wrote differently: behavior, shape, a missed or wrong claim), **invalid**
   (class i), **scorer reading** (the same answer shape read differently). Several allowed; each
   change names its evidence.
-- **Cost rule.** Per call, from the saved `usage`: `cache_miss_tokens` x $1.32 / M +
-  `cache_hit_tokens` x $0.044 / M + `output_tokens` (reasoning included) x $3.96 / M, the full
-  `deepseek-v4-pro` price (TL figures in the issue brief). Off-peak is half price: a call counts as
-  off-peak only if its completion time (record `at` + `wall_s`, converted to UTC with the offset
-  logged by the run script) falls inside DeepSeek's off-peak window as published on
-  api-docs.deepseek.com at report time; if the page does not state the window, every call is priced
-  full and the report says so. Per question = planner + answer. Reported: new spend of this run, and
-  the full per-question cost including the three reused questions (marked "paid in #242").
+- **Cost rule.** Source: TL comment on #243, issuecomment-7030358880 (2026-11-20 04:24 UTC), which
+  gives the `deepseek-v4-pro` rates from https://api-docs.deepseek.com/quick_start/pricing/ as read
+  by the TL's research agent on 2026-11-19. USD per 1M tokens, peak / off-peak (50%): input cache
+  hit $0.044 / $0.022, input cache miss $1.32 / $0.66, output $3.96 / $1.98. Peak hours:
+  01:00-04:00 and 06:00-10:00 UTC, Monday to Friday, excluding Chinese public holidays; all other
+  times are off-peak.
+  - Per call, from the saved `usage`: `cache_miss_tokens` x miss rate + `cache_hit_tokens` x hit
+    rate + `output_tokens` (reasoning included) x output rate. Per question = planner + answer.
+  - Peak or off-peak by the call's completion time in UTC: record `at` (local, naive) + `wall_s`,
+    converted with this machine's UTC offset (logged by the run script with `Get-Date -Format o`;
+    UTC-6 at plan time). The three reused #242 questions have no offset in #242's head-log; their
+    times were taken on this same machine, so the same offset is used, and the report says so. A
+    call whose start and end fall on different sides of a boundary is named.
+  - **Report-time check** (the comment's rule): fetch the pricing page again. If it shows rates and
+    the peak window, use them and note any difference from the comment. If it does not, the report
+    says so and prices with the comment's figures, citing issuecomment-7030358880.
+  - Reported: the new spend of this run, and the full per-question cost including the three reused
+    questions (marked "paid in #242").
 
 ## Files to change
 - `plans/0243-ds-baseline.md` - this plan and its Progress log.
@@ -98,7 +115,10 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
      -> `v4.1 plan-v2`; and, with the run's env pinned (no `.env`), `ev243\settings_log.py` (copy of
      #242's) -> `provider=deepseek model=deepseek-v4-pro base_url=https://api.deepseek.com/beta
      thinking=True planner=True max_parts=4 request_version=ds-strict-1-think-on-a64000-p16000
-     answer_cap=64000 planner_cap=16000 timeout_s=3600.0 key_set=False`.
+     answer_cap=64000 planner_cap=16000 timeout_s=3600.0 key_set=False db=localhost:5432/cee`.
+     The run script logs the same line with the `.env` loaded (`key_set=True`); it must still read
+     `db=localhost:5432/cee` (the database the mock and the sync check used), else the script exits
+     before the paid command.
    - `git diff --stat cdcb6ee 739cb3c -- src scripts config` (for the report).
    - Cache: the worktree's `.eval-runs\cache\` is empty before the seed; then the 6 #242 R-on files are
      copied in (decision above), sha256 of each logged against the source.
@@ -117,7 +137,8 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
      `LLM_PROVIDER=deepseek`, `DEEPSEEK_MODEL=deepseek-v4-pro`,
      `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`, `DEEPSEEK_THINKING=on`, `PLANNER=on`,
      `PLANNER_MAX_PARTS=4`, `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-243\src`; logs the resolved settings
-     line (`settings_log.py`, `key_set=True` expected, never the key);
+     line (`settings_log.py`, `key_set=True` and `db=localhost:5432/cee` expected, checked by the
+     script before the paid command; never the key);
      `python scripts\eval_run.py --real --max-calls 60 --questions Q1,...,Q30 --as-of 2026-11-17 --baseline evals\baselines\corpus-2026-11-19\report.json --out .eval-runs\0243-real *> ev243\real-run.log`;
      logs exit code, start / end with UTC offset;
    - `finally`: removes the worktree `.env` and every pinned variable, logs HEAD again and
@@ -129,10 +150,12 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
    (input, cache hit / miss, output, reasoning), `wall_s`, `tokens_per_s`, cap used.
 4. **Blind scoring.** Dump the 30 answers (claims with cited passage text, part, adjacent, gaps, code
    caveats, parts, behavior) from the scored records to `ev243\answers-dump.txt` (adapted from
-   `ev217\dump217.py`); no #217 data in the dump. A fresh scorer agent (decision above) writes
+   `ev217\dump217.py`); no #217 or #242 data in the dump. The implementer fills `ev243\blind-in\`
+   with the three allowlisted files (decision "Blind scorer"), saves `ev243\scorer-prompt.txt`, logs
+   the sha256 of all four, then starts the fresh scorer agent with that prompt. It writes
    `ev243\verdicts-blind.json` (verdict, class, borderline, one-line reason per question). The
-   implementer adds a Progress-log line with its time and sha256 and **commits and pushes that line
-   before step 5**. The blind file's exact bytes go into the report json (`blind`). Citation check:
+   implementer adds a Progress-log line with its time, the blind file's sha256, and the prompt file
+   with its sha256 (plus the three input hashes), and **commits and pushes that line before step 5**. The blind file's exact bytes go into the report json (`blind`). Citation check:
    every cited chunk id is in its retrieved set and in the database; every code number-check flag is
    checked against its passage (real miss / false positive).
 5. **Comparison with #217.** Per question: #217 final and first-read verdicts
@@ -195,17 +218,24 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   with nothing saved for that question and no `report.json`. Resume rules (as #217; attempt N >= 2
   on the same commit, `--out .eval-runs\0243-real-N`, log `ev243\real-run-N.log`, same script and
   gates):
-  - (a) **Stop outside a model call** (traceback not from a provider request): same command, all 30
-    questions; answered questions are reused from the cache at 0 calls; `--max-calls` = 60 minus the
-    calls made.
+  - (a) **Stop outside a model call** (traceback not raised inside `answer_for` / `call_planner`):
+    same command, all 30 questions; answered questions are reused from the cache at 0 calls;
+    `--max-calls` = 60 minus the calls made.
   - (a') **`ProviderStop`** (402 balance, 429 rate limit, 401 key): the provider refused before any
     output, as #217's billing stop (TL decision issuecomment-7011133159, option ii). The refused
     request counts as 1 call with 0 output. Resume only after the coordinator confirms the top-up /
     wait; then as (a), and the refused question's call is made again.
-  - (b) **Stop raised by the answer request** (timeout, 400 / 500 / 503): that question's planner and
-    answer calls are counted; it is FAIL class i with the traceback quoted, and **never called
-    again**. Resume with `--questions` = every question of Q1-Q30 except the stopped one(s);
+  - (b) **Stop raised inside the answer call** (timeout, 400 / 500 / 503, or any other traceback
+    from inside `answer_for` after the request was sent: a paid output may have been produced and
+    lost, so calling it again would be a re-roll): that question's planner and answer calls are
+    counted; it is FAIL class i with the traceback quoted, and **never called again**. (A traceback
+    inside `call_planner` is caught by `RealRunner.plan` and saved as `failed_call`; should one ever
+    escape, it is treated the same way.) Resume with `--questions` = every question of Q1-Q30 except the stopped one(s);
     answered questions are reused at 0 calls; `--max-calls` = 2 x the questions not yet called.
+  - **Cap overflow goes to the TL.** If the calls needed exceed the cap of 60 (e.g. the seeded keys
+    miss, so 60 new calls are needed, and an (a') refusal adds a re-sent call), the implementer stops
+    and asks the TL for the extra call(s) before resuming; no question is left `NOT_EVALUATED` or
+    `cap` in the scored records.
   - Counting across attempts: per attempt, its **new** raw files (not reused copies) and, when it
     wrote no `report.json`, its log. The report and PR give calls per attempt and the total (<= 60).
   - **Scored records**: the last attempt's `report.json` plus, for each (b) stop, its log entry.
@@ -219,8 +249,14 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
 - [ ] Call count matches the saved raw outputs; 0 re-rolls: per attempt `meta.real_calls` (or the
       log) = new raw files that attempt wrote, except a (b) / (a') stop with a log entry and no file
       (named); reused = 6 (#242) + any resume reuse; total new calls <= 60.
-- [ ] Run settings logged: `head-log.txt` shows the pinned settings line, HEAD before and after equal,
-      code diff vs 739cb3c empty, `.env` removed.
+- [ ] Run settings logged: `head-log.txt` shows the pinned settings line (incl.
+      `db=localhost:5432/cee`), HEAD before and after equal, code diff vs 739cb3c empty, `.env` removed.
+- [ ] Same run frame as #217: every attempt's `report.json` has `meta.snapshot` = `corpus-2026-11-19`
+      and `meta.as_of` = `2026-11-17`, and holds exactly Q1-Q30 (minus any rule (b) stop).
+- [ ] Blind scorer isolated: `ev243\blind-in\` holds exactly the three allowlisted files; the
+      Progress-log blind line names `scorer-prompt.txt` with its sha256 and the input hashes.
+- [ ] Cost uses the rates and peak window of issuecomment-7030358880 (or the page's, if it renders
+      at report time, with differences noted); the report states which.
 - [ ] Blind hash committed before the comparison (Progress-log commit precedes any comparison
       commit; hash recomputable from the json's `blind`); second read of the borderline questions
       in PR review round 1, and the report's "Second read" table matches the reviewer's comment.
@@ -248,3 +284,14 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   exit 0; `cee-db` healthy). `git diff --stat f604ab2 739cb3c -- src scripts config` -> only
   `src/cee/config.py` (thinking default), so #242's R-on outputs are reusable. The bank has Q1-Q35,
   so every command lists Q1-Q30. 0 calls.
+- 2026-11-19 22:40 - plan review 1 (issuecomment-7030351022, CHANGES REQUESTED, reviewed d88ccdb).
+  TL decisions: reuse of #242's Q1 / Q22 / Q24 outputs accepted (plan keys recomputed by the
+  reviewer, match); fresh blind scorer accepted. Blocking fixed: (1) Cost rule cites the TL price
+  comment issuecomment-7030358880 (v4-pro rates peak / off-peak, peak 01:00-04:00 and 06:00-10:00 UTC
+  Mon-Fri excl. Chinese public holidays, report-time page check with the comment as fallback);
+  (2) scorer allowlist `ev243\blind-in\` (dump, `questions.yaml` at 739cb3c, `verdict-rule.txt`),
+  writes only `verdicts-blind.json`, prompt saved as `ev243\scorer-prompt.txt` with its sha256 logged
+  beside the blind hash. Non-blocking adopted: `db=localhost:5432/cee` in the settings line, checked
+  before the paid command, and a `meta.snapshot` / `as_of` acceptance check; cap overflow goes to
+  the TL; any traceback from inside `answer_for` after the request is rule (b), never re-called;
+  the reused calls' UTC offset taken from this machine. 0 calls.
