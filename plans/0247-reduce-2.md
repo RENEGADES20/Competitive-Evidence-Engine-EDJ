@@ -107,6 +107,18 @@ Entries to write (each quote read in the database at build; anything not stated 
 | BAC | advisor_headcount | bac_gwim_and_consumer | "total wealth advisors" | BAC-SUPP-2023Q4#2 |
 | SCHW | client_assets | schw_all_clients | "total client assets" | TODO-verify at build |
 
+Each entry also has `valid_from` (the period end of the document whose `quote` states the
+population, e.g. `2025-12-31` for `MS-SUPP-2025Q4#36`): the population statement is dated (review
+blocking 2c). `tests/test_metric_definitions.py` checks the quote is verbatim in `chunk_id` and that
+`valid_from` equals that document's `period_end` (or its `published_at` when it has none).
+
+**The population source is retrieved and cited** (review blocking 2a, 2b). The `populations` chunk ids
+of a firm join that firm's pins (section 2) for every sub-question of an aspect with a registered
+metric or a proxy aspect, under the same SQL filters, so whenever a derivation proposal can use an
+input, the chunk stating its population is in the cell's retrieved set (`plan.pools`). A population
+entry whose chunk did not reach the cell's pool (a filter dropped it) is treated as unregistered for
+that item: no key, so code never applies a population it cannot cite.
+
 **Carried through the map facts.** `Item.population: str = ""` (code-set, logged in `to_log`).
 `matrix.tag_populations(m)` runs first in `finish()`: each counting item of a firm cell gets the key of
 the one `populations` entry of its firm (BAC for MER, as `metric_definition`) whose `match` phrase is in
@@ -118,23 +130,35 @@ are unchanged.
 - both inputs have a population key and the keys are equal; else rejected with `why` =
   "populations differ: <numerator covers> (<chunk>) vs <denominator covers> (<chunk>)", or
   "population of <input> not registered";
-- neither value is approximate or a bound ("approximately", "about", "around", "nearly", "close to",
-  "more than", "over", "at least", "roughly", "~", ">", "<", "+" after a figure); else rejected with
-  "<input> is approximate".
+- neither value is approximate or a bound; else rejected with "<input> is approximate". The markers
+  are matched **next to the figure only** (review note 1): the item's `value` field, or the word or
+  words directly before the figure in its quote ("approximately", "about", "around", "nearly", "close
+  to", "more than", "over", "at least", "roughly", "~", ">", "<") and "+" or "K" directly after it.
+  A marker elsewhere in the quote ("increased over the prior year") does not count.
 Sum and difference keep today's rules plus the same population check. Rejected proposals stay on the
 cell (`ok: false`, `why`), as now.
 
 **What the answer says per firm.** For every cell with a derivation proposal (accepted or rejected),
-the reduce input shows the inputs with their `covers` text and chunk ids and, for a rejection, code's
-`why`. Prompt v5.1: "For each firm with a computation line, write one claim saying whether the figure is
-computable, citing both inputs." Code check `check_computability`: a claim with that cell id (or a
-sub-question id of the aspect, for the firm) citing every input chunk; missing -> code adds the claim
-in standard wording, cited to both inputs, flag `code_computability`:
+the reduce input shows the inputs, each with its population entry's own `quote`, the entry's chunk id
+and its `valid_from`, and, for a rejection, code's `why`. `covers` is a config label for logs and tests
+only; it never reaches an answer text. Prompt v5.1: "For each firm with a computation line, write one
+claim saying whether the figure is computable, citing both inputs and the population sources shown."
+Code check `check_computability`: a claim with that cell id (or a sub-question id of the aspect, for the
+firm) citing every input chunk and every population source chunk; missing -> code adds the claim in
+standard wording, flag `code_computability`, citing the two inputs **and** the population source
+chunks (all in `plan.pools`, so in the retrieved set):
 - `COMPUTED` = "<Firm>: <aspect>: computed by code from two figures that cover the same population:
-  <formula_text> (<period>)."
-- `NOT_COMPUTED` = "<Firm>: <aspect>: not computed: <why>."
-The values in both texts are the items' values as printed (the number check passes them; a computed
-value passes through the existing `computed` rule). A firm with no proposal keeps its cell gap.
+  <formula_text> (<period>). <source label>: \"<quote>\"" (one quoted source per distinct population
+  chunk).
+- `NOT_COMPUTED` = "<Firm>: <aspect>: not computed: the inputs cover different populations.
+  <numerator source label>: \"<quote>\" <denominator source label>: \"<quote>\"", or "...: not computed:
+  <input> is approximate." / "...: the population of <input> is not stated in the documents searched."
+- **Dated populations** (blocking 2c): when an input's period ends before its entry's `valid_from`, the
+  source label says the date: "per the 4Q2025 supplement note (dated 2025-12-31)"; the input keeps its
+  own period in the text.
+The values in both texts are the items' values as printed and the quotes are verbatim from their cited
+chunks (the number check and the quote check pass them; a computed value passes through the existing
+`computed` rule). A firm with no proposal keeps its cell gap.
 
 Expected on a 0-call re-derive of part 1's logged Q24 matrix (test fixture built from
 `ev247\real-reduce\report.json`): EDJ accepted (`edj_firm` both), MS rejected (all channels vs
@@ -147,15 +171,33 @@ and add on top of the sub-question budget):
 - **Per-period sub-search** (series aspects with asked periods, `matrix.asked_periods(question, as_of)`,
   moved to a shared helper so retrieval can call it): one FTS search per asked period with the
   sub-question's words and every SQL filter, plus a new hard filter on `documents.period_end` inside the
-  period (`fts.Query.period_range`, `filters_sql`), `PERIOD_K = 3` passages, `MAX_PER_DOC` 3. A period
+  period (`fts.Query.period_range`, `filters_sql`), `PERIOD_K = 3` passages, `MAX_PER_DOC` 3. Every
+  chunk kept so far is excluded **in the SQL pool, before the `PERIOD_K` cut** (review note 2; the
+  `exclude` set leaves the pool as in `fts.search` today), so the cut picks among new chunks only. A period
   with no document of that period end returns nothing (EDJ 2024Q4, 2026Q3). Expected for Q23 a1.EDJ:
   2025Q4 -> `EDJ-10K-2025#130`, `#142`, `#148`. Hits: `origin = "period"`, `part_id` = the sub-question.
-- **Registered-definition pin** (aspects with a registered `metric`): the firm's `metric_definitions`
-  entry `chunk_id` and its same-firm `see_also` ids (at most `PIN_MAX = 6`), fetched by ID under the
-  sub-question's entity / segment, window and date-range filters (so Q26's 90-day window drops them);
-  the doc-type scope is **not** applied to pinned ids (D1). Hits: `origin = "pinned"`. Expected: Q11 /
-  Q23 / Q24 a3 get `MS-SUPP-2020Q4#1/#3`, `MS-ADV1A-2026#1`, `SCHW-ADV1A-2026#1`, `SCHW-10K-2025#18`,
-  `BAC-SUPP-2023Q4#2`, `MER-ADV1A-2026#1` (via BAC), `EDJ-10K-2025#130/#148`, `RJF-10K-2025#228/#227`.
+- **Registered-definition pin** (aspects with a registered `metric`; plus the `populations` chunks,
+  section 1): the firm's `metric_definitions` entry `chunk_id`, its `see_also` ids and its
+  `populations` chunk ids (at most `PIN_MAX = 8`), fetched by ID under the sub-question's SQL filters:
+  entity / segment (so "same firm" means "passes the SQL entity filter": BAC ids pinned for MER only when
+  segment GWIM / Merrill; `BAC-DECK-2025-investor-day#13/#34`, segment NULL, are dropped), window and
+  date range (so Q26's 90-day window drops the RJF ids), and the doc-type scope **except the `adv`
+  exclusion** (D1, narrowed: the tier-4 exclusion stays for pinned ids too, so a trade `see_also` could
+  never enter a benchmark question). Hits: `origin = "pinned"`. Expected per question (review note 4):
+  - Q11 a1-a4 (all `advisor_headcount`): `MS-SUPP-2020Q4#1/#3`, `MS-ADV1A-2026#1` (and the other MS
+    `see_also` ids), `SCHW-ADV1A-2026#1`, `SCHW-10K-2025#18/#23`, `BAC-SUPP-2023Q4#2`,
+    `BAC-10K-2025#246`, `BAC-DECK-2025-investor-day#9`, `MER-ADV1A-2026#1`, `EDJ-10K-2025#130/#148`,
+    `EDJ-10Q-2026Q2#60`, `RJF-10K-2025#228/#227/#24`;
+  - Q23 a1 (`advisor_headcount`, series): the same ids, plus the period pass;
+  - Q24 a3 (`advisor_headcount`, proxy) the same ids; a2 (proxy, client assets) the `populations`
+    client-asset chunks (e.g. `MS-SUPP-2025Q4#36`, `EDJ-10Q-2026Q2#59`); a1 and a4 nothing;
+  - Q22 a1 (`net_new_assets`, series; no asked periods, "by quarter"): `EDJ-10Q-2026Q2#60`,
+    `EDJ-10K-2025#130`, `MS-10K-2025#166/#165`, `MS-SUPP-2025Q4#34`, `SCHW-10K-2025#119`,
+    `SCHW-MONTHLY-2026-01#8`, `BAC-10K-2025#249`, `BAC-SUPP-2025Q4#58`, `RJF-10K-2025#224`,
+    `RJF-SUPP-2025Q4#8` (each only if it passes the filters; a2 the definitions aspect, if registered);
+  - Q26 a7 / a8 (registered metrics, 90-day window): nothing passes the window; Q1, Q3, Q19: no
+    registered metric, nothing.
+  The exact lists come from the mock 35 and the 0-call count, and are written in the Progress log.
 - Both are added to `plan.pools[sq.id]` (the map's retrieved-set check) and logged per sub-question in
   `plan.searched` (`period_hits`, `pinned`). The eval's retrieval scoring includes them (they are
   retrieval); the record adds `added_chunk_ids` by origin.
@@ -166,7 +208,9 @@ and add on top of the sub-question budget):
 ## 3. Basis break inside a series (TL item 3)
 `matrix.basis_breaks(m)` (in `finish`, after `tag_populations`): for each holding cell of a `series`
 aspect or a registered-metric `fact` aspect, group its counting items by (normalised scope, population
-key). More than one group -> a code caveat (standard wording `BASIS_BREAK`): "<Firm> - <aspect>: the
+key). For a flow series (Q22 net new assets) every population key is `""` (populations cover only ratio
+inputs), so only the scope splits it (review note 5); the same scope at different periods is one
+group. More than one group -> a code caveat (standard wording `BASIS_BREAK`): "<Firm> - <aspect>: the
 figures cover different bases and are not one series: <whole firm: 2025Q2, 2025Q3, 2026Q2>; <U.S.:
 2025Q1, 2026Q1>; <Canada: 2025Q1, 2026Q1>. The break is flagged, not smoothed." The cell gets flag
 `basis_break`; the reduce input prints the caveat under the cell ("state each basis with its periods;
@@ -174,7 +218,11 @@ never join them"); the caveat is inserted by code like the comparability caveat.
 Q23 matrix: EDJ flagged; MS, RJF, MER as their items show.
 
 ## 4. Noise (TL item 4)
-- **Duplicate claims** (`reduce.dedupe_claims`, after `check_parts`, so part coverage is unchanged):
+- **Duplicate claims** (`reduce.dedupe_claims`, after `check_parts`; review note 6: after the dedupe
+  `check_comparisons` and `check_computability` run again on the reduced list, so a removed claim can
+  never take the comparison or computability claim away silently: if it did, the code gap / code claim
+  fires. Nothing else after the dedupe reads part coverage; the eval's `part_coverage` is computed on
+  the final answer):
   two claims citing the same chunk-id set are duplicates when their texts without the why-line and the
   "<Firm>: " prefix are equal after normalising, or when every figure of one is in the other and the
   word 5-gram overlap of the shorter with the longer is >= `fts.DUP_JACCARD` (0.6). The longer is
@@ -185,10 +233,12 @@ Q23 matrix: EDJ flagged; MS, RJF, MER as their items show.
 - **Gap rows only inside an aspect's firm scope** (Q19): `Aspect.asked_firms` (new, not in any cache
   key): the planner's validated subset before the home-firm "competitors kept" widening. `build_gaps`
   writes per-cell gaps only for cells whose firm is in `asked_firms` (when set) and for research cells
-  only when `asked_firms` is empty. Competitor cells of an aspect without a subset that hold nothing
-  (`not_found` / `not_disclosed`) are folded into one gap per aspect (D3): "Competitors (<names>) -
-  <aspect>: not found in the documents searched." A competitor cell that holds anything is shown as
-  now. Expected on part 1's Q19 matrix (0-call replay): about 16 gap rows instead of 58.
+  only when `asked_firms` is empty. Cells with `role == "competitor"` (set only through
+  `q.theme_peers` on a home-firm market question, planner.py `firm_scope`) of an aspect without a
+  subset that hold nothing (`not_found` / `not_disclosed`) are folded into one gap per aspect (D3):
+  "Competitors (<names>) - <aspect>: not found in the documents searched." A competitor cell that holds
+  anything is shown as now. `named` cells are never folded: on benchmark questions (Q11, Q22-Q24)
+  each firm keeps its own gap, the honest "which do not". Expected on part 1's Q19 matrix (0-call replay): about 16 gap rows instead of 58.
 - **Why-lines only for recency / window, with stated context**: prompt v5.1 keeps the why-line rule for
   recency aspects and window questions only and says "never on other items". The reduce input shows,
   for every item of a recency aspect or a window question, `context:` = the cited passage around the
@@ -199,7 +249,10 @@ Q23 matrix: EDJ flagged; MS, RJF, MER as their items show.
   - `why_line_restates`: the why sentence adds no content word or figure beyond the claim's own text
     (content words = lower-case words minus a stop list and the firm's names; restates when >= 80% of
     them and every figure are in the claim body) -> replaced with `WHY_UNSAID`, flag
-    `why_line_restated`, the model's sentence logged (D4).
+    `why_line_restated`, the model's sentence kept in the log (D4).
+  - Before the paid run (review note 7, TL D4): the 0-call replay of part 1's saved Q26 (and Q19, Q23)
+    reduce output through the new checks reports how many why-lines would be restated / removed; the
+    Q26 count goes in the Progress log and to the TL before the run.
 
 ## 5. Review items (TL item 5)
 - **Re-sort only recency items** (`order_newest_first`): with the question's own window, the whole
@@ -241,8 +294,9 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
   `tests/test_fts_window.py` (period filter), `tests/test_metric_definitions.py` (populations quotes),
   `tests/test_planner.py` (`asked_firms`), `tests/test_eval_run.py`, `tests/test_prompt.py`.
 - `specs/answer-citations.md`, `specs/retrieval.md`, `specs/filings.md` (the `populations` fields),
-  `docs/DECISIONS.md` (ADR-021 amendment, #247 part 2: populations in derivation, pinned definitions
-  across the doc-type scope (amends ADR-015's scope for registered ids only), per-period retrieval,
+  `docs/DECISIONS.md` (ADR-021 amendment, #247 part 2: populations in derivation with dated, cited
+  sources, pinned definitions past the `adv` exclusion only (amends ADR-015 for registered ids),
+  per-period retrieval,
   basis-break caveat, gap scope; **ADR text, so the PR is escalated to the TL for the merge**),
   `docs/RUN.md`.
 - `docs/results/0247-reduce-2-check.md`, `docs/results/0247b-raw/` (raw records of the real run).
@@ -256,41 +310,61 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
    `diag_series.py`: Q23 a1.EDJ now holds `EDJ-10K-2025#130`; Q26's lists unchanged.
 3. `basis_breaks`, gap scope and competitor fold; tests; 0-call replay of part 1's Q19 and Q23 matrices
    (gap count, the EDJ break).
-4. Reduce v5.1: rendering, `check_computability`, why-line checks, dedupe, recency-only re-sort; tests;
-   0-call replay of part 1's eight saved reduce outputs through the new post-call code (duplicates,
-   why-lines removed / restated, re-sort counts), reported, nothing re-run.
+4. Reduce v5.1: rendering, `check_computability`, why-line checks, dedupe (then the comparison and
+   computability checks again), recency-only re-sort; tests; 0-call replay of part 1's eight saved
+   reduce outputs through the new post-call code (duplicates, why-lines removed / restated, re-sort
+   counts), reported, nothing re-run; Q26's restated count to the Progress log.
 5. ask / eval / app wiring, chips; tests; full pytest.
 6. Mock 35-question run against main c4ba303 (section 8).
 7. verify-cee; specs, ADR amendment, RUN.md.
-8. Seed the cache, 0-call count, the cap in the Progress log; the real run (section 9); raw records
+8. Seed the cache, 0-call count (with per-call passages and tokens), the cap in the Progress log; the
+   real run of the eight questions (section 9); raw records
    saved; blind-in prepared; **stop before scoring** (the TL starts the blind scorer).
 9. After the TL's scoring: `docs/results/0247-reduce-2-check.md`, `/finish-task`, PR "Part of #247" or
-   "Closes #247" as the verdicts show, `gh pr checks` green.
+   "Closes #247" only if all eight pass blind (section Acceptance), `gh pr checks` green.
 
 ## Tests (0 real calls; `tests/conftest.py` blocks every client)
 - **Populations**: RJF-shaped (AUA incl. RCS / advisors excl. RCS) -> rejected, `why` names both;
   MS total client assets / WM representatives -> rejected; MS advisor-led / WM representatives at one
   period -> accepted; EDJ firm / firm -> accepted; EDJ firm assets / U.S. count -> rejected; an input
   with no matching entry -> "not registered"; ">15K", "more than 20,000", "approximately 9,000" ->
-  "approximate"; two entries matching one item -> no key. Every `populations` quote verbatim in its
-  chunk (database test, skipped without one).
+  "approximate"; **negative**: an EDJ-shaped quote "... $2,647 ... increased over the prior year ..."
+  is not approximate and the ratio is accepted (review note 1); two entries matching one item -> no
+  key; an entry whose chunk is not in the cell's pool -> no key. Every `populations` quote verbatim in
+  its chunk and `valid_from` equal to its document's period end (database test, skipped without one).
 - **Computability**: a matrix with one accepted and one rejected proposal and a fake reduce output
-  without their claims -> two code claims (`COMPUTED`, `NOT_COMPUTED`) citing both inputs, flagged
-  `code_computability`, no `number_not_found`; with the model's own claims citing both -> none added.
+  without their claims -> two code claims (`COMPUTED`, `NOT_COMPUTED`) citing both inputs and the
+  population source chunks, quoting the entries' `quote` verbatim (no `covers` text), flagged
+  `code_computability`, no `number_not_found`, no `quote_not_found`; an input dated before its entry's
+  `valid_from` -> the dated source label; with the model's own claims citing inputs and sources -> none
+  added. **Citation test** (blocking 2d): through `search_subquestions` with fake searches and a fake
+  pin fetch, every chunk id a code computability claim cites is in `plan.pools` of its sub-question and
+  the claim passes `check_citations` (no `unmatched_citation`, no `outside_matrix`).
 - **Per-period search**: a Q23-shaped fake search: one call per asked period with `period_range`, the
   sub-question's filters kept, kept chunks excluded, main lists unchanged; a question without asked
   periods or a window question -> no period call. `filters_sql` emits the `period_end` clause.
-- **Pins**: registered ids fetched for registered-metric aspects only, same-firm `see_also` only, BAC
-  entry for MER, window and entity filters applied (a Q26-shaped window drops them), doc-type scope not
-  applied, already-kept ids not repeated, `plan.pools` includes them (the map accepts their citation).
+- **Pins**: registered ids fetched for registered-metric aspects only (and population ids for
+  registered-metric or proxy aspects); only ids passing the SQL entity / segment filter (a MER
+  sub-question gets BAC ids with segment GWIM, not segment NULL ones); window filter applied (a
+  Q26-shaped window drops them); the `adv` exclusion not applied, the tier-4 exclusion applied (a trade
+  `see_also` id on a benchmark question is dropped); already-kept ids not repeated; `plan.pools`
+  includes them (the map accepts their citation).
+- **Per-period exclusion before the cut**: a fake pool whose top three for a period are already kept ->
+  the period search returns the next three (the EDJ #130 case).
 - **Basis break**: Q23 EDJ-shaped items (whole firm, U.S., Canada) -> one caveat listing each basis
-  with its periods, `basis_break` on the cell; one basis -> none; a recency aspect -> none.
+  with its periods, `basis_break` on the cell; one basis -> none; a Q22-shaped flow series with the
+  same scope at different periods (population keys all `""`) -> none; MS Wealth Management vs firm
+  scope in one cell -> a caveat; a recency aspect -> none.
 - **Gap scope**: Q19-shaped plan (`asked_firms = [EDJ]` widened by the home-firm rule) -> no gaps for
-  competitor or research cells of those aspects; aspects without a subset -> one competitors gap, named
-  and research cells as before; a competitor cell holding a different quantity keeps its own gap.
-  `validate_plan` records `asked_firms`.
+  competitor or research cells of those aspects; aspects without a subset -> one competitors gap for the
+  `role == "competitor"` cells, named and research cells as before; a competitor cell holding a
+  different quantity keeps its own gap. **Q11 / Q23 / Q24-shaped** matrices (all cells `named`, no
+  theme peers) -> one gap per firm per empty cell, nothing folded. `validate_plan` records
+  `asked_firms`.
 - **Dedupe**: Q19-shaped exact repeats -> one kept; Q26-shaped subsumed claims -> the longer kept;
-  different chunk sets with equal text -> both kept; part coverage unchanged.
+  different chunk sets with equal text -> both kept; part coverage unchanged; a duplicate pair where the
+  removed one was the comparison claim -> the comparison check re-runs and the kept claim (same aspect)
+  still counts, or the code gap fires; the same for a computability claim.
 - **Why-lines**: a non-recency claim with a why-line -> removed, flagged; a restating why -> replaced
   with `WHY_UNSAID`, flagged, logged; a why with a new fact or reason -> kept; the context line is
   rendered only for recency / window items and is cut at 600 characters.
@@ -312,16 +386,25 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
       claims; why-lines only on a12; the other aspects keep their order.
 - [ ] Q26 (real, regression): blind PASS kept; why-lines carry stated context (0 `why_line_restated`
       left unreplaced), newest first, no duplicates.
+- [ ] Q22 (real, regression; issue acceptance "Q1, Q3, Q22 keep PASS"): blind PASS kept; pinned
+      definitions per firm; no must-not chunk (`MS-PR-2026-04-15-01#15`, `SCHW-10Q-2026Q2#56`) cited as
+      a fact; every basis-break caveat it gets listed and checked against its items.
+- [ ] Q1 and Q3 (real, regression): blind PASS kept under v5.1 (maps reused; only the reduce changes).
+- [ ] The outcome is the issue's acceptance: "Closes #247" only if every target and every regression
+      question passes blind; otherwise "Part of #247" with the open items. No regression check is
+      dropped.
 - [ ] Tests listed above; 0 real calls in tests.
 - [ ] Mock 35: every main chunk list identical to main; only `pinned` / `period` additions, each listed;
       recall not lower; forbidden hits from additions reported; mock answers pass every code check.
 - [ ] pytest, verify-cee and `gh pr checks` green.
-- [ ] ADR-021 amendment in the PR -> escalated to the TL for the merge.
+- [ ] ADR-015 / ADR-021 amendments in the PR -> escalated to the TL for the merge.
 
 ## 8. Mock 35-question check (0 calls)
 `eval_run.py` (mock) at the branch head vs main c4ba303 (a detached worktree): per question every main
 sub-question chunk list identical; additions only with origin `pinned` / `period` (listed per question;
-expected on questions whose rule plan has a registered metric or a series with asked periods); recall
+expected on questions whose rule plan has a registered metric or a series with asked periods: Q11,
+Q22 (net new assets: its five firms' NNA definitions pinned, review blocking 1), Q23, Q24, Q28 and any
+other with "advisor headcount" / "net new assets" in its text; none on Q1, Q3, Q19, Q26); recall
 @pool / @final not lower; forbidden / `must_not_return` hits among the additions reported; refusal 8/8
 unchanged; mock answers: 0 `outside_matrix`, 0 `part_gap`, 0 comparison claims missing, 0 why-lines
 missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\mock-*`.
@@ -329,66 +412,83 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
 ## 9. Real check (last, after every mock check passes)
 - **Why the mock cannot show it**: whether v5.1 states per-firm computability and basis breaks in words
   a strategist would forward, writes why-lines from the stated context, and whether the added passages
-  give Q11 / Q23 their missing points needs the real model; Q19 and Q26 guard against regressions.
-- **Questions, one run each**: Q11, Q23, Q24 (targets), Q19, Q26 (regression). No re-rolls: an invalid
-  output, a failed call or a wrong answer is a finding. A ProviderStop or a 400 stops the run (the
-  part-1 `allow()` rule); the rest waits for the TL.
+  give Q11 / Q23 their missing points needs the real model. Q19, Q26, Q22, Q1 and Q3 guard against
+  regressions: v5.1 changes every reduce, and Q22's map inputs change through the definition pins
+  (review blocking 1, TL ruling).
+- **Questions, one run each**: Q11, Q23, Q24 (targets); Q19, Q26, Q22, Q1, Q3 (regression; the issue's
+  "Q1, Q3, Q22 keep PASS" and part 1's Q19 / Q26 PASS). No re-rolls: an invalid output, a failed call or
+  a wrong answer is a finding. A ProviderStop or a 400 stops the run (the part-1 `allow()` rule); the
+  rest waits for the TL.
 - **Settings** (pinned and printed by the wrapper `ev247b\run-real.ps1` / `.sh`): `LLM_PROVIDER=deepseek`,
   `deepseek-v4-pro`, `/beta` strict tools, thinking on, `MAP=on`, `MAP_CONCURRENCY=6`,
   `SUBQUESTION_TOKENS=40000`, plan-v3.1, extract-v1.1, prompt v5.1, request version
   `ds-strict-1-think-on-a64000-p64000`, `--as-of 2026-11-17`, snapshot `corpus-2026-11-19`. Code gate:
   `git status` clean, `src scripts config` identical to the mock-run sha. `.env` copied in from the main
   repo inside `try` and removed in `finally` (trap on Mac); never read or printed.
-- **Reuse**: the five plan-v3.1 records (`docs/results/0246-map-raw/Q{11,19,23,24,26}-plan-*`) and every
-  part-1 map / re-map record (`docs/results/0247-raw/`) are seeded into the worktree's `.eval-runs/cache`.
-  Planner: 0 calls. Map: Q19 and Q26 inputs do not change (no registered metric outside a window, no
-  series), so their map keys should match part 1 (0 calls); Q11, Q23, Q24 inputs change (pins, periods),
-  so they are mapped again. Reduce: v5.1 changes every key: 5 calls.
+- **Reuse** (saved plans and maps wherever the inputs are unchanged): the plan-v3.1 records
+  (`docs/results/0246-map-raw/Q{11,19,23,24,26}-plan-*`, `docs/results/0247-raw/Q{1,3,22}-plan-*`) and
+  every part-1 map / re-map record (`docs/results/0247-raw/`) are seeded into the worktree's
+  `.eval-runs/cache`. Planner: 0 calls (the plan key holds `metric_keys()`, unchanged: populations are a
+  separate list). Map: Q19, Q26, Q1 and Q3 inputs do not change (no registered metric outside a window,
+  no series with asked periods), so their map keys should match part 1 (0 calls); Q11, Q23, Q24 and Q22
+  inputs change (pins, periods), so they are mapped again. Reduce: v5.1 changes every key: 8 calls.
 - **Expected calls** (upper bounds; re-extraction bound = firms):
   | Q | Planner | Map round 1 | Re-extraction (at most) | Reduce | At most |
   |---|---|---|---|---|---|
   | Q11 | 0 | 5 | 5 | 1 | 11 |
   | Q23 | 0 | 5 | 5 | 1 | 11 |
   | Q24 | 0 | 5 | 5 | 1 | 11 |
+  | Q22 | 0 | 5 | 5 | 1 | 11 |
   | Q19 | 0 | 0 (4 if its key changed) | 0 (5) | 1 | 1 (10) |
   | Q26 | 0 | 0 (1) | 0 (1) | 1 | 1 (3) |
-  | **Total** | **0** | | | **5** | **35 (46 if no map record is reused)** |
-- **0-call count first**: `eval_run.py --real --map-only --max-calls 0 --questions Q11,Q23,Q24,Q19,Q26
-  --as-of 2026-11-17 --out ...\ev247b\real-count` (seeded cache, no key in the environment): prints the
-  exact round-1 list and which records are reused. The run's cap = round 1 + the re-extraction bound of
-  those firms + 5, written in the Progress log before the run; if it exceeds 46 the plan is amended
-  first.
-- **Run**: `eval_run.py --real --max-calls <cap> --questions Q11,Q23,Q24,Q19,Q26 --as-of 2026-11-17
-  --out D:\ALLPROJECTS\EDJ\cache\ev247b\real-run` in the background. Mac: the same with
+  | Q1 | 0 | 0 (map reused) | 0 | 1 | 1 |
+  | Q3 | 0 | 0 (map reused) | 0 | 1 | 1 |
+  | **Total** | **0** | | | **8** | **48 with the expected reuse; ceiling 59** |
+  The ceiling 59 (TL ruling) covers Q19 and Q26 being re-mapped too; it assumes the Q1 and Q3 maps are
+  reused. If the count shows a Q1 or Q3 map record not reused, or a total above 59, the plan is amended
+  before any call.
+- **0-call count first**: `eval_run.py --real --map-only --max-calls 0 --questions
+  Q11,Q23,Q24,Q22,Q19,Q26,Q1,Q3 --as-of 2026-11-17 --out ...\ev247b\real-count` (seeded cache, no key in
+  the environment): prints the exact round-1 list and which records are reused, and, per map call, the
+  passage count and estimated input tokens against the per-call input limit (`extract.input_limit`;
+  review note 3: Q23 a1.MS already keeps 66 passages and a1.RJF 68; eight periods x 3 plus pins add
+  about 30 per firm). The run's cap = round 1 + the re-extraction bound of those firms + 8, written in
+  the Progress log with the per-firm counts before the run; a call over the input limit is a finding
+  reported before the run (never trimmed).
+- **Before the run (0 calls)**: the replay of part 1's saved reduce outputs (step 4) gives the
+  `why_line_restated` / `why_line_removed` counts for Q26, Q19 and Q23 and the duplicates per question;
+  Q26's count is written in the Progress log and reported to the TL (TL D4, review note 7).
+- **Run**: `eval_run.py --real --max-calls <cap> --questions Q11,Q23,Q24,Q22,Q19,Q26,Q1,Q3 --as-of
+  2026-11-17 --out D:\ALLPROJECTS\EDJ\cache\ev247b\real-run` in the background. Mac: the same with
   `.venv/bin/python` and `../cache/ev247b/...`. Raw records copied to `docs/results/0247b-raw/`.
 - **Stop before scoring**: prepare `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in\` as part 1 (an answers dump
-  of the five answers, the five questions from `evals/questions.yaml`, part 1's verdict rule with the
+  of the eight answers, the eight questions from `evals/questions.yaml`, part 1's verdict rule with the
   Q24 superseded behavior line) and `blind-in-hashes.txt`; report to the TL, who starts a fresh blind
-  scorer. Baseline: part 1 blind (Q19, Q26 PASS; Q11, Q23, Q24 FAIL).
+  scorer. Baseline: part 1 blind (Q1, Q3, Q19, Q22, Q26 PASS; Q11, Q23, Q24 FAIL).
 - **Reported** (in the check doc and the PR): per question the matrix summary, the added passages by
   origin, the derivations (accepted / rejected and why), basis breaks, gap rows before / after,
   duplicates removed, why-lines removed / restated, calls by type, tokens, wall time, cost with the
   per-1M rates and their source (as part 1).
 
-## Decisions for the plan reviewer / TL
-- **D1 - Pinned definitions bypass the doc-type scope** (not the window, entity or segment filters).
-  Recommended: the registered ids are curated by C1 for exactly these questions (SCHW's only registered
-  figure is its Form ADV Part 1A). Alternative: honour the scope; then SCHW / MS / MER Form ADV figures
-  stay out and only filing chunks are pinned.
-- **D2 - Trade press stays out of benchmark questions.** The MS "close to 15,000" figures are not
-  brought in (rounded, tier 4, ADR-015). Alternative: a tier-4 fallback search for a firm whose series
-  covers no asked period, its items forced adjacent and never a derivation input.
-- **D3 - Fold empty competitor cells into one gap per aspect.** Beyond the TL's minimum (no gaps
-  outside the aspect's subset); recommended for Q19's a1-a6 noise. Alternative: per-cell gaps kept for
-  aspects without a subset.
-- **D4 - A restating why-line is replaced by code** with `WHY_UNSAID` (flagged, logged). Alternative:
-  flag only.
-- **D5 - Computability claims added by code when the reduce omits them** (standard wording, cited).
-  Alternative: a gap ("No claim states whether <Firm>'s figure is computable") as for comparisons.
+## Decisions (TL rulings on review round 1, issuecomment-7037522138)
+- **D1 - Pins bypass only the `adv` exclusion** (narrowed): the tier-4 exclusion stays for pinned ids;
+  window, date range, entity and segment filters apply; "same firm" means the chunk passes the SQL
+  entity filter. ADR-015 amendment, escalated to the TL.
+- **D2 - Trade press stays out of benchmark questions.** MS's answer is the last firm-filed count
+  (4Q2020), the Form ADV figure as adjacent, and the named gap.
+- **D3 - Fold empty competitor cells** into one gap per aspect, for `role == "competitor"` cells only;
+  `named` cells on Q11 / Q22-Q24 keep one gap per firm (tested).
+- **D4 - A restating why-line is replaced by code** with `WHY_UNSAID`, the model's sentence kept in the
+  log; Q26's restated count from the 0-call replay reported before the paid run.
+- **D5 - Computability claims added by code when the reduce omits them**, citing the inputs and the
+  population sources and quoting the sources (blocking 2).
+- The ADR-015 / ADR-021 amendments in the PR are escalated to the TL for the merge.
 
 ## Risks
-- Pins and periods add passages: map inputs grow (Q23 up to ~120 passages over five firms); within the
-  input limit checked per call; cost reported.
+- Pins and periods add passages: about 30 more per firm on Q23 (on top of 60-70 for MS / RJF / MER);
+  the 0-call count gives every call's passages and tokens against the input limit before the run;
+  cost reported.
+- Q22's pins and basis-break caveats can change a passing answer; it is in the real run for that reason.
 - Population matching by phrase can miss an item worded differently: it then reads as unregistered and
   the ratio is refused (safe side); the 0-call re-derive and the real run report every refusal reason.
 - The restating test is lexical; a why sentence with one new word passes. The scorer judges the rest.
@@ -402,3 +502,14 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   4Q2020, the later figures are tier-4 trade press and Form ADV (both outside the benchmark scope);
   Q24's two inconsistent ratios trace to equal scope strings over different populations; Q19's 58 gap
   rows come from the home-firm widening of EDJ-only aspects.
+- 2026-11-20 - plan review round 1: PLAN CHANGES REQUESTED (issuecomment-7037522138), 2 blocking, 7
+  non-blocking; TL rulings adopted in full. Blocking 1: Q22, Q1, Q3 added to the real run as regression
+  questions (saved plans and maps reused where inputs are unchanged), acceptance "Q1, Q3, Q22 blind PASS
+  kept", "Closes #247" only if all eight pass; ceiling 59, exact cap from the 0-call count. Blocking 2:
+  population chunks pinned with the definitions, `valid_from` per entry, computability claims cite and
+  quote the population sources (no `covers` text in answers), dated labels for older inputs, a test
+  that code claims cite only `plan.pools` chunks. Notes 1-7: approximate markers next to the figure
+  only (negative test), kept chunks excluded before the period cut, per-call input size from the count,
+  pinned aspects named per question, `basis_breaks` on flow series, comparison / computability checks
+  re-run after the dedupe, Q26 restated count reported before the run. D1 narrowed to the `adv`
+  exclusion; D2-D5 as ruled.
