@@ -591,3 +591,92 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   27 calls, about $1.38.** The wrapper's output folder variable was shadowed, so the retry overwrote
   `ev247b\real-run\report.json`; the eight-question report was rebuilt with 0 calls (`ev247b\real-run-final`),
   the seven other answers identical. Blind inputs rebuilt with Q3's answer; hashes updated. No code change.
+
+## Revision after scoring (TL, after blind 5/8; plan amended before any code)
+Blind part 2: Q1, Q3 PASS; Q19, Q22, Q24 PASS (borderline); Q26 FAIL (s, borderline); Q11, Q23 FAIL. Q24
+moved FAIL -> PASS, **Q26 regressed PASS -> FAIL**: under the acceptance this PR does not merge with it.
+
+**R1 - Q26 why-lines (the regression).** ADR-021 rule 5 allows a why-line that is either the source's own
+stated context or verifiable factual background with a citation. v5.1 told the reduce to write "the source
+does not say" whenever the item's own context gave no reason; the model did so on 11 of 31 items (8 of them
+from one article, `RJF-TRADE-2026-10-29-WM-01#1`), and code replaced none (`why_line_restated` 0).
+**Why the 0-call replay showed 27 replacements and the run 0**: the replay ran part 1's v5 output (restating
+why-lines) through the new check; v5.1's own output had no restating lines. Its 11 "does not say" lines were
+written by the model, and the check leaves those alone. Change (prompt v5.2, `REDUCE_VERSION = "v5.2"`):
+- The why sentence is either what the item's own passage says about why it matters, or factual background
+  from another passage in the matrix (same firm or the same theme: an earlier period's figure, a stated
+  target, a firm statement on the same subject), cited by adding its chunk id to the claim. "The source does
+  not say" only when no passage in the matrix gives either; never the default.
+- The reduce input lists, under each recency / window item, up to 3 "related" matrix items of the same firm
+  (or research row) sharing content words with it (chunk ids and one-line text), so the model can cite
+  background.
+- Code (`clean_why_lines`): a restating why-line is replaced with "the source does not say" **only** when the
+  claim cites nothing besides the item's own chunk(s); a why-line citing an extra chunk is kept (its figures
+  go through the number check over all cited chunks). Code never writes "does not say" otherwise. A new count
+  `why_line_unsaid` (model-written) is logged next to `why_line_restated`.
+- Tests: a Q26-shaped item whose own passage has no reason, with a related item in the matrix -> a fake
+  output citing the related chunk passes with no flag; a restatement citing only its own chunk is replaced;
+  one citing an extra chunk is kept; the related-items lines are rendered for recency / window items only.
+
+**R2 - Finding 1 (Q24 RJF reason) and EDJ "definition unverified".**
+- `tag_populations`: when no match phrase stands before the figure, the whole quote and the item text are
+  read (the RJF 8,943 item quotes "We had 8,943 employee and independent contractor financial advisors ..."),
+  so the item gets `rjf_advisors_excl_rcs` and the refusal reads "populations differ", quoting
+  `RJF-10K-2025#228`. Test with that quote.
+- EDJ: `derive()` marks a derived cell `definition_unverified`, and `mark_comparability` marks the ratio
+  aspect `unverified`, because the ratio aspect itself has no registered `metric` (EDJ's registered entries
+  are for the inputs, not the ratio). Change: a derived cell whose two inputs carry registered populations is
+  not `definition_unverified`, and the aspect mark is `none` when every derived cell is so (the computation
+  claim already quotes both population sources). Test.
+
+**R3 - Finding 2 (basis break from items with no population).** In a cell where some items carry a
+population, an item without one joins the group of its scope when that scope already has a group, and counts
+as a basis of its own only when it is a dated series point (`period` set) under another scope. Q23 RJF: the
+employee / independent split items join "whole firm"; the undated "approximately 9,000" (PCG) and FID 940
+items make no basis -> no caveat. EDJ U.S. 1Q26 (dated, scope U.S.) keeps the EDJ break. Flow series (no
+population anywhere) unchanged. Tests.
+
+**R4 - Finding 3 and Q19 gap contradictions.** `check_comparisons` adds `COMPARISON_MISSING` only when that
+aspect has no such gap yet (the re-check after the dedupe never doubles it). A normative comparison aspect
+(its text is normative) is covered by the hand-off sentence in an `answer_with_boundary` answer. Gap
+contradictions: `place_gaps` drops a model gap (logged as `gap_contradicts_claim`) whose part id is a cell that
+holds, or an aspect with `asked_firms` whose asked firms' cells all hold (the Q19 a7-a12 lines "Morgan
+Stanley, Schwab, Merrill, Raymond James and Industry research - how Edward Jones management describes ...:
+not found"). Tests.
+
+**R5 - Q22 (non-blocking): definition wording across one firm's filings.** For a registered-metric aspect,
+when one firm's items quote definitions (`definition`) that differ after normalising, from different
+documents, code adds the caveat `DEFINITION_CHANGED` = "<Firm> - <metric>: the definition wording differs
+between <doc A> ('<cut 160>') and <doc B> ('<cut 160>'); figures are listed as each document states them."
+(EDJ net new assets: the 10-K 2025 without "including fees and commissions", the 2026 10-Qs with it.) Test.
+
+**Not changed (findings, TL item 3): Q11 and Q23.** Classification with 0 calls (SQL on `cee`):
+- Corpus gaps (to the NEXT list; they do not block this PR):
+  - MS advisor count after 4Q2020: 0 count lines in every MS 10-K, 10-Q, supplement and press release with a
+    period end from 2024Q4 (`MS-SUPP-2025Q4` .. `MS-SUPP-2026Q3` have no "Wealth Management
+    representatives" line); later figures exist only as tier-4 trade press and Form ADV (pinned, adjacent).
+  - RJF quarterly headcount: the only counts with a period end in 2024Q4-2026Q3 are the FY2025 10-K (8,943;
+    split 3,878 / 5,065; `RJF-10K-2025#24`, `#227`) and the 3Q25 call (8,943); trade press says RJF "no
+    longer reports advisor headcount" (tier 4).
+  - Merrill / BAC count after 4Q2023: only award lists and the investor-day ">15K Wealth Advisors" (3Q25,
+    approximate); no count in BAC 10-K, 10-Q, supplements or press releases 2024-2026.
+  - EDJ 3Q26 10-Q not in the corpus (the 2026Q3 gap).
+  - Q11 definitions: MS and EDJ publish no written definition; BAC's latest is the 2023 supplement footnote;
+    Schwab publishes no advisor count (its registered figure is Form ADV).
+- Answer problems (not corpus): Q11 "differences not named" (no comparison aspect in the saved plan; the
+  comparability caveat lists the definitions cut at 160 characters) and Schwab shown as a gap rather than "no
+  count published; the closest firm-filed figure is Form ADV"; Q23 no plain statement per firm of where its
+  series stops. Candidates for a follow-up issue; not in this revision.
+
+**Real re-check (after every mock check passes).** New reduce calls only for **Q26, Q24, Q19, Q22**, one run
+each; plans and maps reused (the revision changes no retrieval and no map prompt). 0-call count with the
+current code (`ev247b\recheck-count`, `--max-calls 0`, no key): all 4 plans and all 20 map / re-extraction
+records reused, 0 calls; the reduce keys change with v5.2 and the rendered matrix. **Bound: 4 calls (4
+reduce; 0 planner, 0 map, 0 re-extraction).** The count is repeated after the build; any other call means
+the plan is amended first. Q1, Q3, Q11 and Q23 keep their part-2 answers (their reduce is not re-run; their
+verdicts stand). A fresh blind scorer then scores Q19, Q22, Q24, Q26 (inputs in `ev247b\blind-in-r2\`).
+Acceptance for the merge: Q26 back to PASS; Q19, Q22, Q24 stay PASS; Q11 and Q23 stay open as findings
+(corpus gaps to NEXT).
+
+- 2026-11-20 - blind part 2: 5/8 (hash fbde54a7... committed alone in 2cfd92b; table in b025cf6). Revision
+  after scoring written (R1-R5, Q11 / Q23 classification, re-check bound 4); no code yet.
