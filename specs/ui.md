@@ -28,11 +28,28 @@ Page "Ask"
   while answering (after "Ask" is clicked, before the answer shows):
           a progress bar plus a live step trace saying what the system is doing now, e.g.
             Reading the question: firms MS, EDJ; mode compare; window last 4 quarters
-            Planning the search (anthropic, one call): 2 parts: p1 MS; p2 EDJ
-            Searching the corpus: 14 passages from 6 documents in 2 parts
-            Asking the model (anthropic, one call)   | or: No passages found, no model call
+            Planning the search (anthropic, one call): 2 aspects x 2 firms = 4 sub-questions: a1.MS; a2.MS; a1.EDJ; a2.EDJ
+            Searching the corpus: 14 passages from 6 documents in 4 sub-questions
+            Extracting per firm (deepseek, 2 calls in parallel, 1 re-searched, 1 re-extraction):
+              4 cells: 3 fact, 1 not found; behavior by code: answer   (#246; on by default since #247)
+              | with MAP=off: Map step off (MAP=off): no extraction calls; legacy single answer call
+            Asking the model to write the answer from the evidence matrix (deepseek, one call)
+              | or: No model call: the answer is built by code (refuse | incomplete | answer_with_boundary)
+              | or: No passages found: no model call
             Checking citations: 9 matched, 1 flagged
             Adding caveats and gaps
+          #247: the behavior header gains "Incomplete" (an extraction failed and no firm holds the asked
+          figure); the incomplete note shows as a warning above the claims on any behavior (also a
+          boundary answer); the reduce step's flags show as chips with plain labels (cited outside the
+          evidence matrix, computed by code from cited inputs, no why-it-might-matter line, an asked
+          figure shown as adjacent, a different quantity shown as a claim); citation chips link
+          corrective re-search passages too (they are part of the answer's passages). With an Ask-page
+          date filter alone the answer keeps its aspect-by-firm order (newest first and the why-line
+          check apply only to the question's own time window or a recency aspect).
+          #247 part 2: three more chips: "written by code: computable or not, with the population
+          sources" (a per-firm computation claim code added), "why-line removed (not a recency item)"
+          and "why-line replaced: it restated the item". Without a time window only the recency
+          items move newest first, inside their own slots; the other aspects keep their order.
           each step reports what the pipeline really did (counts, filters, provider), never
           invented "reasoning" text; the trace stays readable (collapsed) after the answer
 
@@ -56,9 +73,14 @@ Page "Coverage"
 - Coverage page shows thin areas for all five firms and themes.
 - Feedback writes a row to `query_feedback` linked to the `query_log` row.
 - After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
-  pipeline stages (resolve, plan (#214, ADR-020), retrieve, model call or skip, citation check, caveats/gaps). Each
+  pipeline stages (#248, ADR-021): reading the question, decompose (the planner, #214 / #245),
+  search N sub-questions, extract from k firms (the map, #246), re-search (corrective re-search and
+  re-extraction, #246), synthesize (the reduce call, or the answer built by code, #247), citation
+  check, caveats/gaps, saving the query. Each
   step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
-  The trace adds no extra LLM call (it reports the planner call and the answer call; at most 2 per question, ADR-020).
+  The trace adds no extra LLM call (it reports the planner call, the map calls and the reduce call;
+  calls follow the decomposition, ADR-021 rule 7). The plan
+  line lists the sub-question decomposition (#245, ADR-021 rule 6).
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

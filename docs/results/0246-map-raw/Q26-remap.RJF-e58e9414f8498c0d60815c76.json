@@ -1,0 +1,48 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1",
+  "call_id": "remap.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a3.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-09-02-IN-01#3"
+  ],
+  "at": "2026-11-20T00:53:51.603576",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2071,
+    "output_tokens": 620,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 919,
+    "reasoning_tokens": 496,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 10.52,
+  "tokens_per_s": 58.94,
+  "reasoning_content": "We need answer sub-question a3.RJF recency: Recent executive, leadership and personnel changes announced by the firm. Firm Raymond James Financial. We have one passage about NewEdge Wealth opening office, hires team from Bank of America. But is NewEdge related to Raymond James? NewEdge Capital Group... Is that a Raymond James firm? Hmm. The passage says NewEdge Capital Group said its NewEdge Wealth division welcomed a four-person team. Does it mention Raymond James? No. But it was found for sub-question, chunk id RJF-TRADE... source \"RJF trade\". But content doesn't mention Raymond James. Need use only passages. We must not use outside knowledge. The question asks about Raymond James. This passage is about NewEdge, not Raymond James. Does it state Raymond James? No. So likely not_found or different_quantity? Need determine. The sub-question asks \"Recent executive, leadership and personnel changes announced by the firm\" for Raymond James. Passage is about NewEdge Capital Group/NewEdge Wealth personnel additions, not Raymond James. It says nothing about Raymond James. Is NewEdge a subsidiary of Raymond James? Passage doesn't say. So not_found: passages say nothing about it for Raymond James. But wait, maybe NewEdge is part of Raymond James? The chunk id says RJF-TRADE. But content doesn't state. We cannot use outside knowledge. The instruction says never use what you know from elsewhere. So label not_found. But the passage does say personnel changes by NewEdge, a different firm. Could be different_quantity? No, different_quantity is about a different related quantity for same firm, not a different firm. The prompt: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company...)\" Not applicable. Could be not_found.\n\nNeed return exactly one cell. Cell has subquestion_id a3.RJF, label, items (empty if not_found?), differs_because \"\", reason. derivation operation \"\" inputs [].\n\nLet's craft reason: The passage discusses personnel changes at NewEdge Capital Group/NewEdge Wealth, not Raymond James Financial, and does not state any executive, leadership, or personnel changes announced by Raymond James. Therefore not_found.\n\nItems empty. label not_found. reason short.\n\nNeed submit via tool.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage describes personnel hires by NewEdge Capital Group/NewEdge Wealth, not any executive, leadership, or personnel changes announced by Raymond James Financial.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

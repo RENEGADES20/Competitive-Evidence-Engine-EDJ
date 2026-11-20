@@ -1,0 +1,48 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a3.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-09-02-IN-01#3"
+  ],
+  "at": "2026-11-20T04:06:30.598173",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2129,
+    "output_tokens": 664,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 849,
+    "reasoning_tokens": 541,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 10.11,
+  "tokens_per_s": 65.68,
+  "reasoning_content": "We need answer extraction. We have one sub-question a3.RJF [recency]: Recent executive, leadership and personnel changes announced by the firm. Firm Raymond James Financial (RJF). Passage given is about NewEdge Wealth/NewEdge Capital Group hiring team in Fort Lauderdale. Need determine if this is about Raymond James? It's not Raymond James; NewEdge is separate wealth management firm? The question asks about Raymond James. But the passage is from \"RJF trade\" maybe source? Chunk id RJF-TRADE... but content is NewEdge. Does Raymond James own NewEdge? I recall NewEdge Capital Group is a division of EdgeCo? Actually NewEdge Capital Group is a wealth management firm, not Raymond James. Wait, Raymond James acquired? Let's think. NewEdge Capital Group is the parent of NewEdge Advisors and NewEdge Wealth, part of EdgeCo Holdings? Hmm. But the instruction: use only passages; never use outside knowledge. The passage does not mention Raymond James. It mentions NewEdge Capital Group. Is NewEdge related to Raymond James? Not in passage. We must label based on sub-question asks \"Recent executive, leadership and personnel changes announced by the firm\" for Raymond James. Passage says nothing about Raymond James. But it is a personnel change announced by NewEdge. Is NewEdge a different company? Could be different_quantity? No, not a related quantity. It's not about RJF. So likely not_found: passages say nothing about it. But wait, the passage could be about a subsidiary? It doesn't say Raymond James. We shouldn't use outside knowledge. Since passage only about NewEdge, not Raymond James. For sub-question about Raymond James personnel changes, no passage states. So not_found.\n\nNeed return one cell for sub-question. label not_found, items empty, differs_because \"\", reason. derivation operation \"\", inputs empty.\n\nBut need consider whether the NewEdge hiring is a personnel change \"announced by the firm\" (Raymond James)? No. Not found. We should not include different_quantity because NewEdge is not stated as related to Raymond James. Could label not_found.\n\nLet's craft reason: The passage describes a NewEdge Wealth team hire and does not mention Raymond James Financial or any RJF executive/leadership/personnel change. So not_found.\n\nNeed call submit_extraction with cells array containing one cell object.\n\nEnsure required fields. For not_found items []? Schema items required, can be empty array. differs_because string, reason string, derivation object with operation \"\" inputs [].\n\nLet's produce.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage reports a NewEdge Wealth team hire and does not mention Raymond James Financial or any executive, leadership, or personnel change announced by RJF.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

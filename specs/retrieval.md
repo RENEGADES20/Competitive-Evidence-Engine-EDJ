@@ -51,44 +51,74 @@ expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial 
     #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
     #   is searched as a phrase too ("net new assets", Q22)
 
-# ADR-021 (#245): sub-question decomposition. Planner v3 lists every asked aspect (no merge, no cap,
-#   PLANNER_MAX_PARTS removed); code sets the firms and expands firms x aspects into
-#   SubQuestion(entity, aspect), each searched with every SQL filter and its own budget
-#   (SUBQUESTION_TOKENS, ADR-019 amendment); research searched once; a corrective re-search hook
-#   (CRAG, extra words + exclude set) for #246. The sketch below describes the current code until #245.
-plan_question(query) -> Plan{parts: [Part{id, text, firms, keyword_query}], source, calls}
-    # question planner (#214, ADR-020; src/cee/retrieve/planner.py): with a real provider and
-    #   PLANNER=on, one call (the answer model, tool submit_plan) splits the question into at most
-    #   PLANNER_MAX_PARTS = 4 parts with their firms and rewritten search words. Code validates it:
-    #   firms must be resolve()'s (unknown / unasked / no-document firms dropped; a dropped resolved
-    #   firm comes back as a part, or joins the part with the fewest firms at the cap); more parts than
-    #   the cap are cut; empty words -> the part's text; ids p1..pn by code. Window, themes and the
-    #   Ask page filters are not in the planner's schema. Not usable (no tool call, wrong shape, cut
-    #   at max_tokens) or a failed call -> the rule plan, logged, the call counted, never re-rolled.
-    # prompt plan-v2 (#224): list the asks first (incl. what the question asks without naming it),
-    #   give every ask a part or its own words in a part, keep search words on the asked concept.
-    # neighbour guard (#224): code removes from a part's words every config `neighbour_phrases`
-    #   entry (a different figure sharing a word: "payout ratio" = the dividend payout ratio) the
-    #   question does not name; matched like a synonym key; correction "part N: dropped neighbour
-    #   phrase X"; words left empty -> the question's words. The rule plan is never touched.
-    # rule plan (mock provider, PLANNER=off, fallback): one part per named covered firm for 2-4
-    #   firms, else one whole-question part (five firms exceed the cap). Passage mode (TOKEN_BUDGET
-    #   None or an explicit k): one whole-question part, no planner call.
-search_parts(query, plan) -> [Hit{..., part_id}]
-    # every part searches a copy of the resolved query with its firms and words (Query.terms) and
-    #   the whole question's doc-type scope (Query.scope): every hard SQL filter in every part
-    # research (<= THEME_K = 4 passages) once per question first (research_pass), then the parts in
-    #   order with share_i = max(0, T - R - used) / (parts left) of T = budget_tokens(query) (R =
-    #   research tokens; unused share flows to later parts), chunks kept earlier excluded from the
-    #   pools and the answer-turn map, then the theme peers once (peer_pass). Budgeted total <=
-    #   max(T, R) + one chunk. A one-part plan returns exactly search(query). part_id: p1..pn,
-    #   "research", "peers"
-    # unused share is not handed back to earlier parts (#224, ADR-020 "not now"): a 0-call replay
-    #   of #214's Q25 gave p1 its share plus p2/p3's surplus (15.0k -> 33.6k) and p1 still stopped
-    #   at select()'s floor (68 passages, 21.9k) with MS-10K-2025#153 in the pool; in the mock it
-    #   would change Q7, Q9, Q12 with no key row to gain; surplus spent in a weak part buys low-rank
-    #   matches (Q25 p4); a second pass would restate ADR-019's bound. Revisit when a replay with
-    #   the surplus brings a lost key row into the final set.
+plan_question(query) -> Plan{aspects: [Aspect{id, text, keyword_query, metric, kind, firms}],
+                              subquestions: [SubQuestion{id, entity, aspect, role}], source, calls}
+    # sub-question decomposition (#245, ADR-021 rule 6; ADR-020 as amended; src/cee/retrieve/planner.py):
+    #   with a real provider and PLANNER=on, one call (the answer model, tool submit_plan, prompt
+    #   plan-v3) lists every aspect the question asks, literally: no merge, no cap (PLANNER_MAX_PARTS
+    #   removed), implicit asks and "the closest disclosed figure" as their own aspects; kind fact |
+    #   series | recency | comparison; metric = a key of config/metric_definitions.yaml or "".
+    # plan-v3.1 (#246): each aspect also carries a required boolean `proxy`: true when it asks for a
+    #   stand-in for the asked quantity (the closest disclosed figure, a numerator or denominator to
+    #   compute it, the nearest measure). Code (the map step) never lets a proxy aspect make the
+    #   behavior `answer` (ADR-021 rule 1a); missing / not a boolean -> false with a note.
+    # strict schema on every path: {aspects: [{id, text, keyword_query, firms, metric, kind, proxy}]}, all
+    #   required, additionalProperties false, metric / kind enums ("" = no metric, no nullable type);
+    #   anthropic minItems 1, openai / deepseek no array limits. Output cap 8000 (anthropic, openai;
+    #   deepseek 8000 thinking off, 64000 on, #242 / #245).
+    # firms decided by code (firm_scope): the resolved firms (role named, after the Ask page firm
+    #   filter, Merrill once; firms we hold no documents for are not searched); for a home-firm market
+    #   question (ADR-018's home-firm theme rule: q.theme_peers set; Q19) the competitors on the theme
+    #   as real entities (role competitor); theme mode one entity None (role all). The planner
+    #   message labels each firm: named / through "<peer phrase>" / competitor on the theme.
+    # per-aspect firms (TL decision D3): an aspect may carry a subset of the scoped firms when the
+    #   question itself asks it of some of them (Q12: Schwab's acquisition aspects SCHW only; Q15:
+    #   "how an advisor-led model earns" MS, EDJ, MER, RJF only); code maps names / aliases, drops
+    #   firms outside the scope (note), nothing left -> all; on a home-firm market question a list
+    #   equal to the named firms counts as empty, so the competitors stay (Q19).
+    # validation: ids a1..aM by code; empty text -> the question, empty words -> the text, words cut
+    #   at 400 chars, unknown metric -> none, unknown kind -> fact (all with notes); neighbour guard
+    #   (#224): code removes from an aspect's words every config `neighbour_phrases` entry the
+    #   question does not name ("payout ratio" = the dividend payout ratio). Not usable (no aspects,
+    #   wrong shape, no tool call, cut, refusal) or a failed call -> the rule plan, logged, the call
+    #   counted, never re-rolled. Window, themes and the Ask page filters are not in the schema.
+    # SubQuestion(entity, aspect): each aspect over its firm set, firm-major order, id
+    #   "<aspect>.<firm>" ("a1.all" in theme mode). No cap: 8 firms x 100 aspects = 800.
+    # rule plan (mock provider, PLANNER=off, unsearchable, fallback): one aspect a1 = the whole
+    #   question (its own words), kind recency with a window else fact, metric = the registered key
+    #   the question names; x every scoped firm (five-firm questions: 5 sub-questions; Q19: EDJ + 4
+    #   competitors). Passage mode (TOKEN_BUDGET None or an explicit k): one whole-question part, no
+    #   planner call.
+search_subquestions(query, plan, search_fn=fts.search, research_fn=fts.research_pass) -> [Hit{..., part_id}]
+    # every sub-question searches a copy of the resolved query with its firm and words (Query.terms)
+    #   and the whole question's doc-type scope (Query.scope): entity / segment (Merrill = MER or BAC
+    #   GWIM/Merrill), window, date range, keywords and doc-type scope are SQL filters in every one
+    # research (<= THEME_K = 4 passages) once per question (research_fn), outside the sub-question
+    #   budgets; then each sub-question with its own token budget SUBQUESTION_TOKENS (setting, value
+    #   from the #245 grid, ADR-019 amendment): the question's total grows with the decomposition and
+    #   is reported per question; chunks kept earlier are excluded from later pools and the
+    #   answer-turn map (a chunk appears once, under its first sub-question). part_id = the
+    #   sub-question id or "research". ADR-019's pool rule (POOL_PER_GROUP = 30) is unchanged.
+    # competitors (Q19, ADR-018 safeguards kept, its 2 peer slots replaced): Query.on_theme_only
+    #   (the firm pass AND the theme's keywords, no answer turn attached), Merrill only through BAC
+    #   GWIM/Merrill, and the floor across the competitors of each aspect (FLOOR x their 2nd-best
+    #   rank, after select; plan.competitor_floor; dropped ids logged, an emptied sub-question
+    #   marked floor_emptied). peer_pass runs only without a plan (search(q)).
+    # search_fn seam: called as search_fn(query, trace=, tokens=, exclude=, research=False,
+    #   peers=False, text=<sub-question text>); fts.search ignores `text`; exp/hybrid passes
+    #   hybrid.search (embeds `text`) and must honour Query.on_theme_only.
+corrective_search(query, plan, sq_id, extra_words, exclude, search_fn, tokens) -> [Hit]
+    # re-search hook for #246 (CRAG): one sub-question again with its words (the question's own
+    #   words for a rule-plan aspect) + extra words, neighbour-guarded, never a chunk in `exclude`,
+    #   every SQL filter kept (competitors: on the theme and the aspect's floor); the window is never
+    #   widened (adjacent periods enter as words). 0 model calls; "once per not_found" is #246's rule.
+    # #246 uses it once per not_found sub-question of the map step (extract.run_map): exclude = every
+    #   chunk already retrieved for the question (and earlier re-search hits); extra words =
+    #   extract.widen_words (the firm's metric definition entry: quote, includes, the full-text search
+    #   phrases in looked_in; adjacent quarters as words). Its hits feed only the re-extraction (the
+    #   evidence matrix), never the retrieved set, recall or query_log.chunk_ids.
+    #   plan.pools (each sub-question's PoolTrace.ids(), the value part_pools gets) is the map's
+    #   retrieved-set check; answer turns are pooled only after the exclude filter.
 
 retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segment, doc_type,
                                source_tier, published_at, page, rank, text}]
@@ -144,7 +174,8 @@ retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segme
     #   label) brings the next chunk of the call right after it; fetched with every hard filter
     #   (entity/segment, window, date range, keywords, doc-type scope), no word match; MAX_PER_DOC,
     #   dedupe and k still apply (Q6: the CEO's answer RJF-TR-2026Q1#46 after the analyst's #45)
-    # theme peers (#205, ADR-018): one more SQL pass, entity_filter(theme_peers) AND the on-theme
+    # theme peers (#205, ADR-018; search() without a plan only: with a plan the competitors are
+    #   sub-questions, #245, see search_subquestions above): one more SQL pass, entity_filter(theme_peers) AND the on-theme
     #   keywords AND every other hard filter (window, date range, keywords, doc-type scope), with the
     #   word match; the pool is cut at FLOOR x its 2nd-best rank across all peers (its only chunk
     #   with one; also inside a window) so a firm whose only text on the theme is an advisor ranking
@@ -156,25 +187,47 @@ retrieve(query, budget_tokens(query)) -> [Hit{chunk_id, doc_id, entity_id, segme
     # dedupe: fetch 3k, drop chunks > 90% similar to a higher-ranked one
 ```
 
-## Retrieval modes (#125, #126, #211, #240, experimental branch `exp/hybrid` only)
+### Series coverage passes (#247 part 2)
+After every main sub-question search (unchanged), `planner.search_subquestions` runs two passes per
+sub-question, every chunk kept so far excluded, on top of the budget:
+- **Per-period sub-search**: a `series` aspect with asked periods ("last / past N quarters / years",
+  `matrix.asked_periods`, no window): one FTS search per asked period with `Query.period_range` (a hard
+  SQL filter on `documents.period_end`) and `exclude_ids` (kept chunks leave the SQL pool before the
+  cut), `PERIOD_K = 3` passages. Hits: `origin = "period"`.
+- **Pins** (`fts.fetch_pinned`): the firm's `populations` sources for the ratio inputs the aspect can
+  hold, then its registered definition `chunk_id` and `see_also` for a registered metric, at most
+  `PIN_MAX = 8` (the cut is logged as `pins_cut`), fetched by ID under every hard filter of the
+  sub-question (entity / segment, window, date range, keywords) and the doc-type scope except the `adv`
+  exclusion (ADR-015 amendment). A pinned chunk another sub-question already kept still joins this
+  sub-question's pool. Hits: `origin = "pinned"`.
+Both join `plan.pools` (the map's retrieved-set check) and `plan.searched` (`period_hits`, `pinned`);
+the eval records them as `added_chunk_ids`.
+
+## Retrieval modes (#125, #126, #211, #240, #249, experimental branch `exp/hybrid` only)
 
 `main` has one mode, `fts` (ADR-010, ADR-011). The other two modes live on the branch `exp/hybrid`.
 
-`cee.retrieve.modes.search(q, k=None, mode=..., trace=None, plan=None)` / `ask(..., mode=...)`;
+`cee.retrieve.modes.search(q, k=None, mode=..., trace=None, plan=None, as_of=None)` / `ask(..., mode=...)`;
 default `RETRIEVAL_MODE` in `.env`, else `fts`. `k=None` is the same app default in every mode (#240):
-the token budget `budget_tokens(q)` (#213, ADR-019; research first, its tokens off the firm part,
-peers on top). An explicit k is passages in every mode. `fts.py` and `planner.py` are byte-equal to
-`main` (#211, #240).
+the token budget (#213, ADR-019). An explicit k is passages in every mode. `fts.py`, `planner.py` and
+`src/cee/answer/` are byte-equal to `main` (#211, #240, #249).
 
-Question planner (#214, ADR-020) on this branch, every mode (#240): `modes.plan_for` ->
+Sub-questions (#245, ADR-021 rule 6) on this branch, every mode (#249): the caller plans with
 `planner.plan_question` (one planner call with a real provider, the rule plan on mock); the mode does
-not change the plan or its cache key. `fts` searches a plan exactly as `main`
-(`planner.search_parts`); the hybrid modes with `hybrid.search_parts`, the same loop (a test pins
-`planner.search_parts`' source hash): research once, each part `planner.part_query(q, part)` (its
-firms and words, every hard SQL filter and the whole question's doc-type scope) under an equal share
-of the token budget left, chunks kept earlier excluded, the peers once. In a part the vector leg
-embeds the part's text (`plan.searched[].vector_text`); research and peers embed the question. So
-`fts` and the hybrid modes differ only in how candidates are found and ranked.
+not change the plan or its cache key, so a saved plan is shared across modes (`--reuse-plans`). Every
+mode searches the plan with `main`'s own loop, `planner.search_subquestions`: `fts` with its defaults
+(`fts.search`, `fts.research_pass`), the hybrid modes with `search_fn` = `hybrid.search` and
+`research_fn` = `hybrid.research_pass` (rerank by mode) and `pin_fn` = `fts.fetch_pinned` (registered
+chunks by ID, the same in every mode). The map's corrective re-search (`extract.run_map(search_fn=)`)
+uses the same search (`modes.search_fn(mode)`). In a sub-question the vector leg embeds the
+sub-question's text; research embeds the question. `hybrid.search` honours `Query.on_theme_only` as
+`fts.search` does (a competitor sub-question: the firm part carries the on-theme filter in both legs,
+every kept chunk is on the theme, no answer turn), and `period_range` / `exclude_ids` reach both legs
+through `fts.filters_sql`. The hybrid copy of the loop (`hybrid.search_parts`) and its source-hash pin
+were removed in #249. So `fts` and the hybrid modes differ only in how candidates are found and ranked.
+Known difference (#249, measured for #250): the competitor floor across firms (`fts.FLOOR` x the
+2nd-best `Hit.rank` across an aspect's competitors) compares RRF scores in `hybrid-norerank`, which are
+ranks inside each firm, so it rarely cuts there (`evals/hybrid-eval/corpus-2026-11-19/mock-w11/`).
 - `fts` (default): the keyword search above (`src/cee/retrieve/fts.py`).
 - `hybrid-norerank` (`src/cee/retrieve/hybrid.py`, needs `CEE_VECTORS=on`, table
   `chunk_embeddings`): inside every hard filter of `fts` (entity / segment, window, Ask filters,
@@ -188,7 +241,7 @@ embeds the part's text (`plan.searched[].vector_text`); research and peers embed
   `fts`: relative floor `hybrid.FLOOR[mode]` from the firm's 2nd-best score (ADR-014; research
   base 1; none in a window), theme slot below the floor, Merrill counted once, trade press last and
   a new document first (ADR-016), answer turns with their question turns (ADR-017), peers 2 per firm
-  after `fts.peer_floor()` (ADR-018). An on-theme-only chunk scores 0.99 x its firm's lowest
+  after `fts.peer_floor()` (ADR-018; the whole-question search; sub-questions have no peer part). An on-theme-only chunk scores 0.99 x its firm's lowest
   firm-part score x its on-theme score / the best on-theme-only score, so it ranks below every
   firm-part chunk and never moves the floor base. The gap path is unchanged. With vectors off,
   both hybrid modes stop with a clear message; nothing loads a model.

@@ -16,22 +16,22 @@ def trace_text(at) -> str:
 
 def test_trace_stays_collapsed_after_the_answer(monkeypatch):
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search", lambda q, mode=None, plan=None: [])
+    monkeypatch.setattr(pipeline, "search", lambda q, plan=None, **kw: [])
     monkeypatch.setattr(pipeline, "_log", lambda r, p: 1)
     at = AppTest.from_function(page).run()
     assert not at.exception and not at.error
     box = at.get("status")[0]
-    assert box.label.startswith("How this answer was built: 7 steps")
+    assert box.label.startswith(f"How this answer was built: {len(pipeline.STAGES)} steps")   # #248: 9
     assert "No passages found: no model call" in trace_text(at)
 
 
 def test_failed_stage_is_marked_and_error_shown(monkeypatch):
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
 
-    def broken(q, mode=None, plan=None):
+    def broken(q, plan=None, **kw):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search", broken)
     at = AppTest.from_function(page).run()
-    assert at.get("status")[0].label == "Searching the corpus: failed (RuntimeError: database is down)"
+    assert at.get("status")[0].label == "Searching 1 sub-question: failed (RuntimeError: database is down)"
     assert 'class="failed"' in trace_text(at)
     assert "database is down" in at.error[0].value

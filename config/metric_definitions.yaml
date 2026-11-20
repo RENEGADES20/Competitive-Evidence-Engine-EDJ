@@ -12,11 +12,39 @@
 #   quote               word for word from chunk_id (optional for not_disclosed: then it is the
 #                       nearest related text, not a definition)
 #   doc_id, chunk_id, valid_from (period_end of the document)
+#   period / unit / basis  (#246, ADR-021 rule 2; C1 to confirm)
+#                       period: what one figure of this definition covers: point_in_time (a count
+#                         at a date, e.g. advisors at year end) | quarter | year. For a flow metric
+#                         (net new assets) it is the shortest period the firm reports the flow for:
+#                         every firm reports quarterly and annual flows, although the quoted
+#                         definitions (from 10-Ks; BAC: "over a specified period of time") do not
+#                         state it. Shown with the definition; code does not use it to decide
+#                         comparability (that uses basis, unit and the extracted figures' periods).
+#                       unit: what is counted (advisors, employees, USD). MS "Wealth Management
+#                         representatives" are its advisors (its own label, #46): unit advisors.
+#                       basis: a key naming the definition; equal keys = the same basis, so only
+#                         figures with equal basis and unit are compared or combined across firms.
 #   includes / excludes what the definition says it covers (headcount: trainees, assistants,
 #                       independents); not_stated lists what the firm does not say
 #   see_also            other chunks with the same or earlier wording
 #   looked_in           documents searched (required for not_disclosed)
+#   contrast            (#247 part 3, advisor_headcount) per `contrast_dimensions` key: {value, text,
+#                       chunk_id, date}. value: stated | counted | excluded | count_only | none |
+#                       not_stated. text is a verbatim substring of chunk_id (tests, DB) or empty (code
+#                       prints a fixed phrase). chunk_id: the entry's chunk_id, a see_also id or a
+#                       contrast_ids id; required unless not_stated, or none with no text (the fixed
+#                       phrase "no advisor count" needs no chunk). date (count_date): ISO.
+#   contrast_ids        chunks cited only by the contrast (never pinned: not in see_also)
 #   note                one line for the reader
+
+# The dimensions of the code-built contrast of the firms' definitions (#247 part 3 item 1; Q11), in order.
+contrast_dimensions:
+  advisor_headcount:
+    - {key: written_definition, label: Written definition}
+    - {key: independents, label: Independent contractor advisors}
+    - {key: trainees, label: Trainees}
+    - {key: business_lines, label: Business lines in the count}
+    - {key: count_date, label: Date of the registered count}
 
 definitions:
   # ---------- Edward Jones ----------
@@ -27,10 +55,20 @@ definitions:
     doc_id: EDJ-10K-2025
     chunk_id: EDJ-10K-2025#130
     valid_from: 2025-12-31
+    period: point_in_time
+    unit: advisors
+    basis: edj_financial_advisors_actual
     includes: [U.S. and Canada financial advisors (split in EDJ-10K-2025#148)]
     excludes: []
-    not_stated: [trainees, branch assistants (BOAs), independents (none: all advisors are employees)]
+    not_stated: [trainees, branch assistants (BOAs)]
     see_also: [EDJ-10K-2025#148, EDJ-10Q-2026Q2#60, EDJ-10K-2025#29]
+    contrast_ids: [EDJ-10K-2025#145, EDJ-10K-2025#35]
+    contrast:
+      written_definition: {value: count_only, text: "Financial advisors (actual)", chunk_id: EDJ-10K-2025#130}
+      independents: {value: stated, text: "The Partnership’s financial advisors are employees or partners of the Partnership.", chunk_id: EDJ-10K-2025#35}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "two operating and reportable segments based upon geographic location, the U.S. and Canada", chunk_id: EDJ-10K-2025#145}
+      count_date: {value: counted, date: 2025-12-31, text: "At year end 20,425", chunk_id: EDJ-10K-2025#130}
     note: >-
       Edward Jones reports a count ("actual", year end and average) with no written definition.
       Trainees appear in the onboarding text (#29) but the 10-K does not say whether they are counted.
@@ -42,6 +80,9 @@ definitions:
     doc_id: EDJ-10Q-2026Q2
     chunk_id: EDJ-10Q-2026Q2#60
     valid_from: 2026-06-30
+    period: quarter
+    unit: USD
+    basis: edj_nna_incl_fees_2026
     see_also: [EDJ-10K-2025#130]
     note: >-
       Wording changed in 2026: the 10-K 2025 (#130) has no "including fees and commissions", and the
@@ -55,10 +96,19 @@ definitions:
     doc_id: MS-SUPP-2020Q4
     chunk_id: MS-SUPP-2020Q4#1
     valid_from: 2020-12-31
-    includes: [Wealth Management representatives (count at Dec 31 2020, Sep 30 2020, Dec 31 2019)]
+    period: point_in_time
+    unit: advisors
+    basis: ms_wealth_management_representatives
+    includes: ["Wealth Management representatives (count at Dec 31 2020, Sep 30 2020, Dec 31 2019)"]
     excludes: []
     not_stated: [a definition of "Wealth Management representatives", trainees, any count after 4Q2020]
     see_also: [MS-SUPP-2020Q4#3, MS-SUPP-2025Q4#36, MS-SUPP-2026Q3#38, MS-10K-2025#167, MS-ADV1A-2026#1]
+    contrast:
+      written_definition: {value: count_only, text: "Wealth Management representatives 15,950", chunk_id: MS-SUPP-2020Q4#1}
+      independents: {value: not_stated}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "Wealth Management representatives", chunk_id: MS-SUPP-2020Q4#1}
+      count_date: {value: counted, date: 2020-12-31, text: "Wealth Management representatives 15,950", chunk_id: MS-SUPP-2020Q4#1}
     looked_in: [MS-10K-2025, MS-10Q-2025Q2, MS-10Q-2025Q3, MS-10Q-2026Q1, MS-10Q-2026Q2,
                 MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)",
                 MS-DECK-2026-strategic-update, MS-ADV-2026,
@@ -83,6 +133,9 @@ definitions:
     doc_id: MS-10K-2025
     chunk_id: MS-10K-2025#166
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: ms_nna_excl_fees
     see_also: [MS-10K-2025#165, MS-SUPP-2025Q4#34]
     note: >-
       The heading "Net New Assets (NNA)" is the last line of #165; the definition itself is #166.
@@ -96,10 +149,19 @@ definitions:
     doc_id: SCHW-ADV1A-2026
     chunk_id: SCHW-ADV1A-2026#1
     valid_from: 2026-10-21
-    includes: [employees of Charles Schwab & Co., Inc. (CRD 5393) who perform investment advisory functions, including research (Form ADV Part 1A Item 5.B(1))]
-    excludes: [independent RIAs and their advisors (clients, SCHW-10K-2025#23), clerical workers (Item 5.A)]
+    period: point_in_time
+    unit: employees
+    basis: form_adv_item5b1_advisory_employees
+    includes: ["employees of Charles Schwab & Co., Inc. (CRD 5393) who perform investment advisory functions, including research (Form ADV Part 1A Item 5.B(1))"]
+    excludes: ["independent RIAs and their advisors (clients, SCHW-10K-2025#23)", clerical workers (Item 5.A)]
     not_stated: [how many are Financial Consultants or Wealth Consultants, other Schwab entities]
     see_also: [SCHW-10K-2025#18, SCHW-10K-2025#23]
+    contrast:
+      written_definition: {value: none, text: "perform investment advisory functions (including research)? 4127", chunk_id: SCHW-ADV1A-2026#1}
+      independents: {value: none, text: "Through the Advisor Services segment, Schwab has become one of the largest providers of custodial, trading, banking, and support services to RIAs and their clients", chunk_id: SCHW-10K-2025#23}
+      trainees: {value: not_stated}
+      business_lines: {value: none}
+      count_date: {value: none}
     looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)",
                 "SCHW-DECK-* (2026Q1-Q3)", SCHW-DECK-2026-investor-day, SCHW-ADV-2026,
                 "SCHW-ADV1A-2026 (#216: Form ADV Part 1A Item 5, Charles Schwab & Co. CRD 5393)",
@@ -122,6 +184,9 @@ definitions:
     doc_id: SCHW-10K-2025
     chunk_id: SCHW-10K-2025#119
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: schw_core_net_new_assets
     see_also: [SCHW-MONTHLY-2026-01#8]
     note: >-
       Schwab's headline metric is core net new assets (10-K glossary). The threshold for
@@ -135,10 +200,19 @@ definitions:
     doc_id: BAC-SUPP-2023Q4
     chunk_id: BAC-SUPP-2023Q4#2
     valid_from: 2023-12-31
-    includes: [advisors across all wealth management businesses in GWIM and Consumer Banking ("Total wealth advisors", 18,916 at Dec 31 2023)]
+    period: point_in_time
+    unit: advisors
+    basis: bac_total_wealth_advisors_gwim_consumer
+    includes: ['advisors across all wealth management businesses in GWIM and Consumer Banking ("Total wealth advisors", 18,916 at Dec 31 2023)']
     excludes: []
     not_stated: [a Merrill-only count, trainees, any count after 4Q2023 in the supplements]
     see_also: [BAC-DECK-2025-investor-day#9, BAC-DECK-2025-investor-day#13, BAC-DECK-2025-investor-day#34, BAC-10K-2025#246, MER-ADV1A-2026#1]
+    contrast:
+      written_definition: {value: stated, text: "Includes advisors across all wealth management businesses in GWIM and Consumer Banking", chunk_id: BAC-SUPP-2023Q4#2}
+      independents: {value: not_stated}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "all wealth management businesses in GWIM and Consumer Banking", chunk_id: BAC-SUPP-2023Q4#2}
+      count_date: {value: counted, date: 2023-12-31, text: "Total wealth advisors (3) 18,916", chunk_id: BAC-SUPP-2023Q4#2}
     looked_in: [BAC-10K-2025, BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3,
                 "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)", MER-ADV-2026,
                 "BAC-SUPP-2023Q4 (#216: last supplement with a Total wealth advisors count)",
@@ -162,6 +236,9 @@ definitions:
     doc_id: BAC-10K-2025
     chunk_id: BAC-10K-2025#249
     valid_from: 2025-12-31
+    period: quarter
+    unit: USD
+    basis: bac_gwim_net_client_aum_flows
     see_also: [BAC-SUPP-2025Q4#58]
     note: >-
       BAC has no net-new-assets metric; the closest is GWIM net client AUM flows, which cover AUM
@@ -175,10 +252,19 @@ definitions:
     doc_id: RJF-10K-2025
     chunk_id: RJF-10K-2025#228
     valid_from: 2025-09-30
+    period: point_in_time
+    unit: advisors
+    basis: rjf_financial_advisors_excl_rcs
     includes: [employee financial advisors, independent contractor advisors, trainees once moved into production roles]
     excludes: [advisors in the RCS division]
     not_stated: [assistants]
     see_also: [RJF-10K-2025#227, RJF-10K-2025#24]
+    contrast:
+      written_definition: {value: stated, text: "Advisors in our RCS division are not included in our financial advisor metric", chunk_id: RJF-10K-2025#228}
+      independents: {value: counted, text: "Independent contractors 5,065", chunk_id: RJF-10K-2025#227}
+      trainees: {value: not_stated}   # #228 explains a change in the count, it does not say who is counted (part-3 blind scorer)
+      business_lines: {value: excluded, text: "Advisors in our RCS division are not included", chunk_id: RJF-10K-2025#228}
+      count_date: {value: counted, date: 2025-09-30, text: "Total advisors 8,943", chunk_id: RJF-10K-2025#227}
     note: >-
       #227 splits the 8,943 total into 3,878 employees and 5,065 independent contractors; #228 says
       the count grew "as new recruits and trainees that were moved into production roles exceeded
@@ -191,5 +277,92 @@ definitions:
     doc_id: RJF-10K-2025
     chunk_id: RJF-10K-2025#224
     valid_from: 2025-09-30
+    period: quarter
+    unit: USD
+    basis: rjf_domestic_pcg_nna
     see_also: [RJF-SUPP-2025Q4#8]
     note: Domestic Private Client Group only; fees and commissions count as outflows.
+
+# ---------- Populations of ratio inputs (#247 part 2; Q24) ----------
+# What each input of a within-firm ratio covers (client assets per advisor). Code tags each map item
+# of a ratio-input aspect with the `key` of the entry whose `match` phrase stands nearest before the
+# item's figure in its quote (scope must equal when set); a ratio is computed only when both inputs
+# carry the same key. The `chunk_id` states the population in the firm's own words; it is pinned into
+# the sub-questions that can hold this input and cited, with `quote`, in the computed / not computed
+# claim. Fields:
+#   entity, input      input: client_assets | advisor_headcount
+#   key                equal keys = the same population (a ratio over them is consistent)
+#   covers             one line for logs and tests; never shown in an answer
+#   match              phrases (case-insensitive) that name this input in a quote
+#   scope              optional: the item's scope must equal it (normalised; "" = the whole firm)
+#   quote              verbatim from chunk_id (tests/test_metric_definitions.py)
+#   chunk_id, valid_from (period end of chunk_id's document: when the statement is dated)
+# Not registered (a ratio over them is refused, "population not stated"): SCHW (no advisor count),
+# BAC client assets (GWIM client balances: TODO-verify a population statement), EDJ U.S. / Canada splits.
+populations:
+  - entity: EDJ
+    input: client_assets
+    key: edj_firm
+    covers: Edward Jones client assets under care, total (U.S. and Canada)
+    match: ["client assets under care"]
+    scope: ""
+    quote: "Client assets under care ($ billions): Total: At period end"
+    chunk_id: EDJ-10Q-2026Q2#59
+    valid_from: 2026-06-26
+  - entity: EDJ
+    input: advisor_headcount
+    key: edj_firm
+    covers: Edward Jones financial advisors (actual), firm total (U.S. and Canada)
+    match: ["financial advisors (actual)", "financial advisors"]
+    scope: ""
+    quote: "Financial advisors (actual): At year end 20,425 20,125 19,232"
+    chunk_id: EDJ-10K-2025#130
+    valid_from: 2025-12-31
+  - entity: MS
+    input: client_assets
+    key: ms_wm_all_channels
+    covers: Morgan Stanley Wealth Management total client assets, all three channels
+    match: ["total client assets"]
+    quote: "Wealth Management supports clients through three channels: Advisor-Led, Self-Directed and Workplace."
+    chunk_id: MS-10K-2025#125
+    valid_from: 2025-12-31
+  - entity: MS
+    input: client_assets
+    key: ms_wm_advisor_led
+    covers: Morgan Stanley advisor-led client assets (accounts with a Wealth Management representative)
+    match: ["advisor-led client assets"]
+    quote: "Advisor-led client assets represent client assets in accounts that have a Wealth Management representative assigned."
+    chunk_id: MS-SUPP-2026Q3#38
+    valid_from: 2026-09-30
+  - entity: MS
+    input: advisor_headcount
+    key: ms_wm_advisor_led
+    covers: Morgan Stanley Wealth Management representatives (the advisors of advisor-led accounts)
+    match: ["wealth management representatives", "wealth management representative"]
+    quote: "Advisor‐led client assets represents client assets in accounts that have a Wealth Management representative assigned."
+    chunk_id: MS-SUPP-2020Q4#3
+    valid_from: 2020-12-31
+  - entity: RJF
+    input: client_assets
+    key: rjf_aua_incl_rcs
+    covers: Raymond James client assets under administration, RCS division client assets included
+    match: ["client assets under administration", "assets under administration", "aua", "client assets"]
+    quote: "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA."
+    chunk_id: RJF-10K-2025#228
+    valid_from: 2025-09-30
+  - entity: RJF
+    input: advisor_headcount
+    key: rjf_advisors_excl_rcs
+    covers: Raymond James financial advisors, RCS division advisors excluded
+    match: ["financial advisors", "total advisors", "advisors"]
+    quote: "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA."
+    chunk_id: RJF-10K-2025#228
+    valid_from: 2025-09-30
+  - entity: BAC
+    input: advisor_headcount
+    key: bac_gwim_and_consumer
+    covers: Bank of America total wealth advisors, GWIM and Consumer Banking
+    match: ["total wealth advisors", "wealth advisors"]
+    quote: "(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking."
+    chunk_id: BAC-SUPP-2023Q4#2
+    valid_from: 2023-12-31

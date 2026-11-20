@@ -47,3 +47,7 @@ Preconditions: baseline; the answerable question returns citations.
   tag carries its own page number.
 - The claim text on the answer page is also a passage excerpt, so check the read-back on
   the source page, not the answer page.
+- The page header ("Stored passage") can render before the cited passage itself (#248: run
+  `20261119-230844` read the body too early and saw only a neighbour). The driver waits for the
+  `CITED PASSAGE · <chunk_id>` tag (or the "not in the stored corpus" error) with the render timeout
+  before reading the page (`wait_for_cited`); a passage that never renders is a RenderTimeout.

@@ -1,0 +1,48 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1",
+  "call_id": "remap.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a1.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-10Q-2025Q2#95"
+  ],
+  "at": "2026-11-20T00:44:42.262984",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1934,
+    "output_tokens": 283,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 782,
+    "reasoning_tokens": 155,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 5.2,
+  "tokens_per_s": 54.42,
+  "reasoning_content": "We need answer subquestion a1.MER for Merrill (MER). Need return cells via submit_extraction. We have only one passage chunk. Need determine label. The sub-question asks \"Client assets per financial advisor for each firm, expressed as total client assets divided by advisor headcount.\" For Merrill. Passage given discusses GWIM segment financials: noninterest expense, return on capital, average loans/deposits, Merrill Wealth Management revenue and Private Bank revenue. Nothing about total client assets, advisor headcount, or client assets per advisor. So label likely not_found: passages say nothing about it. Need one cell. Items empty. differs_because \"\", reason. derivation operation \"\" inputs empty.\n\nNeed ensure only submit_extraction call. Let's craft.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage discusses GWIM expenses, returns, loans, deposits, and segment revenues, but says nothing about client assets, advisor headcount, or client assets per financial advisor.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

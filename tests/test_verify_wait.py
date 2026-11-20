@@ -38,3 +38,26 @@ def test_rendered_page_then_waits_for_idle():
     page = Page(renders=True)
     vc.wait_for_text(page, ["Stored passage"], "the source page")
     assert page.idle == 1
+
+
+class LatePage(Page):
+    """#248: the source page whose cited passage renders after the header; records what was awaited."""
+
+    def __init__(self, renders: bool):
+        super().__init__(renders)
+        self.awaited = []
+
+    def wait_for_function(self, js, arg=None, timeout=None):
+        self.awaited.append(arg)
+        super().wait_for_function(js, arg, timeout)
+
+
+def test_open_citation_waits_for_the_cited_passage_tag():
+    page = LatePage(renders=True)
+    vc.wait_for_cited(page, "EDJ-10K-2025#19")
+    assert ["CITED PASSAGE · EDJ-10K-2025#19", "is not in the stored corpus"] in page.awaited
+
+
+def test_a_cited_passage_that_never_renders_is_a_timeout_not_a_fail():
+    with pytest.raises(vc.RenderTimeout, match="the cited passage EDJ-10K-2025#19 did not render"):
+        vc.wait_for_cited(LatePage(renders=False), "EDJ-10K-2025#19")

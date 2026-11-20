@@ -1,6 +1,8 @@
-"""One answer call per question; the question planner (#214, ADR-020) may make one more before
-search, so a question uses at most 2 calls (ADR-012 allows 5). Providers: mock | anthropic | openai |
-deepseek (#242: OpenAI SDK, strict function tools on the /beta base URL, thinking on or off).
+"""The provider plumbing and the legacy single answer call (prompt v4.1, MAP=off). Since #247 the
+default flow is plan -> map -> reduce (cee.answer.extract, cee.answer.reduce), which reuses the
+clients, requests and parsing helpers here; calls follow the decomposition (ADR-021 rule 7).
+Providers: mock | anthropic | openai | deepseek (#242: OpenAI SDK, strict function tools on the /beta
+base URL, thinking on or off).
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 mock is offline and free: it cites the top hits verbatim. Use it for development and tests.
@@ -31,9 +33,11 @@ ANTHROPIC_REQUEST_VERSION = "strict-1"
 
 # DeepSeek (#242). Output caps by thinking mode (True = on): reasoning shares max_tokens, so thinking
 # gets the API's own thinking default (64K) for the answer and room to reason for the planner; off
-# keeps the project's 20000 / 2000. Quality first (TL, plan review 1).
+# is answer 20000, planner 8000 (#245; the planner was 2000 before). Quality first (TL, plan review 1).
 DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
-DEEPSEEK_PLANNER_MAX_TOKENS = {False: 2000, True: 16000}
+# #245: plan-v3 has no aspect cap: off 2000 -> 8000; on 16000 -> 64000 (TL decision after the Q19
+# planner was cut at 16000 reasoning tokens; the same as the answer cap and DeepSeek's thinking default)
+DEEPSEEK_PLANNER_MAX_TOKENS = {False: 8000, True: 64000}
 # Read timeout per read, not per request. The docs only say empty lines are sent while a request
 # waits (one not started after 10 minutes is closed); nothing about lines during inference, so the
 # whole generation may be one silent read: 3600 s covers 64000 tokens at about 18 tokens/s.
@@ -60,6 +64,24 @@ def request_version(provider: str) -> str | None:
 def answer_max_tokens(provider: str) -> int:
     """The answer call's output cap (#242): by thinking mode for deepseek, else MAX_TOKENS."""
     return DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking] if provider == "deepseek" else MAX_TOKENS
+
+
+# Context windows from the providers' docs, checked 2026-11-19: DeepSeek deepseek-v4-pro 1M (Models &
+# Pricing page); Claude Sonnet 5.5 1M (Anthropic model table). OpenAI gpt-5: 400,000 context window and
+# 128,000 max output tokens (developers.openai.com/api/docs/models/gpt-5, read 2026-11-20, #248); the
+# same page also states a separate 272,000-token input limit, which this window - output check does
+# not apply (the openai provider is not used in the W11 runs; marked deprecated on that page).
+# Used by the map's per-call input check and the reduce's (#246, #247): an input over the window minus
+# the output cap is not sent, never trimmed (the #245 interim guard was removed in #247).
+CONTEXT_WINDOW = {"deepseek": 1_000_000, "anthropic": 1_000_000, "openai": 400_000}
+
+
+def input_tokens(question: str, hits: list[Hit], plan=None, window=None) -> int:
+    """Estimated input tokens of the answer call (characters / 4): system prompt, tool schema and
+    the user message as built for these hits."""
+    chars = (len(SYSTEM_PROMPT) + len(json.dumps(llm_output_schema()))
+             + len(build_user_message(question, hits, plan, window)))
+    return round(chars / 4)
 
 
 class ProviderStop(RuntimeError):
@@ -108,7 +130,13 @@ def check_output(answer: Answer, raw=None, provider: str = "") -> Answer:
 
 def _usage(resp, input_key: str, output_key: str) -> dict:
     u = getattr(resp, "usage", None)
-    return {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    out = {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    # #248: Anthropic's prompt-cache tokens (outside input_tokens), when the response has them, for the cost
+    for k in ("cache_read_input_tokens", "cache_creation_input_tokens"):
+        v = getattr(u, k, None)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v
+    return out
 
 
 def _block_dict(b) -> dict:
@@ -160,7 +188,9 @@ def build_user_message(question: str, hits: list[Hit], plan=None, window=None) -
         from cee.retrieve.planner import Part
         parts = [Part("p1", question, [])]
     single = len(parts) == 1
-    pools = {s["id"]: s.get("pool") for s in getattr(plan, "searched", None) or []}
+    # #245: a competitor sub-question the floor across competitors emptied reads as nothing found
+    pools = {s["id"]: 0 if s.get("floor_emptied") else s.get("pool")
+             for s in getattr(plan, "searched", None) or []}
 
     def part_of(h: Hit) -> str | None:
         pid = getattr(h, "part_id", None)
@@ -345,12 +375,36 @@ def deepseek_tool_call(resp, name: str):
     return call, stop, usage, _jsonable(msg)
 
 
-def deepseek_arguments(call) -> dict:
-    """The call's arguments parsed; ValueError when not a JSON object (DeepSeek may send bad JSON)."""
-    args = json.loads(call.function.arguments)
-    if not isinstance(args, dict):
-        raise ValueError(f"arguments are a JSON {type(args).__name__}, not an object")
-    return args
+TRAILING_BRACES = "trailing_braces"
+_STRAY = set(" \t\r\n}]")
+
+
+def loads_object(text, flags: list | None = None) -> dict:
+    """A model's JSON object (tool arguments or structured content). TL decision on #246 (Q24): a
+    known DeepSeek strict-mode glitch returns a complete JSON object followed by stray closing braces;
+    the first complete object is taken (json.JSONDecoder().raw_decode) only when everything after it
+    is whitespace and `}` / `]`, and `trailing_braces` is appended to `flags`. Any other trailing text,
+    a non-object or text that is not JSON raises ValueError. The object still goes through every
+    schema and code check."""
+    if not isinstance(text, str):
+        raise TypeError(f"arguments are {type(text).__name__}, not text")
+    s = text.lstrip()
+    obj, end = json.JSONDecoder().raw_decode(s)
+    rest = s[end:]
+    if rest.strip():
+        if not set(rest) <= _STRAY:
+            raise ValueError(f"Extra data after the JSON object: {rest.strip()[:40]!r}")
+        if flags is not None and TRAILING_BRACES not in flags:
+            flags.append(TRAILING_BRACES)
+    if not isinstance(obj, dict):
+        raise ValueError(f"arguments are a JSON {type(obj).__name__}, not an object")
+    return obj
+
+
+def deepseek_arguments(call, flags: list | None = None) -> dict:
+    """The call's arguments parsed (loads_object); ValueError when not a JSON object (DeepSeek may
+    send bad JSON); stray closing braces after a complete object are accepted and flagged."""
+    return loads_object(call.function.arguments, flags)
 
 
 def _deepseek(question: str, hits: list[Hit], client=None, plan=None, window=None) -> Answer:
@@ -370,10 +424,13 @@ def _deepseek(question: str, hits: list[Hit], client=None, plan=None, window=Non
         raise ModelOutputError(f"Model did not call {TOOL_NAME} (finish_reason={stop or '?'})",
                                payload, "deepseek", stop, usage)
     text = call.function.arguments
+    flags: list = []
     try:
-        raw = deepseek_arguments(call)
+        raw = deepseek_arguments(call, flags)
     except (TypeError, ValueError) as e:
         raise ModelOutputError(f"Model arguments are not a JSON object: {e}", text, "deepseek", stop, usage) from e
+    if flags:
+        usage = {**usage, "parse_flags": flags}
     try:
         answer = Answer(**raw, llm_called=True)
     except (ValueError, TypeError) as e:
@@ -434,9 +491,12 @@ def _openai(question: str, hits: list[Hit], client=None, plan=None, window=None)
     if stop in CUT_REASONS:   # #230
         raise ModelOutputError(f"Model output cut at max_tokens ({usage['output_tokens']} output tokens)",
                                content, "openai", stop, usage)
+    flags: list = []
     try:
-        answer = Answer(**json.loads(content), llm_called=True)
+        answer = Answer(**loads_object(content, flags), llm_called=True)
     except (ValueError, TypeError) as e:  # None, not JSON, not an object, or not a valid Answer
         raise ModelOutputError(f"Model output is not a valid Answer: {e}", content, "openai", stop, usage) from e
+    if flags:
+        usage = {**usage, "parse_flags": flags}
     answer.stop_reason, answer.usage = stop or "", usage
     return check_output(answer, content, "openai")

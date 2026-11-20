@@ -37,6 +37,11 @@ chunk(document) -> [Chunk{chunk_id="<doc_id>#<n>", section, segment, page, text}
 
 metric_definitions.yaml   # config/metric_definitions.yaml (#46): entity, metric, status, quote,
                           # doc_id, chunk_id, valid_from; tests/test_metric_definitions.py
+                          # #246 (ADR-021 rule 2; C1 to confirm): period (point_in_time | quarter |
+                          #   year), unit (advisors, employees, USD), basis (a key naming the
+                          #   definition; equal keys = the same basis, the only figures compared or
+                          #   combined across firms). Today every basis differs, so cross-firm
+                          #   figures carry the comparability caveat (specs/answer-citations.md).
 ```
 
 ### Advisor headcount and NNA definitions (Q11, Q22, Q23)
@@ -52,6 +57,23 @@ From `config/metric_definitions.yaml`; quotes are verbatim there.
 | RJF | Employees + independent contractors; excludes RCS division (`RJF-10K-2025#228`, `#227`) | Includes trainees moved into production | Domestic PCG NNA, fees counted as outflows (`RJF-10K-2025#224`) |
 
 doc_id convention: `<ENTITY>-<FORM>-<PERIOD>` e.g. `BAC-10K-2025`, `RJF-10Q-2026Q2`.
+
+### Populations of ratio inputs (#247 part 2; Q24)
+`config/metric_definitions.yaml` `populations`: one entry per firm, input (`client_assets` |
+`advisor_headcount`) and population `key` (equal keys = the same population), with `match` phrases,
+optional `scope`, `covers` (a log label), `quote` verbatim from `chunk_id`, and `valid_from` (that
+document's period end). Checked by `tests/test_populations.py`. Not registered today: Schwab (no
+advisor count), Bank of America client assets, Edward Jones U.S. / Canada splits (TODO-verify).
+
+### Contrast of the definitions (#247 part 3; Q11)
+`contrast_dimensions` (per metric, today `advisor_headcount`): ordered `{key, label}` (written definition,
+independent contractor advisors, trainees, business lines in the count, date of the registered count). Each
+entry of that metric has a `contrast` map `key -> {value, text, chunk_id, date}`: `value` in `stated | counted
+| excluded | count_only | none | not_stated`; `text` is a verbatim substring of `chunk_id` (whitespace
+collapsed) or empty (code prints a fixed phrase); `chunk_id` is the entry's `chunk_id`, a `see_also` id or a
+`contrast_ids` id. `contrast_ids` are cited by the contrast only and never pinned (not in `see_also`), e.g.
+Edward Jones `EDJ-10K-2025#145` (U.S. and Canada segments) and `#35` (advisors are employees or partners).
+Checked by `tests/test_reduce_part3.py` (shape always; verbatim text against the database when it runs).
 
 ## Acceptance
 

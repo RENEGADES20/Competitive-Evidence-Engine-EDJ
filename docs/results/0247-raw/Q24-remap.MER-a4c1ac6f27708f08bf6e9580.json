@@ -1,0 +1,48 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a1.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-10Q-2025Q2#95"
+  ],
+  "at": "2026-11-20T03:50:45.871681",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1992,
+    "output_tokens": 430,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 712,
+    "reasoning_tokens": 291,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 7.11,
+  "tokens_per_s": 60.48,
+  "reasoning_content": "We need answer extraction for one sub-question a1.MER. Need inspect passages. Only one passage provided, about Merrill (MER). Sub-question asks client assets per financial advisor for each firm, expressed as total client assets divided by advisor headcount. Passage provided: BAC-10Q segment GWIM. Contains no client assets, no advisor headcount. It has revenue figures, loans, deposits, ROAC, expenses. None related to client assets per advisor. So label not_found? But need consider different_quantity: no passage states a different related quantity? The passage states Merrill Wealth Management revenue, Bank of America Private Bank revenue. Not related to client assets per advisor. Could be different_quantity? No, revenue is not a related quantity to client assets per advisor (different measure entirely). The prompt: different_quantity: no passage states asked quantity, but one states a different, related quantity: wider unit contains asked one, different measure (all employees or FTE for advisors, compensation expense for payout grid/headcount, client firms on platform for firm's own advisors, regulatory form label for business metric), or industry figure. Revenue isn't listed as related. So not_found.\n\nNeed return exactly one cell for sub-question a1.MER. Label not_found, items empty, differs_because \"\", reason. derivation operation \"\" inputs empty.\n\nNeed call submit_extraction. Ensure schema. Items empty array.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passage discusses Merrill Wealth Management and Bank of America Private Bank revenue, expenses, loans, deposits, and return on allocated capital, but says nothing about total client assets, advisor headcount, or client assets per financial advisor.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

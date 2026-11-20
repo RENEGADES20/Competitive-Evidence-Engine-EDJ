@@ -108,17 +108,21 @@ def ensure_handoff(answer: Answer) -> Answer:
     return answer
 
 
-def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
+def check_citations(answer: Answer, hits: list[Hit], derived=None) -> Answer:
+    """`derived` (#247): [(value, input chunk ids)] of the matrix's accepted derivations, for the number
+    check. The hand-off sentence is standard wording, not evidence: never flagged no_citation (#247 B2,
+    an evidence-free boundary answer)."""
     answer = move_uncited_cells(ensure_handoff(withhold_normative(answer)))
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         known = [c for c in claim.chunk_ids if c in by_id]
         if not claim.chunk_ids:
-            claim.flags.append("no_citation")
+            if claim.text.strip() != BOUNDARY_HANDOFF:
+                claim.flags.append("no_citation")
         elif len(known) < len(claim.chunk_ids):
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
-    return check_dates(check_numbers(answer, hits), hits)
+    return check_dates(check_numbers(answer, hits, derived), hits)
 
 
 # Parts (#215). Rules in specs/answer-citations.md, "Every part answered or named as a gap".
@@ -186,12 +190,48 @@ def _part_label(part, question: str) -> str:
 
 
 def _part_pools(plan) -> dict[str, int]:
-    """Each part's candidate pool before exclusion (planner.search_parts), when known."""
-    return {s["id"]: s["pool"] for s in getattr(plan, "searched", None) or [] if "pool" in s}
+    """Each part's candidate pool before exclusion (planner.search_subquestions), when known. A
+    competitor sub-question the floor across competitors emptied (#245) reads as 0: its candidates
+    were below the floor, so nothing usable was found for it."""
+    return {s["id"]: 0 if s.get("floor_emptied") else s["pool"]
+            for s in getattr(plan, "searched", None) or [] if "pool" in s}
 
 
-def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:
-    """{part_id: model | citation | handoff | code_gap | none} for the plan's parts (#215).
+def _matrix_state(pid: str, answer: Answer, matrix, known: dict) -> str | None:
+    """#247 B3: a comparison sub-question is covered by its aspect's comparison claim (part_id the
+    aspect or one of its cells, citing a retrieved chunk) or by the comparison_missing gap; a proxy
+    sub-question by any claim / adjacent item on its aspect, or by design when its cell holds nothing
+    (the asked aspect carries the gap)."""
+    from cee.answer.matrix import holds
+    cell = matrix.cells.get(pid) if matrix is not None else None
+    if cell is None:
+        return None
+    a = matrix.aspect(cell.aspect_id)
+    own = {a.id} | {c.id for c in matrix.cells.values() if c.aspect_id == a.id}
+    if a.kind == "comparison":
+        if any(c.part_id in own and any(k in known for k in c.chunk_ids) for c in answer.claims) \
+                or any(g.part_id in own and "comparison_missing" in g.flags for g in answer.gaps):
+            return "comparison"
+    if getattr(a, "proxy", False):
+        if any(c.part_id in own and any(k in known for k in c.chunk_ids) for c in [*answer.claims, *answer.adjacent]):
+            return "proxy"
+        if not holds(cell):
+            return "proxy_by_design"
+    if not holds(cell):
+        # #247 part 2: an empty cell outside its aspect's firm scope gets no gap by design (Q19); an
+        # empty competitor cell is covered by its aspect's folded competitors gap
+        from cee.answer.matrix import in_gap_scope
+        if not in_gap_scope(a, cell):
+            return "out_of_scope"
+        if any(g.part_id == a.id and "matrix_competitors_not_found" in g.flags for g in answer.gaps) \
+                and cell.role == "competitor":
+            return "competitors_gap"
+    return None
+
+
+def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None) -> dict[str, str]:
+    """{part_id: model | citation | handoff | code_gap | comparison | proxy | proxy_by_design | none}
+    for the plan's parts (#215; the matrix states #247 B3).
     model: a cited claim / adjacent item or a gap names the part; citation: an item without a valid
     part_id cites a passage found for the part (v3 outputs, the mock); handoff: a normative part in
     a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap."""
@@ -220,11 +260,11 @@ def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:
                 and any(c.text.strip() == BOUNDARY_HANDOFF for c in answer.claims):
             out[p.id] = "handoff"
         else:
-            out[p.id] = "none"
+            out[p.id] = _matrix_state(p.id, answer, matrix, known) or "none"
     return out
 
 
-def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "") -> Answer:
+def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matrix=None) -> Answer:
     """Every planned part has a cited claim, a cited adjacent item or a gap; a part with none gets
     a code-built gap flagged part_gap (#215, ground rule 3). The wording comes from the part's
     candidate pool before exclusion: 0 -> "No evidence retrieved for", else (or unknown) "Not
@@ -234,7 +274,7 @@ def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "") -> An
         return answer
     pools = _part_pools(plan)
     for p in plan.parts:
-        if part_coverage(answer, plan, hits)[p.id] != "none":
+        if part_coverage(answer, plan, hits, matrix)[p.id] != "none":
             continue
         wording = PART_NO_EVIDENCE if pools.get(p.id) == 0 else PART_NOT_ANSWERED
         answer.gaps.append(Gap(what=wording.format(part=_part_label(p, question)),
@@ -301,13 +341,16 @@ def number_matches(f: Figure, value: float) -> bool:
     return False
 
 
-def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
-    """Flag (never drop) a claim with a number not found in any chunk it cites (rule 4)."""
+def check_numbers(answer: Answer, hits: list[Hit], derived=None) -> Answer:
+    """Flag (never drop) a claim with a number not found in any chunk it cites (rule 4). #247 (ADR-021
+    rule 2): a figure equal to an accepted derivation's value (same match rule) whose input chunks the
+    claim all cites is allowed, flag `computed`; without both inputs cited it stays number_not_found."""
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         cited = [by_id[c].text for c in claim.chunk_ids if c in by_id]
         if not cited:
             continue                                            # already flagged by the citation check
+        computed = [v for v, ids in (derived or []) if ids and ids <= set(claim.chunk_ids)]
         scaled = [v for text in cited for v in _chunk_values(text)]
         bare = [v for text in cited for v in _chunk_values(text, unscaled=True)]
         # Table cells often lose their "(in millions)" header to another chunk: a claim figure with a
@@ -318,8 +361,15 @@ def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
             values = bare if f.scale == 1.0 else scaled + [v * f.scale for v in unitless]
             return any(number_matches(f, v) for v in values)
 
-        if not all(found(f) for f in figures(claim.text)) and "number_not_found" not in claim.flags:
-            claim.flags.append("number_not_found")
+        def from_inputs(f: Figure) -> bool:
+            return any(number_matches(f, v) for v in computed)
+
+        figs = figures(claim.text)
+        if not all(found(f) or from_inputs(f) for f in figs):
+            if "number_not_found" not in claim.flags:
+                claim.flags.append("number_not_found")
+        elif any(not found(f) and from_inputs(f) for f in figs) and "computed" not in claim.flags:
+            claim.flags.append("computed")
     return answer
 
 
@@ -469,23 +519,59 @@ def suggested_sources(entity_id: str) -> str:
     if not rows:
         return _config_sources(entity_id)
     missing = [name for doc_type, name in rows if doc_type not in have]
-    return "Not yet in the corpus: " + "; ".join(missing) if missing else ""
+    if missing:
+        return "Not yet in the corpus: " + "; ".join(missing)
+    # #247 part 3 item 5: a firm reported inside a parent (MER -> BAC) with nothing of its own missing
+    # names its parent's missing sources, never another firm's
+    parent = _entry(entity_id).get("parent")
+    if parent and parent != entity_id:
+        text = suggested_sources(parent)
+        prefix = "Not yet in the corpus: "
+        if text.startswith(prefix):
+            return f"Not yet in the corpus (parent {_short_name(parent)}): " + text[len(prefix):]
+    return ""
+
+
+def _gap_firm(part_id: str | None) -> str | None:
+    """The configured firm a gap's part id names ("a1.MER" -> "MER"); None for aspect-level or research."""
+    tail = (part_id or "").rsplit(".", 1)
+    if len(tail) != 2:
+        return None
+    cfg = entities_config()
+    ids = {e["id"] for e in cfg["entities"] + cfg.get("expansion", [])}
+    return tail[1] if tail[1] in ids else None
 
 
 def fill_suggested_sources(answer: Answer, query: Query) -> Answer:
-    """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51)."""
+    """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51). #247 part 3
+    item 5: a gap on one firm's cell gets only that firm's sources (empty stays empty)."""
     empty = [g for g in answer.gaps if not g.suggested_source.strip()]
     if empty and query.entities:
-        text = _sources_for(query.entities)
+        text = None
         for g in empty:
+            firm = _gap_firm(getattr(g, "part_id", None))
+            if firm:
+                try:
+                    g.suggested_source = suggested_sources(firm)
+                except Exception:
+                    g.suggested_source = ""
+                continue
+            if text is None:
+                text = _sources_for(query.entities)
             g.suggested_source = text
     return answer
 
 
+_PARENT_PREFIX = re.compile(r"^Not yet in the corpus(?: \(parent [^)]*\))?: ")
+
+
 def _sources_for(entities: list[str]) -> str:
-    """The registry sources of several firms in one line (one "Not yet in the corpus:" prefix)."""
+    """The registry sources of several firms in one line (one "Not yet in the corpus:" prefix; a
+    parent's list keeps its "(parent ...)" note inside the line)."""
     prefix = "Not yet in the corpus: "
     parts = [t for t in (suggested_sources(e) for e in entities) if t]
+    parts = [prefix + f"({m.group(0)[len('Not yet in the corpus ('):-3]}) " + t[m.end():]
+             if (m := _PARENT_PREFIX.match(t)) and m.group(0) != prefix else t for t in parts]
     registry = [t[len(prefix):] for t in parts if t.startswith(prefix)]
     return "; ".join(([prefix + "; ".join(registry)] if registry else [])
                      + [t for t in parts if not t.startswith(prefix)])

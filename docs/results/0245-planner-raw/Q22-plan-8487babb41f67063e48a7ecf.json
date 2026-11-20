@@ -1,0 +1,65 @@
+{
+  "question_id": "Q22",
+  "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+  "planner_version": "plan-v3",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-19T22:51:52.740368",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1397,
+    "output_tokens": 2191,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 245,
+    "reasoning_tokens": 2005,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 21.81,
+  "tokens_per_s": 100.46,
+  "reasoning_content": "We need answer with submit_plan tool. Need parse question: \"Net new assets by quarter for each of the five, with each firm's own definition of the metric.\"\n\nFirms: MS, SCHW, EDJ, MER, RJF all through \"each of the five\". So all five firms for every aspect.\n\nAspects: The question asks net new assets by quarter for each of five, with each firm's own definition of the metric.\n\nWe need list aspects literally, every one in order question asks them. What does question ask?\n\n1. Net new assets by quarter for each firm. This is a metric net_new_assets, series? \"by quarter\" is figure over several periods. Metric net_new_assets.\n\n2. Each firm's own definition of the metric (net new assets). This is a separate aspect: how each firm defines net new assets. Kind fact perhaps.\n\nQuestion says \"with each firm's own definition of the metric.\" That's an ask: the definition of net new assets for each firm. So two aspects? It says list every one, each \"and\" joining two asks. Here no \"and\", but asks net new assets by quarter and each firm's own definition of metric. The definition is an aspect the question names. Maybe also closest figure if not disclosed? Net new assets disclosed.\n\nNeed consider if \"by quarter\" may ask the quarterly figures. The metric exactly net_new_assets. metric field: net_new_assets when aspect asks exactly for that registered metric. For the definition aspect, metric \"\".\n\nKind: for net new assets by quarter -> series. For definition -> fact.\n\nKeyword queries 5-25 words, no firm names, no dates. For net new assets by quarter: \"net new assets\", \"net new asset flows\", \"net flows\", \"new client assets\", \"asset flows\", \"net new money\", quarterly? But no dates means no quarter names? \"quarterly net new assets\" maybe includes quarter word but no dates. We should avoid dates but \"by quarter\" can use \"quarterly\". Documents use \"net new assets\", \"net new asset flows\", \"net flows\", \"net new money\", \"asset inflows\", \"net new client assets\". Also definitions differ: Morgan Stanley \"fee-based asset flows\"? Schwab \"core net new assets\"; Merrill \"net new households\"? Edward Jones \"net new assets\"; Raymond James \"domestic private client group net new assets\"? But keywords should be concept without firm names.\n\nFor definition aspect: keywords \"definition of net new assets\", \"how we define net new assets\", \"net new assets defined as\", \"consists of\", \"comprised of\", \"includes\", \"calculation methodology\". Use 5-25 words.\n\nNeed decide number of aspects maybe more than two? The instruction says a figure that may not be disclosed also asks for closest disclosed figure as own aspect. Here net new assets by quarter is disclosed? Possibly for some firms not by quarter exactly, but we shouldn't add unless asked? The question asks net new assets by quarter for each of five. For firms that don't disclose NNA quarterly? Hmm \"closest disclosed figure\" as its own aspect when an asked figure may not be disclosed. Should we add an aspect for closest disclosed figure? The question doesn't mention undisclosed. But perhaps some of the five firms may not disclose exactly \"net new assets by quarter\" (e.g., Edward Jones is private, may disclose annually in Form ADV? Merrill within BofA). But instruction says \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect\". This is a general rule. We might need to include closest figure as an aspect? But question asks net new assets by quarter. If some firms don't report exactly that, closest figure. However we cannot name firms in aspect text or words. Should we include an additional aspect \"closest disclosed figure to net new assets by quarter\" for all? The question says net new assets by quarter for each of the five, with each firm's own definition. The \"closest disclosed figure\" would be an aspect if the figure may not be disclosed. But code chooses firms all. Hmm.\n\nWe need be careful. The instructions: \"List the aspects literally. An aspect is one thing the question asks about. ... a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect.\" The question asks net new assets by quarter; if not disclosed, closest figure. Should we explicitly add \"closest disclosed figure to quarterly net new assets\" as an aspect? The prompt likely expects us to add it because net new assets by quarter may not be disclosed for all (private firms). But the question asks \"by quarter for each of the five\". We don't know if disclosed. We can include aspect for closest disclosed figure? But that's an additional aspect the question may imply. However \"Do not add an aspect the question does not ask.\" Is \"closest disclosed figure\" asked? The instruction says it \"also asks\" when figure may not be disclosed. I think we should add it as its own aspect if we deem it may not be disclosed. But if we add too much, risk. Let's reason.\n\nThe question: \"Net new assets by quarter for each of the five, with each firm's own definition of the metric.\" It asks:\n- net new assets by quarter (series)\n- each firm's own definition of the metric (fact)\n\nMaybe also \"for each of the five\" is comparison? It asks for each firm individually, not a comparison. But \"a judgement the question asks for across firms or periods (whether figures can be set side by side, which firm says the most) is its own aspect of kind comparison.\" Does this question ask to compare? No, just \"for each of the five, with each firm's own definition\". No comparison asked.\n\nMaybe \"each firm's own definition\" implies comparing definitions? It asks with each firm's own definition, not which firm says the most. The definition itself is fact for each. No comparison.\n\nSo likely 2 aspects. But let's consider \"by quarter\" could be \"quarterly net new assets\" with metric net_new_assets. Yes.\n\nNeed choose kind: series for by quarter (figure over several periods). Definition: fact.\n\nKeyword queries no firm names, no dates. For NNA by quarter: \"net new assets quarterly net flows net new money asset inflows net new client assets new client cash\". 5-25 words. Ensure no dates. \"quarterly\" is not a date. Could include \"quarter\". But \"no dates\" means no specific dates like 2024, Q1. \"quarter\" generic okay? Probably okay. But maybe avoid \"quarterly\" in query? Search words documents would use: \"net new assets\" \"net new asset flows\" \"net flows\" \"net new money\" \"asset flows\" \"new client assets\" \"net new client assets\" \"inflows\". Include \"quarter\" maybe not needed; the retrieval with \"net new assets\" and time window handles quarterly. But keyword query should name concept and exact synonyms. \"net new assets by quarter\" concept includes periodicity; documents might say \"quarterly net new assets\". So include \"quarterly\". Fine.\n\nFor definition aspect: \"definition net new assets defined as consists of comprised of includes how we define net new assets calculation methodology net new asset flows definition\". Need 5-25. No firm names.\n\nFirms: leave empty because asked of every listed firm. The instruction says leave firms empty when question asks aspect of every listed firm. So firms: [].\n\nMetric: NNA aspect = \"net_new_assets\". Definition = \"\".\n\nNeed call submit_plan with aspects array. Ensure JSON. Provide no answer text except tool call. The prompt says \"Return the plan by calling the submit_plan tool; do not answer the question.\" We should only call tool.\n\nLet's formulate final.\n\nWait, maybe the question asks \"with each firm's own definition of the metric\" could be considered part of the NNA aspect? But instruction says each \"and\" joining two asks and each metric or dimension; \"with each firm's own definition\" is another ask. So separate aspect.\n\nLet's ensure order: question asks \"Net new assets by quarter for each of the five, with each firm's own definition of the metric.\" The first aspect is net new assets by quarter. Second is each firm's own definition. Good.\n\nCould there be an aspect \"for each of the five\" as a dimension? No.\n\nNow keyword queries length. Let's count.\n\nAspect 1 keyword_query: \"net new assets quarterly net new asset flows net flows net new money net new client assets asset inflows new client cash\" Count: net(1) new2 assets3 quarterly4 net5 new6 asset7 flows8 net9 flows10 net11 new12 money13 net14 new15 client16 assets17 asset18 inflows19 new20 client21 cash22. 22 words, ok. But includes repeated \"net new\". Fine.\n\nCould include \"net new client assets\" and \"client asset flows\". okay.\n\nAspect 2 keyword_query: \"net new assets definition how we define net new assets defined as consists of comprises includes calculation methodology net new asset flows\" Count: net1 new2 assets3 definition4 how5 we6 define7 net8 new9 assets10 defined11 as12 consists13 of14 comprises15 includes16 calculation17 methodology18 net19 new20 asset21 flows22. 22.\n\nNo firm names and no dates. \"we\" generic okay.\n\nPotential issue \"firms\" field when empty: use [] not null.\n\nLet's submit.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "nna_by_quarter",
+        "text": "Net new assets by quarter for each firm.",
+        "keyword_query": "net new assets quarterly net new asset flows net flows net new money net new client assets asset inflows new client cash",
+        "firms": [],
+        "metric": "net_new_assets",
+        "kind": "series"
+      },
+      {
+        "id": "nna_definition",
+        "text": "Each firm's own definition of the net new assets metric.",
+        "keyword_query": "net new assets definition how we define net new assets defined as consists of comprises includes calculation methodology net new asset flows",
+        "firms": [],
+        "metric": "",
+        "kind": "fact"
+      }
+    ]
+  }
+}

@@ -30,7 +30,7 @@ def hit(cid, part="p1", entity="MS"):
 
 
 def plan(*parts, pools=None):
-    p = Plan(parts=[Part(pid, text, firms) for pid, text, firms in parts])
+    p = Plan.from_parts([Part(pid, text, firms) for pid, text, firms in parts])
     if pools is not None:
         p.searched = [{"id": pid, "pool": n} for pid, n in pools.items()]
     return p
