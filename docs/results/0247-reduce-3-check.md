@@ -97,3 +97,5 @@ from 02a57c2; Q11, Q23, Q24 differ from 02a57c2 only in that caveat; no "#148" i
 rebuilt (hashes in section 4).
 
 ## 7. Notes (not changed in this part)
+
+verdicts-blind.json sha256 c050ae7cb32a641fde588e9f5943c36ce44cefb8355b378ca05159f3a9d76c69 (part 3 re-check, five changed answers, fresh scorer agent, 0 API calls; committed alone before any comparison).
