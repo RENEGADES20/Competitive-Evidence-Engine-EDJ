@@ -185,3 +185,46 @@ hashes in `ev247b\blind-in-r2-hashes.txt`. Q1 and Q3 keep their part-2 answers a
 | Q23 where each series stops | answer | fixed by R6c (`SERIES_SPAN`) | this PR |
 
 verdicts-blind-r2.json sha256 cba0e16cf45017c37218467be019897bbfb7468e24d0ced7aa8ec2a1a9e54e23 (re-check, fresh scorer agent; committed alone before any comparison).
+
+## 6. Blind scoring of the re-check
+
+**4/6 PASS** (Q19, Q22, Q24, Q26; borderline Q19, Q22, Q26). Fresh scorer agent, inputs only
+`ev247b\blind-in-r2\`; file `docs/results/0247b-raw/verdicts-blind-r2.json` (hash above, committed alone in
+d422467). With Q1 and Q3 (part-2 PASS, answers unchanged) **part 2 is 6/8**.
+
+| Q | Part 1 | Part 2 (v5.1) | **Re-check (v5.2)** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|---|
+| Q1 | PASS | PASS | (not re-run) | | | |
+| Q3 | PASS | PASS (after the transport retry) | (not re-run) | | | |
+| Q11 | FAIL | FAIL | **FAIL** | r, s | | Only EDJ, RJF, BAC (2023) definitions quoted; MS none and a 2020 count; Schwab none; differences not named side by side |
+| Q19 | PASS (b) | PASS (b) | **PASS** | | yes | Cohort evidence, Schwab moves, EDJ disclosures, hand-off; competitor moves Schwab only; one claim oddly framed as a comparison; one BofA figure (94% collectables) slightly misread |
+| Q22 | PASS (b) | PASS (b) | **PASS** | | yes | Quarterly values with period, source and definition; stray 2019-20 MS points; EDJ 2025Q4 missing; a caveat wrongly says Schwab publishes no definition |
+| Q23 | FAIL | FAIL | **FAIL** | r, s | | MS 2020 only, RJF fiscal year-ends, Merrill 2023 only; EDJ near complete |
+| Q24 | FAIL | PASS (b) | **PASS** | | | EDJ computed on a consistent basis; MS, RJF, Schwab, Merrill declined with reasons; validity answered |
+| Q26 | PASS (b) | FAIL (b) | **PASS** | | yes | Newest first, in window, a why-line each; many why-lines restate another fact; redundant splits; Clark Capital repeats a May 2026 close |
+
+Merge acceptance (TL): Q26 back to PASS; Q19, Q22, Q24 kept PASS; Q1 and Q3 unchanged answers: **met**.
+Against part 1 on the eight: 5/8 -> 6/8 (Q24 FAIL -> PASS; no PASS lost). Q11 and Q23 stay open.
+
+### Findings for follow-up (no code change in this PR, nothing re-run; checked with 0 calls)
+1. **Q23 RJF basis break** (one line): an undated item makes no basis whether or not it carries a population
+   (R2's whole-quote fallback tagged the undated "approximately 9,000" PCG item).
+2. **Q22 "Schwab publishes no definition"**: the registry marks Schwab's net new assets entry `closest_metric`
+   (its headline is *core* net new assets, `SCHW-10K-2025#119`, quoted), and R6a's wording for
+   `closest_metric` says "publishes no definition of this metric". Wrong for Schwab NNA (it defines a related
+   metric, core NNA). Fix: word `closest_metric` as "defines a related metric instead: '<quote>'".
+3. **Q11 differences not side by side**: the R6a caveat lists each firm's definition, includes / excludes and
+   not-stated items in one long line, but never says how they differ (e.g. MS counts representatives of
+   advisor-led accounts; EDJ counts all U.S. and Canada advisors with no written definition; RJF excludes RCS;
+   BAC includes Consumer Banking; Schwab publishes no count). Candidate: a comparison aspect forced by code
+   on "define ... include or exclude" questions, or a code table of the registry's includes / excludes.
+4. **Q19 misread figure** (BofA "94% collectables") and **Q26 why-lines restating another fact, near-duplicate
+   items** (one article split into several claims): reduce-quality findings; the dedupe threshold (content
+   containment 0.85) does not catch splits of one passage.
+5. **MS 2025 10-K and 2026 supplements as "expected sources"** (scorer, Q11 / Q23): SQL over `MS-10K-2025`,
+   `MS-SUPP-2025Q4` .. `MS-SUPP-2026Q3`: no advisor count line anywhere; the only text about representatives is
+   the footnote "Advisor-led client assets represent client assets in accounts that have a Wealth Management
+   representative assigned" (`MS-10K-2025#167`, `MS-SUPP-2025Q4#36`, `MS-SUPP-2026Q1#43`, `MS-SUPP-2026Q2#37`,
+   `MS-SUPP-2026Q3#38`), which defines advisor-led assets, not a headcount. **Corpus gap confirmed** (no count,
+   no headcount definition). Side note: the MS registry entry quotes the 2020 count line; its closest current
+   wording is that footnote (pinned already); the registry could name it as `closest_metric` text.

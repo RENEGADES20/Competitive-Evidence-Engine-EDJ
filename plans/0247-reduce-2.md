@@ -401,30 +401,34 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
 - `test_no_paid_calls` green.
 
 ## Acceptance
-- [ ] Q24 (real): no ratio on inputs of different populations (RJF, MS total client assets refused, or
+- [x] Q24 (real): no ratio on inputs of different populations (RJF, MS total client assets refused, or
       accepted only on advisor-led / WM representatives at one period); per firm with a proposal one
       claim saying computable or not, citing both inputs; the comparison claim; EDJ computed.
+      **Met**: re-check blind PASS (part-2 first run PASS borderline); RJF refused as "populations differ".
 - [ ] Q23 (real): EDJ 4Q24 and 4Q25 points from `EDJ-10K-2025#130`; the EDJ basis break flagged by
       code; MS states the last count (2020) and the closest current firm-filed figure as adjacent;
-      period gaps named; no why-lines.
+      period gaps named; no why-lines. **Not met** (blind FAIL r, s): EDJ near complete (4Q24, 4Q25 in), no why-lines,
+      series spans by code; MS / RJF / Merrill series are corpus gaps (results doc section 5); RJF basis-break noise.
 - [ ] Q11 (real): each firm's definition quoted, or "no written definition" with what the firm reports,
-      cited (pinned definitions in the matrix); differences named.
-- [ ] Q19 (real, regression): blind PASS kept; no gap row outside an aspect's firm scope; no duplicate
+      cited (pinned definitions in the matrix); differences named. **Not met** (blind FAIL r, s): MS and Schwab
+      publish no definition (corpus); the per-firm caveat lists definitions but does not say how they differ.
+- [x] Q19 (real, regression): blind PASS kept (borderline); no gap row outside an aspect's firm scope; no duplicate
       claims; why-lines only on a12; the other aspects keep their order.
-- [ ] Q26 (real, regression): blind PASS kept; why-lines carry stated context (0 `why_line_restated`
+- [x] Q26 (real, regression): blind PASS kept after the revision (borderline; the first part-2 run FAILED, R1); why-lines carry stated context (0 `why_line_restated`
       left unreplaced), newest first, no duplicates.
-- [ ] Q22 (real, regression; issue acceptance "Q1, Q3, Q22 keep PASS"): blind PASS kept; pinned
+- [x] Q22 (real, regression; issue acceptance "Q1, Q3, Q22 keep PASS"): blind PASS kept; pinned
       definitions per firm; no must-not chunk (`MS-PR-2026-04-15-01#15`, `SCHW-10Q-2026Q2#56`) cited as
-      a fact; every basis-break caveat it gets listed and checked against its items.
-- [ ] Q1 and Q3 (real, regression): blind PASS kept under v5.1 (maps reused; only the reduce changes).
-- [ ] The outcome is the issue's acceptance: "Closes #247" only if every target and every regression
+      a fact; every basis-break caveat it gets listed and checked against its items. Blind PASS (borderline);
+      no must-not chunk cited as a fact; no basis break; one wrong caveat word for Schwab (finding).
+- [x] Q1 and Q3 (real, regression): blind PASS kept under v5.1 (Q3 after the TL-approved transport retry) (maps reused; only the reduce changes).
+- [x] The outcome is the issue's acceptance: "Closes #247" only if every target and every regression
       question passes blind; otherwise "Part of #247" with the open items. No regression check is
-      dropped.
-- [ ] Tests listed above; 0 real calls in tests.
-- [ ] Mock 35: every main chunk list identical to main; only `pinned` / `period` additions, each listed;
+      dropped. Part 2: 6/8 blind (Q11, Q23 FAIL) -> "Part of #247".
+- [x] Tests listed above; 0 real calls in tests (966 passed).
+- [x] Mock 35: every main chunk list identical to main; only `pinned` / `period` additions, each listed;
       recall not lower; forbidden hits from additions reported; mock answers pass every code check.
-- [ ] pytest, verify-cee and `gh pr checks` green.
-- [ ] ADR-015 / ADR-021 amendments in the PR -> escalated to the TL for the merge.
+- [x] pytest, verify-cee and `gh pr checks` green.
+- [x] ADR-015 / ADR-021 amendments in the PR -> escalated to the TL for the merge.
 
 ## 8. Mock 35-question check (0 calls)
 `eval_run.py` (mock) at the branch head vs main c4ba303 (a detached worktree): per question every main
@@ -725,3 +729,6 @@ definitions) go to NEXT.
   Q24 RJF reason now "populations differ"; Q19 no comparison gap, 6 contradicting gaps dropped; Q11
   definitions named per firm; Q23 series spans. Remaining: Q23 RJF basis break (an undated keyed item).
   Blind inputs `ev247b\blind-in-r2\` and `ev247b\scorer-prompt-r2.txt` prepared; stopped before scoring.
+- 2026-11-20 - re-check blind 4/6 (hash cba0e16c... committed alone in d422467): Q19, Q22, Q24, Q26 PASS; Q11, Q23
+  FAIL. Part 2 6/8; the TL merge acceptance (Q26 back to PASS, Q19 / Q22 / Q24 kept) is met. Findings 1-5 in the
+  results doc section 6 (no code change, nothing re-run). Acceptance ticked; PR stays Part of #247.
