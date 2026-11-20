@@ -442,18 +442,20 @@ def corrective_search(q, plan, sq_id, extra_words: str, exclude: set[str],
 - ask trace lines; `test_no_paid_calls` still green.
 
 ## Acceptance
-- [ ] Real: Q19's decomposition includes MS, SCHW, MER, RJF as competitor sub-questions; Q24 and
-      Q11 list every asked aspect for all five firms; all nine plans quoted in the PR.
-- [ ] Real + tests: Q12's and Q15's restricted aspects are searched only for their firms (Q12:
+- [x] Real: Q19's decomposition includes MS, SCHW, MER, RJF as competitor sub-questions; Q24 and
+      Q11 list every asked aspect for all five firms; all nine plans quoted in the PR. (Q19's own
+      planner output was cut at the 16000 thinking-on cap and fell back to the rule plan; the four
+      competitors come from code either way; finding, not re-run.)
+- [x] Real + tests: Q12's and Q15's restricted aspects are searched only for their firms (Q12:
       Schwab's acquisition aspects SCHW, Edward Jones's aspect EDJ; Q15: Schwab earnings SCHW,
       advisor-led earnings MS, EDJ, MER, RJF), and Q19 still holds the four competitors.
-- [ ] Interim input guard: mock tests (no trim under the limit; trim + trace + note + log over it);
+- [x] Interim input guard: mock tests (no trim under the limit; trim + trace + note + log over it);
       0 real answer calls in #245; each real plan's interim input tokens reported against the limit.
-- [ ] Every sub-question query carries the SQL entity/segment/window filters (tests).
-- [ ] Re-search hook keeps all SQL filters and the exclude set (tests).
-- [ ] Mock run at the pick: refusal 5/5 (keyed 22/22), recall@final (all and tier 1) not lower
-      than `evals/baselines/corpus-2026-11-19`; every PASS -> FAIL explained; grid table in the PR.
-- [ ] pytest, verify-cee and `gh pr checks` green.
+- [x] Every sub-question query carries the SQL entity/segment/window filters (tests).
+- [x] Re-search hook keeps all SQL filters and the exclude set (tests).
+- [x] Mock run at the pick: refusal 5/5 (keyed 22/22), recall@final (all and tier 1) not lower
+      than `evals/baselines/corpus-2026-11-19`; every PASS -> FAIL explained (none); grid table in the PR.
+- [ ] pytest, verify-cee and `gh pr checks` green (pytest 761 passed, verify-cee PASS; CI in the PR).
 
 ## Mock checks (commands)
 Windows (from `D:\ALLPROJECTS\EDJ\wt-245`, `$env:PYTHONPATH="D:\ALLPROJECTS\EDJ\wt-245\src"`):
@@ -546,3 +548,25 @@ Mac: `PYTHONPATH=$PWD/src SUBQUESTION_TOKENS=12000 .venv/bin/python scripts/eval
   coverage note (stated in the spec); (3) greedy stop rule: skip a passage that does not fit and
   continue, stated in the spec; (4) duplicate D6-D9 line folded into the items. Build waits for
   #242 to merge, then a rebase onto main.
+- 2026-11-19 22:20 - #242 merged (739cb3c, PR #253); rebased onto origin/main eac02d1. Adapted to
+  #242's code: the deepseek planner path keeps #242's `deepseek_tool_request` / `deepseek_create` /
+  `deepseek_tool_call` checks and only gets the v3 schema, prompt and message; thinking on is the
+  default (planner cap 16000, unchanged), thinking off 2000 -> 8000 as planned (request version
+  `...-p8000`); `plan_cache_key` keeps #242's design (the constant `PLANNER_MAX_TOKENS`, now 8000,
+  in the key, the deepseek cap through the request version) instead of `planner_max_tokens(provider)`
+  (the reviewer called it redundant); the OpenAI planner request still sends no output cap (unchanged
+  from main). Differences from the plan text: `corrective_search`'s base words for a rule-plan
+  aspect are the question itself (`q.question`), which `fts` cleans exactly as `keyword_terms(q)[0]`
+  is built, without adding the recency words twice; the 400 stop also covers anthropic/openai SDK
+  errors (any exception with `status_code == 400`). DeepSeek strict docs re-checked
+  (`guides/tool_calls`): enum supported, empty-string enum values not mentioned (the 400 stop covers it).
+- 2026-11-19 22:30 - build done (890e716): pytest 761 passed. Context windows checked: DeepSeek
+  deepseek-v4-pro 1M (Models & Pricing), Claude Sonnet 5.5 1M; guard default for deepseek 933,000.
+- 2026-11-19 22:35 - grid (0 calls): 12000 and 20000 lose recall@final; 40000 eligible and picked
+  (all 30 baseline questions UNCHANGED). Final mock at 9cae90e: same lists, 33 PASS / 2 FAIL (Q19 as
+  baseline; Q33 fails on main too: research not searched without a theme). verify-cee PASS
+  (open-citation / download-document UNREACHABLE: no raw files in the worktree, a precondition).
+- 2026-11-19 22:54 - real planner check: 9 DeepSeek calls (thinking on), 0 answer calls, no 400, no
+  ProviderStop, ~0.87 CNY off-peak. Q19 cut at max_tokens (16000 reasoning) -> rule-plan fallback
+  (finding, not re-run). Q11/Q22/Q24 real plans retrieve must-not chunks (finding for #246).
+  Evidence: docs/results/0245-planner-check.md.
