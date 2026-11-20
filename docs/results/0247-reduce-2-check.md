@@ -47,8 +47,10 @@ at `6a3825a` (code gate: `git status` clean, `src scripts config` identical to t
   The failed record is kept as `Q3-reduce-ec259fc6b468c54a5288cdfa.failed-1.json`, the retry's record next
   to it under its cache key. **Total: 27 calls, about $1.38.**
   - The retry's output folder name was shadowed in the wrapper (PowerShell variables are not case-sensitive),
-    so it wrote into `ev247beal-run` and replaced that run's `report.json` and log. The eight-question report
-    was rebuilt from the saved records with 0 calls (`--max-calls 0`, no key: `ev247beal-run-final`, all 8
+    so it wrote into `ev247b
+eal-run` and replaced that run's `report.json` and log. The eight-question report
+    was rebuilt from the saved records with 0 calls (`--max-calls 0`, no key: `ev247b
+eal-run-final`, all 8
     answers reused); the seven other answers are identical to the first dump (diffed). The raw records of the
     26-call run were already in `docs/results/0247b-raw/`, and the run summary is in `ev247b\head-log.txt`.
 - **Raw records**: `docs/results/0247b-raw/` (51: the 26 new, the Q3 retry, the 24 reused; Q3's failed
@@ -98,7 +100,29 @@ For every question with an answer: 0 outside the matrix, 0 part gaps, 0 why-line
 5. Q11 / Q22 / Q24 refusal flags in the retrieval scoring are the same must-not retrievals as part 1 (main
    search, not the additions); no must-not chunk is cited as a fact in any matrix.
 
-## 3. Blind scoring (pending)
+## 3. Blind scoring
+
+**5/8 PASS** (Q1, Q3, Q19, Q22, Q24; borderline: Q19, Q22, Q24, Q26). Fresh scorer agent, inputs only
+`ev247blind-in\` (after the Q3 transport retry); file `docs/results/0247b-raw/verdicts-blind.json`.
+
+| Q | Part 1 blind | **Part 2 blind** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|
+| Q1 | PASS | **PASS** | | | Channels management credits, dated; $10T flagged as a stock target |
+| Q3 | PASS | **PASS** | | | Framing, priorities, competitors and concessions, dated |
+| Q11 | FAIL | **FAIL** | s, r | | Not five quoted definitions (MS none and 2020 only, EDJ a label, Merrill a 2023 footnote, Schwab a gap); differences not named |
+| Q19 | PASS (b) | **PASS** | | yes | Cohort evidence and competitor moves (Schwab only), hand-off; gap lines for a7-a12 contradict EDJ claims found |
+| Q22 | PASS (b) | **PASS** | | yes | Value, period, source and definition per firm; stray 2019-20 MS cells, a few missing quarters, EDJ 10-K vs 10-Q definition wording not flagged |
+| Q23 | FAIL | **FAIL** | r, s | | MS 2020 only, RJF fiscal year-ends only, Merrill 2023 only; EDJ near complete |
+| Q24 | FAIL | **PASS** | | yes | Ratio only for EDJ, others declined, validity half answered; RJF reason muddled, EDJ hedged "definition unverified" |
+| Q26 | PASS (b) | **FAIL** | s | yes | About a third of items say "the source does not say"; trade press only; one article repeated |
+
+Against part 1 on the same eight: 5/8 -> 5/8. **Q24 FAIL -> PASS; Q26 PASS -> FAIL** (a regression: the
+acceptance does not allow it, so the PR does not merge as is; plan "Revision after scoring").
+- Q26: the 11 "the source does not say" lines were written by the model (v5.1 tells it to when the item's own
+  context gives no reason); code replaced none (`why_line_restated` 0). The 0-call replay's 27 replacements were
+  part 1's restating why-lines run through the new check, a different output.
+
+## 3a. Blind inputs (as prepared)
 Prepared for a fresh scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in\` (`answers-dump.txt` with the eight
 answers, Q3 from the retry; `questions.yaml`; `verdict-rule.txt`, part 1's rule) and
 `ev247b\scorer-prompt.txt`; hashes in `ev247b\blind-in-hashes.txt`. Baseline: part 1 blind (Q1, Q3, Q19,
