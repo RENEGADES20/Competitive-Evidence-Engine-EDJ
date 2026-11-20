@@ -145,3 +145,24 @@ stated), and the per-firm definitions caveat reads "not stated: trainees" for RJ
 - So Q23's remaining failure is corpus (MS after 4Q2020, BAC after 4Q2023, RJF quarterly, EDJ 3Q26) plus one
   RJF point (2025Q1, investor-day deck) that retrieval missed; Q11's MS / Merrill bases are corpus (no MS
   definition or count after 2020 in any filing; BAC's last written footnote is 2023).
+
+## 10. Merge of main (#248, e275175 / a1341d3) and the replays again (0 calls)
+`origin/main` a1341d3 merged into the branch (7300621, no conflict). `eval_run.py` now needs `--naive-tz` for
+saved records without a UTC offset; `diag/replay_part3.py` passes `--naive-tz America/Chicago` when the script
+offers it. No key needed.
+- Baseline on main a1341d3 (`wt-247c-base`, `replay-base`; the 2f568c4 baseline kept as `replay-base-2f568c4`):
+  guard OK (real_calls 0, reused 50, 8/8 cached, 50 raw records identical to the committed blobs).
+  **Identical to the 2f568c4 baseline for all eight** (#248 changes no answer text).
+- Branch 7300621 (`replay`; the scored 22a6555 replay kept as `replay-22a6555`): guard OK, same numbers.
+  - Q1, Q3, Q26 identical to the baseline; Q19, Q22 identical to the scored `blind-in` answers.
+  - **Q11, Q23, Q24 differ from the scored answers**, only by the section 9a fix: the per-firm definitions caveat
+    reads "not stated: trainees" for RJF instead of the #228 trainees quote, and Q11 loses the contrast's
+    Trainees caveat (every firm not stated).
+- pytest after the merge: 1033 passed.
+- Second blind inputs prepared for these three (not scored): `ev247c\blind-in-r2\` (answers-dump.txt with Q11,
+  Q23, Q24 from `replay`; questions.yaml; verdict-rule.txt for the three) and `ev247c\scorer-prompt-r2.txt`
+  (writes `ev247c\verdicts-blind-r2.json`). Hashes (`ev247c\blind-in-r2-hashes.txt`):
+  - answers-dump.txt ae69afb968c53240057fd7749b7c30c11383703e5e957f1d5cfd5b37ffdab156
+  - questions.yaml 0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b
+  - verdict-rule.txt 4957b1257650535f1c71adf813cdbacac4d2246947ec42a0ecd177ca0fdd21e6
+  - scorer-prompt-r2.txt c2b1b3b19fca25b3396a83c1a7de4303f17dca2e080724a8d8631af37dc60a3a

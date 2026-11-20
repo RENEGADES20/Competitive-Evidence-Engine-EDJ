@@ -390,3 +390,9 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
   registry for the map's words (pins and map inputs unchanged). Two new tests (fixed words outside quotes;
   every quote verbatim in its cited chunk, DB). 22a6555: pytest 1000 passed; branch replay re-run (guard OK),
   re-diffed: only Q11 / Q23 / Q24 caveat text changed vs 02a57c2; blind inputs rebuilt.
+- 2026-11-20 12:20 - blind 3/5 (hash 676eb3c, verdicts b101ab4); final 6/8, no PASS -> FAIL. Scorer claims
+  checked (0 calls): RJF trainees cell overstated -> `not_stated` (one config line); 2025-26 MS / BAC / RJF
+  supplements carry no advisor count (corpus gap); RJF 2025Q1 (investor-day deck #43) is a Q23 retrieval miss.
+  Merged main a1341d3 (#248); baseline re-run on it (identical to the 2f568c4 baseline) and branch replay
+  (guard OK): Q11 / Q23 / Q24 differ from the scored answers only by the trainees fix -> stopped before
+  marking ready; blind-in-r2 (Q11, Q23, Q24) prepared. pytest 1033 passed.
