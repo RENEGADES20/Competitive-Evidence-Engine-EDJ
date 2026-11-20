@@ -33,17 +33,14 @@ class Settings:
     # Sub-question decomposition (#245, ADR-021 rule 6, ADR-019 amendment): token budget of each
     # SubQuestion(entity, aspect); the question's total grows with its decomposition. No part cap.
     subquestion_tokens: int = 40000
-    # Interim answer input guard (#245, temporary until #247 wires the reduce step): most estimated
-    # input tokens of the one answer call; None = the provider's default (llm.answer_input_limit).
-    answer_input_max_tokens: int | None = None
     # DeepSeek (#242): OpenAI-SDK compatible; strict function tools need the /beta base URL.
     deepseek_model: str = "deepseek-v4-pro"
     deepseek_base_url: str = "https://api.deepseek.com/beta"
     deepseek_thinking: bool = True
-    # Map step (#246, ADR-021): per-firm extraction calls and the evidence matrix. Off by default
-    # until #247 shows the map's output (TL decision D8); #247 flips the default. The eval turns it on
-    # with --map / --map-only.
-    map_on: bool = False
+    # Map-reduce (#246, #247, ADR-021): per-firm extraction calls, the evidence matrix and the reduce
+    # call. On by default since #247; MAP=off keeps the legacy single answer call (prompt v4.1) for
+    # comparison only (TL D3). The eval maps unless --legacy.
+    map_on: bool = True
     map_concurrency: int = 6     # parallel extraction calls (five firms + research)
 
 
@@ -99,11 +96,10 @@ def settings() -> Settings:
         mock_delay_s=float(os.getenv("MOCK_DELAY_S", "0") or 0),
         planner=os.getenv("PLANNER", "on").strip().strip('"').strip().lower() not in ("off", "false", "0", "no"),
         subquestion_tokens=_positive_int("SUBQUESTION_TOKENS", SUBQUESTION_TOKENS_DEFAULT),
-        answer_input_max_tokens=_positive_int("ANSWER_INPUT_MAX_TOKENS", None),
         deepseek_model=os.getenv("DEEPSEEK_MODEL", "").strip() or "deepseek-v4-pro",
         deepseek_base_url=os.getenv("DEEPSEEK_BASE_URL", "").strip() or "https://api.deepseek.com/beta",
         deepseek_thinking=deepseek_thinking(),
-        map_on=os.getenv("MAP", "off").strip().strip('"').strip().lower() in ON_WORDS,
+        map_on=os.getenv("MAP", "on").strip().strip('"').strip().lower() not in OFF_WORDS,
         map_concurrency=_positive_int("MAP_CONCURRENCY", MAP_CONCURRENCY_DEFAULT),
     )
 

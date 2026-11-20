@@ -21,7 +21,7 @@ import json
 import re
 import time
 from concurrent.futures import CancelledError, ThreadPoolExecutor, as_completed
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Callable, Literal
 
 from pydantic import BaseModel, Field
@@ -31,7 +31,7 @@ from cee.config import settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, Query
 
-EXTRACT_VERSION = "extract-v1"
+EXTRACT_VERSION = "extract-v1.1"   # #247: the asked quantity for other periods is a fact (ADR-021 rule 3)
 EXTRACT_TOOL = "submit_extraction"
 
 # Approval condition 1 (plan review 2): one proxy text, used verbatim in the firm and research prompts.
@@ -54,13 +54,16 @@ a figure.
 Label each cell:
 - fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is
   still a fact (some periods, a narrower group or sample, one of several figures); the item says
-  what it covers (period, scope).
+  what it covers (period, scope). The asked quantity for periods other than those asked (older or
+  later) is also a fact, for the periods it covers: the item's period says which; it is never
+  different_quantity.
 - different_quantity: no passage states the asked quantity, but one states a different, related
   quantity: a wider unit that contains the asked one (a parent company, a segment that also holds
   other businesses), a different measure (all employees or full-time equivalents for advisors,
   compensation expense for a payout grid or a headcount, client firms on a platform for the firm's
   own advisors, a regulatory form's label for a business metric), or an industry figure for a firm's
-  own figure. Put it in items and say in differs_because how it differs from what is asked.
+  own figure. A different period of the asked quantity is not a different quantity. Put it in items
+  and say in differs_because how it differs from what is asked.
 - not_disclosed: the passages show the firm does not report it (they say so, or they report the
   surrounding figures without it).
 - not_found: the passages say nothing about it.
@@ -659,10 +662,13 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     for i, s in enumerate(specs):
         if limit is not None and input_tokens(question, s, window, firms) > limit:
             results[i] = CallResult(skipped=True, error="input over the model's limit")
-        elif allow is not None and not allow(s):
-            results[i] = CallResult(skipped=True, error="not run: --max-calls reached")
         else:
-            todo.append(i)
+            ok = True if allow is None else allow(s)
+            if ok is True:
+                todo.append(i)
+            else:   # #247: allow() returns True, or False / a reason string (e.g. the run stopped after a 400)
+                results[i] = CallResult(skipped=True, error=ok if isinstance(ok, str) and ok
+                                        else "not run: --max-calls reached")
     stop: Exception | None = None
     if todo:
         with ThreadPoolExecutor(max_workers=max(1, concurrency)) as ex:
@@ -756,7 +762,11 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
         remaps.append(MapSpec(f"remap.{key}", 2, sqs[0].entity, False,
                               [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text) for sq in sqs],
                               own, {sq.id: {h.chunk_id for h in own[sq.id]} for sq in sqs}))
-    extra = [h for hs in new_hits.values() for h in hs]
+    extra = []
+    for sq_id, hs in new_hits.items():   # #247 B1: corrective hits keep their sub-question, origin tagged
+        for h in hs:
+            if h.chunk_id not in by_id and all(h.chunk_id != e.chunk_id for e in extra):
+                extra.append(replace(h, part_id=h.part_id or sq_id, origin="corrective"))
     by_id.update({h.chunk_id: h for h in extra})
     if remaps:
         results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider)
@@ -776,4 +786,5 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
         if key not in rows:
             rows.append(key)
     m.rows = rows
-    return finish(m, q, hits + extra, sources)
+    m.hits, m.corrective = dict(by_id), list(extra)
+    return finish(m, q, hits + extra, sources, as_of=as_of)

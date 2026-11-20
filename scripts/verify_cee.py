@@ -207,7 +207,9 @@ def launch(port: int = PORT) -> dict:
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True)
     # MOCK_DELAY_S: the mock waits like a model would, so the progress trace can be seen mid-run (#80).
-    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5"}
+    # MAP=on (#247): the default, set explicitly so a teammate's older .env (MAP=off) cannot change the run.
+    env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5",
+           "MAP": "on"}
     log = open(run_dir / "app.log", "w", encoding="utf-8")
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0
     proc = subprocess.Popen(
@@ -336,8 +338,10 @@ def check_part_gaps(rec, page, what: str) -> None:
                           "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log ORDER BY query_id DESC LIMIT 1")
     row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
-    cited = {c.get("part_id") for c in row["answer"]["claims"]}
-    expected = [p for p in parts if p not in cited]
+    # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
+    cited = {c.get("part_id") for c in [*row["answer"]["claims"], *row["answer"]["adjacent"]]}
+    gapped = {g.get("part_id") for g in row["answer"]["gaps"] if "part_gap" not in (g.get("flags") or [])}
+    expected = [p for p in parts if p not in cited and p not in gapped]
     gaps = [g for g in row["answer"]["gaps"] if "part_gap" in (g.get("flags") or [])]
     body = page.locator("body").inner_text()
     shown = [g["what"] for g in gaps if g["what"] in body]
@@ -366,6 +370,23 @@ def feature_ask_answer(page, base, rec, ctx):
     after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     rec.step("Check the query was logged (side effect)", "query_log +1", after == before + 1,
              f"query_log {before} -> {after}")
+    # #247: the answer is written from the evidence matrix: the shown behavior is the matrix's (or the
+    # documented re-judge by withhold_normative), nothing is cited outside the matrix, every cited id is
+    # in the logged chunk ids (retrieval + corrective re-search, B1) and every citation chip is linked.
+    row = psql(VERIFY_DB,
+               "SELECT (filters->'map'->>'behavior') || '|' || (answer->>'behavior') || '|' || "
+               "coalesce(filters->'reduce'->>'behavior_rejudged', 'none') || '|' || "
+               "coalesce(filters->'reduce'->>'outside_matrix', 'none') || '|' || "
+               "(SELECT count(*) FROM jsonb_array_elements(answer->'claims') c, "
+               "jsonb_array_elements_text(c->'chunk_ids') id WHERE NOT (id = ANY(q.chunk_ids))) "
+               "FROM query_log q ORDER BY query_id DESC LIMIT 1")
+    parts = row.split("|")
+    same = len(parts) == 5 and (parts[0] == parts[1] or (parts[1] == "answer_with_boundary" and parts[2] == "true"))
+    unlinked = "not in the retrieved set" in page.locator("body").inner_text()
+    rec.step("Read the newest query_log row: answer from the evidence matrix (#247)",
+             "shown behavior = filters.map.behavior, 0 outside the matrix, 0 cited ids outside the logged "
+             "chunk ids, no unlinked chip",
+             same and parts[3] == "0" and parts[4] == "0" and not unlinked, f"{row}; unlinked chip={unlinked}")
     check_part_gaps(rec, page, "the EDJ advisors question (one sub-question)")
     ask(page, base, TWO_FIRM_Q)
     check_part_gaps(rec, page, "the two-firm question (two sub-questions)")
@@ -414,8 +435,10 @@ def feature_ask_progress(page, base, rec, ctx):
     lines = open_trace(page)
     rec.step("Open the trace", "eight step lines", len(lines) == 8, " / ".join(lines)[:300])
     map_line = next((l for l in lines if l.startswith("Map step") or l.startswith("Extracting per firm")), "")
-    rec.step("Read the map line (#246)", "'Map step off (MAP=off): no extraction calls' (off by default until #247)",
-             map_line == "Map step off (MAP=off): no extraction calls", map_line)
+    rec.step("Read the map line (#246, on since #247)",
+             "'Extracting per firm (mock, no model call): N cells: ...; behavior by code: answer'",
+             map_line.startswith("Extracting per firm (mock, no model call):")
+             and map_line.endswith("behavior by code: answer"), map_line)
     plan = next((l for l in lines if l.startswith("Planning the search")), "")
     rec.step("Read the plan line (#214, #245)",
              "'Planning the search (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
@@ -426,11 +449,13 @@ def feature_ask_progress(page, base, rec, ctx):
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
              f"trace {n_trace.group(1) if n_trace else '?'} vs footer {n_meta.group(1) if n_meta else '?'}")
+    # #247: the map line also says "no model call" (mock extraction); the model line is the reduce's
     model = next((l for l in lines if l.startswith("Asking the model") or "no model call" in l
-                  and not l.startswith("Planning")), "")
+                  and not l.startswith(("Planning", "Extracting per firm"))), "")
     check = next((l for l in lines if "Checking citations" in l), "")
-    rec.step("Read the model and citation lines", "'(mock, one call)' and 'N matched'",
-             "(mock, one call)" in model and "matched" in check, f"{model} | {check}")
+    rec.step("Read the model and citation lines",
+             "'Asking the model to write the answer from the evidence matrix (mock, one call)' and 'N matched'",
+             "from the evidence matrix (mock, one call)" in model and "matched" in check, f"{model} | {check}")
     ask(page, base, NO_EVIDENCE_Q)
     lines = open_trace(page)
     model = next((l for l in lines if "model" in l and not l.startswith("Planning")), "")
@@ -449,7 +474,7 @@ def feature_ask_progress(page, base, rec, ctx):
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
                           " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
     rec.step("Read the newest query_log row (side effect)",
-             "plan source rules, 2 sub-questions, llm_calls all 0 (map and remap 0: MAP off)",
+             "plan source rules, 2 sub-questions, llm_calls all 0 (the mock map and reduce are not paid calls)",
              row.replace(" ", "") == 'rules|2|{"map":0,"remap":0,"answer":0,"planner":0}', row)
 
 

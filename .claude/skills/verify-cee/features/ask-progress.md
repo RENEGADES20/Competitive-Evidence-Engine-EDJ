@@ -1,9 +1,10 @@
 # Answer progress and step trace
 
 From the moment "Ask" is clicked, a progress bar and one line per pipeline stage show what
-the system is doing (reading the question, planning the search, searching, the map step (off by
-default, #246), asking the model or
-skipping it, checking citations, caveats and gaps, saving the query). Each line states the stage's
+the system is doing (reading the question, planning the search, searching, the map step
+(extraction per firm and the evidence matrix, #246; on by default since #247), asking the model to
+write the answer from the matrix or skipping it, checking citations, caveats and gaps, saving the
+query). Each line states the stage's
 real output. Once the answer shows, the trace stays on the page, collapsed under "How this answer
 was built".
 
@@ -11,7 +12,8 @@ was built".
 
 - `progress-early`: the progress bar and the first step line appear before the answer.
 - `progress-facts`: the search line's passage count equals the footer's chunk count; the
-  model line names the provider and "one call"; the citation line gives matched/flagged.
+  model line reads "Asking the model to write the answer from the evidence matrix (<provider>, one
+  call)"; the citation line gives matched/flagged.
 - `progress-collapsed`: after the answer the trace is collapsed and opens on click.
 - `progress-skip`: on a question with no passages the model step reads "no model call".
 - `progress-failed`: a failing stage is marked failed and its error shown (pytest
@@ -38,21 +40,23 @@ Preconditions: baseline.
   line "LLM called:" is not (screenshot of the trace mid-run).
 - **Collapsed.** A status box labelled "How this answer was built: 8 steps ..." is present
   and the trace lines are hidden; click the label and the eight lines show.
-- **Map (#246).** The map line reads "Map step off (MAP=off): no extraction calls": the map step
-  (extraction per firm, evidence matrix) is off by default until #247 shows its output. With
-  `MAP=on` it reads "Extracting per firm (mock, no model call): N cells: ...; behavior by code: ..."
-  (pytest `tests/test_ask_progress.py`; the verify app keeps the default).
+- **Map (#246, on since #247).** The map line reads "Extracting per firm (mock, no model call): N
+  cells: ...; behavior by code: answer". The driver sets `MAP=on` for the verify app, so an older
+  `.env` with `MAP=off` cannot change the run. `MAP=off` (the legacy single answer call) reads "Map
+  step off (MAP=off): no extraction calls; legacy single answer call" (pytest
+  `tests/test_ask_progress.py`).
 - **Plan.** The line "Planning the search (rules, no model call): 1 aspect x 1 firm = 1
   sub-question: a1.EDJ" is there (the answerable question names Edward Jones only).
 - **Facts.** "Searching the corpus: N passages" equals "N passages found" in the meta line;
-  the model line contains "(mock, one call)"; a "Checking citations: ... matched" line exists.
+  the model line contains "from the evidence matrix (mock, one call)"; a "Checking citations: ...
+  matched" line exists.
 - **Skip.** Ask the no-evidence question, open the trace: "No passages found: no model call",
   and the meta line says "LLM called: False".
 - **Parts.** Ask "How do Morgan Stanley and Raymond James approach advisor recruiting?", open
   the trace: "Planning the search (rules, no model call): 1 aspect x 2 firms = 2 sub-questions:
   a1.MS; a1.RJF" and the search line ends "in 2 sub-questions". The newest `query_log` row in
   `cee_verify` has plan source `rules`, 2 parts (one per sub-question) and `llm_calls`
-  `{"map": 0, "remap": 0, "answer": 0, "planner": 0}` (the mock makes no paid call; the map is off).
+  `{"map": 0, "remap": 0, "answer": 0, "planner": 0}` (the mock map and reduce make no paid call).
 
 ## Gotchas
 

@@ -92,6 +92,7 @@ class Hit:
     date_basis: str = "source"   # "retrieved": dated by the stored copy, not the page (ADR-007 T-09)
     on_theme: bool = False       # entity+theme: a firm chunk with the theme's keywords (#117)
     part_id: str | None = None   # #214: the plan part that kept it (p1.., "research", "peers")
+    origin: str = "search"       # #247: "corrective" for a corrective re-search hit (map step, CRAG)
 
 
 def _alias_pattern(alias: str) -> re.Pattern:

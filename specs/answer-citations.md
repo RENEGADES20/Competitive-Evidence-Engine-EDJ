@@ -5,11 +5,14 @@ Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-002, ADR-003, AD
 
 ## Purpose
 
-Turn retrieved chunks into a cited answer with one LLM call (today: after at most one question-planner
-call before search, ADR-020: planner 1 + answer 1; the ADR-021 map-reduce flow, with calls following
-the sub-question decomposition and no fixed number, from #246 / #247), then check it in code: every
-citation resolves, every number appears in a cited chunk, caveats are inserted, gaps are named
-with a source that would fill them, and the answer never crosses into "should".
+Turn retrieved chunks into a cited answer through the ADR-021 map-reduce flow (since #247, `MAP=on` by
+default): one planner call, one extraction call per firm (plus research) with a corrective
+re-search, an evidence matrix built by code, then one reduce call that writes the answer from the
+matrix (or an answer built by code with no call); calls follow the sub-question decomposition, with
+no fixed number. Then check it in code: every citation resolves to the matrix, every number appears
+in a cited chunk (or follows from cited same-basis inputs), caveats are inserted, gaps are named
+with a source that would fill them, and the answer never crosses into "should". `MAP=off` keeps the
+legacy single answer call (prompt v4.1, planner 1 + answer 1) for comparison only.
 
 ## Reference projects
 
@@ -50,9 +53,10 @@ suggest_sources(query) -> [source]
 | `answer_with_boundary` | Evidence half, then an explicit hand-off of the normative part to the strategist | Q12, Q19 |
 | `gap_with_adjacent` | "Not available / not disclosed" + adjacent data labeled as different + which source would fill it. ADR-021 (#246): no firm holds the asked quantity, a different related quantity exists; the answer also says the database does not support the asked quantity today | Q29, Q30, Q33, Q34, Q35 |
 | `refuse` | Nothing in the corpus. ADR-021 (#246): also when no firm holds the asked quantity and no related quantity exists, with the gap "The database does not support this today: ..."; a request for the system's own forecast | Q32 |
+| `incomplete` | Code-only (#247, ADR-021 #246 D5): no firm holds the asked quantity and an extraction failed; the answer says so plainly (`incomplete_note`), never `refuse`; no model schema offers it | none in the bank |
 
-**Current code (prompt v4.1), until #246 / #247.** The two paragraphs below describe what runs today.
-ADR-021 rules 1 and 3 (after them) replace them when #246 / #247 land.
+**Legacy path (prompt v4.1, `MAP=off` only).** The two paragraphs below describe the legacy single
+answer call. ADR-021 rules 1 and 3 (after them) decide the behavior in the default flow since #247.
 
 Partial or missing disclosure (prompt v3, #204): if the asked quantity is not disclosed for most
 of the firms asked about, the behavior is `gap_with_adjacent` (answerable=false), with what is
@@ -92,14 +96,14 @@ year), `unit` and `basis` (a key naming the definition; equal keys = the same ba
 ## Map step and evidence matrix (#246; ADR-021 rules 1-3, 6, 7)
 
 Plan: `plans/0246-map.md`. Code: `src/cee/answer/extract.py` (calls), `src/cee/answer/matrix.py`
-(rules). **Off by default until #247** (`MAP=off`; the eval turns it on with `--map` / `--map-only`):
-with `MAP=on`, `ask()` builds and logs the matrix (`query_log.filters.map`); the interim answer call
-(prompt v4.1) is still the answer shown.
+(rules). **On by default since #247**: `ask()` builds and logs the matrix (`query_log.filters.map`),
+and the reduce step (below) writes the answer from it. The eval maps unless `--legacy`.
 
 - **Calls (map-reduce, map side).** Round 1: one structured extraction call per firm whose
   sub-questions kept passages (`map.<FIRM>`), plus `map.research` for the research passages, in
   parallel (`MAP_CONCURRENCY`, default 6). A firm with no passage gets code cells `not_found`, no call.
-  Prompt `extract-v1`; tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
+  Prompt `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
+  those asked is a fact for the periods it covers, never `different_quantity`); tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
   required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
   supports the object / integer / enum types used, guide checked 2026-11-20).
 - **Cell** (one per sub-question; research: one per aspect, `<aspect>.research`): `label` `fact` |
@@ -146,14 +150,97 @@ with `MAP=on`, `ask()` builds and logs the matrix (`query_log.filters.map`); the
   D5); a `different_quantity` cell or a proxy fact -> `gap_with_adjacent`; else `refuse`.
 - **Derivation (rule 1d, rule 2 within-firm)**: the model proposes, code accepts only inputs that are
   cited fact items of the same firm with the same non-empty period and scope (the same unit for a sum
-  or difference), no `number_not_found`, values that parse; code computes the value and the formula.
-  An unregistered metric's derived cell is flagged `definition_unverified`.
+  or difference), no `number_not_found`, values that parse; code computes the value and the formula
+  (`formula` with cell ids for the log, `formula_text` without ids for the answer, #247). Scopes are
+  compared normalised (#247, `matrix.normalize_scope`: lower case, punctuation stripped, a leading
+  "the" and a trailing "segment" / "business segment" / "reportable segment" / "business" / "division"
+  removed: "Wealth Management segment" = "Wealth Management"; "Private Client Group" is not the whole
+  firm). An unregistered metric's derived cell is flagged `definition_unverified`.
 - **Comparability marks (rule 2)**, per aspect over the firms holding it: registered metric, same
   `basis` and `unit` -> `same_basis` (+ shared periods); different -> `different_basis` and the
   comparability caveat (Standard wording; each firm's definition = its entry's quote cut to 160
-  characters and its chunk id; Merrill reads BAC's entry); unregistered metric with a figure ->
-  `unverified` and the unverified mark; qualitative -> none. Config caveats of cited substitutes
+  characters and its chunk id; Merrill reads BAC's entry); unregistered metric with a figure on a
+  **metric aspect** (kind `series`, a proxy, or one holding a derived cell; #247, TL D6) ->
+  `unverified` and the unverified mark; qualitative, recency, comparison and plain fact aspects that
+  happen to carry a figure -> none.
+- **Uncovered asked periods (code, #247 B4; TL approval conditions)**: when the question itself asks
+  for "last / past N quarters" (N in digits or words) the asked periods are the N most recent
+  calendar quarters that ended before the as-of date; "last / past N years" -> the N most recent
+  complete years (the unfinished current year never counts), matched by year; a time window (a
+  publication-date filter) gives **no** asked periods (recency questions are judged by the why-line
+  and newest-first rules); no stated range gives none. For series aspects and registered-metric fact
+  aspects (never recency, comparison or proxy; research excluded), each holding cell whose items do
+  not cover every asked period gets a code gap "<Firm> - <aspect>: not found for <2024Q4, 2025Q4> in
+  the documents searched." (none covered: "... not found for the asked periods (<first>-<last>) in the
+  documents searched; figures for other periods are listed."). Item periods map `YYYY-MM-DD` to its
+  calendar quarter and `YYYYQn` as is; a `YYYY` or `FYYYYY` item covers no quarter (only a year). Config caveats of cited substitutes
   (GWIM) are added as by `insert_caveats`.
+
+## Reduce step (#247; ADR-021 rules 0-5)
+
+Plan: `plans/0247-reduce.md`. Code: `src/cee/answer/reduce.py`; prompt `prompt.SYSTEM_PROMPT_V5`
+(`REDUCE_VERSION = "v5"`). One synthesis call writes the Answer from the evidence matrix only, for the
+behavior code decided; it cannot change it.
+
+- **Input** (`reduce_message`): the question, the decided behavior and its reason, the question's own
+  time window (with "order newest first") or the Ask-page date filter (without), the firms in row
+  order, the aspects (kind, metric, proxy = "adjacent only", comparison = "needs exactly one comparison
+  claim", recency = "every item needs a why-line"), then aspect by aspect: the comparability mark, each
+  firm's registered definition (context; citable only when its chunk is a matrix item), every cell
+  (label in words; derived cells with `formula_text`, period, scope and input chunk ids; rejected
+  derivations with code's reason) and every counting item (text, value, unit, period, scope,
+  definition, quote, valid chunk ids; flags written as instructions). Then the code gaps and caveats
+  ("do not repeat them") and one source line per citable chunk (no passage text). No raw passages.
+- **Output**: the existing Answer schema, strict on every provider, with enums: `behavior` = the one
+  decided value; `part_id` = every cell id, every aspect id (a claim that spans firms, e.g. the
+  comparison claim) and `""`; `chunk_ids` items = `matrix.chunk_ids()` (valid cited ids only). Enum
+  limits (OpenAI's numbers, applied to every provider; DeepSeek's guide states none): at most 1000
+  values across the schema, and 15,000 characters for an enum over 250 values; over them a field falls
+  back to a plain string (logged as `schema_fallback`) and the code check below is the guard.
+- **Prompt v5 rules**: evidence only (no outside knowledge, no own computation, nothing about what a
+  firm should do); claims dated from their source line and attributed; no ids in the text; a fact
+  cell (also partial) is a claim stating what it covers and only the periods it has; "adjacent only"
+  cells go in adjacent with `differs_because`; a derived cell is a claim with its formula citing both
+  inputs; one comparison claim per comparison aspect (valid or not, and why; cross-firm comparison only
+  at `same_basis` shared periods); a "Why it might matter: " sentence on every recency item (only what
+  a cited source says, or "Why it might matter: the source does not say."); newest first with a window;
+  the standard wording below.
+- **Answers built by code, 0 calls** (`code_answer`): `refuse` (rule 1c: the matrix gaps with
+  suggested sources); a forecast request (rule 1e: the gap `FORECAST_REFUSAL`); undecided (behavior
+  `incomplete` with the `incomplete_note`, different-quantity cells as adjacent items, every matrix gap;
+  never "does not support"); any matrix with an **empty citable set** (in practice a normative question
+  with no fact: `answer_with_boundary`, `answerable` false, the hand-off sentence with no chunk ids, the
+  matrix gaps, the `incomplete_note` when a cell failed). No reduce schema is built for an empty set.
+- **Code after the call** (`finish_answer`, flags shown as chips, never dropped): the behavior set by
+  code (a different model value logged as `model_behavior`; `withhold_normative` may still re-judge
+  `answer` -> `answer_with_boundary`, logged `behavior_rejudged`); `check_citations` over the matrix's
+  hits only, so an id outside the matrix is `unmatched_citation` + `outside_matrix`; the number check
+  accepts a figure equal to an accepted derivation's value only when the claim cites all its input
+  chunks (`computed`); rule 3: an adjacent item on a holding non-proxy cell -> `adjacent_is_fact`, a
+  claim on a different-quantity or proxy cell -> `claim_from_adjacent`; rule 4: a comparison aspect
+  with no cited claim (part id the aspect or one of its cells) gets the gap `COMPARISON_MISSING`
+  (`comparison_missing`); rule 5: with the question's own window every item, else every recency item,
+  without "Why it might matter: " + text -> `why_line_missing`; with the question's own window or a
+  recency aspect, claims and adjacent items are re-sorted newest first by the latest published date of
+  their cited documents (the hand-off last; `reordered` logged; an Ask-page date filter alone changes
+  nothing); the matrix gaps placed after the model's (a model gap repeating one is merged into it,
+  `model_also_named`); the matrix caveats, `insert_caveats`, `fill_suggested_sources`, `coverage_note`;
+  `check_parts` with the matrix (a comparison part is covered by its aspect's comparison claim or the
+  `COMPARISON_MISSING` gap; a proxy part by any item on its aspect, or by design when its cell holds
+  nothing). Code-built answers go through the same checks.
+- **Hits** (#247 B1): the passages an answer may cite are the retrieval hits plus the map step's
+  corrective re-search hits (`Hit.origin = "corrective"`, no duplicates): the Ask page chips, the
+  checks, the coverage note and `query_log.chunk_ids` use that union; `filters.chunk_origin` names each
+  re-search chunk's sub-question. The eval's retrieval scoring keeps the retrieval hits only.
+- **Invalid outputs** as the answer call's table below (no tool call, cut, refusal, a DeepSeek
+  `finish_reason` other than `tool_calls` / `stop`, not JSON, not a valid Answer, empty); stray closing
+  braces accepted with `trailing_braces`. No trim: an input over the provider's window minus the output
+  cap is not sent (the stage fails). The eval caches each reduce call (`<Q>-reduce-<key>.json`; the key
+  holds the version, the cap, the request version and sha256 of the v5 system prompt, the rendered
+  input and the schema); invalid and failed calls are saved and never re-called; a 400 stops the run.
+- `query_log.filters.reduce`: version, provider, model, `code_built`, `model_behavior`,
+  `behavior_rejudged`, `outside_matrix`, `comparison_missing`, `why_line_missing`, `reordered`,
+  `gaps_merged`, `part_gaps`, flags by name, `stop_reason`, `usage` (ADR-021 rule 7).
 
 ## Answer shape (prompt v4, #215; v3 #204)
 
@@ -173,39 +260,11 @@ one sub-question, `SubQuestion(entity, aspect)`: id `<aspect>.<firm>` (e.g. `a2.
 theme mode), text "<Firm>: <aspect>"; a competitor sub-question the floor across competitors
 emptied (`floor_emptied`, Q19) reads as pool 0 ("no passages were found").
 
-### Interim answer input guard (#245; temporary, removed when #247 wires the reduce step)
-
-Until the map step (#246) and the reduce step (#247) replace it, one answer call reads every
-sub-question's passages, so its input grows with the decomposition (no cap on retrieval, ADR-021).
-A five-firm, three-aspect question can pass the model's context window. The guard keeps that call
-usable and is never silent:
-- **Limit**: `ANSWER_INPUT_MAX_TOKENS`, else the provider's context window minus its answer output
-  cap minus the fixed prompt (system prompt and tool schema), characters / 4, rounded down to 1k
-  (`llm.answer_input_limit`). Context windows checked 2026-11-19: DeepSeek deepseek-v4-pro 1M,
-  Claude Sonnet 5.5 1M; OpenAI gpt-5 400k assumed (TODO-verify). The mock has no limit.
-- **Trim** (`validate.fit_input`), only when the estimated input (`llm.input_tokens`: system prompt,
-  tool schema and the user message as built) passes the limit: research passages first, then
-  round-robin over the sub-questions in plan order, each sub-question's best rank first. **Greedy
-  stop rule**: a passage that would pass the limit is skipped and the round-robin goes on (a long
-  passage does not end the trim while shorter ones still fit); it ends when a full round adds
-  nothing. The kept passages keep their original order.
-- **Which list each step reads**: the model, `check_citations` (a citation of a left-out passage is
-  unmatched and flagged), `check_parts`, the number check, `insert_caveats`,
-  `fill_suggested_sources` and the per-firm lines of `coverage_note` all read the **trimmed** list
-  (what the model was given), so no caveat or coverage line refers to evidence the answer did not
-  read. Retrieval, `query_log.chunk_ids`, recall and the eval status keep the full retrieved list.
-- **Never silent**: the model step's trace line adds "input over the model's limit: kept N of M
-  passages, ~X of ~Y tokens"; code appends to the coverage note "The answer read N of M retrieved
-  passages: the input was trimmed to the model's limit; the passages left out are listed in the
-  log."; `query_log.filters.input_guard` and the eval record hold {limit, before, after, kept,
-  total, dropped chunk ids}. The eval's answer cache key gets the limit and the kept ids when the
-  guard trims, so an output made under one limit is never reused under another.
-
 | Rule | When | What the answer does |
 |---|---|---|
 | Comparison grid | the question names two or more firms, or "each of" / "across" a set | Dimensions fixed from the question and its parts before reading the evidence (each dimension a part names, or each part when the parts are dimensions); an asked dimension is never dropped because the evidence is thin, none added only because the evidence offers it (v4; v3 also took dimensions from the evidence); the same list for every firm, every firm with a claim or a gap under every dimension (no dimension for one firm only); claims dimension by dimension (all firms for one dimension, then the next), each starting "<Dimension> - <Firm>:", each firm in its own terms; an empty cell is a gap "<Firm> - <dimension>: not found in the evidence provided." with a suggested source; never an inference, an adjacent figure or another firm's fact in a cell; an empty cell is only a gap, never a claim (v4). |
-| Comparison claim (ADR-021 rule 4, prompt v5, #247) | a sub-question of `kind=comparison`, or the question asks whether a comparison holds | One cited claim answers the comparison itself (valid or not, and why), cited to its inputs; code checks it is present. |
-| Why-it-might-matter line (ADR-021 rule 5, prompt v5, #247) | recency items | One line per item stating only what the source says or a checkable fact, cited; never our judgement (ground rule 6). |
+| Comparison claim (ADR-021 rule 4, prompt v5, #247) | a sub-question of `kind=comparison` | One cited claim answers the comparison itself (valid or not, and why), cited to its inputs; code checks it is present (else the `COMPARISON_MISSING` gap). |
+| Why-it-might-matter line (ADR-021 rule 5, prompt v5, #247) | recency items; every item when the question has its own window | The claim ends "Why it might matter: <one sentence>" stating only what a cited source says or a checkable fact, or "the source does not say"; never our judgement (ground rule 6); code flags a missing one (`why_line_missing`). |
 | Positions | where something is heading, the future, the range of views | Claims grouped by position (not by firm or source), each starting with the position, then who holds it and when; every claim attributed; two sources that disagree are reported as disagreeing; no forecast or synthesis of its own. |
 | Parts | always | Every claim, adjacent item and gap carries the `part_id` of the plan part it answers; every part gets at least one cited claim or a gap naming what is missing for it; a part with no passages is a gap; a chunk listed under one part may be cited for another; within a part, what a question of its type needs (e.g. headwinds or risks the firm itself names) is covered (v4; v3 split the question itself). A question setting the home firm against a peer, or asking how it could act, shows the home firm's figures on the same dimension from its own filings. |
 
@@ -304,12 +363,17 @@ as constants. Keep the two in sync. Caveats remain code-owned; this wording does
 | Case | Questions | Gap (`gaps[].what`) | Adjacent `differs_because` |
 |---|---|---|---|
 | Merrill standalone results | Q30 | "Merrill does not report standalone results." | "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's." |
-| Advisor attrition | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
+| Advisor attrition (Q28, v4.1 legacy path only) | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
+| Advisor attrition (Q28, v5, #247; Q28 superseded to `answer`) | Q28 | EDJ's disclosed rate is a claim with its period and definition; Merrill's cell gap is the matrix wording, e.g. "Merrill - <aspect>: not disclosed in the documents searched." | "Net advisor headcount change is not attrition: it nets hires against departures." |
+| Forecast request (ADR-021 rule 1e, code, #247) | none in the bank | "This asks for a forecast of the engine's own; the engine reports only positions others hold, attributed and dated." | - |
+| Comparison claim missing (ADR-021 rule 4, code, #247) | Q24 | "No cited claim answers the comparison asked: <aspect>." | - |
+| Uncovered asked periods (code, #247 B4) | Q23 | "<Firm> - <aspect>: not found for <periods> in the documents searched." / "... not found for the asked periods (<first>-<last>) in the documents searched; figures for other periods are listed." | - |
+| Why-it-might-matter (prompt v5, #247) | Q26 | Claim ending "Why it might matter: <sentence>" or "Why it might matter: the source does not say." | - |
 | Database does not support it (ADR-021 rule 1, #247) | Q32-Q35; any aspect no firm holds | "The database does not support this today: <aspect> (<firms>)." | - |
 | Comparability caveat (ADR-021 rule 2, code-inserted, #246 / #247) | Q11, Q22, Q23, Q24, Q31 | Caveat: "<Metric>: the firms define it differently (<firm>: <definition>; ...); figures are listed side by side and not compared or combined (reporting risk)." | - |
 | Unregistered metric (ADR-021 rule 2, #246 / #247) | Q24 (client assets) | Mark: "<Metric> is not in the metric definitions file; its definition is unverified." | - |
 | Map cell gaps (code, #246; #247 places them) | any firm x aspect cell that does not hold its quantity | "<Firm> - <aspect>: not disclosed in the documents searched." / "... not found in the documents searched." (+ " A second search with wider words found nothing new.") / "... not disclosed; a different quantity is listed as adjacent." / "... not extracted (the model output for this firm was invalid or the call failed)." | - |
-| Incomplete (code, #246, TL decision D5) | no fact and a failed extraction | "This answer is incomplete: the evidence for <firms> could not be extracted (the model output was invalid or the call failed). Nothing is concluded about what <firms> disclose." | - |
+| Incomplete (code, #246, TL decision D5; #247 shows it as a warning on any behavior, also a boundary answer) | no fact and a failed extraction | "This answer is incomplete: the evidence for <firms> could not be extracted (the model output was invalid or the call failed). Nothing is concluded about what <firms> disclose." | - |
 | Advisor pay (decided per firm, prompt v2, #167; v3 #204) | Q25, Q29 | Firm with nothing published: "Payout grids are not public." (multi-firm answers name the firm first). Firm whose cited chunks publish payout ranges (RJF recruiting pages, #151): the ranges are claims dated "page content as of <date>", and the gap is "Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public." (multi-firm answers name the firm first, v3). Never "not public" for a firm whose evidence shows ranges. | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
 
 Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this
@@ -365,8 +429,10 @@ A claim figure matches a chunk figure when either:
 Scale words: thousand, k, million, mn, billion, bn, trillion. Not checked: years 1990-2099,
 quarter and form labels (Q3, 3Q26, 10-K), section labels (Item 11, Note 4), dates (December 31,
 12/31/2025), numbers written as words. Derived figures (sums, ratios, per-advisor values) are not in the chunk and are flagged.
-ADR-021 rule 2 (#247): a computed figure is allowed only with both cited inputs, and the check holds it
-to the result of its inputs instead of flagging it.
+ADR-021 rule 2 (#247, built): a computed figure is allowed only with all its cited inputs: a claim
+figure that matches (the same two rules) the value of an accepted derivation whose input chunks the
+claim all cites gets the flag `computed` instead of `number_not_found`; with an input missing, or for a
+cross-firm figure (derivations are within one firm), it stays `number_not_found`.
 
 Limits: a small figure with one decimal can pass rule 2 with a large relative error ("$0.1
 billion" vs $0.14 billion). The check proves a figure is in the cited text, not that it came from

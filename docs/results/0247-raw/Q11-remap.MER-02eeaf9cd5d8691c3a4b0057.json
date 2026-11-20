@@ -1,0 +1,49 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-10Q-2025Q3#90",
+    "BAC-DECK-2025-investor-day#0"
+  ],
+  "at": "2026-11-20T03:06:52.028894",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2071,
+    "output_tokens": 258,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 791,
+    "reasoning_tokens": 139,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 4.73,
+  "tokens_per_s": 54.55,
+  "reasoning_content": "We need answer only one sub-question a4.MER about what advisor headcount definition excludes. Passages given: BAC-10Q-2025Q3#90 shows income statement segment numbers, no advisor headcount. BAC-DECK-2025-investor-day#0 just \"1\". Neither says anything about advisor headcount definition excludes.\n\nSo label not_found. No items. Need provide extraction with subquestion_id a4.MER, label not_found, items empty, differs_because \"\", reason, derivation empty operation/inputs.\n\nNeed be careful: \"not_found: the passages say nothing about it.\" Yes.\n\nLet's produce submit_extraction call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages contain segment income statement figures and a deck page number, but nothing about what Merrill's advisor headcount definition excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

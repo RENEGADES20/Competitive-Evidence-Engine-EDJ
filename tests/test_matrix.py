@@ -230,12 +230,117 @@ def test_same_basis_marks_shared_periods(monkeypatch):
 
 
 def test_unregistered_metric_with_value_is_unverified_and_qualitative_is_none():
-    a = Aspect("a1", "Total client assets.")
+    a = Aspect("a1", "Total client assets.", kind="series")   # #247 D6: metric aspects only
     m = build(PLAIN, [a], [cell("a1.EDJ", "fact", [item(value="$2 trillion")])])
     assert m.marks["a1"].status == "unverified"
     assert m.marks["a1"].mark == "Total client assets is not in the metric definitions file; its definition is unverified."
     q = build(PLAIN, [Aspect("a1", "Strategy.")], [cell("a1.EDJ", "fact", [item()])])
     assert q.marks["a1"].status == "none"
+
+
+@pytest.mark.parametrize("aspect, status", [
+    (Aspect("a1", "What management says about younger clients."), "none"),          # Q19 a1-shaped fact
+    (Aspect("a1", "New hires announced.", kind="recency"), "none"),                 # Q26-shaped recency
+    (Aspect("a1", "Whether the figures compare.", kind="comparison"), "none"),
+    (Aspect("a1", "Total client assets, the numerator.", proxy=True), "unverified"),  # Q24 a2-shaped
+    (Aspect("a1", "Client assets over the last quarters.", kind="series"), "unverified"),
+])
+def test_unverified_mark_only_on_metric_aspects(aspect, status):
+    m = build(PLAIN, [aspect], [cell("a1.EDJ", "fact", [item(value="1,200")]),
+                                cell("a1.MS", "fact", [item(value="900")])])
+    assert m.marks["a1"].status == status
+
+
+@pytest.mark.parametrize("a, b, same", [
+    ("Wealth Management segment", "Wealth Management", True),
+    ("the Wealth Management Segment.", "wealth management", True),
+    ("Global Wealth & Investment Management business segment", "Global Wealth & Investment Management", True),
+    ("Private Client Group", "", False),
+    ("Private Client Group", "Asset Management", False),
+])
+def test_normalize_scope(a, b, same):
+    assert (mx.normalize_scope(a) == mx.normalize_scope(b)) is same
+
+
+def test_derivation_accepts_scopes_that_differ_only_by_segment_word():
+    a1 = Aspect("a1", "Client assets per advisor.")
+    a2 = Aspect("a2", "Client assets.", proxy=True)
+    a3 = Aspect("a3", "Advisors.", proxy=True)
+    m = build(PLAIN, [a1, a2, a3], [
+        cell("a1.MS", "not_disclosed", derivation={"operation": "ratio", "inputs": [
+            {"subquestion_id": "a2.MS", "item": 0}, {"subquestion_id": "a3.MS", "item": 0}]}),
+        cell("a2.MS", "fact", [item("M#1", value="$6,000", unit="USD billions", period="2026-09-30",
+                                    scope="Wealth Management segment")]),
+        cell("a3.MS", "fact", [item("M#2", value="15,000", unit="representatives", period="2026-09-30",
+                                    scope="Wealth Management")])])
+    d = m.cells["a1.MS"].derivation
+    assert d["ok"] and m.cells["a1.MS"].label == "derived"
+    assert "a2.MS" not in d["formula_text"] and d["formula_text"].endswith("USD per representatives")
+
+
+def test_normative_question_with_a_failed_cell_shows_the_incomplete_note():
+    m = build("How should the preferences of younger investors shape Edward Jones's offerings?", [A1],
+              [cell("a1.EDJ", "failed"), cell("a1.MS", "not_found")])
+    assert m.behavior == "answer_with_boundary"
+    assert m.incomplete_note.startswith("This answer is incomplete: the evidence for Edward Jones")
+
+
+# --- uncovered asked periods (#247 B4, TL approval conditions 1-4) ---------------------------------
+
+import datetime as dt  # noqa: E402
+
+AS_OF = dt.date(2026, 11, 17)
+
+
+def test_asked_periods():
+    assert mx.asked_periods("Advisor headcount over the last eight quarters across the five.", AS_OF) == (
+        "quarter", ["2024Q4", "2025Q1", "2025Q2", "2025Q3", "2025Q4", "2026Q1", "2026Q2", "2026Q3"])
+    assert mx.asked_periods("Net new assets over the past 3 years.", AS_OF) == ("year", ["2023", "2024", "2025"])
+    assert mx.asked_periods("What's new on Raymond James in the last 90 days?", AS_OF) is None   # a window: none
+    assert mx.asked_periods("Net new assets by quarter for each of the five.", AS_OF) is None
+
+
+def _series(question, cells, kind="series"):
+    a = Aspect("a1", "Advisor headcount.", kind=kind, metric="advisor_headcount")
+    return build_at(question, [a], cells)
+
+
+def build_at(question, aspects, cells):
+    m = EvidenceMatrix(question, rows=[], aspects=aspects, cells={c.id: c for c in cells})
+    return mx.finish(m, sources=NO_SOURCES, as_of=AS_OF)
+
+
+def test_q23_shaped_period_gaps_name_the_uncovered_quarters():
+    q = "Advisor headcount over the last eight quarters across the five."
+    edj = [item("E#1", "19,413", period="2025-03-28"), item("E#2", "20,309", period="2025-06-27"),
+           item("E#3", "20,429", period="2025-09-26"), item("E#4", "19,674", period="2026-03-27"),
+           item("E#5", "20,514", period="2026-06-26"), item("E#6", "20,000", period="2025")]   # YYYY: no quarter
+    ms = [item("M#1", "15,950", period="2020-12-31")]
+    m = _series(q, [cell("a1.EDJ", "fact", edj), cell("a1.MS", "fact", ms)])
+    gaps = {g["id"]: g["what"] for g in m.gaps if g["label"] == "period_gap"}
+    assert gaps["a1.EDJ"] == ("Edward Jones - Advisor headcount: not found for 2024Q4, 2025Q4, 2026Q3 in the "
+                              "documents searched.")
+    assert gaps["a1.MS"].startswith("Morgan Stanley - Advisor headcount: not found for the asked periods "
+                                    "(2024Q4-2026Q3)")
+
+
+def test_q26_shaped_window_gives_no_period_gap():
+    q = "What's new on Raymond James in the last 90 days?"
+    m = _series(q, [cell("a1.RJF", "fact", [item("R#1", "8,943", period="2026-06-30")])])   # 10-Q in window
+    assert not [g for g in m.gaps if g["label"] == "period_gap"]
+    r = build_at(q, [Aspect("a1", "Recent news.", kind="recency")],
+                 [cell("a1.RJF", "fact", [item("R#1", period="2026-06-30")])])
+    assert not [g for g in r.gaps if g["label"] == "period_gap"]
+
+
+def test_years_shaped_year_end_reporter_has_no_quarter_gaps_and_no_current_year():
+    q = "Advisor headcount over the past 3 years for Morgan Stanley."
+    items = [item(f"M#{y}", "15,000", period=f"{y}-12-31") for y in (2023, 2024, 2025)]
+    m = _series(q, [cell("a1.MS", "fact", items + [item("M#9", "15,100", period="2026-06-30")])])
+    assert not [g for g in m.gaps if g["label"] == "period_gap"]
+    m2 = _series(q, [cell("a1.MS", "fact", items[1:])])
+    assert [g["what"] for g in m2.gaps if g["label"] == "period_gap"] == [
+        "Morgan Stanley - Advisor headcount: not found for 2023 in the documents searched."]
 
 
 def test_gwim_caveat_when_a_merrill_cell_cites_a_bac_gwim_chunk():

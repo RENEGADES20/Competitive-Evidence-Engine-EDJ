@@ -914,7 +914,7 @@ what enforces it and the questions it serves.
   |---|---|---|---|---|
   | Q24 | client assets per advisor; is the comparison valid | EDJ assets and advisors in the same 10-Q | `answer` (derived, 1d) + comparison claim + caveats | superseded |
   | Q25 | what each firm discloses on advisor pay | MS, EDJ, RJF, SCHW disclosures (#213, #215) | `answer` + named gaps | superseded |
-  | Q28 | EDJ and Merrill advisor attrition rates | EDJ discloses a rate; Merrill none | `answer` + Merrill gap + adjacent headcount change | superseded |
+  | Q28 | EDJ and Merrill advisor attrition rates | EDJ discloses a rate; Merrill none | `answer` + Merrill gap + adjacent headcount change; also adjacent (#247): `BAC-DECK-2025-investor-day#34`, "Lower outflows from advisor attrition 26% year over year" (an asset-outflow change, not an attrition rate) | superseded |
   | Q29 | what MS pays its advisors (grid, payout) | aggregate compensation expense only | `gap_with_adjacent` | unchanged |
   | Q30 | Merrill standalone profitability | GWIM only (a wider unit) | `gap_with_adjacent` | unchanged |
 
@@ -965,4 +965,36 @@ settled details, which ADR-021's text did not fix:
   is whitespace and `}` / `]`; the record carries the flag `trailing_braces`. Any other trailing text
   stays invalid, and the object still goes through the strict schema validation and every code check
   (chunk ids, quotes, numbers). Saved records are re-checked under this rule at 0 calls.
+
+Amendment (#247, reduce step; TL decisions on the #247 plan, issue #247 comments 7033895178,
+7033988541 and the TL approval): rules 1, 3, 4 and 5 are completed in `src/cee/answer/reduce.py`
+(prompt v5) with these settled details:
+- **Answers built by code, 0 calls**: `refuse` (rule 1c), a forecast request (rule 1e), an undecided
+  matrix and any matrix with no citable item (in practice a normative question with no fact:
+  `answer_with_boundary` with the hand-off and the gaps). Undecided is shown with a code-only behavior
+  value **`incomplete`** (no model schema offers it); the incomplete note is also shown on a boundary
+  answer when an extraction failed.
+- **The reduce schema is constrained by the matrix**: `behavior` is the one decided value, `part_id`
+  and `chunk_ids` are enums of the matrix's cell / aspect ids and citable chunk ids (a field over the
+  enum limits falls back to a plain string; the code check stays). Code checks citations against the
+  matrix only (`outside_matrix`); the citable passages are the retrieval hits plus the corrective
+  re-search hits, logged with their origin.
+- **Rule 2 in the number check**: a figure equal to an accepted derivation's value is allowed only when
+  the claim cites all its inputs (`computed`).
+- **Rule 3**: extract-v1.1 labels the asked quantity for other periods a fact (partial coverage);
+  code names the asked periods a firm does not cover ("last / past N quarters / years" only; a time
+  window gives none; complete years only, matched by year); code flags an asked figure placed as
+  adjacent and a different quantity placed as a claim.
+- **Rule 4**: one comparison claim per comparison aspect, else the code gap "No cited claim answers
+  the comparison asked: <aspect>."; comparison and proxy parts count as covered by their aspect's
+  claim, item or gap.
+- **Rule 5**: the why-line is inside the claim ("Why it might matter: ...", "the source does not say"
+  allowed); with the question's own window or a recency aspect code re-sorts newest first by the cited
+  documents' published date; an Ask-page date filter alone changes neither.
+- **The comparability mark "definition unverified"** shows only on metric aspects (series, proxy, or
+  holding a derived cell); scope labels are normalised before derivations compare them.
+- **`MAP` is on by default**; `MAP=off` keeps the legacy single answer call (prompt v4.1) for
+  comparison only; the eval maps unless `--legacy`. The #245 interim answer input guard is removed:
+  an input over a provider's window is not sent, never trimmed.
+- After a 400 in an eval run no further call is made (round 2 and the reduce included).
 
