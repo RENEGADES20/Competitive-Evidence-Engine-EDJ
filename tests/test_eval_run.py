@@ -865,6 +865,7 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
         hits[0].part_id = "p1"
         return hits
     monkeypatch.setattr(planner, "search_subquestions", fake_parts)
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [])   # #247: no database in CI
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
     monkeypatch.setattr(er, "substitutes", lambda: SUBS)
     er.main(["--questions", "Q7", "--out", str(tmp_path)])
@@ -1437,7 +1438,9 @@ def test_code_built_reduce_makes_no_call_and_writes_no_file(monkeypatch, tmp_pat
 def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
     """#247: the mock eval runs the map and the mock reduce by default; --legacy runs neither."""
     from cee.answer import extract
+    from cee.retrieve import planner
     _plan_only_env(monkeypatch, None, tmp_path / "cache")
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [])   # no database in CI
     monkeypatch.setenv("LLM_PROVIDER", "mock")
     monkeypatch.setenv("MAP", "off")   # an old .env: the eval maps anyway
     er.main(["--questions", "Q7", "--out", str(tmp_path / "run")])
