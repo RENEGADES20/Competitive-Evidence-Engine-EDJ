@@ -754,3 +754,13 @@ written in sections 3-6 and Tests.
   Q24's 0 part gaps and on a Q24-shaped matrix with a comparison and proxies by
   `tests/test_reduce.py::test_comparison_and_proxy_parts_get_no_false_part_gap_q24_shaped`. Evidence
   `ev247\mock-compare.txt`.
+- 2026-11-20 - verify-cee at af344ee (`.verify-runs/20261120-023815-af344ee`): ask-answer PASS (new
+  step: `answer|answer|false|0|0`, no unlinked chip), gap-path, invalid-chunk, coverage, filters,
+  feedback PASS, open-citation PASS, download-document UNREACHABLE (no raw files); ask-progress FAIL on
+  one step: the driver took the map line ("... no model call") for the model line. Fixed in the driver
+  (7b9a5b4); re-run of ask-progress, ask-answer, open-citation (`20261120-024102-7b9a5b4`): ask-progress
+  PASS (map line "Extracting per firm (mock, no model call): 1 cell: 1 fact; behavior by code: answer",
+  model line "Asking the model to write the answer from the evidence matrix (mock, one call): 1 claim"),
+  ask-answer PASS; open-citation read-back FAIL once (passed in the first run): the known #248 render
+  race. Code-gate sha for the real runs: 7b9a5b4 (its src / scripts / config diff from the mock-run sha
+  b6e0f02 is `scripts/verify_cee.py` only).
