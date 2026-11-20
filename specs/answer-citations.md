@@ -111,6 +111,8 @@ own output, before code adds part gaps or caveats, and again when the eval reuse
 | Cut at the output cap (Anthropic `stop_reason` `max_tokens`, OpenAI `finish_reason` `length`), even when the partial input validates | invalid; every content block kept |
 | No claims, no adjacent items and no gaps, unless behavior `refuse` with `answerable` false | invalid; the tool input as sent kept (a misnamed key shows) |
 | API `stop_reason` `refusal` (Anthropic, #232), even with a tool input that validates | invalid; every content block kept. Not the model's own answer `behavior: refuse` with `answerable` false, which is a valid answer (row above) |
+| DeepSeek (#242): `finish_reason` other than `tool_calls` / `stop` (`length` = cut, `content_filter`, `insufficient_system_resource`, `aborted`) | invalid; the whole message kept (content, `reasoning_content`, tool calls) |
+| DeepSeek: tool arguments that are not JSON or not a JSON object (the API warns they may not be valid JSON) | invalid; the arguments string kept |
 
 Every real answer records `stop_reason` and `usage` (input and output tokens; Anthropic also the
 content block types, e.g. `thinking`, `tool_use`), code-owned fields of the Answer, so they reach
@@ -126,6 +128,13 @@ and by the SDK's `anthropic.transform_schema`. `tool_choice` stays `auto` (claud
 forced tool choice), so a response without a tool call is still possible and stays invalid (first
 row). The OpenAI request was already strict. The eval's cache keys carry the Anthropic request
 version `strict-1` (`llm.request_version`); `PROMPT_VERSION` stays v4.1 (prompt text unchanged).
+DeepSeek (#242) sends `submit_answer` and `submit_plan` as strict function tools (`strict: true`
+on the `https://api.deepseek.com/beta` base URL), with an explicit `max_tokens`: 20000 / 2000 with
+thinking off, 64000 / 16000 with thinking on (reasoning shares the cap). Thinking off forces the
+named function; thinking on uses `tool_choice` auto (a forced choice is a 400 there). A 401 / 402 /
+429 stops the question with a plain message (`ProviderStop`), with no fallback and nothing saved.
+Its request version (`ds-strict-1-think-{on|off}-a{cap}-p{cap}`) joins the eval's cache keys.
+`usage` also records cache hit / miss and reasoning tokens.
 
 ## Every part answered or named as a gap (code, #215)
 
@@ -188,7 +197,7 @@ sentence as the last claim:
 - Q28, Q29: adjacent data carries `differs_because`; a named `suggested_source` appears.
 - Number check catches a planted wrong figure.
 - Every answer includes a coverage note.
-- Works with `LLM_PROVIDER=anthropic` and `LLM_PROVIDER=openai`.
+- Works with `LLM_PROVIDER=anthropic`, `LLM_PROVIDER=openai` and `LLM_PROVIDER=deepseek` (#242).
 
 ## Linked questions
 

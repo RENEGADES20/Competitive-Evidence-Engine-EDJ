@@ -142,7 +142,7 @@ powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 |---|---|
 | `src/cee/ingest/` | EDGAR fetch, PDF parser, chunking, loading, manifest checks |
 | `src/cee/retrieve/fts.py` | Entity resolution and full-text search with SQL hard filters |
-| `src/cee/answer/` | Answer JSON, the single LLM call (mock / anthropic / openai), citation checks |
+| `src/cee/answer/` | Answer JSON, the single LLM call (mock / anthropic / openai / deepseek), citation checks |
 | `src/cee/ask.py` | The end-to-end pipeline, logs every query |
 | `src/cee/app/streamlit_app.py` | Web interface and source view |
 | `db/schema.sql`, `docker-compose.yml` | Database |

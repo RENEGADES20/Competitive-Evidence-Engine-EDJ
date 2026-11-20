@@ -168,12 +168,13 @@ def _caveats_text(a: Answer) -> str:
 
 def model_name(provider: str) -> str:
     s = settings()
-    return {"anthropic": s.llm_model, "openai": s.openai_model}.get(provider, provider)
+    return {"anthropic": s.llm_model, "openai": s.openai_model,
+            "deepseek": s.deepseek_model}.get(provider, provider)
 
 
 def log_filters(r: Result) -> dict:
     """What query_log.filters stores: the resolved query, the plan (#214, ADR-020) and the LLM
-    calls of the question. llm_calls counts paid provider calls (anthropic / openai): the rule plan
+    calls of the question. llm_calls counts paid provider calls (anthropic / openai / deepseek): the rule plan
     and the mock answer are 0, so a mock row reads 0 / 0 although the trace names the mock's
     answer step "(mock, one call)"."""
     plan = r.plan or rules_plan(r.query)

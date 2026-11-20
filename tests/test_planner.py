@@ -236,6 +236,82 @@ def test_openai_plan_call_strict_schema():
     assert planner.plan_question(q7(), "openai", client=FakeOpenAI("not json"), cap=4).source == "fallback"
 
 
+def test_openai_cut_plan_is_rejected_even_when_it_parses():
+    """#242: finish_reason length on the OpenAI planner is a cut plan, never used."""
+    client = FakeOpenAI(json.dumps(PLAN))
+    client._create_orig = client._create
+
+    def cut(**kwargs):
+        resp = client._create_orig(**kwargs)
+        resp.choices[0].finish_reason = "length"
+        return resp
+    client.chat.completions.create = cut
+    plan = planner.plan_question(q7(), "openai", client=client, cap=4)
+    assert plan.source == "fallback" and "max_tokens" in plan.error and plan.raw == json.dumps(PLAN)
+
+
+# --- DeepSeek (#242) --------------------------------------------------------------------------
+
+def _ds_plan_response(finish="tool_calls", args=None, name=planner.PLAN_TOOL, extra_calls=()):
+    from tests.test_llm_deepseek import response, tool_call
+    calls = [tool_call(name=name, arguments=json.dumps(PLAN) if args is None else args), *extra_calls]
+    return response(calls=calls, finish=finish, reasoning="Two asks.")
+
+
+def test_deepseek_plan_request_and_call(monkeypatch):
+    from tests.test_llm_deepseek import FakeDeepSeek
+    for mode, cap_tokens, choice in (("off", 2000, {"type": "function", "function": {"name": planner.PLAN_TOOL}}),
+                                     ("on", 16000, "auto")):
+        monkeypatch.setenv("DEEPSEEK_THINKING", mode)
+        client = FakeDeepSeek(_ds_plan_response())
+        meta: dict = {}
+        raw = planner.call_planner(q7(), "deepseek", 4, client=client, meta=meta)
+        assert raw == PLAN and meta["stop_reason"] == "tool_calls" and meta["reasoning_content"] == "Two asks."
+        assert meta["usage"]["cache_hit_tokens"] == 60
+        req = client.kwargs
+        fn = req["tools"][0]["function"]
+        assert fn["name"] == planner.PLAN_TOOL and fn["strict"] is True
+        assert fn["parameters"] == planner.plan_schema(strict=True) and "minItems" not in json.dumps(fn["parameters"])
+        assert req["max_tokens"] == cap_tokens == planner.planner_max_tokens("deepseek")
+        assert req["tool_choice"] == choice and "Most parts: 4" in req["messages"][1]["content"]
+    plan = planner.plan_question(q7(), "deepseek", client=FakeDeepSeek(_ds_plan_response()), cap=4)
+    assert plan.source == "model" and plan.model == "deepseek-v4-pro" and plan.calls == 1
+
+
+@pytest.mark.parametrize("resp, match", [
+    (dict(finish="length"), "cut at max_tokens"),
+    (dict(finish="aborted"), "finish_reason aborted"),
+    (dict(name="other"), "did not call"),
+    (dict(args="{oops"), "not a JSON object"),
+    (dict(args='"text"'), "not a JSON object"),
+])
+def test_deepseek_unusable_plans_raise_and_fall_back(resp, match):
+    from tests.test_llm_deepseek import FakeDeepSeek
+    with pytest.raises(planner.PlannerOutputError, match=match) as e:
+        planner.call_planner(q7(), "deepseek", 4, client=FakeDeepSeek(_ds_plan_response(**resp)))
+    assert e.value.raw is not None
+    plan = planner.plan_question(q7(), "deepseek", client=FakeDeepSeek(_ds_plan_response(**resp)), cap=4)
+    assert plan.source == "fallback" and plan.calls == 1
+
+
+def test_deepseek_first_plan_call_wins():
+    from tests.test_llm_deepseek import FakeDeepSeek, tool_call
+    other = tool_call(name=planner.PLAN_TOOL, arguments=json.dumps({"parts": []}))
+    meta: dict = {}
+    raw = planner.call_planner(q7(), "deepseek", 4, client=FakeDeepSeek(_ds_plan_response(extra_calls=[other])),
+                               meta=meta)
+    assert raw == PLAN and meta["usage"]["tool_calls"] == 2
+
+
+def test_deepseek_refusal_codes_stop_the_question_not_a_fallback():
+    from cee.answer import llm
+    from tests.test_llm_deepseek import FakeDeepSeek, status_error
+    with pytest.raises(llm.ProviderStop, match="insufficient balance"):
+        planner.plan_question(q7(), "deepseek", client=FakeDeepSeek(error=status_error(402)), cap=4)
+    plan = planner.plan_question(q7(), "deepseek", client=FakeDeepSeek(error=status_error(500)), cap=4)
+    assert plan.source == "fallback" and plan.calls == 1 and "APIStatusError" in plan.error
+
+
 def test_plan_log_is_json():
     plan = planner.plan_question(q7(), "anthropic", client=FakeAnthropic(), cap=4)
     log = json.loads(json.dumps(plan.to_log()))
