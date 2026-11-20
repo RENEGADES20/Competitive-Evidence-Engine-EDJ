@@ -48,9 +48,12 @@ records #250 / #259 reuse); the replay acceptance item proves it.
     comment.
   - `anthropic` / `claude-sonnet-5-5` (for #259): input 2.00, output 10.00, cache read 0.10, cache write
     (5-minute) 2.50 (1.25 x input), no peak window. Source: Anthropic's model price table as given by the
-    claude-api reference (cached 2026-11-03; https://platform.claude.com/docs/en/about-claude/pricing);
-    the #259 report re-reads the page at report time and notes any difference. Same as the $2 / $10 #217
-    used. Our requests set no `cache_control`, so cache read / write are 0 today; the formula covers them.
+    claude-api reference (cached 2026-11-03; https://platform.claude.com/docs/en/about-claude/pricing,
+    which the plan reviewer read on 2026-11-20 with the same row); the #259 report re-reads the page at
+    report time and notes any difference. Same as the $2 / $10 #217 used. Our requests set no
+    `cache_control`, so cache read / write are 0 today; the formula covers them. A note in the file: the
+    rates are for default global routing; US-only `inference_geo` costs 1.1x and the 1-hour cache write is
+    $4.00; neither is used now (review note 5).
   - `openai`: no entry. An unpriced call is reported as `unpriced` (cost `null`), never as $0.
   - `mock`: always $0, 0 calls.
 - **D2 Formula** (`src/cee/answer/cost.py`, new, pure, 0 calls):
@@ -58,10 +61,28 @@ records #250 / #259 reuse); the replay acceptance item proves it.
     `output_tokens`); when hit / miss are absent, all input is a miss (the dearer rate).
   - anthropic: `input x in + output x out + cache_read x read + cache_creation x write`.
   - **Peak or off-peak by completion time** (start `at` + `wall_s`, in UTC), the rule #243 used; a call
-    without `wall_s` uses `at`. New records save `at` with the machine's UTC offset
-    (`datetime.now().astimezone().isoformat()`); a saved naive `at` (every record so far) is read in the
-    machine's local zone and the call is flagged `tz_assumed` (as #243 did). Each call also gets
-    `usd_peak` (what it would cost at peak) so "full price" is always shown.
+    without `wall_s` uses `at`. Each call also gets `usd_peak` (what it would cost at peak), so "full
+    price" is always shown.
+  - **Time zone, explicit and recorded** (review blocking 2). Pricing never depends on the zone of the
+    machine that prices.
+    - New records (eval runs and the app's `finished_at` stamps for planner, map and reduce) carry their
+      UTC offset: `datetime.now().astimezone().isoformat()`. Their zone is the one they were written in,
+      so no flag is needed for them.
+    - Every record saved so far has a naive `at`. For those, `cost.price_call(..., naive_tz=...)` takes the
+      zone as an explicit argument (an IANA name such as `America/Chicago`, or a fixed offset such as
+      `-06:00`), and `eval_run.py` / `eval_cost.py` take `--naive-tz`. There is no machine default:
+      - `eval_cost.py`: a naive record without `--naive-tz` exits 2 before printing, naming the file.
+      - `eval_run.py --real`: before any search or call, the cache folder is scanned; if it holds a naive
+        record and `--naive-tz` is not given, the run exits 2 (nothing called). The shared
+        `.eval-runs/cache` holds naive records today, so #250 / #259 pass `--naive-tz America/Chicago`.
+      - The zone used is printed, stored in `report.json` `meta.cost.naive_tz` and on each call row
+        (`tz`: `record offset` or `--naive-tz America/Chicago`).
+    - The zone of every record written so far is **America/Chicago** (this machine; UTC-6 in November),
+      stated in `docs/RUN.md` and next to the 0242 figure. With it, the 12 calls of 0242 ran
+      03:35-03:51 UTC on Friday 2026-11-20 (completion time), all peak, so the off-peak-aware figure equals
+      the full price, $0.79.
+    - Tests pass a fixed zone (`-06:00`, and UTC) and never rely on the process TZ. IANA names need the
+      tz database (`zoneinfo`; present on this venv, CI's Linux and macOS); tests use fixed offsets only.
   - A failed call (no usage) is a call with cost `null` and reason `no usage`; it still counts.
 - **D3 Ledger.** `RealRunner` appends one row per call it serves (thread-safe for parallel maps): `type`
   (plan / map / remap / reduce / answer), `file`, `new` (made in this run) or reused (from the cache),
@@ -77,7 +98,10 @@ records #250 / #259 reuse); the replay acceptance item proves it.
   since plan-v3): `plans_wanted`, `plan_path`, `PlanMissing`, `missing_plans`, `SavedPlans`,
   `RealRunner(plans_only=...)`. Real: a missing plan stops the run before any search or call (exit 2);
   provider / model unlike the run's: exit 2, nothing called. Mock: plans read from the files, `calls` 0.
-  `--max-calls` stays the run-wide cap over every call type. Also `--cache DIR` (default
+  `--max-calls` stays the run-wide cap over every call type. Merge with #249's sync (review note 2):
+  exp/hybrid's `plan_path` / `plan_cache_key` take `cap` and its `RealRunner(cache_dir=None)` differs
+  from main's `cache_dir=CACHE`; the PR says #249 resolves both to main's versions, and the T9 / T10
+  test names are kept identical, so that merge is mechanical. Also `--cache DIR` (default
   `.eval-runs/cache`), so a replay can read a copied record folder without touching the shared cache.
 - **D6 Progress stages** (`cee.ask.STAGES`), 9 lines instead of 8:
   `resolve, decompose, search, extract, research, synthesize, check, caveats, log`.
@@ -94,8 +118,15 @@ records #250 / #259 reuse); the replay acceptance item proves it.
   - synthesize: "Synthesizing the answer from the evidence matrix (mock, one call): N claims"; built by
     code: "No model call: the answer is built by code (...)"; legacy (MAP=off): "Writing the answer
     (deepseek, one legacy call)"; no passages: "No passages found: no model call".
-  - The mock waits `MOCK_DELAY_S` inside the synthesize stage in `ask.py` (today the delay sits only in
-    the legacy mock answer, so the verify driver's mid-run check is timing luck on the reduce path).
+  - **Mock delay: no new sleep** (review blocking 3; my first draft's premise was wrong). On main,
+    `mock_extract` (`extract.py:512`) and `mock_reduce` (`reduce.py:548`) already sleep `MOCK_DELAY_S`,
+    and the legacy mock answer does too (`llm._mock`). The ask-progress verify question
+    ("What does Edward Jones's 10-K say...", one firm) takes this path: decompose (rules) -> search 1
+    sub-question -> `run_map` with one `map.EDJ` spec (`mock_extract`, sleeps) -> behavior `answer`, so
+    `needs_call` is true -> `R.raw_answer` -> `mock_reduce` (sleeps). The mid-run catch waits for
+    "Synthesizing the answer", which the existing `mock_reduce` sleep makes reliable. The code-built path
+    (no model call) is not taken by any verify question, so it gets no delay either. The step count in
+    the app and the driver comes from `len(STAGES)`, never a literal (review note 6).
   - The app logs each question's cost: `query_log.filters.cost` (same shape as D3, from the plan's
     usage, each map call's usage and the reduce usage), satisfying the CLAUDE.md invariant "every call is
     logged with tokens and cost". The planner's usage and completion time are kept on the `Plan`
@@ -110,12 +141,15 @@ records #250 / #259 reuse); the replay acceptance item proves it.
 - `src/cee/retrieve/planner.py` - `plan_question` passes `meta` to `call_planner`; `Plan.usage`,
   `Plan.finished_at` (in `to_log`).
 - `src/cee/answer/extract.py` - `_call_log` adds `finished_at`; `run_map(..., on_research=None)`.
-- `src/cee/ask.py` - D6 stages and texts, mock delay in synthesize, `log_filters` `cost`.
-- `src/cee/app/views/ask_page.py` - only if the first bar text or step count needs it (`len(STAGES)`).
-- `scripts/eval_run.py` - D3 ledger and cost, D5 `--reuse-plans` and `--cache`, offset-aware `at`,
+- `src/cee/ask.py` - D6 stages and texts, offset-aware reduce `finished_at`, `log_filters` `cost` (no
+  new sleep).
+- `src/cee/app/views/ask_page.py` - only if the first bar text needs it; the step count stays
+  `len(STAGES)`.
+- `scripts/eval_run.py` - D3 ledger and cost, D5 `--reuse-plans` and `--cache`, `--naive-tz` (D2), offset-aware `at`,
   report columns; docstring.
 - `scripts/eval_cost.py` (new) - prices a folder of saved records (`raw/` or a results folder), prints a
-  per-call and total table (new spend, full price), `--json` for the reports. Pure Python, no OS-specific
+  per-call and total table (new spend, full price), `--naive-tz` (required when a record has a naive `at`;
+  printed and in the output), `--json` for the reports. Pure Python, no OS-specific
   script, so no `.ps1` / `.sh` pair is needed; `docs/RUN.md` gets both command blocks.
 - `scripts/verify_cee.py` - `feature_ask_progress` for D6 (9 lines, new texts, mid-run catch on
   "Synthesizing the answer"); `feature_open_citation` waits for `CITED PASSAGE · <chunk_id>` (or the
@@ -124,26 +158,45 @@ records #250 / #259 reuse); the replay acceptance item proves it.
 - `specs/ui.md` - the stage list.
 - `CLAUDE.md` - "Paid API calls": `LLM_PROVIDER=anthropic`, `openai` or `deepseek`.
 - `docs/results/0242-deepseek-check.md` - the dollar cost from `eval_cost.py` (expected $0.79 at full
-  price: $0.27 thinking off, $0.52 on; plus the off-peak-aware figure).
-- `docs/RUN.md` - Windows and Mac blocks: `--reuse-plans`, `--cache`, `eval_cost.py`, reading cost.
+  price: $0.27 thinking off, $0.52 on; off-peak-aware with `--naive-tz America/Chicago`: all 12 peak,
+  also $0.79; the zone is stated next to the figure).
+- `docs/RUN.md` - Windows and Mac blocks: `--reuse-plans`, `--cache`, `--naive-tz`, `eval_cost.py`, reading
+  cost; states that records written before #248 are America/Chicago (UTC-6 in November).
 - Tests: `tests/test_cost.py` (new), `tests/test_eval_run.py`, `tests/test_ask_progress.py`,
   `tests/test_ask_page_trace.py`, `tests/test_verify_wait.py`.
 
 ## Steps
 1. `config/pricing.yaml` + `cost.py` + `tests/test_cost.py`: peak edges (00:59 off, 01:00 peak, 03:59
    peak, 04:00 off, 05:59 off, 06:00 peak, 09:59 peak, 10:00 off, Saturday 02:00 off, a listed holiday
-   off), completion vs start across 06:00, offset-aware vs naive `at`, deepseek hit / miss / no split,
-   anthropic with cache read / write, openai unpriced, failed call. A test prices the 12 committed records
-   in `docs/results/0242-deepseek-raw/{off,on}`: full price $0.79 ($0.27 off, $0.52 on) to the cent.
+   off), completion vs start across 06:00, offset-aware `at` (its own offset wins over `naive_tz`), naive
+   `at` with `naive_tz="-06:00"` and with `naive_tz="+00:00"` (different periods, both explicit), naive
+   `at` with no zone -> error; deepseek hit / miss / no split, anthropic with cache read / write, openai
+   unpriced, failed call. A test prices the 12 committed records in `docs/results/0242-deepseek-raw/{off,on}`
+   with `naive_tz="-06:00"`: full price $0.79 ($0.27 off, $0.52 on) to the cent, all 12 peak, so the
+   off-peak-aware total is also $0.79.
 2. Ledger and cost in `eval_run.py` (D3), `--cache`, offset-aware `at` for new records; tests with the
    existing fake clients: cost per question and `summary.cost` in `report.json` for planner + map +
    remap + reduce; reused calls priced at their saved usage with `usd_new` 0; mock run all 0.
-3. **Resume test (acceptance 1), fakes, 0 real calls:** a two-firm question whose fake search leaves one
-   sub-question empty so the corrective re-search adds passages (one re-extraction). Run A with
-   `--max-calls` = 1 + 2 (plan + two maps): stops before the remap / reduce (`cap`). Run B, same args,
-   `--max-calls` 2: makes only the remap and the reduce; plan and maps reused. Run C, `--max-calls 0`:
-   0 calls, every type reused (plan 1, map 2, remap 1, reduce 1), the answer and the cost equal B's,
-   `usd_new` 0. The fake counters prove no call is made twice. Same for `--legacy` (answer key).
+3. **Resume test (acceptance 1), fakes, 0 real calls** (review blocking 1). On main a sub-question with
+   no passage makes no round-1 map call (`extract.map_specs` turns it into a code `not_found` cell), so
+   the design is: a two-firm question (firms A and B, fake planner: 1 aspect x 2 firms); the fake search
+   gives **both** sub-questions passages; the fake map client returns a `fact` for A's cell and
+   `not_found` for B's cell (eligible for research); the fake corrective search returns new passages for
+   B, so round 2 has one `remap.B`; the fake map client returns a `fact` for it; the fake reduce returns a
+   valid answer. Each fake counts its calls. Expected (calls made / records reused, per type):
+
+   | Run | `--max-calls` | plan | map (A, B) | remap.B | reduce | `real_calls` | `reused` | answer |
+   |---|---|---|---|---|---|---|---|---|
+   | A | 3 | 1 new | 2 new | 0 (capped, listed in `map_capped_calls`, no file) | 0 (`cap`, no file) | 3 | 0 | `NOT_EVALUATED`, note "not run: --max-calls reached" |
+   | B | 2 | reused | 2 reused | 1 new | 1 new | 2 | 3 | the answer |
+   | C | 0 | reused | 2 reused | 1 reused | 1 reused | 0 | 5 | equal to B's |
+
+   Fake counters after the three runs: planner 1, map 2, remap 1, reduce 1 (no call made twice). Run C's
+   `cost`: `calls` {plan 1, map 2, remap 1, reduce 1}, new 0, reused 5, `usd_new` 0, `usd` equal to run
+   B's `usd` (the same five records), `calls_reserved` 0. Run B's `usd_new` = the remap + reduce cost.
+   Legacy (`--legacy`, answer key), one firm: A' cap 1 -> plan new, answer `cap` (`real_calls` 1); B' cap 1
+   -> plan reused, answer new (`real_calls` 1, `reused` 1); C' cap 0 -> plan and answer reused
+   (`real_calls` 0, `reused` 2); counters planner 1, answer 1.
 4. `--reuse-plans` (D5) and its tests (ported T9 / T10 on main: the plan file is shared by two runs and
    the second makes no planner call; real with a missing plan exits 2 before any call; mismatch exits 2;
    mock reads the saved plan with `calls` 0).
@@ -168,14 +221,22 @@ records #250 / #259 reuse); the replay acceptance item proves it.
       question has `cost` with 0 calls and $0; `summary.cost` present.
 - [ ] **A resumed run reuses every saved call** (issue acceptance 1): step 3's tests pass (0 real calls).
 - [ ] **0-call replay of saved real records** (proves the keys did not move and the cost reads real
-      usage): copy `docs/results/0247b-raw` (records only) to a scratch cache, run
+      usage). Run on this branch **before any rebase onto #247 part 3** (review note 3): copy
+      `docs/results/0247b-raw` (records only, not `verdicts*`) to a scratch cache, run
       `LLM_PROVIDER=deepseek DEEPSEEK_THINKING=on eval_run.py --real --max-calls 0 --cache <copy>
-      --questions Q1,Q3,Q11,Q19,Q22,Q23,Q24,Q26 --as-of 2026-11-17` (settings pinned in the command, no
-      `.env` read or edited) -> `real_calls` 0, `calls_reserved` 0, no question `cap`; every plan, map,
-      re-extraction and reduce served from the copy (plans 8; counts per type logged in the Progress
-      log and compared with the part-2 replay-final, 50 records); each question has a non-null `usd`
-      with `usd_new` 0, and the run total is stated. If #247 part 3 merges first and changes the reduce
-      key, the replay uses part 3's saved records instead and the Progress log says so.
+      --naive-tz America/Chicago --questions Q1,Q3,Q11,Q19,Q22,Q23,Q24,Q26 --as-of 2026-11-17`.
+      Settings are pinned in the command; `cee.config` loads `<repo>/.env` on import, and wt-248 has no
+      `.env` (existence checked only, never read), so every unpinned setting is a config default; no
+      `.env` is created or edited (review note 1). Expected: `real_calls` 0, `calls_reserved` 0, no question
+      `cap`; served from the copy: plan 8, map 27, re-extraction 7, reduce 8 = 50 records, the part-2
+      replay-final count; each question has a non-null `usd` with `usd_new` 0, every call tz
+      `--naive-tz America/Chicago`, and the run total is stated. Q3's failed reduce attempt
+      (`Q3-reduce-...failed-1.json`) is not a cache file, so its spend is not in the replay's Q3 cost; the
+      report says so next to the total and compares it with part 2's stated spend (~$1.90 for 33 calls)
+      (review note 4). If part 3 merges first and bumps `REDUCE_VERSION` (0 calls, so no saved reduce
+      record under the new key), the replay is run on the pre-rebase commit and that SHA is logged; if a
+      rebase came first anyway, it uses part 3's own replay records if they exist, or reports the 8 reduce
+      misses as `cap` (plans and maps still 0 calls) and says so.
 - [ ] Cost per question and run total in report.json (issue acceptance 2): tests in steps 1-2; the
       0242 records price to $0.79 full price ($0.27 off, $0.52 on), now in `0242-deepseek-check.md`.
 - [ ] `--reuse-plans` on main: step 4 tests; `--max-calls` still caps every call type (a test: cap 1 on a
@@ -193,3 +254,11 @@ records #250 / #259 reuse); the replay acceptance item proves it.
 - 2026-11-20 09:51 - plan written. Branch `tl/248-eval-ui` from origin/main 2f568c4; DB check: up to date
   (corpus-2026-11-19). Every call type already has a key; the work is the resume proof, cost,
   `--reuse-plans`, stages and the four TL comment items. 0 real calls planned.
+- 2026-11-20 10:40 - plan review round 1 (issuecomment-7044101304), CHANGES REQUESTED, with TL rulings.
+  Blocking 1: resume test redesigned (both firms have passages, B's map cell `not_found` -> re-search ->
+  remap.B) with exact per-run counts. Blocking 2: naive `at` priced only with an explicit `--naive-tz`
+  (required when naive records are present), recorded in report.json; new records and app stamps carry
+  offsets; existing records are America/Chicago; tests use fixed offsets. Blocking 3: premise corrected,
+  `mock_extract` / `mock_reduce` already sleep; no new sleep; verify question path named. Notes 1-6
+  adopted (.env wording, #249 merge note, replay before rebase onto part 3, Q3 failed attempt outside the
+  replay cost, Anthropic geo / 1h notes, step count from `len(STAGES)`).
