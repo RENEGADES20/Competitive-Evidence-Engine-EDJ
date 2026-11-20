@@ -127,7 +127,13 @@ def check_output(answer: Answer, raw=None, provider: str = "") -> Answer:
 
 def _usage(resp, input_key: str, output_key: str) -> dict:
     u = getattr(resp, "usage", None)
-    return {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    out = {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    # #248: Anthropic's prompt-cache tokens (outside input_tokens), when the response has them, for the cost
+    for k in ("cache_read_input_tokens", "cache_creation_input_tokens"):
+        v = getattr(u, k, None)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v
+    return out
 
 
 def _block_dict(b) -> dict:

@@ -50,7 +50,9 @@ Progress = Callable[[str, str, str], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
 
-STAGES = ("resolve", "plan", "search", "map", "model", "check", "caveats", "log")
+# #248: the W11 flow's stages (ADR-021): decompose / search N sub-questions / extract k firms /
+# re-search / synthesize, between reading the question and the code checks
+STAGES = ("resolve", "decompose", "search", "extract", "research", "synthesize", "check", "caveats", "log")
 
 
 class _Trace:
@@ -94,14 +96,14 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     with t.stage("resolve", "Reading the question"):
         query = apply_filters(resolve(question), **(filters or {}))
     t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
-    with t.stage("plan", "Planning the search"):
+    with t.stage("decompose", "Decomposing the question"):
         plan = plan_question(query, provider)
-    t.report("plan", "done", plan_text(plan))
-    with t.stage("search", "Searching the corpus"):
+    t.report("decompose", "done", plan_text(plan))
+    searching = f"Searching {_n(len(plan.subquestions), 'sub-question')}"
+    with t.stage("search", searching):
         hits = search_subquestions(query, plan, as_of=dt.date.today())
     docs = len({h.doc_id for h in hits})
-    t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
-                               f" in {_n(len(plan.subquestions), 'sub-question')}")
+    t.report("search", "done", f"{searching}: {_n(len(hits), 'passage')} from {_n(docs, 'document')}")
     matrix = map_step(query, plan, hits, provider, t)
     every = union_hits(hits, matrix)
     info: dict = {}
@@ -114,38 +116,75 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     return result
 
 
+def _firms(matrix) -> int:
+    """Firms (rows) the map extracted from; the research row is not a firm."""
+    return len([r for r in matrix.rows if r != "research"])
+
+
+def extract_running(plan: Plan) -> str:
+    firms = {s.entity for s in plan.subquestions if s.entity}
+    return f"Extracting from {_n(len(firms), 'firm')}" if firms else "Extracting from the passages"
+
+
 def map_text(matrix, provider: str) -> str:
-    """The map stage's trace line (#246)."""
-    made = [c for c in matrix.calls if not c.get("skipped")]
-    remaps = sum(c["round"] == 2 for c in made)
-    who = "mock, no model call" if provider == "mock" else f"{provider}, {_n(len(made) - remaps, 'call')} in parallel"
-    extra = []
-    if matrix.research:
-        extra.append(f"{len(matrix.research)} re-searched")
-    if remaps:
-        extra.append(_n(remaps, "re-extraction"))
+    """The extract stage's trace line (#246, #248): round-1 calls, cells, labels, behavior by code."""
+    first = [c for c in matrix.calls if c["round"] == 1 and not c.get("skipped")]
+    who = ("mock, no model call" if provider == "mock"
+           else f"{provider}, {_n(len(first), 'call')}" + (" in parallel" if len(first) > 1 else ""))
     labels = matrix.counts()["labels"]
     order = ("fact", "derived", "not_disclosed", "not_found", "different_quantity", "failed")
     shown = ", ".join(f"{labels[k]} {k.replace('_', ' ')}" for k in order if labels.get(k))
-    return (f"Extracting per firm ({who}{''.join(', ' + e for e in extra)}): {_n(len(matrix.cells), 'cell')}"
+    return (f"Extracting from {_n(_firms(matrix), 'firm')} ({who}): {_n(len(matrix.cells), 'cell')}"
             + (f": {shown}" if shown else "") + f"; behavior by code: {matrix.behavior or 'undecided'}")
+
+
+RESEARCH_RUNNING = "Re-searching sub-questions with no evidence"
+
+
+def research_text(matrix, provider: str) -> tuple[str, str]:
+    """(state, line) of the re-search stage (#248): the corrective re-search and re-extraction (#246)."""
+    if not matrix.research:
+        return "skipped", "Re-search: every sub-question has evidence; nothing re-searched"
+    found = sum(bool(r.get("hits")) for r in matrix.research)
+    remaps = [c for c in matrix.calls if c["round"] == 2 and not c.get("skipped")]
+    who = "mock, no model call" if provider == "mock" else f"{provider}, {_n(len(remaps), 'call')}"
+    return "done", (f"{RESEARCH_RUNNING}: {len(matrix.research)} re-searched, {found} with new passages, "
+                    f"{_n(len(remaps), 're-extraction')} ({who})")
 
 
 def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace):
     """#246: the map step (on by default since #247): extraction per firm, corrective re-search, the
-    evidence matrix the reduce step writes the answer from. MAP=off: the legacy single answer call."""
+    evidence matrix the reduce step writes the answer from. MAP=off: the legacy single answer call.
+    #248: two trace stages, extract (round 1) and research (corrective re-search and round 2)."""
     if not settings().map_on:
-        t.report("map", "skipped", "Map step off (MAP=off): no extraction calls; legacy single answer call")
+        t.report("extract", "skipped", "Map step off (MAP=off): no extraction calls; legacy single answer call")
+        t.report("research", "skipped", "Re-search: map step off (MAP=off)")
         return None
     if not hits:
-        t.report("map", "skipped", "No passages found: no extraction call")
+        t.report("extract", "skipped", "No passages found: no extraction call")
+        t.report("research", "skipped", "Re-search: no passages found")
         return None
     import datetime as dt
 
     from cee.answer.extract import run_map
-    with t.stage("map", "Extracting per firm"):
-        matrix = run_map(query, plan, hits, provider, as_of=dt.date.today())
-    t.report("map", "done", map_text(matrix, provider))
+    running = extract_running(plan)
+    state = {"stage": "extract"}
+
+    def on_research() -> None:   # round 1 is done; the corrective re-search starts
+        t.report("extract", "done", f"{running}: round 1 done")
+        t.report("research", "running", RESEARCH_RUNNING)
+        state["stage"] = "research"
+
+    t.report("extract", "running", running)
+    try:
+        matrix = run_map(query, plan, hits, provider, as_of=dt.date.today(), on_research=on_research)
+    except Exception as e:
+        stage = state["stage"]
+        text = running if stage == "extract" else RESEARCH_RUNNING
+        t.report(stage, "failed", f"{text}: failed ({type(e).__name__}: {e})")
+        raise
+    t.report("extract", "done", map_text(matrix, provider))
+    t.report("research", *research_text(matrix, provider))
     return matrix
 
 
@@ -160,7 +199,7 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
     (prompt v4.1, MAP=off), with `plan` for the part grouping and the part check (#215)."""
     t = trace or _Trace(None)
     if not hits:
-        t.report("model", "skipped", "No passages found: no model call")
+        t.report("synthesize", "skipped", "No passages found: no model call")
         t.report("check", "skipped", "Checking citations: nothing to check")
         with t.stage("caveats", "Adding caveats and gaps"):
             answer = empty_retrieval_answer(query)
@@ -170,12 +209,15 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
     if matrix is not None:
         return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info)
     if raw is None:
-        with t.stage("model", f"Asking the model ({provider}, one call)"):
+        with t.stage("synthesize", f"Writing the answer ({provider}, one legacy call)"):
             raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
-        t.report("model", "done", f"Asking the model ({provider}, one call): "
-                                  f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
+        if info is not None:   # #248: the legacy call's usage and completion time, for the cost
+            info.update(usage=raw.usage, finished_at=dt.datetime.now().astimezone().isoformat(), provider=provider,
+                        model=model_name(provider) if provider != "mock" else "mock")
+        t.report("synthesize", "done", f"Writing the answer ({provider}, one legacy call): "
+                                       f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
-        t.report("model", "skipped", "Reusing the saved model output: no model call")
+        t.report("synthesize", "skipped", "Reusing the saved model output: no model call")
     with t.stage("check", "Checking citations"):
         answer = check_parts(check_citations(raw.model_copy(deep=True), hits), plan, hits, question)
     t.report("check", "done", _check_text(answer, hits))
@@ -187,34 +229,38 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
     return answer, raw
 
 
-REDUCE_RUNNING = "Asking the model to write the answer from the evidence matrix"
+REDUCE_RUNNING = "Synthesizing the answer from the evidence matrix"
 
 
 def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info):
     """#247: the reduce step and every code check after it (cee.answer.reduce)."""
     from cee.answer import reduce as R
     code_built = not R.needs_call(matrix)
+    finished_at = None
     if code_built:
         raw = R.code_answer(matrix, query)
-        t.report("model", "skipped", f"No model call: the answer is built by code "
-                                     f"({matrix.behavior or 'incomplete'})")
+        t.report("synthesize", "skipped", f"No model call: the answer is built by code "
+                                          f"({matrix.behavior or 'incomplete'})")
     elif raw is None:
-        with t.stage("model", f"{REDUCE_RUNNING} ({provider}, one call)"):
+        with t.stage("synthesize", f"{REDUCE_RUNNING} ({provider}, one call)"):
             if provider == "mock":
                 raw = R.raw_answer(matrix, query, provider)
             else:
                 meta: dict = {}
                 out = R.call_reduce(question, matrix, query, provider, meta=meta)
+                finished_at = dt.datetime.now().astimezone().isoformat()   # #248: for the cost
                 raw = R.to_answer(out, provider, meta)
-        t.report("model", "done", f"{REDUCE_RUNNING} ({provider}, one call): "
-                                  f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
+        t.report("synthesize", "done", f"{REDUCE_RUNNING} ({provider}, one call): "
+                                       f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
-        t.report("model", "skipped", "Reusing the saved model output: no model call")
+        t.report("synthesize", "skipped", "Reusing the saved model output: no model call")
     with t.stage("check", "Checking citations"):
         answer, done = R.finish_answer(raw.model_copy(deep=True), matrix, query, plan, hits, question,
                                        code_built=code_built)
     if info is not None:
         info.update(done, provider=provider, model=model_name(provider) if provider != "mock" else "mock")
+        if finished_at:   # #248: a new reduce call's usage and completion time, for the logged cost
+            info.update(usage=getattr(raw, "usage", None), finished_at=finished_at)
     t.report("check", "done", _check_text(answer, hits))
     t.report("caveats", "done", _caveats_text(answer))
     return answer, (None if code_built else raw)
@@ -231,8 +277,8 @@ def answer_window(query: Query):
 def plan_text(plan: Plan) -> str:
     """The plan stage's trace line: who planned, how many calls, the parts (#214)."""
     if plan.source == "rules":
-        return f"Planning the search (rules, no model call): {describe_plan(plan)}"
-    head = f"Planning the search ({plan.provider}, one call)"
+        return f"Decomposing the question (rules, no model call): {describe_plan(plan)}"
+    head = f"Decomposing the question ({plan.provider}, one call)"
     if plan.source == "fallback":
         return f"{head}: output not usable ({(plan.error or '')[:120]}), using the rule plan: {describe_plan(plan)}"
     fixes = f" ({_n(len(plan.corrections), 'correction')} by code)" if plan.corrections else ""
@@ -277,9 +323,36 @@ def log_filters(r: Result) -> dict:
                          "remap": sum(c["round"] == 2 for c in made), "answer": int(bool(r.answer.llm_called))}}
     if r.reduce:   # #247: what the reduce step did (code checks, flags, stop_reason, usage; rule 7)
         out["reduce"] = r.reduce
+    out["cost"] = question_cost(r, plan, made)
     if m is not None and getattr(m, "corrective", None):   # #247 B1: where each re-search chunk came from
         out["chunk_origin"] = {h.chunk_id: {"origin": "corrective", "subquestion": h.part_id} for h in m.corrective}
     return out
+
+
+def question_cost(r: Result, plan: Plan, made: list[dict]) -> dict:
+    """#248 (ADR-021 rule 7, CLAUDE.md "every call is logged with tokens and cost"): every paid call of
+    the question (planner, map, re-extraction, reduce or the legacy answer), priced from its usage and
+    completion time with config/pricing.yaml (cee.answer.cost); totals plus one row per call."""
+    from cee.answer import cost as C
+    rows: list[dict] = []
+
+    def add(kind: str, provider: str, model, usage, finished_at) -> None:
+        try:
+            c = C.price_call(provider, model, usage, finished_at=finished_at)
+        except C.CostError as e:   # never breaks the answer; the row says why it has no price
+            c = {**C.price_call(provider, model, None), "status": "error", "error": str(e)}
+        rows.append({"type": kind, "new": True, "cost": c})
+
+    if plan.calls and plan.provider not in ("rules", "mock"):
+        add("plan", plan.provider, plan.model, plan.usage, plan.finished_at)
+    for c in made:
+        add("map" if c["round"] == 1 else "remap", c["provider"], c.get("model"), c.get("usage"),
+            c.get("finished_at"))
+    red = r.reduce or {}
+    if red.get("finished_at") and red.get("provider") not in (None, "mock"):
+        add("reduce" if r.matrix is not None else "answer", red["provider"], red.get("model"),
+            red.get("usage"), red["finished_at"])
+    return {**C.summarize(rows), "rows": [{"type": x["type"], **x["cost"]} for x in rows]}
 
 
 def _log(r: Result, provider: str) -> int:

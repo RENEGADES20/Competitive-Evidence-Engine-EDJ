@@ -21,7 +21,7 @@ def test_trace_stays_collapsed_after_the_answer(monkeypatch):
     at = AppTest.from_function(page).run()
     assert not at.exception and not at.error
     box = at.get("status")[0]
-    assert box.label.startswith("How this answer was built: 8 steps")
+    assert box.label.startswith(f"How this answer was built: {len(pipeline.STAGES)} steps")   # #248: 9
     assert "No passages found: no model call" in trace_text(at)
 
 
@@ -32,6 +32,6 @@ def test_failed_stage_is_marked_and_error_shown(monkeypatch):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search_subquestions", broken)
     at = AppTest.from_function(page).run()
-    assert at.get("status")[0].label == "Searching the corpus: failed (RuntimeError: database is down)"
+    assert at.get("status")[0].label == "Searching 1 sub-question: failed (RuntimeError: database is down)"
     assert 'class="failed"' in trace_text(at)
     assert "database is down" in at.error[0].value

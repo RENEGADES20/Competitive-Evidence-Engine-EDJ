@@ -22,6 +22,7 @@ exclude set, every filter kept.
 """
 from __future__ import annotations
 
+import datetime as dt
 from dataclasses import asdict, dataclass, field, replace
 from functools import lru_cache
 
@@ -162,6 +163,8 @@ class Plan:
     error: str | None = None
     raw: object = None              # the model's output (or payload), JSON-safe
     calls: int = 0                  # paid planner calls (0 or 1)
+    usage: dict | None = None       # #248: the planner call's usage (app path), for the cost
+    finished_at: str | None = None  # #248: when the planner call ended, offset-aware
     searched: list[dict] = field(default_factory=list)   # per sub-question (search_subquestions)
     research_tokens: float = 0.0
     competitor_floor: dict[str, float] = field(default_factory=dict)   # aspect id -> rank floor
@@ -192,6 +195,7 @@ class Plan:
                 "subquestions": [s.to_log() for s in self.subquestions],
                 "parts": [asdict(p) for p in self.parts],
                 "corrections": self.corrections, "error": self.error, "calls": self.calls,
+                "usage": self.usage, "finished_at": self.finished_at,
                 "searched": self.searched, "research_tokens": round(self.research_tokens),
                 "competitor_floor": {k: round(v, 4) for k, v in self.competitor_floor.items()},
                 "raw": self.raw}
@@ -564,15 +568,21 @@ def plan_question(q: Query, provider: str | None = None, client=None) -> Plan:
         return rules_plan(q)
     from cee.answer.llm import ProviderStop
 
+    meta: dict = {}
+
+    def stamped(plan: Plan) -> Plan:   # #248: usage and completion time, for the logged cost
+        plan.usage, plan.finished_at = meta.get("usage"), dt.datetime.now().astimezone().isoformat()
+        return plan
+
     try:
-        raw = call_planner(q, provider, client)
+        raw = call_planner(q, provider, client, meta=meta)
     except PlannerOutputError as e:
-        return from_output(q, e.raw, provider, error=str(e))
+        return stamped(from_output(q, e.raw, provider, error=str(e)))
     except ProviderStop:   # #242: 401 / 402 / 429 stop the question, never a silent rule plan
         raise
     except Exception as e:   # API / network error: the rule plan; the call still counts (ADR-020)
-        return from_output(q, None, provider, error=f"{type(e).__name__}: {e}")
-    return from_output(q, raw, provider)
+        return stamped(from_output(q, None, provider, error=f"{type(e).__name__}: {e}"))
+    return stamped(from_output(q, raw, provider))
 
 
 # --- retrieval ---------------------------------------------------------------------------------

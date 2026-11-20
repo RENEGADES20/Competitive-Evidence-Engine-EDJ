@@ -590,6 +590,7 @@ class CallResult:
     cached: bool = False
     bad_request: bool = False
     flags: list = field(default_factory=list)   # e.g. trailing_braces (#246 TL decision on Q24)
+    finished_at: str | None = None   # #248: when this call ended, offset-aware, stamped in the worker
 
 
 CallFn = Callable[[MapSpec, str, object, list], CallResult]
@@ -671,8 +672,15 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
                                         else "not run: --max-calls reached")
     stop: Exception | None = None
     if todo:
+        def timed(spec, *args) -> CallResult:
+            # #248: each call's own completion time (pricing by period), not one time for the round
+            r = call(spec, *args)
+            if r is not None and r.finished_at is None and not r.cached:
+                r.finished_at = dt.datetime.now().astimezone().isoformat()
+            return r
+
         with ThreadPoolExecutor(max_workers=max(1, concurrency)) as ex:
-            futures = {ex.submit(call, specs[i], question, window, firms): i for i in todo}
+            futures = {ex.submit(timed, specs[i], question, window, firms): i for i in todo}
             for f in as_completed(futures):
                 i = futures[f]
                 try:
@@ -696,7 +704,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
             "model": "mock" if provider == "mock" else model_for(provider), "version": EXTRACT_VERSION,
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
-            "bad_request": r.bad_request, "flags": list(r.flags),
+            "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,
             "passages": len(spec.hits), "input_tokens_est": est}   # #247 part 2: per-call size before the run
 
 
@@ -716,8 +724,11 @@ def eligible_for_research(cell: Cell, aspect) -> bool:
 
 def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: CallFn | None = None,
             concurrency: int | None = None, search_fn=None, as_of: dt.date | None = None,
-            allow: Callable[[MapSpec], bool] | None = None, sources=None) -> EvidenceMatrix:
-    """The map step: round 1, corrective re-search, round 2, then the code rules (matrix.finish)."""
+            allow: Callable[[MapSpec], bool] | None = None, sources=None,
+            on_research: Callable[[], None] | None = None) -> EvidenceMatrix:
+    """The map step: round 1, corrective re-search, round 2, then the code rules (matrix.finish).
+    `on_research` (#248, the app's progress): called once, after round 1 and before the corrective
+    re-search, so the trace can show round 1 done while the re-search runs."""
     from cee.retrieve import planner
     provider = provider or settings().llm_provider
     call = call or provider_call(provider)
@@ -738,6 +749,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     # Corrective re-search (CRAG): once per not_found sub-question, every used chunk excluded.
     research_log: list[dict] = []
     new_hits: dict[str, list[Hit]] = {}
+    if on_research is not None:
+        on_research()
     if fts.searchable(q) and fts.budget_tokens(q) is not None:
         used = {h.chunk_id for h in hits}
         for sq in plan.subquestions:
