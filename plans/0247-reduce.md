@@ -3,6 +3,9 @@
 Issue: #247    Role: TL    Spec: specs/answer-citations.md (also specs/ui.md for the Ask page and the
 trace, specs/retrieval.md for nothing new; specs/filings.md untouched)
 
+Owners (TL takeover, as #246): `src/cee/answer/*` and `specs/answer-citations.md` are S2's;
+`src/cee/app/views/ask_page.py`, `design_page.py` and `specs/ui.md` are U1's; the rest TL.
+
 Binding: ADR-021 rules 0-8 and its #246 amendment, CLAUDE.md ground rules and "Paid API calls". Builds
 on #246 (merged, PR #256: `EvidenceMatrix`, `matrix.finish`, `extract.run_map`, the map cache) and #245
 (sub-questions, `Plan.parts` = one part per sub-question). #248 (per-call cache for every call type,
@@ -43,8 +46,11 @@ Aspects (part ids):
 Evidence matrix, aspect by aspect (cell id = part_id):
 Aspect a1: <aspect text>
   Comparability (code): different_basis | same_basis (shared periods 2026-06-30, ...) | unverified | none
-  a1.EDJ  derived: a2.EDJ#0 / a3.EDJ#0 = $2,647 (USD billions) / 20,514 (financial advisors) = 129,033,831
-          USD per financial advisor; period 2026-06-26; scope whole firm; cite EDJ-10Q-2026Q2#59, #60
+  a1.EDJ  derived (computed by code): total client assets $2,647 billion / 20,514 financial advisors
+          = about $129.0 million per financial advisor; period 2026-06-26; scope whole firm;
+          definition unverified; cite EDJ-10Q-2026Q2#59, EDJ-10Q-2026Q2#60
+  a1.RJF  not_disclosed; a ratio was proposed and rejected by code: scopes differ (whole firm vs
+          Private Client Group)
   a1.MS   fact
     a1.MS#0 "<item text>" value 15,950 | unit Wealth Management representatives | period 2020-12-31 |
             scope Wealth Management | definition "<quoted>" | quote "<quote>" | cite MS-SUPP-2020Q4#1
@@ -64,6 +70,18 @@ Sources (every chunk id you may cite; cite no other):
 ...
 ```
 - Items show only their **valid** chunk ids (rejected ids are not rendered, handover #246 item 3).
+- **Derived cells** (review note 2) are rendered with a user-facing formula: each input's aspect words
+  and value as printed, the computed value from `derivation.value_text` with its unit, never the cell
+  ids (`matrix.derive` keeps the id formula for the log; a new `derivation.formula_text` holds the
+  user-facing one, built by code). The mock writes `formula_text`.
+- **Rejected derivations** (review note 3) are rendered with code's `why` (e.g. "scopes differ: whole
+  firm vs Private Client Group"), so the comparison claim has its reasons. Each aspect with a registered
+  metric also lists each firm's registered definition (`metric_definitions.yaml` quote, cut to 160
+  characters, its chunk id) as context. Those definition chunk ids are citable only when they are also
+  matrix items (the enum); otherwise the definition reaches the answer through the code-inserted
+  comparability caveat, not a claim. The prompt says so.
+- **Uncovered periods** (B4): a cell's code gap naming the asked periods it does not cover (section
+  6 item 4) is listed with the other code gaps; the reduce states only the periods its items have.
 - The source lines are `llm._chunk`'s header without the text (dates, doc type, segment, page), so
   claims can be dated ("The 2Q26 10-Q (period ended June 26, 2026) states ...") without the passage.
 - `number_not_found`, `quote_not_found` and `period_unparsed` flags are rendered as plain instructions on
@@ -81,10 +99,17 @@ Sources (every chunk id you may cite; cite no other):
 - `chunk_ids.items`: `enum` = `matrix.chunk_ids()` (the valid cited ids; derivation inputs are among
   them). A citation outside the matrix cannot be generated on a strict provider; the code check
   (section 4) still runs for the mock, fakes and replays.
-- Enum limits re-checked at build (DeepSeek strict-mode guide, OpenAI structured-output limits on enum
-  count and total length, `anthropic.transform_schema`). If a provider limit is exceeded (Q19 may list
-  ~150 chunk ids), that field falls back to a plain string on that path and the code check is the
-  only guard; the PR says so.
+- **Enum limits** (review note 5): OpenAI structured outputs allow at most 1000 enum values across the
+  whole schema and 15,000 characters in total for an enum with more than 250 values; duplicates count
+  (`chunk_ids` appears twice: claims and adjacent; `part_id` three times). Q19 comes to about 576 values
+  (chunk ids x 2 + part ids x 3 + behavior). DeepSeek's strict-mode guide and Anthropic's
+  structured-output limits are re-read at build and their numbers written in the PR. The schema
+  builder counts values and characters per provider; over a limit, that field falls back to a plain
+  string on that path (D7), the code check is the guard there, and the run log says which field fell
+  back. A Q19-sized schema test (65 sub-questions, 13 aspects, 200 chunk ids) checks the count and the
+  fallback.
+- **The enum is never empty** (B2): when `matrix.chunk_ids()` is empty no reduce call is made (section
+  3), so no schema with `enum: []` is ever sent.
 
 ## 2. Prompt v5 (`prompt.REDUCE_VERSION = "v5"`, `prompt.SYSTEM_PROMPT_V5`)
 v4.1 stays (`PROMPT_VERSION = "v4.1"`) for the legacy single-call path (`MAP=off`, section 5). The v5
@@ -110,8 +135,9 @@ What goes where (rule 3)
   covers (period, scope, sample) when it is partial.
 - A different_quantity cell and every cell marked "adjacent only" go in adjacent, never in claims, each
   with differs_because from the cell (in your words, the same meaning).
-- A derived cell is a claim that states the computed figure with its formula as printed in the cell and
+- A derived cell is a claim that states the computed figure with its formula as shown in the cell and
   cites both inputs; say the definition is unverified when the cell is marked so.
+- State only the periods an item has. Code names the asked periods a firm does not cover (its gaps).
 - Cells with code gaps get no claim; code adds their gap. Add a gap of your own only for something the
   code gaps do not name.
 
@@ -121,10 +147,11 @@ Comparison aspects (rule 4)
   periods, or not valid) and why, citing the items it rests on (definitions, the figures compared).
   Compare or rank figures across firms only when the aspect is marked same_basis, and only at its
   shared periods; otherwise say they are not comparable and why (different definitions, units,
-  periods or scopes, unverified definitions).
+  periods or scopes, unverified definitions, a ratio code rejected and its reason). A registered
+  definition listed under an aspect is context: cite it only when its chunk id is under Sources.
 
 Recency (rule 5) and order
-- For every item in an aspect marked recency, and in any answer with a time window, end the claim with
+- For every item in an aspect marked recency, and in any answer whose question has a time window, end the claim with
   "Why it might matter: " and one sentence stating only what a cited source says about it, or a fact a
   cited source states (a figure, a first, a change against an earlier period). If no cited source says
   why it matters, write "Why it might matter: the source does not say." Never your own judgement.
@@ -157,6 +184,7 @@ Return the answer by calling the submit_answer tool.
 | `refuse` (rule 1c: no fact, no related quantity) | **0** | code-built: `answerable` false, no claims, the matrix gaps (incl. "The database does not support this today: ...") with suggested sources |
 | `refuse` (rule 1e: a forecast request) | **0** | code-built: one gap, new standard wording `FORECAST_REFUSAL` = "This asks for a forecast of the engine's own; the engine reports only positions others hold, attributed and dated." |
 | undecided (`None`, D5) | **0** | code-built: behavior **`incomplete`** (D2 below), the `incomplete_note`, the different-quantity cells as adjacent items (deterministic, as the mock), every matrix gap; never `refuse`, never "does not support" |
+| any behavior with an **empty citable set** (`matrix.chunk_ids() == []`, B2) | **0** | code-built. In practice only rule 1e reaches it (a normative question whose cells are all `not_found` / `failed`; 1a and 1b imply a cited item). Behavior `answer_with_boundary`, `answerable` false; no evidence claim; the hand-off sentence as the last claim with no chunk ids (the citation check exempts exactly `BOUNDARY_HANDOFF` from `no_citation`, since it is standard wording, not evidence); every matrix gap, including "The database does not support this today: ..." where it applies; and the `incomplete_note` when any cell failed. `matrix.decide_behavior` now also sets `incomplete_note` under rule 1e when a cell failed (today it does not), so the failure is shown. Never an empty `chunk_ids` enum. |
 | no hits (empty retrieval) | 0 | unchanged: `validate.empty_retrieval_answer` |
 
 ## 4. Code after the reduce call (`reduce.finish_answer`, then the existing checks)
@@ -182,24 +210,54 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
    claim with `part_id` = the aspect id or one of its sub-question ids that cites a matrix chunk. Missing:
    code adds the gap `COMPARISON_MISSING` = "No cited claim answers the comparison asked: <aspect>."
    flagged `comparison_missing`, with the aspect id as `part_id`.
-6. **Why-lines** (rule 5, `check_why_lines`): in a question with a window or any recency aspect, every
-   claim and adjacent item of a recency aspect (or every item, with a window) must contain
+6. **Why-lines** (rule 5, `check_why_lines`): only for the **question's own** time window
+   (`query.window`, not the Ask-page date filter; review note 4) or a recency aspect: every claim and
+   adjacent item of a recency aspect (or every item, when the question has its own window) must contain
    "Why it might matter: " followed by text; missing -> flag `why_line_missing`. The why sentence is
    covered by the claim's citations, the number check and `withhold_normative` like the rest.
-7. **Newest first** (`order_newest_first`, D4): with a window, claims and adjacent items are re-sorted
-   by code, newest first by the latest date of their cited documents (period end, else published),
-   stable for ties; the hand-off sentence stays last; `reordered` (count) is logged.
+7. **Newest first** (`order_newest_first`, D4): only when the question has its own window or a recency
+   aspect (an Ask-page date filter alone keeps the aspect-by-firm shape; stated in specs/ui.md), claims
+   and adjacent items are re-sorted by code, newest first by the latest **published** date of their
+   cited documents (the date the window filters on; review note 4), stable for ties; the hand-off
+   sentence stays last; `reordered` (count) is logged.
 8. **Gaps and caveats**: the matrix gaps (`matrix.gaps`, standard wording, `part_id` = cell or aspect
-   id, `suggested_source` from the matrix) are appended by code after the model's gaps; the matrix
-   caveats (comparability, GWIM) then `insert_caveats` over the cited hits, then `fill_suggested_sources`,
-   then `coverage_note`. `check_parts` (reused unchanged: each sub-question needs a cited claim or adjacent
-   item or a gap) runs after the matrix gaps are placed, so a part gap means the reduce skipped a
-   holding cell.
+   id, `suggested_source` from the matrix; uncovered-period gaps included, B4) are appended by code
+   after the model's gaps. **Duplicates** (review note 9): a model gap whose normalised text (lower case,
+   whitespace collapsed, final period dropped) equals a code gap's, or that starts with the same
+   "<Firm> - <aspect>:" head for the same part id, is not added twice: the code gap is kept and gets the
+   flag `model_also_named`, the model's text kept in its `claim_text` (logged, not shown). Then the
+   matrix caveats (comparability, GWIM), `insert_caveats` over the cited hits, `fill_suggested_sources`,
+   `coverage_note`.
+   **Part coverage** (B3; `check_parts` / `part_coverage` gain a matrix-aware rule, used only with a
+   matrix): a sub-question of a **comparison** aspect is covered by any claim whose `part_id` is the
+   aspect id or one of the aspect's sub-question ids and that cites a matrix chunk, or by the
+   `COMPARISON_MISSING` gap of that aspect (state `comparison`); a sub-question of a **proxy** aspect is
+   covered by any adjacent item (or claim) on that aspect, or, when its cell holds nothing, counts as
+   covered by design (the asked aspect carries the gap; state `proxy_by_design`). Every other part keeps
+   the existing rule, and the matrix gaps cover non-holding cells, so a remaining `part_gap` means the
+   reduce skipped a holding cell.
 9. `llm.check_output` (cut at the cap, empty output) runs on the model's own output before 1-8, as
    today; invalid outputs raise `ModelOutputError` (section 5).
 
 ## 5. Wiring: `ask()`, `answer_for`, the app, the mock
+- **The hits of an answer are retrieval + corrective re-search** (B1). `run_map` returns the
+  re-search hits on `EvidenceMatrix.hits`; `ask()` sets `Result.hits` = the retrieval hits, then each
+  re-search hit not already there, in order, no duplicates. Each re-search `Hit` keeps its
+  sub-question's `part_id` and gets `origin = "corrective"` (new optional `Hit` field, default
+  `"search"`). Every reader uses that union: the Ask page's citation chips and source links
+  (`ask_page.show_answer`), `_check_text`, `coverage_note`, `insert_caveats`, the reduce's checks and
+  `query_log.chunk_ids` (the union, retrieval first); `log_filters.chunk_origin` maps each re-search
+  chunk id to `"corrective"` (with its sub-question), so the log says where each came from. This keeps
+  the invariant "citations point only at chunk ids in the retrieved set": the retrieved set is the
+  union. **The eval's retrieval scoring** (recall, statuses, forbidden, `must_not_return`) keeps the
+  retrieval hits only, so the mock 35 check against main stays like for like; the record adds
+  `corrective_chunk_ids`.
 - **`MAP` default flips to on** (`Settings.map_on = True`, `.env.example` `MAP=on`, comment updated).
+  **Existing `.env` files are never touched** (review note 1): `.env.example` on main says `MAP=off`,
+  and `load_dotenv` does not override, so a teammate's copied `.env` keeps the map off. The verify
+  driver sets `MAP=on` in the app's environment, the eval maps unless `--legacy` (section 7) and prints
+  `MAP` in its run meta, `docs/RUN.md` (Windows and Mac blocks) tells users to delete the `MAP=off` line
+  from their own `.env` or set `MAP=on`, and the PR body says so for the TL to pass on.
   `MAP=off` keeps the **legacy** path (plan -> search -> one v4.1 answer call) for comparison only
   (D3), without the input guard: an input over the provider's window is reported by the provider (a
   failed stage), never trimmed.
@@ -221,10 +279,13 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
   the model's limit"). `tests/test_input_guard.py` is deleted with the guard (its cases no longer apply);
   the spec section "Interim answer input guard" is removed.
 - **`log_filters`**: `map` = `matrix.to_log()`; new `reduce` = {version, provider, model, code_built
-  (bool), model_behavior, reordered, flags count by name, outside_matrix count}; `llm_calls.answer` = 1
-  for a real reduce call, 0 for mock / code-built.
-- **App (`src/cee/app/views/ask_page.py`, specs/ui.md)**: `BEHAVIOR_TEXT` / `BEHAVIOR_HELP` gain
-  `incomplete` ("Incomplete" / the `incomplete_note`); the answer otherwise renders as today (claims,
+  (bool), model_behavior, behavior_rejudged (withhold_normative), reordered, flags count by name,
+  outside_matrix count, `stop_reason`, `usage` (ADR-021 rule 7; review note 11; also in the logged
+  Answer dump)}; `chunk_origin` (B1); `llm_calls.answer` = 1 for a real reduce call, 0 for mock /
+  code-built.
+- **App (`src/cee/app/views/ask_page.py`, `design_page.py`, specs/ui.md)**: `BEHAVIOR_TEXT` /
+  `BEHAVIOR_HELP` gain `incomplete` ("Incomplete" / the `incomplete_note`), and the design page shows
+  the `incomplete` header next to the other four (review note 7); the answer otherwise renders as today (claims,
   adjacent, gaps, caveats, flags as chips). The new flags get chip labels: `outside_matrix` "cited
   outside the evidence matrix", `computed` "computed by code from cited inputs", `why_line_missing`,
   `adjacent_is_fact`, `claim_from_adjacent`, `comparison_missing`.
@@ -235,7 +296,8 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
   renderer for undecided): per aspect in plan order, per row: a holding fact cell -> one claim from its
   first counting item (`text`, its chunk ids, `part_id` = cell id); a derived cell -> one claim
   "<Firm>: <aspect>: <formula>." citing the inputs; a different_quantity or proxy cell -> one adjacent
-  item with `differs_because` (cell text, else "a different quantity"); a comparison aspect -> one claim
+  item with `differs_because` (cell text, else "a different quantity"); a derived cell's claim uses
+  `formula_text` (no ids); a comparison aspect -> one claim
   "<aspect>: compared only on the same basis; code marks it <status>." citing the chunk ids of that
   aspect's holding cells, else none (the code gap then fires); recency items end "Why it might matter:
   the source does not say."; behavior = the matrix's. It proves the wiring and every code check, not
@@ -259,9 +321,27 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
    (`EXTRACT_VERSION`), one sentence added to the `fact` label: "The asked quantity for periods other
    than those asked (older or later) is also a fact, for the periods it covers: the item's period says
    which; it is never different_quantity." and to `different_quantity`: "A different period of the
-   asked quantity is not a different quantity." The reduce then writes it as a claim with its period,
-   and the cell's gap names the asked quarters it does not cover (the map's per-cell gap stays as is:
-   a fact cell gets no gap; the reduce says what the claim covers). **Open decision D1** (re-map cost).
+   asked quantity is not a different quantity." (TL D1: re-map accepted under the cap.) The reduce
+   writes it as a claim stating only the periods it has. **Code names the uncovered periods** (B4,
+   option b; `matrix.period_gaps`, part of `build_gaps`):
+   - **Asked periods** (`matrix.asked_periods(question, window, as_of)`, deterministic): "last / past N
+     quarters" in the question -> the N most recent calendar quarters ending before `as_of` (Q23 at
+     2026-11-17: 2024Q4-2026Q3); "last / past N years" -> the N most recent calendar years; else the
+     question's own window -> the calendar quarters it overlaps; else none (e.g. Q22 "by quarter" names
+     no range: no period gap, the reduce lists what each firm has).
+   - **Applies to** aspects of kind `series`, and `fact` aspects with a registered metric, when asked
+     periods exist; not to recency, comparison or proxy aspects.
+   - **Per holding cell** (fact / derived, research excluded): its counting items' periods mapped to
+     calendar quarters (`YYYY-MM-DD` -> its quarter, `YYYYQn` as is, `YYYY` -> its four quarters;
+     `FYYYYY` and unparsed periods cover nothing, since fiscal and calendar quarters differ). Uncovered =
+     asked - covered. When non-empty, a code gap "<Firm> - <aspect>: not found for <2024Q4, 2025Q4,
+     2026Q3> in the documents searched." (all asked periods uncovered: "not found for the asked periods
+     (2024Q4-2026Q3) in the documents searched; figures for other periods are listed."), label
+     `period_gap`, the cell id as part id, the firm's suggested source.
+   - `run_map` passes `as_of` to `matrix.finish`. Expected on the 0-call re-check (step 1, Q23 with
+     extract-v1): EDJ 2024Q4, 2025Q4, 2026Q3 uncovered; RJF every asked quarter but 2025Q3.
+   - Tests: a Q23-shaped matrix (EDJ partial, MS 2020 only, a fiscal-year item) gives exactly the named
+     gaps; a Q22-shaped question gives none; a recency aspect gives none.
 5. **Unverified mark only on metric aspects** (`matrix.mark_comparability`): `unverified` only when the
    aspect is a metric aspect: kind `series`, or a proxy, or it holds a `derived` cell (a registered
    metric gets `same_basis` / `different_basis` instead). Recency, comparison and plain `fact` aspects
@@ -292,12 +372,14 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
    per-1M token rates it used and their source.
 
 ## 7. `scripts/eval_run.py`
-- **The eval follows `MAP` (default on)**: with `--real`, plan -> search -> map -> reduce (cached);
-  `--map-only` unchanged (no reduce); `--legacy` (new) runs the v4.1 single answer call with the map
-  off; `--map` stays accepted (now a no-op, kept so #246's commands still run). Mock runs build the
-  matrix and the mock reduce (0 calls) for every searched question.
+- **The eval maps unless `--legacy`** (review note 1; it does not follow `MAP`, so a teammate's old
+  `.env` cannot turn it off): with `--real`, plan -> search -> map -> reduce (cached); `--map-only`
+  unchanged (no reduce); `--legacy` (new) runs the v4.1 single answer call with no map; `--map` stays
+  accepted (a no-op, so #246's commands still run). The run meta prints `map` and the `MAP` setting
+  seen. Mock runs build the matrix and the mock reduce (0 calls) for every searched question.
 - **Reduce cache** (`reduce_cache_key`): question id and text, `REDUCE_VERSION`, snapshot, provider,
-  model, the reduce cap (`llm.answer_max_tokens`), `llm.request_version`, a sha256 of the rendered
+  model, the reduce cap (`llm.answer_max_tokens`), `llm.request_version`, a sha256 of the v5 system
+  prompt text (review note 6: a wording edit without a version bump never reuses an output), a sha256 of the rendered
   reduce user message (it carries the behavior, the window, every cell, mark, gap and source line, so
   any change to the matrix makes a new key) and of the schema (its enums). File
   `<Q>-reduce-<key>.json` in the cache, copied to the run's `raw/`. Saved record: meta, `stop_reason`,
@@ -308,9 +390,11 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
   failed one is reported; none is ever called again. Code-built answers make no call and write no file.
 - **Call cap**: the reduce call is reserved like a map call (`self.calls`), counted as made when sent;
   over the cap -> `NOT_EVALUATED` "not run: --max-calls reached", no file.
-- **Records** gain: `reduce` (version, code_built, model_behavior, flags by name, outside_matrix,
-  reordered, comparison claims found / missing, why-lines missing), `behavior` = the answer's
-  (= matrix behavior), `expected_behavior_effective`, `part_coverage`. `report.md`: one line per
+- **Records** gain: `reduce` (version, code_built, model_behavior, behavior_rejudged, flags by name,
+  outside_matrix, reordered, comparison claims found / missing, why-lines missing, part gaps on
+  comparison / proxy parts), `behavior` = the answer's (the matrix behavior, or `answer_with_boundary`
+  when `withhold_normative` re-judged an `answer`, review note 8: recorded, never an error),
+  `map_behavior`, `expected_behavior_effective`, `part_coverage`, `corrective_chunk_ids` (B1). `report.md`: one line per
   question: behavior vs effective expected, claims / adjacent / gaps, flags, calls by type.
 - The 400 and planner-flag items: section 6 items 7, 8.
 
@@ -345,7 +429,13 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
 - `src/cee/answer/validate.py` - `check_numbers(..., derived=)` and the `computed` flag; guard removed.
 - `src/cee/answer/llm.py` - guard removed; the stale comment; a small shared helper for the three
   providers' tool-call parsing only if `reduce.py` would otherwise copy it (rename-free addition).
-- `src/cee/answer/matrix.py` - `normalize_scope`, the unverified rule, `EvidenceMatrix.hits`.
+- `src/cee/answer/matrix.py` - `normalize_scope`, the unverified rule, `EvidenceMatrix.hits`,
+  `derivation.formula_text`, `asked_periods` / `period_gaps` (B4), `incomplete_note` under rule 1e (B2),
+  `finish(as_of=)`.
+- `src/cee/retrieve/fts.py` - optional `Hit.origin` (default `"search"`; B1). S1's file: one field.
+- `src/cee/answer/validate.py` (also) - the matrix-aware part coverage (B3), the hand-off exempt from
+  `no_citation` (B2), the gap dedupe (note 9).
+- `src/cee/app/views/design_page.py` - the `incomplete` header (note 7).
 - `src/cee/answer/extract.py` - `extract-v1.1` sentences; `run_map` fills `m.hits`; `run_round` skip
   reason from `allow`.
 - `src/cee/ask.py` - flow, stage texts, `answer_for(matrix=)`, guard removed, `log_filters.reduce`.
@@ -412,6 +502,29 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
 - **Handover**: scope normalisation cases; unverified only on metric aspects (Q19- and Q26-shaped
   matrices -> none; Q24-shaped -> a1, a2); the 400 stop via `allow()` (section 6 item 7); planner
   re-check flags; extract-v1.1 text present in both prompts; the stale phrase gone.
+- **Re-search hits are part of the answer's hits** (B1): a fake matrix whose claim cites a corrective
+  re-search hit: the chip is linked on the Ask page (`show_answer` with a fake `Result`), no
+  `outside_matrix` / `unmatched_citation`, the id is in `query_log.chunk_ids` (via `_log`'s parameters)
+  and in `chunk_origin` as `corrective`, no duplicate when retrieval also had it; the eval's recall uses
+  the retrieval hits only.
+- **Empty citable set** (B2): an all-`not_found` normative matrix -> 0 calls (a fake client that
+  fails if called), `answer_with_boundary`, the hand-off last with no `no_citation` flag, the "does not
+  support" gaps; the same with one failed cell -> the `incomplete_note` shown, no "does not support"
+  gap for that aspect; no reduce schema is built.
+- **Comparison and proxy parts** (B3): a Q24-shaped matrix through the mock reduce -> no `part_gap` on
+  `a4.*` or on a not-found proxy cell; a comparison aspect with no claim -> the `COMPARISON_MISSING` gap
+  covers its parts (no part gap besides).
+- **Uncovered periods** (B4): section 6 item 4 tests; `asked_periods` cases ("last eight quarters",
+  "past 3 years", a window, none).
+- **Duplicate gaps** (note 9): a model gap repeating a code gap -> one gap, flag `model_also_named`.
+- **Formula text** (note 2): the rendered input and the mock claim carry no cell id; the id formula
+  stays in the log.
+- **Enum size** (note 5): the Q19-sized schema's value count and character total per provider; over a
+  limit -> the per-field fallback, logged.
+- **UI** (note 7): `show_answer` renders an `incomplete` answer (header "Incomplete" and the note)
+  without a KeyError; the design page lists the header.
+- **Why-lines and order scope** (note 4): an Ask-page date filter alone triggers neither the why-line
+  check nor the re-sort; the sort key is the published date.
 - **Prompt**: no 6-word run of any question text or `passes_if` in v5 (standard wording exempt).
 - **Schema**: the reduce schema passes `_strict_problems` (DeepSeek / OpenAI) and
   `anthropic.transform_schema` leaves it unchanged; `incomplete` not in any model schema.
@@ -428,7 +541,10 @@ In this order, all flags shown as chips on the Ask page (never dropped silently)
 detached worktree, as #246): chunk lists, statuses, recall@pool / @final, coverage and forbidden hits
 identical for all 35 (the reduce never touches retrieval; refusal 8/8). Plus, per question: the mock
 answer validates; 0 `outside_matrix`; every comparison aspect has a claim or the code gap; every recency
-item has a why-line; behavior = matrix behavior; 0 paid calls. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247\
+item has a why-line; behavior = matrix behavior (or the documented re-judge); **0 `part_gap` on
+comparison and proxy parts, Q24 included** (B3); every claim citing a corrective re-search chunk links
+to it (B1); 0 empty `chunk_ids` enums (no reduce schema built for an empty citable set, B2); 0 paid
+calls. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247\
 mock-*`.
 
 ## 10. verify-cee
@@ -438,8 +554,13 @@ Recipe and driver updated in this PR (CLAUDE.md "A changed user feature updates 
   one call): N claims"; the early check waits for "Asking the model"; `llm_calls` on the mock still
   `{"map": 0, "remap": 0, "answer": 0, "planner": 0}`; the `query_log` row's `filters.map` is a matrix
   (not `{"off": true}`) and `filters.reduce` is present.
+- The driver starts the verify app with `MAP=on` in its environment (review note 1), next to
+  `LLM_PROVIDER`, `MOCK_DELAY_S` and `DATABASE_URL`.
 - `ask-answer`: new step: the shown behavior equals `filters.map.behavior` of the newest `query_log`
-  row, and every cited chunk id is in the matrix's cited ids (0 `outside_matrix`).
+  row, or is `answer_with_boundary` with `filters.reduce.behavior_rejudged` true (review note 8); every
+  cited chunk id is in the matrix's cited ids (0 `outside_matrix`) and in the row's `chunk_ids`, and
+  every citation chip on the page is linked (B1; if the verify question has no corrective chunk, the
+  step says so and the B1 case is covered by pytest).
 - `gap-path` (no evidence): unchanged (no map, no reduce).
 Run on Windows (the TL's machine); the Mac block stays in the recipe. Known: the open-citation read-back
 render race (#248).
@@ -515,11 +636,34 @@ render race (#248).
 - [ ] Tests: synthesis cannot cite outside the matrix; comparison claim required; invalid reduce outputs
       saved as invalid; the 400 stop via `allow()`; behavior by code; 0 real calls.
 - [ ] Handover items 1-10 (section 6) done, each with its test or check.
+- [ ] Review 1 blocking items: B1 (union of hits, origin tagged, test), B2 (empty citable set, 0 calls,
+      tests), B3 (no false part gaps on comparison / proxy parts, test and mock line), B4 (code names
+      uncovered periods, test); non-blocking notes 1-11 adopted.
 - [ ] Mock 35-question run: retrieval identical to main `a32eb64`; mock answers pass every code check.
 - [ ] pytest, verify-cee and `gh pr checks` green.
 - [ ] The PR carries the ADR-021 amendment -> escalated to the TL for the merge.
 
-## Open decisions (for the TL, before the build)
+## Risks (review note 10)
+- **Enum size per provider**: Q19-sized schemas near OpenAI's limits; the per-field fallback leaves only
+  the code check on that path (logged, stated in the PR).
+- **Cost and latency for app users** now that `MAP` is on: a five-firm question makes 1 planner + up to
+  6 map + up to 6 re-extraction + 1 reduce calls, minutes of wall time (#246: ~48 min for 33 calls at 6
+  in parallel); visible in the trace and the log; #248 owns cost.
+- **extract-v1.1 label drift**: the added sentence may move labels on other questions (more `fact`,
+  fewer `different_quantity` for other-period figures); the real check reports every label change on the
+  five targets against #246's matrices.
+- **D4 sort key**: published date orders a 10-Q by filing date, not by its period; claims about the
+  same period from two documents may separate.
+- **Asked-period parsing** (B4) covers "last / past N quarters / years" and windows only; other
+  phrasings get no period gap (the reduce states the periods it has).
+
+## Decisions (TL, plan review 1, issuecomment-7033895178)
+D1-D7 below stand as decided: D1 extract-v1.1 with the re-map under the cap of 69; D2 code-built
+refuse / undecided, `incomplete`; D3 `MAP=off` legacy kept; D4 code re-sorts; D5 why-line inside the
+claim; D6 unverified on series / proxy / derived; D7 strict enums with per-field fallback. B1-B4 as
+written in sections 3-6 and Tests.
+
+## Open decisions as first proposed (settled above)
 - **D1 - Q23 fix at the map (extract-v1.1, recommended) or at the reduce.** (a) extract-v1.1 fixes the
   label where rule 3 says it is enforced, but changes the map cache key: the five targets are mapped
   again (20 round-1 + <= 21 re-extractions; #246 made 28, ~19 CNY at peak), cap 69. (b) Keep extract-v1:
@@ -547,3 +691,19 @@ render race (#248).
   in the `llm.py` comment (the spec was fixed by #246); `wt-246` is gone, #246's 33 raw records are in
   `docs/results/0246-map-raw/` (the seed for the plan cache and the step-1 re-check); Q1 / Q3 / Q22
   have only older planner records in the main repo cache (not plan-v3.1), so they need 3 planner calls.
+- 2026-11-20 - plan review 1: PLAN CHANGES REQUESTED (issuecomment-7033895178), 4 blocking, 11
+  non-blocking; TL decisions D1-D7 recorded. Revised: B1 `Result.hits`, the Ask page, the coverage note,
+  the checks and `query_log.chunk_ids` use the union of retrieval and corrective re-search hits (no
+  duplicates, `Hit.origin = "corrective"`, `log_filters.chunk_origin`), eval scoring keeps retrieval
+  hits; B2 an empty citable set is code-built with 0 calls (normative: `answer_with_boundary`, the
+  hand-off exempt from `no_citation`, the gaps, the incomplete note when a cell failed; rule 1e now
+  sets the note), never an empty enum; B3 comparison parts covered by the aspect's comparison claim or
+  its `COMPARISON_MISSING` gap, proxy parts by an adjacent item or by design, mock line "0 part_gap on
+  comparison / proxy parts, Q24 included"; B4 code names uncovered asked periods (`asked_periods`,
+  `period_gaps`), the reduce states only the periods it has. Notes 1-11 adopted: `.env` never touched,
+  `.env.example` `MAP=on`, verify driver sets `MAP=on`, the eval maps unless `--legacy`, RUN.md and the
+  PR body tell users to flip `MAP=off` in their own `.env`; formula text without ids; rejected
+  derivations with their why and registered definitions rendered; enum limits written and a Q19-sized
+  test; system-prompt sha in the reduce key; `incomplete` UI test and design page; re-judged behavior
+  allowed in the eval and verify; gap dedupe; owners and Risks; `stop_reason` / `usage` in
+  `log_filters.reduce`. Call cap unchanged: **69** (phase B <= 66); B2 can only lower the reduce count.
