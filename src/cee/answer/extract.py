@@ -787,4 +787,9 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
             rows.append(key)
     m.rows = rows
     m.hits, m.corrective = dict(by_id), list(extra)
+    # #247 part 2: each sub-question's retrieved set (its pool, its hits, its re-search hits), for the
+    # population rule "a population source counts only when it is in the input cell's pool"
+    pools = getattr(plan, "pools", {}) or {}
+    m.pools = {sq.id: set(pools.get(sq.id, set())) | {h.chunk_id for h in hits if h.part_id == sq.id}
+               | {h.chunk_id for h in new_hits.get(sq.id, [])} for sq in plan.subquestions}
     return finish(m, q, hits + extra, sources, as_of=as_of)

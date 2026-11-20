@@ -23,8 +23,22 @@ def cell(cid, label, items=(), entity=None, role="named", derivation=None):
     return Cell(cid, entity, aspect, role, label, items=list(items), derivation=derivation)
 
 
+# #247 part 2: derivations need both inputs on one registered population. These tests are about the
+# other derivation rules, so every firm's inputs share one test population whose source chunk is in
+# every cell's pool (the population rules have their own tests in tests/test_populations.py).
+TEST_POPULATIONS = tuple({"entity": e, "input": i, "key": "test_pop", "match": ["q"], "quote": "q",
+                          "chunk_id": "POP#1", "valid_from": "2026-06-30"}
+                         for e in ("EDJ", "MS", "SCHW", "BAC", "RJF") for i in mx.POPULATION_INPUTS)
+
+
+@pytest.fixture(autouse=True)
+def _one_population(monkeypatch):
+    monkeypatch.setattr(mx, "_populations", lambda: TEST_POPULATIONS)
+
+
 def build(question, aspects, cells):
     m = EvidenceMatrix(question, rows=[], aspects=aspects, cells={c.id: c for c in cells})
+    m.pools = {c.id: {"POP#1", *(x for i in c.items for x in i.chunk_ids)} for c in cells}
     return mx.finish(m, sources=NO_SOURCES)
 
 

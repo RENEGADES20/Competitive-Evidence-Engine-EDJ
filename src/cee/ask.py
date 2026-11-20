@@ -8,6 +8,7 @@ Skeleton placeholder, owner: TL (Yueyang Du).
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
@@ -97,7 +98,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
         plan = plan_question(query, provider)
     t.report("plan", "done", plan_text(plan))
     with t.stage("search", "Searching the corpus"):
-        hits = search_subquestions(query, plan)
+        hits = search_subquestions(query, plan, as_of=dt.date.today())
     docs = len({h.doc_id for h in hits})
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                f" in {_n(len(plan.subquestions), 'sub-question')}")

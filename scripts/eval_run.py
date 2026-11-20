@@ -1079,7 +1079,7 @@ def main(argv: list[str] | None = None) -> int:
                 plan, capped = rules_plan(query), True
         t0 = time.perf_counter()
         if plan is not None:
-            hits = search_subquestions(query, plan, trace=trace, part_pools=pools)
+            hits = search_subquestions(query, plan, trace=trace, part_pools=pools, as_of=args.as_of)
         else:
             hits = search(query, trace=trace) if args.k is None else search(query, k=args.k, trace=trace)
         search_s = round(time.perf_counter() - t0, 3)

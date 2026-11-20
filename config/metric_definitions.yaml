@@ -235,3 +235,87 @@ definitions:
     basis: rjf_domestic_pcg_nna
     see_also: [RJF-SUPP-2025Q4#8]
     note: Domestic Private Client Group only; fees and commissions count as outflows.
+
+# ---------- Populations of ratio inputs (#247 part 2; Q24) ----------
+# What each input of a within-firm ratio covers (client assets per advisor). Code tags each map item
+# of a ratio-input aspect with the `key` of the entry whose `match` phrase stands nearest before the
+# item's figure in its quote (scope must equal when set); a ratio is computed only when both inputs
+# carry the same key. The `chunk_id` states the population in the firm's own words; it is pinned into
+# the sub-questions that can hold this input and cited, with `quote`, in the computed / not computed
+# claim. Fields:
+#   entity, input      input: client_assets | advisor_headcount
+#   key                equal keys = the same population (a ratio over them is consistent)
+#   covers             one line for logs and tests; never shown in an answer
+#   match              phrases (case-insensitive) that name this input in a quote
+#   scope              optional: the item's scope must equal it (normalised; "" = the whole firm)
+#   quote              verbatim from chunk_id (tests/test_metric_definitions.py)
+#   chunk_id, valid_from (period end of chunk_id's document: when the statement is dated)
+# Not registered (a ratio over them is refused, "population not stated"): SCHW (no advisor count),
+# BAC client assets (GWIM client balances: TODO-verify a population statement), EDJ U.S. / Canada splits.
+populations:
+  - entity: EDJ
+    input: client_assets
+    key: edj_firm
+    covers: Edward Jones client assets under care, total (U.S. and Canada)
+    match: ["client assets under care"]
+    scope: ""
+    quote: "Client assets under care ($ billions): Total: At period end"
+    chunk_id: EDJ-10Q-2026Q2#59
+    valid_from: 2026-06-26
+  - entity: EDJ
+    input: advisor_headcount
+    key: edj_firm
+    covers: Edward Jones financial advisors (actual), firm total (U.S. and Canada)
+    match: ["financial advisors (actual)", "financial advisors"]
+    scope: ""
+    quote: "Financial advisors (actual): At year end 20,425 20,125 19,232"
+    chunk_id: EDJ-10K-2025#130
+    valid_from: 2025-12-31
+  - entity: MS
+    input: client_assets
+    key: ms_wm_all_channels
+    covers: Morgan Stanley Wealth Management total client assets, all three channels
+    match: ["total client assets"]
+    quote: "Wealth Management supports clients through three channels: Advisor-Led, Self-Directed and Workplace."
+    chunk_id: MS-10K-2025#125
+    valid_from: 2025-12-31
+  - entity: MS
+    input: client_assets
+    key: ms_wm_advisor_led
+    covers: Morgan Stanley advisor-led client assets (accounts with a Wealth Management representative)
+    match: ["advisor-led client assets"]
+    quote: "Advisor-led client assets represent client assets in accounts that have a Wealth Management representative assigned."
+    chunk_id: MS-SUPP-2026Q3#38
+    valid_from: 2026-09-30
+  - entity: MS
+    input: advisor_headcount
+    key: ms_wm_advisor_led
+    covers: Morgan Stanley Wealth Management representatives (the advisors of advisor-led accounts)
+    match: ["wealth management representatives", "wealth management representative"]
+    quote: "Advisor‐led client assets represents client assets in accounts that have a Wealth Management representative assigned."
+    chunk_id: MS-SUPP-2020Q4#3
+    valid_from: 2020-12-31
+  - entity: RJF
+    input: client_assets
+    key: rjf_aua_incl_rcs
+    covers: Raymond James client assets under administration, RCS division client assets included
+    match: ["client assets under administration", "assets under administration", "aua", "client assets"]
+    quote: "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA."
+    chunk_id: RJF-10K-2025#228
+    valid_from: 2025-09-30
+  - entity: RJF
+    input: advisor_headcount
+    key: rjf_advisors_excl_rcs
+    covers: Raymond James financial advisors, RCS division advisors excluded
+    match: ["financial advisors", "total advisors", "advisors"]
+    quote: "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA."
+    chunk_id: RJF-10K-2025#228
+    valid_from: 2025-09-30
+  - entity: BAC
+    input: advisor_headcount
+    key: bac_gwim_and_consumer
+    covers: Bank of America total wealth advisors, GWIM and Consumer Banking
+    match: ["total wealth advisors", "wealth advisors"]
+    quote: "(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking."
+    chunk_id: BAC-SUPP-2023Q4#2
+    valid_from: 2023-12-31
