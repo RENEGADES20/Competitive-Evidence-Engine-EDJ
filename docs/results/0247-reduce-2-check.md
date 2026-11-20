@@ -271,3 +271,5 @@ definition. Q11's "differences not named side by side" stays an answer finding (
 fresh blind scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in-r3\` (their replayed answers, `questions.yaml`,
 `verdict-rule.txt`) and `ev247b\scorer-prompt-r3.txt` (writes `ev247b\verdicts-blind-r3.json`); hashes in
 `ev247b\blind-in-r3-hashes.txt`. Q3, Q19 and Q26 are byte-identical and keep their verdicts (PASS).
+
+verdicts-blind-r3.json sha256 ab7745129c55c08b64ecc8e2c07bebf3b7774bbb0e521afc375071d7865da86f (second re-check, five changed answers, fresh scorer agent, 0 API calls; committed alone before any comparison).
