@@ -19,6 +19,32 @@ a basis break inside one firm's series is flagged by code. Less noise: no duplic
 outside an aspect's firm scope, why-lines only on recency / window items and only with the source's
 stated context, and the newest-first re-sort only over recency items.
 
+## TL approval conditions (plan approved at 238b3d1 after review rounds 1-2; binding, written in before any code)
+1. **Population sources are citable** (round-2 blocking 1): `derive()` records `population_chunk_ids`
+   on every proposal (accepted or rejected), only ids that are in the input cell's `plan.pools`
+   (`EvidenceMatrix.pools`, set by `run_map`). `EvidenceMatrix.chunk_ids()` (so `reduce.citable(m)`,
+   the reduce schema enum and the Sources list) includes them, and their `Hit`s are in `m.hits` (the
+   pinned hits are retrieval hits, so `_hits_for` and the quote check see the chunk text). The code
+   computability claims are added in `finish_answer` **before** `check_citations`, so the citation,
+   number and quote checks run on them like on the model's claims. `derived_values` matches a
+   `COMPUTED` claim that cites the input ids plus the population ids (a superset of the inputs).
+2. **Population pins only where a ratio input can be** (round-2 blocking 2): a `populations` entry is
+   pinned on (a) aspects whose `metric` equals the entry's `input`, and (b) proxy aspects, matched by
+   this rule: a proxy aspect with a `metric` takes the entries with `input == metric`; a proxy aspect
+   without one takes the entries whose input words are in its text or keyword query
+   (`client_assets`: "client assets", "assets under", "AUA", "AUM", "client balances";
+   `advisor_headcount`: "advisor", "headcount", "representatives"); none matched -> every entry of the
+   firm. Q24: a2 (proxy, "Total client assets ...") -> client-asset entries; a3 (`advisor_headcount`)
+   -> headcount entries; a1, a4 -> none. Q11 a1-a4 and Q23 a1 -> headcount entries only. **Q22 gets
+   no population pins** (no entry has `input: net_new_assets`), tested.
+3. **Round-2 non-blocking 1-4**: (1) `fetch_pinned` applies the doc-type scope except the `adv`
+   exclusion (tier 4 stays); (2) the Q24 0-call re-derive rebuilds the pools with the new retrieval
+   passes (0 calls) before tagging, then tags and derives over part 1's logged Q24 matrix; (3)
+   `PIN_MAX = 8` order: population ids first, then the definition `chunk_id`, then `see_also`; a cut is
+   logged (`pins_cut`), never silent; (4) the dated label works both ways: an input older or newer than
+   its population statement's `valid_from` (different calendar quarter) gets "population per the
+   <document label>, dated <valid_from>".
+
 ## Industry terms used
 Population (the set of clients or advisors a figure covers; a ratio is valid only over one
 population), per-period retrieval (one search per asked period, a "temporal sub-query"), pinned
@@ -277,7 +303,8 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
 - `src/cee/retrieve/planner.py` - `Aspect.asked_firms`; `search_subquestions(..., as_of=None)` per-period
   and pin passes, `plan.pools`, `plan.searched` fields.
 - `src/cee/retrieve/fts.py` - `Query.period_range` and its `filters_sql` clause; `fetch_pinned(q, ids)`
-  (by ID, the same entity / segment / window / date-range filters, no doc-type scope); `Hit.origin`
+  (by ID, the same entity / segment / window / date-range filters and the doc-type scope except the
+  `adv` exclusion: tier 4 stays excluded); `Hit.origin`
   values `period`, `pinned`.
 - `src/cee/answer/reduce.py` - rendering (computation lines, basis breaks, context lines, repeated
   items), `check_computability`, why-line scope and restating checks, `dedupe_claims`, the recency-only
@@ -513,3 +540,8 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   pinned aspects named per question, `basis_breaks` on flow series, comparison / computability checks
   re-run after the dedupe, Q26 restated count reported before the run. D1 narrowed to the `adv`
   exclusion; D2-D5 as ruled.
+- 2026-11-20 - plan review round 2 (7037650142): 2 blocking, 4 non-blocking; TL approved at 238b3d1 with
+  conditions, written into "TL approval conditions" before any code (population chunk ids citable and
+  in `m.hits`, code claims checked by `check_citations`; population pins only on matching metric or
+  proxy aspects, Q22 none; `fetch_pinned` keeps tier 4; Q24 replay rebuilds pools; pin order; dated
+  label both ways). Build starts.
