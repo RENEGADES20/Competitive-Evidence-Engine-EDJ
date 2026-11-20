@@ -57,8 +57,9 @@ def _contrast(m):
 def test_contrast_one_caveat_per_dimension_every_firm_placed_one_block():
     cav = _contrast(_matrix(Q11, Q11_ASPECTS))
     labels = [c.split(" - ", 1)[1].split(":", 1)[0] for c in cav]
-    assert labels == ["Written definition", "Independent contractor advisors", "Trainees",
-                      "Business lines in the count", "Date of the registered count"]   # one block, in order
+    assert labels == ["Written definition", "Independent contractor advisors",
+                      "Business lines in the count", "Date of the registered count"]   # one block, in order;
+    # trainees: every firm not stated (RJF #228 explains a change in the count, not who is counted) -> skipped
     for c in cav:
         for name in ("Morgan Stanley", "The Charles Schwab Corporation", "Edward Jones",
                      "Merrill (Bank of America Corporation)", "Raymond James Financial"):
@@ -70,7 +71,7 @@ def test_contrast_one_caveat_per_dimension_every_firm_placed_one_block():
     assert "counted by Raymond James Financial ('Independent contractors 5,065', RJF-10K-2025#227)" in ind
     assert "not stated by Morgan Stanley, Merrill (Bank of America Corporation)" in ind
     assert "publishes no count of this metric; reports a related figure instead at The Charles Schwab" in cav[0]
-    assert "dated for Morgan Stanley (2020-12-31, 'Wealth Management representatives 15,950', MS-SUPP-2020Q4#1)" in cav[4]
+    assert "dated for Morgan Stanley (2020-12-31, 'Wealth Management representatives 15,950', MS-SUPP-2020Q4#1)" in cav[3]
 
 
 @pytest.mark.parametrize("question, aspect, rows", [

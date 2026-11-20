@@ -99,3 +99,49 @@ rebuilt (hashes in section 4).
 ## 7. Notes (not changed in this part)
 
 verdicts-blind.json sha256 c050ae7cb32a641fde588e9f5943c36ce44cefb8355b378ca05159f3a9d76c69 (part 3 re-check, five changed answers, fresh scorer agent, 0 API calls; committed alone before any comparison).
+
+## 8. Blind re-score (part 3) and the final verdicts
+**3/5 PASS** on the five changed answers (Q19, Q22, Q24 PASS; Q11, Q23 FAIL). Fresh scorer agent, inputs only
+`ev247c\blind-in\` (hashes in section 4, the 22a6555 answers); file `docs/results/0247c/verdicts-blind.json`
+(hash above, committed alone in 676eb3c).
+
+| Q | Part 1 | Part 2 final | **Part 3** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|---|
+| Q1 | PASS | PASS | PASS (identical, kept) | | | |
+| Q3 | PASS | PASS | PASS (identical, kept) | | | |
+| Q11 | FAIL | FAIL | **FAIL** | r | yes | differences now named; MS rests on a 2020 label with no definition, Merrill on a 2023 BAC supplement; "the RJF trainees claim overreads its passage" |
+| Q19 | PASS (b) | PASS (b) | **PASS** | | yes | competitor moves almost only Schwab |
+| Q22 | PASS (b) | PASS (b) | **PASS** | | no | EDJ Q4 holes flagged as gaps, not filled (no longer borderline) |
+| Q23 | FAIL | FAIL | **FAIL** | r | no | MS 2019-20, Merrill 2022-23, RJF annual only; "MS/BAC/RJF quarterly supplements for 2025-2026 holding advisor counts are in the corpus" |
+| Q24 | FAIL | PASS | **PASS** | | no | |
+| Q26 | PASS (b) | PASS (b) | PASS (identical, kept) | | | |
+
+No PASS -> FAIL: the acceptance is met. **Final for the eight: 6/8** (Q1, Q3, Q19, Q22, Q24, Q26 PASS; Q11,
+Q23 FAIL), the same set as part 2; Q22 is no longer borderline, Q11 moves from s to r (the contrast fixed the
+"differences not named" part).
+
+## 9. Checking two scorer claims (0 calls)
+**(a) RJF trainees** (Q11 contrast cell). `RJF-10K-2025#228` in full: "The number of financial advisors as of
+September 30, 2025 increased compared to the prior year, as new recruits and trainees that were moved into
+production roles exceeded departures and planned retirements. ... Advisors in our RCS division are not
+included in our financial advisor metric ...". The trainees sentence explains a change in the count; it does
+not say who the count includes. The cell `counted` overstated it. **Fixed in this PR** (one config line):
+RJF `trainees: {value: not_stated}`. Effect: the contrast's Trainees caveat is skipped (every firm not
+stated), and the per-firm definitions caveat reads "not stated: trainees" for RJF, in Q11, Q23 and Q24.
+
+**(b) "Quarterly supplements for 2025-2026 holding advisor counts"** (Q23, Q11). SQL on `cee`
+(`ev247c\diag\supp_advisors.txt`, `ev247c\diag\other_advisor_counts.txt`):
+- The supplements with a period end from 2024-12-31: BAC-SUPP-2025Q4, 2026Q1-Q3; MS-SUPP-2025Q4, 2026Q1-Q3;
+  RJF-SUPP-2025Q3, 2025Q4, 2026Q1, 2026Q2. **None has an advisor count.** BAC: only firmwide "Headcount"
+  (213,207 etc., all employees) and "Financial advisory services" fees; the "Total wealth advisors" line ends
+  with BAC-SUPP-2023Q4. MS: only "Advisor-led channel" asset lines and the footnote (f). RJF: only "Financial
+  advisor compensation" in $ and loans to advisors. **Corpus gap** for all three (the scorer's claim does not
+  hold for the supplements).
+- Other documents in 2024Q4-2026Q3 with a count: BAC Investor Day ">15K Wealth Advisors" (Merrill and Private
+  Bank, as of 3Q25; in both answers as adjacent); RJF FY2025 10-K (8,943; in the answers); RJF Investor Day deck
+  `RJF-DECK-2025-investor-day#43` "Mar. 31, 2025** ... FINANCIAL ADVISORS ... 8,731" (tier 3, published
+  2025-06-05): **retrieved for Q11 but not for Q23**, so Q23's RJF 2025Q1 point is a **retrieval miss (r)**, the
+  only one found; trade press (tier 4, indicative): MS "15,000 or so" / "close to 15,000", RJF "about 8,900".
+- So Q23's remaining failure is corpus (MS after 4Q2020, BAC after 4Q2023, RJF quarterly, EDJ 3Q26) plus one
+  RJF point (2025Q1, investor-day deck) that retrieval missed; Q11's MS / Merrill bases are corpus (no MS
+  definition or count after 2020 in any filing; BAC's last written footnote is 2023).
