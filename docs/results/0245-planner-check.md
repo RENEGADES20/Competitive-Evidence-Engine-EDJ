@@ -150,7 +150,7 @@ The saved reasoning shows the model working towards about 9 aspects. It weighs `
 
 ### Findings (reported, not re-run)
 
-1. **Q19 planner cut at the thinking-on cap.** The 16,000-token cap (#242: `DEEPSEEK_PLANNER_MAX_TOKENS[True]`) was all spent on reasoning about the plan-v3 aspect and firm rules.
+1. **Q19 planner cut at the thinking-on cap. TL decision: raise the cap to 64000 and make one more call; see section 3.** The 16,000-token cap (#242: `DEEPSEEK_PLANNER_MAX_TOKENS[True]`) was all spent on reasoning about the plan-v3 aspect and firm rules.
    - Code still put the four competitors into the decomposition (rule-plan fallback).
    - Getting Q19's real aspects needs a larger thinking-on planner cap or thinking off (cap 8000), plus one more planner call.
    - That call is not planned here and is the TL's call.
@@ -167,3 +167,51 @@ The saved reasoning shows the model working towards about 9 aspects. It weighs `
 
    The mock (rule plan) keeps refusal 5/5. With the real plans these questions read substitutes. Labelling them (`different_quantity` / adjacent) is #246's extraction step (ADR-021 rule 3).
 3. **Totals grow with the decomposition, as ADR-021 intends.** 20-sub-question plans read ~216k-239k tokens (Q11, Q24) where the mock read 60k. The interim guard is not reached on DeepSeek.
+
+## 3. Q19 at the planner cap 64000 (TL decision, 1 DeepSeek call)
+
+TL decision, after finding 1: quality first. The thinking-on DeepSeek planner cap goes from 16000 to 64000, the same as the answer cap and DeepSeek's own thinking default. Exactly one more planner call is made, for Q19 only.
+- **Why this is not a re-roll:** the cap is part of the request version (`ds-strict-1-think-on-a64000-p64000`), so this is a new, planned request after a cap finding, not the same request again.
+- **Rule set by the TL:** if Q19 were cut again at 64000, stop and do not call again. It was not cut.
+- **Run:**
+  - Script: `D:\ALLPROJECTS\EDJ\cache\ev245\run-real-q19.ps1`, not committed. It uses the same code gate as section 2, now against `b6069e5`, the mock-run sha after the cap change. The mock lists are identical to section 1's.
+  - `.env` was copied for the run only and removed in `finally`.
+  - Command: `--real --plan-only --max-calls 1 --questions Q19`.
+- **Result:**
+  - Valid output: `finish_reason` `tool_calls`.
+  - Output 9,507 tokens, of which **8,928 reasoning, against the 64,000 cap (14%)**.
+  - Input 1,386 tokens (1,280 cache hits).
+  - **Wall time 97.4 s.**
+  - About **0.13 CNY** at off-peak rates (13:01 Beijing time).
+- **Raw record:** `docs/results/0245-planner-raw/Q19-plan-7671939d689a522f3aa0397e.json`. The section 2 record, the cut one, is `Q19-plan-f39de5647e8a2f9372182001.json`.
+
+**Q19 plan (plan-v3).** The plan has 7 aspects across 5 firms, giving 35 sub-questions: EDJ named; MS, SCHW, MER and RJF as competitors.
+
+| Aspect | Kind | `firms` as the model wrote it | After code |
+|---|---|---|---|
+| a1: what younger investors and clients under 40 prefer from wealth managers and advisors | fact | [] | all five firms |
+| a2: current offerings, products, services and channels | fact | [EDJ] | all five firms |
+| a3: how younger-investor preferences are shaping offerings | recency | [EDJ] | all five firms |
+| a4: how management describes younger investors | fact | [EDJ] | all five firms |
+| a5: priorities stated for serving younger investors | fact | [EDJ] | all five firms |
+| a6: competition named for younger investors | fact | [EDJ] | all five firms |
+| a7: where it says it is losing ground or pulling back with younger investors | fact | [EDJ] | all five firms |
+
+The model wrote `firms [EDJ]` on a2-a7. Under the home-firm guard, a list equal to the named firms counts as empty, so the competitors stay. Code logged six corrections of the form "aspect N: named firms only on a home-firm market question, competitors kept".
+
+**Retrieval of this plan (0 calls):** 130 passages, ~38.9k tokens. The interim answer input is ~47.8k tokens against the 933,000 limit, so the guard drops nothing.
+
+| Firm | Passages kept | Dropped by the floor across competitors |
+|---|---|---|
+| EDJ | 105 | - |
+| SCHW | 19 | none |
+| MER | 2 | 3 (BAC press) |
+| RJF | 0 | 1; its only chunk, so the sub-question reads "nothing found" |
+| MS | 0 | - |
+
+Eval status (retrieval only) is still FAIL, but better than before:
+- Coverage 0.2 -> **0.4**. `MER:press` is now hit by `BAC-PR-2026-01-14-01#12` and `BAC-PR-2026-07-14-01#10`.
+- recall@final 0 -> **1.0**. The expected `EDJ-10K-2025#88` is now retrieved.
+- MS, SCHW and RJF press are still not hit: no such chunk is on the theme in this corpus.
+
+**Calls for #245 in total:** 10 DeepSeek planner calls (9 + 1) and 0 answer calls. Cost was about 0.87 + 0.13 = **1.00 CNY** at off-peak rates.

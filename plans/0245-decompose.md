@@ -571,3 +571,13 @@ Mac: `PYTHONPATH=$PWD/src SUBQUESTION_TOKENS=12000 .venv/bin/python scripts/eval
   (finding, not re-run). Q11/Q22/Q24 real plans retrieve must-not chunks (finding for #246).
   Evidence: docs/results/0245-planner-check.md.
 - 2026-11-19 23:00 - PR #255 opened; gh pr checks: pytest pass.
+- 2026-11-19 23:04 - TL decision (finding 1, quality first): DeepSeek thinking-on planner cap
+  16000 -> 64000 (= the answer cap and DeepSeek's thinking default; request version
+  `...-p64000`, so cache keys change), and exactly 1 more planner call for Q19, a planned call after
+  a cap finding, not a re-roll. Mock re-run at b6069e5: lists identical. Gated run
+  (`ev245\run-real-q19.ps1`, `.env` in try/finally): valid, 7 aspects x 5 firms = 35 sub-questions
+  (EDJ + 4 competitors; the model's `firms [EDJ]` on a2-a7 turned into all firms by the home-firm
+  guard), reasoning 8,928 of 64,000, wall 97.4 s, ~0.13 CNY off-peak. Retrieval: coverage
+  0.2 -> 0.4, recall@final 0 -> 1.0 (`EDJ-10K-2025#88`). #245 total: 10 planner calls, 0 answer
+  calls, ~1.00 CNY. Finding 2 (must-not chunks on Q11/Q22/Q24) goes to #246; finding 3 (hybrid
+  sync) to #249 (TL).
