@@ -642,22 +642,27 @@ render race (#248).
 
 ## Acceptance
 - [ ] Real: Q11 / Q23 behavior `answer`, each firm's definition or series stated as claims (partial
-      coverage with its periods, Q23 MS included), the comparability caveat, and named gaps.
+      coverage with its periods, Q23 MS included), the comparability caveat, and named gaps. **Not met**:
+      behavior `answer` and gaps named, but blind FAIL (s, r): definitions for MS / EDJ / SCHW missing (Q11);
+      the series is incomplete, EDJ 4Q25 missing, the EDJ basis break not flagged (Q23). Follow-up findings 4, 6.
 - [ ] Real: Q24 one cited comparison claim (valid or not, and why) and the EDJ ratio stated from the
-      derived cell with both inputs cited (`computed`, no `number_not_found`).
-- [ ] Real: Q26 a sourced why-line on every item, newest first, nothing older than the window.
-- [ ] Real: Q19 cites competitor moves or names the competitor leg as a gap per firm; hand-off last.
-- [ ] Real: Q1 and Q22 keep PASS; Q3 PASS (FAIL in the DeepSeek baseline); Q22 cites no must-not chunk
-      as a fact.
-- [ ] Tests: synthesis cannot cite outside the matrix; comparison claim required; invalid reduce outputs
+      derived cell with both inputs cited (`computed`, no `number_not_found`). **Not met**: the comparison
+      claim and the EDJ ratio are present, but blind FAIL (s, r, borderline): the RJF and MS ratios use inputs
+      of different populations, and current MS counts are missed. Follow-up findings 5, 7.
+- [x] Real: Q26 a sourced why-line on every item, newest first, nothing older than the window. Blind PASS (borderline: why-lines restate the fact).
+- [x] Real: Q19 cites competitor moves or names the competitor leg as a gap per firm; hand-off last. Blind PASS (borderline).
+- [x] Real: Q1 and Q22 keep PASS; Q3 PASS (FAIL in the DeepSeek baseline); Q22 cites no must-not chunk
+      as a fact. Blind: Q1 PASS, Q3 PASS, Q22 PASS (borderline); Q22 cites no must-not chunk.
+- [x] Tests: synthesis cannot cite outside the matrix; comparison claim required; invalid reduce outputs
       saved as invalid; the 400 stop via `allow()`; behavior by code; 0 real calls.
-- [ ] Handover items 1-10 (section 6) done, each with its test or check.
-- [ ] Review 1 blocking items: B1 (union of hits, origin tagged, test), B2 (empty citable set, 0 calls,
+- [x] Handover items 1-10 (section 6) done, each with its test or check.
+- [x] Review 1 blocking items: B1 (union of hits, origin tagged, test), B2 (empty citable set, 0 calls,
       tests), B3 (no false part gaps on comparison / proxy parts, test and mock line), B4 (code names
       uncovered periods, test); non-blocking notes 1-11 adopted.
-- [ ] Mock 35-question run: retrieval identical to main `a32eb64`; mock answers pass every code check.
-- [ ] pytest, verify-cee and `gh pr checks` green.
-- [ ] The PR carries the ADR-021 amendment -> escalated to the TL for the merge.
+- [x] Mock 35-question run: retrieval identical to main `a32eb64`; mock answers pass every code check.
+- [x] pytest, verify-cee and `gh pr checks` green (verify-cee: open-citation read-back failed once on a re-run,
+      the known #248 render race; it passed in the full run; download-document unreachable, no raw files).
+- [x] The PR carries the ADR-021 amendment -> escalated to the TL for the merge.
 
 ## Risks (review note 10)
 - **Enum size per provider**: Q19-sized schemas near OpenAI's limits; the per-field fallback leaves only
@@ -780,3 +785,8 @@ written in sections 3-6 and Tests.
   ratios derived (`computed`). Q23: MS 2020 counts are claims; period gaps named. Must-not:
   `SCHW-TR-2026Q3#10` is a fact under Q24's comparison aspect a4 (also `different_quantity` under a3).
   Findings in `docs/results/0247-reduce-check.md`. Stopped before scoring (TL starts the blind scorer).
+- 2026-11-20 - blind scoring (fresh scorer agent; verdicts-blind.json sha256 6026044270...12cc6cf,
+  committed alone in 8e18172 before any comparison): **5/8 PASS**. Q1, Q3 PASS; Q19, Q22, Q26 PASS (borderline);
+  Q11, Q23 FAIL (s, r); Q24 FAIL (s, r, borderline). Against #243 like-for-like on these eight: 2/8 -> 5/8 (Q3, Q19,
+  Q26 FAIL -> PASS; no PASS lost). Q11 / Q23 / Q24 real targets not met: coverage and basis findings for follow-up
+  (docs/results/0247-reduce-check.md section 4). PR stays "Part of #247".
