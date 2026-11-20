@@ -770,10 +770,16 @@ def _outside_quotes(text: str) -> str:
     return _QUOTED.sub(" ", text)
 
 
+# #247 part 3 item 4: bare and fiscal years are stated periods too; "$2,024" / "2,024 advisors" / "2024.5" are
+# not years, "in 2024, ..." is (TL condition 3: lookahead (?!\d|,\d|\.\d))
+_YEAR = re.compile(r"(?:\b(fiscal(?:\s+year)?\s+|FY\s?))?(?<![\d$.,])((?:19|20)\d{2})(?!\d|,\d|\.\d)", re.I)
+
+
 def _stated_periods(text: str) -> set:
     from cee.answer.validate import _ANY_DATE
     return ({m.group(0).lower() for m in _ANY_DATE.finditer(text)}
-            | {m.group(0).lower() for m in _QUARTER_LABEL.finditer(text)})
+            | {m.group(0).lower() for m in _QUARTER_LABEL.finditer(text)}
+            | {("fy" if m.group(1) else "") + m.group(2) for m in _YEAR.finditer(text)})
 
 
 def dedupe_claims(answer: Answer) -> list[dict]:

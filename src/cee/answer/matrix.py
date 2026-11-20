@@ -741,6 +741,68 @@ def period_gaps(m: EvidenceMatrix, as_of, source) -> list[dict]:
     return out
 
 
+HOLE_MAX = 4   # #247 part 3 item 3: a longer missing run separates two series segments, it is not a hole
+QUARTER_HOLES = ("{firm} - {aspect}: not found for {periods} in the documents searched (inside its series "
+                 "{first}-{last}; other firms report these quarters).")
+_BY_QUARTER = re.compile(r"\b(?:by|each|per)\s+quarter\b|\bquarterly\b", re.I)
+
+
+def _qindex(q: str) -> int:
+    return int(q[:4]) * 4 + int(q[5]) - 1
+
+
+def _qlabel(n: int) -> str:
+    return f"{n // 4}Q{n % 4 + 1}"
+
+
+def quarter_segments(quarters) -> list[list[int]]:
+    """Quarter indexes split into series segments at runs of more than HOLE_MAX missing quarters."""
+    idx = sorted({_qindex(q) for q in quarters if q})
+    segs: list[list[int]] = []
+    for n in idx:
+        if segs and n - segs[-1][-1] - 1 <= HOLE_MAX:
+            segs[-1].append(n)
+        else:
+            segs.append([n])
+    return segs
+
+
+def _cell_quarters(c: Cell) -> set[str]:
+    return {q for q in (_covers(i.period, "quarter") for i in c.counting_items if i.value) if q}
+
+
+def quarter_holes(m: EvidenceMatrix, as_of, source) -> list[dict]:
+    """#247 part 3 item 3 (review blocking 3): a "by quarter" series aspect with no asked range: a gap per
+    holding firm cell naming its holes, i.e. runs of at most HOLE_MAX quarters it does not cover with a
+    covered quarter on both sides, and only quarters another holding firm cell covers."""
+    if asked_periods(m.question, as_of) or _ASKED.search(m.question or ""):
+        return []
+    out = []
+    for a in m.aspects:
+        if a.kind != "series" or not (_BY_QUARTER.search(a.text or "") or _BY_QUARTER.search(m.question or "")):
+            continue
+        cells = [c for c in m.cells.values() if c.aspect_id == a.id and c.role != "research" and c.entity
+                 and holds(c)]
+        cover = {c.id: _cell_quarters(c) for c in cells}
+        for c in cells:
+            others = set().union(*(v for k, v in cover.items() if k != c.id)) if len(cells) > 1 else set()
+            holes, bounds = [], None
+            for seg in quarter_segments(cover[c.id]):
+                have = set(seg)
+                miss = [_qlabel(n) for n in range(seg[0], seg[-1] + 1) if n not in have and _qlabel(n) in others]
+                if miss:
+                    holes += miss
+                    bounds = bounds or (_qlabel(seg[0]), _qlabel(seg[-1]))
+                    bounds = (min(bounds[0], _qlabel(seg[0])), max(bounds[1], _qlabel(seg[-1])))
+            if not holes:
+                continue
+            what = QUARTER_HOLES.format(firm=row_name(c), aspect=_aspect_text(a), periods=", ".join(holes),
+                                        first=bounds[0], last=bounds[1])
+            out.append({"id": c.id, "what": what, "suggested_source": source(c.entity), "label": "period_gap",
+                        "periods": holes})
+    return out
+
+
 COMPETITORS_GAP = "Competitors ({firms}) - {aspect}: not found in the documents searched."
 BASIS_BREAK = ("{firm} - {aspect}: the figures cover different bases and are not one series: {groups}. "
                "The break is flagged, not smoothed.")
@@ -760,6 +822,34 @@ def _breaks_apply(a) -> bool:
     return a.kind == "series" or (a.kind == "fact" and bool(a.metric) and not getattr(a, "proxy", False))
 
 
+def _norm_period(p: str) -> str:
+    """A period as a comparable string: quarter labels and dates map to the same key (2026Q2 ==
+    2026-06-30); anything else as written."""
+    k = _period_key(p)
+    return f"{k[0]:04d}-{k[1]:02d}" if k else str(p).strip()
+
+
+def _drop_splits(groups: dict) -> None:
+    """#247 part 3 item 6 (review blocking 4, TL condition 3): parts of one count at the same dates are a
+    split, not a break. Whole-firm groups are those with an empty normalised scope. A group with a non-empty
+    scope whose periods (normalised) are all periods of a whole-firm group of the same population key, or of
+    any whole-firm group when the part carries no key, is dropped. With no such whole-firm group, groups of
+    one key with identical period sets keep only the first. Groups with two different keys never merge."""
+    norm = {k: {_norm_period(p) for p in v} for k, v in groups.items()}
+    for k in list(groups):
+        scope, pop = k
+        if not scope:
+            continue
+        wholes = [w for w in groups if not w[0] and (w[1] == pop or not pop)]
+        if wholes:
+            if any(norm[k] <= norm[w] for w in wholes):
+                del groups[k]
+            continue
+        earlier = list(groups)[:list(groups).index(k)]
+        if any(o[1] == pop and o[0] and norm[o] == norm[k] for o in earlier):
+            del groups[k]
+
+
 def basis_breaks(m: EvidenceMatrix) -> None:
     """#247 part 2 (TL item 3): a holding cell of a series aspect (or a registered-metric fact aspect)
     whose counting items cover more than one basis (normalised scope, population key) gets the flag
@@ -776,17 +866,17 @@ def basis_breaks(m: EvidenceMatrix) -> None:
             labels: dict[tuple[str, str], str] = {}
             valued = [i for i in c.counting_items if i.value]
             keyed = {normalize_scope(i.scope): i.population for i in valued if i.population}
-            for i in valued:
+            for i in sorted(valued, key=lambda x: not x.period):   # dated items open the groups first
                 k = (normalize_scope(i.scope), i.population)
-                if keyed and not i.population:   # R3: an item without a population ...
-                    if k[0] in keyed:
-                        k = (k[0], keyed[k[0]])   # ... joins its scope's group
-                    elif not i.period:
-                        continue                  # ... and an undated one makes no basis
+                if keyed and not i.population and k[0] in keyed:   # R3: an item without a population
+                    k = (k[0], keyed[k[0]])                         # joins its scope's group
+                if not i.period:          # #247 part 3 item 6: an undated item never opens a group
+                    continue              # (it would add no period to an existing one)
                 groups.setdefault(k, [])
-                if i.period and i.period not in groups[k]:
+                if i.period not in groups[k]:
                     groups[k].append(i.period)
                 labels.setdefault(k, _q1(i.scope) or "whole firm")
+            _drop_splits(groups)
             if len(groups) < 2:
                 continue
             parts = [f"{labels[k]}{' (' + k[1] + ')' if k[1] else ''}: {', '.join(sorted(v)) or 'period not stated'}"
@@ -848,6 +938,7 @@ def build_gaps(m: EvidenceMatrix, sources=None, as_of=None) -> None:
             m.gaps.append({"id": a.id, "what": NOT_SUPPORTED.format(aspect=_aspect_text(a), firms=firms),
                            "suggested_source": "", "label": "not_supported"})
     m.gaps += period_gaps(m, as_of, source)
+    m.gaps += quarter_holes(m, as_of, source)   # #247 part 3 item 3
 
 
 DEFINITIONS_BY_FIRM = "{metric} as each firm defines it: {parts}."
@@ -859,6 +950,55 @@ SERIES_SPAN = ("{firm} - {aspect}: the series in the documents searched runs fro
 
 def _list(xs) -> str:
     return ", ".join(str(x) for x in xs or [])
+
+
+RELATED_METRIC = "defines a related metric instead: "                       # #247 part 3 item 2
+RELATED_FIGURE = "publishes no count of this metric; reports a related figure instead: "
+
+
+def _closest_head(d: dict, quoted_units: set) -> str:
+    """#247 part 3 item 2 (review blocking 2): a closest_metric entry in the asked unit defines a related
+    metric (Schwab core NNA); one in another unit (Schwab headcount: Form ADV employees) reports a related
+    figure and publishes no count of the asked metric."""
+    if quoted_units and d.get("unit") not in quoted_units:
+        return RELATED_FIGURE
+    return RELATED_METRIC
+
+
+SCOPE_DIMS = ("independents", "trainees", "business_lines")   # what a count includes / excludes
+
+
+def _scope_bits(d: dict, metric: str) -> list[str]:
+    """#247 part 3 (TL, after the EDJ #148 finding): what the per-firm definitions caveat says a definition
+    includes or excludes comes only from the entry's `contrast` cells: each a verbatim registry text with
+    the chunk that says it (tested against the database), or a fixed phrase ("not stated: <dimension
+    labels>"). The free-text includes / excludes / not_stated lists are not printed (they stay in the
+    registry for the map's words)."""
+    labels = {x["key"]: x["label"] for x in contrast_dimensions().get(metric) or []}
+    cells = d.get("contrast") or {}
+    out, unstated = [], []
+    for key in SCOPE_DIMS:
+        if key not in labels:
+            continue
+        cell = cells.get(key) or {"value": "not_stated"}
+        label = labels[key][0].lower() + labels[key][1:]
+        if cell["value"] == "not_stated":
+            unstated.append(label)
+        elif cell["value"] != "none" and cell.get("text") and cell.get("chunk_id"):   # none: no count at all
+            verb = "excludes" if cell["value"] == "excluded" else label
+            out.append(f"{verb}: '{cell['text']}' ({cell['chunk_id']})")
+    if unstated:
+        out.append("not stated: " + ", ".join(unstated))
+    return out
+
+
+def firm_label(firm: str, d: dict | None) -> str:
+    """#247 part 3 (review nb 1): a row whose registry entry belongs to its parent names the parent, so a
+    BAC passage never reads as Merrill's own words: "Merrill (Bank of America)"."""
+    name = row_name(firm)
+    if d and d.get("entity") and d["entity"] != firm:
+        return f"{name} ({row_name(d['entity'])})"
+    return name
 
 
 def definitions_by_firm(m: EvidenceMatrix) -> dict[str, str]:
@@ -873,19 +1013,73 @@ def definitions_by_firm(m: EvidenceMatrix) -> dict[str, str]:
         if len(firms) < 2 or (len(bases) == 1 and all(d and d.get("status") == "quoted" for d in defs.values())):
             continue
         parts = []
+        units = {d.get("unit") for d in defs.values() if d and d.get("status") == "quoted"}
         for f, d in defs.items():
             if not d:
                 parts.append(f"{row_name(f)}: no registered definition")
                 continue
             st = d.get("status")
-            head = {"quoted": "", "closest_metric": "publishes no definition of this metric; closest metric ",
+            head = {"quoted": "", "closest_metric": _closest_head(d, units),
                     "not_disclosed": "publishes no definition or count; nearest text "}.get(st, "")
             bits = [f"{head}'{_clip(d.get('quote', ''), CAVEAT_DEF_CHARS)}' ({d.get('chunk_id', '')})"]
-            for k, w in (("includes", "includes"), ("excludes", "excludes"), ("not_stated", "not stated")):
-                if d.get(k):
-                    bits.append(f"{w} {_clip(_list(d[k]), 120)}")
-            parts.append(f"{row_name(f)}: " + "; ".join(bits))
+            bits += _scope_bits(d, metric)   # #247 part 3 (TL): verbatim with its chunk, or a fixed phrase
+            parts.append(f"{firm_label(f, d)}: " + "; ".join(bits))
         out[metric] = DEFINITIONS_BY_FIRM.format(metric=metric.replace("_", " ").capitalize(), parts=" | ".join(parts))
+    return out
+
+
+DEFINITION_CONTRAST = "{metric}, how the definitions differ - {label}: {parts}."   # #247 part 3 item 1
+CONTRAST_VALUES = ("stated", "counted", "excluded", "count_only", "none", "not_stated")
+CONTRAST_PHRASE = {"stated": "stated by", "counted": "counted by", "excluded": "excluded by",
+                   "count_only": "a count with no written definition at", "none": "no advisor count at",
+                   "not_stated": "not stated by"}
+CONTRAST_PHRASE_BY_DIM = {("written_definition", "none"): "publishes no count of this metric; reports a related "
+                                                          "figure instead at",
+                          ("count_date", "counted"): "dated for"}
+_DEFINITION_ASK = re.compile(r"\bdefin|\binclud|\bexclud", re.I)
+
+
+@lru_cache(maxsize=1)
+def contrast_dimensions() -> dict[str, list[dict]]:
+    from cee.retrieve.planner import METRIC_DEFINITIONS
+    data = yaml.safe_load(METRIC_DEFINITIONS.read_text(encoding="utf-8")) or {}
+    return data.get("contrast_dimensions") or {}
+
+
+def _contrast_item(firm: str, d: dict, cell: dict) -> str:
+    bits = [str(cell["date"])] if cell.get("date") else []
+    if cell.get("text"):
+        bits.append(f"'{cell['text']}'")
+    if cell.get("chunk_id"):
+        bits.append(str(cell["chunk_id"]))
+    return firm_label(firm, d) + (f" ({', '.join(bits)})" if bits else "")
+
+
+def definitions_contrast(m: EvidenceMatrix) -> list[str]:
+    """#247 part 3 item 1 (Q11): when an aspect with a registered metric asks for its definition
+    (define / include / exclude) and the metric has `contrast_dimensions`, one caveat per dimension that
+    places every firm row, grouped by value, with the registry's verbatim text and chunk id (one block per
+    metric). A dimension where every firm is not_stated is skipped."""
+    out: list[str] = []
+    firms = [r for r in m.rows if r not in ("research", "all")]
+    if len(firms) < 2:
+        return out
+    dims = contrast_dimensions()
+    metrics = dict.fromkeys(a.metric for a in m.aspects
+                            if a.metric in dims and _DEFINITION_ASK.search(a.text or ""))
+    for metric in metrics:
+        defs = {f: metric_definition(f, metric) for f in firms}
+        for dim in dims[metric]:
+            groups: dict[str, list[str]] = {}
+            for f, d in defs.items():
+                cell = ((d or {}).get("contrast") or {}).get(dim["key"]) or {"value": "not_stated"}
+                groups.setdefault(cell["value"], []).append(_contrast_item(f, d, cell))
+            if set(groups) == {"not_stated"}:
+                continue
+            parts = [f"{CONTRAST_PHRASE_BY_DIM.get((dim['key'], v), CONTRAST_PHRASE[v])} {', '.join(xs)}"
+                     for v, xs in groups.items()]
+            out.append(DEFINITION_CONTRAST.format(metric=metric.replace("_", " ").capitalize(),
+                                                  label=dim["label"], parts="; ".join(parts)))
     return out
 
 
@@ -968,8 +1162,21 @@ def series_spans(m: EvidenceMatrix) -> list[str]:
                              key=_period_key)
             if not periods:
                 continue
-            out.append(SERIES_SPAN.format(firm=row_name(c), aspect=_aspect_text(a), first=periods[0],
-                                          last=periods[-1], n=len(periods)))
+            # #247 part 3 (review nb 5): the latest segment; earlier points split off by a run of more than
+            # HOLE_MAX missing quarters are named apart
+            qof = {p: _covers(p, "quarter") for p in periods}
+            segs = quarter_segments(q for q in qof.values() if q)
+            earlier = []
+            if len(segs) > 1:
+                latest = {_qlabel(n) for n in segs[-1]}
+                earlier = [p for p in periods if qof[p] and qof[p] not in latest]
+                periods = [p for p in periods if p not in earlier]
+            text = SERIES_SPAN.format(firm=row_name(c), aspect=_aspect_text(a), first=periods[0],
+                                      last=periods[-1], n=len(periods))
+            if earlier:
+                text = text.replace(" points); ", f" points; earlier points {earlier[0]} to {earlier[-1]}, "
+                                    f"{len(earlier)} points, are a separate segment); ", 1)
+            out.append(text)
     return out
 
 
@@ -979,6 +1186,7 @@ def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
     replaced = {mk.metric for mk in m.marks.values() if mk.caveat and mk.metric in by_firm}
     m.caveats = [mk.caveat for mk in m.marks.values() if mk.caveat and mk.metric not in replaced]
     m.caveats += [c for c in by_firm.values() if c not in m.caveats]
+    m.caveats += [c for c in definitions_contrast(m) if c not in m.caveats]   # #247 part 3 item 1
     m.caveats += [b["caveat"] for b in m.breaks if b["caveat"] not in m.caveats]   # #247 part 2
     m.caveats += [c for c in definition_changes(m) + series_spans(m) if c not in m.caveats]   # R5, R6c
     if query is None or not hits:

@@ -519,23 +519,59 @@ def suggested_sources(entity_id: str) -> str:
     if not rows:
         return _config_sources(entity_id)
     missing = [name for doc_type, name in rows if doc_type not in have]
-    return "Not yet in the corpus: " + "; ".join(missing) if missing else ""
+    if missing:
+        return "Not yet in the corpus: " + "; ".join(missing)
+    # #247 part 3 item 5: a firm reported inside a parent (MER -> BAC) with nothing of its own missing
+    # names its parent's missing sources, never another firm's
+    parent = _entry(entity_id).get("parent")
+    if parent and parent != entity_id:
+        text = suggested_sources(parent)
+        prefix = "Not yet in the corpus: "
+        if text.startswith(prefix):
+            return f"Not yet in the corpus (parent {_short_name(parent)}): " + text[len(prefix):]
+    return ""
+
+
+def _gap_firm(part_id: str | None) -> str | None:
+    """The configured firm a gap's part id names ("a1.MER" -> "MER"); None for aspect-level or research."""
+    tail = (part_id or "").rsplit(".", 1)
+    if len(tail) != 2:
+        return None
+    cfg = entities_config()
+    ids = {e["id"] for e in cfg["entities"] + cfg.get("expansion", [])}
+    return tail[1] if tail[1] in ids else None
 
 
 def fill_suggested_sources(answer: Answer, query: Query) -> Answer:
-    """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51)."""
+    """Fill only gaps whose suggested_source is empty; text the model wrote is kept (#51). #247 part 3
+    item 5: a gap on one firm's cell gets only that firm's sources (empty stays empty)."""
     empty = [g for g in answer.gaps if not g.suggested_source.strip()]
     if empty and query.entities:
-        text = _sources_for(query.entities)
+        text = None
         for g in empty:
+            firm = _gap_firm(getattr(g, "part_id", None))
+            if firm:
+                try:
+                    g.suggested_source = suggested_sources(firm)
+                except Exception:
+                    g.suggested_source = ""
+                continue
+            if text is None:
+                text = _sources_for(query.entities)
             g.suggested_source = text
     return answer
 
 
+_PARENT_PREFIX = re.compile(r"^Not yet in the corpus(?: \(parent [^)]*\))?: ")
+
+
 def _sources_for(entities: list[str]) -> str:
-    """The registry sources of several firms in one line (one "Not yet in the corpus:" prefix)."""
+    """The registry sources of several firms in one line (one "Not yet in the corpus:" prefix; a
+    parent's list keeps its "(parent ...)" note inside the line)."""
     prefix = "Not yet in the corpus: "
     parts = [t for t in (suggested_sources(e) for e in entities) if t]
+    parts = [prefix + f"({m.group(0)[len('Not yet in the corpus ('):-3]}) " + t[m.end():]
+             if (m := _PARENT_PREFIX.match(t)) and m.group(0) != prefix else t for t in parts]
     registry = [t[len(prefix):] for t in parts if t.startswith(prefix)]
     return "; ".join(([prefix + "; ".join(registry)] if registry else [])
                      + [t for t in parts if not t.startswith(prefix)])

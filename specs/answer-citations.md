@@ -242,6 +242,29 @@ behavior code decided; it cannot change it.
   `behavior_rejudged`, `outside_matrix`, `comparison_missing`, `why_line_missing`, `reordered`,
   `gaps_merged`, `part_gaps`, flags by name, `stop_reason`, `usage` (ADR-021 rule 7).
 
+### Reduce part 3 (#247 part 3, post-call code only; plans/0247-reduce-3.md)
+- `DEFINITION_CONTRAST`: when an aspect with a registered metric asks for its definition (define / include /
+  exclude) and the metric has `contrast_dimensions`, one caveat per dimension places every firm row, grouped by
+  value, with the registry's verbatim text and chunk id (one block per metric; all-not-stated dimensions
+  skipped). A row whose entry belongs to its parent names it ("Merrill (Bank of America Corporation)"), here
+  and in `DEFINITIONS_BY_FIRM`. `DEFINITIONS_BY_FIRM` prints only verbatim text with the chunk that says it (the
+  entry's quote; what a count includes / excludes from the entry's `contrast` cells) or fixed phrases ("not
+  stated: <dimension labels>"); the registry's free-text includes / excludes / not_stated lists are not printed
+  (tested: outside quotes only fixed words and firm names; every quote verbatim in its cited chunk).
+- `closest_metric` wording: "defines a related metric instead" when the entry's unit equals the quoted
+  entries' unit; otherwise "publishes no count of this metric; reports a related figure instead".
+- Quarter holes: a "by quarter" series aspect with no asked range gets a `period_gap` per holding firm cell
+  naming runs of at most 4 uncovered quarters with a covered quarter on both sides, only quarters another
+  holding firm covers (`QUARTER_HOLES`). `SERIES_SPAN` reports the latest segment (split at runs of more than
+  4 missing quarters) and names earlier points as a separate segment.
+- Dedupe: bare and fiscal years are stated periods ("fiscal 2024" -> `fy2024`; "$2,024" is not a year).
+- Gap sources: a gap on one firm's cell gets only that firm's `suggested_sources`; a firm reported inside a
+  parent with nothing of its own missing gets the parent's list ("Not yet in the corpus (parent ...): ..."),
+  also on the empty-retrieval path; aspect-level and research gaps keep the joined list.
+- Basis breaks: an undated item never opens a group; parts of one count at the same (normalised) dates are a
+  split, not a break (a scoped group within a whole-firm group of the same or no population key; with no
+  whole-firm group, same-key groups with identical periods); groups of two keys never merge.
+
 ### Reduce part 2 (#247 part 2, prompt v5.2; plans/0247-reduce-2.md)
 Revision after blind scoring (prompt v5.2; plan "Revision after scoring", R1-R6):
 - Why-lines: the item's own stated context, or cited factual background from another matrix passage (the
