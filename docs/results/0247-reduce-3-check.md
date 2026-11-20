@@ -1,7 +1,7 @@
 # #247 part 3 checks: definition contrast, related-metric wording, quarter holes, gap sources (0 API calls)
 
 Plan: `plans/0247-reduce-3.md` (approved at 9313a22 with the TL conditions written in at 0db59f2). Code at
-`02a57c2`. Snapshot `corpus-2026-11-19`, `--as-of 2026-11-17`. **0 API calls** in this part: no plan, map or
+`22a6555` (02a57c2 + the TL fix in section 6). Snapshot `corpus-2026-11-19`, `--as-of 2026-11-17`. **0 API calls** in this part: no plan, map or
 reduce call; `.env` never read or copied; no key set. Evidence folder `D:\ALLPROJECTS\EDJ\cache\ev247c\`.
 **Blind scoring: not done yet** (the TL starts a fresh scorer; inputs in section 4).
 
@@ -29,7 +29,8 @@ reduce keys pinned (`diag/replay_part3.py`), `--max-calls 0`, `DEEPSEEK_API_KEY`
 | Run | Commit | Guard (`diag/guard.py`, `head-log.txt`) |
 |---|---|---|
 | `replay-base` | main 2f568c4 (`wt-247c-base`, detached) | OK: real_calls 0, reused 50, model cached 8/8, 50 raw records identical to the committed blobs |
-| `replay` | branch 02a57c2 | OK: real_calls 0, reused 50, model cached 8/8, 50 raw records identical to the committed blobs |
+| `replay-02a57c2` | branch 02a57c2 (first replay, kept) | OK: real_calls 0, reused 50, model cached 8/8, 50 raw records identical to the committed blobs |
+| `replay` | branch 22a6555 (after the section 6 fix) | OK: real_calls 0, reused 50, model cached 8/8, 50 raw records identical to the committed blobs |
 
 The raw copies come from a Windows checkout (CRLF); the guard compares them with the git blobs after CRLF -> LF.
 `docs/results/0247b-raw/` is unchanged (`git status` clean there before and after both runs).
@@ -71,14 +72,28 @@ baseline (Q11, Q19, Q22, Q23, Q24, from the branch replay), `questions.yaml` (fr
 `verdict-rule.txt` (r3's rule, question list Q11, Q19, Q22, Q23, Q24; Q24 against `answer` per
 `behavior_supersede.yaml`). Scorer prompt `ev247c\scorer-prompt.txt` (writes `ev247c\verdicts-blind.json`).
 Hashes (`ev247c\blind-in-hashes.txt`):
-- answers-dump.txt 5fcae2c79b942c65355e92499c402dff6ad2382bc39667b5b74e31cab90be9be
+- answers-dump.txt df4a73dc6e15d06c0501fd8d393fe76964bc31f8bcf45dde1104598c35050e62 (rebuilt at 22a6555)
 - questions.yaml 0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b
 - verdict-rule.txt 1607043002b28bd66c5293a8b8c8376727a0a996bae7edb8efcdd3cd228df9b7
+- scorer-prompt.txt 11a52683f0aa215b2bcc48b8c406cb97d7285525a6f41af3ba5fd879c904752c
 
 Unchanged answers keep their part-2 verdicts: Q1, Q3, Q26 PASS. Acceptance: no PASS -> FAIL (Q19, Q22, Q24);
 Q11 aims at PASS; Q23 stays a corpus gap unless the re-score says otherwise.
 
-## 5. Notes (not changed in this part)
-- The `DEFINITIONS_BY_FIRM` caveat still prints EDJ "includes U.S. and Canada financial advisors (split in
-  EDJ-10K-2025#148)" from the registry's `includes`; #148 holds the two columns, "Canada" is in #145 / #146
-  (review round 1 table). The contrast cites #145; the `includes` wording is part-2 registry text.
+## 5. pytest at 22a6555
+1000 passed (two more in `tests/test_reduce_part3.py`, section 6); `gh pr checks 263` green.
+
+## 6. TL fix before scoring: the per-firm definitions caveat cited the wrong chunk
+The `DEFINITIONS_BY_FIRM` caveat printed the registry's free-text `includes` / `excludes` / `not_stated` lists,
+e.g. EDJ "includes U.S. and Canada financial advisors (split in EDJ-10K-2025#148)", but "Canada" is not in #148
+(it is in #145). Fix (`matrix._scope_bits`): what a count includes or excludes is printed only from the entry's
+`contrast` cells, each a verbatim registry text with the chunk that says it (EDJ: 'two operating and
+reportable segments based upon geographic location, the U.S. and Canada' (EDJ-10K-2025#145)), or the fixed
+phrase "not stated: <dimension labels>". The free-text lists stay in the registry (the map's words read
+`includes`), so pins, `see_also` and map inputs are unchanged. Tests: outside the quotes the caveat has only
+fixed words and firm names; every quote in it is verbatim in the chunk it cites (database, not skipped).
+Re-replay (0 calls, guard OK) and re-diff against the baseline: Q1, Q3, Q26 identical; Q19 and Q22 unchanged
+from 02a57c2; Q11, Q23, Q24 differ from 02a57c2 only in that caveat; no "#148" in any caveat. Blind inputs
+rebuilt (hashes in section 4).
+
+## 7. Notes (not changed in this part)

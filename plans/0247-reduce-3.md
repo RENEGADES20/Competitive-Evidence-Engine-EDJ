@@ -384,3 +384,9 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
   identical; Q11, Q22, Q23, Q24 as section 8; **Q19 also changed** (not in section 8): the folded competitor
   gap rows now carry Merrill's parent sources (item 5 via `COMPETITORS_GAP`), so Q19 joins the blind set.
   Blind inputs prepared (`ev247c\blind-in\`: Q11, Q19, Q22, Q23, Q24); stopped before scoring.
+- 2026-11-20 11:35 - TL fix before scoring: the per-firm definitions caveat printed the registry's free-text
+  includes (EDJ "U.S. and Canada ... (split in EDJ-10K-2025#148)": #148 has no "Canada"). Now it prints only
+  verbatim contrast texts with their chunks (EDJ #145) or "not stated: <labels>"; free-text lists stay in the
+  registry for the map's words (pins and map inputs unchanged). Two new tests (fixed words outside quotes;
+  every quote verbatim in its cited chunk, DB). 22a6555: pytest 1000 passed; branch replay re-run (guard OK),
+  re-diffed: only Q11 / Q23 / Q24 caveat text changed vs 02a57c2; blind inputs rebuilt.
