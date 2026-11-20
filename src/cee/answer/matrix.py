@@ -240,10 +240,25 @@ def _norm(text: str) -> str:
     return " ".join(str(text or "").lower().split())
 
 
-def _value(text: str) -> float | None:
-    from cee.answer.validate import figures
+_SCALE_WORD = re.compile(r"\b(thousands?|millions?|billions?|trillions?)\b", re.I)
+
+
+def _value(text: str, unit: str = "") -> float | None:
+    """The item's figure; a scale word in its unit ("USD billions") applies when the value itself
+    has none ("$2,647" in a "($ in billions)" table)."""
+    from cee.answer.validate import SCALES, figures
     fs = figures(text or "")
-    return fs[0].value if fs else None
+    if not fs:
+        return None
+    m = _SCALE_WORD.search(unit or "")
+    if fs[0].scale == 1.0 and m:
+        return fs[0].value * SCALES[m.group(1).lower().rstrip("s")]
+    return fs[0].value
+
+
+def _base_unit(unit: str) -> str:
+    """The unit without its scale word ("USD billions" -> "USD")."""
+    return " ".join(_SCALE_WORD.sub(" ", unit or "").split())
 
 
 def _fmt(x: float) -> str:
@@ -286,7 +301,7 @@ def derive(m: EvidenceMatrix) -> None:
             periods = {i.period for _, i in items}
             scopes = {_norm(i.scope) for _, i in items}
             units = {_norm(i.unit) for _, i in items}
-            values = [_value(i.value) for _, i in items]
+            values = [_value(i.value, i.unit) for _, i in items]
             if "" in periods or len(periods) != 1:
                 why = "periods differ or are not stated: " + ", ".join(i.period or "(none)" for _, i in items)
             elif len(scopes) != 1:
@@ -302,13 +317,18 @@ def derive(m: EvidenceMatrix) -> None:
             continue
         if op == "ratio":
             result, sign = values[0] / values[1], " / "
+            num, den = _base_unit(items[0][1].unit), _base_unit(items[1][1].unit)
+            unit = f"{num} per {den}" if num and den else ""
         elif op == "sum":
             result, sign = sum(values), " + "
+            unit = _base_unit(items[0][1].unit)
         else:
             result, sign = values[0] - values[1], " - "
-        formula = (sign.join(ref for ref, _ in items) + " = " + sign.join(i.value for _, i in items)
-                   + f" = {_fmt(result)}")
-        cell.derivation = {**d, "ok": True, "why": "", "value": result, "value_text": _fmt(result),
+            unit = _base_unit(items[0][1].unit)
+        shown = [f"{i.value} ({i.unit})" if i.unit else i.value for _, i in items]
+        formula = (sign.join(ref for ref, _ in items) + " = " + sign.join(shown) + f" = {_fmt(result)}"
+                   + (f" {unit}" if unit else ""))
+        cell.derivation = {**d, "ok": True, "why": "", "value": result, "value_text": _fmt(result), "unit": unit,
                            "formula": formula, "period": items[0][1].period, "scope": items[0][1].scope,
                            "input_chunk_ids": sorted({c for _, i in items for c in i.chunk_ids})}
         if cell.label != "fact":

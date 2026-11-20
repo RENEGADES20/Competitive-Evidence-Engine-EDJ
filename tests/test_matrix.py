@@ -188,6 +188,16 @@ def test_derivation_rejected_with_why(a, b, op, other, why):
     assert c.label == "not_disclosed" and not c.derivation["ok"] and why in c.derivation["why"]
 
 
+def test_derivation_applies_the_scale_word_of_the_unit():
+    """Found in the #246 re-check (Q24 EDJ): "$2,647" with unit "USD billions" is 2.647e12, so the
+    per-advisor value is in dollars, not billions."""
+    c = _derive(item("A#1", value="$2,647", unit="USD billions", period="2026-06-26"),
+                item("B#1", value="20,514", unit="financial advisors", period="2026-06-26"))
+    assert c.derivation["value_text"] == "129,033,831" and c.derivation["unit"] == "USD per financial advisors"
+    assert c.derivation["formula"] == ("a2.EDJ#0 / a3.EDJ#0 = $2,647 (USD billions) / 20,514 (financial advisors)"
+                                       " = 129,033,831 USD per financial advisors")
+
+
 def test_derivation_accepted_computes_value_and_formula():
     c = _derive(item("A#1", value="100", period="2026Q2"), item("B#1", value="4", period="2026Q2"))
     assert c.label == "derived" and c.derivation["value"] == 25
