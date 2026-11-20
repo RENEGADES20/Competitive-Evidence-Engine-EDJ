@@ -156,6 +156,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-20 | ADR-021 (answer behavior by code, definitions and comparability, sub-question decomposition, no fixed call cap) with ADR-012/019/020 amendments, specs, behavior_supersede.yaml (Q24, Q25, Q28) and Q31-Q35 appended (#244) (#251) | none | #245 planner v3 and firms x aspects retrieval |
 | 2026-11-20 | #242 DeepSeek provider (planner + answer, strict tools on /beta, thinking default on after a 12-call check: valid 6/6 on vs 5/6 off), OpenAI planner rejects cut plans (#253) | Blockers: none | Next: #243; ADR-012/CLAUDE.md provider list via #244 |
 | 2026-11-20 | #245: sub-question decomposition landed (plan-v3 aspects, firms x aspects with per-aspect firm subsets, SUBQUESTION_TOKENS=40000, competitors as real entities, re-search hook, temporary input guard, DeepSeek thinking-on planner cap 64000); mock 30/30 unchanged, 10 DeepSeek planner calls ~1.00 CNY, Q19 7 aspects x 5 firms (#255) | real plans retrieve must-not chunks on Q11/Q22/Q24 (for #246) | #246 map step |
+| 2026-11-20 | #243 DeepSeek baseline (today's pipeline, deepseek-v4-pro thinking on): 15/30 like-for-like (tier 1 10/18; blind first read 16/30) vs Claude #217 24/30 (14/18); 54 calls + 6 reused from #242, $2.46 new spend (#257) | none | #245 pipeline redesign judged against this baseline (#250) |
 
 ## Weekly score (from W6)
 
