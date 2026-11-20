@@ -195,7 +195,9 @@ sub-question, every chunk kept so far excluded, on top of the budget:
   SQL filter on `documents.period_end`) and `exclude_ids` (kept chunks leave the SQL pool before the
   cut), `PERIOD_K = 3` passages. Hits: `origin = "period"`.
 - **Pins** (`fts.fetch_pinned`): the firm's `populations` sources for the ratio inputs the aspect can
-  hold, then its registered definition `chunk_id` and `see_also` for a registered metric, at most
+  hold, then its registered definition `chunk_id` and `see_also` for a registered metric
+  (and, for a `series` aspect only, the entry's `series_pins`: dated counts in documents without
+  `period_end`, which the per-period pass cannot reach; #247 part 4, Q23 `RJF-DECK-2025-investor-day#43`), at most
   `PIN_MAX = 8` (the cut is logged as `pins_cut`), fetched by ID under every hard filter of the
   sub-question (entity / segment, window, date range, keywords) and the doc-type scope except the `adv`
   exclusion (ADR-015 amendment). A pinned chunk another sub-question already kept still joins this
