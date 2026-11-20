@@ -75,6 +75,17 @@ collapsed) or empty (code prints a fixed phrase); `chunk_id` is the entry's `chu
 Edward Jones `EDJ-10K-2025#145` (U.S. and Canada segments) and `#35` (advisors are employees or partners).
 Checked by `tests/test_reduce_part3.py` (shape always; verbatim text against the database when it runs).
 
+### Series pins (#247 part 4; Q23)
+`series_pins` (optional, per definition entry): chunk ids pinned only for `series` aspects of the metric
+(`planner.pinned_ids`, after the definition chunk and `see_also`; never in `see_also`). Rule: a chunk of the
+firm's tier 1-3 document with `period_end` NULL that states a count of the metric, on the entry's population,
+together with the count's own date in the chunk text (not a page header, capture, retrieval or publication
+date), so the per-period pass (which filters on `period_end`) cannot reach it. Filled from a corpus scan
+(`docs/results/0247-reduce-4-check.md`: SQL, one reason per row), rerun when an undated document is ingested.
+Today: Raymond James `RJF-DECK-2025-investor-day#43` ("Mar. 31, 2025 ... FINANCIAL ADVISORS ... 8,731").
+Checked by `tests/test_reduce_part4.py` (shape always; exists, `period_end` NULL, tier 1-3, a date and a count
+in the text, against the database when it runs).
+
 ## Acceptance
 
 - `published_at` coverage 100%: no document without a publication date.

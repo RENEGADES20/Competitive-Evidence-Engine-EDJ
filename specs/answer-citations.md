@@ -242,6 +242,25 @@ behavior code decided; it cannot change it.
   `behavior_rejudged`, `outside_matrix`, `comparison_missing`, `why_line_missing`, `reordered`,
   `gaps_merged`, `part_gaps`, flags by name, `stop_reason`, `usage` (ADR-021 rule 7).
 
+### Reduce part 4 (#247 part 4, post-call code; plans/0247-reduce-4.md)
+- `LAST_REPORTED` (code caveat, after `SERIES_SPAN`): "{firm} - {metric}: latest count found in the {doc_words}:
+  {date} ({chunk}); no count found in the {doc_words} read since ({docs})." One per firm row and registered
+  metric whose registry entry has a counted `contrast.count_date`, when the question has an aspect of that metric.
+  - Latest count: the latest dated item that counts the metric (unit names advisors / representatives, not
+    employees, USD or client assets) in the firm's fact, derived or different-quantity cells of those aspects,
+    or the registry `count_date` when its chunk was read; its document type T.
+  - Old: before the first day of the first asked period ("last eight quarters"), else before the as-of date
+    minus one year.
+  - Later documents read: documents of type T with a chunk in the map's hits under one of the firm's
+    sub-questions of that metric (not the candidate pools), dated (`period_end`, else `published_at`) after the
+    latest count, none cited by a counting item. Both hold -> the caveat; the documents are listed, oldest first.
+  - The same-document-type rule, not the age test, keeps an annual reporter out (Raymond James's 10-K count
+    2025-09-30 is older than as-of minus one year, but no later 10-K was read).
+  - It never says "discontinued", "last reported", "no longer" or "current": a stored count of another document
+    type can be later (Merrill: `BAC-DECK-2025-investor-day#9`, ">15K"), and the map read passages, not whole
+    documents. Doc-type words: supplement -> "quarterly financial supplements", 10-K / 10-Q -> "Form 10-K annual
+    reports" / "Form 10-Q quarterly reports", deck -> "investor presentations".
+
 ### Reduce part 3 (#247 part 3, post-call code only; plans/0247-reduce-3.md)
 - `DEFINITION_CONTRAST`: when an aspect with a registered metric asks for its definition (define / include /
   exclude) and the metric has `contrast_dimensions`, one caveat per dimension places every firm row, grouped by
