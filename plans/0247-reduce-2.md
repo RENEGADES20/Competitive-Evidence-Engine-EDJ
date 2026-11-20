@@ -680,3 +680,37 @@ Acceptance for the merge: Q26 back to PASS; Q19, Q22, Q24 stay PASS; Q11 and Q23
 
 - 2026-11-20 - blind part 2: 5/8 (hash fbde54a7... committed alone in 2cfd92b; table in b025cf6). Revision
   after scoring written (R1-R5, Q11 / Q23 classification, re-check bound 4); no code yet.
+
+**R6 - answer-side issues (TL comment on #247 after 645d79c; ADR-021 rules 1-2; written in before any code).**
+- **(a) Definitions named per firm (Q11)**: for every registered metric of the question's aspects, when the
+  firms in the matrix do not all share one quoted basis, code adds one caveat `DEFINITIONS_BY_FIRM` per metric,
+  also when the plan has no comparison aspect: "<Metric> as each firm defines it: <Firm>: <the firm's own
+  words, cut at 160> (<chunk>); includes <...>; excludes <...>; not stated: <...> | <Firm>: no written
+  definition published; it reports <label> (<chunk>) | ... ." The per-firm parts come from
+  `config/metric_definitions.yaml` (`status`, `quote`, `chunk_id`, `includes`, `excludes`, `not_stated`),
+  inserted by code like the other config caveats; a firm with `status: not_disclosed` or `closest_metric` is
+  named as such. It replaces the shorter comparability caveat for that metric (no two caveats on one metric).
+- **(b) No count published, a closest figure adjacent (Q11 Schwab)**: a `different_quantity` cell's code gap
+  names the closest quantity instead of "a different quantity is listed as adjacent": "<Firm> - <aspect>:
+  not published in the documents searched; the closest disclosed figure is <the cell's first item, cut at
+  160> (adjacent)." The cell stays `different_quantity`; the answer's behavior is unchanged (code decides it
+  for the whole question, rule 1); the reduce already lists the item as adjacent with `differs_because`.
+- **(c) Where each firm's series starts and stops (Q23)**: for a `series` aspect, each firm cell that holds
+  gets a code caveat `SERIES_SPAN`: "<Firm> - <aspect>: the series in the documents searched runs from
+  <earliest period> to <latest period> (<n> points); no figure after <latest period> was found." A firm cell
+  that holds nothing keeps its gap. Periods are the items' own (`YYYY-MM-DD`, `YYYYQn`, `FYYYYY`), sorted by
+  date; undated items are not counted.
+- Tests (0 calls): a Q11-shaped matrix (five firms, one registered metric, no comparison aspect) -> one
+  `DEFINITIONS_BY_FIRM` caveat naming each firm, the comparability caveat for that metric not repeated; a
+  `different_quantity` cell -> the gap names its first item; a Q23-shaped series -> one `SERIES_SPAN` caveat
+  per holding firm with the right first / last period and count.
+
+**Real re-check bound (amended for R6)**: reduce calls only for **Q26, Q24, Q19, Q22, Q11, Q23**, one run each,
+plans and maps reused: **bound 6 calls**, confirmed by a 0-call count after the build (anything else means
+the plan is amended first). Output to a new folder (`ev247b\real-r2`; the wrapper's `-Out` parameter is
+renamed so it cannot shadow `$out`). A fresh blind scorer scores those six (`ev247b\blind-in-r2\`). Merge
+acceptance: Q26 back to PASS; Q19, Q22, Q24 keep PASS; Q1 and Q3 keep their part-2 answers; Q11 and Q23
+judged again, corpus gaps (MS after 4Q2020, RJF quarterly, BAC after 4Q2023, EDJ 3Q26, missing written
+definitions) go to NEXT.
+
+- 2026-11-20 - TL go-ahead for R1-R5 plus R6 (TL comment on #247); R6 written in before any code.
