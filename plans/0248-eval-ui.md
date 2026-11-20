@@ -133,8 +133,22 @@ records #250 / #259 reuse); the replay acceptance item proves it.
     (`usage`, `finished_at`, in `to_log`); map calls get `finished_at` in `_call_log`; the reduce's
     completion time is stamped in `ask._reduce_for`. No change to `reduce.py`.
 
+## Round-2 notes (plan approved at f381049, issuecomment-7044228917; adopted, written in before any code)
+1. **Map completion time per call.** Each map call's `finished_at` (offset-aware) is stamped inside the
+   worker, on `CallResult`, and copied by `_call_log`; not one time for the whole round. `price_call`
+   accepts either form: `at` + `wall_s`, or `finished_at`.
+2. **The resume test asserts its preconditions**, so a later change fails loudly instead of quietly
+   changing the counts: the fake aspect is not `comparison`; the fake search returns no `research`-part
+   hits (no `map.research` call); the corrective search is monkeypatched (`RealRunner.map` passes no
+   `search_fn`); A's `fact` passes the quote / number checks, so run A's behavior is `answer` and its reduce
+   is `cap`, not `code_built`.
+3. **tzdata.** `tzdata` is pinned in `requirements.txt` (Windows has no system tz database), and `cost.py`
+   turns a `ZoneInfoNotFoundError` into a clear message suggesting a fixed offset (e.g. `-06:00`).
+   `requirements.txt` joins the file list.
+
 ## Files to change
 - `config/pricing.yaml` (new) - D1.
+- `requirements.txt` - pin `tzdata` (round-2 note 3).
 - `src/cee/answer/cost.py` (new) - D2: `load_prices`, `is_peak`, `price_call`, `summarize`.
 - `src/cee/answer/llm.py` - Anthropic usage adds `cache_read_input_tokens` / `cache_creation_input_tokens`
   when the SDK returns them; `CONTEXT_WINDOW["openai"]` verified (step 9).
