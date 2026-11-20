@@ -160,6 +160,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-20 | #246 map step: per-firm extraction (extract-v1, plan-v3.1 proxy), CRAG re-search, evidence matrix, behavior and comparability by code; MAP off until #247; 33 real calls; Q11/Q19/Q23/Q24/Q26 as expected (Q24 after the TL's stray-brace parser rule, 0-call re-check) (#256) | none | #247 reduce step |
 | 2026-11-20 | #247 reduce step: prompt v5 over the evidence matrix, code-checked, wired into ask, the app and the eval; MAP on by default; real check 5/8 blind (Q3, Q19, Q26 newly PASS; Q1, Q22 kept) (#260) | Q11, Q23, Q24 still FAIL on series coverage and derivation scope | follow-up findings (0247-reduce-check.md section 4); #248 |
 | 2026-11-20 | #247 part 2: populations of ratio inputs, per-period and pinned retrieval, basis-break / definition / series-span caveats, gap scope, dedupe (outside quotes), why-lines from context or cited background (v5.2); real check 6/8 blind, 33 calls (#261) | Q11 / Q23 open (blind FAIL after the dedupe fix; Q23 corpus gaps, Q11 missing definitions and contrast) | TL merge (ADR-015/021 amendments); follow-up findings |
+| 2026-11-20 | #248: eval and app cost per call and question (config/pricing.yaml, peak / off-peak, --naive-tz), resume proof for every call type, --reuse-plans and --cache on main, eval_cost.py, 9 progress stages, open-citation wait; 0 real calls (#262) | none | #249 sync exp/hybrid, then #250 DeepSeek fts + hybrid scored runs |
 
 ## Weekly score (from W6)
 
