@@ -28,9 +28,11 @@ Page "Ask"
   while answering (after "Ask" is clicked, before the answer shows):
           a progress bar plus a live step trace saying what the system is doing now, e.g.
             Reading the question: firms MS, EDJ; mode compare; window last 4 quarters
-            Planning the search (anthropic, one call): 2 parts: p1 MS; p2 EDJ
-            Searching the corpus: 14 passages from 6 documents in 2 parts
+            Planning the search (anthropic, one call): 2 aspects x 2 firms = 4 sub-questions: a1.MS; a2.MS; a1.EDJ; a2.EDJ
+            Searching the corpus: 14 passages from 6 documents in 4 sub-questions
             Asking the model (anthropic, one call)   | or: No passages found, no model call
+              (#245, temporary until #247: "...; input over the model's limit: kept N of M passages,
+              ~X of ~Y tokens" when the interim input guard trimmed the passages)
             Checking citations: 9 matched, 1 flagged
             Adding caveats and gaps
           each step reports what the pipeline really did (counts, filters, provider), never
@@ -58,7 +60,9 @@ Page "Coverage"
 - After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
   pipeline stages (resolve, plan (#214, ADR-020), retrieve, model call or skip, citation check, caveats/gaps). Each
   step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
-  The trace adds no extra LLM call (it reports the planner call and the answer call; at most 2 per question, ADR-020).
+  The trace adds no extra LLM call (it reports the planner call and the answer call; until #246 /
+  #247 add the map and reduce calls, planner 1 + answer 1 per question, ADR-021 rule 7). The plan
+  line lists the sub-question decomposition (#245, ADR-021 rule 6).
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

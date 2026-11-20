@@ -63,7 +63,8 @@ def deepseek_thinking() -> bool:
 
 
 # SUBQUESTION_TOKENS default (#245): picked from the mock grid {12000, 20000, 40000} by the plan's
-# fixed rule (plans/0245-decompose.md; ADR-019 amendment).
+# fixed rule (plans/0245-decompose.md; ADR-019 amendment): only 40000 was eligible (12000 and 20000
+# lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
 SUBQUESTION_TOKENS_DEFAULT = 40000
 
 

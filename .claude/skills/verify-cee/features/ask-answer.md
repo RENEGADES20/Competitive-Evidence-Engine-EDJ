@@ -18,7 +18,8 @@ A user types a question and gets an answer whose claims each link to a stored pa
   comes from the part's candidate pool: "No evidence retrieved for: <part>" when the part's search
   found nothing, else "Not answered from the evidence retrieved for: <part>". The mock cites its
   top 3 passages only, so a two-firm mock answer usually gets a part gap for the firm it did not
-  cite. An uncited grid cell moved to gaps (`uncited_cell`) needs a model; proven by
+  cite; since #245 every sub-question (firm x aspect) is a part, so a five-firm mock answer can
+  show up to four such gaps (expected, not a failure). An uncited grid cell moved to gaps (`uncited_cell`) needs a model; proven by
   `tests/test_part_check.py`, not driven here.
 - `ask-theme-gap`: a question about several firms on one theme (Q21) gets a coverage line
   "No passages on the theme (...) for X" naming each firm with no passage on it (#117).
@@ -38,9 +39,9 @@ Preconditions: baseline.
 - **Footer.** Page text contains `LLM called: False` (mock).
 - **Side effect.** `SELECT count(*) FROM query_log` in `cee_verify` is one higher than
   before the ask.
-- **Part gaps.** After the EDJ question (one part) and after the two-firm question
-  "How do Morgan Stanley and Raymond James approach advisor recruiting?" (rule plan: p1 MS,
-  p2 RJF), read the newest `query_log` row: the gaps flagged `part_gap` are exactly one per plan
+- **Part gaps.** After the EDJ question (one sub-question) and after the two-firm question
+  "How do Morgan Stanley and Raymond James approach advisor recruiting?" (rule plan, #245:
+  sub-questions a1.MS, a1.RJF), read the newest `query_log` row: the gaps flagged `part_gap` are exactly one per plan
   part that no mock claim names (`answer->claims[].part_id`), and each such gap's text and a
   `part_gap` chip are on the page (expected for the EDJ question: none).
 - **Theme gap.** Ask Q21 ("What do we know about the generational wealth transfer, and how

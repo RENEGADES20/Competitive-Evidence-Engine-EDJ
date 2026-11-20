@@ -102,7 +102,38 @@ their own headings. A part with no passages of its own says why, from its candid
 exclusion (`plan.searched[i]["pool"]`): pool 0 "(no passages were found for this part)", else
 "(no further passages; the passages found for this part are listed under another part or the
 research passages)". No plan: one part p1, the whole question. The model writes `part_id` on
-every claim, adjacent item and gap ("" when none applies).
+every claim, adjacent item and gap ("" when none applies). Since #245 (ADR-021 rule 6) every part is
+one sub-question, `SubQuestion(entity, aspect)`: id `<aspect>.<firm>` (e.g. `a2.EDJ`; `a1.all` in
+theme mode), text "<Firm>: <aspect>"; a competitor sub-question the floor across competitors
+emptied (`floor_emptied`, Q19) reads as pool 0 ("no passages were found").
+
+### Interim answer input guard (#245; temporary, removed when #247 wires the reduce step)
+
+Until the map step (#246) and the reduce step (#247) replace it, one answer call reads every
+sub-question's passages, so its input grows with the decomposition (no cap on retrieval, ADR-021).
+A five-firm, three-aspect question can pass the model's context window. The guard keeps that call
+usable and is never silent:
+- **Limit**: `ANSWER_INPUT_MAX_TOKENS`, else the provider's context window minus its answer output
+  cap minus the fixed prompt (system prompt and tool schema), characters / 4, rounded down to 1k
+  (`llm.answer_input_limit`). Context windows checked 2026-11-19: DeepSeek deepseek-v4-pro 1M,
+  Claude Sonnet 5.5 1M; OpenAI gpt-5 400k assumed (TODO-verify). The mock has no limit.
+- **Trim** (`validate.fit_input`), only when the estimated input (`llm.input_tokens`: system prompt,
+  tool schema and the user message as built) passes the limit: research passages first, then
+  round-robin over the sub-questions in plan order, each sub-question's best rank first. **Greedy
+  stop rule**: a passage that would pass the limit is skipped and the round-robin goes on (a long
+  passage does not end the trim while shorter ones still fit); it ends when a full round adds
+  nothing. The kept passages keep their original order.
+- **Which list each step reads**: the model, `check_citations` (a citation of a left-out passage is
+  unmatched and flagged), `check_parts`, the number check, `insert_caveats`,
+  `fill_suggested_sources` and the per-firm lines of `coverage_note` all read the **trimmed** list
+  (what the model was given), so no caveat or coverage line refers to evidence the answer did not
+  read. Retrieval, `query_log.chunk_ids`, recall and the eval status keep the full retrieved list.
+- **Never silent**: the model step's trace line adds "input over the model's limit: kept N of M
+  passages, ~X of ~Y tokens"; code appends to the coverage note "The answer read N of M retrieved
+  passages: the input was trimmed to the model's limit; the passages left out are listed in the
+  log."; `query_log.filters.input_guard` and the eval record hold {limit, before, after, kept,
+  total, dropped chunk ids}. The eval's answer cache key gets the limit and the kept ids when the
+  guard trims, so an output made under one limit is never reused under another.
 
 | Rule | When | What the answer does |
 |---|---|---|
