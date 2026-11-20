@@ -241,3 +241,54 @@ Unchanged answers keep their part-3 verdicts (Q1, Q3, Q19, Q22, Q26 PASS). Accep
 Q23 may stay FAIL on the corpus gaps (NEXT item 11).
 
 verdicts-blind.json sha256 509c7499179fad5c7d2808a315a16e043278a8ac5507f2aa172b68401b849b89 (part 4 re-check, Q11 / Q23 / Q24, fresh scorer agent, 0 API calls; committed alone before any comparison).
+
+## 7. Blind re-score (part 4) and the comparison
+**1/3 PASS** on the three changed answers (Q24 PASS; Q11, Q23 FAIL). Fresh scorer agent, inputs only
+`ev247d\blind-in\` (hashes in section 6); file `docs/results/0247d/verdicts-blind.json` (hash above, committed alone
+in 163437a).
+
+| Q | Part 3 final (r2) | **Part 4** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|
+| Q11 | PASS (borderline) | **FAIL** | s, r | yes | differences named explicitly; but only RJF and Merrill get a quoted written definition: MS only a 2020 count label (gaps on define / include / exclude), EDJ a metric label plus "employees or partners", Merrill's footnote from 2023 |
+| Q23 | FAIL (r, s) | **FAIL** | r, c | no | series incomplete: EDJ eight quarters; MS 2019-20, Merrill 2022-23 (GWIM + Consumer Banking), RJF four points, Schwab none |
+| Q24 | PASS | **PASS** | | no | EDJ ratio from one 10-Q; comparison stated invalid with each firm's reason |
+
+**Q11 is a PASS -> FAIL flip on a borderline question.** Under the plan's acceptance this stops the merge; it goes to
+the TL (the PR stays a draft; nothing is re-rolled).
+
+**What differs in Q11 between the two scored answers** (0 calls; `diff ev247c\blind-in-r2\answers-dump.txt.Q11`
+against the Q11 block of `ev247d\blind-in\answers-dump.txt`): **exactly two added lines, nothing else**. The two lines
+are the code caveats:
+- "Morgan Stanley - Advisor headcount: latest count found in the quarterly financial supplements: 2020-12-31
+  (MS-SUPP-2020Q4#1); no count found in the quarterly financial supplements read since (MS-SUPP-2025Q4,
+  MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3)."
+- "Merrill (Bank of America Corporation) - Advisor headcount: latest count found in the quarterly financial
+  supplements: 2023-12-31 (BAC-SUPP-2023Q4#2); no count found in the quarterly financial supplements read since
+  (BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3)."
+
+Claims, adjacent items, gaps and every other caveat are byte-identical.
+
+**The part-4 reason's facts were all in the part-3 answer**, and the part-3 scorer named most of them:
+- *MS has no written definition, only a 2020 count label.* Part 3 already had the same gaps G [a1.MS], [a3.MS],
+  [a4.MS] ("not found in the documents searched"), claims C5-C7 (MS-SUPP-2020Q4, 2019-2020 points) and the by-firm
+  caveat quoting 'Wealth Management representatives 15,950 ...'. The part-3 scorer: "the Morgan Stanley definition is
+  a gap and its only count comes from a 2020 supplement".
+- *EDJ is a label plus "employees or partners".* Part 3 already had C1 (the "Financial advisors (actual)" label) and
+  the contrast quoting EDJ-10K-2025#35. The part-3 scorer: "EDJ label plus employees/partners".
+- *Merrill's footnote dates from 2023.* Part 3 already had C2 and C22 (BAC-SUPP-2023Q4) and the same contrast quote.
+  The part-3 scorer did not name the date; the part-4 scorer does. The new Merrill note states that date in words.
+
+The part-3 scorer named one thing missing: the MS count is "flagged by date but not as possibly discontinued". The
+new MS note addresses exactly that, within ground rule 4: it says no count was found in the later supplements, never
+"discontinued". The two scorers read the same evidence on the same bar ("five definitions, quoted"), and the borderline
+moved the other way. One reading is that the note puts the age of the MS and Merrill bases in plain words, and so
+weakens the reading of "five definitions quoted". The other is scorer variance on a borderline. This document cannot
+tell the two apart: the TL's adjudicating read of both versions decides.
+
+**Q23**: FAIL before and after. RJF 2025Q1 is now in the answer (the r miss of part 3 is fixed). The scorer still
+lists r: "Raymond James four annual/scattered points" names no passage the corpus holds. The section 9b SQL of part 3
+found no other RJF count in 2024Q4-2026Q3 in tier 1-3. The rest is the corpus gap of NEXT item 11 (c).
+**Q24**: PASS, unchanged.
+
+Final for the eight, pending the TL's decision on Q11: Q1, Q3, Q19, Q22, Q24, Q26 PASS (kept or re-scored); Q11 FAIL
+(borderline, flip); Q23 FAIL.
