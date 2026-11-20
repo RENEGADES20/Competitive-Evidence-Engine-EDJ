@@ -308,8 +308,10 @@ def corrective_search(q, plan, sq_id, extra_words: str, exclude: set[str],
   - In `ask.answer_for`, before the model call: estimated input = overhead + the passages' tokens
     (characters / 4, as everywhere). Over the limit -> `fit_input(hits, plan, limit)` (new, in
     `validate.py`) keeps research passages first, then passages round-robin over the sub-questions
-    in plan order, each sub-question's best rank first, until the next passage would pass the limit;
-    the order of the kept list is the original order.
+    in plan order, each sub-question's best rank first. **Stop rule (greedy, stated in the spec):**
+    a passage that would pass the limit is skipped and the round-robin continues with the next
+    sub-question, so one long passage does not end the trim while shorter ones still fit; the trim
+    ends when a full round adds nothing. The kept list keeps the original order.
   - Never silent: a trace line ("Input over the model's limit: kept N of M passages, ~X of ~Y
     tokens"), a code-built sentence appended to the coverage note ("The answer read N of M retrieved
     passages: the input was trimmed to the model's limit; the passages left out are listed in the
@@ -318,6 +320,15 @@ def corrective_search(q, plan, sq_id, extra_words: str, exclude: set[str],
   - The model and the citation checks see the trimmed list (a citation must point at a passage the
     model was given); `query_log.chunk_ids`, retrieval recall and the eval status are measured on
     the full retrieved list, before the guard.
+  - **Which list the post-answer steps read** (stated in `specs/answer-citations.md`):
+    `check_citations`, `check_parts` and the number check read the trimmed list (what the model
+    saw). `insert_caveats`, `fill_suggested_sources` and the per-firm lines of `coverage_note` read
+    the **trimmed** list too, so a caveat or a "passages from" line never refers to evidence the
+    answer did not read; the guard's coverage-note sentence names the trim and points to the log
+    for the left-out passages.
+  - **Answer cache key** (`scripts/eval_run.py`): when the guard trims, the key also gets
+    `{"input_guard": [limit, kept chunk ids]}`, so an output made under one limit is never reused
+    under another; an untrimmed call keeps today's key.
   - Tests (mock, 0 calls): no trim under the limit (identical hits, no note, `input_guard` absent);
     over it: research kept, round-robin order, trace line, note, log entry, citation of a dropped
     chunk flagged as unmatched.
@@ -493,14 +504,13 @@ Mac: `PYTHONPATH=$PWD/src SUBQUESTION_TOKENS=12000 .venv/bin/python scripts/eval
 - D5 **settled**: 0 real answer calls in #245; the interim single answer call is temporary; token
   totals reported (grid points and real plans); a temporary, logged `ANSWER_INPUT_MAX_TOKENS` guard
   on the interim answer call only, removed when #247 lands.
-- D6 Planner output caps raised to 8000 (anthropic/openai and deepseek thinking off; the latter is
-  #242's constant).
-- D7 `metric` as an enum with "" for none (strict-safe on all three paths) instead of nullable.
-- D8 Sub-question ids `a<j>.<ENTITY>` (`a1.all` in theme mode), firm-major order, a chunk kept once
-  under its first sub-question.
-- D9 `Query.theme_peers` stays on the resolved query (coverage note, caveats, eval forbidden
-  check); `peer_pass` runs only without a plan.
-- D6, D7, D8, D9 accepted as proposed.
+- D6 accepted: planner output caps raised to 8000 (anthropic/openai and deepseek thinking off; the
+  latter is #242's constant).
+- D7 accepted: `metric` as an enum with "" for none (strict-safe on all three paths), not nullable.
+- D8 accepted: sub-question ids `a<j>.<ENTITY>` (`a1.all` in theme mode), firm-major order, a chunk
+  kept once under its first sub-question.
+- D9 accepted: `Query.theme_peers` stays on the resolved query (coverage note, caveats, eval
+  forbidden check); `peer_pass` runs only without a plan.
 
 ## Review notes (non-blocking, all adopted)
 1. corrective_search base terms = `aspect.keyword_query or fts.keyword_terms(q)[0]` (Re-search hook).
@@ -530,3 +540,9 @@ Mac: `PYTHONPATH=$PWD/src SUBQUESTION_TOKENS=12000 .venv/bin/python scripts/eval
   (D5: risk named, 0 real answer calls, temporary logged `ANSWER_INPUT_MAX_TOKENS` guard with mock
   tests and a per-plan report); all 10 non-blocking notes adopted. #242 still not merged: build
   still waits for it and a rebase.
+- 2026-11-19 - plan review 2: APPROVED at 02e8a1e (issuecomment-7029953602). Adopted its
+  non-blocking notes: (1) the guard's limit and kept ids join the answer cache key when it trims;
+  (2) the trimmed list feeds the citation, part, number and caveat checks, suggested sources and the
+  coverage note (stated in the spec); (3) greedy stop rule: skip a passage that does not fit and
+  continue, stated in the spec; (4) duplicate D6-D9 line folded into the items. Build waits for
+  #242 to merge, then a rebase onto main.
