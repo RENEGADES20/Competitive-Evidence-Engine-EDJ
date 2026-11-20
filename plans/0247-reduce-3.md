@@ -372,3 +372,15 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
   clients". Amended: sections 1-9, Files, Steps, Acceptance, Risks.
 - 2026-11-20 11:20 - plan review round 2 RETURN (7044411488); TL approved at 9313a22 on conditions
   (7044420979), written in above (TL approval conditions 1-3; sections 1, 4, 6, 8, Acceptance) before any code.
+- 2026-11-20 11:10 - code at 02a57c2 (items 1-6 with the TL conditions). Tests: the new cases are in one new
+  file, `tests/test_reduce_part3.py` (26 tests: contrast, wording, holes / segments, breaks, years, gap
+  sources, registry shape and the DB verbatim check), instead of spreading them over `test_series_coverage.py`,
+  `test_reduce_noise.py`, `test_validate.py`, `test_metric_definitions.py`; `test_series_coverage.py` has the
+  one updated r6a assertion. pytest 972 -> 998 (one Streamlit timing flake in `test_ask_page_trace.py`,
+  passed on re-run).
+- 2026-11-20 11:30 - mock 35 vs main 2f568c4: retrieval, statuses and claims identical; verify-cee VERIFY PASS
+  (`.verify-runs/20261120-111924-02a57c2`). Baseline replay (main, `wt-247c-base`) and branch replay: guard OK
+  on both (0 calls, 50 reused, 8/8 cached, raw records identical to the committed blobs). Diff: Q1, Q3, Q26
+  identical; Q11, Q22, Q23, Q24 as section 8; **Q19 also changed** (not in section 8): the folded competitor
+  gap rows now carry Merrill's parent sources (item 5 via `COMPETITORS_GAP`), so Q19 joins the blind set.
+  Blind inputs prepared (`ev247c\blind-in\`: Q11, Q19, Q22, Q23, Q24); stopped before scoring.
