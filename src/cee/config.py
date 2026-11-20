@@ -34,11 +34,12 @@ class Settings:
     # DeepSeek (#242): OpenAI-SDK compatible; strict function tools need the /beta base URL.
     deepseek_model: str = "deepseek-v4-pro"
     deepseek_base_url: str = "https://api.deepseek.com/beta"
-    deepseek_thinking: bool = False
+    deepseek_thinking: bool = True
 
 
-# DEEPSEEK_THINKING default (#242): chosen from the real check on Q1, Q22, Q24 (plans/0242-deepseek.md).
-DEEPSEEK_THINKING_DEFAULT = False
+# DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
+# Q24: valid outputs 6/6 on vs 5/6 off (docs/results/0242-deepseek-check.md).
+DEEPSEEK_THINKING_DEFAULT = True
 ON_WORDS = ("on", "true", "1", "yes")
 OFF_WORDS = ("off", "false", "0", "no")
 

@@ -188,7 +188,7 @@ def test_deepseek_settings(monkeypatch):
     monkeypatch.delenv("DEEPSEEK_BASE_URL", raising=False)
     s = config.settings()
     assert s.deepseek_model == "deepseek-v4-pro" and s.deepseek_base_url == "https://api.deepseek.com/beta"
-    assert s.deepseek_thinking is config.DEEPSEEK_THINKING_DEFAULT
+    assert s.deepseek_thinking is config.DEEPSEEK_THINKING_DEFAULT is True   # chosen by the #242 real check
     for raw, want in (("on", True), ("TRUE", True), ("off", False), ("0", False), ("", config.DEEPSEEK_THINKING_DEFAULT)):
         monkeypatch.setenv("DEEPSEEK_THINKING", raw)
         assert config.settings().deepseek_thinking is want

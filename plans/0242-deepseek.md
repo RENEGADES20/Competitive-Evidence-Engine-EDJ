@@ -363,3 +363,12 @@ no `.sh` twin; if one is ever committed it gets one.
   VERIFY PASS (`.verify-runs\20261119-213310-6b76881`); open-citation and download-document
   UNREACHABLE because the worktree has no `data/raw/` (same as #240), not a #242 change. No ruff in
   CI (pytest only). Mock-runs sha 6b76881 recorded; real check next.
+- 2026-11-19 21:52 - real check done (`ev242\run-real.ps1`, code gate passed at f604ab2 vs mock sha
+  6b76881, `.env` removed after): R-off 6 calls, R-on 6 calls, exit 0 both, no 401/402/429.
+  No cut (largest: R-on Q22 answer 33,166 / 64,000 = 52%, planner 8,288 / 16,000 = 52%), no failed
+  call, so no question dropped. Criterion 1: valid outputs off 5/6, on 6/6 -> **on**. The invalid
+  output: R-off Q22 answer, finish_reason tool_calls but the strict-mode arguments stop mid-string
+  after 8,926 characters (2,923 output tokens, far under the cap): bad JSON, saved, not re-rolled.
+  (Criterion 2 would also give on: off 1/2 answers with the expected behavior, Q24 answered instead
+  of gap_with_adjacent; on 3/3.) Default set to on (config + .env.example + D10 pin); pytest 737
+  passed, mock eval 30/30 UNCHANGED again (`.eval-runs\0242-mock-2`).
