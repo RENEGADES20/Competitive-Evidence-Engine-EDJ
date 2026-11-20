@@ -480,7 +480,9 @@ class RealRunner:
         self.map_max_tokens = None
         self.last_plan_origin: str | None = None
         self.map_capped: list[str] = []
+        self.map_stopped: list[str] = []
         self.bad_request: str | None = None
+        self.last_plan_flags: list[str] = []
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
@@ -558,7 +560,7 @@ class RealRunner:
         from cee.config import settings
         from cee.retrieve import fts, planner
 
-        self.last_plan_origin = None
+        self.last_plan_origin, self.last_plan_flags = None, []
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
             self.last_plan_origin = "no planner call (rules or passage plan)"
             return planner.plan_question(query, self.provider)
@@ -576,11 +578,16 @@ class RealRunner:
                 if isinstance(payload, str) and str(saved.get("error", "")).startswith(
                         ("planner arguments are not a JSON object", "planner output is not JSON")):
                     from cee.answer.llm import loads_object
+                    flags: list = []
                     try:   # #246 TL decision: stray closing braces after a complete object (0 calls)
-                        return planner.from_output(query, loads_object(payload), self.provider)
+                        plan = planner.from_output(query, loads_object(payload, flags), self.provider)
+                        self.last_plan_flags = [*flags, "rechecked"]   # #247 (PR #256 review note 2)
+                        self.last_plan_origin += f"; re-parsed, flags {', '.join(self.last_plan_flags)}"
+                        return plan
                     except (TypeError, ValueError):
                         pass
                 return planner.from_output(query, payload, self.provider, error=saved["error"])
+            self.last_plan_flags = list(saved.get("parse_flags") or [])
             return planner.from_output(query, saved["raw"], self.provider)
         if self.calls >= self.max_calls:
             return None
@@ -618,6 +625,7 @@ class RealRunner:
         self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"),
                           **timing(t0, call.get("usage")), **self._reasoning(call),
                           **({"parse_flags": call["parse_flags"]} if call.get("parse_flags") else {}), "raw": raw})
+        self.last_plan_flags = list(call.get("parse_flags") or [])
         return planner.from_output(query, raw, self.provider)
 
     def map(self, q: dict, query, plan, hits, as_of=None):
@@ -628,7 +636,7 @@ class RealRunner:
         from cee.answer import extract, llm
         from cee.answer.extract import CallResult
 
-        self.map_capped = []
+        self.map_capped, self.map_stopped = [], []
         self.map_max_tokens = extract.extract_max_tokens(self.provider)
         window = extract.query_window(query)
         paths: dict[str, Path] = {}
@@ -640,7 +648,10 @@ class RealRunner:
                 paths[spec.id] = self.cache_dir / f"{q['id']}-{spec.id}-{key}.json"
             return paths[spec.id]
 
-        def allow(spec) -> bool:   # main thread
+        def allow(spec):   # main thread: True, or the reason the call is not made (#247)
+            if self.bad_request:   # PR #256 review note 1: after a 400 no further call (round 2 included)
+                self.map_stopped.append(spec.id)
+                return "not run: the run stopped after a 400"
             if path_of(spec).is_file():
                 return True
             if self.calls >= self.max_calls:
@@ -973,6 +984,7 @@ def main(argv: list[str] | None = None) -> int:
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
         if real:
             r["plan_origin"] = real.last_plan_origin if not capped else "not planned: --max-calls reached"
+            r["plan_parse_flags"] = list(real.last_plan_flags) if not capped else []
         if run_map_step and plan is not None and hits and not capped and not (real and args.plan_only):
             from cee.answer.extract import EXTRACT_VERSION, run_map
             matrix = (real.map(q, query, plan, hits, as_of=args.as_of) if real

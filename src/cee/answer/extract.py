@@ -21,7 +21,7 @@ import json
 import re
 import time
 from concurrent.futures import CancelledError, ThreadPoolExecutor, as_completed
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Callable, Literal
 
 from pydantic import BaseModel, Field
@@ -659,10 +659,13 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     for i, s in enumerate(specs):
         if limit is not None and input_tokens(question, s, window, firms) > limit:
             results[i] = CallResult(skipped=True, error="input over the model's limit")
-        elif allow is not None and not allow(s):
-            results[i] = CallResult(skipped=True, error="not run: --max-calls reached")
         else:
-            todo.append(i)
+            ok = True if allow is None else allow(s)
+            if ok is True:
+                todo.append(i)
+            else:   # #247: allow() returns True, or False / a reason string (e.g. the run stopped after a 400)
+                results[i] = CallResult(skipped=True, error=ok if isinstance(ok, str) and ok
+                                        else "not run: --max-calls reached")
     stop: Exception | None = None
     if todo:
         with ThreadPoolExecutor(max_workers=max(1, concurrency)) as ex:
@@ -756,7 +759,11 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
         remaps.append(MapSpec(f"remap.{key}", 2, sqs[0].entity, False,
                               [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text) for sq in sqs],
                               own, {sq.id: {h.chunk_id for h in own[sq.id]} for sq in sqs}))
-    extra = [h for hs in new_hits.values() for h in hs]
+    extra = []
+    for sq_id, hs in new_hits.items():   # #247 B1: corrective hits keep their sub-question, origin tagged
+        for h in hs:
+            if h.chunk_id not in by_id and all(h.chunk_id != e.chunk_id for e in extra):
+                extra.append(replace(h, part_id=h.part_id or sq_id, origin="corrective"))
     by_id.update({h.chunk_id: h for h in extra})
     if remaps:
         results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider)
@@ -776,4 +783,5 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
         if key not in rows:
             rows.append(key)
     m.rows = rows
-    return finish(m, q, hits + extra, sources)
+    m.hits, m.corrective = dict(by_id), list(extra)
+    return finish(m, q, hits + extra, sources, as_of=as_of)

@@ -120,6 +120,10 @@ class EvidenceMatrix:
     calls: list[dict] = field(default_factory=list)
     research: list[dict] = field(default_factory=list)
     version: str = "extract-v1"
+    # #247 (B1): every passage the matrix may cite, retrieval and corrective re-search hits, by chunk
+    # id (not logged: the ids are in cells and research). `corrective` = the re-search hits, in order.
+    hits: dict = field(default_factory=dict, repr=False)
+    corrective: list = field(default_factory=list, repr=False)
 
     def aspect(self, aspect_id: str):
         return next(a for a in self.aspects if a.id == aspect_id)
@@ -240,6 +244,20 @@ def _norm(text: str) -> str:
     return " ".join(str(text or "").lower().split())
 
 
+_SCOPE_TAIL = re.compile(r"\s+(?:reportable\s+segment|business\s+segment|segment|business|division)$")
+
+
+def normalize_scope(text: str) -> str:
+    """A scope label for comparison (#247, PR #256 review note 4): lower case, punctuation stripped,
+    whitespace collapsed, a leading "the" and a trailing "segment" / "business segment" / "reportable
+    segment" / "business" / "division" removed. "Wealth Management segment" == "Wealth Management";
+    "Private Client Group" stays different from "" (the whole firm)."""
+    t = re.sub(r"[^\w\s&]", " ", str(text or "").lower())
+    t = " ".join(t.split())
+    t = re.sub(r"^the\s+", "", t)
+    return _SCOPE_TAIL.sub("", t).strip()
+
+
 _SCALE_WORD = re.compile(r"\b(thousands?|millions?|billions?|trillions?)\b", re.I)
 
 
@@ -299,7 +317,7 @@ def derive(m: EvidenceMatrix) -> None:
             items.append((f"{src.id}#{idx}", src.items[idx]))
         if why is None:
             periods = {i.period for _, i in items}
-            scopes = {_norm(i.scope) for _, i in items}
+            scopes = {normalize_scope(i.scope) for _, i in items}
             units = {_norm(i.unit) for _, i in items}
             values = [_value(i.value, i.unit) for _, i in items]
             if "" in periods or len(periods) != 1:
@@ -328,8 +346,11 @@ def derive(m: EvidenceMatrix) -> None:
         shown = [f"{i.value} ({i.unit})" if i.unit else i.value for _, i in items]
         formula = (sign.join(ref for ref, _ in items) + " = " + sign.join(shown) + f" = {_fmt(result)}"
                    + (f" {unit}" if unit else ""))
+        # #247 (review note 2): the user-facing formula, with no cell ids, for the reduce and the mock
+        formula_text = sign.join(shown) + f" = {_fmt(result)}" + (f" {unit}" if unit else "")
         cell.derivation = {**d, "ok": True, "why": "", "value": result, "value_text": _fmt(result), "unit": unit,
-                           "formula": formula, "period": items[0][1].period, "scope": items[0][1].scope,
+                           "formula": formula, "formula_text": formula_text,
+                           "period": items[0][1].period, "scope": items[0][1].scope,
                            "input_chunk_ids": sorted({c for _, i in items for c in i.chunk_ids})}
         if cell.label != "fact":
             cell.label = "derived"
@@ -345,6 +366,14 @@ def holds(cell: Cell) -> bool:
 
 
 # --- comparability (rule 2) ---------------------------------------------------------------------
+
+def metric_aspect(a, cells) -> bool:
+    """An aspect that asks for a quantity (#247, TL D6): kind series, a proxy, or one holding a derived
+    cell. Recency and comparison aspects never are."""
+    if a.kind in ("recency", "comparison"):
+        return False
+    return a.kind == "series" or bool(getattr(a, "proxy", False)) or any(c.label == "derived" for c in cells)
+
 
 def mark_comparability(m: EvidenceMatrix) -> None:
     m.marks = {}
@@ -370,7 +399,10 @@ def mark_comparability(m: EvidenceMatrix) -> None:
                         parts.append(f"{row_name(f)}: {text}")
                     mark.caveat = COMPARABILITY_CAVEAT.format(metric=a.metric.replace("_", " ").capitalize(),
                                                               definitions="; ".join(parts))
-        elif any(i.value for c in cells for i in c.counting_items) or any(c.label == "derived" for c in cells):
+        elif metric_aspect(a, cells) and (any(i.value for c in cells for i in c.counting_items)
+                                          or any(c.label == "derived" for c in cells)):
+            # #247 (#246 finding 5): the mark only on metric aspects (series, proxy, or holding a
+            # derived cell); qualitative, recency and comparison aspects that carry a figure get none
             mark.status = "unverified"
             mark.mark = UNVERIFIED_MARK.format(metric=_aspect_text(a))
         m.marks[a.id] = mark
@@ -402,6 +434,8 @@ def decide_behavior(m: EvidenceMatrix) -> None:
         m.behavior, m.behavior_reason = "refuse", "1e: the question asks for the system's own forecast"
     elif normative_question(q):
         m.behavior, m.behavior_reason = "answer_with_boundary", "1e: the question has a normative part"
+        if failed and not fact_cells:   # #247 B2: a failed extraction is shown, not hidden by 1e
+            m.incomplete_note = INCOMPLETE_NOTE.format(firms=", ".join(dict.fromkeys(row_name(c) for c in failed)))
     elif fact_cells:
         m.behavior = "answer"
         m.behavior_reason = "1a: the asked quantity in " + ", ".join(c.id for c in fact_cells)
@@ -416,9 +450,99 @@ def decide_behavior(m: EvidenceMatrix) -> None:
         m.behavior, m.behavior_reason = "refuse", "1c: no fact and no related quantity"
 
 
-def build_gaps(m: EvidenceMatrix, sources=None) -> None:
+# --- asked periods and uncovered-period gaps (#247 B4, TL approval conditions 1-4) ----------------
+
+_NUMBER_WORDS = {w: i for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve".split())}
+_ASKED = re.compile(r"\b(?:last|past|previous|prior|most\s+recent)\s+(\d{1,2}|[a-z]+)\s+(quarters|years)\b", re.I)
+PERIOD_GAP = "{firm} - {aspect}: not found for {periods} in the documents searched."
+PERIOD_GAP_ALL = ("{firm} - {aspect}: not found for the asked periods ({span}) in the documents searched; "
+                  "figures for other periods are listed.")
+
+
+def asked_periods(question: str, as_of) -> tuple[str, list[str]] | None:
+    """The periods the question itself asks for: ("quarter", ["2024Q4", ...]) for "last N quarters"
+    (the N most recent calendar quarters that ended before as_of), ("year", ["2023", ...]) for
+    "last N years" (complete years only, the unfinished current year never counts). A time window
+    (a publication-date filter) gives none (TL condition 1); no stated range gives none."""
+    if as_of is None:
+        return None
+    m = _ASKED.search(question or "")
+    if not m:
+        return None
+    raw = m.group(1).lower()
+    n = int(raw) if raw.isdigit() else _NUMBER_WORDS.get(raw)
+    if not n:
+        return None
+    if m.group(2).lower() == "years":
+        last = as_of.year - 1   # the current year is unfinished on any as_of inside it
+        return "year", [str(y) for y in range(last - n + 1, last + 1)]
+    y, q = as_of.year, (as_of.month - 1) // 3 + 1
+    import datetime as _dt
+    ends = {1: (3, 31), 2: (6, 30), 3: (9, 30), 4: (12, 31)}
+    if _dt.date(y, *ends[q]) >= as_of:   # the current quarter has not ended before as_of
+        y, q = (y, q - 1) if q > 1 else (y - 1, 4)
+    out = []
+    for _ in range(n):
+        out.append(f"{y}Q{q}")
+        y, q = (y, q - 1) if q > 1 else (y - 1, 4)
+    return "quarter", list(reversed(out))
+
+
+def _covers(period: str, unit: str) -> str | None:
+    """The asked period an item period covers: a quarter ("2025Q3") or a year ("2025"). In a quarters
+    ask a YYYY or FYYYYY item covers no quarter (TL condition 4d)."""
+    p = str(period or "")
+    m = re.fullmatch(r"(\d{4})-(\d{2})-\d{2}", p)
+    if m:
+        return m.group(1) if unit == "year" else f"{m.group(1)}Q{(int(m.group(2)) - 1) // 3 + 1}"
+    m = re.fullmatch(r"(\d{4})Q([1-4])", p)
+    if m:
+        return m.group(1) if unit == "year" else p
+    m = re.fullmatch(r"(?:FY)?(\d{4})", p)
+    if m and unit == "year":
+        return m.group(1)
+    return None
+
+
+def _period_gaps_apply(a) -> bool:
+    return a.kind == "series" or (a.kind == "fact" and bool(a.metric) and not getattr(a, "proxy", False))
+
+
+def period_gaps(m: EvidenceMatrix, as_of, source) -> list[dict]:
+    """A gap naming the asked periods a holding cell does not cover (series aspects and registered-
+    metric fact aspects; never recency, comparison or proxy aspects; research excluded)."""
+    asked = asked_periods(m.question, as_of)
+    if not asked:
+        return []
+    unit, periods = asked
+    out = []
+    for a in m.aspects:
+        if not _period_gaps_apply(a):
+            continue
+        for c in m.cells.values():
+            if c.aspect_id != a.id or c.role == "research" or not holds(c):
+                continue
+            covered = {_covers(i.period, unit) for i in c.counting_items}
+            if c.label == "derived" and c.derivation:
+                covered.add(_covers(c.derivation.get("period", ""), unit))
+            missing = [p for p in periods if p not in covered]
+            if not missing:
+                continue
+            if len(missing) == len(periods):
+                what = PERIOD_GAP_ALL.format(firm=row_name(c), aspect=_aspect_text(a),
+                                             span=f"{periods[0]}-{periods[-1]}")
+            else:
+                what = PERIOD_GAP.format(firm=row_name(c), aspect=_aspect_text(a), periods=", ".join(missing))
+            out.append({"id": c.id, "what": what, "suggested_source": source(c.entity), "label": "period_gap",
+                        "periods": missing})
+    return out
+
+
+def build_gaps(m: EvidenceMatrix, sources=None, as_of=None) -> None:
     """Code-built gaps (#247 places them): one per cell that does not hold its quantity, and the
-    'does not support' gap per aspect no row holds; comparison and proxy aspects get none."""
+    'does not support' gap per aspect no row holds; comparison and proxy aspects get none. #247 B4:
+    plus a gap naming the asked periods (last N quarters / years) a holding cell does not cover."""
     from cee.answer.validate import suggested_sources
     sources = sources or suggested_sources
     memo: dict[str, str] = {}
@@ -452,6 +576,7 @@ def build_gaps(m: EvidenceMatrix, sources=None) -> None:
             firms = ", ".join(dict.fromkeys(row_name(c) for c in cells))
             m.gaps.append({"id": a.id, "what": NOT_SUPPORTED.format(aspect=_aspect_text(a), firms=firms),
                            "suggested_source": "", "label": "not_supported"})
+    m.gaps += period_gaps(m, as_of, source)
 
 
 def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
@@ -469,11 +594,11 @@ def build_caveats(m: EvidenceMatrix, query=None, hits=None) -> None:
     m.caveats += [c for c in probe.caveats if c not in m.caveats]
 
 
-def finish(m: EvidenceMatrix, query=None, hits=None, sources=None) -> EvidenceMatrix:
+def finish(m: EvidenceMatrix, query=None, hits=None, sources=None, as_of=None) -> EvidenceMatrix:
     """Run every code rule on a filled matrix, in order."""
     derive(m)
     mark_comparability(m)
     decide_behavior(m)
-    build_gaps(m, sources)
+    build_gaps(m, sources, as_of)
     build_caveats(m, query, hits)
     return m

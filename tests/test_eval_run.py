@@ -1241,6 +1241,67 @@ def test_map_failed_call_is_saved_counted_and_never_called_again(monkeypatch, tm
     assert len(calls) == 5 and again.made == 0 and m2.cells["a1.SCHW"].label == "failed"   # reused, not re-called
 
 
+def test_a_400_in_round_1_stops_before_round_2_via_allow(monkeypatch, tmp_path):
+    """#247 (PR #256 review note 1): after a 400 the round's other calls finish and are saved, the
+    corrective re-search may run (database only), but no round-2 call is made."""
+    from cee.answer import extract
+    from cee.retrieve import planner
+    from cee.retrieve.fts import Hit
+
+    def behave(spec, meta):
+        if spec.id == "map.SCHW":
+            raise _BadRequest("schema rejected")
+        raw = extract.mock_extract(spec)
+        if spec.id == "map.MS":   # a not_found cell, so the corrective re-search runs for it
+            for c in raw["cells"]:
+                c["label"], c["items"] = "not_found", []
+        return raw
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    monkeypatch.setattr(extract.fts, "budget_tokens", lambda q: 40000)
+    monkeypatch.setattr(extract.fts, "searchable", lambda q: True)
+    new = Hit(chunk_id="MS#9", doc_id="MS", entity_id="MS", segment=None, doc_type="10-K", source_tier=2,
+              published_at="2026-02-01", period_end="2025-12-31", section=None, page=None, rank=1.0,
+              text="MS reports 15,000 advisors.", part_id="a1.MS")
+    monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [new])
+    r = er.RealRunner("deepseek", 20, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    m = r.map(qd, qry, plan, hits)
+    assert sorted(calls) == ["map.EDJ", "map.MER", "map.MS", "map.RJF", "map.SCHW"]   # round 1 finished
+    assert r.bad_request and r.map_stopped == ["remap.MS"] and "remap.MS" not in calls
+    remap = [c for c in m.calls if c["id"] == "remap.MS"][0]
+    assert remap["skipped"] and remap["error"] == "not run: the run stopped after a 400"
+    rec = [s for s in saved(tmp_path / "cache") if s.get("bad_request")]
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW"
+    assert m.corrective and m.corrective[0].origin == "corrective"   # B1: tagged, kept on the matrix
+
+
+def test_planner_recheck_records_trailing_brace_flags(monkeypatch, tmp_path):
+    """#247 (PR #256 review note 2): a saved plan re-parsed with stray closing braces is flagged."""
+    import json as _json
+
+    from cee import ask
+    from cee.retrieve import fts as _fts
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(_fts, "searchable", lambda q: True)
+    monkeypatch.setattr(_fts, "budget_tokens", lambda q: 40000)
+    calls = _planner_calls(monkeypatch, pytest.fail)
+    qd = {"id": "Q7", "text": Q7_TEXT}
+    qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
+    runner = er.RealRunner("deepseek", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    from dataclasses import asdict
+    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.request_version)
+    raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": [], "metric": "",
+                        "kind": "fact", "proxy": False}]}
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / f"Q7-plan-{key}.json").write_text(_json.dumps({
+        "invalid": True, "error": "planner arguments are not a JSON object: Extra data",
+        "raw_payload": _json.dumps(raw) + "}"}), encoding="utf-8")
+    plan = runner.plan(qd, qry)
+    assert plan.source != "fallback" and runner.last_plan_flags == ["trailing_braces", "rechecked"]
+    assert "trailing_braces" in runner.last_plan_origin and calls == []
+
+
 def test_map_invalid_output_saved_as_invalid_and_reused(monkeypatch, tmp_path):
     from cee.answer import llm
 
