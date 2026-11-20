@@ -158,6 +158,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-20 | #245: sub-question decomposition landed (plan-v3 aspects, firms x aspects with per-aspect firm subsets, SUBQUESTION_TOKENS=40000, competitors as real entities, re-search hook, temporary input guard, DeepSeek thinking-on planner cap 64000); mock 30/30 unchanged, 10 DeepSeek planner calls ~1.00 CNY, Q19 7 aspects x 5 firms (#255) | real plans retrieve must-not chunks on Q11/Q22/Q24 (for #246) | #246 map step |
 | 2026-11-20 | #243 DeepSeek baseline (today's pipeline, deepseek-v4-pro thinking on): 15/30 like-for-like (tier 1 10/18; blind first read 16/30) vs Claude #217 24/30 (14/18); 54 calls + 6 reused from #242, $2.46 new spend (#257) | none | #245 pipeline redesign judged against this baseline (#250) |
 | 2026-11-20 | #246 map step: per-firm extraction (extract-v1, plan-v3.1 proxy), CRAG re-search, evidence matrix, behavior and comparability by code; MAP off until #247; 33 real calls; Q11/Q19/Q23/Q24/Q26 as expected (Q24 after the TL's stray-brace parser rule, 0-call re-check) (#256) | none | #247 reduce step |
+| 2026-11-20 | #247 reduce step: prompt v5 over the evidence matrix, code-checked, wired into ask, the app and the eval; MAP on by default; real check 5/8 blind (Q3, Q19, Q26 newly PASS; Q1, Q22 kept) (#260) | Q11, Q23, Q24 still FAIL on series coverage and derivation scope | follow-up findings (0247-reduce-check.md section 4); #248 |
 
 ## Weekly score (from W6)
 
