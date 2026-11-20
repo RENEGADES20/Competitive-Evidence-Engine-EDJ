@@ -331,3 +331,64 @@ def test_widen_words_adds_definition_phrases_and_adjacent_quarters():
     win = Query(question="q", entities=["RJF"], window=(dt.date(2026, 8, 19), dt.date(2026, 11, 17)))
     sq2 = SubQuestion("a1.RJF", "RJF", Aspect("a1", "What is new.", kind="recency"), "named")
     assert extract.widen_words(win, sq2) == "second quarter 2026 2Q26 fourth quarter 2026 4Q26"
+
+
+# --- #246 TL decision (Q24): stray closing braces after a complete JSON object -------------------
+
+def test_loads_object_accepts_stray_closing_braces_and_flags_them():
+    flags = []
+    assert llm.loads_object('{"cells": [1]}}', flags) == {"cells": [1]} and flags == ["trailing_braces"]
+    flags = []
+    assert llm.loads_object('{"a": 1}\n ]} ', flags) == {"a": 1} and flags == ["trailing_braces"]
+
+
+@pytest.mark.parametrize("text", ['{"a": 1} extra', '{"a": 1}{"b": 2}', '{"a": 1},', '[1, 2]', 'not json', '{"a": '])
+def test_loads_object_rejects_other_trailing_text_and_non_objects(text):
+    with pytest.raises(ValueError):
+        llm.loads_object(text, [])
+
+
+def test_loads_object_unchanged_without_trailing_text():
+    flags = []
+    assert llm.loads_object('  {"a": [1, {"b": "}"}]}  ', flags) == {"a": [1, {"b": "}"}]} and flags == []
+
+
+def test_map_output_with_stray_brace_is_accepted_flagged_and_still_checked():
+    spec, _, _ = spec_edj()
+    bad_id = {"cells": [cell_out("a1.EDJ", chunk_ids=("INVENTED#1",)), cell_out("a2.EDJ", "not_disclosed")]}
+    client = FakeDeepSeek(response([tool_call(extract.EXTRACT_TOOL, json.dumps(bad_id) + "}")]))
+    meta = {}
+    raw = extract.call_extract(Q.question, spec, "deepseek", client=client, meta=meta)
+    assert meta["parse_flags"] == ["trailing_braces"]
+    cells = extract.parse_output(raw, spec, {h.chunk_id: h for h in spec.hits})
+    assert cells[0].items[0].rejected_ids == ["INVENTED#1"] and cells[0].effective_label == "not_found"
+    junk = FakeDeepSeek(response([tool_call(extract.EXTRACT_TOOL, json.dumps(OUT) + " trailing words")]))
+    with pytest.raises(llm.ModelOutputError, match="not a JSON object"):
+        extract.call_extract(Q.question, spec, "deepseek", client=junk)
+    schema_bad = FakeDeepSeek(response([tool_call(extract.EXTRACT_TOOL, '{"cells": []}}')]))
+    with pytest.raises(llm.ModelOutputError, match="no cells"):
+        extract.call_extract(Q.question, spec, "deepseek", client=schema_bad)
+
+
+def test_saved_invalid_record_is_rechecked_at_zero_calls():
+    good = {"invalid": True, "error": "Map arguments are not a JSON object: Extra data: line 1 column 9",
+            "raw_payload": json.dumps(OUT) + "}"}
+    r = extract.recheck_invalid(good, "deepseek")
+    assert r.raw == OUT and r.flags == ["trailing_braces", "rechecked"] and r.cached
+    assert extract.recheck_invalid({**good, "raw_payload": json.dumps(OUT) + " x"}, "deepseek") is None
+    assert extract.recheck_invalid({**good, "error": "Map output cut at max_tokens"}, "deepseek") is None
+    assert extract.recheck_invalid({**good, "failed_call": True}, "deepseek") is None
+
+
+def test_answer_and_planner_paths_use_the_same_rule(monkeypatch):
+    from tests.test_llm_deepseek import OUTPUT
+    from tests.test_validate import hit as vhit
+    a = llm._deepseek("q?", [vhit()], client=FakeDeepSeek(response([tool_call(llm.TOOL_NAME, json.dumps(OUTPUT) + "}")])))
+    assert a.usage["parse_flags"] == ["trailing_braces"]
+    with pytest.raises(llm.ModelOutputError):
+        llm._deepseek("q?", [vhit()], client=FakeDeepSeek(response([tool_call(llm.TOOL_NAME, json.dumps(OUTPUT) + "x")])))
+    plan = {"aspects": [{"id": "a", "text": "t", "keyword_query": "w", "firms": [], "metric": "", "kind": "fact",
+                         "proxy": False}]}
+    meta = {}
+    out = planner.call_planner(Q, "deepseek", FakeDeepSeek(response([tool_call(planner.PLAN_TOOL, json.dumps(plan) + "}}")])), meta)
+    assert out == plan and meta["parse_flags"] == ["trailing_braces"]

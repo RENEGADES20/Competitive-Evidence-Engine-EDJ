@@ -383,12 +383,36 @@ def deepseek_tool_call(resp, name: str):
     return call, stop, usage, _jsonable(msg)
 
 
-def deepseek_arguments(call) -> dict:
-    """The call's arguments parsed; ValueError when not a JSON object (DeepSeek may send bad JSON)."""
-    args = json.loads(call.function.arguments)
-    if not isinstance(args, dict):
-        raise ValueError(f"arguments are a JSON {type(args).__name__}, not an object")
-    return args
+TRAILING_BRACES = "trailing_braces"
+_STRAY = set(" \t\r\n}]")
+
+
+def loads_object(text, flags: list | None = None) -> dict:
+    """A model's JSON object (tool arguments or structured content). TL decision on #246 (Q24): a
+    known DeepSeek strict-mode glitch returns a complete JSON object followed by stray closing braces;
+    the first complete object is taken (json.JSONDecoder().raw_decode) only when everything after it
+    is whitespace and `}` / `]`, and `trailing_braces` is appended to `flags`. Any other trailing text,
+    a non-object or text that is not JSON raises ValueError. The object still goes through every
+    schema and code check."""
+    if not isinstance(text, str):
+        raise TypeError(f"arguments are {type(text).__name__}, not text")
+    s = text.lstrip()
+    obj, end = json.JSONDecoder().raw_decode(s)
+    rest = s[end:]
+    if rest.strip():
+        if not set(rest) <= _STRAY:
+            raise ValueError(f"Extra data after the JSON object: {rest.strip()[:40]!r}")
+        if flags is not None and TRAILING_BRACES not in flags:
+            flags.append(TRAILING_BRACES)
+    if not isinstance(obj, dict):
+        raise ValueError(f"arguments are a JSON {type(obj).__name__}, not an object")
+    return obj
+
+
+def deepseek_arguments(call, flags: list | None = None) -> dict:
+    """The call's arguments parsed (loads_object); ValueError when not a JSON object (DeepSeek may
+    send bad JSON); stray closing braces after a complete object are accepted and flagged."""
+    return loads_object(call.function.arguments, flags)
 
 
 def _deepseek(question: str, hits: list[Hit], client=None, plan=None, window=None) -> Answer:
@@ -408,10 +432,13 @@ def _deepseek(question: str, hits: list[Hit], client=None, plan=None, window=Non
         raise ModelOutputError(f"Model did not call {TOOL_NAME} (finish_reason={stop or '?'})",
                                payload, "deepseek", stop, usage)
     text = call.function.arguments
+    flags: list = []
     try:
-        raw = deepseek_arguments(call)
+        raw = deepseek_arguments(call, flags)
     except (TypeError, ValueError) as e:
         raise ModelOutputError(f"Model arguments are not a JSON object: {e}", text, "deepseek", stop, usage) from e
+    if flags:
+        usage = {**usage, "parse_flags": flags}
     try:
         answer = Answer(**raw, llm_called=True)
     except (ValueError, TypeError) as e:
@@ -472,9 +499,12 @@ def _openai(question: str, hits: list[Hit], client=None, plan=None, window=None)
     if stop in CUT_REASONS:   # #230
         raise ModelOutputError(f"Model output cut at max_tokens ({usage['output_tokens']} output tokens)",
                                content, "openai", stop, usage)
+    flags: list = []
     try:
-        answer = Answer(**json.loads(content), llm_called=True)
+        answer = Answer(**loads_object(content, flags), llm_called=True)
     except (ValueError, TypeError) as e:  # None, not JSON, not an object, or not a valid Answer
         raise ModelOutputError(f"Model output is not a valid Answer: {e}", content, "openai", stop, usage) from e
+    if flags:
+        usage = {**usage, "parse_flags": flags}
     answer.stop_reason, answer.usage = stop or "", usage
     return check_output(answer, content, "openai")

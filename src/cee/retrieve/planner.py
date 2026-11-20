@@ -22,7 +22,6 @@ exclude set, every filter kept.
 """
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field, replace
 from functools import lru_cache
 
@@ -484,10 +483,14 @@ def call_planner(q: Query, provider: str, client=None, meta: dict | None = None)
         meta["usage"] = llm._usage(resp, "prompt_tokens", "completion_tokens")
         if stop in llm.CUT_REASONS:   # #242: a cut plan is never trusted, even when it parses
             raise PlannerOutputError("planner output cut at max_tokens", content, stop)
+        flags: list = []
         try:
-            return json.loads(content)
+            out = llm.loads_object(content, flags)   # #246: stray closing braces accepted, flagged
         except (TypeError, ValueError) as e:
             raise PlannerOutputError(f"planner output is not JSON: {e}", content) from e
+        if flags:
+            meta["parse_flags"] = flags
+        return out
     if provider == "deepseek":   # #242: same checks and order as llm._deepseek
         client = client or llm.deepseek_client()
         resp = llm.deepseek_create(client, deepseek_plan_request(q))
@@ -501,11 +504,15 @@ def call_planner(q: Query, provider: str, client=None, meta: dict | None = None)
             raise PlannerOutputError(f"planner output stopped by finish_reason {stop}", payload, stop)
         if call is None:
             raise PlannerOutputError(f"planner did not call {PLAN_TOOL} (finish_reason={stop})", payload, stop)
+        flags: list = []
         try:
-            return llm.deepseek_arguments(call)
+            out = llm.deepseek_arguments(call, flags)   # #246: stray closing braces accepted, flagged
         except (TypeError, ValueError) as e:
             raise PlannerOutputError(f"planner arguments are not a JSON object: {e}",
                                      call.function.arguments, stop) from e
+        if flags:
+            meta["parse_flags"] = flags
+        return out
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 

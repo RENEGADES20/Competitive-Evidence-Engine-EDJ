@@ -572,7 +572,15 @@ class RealRunner:
             self.last_plan_origin = (f"cached: {path.name} ({saved.get('planner_version')}, request_version "
                                      f"{saved.get('request_version')}, made {saved.get('at')}); no new planner call")
             if saved.get("invalid"):
-                return planner.from_output(query, saved.get("raw_payload"), self.provider, error=saved["error"])
+                payload = saved.get("raw_payload")
+                if isinstance(payload, str) and str(saved.get("error", "")).startswith(
+                        ("planner arguments are not a JSON object", "planner output is not JSON")):
+                    from cee.answer.llm import loads_object
+                    try:   # #246 TL decision: stray closing braces after a complete object (0 calls)
+                        return planner.from_output(query, loads_object(payload), self.provider)
+                    except (TypeError, ValueError):
+                        pass
+                return planner.from_output(query, payload, self.provider, error=saved["error"])
             return planner.from_output(query, saved["raw"], self.provider)
         if self.calls >= self.max_calls:
             return None
@@ -608,7 +616,8 @@ class RealRunner:
                 raise SystemExit(f"stopped: planner request rejected with 400 ({err})") from e
             return planner.from_output(query, None, self.provider, error=err)
         self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"),
-                          **timing(t0, call.get("usage")), **self._reasoning(call), "raw": raw})
+                          **timing(t0, call.get("usage")), **self._reasoning(call),
+                          **({"parse_flags": call["parse_flags"]} if call.get("parse_flags") else {}), "raw": raw})
         return planner.from_output(query, raw, self.provider)
 
     def map(self, q: dict, query, plan, hits, as_of=None):
@@ -648,6 +657,9 @@ class RealRunner:
                     self.reused += 1
                 self._copy(path)
                 if saved.get("invalid"):
+                    again = extract.recheck_invalid(saved, self.provider)   # #246 TL: stray closing braces
+                    if again is not None:
+                        return again
                     return CallResult(invalid=not saved.get("failed_call"), failed_call=bool(saved.get("failed_call")),
                                       error=saved.get("error"), stop_reason=saved.get("stop_reason"),
                                       usage=saved.get("usage"), cached=True)
@@ -656,7 +668,7 @@ class RealRunner:
                 except llm.ModelOutputError as e:
                     return CallResult(invalid=True, error=str(e), cached=True)
                 return CallResult(raw=saved["raw"], stop_reason=saved.get("stop_reason"), usage=saved.get("usage"),
-                                  cached=True)
+                                  cached=True, flags=list(saved.get("parse_flags") or []))
             with self.lock:
                 self.made += 1
             meta = {"question_id": q["id"], "question": q["text"], "extract_version": extract.EXTRACT_VERSION,
@@ -684,9 +696,11 @@ class RealRunner:
                 if bad:
                     self.bad_request = err
                 return CallResult(failed_call=True, error=err, bad_request=bad)
+            flags = list(got.get("parse_flags") or [])
             self._save(path, {**meta, "stop_reason": got.get("stop_reason"), "usage": got.get("usage"),
-                              **timing(t0, got.get("usage")), **self._reasoning(got), "raw": raw})
-            return CallResult(raw=raw, stop_reason=got.get("stop_reason"), usage=got.get("usage"))
+                              **timing(t0, got.get("usage")), **self._reasoning(got),
+                              **({"parse_flags": flags} if flags else {}), "raw": raw})
+            return CallResult(raw=raw, stop_reason=got.get("stop_reason"), usage=got.get("usage"), flags=flags)
 
         try:
             return extract.run_map(query, plan, hits, self.provider, call=call, as_of=as_of, allow=allow)
@@ -843,7 +857,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
             lines.append(f"- Map: behavior by code {r['map_behavior'] or 'undecided'} (effective expected "
                          f"{r.get('expected_behavior_effective')}); {r['map_calls']} map + {r['remap_calls']} "
                          f"re-extraction calls; labels {m['counts']['labels']}; {len(m['research'])} re-searched"
-                         + (f"; capped: {', '.join(r['map_capped_calls'])}" if r.get("map_capped_calls") else ""))
+                         + (f"; capped: {', '.join(r['map_capped_calls'])}" if r.get("map_capped_calls") else "")
+                         + (f"; parse flags: {r['map_call_flags']}" if r.get("map_call_flags") else ""))
             lines += [f"  - {g}" for g in m["grid"]]
             for hit in r.get("map_must_not") or []:
                 lines.append(f"  - must-not `{hit['chunk_id']}` in {hit['cell']} ({hit['label']}, {hit['via']})"
@@ -968,7 +983,8 @@ def main(argv: list[str] | None = None) -> int:
                   "expected_behavior_effective": supersede.get(q["id"], q.get("expected_behavior")),
                   "map_calls": sum(c["round"] == 1 for c in made), "remap_calls": sum(c["round"] == 2 for c in made),
                   "map_must_not": map_must_not(matrix, key_for(q, keys)), "map_research": matrix.research,
-                  "map_capped_calls": list(real.map_capped) if real else []}
+                  "map_capped_calls": list(real.map_capped) if real else [],
+                  "map_call_flags": {c["id"]: c["flags"] for c in matrix.calls if c.get("flags")}}
             r["llm_calls"] |= {"map": r["map_calls"], "remap": r["remap_calls"]}
             if real and real.bad_request:   # a 400: every planned call would fail the same way
                 records.append(r)

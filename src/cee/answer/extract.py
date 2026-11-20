@@ -383,10 +383,13 @@ def call_extract(question: str, spec: MapSpec, provider: str, window=None, firms
         if stop in llm.CUT_REASONS:
             raise llm.ModelOutputError(f"Map output cut at max_tokens ({usage['output_tokens']} output tokens)",
                                        content, provider, stop, usage)
+        flags: list = []
         try:
-            raw = json.loads(content)
+            raw = llm.loads_object(content, flags)
         except (TypeError, ValueError) as e:
             raise llm.ModelOutputError(f"Map output is not JSON: {e}", content, provider, stop, usage) from e
+        if flags:
+            meta["parse_flags"] = flags
     elif provider == "deepseek":
         client = client or llm.deepseek_client()
         resp = llm.deepseek_create(client, deepseek_extract_request(question, spec, window, firms))
@@ -402,11 +405,14 @@ def call_extract(question: str, spec: MapSpec, provider: str, window=None, firms
         if call is None:
             raise llm.ModelOutputError(f"Model did not call {EXTRACT_TOOL} (finish_reason={stop or '?'})",
                                        payload, provider, stop, usage)
+        flags: list = []
         try:
-            raw = llm.deepseek_arguments(call)
+            raw = llm.deepseek_arguments(call, flags)   # #246 TL: stray closing braces accepted, flagged
         except (TypeError, ValueError) as e:
             raise llm.ModelOutputError(f"Map arguments are not a JSON object: {e}", call.function.arguments,
                                        provider, stop, usage) from e
+        if flags:
+            meta["parse_flags"] = flags
     else:
         raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
     validate_output(raw, provider, meta.get("stop_reason"), meta.get("usage"))
@@ -580,6 +586,7 @@ class CallResult:
     wall_s: float | None = None
     cached: bool = False
     bad_request: bool = False
+    flags: list = field(default_factory=list)   # e.g. trailing_braces (#246 TL decision on Q24)
 
 
 CallFn = Callable[[MapSpec, str, object, list], CallResult]
@@ -607,9 +614,31 @@ def provider_call(provider: str) -> CallFn:
                               bad_request=getattr(e, "status_code", None) == 400,
                               wall_s=round(time.monotonic() - t0, 2))
         return CallResult(raw=raw, stop_reason=meta.get("stop_reason"), usage=meta.get("usage"),
-                          wall_s=round(time.monotonic() - t0, 2))
+                          wall_s=round(time.monotonic() - t0, 2), flags=list(meta.get("parse_flags") or []))
 
     return call
+
+
+ARGUMENT_ERRORS = ("Map arguments are not a JSON object", "Map output is not JSON")
+
+
+def recheck_invalid(saved: dict, provider: str) -> CallResult | None:
+    """#246 TL decision (Q24): a saved invalid map record whose arguments failed only to parse is
+    parsed again with llm.loads_object (0 calls). A complete object followed only by stray closing
+    braces is accepted with the flags trailing_braces and rechecked, then validated like any output;
+    anything else stays invalid (None)."""
+    from cee.answer import llm
+    payload, error = saved.get("raw_payload"), str(saved.get("error") or "")
+    if saved.get("failed_call") or not isinstance(payload, str) or not error.startswith(ARGUMENT_ERRORS):
+        return None
+    flags: list = []
+    try:
+        raw = llm.loads_object(payload, flags)
+        validate_output(raw, provider)
+    except (TypeError, ValueError, llm.ModelOutputError):
+        return None
+    return CallResult(raw=raw, stop_reason=saved.get("stop_reason"), usage=saved.get("usage"), cached=True,
+                      flags=[*flags, "rechecked"])
 
 
 def input_limit(provider: str) -> int | None:
@@ -661,7 +690,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str) -> dict:
             "model": "mock" if provider == "mock" else model_for(provider), "version": EXTRACT_VERSION,
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
-            "bad_request": r.bad_request}
+            "bad_request": r.bad_request, "flags": list(r.flags)}
 
 
 def _cells_of(spec: MapSpec, r: CallResult, by_id: dict[str, Hit], source: str) -> list[Cell]:
