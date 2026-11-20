@@ -40,6 +40,31 @@ supplements 4Q2020, Merrill / Bank of America's supplements 4Q2023). (2) Q23 ret
   rule stated in the spec; `pool43.txt` / `pin_sim.txt` saved in `ev247d\diag\`; the MS note read next to the MS
   span caveat in the final Q23.
 
+## Plan review round 2 (issuecomment-7047506049): APPROVED at 95a704f; non-blocking 1-6 adopted (TL), written in before any code
+1. The `series_pins` rule text (registry header, `specs/filings.md`, section 2) says **tier 1-3** and **the count's own
+   date** (not a page header, capture, retrieval or publication date): tier-4 `RJF-TRADE-2026-11-05-IN-01#0` holds
+   "8,943 advisors" with a header date and must not qualify.
+2. The scan regex adds `representatives|adviser` (`series_pins_scan.sql`); re-run: 120 rows (was 82), still only
+   #43 qualifies. The Form ADV Part 1A chunks (`*-ADV1A-2026#1`, Item 5 employee counts) now match; they count
+   employees, not the metric, and are already pinned (MS / BAC `see_also`, the SCHW definition chunk).
+3. A reason per row (`ev247d\diag\series_pins_scan_reasons.tsv`, from the full chunk text,
+   `series_pins_scan_full.txt`): 1 qualifies, 4 counts without their own date, 5 counts of another population
+   (BAC #76, #34, #77; `MER-PR-web-becoming-a-merrill-lynch-advisor#1` "2,112 advisors named to Forbes 2025
+   Best-in-State" = ranked advisors, reclassified from "no advisor count"; `RJF-PR-web-bank-and-credit-union-advisors#0`
+   940 FID advisors with a page-capture date), 3 Form ADV Item 5 employee counts, 3 Form ADV headers, 104 no
+   advisor count. The results doc carries the table.
+4. Item 9 tests assert "read" directly: a later same-type document present only in `m.pools` (not in `m.hits`), and
+   one only under a non-M sub-question of the firm, is not listed; with no other later document, no note.
+5. **Unit filter**: the latest count and the "no count found since" check read only items that count the metric:
+   unit matching `advis|representative` and not an employee count (unit starting with "employees"); USD, client
+   assets and employee items never move the latest count nor block the note. Tests: a dated USD item and a dated
+   "employees" item do not move the latest count; a USD item in a later document does not suppress the note.
+   (Units in the replayed headcount cells: "Wealth Management representatives", "wealth advisors", "total wealth
+   advisors", "financial advisors", "employee financial advisors", "independent advisors", "advisors"; RJF Q26 a7
+   also "USD", "client assets".)
+6. The DB date pattern accepts a month abbreviation with its dot ("Mar. 31, 2025"), full month names, ISO dates and
+   quarter labels ("3Q25", "2025Q1").
+
 ## 0-call diagnosis (done for this plan; scripts and output in `D:\ALLPROJECTS\EDJ\cache\ev247d\diag\`)
 - **Item 10, why Q23 misses #43** (`pool43.py` -> `pool43.txt`; `pin_sim.py` -> `pin_sim.txt`; retrieval only, the committed Q23 / Q11 / Q24 plan records,
   `--as-of 2026-11-17`): #43 **is in Q23's a1.RJF candidate pool** (190 ids) but **lost in `select()`**: the
@@ -126,9 +151,9 @@ supplements 4Q2020, Merrill / Bank of America's supplements 4Q2023). (2) Q23 ret
 **Design**:
 - Registry (`config/metric_definitions.yaml`): a new optional field on a definition entry, `series_pins`.
   **Curation rule** (review blocking 1; the same text in the registry header and `specs/filings.md`): a
-  `series_pins` id is a chunk of the firm's document with `period_end` NULL that states a count of the metric,
-  on the entry's population, together with its date in the chunk text, and that the per-period pass therefore
-  cannot reach. Pinned only for `series` aspects of that metric. The field is filled by the corpus scan below,
+  `series_pins` id is a chunk of the firm's tier 1-3 document with `period_end` NULL that states a count of the
+  metric, on the entry's population, together with the count's own date in the chunk text (not a page header,
+  capture, retrieval or publication date), and that the per-period pass therefore cannot reach (round 2 nb 1). Pinned only for `series` aspects of that metric. The field is filled by the corpus scan below,
   rerun when a document with `period_end` NULL is ingested, not by the chunk one question missed. RJF `advisor_headcount`:
   `series_pins: [RJF-DECK-2025-investor-day#43]` (the slide's own words: "Mar. 31, 2025** ... FINANCIAL ADVISORS
   ... 8,011 8,787 8,731"; its FY2024 8,787 equals `RJF-10K-2025#227`'s 2024-09-30 total, so it is the same
@@ -141,11 +166,12 @@ supplements 4Q2020, Merrill / Bank of America's supplements 4Q2023). (2) Q23 ret
   FROM chunks c JOIN documents d USING (doc_id)
   WHERE d.period_end IS NULL AND d.source_tier BETWEEN 1 AND 3
     AND d.entity_id IN ('MS','SCHW','EDJ','MER','BAC','RJF') AND d.doc_type <> 'transcript'
-    AND c.text ~* '(financial|wealth)\s+advis|advisors'
+    AND c.text ~* '(financial|wealth)\s+advis|advisors|representatives|adviser'
     AND c.text ~ '\d[\d,]{2,}|\d+\s*K\y'
   ORDER BY c.chunk_id;
   ```
-  82 rows, each read. **Only `RJF-DECK-2025-investor-day#43` qualifies** (advisor count 8,731 with "Mar. 31,
+  82 rows at round 1; 120 rows with `representatives|adviser` (round 2 nb 2), each with a reason in
+  `series_pins_scan_reasons.tsv` (round 2 nb 3). **Only `RJF-DECK-2025-investor-day#43` qualifies** (advisor count 8,731 with "Mar. 31,
   2025" in the chunk). Not qualifying:
   - `RJF-DECK-2025-investor-day#30` ("8,731 PCG advisors") and `#126` ("approximately 9,000 employee and
     independent financial advisors"): no date in the chunk.
@@ -157,8 +183,11 @@ supplements 4Q2020, Merrill / Bank of America's supplements 4Q2023). (2) Q23 ret
   - `BAC-DECK-2025-investor-day#18`, `#50`, `#64`, `#68`; `RJF-DECK-2025-investor-day#45`, `#93`;
     `SCHW-DECK-2026-investor-day#172`, `#307`; `MER-PR-2026-09-15-01#0`: no advisor count (percentages, assets,
     revenue, rankings, product text).
-  - Form ADV brochures (`*-ADV-2026#*`) and recruiting pages (`*-PR-web-*`): legal, fee or recruiting text, no
-    advisor count.
+  - `MER-PR-web-becoming-a-merrill-lynch-advisor#1` ("2,112 advisors named to Forbes 2025 Best-in-State") and
+    `RJF-PR-web-bank-and-credit-union-advisors#0` (940 FID advisors, page-capture date): other populations.
+  - `*-ADV1A-2026#1`: Form ADV Item 5 employee counts, not the metric, already pinned; `*-ADV1A-2026#0` headers.
+  - Other Form ADV brochure chunks (`*-ADV-2026#*`) and recruiting pages (`*-PR-web-*`): legal, fee or recruiting
+    text, no advisor count (rule numbers, accounts, phone numbers, capture timestamps).
   The scan and its result go into the results doc too.
 - Code (`src/cee/retrieve/planner.py`, `pinned_ids`): after the definition chunk and `see_also`, append the
   entry's `series_pins` when `aspect.kind == "series"`; dedupe; `PIN_MAX = 8` unchanged (RJF: 4 ids). Fetched by
@@ -319,3 +348,6 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
   DB test asserts a date in every pin), blocking 2 (the note scoped to the document type, "found" / "read"),
   non-blocking 1-5. `pool43.txt` and `pin_sim.txt` saved. Amended: Goal, sections 1, 2, 5, Files, Acceptance,
   Risks.
+- 2026-11-20 13:05 - plan review round 2 APPROVED at 95a704f (issuecomment-7047506049); non-blocking 1-6 adopted
+  and written in (section "Plan review round 2"); scan re-run with `representatives|adviser` (120 rows, reasons
+  per row, only #43 qualifies).
