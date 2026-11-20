@@ -11,7 +11,7 @@
 # Fields:
 #   use_case: entity_brief | head_to_head | mechanism | theme_scan | segment_evidence |
 #             benchmark | recency | honest_miss
-#   tier: 1 (by gate 3, W8) | 2 (by gate 4, W11) | 3 (stretch)      counts: 18 / 3 / 9
+#   tier: 1 (by gate 3, W8) | 2 (by gate 4, W11) | 3 (stretch)      counts: 18 / 3 / 14
 #   gate: 3 for tier 1, 4 for tier 2, null for tier 3
 #   expected_sources: patterns ENTITY:doc_type[#segment]; kept as the human-readable intent
 #   expected_doc_ids: concrete doc_ids from data/manifest.csv a good answer uses (tier 1, #56);
@@ -536,3 +536,118 @@ questions:
       accurate the figures are.
 
       Doc IDs (#56): Section that matters: BAC-10K-2025 GWIM. Merrill standalone profit is not disclosed anywhere; adjacent only.
+
+  - id: Q31
+    text: Which of the five publish an advisor attrition or retention rate, and what does each one report?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Answered, not turned into a gap. Every firm that publishes a rate is reported with the figure,
+      its period and the firm's own definition, cited: Edward Jones's annualized advisor attrition,
+      Morgan Stanley's adviser retention rate and Raymond James's "regretted" attrition (a CEO remark
+      on an earnings call). The three definitions differ, so the figures are listed side by side,
+      never ranked or combined. Merrill's year-over-year reduction in advisor attrition is a change,
+      not a rate, and appears only as adjacent; Schwab is named as publishing no advisor rate.
+      Firm-wide employee attrition or retention is a different quantity and appears only as adjacent.
+    evidence: >-
+      EDJ 10-Q attrition % and its footnote definition; MS and RJF earnings-call remarks; BAC
+      investor-day deck (Merrill); MS 10-K human capital table and BAC call (employees, adjacent).
+    expected_sources: ["EDJ:10-Q", "MS:transcript", "RJF:transcript", "BAC:deck#GWIM", "SCHW:10-K"]
+    expected_doc_ids: ["EDJ-10Q-2025Q2", "EDJ-10Q-2025Q3", "MS-TR-2026Q3", "RJF-TR-2024Q4", "BAC-DECK-2025-investor-day"]
+    expected_behavior: answer
+    notes: >-
+      Appended by #244 (ADR-021 rules 1-3): partial disclosure across the asked firms is `answer`
+      with the missing firms named. Corpus check 2026-11-19 on corpus-2026-11-19 (read-only SQL,
+      every entity and THEME; '%attrition%' BAC 12, EDJ 9, MER 1, MS 3, RJF 6, SCHW 2; '%retention
+      rate%' BAC 1, MS 2, SCHW 1, THEME 2; every hit re-read). Holders: EDJ-10Q-2025Q2#66/#67 (6.4%),
+      EDJ-10Q-2025Q3#69/#70 (6.1%, definition in footnote 5), MS-TR-2026Q3#36 (above 99%),
+      RJF-TR-2024Q4#49 (~1% regretted). Adjacent: BAC-DECK-2025-investor-day#34 (Merrill, 26% lower
+      attrition year over year), MS-10K-2025#55 (global voluntary employee attrition 9%),
+      BAC-TR-2025Q2#28 (92% employee retention). BAC-TR-2026Q2#63 ("near historic lows") gives no
+      figure. SCHW hits are client-asset attrition and wealth-transfer retention, not advisors.
+
+  - id: Q32
+    text: What share of each of the five firms' financial advisors can advise clients in a language other than English?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Says the database does not support this today, for every firm, and names a source that would
+      answer it. No estimate, no proxy figure presented as the answer.
+    evidence: Nothing in the corpus; firm recruiting pages or diversity reports might, if acquired.
+    expected_sources: ["MS:press", "SCHW:press", "EDJ:press", "MER:press", "RJF:press"]
+    expected_doc_ids: []
+    expected_behavior: refuse
+    notes: >-
+      Appended by #244 (ADR-021 rule 1c, D1): no firm holds the figure and no related figure exists.
+      Corpus check 2026-11-19 on corpus-2026-11-19 (read-only SQL, every entity and THEME):
+      '%bilingual%', '%multilingual%', '%spanish-speaking%', '%non-english%', '%foreign language%',
+      '%interpreter%' 0; '%other than english%' MER 1, THEME 1 and '%in-language%' SCHW 1 are a
+      Form ADV proxy-voting clause, a translation disclaimer and a plain-language line; '%language%'
+      chunks with a digit are boilerplate or large language models.
+
+  - id: Q33
+    text: What is the average age of the financial advisors at each of the five firms?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Says the database does not support a firm-level advisor age today, for every firm. Then the
+      industry-wide figures on advisor age, labelled as industry surveys and not any firm's advisors,
+      each with its source and date. No firm figure inferred from them.
+    evidence: Industry research on the advisor workforce; no firm discloses advisor age.
+    expected_sources: ["THEME:research"]
+    expected_doc_ids: ["MCK-ADVISOR-SHORTAGE-2025", "KITCES-WELLBEING-2023"]
+    expected_behavior: gap_with_adjacent
+    notes: >-
+      Appended by #244 (ADR-021 rules 1b and 3). Corpus check 2026-11-19 on corpus-2026-11-19
+      (read-only SQL, every entity and THEME): '%average advisor age%', '%age of the average
+      advisor%', '%average age of%financial%' 0; '%median age%' THEME 5; '%average age%' SCHW 3,
+      THEME 2. Adjacent: MCK-ADVISOR-SHORTAGE-2025#7 (advisors on average ten years older than
+      similar professions; ~38% expected to retire), KITCES-WELLBEING-2023#45 (surveyed advisors'
+      median age 50). Schwab's average client age (SCHW-TR-2025Q3#12, SCHW-TR-2025Q4#42,
+      SCHW-DECK-2026-investor-day#87) is a different quantity and must not be used as advisor age.
+
+  - id: Q34
+    text: What user rating does each of the five firms' mobile app have in the app stores?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Says the database does not support app-store ratings today, for every firm. Then the related
+      figure, labelled as different: a third-party satisfaction ranking of Bank of America's banking
+      app, which is neither an app-store rating nor Merrill's own app. No rating inferred from it.
+    evidence: Firm press releases cite third-party app awards; no app-store ratings are stored.
+    expected_sources: ["BAC:press", "MS:press", "SCHW:press", "EDJ:press", "RJF:press"]
+    expected_doc_ids: ["BAC-PR-2026-01-14-01"]
+    expected_behavior: gap_with_adjacent
+    notes: >-
+      Appended by #244 (ADR-021 rules 1b and 3). Corpus check 2026-11-19 on corpus-2026-11-19
+      (read-only SQL, every entity and THEME): '%app rating%', '%app store%', '%google play%',
+      '%star rating%' 0; '%Mobile App Satisfaction%' BAC 6. Adjacent: BAC-PR-2026-01-14-01#9
+      ("No. 1 in Banking Mobile App Satisfaction") with its J.D. Power source in #30.
+
+  - id: Q35
+    text: What rating do employees give each of the five firms on public employer-review websites?
+    use_case: benchmark
+    tier: 3
+    trap: false
+    gate: null
+    passes_if: >-
+      Says the database does not support employer-review ratings today, for every firm. Then the
+      related figure, labelled as different: a firm's own employee engagement survey result, which is
+      an internal survey, not a public review rating.
+    evidence: Firm 10-K human capital sections; no employer-review site data is stored.
+    expected_sources: ["MS:10-K", "BAC:10-K", "SCHW:10-K", "EDJ:10-K", "RJF:10-K"]
+    expected_doc_ids: ["MS-10K-2025"]
+    expected_behavior: gap_with_adjacent
+    notes: >-
+      Appended by #244 (ADR-021 rules 1b and 3). Corpus check 2026-11-19 on corpus-2026-11-19
+      (read-only SQL, every entity and THEME): '%glassdoor%', '%employer review%', '%best places to
+      work%', '%comparably%' 0; '%great place to work%' BAC 2 (no figure). Adjacent: MS-10K-2025#55
+      ("Proud to work at Morgan Stanley 93 %", engagement survey; footnote #56).

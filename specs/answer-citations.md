@@ -1,12 +1,13 @@
 # Spec: Answer and citations
 
 **Owner:** S2
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-002, ADR-003 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-002, ADR-003, ADR-012, ADR-020, ADR-021 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
-Turn retrieved chunks into a cited answer with one LLM call (after at most one question-planner call
-before search, ADR-020: 2 calls per question at most), then check it in code: every
+Turn retrieved chunks into a cited answer with one LLM call (today: after at most one question-planner
+call before search, ADR-020: planner 1 + answer 1; the ADR-021 map-reduce flow, with calls following
+the sub-question decomposition and no fixed number, from #246 / #247), then check it in code: every
 citation resolves, every number appears in a cited chunk, caveats are inserted, gaps are named
 with a source that would fill them, and the answer never crosses into "should".
 
@@ -45,10 +46,13 @@ suggest_sources(query) -> [source]
 
 | Value | Meaning | Questions |
 |---|---|---|
-| `answer` | Normal answer, every claim cited | most, incl. Q4, Q26, Q27 |
+| `answer` | Normal answer, every claim cited. ADR-021 rule 1 (code from #246): any asked firm x aspect holds the asked quantity (or a same-basis derivation of it); every missing cell is a named gap | most, incl. Q4, Q26, Q27, Q31. Q24, Q25, Q28: bank `gap_with_adjacent`, superseded to `answer` (`evals/behavior_supersede.yaml`, ADR-021 rule 8); current code (prompt v4.1) may still choose `gap_with_adjacent` for them |
 | `answer_with_boundary` | Evidence half, then an explicit hand-off of the normative part to the strategist | Q12, Q19 |
-| `gap_with_adjacent` | "Not available / not disclosed" + adjacent data labeled as different + which source would fill it | Q24, Q25, Q28, Q29, Q30 |
-| `refuse` | Nothing in the corpus | none yet |
+| `gap_with_adjacent` | "Not available / not disclosed" + adjacent data labeled as different + which source would fill it. ADR-021 (#246): no firm holds the asked quantity, a different related quantity exists; the answer also says the database does not support the asked quantity today | Q29, Q30, Q33, Q34, Q35 |
+| `refuse` | Nothing in the corpus. ADR-021 (#246): also when no firm holds the asked quantity and no related quantity exists, with the gap "The database does not support this today: ..."; a request for the system's own forecast | Q32 |
+
+**Current code (prompt v4.1), until #246 / #247.** The two paragraphs below describe what runs today.
+ADR-021 rules 1 and 3 (after them) replace them when #246 / #247 land.
 
 Partial or missing disclosure (prompt v3, #204): if the asked quantity is not disclosed for most
 of the firms asked about, the behavior is `gap_with_adjacent` (answerable=false), with what is
@@ -63,6 +67,27 @@ grids, amounts): not disclosed for most firms asked about -> `gap_with_adjacent`
 as claims, each firm's undisclosed specifics as a gap naming the firm. Code does not derive the
 behavior from per-part coverage (plans/0215: a coverage rule would not fire on Q25, would flip with
 the planner's split, and would touch Q11 / Q23, NEXT item 5, which stays open).
+
+**ADR-021 rules 1 and 3 (#246 / #247).** The map extraction call (extract-v1, #246) labels each firm x
+aspect cell `fact`, `not_disclosed`, `not_found` or `different_quantity`; code aggregates the labels:
+any `fact` (or a same-firm, same-basis derivation) -> `answer`, every other cell a named gap, an aspect
+no firm holds gets "The database does not support this today: <aspect> (<firms>)."; no fact but a
+`different_quantity` -> `gap_with_adjacent` (the same "does not support" statement, then the labelled
+adjacent figure); neither -> `refuse`. A forecast request -> `refuse` first; a normative part ->
+`answer_with_boundary` next. A partially covered asked quantity (some firms, quarters or a narrower
+sample) is always a claim; adjacent is only for a different quantity or a wider unit.
+
+## Definitions and comparability (ADR-021 rule 2, #246)
+
+Source: `config/metric_definitions.yaml`. #246 adds per definition `period` (point in time, quarter or
+year), `unit` and `basis` (a key naming the definition; equal keys = the same basis).
+
+| Case | What the answer does |
+|---|---|
+| Within one firm (a ratio, sum, per-advisor value) | Computed only when the inputs share period or date, entity / segment scope and compatible units; the formula and both cited inputs shown; the number check (#247) holds the result to its inputs |
+| Across firms, same `basis`, period and unit | Compared or computed |
+| Across firms, different or unknown basis | Each firm's figure listed with its own definition; code inserts the comparability caveat (Standard wording); never ranked, combined or averaged |
+| Metric not in the file (e.g. client assets) | Within-firm computation allowed with the "definition unverified" mark; never compared across firms |
 
 ## Answer shape (prompt v4, #215; v3 #204)
 
@@ -82,6 +107,8 @@ every claim, adjacent item and gap ("" when none applies).
 | Rule | When | What the answer does |
 |---|---|---|
 | Comparison grid | the question names two or more firms, or "each of" / "across" a set | Dimensions fixed from the question and its parts before reading the evidence (each dimension a part names, or each part when the parts are dimensions); an asked dimension is never dropped because the evidence is thin, none added only because the evidence offers it (v4; v3 also took dimensions from the evidence); the same list for every firm, every firm with a claim or a gap under every dimension (no dimension for one firm only); claims dimension by dimension (all firms for one dimension, then the next), each starting "<Dimension> - <Firm>:", each firm in its own terms; an empty cell is a gap "<Firm> - <dimension>: not found in the evidence provided." with a suggested source; never an inference, an adjacent figure or another firm's fact in a cell; an empty cell is only a gap, never a claim (v4). |
+| Comparison claim (ADR-021 rule 4, prompt v5, #247) | a sub-question of `kind=comparison`, or the question asks whether a comparison holds | One cited claim answers the comparison itself (valid or not, and why), cited to its inputs; code checks it is present. |
+| Why-it-might-matter line (ADR-021 rule 5, prompt v5, #247) | recency items | One line per item stating only what the source says or a checkable fact, cited; never our judgement (ground rule 6). |
 | Positions | where something is heading, the future, the range of views | Claims grouped by position (not by firm or source), each starting with the position, then who holds it and when; every claim attributed; two sources that disagree are reported as disagreeing; no forecast or synthesis of its own. |
 | Parts | always | Every claim, adjacent item and gap carries the `part_id` of the plan part it answers; every part gets at least one cited claim or a gap naming what is missing for it; a part with no passages is a gap; a chunk listed under one part may be cited for another; within a part, what a question of its type needs (e.g. headwinds or risks the firm itself names) is covered (v4; v3 split the question itself). A question setting the home firm against a peer, or asking how it could act, shows the home firm's figures on the same dimension from its own filings. |
 
@@ -179,6 +206,9 @@ as constants. Keep the two in sync. Caveats remain code-owned; this wording does
 |---|---|---|---|
 | Merrill standalone results | Q30 | "Merrill does not report standalone results." | "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's." |
 | Advisor attrition | Q28 | "Neither firm discloses advisor attrition on a comparable basis." | "Net advisor headcount change is not attrition: it nets hires against departures." |
+| Database does not support it (ADR-021 rule 1, #247) | Q32-Q35; any aspect no firm holds | "The database does not support this today: <aspect> (<firms>)." | - |
+| Comparability caveat (ADR-021 rule 2, code-inserted, #246 / #247) | Q11, Q22, Q23, Q24, Q31 | Caveat: "<Metric>: the firms define it differently (<firm>: <definition>; ...); figures are listed side by side and not compared or combined (reporting risk)." | - |
+| Unregistered metric (ADR-021 rule 2, #246 / #247) | Q24 (client assets) | Mark: "<Metric> is not in the metric definitions file; its definition is unverified." | - |
 | Advisor pay (decided per firm, prompt v2, #167; v3 #204) | Q25, Q29 | Firm with nothing published: "Payout grids are not public." (multi-firm answers name the firm first). Firm whose cited chunks publish payout ranges (RJF recruiting pages, #151): the ranges are claims dated "page content as of <date>", and the gap is "Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public." (multi-firm answers name the firm first, v3). Never "not public" for a firm whose evidence shows ranges. | "Aggregate compensation expense covers all employees and pay types; it is not the advisor payout grid." Trade press: "Trade-press reporting is indicative, not authoritative." |
 
 Boundary hand-off (`answer_with_boundary`, Q12, Q19): the evidence half first, then this
@@ -201,7 +231,7 @@ sentence as the last claim:
 
 ## Linked questions
 
-Q12, Q19, Q24, Q25, Q28, Q29, Q30 (primary); every question.
+Q12, Q19, Q24, Q25, Q28, Q29, Q30 (primary); Q11, Q23, Q26, Q31-Q35 (ADR-021); every question.
 
 ## Number check
 
@@ -234,6 +264,8 @@ A claim figure matches a chunk figure when either:
 Scale words: thousand, k, million, mn, billion, bn, trillion. Not checked: years 1990-2099,
 quarter and form labels (Q3, 3Q26, 10-K), section labels (Item 11, Note 4), dates (December 31,
 12/31/2025), numbers written as words. Derived figures (sums, ratios, per-advisor values) are not in the chunk and are flagged.
+ADR-021 rule 2 (#247): a computed figure is allowed only with both cited inputs, and the check holds it
+to the result of its inputs instead of flagging it.
 
 Limits: a small figure with one decimal can pass rule 2 with a large relative error ("$0.1
 billion" vs $0.14 billion). The check proves a figure is in the cited text, not that it came from
