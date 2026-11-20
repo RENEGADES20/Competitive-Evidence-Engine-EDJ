@@ -112,6 +112,8 @@ the model's behavior equals the decided one, and no answer was built by code.
 
 ## 3. Blind scoring
 
+verdicts-blind.json sha256 60260442705b938f6eda2b28e40a7052cc44ba29a5bf23933a861e76a12cc6cf (fresh scorer agent, `ev247\verdicts-blind.json`; committed before any comparison).
+
 Pending. Inputs: `D:\ALLPROJECTS\EDJ\cache\ev247\blind-in\`, holding `answers-dump.txt`, `questions.yaml`
 and `verdict-rule.txt`. The rule is #217 / #243's, with Q24's superseded expected behavior noted. The
 scorer prompt is `ev247\scorer-prompt.txt`, and the hashes are in `ev247\blind-in-hashes.txt`.
