@@ -1453,3 +1453,14 @@ def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
     monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
     er.main(["--questions", "Q7", "--legacy", "--out", str(tmp_path / "legacy")])
     assert "reduce" not in _record(tmp_path / "legacy")["questions"][0]
+
+
+def test_plan_key_unchanged_by_the_new_retrieval_only_query_fields():
+    """#247 part 2: plans saved before Query.period_range / exclude_ids keep their cache key."""
+    from dataclasses import asdict
+
+    from cee.retrieve.fts import Query
+    d = asdict(Query(question="x", entities=["EDJ"]))
+    old = {k: v for k, v in d.items() if k not in ("period_range", "exclude_ids")}
+    q = {"id": "Q1", "text": "x"}
+    assert er.plan_cache_key(q, "s", "deepseek", "m", d) == er.plan_cache_key(q, "s", "deepseek", "m", old)

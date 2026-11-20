@@ -385,6 +385,9 @@ def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, query: dic
     from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION, metric_keys
     # PLANNER_MAX_TOKENS is the anthropic / openai cap; the DeepSeek planner cap (by thinking mode,
     # #242) is kept apart through the request version (llm.request_version).
+    # #247 part 2: the retrieval-only Query fields (period_range, exclude_ids) join the key only when
+    # set, so plans saved before them keep their key (they are never set on the question's own query)
+    query = {k: v for k, v in query.items() if not (k in ("period_range", "exclude_ids") and not v)}
     parts = [q["id"], q["text"], PLANNER_VERSION, snapshot, provider, model, PLANNER_MAX_TOKENS,
              list(metric_keys()), query]
     if request:
