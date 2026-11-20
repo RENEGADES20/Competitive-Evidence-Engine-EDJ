@@ -70,8 +70,8 @@ plus `plans/0212-*`, `0240-*`, this plan and `evals/hybrid-eval/`).
   `modes.search(query, mode=, plan=, as_of=)` in place of `search_subquestions`, `map_step` passes
   `search_fn=modes.search_fn(mode)` to `run_map`, `Result.retrieval_mode`, `retrieval_mode` in the log,
   the mode suffix on the search trace line. The plan call stays `main`'s (`plan_question`), mode-free.
-- `src/cee/config.py` - `main`'s version plus `retrieval_mode`. `planner_max_parts` goes if `main`
-  dropped it.
+- `src/cee/config.py` - `main`'s version plus `retrieval_mode`. `planner_max_parts` goes (`main`
+  dropped it with the plan-v3 "no cap" rule, #245).
 - `scripts/eval_run.py` - `main`'s version plus the mode hunks (`--mode`, search timing and warm-up,
   duplicate measure, `--floor`/`--max-per-doc` grid, `run_bank`); search goes through
   `modes.search(query, ..., mode=, plan=, as_of=)`; `RealRunner.map` and the mock `run_map` get
