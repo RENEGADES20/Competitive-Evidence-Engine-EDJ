@@ -157,6 +157,11 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
    - **Pins** (gap 2 end to end): per sub-question, `pinned` and `pins_cut` in fts vs hybrid-norerank.
      Same plan means the same pins, apart from dedup against chunks already kept; any other
      difference is a defect.
+   Floor table details (round 2 notes): per competitor sub-question the hit count before the floor
+   (`passages` + `len(floor_dropped)`) next to the count after it, so "the floor did not fire" is
+   told apart from "different hits"; and the map's corrective re-search hits on competitor
+   sub-questions (`corrective_search` also cuts at `plan.competitor_floor`), fts vs hybrid-norerank,
+   or a line stating that no corrective re-search ran on a competitor sub-question.
    The competitor floor table goes to the TL (TL ruling) before the PR is marked ready; the outcome
    and the TL decision are recorded in the evidence report and as a comment on #250.
 7. **verify-cee** on this branch: search-mode (Smart search) and ask-progress in hybrid-norerank (the 9
@@ -164,7 +169,8 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
 8. **Re-sync check** (blocking 2): `git fetch origin` before opening the PR and again before the merge.
    If `origin/main` has moved past `e15ccf8`, merge it again by the same rule (step 1) and re-run step 1's
    diff and byte-equality checks, step 4 (pytest), step 5 (fts parity) and step 6 (hybrid-norerank mock
-   and its tables) on the new `main` SHA.
+   and its tables) on the new `main` SHA. A re-run step 6 sends the new competitor floor table to the
+   TL again, and the #250 comment cites the final SHA's numbers.
 9. `/finish-task`: PR into `exp/hybrid`, `Closes #249`, `gh pr checks` green. The PR body names the `main`
    SHA the parity was proved against; #250 runs fts on that same `main` SHA, or re-syncs first. The PR
    stays draft until the TL has the competitor floor numbers.
@@ -209,3 +215,6 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
   competitor chunks reaching the map, fts vs hybrid-norerank, for the TL before the PR is ready (TL ruling).
   Blocking 2: re-sync rule added (step 8, acceptance, Risks). Non-blocking 1-5 adopted (trace and gate
   tests, NB9 hunks named, pins table, parity rows kept, ask_page.py named).
+- 2026-11-20 - plan approved at f60fe35 (round 2). Notes adopted before code: a re-run floor table goes to
+  the TL again; the floor table covers corrective re-search competitor hits (or states none ran); counts
+  before and after the floor.
