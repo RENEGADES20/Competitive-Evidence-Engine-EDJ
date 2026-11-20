@@ -176,26 +176,26 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
    stays draft until the TL has the competitor floor numbers.
 
 ## Acceptance
-- [ ] Linked questions Q1-Q30 (bank Q1-Q35 run): fts mock on this branch identical to `main` (chunk
+- [x] Linked questions Q1-Q30 (bank Q1-Q35 run): fts mock on this branch identical to `main` (chunk
       lists, statuses, plans, map behavior, answers) -> 30/30 (35/35).
-- [ ] hybrid-norerank mock runs on all questions with 0 calls; refusal and keyed checks and the
+- [x] hybrid-norerank mock runs on all questions with 0 calls; refusal and keyed checks and the
       per-question differences against fts on the same plans are in the evidence report.
 - [ ] Competitor floor measured at 0 calls: per question, fts vs hybrid-norerank `floor_dropped` /
       `floor_emptied` counts and competitor chunks reaching the map, in the evidence report; numbers
       given to the TL before the PR is marked ready; outcome and TL decision commented on #250.
-- [ ] `pinned` / `pins_cut` per sub-question equal in fts and hybrid-norerank (apart from dedup), in the
+- [x] `pinned` / `pins_cut` per sub-question equal in fts and hybrid-norerank (apart from dedup), in the
       evidence report.
 - [ ] Re-sync: `git fetch` before the PR and before merge; if `origin/main` moved past e15ccf8, re-merged
       and steps 1, 4, 5, 6 re-run on the new SHA; the PR body names the `main` SHA of the parity proof.
-- [ ] Hybrid modes use the shared loop: `test_search_mode.py` shows `search_subquestions` called with
+- [x] Hybrid modes use the shared loop: `test_search_mode.py` shows `search_subquestions` called with
       hybrid `search_fn` / `research_fn` and `pin_fn=fts.fetch_pinned`; `run_map` gets the hybrid
       `search_fn`; `git grep search_parts -- src scripts tests` is empty; no source-hash pin left.
-- [ ] `hybrid.search` honours `on_theme_only` (tests); `period_range` / `exclude_ids` reach both legs (test).
-- [ ] Plans do not depend on the mode: `test_plan_cache_is_shared_by_every_retrieval_mode`,
+- [x] `hybrid.search` honours `on_theme_only` (tests); `period_range` / `exclude_ids` reach both legs (test).
+- [x] Plans do not depend on the mode: `test_plan_cache_is_shared_by_every_retrieval_mode`,
       `test_reuse_plans_with_real_never_calls_the_planner`, `test_reuse_plans_in_a_mock_run_reads_the_saved_plan` pass.
-- [ ] `git diff origin/main --stat` lists only hybrid files; `planner.py`, `fts.py`, `src/cee/answer/` equal `main`.
+- [x] `git diff origin/main --stat` lists only hybrid files; `planner.py`, `fts.py`, `src/cee/answer/` equal `main`.
 - [ ] pytest green (vectors on and off), verify-cee (Smart search, ask-progress) PASS, `gh pr checks` green.
-- [ ] 0 real calls.
+- [x] 0 real calls.
 
 ## Risks
 - **`main` moves after the sync.** #247 part 4 (retrieval and reduce) may merge to `main` after this
@@ -218,3 +218,21 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
 - 2026-11-20 - plan approved at f60fe35 (round 2). Notes adopted before code: a re-run floor table goes to
   the TL again; the floor table covers corrective re-search competitor hits (or states none ran); counts
   before and after the floor.
+- 2026-11-20 - build at 388811e (merge of `origin/main` e15ccf8, fetched first: main unchanged). The
+  merge commit carries the conflict resolution and the seam together (the 8 conflicts could not be
+  resolved without it). `eval_run.py`: main's question loop moved into `run_bank()` (the branch's grid
+  shape); `RealRunner` signature as main's (`cache_dir=CACHE`, `plans_only` attribute) plus a
+  `retrieval_mode` attribute for the map's re-search. `modes.plan_for` and `hybrid.peer_pass` had no
+  caller left and went with their tests. `test_eval_run.py`: main's file plus the branch's 13 mode tests,
+  the warm-up counts and T9 now runs its second run in hybrid-norerank (names kept).
+- pytest 1132 passed (vectors on, incl. the DB hybrid tests), 1128 passed + 4 skipped (vectors off).
+- Mock 0 calls, as-of 2026-11-17, corpus-2026-11-19: fts identical to main on 35/35 (8 fields per
+  question); hybrid-norerank PASS 31 vs 33, refusal gap 7/8 vs 8/8 (Q22, Q24: must-not chunk retrieved,
+  not cited by the mock map), keyed 24/26 vs 26/26; plans 35/35 identical; pins 16/16 identical.
+  Competitor floor (Q19 only): fts floor 8.8362 drops MER's 4 (emptied), 11 competitor passages to the map;
+  hybrid-norerank floor 0.0097 drops 0, 22 to the map. Corrective re-search on competitors: 0 hits in both.
+  Evidence `evals/hybrid-eval/corpus-2026-11-19/mock-w11/`. Floor table goes to the TL before ready.
+- verify-cee `--mode hybrid`: search-mode, ask-progress, ask-answer, gap-path PASS
+  (`.verify-runs/20261120-123125-388811e`). The app offers only `hybrid` (Smart search), not
+  hybrid-norerank (#128), so ask-progress ran in `hybrid`; hybrid-norerank is covered by the mock eval.
+  verify-cee `--mode fts`: search-mode, ask-progress, ask-answer PASS (`.verify-runs/20261120-123601-388811e`).
