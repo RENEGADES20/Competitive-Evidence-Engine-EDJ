@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import time
 
 from cee.answer import prompt as P
@@ -759,13 +760,28 @@ def _dup_text(x) -> str:
 
 
 SUBSUMED = 0.85   # share of the shorter claim's content words found in the longer one
+_QUOTED = re.compile(r'"[^"]*"|\u201c[^\u201d]*\u201d|(?<![\w])\'[^\']{6,}\'(?![\w])')
+_QUARTER_LABEL = re.compile(r"\b(?:[1-4]Q\d{2}|\d{4}Q[1-4]|(?:first|second|third|fourth) quarter(?: of)? \d{4})\b", re.I)
+
+
+def _outside_quotes(text: str) -> str:
+    """A claim's own words: quoted passage text removed (PR #261 review blocking 1: a quoted table row
+    carries every period's figure, so figures are compared outside the quotes)."""
+    return _QUOTED.sub(" ", text)
+
+
+def _stated_periods(text: str) -> set:
+    from cee.answer.validate import _ANY_DATE
+    return ({m.group(0).lower() for m in _ANY_DATE.finditer(text)}
+            | {m.group(0).lower() for m in _QUARTER_LABEL.finditer(text)})
 
 
 def dedupe_claims(answer: Answer) -> list[dict]:
     """#247 part 2: claims citing the same chunk set are duplicates when their texts (no why-line, no
-    "<Firm>: " prefix) are equal, or when the shorter is held in the longer: every figure of it in the
-    longer and >= SUBSUMED of its content words (stop words and firm names removed) too. The longer is
-    kept (ties: the first). Returns the removed (logged, never shown)."""
+    "<Firm>: " prefix) are equal, or when the shorter is held in the longer: outside quoted text, every
+    figure and every stated period (dates, quarter labels) of it in the longer (PR #261 review blocking 1:
+    one table row quoted by claims about different periods), and >= SUBSUMED of its content words (stop
+    words and firm names removed) too. The longer is kept (ties: the first). Returns the removed."""
     from cee.answer.validate import figures
     claims = answer.claims
     drop: dict[int, int] = {}
@@ -782,9 +798,11 @@ def dedupe_claims(answer: Answer) -> list[dict]:
                 drop[j] = i
                 continue
             short, long_, si, li = (ta, tb, i, j) if len(ta) < len(tb) else (tb, ta, j, i)
-            fs, fl = {str(f.value) for f in figures(short)}, {str(f.value) for f in figures(long_)}
+            rs, rl = (a.text, b.text) if si == i else (b.text, a.text)
+            os_, ol = _outside_quotes(rs.split(P.WHY_LINE, 1)[0]), _outside_quotes(rl.split(P.WHY_LINE, 1)[0])
+            fs, fl = {str(f.value) for f in figures(os_)}, {str(f.value) for f in figures(ol)}
             ws, wl = _content(short), _content(long_)
-            if fs <= fl and ws and len(ws & wl) >= SUBSUMED * len(ws):
+            if fs <= fl and _stated_periods(os_) <= _stated_periods(ol) and ws and len(ws & wl) >= SUBSUMED * len(ws):
                 drop[si] = li
     removed = [{"text": claims[k].text, "part_id": claims[k].part_id, "kept": v} for k, v in sorted(drop.items())]
     answer.claims = [x for n, x in enumerate(claims) if n not in drop]

@@ -262,3 +262,55 @@ def test_r6c_series_span_per_holding_firm():
     assert ("Morgan Stanley - Advisor headcount over the last eight quarters: the series in the documents searched "
             "runs from 2019-12-31 to 2020-12-31 (3 points); no figure after 2020-12-31 was found.") in spans
     assert any(s.startswith("Edward Jones") and "from 2025-12-31 to 2026Q2 (2 points)" in s for s in spans)
+
+
+# --- PR #261 review round 1 (fixes 1, 2) ---------------------------------------------------------------
+
+def test_registry_list_items_are_plain_text():
+    import yaml
+
+    from cee.config import REPO_ROOT
+    defs = yaml.safe_load((REPO_ROOT / "config" / "metric_definitions.yaml").read_text(encoding="utf-8"))["definitions"]
+    for d in defs:
+        for k in ("includes", "excludes", "not_stated", "see_also", "looked_in"):
+            for x in d.get(k) or []:
+                assert isinstance(x, str), (d["entity"], d["metric"], k, x)
+                assert x.count("(") == x.count(")"), (d["entity"], d["metric"], k, x)   # not split at a comma
+
+
+def _hit(cid, doc_type):
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id="EDJ", segment=None, doc_type=doc_type,
+               source_tier=2, published_at="2026-08-07", period_end="2026-06-26", section=None, page=None, rank=1.0,
+               text="t")
+
+
+def test_r5_q22_shaped_definition_aspect_fires_across_10k_and_10q():
+    series = Aspect("a1", "Net new assets by quarter, as each firm reports the metric.", metric="net_new_assets",
+                    kind="series")
+    defs = Aspect("a2", "Each firm's own definition of its net new assets metric.")
+    c1 = C("a1.EDJ", "fact", items=[Item(text="t", chunk_ids=["EDJ-10Q-2026Q2#60"], value="18", period="2026Q2")])
+    c2 = C("a2.EDJ", "fact", items=[
+        Item(text="t", chunk_ids=["EDJ-10Q-2026Q2#60"], definition="Net new assets represents cash and securities "
+             "inflows and outflows, including fees and commissions and excluding mutual fund distributions."),
+        Item(text="t", chunk_ids=["EDJ-10K-2025#130"], definition="Net new assets represents cash and securities "
+             "inflows and outflows, excluding mutual fund capital gain distributions.")])
+    m = EvidenceMatrix("Net new assets by quarter for each of the five, with each firm's own definition.",
+                       rows=["EDJ"], aspects=[series, defs], cells={c1.id: c1, c2.id: c2})
+    m.hits = {"EDJ-10Q-2026Q2#60": _hit("EDJ-10Q-2026Q2#60", "10-Q"), "EDJ-10K-2025#130": _hit("EDJ-10K-2025#130", "10-K")}
+    mx.finish(m, sources=NO_SOURCES)
+    assert len([x for x in m.caveats if "definition wording differs" in x]) == 1
+
+
+def test_r5_no_merrill_false_positive_from_a_different_quantity_cell_or_another_doc_family():
+    a = Aspect("a3", "Number of financial advisors.", metric="advisor_headcount", proxy=True)
+    dq = C("a3.MER", "different_quantity", items=[
+        Item(text="t", chunk_ids=["BAC-SUPP-2023Q4#2"], definition="Includes advisors across all wealth management "
+             "businesses in GWIM and Consumer Banking."),
+        Item(text="t", chunk_ids=["MER-ADV1A-2026#1"], definition="full- and part-time employees, excluding clerical")])
+    m = EvidenceMatrix("Client assets per advisor across the five?", rows=["MER"], aspects=[a], cells={dq.id: dq})
+    m.hits = {"BAC-SUPP-2023Q4#2": _hit("BAC-SUPP-2023Q4#2", "supplement"), "MER-ADV1A-2026#1": _hit("MER-ADV1A-2026#1", "adv")}
+    mx.finish(m, sources=NO_SOURCES)
+    assert not any("definition wording differs" in x for x in m.caveats)
+    dq.label = "fact"   # even as facts: a supplement footnote and Form ADV wording are not like-for-like
+    mx.finish(m, sources=NO_SOURCES)
+    assert not any("definition wording differs" in x for x in m.caveats)

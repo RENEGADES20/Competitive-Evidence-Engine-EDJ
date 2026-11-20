@@ -217,3 +217,36 @@ def test_r4_model_gap_contradicting_a_found_claim_dropped():
     log = []
     R.place_gaps(a, m, log)
     assert len(log) == 2 and not any(g.part_id in ("a7", "a7.EDJ") and not g.flags for g in a.gaps)
+
+
+# --- PR #261 review round 1 (blocking 1): one quoted table row, different periods ------------------------
+
+def test_dedupe_keeps_per_period_points_quoting_one_table_row_edj_130():
+    row = '"Financial advisors (actual): At year end 20,425 20,125 19,232 1%"'
+    a = Answer(answerable=True, behavior="answer", claims=[
+        cl(f"Edward Jones: The 2025 10-K (period ended December 31, 2025) reports {row}; it states 20,425 financial "
+           "advisors (actual) at year end for the year ended December 31, 2025.", ["EDJ-10K-2025#130"], "a1.EDJ"),
+        cl(f"Edward Jones: The 2025 10-K (period ended December 31, 2025) reports {row}; it states 20,125 financial "
+           "advisors (actual) at year end for the year ended December 31, 2024.", ["EDJ-10K-2025#130"], "a1.EDJ")])
+    assert R.dedupe_claims(a) == [] and len(a.claims) == 2
+
+
+def test_dedupe_keeps_ms_15950_next_to_the_other_2020_points():
+    row = '"Wealth Management representatives 15,950 15,469 15,468"'
+    a = Answer(answerable=True, behavior="answer", claims=[
+        cl(f"Morgan Stanley: The supplement for the period ended December 31, 2020 reports {row}; it states 15,950 "
+           "Wealth Management representatives as of December 31, 2020.", ["MS-SUPP-2020Q4#1"], "a1.MS"),
+        cl(f"Morgan Stanley: The supplement for the period ended December 31, 2020 reports {row}; it states 15,469 "
+           "Wealth Management representatives as of September 30, 2020.", ["MS-SUPP-2020Q4#1"], "a1.MS"),
+        cl(f"Morgan Stanley: The supplement for the period ended December 31, 2020 reports {row}; it states 15,950 "
+           "Wealth Management representatives as of December 31, 2020.", ["MS-SUPP-2020Q4#1"], "a2.MS")])
+    removed = R.dedupe_claims(a)
+    assert [x.text.split("it states ")[1][:6] for x in a.claims] == ["15,950", "15,469"]   # the exact repeat goes
+    assert len(removed) == 1 and removed[0]["part_id"] == "a2.MS"
+
+
+def test_dedupe_same_figures_different_stated_period_kept():
+    a = Answer(answerable=True, behavior="answer", claims=[
+        cl("X reported net new assets of $17 billion for 2Q25.", ["T#1"]),
+        cl("X reported net new assets of $17 billion for 3Q25, the same table shows.", ["T#1"])])
+    assert R.dedupe_claims(a) == []

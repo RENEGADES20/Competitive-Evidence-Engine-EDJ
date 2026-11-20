@@ -407,11 +407,16 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
       **Met**: re-check blind PASS (part-2 first run PASS borderline); RJF refused as "populations differ".
 - [ ] Q23 (real): EDJ 4Q24 and 4Q25 points from `EDJ-10K-2025#130`; the EDJ basis break flagged by
       code; MS states the last count (2020) and the closest current firm-filed figure as adjacent;
-      period gaps named; no why-lines. **Not met** (blind FAIL r, s): EDJ near complete (4Q24, 4Q25 in), no why-lines,
-      series spans by code; MS / RJF / Merrill series are corpus gaps (results doc section 5); RJF basis-break noise.
+      period gaps named; no why-lines. **Not met** (re-check blind FAIL r, s). The scored answer lacked EDJ 3Q25 /
+      4Q25 / 1Q26 and MS's last count 15,950 (4Q2020): the model wrote them and `dedupe_claims` removed them (PR #261
+      review blocking 1; 11 claims removed by the bug, restored by the fix in the 0-call replay: EDJ 3 points, MS 2,
+      RJF FY2023 / FY2024 totals and splits 6). The rest is corpus: MS after 4Q2020, RJF quarterly, Merrill after
+      4Q2023, EDJ 3Q26 (results doc sections 5, 7). Re-score after the fix pending; RJF basis-break noise remains.
 - [ ] Q11 (real): each firm's definition quoted, or "no written definition" with what the firm reports,
-      cited (pinned definitions in the matrix); differences named. **Not met** (blind FAIL r, s): MS and Schwab
-      publish no definition (corpus); the per-firm caveat lists definitions but does not say how they differ.
+      cited (pinned definitions in the matrix); differences named. **Not met** (re-check blind FAIL r, s). The dedupe
+      bug removed 10 claims (MS 15,950 / 15,468, EDJ 2Q26 firm / U.S. / Canada, Merrill 2023 / 2022, RJF totals x3),
+      restored by the fix (0-call replay). Corpus: MS and Schwab publish no written definition, BAC's latest is 2023.
+      Answer: the per-firm caveat lists definitions but does not say how they differ (finding). Re-score pending.
 - [x] Q19 (real, regression): blind PASS kept (borderline); no gap row outside an aspect's firm scope; no duplicate
       claims; why-lines only on a12; the other aspects keep their order.
 - [x] Q26 (real, regression): blind PASS kept after the revision (borderline; the first part-2 run FAILED, R1); why-lines carry stated context (0 `why_line_restated`
@@ -596,6 +601,14 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   `ev247b\real-run\report.json`; the eight-question report was rebuilt with 0 calls (`ev247b\real-run-final`),
   the seven other answers identical. Blind inputs rebuilt with Q3's answer; hashes updated. No code change.
 
+## Notes on files and chips (PR #261 review round 1, non-blocking 5)
+- Files changed beyond the list above, all in scope and in the Progress log: `src/cee/answer/extract.py`
+  (per-call passages / token estimate, `m.pools`), `src/cee/answer/validate.py` (`out_of_scope` /
+  `competitors_gap` part coverage), `src/cee/app/components.py` (the chip labels live there, not in
+  `ask_page.py`).
+- The planned `basis_break` chip is **dropped**: the basis break reaches the user as a code caveat
+  (`BASIS_BREAK`), which the Ask page already shows; specs/ui.md lists the three chips that exist.
+
 ## Revision after scoring (TL, after blind 5/8; plan amended before any code)
 Blind part 2: Q1, Q3 PASS; Q19, Q22, Q24 PASS (borderline); Q26 FAIL (s, borderline); Q11, Q23 FAIL. Q24
 moved FAIL -> PASS, **Q26 regressed PASS -> FAIL**: under the acceptance this PR does not merge with it.
@@ -732,3 +745,10 @@ definitions) go to NEXT.
 - 2026-11-20 - re-check blind 4/6 (hash cba0e16c... committed alone in d422467): Q19, Q22, Q24, Q26 PASS; Q11, Q23
   FAIL. Part 2 6/8; the TL merge acceptance (Q26 back to PASS, Q19 / Q22 / Q24 kept) is met. Findings 1-5 in the
   results doc section 6 (no code change, nothing re-run). Acceptance ticked; PR stays Part of #247.
+- 2026-11-20 - PR #261 review round 1 (CHANGES REQUESTED, issuecomment-7043282184): blocking 1 fixed (dedupe compares
+  figures and stated periods outside quoted text; EDJ-10K-2025#130 and MS 15,950 tests); blocking 2 corrected (Q11 / Q23
+  outcome: 10 / 11 claims were removed by the bug, restored in the 0-call replay; the rest is corpus); non-blocking
+  1-3, 5, 6 fixed (registry items quoted with a str test; R5 like-for-like, fires on Q22 EDJ, no Merrill false
+  positive; doc paths; file notes, basis_break chip dropped; ADR wording). 0-call replay of the eight scored
+  answers (ev247b replay-final): Q3, Q19, Q26 byte-identical; Q1, Q11, Q22, Q23, Q24 changed -> blind-in-r3
+  prepared for a fresh 0-call re-score. pytest 972 passed.

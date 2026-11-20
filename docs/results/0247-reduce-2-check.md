@@ -47,10 +47,8 @@ at `6a3825a` (code gate: `git status` clean, `src scripts config` identical to t
   The failed record is kept as `Q3-reduce-ec259fc6b468c54a5288cdfa.failed-1.json`, the retry's record next
   to it under its cache key. **Total: 27 calls, about $1.38.**
   - The retry's output folder name was shadowed in the wrapper (PowerShell variables are not case-sensitive),
-    so it wrote into `ev247b
-eal-run` and replaced that run's `report.json` and log. The eight-question report
-    was rebuilt from the saved records with 0 calls (`--max-calls 0`, no key: `ev247b
-eal-run-final`, all 8
+    so it wrote into `ev247b\real-run` and replaced that run's `report.json` and log. The eight-question report
+    was rebuilt from the saved records with 0 calls (`--max-calls 0`, no key: `ev247b\real-run-final`, all 8
     answers reused); the seven other answers are identical to the first dump (diffed). The raw records of the
     26-call run were already in `docs/results/0247b-raw/`, and the run summary is in `ev247b\head-log.txt`.
 - **Raw records**: `docs/results/0247b-raw/` (51: the 26 new, the Q3 retry, the 24 reused; Q3's failed
@@ -103,7 +101,7 @@ For every question with an answer: 0 outside the matrix, 0 part gaps, 0 why-line
 ## 3. Blind scoring
 
 **5/8 PASS** (Q1, Q3, Q19, Q22, Q24; borderline: Q19, Q22, Q24, Q26). Fresh scorer agent, inputs only
-`ev247blind-in\` (after the Q3 transport retry); file `docs/results/0247b-raw/verdicts-blind.json`.
+`ev247b\blind-in\` (after the Q3 transport retry); file `docs/results/0247b-raw/verdicts-blind.json`.
 
 | Q | Part 1 blind | **Part 2 blind** | Class | Borderline | Reason (scorer, short) |
 |---|---|---|---|---|---|
@@ -154,10 +152,10 @@ local (14:24-15:03 UTC, off-peak): 6 calls, all valid (`tool_calls`), 0 reused r
 
 | Q | Claims / adjacent / gaps | Code checks |
 |---|---|---|
-| Q11 | 16 / 8 / 8 | `DEFINITIONS_BY_FIRM` caveat (each firm named); Schwab gaps name the closest figure (Form ADV); 12 duplicates removed; basis breaks a2.EDJ, a2.MER |
+| Q11 | 16 / 8 / 8 | `DEFINITIONS_BY_FIRM` caveat (each firm named); Schwab gaps name the closest figure (Form ADV); 12 "duplicates" removed (10 of them distinct data points: the dedupe bug, section 7); basis breaks a2.EDJ, a2.MER |
 | Q19 | 44 / 2 / 16 | no comparison gap (the hand-off covers a13); 6 model gaps contradicting found claims dropped; 4 duplicates |
 | Q22 | 42 / 9 / 2 | clean |
-| Q23 | 11 / 12 / 5 | `SERIES_SPAN` per firm (MS 2019-12-31 to 2020-12-31, EDJ 2024-09-27 to 2026-06-26, RJF FY2023-FY2025); 34 why-lines removed; 11 duplicates |
+| Q23 | 11 / 12 / 5 | `SERIES_SPAN` per firm (MS 2019-12-31 to 2020-12-31, EDJ 2024-09-27 to 2026-06-26, RJF FY2023-FY2025); 34 why-lines removed; 11 "duplicates" removed, all distinct data points (EDJ 3Q25 / 4Q25 / 1Q26, MS 15,950 / 15,468, RJF FY2023-24): the dedupe bug, section 7; 11 duplicates |
 | Q24 | 4 / 65 / 4 | RJF now refused with "the two figures cover different populations" (R2); EDJ computed, not "unverified" |
 | Q26 | 31 / 0 / 2 | 0 "the source does not say" (v5.1: 11); why-lines from the stated context; 1 duplicate |
 
@@ -183,6 +181,8 @@ hashes in `ev247b\blind-in-r2-hashes.txt`. Q1 and Q3 keep their part-2 answers a
 | Q11 differences not named | answer | fixed by R6a (`DEFINITIONS_BY_FIRM`) | this PR |
 | Q11 Schwab shown as a bare gap | answer | fixed by R6b (gap names the closest figure) | this PR |
 | Q23 where each series stops | answer | fixed by R6c (`SERIES_SPAN`) | this PR |
+| Q23 EDJ 3Q25 / 4Q25 / 1Q26 and MS 15,950 missing from the scored answer | **answer (code bug)** | written by the model, removed by `dedupe_claims` (one quoted table row read as the same claim); restored in the 0-call replay (section 7) | this PR (fixed) |
+| Q11 MS 15,950, EDJ 2Q26 splits, Merrill 2023 / 2022, RJF totals missing | **answer (code bug)** | the same dedupe bug; 10 claims restored in the replay | this PR (fixed) |
 
 verdicts-blind-r2.json sha256 cba0e16cf45017c37218467be019897bbfb7468e24d0ced7aa8ec2a1a9e54e23 (re-check, fresh scorer agent; committed alone before any comparison).
 
@@ -228,3 +228,46 @@ Against part 1 on the eight: 5/8 -> 6/8 (Q24 FAIL -> PASS; no PASS lost). Q11 an
    `MS-SUPP-2026Q3#38`), which defines advisor-led assets, not a headcount. **Corpus gap confirmed** (no count,
    no headcount definition). Side note: the MS registry entry quotes the 2020 count line; its closest current
    wording is that footnote (pinned already); the registry could name it as `closest_metric` text.
+
+## 7. PR #261 review round 1: the dedupe bug, fixes, 0-call replay of the eight scored answers
+
+**Blocking 1** (`reduce.dedupe_claims`): two claims citing one chunk were "held in" each other when the figures
+of the shorter appeared in the longer, and a quoted table row ("At year end 20,425 20,125 19,232") carries
+every period's figure, so per-period claims about one row were removed as duplicates. Fix: figures and stated
+periods (dates, quarter labels) are compared **outside quoted text**, and every period the shorter states must be
+stated by the longer. Tests: the `EDJ-10K-2025#130` 20,425 / 20,125 case, the MS 15,950 case (the exact repeat
+still goes), same figure for different quarters.
+
+**Other fixes** (non-blocking): the registry's list items quoted (`independents (none: ...)` parsed as a
+mapping, BAC / MS / Schwab items split at commas), with a test that every item is plain text; R5 compares
+only fact cells and like-for-like documents (10-K / 10-Q one family): it now fires on Q22 EDJ net new assets
+(10-K 2025 vs 10-Q 2Q26) and no longer on Merrill (a supplement footnote vs Form ADV wording in a
+different-quantity cell); ADR-021 / spec wording of the R2 whole-quote fallback; this doc's damaged paths;
+the plan's file list and the dropped `basis_break` chip.
+
+**0-call replay** (`ev247b\replay-final`, no key, `--max-calls 0`; plans and maps reused, 50 records; each
+question's reduce output is the scored record, so no model output changed; `ev247b\diag\replay_final.py`),
+compared with the scored dumps (`blind-in\` for Q1 / Q3, `blind-in-r2\` for the six):
+
+| Q | Answer text | Claims | Caveats / gaps |
+|---|---|---|---|
+| Q1 | changed | 18 -> 18 | one gap reworded (R6b: names the closest figure, MS's stated $10T client-asset goal) |
+| Q3 | identical | 23 | - |
+| Q11 | changed | 16 -> 26 (**10 restored**: MS 15,950 / 15,468; EDJ 2Q26 whole firm / U.S. / Canada; Merrill 2023 and 2022; RJF totals x3) | definitions caveat: plain text instead of a printed dict |
+| Q19 | identical | 44 | - |
+| Q22 | changed | 42 -> 42 | + EDJ net-new-assets definition-wording caveat (10-K vs 10-Q) |
+| Q23 | changed | 11 -> 22 (**11 restored**: EDJ 3Q25 20,429, 4Q25 20,425, 1Q26 20,550; MS 15,950, 15,468; RJF FY2023 / FY2024 totals and employee / independent splits) | definitions caveat: plain text |
+| Q24 | changed | 4 -> 4 | Merrill false-positive wording caveat gone; definitions caveat plain text |
+| Q26 | identical | 31 | - |
+
+The removals the review called true duplicates (Q19, Q22, Q24, Q26) are unchanged (identical or same claims).
+
+**What is the bug and what is corpus** (Q11, Q23): the points above were in the model's answers and were removed
+by the bug; they are restored. What stays missing is corpus (section 5): no MS count after 4Q2020, no RJF
+quarterly count, no BAC / Merrill count after 4Q2023, no EDJ 3Q26 10-Q, no written MS / EDJ / Schwab
+definition. Q11's "differences not named side by side" stays an answer finding (section 6, finding 3).
+
+**Re-score (0 API calls, pending)**: the five questions whose answer text changed (Q1, Q11, Q22, Q23, Q24) go to a
+fresh blind scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in-r3\` (their replayed answers, `questions.yaml`,
+`verdict-rule.txt`) and `ev247b\scorer-prompt-r3.txt` (writes `ev247b\verdicts-blind-r3.json`); hashes in
+`ev247b\blind-in-r3-hashes.txt`. Q3, Q19 and Q26 are byte-identical and keep their verdicts (PASS).

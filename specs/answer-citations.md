@@ -261,7 +261,8 @@ Revision after blind scoring (prompt v5.2; plan "Revision after scoring", R1-R6)
 First version (prompt v5.1):
 - **Populations of ratio inputs** (rule 2): `matrix.tag_populations` gives each item of a ratio-input
   aspect (metric `client_assets` / `advisor_headcount`, or a proxy aspect matched by its words) the key
-  of the `populations` entry whose phrase stands nearest before its figure, only when the entry's chunk
+  of the `populations` entry whose phrase stands nearest before its figure (no phrase before it: the whole
+  quote and the item text), only when the entry's chunk
   is in that cell's pool. `derive()` computes a ratio only on equal keys and exact figures ("about",
   "more than", ">", "+", "K" next to the figure refuse it), and records `populations` and
   `population_chunk_ids` on every proposal; those ids are citable (`EvidenceMatrix.chunk_ids()`).
@@ -283,8 +284,10 @@ First version (prompt v5.1):
   words already in the claim) with "Why it might matter: the source does not say."
   (`why_line_restated`); the model's sentences are in the log.
 - **Duplicates**: after the part check, claims citing the same chunk set whose shorter text is held in
-  the longer (figures and >= 85% of content words) are removed (logged as `duplicates_removed`); the
-  comparison and computability checks run again.
+  the longer are removed (logged as `duplicates_removed`): outside quoted text, its figures and stated
+  periods (dates, quarter labels) all in the longer, and >= 85% of its content words (PR #261 review: a
+  quoted table row carries every period's figure, so quoted text is not compared); the comparison and
+  computability checks run again.
 - **Order**: with the question's own window the whole answer is sorted newest first; with recency
   aspects only, only their items move, inside their own slots.
 

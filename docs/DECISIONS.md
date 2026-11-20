@@ -1011,7 +1011,8 @@ comments 7037522138 and 7037650142; prompt v5.1):
   carry the same registered population (`config/metric_definitions.yaml` `populations`: what each
   input covers, in the firm's own words, with the chunk that states it and its date `valid_from`) and
   neither figure is approximate or a bound (matched next to the figure). Code tags each input item from
-  the entry whose phrase stands nearest before its figure, only when that entry's chunk is in the input
+  the entry whose phrase stands nearest before its figure (when no phrase stands before it, the whole quote
+  and the item text are read: "We had 8,943 ... financial advisors"), only when that entry's chunk is in the input
   cell's retrieved set. The population source chunks are pinned into the sub-questions that can hold
   an input, are citable, and every derivation proposal ends in one claim per firm saying whether the
   figure is computable, citing both inputs and the sources and quoting them (code writes it when the

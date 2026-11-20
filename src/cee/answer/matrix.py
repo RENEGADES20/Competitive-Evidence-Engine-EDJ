@@ -889,30 +889,54 @@ def definitions_by_firm(m: EvidenceMatrix) -> dict[str, str]:
     return out
 
 
+DOC_FAMILY = {"10-K": "periodic filing", "10-Q": "periodic filing"}   # like-for-like definition sources
+
+
+def _definition_aspects(m: EvidenceMatrix) -> dict[str, list]:
+    """Per registered metric, the aspects that hold its definitions: the metric's own aspects and aspects
+    with no metric whose text names the metric ("Each firm's own definition of its net new assets
+    metric", Q22 a2)."""
+    out: dict[str, list] = {}
+    metrics = list(dict.fromkeys(a.metric for a in m.aspects if a.metric))
+    for metric in metrics:
+        words = metric.replace("_", " ")
+        out[metric] = [a for a in m.aspects if a.metric == metric
+                       or (not a.metric and words in a.text.lower() and a.kind not in ("comparison", "recency"))]
+    return out
+
+
 def definition_changes(m: EvidenceMatrix) -> list[str]:
-    """#247 part 2 R5: one firm's items quoting definitions that differ (normalised) from different
-    documents, on a registered-metric aspect -> a caveat naming both documents and their wording."""
+    """#247 part 2 R5 (PR #261 review fix 2): for one firm and one registered metric, the definitions its
+    fact items quote (`definition`) from like-for-like documents (the same document family, e.g. 10-K and
+    10-Q) that differ after normalising -> a caveat naming both documents and their wording. Only items of
+    cells that hold the asked quantity (no different-quantity cell: no Form ADV wording against a filing)."""
     out = []
-    for a in m.aspects:
-        if not a.metric:
-            continue
-        for c in m.cells.values():
-            if c.aspect_id != a.id or c.role == "research" or not c.entity:
-                continue
-            seen: dict[str, tuple[str, str]] = {}
-            for i in c.counting_items:
-                if not i.definition:
+    for metric, aspects in _definition_aspects(m).items():
+        ids = {a.id for a in aspects}
+        firms = dict.fromkeys(c.entity for c in m.cells.values() if c.aspect_id in ids and c.entity
+                              and c.role != "research")
+        for firm in firms:
+            seen: dict[tuple[str, str], tuple[str, str]] = {}
+            for c in m.cells.values():
+                if c.aspect_id not in ids or c.entity != firm or c.role == "research" or c.effective_label != "fact":
                     continue
-                norm = re.sub(r"[^a-z0-9 ]", "", _norm(i.definition))
-                doc = i.chunk_ids[0].split("#")[0]
-                seen.setdefault(norm, (doc, i.definition))
-            docs = list(seen.values())
-            if len(docs) >= 2 and docs[0][0] != docs[1][0]:
-                text = DEFINITION_CHANGED.format(firm=row_name(c), metric=a.metric.replace("_", " "), a=docs[0][0],
-                                                 qa=_clip(docs[0][1], CAVEAT_DEF_CHARS), b=docs[1][0],
-                                                 qb=_clip(docs[1][1], CAVEAT_DEF_CHARS))
-                if text not in out:
-                    out.append(text)
+                for i in c.counting_items:
+                    if not i.definition:
+                        continue
+                    h = m.hits.get(i.chunk_ids[0])
+                    family = DOC_FAMILY.get(getattr(h, "doc_type", ""), getattr(h, "doc_type", "") or "?")
+                    norm = re.sub(r"[^a-z0-9 ]", "", _norm(i.definition))
+                    seen.setdefault((family, norm), (i.chunk_ids[0].split("#")[0], i.definition))
+            by_family: dict[str, list] = {}
+            for (family, _), v in seen.items():
+                by_family.setdefault(family, []).append(v)
+            for docs in by_family.values():
+                if len(docs) >= 2 and docs[0][0] != docs[1][0]:
+                    text = DEFINITION_CHANGED.format(firm=row_name(firm), metric=metric.replace("_", " "),
+                                                     a=docs[0][0], qa=_clip(docs[0][1], CAVEAT_DEF_CHARS),
+                                                     b=docs[1][0], qb=_clip(docs[1][1], CAVEAT_DEF_CHARS))
+                    if text not in out:
+                        out.append(text)
     return out
 
 
