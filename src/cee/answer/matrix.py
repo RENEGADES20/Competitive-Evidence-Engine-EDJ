@@ -1189,7 +1189,7 @@ DOC_WORDS = {"supplement": "quarterly financial supplements", "10-K": "Form 10-K
              "10-Q": "Form 10-Q quarterly reports", "deck": "investor presentations",
              "press": "company press releases", "transcript": "earnings-call transcripts",
              "monthly": "monthly activity reports", "8-K": "Form 8-K current reports"}
-_COUNT_UNIT = re.compile(r"advis|representative", re.I)   # round 2 nb 5: an item that counts the metric
+_COUNT_UNIT = re.compile(r"advis[oe]rs?\b|representatives?\b", re.I)   # round 2 nb 5; PR review nb 2: not "advisory"
 _EMPLOYEE_UNIT = re.compile(r"^\s*employees\b", re.I)
 
 

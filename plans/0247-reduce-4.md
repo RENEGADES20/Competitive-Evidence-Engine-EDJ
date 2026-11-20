@@ -319,10 +319,11 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
       code says "discontinued", "stopped", "no longer", "ceased" or "last reported".
 - [x] Item 10 registry: the `series_pins` curation rule is in the registry header and `specs/filings.md`; the
       scan (SQL and result: only #43) is in the results doc; the DB test asserts a date and a count in every pin.
-- [ ] **No PASS -> FAIL** on the fresh blind re-score of the changed answers (Q11, Q24 keep PASS). A PASS -> FAIL
+- [x] **No PASS -> FAIL** on the fresh blind re-score of the changed answers (Q11, Q24 keep PASS). A PASS -> FAIL
       stops the merge and goes to the TL with the scorer's reason; nothing is re-rolled. Q23 may stay FAIL on the
       corpus gaps (NEXT item 11: MS after 4Q2020, BAC after 4Q2023, RJF quarterly, EDJ 3Q26); that is not a
-      regression, and the PR stays "Part of #247".
+      regression, and the PR stays "Part of #247". **Outcome**: Q24 PASS; Q11 FAIL (borderline), the same as the
+      adjudicated part-3 answer, so the TL treats this item as met (PR review issuecomment-7048335905); the PR closes #247.
 - [ ] Linked questions: Q23 (items 9, 10), Q11 and Q24 (item 9); Q1, Q3, Q19, Q22, Q26 unchanged.
 
 ## Risks
@@ -343,15 +344,15 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
   but cut by `MAX_PER_DOC = 3` (deck; `period_end` NULL, so no period pass); a series-only pin changes only
   Q23 a1.RJF among the eight; MS / Merrill latest counts 2020-12-31 / 2023-12-31 with later supplements read in
   Q11, Q23, Q24.
-- 2026-11-20 12:45 - plan review round 1 RETURN (issuecomment-7047263496); TL rulings adopted: blocking 1 (the
+- 2026-11-20 12:22 - plan review round 1 RETURN (issuecomment-7047263496); TL rulings adopted: blocking 1 (the
   `series_pins` curation rule, the corpus scan `series_pins_scan.sql` / `.txt`: 82 rows read, only #43 qualifies;
   DB test asserts a date in every pin), blocking 2 (the note scoped to the document type, "found" / "read"),
   non-blocking 1-5. `pool43.txt` and `pin_sim.txt` saved. Amended: Goal, sections 1, 2, 5, Files, Acceptance,
   Risks.
-- 2026-11-20 13:05 - plan review round 2 APPROVED at 95a704f (issuecomment-7047506049); non-blocking 1-6 adopted
+- 2026-11-20 12:33 - plan review round 2 APPROVED at 95a704f (issuecomment-7047506049); non-blocking 1-6 adopted
   and written in (section "Plan review round 2"); scan re-run with `representatives|adviser` (120 rows, reasons
   per row, only #43 qualifies).
-- 2026-11-20 12:40 - code at 2d5f25b (items 9-10 with round-2 nb 1-6): `matrix.last_reported` / `LAST_REPORTED` with
+- 2026-11-20 12:38 - code at 2d5f25b (items 9-10 with round-2 nb 1-6): `matrix.last_reported` / `LAST_REPORTED` with
   the unit filter, `planner.pinned_ids` + RJF `series_pins`, specs, 15 tests in `tests/test_reduce_part4.py`.
   pytest 1033 -> 1048 (DB test not skipped). Mock 35 vs main e15ccf8: retrieval, statuses, claims, gaps identical;
   caveats only in Q11, Q23. verify-cee VERIFY PASS (`.verify-runs/20261120-124117-2d5f25b`).
@@ -361,6 +362,13 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
   records in `docs/results/0247d-raw/` (6215d58). RJF cell holds 8,731 at 2025-03-31 (#43); the answer lists it
   (C9); no RJF basis break. Final replay (guard OK, 50 reused): Q23 = the real run. Blind inputs for Q11, Q23, Q24
   prepared (`ev247d\blind-in\`, hashes in the results doc); stopped before scoring.
-- 2026-11-20 13:30 - blind re-score 1/3 (hash 163437a, verdicts 525f2d1): Q24 PASS; Q23 FAIL (r, c); **Q11 PASS -> FAIL
+- 2026-11-20 13:04 - blind re-score 1/3 (hash 163437a, verdicts 525f2d1): Q24 PASS; Q23 FAIL (r, c); **Q11 PASS -> FAIL
   (borderline)**. Its answer differs from part 3's scored one only by the two new notes (0-call diff, results doc section 7).
   The acceptance "no PASS -> FAIL" is not met: merge stopped, PR #265 stays a draft, the TL adjudicates Q11.
+- 2026-11-20 13:20 - PR review round 1 (issuecomment-7048335905): code approved; the adjudicating read of Q11 gives FAIL
+  (borderline) on both versions, so the flip is not a regression. TL ruling: "no PASS -> FAIL" is treated as met for
+  code purposes; the adjudicated final for the eight is 6/8 (Q11, Q23 FAIL: corpus); part 3's 7/8 is restated.
+  Review nb 1: the log times above were corrected to the commit / comment times (round 1 12:19, plan amended 12:22;
+  round 2 12:31, written in 12:33; code 12:38; scoring 13:04). Review nb 2: the unit regex is tightened to
+  `advis[oe]rs?\b|representatives?\b`, with a test; the 0-call replay is byte-identical for all eight. 1049 passed.
+  The PR now says "Closes #247": what is left is corpus gaps (NEXT item 11) and the floor follow-up.

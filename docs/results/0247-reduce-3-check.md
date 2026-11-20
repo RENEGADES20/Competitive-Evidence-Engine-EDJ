@@ -191,3 +191,8 @@ advisor count in any 2025-26 MS, BAC or RJF supplement): **corpus gap**, plus **
 8,731 at 2025-03-31 in `RJF-DECK-2025-investor-day#43`. Follow-ups in `docs/NEXT.md` items 9-11: a code note
 "last reported count; no count in the documents searched since" for series that end early (Q11 borderline,
 Q23), the RJF investor-day retrieval miss, and the headcount corpus gaps (RJF earnings releases, EDJ 3Q26 10-Q).
+
+**Correction (#247 part 4, adjudicated in PR #265):** the "final 7/8" above rests on one lenient read of Q11 (r2 PASS,
+borderline). An adjudicating second read, together with Q11's 7 blind reads (1 PASS), puts Q11 as a stable borderline
+FAIL. The part-3 final is therefore 7/8 on one lenient read and 6/8 on adjudication.
+See `docs/results/0247-reduce-4-check.md` section 7.

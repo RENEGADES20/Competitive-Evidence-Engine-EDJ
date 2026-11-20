@@ -137,6 +137,19 @@ def test_unit_filter_for_the_latest_count_and_the_found_since_check():
     assert notes(matrix(Q23, [SERIES], cells, hits, ["MS"])) == [MS_NOTE]
 
 
+def test_count_units_exclude_advisory():
+    # PR #265 review nb 2: "advisory assets" is not a count of advisors; advisor and representative units are
+    for unit in ("financial advisors", "Wealth Management representatives", "wealth advisors", "advisors",
+                 "investment adviser representatives", "employee financial advisors", "advisor"):
+        assert mx._counts_metric(item("1,000", "2026-03-31", "X#1", unit)), unit
+    for unit in ("advisory assets", "advisory accounts", "employees performing investment advisory functions",
+                 "employees", "USD", "client assets"):
+        assert not mx._counts_metric(item("1,000", "2026-03-31", "X#1", unit)), unit
+    extra = [item("$9 billion", "2026-03-31", "MS-SUPP-2026Q1#7", "advisory assets")]
+    cells, hits = ms_series(extra_items=extra)
+    assert notes(matrix(Q23, [SERIES], cells, hits, ["MS"])) == [MS_NOTE]
+
+
 def test_no_count_date_or_no_registered_metric_gets_none():
     items = [item("30,690", "2025-12-31", "SCHW-ADV1A-2026#1", "employees")]
     hits = [hit("SCHW-ADV1A-2026#1", "adv", "2025-12-31", "a1.SCHW"), hit("SCHW-SUPP-2026Q1#1", "adv", "2026-03-31", "a1.SCHW")]
