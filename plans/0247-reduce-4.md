@@ -301,23 +301,23 @@ with tests. 4. Full pytest (count before / after); mock 35 vs main e15ccf8 (`com
 stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and comparison; `/finish-task`.
 
 ## Acceptance
-- [ ] pytest passes (count before and after; DB tests run with `cee-db` up, not skipped); `gh pr checks` green.
-- [ ] Mock 35 vs main e15ccf8: every chunk list identical (the mock's rule plan has no series aspect), statuses
+- [x] pytest passes (count before and after; DB tests run with `cee-db` up, not skipped); `gh pr checks` green.
+- [x] Mock 35 vs main e15ccf8: every chunk list identical (the mock's rule plan has no series aspect), statuses
       and refusal unchanged; caveat differences only in Q11, Q23, Q24 (the note).
-- [ ] verify-cee VERIFY PASS (open-citation / download-document may be UNREACHABLE without raw files, as before).
-- [ ] 0-call guard holds on every replay; branch vs baseline: Q1, Q3, Q19, Q22, Q26 byte-identical; Q11, Q24 differ
+- [x] verify-cee VERIFY PASS (open-citation / download-document may be UNREACHABLE without raw files, as before).
+- [x] 0-call guard holds on every replay; branch vs baseline: Q1, Q3, Q19, Q22, Q26 byte-identical; Q11, Q24 differ
       only by the two `LAST_REPORTED` caveats.
-- [ ] 0-call count on the finished code: exactly Q23 `a1.RJF` map capped; **real calls <= 3** (expected 2), all
+- [x] 0-call count on the finished code: exactly Q23 `a1.RJF` map capped; **real calls <= 3** (expected 2), all
       saved in `docs/results/0247d-raw/`, count and model in the PR.
-- [ ] Q23 (item 10): `RJF-DECK-2025-investor-day#43` in Q23's retrieved set (pinned, a1.RJF) and in the RJF map
+- [x] Q23 (item 10): `RJF-DECK-2025-investor-day#43` in Q23's retrieved set (pinned, a1.RJF) and in the RJF map
       input; the answer lists RJF 8,731 at 2025-03-31 with that source. If the model does not, it is reported as
       a finding with the RJF cell's label and items; nothing is re-rolled.
-- [ ] Item 9: Q11, Q23 and Q24 carry the note in the exact template ("latest count found in the quarterly
+- [x] Item 9: Q11, Q23 and Q24 carry the note in the exact template ("latest count found in the quarterly
       financial supplements: <date> (<chunk>); no count found in the quarterly financial supplements read since
       (<docs>)") for MS 2020-12-31 (`MS-SUPP-2020Q4#1`) and Merrill (Bank of America Corporation) 2023-12-31
       (`BAC-SUPP-2023Q4#2`), listing the later supplements read; no note for EDJ, RJF, Schwab; no answer text by
       code says "discontinued", "stopped", "no longer", "ceased" or "last reported".
-- [ ] Item 10 registry: the `series_pins` curation rule is in the registry header and `specs/filings.md`; the
+- [x] Item 10 registry: the `series_pins` curation rule is in the registry header and `specs/filings.md`; the
       scan (SQL and result: only #43) is in the results doc; the DB test asserts a date and a count in every pin.
 - [ ] **No PASS -> FAIL** on the fresh blind re-score of the changed answers (Q11, Q24 keep PASS). A PASS -> FAIL
       stops the merge and goes to the TL with the scorer's reason; nothing is re-rolled. Q23 may stay FAIL on the
@@ -351,3 +351,13 @@ stop for the TL's scorer. 8. After scoring: hash commit alone, then verdicts and
 - 2026-11-20 13:05 - plan review round 2 APPROVED at 95a704f (issuecomment-7047506049); non-blocking 1-6 adopted
   and written in (section "Plan review round 2"); scan re-run with `representatives|adviser` (120 rows, reasons
   per row, only #43 qualifies).
+- 2026-11-20 12:40 - code at 2d5f25b (items 9-10 with round-2 nb 1-6): `matrix.last_reported` / `LAST_REPORTED` with
+  the unit filter, `planner.pinned_ids` + RJF `series_pins`, specs, 15 tests in `tests/test_reduce_part4.py`.
+  pytest 1033 -> 1048 (DB test not skipped). Mock 35 vs main e15ccf8: retrieval, statuses, claims, gaps identical;
+  caveats only in Q11, Q23. verify-cee VERIFY PASS (`.verify-runs/20261120-124117-2d5f25b`).
+- 2026-11-20 12:48 - replays (0 calls, guard OK): baseline main = part 3's final replay; branch: Q1, Q3, Q19, Q22,
+  Q26 identical, Q11 / Q24 only the two notes; count: Q23 map.RJF and the reduce are the only misses.
+- 2026-11-20 12:56 - real run Q23 (`--max-calls 3`): **2 calls** (map.RJF, reduce; no re-extraction), $0.129;
+  records in `docs/results/0247d-raw/` (6215d58). RJF cell holds 8,731 at 2025-03-31 (#43); the answer lists it
+  (C9); no RJF basis break. Final replay (guard OK, 50 reused): Q23 = the real run. Blind inputs for Q11, Q23, Q24
+  prepared (`ev247dlind-in\`, hashes in the results doc); stopped before scoring.
