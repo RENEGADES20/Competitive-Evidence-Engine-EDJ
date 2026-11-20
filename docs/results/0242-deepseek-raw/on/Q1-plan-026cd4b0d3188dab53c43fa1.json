@@ -1,0 +1,53 @@
+{
+  "question_id": "Q1",
+  "question": "What is Morgan Stanley's strategy to increase their net new assets?",
+  "planner_version": "plan-v2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_parts": 4,
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "What is Morgan Stanley's strategy to increase their net new assets?",
+    "entities": [
+      "MS"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null
+  },
+  "at": "2026-11-19T21:37:41.241730",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1080,
+    "output_tokens": 1661,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 1080,
+    "reasoning_tokens": 1474,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 25.7,
+  "tokens_per_s": 64.63,
+  "reasoning_content": "We need answer: plan the document search. We need list asks first, then write parts. Question: \"What is Morgan Stanley's strategy to increase their net new assets?\" Single firm MS. Asks: strategy to increase net new assets. Need cover every ask. It asks strategy to increase net new assets. Also underlying: how management describes strategy, priorities, initiatives, drivers of net new assets, targets, maybe results. The instruction says list asks before writing parts. We need return plan via submit_plan, at most 4 parts. Single ask, maybe one part, but could be multiple dimensions of \"strategy to increase net new assets\" (drivers, initiatives, wealth management channels, advisor growth, lending, deposits, workplace, referrals, client acquisition, digital, etc.). Need not overdo but cover strategy comprehensively. The question is one ask. Could one part enough? The instruction: \"Cover every ask, in at most 4 parts. Every ask gets its own part.\" Single ask -> one part. But \"A figure that may not be disclosed also asks for the closest figure that is disclosed, as its own part.\" Net new assets is disclosed; strategy maybe discussed. Could include keyword query for strategy. However maybe we want separate parts for strategy/initiatives and drivers/metrics? But \"Do not spend a part on something the question does not ask.\" It asks strategy to increase net new assets. The closest disclosed figure maybe net new asset growth drivers? Hmm.\n\nLet's think carefully. The user asks \"What is Morgan Stanley's strategy to increase their net new assets?\" This asks for their strategy, not specific metric. Documents: earnings calls, investor decks, press releases, filings, Form ADV, research. Need search for strategic language around net new assets, net new asset growth, flows, client assets, wealth management inflows, fee-based assets, etc.\n\nWe can make one part with keyword_query containing words docs use: net new assets, net new asset growth, asset inflows, client inflows, organic growth, fee-based asset flows, wealth management net new assets, strategy, initiatives, drivers, advisors, workplace, referrals, lending, deposits, digital, etc. But keyword_query 5-25 words, no firm names/dates. Need \"strategy to increase their net new assets\" exactly concept.\n\nMaybe plan with 2-3 parts:\n1. Stated strategy and initiatives to grow net new assets (organic growth, advisor productivity, recruitment, client acquisition, workplace channel, referrals).\n2. Drivers and targets for net new asset growth (net new asset targets, flow expectations, asset growth metrics).\nBut the question only asks strategy. Splitting might be fine if asks can be separated: strategy (qualitative) and metrics/targets (quantitative). But instruction says every ask gets own part; with one ask, one part. But \"what is strategy\" also asks how management describes... We can have one part.\n\nHowever, the system says \"List the asks first. Before writing parts, list for yourself everything the question asks for\". We need in final maybe list asks and then call submit_plan. We can only output text and tool call. We need include the list before tool call, in commentary? The final should list asks and then submit_plan? The instruction says \"List the asks first.\" We can do that in the text, then submit plan.\n\nWe should decide parts. Let's enumerate asks:\n- Morgan Stanley's strategy to increase net new assets (single ask).\nPotential implicit: management's description of strategy, stated priorities, initiatives, drivers, targets, and results. But the question literally asks strategy. In plan, maybe one part is enough. But the planning rubric allows up to 4 parts; maybe we can create parts by dimensions:\n  - Part 1: strategic initiatives and channels to grow net new assets.\n  - Part 2: net new asset targets/outlook and drivers cited on earnings calls.\nBut that might be over-splitting. The instruction says \"A short question with one ask is one part.\" So one part.\n\nLet's craft one part:\nid: ms_nna_strategy\ntext: \"What is Morgan Stanley's stated strategy, initiatives, and priorities to increase net new assets?\"\nfirms: [\"MS\"]\nkeyword_query: \"net new assets organic growth strategy initiatives inflows advisor productivity client acquisition referrals workplace digital lending deposits fee-based flows\"\n\nNeed 5-25 words. Count: net(1) new2 assets3 organic4 growth5 strategy6 initiatives7 inflows8 advisor9 productivity10 client11 acquisition12 referrals13 workplace14 digital15 lending16 deposits17 fee-based18 flows19. Good. But careful \"deposits\" maybe different figure; but net new assets includes deposits? In wealth management, net new assets includes deposits and loans? Actually strategy to increase net new assets includes bank deposits? Could be. But instruction warns \"deposits are not client assets\" maybe avoid \"deposits\" as a different figure. Net new assets in wealth management includes fee-based and bank? Morgan Stanley's net new assets metric includes bank deposit flows? Yes, net new assets include deposits? Hmm. But to be safe, avoid deposits. Also \"lending\" may be different but strategy to increase NNA via lending relationships. The question asks strategy, so initiatives like workplace, referrals, lending relationships are relevant. But keyword query should name the asked concept and synonyms. \"deposits\" and \"lending\" might be different figures, but as strategic drivers they could be relevant. The warning says never add a different figure that shares a word even as context. \"Deposits are not client assets\" specifically. So avoid \"deposits\" and maybe \"lending\"? Lending is not a figure maybe. But maybe avoid as context.\n\nLet's craft keyword query focused: \"net new assets net new asset growth organic growth asset inflows client inflows strategy initiatives drivers advisor productivity referrals workplace channel client acquisition fee-based flows\" Count 20? Let's count: net1 new2 assets3 net4 new5 asset6 growth7 organic8 growth9 asset10 inflows11 client12 inflows13 strategy14 initiatives15 drivers16 advisor17 productivity18 referrals19 workplace20 channel21 client22 acquisition23 fee-based24 flows25. Exactly 25. But repeated \"net new\" redundant. Could be okay. Maybe reduce.\n\nMaybe include \"wealth management\" but no firm names. Fine. \"net new asset growth\" exact. \"organic growth\" is synonym. \"asset inflows\", \"client inflows\", \"flows\". \"strategy\", \"initiatives\", \"priorities\", \"drivers\". \"advisor productivity\", \"client acquisition\", \"workplace channel\", \"referrals\". Good.\n\nWould one part suffice? Yes.\n\nBut maybe the question expects a search plan, and we should create parts for each dimension to ensure evidence. The prompt examples show for one firm and one ask, one part. So one part.\n\nLet's ensure no dates, no firm names in keyword_query. firms list [\"MS\"].\n\nNeed call submit_plan. Before that, list asks. Let's final output with brief asks list then tool call.\n\nWe need use submit_plan tool.",
+  "raw": {
+    "parts": [
+      {
+        "id": "ms_nna_growth_strategy",
+        "text": "What is Morgan Stanley's stated strategy, initiatives, and priorities to increase net new assets?",
+        "firms": [
+          "MS"
+        ],
+        "keyword_query": "net new assets net new asset growth organic growth asset inflows client inflows strategy initiatives priorities drivers advisor productivity client acquisition workplace channel referrals fee-based flows"
+      }
+    ]
+  }
+}

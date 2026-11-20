@@ -326,16 +326,16 @@ script in `ev242`). The one-off scripts in `ev242` are Windows-only and not comm
 no `.sh` twin; if one is ever committed it gets one.
 
 ## Acceptance
-- [ ] `LLM_PROVIDER=deepseek` answers Q1 in the running app (step 7 one-off Playwright check:
+- [x] `LLM_PROVIDER=deepseek` answers Q1 in the running app (step 7 one-off Playwright check:
       screenshot, footer, query_log row; verify-cee's driver is mock-only).
-- [ ] Tests D1-D15 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
+- [x] Tests D1-D15 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
       cut, no-tool, bad-JSON and pydantic-failure outputs saved as invalid; 402 / 429 stop; OpenAI
       planner rejects `length`; `reasoning_content` saved for valid outputs; 0 real calls (httpx2
       counter `sent == []`).
-- [ ] Real: 6 question-runs (Q1, Q22, Q24 x thinking on / off), 12 calls at most (14 with the app
+- [x] Real: 6 question-runs (Q1, Q22, Q24 x thinking on / off), 12 calls at most (14 with the app
       check), every raw record saved with usage; cap findings reported; thinking default chosen by
       the rule above, evidence in the PR and `docs/results/0242-deepseek-check.md`.
-- [ ] Mock `eval_run.py` 30/30 chunk lists unchanged vs `evals/baselines/corpus-2026-11-19`;
+- [x] Mock `eval_run.py` 30/30 chunk lists unchanged vs `evals/baselines/corpus-2026-11-19`;
       pytest, verify-cee (mock) and `gh pr checks` green.
 
 ## Progress log
@@ -372,3 +372,12 @@ no `.sh` twin; if one is ever committed it gets one.
   (Criterion 2 would also give on: off 1/2 answers with the expected behavior, Q24 answered instead
   of gap_with_adjacent; on 3/3.) Default set to on (config + .env.example + D10 pin); pytest 737
   passed, mock eval 30/30 UNCHANGED again (`.eval-runs\0242-mock-2`).
+- 2026-11-19 22:00 - app check (`ev242\run-app.ps1 -Thinking on`, code gate passed at c210bed,
+  `.env` removed after): 2 calls, Q1 answered on the Ask page in 142.6 s, footer `model: deepseek |
+  LLM called: True`, query #1 logged, screenshot `docs/results/0242-deepseek-app-q1.png`. The
+  script's query_log read-back failed on its own SQL (`json_array_length` on jsonb) before the copy
+  was dropped, so the row's `model` / `llm_calls` were not read back (not verified; no call
+  repeated). verify-cee (mock) re-run after the default change: VERIFY PASS
+  (`.verify-runs\20261119-215405-c210bed`, same two UNREACHABLE as before). Total real calls: 14
+  (cap 14). Evidence report `docs/results/0242-deepseek-check.md`, raw records
+  `docs/results/0242-deepseek-raw/`.

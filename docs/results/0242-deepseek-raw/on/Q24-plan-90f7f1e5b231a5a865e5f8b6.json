@@ -1,0 +1,97 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "planner_version": "plan-v2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_parts": 4,
+  "max_tokens": 16000,
+  "request_version": "ds-strict-1-think-on-a64000-p16000",
+  "query": {
+    "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null
+  },
+  "at": "2026-11-19T21:46:42.617871",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1122,
+    "output_tokens": 3189,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 98,
+    "reasoning_tokens": 2764,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 37.25,
+  "tokens_per_s": 85.61,
+  "reasoning_content": "We need answer with plan only. Need parse question. \"Client assets per advisor across the five -- and is that comparison even valid?\" Firms: MS, SCHW, EDJ, MER, RJF.\n\nWe need list asks first internally. The question asks: client assets per advisor across the five firms, and whether that comparison is valid. So asks: for each of five firms, client assets per advisor (or closest disclosed figure: total client assets and number of advisors, or directly disclosed assets per advisor). Also asks validity of comparison: comparability of metric definitions across firms, differences in advisor counts (employee vs independent, channels), asset definitions, etc.\n\nWe must cover every ask in at most 4 parts. Each ask gets its own part; merge asks if more. We have six-ish asks (5 firms \u00d7 metric + validity). Need merge. Could do one part per firm for client assets per advisor with words for metric, but that's 5 parts >4. We need at most 4 parts. So merge all firms into perhaps one or two parts and a validity part.\n\nBut instruction: \"With several firms and several dimensions, write one part per firm with words for every dimension, or one part per dimension with every firm; either way every firm gets words for every dimension.\" Here one dimension (client assets per advisor) for five firms plus validity dimension. We can write one part per dimension with every firm: Part 1 client assets per advisor for all five firms (keywords without firm names, but firm filters applied? The search engine applies firm filters based on firms list. We can list all five firms in one part and keyword query for client assets per advisor). But if all firms in one part, firm filters all five, search for metric. Then validity part. That's 2 parts. But maybe need separate evidence for each firm? The system says code applies firm filters; parts choose words. One part per dimension with every firm works. However, to get per-firm numbers maybe one part per firm better but limit 4. Could do 5 parts? No max 4. So merge.\n\nCould write 4 parts: one part for each of maybe groups? But dimension with all firms is one part. Validity one part. Maybe additional parts to capture closest disclosed figures: client assets total and advisor headcount because assets per advisor may not be disclosed. We should include words for \"total client assets\" and \"financial advisors\" in same part? Instruction: \"A figure that may not be disclosed also asks for the closest figure that is disclosed, as its own part.\" Hmm. \"A figure that may not be disclosed also asks for the closest figure that is disclosed, as its own part.\" This suggests if assets per advisor not disclosed, closest disclosed figure (total client assets, advisor count) goes in its own part. But we can also have primary metric part. So maybe parts:\n\n1. Direct \"client assets per advisor\" disclosed metric across five firms.\n2. Total client assets (closest disclosed numerator) across five firms.\n3. Number of financial advisors/adviser headcount (closest disclosed denominator) across five firms.\n4. Comparability/validity of the comparison: differences in advisor definitions, channels, asset definitions.\n\nThis covers all asks and closest disclosed figures as own parts. Total 4 parts. Good. Each part with all firms? Parts 1-3 firms all five, keywords no firm names. Part 4 firms all five maybe empty? Question asks validity of comparison across the five, so firms all five. Keywords about definitions, methodology, comparability.\n\nNeed ensure \"each named firm gets words for every dimension\" \u2014 since keyword_query no firm names, firms field includes all five for each dimension. Good.\n\nBut maybe part 3 advisor headcount: terms \"financial advisors\", \"wealth management advisors\", \"representatives\", \"adviser count\", \"number of advisors\". For Raymond James includes independent contractor advisors and employee advisors; Schwab includes consultant? Merrill advisors. Keywords: \"financial advisors\", \"advisor headcount\", \"number of advisors\", \"wealth advisors\", \"registered representatives\", \"client-facing advisors\", \"advisor count\".\n\nPart 2 total client assets: \"client assets\", \"total client assets\", \"assets under management\", \"client assets under management\", \"assets under administration\", \"AUA\", \"AUM\", \"wealth management client assets\". Need maybe \"client assets\" term. Note \"deposits are not client assets\" so don't include bank deposits. Good.\n\nPart 1 direct: \"assets per advisor\", \"client assets per advisor\", \"average assets per advisor\", \"productivity per advisor\", \"assets per financial advisor\", \"revenue per advisor\"? Wait question asks client assets per advisor, not revenue. But \"productivity per advisor\" may be a metric. Could include \"client assets per advisor\" \"assets per advisor\" \"average client assets per advisor\" \"productivity metrics\"? Careful not to include different figure like revenue per advisor, which shares word but is different figure. Instruction: never add a different figure that shares a word with it. Revenue per advisor is different. So avoid revenue. Could include \"assets per advisor\" variants only. Maybe \"advisor productivity\" is ambiguous but likely revenue, avoid. Good.\n\nPart 4 comparability: keywords: \"advisor definition\", \"independent contractor\", \"employee advisor\", \"registered investment advisor\", \"RIA\", \"broker-dealer\", \"assets under management definition\", \"assets under administration\", \"comparability\", \"methodology\", \"footnotes\", \"disclosure\", \"average advisor\", \"headcount basis\". Need 5-25 words. Include words documents use. No firm names, no dates.\n\nWe should list asks first in our reasoning. Then submit plan.\n\nLet's craft parts.\n\nPart 1:\nid: \"assets_per_advisor\"\ntext: \"Find each firm's disclosed client assets per advisor or average client assets per advisor metric across Morgan Stanley, Schwab, Edward Jones, Merrill and Raymond James.\"\nfirms: [\"MS\",\"SCHW\",\"EDJ\",\"MER\",\"RJF\"]\nkeyword_query: \"client assets per advisor average client assets per financial advisor assets per advisor advisor productivity client assets divided by advisors assets per wealth advisor\"\n\nNeed count 5-25 words. Let's count: client(1) assets2 per3 advisor4 average5 client6 assets7 per8 financial9 advisor10 assets11 per12 advisor13 advisor14 productivity15 client16 assets17 divided18 by19 advisors20 assets21 per22 wealth23 advisor24. 24 words. But \"advisor productivity\" could be revenue; maybe remove. We can have \"client assets per advisor\", \"average client assets per advisor\", \"assets per advisor\", \"client assets divided by advisor count\", \"assets per wealth advisor\". That's fine. Remove \"advisor productivity\". Let's craft 15 words.\n\nPart 2:\nid: \"total_client_assets\"\ntext: \"Find each firm's total client assets (or closest disclosed client asset measure) to use as the numerator for the per-advisor comparison.\"\nfirms all five\nkeyword_query: \"total client assets client assets under management assets under administration client assets AUA AUM wealth management client assets retail client assets investor assets\" maybe. Count.\n\nPart 3:\nid: \"advisor_headcount\"\ntext: \"Find each firm's number of financial advisors or closest disclosed advisor headcount to use as the denominator for the per-advisor comparison.\"\nfirms all five\nkeyword_query: \"number of financial advisors advisor headcount wealth management advisors financial consultants registered representatives client-facing advisors advisor count total advisors\"\n\nPart 4:\nid: \"comparability\"\ntext: \"Find disclosures and commentary on how each firm defines client assets and advisor headcount, and whether the per-advisor comparison across the five firms is valid or distorted by differences in advisor channels, asset definitions, and calculation methods.\"\nfirms all five\nkeyword_query: \"advisor definition independent contractor employee advisor registered investment advisor RIA channel assets under management definition assets under administration methodology calculation basis comparability disclosure footnotes average advisor headcount basis\"\n\nNeed ensure keyword_query 5-25 words. Count part 4: advisor1 definition2 independent3 contractor4 employee5 advisor6 registered7 investment8 advisor9 RIA10 channel11 assets12 under13 management14 definition15 assets16 under17 administration18 methodology19 calculation20 basis21 comparability22 disclosure23 footnotes24 average25 advisor26 headcount27 basis28. Too many 28. Trim. \"advisor definition independent contractor employee advisor registered investment advisor channel assets under management definition assets under administration methodology calculation basis comparability disclosure footnotes\" count: advisor1 definition2 independent3 contractor4 employee5 advisor6 registered7 investment8 advisor9 channel10 assets11 under12 management13 definition14 assets15 under16 administration17 methodology18 calculation19 basis20 comparability21 disclosure22 footnotes23. 23 words. Good.\n\nPart 2 count: total1 client2 assets3 client4 assets5 under6 management7 assets8 under9 administration10 AUA11 AUM12 wealth13 management14 client15 assets16 retail17 client18 assets19 investor20 assets21. 21 words. Fine. But \"assets under administration\" and \"assets under management\" are different from client assets; but question asks client assets, closest disclosed maybe client assets. \"AUM\" not necessarily client assets? For wealth management, client assets can include AUM and AUA. We can include both. But instruction \"Same concept only. Search words name the asked concept ... its exact synonyms. Never add a different figure that shares a word with it.\" Are AUM/AUA different figures? They are components of client assets. For part 2, we're seeking closest disclosed total client assets; AUM/AUA may be disclosed instead. It's okay as closest disclosed figure? But part 2 is \"closest disclosed figure\" own part. Could include \"client assets\", \"total client assets\", \"client assets under management\", \"assets under administration\", \"client assets under administration\". But AUM alone may be different. Let's keep \"client assets\" focus: \"total client assets client assets under management client assets under administration wealth management client assets retail client assets investor assets AUA AUM\". Hmm.\n\nThe instruction says a figure that may not be disclosed asks for closest disclosed figure as its own part. So part 2 should ask total client assets; part 3 advisor count. These are closest figures. The words should be those documents use for those concepts. For total client assets, use \"total client assets\", \"client assets\", \"client assets under management\", \"client assets under administration\", \"assets under management\", \"assets under administration\". These are synonymous enough in wealth context.\n\nPart 1 direct metric may not exist; but part 1 still asks direct \"client assets per advisor\". Good.\n\nNeed final only submit_plan tool call. We can include brief thinking? The prompt says list asks first before writing parts, but final answer should return plan by calling tool. We can do reasoning in thought block. Then submit plan. No need to output asks in final text; just tool call.\n\nLet's ensure firms field only IDs. For parts all five.\n\nLet's make each text one sentence. Good.\n\nNeed perhaps not exceed 4 parts. We have exactly 4.\n\nLet's refine keywords.\n\nPart1 keyword: \"client assets per advisor average client assets per advisor assets per advisor client assets divided by advisor count assets per wealth advisor client assets per financial advisor\" Count: client1 assets2 per3 advisor4 average5 client6 assets7 per8 advisor9 assets10 per11 advisor12 client13 assets14 divided15 by16 advisor17 count18 assets19 per20 wealth21 advisor22 client23 assets24 per25 financial26 advisor27. 27 >25. Trim: \"client assets per advisor average client assets per advisor assets per advisor client assets divided by advisor count assets per financial advisor\" count: client1 assets2 per3 advisor4 average5 client6 assets7 per8 advisor9 assets10 per11 advisor12 client13 assets14 divided15 by16 advisor17 count18 assets19 per20 financial21 advisor22 =22. Good.\n\nPart2 keyword: \"total client assets client assets under management client assets under administration wealth management client assets retail client assets investor assets assets under management assets under administration\" count: total1 client2 assets3 client4 assets5 under6 management7 client8 assets9 under10 administration11 wealth12 management13 client14 assets15 retail16 client17 assets18 investor19 assets20 assets21 under22 management23 assets24 under25 administration26. 26 just over. Remove \"investor assets\": total1 client2 assets3 client4 assets5 under6 management7 client8 assets9 under10 administration11 wealth12 management13 client14 assets15 retail16 client17 assets18 assets19 under20 management21 assets22 under23 administration24. 24 words. Good.\n\nPart3: \"number of financial advisors advisor headcount wealth management advisors financial consultants registered representatives client-facing advisors advisor count total advisors\" count: number1 of2 financial3 advisors4 advisor5 headcount6 wealth7 management8 advisors9 financial10 consultants11 registered12 representatives13 client-facing14 advisors15 advisor16 count17 total18 advisors19. 19 words. Good.\n\nPart4: as above 23 words.\n\nShould part4 include \"average assets per advisor\" for comparability? No, validity is about definitions. Good.\n\nNow submit.",
+  "raw": {
+    "parts": [
+      {
+        "id": "assets_per_advisor",
+        "text": "Find each firm's disclosed client assets per advisor or average client assets per advisor metric across Morgan Stanley, Schwab, Edward Jones, Merrill and Raymond James.",
+        "firms": [
+          "MS",
+          "SCHW",
+          "EDJ",
+          "MER",
+          "RJF"
+        ],
+        "keyword_query": "client assets per advisor average client assets per advisor assets per advisor client assets divided by advisor count assets per financial advisor"
+      },
+      {
+        "id": "total_client_assets",
+        "text": "Find each firm's total client assets or closest disclosed client asset measure to use as the numerator for the per-advisor comparison.",
+        "firms": [
+          "MS",
+          "SCHW",
+          "EDJ",
+          "MER",
+          "RJF"
+        ],
+        "keyword_query": "total client assets client assets under management client assets under administration wealth management client assets retail client assets assets under management assets under administration"
+      },
+      {
+        "id": "advisor_headcount",
+        "text": "Find each firm's number of financial advisors or closest disclosed advisor headcount to use as the denominator for the per-advisor comparison.",
+        "firms": [
+          "MS",
+          "SCHW",
+          "EDJ",
+          "MER",
+          "RJF"
+        ],
+        "keyword_query": "number of financial advisors advisor headcount wealth management advisors financial consultants registered representatives client-facing advisors advisor count total advisors"
+      },
+      {
+        "id": "comparability",
+        "text": "Find disclosures and commentary on how each firm defines client assets and advisor headcount, and whether the per-advisor comparison across the five firms is valid or distorted by differences in advisor channels, asset definitions, and calculation methods.",
+        "firms": [
+          "MS",
+          "SCHW",
+          "EDJ",
+          "MER",
+          "RJF"
+        ],
+        "keyword_query": "advisor definition independent contractor employee advisor registered investment advisor channel assets under management definition assets under administration methodology calculation basis comparability disclosure footnotes"
+      }
+    ]
+  }
+}
