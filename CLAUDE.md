@@ -92,7 +92,7 @@ If your change touches two areas, read both specs and mention both in the PR.
 
 ## Paid API calls (money)
 
-Every real model call (`LLM_PROVIDER=anthropic` or `openai`) and every other paid API costs the
+Every real model call (`LLM_PROVIDER=anthropic`, `openai` or `deepseek`) and every other paid API costs the
 team money. The default is zero calls. Follow these steps whenever a task might call one.
 
 1. **Not necessary, not called.** Building, debugging, UI, ingestion, retrieval and tests run on

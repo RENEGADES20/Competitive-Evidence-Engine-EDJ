@@ -1464,3 +1464,235 @@ def test_plan_key_unchanged_by_the_new_retrieval_only_query_fields():
     old = {k: v for k, v in d.items() if k not in ("period_range", "exclude_ids")}
     q = {"id": "Q1", "text": "x"}
     assert er.plan_cache_key(q, "s", "deepseek", "m", d) == er.plan_cache_key(q, "s", "deepseek", "m", old)
+
+
+# --- #248: a resumed run reuses every call; cost per question; --reuse-plans; --naive-tz ---------
+
+USAGE = {"input_tokens": 1_000_000, "output_tokens": 100_000, "cache_hit_tokens": 200_000,
+         "cache_miss_tokens": 800_000, "reasoning_tokens": 50_000}
+RESUME_PLAN = {"aspects": [{"id": "a", "text": "How each firm recruits advisors.", "keyword_query": "recruit advisors",
+                            "firms": [], "metric": "", "kind": "fact"}]}
+
+
+def _hit(cid, entity, text, part_id=None):
+    from cee.retrieve.fts import Hit
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type="10-K",
+               source_tier=2, published_at="2026-02-19", period_end="2025-12-31", section="Item 1", page=None,
+               rank=1.0, text=text, part_id=part_id)
+
+
+def _resume_env(monkeypatch):
+    """Two firms (MS, RJF), one fact aspect; both sub-questions get passages; the fake map returns a
+    fact for MS and not_found for RJF; the fake corrective search adds an RJF passage, so round 2 is one
+    remap.RJF; the fake reduce returns the mock reduce. Every fake counts its calls (0 real calls)."""
+    from cee import ask
+    from cee.answer import extract
+    from cee.answer import reduce as R
+    from cee.retrieve import fts, planner
+
+    monkeypatch.setenv("LLM_PROVIDER", "deepseek")
+    monkeypatch.setenv("MOCK_DELAY_S", "0")
+    monkeypatch.setattr(ask, "model_name", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(planner, "model_for", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
+    monkeypatch.setattr(fts, "searchable", lambda q: True)
+    monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
+    monkeypatch.setattr(er, "substitutes", lambda: SUBS)
+    monkeypatch.setattr(ask, "generate", lambda *a, **k: pytest.fail("no legacy answer call"))
+    calls = {"plan": 0, "map": 0, "remap": 0, "reduce": 0, "corrective": 0}
+
+    def call_planner(query, provider, client=None, meta=None):
+        calls["plan"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        return RESUME_PLAN
+    monkeypatch.setattr(planner, "call_planner", call_planner)
+
+    def search(q, plan, trace=None, part_pools=None, **kw):
+        plan.searched = [{"id": s.id, "budget": 1000, "tokens": 20, "pool": 1} for s in plan.subquestions]
+        return [_hit("MS-10K-2025#1", "MS", "Morgan Stanley recruits advisors through its training program.", "a1.MS"),
+                _hit("RJF-10K-2025#1", "RJF", "Raymond James describes its advisor platform.", "a1.RJF")]
+    monkeypatch.setattr(planner, "search_subquestions", search)
+
+    def corrective(q, plan, sq_id, words, exclude, search_fn=None, tokens=None):
+        calls["corrective"] += 1
+        return [_hit("RJF-10K-2025#7", "RJF", "Raymond James recruits advisors from wirehouse firms.")]
+    monkeypatch.setattr(planner, "corrective_search", corrective)
+
+    def call_extract(question, spec, provider, window=None, firms=None, client=None, meta=None):
+        calls["remap" if spec.round == 2 else "map"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        out = extract.mock_extract(spec)
+        if spec.id == "map.RJF":   # round 1: the firm's passage does not answer the aspect
+            out["cells"] = [{**c, "label": "not_found", "items": [], "reason": "not stated"} for c in out["cells"]]
+        return out
+    monkeypatch.setattr(extract, "call_extract", call_extract)
+
+    def call_reduce(question, matrix, query, provider, client=None, meta=None):
+        calls["reduce"] += 1
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage=dict(USAGE))
+        return R.mock_reduce(matrix, query)
+    monkeypatch.setattr(R, "call_reduce", call_reduce)
+    return calls
+
+
+def _resume(tmp_path, name, cap, *extra):
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", str(cap), "--as-of", "2026-11-17",
+                  "--cache", str(tmp_path / "cache"), "--out", str(tmp_path / name), *extra])
+    rep = _record(tmp_path / name)
+    return rc, rep, rep["questions"][0]
+
+
+def test_a_resumed_run_reuses_every_saved_call(monkeypatch, tmp_path):
+    # #248 acceptance 1 (plan step 3): runs A (cap 3), B (cap 2), C (cap 0); 0 real calls (fakes)
+    from cee.retrieve import planner
+    calls = _resume_env(monkeypatch)
+    # preconditions (round-2 note 2): a fact aspect (a comparison is never re-searched), no research-part
+    # hits (no map.research call), the corrective search is the fake (RealRunner.map passes no search_fn)
+    assert all(a["kind"] != "comparison" for a in RESUME_PLAN["aspects"])
+    assert all(h.part_id != "research" for h in planner.search_subquestions(None, planner.Plan()))
+    assert planner.corrective_search.__name__ == "corrective"
+
+    rc, rep, r = _resume(tmp_path, "A", 3)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "corrective": 1}
+    assert rep["meta"]["real_calls"] == 3 and rep["meta"]["reused"] == 0
+    assert r["map_capped_calls"] == ["remap.RJF"] and r["model"] == "cap"
+    assert r["map_behavior"] == "answer"     # MS's fact passed the checks: the reduce is capped, not code-built
+    assert r["status"] == "NOT_EVALUATED" and r["note"] == "not run: --max-calls reached"
+    assert r["cost"]["by_type"] == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "answer": 0}
+    assert r["cost"]["new"] == 3 and r["cost"]["reused"] == 0
+    assert not any("remap" in p.name or "reduce" in p.name for p in (tmp_path / "cache").iterdir())
+
+    rc, rep, r = _resume(tmp_path, "B", 2)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "corrective": 2}
+    assert rep["meta"]["real_calls"] == 2 and rep["meta"]["reused"] == 3 and r["model"] == "called"
+    assert r["cost"]["by_type"] == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "answer": 0}
+    assert (r["cost"]["new"], r["cost"]["reused"]) == (2, 3)
+    b_cost, b_answer = r["cost"], r["answer"]
+
+    rc, rep, r = _resume(tmp_path, "C", 0)
+    assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "corrective": 3}   # no call twice
+    assert rep["meta"]["real_calls"] == 0 and rep["meta"]["calls_reserved"] == 0 and rep["meta"]["reused"] == 5
+    assert r["model"] == "cached" and r["answer"] == b_answer
+    c = r["cost"]
+    assert c["by_type"] == {"plan": 1, "map": 2, "remap": 1, "reduce": 1, "answer": 0}
+    assert (c["new"], c["reused"], c["usd_new"]) == (5 - 5, 5, 0)
+    assert c["usd"] == pytest.approx(b_cost["usd"]) and c["usd"] > 0
+    # each call: 0.2M hit, 0.8M miss, 0.1M out (reasoning inside) -> $1.4048 at peak
+    assert c["usd_peak"] == pytest.approx(5 * (0.2 * 0.044 + 0.8 * 1.32 + 0.1 * 3.96))
+    assert c["input_tokens"] == 5_000_000 and c["cache_hit_tokens"] == 1_000_000 and c["reasoning_tokens"] == 250_000
+    assert all(row["cost"]["tz"] == "record offset" for row in c["rows"])   # new records carry their offset
+    assert rep["summary"]["cost"]["usd"] == pytest.approx(c["usd"]) and rep["meta"]["cost"]["usd_new"] == 0
+    assert "**Cost** (#248): 5 calls" in (tmp_path / "C" / "report.md").read_text(encoding="utf-8")
+
+
+def test_max_calls_caps_every_call_type(monkeypatch, tmp_path):
+    calls = _resume_env(monkeypatch)
+    rc, rep, r = _resume(tmp_path, "one", 1)
+    assert calls["plan"] == 1 and calls["map"] == 0 and calls["reduce"] == 0 and rep["meta"]["real_calls"] == 1
+    assert sorted(r["map_capped_calls"]) == ["map.MS", "map.RJF"]
+
+
+def test_legacy_resume_reuses_plan_and_answer(fake_model, monkeypatch, tmp_path):
+    from cee.retrieve import fts
+    calls = _resume_env(monkeypatch)
+    monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS"]))
+    from cee import ask
+    fake_calls = []
+
+    def generate(question, hits, provider, plan=None, window=None):
+        fake_calls.append(question)
+        from cee.answer.schema import Answer
+        return Answer(answerable=True, behavior="answer", claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}],
+                      llm_called=True, usage=dict(USAGE))
+    monkeypatch.setattr(ask, "generate", generate)
+    _, rep, r = _resume(tmp_path, "A1", 1, "--legacy")
+    assert (rep["meta"]["real_calls"], r["model"], calls["plan"], len(fake_calls)) == (1, "cap", 1, 0)
+    _, rep, r = _resume(tmp_path, "B1", 1, "--legacy")
+    assert (rep["meta"]["real_calls"], rep["meta"]["reused"], r["model"], len(fake_calls)) == (1, 1, "called", 1)
+    _, rep, r = _resume(tmp_path, "C1", 0, "--legacy")
+    assert (rep["meta"]["real_calls"], rep["meta"]["reused"], r["model"], len(fake_calls)) == (0, 2, "cached", 1)
+    assert r["cost"]["by_type"]["answer"] == 1 and r["cost"]["by_type"]["plan"] == 1 and calls["plan"] == 1
+
+
+def test_naive_records_need_naive_tz_before_any_call(monkeypatch, tmp_path):
+    import json
+    calls = _resume_env(monkeypatch)
+    (tmp_path / "cache").mkdir()
+    (tmp_path / "cache" / "Q1-plan-old.json").write_text(json.dumps({"at": "2026-11-19T21:35:43"}), encoding="utf-8")
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                  "--out", str(tmp_path / "x")])
+    assert rc == 2 and calls["plan"] == 0 and not (tmp_path / "x").exists()
+    with pytest.raises(SystemExit):   # an unknown zone is refused before anything runs
+        er.main(["--questions", "Q7", "--naive-tz", "Not/AZone", "--out", str(tmp_path / "y")])
+    _, rep, r = _resume(tmp_path, "z", 3, "--naive-tz", "America/Chicago")
+    assert rep["meta"]["cost"]["naive_tz"] == "America/Chicago" and calls["plan"] == 1
+
+
+def test_a_replayed_naive_record_is_priced_in_the_given_zone(monkeypatch, tmp_path):
+    # a saved record whose naive `at` is 21:35 in America/Chicago (03:35 UTC Friday): peak
+    import json
+    _resume_env(monkeypatch)
+    _resume(tmp_path, "A", 3)
+    cache = tmp_path / "cache"
+    for f in cache.iterdir():
+        rec = json.loads(f.read_text(encoding="utf-8"))
+        rec["at"], rec["wall_s"] = "2026-11-19T21:35:00", 10
+        f.write_text(json.dumps(rec), encoding="utf-8")
+    _, rep, r = _resume(tmp_path, "chi", 0, "--naive-tz=-06:00")
+    assert r["cost"]["peak_calls"] == 3 and all(x["cost"]["tz"] == "--naive-tz -06:00" for x in r["cost"]["rows"])
+    _, rep, r = _resume(tmp_path, "utc", 0, "--naive-tz", "UTC")   # Thursday 21:35 UTC: off-peak
+    assert r["cost"]["off_peak_calls"] == 3
+
+
+def test_mock_run_cost_is_zero(monkeypatch, tmp_path):
+    _resume_env(monkeypatch)
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    er.main(["--questions", "Q7", "--out", str(tmp_path)])
+    rep = _record(tmp_path)
+    assert rep["questions"][0]["cost"]["calls"] == 0 and rep["summary"]["cost"]["usd"] == 0
+    assert rep["meta"]["cost"]["usd"] == 0
+
+
+def test_plan_cache_is_shared_by_every_retrieval_mode(monkeypatch, tmp_path):
+    # #240 (T9) on main (#248): the planner record path has no retrieval mode; a second run with the
+    # same plan key reuses it, so the planner is called once in total
+    calls = _resume_env(monkeypatch)
+    _resume(tmp_path, "first", 1)
+    _, rep, r = _resume(tmp_path, "second", 0)
+    assert calls["plan"] == 1 and r["plan"]["source"] == "model"
+    assert any(p.name.startswith("Q7-plan-") for p in (tmp_path / "second" / "raw").iterdir())
+
+
+def test_reuse_plans_with_real_never_calls_the_planner(monkeypatch, tmp_path):
+    # #240 (T10) on main: plans only from the cache; a missing plan stops the run before any call
+    # (exit 2); a provider / model mismatch exits 2
+    calls = _resume_env(monkeypatch)
+    _resume(tmp_path, "seed", 1)
+    assert calls["plan"] == 1
+    _, rep, r = _resume(tmp_path, "ok", 2, "--reuse-plans", "deepseek:deepseek-v4-pro")
+    assert calls["plan"] == 1 and calls["map"] == 2 and r["plan"]["source"] == "model"
+    assert rep["meta"]["reuse_plans"] == "deepseek:deepseek-v4-pro"
+    for p in (tmp_path / "cache").glob("Q7-plan-*.json"):
+        p.unlink()
+    rc = er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                  "--reuse-plans", "deepseek:deepseek-v4-pro", "--out", str(tmp_path / "missing")])
+    assert rc == 2 and calls["plan"] == 1 and not (tmp_path / "missing").exists()
+    with pytest.raises(SystemExit) as e:
+        er.main(["--questions", "Q7", "--real", "--max-calls", "5", "--cache", str(tmp_path / "cache"),
+                 "--reuse-plans", "deepseek:other-model", "--out", str(tmp_path / "mismatch")])
+    assert e.value.code == 2 and calls["plan"] == 1
+
+
+def test_reuse_plans_in_a_mock_run_reads_the_saved_plan(monkeypatch, tmp_path):
+    # #240 (T10) on main: mock + --reuse-plans: the saved plan, 0 calls (the planner is never called)
+    calls = _resume_env(monkeypatch)
+    _resume(tmp_path, "seed", 1)
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    assert er.main(["--questions", "Q7", "--as-of", "2026-11-17", "--cache", str(tmp_path / "cache"),
+                    "--reuse-plans", "deepseek:deepseek-v4-pro", "--out", str(tmp_path / "m")]) == 0
+    r = _record(tmp_path / "m")["questions"][0]
+    assert r["plan"]["source"] == "model" and r["plan"]["calls"] == 0 and calls["plan"] == 1
+    assert _record(tmp_path / "m")["meta"]["real_calls"] == 0

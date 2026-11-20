@@ -267,10 +267,10 @@ LLM_PROVIDER=deepseek .venv/bin/python -m streamlit run src/cee/app/streamlit_ap
 ```
 Planned real runs of a few questions (CLAUDE.md "Paid API calls"):
 ```powershell
-$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
+$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
 ```
 ```bash
-LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
+LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
 ```
 If DeepSeek answers 402 (balance used up), 429 (rate limit) or 401 (key rejected), the question
 stops with that message and nothing is saved. Top up, wait or fix the key, then run again; saved
@@ -280,10 +280,10 @@ outputs are reused.
 `--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,
 the sub-questions (firm x aspect) and how many tokens the answer call would read:
 ```powershell
-$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
+$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
 ```
 ```bash
-LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
+LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 9 --questions Q19,Q11,Q23,Q24,Q1,Q3,Q22,Q12,Q15 --as-of 2026-11-17
 ```
 If the provider rejects the planner request itself (HTTP 400), the run stops after that one call.
 
@@ -299,22 +299,54 @@ Plan first, count the map calls for free, then run:
 ```powershell
 .\.venv\Scripts\python.exe scripts\eval_run.py --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 $env:LLM_PROVIDER="deepseek"
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 ```
 ```bash
 .venv/bin/python scripts/eval_run.py --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 export LLM_PROVIDER=deepseek
-.venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
-.venv/bin/python scripts/eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
-.venv/bin/python scripts/eval_run.py --real --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 3 --questions Q1,Q3,Q22 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --max-calls <cap from the count> --questions Q11,Q19,Q23,Q24,Q26,Q1,Q3,Q22 --as-of 2026-11-17
 ```
 The cap of the last command is the number the 0-call count gives: its round-1 map calls, plus at
 most one re-extraction per firm with a re-searched cell, plus one reduce call per question; write it
 down before the run (#247 part 2: never a fixed number from an earlier run).
 Every reduce call is saved in `.eval-runs/cache/` (`<Q>-reduce-<key>.json`: valid, invalid or failed)
 and never made again; a 400 stops the run. `--legacy` runs the old single answer call instead.
+
+**Cost per question, resuming a run and sharing plans** (#248; all free: 0 calls). Every call of the
+flow (plan, map per firm, re-extraction, reduce) is saved in the cache and reused, so a stopped run is
+resumed by running the same command again: only the calls not yet saved are made, within
+`--max-calls`. Each question in `report.json` has `cost`: calls by type, new and reused, tokens
+(including DeepSeek's cache-hit tokens), `usd` (every call the answer used), `usd_new` (spent in
+this run), `usd_peak` (all at the peak price) and peak / off-peak calls; `summary.cost` has the run
+total, and `report.md` a cost line and column. Prices and their source: `config/pricing.yaml`.
+DeepSeek is cheaper off-peak; a call is priced by the time it finished, in UTC.
+
+Records written before #248 store a time without a UTC offset. They were all written in
+America/Chicago (UTC-6 in November), so a DeepSeek run over a cache holding them needs
+`--naive-tz America/Chicago`; without it the run stops before any call (exit 2). New records carry
+their offset. To price a folder of saved records (a run's `raw/`, the cache, a results folder):
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_cost.py docs\results\0242-deepseek-raw --naive-tz America/Chicago
+```
+```bash
+.venv/bin/python scripts/eval_cost.py docs/results/0242-deepseek-raw --naive-tz America/Chicago
+```
+A fixed offset works too (`--naive-tz=-06:00`; write it with `=`, because it starts with a minus).
+`--cache <folder>` reads records from another folder (e.g. a copy, for a 0-call replay with
+`--max-calls 0`). `--reuse-plans PROVIDER:MODEL` takes every plan from the saved planner records and
+never calls the planner, so two runs (e.g. fts on main and hybrid on exp/hybrid) answer from the same
+plans; a missing plan stops the run before any search:
+```powershell
+$env:LLM_PROVIDER="deepseek"
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --max-calls 0 --reuse-plans deepseek:deepseek-v4-pro --questions Q1,Q3 --as-of 2026-11-17
+```
+```bash
+LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --max-calls 0 --reuse-plans deepseek:deepseek-v4-pro --questions Q1,Q3 --as-of 2026-11-17
+```
 
 **Check the map step** (#246: extraction per firm, corrective re-search, evidence matrix; on in the
 app since #247). Free on the mock; paid with `--real --map-only` (planner calls for
@@ -323,16 +355,16 @@ per firm; no answer call). Plan first, count for free, then map:
 ```powershell
 .\.venv\Scripts\python.exe scripts\eval_run.py --map --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
 $env:LLM_PROVIDER="deepseek"; $env:MAP="on"
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
-.\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
 ```
 ```bash
 .venv/bin/python scripts/eval_run.py --map --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
 export LLM_PROVIDER=deepseek MAP=on
-.venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
-.venv/bin/python scripts/eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
-.venv/bin/python scripts/eval_run.py --real --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
 ```
 The `--max-calls 0` run makes no call and lists, per question, the extraction calls it would make
 (`map_capped_calls`); a call skipped at the cap writes no cache file. Every call is saved in
@@ -365,10 +397,10 @@ bash scripts/restore.sh snapshots/corpus-2026-11-17.dump
 Every output is saved under `.eval-runs\cache\` and reused, so a second run of unchanged code
 costs nothing:
 ```powershell
-$env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 30 --as-of 2026-11-17
+$env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --naive-tz America/Chicago --max-calls 30 --as-of 2026-11-17
 ```
 ```bash
-LLM_PROVIDER=anthropic .venv/bin/python scripts/eval_run.py --real --max-calls 30 --as-of 2026-11-17
+LLM_PROVIDER=anthropic .venv/bin/python scripts/eval_run.py --real --naive-tz America/Chicago --max-calls 30 --as-of 2026-11-17
 ```
 The run writes `report.md` and `report.json` in its run folder. The model is not deterministic,
 so new answers can differ in wording from the report; the score is a human (or agent) reading of
