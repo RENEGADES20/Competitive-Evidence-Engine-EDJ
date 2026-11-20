@@ -317,3 +317,12 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b, rule
   f7ef795bb63ef19899454ca9dc937c508a08607321577bd08984017ab8a9d8b2, prompt
   9a20a12d5b0fa2840407110339c0af6a396d34836d9a538125638994d597c4f6. Scorer started by the coordinator.
+- 2026-11-20 01:15 - step 4 blind verdicts by the fresh scorer agent (started by the coordinator with
+  `ev243\scorer-prompt.txt`, sha256 9a20a12d5b0fa2840407110339c0af6a396d34836d9a538125638994d597c4f6;
+  inputs `ev243\blind-in\` only: `answers-dump.txt` 0c3ee232b3048bd38e03097c84bddad06482747ae8bd239c4cd74455dd948815,
+  `questions.yaml` 0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b,
+  `verdict-rule.txt` f7ef795bb63ef19899454ca9dc937c508a08607321577bd08984017ab8a9d8b2):
+  `ev243\verdicts-blind.json`, sha256
+  `7816579dccc700870cc7e244c1a02a894920e90635a970a939b11f7bf17daa24` (recomputed by the
+  implementer; equal to the scorer's). Blind score 16/30; borderline Q3, Q5, Q8, Q12, Q14, Q15, Q16,
+  Q18, Q21, Q22, Q24, Q26, Q28. Committed before any comparison (step 5).
