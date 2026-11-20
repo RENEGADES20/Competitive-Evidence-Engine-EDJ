@@ -1173,3 +1173,118 @@ def test_guard_trim_joins_the_answer_key(fake_model, monkeypatch, tmp_path):
     assert how == "called" and again.last_guard and again.last_guard["dropped"]       # not the untrimmed output
     rec = [s for s in saved(tmp_path / "cache") if s.get("input_guard")][0]
     assert rec["input_guard"]["limit"] == base + 1200
+
+
+# --- #246: map calls cached, capped exactly, failed calls saved, must-not report ------------------
+
+def _map_setup(monkeypatch, behave=None):
+    """Five firms, one aspect; extract.call_extract replaced by a recorder (0 real calls)."""
+    from cee import ask
+    from cee.answer import extract
+    from cee.retrieve import planner
+    from cee.retrieve.fts import Hit, Query
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    firms = ["MS", "SCHW", "EDJ", "MER", "RJF"]
+    qry = Query(question="Advisor headcount across the five.", entities=firms)
+    plan = planner.Plan(aspects=[planner.Aspect("a1", "Advisor headcount.")],
+                        subquestions=[planner.SubQuestion(f"a1.{f}", f, planner.Aspect("a1", "Advisor headcount."))
+                                      for f in firms])
+    plan.subquestions = [planner.SubQuestion(f"a1.{f}", f, plan.aspects[0]) for f in firms]
+    hits = [Hit(chunk_id=f"{f}#1", doc_id=f, entity_id=f, segment=None, doc_type="10-K", source_tier=2,
+                published_at="2026-02-01", period_end="2025-12-31", section=None, page=None, rank=1.0,
+                text=f"{f} reports advisors.", part_id=f"a1.{f}") for f in firms]
+    calls = []
+
+    def fake(question, spec, provider, window=None, firms=None, client=None, meta=None):
+        calls.append(spec.id)
+        if behave:
+            return behave(spec, meta)
+        return extract.mock_extract(spec)
+    monkeypatch.setattr(extract, "call_extract", fake)
+    monkeypatch.setattr(extract.fts, "budget_tokens", lambda q: None)   # no corrective re-search here
+    return {"id": "Q23", "text": qry.question}, qry, plan, hits, calls
+
+
+def test_map_calls_capped_exactly_and_a_capped_call_writes_no_cache_file(monkeypatch, tmp_path):
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch)
+    zero = er.RealRunner("deepseek", 0, "snap", tmp_path / "r0", cache_dir=tmp_path / "cache")
+    m = zero.map(qd, qry, plan, hits)
+    assert calls == [] and zero.map_capped == ["map.MS", "map.SCHW", "map.EDJ", "map.MER", "map.RJF"]
+    assert not (tmp_path / "cache").exists() or not any((tmp_path / "cache").iterdir())   # nothing saved
+    assert all(c.label == "failed" for c in m.cells.values())
+    three = er.RealRunner("deepseek", 3, "snap", tmp_path / "r3", cache_dir=tmp_path / "cache")
+    m = three.map(qd, qry, plan, hits)
+    assert len(calls) == 3 and three.calls == 3 and three.made == 3 and len(three.map_capped) == 2
+    assert sum(c.label == "fact" for c in m.cells.values()) == 3
+    again = er.RealRunner("deepseek", 2, "snap", tmp_path / "r4", cache_dir=tmp_path / "cache")
+    m = again.map(qd, qry, plan, hits)                     # 3 reused (free), 2 new calls within the cap
+    assert len(calls) == 5 and again.reused == 3 and again.made == 2
+    assert all(c.label == "fact" for c in m.cells.values())
+
+
+def test_map_failed_call_is_saved_counted_and_never_called_again(monkeypatch, tmp_path):
+    def behave(spec, meta):
+        if spec.id == "map.SCHW":
+            raise TimeoutError("read timed out")
+        from cee.answer import extract
+        return extract.mock_extract(spec)
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    r = er.RealRunner("deepseek", 9, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    m = r.map(qd, qry, plan, hits)
+    assert m.cells["a1.SCHW"].label == "failed" and r.made == 5 and len(calls) == 5
+    rec = [s for s in saved(tmp_path / "cache") if s.get("failed_call")]
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW" and rec[0]["error"].startswith("TimeoutError")
+    again = er.RealRunner("deepseek", 9, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    m2 = again.map(qd, qry, plan, hits)
+    assert len(calls) == 5 and again.made == 0 and m2.cells["a1.SCHW"].label == "failed"   # reused, not re-called
+
+
+def test_map_invalid_output_saved_as_invalid_and_reused(monkeypatch, tmp_path):
+    from cee.answer import llm
+
+    def behave(spec, meta):
+        if spec.id == "map.EDJ":
+            raise llm.ModelOutputError("Map output cut at max_tokens (64000 output tokens)", {"partial": 1},
+                                       "deepseek", "length", {"output_tokens": 64000})
+        from cee.answer import extract
+        return extract.mock_extract(spec)
+    qd, qry, plan, hits, calls = _map_setup(monkeypatch, behave)
+    er.RealRunner("deepseek", 9, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache").map(qd, qry, plan, hits)
+    rec = [s for s in saved(tmp_path / "cache") if s.get("invalid")][0]
+    assert rec["raw_payload"] == {"partial": 1} and rec["stop_reason"] == "length" and not rec.get("failed_call")
+    again = er.RealRunner("deepseek", 9, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    m = again.map(qd, qry, plan, hits)
+    assert again.made == 0 and m.cells["a1.EDJ"].label == "failed" and len(calls) == 5
+
+
+def test_map_cache_key_changes_with_its_inputs(monkeypatch):
+    from cee.answer import extract
+    qd, qry, plan, hits, _ = _map_setup(monkeypatch)
+    specs, _ = extract.map_specs(qry, plan, hits)
+    base = er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 20000, "rv", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv2", specs[0])
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[1])
+    monkeypatch.setattr(extract, "EXTRACT_VERSION", "extract-v2")
+    assert base != er.map_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", specs[0])
+
+
+def test_map_must_not_reports_items_and_derivation_inputs():
+    from cee.answer.matrix import Cell, EvidenceMatrix, Item
+    from cee.retrieve.planner import Aspect
+    m = EvidenceMatrix("q", rows=[], aspects=[Aspect("a1", "x"), Aspect("a3", "y", proxy=True)], cells={
+        "a3.SCHW": Cell("a3.SCHW", "SCHW", "a3", "named", "fact", items=[Item("t", chunk_ids=["BAD#1"])]),
+        "a1.SCHW": Cell("a1.SCHW", "SCHW", "a1", "named", "derived",
+                        derivation={"ok": True, "input_chunk_ids": ["BAD#1", "OK#1"]}),
+        "a3.MS": Cell("a3.MS", "MS", "a3", "named", "different_quantity", items=[Item("t", chunk_ids=["BAD#2"])])})
+    out = er.map_must_not(m, {"must_not_return": ["BAD#1", "BAD#2"]})
+    assert {(o["chunk_id"], o["cell"], o["via"], o["as_fact"]) for o in out} == {
+        ("BAD#1", "a3.SCHW", "item", True), ("BAD#1", "a1.SCHW", "derivation input", True),
+        ("BAD#2", "a3.MS", "item", False)}
+
+
+def test_map_only_needs_real(tmp_path):
+    with pytest.raises(SystemExit):
+        er.main(["--questions", "Q7", "--map-only", "--out", str(tmp_path)])

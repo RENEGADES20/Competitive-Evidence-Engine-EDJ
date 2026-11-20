@@ -40,6 +40,11 @@ class Settings:
     deepseek_model: str = "deepseek-v4-pro"
     deepseek_base_url: str = "https://api.deepseek.com/beta"
     deepseek_thinking: bool = True
+    # Map step (#246, ADR-021): per-firm extraction calls and the evidence matrix. Off by default
+    # until #247 shows the map's output (TL decision D8); #247 flips the default. The eval turns it on
+    # with --map / --map-only.
+    map_on: bool = False
+    map_concurrency: int = 6     # parallel extraction calls (five firms + research)
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -66,6 +71,7 @@ def deepseek_thinking() -> bool:
 # fixed rule (plans/0245-decompose.md; ADR-019 amendment): only 40000 was eligible (12000 and 20000
 # lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
 SUBQUESTION_TOKENS_DEFAULT = 40000
+MAP_CONCURRENCY_DEFAULT = 6   # #246: five firms + research in parallel
 
 
 def _positive_int(name: str, default: int | None) -> int | None:
@@ -97,6 +103,8 @@ def settings() -> Settings:
         deepseek_model=os.getenv("DEEPSEEK_MODEL", "").strip() or "deepseek-v4-pro",
         deepseek_base_url=os.getenv("DEEPSEEK_BASE_URL", "").strip() or "https://api.deepseek.com/beta",
         deepseek_thinking=deepseek_thinking(),
+        map_on=os.getenv("MAP", "off").strip().strip('"').strip().lower() in ON_WORDS,
+        map_concurrency=_positive_int("MAP_CONCURRENCY", MAP_CONCURRENCY_DEFAULT),
     )
 
 

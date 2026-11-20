@@ -412,7 +412,10 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Look above the answer", "a collapsed 'How this answer was built' box",
              status.count() > 0 and hidden, f"box={status.count() > 0}, trace hidden={hidden}")
     lines = open_trace(page)
-    rec.step("Open the trace", "seven step lines", len(lines) == 7, " / ".join(lines)[:300])
+    rec.step("Open the trace", "eight step lines", len(lines) == 8, " / ".join(lines)[:300])
+    map_line = next((l for l in lines if l.startswith("Map step") or l.startswith("Extracting per firm")), "")
+    rec.step("Read the map line (#246)", "'Map step off (MAP=off): no extraction calls' (off by default until #247)",
+             map_line == "Map step off (MAP=off): no extraction calls", map_line)
     plan = next((l for l in lines if l.startswith("Planning the search")), "")
     rec.step("Read the plan line (#214, #245)",
              "'Planning the search (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
@@ -445,8 +448,9 @@ def feature_ask_progress(page, base, rec, ctx):
              and search_line.endswith("in 2 sub-questions"), f"{plan} | {search_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
                           " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
-    rec.step("Read the newest query_log row (side effect)", "plan source rules, 2 sub-questions, llm_calls 0 / 0",
-             row.replace(" ", "") == 'rules|2|{"answer":0,"planner":0}', row)
+    rec.step("Read the newest query_log row (side effect)",
+             "plan source rules, 2 sub-questions, llm_calls all 0 (map and remap 0: MAP off)",
+             row.replace(" ", "") == 'rules|2|{"map":0,"remap":0,"answer":0,"planner":0}', row)
 
 
 PDF_PAGE_SAMPLES = ["MS-SUPP-2026Q3#16", "SCHW-DECK-2026Q2#53"]  # a table page and a deck page (#53 comment)

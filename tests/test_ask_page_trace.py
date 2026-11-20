@@ -21,7 +21,7 @@ def test_trace_stays_collapsed_after_the_answer(monkeypatch):
     at = AppTest.from_function(page).run()
     assert not at.exception and not at.error
     box = at.get("status")[0]
-    assert box.label.startswith("How this answer was built: 7 steps")
+    assert box.label.startswith("How this answer was built: 8 steps")
     assert "No passages found: no model call" in trace_text(at)
 
 

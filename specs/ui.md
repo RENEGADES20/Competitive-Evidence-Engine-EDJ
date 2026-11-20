@@ -30,6 +30,9 @@ Page "Ask"
             Reading the question: firms MS, EDJ; mode compare; window last 4 quarters
             Planning the search (anthropic, one call): 2 aspects x 2 firms = 4 sub-questions: a1.MS; a2.MS; a1.EDJ; a2.EDJ
             Searching the corpus: 14 passages from 6 documents in 4 sub-questions
+            Map step off (MAP=off): no extraction calls   (#246; the default until #247)
+              | with MAP=on: Extracting per firm (deepseek, 2 calls in parallel, 1 re-searched,
+              1 re-extraction): 4 cells: 3 fact, 1 not found; behavior by code: answer
             Asking the model (anthropic, one call)   | or: No passages found, no model call
               (#245, temporary until #247: "...; input over the model's limit: kept N of M passages,
               ~X of ~Y tokens" when the interim input guard trimmed the passages)
@@ -58,7 +61,8 @@ Page "Coverage"
 - Coverage page shows thin areas for all five firms and themes.
 - Feedback writes a row to `query_feedback` linked to the `query_log` row.
 - After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
-  pipeline stages (resolve, plan (#214, ADR-020), retrieve, model call or skip, citation check, caveats/gaps). Each
+  pipeline stages (resolve, plan (#214, ADR-020), retrieve, map (#246, off by default until #247),
+  model call or skip, citation check, caveats/gaps). Each
   step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
   The trace adds no extra LLM call (it reports the planner call and the answer call; until #246 /
   #247 add the map and reduce calls, planner 1 + answer 1 per question, ADR-021 rule 7). The plan

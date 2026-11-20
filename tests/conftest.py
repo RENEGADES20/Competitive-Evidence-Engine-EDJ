@@ -46,3 +46,6 @@ def _no_paid_calls(monkeypatch, tmp_path_factory):
     monkeypatch.setenv("ANTHROPIC_BASE_URL", CLOSED_PORT_URL)
     monkeypatch.setenv("OPENAI_BASE_URL", CLOSED_PORT_URL)
     monkeypatch.setenv("DEEPSEEK_BASE_URL", CLOSED_PORT_URL)
+    # #246: the map step's default (off until #247), whatever a developer's .env says
+    monkeypatch.delenv("MAP", raising=False)
+    monkeypatch.delenv("MAP_CONCURRENCY", raising=False)

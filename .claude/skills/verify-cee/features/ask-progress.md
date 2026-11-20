@@ -1,7 +1,8 @@
 # Answer progress and step trace
 
 From the moment "Ask" is clicked, a progress bar and one line per pipeline stage show what
-the system is doing (reading the question, planning the search, searching, asking the model or
+the system is doing (reading the question, planning the search, searching, the map step (off by
+default, #246), asking the model or
 skipping it, checking citations, caveats and gaps, saving the query). Each line states the stage's
 real output. Once the answer shows, the trace stays on the page, collapsed under "How this answer
 was built".
@@ -35,8 +36,12 @@ Preconditions: baseline.
 - **Early.** Ask the answerable question. As soon as "Asking the model" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).
-- **Collapsed.** A status box labelled "How this answer was built: 7 steps ..." is present
-  and the trace lines are hidden; click the label and the seven lines show.
+- **Collapsed.** A status box labelled "How this answer was built: 8 steps ..." is present
+  and the trace lines are hidden; click the label and the eight lines show.
+- **Map (#246).** The map line reads "Map step off (MAP=off): no extraction calls": the map step
+  (extraction per firm, evidence matrix) is off by default until #247 shows its output. With
+  `MAP=on` it reads "Extracting per firm (mock, no model call): N cells: ...; behavior by code: ..."
+  (pytest `tests/test_ask_progress.py`; the verify app keeps the default).
 - **Plan.** The line "Planning the search (rules, no model call): 1 aspect x 1 firm = 1
   sub-question: a1.EDJ" is there (the answerable question names Edward Jones only).
 - **Facts.** "Searching the corpus: N passages" equals "N passages found" in the meta line;
@@ -47,7 +52,7 @@ Preconditions: baseline.
   the trace: "Planning the search (rules, no model call): 1 aspect x 2 firms = 2 sub-questions:
   a1.MS; a1.RJF" and the search line ends "in 2 sub-questions". The newest `query_log` row in
   `cee_verify` has plan source `rules`, 2 parts (one per sub-question) and `llm_calls`
-  `{"answer": 0, "planner": 0}` (the mock makes no paid call).
+  `{"map": 0, "remap": 0, "answer": 0, "planner": 0}` (the mock makes no paid call; the map is off).
 
 ## Gotchas
 

@@ -818,6 +818,8 @@ fts.search; exp/hybrid passes its own) with its own budget (ADR-019 amendment); 
 is the re-search hook for #246. The rule plan is one whole-question aspect for every scoped firm.
 Calls stay planner 1 + answer 1 until #246 / #247; the answer call reads the evidence grouped by
 sub-question (prompt v4.1 unchanged) behind a temporary, logged input guard. Real check in the #245 PR.
+Amendment (#246, plan-v3.1): each aspect carries a required boolean `proxy` (a stand-in for the asked
+quantity: the closest disclosed figure, a numerator or denominator); see ADR-021's #246 amendment.
 
 ## ADR-021: Answer behavior decided by code; definitions and comparability; sub-question decomposition with no fixed call cap
 Status: Accepted (user decision 2026-11-19, #244); amends ADR-012, ADR-019 and ADR-020; built by #245
@@ -927,4 +929,40 @@ metric_definitions.yaml` gains `period`, `unit` and `basis` (#246) and only regi
 compared across firms. Until #245-#247 land, the code, `specs/ui.md`, README and
 `docs/ARCHITECTURE.md` describe the current flow (planner 1 + answer 1, prompt v4.1); the specs mark
 each ADR-021 item with the issue that builds it.
+Amendment (#246, map step; TL decisions on the #246 plan, issue #246 comments 7031387523 and
+7031488115): the rules above are built in `src/cee/answer/extract.py` and `matrix.py` with these
+settled details, which ADR-021's text did not fix:
+- **Proxy aspects.** Plan-v3 lists "the closest disclosed figure" as its own aspect. Plan-v3.1 marks
+  such aspects `proxy: true` (a stand-in: the closest figure, a numerator or denominator). A proxy
+  aspect never fires rule 1(a): its cells count as a related quantity for rule 1(b) and feed the
+  adjacent side, and get no gap of their own; they may be inputs of a within-firm derivation
+  (rule 1d), whose cell on a non-proxy aspect does fire 1(a). Extract-v1 states one proxy text: the
+  figure a proxy sub-question names, as the firm reports it, is a fact; a different measure
+  (employees, full-time equivalents, compensation expense, client firms) is `different_quantity`.
+  So Q29, Q30, Q33-Q35 keep `gap_with_adjacent`.
+- **Undecided behavior.** No cell holds the asked quantity and an extraction failed (an invalid
+  output or a failed call): the behavior is not decided (`behavior` None). The answer is shown plainly
+  as incomplete ("This answer is incomplete: ..."), never as `refuse` and never with "The database
+  does not support this today", because a failed extraction cannot show an absence.
+- **Derivations** (rule 1d) are proposed by the extraction model and accepted by code only for cited
+  fact items of the same firm with the same period and scope (the same unit for a sum or
+  difference) and figures found in their chunks; code computes the value.
+- **Retrieved set of a cell**: its sub-question's kept passages plus the chunks in its own candidate
+  pool that a sibling sub-question of the same firm kept; an id outside it is rejected and flagged
+  (never dropped silently). Rejection is per citation, not per output.
+- **Comparison-kind aspects** decide nothing and get no corrective re-search and no gap; the reduce
+  (#247) answers them (rule 4).
+- **Failed calls** (timeout, 5xx, connection, a 401 / 429 outside DeepSeek's ProviderStop, a 400)
+  make that call's cells `failed`; the eval saves a counted record, never called again; a 400 stops
+  an eval run after the round.
+- **`MAP` is off in the app until #247** shows the map's output (no user pays for calls whose output
+  is not shown); the eval turns it on with `--map` / `--map-only`; #247 flips the default.
+- The map call's output cap joins its own cache key; `llm.request_version` is unchanged.
+- **Invalid-output rule, JSON parsing** (TL decision on #246 Q24, after the real check): DeepSeek's
+  strict mode sometimes returns a complete JSON object followed by stray closing braces. One helper
+  (`llm.loads_object`, used by the map, planner and answer paths on DeepSeek and OpenAI) takes the
+  first complete object (`json.JSONDecoder().raw_decode`) and accepts it only when everything after it
+  is whitespace and `}` / `]`; the record carries the flag `trailing_braces`. Any other trailing text
+  stays invalid, and the object still goes through the strict schema validation and every code check
+  (chunk ids, quotes, numbers). Saved records are re-checked under this rule at 0 calls.
 

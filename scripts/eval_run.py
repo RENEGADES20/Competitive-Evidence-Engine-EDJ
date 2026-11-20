@@ -394,6 +394,56 @@ def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, query: dic
     return hashlib.sha256(json.dumps(parts, default=str, sort_keys=True).encode()).hexdigest()[:24]
 
 
+def map_cache_key(q: dict, snapshot: str, provider: str, model: str, max_tokens: int,
+                  request: str | None, spec, window=None) -> str:
+    """#246: one extraction call: question, extract version, snapshot, provider, model, the map cap,
+    the request version (thinking mode), the call id, its cells (id, text, kind, metric, proxy), the
+    input chunk ids in order and the window."""
+    from cee.answer.extract import EXTRACT_VERSION
+    cells = [[c.id, c.text, c.aspect.kind, c.aspect.metric, bool(getattr(c.aspect, "proxy", False))]
+             for c in spec.cells]
+    parts = [q["id"], q["text"], EXTRACT_VERSION, snapshot, provider, model, max_tokens, request, spec.id,
+             cells, [h.chunk_id for h in spec.hits], [str(w) for w in window] if window else None]
+    return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
+
+
+def extract_version() -> str:
+    from cee.answer.extract import EXTRACT_VERSION
+    return EXTRACT_VERSION
+
+
+def effective_behaviors() -> dict[str, str]:
+    """evals/behavior_supersede.yaml (ADR-021 rule 8): informational here; the scorer is #248's."""
+    path = REPO / "evals" / "behavior_supersede.yaml"
+    if not path.is_file():
+        return {}
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return {e["id"]: e["expected_behavior"] for e in data.get("supersedes") or []}
+
+
+def map_must_not(matrix, key: dict | None) -> list[dict]:
+    """#246: every must_not_return chunk the matrix cites (items, and the inputs behind an accepted
+    derivation), with its cell and label; as_fact = cited for a cell that holds the asked quantity."""
+    bad = set((key or {}).get("must_not_return") or [])
+    if matrix is None or not bad:
+        return []
+    from cee.answer.matrix import holds
+    out = []
+    for c in matrix.cells.values():
+        for i in c.items:
+            for cid in i.chunk_ids:
+                if cid in bad:
+                    out.append({"chunk_id": cid, "cell": c.id, "label": c.effective_label,
+                                "as_fact": c.effective_label == "fact", "via": "item"})
+        d = c.derivation or {}
+        if d.get("ok"):
+            for cid in d.get("input_chunk_ids") or []:
+                if cid in bad:
+                    out.append({"chunk_id": cid, "cell": c.id, "label": c.label, "as_fact": holds(c),
+                                "via": "derivation input"})
+    return out
+
+
 def part_stages(recall: dict | None, hits, pools: dict[str, set[str]]) -> None:
     """Per expected row (#214): the plan parts whose candidate pool held it (`parts_pool`) and the
     part that kept it (`parts_final`; `research` / `peers` for those passes)."""
@@ -423,6 +473,14 @@ class RealRunner:
         self.calls, self.reused, self.last_file, self.last_guard = 0, 0, None, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
+        # #246: `calls` counts reservations (the --max-calls cap, exact under parallel map calls);
+        # `made` counts calls actually sent (a reservation cancelled after a ProviderStop is not made)
+        import threading
+        self.made, self.lock = 0, threading.Lock()
+        self.map_max_tokens = None
+        self.last_plan_origin: str | None = None
+        self.map_capped: list[str] = []
+        self.bad_request: str | None = None
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
@@ -460,6 +518,7 @@ class RealRunner:
         if self.calls >= self.max_calls:
             return None, "cap"
         self.calls += 1   # counted before the call: a failed call still cost money
+        self.made += 1
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "request_version": self.request_version,
@@ -499,7 +558,9 @@ class RealRunner:
         from cee.config import settings
         from cee.retrieve import fts, planner
 
+        self.last_plan_origin = None
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
+            self.last_plan_origin = "no planner call (rules or passage plan)"
             return planner.plan_question(query, self.provider)
         key = plan_cache_key(q, self.snapshot, self.provider, self.model, asdict(query), self.request_version)
         path = self.cache_dir / f"{q['id']}-plan-{key}.json"
@@ -507,12 +568,26 @@ class RealRunner:
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
             self._copy(path)
+            # #246: where the plan came from, in every record
+            self.last_plan_origin = (f"cached: {path.name} ({saved.get('planner_version')}, request_version "
+                                     f"{saved.get('request_version')}, made {saved.get('at')}); no new planner call")
             if saved.get("invalid"):
-                return planner.from_output(query, saved.get("raw_payload"), self.provider, error=saved["error"])
+                payload = saved.get("raw_payload")
+                if isinstance(payload, str) and str(saved.get("error", "")).startswith(
+                        ("planner arguments are not a JSON object", "planner output is not JSON")):
+                    from cee.answer.llm import loads_object
+                    try:   # #246 TL decision: stray closing braces after a complete object (0 calls)
+                        return planner.from_output(query, loads_object(payload), self.provider)
+                    except (TypeError, ValueError):
+                        pass
+                return planner.from_output(query, payload, self.provider, error=saved["error"])
             return planner.from_output(query, saved["raw"], self.provider)
         if self.calls >= self.max_calls:
             return None
         self.calls += 1   # counted before the call: a failed call still cost money
+        self.made += 1
+        self.last_plan_origin = (f"new planner call: {path.name} ({planner.PLANNER_VERSION}, request_version "
+                                 f"{self.request_version})")
         meta = {"question_id": q["id"], "question": q["text"], "planner_version": planner.PLANNER_VERSION,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.request_version,
@@ -541,8 +616,96 @@ class RealRunner:
                 raise SystemExit(f"stopped: planner request rejected with 400 ({err})") from e
             return planner.from_output(query, None, self.provider, error=err)
         self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"),
-                          **timing(t0, call.get("usage")), **self._reasoning(call), "raw": raw})
+                          **timing(t0, call.get("usage")), **self._reasoning(call),
+                          **({"parse_flags": call["parse_flags"]} if call.get("parse_flags") else {}), "raw": raw})
         return planner.from_output(query, raw, self.provider)
+
+    def map(self, q: dict, query, plan, hits, as_of=None):
+        """#246: the map step with every extraction call cached and saved (valid, invalid or failed),
+        never re-called. Calls are reserved here, in the main thread, before each parallel round, so
+        --max-calls is exact; a call over the cap is not made and writes no cache file. A 400 stops
+        the run after the round is saved."""
+        from cee.answer import extract, llm
+        from cee.answer.extract import CallResult
+
+        self.map_capped = []
+        self.map_max_tokens = extract.extract_max_tokens(self.provider)
+        window = extract.query_window(query)
+        paths: dict[str, Path] = {}
+
+        def path_of(spec) -> Path:
+            if spec.id not in paths:
+                key = map_cache_key(q, self.snapshot, self.provider, self.model, self.map_max_tokens,
+                                    self.request_version, spec, window)
+                paths[spec.id] = self.cache_dir / f"{q['id']}-{spec.id}-{key}.json"
+            return paths[spec.id]
+
+        def allow(spec) -> bool:   # main thread
+            if path_of(spec).is_file():
+                return True
+            if self.calls >= self.max_calls:
+                self.map_capped.append(spec.id)
+                return False
+            self.calls += 1        # reserved: counted before the call
+            return True
+
+        def call(spec, question, win, firms) -> CallResult:
+            path = path_of(spec)
+            if path.is_file():
+                saved = json.loads(path.read_text(encoding="utf-8"))
+                with self.lock:
+                    self.reused += 1
+                self._copy(path)
+                if saved.get("invalid"):
+                    again = extract.recheck_invalid(saved, self.provider)   # #246 TL: stray closing braces
+                    if again is not None:
+                        return again
+                    return CallResult(invalid=not saved.get("failed_call"), failed_call=bool(saved.get("failed_call")),
+                                      error=saved.get("error"), stop_reason=saved.get("stop_reason"),
+                                      usage=saved.get("usage"), cached=True)
+                try:
+                    extract.validate_output(saved["raw"], self.provider)
+                except llm.ModelOutputError as e:
+                    return CallResult(invalid=True, error=str(e), cached=True)
+                return CallResult(raw=saved["raw"], stop_reason=saved.get("stop_reason"), usage=saved.get("usage"),
+                                  cached=True, flags=list(saved.get("parse_flags") or []))
+            with self.lock:
+                self.made += 1
+            meta = {"question_id": q["id"], "question": q["text"], "extract_version": extract.EXTRACT_VERSION,
+                    "call_id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
+                    "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
+                    "max_tokens": self.map_max_tokens, "request_version": self.request_version,
+                    "chunk_ids": [h.chunk_id for h in spec.hits], "at": dt.datetime.now().isoformat()}
+            got: dict = {}
+            t0 = time.monotonic()
+            try:
+                raw = extract.call_extract(question, spec, self.provider, win, firms, meta=got)
+            except llm.ProviderStop:
+                raise   # refused before any output: nothing to save, the run stops
+            except llm.ModelOutputError as e:
+                usage = e.usage or got.get("usage") or {}
+                self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
+                                  "stop_reason": e.stop_reason, "usage": usage, **timing(t0, usage),
+                                  **self._reasoning(got)})
+                return CallResult(invalid=True, error=str(e), stop_reason=e.stop_reason, usage=usage)
+            except Exception as e:   # B3: timeout, 5xx, connection, 401 / 429 outside ProviderStop, 400
+                err = f"{type(e).__name__}: {e}"
+                bad = getattr(e, "status_code", None) == 400
+                self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
+                                  "bad_request": bad, **timing(t0, None)})
+                if bad:
+                    self.bad_request = err
+                return CallResult(failed_call=True, error=err, bad_request=bad)
+            flags = list(got.get("parse_flags") or [])
+            self._save(path, {**meta, "stop_reason": got.get("stop_reason"), "usage": got.get("usage"),
+                              **timing(t0, got.get("usage")), **self._reasoning(got),
+                              **({"parse_flags": flags} if flags else {}), "raw": raw})
+            return CallResult(raw=raw, stop_reason=got.get("stop_reason"), usage=got.get("usage"), flags=flags)
+
+        try:
+            return extract.run_map(query, plan, hits, self.provider, call=call, as_of=as_of, allow=allow)
+        except llm.ProviderStop as e:
+            raise SystemExit(f"stopped: {e}") from e
 
     @staticmethod
     def _reasoning(call: dict) -> dict:
@@ -689,6 +852,19 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
                 lines.append(f"- **Outside the window:** {', '.join(rec['outside_window'])}")
         if r["forbidden"]:
             lines.append(f"- **Forbidden hits:** {', '.join(r['forbidden'])}")
+        if "map_behavior" in r:   # #246: the evidence matrix
+            m = r["matrix"]
+            lines.append(f"- Map: behavior by code {r['map_behavior'] or 'undecided'} (effective expected "
+                         f"{r.get('expected_behavior_effective')}); {r['map_calls']} map + {r['remap_calls']} "
+                         f"re-extraction calls; labels {m['counts']['labels']}; {len(m['research'])} re-searched"
+                         + (f"; capped: {', '.join(r['map_capped_calls'])}" if r.get("map_capped_calls") else "")
+                         + (f"; parse flags: {r['map_call_flags']}" if r.get("map_call_flags") else ""))
+            lines += [f"  - {g}" for g in m["grid"]]
+            for hit in r.get("map_must_not") or []:
+                lines.append(f"  - must-not `{hit['chunk_id']}` in {hit['cell']} ({hit['label']}, {hit['via']})"
+                             + (" **as fact**" if hit["as_fact"] else ""))
+        if r.get("plan_origin"):
+            lines.append(f"- Plan: {r['plan_origin']}")
         lines += [f"- Retrieved: {', '.join(r['chunk_ids']) or 'nothing'}", ""]
     (run_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -704,6 +880,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-calls", type=int, help="hard cap on paid model calls in this run")
     ap.add_argument("--plan-only", action="store_true",
                     help="with --real: planner calls only, then the 0-call search of each plan; no answer call (#245)")
+    ap.add_argument("--map", action="store_true",
+                    help="run the map step (#246: extraction per firm, re-search, evidence matrix); off by default")
+    ap.add_argument("--map-only", action="store_true",
+                    help="with --real: plan, search and the map step; no answer call (#246; implies --map)")
     ap.add_argument("--out", help="run folder (default .eval-runs/<snapshot>-<time>)")
     ap.add_argument("--as-of", type=dt.date.fromisoformat, default=dt.date.today(),
                     help="day the time windows end, YYYY-MM-DD (default today)")
@@ -713,6 +893,11 @@ def main(argv: list[str] | None = None) -> int:
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
     if args.plan_only and not args.real:
         ap.error("--plan-only needs --real (the mock planner makes no call)")
+    if args.map_only and not args.real:
+        ap.error("--map-only needs --real (use --map for a mock run)")
+    if args.map_only and args.plan_only:
+        ap.error("--map-only and --plan-only exclude each other")
+    run_map_step = args.map or args.map_only
     if args.max_calls is not None and args.max_calls > 10:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
@@ -741,6 +926,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.baseline:
         base = {r["id"]: r for r in json.loads(Path(args.baseline).read_text(encoding="utf-8"))["questions"]}
     subs = substitutes()
+    supersede = effective_behaviors()
     real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
 
     records = []
@@ -785,8 +971,32 @@ def main(argv: list[str] | None = None) -> int:
                                   "tokens": llm.input_tokens(q["text"], hits, plan, answer_window(query)),
                                   "would_drop": len(g["dropped"]) if g else 0}
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
+        if real:
+            r["plan_origin"] = real.last_plan_origin if not capped else "not planned: --max-calls reached"
+        if run_map_step and plan is not None and hits and not capped and not (real and args.plan_only):
+            from cee.answer.extract import EXTRACT_VERSION, run_map
+            matrix = (real.map(q, query, plan, hits, as_of=args.as_of) if real
+                      else run_map(query, plan, hits, "mock", as_of=args.as_of))
+            made = [c for c in matrix.calls if not c.get("skipped")]
+            r |= {"matrix": matrix.to_log(), "map_behavior": matrix.behavior,
+                  "map_behavior_reason": matrix.behavior_reason,
+                  "expected_behavior_effective": supersede.get(q["id"], q.get("expected_behavior")),
+                  "map_calls": sum(c["round"] == 1 for c in made), "remap_calls": sum(c["round"] == 2 for c in made),
+                  "map_must_not": map_must_not(matrix, key_for(q, keys)), "map_research": matrix.research,
+                  "map_capped_calls": list(real.map_capped) if real else [],
+                  "map_call_flags": {c["id"]: c["flags"] for c in matrix.calls if c.get("flags")}}
+            r["llm_calls"] |= {"map": r["map_calls"], "remap": r["remap_calls"]}
+            if real and real.bad_request:   # a 400: every planned call would fail the same way
+                records.append(r)
+                write_reports(run_dir, {"run_id": run_id, "snapshot": snapshot, "mode": "real", "commit": "",
+                                        "k": "-", "min_coverage": args.min_coverage, "as_of": args.as_of.isoformat(),
+                                        "real_calls": real.made, "max_calls": args.max_calls, "reused": real.reused,
+                                        "stopped": real.bad_request}, records)
+                raise SystemExit(f"stopped: a map request was rejected with 400 ({real.bad_request})")
         if real and args.plan_only:
             r["model"] = "plan_only"
+        elif real and args.map_only:
+            r["model"] = "map_only"
         elif real:
             answer, how = (None, "cap") if capped else real.answer(q, query, hits, plan)
             r = apply_real(r, answer, how, real.last_file if not capped else None)
@@ -816,7 +1026,11 @@ def main(argv: list[str] | None = None) -> int:
             "planner_version": PLANNER_VERSION, "plan_only": args.plan_only,
             "guard_provider": guard_provider, "answer_input_limit": llm.answer_input_limit(guard_provider),
             "mode": "real" if real else "mock", "baseline": args.baseline, "as_of": args.as_of.isoformat(),
-            "real_calls": real.calls if real else 0, "reused": real.reused if real else 0, "max_calls": args.max_calls}
+            "real_calls": real.made if real else 0, "calls_reserved": real.calls if real else 0,
+            "reused": real.reused if real else 0, "max_calls": args.max_calls,
+            "map": run_map_step, "map_only": args.map_only, "extract_version": extract_version(),
+            "map_concurrency": settings().map_concurrency,
+            "map_max_tokens": real.map_max_tokens if real else None}
     write_reports(run_dir, meta, records)
     counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}
     summary = summarize(records)

@@ -13,7 +13,9 @@ flowchart LR
     E[Streamlit web interface] --> F[Search and filter<br/>company / date / keywords]
     D --> F
     P[Question planner<br/>aspects; code: firms x aspects<br/>= sub-questions, ADR-021] --> F
-    F --> G[Answer generation<br/>one LLM call + retrieved evidence]
+    F --> M[Map step, #246, MAP=on<br/>extraction per firm + CRAG re-search<br/>evidence matrix; behavior by code]
+    F --> G[Answer generation<br/>one LLM call + retrieved evidence<br/>reduce over the matrix from #247]
+    M -.-> G
     G --> H[Citation validation<br/>stored doc and chunk IDs]
     H --> I[Answer + citations<br/>or evidence gap]
     I --> J[Human evaluation<br/>evals/questions.yaml]

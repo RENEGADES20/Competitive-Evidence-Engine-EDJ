@@ -287,6 +287,28 @@ LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --plan-only --
 ```
 If the provider rejects the planner request itself (HTTP 400), the run stops after that one call.
 
+**Check the map step** (#246: extraction per firm, corrective re-search, evidence matrix; off in the
+app until #247). Free on the mock with `--map`; paid with `--real --map-only` (planner calls for
+plans not yet cached, then one extraction call per firm plus research, and at most one re-extraction
+per firm; no answer call). Plan first, count for free, then map:
+```powershell
+.\.venv\Scripts\python.exe scripts\eval_run.py --map --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+$env:LLM_PROVIDER="deepseek"; $env:MAP="on"
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.\.venv\Scripts\python.exe scripts\eval_run.py --real --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+```
+```bash
+.venv/bin/python scripts/eval_run.py --map --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+export LLM_PROVIDER=deepseek MAP=on
+.venv/bin/python scripts/eval_run.py --real --plan-only --max-calls 5 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --map-only --max-calls 0 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+.venv/bin/python scripts/eval_run.py --real --map-only --max-calls 43 --questions Q11,Q19,Q23,Q24,Q26 --as-of 2026-11-17
+```
+The `--max-calls 0` run makes no call and lists, per question, the extraction calls it would make
+(`map_capped_calls`); a call skipped at the cap writes no cache file. Every call is saved in
+`.eval-runs/cache/` (valid, invalid or failed) and never made again.
+
 **Check retrieval for all 30 questions, free** (mock provider, no calls; compares with the
 committed baseline of the current snapshot):
 ```powershell

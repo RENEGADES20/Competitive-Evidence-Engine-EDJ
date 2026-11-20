@@ -29,8 +29,21 @@ def bank(qid: str) -> Query:
     return resolve(BANK[qid]["text"], TODAY)
 
 
-def asp(text="t", words="advisor recruiting deals", firms=(), metric="", kind="fact"):
-    return {"id": "x", "text": text, "keyword_query": words, "firms": list(firms), "metric": metric, "kind": kind}
+def asp(text="t", words="advisor recruiting deals", firms=(), metric="", kind="fact", proxy=False):
+    return {"id": "x", "text": text, "keyword_query": words, "firms": list(firms), "metric": metric, "kind": kind,
+            "proxy": proxy}
+
+
+def test_plan_v31_proxy_flag_from_fake_outputs():
+    """#246 (B2): proxy true -> Aspect.proxy; missing or not a boolean -> False with a note; rules -> False."""
+    raw = {"aspects": [asp("client assets per advisor"), asp("total client assets", proxy=True),
+                       {k: v for k, v in asp("advisor headcount").items() if k != "proxy"},
+                       asp("comparable?", kind="comparison", proxy="yes")]}
+    aspects, notes = planner.validate_plan(raw, q7())
+    assert [a.proxy for a in aspects] == [False, True, False, False]
+    assert notes == ["aspect 3: proxy missing or not a boolean, false", "aspect 4: proxy missing or not a boolean, false"]
+    assert planner.Plan(aspects=aspects).to_log()["aspects"][1]["proxy"] is True
+    assert all(not a.proxy for a in planner.rules_plan(q7()).aspects)
 
 
 def subs(plan):
@@ -392,15 +405,15 @@ def test_planner_prompt_names_no_question_id_and_no_rubric():
     assert _leaks(text) == {}
 
 
-def test_planner_version_is_v3_and_changes_the_cache_key(monkeypatch):
+def test_planner_version_is_v31_and_changes_the_cache_key(monkeypatch):
     import tests.test_eval_run  # noqa: F401  (loads scripts/eval_run.py as module eval_run)
     from eval_run import plan_cache_key
-    assert planner.PLANNER_VERSION == "plan-v3"
+    assert planner.PLANNER_VERSION == "plan-v3.1"   # #246: proxy flag; no plan-v3 output is reused
     args = ({"id": "Q25", "text": BANK["Q25"]["text"]}, "corpus-2026-11-17", "anthropic", "claude-sonnet-5-5", {})
     v3 = plan_cache_key(*args)
-    monkeypatch.setattr(planner, "PLANNER_VERSION", "plan-v2")
-    assert plan_cache_key(*args) != v3
     monkeypatch.setattr(planner, "PLANNER_VERSION", "plan-v3")
+    assert plan_cache_key(*args) != v3
+    monkeypatch.setattr(planner, "PLANNER_VERSION", "plan-v3.1")
     monkeypatch.setattr(planner, "metric_keys", lambda: ("advisor_headcount",))
     assert plan_cache_key(*args) != v3                                   # the schema's enum is in the key
 

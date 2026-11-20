@@ -1,0 +1,408 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1",
+  "call_id": "map.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a1.SCHW",
+    "a2.SCHW",
+    "a3.SCHW",
+    "a4.SCHW",
+    "a5.SCHW",
+    "a6.SCHW",
+    "a7.SCHW",
+    "a8.SCHW",
+    "a9.SCHW",
+    "a10.SCHW",
+    "a11.SCHW",
+    "a12.SCHW",
+    "a13.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-TR-2026Q2#37",
+    "SCHW-DECK-2026-investor-day#86"
+  ],
+  "at": "2026-11-20T00:25:50.249555",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6177,
+    "output_tokens": 15926,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 5025,
+    "reasoning_tokens": 13526,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 169.58,
+  "tokens_per_s": 93.91,
+  "reasoning_content": "Let me analyze this task. I need to extract evidence about The Charles Schwab Corporation (SCHW) from passages for sub-questions about wealth-management firms. But wait - the question is about \"How should the preferences of younger investors shape Edward Jones's offerings?\" and firm is Schwab. Interesting - so I'm extracting from Schwab documents about younger investors, but some sub-questions ask about Edward Jones (a7-a13). Let me re-read.\n\nActually the sub-questions a7-a13 are about Edward Jones. But the firm is SCHW. The passages are Schwab documents. There are no passages for a4-a13 (no further passages). So for those, since passages say nothing about Edward Jones (a7-a13), I should label not_found. For a4, a5, a6, they ask about younger investor preferences for Schwab, but no further passages; however there may be passages listed under other sub-questions that contain relevant info. The instruction says \"Use only the passages below\" and passages are grouped by sub-question they were found for. The research passages... Hmm, for a4-a6 there are no further passages but note \"the passages found for this part are listed under another part or the research passages\".\n\nActually I should only use the passages listed. The passages listed are only under a1, a2, a3. For a4, a5, a6, a7-a13 there are no passages. So the passages \"below\" that I can use are all listed. I can use any passage for any sub-question? The instruction says \"Use only the passages below.\" The passages are grouped by sub-question they were found for. But some sub-questions have no passages.\n\nWait, let me reconsider. The question is about Edward Jones's offerings shaped by younger investor preferences, but the firm is Schwab. This is odd. Actually maybe the task is that code has split question into sub-questions, and for a7-a13 they're about Edward Jones but since firm is Schwab, those are not applicable - no passages. So not_found.\n\nLet me carefully identify what each sub-question asks:\n\n- a1.SCHW [fact]: What preferences do younger investors and clients under 40 state for wealth-management products, services, channels, fees, and advice?\n- a2.SCHW [fact]: What digital and mobile channel preferences do younger investors state?\n- a3.SCHW [fact]: What fee and pricing preferences do younger investors state?\n- a4.SCHW [fact]: What investment product and asset preferences do younger investors state?\n- a5.SCHW [fact]: What advice model and human interaction preferences do younger investors state?\n- a6.SCHW [fact]: What communication and financial education preferences do younger investors state?\n- a7.SCHW [fact]: How does Edward Jones management describe younger investors and clients under 40 and their needs?\n- a8.SCHW [fact]: What are Edward Jones's current offerings, capabilities, and client experience relevant to younger investors?\n- a9.SCHW [fact]: What priorities does Edward Jones state for serving younger investors and clients under 40?\n- a10.SCHW [fact]: What competition does Edward Jones name in serving younger investors?\n- a11.SCHW [fact]: Where does Edward Jones say it is losing ground or pulling back among younger investors?\n- a12.SCHW [recency]: What recent or planned changes to offerings for younger investors does Edward Jones disclose?\n- a13.SCHW [comparison]: How should younger-investor preferences shape Edward Jones's offerings?\n\nSo a1-a6 are about younger investors' preferences (Schwab context), a7-a13 about Edward Jones.\n\nFor the passages I have:\n- a1 passages: many facts about Schwab attracting younger clients, demographics, channels (social media, family, YouTube), financial planning, etc.\n- a2 passages: digital/mobile channel preferences - thinkorswim, YouTube, social media, live content, in-person locations, crypto.\n- a3 passages: fee/pricing preferences - removal of commissions, no/low commissions.\n\nLet me extract cells.\n\nLet me go through each sub-question.\n\nFor a1: \"What preferences do younger investors and clients under 40 state for wealth-management products, services, channels, fees, and advice?\"\n\nPassages under a1 mostly state demographic facts (percentage of new-to-firm households that are Gen Z/millennials, under 40, etc.), and some preference statements: \"We know they learn about finances primarily through social media and family.\" \"Their top online resource is YouTube...\" \"younger investors at Schwab are highly engaged in building their wealth over the long term\" \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" \"Clients expect all aspects of their lives to be more convenient, and they want to conduct more of their financial lives in one place.\" Hmm, that's clients generally, not specifically younger.\n\nLet me identify facts for a1:\n1. \"We know they learn about finances primarily through social media and family.\" - this is a channel preference (information sources). Quote from SCHW-TR-2025Q3#11.\n2. \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" - SCHW-TR-2025Q3#12. Channel preference.\n3. \"younger investors at Schwab are highly engaged in building their wealth over the long term\" - this is a preference? It's about engagement in long-term wealth building. Could be fact for a1.\n4. \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" - preference for financial planning/advice? It's a fact about younger investors creating financial plans. Could be fact (partial - one-third under 40). This is a preference for advice/planning perhaps.\n5. \"Clients expect all aspects of their lives to be more convenient, and they want to conduct more of their financial lives in one place.\" - this is stated about clients generally, not younger specifically. Might be different_quantity or not applicable. Actually a1 asks about younger investors and clients under 40. This statement is about all clients. But it's in the context of \"winning with investors of all ages\". Hmm. It's a general client preference, not specifically younger. I could label it different_quantity? The instruction says different_quantity is for different measure/unit. Actually a general statement of \"clients\" includes younger? I'd be cautious. Maybe skip or mark as not a fact for a1 because it's not specifically younger investors. Actually the question a1 asks for preferences younger investors state. The \"Clients expect...\" is about all clients, not younger specifically. I think I should not include it as a fact for a1, or maybe include as different_quantity with differs_because \"stated about clients generally, not specifically younger investors\". Hmm. Let me think about what's most accurate.\n\nActually the guidance: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact.\" For a1, the sub-question asks about younger investors and clients under 40 preferences. The passage \"We know they learn about finances primarily through social media and family\" is directly about younger investors. \"Their top online resource is YouTube\" is about younger investors. Good.\n\nThe demographic facts (70% of new-to-firm retail households are Gen Z and millennials) are about who they are, not preferences. But a1 asks preferences. Hmm, some might be relevant as \"fact\" for demographic? Actually a1 is specifically preferences for products/services/channels/fees/advice. The demographic stats are not preferences. But they might be relevant context. However the sub-question a1 is [fact] about preferences. I should focus on preferences.\n\nLet me reconsider the whole extraction. Each sub-question asks a specific thing. For a1, I need preferences. Let me list candidate preference facts:\n\nFrom SCHW-TR-2025Q3#11:\n- \"We know they learn about finances primarily through social media and family.\" \u2192 channel/information preference. Fact for a1 (and also a2 digital/mobile? Social media is digital). Quote.\n- \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.\" \u2192 general channel preference.\n\nFrom SCHW-TR-2025Q3#12:\n- \"Their top online resource is YouTube\" \u2192 channel preference.\n- \"younger investors at Schwab are highly engaged in building their wealth over the long term.\" \u2192 preference for long-term wealth building (advice/product? maybe).\n- \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" \u2192 financial planning engagement.\n\nFrom SCHW-TR-2025Q4#11:\n- \"Clients expect all aspects of their lives to be more convenient, and they want to conduct more of their financial lives in one place.\" \u2192 general clients. Maybe not.\n\nFrom SCHW-TR-2025Q2#9:\n- \"An increasing number of traders are turning to us for best-in-class trading experience.\" \u2192 traders, not necessarily younger. \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" \u2192 all ages, not younger specifically.\n\nFrom SCHW-TR-2026Q3#11:\n- \"We are attracting younger clients, approximately 70% of new-to-firm retail households are Gen Z and millennials.\" demographic.\n\nFrom SCHW-DECK-2026-investor-day#106:\n- \"42% of thinkorswim users are Millennial or Gen Z\" demographic.\n- \"28% growth in Trader Talks subscribers Y/Y\", \"+38% increase in derivatives trades Y/Y\" engagement stats.\n\nThese are mostly demographic/engagement, not preferences.\n\nOK. For a1, I'll include the clear preference statements. But also note a1 asks \"products, services, channels, fees, and advice.\" The passages don't state fee preferences for younger investors specifically (removal of commissions is a3 maybe). Let me include what's there.\n\nLet me draft items for a1:\n\nItem 0: \"Schwab says younger investors learn about finances primarily through social media and family.\" quote \"We know they learn about finances primarily through social media and family.\" value \"\" unit \"\" period \"\" scope \"\" definition \"\" chunk SCHW-TR-2025Q3#11. This is a channel/information preference.\n\nItem 1: \"Schwab says their top online resource is YouTube, and Schwab is the number one financial services firm on YouTube by followers.\" quote \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" chunk SCHW-TR-2025Q3#12.\n\nItem 2: \"Schwab says younger investors at Schwab are highly engaged in building their wealth over the long term.\" quote \"And younger investors at Schwab are highly engaged in building their wealth over the long term.\" chunk SCHW-TR-2025Q3#12.\n\nItem 3: \"One-third of retail households who created a financial plan within the last two years are under the age of 40.\" quote \"In fact, one-third of retail households who created a financial plan within the last two years are under the age of 40.\" value \"one-third\" unit \"retail households who created a financial plan\" period \"last two years\"? Hmm. This is a preference/behavior for financial planning. Period could be \"\" or \"2023-2025\"? The passage is from 2025Q3 (published 2025-10-16), \"within the last two years\". I'll set period \"\" maybe. Actually value \"one-third\", unit \"retail households who created a financial plan\", period \"\" scope \"under age 40\". Hmm.\n\nActually, maybe simpler to keep value/unit empty for these preference statements. For item 3, there's a figure \"one-third\". I'll include value \"one-third\", unit \"retail households who created a financial plan\", period \"\", scope \"under the age of 40\".\n\nItem 4: \"Schwab says one of the reasons younger investors turn to Schwab is because Schwab is meeting them in the channels where they turn for information about investing.\" quote \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.\" chunk SCHW-TR-2025Q3#11.\n\nItem 5: \"Clients expect all aspects of their lives to be more convenient, and they want to conduct more of their financial lives in one place.\" - This is about clients generally. Should I include? For a1, maybe as fact? It's not specifically younger. I'll consider it different_quantity? Actually the instruction for different_quantity is about quantities/measures. This is a preference statement not a quantity. Hmm. Maybe I'll just not include it in a1 to avoid mislabeling. But the sub-question is about preferences. The statement \"Clients expect all aspects...\" is a client preference but not specifically younger. I could label it different_quantity with differs_because \"stated about clients generally, not specifically younger investors or clients under 40.\" But different_quantity is defined for quantities. The label options are fact, different_quantity, not_disclosed, not_found. For a non-quantity statement that is related but different scope, maybe \"different_quantity\" is the closest? The instructions: \"When unsure between fact and different_quantity, choose different_quantity and say why.\" But different_quantity is about \"a different, related quantity\". A general client preference isn't a quantity. Hmm.\n\nI think I should keep a1 items to those specifically about younger investors. I'll include items 0-4 as facts. Maybe also item 5 as... Actually, let me not over-include. The question asks preferences of younger investors. \"Clients expect...\" is not about younger. Skip.\n\nActually wait, maybe I should reconsider whether demographic facts are relevant to a1. The question a1 is about \"preferences ... for wealth-management products, services, channels, fees, and advice.\" The demographic stats don't state preferences. So no.\n\nBut there's also \"one-third of new-to-firm retail households at Schwab are Gen Zers... One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" This directly states channel preferences.\n\nAlso \"younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed\" - from SCHW-TR-2025Q3#12. This states preferences for products/services (platforms, tools, education, coaching, expertise, service). Include as fact for a1.\n\nAlso SCHW-TR-2025Q2#9: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" - all ages, includes younger but not specific. Maybe skip or include as fact? \"all ages\" includes younger investors. Hmm. It says investors and traders of all ages. That's a product preference (digital assets). But not specifically younger. I could include with scope \"all ages\" but it's not under 40 specifically. I'll skip for a1, maybe include for a4 (investment product preferences) since it mentions digital assets through ETFs, futures, closed-end funds. Actually a4 is about investment product and asset preferences of younger investors. That statement is all ages, so not specifically younger. Hmm.\n\nLet me now think about a2: \"What digital and mobile channel preferences do younger investors state?\"\n\nFrom a1 passages: social media and family (SCHW-TR-2025Q3#11), YouTube top online resource (SCHW-TR-2025Q3#12). These are digital channels. Also from a2 passages:\n- SCHW-DECK-2026-investor-day#99: table shows \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\" - this is Schwab's offerings, not younger investors' stated preferences. Hmm, actually a2 asks \"What digital and mobile channel preferences do younger investors state?\" The table is about Schwab's offerings by segment, not stated preferences. Might not be relevant to a2. But a8 (Edward Jones current offerings) not relevant.\n- SCHW-TR-2025Q3#41: \"I think what we can offer the young investor in terms of the support, the service, the education, and of course, the leading platform with thinkorswim and our digital capabilities, I think is unmatched.\" - this is Schwab's description of its offerings, not younger investors' stated preferences. Not for a2.\n- SCHW-TR-2025Q2#33: \"We have in-person experiences in over 400 locations... 16,000 advisors... For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house...\" - not digital.\n- SCHW-TR-2025Q3#39: crypto appeal to young investors - \"Crypto will be great for clients and will certainly appeal to young investors.\" That's a product preference (crypto) - maybe a4, not a2.\n\nSo for a2, the digital/mobile channel preferences:\n- \"We know they learn about finances primarily through social media and family.\" (social media = digital channel)\n- \"Their top online resource is YouTube\" (digital channel)\n- \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.\" (channels, but not specifically digital)\n\nAlso from a2 passage SCHW-TR-2025Q3#41: \"the leading platform with thinkorswim and our digital capabilities\" - that's Schwab's offering. Not stated preference by younger investors. Skip.\n\nHmm, but the a2 passages contain \"younger investors... Schwab Starter Kit, Schwab Teen Investor Account, No/low commissions\" - these are Schwab's offerings, not preferences. Not a fact for a2 (which asks preferences). Maybe relevant to a8 but a8 is Edward Jones. So skip.\n\nSo a2 facts: social media and family, YouTube. Also maybe \"meeting them in the channels where they turn for information about investing\" - a general channel statement.\n\nLet me include:\n- Item 0: younger investors learn about finances primarily through social media and family (SCHW-TR-2025Q3#11).\n- Item 1: their top online resource is YouTube (SCHW-TR-2025Q3#12).\n\nCould also include \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing\" (SCHW-TR-2025Q3#11). That's a channel preference (channels where they turn for information). Include.\n\nFor a3: \"What fee and pricing preferences do younger investors state?\"\n\nFrom a3 passages:\n- SCHW-TR-2026Q2#36: \"We've really seen a growth in young investors, I think part of that was started with the removal of commissions, which brought more people into the market that had less money.\" This connects removal of commissions (zero commissions) to young investors. This is a fee preference (no commissions). Fact for a3. Quote. value \"\" (no figure). Actually \"removal of commissions\" - no figure. Include as fact.\n\n- SCHW-DECK-2026-investor-day#99 (from a2): \"Younger investors | ... | No / low commissions\" - this is Schwab's offering, not stated preference. But it indicates younger investors are associated with no/low commissions. Hmm. a3 asks fee and pricing preferences younger investors state. The table is Schwab's product mapping, not a stated preference. However it does say younger investors segment gets \"No / low commissions\". It's Schwab's offering, not investor preference. I'd skip or mark different_quantity. Actually, could be relevant but it's not \"stated preference\". I'll skip for a3.\n\n- SCHW-TR-2025Q3#39 (a2): \"the spreads at the moment and the amount of money that these digitally native firms are making in crypto are enormous... there's room to be both aggressive on price and to deliver great value\" - this is about crypto pricing, not younger investors' fee preferences. Skip.\n\nSo a3 fact: removal of commissions started growth in young investors (SCHW-TR-2026Q2#36).\n\nAlso maybe from SCHW-DECK-2026-investor-day#99 \"No / low commissions\" for younger investors. Hmm, but that's Schwab's offering. The sub-question a3 asks \"What fee and pricing preferences do younger investors state?\" The deck table associates younger investors with \"No / low commissions\" as what Schwab offers them. It's not a stated preference, but it's evidence of pricing approach for younger investors. I think I could include it as a fact? No - the sub-question specifically asks preferences younger investors state. The table is Schwab's segment strategy. I'll skip. Actually, let me reconsider: the label guidance says \"fact: a passage states what the sub-question asks for this firm, in full or in part.\" The sub-question asks fee/pricing preferences younger investors state. The removal of commissions statement directly says growth in young investors started with removal of commissions, implying preference for no commissions. Good.\n\nFor a4: \"What investment product and asset preferences do younger investors state?\"\n\nNo passages under a4, but relevant passages elsewhere:\n- SCHW-TR-2025Q3#39 (a2): \"Crypto will be great for clients and will certainly appeal to young investors.\" \u2192 crypto preference. Fact for a4? It says crypto will appeal to young investors (product/asset preference). Include.\n- SCHW-TR-2025Q2#9 (a1): \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" \u2192 digital assets preference, all ages (includes younger). Could include with scope \"all ages\" and note. Actually it says \"investors and traders of all ages\" - not specifically younger. I'll mark different_quantity? Hmm, the instruction: different_quantity for a wider unit or different measure. \"all ages\" is wider than younger investors. So label different_quantity with differs_because \"stated about investors and traders of all ages, not specifically younger investors.\" Actually it's a preference (digital assets) not a quantity. But the \"different_quantity\" label is about quantities. Hmm. There's no \"different_scope\" label. The options are limited. For a statement that's related but about a wider group, maybe I should use different_quantity? The instruction says \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\" This is about quantities. For preferences (non-quantity), maybe \"not_found\" is more appropriate? But the passage does say something related. Hmm.\n\nActually let me re-read the label definitions more carefully:\n\n\"Label each cell:\n- fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact...\n- different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure (all employees or full-time equivalents for advisors, compensation expense for a payout grid or a headcount, client firms on a platform for the firm's own advisors, a regulatory form's label for a business metric), or an industry figure for a firm's own figure. Put it in items and say in differs_because how it differs from what is asked.\n- not_disclosed: ...\n- not_found: the passages say nothing about it.\"\n\nSo different_quantity is really for quantities/figures. For non-quantity preferences about \"all ages\", the closest might be fact if it includes younger investors? \"investors and traders of all ages\" includes younger investors. But a4 asks \"younger investors state\". The statement is broader. Hmm.\n\nActually, maybe I'm overcomplicating. Let me focus on what clearly fits. For a4, the clear fact is \"Crypto will be great for clients and will certainly appeal to young investors.\" Also \"younger traders... recognize the potential that trading has in helping build wealth over time\" (from a1 SCHW-TR-2025Q3#12) - trading preference. Also \"New clients who exhibit more advanced trading behavior... now account for 1/3 of new traders\" - not younger specifically. And \"An increasing number of traders are turning to us for best-in-class trading experience\" - traders generally.\n\nAlso SCHW-TR-2025Q2#9: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" I could include as fact with scope \"investors and traders of all ages\" and note it includes younger investors? Actually the sub-question asks about younger investors specifically. Including \"all ages\" as fact might be slightly off, but partial is still fact? No, \"all ages\" is broader, not partial of younger. I'll mark it different_quantity? But different_quantity requires a quantity. The statement has no figure. Hmm.\n\nI think for non-quantity, broader-scope statements, I could still use \"fact\" but note scope. Actually the schema has \"scope\" field. I can put scope \"investors and traders of all ages\". The label \"fact\" means \"passage states what the sub-question asks for, in full or in part.\" Since it states an investment product preference for a group that includes younger investors, but not specifically younger. This is ambiguous. The instruction: \"When unsure between fact and different_quantity, choose different_quantity and say why.\" But different_quantity is for quantities. Ugh.\n\nLet me not overthink: for a4, I'll include:\n1. Crypto appeal to young investors (fact) - SCHW-TR-2025Q3#39.\n2. Digital assets through ETFs, futures, and closed-end funds for investors/traders of all ages (fact, scope \"all ages\") - SCHW-TR-2025Q2#9. Hmm, but is this \"younger investors state\"? It's \"all ages\". I'll include as fact with scope noting \"all ages\" and in text note it's all ages. Actually, maybe better to be safe: label it fact but scope \"investors and traders of all ages\". The reason: \"passage states digital asset investing preference for all ages, which includes younger investors.\"\n\nAlternatively I could leave a4 with just crypto and trading. Let me also consider \"younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time\" (SCHW-TR-2025Q3#12). That's a trading product preference. Include for a4.\n\nActually a4 is \"investment product and asset preferences\". Trading isn't exactly a product/asset, but \"trading\" as an activity. Crypto and digital assets are asset preferences. Trading could go under a5 (advice/human interaction)? No. Maybe under a1 general. I'll include crypto and digital assets for a4.\n\nFor a5: \"What advice model and human interaction preferences do younger investors state?\"\n\nPassages: \n- SCHW-TR-2025Q2#33 (a2): \"For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house, there's no better place to be than here at Schwab.\" This mentions young investors' concerns (college debt, buying a house) but not advice model/human interaction preference.\n- SCHW-TR-2025Q3#41: \"I have a thousand colleagues... former trading professionals that answer the phones for any investors that want advice and expertise on how to trade.\" - not specifically younger.\n- SCHW-TR-2025Q3#12: \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" \u2192 financial planning (advice) engagement. This is an advice preference/behavior. Include for a5.\n- SCHW-TR-2025Q2#9: \"New clients who exhibit more advanced trading behavior...\" not advice.\n\nSo a5 fact: one-third of retail households who created a financial plan in last two years are under 40 (SCHW-TR-2025Q3#12). This indicates younger investors use financial planning. Also maybe \"younger investors at Schwab are highly engaged in building their wealth over the long term\" - not advice model.\n\nAlso from a1 SCHW-TR-2025Q3#12: \"And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed\" - coaching/expertise/service = advice/human interaction. Include for a5? It's younger traders turning to Schwab for platforms, tools, education, coaching, expertise, service. That's about services/advice. Could be a5. Include.\n\nSo a5 items:\n1. \"one-third of retail households who created a financial plan within the last two years are under the age of 40\" (financial planning).\n2. \"younger traders are turning to Schwab because they recognize the potential that trading has... and because Schwab has the platforms, tools, education, coaching, expertise, and service they need\" (coaching/expertise/service).\n\nHmm, but #2 might fit a1 or a4. I'll put it in a5 as human interaction/advice (coaching, expertise, service). Actually \"coaching, expertise, service\" is human interaction. Good.\n\nFor a6: \"What communication and financial education preferences do younger investors state?\"\n\nPassages:\n- SCHW-TR-2025Q3#11: \"We know they learn about finances primarily through social media and family.\" \u2192 communication/education preference. This is also a2 (digital). For a6, communication/education: social media and family, YouTube.\n- SCHW-TR-2025Q3#12: \"Their top online resource is YouTube\" \u2192 education resource.\n- SCHW-TR-2025Q3#41: \"We put on 35 hours a week of live content for our investors about how to learn how to trade, how to learn how to invest, the power of things like compounding. And the engagement in those types of things is off the charts.\" \u2192 education content; engagement off the charts. Not specifically younger preference but context young investors. Hmm.\n- SCHW-DECK-2026-investor-day#106: \"Interest across demographics Engagement with education... 28% growth in Trader Talks subscribers Y/Y\" \u2192 education engagement, not specifically younger.\n\nFor a6, facts: social media and family (learning about finances), YouTube top online resource. These overlap with a2. I'll include them under a6 as well (communication/education preferences). It's fine to have the same figure/statement across multiple sub-questions? The instruction says \"return exactly one cell for each sub-question.\" So each sub-question gets its own cell(s). Overlapping items across sub-questions is acceptable since they're separate cells.\n\nFor a6:\n1. \"Schwab says younger investors learn about finances primarily through social media and family.\" (SCHW-TR-2025Q3#11).\n2. \"Schwab says their top online resource is YouTube.\" (SCHW-TR-2025Q3#12).\nMaybe also \"We put on 35 hours a week of live content... engagement off the charts\" but that's Schwab's offering, not stated preference. Skip.\n\nFor a7-a13 (Edward Jones): No passages mention Edward Jones. So not_found for all. But wait - the question is \"How should the preferences of younger investors shape Edward Jones's offerings?\" and the firm is Schwab. There are no Edward Jones passages. So not_found is correct for a7-a13.\n\nActually, let me double check: a13 [comparison] asks \"How should younger-investor preferences shape Edward Jones's offerings?\" The passages are Schwab documents, no Edward Jones. not_found.\n\nNow let me also reconsider a1. There are many demographic facts that might be considered relevant to a1's \"preferences\"? The sub-question a1 is explicitly [fact] about preferences. I'll include preference statements.\n\nLet me carefully list final cells.\n\nI need to output via submit_extraction tool. Each cell has subquestion_id, label, items (array), differs_because, reason, derivation.\n\nFor not_found cells, items should be empty array, differs_because \"\", reason \"The passages say nothing about X.\"\n\nLet me now define items for each.\n\n### a1.SCHW\n\nLabel: fact.\n\nItems:\n\nItem 0:\n- text: \"Schwab says younger investors learn about finances primarily through social media and family.\"\n- quote: \"We know they learn about finances primarily through social media and family.\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"SCHW-TR-2025Q3#11\"]\n\nItem 1:\n- text: \"Schwab says one of the reasons younger investors turn to Schwab is because Schwab is meeting them in the channels where they turn for information about investing.\"\n- quote: \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.\"\n- chunk_ids: [\"SCHW-TR-2025Q3#11\"]\n\nItem 2:\n- text: \"Schwab says younger investors' top online resource is YouTube, and Schwab is the number one financial services firm on YouTube by followers.\"\n- quote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\n- chunk_ids: [\"SCHW-TR-2025Q3#12\"]\n\nItem 3:\n- text: \"Schwab says younger investors at Schwab are highly engaged in building their wealth over the long term.\"\n- quote: \"And younger investors at Schwab are highly engaged in building their wealth over the long term.\"\n- chunk_ids: [\"SCHW-TR-2025Q3#12\"]\n\nItem 4:\n- text: \"Schwab says one-third of retail households who created a financial plan within the last two years are under the age of 40.\"\n- quote: \"In fact, one-third of retail households who created a financial plan within the last two years are under the age of 40.\"\n- value: \"one-third\"\n- unit: \"retail households who created a financial plan\"\n- period: \"\"\n- scope: \"under the age of 40\"\n- definition: \"\"\n- chunk_ids: [\"SCHW-TR-2025Q3#12\"]\n\nItem 5:\n- text: \"Schwab says younger traders turn to Schwab for the platforms, tools, education, coaching, expertise, and service they need to succeed.\"\n- quote: \"And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.\"\n- chunk_ids: [\"SCHW-TR-2025Q3#12\"]\n\nThat's good for a1.\n\nreason: \"Passages state younger investors' channel, information, planning, and service preferences.\"\n\n### a2.SCHW\n\nLabel: fact.\n\nItems:\n0: social media and family (same as a1 item 0) - digital/mobile channel (social media). chunk SCHW-TR-2025Q3#11.\n1: top online resource is YouTube. chunk SCHW-TR-2025Q3#12.\n2: \"meeting them in the channels where they turn for information about investing\" - channels. chunk SCHW-TR-2025Q3#11.\n\nHmm item 2 is more general channel, not specifically digital/mobile. But \"channels where they turn for information\" includes digital. I'll include it as fact.\n\nreason: \"Passages state younger investors use social media, YouTube, and the channels where they turn for investing information.\"\n\n### a3.SCHW\n\nLabel: fact.\n\nItems:\n0: removal of commissions started growth in young investors. text: \"Schwab says growth in young investors was partly started by the removal of commissions, which brought more people with less money into the market.\" quote: \"We've really seen a growth in young investors, I think part of that was started with the removal of commissions, which brought more people into the market that had less money.\" value \"\" unit \"\" period \"\" scope \"\" definition \"\" chunk SCHW-TR-2026Q2#36.\n\nAlso maybe include \"No / low commissions\" associated with younger investors from deck#99. Let me decide. The sub-question a3 asks fee/pricing preferences younger investors state. Deck#99 is Schwab's segment offering table: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\". This isn't a stated preference by younger investors; it's Schwab's pricing offering for younger investors. I'll include as different_quantity? Hmm. Actually it could be a fact about Schwab's offerings relevant to younger investors (a8 would be Edward Jones though). For a3, it's not a stated preference. I'll skip to keep it clean. But maybe the question \"fee and pricing preferences\" - the removal of commissions is the clear stated implication. I'll also consider whether \"No / low commissions\" is a preference. The table is Schwab's own mapping, but it reflects the fee offering for younger investors. I think including it as a fact for a3 is defensible because it states younger investors segment is served with no/low commissions. But the sub-question says \"preferences ... state\". The deck doesn't say younger investors state a preference. I'll skip.\n\nActually, wait - maybe I should include it as a fact because it's Schwab describing fee offerings for younger investors, which is related to a3 but not exactly \"stated preference\". Given ambiguity, maybe mark as different_quantity? No, it's not a quantity. I'll leave it out.\n\nreason: \"Passages connect the removal of commissions to growth in young investors; no younger-investor pricing-preference figures beyond that.\"\n\n### a4.SCHW\n\nLabel: fact.\n\nItems:\n0: crypto appeal. text: \"Schwab says crypto will appeal to young investors.\" quote: \"Crypto will be great for clients and will certainly appeal to young investors.\" chunk SCHW-TR-2025Q3#39.\n1: digital assets. text: \"Schwab says investors and traders of all ages are turning to Schwab to invest in digital assets through ETFs, futures, and closed-end funds.\" quote: \"It is worth highlighting that investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" scope \"investors and traders of all ages\" chunk SCHW-TR-2025Q2#9.\n\nHmm item 1 is all ages. Is it fact or different_quantity? It's a preference for digital assets among all ages, which includes younger. The sub-question a4 asks younger investors' investment product and asset preferences. The statement is about \"all ages\" not specifically younger. I think this is a broader group. The instruction: \"different_quantity: ... a wider unit that contains the asked one.\" The asked \"unit\" is younger investors; \"investors and traders of all ages\" is a wider unit. But it's not a quantity. Hmm.\n\nActually, the instruction for different_quantity includes examples of wider unit (parent company, segment) and different measure. It's really about figures. For non-figure statements, the label \"fact\" with a scope note might be acceptable. But to be safe and follow \"When unsure between fact and different_quantity, choose different_quantity and say why\", maybe I should label item 1 as different_quantity? But different_quantity's items field is also used to hold the item. Let me check: for different_quantity, \"Put it in items and say in differs_because how it differs from what is asked.\" So different_quantity cells also have items. So I could label the whole cell different_quantity and include the item, with differs_because \"stated about investors and traders of all ages, not specifically younger investors.\"\n\nBut then the cell for a4 would be different_quantity, and item 0 (crypto) is a fact. Hmm, can a cell have both fact and different_quantity items? The cell has one label. I think each cell should have one label. If I have both a fact item and a different_quantity item in the same sub-question, I need... Actually the structure is one cell per sub-question with one label. But items can be multiple. If some items are facts and some are different quantities, how to handle?\n\nWait, re-reading: \"return exactly one cell for each sub-question listed.\" So one cell per sub-question, with one label. The items array can contain multiple items. If I have a fact and a different_quantity item in the same sub-question, that's awkward because label is per-cell.\n\nHmm, but the label applies to the cell. If the cell has label \"fact\", all items should be facts. If \"different_quantity\", the items are the different related quantities. So I need to choose one label per sub-question.\n\nActually, maybe I should split: if there's at least one fact, label the cell \"fact\" and only include fact items; the different_quantity items would be dropped? But the instruction says \"Items (fact and different_quantity only), one per figure or statement\". And \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\"\n\nI think the cleanest approach: for each sub-question, determine the label. If there are facts, label \"fact\" and include the fact items. If there are only related-but-different items, label \"different_quantity\" and include those items with differs_because.\n\nSo for a4: crypto appeal is a fact (younger investors' asset preference). Digital assets \"all ages\" is broader; I could either include it as a fact (scope all ages) or drop it. Given the instruction to be conservative, I'll drop the \"all ages\" item from a4 and only include crypto and maybe trading.\n\nActually, trading: \"younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time.\" That's a trading preference, arguably investment product/activity. I could include in a4 as fact. But I already used that quote in a1 (platforms/tools) and a5. Let me include the trading recognition part in a4.\n\nItem 1 for a4: text \"Schwab says younger traders recognize the potential that trading has in helping build wealth over time.\" quote \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time.\" chunk SCHW-TR-2025Q3#12.\n\nOK a4 facts: crypto, trading. Good.\n\nreason: \"Passages state younger investors' asset/product interest in crypto and trading.\"\n\n### a5.SCHW\n\nLabel: fact.\n\nItems:\n0: one-third of households who created a financial plan in last two years are under 40 (SCHW-TR-2025Q3#12). Financial planning advice.\n1: younger traders turn to Schwab for coaching, expertise, service (human interaction). chunk SCHW-TR-2025Q3#12. Actually I used the full quote in a1 item 5. For a5, I'll use the same quote or a subset focusing on coaching/expertise/service. It's fine to overlap but I'll focus.\n\ntext: \"Schwab says younger traders turn to Schwab for the coaching, expertise, and service they need to succeed.\" quote: \"And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.\" chunk SCHW-TR-2025Q3#12.\n\nreason: \"Passages show younger investors use financial planning and value coaching, expertise, and service.\"\n\n### a6.SCHW\n\nLabel: fact.\n\nItems:\n0: social media and family learning (SCHW-TR-2025Q3#11).\n1: YouTube top online resource (SCHW-TR-2025Q3#12).\n\nreason: \"Passages state younger investors learn about finances through social media, family, and YouTube.\"\n\n### a7-a13\n\nAll not_found. Items empty, differs_because \"\", reason \"The passages say nothing about Edward Jones's ...\".\n\nWait, but is there any mention of Edward Jones in any passage? Let me scan. No, none. So not_found.\n\nBut actually, the overall question asks about Edward Jones, and the firm is Schwab. The sub-questions a7-a13 ask about Edward Jones specifically. Since passages are Schwab documents and don't mention Edward Jones, not_found is correct.\n\nLet me double-check a13: [comparison] \"How should younger-investor preferences shape Edward Jones's offerings?\" No passage. not_found.\n\nNow, let me reconsider the \"not_found\" vs \"not_disclosed\" distinction. not_disclosed: passages show the firm does not report it. not_found: passages say nothing about it. For a7-a13, passages say nothing about Edward Jones. So not_found.\n\nNow let me also reconsider whether a1 should include demographic facts. The sub-question a1 is [fact]: \"What preferences do younger investors and clients under 40 state...\" I'll keep only preferences. Good.\n\nLet me also reconsider a2 items: I have social media, YouTube, and channels. Fine.\n\nNow, let me think about the \"definition\" field. For items, definition is firm's own definition of the quantity when a passage gives one. None of these give definitions. So \"\" for all.\n\nPeriod: Most preference statements have no period. The financial plan item \"within the last two years\" - I could put period \"\" or maybe not. I'll put \"\" because it's relative. Actually \"within the last two years\" is a period but relative to 2025Q3. I'll leave \"\" to be safe. Value \"one-third\".\n\nScope: for financial plan item, scope \"under the age of 40\" (the subset). Actually the unit already says \"retail households who created a financial plan\", and scope \"under the age of 40\". Good.\n\nFor a4 crypto: value \"\" unit \"\" period \"\" scope \"\".\n\nLet me also reconsider a3: should I include \"No / low commissions\" from deck#99 as fact? The sub-question a3 asks fee and pricing preferences younger investors state. The deck's table segment mapping for \"Younger investors\" lists \"No / low commissions\". This is Schwab's pricing offering, not a stated preference. I think I'll include it as a fact? Hmm.\n\nActually, let me reconsider the nature of the question: \"What fee and pricing preferences do younger investors state?\" The passages found for a3 (SCHW-TR-2026Q2#36, #37, deck#86) - the removal of commissions statement is the key. Deck#99 (found under a2) has \"No / low commissions\" for younger investors. Since I can use all passages, should I include deck#99 in a3?\n\nThe deck#99 table: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\". This associates \"No / low commissions\" with younger investors. It's Schwab's offering, but it reflects what younger investors get/are attracted to. The sub-question asks \"fee and pricing preferences do younger investors state\" - this is not a stated preference, it's Schwab's offering. I'll skip it to avoid mislabeling. But maybe the grader would want it. Hmm.\n\nLet me think about the purpose: The final comparison question is about how younger-investor preferences should shape Edward Jones's offerings. The extraction should capture Schwab's evidence about younger investors' preferences. For a3 (fee/pricing), the clear evidence is removal of commissions. The deck#99 \"No / low commissions\" is Schwab's product mapping. I'll include it as a fact with text noting Schwab lists \"No / low commissions\" among offerings for younger investors. Actually, that's more about Schwab's offerings (which would be a8 if it were Edward Jones). For a3 (preferences), it's not a stated preference. I'll leave it out.\n\nHmm, but actually, re-reading a3 sub-question: \"What fee and pricing preferences do younger investors state?\" - the removal of commissions statement implies younger investors came into market after commission removal. Good enough.\n\nLet me also reconsider a4: \"What investment product and asset preferences do younger investors state?\" The crypto statement is strong. The \"digital assets through ETFs, futures, closed-end funds\" is \"all ages\". I'll leave it out of a4 or include as a fact with scope \"all ages\". Given the instruction \"When unsure between fact and different_quantity, choose different_quantity and say why\" - but this is about quantities. For a non-quantity broader-scope statement, maybe the safest is to not include it in a4 (since a4 asks specifically younger). Actually, wait, but the passage says \"investors and traders of all ages\" - this does not specifically state younger investors' preferences. Including it as a fact for a4 might be wrong. I'll leave it out. But then a4 only has crypto and trading. Trading is fine.\n\nActually, should I reconsider including the \"digital assets\" statement under a4 as fact with scope \"all ages\" and a note? The label guidance: \"Partial is still a fact (some periods, a narrower group or sample...)\". \"all ages\" is broader, not narrower. So it's not a fact for \"younger investors\". It's a different (wider) group. For quantities, that's different_quantity. For this preference statement, maybe I'll include it in a4 as different_quantity? But the cell label would then be different_quantity, conflicting with the fact items (crypto, trading).\n\nI think the cleanest is to only include clearly-younger items. So a4: crypto (young investors), trading (younger traders). Drop \"all ages\" digital assets.\n\nActually, but \"digital assets through ETFs, futures, and closed-end funds\" is directly about investment product/asset preferences, and it's stated right after \"investors and traders of all ages are turning to us\". The question a4 asks about younger investors specifically. Since \"all ages\" includes younger, but not specific, I'll drop it.\n\nLet me finalize.\n\nWait, I should also double-check: are there any passages I'm missing for a4-a6 under \"research passages\"? The prompt says for a4-a6 \"(no further passages; the passages found for this part are listed under another part or the research passages)\". But there are no \"research passages\" section shown. So the only passages available are those listed under a1, a2, a3. I've considered all.\n\nNow let me also think about whether some a1 demographic stats should be included for a1 since a1 asks about \"clients under 40\" preferences - no, preferences only.\n\nActually, wait. Let me re-read a1 sub-question: \"What preferences do younger investors and clients under 40 state for wealth-management products, services, channels, fees, and advice?\" This is broad. It includes channels (social media, YouTube), advice (financial planning), fees (removal of commissions maybe overlaps), services (platforms, tools, education, coaching, expertise, service), products (trading, crypto).\n\nI've covered these across a1-a6. Good.\n\nLet me also make sure a1 item 4 (financial plan one-third) is appropriate for a1. Yes, advice preference.\n\nNow, formatting the submit_extraction call.\n\nLet me write out all cells.\n\nFor not_found cells, items = [], differs_because = \"\", derivation = {\"operation\": \"\", \"inputs\": []}.\n\nLet me write reason for each.\n\nLet me now also decide the label for a1: \"fact\". Yes.\n\nNow, one more consideration: the instruction says \"Items (fact and different_quantity only), one per figure or statement; a series is one item per period\". I have multiple statements per cell. Fine.\n\nLet me write the final tool call.\n\nFor a1 items, I'll include 5 items (0-4 as above plus item 5). Actually let me renumber.\n\nLet me write them carefully with all required fields: text, quote, value, unit, period, scope, definition, chunk_ids.\n\na1:\n- label fact\n- items:\n0: social media and family\n1: channels where they turn for information\n2: YouTube\n3: highly engaged building wealth long term\n4: one-third financial plan\n5: platforms, tools, education, coaching, expertise, service\n\nActually, item 3 \"highly engaged in building their wealth over the long term\" - is this a preference? It's a behavior/engagement. The sub-question a1 asks preferences for products/services/channels/fees/advice. \"Engaged in building wealth over long term\" is a preference for long-term wealth building. I'll keep it.\n\nitem 5 platforms/tools/etc - I'll keep in a1.\n\na2:\n- items:\n0: social media and family\n1: YouTube\n2: channels where they turn for information\n\na3:\n- items:\n0: removal of commissions\n\na4:\n- items:\n0: crypto appeal\n1: younger traders recognize trading potential\n\na5:\n- items:\n0: one-third financial plan under 40\n1: coaching/expertise/service\n\na6:\n- items:\n0: social media and family\n1: YouTube\n\na7-a13: not_found.\n\nNow let me write text strings in passage's terms, attributed to firm.\n\nFor a1 item 0 text: \"Schwab says younger investors learn about finances primarily through social media and family.\" Good.\n\na1 item 1 text: \"Schwab says one of the reasons younger investors turn to Schwab is that Schwab meets them in the channels where they turn for information about investing.\" quote exact: \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.\"\n\na1 item 2 text: \"Schwab says younger investors' top online resource is YouTube, and Schwab is the number one financial services firm on YouTube by followers.\" quote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\n\na1 item 3 text: \"Schwab says younger investors at Schwab are highly engaged in building their wealth over the long term.\" quote: \"And younger investors at Schwab are highly engaged in building their wealth over the long term.\"\n\na1 item 4 text: \"Schwab says one-third of retail households who created a financial plan within the last two years are under the age of 40.\" quote: \"In fact, one-third of retail households who created a financial plan within the last two years are under the age of 40.\" value \"one-third\" unit \"retail households who created a financial plan\" period \"\" scope \"under the age of 40\".\n\na1 item 5 text: \"Schwab says younger traders turn to Schwab for the platforms, tools, education, coaching, expertise, and service they need to succeed.\" quote: \"And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.\"\n\na2 item 0 text same as a1 item 0. quote same.\na2 item 1 text same as a1 item 2.\na2 item 2 text: \"Schwab says younger investors turn to Schwab because it meets them in the channels where they turn for information about investing.\" quote same as a1 item 1.\n\na3 item 0 text: \"Schwab says growth in young investors was partly started by the removal of commissions, which brought more people into the market who had less money.\" quote: \"We've really seen a growth in young investors, I think part of that was started with the removal of commissions, which brought more people into the market that had less money.\"\n\na4 item 0 text: \"Schwab says crypto will appeal to young investors.\" quote: \"Crypto will be great for clients and will certainly appeal to young investors.\" chunk SCHW-TR-2025Q3#39.\n\na4 item 1 text: \"Schwab says younger traders are turning to Schwab because they recognize the potential that trading has in helping build wealth over time.\" quote: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time.\" chunk SCHW-TR-2025Q3#12.\n\na5 item 0 text: \"Schwab says one-third of retail households who created a financial plan within the last two years are under the age of 40.\" (same as a1 item 4) quote same. value \"one-third\" unit \"retail households who created a financial plan\" scope \"under the age of 40\".\n\na5 item 1 text: \"Schwab says younger traders turn to Schwab for the coaching, expertise, and service they need to succeed.\" quote: \"And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.\" chunk SCHW-TR-2025Q3#12.\n\na6 item 0: social media and family (same as a1 item 0).\na6 item 1: YouTube (same as a1 item 2).\n\nNow, some items have the same chunk and quote across different sub-questions. That's fine.\n\nLet me also reconsider: should a6 include \"We put on 35 hours a week of live content... engagement off the charts\" (SCHW-TR-2025Q3#41)? That's Schwab's education content and engagement, but it says \"our investors\" not specifically younger. It's in response to a question about young investors though. The context: \"So I think what we can offer the young investor in terms of the support, the service, the education... is unmatched.\" The 35 hours live content is about education for investors. I could include as fact for a6? It's Schwab's education offering, engagement \"off the charts\", not a stated preference of younger investors. I'll skip.\n\nActually, a6 asks \"What communication and financial education preferences do younger investors state?\" The social media/family/YouTube statements are about how younger investors learn about finances - that's financial education/communication preference. Good.\n\nNow, let me also think about whether the demographic facts (e.g., \"nearly one-third of new-to-firm retail households at Schwab are Gen Zers\", \"nearly 60% are under the age of 40\") should be included somewhere. The sub-questions a1-a6 are about preferences, not demographics. a7-a13 are Edward Jones. So demographics don't fit any sub-question directly. The overall question is about shaping Edward Jones's offerings based on younger-investor preferences. Demographic stats are context but not asked. I'll leave them out. Actually, a1 says \"clients under 40 state for wealth-management products, services, channels, fees, and advice\" - demographic stats don't state preferences. So skip.\n\nHmm, but wait - maybe the sub-question a1's [fact] label means it's a fact extraction about preferences, and demographic facts like \"70% of new-to-firm retail households are Gen Z and millennials\" are not preferences. Right, skip.\n\nLet me also reconsider if \"Clients expect all aspects of their lives to be more convenient, and they want to conduct more of their financial lives in one place\" (SCHW-TR-2025Q4#11) should be included in a1. It's a client preference but not specifically younger. Skip.\n\nOK.\n\nNow let me write the reason strings concisely.\n\na1 reason: \"Passages state younger investors' stated channels, information sources, planning engagement, and service needs.\"\na2 reason: \"Passages state younger investors use social media, YouTube, and the channels where they get investing information.\"\na3 reason: \"Passages connect commission removal to growth in young investors; no other younger-investor pricing preferences are stated.\"\na4 reason: \"Passages state younger investors' interest in crypto and trading.\"\na5 reason: \"Passages show younger investors' use of financial planning and their stated need for coaching, expertise, and service.\"\na6 reason: \"Passages state younger investors learn about finances through social media, family, and YouTube.\"\na7-a13 reason: \"The passages say nothing about Edward Jones.\"\n\nNow derivation for all: {\"operation\": \"\", \"inputs\": []}.\n\ndiffers_because for fact cells: \"\".\n\nLet me now produce the JSON.\n\nDouble-check chunk IDs:\n- SCHW-TR-2025Q3#11 (a1)\n- SCHW-TR-2025Q3#12 (a1)\n- SCHW-TR-2026Q2#36 (a3)\n- SCHW-TR-2025Q3#39 (a2)\n- SCHW-TR-2025Q2#9 (a1)\n- SCHW-DECK-2026-investor-day#99 (a2)\n\nI'm using SCHW-TR-2025Q3#39 for crypto - it's listed under a2 passages. Good, it's available.\n\nFor a4 item 0 crypto, chunk SCHW-TR-2025Q3#39.\n\nFor a4 item 1 trading, chunk SCHW-TR-2025Q3#12.\n\nFor a3 item 0, chunk SCHW-TR-2026Q2#36.\n\nOK.\n\nLet me write out the full tool call now.\n\nOne more thing: The schema requires \"value\", \"unit\", \"period\", \"scope\", \"definition\" all strings, and \"chunk_ids\" array. For items with no figure, value \"\", unit \"\", period \"\", scope \"\", definition \"\".\n\nFor the financial plan item, value \"one-third\", unit \"retail households who created a financial plan\", period \"\", scope \"under the age of 40\", definition \"\".\n\nLet me ensure quote lengths under 300 chars. Yes.\n\nNow, write final.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says younger investors learn about finances primarily through social media and family.",
+            "quote": "We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says one of the reasons younger investors turn to Schwab is that Schwab meets them in the channels where they turn for information about investing.",
+            "quote": "One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors' top online resource is YouTube, and Schwab is the number one financial services firm on YouTube by followers.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors at Schwab are highly engaged in building their wealth over the long term.",
+            "quote": "And younger investors at Schwab are highly engaged in building their wealth over the long term.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+            "quote": "In fact, one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+            "value": "one-third",
+            "unit": "retail households who created a financial plan",
+            "period": "",
+            "scope": "under the age of 40",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says younger traders turn to Schwab for the platforms, tools, education, coaching, expertise, and service they need to succeed.",
+            "quote": "And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state younger investors' channels, information sources, planning engagement, and service needs.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says younger investors learn about finances primarily through social media and family.",
+            "quote": "We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors' top online resource is YouTube.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors turn to Schwab because it meets them in the channels where they turn for information about investing.",
+            "quote": "One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state younger investors use social media, YouTube, and the channels where they get investing information.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says growth in young investors was partly started by the removal of commissions, which brought more people into the market who had less money.",
+            "quote": "We've really seen a growth in young investors, I think part of that was started with the removal of commissions, which brought more people into the market that had less money.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q2#36"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages connect commission removal to growth in young investors; no other younger-investor pricing preferences are stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says crypto will appeal to young investors.",
+            "quote": "Crypto will be great for clients and will certainly appeal to young investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#39"
+            ]
+          },
+          {
+            "text": "Schwab says younger traders are turning to Schwab because they recognize the potential that trading has in helping build wealth over time.",
+            "quote": "Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state younger investors' interest in crypto and trading.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+            "quote": "In fact, one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+            "value": "one-third",
+            "unit": "retail households who created a financial plan",
+            "period": "",
+            "scope": "under the age of 40",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says younger traders turn to Schwab for the coaching, expertise, and service they need to succeed.",
+            "quote": "And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed, a combination they cannot find anywhere else.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages show younger investors' use of financial planning and their stated need for coaching, expertise, and service.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says younger investors learn about finances primarily through social media and family.",
+            "quote": "We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors' top online resource is YouTube.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state younger investors learn about finances through social media, family, and YouTube.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about how Edward Jones management describes younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about Edward Jones's current offerings, capabilities, or client experience.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about Edward Jones's priorities for serving younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about competition Edward Jones names in serving younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a11.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about Edward Jones losing ground or pulling back among younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a12.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about recent or planned changes to Edward Jones's offerings for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a13.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about how younger-investor preferences should shape Edward Jones's offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
