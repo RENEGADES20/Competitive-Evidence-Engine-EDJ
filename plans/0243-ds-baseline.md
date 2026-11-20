@@ -242,28 +242,28 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
     Step 4's dump, step 8's tables and the report json are built from exactly these.
 
 ## Acceptance
-- [ ] TL go-ahead before the first call: `gh issue view 243 --comments` shows the 2026-11-19 TL
+- [x] TL go-ahead before the first call: `gh issue view 243 --comments` shows the 2026-11-19 TL
       comment; `head-log.txt`'s first paid-run line is later.
-- [ ] Mock first: `.eval-runs\0243-mock` -> 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed 22/22,
+- [x] Mock first: `.eval-runs\0243-mock` -> 29 PASS / 1 FAIL (Q19), refusal gap 5/5, keyed 22/22,
       0 forbidden, no status change; 30/30 chunk lists identical (`ev243\mock-diff.txt`).
-- [ ] Call count matches the saved raw outputs; 0 re-rolls: per attempt `meta.real_calls` (or the
+- [x] Call count matches the saved raw outputs; 0 re-rolls: per attempt `meta.real_calls` (or the
       log) = new raw files that attempt wrote, except a (b) / (a') stop with a log entry and no file
       (named); reused = 6 (#242) + any resume reuse; total new calls <= 60.
-- [ ] Run settings logged: `head-log.txt` shows the pinned settings line (incl.
+- [x] Run settings logged: `head-log.txt` shows the pinned settings line (incl.
       `db=localhost:5432/cee`), HEAD before and after equal, code diff vs 739cb3c empty, `.env` removed.
-- [ ] Same run frame as #217: every attempt's `report.json` has `meta.snapshot` = `corpus-2026-11-19`
+- [x] Same run frame as #217: every attempt's `report.json` has `meta.snapshot` = `corpus-2026-11-19`
       and `meta.as_of` = `2026-11-17`, and holds exactly Q1-Q30 (minus any rule (b) stop).
-- [ ] Blind scorer isolated: `ev243\blind-in\` holds exactly the three allowlisted files; the
+- [x] Blind scorer isolated: `ev243\blind-in\` holds exactly the three allowlisted files; the
       Progress-log blind line names `scorer-prompt.txt` with its sha256 and the input hashes.
-- [ ] Cost uses the rates and peak window of issuecomment-7030358880 (or the page's, if it renders
+- [x] Cost uses the rates and peak window of issuecomment-7030358880 (or the page's, if it renders
       at report time, with differences noted); the report states which.
 - [ ] Blind hash committed before the comparison (Progress-log commit precedes any comparison
       commit; hash recomputable from the json's `blind`); second read of the borderline questions
       in PR review round 1, and the report's "Second read" table matches the reviewer's comment.
-- [ ] Report lists all 30 verdicts (PASS / FAIL, class for each FAIL), score and tier-1 score, and
+- [x] Report lists all 30 verdicts (PASS / FAIL, class for each FAIL), score and tier-1 score, and
       every change against #217 with its label and evidence; cost per question and total in dollars
       (rule above), tokens incl. cache hit and reasoning.
-- [ ] 0 code changes: `git diff origin/main...HEAD --stat` lists only the three files above.
+- [x] 0 code changes: `git diff origin/main...HEAD --stat` lists only the three files above.
 - [ ] `gh pr checks <PR#>` all green on the PR head.
 
 ## Risks
@@ -326,3 +326,13 @@ Not changed: anything in `src/`, `config/`, `scripts/`, `tests/`, `evals/`, the 
   `7816579dccc700870cc7e244c1a02a894920e90635a970a939b11f7bf17daa24` (recomputed by the
   implementer; equal to the scorer's). Blind score 16/30; borderline Q3, Q5, Q8, Q12, Q14, Q15, Q16,
   Q18, Q21, Q22, Q24, Q26, Q28. Committed before any comparison (step 5).
+- 2026-11-20 01:50 - steps 5-8 (0 calls). Comparison with #217 (`ev243\cmp.py`, `brief.py`, `checks.py`): nine
+  PASS -> FAIL (Q3 plan + model; Q5 scorer reading + model; Q7 plan + retrieval + model; Q8, Q12, Q21, Q28
+  model; Q15 model + retrieval; Q17 model + scorer reading), one FAIL -> PASS (Q19, scorer reading: same
+  shape #217's TL decision failed). Blind verdicts unchanged; a #217-consistent reading on Q5 / Q17 / Q19
+  gives 17/30, the range on them 15-18/30. Number flags checked against passages (3 real misses: Q17 c31,
+  c59, Q24 c13); one unmatched citation (Q5 c4). Pricing page re-read 2026-11-20: same rates and peak
+  window as issuecomment-7030358880; billing time not stated, completion time used. Cost (`ev243\cost.py`):
+  new spend $2.46 (54 calls; 9 at peak, Q26 answer across 06:00 UTC), all 30 incl. #242's three $2.99.
+  Report `docs/results/w11-deepseek-baseline.md` + `.json` (`ev243\gen_w11.py`); blind hash recomputes
+  from the json. Second read (17 questions) left for PR review round 1.
