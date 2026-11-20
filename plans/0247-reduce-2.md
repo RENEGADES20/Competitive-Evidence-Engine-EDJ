@@ -714,3 +714,9 @@ judged again, corpus gaps (MS after 4Q2020, RJF quarterly, BAC after 4Q2023, EDJ
 definitions) go to NEXT.
 
 - 2026-11-20 - TL go-ahead for R1-R5 plus R6 (TL comment on #247); R6 written in before any code.
+- 2026-11-20 08:25 - revision built (20663ec): R1-R6 with tests (pytest 966 passed, 0 real calls); mock 35 vs
+  main c4ba303 (`ev247b\mock-compare-r2.txt`): retrieval identical apart from the pinned additions, every
+  mock code check clean; verify-cee VERIFY PASS (`.verify-runs/20261120-081908-20663ec`; open-citation and
+  download-document UNREACHABLE, no raw files). 0-call count (`ev247b\count-r2`, no key): 6 plans and every
+  map / re-extraction record reused (38 records), the 6 reduce calls capped: **bound and cap 6** (Q26, Q24,
+  Q19, Q22, Q11, Q23). Wrapper parameter renamed `-OutDir` (no clash with `$out`).
