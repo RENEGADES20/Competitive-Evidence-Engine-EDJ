@@ -217,6 +217,15 @@ def _matrix_state(pid: str, answer: Answer, matrix, known: dict) -> str | None:
             return "proxy"
         if not holds(cell):
             return "proxy_by_design"
+    if not holds(cell):
+        # #247 part 2: an empty cell outside its aspect's firm scope gets no gap by design (Q19); an
+        # empty competitor cell is covered by its aspect's folded competitors gap
+        from cee.answer.matrix import in_gap_scope
+        if not in_gap_scope(a, cell):
+            return "out_of_scope"
+        if any(g.part_id == a.id and "matrix_competitors_not_found" in g.flags for g in answer.gaps) \
+                and cell.role == "competitor":
+            return "competitors_gap"
     return None
 
 

@@ -140,3 +140,30 @@ def test_without_window_only_recency_items_move_in_their_slots():
 
 def test_with_window_the_whole_answer_is_sorted():
     assert _resort(True) == ["rec sep", "rec june", "old other"]
+
+
+# --- gap scope in the answer (Q19) ------------------------------------------------------------------
+
+def test_q19_shaped_answer_drops_out_of_scope_model_gaps_and_adds_no_part_gap():
+    from cee.retrieve.planner import Plan, SubQuestion
+    own = Aspect("a7", "How does Edward Jones management describe younger investors?", asked_firms=["EDJ"])
+    pref = Aspect("a1", "What preferences do younger investors state?")
+    cells = [Cell("a7.EDJ", "EDJ", "a7", "named", "fact", items=[Item("t", chunk_ids=["E#1"])]),
+             Cell("a7.MS", "MS", "a7", "competitor", "not_found"),
+             Cell("a1.EDJ", "EDJ", "a1", "named", "not_found"),
+             Cell("a1.MS", "MS", "a1", "competitor", "not_found"), Cell("a1.RJF", "RJF", "a1", "competitor", "not_found")]
+    m = EvidenceMatrix("How should the preferences of younger investors shape Edward Jones's offerings?",
+                       rows=["EDJ", "MS", "RJF"], aspects=[pref, own], cells={c.id: c for c in cells})
+    hit = H("E#1")
+    m.hits = {"E#1": hit}
+    finish(m, sources=NO_SOURCES)
+    plan = Plan(aspects=[pref, own], subquestions=[SubQuestion(c.id, c.entity, m.aspect(c.aspect_id), c.role)
+                                                   for c in cells])
+    raw = Answer(answerable=True, behavior=m.behavior, claims=[cl("Edward Jones: t.", ["E#1"], "a7.EDJ")],
+                 gaps=[{"what": "Morgan Stanley - a7: not found.", "part_id": "a7.MS"},
+                       {"what": "Morgan Stanley - a1: not found.", "part_id": "a1.MS"}])
+    a, info = R.finish_answer(raw, m, Query(question=m.question, entities=["EDJ"]), plan, [hit], m.question)
+    assert not any("part_gap" in g.flags for g in a.gaps)
+    assert not any(g.part_id == "a7.MS" for g in a.gaps)
+    fold = next(g for g in a.gaps if "matrix_competitors_not_found" in g.flags)
+    assert "model_also_named" in fold.flags and "a1" == fold.part_id

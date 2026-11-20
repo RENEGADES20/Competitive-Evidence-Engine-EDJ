@@ -706,18 +706,17 @@ def _dup_text(x) -> str:
     return " ".join(re.sub(r"[^\w\s.,%$]", " ", body.lower()).split()).rstrip(".")
 
 
+SUBSUMED = 0.85   # share of the shorter claim's content words found in the longer one
+
+
 def dedupe_claims(answer: Answer) -> list[dict]:
     """#247 part 2: claims citing the same chunk set are duplicates when their texts (no why-line, no
-    "<Firm>: " prefix) are equal, or when every figure of one is in the other and its word 5-grams
-    overlap the other's >= fts.DUP_JACCARD. The longer is kept (ties: the first). Returns the removed."""
+    "<Firm>: " prefix) are equal, or when the shorter is held in the longer: every figure of it in the
+    longer and >= SUBSUMED of its content words (stop words and firm names removed) too. The longer is
+    kept (ties: the first). Returns the removed (logged, never shown)."""
     from cee.answer.validate import figures
-    from cee.retrieve.fts import DUP_JACCARD
     claims = answer.claims
     drop: dict[int, int] = {}
-
-    def grams(s: str) -> set:
-        w = s.split()
-        return {tuple(w[i:i + 5]) for i in range(max(1, len(w) - 4))}
     for i in range(len(claims)):
         for j in range(i + 1, len(claims)):
             if i in drop or j in drop:
@@ -732,8 +731,8 @@ def dedupe_claims(answer: Answer) -> list[dict]:
                 continue
             short, long_, si, li = (ta, tb, i, j) if len(ta) < len(tb) else (tb, ta, j, i)
             fs, fl = {str(f.value) for f in figures(short)}, {str(f.value) for f in figures(long_)}
-            gs, gl = grams(short), grams(long_)
-            if fs <= fl and gs and len(gs & gl) / len(gs) >= DUP_JACCARD:
+            ws, wl = _content(short), _content(long_)
+            if fs <= fl and ws and len(ws & wl) >= SUBSUMED * len(ws):
                 drop[si] = li
     removed = [{"text": claims[k].text, "part_id": claims[k].part_id, "kept": v} for k, v in sorted(drop.items())]
     answer.claims = [x for n, x in enumerate(claims) if n not in drop]
@@ -808,7 +807,21 @@ def place_gaps(answer: Answer, m: EvidenceMatrix) -> int:
     code = [Gap(what=g["what"], suggested_source=g.get("suggested_source", ""), part_id=g["id"],
                 flags=[f"matrix_{g.get('label', 'gap')}"]) for g in m.gaps]
     kept, merged = [], 0
+    from cee.answer.matrix import in_gap_scope
+    folds = {cid: c for g, c in zip(m.gaps, code) for cid in g.get("cells") or []}
     for g in model:
+        cell = m.cells.get(g.part_id)
+        if cell is not None:   # #247 part 2 (Q19): no gap outside the aspect's firm scope, folded cells merged
+            if not in_gap_scope(m.aspect(cell.aspect_id), cell):
+                merged += 1
+                continue
+            if cell.id in folds:
+                f = folds[cell.id]
+                if "model_also_named" not in f.flags:
+                    f.flags.append("model_also_named")
+                f.claim_text = "\n".join(x for x in (f.claim_text, g.what) if x)
+                merged += 1
+                continue
         twin = next((c for c in code if _gap_norm(c.what) == _gap_norm(g.what)
                      or (c.part_id == g.part_id and ":" in c.what
                          and _gap_norm(g.what).startswith(_gap_norm(c.what.split(":", 1)[0]) + ":"))), None)
