@@ -230,11 +230,11 @@ records #250 / #259 reuse); the replay acceptance item proves it.
 10. Checks (below), then `/finish-task`.
 
 ## Acceptance
-- [ ] Linked questions Q1-Q30: retrieval unchanged. Mock eval of the bank (0 calls, `--as-of 2026-11-17`):
+- [x] Linked questions Q1-Q30: retrieval unchanged. Mock eval of the bank (0 calls, `--as-of 2026-11-17`):
       every chunk list identical to main 2f568c4's mock run; refusal and keyed checks unchanged; every
       question has `cost` with 0 calls and $0; `summary.cost` present.
-- [ ] **A resumed run reuses every saved call** (issue acceptance 1): step 3's tests pass (0 real calls).
-- [ ] **0-call replay of saved real records** (proves the keys did not move and the cost reads real
+- [x] **A resumed run reuses every saved call** (issue acceptance 1): step 3's tests pass (0 real calls).
+- [x] **0-call replay of saved real records** (proves the keys did not move and the cost reads real
       usage). Run on this branch **before any rebase onto #247 part 3** (review note 3): copy
       `docs/results/0247b-raw` (records only, not `verdicts*`) to a scratch cache, run
       `LLM_PROVIDER=deepseek DEEPSEEK_THINKING=on eval_run.py --real --max-calls 0 --cache <copy>
@@ -251,18 +251,22 @@ records #250 / #259 reuse); the replay acceptance item proves it.
       record under the new key), the replay is run on the pre-rebase commit and that SHA is logged; if a
       rebase came first anyway, it uses part 3's own replay records if they exist, or reports the 8 reduce
       misses as `cap` (plans and maps still 0 calls) and says so.
-- [ ] Cost per question and run total in report.json (issue acceptance 2): tests in steps 1-2; the
+      **Result (Progress log 10:40):** 0 calls; 44 reused (plan 8, map 27, re-extraction 7, reduce 2), not
+      50: 6 reduces are `cap` because their saved records do not match main's reduce key (v5.1 records, or
+      v5.2 records made before part 2's r3 fix). Main's own code (2f568c4) gives the identical replay, so
+      this branch moved no key. Total $2.523 as run over the 44 records.
+- [x] Cost per question and run total in report.json (issue acceptance 2): tests in steps 1-2; the
       0242 records price to $0.79 full price ($0.27 off, $0.52 on), now in `0242-deepseek-check.md`.
-- [ ] `--reuse-plans` on main: step 4 tests; `--max-calls` still caps every call type (a test: cap 1 on a
+- [x] `--reuse-plans` on main: step 4 tests; `--max-calls` still caps every call type (a test: cap 1 on a
       two-firm question makes the plan call only).
 - [ ] verify-cee shows the new stages (issue acceptance 3): `python scripts/verify_cee.py run` all features
       PASS (ask-progress: 9 lines, the new texts, `query_log.filters.cost`), evidence folder named in the PR.
 - [ ] Open-citation flake: `python scripts/verify_cee.py run open-citation` passes 5 runs in a row
       (5 run folders listed in the PR).
-- [ ] `CONTEXT_WINDOW["openai"]` verified with a source, or the TODO kept with a note.
-- [ ] CLAUDE.md names `deepseek`; `docs/RUN.md` has Windows and Mac blocks for the new flags.
+- [x] `CONTEXT_WINDOW["openai"]` verified with a source, or the TODO kept with a note.
+- [x] CLAUDE.md names `deepseek`; `docs/RUN.md` has Windows and Mac blocks for the new flags.
 - [ ] `pytest` green locally (PYTHONPATH=wt-248/src) and `gh pr checks` green.
-- [ ] 0 real calls (stated in the PR's Verification section).
+- [x] 0 real calls (stated in the PR's Verification section).
 
 ## Progress log
 - 2026-11-20 09:51 - plan written. Branch `tl/248-eval-ui` from origin/main 2f568c4; DB check: up to date
@@ -276,3 +280,36 @@ records #250 / #259 reuse); the replay acceptance item proves it.
   `mock_extract` / `mock_reduce` already sleep; no new sleep; verify question path named. Notes 1-6
   adopted (.env wording, #249 merge note, replay before rebase onto part 3, Q3 failed attempt outside the
   replay cost, Anthropic geo / 1h notes, step count from `len(STAGES)`).
+- 2026-11-20 10:05 - round-2 notes written into the plan (a0fa111) before any code.
+- 2026-11-20 10:20 - built (c2f4ecc): `config/pricing.yaml`, `cee.answer.cost`, the eval ledger and cost,
+  `--reuse-plans` / `--cache` / `--naive-tz`, `scripts/eval_cost.py`, 9 app stages, `log_filters.cost`,
+  per-call map `finished_at` in the worker, Anthropic cache-token usage, open-citation wait; `tzdata` pinned.
+  Deviation: the naive-time scan before a real run applies when the provider has a peak window (deepseek);
+  a flat-priced provider (anthropic) needs no zone, so its naive records never stop a run. `RealRunner`
+  takes `plans_only` as an attribute, not a constructor argument (tests patch `__init__`'s defaults).
+  pytest 1005 passed locally (PYTHONPATH=wt-248/src), 0 real calls.
+- 2026-11-20 10:40 - **0-call replay** on c2f4ecc, before any rebase (origin/main still 2f568c4; part 3
+  not merged): `LLM_PROVIDER=deepseek DEEPSEEK_THINKING=on eval_run.py --real --max-calls 0 --cache <copy of
+  0247b-raw> --naive-tz America/Chicago --questions Q1,Q3,Q11,Q19,Q22,Q23,Q24,Q26 --as-of 2026-11-17`
+  (evidence `D:\ALLPROJECTS\EDJ\cache\ev248\replay`). wt-248 has no `.env`; settings in the command.
+  Result: `real_calls` 0, `calls_reserved` 0, 44 records reused: plan 8, map 27, re-extraction 7, reduce
+  **2** (Q19, Q26). The other 6 reduces are `cap` (no call): Q1 and Q3 have only v5.1 reduce records (main
+  is v5.2), and Q11 / Q22 / Q23 / Q24's v5.2 records were made before part 2's r3 fix changed their reduce
+  input; part 2's "50 records" replay-final used its own `replay_final.py`, which reused outputs without
+  the eval's key. **Proof the keys did not move:** the same replay on main's code (detached worktree at
+  2f568c4, records in its `.eval-runs/cache`, `ev248\replay-base`) gives the identical result: 44 reused,
+  the same 6 `cap` / 2 `cached`, identical chunk lists and answers for all 8 questions. Cost of the 44
+  reused records: $2.523 as run (22 peak, 22 off-peak, naive times read as America/Chicago), $3.651 at full
+  price; per question Q1 0.195, Q3 0.175, Q11 0.336, Q19 0.589, Q22 0.530, Q23 0.118, Q24 0.381, Q26 0.199.
+  It leaves out the 6 reduce records not served and Q3's failed reduce attempt (`...failed-1.json`, not a
+  cache file), so it is not comparable with part 2's ~$1.90 for 33 new calls (different call sets).
+- 2026-11-20 10:55 - mock 35 (0 calls, `--as-of 2026-11-17`): branch vs main 2f568c4 (same commands, base
+  worktree): all 35 chunk lists, statuses, answers and map behaviors identical; PASS 33 / FAIL 2 on both;
+  refusal gap 8/8, keyed 26/26; every question's `cost` 0 calls / $0 (`ev248\mock-branch`, `mock-main`).
+- 2026-11-20 10:55 - `CONTEXT_WINDOW["openai"]`: developers.openai.com/api/docs/models/gpt-5 (read
+  2026-11-20) states 400,000 context and 128,000 max output; it also states a separate 272,000 input limit
+  and marks gpt-5 deprecated. TODO removed, the value kept, the input limit noted in the comment.
+- 2026-11-20 11:00 - verify-cee all features (`.verify-runs\20261120-102521-c2f4ecc`): ask-answer,
+  ask-progress, gap-path, invalid-chunk, coverage, filters, feedback PASS; open-citation and
+  download-document UNREACHABLE (no raw files in the worktree: `CORPUS_SHARE_PATH` unset because wt-248
+  has no `.env`). Re-run with `CORPUS_SHARE_PATH` set to the Box folder in the command: see below.

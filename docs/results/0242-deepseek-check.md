@@ -92,6 +92,15 @@ time of each call; tokens/s is output tokens divided by that time.
 - **on:** 155,248 input tokens (4,736 cache hit), 81,977 output tokens (73,511 of them reasoning), 818 s.
 - **Both modes:** 332,235 input tokens and 91,871 output tokens.
 
+**Cost** (added in #248, 0 calls: `scripts/eval_cost.py docs/results/0242-deepseek-raw --naive-tz America/Chicago`,
+prices from `config/pricing.yaml`, `deepseek-v4-pro`, source the TL comment on #243):
+- **$0.79 at full price** for the 12 check calls: **off $0.27** ($0.2672), **on $0.52** ($0.5235).
+- These records store their start time without a UTC offset; they were written on the TL machine in
+  America/Chicago (UTC-6 in November). Read in that zone, every call finished between 03:35 and 03:52 UTC on
+  Friday 2026-11-20, inside the 01:00-04:00 UTC peak window, so the cost as run is also $0.79 (12 peak, 0
+  off-peak).
+- The 2 app-check calls below are not in the raw folders, so they are not in this figure.
+
 Thinking on produces about 8 times the output tokens and takes about 7 times the wall time
 (Q22's answer took 5 minutes). Measured speed was 46-107 tokens/s, far above the 18 tokens/s the
 3600 s read timeout assumes.

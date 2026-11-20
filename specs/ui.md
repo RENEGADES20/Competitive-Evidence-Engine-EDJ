@@ -73,8 +73,10 @@ Page "Coverage"
 - Coverage page shows thin areas for all five firms and themes.
 - Feedback writes a row to `query_feedback` linked to the `query_log` row.
 - After "Ask" is clicked, a progress bar and a step trace appear at once and advance with the
-  pipeline stages (resolve, plan (#214, ADR-020), retrieve, map (#246, on by default since #247),
-  reduce call or skip, citation check, caveats/gaps). Each
+  pipeline stages (#248, ADR-021): reading the question, decompose (the planner, #214 / #245),
+  search N sub-questions, extract from k firms (the map, #246), re-search (corrective re-search and
+  re-extraction, #246), synthesize (the reduce call, or the answer built by code, #247), citation
+  check, caveats/gaps, saving the query. Each
   step line comes from the stage's real output; a failed stage is shown as failed, not hidden.
   The trace adds no extra LLM call (it reports the planner call, the map calls and the reduce call;
   calls follow the decomposition, ADR-021 rule 7). The plan
