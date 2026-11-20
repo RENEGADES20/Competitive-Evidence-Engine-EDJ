@@ -46,10 +46,25 @@ embeds `text` in the vector leg. Three gaps:
 3. **`period_range` / `exclude_ids`**: `hybrid.hard_filters` builds its filters from `fts.filters_sql(q)`,
    which on `main` now adds both, so both legs get them with no hybrid change. A test pins it.
 
-Unsure (written down for the reviewer): `_competitor_floor` uses `fts.FLOOR` (0.3) x the 2nd-best rank.
-On RRF scores that is a relative cut like hybrid's own (0.4); on `hybrid`'s sigmoid scores it is a
-ratio of probabilities (hybrid.py notes "a sigmoid is not a ratio"). I keep `main`'s loop unchanged
-(the point of the issue) and only record this; `hybrid` (rerank) is the reference mode and not in #250.
+**Known difference: the competitor floor is close to a no-op in hybrid-norerank** (review round 1,
+blocking 1). `_competitor_floor` cuts every competitor sub-question's hits of one aspect at `fts.FLOOR`
+(0.3) x the 2nd-best `Hit.rank` across those competitors. `hybrid.candidates` fuses per quota firm
+(`_per_firm`) and a competitor sub-question searches one firm, so hybrid-norerank's RRF score depends
+only on a chunk's rank inside its own firm, not on how well its text matches: every competitor's best
+chunk scores about 2/61 = 0.033, the floor is about 0.0098, and any chunk at rank 41 or better in one
+leg passes (1/101 = 0.0099). The hits that reach the floor are already the top few after `select()`
+under the sub-question budget, so the floor almost never fires; `corrective_search` reuses
+`plan.competitor_floor` and has the same problem. In fts the floor compares `ts_rank` across firms and
+does fire (ADR-018's example: Merrill's advisor-ranking chunks are cut). This is not "a relative cut
+like hybrid's own 0.4": that one is per firm, and ADR-018 rejects a per-firm floor for peers. On
+`hybrid` (rerank) the cut is a ratio of sigmoid scores, also not comparable to fts.
+Effect on #250: hybrid-norerank can keep competitor chunks that fts drops, so a disabled ADR-018
+safeguard would be credited or blamed on "hybrid". This issue does **not** fix it (a fix changes
+`hybrid.search`'s rank semantics or `planner.py`, which must equal `main`). It **measures** it at 0
+calls (step 6) and records it as a known #250 difference. TL ruling (2026-11-20): the numbers go to
+the TL before the PR is marked ready; the TL decides on #250 whether to accept them as part of
+"retrieval" or to fix them first in a follow-up issue before #250 (for example a cross-firm
+comparable score for competitor queries).
 
 ## Files to change
 Only hybrid files may differ from `origin/main` afterwards (the list in `plans/0211-hybrid-retest.md`
@@ -77,7 +92,12 @@ plus `plans/0212-*`, `0240-*`, this plan and `evals/hybrid-eval/`).
   `modes.search(query, ..., mode=, plan=, as_of=)`; `RealRunner.map` and the mock `run_map` get
   `search_fn=modes.search_fn(mode)`. Plan cache: `main`'s `plan_cache_key` / `plan_path` (no cap),
   `RealRunner(cache_dir=CACHE)`, `plans_only` as an attribute, `main`'s `SavedPlans`/`missing_plans`;
-  the branch's capped duplicates go (PR #262 notes). Test names T9/T10 kept as on `main`.
+  the branch's capped duplicates go (PR #262 notes). Test names T9/T10 kept as on `main`. Also kept
+  (0240 sync rule NB9): `current_constants`' mode-aware hybrid keys.
+- `scripts/eval_compare.py` - no conflict; kept as on the branch, including `--no-decision` and
+  `--pool-note` (0240 NB9).
+- `src/cee/app/views/ask_page.py` - auto-merged (hybrid file whose base moved); not edited by hand,
+  checked by the verify-cee Smart search step.
 - `scripts/verify_cee.py`, `.claude/skills/verify-cee/features/ask-progress.md`, `specs/retrieval.md`,
   `docs/RUN.md` - `main`'s text plus the branch's mode / hybrid hunks; the "Retrieval modes" section of
   the spec and the RUN.md "Hybrid retrieval" section describe the `search_fn` seam and the shared
@@ -86,15 +106,19 @@ plus `plans/0212-*`, `0240-*`, this plan and `evals/hybrid-eval/`).
   - `tests/test_hybrid.py`: remove T3 parity (`test_t3_hybrid_search_parts_mirrors_planner_search_parts`,
     `test_t3_passage_mode_and_not_searchable_branches`) and `test_t3b_planner_search_parts_source_is_pinned`;
     move the vectors-once and the DB hard-filter tests from `search_parts` to `modes.search(plan=...)`;
-    new tests for gap 1 (both legs carry the on-theme filter, no answer turn, every hit `on_theme`;
-    unchanged when `on_theme_only` is False or the mode is not entity+theme) and gap 3
+    new tests for gap 1 (both legs carry the on-theme filter, no answer turn, every hit `on_theme`,
+    `trace.on_theme` gets the firm pass ids as in fts; unchanged when `on_theme_only` is False or the
+    mode is not entity+theme; in `hybrid` (rerank) every hit is exempt from `gate()` and is scored,
+    pinned by a test or, if a test is not practical, by a code comment) and gap 3
     (`period_range` / `exclude_ids` reach both legs).
   - `tests/test_search_mode.py`: fts with a plan calls `planner.search_subquestions` with the default
     functions; hybrid with a plan calls it with hybrid `search_fn` / `research_fn` (rerank by mode)
     and `pin_fn=fts.fetch_pinned`; `search_fn(mode)`.
   - `tests/test_eval_run.py`, `tests/test_ask_progress.py`, `tests/test_ask_page_trace.py`: `main`'s
     versions plus the mode tests; one test that hybrid-norerank's `run_map` gets the hybrid `search_fn`.
-- Evidence: `evals/hybrid-eval/corpus-<snapshot>/mock-w11/` (report.md, summary.json, both report.json).
+- Evidence: `evals/hybrid-eval/corpus-<snapshot>/mock-w11/` (report.md, summary.json, both report.json,
+  `fts-parity.md` with the parity script's 35 per-question rows, identical or not, and the competitor
+  floor / pins tables of step 6).
   The `main` fts run is kept outside the repo in `D:\ALLPROJECTS\EDJ\cache\ev249`.
 Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`, `src/cee/answer/*`,
 `config/`, `evals/expected_chunks.yaml`, `evals/questions.yaml`.
@@ -115,22 +139,48 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
 5. **fts parity, mock, 0 calls.** The DB snapshot is checked with `scripts/sync-db.ps1 -Check`. The same
    `eval_run.py` mock command (fts, full bank Q1-Q35, `--as-of 2026-11-17`) on a detached worktree at
    `origin/main` and on this branch. A one-off scratch script (not committed) compares per question:
-   ordered chunk lists, statuses, plan, map behavior, answer text. Expected: identical on 35/35.
+   ordered chunk lists, statuses, plan, map behavior, answer text. Expected: identical on 35/35. Its
+   per-question output (35 rows) is saved as `mock-w11/fts-parity.md`, so the claim is checkable
+   without the script.
 6. **hybrid-norerank, mock, 0 calls.** The same command with `--mode hybrid-norerank` on this branch.
    Same plans by construction (rule plans on mock; `plan_path` has no mode in its key; T9 test).
    Reported against the fts run: refusal checks, keyed checks, PASS/FAIL, recall@final and the
    per-question chunk-list differences; via `scripts/eval_compare.py --run` if it still reads the W11
    records, otherwise from both report.json files (noted). No decision is taken here; #250 decides.
-   `hybrid` (rerank) is covered by tests only.
+   `hybrid` (rerank) is covered by tests only. Two more tables, 0 calls, from `plan.searched` in both
+   report.json files:
+   - **Competitor floor** (blocking 1): per question and competitor sub-question, fts vs
+     hybrid-norerank: `floor_dropped` count, `floor_emptied`, and the competitor chunks that reach the
+     map (passages per competitor sub-question after the floor, period and pin passes), plus
+     `plan.competitor_floor` per aspect. Questions with no competitor sub-question are listed as such.
+     If Q1-Q35 show no difference, the report says so with the counts.
+   - **Pins** (gap 2 end to end): per sub-question, `pinned` and `pins_cut` in fts vs hybrid-norerank.
+     Same plan means the same pins, apart from dedup against chunks already kept; any other
+     difference is a defect.
+   The competitor floor table goes to the TL (TL ruling) before the PR is marked ready; the outcome
+   and the TL decision are recorded in the evidence report and as a comment on #250.
 7. **verify-cee** on this branch: search-mode (Smart search) and ask-progress in hybrid-norerank (the 9
    W11 stages, "Searching N sub-questions"), plus ask-answer in fts.
-8. `/finish-task`: PR into `exp/hybrid`, `Closes #249`, `gh pr checks` green.
+8. **Re-sync check** (blocking 2): `git fetch origin` before opening the PR and again before the merge.
+   If `origin/main` has moved past `e15ccf8`, merge it again by the same rule (step 1) and re-run step 1's
+   diff and byte-equality checks, step 4 (pytest), step 5 (fts parity) and step 6 (hybrid-norerank mock
+   and its tables) on the new `main` SHA.
+9. `/finish-task`: PR into `exp/hybrid`, `Closes #249`, `gh pr checks` green. The PR body names the `main`
+   SHA the parity was proved against; #250 runs fts on that same `main` SHA, or re-syncs first. The PR
+   stays draft until the TL has the competitor floor numbers.
 
 ## Acceptance
 - [ ] Linked questions Q1-Q30 (bank Q1-Q35 run): fts mock on this branch identical to `main` (chunk
       lists, statuses, plans, map behavior, answers) -> 30/30 (35/35).
 - [ ] hybrid-norerank mock runs on all questions with 0 calls; refusal and keyed checks and the
       per-question differences against fts on the same plans are in the evidence report.
+- [ ] Competitor floor measured at 0 calls: per question, fts vs hybrid-norerank `floor_dropped` /
+      `floor_emptied` counts and competitor chunks reaching the map, in the evidence report; numbers
+      given to the TL before the PR is marked ready; outcome and TL decision commented on #250.
+- [ ] `pinned` / `pins_cut` per sub-question equal in fts and hybrid-norerank (apart from dedup), in the
+      evidence report.
+- [ ] Re-sync: `git fetch` before the PR and before merge; if `origin/main` moved past e15ccf8, re-merged
+      and steps 1, 4, 5, 6 re-run on the new SHA; the PR body names the `main` SHA of the parity proof.
 - [ ] Hybrid modes use the shared loop: `test_search_mode.py` shows `search_subquestions` called with
       hybrid `search_fn` / `research_fn` and `pin_fn=fts.fetch_pinned`; `run_map` gets the hybrid
       `search_fn`; `git grep search_parts -- src scripts tests` is empty; no source-hash pin left.
@@ -141,6 +191,21 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
 - [ ] pytest green (vectors on and off), verify-cee (Smart search, ask-progress) PASS, `gh pr checks` green.
 - [ ] 0 real calls.
 
+## Risks
+- **`main` moves after the sync.** #247 part 4 (retrieval and reduce) may merge to `main` after this
+  sync. Then `exp/hybrid` lags `main`, and #250 (fts on `main` vs hybrid-norerank here) would differ
+  in pipeline, not only in retrieval. Mitigation: step 8's re-sync check, the `main` SHA named in the
+  PR body, and #250 running fts on that SHA or re-syncing first.
+- **Competitor floor in hybrid-norerank** (see "Known difference" above): measured here, decided by the
+  TL on #250.
+- **Large conflict in `eval_run.py`.** Mitigation: start from `main`'s file, re-apply only the listed
+  mode hunks, and the 35/35 fts parity proves nothing else moved.
+
 ## Progress log
 - 2026-11-20 - plan written. Trial merge: 8 conflicts. Gaps found: `on_theme_only` in hybrid.search,
   explicit `pin_fn` for hybrid, competitor floor on RRF/sigmoid ranks (recorded, loop kept as `main`).
+- 2026-11-20 - plan review round 1 (RETURN). Blocking 1: the competitor-floor paragraph corrected (per-firm
+  RRF makes the cross-competitor floor close to a no-op); step 6 measures floor_dropped / floor_emptied and
+  competitor chunks reaching the map, fts vs hybrid-norerank, for the TL before the PR is ready (TL ruling).
+  Blocking 2: re-sync rule added (step 8, acceptance, Risks). Non-blocking 1-5 adopted (trace and gate
+  tests, NB9 hunks named, pins table, parity rows kept, ask_page.py named).
