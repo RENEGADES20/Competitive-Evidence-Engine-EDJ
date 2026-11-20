@@ -965,6 +965,7 @@ settled details, which ADR-021's text did not fix:
   is whitespace and `}` / `]`; the record carries the flag `trailing_braces`. Any other trailing text
   stays invalid, and the object still goes through the strict schema validation and every code check
   (chunk ids, quotes, numbers). Saved records are re-checked under this rule at 0 calls.
+
 Amendment (#247, reduce step; TL decisions on the #247 plan, issue #247 comments 7033895178,
 7033988541 and the TL approval): rules 1, 3, 4 and 5 are completed in `src/cee/answer/reduce.py`
 (prompt v5) with these settled details:
