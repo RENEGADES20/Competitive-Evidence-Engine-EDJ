@@ -728,3 +728,29 @@ written in sections 3-6 and Tests.
   "last N years" by complete years, matched by year; Q26-, years- and Q23-shaped tests; round-2 notes
   adopted (eval part_coverage on the union, code-built answers through the comparison and part checks,
   incomplete_note shown as a warning on any behavior, a YYYY item covers no quarter). Cap 69. Build starts.
+- 2026-11-20 - step 1 (a41fcf8): scope normalisation, unverified mark on metric aspects, uncovered-period
+  gaps, corrective hits on the matrix, the 400 stop via `allow()` (test), planner re-check flags (test).
+  0-call re-check of #246's 33 records under extract-v1 (`ev247\recheck-246`, no key, `--max-calls 0`): 0
+  calls, 33 reused; Q24 a1.MS now derived ($3,999 billion / 15,950 at 2020-12-31; scopes "Wealth Management
+  segment" vs "Wealth Management" normalised), RJF still rejected (whole firm vs Private Client Group);
+  marks: Q19 a1 / a5 / a11 and Q26 a1, a2, a4-a6 and Q24 a4 lose `unverified`, Q24 a1 / a2 keep it; Q23
+  period gaps EDJ 2024Q4, 2025Q4, 2026Q3 and RJF all but 2025Q3 (as expected); every other label and
+  behavior unchanged.
+- 2026-11-20 - build (b6e0f02, docs af344ee): reduce.py (render, strict enums with the OpenAI limits,
+  three provider paths, mock, code-built answers, every post-call check), prompt v5, `incomplete`,
+  computed figures in the number check, the matrix-aware part coverage, `ask()` / `answer_for` wiring
+  with the union of hits, `MAP` on, the interim guard removed (`tests/test_input_guard.py` deleted with
+  it), the Ask page (`incomplete`, the warning, flag labels), the eval (reduce cache, failed / invalid
+  records, `--legacy`, maps unless `--legacy`), extract-v1.1, verify driver and recipes, specs, ADR-021
+  amendment. DeepSeek's tool-call guide (read 2026-11-20) states no enum limit: OpenAI's numbers apply
+  to every provider. Not done: no label mapping for older flags (they keep their names as before).
+  pytest 901 passed.
+- 2026-11-20 - mock 35 (0 calls; main a32eb64 with `--map` in a detached worktree vs b6e0f02):
+  chunk lists, statuses, recall@pool / @final, coverage, forbidden and refusal identical for all 35 (33
+  PASS / 2 FAIL, refusal 8/8, as main). The mock reduce answered all 35: 0 `outside_matrix`, 0
+  `part_gap`, 0 why-lines missing, 0 comparison claims missing, behavior = matrix behavior everywhere,
+  0 code-built (the mock map gives a fact wherever it retrieves). The mock rule plan has no comparison
+  or proxy aspect, so "no part gap on comparison / proxy parts, Q24 included" is shown on the mock by
+  Q24's 0 part gaps and on a Q24-shaped matrix with a comparison and proxies by
+  `tests/test_reduce.py::test_comparison_and_proxy_parts_get_no_false_part_gap_q24_shaped`. Evidence
+  `ev247\mock-compare.txt`.

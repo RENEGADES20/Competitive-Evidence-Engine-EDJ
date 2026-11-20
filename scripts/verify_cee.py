@@ -449,8 +449,9 @@ def feature_ask_progress(page, base, rec, ctx):
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
              f"trace {n_trace.group(1) if n_trace else '?'} vs footer {n_meta.group(1) if n_meta else '?'}")
+    # #247: the map line also says "no model call" (mock extraction); the model line is the reduce's
     model = next((l for l in lines if l.startswith("Asking the model") or "no model call" in l
-                  and not l.startswith("Planning")), "")
+                  and not l.startswith(("Planning", "Extracting per firm"))), "")
     check = next((l for l in lines if "Checking citations" in l), "")
     rec.step("Read the model and citation lines",
              "'Asking the model to write the answer from the evidence matrix (mock, one call)' and 'N matched'",
