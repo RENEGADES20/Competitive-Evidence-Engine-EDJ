@@ -19,7 +19,7 @@ HITS = [hit("BAC-10K-2025#244", "BAC-10K-2025"), hit("BAC-10K-2025#246", "BAC-10
 def run(monkeypatch, hits, generate=None):
     calls, events = [], []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: hits)
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan, **kw: hits)
 
     def fake_generate(question, h, provider, plan=None, window=None):
         calls.append(provider)
@@ -64,7 +64,7 @@ def test_failed_stage_is_reported_then_raised(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
 
-    def broken(q, plan):
+    def broken(q, plan, **kw):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search_subquestions", broken)
     with pytest.raises(RuntimeError):
@@ -81,7 +81,7 @@ def test_no_callback_behaves_as_before(monkeypatch):
 def test_failed_query_log_is_its_own_failed_step(monkeypatch):
     events = []
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
-    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: [])
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan, **kw: [])
 
     def broken(r, p):
         raise RuntimeError("insert failed")
@@ -108,7 +108,7 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
                     source="model", provider=provider, calls=1)
     monkeypatch.setattr(pipeline, "plan_question", fake_plan)
     seen = []
-    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan: seen.append(plan) or HITS)
+    monkeypatch.setattr(pipeline, "search_subquestions", lambda q, plan, **kw: seen.append(plan) or HITS)
 
     def fake_generate(question, h, provider, plan=None, window=None):
         calls.append("answer")
@@ -165,7 +165,7 @@ def test_map_and_reduce_run_by_default_on_the_mock(monkeypatch):
     logged = pipeline.log_filters(result)
     assert logged["map"]["behavior"] == "answer" and logged["map"]["cells"]["a1.MER"]["label"] == "fact"
     assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0}   # the mock is not a paid call
-    assert logged["reduce"]["version"] == "v5" and logged["reduce"]["outside_matrix"] == 0
+    assert logged["reduce"]["version"] == "v5.1" and logged["reduce"]["outside_matrix"] == 0
     assert result.answer.behavior == "answer" and result.answer.claims[0].part_id == "a1.MER"
     assert result.answer.claims[0].chunk_ids == ["BAC-10K-2025#244"] and not result.answer.claims[0].flags
 

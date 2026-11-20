@@ -121,6 +121,105 @@ def _cell_head(m: EvidenceMatrix, c) -> str:
     return f"  {c.id} {firm}: {head}"
 
 
+CONTEXT_CHARS = 600   # #247 part 2: the cited passage around a recency / window item's quote
+
+
+def _flat(text) -> str:
+    return " ".join(str(text or "").split())
+
+
+def item_context(m: EvidenceMatrix, i) -> str:
+    """The cited passage around the item's quote (up to CONTEXT_CHARS, cut at word boundaries), so the
+    why-line can give what the source says about why the item matters (#247 part 2)."""
+    h = next((m.hits.get(c) for c in i.chunk_ids if m.hits.get(c) is not None), None)
+    if h is None:
+        return ""
+    text = _flat(h.text)
+    if len(text) <= CONTEXT_CHARS:
+        return text
+    probe = _flat(i.quote)[:40]
+    at = text.find(probe) if probe else -1
+    start = max(0, (at if at >= 0 else 0) - CONTEXT_CHARS // 3)
+    piece = text[start:start + CONTEXT_CHARS]
+    if start > 0:
+        piece = piece.split(" ", 1)[-1]
+    if start + CONTEXT_CHARS < len(text):
+        piece = piece.rsplit(" ", 1)[0]
+    return ("... " if start > 0 else "") + piece + (" ..." if start + CONTEXT_CHARS < len(text) else "")
+
+
+def _date_words(iso: str) -> str:
+    import datetime as dt
+    try:
+        d = dt.date.fromisoformat(str(iso)[:10])
+    except ValueError:
+        return str(iso)
+    return f"{d:%B} {d.day}, {d.year}"
+
+
+def _quarter(period: str) -> str | None:
+    import re
+    p = str(period or "")
+    m_ = re.fullmatch(r"(\d{4})-(\d{2})-\d{2}", p)
+    if m_:
+        return f"{m_.group(1)}Q{(int(m_.group(2)) - 1) // 3 + 1}"
+    m_ = re.fullmatch(r"(\d{4})Q([1-4])", p)
+    return p if m_ else None
+
+
+def population_sources(m: EvidenceMatrix, d: dict) -> list[dict]:
+    """One entry per distinct population source chunk of a derivation: chunk id, its own words, a
+    label from its source line and, when an input's period falls in another quarter than the
+    statement's valid_from (either direction), the date (TL condition 3.4)."""
+    from cee.answer.validate import source_label
+    out: dict[str, dict] = {}
+    for p in d.get("populations") or []:
+        h = m.hits.get(p["chunk_id"])
+        e = out.setdefault(p["chunk_id"], {"chunk_id": p["chunk_id"], "quote": p.get("quote", ""),
+                                           "label": source_label(h).rsplit(" [", 1)[0] if h else p["chunk_id"],
+                                           "valid_from": p.get("valid_from", ""), "dated": False})
+        if _quarter(p.get("period", "")) and _quarter(p.get("valid_from", "")) != _quarter(p.get("period", "")):
+            e["dated"] = True
+    return list(out.values())
+
+
+def _sources_text(srcs: list[dict]) -> str:
+    out = []
+    for s in srcs:
+        dated = f", dated {_date_words(s['valid_from'])}" if s["dated"] and s["valid_from"] else ""
+        out.append(f' Population per the {s["label"]}{dated}: "{s["quote"]}"')
+    return "".join(out)
+
+
+def computation_proposal(c) -> bool:
+    """A derivation proposal whose inputs are all cited items (so its claim can cite them)."""
+    d = c.derivation or {}
+    return bool(d) and bool(d.get("input_chunk_ids")) and "populations" in d and bool(
+        d.get("ok") or not str(d.get("why", "")).startswith("input "))
+
+
+def _why_words(why: str) -> str:
+    why = str(why or "")
+    if why == "populations differ":
+        return "the two figures cover different populations"
+    if why.startswith("population not stated: "):
+        return "the population of " + why.split(": ", 1)[1] + " is not stated in the documents searched"
+    if why.startswith("approximate: "):
+        return why.split(": ", 1)[1]
+    return why
+
+
+def _computation_line(m: EvidenceMatrix, c) -> str:
+    d = c.derivation or {}
+    srcs = population_sources(m, d)
+    verdict = (f"computable: {d.get('formula_text')} (period {d.get('period') or 'n/a'})" if d.get("ok")
+               else f"not computable: {_why_words(d.get('why', ''))}")
+    src = "; ".join(f'"{_q(s["quote"])}" ({s["chunk_id"]}'
+                    + (f", population statement dated {s['valid_from']}" if s["dated"] else "") + ")" for s in srcs)
+    return (f"    computation (code): {verdict}; inputs cite {', '.join(d.get('input_chunk_ids') or [])}"
+            + (f"; population sources: {src}" if src else "; population sources: none registered"))
+
+
 def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
     from cee.answer.matrix import metric_definition
     lines = [f"Question: {question}",
@@ -145,6 +244,7 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
                 "recency": " -> every item needs a why-line"}.get(a.kind, "")
         lines.append(f"- {a.id} [{', '.join(tags)}]: {_q(a.text)}{note}")
     lines += ["", "Evidence matrix, aspect by aspect (a cell id is the part_id of what you write from it):"]
+    seen: dict = {}
     for a in m.aspects:
         lines.append(f"Aspect {a.id}: {_q(a.text)}")
         mk = m.marks.get(a.id)
@@ -162,13 +262,28 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
                 if d and d.get("quote"):
                     lines.append(f"  Registered definition, {row_name(f)}: \"{_q(d['quote'])[:160]}\" "
                                  f"({d.get('chunk_id', '')}; context, cite only if under Sources)")
+        why_items = bool(w) or a.kind == "recency"
         for c in m.cells.values():
             if c.aspect_id != a.id:
                 continue
             lines.append(_cell_head(m, c))
+            if computation_proposal(c):
+                lines.append(_computation_line(m, c))
+            for b in m.breaks:
+                if b["id"] == c.id:
+                    lines.append("    basis break (code): " + "; ".join(b["groups"])
+                                 + " -> state each basis with its own periods; never join them")
             for n, i in enumerate(c.items):
                 if i.counts:
-                    lines.append(_item_line(n, i))
+                    line = _item_line(n, i)
+                    first = seen.setdefault((_flat(i.text).lower(), tuple(sorted(i.chunk_ids))), c.aspect_id)
+                    if first != c.aspect_id:
+                        line += f" [also under {first}: write it once]"
+                    lines.append(line)
+                    if why_items:
+                        ctx = item_context(m, i)
+                        if ctx:
+                            lines.append(f'      context: "{_q(ctx)}"')
     lines += ["", "Gaps added by code (do not repeat them):"]
     lines += [f"- [{g['id']}] {g['what']}" for g in m.gaps] or ["- none"]
     lines += ["", "Caveats added by code (do not repeat them):"]
@@ -491,6 +606,140 @@ def check_comparisons(answer: Answer, m: EvidenceMatrix) -> list[str]:
     return missing
 
 
+def _why_scope(m: EvidenceMatrix, query, x) -> bool:
+    c = m.cells.get(x.part_id)
+    aspect = c.aspect_id if c is not None else x.part_id
+    return bool(own_window(query)) or aspect in _recency_aspects(m)
+
+
+_STOP = set("""a an the and or of to in on at for by with from as is are was were be been it its this that these those
+which who what why how it's their his her our we they he she not no but also than then so such into about over
+after before more most per may might matter source sources says said report reports reported states stated
+according firm company total totals amount amounts figure figures show shows showing same table include
+includes including""".split())
+
+
+def _content(text: str) -> set[str]:
+    import re
+    from cee.answer.validate import _firm_names
+    t = text.lower()
+    for n in sorted(_firm_names(), key=len, reverse=True):
+        t = t.replace(n.lower(), " ")
+    return {w for w in re.findall(r"[a-z][a-z'-]+", t) if w not in _STOP and len(w) > 2}
+
+
+def restates(body: str, why: str) -> bool:
+    """The why sentence adds nothing beyond its claim (#247 part 2, TL D4): every figure it states is in
+    the claim and >= 80% of its content words (stop words and firm names removed) are too."""
+    from cee.answer.validate import figures
+    why = why.strip()
+    if not why or why == P.WHY_UNSAID[len(P.WHY_LINE):]:
+        return False
+    body_figs = {str(f.value) for f in figures(body)}
+    if any(str(f.value) not in body_figs for f in figures(why)):
+        return False
+    words, have = _content(why), _content(body)
+    if not words:
+        return True
+
+    def known(w: str) -> bool:   # "addition" is in a body that says "add"
+        return any(w.startswith(b) or b.startswith(w) for b in have)
+    return sum(known(w) for w in words) >= 0.8 * len(words)
+
+
+def clean_why_lines(answer: Answer, m: EvidenceMatrix, query) -> dict:
+    """#247 part 2: a why-line outside recency / window items is removed (why_line_removed); a why-line
+    that restates its claim is replaced with WHY_UNSAID (why_line_restated). The model's text is kept
+    in the log (returned)."""
+    log: dict = {"removed": [], "restated": []}
+    for x in [*answer.claims, *answer.adjacent]:
+        if P.WHY_LINE not in x.text:
+            continue
+        body, why = x.text.split(P.WHY_LINE, 1)
+        if not _why_scope(m, query, x):
+            x.text = body.rstrip()
+            x.flags.append("why_line_removed")
+            log["removed"].append({"part_id": x.part_id, "why": why.strip()})
+        elif restates(body, why):
+            x.text = body.rstrip() + " " + P.WHY_UNSAID
+            x.flags.append("why_line_restated")
+            log["restated"].append({"part_id": x.part_id, "why": why.strip()})
+    return log
+
+
+def check_computability(answer: Answer, m: EvidenceMatrix) -> list[str]:
+    """TL D5 / condition 1: for each derivation proposal with cited inputs, a claim on that cell citing
+    every input and population source chunk; missing -> code adds it (COMPUTED / NOT_COMPUTED, the
+    sources quoted), flag code_computability. Returns the cells it added a claim for."""
+    from cee.answer.matrix import _aspect_text
+    from cee.answer.schema import Claim
+    added = []
+    for c in m.cells.values():
+        if not computation_proposal(c):
+            continue
+        d = c.derivation
+        need = set(d.get("input_chunk_ids") or []) | set(d.get("population_chunk_ids") or [])
+        if any(x.part_id == c.id and need <= set(x.chunk_ids) for x in answer.claims):
+            continue
+        a = m.aspect(c.aspect_id)
+        firm = f"{row_name(c)}: "
+        srcs = _sources_text(population_sources(m, d))
+        if d.get("ok"):
+            text = P.COMPUTED.format(firm=firm, aspect=_aspect_text(a).rstrip("."), formula=d.get("formula_text"),
+                                     period=f" ({d.get('period')})" if d.get("period") else "", sources=srcs)
+        else:
+            text = P.NOT_COMPUTED.format(firm=firm, aspect=_aspect_text(a).rstrip("."),
+                                         why=_why_words(d.get("why", "")), sources=srcs)
+        ids = list(dict.fromkeys([*(d.get("input_chunk_ids") or []), *(d.get("population_chunk_ids") or [])]))
+        claim = Claim(text=text, chunk_ids=ids, part_id=c.id, flags=["code_computability"])
+        same = [n for n, x in enumerate(answer.claims)
+                if x.part_id in m.cells and m.cells[x.part_id].aspect_id == c.aspect_id]
+        answer.claims.insert((max(same) + 1) if same else len(answer.claims), claim)
+        added.append(c.id)
+    return added
+
+
+def _dup_text(x) -> str:
+    import re
+    body = x.text.split(P.WHY_LINE, 1)[0]
+    body = re.sub(r"^[^:]{1,60}:\s+", "", body.strip())
+    return " ".join(re.sub(r"[^\w\s.,%$]", " ", body.lower()).split()).rstrip(".")
+
+
+def dedupe_claims(answer: Answer) -> list[dict]:
+    """#247 part 2: claims citing the same chunk set are duplicates when their texts (no why-line, no
+    "<Firm>: " prefix) are equal, or when every figure of one is in the other and its word 5-grams
+    overlap the other's >= fts.DUP_JACCARD. The longer is kept (ties: the first). Returns the removed."""
+    from cee.answer.validate import figures
+    from cee.retrieve.fts import DUP_JACCARD
+    claims = answer.claims
+    drop: dict[int, int] = {}
+
+    def grams(s: str) -> set:
+        w = s.split()
+        return {tuple(w[i:i + 5]) for i in range(max(1, len(w) - 4))}
+    for i in range(len(claims)):
+        for j in range(i + 1, len(claims)):
+            if i in drop or j in drop:
+                continue
+            a, b = claims[i], claims[j]
+            if not a.chunk_ids or set(a.chunk_ids) != set(b.chunk_ids) \
+                    or P.BOUNDARY_HANDOFF in (a.text.strip(), b.text.strip()):
+                continue
+            ta, tb = _dup_text(a), _dup_text(b)
+            if ta == tb:
+                drop[j] = i
+                continue
+            short, long_, si, li = (ta, tb, i, j) if len(ta) < len(tb) else (tb, ta, j, i)
+            fs, fl = {str(f.value) for f in figures(short)}, {str(f.value) for f in figures(long_)}
+            gs, gl = grams(short), grams(long_)
+            if fs <= fl and gs and len(gs & gl) / len(gs) >= DUP_JACCARD:
+                drop[si] = li
+    removed = [{"text": claims[k].text, "part_id": claims[k].part_id, "kept": v} for k, v in sorted(drop.items())]
+    answer.claims = [x for n, x in enumerate(claims) if n not in drop]
+    return removed
+
+
 def check_why_lines(answer: Answer, m: EvidenceMatrix, query) -> int:
     """Rule 5: with the question's own window every item, else every item of a recency aspect, needs
     "Why it might matter: " and text after it; missing -> why_line_missing. Returns the count."""
@@ -518,17 +767,30 @@ def order_newest_first(answer: Answer, m: EvidenceMatrix, query, by_id: dict) ->
     Returns how many items moved."""
     if not (own_window(query) or _recency_aspects(m)):
         return 0
+    rec = _recency_aspects(m)
 
     def key(x):
         dates = [str(by_id[c].published_at) for c in x.chunk_ids if c in by_id and by_id[c].published_at]
         return max(dates) if dates else ""
+
+    def recency_item(x) -> bool:
+        c = m.cells.get(x.part_id)
+        return (c.aspect_id if c is not None else x.part_id) in rec
 
     moved = 0
     for field in ("claims", "adjacent"):
         items = getattr(answer, field)
         handoff = [x for x in items if x.text.strip() == P.BOUNDARY_HANDOFF]
         rest = [x for x in items if x.text.strip() != P.BOUNDARY_HANDOFF]
-        new = sorted(rest, key=key, reverse=True) + handoff
+        if own_window(query):
+            new = sorted(rest, key=key, reverse=True) + handoff
+        else:   # #247 part 2 (review note, Q19): only the recency items move, inside their own slots
+            slots = [n for n, x in enumerate(rest) if recency_item(x)]
+            ordered = iter(sorted((rest[n] for n in slots), key=key, reverse=True))
+            new = list(rest)
+            for n in slots:
+                new[n] = next(ordered)
+            new += handoff
         moved += sum(a is not b for a, b in zip(items, new))
         setattr(answer, field, new)
     return moved
@@ -573,6 +835,12 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     answer.incomplete_note = m.incomplete_note or ""
     by_id = _hits_for(m, hits)
     allowed = [by_id[c] for c in citable(m) if c in by_id]
+    # #247 part 2: code computability claims and the why-line clean-up come before the citation check,
+    # so the citation, number and date checks run on them like on the model's claims (TL condition 1)
+    info["code_computability"] = check_computability(answer, m)
+    why_log = clean_why_lines(answer, m, query)
+    info["why_line_removed"], info["why_line_restated"] = len(why_log["removed"]), len(why_log["restated"])
+    info["why_lines_log"] = why_log
     answer = check_citations(answer, allowed, derived=derived_values(m))
     info["behavior_rejudged"] = answer.behavior != decided
     ok_ids = set(citable(m))
@@ -592,6 +860,19 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     answer.caveats = list(dict.fromkeys([*answer.caveats, *m.caveats]))
     union = list(by_id.values())
     answer = check_parts(answer, plan, union, question, matrix=m)
+    # #247 part 2: duplicates removed after the part check; then the comparison and computability
+    # checks run again on the reduced list (round-1 note 6), new code claims citation-checked
+    info["duplicates_removed"] = dedupe_claims(answer)
+    if info["duplicates_removed"]:
+        info["comparison_missing"] = sorted(set(info["comparison_missing"]) | set(check_comparisons(answer, m)))
+        before = {id(x) for x in answer.claims}
+        late = check_computability(answer, m)
+        if late:
+            fresh = Answer(answerable=answer.answerable, behavior=answer.behavior,
+                           claims=[x for x in answer.claims if id(x) not in before])
+            check_citations(fresh, allowed, derived=derived_values(m))
+            info["code_computability"] = info["code_computability"] + late
+    info["basis_breaks"] = [b["id"] for b in m.breaks]
     answer = insert_caveats(answer, query, union)
     answer = fill_suggested_sources(answer, query)
     answer.coverage_note = coverage_note(query, list(hits or []))

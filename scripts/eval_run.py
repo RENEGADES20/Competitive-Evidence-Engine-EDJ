@@ -995,7 +995,12 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
                          f"{red.get('flags') or {}}; comparison missing {red.get('comparison_missing') or []}; "
                          f"why-lines missing {red.get('why_line_missing', 0)}; outside matrix "
                          f"{red.get('outside_matrix', 0)}; reordered {red.get('reordered', 0)}; part gaps "
-                         f"{red.get('part_gaps', 0)}")
+                         f"{red.get('part_gaps', 0)}; code computability {red.get('code_computability') or []}; "
+                         f"why-lines removed {red.get('why_line_removed', 0)} / restated "
+                         f"{red.get('why_line_restated', 0)}; duplicates removed "
+                         f"{len(red.get('duplicates_removed') or [])}; basis breaks {red.get('basis_breaks') or []}")
+        if r.get("added_chunk_ids") and any(r["added_chunk_ids"].values()):
+            lines.append(f"- Added passages: {r['added_chunk_ids']}")
         if r.get("plan_origin"):
             lines.append(f"- Plan: {r['plan_origin']}")
         lines += [f"- Retrieved: {', '.join(r['chunk_ids']) or 'nothing'}", ""]
@@ -1086,7 +1091,10 @@ def main(argv: list[str] | None = None) -> int:
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates,
                      trace.ids())
         r |= prompt_size(k, hits, b_tokens, trace.peers)
-        r |= {"search_s": search_s, "unattached": list(trace.unattached)}
+        r |= {"search_s": search_s, "unattached": list(trace.unattached),
+              # #247 part 2: the passages the per-period and pin passes added, by origin
+              "added_chunk_ids": {o: [h.chunk_id for h in hits if getattr(h, "origin", "search") == o]
+                                  for o in ("period", "pinned")}}
         research = [h for h in hits if h.part_id == "research"]
         r |= {"plan": plan.to_log() if plan else None, "parts": len(plan.parts) if plan else 1,
               "aspects": len(plan.aspects) if plan else 1, "subquestions": len(plan.subquestions) if plan else 1,
@@ -1115,7 +1123,8 @@ def main(argv: list[str] | None = None) -> int:
                   "map_must_not": map_must_not(matrix, key_for(q, keys)), "map_research": matrix.research,
                   "map_capped_calls": list(real.map_capped) if real else [],
                   "map_call_flags": {c["id"]: c["flags"] for c in matrix.calls if c.get("flags")},
-                  "corrective_chunk_ids": [h.chunk_id for h in matrix.corrective]}   # #247 B1
+                  "corrective_chunk_ids": [h.chunk_id for h in matrix.corrective],   # #247 B1
+                  "map_breaks": matrix.breaks}
             r["llm_calls"] |= {"map": r["map_calls"], "remap": r["remap_calls"]}
             if real and real.bad_request:   # a 400: every planned call would fail the same way
                 records.append(r)

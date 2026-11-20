@@ -37,8 +37,23 @@ def cell(cid, label, items=(), derivation=None, differs=""):
                 derivation=derivation, differs_because=differs)
 
 
-def matrix(question, aspects, cells, hits=(), as_of=None):
+# #247 part 2: one shared test population for every firm and input (source chunk in every pool), so
+# these reduce tests keep their accepted derivations; population rules: tests/test_populations.py.
+TEST_POPULATIONS = tuple({"entity": e, "input": i, "key": "test_pop", "match": [""], "quote": "",
+                          "chunk_id": "EDJ-10Q#60", "valid_from": "2026-06-26"}
+                         for e in ("EDJ", "MS", "SCHW", "BAC", "RJF") for i in ("client_assets", "advisor_headcount"))
+
+
+@pytest.fixture(autouse=True)
+def _one_population(monkeypatch):
+    from cee.answer import matrix as mx
+    monkeypatch.setattr(mx, "_populations", lambda: TEST_POPULATIONS)
+
+
+def matrix(question, aspects, cells, hits=(), as_of=None, pools=None):
     m = EvidenceMatrix(question, rows=[], aspects=aspects, cells={c.id: c for c in cells})
+    m.pools = pools if pools is not None else {
+        c.id: {"EDJ-10Q#60", *(x for i in c.items for x in i.chunk_ids)} for c in cells}
     rows = []
     for c in cells:
         k = "research" if c.role == "research" else (c.entity or "all")
@@ -151,7 +166,7 @@ def test_synthesis_cannot_cite_outside_the_matrix():
     flagged = [c for c in a.claims if "outside_matrix" in c.flags]
     assert [c.chunk_ids[0] for c in flagged] == ["EDJ-10Q#70", "EDJ-10Q#99", "EDJ-10Q#123"]
     assert all("unmatched_citation" in c.flags for c in flagged) and info["outside_matrix"] == 3
-    assert len(a.claims) == 4   # flagged, never dropped
+    assert len([x for x in a.claims if "code_computability" not in x.flags]) == 4   # flagged, never dropped
 
 
 def test_comparison_claim_required():

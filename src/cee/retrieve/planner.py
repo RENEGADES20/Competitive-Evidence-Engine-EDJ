@@ -651,17 +651,22 @@ def _extra_passes(q: Query, plan: Plan, kept: set[str], as_of, period_fn, pin_fn
                     entry["period_hits"].append(f"{period}:{h.chunk_id}")
         ids, cut = pinned_ids(sq.entity, sq.aspect)
         entry["pins_cut"] = cut
+        shared: set[str] = set()
         if ids:
-            for h in pin_fn(sub, [i for i in ids if i not in kept]):
+            # every registered id passing this sub-question's filters joins its pool; a chunk another
+            # sub-question already kept is not repeated as a hit, but still counts as retrieved here
+            for h in pin_fn(sub, ids):
+                entry["pinned"].append(h.chunk_id)
                 if h.chunk_id in kept:
+                    shared.add(h.chunk_id)
                     continue
                 h.part_id, h.origin = sq.id, "pinned"
                 kept.add(h.chunk_id)
                 added.append(h)
-                entry["pinned"].append(h.chunk_id)
         if added:
             out[sq.id] = added
-            plan.pools[sq.id] = set(plan.pools.get(sq.id, set())) | {h.chunk_id for h in added}
+        if added or shared:
+            plan.pools[sq.id] = set(plan.pools.get(sq.id, set())) | {h.chunk_id for h in added} | shared
     return out
 
 

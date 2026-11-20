@@ -689,14 +689,15 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     return [r for r in results]   # type: ignore[misc]
 
 
-def _call_log(spec: MapSpec, r: CallResult, provider: str) -> dict:
+def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = None) -> dict:
     from cee.retrieve.planner import model_for
     return {"id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
             "chunk_ids": [h.chunk_id for h in spec.hits], "provider": provider,
             "model": "mock" if provider == "mock" else model_for(provider), "version": EXTRACT_VERSION,
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
-            "bad_request": r.bad_request, "flags": list(r.flags)}
+            "bad_request": r.bad_request, "flags": list(r.flags),
+            "passages": len(spec.hits), "input_tokens_est": est}   # #247 part 2: per-call size before the run
 
 
 def _cells_of(spec: MapSpec, r: CallResult, by_id: dict[str, Hit], source: str) -> list[Cell]:
@@ -729,7 +730,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     cells: dict[str, Cell] = {c.id: c for c in code_cells}
     calls = []
     for spec, r in zip(specs, results):
-        calls.append(_call_log(spec, r, provider))
+        calls.append(_call_log(spec, r, provider, input_tokens(q.question, spec, window, firms)))
         for c in _cells_of(spec, r, by_id, "mock" if provider == "mock" else "model"):
             cells[c.id] = c
     order = [sq.id for sq in plan.subquestions] + [f"{a.id}.research" for a in plan.aspects]
@@ -771,7 +772,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     if remaps:
         results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider)
         for spec, r in zip(remaps, results2):
-            calls.append(_call_log(spec, r, provider))
+            calls.append(_call_log(spec, r, provider, input_tokens(q.question, spec, window, firms)))
             for c in _cells_of(spec, r, by_id, "reextract"):
                 old = cells[c.id]
                 c.first = asdict(old)

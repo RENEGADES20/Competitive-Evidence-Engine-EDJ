@@ -1,0 +1,204 @@
+"""#247 part 2 (plans/0247-reduce-2.md sections 2-4): per-period sub-search, pinned registered chunks,
+basis breaks, gap scope (Q19), `asked_firms`. Fakes only; the fetch_pinned tests use the database and
+skip without one. 0 paid calls."""
+import datetime as dt
+
+import psycopg
+import pytest
+
+from cee.answer import matrix as mx
+from cee.answer.matrix import Cell, EvidenceMatrix, Item
+from cee.config import settings
+from cee.retrieve import fts, planner
+from cee.retrieve.fts import Hit, Query
+from cee.retrieve.planner import Aspect, Plan, SubQuestion
+
+NO_SOURCES = lambda entity: ""   # noqa: E731
+AS_OF = dt.date(2026, 11, 17)
+Q23 = "Advisor headcount over the last eight quarters across the five."
+
+
+def H(cid, entity="EDJ", origin="search"):
+    return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type="10-K",
+               source_tier=2, published_at="2026-03-13", period_end="2025-12-31", section=None, page=None,
+               rank=1.0, text="t", origin=origin)
+
+
+# --- per-period sub-search -------------------------------------------------------------------------
+
+def test_period_pass_one_call_per_asked_period_excluding_kept_chunks_main_lists_unchanged(monkeypatch):
+    series = Aspect("a1", "Advisor headcount over the last eight quarters.", "advisor headcount",
+                    metric=None, kind="series")
+    plan = Plan(aspects=[series], subquestions=[SubQuestion("a1.EDJ", "EDJ", series)])
+    calls = []
+
+    def fake(q, trace=None, tokens=None, exclude=None, research=True, peers=True, text=None, k=None):
+        if q.period_range is None:
+            return [H("EDJ-10K-2025#58"), H("EDJ-10K-2025#70"), H("EDJ-10K-2025#202")]
+        calls.append((q.period_range, tuple(q.exclude_ids), k, q.entities))
+        if q.period_range == (dt.date(2025, 10, 1), dt.date(2025, 12, 31)):
+            # the pool already lost the kept chunks in SQL: the next three are new
+            return [H("EDJ-10K-2025#130"), H("EDJ-10K-2025#142"), H("EDJ-10K-2025#148")]
+        return []
+    monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
+    q = Query(question=Q23, entities=["EDJ"])
+    hits = planner.search_subquestions(q, plan, search_fn=fake, research_fn=lambda q, trace=None: [], as_of=AS_OF)
+    assert len(calls) == 8 and all(c[2] == planner.PERIOD_K and c[3] == ["EDJ"] for c in calls)
+    assert all({"EDJ-10K-2025#58", "EDJ-10K-2025#70", "EDJ-10K-2025#202"} <= set(c[1]) for c in calls)
+    assert [h.chunk_id for h in hits if h.origin == "search"] == ["EDJ-10K-2025#58", "EDJ-10K-2025#70",
+                                                                  "EDJ-10K-2025#202"]
+    assert [h.chunk_id for h in hits if h.origin == "period"] == ["EDJ-10K-2025#130", "EDJ-10K-2025#142",
+                                                                  "EDJ-10K-2025#148"]
+    assert {"EDJ-10K-2025#130"} <= plan.pools["a1.EDJ"]
+    assert plan.searched[0]["period_hits"][0] == "2025Q4:EDJ-10K-2025#130"
+
+
+@pytest.mark.parametrize("question, kind", [
+    ("Net new assets by quarter across the five.", "series"),        # no asked periods (Q22)
+    ("Advisor headcount over the last eight quarters across the five.", "fact"),   # not a series
+])
+def test_no_period_pass_without_asked_periods_or_series(monkeypatch, question, kind):
+    a = Aspect("a1", "x", kind=kind)
+    plan = Plan(aspects=[a], subquestions=[SubQuestion("a1.EDJ", "EDJ", a)])
+    seen = []
+
+    def fake(q, **kw):
+        seen.append(q.period_range)
+        return []
+    monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
+    planner.search_subquestions(Query(question=question, entities=["EDJ"]), plan, search_fn=fake,
+                                research_fn=lambda q, trace=None: [], as_of=AS_OF)
+    assert seen == [None]
+
+
+def test_window_question_gets_no_period_pass(monkeypatch):
+    a = Aspect("a1", "x", kind="series")
+    plan = Plan(aspects=[a], subquestions=[SubQuestion("a1.RJF", "RJF", a)])
+    seen = []
+    monkeypatch.setattr(fts, "budget_tokens", lambda q: 40000)
+    q = Query(question="Advisor headcount over the last eight quarters?", entities=["RJF"],
+              window=(dt.date(2026, 8, 19), dt.date(2026, 11, 17)))
+    planner.search_subquestions(q, plan, search_fn=lambda q, **kw: seen.append(q.period_range) or [],
+                                research_fn=lambda q, trace=None: [], as_of=AS_OF)
+    assert seen == [None]
+
+
+def test_filters_sql_period_end_and_exclusion_clauses():
+    sql, params = fts.filters_sql(Query(question="x", period_range=(dt.date(2025, 10, 1), dt.date(2025, 12, 31)),
+                                        exclude_ids=["A#1"]))
+    assert "d.period_end BETWEEN %(pr_from)s AND %(pr_to)s" in sql and "c.chunk_id <> ALL(%(excl_ids)s)" in sql
+    assert params["pr_to"] == dt.date(2025, 12, 31) and params["excl_ids"] == ["A#1"]
+    assert fts.filters_sql(Query(question="x"))[0] == "TRUE"
+
+
+def test_period_bounds():
+    assert planner._period_bounds("2025Q4") == (dt.date(2025, 10, 1), dt.date(2025, 12, 31))
+    assert planner._period_bounds("2026Q1") == (dt.date(2026, 1, 1), dt.date(2026, 3, 31))
+    assert planner._period_bounds("2024") == (dt.date(2024, 1, 1), dt.date(2024, 12, 31))
+
+
+# --- pinned registered chunks (database) ---------------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def db():
+    try:
+        with psycopg.connect(settings().database_url, connect_timeout=3) as conn:
+            n = conn.execute("SELECT count(*) FROM chunks WHERE chunk_id = 'BAC-SUPP-2023Q4#2'").fetchone()[0]
+    except psycopg.OperationalError:
+        pytest.skip("database not running")
+    if not n:
+        pytest.skip("no corpus loaded")
+
+
+def test_fetch_pinned_entity_filter_adv_allowed_tier4_and_window_applied(db):
+    bench = Query(question=Q23, entities=["MER"], scope=(["adv"], [4]))
+    got = [h.chunk_id for h in fts.fetch_pinned(bench, ["BAC-SUPP-2023Q4#2", "BAC-DECK-2025-investor-day#13",
+                                                        "MER-ADV1A-2026#1", "MS-SUPP-2020Q4#1"])]
+    assert got == ["BAC-SUPP-2023Q4#2", "MER-ADV1A-2026#1"]   # GWIM segment yes, NULL segment no, other firm no
+    trade = Query(question=Q23, entities=["MS"], scope=(["adv"], [4]))
+    assert [h.chunk_id for h in fts.fetch_pinned(trade, ["MS-TRADE-2026-09-16-IN-01#0", "MS-ADV1A-2026#1"])] \
+        == ["MS-ADV1A-2026#1"]   # tier 4 stays excluded, adv allowed (D1 narrowed)
+    window = Query(question="What's new on Raymond James in the last 90 days?", entities=["RJF"],
+                   window=(dt.date(2026, 8, 19), dt.date(2026, 11, 17)))
+    assert fts.fetch_pinned(window, ["RJF-10K-2025#228"]) == []
+    assert all(h.origin == "pinned" for h in fts.fetch_pinned(bench, ["BAC-SUPP-2023Q4#2"]))
+
+
+# --- asked_firms and the gap scope (Q19) ------------------------------------------------------------------
+
+def test_validate_plan_records_asked_firms_before_the_home_firm_widening():
+    q = Query(question="How should the preferences of younger investors shape Edward Jones's offerings?",
+              entities=["EDJ"], theme_peers=["MS", "SCHW"], mode="entity+theme", themes=["clients"])
+    aspects, notes = planner.validate_plan({"aspects": [
+        {"text": "EDJ priorities", "keyword_query": "priorities", "firms": ["EDJ"], "metric": "", "kind": "fact",
+         "proxy": False},
+        {"text": "Preferences", "keyword_query": "preferences", "firms": [], "metric": "", "kind": "fact",
+         "proxy": False}]}, q)
+    assert aspects[0].firms == [] and aspects[0].asked_firms == ["EDJ"]
+    assert aspects[1].firms == [] and aspects[1].asked_firms == []
+
+
+def C(cid, label, role="named", items=()):
+    a, e = cid.split(".")
+    return Cell(cid, None if e == "research" else e, a, "research" if e == "research" else role, label,
+                items=list(items))
+
+
+def test_q19_shaped_gaps_only_inside_the_aspect_scope_and_competitors_folded():
+    own = Aspect("a7", "How does Edward Jones management describe younger investors?", asked_firms=["EDJ"])
+    pref = Aspect("a1", "What preferences do younger investors state?")
+    cells = [C("a7.EDJ", "not_found"), C("a7.MS", "not_found", "competitor"), C("a7.SCHW", "not_found", "competitor"),
+             C("a7.research", "not_found"),
+             C("a1.EDJ", "not_found"), C("a1.MS", "not_found", "competitor"), C("a1.RJF", "not_disclosed", "competitor"),
+             C("a1.SCHW", "different_quantity", "competitor", [Item("t", chunk_ids=["S#1"])]),
+             C("a1.research", "fact", items=[Item("t", chunk_ids=["R#1"])])]
+    m = EvidenceMatrix("How should the preferences of younger investors shape Edward Jones's offerings?", rows=[],
+                       aspects=[pref, own], cells={c.id: c for c in cells})
+    mx.finish(m, sources=NO_SOURCES)
+    ids = [g["id"] for g in m.gaps]
+    assert "a7.EDJ" in ids and not {"a7.MS", "a7.SCHW", "a7.research"} & set(ids)
+    assert "a1.EDJ" in ids and "a1.SCHW" in ids and not {"a1.MS", "a1.RJF"} & set(ids)
+    fold = next(g for g in m.gaps if g["label"] == "competitors_not_found")
+    assert fold["id"] == "a1" and fold["what"].startswith("Competitors (Morgan Stanley, Raymond James")
+    assert fold["cells"] == ["a1.MS", "a1.RJF"]
+
+
+def test_benchmark_named_cells_keep_one_gap_per_firm():
+    a = Aspect("a1", "How each firm defines advisor headcount.", metric="advisor_headcount")
+    cells = [C(f"a1.{f}", "not_found") for f in ("MS", "SCHW", "EDJ")] + [C("a1.RJF", "fact", items=[Item("t", chunk_ids=["R#1"])])]
+    m = mx.finish(EvidenceMatrix("How does each of the five define advisor headcount?", rows=[], aspects=[a],
+                                 cells={c.id: c for c in cells}), sources=NO_SOURCES)
+    assert [g["id"] for g in m.gaps if g["label"] == "not_found"] == ["a1.MS", "a1.SCHW", "a1.EDJ"]
+    assert not any(g["label"] == "competitors_not_found" for g in m.gaps)
+
+
+# --- basis breaks ---------------------------------------------------------------------------------------
+
+def it(value, period, scope=""):
+    return Item(text="t", quote="q", chunk_ids=["X#1"], value=value, period=period, scope=scope)
+
+
+def test_q23_edj_shaped_basis_break_lists_each_basis_with_its_periods():
+    a = Aspect("a1", "Advisor headcount over the last eight quarters.", metric="advisor_headcount", kind="series")
+    c = C("a1.EDJ", "fact", items=[it("20,514", "2026Q2"), it("19,674", "2026Q1", "U.S."), it("876", "2026Q1", "Canada"),
+                             it("20,429", "2025Q3")])
+    m = mx.finish(EvidenceMatrix(Q23, rows=[], aspects=[a], cells={c.id: c}), sources=NO_SOURCES)
+    assert "basis_break" in m.cells["a1.EDJ"].flags and len(m.breaks) == 1
+    cav = m.breaks[0]["caveat"]
+    assert cav.startswith("Edward Jones - Advisor headcount over the last eight quarters: the figures cover different "
+                          "bases") and "whole firm: 2025Q3, 2026Q2" in cav and "U.S.: 2026Q1" in cav
+    assert cav in m.caveats
+
+
+@pytest.mark.parametrize("items, kind, expected", [
+    ([it("100", "2025Q3"), it("120", "2025Q4")], "series", 0),                         # one basis
+    ([it("$66", "2025Q3", "Wealth Management"), it("$70", "2025Q4", "Wealth Management")], "series", 0),   # Q22 flow
+    ([it("$66", "2025Q3", "Wealth Management"), it("$70", "2025Q4", "Firm")], "series", 1),
+    ([it("100", "2025Q3"), it("90", "2025Q4", "U.S.")], "recency", 0),
+])
+def test_basis_break_cases(items, kind, expected):
+    a = Aspect("a1", "Net new assets by quarter.", metric="net_new_assets", kind=kind)
+    c = C("a1.MS", "fact", items=items)
+    m = mx.finish(EvidenceMatrix("Net new assets by quarter across the five.", rows=[], aspects=[a],
+                                 cells={c.id: c}), sources=NO_SOURCES)
+    assert len(m.breaks) == expected

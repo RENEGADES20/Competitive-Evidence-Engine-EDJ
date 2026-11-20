@@ -517,7 +517,7 @@ def _fake_plan(monkeypatch):
     monkeypatch.setattr(planner, "plan_question",
                         lambda q, provider, **kw: planner.Plan.from_parts([planner.Part("p1", "", list(q.entities))]))
     monkeypatch.setattr(planner, "search_subquestions",
-                        lambda q, plan, trace=None, part_pools=None: fts.search(q, trace=trace))
+                        lambda q, plan, trace=None, part_pools=None, **kw: fts.search(q, trace=trace))
 
 
 def _fake_eval(monkeypatch, entities, hits, peer_ids=(), unattached=()):
@@ -860,7 +860,7 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     seen = []
 
-    def fake_parts(q, plan, trace=None, part_pools=None):
+    def fake_parts(q, plan, trace=None, part_pools=None, **kw):
         seen.append(plan)
         hits[0].part_id = "p1"
         return hits
@@ -872,7 +872,7 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     r = _record(tmp_path)["questions"][0]
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
     assert {k: r["llm_calls"][k] for k in ("planner", "answer")} == {"planner": 0, "answer": 0}   # #247: + map counts
-    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v5"   # the mock reduce ran (0 calls)
+    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v5.1"   # the mock reduce ran (0 calls)
     assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"
 
 
@@ -1101,7 +1101,7 @@ def _plan_only_env(monkeypatch, outcome, cache):
     monkeypatch.setattr(ask, "generate", lambda *a, **k: pytest.fail("no answer call in --plan-only"))
     calls = _planner_calls(monkeypatch, outcome)
 
-    def fake_parts(q, plan, trace=None, part_pools=None):
+    def fake_parts(q, plan, trace=None, part_pools=None, **kw):
         plan.searched = [{"id": s.id, "budget": 1000, "tokens": 250, "pool": 3} for s in plan.subquestions]
         hits = real_hits()
         hits[0].part_id = plan.subquestions[0].id
@@ -1334,9 +1334,11 @@ def test_map_only_needs_real(tmp_path):
 from cee.retrieve.fts import Query  # noqa: E402
 
 def _reduce_setup(monkeypatch, behave):
+    from cee.answer import matrix as mx
     from cee.answer import reduce as R
-    from tests.test_reduce import q24_shaped
+    from tests.test_reduce import TEST_POPULATIONS, q24_shaped
 
+    monkeypatch.setattr(mx, "_populations", lambda: TEST_POPULATIONS)   # #247 part 2: one population
     m = q24_shaped()
     calls = []
 
@@ -1446,7 +1448,7 @@ def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
     er.main(["--questions", "Q7", "--out", str(tmp_path / "run")])
     rep = _record(tmp_path / "run")
     r = rep["questions"][0]
-    assert r["reduce"]["version"] == "v5" and r["answer_behavior"] == r["map_behavior"]
+    assert r["reduce"]["version"] == "v5.1" and r["answer_behavior"] == r["map_behavior"]
     assert rep["meta"]["map"] is True and rep["meta"]["map_setting"] is False and rep["meta"]["real_calls"] == 0
     monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
     er.main(["--questions", "Q7", "--legacy", "--out", str(tmp_path / "legacy")])
