@@ -166,3 +166,5 @@ offers it. No key needed.
   - questions.yaml 0f9400be52aca221bbbde8c404ab04335a0b4537593c767434ffd3ee59e89a5b
   - verdict-rule.txt 4957b1257650535f1c71adf813cdbacac4d2246947ec42a0ecd177ca0fdd21e6
   - scorer-prompt-r2.txt c2b1b3b19fca25b3396a83c1a7de4303f17dca2e080724a8d8631af37dc60a3a
+
+verdicts-blind-r2.json sha256 39dd3d7569590a98736ed04caecfdfd7ae164cfa90c8dc831e54b6dd123883c6 (part 3 second re-check, Q11 / Q23 / Q24 after the trainees fix, fresh scorer agent, 0 API calls; committed alone before any comparison).
