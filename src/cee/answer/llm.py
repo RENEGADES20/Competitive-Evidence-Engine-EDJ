@@ -67,7 +67,10 @@ def answer_max_tokens(provider: str) -> int:
 
 
 # Context windows from the providers' docs, checked 2026-11-19: DeepSeek deepseek-v4-pro 1M (Models &
-# Pricing page); Claude Sonnet 5.5 1M (Anthropic model table). OpenAI gpt-5: TODO-verify, 400k assumed.
+# Pricing page); Claude Sonnet 5.5 1M (Anthropic model table). OpenAI gpt-5: 400,000 context window and
+# 128,000 max output tokens (developers.openai.com/api/docs/models/gpt-5, read 2026-11-20, #248); the
+# same page also states a separate 272,000-token input limit, which this window - output check does
+# not apply (the openai provider is not used in the W11 runs; marked deprecated on that page).
 # Used by the map's per-call input check and the reduce's (#246, #247): an input over the window minus
 # the output cap is not sent, never trimmed (the #245 interim guard was removed in #247).
 CONTEXT_WINDOW = {"deepseek": 1_000_000, "anthropic": 1_000_000, "openai": 400_000}
@@ -127,7 +130,13 @@ def check_output(answer: Answer, raw=None, provider: str = "") -> Answer:
 
 def _usage(resp, input_key: str, output_key: str) -> dict:
     u = getattr(resp, "usage", None)
-    return {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    out = {"input_tokens": getattr(u, input_key, None), "output_tokens": getattr(u, output_key, None)}
+    # #248: Anthropic's prompt-cache tokens (outside input_tokens), when the response has them, for the cost
+    for k in ("cache_read_input_tokens", "cache_creation_input_tokens"):
+        v = getattr(u, k, None)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v
+    return out
 
 
 def _block_dict(b) -> dict:

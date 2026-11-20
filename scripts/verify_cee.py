@@ -418,8 +418,9 @@ def feature_ask_progress(page, base, rec, ctx):
     wait_idle(page)
     page.get_by_role("textbox", name="Question").fill(ANSWERABLE_Q)
     page.get_by_role("button", name="Ask").click()
-    # The verify app's mock waits MOCK_DELAY_S in the model step: the page is caught mid-run.
-    page.wait_for_function("() => document.body.innerText.includes('Asking the model')",
+    # The verify app's mock waits MOCK_DELAY_S in the mock map and the mock reduce (#248: the question
+    # takes map.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
+    page.wait_for_function("() => document.body.innerText.includes('Synthesizing the answer')",
                            timeout=RENDER_TIMEOUT_S * 1000)
     body = page.locator("body").inner_text()
     bar = page.locator('[data-testid="stProgress"]').count() > 0
@@ -433,49 +434,59 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Look above the answer", "a collapsed 'How this answer was built' box",
              status.count() > 0 and hidden, f"box={status.count() > 0}, trace hidden={hidden}")
     lines = open_trace(page)
-    rec.step("Open the trace", "eight step lines", len(lines) == 8, " / ".join(lines)[:300])
-    map_line = next((l for l in lines if l.startswith("Map step") or l.startswith("Extracting per firm")), "")
-    rec.step("Read the map line (#246, on since #247)",
-             "'Extracting per firm (mock, no model call): N cells: ...; behavior by code: answer'",
-             map_line.startswith("Extracting per firm (mock, no model call):")
+    from cee.ask import STAGES   # #248: 9 stages; the count is never a literal
+    rec.step("Open the trace", f"{len(STAGES)} step lines", len(lines) == len(STAGES), " / ".join(lines)[:400])
+    map_line = next((l for l in lines if l.startswith("Map step") or l.startswith("Extracting from")), "")
+    rec.step("Read the extract line (#246, #248)",
+             "'Extracting from 1 firm (mock, no model call): N cells: ...; behavior by code: answer'",
+             map_line.startswith("Extracting from 1 firm (mock, no model call):")
              and map_line.endswith("behavior by code: answer"), map_line)
-    plan = next((l for l in lines if l.startswith("Planning the search")), "")
-    rec.step("Read the plan line (#214, #245)",
-             "'Planning the search (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
+    research = next((l for l in lines if l.startswith("Re-search")), "")
+    rec.step("Read the re-search line (#248)", "'Re-search...' (nothing to re-search, or what was re-searched)",
+             research.startswith(("Re-search: every sub-question has evidence", "Re-searching sub-questions")),
+             research)
+    plan = next((l for l in lines if l.startswith("Decomposing the question")), "")
+    rec.step("Read the decompose line (#214, #245, #248)",
+             "'Decomposing the question (rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ'",
              "(rules, no model call): 1 aspect x 1 firm = 1 sub-question: a1.EDJ" in plan, plan)
     body = page.locator("body").inner_text()
     n_meta = re.search(r"(\d+) passages found", body)
-    n_trace = re.search(r"Searching the corpus: (\d+) passage", " ".join(lines))
+    n_trace = re.search(r"Searching 1 sub-question: (\d+) passage", " ".join(lines))
     same = bool(n_meta and n_trace and n_meta.group(1) == n_trace.group(1))
     rec.step("Compare the search line with the footer", "same passage count", same,
              f"trace {n_trace.group(1) if n_trace else '?'} vs footer {n_meta.group(1) if n_meta else '?'}")
-    # #247: the map line also says "no model call" (mock extraction); the model line is the reduce's
-    model = next((l for l in lines if l.startswith("Asking the model") or "no model call" in l
-                  and not l.startswith(("Planning", "Extracting per firm"))), "")
+    # #248: the synthesize line is the reduce's (the extract line also says "no model call")
+    model = next((l for l in lines if l.startswith("Synthesizing the answer")), "")
     check = next((l for l in lines if "Checking citations" in l), "")
-    rec.step("Read the model and citation lines",
-             "'Asking the model to write the answer from the evidence matrix (mock, one call)' and 'N matched'",
+    rec.step("Read the synthesize and citation lines",
+             "'Synthesizing the answer from the evidence matrix (mock, one call)' and 'N matched'",
              "from the evidence matrix (mock, one call)" in model and "matched" in check, f"{model} | {check}")
     ask(page, base, NO_EVIDENCE_Q)
     lines = open_trace(page)
-    model = next((l for l in lines if "model" in l and not l.startswith("Planning")), "")
+    model = next((l for l in lines if l.startswith("No passages found: no model call")), "")
     body = page.locator("body").inner_text()
     rec.step("Ask the no-evidence question, open the trace", "model step skipped, no model call",
              "no model call" in model and "LLM called: False" in body, model)
     # plan-parts (#214, #245): a two-firm question is one sub-question per firm, and the plan is logged
     ask(page, base, TWO_FIRM_Q)
     lines = open_trace(page)
-    plan = next((l for l in lines if l.startswith("Planning the search")), "")
-    search_line = next((l for l in lines if l.startswith("Searching the corpus")), "")
+    plan = next((l for l in lines if l.startswith("Decomposing the question")), "")
+    search_line = next((l for l in lines if l.startswith("Searching ")), "")
+    extract_line = next((l for l in lines if l.startswith("Extracting from")), "")
     rec.step("Ask a two-firm question, open the trace",
-             "plan line '1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF', search 'in 2 sub-questions'",
+             "decompose '1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF', 'Searching 2 sub-questions: ...', "
+             "'Extracting from 2 firms ...'",
              "1 aspect x 2 firms = 2 sub-questions: a1.MS; a1.RJF" in plan
-             and search_line.endswith("in 2 sub-questions"), f"{plan} | {search_line}")
+             and search_line.startswith("Searching 2 sub-questions: ") and extract_line.startswith("Extracting from 2 firms"),
+             f"{plan} | {search_line} | {extract_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
-                          " || '|' || (filters->'llm_calls')::text FROM query_log ORDER BY query_id DESC LIMIT 1")
+                          " || '|' || (filters->'llm_calls')::text || '|' || (filters->'cost'->>'calls') || '|' || "
+                          "(filters->'cost'->>'usd') FROM query_log ORDER BY query_id DESC LIMIT 1")
     rec.step("Read the newest query_log row (side effect)",
-             "plan source rules, 2 sub-questions, llm_calls all 0 (the mock map and reduce are not paid calls)",
-             row.replace(" ", "") == 'rules|2|{"map":0,"remap":0,"answer":0,"planner":0}', row)
+             "plan source rules, 2 sub-questions, llm_calls all 0 and cost 0 calls / $0 (#248; the mock map and "
+             "reduce are not paid calls)",
+             row.replace(" ", "") in ('rules|2|{"map":0,"remap":0,"answer":0,"planner":0}|0|0',
+                                      'rules|2|{"map":0,"remap":0,"answer":0,"planner":0}|0|0.0'), row)
 
 
 PDF_PAGE_SAMPLES = ["MS-SUPP-2026Q3#16", "SCHW-DECK-2026Q2#53"]  # a table page and a deck page (#53 comment)
@@ -576,6 +587,15 @@ def check_date_label(rec, page, source_chunk: str) -> None:
              f"'Filed:' {'shown' if 'Filed:' in body else 'missing'}")
 
 
+def wait_for_cited(page, chunk_id: str) -> None:
+    """#248 (flake in run 20261119-230844): the source page header ('Stored passage') can render before
+    the cited passage; wait for its 'CITED PASSAGE · <id>' tag (or the 'not in the stored corpus' error)
+    with the render timeout, so the body is never read half-drawn. A page that never draws it is a
+    RenderTimeout, not a wrong FAIL."""
+    wait_for_text(page, [f"CITED PASSAGE · {chunk_id}", "is not in the stored corpus"],
+                  f"the cited passage {chunk_id}")
+
+
 def feature_open_citation(page, base, rec, ctx):
     ask(page, base, ANSWERABLE_Q)
     link = citation_links(page).first
@@ -594,6 +614,7 @@ def feature_open_citation(page, base, rec, ctx):
         link.click()
     source = new_tab.value
     wait_for_text(source, SOURCE_PAGE_DONE, "the source page")
+    wait_for_cited(source, chunk_id)   # #248: the passage itself renders after the page header
     rec.page = source
     body = source.locator("body").inner_text()
     rec.step(f"Click citation {chunk_id}", "a new tab with the source page for that chunk",

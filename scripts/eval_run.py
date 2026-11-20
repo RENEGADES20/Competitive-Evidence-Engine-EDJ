@@ -27,6 +27,17 @@ Recall and refusal accuracy (#60), for questions with an answer key in evals/exp
 must_return, and a refusal check that FAILs the question when a must_not_return chunk, a forbidden
 hit or (Q26) a chunk older than the window comes back. --as-of fixes the day the window ends.
 
+Cache, cost and plan reuse (#248): every call of the flow (plan, map per firm, re-extraction, reduce;
+the legacy answer) has its own cache key and file; a resumed run reuses every saved call and never pays
+twice. Each question's `cost` in report.json: calls by type, new and reused, tokens (with the
+provider's cache-hit tokens), `usd` (every call the answer used, reused ones at what they cost when
+made), `usd_new` (spent in this run), `usd_peak` and peak / off-peak calls, priced with
+config/pricing.yaml (cee.answer.cost); `summary.cost` and `meta.cost` hold the run totals. Records
+written before #248 have a naive `at` (written in America/Chicago): a real run over a cache holding
+them needs `--naive-tz America/Chicago` when the provider has a peak window (deepseek).
+  python scripts/eval_run.py --real --max-calls 0 --naive-tz America/Chicago --cache <folder>   # replay
+  python scripts/eval_run.py --reuse-plans deepseek:deepseek-v4-pro      # plans only from saved records
+
 Recall by stage (#210): search() fills a PoolTrace with the chunk ids of every candidate pool
 before select(); recall@pool = expected passages with a chunk in a pool, recall@final = in the
 retrieved set. Each expected row is `final`, `pool` (lost in select) or `none` (never a candidate).
@@ -272,7 +283,14 @@ def summarize(records: list[dict]) -> dict:
             "search_s_median": _median([r["search_s"] for r in records if r.get("search_s") is not None]),
             "search_s_max": max((r["search_s"] for r in records if r.get("search_s") is not None), default=None),
             "refusal_gap": accuracy([r for r in keyed if r.get("expected_behavior") in GAP_BEHAVIORS]),
-            "refusal_all": accuracy(keyed)}
+            "refusal_all": accuracy(keyed),
+            "cost": run_cost(records)}
+
+
+def run_cost(records: list[dict]) -> dict:
+    """#248: the run's totals over every question's cost rows (no rows in a mock run: 0)."""
+    from cee.answer.cost import summarize
+    return summarize([row for r in records for row in (r.get("cost") or {}).get("rows") or []])
 
 
 def evaluate(q: dict, query, hits, corpus, subs, min_coverage: float, key: dict | None = None,
@@ -365,6 +383,11 @@ def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model:
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
 
+def now_iso() -> str:
+    """#248: record times carry this machine's UTC offset, so pricing by period needs no assumed zone."""
+    return dt.datetime.now().astimezone().isoformat()
+
+
 def timing(t0: float, usage: dict | None) -> dict:
     """#242: wall time of one paid call and its output tokens per second (None when unknown)."""
     wall = round(time.monotonic() - t0, 2)
@@ -393,6 +416,127 @@ def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, query: dic
     if request:
         parts = [*parts, {"request": request}]
     return hashlib.sha256(json.dumps(parts, default=str, sort_keys=True).encode()).hexdigest()[:24]
+
+
+def plans_wanted(query, k: int | None = None) -> bool:
+    """True when a run plans this question with a planner call (#214): planner on, the question is
+    searched, token mode and no explicit k. False: plan_question's rule plan, no call, no file."""
+    from cee.config import settings
+    from cee.retrieve import fts
+    return k is None and settings().planner and fts.searchable(query) and fts.budget_tokens(query) is not None
+
+
+def plan_path(cache_dir: Path, q: dict, query, snapshot: str, provider: str, model: str,
+              request: str | None) -> Path:
+    """Where a question's planner output is saved (#214); one function for RealRunner.plan and
+    --reuse-plans (#240, #248), so both read the same file. The retrieval mode is not part of it."""
+    from dataclasses import asdict
+    key = plan_cache_key(q, snapshot, provider, model, asdict(query), request)
+    return cache_dir / f"{q['id']}-plan-{key}.json"
+
+
+class PlanMissing(RuntimeError):
+    """--reuse-plans: a question's saved planner output is not in the cache (#240)."""
+
+
+def missing_plans(bank: list[dict], resolve, as_of, snapshot: str, provider: str, model: str,
+                  request: str | None, k: int | None = None, cache_dir: Path | None = None) -> list[str]:
+    """Question IDs whose saved plan --reuse-plans would need but cannot find (0 calls)."""
+    cache_dir = cache_dir or CACHE
+    out = []
+    for q in bank:
+        query = resolve(q["text"], today=as_of)
+        if plans_wanted(query, k) and not plan_path(cache_dir, q, query, snapshot, provider, model,
+                                                    request).is_file():
+            out.append(q["id"])
+    return out
+
+
+def plan_from_record(saved: dict, query, provider: str):
+    """(Plan, parse flags, origin note) of a saved planner record: valid, invalid (re-parsed when only
+    stray closing braces broke it, #246) or a failed call (the rule plan with its error)."""
+    from cee.retrieve import planner
+    if saved.get("invalid"):
+        payload = saved.get("raw_payload")
+        if isinstance(payload, str) and str(saved.get("error", "")).startswith(
+                ("planner arguments are not a JSON object", "planner output is not JSON")):
+            from cee.answer.llm import loads_object
+            flags: list = []
+            try:   # #246 TL decision: stray closing braces after a complete object (0 calls)
+                plan = planner.from_output(query, loads_object(payload, flags), provider)
+                flags = [*flags, "rechecked"]   # #247 (PR #256 review note 2)
+                return plan, flags, f"; re-parsed, flags {', '.join(flags)}"
+            except (TypeError, ValueError):
+                pass
+        return planner.from_output(query, payload, provider, error=saved["error"]), [], ""
+    return planner.from_output(query, saved["raw"], provider), list(saved.get("parse_flags") or []), ""
+
+
+class SavedPlans:
+    """--reuse-plans in a mock run (#240, #248): each plan from the planner output a real run with this
+    provider / model / request version saved; the planner is never called (no client is built)."""
+
+    def __init__(self, provider: str, model: str, snapshot: str, cache_dir: Path | None = None):
+        from cee.answer import llm
+        self.provider, self.model, self.snapshot, self.cache_dir = provider, model, snapshot, cache_dir or CACHE
+        self.request_version = llm.request_version(provider)
+
+    def plan(self, q: dict, query):
+        from cee.retrieve import planner
+        if not plans_wanted(query):
+            return planner.plan_question(query, "mock")
+        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, self.request_version)
+        if not path.is_file():
+            raise PlanMissing(f"{q['id']}: no saved plan {path.name}")
+        plan, _, _ = plan_from_record(json.loads(path.read_text(encoding="utf-8")), query, self.provider)
+        plan.calls = 0   # read from a file in a mock run: no call was made here
+        return plan
+
+
+def call_type(name: str) -> str:
+    """plan | map | remap | reduce | answer, from a cache file name (#248)."""
+    if "-plan-" in name:
+        return "plan"
+    if "-reduce-" in name:
+        return "reduce"
+    if "-remap." in name:
+        return "remap"
+    if "-map." in name:
+        return "map"
+    return "answer"
+
+
+def naive_records(cache_dir: Path) -> list[str]:
+    """Cache files whose `at` has no UTC offset (every record written before #248)."""
+    from cee.answer.cost import is_naive
+    out = []
+    for f in sorted(cache_dir.glob("*.json")) if cache_dir.is_dir() else []:
+        try:
+            if is_naive(json.loads(f.read_text(encoding="utf-8")).get("at")):
+                out.append(f.name)
+        except (ValueError, OSError):
+            continue
+    return out
+
+
+def price_rows(ledger: list[dict], naive_tz: str | None) -> list[dict]:
+    """Ledger entries -> cost rows {type, file, new, cost} (cee.answer.cost; a price that cannot be
+    computed is status `error` with the reason, never a guess)."""
+    from cee.answer import cost as C
+    rows = []
+    for e in ledger:
+        try:
+            c = C.price_call(e["provider"], e["model"], e["usage"], at=e["at"], wall_s=e["wall_s"],
+                             finished_at=e.get("finished_at"), naive_tz=naive_tz)
+        except C.CostError as err:
+            c = {**C.price_call(e["provider"], e["model"], None), "status": "error", "error": str(err)}
+        rows.append({"type": e["type"], "file": e["file"], "new": e["new"], "cost": c})
+    return rows
+
+
+def question_cost(rows: list[dict]) -> dict:
+    from cee.answer.cost import summarize
+    return {**summarize(rows), "rows": rows}
 
 
 def map_cache_key(q: dict, snapshot: str, provider: str, model: str, max_tokens: int,
@@ -508,6 +652,11 @@ class RealRunner:
         self.map_stopped: list[str] = []
         self.bad_request: str | None = None
         self.last_plan_flags: list[str] = []
+        # #248: one entry per call served (new or reused from the cache), for the cost per question
+        self.ledger: list[dict] = []
+        # #240 / #248 --reuse-plans: plans only from the cache, never a planner call (an attribute, not a
+        # constructor argument, so tests that patch __init__'s defaults keep working)
+        self.plans_only = False
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
         """The legacy single answer call (prompt v4.1, `--legacy`, MAP off).
@@ -548,7 +697,7 @@ class RealRunner:
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "request_version": self.request_version,
-                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+                "chunk_ids": [h.chunk_id for h in hits], "at": now_iso()}
         from cee.answer.llm import ProviderStop
 
         t0 = time.monotonic()
@@ -636,7 +785,7 @@ class RealRunner:
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": R.max_tokens(self.provider), "request_version": self.request_version,
                 "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
-                "enum_values": R.enum_values(schema), "at": dt.datetime.now().isoformat()}
+                "enum_values": R.enum_values(schema), "at": now_iso()}
         got: dict = {}
         t0 = time.monotonic()
         try:
@@ -678,8 +827,7 @@ class RealRunner:
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
             self.last_plan_origin = "no planner call (rules or passage plan)"
             return planner.plan_question(query, self.provider)
-        key = plan_cache_key(q, self.snapshot, self.provider, self.model, asdict(query), self.request_version)
-        path = self.cache_dir / f"{q['id']}-plan-{key}.json"
+        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, self.request_version)
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
@@ -687,22 +835,11 @@ class RealRunner:
             # #246: where the plan came from, in every record
             self.last_plan_origin = (f"cached: {path.name} ({saved.get('planner_version')}, request_version "
                                      f"{saved.get('request_version')}, made {saved.get('at')}); no new planner call")
-            if saved.get("invalid"):
-                payload = saved.get("raw_payload")
-                if isinstance(payload, str) and str(saved.get("error", "")).startswith(
-                        ("planner arguments are not a JSON object", "planner output is not JSON")):
-                    from cee.answer.llm import loads_object
-                    flags: list = []
-                    try:   # #246 TL decision: stray closing braces after a complete object (0 calls)
-                        plan = planner.from_output(query, loads_object(payload, flags), self.provider)
-                        self.last_plan_flags = [*flags, "rechecked"]   # #247 (PR #256 review note 2)
-                        self.last_plan_origin += f"; re-parsed, flags {', '.join(self.last_plan_flags)}"
-                        return plan
-                    except (TypeError, ValueError):
-                        pass
-                return planner.from_output(query, payload, self.provider, error=saved["error"])
-            self.last_plan_flags = list(saved.get("parse_flags") or [])
-            return planner.from_output(query, saved["raw"], self.provider)
+            plan, self.last_plan_flags, note = plan_from_record(saved, query, self.provider)
+            self.last_plan_origin += note
+            return plan
+        if self.plans_only:   # #240 / #248 --reuse-plans: never a planner call
+            raise PlanMissing(f"{q['id']}: no saved plan {path.name} (--reuse-plans); no call made")
         if self.calls >= self.max_calls:
             return None
         self.calls += 1   # counted before the call: a failed call still cost money
@@ -713,7 +850,7 @@ class RealRunner:
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.request_version,
                 "query": asdict(query),
-                "at": dt.datetime.now().isoformat()}
+                "at": now_iso()}
         from cee.answer.llm import ProviderStop
 
         call: dict = {}   # #230: stop_reason and usage of the call, saved with every plan record
@@ -800,7 +937,7 @@ class RealRunner:
                     "call_id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
                     "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                     "max_tokens": self.map_max_tokens, "request_version": self.request_version,
-                    "chunk_ids": [h.chunk_id for h in spec.hits], "at": dt.datetime.now().isoformat()}
+                    "chunk_ids": [h.chunk_id for h in spec.hits], "at": now_iso()}
             got: dict = {}
             t0 = time.monotonic()
             try:
@@ -841,11 +978,23 @@ class RealRunner:
         path.parent.mkdir(parents=True, exist_ok=True)
         # default=str: an unexpected payload type must never cost the paid output (#187)
         path.write_text(json.dumps(record, indent=2, default=str), encoding="utf-8")
-        self._copy(path)
+        self._copy(path, new=True)
 
-    def _copy(self, path: Path) -> None:
+    def _copy(self, path: Path, new: bool = False) -> None:
+        """Copy a record to the run's raw/ folder and enter it in the ledger (#248): new = made in this
+        run, else reused from the cache."""
+        text = path.read_text(encoding="utf-8")
         self.raw_dir.mkdir(parents=True, exist_ok=True)
-        (self.raw_dir / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+        (self.raw_dir / path.name).write_text(text, encoding="utf-8")
+        try:
+            rec = json.loads(text)
+        except ValueError:
+            rec = {}
+        with self.lock:
+            self.ledger.append({"type": call_type(path.name), "file": path.name, "new": new,
+                                "provider": rec.get("provider", self.provider), "model": rec.get("model", self.model),
+                                "usage": rec.get("usage"), "at": rec.get("at"), "wall_s": rec.get("wall_s"),
+                                "finished_at": rec.get("finished_at")})
 
 
 def apply_real(record: dict, answer: dict | None, how: str, raw_file: str | None = None) -> dict:
@@ -889,6 +1038,25 @@ def _refusal(r: dict) -> str:
     return "ok" if r["refusal_ok"] else f"FAIL ({len(rec['misleading']) + len(rec['outside_window'])})"
 
 
+def _usd(v) -> str:
+    return "-" if v is None else f"{v:.3f}"
+
+
+def cost_line(c: dict | None) -> str:
+    """#248: one line of calls, tokens and dollars (report header and each question)."""
+    if not c:
+        return "**Cost** (#248): 0 calls, $0"
+    types = ", ".join(f"{k} {v}" for k, v in c["by_type"].items() if v)
+    extra = [f"{c[k]} {k.replace('_calls', '').replace('_', ' ')}" for k in ("unpriced_calls", "no_usage_calls")
+             if c.get(k)]
+    return (f"**Cost** (#248): {c['calls']} calls ({types or 'none'}; new {c['new']}, reused {c['reused']}); "
+            f"tokens in {c['input_tokens']:,} (cache hit {c['cache_hit_tokens']:,}), out {c['output_tokens']:,} "
+            f"(reasoning {c['reasoning_tokens']:,}); ${c['usd']:.3f} (new in this run ${c['usd_new']:.3f}, all at "
+            f"peak ${c['usd_peak']:.3f}); off-peak {c['off_peak_calls']}, peak {c['peak_calls']}"
+            + (f"; {', '.join(extra)}" if extra else "")
+            + (f"; naive times read as {c['naive_tz']}" if c.get("naive_tz") else ""))
+
+
 def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     summary = summarize(records)
@@ -920,7 +1088,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              f"{meta.get('token_budget') or 'none (passage rule)'}; search time per question median "
              f"{summary.get('search_s_median')} s, max {summary.get('search_s_max')} s  ",
              f"**Refusal accuracy**: gap questions ({gap_ids or 'none'}) {_frac(rg['ok'], rg['of'])}; "
-             f"all questions with a key {_frac(ra['ok'], ra['of'])}", "",
+             f"all questions with a key {_frac(ra['ok'], ra['of'])}  ",
+             cost_line(meta.get("cost")), "",
              "Status: FAIL on any forbidden hit or refusal failure; NOT_EVALUATED when no expected source is in the "
              "corpus; PASS when coverage of the available patterns >= min coverage"
              + ("; real mode also needs behavior == expected." if meta["mode"] == "real" else "."), "",
@@ -930,9 +1099,9 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
              "in the retrieved set (= Passages). Tokens: characters / 4.", "",
              "| Q | Tier | Use case | Expected | Firms (mode) | k | Hits | Chars | Tokens | Coverage | Recall docs"
              " | Passages (final) | Pool | Refusal | Forbidden | Status" + (" | Change" if meta.get("baseline") else "")
-             + (" | Behavior" if meta["mode"] == "real" else "") + " |",
+             + (" | Behavior | Cost (USD)" if meta["mode"] == "real" else "") + " |",
              "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---" + ("|---" if meta.get("baseline") else "")
-             + ("|---" if meta["mode"] == "real" else "") + "|"]
+             + ("|---|---" if meta["mode"] == "real" else "") + "|"]
     for r in records:
         cov = "-" if r["coverage"] is None else f"{r['hit_patterns']}/{r['available_patterns']}"
         rec = r.get("recall") or {}
@@ -945,12 +1114,13 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
                      f"{_frac(rec.get('passages_in_pool'), rec.get('passages'))} | {_refusal(r)} | "
                      f"{len(r['forbidden'])} | {r['status']}"
                      + (f" | {r.get('change', '')}" if meta.get("baseline") else "")
-                     + (f" | {r.get('behavior') or r.get('note', '')}" if meta["mode"] == "real" else "") + " |")
+                     + (f" | {r.get('behavior') or r.get('note', '')} | {_usd((r.get('cost') or {}).get('usd'))}"
+                        if meta["mode"] == "real" else "") + " |")
     lines.append(f"| **All** | | | | | | {summary['passages']} | {sum(r.get('chars', 0) for r in records)} | "
                  f"{summary['tokens_est']} | | | {summary['recall_final']} (mean) | {summary['recall_pool']} (mean) | "
                  f"{_frac(ra['ok'], ra['of'])} | {sum(len(r['forbidden']) for r in records)} | "
                  f"PASS {counts['PASS']}" + (" | " if meta.get("baseline") else "")
-                 + (" | " if meta["mode"] == "real" else "") + " |")
+                 + (f" | | {_usd((meta.get('cost') or {}).get('usd'))}" if meta["mode"] == "real" else "") + " |")
     lines += ["", "## Per question", ""]
     for r in records:
         lines += [f"### {r['id']} - {r['status']}", "", r["text"], ""]
@@ -1006,6 +1176,8 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
             lines.append(f"- Added passages: {r['added_chunk_ids']}")
         if r.get("plan_origin"):
             lines.append(f"- Plan: {r['plan_origin']}")
+        if (r.get("cost") or {}).get("calls"):
+            lines.append("- " + cost_line(r["cost"]).replace("**Cost** (#248): ", "Cost: "))
         lines += [f"- Retrieved: {', '.join(r['chunk_ids']) or 'nothing'}", ""]
     (run_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -1031,6 +1203,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--as-of", type=dt.date.fromisoformat, default=dt.date.today(),
                     help="day the time windows end, YYYY-MM-DD (default today)")
     ap.add_argument("--keys", type=Path, default=KEYS, help="answer key (default evals/expected_chunks.yaml)")
+    ap.add_argument("--reuse-plans", metavar="PROVIDER:MODEL",
+                    help="#240 / #248: every plan from a saved planner output in the cache, never a planner call; "
+                         "a missing plan stops the run before any search (exit 2). Mock or --real.")
+    ap.add_argument("--cache", type=Path, help="cache folder (default .eval-runs/cache), e.g. a copied record folder")
+    ap.add_argument("--naive-tz", help="#248: the zone of saved records whose `at` has no UTC offset (every record "
+                                       "before #248: America/Chicago); an IANA name or a fixed offset like -06:00")
     args = ap.parse_args(argv)
     if args.real and (args.max_calls is None or args.max_calls < 0):
         ap.error("--real needs --max-calls N (CLAUDE.md 'Paid API calls'); nothing was called")
@@ -1043,6 +1221,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.legacy and args.map_only:
         ap.error("--legacy and --map-only exclude each other")
     run_map_step = not args.legacy   # #247 (review note 1): the eval maps unless --legacy, whatever MAP says
+    from cee.answer import cost as C
+    try:
+        C.parse_tz(args.naive_tz)
+    except C.CostError as e:
+        ap.error(str(e))
     if args.max_calls is not None and args.max_calls > 10:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
@@ -1068,10 +1251,42 @@ def main(argv: list[str] | None = None) -> int:
         base = {r["id"]: r for r in json.loads(Path(args.baseline).read_text(encoding="utf-8"))["questions"]}
     subs = substitutes()
     supersede = effective_behaviors()
-    real = RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir) if args.real else None
+    cache_dir = args.cache or CACHE
+    saved_plans = None
+    if args.reuse_plans:  # #240 / #248: plans only from saved planner outputs, checked before any search
+        from cee.answer import llm
+        from cee.ask import model_name
+        provider, _, model = args.reuse_plans.partition(":")
+        if not provider or not model:
+            ap.error("--reuse-plans takes PROVIDER:MODEL, e.g. deepseek:deepseek-v4-pro")
+        if args.real and (provider != settings().llm_provider or model != model_name(provider)):
+            ap.error(f"--reuse-plans {args.reuse_plans} is not this run's provider and model "
+                     f"({settings().llm_provider}:{model_name(settings().llm_provider)}); nothing was called")
+        missing = missing_plans(bank, resolve, args.as_of, snapshot, provider, model,
+                                llm.request_version(provider), args.k, cache_dir)
+        if missing:
+            print(f"--reuse-plans: no saved plan for {', '.join(missing)}; nothing was searched or called.")
+            return 2
+        if not args.real:
+            saved_plans = SavedPlans(provider, model, snapshot, cache_dir)
+    if args.real and not args.naive_tz and C.needs_time(settings().llm_provider):
+        naive = naive_records(cache_dir)   # #248: priced by period, so their zone must be given
+        if naive:
+            print(f"{len(naive)} saved records in {cache_dir} have a time without a UTC offset (e.g. {naive[0]}); "
+                  f"pass the zone they were written in, e.g. --naive-tz America/Chicago. Nothing was called.")
+            return 2
+    if args.real:
+        real = (RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir, cache_dir=args.cache)
+                if args.cache else RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir))
+        real.plans_only = bool(args.reuse_plans)
+    else:
+        real = None
+    if args.naive_tz:
+        print(f"Naive record times are read as {args.naive_tz} (--naive-tz).")
 
     records = []
     for q in bank:
+        start = len(real.ledger) if real else 0   # #248: this question's calls in the ledger
         query = resolve(q["text"], today=args.as_of)  # retrieval and scoring share one window end
         # #213: without --k, search() takes the app's rule (passages, or tokens with TOKEN_BUDGET);
         # an explicit k is the passage rule. budget() includes the peers' slots (#205).
@@ -1082,7 +1297,8 @@ def main(argv: list[str] | None = None) -> int:
         # one planner call with --real); passage mode is one whole-question search, no planner.
         plan, pools, capped = None, {}, False
         if args.k is None and b_tokens is not None:
-            plan = real.plan(q, query) if real else plan_question(query, "mock")
+            plan = (real.plan(q, query) if real else saved_plans.plan(q, query) if saved_plans
+                    else plan_question(query, "mock"))
             if plan is None:   # the planner call would pass --max-calls: rule plan, no answer call
                 plan, capped = rules_plan(query), True
         t0 = time.perf_counter()
@@ -1130,6 +1346,7 @@ def main(argv: list[str] | None = None) -> int:
                   "map_breaks": matrix.breaks}
             r["llm_calls"] |= {"map": r["map_calls"], "remap": r["remap_calls"]}
             if real and real.bad_request:   # a 400: every planned call would fail the same way
+                r["cost"] = question_cost(price_rows(real.ledger[start:], args.naive_tz))
                 records.append(r)
                 write_reports(run_dir, {"run_id": run_id, "snapshot": snapshot, "mode": "real", "commit": "",
                                         "k": "-", "min_coverage": args.min_coverage, "as_of": args.as_of.isoformat(),
@@ -1158,6 +1375,7 @@ def main(argv: list[str] | None = None) -> int:
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid", "failed"))
             r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
             if real.bad_request:   # #247: a 400 on the reduce call: the run stops, every record saved
+                r["cost"] = question_cost(price_rows(real.ledger[start:], args.naive_tz))
                 records.append(r)
                 write_reports(run_dir, {"run_id": run_id, "snapshot": snapshot, "mode": "real", "commit": "",
                                         "k": "-", "min_coverage": args.min_coverage, "as_of": args.as_of.isoformat(),
@@ -1174,6 +1392,7 @@ def main(argv: list[str] | None = None) -> int:
             r["part_coverage"] = part_coverage(a, plan, every, matrix)
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
+        r["cost"] = question_cost(price_rows(real.ledger[start:], args.naive_tz) if real else [])
         records.append(r)
         print(f"{q['id']:>4} {r['status']:<13} coverage {r['coverage']} forbidden {len(r['forbidden'])}"
               + (f" recall {r['doc_recall']} refusal {_refusal(r)}" if r["recall"] else "")
@@ -1194,7 +1413,10 @@ def main(argv: list[str] | None = None) -> int:
             "reused": real.reused if real else 0, "max_calls": args.max_calls,
             "map": run_map_step, "map_only": args.map_only, "extract_version": extract_version(),
             "map_concurrency": settings().map_concurrency, "reduce_version": reduce_version(),
-            "map_max_tokens": real.map_max_tokens if real else None}
+            "map_max_tokens": real.map_max_tokens if real else None,
+            "reuse_plans": args.reuse_plans, "cache": str(cache_dir),
+            "cost": {**run_cost(records), "naive_tz": args.naive_tz,
+                     "prices": "config/pricing.yaml"}}
     write_reports(run_dir, meta, records)
     counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}
     summary = summarize(records)
@@ -1202,7 +1424,8 @@ def main(argv: list[str] | None = None) -> int:
           f"{summary['refusal_gap']['of']} | recall@pool {summary['recall_pool']} recall@final "
           f"{summary['recall_final']} (tier 1: {summary['tier1_recall_pool']} / {summary['tier1_recall_final']})"
           f" | passages {summary['passages']} tokens~{summary['tokens_est']}"
-          f" | real calls {meta['real_calls']} | report: {run_dir / 'report.md'}")
+          f" | real calls {meta['real_calls']} | ${meta['cost']['usd']:.3f} (new ${meta['cost']['usd_new']:.3f})"
+          f" | report: {run_dir / 'report.md'}")
     return 0
 
 
