@@ -28,6 +28,20 @@ Not touched (the #248 implementer works there in parallel): `scripts/eval_run.py
   break; (5) a 0-call baseline replay on main 2f568c4, diffed against the branch replay for all 8 questions.
 - Non-blocking 1-8 adopted; for 5, the same segment rule applies to `SERIES_SPAN`.
 
+## TL approval conditions (plan approved at 9313a22 after review rounds 1-2, 7044195120 / 7044411488; TL 7044420979; written in before any code)
+1. MS `business_lines` text = 'Wealth Management representatives' alone (verbatim); every `business_lines` cell
+   has a `value` code from the allowed set; SCHW `independents` quotes the verbatim `SCHW-10K-2025#23` sentence
+   'Through the Advisor Services segment, Schwab has become one of the largest providers of custodial,
+   trading, banking, and support services to RIAs and their clients' (no gloss).
+2. EDJ `independents` quotes `EDJ-10K-2025#35` 'The Partnership’s financial advisors are employees or partners
+   of the Partnership.' (curly apostrophe U+2019) as a contrast-only id (DB-checked, not in `see_also`), value
+   `stated`; "independents" is dropped from EDJ's `not_stated`; registry test: EDJ `not_stated` has no
+   "independents".
+3. Round-2 non-blocking 1-3: bare-year lookahead `(?!\d|,\d|\.\d)` with an "in 2024, ..." / "in 2025, ..." test;
+   split rule: the whole-firm group is the one with an empty normalised scope, groups are never merged across
+   population keys, periods compared as normalised strings; SCHW `written_definition` uses the item-2 wording
+   ("publishes no count of this metric; reports a related figure instead").
+
 ## Goal
 The post-call code fixes the answer problems the part-2 blind scorers named, with no new model output:
 Q11 names how the five headcount definitions differ, side by side, by code, in the firms' own words; a
@@ -61,16 +75,17 @@ caveat but never contrasted explicitly".
 
     | Dimension | MS | Schwab | EDJ | Merrill (Bank of America) | RJF |
     |---|---|---|---|---|---|
-    | written_definition | count_only, 'Wealth Management representatives 15,950' (MS-SUPP-2020Q4#1) | none, closest figure 'perform investment advisory functions (including research)? 4127' (SCHW-ADV1A-2026#1) | count_only, 'Financial advisors (actual)' (EDJ-10K-2025#130) | stated, 'Includes advisors across all wealth management businesses in GWIM and Consumer Banking' (BAC-SUPP-2023Q4#2) | stated, 'Advisors in our RCS division are not included in our financial advisor metric' (RJF-10K-2025#228) |
-    | independents | not_stated | none, 'support services to RIAs and their clients' (SCHW-10K-2025#23): fixed phrase "no advisor count; RIAs are clients of Advisor Services" + the quote | not_stated | not_stated | counted, 'Independent contractors 5,065' (RJF-10K-2025#227) |
+    | written_definition | count_only, 'Wealth Management representatives 15,950' (MS-SUPP-2020Q4#1) | none: "publishes no count of this metric; reports a related figure instead", 'perform investment advisory functions (including research)? 4127' (SCHW-ADV1A-2026#1) | count_only, 'Financial advisors (actual)' (EDJ-10K-2025#130) | stated, 'Includes advisors across all wealth management businesses in GWIM and Consumer Banking' (BAC-SUPP-2023Q4#2) | stated, 'Advisors in our RCS division are not included in our financial advisor metric' (RJF-10K-2025#228) |
+    | independents | not_stated | none ("no advisor count"), 'Through the Advisor Services segment, Schwab has become one of the largest providers of custodial, trading, banking, and support services to RIAs and their clients' (SCHW-10K-2025#23) | stated, 'The Partnership’s financial advisors are employees or partners of the Partnership.' (EDJ-10K-2025#35, contrast-only id) | not_stated | counted, 'Independent contractors 5,065' (RJF-10K-2025#227) |
     | trainees | not_stated | not_stated | not_stated | not_stated | counted, 'new recruits and trainees that were moved into production roles' (RJF-10K-2025#228) |
-    | business_lines | 'Advisor-led channel' heading + 'Wealth Management representatives' (MS-SUPP-2020Q4#1; exact substring fixed at build, DB-checked) | none (no advisor count) | 'two operating and reportable segments based upon geographic location, the U.S. and Canada' (EDJ-10K-2025#145, contrast-only id) | 'all wealth management businesses in GWIM and Consumer Banking' (BAC-SUPP-2023Q4#2) | excluded, 'Advisors in our RCS division are not included' (RJF-10K-2025#228) |
+    | business_lines | counted, 'Wealth Management representatives' (MS-SUPP-2020Q4#1) | none ("no advisor count") | counted, 'two operating and reportable segments based upon geographic location, the U.S. and Canada' (EDJ-10K-2025#145, contrast-only id) | counted, 'all wealth management businesses in GWIM and Consumer Banking' (BAC-SUPP-2023Q4#2) | excluded, 'Advisors in our RCS division are not included' (RJF-10K-2025#228) |
     | count_date | 2020-12-31, 'Wealth Management representatives 15,950' (MS-SUPP-2020Q4#1) | none (no advisor count) | 2025-12-31, 'At year end 20,425' (EDJ-10K-2025#130) | 2023-12-31, 'Total wealth advisors (3) 18,916' (BAC-SUPP-2023Q4#2) | 2025-09-30, 'Total advisors 8,943' (RJF-10K-2025#227) |
 
     No "last", "wider than Merrill" or "current" wording: those are absence or inference claims no chunk makes.
-  - The EDJ `not_stated` item "independents (none: all advisors are employees)" becomes "independents" (no
-    passage supports "none"; it reached Q11, Q23 and Q24 through `DEFINITIONS_BY_FIRM`). Replay-safe:
-    `not_stated` feeds neither the pins, nor `widen_words`, nor the reduce message.
+  - The EDJ `not_stated` item "independents (none: all advisors are employees)" is **removed** (TL condition
+    2: `EDJ-10K-2025#35` states who EDJ advisors are, quoted in the contrast; "none" was an inference). It
+    reached Q11, Q23 and Q24 through `DEFINITIONS_BY_FIRM`. Replay-safe: `not_stated` feeds neither the pins,
+    nor `widen_words`, nor the reduce message. EDJ `contrast_ids: [EDJ-10K-2025#145, EDJ-10K-2025#35]`.
 - **Parent named** (nb 1): when a BAC passage stands for the Merrill row, the row reads "Merrill (Bank of
   America, BAC-SUPP-2023Q4#2)", in the contrast and in `DEFINITIONS_BY_FIRM`, so a BAC footnote never reads as
   Merrill's own words.
@@ -79,9 +94,11 @@ caveat but never contrasted explicitly".
   with >= 2 firm rows; **one block per metric** however many aspects match (nb 7). One caveat per dimension,
   firms grouped by value, in row order: `DEFINITION_CONTRAST = "Advisor headcount, how the definitions differ
   - {label}: {parts}."`, e.g. "... - Independent contractor advisors: counted by Raymond James Financial
-  ('Independent contractors 5,065', RJF-10K-2025#227); no advisor count at The Charles Schwab Corporation
-  (RIAs are clients of Advisor Services: 'support services to RIAs and their clients', SCHW-10K-2025#23); not
-  stated by Morgan Stanley, Edward Jones, Merrill (Bank of America)." A dimension where every firm is
+  ('Independent contractors 5,065', RJF-10K-2025#227); stated by Edward Jones ('The Partnership’s financial
+  advisors are employees or partners of the Partnership.', EDJ-10K-2025#35); no advisor count at The Charles
+  Schwab Corporation ('Through the Advisor Services segment, Schwab has become one of the largest providers of
+  custodial, trading, banking, and support services to RIAs and their clients', SCHW-10K-2025#23); not stated
+  by Morgan Stanley, Merrill (Bank of America)." A dimension where every firm is
   `not_stated` is skipped. Placed in `build_caveats` right after the `DEFINITIONS_BY_FIRM` caveat (which stays:
   it carries the full quotes).
 - Which questions: Q11 only (a1 "How each firm defines ...", a3 / a4 "... includes / excludes", metric
@@ -96,9 +113,11 @@ caveat but never contrasted explicitly".
   - registry (no DB): every `contrast` key is a listed dimension; every value is in the allowed set; every
     value except `not_stated` has a `chunk_id` that is the entry's `chunk_id`, in `see_also` or in
     `contrast_ids`; `contrast_ids` are not in `see_also`; `count_date.date` is an ISO date; `text` is a plain
-    `str`; the EDJ `not_stated` list has no "none: all advisors are employees";
+    `str`; every `business_lines` cell has a value code; the EDJ `not_stated` list has no "independents"
+    item at all (TL condition 2);
   - registry (DB up, as the `quote` test): every non-empty `text` is a verbatim substring of its `chunk_id`
-    (whitespace collapsed); every `contrast_ids` chunk exists.
+    (whitespace collapsed; the EDJ #35 quote keeps U+2019); every `contrast_ids` chunk exists; MS
+    `business_lines` text == 'Wealth Management representatives'.
 
 ## 2. `closest_metric` wording (TL item 2; findings 2 / 6; review blocking 2)
 **Today**: `definitions_by_firm` heads a `closest_metric` entry with "publishes no definition of this metric;
@@ -157,12 +176,14 @@ segment and the earlier one; the Q23 RJF shape keeps one segment.
 "$17 billion for fiscal 2025, the table shows" are one claim to the dedupe.
 **Design**: `_stated_periods` (it already gets the outside-quotes text) also adds every year: `fiscal 2024`,
 `fiscal year 2024`, `FY2024`, `FY 2024` -> `fy2024`; a bare year -> `2024`. **Anchoring** (nb 4): a bare year is
-`(?<![\d$.,])(?:19|20)\d{2}(?![\d,]|\.\d)` so "$2,024", "2,024 advisors" and "2024.5" are not years. A year
+`(?<![\d$.,])(?:19|20)\d{2}(?!\d|,\d|\.\d)` (TL condition 3) so "$2,024", "2,024 advisors" and "2024.5" are
+not years while "in 2024, net new assets ..." is. A year
 inside a matched date is added too (both claims of a pair are read the same way). This only makes the dedupe
 keep more, never remove more.
 **Tests** (`tests/test_reduce_noise.py`): the reviewer's fiscal 2024 / fiscal 2025 pair -> both kept; "in 2024"
 vs "in 2025" -> both kept; an exact repeat with the same year -> still removed; "$2,024 million" / "2,024
-advisors" give no year; the existing three dedupe tests unchanged.
+advisors" give no year; "in 2024, net new assets were $5 billion" vs "in 2025, net new assets were $5
+billion" -> both kept; the existing three dedupe tests unchanged.
 **Expected in the replay**: no removal changes. A 0-call check of the replayed answers' removals with the year
 rule found no pair whose year sets differ: Q11 2, Q19 4, Q26 1, the others 0, the same claims as
 `replay-final`.
@@ -197,12 +218,16 @@ of basis.
 **Design** (`matrix.basis_breaks`):
 - An item with no period never opens a group: it joins an existing dated group with its key (adds no period),
   else it is skipped. A cell whose items are all undated has no break.
-- **Same-date split** (TL ruling, blocking 4): a group other than "whole firm" whose dated periods are all
-  periods of the whole-firm group is a split, not a break, and is dropped before counting groups. With no
-  whole-firm group, groups with identical period sets are a split (kept as one). Only >= 2 groups left -> break.
+- **Same-date split** (TL ruling, blocking 4; condition 3): the whole-firm group(s) are those with an empty
+  normalised scope. A group with a non-empty scope whose dated periods (normalised strings, `_period_key`
+  where parseable) are all periods of a whole-firm group **with the same population key** is a split, not a
+  break, and is dropped before counting groups. With no whole-firm group, groups with the same population key
+  and identical period sets are a split (kept as one). Groups are never merged across population keys: two
+  whole-firm groups with different keys stay a break. Only >= 2 groups left -> break.
 **Tests** (`tests/test_series_coverage.py`): the Q23 RJF shape (three dated whole-firm items + two undated
 keyed items with other scopes) -> no break; **the Q11 a2.EDJ shape (whole firm, U.S., Canada, all 2026Q2) -> no
-break**; no whole-firm group, two scopes with the same periods -> no break; the Q23 EDJ-shaped test (whole firm
+break**; no whole-firm group, two scopes with the same periods -> no break; two whole-firm groups with
+different population keys -> still a break; periods "2026Q2" vs "2026-06-30" compared normalised; the Q23 EDJ-shaped test (whole firm
 2025Q3 and 2026Q2; U.S. and Canada 2026Q1) and the r3 `m2` case (whole firm 2026Q2; U.S. 2026Q1) **still
 break**; the existing parametrised cases unchanged; the R3 test adjusted where it expects "period not stated".
 **Answers changed**: Q23 (RJF break caveat gone), Q11 (a2.EDJ and a2.MER break caveats gone).
@@ -253,10 +278,10 @@ answer.
 |---|---|---|
 | Q1 | none | - |
 | Q3 | none | - |
-| Q11 | contrast caveats (5 dimensions at most, one block); Schwab "publishes no count ...; reports a related figure instead"; Merrill rows name Bank of America; EDJ "independents" without "(none: ...)"; a4.MER source = parent's; a2.EDJ and a2.MER break caveats gone | 1, 2, 5, 6 |
+| Q11 | contrast caveats (5 dimensions at most, one block; EDJ independents quoted from #35); Schwab "publishes no count ...; reports a related figure instead"; Merrill rows name Bank of America; EDJ "not stated" without any independents item; a4.MER source = parent's; a2.EDJ and a2.MER break caveats gone | 1, 2, 5, 6 |
 | Q19 | none | (4: removals unchanged) |
 | Q22 | Schwab and Merrill NNA "defines a related metric instead" (Merrill naming Bank of America); gaps EDJ 2024Q4, 2025Q4 (no MS gap); MS `SERIES_SPAN` latest segment 2024Q3-2026Q3 + earlier segment; a1.MER / a2.MER source = parent's | 2, 3, 5 |
-| Q23 | Schwab "publishes no count ...; reports a related figure instead"; Merrill naming Bank of America; EDJ "independents" without "(none: ...)"; RJF break caveat gone; a1.MER source = parent's | 1 (registry text), 2, 5, 6 |
+| Q23 | Schwab "publishes no count ...; reports a related figure instead"; Merrill naming Bank of America; EDJ "not stated" without any independents item; RJF break caveat gone; a1.MER source = parent's | 1 (registry text), 2, 5, 6 |
 | Q24 | as Q23 for the by-firm caveat; a1.MER source = parent's | 1 (registry text), 2, 5 |
 | Q26 | none | (4: removal unchanged) |
 
@@ -309,8 +334,10 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
 - [ ] Branch replay vs baseline replay: Q1, Q3, Q19, Q26 byte-identical; Q11, Q22, Q23, Q24 change only as in
       section 8; dedupe removals as in the baseline (Q11 2, Q19 4, Q26 1). Baseline vs scored dumps: only the
       known part-2 differences (Q1 a4.MS gap wording, Q24 separator).
-- [ ] Every contrast `text` verbatim in its chunk (DB test) or a fixed phrase; no "last" / "wider" / "none:
-      all advisors are employees" in any answer.
+- [ ] Every contrast `text` verbatim in its chunk (DB test) or a fixed phrase; every `business_lines` cell
+      has a value code; no "last" / "wider" / "none: all advisors are employees" in any answer; EDJ
+      independents shown with the `EDJ-10K-2025#35` quote, and EDJ's "not stated" list (Q11, Q23, Q24) has no
+      independents item.
 - [ ] Q11: the answer has the code contrast (each dimension, every firm placed, chunk ids, one block) and the
       unit-aware wording, and no a2.EDJ / a2.MER break caveat. **Aim: PASS** on the fresh blind re-score. A
       FAIL is reported with the scorer's reason, and what is corpus (no written MS / EDJ definition, no Schwab
@@ -343,3 +370,5 @@ the verdict hash alone, then verdicts and comparison; `/finish-task`.
   "the U.S. and Canada"; `RJF-10K-2025#227` "Independent contractors 5,065 ... Total advisors 8,943";
   `BAC-SUPP-2023Q4#2` "Total wealth advisors (3) 18,916"; `SCHW-10K-2025#23` "support services to RIAs and their
   clients". Amended: sections 1-9, Files, Steps, Acceptance, Risks.
+- 2026-11-20 11:20 - plan review round 2 RETURN (7044411488); TL approved at 9313a22 on conditions
+  (7044420979), written in above (TL approval conditions 1-3; sections 1, 4, 6, 8, Acceptance) before any code.
