@@ -242,6 +242,36 @@ behavior code decided; it cannot change it.
   `behavior_rejudged`, `outside_matrix`, `comparison_missing`, `why_line_missing`, `reordered`,
   `gaps_merged`, `part_gaps`, flags by name, `stop_reason`, `usage` (ADR-021 rule 7).
 
+### Reduce part 2 (#247 part 2, prompt v5.1; plans/0247-reduce-2.md)
+- **Populations of ratio inputs** (rule 2): `matrix.tag_populations` gives each item of a ratio-input
+  aspect (metric `client_assets` / `advisor_headcount`, or a proxy aspect matched by its words) the key
+  of the `populations` entry whose phrase stands nearest before its figure, only when the entry's chunk
+  is in that cell's pool. `derive()` computes a ratio only on equal keys and exact figures ("about",
+  "more than", ">", "+", "K" next to the figure refuse it), and records `populations` and
+  `population_chunk_ids` on every proposal; those ids are citable (`EvidenceMatrix.chunk_ids()`).
+- **Computation claims**: the reduce input shows a "computation (code)" line per proposal (computable
+  or not, why, the inputs, each population source quoted, dated when an input falls in another quarter
+  than the source's `valid_from`). One claim per firm must cite both inputs and the sources; missing ->
+  code adds it before the citation check: `COMPUTED` / `NOT_COMPUTED` (standard wording), flag
+  `code_computability`.
+- **Basis breaks**: `matrix.basis_breaks` flags a holding cell of a series / registered-metric fact
+  aspect whose items cover more than one (scope, population); the caveat `BASIS_BREAK` lists each basis
+  with its periods and is inserted by code; the input tells the reduce to keep the bases apart.
+- **Gap scope**: per-cell gaps only inside the aspect's planned firm subset (`asked_firms`); empty
+  `competitor` cells fold into `COMPETITORS_GAP` per aspect; a model gap outside the scope is dropped,
+  one on a folded cell merges into the fold; part coverage counts these cells as `out_of_scope` /
+  `competitors_gap`.
+- **Why-lines**: only on recency / window items; the input shows each such item's `context:` (the cited
+  passage around its quote, up to 600 characters). Code removes a why-line elsewhere
+  (`why_line_removed`) and replaces one that restates its claim (its figures and >= 80% of its content
+  words already in the claim) with "Why it might matter: the source does not say."
+  (`why_line_restated`); the model's sentences are in the log.
+- **Duplicates**: after the part check, claims citing the same chunk set whose shorter text is held in
+  the longer (figures and >= 85% of content words) are removed (logged as `duplicates_removed`); the
+  comparison and computability checks run again.
+- **Order**: with the question's own window the whole answer is sorted newest first; with recency
+  aspects only, only their items move, inside their own slots.
+
 ## Answer shape (prompt v4, #215; v3 #204)
 
 General rules in the prompt; no question ID, no `passes_if` text and no question text (a test

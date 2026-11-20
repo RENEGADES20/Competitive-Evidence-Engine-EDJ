@@ -409,6 +409,13 @@ lose a passage each to trade chunks compared with the freeze (trade takes the do
 turns at k = 20); a fee question worded without any configured term or theme keyword does not
 see the brochures, and the term lists are the place to widen it. Evidence in the #179 PR.
 
+Amendment (#247 part 2, TL ruling D1 on the plan review, issue #247 comment 7037522138): a chunk id
+registered in `config/metric_definitions.yaml` (a definition `chunk_id`, its `see_also`, a
+`populations` source) is fetched by ID for the sub-questions of a registered-metric or ratio-input
+aspect even when its document type is `adv` (one curated Form ADV Part 1A figure crowds nothing out;
+for Schwab it is the only firm-filed figure). The tier-4 exclusion, the window, the date range and the
+entity / segment filters still apply to pinned ids.
+
 ## ADR-016: Slot order inside a firm: trade press last, a new document before a second chunk
 Status: Accepted (tech lead, 2026-11-17, #198 / #199); adds slot-order rules to `specs/retrieval.md`
 Context: the final snapshot `corpus-2026-11-17` adds 77 trade-press articles (tier 4, #57) and
@@ -997,4 +1004,28 @@ Amendment (#247, reduce step; TL decisions on the #247 plan, issue #247 comments
   comparison only; the eval maps unless `--legacy`. The #245 interim answer input guard is removed:
   an input over a provider's window is not sent, never trimmed.
 - After a 400 in an eval run no further call is made (round 2 and the reduce included).
+
+Amendment (#247 part 2; plan `plans/0247-reduce-2.md`, TL approval after review rounds 1-2, issue #247
+comments 7037522138 and 7037650142; prompt v5.1):
+- **Rule 2, populations**: a within-firm ratio (or sum, difference) is computed only when both inputs
+  carry the same registered population (`config/metric_definitions.yaml` `populations`: what each
+  input covers, in the firm's own words, with the chunk that states it and its date `valid_from`) and
+  neither figure is approximate or a bound (matched next to the figure). Code tags each input item from
+  the entry whose phrase stands nearest before its figure, only when that entry's chunk is in the input
+  cell's retrieved set. The population source chunks are pinned into the sub-questions that can hold
+  an input, are citable, and every derivation proposal ends in one claim per firm saying whether the
+  figure is computable, citing both inputs and the sources and quoting them (code writes it when the
+  reduce does not; a source dated in another quarter than an input is labelled with its date).
+- **Series coverage**: series aspects with asked periods get a per-period sub-search (one FTS search
+  per asked period, a hard filter on the document's period end, kept chunks excluded before the cut);
+  registered definition chunks are pinned (ADR-015 amendment above). Both add to the sub-question's
+  passages; the main search lists are unchanged.
+- **Basis breaks**: a firm's series whose items cover different scopes (or populations) gets a code
+  caveat listing each basis with its periods; the reduce states each basis apart.
+- **Noise**: code gaps only inside an aspect's planned firm subset (`asked_firms`, before the
+  home-firm widening); empty competitor cells fold into one gap per aspect; duplicate claims (same
+  chunks, the shorter held in the longer) are removed after the part check, then the comparison and
+  computability checks run again; why-lines only on recency / window items, written from the cited
+  passage's context, and a why-line that restates its claim is replaced by "the source does not say"
+  (the model's sentence logged); without a window only the recency items are re-sorted newest first.
 
