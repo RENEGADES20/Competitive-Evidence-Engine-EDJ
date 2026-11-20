@@ -183,3 +183,5 @@ hashes in `ev247b\blind-in-r2-hashes.txt`. Q1 and Q3 keep their part-2 answers a
 | Q11 differences not named | answer | fixed by R6a (`DEFINITIONS_BY_FIRM`) | this PR |
 | Q11 Schwab shown as a bare gap | answer | fixed by R6b (gap names the closest figure) | this PR |
 | Q23 where each series stops | answer | fixed by R6c (`SERIES_SPAN`) | this PR |
+
+verdicts-blind-r2.json sha256 cba0e16cf45017c37218467be019897bbfb7468e24d0ced7aa8ec2a1a9e54e23 (re-check, fresh scorer agent; committed alone before any comparison).
