@@ -1,0 +1,165 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "extract_version": "extract-v1",
+  "call_id": "map.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a1.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "RJF-10K-2025#12",
+    "RJF-TR-2025Q3#8",
+    "RJF-PR-2025-10-22-01#2",
+    "RJF-10Q-2026Q1#239",
+    "RJF-DECK-2025-investor-day#69",
+    "RJF-SUPP-2026Q2#41",
+    "RJF-10K-2025#228",
+    "RJF-TR-2025Q2#4",
+    "RJF-PR-web-independent-advisor#1",
+    "RJF-10Q-2025Q4#199",
+    "RJF-DECK-2026Q2#32",
+    "RJF-SUPP-2025Q4#33",
+    "RJF-10K-2025#41",
+    "RJF-TR-2025Q1#83",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-10Q-2026Q2#252",
+    "RJF-DECK-2026Q1#32",
+    "RJF-SUPP-2026Q1#14",
+    "RJF-TR-2026Q1#32",
+    "RJF-10Q-2025Q2#378",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-SUPP-2025Q3#14",
+    "RJF-TR-2025Q4#8",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-10Q-2026Q1#244",
+    "RJF-DECK-2025-investor-day#110",
+    "RJF-SUPP-2025Q4#12",
+    "RJF-TR-2024Q4#19",
+    "RJF-PR-web-independent-ria-custody-services#2",
+    "RJF-10Q-2025Q2#162",
+    "RJF-SUPP-2026Q2#14",
+    "RJF-TR-2024Q3#23",
+    "RJF-PR-web-traditional-employee-advisor#0",
+    "RJF-10Q-2026Q1#204",
+    "RJF-SUPP-2026Q1#13",
+    "RJF-TR-2026Q2#65",
+    "RJF-TR-2026Q2#66",
+    "RJF-PR-web-advisor-select#0",
+    "RJF-10Q-2025Q2#234",
+    "RJF-SUPP-2026Q2#13",
+    "RJF-TR-2025Q3#4",
+    "RJF-PR-2026-04-22-01#99",
+    "RJF-10Q-2026Q2#429",
+    "RJF-TR-2025Q3#5",
+    "RJF-PR-2026-07-22-01#55",
+    "RJF-10Q-2025Q4#257",
+    "RJF-TR-2025Q1#4",
+    "RJF-PR-2026-01-28-01#38",
+    "RJF-10Q-2026Q2#336",
+    "RJF-TR-2025Q2#30",
+    "RJF-PR-web-bank-and-credit-union-advisors#2",
+    "RJF-10Q-2025Q4#256",
+    "RJF-TR-2026Q1#5",
+    "RJF-PR-web-bank-and-credit-union-advisors#3",
+    "RJF-TR-2025Q2#40",
+    "RJF-PR-web-independent-advisor#0",
+    "RJF-TR-2026Q1#52",
+    "RJF-PR-web-independent-ria-custody-services#0",
+    "RJF-TR-2026Q2#69",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-TR-2025Q1#38",
+    "RJF-PR-2026-04-22-01#55",
+    "RJF-TR-2025Q4#85",
+    "RJF-PR-2026-07-22-01#52",
+    "RJF-PR-2025-10-22-01#58",
+    "RJF-PR-2026-01-28-01#71",
+    "RJF-PR-2026-04-22-01#52",
+    "RJF-PR-2025-10-22-01#55"
+  ],
+  "at": "2026-11-20T00:31:58.740537",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 21429,
+    "output_tokens": 5480,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 20277,
+    "reasoning_tokens": 4864,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 74.59,
+  "tokens_per_s": 73.47,
+  "reasoning_content": "We need answer subquestion a1.RJF: advisor headcount over last eight quarters. Need return one cell. We need determine label. We have passages. The metric is advisor_headcount series over last eight quarters. Need find actual figures per quarter for advisor headcount.\n\nPassages: RJF-TR-2025Q3#4 gives \"record number of financial advisors of 8,943\" as of fiscal year end 2025-09-30 (period 2025-09-30, transcript published 2025-10-22). That's a point in time figure for financial advisors. This is a fact for one quarter (September 30, 2025). Also RJF-TR-2025Q3#8 says \"We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year\". No number there but #4 gives number.\n\nRJF-DECK-2025-investor-day#126: \"domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\" - approximate, period n/a published 2025-06-05. This is a different? It is advisor headcount but approximate and earlier date not specific, period n/a. Could be a fact? It says approximately 9,000 employee and independent financial advisors; period not stated but deck published 2025-06-05, period n/a. The subquestion asks last eight quarters. That deck figure not dated and approximate. Might include as fact with period \"\"? But the requirement for series is eight quarters. We can include fact items for figures we find. The exact asked quantity is advisor headcount; approximate 9,000 domestic employee and independent financial advisors is a fact (narrower? whole firm's domestic wealth management businesses - that's essentially the firm's PCG advisors, domestic). But period n/a and approximate. Could be fact with period \"\". Hmm.\n\nRJF-10K-2025#228 says \"The number of financial advisors as of September 30, 2025 increased compared to the prior year...\" no figure. Not disclosed? Actually they mention but not quantity. The 10-K may contain actual table elsewhere, but passages not include. We have only given chunks.\n\nRJF-10K-2025#12 says financial advisors associated with RCS not included in financial advisor counts. Definition relevant: firm's financial advisor counts exclude RCS advisors. This is definition fact maybe.\n\nQuestion: return exactly one cell for subquestion. label fact if passages state what asks in full or in part. We have one exact quarterly number (8,943 as of 2025-09-30). The last eight quarters: need perhaps 8 figures. We don't have all. But partial still fact. We should include fact items for each figure found. Also maybe approximate 9,000. And the statement \"record number of financial advisors, 2% higher than prior year\" is fact but no value.\n\nNeed decide label for cell overall: fact (partial) since at least one period is stated. Items one per figure/statement. Include:\n1. 8,943 financial advisors as of September 30, 2025 (record number). Quote from RJF-TR-2025Q3#4: \"record number of financial advisors of 8,943\". value \"8,943\", unit \"financial advisors\", period \"2025-09-30\", scope \"\" whole firm (the firm's financial advisors metric; RCS excluded per 10K). definition maybe \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" from RJF-10K-2025#228 or #12. Could include definition in item 1? The definition should be firm's own definition quoted. We can put definition in item 1 from RJF-10K-2025#228: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" But definition field belongs to item; maybe include for the 8,943 item.\n\n2. statement from RJF-TR-2025Q3#8: \"We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year\" value \"\", period 2025-09-30? The fiscal year ended 2025-09-30, unit financial advisors. Could include as fact statement. But perhaps redundant with #4. Maybe include as a separate fact item? They ask one per figure or statement. This is a statement with no figure but relevant. Could include.\n\n3. RJF-DECK-2025-investor-day#126: \"domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\" value \"approximately 9,000\" or \"9,000\" (as printed \"approximately 9,000\"). period \"\" (deck period n/a). Scope \"domestic wealth management businesses\" (Private Client Group). Is this a fact for advisor_headcount? It names approximately 9,000 employee and independent financial advisors; it's the same quantity (advisor headcount) albeit approximate and no date. Could be a fact with period \"\". But the subquestion asks last eight quarters; an undated approximate count might not satisfy any quarter. The instructions: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods, a narrower group or sample, one of several figures); the item says what it covers (period, scope).\" For a point-in-time series, an undated figure is weaker. But it is still a figure for financial advisors, though period not stated. Is it a fact? The named quantity is advisor headcount; yes approximate. However \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" This is exactly financial advisors. But \"employee and independent financial advisors\" is the firm's count? \"approximately 9,000 employee and independent financial advisors\" from deck. That is a fact. Period n/a; scope domestic wealth management businesses. Should include maybe.\n\nBut we need be careful: The instruction says for different_quantity \"a wider unit that contains the asked one... different measure...\" Not applicable.\n\n4. The 10-K definition: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" This is a fact for how firm defines/reports the metric. Could include as fact item with no value. Actually subquestion asks metric advisor headcount, not definition. But instruction: \"The firm's own definition of a metric, quoted from a passage, is a fact for a sub-question that asks how the firm defines or reports it.\" The subquestion doesn't ask how define; it asks headcount series. So definition could be in definition field of a fact item.\n\nNow, are there any other quarterly advisor headcount figures in passages? Search: \"8,943\" only. \"record number of financial advisors, 2% higher than prior year\" no prior figure. \"approximately 9,000\". \"940 advisors across 160 financial institutions\" - that's FID advisors, a subset, maybe different? Wait \"940 advisors across 160 financial institutions\" is from bank and credit union advisors page. It's advisor headcount but only a segment/division (Financial Institutions Division). The asked quantity is firm-wide advisor headcount over eight quarters. 940 is a narrower group (FID advisors). Is that a fact? Partial: \"some periods, a narrower group or sample\" is still a fact. It names \"940 advisors across 160 financial institutions\" - that's the firm's financial advisors in FID? Actually Financial Institutions Division advisors. It is a narrower group of advisors. The item says what it covers (period, scope). Could be fact with scope \"Financial Institutions Division (bank and credit union advisors)\", period n/a. But is it \"advisor headcount\"? Yes, 940 advisors in FID. But undated web page. Might be fact (partial, narrower group). However it might be a different quantity? It's still financial advisors, just a division. That qualifies partial fact. But period n/a and content as of 2026-05-17. Hmm.\n\nBut the subquestion is specifically \"Advisor headcount over the last eight quarters\" across the five firms. For RJF, they want the series. Passages likely only provide one exact figure 8,943 and maybe some approximate. Should I include the FID 940? It is not the firm's own advisor count (excluded? Wait Financial Institutions Division advisors are Raymond James advisors in bank/credit union programs, likely included in financial advisor counts? They are \"940 advisors across 160 financial institutions\" which are advisors in FID, perhaps included in firm's count? The page says \"FID advisors lead in the industry\" etc. It's a recruiting page. It is a subset of RJF advisors. Could include as fact with scope FID, period \"\". But it doesn't directly answer last eight quarters.\n\nLet's think about labels and items. The cell label: fact if any passage states what sub-question asks in full or in part. Yes. So label \"fact\".\n\nItems should be one per figure or statement. For series, a series is one item per period. We have one period figure (2025-09-30). Also maybe approximate 9,000 (period n/a) and FID 940 (period n/a) as separate items? The instruction says items (fact and different_quantity only), one per figure or statement; a series is one item per period. Could include multiple items with no period? I'd include only exact/meaningful ones. Maybe include 8,943 as fact, and 2% growth statement as fact, and definition statement as fact? But definition is not a figure; can be included? \"one per figure or statement\" yes statement.\n\nBut be cautious: The system expects cell with label and items. Maybe they want items only for figures, not definitions? The schema allows text without value. We can include.\n\nWe need set differs_because \"\" for fact? The schema requires differs_because string. For fact label, differs_because probably \"\". reason one short sentence.\n\nDerivation: operation \"\" and inputs empty (required object with operation \"\" and inputs []). For fact.\n\nLet's decide final items. I'd include:\n\nItem 0: text \"Raymond James ended fiscal year 2025 with a record number of financial advisors of 8,943.\" quote \"record number of financial advisors of 8,943\" value \"8,943\" unit \"financial advisors\" period \"2025-09-30\" scope \"\" definition \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" chunk_ids [\"RJF-TR-2025Q3#4\"]? The definition quote from RJF-10K-2025#228, but chunk_ids should be passages quoted; we have two quotes from two passages. The item's quote field only one exact words. We can include definition in definition field with quoted text but chunk_ids for both? The schema chunk_ids: ids of passages quoted. If definition also quoted from another passage, include both ids. The item quote is from #4; definition from #228. So chunk_ids [\"RJF-TR-2025Q3#4\", \"RJF-10K-2025#228\"]. That's fine.\n\nBut is definition field meant to quote firm's definition; yes. Include it.\n\nItem 1: text \"At the end of fiscal 2025, the number of financial advisors was a record, 2% higher than the prior year.\" quote \"We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year\" value \"\" unit \"\" period \"2025-09-30\" scope \"\" definition \"\" chunk_ids [\"RJF-TR-2025Q3#8\"]. This is a statement no figure. Should we include? It duplicates but adds growth. Fine.\n\nItem 2: text \"Raymond James' domestic wealth management businesses included approximately 9,000 employee and independent financial advisors, according to an investor-day biography (undated).\" quote \"domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\" value \"approximately 9,000\" unit \"financial advisors\" period \"\" scope \"domestic wealth management businesses (Private Client Group)\" definition \"\" chunk_ids [\"RJF-DECK-2025-investor-day#126\"]. Is value as printed \"approximately 9,000\" vs \"9,000\"? The instruction value: figure as printed. \"approximately 9,000\" printed as word approximately. I'd put value \"approximately 9,000\". unit \"financial advisors\".\n\nBut is this fact or different_quantity? It's the same quantity. Fact.\n\nItem 3: FID 940? Hmm. It might confuse: scope \"Financial Institutions Division\" narrower group. But the instruction says narrower group is still fact. The item says what it covers. It is an undated recruiting page. But the subquestion asks last eight quarters; this does not correspond to a quarter. I'm hesitant to include because period is not stated and it's a marketing page \"940 advisors across 160 financial institutions\". It is a figure for a subset of advisors at an undated point. It might be relevant but not for last eight quarters. Including too many undated partial facts may be okay. But the cell is about advisor headcount series; an undated subset figure is a fact but not answering the series. Could include to be thorough.\n\nHowever, the instruction \"Use only the passages below... A sub-question marked [proxy] names...\" not relevant. \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" 940 advisors is the named quantity (financial advisors) but a narrower group. So fact. But period not stated. The item says \"period: ... '' when not stated or no figure.\" So allowed.\n\nShould we include the FID 940? It says \"940 advisors across 160 financial institutions\" from RJF-PR-web-bank-and-credit-union-advisors#0. Scope \"Financial Institutions Division\". The text should attribute to firm, in passage's terms. It's from Raymond James recruiting page. We can include.\n\nBut the question asks advisor headcount over last eight quarters. The FID page content as of 2026-05-17, not a quarter. It's undated. It might not be useful but is a fact. Could include but not necessary. The instructions say \"Items (fact and different_quantity only), one per figure or statement\". We should include all relevant figures? Probably include the ones that state advisor headcount. But maybe not all undated marketing figures if they are not the firm's reported metric. Wait \"940 advisors across 160 financial institutions\" is a different_quantity? It is not the firm's total financial advisors; it's a subset. But partial facts for narrower group are allowed. It is still \"financial advisors\" count, just a division. So fact.\n\nBut there is nuance: the FID 940 could be \"financial advisors associated with firms in RCS are not included\" no. FID is Raymond James Financial Institutions Division, these advisors are likely Raymond James advisors (bank/credit union program), so they are in the firm's advisor count? Possibly. It's a narrower group.\n\nI think include it with scope. But could overcomplicate. The grading likely expects identifying 8,943 and maybe 2% higher. Maybe also approximately 9,000. The FID 940 is less relevant.\n\nLet's also consider whether there is a not_disclosed possibility for missing quarters? The cell label overall is fact because at least partial. We don't need derivation because no computation from other cells.\n\nCould there be a series of 8 quarterly headcounts hidden in supplements? The passages include compensation tables but not advisor counts. No other headcount. So only one exact quarter. The label fact partial.\n\nWe should mention in reason: \"Passages state a financial advisor headcount of 8,943 as of 2025-09-30 (and an approximate 9,000), so partial fact.\" Good.\n\nNeed format exactly via submit_extraction.\n\nLet's craft items carefully with required fields.\n\nItem 0:\ntext: \"Raymond James ended fiscal 2025 with a record number of financial advisors of 8,943.\"\nquote: \"record number of financial advisors of 8,943\"\nvalue: \"8,943\"\nunit: \"financial advisors\"\nperiod: \"2025-09-30\"\nscope: \"\" (whole firm)\ndefinition: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" (from 10-K). Hmm this definition is from chunk RJF-10K-2025#228; but in item quote we only quote transcript. chunk_ids include both. Good.\n\nItem 1:\ntext: \"At the end of fiscal 2025, the number of financial advisors was a record, 2% higher than the prior year.\"\nquote: \"We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year, and a reflection of solid advisor retention as well as strong recruiting results.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"2025-09-30\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"RJF-TR-2025Q3#8\"]\n\nItem 2:\ntext: \"Raymond James' domestic wealth management businesses included approximately 9,000 employee and independent financial advisors, according to an undated investor-day biography.\"\nquote: \"leading the firm's domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\"\nvalue: \"approximately 9,000\"\nunit: \"financial advisors\"\nperiod: \"\"\nscope: \"domestic wealth management businesses (Private Client Group)\"\ndefinition: \"\"\nchunk_ids: [\"RJF-DECK-2025-investor-day#126\"]\n\nMaybe include item 3 for FID:\ntext: \"Raymond James' Financial Institutions Division had 940 advisors across 160 financial institutions, per an undated recruiting page.\"\nquote: \"940 advisors across 160 financial institutions\"\nvalue: \"940\"\nunit: \"financial advisors\"\nperiod: \"\"\nscope: \"Financial Institutions Division (bank and credit union advisors)\"\ndefinition: \"\"\nchunk_ids: [\"RJF-PR-web-bank-and-credit-union-advisors#0\"]\n\nIs that a fact? Yes partial narrower group. But maybe \"financial institutions\" are client institutions, not firm scope. Fine.\n\nHowever, the cell's purpose is headcount over last eight quarters; including undated narrower group may be irrelevant and could be considered wrong because it's not the firm's own reported advisor headcount? But instructions allow narrower group as partial fact. I'd include but with scope. Yet there is a risk: The 940 figure might be a different_quantity because it's a subset \"bank and credit union advisors\" and not the total advisor headcount. But the instruction says \"partial is still a fact (some periods, a narrower group or sample...)\". So fact.\n\nBut wait \"different_quantity\" includes \"a wider unit that contains the asked one (a parent company, a segment that also holds other businesses)\". The FID 940 is a narrower group, so not different_quantity. Fact.\n\nShould we include item 4 definition statement as separate? We already put definition in item 0. The instruction says \"The firm's own definition of a metric, quoted from a passage, is a fact for a sub-question that asks how the firm defines or reports it.\" This subquestion doesn't ask that, but definition field can hold it. We can leave in definition field.\n\nNow think about period for approximate 9,000: deck period n/a but published 2025-06-05. It is investor day deck from 2025-06-05, period n/a. The instruction: period \"\" when not stated. Good.\n\nPotential issue: item 0 period \"2025-09-30\" is fiscal year end, yes point in time.\n\nDo we need to label cell \"fact\" with partial? Yes.\n\nReason: \"Passages state a point-in-time financial advisor count of 8,943 at fiscal 2025 year-end and an approximate 9,000, so the series is only partially reported.\"\n\nNow submit. Need ensure JSON valid. The tool call schema requires \"cells\" array. We'll call submit_extraction with one cell.\n\nLet's verify item fields required: text, quote, value, unit, period, scope, definition, chunk_ids. Additional properties false. So no extra.\n\nFor item 1 quote: should be exact and <=300 chars. Use \"We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year, and a reflection of solid advisor retention as well as strong recruiting results.\" That's 153 chars, okay.\n\nFor item 2 quote exact: \"leading the firm's domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors and generate nearly 70 percent of overall firm revenues\" maybe full sentence. Use shorter exact \"domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\". Good.\n\nFor item 3 quote \"940 advisors across 160 financial institutions\" exact. Good.\n\nDefinition for item 0: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" exact from #228. Good.\n\nchunk_ids for item 0: [\"RJF-TR-2025Q3#4\", \"RJF-10K-2025#228\"].\n\nOne thought: The definition text is in RJF-10K-2025#228 and also RJF-10K-2025#12 says \"Financial advisors associated with firms in RCS are not included in our financial advisor counts, although their client assets are included in our AUA.\" Slight different wording. We can use #228 wording. Good.\n\nDo we need include the statement from 10-K #228 \"The number of financial advisors as of September 30, 2025 increased compared to the prior year...\" as item? It's similar to transcript #8 but no figure. Maybe include? It is a statement fact with no figure. We already have item 1. Could include as item but redundant. I'll leave out or include? \"one per figure or statement\" could include. But too many redundant statements. We have item 1 covering growth statement. The 10-K statement is also a fact with no value but same info; not necessary. But maybe it confirms. I can include another item? I'd keep concise.\n\nNow label: fact. differs_because: \"\". reason: as above. derivation: {\"operation\": \"\", \"inputs\": []}.\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James ended fiscal 2025 with a record number of financial advisors of 8,943.",
+            "quote": "record number of financial advisors of 8,943",
+            "value": "8,943",
+            "unit": "financial advisors",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.",
+            "chunk_ids": [
+              "RJF-TR-2025Q3#4",
+              "RJF-10K-2025#228"
+            ]
+          },
+          {
+            "text": "At the end of fiscal 2025, Raymond James' number of financial advisors was a record, 2% higher than the prior year, reflecting solid advisor retention and strong recruiting results.",
+            "quote": "We ended the fiscal year with a record number of financial advisors, 2% higher than the prior year, and a reflection of solid advisor retention as well as strong recruiting results.",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2025Q3#8"
+            ]
+          },
+          {
+            "text": "Raymond James' domestic wealth management businesses included approximately 9,000 employee and independent financial advisors, according to an undated investor-day biography.",
+            "quote": "leading the firm's domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors",
+            "value": "approximately 9,000",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "domestic wealth management businesses (Private Client Group)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#126"
+            ]
+          },
+          {
+            "text": "Raymond James' Financial Institutions Division had 940 advisors across 160 financial institutions, per an undated recruiting page.",
+            "quote": "940 advisors across 160 financial institutions",
+            "value": "940",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "Financial Institutions Division (bank and credit union advisors)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-web-bank-and-credit-union-advisors#0"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state a point-in-time financial advisor headcount of 8,943 at fiscal 2025 year-end plus an approximate 9,000 and a narrower FID count, so the eight-quarter series is only partially reported.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

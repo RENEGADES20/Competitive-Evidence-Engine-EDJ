@@ -1,0 +1,48 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1",
+  "call_id": "remap.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a2.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-20T00:31:34.409913",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1783,
+    "output_tokens": 285,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 631,
+    "reasoning_tokens": 154,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 4.36,
+  "tokens_per_s": 65.37,
+  "reasoning_content": "I need to extract information for sub-question a2.RJF: \"What digital and mobile channel preferences do younger investors state?\" for Raymond James Financial (RJF). I have only one passage chunk, and it's about recruiting: \"Collaborative recruiting across channels / West Coast and Northeast focus / Next gen advisor strategy\". This says nothing about younger investors' digital and mobile channel preferences. So label should be not_found.\n\nLet me verify: the passage is about advisor strategy, not investor preferences. No digital/mobile channel preferences. So not_found.\n\nI need to submit one cell for a2.RJF with label not_found, empty items, differs_because \"\", reason, derivation with operation \"\" and inputs [].\n\nLet me call submit_extraction.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage for RJF discusses collaborative recruiting across channels, West Coast/Northeast focus, and next gen advisor strategy, and says nothing about younger investors' digital or mobile channel preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
