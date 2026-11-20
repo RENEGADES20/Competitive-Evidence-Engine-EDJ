@@ -99,7 +99,9 @@ These records cost $2.62 when #246 / #247 made them. That is not new spend in #2
   fields. `extract_message`, `system_prompt`, the schema and the DeepSeek request are unchanged.
 - `git diff b8c1242 08b0ac4 -- src/cee/retrieve/planner.py` holds only `asked_firms`, the usage / `finished_at` stamp,
   and the pin and period passes (retrieval). No prompt, schema or request change.
-- `src/cee/answer/prompt.py` is unchanged.
+- `src/cee/answer/prompt.py` changed by 26 lines: the reduce prompt went from v5 to v5.2 (746c8d0, 20663ec).
+  - The map is not affected: `extract.py` does not import `prompt.py`.
+  - The reused reduces are safe: their key hashes `REDUCE_VERSION` and the system prompt (plan review round 2, nb 3).
 
 Retrieval changes since then reach the map key through its chunk ids. The grouping is checked by the message hashes
 of step 7. The report's "how it was run" repeats these bases.
@@ -112,6 +114,50 @@ of step 7. The report's "how it was run" repeats these bases.
 - **Any #247 map record whose message hash differs** in step 7.
 
 #243 records (`plan-v2`, a single answer call) and #217 / #240 records (Claude) have keys that never match.
+
+## TL approval conditions (issuecomment-7049142807; plan review round 2, issuecomment-7049132420)
+These override any step below that says otherwise.
+
+**C1. The hash check runs on the worktree's own code** (round 2, blocking 1).
+- `diag/map_msg_hash.py` takes `--wt <worktree>`:
+  - It puts `<wt>/src` and `<wt>/scripts` first on `sys.path`, and the scripts also set `PYTHONPATH=<wt>\src`.
+  - It imports `eval_run` from `<wt>/scripts` before any `cee` import.
+- The tsv header records `extract.__file__`, `eval_run.__file__` and `git -C <wt> rev-parse HEAD`.
+- It aborts (exit 3) unless both files are under `<wt>`.
+- `DEEPSEEK_API_KEY` is set to empty for every hash run, so a slip can only fail with a 401.
+- It refuses any `--max-calls` other than 0 (exit 3; round 2, nb 6).
+
+**C2. The producing commit is assigned per record, from the record's `at`** (round 2, blocking 2):
+- 7b9a5b4 for `at` 02:49-04:06;
+- 715adda for 06:57-07:32 (Q11 five maps + `remap.MS`; Q22 `map.MS`; Q23 EDJ / MER / MS / SCHW; Q24 five maps +
+  `remap.SCHW`);
+- 2d5f25b for Q23 `map.RJF` (12:49).
+
+No code commit falls inside those windows. Every record falling outside these windows has no producing commit; it is
+left out and called.
+
+Each historical replay:
+- runs on a detached worktree at that commit with that commit's own CLI. 7b9a5b4 and 715adda have no `--cache` and no
+  `--naive-tz`, so the seed goes into `<wt>/.eval-runs/cache` (gitignored);
+- uses the producing run's questions, `--as-of 2026-11-17`, the pinned env and `--max-calls 0`.
+
+`count-fts.md` gets a record -> `at` -> commit column.
+
+**C3. Allow-list cache** (round 2, blocking 3).
+- Of the inherited map / remap records (#247's, and for hybrid also the fts final `raw/`), the run cache holds **only**
+  those the **final** 0-call count served with matching message hashes (message, system prompt, schema).
+- Every other inherited `*map.*` / `*remap.*` record is left out, so any such call is made. A remap that only becomes
+  reachable after a new round-1 call is therefore made, never reused unverified.
+- Plans and reduces are unaffected: the plan key hashes the query, and the reduce key hashes the rendered message.
+- The remaps and maps left out are counted in `count-fts.md` / `count-hyb.md`.
+
+**C4. Round-2 non-blocking 1-6:**
+1. The round-2 bound counts distinct `_row_key(entity)` values (a firm, or `all` for theme questions).
+2. Cached remaps are subtracted only for questions whose round 1 was fully served at the count.
+3. The `prompt.py` statement is corrected (above).
+4. The reports count reduces shared between modes next to the shared map records.
+5. An Acceptance line for the post-run tsv cross-check.
+6. The wrapper refuses `--max-calls` other than 0 (C1).
 
 ## Paid-call plan (CLAUDE.md "Paid API calls"; TL go-ahead issuecomment-7029133145)
 **Questions.** Q1-Q30, one run each in each mode. One run is the full flow:
@@ -458,6 +504,8 @@ or the database changes, in any of the three PRs.
 - [ ] Message check: every reused map / remap record (the 34 #247 records in fts; every record hybrid reuses) has
       equal message hashes (system prompt and schema too), or was dropped and called. Tables are in `count-fts.md` /
       `count-hyb.md`, committed before each run.
+- [ ] Post-run cross-check (C4.5): in each final replay's tsv (fts, hybrid), every inherited record that was reused
+      has a source hash, and it matches.
 - [ ] Caps written before each paid phase (22; C-fts; C-hyb), with the per-question round-2 bound.
 - [ ] Calls per attempt: `meta.real_calls` (or the log) = new cache files of that attempt; the total over attempts is
       at or below the cap. A capped call is named and was not topped up without the TL.
@@ -521,3 +569,7 @@ or the database changes, in any of the three PRs.
   - nb 8: second-read sets extended.
   - nb 9: the mock-baseline reading stated.
   - 0 calls.
+- 2026-11-20 - plan review round 2 (issuecomment-7049132420) and TL approval at d5f337d on conditions
+  (issuecomment-7049142807). The conditions are written in above as C1-C4: the wrapper runs on the worktree's own
+  code; producing commit per record from `at`; an allow-list cache; round-2 nb 1-6. Execution starts after this
+  commit. 0 calls.
