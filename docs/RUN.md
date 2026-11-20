@@ -40,7 +40,8 @@ python3.11 -m venv .venv
 ```
 
 Open `.env` in a text editor. Leave `LLM_PROVIDER=mock` (offline, free) unless you are told
-to test with a real model; then set `LLM_PROVIDER=anthropic` and your `ANTHROPIC_API_KEY`.
+to test with a real model; then set `LLM_PROVIDER=anthropic` and your `ANTHROPIC_API_KEY`
+(or `LLM_PROVIDER=deepseek` and `DEEPSEEK_API_KEY`, section 7).
 Teammates leave `CORPUS_SHARE_PATH` empty. Never commit `.env`.
 
 Corpus owners who ingest documents (tech lead, C1, C2) also install
@@ -400,6 +401,28 @@ LLM_PROVIDER=anthropic .venv/bin/python -m streamlit run src/cee/app/streamlit_a
 ```
 Open http://localhost:8501, type a question, and click a citation to see the stored passage.
 The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
+
+**Ask with DeepSeek** (#242; paid, same two calls per question). Put `DEEPSEEK_API_KEY` in `.env`
+and keep `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`; strict tool schemas need the `/beta`
+URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. `DEEPSEEK_THINKING` turns the model's
+reasoning on or off; leave it empty for the default, which was chosen in the #242 check
+(`docs/results/0242-deepseek-check.md`). With thinking on, an answer can take several minutes.
+```powershell
+$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
+```
+```bash
+LLM_PROVIDER=deepseek .venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+```
+Planned real runs of a few questions (CLAUDE.md "Paid API calls"):
+```powershell
+$env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe scripts\eval_run.py --real --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
+```
+```bash
+LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --max-calls 6 --questions Q1,Q22,Q24 --as-of 2026-11-17
+```
+If DeepSeek answers 402 (balance used up), 429 (rate limit) or 401 (key rejected), the question
+stops with that message and nothing is saved. Top up, wait or fix the key, then run again; saved
+outputs are reused.
 
 **Check retrieval for all 30 questions, free** (mock provider, no calls; compares with the
 committed baseline of the current snapshot):

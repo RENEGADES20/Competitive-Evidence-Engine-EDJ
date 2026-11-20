@@ -27,7 +27,7 @@ Search time: every question's `search()` is timed (`search_s`); one untimed warm
 first question comes first (`warmup_s`, model loading in hybrid mode), and the median goes into
 the summary and the report header.
 
---real calls the configured provider (LLM_PROVIDER), at most --max-calls times, and saves every
+--real calls the configured provider (LLM_PROVIDER: anthropic, openai or deepseek), at most --max-calls times, and saves every
 model output in .eval-runs/cache/ so the same question + prompt version + snapshot + model +
 retrieved chunks is never paid for twice (CLAUDE.md "Paid API calls"). Reports go to
 .eval-runs/<snapshot>-<time>/report.md and report.json.
@@ -447,6 +447,13 @@ def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model:
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
 
+def timing(t0: float, usage: dict | None) -> dict:
+    """#242: wall time of one paid call and its output tokens per second (None when unknown)."""
+    wall = round(time.monotonic() - t0, 2)
+    out = (usage or {}).get("output_tokens")
+    return {"wall_s": wall, "tokens_per_s": round(out / wall, 2) if out and wall > 0 else None}
+
+
 def parts_of(plan) -> list | None:
     """The plan's parts as the answer cache key sees them (#215): [[id, text, firms], ...]."""
     return None if plan is None else [[p.id, p.text, list(p.firms)] for p in plan.parts]
@@ -458,6 +465,8 @@ def plan_cache_key(q: dict, snapshot: str, provider: str, model: str, max_parts:
     provider, model, part cap, the planner's output cap and the resolved query; the request
     version (#232) only when given."""
     from cee.retrieve.planner import PLANNER_MAX_TOKENS, PLANNER_VERSION
+    # PLANNER_MAX_TOKENS is the constant 2000; the DeepSeek planner cap (by thinking mode, #242) is
+    # kept apart through the request version (llm.request_version), so the key stays as it was.
     parts = [q["id"], q["text"], PLANNER_VERSION, snapshot, provider, model, max_parts, PLANNER_MAX_TOKENS, query]
     if request:
         parts = [*parts, {"request": request}]
@@ -554,10 +563,10 @@ class RealRunner:
         from cee.ask import model_name
 
         if provider == "mock":
-            raise SystemExit("--real needs LLM_PROVIDER=anthropic or openai; it is mock.")
+            raise SystemExit("--real needs LLM_PROVIDER=anthropic, openai or deepseek; it is mock.")
         self.provider, self.max_calls, self.snapshot = provider, max_calls, snapshot
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
-        self.max_tokens = llm.MAX_TOKENS
+        self.max_tokens = llm.answer_max_tokens(provider)   # #242: deepseek by thinking mode
         self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
         self.calls, self.reused, self.last_file = 0, 0, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
@@ -602,16 +611,28 @@ class RealRunner:
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "request_version": self.request_version,
                 "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
+        from cee.answer.llm import ProviderStop
+
+        t0 = time.monotonic()
         try:
             answer, raw = answer_for(q["text"], query, hits, self.provider, plan=plan)
+        except ProviderStop as e:   # #242: refused before any output: nothing to save, the run stops
+            raise SystemExit(f"stopped: {e}") from e
         except ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
             usage = getattr(e, "usage", None) or {}
             self.last_stop = (getattr(e, "stop_reason", None), usage.get("output_tokens"))
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
-                              "stop_reason": getattr(e, "stop_reason", None), "usage": usage})
+                              "stop_reason": getattr(e, "stop_reason", None), "usage": usage,
+                              **timing(t0, usage)})
             return None, "invalid"
+        # Any other error (timeout, 400 / 500 / 503) propagates: nothing saved, the call counted.
         self.last_stop = (raw.stop_reason or None, raw.usage.get("output_tokens"))
-        self._save(path, {**meta, "stop_reason": raw.stop_reason, "usage": raw.usage, "raw": raw.model_dump()})
+        extra = {}
+        payload = getattr(raw, "_provider_payload", None)
+        if payload:   # #242: DeepSeek's reasoning, kept in the record only (never in the Answer dump)
+            extra["reasoning_content"] = payload.get("reasoning_content")
+        self._save(path, {**meta, "stop_reason": raw.stop_reason, "usage": raw.usage, **timing(t0, raw.usage),
+                          **extra, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
 
     def plan(self, q: dict, query):
@@ -641,22 +662,35 @@ class RealRunner:
         self.calls += 1   # counted before the call: a failed call still cost money
         meta = {"question_id": q["id"], "question": q["text"], "planner_version": planner.PLANNER_VERSION,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model, "max_parts": cap,
-                "max_tokens": planner.PLANNER_MAX_TOKENS, "request_version": self.request_version,
+                "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.request_version,
                 "query": asdict(query),
                 "at": dt.datetime.now().isoformat()}
+        from cee.answer.llm import ProviderStop
+
         call: dict = {}   # #230: stop_reason and usage of the call, saved with every plan record
+        t0 = time.monotonic()
         try:
             raw = planner.call_planner(query, self.provider, cap, meta=call)
+        except ProviderStop as e:   # #242: refused before any output: nothing to save, the run stops
+            raise SystemExit(f"stopped: {e}") from e
         except planner.PlannerOutputError as e:
             self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
-                              "stop_reason": e.stop_reason, "usage": call.get("usage")})
+                              "stop_reason": e.stop_reason, "usage": call.get("usage"),
+                              **timing(t0, call.get("usage")), **self._reasoning(call)})
             return planner.from_output(query, e.raw, self.provider, cap, error=str(e))
         except Exception as e:   # API / network: the rule plan, the call counted, never re-called
             err = f"{type(e).__name__}: {e}"
-            self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None})
+            self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
+                              **timing(t0, None)})
             return planner.from_output(query, None, self.provider, cap, error=err)
-        self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"), "raw": raw})
+        self._save(path, {**meta, "stop_reason": call.get("stop_reason"), "usage": call.get("usage"),
+                          **timing(t0, call.get("usage")), **self._reasoning(call), "raw": raw})
         return planner.from_output(query, raw, self.provider, cap)
+
+    @staticmethod
+    def _reasoning(call: dict) -> dict:
+        """#242: the planner's reasoning text, when the provider returned one (deepseek)."""
+        return {"reasoning_content": call["reasoning_content"]} if "reasoning_content" in call else {}
 
     def _save(self, path: Path, record: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)

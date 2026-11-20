@@ -1,6 +1,6 @@
 """Tests cannot reach a paid API (#224, CLAUDE.md "Paid API calls" rule 4).
 
-tests/conftest.py stubs the two real-client builders and clears the credential environment. These
+tests/conftest.py stubs the three real-client builders (anthropic, openai, deepseek #242) and clears the credential environment. These
 tests prove it with a request counter on the SDKs' transport: anthropic 1.9.0 and openai 3.22.1
 send through httpx2 (their client wrappers subclass httpx2.Client / httpx2.AsyncClient and define
 no send of their own; httpx2.Client is not an httpx.Client). The counter records every request and
@@ -28,6 +28,8 @@ except ImportError:  # not a core requirement; see the docstring
 from cee.answer import llm
 from cee.retrieve import fts, planner
 from tests.conftest import CLOSED_PORT_URL, PaidCallBlocked
+
+REAL_DEEPSEEK_CLIENT = llm.deepseek_client   # captured at import, before conftest's stub (#242)
 
 
 @pytest.fixture
@@ -78,10 +80,11 @@ def _budget_question() -> fts.Query:
 
 def test_environment_is_cleared(sent):
     assert os.environ["LLM_PROVIDER"] == "mock"
-    left = {n for n in os.environ if n.startswith(("ANTHROPIC_", "OPENAI_"))}
-    assert left == {"ANTHROPIC_CONFIG_DIR", "ANTHROPIC_BASE_URL", "OPENAI_BASE_URL"}
+    left = {n for n in os.environ if n.startswith(("ANTHROPIC_", "OPENAI_", "DEEPSEEK_"))}
+    assert left == {"ANTHROPIC_CONFIG_DIR", "ANTHROPIC_BASE_URL", "OPENAI_BASE_URL", "DEEPSEEK_BASE_URL"}
     assert os.listdir(os.environ["ANTHROPIC_CONFIG_DIR"]) == []
-    assert os.environ["ANTHROPIC_BASE_URL"] == os.environ["OPENAI_BASE_URL"] == CLOSED_PORT_URL
+    assert (os.environ["ANTHROPIC_BASE_URL"] == os.environ["OPENAI_BASE_URL"]
+            == os.environ["DEEPSEEK_BASE_URL"] == CLOSED_PORT_URL)
     with pytest.raises(anthropic.AnthropicError):   # CredentialsError: no profile in the empty dir
         anthropic.Anthropic()
     with pytest.raises(openai.OpenAIError):         # no key
@@ -94,7 +97,22 @@ def test_client_builders_are_blocked(sent):
         llm.anthropic_client()
     with pytest.raises(PaidCallBlocked, match="blocked"):
         llm.openai_client()
+    with pytest.raises(PaidCallBlocked, match="blocked"):
+        llm.deepseek_client()
     assert sent == []
+
+
+def test_real_deepseek_client_honors_the_closed_base_url(sent, monkeypatch):
+    """#242 control: the real builder (captured before conftest's stub) with a dummy key sends one
+    request, to the closed port's /chat/completions, and the counter sees it. No key: no client."""
+    with pytest.raises(RuntimeError, match="DEEPSEEK_API_KEY"):
+        REAL_DEEPSEEK_CLIENT()
+    assert sent == []
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "dummy-key")
+    client = REAL_DEEPSEEK_CLIENT()
+    with pytest.raises(openai.APIConnectionError):
+        client.chat.completions.create(model="x", max_tokens=1, messages=[{"role": "user", "content": "hi"}])
+    assert len(sent) == 1 and sent[0]["url"] == f"{CLOSED_PORT_URL}/chat/completions"
 
 
 def test_profile_on_disk_cannot_reach_the_api(sent, monkeypatch, tmp_path):
@@ -119,4 +137,8 @@ def test_profile_on_disk_cannot_reach_the_api(sent, monkeypatch, tmp_path):
         llm.generate("question", [], provider="anthropic")
     with pytest.raises(PaidCallBlocked, match="blocked"):
         llm.generate("question", [], provider="openai")
+    plan = planner.plan_question(_budget_question(), "deepseek")
+    assert plan.source == "fallback" and "blocked" in plan.error and plan.calls == 1
+    with pytest.raises(PaidCallBlocked, match="blocked"):
+        llm.generate("question", [], provider="deepseek")
     assert sent == []

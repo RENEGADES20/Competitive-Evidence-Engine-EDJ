@@ -154,6 +154,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-19 | #216 done: snapshot corpus-2026-11-19 (224 docs, 21,161 chunks) with advisor-count sources for MS (4Q2020), Merrill (4Q2023; 3Q25 ">15K") and Schwab (none published; Form ADV closest metric); definitions quote them; new baseline 29/1 (#236) | Q23 has no in-window series for MS/Merrill/Schwab; ADV not searched for benchmark questions (#179), both accepted for #217/NEXT | run /sync-db; exp/hybrid embed --missing at next sync |
 | 2026-11-19 | W10 scored run on corpus-2026-11-19: 24/30 (tier 1 14/18; first read 25, Q19 failed on second read) vs Gate 4 21/30, report + NEXT rewritten, 61 real calls (#238) | none | NEXT items 1 (behavior decision), 2 (cross-firm conclusion) and 8 (planner firm scope) |
 | 2026-11-20 | ADR-021 (answer behavior by code, definitions and comparability, sub-question decomposition, no fixed call cap) with ADR-012/019/020 amendments, specs, behavior_supersede.yaml (Q24, Q25, Q28) and Q31-Q35 appended (#244) (#251) | none | #245 planner v3 and firms x aspects retrieval |
+| 2026-11-20 | #242 DeepSeek provider (planner + answer, strict tools on /beta, thinking default on after a 12-call check: valid 6/6 on vs 5/6 off), OpenAI planner rejects cut plans (#253) | Blockers: none | Next: #243; ADR-012/CLAUDE.md provider list via #244 |
 
 ## Weekly score (from W6)
 

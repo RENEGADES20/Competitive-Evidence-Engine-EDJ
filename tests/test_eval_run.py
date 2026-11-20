@@ -1250,3 +1250,124 @@ def test_hybrid_constants_record_the_pool_rule(monkeypatch, tmp_path):
     assert "RERANK_N" not in c
     assert (c["POOL_PER_GROUP"], c["LEG_K"], c["RRF_K"], c["TOKEN_BUDGET"]) == (
         fts.POOL_PER_GROUP, hybrid.LEG_K, hybrid.RRF_K, fts.TOKEN_BUDGET)
+# --- DeepSeek (#242) --------------------------------------------------------------------------
+
+@pytest.fixture
+def deepseek_model(monkeypatch):
+    """A deepseek generate that returns a valid answer carrying reasoning, or raises `state['error']`."""
+    from cee import ask
+    from cee.answer.schema import Answer
+
+    calls, state = [], {"error": None}
+
+    def generate(question, hits, provider, plan=None, window=None):
+        calls.append(provider)
+        if state["error"] is not None:
+            raise state["error"]
+        a = Answer(answerable=True, behavior="answer", claims=[{"text": "x", "chunk_ids": [hits[0].chunk_id]}],
+                   llm_called=True, stop_reason="tool_calls", usage={"output_tokens": 400, "reasoning_tokens": 300})
+        a._provider_payload = {"reasoning_content": "secret thoughts", "content": None}
+        return a
+
+    monkeypatch.setattr(ask, "generate", generate)
+    return calls, state
+
+
+def test_deepseek_records_carry_version_caps_reasoning_and_timing(deepseek_model, monkeypatch, tmp_path):
+    import json
+
+    monkeypatch.setenv("DEEPSEEK_THINKING", "off")
+    runner = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.model == "deepseek-v4-pro" and runner.max_tokens == 20000
+    a, how = runner.answer(q("Q1", []), query(["MS"]), real_hits())
+    assert how == "called"
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["request_version"] == "ds-strict-1-think-off-a20000-p2000" and rec["max_tokens"] == 20000
+    assert rec["reasoning_content"] == "secret thoughts"
+    assert rec["wall_s"] >= 0 and "tokens_per_s" in rec
+    assert "secret thoughts" not in json.dumps(rec["raw"]) and "secret thoughts" not in json.dumps(a)
+    # thinking on is another request: its key differs, so nothing is reused
+    monkeypatch.setenv("DEEPSEEK_THINKING", "on")
+    on = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p16000"
+    assert on.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "called" and on.calls == 1
+    assert len(deepseek_model[0]) == 2 and len(list((tmp_path / "cache").iterdir())) == 2
+
+
+def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
+    from cee import ask
+    from cee.retrieve import planner
+    from cee.retrieve.fts import resolve
+
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    monkeypatch.setenv("DEEPSEEK_THINKING", "on")
+    raw = {"parts": [{"id": "a", "text": "payout", "firms": ["MS"], "keyword_query": "payout grid"}]}
+
+    def call(query, provider, cap, client=None, meta=None):
+        meta.update(stop_reason="tool_calls", usage={"output_tokens": 900}, reasoning_content="plan thoughts")
+        return raw
+    monkeypatch.setattr(planner, "call_planner", call)
+    runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["max_tokens"] == 16000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p16000"
+    assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
+
+
+def test_deepseek_invalid_answer_is_saved_and_never_recalled(deepseek_model, tmp_path):
+    from cee.answer import llm
+
+    calls, state = deepseek_model
+    state["error"] = llm.ModelOutputError("cut", {"reasoning_content": "r"}, "deepseek", "length",
+                                          {"output_tokens": 20000})
+    runner = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    assert runner.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "invalid"
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["invalid"] and rec["stop_reason"] == "length" and rec["raw_payload"] == {"reasoning_content": "r"}
+    assert rec["tokens_per_s"] is not None or rec["wall_s"] == 0
+    state["error"] = None
+    again = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
+    assert again.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "invalid" and again.calls == 0
+    assert len(calls) == 1
+
+
+def test_deepseek_provider_stop_saves_nothing_and_exits(deepseek_model, monkeypatch, tmp_path):
+    from cee.answer import llm
+    from cee.retrieve import planner
+    from cee.retrieve.fts import resolve
+
+    calls, state = deepseek_model
+    state["error"] = llm.ProviderStop("DeepSeek: insufficient balance (402); top up")
+    runner = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    with pytest.raises(SystemExit, match="insufficient balance"):
+        runner.answer(q("Q1", []), query(["MS"]), real_hits())
+    assert not (tmp_path / "cache").exists() and runner.calls == 1
+
+    def refuse(*a, **kw):
+        raise llm.ProviderStop("DeepSeek: rate limit reached (429)")
+    monkeypatch.setattr(planner, "call_planner", refuse)
+    with pytest.raises(SystemExit, match="rate limit"):
+        runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
+    assert not (tmp_path / "cache").exists()
+
+
+def test_other_answer_errors_propagate_save_nothing_and_count(deepseek_model, tmp_path):
+    """Review 2 NB2 (D14): a timeout / 500 on the answer path aborts the run; nothing saved; counted."""
+    import httpx2
+    import openai
+
+    calls, state = deepseek_model
+    state["error"] = openai.APITimeoutError(request=httpx2.Request("POST", "http://127.0.0.1:9/chat/completions"))
+    runner = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
+    with pytest.raises(openai.APITimeoutError):
+        runner.answer(q("Q1", []), query(["MS"]), real_hits())
+    assert runner.calls == 1 and len(calls) == 1
+    assert not (tmp_path / "cache").exists() and not (tmp_path / "run" / "raw").exists()
+
+
+def test_timing_helper():
+    import time
+
+    t = er.timing(time.monotonic() - 2.0, {"output_tokens": 100})
+    assert 1.9 <= t["wall_s"] and 40 <= t["tokens_per_s"] <= 52
+    assert er.timing(time.monotonic(), None)["tokens_per_s"] is None

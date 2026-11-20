@@ -211,7 +211,7 @@ def validate_plan(raw, q: Query, cap: int | None = None) -> tuple[list[Part], li
 
 
 def plan_schema(strict: bool = False) -> dict:
-    """strict=True: the OpenAI schema (no array limits). strict=False: the Anthropic tool's schema,
+    """strict=True: the OpenAI and DeepSeek (#242) schema (no array limits). strict=False: the Anthropic tool's schema,
     also sent with strict: true since #232; Anthropic strict mode accepts minItems 0 or 1 and no
     maxItems, so the part cap is in the prompt and code cuts extra parts (validate_plan)."""
     part = {"type": "object",
@@ -264,6 +264,21 @@ def openai_plan_request(q: Query, cap: int) -> dict:
     }
 
 
+def planner_max_tokens(provider: str) -> int:
+    """The planner call's output cap (#242): by thinking mode for deepseek, else PLANNER_MAX_TOKENS."""
+    if provider == "deepseek":
+        from cee.answer.llm import DEEPSEEK_PLANNER_MAX_TOKENS
+        return DEEPSEEK_PLANNER_MAX_TOKENS[settings().deepseek_thinking]
+    return PLANNER_MAX_TOKENS
+
+
+def deepseek_plan_request(q: Query, cap: int) -> dict:
+    """#242: strict function submit_plan (OpenAI strict schema: no array limits), explicit max_tokens."""
+    from cee.answer.llm import deepseek_tool_request
+    return deepseek_tool_request(PLAN_TOOL, "Submit the search plan.", plan_schema(strict=True),
+                                 system_prompt(cap), planner_message(q, cap), planner_max_tokens("deepseek"))
+
+
 def _block_dict(b) -> dict:
     from cee.answer.llm import _block_dict as block
     return block(b)
@@ -297,18 +312,40 @@ def call_planner(q: Query, provider: str, cap: int, client=None, meta: dict | No
         client = client or llm.openai_client()
         resp = client.chat.completions.create(**openai_plan_request(q, cap))
         content = resp.choices[0].message.content
-        meta["stop_reason"] = getattr(resp.choices[0], "finish_reason", None)
+        stop = getattr(resp.choices[0], "finish_reason", None)
+        meta["stop_reason"] = stop
         meta["usage"] = llm._usage(resp, "prompt_tokens", "completion_tokens")
+        if stop in llm.CUT_REASONS:   # #242: a cut plan is never trusted, even when it parses
+            raise PlannerOutputError("planner output cut at max_tokens", content, stop)
         try:
             return json.loads(content)
         except (TypeError, ValueError) as e:
             raise PlannerOutputError(f"planner output is not JSON: {e}", content) from e
+    if provider == "deepseek":   # #242: same checks and order as llm._deepseek
+        client = client or llm.deepseek_client()
+        resp = llm.deepseek_create(client, deepseek_plan_request(q, cap))
+        call, stop, usage, payload = llm.deepseek_tool_call(resp, PLAN_TOOL)
+        msg = payload if isinstance(payload, dict) else {}
+        meta["stop_reason"], meta["usage"] = stop, usage
+        meta["reasoning_content"] = msg.get("reasoning_content")
+        if stop in llm.CUT_REASONS:
+            raise PlannerOutputError("planner output cut at max_tokens", payload, stop)
+        if stop not in llm.DEEPSEEK_OK:
+            raise PlannerOutputError(f"planner output stopped by finish_reason {stop}", payload, stop)
+        if call is None:
+            raise PlannerOutputError(f"planner did not call {PLAN_TOOL} (finish_reason={stop})", payload, stop)
+        try:
+            return llm.deepseek_arguments(call)
+        except (TypeError, ValueError) as e:
+            raise PlannerOutputError(f"planner arguments are not a JSON object: {e}",
+                                     call.function.arguments, stop) from e
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
 def model_for(provider: str) -> str:
     s = settings()
-    return {"anthropic": s.llm_model, "openai": s.openai_model}.get(provider, provider)
+    return {"anthropic": s.llm_model, "openai": s.openai_model,
+            "deepseek": s.deepseek_model}.get(provider, provider)
 
 
 def from_output(q: Query, raw, provider: str, cap: int, error: str | None = None) -> Plan:
@@ -338,10 +375,14 @@ def plan_question(q: Query, provider: str | None = None, client=None, cap: int |
         return Plan(parts=[Part("p1", q.question, list(q.entities))])
     if provider == "mock" or not settings().planner or not fts.searchable(q):
         return rules_plan(q, cap)
+    from cee.answer.llm import ProviderStop
+
     try:
         raw = call_planner(q, provider, cap, client)
     except PlannerOutputError as e:
         return from_output(q, e.raw, provider, cap, error=str(e))
+    except ProviderStop:   # #242: 401 / 402 / 429 stop the question, never a silent rule plan
+        raise
     except Exception as e:   # API / network error: the rule plan; the call still counts (ADR-020)
         return from_output(q, None, provider, cap, error=f"{type(e).__name__}: {e}")
     return from_output(q, raw, provider, cap)
