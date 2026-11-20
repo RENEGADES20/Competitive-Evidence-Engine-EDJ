@@ -545,3 +545,37 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   in `m.hits`, code claims checked by `check_citations`; population pins only on matching metric or
   proxy aspects, Q22 none; `fetch_pinned` keeps tier 4; Q24 replay rebuilds pools; pin order; dated
   label both ways). Build starts.
+- 2026-11-20 - build (746c8d0 .. 715adda): populations config and tagging, `derive()` population /
+  approximate rules with `population_chunk_ids` citable, per-period sub-search and pins
+  (`fetch_pinned`: entity / segment / window / date range, doc-type scope except `adv`), `asked_firms`,
+  gap scope and competitor fold (model gaps outside the scope dropped, part coverage `out_of_scope` /
+  `competitors_gap`), basis breaks, reduce v5.1 (computation lines and code claims before the citation
+  check, context lines, why-line removal / restating replacement, dedupe by content containment then the
+  comparison and computability checks again, recency-only re-sort), chips, eval fields (`added_chunk_ids`,
+  per-call `passages` / `input_tokens_est`, reduce info), plan cache key kept stable (the new
+  retrieval-only Query fields). New tests: `tests/test_populations.py`, `tests/test_series_coverage.py`,
+  `tests/test_reduce_noise.py`. pytest 957 passed (0 real calls).
+- 2026-11-20 - mock 35 (0 calls; main c4ba303 in `wt-247b-main` vs 715adda, `ev247b\mock-compare2.txt`):
+  every main sub-question list identical, additions only `pinned` (Q1 2, Q11 12, Q22 5, Q23 17; the mock
+  rule plan has no series aspect, so no period pass), recall not lower (Q11 @final 0.4 -> 1.0, Q22 0.75 ->
+  0.875), no new forbidden hit, statuses and refusal unchanged (33 PASS / 2 FAIL); mock answers: 0
+  outside the matrix, 0 part gaps, 0 why-lines missing, 0 comparison claims missing, behavior = matrix.
+- 2026-11-20 - verify-cee at 9f66be3 (`.verify-runs/20261120-064407-9f66be3`): VERIFY PASS; ask-answer,
+  ask-progress, gap-path, invalid-chunk, coverage, filters, feedback PASS; open-citation and
+  download-document UNREACHABLE (no raw files in data/raw, as in part 1). No recipe line changed.
+- 2026-11-20 - 0-call replay of part 1 (`ev247b\diag\replay_part1.txt`; part 1's logged matrices and saved
+  reduce outputs, pools rebuilt with the new passes, TL condition 3.2): **Q24** EDJ accepted (edj_firm /
+  edj_firm, sources EDJ-10Q-2026Q2#59, EDJ-10K-2025#130), MS refused (ms_wm_all_channels vs
+  ms_wm_advisor_led), RJF refused (rjf_aua_incl_rcs vs rjf_advisors_excl_rcs, RJF-10K-2025#228); three code
+  computability claims, 0 outside the matrix. **Q26**: 27 of 30 why-lines would be replaced as restating
+  (part 1's why-lines), 2 duplicates removed. Q19: gap rows 58 -> 16, 12 duplicates, 1 why-line
+  restated, 3 re-sorted (a12 only). Q23: 25 why-lines removed (not recency), EDJ and RJF basis breaks,
+  `EDJ-10K-2025#130` reached by the 2025Q4 period search. Q11: 4 duplicates. Q1, Q3, Q22: unchanged.
+- 2026-11-20 06:52 - 0-call count (`ev247b\real-count`, no key, `--max-calls 0`, code gate 715adda): 8
+  plans reused (0 planner calls). Map records reused: Q1, Q3, Q19 (4 + 3 re-extractions), Q26 (1 + 1),
+  Q22 SCHW / EDJ / MER / RJF. Round 1 to call: Q11 5, Q22 1 (MS: a pinned NNA chunk), Q23 5, Q24 5 =
+  **16**. Re-extraction bound (firms re-mapped): Q11 5, Q22 1, Q23 5, Q24 5 = 16. Reduce 8. **Cap 40**
+  (ceiling 59). Largest map inputs (estimated tokens / passages): Q24 RJF 72,337 / 221, Q24 MS 71,528 / 212,
+  Q11 SCHW 71,308 / 230, Q11 MS 69,482 / 220, Q24 SCHW 67,996 / 221, Q23 MS 31,086 / 92; all under the
+  DeepSeek input limit (1,000,000 - 64,000). Refusal flags on Q11 / Q22 / Q24 are the same must-not
+  retrievals as part 1 (main search, not the additions).
