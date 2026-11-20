@@ -273,3 +273,35 @@ fresh blind scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in-r3\` (their replay
 `ev247b\blind-in-r3-hashes.txt`. Q3, Q19 and Q26 are byte-identical and keep their verdicts (PASS).
 
 verdicts-blind-r3.json sha256 ab7745129c55c08b64ecc8e2c07bebf3b7774bbb0e521afc375071d7865da86f (second re-check, five changed answers, fresh scorer agent, 0 API calls; committed alone before any comparison).
+
+## 8. Second re-check after the review fixes (0 API calls) and the final verdicts
+
+**3/5 PASS** on the five changed answers (Q1, Q22, Q24 PASS; Q11, Q23 FAIL). Fresh scorer agent, inputs only
+`ev247b\blind-in-r3\`; file `docs/results/0247b-raw/verdicts-blind-r3.json` (hash above, committed alone in
+b1d56f8).
+
+| Q | Part 1 | Part 2 (v5.1) | Re-check (v5.2) | **Final (fixed code, r3; Q3 / Q19 / Q26 byte-identical, kept)** | Class | Borderline | Reason (scorer, short) |
+|---|---|---|---|---|---|---|---|
+| Q1 | PASS | PASS | - | **PASS** | | | Channels in management's words, dated; the NNA target gap honestly marked |
+| Q3 | PASS | PASS | - | **PASS** (kept) | | | |
+| Q11 | FAIL | FAIL | FAIL | **FAIL** | s, r | yes | RJF and Merrill definitions quoted; MS a 2020 count, EDJ a table label, Schwab correctly none; the caveat lists per firm but never contrasts |
+| Q19 | PASS (b) | PASS (b) | PASS (b) | **PASS** (kept) | | yes | |
+| Q22 | PASS (b) | PASS (b) | PASS (b) | **PASS** | | yes | EDJ fourth quarters missing and unmarked; stray 2019-2020 MS points; the Schwab caveat contradicts its quoted core-NNA definition |
+| Q23 | FAIL | FAIL | FAIL | **FAIL** | r, c | | Only EDJ has eight quarters; MS 2019-2020, Merrill 2022-2023, RJF fiscal year-ends |
+| Q24 | FAIL | PASS (b) | PASS | **PASS** | | | EDJ computed on one basis; the other four declined with reasons; validity answered |
+| Q26 | PASS (b) | FAIL (b) | PASS (b) | **PASS** (kept) | | yes | |
+
+**Final part 2: 6/8** (Q1, Q3, Q19, Q22, Q24, Q26 PASS; Q11, Q23 FAIL), the same set as before the review fixes.
+Against part 1: 5/8 -> 6/8 (Q24 FAIL -> PASS, no PASS lost). Q23's remaining failure is class c (corpus: MS after
+4Q2020, RJF quarterly, Merrill after 4Q2023; section 5) plus r as the scorer reads it; Q11's is the missing
+written definitions (corpus) and the missing contrast (answer).
+
+### Findings added (follow-up, no code change in this PR)
+6. **Q22 Schwab "no definition" caveat** (finding 2 above, seen again by the scorer): `closest_metric` wording.
+7. **Q22 EDJ fourth quarters not marked**: Q22 asks "by quarter" with no range, so no asked periods and no period
+   gap; EDJ reports Q4 only inside its 10-K year figures, and the answer neither lists nor marks them. Candidate: a
+   period gap for a quarterly series against the quarters the other firms cover, or `SERIES_SPAN` on Q22.
+8. **Q11 contrast** (finding 3 above): the per-firm definitions caveat lists inclusions and exclusions but never
+   says how the five differ; candidate: a code-built contrast (who counts trainees, independents, Consumer
+   Banking, RCS; who publishes no count) or a comparison aspect forced by code on "define ... include or
+   exclude" questions.

@@ -411,12 +411,14 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
       4Q25 / 1Q26 and MS's last count 15,950 (4Q2020): the model wrote them and `dedupe_claims` removed them (PR #261
       review blocking 1; 11 claims removed by the bug, restored by the fix in the 0-call replay: EDJ 3 points, MS 2,
       RJF FY2023 / FY2024 totals and splits 6). The rest is corpus: MS after 4Q2020, RJF quarterly, Merrill after
-      4Q2023, EDJ 3Q26 (results doc sections 5, 7). Re-score after the fix pending; RJF basis-break noise remains.
+      4Q2023, EDJ 3Q26 (results doc sections 5, 7). Re-scored after the fix (r3, 0 calls): FAIL (r, c); RJF
+      basis-break noise remains.
 - [ ] Q11 (real): each firm's definition quoted, or "no written definition" with what the firm reports,
       cited (pinned definitions in the matrix); differences named. **Not met** (re-check blind FAIL r, s). The dedupe
       bug removed 10 claims (MS 15,950 / 15,468, EDJ 2Q26 firm / U.S. / Canada, Merrill 2023 / 2022, RJF totals x3),
       restored by the fix (0-call replay). Corpus: MS and Schwab publish no written definition, BAC's latest is 2023.
-      Answer: the per-firm caveat lists definitions but does not say how they differ (finding). Re-score pending.
+      Answer: the per-firm caveat lists definitions but does not say how they differ (finding). Re-scored after the
+      fix (r3, 0 calls): FAIL (s, r, borderline).
 - [x] Q19 (real, regression): blind PASS kept (borderline); no gap row outside an aspect's firm scope; no duplicate
       claims; why-lines only on a12; the other aspects keep their order.
 - [x] Q26 (real, regression): blind PASS kept after the revision (borderline; the first part-2 run FAILED, R1); why-lines carry stated context (0 `why_line_restated`
@@ -428,7 +430,8 @@ v4.1 unchanged. No question text, no `passes_if` text (the 6-word-run test).
 - [x] Q1 and Q3 (real, regression): blind PASS kept under v5.1 (Q3 after the TL-approved transport retry) (maps reused; only the reduce changes).
 - [x] The outcome is the issue's acceptance: "Closes #247" only if every target and every regression
       question passes blind; otherwise "Part of #247" with the open items. No regression check is
-      dropped. Part 2: 6/8 blind (Q11, Q23 FAIL) -> "Part of #247".
+      dropped. Part 2 final: 6/8 blind (Q11, Q23 FAIL; the r3 re-score of the five changed answers kept the set) ->
+      "Part of #247".
 - [x] Tests listed above; 0 real calls in tests (966 passed).
 - [x] Mock 35: every main chunk list identical to main; only `pinned` / `period` additions, each listed;
       recall not lower; forbidden hits from additions reported; mock answers pass every code check.
@@ -752,3 +755,6 @@ definitions) go to NEXT.
   positive; doc paths; file notes, basis_break chip dropped; ADR wording). 0-call replay of the eight scored
   answers (ev247b replay-final): Q3, Q19, Q26 byte-identical; Q1, Q11, Q22, Q23, Q24 changed -> blind-in-r3
   prepared for a fresh 0-call re-score. pytest 972 passed.
+- 2026-11-20 - r3 blind re-score of the five changed answers (0 API calls; hash ab774512... committed alone in
+  b1d56f8): Q1, Q22, Q24 PASS; Q11, Q23 FAIL. Final part 2 6/8 (same set). Findings 6-8 added (Schwab caveat
+  wording, EDJ Q4 points unmarked in Q22, Q11 contrast).
