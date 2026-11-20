@@ -127,8 +127,9 @@ Sub-questions with pins: 16; identical in both modes: 16.
   11 competitor passages reach the map. In hybrid-norerank the floor is 0.0097 (0.3 x the 2nd-best RRF
   score, a rank inside each firm) and cuts nothing: Merrill keeps 5 chunks and RJF 1, so 22 competitor
   passages reach the map. The corrective re-search added no competitor chunk in either mode (fts
-  re-searched a1.MS, a1.MER, a1.RJF; hybrid-norerank a1.MS; 0 hits each). TL decision pending: accept
-  as part of "retrieval" in #250, or fix first in a follow-up issue.
+  re-searched a1.MS, a1.MER, a1.RJF; hybrid-norerank a1.MS; 0 hits each). **TL decision (2026-11-20, posted on
+  #250): accepted as part of "retrieval" for #250.** The floor fires only on Q19 a1.MER; the #250 report
+  attributes any Q19 competitor difference to it; a mode-aware floor is a follow-up.
 - **Refusal.** hybrid-norerank fails the refusal check on Q22 (`SCHW-10Q-2026Q2#56`) and Q24
   (`SCHW-TR-2026Q3#10`): a must-not chunk is retrieved; the mock map cites neither (`map_must_not` empty).
   Neither question has a competitor sub-question, so this is not the floor.

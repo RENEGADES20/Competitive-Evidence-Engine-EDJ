@@ -180,12 +180,12 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
       lists, statuses, plans, map behavior, answers) -> 30/30 (35/35).
 - [x] hybrid-norerank mock runs on all questions with 0 calls; refusal and keyed checks and the
       per-question differences against fts on the same plans are in the evidence report.
-- [ ] Competitor floor measured at 0 calls: per question, fts vs hybrid-norerank `floor_dropped` /
+- [x] Competitor floor measured at 0 calls: per question, fts vs hybrid-norerank `floor_dropped` /
       `floor_emptied` counts and competitor chunks reaching the map, in the evidence report; numbers
       given to the TL before the PR is marked ready; outcome and TL decision commented on #250.
 - [x] `pinned` / `pins_cut` per sub-question equal in fts and hybrid-norerank (apart from dedup), in the
       evidence report.
-- [ ] Re-sync: `git fetch` before the PR and before merge; if `origin/main` moved past e15ccf8, re-merged
+- [x] Re-sync: `git fetch` before the PR and before merge; if `origin/main` moved past e15ccf8, re-merged
       and steps 1, 4, 5, 6 re-run on the new SHA; the PR body names the `main` SHA of the parity proof.
 - [x] Hybrid modes use the shared loop: `test_search_mode.py` shows `search_subquestions` called with
       hybrid `search_fn` / `research_fn` and `pin_fn=fts.fetch_pinned`; `run_map` gets the hybrid
@@ -194,7 +194,7 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
 - [x] Plans do not depend on the mode: `test_plan_cache_is_shared_by_every_retrieval_mode`,
       `test_reuse_plans_with_real_never_calls_the_planner`, `test_reuse_plans_in_a_mock_run_reads_the_saved_plan` pass.
 - [x] `git diff origin/main --stat` lists only hybrid files; `planner.py`, `fts.py`, `src/cee/answer/` equal `main`.
-- [ ] pytest green (vectors on and off), verify-cee (Smart search, ask-progress) PASS, `gh pr checks` green.
+- [x] pytest green (vectors on and off), verify-cee (Smart search, ask-progress) PASS, `gh pr checks` green.
 - [x] 0 real calls.
 
 ## Risks
@@ -236,3 +236,7 @@ Byte-equal to `origin/main` afterwards: `src/cee/retrieve/planner.py`, `fts.py`,
   (`.verify-runs/20261120-123125-388811e`). The app offers only `hybrid` (Smart search), not
   hybrid-norerank (#128), so ask-progress ran in `hybrid`; hybrid-norerank is covered by the mock eval.
   verify-cee `--mode fts`: search-mode, ask-progress, ask-answer PASS (`.verify-runs/20261120-123601-388811e`).
+- 2026-11-20 - TL decision on the floor table: accepted as part of "retrieval" for #250 (posted on #250; the
+  floor fires only on Q19 a1.MER, the #250 report attributes any Q19 competitor difference to it, a
+  mode-aware floor is a follow-up). Re-sync check before ready: `origin/main` still e15ccf8, no re-merge.
+  PR #264 CI green.
