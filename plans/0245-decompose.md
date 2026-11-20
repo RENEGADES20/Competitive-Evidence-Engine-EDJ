@@ -455,7 +455,7 @@ def corrective_search(q, plan, sq_id, extra_words: str, exclude: set[str],
 - [x] Re-search hook keeps all SQL filters and the exclude set (tests).
 - [x] Mock run at the pick: refusal 5/5 (keyed 22/22), recall@final (all and tier 1) not lower
       than `evals/baselines/corpus-2026-11-19`; every PASS -> FAIL explained (none); grid table in the PR.
-- [ ] pytest, verify-cee and `gh pr checks` green (pytest 761 passed, verify-cee PASS; CI in the PR).
+- [x] pytest, verify-cee and `gh pr checks` green (pytest 761 passed, verify-cee PASS, PR #255 pytest check pass).
 
 ## Mock checks (commands)
 Windows (from `D:\ALLPROJECTS\EDJ\wt-245`, `$env:PYTHONPATH="D:\ALLPROJECTS\EDJ\wt-245\src"`):
@@ -570,3 +570,4 @@ Mac: `PYTHONPATH=$PWD/src SUBQUESTION_TOKENS=12000 .venv/bin/python scripts/eval
   ProviderStop, ~0.87 CNY off-peak. Q19 cut at max_tokens (16000 reasoning) -> rule-plan fallback
   (finding, not re-run). Q11/Q22/Q24 real plans retrieve must-not chunks (finding for #246).
   Evidence: docs/results/0245-planner-check.md.
+- 2026-11-19 23:00 - PR #255 opened; gh pr checks: pytest pass.
