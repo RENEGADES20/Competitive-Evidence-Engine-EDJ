@@ -579,3 +579,9 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   Q11 SCHW 71,308 / 230, Q11 MS 69,482 / 220, Q24 SCHW 67,996 / 221, Q23 MS 31,086 / 92; all under the
   DeepSeek input limit (1,000,000 - 64,000). Refusal flags on Q11 / Q22 / Q24 are the same must-not
   retrievals as part 1 (main search, not the additions).
+- 2026-11-20 07:50 - real run (cap 40, code gate 715adda, run at 6a3825a, `ev247b\real-run`): **26 calls**
+  (16 map, 2 re-extraction, 8 reduce), 24 records reused, about $1.36 (off-peak). No ProviderStop, no 400,
+  no invalid output; **Q3's reduce call failed** (`APIConnectionError`), saved as `failed_call`, not re-run.
+  Raw records in `docs/results/0247b-raw/`. Findings (Q24 RJF refusal reason, Q23 RJF basis-break noise,
+  Q19 duplicate comparison gap) in `docs/results/0247-reduce-2-check.md`. Blind inputs prepared in
+  `ev247b\blind-in\` with `ev247b\scorer-prompt.txt`; **stopped before scoring** (the TL starts the scorer).
