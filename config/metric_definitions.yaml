@@ -28,7 +28,22 @@
 #                       independents); not_stated lists what the firm does not say
 #   see_also            other chunks with the same or earlier wording
 #   looked_in           documents searched (required for not_disclosed)
+#   contrast            (#247 part 3, advisor_headcount) per `contrast_dimensions` key: {value, text,
+#                       chunk_id, date}. value: stated | counted | excluded | count_only | none |
+#                       not_stated. text is a verbatim substring of chunk_id (tests, DB) or empty (code
+#                       prints a fixed phrase). chunk_id: the entry's chunk_id, a see_also id or a
+#                       contrast_ids id; required unless not_stated. date (count_date): ISO.
+#   contrast_ids        chunks cited only by the contrast (never pinned: not in see_also)
 #   note                one line for the reader
+
+# The dimensions of the code-built contrast of the firms' definitions (#247 part 3 item 1; Q11), in order.
+contrast_dimensions:
+  advisor_headcount:
+    - {key: written_definition, label: Written definition}
+    - {key: independents, label: Independent contractor advisors}
+    - {key: trainees, label: Trainees}
+    - {key: business_lines, label: Business lines in the count}
+    - {key: count_date, label: Date of the registered count}
 
 definitions:
   # ---------- Edward Jones ----------
@@ -44,8 +59,15 @@ definitions:
     basis: edj_financial_advisors_actual
     includes: [U.S. and Canada financial advisors (split in EDJ-10K-2025#148)]
     excludes: []
-    not_stated: [trainees, branch assistants (BOAs), "independents (none: all advisors are employees)"]
+    not_stated: [trainees, branch assistants (BOAs)]
     see_also: [EDJ-10K-2025#148, EDJ-10Q-2026Q2#60, EDJ-10K-2025#29]
+    contrast_ids: [EDJ-10K-2025#145, EDJ-10K-2025#35]
+    contrast:
+      written_definition: {value: count_only, text: "Financial advisors (actual)", chunk_id: EDJ-10K-2025#130}
+      independents: {value: stated, text: "The Partnership’s financial advisors are employees or partners of the Partnership.", chunk_id: EDJ-10K-2025#35}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "two operating and reportable segments based upon geographic location, the U.S. and Canada", chunk_id: EDJ-10K-2025#145}
+      count_date: {value: counted, date: 2025-12-31, text: "At year end 20,425", chunk_id: EDJ-10K-2025#130}
     note: >-
       Edward Jones reports a count ("actual", year end and average) with no written definition.
       Trainees appear in the onboarding text (#29) but the 10-K does not say whether they are counted.
@@ -80,6 +102,12 @@ definitions:
     excludes: []
     not_stated: [a definition of "Wealth Management representatives", trainees, any count after 4Q2020]
     see_also: [MS-SUPP-2020Q4#3, MS-SUPP-2025Q4#36, MS-SUPP-2026Q3#38, MS-10K-2025#167, MS-ADV1A-2026#1]
+    contrast:
+      written_definition: {value: count_only, text: "Wealth Management representatives 15,950", chunk_id: MS-SUPP-2020Q4#1}
+      independents: {value: not_stated}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "Wealth Management representatives", chunk_id: MS-SUPP-2020Q4#1}
+      count_date: {value: counted, date: 2020-12-31, text: "Wealth Management representatives 15,950", chunk_id: MS-SUPP-2020Q4#1}
     looked_in: [MS-10K-2025, MS-10Q-2025Q2, MS-10Q-2025Q3, MS-10Q-2026Q1, MS-10Q-2026Q2,
                 MS-SUPP-2025Q4, MS-SUPP-2026Q1, MS-SUPP-2026Q2, MS-SUPP-2026Q3, "MS-TR-* (2024Q4-2026Q3)",
                 MS-DECK-2026-strategic-update, MS-ADV-2026,
@@ -127,6 +155,12 @@ definitions:
     excludes: ["independent RIAs and their advisors (clients, SCHW-10K-2025#23)", clerical workers (Item 5.A)]
     not_stated: [how many are Financial Consultants or Wealth Consultants, other Schwab entities]
     see_also: [SCHW-10K-2025#18, SCHW-10K-2025#23]
+    contrast:
+      written_definition: {value: none, text: "perform investment advisory functions (including research)? 4127", chunk_id: SCHW-ADV1A-2026#1}
+      independents: {value: none, text: "Through the Advisor Services segment, Schwab has become one of the largest providers of custodial, trading, banking, and support services to RIAs and their clients", chunk_id: SCHW-10K-2025#23}
+      trainees: {value: not_stated}
+      business_lines: {value: none}
+      count_date: {value: none}
     looked_in: [SCHW-10K-2025, "SCHW-10Q-* (2025Q2-2026Q2)", "SCHW-MONTHLY-* (2026)", "SCHW-TR-* (2024Q4-2026Q3)",
                 "SCHW-DECK-* (2026Q1-Q3)", SCHW-DECK-2026-investor-day, SCHW-ADV-2026,
                 "SCHW-ADV1A-2026 (#216: Form ADV Part 1A Item 5, Charles Schwab & Co. CRD 5393)",
@@ -172,6 +206,12 @@ definitions:
     excludes: []
     not_stated: [a Merrill-only count, trainees, any count after 4Q2023 in the supplements]
     see_also: [BAC-DECK-2025-investor-day#9, BAC-DECK-2025-investor-day#13, BAC-DECK-2025-investor-day#34, BAC-10K-2025#246, MER-ADV1A-2026#1]
+    contrast:
+      written_definition: {value: stated, text: "Includes advisors across all wealth management businesses in GWIM and Consumer Banking", chunk_id: BAC-SUPP-2023Q4#2}
+      independents: {value: not_stated}
+      trainees: {value: not_stated}
+      business_lines: {value: counted, text: "all wealth management businesses in GWIM and Consumer Banking", chunk_id: BAC-SUPP-2023Q4#2}
+      count_date: {value: counted, date: 2023-12-31, text: "Total wealth advisors (3) 18,916", chunk_id: BAC-SUPP-2023Q4#2}
     looked_in: [BAC-10K-2025, BAC-SUPP-2025Q4, BAC-SUPP-2026Q1, BAC-SUPP-2026Q2, BAC-SUPP-2026Q3,
                 "BAC-PR-* (2026)", "BAC-DECK-* (2026Q1-Q3)", "BAC-TR-* (2024Q4-2026Q3)", MER-ADV-2026,
                 "BAC-SUPP-2023Q4 (#216: last supplement with a Total wealth advisors count)",
@@ -218,6 +258,12 @@ definitions:
     excludes: [advisors in the RCS division]
     not_stated: [assistants]
     see_also: [RJF-10K-2025#227, RJF-10K-2025#24]
+    contrast:
+      written_definition: {value: stated, text: "Advisors in our RCS division are not included in our financial advisor metric", chunk_id: RJF-10K-2025#228}
+      independents: {value: counted, text: "Independent contractors 5,065", chunk_id: RJF-10K-2025#227}
+      trainees: {value: counted, text: "new recruits and trainees that were moved into production roles", chunk_id: RJF-10K-2025#228}
+      business_lines: {value: excluded, text: "Advisors in our RCS division are not included", chunk_id: RJF-10K-2025#228}
+      count_date: {value: counted, date: 2025-09-30, text: "Total advisors 8,943", chunk_id: RJF-10K-2025#227}
     note: >-
       #227 splits the 8,943 total into 3,878 employees and 5,065 independent contractors; #228 says
       the count grew "as new recruits and trainees that were moved into production roles exceeded

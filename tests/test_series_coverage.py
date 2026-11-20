@@ -246,7 +246,9 @@ def test_r6a_definitions_by_firm_named_without_a_comparison_aspect():
     assert len(cav) == 1
     for name in ("Morgan Stanley:", "Edward Jones:", "Raymond James Financial:", "The Charles Schwab Corporation:"):
         assert name in cav[0]
-    assert "excludes advisors in the RCS division" in cav[0] and "publishes no definition of this metric" in cav[0]
+    assert "excludes advisors in the RCS division" in cav[0]
+    assert "publishes no count of this metric; reports a related figure instead" in cav[0]   # #247 part 3 item 2
+    assert "publishes no definition of this metric" not in cav[0]
     assert not any(x.startswith("Advisor headcount: the firms define it differently") for x in m.caveats)
     gap = next(g for g in m.gaps if g["id"] == "a1.SCHW")
     assert "the closest disclosed figure is Form ADV: 4,127 employees perform advisory functions (adjacent)" in gap["what"]

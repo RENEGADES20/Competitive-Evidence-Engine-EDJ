@@ -65,6 +65,16 @@ optional `scope`, `covers` (a log label), `quote` verbatim from `chunk_id`, and 
 document's period end). Checked by `tests/test_populations.py`. Not registered today: Schwab (no
 advisor count), Bank of America client assets, Edward Jones U.S. / Canada splits (TODO-verify).
 
+### Contrast of the definitions (#247 part 3; Q11)
+`contrast_dimensions` (per metric, today `advisor_headcount`): ordered `{key, label}` (written definition,
+independent contractor advisors, trainees, business lines in the count, date of the registered count). Each
+entry of that metric has a `contrast` map `key -> {value, text, chunk_id, date}`: `value` in `stated | counted
+| excluded | count_only | none | not_stated`; `text` is a verbatim substring of `chunk_id` (whitespace
+collapsed) or empty (code prints a fixed phrase); `chunk_id` is the entry's `chunk_id`, a `see_also` id or a
+`contrast_ids` id. `contrast_ids` are cited by the contrast only and never pinned (not in `see_also`), e.g.
+Edward Jones `EDJ-10K-2025#145` (U.S. and Canada segments) and `#35` (advisors are employees or partners).
+Checked by `tests/test_reduce_part3.py` (shape always; verbatim text against the database when it runs).
+
 ## Acceptance
 
 - `published_at` coverage 100%: no document without a publication date.
