@@ -26,7 +26,7 @@ at `6a3825a` (code gate: `git status` clean, `src scripts config` identical to t
   re-extraction bound 16; reduce 8; **cap 40** (ceiling 59). Largest map input: Q24 RJF ~72,337 tokens /
   221 passages (limit 936,000).
 
-## 2. Real check (26 DeepSeek calls)
+## 2. Real check (27 DeepSeek calls: 26 + 1 transport retry)
 - **Model**: `deepseek-v4-pro`, `/beta` strict tools, thinking on; `MAP=on`, `MAP_CONCURRENCY=6`,
   `SUBQUESTION_TOKENS=40000`, plan-v3.1, extract-v1.1, prompt v5.1, request version
   `ds-strict-1-think-on-a64000-p64000`. Wrapper `D:\ALLPROJECTS\EDJ\cache\ev247b\run-real.ps1` (with `.sh`);
@@ -40,14 +40,26 @@ at `6a3825a` (code gate: `git status` clean, `src scripts config` identical to t
 - **Cost**: about **$1.36** (all calls finished off-peak, 12:53-13:50 UTC on a weekday; rates per 1M tokens,
   off-peak: cache hit $0.022, miss $0.66, output $1.98; source as part 1: `docs/results/w11-deepseek-baseline.md`
   "Cost"). Part 1 + part 2 for #247: 72 calls.
-- **Raw records**: `docs/results/0247b-raw/` (50: the 26 new and the 24 reused).
+- **TL decision: 1 transport retry** (Q3). The failed reduce call returned no model output (a transport
+  failure, not a wrong answer), so the TL allowed exactly one retry with the same inputs and settings
+  (`run-real.ps1 -Phase run -Cap 1 -Questions Q3`, 07:55-07:57 local, code gate passed, `.env` copied in and
+  removed in `finally`). It returned a valid answer (stop `tool_calls`, 11,092 output tokens, about $0.02).
+  The failed record is kept as `Q3-reduce-ec259fc6b468c54a5288cdfa.failed-1.json`, the retry's record next
+  to it under its cache key. **Total: 27 calls, about $1.38.**
+  - The retry's output folder name was shadowed in the wrapper (PowerShell variables are not case-sensitive),
+    so it wrote into `ev247beal-run` and replaced that run's `report.json` and log. The eight-question report
+    was rebuilt from the saved records with 0 calls (`--max-calls 0`, no key: `ev247beal-run-final`, all 8
+    answers reused); the seven other answers are identical to the first dump (diffed). The raw records of the
+    26-call run were already in `docs/results/0247b-raw/`, and the run summary is in `ev247b\head-log.txt`.
+- **Raw records**: `docs/results/0247b-raw/` (51: the 26 new, the Q3 retry, the 24 reused; Q3's failed
+  record under the `.failed-1` name).
 
 ### Per question (behavior by code, the answer, the code checks)
 
 | Q | Behavior | Calls (map + re-map + reduce) | Claims / adjacent / gaps | Code checks |
 |---|---|---|---|---|
 | Q1 | answer | 0 + 0 + 1 | 18 / 3 / 2 | clean |
-| Q3 | (none) | 0 + 0 + 1 failed | - | reduce call failed (connection error) |
+| Q3 | answer | 0 + 0 + 1 failed + 1 retry | 23 / 0 / 0 | first reduce call failed (connection error); TL decision: 1 transport retry, valid |
 | Q11 | answer | 5 + 1 (+1 reused) + 1 | 23 / 8 / 8 | 9 pinned passages; 5 duplicates removed; basis breaks a2.EDJ, a2.MER |
 | Q19 | answer_with_boundary | 0 + 0 + 1 | 43 / 2 / 24 | gap rows (matrix) 58 -> 16; 2 duplicates; 3 re-sorted (a12 only); comparison missing a13 |
 | Q22 | answer | 1 + 0 + 1 | 42 / 9 / 2 | 1 pinned (MS); 11 `date_mismatch` (as part 1) |
@@ -68,8 +80,8 @@ For every question with an answer: 0 outside the matrix, 0 part gaps, 0 why-line
   facts; SCHW cells are different quantities from the Form ADV figures).
 
 ### Findings (reported, not re-run)
-1. **Q3 has no answer**: the reduce call failed with a connection error (a failed call, saved). Re-running it is
-   an unplanned re-run (TL decision); the blind scorer sees "no answer".
+1. **Q3's first reduce call failed** with a connection error (no model output). TL decision: 1 transport retry,
+   which returned a valid answer; both records are saved.
 2. **Q24 RJF refused for the wrong reason**: the 8,943 item's quote names "financial advisors" after the
    figure ("We had 8,943 employee and independent contractor financial advisors"), and the rule reads only the
    phrases before the figure, so the item got no population key: the ratio was refused as "population not
@@ -88,6 +100,6 @@ For every question with an answer: 0 outside the matrix, 0 part gaps, 0 why-line
 
 ## 3. Blind scoring (pending)
 Prepared for a fresh scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in\` (`answers-dump.txt` with the eight
-answers, Q3 shown as no answer; `questions.yaml`; `verdict-rule.txt`, part 1's rule) and
+answers, Q3 from the retry; `questions.yaml`; `verdict-rule.txt`, part 1's rule) and
 `ev247b\scorer-prompt.txt`; hashes in `ev247b\blind-in-hashes.txt`. Baseline: part 1 blind (Q1, Q3, Q19,
 Q22, Q26 PASS; Q11, Q23, Q24 FAIL).

@@ -585,3 +585,9 @@ missing, behavior = matrix behavior. Evidence `D:\ALLPROJECTS\EDJ\cache\ev247b\m
   Raw records in `docs/results/0247b-raw/`. Findings (Q24 RJF refusal reason, Q23 RJF basis-break noise,
   Q19 duplicate comparison gap) in `docs/results/0247-reduce-2-check.md`. Blind inputs prepared in
   `ev247b\blind-in\` with `ev247b\scorer-prompt.txt`; **stopped before scoring** (the TL starts the scorer).
+- 2026-11-20 07:57 - **TL decision: 1 transport retry** of Q3's reduce call (the APIConnectionError returned no
+  model output): one call, same inputs and settings, valid answer (23 claims). Failed record kept as
+  `docs/results/0247b-raw/Q3-reduce-ec259fc6b468c54a5288cdfa.failed-1.json`, the retry next to it. **Total
+  27 calls, about $1.38.** The wrapper's output folder variable was shadowed, so the retry overwrote
+  `ev247b\real-run\report.json`; the eight-question report was rebuilt with 0 calls (`ev247b\real-run-final`),
+  the seven other answers identical. Blind inputs rebuilt with Q3's answer; hashes updated. No code change.
