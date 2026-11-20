@@ -259,13 +259,13 @@ records #250 / #259 reuse); the replay acceptance item proves it.
       0242 records price to $0.79 full price ($0.27 off, $0.52 on), now in `0242-deepseek-check.md`.
 - [x] `--reuse-plans` on main: step 4 tests; `--max-calls` still caps every call type (a test: cap 1 on a
       two-firm question makes the plan call only).
-- [ ] verify-cee shows the new stages (issue acceptance 3): `python scripts/verify_cee.py run` all features
+- [x] verify-cee shows the new stages (issue acceptance 3): `python scripts/verify_cee.py run` all features
       PASS (ask-progress: 9 lines, the new texts, `query_log.filters.cost`), evidence folder named in the PR.
-- [ ] Open-citation flake: `python scripts/verify_cee.py run open-citation` passes 5 runs in a row
+- [x] Open-citation flake: `python scripts/verify_cee.py run open-citation` passes 5 runs in a row
       (5 run folders listed in the PR).
 - [x] `CONTEXT_WINDOW["openai"]` verified with a source, or the TODO kept with a note.
 - [x] CLAUDE.md names `deepseek`; `docs/RUN.md` has Windows and Mac blocks for the new flags.
-- [ ] `pytest` green locally (PYTHONPATH=wt-248/src) and `gh pr checks` green.
+- [x] `pytest` green locally (PYTHONPATH=wt-248/src) and `gh pr checks` green.
 - [x] 0 real calls (stated in the PR's Verification section).
 
 ## Progress log
@@ -313,3 +313,8 @@ records #250 / #259 reuse); the replay acceptance item proves it.
   ask-progress, gap-path, invalid-chunk, coverage, filters, feedback PASS; open-citation and
   download-document UNREACHABLE (no raw files in the worktree: `CORPUS_SHARE_PATH` unset because wt-248
   has no `.env`). Re-run with `CORPUS_SHARE_PATH` set to the Box folder in the command: see below.
+- 2026-11-20 11:20 - open-citation + download-document with `CORPUS_SHARE_PATH` (the Box corpus folder) set in
+  the command: 5 runs in a row, all PASS: `.verify-runs61120-111246-c2f4ecc`, `-111416-c2f4ecc`,
+  `-111526-c2f4ecc`, `-111636-61f1996`, `-111746-61f1996` (61f1996 changes only docs and a comment in
+  `llm.py`). The full run above covers every other feature; ask-progress shows the 9 stages and the
+  `query_log` cost (0 calls, $0). pytest 1005 passed. Next: PR, `gh pr checks`.
