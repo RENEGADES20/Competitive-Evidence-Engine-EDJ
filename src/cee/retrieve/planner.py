@@ -620,6 +620,8 @@ def pinned_ids(entity: str | None, aspect: Aspect) -> tuple[list[str], list[str]
     if d:
         ids += [d.get("chunk_id")] if d.get("chunk_id") else []
         ids += list(d.get("see_also") or [])
+        if aspect.kind == "series":   # #247 part 4 item 10: dated counts in undated documents (Q23 RJF)
+            ids += list(d.get("series_pins") or [])
     ids = list(dict.fromkeys(ids))
     return ids[:PIN_MAX], ids[PIN_MAX:]
 

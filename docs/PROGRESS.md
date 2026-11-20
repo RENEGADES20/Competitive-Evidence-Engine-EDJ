@@ -162,6 +162,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-20 | #247 part 2: populations of ratio inputs, per-period and pinned retrieval, basis-break / definition / series-span caveats, gap scope, dedupe (outside quotes), why-lines from context or cited background (v5.2); real check 6/8 blind, 33 calls (#261) | Q11 / Q23 open (blind FAIL after the dedupe fix; Q23 corpus gaps, Q11 missing definitions and contrast) | TL merge (ADR-015/021 amendments); follow-up findings |
 | 2026-11-20 | #248: eval and app cost per call and question (config/pricing.yaml, peak / off-peak, --naive-tz), resume proof for every call type, --reuse-plans and --cache on main, eval_cost.py, 9 progress stages, open-citation wait; 0 real calls (#262) | none | #249 sync exp/hybrid, then #250 DeepSeek fts + hybrid scored runs |
 | 2026-11-20 | #247 part 3: code-built definition contrast, unit-aware related-metric wording, quarter holes and span segments, years in the dedupe, per-firm gap sources, basis-break split rules; 0 API calls, replays guarded; final 7/8 (Q11 now PASS) (#263) | Q23: corpus gaps + RJF investor-day retrieval miss | NEXT items 9-11 |
+| 2026-11-20 | #247 part 4 (closes #247): code note "latest count found ... none found since" (MS 2020, Merrill/BAC 2023) and `series_pins` for the Q23 RJF investor-day count (8,731 at 2025-03-31), 2 real calls (#265) | adjudicated 6/8 on the eight (Q11, Q23 corpus-limited) | NEXT item 11 (headcount ingestion) |
 
 ## Weekly score (from W6)
 
