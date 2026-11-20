@@ -61,7 +61,7 @@ plan_question(query) -> Plan{aspects: [Aspect{id, text, keyword_query, metric, k
     # strict schema on every path: {aspects: [{id, text, keyword_query, firms, metric, kind}]}, all
     #   required, additionalProperties false, metric / kind enums ("" = no metric, no nullable type);
     #   anthropic minItems 1, openai / deepseek no array limits. Output cap 8000 (anthropic, openai;
-    #   deepseek 8000 thinking off, 16000 on, #242).
+    #   deepseek 8000 thinking off, 64000 on, #242 / #245).
     # firms decided by code (firm_scope): the resolved firms (role named, after the Ask page firm
     #   filter, Merrill once; firms we hold no documents for are not searched); for a home-firm market
     #   question (ADR-018's home-firm theme rule: q.theme_peers set; Q19) the competitors on the theme

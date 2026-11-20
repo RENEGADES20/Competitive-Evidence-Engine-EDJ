@@ -177,7 +177,7 @@ def test_request_version_and_model_names(thinking):
     off = llm.request_version("deepseek")
     thinking(True)
     on = llm.request_version("deepseek")
-    assert (off, on) == ("ds-strict-1-think-off-a20000-p8000", "ds-strict-1-think-on-a64000-p16000")
+    assert (off, on) == ("ds-strict-1-think-off-a20000-p8000", "ds-strict-1-think-on-a64000-p64000")
     assert llm.answer_max_tokens("deepseek") == 64000 and llm.answer_max_tokens("anthropic") == llm.MAX_TOKENS
     assert ask.model_name("deepseek") == planner.model_for("deepseek") == "deepseek-v4-pro"
 

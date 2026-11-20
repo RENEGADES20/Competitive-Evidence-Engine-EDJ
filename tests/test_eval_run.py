@@ -997,7 +997,7 @@ def test_deepseek_records_carry_version_caps_reasoning_and_timing(deepseek_model
     # thinking on is another request: its key differs, so nothing is reused
     monkeypatch.setenv("DEEPSEEK_THINKING", "on")
     on = er.RealRunner("deepseek", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
-    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p16000"
+    assert on.max_tokens == 64000 and on.request_version == "ds-strict-1-think-on-a64000-p64000"
     assert on.answer(q("Q1", []), query(["MS"]), real_hits())[1] == "called" and on.calls == 1
     assert len(deepseek_model[0]) == 2 and len(list((tmp_path / "cache").iterdir())) == 2
 
@@ -1018,7 +1018,7 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 16000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p16000"
+    assert rec["max_tokens"] == 64000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p64000"
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 

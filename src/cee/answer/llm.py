@@ -33,7 +33,9 @@ ANTHROPIC_REQUEST_VERSION = "strict-1"
 # gets the API's own thinking default (64K) for the answer and room to reason for the planner; off
 # keeps the project's 20000 / 2000. Quality first (TL, plan review 1).
 DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
-DEEPSEEK_PLANNER_MAX_TOKENS = {False: 8000, True: 16000}   # #245: plan-v3 has no aspect cap (off was 2000)
+# #245: plan-v3 has no aspect cap: off 2000 -> 8000; on 16000 -> 64000 (TL decision after the Q19
+# planner was cut at 16000 reasoning tokens; the same as the answer cap and DeepSeek's thinking default)
+DEEPSEEK_PLANNER_MAX_TOKENS = {False: 8000, True: 64000}
 # Read timeout per read, not per request. The docs only say empty lines are sent while a request
 # waits (one not started after 10 minutes is closed); nothing about lines during inference, so the
 # whole generation may be one silent read: 3600 s covers 64000 tokens at about 18 tokens/s.

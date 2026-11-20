@@ -188,7 +188,8 @@ row). The OpenAI request was already strict. The eval's cache keys carry the Ant
 version `strict-1` (`llm.request_version`); `PROMPT_VERSION` stays v4.1 (prompt text unchanged).
 DeepSeek (#242) sends `submit_answer` and `submit_plan` as strict function tools (`strict: true`
 on the `https://api.deepseek.com/beta` base URL), with an explicit `max_tokens`: 20000 / 2000 with
-thinking off, 64000 / 16000 with thinking on (reasoning shares the cap). Thinking off forces the
+thinking off, 64000 / 64000 with thinking on (reasoning shares the cap; planner cap
+2000 -> 8000 off and 16000 -> 64000 on since #245). Thinking off forces the
 named function; thinking on uses `tool_choice` auto (a forced choice is a 400 there). A 401 / 402 /
 429 stops the question with a plain message (`ProviderStop`), with no fallback and nothing saved.
 Its request version (`ds-strict-1-think-{on|off}-a{cap}-p{cap}`) joins the eval's cache keys.

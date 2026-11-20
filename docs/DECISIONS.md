@@ -805,7 +805,7 @@ Built (#245): `PLANNER_VERSION = plan-v3`, tool `submit_plan` with the strict sc
 `{aspects: [{id, text, keyword_query, firms, metric, kind}]}` on the anthropic, openai and deepseek
 paths (metric: a registered key of config/metric_definitions.yaml or ""; kind: fact | series |
 recency | comparison); planner output cap 8000 (anthropic / openai; deepseek 8000 thinking off,
-16000 on). `PLANNER_MAX_PARTS` is removed; no aspect cap, no merge, no dedupe. **Per-aspect firm
+64000 on, TL decision after Q19's planner was cut at 16000). `PLANNER_MAX_PARTS` is removed; no aspect cap, no merge, no dedupe. **Per-aspect firm
 subset** (TL decision D3, #245 plan review): an aspect may carry `firms`, a subset of the firms code
 scoped, filled only when the question itself asks the aspect of some of them (Q12: Schwab's
 acquisition aspects for SCHW only; Q15: "how an advisor-led model earns" for MS, EDJ, MER, RJF only);
