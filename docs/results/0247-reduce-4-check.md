@@ -239,3 +239,5 @@ The scorer prompt is `ev247d\scorer-prompt.txt`; it writes `ev247d\verdicts-blin
 
 Unchanged answers keep their part-3 verdicts (Q1, Q3, Q19, Q22, Q26 PASS). Acceptance: no PASS -> FAIL (Q11, Q24);
 Q23 may stay FAIL on the corpus gaps (NEXT item 11).
+
+verdicts-blind.json sha256 509c7499179fad5c7d2808a315a16e043278a8ac5507f2aa172b68401b849b89 (part 4 re-check, Q11 / Q23 / Q24, fresh scorer agent, 0 API calls; committed alone before any comparison).
