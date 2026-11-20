@@ -103,3 +103,5 @@ Prepared for a fresh scorer: `D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in\` (`answe
 answers, Q3 from the retry; `questions.yaml`; `verdict-rule.txt`, part 1's rule) and
 `ev247b\scorer-prompt.txt`; hashes in `ev247b\blind-in-hashes.txt`. Baseline: part 1 blind (Q1, Q3, Q19,
 Q22, Q26 PASS; Q11, Q23, Q24 FAIL).
+
+verdicts-blind.json sha256 fbde54a73ecdcab33dba81149abf077806716c5628265f842cc646cf8be77df1 (fresh scorer agent, `ev247b\verdicts-blind.json`; committed alone before any comparison).
