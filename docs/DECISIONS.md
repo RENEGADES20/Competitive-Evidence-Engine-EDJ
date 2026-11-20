@@ -50,7 +50,7 @@ enhancement, never a dependency.
 Consequences: Provider can be switched in `.env`. We own the validator code.
 
 ## ADR-003: One LLM call per answer by default
-Status: Accepted; its single-call default and its "multi-call design needs a new ADR" rule are superseded by ADR-012 (up to 5 LLM calls per user question, one by default). "Retrieval is deterministic" stands.
+Status: Accepted; its single-call default and its "multi-call design needs a new ADR" rule are superseded by ADR-012 (up to 5 LLM calls per user question, one by default). "Retrieval is deterministic" stands. ADR-012's cap is in turn superseded by ADR-021 (no fixed number).
 Context: Multi-step agent chains are slower, harder to debug and harder to cite.
 Decision: Retrieval is deterministic; the answer comes from a single LLM call. Any
 multi-call design (map-reduce, sub-question decomposition, LLM routing) needs a new ADR
@@ -271,7 +271,7 @@ work that needs a model still costs a branch and a comparison run before it can 
 Teammates install nothing new.
 
 ## ADR-012: Up to 5 LLM calls per user question
-Status: Accepted (tech lead decision 2026-11-16, #184); supersedes ADR-003's single-call default
+Status: Accepted (tech lead decision 2026-11-16, #184); supersedes ADR-003's single-call default; its 0-5 call cap is superseded by ADR-021 (no fixed number, see the amendment below)
 Context: ADR-003 set a single-call default per answer and asked for a new ADR before any
 multi-call design. Some questions split into parts: a comparison ("How do Edward Jones and
 Morgan Stanley price advice?") needs evidence per firm, and one retrieval and one call over all
@@ -299,6 +299,17 @@ answer. README, `docs/ARCHITECTURE.md`, `specs/answer-citations.md`, `specs/ui.m
 docstrings still describe the one-call code until the feature issue changes them.
 The first feature that uses it is the question planner (#214, ADR-020): one planner call and one
 answer call, at most 2 per question.
+Amendment (#244, ADR-021): the 0-5 cap is relaxed with no fixed number (user decision 2026-11-19:
+quality first, cost reduced later). Calls follow the question's sub-question decomposition
+(map-reduce: planner 1, map one per firm plus research, re-extraction after a corrective re-search,
+reduce 1; ADR-021 rule 7). Unchanged: SQL filters for every sub-question, citations only to retrieved
+chunks, caveats by code, every call logged (now with input / output tokens; cost from a configured
+price, #248), the mock covers every call so tests and CI make 0 real calls, and the work stays on
+`main`. Paid-call testing: one run of a planned question through the full answer flow counts every call
+the flow makes; the plan states the expected count before the first call; re-runs are planned; no
+per-task total; the 30-question scored run (Gate 3) needs the tech lead; scored runs keep a run-level
+`--max-calls`. Providers: the extra calls use the configured answer provider (`LLM_PROVIDER`: the
+configured providers, `anthropic` and `openai`; `deepseek` once #242 lands).
 
 ## ADR-013: Retrieval budget by number of firms; Merrill counted once
 Status: Accepted (tech lead, 2026-11-17, #181); replaces the fixed k=20 of `specs/retrieval.md`
@@ -525,7 +536,7 @@ chunk on the younger-investor theme; Merrill's are advisor rankings, cut by the 
 the #205 PR.
 
 ## ADR-019: Retrieval budget in tokens; candidate pool from a grid
-Status: Proposed (TL, #213, 2026-11-19); replaces ADR-013's passage count (k = 20, five firms 30)
+Status: Accepted (TL, #213, 2026-11-19); amended by ADR-021 (per-sub-question budget, see the amendment below); replaces ADR-013's passage count (k = 20, five firms 30)
 with a token budget; Merrill counted once (ADR-013) stays
 Context: the model read 20 passages (30 for five firms), about 6k tokens per question (median
 6,001, max 9,544, characters / 4), out of 21,143 chunks, and `select()` saw only the best 15
@@ -599,9 +610,16 @@ real output saves `stop_reason` and usage. Cache: the cap joins the eval's answe
 8000, so outputs saved at 8000 keep their keys and are never reused at 20000; planner keys do not
 contain it. The real clients get `max_retries=0` (TL decision), so a timeout at the larger cap is
 never resent by the SDK. Real check in the #230 PR.
+Amendment (#244, ADR-021, sub-question budget): in planned mode the per-question total is no longer
+fixed. Each sub-question (firm x aspect, ADR-021 rule 6) gets its own token budget (a new setting
+`SUBQUESTION_TOKENS`, value set and measured in #245), so the total grows with the decomposition and is
+reported per question. Unchanged: the pool rule (`POOL_PER_GROUP = 30` per firm and document type),
+research selected first (THEME_K), Merrill counted once (ADR-013), tokens as characters / 4, and
+passage mode (`TOKEN_BUDGET = None`, an explicit k). Until #245 lands the code keeps the fixed total
+described above.
 
 ## ADR-020: Question planner: one planner call splits a question into parts, each part searched
-Status: Proposed (TL, #214, 2026-11-19); the first use of ADR-012's multi-call rule
+Status: Accepted (TL, #214, 2026-11-19); amended by ADR-021 (no part cap, no fixed call count, see the amendment below); the first use of ADR-012's multi-call rule
 Context: #210 and #213 showed that 7 of the 8 passages Gate 4 named as missed were never
 candidates, and that a larger pool and budget (ADR-019) still left Q7, Q15, Q20 and Q25's own
 missed passages out: the question's words do not match the words of the passage. Four Gate 4
@@ -741,4 +759,124 @@ by quarter and each firm's definition for MS, SCHW, EDJ and RJF, Merrill marked 
 standalone (GWIM flows only as adjacent); its eval status fails only the retrieval must-not check
 (`MS-PR-2026-04-15-01#15` retrieved, not cited, as in #230). Q1, Q10, Q21 `answer` PASS; Q23
 `gap_with_adjacent` as at Gate 4. Evidence in the #232 PR.
+Amendment (#244, ADR-021, sub-question decomposition): superseded are the part cap
+(`PLANNER_MAX_PARTS = 4`), the rule plan's "five-firm questions stay one part", the equal split of a
+fixed total and "planner 1 + answer 1 = at most 2 per question". One planner call remains. Planner v3
+(#245) lists every aspect the question asks, literally, with no merge and no cap; code, not the planner,
+sets the firms (the resolved firms; for a home-firm market question the competitors as real entities,
+ADR-018) and expands firms x aspects into sub-questions, each with its own budget (ADR-019 amendment).
+Unchanged: every sub-question searches a copy of the resolved query, so entity / segment, window, date
+range, keywords and doc-type scope stay SQL filters; the `neighbour_phrases` guard; the window, themes
+and filters stay out of the planner's schema; an unusable or failed planner call falls back to the rule
+plan, is logged, counts and is never re-rolled; passage mode is one whole-question part with no
+planner call. Until #245 lands the code keeps the part cap and the split described above.
+
+## ADR-021: Answer behavior decided by code; definitions and comparability; sub-question decomposition with no fixed call cap
+Status: Accepted (user decision 2026-11-19, #244); amends ADR-012, ADR-019 and ADR-020; built by #245
+(decomposition), #246 (map step, evidence matrix, code rules) and #247 (reduce step); the eval scorer
+reads `evals/behavior_supersede.yaml` from #248
+Context: the W10 scored run (24/30 on `corpus-2026-11-19`, docs/results/w10-report.md) failed Q11,
+Q19, Q20, Q23, Q24 and Q26 (NEXT items 1, 2, 3, 8). Q11 and Q23 chose `gap_with_adjacent` because the
+prompt rule of #204 / #215 said "not disclosed for most of the firms asked about -> `gap_with_adjacent`",
+and put the definitions and the series that exist into adjacent items. Q25 answered `answer` with its
+undisclosed parts as gaps, against the bank's `gap_with_adjacent`, and the TL accepted it (#213). Q24
+never answered the comparison itself; Q26 had no line on why each item matters; Q19's planner scoped
+every part to Edward Jones, so no competitor move was searched. One answer call reading up to ~100k
+tokens has to extract, compare and choose the behavior at once. On 2026-11-19 the user (project lead)
+set the rules below.
+Decision: the industry patterns are **sub-question decomposition** (LlamaIndex
+SubQuestionQueryEngine, Least-to-Most, Self-Ask), **map-reduce** (structured extraction per firm, then
+one synthesis), an **evidence matrix** (a comps table, firm x aspect) and **corrective retrieval**
+(CRAG) for empty sub-questions. Rule 0 governs all answer text; rules 1-8 apply it. Each rule names
+what enforces it and the questions it serves.
+- **Rule 0. Evidence only, never opinions** (ground rules 1, 4, 6). Every sentence of an answer is a
+  cited fact from a stored chunk, a figure computed from cited inputs (rule 2) or a gap. *Enforced by*
+  code: citation check, number check, `withhold_normative` / `ensure_handoff` (existing,
+  specs/answer-citations.md). *Questions*: every question.
+- **Rule 1. Behavior decided by code from the sub-questions.** The map extraction call (prompt
+  extract-v1, #246) labels every firm x aspect cell `fact`, `not_disclosed`, `not_found` or
+  `different_quantity`, with cited chunk ids; **code** (#246 `EvidenceMatrix`) aggregates the labels
+  into the behavior; the reduce call (#247) writes the answer for that behavior and cannot change it.
+  (a) Question level: `answer` when any cell holds the asked quantity (`fact`). Aspect level: every cell
+  without a fact is a named gap, and an aspect that no asked firm holds gets the gap "The database does
+  not support this today: <aspect> (<firms>)." inside that answer.
+  (b) No cell is a fact, but some cell holds a different related quantity: `gap_with_adjacent`. The
+  answer says the database does not support the asked quantity today, then gives the labelled adjacent
+  figure with `differs_because`.
+  (c) No fact and no related quantity: `refuse` (`answerable` false) with that gap and the suggested
+  sources.
+  (d) Derived quantities: a quantity computable from cited inputs of the same firm on the same basis
+  (rule 2, within-firm) counts as held (Q24: Edward Jones's assets and advisors in the same 10-Q).
+  (e) Precedence: a request for the system's own forecast -> `refuse`; else a normative part ->
+  `answer_with_boundary` (existing code adds the hand-off); else (a)-(c). Positions that others hold,
+  attributed and dated, are facts (Q16).
+  *Enforced by* code (#246) on labels from a prompt (#246). *Questions*: Q11, Q22, Q23, Q24, Q25, Q28,
+  Q29, Q30, Q31-Q35; Q12, Q19 (boundary); Q16 (positions).
+- **Rule 2. Definitions and comparability** from `config/metric_definitions.yaml`.
+  Within-firm computation (a ratio, a sum, a per-advisor value): the inputs share period or date,
+  entity / segment scope and compatible units; the answer shows the formula and cites both inputs.
+  Cross-firm comparison or computation: only with the same definition, period and unit; otherwise each
+  firm's figure is listed with its own definition, and code inserts the comparability caveat (standard
+  wording, specs/answer-citations.md: the reporting risk). A metric not registered in the file (e.g.
+  client assets): a within-firm computation is allowed when the within-firm test holds, marked
+  "definition unverified"; it is never compared across firms, only listed. #246 adds three fields per
+  definition (C1 reviews): `period` (point in time, quarter or year), `unit`, `basis` (a key naming the
+  definition; equal keys mean the same basis). *Enforced by* code: comparability marks and caveats
+  (#246), the number check on computed figures (#247). *Questions*: Q11, Q22, Q23, Q24, Q31.
+- **Rule 3. Adjacent is only for a different quantity.** A partially covered asked quantity (some
+  firms, some quarters, a narrower sample) is always a claim, with what it covers stated. A wider unit
+  or a different measure (GWIM for Merrill, aggregate compensation expense for a payout grid, an
+  industry survey for a firm) is adjacent. *Enforced by* the extraction labels (prompt, #246), their
+  aggregation (code, #246) and the reduce prompt v5 (#247). *Questions*: Q25, Q11, Q23, Q28, Q29, Q30,
+  Q31, Q33-Q35.
+- **Rule 4. A comparison question carries one cited claim that answers the comparison itself**
+  (valid or not, and why), cited to its inputs. *Enforced by* prompt v5 and a code check on
+  sub-questions of `kind=comparison` (#247). *Questions*: Q24 (Q15, Q10 as checks).
+- **Rule 5. The "why it might matter" line** of a recency item states only what the source says or a
+  checkable fact, cited; never our judgement (ground rule 6). *Enforced by* prompt v5 (#247) and the
+  existing citation, number and normative checks. *Questions*: Q26 (Q27 as check).
+- **Rule 6. Sub-question decomposition, literal.** The question is parsed as it is written: N firms x
+  M aspects are N x M sub-questions, with no merging and no cap. The planner (plan-v3, #245) lists the
+  aspects; code sets the firms (the resolved firms; for a home-firm market question the competitors as
+  real entities, ADR-018) and expands them. Research is searched once. Every sub-question keeps all SQL
+  filters. A sub-question whose extraction finds nothing gets one corrective re-search (CRAG: widened
+  words from `looked_in`, synonyms, adjacent periods; chunks already used excluded) and one
+  re-extraction (#245 hook, #246). *Enforced by* code (#245, #246) and the planner prompt (#245).
+  *Questions*: Q19, Q11, Q24, Q1, Q3, Q22.
+- **Rule 7. Calls follow the decomposition; no fixed number** (amends ADR-012). Planner 1, map one
+  per firm plus one for research (in parallel), re-extraction for re-searched sub-questions, reduce 1.
+  Every question logs its calls and input / output tokens, and its cost from a configured price
+  (#248); scored runs report them and keep a run-level `--max-calls` (CLAUDE.md "Paid API calls"); a
+  plan states the expected call count before the first real call; the mock covers every call, so tests
+  and CI make 0 real calls. Quality first; cost is reduced later. *Enforced by* code (#246, #247, #248)
+  and the paid-call rule. *Questions*: every question.
+- **Rule 8. Bank conflict, without rewriting the bank.** `evals/behavior_supersede.yaml` supersedes
+  the expected behavior of Q24, Q25 and Q28 to `answer` (rule 1); the scorer reads it from #248; an
+  entry never changes `passes_if`. Appended questions pin the rules: Q31 (partial disclosure is
+  `answer`), Q32 (`refuse`: the database does not support it today), Q33-Q35 (`gap_with_adjacent`).
+  From now on the CLAUDE.md gap / refuse share is held on both the bank's `expected_behavior` (raw:
+  9/35) and the behavior after the supersede file (effective: Q29, Q30, Q32-Q35 = 6/35, 17.1%), each at
+  least 5/30; `tests/test_behavior_supersede.py` checks both. *Questions*: Q24, Q25, Q28, Q31-Q35.
+
+  Bank audit (every question expecting `gap_with_adjacent` or `refuse`, on `corpus-2026-11-19`):
+
+  | Q | Asked, per firm x aspect | Corpus | Rule 1 | Bank |
+  |---|---|---|---|---|
+  | Q24 | client assets per advisor; is the comparison valid | EDJ assets and advisors in the same 10-Q | `answer` (derived, 1d) + comparison claim + caveats | superseded |
+  | Q25 | what each firm discloses on advisor pay | MS, EDJ, RJF, SCHW disclosures (#213, #215) | `answer` + named gaps | superseded |
+  | Q28 | EDJ and Merrill advisor attrition rates | EDJ discloses a rate; Merrill none | `answer` + Merrill gap + adjacent headcount change | superseded |
+  | Q29 | what MS pays its advisors (grid, payout) | aggregate compensation expense only | `gap_with_adjacent` | unchanged |
+  | Q30 | Merrill standalone profitability | GWIM only (a wider unit) | `gap_with_adjacent` | unchanged |
+
+  Every other expectation (Q1-Q23, Q26, Q27) agrees with rules 1-6.
+Consequences: behavior becomes reproducible from the evidence matrix and testable on the mock; Q11 and
+Q23 answer with each firm's definition or series and named gaps; Q24 can state the comparison and the
+Edward Jones ratio. Calls and tokens per question grow with the decomposition (a five-firm,
+three-aspect question: 1 planner + 6 map + up to 6 re-extractions + 1 reduce), which raises cost and
+latency; the logs and scored-run reports make it visible, and cost reduction (caching, cheaper map
+model) is later work. More calls mean more invalid outputs to save and more to debug. `config/
+metric_definitions.yaml` gains `period`, `unit` and `basis` (#246) and only registered metrics are
+compared across firms. Until #245-#247 land, the code, `specs/ui.md`, README and
+`docs/ARCHITECTURE.md` describe the current flow (planner 1 + answer 1, prompt v4.1); the specs mark
+each ADR-021 item with the issue that builds it.
 
