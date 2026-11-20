@@ -34,7 +34,8 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   default effort `high`; output carries `reasoning_content`.
 - `quick_start/error_codes`: 401 bad key, 402 insufficient balance, 429 rate limit, 500 / 503 retry later.
 - `quick_start/rate_limit`: "If the request has not started inference after 10 minutes, the server
-  will close the connection"; empty keep-alive lines meanwhile (the SDK's JSON parser handles them).
+  will close the connection"; a non-streaming request gets empty lines while it waits (the SDK's
+  JSON parser handles them). Nothing is documented about lines during inference.
 - Models: `deepseek-v4-pro`, `deepseek-flash` (legacy `deepseek-v4-flash` names served by Flash).
   Prices are not on the pages fetched; the PR reports tokens (incl. cache hits), not dollars.
 
@@ -43,15 +44,19 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    `deepseek_base_url` (`DEEPSEEK_BASE_URL`, default `https://api.deepseek.com/beta`) and
    `deepseek_thinking: bool` (`DEEPSEEK_THINKING`, parsed like `CEE_VECTORS`: on|true|1|yes /
    off|false|0|no / empty -> the default; anything else -> `ValueError`). The default is set in
-   step 9 from the real check; until then `off` (see "Thinking default").
+   step 6 from the real check; until then `off` (see "Thinking default").
 2. **`llm.py`.**
    - `deepseek_client()`: `openai.OpenAI(api_key=DEEPSEEK_API_KEY, base_url=settings().deepseek_base_url,
-     max_retries=0, timeout=Timeout(2700 s, connect=30 s))`. Why it fits: the httpx read timeout
-     is per read (the longest wait for the next bytes), not per request. While a non-streaming
-     request waits or runs, DeepSeek sends empty keep-alive lines, and each one resets the read
-     timer. 2700 s (45 min) is also above the server's 10-minute close for a request that has not
-     started. Even with no keep-alive line at all, it covers a 64000-token thinking answer at
-     about 25 tokens/s. A timeout is a failed call: reported, not re-rolled (see "Other API errors"). A missing / empty
+     max_retries=0, timeout=Timeout(3600 s, connect=30 s))` (TL decision, review 2). Why it fits:
+     the httpx read timeout is per read (the longest wait for the next bytes), not per request.
+     The docs say only that empty lines are sent while a non-streaming request is waiting, and that
+     the server closes a request that has not started inference after 10 minutes. They say nothing
+     about lines during inference, so the plan assumes none: the whole generation may be one silent
+     read. 3600 s then covers a 64000-token thinking answer at about 18 tokens/s or faster. That
+     speed is an assumption, not a sourced figure, so every call's wall time and tokens per second
+     are recorded (eval_run, Design 5) to check it. A timeout is a failed call: reported, not
+     re-rolled (see "Other API errors"), and the question drops from the comparison ("Thinking
+     default"). A missing / empty
      `DEEPSEEK_API_KEY` raises a clear `RuntimeError` before any client exists (never falls back to
      `OPENAI_API_KEY`).
    - Caps by thinking mode: `DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}` (answer; off = the
@@ -129,7 +134,10 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    `--real` names deepseek. `cache_key` / `plan_cache_key` signatures unchanged; `plan_cache_key`
    gets a one-line comment: its `PLANNER_MAX_TOKENS` is the constant 2000, and the DeepSeek
    planner cap is kept apart through the request version (review NB6). Valid answer and plan
-   records also save `reasoning_content` (Design 2).
+   records also save `reasoning_content` (Design 2). Every saved answer and plan record (valid or
+   invalid, all providers) gains `wall_s` (time around the call, `time.monotonic`) and
+   `tokens_per_s` (output tokens / `wall_s`). These are new bookkeeping fields in the record, not in
+   the cache key.
 6. **`.env.example`.** Provider comment `mock | anthropic | openai | deepseek`; `DEEPSEEK_API_KEY=`,
    `DEEPSEEK_MODEL=deepseek-v4-pro`, `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta` (comment:
    /beta is needed for strict tools), `DEEPSEEK_THINKING=<chosen default>` with one comment line.
@@ -178,7 +186,7 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   `ds-strict-1-think-off-a20000-p2000` and `ds-strict-1-think-on-a64000-p16000`; `model_name` / `model_for` deepseek -> `deepseek-v4-pro`.
 - D10 config: `DEEPSEEK_THINKING` on / off / empty / bad value; defaults of model and base URL.
 - D11 client: the real builder (captured before conftest) with a dummy key: `max_retries == 0`,
-  timeout read 2700 s (> 600 s) and connect 30 s, base URL `/beta/`; no key -> RuntimeError.
+  timeout read 3600 s and connect 30 s, base URL `/beta/`; no key -> RuntimeError.
 - D12 eval_run: `RealRunner("deepseek", ...)` with a fake `generate` / planner: the answer and plan
   records carry the deepseek request version and max_tokens; switching `DEEPSEEK_THINKING` changes
   both keys (no reuse); valid answer and plan records hold `reasoning_content`, and the answer's
@@ -186,6 +194,12 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   an invalid output is saved and reused as invalid on a second run (no second call).
 - D13 several tool calls: two `submit_answer` calls -> the first one is used, `usage.tool_calls == 2`
   (same for `submit_plan`).
+- D14 (review 2 NB2): `RealRunner("deepseek", ...).answer` with a fake `generate` that raises a
+  non-ProviderStop error (e.g. `openai.APITimeoutError` or a 500 `APIStatusError`): the exception
+  propagates out of `answer`, no record is written in the cache or `raw/`, and `runner.calls` went
+  up by one (the call is counted).
+- D15 timing: valid and invalid answer and plan records carry `wall_s` (measured around the call)
+  and `tokens_per_s` (= completion tokens / `wall_s`; None when either is missing).
 
 ## Steps
 1. Code (Design 1-8) and tests; `pytest` with `PYTHONPATH=D:\ALLPROJECTS\EDJ\wt-242\src`, all green.
@@ -207,14 +221,16 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
    `DEEPSEEK_MODEL=deepseek-v4-pro`, `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`,
    `DEEPSEEK_THINKING=<chosen>`, `PLANNER=on`, `PLANNER_MAX_PARTS=4`, `PYTHONPATH`), the resolved
    non-secret settings logged; Streamlit on port 8598; a Playwright script asks Q1 on the Ask page
-   once, waits up to 45 min, saves a screenshot and the page text, checks the footer
+   once, waits up to 2 h (two calls, each up to the 3600 s read timeout), saves a screenshot and the page text, checks the footer
    `LLM called: True` and the query_log row (`model = deepseek-v4-pro`, `llm_calls` planner 1 /
    answer 1); `finally` stops Streamlit, removes `.env` and the variables, logs that `.env` is gone.
    This is the evidence for acceptance 1. `verify_cee.py` forces `LLM_PROVIDER=mock`, so the PR says
    the real-provider proof is this one-off check and verify-cee (mock) proves the pipeline (NB4).
 8. Evidence committed: `docs/results/0242-deepseek-check.md` (per run: question, mode, planner
    source, finish_reason, valid / invalid and why, behavior vs expected, citation flags, tokens incl.
-   cache hit / reasoning, wall time; cap findings; the decision) and
+   cache hit / reasoning, wall time; cap findings; dropped questions; the decision; review 2 NB1:
+   for every call, wall time, tokens per second, and reasoning + output tokens against its cap
+   (e.g. "41,200 / 64,000 = 64%"), so the room the caps left shows even without a cut) and
    `docs/results/0242-deepseek-raw/*.json` (the raw records the runs saved, `reasoning_content`
    included). Full run folders and logs in `D:\ALLPROJECTS\EDJ\cache\ev242\`.
 9. `/finish-task`: PR with "Closes #242". Verification lists every real call. The PR states that the
@@ -260,14 +276,24 @@ CLAUDE.md "Paid API calls", ADR-011/012/020, `D:\ALLPROJECTS\EDJ\cache\ev240\run
   `ev242\real-{off|on}\`.
 - **Saved:** every planner and answer record (question, prompt / planner version, model, request
   version, max_tokens, chunk ids, raw output or raw payload, `reasoning_content`, finish_reason,
-  usage with cache hit / miss and reasoning tokens).
+  usage with cache hit / miss and reasoning tokens, wall_s, tokens_per_s).
 
 ## Thinking default (decision rule, fixed before the calls)
 **Cap findings first.** A planner or answer output cut at its cap (`finish_reason` `length`) in
 either mode is reported as a cap finding (question, mode, call, output and reasoning tokens). That
 question is then dropped from criteria 1-3 **for both modes**, not counted against the mode that
-was cut. If every question drops, the comparison has no evidence and the default goes to the
-tie-break (on); the PR says so.
+was cut.
+
+**No model output drops too (review 2, B2).** A question with no model output in either mode drops
+from criteria 1-3 **for both modes** and is named in the report, like a cap finding. "No model
+output" means:
+- a failed call, planner or answer: a timeout, a 400 / 500 / 503, or a planner failure that fell
+  back to the rule plan (saved as `failed_call`);
+- a question never run because its run aborted.
+A saved invalid output still counts against its mode: no tool call, bad JSON, pydantic failure,
+`content_filter`, an empty answer, or a plan that `validate_plan` rejects.
+
+If every question drops, the comparison has no evidence and the default is **on**; the PR says so.
 
 Compare R-off and R-on over the questions left, in this order; the first criterion that differs decides:
 1. Valid outputs (plans with source `model` + valid answers), out of 2 x the questions left.
@@ -302,7 +328,7 @@ no `.sh` twin; if one is ever committed it gets one.
 ## Acceptance
 - [ ] `LLM_PROVIDER=deepseek` answers Q1 in the running app (step 7 one-off Playwright check:
       screenshot, footer, query_log row; verify-cee's driver is mock-only).
-- [ ] Tests D1-D13 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
+- [ ] Tests D1-D15 and the guard tests pass: strict flag and explicit `max_tokens` on both tools;
       cut, no-tool, bad-JSON and pydantic-failure outputs saved as invalid; 402 / 429 stop; OpenAI
       planner rejects `length`; `reasoning_content` saved for valid outputs; 0 real calls (httpx2
       counter `sent == []`).
@@ -323,3 +349,10 @@ no `.sh` twin; if one is ever committed it gets one.
   outputs (PrivateAttr, schema.py added), NB2 other API errors, NB3 first tool call wins (D13),
   NB4 app check is the real-provider proof, NB6 `plan_cache_key` comment. TL approved the 2 app
   calls (cap 14).
+- 2026-11-19 21:24 - plan review 2 (CHANGES REQUESTED, issue comment 7029356630) addressed: read
+  timeout 3600 s (TL), keep-alive sentence limited to what the docs say (empty lines while waiting;
+  nothing documented during inference), D11 updated; wall_s and tokens_per_s in every record (D15)
+  and per-call reasoning + output vs cap in the report; drop rule for a question with no model
+  output in either mode (failed call, planner fallback, run aborted; saved invalid outputs still
+  count; all dropped -> on); D14 pins a non-ProviderStop answer error (propagates, nothing saved,
+  counted).
