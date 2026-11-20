@@ -356,3 +356,10 @@ no `.sh` twin; if one is ever committed it gets one.
   output in either mode (failed call, planner fallback, run aborted; saved invalid outputs still
   count; all dropped -> on); D14 pins a non-ProviderStop answer error (propagates, nothing saved,
   counted).
+- 2026-11-19 21:35 - plan approved (TL, 5820a7f). Built Design 1-8 and tests D1-D15 (commit 6b76881):
+  full pytest 737 passed with `PYTHONPATH=<wt>\src`. Mock eval (`.eval-runs\0242-mock`): 29 PASS /
+  1 FAIL (Q19, as the baseline), refusal 5/5, 30/30 UNCHANGED and chunk lists identical to
+  `evals/baselines/corpus-2026-11-19` (30/30, `ev242\mock-compare.txt`), 0 calls. verify-cee (mock)
+  VERIFY PASS (`.verify-runs\20261119-213310-6b76881`); open-citation and download-document
+  UNREACHABLE because the worktree has no `data/raw/` (same as #240), not a #242 change. No ruff in
+  CI (pytest only). Mock-runs sha 6b76881 recorded; real check next.
