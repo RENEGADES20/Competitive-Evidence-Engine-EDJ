@@ -108,17 +108,21 @@ def ensure_handoff(answer: Answer) -> Answer:
     return answer
 
 
-def check_citations(answer: Answer, hits: list[Hit]) -> Answer:
+def check_citations(answer: Answer, hits: list[Hit], derived=None) -> Answer:
+    """`derived` (#247): [(value, input chunk ids)] of the matrix's accepted derivations, for the number
+    check. The hand-off sentence is standard wording, not evidence: never flagged no_citation (#247 B2,
+    an evidence-free boundary answer)."""
     answer = move_uncited_cells(ensure_handoff(withhold_normative(answer)))
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         known = [c for c in claim.chunk_ids if c in by_id]
         if not claim.chunk_ids:
-            claim.flags.append("no_citation")
+            if claim.text.strip() != BOUNDARY_HANDOFF:
+                claim.flags.append("no_citation")
         elif len(known) < len(claim.chunk_ids):
             claim.flags.append("unmatched_citation")
         claim.source_label = "; ".join(dict.fromkeys(source_label(by_id[c]) for c in known))
-    return check_dates(check_numbers(answer, hits), hits)
+    return check_dates(check_numbers(answer, hits, derived), hits)
 
 
 # Parts (#215). Rules in specs/answer-citations.md, "Every part answered or named as a gap".
@@ -193,55 +197,32 @@ def _part_pools(plan) -> dict[str, int]:
             for s in getattr(plan, "searched", None) or [] if "pool" in s}
 
 
-# Interim answer input guard (#245; temporary, removed when #247 wires the reduce step).
-GUARD_NOTE = ("The answer read {kept} of {total} retrieved passages: the input was trimmed to the "
-              "model's limit; the passages left out are listed in the log.")
+def _matrix_state(pid: str, answer: Answer, matrix, known: dict) -> str | None:
+    """#247 B3: a comparison sub-question is covered by its aspect's comparison claim (part_id the
+    aspect or one of its cells, citing a retrieved chunk) or by the comparison_missing gap; a proxy
+    sub-question by any claim / adjacent item on its aspect, or by design when its cell holds nothing
+    (the asked aspect carries the gap)."""
+    from cee.answer.matrix import holds
+    cell = matrix.cells.get(pid) if matrix is not None else None
+    if cell is None:
+        return None
+    a = matrix.aspect(cell.aspect_id)
+    own = {a.id} | {c.id for c in matrix.cells.values() if c.aspect_id == a.id}
+    if a.kind == "comparison":
+        if any(c.part_id in own and any(k in known for k in c.chunk_ids) for c in answer.claims) \
+                or any(g.part_id in own and "comparison_missing" in g.flags for g in answer.gaps):
+            return "comparison"
+    if getattr(a, "proxy", False):
+        if any(c.part_id in own and any(k in known for k in c.chunk_ids) for c in [*answer.claims, *answer.adjacent]):
+            return "proxy"
+        if not holds(cell):
+            return "proxy_by_design"
+    return None
 
 
-def fit_input(hits: list[Hit], plan, limit: int, base: float, cost) -> tuple[list[Hit], list[str]]:
-    """(kept hits in their original order, dropped chunk ids) so that base + sum(cost(kept)) <= limit.
-    Research passages first, then round-robin over the plan's sub-questions in plan order, each
-    sub-question's best rank first. Greedy stop rule: a passage that would pass the limit is skipped
-    and the round-robin goes on; it ends when a full round adds nothing. `base` is the estimated
-    input with no passage (system prompt, tool schema, the user message's fixed lines) and
-    `cost(hit)` one passage's tokens as the user message prints it (llm.chunk_tokens)."""
-    order = [p.id for p in getattr(plan, "parts", None) or []]
-    queues: dict[str, list[Hit]] = {}
-    for h in sorted(hits, key=lambda h: -h.rank):
-        pid = h.part_id if h.part_id in order else ("research" if h.part_id == "research" else "other")
-        queues.setdefault(pid, []).append(h)
-    kept: list[Hit] = []
-    total = base
-
-    def fits(h: Hit) -> bool:
-        nonlocal total
-        if total + cost(h) > limit:
-            return False
-        total += cost(h)
-        return True
-
-    for h in queues.pop("research", []):
-        if fits(h):
-            kept.append(h)
-    rounds = [pid for pid in order if pid in queues] + (["other"] if "other" in queues else [])
-    while True:
-        added = False
-        for pid in rounds:
-            queue = queues.get(pid) or []
-            while queue:
-                h = queue.pop(0)
-                if fits(h):
-                    kept.append(h)
-                    added = True
-                    break
-        if not added:
-            break
-    ids = {h.chunk_id for h in kept}
-    return [h for h in hits if h.chunk_id in ids], [h.chunk_id for h in hits if h.chunk_id not in ids]
-
-
-def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:
-    """{part_id: model | citation | handoff | code_gap | none} for the plan's parts (#215).
+def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None) -> dict[str, str]:
+    """{part_id: model | citation | handoff | code_gap | comparison | proxy | proxy_by_design | none}
+    for the plan's parts (#215; the matrix states #247 B3).
     model: a cited claim / adjacent item or a gap names the part; citation: an item without a valid
     part_id cites a passage found for the part (v3 outputs, the mock); handoff: a normative part in
     a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap."""
@@ -270,11 +251,11 @@ def part_coverage(answer: Answer, plan, hits: list[Hit]) -> dict[str, str]:
                 and any(c.text.strip() == BOUNDARY_HANDOFF for c in answer.claims):
             out[p.id] = "handoff"
         else:
-            out[p.id] = "none"
+            out[p.id] = _matrix_state(p.id, answer, matrix, known) or "none"
     return out
 
 
-def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "") -> Answer:
+def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matrix=None) -> Answer:
     """Every planned part has a cited claim, a cited adjacent item or a gap; a part with none gets
     a code-built gap flagged part_gap (#215, ground rule 3). The wording comes from the part's
     candidate pool before exclusion: 0 -> "No evidence retrieved for", else (or unknown) "Not
@@ -284,7 +265,7 @@ def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "") -> An
         return answer
     pools = _part_pools(plan)
     for p in plan.parts:
-        if part_coverage(answer, plan, hits)[p.id] != "none":
+        if part_coverage(answer, plan, hits, matrix)[p.id] != "none":
             continue
         wording = PART_NO_EVIDENCE if pools.get(p.id) == 0 else PART_NOT_ANSWERED
         answer.gaps.append(Gap(what=wording.format(part=_part_label(p, question)),
@@ -351,13 +332,16 @@ def number_matches(f: Figure, value: float) -> bool:
     return False
 
 
-def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
-    """Flag (never drop) a claim with a number not found in any chunk it cites (rule 4)."""
+def check_numbers(answer: Answer, hits: list[Hit], derived=None) -> Answer:
+    """Flag (never drop) a claim with a number not found in any chunk it cites (rule 4). #247 (ADR-021
+    rule 2): a figure equal to an accepted derivation's value (same match rule) whose input chunks the
+    claim all cites is allowed, flag `computed`; without both inputs cited it stays number_not_found."""
     by_id = {h.chunk_id: h for h in hits}
     for claim in [*answer.claims, *answer.adjacent]:
         cited = [by_id[c].text for c in claim.chunk_ids if c in by_id]
         if not cited:
             continue                                            # already flagged by the citation check
+        computed = [v for v, ids in (derived or []) if ids and ids <= set(claim.chunk_ids)]
         scaled = [v for text in cited for v in _chunk_values(text)]
         bare = [v for text in cited for v in _chunk_values(text, unscaled=True)]
         # Table cells often lose their "(in millions)" header to another chunk: a claim figure with a
@@ -368,8 +352,15 @@ def check_numbers(answer: Answer, hits: list[Hit]) -> Answer:
             values = bare if f.scale == 1.0 else scaled + [v * f.scale for v in unitless]
             return any(number_matches(f, v) for v in values)
 
-        if not all(found(f) for f in figures(claim.text)) and "number_not_found" not in claim.flags:
-            claim.flags.append("number_not_found")
+        def from_inputs(f: Figure) -> bool:
+            return any(number_matches(f, v) for v in computed)
+
+        figs = figures(claim.text)
+        if not all(found(f) or from_inputs(f) for f in figs):
+            if "number_not_found" not in claim.flags:
+                claim.flags.append("number_not_found")
+        elif any(not found(f) and from_inputs(f) for f in figs) and "computed" not in claim.flags:
+            claim.flags.append("computed")
     return answer
 
 

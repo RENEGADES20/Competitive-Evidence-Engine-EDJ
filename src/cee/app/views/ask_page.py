@@ -17,6 +17,7 @@ BEHAVIOR_TEXT = {
     "answer_with_boundary": "Answer (evidence only; the judgement is yours)",
     "gap_with_adjacent": "Not in the corpus",
     "refuse": "No evidence",
+    "incomplete": "Incomplete",   # #247: an extraction failed and no firm holds the asked figure (code-built)
 }
 
 
@@ -28,6 +29,8 @@ BEHAVIOR_HELP = {
                          "below and marked as adjacent; the box says what is missing.",
     "refuse": "Nothing in the stored documents answers this. That is a valid result, not an error: "
               "the box below says what is missing and where it could come from.",
+    "incomplete": "Part of the evidence could not be extracted, so nothing is concluded about it. "
+                  "The warning below names the firms; anything close is marked as adjacent.",
 }
 FILTERS_HINT = "Filters are on in the sidebar; they may be hiding the evidence. Clear them and ask again."
 
@@ -157,6 +160,8 @@ def show_answer(r: Result, filters: dict) -> None:
 
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
     st.caption(BEHAVIOR_HELP[a.behavior])
+    if a.incomplete_note:   # #247: shown on any behavior (incomplete, or a boundary answer with a failed extraction)
+        st.warning(a.incomplete_note)
     if a.behavior in ("refuse", "gap_with_adjacent") and filters_text(filters) != "none":
         st.info(FILTERS_HINT)
     for i, c in enumerate(a.claims, start=1):

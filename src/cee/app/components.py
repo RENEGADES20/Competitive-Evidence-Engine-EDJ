@@ -157,6 +157,14 @@ def snapshot_card(snapshot: str, stats: list[tuple[str, str]]) -> None:
           f'<div class="row">{row}</div></div>')
 
 
+# #247: plain labels for the reduce step's flags (older flags keep their names, as before).
+FLAG_TEXT = {"outside_matrix": "cited outside the evidence matrix",
+             "computed": "computed by code from cited inputs",
+             "why_line_missing": "no why-it-might-matter line",
+             "adjacent_is_fact": "an asked figure shown as adjacent",
+             "claim_from_adjacent": "a different quantity shown as a claim"}
+
+
 def behavior_header(text: str, code: str) -> None:
     """A real heading: the verify driver finds it by role and name."""
     _html(f'<div class="cee-behavior"><h2>{escape(text)}</h2><span class="code">{escape(code)}</span></div>')
@@ -167,7 +175,7 @@ def claim_card(n: int, text: str, chips: list[tuple], source_label: str = "",
     """chips: (chunk_id, tier) or (chunk_id, tier, source_label, linkable) per citation."""
     chip_html = "".join(citation_chip_html(c[0], c[1], link and (c[3] if len(c) > 3 else True),
                                            c[2] if len(c) > 2 else "") for c in chips)
-    flag_html = "".join(f' <span class="cee-flag">{escape(f)}</span>' for f in flags or [])
+    flag_html = "".join(f' <span class="cee-flag">{escape(FLAG_TEXT.get(f, f))}</span>' for f in flags or [])
     top = f'<div class="lbl">{escape(label)}</div>' if label else ""
     src = f'<div class="src">{escape(source_label)}</div>' if source_label else ""
     extra = f'<div class="src"><b>Differs because:</b> {escape(note)}</div>' if note else ""
@@ -195,7 +203,7 @@ def gap_box(what: str, suggested_source: str = "", flags: list[str] | None = Non
     """Always expanded. Starts with 'Gap:' (scripts/verify_cee.py reads it). Code flags (#215:
     part_gap, uncited_cell) show as chips, like claim flags."""
     fill = f"<br><b>Would be filled by:</b> {escape(suggested_source)}" if suggested_source else ""
-    flag_html = "".join(f' <span class="cee-flag">{escape(f)}</span>' for f in flags or [])
+    flag_html = "".join(f' <span class="cee-flag">{escape(FLAG_TEXT.get(f, f))}</span>' for f in flags or [])
     _html(f'<div class="cee-box cee-gap"><b class="l">Gap:</b> {escape(what)}{flag_html}{fill}</div>')
 
 

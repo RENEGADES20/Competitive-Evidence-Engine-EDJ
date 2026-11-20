@@ -345,7 +345,7 @@ def compare(record: dict, base: dict | None) -> str:
 
 def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model: str, chunk_ids: list,
               max_tokens: int = 8000, plan_parts: list | None = None, window=None,
-              request: str | None = None, guard: dict | None = None) -> str:
+              request: str | None = None) -> str:
     """max_tokens (#213) joins the key only when it is not 8000: outputs saved so far keep their
     key, and a run with another output cap never reuses one made under 8000. The window (#230)
     joins it only when the question has one (the v4.1 user message names it; --as-of moves it).
@@ -360,9 +360,7 @@ def cache_key(q: dict, prompt_version: str, snapshot: str, provider: str, model:
         parts = [*parts, {"window": [str(window[0]), str(window[1])]}]
     if request:
         parts = [*parts, {"request": request}]
-    if guard:   # #245: the interim input guard trimmed the passages: its limit and the kept ids
-        kept = [c for c in chunk_ids if c not in set(guard.get("dropped") or [])]
-        parts = [*parts, {"input_guard": [guard["limit"], kept]}]
+
     blob = json.dumps(parts)
     return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
@@ -405,6 +403,30 @@ def map_cache_key(q: dict, snapshot: str, provider: str, model: str, max_tokens:
     parts = [q["id"], q["text"], EXTRACT_VERSION, snapshot, provider, model, max_tokens, request, spec.id,
              cells, [h.chunk_id for h in spec.hits], [str(w) for w in window] if window else None]
     return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
+
+
+def reduce_cache_key(q: dict, snapshot: str, provider: str, model: str, max_tokens: int,
+                     request: str | None, matrix, query) -> str:
+    """#247: one reduce call: question, reduce version, snapshot, provider, model, the cap, the request
+    version (thinking mode), a sha256 of the v5 system prompt (a wording edit never reuses an output,
+    review note 6), of the rendered user message (behavior, window, every cell, mark, gap and source)
+    and of the schema (its enums)."""
+    from cee.answer import prompt as P
+    from cee.answer import reduce as R
+
+    def sha(text: str) -> str:
+        return hashlib.sha256(text.encode()).hexdigest()
+
+    schema, _ = R.reduce_schema(matrix)
+    parts = [q["id"], q["text"], R.REDUCE_VERSION, snapshot, provider, model, max_tokens, request,
+             sha(P.SYSTEM_PROMPT_V5), sha(R.reduce_message(q["text"], matrix, query)),
+             sha(json.dumps(schema, sort_keys=True))]
+    return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
+
+
+def reduce_version() -> str:
+    from cee.answer.prompt import REDUCE_VERSION
+    return REDUCE_VERSION
 
 
 def extract_version() -> str:
@@ -470,7 +492,7 @@ class RealRunner:
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
         self.max_tokens = llm.answer_max_tokens(provider)   # #242: deepseek by thinking mode
         self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
-        self.calls, self.reused, self.last_file, self.last_guard = 0, 0, None, None
+        self.calls, self.reused, self.last_file = 0, 0, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
         # #246: `calls` counts reservations (the --max-calls cap, exact under parallel map calls);
@@ -485,22 +507,21 @@ class RealRunner:
         self.last_plan_flags: list[str] = []
 
     def answer(self, q: dict, query, hits, plan=None) -> tuple[dict | None, str]:
-        """(answer dict or None, how): how = no_call | cached | called | cap | invalid.
+        """The legacy single answer call (prompt v4.1, `--legacy`, MAP off).
+        (answer dict or None, how): how = no_call | cached | called | cap | invalid.
         invalid: the model output (new or cached) is not a valid Answer; its raw payload is in
         raw/<self.last_file> and the call still counts (#187)."""
         from cee.answer.llm import ModelOutputError, check_output
         from cee.answer.schema import Answer
-        from cee.ask import answer_for, answer_window, guard_input
+        from cee.ask import answer_for, answer_window
 
-        self.last_file, self.last_stop, self.last_guard = None, (None, None), None
+        self.last_file, self.last_stop = None, (None, None)
         if not hits:
             answer, _ = answer_for(q["text"], query, hits, self.provider)
             return answer.model_dump(), "no_call"
-        _, guard = guard_input(q["text"], query, hits, self.provider, plan)   # #245 interim guard
-        self.last_guard = guard
         key = cache_key(q, self.prompt_version, self.snapshot, self.provider, self.model,
                         [h.chunk_id for h in hits], self.max_tokens, parts_of(plan), answer_window(query),
-                        self.request_version, guard)
+                        self.request_version)
         path = self.cache_dir / f"{q['id']}-{key}.json"
         self.last_file = path.name
         if path.is_file():
@@ -524,8 +545,7 @@ class RealRunner:
         meta = {"question_id": q["id"], "question": q["text"], "prompt_version": self.prompt_version,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": self.max_tokens, "request_version": self.request_version,
-                "chunk_ids": [h.chunk_id for h in hits], "input_guard": guard,
-                "at": dt.datetime.now().isoformat()}
+                "chunk_ids": [h.chunk_id for h in hits], "at": dt.datetime.now().isoformat()}
         from cee.answer.llm import ProviderStop
 
         t0 = time.monotonic()
@@ -550,6 +570,97 @@ class RealRunner:
                           **extra, "raw": raw.model_dump()})
         return answer.model_dump(), "called"
 
+    def reduce(self, q: dict, query, plan, hits, matrix) -> tuple[dict | None, str, dict]:
+        """#247: the reduce call, cached like a map call and never re-called (valid, invalid or failed).
+        (answer dict or None, how, info): how = no_call | code_built | cached | called | cap | invalid |
+        failed | stopped. `hits` = retrieval + corrective re-search hits (B1). A 400 sets bad_request
+        (the run stops after this question, every record saved)."""
+        from cee.answer import llm
+        from cee.answer import reduce as R
+        from cee.ask import answer_for
+
+        self.last_file, self.last_stop = None, (None, None)
+        info: dict = {}
+        if not hits:
+            answer, _ = answer_for(q["text"], query, hits, self.provider)
+            return answer.model_dump(), "no_call", info
+        if not R.needs_call(matrix):
+            answer, _ = answer_for(q["text"], query, hits, self.provider, plan=plan, matrix=matrix, info=info)
+            return answer.model_dump(), "code_built", info
+        key = reduce_cache_key(q, self.snapshot, self.provider, self.model, R.max_tokens(self.provider),
+                               self.request_version, matrix, query)
+        path = self.cache_dir / f"{q['id']}-reduce-{key}.json"
+        self.last_file = path.name
+
+        def finish(raw_answer):
+            answer, _ = answer_for(q["text"], query, hits, self.provider, raw=raw_answer, plan=plan,
+                                   matrix=matrix, info=info)
+            info.update(stop_reason=raw_answer.stop_reason, usage=raw_answer.usage)
+            return answer.model_dump()
+
+        if path.is_file():
+            saved = json.loads(path.read_text(encoding="utf-8"))
+            self.reused += 1
+            self._copy(path)
+            self.last_stop = (saved.get("stop_reason"), (saved.get("usage") or {}).get("output_tokens"))
+            if saved.get("failed_call"):
+                return None, "failed", {"error": saved.get("error")}
+            meta = {"stop_reason": saved.get("stop_reason"), "usage": saved.get("usage"),
+                    "parse_flags": saved.get("parse_flags")}
+            raw = saved.get("raw")
+            if saved.get("invalid"):
+                payload = saved.get("raw_payload")
+                if not (isinstance(payload, str) and str(saved.get("error", "")).startswith(R.ARGUMENT_ERRORS)):
+                    return None, "invalid", {"error": saved.get("error")}
+                flags: list = []
+                try:   # the #246 rule: stray closing braces after a complete object (0 calls)
+                    raw = llm.loads_object(payload, flags)
+                except (TypeError, ValueError):
+                    return None, "invalid", {"error": saved.get("error")}
+                meta["parse_flags"] = [*flags, "rechecked"]
+            try:
+                return finish(R.to_answer(raw, self.provider, meta)), "cached", info
+            except llm.ModelOutputError as e:
+                return None, "invalid", {"error": str(e)}
+        if self.bad_request:
+            return None, "stopped", {"error": "not run: the run stopped after a 400"}
+        if self.calls >= self.max_calls:
+            return None, "cap", info
+        self.calls += 1   # reserved and counted before the call: a failed call still cost money
+        self.made += 1
+        schema, fallback = R.reduce_schema(matrix)
+        meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.REDUCE_VERSION,
+                "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
+                "max_tokens": R.max_tokens(self.provider), "request_version": self.request_version,
+                "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
+                "enum_values": R.enum_values(schema), "at": dt.datetime.now().isoformat()}
+        got: dict = {}
+        t0 = time.monotonic()
+        try:
+            out = R.call_reduce(q["text"], matrix, query, self.provider, meta=got)
+        except llm.ProviderStop as e:   # refused before any output: nothing to save, the run stops
+            raise SystemExit(f"stopped: {e}") from e
+        except llm.ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
+            usage = e.usage or got.get("usage") or {}
+            self.last_stop = (e.stop_reason, usage.get("output_tokens"))
+            self._save(path, {**meta, "invalid": True, "error": str(e), "raw_payload": e.raw,
+                              "stop_reason": e.stop_reason, "usage": usage, **timing(t0, usage),
+                              **self._reasoning(got)})
+            return None, "invalid", {"error": str(e)}
+        except Exception as e:   # timeout, 5xx, connection, a 400: counted, saved, never re-called
+            err = f"{type(e).__name__}: {e}"
+            bad = getattr(e, "status_code", None) == 400
+            self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
+                              "bad_request": bad, **timing(t0, None)})
+            if bad:
+                self.bad_request = err
+            return None, "failed", {"error": err}
+        flags = list(got.get("parse_flags") or [])
+        self.last_stop = (got.get("stop_reason"), (got.get("usage") or {}).get("output_tokens"))
+        self._save(path, {**meta, "stop_reason": got.get("stop_reason"), "usage": got.get("usage"),
+                          **timing(t0, got.get("usage")), **self._reasoning(got),
+                          **({"parse_flags": flags} if flags else {}), "raw": out})
+        return finish(R.to_answer(out, self.provider, got)), "called", info
     def plan(self, q: dict, query):
         """The question's plan (#214, ADR-020) from one planner call, cached like an answer: a saved
         plan (valid, invalid or a failed call) is always reused, so a re-run never calls the planner
@@ -743,7 +854,8 @@ def apply_real(record: dict, answer: dict | None, how: str, raw_file: str | None
         return record
     if answer is None:
         record["status"], record["behavior"] = "NOT_EVALUATED", None
-        record["note"] = "not run: --max-calls reached"
+        record["note"] = {"failed": "reduce call failed (saved, never re-called)",
+                          "stopped": "not run: the run stopped after a 400"}.get(how, "not run: --max-calls reached")
         return record
     record["behavior"] = answer["behavior"]
     record["answer"] = answer
@@ -874,6 +986,16 @@ def write_reports(run_dir: Path, meta: dict, records: list[dict]) -> None:
             for hit in r.get("map_must_not") or []:
                 lines.append(f"  - must-not `{hit['chunk_id']}` in {hit['cell']} ({hit['label']}, {hit['via']})"
                              + (" **as fact**" if hit["as_fact"] else ""))
+        if r.get("reduce"):   # #247: the reduce step
+            red, ans = r["reduce"], r.get("answer") or {}
+            lines.append(f"- Reduce ({red.get('version')}, {'code-built' if red.get('code_built') else red.get('how')}): "
+                         f"behavior {r.get('behavior') or r.get('answer_behavior')} (map {r.get('map_behavior') or 'undecided'}, effective "
+                         f"expected {r.get('expected_behavior_effective')}); {len(ans.get('claims') or [])} claims, "
+                         f"{len(ans.get('adjacent') or [])} adjacent, {len(ans.get('gaps') or [])} gaps; flags "
+                         f"{red.get('flags') or {}}; comparison missing {red.get('comparison_missing') or []}; "
+                         f"why-lines missing {red.get('why_line_missing', 0)}; outside matrix "
+                         f"{red.get('outside_matrix', 0)}; reordered {red.get('reordered', 0)}; part gaps "
+                         f"{red.get('part_gaps', 0)}")
         if r.get("plan_origin"):
             lines.append(f"- Plan: {r['plan_origin']}")
         lines += [f"- Retrieved: {', '.join(r['chunk_ids']) or 'nothing'}", ""]
@@ -892,7 +1014,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--plan-only", action="store_true",
                     help="with --real: planner calls only, then the 0-call search of each plan; no answer call (#245)")
     ap.add_argument("--map", action="store_true",
-                    help="run the map step (#246: extraction per firm, re-search, evidence matrix); off by default")
+                    help="accepted for #246's commands; since #247 the map and reduce run unless --legacy")
+    ap.add_argument("--legacy", action="store_true",
+                    help="#247: the legacy single answer call (prompt v4.1), no map and no reduce")
     ap.add_argument("--map-only", action="store_true",
                     help="with --real: plan, search and the map step; no answer call (#246; implies --map)")
     ap.add_argument("--out", help="run folder (default .eval-runs/<snapshot>-<time>)")
@@ -908,19 +1032,17 @@ def main(argv: list[str] | None = None) -> int:
         ap.error("--map-only needs --real (use --map for a mock run)")
     if args.map_only and args.plan_only:
         ap.error("--map-only and --plan-only exclude each other")
-    run_map_step = args.map or args.map_only
+    if args.legacy and args.map_only:
+        ap.error("--legacy and --map-only exclude each other")
+    run_map_step = not args.legacy   # #247 (review note 1): the eval maps unless --legacy, whatever MAP says
     if args.max_calls is not None and args.max_calls > 10:
         print("Note: more than 10 calls needs the user's OK first (CLAUDE.md 'Paid API calls').")
 
     from cee.config import settings
     from cee.retrieve import fts
     from cee.retrieve.fts import PoolTrace, budget, budget_tokens, resolve, search
-    from cee.answer import llm
-    from cee.ask import answer_window, guard_input
+    from cee.ask import answer_for, union_hits
     from cee.retrieve.planner import PLANNER_VERSION, plan_question, rules_plan, search_subquestions
-    # #245: the interim answer input of every question, against the guard limit of the run's provider
-    # (the mock has none: measured against deepseek, the app's provider)
-    guard_provider = settings().llm_provider if settings().llm_provider != "mock" else "deepseek"
 
     bank = yaml.safe_load(QUESTIONS.read_text(encoding="utf-8"))["questions"]
     if args.questions:
@@ -975,16 +1097,12 @@ def main(argv: list[str] | None = None) -> int:
             sub_tokens = sum(s.get("tokens", 0) for s in plan.searched)
             r |= {"budget_tokens": sub_budget, "subquestion_tokens": sub_tokens,
                   "fill": round(sub_tokens / sub_budget, 3) if sub_budget else None}
-        if hits:   # #245: what the one interim answer call would read, and the guard's trim (0 calls)
-            limit = llm.answer_input_limit(guard_provider)
-            _, g = guard_input(q["text"], query, hits, guard_provider, plan)
-            r["interim_input"] = {"provider": guard_provider, "limit": limit,
-                                  "tokens": llm.input_tokens(q["text"], hits, plan, answer_window(query)),
-                                  "would_drop": len(g["dropped"]) if g else 0}
+
         part_stages(r["recall"], hits, {**pools, "research": set(trace.research), "peers": set(trace.peers)})
         if real:
             r["plan_origin"] = real.last_plan_origin if not capped else "not planned: --max-calls reached"
             r["plan_parse_flags"] = list(real.last_plan_flags) if not capped else []
+        matrix = None
         if run_map_step and plan is not None and hits and not capped and not (real and args.plan_only):
             from cee.answer.extract import EXTRACT_VERSION, run_map
             matrix = (real.map(q, query, plan, hits, as_of=args.as_of) if real
@@ -996,7 +1114,8 @@ def main(argv: list[str] | None = None) -> int:
                   "map_calls": sum(c["round"] == 1 for c in made), "remap_calls": sum(c["round"] == 2 for c in made),
                   "map_must_not": map_must_not(matrix, key_for(q, keys)), "map_research": matrix.research,
                   "map_capped_calls": list(real.map_capped) if real else [],
-                  "map_call_flags": {c["id"]: c["flags"] for c in matrix.calls if c.get("flags")}}
+                  "map_call_flags": {c["id"]: c["flags"] for c in matrix.calls if c.get("flags")},
+                  "corrective_chunk_ids": [h.chunk_id for h in matrix.corrective]}   # #247 B1
             r["llm_calls"] |= {"map": r["map_calls"], "remap": r["remap_calls"]}
             if real and real.bad_request:   # a 400: every planned call would fail the same way
                 records.append(r)
@@ -1010,16 +1129,37 @@ def main(argv: list[str] | None = None) -> int:
         elif real and args.map_only:
             r["model"] = "map_only"
         elif real:
-            answer, how = (None, "cap") if capped else real.answer(q, query, hits, plan)
+            every = union_hits(hits, matrix)   # #247 B1: retrieval + corrective re-search hits
+            if capped:
+                answer, how, info = None, "cap", {}
+            elif matrix is not None:
+                answer, how, info = real.reduce(q, query, plan, every, matrix)
+            else:
+                (answer, how), info = real.answer(q, query, hits, plan), {}
             r = apply_real(r, answer, how, real.last_file if not capped else None)
-            if answer is not None and plan is not None:   # #215: how each part was covered
+            if matrix is not None:
+                r["reduce"] = {**info, "how": how}
+            if answer is not None and plan is not None:   # #215: how each part was covered (on the union)
                 from cee.answer.schema import Answer
                 from cee.answer.validate import part_coverage
-                r["part_coverage"] = part_coverage(Answer(**answer), plan, hits)
-            r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid"))
+                r["part_coverage"] = part_coverage(Answer(**answer), plan, every, matrix)
+            r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid", "failed"))
             r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
-            if real.last_guard and not capped:   # #245: the interim input guard trimmed this answer
-                r["input_guard"] = real.last_guard
+            if real.bad_request:   # #247: a 400 on the reduce call: the run stops, every record saved
+                records.append(r)
+                write_reports(run_dir, {"run_id": run_id, "snapshot": snapshot, "mode": "real", "commit": "",
+                                        "k": "-", "min_coverage": args.min_coverage, "as_of": args.as_of.isoformat(),
+                                        "real_calls": real.made, "max_calls": args.max_calls, "reused": real.reused,
+                                        "stopped": real.bad_request}, records)
+                raise SystemExit(f"stopped: a reduce request was rejected with 400 ({real.bad_request})")
+        elif matrix is not None:   # #247: the mock reduce (0 calls); retrieval status unchanged
+            info: dict = {}
+            every = union_hits(hits, matrix)
+            a, _ = answer_for(q["text"], query, every, "mock", plan=plan, matrix=matrix, info=info)
+            from cee.answer.validate import part_coverage
+            r["reduce"] = {**info, "how": "code_built" if info.get("code_built") else "mock"}
+            r["answer"], r["answer_behavior"] = a.model_dump(), a.behavior
+            r["part_coverage"] = part_coverage(a, plan, every, matrix)
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         records.append(r)
@@ -1036,12 +1176,12 @@ def main(argv: list[str] | None = None) -> int:
             "pool_per_group": fts.POOL_PER_GROUP, "token_budget": fts.TOKEN_BUDGET if args.k is None else None,
             "planner": settings().planner, "subquestion_tokens": settings().subquestion_tokens,
             "planner_version": PLANNER_VERSION, "plan_only": args.plan_only,
-            "guard_provider": guard_provider, "answer_input_limit": llm.answer_input_limit(guard_provider),
+            "map_setting": settings().map_on, "legacy": args.legacy,
             "mode": "real" if real else "mock", "baseline": args.baseline, "as_of": args.as_of.isoformat(),
             "real_calls": real.made if real else 0, "calls_reserved": real.calls if real else 0,
             "reused": real.reused if real else 0, "max_calls": args.max_calls,
             "map": run_map_step, "map_only": args.map_only, "extract_version": extract_version(),
-            "map_concurrency": settings().map_concurrency,
+            "map_concurrency": settings().map_concurrency, "reduce_version": reduce_version(),
             "map_max_tokens": real.map_max_tokens if real else None}
     write_reports(run_dir, meta, records)
     counts = {s: sum(r["status"] == s for r in records) for s in STATUSES}

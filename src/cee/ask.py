@@ -1,8 +1,8 @@
-"""End-to-end: resolve -> plan (at most one planner call; sub-question decomposition, #245,
-ADR-021 rule 6) -> retrieve each sub-question -> one answer call (or none) -> validate -> log.
-Until #246 / #247 replace the single answer call with map and reduce, a question uses at most 2
-calls (planner 1 + answer 1); the answer call reads every sub-question's passages, trimmed only by
-the temporary, logged input guard when they pass the model's limit (guard_input).
+"""End-to-end (ADR-021): resolve -> plan (at most one planner call; sub-question decomposition, #245)
+-> retrieve each sub-question -> map (one extraction call per firm, corrective re-search, evidence
+matrix, #246) -> reduce (one synthesis call from the matrix, or an answer built by code, #247) ->
+validate -> log. Calls follow the decomposition (rule 7). MAP=off keeps the legacy single answer call
+(prompt v4.1) for comparison only (TL D3).
 
 Skeleton placeholder, owner: TL (Yueyang Du).
 """
@@ -11,14 +11,14 @@ from __future__ import annotations
 import json
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 
 from psycopg.types.json import Jsonb
 
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
-from cee.answer.validate import (GUARD_NOTE, check_citations, check_parts, coverage_note,
-                                 empty_retrieval_answer, fill_suggested_sources, insert_caveats)
+from cee.answer.validate import (check_citations, check_parts, coverage_note, empty_retrieval_answer,
+                                 fill_suggested_sources, insert_caveats)
 from cee.config import settings
 from cee.db import connect
 from cee.retrieve.fts import Hit, Query, apply_filters, resolve
@@ -32,8 +32,17 @@ class Result:
     answer: Answer
     query_id: int | None = None
     plan: Plan | None = None
-    input_guard: dict | None = None   # #245: the interim input guard's trim, when it trimmed
     matrix: object = None             # #246: the evidence matrix (MAP=on), else None
+    reduce: dict = field(default_factory=dict)   # #247: what the reduce step did (log_filters.reduce)
+
+
+def union_hits(hits: list[Hit], matrix) -> list[Hit]:
+    """#247 B1: the passages an answer may cite: the retrieval hits, then each corrective re-search hit
+    of the map step not already there (origin "corrective"), in order, no duplicates."""
+    if matrix is None:
+        return list(hits)
+    seen = {h.chunk_id for h in hits}
+    return [*hits, *[h for h in getattr(matrix, "corrective", []) or [] if h.chunk_id not in seen]]
 
 
 Progress = Callable[[str, str, str], None]
@@ -93,9 +102,10 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     t.report("search", "done", f"Searching the corpus: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                f" in {_n(len(plan.subquestions), 'sub-question')}")
     matrix = map_step(query, plan, hits, provider, t)
-    guard: dict = {}
-    answer, _raw = answer_for(question, query, hits, provider, trace=t, plan=plan, guard=guard)
-    result = Result(query, hits, answer, plan=plan, input_guard=guard or None, matrix=matrix)
+    every = union_hits(hits, matrix)
+    info: dict = {}
+    answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix, info=info)
+    result = Result(query, every, answer, plan=plan, matrix=matrix, reduce=info)
     if log:
         with t.stage("log", "Saving the query"):
             result.query_id = _log(result, provider)
@@ -121,10 +131,10 @@ def map_text(matrix, provider: str) -> str:
 
 
 def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace):
-    """#246: the map step when MAP=on (off by default until #247): extraction per firm, corrective
-    re-search, the evidence matrix (logged; the interim answer stays what the user sees)."""
+    """#246: the map step (on by default since #247): extraction per firm, corrective re-search, the
+    evidence matrix the reduce step writes the answer from. MAP=off: the legacy single answer call."""
     if not settings().map_on:
-        t.report("map", "skipped", "Map step off (MAP=off): no extraction calls")
+        t.report("map", "skipped", "Map step off (MAP=off): no extraction calls; legacy single answer call")
         return None
     if not hits:
         t.report("map", "skipped", "No passages found: no extraction call")
@@ -138,45 +148,16 @@ def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace
     return matrix
 
 
-def guard_input(question: str, query: Query, hits: list[Hit], provider: str,
-                plan: Plan | None = None) -> tuple[list[Hit], dict | None]:
-    """Interim answer input guard (#245; temporary, removed when #247 wires the reduce step): the
-    passages the one answer call reads, and None, when the estimated input (characters / 4) fits
-    llm.answer_input_limit(provider); else the passages kept by validate.fit_input (research first,
-    round-robin over the sub-questions, best rank first) and {limit, before, after, kept, total,
-    dropped chunk ids}. No limit (the mock, unless ANSWER_INPUT_MAX_TOKENS is set): no guard."""
-    from cee.answer import llm
-    from cee.answer.validate import fit_input
-
-    limit = llm.answer_input_limit(provider)
-    if limit is None or not hits:
-        return hits, None
-    window = answer_window(query)
-    before = llm.input_tokens(question, hits, plan, window)
-    if before <= limit:
-        return hits, None
-    base = llm.input_tokens(question, [], plan, window)
-    kept, dropped = fit_input(hits, plan, limit, base, llm.chunk_tokens)
-    return kept, {"limit": limit, "before": before, "after": llm.input_tokens(question, kept, plan, window),
-                  "kept": len(kept), "total": len(hits), "dropped": dropped}
-
-
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
                raw: Answer | None = None, trace: _Trace | None = None,
-               plan: Plan | None = None, guard: dict | None = None) -> tuple[Answer, Answer | None]:
+               plan: Plan | None = None, matrix=None, info: dict | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
     Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
-    `plan` (#215): the model sees the evidence grouped by part, and code checks every part has a
-    cited claim or a gap (validate.check_parts); None: no part grouping and no part check.
-    Interim input guard (#245): when the input passes the model's limit, the model, the citation /
-    part / number checks, the caveats, the suggested sources and the coverage note all read the
-    trimmed list (what the model was given); the coverage note says so and `guard` (a dict, when
-    passed) gets {limit, before, after, kept, total, dropped}. Retrieval and its log keep the full list."""
+    `matrix` (#247): the reduce step writes the answer from the evidence matrix (one call, or an
+    answer built by code; `hits` = retrieval + corrective re-search hits, B1); `info` (a dict, when
+    passed) gets what the reduce did, for log_filters.reduce. No matrix: the legacy single answer call
+    (prompt v4.1, MAP=off), with `plan` for the part grouping and the part check (#215)."""
     t = trace or _Trace(None)
-    seen, info = guard_input(question, query, hits, provider, plan) if hits else (hits, None)
-    if info is not None and guard is not None:
-        guard.update(info)
-    hits = seen
     if not hits:
         t.report("model", "skipped", "No passages found: no model call")
         t.report("check", "skipped", "Checking citations: nothing to check")
@@ -185,12 +166,12 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
             answer.coverage_note = coverage_note(query, hits)
         t.report("caveats", "done", _caveats_text(answer))
         return answer, None
-    trimmed = (f"; input over the model's limit: kept {info['kept']} of {info['total']} passages, "
-               f"~{info['after']} of ~{info['before']} tokens" if info else "")
+    if matrix is not None:
+        return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info)
     if raw is None:
-        with t.stage("model", f"Asking the model ({provider}, one call{trimmed})"):
+        with t.stage("model", f"Asking the model ({provider}, one call)"):
             raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
-        t.report("model", "done", f"Asking the model ({provider}, one call{trimmed}): "
+        t.report("model", "done", f"Asking the model ({provider}, one call): "
                                   f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
         t.report("model", "skipped", "Reusing the saved model output: no model call")
@@ -201,12 +182,41 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         answer = insert_caveats(answer, query, hits)
         answer = fill_suggested_sources(answer, query)
         answer.coverage_note = coverage_note(query, hits)
-        if info:
-            answer.coverage_note = " ".join(filter(None, [answer.coverage_note, GUARD_NOTE.format(
-                kept=info["kept"], total=info["total"])]))
     t.report("caveats", "done", _caveats_text(answer))
     return answer, raw
 
+
+REDUCE_RUNNING = "Asking the model to write the answer from the evidence matrix"
+
+
+def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info):
+    """#247: the reduce step and every code check after it (cee.answer.reduce)."""
+    from cee.answer import reduce as R
+    code_built = not R.needs_call(matrix)
+    if code_built:
+        raw = R.code_answer(matrix, query)
+        t.report("model", "skipped", f"No model call: the answer is built by code "
+                                     f"({matrix.behavior or 'incomplete'})")
+    elif raw is None:
+        with t.stage("model", f"{REDUCE_RUNNING} ({provider}, one call)"):
+            if provider == "mock":
+                raw = R.raw_answer(matrix, query, provider)
+            else:
+                meta: dict = {}
+                out = R.call_reduce(question, matrix, query, provider, meta=meta)
+                raw = R.to_answer(out, provider, meta)
+        t.report("model", "done", f"{REDUCE_RUNNING} ({provider}, one call): "
+                                  f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
+    else:
+        t.report("model", "skipped", "Reusing the saved model output: no model call")
+    with t.stage("check", "Checking citations"):
+        answer, done = R.finish_answer(raw.model_copy(deep=True), matrix, query, plan, hits, question,
+                                       code_built=code_built)
+    if info is not None:
+        info.update(done, provider=provider, model=model_name(provider) if provider != "mock" else "mock")
+    t.report("check", "done", _check_text(answer, hits))
+    t.report("caveats", "done", _caveats_text(answer))
+    return answer, (None if code_built else raw)
 
 def answer_window(query: Query):
     """(from, to) the answer call is told about (prompt v4.1, #230): the question's time window and
@@ -264,8 +274,10 @@ def log_filters(r: Result) -> dict:
                    else {"skipped": "no passages"}),
            "llm_calls": {"planner": plan.calls, "map": sum(c["round"] == 1 for c in made),
                          "remap": sum(c["round"] == 2 for c in made), "answer": int(bool(r.answer.llm_called))}}
-    if r.input_guard:   # #245: the interim input guard trimmed the answer call's passages
-        out["input_guard"] = r.input_guard
+    if r.reduce:   # #247: what the reduce step did (code checks, flags, stop_reason, usage; rule 7)
+        out["reduce"] = r.reduce
+    if m is not None and getattr(m, "corrective", None):   # #247 B1: where each re-search chunk came from
+        out["chunk_origin"] = {h.chunk_id: {"origin": "corrective", "subquestion": h.part_id} for h in m.corrective}
     return out
 
 

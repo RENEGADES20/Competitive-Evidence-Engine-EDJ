@@ -6,11 +6,13 @@ The LLM fills claims/adjacent/gaps/behavior; code fills source_label, flags and 
 from __future__ import annotations
 
 import json
-from typing import Literal, get_args
+from typing import Literal
 
 from pydantic import BaseModel, Field, PrivateAttr, field_validator, model_validator
 
-Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refuse"]
+# #247: "incomplete" is code-only (an undecided matrix, ADR-021 #246 D5); no model schema offers it.
+Behavior = Literal["answer", "answer_with_boundary", "gap_with_adjacent", "refuse", "incomplete"]
+MODEL_BEHAVIORS = ("answer", "answer_with_boundary", "gap_with_adjacent", "refuse")
 
 
 class Claim(BaseModel):
@@ -49,6 +51,7 @@ class Answer(BaseModel):
     caveats: list[str] = Field(default_factory=list)  # inserted by code
     coverage_note: str = ""                            # built by code from the retrieved hits
     withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
+    incomplete_note: str = ""                          # code-owned (#247): an extraction failed; shown as a warning
     llm_called: bool = False
     # Code-owned, from the provider response (#230): why the output stopped (Anthropic stop_reason,
     # OpenAI finish_reason; "" for the mock and outputs saved before #230) and its token usage
@@ -106,7 +109,7 @@ def llm_output_schema() -> dict:
         "type": "object", "additionalProperties": False,
         "properties": {
             "answerable": {"type": "boolean"},
-            "behavior": {"type": "string", "enum": list(get_args(Behavior))},
+            "behavior": {"type": "string", "enum": list(MODEL_BEHAVIORS)},
             "claims": {"type": "array", "items": claim},
             "adjacent": {"type": "array", "items": adjacent},
             "gaps": {"type": "array", "items": gap},

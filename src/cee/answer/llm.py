@@ -1,6 +1,8 @@
-"""One answer call per question; the question planner (#214, ADR-020) may make one more before
-search, so a question uses at most 2 calls (ADR-012 allows 5). Providers: mock | anthropic | openai |
-deepseek (#242: OpenAI SDK, strict function tools on the /beta base URL, thinking on or off).
+"""The provider plumbing and the legacy single answer call (prompt v4.1, MAP=off). Since #247 the
+default flow is plan -> map -> reduce (cee.answer.extract, cee.answer.reduce), which reuses the
+clients, requests and parsing helpers here; calls follow the decomposition (ADR-021 rule 7).
+Providers: mock | anthropic | openai | deepseek (#242: OpenAI SDK, strict function tools on the /beta
+base URL, thinking on or off).
 
 Skeleton placeholder, owner: S2 (Jiapeng Liu).
 mock is offline and free: it cites the top hits verbatim. Use it for development and tests.
@@ -31,7 +33,7 @@ ANTHROPIC_REQUEST_VERSION = "strict-1"
 
 # DeepSeek (#242). Output caps by thinking mode (True = on): reasoning shares max_tokens, so thinking
 # gets the API's own thinking default (64K) for the answer and room to reason for the planner; off
-# keeps the project's 20000 / 2000. Quality first (TL, plan review 1).
+# is answer 20000, planner 8000 (#245; the planner was 2000 before). Quality first (TL, plan review 1).
 DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
 # #245: plan-v3 has no aspect cap: off 2000 -> 8000; on 16000 -> 64000 (TL decision after the Q19
 # planner was cut at 16000 reasoning tokens; the same as the answer cap and DeepSeek's thinking default)
@@ -64,25 +66,11 @@ def answer_max_tokens(provider: str) -> int:
     return DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking] if provider == "deepseek" else MAX_TOKENS
 
 
-# Interim answer input guard (#245, temporary: removed when #247 wires the reduce step). Context
-# windows from the providers' docs, checked 2026-11-19: DeepSeek deepseek-v4-pro 1M (Models &
+# Context windows from the providers' docs, checked 2026-11-19: DeepSeek deepseek-v4-pro 1M (Models &
 # Pricing page); Claude Sonnet 5.5 1M (Anthropic model table). OpenAI gpt-5: TODO-verify, 400k assumed.
+# Used by the map's per-call input check and the reduce's (#246, #247): an input over the window minus
+# the output cap is not sent, never trimmed (the #245 interim guard was removed in #247).
 CONTEXT_WINDOW = {"deepseek": 1_000_000, "anthropic": 1_000_000, "openai": 400_000}
-GUARD_ROUND = 1000
-
-
-def answer_input_limit(provider: str) -> int | None:
-    """Most estimated input tokens (characters / 4) of the interim answer call: ANSWER_INPUT_MAX_TOKENS,
-    else the provider's context window minus its answer output cap minus the fixed prompt overhead
-    (system prompt and tool schema), rounded down to 1k. None (no guard) on the mock."""
-    s = settings().answer_input_max_tokens
-    if s is not None:
-        return s
-    window = CONTEXT_WINDOW.get(provider)
-    if window is None:
-        return None
-    overhead = (len(SYSTEM_PROMPT) + len(json.dumps(llm_output_schema()))) / 4
-    return int((window - answer_max_tokens(provider) - overhead) // GUARD_ROUND * GUARD_ROUND)
 
 
 def input_tokens(question: str, hits: list[Hit], plan=None, window=None) -> int:
@@ -91,11 +79,6 @@ def input_tokens(question: str, hits: list[Hit], plan=None, window=None) -> int:
     chars = (len(SYSTEM_PROMPT) + len(json.dumps(llm_output_schema()))
              + len(build_user_message(question, hits, plan, window)))
     return round(chars / 4)
-
-
-def chunk_tokens(h: Hit) -> float:
-    """One passage's estimated tokens as the user message prints it (its <chunk> line + newline)."""
-    return (len(_chunk(h)) + 1) / 4
 
 
 class ProviderStop(RuntimeError):

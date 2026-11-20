@@ -27,7 +27,8 @@ def render() -> None:
 
     _section("Answer behavior headers")
     for text, code in [("Answer", "answer"), ("Answer (evidence only; the judgement is yours)", "answer_with_boundary"),
-                       ("Not in the corpus", "gap_with_adjacent"), ("No evidence", "refuse")]:
+                       ("Not in the corpus", "gap_with_adjacent"), ("No evidence", "refuse"),
+                       ("Incomplete", "incomplete")]:
         ui.behavior_header(text, code)
 
     _section("Claim card")

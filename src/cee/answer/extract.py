@@ -31,7 +31,7 @@ from cee.config import settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, Query
 
-EXTRACT_VERSION = "extract-v1"
+EXTRACT_VERSION = "extract-v1.1"   # #247: the asked quantity for other periods is a fact (ADR-021 rule 3)
 EXTRACT_TOOL = "submit_extraction"
 
 # Approval condition 1 (plan review 2): one proxy text, used verbatim in the firm and research prompts.
@@ -54,13 +54,16 @@ a figure.
 Label each cell:
 - fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is
   still a fact (some periods, a narrower group or sample, one of several figures); the item says
-  what it covers (period, scope).
+  what it covers (period, scope). The asked quantity for periods other than those asked (older or
+  later) is also a fact, for the periods it covers: the item's period says which; it is never
+  different_quantity.
 - different_quantity: no passage states the asked quantity, but one states a different, related
   quantity: a wider unit that contains the asked one (a parent company, a segment that also holds
   other businesses), a different measure (all employees or full-time equivalents for advisors,
   compensation expense for a payout grid or a headcount, client firms on a platform for the firm's
   own advisors, a regulatory form's label for a business metric), or an industry figure for a firm's
-  own figure. Put it in items and say in differs_because how it differs from what is asked.
+  own figure. A different period of the asked quantity is not a different quantity. Put it in items
+  and say in differs_because how it differs from what is asked.
 - not_disclosed: the passages show the firm does not report it (they say so, or they report the
   surrounding figures without it).
 - not_found: the passages say nothing about it.

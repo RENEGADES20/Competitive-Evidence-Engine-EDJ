@@ -552,7 +552,7 @@ def test_token_mode_searches_with_k_none_and_records_the_budget(monkeypatch, tmp
     five = ["MS", "SCHW", "EDJ", "MER", "RJF"]
     seen, qry = _fake_eval(monkeypatch, five, [_tok_hit("MS-10K-2025#1", "MS", 40000)])
     monkeypatch.setattr(fts, "TOKEN_BUDGET", 20000)
-    er.main(["--questions", "Q22", "--out", str(tmp_path / "tok")])
+    er.main(["--questions", "Q22", "--legacy", "--out", str(tmp_path / "tok")])   # retrieval only (#247)
     er.main(["--questions", "Q22", "--k", "20", "--out", str(tmp_path / "fixed")])
     assert seen == [None, 20]
     rep = _record(tmp_path / "tok")
@@ -590,7 +590,7 @@ def test_theme_peers_do_not_count_toward_fill(monkeypatch, tmp_path):
     _fake_eval(monkeypatch, ["EDJ"], hits, peer_ids=["SCHW-TR-2026Q3#11", "MS-10K-2025#9", "RJF-X#1"],
                unattached=["EDJ-TR-2026Q1#4"])
     monkeypatch.setattr(fts, "TOKEN_BUDGET", 2000)
-    er.main(["--questions", "Q19", "--out", str(tmp_path / "q19")])
+    er.main(["--questions", "Q19", "--legacy", "--out", str(tmp_path / "q19")])   # retrieval only (#247)
     rep = _record(tmp_path / "q19")
     r = rep["questions"][0]
     assert r["budget_tokens"] == 2000
@@ -870,7 +870,8 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     er.main(["--questions", "Q7", "--out", str(tmp_path)])
     r = _record(tmp_path)["questions"][0]
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
-    assert r["llm_calls"] == {"planner": 0, "answer": 0} and r["plan"]["source"] == "rules"
+    assert {k: r["llm_calls"][k] for k in ("planner", "answer")} == {"planner": 0, "answer": 0}   # #247: + map counts
+    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v5"   # the mock reduce ran (0 calls)
     assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"
 
 
@@ -1081,7 +1082,7 @@ def test_timing_helper():
     assert er.timing(time.monotonic(), None)["tokens_per_s"] is None
 
 
-# --- #245: plan-only real runs, the 400 stop, the interim input guard in the answer key --------
+# --- #245: plan-only real runs, the 400 stop (#247: the interim input guard is gone) ------------
 
 def _plan_only_env(monkeypatch, outcome, cache):
     from cee import ask
@@ -1122,7 +1123,6 @@ def test_plan_only_makes_planner_calls_and_no_answer_call(monkeypatch, tmp_path)
     assert [s["id"] for s in r["plan"]["subquestions"]] == ["a2.MS", "a1.RJF", "a2.RJF"]
     assert r["aspects"] == 2 and r["subquestions"] == 3
     assert r["budget_tokens"] == 3000 and r["fill"] == 0.25                  # sum of sub-question budgets
-    assert r["interim_input"]["tokens"] > 0 and r["interim_input"]["would_drop"] == 0
     assert rep["meta"]["subquestion_tokens"] and "max_parts" not in rep["meta"]
 
 
@@ -1151,28 +1151,6 @@ def test_a_400_on_a_planner_call_stops_the_run(monkeypatch, tmp_path):
     plan = er.RealRunner("deepseek", 9, "snap-2", tmp_path / "r2", cache_dir=tmp_path / "c2").plan(
         {"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     assert plan.source == "fallback"
-
-
-def test_guard_trim_joins_the_answer_key(fake_model, monkeypatch, tmp_path):
-    from cee.retrieve.fts import Hit
-    hits = [Hit(chunk_id=f"MS-10K-2025#{i}", doc_id="MS-10K-2025", entity_id="MS", segment=None, doc_type="10-K",
-                source_tier=2, published_at="2026-02-19", period_end="2025-12-31", section="Item 7", page=None,
-                rank=10.0 - i, text="word " * 400) for i in range(6)]
-    args = (q("Q1", []), "v4.1", "snap", "anthropic", "m", [h.chunk_id for h in hits])
-    plain = er.cache_key(*args)
-    trimmed = er.cache_key(*args, 8000, None, None, None, {"limit": 5000, "dropped": ["MS-10K-2025#5"]})
-    assert trimmed != plain != er.cache_key(*args, 8000, None, None, None, {"limit": 6000, "dropped": ["MS-10K-2025#5"]})
-    runner = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
-    runner.answer(q("Q1", []), query(["MS"]), hits)
-    assert runner.last_guard is None
-    from cee.answer import llm
-    base = llm.input_tokens("text Q1", hits[:0])
-    monkeypatch.setenv("ANSWER_INPUT_MAX_TOKENS", str(base + 1200))
-    again = er.RealRunner("anthropic", 2, "snap-1", tmp_path / "run2", cache_dir=tmp_path / "cache")
-    a, how = again.answer(q("Q1", []), query(["MS"]), hits)
-    assert how == "called" and again.last_guard and again.last_guard["dropped"]       # not the untrimmed output
-    rec = [s for s in saved(tmp_path / "cache") if s.get("input_guard")][0]
-    assert rec["input_guard"]["limit"] == base + 1200
 
 
 # --- #246: map calls cached, capped exactly, failed calls saved, must-not report ------------------
@@ -1349,3 +1327,124 @@ def test_map_must_not_reports_items_and_derivation_inputs():
 def test_map_only_needs_real(tmp_path):
     with pytest.raises(SystemExit):
         er.main(["--questions", "Q7", "--map-only", "--out", str(tmp_path)])
+
+# --- #247: reduce calls cached, reused, saved when invalid or failed; a 400 stops the run ----------
+
+from cee.retrieve.fts import Query  # noqa: E402
+
+def _reduce_setup(monkeypatch, behave):
+    from cee.answer import reduce as R
+    from tests.test_reduce import q24_shaped
+
+    m = q24_shaped()
+    calls = []
+
+    def fake(question, matrix, query, provider, client=None, meta=None):
+        calls.append(provider)
+        if meta is not None:
+            meta.update(stop_reason="tool_calls", usage={"output_tokens": 10})
+        return behave(matrix)
+    monkeypatch.setattr(R, "call_reduce", fake)
+    from cee import ask
+    monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
+    qry = Query(question=m.question, entities=["EDJ", "SCHW", "MS"])
+    return {"id": "Q24", "text": m.question}, qry, m, calls
+
+
+def _good(m):
+    return {"answerable": True, "behavior": "answer", "adjacent": [], "gaps": [], "claims": [
+        {"text": "The comparison is not valid.", "chunk_ids": ["MS-10K#5"], "part_id": "a4"}]}
+
+
+def test_reduce_call_cached_and_reused_with_zero_calls(monkeypatch, tmp_path):
+    from tests.test_reduce import plan_of
+    qd, qry, m, calls = _reduce_setup(monkeypatch, _good)
+    hits = list(m.hits.values())
+    r = er.RealRunner("deepseek", 1, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), hits, m)
+    assert how == "called" and r.made == 1 and a["behavior"] == "answer" and info["comparison_missing"] == []
+    rec = [s for s in saved(tmp_path / "cache") if s.get("reduce_version")][0]
+    assert rec["raw"]["claims"][0]["part_id"] == "a4" and rec["chunk_ids"] == m.chunk_ids()
+    again = er.RealRunner("deepseek", 0, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    a2, how2, _ = again.reduce(qd, qry, plan_of(m), hits, m)
+    assert how2 == "cached" and again.made == 0 and len(calls) == 1 and a2["claims"] == a["claims"]
+    capped = er.RealRunner("deepseek", 0, "snap-2", tmp_path / "r3", cache_dir=tmp_path / "cache")
+    assert capped.reduce(qd, qry, plan_of(m), hits, m)[1] == "cap" and len(calls) == 1
+
+
+def test_reduce_key_changes_with_the_matrix(monkeypatch):
+    from tests.test_reduce import q24_shaped
+    m = q24_shaped()
+    qd = {"id": "Q24", "text": m.question}
+    base = er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m, None)
+    assert base == er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv2", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 20000, "rv", m, None)
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", m,
+                                       Query(question=m.question, entities=[], window=("2026-01-01", "2026-03-31")))
+    m.cells["a1.MS"].label = "not_disclosed"
+    from cee.answer.matrix import finish
+    assert base != er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "rv", finish(m), None)
+
+
+def test_invalid_reduce_output_saved_as_invalid_and_never_recalled(monkeypatch, tmp_path):
+    from cee.answer import llm
+    from tests.test_reduce import plan_of
+
+    def bad(m):
+        raise llm.ModelOutputError("Model output cut at max_tokens (64000 output tokens)", {"partial": 1},
+                                   "deepseek", "length", {"output_tokens": 64000})
+    qd, qry, m, calls = _reduce_setup(monkeypatch, bad)
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    assert r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "invalid"
+    rec = [s for s in saved(tmp_path / "cache") if s.get("invalid")][0]
+    assert rec["raw_payload"] == {"partial": 1} and rec["stop_reason"] == "length"
+    again = er.RealRunner("deepseek", 5, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    assert again.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "invalid"
+    assert again.made == 0 and len(calls) == 1
+
+
+def test_failed_reduce_call_saved_and_a_400_stops(monkeypatch, tmp_path):
+    from tests.test_reduce import plan_of
+
+    def boom(m):
+        raise _BadRequest("schema rejected")
+    qd, qry, m, calls = _reduce_setup(monkeypatch, boom)
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)
+    assert a is None and how == "failed" and r.bad_request and r.made == 1
+    rec = saved(tmp_path / "cache")[0]
+    assert rec["failed_call"] and rec["bad_request"] is True
+    other = {"id": "Q11", "text": "other"}
+    assert r.reduce(other, qry, plan_of(m), list(m.hits.values()), m)[1] == "stopped" and len(calls) == 1
+    again = er.RealRunner("deepseek", 5, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
+    assert again.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)[1] == "failed" and len(calls) == 1
+
+
+def test_code_built_reduce_makes_no_call_and_writes_no_file(monkeypatch, tmp_path):
+    from tests.test_reduce import H, cell, matrix, plan_of
+    from cee.retrieve.planner import Aspect
+
+    qd, qry, _, calls = _reduce_setup(monkeypatch, _good)
+    m = matrix("Advisor headcount across the five.", [Aspect("a1", "Advisor headcount.")],
+               [cell("a1.EDJ", "not_disclosed"), cell("a1.MS", "not_found")], [H("EDJ-10K#1")])
+    r = er.RealRunner("deepseek", 5, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
+    a, how, info = r.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)
+    assert how == "code_built" and a["behavior"] == "refuse" and calls == [] and r.made == 0
+    assert not (tmp_path / "cache").exists() or not any((tmp_path / "cache").iterdir())
+
+
+def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
+    """#247: the mock eval runs the map and the mock reduce by default; --legacy runs neither."""
+    from cee.answer import extract
+    _plan_only_env(monkeypatch, None, tmp_path / "cache")
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+    monkeypatch.setenv("MAP", "off")   # an old .env: the eval maps anyway
+    er.main(["--questions", "Q7", "--out", str(tmp_path / "run")])
+    rep = _record(tmp_path / "run")
+    r = rep["questions"][0]
+    assert r["reduce"]["version"] == "v5" and r["answer_behavior"] == r["map_behavior"]
+    assert rep["meta"]["map"] is True and rep["meta"]["map_setting"] is False and rep["meta"]["real_calls"] == 0
+    monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
+    er.main(["--questions", "Q7", "--legacy", "--out", str(tmp_path / "legacy")])
+    assert "reduce" not in _record(tmp_path / "legacy")["questions"][0]

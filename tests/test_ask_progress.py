@@ -37,6 +37,7 @@ def done(events):
 
 
 def test_stages_in_order_with_facts_from_their_output(monkeypatch):
+    monkeypatch.setenv("MAP", "off")   # #247: the legacy single answer call (prompt v4.1)
     result, events, calls = run(monkeypatch, HITS)
     assert events[0] == ("resolve", "running", "Reading the question")   # first line before any work
     order = [stage for stage, state, _ in events if state != "running"]
@@ -98,6 +99,7 @@ def test_plan_stage_and_at_most_two_calls(monkeypatch):
     from cee.retrieve.planner import Part, Plan
 
     calls = []
+    monkeypatch.setenv("MAP", "off")   # #247: the legacy single answer call
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MS", "MER"]))
 
     def fake_plan(query, provider):
@@ -143,21 +145,52 @@ def test_mock_logs_zero_calls(monkeypatch):
     assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0} and logged["plan"]["source"] == "rules"
 
 
-def test_map_is_off_by_default(monkeypatch):
-    """#246 (TL decision D8): MAP off until #247: the stage is skipped, no extraction, logged off."""
+def test_map_off_is_the_legacy_single_call(monkeypatch):
+    """#247 (TL D3): MAP=off keeps the legacy v4.1 answer call: no extraction, logged off."""
     import cee.answer.extract as extract
+    monkeypatch.setenv("MAP", "off")
     monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
     result, events, calls = run(monkeypatch, HITS)
-    assert ("map", "skipped", "Map step off (MAP=off): no extraction calls") in events
-    assert result.matrix is None and pipeline.log_filters(result)["map"] == {"off": True}
+    assert ("map", "skipped", "Map step off (MAP=off): no extraction calls; legacy single answer call") in events
+    assert result.matrix is None and pipeline.log_filters(result)["map"] == {"off": True} and calls == ["mock"]
 
 
-def test_map_on_builds_and_logs_the_matrix_on_the_mock(monkeypatch):
-    monkeypatch.setenv("MAP", "on")
+def test_map_and_reduce_run_by_default_on_the_mock(monkeypatch):
+    """#247: MAP on by default: the matrix, then the mock reduce (0 paid calls), no legacy call."""
     result, events, calls = run(monkeypatch, HITS)
     d = done(events)
     assert d["map"] == ("Extracting per firm (mock, no model call): 1 cell: 1 fact; behavior by code: answer")
+    assert d["model"] == ("Asking the model to write the answer from the evidence matrix (mock, one call): 1 claim")
+    assert calls == []                                       # the legacy generate() is not called
     logged = pipeline.log_filters(result)
     assert logged["map"]["behavior"] == "answer" and logged["map"]["cells"]["a1.MER"]["label"] == "fact"
     assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0}   # the mock is not a paid call
-    assert calls == ["mock"]
+    assert logged["reduce"]["version"] == "v5" and logged["reduce"]["outside_matrix"] == 0
+    assert result.answer.behavior == "answer" and result.answer.claims[0].part_id == "a1.MER"
+    assert result.answer.claims[0].chunk_ids == ["BAC-10K-2025#244"] and not result.answer.claims[0].flags
+
+
+def test_corrective_hits_join_the_answer_hits_and_the_log(monkeypatch):
+    """#247 B1: a claim citing a corrective re-search hit is linked, unflagged and logged."""
+    from dataclasses import replace
+
+    import cee.answer.extract as extract
+    from cee.answer.matrix import Cell, EvidenceMatrix, Item, finish
+    from cee.retrieve.planner import Aspect
+
+    new = replace(hit("BAC-10Q-2026Q3#9", "BAC-10Q-2026Q3"), part_id="a1.MER", origin="corrective")
+
+    def fake_map(q, plan, hits, provider, as_of=None):
+        a = Aspect("a1", "Merrill profitability.")
+        m = EvidenceMatrix(q.question, rows=["MER"], aspects=[a], cells={"a1.MER": Cell(
+            "a1.MER", "MER", "a1", "named", "fact", items=[Item("t", "q", ["BAC-10Q-2026Q3#9"])])})
+        m.hits = {h.chunk_id: h for h in [*hits, new]}
+        m.corrective = [new]
+        return finish(m, q, [*hits, new])
+    monkeypatch.setattr(extract, "run_map", fake_map)
+    result, events, calls = run(monkeypatch, HITS)
+    assert [h.chunk_id for h in result.hits] == [*(h.chunk_id for h in HITS), "BAC-10Q-2026Q3#9"]
+    c = result.answer.claims[0]
+    assert c.chunk_ids == ["BAC-10Q-2026Q3#9"] and not c.flags and c.source_label
+    logged = pipeline.log_filters(result)
+    assert logged["chunk_origin"] == {"BAC-10Q-2026Q3#9": {"origin": "corrective", "subquestion": "a1.MER"}}
