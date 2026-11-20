@@ -65,7 +65,7 @@ is an **escalation** to the tech lead, not a return. Every check falls in exactl
 CLAUDE.md "Paid API calls (money)" decides. For review that means:
 - **Allowed without the tech lead** when the approved ExecPlan planned them: question IDs, why the
   mock cannot show it, and how many runs of each. One run of a question goes once through the full
-  answer flow (up to 5 calls, ADR-012); a second run of the same question must be in the plan.
+  answer flow (every call the flow makes, ADR-021); a second run of the same question must be in the plan.
   No per-task total. They run last, after every mock check passed, with the planned questions
   run together in one run (CLAUDE.md step 3); every raw output (question, prompt version, model,
   output) is saved in the run's evidence folder; the PR's Verification states the count, the
@@ -101,7 +101,7 @@ The plan is `plans/<NNNN>-*.md` on branch `tl/<issue#>-*` (`git fetch origin`, t
 Each of these that does not hold is a blocking finding:
 1. Every Acceptance item of the issue maps to a plan Acceptance item with a concrete check (command -> expected result, question ID -> behavior).
 2. "Files to change" stays inside the issue's scope; nothing from "Out of scope"; no teammate-owned file without naming the owner as reviewer (CLAUDE.md spec table).
-3. No invariant is bent (hard filters in SQL for every part, at most 5 LLM calls per user question (ADR-012), citations only to retrieved chunks, caveats by code, question bank append-only).
+3. No invariant is bent (hard filters in SQL for every part, LLM calls follow the decomposition, the expected count is stated in the plan, every call logged (ADR-021), citations only to retrieved chunks, caveats by code, question bank append-only).
 4. Windows and Mac: any script or setup step has both versions.
 5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, how many runs of each question, a re-run of a question listed before the first call, run last after the mock checks; no 30-question scored run (Gate 3) without a tech-lead go-ahead); see "Paid API calls".
 6. Steps are small and testable; risks named.

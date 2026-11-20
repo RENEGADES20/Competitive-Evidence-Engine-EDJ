@@ -1,7 +1,7 @@
 # Spec: Retrieval
 
 **Owner:** S1
-Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020 in [DECISIONS.md](../docs/DECISIONS.md).
+Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-001, ADR-004, ADR-010, ADR-011, ADR-013, ADR-014, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020, ADR-021 in [DECISIONS.md](../docs/DECISIONS.md).
 
 ## Purpose
 
@@ -51,6 +51,11 @@ expand_synonyms(terms) -> terms     # NNA -> "net new assets"; FA -> "financial 
     #   structure`: gap question Q25 stays clear of "payout grid"); a multi-word key in the question
     #   is searched as a phrase too ("net new assets", Q22)
 
+# ADR-021 (#245): sub-question decomposition. Planner v3 lists every asked aspect (no merge, no cap,
+#   PLANNER_MAX_PARTS removed); code sets the firms and expands firms x aspects into
+#   SubQuestion(entity, aspect), each searched with every SQL filter and its own budget
+#   (SUBQUESTION_TOKENS, ADR-019 amendment); research searched once; a corrective re-search hook
+#   (CRAG, extra words + exclude set) for #246. The sketch below describes the current code until #245.
 plan_question(query) -> Plan{parts: [Part{id, text, firms, keyword_query}], source, calls}
     # question planner (#214, ADR-020; src/cee/retrieve/planner.py): with a real provider and
     #   PLANNER=on, one call (the answer model, tool submit_plan) splits the question into at most

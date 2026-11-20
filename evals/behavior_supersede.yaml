@@ -1,0 +1,49 @@
+# Superseded expected behaviors (ADR-021 rule 8, #244).
+#
+# The question bank (evals/questions.yaml) is append-only: no question is rewritten. When a later
+# decision changes the behavior a question should get, the change is recorded here instead.
+#   - The eval scorer reads this file from #248 (eval harness); until then scripts/eval_run.py
+#     still compares with the bank's expected_behavior.
+#   - An entry changes expected_behavior only; passes_if, evidence and every other field of the
+#     question stay as written in the bank.
+#   - bank_expected must equal the bank's expected_behavior (tests/test_behavior_supersede.py), so a
+#     later bank change cannot silently diverge from this file.
+#   - The CLAUDE.md share of gap_with_adjacent + refuse questions is held on both counts: the bank's
+#     expected_behavior (raw) and the behavior after this file (effective), each at least 5/30.
+#
+# Fields: id, bank_expected, expected_behavior, rule, decided, reason
+
+supersedes:
+  - id: Q24
+    bank_expected: gap_with_adjacent
+    expected_behavior: answer
+    rule: ADR-021 rules 1d, 2, 4
+    decided: 2026-11-19 (user decision; TL D2 on the #244 plan review)
+    reason: >-
+      Client assets per advisor is derivable for Edward Jones from same-firm, same-basis cited inputs
+      (assets under care and advisor count in the same 10-Q), so at least one asked firm holds the
+      quantity and the answer is `answer`: the EDJ ratio with both inputs cited, one cited claim that
+      answers whether the cross-firm comparison is valid, each other firm's figures with their
+      definitions and the comparability caveat, and named gaps. The bank's "decline a bad comparison"
+      intent is kept by rule 2 (no cross-firm ratio on different bases) and rule 4.
+
+  - id: Q25
+    bank_expected: gap_with_adjacent
+    expected_behavior: answer
+    rule: ADR-021 rules 1a, 3
+    decided: 2026-11-19 (user decision; named in #244; accepted by the TL in #213)
+    reason: >-
+      Several firms disclose parts of their advisor compensation structure (Form ADV, 10-K / 10-Q and
+      recruiting-page text), so the asked quantity is partially covered: a claim per disclosure and a
+      named gap for every undisclosed part (payout grids). A partial disclosure is never adjacent.
+
+  - id: Q28
+    bank_expected: gap_with_adjacent
+    expected_behavior: answer
+    rule: ADR-021 rules 1a, 3
+    decided: 2026-11-19 (user decision; TL D2 on the #244 plan review)
+    reason: >-
+      Edward Jones discloses an advisor attrition rate with its definition (10-Q 2025Q2 / 2025Q3), so
+      one of the two asked firms holds the quantity: `answer` with EDJ's rate, period and definition,
+      the gap that Merrill gives no rate, and the net headcount change as adjacent with the
+      difference stated. passes_if already asks for exactly this content.

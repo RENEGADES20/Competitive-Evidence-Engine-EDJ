@@ -45,6 +45,6 @@ merged). If not, stop and say why.
 - Agents run one after another in the same checkout; never two writers at once.
 - The reviewer's only inputs are issue/plan/PR numbers and the repo. That is what makes it independent.
 - Paid API calls: 0 unless the approved plan planned them (question IDs, why, runs of each question;
-  one run = the full answer flow, up to 5 calls; no per-task total; CLAUDE.md). Unplanned calls or
+  one run = the full answer flow, every call the flow makes, ADR-021; no per-task total; CLAUDE.md). Unplanned calls or
   re-runs need the tech lead, and so does the 30-question scored run (Gate 3). The reviewer never makes a paid call.
 - Teammate PRs are not reviewed this way; they stay with the tech lead.

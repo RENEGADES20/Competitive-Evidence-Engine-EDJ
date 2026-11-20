@@ -29,8 +29,9 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
   SQL `WHERE` clauses, not prompt instructions. Merrill = `entity=MER` or
   (`entity=BAC` and `segment` in GWIM/Merrill).
 - **Time windows are filtered in SQL**, not judged by the LLM.
-- **Up to 5 LLM calls per user question; one by default.** More only when the question splits
-  into parts (e.g. a comparison across firms); every part keeps the SQL filters. See ADR-012.
+- **LLM calls follow the question's decomposition; no fixed number.** Firms x aspects, every
+  sub-question keeps the SQL filters; every call is logged with tokens and cost (cost: #248). See
+  ADR-021 (amends ADR-012).
 - **Model-based work is developed on a branch, not `main`.** Anything that needs a model
   besides the answer LLM calls (embeddings, rerankers, any local or hosted model in
   retrieval or validation) is built and tested there (today `exp/hybrid`). See ADR-011.
@@ -99,8 +100,8 @@ team money. The default is zero calls. Follow these steps whenever a task might 
    judge answer quality (wording, behavior choice, whether claims match their sources).
 2. **Plan before the first call.** Write down which question IDs, why the mock cannot show it,
    and how many runs of each. Use the fewest questions that prove the point.
-   One run of a planned question through the full answer flow (up to 5 real calls, ADR-012)
-   needs no tech-lead approval. Running the same question again (e.g. a second prompt version)
+   One run of a planned question through the full answer flow (every call the flow makes,
+   ADR-021; the plan states the expected count) needs no tech-lead approval. Running the same question again (e.g. a second prompt version)
    is planned in the ExecPlan before the first call. There is no per-task total.
    The 30-question scored run (Gate 3) needs an explicit go-ahead from the tech lead.
 3. **Make each call count.** Call only on finished code, after every mock check passes. Run the
