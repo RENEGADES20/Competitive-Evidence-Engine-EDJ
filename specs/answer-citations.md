@@ -123,7 +123,10 @@ with `MAP=on`, `ask()` builds and logs the matrix (`query_log.filters.map`); the
   check rules below), `period_unparsed`; a missing cell is `not_found` (`missing_cell`).
 - **Invalid map outputs** (saved, never re-rolled; the cells become `failed`): no tool call; cut at
   the cap; Anthropic refusal; DeepSeek `finish_reason` other than `tool_calls` / `stop`; not JSON; not a
-  valid extraction; no cells. **Failed calls** (timeout, 5xx, connection, a 401 / 429 that is not
+  valid extraction; no cells. JSON parsing (TL decision on #246 Q24; every DeepSeek / OpenAI argument
+  parse, map, planner and answer, `llm.loads_object`): a complete object followed only by whitespace
+  and stray `}` / `]` is accepted with the flag `trailing_braces`; any other trailing text is invalid;
+  the object is still validated and checked in full. **Failed calls** (timeout, 5xx, connection, a 401 / 429 that is not
   DeepSeek's `ProviderStop`, a 400): the call's cells `failed`, the round goes on; the eval saves a
   counted `failed_call` record, reused and never called again; a 400 stops the eval run after the
   round. A `ProviderStop` stops the question; calls not started are cancelled.

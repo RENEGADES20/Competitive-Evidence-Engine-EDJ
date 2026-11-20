@@ -61,7 +61,7 @@ phase; later commits on the branch touch only `plans/` and `docs/`).
 | Q11 | `answer` | answer | 5 + 2 | matches |
 | Q19 | `answer_with_boundary` | answer_with_boundary | 4 + 3 | matches; competitor rows present |
 | Q23 | `answer` | answer | 5 + 0 | matches |
-| Q24 | **undecided** (`None`) | answer | 5 + 2 | **does not match**: 3 of 5 map outputs invalid (finding 1) |
+| Q24 | undecided (`None`) in phase B; **`answer` after the 0-call re-check (section 3)** | answer | 5 + 2 | phase B: 3 of 5 map outputs invalid (finding 1); re-check: matches, EDJ ratio derived |
 | Q26 | `answer` | answer | 1 + 1 | matches |
 
 **Q11 matrix** (rows x a1 define / a2 report / a3 includes / a4 excludes):
@@ -142,7 +142,8 @@ phase; later commits on the branch touch only `plans/` and `docs/`).
 
 ### Findings (reported, not re-run)
 
-1. **Q24: 3 of 5 map outputs invalid, all the same way.**
+1. **Q24: 3 of 5 map outputs invalid, all the same way.** Resolved by the TL decision (option a,
+   section 3).
    - DeepSeek's strict tool arguments for map.EDJ, map.MS and map.RJF each hold a complete, valid JSON
      object followed by one stray `}` ("Extra data"; arguments of 4,837, 6,361 and 7,550 characters).
    - By the invalid-output rule these are saved and never re-rolled, so the cells are `failed` and the
@@ -170,3 +171,66 @@ phase; later commits on the branch touch only `plans/` and `docs/`).
 
 **Calls for #246 in total:** 33 DeepSeek calls (5 planner, 20 map, 8 re-extraction), 0 answer calls.
 Cost about 19.3 CNY at peak rates.
+
+## 3. Re-check after the TL decision on Q24 (0 calls)
+
+**Decision (TL, option a): a parser fix for a known DeepSeek strict-mode glitch.**
+- One helper, `llm.loads_object`, parses every DeepSeek and OpenAI argument string: map, planner and
+  answer.
+- It takes the first complete JSON object (`json.JSONDecoder().raw_decode`) and accepts it only when
+  everything after it is whitespace and `}` / `]`. The record then carries the flag `trailing_braces`.
+- Any other trailing text stays invalid.
+- The object still goes through the strict schema validation and every code check: chunk ids, quotes,
+  numbers.
+- Saved invalid map records whose only problem was parsing are re-checked on reuse
+  (`extract.recheck_invalid`, flags `trailing_braces` and `rechecked`). The saved files are not changed.
+
+**A derivation bug found by the re-check, fixed in the same round.**
+- `derive` read "$2,647" with the unit "USD billions" as 2,647.
+- It now applies the unit's scale word and states the result unit.
+- Test: `test_derivation_applies_the_scale_word_of_the_unit`.
+
+**Run.**
+- Commit `f81ce11`. Script: `D:\ALLPROJECTS\EDJ\cache\ev246\run-recheck.ps1`.
+- The code gate held, no API key was in the environment, and the run used `--real --map-only
+  --max-calls 0`.
+- Result: **0 calls, all 33 saved records reused**.
+- The mock 35-question run at `f81ce11` is identical to main again.
+
+**What changed: only Q24.** Q11, Q19, Q23 and Q26 keep the same matrices and behaviors.
+
+**Q24, re-checked matrix** (a1 per advisor / a2 assets, proxy / a3 advisors, proxy / a4 comparison):
+
+| Firm | a1 | a2 (proxy) | a3 (proxy) | a4 (comparison) | Parse flag |
+|---|---|---|---|---|---|
+| EDJ | **derived** | **fact** | **fact** | not_found | `trailing_braces` |
+| MS | not_disclosed (ratio rejected) | fact | fact | fact | `trailing_braces` |
+| SCHW | different_quantity | fact | different_quantity | fact | - |
+| MER | not_found | fact | different_quantity | fact | - |
+| RJF | not_disclosed (ratio rejected) | fact | fact | fact | `trailing_braces` |
+
+- **a2.EDJ fact:** $2,647 (USD billions) at 2026-06-26, `EDJ-10Q-2026Q2#59`, plus 2026Q1, 2025Q3, 2025Q2
+  and the 10-K's $2.5 trillion. The `EDJ-10Q-2026Q2#59` item is flagged `quote_not_found`: the quote is
+  not verbatim, but the figure is found in the chunk.
+- **a3.EDJ fact:** 20,514 financial advisors at 2026-06-26, `EDJ-10Q-2026Q2#60`, plus earlier quarters.
+  Two items cite ids outside the cell's retrieved set and are flagged `unmatched_citation`.
+- **EDJ ratio, derived by code:** `a2.EDJ#0 / a3.EDJ#0 = $2,647 (USD billions) / 20,514 (financial
+  advisors) = 129,033,831 USD per financial advisors`.
+  - Period 2026-06-26, the same for both inputs; scope: the whole firm.
+  - **Input chunk ids:** `EDJ-10Q-2026Q2#59`, `EDJ-10Q-2026Q2#60`.
+  - Flag `definition_unverified`, because client assets is not a registered metric.
+- **MS and RJF ratio proposals are rejected by code.**
+  - MS: the scope strings differ ("Wealth Management segment" vs "Wealth Management"). Strict string
+    equality; noted for #247.
+  - RJF: whole firm vs Private Client Group, a real difference.
+- **Behavior: `answer`**, reason "1a: the asked quantity in a1.EDJ". The proxy cells a2 / a3 did not
+  decide it.
+- **Marks and caveats:**
+  - a3 `different_basis`, with the advisor-headcount caveat.
+  - a1, a2 and a4 `unverified`.
+  - The GWIM caveat.
+- **`map_must_not`:** `SCHW-TR-2026Q3#10` in a3.SCHW, `different_quantity`, not as a fact. No must-not
+  chunk is among the derivation inputs.
+
+The Q24 acceptance item is met: EDJ assets and advisors are on the same basis, and the ratio is derived
+from cited same-period inputs.

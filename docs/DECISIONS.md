@@ -958,4 +958,11 @@ settled details, which ADR-021's text did not fix:
 - **`MAP` is off in the app until #247** shows the map's output (no user pays for calls whose output
   is not shown); the eval turns it on with `--map` / `--map-only`; #247 flips the default.
 - The map call's output cap joins its own cache key; `llm.request_version` is unchanged.
+- **Invalid-output rule, JSON parsing** (TL decision on #246 Q24, after the real check): DeepSeek's
+  strict mode sometimes returns a complete JSON object followed by stray closing braces. One helper
+  (`llm.loads_object`, used by the map, planner and answer paths on DeepSeek and OpenAI) takes the
+  first complete object (`json.JSONDecoder().raw_decode`) and accepts it only when everything after it
+  is whitespace and `}` / `]`; the record carries the flag `trailing_braces`. Any other trailing text
+  stays invalid, and the object still goes through the strict schema validation and every code check
+  (chunk ids, quotes, numbers). Saved records are re-checked under this rule at 0 calls.
 
