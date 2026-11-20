@@ -720,3 +720,8 @@ definitions) go to NEXT.
   download-document UNREACHABLE, no raw files). 0-call count (`ev247b\count-r2`, no key): 6 plans and every
   map / re-extraction record reused (38 records), the 6 reduce calls capped: **bound and cap 6** (Q26, Q24,
   Q19, Q22, Q11, Q23). Wrapper parameter renamed `-OutDir` (no clash with `$out`).
+- 2026-11-20 09:03 - real re-check (cap 6, `ev247b\real-r2`, run at a0ceb61): **6 reduce calls**, all valid, 38
+  records reused, about $0.52; part 2 in all 33 calls, about $1.90. Q26: 0 "does not say" lines (11 before);
+  Q24 RJF reason now "populations differ"; Q19 no comparison gap, 6 contradicting gaps dropped; Q11
+  definitions named per firm; Q23 series spans. Remaining: Q23 RJF basis break (an undated keyed item).
+  Blind inputs `ev247b\blind-in-r2\` and `ev247b\scorer-prompt-r2.txt` prepared; stopped before scoring.

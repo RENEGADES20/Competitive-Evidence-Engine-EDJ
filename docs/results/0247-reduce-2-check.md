@@ -129,3 +129,57 @@ answers, Q3 from the retry; `questions.yaml`; `verdict-rule.txt`, part 1's rule)
 Q22, Q26 PASS; Q11, Q23, Q24 FAIL).
 
 verdicts-blind.json sha256 fbde54a73ecdcab33dba81149abf077806716c5628265f842cc646cf8be77df1 (fresh scorer agent, `ev247b\verdicts-blind.json`; committed alone before any comparison).
+
+## 4. Revision after scoring and re-check (R1-R6, prompt v5.2)
+
+Plan section "Revision after scoring" (R1-R5, TL comment after 645d79c) and R6 (TL comment after it). Code
+`20663ec`; real calls at `a0ceb61` (code gate: `src scripts config` identical to `20663ec`).
+
+### 4.1 Zero-call checks
+- pytest: 966 passed (revision tests in `tests/test_populations.py`, `tests/test_series_coverage.py`,
+  `tests/test_reduce_noise.py`).
+- Mock 35 vs main c4ba303 (`ev247b\mock-compare-r2.txt`): retrieval identical apart from the pinned additions;
+  0 outside the matrix, 0 part gaps, 0 why-lines missing, 0 comparison claims missing.
+- verify-cee (`.verify-runs/20261120-081908-20663ec`): VERIFY PASS (open-citation, download-document
+  UNREACHABLE: no raw files).
+- 0-call count (`ev247b\count-r2`, no key): the 6 plans and all 38 map / re-extraction records reused; only the
+  6 reduce calls would be made. **Cap 6.**
+
+### 4.2 Real re-check (6 DeepSeek calls)
+Reduce only, Q11, Q19, Q22, Q23, Q24, Q26, one run each, `ev247b\real-r2` (wrapper `-OutDir`), 08:24-09:03
+local (14:24-15:03 UTC, off-peak): 6 calls, all valid (`tool_calls`), 0 reused reduce, 38 records reused;
+7,040 cache-hit + 69,115 cache-miss input tokens, 238,816 output tokens; about **$0.52**. Raw records in
+`docs/results/0247b-raw/` (the six `*-reduce-*` files dated 2026-11-20T08:2x-08:5x).
+**#247 part 2 in all: 33 calls (26 + 1 transport retry + 6), about $1.90.**
+
+| Q | Claims / adjacent / gaps | Code checks |
+|---|---|---|
+| Q11 | 16 / 8 / 8 | `DEFINITIONS_BY_FIRM` caveat (each firm named); Schwab gaps name the closest figure (Form ADV); 12 duplicates removed; basis breaks a2.EDJ, a2.MER |
+| Q19 | 44 / 2 / 16 | no comparison gap (the hand-off covers a13); 6 model gaps contradicting found claims dropped; 4 duplicates |
+| Q22 | 42 / 9 / 2 | clean |
+| Q23 | 11 / 12 / 5 | `SERIES_SPAN` per firm (MS 2019-12-31 to 2020-12-31, EDJ 2024-09-27 to 2026-06-26, RJF FY2023-FY2025); 34 why-lines removed; 11 duplicates |
+| Q24 | 4 / 65 / 4 | RJF now refused with "the two figures cover different populations" (R2); EDJ computed, not "unverified" |
+| Q26 | 31 / 0 / 2 | 0 "the source does not say" (v5.1: 11); why-lines from the stated context; 1 duplicate |
+
+Remaining observation (not changed before scoring): Q23 RJF still gets a basis-break caveat. With the R2
+whole-quote fallback, the undated "approximately 9,000" PCG item now carries `rjf_advisors_excl_rcs`, so it is
+a keyed group of its own; R3 only drops undated items without a population. A one-line follow-up (undated
+items make no basis, keyed or not) if the TL wants it.
+
+### 4.3 Blind inputs for the re-check (pending)
+`D:\ALLPROJECTS\EDJ\cache\ev247b\blind-in-r2\` (`answers-dump.txt` with the six answers, `questions.yaml`,
+`verdict-rule.txt` for six questions) and `ev247b\scorer-prompt-r2.txt` (writes `ev247b\verdicts-blind-r2.json`);
+hashes in `ev247b\blind-in-r2-hashes.txt`. Q1 and Q3 keep their part-2 answers and verdicts (PASS).
+
+## 5. Q11 / Q23: corpus gaps vs answer problems (0 calls, SQL on `cee`)
+
+| Item | Kind | Evidence | Where it goes |
+|---|---|---|---|
+| MS advisor count after 4Q2020 | corpus gap | 0 count lines in every MS 10-K / 10-Q / supplement / press release with a period end from 2024Q4 (`MS-SUPP-2025Q4`..`2026Q3` have no "Wealth Management representatives" line); later figures only tier-4 trade press ("close to 15,000") and Form ADV (13,000 advisory employees) | NEXT |
+| RJF quarterly headcount | corpus gap | the only counts with a period end in 2024Q4-2026Q3: FY2025 10-K (8,943; 3,878 / 5,065, `RJF-10K-2025#24`, `#227`) and the 3Q25 call; trade press says RJF "no longer reports advisor headcount" | NEXT |
+| Merrill / BAC count after 4Q2023 | corpus gap | BAC 10-K / 10-Q / supplements / press 2024-2026: award lists and ">15K Wealth Advisors" (investor day, 3Q25, approximate) only | NEXT |
+| EDJ 3Q26 | corpus gap | `EDJ-10Q-2026Q3` not stored | NEXT |
+| Written definitions (MS, EDJ; BAC after 2023; Schwab) | corpus gap | MS and EDJ publish none; BAC's latest is the 2023 supplement footnote; Schwab publishes no count (registered figure: Form ADV) | NEXT |
+| Q11 differences not named | answer | fixed by R6a (`DEFINITIONS_BY_FIRM`) | this PR |
+| Q11 Schwab shown as a bare gap | answer | fixed by R6b (gap names the closest figure) | this PR |
+| Q23 where each series stops | answer | fixed by R6c (`SERIES_SPAN`) | this PR |
