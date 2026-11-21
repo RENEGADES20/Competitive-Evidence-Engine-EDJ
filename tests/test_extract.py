@@ -166,7 +166,10 @@ def test_invalid_outputs_raise_model_output_error_with_payload(client, provider,
 
 def test_invalid_output_cells_are_failed_and_not_researched():
     plan = plan_for()
-    hits = [hit("EDJ-10K-2025#130", part="a1.EDJ"), hit("MS#1", entity="MS", part="a1.MS")]
+    # #272: both EDJ cells have a passage, so both are in (failing) calls; a cell with nothing citable is a
+    # code cell with no call (see test_fan_out_*)
+    hits = [hit("EDJ-10K-2025#130", part="a1.EDJ"), hit("EDJ-10K-2025#131", part="a2.EDJ"),
+            hit("MS#1", entity="MS", part="a1.MS")]
     searched = []
 
     def call(spec, *a):
@@ -229,7 +232,7 @@ def test_parallel_calls_respect_concurrency_and_keep_spec_order(monkeypatch):
         with lock:
             live[0] += 1
             peak[0] = max(peak[0], live[0])
-        order = ["map.MS", "map.SCHW", "map.EDJ", "map.MER", "map.RJF"]
+        order = ["map.a1.MS", "map.a1.SCHW", "map.a1.EDJ", "map.a1.MER", "map.a1.RJF"]
         time.sleep(0.02 * (5 - order.index(spec.id)))   # finish in reverse order
         with lock:
             live[0] -= 1
@@ -238,7 +241,7 @@ def test_parallel_calls_respect_concurrency_and_keep_spec_order(monkeypatch):
     par = extract.run_map(q, plan, hits, "anthropic", call=call, concurrency=2, sources=lambda e: "")
     seq = extract.run_map(q, plan, hits, "anthropic", call=call, concurrency=1, sources=lambda e: "")
     assert peak[0] <= 2
-    assert [c["id"] for c in par.calls] == ["map.MS", "map.SCHW", "map.EDJ", "map.MER", "map.RJF"]
+    assert [c["id"] for c in par.calls] == ["map.a1.MS", "map.a1.SCHW", "map.a1.EDJ", "map.a1.MER", "map.a1.RJF"]
     assert par.to_log()["cells"] == seq.to_log()["cells"] and par.behavior == "answer"
 
 
@@ -248,20 +251,20 @@ def test_provider_stop_stops_the_question_and_cancels_the_rest():
 
     def call(spec, *a):
         started.append(spec.id)
-        if spec.id == "map.MS":
+        if spec.id == "map.a1.MS":
             raise llm.ProviderStop("DeepSeek: rate limit reached (429)")
         time.sleep(0.2)
         return CallResult(raw=extract.mock_extract(spec))
 
     with pytest.raises(llm.ProviderStop):
         extract.run_map(q, plan, hits, "anthropic", call=call, concurrency=1, sources=lambda e: "")
-    assert started == ["map.MS"]
+    assert started == ["map.a1.MS"]
 
 
 def test_failed_call_marks_only_its_cells_and_the_round_goes_on(monkeypatch):
     q, plan, hits = five_firm_setup()
-    errors = {"map.MS": TimeoutError("read timed out"), "map.SCHW": status_error(500),
-              "map.EDJ": status_error(429)}
+    errors = {"map.a1.MS": TimeoutError("read timed out"), "map.a1.SCHW": status_error(500),
+              "map.a1.EDJ": status_error(429)}
 
     def fake_call_extract(question, spec, provider, window=None, firms=None, client=None, meta=None):
         if spec.id in errors:
@@ -274,7 +277,7 @@ def test_failed_call_marks_only_its_cells_and_the_round_goes_on(monkeypatch):
     assert m.cells["a1.MER"].label == "fact" and m.cells["a1.RJF"].label == "fact"
     assert m.cells["a1.MS"].error.startswith("TimeoutError") and m.behavior == "answer"
     logged = {c["id"]: c for c in m.calls}
-    assert logged["map.SCHW"]["failed_call"] and not logged["map.MER"]["failed_call"]
+    assert logged["map.a1.SCHW"]["failed_call"] and not logged["map.a1.MER"]["failed_call"]
 
 
 def test_over_the_cap_is_skipped_without_a_call():
@@ -284,7 +287,7 @@ def test_over_the_cap_is_skipped_without_a_call():
     m = extract.run_map(q, plan, hits, "anthropic",
                         call=lambda spec, *a: calls.append(spec.id) or CallResult(raw=extract.mock_extract(spec)),
                         allow=lambda spec: next(allowed), sources=lambda e: "")
-    assert sorted(calls) == ["map.EDJ", "map.MS", "map.SCHW"]
+    assert sorted(calls) == ["map.a1.EDJ", "map.a1.MS", "map.a1.SCHW"]
     assert m.cells["a1.MER"].label == "failed" and "--max-calls" in m.cells["a1.MER"].error
 
 
@@ -303,7 +306,7 @@ def test_research_runs_once_per_not_found_with_the_exclude_set_then_one_reextrac
     def call(spec, *a):
         calls.append((spec.id, spec.cell_ids, [h.chunk_id for h in spec.hits]))
         out = {"cells": [cell_out(c, "not_found") for c in spec.cell_ids]}
-        if spec.id == "map.EDJ":
+        if spec.id == "map.a1.EDJ":
             out["cells"][0] = cell_out("a1.EDJ")
         return CallResult(raw=out)
 
@@ -314,9 +317,11 @@ def test_research_runs_once_per_not_found_with_the_exclude_set_then_one_reextrac
     assert "NEW-MS#2" in searches[2][2]                            # earlier re-search hits excluded too
     ms =next(r for r in m.research if r["id"] == "a1.MS")
     assert "Wealth Management representatives" in ms["words"]       # the definition quote
-    assert calls[-1][0] == "remap.MS" and calls[-1][1] == ["a1.MS", "a2.MS"]
-    assert calls[-1][2] == ["NEW-MS#2", "NEW-MS#3"]
-    assert sum(c[0].startswith("remap") for c in calls) == 1        # one per firm, only with new hits
+    # #272: one call per cell with something citable (a2.EDJ, a3.EDJ, a2.MS, a3.MS have none: code cells)
+    assert [c[0] for c in calls if c[0].startswith("map")] == ["map.a1.EDJ", "map.a1.MS"]
+    assert [c[:3] for c in calls if c[0].startswith("remap")] == [("remap.a1.MS", ["a1.MS"], ["NEW-MS#2"]),
+                                                                  ("remap.a2.MS", ["a2.MS"], ["NEW-MS#3"])]
+    assert m.cells["a2.EDJ"].source == "code" and "no_passages" in m.cells["a2.EDJ"].flags
     assert m.cells["a1.MS"].source == "reextract" and m.cells["a1.MS"].first["label"] == "not_found"
     assert len(m.research) == 3                                     # a re-extracted not_found is final
 
