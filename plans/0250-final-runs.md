@@ -601,3 +601,8 @@ or the database changes, in any of the three PRs.
   - The modes differ on Q10, Q12, Q20, Q21, Q27 and Q28.
   - Reports, NEXT and README written.
   - Total for #250: 219 new calls, about $14.73.
+- 2026-11-21 - PR review round 1 second reads on #267 and #268:
+  - fts: Q12 PASS -> FAIL (literal passes_if), adjudicated 18/30.
+  - hybrid: Q25 FAIL -> PASS (borderline), adjudicated 22/30.
+  - Reports, NEXT and README updated to the adjudicated scores.
+  - Q12 sits in NEXT item 3; Q25's mode difference is answer-caused (TL ruling).

@@ -3,12 +3,12 @@
 Rewritten on 2026-11-21 from the W11 scored run (#250; [docs/results/w11-report.md](results/w11-report.md)).
 The run used DeepSeek `deepseek-v4-pro` (thinking on) and the map-reduce pipeline, with fts retrieval on
 `corpus-2026-11-19`.
-- **Scores:** the blind full read scores it 19/30 (tier 1: 11/18). The adjudicated score follows the PR review's second read.
-- **Same plans, hybrid-norerank on `exp/hybrid`:** 21/30 blind. Adjudicated: pending (#250 PR 2).
+- **Scores:** adjudicated 18/30 (tier 1: 11/18), after the PR #267 second read (Q12 PASS -> FAIL). The blind full read gave 19/30 and the first, truncated read 20/30.
+- **Same plans, hybrid-norerank on `exp/hybrid`:** 22/30 adjudicated, 21/30 blind (#250 PR 2, #268).
 - **Earlier runs:** W10 with Claude, single answer call: 24/30 fts, 25/30 hybrid. The DeepSeek baseline #243, single
   answer call: 15/30.
 
-The eleven fts failures are Q5, Q10, Q11, Q16, Q18, Q20, Q21, Q23, Q25, Q28 and Q29. Items are ranked by how many
+The twelve fts failures are Q5, Q10, Q11, Q12, Q16, Q18, Q20, Q21, Q23, Q25, Q28 and Q29. Items are ranked by how many
 questions each would move and by how sure we are of the cause. Each item names:
 - the question IDs behind it;
 - a rough size (S = under a day, M = 1-3 days, L = a week or more);
@@ -40,14 +40,15 @@ Nothing here is started.
 
    Size M. Check: the three reduces re-run from their saved matrices (planned real calls); the behavior matches the
    bank's, and the other 27 are unchanged on a 0-call replay.
-3. **Required part or shape missing** (Q5, Q16, Q25, Q28; class s).
+3. **Required part or shape missing** (Q5, Q12, Q16, Q25, Q28; class s).
    - Q5 keeps two claims from 51 passages.
+   - Q12 does not set out Edward Jones's own cost structure, read against a literal `passes_if` (FAIL in both modes after the second reads).
    - Q16 is organised by sub-question and firm, not by position, with off-topic claims.
    - Q25 leans on trade press for Schwab and MS pay and does not mark Schwab's structure as not public.
    - Q28 never states plainly how net headcount change differs from attrition.
 
-   Q25 and Q28 are borderline in the full read and differ from the first read, so the second read decides them. Size
-   M (reduce prompt rules for "by position" and "not public", with tests on the rendered message). Check: the four
+   Q16, Q25 and Q28 are borderline FAILs, confirmed by the second read. Hybrid's Q25 passes: it labels its trade press and marks the undisclosed cells. Size
+   M (reduce prompt rules for "by position", "not public" and the home firm's side, with tests on the rendered message). Check: the five
    answers re-scored blind after a planned re-run.
 4. **Definitions and series limited by the corpus** (Q11, Q23; r, s, c). These are unchanged since W10 and #247:
    - Q11 has no written MS, EDJ or Schwab definition in tier 1-3;
@@ -79,6 +80,6 @@ Done in W11 and dropped from this list:
 - map-reduce with per-firm extraction, corrective re-search and a reduce call (#245-#248);
 - the Q24 EDJ ratio and the Q26 newest-first window (both pass);
 - the Q19 competitor leg (passes in both modes);
-- the Q3, Q7, Q8, Q12, Q15, Q17 drops of #243 (pass again).
+- the Q3, Q7, Q8, Q15, Q17 drops of #243 (pass again).
 
 W10 failures now passing in W11 fts: Q19, Q24, Q26.

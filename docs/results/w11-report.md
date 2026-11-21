@@ -1,8 +1,10 @@
 # W11 final scored run: DeepSeek, map-reduce, fts retrieval (#250)
 
-**Blind full read: 19/30 (tier 1: 11/18)**: primary. First blind read (passages truncated by the scorer): 20/30 (tier 1 13/18). Second read and adjudicated score: PR review round 1 (section 'Second read'). One sample per question.
+**Adjudicated: 18/30 (tier 1: 11/18)**, after the second read in PR #267 review round 1 (Q12 PASS -> FAIL). Blind full read (`verdicts-blind-full.json`): 19/30 (tier 1 11/18). First blind read (`verdicts-blind.json`, passages truncated by the scorer): 20/30 (tier 1 13/18). One sample per question.
 
-Against: #243 DeepSeek baseline (pre-map-reduce) 15/30 like-for-like; W10 Claude #217 fts 24/30; #247's adjudicated eight 6/8. Same plans, hybrid-norerank on `exp/hybrid`: 21/30 (evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md).
+Against: #243 DeepSeek baseline (pre-map-reduce) 15/30 like-for-like; W10 Claude #217 fts 24/30; #247's adjudicated eight 6/8. Same plans, hybrid-norerank on `exp/hybrid`: 22/30 adjudicated, 21/30 blind (evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md).
+
+Q12 reads FAIL in both modes under a literal `passes_if`: neither answer sets out Edward Jones's own cost structure (second reads of PR #267 and PR #268).
 
 ## How this was run
 
@@ -12,46 +14,46 @@ Against: #243 DeepSeek baseline (pre-map-reduce) 15/30 like-for-like; W10 Claude
 - Run: `--max-calls 139` (from the 0-call count: round-1 maps + one re-extraction per row key + one reduce per question), one attempt, exit 0, **79 new calls**, 67 reused. No ProviderStop, no 400, no cap reached. 67 saved records reused: 30 plans (8 inherited + 22 from the planner phase), 34 #247 map / remap records (each re-checked: rendered extract message, system prompt, schema and request byte-identical to the message it was made from, at its producing commit 7b9a5b4 / 715adda / 2d5f25b; `docs/results/w11-run/count-fts.md`), 3 reduces (Q19, Q23, Q26).
 - Cost of this run: $6.59 new; $9.52 for every call the 30 answers used (input 5,106,567 tokens, 518,656 cache hits; output 2,919,410, of which reasoning 2,554,530); 124 calls off-peak, 22 peak (prices `config/pricing.yaml`, by completion time).
 - Replay (0 calls, the run's `raw/` as cache): every answer identical except Q12 (see Findings).
-- Scoring: blind, fresh scorers, inputs `ev250\blind-in-fts\` only (dump of the 30 answers with each cited passage, `questions.yaml`, `verdict-rule.txt`: the #217 / #243 bar, with the Q24 / Q25 / Q28 superseded behaviors). **First read** (one Sonnet scorer, sha256 `a3297da4e1584fe1...`, committed alone in 5de05e8): the scorer cut cited passages to about 110 characters and claims to 230-420 to fit the dump in its context, so some FAILs may come from truncated text. **Full read** (primary; four Sonnet scorers, Q1-8 / Q9-15 / Q16-21 / Q22-30, each reading its lines in full; merged sha256 `5bad7497a5804047...`, committed alone first).
+- Scoring: blind, fresh scorers, inputs `ev250\blind-in-fts\` only (dump of the 30 answers with each cited passage, `questions.yaml`, `verdict-rule.txt`: the #217 / #243 bar, with the Q24 / Q25 / Q28 superseded behaviors). **First read** (one Sonnet scorer, sha256 `a3297da4e1584fe1...`, committed alone in 5de05e8): the scorer cut cited passages to about 110 characters and claims to 230-420 to fit the dump in its context, so some FAILs may come from truncated text. **Full read** (four Sonnet scorers, Q1-8 / Q9-15 / Q16-21 / Q22-30, each reading its lines in full; merged file `verdicts-blind-full.json`, sha256 `5bad7497a5804047150bf9b860cfeffbbd2d395aa1820f8c85a6ca014fc6e7dc`, committed alone in d8f0c60). **Second read**: the PR #267 reviewer, round 1; adjudicated = full read plus its changes.
 
 ## Scores
 
 Classes: r retrieval, s shape / part missing, b behavior, c corpus gap, i invalid output. bl = borderline. USD = new / all calls the answer used.
 
-| Q | Tier | Expected -> got | #243 | W10 fts | #247 adj. | First read | **Full read** | Class | Second read | Calls new/all | USD |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Q1 | 1 | answer -> answer | PASS | PASS | PASS | PASS | **PASS** |  |  | 1/3 | 0.024 / 0.220 |
-| Q2 | 1 | answer -> answer | PASS | PASS |  | PASS | **PASS** |  |  | 2/3 | 0.238 / 0.244 |
-| Q3 | 1 | answer -> answer | FAIL | PASS | PASS | PASS | **PASS** |  |  | 1/3 | 0.022 / 0.198 |
-| Q4 | 1 | answer -> answer | PASS | PASS |  | PASS bl | **PASS bl** |  |  | 2/3 | 0.172 / 0.183 |
-| Q5 | 1 | answer -> answer | FAIL | PASS |  | FAIL | **FAIL** | s, r |  | 2/3 | 0.042 / 0.050 |
-| Q6 | 1 | answer -> answer | PASS | PASS |  | PASS | **PASS** |  |  | 2/3 | 0.133 / 0.150 |
-| Q7 | 2 | answer -> answer | FAIL | PASS |  | PASS bl | **PASS bl** |  |  | 5/6 | 0.496 / 0.516 |
-| Q8 | 2 | answer -> answer | FAIL | PASS |  | PASS | **PASS bl** |  |  | 3/4 | 0.133 / 0.142 |
-| Q9 | 3 | answer -> answer | PASS | PASS |  | PASS | **PASS** |  |  | 3/4 | 0.195 / 0.204 |
-| Q10 | 3 | answer -> gap_with_adjacent | PASS | PASS |  | FAIL | **FAIL** | b, s |  | 7/8 | 0.415 / 0.429 |
-| Q11 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | **FAIL** | r, s |  | 1/9 | 0.044 / 0.380 |
-| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS |  | FAIL bl | **PASS bl** |  |  | 3/4 | 0.307 / 0.338 |
-| Q13 | 1 | answer -> answer | PASS | PASS |  | PASS | **PASS** |  |  | 2/3 | 0.115 / 0.126 |
-| Q14 | 3 | answer -> answer | PASS | PASS |  | PASS | **PASS bl** |  |  | 2/3 | 0.157 / 0.170 |
-| Q15 | 3 | answer -> answer | FAIL | PASS |  | PASS bl | **PASS** |  |  | 6/7 | 0.421 / 0.440 |
-| Q16 | 3 | answer -> answer | PASS | PASS |  | FAIL bl | **FAIL bl** | s |  | 2/3 | 0.418 / 0.429 |
-| Q17 | 1 | answer -> answer | FAIL | PASS |  | PASS | **PASS bl** |  |  | 2/3 | 0.301 / 0.318 |
-| Q18 | 3 | answer -> refuse | PASS | PASS |  | FAIL | **FAIL** | b, r, s |  | 1/2 | 0.090 / 0.104 |
-| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | FAIL | PASS | PASS bl | **PASS bl** |  |  | 0/9 | 0.000 / 0.589 |
-| Q20 | 1 | answer -> incomplete | FAIL | FAIL |  | FAIL | **FAIL** | i |  | 1/2 | 0.290 / 0.299 |
-| Q21 | 2 | answer -> none | FAIL | PASS |  | FAIL | **FAIL** | i |  | 11/12 | 1.081 / 1.114 |
-| Q22 | 1 | answer -> answer | PASS | PASS | PASS | PASS | **PASS bl** |  |  | 1/7 | 0.063 / 0.593 |
-| Q23 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | **FAIL** | s, r |  | 0/7 | 0.000 / 0.217 |
-| Q24 | 3 | answer -> answer | FAIL | FAIL | PASS | PASS | **PASS** |  |  | 1/8 | 0.129 / 0.509 |
-| Q25 | 1 | answer -> answer | PASS | PASS |  | PASS bl | **FAIL bl** | s |  | 8/9 | 0.635 / 0.654 |
-| Q26 | 1 | answer -> answer | FAIL | FAIL | PASS | PASS bl | **PASS bl** |  |  | 0/4 | 0.000 / 0.199 |
-| Q27 | 1 | answer -> answer | PASS | PASS |  | PASS bl | **PASS bl** |  |  | 2/3 | 0.212 / 0.226 |
-| Q28 | 1 | answer -> answer | FAIL | PASS |  | PASS | **FAIL bl** | s |  | 4/5 | 0.227 / 0.238 |
-| Q29 | 1 | gap_with_adjacent -> answer | PASS | PASS |  | FAIL bl | **FAIL** | b, s |  | 2/3 | 0.128 / 0.131 |
-| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS |  | PASS | **PASS** |  |  | 2/3 | 0.098 / 0.108 |
+| Q | Tier | Expected -> got | #243 | W10 fts | #247 adj. | First read | Full read | Class | Second read | **Adjudicated** | Calls new/all | USD |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Q1 | 1 | answer -> answer | PASS | PASS | PASS | PASS | PASS |  |  | **PASS** | 1/3 | 0.024 / 0.220 |
+| Q2 | 1 | answer -> answer | PASS | PASS |  | PASS | PASS |  |  | **PASS** | 2/3 | 0.238 / 0.244 |
+| Q3 | 1 | answer -> answer | FAIL | PASS | PASS | PASS | PASS |  |  | **PASS** | 1/3 | 0.022 / 0.198 |
+| Q4 | 1 | answer -> answer | PASS | PASS |  | PASS bl | PASS bl |  |  | **PASS** | 2/3 | 0.172 / 0.183 |
+| Q5 | 1 | answer -> answer | FAIL | PASS |  | FAIL | FAIL | s, r |  | **FAIL** | 2/3 | 0.042 / 0.050 |
+| Q6 | 1 | answer -> answer | PASS | PASS |  | PASS | PASS |  |  | **PASS** | 2/3 | 0.133 / 0.150 |
+| Q7 | 2 | answer -> answer | FAIL | PASS |  | PASS bl | PASS bl |  |  | **PASS** | 5/6 | 0.496 / 0.516 |
+| Q8 | 2 | answer -> answer | FAIL | PASS |  | PASS | PASS bl |  |  | **PASS** | 3/4 | 0.133 / 0.142 |
+| Q9 | 3 | answer -> answer | PASS | PASS |  | PASS | PASS |  |  | **PASS** | 3/4 | 0.195 / 0.204 |
+| Q10 | 3 | answer -> gap_with_adjacent | PASS | PASS |  | FAIL | FAIL | b, s | FAIL | **FAIL** | 7/8 | 0.415 / 0.429 |
+| Q11 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | FAIL | r, s |  | **FAIL** | 1/9 | 0.044 / 0.380 |
+| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS |  | FAIL bl | PASS bl |  | FAIL (literal passes_if: no Edward Jones cost structure) | **FAIL** | 3/4 | 0.307 / 0.338 |
+| Q13 | 1 | answer -> answer | PASS | PASS |  | PASS | PASS |  |  | **PASS** | 2/3 | 0.115 / 0.126 |
+| Q14 | 3 | answer -> answer | PASS | PASS |  | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.157 / 0.170 |
+| Q15 | 3 | answer -> answer | FAIL | PASS |  | PASS bl | PASS |  |  | **PASS** | 6/7 | 0.421 / 0.440 |
+| Q16 | 3 | answer -> answer | PASS | PASS |  | FAIL bl | FAIL bl | s | FAIL bl | **FAIL** | 2/3 | 0.418 / 0.429 |
+| Q17 | 1 | answer -> answer | FAIL | PASS |  | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.301 / 0.318 |
+| Q18 | 3 | answer -> refuse | PASS | PASS |  | FAIL | FAIL | b, r, s |  | **FAIL** | 1/2 | 0.090 / 0.104 |
+| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | FAIL | PASS | PASS bl | PASS bl |  |  | **PASS** | 0/9 | 0.000 / 0.589 |
+| Q20 | 1 | answer -> incomplete | FAIL | FAIL |  | FAIL | FAIL | i | settled (i, cut at cap) | **FAIL** | 1/2 | 0.290 / 0.299 |
+| Q21 | 2 | answer -> none | FAIL | PASS |  | FAIL | FAIL | i | settled (i, cut at cap) | **FAIL** | 11/12 | 1.081 / 1.114 |
+| Q22 | 1 | answer -> answer | PASS | PASS | PASS | PASS | PASS bl |  |  | **PASS** | 1/7 | 0.063 / 0.593 |
+| Q23 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | FAIL | s, r | settled (corpus) | **FAIL** | 0/7 | 0.000 / 0.217 |
+| Q24 | 3 | answer -> answer | FAIL | FAIL | PASS | PASS | PASS |  |  | **PASS** | 1/8 | 0.129 / 0.509 |
+| Q25 | 1 | answer -> answer | PASS | PASS |  | PASS bl | FAIL bl | s | FAIL bl | **FAIL** | 8/9 | 0.635 / 0.654 |
+| Q26 | 1 | answer -> answer | FAIL | FAIL | PASS | PASS bl | PASS bl |  |  | **PASS** | 0/4 | 0.000 / 0.199 |
+| Q27 | 1 | answer -> answer | PASS | PASS |  | PASS bl | PASS bl |  | PASS bl (not re-read; hybrid cut) | **PASS** | 2/3 | 0.212 / 0.226 |
+| Q28 | 1 | answer -> answer | FAIL | PASS |  | PASS | FAIL bl | s | FAIL bl | **FAIL** | 4/5 | 0.227 / 0.238 |
+| Q29 | 1 | gap_with_adjacent -> answer | PASS | PASS |  | FAIL bl | FAIL | b, s |  | **FAIL** | 2/3 | 0.128 / 0.131 |
+| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS |  | PASS | PASS |  |  | **PASS** | 2/3 | 0.098 / 0.108 |
 
-Blind score 19/30, tier 1 11/18. Borderline: Q4, Q7, Q8, Q12, Q14, Q16, Q17, Q19, Q22, Q25, Q26, Q27, Q28.
+Adjudicated 18/30 (tier 1 11/18); blind full read 19/30 (tier 1 11/18). Borderline in the blind read: Q4, Q7, Q8, Q12, Q14, Q16, Q17, Q19, Q22, Q25, Q26, Q27, Q28.
 
 ## Changes against #243, W10 and #247
 
@@ -64,7 +66,7 @@ Every pipeline element changed at once between these runs and W10 (Claude, singl
 | Q7 | #243 FAIL -> PASS | Same dimensions across three firms with visible gaps (MS training, MS/MER headcount); borderline because MS cells are weak (2020 headcount, tangential trade-press clawback items) and Merrill column leans on BAC/GWIM and trade press. |
 | Q8 | #243 FAIL -> PASS | Each firm's own language (Schwab platform/ecosystem; RJF independence/culture/affiliation choice) with RJF RCS custody vs affiliation separated in claims; borderline because the closing comparison is a thin 'difference of emphasis' and does not explicitly state the custody-vs-affiliation model difference. |
 | Q10 | #243 PASS -> FAIL; W10 fts PASS -> FAIL | Expected answer but got gap_with_adjacent: declines to name or rank any firm as most explicit, so no judgment is made legible, although dated statements per firm are shown. |
-| Q12 | #243 FAIL -> PASS | Full Schwab evidence (scale quotes, cost per account, ~40% marketing-driven, ad spend, accounts, workplace) and an explicit normative hand-off; borderline because Edward Jones's own cost structure is thin (no expense figures set alongside). |
+| Q12 | W10 fts PASS -> FAIL | Full Schwab evidence (scale quotes, cost per account, ~40% marketing-driven, ad spend, accounts, workplace) and an explicit normative hand-off; borderline because Edward Jones's own cost structure is thin (no expense figures set alongside). |
 | Q15 | #243 FAIL -> PASS | Explains cash-spread (NII $11.8B of $23.9B, client cash funding) vs asset-based fee mechanism with each model's disclosed revenue composition, and states the comparison is not same-basis; Schwab framing leans partly on trade press but 10-K supports it. |
 | Q16 | #243 PASS -> FAIL; W10 fts PASS -> FAIL | Claims are organised by sub-question aspect and firm, not by position; no spread-of-positions framing, and off-topic claims (JPM data-privacy, CFPB, Schwab 24/7 trading, Fortune recognition) pad it, though dated/attributed sources and no own forecast. |
 | Q17 | #243 FAIL -> PASS | Separates named deployed tools and usage results (Charley, Raimond 6,500 users, BAC 114 live GenAI cases) from plans/aspirations and risk language, and declines a false ranking; borderline as RJF is left out of the who-claims-most claim and several cited passage openings are truncated. |
@@ -92,8 +94,21 @@ Calls used by the 30 answers: 146 ({'plan': 30, 'map': 75, 'remap': 13, 'reduce'
 
 ## Second read
 
-To be read in full in PR review round 1 (every borderline question, every FAIL except the corpus-limited Q20, Q21 and Q23 (TL), the six W10 failures, and every change against #243, W10 fts or #247's eight): Q3, Q4, Q5, Q7, Q8, Q10, Q11, Q12, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21, Q22, Q23, Q24, Q25, Q26, Q27, Q28, Q29.
-The table above gets the second-read column; the reported score stays the blind full read, with the range the second read implies and the adjudicated score.
+PR #267 review round 1 (reviewer agent, reviewed d2b519d) read in full: the questions where the modes differ, the questions where the two fts reads differ (Q12, Q25, Q28) and every borderline FAIL. Q20, Q21, Q23 and Q27 settled per the TL. It changes only Q12, PASS -> FAIL under a literal passes_if (no Edward Jones cost structure); Q12 reads FAIL in both modes.
+
+| Q | Blind full read | Second read | Adjudicated |
+|---|---|---|---|
+| Q10 | FAIL | FAIL | **FAIL** |
+| Q12 | PASS bl | FAIL (literal passes_if: no Edward Jones cost structure) | **FAIL** |
+| Q16 | FAIL bl | FAIL bl | **FAIL** |
+| Q20 | FAIL | settled (i, cut at cap) | **FAIL** |
+| Q21 | FAIL | settled (i, cut at cap) | **FAIL** |
+| Q23 | FAIL | settled (corpus) | **FAIL** |
+| Q25 | FAIL bl | FAIL bl | **FAIL** |
+| Q27 | PASS bl | PASS bl (not re-read; hybrid cut) | **PASS** |
+| Q28 | FAIL bl | FAIL bl | **FAIL** |
+
+Changed by the second read: Q12 PASS -> FAIL. Adjudicated 18/30 (tier 1 11/18); blind full read 19/30; first (truncated) read 20/30.
 
 ## The 30 answers
 
