@@ -1,6 +1,6 @@
 # W11 final scored run: DeepSeek, map-reduce, hybrid-norerank retrieval (#250)
 
-**Blind full read: 21/30 (tier 1: 12/18).** Same 30 plans as the fts run on `main` (`docs/results/w11-report.md`, blind full read 19/30, tier 1 11/18). Second read and adjudicated score: PR review round 1. One sample per question.
+**Adjudicated: 22/30 (tier 1: 13/18)**, after the second read in PR #268 review round 1 (Q25 FAIL -> PASS, borderline). Blind full read: 21/30 (tier 1 12/18). Same 30 plans as the fts run on `main` (`docs/results/w11-report.md`: adjudicated 18/30, blind full read 19/30). One sample per question.
 
 Against: W10 Claude hybrid-norerank #240 25/30; #243 DeepSeek baseline 15/30; #247's adjudicated eight 6/8.
 
@@ -12,46 +12,46 @@ Against: W10 Claude hybrid-norerank #240 25/30; #243 DeepSeek baseline 15/30; #2
 - Run: `--max-calls 177` (from the 0-call count: round-1 maps + one re-extraction per row key + one reduce per question), one attempt, exit 0, **118 new calls**, 30 reused. No ProviderStop, no 400, no cap reached. 30 records reused (the plans). No map / remap record was inherited: every round-1 map input differs from the fts run and #247 (`count-hyb.md`); no fts reduce matched.
 - Cost of this run: $7.84 new; $8.29 for every call the 30 answers used (input 3,860,914 tokens, 220,160 cache hits; output 2,934,294, of which reasoning 2,551,617); 140 calls off-peak, 8 peak (prices `config/pricing.yaml`, by completion time).
 - Replay (0 calls, the run's `raw/` as cache): every answer identical except Q12 (see Findings).
-- Scoring: blind, inputs `ev250\blind-in-hyb\` only (dump split in two files, Q1-Q15 / Q16-Q30, read in full). The dump was too large for one scorer: four Sonnet scorers each took a range (Q1-8, Q9-15, Q16-21, Q22-30) under the same prompt; part files and the merged file (sha256 `b1c85d3468441d0c...`) committed alone in b3b4ebb before any comparison. The hybrid scorers never saw the fts answers or verdicts.
+- Scoring: blind, inputs `ev250\blind-in-hyb\` only (dump split in two files, Q1-Q15 / Q16-Q30, read in full). The dump was too large for one scorer: four Sonnet scorers each took a range (Q1-8, Q9-15, Q16-21, Q22-30) under the same prompt; part files and the merged file `verdicts-blind.json` (sha256 `b1c85d3468441d0c8147ff49d61224e9f3a3fbb1c5c049a6a1e0885ed02f2858`) committed alone in b3b4ebb before any comparison. The hybrid scorers never saw the fts answers or verdicts.
 
 ## Scores
 
 Classes: r retrieval, s shape / part missing, b behavior, c corpus gap, i invalid output. bl = borderline. USD = new / all calls the answer used.
 
-| Q | Tier | Expected -> got | #243 | W10 hybrid | W11 fts | **Hybrid** | Class | Second read | Calls new/all | USD |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Q1 | 1 | answer -> answer | PASS | PASS | PASS | **PASS** |  |  | 2/3 | 0.100 / 0.127 |
-| Q2 | 1 | answer -> answer | PASS | PASS | PASS | **PASS** |  |  | 2/3 | 0.230 / 0.235 |
-| Q3 | 1 | answer -> answer | FAIL | PASS | PASS | **PASS** |  |  | 2/3 | 0.120 / 0.137 |
-| Q4 | 1 | answer -> answer | PASS | PASS | PASS bl | **PASS bl** |  |  | 2/3 | 0.174 / 0.185 |
-| Q5 | 1 | answer -> answer | FAIL | PASS | FAIL | **FAIL bl** | r, s |  | 2/3 | 0.042 / 0.050 |
-| Q6 | 1 | answer -> answer | PASS | PASS | PASS | **PASS** |  |  | 2/3 | 0.094 / 0.110 |
-| Q7 | 2 | answer -> answer | FAIL | PASS | PASS bl | **PASS bl** |  |  | 6/7 | 0.434 / 0.455 |
-| Q8 | 2 | answer -> answer | FAIL | PASS | PASS bl | **PASS bl** |  |  | 3/4 | 0.158 / 0.167 |
-| Q9 | 3 | answer -> answer | PASS | PASS | PASS | **PASS** |  |  | 4/5 | 0.167 / 0.176 |
-| Q10 | 3 | answer -> answer | PASS | PASS | FAIL | **PASS** |  |  | 7/8 | 0.345 / 0.359 |
-| Q11 | 1 | answer -> answer | FAIL | FAIL | FAIL | **FAIL** | r, s |  | 7/8 | 0.340 / 0.358 |
-| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS | PASS bl | **FAIL bl** | s |  | 3/4 | 0.239 / 0.270 |
-| Q13 | 1 | answer -> answer | PASS | PASS | PASS | **PASS bl** |  |  | 3/4 | 0.132 / 0.143 |
-| Q14 | 3 | answer -> answer | PASS | PASS | PASS bl | **PASS bl** |  |  | 2/3 | 0.156 / 0.170 |
-| Q15 | 3 | answer -> answer | FAIL | PASS | PASS | **PASS bl** |  |  | 6/7 | 0.370 / 0.389 |
-| Q16 | 3 | answer -> answer | PASS | PASS | FAIL bl | **FAIL bl** | s |  | 2/3 | 0.432 / 0.443 |
-| Q17 | 1 | answer -> answer | FAIL | PASS | PASS bl | **PASS bl** |  |  | 2/3 | 0.291 / 0.308 |
-| Q18 | 3 | answer -> refuse | PASS | PASS | FAIL | **FAIL** | b, r |  | 1/2 | 0.112 / 0.126 |
-| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | FAIL | PASS bl | **PASS bl** |  |  | 7/8 | 0.300 / 0.351 |
-| Q20 | 1 | answer -> answer | FAIL | PASS | FAIL | **PASS bl** |  |  | 2/3 | 0.262 / 0.271 |
-| Q21 | 2 | answer -> answer | FAIL | PASS | FAIL | **PASS bl** |  |  | 12/13 | 0.922 / 0.955 |
-| Q22 | 1 | answer -> answer | PASS | PASS | PASS bl | **PASS bl** |  |  | 6/7 | 0.309 / 0.316 |
-| Q23 | 1 | answer -> answer | FAIL | FAIL | FAIL | **FAIL** | r, s |  | 6/7 | 0.324 / 0.331 |
-| Q24 | 3 | answer -> gap_with_adjacent | FAIL | FAIL | PASS | **PASS bl** |  |  | 7/8 | 0.467 / 0.478 |
-| Q25 | 1 | answer -> answer | PASS | PASS | FAIL bl | **FAIL bl** | s, b |  | 9/10 | 0.554 / 0.573 |
-| Q26 | 1 | answer -> answer | FAIL | FAIL | PASS bl | **PASS bl** |  |  | 2/3 | 0.193 / 0.207 |
-| Q27 | 1 | answer -> incomplete | PASS | PASS | PASS bl | **FAIL** | i, b |  | 1/2 | 0.151 / 0.165 |
-| Q28 | 1 | answer -> answer | FAIL | PASS | FAIL bl | **PASS bl** |  |  | 4/5 | 0.223 / 0.235 |
-| Q29 | 1 | gap_with_adjacent -> answer | PASS | PASS | FAIL | **FAIL bl** | b, s |  | 2/3 | 0.083 / 0.086 |
-| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | PASS | **PASS** |  |  | 2/3 | 0.110 / 0.119 |
+| Q | Tier | Expected -> got | #243 | W10 hybrid | W11 fts adj. | Hybrid blind | Class | Second read | **Adjudicated** | Calls new/all | USD |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Q1 | 1 | answer -> answer | PASS | PASS | PASS | PASS |  |  | **PASS** | 2/3 | 0.100 / 0.127 |
+| Q2 | 1 | answer -> answer | PASS | PASS | PASS | PASS |  |  | **PASS** | 2/3 | 0.230 / 0.235 |
+| Q3 | 1 | answer -> answer | FAIL | PASS | PASS | PASS |  |  | **PASS** | 2/3 | 0.120 / 0.137 |
+| Q4 | 1 | answer -> answer | PASS | PASS | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.174 / 0.185 |
+| Q5 | 1 | answer -> answer | FAIL | PASS | FAIL | FAIL bl | r, s | FAIL bl | **FAIL** | 2/3 | 0.042 / 0.050 |
+| Q6 | 1 | answer -> answer | PASS | PASS | PASS | PASS |  |  | **PASS** | 2/3 | 0.094 / 0.110 |
+| Q7 | 2 | answer -> answer | FAIL | PASS | PASS | PASS bl |  |  | **PASS** | 6/7 | 0.434 / 0.455 |
+| Q8 | 2 | answer -> answer | FAIL | PASS | PASS | PASS bl |  |  | **PASS** | 3/4 | 0.158 / 0.167 |
+| Q9 | 3 | answer -> answer | PASS | PASS | PASS | PASS |  |  | **PASS** | 4/5 | 0.167 / 0.176 |
+| Q10 | 3 | answer -> answer | PASS | PASS | FAIL | PASS |  | PASS bl | **PASS** | 7/8 | 0.345 / 0.359 |
+| Q11 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | r, s |  | **FAIL** | 7/8 | 0.340 / 0.358 |
+| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | PASS | FAIL | FAIL bl | s | FAIL | **FAIL** | 3/4 | 0.239 / 0.270 |
+| Q13 | 1 | answer -> answer | PASS | PASS | PASS | PASS bl |  |  | **PASS** | 3/4 | 0.132 / 0.143 |
+| Q14 | 3 | answer -> answer | PASS | PASS | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.156 / 0.170 |
+| Q15 | 3 | answer -> answer | FAIL | PASS | PASS | PASS bl |  |  | **PASS** | 6/7 | 0.370 / 0.389 |
+| Q16 | 3 | answer -> answer | PASS | PASS | FAIL | FAIL bl | s | FAIL | **FAIL** | 2/3 | 0.432 / 0.443 |
+| Q17 | 1 | answer -> answer | FAIL | PASS | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.291 / 0.308 |
+| Q18 | 3 | answer -> refuse | PASS | PASS | FAIL | FAIL | b, r |  | **FAIL** | 1/2 | 0.112 / 0.126 |
+| Q19 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | FAIL | PASS | PASS bl |  |  | **PASS** | 7/8 | 0.300 / 0.351 |
+| Q20 | 1 | answer -> answer | FAIL | PASS | FAIL | PASS bl |  | settled (fts cut) | **PASS** | 2/3 | 0.262 / 0.271 |
+| Q21 | 2 | answer -> answer | FAIL | PASS | FAIL | PASS bl |  | settled (fts cut) | **PASS** | 12/13 | 0.922 / 0.955 |
+| Q22 | 1 | answer -> answer | PASS | PASS | PASS | PASS bl |  |  | **PASS** | 6/7 | 0.309 / 0.316 |
+| Q23 | 1 | answer -> answer | FAIL | FAIL | FAIL | FAIL | r, s | settled (corpus) | **FAIL** | 6/7 | 0.324 / 0.331 |
+| Q24 | 3 | answer -> gap_with_adjacent | FAIL | FAIL | PASS | PASS bl |  |  | **PASS** | 7/8 | 0.467 / 0.478 |
+| Q25 | 1 | answer -> answer | PASS | PASS | FAIL | FAIL bl | s, b | PASS bl (trade press 4 of 67 claims, all labelled; undisclosed cells marked) | **PASS** | 9/10 | 0.554 / 0.573 |
+| Q26 | 1 | answer -> answer | FAIL | FAIL | PASS | PASS bl |  |  | **PASS** | 2/3 | 0.193 / 0.207 |
+| Q27 | 1 | answer -> incomplete | PASS | PASS | PASS | FAIL | i, b | settled (i, cut at cap) | **FAIL** | 1/2 | 0.151 / 0.165 |
+| Q28 | 1 | answer -> answer | FAIL | PASS | FAIL | PASS bl |  | PASS bl | **PASS** | 4/5 | 0.223 / 0.235 |
+| Q29 | 1 | gap_with_adjacent -> answer | PASS | PASS | FAIL | FAIL bl | b, s | FAIL | **FAIL** | 2/3 | 0.083 / 0.086 |
+| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | PASS | PASS |  |  | **PASS** | 2/3 | 0.110 / 0.119 |
 
-Blind score 21/30, tier 1 12/18. Borderline: Q4, Q5, Q7, Q8, Q12, Q13, Q14, Q15, Q16, Q17, Q19, Q20, Q21, Q22, Q24, Q25, Q26, Q28, Q29.
+Adjudicated 22/30 (tier 1 13/18); blind full read 21/30 (tier 1 12/18). Borderline in the blind read: Q4, Q5, Q7, Q8, Q12, Q13, Q14, Q15, Q16, Q17, Q19, Q20, Q21, Q22, Q24, Q25, Q26, Q28, Q29.
 
 ## Changes against #243, W10 and #247
 
@@ -72,7 +72,6 @@ Every pipeline element changed at once between these runs and W10 (Claude, singl
 | Q20 | #243 FAIL -> PASS | Real survey findings with source, date and sample (UBS, FINRA under-35, BofA 21-45, Wealthtender 35-64 with n=500); but no disagreement between surveys surfaced, Wealthtender is not under 40, and some UBS claims are succession-planning rather than advisor choice. |
 | Q21 | #243 FAIL -> PASS | Two halves kept separate: Cerulli $123.7T to 2048 (Oct 2025) and UBS $83T (Apr 2026) labelled by source and date, versus per-firm statements (Schwab, EDJ, RJF, BAC) with honest gaps for MS/Merrill; cluttered with headcount/NNA filler and C6 $85T citation shows unrelated opening text. |
 | Q24 | #243 FAIL -> PASS; W10 hybrid FAIL -> PASS | Declines the bad comparison and names per-firm why it is invalid (different numerators and advisor definitions, RJF's own caveat) with citations; borderline because it computes no figure even for Edward Jones where both inputs are disclosed on one basis. |
-| Q25 | #243 PASS -> FAIL; W10 hybrid PASS -> FAIL | Relies on trade-press (InvestmentNews) claims on MS pay threshold, retention bonuses and clawbacks as if disclosed, contrary to passes_if; also pads with ADV/10-K items and the undisclosed rest is only partly marked. |
 | Q26 | #243 FAIL -> PASS; W10 hybrid FAIL -> PASS | All items fall in the 2026-08-19 to 11-17 window with dates and cited docs; borderline because every item is tier-4 trade press, the 'why it matters' lines mostly restate other facts, and ordering/links are not clearly newest-first. |
 | Q27 | #243 PASS -> FAIL; W10 hybrid PASS -> FAIL | Incomplete answer: every Merrill sub-question matrix_failed (model output invalid), answerable=False, nothing concluded; expected answer. |
 | Q28 | #243 FAIL -> PASS | EDJ rate (6.1% 3Q25, 6.4% 2Q25) with period, own definition and 10-Q cites; Merrill only qualitative 'near historic lows'; no valid comparison stated; headcount given as adjacent and labelled not attrition, though net headcount change is not computed and industry research is added. |
@@ -80,32 +79,32 @@ Every pipeline element changed at once between these runs and W10 (Claude, singl
 
 ## fts vs hybrid-norerank (same plans)
 
-Same 30 plans, same model and settings; retrieval is the only planned difference. Verdicts differ on 6 questions: Q10, Q12, Q20, Q21, Q27, Q28. fts 19/30, hybrid-norerank 21/30.
+Same 30 plans, same model and settings; retrieval is the only planned difference. Adjudicated verdicts differ on 6 questions: Q10, Q20, Q21, Q25, Q27, Q28. fts 18/30, hybrid-norerank 22/30 adjudicated (blind 19 / 21).
 
 | Q | fts | hybrid | retrieved fts / hyb (shared) | cited fts / hyb (shared) | cause |
 |---|---|---|---|---|---|
-| Q10 | FAIL | PASS | 576 / 407 (261) | 28 / 26 (15) | retrieval + model: different retrieved sets (261 shared of 576 / 407); fts reduced to gap_with_adjacent (1 claim, 7 gaps), hybrid to answer (5 claims naming Merrill's 'Mass Affluent' tier) |
-| Q12 | PASS bl | FAIL bl | 423 / 232 (184) | 51 / 40 (15) | scorer reading: both scorers give the same reason for opposite verdicts (TL); not a mode effect |
-| Q20 | FAIL | PASS bl | 832 / 882 (520) | 0 / 21 (0) | invalid output (fts): fts map.all cut at 64,000 output tokens, answered without that cell; hybrid's map completed |
-| Q21 | FAIL | PASS bl | 2449 / 1634 (1368) | 0 / 102 (0) | invalid output (fts): fts reduce cut at 64,000 output tokens (no answer); hybrid answered |
-| Q27 | PASS bl | FAIL | 109 / 108 (108) | 18 / 0 (0) | invalid output (hybrid): hybrid map.MER cut at 64,000 output tokens, answered without the Merrill cell; fts map completed |
-| Q28 | FAIL bl | PASS bl | 137 / 149 (113) | 16 / 15 (14) | scorer reading / wording: same EDJ rate and Merrill qualitative evidence in both (14 of 16 / 15 cited chunks shared); the scorers differ on whether net headcount vs attrition is stated plainly |
+| Q10 | FAIL | PASS | 576 / 407 (261) | 28 / 26 (15) | retrieval + model: different retrieved sets (261 shared of 576 / 407); fts reduced to gap_with_adjacent (1 claim, 7 gaps); hybrid answered (5 claims), quoting Merrill only (its 'Mass Affluent' tier), the other firms as adjacent |
+| Q20 | FAIL | PASS | 832 / 882 (520) | 0 / 21 (0) | invalid output (fts): fts map.all cut at 64,000 output tokens, answered without that cell; hybrid's map completed |
+| Q21 | FAIL | PASS | 2449 / 1634 (1368) | 0 / 102 (0) | invalid output (fts): fts reduce cut at 64,000 output tokens (no answer); hybrid answered |
+| Q25 | FAIL | PASS | 1272 / 732 (492) | 48 / 53 (28) | answer (TL ruling): the two answers differ; the fts answer cites a recruiter's trade-press quote for Schwab pay without marking Schwab's structure undisclosed; hybrid's trade press is 4 of 67 claims, all labelled, and undisclosed cells are marked |
+| Q27 | PASS | FAIL | 109 / 108 (108) | 18 / 0 (0) | invalid output (hybrid): hybrid map.MER cut at 64,000 output tokens, answered without the Merrill cell; fts map completed |
+| Q28 | FAIL | PASS | 137 / 149 (113) | 16 / 15 (14) | scorer reading / wording: same EDJ rate and Merrill qualitative evidence in both (14 of 16 / 15 cited chunks shared); the readers differ on whether net headcount vs attrition is stated plainly |
 
-**Q19 and the ADR-018 competitor floor** (TL decisions on #250, issuecomment-7047676757 and the a1.RJF extension): on the DeepSeek plans the floor fires only in Q19: fts drops 4 of 5 Merrill chunks (a1.MER) and the single RJF chunk (a1.RJF, emptied); hybrid-norerank drops none (`mock-real-plans.md`). Any Q19 difference that comes from Merrill or RJF competitor passages is attributed to the floor, not to ranking. Q19: fts PASS bl, hybrid PASS bl.
+**Q19 and the ADR-018 competitor floor** (TL decisions on #250, issuecomment-7047676757 and the a1.RJF extension): on the DeepSeek plans the floor fires only in Q19: fts drops 4 of 5 Merrill chunks (a1.MER) and the single RJF chunk (a1.RJF, emptied); hybrid-norerank drops none (`mock-real-plans.md`). Any Q19 difference that comes from Merrill or RJF competitor passages is attributed to the floor, not to ranking. Q19: fts PASS, hybrid PASS (adjudicated).
 
 Map records shared between the modes: none (every map input differs). Reduces shared: none.
 
 - **Q10** fts: Expected answer but got gap_with_adjacent: declines to name or rank any firm as most explicit, so no judgment is made legible, although dated statements per firm are shown.
   hybrid: Shows dated statements for all five firms and states the basis for naming Merrill (only firm naming a 'Mass Affluent' tier) while labelling Schwab/RJF/MS/EDJ statements as adjacent; reader can disagree.
 
-- **Q12** fts: Full Schwab evidence (scale quotes, cost per account, ~40% marketing-driven, ad spend, accounts, workplace) and an explicit normative hand-off; borderline because Edward Jones's own cost structure is thin (no expense figures set alongside).
-  hybrid: Schwab acquisition evidence is good (40% marketing-driven, cost per account, account growth) and replication is handed off, but Edward Jones's own disclosed cost structure is not set alongside (only footprint and initiatives); borderline.
-
 - **Q20** fts: Incomplete output: every sub-question matrix_failed (model output invalid/call failed), so no survey findings were returned.
   hybrid: Real survey findings with source, date and sample (UBS, FINRA under-35, BofA 21-45, Wealthtender 35-64 with n=500); but no disagreement between surveys surfaced, Wealthtender is not under 40, and some UBS claims are succession-planning rather than advisor choice.
 
 - **Q21** fts: Invalid output: no answer record (model none, reduce invalid), nothing delivered.
   hybrid: Two halves kept separate: Cerulli $123.7T to 2048 (Oct 2025) and UBS $83T (Apr 2026) labelled by source and date, versus per-firm statements (Schwab, EDJ, RJF, BAC) with honest gaps for MS/Merrill; cluttered with headcount/NNA filler and C6 $85T citation shows unrelated opening text.
+
+- **Q25** fts: Good filing-based disclosures (10-K, ADV, RJF pages) but leans on trade press for Schwab pay (recruiter quote), MS pay-threshold and clawbacks, and does not mark Schwab salary/bonus/recruiting as undisclosed; reaches for trade-press grid-type reconstruction.
+  hybrid: Relies on trade-press (InvestmentNews) claims on MS pay threshold, retention bonuses and clawbacks as if disclosed, contrary to passes_if; also pads with ADV/10-K items and the undisclosed rest is only partly marked.
 
 - **Q27** fts: Merrill-specific items (trade press, 9/15 press release, Merrill Wealth Management lines) with BAC GWIM material labelled as GWIM-not-Merrill and gaps declared for headcount/NNA; C1/C2 co-president and regional-head items date from 2023 and are not changes this year.
   hybrid: Incomplete answer: every Merrill sub-question matrix_failed (model output invalid), answerable=False, nothing concluded; expected answer.
@@ -126,8 +125,23 @@ Calls used by the 30 answers: 148 ({'plan': 30, 'map': 76, 'remap': 14, 'reduce'
 
 ## Second read
 
-To be read in full in PR review round 1 (every borderline question, the six W10 failures (#240's failures are among them), every change against #240 and every question whose verdict differs from W11 fts (both answers side by side)): Q4, Q5, Q7, Q8, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21, Q22, Q23, Q24, Q25, Q26, Q27, Q28, Q29.
-The table above gets the second-read column; the reported score stays the blind full read, with the range the second read implies and the adjudicated score.
+PR #268 review round 1 (reviewer agent, reviewed aed43d0) read in full the questions where the modes differ and every borderline FAIL. Q20, Q21, Q23 and Q27 settled per the TL. It changes only Q25, FAIL -> PASS (borderline): the trade press is 4 of 67 claims, all labelled, and undisclosed cells are marked.
+
+| Q | Blind full read | Second read | Adjudicated |
+|---|---|---|---|
+| Q5 | FAIL bl | FAIL bl | **FAIL** |
+| Q10 | PASS | PASS bl | **PASS** |
+| Q12 | FAIL bl | FAIL | **FAIL** |
+| Q16 | FAIL bl | FAIL | **FAIL** |
+| Q20 | PASS bl | settled (fts cut) | **PASS** |
+| Q21 | PASS bl | settled (fts cut) | **PASS** |
+| Q23 | FAIL | settled (corpus) | **FAIL** |
+| Q25 | FAIL bl | PASS bl (trade press 4 of 67 claims, all labelled; undisclosed cells marked) | **PASS** |
+| Q27 | FAIL | settled (i, cut at cap) | **FAIL** |
+| Q28 | PASS bl | PASS bl | **PASS** |
+| Q29 | FAIL bl | FAIL | **FAIL** |
+
+Changed by the second read: Q25 FAIL -> PASS. Adjudicated 22/30 (tier 1 13/18); blind full read 21/30.
 
 ## The 30 answers
 
