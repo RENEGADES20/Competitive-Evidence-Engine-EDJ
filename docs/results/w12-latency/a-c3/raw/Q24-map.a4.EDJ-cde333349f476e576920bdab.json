@@ -1,0 +1,203 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10K-2025#59",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10Q-2026Q1#72",
+    "EDJ-10Q-2026Q1#39",
+    "EDJ-10Q-2025Q3#87",
+    "EDJ-10Q-2025Q3#54",
+    "EDJ-10K-2025#23",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46"
+  ],
+  "at": "2026-11-21T14:09:28.468913-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10303,
+    "output_tokens": 8303,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 8895,
+    "reasoning_tokens": 6895,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.42
+  },
+  "wall_s": 38.31,
+  "tokens_per_s": 216.73,
+  "ttft_s": 1.42,
+  "reasoning_content": "The sub-question asks whether client assets per advisor figures across five firms can be validly compared given differences in definitions, advisor counts, and client asset measures. We need to extract evidence from Edward Jones passages about definitions: AUC (assets under care), financial advisors counted, etc.\n\nRelevant: EDJ-10Q-2026Q2#61: \"$2.6 trillion of assets under care ('AUC'), including $1.2 trillion of advisory programs AUC ... 20,514 financial advisors.\" Also EDJ-10Q-2026Q1#51: Client assets under care total, advisory programs, Financial advisors (actual) \u2014 and footnote \"Counted on a full-time equivalent basis\" in #75 and #87 (home office associates footnote though). Actually #52 shows financial advisors table with \"Average\" and #62 mentions \"Counted on a full-time equivalent basis\" \u2014 that footnote likely relates to home office associates and financial advisors table? Let's see #87: \"Home office associates(1): ... (1) Counted on a full-time equivalent basis.\" So that footnote is for home office associates. The financial advisors table in #51 shows \"Financial advisors (actual): At period end\" \u2014 \"actual\" vs average on FTE basis. Hmm.\n\nSo facts: EDJ defines AUC = \"assets under care\" \u2014 definitions of advisory programs AUC. Financial advisors count at period end (actual), 20,514 at 2026-06-26; 20,550 at 2026-03-27. AUC $2.6 trillion at 2026-06-26; AUC $2.4 trillion at 2026-03-27; advisory programs AUC $1.2T and $1.1T.\n\nAlso #46: \"more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\"\n\nAlso financial advisor attrition 6.4% (#67) \u2014 differences in advisor counts (FTE vs actual, period end vs average). #51 shows \"Financial advisors (actual): At period end\" and \"Average\" rows, indicating actual vs FTE.\n\nThe sub-question is a \"comparison\" question \u2014 whether figures can be validly compared. We should extract facts about definitions and measures. Label probably \"fact\" since passages state metrics/definitions. But the question asks \"whether ... can be validly compared\" \u2014 this is a judgment; the passages give definitions. Maybe label fact with items quoting definitions.\n\nLet me build items:\n\n1. EDJ reports total client assets as \"assets under care (AUC)\", which at 2026-06-26 was $2.6 trillion, including $1.2 trillion of advisory programs AUC. quote from #61. period 2026-06-26, scope \"\" (whole firm). definition: \"assets under care (\"AUC\")\".\n\n2. EDJ reports 20,514 financial advisors at 2026-06-26. #61. period 2026-06-26, scope \"\", unit financial advisors, value 20,514.\n\n3. First quarter 2026: total AUC at period end $2,417 billion, average $2,498B; advisory programs AUC at period end $1,064B, average $1,096B. #51. Could be one item or multiple. \"a series is one item per period\" \u2014 items per figure. Let's do a couple items: total AUC at period end 2026-03-27 $2,417 billion; advisory programs AUC at period end $1,064 billion; financial advisors at period end 20,550 (actual).\n\n4. #52: financial advisors 20,550 at period end, average 20,506 \u2014 \"Financial advisors (actual)\". Actually #51 and #52 are continuation of same table. #52 shows \"20,550 20,288 1% Average 20,506 20,221 1%\". So item: financial advisors at period end 20,550 on an actual basis, average 20,506. Use quote from #52.\n\n5. Definition of AUC/asset-based fee revenue from #207: \"Asset-based fee revenue - Revenue is derived from fees determined by the underlying value of client assets...\" This is revenue definition, maybe relevant to client asset measures. And advisory program fees based on average daily market value. Could include as definition fact.\n\n6. #46: \"more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\"\n\n7. #67: financial advisor attrition increased to 6.4%; second quarter 2025 ended with 20,309 financial advisors; AUC $2.3 trillion. These show different periods' counts.\n\nAlso earlier period: #87 home office associates FTE \u2014 irrelevant.\n\nThe sub-question: valid comparison given differences in definitions, advisor counts, client asset measures. We should include facts that show: (a) EDJ measures client assets as AUC including advisory programs; (b) advisor counts may be actual at period end vs average, and FTE basis for some; (c) periods differ.\n\nWe also might include \"not_disclosed\"/\"not_found\"? No, the passages show enough to give facts.\n\nLet's keep items focused but comprehensive. Perhaps 7-8 items.\n\nItems:\n\n0. EDJ's client asset measure is \"assets under care (AUC)\" and at end of Q2 2026 totaled $2.6 trillion, including $1.2 trillion of advisory programs AUC. quote #61. period 2026-06-26, value \"$2.6 trillion\", unit \"USD\", scope \"\" or \"total client assets\". definition: \"assets under care (\\\"AUC\\\")\".\n\nMaybe split total and advisory into separate items since figures distinct:\n- total AUC $2.6T\n- advisory programs AUC $1.2T\n- financial advisors 20,514.\n\n1. total AUC at 2026-03-27 $2,417 billion ($2.4 trillion); text from #51 or #46. Use #51: \"Total: At period end $ 2,417 $ 2,159 12%\". quote. value \"2,417\", unit \"USD billions\", period 2026-03-27.\n\n2. advisory programs AUC at period end $1,064 billion. #51.\n\n3. financial advisors at period end 20,550 actual. #51/#52. quote from #52: \"20,550 ... Average 20,506\". Hmm the table columns: At period end: 20,550 vs 20,288; Average: 20,506 vs 20,221. The \"actual\" label is from #51 \"Financial advisors (actual): At period end\". So quote #51 for label plus #52 for numbers. chunk_ids both.\n\n4. Definition of AUC? #207 gives \"client assets\" and asset-based fee revenue based on \"average daily market value of client assets in the program\". Could be item: \"Edward Jones calculates advisory program fees on the average daily market value of client assets in the program...\" definition. But is that \"client asset measure\"? It's how fees are computed, not exactly AUC definition. Might still be useful for comparison validity. Include as a fact with definition quote.\n\n5. #46: \"more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\" This shows rounded/approximate disclosure. Could be a separate item (text, value \"$2.4 trillion\", period 2026-03-27). It's the same total AUC figure but approximate; maybe duplicate. Maybe use as evidence that the firm reports approximate figures. Hmm, \"one per figure\" \u2014 duplicate same figure. I'll skip or fold.\n\n6. #67: Q2 2025: $2.3 trillion AUC and 20,309 financial advisors, attrition 6.4%. Period 2025-06-27. Include to show advisor attrition/different counts. One item for advisors 20,309 and maybe attrition 6.4%.\n\n7. #87: \"Home office associates ... Counted on a full-time equivalent basis\" \u2014 not financial advisors. Skip.\n\nAlso the \"Financial advisors (actual)\" vs \"Average\" distinction in #51/#52 demonstrates advisor counts reported both period-end actual and average, and footnote for home office associates FTE. Could add item noting advisors appear \"actual\" at period end while other headcounts are FTE \u2014 but that's a statement, text no figure, item allowed (value \"\").\n\nHmm, careful: the guidance says items are facts about figures or statements. Fine.\n\nLet me now decide label. The sub-question asks \"Whether the client assets per advisor figures across the five firms can be validly compared...\" There is no passage that directly says \"not comparable\" or that definitions differ across firms. For EDJ, passages state definitions and measures. So label \"fact\" with items stating the measures/definitions. Could also be \"not_found\" if passages don't address comparability. But the instruction: label fact if a passage states what the sub-question asks for this firm, in full or in part. The sub-question asks about comparability given differences in definitions; passages state the definitions/measures, which is partial. I'll use fact.\n\nActually, maybe better: the question is about whether comparison is valid; passages reveal EDJ's definitions and counting bases, which is the evidence. Fact.\n\nLet's craft items with quotes at most ~300 chars.\n\nItem A: total AUC Q2 2026.\ntext: \"Edward Jones reports its client asset measure as assets under care (AUC), which totaled $2.6 trillion at June 26, 2026, including $1.2 trillion of advisory programs AUC.\"\nquote: \"The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC.\"\nchunk: EDJ-10Q-2026Q2#61\nvalue \"$2.6 trillion\", unit \"USD\", period \"2026-06-26\", scope \"\" \u2014 maybe scope \"total client assets (AUC)\"? We can put scope \"\".\n\nItem B: advisory programs AUC $1.2 trillion same chunk. value \"$1.2 trillion\".\n\nItem C: financial advisors 20,514 at 2026-06-26.\nquote: \"The Partnership ended the second quarter with 20,514 financial advisors.\" same chunk.\n\nItem D: Q1 2026 total AUC at period end $2,417 billion, average $2,498B. Maybe separate item for period end. quote from #51: \"Total: At period end $ 2,417 $ 2,159 12% Average $ 2,498 $ 2,195 14%\" \u2014 but quote should be exact words. The passage text has \"Total: At period end $ 2,417 $ 2,159 12%\". I can quote: \"Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12% Average $ 2,498 $ 2,195 14%\". That's fine.\n\nItem E: advisory programs AUC at period end $1,064B, average $1,096B. same chunk.\n\nItem F: financial advisors at period end 20,550 actual, average 20,506. chunk #51 + #52. quote #52: \"20,550 -7% 8,808 ... Average 8,887 9,429 -6% ...\" wait that's #75. Let me re-read #52: \"20,550 20,288 1% Average 20,506 20,221 1%\" \u2014 yes. And #51 ends with \"Financial advisors (actual): At period end\". So quote: \"Financial advisors (actual): At period end\" from #51 and \"20,550 20,288 1% Average 20,506 20,221 1%\" from #52. Combine? quote must be exact words of passage; can quote both segments separated? Better use one quote from #52 with the numbers and mention the (actual) label in text, chunk_ids both. Quote: \"20,550 20,288 1% Average 20,506 20,221 1%\". Hmm not very informative but exact. Or quote #52 full: \"(2) Net new assets represents... The Partnership ended the first quarter with 20,550 financial advisors.\" Yes #52 has: \"The Partnership ended the first quarter with 20,550 financial advisors.\" Great. Use that for value 20,550; text notes table labels the figure \"Financial advisors (actual): At period end\" and shows average 20,506.\n\nItem G: definition of asset-based fee revenue / advisory program fees. text: \"Edward Jones' asset-based fee revenue is derived from fees determined by the underlying value of client assets, and advisory program fees are based on the average daily market value of client assets in the program as well as contractual rates.\"\nquote from #207: \"Asset-based fee revenue - Revenue is derived from fees determined by the underlying value of client assets and includes advisory programs fees, service fees, and other asset-based fee revenue... Program fees are based on the average daily market value of client assets in the program as well as contractual rates and are charged to clients monthly...\"\ndefinition field: that quote? The definition field is \"the firm's own definition of the quantity when a passage gives one, quoted\". We can put the definition in definition field and quote as supporting. Maybe put the whole thing as definition. Text: \"Edward Jones defines asset-based fee revenue as revenue derived from fees determined by the underlying value of client assets, with advisory program fees based on the average daily market value of client assets in the program.\" value \"\", unit \"\", period \"\", scope \"\".\n\nItem H: #46: \"more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\" This shows rounded approximations. Could include as item with text no figure? value \"$2.4 trillion\". But duplicate. Maybe include to show that in narrative the firm rounds. Hmm, \"one per figure\" \u2014 same figure stated in two places is still one figure; but the sub-question is about comparability, and the narrative rounding is relevant to comparability? Slightly. I'll skip to avoid duplication? But the item might be valuable: \"assets under care\" applies to total client assets including $2.4T. Eh.\n\nItem I: Q2 2025: 20,309 financial advisors, AUC $2.3 trillion, attrition 6.4%. This shows advisor attrition differences. Include one item: text \"Edward Jones ended the second quarter of 2025 with 20,309 financial advisors and $2.3 trillion of client assets under care; financial advisor attrition increased to 6.4%.\" quote from #67. value \"20,309\", unit \"financial advisors\", period 2025-06-27, scope \"\". Hmm two figures in one item; better separate: advisors item, attrition item maybe. Attrition 6.4% is a different measure (not asked) but relevant to comparability of advisor counts. It might be different_quantity? The sub-question doesn't name a specific quantity; it's a comparison validity question. Attrition is related context. Could be fact statement.\n\nMaybe keep it lean: items about definitions and counting bases are what matter.\n\nAlso important: the footnote \"(1) Counted on a full-time equivalent basis\" appears under home office associates, not financial advisors. But #51's financial advisors table has \"Financial advisors (actual): At period end\" and \"Average\". This suggests financial advisor counts are \"actual\" not FTE, whereas home office associates are FTE. That's a real definitional nuance. Item: \"Edward Jones labels its period-end financial advisor count as 'actual' and separately reports an average count; by contrast, its home office associate headcount is counted on a full-time equivalent basis.\" quote from #51 \"#Financial advisors (actual): At period end\" and #87 \"(1) Counted on a full-time equivalent basis.\" Hmm quoting across chunks is messy. Could do two items:\n- Financial advisors reported on an \"actual\" basis at period end, with an average count also given (chunk #51/#52).\n- Home office associates counted on a full-time equivalent basis (chunk #87) \u2014 but that's not financial advisors; still shows different counting conventions. Might be tangential. The sub-question explicitly mentions \"advisor counts\" differences. The FTE note is for home office associates, so not advisors. I'd avoid conflating. But we can mention advisors table shows \"actual\" and \"Average\".\n\nActually #75: \"9,455 -7% 8,808 9,455 -7% Average 8,887 9,429 -6% 8,938 9,419 -5% (1) Counted on a full-time equivalent basis.\" That's likely financial advisors? #75 begins with \"9,455 -7% 8,808...\" then \"Average ...\" then footnote FTE. Hmm, could be financial advisors table? Let's look: #52 shows \"20,550 20,288 1% Average 20,506 20,221 1%\" then \"(1) Income before allocations margin...\" and \"(2) Net new assets...\". So in #52, financial advisors number 20,550. In #75, \"9,455\" might be home office associates? #87 shows home office associates at period end 9,419, average 9,441. #75 shows 9,455 and 8,808? Wait #75: \"9,455 -7% 8,808 9,455 -7% Average 8,887 9,429 -6% 8,938 9,419 -5%\". Hmm 9,455 could be home office associates at period end 2026Q2 vs 8,808? That's a 7% decline? Doesn't fit. Actually #87 Q3 2025: home office associates at period end 9,419 vs 9,406 (0%), average 9,441 vs 9,417. #75 Q2 2026 shows 8,808? possibly home office associates declined. Whatever. Not needed.\n\nSo I'll include a statement item about the \"actual\" label and average count.\n\nNow the cells: single sub-question, so one cell.\n\nLet me also consider whether to label some items different_quantity. The sub-question doesn't name a specific quantity like \"client assets per advisor\"; it's a comparison validity question. So facts are the definitions and figures. No different_quantity needed. Unless the cell should say \"not_disclosed\" because the firm doesn't discuss comparability across five firms. But passages give EDJ's own definitions; partial fact is still fact. I'll go fact.\n\nLet me finalize items (maybe 7):\n\n0. Total AUC Q2 2026 $2.6T (definition AUC).\n1. Advisory programs AUC $1.2T Q2 2026.\n2. 20,514 financial advisors at 2026-06-26.\n3. Q1 2026 total AUC at period end $2,417B (and average $2,498B maybe in text).\n4. Q1 2026 advisory programs AUC at period end $1,064B.\n5. Q1 2026 financial advisors 20,550 actual, average 20,506.\n6. Definition of asset-based fee revenue/advisory program fee basis.\n7. Q2 2025 advisors 20,309, AUC $2.3T, attrition 6.4%.\n\nMaybe item 7 split: advisors 20,309; attrition 6.4%. Attrition is an extra metric but shows advisor count volatility \u2014 relevant. I'll make two items? Better one item for advisors and one for attrition, and maybe skip AUC $2.3T to avoid bloat. But AUC $2.3T shows period variation of asset measure. Eh. I'll do one item with advisors and one with attrition, and maybe total AUC.\n\nActually the guidance: \"a series is one item per period\". So per period, one item per figure. Fine.\n\nLet me also include #46 as evidence that the firm's narrative rounds: \"$2.4 trillion in client assets under care as of March 27, 2026\" and \"more than 20,000 financial advisors serve more than 9 million clients.\" This directly relates to comparability (rounded figures). I'll include one item with that.\n\nTotal items ~9. That's okay.\n\nHmm, but repeated Q1 total AUC ($2,417B in table vs $2.4T in narrative) \u2014 duplicate figure per period. The instruction \"one per figure or statement\" suggests avoid duplicates. Skip #46 or use it as the Q1 item instead of table. The table is more precise. I'll use table.\n\nLet me write quotes carefully.\n\nItem 0:\ntext: \"Edward Jones reports total client assets as assets under care (AUC), which stood at $2.6 trillion at June 26, 2026, including $1.2 trillion of advisory programs AUC.\"\nquote: \"The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\\\"AUC\\\"), including $1.2 trillion of advisory programs AUC.\"\nchunk: EDJ-10Q-2026Q2#61\nvalue \"$2.6 trillion\", unit \"USD\", period \"2026-06-26\", scope \"\", definition \"assets under care (\\\"AUC\\\")\" \u2014 maybe the definition field should be the firm's own definition, but there's no formal definition of AUC. We can leave \"\" or put \"assets under care (\\\"AUC\\\")\". Hmm definition means definition of the quantity; AUC isn't defined beyond name. Leave \"\".\n\nItem 1: advisory programs AUC. value \"$1.2 trillion\", period same, scope \"advisory programs\".\n\nItem 2: 20,514 advisors.\n\nItem 3: Q1 total AUC at period end 2,417; text mention average $2,498B. quote from #51. value \"2,417\", unit \"USD billions\", period \"2026-03-27\", scope \"\".\nquote: \"Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12% Average $ 2,498 $ 2,195 14%\"\n\nItem 4: advisory programs AUC 1,064 at period end; quote \"Advisory programs: At period end $ 1,064 $ 860 24% Average $ 1,096 $ 875 25%\". value \"1,064\", unit \"USD billions\", scope \"advisory programs\".\n\nItem 5: financial advisors 20,550 actual at period end, average 20,506. quote from #52: \"The Partnership ended the first quarter with 20,550 financial advisors.\" plus text noting table labels \"Financial advisors (actual): At period end\" and average 20,506. chunk_ids #51,#52. value \"20,550\", unit \"financial advisors\", period 2026-03-27.\n\nItem 6: definition of asset-based fee revenue. quote from #207. text: \"Edward Jones defines asset-based fee revenue as fees determined by the underlying value of client assets; advisory program fees are based on the average daily market value of client assets in the program and contractual rates.\"\ndefinition field: \"Asset-based fee revenue - Revenue is derived from fees determined by the underlying value of client assets and includes advisory programs fees, service fees, and other asset-based fee revenue\u2026 Program fees are based on the average daily market value of client assets in the program as well as contractual rates\"\nvalue \"\", unit \"\", period \"\", scope \"\".\n\nItem 7: 2025Q2: 20,309 financial advisors and attrition 6.4%.\nText: \"Edward Jones ended the second quarter of 2025 with 20,309 financial advisors and reported financial advisor attrition of 6.4%.\"\nquote: \"The Partnership ended the second quarter with 20,309 financial advisors. Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\"\nvalue \"20,309\", unit \"financial advisors\", period \"2025-06-27\". Hmm two figures; split attrition separately? The text mentions both; value only one. Maybe split into two items:\n7a advisors 20,309; quote first sentence.\n7b attrition 6.4% (period Q2 2025), unit \"%\", scope \"\".\nThe attrition is not asked but relevant. Items \"one per figure\" \u2014 so split. I'll include both.\n\nItem 8: Q2 2025 AUC $2.3 trillion. quote: \"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion\". value \"$2.3 trillion\", period 2025-06-27. Include? It shows measure variation. Maybe.\n\nThat's a lot. Fine; but keep manageable ~9.\n\nAlso should we include a statement that passages do not provide a basis to conclude comparability? We could set label fact and reason: passages state EDJ's own AUC and advisor-count definitions/counting bases, which are the definitional differences the question asks about. Not compare.\n\nWait \u2014 but is \"fact\" right? The sub-question asks \"Whether ... can be validly compared side by side\". A passage stating the definition is partial fact about definitions. Yes.\n\nLet me also think: maybe the expected answer is that EDJ's figures include total client assets under care (which includes non-advisory assets), while other firms might report only advisory assets \u2014 and EDJ also gives advisory programs AUC, so comparison could use that. Facts cover it.\n\nLet me write the tool call.\n\nCareful: quote must be exact. Let me copy from passages.\n\n#61 quote: \"The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC. Average client AUC increased 17%...\" Use first sentence(s). Exact text: `The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC.` Yes.\n\n20,514: `The Partnership ended the second quarter with 20,514 financial advisors.` Exact.\n\n#51 quote for total: The passage text: \"Client assets under care ($ billions):\\n  Total:\\n  At period end                                      $                        2,417      $                    2,159                      12%\\n  Average                                            $                        2,498      $                    2,195                      14%\". I'll quote: \"Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12% Average $ 2,498 $ 2,195 14%\". Acceptable approximate whitespace? \"exact words\" not exact whitespace. Fine.\n\nAdvisory programs: \"Advisory programs: At period end $ 1,064 $ 860 24% Average $ 1,096 $ 875 25%\".\n\nFinancial advisors actual: from #51 \"Financial advisors (actual): At period end\" and #52 \"The Partnership ended the first quarter with 20,550 financial advisors.\" Also #52 shows average 20,506. I'll quote: \"Financial advisors (actual): At period end ... 20,550 ... Average 20,506\". Hmm exact quote with ellipsis? Better quote #52 sentence only and mention \"actual\" in text, chunk ids #51 and #52.\n\nActually #52 text: \"20,550                          20,288                       1%\\n  Average                                                                    20,506                          20,221                       1%\" plus later \"The Partnership ended the first quarter with 20,550 financial advisors.\" Use the latter.\n\nAttrition quote: \"The Partnership ended the second quarter with 20,309 financial advisors. Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\" exact from #67.\n\nAUC 2025Q2 quote: \"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion and a 9% increase in average client AUC\". Exact.\n\nDefinition #207 quote: \"Asset-based fee revenue - Revenue is derived from fees determined by the underlying value of client assets and includes advisory programs fees, service fees, and other asset-based fee revenue. The primary source of asset-based fee revenue is generated from program fees for investment advisory services. ... Program fees are based on the average daily market value of client assets in the program as well as contractual rates and are charged to clients monthly and collected the following month.\" That's >300 chars. Trim: \"Revenue is derived from fees determined by the underlying value of client assets and includes advisory programs fees, service fees, and other asset-based fee revenue.\" and separately \"Program fees are based on the average daily market value of client assets in the program as well as contractual rates\". Use first as quote (~150 chars), definition field second.\n\nOK.\n\nAlso maybe include #46 narrative: \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\" This is a statement showing rounded figures and \"client assets under care.\" Could be item text, no figure? value \"$2.4 trillion\". But duplicate with item 3. Skip.\n\nLet me settle on 8 items:\n\n0 total AUC 2026Q2 $2.6T\n1 advisory AUC 2026Q2 $1.2T\n2 advisors 20,514 2026Q2\n3 total AUC 2026Q1 $2,417B (w/ average $2,498B noted)\n4 advisory AUC 2026Q1 $1,064B\n5 advisors 20,550 actual 2026Q1 (average 20,506)\n6 asset-based fee revenue definition\n7 advisors 20,309 + attrition \u2014 split? Let's split:\n7 advisors 20,309 2025Q2\n8 attrition 6.4% 2025Q2\n9 total AUC 2025Q2 $2.3T\n\n10 items. Fine.\n\nHmm item 8 attrition: unit \"%\", value \"6.4\". Is attrition an \"asked quantity\"? The sub-question is about validity of comparison; attrition affects advisor count comparability. Fact statement about EDJ's reported attrition. I'd include.\n\nShould I include the \"Counted on a full-time equivalent basis\" note? Since it applies to home office associates, not advisors, maybe include as item noting other headcounts are FTE but advisor counts are \"actual\" \u2014 this is key to the comparability question (differences in advisor counts). But the footnote in #87 is under home office associates so I can't say advisors are FTE. I can state: \"Edward Jones labels its period-end financial advisor figure as 'actual' and separately presents an average count, while its home office associate count is presented on a full-time equivalent basis.\" quote from #51 \"Financial advisors (actual): At period end\" and #87 \"(1) Counted on a full-time equivalent basis.\" That's a statement, value \"\". Might be useful. But mixing. I think item 5's text already captures the \"actual\" vs average. I could add to item 5's text: \"The table labels the period-end count 'actual' and also shows an average of 20,506.\"\n\nGood.\n\nNow reason: \"Passages state Edward Jones's own client-asset measure (AUC, including advisory programs) and its advisor counts (actual period-end and average), the definitional and counting differences the comparison question asks about; they do not themselves compare firms.\"\n\nderivation: empty.\n\ndiffers_because: \"\".\n\nLet me produce the JSON.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports total client assets as assets under care (AUC), which stood at $2.6 trillion at June 26, 2026, including $1.2 trillion of advisory programs AUC.",
+            "quote": "The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC.",
+            "value": "$2.6 trillion",
+            "unit": "USD",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          },
+          {
+            "text": "Of the $2.6 trillion total AUC at June 26, 2026, $1.2 trillion was advisory programs AUC, a narrower subset of client assets.",
+            "quote": "including $1.2 trillion of advisory programs AUC",
+            "value": "$1.2 trillion",
+            "unit": "USD",
+            "period": "2026-06-26",
+            "scope": "advisory programs",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2026 with 20,514 financial advisors.",
+            "quote": "The Partnership ended the second quarter with 20,514 financial advisors.",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          },
+          {
+            "text": "At March 27, 2026, total client assets under care were $2,417 billion at period end and $2,498 billion on average for the quarter.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12% Average $ 2,498 $ 2,195 14%",
+            "value": "2,417",
+            "unit": "USD billions",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "At March 27, 2026, advisory programs AUC were $1,064 billion at period end and $1,096 billion on average for the quarter.",
+            "quote": "Advisory programs: At period end $ 1,064 $ 860 24% Average $ 1,096 $ 875 25%",
+            "value": "1,064",
+            "unit": "USD billions",
+            "period": "2026-03-27",
+            "scope": "advisory programs",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "The first-quarter 2026 table labels the period-end financial advisor count as 'actual', showing 20,550 financial advisors at period end and an average of 20,506 for the quarter.",
+            "quote": "Financial advisors (actual): At period end ... 20,550 ... Average 20,506 ... The Partnership ended the first quarter with 20,550 financial advisors.",
+            "value": "20,550",
+            "unit": "financial advisors",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51",
+              "EDJ-10Q-2026Q1#52"
+            ]
+          },
+          {
+            "text": "Edward Jones defines asset-based fee revenue as revenue derived from fees determined by the underlying value of client assets, including advisory program fees, service fees and other asset-based fee revenue.",
+            "quote": "Asset-based fee revenue - Revenue is derived from fees determined by the underlying value of client assets and includes advisory programs fees, service fees, and other asset-based fee revenue.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Program fees are based on the average daily market value of client assets in the program as well as contractual rates and are charged to clients monthly and collected the following month.",
+            "chunk_ids": [
+              "EDJ-10K-2025#207"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2025 with 20,309 financial advisors.",
+            "quote": "The Partnership ended the second quarter with 20,309 financial advisors.",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported that financial advisor attrition increased to 6.4%, primarily due to an increase in retirements.",
+            "quote": "Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.",
+            "value": "6.4",
+            "unit": "%",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2025 with a 12% increase in client assets under care (AUC) to $2.3 trillion, alongside a 9% increase in average client AUC.",
+            "quote": "The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion and a 9% increase in average client AUC",
+            "value": "$2.3 trillion",
+            "unit": "USD",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state Edward Jones's own client-asset measure (AUC, split into total and advisory programs) and its advisor counts and labels (period-end 'actual', average, and attrition), which are the definitional and counting differences the comparison question turns on; no passage itself compares firms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

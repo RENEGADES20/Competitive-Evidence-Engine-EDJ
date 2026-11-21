@@ -245,3 +245,5 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   USD about 5.87 (off-peak). Step 10 rule (`D:\ALLPROJECTS\EDJ\cache\ev272\testa.py`): eligible = C1 only (0 cut,
   0 invalid, behavior 6/6 >= 4/6) -> **C1 chosen: plan off, map low, reduce low, map on deepseek-v4-pro**. Flash is not
   adopted. Defaults set in `src/cee/config.py`; tests updated; pytest 1093 passed.
+- 2026-11-21 14:27 - step 10 mock recheck at 4a64f79 (0 calls): #250 plans 30/30 identical to clean main. Test B gate 4a64f79, worktree wt-272run, cache cache-a (the six test-A questions reuse their C1 records).
+- 2026-11-21 14:40 - test B fts plan phase: 24 new planner calls (USD 0.026), 6 reused from test A. Count (0 calls): 321 new round-1 map calls (the six test-A questions reuse every C1 record), input est 12.9M tokens; run --max-calls 672 (321 + 321 re-map ceiling + 30 reduces). USD hard ceiling 377 (every call at its cap, peak), expected about 28 peak / 14 off-peak.

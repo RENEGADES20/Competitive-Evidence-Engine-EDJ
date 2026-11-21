@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a5.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:56:22.743218-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2041,
+    "output_tokens": 417,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 633,
+    "reasoning_tokens": 290,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.44
+  },
+  "wall_s": 5.84,
+  "tokens_per_s": 71.4,
+  "ttft_s": 1.44,
+  "reasoning_content": "The sub-question asks about Edward Jones's offerings \u2014 but the firm is Merrill (MER). The passages are from BAC press, segment GWIM. Nothing about Edward Jones. The question mixes firms. We must extract evidence about Merrill. Sub-question asks how Edward Jones's current offerings align with younger investors' preferences \u2014 that's not about Merrill at all. Hmm, but instructions: extract evidence about one firm (Merrill). The sub-question mentions Edward Jones. Passages say nothing about Edward Jones's offerings. Also the passage mentions \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\" \u2014 that's recognition, not offerings alignment.\n\nSo label not_found: passages say nothing about it. Actually the only passage discusses Merrill, and the sub-question asks about Edward Jones. So not_found.\n\nBut wait \u2014 could the mentions of \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\" count as related? Not really about offerings alignment with younger investors' preferences. That's different_quantity? It's a different quantity... not really a quantity. I'd say not_found.\n\nHmm, but maybe they'd want different_quantity since no passage states the asked quantity but one states a different, related quantity. The passage mentions nothing about younger investors' preferences. Not related. Not_found.\n\nReasonable: label not_found, no items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only available passage is a Merrill/Bank of America GWIM document about awards, digital activity, revenue and net income; it says nothing about Edward Jones's offerings or about younger investors' preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

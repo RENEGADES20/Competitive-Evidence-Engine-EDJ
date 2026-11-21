@@ -1,0 +1,137 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a3.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39"
+  ],
+  "at": "2026-11-21T13:56:22.680618-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4041,
+    "output_tokens": 3604,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 2633,
+    "reasoning_tokens": 2739,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.89
+  },
+  "wall_s": 21.92,
+  "tokens_per_s": 164.42,
+  "ttft_s": 0.89,
+  "reasoning_content": "The sub-question asks: \"What advice and service models do younger investors prefer, including self-directed versus full-service?\" This is about a preference of younger investors. We need facts stated by the firm about younger investors' preferences regarding advice and service models.\n\nPassages mention: Schwab serves investors across investing styles \"Self-directed to advised\" and engagement preferences \"Digital-first to relationship-led\". Transcript 2025Q3#11: younger clients learn about finances primarily through social media and family \u2014 that's about channels, not exactly advice/service model. 2025Q3#12: top online resource is YouTube; younger investors highly engaged; one-third of retail households who created a financial plan within the last two years are under 40 \u2014 this shows younger investors use financial plans (advised). 2025Q3#41: education, live content, coaching \u2014 younger traders.\n\nThe deck #99 lists \"Younger investors: Schwab Starter Kit, Schwab Teen Investor Account, No/low commissions\" \u2014 service offerings for younger investors, not preferences exactly.\n\nIs there anything stating what younger investors prefer? Maybe not directly \u2014 the firm describes how it serves them across styles. Hmm. The question asks what do younger investors prefer, including self-directed vs full-service. Passage #23 deck says Schwab serves spectrum from self-directed to advised; that's the firm's coverage, not younger investors' preference. Transcript #12: younger investors build wealth, one-third of financial plan creators under 40 \u2014 indicates younger investors engage in financial planning (advised). That's a fact about preference/behavior? It says \"one-third of retail households who created a financial plan within the last two years are under the age of 40\" \u2014 a fact about planning engagement by young households.\n\nI'd label fact with items: \n1. Younger investors learn about finances primarily through social media and family (channel preference). Is that \"advice and service models\"? It's about where they turn for information \u2014 a channel preference, indirectly relevant. Could be fact.\n2. Younger investors use financial planning: one-third of retail households who created a financial plan within last two years are under 40. Fact.\n3. Younger investors turning to Schwab for trading platforms/tools/education/coaching \u2014 suggests self-directed preference. Fact: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time.\" And they turn to Schwab \"because we have the platforms, tools, education, coaching, expertise, and service they need\" \u2014 that indicates they want self-directed tools plus service. Fact-ish.\n4. Deck #23: Schwab's retail business built to win across investing styles self-directed to advised, digital-first to relationship-led \u2014 this is the firm's breadth, not a younger-investor preference. Could be different_quantity? Hmm, it's about the whole retail base across generations, not younger investors. It's a related quantity: the investing styles/engagement preferences the firm supports across all clients. That could be different_quantity (wider scope: all clients, not just younger). Actually the deck describes diverse set of individual investors across generations \"next-gen to retirees\" \u2014 includes younger, wider scope. I'd include as different_quantity? The instruction: different_quantity when a passage states a different, related quantity \u2014 wider unit containing the asked one. Here the asked thing is \"advice and service models younger investors prefer.\" The deck says firm offers from self-directed to advised across generations \u2014 wider scope. Could include as different_quantity.\n\nBut careful: the asked quantity is a preference, not a service offering. The deck lists offerings/capabilities \u2014 arguably different quantity (service offerings rather than preferences). I'll include as different_quantity with explanation.\n\nAlso #99 deck lists products for younger investors \u2014 offerings, not preferences. Could include as different_quantity (offerings, not preferences). Hmm, maybe better to keep focus.\n\nLet me structure the cell: label \"fact\" since we have some facts about younger investors' preferences/channels and planning behavior. Items:\n\nItem 0: Younger investors learn about finances primarily through social media and family. Quote: \"We know they learn about finances primarily through social media and family.\" chunk SCHW-TR-2025Q3#11. value \"\", unit \"\", period 2025-09-30? The statement is at a point in time (transcript of Q3 2025). Set period \"2025-09-30\". scope: younger clients / Gen Z retail households? The sentence follows referencing Gen Z new-to-firm households. Claim: \"they\" = Gen Zers. Set scope \"Gen Z investors\".\n\nItem 1: Younger investors' top online resource is YouTube. Quote: \"Their top online resource is YouTube\". chunk #12, period 2025-09-30, scope younger investors. This is a channel preference.\n\nItem 2: One-third of retail households that created a financial plan in the last two years are under 40 \u2014 younger investors engage with advice/financial planning. Quote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\". value \"one-third\"? It's a figure \u2014 \"one-third\" as printed. Unit: \"of retail households creating a financial plan\". period 2025-09-30 (as of the transcript, last two years). Scope: retail households under 40.\n\nItem 3: Younger traders turn to Schwab for platforms, tools, education, coaching, expertise and service \u2014 self-directed trading with support. Quote: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need\". chunk #12, period 2025-09-30, scope younger traders.\n\nItem 4: Firm's offerings for younger investors include Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions (deck #99) \u2014 that's offerings not preferences. different_quantity? Could include under different_quantity with differs_because \"describes Schwab's product offerings for younger investors, not the preferences themselves.\"\n\nHmm, but different_quantity is for a different measure of the quantity asked. The asked quantity is preferences. Offerings are related but not a different \"quantity\" in the metric sense. Maybe better to omit. But the instruction says when unsure between fact and different_quantity choose different_quantity. Yet offerings aren't a quantity.\n\nItem 5: Deck #23: Schwab serves investors across generations with investing styles from self-directed to advised and engagement preferences digital-first to relationship-led. That indicates the range of models the firm supports; broader than younger investors. I'll mark different_quantity with differs_because \"covers all retail generations and the firm's full range of investing styles/engagement preferences, not younger investors' stated preferences.\"\n\nI think include #23 as different_quantity, and maybe omit #99 or include as a fact? #99 lists what Schwab offers younger investors (Starter Kit, Teen Investor Account) \u2014 indicates the firm's response, not preference. I'll include as different_quantity too? Hmm, two different_quantity items. That's fine.\n\nActually, maybe simpler: label fact and include items 0-3, plus one different_quantity item for #23. Let me also consider 2026Q3#11: \"Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences\" \u2014 similar to #23, wider scope (all generations). Could be different_quantity.\n\nI'll include: \n- different_quantity item: Schwab's retail business is built to serve investors across generations, wealth tiers, investing styles from self-directed to advised and engagement preferences from digital-first to relationship-led (chunks #11 2026Q3 and #23). Actually two chunks; quote one. Use #23 quote: \"Investing Styles Self-directed to advised ... Digital-first to relationship-led Engagement Preferences\". Hmm quote formatting. Maybe use #11 2026Q3 quote: \"Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.\" That's broader than younger investors. differs_because: covers all retail generations and the firm's capabilities, not what younger investors prefer.\n\nAlso maybe 2025Q3#41: firm offers 1,000 former trading professionals answering phones for advice, 35 hours/week live content \u2014 services that appeal to young investors. That's service offerings, not preference. Could include as different_quantity.\n\nLet me keep the cell manageable: 4 fact items + 1-2 different_quantity items.\n\nDerivation: not needed.\n\nLabel: fact (since we have facts).\n\nWrite items carefully with quotes \u2264300 chars.\n\nItem order counts for derivation; none.\n\nLet me draft:\n\nItem 0:\ntext: \"Schwab says younger investors (Gen Z new-to-firm households) learn about finances primarily through social media and family.\"\nquote: \"We know they learn about finances primarily through social media and family.\"\nchunk_ids: [\"SCHW-TR-2025Q3#11\"]\nvalue \"\", unit \"\", period \"2025-09-30\", scope \"Gen Z new-to-firm retail households\", definition \"\".\n\nItem 1:\ntext: \"Schwab says younger investors' top online resource is YouTube.\"\nquote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\nchunk #12, period 2025-09-30, scope \"younger investors\".\n\nItem 2:\ntext: \"Schwab says one-third of retail households that created a financial plan within the last two years are under the age of 40.\"\nquote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\"\nvalue \"one-third\", unit \"of retail households creating a financial plan\", period \"2025-09-30\", scope \"retail households under age 40\".\n\nItem 3:\ntext: \"Schwab says younger traders turn to it for platforms, tools, education, coaching, expertise and service to trade and build wealth long term.\"\nquote: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed\"\nchunk #12, period 2025-09-30, scope \"younger traders\".\n\nItem 4 (different_quantity): Schwab's retail business built to win across generations, wealth tiers, investing styles and engagement preferences \u2014 spans all generations, not younger investors' stated preferences. Quote from #11 2026Q3: \"Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.\" period 2026-09-30, scope \"retail business (all generations)\". differs_because: \"Describes the firm's full retail client base across generations and its range of investing styles/engagement preferences, not what younger investors prefer.\"\n\nItem 5 (different_quantity): Offerings aimed at younger investors: Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions \u2014 these are products offered, not stated preferences. Quote from #99: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\". period \"\" (deck period n/a), scope \"younger investors\". Hmm quote is table fragment; acceptable? Might be messy. Maybe skip.\n\nAlternatively item 5: firm's services for young investors: 1,000 former trading professionals answering phones, 35 hours/week live content \u2014 services offered, not preferences. Eh.\n\nI think include the deck #99 as it directly mentions younger investors' segment offerings; it indicates self-directed style services (Starter Kit, Teen Account, low commissions). Label different_quantity (products rather than preferences).\n\nAlso maybe deck #100: \"of New-to-Firm Retail HHs <40 +60%\" \u2014 that's growth; not preference.\n\nI'll finalize with items 0-4 and item 5 deck #99.\n\nQuote for #99: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\" \u2014 under 300 chars. Fine.\n\nReason: \"Passages state younger investors' information channels and planning/trading behavior, but not a direct stated preference ranking of self-directed versus full-service models; related capability statements are marked different_quantity.\"\n\nHmm, but label fact is fine since partial facts exist.\n\nActually wait \u2014 should the whole cell be \"not_disclosed\" because the firm doesn't state what advice/service models younger investors prefer? No \u2014 partial facts exist (planning usage, trading, channels). Instructions: partial is still a fact. Good.\n\nDefinition field: \"\".\n\nOne concern: item 3's statement \u2014 \"younger traders are turning to us because ... platforms, tools...\" \u2014 that's arguably the firm's attribution of young investors' preference for trading tools. Fact.\n\nLet me write the tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says Gen Z new-to-firm retail investors learn about finances primarily through social media and family.",
+            "quote": "We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "Gen Z new-to-firm retail households",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says younger investors' top online resource is YouTube.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says one-third of retail households that created a financial plan within the last two years are under the age of 40.",
+            "quote": "one-third of retail households who created a financial plan within the last two years are under the age of 40",
+            "value": "one-third",
+            "unit": "of retail households who created a financial plan",
+            "period": "2025-09-30",
+            "scope": "retail households under age 40",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says younger traders turn to it because they see trading's potential to build wealth over time and because Schwab offers the platforms, tools, education, coaching, expertise and service they need.",
+            "quote": "Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "younger traders",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says its retail business is built to win across generations, wealth tiers, investing styles and engagement preferences, with styles spanning self-directed to advised and engagement spanning digital-first to relationship-led.",
+            "quote": "Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.",
+            "value": "",
+            "unit": "",
+            "period": "2026-09-30",
+            "scope": "retail business (all generations)",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#11",
+              "SCHW-DECK-2026Q3#23"
+            ]
+          },
+          {
+            "text": "Schwab's materials list offerings aimed at younger investors: Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions.",
+            "quote": "Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#99"
+            ]
+          }
+        ],
+        "differs_because": "The generation-spanning retail capability list and the younger-investor product table describe Schwab's full retail client base and the offerings it provides, not a stated preference ranking of advice versus self-directed service among younger investors.",
+        "reason": "Passages give partial facts on young investors' information channels, planning engagement and trading behavior, while the broader capability statements are a wider scope rather than their stated advice-model preference.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

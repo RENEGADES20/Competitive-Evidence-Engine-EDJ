@@ -1,0 +1,61 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a3.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#322",
+    "EDJ-10Q-2026Q1#10",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q2#48",
+    "EDJ-10K-2025#282",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2026Q2#84",
+    "EDJ-10Q-2025Q2#90"
+  ],
+  "at": "2026-11-21T13:57:10.552386-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4377,
+    "output_tokens": 376,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2841,
+    "reasoning_tokens": 256,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.89
+  },
+  "wall_s": 2.7,
+  "tokens_per_s": 139.26,
+  "ttft_s": 0.89,
+  "reasoning_content": "The sub-question asks about advice and service models younger investors prefer, including self-directed versus full-service. The passages don't discuss younger investors' preferences. They discuss onboarding, advisory programs, financial advisors. Nothing about younger investors' preferences. So not_found? Or not_disclosed?\n\nThe passages say nothing about younger investors' preferences \u2014 not_found. There's advisory programs data, but that's not the asked quantity about younger investors' preferences. Hmm, could argue different_quantity: advisory programs AUC growth indicates clients investing in advisory programs \u2014 but that's not \"younger investors' preferences\". Not the same quantity, and a related quantity? It's a different population (all clients, not younger). But is it \"a different, related quantity\"? The instructions say different_quantity applies for a wider unit containing the asked one, different measure, etc. Here the asked quantity is a preference characteristic \u2014 no figure. Advisory programs AUC is a different measure/population. Hmm.\n\nI think not_found is best: the passages say nothing about younger investors' preferences or self-directed vs full-service advice models.\n\nActually there is a mention \"advice models including financial planning\" in onboarding. But not a preference.\n\nReturn not_found with no items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage addresses younger investors' preferences or any self-directed versus full-service advice/service model preference; the passages discuss advisor onboarding, advisory-program assets and fees only.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

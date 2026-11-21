@@ -1,0 +1,115 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#202",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#59",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10Q-2025Q3#87"
+  ],
+  "at": "2026-11-21T14:09:28.447534-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8175,
+    "output_tokens": 646,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 6767,
+    "reasoning_tokens": 194,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.33
+  },
+  "wall_s": 6.39,
+  "tokens_per_s": 101.1,
+  "ttft_s": 1.33,
+  "reasoning_content": "We need the advisor headcount for the firm. The firm reports financial advisors at period end. Which period? The question doesn't specify a period; \"Advisor headcount for the firm\" - latest is Q2 2026: 20,514 at period end (firm-level, total). That's a fact.\n\nNote: some passages give U.S. only (19,647) and Canada (867). The firm-level total 20,514 is in EDJ-10Q-2026Q2#60.\n\nAlso 10-K 2025: 20,425 at year end.\n\nProvide fact items: latest firm-level 20,514 (2026-06-26), plus 20,425 (2025-12-31). Maybe include average? Keep to headcount asks \u2014 at period end is headcount. I'll include two items: FY2025 year-end and Q2 2026 period end.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports 20,514 financial advisors (actual) at period end as of June 26, 2026.",
+            "quote": "Financial advisors (actual):\n  At period end                                                              20,514                         20,309                      1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports 20,425 financial advisors (actual) at year end for 2025.",
+            "quote": "Financial advisors (actual):\n  At year end                                                                            20,425                20,125                19,232                         1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm's U.S. business unit reports 19,647 financial advisors (actual) at period end as of June 26, 2026.",
+            "quote": "Financial advisors (actual):\n  At period end                                                            19,647                          19,435                     1%                                867                           874                      -1%",
+            "value": "19,647",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#79"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages explicitly report the firm's financial advisor headcount at period end and year end.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

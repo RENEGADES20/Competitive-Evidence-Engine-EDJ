@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a2.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:05:17.543149-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2021,
+    "output_tokens": 563,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 869,
+    "reasoning_tokens": 430,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.73
+  },
+  "wall_s": 7.39,
+  "tokens_per_s": 76.18,
+  "ttft_s": 1.73,
+  "reasoning_content": "Let me analyze this. The question is about Merrill (MER), sub-question a2.MER asks: What communication and engagement channels do younger investors prefer?\n\nThe passages provided: the only chunk listed is about digitally active Private Bank core relationships, and various rankings. It does not mention younger investors' preferred communication and engagement channels.\n\nThe chunk mentions \"digitally active Private Bank core relationships\" percentage - but that's not about younger investors' preferences specifically, nor communication/engagement channels preferred by younger investors.\n\nThere are no passages that state anything about younger investors' communication/engagement channel preferences.\n\nSo the label should be not_found, since the passages say nothing about it.\n\nActually, let me consider if the \"digitally active\" is a different_quantity. The sub-question asks about younger investors' preferred communication/engagement channels. The passage mentions digitally active Private Bank core relationships (a metric about digital activity). But it's not about younger investors, and it's not about preferred channels - it's about digital activity of Private Bank relationships. This is a different measure/quantity, not about younger investors.\n\nBut the instruction says different_quantity is when a passage states a different, related quantity. The passage states \"digitally active\" metric for Private Bank core relationships - this is about digital engagement but not for younger investors specifically, and it's a different group (Private Bank clients, not younger investors).\n\nHmm. Actually, I think this is not_found because the passage doesn't address younger investors' preferences at all. The digitally active metric is about Private Bank core relationships (high net worth), not younger investors, and it's a measure of digital activity not preferences.\n\nThe safest is not_found. Let me go with not_found since nothing addresses younger investors' communication/engagement channel preferences.\n\nActually, let me reconsider. Could it be different_quantity? The \"digitally active\" percentage is a related quantity to engagement channels (digital channel). But it's for Private Bank clients, not younger investors. And the question specifically asks about younger investors. So this is quite far.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages contain no statement about which communication and engagement channels younger investors prefer; the only chunk discusses digitally active Private Bank relationships and various advisor rankings, none of which address younger investors' channel preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

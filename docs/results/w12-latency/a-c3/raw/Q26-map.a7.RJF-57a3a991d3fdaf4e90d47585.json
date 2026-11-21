@@ -1,0 +1,253 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a7.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#3",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#3",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-10-27-WM-01#1"
+  ],
+  "at": "2026-11-21T14:11:52.208484-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11062,
+    "output_tokens": 4429,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9654,
+    "reasoning_tokens": 2149,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.2
+  },
+  "wall_s": 19.2,
+  "tokens_per_s": 230.68,
+  "ttft_s": 1.2,
+  "reasoning_content": "The sub-question asks: \"What updates or commentary has Raymond James provided on its business segments?\" We need evidence about business segment updates/commentary. The most relevant is the fiscal Q4 earnings commentary (chunk RJF-TRADE-2026-10-29-WM-01#1) with Private Client Group revenue, pre-tax income, client assets, net new assets. Also the segment structure mention: RJA employee advisor channel, RJFS independent channel, Private Client Group. Also private wealth platform launches (Private Wealth Guided Portfolios) \u2014 commentary from PCG President.\n\nWe need to decide label: fact \u2014 passages state updates/commentary on business segments. The question asks for \"updates or commentary\" \u2014 qualitative. We can provide items with text and quotes. Label fact.\n\nLet me build items:\n\n1. Private Client Group record quarterly net revenue $3.06 billion, up 15% YoY, pre-tax income $458 million, up 10% YoY, fiscal quarter (Q4 FY2026). Period: F2026? The article published 2026-10-29 says \"fiscal fourth-quarter earnings last week\" \u2014 fiscal quarter. Period \"2026Q4\" is a calendar quarter notation; but it's a fiscal quarter. Hmm, the period format: \"YYYYQn\" for a calendar quarter, \"FYYYYY\" for fiscal year. For fiscal quarter maybe use F2026? It's fiscal Q4 of FY2026. I'll use \"F2026\" perhaps with scope \"fiscal fourth quarter\". Better: period \"F2026\" and text says fiscal fourth quarter. Hmm, ambiguous. I'll use \"F2026\".\n\nActually maybe safer \"2026Q4\"? It's not calendar Q4 exactly (Raymond James fiscal year ends September 30, so fiscal Q4 = Jul-Sep 2026, which is calendar Q3). Using 2026Q4 would be wrong. Use \"F2026\".\n\n2. Record quarter-end client assets under administration $1.87 trillion, up 1% sequentially, 12% YoY \u2014 firm-wide. Period F2026 (quarter end).\n\n3. Domestic PCG net new assets rose 88% for fiscal year to record more than $98 billion; quarterly NNA nearly $23 billion, annualized growth 5.3%.\n\n4. Advisor headcount: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\" That's commentary on reporting; could be item.\n\n5. Recruited $538 million in trailing 12-month production for advisors entering domestic independent contractor and employee channels during the fiscal year, up from $407 million; advisors represented more than $82 billion in client assets (from 11-05 WM chunk).\n\n6. Private Client Group President Tash Elwyn commentary on Private Wealth Guided Portfolios launch (Sept 29) \u2014 segment/business update. Includes \"nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation\" as of September 2026.\n\n7. Retirement plan program SIMPLE IRA available firm-wide to ~8,900 advisors.\n\n8. Employee advisor channel (RJA) and independent channel (RJFS) recruiting updates \u2014 many chunks. Could include a couple: RJA added $1.5B PNC team; RJFS added $500M team; etc. But question is about business segments updates/commentary \u2014 recruiting across channels counts. Maybe include one item summarizing channel-level recruiting: \"Raymond James reported fiscal fourth-quarter earnings last week and said it recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels\" \u2014 that's a good segment-level item.\n\nAlso the M&A commentary from Shoukry: \"we do look for acquisitions in the wealth management business in particular\" \u2014 that's commentary. Could be an item.\n\nAlso asset management: Clark Capital acquisition closed May 2026, added as independent boutique within Raymond James Investment Management's multi-boutique structure \u2014 segment update.\n\nAlso record 8,943 advisors at fiscal year end, 2% increase YoY (11-05 IN chunk), with the firm signaling expected continued momentum.\n\nLet me assemble a solid set of maybe 8-10 items. Each item needs text, quote \u2264300 chars, chunk_ids, value, unit, period, scope, definition.\n\nItems:\n\n0. PCG record quarterly net revenue $3.06B, up 15% YoY, and pre-tax income $458M, up 10% YoY (fiscal Q4 2026). Quote: \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\" value \"3.06\" unit \"USD billion\" period F2026 scope \"Private Client Group\". Hmm one item per figure ideally. The instruction: \"Items (fact and different_quantity only), one per figure or statement\". Could split revenue and pre-tax income. I'll split into two items maybe. Keep it simpler: two items.\n\n1. Firm-wide client assets under administration $1.87 trillion at quarter end, up 1% sequentially, 12% YoY.\n\n2. Domestic PCG net new assets record >$98 billion for fiscal year, up 88%; quarterly ~$23 billion, 5.3% annualized growth.\n\n3. Advisor headcount: firm no longer reports headcount; about 8,900 last broken out; and record 8,943 advisors at FY end (2% increase). Two items.\n\n4. Recruited $538M trailing-12-month production for advisors entering domestic independent contractor and employee channels in FY, up from $407M; those advisors represented >$82B client assets. Value \"538\" unit \"USD million\".\n\n5. Private Wealth Guided Portfolios launch with Elwyn quote. Also AAMS constructs models.\n\n6. ~450 advisors earned Private Wealth Advisor designation since 2022, as of September 2026.\n\n7. SIMPLE IRA program firm-wide to ~8,900 advisors (Sept 16).\n\n8. Clark Capital acquisition closed May 2026, >$46B AUM, independent boutique within Raymond James Investment Management.\n\n9. Shoukry M&A commentary.\n\n10. Recruitment in channels: RJA employee channel additions (e.g., $1.5B PNC team, $700M UBS team, $1.2B Truist) \u2014 maybe one item noting employee advisor channel recruiting. I'll include the $1.5B PNC team item and note channel.\n\nAlso commentary: \"Raymond James reported its fiscal fourth-quarter earnings last week...\" \u2014 earnings call.\n\nI'll keep around 10 items. Also note the article says client assets $1.92 trillion in Oct 16 chunk \u2014 inconsistent, but ignore.\n\nLabel: fact. Reason: passages report segment-level results and commentary from the firm.\n\nNo derivation.\n\nLet me write cells.\n\nFor period of fiscal quarter: use \"F2026\". Scope \"Private Client Group\" etc.\n\nItem texts must be attributed to firm.\n\nWrite now.\n\nItem for client assets: quote \"Overall, the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\" value \"1.87\" unit \"USD trillion\" period \"F2026\" scope \"\".\n\nNNA item: quote \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" value \"98\" unit \"USD billion\" period F2026 scope \"Domestic Private Client Group\". Hmm value >98 billion.\n\nHeadcount items: \n- \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\" value \"8,900\" unit \"advisors\" period \"\" scope \"\". This is commentary on segment reporting; period unstated.\n- \"record 8,943 advisors - a 2% increase year-over-year\" at fiscal year end. period F2026.\n\nRecruiting production: value \"538\" unit \"USD million\" period F2026 scope \"domestic independent contractor and employee advisor channels\".\n\nPrivate Wealth Guided Portfolios: value \"\" unit \"\" period \"2026-09\" ... period should be YYYY-MM-DD; article published 2026-09-29, \"This week, the firm announced the launch\". Use \"2026-09\" not allowed. Use \"2026-09-29\" (publication) \u2014 but that's not the launch date exactly. Hmm. Maybe period \"\" since not stated. I'll use \"2026-09-29\" with scope \"\" \u2014 actually the launch \"this week\" of Sept 29. I'll use \"2026-09-29\" cautiously? Guideline: period for point in time. The passage doesn't state a date for the launch other than publication. I'll set \"\".\n\nDesignation: \"Since launching in 2022, nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation\" \u2014 the other chunk says \"As of September 2026, nearly 450 advisors\". Use that for period \"2026-09\" \u2014 again need date format. Use \"\" or \"2026-09-30\"? I'll use \"\" ... Hmm, \"As of September 2026\" \u2192 maybe \"2026-09\" invalid. I'll leave \"\". Actually could use \"2026-09-29\"? No. Set \"\".\n\nSIMPLE IRA: ~8,900 advisors firm-wide, published 2026-09-16, value \"8,900\" unit \"advisors\".\n\nClark Capital: >$46 billion AUM, closed May 2026, within Raymond James Investment Management.\n\nShoukry M&A commentary: text item, value \"\".\n\nAlso maybe item on Elwyn's commentary at annual conference May 2026 about advisor being the client. Skip? Could include as commentary. I'll include Elwyn quote on private wealth.\n\nOk submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James reported that its Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year, in its fiscal fourth quarter.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.",
+            "value": "3.06",
+            "unit": "USD billion",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported Private Client Group pre-tax income of $458 million for the quarter, up 10% year-over-year.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.",
+            "value": "458",
+            "unit": "USD million",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "quote": "Overall, the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "value": "1.87",
+            "unit": "USD trillion",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion, with quarterly net new assets of nearly $23 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "98",
+            "unit": "USD billion",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Commentary noted that Raymond James no longer reports advisor headcount, having last officially broken out about 8,900 advisors.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "value": "8,900",
+            "unit": "advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year, and said it expects continued momentum with healthy pipelines of advisor commitments.",
+            "quote": "As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year, the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+            "value": "8,943",
+            "unit": "advisors",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "In its fiscal fourth-quarter earnings commentary, Raymond James said it recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels, up from $407 million, and that those advisors represented more than $82 billion in client assets.",
+            "quote": "Raymond James reported its fiscal fourth-quarter earnings last week and said it recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. Those advisors represented more than $82 billion in client assets.",
+            "value": "538",
+            "unit": "USD million",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee advisor channels",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James announced the launch of Private Wealth Guided Portfolios, risk-based model portfolios blending traditional and alternative investments, with Private Client Group President Tash Elwyn calling it a meaningful addition to private wealth resources.",
+            "quote": "\"At Raymond James, we're committed to being a destination for private wealth advisors and the clients they serve... Private Wealth Guided Portfolios are a meaningful addition to those resources, providing advisors with another way to help clients access alternative investments thoughtfully and in alignment with their goals.\"",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group / private wealth platform",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-WM-01#0",
+              "RJF-TRADE-2026-09-29-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James said nearly 450 advisors had earned its Private Wealth Advisor designation as of September 2026, and that its Asset Management Services group oversees portfolio construction for the new models with its private markets and alternatives team.",
+            "quote": "Since launching in 2022, nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation, according to the firm. ... Raymond James asset management services group oversees portfolio construction for the models and works with the firm's private markets and alternatives team",
+            "value": "450",
+            "unit": "advisors",
+            "period": "",
+            "scope": "Private Wealth Advisor designation program",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-WM-01#1",
+              "RJF-TRADE-2026-09-29-IN-01#3"
+            ]
+          },
+          {
+            "text": "Raymond James made a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program available to its roughly 8,900 advisors, according to a regulatory filing and a spokesperson.",
+            "quote": "Raymond James has made its small-business retirement plan available to its roughly 8,900 advisors, according to a regulatory filing and a spokesperson.",
+            "value": "8,900",
+            "unit": "advisors",
+            "period": "2026-09-16",
+            "scope": "firm-wide",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James' acquisition of Clark Capital Management Group, an asset manager with more than $46 billion under management, closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.",
+            "quote": "the firm agreed to acquire Clark Capital Management Group, a Philadelphia-based asset manager with more than $46 billion under management... That transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.",
+            "value": "46",
+            "unit": "USD billion",
+            "period": "2026-05",
+            "scope": "Raymond James Investment Management",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#3"
+            ]
+          },
+          {
+            "text": "On M&A commentary, executive Shoukry said the firm looks for acquisitions in the wealth management business in particular, but only where there is a good cultural and strategic fit, and that it does not do acquisitions to slash costs.",
+            "quote": "\"We don't do acquisitions to slash costs,\" he said. \"We do acquisitions to grow revenues and to be better firms together over time...\"",
+            "value": "",
+            "unit": "",
+            "period": "F2026",
+            "scope": "wealth management business",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James' employee advisor channel, Raymond James & Associates, added a Washington, D.C. three-advisor team from PNC Private Bank that managed over $1.5 billion in client assets, operating as KKM Wealth Partners within Alex. Brown.",
+            "quote": "Raymond James has recruited a Washington, D.C.-based three-advisor team that previously managed over $1.5 billion in client assets at PNC Private Bank. The team will operate as KKM Wealth Partners within Alex. Brown, a unit of Raymond James & Associates.",
+            "value": "1.5",
+            "unit": "USD billion",
+            "period": "2026-11-05",
+            "scope": "Raymond James & Associates (employee advisor channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James' independent channel, Raymond James Financial Services, added a five-advisor team from Commonwealth Financial Network operating as Harris Wealth Partners in Rochester, New York, with approximately $500 million in client assets.",
+            "quote": "Raymond James Financial Services (RJFS) welcomed a five-advisor team from Commonwealth Financial Network to its independent advisor channel, adding approximately $500 million in client assets to its roster.",
+            "value": "500",
+            "unit": "USD million",
+            "period": "2026-09-24",
+            "scope": "Raymond James Financial Services (independent advisor channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-24-IN-01#0"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages carry the firm's own segment-level results, headcount, recruiting and platform commentary across its Private Client Group, employee and independent advisor channels and asset management.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

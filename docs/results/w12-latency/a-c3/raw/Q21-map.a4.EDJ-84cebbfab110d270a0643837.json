@@ -1,0 +1,208 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#222",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#167",
+    "EDJ-10Q-2025Q2#93",
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2026Q2#40",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10Q-2025Q2#49",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#304",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10K-2025#283",
+    "EDJ-10Q-2026Q1#70",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-10K-2025#33",
+    "EDJ-10K-2025#74",
+    "EDJ-10Q-2025Q3#100",
+    "EDJ-10Q-2026Q2#86",
+    "EDJ-10Q-2026Q1#33",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10K-2025#16",
+    "EDJ-10K-2025#117",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#67"
+  ],
+  "at": "2026-11-21T14:01:29.938379-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18512,
+    "output_tokens": 4673,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 17104,
+    "reasoning_tokens": 3770,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.23
+  },
+  "wall_s": 52.8,
+  "tokens_per_s": 88.5,
+  "ttft_s": 1.23,
+  "reasoning_content": "We need answer extraction for sub-question a4.EDJ [fact, metric advisor_headcount]: \"How do these firms prepare for advisor succession and retirement given aging advisor force and clients?\"\n\nMetric advisor_headcount suggests [proxy]? Actually subquestion asks about preparation for advisor succession and retirement; metric advisor_headcount means the named proxy is advisor headcount. We need extract facts about EDJ preparing for advisor succession/retirement. There are passages: Retirement Transition Plans (EDJ-10K-2025#222) clearly describes retirement transition plans for financial advisors. Also attrition/retirements (EDJ-10Q-2025Q2#67), aging client base/wealth transfers. Advisor headcounts: 20,425 at year end 2025, 20,309 Q2 2025, 20,429 Q3 2025, 20,514 Q2 2026. The metric advisor_headcount is proxy, so headcount figures are facts. Need one cell, items multiple.\n\nWe need decide label fact. Since passages state preparation (retirement transition plans) and advisor headcount. Include items for relevant figures/statements. Need not include every headcount? One per figure or statement; series one item per period. Should include retirement transition plan description (no figure), attrition increase due to retirements (6.4% Q2 2025), aging client base/generational transfers, headcount figures likely 2025 year end and quarterly. The sub-question asks how prepare for advisor succession and retirement given aging advisor force and clients. The headcount proxy facts should include advisor headcount figures. Also maybe general partner retirement at 65? That's executive not advisor. Not relevant.\n\nWe need include exact quotes <=300 chars, chunk ids. Let's select items:\n\n1. Retirement transition plans: \"Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services...\" Quote exact maybe first sentence and details. Value \"\", period \"\", scope \"\" or \"retiring financial advisors\". Text: Edward Jones offers eligible retiring financial advisors individually tailored retirement transition plans that compensate them for client transition services over a five-year agreement, with most paid ratably over four years. Quote can be partial exact. Use chunk EDJ-10K-2025#222.\n\n2. Financial advisor attrition increased to 6.4% primarily due to increase in retirements, consistent with industry trends. Period 2025Q2? Passage is Q2 2025. Value 6.4%, unit \"%\". Scope maybe \"financial advisors\". Quote exact: \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\" Period 2025Q2 (quarter ended June 27, 2025). Chunk EDJ-10Q-2025Q2#67. But if metric is advisor_headcount, attrition is a different measure? The subquestion itself is qualitative preparation; attrition is related. The instruction says only quantity subquestion names is a fact; figure that only resembles it is never fact. But subquestion names metric advisor_headcount. The subquestion is \"How do these firms prepare...\" The metric advisor_headcount likely proxy for advisor force. Attrition is not headcount. Should label different_quantity? Hmm.\n\nWe must be careful: \"A sub-question marked [proxy] names a stand-in figure ... that named figure, as the firm reports it, is a fact. A figure of a different measure than the one named (all employees, full-time equivalents, compensation expense...) is different_quantity, with differs_because.\" Here metric advisor_headcount. So headcount is fact. Attrition % is a different measure; but the question asks preparation for retirement; attrition due to retirements is evidence. But since only quantity named is advisor_headcount, attrition should be different_quantity if included. However items for a cell can include both fact and different_quantity? The cell label is one label. For a single sub-question, label is one overall? The schema says label per cell. Items don't have label. If we include different quantity item in a fact cell, probably wrong. The cell label applies to all. We likely should mark cell fact and only include facts: headcount and retirement plan statements. But retirement plan description isn't a quantity; it's a fact. Attrition % would be different_quantity. Should we omit attrition to avoid contaminating? But it is relevant preparation evidence. However the metric constraint strict: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" Attrition resembles but is not headcount. It could be different_quantity. But then cell label? Maybe can include items of different measures only when label different_quantity. If cell label fact, don't include attrition. But question includes qualitative; headcount facts plus retirement plan description enough. The retirement plan description has no figure, so it's a fact statement. The headcount figures are proxy facts. We'll include multiple headcount periods.\n\nNeed include 20,425 at year end 2025 (EDJ-10K-2025#130), 20,309 Q2 2025 (EDJ-10Q-2025Q2#67), 20,429 Q3 2025 (EDJ-10Q-2025Q3#70), 20,514 Q2 2026 (EDJ-10Q-2026Q2#60 or #61). Also maybe Q1 2026? Not in passages? No headcount for Q1 2026. Include 2025 year-end, Q2 2025, Q3 2025, Q2 2026. Maybe Q2 2026 passage #60 table has 20,514 and 20,309. Use #60 for 20,514. Q2 2025 #67 states 20,309; could use #67. Q3 2025 #70 states 20,429. 10-K #130 states 20,425 at year end. Also 10-K #148 U.S. only 19,540; scope U.S. Could be a fact for advisor_headcount? It's a subset (U.S.). Partial still fact, scope U.S. Include? The question about firm, U.S. sub-scope maybe. Could include but maybe too much. The instruction says series one per period. There are multiple scopes. We can include U.S. 19,540 at year end 2025. But may be redundant. Better include key total figures.\n\nRetirement transition plan details:\nQuote exact: \"Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement. Generally, the retirement and transition agreement is for five years. During the first two years the retiring financial advisor remains an employee and provides client transition services. The financial advisor retires at the end of year two and is subject to a non-compete agreement for three years. Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.\" That's >300 chars. Need quote at most ~300. Use: \"Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement.\" ~263 chars. Good. Text can mention five years etc? If quote doesn't support, avoid. We can put text only what quote supports. Maybe text: \"Edward Jones offers eligible retiring financial advisors individually tailored retirement transition plans that compensate them for successfully providing client transition services under a retirement and transition agreement.\" No period. Value \"\".\n\nAlso separate item for plan duration/payment? Could include another item: \"Generally, the retirement and transition agreement is for five years... Most retiring financial advisors participating ... are paid ratably over four years.\" Quote exact. This is a statement about preparation. It has values five years/four years but unit years, period \"\". Could be separate. Is that overkill? One item per statement. Good to include.\n\nAlso aging client base and generational wealth transfers outside firm; not a preparation but context. The question asks \"given aging advisor force and clients\"; passage states outflows influenced by aging client base and generational wealth transfers outside the firm. Could include as fact statement. No figure. It supports context. Include? It is not about preparation but about the challenge. Good.\n\nMaybe also \"experiencing generational wealth transfer, changing client demographics\" from 10-K risk. But not necessary.\n\nPotential issue: \"advisor_headcount\" metric fact should include headcount only. Retirement transition plan description no figure is okay as fact. The cell label fact. Reason: Passages describe retirement transition plans and report advisor headcounts.\n\nWe need not include `derivation`.\n\nLet's ensure periods:\n- 2025 year end: period \"2025-12-31\" (10-K period).\n- Q2 2025: \"2025Q2\" (quarter ended 2025-06-27). We can use \"2025Q2\".\n- Q3 2025: \"2025Q3\".\n- Q2 2026: \"2026Q2\".\nFor headcount at period end, period date maybe \"2025-12-31\" for year end. For Q2, \"2025-06-27\" or \"2025Q2\". Use YYYY-MM-DD for point in time. It says \"YYYY-MM-DD for a point in time, YYYYQn for a calendar quarter\". Headcount at period end is point in time. Use exact date: 2025-06-27, 2025-09-26, 2026-06-26, 2025-12-31. Good.\n\nValue \"20,425\", unit \"financial advisors\", scope \"\".\nQ2 2025 value \"20,309\".\nQ3 2025 \"20,429\".\nQ2 2026 \"20,514\".\n\nText for each headcount: \"Edward Jones ended 2025 with 20,425 financial advisors.\" Quote \"Financial advisors (actual): At year end 20,425\" (exact maybe table). Chunk #130. Text can be direct.\n\nFor Q2 2025: \"The Partnership ended the second quarter with 20,309 financial advisors.\" Quote exact. Chunk #67.\nQ3 2025: \"The Partnership ended the third quarter with 20,429 financial advisors.\" Chunk #70.\nQ2 2026: \"The Partnership ended the second quarter with 20,514 financial advisors.\" Chunk #61 or #60. Use #61 quote includes. #60 table also. Use #61.\n\nRetirement plan item chunk #222. Quote as above.\nSecond retirement plan payment item quote: \"Generally, the retirement and transition agreement is for five years. During the first two years the retiring financial advisor remains an employee and provides client transition services. The financial advisor retires at the end of year two and is subject to a non-compete agreement for three years. Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.\" This is ~370 >300. Need shorten. Could quote \"Generally, the retirement and transition agreement is for five years. ... Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.\" But ellipsis exact? We can use quoted fragments with ellipsis? \"exact words ... copied\" likely avoid ellipsis. Use only first and last? Hmm exact quote at most 300. Maybe select: \"Generally, the retirement and transition agreement is for five years. During the first two years the retiring financial advisor remains an employee and provides client transition services.\" That's ~190. Text mention five-year agreement, first two years employee. Good. Another item for payment: \"Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.\" ~115. Separate item. Fine.\n\nAging client item: quote \"These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.\" ~200. Period 2025Q2, scope \"\". Text: \"Edward Jones attributes higher asset outflows partly to an aging client base and generational wealth transfers outside the firm.\" Chunk #67. No figure. Good.\n\nShould we include \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements\" as fact? It's not headcount. Since cell label fact, no. But maybe the metric advisor_headcount is a proxy and attrition is a different measure. If we include, would need cell label different_quantity? But then headcount facts conflict. Could have separate cells? Only one cell per subquestion. We must choose overall. The label should reflect the main answer. Since we have headcount facts, fact. We can omit attrition. This loses info but complies.\n\nHowever, the question: \"How do these firms prepare for advisor succession and retirement given aging advisor force and clients?\" Retirement transition plans directly answer. Headcount proxy facts. Attrition due to retirements is evidence of aging advisor force. Could include it as a fact? The quantity named advisor_headcount; attrition is not headcount. The strict rule says not fact. So omit. The qualitative statement \"Financial advisor attrition increased ... due to retirements\" includes a figure. It is a different quantity. We could include it in items and set cell label different_quantity? But then headcount facts would be facts; label mismatch. Maybe the label can be fact because the cell as a whole has facts, and items can include different quantity? The schema doesn't label items. The instructions: \"Label each cell: fact... different_quantity...\" It likely expects one label. If mixed, choose fact? Hmm.\n\nMaybe we should include only facts and no different_quantity. Then label fact. Good.\n\nNeed consider retirement transition plans are not a quantity but a statement. That's allowed: \"fact: a passage states what the sub-question asks for ... in full or in part.\" Good.\n\nLet's craft cell with items array 7 items:\n0 retirement plans offered\n1 agreement five years, first two years employee\n2 paid ratably over four years\n3 headcount 2025 year end 20,425\n4 headcount Q2 2025 20,309\n5 headcount Q3 2025 20,429\n6 headcount Q2 2026 20,514\n7 aging client base/generational transfers (maybe item). That's 8.\n\nOrder maybe context first then plans then headcounts. Derivation empty.\n\nNeed quote exact. Let's verify exact words:\nEDJ-10K-2025#222:\n\"Retirement Transition Plans. Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement. Generally, the retirement and transition agreement is for five years. During the first two years the retiring financial advisor remains an employee and provides client transition services. The financial advisor retires at the end of year two and is subject to a non-compete agreement for three years. Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.\"\nGood.\n\nEDJ-10Q-2025Q2#67:\n\"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion ... The Partnership ended the second quarter with 20,309 financial advisors. Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\"\nAnd earlier: \"These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.\"\nGood.\n\nEDJ-10Q-2025Q3#70: \"The Partnership ended the third quarter with 20,429 financial advisors.\"\nEDJ-10Q-2026Q2#61: \"The Partnership ended the second quarter with 20,514 financial advisors.\"\nEDJ-10K-2025#130 table: \"Financial advisors (actual): At year end 20,425 20,125 19,232 1%\" Need quote \"At year end 20,425\" exact not contiguous? The table has \"At year end                                                                            20,425\". We can quote \"Financial advisors (actual): At year end 20,425\" but exact spacing not needed? They say exact words; table formatting. Could quote \"At year end 20,425\" as words. Fine. Maybe use a sentence: \"Financial advisors (actual): At year end 20,425\". Not a grammatical sentence but exact table label. Good.\n\nFor Q2 2026 quote from #61 exact. Good.\n\nScope for retirement: \"retiring financial advisors\" maybe scope field should be part of firm figure covers. For plan statements, scope can be \"retiring financial advisors\" or \"\". The schema says scope \"the part of the firm the figure covers as the passage says (a segment, a country), \"\" for the whole firm.\" For non-figure statements, maybe \"retiring financial advisors\". Use \"retiring financial advisors\" for plan items. For headcounts, scope \"\".\n\nDefinition: The firm's own definition of a metric, quoted. For advisor headcount, no definition. For retirement plans, no. Leave \"\".\n\nText sentence should attribute to firm in passage's terms. Avoid \"Edward Jones\" if passage says \"the Partnership\". Fine.\n\nReason: \"Passages describe tailored retirement transition plans and report financial advisor headcounts over several periods.\"\n\nNeed label \"fact\".\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "The Partnership offers eligible retiring financial advisors individually tailored retirement transition plans that compensate them for successfully providing client transition services under a retirement and transition agreement.",
+            "quote": "Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retiring financial advisors",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#222"
+            ]
+          },
+          {
+            "text": "Generally, the retirement and transition agreement is for five years, and during the first two years the retiring financial advisor remains an employee and provides client transition services.",
+            "quote": "Generally, the retirement and transition agreement is for five years. During the first two years the retiring financial advisor remains an employee and provides client transition services.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retiring financial advisors",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#222"
+            ]
+          },
+          {
+            "text": "Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.",
+            "quote": "Most retiring financial advisors participating in a retirement transition plan are paid ratably over four years.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retiring financial advisors",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#222"
+            ]
+          },
+          {
+            "text": "The Partnership attributes higher asset outflows partly to an aging client base and generational wealth transfers outside the firm.",
+            "quote": "These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.",
+            "value": "",
+            "unit": "",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "The Partnership ended 2025 with 20,425 financial advisors.",
+            "quote": "Financial advisors (actual): At year end 20,425",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2025 with 20,309 financial advisors.",
+            "quote": "The Partnership ended the second quarter with 20,309 financial advisors.",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "The Partnership ended the third quarter of 2025 with 20,429 financial advisors.",
+            "quote": "The Partnership ended the third quarter with 20,429 financial advisors.",
+            "value": "20,429",
+            "unit": "financial advisors",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#70"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2026 with 20,514 financial advisors.",
+            "quote": "The Partnership ended the second quarter with 20,514 financial advisors.",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe tailored retirement transition plans and report financial advisor headcounts across several periods.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

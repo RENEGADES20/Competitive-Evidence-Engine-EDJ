@@ -1,0 +1,226 @@
+{
+  "question_id": "Q5",
+  "question": "Where is Morgan Stanley investing in technology for its advisors?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2025Q3#8",
+    "MS-TR-2025Q2#3",
+    "MS-TR-2026Q1#36",
+    "MS-TR-2026Q3#34",
+    "MS-TR-2026Q1#10",
+    "MS-TR-2025Q3#13",
+    "MS-TR-2025Q4#72",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2026Q1#43",
+    "MS-TR-2026Q2#60",
+    "MS-TR-2025Q4#21",
+    "MS-TR-2026Q3#49",
+    "MS-TR-2026Q3#32",
+    "MS-TR-2026Q3#35",
+    "MS-10K-2025#25",
+    "MS-TR-2026Q3#16"
+  ],
+  "schema_fallback": [],
+  "enum_values": 60,
+  "at": "2026-11-21T13:50:48.588170-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6536,
+    "output_tokens": 4433,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 4872,
+    "reasoning_tokens": 2201,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.98
+  },
+  "wall_s": 25.62,
+  "tokens_per_s": 173.03,
+  "ttft_s": 1.98,
+  "reasoning_content": "Let me work through this carefully. Single firm (Morgan Stanley), aspect by aspect.\n\nAspects a1, a2, a4 are \"fact\" aspects - no why-lines needed (no recency). a3 is recency - every item needs a why-line.\n\nThere's no time window in the question, so ordering by recency only applies to a3 items (the recency aspect). Actually the instruction says \"For every item of an aspect marked recency, and every item when the question has a time window\". There's no time window, so only a3 items get why-lines.\n\nFor a3, each item needs a why-line. I can use the context line or related items. Context lines are present for all three a3 items.\n\nLet me write claims for each aspect.\n\na1.MS - 7 items, all fact claims. No why-lines.\n\na2.MS - 5 items, fact claims.\n\na3.MS - 3 items, recency, each with why-line.\n\na4.MS - 9 items, fact claims.\n\nItem 7 in a4 has quote not verbatim - never put in quotation marks. Item 8 in a4 has \"period not stated in a usable form\" - so I should not date it, or state period not available. Actually it's a fact cell; \"period not stated in a usable form\" means I can't date it. The 10-K is period 2025-12-31, published 2026-02-19. But the item says \"[period not stated in a usable form]\". So I should write it without a period date, or say the period is not stated. Let me just say \"The 10-K states...\" without a specific period date.\n\nLet me write each claim carefully, dating from source lines.\n\nFor a3 why-lines, use context or related. Each item has a context line I can use.\n\nLet me build.\n\na1 items - no why-lines.\n\nItem 1 (2025Q3): Morgan Stanley cited LeadIQ... dated period 2025Q3.\n\nActually the source lines give period as \"2025Q3\" but the source is period 2025-09-30. I'll date with period. The instruction: \"Date every claim from its source line\". The item's period is \"2025Q3\". I'll write \"In the third quarter of 2025 (period ended September 30, 2025)...\" Hmm. Actually simpler to use the period as given. Let me use the period labels given in the item. For a1 item 1 period \"2025Q3\". I'll write \"Morgan Stanley, in its 3Q25 earnings call (period ended September 30, 2025), cited LeadIQ...\".\n\nLet me be consistent. The sources show period and published dates. I'll date with period like \"3Q25 (period ended September 30, 2025)\".\n\nActually, I'll just use clear dating. Let me write naturally.\n\nLet me produce the claims.\n\na1 claims (7 items), each starting \"Morgan Stanley: \".\n\n1. period 2025Q3 - LeadIQ\n2. period 2025Q2 - ongoing investments\n3. period 2026Q1 - lending products automation\n4. period 2026Q3 - data insights FA tailor advice\n5. period 2026Q1 - lending penetration\n6. period 2025Q3 - private markets Carta, digital assets Zero Hash\n7. period 2025Q4 - digital asset transformation Zero Hash\n\na2 claims (5 items):\n1. 2025-12-31 - broadening capabilities\n2. 2025-09-30 - LeadIQ\n3. 2026-03-31 - co-piloting super agents\n4. 2026-06-30 - match advisers to right clients\n5. 2026-09-30 - data insights\n\na3 claims (3 items) with why-lines:\n1. 2025Q3 LeadIQ - why from context (in pilot showing progress)\n2. 2026Q1 co-piloting super agents - why from context\n3. 2025Q4 automation client acquisition - why from context\n\na4 claims (9 items):\n1. 2026Q3 - double overweight AI\n2. 2026Q3 - AI ecosystem top priority\n3. 2026Q3 - technology differentiator\n4. 2026Q3 - world-class technology\n5. 2025Q3 - LeadIQ\n6. 2025Q4 - broadening capabilities\n7. 2025Q4 - digital asset transformation (quote not verbatim)\n8. 10-K - generative AI tokenization (period not stated usable)\n9. 2026Q3 - scale supports continued investment\n\nFor a4 item 8, period not usable - write \"The 10-K states...\" without a period. Actually I could say \"The 10-K (filed for fiscal year 2025) states...\" but instruction says period not stated in usable form, so I should not date it. I'll just say \"The 10-K states that technology supporting evolving client needs, including generative AI and tokenization, is a factor in Wealth Management's ability to compete across advisor-led, workplace and digital-direct channels.\"\n\nNow part_id: a1.MS items \u2192 part_id \"a1.MS\". a2.MS \u2192 \"a2.MS\". a3.MS \u2192 \"a3.MS\". a4.MS \u2192 \"a4.MS\".\n\nWait, but the schema for part_id enum includes \"a1.MS\", \"a2.MS\", \"a3.MS\", \"a4.MS\", \"a1\", \"a2\", \"a3\", \"a4\", \"\". The instruction says \"a cell id is the part_id of what you write from it\". So a1.MS cell \u2192 part_id \"a1.MS\". Good.\n\nNow let me write all claims.\n\nFor why-lines in a3:\n\nItem 1 context: \"... in pilot, are showing progress. These include the DevGen AI tool..., Parable..., and LeadIQ...\" So why it might matter: LeadIQ is described as in pilot and showing progress as an early AI use case. I'll cite MS-TR-2025Q3#8 (already cited) plus maybe related. The why-line should add a reason. I'll use the context.\n\nWhy it might matter: LeadIQ was cited among early AI use cases that are in pilot and showing progress.\n\nItem 2 context: \"have the historical context as between the financial adviser and the client where she is well aware of the past interactions and how that might drive against certain market dynamics, future action.\" So why: the co-piloting super agents use historical context between adviser and client to anticipate future actions. \n\nItem 3 context: \"... lending balances grew $7 billion... driven by securities-based lending and mortgages. Growth reflects our efforts... leveraging technology to improve automation and facilitate client acquisition openings...\" Why: the automation efforts are cited as driving growth in securities-based lending and deepening client penetration.\n\nLet me write these.\n\nNow let me construct the full answer.\n\nI need to order: aspect by aspect in order listed (a1, a2, a3, a4). Within a3, recency: order newest first. a3 items: item1 2025Q3, item2 2026Q1, item3 2025Q4. Newest first: 2026Q1 (item2), 2025Q4 (item3), 2025Q3 (item1).\n\nActually recency ordering applies to a3 items (the recency aspect). So order them newest first: item2 (2026Q1), item3 (2025Q4), item1 (2025Q3).\n\nFor other aspects, no time window, so order as listed.\n\nLet me write everything now.\n\nLet me carefully date each claim.\n\na1:\n1. MS-TR-2025Q3#8, period 2025Q3 \u2192 \"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley cited LeadIQ, its AI-powered lead distribution platform, as an early AI use case focused on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors.\"\n2. MS-TR-2025Q2#3, period 2025Q2 \u2192 \"On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley said its ongoing investments in its wealth platform include investments to support its advisors, a build-out of E*TRADE capabilities, and expansion of its workplace channel.\"\n3. MS-TR-2026Q1#36, 2026Q1 \u2192 lending products digital tools automation paper backlog.\n4. MS-TR-2026Q3#34, 2026Q3 \u2192 data insights.\n5. MS-TR-2026Q1#10, 2026Q1 \u2192 lending penetration.\n6. MS-TR-2025Q3#13, 2025Q3 \u2192 Carta, Zero Hash.\n7. MS-TR-2025Q4#72, 2025Q4 \u2192 digital asset transformation.\n\nI'll write dates more simply.\n\nLet me finalize text for each. I'll write concise but faithful.\n\nNow produce the tool call.\n\nFor why-lines, I need to add the chunk_id of the passage used. Since I use context lines, they're part of the same chunk (the item's own passage). So chunk_ids stays same for item 1 (MS-TR-2025Q3#8), item 2 (MS-TR-2026Q1#43), item 3 (MS-TR-2025Q4#21). Actually context is from same passage, so no additional chunk id. But I could also cite related. The context line is from the item's own passage, so same chunk id. I'll just keep the same chunk id.\n\nLet me write it all.\n\nFor a3 item 2 why-line: context mentions historical context between financial adviser and client. Good.\n\nLet me write final.\n\nNote quotes: I should put quoted text in quotation marks where verbatim. Item a4 item 7 is \"quote not verbatim\" - do NOT use quotation marks. All others can quote.\n\nLet me draft the claims with quotes where helpful.\n\nI'll now compose.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley cited LeadIQ, its AI-powered lead distribution platform, as an early AI use case focused on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley said its ongoing investments in its wealth platform include investments to support its advisors, a build-out of E*TRADE capabilities, and expansion of its workplace channel.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#3"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said it put resources toward lending products, including digital tools, digital enhancements and automation to help with the paper backlog associated with lending products.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#36"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley said the data and insights from its wealth management scale allow its financial advisors (FAs) to tailor advice and equip the firm's tools to deliver that advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#34"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said lending-product household penetration rose through ongoing investments in technology, adviser and client education, and an expanded product set.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#10"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said it continued to invest in deepening its competitive moats in private markets through expanded collaboration with Carta and in digital assets through partnerships with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said it is in the early days of the digital asset transformation side of wealth and is looking to expand capabilities through its partnership with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#72"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley cites LeadIQ as an AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said it is working on co-piloting and 'super agents' to drive efficiency and effectiveness across the wealth portfolio.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#43"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley says technology it has put in place gives it a greater ability to match advisers to the right clients.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#60"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley says data insights from its size and scale allow its financial advisers to tailor advice and equip its own tools to deliver that advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#34"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said it is developing co-piloting \"super agents\" in wealth that use the historical context between a financial adviser and client to drive efficiency and effectiveness across portfolios. Why it might matter: the source describes these super agents as drawing on the historical context between the financial adviser and the client, where the adviser is well aware of past interactions and how they might drive against certain market dynamics and future action.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#43"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said it is leveraging technology to improve automation and facilitate client acquisition openings, as well as increasing education with its advisors and clients. Why it might matter: the source ties these automation efforts to growth, noting that securities-based lending balances rose and that the growth reflects efforts to deepen client penetration with securities-based lending by leveraging technology to improve automation and facilitate client acquisition openings.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#21"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said LeadIQ, its AI-powered lead distribution platform, focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors. Why it might matter: the source lists LeadIQ among early AI use cases that are in pilot and showing progress, alongside the DevGen AI tool and Parable.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), management said AI is something that matters to clients and the firm and that the firm is now \"double overweight.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), management said being part of the AI ecosystem and viewed as a trusted adviser\u2014acting as wealth manager, asset allocator and banker\u2014is the firm's top priority as adviser.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), management said technology is a differentiator in Morgan Stanley's favor across its self-directed, workplace and financial-adviser platform.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), management tied world-class technology to supporting clients who want to make decisions with their financial advisers based on their needs.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#35"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (period ended September 30, 2025), management cited LeadIQ, an AI-powered lead distribution platform, as an early AI use case focused on matching workplace and self-directed relationships and facilitating engagement with financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (period ended December 31, 2025), management said the firm is using its scale to invest in broadening capabilities for financial advisors, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (period ended December 31, 2025), management highlighted the early stage of digital-asset transformation in wealth, including a Zero Hash partnership and plans to expand crypto and tokenized-asset capabilities and continue work on E*TRADE.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#72"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 10-K states that technology supporting evolving client needs, including generative AI and tokenization, is a factor in Wealth Management's ability to compete across advisor-led, workplace and digital-direct channels.",
+        "chunk_ids": [
+          "MS-10K-2025#25"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (period ended September 30, 2026), management said the scale of the wealth platform supports continued investment in future technology, including AI and digital tools.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a4.MS"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

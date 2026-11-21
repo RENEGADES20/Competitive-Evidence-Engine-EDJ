@@ -1,0 +1,251 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a7.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37"
+  ],
+  "at": "2026-11-21T13:56:22.701619-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5324,
+    "output_tokens": 6716,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 4300,
+    "reasoning_tokens": 5053,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.69
+  },
+  "wall_s": 26.56,
+  "tokens_per_s": 252.86,
+  "ttft_s": 0.69,
+  "reasoning_content": "We need to extract evidence about Schwab's offerings and strategies to serve younger investors. The sub-question: \"What offerings and strategies do competitors deploy to serve younger investors?\" but note firm is Charles Schwab. The passages are about Schwab's own offerings/strategies for younger investors. The sub-question wording says \"competitors\" but we extract evidence about this firm (Schwab) from passages. We need to identify offerings and strategies Schwab deploys. Fact items for offerings/strategies. These are not quantities necessarily; but items can have text with no figure. We need label fact if passage states what the sub-question asks for. The sub-question asks offerings and strategies; passages state Schwab offerings like Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions, thinkorswim, education, YouTube, financial planning, etc.\n\nWe need exactly one cell for sub-question a7.SCHW. Label fact, with multiple items (each offering/strategy). Use passages only. Need quote exact, chunk_ids.\n\nLet's list relevant passages and offerings/strategies:\n\n- SCHW-DECK-2026-investor-day#99: Younger investors: Schwab Starter Kit TM, Schwab Teen Investor TM Account, No / low commissions. This is direct offerings.\n- SCHW-TR-2025Q3#12: top online resource YouTube, #1 financial services firm on YouTube by followers; younger investors engaged; one-third of retail households created financial plan under 40; platforms, tools, education, coaching, expertise, service.\n- SCHW-TR-2025Q3#41: 1,000 former trading professionals answer phones; 35 hours/week live content; leading platform thinkorswim and digital capabilities; crypto additive.\n- SCHW-TR-2025Q2#9: best-in-class trading experience; digital assets through ETFs, futures, closed-end funds? This is broader but relevant.\n- SCHW-TR-2025Q2#33: in-person experiences over 400 locations, 16,000 advisors; help young investors college debt, buy house. Note 16,000 advisors is a figure but not necessarily offering. Could include as strategy: in-person experiences and advisors.\n- SCHW-TR-2026Q2#36: removal of commissions brought more people; options trading; AI; pattern day trading rule. Strategies? Maybe.\n- SCHW-DECK-2026-investor-day#100: #1 in trading, executing ~1/3 retail brokerage trades; #1 in retail options trading volume & margin balance usage; +60% of NTF Retail HHs <40. Not offering.\n- SCHW-TR-2026Q3#11: serving individual investors across spectrum; built to win across generations; attracting younger clients. Not offering specifics.\n- SCHW-TR-2025Q4#11: convenience, one place. Not specific.\n- SCHW-DECK-2026-investor-day#106: thinkorswim users Millennial/Gen Z 42%; Trader Talks subscribers growth; derivatives trades. Trader Talks is education offering.\n- SCHW-DECK-2026-investor-day#131: marketing foundational; not offering.\n- SCHW-TR-2025Q3#39: crypto appeal to young investors; not offering yet.\n- SCHW-TR-2025Q4#42: attracting them in places they are. Not specific.\n- SCHW-TR-2026Q2#37: market environment. Not offering.\n\nWe should include key offerings/strategies. Need not overdo but comprehensive. Each item one sentence, attributed to firm, passage terms. Since no figure, value \"\", unit \"\", period \"\" or if period stated? For offerings from deck period n/a. For transcripts period dates. We can include period as document period? The instruction: period \"YYYY-MM-DD\" for point in time, etc; \"\" when not stated or no figure. Since no figure, period \"\" probably. Scope maybe \"Younger investors\" or \"Retail\". For offerings targeting younger investors, scope \"younger investors\" perhaps. But scope is \"the part of the firm the figure covers as the passage says\"; no figure, maybe \"\". Could put scope \"Younger investors\" for clarity? The schema allows. I'd put scope \"younger investors\" for offerings specifically.\n\nNeed quote exact wording. For deck #99, quote: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\" maybe exact. We can quote partial. Text: \"Schwab offers younger investors the Schwab Starter Kit, the Schwab Teen Investor Account, and no or low commissions.\" Quote from chunk: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\". Chunk id.\n\nFor YouTube: text \"Schwab meets younger investors on YouTube, where it is the number one financial services firm by followers, and offers financial planning.\" Quote exact: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers. ... one-third of retail households who created a financial plan within the last two years are under the age of 40.\" We can include. Maybe separate items: YouTube channel; financial planning. But one item can mention both? Better one per figure/statement. \"one per figure or statement\"; we can make separate.\n\nFor live content and service: text \"Schwab provides 35 hours a week of live educational content and access to about 1,000 former trading professionals who answer phones.\" Quote exact: \"I have a thousand colleagues ... We put on 35 hours a week of live content...\" This includes figures? It has 1,000 and 35 hours; these are figures. We should record value? The item includes two figures; maybe separate items: one for 1,000 colleagues (unit \"former trading professionals\"); one for 35 hours/week (unit \"hours per week\"). But sub-question asks offerings/strategies, not quantities. Still items can include figures. Need value and unit. Could do separate to avoid multiple figures in one item. Let's do:\n- Item: Schwab has about 1,000 former trading professionals answering phones for investors seeking trading advice. value \"a thousand\" or \"1,000\"; unit \"former trading professionals\"; period \"2025-09-30\"? It's transcript period 2025-09-30. Scope \"retail investors\"? The quote says any investors. We'll set period \"\"? Actually transcript period is 2025-09-30; but the statement \"I have a thousand colleagues that wake up every day\" at that time. Period can be \"2025-09-30\" since point in time. Maybe okay.\n- Item: Schwab puts on 35 hours a week of live content about learning to trade and invest. value \"35\"; unit \"hours per week\"; period \"2025-09-30\".\n- Item: Schwab offers the thinkorswim platform and digital capabilities. Quote: \"the leading platform with thinkorswim and our digital capabilities\" no figure; period \"\".\n\nFor in-person and advisors: text \"Schwab offers in-person experiences in over 400 locations and 16,000 advisors to help young investors with goals such as paying off college debt or buying a house.\" Quote: \"We have in-person experiences in over 400 locations across our country. We have 16,000 advisors in every community that you can walk in and talk to. For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house...\" This has 400 and 16,000. Separate items maybe:\n- 400 locations (unit \"locations\")\n- 16,000 advisors (unit \"advisors\")\n- in-person advice/help with college debt and house (no figure)\nBut maybe too granular. Since sub-question asks offerings/strategies, the key is in-person experiences and advisors. We can make one item with no figure: \"Schwab offers in-person experiences in over 400 locations and 16,000 advisors to help young investors with goals like paying off college debt or buying a house.\" But value would be? If multiple figures, ambiguous. Better split into two items? The instructions: one per figure or statement. A statement can contain figures; but value field expects figure as printed. Could put value \"400 locations; 16,000 advisors\"? Not ideal. Let's split:\n- Item: Schwab has in-person experiences in over 400 locations. value \"400\"; unit \"locations\"; period \"2025-06-30\"; scope \"United States\" maybe \"across our country\".\n- Item: Schwab has 16,000 advisors in every community. value \"16,000\"; unit \"advisors\"; period \"2025-06-30\"; scope \"\".\n- Item: Schwab positions itself as helping young investors with goals like paying off college debt and buying a house. Quote same; no figure.\n\nFor Trader Talks: deck #106: \"28% growth in Trader Talks subscribers Y/Y\" - this is an education offering. Text: \"Schwab's Trader Talks subscriber base grew 28% year over year.\" value \"28%\"; unit \"%\"; period maybe \"\" or 2026? Deck period n/a. Could include. But sub-question asks offerings/strategies; Trader Talks is a content offering. Good.\n\nFor thinkorswim: deck #106 says 42% of thinkorswim users are Millennial or Gen Z. This is engagement, not offering. But thinkorswim itself is offering. Already included.\n\nFor digital assets: transcript #9: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" This is an offering relevant to younger? It says all ages. Could include as offering: access to digital assets through ETFs, futures, closed-end funds. But sub-question specifically younger investors; passage doesn't say younger. It says all ages. Might be less direct. We can omit or include as broader. Since we only need evidence for offerings/strategies to serve younger investors, include direct ones.\n\nFor commission removal: transcript 2026Q2: \"removal of commissions, which brought more people into the market that had less money.\" Strategy. Could include: \"Schwab cites the removal of commissions as bringing more young investors with less money into the market.\" value \"\"; unit \"\"; period \"\"; scope \"young investors\". Quote. Also \"growth and comfort with options trading\". Maybe.\n\nFor AI: \"AI is absolutely benefactor in our trading levels\" - not offering by Schwab, but a trend. Not relevant.\n\nFor Schwab Starter Kit and Teen Investor Account: direct.\n\nFor marketing: deck #131: marketing foundational, +14% new-to-firm retail HHs 2024-2025, 61% Gen Z & Millennial new clients. Not offering. Could be strategy: marketing. But not specific. Maybe omit.\n\nFor \"built to win across generations, wealth tiers, investing styles, and engagement preferences\" - strategy. Could include: Schwab's retail business is built to win across generations, wealth tiers, investing styles, and engagement preferences. This is a strategy statement. Chunk #11 or deck #23. But it's generic. Could include.\n\nWe need return one cell. Label fact. The items should be concise. We can include maybe 10-12 items. Need avoid over-inclusion of irrelevant. Let's select the strongest direct offerings/strategies:\n\n1. Schwab Starter Kit\n2. Schwab Teen Investor Account\n3. No/low commissions\n4. YouTube presence (#1 financial services firm on YouTube by followers)\n5. Financial planning (one-third of retail households created plan under 40)\n6. 35 hours/week live content\n7. ~1,000 former trading professionals answering phones\n8. thinkorswim platform and digital capabilities\n9. In-person experiences over 400 locations\n10. 16,000 advisors\n11. Trader Talks (28% subscriber growth)\n12. Digital assets via ETFs, futures, closed-end funds? Maybe skip because not younger-specific.\n13. Removal of commissions bringing young investors (could overlap with #3).\n14. Built to win across generations/wealth tiers/investing styles/engagement preferences.\n\nNeed ensure each item has quote and chunk_ids. For items with no figure, value \"\", unit \"\", period \"\". For items with figure, period as transcript period or deck period. For deck period n/a, period \"\".\n\nLet's formulate each.\n\nItem 0: Schwab offers younger investors the Schwab Starter Kit. quote: \"Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\" chunk SCHW-DECK-2026-investor-day#99. value \"\", unit \"\", period \"\", scope \"younger investors\". definition \"\".\n\nItem 1: Schwab offers younger investors the Schwab Teen Investor Account. same quote maybe. To avoid duplicate quote, use same chunk. It's okay. Could combine Starter Kit and Teen Investor into one item? But one per offering. Use same quote. Fine.\n\nItem 2: Schwab offers no or low commissions to younger investors. same quote.\n\nItem 3: Schwab is the number one financial services firm on YouTube by followers, which it cites as younger investors' top online resource. quote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" chunk SCHW-TR-2025Q3#12. period \"2025-09-30\"; scope \"younger investors\". value \"\", unit \"\".\n\nItem 4: Schwab offers financial planning, and one-third of retail households that created a financial plan in the last two years were under 40. quote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" chunk same. value \"one-third\"? The value as printed is \"one-third\"; unit maybe \"of retail households\"; period \"2025-09-30\"; scope \"retail households under 40\". But this is not an offering per se; it's engagement. Yet it shows financial planning offering. Maybe text: \"Schwab offers financial planning, and younger investors are using it: one-third of retail households who created a financial plan within the last two years are under 40.\" value \"one-third\"; unit \"retail households\"; period \"2025-09-30\"; scope \"retail households under 40\". Good.\n\nItem 5: Schwab puts on 35 hours a week of live educational content for investors. quote: \"We put on 35 hours a week of live content for our investors about how to learn how to trade, how to learn how to invest, the power of things like compounding.\" chunk SCHW-TR-2025Q3#41. value \"35\"; unit \"hours per week\"; period \"2025-09-30\"; scope \"investors\".\n\nItem 6: Schwab has about 1,000 former trading professionals answering phones for investors seeking trading advice. quote: \"I have a thousand colleagues that wake up every day that are former trading professionals that answer the phones for any investors that want advice and expertise on how to trade.\" chunk same. value \"a thousand\" or \"1,000\"? Passage says \"a thousand\". Use \"a thousand\". unit \"former trading professionals\"; period \"2025-09-30\"; scope \"investors\".\n\nItem 7: Schwab offers the thinkorswim platform and digital capabilities. quote: \"the leading platform with thinkorswim and our digital capabilities\" chunk same. value \"\", unit \"\", period \"\", scope \"young investors\" maybe. The quote says \"what we can offer the young investor ... the leading platform with thinkorswim and our digital capabilities\". Good.\n\nItem 8: Schwab offers in-person experiences in over 400 locations. quote: \"We have in-person experiences in over 400 locations across our country.\" chunk SCHW-TR-2025Q2#33. value \"400\"; unit \"locations\"; period \"2025-06-30\"; scope \"United States\" (across our country). \n\nItem 9: Schwab has 16,000 advisors in every community. quote: \"We have 16,000 advisors in every community that you can walk in and talk to.\" chunk same. value \"16,000\"; unit \"advisors\"; period \"2025-06-30\"; scope \"\".\n\nItem 10: Schwab positions itself to help young investors with goals such as paying off college debt and buying a house. quote: \"For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house, there's no better place to be than here at Schwab.\" chunk same. value \"\", unit \"\", period \"\", scope \"young investors\".\n\nItem 11: Schwab's Trader Talks subscriber base grew 28% year over year. quote: \"28% growth in Trader Talks subscribers Y/Y\" chunk SCHW-DECK-2026-investor-day#106. value \"28%\"; unit \"%\"; period \"\"; scope \"Trader Talks\". This is an education offering. Good.\n\nItem 12: Schwab's retail business is built to win across generations, wealth tiers, investing styles, and engagement preferences. quote: \"Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.\" chunk SCHW-TR-2026Q3#11. value \"\", unit \"\", period \"\", scope \"retail business\". This is a strategy.\n\nItem 13: Schwab cites removal of commissions as bringing more people with less money into the market, including younger investors. Quote: \"part of that was started with the removal of commissions, which brought more people into the market that had less money.\" chunk SCHW-TR-2026Q2#36. value \"\", unit \"\", period \"\", scope \"young investors\"? The passage context: \"growth in young investors, I think part of that was started with the removal of commissions\". Good.\n\nItem 14: Schwab offers digital assets through ETFs, futures, and closed-end funds. Quote: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" chunk SCHW-TR-2025Q2#9. This is not specifically younger; maybe omit to keep focused. But it is an offering. Since sub-question asks offerings/strategies for younger investors, this passage says all ages. Could include as broader strategy, but might be not fact for younger. I'll omit.\n\nItem 15: Schwab's marketing is foundational to enterprise growth and helped attract Gen Z & Millennial investors (61% of new clients). Quote deck #131. This is strategy. Maybe include? Text: \"Schwab says marketing is foundational to enterprise growth, and 61% of its new clients are Gen Z and millennials.\" value \"61%\"; unit \"% of new clients\"; period \"\"; scope \"new clients\". This is relevant to serving younger. But not an offering. Could include as strategy. Hmm.\n\nNeed avoid too many generic items. The key is offerings/strategies. I'll include 12-14 items.\n\nNeed label fact. No different_quantity? Could there be a different quantity? No, sub-question isn't quantity. All are facts. Label fact.\n\nreason: \"Passages describe Schwab's products, channels, and service strategies aimed at younger investors.\"\n\nderivation empty.\n\nCheck quotes exact. Use at most ~300 chars. For #99 quote includes pipe table; okay. For #12 quote exact: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" Good.\n\nFor #12 second item quote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" Good.\n\nFor #41 quote: \"I have a thousand colleagues that wake up every day that are former trading professionals that answer the phones for any investors that want advice and expertise on how to trade.\" Exact? Passage: \"I have a thousand colleagues that wake up every day that are former trading professionals that answer the phones for any investors that want advice and expertise on how to trade.\" yes.\n\nFor 35 hours: \"We put on 35 hours a week of live content for our investors about how to learn how to trade, how to learn how to invest, the power of things like compounding.\" yes.\n\nFor thinkorswim: \"So I think what we can offer the young investor in terms of the support, the service, the education, and of course, the leading platform with thinkorswim and our digital capabilities, I think is unmatched.\" quote maybe exact.\n\nFor #33: \"We have in-person experiences in over 400 locations across our country. We have 16,000 advisors in every community that you can walk in and talk to.\" Good.\n\nFor young investors college debt: \"For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house, there's no better place to be than here at Schwab.\" exact.\n\nFor Trader Talks: \"28% growth in Trader Talks subscribers Y/Y\" exact.\n\nFor #11: \"Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.\" exact.\n\nFor #36: \"I think part of that was started with the removal of commissions, which brought more people into the market that had less money.\" exact.\n\nFor #131: \"61% Gen Z & Millennial Investors Percent of New Clients 1\" maybe quote. Text: \"Schwab says marketing is foundational to enterprise growth and that 61% of new clients are Gen Z and millennial investors.\" Quote: \"Marketing is foundational to enterprise growth. ... 61% Gen Z & Millennial Investors Percent of New Clients 1\". But exact quote should be contiguous. The passage has separate lines. We can quote \"61% Gen Z & Millennial Investors Percent of New Clients 1\". Or omit.\n\nMaybe include marketing as strategy: \"Schwab says marketing is foundational to enterprise growth and cites 61% of new clients as Gen Z and millennials.\" value \"61%\"; unit \"% of new clients\"; period \"\"; scope \"new clients\". Quote: \"61% Gen Z & Millennial Investors Percent of New Clients 1\". chunk #131. This is okay. But the sub-question asks offerings and strategies; marketing is strategy. I'll include.\n\nAlso \"attracting them in the places they are\" from #42. Could include as strategy: \"Schwab is attracting younger clients in the places they are.\" Quote: \"A third of our new-to-firm clients last year were Gen Z investors, and we're going and attracting them in the places they are.\" This is strategy. Maybe include. But we already have YouTube etc.\n\nLet's decide final items count maybe 14. Need ensure one cell only. The response should call submit_extraction.\n\nLet's structure items with keys text, quote, value, unit, period, scope, definition, chunk_ids.\n\nPotential issue: For items with \"a thousand\", value should be as printed \"a thousand\". Unit \"former trading professionals\". Good.\n\nFor \"one-third\" value \"one-third\"; unit \"retail households\". Good.\n\nFor \"over 400\" value \"400\"; unit \"locations\". Good.\n\nFor \"61%\" value \"61%\"; unit \"% of new clients\". Good.\n\nFor \"35\" value \"35\"; unit \"hours per week\". Good.\n\nFor \"28%\" value \"28%\"; unit \"%\". Good.\n\nFor \"16,000\" value \"16,000\"; unit \"advisors\". Good.\n\nNo computation.\n\nLet's ensure no \"different_quantity\" needed. Since sub-question asks offerings/strategies, all items are facts. Label fact.\n\nNow produce tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab offers younger investors the Schwab Starter Kit.",
+            "quote": "Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#99"
+            ]
+          },
+          {
+            "text": "Schwab offers younger investors the Schwab Teen Investor Account.",
+            "quote": "Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#99"
+            ]
+          },
+          {
+            "text": "Schwab offers younger investors no or low commissions.",
+            "quote": "Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#99"
+            ]
+          },
+          {
+            "text": "Schwab is the number one financial services firm on YouTube by followers, which it cites as younger investors' top online resource.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab offers financial planning, and one-third of retail households that created a financial plan within the last two years were under the age of 40.",
+            "quote": "one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+            "value": "one-third",
+            "unit": "retail households",
+            "period": "2025-09-30",
+            "scope": "retail households under 40",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab puts on 35 hours a week of live educational content for investors about learning to trade and invest.",
+            "quote": "We put on 35 hours a week of live content for our investors about how to learn how to trade, how to learn how to invest, the power of things like compounding.",
+            "value": "35",
+            "unit": "hours per week",
+            "period": "2025-09-30",
+            "scope": "investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#41"
+            ]
+          },
+          {
+            "text": "Schwab has about a thousand former trading professionals answering phones for investors seeking trading advice and expertise.",
+            "quote": "I have a thousand colleagues that wake up every day that are former trading professionals that answer the phones for any investors that want advice and expertise on how to trade.",
+            "value": "a thousand",
+            "unit": "former trading professionals",
+            "period": "2025-09-30",
+            "scope": "investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#41"
+            ]
+          },
+          {
+            "text": "Schwab offers young investors the thinkorswim platform and its digital capabilities, along with support, service, and education.",
+            "quote": "So I think what we can offer the young investor in terms of the support, the service, the education, and of course, the leading platform with thinkorswim and our digital capabilities, I think is unmatched.",
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#41"
+            ]
+          },
+          {
+            "text": "Schwab offers in-person experiences in over 400 locations across the country.",
+            "quote": "We have in-person experiences in over 400 locations across our country.",
+            "value": "400",
+            "unit": "locations",
+            "period": "2025-06-30",
+            "scope": "United States",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#33"
+            ]
+          },
+          {
+            "text": "Schwab has 16,000 advisors in every community that clients can walk in and talk to.",
+            "quote": "We have 16,000 advisors in every community that you can walk in and talk to.",
+            "value": "16,000",
+            "unit": "advisors",
+            "period": "2025-06-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#33"
+            ]
+          },
+          {
+            "text": "Schwab positions itself as a place for young investors to get help with goals such as paying off college debt and buying a house.",
+            "quote": "For serious investors who want to, young investors who want to think about how to pay off their college debt, how to buy a house, there's no better place to be than here at Schwab.",
+            "value": "",
+            "unit": "",
+            "period": "2025-06-30",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#33"
+            ]
+          },
+          {
+            "text": "Schwab's Trader Talks subscriber base grew 28% year over year.",
+            "quote": "28% growth in Trader Talks subscribers Y/Y",
+            "value": "28%",
+            "unit": "%",
+            "period": "",
+            "scope": "Trader Talks",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#106"
+            ]
+          },
+          {
+            "text": "Schwab's retail business is built to win across generations, wealth tiers, investing styles, and engagement preferences.",
+            "quote": "Our retail business is built to win across generations, wealth tiers, investing styles and engagement preferences.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retail business",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab cites the removal of commissions as bringing more people with less money into the market, including younger investors.",
+            "quote": "I think part of that was started with the removal of commissions, which brought more people into the market that had less money.",
+            "value": "",
+            "unit": "",
+            "period": "2026-06-30",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q2#36"
+            ]
+          },
+          {
+            "text": "Schwab says marketing is foundational to enterprise growth and that 61% of new clients are Gen Z and millennial investors.",
+            "quote": "61% Gen Z & Millennial Investors Percent of New Clients 1",
+            "value": "61%",
+            "unit": "% of new clients",
+            "period": "",
+            "scope": "new clients",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#131"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages describe Schwab's products, channels, education, service model, and marketing strategies aimed at younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

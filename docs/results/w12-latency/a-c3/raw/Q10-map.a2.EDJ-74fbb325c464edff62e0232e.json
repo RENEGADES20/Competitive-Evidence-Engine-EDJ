@@ -1,0 +1,111 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#16",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2025Q2#68"
+  ],
+  "at": "2026-11-21T13:51:41.628570-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11473,
+    "output_tokens": 1181,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 10449,
+    "reasoning_tokens": 790,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.81
+  },
+  "wall_s": 12.84,
+  "tokens_per_s": 91.98,
+  "ttft_s": 0.81,
+  "reasoning_content": "We need answer one cell a2.EDJ: what firm said about serving mass-affluent clients. Passages mention \"High Net Worth\" initiative, not mass-affluent. Need label. The question asks specifically mass-affluent. Passages say nothing about mass-affluent. But mentions high net worth targeting. That's a different quantity? Sub-question asks what each firm said about serving mass-affluent clients. EDJ passages: 10-K #88 mentions initiatives targeting new clients: High Net Worth, Workplace, digital platform Next Generation investors. No mass-affluent. Is that different_quantity? It is a different client segment (high net worth) related but not the asked quantity. However label options: not_found if passages say nothing about it. They do say something about client segments but not mass-affluent. The instructions: different_quantity when no passage states asked quantity but one states a different related quantity: a wider unit ... different measure. High net worth segment is a different quantity than mass-affluent. Could label different_quantity with item quoting High Net Worth initiative. Hmm.\n\nMass-affluent is a specific segment; passage says primarily serves individual investors; and High Net Worth initiative. No mass-affluent. Could label not_found because nothing about mass-affluent specifically. But \"different_quantity\" seems designed for exactly this: a different segment. Need decide. The question asks \"What each firm has said about serving mass-affluent clients\". EDJ says primarily serves individual investors, and targeting high net worth. The high net worth initiative is a different client segment. I think different_quantity is appropriate, with differs_because: it describes a high-net-worth initiative, not mass-affluent clients.\n\nMaybe also \"primarily serves individual investors in U.S. and Canada\" is broader unit containing mass-affluent\u2014a wider unit. That would be different_quantity too. We can include items for both: one for primarily serves individual investors (wider), one for High Net Worth initiative (different segment). But careful: only one label for cell, items can multiple. Since no mass-affluent statement, label different_quantity. Items:\n1. Partnership primarily serves individual investors in U.S. and Canada. quote exact. value \"\", unit \"\", period maybe 2025-12-31? scope? It says through retail brokerage entities. This is a broader client base containing mass-affluent. differs_because: broader individual investor base, not specifically mass-affluent.\n2. The Partnership's initiatives include targeting new clients: High Net Worth focused on attracting and serving high net worth clients through expanded advice... quote. period 2025-12-31 (10-K period). scope High Net Worth. differs_because: a different client segment (high net worth) not mass-affluent.\n\nShould we include \"more than 9 million clients\" etc? No, that's not about serving mass-affluent.\n\nNeed include chunk ids. Item 1 quote from EDJ-10K-2025#204 or #9. Both have same. Use #204, maybe exact. Item 2 from #88.\n\nNeed text attributed to firm. Use \"The Partnership primarily serves individual investors in the U.S. and Canada through its retail brokerage entities.\" and \"The Partnership lists 'High Net Worth' as an initiative focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models.\"\n\nNeed period: 2025-12-31 for 10-K. scope: \"retail brokerage entities\" for first? The quote says \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada\"; scope could be \"retail brokerage entities\". For second scope \"High Net Worth initiative\". Definition \"\".\n\nValue \"\", unit \"\".\n\nCould also include \"Workplace\" initiative? Not relevant.\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "The Partnership said that through its retail brokerage entities it primarily serves individual investors in the U.S. and Canada.",
+            "quote": "Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "retail brokerage entities",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#204"
+            ]
+          },
+          {
+            "text": "The Partnership listed \"High Net Worth\" as an initiative focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "High Net Worth initiative",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "The passages describe a broader individual-investor client base and a separate high-net-worth client initiative, not a statement about serving mass-affluent clients specifically.",
+        "reason": "No passage mentions mass-affluent clients, but the firm describes a wider individual-investor base and a different high-net-worth segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
