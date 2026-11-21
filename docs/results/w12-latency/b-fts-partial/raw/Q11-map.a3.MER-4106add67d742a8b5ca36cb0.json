@@ -1,0 +1,123 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a3.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-04-15-01#12",
+    "BAC-SUPP-2026Q2#54",
+    "BAC-10Q-2026Q2#93",
+    "BAC-10Q-2026Q1#72",
+    "BAC-10Q-2025Q3#95",
+    "BAC-10Q-2025Q2#98",
+    "BAC-10Q-2025Q3#99",
+    "BAC-10Q-2026Q1#75",
+    "BAC-DECK-2026Q3#31",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "BAC-TR-2026Q3#19",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-10K-2025#249",
+    "BAC-DECK-2026Q2#20",
+    "BAC-PR-2026-01-14-01#12",
+    "BAC-TR-2026Q2#20",
+    "BAC-SUPP-2026Q3#52",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2026Q1#27",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q1#26",
+    "BAC-SUPP-2026Q2#56",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-TR-2025Q2#34",
+    "BAC-SUPP-2026Q1#44",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-TR-2026Q2#21",
+    "BAC-SUPP-2025Q4#57",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q2#63",
+    "BAC-PR-2026-10-14-01#13",
+    "BAC-SUPP-2026Q1#46",
+    "BAC-PR-2026-07-14-01#12",
+    "BAC-SUPP-2026Q3#54",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-PR-2026-01-14-01#11",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "MER-PR-web-advisor-development-program#0",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-10-14-01#11",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-ADV1A-2026#1",
+    "BAC-TR-2025Q2#35",
+    "BAC-DECK-2025-investor-day#18",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2025Q1#28",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-10Q-2026Q2#88",
+    "MER-PR-2026-09-15-01#0",
+    "BAC-10K-2025#247",
+    "BAC-TR-2025Q4#106",
+    "BAC-10Q-2025Q2#93",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "BAC-10Q-2025Q2#94",
+    "MER-PR-2026-09-15-01#3",
+    "BAC-10Q-2025Q3#94",
+    "BAC-10Q-2026Q2#89",
+    "BAC-SUPP-2025Q4#55"
+  ],
+  "at": "2026-11-21T14:59:26.341686-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 19050,
+    "output_tokens": 1283,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 17514,
+    "reasoning_tokens": 1018,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.55
+  },
+  "wall_s": 16.98,
+  "tokens_per_s": 75.56,
+  "ttft_s": 2.55,
+  "reasoning_content": "The sub-question asks: What the firm's advisor headcount definition includes. I need to find passages that state what Merrill's advisor headcount definition includes.\n\nLooking at the passages, I see one relevant: BAC-SUPP-2023Q4#2 which has \"Total wealth advisors (3) 18,916...\" and footnote \"(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nThis is the definition of what the advisor headcount includes. This is a fact for the sub-question.\n\nAlso, there's \"Wealth Advisors\" mentioned in BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\".\n\nBut the sub-question specifically asks what the firm's advisor headcount definition includes. The footnote (3) is the key definitional statement.\n\nLet me also check MER-ADV1A-2026#1 which gives employee counts from Form ADV - this is a different quantity (employees, not advisor headcount definition), and it's about investment advisory functions, registered representatives, etc. This is a different_quantity or maybe relevant to definition. But the question is about advisor headcount definition - what it includes.\n\nThe key definitional statement is footnote (3): \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nSo this is a fact. Let me submit this.\n\nThe definition includes advisors across all wealth management businesses in GWIM and Consumer Banking.\n\nLet me write the cell.\n\nvalue: 18,916 (for period 2023-12-31) - but actually the definition is the key. The footnote defines it. The figure 18,916 is the \"Total wealth advisors\" count.\n\nActually, I should focus on the definition. The sub-question is \"What the firm's advisor headcount definition includes\". The footnote says it includes advisors across all wealth management businesses in GWIM and Consumer Banking.\n\nLet me provide the item with the definition.\n\nThe item text: Merrill reports \"Total wealth advisors\" at period end, which includes advisors across all wealth management businesses in GWIM and Consumer Banking.\n\nquote: \"(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nvalue: \"\" (this is a definition, not a figure - but the figure 18,916 is attached). Actually I could include the figure as context but the sub-question asks about definition includes. Let me focus on the definitional statement. I'll put value as \"\" since the key content is the definition.\n\nActually, I could include both the definition and the figure. But the figure 18,916 is for period end 2023-12-31. Let me include the definitional statement as the primary fact, with definition field containing the quote.\n\nLet me write:\n- text: \"Merrill reports 'Total wealth advisors' at period end, which includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n- quote: \"(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking\"\n- chunk_ids: [\"BAC-SUPP-2023Q4#2\"]\n\nActually, the period for that figure is 2023-12-31. But the definition statement is not time-bound. I'll leave period \"\".\n\nLet me also consider if there are other definitional statements. The MER-ADV1A-2026#1 gives regulatory counts (employees, investment advisory functions, registered representatives). These are different quantities - employees, not advisor headcount definition. But it's about employees who perform investment advisory functions. That's not really the advisor headcount definition.\n\nActually, the question asks what the definition includes. The most direct answer is footnote (3). I'll provide that as the fact.\n\nI could also add the \"Wealth Advisors >15K\" but that's just a number without definition.\n\nI think the primary fact is footnote (3). Let me submit one cell with the fact.\n\nShould I include the 18,916 figure? The sub-question is about what the definition includes, not the count itself. I'll focus on definition. But I can mention the figure in text as context. Actually, let me keep it clean with just the definition.\n\nLet me provide value as \"18,916\" with period \"2023-12-31\" since it illustrates. Hmm, but that's the count, not the definition. The question is \"what does each definition include or exclude?\" So the definition statement is the fact.\n\nI'll provide the definition as the fact, with value empty since it's a definitional statement. Actually, I could put the value and period since it's attached to a specific reporting instance. But to keep clean and accurate, I'll just give the definition.\n\nI'll do one item focused on the definition.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Merrill (Bank of America) reports \"Total wealth advisors\" at period end, which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "quote": "Total wealth advisors (3) 18,916 19,273 ... (3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "value": "18,916",
+            "unit": "wealth advisors",
+            "period": "2023-12-31",
+            "scope": "GWIM and Consumer Banking",
+            "definition": "Includes advisors across all wealth management businesses in GWIM and Consumer Banking",
+            "chunk_ids": [
+              "BAC-SUPP-2023Q4#2"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The footnote to 'Total wealth advisors' explicitly states what the advisor headcount definition includes, which is what the sub-question asks.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

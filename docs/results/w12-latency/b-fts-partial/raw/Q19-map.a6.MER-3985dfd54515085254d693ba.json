@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a6.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:05:17.566848-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2032,
+    "output_tokens": 816,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 880,
+    "reasoning_tokens": 668,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.61
+  },
+  "wall_s": 7.36,
+  "tokens_per_s": 110.87,
+  "ttft_s": 1.61,
+  "reasoning_content": "Let me analyze the sub-question. The question asks about Edward Jones's strategy, but the firm is Merrill (MER). The passages provided are about Bank of America's GWIM segment (Merrill). \n\nThe sub-question asks: \"How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?\"\n\nThe passage mentions \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - this is a different quantity/related info but not about younger investors strategy.\n\nActually, there's nothing about Edward Jones strategy for younger investors. The passage is about Merrill/Bank of America. The only relevant item is \"Top 40 Advisors Under 40\" which is about advisors under 40, not younger investors/clients.\n\nSo this is likely not_found or different_quantity. The \"Top 40 Advisors Under 40\" is about advisors under 40, not younger investors/clients under 40. This is a different measure.\n\nActually, let me think. The sub-question asks about Edward Jones's strategy for younger investors. The passage is about Merrill/Bank of America. There's no content about Edward Jones at all. So it's not_found.\n\nWait, but the instruction says \"Use only the passages below.\" The passages are about Merrill (the firm being extracted for is Merrill). But the question asks about Edward Jones. This is a mismatch - the question is about Edward Jones but firm is Merrill. \n\nRegardless, I should extract from the passages. The passages say nothing about Edward Jones's strategy for younger investors. The \"Top 40 Advisors Under 40\" is about advisors under 40, not younger clients/investors.\n\nSo label: not_found, since the passages say nothing about the asked quantity.\n\nActually, could \"Top 40 Advisors Under 40\" be a different_quantity? It's about advisors under 40, not younger investors/clients under 40. It's a different measure entirely. But it's also not about Edward Jones (it's Merrill/Bank of America).\n\nThe passage is about Merrill, and the question asks about Edward Jones. Since the firm being extracted is Merrill, but the question references Edward Jones... This is confusing. But I'll just extract based on what's in the passages.\n\nThe passage mentions advisors under 40 (Top 40 Advisors Under 40), which is not about younger investors/clients. It's a different quantity (advisors vs clients/investors). But it's also not about strategy/priorities.\n\nI think not_found is most appropriate because the passages say nothing about a strategy for attracting/serving younger investors. The \"Top 40 Advisors Under 40\" is about recognition of advisors, not a strategy.\n\nActually, let me reconsider. different_quantity is for a different related quantity. \"Advisors under 40\" vs \"clients/investors under 40\" - these are different. But the sub-question asks about \"strategy and priorities for attracting and serving younger investors\" - not a quantity per se. It's asking about strategic statements.\n\nThe passage contains no strategic statement about younger investors. So not_found.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statement from Edward Jones (or Merrill/Bank of America) about a strategy or priorities for attracting and serving younger investors or clients under 40; the only related mention is a third-party ranking of advisors under 40, not a strategy for younger clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

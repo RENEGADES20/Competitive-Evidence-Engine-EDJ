@@ -1,0 +1,132 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-10Q-2025Q2#295",
+    "RJF-10K-2025#216",
+    "RJF-DECK-2025-investor-day#130",
+    "RJF-PR-2026-01-28-01#70",
+    "RJF-10Q-2026Q2#35",
+    "RJF-10K-2025#696",
+    "RJF-DECK-2025-investor-day#93",
+    "RJF-SUPP-2026Q2#17",
+    "RJF-10Q-2026Q1#337",
+    "RJF-10K-2025#100",
+    "RJF-DECK-2025-investor-day#125",
+    "RJF-SUPP-2026Q1#17",
+    "RJF-10Q-2025Q4#238",
+    "RJF-SUPP-2025Q4#15",
+    "RJF-10Q-2026Q1#360",
+    "RJF-SUPP-2025Q3#17",
+    "RJF-10Q-2025Q2#259",
+    "RJF-SUPP-2025Q3#13",
+    "RJF-10Q-2026Q2#350"
+  ],
+  "at": "2026-11-21T13:02:17.398647-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8345,
+    "output_tokens": 2380,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 7193,
+    "reasoning_tokens": 1465,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.94
+  },
+  "wall_s": 17.81,
+  "tokens_per_s": 133.63,
+  "ttft_s": 1.94,
+  "reasoning_content": "Let me analyze the question. The sub-question asks about the specific products, services, platforms, or fee levels RJF says it offers mass-affluent clients.\n\nLooking at the passages, I need to find anything about \"mass-affluent\" specifically. Scanning the passages, none mention \"mass-affluent\" clients at all. The passages describe PCG segment services, fee-based accounts, managed programs, etc., but none specifically refer to \"mass-affluent\" clients.\n\nThe question asks \"which has been most explicit about serving mass-affluent clients, and what exactly have they said?\" The sub-question asks about products/services offered to mass-affluent clients.\n\nNone of the passages mention mass-affluent. They describe products/services generally for clients, but not specifically mass-affluent. So this is not_found (nothing about mass-affluent specifically) or different_quantity?\n\nActually, the passages describe products and services generally for \"clients\" without specifying mass-affluent. This is a different_quantity situation? The products are described for clients generally, not mass-affluent specifically.\n\nWait, let me think carefully. The question is about serving mass-affluent clients specifically. The passages describe PCG services broadly (financial planning, investment advisory, securities transaction services, fee-based accounts, managed programs), but do not tie these to \"mass-affluent\" clients specifically.\n\nSo none of the passages state what products/services are offered specifically to mass-affluent clients. They describe products for clients generally.\n\nThe label options:\n- fact: passage states what sub-question asks (products offered to mass-affluent)\n- different_quantity: passage states a different related quantity\n- not_disclosed: passages show firm does not report it\n- not_found: passages say nothing about it\n\nSince no passage mentions \"mass-affluent\" at all, and describes products for clients generally (a wider group), this could be different_quantity. The products/services described (financial planning, investment advisory, fee-based accounts, managed programs) are offered to \"clients\" generally, which is a wider group that includes but isn't limited to mass-affluent.\n\nActually, the instruction says: \"a wider unit that contains the asked one (a parent company, a segment...) or a different measure\". Products offered to clients generally vs. products offered to mass-affluent specifically - this is like offering to a wider group.\n\nHmm, but actually the sub-question is about \"products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\" The passages describe products/services offered to clients generally, not specifically mass-affluent.\n\nI think the most accurate label is different_quantity: the firm describes products/services for its clients broadly (not specifically mass-affluent). The differs_because would be \"described for clients generally, not mass-affluent specifically.\"\n\nActually, let me reconsider. There's no mention of mass-affluent anywhere. The firm offers these products to all its PCG clients. This is not_found in the sense that nothing is said about mass-affluent, but the products are described generally.\n\nI think the most defensible answer is different_quantity with items describing the products/services, and differs_because explaining these are for clients generally, not specifically mass-affluent.\n\nLet me identify the key product/service descriptions:\n\n1. RJF-10K-2025#216: \"we provide financial planning, investment advisory, and securities transaction services for which we generally charge either asset-based fees... or sales commissions... We also earn revenues for distribution and related services performed related to mutual and other funds, fixed and variable annuities, and insurance products.\"\n\n2. RJF-10K-2025#696: PCG segment provides financial planning, investment advisory, securities transaction services in U.S., Canada, U.K.; distribution services for mutual and other funds, fixed and variable annuities, insurance products.\n\n3. RJF-10Q-2025Q2#295: fee-based accounts comprised of wide array of products and programs; majority invested in programs where advisors provide investment advisory services (discretionary or non-discretionary).\n\n4. RJF-10Q-2025Q4#238: fee-based accounts invested in Managed programs overseen by AMS; fees based on value of client assets and vary by account type and level of assets.\n\n5. RJF-10Q-2025Q2#259: ESP deposit product, FDIC coverage up to $50 million.\n\nThese are products/services offered to clients generally.\n\nI'll label as different_quantity and list these items. The differs_because: passages describe products/services for PCG clients generally, not specifically mass-affluent clients.\n\nActually, wait. Let me reconsider whether this should be not_found. The sub-question is \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\" \n\nSince RJF never mentions \"mass-affluent\" clients, and the products are described for clients generally (not mass-affluent), this is a different quantity: a wider group (all clients) rather than mass-affluent specifically.\n\nI'll go with different_quantity.\n\nLet me draft the items. I'll include the key product/service descriptions.\n\nItem 0: financial planning, investment advisory, and securities transaction services, charging asset-based fees or sales commissions.\nQuote from RJF-10K-2025#216: \"we provide financial planning, investment advisory, and securities transaction services for which we generally charge either asset-based fees ... or sales commissions\"\n\nItem 1: distribution services for mutual and other funds, fixed and variable annuities, insurance products.\nQuote from RJF-10K-2025#216: \"We also earn revenues for distribution and related services performed related to mutual and other funds, fixed and variable annuities, and insurance products.\"\n\nItem 2: fee-based accounts with wide array of products and programs, discretionary/non-discretionary investment advisory.\nQuote from RJF-10Q-2025Q2#295.\n\nItem 3: Managed programs (fee-based accounts invested in managed programs overseen by AMS).\nQuote from RJF-10Q-2025Q4#238.\n\nItem 4: ESP deposit product with enhanced rates and FDIC coverage up to $50 million.\nQuote from RJF-10Q-2025Q2#259.\n\nThese have no specific value/unit/period; they're descriptive. I'll set value=\"\", unit=\"\", period=\"\", scope=\"Private Client Group (PCG)\" or \"our clients\".\n\nLet me finalize.\n\nActually, for the scope field, I should note the segment. For fee-based accounts, it's within PCG. For ESP, it's bank/RJBDP.\n\nLet me write concise items.\n\ndiffers_because: \"Passages describe products and services offered to the firm's clients generally (e.g., Private Client Group clients), not specifically to mass-affluent clients; no passage mentions mass-affluent clients.\"\n\nreason: \"No passage mentions 'mass-affluent' clients; the passages describe products/services for clients generally, a wider group.\"\n\nLet me write the items properly.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James states that through its PCG segment it provides financial planning, investment advisory, and securities transaction services for which it generally charges either asset-based fees or sales commissions.",
+            "quote": "we provide financial planning, investment advisory, and securities transaction services for which we generally charge either asset-based fees (presented in \"Asset management and related administrative fees\") or sales commissions (presented in \"Brokerage revenues\")",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group (PCG) segment",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#216"
+            ]
+          },
+          {
+            "text": "Raymond James states it earns revenues for distribution and related services performed related to mutual and other funds, fixed and variable annuities, and insurance products.",
+            "quote": "We also earn revenues for distribution and related services performed related to mutual and other funds, fixed and variable annuities, and insurance products.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group (PCG) segment",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#216"
+            ]
+          },
+          {
+            "text": "Raymond James states that fee-based accounts within its PCG segment are comprised of a wide array of products and programs, the majority of which are invested in programs where its financial advisors provide investment advisory services on a discretionary or non-discretionary basis.",
+            "quote": "Fee-based accounts within our PCG segment are comprised of a wide array of products and programs that we offer our clients. The majority of assets in fee-based accounts within our PCG segment are invested in programs for which our financial advisors provide investment advisory services, either on a discretionary or non-discretionary basis.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group (PCG) segment",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10Q-2025Q2#295"
+            ]
+          },
+          {
+            "text": "Raymond James states it offers clients fee-based accounts invested in \"Managed programs\" overseen by AMS (part of its Asset Management segment), with fees based on the value of client assets that vary by account type and level of assets in the client relationship.",
+            "quote": "We also offer our clients fee-based accounts that are invested in \"Managed programs\" overseen by AMS, which is part of our Asset Management segment. ... Fees received from such accounts are based on the value of client assets in fee-based accounts and vary based on the specific account types in which the client invests and the level of assets in the client relationship.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group (PCG) segment",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10Q-2025Q4#238"
+            ]
+          },
+          {
+            "text": "Raymond James states it introduced an Enhanced Savings Program (ESP) in fiscal 2023, where deposits are held by Raymond James Bank, offer enhanced rates, and offer FDIC coverage of up to $50 million for certain accounts.",
+            "quote": "Such programs include our ESP introduced to our clients in fiscal 2023 where such deposits are held by Raymond James Bank, offer enhanced rates, and offer FDIC coverage of up to $50 million for certain accounts",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Raymond James Bank deposit program",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10Q-2025Q2#259"
+            ]
+          }
+        ],
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients, our clients), a wider group than mass-affluent clients specifically; no passage mentions \"mass-affluent\" clients.",
+        "reason": "No passage references mass-affluent clients; the described products and services are for clients generally, a broader group.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

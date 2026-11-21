@@ -1,0 +1,69 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a5.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37"
+  ],
+  "at": "2026-11-21T13:05:17.445968-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5200,
+    "output_tokens": 453,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 4048,
+    "reasoning_tokens": 322,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.7
+  },
+  "wall_s": 5.58,
+  "tokens_per_s": 81.18,
+  "ttft_s": 1.7,
+  "reasoning_content": "Let me analyze this. The question is about Edward Jones's offerings, but the firm is Charles Schwab (SCHW). This is a mismatch - the sub-question asks about Edward Jones, but the passages are about Schwab. \n\nWait, let me re-read. The question asks: \"How should the preferences of younger investors shape Edward Jones's offerings?\" and the firm is The Charles Schwab Corporation (SCHW). This seems like a misdirected question - the passages are all about Schwab, not Edward Jones.\n\nThe sub-question a5.SCHW [fact]: \"How do Edward Jones's current offerings align with younger investors' preferences?\"\n\nSo I need to extract information about Edward Jones from Schwab passages. But the passages are all about Schwab. They don't mention Edward Jones at all.\n\nActually, wait - this seems to be a case where the passages are about Schwab, not Edward Jones. The sub-question asks about Edward Jones. Since the passages are all about Schwab's own offerings, not Edward Jones, there's nothing about Edward Jones.\n\nSo the label should be not_found - the passages say nothing about Edward Jones's offerings.\n\nLet me confirm: none of the passages mention \"Edward Jones.\" They're all about Schwab's own retail business. So the answer is not_found.\n\nActually, let me be careful. The passages are about Schwab, which is a different firm than Edward Jones. The sub-question asks about Edward Jones's current offerings. None of the passages discuss Edward Jones.\n\nSo the answer is not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The sub-question asks about Edward Jones's offerings, but all passages concern The Charles Schwab Corporation's own retail business and younger investors; no passage mentions Edward Jones or its offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

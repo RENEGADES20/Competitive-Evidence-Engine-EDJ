@@ -1,0 +1,615 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a14.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a14.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#141",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2025Q2#70",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2026Q2#72",
+    "EDJ-10Q-2026Q1#61",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10Q-2025Q3#98",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#212",
+    "EDJ-10K-2025#208",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#5"
+  ],
+  "at": "2026-11-21T15:10:52.815150-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11638,
+    "output_tokens": 11214,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 10486,
+    "reasoning_tokens": 6455,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 4.61
+  },
+  "wall_s": 98.8,
+  "tokens_per_s": 113.5,
+  "ttft_s": 4.61,
+  "reasoning_content": "The sub-question asks for: Advisor-led firms' cost of advisor compensation and support. This is a fact-type sub-question about Edward Jones's cost of advisor compensation and support.\n\nLooking at the passages, I need to extract the cost of advisor compensation and support figures for Edward Jones.\n\nKey data: Financial advisor compensation and benefits (this is advisor compensation). Home office and branch compensation (support). Variable compensation.\n\nLet me identify the most relevant figures. The sub-question is about \"advisor compensation and support\" cost.\n\nFinancial advisor compensation and benefits:\n- 2025: $6,969 million (annual, EDJ-10K-2025#141)\n- 2024: $6,208\n- 2023: $5,218\n- Q1 2026: $1,875 (EDJ-10Q-2026Q1#60)\n- Q1 2025: $1,653\n- Q2 2025: $1,692, first half 2025: $3,345 (EDJ-10Q-2025Q2#81)\n- Q2 2026: $2,001, first half 2026: $3,876 (EDJ-10Q-2026Q2#75)\n- Q3 2025: $1,710, first nine months 2025: $4,961 (EDJ-10Q-2025Q3#98)\n\nHome office and branch compensation and benefits:\n- 2025: $2,726, 2024: $2,461, 2023: $2,334 (EDJ-10K-2025#141)\n- Q1 2026: $656, Q1 2025: $626 (EDJ-10Q-2026Q1#60)\n- Q2 2025: $727, first half 2025: $1,353 (EDJ-10Q-2025Q2#81)\n- Q3 2025: $668, first nine months 2025: $2,021 (EDJ-10Q-2025Q3#88)\n- Q2 2026: $683, first half 2026: $1,339 (EDJ-10Q-2026Q2#72)\n\nVariable compensation:\n- 2025: $2,710, 2024: $2,436, 2023: $1,838\n- Q1 2026: $748, Q1 2025: $611\n- etc.\n\nTotal compensation and benefits:\n- 2025: $12,405, 2024: $11,105, 2023: $9,390\n- Q1 2026: $3,279, Q1 2025: $2,890\n\nThe sub-question is \"Advisor-led firms' cost of advisor compensation and support\". This asks for the cost of advisor compensation and support.\n\nI should capture the financial advisor compensation (advisor compensation) and home office and branch compensation (support). These are the core items. Total compensation and benefits includes variable compensation.\n\nI think the best answer is to capture the key figures: Financial advisor compensation and benefits, and Home office and branch compensation and benefits, plus Total compensation and benefits.\n\nLet me focus on the most authoritative/complete figure - the annual figures from the 10-K, plus the quarterly figures.\n\nActually, the sub-question is a \"fact\" type. I should provide fact items with figures. Let me provide the main items.\n\nLet me structure the items. I'll include the annual figures (2023, 2024, 2025) for financial advisor, home office and branch, variable compensation, and total compensation and benefits. Plus quarterly figures.\n\nActually, I should be judicious. The question is about \"cost of advisor compensation and support\". The key figures are:\n- Financial advisor compensation and benefits (advisor compensation)\n- Home office and branch compensation and benefits (support)\n\nVariable compensation and total compensation might also be relevant but variable compensation is more about firm-wide bonuses.\n\nI'll provide items for financial advisor compensation and home office and branch compensation across periods, plus total compensation and benefits as a summary.\n\nLet me capture the main ones. I'll include the annual figures from the 10-K which is the most complete, and note the quarterly figures too.\n\nGiven the guidance to be thorough but not redundant, I'll list:\n1. Financial advisor compensation annual 2025, 2024, 2023\n2. Home office and branch compensation annual 2025, 2024, 2023\n3. Variable compensation annual\n4. Total compensation and benefits annual\n5. Quarterly figures (Q1 2026, etc.)\n\nActually, let me include a reasonable set. I'll do the annual figures for the three lines that relate to advisor compensation and support, plus total, and quarterly figures.\n\nLet me write out items. The definition: Edward Jones reports \"Financial advisor\" compensation and benefits, \"Home office and branch\" compensation and benefits, and \"Variable compensation\" under \"Compensation and benefits\" in operating expenses.\n\nI'll provide items for each distinct figure.\n\nLet me be comprehensive but organized. I'll list:\n\nFinancial advisor compensation and benefits:\n- 2025: $6,969\n- 2024: $6,208\n- 2023: $5,218\n- Q1 2026: $1,875\n- Q1 2025: $1,653\n- Q2 2026: $2,001, Q2 2025: $1,692\n- First half 2026: $3,876, first half 2025: $3,345\n- Q3 2025: $1,710, nine months 2025: $4,961\n\nHome office and branch:\n- 2025: $2,726, 2024: $2,461, 2023: $2,334\n- Q1 2026: $656, Q1 2025: $626\n- Q2 2026: $683, Q2 2025: $727\n- first half 2026: $1,339, first half 2025: $1,353\n- Q3 2025: $668, nine months: $2,021\n\nVariable compensation:\n- 2025: $2,710, 2024: $2,436, 2023: $1,838\n- Q1 2026: $748, Q1 2025: $611\n- Q2 2026: $780, Q2 2025: $588\n- first half 2026: $1,528, first half 2025: $1,199\n- Q3 2025: $790, nine months: $1,989\n\nTotal compensation and benefits:\n- 2025: $12,405, 2024: $11,105, 2023: $9,390\n- Q1 2026: $3,279, Q1 2025: $2,890\n- Q2 2026: $3,464, Q2 2025: $3,007\n- first half 2026: $6,743, first half 2025: $5,897\n\nThis is a lot. I'll include the main annual figures and key quarterly figures. Actually, I should be reasonably complete but I'll focus on the most relevant and not over-include redundant items.\n\nGiven the instruction \"a series is one item per period\", I'll provide one item per period for each line.\n\nLet me decide on scope: whole firm (US segment mostly; the 10-Q figures are US segment; there's also Canada segment mentioned separately). The chunk EDJ-10Q-2026Q1#67 mentions Canada financial advisor compensation $54. Actually EDJ-10Q-2026Q1#68 mentions Canada net revenue, and financial advisor compensation increased 13% to $54.\n\nActually, most figures are for the US segment (the main table). The Canada segment is separate. The annual 10-K figures are whole firm.\n\nLet me keep scope mostly \"\" (whole firm) for annual figures, and for the quarterly figures they're likely US segment but I'll just note \"\" unless specified. Actually the 10-Q quarterly figures in the main table are US segment (before \"Canada\" section). Hmm. Let me check. EDJ-10Q-2026Q1#60 is the main income statement table. Then later \"Canada\" section has separate figures.\n\nActually the chunk #53 says \"Net revenue increased 12% to $4,677\" and #67 says \"Net revenue increased 12%... to $4,548\" which is the US segment excluding Canada. So the main table figures are US segment (US & Canada are separate segments). Wait, actually Edward Jones has \"Segment Information\" with US and Canada.\n\nLet me look: EDJ-10Q-2026Q1#61 shows financial advisors 20,550 etc. These are US (or total?). The Canada section is separate.\n\nFor simplicity, I'll mark scope as \"United States segment\" where I can tell, but actually the main consolidated table includes both US and Canada? Let me not overthink. The annual 10-K figures are consolidated (whole firm). The quarterly main table figures appear to be US segment (with Canada broken out separately).\n\nActually, looking at EDJ-10Q-2026Q1#67: \"Net revenue increased 12% in the first quarter of 2026 to $4,548\" while #53 says \"$4,677\". The difference $129 is Canada (mentioned in #68). So the main table is US segment.\n\nSo for quarterly figures, scope = \"United States segment\". But wait, EDJ-10Q-2026Q1#60 shows \"Total operating expenses $4,136\" while #67 shows \"$4,015\" (US segment). And #53 shows total $4,136. So #60 table is the consolidated (including Canada), #67 is US segment.\n\nHmm, this is getting complicated. Actually:\n- #60 (the income statement table) shows total operating expenses $4,136 = consolidated\n- #67 shows US segment operating expenses $4,015\n- #68 shows Canada operating expenses $121\n\n$4,015 + $121 = $4,136. Yes.\n\nSo the main table in #60 is consolidated (whole firm), and segment info breaks out US vs Canada.\n\nSo the quarterly compensation figures in #60 are consolidated (whole firm). Good, scope = \"\" for those.\n\nBut #67 shows \"Financial advisor compensation increased 13%... to $1,821\" for US segment. And #60 shows $1,875 for consolidated. So US financial advisor = $1,821, Canada = $54. 1821+54=1875. Yes.\n\nSo I should primarily use the consolidated figures from #60/#72 tables, which are whole firm.\n\nI'll focus on the consolidated figures. Let me list the main items with consolidated figures.\n\nFor annual: 10-K figures are consolidated.\n\nI'll provide:\n1. Financial advisor compensation and benefits - annual 2025, 2024, 2023\n2. Home office and branch compensation - annual 2025, 2024, 2023\n3. Variable compensation - annual 2025, 2024, 2023\n4. Total compensation and benefits - annual 2025, 2024, 2023\n5. Quarterly financial advisor compensation (consolidated from tables)\n6. Quarterly home office and branch\n7. Quarterly variable compensation\n8. Quarterly total compensation\n\nThis is a lot but comprehensive. Let me be selective and include the annual figures (most important) plus a few quarterly points.\n\nActually, I'll include a comprehensive but manageable set. The key is the \"fact\" label with the figures.\n\nLet me finalize items. I'll use units \"USD millions\" (the figures are in millions as shown by \"$6,969\" in the table with millions implied). Actually the table headers likely say \"$ in millions\". The figures like \"6,969\" are in millions.\n\nI'll set unit to \"USD millions\" and value \"6,969\" etc. Actually let me use the printed value as \"$6,969\" and unit \"USD millions\".\n\nThe instruction says value: \"the figure as printed\". The table shows \"$ 6,969\" (with the $ in header). I'll put value \"6,969\" and unit \"USD millions\".\n\nLet me write the items now.\n\nFor periods:\n- Annual: F2025 (fiscal year 2025) \u2014 but Edward Jones fiscal year = calendar year (December 31). Use \"2025\" as calendar year? The period is \"2025\" for year ended December 31, 2025. I'll use \"2025\".\n\nActually the format options: \"YYYY\" for calendar year. Fiscal year ending Dec 31 is same as calendar year. Use \"2025\".\n\nFor quarters: \"2026Q1\" for three months ended March 27, 2026. And \"2025Q1\" for March 28, 2025.\n\nLet me write items.\n\nI'll keep it reasonably comprehensive. Let me produce the items.\n\nFinancial advisor compensation:\n- 2025: $6,969 million (chunk EDJ-10K-2025#141)\n- 2024: $6,208\n- 2023: $5,218\n- 2026Q1: $1,875 (EDJ-10Q-2026Q1#60)\n- 2025Q1: $1,653\n- 2026Q2: $2,001 (EDJ-10Q-2026Q2#72)\n- 2025Q2: $1,692\n- 2026 first half: $3,876\n- 2025 first half: $3,345\n- 2025Q3: $1,710 (EDJ-10Q-2025Q3#98)\n- 2025 nine months: $4,961\n\nHome office and branch:\n- 2025: $2,726\n- 2024: $2,461\n- 2023: $2,334\n- 2026Q1: $656\n- 2025Q1: $626\n- 2026Q2: $683\n- 2025Q2: $727\n- 2026 first half: $1,339\n- 2025 first half: $1,353\n- 2025Q3: $668\n- 2025 nine months: $2,021\n\nVariable compensation:\n- 2025: $2,710\n- 2024: $2,436\n- 2023: $1,838\n- 2026Q1: $748\n- 2025Q1: $611\n- 2026Q2: $780\n- 2025Q2: $588\n- 2026 first half: $1,528\n- 2025 first half: $1,199\n- 2025Q3: $790\n- 2025 nine months: $1,989\n\nTotal compensation and benefits:\n- 2025: $12,405\n- 2024: $11,105\n- 2023: $9,390\n- 2026Q1: $3,279\n- 2025Q1: $2,890\n- 2026Q2: $3,464\n- 2025Q2: $3,007\n- 2026 first half: $6,743\n- 2025 first half: $5,897\n\nThis is ~40 items, quite a lot. I'll include them all since they're all facts and the question is broad about \"cost of advisor compensation and support\".\n\nActually, let me be more focused. The question asks \"cost of advisor compensation and support\". The core is financial advisor compensation and home office/branch (support). Variable compensation and total are broader. But I think including total compensation and benefits is useful as it captures \"support\" (home office and branch) + advisor + variable.\n\nI'll include all four lines. But to avoid excessive redundancy, maybe I'll include the annual figures for all four lines (most complete), and the quarterly figures for financial advisor and home office and branch (the two core components), plus note total quarterly.\n\nActually, let me just include everything systematically. The instruction says be thorough. But 40 items is a lot. Let me include annual (12 items) + quarterly for financial advisor, home office, variable, total (the quarterly from the two main tables and Q3).\n\nI'll include:\n- Annual 2023/2024/2025 for all 4 lines = 12 items\n- Quarterly Q1 2026/Q1 2025 for all 4 lines = 8 items (from #60)\n- Q2 2026/Q2 2025 + first half 2026/2025 for all 4 lines = 12 items (from #72)\n- Q3 2025 financial advisor, home office, variable = items\n\nThis is getting to be a lot. Let me trim to essentials but still thorough.\n\nI'll produce a comprehensive set. Let me just write it out.\n\nActually, to keep it manageable and correct, I'll include the annual figures (which directly answer \"cost of advisor compensation and support\" at a firm level) plus the quarterly figures for financial advisor and home office/branch compensation (the two named quantities). Variable compensation and total are somewhat secondary but still \"cost of advisor compensation\" broadly.\n\nI'll include all four lines for completeness, across annual and the available quarters. Let me write it.\n\nLet me now construct the final answer. I'll write text for each item concisely.\n\nFor the annual items, quote from EDJ-10K-2025#141.\n\nFor quarterly Q1, quote from EDJ-10Q-2026Q1#60.\nFor Q2 and first half, quote from EDJ-10Q-2026Q2#72.\nFor Q3, quote from EDJ-10Q-2025Q3#98 (for financial advisor $1,710/$4,961) and EDJ-10Q-2025Q3#88 (home office $668/$2,021, variable $790/$1,989).\n\nNote the Q3 figures in #98 are US segment? Let me check. #98 is under \"Segment Information\" - actually it says \"Operating expenses increased 13% to 3,903...\" \u2014 this appears to be a segment. Hmm. #98 mentions \"Canada\" after, suggesting #98 is US segment.\n\nActually #98: \"Operating expenses increased 13% to 3,903 and 11% to $11,111 in the third quarter and first nine months of 2025\" then later \"Canada\" section. So these are US segment figures.\n\nWait but #74 (EDJ-10Q-2025Q3#74) says \"Operating expenses increased 11% to $11,431\" for nine months, and \"income before allocations... to $1,510\". While #98 says \"$11,111\" nine months. The difference $11,431 vs $11,111... hmm. Actually #74 says \"increased 11% to $11,431\" for nine months. #98 says \"11% to $11,111\" for nine months. Different. \n\nActually #74 is consolidated (whole firm), #98 is US segment. Canada nine months operating would be ~$320 (11,431-11,111). And Canada financial advisor... \n\nThis is getting complicated. The #98 figures (financial advisor $1,710 Q3, $4,961 nine months; home office $2,451 nine months; variable) are US segment.\n\nGiven the complexity, and that the sub-question just needs \"cost of advisor compensation and support\", I'll focus on the consolidated annual figures and the consolidated quarterly tables (#60, #72), and the Q3 consolidated figures.\n\nActually, for Q3 2025, the consolidated financial advisor figure \u2014 is there one? #74 and #71 are MD&A text. #88 gives home office $668 (Q3) and $2,021 (nine months), variable $790 (Q3) and $1,989 (nine months). #98 gives financial advisor $1,710 (Q3) and $4,961 (nine months).\n\nBut #88 and #98 appear to be US segment (under \"Segment Information\"). Actually #88 header says \"Segment Information\" at bottom. And #98 has \"Canada\" after.\n\nHmm, the Q3 consolidated financial advisor figure: Is there a consolidated table? The 10-Q Q3 might have a table. But we only have MD&A text.\n\nTo avoid scope confusion, I'll use scope for the Q3 figures. Actually, let me check: #74 says \"Operating expenses increased 11% to $11,431\" (nine months consolidated). #98 says \"$11,111\" (nine months, likely US segment). The financial advisor $4,961 nine months in #98 \u2014 is that US segment or consolidated?\n\nGiven #98 mentions \"Canada\" section after, and gives separate Canada figures, #98 is the US segment discussion. So financial advisor $1,710/$4,961 are US segment.\n\nBut actually wait, let me reconsider. #98 starts \"Operating expenses increased 13% to 3,903 and 11% to $11,111...\" This is likely the \"Segment Information\" for US. Then \"Canada\" section follows.\n\nTo be safe, for Q3 figures I'll mark scope as \"United States segment\" for #98/#88 figures.\n\nActually, this is getting too deep. Let me simplify: I'll include the annual figures (consolidated, whole firm) and the quarterly figures from the clear consolidated tables (#60 for Q1, #72 for Q2). These are clean. I'll also include the Q3 figures but note scope.\n\nActually, for the purpose of this extraction, the most important clean figures are the annual ones. I'll include:\n\nAnnual (whole firm, 10-K):\n- Financial advisor: 2025 $6,969, 2024 $6,208, 2023 $5,218\n- Home office and branch: 2025 $2,726, 2024 $2,461, 2023 $2,334\n- Variable: 2025 $2,710, 2024 $2,436, 2023 $1,838\n- Total comp: 2025 $12,405, 2024 $11,105, 2023 $9,390\n\nQuarterly Q1 (consolidated, #60):\n- Financial advisor: 2026Q1 $1,875, 2025Q1 $1,653\n- Home office and branch: 2026Q1 $656, 2025Q1 $626\n- Variable: 2026Q1 $748, 2025Q1 $611\n- Total: 2026Q1 $3,279, 2025Q1 $2,890\n\nQuarterly Q2 & first half (consolidated, #72):\n- Financial advisor: 2026Q2 $2,001, 2025Q2 $1,692, 1H2026 $3,876, 1H2025 $3,345\n- Home office: 2026Q2 $683, 2025Q2 $727, 1H2026 $1,339, 1H2025 $1,353\n- Variable: 2026Q2 $780, 2025Q2 $588, 1H2026 $1,528, 1H2025 $1,199\n- Total: 2026Q2 $3,464, 2025Q2 $3,007, 1H2026 $6,743, 1H2025 $5,897\n\nQ3 2025 (#98, #88 - US segment):\n- Financial advisor: Q3 $1,710, nine months $4,961\n- Home office: Q3 $668, nine months $2,021\n- Variable: Q3 $790, nine months $1,989\n\nThis is comprehensive. I'll include all. That's about 45 items. That's a lot but acceptable given thoroughness.\n\nActually, I worry about over-inclusion. Let me be more focused on what the sub-question asks: \"cost of advisor compensation and support\". This is financial advisor compensation + home office and branch compensation (support). Variable compensation and total are also compensation costs.\n\nI think a reasonable approach: include all the figures as facts. Let me just do it thoroughly but efficiently.\n\nI'll write the items. Given the large number, I'll group logically.\n\nLet me write text for each. To keep it efficient, I'll use concise text.\n\nFor the annual financial advisor item, text: \"Edward Jones reports financial advisor compensation and benefits expense of $6,969 million for 2025.\"\n\nLet me now produce the final submission.\n\nI need to decide on value format. I'll use value \"6,969\" and unit \"USD millions\". Actually the table shows \"$ 6,969\" with $ in the row. I'll put value \"$6,969\" and unit \"USD millions\"? The instruction says \"the figure as printed\". The printed figure in the table is \"6,969\" (with $ sign separate). I'll put value \"6,969\" and unit \"USD millions\".\n\nLet me also include the definition field: Edward Jones doesn't give a specific definition of \"financial advisor compensation and benefits\" in these passages, except that financial advisor compensation increases due to \"increases in revenues on which commissions are earned\". I'll leave definition mostly \"\".\n\nActually, one relevant definition-like statement: \"Variable compensation expands and contracts in relation to the Partnership's profitability and margin earned... paid to associates in the form of bonuses and profit sharing.\" That's a definition of variable compensation. Could include as a fact item? The sub-question is about \"advisor compensation and support\" broadly, not specifically variable comp definition. I'll leave it out or include briefly.\n\nI'll keep it focused on the figures.\n\nLet me write the items now.\n\nFor periods, quarters: \"2026Q1\" format. Years: \"2025\".\n\nLet me produce.\n\nI'll create the cell with label \"fact\" and all items.\n\nGiven the volume, I'll write carefully. Let me finalize.\n\nActually, I realize I should double check the \"first half\" period format. The instruction doesn't have a \"half-year\" format explicitly. Options: \"YYYY-MM-DD\", \"YYYYQn\", \"FYYYYY\", \"YYYY\", \"\". For \"six months ended June 26, 2026\", I could use period \"2026Q2\" (since it's the six months through Q2) but that's ambiguous. Or use \"2026-06-26\" (point in time)? The instruction says period for \"YYYY-MM-DD\" for a point in time.\n\nFor six months ended, I'll use \"2026-06-26\" as point in time? That's the period end date. Hmm. Actually \"point in time\" is for balance sheet items. For income statement cumulative periods, using the end date might work but is ambiguous with the three-month period ending same date.\n\nI'll just use \"2026Q2\" for both the three-month and note in text/scope that it's six months. Actually better to use period \"\" and describe in text? No.\n\nLet me use period \"2026Q2\" for the three-month period, and for six-month I'll use \"2026-06-26\" with text clarifying \"six months ended June 26, 2026\". Actually, to disambiguate, I'll put the period as the end date and clearly state in text \"for the six months ended\".\n\nHmm, but that conflicts with the three-month period also ending June 26, 2026.\n\nI think the cleanest is: for six-month periods, use period \"2026-06-26\" (end date) and text says \"six months ended June 26, 2026\". For three-month, use \"2026Q2\". These are distinguishable because Q2 has \"Q\" in it.\n\nActually \"2026Q2\" for three months ended June 26, 2026. And \"2026-06-26\" for six months ended June 26, 2026. These are different format strings, distinguishable.\n\nFor first nine months ended September 26, 2025, use \"2025-09-26\".\n\nOK let me finalize. This is a lot of items; I'll write them all.\n\nActually, let me reconsider the scope of what to include to keep it reasonable. I'll include:\n\nAnnual (12 items): 3 years \u00d7 4 lines\nQ1 (8 items): 2 quarters \u00d7 4 lines\nQ2 + 1H (12 items): 2 quarters \u00d7 4 lines + 2 half-years \u00d7 4 lines\nQ3 + 9mo (some items)\n\nThat's ~40 items. I'll include them but maybe trim variable and total for quarterly to reduce. Actually the question is specifically about \"advisor compensation and support\", so financial advisor + home office/branch are most important. Variable compensation is firm-wide profit sharing, total includes all.\n\nI'll include financial advisor and home office/branch for all periods, and include variable + total for annual (as context) and maybe skip quarterly variable/total to reduce noise. Actually variable compensation is a key part of advisor compensation model at Edward Jones (they explicitly tie it to profitability). I'll include it.\n\nI'll include everything for completeness. Let me just write it all out now.\n\nFinal answer structure. Let me write concise items.\n\nI'll go with including annual figures for all 4 lines, quarterly for financial advisor + home office + variable + total where available in the clean consolidated tables.\n\nLet me write it out in the tool call.\n\nGiven length, I'll write efficiently.\n\nFor scope: annual = \"\" (whole firm). Quarterly consolidated tables (#60, #72) = \"\" (whole firm, consolidated). Q3 #88/#98 = \"United States segment\".\n\nLet me write.\n\nI'll now produce the final submission with all items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a14.EDJ",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "Edward Jones discloses financial advisor compensation and benefits, home office and branch compensation and benefits, and variable compensation within total compensation and benefits in its income statements and MD&A, directly answering the cost of advisor compensation and support.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $6,969 million for the year ended December 31, 2025.",
+            "quote": "Compensation and benefits:\n  Financial advisor                          $                                      6,969",
+            "value": "6,969",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $6,208 million for the year ended December 31, 2024.",
+            "quote": "Financial advisor                          $                                      6,969      $          6,208      $          5,218",
+            "value": "6,208",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $5,218 million for the year ended December 31, 2023.",
+            "quote": "Financial advisor                          $                                      6,969      $          6,208      $          5,218",
+            "value": "5,218",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $2,726 million for the year ended December 31, 2025.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334",
+            "value": "2,726",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $2,461 million for the year ended December 31, 2024.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334",
+            "value": "2,461",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $2,334 million for the year ended December 31, 2023.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334",
+            "value": "2,334",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $2,710 million for the year ended December 31, 2025.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838",
+            "value": "2,710",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $2,436 million for the year ended December 31, 2024.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838",
+            "value": "2,436",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $1,838 million for the year ended December 31, 2023.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838",
+            "value": "1,838",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $12,405 million for the year ended December 31, 2025.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390",
+            "value": "12,405",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $11,105 million for the year ended December 31, 2024.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390",
+            "value": "11,105",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $9,390 million for the year ended December 31, 2023.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390",
+            "value": "9,390",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $1,875 million for the three months ended March 27, 2026.",
+            "quote": "Financial advisor                          $                        1,875      $                    1,653",
+            "value": "1,875",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $1,653 million for the three months ended March 28, 2025.",
+            "quote": "Financial advisor                          $                        1,875      $                    1,653",
+            "value": "1,653",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $656 million for the three months ended March 27, 2026.",
+            "quote": "Home office and branch                                                656                             626",
+            "value": "656",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $626 million for the three months ended March 28, 2025.",
+            "quote": "Home office and branch                                                656                             626",
+            "value": "626",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $748 million for the three months ended March 27, 2026.",
+            "quote": "Variable compensation                                                 748                             611",
+            "value": "748",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $611 million for the three months ended March 28, 2025.",
+            "quote": "Variable compensation                                                 748                             611",
+            "value": "611",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $3,279 million for the three months ended March 27, 2026.",
+            "quote": "Total compensation and benefits                                     3,279                           2,890",
+            "value": "3,279",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $2,890 million for the three months ended March 28, 2025.",
+            "quote": "Total compensation and benefits                                     3,279                           2,890",
+            "value": "2,890",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $2,001 million for the three months ended June 26, 2026.",
+            "quote": "Financial advisor                          $                        2,001      $                   1,692",
+            "value": "2,001",
+            "unit": "USD millions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $1,692 million for the three months ended June 27, 2025.",
+            "quote": "Financial advisor                          $                        2,001      $                   1,692",
+            "value": "1,692",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $3,876 million for the six months ended June 26, 2026.",
+            "quote": "Financial advisor                          $                        2,001      $                   1,692                    18%      $                      3,876      $                   3,345",
+            "value": "3,876",
+            "unit": "USD millions",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation and benefits expense of $3,345 million for the six months ended June 27, 2025.",
+            "quote": "Financial advisor                          $                        2,001      $                   1,692                    18%      $                      3,876      $                   3,345",
+            "value": "3,345",
+            "unit": "USD millions",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $683 million for the three months ended June 26, 2026.",
+            "quote": "Home office and branch                                                683                            727",
+            "value": "683",
+            "unit": "USD millions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $727 million for the three months ended June 27, 2025.",
+            "quote": "Home office and branch                                                683                            727",
+            "value": "727",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $1,339 million for the six months ended June 26, 2026.",
+            "quote": "Home office and branch                                                683                            727                    -6%                             1,339                          1,353",
+            "value": "1,339",
+            "unit": "USD millions",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $1,353 million for the six months ended June 27, 2025.",
+            "quote": "Home office and branch                                                683                            727                    -6%                             1,339                          1,353",
+            "value": "1,353",
+            "unit": "USD millions",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $780 million for the three months ended June 26, 2026.",
+            "quote": "Variable compensation                                                 780                            588",
+            "value": "780",
+            "unit": "USD millions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $588 million for the three months ended June 27, 2025.",
+            "quote": "Variable compensation                                                 780                            588",
+            "value": "588",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $1,528 million for the six months ended June 26, 2026.",
+            "quote": "Variable compensation                                                 780                            588                    33%                             1,528                          1,199",
+            "value": "1,528",
+            "unit": "USD millions",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $1,199 million for the six months ended June 27, 2025.",
+            "quote": "Variable compensation                                                 780                            588                    33%                             1,528                          1,199",
+            "value": "1,199",
+            "unit": "USD millions",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $3,464 million for the three months ended June 26, 2026.",
+            "quote": "Total compensation and benefits                                     3,464                          3,007",
+            "value": "3,464",
+            "unit": "USD millions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $3,007 million for the three months ended June 27, 2025.",
+            "quote": "Total compensation and benefits                                     3,464                          3,007",
+            "value": "3,007",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $6,743 million for the six months ended June 26, 2026.",
+            "quote": "Total compensation and benefits                                     3,464                          3,007                    15%                             6,743                          5,897",
+            "value": "6,743",
+            "unit": "USD millions",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total compensation and benefits expense of $5,897 million for the six months ended June 27, 2025.",
+            "quote": "Total compensation and benefits                                     3,464                          3,007                    15%                             6,743                          5,897",
+            "value": "5,897",
+            "unit": "USD millions",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#72"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation expense of $1,710 million for the third quarter of 2025 (United States segment).",
+            "quote": "Financial advisor compensation increased 12% in both the third quarter and first nine months of 2025 to $1,710 and $4,961",
+            "value": "1,710",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#98"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisor compensation expense of $4,961 million for the first nine months of 2025 (United States segment).",
+            "quote": "Financial advisor compensation increased 12% in both the third quarter and first nine months of 2025 to $1,710 and $4,961",
+            "value": "4,961",
+            "unit": "USD millions",
+            "period": "2025-09-26",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#98"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $668 million for the third quarter of 2025.",
+            "quote": "Home office and branch compensation and benefits expense increased 10% and 11% to $668 and $2,021 in the third quarter and first nine months of 2025",
+            "value": "668",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#88"
+            ]
+          },
+          {
+            "text": "Edward Jones reports home office and branch compensation and benefits expense of $2,021 million for the first nine months of 2025.",
+            "quote": "Home office and branch compensation and benefits expense increased 10% and 11% to $668 and $2,021 in the third quarter and first nine months of 2025",
+            "value": "2,021",
+            "unit": "USD millions",
+            "period": "2025-09-26",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#88"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $790 million for the third quarter of 2025.",
+            "quote": "Variable compensation increased 24% and 12% in the third quarter and first nine months of 2025 to $790 and $1,989",
+            "value": "790",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#88"
+            ]
+          },
+          {
+            "text": "Edward Jones reports variable compensation expense of $1,989 million for the first nine months of 2025.",
+            "quote": "Variable compensation increased 24% and 12% in the third quarter and first nine months of 2025 to $790 and $1,989",
+            "value": "1,989",
+            "unit": "USD millions",
+            "period": "2025-09-26",
+            "scope": "United States segment",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#88"
+            ]
+          },
+          {
+            "text": "Edward Jones states that variable compensation expands and contracts in relation to the Partnership's profitability and margin earned, and that a significant portion of profits is allocated to variable compensation paid to associates as bonuses and profit sharing.",
+            "quote": "Variable compensation expands and contracts in relation to the Partnership's profitability and margin earned. A significant portion of the Partnership's profits is allocated to variable compensation and paid to associates in the form of bonuses and profit sharing",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Variable compensation: a significant portion of the Partnership's profits allocated to variable compensation and paid to associates in the form of bonuses and profit sharing.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#88"
+            ]
+          },
+          {
+            "text": "Edward Jones states that financial advisor compensation and benefits increased primarily due to increases in revenues on which commissions are earned.",
+            "quote": "Financial advisor compensation and benefits increased primarily due to an increase in revenues on which commissions are earned",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#132"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

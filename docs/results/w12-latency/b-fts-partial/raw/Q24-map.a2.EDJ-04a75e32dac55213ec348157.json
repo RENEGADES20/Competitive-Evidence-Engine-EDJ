@@ -1,0 +1,199 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#202",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#59",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10Q-2025Q3#87"
+  ],
+  "at": "2026-11-21T13:16:16.506479-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8159,
+    "output_tokens": 7711,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 6623,
+    "reasoning_tokens": 6621,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.88
+  },
+  "wall_s": 52.08,
+  "tokens_per_s": 148.06,
+  "ttft_s": 1.88,
+  "reasoning_content": "We need to answer sub-question a2.EDJ: Advisor headcount for the firm. Label options: fact, not_disclosed, not_found, different_quantity.\n\nWe have many passages with \"Financial advisors (actual): At period end / Average\" figures. These are advisor headcounts. The firm reports financial advisors actual headcount at period end and average.\n\nNote the data: Some chunks show total and split U.S./Canada. There are consolidated figures and U.S./Canada splits. We need to extract the advisor headcount.\n\nThe sub-question asks \"Advisor headcount for the firm\" - whole firm. The consolidated figures in chunks like EDJ-10Q-2026Q2#60 show total \"At period end 20,514\" and \"Average 20,537\" for 2026Q2 (second quarter). Wait, need to check periods.\n\nActually there are inconsistencies: chunk #60 shows \"20,514\" at period end for 2026Q2? Let me look. The chunk says \"Financial advisors (actual): At period end 20,514 20,309 ... Average 20,537 20,316...\" This appears to be total (consolidated). But other chunks show 19,647 for U.S. in 2026Q2 and 867 Canada. Wait, 19,647 + 867 = 20,514. Yes! So #60 total = 20,514 = U.S. 19,647 + Canada 867. And average 20,537 = U.S. 19,665 + Canada 872 = 20,537. Yes.\n\nSo there are multiple chunks. The firm reports advisor headcount. So label fact.\n\nNow which figures to include? The question is a single sub-question asking advisor headcount for the firm. I should include all facts about advisor headcount across periods. There are many. Let me collect the consolidated (total firm) figures with period.\n\nLet me identify each chunk and its consolidated figures.\n\nChunks for a2.EDJ (directly listed):\n1. EDJ-10Q-2026Q2#60: \"At period end 20,514 / 20,309; Average 20,537 / 20,316\" - this is second quarter 2026 vs 2025 (period ended 2026-06-26). Actually the source says period 2026-06-26. This is Q2 2026. The \"Second Quarter 2026 versus Second Quarter 2025\". So period for current = 2026Q2? The 10-Q period is 2026-06-26. The quarter ended June 26, 2026. Let's denote period \"2026Q2\" for current and \"2025Q2\" for prior year.\n\nActually careful: these 10-Qs have period dates. EDJ-10Q-2026Q2 period 2026-06-26 (Q2 2026). The \"At period end\" figures: 20,514 (2026Q2) vs 20,309 (2025Q2). Average 20,537 vs 20,316.\n\n2. EDJ-10K-2025#130: \"At year end 20,425 / 20,125 / 19,232; Average 20,331 / 19,650 / 18,945\" - years ended Dec 31 2025, 2024, 2023. Period FY2025, FY2024, FY2023. Actually fiscal year = calendar year here (period ends Dec 31). Use \"FY2025\" etc.\n\n3. EDJ-10K-2025#148: shows U.S. and Canada split? \"At year end 19,540 / 19,253 / 18,378\" (U.S.) and \"885 / 872 / 854\" (Canada). These are segment figures, not total firm. Wait, but the sub-question asks \"advisor headcount for the firm\" (whole firm). These are U.S. and Canada splits, not the firm total. Hmm.\n\nActually let's reconsider. The firm total for year end 2025 = 20,425. U.S. = 19,540, Canada = 885. Sum = 20,425. So #148 shows the split.\n\nThe sub-question is advisor headcount for the firm. Should I include the consolidated total figures, or also the U.S./Canada splits? The question asks \"for the firm\" - the whole firm. The splits are part of the firm, narrower groups. The instruction: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods, a narrower group or sample...)\". So a narrower group (U.S. segment) is partial and still a fact. So I could include U.S. and Canada figures as facts with scope.\n\nBut do I need to include every single figure? The instruction says items one per figure. I should be thorough but maybe focus on the whole-firm headcount. Let me include the consolidated total firm figures as the primary answer, and possibly note the U.S./Canada splits.\n\nActually, let me think about what's cleanest. The question \"Advisor headcount for the firm\" - the firm-level headcount. The consolidated total figures are the direct answer. The U.S./Canada splits are partial (narrower groups). I'll include them with scope.\n\nBut there are many chunks with both total and split. Let me enumerate all consolidated total figures available.\n\nLet me go through each chunk:\n\nDirect chunks (in the a2.EDJ group):\n\n- EDJ-10Q-2026Q2#60: total firm: At period end 20,514 (Q2 2026), 20,309 (Q2 2025); Average 20,537, 20,316.\n\n- EDJ-10K-2025#58: no figures, just narrative.\n\n- EDJ-10Q-2025Q3#69: shows attrition %, no advisor headcount numbers directly? It mentions \"Attrition %\" but the chunk text doesn't show advisor headcount figures (they're cut off). Actually it's a fragment. No headcount figures visible.\n\n- EDJ-10K-2025#70: narrative.\n\n- EDJ-10Q-2026Q1#66: shows \"Financial advisors (actual): At period end 19,674 / 19,413; Average 19,627 / 19,346\" but labeled \"U.S.\" at bottom. Wait, actually chunk #66 ends with \"U.S.\" So these are U.S. figures, not total. Let me check: chunk #66 text: \"... At period end 19,674 19,413 1% 876 875 \u2014; Average 19,627 19,346 1% 879 875 \u2014 U.S.\" Hmm the \"876 875\" and \"879 875\" are Canada. So 19,674 is U.S. at period end, 876 is Canada. So total = 19,674 + 876 = 20,550 for Q1 2026? Wait but chunk #60 Q2 2026 total was 20,514. Q1 2026 would be earlier (March 27, 2026). Let me verify.\n\nActually the 10-Q 2026Q1 period ends March 27, 2026. Chunk #66 shows U.S. figures. The \"876 875\" is Canada. So total Q1 2026 = 19,674 + 876 = 20,550? Hmm but there's no explicit total shown in #66. Wait actually let me re-read chunk #66 carefully.\n\nChunk #66: \"1 19%; Client households at period end 6.6 6.4 3% 0.2 0.2 \u2014; Net new assets for the period ($ billions) $ 17.6 $ 16.8 5% $ 0.4 $ 0.5 -20%; Financial advisors (actual): At period end 19,674 19,413 1% 876 875 \u2014; Average 19,627 19,346 1% 879 875 \u2014; U.S.\"\n\nSo the columns: U.S. current, U.S. prior, % change, Canada current, Canada prior, % change. So U.S. at period end = 19,674 (Q1 2026), prior 19,413 (Q1 2025); Canada 876 / 875. Average U.S. 19,627 / 19,346; Canada 879 / 875.\n\nSo this is the U.S./Canada split, not total. Total would be 19,674+876 = 20,550.\n\nHmm, but wait, this seems inconsistent with other data. Let me check the consolidated totals.\n\nActually there might be a discrepancy because different chunks show different things. Let me focus.\n\nActually, wait - there's a subtlety. The \"Financial advisors (actual)\" total consolidated figures appear in chunks like #60 (total), #82 (U.S. and Canada split), #86, #89, #93, #79, #130, #148, #51.\n\nLet me carefully map each chunk:\n\nEDJ-10Q-2026Q2#60: total firm. \"Financial advisors (actual): At period end 20,514 20,309; Average 20,537 20,316\". This is Q2 2026 vs Q2 2025 total.\n\nEDJ-10Q-2026Q2#82: \"Financial advisors (actual): At period end 19,647 19,435 1% 867 874 -1%; Average 19,642 19,391 1% 875 874 \u2014\". This is U.S. and Canada split. U.S. at period end 19,647 (Q2 2026), Canada 867. Sum = 20,514. Matches #60 total.\n\nEDJ-10Q-2026Q2#79: \"Financial advisors (actual): At period end 19,647 19,435 1% 867 874 -1%; Average 19,665 19,442 1% 872 874 \u2014; U.S.\" Wait, #79 shows At period end 19,647/19,435 and 867/874, Average 19,665/19,442 and 872/874. This is U.S./Canada split for Q2 2026. Note Average U.S. = 19,665 (not 19,642 as in #82). Hmm slight discrepancy between #82 and #79 for average. Actually #82 says \"Average 19,642 19,391\" and #79 says \"Average 19,665 19,442\". These differ. Possibly #82 is for a different period or there's a data inconsistency.\n\nWait, let me re-read #82: \"Net new assets for the period ($ billions) $ 35.3 $ 33.2 6% $ 0.6 $ 0.9 -33%; Financial advisors (actual): At period end 19,647 19,435 1% 867 874 -1%; Average 19,642 19,391 1% 875 874 \u2014\". This is first half (six months) of 2026? \"Net new assets ... 35.3\" and \"0.6\" - this is six months. The chunk mentions \"first half of 2026\". So #82 is six-month figures (H1 2026), not Q2.\n\nActually #82 source period 2026-06-26 (Q2 10-Q). The text says \"Net revenue increased 18% and 15% in the second quarter and first half of 2026\". So #82 shows six-month data. \"Financial advisors (actual): At period end 19,647 19,435 ... Average 19,642 19,391\". At period end for six months = same as Q2 period end (June 26, 2026). Average for six months = 19,642 vs 19,391.\n\nAnd #79 shows: \"At period end 19,647 19,435 1% 867 874 -1%; Average 19,665 19,442 1% 872 874 \u2014\". This is Q2 (three months) data? Average 19,665 for Q2 vs 19,642 for six months. Yes, #79 is the three-month Q2 data (average), #82 is six-month.\n\nThis is getting complex. The sub-question just asks \"advisor headcount for the firm\". I should provide the key facts: the total firm advisor headcount at various period ends and averages.\n\nGiven the complexity, I think the cleanest approach is to include the consolidated total firm figures where explicitly given as \"total\" (whole firm), and possibly note U.S./Canada splits.\n\nThe most important consolidated figures:\n- #60: Q2 2026 total: At period end 20,514; Average 20,537 (Q2 2026). Prior year Q2 2025: 20,309 / 20,316.\n- #130: Year end FY2025: 20,425; FY2024: 20,125; FY2023: 19,232. Average FY2025: 20,331; FY2024: 19,650; FY2023: 18,945.\n\nAre there other consolidated total figures? Let me check #51: \"Financial advisors (actual): At period end\" - cut off, no figure visible. #69, #86, #89, #93 show U.S./Canada splits.\n\nActually, let me look for consolidated totals in the search pool. Chunk #51 ends \"At period end\" without showing figure (cut off). So no.\n\nSo the explicit consolidated total firm advisor headcount figures are in #60 (Q2 2026) and #130 (year-end 2025/2024/2023).\n\nBut wait, there might be more. The chunks #86, #89, #93, #79, #82 all show U.S./Canada splits. Should I include them? They are partial (narrower groups), which are still facts.\n\nGiven the question is just \"advisor headcount for the firm,\" I think the most direct answer is the consolidated total figures. But I should be thorough and include U.S. and Canada splits as facts with scope, since they are parts of the firm.\n\nHowever, including everything might be excessive. Let me think about what's most useful for the downstream comparison (\"Client assets per advisor across the five\"). They need advisor headcount for the firm. The consolidated total is what matters.\n\nLet me decide: I'll include the consolidated total firm figures (fact), which are the direct answer. I'll include:\n- #60: Q2 2026 (period 2026Q2): at period end 20,514; and prior Q2 2025: 20,309. Average 20,537 / 20,316.\n- #130: year-end FY2025 20,425, FY2024 20,125, FY2023 19,232; average 20,331 / 19,650 / 18,945.\n\nActually, should I also include the U.S./Canada split figures? They are \"partial\" facts. The instruction says partial is still a fact. But it also says \"for this firm\" - the whole firm. The U.S. segment is a narrower group within the firm.\n\nI think for thoroughness and correctness, I'll include the consolidated totals as the main facts. I could optionally include the U.S./Canada splits. Given there are many splits with slight inconsistencies, and the question is about \"the firm\" total, I'll focus on the total firm figures. But I should also include the splits? \n\nLet me reconsider the guidance: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods, a narrower group or sample, one of several figures); the item says what it covers (period, scope).\"\n\nSo narrower group (U.S., Canada) is a fact with scope. I think I should include at least the U.S. and Canada splits for completeness, but it's a judgment call.\n\nActually, for the downstream computation \"client assets per advisor\", they need total advisors. The consolidated total is what matters. The U.S./Canada split is supplementary.\n\nI'll include the consolidated totals and also the U.S./Canada splits where they're clearly presented, to be safe. But that's a lot of items. Let me be judicious.\n\nActually, let me reconsider. The primary consolidated figures I have:\n1. #60 (Q2 2026 10-Q): total firm at period end 20,514 (2026Q2) and 20,309 (2025Q2); average 20,537 (2026Q2) and 20,316 (2025Q2).\n2. #130 (10-K FY2025): year end 20,425 (FY2025), 20,125 (FY2024), 19,232 (FY2023); average 20,331 (FY2025), 19,650 (FY2024), 18,945 (FY2023).\n\nThese are the whole-firm totals. I'll present these as facts.\n\nAdditionally, I could note the U.S./Canada segment figures. But I think to keep it clean and answer \"advisor headcount for the firm,\" I'll present the total firm figures, and maybe add the most recent U.S./Canada split as a fact with scope for completeness.\n\nActually, let me just include the total firm figures. The sub-question is specifically \"advisor headcount for the firm\" (whole firm). The U.S./Canada splits are for the same metric but narrower scope; they're technically facts too. But given the emphasis, I'll include the totals.\n\nHmm, but I want to be thorough. Let me include a few key items:\n\nFor total firm:\n- Item 0: At period end 20,514 (Q2 2026), scope \"\" (whole firm).\n- Item 1: Average 20,537 (Q2 2026).\n- Item 2: At period end 20,309 (Q2 2025).\n- Item 3: Average 20,316 (Q2 2025).\n- Item 4: At year end 20,425 (FY2025).\n- Item 5: Average 20,331 (FY2025).\n- Item 6: At year end 20,125 (FY2024).\n- Item 7: Average 19,650 (FY2024).\n- Item 8: At year end 19,232 (FY2023).\n- Item 9: Average 18,945 (FY2023).\n\nThat's 10 items. Reasonable.\n\nShould I also note \"Financial advisors (actual)\" definition? The chunks label \"Financial advisors (actual)\" with \"At period end\" and \"Average\". The firm defines financial advisors as actual headcount (not FTE). Note chunk #62 and #75 mention \"Home office associates ... Counted on a full-time equivalent basis\" - that's about home office associates, not financial advisors. So financial advisors are \"actual\" headcount.\n\nAlso note the definition: \"Financial advisors (actual)\" - actual vs average. This is a definition. I could note it.\n\nLet me also check if there's a definition of what counts as a \"financial advisor.\" The passages don't give a detailed definition beyond \"actual\" headcount and \"financial advisors.\" There's mention of \"financial advisors are employees\" (in #59) but that's not a definition of the metric.\n\nI'll set definition to \"\" for the items, or note \"actual\" headcount.\n\nActually, the label \"Financial advisors (actual)\" is meaningful - it's actual headcount (not FTE). I can put definition as \"actual\" for these.\n\nLet me also consider: is there any statement that the firm does NOT disclose advisor headcount? No, it clearly discloses. So label fact.\n\nNow for period formatting:\n- Q2 2026: the 10-Q period ends 2026-06-26. Use \"2026Q2\".\n- Q2 2025: \"2025Q2\".\n- FY2025: \"FY2025\" (fiscal year = calendar year ending Dec 31, 2025).\n- FY2024: \"FY2024\".\n- FY2023: \"FY2023\".\n\nThe 10-K is \"period 2025-12-31\" which is FY2025 (calendar year). The year end figures are for years ended Dec 31, 2025, 2024, 2023.\n\nI'll write period as \"FY2025\", \"FY2024\", \"FY2023\".\n\nFor the \"at year end\" point-in-time, the period is the fiscal year end date, but the convention \"FY2025\" is fine since it's \"year ended December 31, 2025\". Actually \"At year end\" refers to a point in time (Dec 31, 2025). But the 10-K labels it \"at year end\" for the fiscal year. I'll use \"FY2025\" to indicate the year. Actually the schema says period \"FYYYYY\" for fiscal year. \"At year end\" is a point in time at fiscal year end. Hmm. I'll use \"FY2025\" for the year-end figure since it's \"year ended Dec 31, 2025\". Both \"At year end\" and \"Average\" are for FY2025.\n\nActually for \"At year end\" the point in time is 2025-12-31. But the schema's period options include \"YYYY-MM-DD\" for point in time. However, \"At year end\" in context of FY2025 = Dec 31, 2025. I could use \"2025-12-31\" for at year end, and \"FY2025\" for average.\n\nHmm, this is getting overly detailed. Let me simplify: use \"FY2025\" for both year-end and average figures, as they pertain to fiscal year 2025. The average is over the year, year-end is the end of that year. Both are FY2025 context. Actually \"Average\" for FY2025 is the average across FY2025.\n\nI'll use \"FY2025\" for year-end point and \"FY2025\" for average too. Or use \"2025-12-31\" for year end. Let me use \"FY2025\" for both, since it's cleaner and the schema explicitly supports fiscal year.\n\nActually, to be precise: \"At year end\" = point in time 2025-12-31. But \"FY2025\" is acceptable as a fiscal year label. The downstream comparison likely wants a year. I'll use \"FY2025\".\n\nFor Q2: \"2026Q2\" and \"2025Q2\". For \"at period end\" it's point in time June 26, 2026, but \"2026Q2\" is fine.\n\nLet me finalize.\n\nActually, I realize I should double check: are the #60 figures truly total firm, or is #60 also a split? #60 shows \"At period end 20,514 20,309; Average 20,537 20,316\" with no \"U.S.\" or \"Canada\" label, and it's the first table (before \"U.S.\" sections). The #60 text ends with \"Second Quarter 2026 versus Second Quarter 2025 Overview\". This appears to be the consolidated (total firm) table. The number 20,514 = 19,647 + 867 (U.S. + Canada from #79/#82). Yes, total firm.\n\nGood.\n\nLet me also verify the FY2025 figures in #130: \"At year end 20,425 20,125 19,232; Average 20,331 19,650 18,945\". And #148 shows U.S. \"19,540 19,253 18,378\" and Canada \"885 872 854\". Sum U.S.+Canada: 19,540+885=20,425 \u2713. So #130 is total firm.\n\nGreat.\n\nNow, should I also include the U.S./Canada split figures as facts? I think for the \"client assets per advisor\" comparison, they need the firm total. The total is what I've captured. I'll also mention in the reason that the firm discloses total financial advisors.\n\nI think I'll include the consolidated totals only, and maybe add a note about the U.S./Canada split being available. Actually, I'll just include the totals as facts. That's the direct answer.\n\nBut wait - let me reconsider whether to include more periods. The question likely needs the most recent year-end (FY2025) headcount for \"client assets per advisor\". I have FY2025 year-end 20,425. Good. Also Q2 2026 at period end 20,514 (more recent). Both are useful.\n\nLet me also include average for FY2025 (20,331) since \"average\" is often used for ratios.\n\nI'll finalize with the 10 items (or combine at period end and average).\n\nActually, to reduce clutter, I could present each figure as a separate item. The instruction says \"one per figure or statement; a series is one item per period.\" So each figure is an item. \"At period end 20,514\" is one figure/period. \"Average 20,537\" is another figure/period. So they're separate items.\n\nLet me write out items.\n\nFor #60 (Q2 2026):\n- At period end: value 20,514, unit \"financial advisors\", period \"2026Q2\", scope \"\".\n- Average: 20,537, period \"2026Q2\".\n- At period end (prior year): 20,309, period \"2025Q2\".\n- Average (prior year): 20,316, period \"2025Q2\".\n\nFor #130 (FY2025):\n- At year end: 20,425, period \"FY2025\".\n- Average: 20,331, period \"FY2025\".\n- At year end: 20,125, period \"FY2024\".\n- Average: 19,650, period \"FY2024\".\n- At year end: 19,232, period \"FY2023\".\n- Average: 18,945, period \"FY2023\".\n\nThat's 10 items.\n\nQuotes: I need exact quotes from the passages. Let me copy from each chunk.\n\nFor #60: \"At period end                                                              20,514                         20,309                      1%\" and \"Average                                                                    20,537                         20,316                      1%\".\n\nFor #130: \"At year end                                                                            20,425                20,125                19,232                         1%\" and \"Average                                                                                20,331                19,650                18,945                         3%\".\n\nI'll quote these.\n\nNow let me construct the cells.\n\nFor definition field: the label \"Financial advisors (actual)\" - I can put definition as \"actual\" or leave \"\". The firm labels the metric \"Financial advisors (actual)\" with \"At period end\" and \"Average\". I'll note in definition maybe \"\" since no explicit definition given beyond \"actual\".\n\nActually, \"actual\" is a meaningful distinction from \"average\" or FTE. I'll leave definition \"\" and just describe in text.\n\nLet me write the text for each item clearly.\n\nItem texts:\n- \"Edward Jones reported 20,514 financial advisors (actual) at period end for the second quarter of 2026.\"\n- \"Edward Jones reported an average of 20,537 financial advisors for the second quarter of 2026.\"\netc.\n\nNow reason: \"The firm discloses financial advisor headcount ('Financial advisors (actual)') at period end and on average; these are whole-firm figures.\"\n\ndiffers_because: \"\" (not applicable for facts).\n\nderivation: operation \"\", inputs [].\n\nLet me now also double-check the periods for the Q2 figures. Chunk #60 source says \"period 2026-06-26\" and title \"Second Quarter 2026 versus Second Quarter 2025\". So current period = 2026Q2 (three months ended June 26, 2026), prior = 2025Q2 (three months ended June 27, 2025). Good.\n\nNote: The #60 chunk shows \"At period end 20,514 20,309\" - current vs prior. And \"Average 20,537 20,316\". Yes.\n\nAlright, let me also verify there isn't an even more recent or different consolidated figure I'm missing. The search pool includes #51 (Q1 2026) but it's cut off before showing the figure. #69 (Q3 2025) doesn't show headcount. #86, #89, #93 are U.S./Canada splits. #79, #82 U.S./Canada splits.\n\nActually, chunk #51: \"Financial advisors (actual): At period end\" - cut off. It might have shown a total figure but it's not in the text we have. So no.\n\nI think I have the key consolidated totals. \n\nShould I also include the U.S. and Canada split for completeness as partial facts? Let me consider adding them, but it might be overkill. The instruction emphasizes the item \"says what it covers (period, scope)\". For a narrower group, scope = \"U.S.\" or \"Canada\".\n\nI'll add a couple of key split items? Actually, I'll keep it focused on the total firm, since that's what \"advisor headcount for the firm\" asks. Adding splits could be seen as partial facts and helpful, but the primary need is the total.\n\nI'll include the total firm figures only. This is cleanest and directly answers.\n\nActually, let me reconsider once more. The downstream question \"Client assets per advisor across the five -- and is that comparison even valid?\" They want advisor headcount for each of five firms to compute client assets per advisor. For Edward Jones, they need the firm's total advisor headcount. So the consolidated total is exactly what's needed.\n\nFinal answer: 10 items (facts), label \"fact\".\n\nLet me write quotes carefully matching the source text (with the spacing compressed reasonably but keeping exact wording). I'll use the key phrases.\n\nQuote for #60 at period end: \"At period end                                                              20,514                         20,309                      1%\"\nQuote for #60 average: \"Average                                                                    20,537                         20,316                      1%\"\n\nQuote for #130 at year end: \"At year end                                                                            20,425                20,125                19,232                         1%\"\nQuote for #130 average: \"Average                                                                                20,331                19,650                18,945                         3%\"\n\nThese are fine.\n\nNow write out.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported 20,514 financial advisors (actual) at period end for the second quarter of 2026.",
+            "quote": "Financial advisors (actual):\n  At period end                                                              20,514                         20,309                      1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,537 financial advisors for the second quarter of 2026.",
+            "quote": "Average                                                                    20,537                         20,316                      1%",
+            "value": "20,537",
+            "unit": "financial advisors",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,309 financial advisors (actual) at period end for the second quarter of 2025.",
+            "quote": "At period end                                                              20,514                         20,309                      1%",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,316 financial advisors for the second quarter of 2025.",
+            "quote": "Average                                                                    20,537                         20,316                      1%",
+            "value": "20,316",
+            "unit": "financial advisors",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,425 financial advisors (actual) at year end for 2025.",
+            "quote": "At year end                                                                            20,425                20,125                19,232                         1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "FY2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,331 financial advisors for 2025.",
+            "quote": "Average                                                                                20,331                19,650                18,945                         3%",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "FY2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,125 financial advisors (actual) at year end for 2024.",
+            "quote": "At year end                                                                            20,425                20,125                19,232                         1%",
+            "value": "20,125",
+            "unit": "financial advisors",
+            "period": "FY2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 19,650 financial advisors for 2024.",
+            "quote": "Average                                                                                20,331                19,650                18,945                         3%",
+            "value": "19,650",
+            "unit": "financial advisors",
+            "period": "FY2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 19,232 financial advisors (actual) at year end for 2023.",
+            "quote": "At year end                                                                            20,425                20,125                19,232                         1%",
+            "value": "19,232",
+            "unit": "financial advisors",
+            "period": "FY2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 18,945 financial advisors for 2023.",
+            "quote": "Average                                                                                20,331                19,650                18,945                         3%",
+            "value": "18,945",
+            "unit": "financial advisors",
+            "period": "FY2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The firm discloses whole-firm financial advisor headcount (labeled 'Financial advisors (actual)') at period/year end and on average, so these are facts.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

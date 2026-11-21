@@ -1,0 +1,543 @@
+{
+  "question_id": "Q13",
+  "question": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2025Q4#7",
+    "MS-TR-2026Q1#24",
+    "MS-TR-2024Q4#94",
+    "MS-TR-2025Q3#13",
+    "MS-TR-2026Q2#16",
+    "MS-TR-2025Q4#12",
+    "MS-TR-2024Q4#9",
+    "MS-TR-2025Q2#34",
+    "MS-TR-2026Q1#13",
+    "MS-TR-2025Q3#42",
+    "MS-DECK-2026-strategic-update#22",
+    "MS-10Q-2025Q3#60",
+    "MS-TR-2025Q3#15",
+    "MS-TR-2025Q4#20",
+    "MS-TR-2025Q1#13",
+    "MS-TR-2026Q2#21",
+    "MS-TR-2026Q2#28",
+    "MS-TR-2025Q2#35",
+    "MS-TR-2025Q3#25",
+    "MS-DECK-2026-strategic-update#13",
+    "MS-DECK-2026-strategic-update#32",
+    "MS-TR-2026Q3#23",
+    "MS-TR-2026Q3#15",
+    "MS-SUPP-2026Q2#37",
+    "MS-10Q-2026Q2#16",
+    "MS-DECK-2026-strategic-update#23",
+    "MS-TR-2026Q2#23",
+    "MS-TR-2024Q4#77",
+    "MS-TR-2025Q3#43",
+    "MS-TR-2026Q3#13",
+    "MS-TR-2024Q4#13",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2026Q2#59",
+    "MS-TR-2025Q1#70",
+    "MS-10Q-2026Q2#61",
+    "MS-SUPP-2026Q3#17",
+    "MS-10K-2025#164",
+    "MS-TR-2024Q4#26",
+    "MS-TR-2026Q3#32",
+    "MS-TR-2025Q4#19",
+    "MS-TR-2026Q2#14",
+    "MS-TR-2026Q3#16"
+  ],
+  "schema_fallback": [],
+  "enum_values": 136,
+  "at": "2026-11-21T15:05:42.259927-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14879,
+    "output_tokens": 22458,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 13215,
+    "reasoning_tokens": 16198,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.19
+  },
+  "wall_s": 124.2,
+  "tokens_per_s": 180.82,
+  "ttft_s": 2.19,
+  "reasoning_content": "This is a complex task. I need to write the answer for Morgan Stanley only, aspect by aspect. Let me analyze the evidence matrix and produce claims.\n\nKey considerations:\n- One firm (Morgan Stanley), so aspect by aspect, no \"<Firm>: \" prefix needed? Actually the instruction says \"Several firms: aspect by aspect... each claim starting '<Firm>: '. One firm: aspect by aspect.\" So one firm, no firm prefix needed.\n- a1 through a5, a7 are fact/series cells - each item becomes a claim.\n- a6 is adjacent only (stand-in figure, proxy). Items go to adjacent with differs_because.\n- a7 requires why-line for every item.\n- a8 comparison - exactly one claim with part_id a8.\n\nAlso there are cells with basis break (a6) - \"state each basis with its own periods; never join them\".\n\nAlso items with \"computation\" line - none here apparently. Let me check. No computation lines visible.\n\nLet me also note \"quote not verbatim\" items - never put in quotation marks.\n\nLet me structure the claims.\n\nFor a1, items 1-11, all facts. Each claim cites chunk ids. I need to write claims. Since it's one firm, aspect by aspect. part_id for each claim should be... the instruction says \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nSo for fact cells like a1.MS, the part_id is a1.MS? Wait, the part_id enum includes \"a1.MS\" ... \"a8.MS\" and \"a1\" ... \"a8\". The cell ids are a1.MS, a2.MS, etc. So each item from a1.MS should carry part_id \"a1.MS\".\n\nWait let me re-read. \"A fact cell is a claim\" - so each fact cell (a1.MS, a2.MS, etc.) is a claim? But there are multiple items per aspect. Let me re-read.\n\nActually the instruction: \"a cell id is the part_id of what you write from it\". So each item (which is within a cell a1.MS) - the part_id is a1.MS.\n\nHmm, but \"Every claim... carries the part_id of the cell it comes from\". Each item is a cell? Let me look: \"Evidence matrix, aspect by aspect (a cell id is the part_id of what you write from it): Aspect a1... a1.MS Morgan Stanley: fact item 1, item 2...\".\n\nSo the cell is a1.MS, containing items 1-11. Each item is written as a claim with part_id a1.MS.\n\nWait, actually, re-reading more carefully. The comparison aspects say \"write exactly one claim with that aspect's id as part_id\". For fact cells, \"A fact cell is a claim\". But then \"item\" - each item is... hmm.\n\nActually I think each \"item\" within a cell becomes a separate claim, all sharing the cell's part_id (a1.MS). Let me go with that.\n\nActually wait, let me reconsider. The \"claim\" in the output has part_id. For a fact cell with multiple items, do I write one claim per item or one claim per cell?\n\nLooking at \"A fact cell is a claim, also when it is partial\". And \"item\" refers to individual facts within the cell. Hmm.\n\nActually I think the structure is: each item in the matrix becomes a claim. The part_id is the cell id (a1.MS). Let me write one claim per item.\n\nLet me look at the a8 comparison. It says \"needs exactly one comparison claim, part_id a8\". So a8 items 1-8 need to be synthesized into ONE claim that answers whether comparison can be made. Wait, a8 is marked \"fact\" not \"comparison\"? Let me check.\n\nAspect a8: \"How does the firm position its workplace and stock-plan participant conversion efforts relative to competitors or the industry? -> needs exactly one comparison claim, part_id a8\"\n\nSo a8 is a comparison aspect. The \"a8.MS ... fact item 1-8\" are the underlying facts. But the comparison claim should be ONE claim with part_id a8.\n\nWait, but the comparison aspects section says: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why\".\n\nSo a8 is comparison. The comparison here is about positioning relative to competitors/industry. Since it's a single firm, the comparison is really about whether the firm positions itself relative to competitors.\n\nHmm. The a8 items are all Morgan Stanley's own statements about its competitive position (industry leader, differentiated funnel, etc.). These are facts about how MS positions itself. The comparison claim needs to answer whether the comparison can be made.\n\nActually, re-reading: a8 is listed as \"fact\" in the matrix (a8.MS Morgan Stanley: fact), but the aspect header says \"-> needs exactly one comparison claim, part_id a8\".\n\nWait, let me look again at the aspect definitions. The top says:\n\"- a8 [comparison]: How does the firm position its workplace and stock-plan participant conversion efforts relative to competitors or the industry? -> needs exactly one comparison claim, part_id a8\"\n\nSo a8 is a comparison aspect. It needs exactly one claim with part_id a8.\n\nBut then in the matrix, \"a8.MS Morgan Stanley: fact item 1-8\" are provided. These are the facts to cite.\n\nSo I need to write ONE comparison claim for a8. The comparison: is it valid? Since there's only one firm (Morgan Stanley), and the comparison is about positioning relative to competitors/industry... \n\nActually, the comparison claim should state whether the comparison can be made. Since all items are Morgan Stanley's own self-positioning statements (not actual competitor data), the comparison would be: MS positions itself as industry leader/differentiated, but these are self-reported positioning statements, not comparisons against actual competitor figures.\n\nHmm, let me think about what \"comparison\" means here. The aspect asks \"How does the firm position... relative to competitors or the industry?\" This is really a fact question about positioning, but marked as comparison.\n\nThe comparison aspect instruction says: \"write exactly one claim that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on\".\n\nSo for a8, I need to write one claim stating whether the comparison (positioning relative to competitors) can be made. Since there's only one firm and only its own statements, the comparison would be... the firm's self-reported positioning, not a head-to-head comparison.\n\nActually, I think I should write one claim summarizing that Morgan Stanley positions itself as industry leader with a differentiated funnel, citing the items, and note this is its own positioning. But the comparison validity...\n\nLet me re-read more carefully. The comparison aspects note: \"Compare or rank figures across firms only when the aspect is marked same_basis... otherwise say they are not comparable and why\".\n\na8 is not marked same_basis. There's only one firm (MS). So the comparison is essentially MS vs \"competitors or the industry\", but we only have MS's own statements.\n\nI think the comparison claim should state: this comparison cannot be made on a same-basis with actual competitor figures; only Morgan Stanley's own self-positioning statements are available. So it's \"not valid\" as a comparison against actual competitor data, but MS's self-positioning is available.\n\nActually, let me think about the practical structure. The comparison claim cites the items (facts) and states validity.\n\nLet me write the comparison claim as: The comparison is valid only in the sense that Morgan Stanley's own positioning statements are available (it describes itself as industry leader with differentiated funnel), but there are no competitor or industry figures to compare against, so a true head-to-head comparison is not valid.\n\nHmm, I'll write it carefully.\n\nActually, let me reconsider the whole task structure and just produce the output.\n\nLet me also note the \"recency\" aspect a7 needs why-lines, and the \"time window\" question - is there a time window? The question doesn't explicitly state a time window, but a7 is \"inside the time window\". The recency items have period fields. Let me check if there's a time window mentioned.\n\nThe question: \"How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?\" No explicit time window.\n\na7 is marked [recency], so \"For every item of an aspect marked recency... end the claim with Why it might matter\".\n\nSo all a7 items need why-lines.\n\nAlso \"With a time window, order claims and adjacent items newest first across the whole answer.\" Since no time window, no special ordering. But a7 items are recency, need why-lines.\n\nNow let me also check: the question has no time window, so no why-line needed except for recency aspect a7.\n\nLet me now write all claims.\n\nFor each fact item, I write a claim with text, chunk_ids, part_id.\n\nLet me carefully handle \"quote not verbatim\" items - don't use quotation marks.\n\nAlso \"figure not found in its passage\" - items marked so keep figure out. Let me check a6 items: item 2 says \"period not stated in a usable form\", item 9, 10, 11 \"period not stated in a usable form\". These are adjacent items.\n\nLet me now go through each aspect.\n\n### a1 (part_id a1.MS) - 11 items, all fact claims\n\nItem 1: quote verbatim (not marked not verbatim). So I can quote \"strategic client acquisition model\". Actually the quote is provided. Since it's not marked \"quote not verbatim\", I can use quotation marks.\n\nWait, the instruction: \"An item marked 'quote not verbatim' is never put in quotation marks.\" So items NOT marked quote-not-verbatim CAN be quoted verbatim.\n\nBut I should be careful about what I quote. The item gives a quote field. I can incorporate it.\n\nLet me write each claim. I need to date every claim from source line. But for a1, the items don't all have explicit periods. Let me check.\n\nItem 1: cite MS-TR-2025Q4#7, period 2025-12-31. \"The 4Q25 earnings call (period ended December 31, 2025)...\"\n\nActually I should use the source's period. Let me use the source info provided at bottom.\n\nLet me write dates based on source \"from\" field:\n- MS-TR-2025Q4#7: period 2025-12-31, published 2026-01-15 \u2192 4Q25 earnings call (period ended Dec 31, 2025)\n- MS-TR-2026Q1#24: period 2026-03-31 \u2192 1Q26 call\n- MS-TR-2024Q4#94: period 2024-12-31\n- MS-TR-2025Q3#13: 2025-09-30\n- MS-TR-2026Q2#16: 2026-06-30\n- MS-TR-2025Q4#12: 2025-12-31\n- MS-TR-2024Q4#9: 2024-12-31\n- MS-TR-2025Q2#34: 2025-06-30\n- MS-TR-2026Q1#13: 2026-03-31\n- MS-TR-2025Q3#42: 2025-09-30\n- MS-DECK-2026-strategic-update#22: n/a, published 2026-01-15\n\nThe instruction says \"Date every claim from its source line, e.g. 'The 2Q26 10-Q (period ended June 26, 2026) states ...' or 'On the 3Q26 earnings call (October 2026), management said ...'\".\n\nSo I'll date with period.\n\nLet me write all claims concisely but accurately.\n\nThis is going to be long. Let me be systematic.\n\nFor a1, each item:\n\n1. cite #7, period 2025-12-31 (4Q25). Quote verbatim. \"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley described its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014as comprising its 'strategic client acquisition model,' positioning Workplace as the top of the funnel for acquiring wealth management clients.\"\n\n2. #24, 2026-03-31, quote not verbatim. CFO describes funnel beginning with retaining vested workplace assets (translating into NNA), then channel migration where workplace assets seek advice and move into adviser-led channel.\n\n3. #94, 2024-12-31. \"channel migration\" = workplace assets moving into advisor-led, $300 billion since 2020. value $300 billion.\n\n4. #13, 2025-09-30. attributes migration to consistent investments in differentiated platform.\n\n5. #16, 2026-06-30, quote not verbatim. Workplace brings relationships/assets onto platform, delivering advice and solutions to build fee-based assets.\n\n6. #12, 2025-12-31. Morgan Stanley at Work positions as early trusted advisor to private companies (Carta partnership), employees benefit from equity comp plans, liquidity, full-service advice.\n\n7. #9, 2024-12-31. investments in self-directed and Workplace channels drive differentiated client acquisition funnel.\n\n8. #34, 2025-06-30. 70% of workplace-originated flows are net new assets. value 70%.\n\n9. #13, 2026-03-31. since 2020 over $400 billion new adviser-led assets from Workplace or E*TRADE.\n\n10. #42, 2025-09-30. referral-based partnership with Carta.\n\n11. #22 deck. strategic-update deck depicts client lifecycle.\n\nLet me write them all.\n\nActually, I need to be efficient. Let me draft all claims now.\n\nFor the dates, I'll use consistent format like \"On the 4Q25 earnings call (period ended December 31, 2025)\".\n\nLet me write everything out.\n\nI'll produce the full answer now.\n\nLet me handle a6 adjacent items with differs_because. a6 is \"stand-in figure (adjacent only)\". The aspect is a proxy/stand-in. Each item goes to adjacent with differs_because.\n\nThe differs_because should explain why the stand-in differs from actual conversion. General: \"This is a stand-in figure (closest disclosed proxy), not a direct measure of participant conversion.\"\n\nBut the instruction says \"differs_because from the cell, in your words with the same meaning.\" The cell is a6, which is \"What is the closest disclosed figure to conversion of participants, such as total workplace participants, wealth management net new assets, or advisor headcount changes?\" and marked \"stand-in figure (adjacent only)\".\n\nSo differs_because for each adjacent item should explain it's a stand-in, not the actual conversion metric.\n\nAlso there's a \"basis break\" line for a6: \"whole firm: 2025Q1; Workplace channel: 2026-06-30, 2026-09-30 -> state each basis with its own periods; never join them\".\n\nSo I need to state each basis with its own periods.\n\nThe a6 items:\n1. Advisor-Led Flows definition, ~$60bn avg 2020-2024 vs ~$100bn 2025. (deck)\n2. Advisor-led assets $99 billion FY2025. period not stated.\n3. $400 billion since 2020.\n4. $1.2 trillion (20% of adviser-led assets).\n5. 70% of workplace flows net new assets.\n6. $20 billion incremental Q1 2025.\n7. 6.6 million stock plan participants June 30, 2026 vs 6.5 million Dec 31, 2025.\n8. 6.7 million Sep 30, 2026 vs 6.6 million June 30, 2026.\n9. NNA $356.3bn 2025, $251.7bn 2024, $282.3bn 2023.\n10. NNA $251.7bn 2024.\n11. NNA $282.3bn 2023.\n\nThese are all stand-in figures. Each goes to adjacent with differs_because.\n\nFor items with \"period not stated in a usable form\", I should not state a period. Actually item 2 says \"period not stated in a usable form\" and \"value 99 unit USD billions\". I'll just say \"for full year 2025\" as in the quote? Actually the quote says \"for the full year\". Hmm. The item's value field says \"99, unit USD billions\" and period \"not stated in a usable form\". \n\nActually wait, the quote mentions \"record $99 billion for the full year\". So FY2025. But code says period not stated in usable form. I should probably just say what the source says without asserting a specific period label. I'll say \"grew to a record $99 billion for the full year\".\n\nFor items 9, 10, 11: NNA figures. Item 9 lists three years with values but \"period not stated in a usable form\". The quote is \"Net new assets $356.3 $251.7 $282.3\". Hmm, the item text says \"reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.\"\n\nItems 9, 10, 11 seem redundant (item 10 and 11 split out item 9). Actually item 9 has value 356.3, items 10 (251.7) and 11 (282.3) are separate. So three separate claims/adjacent items.\n\nThis is getting complicated. Let me just write all three as separate adjacent items, or combine? They're separate items so separate adjacent entries.\n\nActually, items 9, 10, 11 all cite MS-10K-2025#164 with the same quote. Item 9 covers all three years ($356.3/$251.7/$282.3), item 10 = $251.7 (2024), item 11 = $282.3 (2023). These are somewhat redundant but I'll write them as given.\n\nHmm wait, this seems like over-decomposition. But I'll follow the matrix. Actually, let me reconsider - maybe I should write item 9 as one adjacent entry covering all three years, and items 10 and 11 as separate. But that's redundant. \n\nActually, I think the cleaner approach: write each item as its own adjacent entry. But items 10 and 11 are subsets of item 9. To avoid redundancy, maybe combine. But the instruction is to write from each cell/item. I'll write them separately but maybe merge 9/10/11 into one? \n\nLet me just write each item separately as adjacent entries. It's fine to have some redundancy since they cite the same source but different values.\n\nActually, I'll write item 9 as one entry (the three-year series), and skip 10 and 11 as they're redundant subsets? No, I should follow the matrix. Hmm.\n\nLet me think about efficiency and correctness. The grader wants claims from each item. I'll write:\n- Item 9: NNA $356.3bn (2025), $251.7bn (2024), $282.3bn (2023)\n- Item 10: NNA $251.7bn (2024)\n- Item 11: NNA $282.3bn (2023)\n\nThese are redundant. I think I can combine into fewer entries. But to be safe, I'll write item 9 comprehensively and note items 10/11 as covered. Actually, let me just write them all as three separate adjacent entries to be safe.\n\nHmm, actually, this creates a lot of noise. Let me write item 9 covering all three, and combine 10 and 11 into it (since they're the same figures). Actually no\u2014let me just be faithful and write all items.\n\nGiven the length constraints, I'll write them concisely.\n\nLet me now also determine differs_because for a6 items. Since all are stand-in figures (proxies), the differs_because should convey they're not actual conversion metrics.\n\nFor stock plan participants (items 7, 8): \"Stock plan participants are a count of accounts in the workplace channel, not a count converted into wealth management clients.\"\n\nFor NNA (items 9, 10, 11): \"Wealth management net new assets are an aggregate inflow figure, not a measure of participants converted.\"\n\nFor the various \"advisor-led assets originating from workplace/E*TRADE\" figures (items 1-6): \"These are asset-flow figures, not counts of participants converted.\"\n\nActually the aspect a6 itself is \"closest disclosed figure to conversion of participants\". The differs_because should reflect the specific proxy nature.\n\nLet me write a generic but specific differs_because for each.\n\nActually, I realize the instruction says for adjacent items: \"each with differs_because from the cell\". The cell a6 is defined as \"stand-in figure (adjacent only)\". So the differs_because is essentially: this is a stand-in/proxy, not the actual conversion metric.\n\nI'll write specific differs_because for each item type.\n\nLet me now write the entire answer.\n\nFor a8 comparison, one claim. Let me think about what to write.\n\nThe comparison aspect: \"How does the firm position its workplace and stock-plan participant conversion efforts relative to competitors or the industry?\"\n\nItems are MS's self-statements: singular position, industry leader, differentiated funnel, 70% of top unicorns, etc.\n\nComparison claim: This comparison can only be made on the basis of Morgan Stanley's own self-reported positioning; there are no competitor or industry benchmark figures in the evidence. So it's \"valid only for Morgan Stanley's self-positioning, not as a head-to-head comparison.\"\n\nActually, let me reconsider. The comparison aspect needs to answer \"whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why\".\n\nSince we only have one firm and its own statements, and no competitor figures, the comparison (MS vs competitors/industry) cannot be made on actual figures. Only MS's self-positioning is available.\n\nI'll write: The comparison is not valid as a same-basis comparison because the evidence contains only Morgan Stanley's own self-reported positioning statements (industry leader, differentiated funnel, 70% of top-100 unicorns in its pipeline) and no competitor or industry figures to compare against.\n\nLet me cite the key items.\n\nNow let me write everything out fully.\n\nLet me carefully compose dates. I'll use period info from sources.\n\nFor transcripts, \"period\" is the quarter end. I'll write \"On the [Q] earnings call (period ended [date])\".\n\nFor deck: \"In its January 2026 strategic-update deck\" (published 2026-01-15).\n\nFor 10-Q: \"The 3Q25 10-Q (period ended September 30, 2025)\".\n\nFor supplement: \"The 2Q26 supplement (period ended June 30, 2026)\" or \"3Q26 supplement (period ended September 30, 2026)\".\n\nFor 10-K: \"The 2025 10-K (period ended December 31, 2025)\".\n\nNow let me write.\n\nFor a7 why-lines, each item has a \"context\" line and \"related\" lines. I use the context line (reason/purpose/first/record/change/consequence) or related facts.\n\nItem 1 (LeadIQ): context says \"in pilot, are showing progress... including LeadIQ... matching workplace and self-directed relationships and facilitating engagement\". Why it might matter: LeadIQ is one of MS's early AI use cases, some live and some in pilot, showing progress. Actually I should pick one reason. The context shows LeadIQ is among early AI use cases \"in pilot, are showing progress\".\n\nWhy it might matter: \"the source notes it is among Morgan Stanley's early AI use cases, some live and some in pilot, that are showing progress.\" That's a reason/purpose from context.\n\nActually the why-line should give one sentence on why it might matter. Let me use the context.\n\nItem 2 (Carta partnership): context \"puts us at the center of new client stock plan opportunities as private companies consider going public.\" Why: it positions the firm at the center of new client stock plan opportunities.\n\nItem 3 (expanded Carta collaboration + Zero Hash): context \"deepening our competitive moats... reinforcing our leadership in the industry and enhancing our ability to service our clients with unique capabilities.\" Why: deepens competitive moats and reinforces industry leadership.\n\nItem 4 (MS at Work, 50,000 private companies): context \"illustrates why Morgan Stanley wins as the integrated firm... support our clients throughout an entire life cycle.\" Why: positions MS to support clients through the entire lifecycle.\n\nLet me write these why-lines using context.\n\nFor each a7 item, why-line format: \"Why it might matter: ...\"\n\nNow let me draft the full submission.\n\nLet me write out all claims now carefully.\n\nI'll organize as: claims array (facts a1-a5, a7, a8), adjacent array (a6 items), gaps array (empty, since code gaps \"none\" and I should add a gap only for something not named... actually the instruction says \"Add a gap of your own only for something those gaps do not name.\" There are no code gaps, so do I add gaps? The gaps field - I can leave empty array. But wait, are there any gaps needed?\n\nThe \"Gaps added by code\" says \"none\". So no gaps to add unless something the code gaps don't name. Since there are no code gaps and I don't see obvious missing info, I'll leave gaps empty.\n\nActually wait - the standard wording mentions advisor pay gaps, but that's not relevant here.\n\nLet me now also double check: a5 has \"Comparability (code): unverified: not in the metric definitions file; never compared across firms\". So a5 items are fact claims (not compared). I write them as claims with part_id a5.MS.\n\na6 has same \"unverified\" note but is adjacent only.\n\nLet me write the final answer now.\n\nFor part_id, each item uses its cell's part_id:\n- a1 items \u2192 \"a1.MS\"\n- a2 items \u2192 \"a2.MS\"\n- a3 items \u2192 \"a3.MS\"\n- a4 items \u2192 \"a4.MS\"\n- a5 items \u2192 \"a5.MS\"\n- a6 items \u2192 \"a6.MS\" (adjacent)\n- a7 items \u2192 \"a7.MS\"\n- a8 \u2192 \"a8\" (comparison claim)\n\nWait, but the part_id enum includes \"a1.MS\" through \"a8.MS\" and also \"a1\" through \"a8\". The comparison claim a8 uses \"a8\" (the aspect id). The fact cells use \"a1.MS\" etc.\n\nActually, let me check. The instruction says \"write exactly one claim with that aspect's id as part_id\" for comparison. So a8 \u2192 \"a8\".\n\nFor fact cells, part_id is the cell id \"a1.MS\" etc.\n\nGood.\n\nNow let me write everything. This will be a large answer.\n\nLet me write concisely but completely.\n\nI need to be careful with chunk_ids - only cite from the Sources list. Each claim cites its item's cite chunk id(s).\n\nFor items with multiple cites (like a2 item 14, a6 item 1, a5 item... etc.), include all.\n\nLet me now compose.\n\nI'll write the claims.\n\nLet me carefully produce each text.\n\n---\n\n**a1 claims (part_id a1.MS):**\n\n1. cite [MS-TR-2025Q4#7]\n\"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley described its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014each a category leader, as together comprising its 'strategic client acquisition model,' positioning Workplace as the top of the funnel for acquiring wealth management clients.\"\n\n2. cite [MS-TR-2026Q1#24], not verbatim\n\"On the 1Q26 earnings call (period ended March 31, 2026), the CFO described the funnel as beginning with retaining vested workplace assets (which translates into net new assets), followed over time by channel migration where workplace assets seek advice and move into the adviser-led channel.\"\n\n3. cite [MS-TR-2024Q4#94]\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley described channel migration as workplace assets that began in the Workplace channel moving into the advisor-led channel, with $300 billion doing so since 2020.\"\n\n4. cite [MS-TR-2025Q3#13]\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley attributed the migration of workplace-originated assets into the advisor-led channel to its consistent investments in its differentiated platform.\"\n\n5. cite [MS-TR-2026Q2#16], not verbatim\n\"On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley described Workplace as bringing relationships and assets onto the platform, and then delivering advice and solutions to those relationships to build fee-based assets.\"\n\n6. cite [MS-TR-2025Q4#12]\n\"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley described its Morgan Stanley at Work business as positioning it as an early trusted advisor to private companies, where employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice as companies grow.\"\n\n7. cite [MS-TR-2024Q4#9]\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley described its investments in the self-directed and Workplace channels as driving its 'differentiated client acquisition funnel.'\"\n\n8. cite [MS-TR-2025Q2#34]\n\"On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley stated that 70% of the flows that originate from workplace are net new assets to the firm.\"\n\n9. cite [MS-TR-2026Q1#13]\n\"On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.\"\n\n10. cite [MS-TR-2025Q3#42]\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley described a referral-based partnership with Carta under which private companies moving from private to public are referred to Morgan Stanley, supporting conversion into its platform.\"\n\n11. cite [MS-DECK-2026-strategic-update#22], not verbatim\n\"In its January 2026 strategic-update deck, Morgan Stanley depicted a client lifecycle in which workplace founders and employees move from financial wellness and equity compensation through to full-service wealth advice and asset allocation as companies go public.\"\n\n---\n\n**a2 claims (part_id a2.MS):**\n\n1. cite [MS-10Q-2025Q3#60]\n\"The 3Q25 10-Q (period ended September 30, 2025) defines the workplace channel as including equity compensation solutions for companies, their executives and employees.\"\n\n2. cite [MS-10Q-2025Q3#60]\n\"The 3Q25 10-Q (period ended September 30, 2025) defines stock plan participants as total accounts with vested and/or unvested stock plan assets in the workplace channel, with individuals holding accounts in multiple plans counted in each plan.\"\n\n3. cite [MS-TR-2025Q3#15]\n\"On the 3Q25 earnings call (period ended September 30, 2025), the CFO described the workplace channel as a powerful asset acquisition tool, with the reopening of the IPO market supporting net new assets.\"\n\n4. cite [MS-TR-2026Q2#16], not verbatim\n\"On the 2Q26 earnings call (period ended June 30, 2026), the CFO said Workplace brings relationships and assets onto the platform and is a strong contributor to the top of the funnel, with stock plan IPO flows representing just over half of overall net new assets in the quarter.\"\n\n5. cite [MS-TR-2025Q4#7]\n\"On the 4Q25 earnings call (period ended December 31, 2025), the CEO said the financial advisors, Workplace, and E*TRADE channels together comprise the firm's strategic client acquisition model.\"\n\n6. cite [MS-TR-2025Q4#20]\n\"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full year 2025, versus historical averages of around $60 billion per year.\"\n\n7. cite [MS-TR-2025Q1#13]\n\"On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley said assets migrating to the advisor-led channel that originated from the workplace channel increased by an incremental $20 billion in the quarter, adding to roughly $300 billion accumulated from workplace since the channel expanded in 2020.\"\n\n8. cite [MS-TR-2026Q2#21], not verbatim\n\"On the 2Q26 earnings call (period ended June 30, 2026), the firm said it has about 70% of the top 100 unicorns by market cap in its workplace pipeline, with IPOs serving as a source of net new assets at the top of the funnel.\"\n\n9. cite [MS-TR-2025Q2#34]\n\"On the 2Q25 earnings call (period ended June 30, 2025), the CFO said 70% of the flows that originate from the workplace channel are actually net new assets to the firm.\"\n\n10. cite [MS-TR-2026Q2#28], not verbatim\n\"On the 2Q26 earnings call (period ended June 30, 2026), the CFO said the firm is working on a referral model that can begin as early as the financial education spot to convert workplace clients into advice-based (advisor-led) relationships.\"\n\n11. cite [MS-TR-2025Q4#12], not verbatim\n\"On the 4Q25 earnings call (period ended December 31, 2025), the CEO said the Morgan Stanley at Work business positions the firm as an early trusted advisor to over 50,000 private companies, with employees benefiting from management of equity compensation plans, liquidity opportunities, and full-service advice.\"\n\n12. cite [MS-TR-2025Q2#35]\n\"On the 2Q25 earnings call (period ended June 30, 2025), the CFO said the firm historically had about $16 billion per year originating from workplace, and was running ahead of that in 2025.\"\n\n13. cite [MS-TR-2025Q3#25], not verbatim\n\"On the 3Q25 earnings call (period ended September 30, 2025), the CFO said workplace has been a contributor to net new assets, fee-based flows, and channel migration, citing a $300 billion workplace migration figure and about $60 billion of migration per year historically.\"\n\n14. cite [MS-DECK-2026-strategic-update#13, MS-DECK-2026-strategic-update#32], not verbatim\n\"In its January 2026 strategic-update deck, Morgan Stanley showed advisor-led flows from workplace and E*TRADE of approximately $60 billion average for 2020-2024 and approximately $100 billion for 2025.\"\n\n15. cite [MS-TR-2026Q3#23], not verbatim\n\"On the 3Q26 earnings call (period ended September 30, 2026), the CEO described the attachment points that bring clients to E*TRADE and, where appropriate, fee-based flows that make their way to advisers, with clients acquired in the corporate stock plan (workplace) context.\"\n\n16. cite [MS-TR-2026Q3#15]\n\"On the 3Q26 earnings call (period ended September 30, 2026), the CFO said the firm's pipeline and connectivity across channels allows it to build relationships early and deepen them over time.\"\n\n---\n\n**a3 claims (part_id a3.MS):**\n\n1. cite [MS-SUPP-2026Q2#37]\n\"The 2Q26 supplement (period ended June 30, 2026) states Morgan Stanley's Workplace channel includes equity compensation solutions (stock plan administration) for companies, their executives and employees, and this channel is the entry point through which workplace/stock-plan participants are engaged.\"\n\n2. cite [MS-10Q-2026Q2#16], not verbatim\n\"The 2Q26 10-Q (period ended June 30, 2026) states Morgan Stanley's Wealth Management segment provides workplace services, including stock plan administration, and retirement plan services, as one of three channels (Advisor-Led, Self-Directed and Workplace) through which it supports clients.\"\n\n3. cite [MS-DECK-2026-strategic-update#22], not verbatim\n\"In its January 2026 strategic-update deck, Morgan Stanley shows a client lifecycle offering spanning financial wellness and employee benefits, founders wealth strategies, full-service wealth advice and asset allocation, family office solutions, trust & estate planning, private shares trading & lending, and IPO execution and support services to move participants from the workplace/employee stage into full wealth relationships.\"\n\n4. cite [MS-DECK-2026-strategic-update#23], not verbatim\n\"In its January 2026 strategic-update deck, Morgan Stanley's 'MS at Work' offering provides stock plan and 401(k) administration, cap table management, cash management solutions, and private capital markets/tender/financing and IPO services for late-stage/IPO companies.\"\n\n5. cite [MS-TR-2026Q2#23]\n\"On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said it uses referral models and technology such as the 'LeadIQ' product to match individuals (including workplace participants) with advisers, with the goal of becoming their principal financial adviser.\"\n\n6. cite [MS-TR-2024Q4#77], not verbatim\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley said it has an exclusive partnership with Carta through which private stock plan/corporate companies are referred to Morgan Stanley as they go public, providing a seamless experience to convert those participants into wealth clients.\"\n\n7. cite [MS-TR-2025Q3#43], not verbatim\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said it offers advice-based services to founders and individuals of private companies through its Carta relationship, deepening relationships as companies transition from private to public.\"\n\n8. cite [MS-TR-2026Q2#28], not verbatim\n\"On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said its referral model for workplace participants can begin as early as the financial education spot and with 401(k) assets, to help individuals understand where they could use advice.\"\n\n9. cite [MS-TR-2026Q3#13]\n\"On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley said it continues to expand its retirement capabilities and deepen engagement with plan participants, creating opportunities to build advice-based relationships over time.\"\n\n10. cite [MS-TR-2024Q4#13]\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley said it provides financial wellness programs to company employees as part of the Integrated Firm, spanning from advice in corporate boardrooms to financial wellness programs for that company's employees.\"\n\n---\n\n**a4 claims (part_id a4.MS):**\n\n1. cite [MS-TR-2025Q3#8]\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said it uses an AI-powered lead distribution platform called LeadIQ that matches workplace and self-directed relationships and facilitates engagement with financial advisors.\"\n\n2. cite [MS-TR-2026Q2#28]\n\"On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said that for workplace participants who do not yet have an advice-based relationship, it works a referral model that can begin as early as the financial education spot and also through 401(k) assets, giving people the ability to understand where they could use advice.\"\n\n3. cite [MS-TR-2026Q1#24]\n\"On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said it drives channel migration from workplace to advisor-led through technology and investment, as workplace assets begin seeking advice.\"\n\n4. cite [MS-TR-2025Q3#13]\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said assets that originate from workplace migrate into the advisor-led channel as a result of consistent investments it has made into its differentiated platform.\"\n\n5. cite [MS-TR-2025Q4#12]\n\"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said Morgan Stanley at Work, through its exclusive partnership with Carta, positions it as an early trusted advisor to private companies, and employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice.\"\n\n6. cite [MS-TR-2026Q2#59]\n\"On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said it begins at the top of the funnel with corporate coverage, using the Integrated Firm to build corporate relationships that lead to workplace relationships.\"\n\n7. cite [MS-TR-2025Q1#70]\n\"On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley said advisors engage retail clients by sending 'next best actions,' and it has seen increased responses to these engagements.\"\n\n---\n\n**a5 claims (part_id a5.MS):**\n\n1. cite [MS-TR-2024Q4#94]\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley stated that since 2020 (over roughly the last five years), it has seen $300 billion of assets initiate in the Workplace channel and move into the advisor-led channel.\"\n\n2. cite [MS-TR-2025Q3#25]\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley stated it has seen about $60 billion of workplace-to-advisor-led migration per year, and as of the third quarter of 2025 was exceeding that pace on a full-year basis.\"\n\n3. cite [MS-DECK-2026-strategic-update#32]\n\"In its January 2026 strategic-update deck, Morgan Stanley defines 'Advisor-Led Flows from Workplace and E*TRADE' as assets brought into advisor-led relationships where the initial account was workplace or self-directed.\"\n\n---\n\n**a6 adjacent items (part_id a6.MS):**\n\nNote basis break: whole firm 2025Q1; Workplace channel 2026-06-30, 2026-09-30.\n\nItem 1: cite [#32, #13], not verbatim\n\"In its January 2026 strategic-update deck, Morgan Stanley defines 'Advisor-Led Flows from Workplace and E*TRADE' as assets brought into advisor-led relationships where the initial account was workplace or self-directed, and reports approximately $60 billion on average across 2020-2024 versus approximately $100 billion in 2025.\"\ndiffers_because: \"Advisor-led flows from workplace and E*TRADE are a dollar figure for assets, not a count of participants converted into wealth management clients.\"\n\nItem 2: cite [#20]\n\"On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley reported advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full year 2025, versus historical averages of around $60 billion per year.\"\ndiffers_because: similar.\n\nItem 3: cite [#13]\n\"On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.\"\n\nItem 4: cite [#13]\n\"On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that, inclusive of Workplace assets on the platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion, roughly 20% of adviser-led assets.\"\n\nItem 5: cite [#34]\n\"On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley stated that 70% of the flows that come from (originate from) workplace are actually net new assets to the firm.\"\n\nItem 6: cite [#13], period 2025Q1 (whole firm basis)\n\"On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley reported that assets migrating to the advisor-led channel that originated from the workplace channel added an incremental $20 billion in Q1 2025, adding to roughly $300 billion accumulated from workplace since the channel's 2020 expansion.\"\n\nItem 7: cite [#61], Workplace channel basis 2026-06-30, not verbatim\n\"The 2Q26 10-Q (period ended June 30, 2026) reports 6.6 million stock plan participants in the workplace channel at June 30, 2026, versus 6.5 million at December 31, 2025.\"\n\nItem 8: cite [#17], Workplace channel basis 2026-09-30, not verbatim\n\"The 3Q26 supplement (period ended September 30, 2026) reports 6.7 million stock plan participants in the workplace channel at September 30, 2026, versus 6.6 million at June 30, 2026.\"\n\nItem 9: cite [#164]\n\"The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.\"\n\nItem 10: cite [#164]\n\"The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $251.7 billion in 2024.\"\n\nItem 11: cite [#164]\n\"The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $282.3 billion in 2023.\"\n\nHmm, items 9, 10, 11 are very redundant. I'll write item 9 comprehensively and combine. Actually, I'll just write all three but it's noisy. Let me write item 9 covering all three, and skip 10, 11? No, the matrix lists them as separate items.\n\nActually, I'll merge 9, 10, 11 into one adjacent entry since they cite the same source and quote. But the instruction says write from each item. Let me write item 9 fully (covering all three years), and note items 10 and 11 are the same figures already included. Actually, to be safe and faithful, I'll write them as three entries but keep them short.\n\nHmm, actually the cleaner interpretation: items 9, 10, 11 are separate because each has a \"value\" field (356.3, 251.7, 282.3). They're meant to be separate adjacent entries. But writing three nearly-identical entries is wasteful.\n\nI'll write item 9 as the combined three-year figure, and combine 10 and 11 into it. Actually let me just write them as three separate adjacent entries, it's more faithful. But to reduce redundancy I could write:\n\nEntry A (item 9): \"reports WM NNA of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.\"\nEntry B (item 10): \"$251.7 billion in 2024.\"\nEntry C (item 11): \"$282.3 billion in 2023.\"\n\nI'll just do all three. It's fine.\n\nActually, wait - I need to reconsider. The \"period not stated in a usable form\" for items 9, 10, 11. So I shouldn't assert the year labels? The item text itself says \"in 2025, in 2024, in 2023\" and the quote is just \"Net new assets $356.3 $251.7 $282.3\". The value field for item 9 is \"356.3 unit USD billions\". The years come from the item's text description.\n\nI think I can state the years as the item text does, but the code flagged \"period not stated in a usable form\" meaning the source doesn't clearly map years. Hmm. Actually the item text explicitly says \"in 2025, in 2024, and in 2023\". So I'll state them but maybe note the source provides three figures without explicit year labels? \n\nActually, let me just follow the item text and write \"in 2025, 2024, and 2023\" as the item describes. The \"period not stated in a usable form\" is a code note I shouldn't necessarily reproduce. Actually, I should be careful - the instruction says \"State only the periods an item has\". Item 9's period field says \"period not stated in a usable form\" for items 9/10/11... wait let me recheck.\n\nItem 9: \"value 356.3 | unit USD billions | scope Wealth Management | definition ... | quote ... | cite MS-10K-2025#164 [period not stated in a usable form]\"\n\nItem 10: \"value 251.7 ... [period not stated in a usable form]\"\n\nItem 11: \"value 282.3 ... [period not stated in a usable form]\"\n\nSo the periods (2025, 2024, 2023) come from the item's descriptive text, not a \"period\" field. The [period not stated in a usable form] note is about the period field.\n\nI'll write the years as the descriptive text states them. It's fine.\n\nActually, let me reconsider. The note \"period not stated in a usable form\" suggests I shouldn't confidently assign years. But the item text explicitly lists years. I'll follow the item text since that's what's given. Actually the item text is: \"Morgan Stanley reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.\"\n\nI'll write that faithfully.\n\nOK let me also handle the differs_because for each a6 item. Since the cell is a stand-in/proxy, differs_because explains why it's not the actual conversion metric.\n\nLet me write generic-ish but specific differs_because:\n\nFor asset-flow items (1-6): \"These are dollar figures of adviser-led assets/flows originating from workplace and E*TRADE, a stand-in for conversion, not a count or rate of participants converted into wealth management clients.\"\n\nFor stock plan participant items (7-8): \"Stock plan participants are a count of total accounts with vested and/or unvested stock plan assets in the workplace channel, not a count of participants converted into wealth management clients.\"\n\nFor NNA items (9-11): \"Wealth management net new assets are aggregate client asset inflows across the segment, not a measure of participants converted from workplace/stock-plan into wealth management clients.\"\n\nNow the basis break for a6. The instruction: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nThe basis break: \"whole firm: 2025Q1; Workplace channel: 2026-06-30, 2026-09-30\".\n\nSo items 1-6 (asset figures) are \"whole firm\" basis with period 2025Q1? Actually that's confusing. Let me re-read.\n\n\"basis break (code): whole firm: 2025Q1; Workplace channel: 2026-06-30, 2026-09-30 -> state each basis with its own periods; never join them\"\n\nHmm, I think this means: some items are on a \"whole firm\" basis (period 2025Q1) and others are \"Workplace channel\" basis (periods 2026-06-30, 2026-09-30). \n\nLooking at items: item 7 (stock plan participants at 2026-06-30) and item 8 (2026-09-30) are \"Workplace channel\" basis. Items 1-6 and 9-11 are \"whole firm\" basis (asset figures, NNA).\n\nItem 6 has period 2025Q1. Items 1-5, 9-11 have various periods but are \"whole firm\" figures.\n\nActually the \"whole firm: 2025Q1\" might refer to item 6 specifically (the $20 billion incremental Q1 2025). And \"Workplace channel: 2026-06-30, 2026-09-30\" refers to items 7 and 8.\n\nThe caveat says: \"the figures cover different bases and are not one series: whole firm: 2025Q1; Workplace channel: 2026-06-30, 2026-09-30.\"\n\nSo the \"basis break\" is between whole-firm figures and workplace-channel figures. I should state each with its own period and not join them.\n\nIn practice, for each adjacent item, I'll state its basis and period. For item 6 (whole firm, 2025Q1), item 7 (Workplace channel, 2026-06-30), item 8 (Workplace channel, 2026-09-30).\n\nI think I just need to make sure I state the correct scope/period for each and don't present them as one continuous series. Since they're separate adjacent entries, that's naturally handled. But I should note the basis in each entry where relevant.\n\nLet me add scope notes:\n- Item 7, 8: \"workplace channel\" scope.\n- Others: whole firm / Wealth Management.\n\nOK. Now let me write the why-lines for a7.\n\n**a7 claims (part_id a7.MS):**\n\nItem 1 (LeadIQ): period 2025-09-30, cite #8\n\"On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley reported LeadIQ, an AI-powered lead distribution platform that focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors, as one of its early AI use cases, some live and some in pilot.\"\nWhy it might matter: \"Why it might matter: the source notes these early AI use cases, including LeadIQ, are in pilot and are showing progress.\" (from context)\n\nActually the context says \"in pilot, are showing progress. These include... LeadIQ...\". So the why-line: \"the source says these early AI use cases are in pilot and are showing progress.\"\n\nItem 2 (Carta partnership): period 2024-12-31, cite #26\n\"On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley reported a recently announced partnership with Carta that puts the firm at the center of new client stock plan opportunities as private companies consider going public.\"\nWhy: context \"puts us at the center of new client stock plan opportunities as private companies consider going public\" - this is essentially the item itself. Hmm. The why-line should not restate the item. Let me look at context more.\n\nContext: \"In Workplace, our recently announced partnership with Carta puts us at the center of new client stock plan opportunities as private companies consider going public.\"\n\nThat's basically the item. The related lines mention: #77 (exclusive partnership, referred as go public), #12 (MS at Work positions as early trusted advisor), #42 (referral-based partnership).\n\nWhy it might matter: I can use a related fact. E.g., \"the firm separately states the Carta relationship positions it as an early trusted advisor to over 50,000 private companies\" (#12). Or \"the partnership positions Morgan Stanley as an early trusted advisor to private companies as they transition from private to public.\"\n\nActually, the instruction says the why-line should come from either the item's context (reason/purpose/first/record/change/consequence) OR factual background from related lines.\n\nThe context for item 2 essentially restates the item. But there's a \"first/record\" aspect? Not really. Let me use a related line.\n\nRelated #12: \"MS at Work, through exclusive partnership with Carta, positions the firm as an early trusted advisor to over 50,000 private companies.\"\n\nWhy it might matter: \"the firm positions this as part of being an early trusted advisor to over 50,000 private companies.\" \n\nActually, let me use the related #77: \"through which private stock plan/corporate companies are referred to Morgan Stanley as they go public, providing a seamless experience.\"\n\nHmm. Let me pick a clean why-line. The why-line should add context beyond the item itself.\n\nFor item 2, I'll say: \"Why it might matter: the firm separately describes this as an exclusive partnership through which private companies are referred to Morgan Stanley as they go public, providing a seamless experience for those clients.\" (citing #77)\n\nBut I need to add that chunk id to the claim's chunk_ids. So item 2's chunk_ids would be [#26, #77].\n\nWait, let me re-read: \"then add that passage's chunk id to the claim's chunk_ids.\"\n\nSo the why-line's source chunk id gets added.\n\nFor item 2, I could use related #77 or #12 or #42. Let me use #77 (exclusive partnership referred as go public).\n\nActually, the context line itself gives a reason: \"puts us at the center of new client stock plan opportunities as private companies consider going public\" - this is the consequence/purpose. But it's basically the same as the item.\n\nLet me use the related line for a distinct why.\n\nActually, I realize the \"context\" line IS the passage context, and it often includes the quote itself plus surrounding text. The why-line should pick a reason/purpose/first/record/change/consequence from that context.\n\nFor item 2, the context mentions \"puts us at the center of new client stock plan opportunities\" and \"the number of active traders on the E*TRADE platform grew, ending the year at levels higher than 2022.\" Hmm, the context is a broader passage.\n\nThe why-line could be: \"the source frames this in the context of the E*TRADE platform ending the year with more active traders than 2022.\" That's a factual background from the same context.\n\nHmm, this is getting complicated. Let me just pick clean why-lines.\n\nActually, let me simplify. The why-line requirement: one sentence on why the item might matter, from context (reason/purpose/first/record/change/consequence) or related facts.\n\nFor each a7 item:\n\nItem 1 (LeadIQ): context mentions \"in pilot, are showing progress\" - a development/first. Why: \"the source notes it is among early AI use cases that are in pilot and showing progress.\" Use #8 (already cited).\n\nActually the why-line uses the same chunk (context is from #8). So no additional chunk id needed, just the why sentence.\n\nWait, the instruction: \"from one of two places: what the item's own passage says (its 'context' line...), or factual background from another passage listed under Sources (its 'related' lines...); then add that passage's chunk id to the claim's chunk_ids.\"\n\nSo if I use the context line (same source as item), the chunk id is already in the claim. If I use a related line (different source), I add that chunk id.\n\nFor item 1, context is from #8 (same source). Why-line from context, no new chunk.\n\nItem 2: context from #26 (same source). But the context essentially = item. I could use a related line (#77, #12, #42) for a distinct why, adding that chunk.\n\nLet me just use the context where it provides a clear reason, and related where needed.\n\nItem 1 why: \"Why it might matter: the source lists it among Morgan Stanley's early AI use cases, some live and some in pilot, that are showing progress.\" (context, #8 already cited)\n\nItem 2 why: context restates item. Use related #12: \"the firm positions the Carta partnership as making it an early trusted advisor to over 50,000 private companies.\" Add #12.\n\nActually, let me reconsider. The context for item 2: \"our recently announced partnership with Carta puts us at the center of new client stock plan opportunities as private companies consider going public.\" This IS the item. So a why-line from context would restate.\n\nLet me use related #77: \"Why it might matter: the firm separately states the exclusive Carta partnership means private companies are referred to Morgan Stanley as they go public, providing a seamless experience for those clients.\" Add #77.\n\nItem 3 (expanded Carta + Zero Hash): context \"deepening our competitive moats... reinforcing our leadership in the industry and enhancing our ability to service our clients with unique capabilities.\" Why: \"the source frames this as deepening its competitive moats and reinforcing its leadership in the industry.\" (context, #13 already cited)\n\nItem 4 (MS at Work 50,000): context \"illustrates why Morgan Stanley wins as the integrated firm... support our clients throughout an entire life cycle.\" Why: \"the source presents this as illustrating why Morgan Stanley wins as the integrated firm, supporting clients throughout their entire lifecycle.\" (context, #12 already cited)\n\nGood, these why-lines from context work.\n\nLet me finalize why-lines:\n\nItem 1: \"Why it might matter: the source notes these early AI use cases are in pilot and are showing progress.\" (from #8 context)\n\nItem 2: \"Why it might matter: the firm separately describes the Carta relationship as an exclusive partnership through which private companies are referred to Morgan Stanley as they go public, providing a seamless experience for those clients.\" (from #77) \u2192 add #77 to chunk_ids.\n\nItem 3: \"Why it might matter: the source frames these investments as deepening Morgan Stanley's competitive moats and reinforcing its leadership in the industry.\" (from #13 context)\n\nItem 4: \"Why it might matter: the source presents this as illustrating why Morgan Stanley wins as the integrated firm, supporting clients throughout their entire lifecycle.\" (from #12 context)\n\nNow for the a8 comparison claim.\n\na8 comparison claim (part_id \"a8\"):\nThe comparison asks how MS positions itself relative to competitors/industry. Available: only MS's own self-positioning statements (industry leader, differentiated funnel, singular position, 70% of top-100 unicorns). No competitor or industry benchmark figures.\n\nSo the claim: \"This comparison cannot be made on a same-basis against competitor or industry figures, because the evidence contains only Morgan Stanley's own self-reported positioning (e.g., its statements that it is in a 'singular position in the industry,' an industry leader with record net new assets, and has about 70% of the top 100 unicorns by market cap in its workplace pipeline), and no competitor or industry benchmark figures against which to compare.\"\n\nCite: MS-TR-2026Q3#32, MS-TR-2026Q2#14, MS-TR-2026Q2#21, MS-TR-2025Q3#13, MS-TR-2026Q3#16.\n\nLet me write a clean comparison claim.\n\nActually, I need to think about whether the comparison is \"valid\". The aspect is \"How does the firm position... relative to competitors or the industry?\" This is asking for the firm's own positioning. That's actually answerable from MS's statements (they ARE the positioning). So maybe the comparison claim should state: the comparison is valid in the sense that MS's own self-positioning statements are available, but there are no competitor figures.\n\nHmm. Let me re-read the comparison instruction once more.\n\n\"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\n\"Compare or rank figures across firms only when the aspect is marked same_basis... otherwise say they are not comparable and why.\"\n\na8 is not same_basis. So I say the comparison (MS vs competitors/industry) is not comparable because there are no competitor/industry figures; only MS's own positioning statements.\n\nI'll write: not valid as a same-basis comparison because the evidence contains only Morgan Stanley's own self-reported positioning and no competitor or industry benchmark figures.\n\nLet me finalize.\n\nNow, let me also double check the \"recency\" ordering. Since no time window is given in the question, I don't need to order newest first across the whole answer. But a7 items - I should probably order them by period? The instruction says \"With a time window, order claims... newest first\". No time window, so no special ordering. But a7 items have periods; I'll keep them in matrix order (which is item 1 = 2025-09-30, item 2 = 2024-12-31, item 3 = 2025-09-30, item 4 = 2025-12-31). Actually the matrix order isn't chronological. Since no time window, I'll keep matrix order.\n\nActually wait, is there a time window? The question doesn't specify. a7 says \"inside the time window\". But there's no explicit time window in the question. Hmm. The aspect a7 is \"recency: inside the time window\". Without a time window, I just treat a7 items normally with why-lines.\n\nOK, I'll keep matrix order for everything.\n\nNow let me also verify the chunk_ids for each claim match the \"cite\" field.\n\nLet me write the final submission now.\n\nFor a2 item 14, cites are MS-DECK-2026-strategic-update#13 AND #32. So chunk_ids = [\"MS-DECK-2026-strategic-update#13\", \"MS-DECK-2026-strategic-update#32\"].\n\nFor a5 item 3, cite MS-DECK-2026-strategic-update#32.\n\nFor a6 item 1, cites #32 and #13.\n\nFor a8, cite multiple.\n\nLet me now also verify no \"computation\" lines exist - correct, none.\n\nLet me write everything out as the final tool call.\n\nLet me also make sure about quotation marks. Items marked \"quote not verbatim\" - I must not use quotation marks. For those, I paraphrase. For items NOT marked, I can use quotation marks for the exact quoted phrases.\n\nLet me check which items have quote-not-verbatim:\n- a1 item 2 (#24): not verbatim\n- a1 item 5 (#16): not verbatim\n- a1 item 11 (#22): not verbatim\n- a2 item 4 (#16): not verbatim\n- a2 item 8 (#21): not verbatim\n- a2 item 10 (#28): not verbatim\n- a2 item 11 (#12): not verbatim\n- a2 item 13 (#25): not verbatim\n- a2 item 14 (#13,#32): not verbatim\n- a2 item 15 (#23): not verbatim\n- a3 item 2 (#16): not verbatim\n- a3 item 3 (#22): not verbatim\n- a3 item 4 (#23): not verbatim\n- a3 item 6 (#77): not verbatim\n- a3 item 7 (#43): not verbatim\n- a3 item 8 (#28): not verbatim\n- a6 item 1 (#32,#13): not verbatim\n- a6 item 7 (#61): not verbatim\n- a6 item 8 (#17): not verbatim\n- a8 item 1 (#32): not verbatim\n- a8 item 6 (#16): not verbatim\n- a8 item 8 (#16): not verbatim\n\nFor these, I paraphrase without quotation marks. For others (not marked), I can quote specific phrases verbatim.\n\nItems with verbatim quotes I can quote:\n- a1 item 1: \"strategic client acquisition model\" - verbatim\n- a1 item 3: \"channel migration\" phrase\n- a1 item 4\n- a1 item 6\n- a1 item 7: \"differentiated client acquisition funnel\"\n- a1 item 8\n- a1 item 9\n- a1 item 10\n- a2 item 1, 2 (definitions)\n- etc.\n\nI'll use quotation marks only where the item is verbatim and I'm quoting exact words. For most, I'll just paraphrase to be safe, but I can include short exact phrases in quotes for verbatim items.\n\nActually, to keep it clean and avoid errors, I'll use quotation marks sparingly\u2014only for clear verbatim phrases like \"strategic client acquisition model\", \"differentiated client acquisition funnel\", \"channel migration\", \"Advisor-Led Flows from Workplace and E*TRADE\".\n\nLet me finalize and write.\n\nFor the definitions in a2 items 1, 2 - these are verbatim definitions. I can quote them.\n\nLet me write the final answer now.\n\nOne more consideration: gaps array. Code gaps \"none\". Should I add any gap? The instruction says \"Add a gap of your own only for something those gaps do not name.\" Since there are no code gaps, technically I could add gaps for things not covered. But I don't think I need to add any. I'll leave gaps as empty array.\n\nActually wait, let me reconsider - are there any missing facts? The question is well-covered by the matrix. No gaps needed.\n\nLet me finalize the answer and submit.\n\nI need to double-check the answerable field: true.\n\nbehavior: \"answer\".\n\nNow writing all claims, adjacent, gaps (empty).\n\nLet me count and write everything carefully in the tool call.\n\nFor chunk_ids, I must only use ids from the enum. All cite ids are in the enum list. Good.\n\nLet me write the final JSON.\n\nActually, let me reconsider the a8 comparison claim's part_id. The enum has both \"a8\" and \"a8.MS\". The instruction says comparison claim uses the aspect id \"a8\". So part_id = \"a8\".\n\nLet me write the comparison claim text:\n\n\"This comparison cannot be made on a same basis against competitors or the industry, because the evidence contains only Morgan Stanley's own self-reported positioning statements and no competitor or industry benchmark figures. Morgan Stanley states (3Q26 call, period ended September 30, 2026) it is in a 'singular position in the industry' due to the integrated scaling of its client acquisition funnel and a differentiated workplace offering; states (2Q26 call, period ended June 30, 2026) it remains the industry leader with record net new assets of $148 billion; and states it has about 70% of the top 100 unicorns by market cap in its workplace pipeline.\"\n\nchunk_ids: [\"MS-TR-2026Q3#32\", \"MS-TR-2026Q2#14\", \"MS-TR-2026Q2#21\", \"MS-TR-2025Q3#13\", \"MS-TR-2026Q3#16\"]\n\nHmm wait, \"singular position in the industry\" - item 1 quote is verbatim? Item 1 (a8) is marked \"quote not verbatim\", so I should NOT put \"singular position in the industry\" in quotes. Let me paraphrase.\n\nActually the quote field shows \"We are now in a singular position in the industry...\" and it's marked [quote not verbatim]. So no quotation marks.\n\nLet me rewrite without quotes.\n\nFinal comparison claim:\n\"Morgan Stanley: this comparison cannot be made on a same basis against competitors or the industry, because the evidence contains only Morgan Stanley's own self-reported positioning statements and no competitor or industry benchmark figures. On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley stated it is now in a singular position in the industry due to the integrated scaling of its client acquisition funnel and a differentiated workplace offering that continues to expand and source new relationships; on the 2Q26 earnings call (period ended June 30, 2026), it stated it remains the industry leader with record net new assets of $148 billion and strong fee-based flows of $39 billion, and that it has about 70% of the top 100 unicorns by market cap in its workplace pipeline; and on the 3Q25 earnings call (period ended September 30, 2025), it stated its workplace investments deepen its competitive moats and reinforce its leadership in the industry.\"\n\nThat's comprehensive. chunk_ids: #32, #14, #21, #13.\n\nOK let me write everything now.\n\nActually, I realize I should keep it as \"exactly one comparison claim\". Good.\n\nLet me now produce the final answer tool call.\n\nI'll write it all out carefully.\n\nFor the why-line on a7 item 2, I'm adding chunk #77 to the claim's chunk_ids. So item 2 chunk_ids = [\"MS-TR-2024Q4#26\", \"MS-TR-2024Q4#77\"].\n\nLet me verify #77 is in the enum. Yes.\n\nNow let me write.\n\nLet me finalize all texts and submit.\n\nI'll be careful with part_ids. All fact claims use \"a1.MS\" etc. a7 items use \"a7.MS\". a6 adjacent use \"a6.MS\". a8 comparison uses \"a8\".\n\nLet me write.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley described its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014each a category leader, as together comprising its \"strategic client acquisition model,\" positioning Workplace as the top of the funnel for acquiring wealth management clients.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the CFO described the funnel as beginning with retaining vested workplace assets (which translates into net new assets), followed over time by channel migration where workplace assets seek advice and move into the adviser-led channel.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#24"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley described channel migration as workplace assets that began in the Workplace channel moving into the advisor-led channel, with $300 billion doing so since 2020.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#94"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley attributed the migration of workplace-originated assets into the advisor-led channel to its consistent investments in its differentiated platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley described Workplace as bringing relationships and assets onto the platform, and then delivering advice and solutions to those relationships to build fee-based assets.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley described its Morgan Stanley at Work business as positioning it as an early trusted advisor to private companies, where employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice as companies grow.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley described its investments in the self-directed and Workplace channels as driving its \"differentiated client acquisition funnel.\"",
+        "chunk_ids": [
+          "MS-TR-2024Q4#9"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley stated that 70% of the flows that originate from workplace are net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley described a referral-based partnership with Carta under which private companies moving from private to public are referred to Morgan Stanley, supporting conversion into its platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#42"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley depicted a client lifecycle in which workplace founders and employees move from financial wellness and equity compensation through to full-service wealth advice and asset allocation as companies go public.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#22"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The 3Q25 10-Q (period ended September 30, 2025) defines the workplace channel as including \"equity compensation solutions for companies, their executives and employees.\"",
+        "chunk_ids": [
+          "MS-10Q-2025Q3#60"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The 3Q25 10-Q (period ended September 30, 2025) defines stock plan participants as total accounts with vested and/or unvested stock plan assets in the workplace channel, with individuals holding accounts in multiple plans counted in each plan.",
+        "chunk_ids": [
+          "MS-10Q-2025Q3#60"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), the CFO described the workplace channel as a powerful asset acquisition tool, with the reopening of the IPO market supporting net new assets.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#15"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the CFO said Workplace brings relationships and assets onto the platform and is a strong contributor to the top of the funnel, with stock plan IPO flows representing just over half of overall net new assets in the quarter.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the CEO said the financial advisors, Workplace, and E*TRADE channels together comprise the firm's strategic client acquisition model.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full year 2025, versus historical averages of around $60 billion per year.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#20"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley said assets migrating to the advisor-led channel that originated from the workplace channel increased by an incremental $20 billion in the quarter, adding to roughly $300 billion accumulated from workplace since the channel expanded in 2020.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the firm said it has about 70% of the top 100 unicorns by market cap in its workplace pipeline, with IPOs serving as a source of net new assets at the top of the funnel.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#21"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 2Q25 earnings call (period ended June 30, 2025), the CFO said 70% of the flows that originate from the workplace channel are actually net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the CFO said the firm is working on a referral model that can begin as early as the financial education spot to convert workplace clients into advice-based (advisor-led) relationships.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the CEO said the Morgan Stanley at Work business positions the firm as an early trusted advisor to over 50,000 private companies, with employees benefiting from management of equity compensation plans, liquidity opportunities, and full-service advice.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 2Q25 earnings call (period ended June 30, 2025), the CFO said the firm historically had about $16 billion per year originating from workplace, and was running ahead of that in 2025.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#35"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), the CFO said workplace has been a contributor to net new assets, fee-based flows, and channel migration, citing a $300 billion workplace migration figure and about $60 billion of migration per year historically.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#25"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley showed advisor-led flows from workplace and E*TRADE of approximately $60 billion average for 2020-2024 and approximately $100 billion for 2025.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#13",
+          "MS-DECK-2026-strategic-update#32"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), the CEO described the attachment points that bring clients to E*TRADE and, where appropriate, fee-based flows that make their way to advisers, with clients acquired in the corporate stock plan (workplace) context.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#23"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), the CFO said the firm's pipeline and connectivity across channels allows it to build relationships early and deepen them over time.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#15"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The 2Q26 supplement (period ended June 30, 2026) states Morgan Stanley's Workplace channel includes equity compensation solutions (stock plan administration) for companies, their executives and employees, and this channel is the entry point through which workplace/stock-plan participants are engaged.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q2#37"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "The 2Q26 10-Q (period ended June 30, 2026) states Morgan Stanley's Wealth Management segment provides workplace services, including stock plan administration, and retirement plan services, as one of three channels (Advisor-Led, Self-Directed and Workplace) through which it supports clients.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#16"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley shows a client lifecycle offering spanning financial wellness and employee benefits, founders wealth strategies, full-service wealth advice and asset allocation, family office solutions, trust & estate planning, private shares trading & lending, and IPO execution and support services to move participants from the workplace/employee stage into full wealth relationships.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#22"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley's MS at Work offering provides stock plan and 401(k) administration, cap table management, cash management solutions, and private capital markets/tender/financing and IPO services for late-stage/IPO companies.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said it uses referral models and technology such as the \"LeadIQ\" product to match individuals (including workplace participants) with advisers, with the goal of becoming their principal financial adviser.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley said it has an exclusive partnership with Carta through which private stock plan/corporate companies are referred to Morgan Stanley as they go public, providing a seamless experience to convert those participants into wealth clients.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#77"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said it offers advice-based services to founders and individuals of private companies through its Carta relationship, deepening relationships as companies transition from private to public.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#43"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said its referral model for workplace participants can begin as early as the financial education spot and with 401(k) assets, to help individuals understand where they could use advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley said it continues to expand its retirement capabilities and deepen engagement with plan participants, creating opportunities to build advice-based relationships over time.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#13"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley said it provides financial wellness programs to company employees as part of the Integrated Firm, spanning from advice in corporate boardrooms to financial wellness programs for that company's employees.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#13"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said it uses an AI-powered lead distribution platform called LeadIQ that matches workplace and self-directed relationships and facilitates engagement with financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said that for workplace participants who do not yet have an advice-based relationship, it works a referral model that can begin as early as the financial education spot and also through 401(k) assets, giving people the ability to understand where they could use advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley said it drives channel migration from workplace to advisor-led through technology and investment, as workplace assets begin seeking advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#24"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley said assets that originate from workplace migrate into the advisor-led channel as a result of consistent investments it has made into its differentiated platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley said Morgan Stanley at Work, through its exclusive partnership with Carta, positions it as an early trusted advisor to private companies, and employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), Morgan Stanley said it begins at the top of the funnel with corporate coverage, using the Integrated Firm to build corporate relationships that lead to workplace relationships.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#59"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley said advisors engage retail clients by sending \"next best actions,\" and it has seen increased responses to these engagements.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#70"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley stated that since 2020 (over roughly the last five years), it has seen $300 billion of assets initiate in the Workplace channel and move into the advisor-led channel.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#94"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley stated it has seen about $60 billion of workplace-to-advisor-led migration per year, and as of the third quarter of 2025 was exceeding that pace on a full-year basis.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#25"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley defines \"Advisor-Led Flows from Workplace and E*TRADE\" as assets brought into advisor-led relationships where the initial account was workplace or self-directed.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#32"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley reported LeadIQ, an AI-powered lead distribution platform that focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors, as one of its early AI use cases, some live and some in pilot. Why it might matter: the source notes these early AI use cases are in pilot and are showing progress.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), Morgan Stanley reported a recently announced partnership with Carta that puts the firm at the center of new client stock plan opportunities as private companies consider going public. Why it might matter: the firm separately describes the Carta relationship as an exclusive partnership through which private companies are referred to Morgan Stanley as they go public, providing a seamless experience for those clients.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#26",
+          "MS-TR-2024Q4#77"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), Morgan Stanley reported deepening its competitive moats through an expanded collaboration with Carta in private markets and announced partnerships with Zero Hash in digital assets. Why it might matter: the source frames these investments as deepening Morgan Stanley's competitive moats and reinforcing its leadership in the industry.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley reported that its Morgan Stanley at Work business, through its exclusive partnership with Carta, positions the firm as an early trusted advisor to over 50,000 private companies, enabling workplace employees to benefit from equity compensation plan management, liquidity opportunities and full-service advice as workplace companies grow. Why it might matter: the source presents this as illustrating why Morgan Stanley wins as the integrated firm, supporting clients throughout their entire lifecycle.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "This comparison cannot be made on a same basis against competitors or the industry, because the evidence contains only Morgan Stanley's own self-reported positioning statements and no competitor or industry benchmark figures. On the 3Q26 earnings call (period ended September 30, 2026), Morgan Stanley stated it is now in a singular position in the industry due to the integrated scaling of its client acquisition funnel and a differentiated workplace offering that continues to expand and source new relationships; on the 2Q26 earnings call (period ended June 30, 2026), it stated it remains the industry leader with record net new assets of $148 billion and strong fee-based flows of $39 billion, and that it has about 70% of the top 100 unicorns by market cap in its workplace pipeline; and on the 3Q25 earnings call (period ended September 30, 2025), it stated its workplace investments deepen its competitive moats and reinforce its leadership in the industry.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32",
+          "MS-TR-2026Q2#14",
+          "MS-TR-2026Q2#21",
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a8"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "In its January 2026 strategic-update deck, Morgan Stanley defines \"Advisor-Led Flows from Workplace and E*TRADE\" as assets brought into advisor-led relationships where the initial account was workplace or self-directed, and reports approximately $60 billion on average across 2020-2024 versus approximately $100 billion in 2025.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#32",
+          "MS-DECK-2026-strategic-update#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a dollar figure of adviser-led asset flows originating from workplace and E*TRADE, a stand-in for conversion, not a count or rate of participants converted into wealth management clients."
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), Morgan Stanley reported advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full year 2025, versus historical averages of around $60 billion per year.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#20"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a dollar figure of adviser-led assets, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a dollar figure of new adviser-led assets, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), Morgan Stanley stated that, inclusive of Workplace assets on the platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion, roughly 20% of adviser-led assets.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a dollar figure of adviser-led assets sourced from Workplace and E*TRADE, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "On the 2Q25 earnings call (period ended June 30, 2025), Morgan Stanley stated that 70% of the flows that originate from workplace are actually net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a percentage of workplace-originated flows that are net new assets, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "On the 1Q25 earnings call (period ended March 31, 2025), Morgan Stanley reported that assets migrating to the advisor-led channel that originated from the workplace channel added an incremental $20 billion in Q1 2025, adding to roughly $300 billion accumulated from workplace since the channel's 2020 expansion.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is a dollar figure of assets migrating from workplace to advisor-led, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "The 2Q26 10-Q (period ended June 30, 2026) reports 6.6 million stock plan participants in the workplace channel at June 30, 2026, versus 6.5 million at December 31, 2025 (workplace channel basis).",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#61"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Stock plan participants are a count of total accounts with vested and/or unvested stock plan assets in the workplace channel, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "The 3Q26 supplement (period ended September 30, 2026) reports 6.7 million stock plan participants in the workplace channel at September 30, 2026, versus 6.6 million at June 30, 2026 (workplace channel basis).",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#17"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Stock plan participants are a count of total accounts with vested and/or unvested stock plan assets in the workplace channel, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.",
+        "chunk_ids": [
+          "MS-10K-2025#164"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Wealth management net new assets are aggregate client asset inflows across the segment, not a measure of participants converted from workplace/stock-plan into wealth management clients."
+      },
+      {
+        "text": "The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $251.7 billion in 2024.",
+        "chunk_ids": [
+          "MS-10K-2025#164"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Wealth management net new assets are aggregate client asset inflows across the segment, not a measure of participants converted from workplace/stock-plan into wealth management clients."
+      },
+      {
+        "text": "The 2025 10-K (period ended December 31, 2025) reports Wealth Management net new assets of $282.3 billion in 2023.",
+        "chunk_ids": [
+          "MS-10K-2025#164"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Wealth management net new assets are aggregate client asset inflows across the segment, not a measure of participants converted from workplace/stock-plan into wealth management clients."
+      }
+    ],
+    "gaps": []
+  }
+}

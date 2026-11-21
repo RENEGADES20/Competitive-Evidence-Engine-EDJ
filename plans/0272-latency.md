@@ -247,3 +247,15 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   adopted. Defaults set in `src/cee/config.py`; tests updated; pytest 1093 passed.
 - 2026-11-21 14:27 - step 10 mock recheck at 4a64f79 (0 calls): #250 plans 30/30 identical to clean main. Test B gate 4a64f79, worktree wt-272run, cache cache-a (the six test-A questions reuse their C1 records).
 - 2026-11-21 14:40 - test B fts plan phase: 24 new planner calls (USD 0.026), 6 reused from test A. Count (0 calls): 321 new round-1 map calls (the six test-A questions reuse every C1 record), input est 12.9M tokens; run --max-calls 672 (321 + 321 re-map ceiling + 30 reduces). USD hard ceiling 377 (every call at its cap, peak), expected about 28 peak / 14 off-peak.
+- 2026-11-21 15:42 - test B fts run 1 (b-fts) stopped at Q25 with DeepSeek 429 (rate limit; ProviderStop, nothing saved for the refused call, the run stops as designed). Q1-Q24 done, 474 records saved, 0 invalid so far. Resumed after a pause with the same settings and cache as b-fts-r2 (saved outputs reused; not a re-roll; RUN.md: wait, then run again).
+- 2026-11-21 15:51 - BLOCKED: the resumed test B run (b-fts-r2) stopped at its first new call with DeepSeek 402
+  "insufficient balance". Nothing was saved for the refused call; no further call is possible until the account is
+  topped up. State: test B fts Q1-Q24 complete (474 records, 0 cut, 0 invalid, 0 failed); Q25 has 7 of its map records;
+  Q26-Q30 not run. Test B new calls so far 322 (24 planner + 298 map / re-map / reduce), USD 10.26 off-peak; all test
+  B and test A records saved (`docs/results/w12-latency/`, `D:\ALLPROJECTS\EDJ\cache\ev272\cache-a`). Interim latency
+  Q1-Q24: critical path p50 173 s, p90 241 s, max 285 s; first evidence p50 18 s, p90 25 s (W11 #250: p50 415 s,
+  p90 822 s; first evidence p50 204 s). Finding: Q21's reduce key differed between test A and test B although every
+  plan and map record was reused (same behavior, same 138 citable chunks), so one extra reduce call was made; the
+  reduce message is not byte-stable across processes (as Q12 in the #250 replay). Not in this plan's scope; noted.
+  Resume after top-up: the same command with `-Out b-fts-r3` (cache-a, gate 4a64f79, --max-calls 672); every saved
+  record is reused, so only Q25-Q30's remaining calls are made.

@@ -1,0 +1,268 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-SUPP-2020Q4#1",
+    "SCHW-TR-2025Q3#17",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-TR-2025Q1#44",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q2#64",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-SUPP-2023Q4#2",
+    "MER-ADV1A-2026#1",
+    "RJF-TR-2025Q3#4",
+    "RJF-10K-2025#227",
+    "RJF-DECK-2025-investor-day#43"
+  ],
+  "schema_fallback": [],
+  "enum_values": 56,
+  "at": "2026-11-21T15:39:20.509868-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8216,
+    "output_tokens": 12706,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 6552,
+    "reasoning_tokens": 9986,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.61
+  },
+  "wall_s": 69.53,
+  "tokens_per_s": 182.74,
+  "ttft_s": 1.61,
+  "reasoning_content": "Let me understand the task. This is about advisor headcount over the last eight quarters across five firms.\n\nThe question has no time window explicitly, but \"last eight quarters\" is a time context. Actually, let me check: \"with a time window, order claims and adjacent items newest first.\" The question says \"over the last eight quarters\" - that's a time window conceptually. But the recency/why-line requirement applies when \"the question has a time window\". Hmm, actually the \"last eight quarters\" is a period reference, not necessarily a \"time window\" in the sense of recency ordering.\n\nWait, let me re-read the recency rules:\n\n\"Recency and order\n- For every item of an aspect marked recency, and every item when the question has a time window, end the claim with 'Why it might matter: '...\"\n\nThe aspects are not marked \"recency\" here (only \"series, metric advisor_headcount\"). The question doesn't seem to have a specific \"time window\" flag. Actually \"over the last eight quarters\" is just describing what data we want, not a recency time window flag.\n\n\"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nHmm, I think there's no explicit time window indicated. The question just asks for the last eight quarters. I'll not add why-lines since there's no recency marking and no time window flag given.\n\nActually, wait - let me think. The instructions say \"every item when the question has a time window\". The question \"Advisor headcount over the last eight quarters\" - this is arguably a time window. But I think the code would have flagged it. The aspects don't have \"recency\" marked. I'll treat it as no recency/why-lines needed.\n\nLet me structure the answer.\n\nAspect a1: Advisor headcount over the last eight quarters.\n\nThis is a series aspect, not comparison. Comparability is \"different_basis\" - caveat added by code, don't repeat.\n\nFirms in order: MS, SCHW, EDJ, MER, RJF.\n\na1.MS: fact - 3 items (all from 2020 and 2019, not in asked periods). These are claims.\n\na1.SCHW: adjacent only (different quantity). All 7 items adjacent. But note item 5 has \"figure not found in its passage: do not state this figure\". So item 5 (16,000 advisory firms in deck) should not state the figure. Actually wait - item 5 says \"figure not found in its passage: do not state this figure\". But item 6 also reports 16,000 advisory firms with a quote and period. So for item 5, I must not state the figure.\n\nActually, let me re-read: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\"\n\nSo item 5: I write the claim without the figure. But this is adjacent anyway (whole SCHW is adjacent). Let me write adjacent items.\n\nActually, since a1.SCHW is \"different quantity (adjacent only)\", all items are adjacent items with the overall differs_because.\n\nThe differs_because for SCHW: \"No passage reports advisor headcount for any quarter; instead passages report a different measure (total employees of 32,000), regulatory Form ADV employee counts (30,690 total employees excluding clerical, 4,127 performing investment advisory functions, 16,763 registered representatives), client advisory firms on the platform (16,000), and an expected number of new financial/wealth consultant additions (~250), rather than an eight-quarter advisor headcount series.\"\n\nEach adjacent item should carry differs_because. Do I write one adjacent item per item, or one combined? The instruction says \"give the adjacent items, each with differs_because\". So each item is a separate adjacent entry.\n\nFor each adjacent item, differs_because can be a specific version. Let me write each.\n\nActually, the cell-level differs_because is given. Each adjacent item should carry a differs_because. I can reuse the cell-level differs_because or write item-specific versions. The instruction says \"each with differs_because from the cell, in your words with the same meaning.\"\n\nI'll write each adjacent item with a differs_because that captures \"this is a different measure (X), not an eight-quarter advisor headcount series.\"\n\nLet me go through each firm.\n\n**Morgan Stanley (a1.MS)** - fact, 3 items. These are claims (fact cells). Note the caveat: series runs 2019-12-31 to 2020-12-31, no figure after 2020-12-31. The gap already says \"not found for the asked periods (2024Q4-2026Q3); figures for other periods are listed.\"\n\nSo I write claims for the 3 items. Each is a fact claim.\n\nItem 1: Morgan Stanley reported 15,950 Wealth Management representatives (its financial advisor headcount) as of December 31, 2020. cite MS-SUPP-2020Q4#1.\n\nItem 2: 15,469 as of September 30, 2020.\n\nItem 3: 15,468 as of December 31, 2019.\n\nThese are dated. Since there's no time window/recency, no why-line needed.\n\nActually wait, let me reconsider whether there's a time window. The question \"over the last eight quarters\" - I'll interpret this as just the scope of what's asked, not triggering why-lines. The code didn't mark any aspect \"recency\". I'll not add why-lines.\n\n**Schwab (a1.SCHW)** - adjacent only. 7 items, but item 5 figure not found.\n\nLet me write adjacent items:\n- item 1: 32,000 employees, period 2025-09-30\n- item 2: 30,690 employees (Form ADV)\n- item 3: 4,127 employees performing investment advisory functions\n- item 4: 16,763 registered representatives\n- item 5: 16,000 advisory firms (deck) - figure not found, don't state figure. Hmm, but item 6 also has 16,000. Item 5's passage doesn't contain the figure. So I should... not state the figure. But what do I write? \"Schwab reported advisory firms as clients in its Advisor Services business\" without number? The quote \"16K Advisory Firms\" is given but marked \"figure not found in its passage\". \n\nActually the mark \"figure not found in its passage\" means the quote/figure wasn't actually found in the passage. So I keep the figure out. I'll write something like \"Schwab's investor day deck references advisory firms as clients in its Advisor Services business\" without the 16K number. Actually, I think since item 6 covers 16,000 advisory firms with a proper quote, item 5 is redundant but still listed. Let me just omit the figure from item 5.\n\nHmm, this is tricky. Let me write item 5 without the number: \"Schwab's investor day deck describes advisory firms as clients in its Advisor Services business.\" But that seems weak. Actually the value is 16,000, unit advisory firms. I write \"Schwab reported advisory firms as clients in its Advisor Services business\" - no, I need to not state the 16,000.\n\nLet me just write: \"Schwab's investor day materials reference its Advisor Services business's advisory-firm clients.\" with differs_because.\n\nActually, I'll keep it simple and note the figure is not stated. But instruction says \"keeps its figure out of your text\" - just omit the figure.\n\nLet me write adjacent item 5: \"Schwab's investor day deck refers to advisory firms as clients in its Advisor Services business (the exact count is not stated in the cited passage).\" Hmm, but that adds info not in evidence. Actually \"figure not found in its passage\" is a code marker; I should just not state the figure. I'll write the claim without the number.\n\nActually, maybe I'm overcomplicating. Let me write: \"Schwab's investor day deck describes advisory firms among its Advisor Services clients.\" differs_because: \"advisory-firm clients are not an eight-quarter advisor headcount series.\"\n\nWait, actually I think I could combine item 5 and item 6 since they're the same figure (16,000 advisory firms), but item 5's figure is not found while item 6's is. Item 6 has a real quote and period 2026-09-30. I'll write item 6 fully, and item 5 without the figure.\n\nHmm, but actually both items are in the same cell and both are adjacent. Let me just write each item.\n\nLet me be careful and write all items.\n\nFor SCHW adjacent items, the differs_because at cell level is long. Each item's differs_because should be \"from the cell, in your words with the same meaning.\" I can write a shorter version per item. But maybe simplest to use the cell-level differs_because for each. Actually, the instruction says each adjacent item carries differs_because \"from the cell\". I think I can tailor slightly per item but same meaning.\n\nLet me write per-item differs_because:\n- item 1 (32,000 employees): \"Employee headcount is a different measure from an eight-quarter advisor headcount series.\"\n- item 2 (30,690 employees): similar\n- item 3 (4,127 advisory function employees): \"Employees performing investment advisory functions is a Form ADV measure, not an eight-quarter advisor headcount series.\"\n- item 4 (16,763 registered reps): similar\n- item 5, 6 (16,000 advisory firms): \"Advisory-firm clients on the platform are not advisor headcount.\"\n- item 7 (250 expected new consultants): \"Expected new consultant additions are not an eight-quarter advisor headcount series.\"\n\nActually, to be safe and consistent, I'll use a consistent differs_because for each that reflects the cell. Let me use the cell-level differs_because verbatim-ish but shortened. Actually the instruction says \"in your words with the same meaning\". I'll write concise versions.\n\nLet me now think about EDJ.\n\n**Edward Jones (a1.EDJ)** - fact with basis break. State each basis with its own periods, never join.\n\nWhole firm (edj_firm): 2024-09-27, 2024-12-31, 2025-06-27, 2025-09-26, 2025-12-31, 2026-06-26\nU.S.: 2025-03-28, 2026-03-27\nCanada: 2025-03-28, 2026-03-27\n\nItems:\n1. 20,514 whole firm, 2026-06-26\n2. 19,674 U.S., 2026-03-27\n3. 876 Canada, 2026-03-27\n4. 20,425 whole firm, 2025-12-31\n5. 20,429 whole firm, 2025-09-26\n6. 20,309 whole firm, 2025-06-27\n7. 19,413 U.S., 2025-03-28\n8. 875 Canada, 2025-03-28\n9. 20,125 whole firm, 2024-12-31\n10. 19,885 whole firm, 2024-09-27\n\nSo I need to write claims, stating each basis with its own periods. I'll group by basis perhaps, or write each item noting scope.\n\nLet me write each item as a claim with part_id a1.EDJ.\n\nFor whole firm items: no scope note needed (whole firm is default). For U.S. and Canada items, note scope.\n\nActually the basis break instruction: \"state each basis with its own periods; never join them into one series or compare across the break.\" So I should clearly label whole firm vs U.S. vs Canada.\n\nLet me write them.\n\n**Merrill (a1.MER)** - adjacent only. 4 items.\n\nItem 1: >15K wealth advisors (Merrill + Private Bank), Nov 2025 investor day deck.\nItem 2: 18,916 total wealth advisors 2023-12-31 (GWIM + Consumer Banking), quote not verbatim.\nItem 3: 26,599 registered reps (Form ADV).\nItem 4: 32,960 employees (Form ADV).\n\nEach adjacent with differs_because.\n\nFor Merrill, the GWIM note: \"GWIM is not Merrill: the segment also includes Bank of America Private Bank.\" This is a caveat already added by code. But the standard wording says \"Bank of America GWIM figures for Merrill go in adjacent with differs_because 'GWIM includes both Merrill and Bank of America Private Bank...'\". \n\nItem 1 says \"Merrill and the Private Bank combined\" - this is actually Merrill + Private Bank, which is essentially GWIM. Hmm. The differs_because at cell level: \"No passage states Merrill's own advisor headcount for the last eight quarters; the closest figures are a combined Merrill/Private Bank '>15K' wealth-advisor count, a wider GWIM-plus-Consumer-Banking 'total wealth advisors' series from 2022-2023, and Merrill's Form ADV employee and registered-representative counts.\"\n\nI'll write per-item differs_because.\n\n**RJF (a1.RJF)** - fact. 4 items.\n\nItem 1: 8,943 total financial advisors as of 2025-09-30 (record), 3,878 employee + 5,065 independent contractors. cite RJF-TR-2025Q3#4, RJF-10K-2025#227.\n\nItem 2: 8,787 as of 2024-09-30 (3,826 + 4,961). cite RJF-10K-2025#227. quote not verbatim.\n\nItem 3: 8,712 as of 2023-09-30 (3,693 + 5,019). quote not verbatim.\n\nItem 4: 8,731 as of 2025-03-31 (investor day). cite RJF-DECK-2025-investor-day#43. quote not verbatim.\n\nThese are fact claims.\n\nNow, is there a time window for ordering? \"last eight quarters\" - the data spans various periods. I'll order newest first within each firm? The instruction: \"With a time window, order claims and adjacent items newest first across the whole answer.\" I don't think there's a time window flag. I'll just follow the item order as listed in the matrix, which is already roughly ordered.\n\nActually, let me reconsider the \"time window\" concept. The question asks \"over the last eight quarters\". This is a temporal scope but not a recency \"time window\" flag in the tool's sense (which triggers why-lines). Since no aspect is marked \"recency\", and no explicit time window flag, I'll not add why-lines.\n\nLet me also reconsider: do I need a comparison claim? The aspect a1 is \"series\" metric, not \"comparison\". So no comparison claim needed. The comparability note is a caveat added by code (don't repeat).\n\nNow the gaps: \"Gaps added by code (do not repeat them)\" - so I do NOT add these gaps. They're already handled. Wait, but the gap_with_adjacent behavior... The answer behavior is \"answer\" (not gap_with_adjacent). So I write claims and adjacent items.\n\nActually wait, let me re-read the gaps section. \"Gaps added by code (do not repeat them)\" - these are listed as gaps that code already adds. So I should not repeat them in my \"gaps\" field? But the tool requires a \"gaps\" array. Hmm.\n\nActually, the tool's gaps field is for gaps I add. The instruction says \"Add a gap of your own only for something those gaps do not name.\" And \"Gaps added by code (do not repeat them)\".\n\nWait, but there's confusion. Let me re-read:\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo the gaps listed under \"Gaps added by code\" are added by code automatically. I don't add them. I only add my own gaps for things not covered.\n\nDo I need to add any gap of my own? Let me check the gaps listed:\n\n- a1.SCHW: not published, closest is 32,000 employees (adjacent). Covered.\n- a1.MER: not published, closest is >15K (adjacent). Covered.\n- a1.MS: not found for asked periods; other periods listed. Covered.\n- a1.EDJ: not found for 2026Q3. Covered.\n- a1.RJF: not found for 2024Q4, 2025Q2, 2025Q4, 2026Q1, 2026Q2, 2026Q3. Covered.\n\nSo no new gaps needed. I'll submit empty gaps array.\n\nNow let me write all the claims and adjacent items.\n\nLet me write the text carefully with dates and citations.\n\nFor fact claims, date every claim from source line.\n\n**a1.MS claims:**\n\nItem 1: \"Morgan Stanley: Morgan Stanley reported 15,950 Wealth Management representatives (its financial advisor headcount) as of December 31, 2020, per its fourth quarter 2020 financial supplement (published January 20, 2021).\" part_id a1.MS, cite MS-SUPP-2020Q4#1.\n\nItem 2: \"...reported 15,469 Wealth Management representatives as of September 30, 2020...\"\n\nItem 3: \"...reported 15,468 Wealth Management representatives as of December 31, 2019...\"\n\nNote scope: Wealth Management.\n\n**a1.SCHW adjacent:**\n\nitem 1: 32,000 employees, 2025-09-30. cite SCHW-TR-2025Q3#17. Source: transcript period 2025-09-30, published 2025-10-16.\n\nText: \"The Charles Schwab Corporation: In its third quarter 2025 earnings call (October 16, 2025), Schwab stated it has 32,000 employees working together.\" differs_because.\n\nitem 2: 30,690 employees Form ADV. cite SCHW-ADV1A-2026#1, published 2026-10-21.\n\nText: \"Schwab's Form ADV (published October 21, 2026) reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers.\"\n\nitem 3: 4,127 performing investment advisory functions (including research).\n\nitem 4: 16,763 registered representatives.\n\nitem 5: 16,000 advisory firms - figure not found, don't state figure. cite SCHW-DECK-2026-investor-day#62.\n\nText without figure: \"Schwab's investor day deck (May 14, 2026) refers to advisory firms as clients in its Advisor Services business.\" Actually, I need to be careful. The quote is \"16K Advisory Firms\" but figure not found in passage. So I shouldn't state 16,000 or 16K. I'll write: \"Schwab's investor day materials reference advisory firms in its Advisor Services business.\"\n\nHmm, but then it's very thin. Let me just write it as an adjacent item noting the measure. Actually maybe I should just write: \"Schwab's investor day deck (May 14, 2026) mentions advisory firms among its Advisor Services clients (the passage does not state a figure).\" \n\nActually, the instruction says \"keeps its figure out of your text\" - I just omit the number. I can still describe the measure (advisory firms as clients). Let me write: \"Schwab's investor day deck (May 14, 2026) describes advisory firms as clients of its Advisor Services business.\" differs_because: \"Advisory-firm clients on the platform are not advisor headcount.\"\n\nitem 6: 16,000 advisory firms, 2026-09-30. cite SCHW-TR-2026Q3#10. published 2026-10-15.\n\nText: \"In its third quarter 2026 earnings call (October 15, 2026), Schwab stated it serves more than 16,000 advisory firms representing $5.8 trillion in assets.\"\n\nitem 7: 250 expected new financial/wealth consultants, 2025. cite SCHW-TR-2025Q1#44. published 2025-04-17.\n\nText: \"On its first quarter 2025 earnings call (April 17, 2025), Schwab stated it expects to grow by roughly 250 new financial and wealth consultants during 2025.\"\n\n**a1.EDJ claims (basis break):**\n\nI'll write each item, noting basis and period. State each basis with its own periods.\n\nLet me write:\n\nItem 1: whole firm, 2026-06-26: \"Edward Jones reported 20,514 financial advisors at period end for the second quarter of 2026 (ended June 26, 2026), whole firm.\" cite EDJ-10Q-2026Q2#60 (published 2026-08-07).\n\nItem 2: U.S., 2026-03-27: \"Edward Jones reported 19,674 financial advisors at period end in the U.S. segment for the first quarter of 2026 (ended March 27, 2026).\" cite EDJ-10Q-2026Q1#66 (published 2026-05-07).\n\nItem 3: Canada, 2026-03-27: 876 financial advisors, Canada segment.\n\nItem 4: whole firm, 2025-12-31: 20,425 financial advisors at year end 2025. cite EDJ-10K-2025#130 (published 2026-03-13).\n\nItem 5: whole firm, 2025-09-26: 20,429, third quarter 2025. cite EDJ-10Q-2025Q3#67 (published 2025-11-07).\n\nItem 6: whole firm, 2025-06-27: 20,309, second quarter 2025. cite EDJ-10Q-2025Q2#64 (published 2025-08-08).\n\nItem 7: U.S., 2025-03-28: 19,413 U.S. segment. cite EDJ-10Q-2026Q1#66.\n\nItem 8: Canada, 2025-03-28: 875 Canada segment. cite EDJ-10Q-2026Q1#66.\n\nItem 9: whole firm, 2024-12-31: 20,125 year end 2024. cite EDJ-10K-2025#130.\n\nItem 10: whole firm, 2024-09-27: 19,885 third quarter 2024. cite EDJ-10Q-2025Q3#67.\n\nNow, how to handle the basis break in writing. The instruction: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo I should clearly separate whole firm from U.S./Canada. I'll write items grouped, or add a note. Since each item already specifies scope (whole firm, U.S., Canada), I'll write them with explicit scope labels. I'll perhaps order them newest first? There's no time window flag, so I'll follow matrix order.\n\nActually, wait - the matrix lists items in order 1-10 which is roughly newest first. But item 7 and 8 (U.S./Canada 2025-03-28) come after item 4-6 (whole firm 2025). That's fine, I'll follow matrix order.\n\nBut the basis break requires stating each basis separately. I could add a lead-in sentence noting the whole firm vs segment breakdown. But the caveat already says this (added by code). I should not repeat caveats. But the basis break is part of the claim writing instruction, not just caveat.\n\nActually, let me re-read: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo I state each basis with its own periods. I'll write each claim with its scope clearly, and perhaps a brief note. Since the items already carry scope labels, I'll just make sure each claim states its basis (whole firm vs U.S. segment vs Canada segment).\n\nI think writing each item with explicit scope is sufficient. Let me write them.\n\n**a1.MER adjacent:**\n\nitem 1: >15K wealth advisors, Merrill + Private Bank, Nov 2025 investor day deck. cite BAC-DECK-2025-investor-day#9 (published 2025-11-05).\n\nText: \"Merrill: The November 5, 2025 Bank of America investor day deck states Merrill and the Private Bank combined have more than 15,000 wealth advisors.\" differs_because.\n\nitem 2: 18,916 total wealth advisors, 2023-12-31, GWIM + Consumer Banking, quote not verbatim. cite BAC-SUPP-2023Q4#2 (published 2024-01-12).\n\nText: \"Bank of America's fourth quarter 2023 supplement (January 12, 2024) reported total wealth advisors at period end of 18,916 as of December 31, 2023, within a series (19,273 at September 30, 2023; 18,916 at June 30, 2023; 19,130 at March 31, 2023; 19,099 at December 31, 2022; 19,243 at September 30, 2022; 19,273 at June 30, 2022), a count that includes advisors across all wealth management businesses in GWIM and Consumer Banking \u2014 a wider group than Merrill and a period older than the last eight quarters.\"\n\nitem 3: 26,599 registered reps Form ADV. cite MER-ADV1A-2026#1 (published 2026-11-11).\n\nText: \"Merrill's Form ADV (November 11, 2026) reports approximately 26,599 employees who are registered representatives of a broker-dealer.\"\n\nitem 4: 32,960 employees Form ADV. cite MER-ADV1A-2026#1.\n\nText: \"Merrill's Form ADV (November 11, 2026) reports approximately 32,960 employees (full- and part-time, excluding clerical workers).\"\n\n**a1.RJF claims:**\n\nitem 1: 8,943 total financial advisors, 2025-09-30, record. cite RJF-TR-2025Q3#4 (published 2025-10-22), RJF-10K-2025#227 (published 2025-11-25).\n\nText: \"Raymond James Financial: Raymond James ended fiscal 2025 with a record 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractors.\"\n\nitem 2: 8,787 as of 2024-09-30 (3,826 + 4,961). cite RJF-10K-2025#227. quote not verbatim.\n\nText: \"Raymond James reported 8,787 total financial advisors as of September 30, 2024, comprising 3,826 employee financial advisors and 4,961 independent contractors.\"\n\nitem 3: 8,712 as of 2023-09-30 (3,693 + 5,019). quote not verbatim.\n\nitem 4: 8,731 as of 2025-03-31 (investor day). cite RJF-DECK-2025-investor-day#43 (published 2025-06-05). quote not verbatim.\n\nText: \"Raymond James's investor day materials (June 5, 2025) report 8,731 total financial advisors as of March 31, 2025.\"\n\nNow let me also double check the ordering. Since there's no explicit time window flag, I'll present aspect by aspect, firms in order (MS, SCHW, EDJ, MER, RJF).\n\nLet me finalize.\n\nActually, I need to reconsider the \"why it might matter\" for time window. The question \"over the last eight quarters\" - is this a time window? The instruction in the prompt: \"and every item when the question has a time window\". \n\nHmm. I think \"last eight quarters\" is a time reference/scope, not the \"time window\" flag that the system uses for recency ordering and why-lines. The recency flag would be marked on aspects (e.g., \"recency\" in aspect metadata). Here aspects are marked \"series, metric advisor_headcount\", not recency.\n\nI'll not add why-lines.\n\nAlso, ordering \"newest first across the whole answer\" only applies \"With a time window\". No time window, so I keep firm order and item order as listed.\n\nLet me now also verify the source citations I can use. The chunk_ids enum includes all listed sources. Good.\n\nLet me write the final answer.\n\nFor part_id, each claim/adjacent uses the cell id: a1.MS, a1.SCHW, a1.EDJ, a1.MER, a1.RJF. Since there's no comparison claim spanning firms, I don't need \"a1\" alone.\n\nNow let me write out all claims.\n\nLet me carefully construct the text for each.\n\nFor EDJ, the basis break: I'll write whole-firm items and segment items with clear labels. Let me also add a brief note that whole-firm and segment figures are on different bases? Actually the caveat already says that. But the instruction for basis break says \"state each basis with its own periods\". I'll just write each claim stating its basis.\n\nLet me write.\n\nActually, I realize I should double-check whether I should note the scope \"whole firm\" vs \"U.S.\" vs \"Canada\" explicitly. Yes, items 2,3,7,8 have scope. Items 1,4,5,6,9,10 are whole firm (no explicit scope in matrix, default whole firm). I'll write \"whole firm\" for those to be clear, or just leave as \"financial advisors\". To be safe and clear about the basis break, I'll label: whole-firm items as \"whole firm\" and segment items as \"U.S. segment\" / \"Canada segment\".\n\nLet me write final claims.\n\nMS claims (3):\n\n1. \"Morgan Stanley: Morgan Stanley's fourth quarter 2020 financial supplement (period ended December 31, 2020, published January 20, 2021) reported 15,950 Wealth Management representatives, its financial advisor headcount, as of December 31, 2020.\"\n\n2. \"Morgan Stanley: The same supplement reported 15,469 Wealth Management representatives as of September 30, 2020.\"\n\n3. \"Morgan Stanley: The same supplement reported 15,468 Wealth Management representatives as of December 31, 2019.\"\n\nEach with part_id a1.MS, chunk MS-SUPP-2020Q4#1.\n\nSCHW adjacent (7):\n\n1. \"The Charles Schwab Corporation: On its third quarter 2025 earnings call (October 16, 2025), Schwab stated it has 32,000 employees working together.\" differs \"Total employee headcount is a different measure from an eight-quarter advisor headcount series.\" chunk SCHW-TR-2025Q3#17.\n\n2. \"The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers.\" differs \"Form ADV total-employee count is a different measure from an eight-quarter advisor headcount series.\" chunk SCHW-ADV1A-2026#1.\n\n3. \"The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 4,127 employees who perform investment advisory functions (including research).\" differs \"Employees performing investment advisory functions is a different measure from an eight-quarter advisor headcount series.\" chunk SCHW-ADV1A-2026#1.\n\n4. \"The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 16,763 employees who are registered representatives of a broker-dealer.\" differs \"Registered-representative count is a different measure from an eight-quarter advisor headcount series.\" chunk SCHW-ADV1A-2026#1.\n\n5. \"The Charles Schwab Corporation: Schwab's investor day deck (May 14, 2026) describes advisory firms as clients of its Advisor Services business (the cited passage does not state a figure).\" differs \"Advisory-firm clients on the platform are not an eight-quarter advisor headcount series.\" chunk SCHW-DECK-2026-investor-day#62.\n\nHmm wait, \"the cited passage does not state a figure\" - is this appropriate? The marker is \"figure not found in its passage: do not state this figure\". I think I can just omit the figure and describe the measure. But actually, describing \"advisory firms as clients\" without a number is fine. But I'm slightly worried about adding \"does not state a figure\" as that's editorializing. Actually it's accurate to the code's note. But the instruction says just \"keeps its figure out of your text\". So I'll just omit the figure and not add commentary.\n\nLet me write: \"The Charles Schwab Corporation: Schwab's investor day deck (May 14, 2026) refers to advisory firms in its Advisor Services business.\"\n\ndiffers: \"Advisory-firm clients on the platform are not an eight-quarter advisor headcount series.\"\n\n6. \"The Charles Schwab Corporation: On its third quarter 2026 earnings call (October 15, 2026), Schwab stated it serves more than 16,000 advisory firms representing $5.8 trillion in assets.\" differs \"Advisory-firm clients on the platform are not an eight-quarter advisor headcount series.\" chunk SCHW-TR-2026Q3#10.\n\n7. \"The Charles Schwab Corporation: On its first quarter 2025 earnings call (April 17, 2025), Schwab stated it expects to grow by roughly 250 new financial and wealth consultants during 2025.\" differs \"Expected new consultant additions are not an eight-quarter advisor headcount series.\" chunk SCHW-TR-2025Q1#44.\n\nEDJ claims (10):\n\n1. \"Edward Jones: Edward Jones's second quarter 2026 10-Q (period ended June 26, 2026, published August 7, 2026) reported 20,514 financial advisors at period end for the whole firm.\" chunk EDJ-10Q-2026Q2#60.\n\n2. \"Edward Jones: Edward Jones's first quarter 2026 10-Q (period ended March 27, 2026, published May 7, 2026) reported 19,674 financial advisors at period end in the U.S. segment.\" chunk EDJ-10Q-2026Q1#66.\n\n3. \"Edward Jones: The same 10-Q reported 876 financial advisors at period end in the Canada segment.\" chunk EDJ-10Q-2026Q1#66.\n\n4. \"Edward Jones: Edward Jones's 2025 10-K (year ended December 31, 2025, published March 13, 2026) reported 20,425 financial advisors at year end 2025 for the whole firm.\" chunk EDJ-10K-2025#130.\n\n5. \"Edward Jones: Edward Jones's third quarter 2025 10-Q (period ended September 26, 2025, published November 7, 2025) reported 20,429 financial advisors at period end for the whole firm.\" chunk EDJ-10Q-2025Q3#67.\n\n6. \"Edward Jones: Edward Jones's second quarter 2025 10-Q (period ended June 27, 2025, published August 8, 2025) reported 20,309 financial advisors at period end for the whole firm.\" chunk EDJ-10Q-2025Q2#64.\n\n7. \"Edward Jones: Edward Jones's first quarter 2026 10-Q (period ended March 27, 2026, published May 7, 2026) reported 19,413 financial advisors at period end in the U.S. segment for the first quarter of 2025 (ended March 28, 2025).\" chunk EDJ-10Q-2026Q1#66.\n\nWait, item 7 period is 2025-03-28, but cite is EDJ-10Q-2026Q1#66. The item says \"for the first quarter of 2025 (ended March 28, 2025)\". The source is the Q1 2026 10-Q which shows prior-year comparison. Let me phrase: \"Edward Jones's first quarter 2026 10-Q (published May 7, 2026) reported 19,413 financial advisors at period end in the U.S. segment for the first quarter of 2025 (ended March 28, 2025).\"\n\nHmm, but the source line for EDJ-10Q-2026Q1#66 says \"period 2026-03-27, published 2026-05-07\". The figure 19,413 is the prior-year comparison within that document. So I date the claim by the source line but note the figure's period is 2025-03-28.\n\nActually the instruction: \"Date every claim from its source line\". So I say \"The first quarter 2026 10-Q (period ended March 27, 2026) states ...\". Then note the figure is for the prior-year period.\n\nLet me write: \"Edward Jones: Edward Jones's first quarter 2026 10-Q (period ended March 27, 2026, published May 7, 2026) reported 19,413 financial advisors at period end in the U.S. segment for the first quarter of 2025 (ended March 28, 2025).\"\n\n8. \"Edward Jones: The same 10-Q reported 875 financial advisors at period end in the Canada segment for the first quarter of 2025 (ended March 28, 2025).\"\n\n9. \"Edward Jones: Edward Jones's 2025 10-K (year ended December 31, 2025, published March 13, 2026) reported 20,125 financial advisors at year end 2024 (December 31, 2024) for the whole firm.\" chunk EDJ-10K-2025#130.\n\n10. \"Edward Jones: Edward Jones's third quarter 2025 10-Q (period ended September 26, 2025, published November 7, 2025) reported 19,885 financial advisors at period end for the third quarter of 2024 (ended September 27, 2024) for the whole firm.\" chunk EDJ-10Q-2025Q3#67.\n\nMER adjacent (4):\n\n1. \"Merrill: The Bank of America investor day deck (November 5, 2025) states Merrill and the Private Bank combined have more than 15,000 wealth advisors.\" differs \"A combined Merrill/Private Bank wealth-advisor count is not Merrill's own advisor headcount for the last eight quarters.\" chunk BAC-DECK-2025-investor-day#9.\n\n2. \"Merrill: Bank of America's fourth quarter 2023 supplement (January 12, 2024) reported total wealth advisors at period end of 18,916 as of December 31, 2023, within a series (19,273 at September 30, 2023; 18,916 at June 30, 2023; 19,130 at March 31, 2023; 19,099 at December 31, 2022; 19,243 at September 30, 2022; 19,273 at June 30, 2022), a count that includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" differs \"This is a wider GWIM-plus-Consumer-Banking group and a period older than the last eight quarters, not Merrill's own advisor headcount.\" chunk BAC-SUPP-2023Q4#2.\n\n3. \"Merrill: Merrill's Form ADV (November 11, 2026) reports approximately 26,599 employees who are registered representatives of a broker-dealer.\" differs \"A regulatory-form registered-representative count differs from a stated advisor headcount metric.\" chunk MER-ADV1A-2026#1.\n\n4. \"Merrill: Merrill's Form ADV (November 11, 2026) reports approximately 32,960 employees (full- and part-time, excluding clerical workers).\" differs \"A Form ADV employee count is a different measure from advisor headcount.\" chunk MER-ADV1A-2026#1.\n\nRJF claims (4):\n\n1. \"Raymond James Financial: Raymond James ended fiscal 2025 with a record 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractors (third quarter 2025 earnings call, October 22, 2025; fiscal 2025 10-K, November 25, 2025).\" chunk RJF-TR-2025Q3#4, RJF-10K-2025#227.\n\n2. \"Raymond James Financial: Raymond James's fiscal 2025 10-K (November 25, 2025) reported 8,787 total financial advisors as of September 30, 2024, comprising 3,826 employee financial advisors and 4,961 independent contractors.\" chunk RJF-10K-2025#227.\n\n3. \"Raymond James Financial: The same 10-K reported 8,712 total financial advisors as of September 30, 2023, comprising 3,693 employee financial advisors and 5,019 independent contractors.\" chunk RJF-10K-2025#227.\n\n4. \"Raymond James Financial: Raymond James's investor day materials (June 5, 2025) report 8,731 total financial advisors as of March 31, 2025.\" chunk RJF-DECK-2025-investor-day#43.\n\nNow, about part_id for the multi-firm ordering: each claim uses its cell's part_id (a1.MS etc.). Good.\n\nLet me finalize and submit.\n\nFor gaps: empty array (code adds them).\n\nActually, wait - I need to double check whether I should include a gap for something. The instruction \"Add a gap of your own only for something those gaps do not name.\" The code gaps cover everything (MS not found for asked periods, SCHW not published, EDJ not found 2026Q3, MER not published, RJF not found several periods). So no new gaps.\n\nLet me write the submit_answer call.\n\nI'll set answerable: true, behavior: \"answer\".\n\nLet me finalize all text strings.\n\nOne more check on quote not verbatim items - I must not put quotes around those. Items marked \"quote not verbatim\": MS? No. SCHW items - none marked. EDJ - none marked. MER item 2 marked \"quote not verbatim\". RJF items 2,3,4 marked \"quote not verbatim\". So I don't use quotation marks for those. I haven't used quotation marks anywhere, which is fine.\n\nNow, let me also verify: for fact claims, should I include the quote? The instruction says claims state what a cited item says. I don't need to include verbatim quotes unless helpful. I'll paraphrase with dates. For fact items with \"quote\" not marked not-verbatim, I could include quotes but not required. I'll just paraphrase accurately.\n\nActually, let me reconsider item 5 for SCHW (figure not found). I'll write it carefully.\n\nLet me write final answer now.\n\nLet me reconsider the ordering across the whole answer. No time window, so order is: aspect a1, firms in order MS, SCHW, EDJ, MER, RJF. Within each firm, claims/adjacent in the order items appear.\n\nI'll put claims first (for MS, EDJ, RJF), and adjacent (for SCHW, MER). But actually the \"claims\" and \"adjacent\" are separate arrays in the tool. So I'll fill claims array with MS, EDJ, RJF items (in firm order), and adjacent array with SCHW, MER items.\n\nWait, but the firm order is MS, SCHW, EDJ, MER, RJF. The claims array would have MS (3), EDJ (10), RJF (4). The adjacent array would have SCHW (7), MER (4).\n\nDoes the tool care about interleaving? The arrays are separate. I think the code will render claims and adjacent appropriately. I'll just fill both arrays.\n\nActually, re-reading: \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nThe claims and adjacent are separate arrays. I'll put all claims in claims array (MS, EDJ, RJF), all adjacent in adjacent array (SCHW, MER).\n\nLet me finalize.\n\nFor the adjacent items, the \"text\" should start with firm name too? The instruction says \"each claim starting '<Firm>: '\". For adjacent, similar. I'll include firm name in each.\n\nLet me write everything out now.\n\nFinal part_ids:\n- MS claims: a1.MS\n- SCHW adjacent: a1.SCHW\n- EDJ claims: a1.EDJ\n- MER adjacent: a1.MER\n- RJF claims: a1.RJF\n\nAll good.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: Morgan Stanley's fourth quarter 2020 financial supplement (period ended December 31, 2020, published January 20, 2021) reported 15,950 Wealth Management representatives, its financial advisor headcount, as of December 31, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The same supplement reported 15,469 Wealth Management representatives as of September 30, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The same supplement reported 15,468 Wealth Management representatives as of December 31, 2019.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's second quarter 2026 10-Q (period ended June 26, 2026, published August 7, 2026) reported 20,514 financial advisors at period end for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's first quarter 2026 10-Q (period ended March 27, 2026, published May 7, 2026) reported 19,674 financial advisors at period end in the U.S. segment.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The same 10-Q reported 876 financial advisors at period end in the Canada segment for the first quarter of 2026 (ended March 27, 2026).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's 2025 10-K (year ended December 31, 2025, published March 13, 2026) reported 20,425 financial advisors at year end 2025 for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's third quarter 2025 10-Q (period ended September 26, 2025, published November 7, 2025) reported 20,429 financial advisors at period end for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#67"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's second quarter 2025 10-Q (period ended June 27, 2025, published August 8, 2025) reported 20,309 financial advisors at period end for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#64"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's first quarter 2026 10-Q (period ended March 27, 2026, published May 7, 2026) reported 19,413 financial advisors at period end in the U.S. segment for the first quarter of 2025 (ended March 28, 2025).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The same 10-Q reported 875 financial advisors at period end in the Canada segment for the first quarter of 2025 (ended March 28, 2025).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's 2025 10-K (year ended December 31, 2025, published March 13, 2026) reported 20,125 financial advisors at year end 2024 (December 31, 2024) for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: Edward Jones's third quarter 2025 10-Q (period ended September 26, 2025, published November 7, 2025) reported 19,885 financial advisors at period end for the third quarter of 2024 (ended September 27, 2024) for the whole firm.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#67"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Raymond James Financial: Raymond James ended fiscal 2025 with a record 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractors (third quarter 2025 earnings call, October 22, 2025, and fiscal 2025 10-K, November 25, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#4",
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: Raymond James's fiscal 2025 10-K (November 25, 2025) reported 8,787 total financial advisors as of September 30, 2024, comprising 3,826 employee financial advisors and 4,961 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The same 10-K reported 8,712 total financial advisors as of September 30, 2023, comprising 3,693 employee financial advisors and 5,019 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: Raymond James's investor day materials (June 5, 2025) report 8,731 total financial advisors as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#43"
+        ],
+        "part_id": "a1.RJF"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: On its third quarter 2025 earnings call (October 16, 2025), Schwab stated it has 32,000 employees working together.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#17"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Total employee headcount is a different measure from an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "A Form ADV total-employee count is a different measure from an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 4,127 employees who perform investment advisory functions (including research).",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Employees performing investment advisory functions is a different measure from an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 16,763 employees who are registered representatives of a broker-dealer.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "A registered-representative count is a different measure from an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab's investor day deck (May 14, 2026) refers to advisory firms in its Advisor Services business.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Advisory-firm clients on the platform are not an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its third quarter 2026 earnings call (October 15, 2026), Schwab stated it serves more than 16,000 advisory firms representing $5.8 trillion in assets.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Advisory-firm clients on the platform are not an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its first quarter 2025 earnings call (April 17, 2025), Schwab stated it expects to grow by roughly 250 new financial and wealth consultants during 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#44"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Expected new consultant additions are not an eight-quarter advisor headcount series."
+      },
+      {
+        "text": "Merrill: The Bank of America investor day deck (November 5, 2025) states Merrill and the Private Bank combined have more than 15,000 wealth advisors.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "A combined Merrill/Private Bank wealth-advisor count is not Merrill's own advisor headcount for the last eight quarters."
+      },
+      {
+        "text": "Merrill: Bank of America's fourth quarter 2023 supplement (January 12, 2024) reported total wealth advisors at period end of 18,916 as of December 31, 2023, within a series (19,273 at September 30, 2023; 18,916 at June 30, 2023; 19,130 at March 31, 2023; 19,099 at December 31, 2022; 19,243 at September 30, 2022; 19,273 at June 30, 2022), a count that includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "This is a wider GWIM-plus-Consumer-Banking group and a period older than the last eight quarters, not Merrill's own advisor headcount."
+      },
+      {
+        "text": "Merrill: Merrill's Form ADV (November 11, 2026) reports approximately 26,599 employees who are registered representatives of a broker-dealer.",
+        "chunk_ids": [
+          "MER-ADV1A-2026#1"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "A regulatory-form registered-representative count differs from a stated advisor headcount metric."
+      },
+      {
+        "text": "Merrill: Merrill's Form ADV (November 11, 2026) reports approximately 32,960 employees (full- and part-time, excluding clerical workers).",
+        "chunk_ids": [
+          "MER-ADV1A-2026#1"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "A Form ADV employee count is a different measure from advisor headcount."
+      }
+    ],
+    "gaps": []
+  }
+}

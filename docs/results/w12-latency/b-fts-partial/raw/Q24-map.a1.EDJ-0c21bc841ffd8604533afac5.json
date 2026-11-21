@@ -1,0 +1,212 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#91",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2025Q2#28"
+  ],
+  "at": "2026-11-21T13:16:16.496154-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9360,
+    "output_tokens": 5594,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7824,
+    "reasoning_tokens": 4180,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.06
+  },
+  "wall_s": 40.25,
+  "tokens_per_s": 138.98,
+  "ttft_s": 2.06,
+  "reasoning_content": "Let me analyze the sub-question. The sub-question asks for \"Client assets (total client assets under management/advisement) for the firm.\"\n\nI need to extract facts about client assets (total client assets under care/AUC) for Edward Jones.\n\nLooking at the passages, I see several data points about \"client assets under care\" (AUC) at various periods:\n\n1. EDJ-10Q-2026Q2#53: \"total of $2.6 trillion in client assets under care as of June 26, 2026\" - this is total client assets under care.\n\n2. EDJ-10Q-2026Q2#61: \"The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC.\"\n\n3. EDJ-10Q-2026Q1#52: \"The Partnership ended the first quarter of 2026 with $2.4 trillion of assets under care (\"AUC\"), including $1.1 trillion of advisory programs AUC.\"\n\n4. EDJ-10Q-2026Q1#51: \"Client assets under care ($ billions): Total: At period end $2,417... Average $2,498\" - for Q1 2026\n\n5. EDJ-10Q-2026Q1#46: \"total of $2.4 trillion in client assets under care as of March 27, 2026\"\n\n6. EDJ-10K-2025#131: \"The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.\" - fiscal year 2025\n\n7. EDJ-10Q-2025Q3#66: \"Client assets under care ($ billions): Total: At period end $2,421... Average $2,365\" - Q3 2025\n\n8. EDJ-10Q-2025Q2#63: \"Client assets under care ($ billions): Total: At period end $2,306... Average $2,212\" - Q2 2025\n\n9. EDJ-10Q-2025Q2#67: \"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion\"\n\n10. EDJ-10Q-2026Q2#59: \"Client assets under care ($ billions): Total: At period end $2,647... Average $2,580\" - Q2 2026\n\n11. EDJ-10Q-2026Q2#81: \"Client assets under care ($ billions): At period end $2,591.3... Average $2,501.4\" - this seems to be a U.S. segment (the second column with $56.1 and $54.8 is Canada)\n\nWait, let me look at chunk #81 more carefully. It shows \"At period end $2,591.3 vs $2,256.6 15%, $56.1 vs $49.0 14%\" - this appears to be U.S. and Canada segments split. So $2,591.3 is U.S., $56.1 is Canada.\n\nActually, the question asks for total client assets under management/advisement. The firm reports \"client assets under care\" (AUC). Let me extract these as facts.\n\nThe firm's main metric is \"assets under care\" (AUC), total. This is what's asked: \"total client assets under management/advisement.\"\n\nLet me collect the key figures:\n\nFiscal Year 2025 (ended 2025-12-31):\n- Total client AUC: $2.5 trillion at period end, $1.1 trillion advisory programs\n- Average client AUC increased 12%\n\nActually from EDJ-10K-2025#131: \"ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC\"\n\nLet me identify the exact period labels. The 10-K is for period 2025-12-31 (fiscal year 2025).\n\nFor periods:\n- Q2 2025 (period ended 2025-06-27): Total AUC at period end $2,306 billion, average $2,212 billion\n- Q3 2025 (period ended 2025-09-26): Total AUC at period end $2,421 billion, average $2,365 billion\n- Q1 2026 (period ended 2026-03-27): Total AUC at period end $2,417 billion, average $2,498 billion\n- Q2 2026 (period ended 2026-06-26): Total AUC at period end $2,647 billion, average $2,580 billion\n- FY 2025: Total AUC $2.5 trillion at period end\n\nI should provide these as facts. Let me focus on the most relevant ones.\n\nThe sub-question is just [fact] - Client assets (total client assets under management/advisement) for the firm.\n\nSo I should report the total client assets under care (AUC) figures. The firm reports \"client assets under care\" (AUC), which is the closest to \"total client assets under management/advisement.\"\n\nLet me compile items. I'll list each period's total AUC figure.\n\nKey figures with exact numbers:\n\n1. FY2025 (period end 2025-12-31): $2.5 trillion total AUC. From #131. Actually it says \"to $2.5 trillion\". Also from #131 \"Average client AUC increased 12%\".\n\n2. Q2 2025 (period end 2025-06-27): $2,306 billion ($2.3 trillion). From #63 and #67.\n\n3. Q3 2025 (period end 2025-09-26): $2,421 billion. From #66.\n\n4. Q1 2026 (period end 2026-03-27): $2,417 billion. From #51, #52.\n\n5. Q2 2026 (period end 2026-06-26): $2,647 billion ($2.6 trillion). From #59, #61, #53.\n\nLet me also note the average figures, but those are average client AUC. The question asks for total client assets, so period-end is the key figure. But I could include both.\n\nActually, I'll include period-end total AUC as the primary facts, and note advisory programs breakdown too.\n\nLet me be thorough but focused. I'll provide the period-end total AUC figures as facts for each period.\n\nLet me write out the items.\n\nItem 0: FY2025 period end - $2.5 trillion total client AUC\n- text: \"The Partnership ended fiscal year 2025 with $2.5 trillion in client assets under care (AUC), including $1.1 trillion of advisory programs AUC.\"\n- quote from #131: \"The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.\"\n- value: \"$2.5 trillion\"\n- unit: \"USD\" (client assets under care)\n- period: \"F2025\"\n\nItem 1: Q2 2025 - $2,306 billion (2.3 trillion)\n- from #63: \"At period end $2,306\"\n- value: \"$2,306\" billion... actually the table is in $ billions. So $2,306 billion = $2.306 trillion.\n\nItem 2: Q3 2025 - $2,421 billion\n\nItem 3: Q1 2026 - $2,417 billion\n\nItem 4: Q2 2026 - $2,647 billion\n\nLet me also consider the definition. The firm uses \"assets under care\" (AUC). This is their term. Is AUC the same as \"assets under management/advisement\"? The question asks for \"total client assets under management/advisement.\" AUC is the firm's metric for total client assets. I'll treat it as a fact, noting the firm's term is \"assets under care.\"\n\nActually, I should think about whether \"assets under care\" is a different quantity from \"assets under management/advisement.\" The question phrasing \"Client assets (total client assets under management/advisement)\" suggests the asker wants total client assets, and AUC is exactly that - total client assets under care. I'll treat it as fact since AUC is the firm's total client assets metric.\n\nNote: There's a nuance. \"Assets under care\" includes assets on which the firm doesn't necessarily earn advisory fees (like brokerage assets). \"Assets under management/advisement\" might be narrower (advisory programs only). But the question says \"Client assets (total client assets under management/advisement)\" - the parenthetical is clarifying what \"client assets\" means, and \"total\" suggests the broadest measure.\n\nActually, the firm has \"advisory programs AUC\" as a subset ($1.2 trillion of the $2.6 trillion). The \"total client AUC\" is $2.6 trillion. The \"assets under management/advisement\" might correspond more to advisory programs.\n\nHmm, but the question asks for \"Client assets (total client assets under management/advisement) for the firm.\" I think the asker wants total client assets. The firm's \"assets under care\" is total client assets. \"Advisory programs AUC\" is the subset under advisement.\n\nGiven ambiguity, I'll report both: total client AUC (assets under care) as the primary fact, and advisory programs AUC as additional items. Both are facts the firm reports.\n\nActually, let me keep it simple and report the total client assets under care figures, since that's \"total client assets.\" I'll note the advisory programs subset too where relevant.\n\nLet me think about what's most useful. The sub-question is \"[fact]: Client assets (total client assets under management/advisement) for the firm.\"\n\nI'll provide the total AUC figures (assets under care), and also include the advisory programs AUC as a related fact since it's \"under management/advisement\" more specifically.\n\nActually, \"assets under care\" is the firm's total client assets metric. I'll report it as fact. I'll also report advisory programs AUC as fact (it's a component).\n\nLet me structure the items. I'll report total AUC period-end for each period, plus advisory programs AUC.\n\nLet me list comprehensively:\n\nTotal client AUC (assets under care), period end:\n- F2025: $2.5 trillion (from #131)\n- 2025Q2: $2,306 billion (from #63)\n- 2025Q3: $2,421 billion (from #66)\n- 2026Q1: $2,417 billion (from #51)\n- 2026Q2: $2,647 billion (from #59)\n\nAdvisory programs AUC, period end:\n- F2025: $1.1 trillion (from #131)\n- 2025Q2: $931 billion (from #63)\n- 2025Q3: $1,036 billion (from #66)\n- 2026Q1: $1,064 billion (from #51)\n- 2026Q2: $1,198 billion (from #59)\n\nI think I'll report the total AUC as the main fact, and include advisory programs as additional items with clear labels.\n\nActually, to be precise about what the question wants (\"total client assets under management/advisement\"), the key figure is total client AUC. I'll report total AUC figures as facts.\n\nLet me also add the average client AUC figures? The question is about \"client assets\" total, so period-end is the natural answer. I'll include period-end primarily but can also mention average.\n\nI'll keep it focused: report total client AUC period-end for each available period, plus the advisory programs AUC (as it's \"under advisement\").\n\nLet me finalize. I'll provide ~5 items for total AUC, and note advisory programs.\n\nActually, I want to be careful about not over-complicating. Let me provide items for total client assets under care (AUC) at period end for each period, and advisory programs AUC at period end for each period. That's the most directly relevant to \"client assets per advisor\" (total assets) and \"under management/advisement\" (advisory programs).\n\nLet me write it out now.\n\nFor the definition field: the firm's definition of AUC. Is there a definition? \"assets under care\" - I don't see an explicit definition in these passages. I'll leave definition empty or note.\n\nActually, there's a note in #73/#78: \"(1) Assets on which the Partnership earns asset-based fee revenue.\" But that's for the \"client asset values\" table showing advisory programs and mutual fund assets - not the AUC total.\n\nHmm wait, let me look at #73 and #78. These show \"client asset values ($ billions)\" with \"Advisory programs\" and \"Mutual fund assets held outside of advisory programs\". These are \"assets on which the Partnership earns asset-based fee revenue\" - which is a different, narrower measure than AUC (total client assets under care).\n\nSo there's:\n- AUC (assets under care): total client assets ($2.6 trillion)\n- \"client asset values\" / \"assets on which the Partnership earns asset-based fee revenue\": a narrower measure (advisory programs + mutual funds outside advisory)\n\nThese are different. The question asks for \"total client assets under management/advisement.\" \n\nThe AUC total ($2.6 trillion) is \"total client assets under care\" - the broadest. The \"assets under management/advisement\" is more like the advisory programs + asset-based fee assets.\n\nGiven the ambiguity, I think \"total client assets\" = AUC is the best answer, and \"under management/advisement\" = advisory programs AUC is a subset.\n\nI'll report both clearly. The total AUC is the firm's \"total client assets\" metric.\n\nLet me finalize the items and submit.\n\nFor periods, I'll use:\n- F2025 for fiscal year 2025 (10-K period 2025-12-31)\n- 2025Q2 for period ended 2025-06-27\n- 2025Q3 for period ended 2025-09-26\n- 2026Q1 for period ended 2026-03-27\n- 2026Q2 for period ended 2026-06-26\n\nValues: I'll write them as printed, e.g., \"$2.5 trillion\" or \"$2,306\" (billions).\n\nLet me write the items concisely.\n\nActually, for value and unit, let me be consistent. For the trillion figures, value \"$2.5\" unit \"trillion USD\" or value \"$2.5 trillion\" unit \"USD\". I'll use value as printed.\n\nFor #63 table: value \"$2,306\" unit \"USD billions\" or \"$ billions\". The table header says \"($ billions)\". So value $2,306 billion = $2.306 trillion.\n\nI'll write value \"$2,306\" and unit \"USD billions\".\n\nLet me just make reasonable choices.\n\nFor FY2025 total: value \"$2.5 trillion\", unit \"USD (client assets under care)\". Actually unit should just be the measure. Let me use unit \"USD\" and put the trillion in value.\n\nLet me standardize:\n- value: \"$2.5 trillion\", unit \"USD\"\n- value: \"$2,306 billion\", unit \"USD\"\n\nHmm, but the instructions say value \"as printed\" and unit \"what is counted or measured\". The measure is \"client assets under care\" / USD.\n\nI'll use:\n- unit: \"USD (client assets under care)\"\n\nActually simpler: unit = \"client assets under care (USD)\". Or just \"USD\".\n\nLet me keep unit as \"USD\" and value as printed figure. The text will clarify it's client AUC.\n\nI'll go with:\n- unit: \"client assets under care\" for total AUC items, value includes the number.\n\nActually let me just do value \"$2.5 trillion\" unit \"USD\" and for billions value \"$2,306\" unit \"USD billions\".\n\nI'll be consistent using unit \"USD billions\" for the quarterly table figures and \"$X trillion\" / \"USD\" for the trillion statements.\n\nLet me just write cleanly.\n\nFinal items (I'll include both total AUC and advisory AUC as facts):\n\n1. Total AUC F2025 period end\n2. Total AUC 2025Q2 period end\n3. Total AUC 2025Q3 period end\n4. Total AUC 2026Q1 period end\n5. Total AUC 2026Q2 period end\n6. Advisory AUC F2025 period end\n7. Advisory AUC 2026Q2 period end (and others)\n\nActually, I think I'll focus on total AUC as the primary answer since the question asks \"total client assets.\" I'll include advisory programs AUC as additional context items too since \"under management/advisement\" specifically points to that.\n\nLet me include both but clearly.\n\nI'll write it all out now and submit.\n\nFor chunk_ids, I need to use the actual ids. Let me list them:\n- #131 = \"EDJ-10K-2025#131\"\n- #63 = \"EDJ-10Q-2025Q2#63\"\n- #66 = \"EDJ-10Q-2025Q3#66\"\n- #51 = \"EDJ-10Q-2026Q1#51\"\n- #59 = \"EDJ-10Q-2026Q2#59\"\n- #61 = \"EDJ-10Q-2026Q2#61\"\n- #53 = \"EDJ-10Q-2026Q2#53\"\n\nLet me write the cells.\n\nI'll do one cell for a1.EDJ with multiple items (facts).\n\nLet me write concise items.\n\nItem for total AUC period end figures - I'll make each period a separate item.\n\nTotal AUC:\n- F2025: $2.5 trillion (#131)\n- 2025Q2: $2,306 billion (#63)\n- 2025Q3: $2,421 billion (#66)\n- 2026Q1: $2,417 billion (#51)\n- 2026Q2: $2,647 billion (#59)\n\nAdvisory programs AUC:\n- F2025: $1.1 trillion (#131)\n- 2025Q2: $931 billion (#63)\n- 2025Q3: $1,036 billion (#66)\n- 2026Q1: $1,064 billion (#51)\n- 2026Q2: $1,198 billion (#59)\n\nI'll include all these as facts.\n\nLet me write the text for each item clearly indicating what it covers.\n\nNow write the submit call.\n\nFor definition field: I could note that the firm's metric is \"assets under care\" (AUC). There isn't a formal definition quoted. I'll leave definition \"\" for most, but maybe for one item note \"assets under care (AUC)\".\n\nActually there's a possible definition issue: AUC vs \"assets under management/advisement\". I'll note in the text that the firm's total client asset metric is \"assets under care\" (AUC), and advisory programs AUC is the \"under advisement\" subset.\n\nLet me finalize and submit.\n\nI'll set reason: \"The firm reports total client assets as 'assets under care' (AUC) at each period end; these are facts.\"\n\nLet me write out all items now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The firm reports total client assets under care (AUC) at each period end, plus the advisory programs AUC subset; these are the firm's own client asset figures.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "The Partnership ended fiscal year 2025 with $2.5 trillion in total client assets under care (AUC), including $1.1 trillion of advisory programs AUC.",
+            "quote": "The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.",
+            "value": "$2.5 trillion",
+            "unit": "USD (total client assets under care)",
+            "period": "F2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          },
+          {
+            "text": "The Partnership ended fiscal year 2025 with $1.1 trillion of advisory programs assets under care (AUC).",
+            "quote": "including $1.1 trillion of advisory programs AUC",
+            "value": "$1.1 trillion",
+            "unit": "USD (advisory programs assets under care)",
+            "period": "F2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2025 with $2,306 billion in total client assets under care (AUC).",
+            "quote": "Total: At period end $ 2,306 $ 2,062",
+            "value": "$2,306",
+            "unit": "USD billions (total client assets under care)",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#63"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2025 with $931 billion of advisory programs assets under care (AUC).",
+            "quote": "Advisory programs: At period end $ 931 $ 812",
+            "value": "$931",
+            "unit": "USD billions (advisory programs assets under care)",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#63"
+            ]
+          },
+          {
+            "text": "The Partnership ended the third quarter of 2025 with $2,421 billion in total client assets under care (AUC).",
+            "quote": "Total: At period end $ 2,421 $ 2,176",
+            "value": "$2,421",
+            "unit": "USD billions (total client assets under care)",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#66"
+            ]
+          },
+          {
+            "text": "The Partnership ended the third quarter of 2025 with $1,036 billion of advisory programs assets under care (AUC).",
+            "quote": "Advisory programs: At period end $ 1,036 $ 864",
+            "value": "$1,036",
+            "unit": "USD billions (advisory programs assets under care)",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#66"
+            ]
+          },
+          {
+            "text": "The Partnership ended the first quarter of 2026 with $2,417 billion in total client assets under care (AUC), including $1,064 billion of advisory programs AUC.",
+            "quote": "Total: At period end $ 2,417 $ 2,159 ... Advisory programs: At period end $ 1,064 $ 860",
+            "value": "$2,417",
+            "unit": "USD billions (total client assets under care)",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "The Partnership ended the first quarter of 2026 with $1,064 billion of advisory programs assets under care (AUC).",
+            "quote": "Advisory programs: At period end $ 1,064 $ 860",
+            "value": "$1,064",
+            "unit": "USD billions (advisory programs assets under care)",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2026 with $2,647 billion in total client assets under care (AUC), including $1,198 billion of advisory programs AUC.",
+            "quote": "Total: At period end $ 2,647 $ 2,306 ... Advisory programs: At period end $ 1,198 $ 931",
+            "value": "$2,647",
+            "unit": "USD billions (total client assets under care)",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2026 with $1,198 billion of advisory programs assets under care (AUC).",
+            "quote": "Advisory programs: At period end $ 1,198 $ 931",
+            "value": "$1,198",
+            "unit": "USD billions (advisory programs assets under care)",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (AUC), including $1.2 trillion of advisory programs AUC.",
+            "quote": "The Partnership ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC.",
+            "value": "$2.6 trillion",
+            "unit": "USD (total client assets under care)",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
