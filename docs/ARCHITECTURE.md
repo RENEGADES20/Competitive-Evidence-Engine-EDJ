@@ -1,26 +1,75 @@
 # Architecture
 
-Draft for week 1. Invariants are in [CLAUDE.md, Architecture invariants](../CLAUDE.md#architecture-invariants);
+Updated for W11 (#270). Invariants are in [CLAUDE.md, Architecture invariants](../CLAUDE.md#architecture-invariants);
 this file explains the design behind them. Decisions are recorded in [DECISIONS.md](DECISIONS.md).
 
 ## Pipeline
 
 ```mermaid
 flowchart LR
-    A[Public sources<br/>EDGAR, IR, trade press, research] --> B[Import and parse<br/>Python, PDF/HTML]
-    B --> C[(Original document storage<br/>shared folder raw/)]
-    B --> D[(PostgreSQL<br/>documents, chunks, entities, topics)]
-    E[Streamlit web interface] --> F[Search and filter<br/>company / date / keywords]
-    D --> F
-    P[Question planner<br/>aspects; code: firms x aspects<br/>= sub-questions, ADR-021] --> F
-    F --> M[Map step, #246<br/>extraction per firm + CRAG re-search<br/>evidence matrix; behavior by code]
-    M --> G[Reduce step, #247<br/>one LLM call over the matrix, prompt v5<br/>or an answer built by code]
-    G --> H[Citation validation<br/>stored doc and chunk IDs]
-    H --> I[Answer + citations<br/>or evidence gap]
-    I --> J[Human evaluation<br/>evals/questions.yaml]
-    C --> K[Source viewer / download]
-    I --> K
+    subgraph Build["Corpus (built ahead of time)"]
+        direction TB
+        S["Public sources<br/>filings, decks, calls, press, research"] --> I["Ingest<br/>parse, chunk, tag firm, segment, date"]
+        I --> DB[("Postgres<br/>documents, chunks, manifest; dated snapshots")]
+    end
+    subgraph Find["1. Find the evidence"]
+        direction TB
+        Q["Question<br/>plain language"] --> R["Resolve firms<br/>aliases, segments, time window"]
+        R --> P["Plan sub-questions<br/>aspects x firms"]
+        P --> F["Search<br/>per sub-question, filters in SQL"]
+    end
+    subgraph Read["2. Read it, decide in code"]
+        direction TB
+        X["Extract per firm<br/>fact, not disclosed, not found, other figure"] --> C["Re-search<br/>empty cells, one round"]
+        C --> M["Evidence matrix<br/>behavior, definitions, caveats"]
+    end
+    subgraph Write["3. Write and check"]
+        direction TB
+        W["Write the answer<br/>from the matrix only"] --> K["Check<br/>citations, numbers, caveats, gaps"]
+        K --> U["Streamlit app<br/>answer, sources, coverage"]
+    end
+    DB --> F
+    F --> X
+    M --> W
+    subgraph Legend
+        direction TB
+        k1[("Data")]
+        k2["Code step"]
+        k3["AI step"]
+        k4["AI + code step"]
+    end
+    classDef data fill:#ECEAE3,stroke:#57534E,color:#1C2321
+    classDef code fill:#FFFFFF,stroke:#1C2321,stroke-width:2px,color:#1C2321
+    classDef ai fill:#D4F53C,stroke:#1C2321,color:#1C2321
+    classDef aicode fill:#D4F53C,stroke:#1C2321,stroke-width:2px,stroke-dasharray:5 3,color:#1C2321
+    class S,DB,Q,k1 data
+    class I,R,F,M,K,U,k2 code
+    class X,W,k3 ai
+    class P,C,k4 aicode
 ```
+
+The same diagram is in the README and on the app's Architecture page; the module text (what each
+step does, who does it, the rule it enforces) lives in `src/cee/app/architecture.py`, and
+`tests/test_architecture_page.py` checks that both diagrams use its labels. Principle: **AI reads
+and writes; code decides and checks.**
+
+W11 flow (ADR-021; the stages of `cee.ask`, shown live in the Ask page's progress trace):
+
+| Stage | Who | What happens | Where |
+|---|---|---|---|
+| resolve | code | firms, segments, time window from aliases | `retrieve/fts.py` `resolve`, `config/entities.yaml` |
+| decompose | AI + code | the planner names aspects (one call); code expands firms x aspects into sub-questions | `retrieve/planner.py` |
+| search | code | each sub-question searched with entity, segment and time as SQL filters; full-text on `main`, hybrid on `exp/hybrid` | `retrieve/fts.py` `search` |
+| extract | AI | one call per firm, strict schema: fact / not_disclosed / not_found / different_quantity; code rejects ids outside the cell's retrieved set and flags quotes and figures not in the cited passage | `answer/extract.py` |
+| research | code + AI | one corrective re-search for `not_found` cells (wider words, used chunks excluded, same filters), then re-extraction | `answer/extract.py` `run_map` |
+| matrix | code | behavior, metric definitions, what may be computed, caveats, gaps | `answer/matrix.py`, `config/metric_definitions.yaml` |
+| synthesize | AI or code | one reduce call writes the answer from the matrix only; refuse, forecast requests, an undecided matrix or nothing to cite are written by code with no call | `answer/reduce.py` |
+| check, caveats | code | citations only to retrieved chunk IDs (flagged, never dropped), number and date checks, caveats and gaps inserted | `answer/validate.py`, `answer/reduce.py` |
+| log | code | the query, plan, every call with tokens and cost | `query_log`, `answer/cost.py` |
+
+The number of model calls follows the question: one planner call, one extraction call per firm,
+re-extractions for re-searched cells, and at most one reduce call. `MAP=off` keeps the legacy
+single answer call. With nothing retrieved the gap answer is built by code with no call.
 
 ## Schema draft
 
@@ -111,6 +160,14 @@ topics list), not by the LLM. Details in [specs/retrieval.md](../specs/retrieval
 | `theme` | No firm named, theme matched (Q16, Q18, Q20) | topic filter; research docs eligible | per topic |
 | `entity+theme` | Both (Q12, Q21) | both parts retrieved separately | split between parts |
 
+Search engine (the same filters in every engine): full-text search (`fts`) is the default and the
+only engine on `main`. `exp/hybrid` adds `hybrid` (keyword + embeddings + a local reranker) and
+`hybrid-norerank` (the same candidates ordered by fusion score), chosen by `RETRIEVAL_MODE` or
+`scripts/eval_run.py --mode` (ADR-011). W11 scored runs (#250, adjudicated): fts 18/30 on `main`
+([w11-report](results/w11-report.md)), hybrid-norerank 22/30 on `exp/hybrid`
+([report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md)).
+How to run each: [RUN.md section 7](RUN.md#7-results-ask-with-the-real-model-and-reproduce-the-gate-4-run).
+
 ## Entity relation model
 
 In `config/entities.yaml`:
@@ -135,8 +192,8 @@ In `config/entities.yaml`:
 
 ## Answer JSON
 
-One LLM call returns this shape (Claude via tool use, OpenAI via Structured Outputs); our
-code validates it. See [specs/answer-citations.md](../specs/answer-citations.md). `part_id` names
+The answer has this shape: the reduce call writes it from the evidence matrix (or code builds it;
+the legacy single answer call with `MAP=off`), via tool use / structured outputs; our code validates it. See [specs/answer-citations.md](../specs/answer-citations.md). `part_id` names
 the planner part (ADR-020) an item answers (prompt v4, #215; "" in older outputs); a gap's `flags`
 and `claim_text` are code-owned (a part with no claim or gap, an uncited grid cell moved to gaps).
 `stop_reason` and `usage` are code-owned too (#230): why the model's output stopped and its token

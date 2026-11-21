@@ -47,7 +47,7 @@ def test_core_modules_do_not_import_fastembed():
         "sys.modules['fastembed'] = None\n"
         "sys.modules['onnxruntime'] = None\n"
         "import cee.retrieve.fts, cee.ask, cee.app.components\n"
-        "from cee.app.views import ask_page, coverage_page, design_page, source_page\n"
+        "from cee.app.views import ask_page, coverage_page, architecture_page, source_page\n"
         "import cee.retrieve.embed\n"  # the module itself imports fastembed only when used
         "print('ok')\n"
     )

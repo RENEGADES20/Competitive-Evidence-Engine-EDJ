@@ -132,14 +132,14 @@ Review notes (non-blocking, from the plan review on #270):
    rendered README on the branch (or a screenshot of it).
 
 ## Acceptance
-- [ ] Linked questions: none (docs and UI only; no retrieval or answer change).
-- [ ] README mermaid shows the W11 flow (decompose, per-sub-question search with SQL filters,
+- [x] Linked questions: none (docs and UI only; no retrieval or answer change).
+- [x] README mermaid shows the W11 flow (decompose, per-sub-question search with SQL filters,
   per-firm extract, corrective re-search, evidence matrix decided by code, synthesis, checks)
   with a data / code / AI legend; renders on the GitHub PR page.
-- [ ] README node labels equal `architecture.py` labels -> `pytest tests/test_architecture_page.py`
+- [x] README node labels equal `architecture.py` labels -> `pytest tests/test_architecture_page.py`
   passes.
-- [ ] README screenshots are new, from the running mock app, with alt text; demo.gif kept.
-- [ ] README Status, ARCHITECTURE.md and RUN.md match the merged W11 reports and code; RUN.md has
+- [x] README screenshots are new, from the running mock app, with alt text; demo.gif kept.
+- [x] README Status, ARCHITECTURE.md and RUN.md match the merged W11 reports and code; RUN.md has
   Windows and macOS blocks for fts and hybrid-norerank. Checks (TL ruling on #270):
   - `grep -c "18/30" README.md` and `grep -c "22/30" README.md` -> each >= 1; `grep -c
     "docs/results/w11-report.md" README.md` >= 1; `grep -c
@@ -152,14 +152,14 @@ Review notes (non-blocking, from the plan review on #270):
     `git show origin/exp/hybrid:scripts/eval_run.py` (`RETRIEVAL_MODES = ("fts", "hybrid",
     "hybrid-norerank")`, `--mode`) and `origin/exp/hybrid:.env.example` (`RETRIEVAL_MODE=fts`); the
     output is logged in the Progress log.
-- [ ] App nav shows Architecture (url `architecture`), no Design; `design_page.py` gone and
+- [x] App nav shows Architecture (url `architecture`), no Design; `design_page.py` gone and
   nothing imports it (`git grep design_page` -> only plans/ and history docs).
-- [ ] Hover and keyboard focus show each module's explanation; the plain list shows all modules;
+- [x] Hover and keyboard focus show each module's explanation; the plain list shows all modules;
   no firm figures, no network fetch, no script tag on the page.
-- [ ] `verify_cee.py run architecture-page ask-answer gap-path open-citation coverage` -> PASS
+- [x] `verify_cee.py run architecture-page ask-answer gap-path open-citation coverage` -> PASS
   (mock), evidence folder named in the PR.
-- [ ] `python -m pytest -q` green locally and `gh pr checks` green.
-- [ ] 0 real calls; `.env` never read or printed.
+- [x] `python -m pytest -q` green locally and `gh pr checks` green.
+- [x] 0 real calls; `.env` never read or printed.
 
 ## Progress log
 - 2026-11-21 01:25 - plan written on `tl/270-closeout-arch` from origin/main 0a7510a (worktree
@@ -169,3 +169,25 @@ Review notes (non-blocking, from the plan review on #270):
   `scripts/eval_run.py` has `RETRIEVAL_MODES = ("fts", "hybrid", "hybrid-norerank")` and
   `--mode` (default `RETRIEVAL_MODE`, else fts); `.env.example` has `RETRIEVAL_MODE=fts` and says
   hybrid needs `CEE_VECTORS=on`.
+- 2026-11-21 01:32 - `st.html` (Streamlit 1.64) keeps `tabindex`, `role`, `aria-describedby`, inline
+  `style` and `<style>`, `:hover`/`:focus` work (no iframe, so review note 1's frame handling is not
+  needed), but it drops inline SVG entirely: the arrows and group frames are drawn as plain divs.
+  Tooltips open beside the box, so the diagram's scroll area never clips them.
+- 2026-11-21 01:38 - module text in `src/cee/app/architecture.py` (13 modules: 3 offline, 10 online;
+  kinds data / code / ai / ai+code). README and ARCHITECTURE.md mermaid in the current style: a
+  `Corpus` subgraph plus three online subgraphs (find / read and decide / write and check), boxes
+  and arrows, classDefs and a Legend subgraph. `tests/test_architecture_page.py` checks both
+  diagrams' node labels against the module list.
+- 2026-11-21 01:42 - `verify_cee.py`: driver `architecture-page` (hover Search, Tab to Evidence
+  matrix, list, no figures, /design gone) and a `shots` command (README images into the run's
+  `shots/` and docs/assets; Streamlit scrolls inside its own container, so the shots use a tall
+  viewport and clip to the content). First drive on the plan commit: architecture-page PASS, the
+  other features PASS except open-citation / download-document UNREACHABLE (no raw files in the
+  worktree without the share path).
+- 2026-11-21 01:45 - item 5 checks: README `18/30` x1, `22/30` x1, `docs/results/w11-report.md` x2,
+  the exp/hybrid deepseek report x1, no "One LLM call" / "single LLM call"; RUN.md section 7 has no
+  "about two calls"; the retrieval-mode block has 2 PowerShell + 2 bash blocks (fts, hybrid-norerank);
+  its names `RETRIEVAL_MODE`, `--mode fts | hybrid | hybrid-norerank` equal exp/hybrid's
+  `RETRIEVAL_MODES = ("fts", "hybrid", "hybrid-norerank")` and `.env.example` `RETRIEVAL_MODE=fts`.
+  Dark token set checked in a standalone render (scratch, the app is pinned light). Full pytest:
+  1055 passed. 0 real calls.
