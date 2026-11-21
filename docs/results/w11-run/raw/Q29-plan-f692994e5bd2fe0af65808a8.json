@@ -1,0 +1,69 @@
+{
+  "question_id": "Q29",
+  "question": "What does Morgan Stanley pay its financial advisors?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "What does Morgan Stanley pay its financial advisors?",
+    "entities": [
+      "MS"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-20T14:20:49.012693-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1373,
+    "output_tokens": 1604,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 93,
+    "reasoning_tokens": 1422,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 13.41,
+  "tokens_per_s": 119.61,
+  "reasoning_content": "The user asks: \"What does Morgan Stanley pay its financial advisors?\"\n\nThe firms list has only MS (Morgan Stanley), named.\n\nI need to list aspects. The question asks: what does Morgan Stanley pay its financial advisors?\n\nThis is a single aspect essentially: compensation/pay of financial advisors at Morgan Stanley.\n\nBut I should think about whether there are sub-aspects. The question asks \"what does it pay\" - pay. There might be multiple dimensions: salary, commission, bonuses, total compensation, payout grid, etc. But the instruction says: \"List every one, in the order the question asks them\" and \"Do not add an aspect the question does not ask.\"\n\nThe question is simple: pay to financial advisors. So one aspect: financial advisor compensation/pay.\n\nHowever, the instructions also mention: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\"\n\nDoes pay to financial advisors get disclosed? Morgan Stanley might disclose advisor compensation. But there might be a proxy aspect. Actually the question asks \"What does Morgan Stanley pay its financial advisors?\" This is about compensation. If exact pay isn't disclosed, closest disclosed figure could be compensation expense per advisor, or total compensation and benefits divided by advisor headcount.\n\nBut I should be careful. The instruction says \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\" This applies when the figure may not be disclosed. Financial advisor pay is typically not disclosed per advisor, but firms may disclose \"compensation and benefits\" expense, and advisor headcount, allowing a proxy calculation.\n\nSo should I add a proxy aspect? The question asks what Morgan Stanley pays its financial advisors. If the exact figure is not disclosed, we'd want the closest disclosed figure. That would be compensation and benefits expense (or total comp per advisor). Hmm.\n\nLet me think. The instruction is nuanced. \"Never merge two aspects into one, never drop one.\" \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\"\n\nSo I think we should have:\n1. Aspect: financial advisor compensation/pay (the asked figure) - metric: \"\" (not a registered metric). kind: fact. proxy: false.\n2. Aspect: closest disclosed figure for advisor pay - proxy: true. This could be \"compensation expense for financial advisors\" or \"average compensation per financial advisor\" computed from total compensation.\n\nActually, let me reconsider. The registered metrics are advisor_headcount and net_new_assets. Neither directly is pay. Pay is not a registered metric.\n\nSo aspect 1: \"What financial advisors at Morgan Stanley are paid\" with keywords: financial advisor compensation, pay, salary, commission, payout, bonus, total compensation.\n\nAspect 2 (proxy): \"Closest disclosed figure for financial advisor pay\" - e.g., total compensation and benefits expense, or average compensation per advisor. Keywords: compensation and benefits expense, total compensation, per advisor, average compensation.\n\nShould I include the proxy? The guidance: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\"\n\nFinancial advisor pay: is it disclosed? Morgan Stanley doesn't publish individual advisor pay, but it does disclose total compensation and benefits expense in its wealth management segment, and advisor headcount. Actually, \"average compensation per financial advisor\" can be derived. The question \"what does Morgan Stanley pay its financial advisors\" could be answered by the average payout or total comp.\n\nI think it's reasonable to include one proxy aspect for the closest disclosed figure.\n\nActually, let me also think about whether \"pay\" breaks into components: base salary, commissions, bonuses, equity. The question is singular \"what does it pay\" - it's a general pay question. But maybe \"pay\" encompasses all forms. The instruction says don't add aspects not asked. I'll keep it simple.\n\nBut wait - the instruction says \"List every one, in the order the question asks them.\" The question asks one thing. So one main aspect.\n\nThen \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\" So I'll add a proxy aspect.\n\nLet me decide the final aspects:\n\n1. id: advisor_pay\n   text: \"What Morgan Stanley pays its financial advisors.\"\n   keyword_query: \"financial advisor compensation pay salary commission bonus payout grid total compensation advisor compensation\"\n   firms: [\"MS\"]\n   metric: \"\"\n   kind: fact\n   proxy: false\n\n2. id: advisor_pay_proxy\n   text: \"Closest disclosed figure for what Morgan Stanley pays its financial advisors.\"\n   keyword_query: \"compensation and benefits expense total compensation per advisor average advisor compensation wealth management compensation expense\"\n   firms: [\"MS\"]\n   metric: \"\"\n   kind: fact\n   proxy: true\n\nHmm, but is the proxy aspect's kind \"fact\" or \"comparison\"? It's a fact (a disclosed figure). kind fact.\n\nActually wait, let me reconsider whether the proxy is needed. The question \"What does Morgan Stanley pay its financial advisors?\" The answer would be from disclosures. If not disclosed directly, we use proxy. The plan should include the proxy. I'll include it.\n\nLet me also consider: should there be a \"comparison\" aspect? The question doesn't ask for comparison across firms or periods. No.\n\nShould there be a \"recency\" aspect? The question doesn't specify a time window. No.\n\nShould there be a \"series\" aspect? Pay over several periods? Not asked explicitly. No.\n\nSo two aspects total.\n\nLet me also double check the keyword_query: 5 to 25 words. My keyword queries are within range. No firm names, no dates. Good.\n\nFirms: [\"MS\"] for both since the question is only about Morgan Stanley. Yes.\n\nmetric: \"\" for both. Pay is not advisor_headcount or net_new_assets.\n\nActually, wait - is \"net_new_assets\" or \"advisor_headcount\" relevant? No.\n\nLet me finalize.\n\nFor the proxy aspect text: \"Closest disclosed figure for financial advisor compensation at Morgan Stanley.\" without firm names in text. The instruction says \"Write no firm names in an aspect's text or words.\" So text should not contain \"Morgan Stanley\". Good, I'll write without firm names.\n\nText for aspect 1: \"What the firm pays its financial advisors.\" - no firm name.\n\nKeyword query aspect 1: \"financial advisor compensation pay salary commission bonus payout grid total compensation incentive compensation advisor pay\" - that's ~15 words.\n\nKeyword query aspect 2 (proxy): \"compensation and benefits expense total compensation per advisor average compensation advisor compensation expense wealth management compensation\" - ~15 words.\n\nGood.\n\nI'll submit the plan.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "advisor_pay",
+        "text": "What the firm pays its financial advisors.",
+        "keyword_query": "financial advisor compensation pay salary commission bonus payout grid total compensation incentive compensation advisor pay",
+        "firms": [
+          "MS"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_pay_proxy",
+        "text": "Closest disclosed figure for what the firm pays its financial advisors.",
+        "keyword_query": "compensation and benefits expense total compensation per advisor average advisor compensation wealth management compensation expense advisor compensation",
+        "firms": [
+          "MS"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": true
+      }
+    ]
+  }
+}

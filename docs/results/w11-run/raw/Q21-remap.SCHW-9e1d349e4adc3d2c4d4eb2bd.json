@@ -1,0 +1,101 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW",
+    "a13.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "SCHW-TR-2025Q1#45",
+    "SCHW-TR-2025Q1#46",
+    "SCHW-10K-2025#39",
+    "SCHW-10Q-2026Q2#119",
+    "SCHW-DECK-2026Q3#58",
+    "SCHW-PR-2026-10-15-01#22",
+    "SCHW-TR-2025Q4#64",
+    "SCHW-TR-2025Q4#65",
+    "SCHW-10K-2025#120",
+    "SCHW-10Q-2026Q1#30",
+    "SCHW-DECK-2026Q2#56",
+    "SCHW-PR-2026-07-21-01#23",
+    "SCHW-TR-2025Q3#28",
+    "SCHW-10Q-2025Q3#36",
+    "SCHW-DECK-2026-investor-day#93",
+    "SCHW-PR-2026-04-16-01#19",
+    "SCHW-10K-2025#320",
+    "SCHW-10Q-2025Q2#93",
+    "SCHW-DECK-2026Q1#51",
+    "SCHW-PR-2026-01-21-01#21",
+    "SCHW-10Q-2025Q2#107",
+    "SCHW-PR-2026-01-21-01#29",
+    "SCHW-10Q-2025Q3#95",
+    "SCHW-DECK-2026-investor-day#215",
+    "SCHW-PR-2026-10-15-01#29",
+    "SCHW-10Q-2026Q1#69",
+    "SCHW-DECK-2026-investor-day#258",
+    "SCHW-PR-2026-01-21-01#56",
+    "SCHW-10Q-2026Q2#240",
+    "SCHW-DECK-2026Q1#60",
+    "SCHW-PR-2026-04-16-01#25",
+    "SCHW-10Q-2026Q2#28",
+    "SCHW-PR-2026-07-21-01#30",
+    "SCHW-10Q-2026Q2#258",
+    "SCHW-DECK-2026-investor-day#168",
+    "SCHW-10K-2025#473",
+    "SCHW-PR-2026-07-21-01#57",
+    "SCHW-10Q-2026Q1#89",
+    "SCHW-DECK-2026-investor-day#180",
+    "SCHW-10K-2025#472",
+    "SCHW-DECK-2026-investor-day#199",
+    "SCHW-10K-2025#257"
+  ],
+  "at": "2026-11-20T18:15:35.985085-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12812,
+    "output_tokens": 729,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 11532,
+    "reasoning_tokens": 543,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 7.08,
+  "tokens_per_s": 102.97,
+  "reasoning_content": "We need answer by calling submit_extraction with cells for two subquestions. Need extract from passages only. Need carefully identify facts.\n\nSub-question a2.SCHW [fact]: Over what timeframe and horizon is the generational wealth transfer expected to occur?\n\nPassages listed for a2 mostly irrelevant (balance sheet, capital, duration, Ameritrade flows, etc.). None mention generational wealth transfer timeframe/horizon. Need label not_found likely. Check all passages: none about generational wealth transfer. So not_found, items empty, differs_because \"\", reason.\n\nSub-question a13.SCHW [fact]: Where do the firms say they are losing ground or pulling back in next-generation wealth?\n\nPassages listed for a13 also irrelevant: litigation, investor day slides, TD secondary offering, capital management, non-GAAP, alternatives demand. None mention losing ground or pulling back in next-generation wealth. So not_found.\n\nWait, need consider different_quantity? For a2: no passage states a different related quantity (duration? no, duration is not related to generational wealth transfer timeframe). No. not_found.\n\nFor a13: none. Maybe SCHW-DECK-2026-investor-day#180 mentions \"Grow Advice Market Share 1 ... Schwab MI Share $37T ~2%\" Could be about advice market share, maybe losing ground? But sub-question asks \"Where do the firms say they are losing ground or pulling back in next-generation wealth?\" This passage says Schwab has opportunity to grow share in advice and lending; not saying losing ground or pulling back in next-generation wealth. Could be different_quantity? It gives market share ~2% in advice. But not \"losing ground or pulling back in next-generation wealth.\" Not related. Different quantity? The question asks about where firms say losing ground/pulling back in next-generation wealth. A market share figure is different? It might be a fact? No, it doesn't state losing ground. So not_found.\n\nNeed ensure return exactly one cell per sub-question. Items for not_found empty array. derivation operation \"\" inputs empty.\n\nNeed provide cells with required fields. Let's craft.\n\nFor a2: label not_found; items []; differs_because \"\"; reason \"None of the passages mention the timeframe or horizon for the generational wealth transfer.\"; derivation {operation:\"\", inputs:[]}.\n\nFor a13: label not_found; items []; differs_because \"\"; reason \"None of the passages state that Schwab is losing ground or pulling back in next-generation wealth.\"; derivation empty.\n\nNeed call submit_extraction.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the provided passages mention the timeframe or horizon over which the generational wealth transfer is expected to occur.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a13.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the provided passages state where Schwab says it is losing ground or pulling back in next-generation wealth.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

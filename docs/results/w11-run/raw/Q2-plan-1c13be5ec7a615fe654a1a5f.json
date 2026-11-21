@@ -1,0 +1,124 @@
+{
+  "question_id": "Q2",
+  "question": "How is Raymond James positioning itself to recruit advisors away from the wirehouses?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "How is Raymond James positioning itself to recruit advisors away from the wirehouses?",
+    "entities": [
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-20T13:57:37.185726-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1382,
+    "output_tokens": 2855,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 102,
+    "reasoning_tokens": 2293,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 24.53,
+  "tokens_per_s": 116.39,
+  "reasoning_content": "The question asks: \"How is Raymond James positioning itself to recruit advisors away from the wirehouses?\"\n\nFirms: RJF only (Raymond James Financial), named.\n\nSo all aspects search for RJF only.\n\nLet me identify the aspects the question asks. The question asks about how RJF is positioning itself to recruit advisors away from wirehouses. This is a \"how\" question that asks for the strategy/positioning aspects.\n\nAspects to consider:\n1. The positioning/strategy itself: how Raymond James positions itself to recruit advisors away from wirehouses. The message/pitch to advisors.\n2. The recruitment of advisors (advisor recruiting) - the act of recruiting.\n3. The wirehouse competitors named (competition: wirehouses = Merrill Lynch, Morgan Stanley, Wells Fargo, UBS).\n4. Recruiting offers/incentives (compensation, transition packages, bonuses) - what they offer to recruit.\n5. Advisor headcount growth / recruited advisor counts (results reported) - metric advisor_headcount.\n6. Technology/platform/culture advantages pitched.\n7. Transition/conversion of wirehouse advisors.\n\nBut I should be careful not to over-add. The question is a single \"how\" question about positioning itself to recruit advisors away from wirehouses.\n\nLet me think about the aspects per the guidance. The question asks:\n- positioning itself (the pitch/strategy)\n- recruit advisors (recruiting efforts)\n- away from wirehouses (competition with wirehouses)\n\nAlso implicitly: results they report (advisor headcount, recruited advisor assets).\n\nLet me list aspects:\n\n1. Recruiting pitch/message to advisors: how RJF positions itself to advisors (value proposition: independence, culture, freedom, ownership, technology, support).\n2. Wirehouse competitors named: names wirehouses it's recruiting from.\n3. Recruiting incentives/transition packages/compensation offered to advisors.\n4. Advisor recruitment results: advisor headcount growth, recruited advisors, recruited assets (net_new_assets).\n5. Comparison: how RJF's positioning compares vs wirehouses.\n\nLet me think about how many aspects. The question: \"How is Raymond James positioning itself to recruit advisors away from the wirehouses?\"\n\nCore aspects:\n1. Positioning/strategy description (fact/recency)\n2. The recruiting value proposition to advisors (culture, independence, support, technology)\n3. Wirehouse competitors named (fact)\n4. Recruiting incentives/compensation/transition deals (fact)\n5. Advisor recruitment results/reported metrics: advisor headcount (metric advisor_headcount), net new assets / recruited assets (metric net_new_assets)\n6. Comparison vs wirehouses (comparison)\n\nI think these are reasonable. But should I split advisor headcount and net new assets into two aspects? Yes, they are distinct registered metrics.\n\nLet me also consider \"recency\" - what is new inside the time window. The question doesn't specify a time window, so I can leave that. Actually there's no time window mentioned in the question. So I don't need recency specifically. But \"positioning itself\" is somewhat current/ongoing.\n\nLet me define aspects:\n\n1. id: positioning_strategy\n   text: How Raymond James positions itself to recruit advisors away from wirehouses.\n   keyword_query: positioning, strategy, recruit, wirehouse, advisor, value proposition, independence, culture\n   metric: \"\"\n   kind: fact (or recency?) - I'll use fact.\n   proxy: false\n\n2. id: recruiting_pitch\n   text: The value proposition Raymond James pitches to advisors (culture, independence, support, technology, freedom).\n   keyword_query: advisor value proposition, advisor independence, freedom, culture, technology platform, advisor support, autonomy\n   kind: fact\n   proxy: false\n\n3. id: wirehouse_competitors\n   text: The wirehouse firms Raymond James names as competitors and sources of advisor recruits.\n   keyword_query: wirehouse, Merrill Lynch, Morgan Stanley, Wells Fargo, UBS, wirehouse competitors, recruiting from wirehouses\n   kind: fact\n   proxy: false\n\n4. id: recruiting_incentives\n   text: The recruiting incentives, transition packages, and compensation Raymond James offers advisors.\n   keyword_query: transition assistance, recruiting bonus, forgivable loan, compensation, advisor transition package, signing bonus\n   kind: fact\n   proxy: false\n\n5. id: advisor_headcount_results\n   text: Advisor headcount growth and recruited advisor numbers Raymond James reports.\n   metric: advisor_headcount\n   keyword_query: advisor headcount, financial advisors, recruited advisors, advisor additions, net advisor growth\n   kind: series (figure over several periods) or fact. It's a figure over periods. I'll use series.\n   proxy: false\n\n6. id: recruited_assets\n   text: Recruited client assets and net new assets Raymond James reports from advisor recruiting.\n   metric: net_new_assets\n   keyword_query: recruited assets, net new assets, assets recruited, recruited client assets, net flows\n   kind: series\n   proxy: false\n\n7. id: wirehouse_comparison\n   text: How Raymond James's offering compares to wirehouses for advisors.\n   metric: \"\"\n   kind: comparison\n   keyword_query: versus wirehouses, compared to wirehouses, advisor choice, wirehouse model, independent model, differences\n   proxy: false\n\nHmm, is 7 too much? The question asks \"How is Raymond James positioning itself...\" - this is more about RJF's own positioning, not a comparison judgement. But the guidance says a judgement across firms is its own aspect. Here it's only one firm, but \"away from the wirehouses\" implies comparison with wirehouses. I think wirehouse_competitors covers naming them. The comparison aspect might be optional. But \"positioning itself to recruit advisors away from the wirehouses\" inherently involves how it contrasts with wirehouses. I'll keep a comparison aspect but maybe merge into positioning_strategy.\n\nActually, let me reconsider. The guidance says never merge, never drop, and a judgement across firms/periods is its own aspect of kind comparison. The question asks for positioning vs wirehouses - that implies a comparison of RJF's model vs wirehouses. I'll keep it.\n\nBut I should be careful not to over-add aspects the question doesn't ask. Let me keep it focused but comprehensive.\n\nFirms for each aspect: since the question asks only about Raymond James, all aspects have firms = [\"RJF\"]. Wait, the guidance says \"Leave firms empty when the question asks the aspect of every listed firm.\" Here there's only one listed firm (RJF), and the question asks about it. So firms = [\"RJF\"] for all aspects. Actually, \"named\" firm means the question is about RJF specifically. So fill firms with [\"RJF\"].\n\nWait, re-read: \"Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" The question asks about Raymond James specifically, so yes fill with [\"RJF\"]. Since there's only one firm, leaving empty would also search all listed firms (just RJF). Either way same result. But the instruction says fill when the question restricts to some. The question restricts to RJF (named). So fill [\"RJF\"].\n\nLet me finalize the aspects.\n\nActually let me reconsider whether to include \"wirehouse_competitors\" as separate from \"positioning_strategy\". The positioning question is \"how is RJF positioning itself to recruit advisors away from wirehouses\" - the answer would involve the pitch, the incentives, the technology, the culture, the results. Let me structure:\n\n1. recruiting_strategy (fact): How RJF describes its strategy to recruit advisors from wirehouses.\n2. value_proposition (fact): The value proposition/pitch to advisors (independence, culture, ownership, support, technology).\n3. wirehouse_competitors (fact): Wirehouses named as competitors/sources.\n4. recruiting_incentives (fact): Incentives/transition/compensation offered.\n5. advisor_headcount (series, metric advisor_headcount): Recruited advisor numbers.\n6. net_new_assets (series, metric net_new_assets): Recruited assets.\n7. comparison (comparison): How RJF contrasts its model vs wirehouses.\n\nThat's 7 aspects. Seems comprehensive and each maps to a distinct ask.\n\nKeyword queries need 5-25 words, filing/earnings-call vocabulary, no firm names, no dates.\n\nFor wirehouse_competitors, I should avoid firm names in keyword query? The instruction says \"no firm names\" in keyword_query. Wait, \"with no firm names and no dates\" - so keyword_query must NOT contain firm names. So for wirehouse competitors, I can't list Merrill Lynch etc. I need to use generic terms: \"wirehouse\", \"wirehouse advisors\", \"wirehouse competitors\", \"legacy wirehouses\", \"large bank-owned brokerage\". Hmm but \"wirehouse\" is a category, not a firm name. I'll use \"wirehouse\" and \"wirehouse firms\".\n\nLet me write keyword queries:\n\n1. recruiting_strategy: \"advisor recruiting strategy attract wirehouse advisors recruiting growth advisor recruits\" - need 5-25 words.\nActually: \"advisor recruiting strategy recruit advisors wirehouse advisors advisor growth recruiting effort\"\n\n2. value_proposition: \"advisor value proposition culture independence freedom ownership advisor support technology platform advisor autonomy\"\n\n3. wirehouse_competitors: \"wirehouse advisors wirehouse firms wirehouse competitors recruiting from wirehouses wirehouse model large brokerage firms\"\n\n4. recruiting_incentives: \"transition assistance recruiting package forgivable loan signing bonus advisor compensation transition deal recruiting bonus\"\n\n5. advisor_headcount: \"financial advisors advisor headcount recruited advisors advisor additions net advisor growth advisor count\"\n\n6. net_new_assets: \"recruited assets net new assets advisor recruited assets net flows client assets recruited\"\n\n7. comparison: \"versus wirehouses wirehouse model independent model advisor choice comparison wirehouse differences\"\n\nLet me refine to ensure 5-25 words each.\n\nNow metric field: only for advisor_headcount and net_new_assets aspects.\n\nadvisor_headcount aspect: metric = \"advisor_headcount\".\nnet_new_assets aspect: metric = \"net_new_assets\".\n\nkind: fact for strategy/pitch/competitors/incentives; series for the two metric aspects; comparison for the comparison aspect.\n\nproxy: false for all? The question asks how RJF is positioning itself; advisor headcount and net new assets are results they report, which is part of positioning evidence, not really a proxy. They're asked implicitly (results they report). I'll mark proxy false for all.\n\nActually, is advisor_headcount a proxy? The question asks \"how is RJF positioning itself to recruit advisors\" - recruiting results (headcount growth from wirehouses) are direct evidence. Not a proxy. Keep false.\n\nLet me finalize.\n\nOne consideration: should I add a \"recency\" aspect? No time window specified. Skip.\n\nLet me write final plan.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "recruiting_strategy",
+        "text": "How Raymond James describes its strategy to recruit advisors away from wirehouses.",
+        "keyword_query": "advisor recruiting strategy attract wirehouse advisors advisor growth recruiting efforts recruit financial advisors",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "value_proposition",
+        "text": "The value proposition Raymond James pitches to advisors, including culture, independence, ownership, support, and technology.",
+        "keyword_query": "advisor value proposition culture independence freedom ownership advisor support technology platform autonomy",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "wirehouse_competitors",
+        "text": "The wirehouse firms Raymond James names as competitors and sources of advisor recruits.",
+        "keyword_query": "wirehouse advisors wirehouse firms wirehouse competitors recruiting from wirehouses wirehouse model large brokerage firms",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "recruiting_incentives",
+        "text": "The recruiting incentives, transition packages, and compensation Raymond James offers to advisors.",
+        "keyword_query": "transition assistance recruiting package forgivable loan signing bonus advisor compensation transition deal recruiting bonus",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_headcount",
+        "text": "The advisor headcount growth and recruited advisor numbers Raymond James reports.",
+        "keyword_query": "financial advisors advisor headcount recruited advisors advisor additions net advisor growth advisor count",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "net_new_assets",
+        "text": "The recruited client assets and net new assets Raymond James reports from advisor recruiting.",
+        "keyword_query": "recruited assets net new assets advisor recruited assets net flows client assets recruited",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "net_new_assets",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "wirehouse_comparison",
+        "text": "How Raymond James contrasts its model and offering against wirehouses for advisors.",
+        "keyword_query": "versus wirehouses wirehouse model independent model advisor choice comparison wirehouse differences",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "comparison",
+        "proxy": false
+      }
+    ]
+  }
+}

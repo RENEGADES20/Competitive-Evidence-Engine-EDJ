@@ -1,0 +1,58 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "Advisor headcount over the last eight quarters across the five.",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-20T00:10:13.827226",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1451,
+    "output_tokens": 1667,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 171,
+    "reasoning_tokens": 1552,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 19.97,
+  "tokens_per_s": 83.48,
+  "reasoning_content": "The user wants me to create a search plan for the question: \"Advisor headcount over the last eight quarters across the five.\"\n\nThe firms are: MS, SCHW, EDJ, MER, RJF.\n\nThe question asks about advisor headcount over the last eight quarters across the five firms.\n\nLet me think about what aspects the question asks.\n\nThe question asks: \"Advisor headcount over the last eight quarters across the five.\"\n\nThis is a single metric: advisor headcount, over a series (last eight quarters), across five firms.\n\nAspects:\n1. Advisor headcount over the last eight quarters - this is a series. The question asks for the metric across the five firms.\n\nBut wait - the instructions say to break down aspects carefully. The question asks \"Advisor headcount over the last eight quarters across the five.\"\n\nThis is one aspect essentially: advisor headcount (series) for each of the five firms.\n\nBut the instructions say: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy\"\n\nAdvisor headcount might be disclosed directly, or it might need a proxy. For wealth-management firms, \"advisor headcount\" is usually disclosed directly (e.g., financial advisors, wealth management advisors). But some firms might use \"financial advisors\" number.\n\nActually, advisor headcount is a registered metric: \"advisor_headcount\" is in the metric enum. So the metric should be \"advisor_headcount\".\n\nLet me think about whether there are multiple aspects. The question is simple: one metric, over eight quarters, across five firms.\n\nBut wait - do I need a comparison aspect? The question doesn't explicitly ask for a comparison (\"which firm says the most\"). It just asks for the headcount over the last eight quarters across the five. That's just facts/series for each firm.\n\nActually, let me re-read: \"Advisor headcount over the last eight quarters across the five.\" This asks for advisor headcount figures over the last eight quarters for each of the five firms. No comparison judgment asked.\n\nSo there might be just one aspect: advisor headcount series for the five firms.\n\nBut the instructions say to list every aspect. The question has one ask: advisor headcount over eight quarters. That's one aspect.\n\nHowever, I should consider whether \"advisor headcount\" might need a proxy for some firms. For example, Edward Jones reports \"financial advisors\" which is advisor headcount. Merrill reports \"financial advisors\". Raymond James reports \"financial advisors\". Schwab reports... consultant? Actually Schwab might report \"financial consultants\". Morgan Stanley reports \"financial advisors\" (in wealth management).\n\nSo the keyword query should include synonyms: \"financial advisor\", \"financial advisor headcount\", \"advisor count\", \"number of advisors\", \"financial consultants\", etc.\n\nShould I add a proxy aspect for the closest disclosed figure? The question asks for advisor headcount, which is a registered metric. Since it's a registered metric and typically disclosed, maybe no proxy needed. But the instruction says \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy\". \n\nAdvisor headcount IS disclosed by these firms (they all report advisor/FA counts). So I don't think a proxy is needed.\n\nActually, let me reconsider. Schwab might report \"financial consultants\" rather than \"advisors\". That's still advisor headcount, just a different name. The keyword query can capture that.\n\nLet me think about whether there should be one aspect or multiple.\n\nThe question: \"Advisor headcount over the last eight quarters across the five.\"\n\nOne metric: advisor headcount. One dimension: time (last eight quarters). One scope: five firms.\n\nThis is a single aspect of kind \"series\" (figure over several periods), metric \"advisor_headcount\".\n\nBut wait, the instructions also mention \"recency (what is new inside the time window)\". The question asks for \"over the last eight quarters\" which is a series. So kind = series.\n\nShould I also add a comparison aspect? The question doesn't ask \"which firm grew the most\" or \"whether figures can be set side by side\". It just asks for headcount over eight quarters. So no comparison.\n\nHmm, but actually the phrase \"across the five\" might imply comparing across the five firms. But it's really just asking for the data across all five. I'll treat it as a series for each firm, no comparison.\n\nActually, let me reconsider the aspect breakdown more carefully. The instructions are quite emphatic about not merging aspects and not dropping any. But the question here is genuinely simple: one metric over eight quarters across five firms.\n\nSo I'll create one aspect:\n\n- id: advisor_headcount\n- text: \"Advisor headcount over the last eight quarters for each firm\"\n- keyword_query: \"financial advisor headcount number of financial advisors advisor count wealth management advisors financial consultants total advisors\"\n- firms: empty (all firms)\n- metric: advisor_headcount\n- kind: series\n- proxy: false\n\nWait, but should the firms be empty or all five listed? The instruction: \"Leave firms empty when the question asks the aspect of every listed firm; code then searches it for all of them.\" The question asks the aspect of all five firms. So leave firms empty.\n\nActually, re-reading: \"Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" The question asks across all five, so firms should be empty (all of them).\n\nSo firms: [].\n\nLet me finalize.\n\nActually, let me reconsider if there's more than one aspect. Could there be a proxy for advisor headcount? Some firms may report \"total client-facing professionals\" or \"wealth management professionals\" instead of advisors. But advisor headcount is the registered metric, and it's generally disclosed.\n\nI think one aspect is correct. But let me double check the metric enum - \"advisor_headcount\" is available. So metric = \"advisor_headcount\".\n\nThe keyword query should be 5-25 words. Let me craft: \"financial advisor headcount number of advisors total advisors advisor count financial consultants wealth management advisors\"\n\nThat's about 15 words. Good.\n\nKind: series (over eight quarters).\n\nProxy: false.\n\nLet me also think about whether I should break \"over the last eight quarters\" into a separate aspect. No, it's just the time window, which is a filter code applies, not an aspect itself.\n\nI think a single aspect is right. But wait, let me reconsider the instruction: \"List every one, in the order the question asks them\" and \"do not stop at any number: a question with twelve asks has twelve aspects.\"\n\nThis question has one ask. One aspect.\n\nActually, hold on. Let me reconsider whether \"advisor headcount\" needs proxy aspects for specific firms. The metric \"advisor_headcount\" is directly what's asked. All five firms disclose advisor headcounts. So no proxy.\n\nFinal plan: one aspect.\n\nLet me write the text carefully without firm names: \"Advisor headcount over the last eight quarters.\"\n\nKeyword query: \"financial advisor headcount number of financial advisors total advisors advisor count financial consultants wealth management advisors\"\n\nI'll submit.\n\nActually, let me reconsider the kind. \"series\" = a figure over several periods. Yes, eight quarters is several periods. So kind = \"series\".\n\nMetric = \"advisor_headcount\".\n\nProxy = false.\n\nfirms = [].\n\nLet me write the final JSON.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "advisor_headcount",
+        "text": "Advisor headcount over the last eight quarters.",
+        "keyword_query": "financial advisor headcount number of financial advisors total advisors advisor count financial consultants wealth management advisors",
+        "firms": [],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": false
+      }
+    ]
+  }
+}
