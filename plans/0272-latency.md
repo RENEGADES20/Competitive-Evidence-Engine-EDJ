@@ -2,6 +2,11 @@
 
 Issue: #272    Role: TL    Spec: specs/answer-citations.md, specs/retrieval.md, specs/ui.md
 
+Owners (TL takeover): `src/cee/answer/*`, `specs/answer-citations.md` S2; `src/cee/retrieve/planner.py`,
+`specs/retrieval.md` S1; `src/cee/app/views/ask_page.py`, `specs/ui.md` U1. Binding: ADR-021 and its #246 / #247
+amendments, CLAUDE.md ground rules and "Paid API calls". TL ruling on plan review round 1:
+issuecomment-7067044356 (conditions 1-3, written in below).
+
 TL go-ahead on #272 (2026-11-21): the planned real calls of test A, and the Gate 3 full 30-question scored runs of
 test B in both modes (fts on `main`, hybrid-norerank on `exp/hybrid`), including one planned re-run with reduce effort
 `high` for a mode below its floor.
@@ -46,6 +51,23 @@ Step 1 reprints this with `scripts/latency_report.py` (per stage p50 / p90 / max
   with no fact -> `failed`. The merged result is the same per-firm `Cell` set and `EvidenceMatrix` shape as today, so
   `finish()` and the reduce input are unchanged. `MAP_CONCURRENCY` default 6 -> 24. `EXTRACT_VERSION` is bumped
   (call shape changed; the new call ids change the keys anyway).
+- **Per-cell citation sets (TL condition 1).** The firm's call spec is built exactly as today (`map_specs`, unchanged
+  rule), then split into one spec per cell:
+  - (a) passages of a cell call = the cell's own passages (`groups[cell]`, as today) plus, listed separately under
+    the same sub-question as "also in this sub-question's search pool (listed for a sibling)", the firm input
+    passages in `plan.pools[cell] & input_ids` that are not its own. `allowed[cell]` is today's rule unchanged: own
+    chunk ids | (`plan.pools[cell]` & the firm's `input_ids`), per cell. So a cell can see and cite exactly the set it
+    could cite in the firm call; it no longer sees sibling passages it could never cite.
+  - (b) A firm with no passages: code cells as today (`not_found`, reason "no passages retrieved", flag
+    `no_passages`). A cell inside a firm with passages whose own passages are empty: when its pool overlap is not
+    empty it gets a call, rendered with today's `KEPT_ELSEWHERE` line plus the pool passages; when its `allowed` set
+    is empty (today rendered `NO_PASSAGES` or `KEPT_ELSEWHERE` with nothing citable) it becomes the same code cell
+    (`not_found`, "no passages retrieved", `no_passages`) and no call is made. Stated difference: today the model
+    labels such a cell, but with nothing citable it can only return a label with no cited item; a code `not_found`
+    says the same without a paid call. On the mock the label is `not_found` either way (mock reads `groups` only).
+  - (c) Unit test: one firm, two cells sharing a chunk (cell A lists it, cell B has it in its pool, `KEPT_ELSEWHERE`);
+    the same per-cell fake model outputs parsed against the firm spec and against the split specs give the same
+    labels and claim chunk ids; and a cell with an empty `allowed` set gives the code cell above.
 - **Progressive Ask page.** `run_map(on_call=...)` fires in the main thread inside `run_round`'s `as_completed` loop
   (never in a worker thread, so Streamlit can draw). `ask()` passes three events to the page: plan ready (the
   decompose text), cells landed (that call's validated cells), answer ready. The page shows the plan first, then
@@ -92,7 +114,8 @@ Step 1 reprints this with `scripts/latency_report.py` (per stage p50 / p90 / max
    usage), `ttft_s`, `DEEPSEEK_STREAM` fallback. Unit tests with a fake streamed response, including a cut
    (`finish_reason length`) and a stream without usage.
 4. Map fan-out per cell, batches over `MAP_CALL_TOKENS`, merge, re-map per cell, `MAP_CONCURRENCY` 24. Unit tests:
-   merged cells equal the per-firm result for the same outputs; batch merge precedence; a failed batch; remap ids.
+   merged cells equal the per-firm result for the same outputs; batch merge precedence; a failed batch; remap ids;
+   the condition-1 test (c).
 5. Progressive Ask page: `on_call`, `ask()` events, page sections. Tests: events order (plan -> cells -> answer); an
    evidence line only for a `fact` item with a chunk id in the retrieved set.
 6. Docs and `.env.example` (step "Files to change").
@@ -116,7 +139,8 @@ Step 1 reprints this with `scripts/latency_report.py` (per stage p50 / p90 / max
    - Outputs per config: `latency_report` table, cut outputs (must be 0), invalid / failed calls, behaviors, cost.
 10. **Choose the config (rule fixed now).** Eligible: 0 cut outputs, 0 invalid outputs, and the number of the six
     whose behavior equals `expected_behavior` in `evals/questions.yaml` is at least the #250 fts run's number on the
-    same six. Pick the eligible config with the lowest median critical path; C3 only if it beats the best of C1 / C2.
+    same six: **4/6** (`docs/results/w11-report.md`: Q5 answer, Q19 answer_with_boundary, Q24 answer, Q26 answer
+    match; Q10 gap_with_adjacent and Q21 none do not). Pick the eligible config with the lowest median critical path; C3 only if it beats the best of C1 / C2.
     None eligible: stop, report to the TL, no test B. If C3 is chosen and a mode is still below its floor after the
     reduce-`high` re-run (step 11 / 14), flash is not adopted: the defaults go to the best eligible non-flash config,
     and any further paid run needs a new TL go-ahead. Set the defaults to the chosen config (one commit; mock checks of
@@ -140,7 +164,7 @@ Step 1 reprints this with `scripts/latency_report.py` (per stage p50 / p90 / max
     fts runs (0 planner calls). Test A: six questions, output latency table and 0 cut outputs; any cut output: stop and
     report to the TL, no hybrid test B. Test B: Q1-Q30, scored
     blind the same way, floor 22/30; below it, one re-run with reduce `high`. Report section added; PR to `exp/hybrid`
-    (`Closes #272`).
+    (`Closes #272`). Before its merge: `gh pr checks` green on the hybrid PR.
 
 ## Expected real calls (DeepSeek `deepseek-v4-pro`; C3 maps on `deepseek-flash`)
 Per question: 1 planner + one map call per cell with passages (+ batches) + research (when present) + 0..1 re-map per
@@ -166,6 +190,8 @@ Cost: a call per cell repeats the system prompt, firm list and window (about 3-4
 cache hits), so input cost rises with the call count (Q21: about 81 round-1 calls vs 6); output tokens should fall
 with lower effort. The count phase prints `input_tokens_est` per call, and the report gives cost per question per
 config against #250.
+USD ceiling: before each paid run the count phase's estimated input tokens and the output caps are priced with
+`config/pricing.yaml` (peak rates) and the ceiling is written in the Progress log before the run starts.
 Every raw response is saved in the run's evidence folder; no call is repeated except the planned ones above.
 
 ## Acceptance
@@ -189,3 +215,5 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   `sync-db -Check` exit 1 (Docker not running); to start before step 7.
 - 2026-11-21 12:20 - plan review (Sonnet reviewer agent, one round): APPROVE WITH NOTES. Blocking 1 (flash not
   adopted if a mode stays below its floor) and notes 2, 4-9 applied; note 3 answered with the cost paragraph.
+- 2026-11-21 12:40 - TL ruling on review round 1 (issuecomment-7067044356): approved with conditions 1-3, now written
+  in (Owners line; per-cell citation sets; hybrid `gh pr checks`; USD ceiling; eligibility baseline 4/6).
