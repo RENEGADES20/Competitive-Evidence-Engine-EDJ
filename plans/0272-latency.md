@@ -217,3 +217,16 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   adopted if a mode stays below its floor) and notes 2, 4-9 applied; note 3 answered with the cost paragraph.
 - 2026-11-21 12:40 - TL ruling on review round 1 (issuecomment-7067044356): approved with conditions 1-3, now written
   in (Owners line; per-cell citation sets; hybrid `gh pr checks`; USD ceiling; eligibility baseline 4/6).
+- 2026-11-21 13:20 - steps 0-8 done, 0 real calls. Commits be94cd6 (effort/cap/model/stream per stage, stage request
+  versions), c91fa94 (map per cell, batches, merge, progressive Ask page, latency_report), 2172170 (docs, run scripts,
+  verify steps). Decisions made while building: (1) `MAP_CALL_TOKENS` default 60000, not 40000: at 40000 the mock run
+  with the #250 plans batched Q17's whole-corpus cells (the cell budget 40000 plus prompt, schema and pool passages is
+  over 40000); (2) a streamed request whose client returns a whole response is used as is (fake clients, and any
+  provider that ignores `stream`); (3) the legacy `MAP=off` answer call keeps its old request (no stream, no effort),
+  it is not in the W11 flow; (4) `--reuse-plans PROVIDER:MODEL@VERSION` reads plans saved under another planner
+  request version (the #250 plans for the mock check). Checks: `pytest -q` 1093 passed; mock Q1-Q30 fts vs clean
+  `main` 7657d64 (`D:\ALLPROJECTS\EDJ\cache\ev272\{main,br}-{rule,plans250}`, `cmp_mock.py`): rule plans 30/30
+  identical, #250 plans 30/30 identical (status, retrieved chunk ids, behavior, every cell label, every claim and its
+  chunk ids); map calls on the mock 75 -> 436 with the #250 plans. verify-cee all 10 features PASS
+  (`.verify-runs/20261121-124310-c91fa94`; ask-progress steps 1-2: plan first, then an Edward Jones evidence card with
+  a chip, no answer yet). `latency_report` on #250: fts p50 415 s, p90 822 s; hybrid p50 522 s.
