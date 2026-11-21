@@ -124,6 +124,13 @@ some markup). If it strips them, fall back to `st.markdown(..., unsafe_allow_htm
 strip them, `st.components.v1.html` (an iframe, still inline, no network) with the same markup.
 Recorded in the Progress log.
 
+Review notes (non-blocking, from the plan review on #270):
+1. If the `components.v1.html` iframe fallback is used, the driver's hover and focus checks need
+   frame handling (`page.frame_locator(...)`); recorded in the Progress log either way.
+2. `specs/ui.md` is owned by U1; the PR names U1 as owner (informational, TL takeover).
+3. "Mermaid renders on the PR page" is a manual check: the PR Verification gets the link to the
+   rendered README on the branch (or a screenshot of it).
+
 ## Acceptance
 - [ ] Linked questions: none (docs and UI only; no retrieval or answer change).
 - [ ] README mermaid shows the W11 flow (decompose, per-sub-question search with SQL filters,
@@ -133,7 +140,18 @@ Recorded in the Progress log.
   passes.
 - [ ] README screenshots are new, from the running mock app, with alt text; demo.gif kept.
 - [ ] README Status, ARCHITECTURE.md and RUN.md match the merged W11 reports and code; RUN.md has
-  Windows and macOS blocks for fts and hybrid-norerank.
+  Windows and macOS blocks for fts and hybrid-norerank. Checks (TL ruling on #270):
+  - `grep -c "18/30" README.md` and `grep -c "22/30" README.md` -> each >= 1; `grep -c
+    "docs/results/w11-report.md" README.md` >= 1; `grep -c
+    "hybrid-eval/corpus-2026-11-19/deepseek/report.md" README.md` >= 1.
+  - `grep -n -i "One LLM call\|single LLM call" README.md` -> no output.
+  - `sed -n '/^## 7\./,$p' docs/RUN.md | grep -n "about two calls"` -> no output.
+  - the RUN.md retrieval-mode section holds a ```` ```powershell ```` and a ```` ```bash ```` block for
+    fts and for hybrid-norerank (4 blocks; checked by eye and by `grep -c` inside the section).
+  - the mode names and flags in RUN.md (`RETRIEVAL_MODE`, `--mode fts|hybrid|hybrid-norerank`) match
+    `git show origin/exp/hybrid:scripts/eval_run.py` (`RETRIEVAL_MODES = ("fts", "hybrid",
+    "hybrid-norerank")`, `--mode`) and `origin/exp/hybrid:.env.example` (`RETRIEVAL_MODE=fts`); the
+    output is logged in the Progress log.
 - [ ] App nav shows Architecture (url `architecture`), no Design; `design_page.py` gone and
   nothing imports it (`git grep design_page` -> only plans/ and history docs).
 - [ ] Hover and keyboard focus show each module's explanation; the plain list shows all modules;
@@ -146,3 +164,8 @@ Recorded in the Progress log.
 ## Progress log
 - 2026-11-21 01:25 - plan written on `tl/270-closeout-arch` from origin/main 0a7510a (worktree
   D:\ALLPROJECTS\EDJ\wt-270).
+- 2026-11-21 01:30 - plan approved with conditions (reviewer + TL ruling on #270): Acceptance item 5
+  gets concrete grep checks; review notes 1-3 added. exp/hybrid names checked:
+  `scripts/eval_run.py` has `RETRIEVAL_MODES = ("fts", "hybrid", "hybrid-norerank")` and
+  `--mode` (default `RETRIEVAL_MODE`, else fts); `.env.example` has `RETRIEVAL_MODE=fts` and says
+  hybrid needs `CEE_VECTORS=on`.
