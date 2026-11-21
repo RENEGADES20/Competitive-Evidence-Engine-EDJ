@@ -191,3 +191,8 @@ Review notes (non-blocking, from the plan review on #270):
   `RETRIEVAL_MODES = ("fts", "hybrid", "hybrid-norerank")` and `.env.example` `RETRIEVAL_MODE=fts`.
   Dark token set checked in a standalone render (scratch, the app is pinned light). Full pytest:
   1055 passed. 0 real calls.
+- 2026-11-21 01:52 - final verify-cee on 27cc34e, run `20261121-014743-27cc34e` (mock; every meta
+  line says `model: mock`): all 10 features PASS, including architecture-page, open-citation and
+  download-document (the main checkout's `.env` was copied in for `CORPUS_SHARE_PATH`, never read,
+  and removed after). `shots` from the same run wrote docs/assets answer, source, gap,
+  architecture (Search hovered); a standalone dark-token render is kept in the run's `shots/`.
