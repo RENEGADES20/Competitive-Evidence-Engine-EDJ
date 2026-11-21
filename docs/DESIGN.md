@@ -1,7 +1,10 @@
 # Design language
 
 Owner: U1. Theme: `.streamlit/config.toml`. Components: `src/cee/app/components.py` (all extra
-CSS is the `CSS` constant there). Live gallery: the **Design** page. Issue #67.
+CSS is the `CSS` constant there). Issue #67. The Design gallery page was retired in #270; the
+app shows an **Architecture** page instead (`src/cee/app/views/architecture_page.py`, same tokens).
+Its hover boxes are CSS only (no JS) and repeat text that is also listed under the diagram, so
+nothing is shown only in a tooltip (principle 3).
 
 ## Principles
 

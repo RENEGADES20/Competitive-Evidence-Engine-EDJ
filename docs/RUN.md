@@ -242,8 +242,55 @@ advisor-headcount sources, #216). Gate 4 was scored **21/30** on `corpus-2026-11
 scores and the known gaps: [docs/results/gate4-report.md](results/gate4-report.md). What to
 build next: [docs/NEXT.md](NEXT.md).
 
-**Ask a question with the real model** (paid: about two calls per question, the question planner and the answer, ADR-020; CLAUDE.md "Paid API
-calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
+W11 (map-reduce, ADR-021) was scored on `corpus-2026-11-19` with DeepSeek (#250, adjudicated):
+**18/30** with full-text search on `main` ([docs/results/w11-report.md](results/w11-report.md)) and
+**22/30** with `hybrid-norerank` on `exp/hybrid`
+([report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md)).
+How the pipeline works: [ARCHITECTURE.md, Pipeline](ARCHITECTURE.md#pipeline), or the app's
+Architecture page.
+
+**How many calls one question makes** (ADR-021: the calls follow the question): one planner call
+(none when the plan is reused), one extraction call per firm, at most one re-extraction per firm
+with a re-searched cell, and at most one reduce call (none when code writes the answer). A
+one-firm question is 2 to 4 calls; a five-firm question 7 to 12. Every call is
+logged with tokens and cost.
+
+**Run each retrieval mode.** The engine is chosen by `RETRIEVAL_MODE` (app) or `--mode` (eval);
+the firm, segment and time filters are the same SQL in every mode. The commands below are free
+(mock provider, 0 calls); add `--real --max-calls <n>` and a provider as in the blocks further
+down for model answers.
+
+Full-text search (`fts`) on `main`, the default:
+```powershell
+git switch main
+.\.venv\Scripts\python.exe -m streamlit run src\ceepp\streamlit_app.py
+.\.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17
+```
+```bash
+git switch main
+.venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+.venv/bin/python scripts/eval_run.py --as-of 2026-11-17
+```
+Hybrid without the reranker (`hybrid-norerank`) on `exp/hybrid`. It needs vectors on and every
+chunk embedded (section 1, "Vectors"); `hybrid` (with the reranker) also needs the reranker model
+(`exp/hybrid` RUN.md, "Hybrid retrieval"). The app reads `RETRIEVAL_MODE` from the environment or
+`.env`; the eval takes `--mode fts | hybrid | hybrid-norerank`:
+```powershell
+git switch exp/hybrid
+$env:CEE_VECTORS="on"; $env:RETRIEVAL_MODE="hybrid-norerank"
+.\.venv\Scripts\python.exe -m streamlit run src\ceepp\streamlit_app.py
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-11-17
+```
+```bash
+git switch exp/hybrid
+export CEE_VECTORS=on RETRIEVAL_MODE=hybrid-norerank
+.venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank --as-of 2026-11-17
+```
+Switch back with `git switch main` (and unset both variables, or open a new terminal).
+
+**Ask a question with the real model** (paid: the calls above, planner, extraction per firm,
+re-extraction and reduce; CLAUDE.md "Paid API calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
 `.env` stays on mock:
 ```powershell
 $env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
@@ -254,7 +301,7 @@ LLM_PROVIDER=anthropic .venv/bin/python -m streamlit run src/cee/app/streamlit_a
 Open http://localhost:8501, type a question, and click a citation to see the stored passage.
 The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
 
-**Ask with DeepSeek** (#242; paid, same two calls per question). Put `DEEPSEEK_API_KEY` in `.env`
+**Ask with DeepSeek** (#242; paid, the same calls per question). Put `DEEPSEEK_API_KEY` in `.env`
 and keep `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`; strict tool schemas need the `/beta`
 URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. `DEEPSEEK_THINKING` turns the model's
 reasoning on or off; leave it empty for the default, which was chosen in the #242 check
