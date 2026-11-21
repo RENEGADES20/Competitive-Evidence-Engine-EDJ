@@ -72,7 +72,7 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-19.
+As of 2026-11-21.
 
 **Corpus.** Snapshot `corpus-2026-11-19` (#216) holds all 224 documents in `main`'s manifest
 and 21,161 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
@@ -107,7 +107,7 @@ budget, question planner, per-part gaps, headcount sources), the same 30 questio
 **24/30** on `corpus-2026-11-19` (real run on 2026-11-19, scored by the TL agent; tier 1: 14/18;
 ten questions read twice in review: the first read gave 25/30, the second read failed Q19 and the
 TL kept it as FAIL): [docs/results/w10-report.md](docs/results/w10-report.md);
-next steps: [docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+W11 (map-reduce: one extraction call per firm, corrective re-search, one reduce call) with DeepSeek `deepseek-v4-pro`, thinking on, on the same snapshot: **19/30** blind (tier 1: 11/18; real run on 2026-11-20, four blind scorers, full read; a first scorer that truncated passages gave 20/30; the adjudicated score follows the PR review's second read). Three outputs were cut at the 64,000-token output cap (Q20, Q21 here; Q27 in hybrid). The same plans with hybrid-norerank on `exp/hybrid`: 21/30 blind (#250 PR 2). The DeepSeek baseline before map-reduce (#243) scored 15/30: [docs/results/w11-report.md](docs/results/w11-report.md); next steps: [docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
 check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +

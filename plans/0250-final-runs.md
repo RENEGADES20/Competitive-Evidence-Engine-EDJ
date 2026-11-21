@@ -573,3 +573,31 @@ or the database changes, in any of the three PRs.
   (issuecomment-7049142807). The conditions are written in above as C1-C4: the wrapper runs on the worktree's own
   code; producing commit per record from `at`; an allow-list cache; round-2 nb 1-6. Execution starts after this
   commit. 0 calls.
+- 2026-11-20 - mock checks: both modes identical to the PR #266 runs on 35/35 (fts 33/2, refusal gap 8/8, keyed 26/26;
+  hybrid 31 PASS, gap 7/8, keyed 24/26). Guard stop paths tested, with a dummy `.env`.
+- 2026-11-20 13:57-14:21 - Phase P (af4aa99): 22 planner calls, 8 plans reused, all valid, $0.307.
+- 2026-11-20 - step 5 on the real plans: plans identical across modes, 30/30; pins 64/64.
+  - The floor fires only in Q19: a1.MER (fts drops 4) and a1.RJF (fts drops 1, cell emptied).
+  - The TL extended the floor decision to a1.RJF.
+- 2026-11-20 - C2 / C3 hash check:
+  - All 34 #247 map records reproduce at their producing commit (7b9a5b4: 16; 715adda: 17; 2d5f25b: 1) and match at
+    08b0ac4.
+  - The allow-list cache leaves out 48 other inherited map records.
+  - Final count: cap 139.
+- 2026-11-20 16:42-19:05 - fts run (05b7282): 79 new calls, 67 reused, $6.59 new, exit 0.
+  - Q21 reduce and Q20 `map.all` were cut at 64,000 output tokens (findings, no re-call; TL ruling).
+  - 0-call replay: identical except Q12 (a non-deterministic code caveat; TL ruling: NEXT follow-up).
+  - The post-run hash check passes.
+- 2026-11-20 - fts blind first read (one scorer, passages truncated): 20/30; sha256
+  a3297da4e1584fe1c7a335fff554a02801867b091102346c6672ae442fc2845d, committed alone in 5de05e8.
+- 2026-11-21 - hybrid (`tl/250-hybrid`):
+  - count: 0 inherited map records reused (every input differs), cap 177;
+  - run 02:13-06:30 UTC: 118 new calls, 0 planner calls, $7.84 new; Q27 `map.MER` cut at 64,000 output tokens;
+  - replay: identical except Q12;
+  - blind (four scorers, full read): 21/30, sha256 b1c85d3468441d0c8147ff49d61224e9f3a3fbb1c5c049a6a1e0885ed02f2858
+    (b3b4ebb).
+- 2026-11-21 - fts blind full read (four scorers; the TL decision makes it primary): 19/30, sha256
+  5bad7497a5804047150bf9b860cfeffbbd2d395aa1820f8c85a6ca014fc6e7dc, committed alone in d8f0c60.
+  - The modes differ on Q10, Q12, Q20, Q21, Q27 and Q28.
+  - Reports, NEXT and README written.
+  - Total for #250: 219 new calls, about $14.73.
