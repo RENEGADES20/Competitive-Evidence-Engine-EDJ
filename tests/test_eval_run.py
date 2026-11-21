@@ -736,7 +736,7 @@ def _planner_calls(monkeypatch, outcome):
             raise outcome
         return outcome
     monkeypatch.setattr(planner, "call_planner", call)
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     return calls
 
 
@@ -799,7 +799,7 @@ def test_planner_record_saves_stop_reason_and_usage(monkeypatch, tmp_path):
     from cee.retrieve.fts import resolve
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
     def call(query, provider, client=None, meta=None):
@@ -1020,7 +1020,7 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 64000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p64000"
+    assert rec["max_tokens"] == 128000 and rec["request_version"] == "ds-strict-2-plan-high-c128000-s1"   # #272
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 
@@ -1091,7 +1091,7 @@ def _plan_only_env(monkeypatch, outcome, cache):
 
     monkeypatch.setenv("LLM_PROVIDER", "anthropic")
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
@@ -1164,7 +1164,7 @@ def _map_setup(monkeypatch, behave=None):
     from cee.retrieve.fts import Hit, Query
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     firms = ["MS", "SCHW", "EDJ", "MER", "RJF"]
     qry = Query(question="Advisor headcount across the five.", entities=firms)
     plan = planner.Plan(aspects=[planner.Aspect("a1", "Advisor headcount.")],
@@ -1269,7 +1269,7 @@ def test_planner_recheck_records_trailing_brace_flags(monkeypatch, tmp_path):
     qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
     runner = er.RealRunner("deepseek", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     from dataclasses import asdict
-    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.request_version)
+    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.plan_version)
     raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": [], "metric": "",
                         "kind": "fact", "proxy": False}]}
     (tmp_path / "cache").mkdir()
@@ -1493,7 +1493,7 @@ def _resume_env(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "deepseek")
     monkeypatch.setenv("MOCK_DELAY_S", "0")
     monkeypatch.setattr(ask, "model_name", lambda p: "deepseek-v4-pro")
-    monkeypatch.setattr(planner, "model_for", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "deepseek-v4-pro")
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))

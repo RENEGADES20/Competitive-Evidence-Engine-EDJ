@@ -260,11 +260,11 @@ def extract_message(question: str, spec: MapSpec, window=None, firms: list[str] 
 
 
 def extract_max_tokens(provider: str) -> int:
-    """The map call's output cap: deepseek by thinking mode (as the answer), else llm.MAX_TOKENS.
-    It joins the map cache key directly; llm.request_version is unchanged."""
+    """The map call's output cap: deepseek by the map stage's effort (#272: off 20000, thinking 128000),
+    else llm.MAX_TOKENS. It joins the map cache key directly."""
     from cee.answer import llm
     if provider == "deepseek":
-        return llm.DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking]
+        return llm.stage_max_tokens("map")
     return llm.MAX_TOKENS
 
 
@@ -290,7 +290,7 @@ def deepseek_extract_request(question: str, spec: MapSpec, window=None, firms=No
     from cee.answer.llm import deepseek_tool_request
     return deepseek_tool_request(EXTRACT_TOOL, "Submit the extracted cells.", extraction_schema(spec, strict=True),
                                  system_prompt(spec.research), extract_message(question, spec, window, firms),
-                                 extract_max_tokens("deepseek"))
+                                 extract_max_tokens("deepseek"), stage="map")
 
 
 def input_tokens(question: str, spec: MapSpec, window=None, firms=None) -> int:
@@ -395,8 +395,9 @@ def call_extract(question: str, spec: MapSpec, provider: str, window=None, firms
             meta["parse_flags"] = flags
     elif provider == "deepseek":
         client = client or llm.deepseek_client()
-        resp = llm.deepseek_create(client, deepseek_extract_request(question, spec, window, firms))
-        call, stop, usage, payload = llm.deepseek_tool_call(resp, EXTRACT_TOOL)
+        req = deepseek_extract_request(question, spec, window, firms)
+        resp = llm.deepseek_create(client, req)
+        call, stop, usage, payload = llm.deepseek_tool_call(resp, EXTRACT_TOOL, req)
         msg = payload if isinstance(payload, dict) else {}
         meta["stop_reason"], meta["usage"] = stop, usage
         meta["reasoning_content"] = msg.get("reasoning_content")
@@ -701,7 +702,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
     from cee.retrieve.planner import model_for
     return {"id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
             "chunk_ids": [h.chunk_id for h in spec.hits], "provider": provider,
-            "model": "mock" if provider == "mock" else model_for(provider), "version": EXTRACT_VERSION,
+            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": EXTRACT_VERSION,
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
             "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,

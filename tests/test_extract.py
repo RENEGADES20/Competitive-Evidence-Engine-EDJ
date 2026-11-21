@@ -111,7 +111,7 @@ def test_deepseek_request_and_output(monkeypatch):
     fn = client.kwargs["tools"][0]["function"]
     assert fn["name"] == extract.EXTRACT_TOOL and fn["strict"] is True
     assert fn["parameters"] == extract.extraction_schema(spec, strict=True)
-    assert client.kwargs["max_tokens"] == 64000 and client.kwargs["tool_choice"] == "auto"
+    assert client.kwargs["max_tokens"] == 128000 and client.kwargs["tool_choice"] == "auto"   # #272 cap
     assert raw == OUT and meta["reasoning_content"] == "I look at the passages."
 
 

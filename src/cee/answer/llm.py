@@ -48,12 +48,53 @@ DEEPSEEK_STOP_CODES = {401: "the API key was rejected (401); check DEEPSEEK_API_
                        429: "rate limit reached (429); wait, then run again"}
 
 
-def request_version(provider: str) -> str | None:
+# #272: the W11 flow's stages (planner, map, reduce) each have their own effort (off | low | high | max), cap,
+# model (the map may use another model) and streaming; the legacy MAP=off answer call keeps DEEPSEEK_THINKING and
+# DEEPSEEK_MAX_TOKENS. Thinking-mode cap 128000 (was 64000, which cut Q20, Q21, Q27 in #250; the API allows 384K);
+# off-mode caps as before (planner 8000, map and reduce 20000).
+DEEPSEEK_STAGES = ("plan", "map", "reduce")
+DEEPSEEK_THINKING_CAP = 128000
+DEEPSEEK_OFF_CAPS = {"plan": 8000, "map": 20000, "reduce": 20000}
+
+
+def stage_effort(stage: str) -> str:
+    """off | low | high | max for one stage (DEEPSEEK_EFFORT_PLAN / _MAP / _REDUCE)."""
+    if stage not in DEEPSEEK_STAGES:
+        raise ValueError(f"unknown stage {stage!r}")
+    return getattr(settings(), f"deepseek_effort_{stage}")
+
+
+def stage_thinking(stage: str) -> bool:
+    return stage_effort(stage) != "off"
+
+
+def stage_max_tokens(stage: str) -> int:
+    return DEEPSEEK_THINKING_CAP if stage_thinking(stage) else DEEPSEEK_OFF_CAPS[stage]
+
+
+def stage_model(stage: str) -> str:
+    """The DeepSeek model of one stage: DEEPSEEK_MODEL_MAP for the map when set, else DEEPSEEK_MODEL."""
+    s = settings()
+    return (s.deepseek_model_map or s.deepseek_model) if stage == "map" else s.deepseek_model
+
+
+def stage_stream(stage: str) -> bool:
+    """DEEPSEEK_STREAM: on streams every stage; nothink only the stages with thinking off; off none."""
+    mode = settings().deepseek_stream
+    return mode == "on" or (mode == "nothink" and not stage_thinking(stage))
+
+
+def request_version(provider: str, stage: str | None = None) -> str | None:
     """The request version that joins the eval's cache keys (#232): anthropic strict-1; deepseek
     (#242) names the thinking mode and both caps, so an output made in one mode is never reused for
-    the other; openai none."""
+    the other; openai none. #272: with a stage, deepseek names that stage's effort, cap and streaming
+    only, so each stage's key changes only with its own settings (a reduce-only re-run reuses every
+    plan and map record)."""
     if provider == "anthropic":
         return ANTHROPIC_REQUEST_VERSION
+    if provider == "deepseek" and stage is not None:
+        return (f"ds-strict-2-{stage}-{stage_effort(stage)}-c{stage_max_tokens(stage)}"
+                f"-s{1 if stage_stream(stage) else 0}")
     if provider == "deepseek":
         on = settings().deepseek_thinking
         return (f"ds-strict-1-think-{'on' if on else 'off'}"
@@ -302,20 +343,30 @@ def deepseek_client():
 
 
 def deepseek_tool_request(name: str, description: str, schema: dict, system: str, user: str,
-                          max_tokens: int) -> dict:
+                          max_tokens: int, stage: str | None = None) -> dict:
     """One strict function tool (#242). Thinking off: the named function is forced. Thinking on:
-    tool_choice auto (a forced choice is a 400 in thinking mode); the prompt requires the tool."""
+    tool_choice auto (a forced choice is a 400 in thinking mode); the prompt requires the tool.
+    #272: with a stage, that stage's effort (sent as reasoning_effort when thinking is on), model, cap
+    and streaming (stream=True with the usage chunk); without one, the legacy request (DEEPSEEK_THINKING)."""
     s = settings()
-    on = s.deepseek_thinking
-    return {
-        "model": s.deepseek_model,
+    if stage is None:
+        on, model, body = s.deepseek_thinking, s.deepseek_model, {}
+    else:
+        on, model, max_tokens = stage_thinking(stage), stage_model(stage), stage_max_tokens(stage)
+        body = {"reasoning_effort": stage_effort(stage)} if on else {}
+    req = {
+        "model": model,
         "max_tokens": max_tokens,
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         "tools": [{"type": "function", "function": {"name": name, "description": description,
                                                     "strict": True, "parameters": schema}}],
         "tool_choice": "auto" if on else {"type": "function", "function": {"name": name}},
-        "extra_body": {"thinking": {"type": "enabled" if on else "disabled"}},
+        "extra_body": {"thinking": {"type": "enabled" if on else "disabled"}, **body},
     }
+    if stage is not None and stage_stream(stage):
+        req["stream"] = True
+        req["stream_options"] = {"include_usage": True}
+    return req
 
 
 def deepseek_request(question: str, hits: list[Hit], plan=None, window=None) -> dict:
@@ -327,16 +378,66 @@ def deepseek_request(question: str, hits: list[Hit], plan=None, window=None) -> 
 
 
 def deepseek_create(client, request: dict):
-    """Send one DeepSeek request; 401 / 402 / 429 become ProviderStop with a plain message."""
+    """Send one DeepSeek request; 401 / 402 / 429 become ProviderStop with a plain message. #272: a
+    streamed request (stream=True) is read to the end and assembled into the same response shape as a
+    non-streamed one (assemble_stream), with ttft_s, the seconds to the first chunk that carries text,
+    reasoning or a tool call. The read timeout applies to each chunk read, not to the whole stream."""
     import openai
 
+    t0 = time.monotonic()
     try:
-        return client.chat.completions.create(**request)
+        resp = client.chat.completions.create(**request)
+        if request.get("stream") and not (hasattr(resp, "choices") and not hasattr(resp, "__iter__")):
+            return assemble_stream(resp, t0)   # a whole response (a client that ignores stream) is used as is
+        return resp
     except openai.APIStatusError as e:
         why = DEEPSEEK_STOP_CODES.get(getattr(e, "status_code", None))
         if why:
             raise ProviderStop(f"DeepSeek: {why}") from e
         raise
+
+
+def assemble_stream(chunks, t0: float | None = None):
+    """#272: one streamed chat completion as a response object (SimpleNamespace): choices[0].message
+    with content, reasoning_content and tool_calls (argument deltas joined by index), finish_reason,
+    usage (from the final usage chunk; None when the stream sent none), ttft_s and streamed=True."""
+    from types import SimpleNamespace as NS
+
+    t0 = time.monotonic() if t0 is None else t0
+    content, reasoning, calls = [], [], {}
+    finish, usage, ttft = None, None, None
+    for ch in chunks:
+        if getattr(ch, "usage", None) is not None:
+            usage = ch.usage
+        for choice in getattr(ch, "choices", None) or []:
+            d = getattr(choice, "delta", None)
+            got = False
+            if d is not None:
+                if getattr(d, "content", None):
+                    content.append(d.content)
+                    got = True
+                if getattr(d, "reasoning_content", None):
+                    reasoning.append(d.reasoning_content)
+                    got = True
+                for tc in getattr(d, "tool_calls", None) or []:
+                    i = getattr(tc, "index", 0) or 0
+                    c = calls.setdefault(i, {"id": None, "name": "", "arguments": []})
+                    c["id"] = getattr(tc, "id", None) or c["id"]
+                    f = getattr(tc, "function", None)
+                    if f is not None:
+                        c["name"] = getattr(f, "name", None) or c["name"]
+                        if getattr(f, "arguments", None):
+                            c["arguments"].append(f.arguments)
+                    got = True
+            if got and ttft is None:
+                ttft = round(time.monotonic() - t0, 2)
+            if getattr(choice, "finish_reason", None):
+                finish = choice.finish_reason
+    tool_calls = [NS(id=c["id"], type="function", function=NS(name=c["name"], arguments="".join(c["arguments"])))
+                  for _, c in sorted(calls.items())]
+    msg = NS(role="assistant", content="".join(content) or None, reasoning_content="".join(reasoning) or None,
+             tool_calls=tool_calls or None)
+    return NS(choices=[NS(message=msg, finish_reason=finish)], usage=usage, ttft_s=ttft, streamed=True)
 
 
 def _jsonable(obj):
@@ -354,10 +455,12 @@ def _jsonable(obj):
     return str(obj)
 
 
-def deepseek_tool_call(resp, name: str):
+def deepseek_tool_call(resp, name: str, request: dict | None = None):
     """(first tool call named `name` or None, finish_reason, usage, payload) of one response.
     usage: input / output tokens, cache hit / miss, reasoning tokens, tool call count, thinking mode.
-    payload: the whole message as JSON data (content, reasoning_content, tool calls)."""
+    payload: the whole message as JSON data (content, reasoning_content, tool calls).
+    #272: with the request, thinking, effort and model come from it (each stage has its own), and a
+    streamed response adds streamed and ttft_s."""
     choice = resp.choices[0]
     msg = choice.message
     stop = getattr(choice, "finish_reason", None)
@@ -371,6 +474,14 @@ def deepseek_tool_call(resp, name: str):
              "reasoning_tokens": getattr(details, "reasoning_tokens", None),
              "tool_calls": len(calls),
              "thinking": "on" if settings().deepseek_thinking else "off"}
+    if request is not None:
+        body = request.get("extra_body") or {}
+        usage["thinking"] = "on" if (body.get("thinking") or {}).get("type") == "enabled" else "off"
+        usage["effort"] = body.get("reasoning_effort") or ("off" if usage["thinking"] == "off" else None)
+        usage["model"] = request.get("model")
+    if getattr(resp, "streamed", False) is True:
+        usage["streamed"] = True
+        usage["ttft_s"] = getattr(resp, "ttft_s", None)
     call = next((c for c in calls if getattr(getattr(c, "function", None), "name", None) == name), None)
     return call, stop, usage, _jsonable(msg)
 

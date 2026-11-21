@@ -41,7 +41,15 @@ class Settings:
     # call. On by default since #247; MAP=off keeps the legacy single answer call (prompt v4.1) for
     # comparison only (TL D3). The eval maps unless --legacy.
     map_on: bool = True
-    map_concurrency: int = 6     # parallel extraction calls (five firms + research)
+    map_concurrency: int = 24    # parallel extraction calls (#272: one per firm x aspect cell)
+    # #272: DeepSeek effort per stage (off | low | high | max; off = thinking disabled), the map's model
+    # (empty = deepseek_model), streaming (on | off | nothink) and the map's input ceiling per call.
+    deepseek_effort_plan: str = "high"
+    deepseek_effort_map: str = "high"
+    deepseek_effort_reduce: str = "high"
+    deepseek_model_map: str = ""
+    deepseek_stream: str = "on"
+    map_call_tokens: int = 40000
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -68,7 +76,24 @@ def deepseek_thinking() -> bool:
 # fixed rule (plans/0245-decompose.md; ADR-019 amendment): only 40000 was eligible (12000 and 20000
 # lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
 SUBQUESTION_TOKENS_DEFAULT = 40000
-MAP_CONCURRENCY_DEFAULT = 6   # #246: five firms + research in parallel
+MAP_CONCURRENCY_DEFAULT = 24  # #272: one call per firm x aspect cell (was 6: five firms + research, #246)
+# #272: the input ceiling of one map call; a cell over it is split into batches. 40000 = SUBQUESTION_TOKENS, so
+# a cell's normal retrieval budget fits one call.
+MAP_CALL_TOKENS_DEFAULT = 40000
+# #272: DeepSeek effort per stage. Interim default high (the API's default, now sent explicitly) until test A.
+EFFORTS = ("off", "low", "high", "max")
+EFFORT_DEFAULTS = {"plan": "high", "map": "high", "reduce": "high"}
+STREAM_MODES = ("on", "off", "nothink")
+
+
+def _choice(name: str, allowed: tuple, default: str) -> str:
+    """A setting from a fixed list; empty -> the default; anything else stops with a clear error."""
+    raw = os.getenv(name, "").strip().strip('"').strip().lower()
+    if not raw:
+        return default
+    if raw not in allowed:
+        raise ValueError(f"{name}={raw!r} is not understood; use one of {', '.join(allowed)}")
+    return raw
 
 
 def _positive_int(name: str, default: int | None) -> int | None:
@@ -101,6 +126,12 @@ def settings() -> Settings:
         deepseek_thinking=deepseek_thinking(),
         map_on=os.getenv("MAP", "on").strip().strip('"').strip().lower() not in OFF_WORDS,
         map_concurrency=_positive_int("MAP_CONCURRENCY", MAP_CONCURRENCY_DEFAULT),
+        deepseek_effort_plan=_choice("DEEPSEEK_EFFORT_PLAN", EFFORTS, EFFORT_DEFAULTS["plan"]),
+        deepseek_effort_map=_choice("DEEPSEEK_EFFORT_MAP", EFFORTS, EFFORT_DEFAULTS["map"]),
+        deepseek_effort_reduce=_choice("DEEPSEEK_EFFORT_REDUCE", EFFORTS, EFFORT_DEFAULTS["reduce"]),
+        deepseek_model_map=os.getenv("DEEPSEEK_MODEL_MAP", "").strip(),
+        deepseek_stream=_choice("DEEPSEEK_STREAM", STREAM_MODES, "on"),
+        map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),
     )
 
 
