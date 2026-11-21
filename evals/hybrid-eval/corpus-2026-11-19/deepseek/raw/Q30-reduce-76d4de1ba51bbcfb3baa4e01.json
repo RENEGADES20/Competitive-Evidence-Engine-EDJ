@@ -1,0 +1,328 @@
+{
+  "question_id": "Q30",
+  "question": "What is Merrill's standalone profitability?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "gap_with_adjacent",
+  "chunk_ids": [
+    "BAC-SUPP-2025Q4#53",
+    "BAC-SUPP-2026Q1#43",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-01-14-01#11",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-DECK-2025-investor-day#10",
+    "BAC-10K-2025#246",
+    "BAC-10Q-2025Q3#93",
+    "BAC-10Q-2026Q1#71",
+    "BAC-10Q-2026Q2#88"
+  ],
+  "schema_fallback": [],
+  "enum_values": 44,
+  "at": "2026-11-21T00:28:30.302107-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7059,
+    "output_tokens": 14933,
+    "cache_hit_tokens": 1792,
+    "cache_miss_tokens": 5267,
+    "reasoning_tokens": 9931,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 114.41,
+  "tokens_per_s": 130.52,
+  "reasoning_content": "We need answer via submit_answer tool. Behavior gap_with_adjacent. One firm Merrill. Need write claims? Since gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items, each with differs_because; code gaps say what database does not support.\n\nWe have aspects a1, a2, a3, each marked fact but the items are \"different quantity (adjacent only)\". So for each aspect, no claim; adjacent items carry part_id of cell (a1.MER, a2.MER, a3.MER) with differs_because.\n\nNeed provide gaps too? The instructions: gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give adjacent items, each with differs_because; the code gaps say what the database does not support.\n\nThe submit_answer schema has claims, adjacent, gaps. Gaps added by code should be included? \"Gaps added by code (do not repeat them)\" means do not repeat those in text? Actually schema requires gaps array. Hmm. Let's parse. The system says \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nThe submit tool has gaps parameter. We need submit gaps? The instruction says code adds gaps listed. But we as model need to output gaps array too, presumably including code gaps? Wait \"do not repeat them\" means don't write caveats and gaps in text, but schema includes gaps. Actually the answer is built by us with gaps. The \"Gaps added by code\" are provided to us; we should include them in gaps array? The phrase \"code adds those gaps (listed under 'Gaps added by code')\" suggests code will add them, not us. But we're the only one submitting. Hmm.\n\nLet's re-read: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name. Caveats are added by code; do not repeat them.\"\n\nSo in our submitted answer, we should not include the code gaps (they are added by code). We should only add own gaps if something not named. But the schema requires gaps array (can be empty?). It's required. So we can submit empty gaps array, since code adds the gaps. Actually the tool output is the final answer; perhaps the framework combines our JSON with code gaps. We should not duplicate. So gaps: [].\n\nClaims: since behavior gap_with_adjacent and no fact holds asked quantity, write no claim. So claims: [].\n\nAdjacent: we need list adjacent items for each cell. The evidence matrix has many items. We should write adjacent items, each with differs_because. For each item? The instruction says \"give the adjacent items, each with differs_because\". Each item is an adjacent figure. We need probably write one adjacent entry per item (10 items for a1, 10 for a2, 15 for a3). That's a lot. But maybe we can group by source/quote? \"Each claim, adjacent item and gap carries the part_id of the cell it comes from.\"\n\nWe need each adjacent item text states what it covers (period, scope), quote? For adjacent items, no requirement to date every claim? The instruction \"Date every claim from its source line\" applies to claims; adjacent items likely also should be dated? Standard says adjacent items carry differs_because. We should include source line date and quote? For fact cells marked adjacent only, write them as adjacent, each with differs_because from the cell, in your words with same meaning.\n\nGiven evidence matrix gives each item with value, unit, period, scope, quote, cite. We should state each figure, date, source. Also quote maybe not necessary but can include? \"Every claim states what a cited item says...\". Adjacent items are not claims but we can still be precise.\n\nNeed date every claim from source line, e.g. \"The 2Q26 10-Q ... states\". For adjacent, likely same. We'll write each as: \"Merrill: For [period], Bank of America reported GWIM [metric] of $X million (source date).\" Then differs_because.\n\nBut we have many items; perhaps we can combine multiple periods that share the same source quote? The instruction says each adjacent item? Let's think. The evidence matrix has \"item 1... item 10\". We likely should write one adjacent entry per item? That's 35 entries. That's acceptable but long. Alternatively group items from same aspect into one adjacent text with multiple sentences, but part_id and differs_because per cell. The instruction \"Each claim, adjacent item and gap carries the part_id of the cell it comes from.\" Could write one adjacent entry per aspect summarizing all items? But \"give the adjacent items\" plural. However each cell is a part_id (a1.MER). We could write one adjacent item per cell listing all figures. But \"each with differs_because\" - could be one per cell with all figures. Hmm.\n\nThe evidence matrix shows a1.MER has 10 items all under one cell. In typical output, each item may be a separate adjacent entry, all with part_id a1.MER. But the instruction \"an item\" perhaps each bullet item. The tool schema adjacent is an array of objects; each object is an adjacent item. I think we should produce one adjacent object per matrix item? But that's 35. Could be expected.\n\nLet's examine the \"standard wording\" and constraints. We must cite chunk ids. All items have cite. We need be accurate.\n\nLet's consider grouping by source to reduce repetition. But each item has different period and value; we can write one adjacent text containing several figures from the same source. But then differs_because same. The part_id is same. The instructions don't strictly forbid grouping multiple items in one adjacent object. But \"Every claim, adjacent item and gap carries the part_id of the cell it comes from\" - one object per cell is fine.\n\nHowever, the instruction \"give the adjacent items, each with differs_because\" suggests each item in evidence matrix becomes an adjacent item. Let's follow that to be safe, but maybe too verbose. The answer has no explicit length limit. We'll produce one adjacent per matrix item.\n\nWait, \"One firm: aspect by aspect.\" So we order aspects a1, a2, a3. For each aspect, adjacent items. Within a1, items are not necessarily ordered by recency? The instruction \"With a time window, order claims and adjacent items newest first across the whole answer.\" Is there a time window? The question doesn't have explicit time window (What is Merrill's standalone profitability?). No time window. So no recency ordering requirement. But maybe we should order items? The matrix lists items 1-10 in some order not strictly newest. We can follow matrix order? The instruction says firms in order listed, aspect by aspect. No explicit order within aspect. But we can keep matrix order to be consistent.\n\nActually \"With a time window\" - no time window. So no why-lines. Good.\n\nNeed add why-lines? Only for recency aspects or when time window. None marked recency. So no why-lines.\n\nNeed gap of our own? \"Add a gap of your own only for something those gaps do not name.\" Code gaps name a1.MER and a1. For a2 and a3, code gaps? The \"Gaps added by code\" only lists a1.MER and a1. But a2 and a3 are also not standalone; they are adjacent only. Do we need add gaps for a2 and a3? The behavior says gap_with_adjacent, code gaps say what database doesn't support. Only a1 gaps listed. But a2 and a3 also have no fact. Should we add gaps for them? The code gaps list only a1.MER and a1. Hmm. \"Add a gap of your own only for something those gaps do not name.\" Does the database not support a2 and a3? Possibly the gaps listed only for a1 because a1 is the primary fact; a2 and a3 are proxy aspects that are adjacent only, so maybe code considers them as adjacent, not gaps. The instruction for adjacent: gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items. So for a2 and a3, we give adjacent items, no gap needed.\n\nBut maybe we should add gaps for a2 and a3? The aspect a2 is \"fact, proxy: a stand-in figure, adjacent only\" and a3 same. They are proxies, and evidence items are \"different quantity (adjacent only)\". The code says those are adjacent only; not gaps. So no gaps.\n\nThe gaps array should be empty (code adds listed gaps). But the schema requires gaps array; we can submit []. Actually should we include the code gaps in gaps array? The instruction says code adds them, don't repeat. We'll submit empty gaps.\n\nNow craft adjacent text. Need include differs_because string exactly or paraphrased? The instruction: \"adjacent only ... each with differs_because from the cell, in your words with the same meaning.\" The cell provides differs_because text. We can use verbatim or paraphrase. We'll use the provided wording perhaps slightly adjusted to fit \"Merrill:\".\n\nFor a1 differs: \"The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity.\"\n\nFor a2: \"The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity.\"\n\nFor a3: \"The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported.\"\n\nNow, each adjacent text. Need date from source line. Source line info:\n- BAC-SUPP-2025Q4#53: BAC supplement, segment GWIM, period 2025-12-31, published 2026-01-14, Global Wealth & Investment Management Segment Results, p.17\n- BAC-SUPP-2026Q1#43: BAC supplement, period 2026-03-31, published 2026-04-15, p.16\n- BAC-PR-2026-07-14-01#10: BAC press, period 2026-06-30, published 2026-07-14\n- BAC-PR-2026-01-14-01#11: BAC press, period 2025-12-31, published 2026-01-14\n- BAC-PR-2026-04-15-01#10: BAC press, period 2026-03-31, published 2026-04-15\n- BAC-PR-2026-10-14-01#11: BAC press, period 2026-09-30, published 2026-10-14\n- BAC-DECK-2025-investor-day#10: BAC deck, published 2025-11-05\n- BAC-10K-2025#246: BAC 10-K, period 2025-12-31, published 2026-02-25\n- BAC-10Q-2025Q3#93: BAC 10-Q, period 2025-09-30, published 2025-10-31\n- BAC-10Q-2026Q1#71: period 2026-03-31, published 2026-05-01\n- BAC-10Q-2026Q2#88: period 2026-06-30, published 2026-07-31\n\nWe should date each claim: \"In the BAC supplement published 2026-01-14 (period ended December 31, 2025), Bank of America reports GWIM net income of $4,670 million for the year ended December 31, 2025.\" That's fine.\n\nShould we mention \"The 2025 fourth-quarter supplement states...\"? Use \"The BAC supplement published January 14, 2026 states ...\" That's clear.\n\nNow, let's formulate adjacent items.\n\nAspect a1 items:\n1. $4,670M 2025, source BAC-SUPP-2025Q4#53\n2. $4,263M 2024, same\n3. $1,007M 2025Q1, BAC-SUPP-2026Q1#43\n4. $993M 2025Q2, BAC-PR-2026-07-14-01#10\n5. $1,265M 2025Q3, BAC-SUPP-2026Q1#43\n6. $1,405M 2025Q4, BAC-PR-2026-01-14-01#11\n7. $1,329M 2026Q1, BAC-PR-2026-04-15-01#10\n8. $1,413M 2026Q2, BAC-PR-2026-07-14-01#10\n9. $1,540M 2026Q3, BAC-PR-2026-10-14-01#11\n10. $1,171M 2024Q4, BAC-PR-2026-01-14-01#11\n\nAspect a2 items:\n1. $6,227M 2025, BAC-SUPP-2025Q4#53\n2. $5,684M 2024, same\n3. $1,343M 2025Q1, BAC-SUPP-2026Q1#43\n4. $1,324M 2025Q2, BAC-PR-2026-07-14-01#10\n5. $1,686M 2025Q3, BAC-PR-2026-01-14-01#11\n6. $1,874M 2025Q4, BAC-PR-2026-01-14-01#11\n7. $1,772M 2026Q1, BAC-PR-2026-04-15-01#10\n8. $1,884M 2026Q2, BAC-PR-2026-07-14-01#10\n9. $2,053M 2026Q3, BAC-PR-2026-10-14-01#11\n10. $1,561M 2024Q4, BAC-PR-2026-01-14-01#11\n\nAspect a3 items:\n1. pre-tax margin 25% 2024, BAC-DECK-2025-investor-day#10\n2. pre-tax margin 22% 2025Q1, BAC-PR-2026-04-15-01#10\n3. pre-tax margin 22% 2025Q2, BAC-PR-2026-07-14-01#10\n4. pre-tax margin 27% 2025Q3, BAC-PR-2026-01-14-01#11\n5. pre-tax margin 28% 2025Q4, BAC-PR-2026-01-14-01#11\n6. pre-tax margin 26% 2026Q1, BAC-PR-2026-04-15-01#10\n7. pre-tax margin 27% 2026Q2, BAC-PR-2026-07-14-01#10\n8. pre-tax margin 29% 2026Q3, BAC-PR-2026-10-14-01#11\n9. operating margin 25% 2025, BAC-10K-2025#246\n10. operating margin 25% 2024, BAC-10K-2025#246\n11. operating margin 27% 2025Q3, BAC-10Q-2025Q3#93\n12. operating margin 26% 2026Q1, BAC-10Q-2026Q1#71\n13. operating margin 27% 2026Q2, BAC-10Q-2026Q2#88\n14. return on avg allocated capital 24% 2025, BAC-SUPP-2025Q4#53\n15. return on avg allocated capital 23% 2024, same\n\nNeed be careful: For a3 item 1: source BAC-DECK-2025-investor-day#10, published 2025-11-05, period n/a; item says fiscal year 2024. We date \"The Bank of America investor day deck published November 5, 2025 states...\" Good.\n\nFor items with \"The operating margin was 25 percent in both 2025 and 2024.\" The item 9 and 10 share same quote and source. We can write separately or combine. We can write one adjacent text: \"The Bank of America 2025 10-K (published February 25, 2026) states the GWIM operating margin was 25 percent in both 2025 and 2024.\" That covers both periods in one adjacent item. But part_id a3.MER. Since both items same cell and source, combining is efficient. However the evidence lists them as separate items. We can combine into one adjacent object because it's same source quote. The instruction \"give the adjacent items\" - could be fine to combine same quote. But to be safe with part_id mapping, each adjacent object is a single text; combining two periods in one object is okay. But then how many objects? Hmm.\n\nI think it's acceptable and cleaner to combine items that come from same source and same quote into one adjacent object. But the matrix has explicit items; the grader might expect each item separate? The tool only validates schema, not count. The final answer is for user; readability matters. Combining reduces verbosity. However, the instruction \"Every claim, adjacent item and gap carries the part_id of the cell it comes from\" - one object per cell is okay. Let me consider grouping all a1 items into one adjacent object listing all figures. That would be concise. But then differs_because applies to the whole set. Is that acceptable? The instruction \"give the adjacent items\" plural - maybe each matrix item is an adjacent item. Yet they all share one cell id. The safest is to produce one adjacent object per matrix item. But that's 35 objects; still fine.\n\nLet's look at example in instructions? None. I'll produce one adjacent object per item to be faithful. But that is long. We can still do it.\n\nWait, the tool schema requires \"text\", \"chunk_ids\", \"part_id\", \"differs_because\" for adjacent. We can include multiple chunk ids? For each item only one cite, so one chunk id. Fine.\n\nNeed no claims. gaps empty.\n\nLet's draft texts.\n\nFor a1 items, text should start \"Merrill: \"? The shape says \"Several firms: ... each claim starting '<Firm>: '. One firm: aspect by aspect.\" For one firm, do we start each claim with \"Merrill: \"? It says one firm: aspect by aspect. It doesn't require firm prefix. But the earlier \"Several firms: ... each claim starting '<Firm>: '.\" For one firm, no need. But we can still use \"Merrill: \" for clarity? The standard wording examples use firm prefix in multi-firm. For one firm, avoid repetition? The instruction \"One firm: aspect by aspect.\" No firm prefix required. I'll not start each with \"Merrill:\" but can mention Merrill in differs_because. However adjacent text should make clear. Let's include \"Merrill\" in text perhaps.\n\nActually each adjacent text could start with \"Merrill: ...\" to be safe. But then all entries start with \"Merrill:\". The shape says \"Several firms: aspect by aspect ... each claim starting '<Firm>: '.\" For one firm not specified. I'll start with \"Merrill: \" for consistency and clarity? Hmm. The final answer is aspect by aspect; one firm. It may be fine without prefix. But the instruction says \"Each claim, adjacent item and gap carries the part_id...\" not about prefix.\n\nLet's keep \"Merrill: \" prefix to be consistent with firm naming. But for 35 entries, prefix adds noise. I think okay.\n\nActually the question: \"What is Merrill's standalone profitability?\" Single firm. We'll write:\n\n\"Standalone net income (a1): no standalone Merrill figure; closest disclosed figures are GWIM segment net income, adjacent.\"\n\nThen list. But the tool only has adjacent array; we can't add explanatory headings except in text. We could include aspect headings in first adjacent text? But each adjacent is separate. The answer format will concatenate adjacent items. It might be helpful to include \"Aspect a1...\" but instructions don't require. The part_id indicates aspect. But user sees answer; maybe the tool renders headings? Not sure. We just provide JSON.\n\nGiven the tool output likely displayed as list of claims/adjacent/gaps. We'll rely on text.\n\nLet's craft each adjacent text carefully with dates and figures.\n\nI'll write in a consistent pattern:\n\nFor a1 item 1: \"Merrill: Bank of America's Global Wealth & Investment Management (GWIM) segment, which includes Merrill Wealth Management and Bank of America Private Bank, reported net income of $4,670 million for the year ended December 31, 2025, per the BAC supplement published January 14, 2026.\"\n\ndiffers_because: \"The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity.\"\n\nWait, the text itself already says GWIM includes both. That's fine; differs_because repeats.\n\nMaybe shorter: \"Merrill: In the BAC supplement published January 14, 2026, Bank of America reports GWIM net income of $4,670 million for the year ended December 31, 2025.\" Then differs_because provides explanation. Good.\n\nNeed \"date every claim from its source line\" - for adjacent we include publication date. Good.\n\nFor item 3 source BAC-SUPP-2026Q1#43: \"In the BAC supplement published April 15, 2026, Bank of America reports GWIM net income of $1,007 million for the first quarter of 2025.\" Note source line period 2026-03-31 but the figure is 2025Q1 (from prior-year comparison). Fine.\n\nFor item 4 source BAC-PR-2026-07-14-01#10: press published July 14, 2026, period ended June 30, 2026. It reports 2025Q2 net income $993M. \"In the BAC press release published July 14, 2026, Bank of America reports GWIM net income of $993 million for the second quarter of 2025.\" Good.\n\nItem 5 source BAC-SUPP-2026Q1#43 (published April 15, 2026): 2025Q3 $1,265M.\n\nItem 6 source BAC-PR-2026-01-14-01#11 (published Jan 14, 2026): 2025Q4 $1,405M.\n\nItem 7 source BAC-PR-2026-04-15-01#10 (published April 15, 2026): 2026Q1 $1,329M.\n\nItem 8 source BAC-PR-2026-07-14-01#10: 2026Q2 $1,413M.\n\nItem 9 source BAC-PR-2026-10-14-01#11 (published Oct 14, 2026): 2026Q3 $1,540M.\n\nItem 10 source BAC-PR-2026-01-14-01#11: 2024Q4 $1,171M.\n\nSimilarly a2 and a3.\n\nFor a3, note items 9/10 operating margin: source 10-K published Feb 25, 2026; \"The operating margin was 25 percent in both 2025 and 2024.\" Could write two adjacent objects:\n- \"In the BAC 10-K published February 25, 2026, Bank of America reports a GWIM operating margin of 25 percent for 2025.\"\n- \"... 25 percent for 2024.\"\nBoth cite same. Fine.\n\nFor item 11: 10-Q published October 31, 2025: \"The operating margin was 27 percent compared to 25 percent.\" for 2025Q3. Write \"In the BAC 10-Q published October 31, 2025, Bank of America reports a GWIM operating margin of 27 percent for the third quarter of 2025.\"\n\nItem 12: 10-Q published May 1, 2026: \"The operating margin was 26 percent compared to 22 percent a year ago.\" for 2026Q1.\n\nItem 13: 10-Q published July 31, 2026: 27% for 2026Q2.\n\nItems 14/15: return on average allocated capital 24% 2025 and 23% 2024, source supplement published Jan 14 2026. Note definition \"return on average allocated capital is a return-on-capital measure, not return on equity.\" We should state that in text. \"Bank of America reports a GWIM return on average allocated capital of 24 percent for 2025, a return-on-capital measure rather than return on equity, per the BAC supplement published January 14, 2026.\" Good.\n\nFor a3 item 1: \"In the Bank of America investor day deck published November 5, 2025, Bank of America reports a GWIM pre-tax margin of 25% for fiscal year 2024.\" Good.\n\nPre-tax margin items:\n- 22% 2025Q1 (press April 15 2026)\n- 22% 2025Q2 (press July 14 2026)\n- 27% 2025Q3 (press Jan 14 2026)\n- 28% 2025Q4 (press Jan 14 2026)\n- 26% 2026Q1 (press Apr 15 2026)\n- 27% 2026Q2 (press Jul 14 2026)\n- 29% 2026Q3 (press Oct 14 2026)\n\nNow, should we include quotes? Not required for adjacent. We can include exact figures. Fine.\n\nNow the \"differs_because\" for each adjacent entry must match the cell's differs_because meaning. We can use the exact provided text.\n\nLet's set part_id values: a1.MER, a2.MER, a3.MER. The schema enum includes \"a1.MER\", \"a2.MER\", \"a3.MER\", \"a1\", \"a2\", \"a3\", \"\". For adjacent from cells a1.MER etc. use those.\n\nClaims: empty array. Adjacent: 35 objects. Gaps: empty array? But schema requires gaps; can be []. answerable: true? The behavior gap_with_adjacent; answerable maybe true? The tool requires answerable boolean. For gap_with_adjacent, \"answerable\" probably false? Let's think. The answerable field indicates whether the question can be answered with claims. Since behavior gap_with_adjacent, no claim. But we provide adjacent. Is answerable true or false? The instruction: \"Return the answer by calling submit_answer tool.\" The schema has answerable boolean. In prior tasks, gap_with_adjacent likely answerable: false? But the answer includes adjacent. Hmm.\n\nThe behavior says \"gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items\". \"answerable\" likely indicates whether a direct claim exists. Since no direct fact, answerable false. But the question can still be partially answered via adjacent. I think answerable should be false because the asked quantity isn't available; we give adjacent. But let's examine: The tool requires answerable. If we set true, it might imply direct answer exists. The behavior is gap_with_adjacent, which likely maps to answerable false? Actually the behavior enum only has \"gap_with_adjacent\". The answerable boolean is separate. I'd set answerable: false, because no standalone profitability facts; only adjacent. But maybe the answer is \"answerable\" via adjacent? Hmm.\n\nThe instruction \"Why: 1b: no fact; a related quantity in a1.MER, a2.MER, a3.MER\". This means no fact for the question; behavior gap_with_adjacent. So answerable false.\n\nI'll set answerable: false, behavior: \"gap_with_adjacent\".\n\nNow gaps: should we include code gaps? The instruction says code adds them; do not repeat. So gaps: [].\n\nBut wait, maybe the final answer should include the code gaps in the gaps array because otherwise the user won't see why not supported. The tool will add them automatically? The prompt says \"code adds those gaps (listed under 'Gaps added by code')\". So yes, not us.\n\nNow let's ensure no why-lines (no time window, no recency). Good.\n\nOrder: aspect by aspect in order listed. Within aspects, should we order newest first? No time window. But maybe we can order items logically. The matrix order for a1 is not chronological. We could order newest first to be helpful, but instruction only requires newest first with time window. Without time window, no ordering requirement. To be safe, keep matrix order (items as listed). But matrix order for a1: 2025, 2024, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1, 2026Q2, 2026Q3, 2024Q4. That's a bit odd but okay. The user might prefer chronological. But instruction says \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window. We can keep matrix order to match evidence. I'll keep matrix order exactly as provided.\n\nNow, need be careful with source names and dates. Let's define a helper for date strings.\n\nSource dates:\n- BAC-SUPP-2025Q4#53: \"the Bank of America supplement published January 14, 2026\" (period ended December 31, 2025).\n- BAC-SUPP-2026Q1#43: \"the Bank of America supplement published April 15, 2026\"\n- BAC-PR-2026-07-14-01#10: \"the Bank of America press release published July 14, 2026\"\n- BAC-PR-2026-01-14-01#11: \"the Bank of America press release published January 14, 2026\"\n- BAC-PR-2026-04-15-01#10: \"the Bank of America press release published April 15, 2026\"\n- BAC-PR-2026-10-14-01#11: \"the Bank of America press release published October 14, 2026\"\n- BAC-DECK-2025-investor-day#10: \"the Bank of America investor day deck published November 5, 2025\"\n- BAC-10K-2025#246: \"the Bank of America 10-K published February 25, 2026\"\n- BAC-10Q-2025Q3#93: \"the Bank of America 10-Q published October 31, 2025\"\n- BAC-10Q-2026Q1#71: \"the Bank of America 10-Q published May 1, 2026\"\n- BAC-10Q-2026Q2#88: \"the Bank of America 10-Q published July 31, 2026\"\n\nWe should avoid saying \"2Q26 10-Q\" etc since sources don't use that exactly; publication dates suffice.\n\nLet's draft all adjacent items. We need chunk_ids arrays each with single id.\n\nI'll produce JSON.\n\nDouble-check quotes: The instruction \"An item marked 'quote not verbatim' is never put in quotation marks.\" None marked. We don't need quotes. We'll not include quotation marks except maybe \"net income\" etc. Fine.\n\nNow, are adjacent items allowed to state values without quotation marks? Yes.\n\nLet's write.\n\nFor a1:\n\n1. text: \"Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $4,670 million for the year ended December 31, 2025.\"\nchunk: BAC-SUPP-2025Q4#53, part a1.MER, differs.\n\n2. \"$4,263 million for the year ended December 31, 2024.\" same source.\n\n3. \"In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,007 million for the first quarter of 2025.\" BAC-SUPP-2026Q1#43.\n\n4. \"In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $993 million for the second quarter of 2025.\" BAC-PR-2026-07-14-01#10.\n\n5. \"In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,265 million for the third quarter of 2025.\" BAC-SUPP-2026Q1#43.\n\n6. \"In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,405 million for the fourth quarter of 2025.\" BAC-PR-2026-01-14-01#11.\n\n7. \"In the Bank of America press release published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,329 million for the first quarter of 2026.\" BAC-PR-2026-04-15-01#10.\n\n8. \"In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,413 million for the second quarter of 2026.\" BAC-PR-2026-07-14-01#10.\n\n9. \"In the Bank of America press release published October 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,540 million for the third quarter of 2026.\" BAC-PR-2026-10-14-01#11.\n\n10. \"In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,171 million for the fourth quarter of 2024.\" BAC-PR-2026-01-14-01#11.\n\na2:\n1. \"In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) income before income taxes of $6,227 million for the year ended December 31, 2025.\" BAC-SUPP-2025Q4#53.\n2. \"$5,684 million for the year ended December 31, 2024.\" same.\n3. \"In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) income before income taxes of $1,343 million for the first quarter of 2025.\" BAC-SUPP-2026Q1#43.\n4. \"In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,324 million for the second quarter of 2025.\" BAC-PR-2026-07-14-01#10.\n5. \"In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,686 million for the third quarter of 2025.\" BAC-PR-2026-01-14-01#11.\n6. \"In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,874 million for the fourth quarter of 2025.\" BAC-PR-2026-01-14-01#11.\n7. \"In the Bank of America press release published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,772 million for the first quarter of 2026.\" BAC-PR-2026-04-15-01#10.\n8. \"In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,884 million for the second quarter of 2026.\" BAC-PR-2026-07-14-01#10.\n9. \"In the Bank of America press release published October 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $2,053 million for the third quarter of 2026.\" BAC-PR-2026-10-14-01#11.\n10. \"In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,561 million for the fourth quarter of 2024.\" BAC-PR-2026-01-14-01#11.\n\na3:\n1. \"In the Bank of America investor day deck published November 5, 2025, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 25% for fiscal year 2024.\" BAC-DECK-2025-investor-day#10.\n2. \"In the Bank of America press release published April 15, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 22% for the first quarter of 2025.\" BAC-PR-2026-04-15-01#10.\n3. \"In the Bank of America press release published July 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 22% for the second quarter of 2025.\" BAC-PR-2026-07-14-01#10.\n4. \"In the Bank of America press release published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 27% for the third quarter of 2025.\" BAC-PR-2026-01-14-01#11.\n5. \"In the Bank of America press release published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 28% for the fourth quarter of 2025.\" BAC-PR-2026-01-14-01#11.\n6. \"In the Bank of America press release published April 15, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 26% for the first quarter of 2026.\" BAC-PR-2026-04-15-01#10.\n7. \"In the Bank of America press release published July 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 27% for the second quarter of 2026.\" BAC-PR-2026-07-14-01#10.\n8. \"In the Bank of America press release published October 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 29% for the third quarter of 2026.\" BAC-PR-2026-10-14-01#11.\n9. \"In the Bank of America 10-K published February 25, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 25 percent for 2025.\" BAC-10K-2025#246.\n10. \"In the Bank of America 10-K published February 25, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 25 percent for 2024.\" BAC-10K-2025#246.\n11. \"In the Bank of America 10-Q published October 31, 2025, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 27 percent for the third quarter of 2025.\" BAC-10Q-2025Q3#93.\n12. \"In the Bank of America 10-Q published May 1, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 26 percent for the first quarter of 2026.\" BAC-10Q-2026Q1#71.\n13. \"In the Bank of America 10-Q published July 31, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 27 percent for the second quarter of 2026.\" BAC-10Q-2026Q2#88.\n14. \"In the Bank of America supplement published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) return on average allocated capital of 24 percent for 2025, a return-on-capital measure rather than return on equity.\" BAC-SUPP-2025Q4#53.\n15. \"In the Bank of America supplement published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) return on average allocated capital of 23 percent for 2024, a return-on-capital measure rather than return on equity.\" BAC-SUPP-2025Q4#53.\n\ndiffers_because for each:\na1: \"The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity.\"\na2: \"The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity.\"\na3: \"The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported.\"\n\nShould we use the exact cell differs_because or can we shorten? We'll use exact.\n\nNow, do we need a \"suggested_source\" for gaps? gaps empty. Fine.\n\nLet's verify chunk ids are all in allowed list. Yes.\n\nNow let's consider if claims array should include a \"not valid\" comparison claim? The aspects a1, a2, a3 are fact aspects (not comparison). No comparison. So no claims.\n\nNow, answerable: false. behavior: \"gap_with_adjacent\".\n\nLet's submit.\n\nBut before finalizing, reconsider whether we should include the code gaps in gaps array. The prompt says \"code adds those gaps (listed under 'Gaps added by code')\" \u2014 in the final answer, the system likely appends them. But the tool call we make is the answer; if we omit them, will they be added? The instructions to us: \"Cells with code gaps get no claim; code adds those gaps... Add a gap of your own only for something those gaps do not name.\" This strongly implies we should not include code gaps. So gaps: [].\n\nHowever, there is a subtlety: the schema requires gaps array; empty is allowed. Good.\n\nAlso the \"caveats added by code (do not repeat them)\" - we won't include caveats text.\n\nNow, one more consideration: The adjacent items for a2 and a3 are \"proxy: a stand-in figure, adjacent only\". The instruction for a2/a3 says \"proxy: a stand-in figure, adjacent only\" in the aspect header. Our differs_because matches.\n\nLet's ensure we don't accidentally write a claim. We only write adjacent. Good.\n\nNow, should we mention \"Merrill: \" prefix for all? The text already says \"Merrill: ...\" I'll include. For a2/a3 entries also start \"Merrill: \".\n\nLet's now build JSON carefully. Each adjacent object requires \"text\", \"chunk_ids\", \"part_id\", \"differs_because\". No other fields.\n\nLet's count 35 adjacent items. a1 10, a2 10, a3 15 = 35.\n\nLet's write JSON in the tool call.\n\nNeed ensure text strings don't contain problematic quotes; use standard. Use apostrophes in \"Bank of America's\" \u2014 fine.\n\nLet's produce.\n\nWait, the tool parameter \"claims\" is required array; we'll pass []. \"gaps\" required; pass []. \"answerable\" false.\n\nDouble-check part_id enum includes \"a1.MER\" etc. Yes.\n\nLet's write the submit_answer call now.",
+  "raw": {
+    "answerable": false,
+    "behavior": "gap_with_adjacent",
+    "claims": [],
+    "adjacent": [
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $4,670 million for the year ended December 31, 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $4,263 million for the year ended December 31, 2024.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,007 million for the first quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#43"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $993 million for the second quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,265 million for the third quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#43"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,405 million for the fourth quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,329 million for the first quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,413 million for the second quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published October 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,540 million for the third quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) net income of $1,171 million for the fourth quarter of 2024.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "The figures are net income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) income before income taxes of $6,227 million for the year ended December 31, 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) income before income taxes of $5,684 million for the year ended December 31, 2024.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) income before income taxes of $1,343 million for the first quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#43"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,324 million for the second quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,686 million for the third quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,874 million for the fourth quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published April 15, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,772 million for the first quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,884 million for the second quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published October 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $2,053 million for the third quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports Global Wealth & Investment Management (GWIM) pre-tax income of $1,561 million for the fourth quarter of 2024.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "The figures are pre-tax income for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity."
+      },
+      {
+        "text": "Merrill: In the Bank of America investor day deck published November 5, 2025, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 25% for fiscal year 2024.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published April 15, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 22% for the first quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 22% for the second quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 27% for the third quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 28% for the fourth quarter of 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published April 15, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 26% for the first quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published July 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 27% for the second quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America press release published October 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) pre-tax margin of 29% for the third quarter of 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America 10-K published February 25, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 25 percent for 2025.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America 10-K published February 25, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 25 percent for 2024.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America 10-Q published October 31, 2025, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 27 percent for the third quarter of 2025.",
+        "chunk_ids": [
+          "BAC-10Q-2025Q3#93"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America 10-Q published May 1, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 26 percent for the first quarter of 2026.",
+        "chunk_ids": [
+          "BAC-10Q-2026Q1#71"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America 10-Q published July 31, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) operating margin of 27 percent for the second quarter of 2026.",
+        "chunk_ids": [
+          "BAC-10Q-2026Q2#88"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) return on average allocated capital of 24 percent for 2025, a return-on-capital measure rather than return on equity.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      },
+      {
+        "text": "Merrill: In the Bank of America supplement published January 14, 2026, Bank of America reports a Global Wealth & Investment Management (GWIM) return on average allocated capital of 23 percent for 2024, a return-on-capital measure rather than return on equity.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "The figures are profitability ratios for Bank of America's Global Wealth & Investment Management (GWIM) segment, a wider unit that consists of Merrill Wealth Management and Bank of America Private Bank, not Merrill as a standalone entity; no Merrill standalone ratio is reported."
+      }
+    ],
+    "gaps": []
+  }
+}

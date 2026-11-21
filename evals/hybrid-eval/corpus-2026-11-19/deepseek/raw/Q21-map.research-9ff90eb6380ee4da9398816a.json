@@ -1,0 +1,402 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research",
+    "a10.research",
+    "a11.research",
+    "a12.research",
+    "a13.research",
+    "a14.research",
+    "a15.research",
+    "a16.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "CERULLI-GWT-2025#2",
+    "CERULLI-GWT-2025#13",
+    "UBS-NEXTGEN-2026#6",
+    "UBS-NEXTGEN-2026#12"
+  ],
+  "at": "2026-11-20T22:51:50.934107-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3720,
+    "output_tokens": 8242,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 2312,
+    "reasoning_tokens": 5744,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 59.73,
+  "tokens_per_s": 137.99,
+  "reasoning_content": "Let me analyze this task carefully.\n\nI have research passages from Cerulli and UBS about the generational wealth transfer. The sub-questions are all \"research\" questions, and the passages are industry research, not one firm's documents.\n\nKey instruction: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nThe question asks about \"these five\" firms (Morgan Stanley, Charles Schwab, Edward Jones, Merrill, Raymond James). But the passages provided are only research (Cerulli and UBS), not firm documents. So for sub-questions about firms (a5 through a16), there may be no firm-specific information in the passages. I should mark them not_found (or different_quantity where appropriate, but there's no industry figure for those firm-specific aspects).\n\nLet me go through each sub-question.\n\na1.research [fact]: What is the estimated size and scale of the generational wealth transfer?\n\nFrom CERULLI-GWT-2025#2: Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048. Generation Xers $39 trillion and Millennials $46 trillion. Women in Baby Boomer and older generations expected to receive $40 trillion in 'horizontal' transfers. Women in younger generations expected to receive $47 trillion of the wealth transferred intergenerationally.\n\nFrom CERULLI-GWT-2025#13: estimated total of $85 trillion to Gen X or Millennial heirs.\n\nFrom UBS-NEXTGEN-2026#6: USD 83 trillion in private wealth globally over next two to three decades.\n\nFrom UBS-NEXTGEN-2026#12: USD 83 trillion in assets over next two decades.\n\nThese are all industry estimates. This is a fact. Multiple items.\n\na2.research [fact]: Over what timeframe and horizon is the generational wealth transfer expected to occur?\n\nCerulli: \"between now and 2048\". UBS: \"Over the next two to three decades\" and \"Over the next two decades\". These are facts.\n\na3.research [fact]: Who is transferring wealth and who is inheriting it across generations?\n\nCerulli: older households transfer to heirs (Gen X, Millennials), charities; women receive horizontal transfers. UBS: \"pass from one generation to the next\", next generation inheriting. Facts.\n\na4.research [fact]: What is known about whether heirs retain inherited assets and stay with the same advisors?\n\nThe passages don't seem to directly state about retention/staying with same advisors. Let me check. CERULLI#2: no. CERULLI#13: challenges preventing wealth transfer planning, top five factors - not about retention. UBS passages: no retention info. So not_found.\n\na5.research [fact]: How do the firms describe the generational wealth transfer and the opportunity it presents?\n\nThis asks about \"the firms\" (the five firms). The passages are research, not firm documents. No firm statements. The research describes opportunity (\"massive need, and opportunity, for providers\"), but that's not the firms' description. Hmm. The sub-question is about how firms describe it. Since no firm passages, not_found.\n\nActually wait - the instruction says research figures are facts for \"an aspect about the industry, clients or advisors in general\". a5 is about firms specifically. No firm statements in research passages. So not_found.\n\na6.research [fact]: priorities and strategies of firms. No firm info. not_found.\n\na7.research: engage next-gen heirs. No firm info. not_found.\n\na8.research: hire/train/develop next-gen advisors. No firm info. not_found.\n\na9.research: technology/digital. No firm info. not_found.\n\na10.research: education, family meeting programs. No firm info. not_found.\n\na11.research: retention strategies. No firm info. not_found.\n\na12.research: competitors and competitive pressures. No firm info. not_found.\n\na13.research: losing ground/pulling back. No firm info. not_found.\n\na14.research [series, metric advisor_headcount, proxy]: advisor headcount figures that reflect next-gen hiring. No firm headcount figures in research passages. not_found.\n\na15.research [series, metric net_new_assets, proxy]: net new asset flows. No firm figures. not_found.\n\na16.research [comparison]: How do the five firms compare in their preparation. No firm info. not_found.\n\nNow, let me think about whether the research passages could support any of the firm-related sub-questions. The research is about industry, clients, advisors in general. None of the firm-specific sub-questions are about industry in general. So all not_found.\n\nBut wait, a1, a2, a3 are clearly fact items from research. a4 - the passages might actually touch on it indirectly? Let me re-read.\n\nCERULLI#13: \"Top-Five Factors Preventing Wealth Transfer Planning\" - challenges: not comfortable sharing financial info, fear children not prepared, inexperience with multi-generational wealth strategies, unwilling to give up control, worries about upsetting family members. This is about challenges in wealth transfer planning, not about whether heirs retain inherited assets or stay with same advisors. So not_found for a4.\n\nActually, let me reconsider. The question a4 asks \"What is known about whether heirs retain inherited assets and stay with the same advisors?\" None of the passages address retention of assets or advisor stickiness. So not_found.\n\nLet me now structure the items for a1, a2, a3.\n\nFor a1, I need to decide each figure as a separate item. Let me list:\n\nItem 0 (a1): Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\n- text: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n- quote: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n- value: \"$123.7 trillion\"\n- unit: \"USD\" (trillion dollars)\n- period: \"\" (it's a projection period \"now to 2048\", but period field is for a point in time. Hmm. The period field is for point in time or quarter/year. For a projection \"between now and 2048\", the period isn't a single point. I could put period \"\" since it's a range. Actually the instructions: period \"YYYY-MM-DD\" for a point in time, etc. For \"between now and 2048\", that's a horizon, not a single period. I'll put period \"\" and mention the timeframe in text.)\n\nActually, let me think. The period field might be better left empty for projections that span \"now to 2048\". The text states the timeframe.\n\n- scope: \"U.S. households\" (Cerulli is U.S. research? The passage says \"households\"). Actually the passage says \"households will transfer\". Scope: \"households\" or \"\". The source is Cerulli research; I'll put scope \"U.S. households\"? The passage doesn't say \"U.S.\" explicitly. It just says \"households\". Hmm. I should not add what's not stated. Scope: \"households\". Or \"\" for whole (all households). I'll put \"households\".\n\nActually scope is \"the part of the firm the figure covers\". For research, scope could be the population covered. Let me put \"households\" or \"U.S.\"? The passage just says \"households\". I'll use \"households\".\n\n- definition: \"\"\n- chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\nItem 1 (a1): Gen Xers will inherit $39 trillion and Millennials $46 trillion.\n- text: \"Cerulli projects Generation Xers will inherit $39 trillion and Millennials $46 trillion of the wealth being transferred.\"\n- quote: \"Generation Xers $39 trillion and Millennials $46 trillion\"\n- value: \"$39 trillion and $46 trillion\" - hmm, one item per figure. \"a series is one item per period\". This is two different groups. Should I split into two items? The instruction says \"one per figure or statement\". I could do one item with value \"$39 trillion\" (Gen X) and another \"$46 trillion\" (Millennials). But actually the sentence combines both. Let me split for clarity? \"Items (fact and different_quantity only), one per figure or statement\". So one statement could be one item. But value field expects a single figure. I'll split into two items: one for Gen X, one for Millennials.\n\nActually, let me keep it manageable. I'll do:\n- Item: Gen Xers inherit $39 trillion. value \"$39 trillion\", unit \"USD\", scope \"Generation X heirs\".\n- Item: Millennials inherit $46 trillion. value \"$46 trillion\", unit \"USD\", scope \"Millennial heirs\".\n\nItem 3 (a1): Women in Baby Boomer and older generations expected to receive $40 trillion in 'horizontal' transfers as they outlive husbands.\n- value \"$40 trillion\", unit \"USD\", scope \"women in Baby Boomer and older generations\".\n\nItem 4 (a1): Women in younger generations expected to receive $47 trillion of wealth transferred intergenerationally.\n- value \"$47 trillion\", unit \"USD\", scope \"women in younger generations\".\n\nItem 5 (a1): Cerulli estimate $85 trillion to Gen X or Millennial heirs (from #13).\n- text: \"Cerulli estimates an estimated total of $85 trillion will be donated or passed down to Gen X or Millennial heirs.\"\n- quote: \"Eventually, most of the wealth owned by older generations will be either donated or passed down to Gen X or Millennial heirs-an estimated total of $85 trillion.\"\n- value \"$85 trillion\", unit \"USD\", scope \"Gen X or Millennial heirs\".\n\nItem 6 (a1): UBS USD 83 trillion private wealth globally.\n- text: \"UBS estimates USD 83 trillion in private wealth will change hands globally over the next two to three decades.\"\n- quote: \"an estimated USD 83 trillion in private wealth will change hands globally\"\n- value \"$83 trillion\" (or \"USD 83 trillion\")\n- unit \"USD\"\n- scope \"global private wealth\".\n\nItem 7 (a1): UBS USD 83 trillion in assets over next two decades (from #12).\n- quote: \"an estimated USD 83 trillion in assets is expected to pass from one generation to the next\"\n- value \"USD 83 trillion\"\n\nThese are all facts. I might combine the two UBS ones since same figure, but they're from different chunks with slightly different phrasing. I'll include both as separate items or maybe just one. Actually both are same $83T. To avoid redundancy, I could include one item referencing both chunks. But the quote should be exact from one passage. I'll include two items? The instruction says one per figure or statement. Two different statements in two chunks. I'll include both but maybe combine into one item with text covering both? Hmm, chunk_ids can be multiple. I'll do one item for UBS $83T citing both chunks.\n\nActually simpler: one item for UBS $83T with quote from #6 and chunk_ids both [\"UBS-NEXTGEN-2026#6\", \"UBS-NEXTGEN-2026#12\"]. The quote should be exact words. I'll pick from #6: \"an estimated USD 83 trillion in private wealth will change hands globally\". And text mentions both passages state the figure.\n\nLet me finalize. I think listing each distinct figure is good.\n\nFor a2 (timeframe):\n- Cerulli: \"between now and 2048\" - item with no figure (value \"\"). text: \"Cerulli projects the wealth transfer will occur between now and 2048.\"\n- UBS #6: \"Over the next two to three decades\" - item.\n- UBS #12: \"Over the next two decades\" - item.\n\nThese are facts. value \"\", unit \"\", period \"\".\n\nFor a3 (who is transferring/inheriting):\n- Cerulli: older households transfer to heirs (Gen X, Millennials) and charities. Also women receive horizontal transfers.\n- UBS: wealth passes from one generation to the next; next generation inheriting.\nItems:\n- Item: \"Cerulli says older households hold more wealth and will transfer it to heirs and charities.\" quote from #2.\n- Item: \"Cerulli says Gen Xers and Millennials will inherit, and women in Baby Boomer/older and younger generations will receive horizontal and intergenerational transfers.\"\n- Item: \"UBS says wealth passes from one generation to the next, with the next generation inheriting.\"\n\nThese are statements without single figures; value \"\".\n\nFor a4: not_found. reason: passages do not address whether heirs retain inherited assets or stay with same advisors.\n\nFor a5-a16: not_found, reason: passages are industry research and contain no statements from the named firms about [topic].\n\nWait, let me reconsider a5: \"How do the firms describe the generational wealth transfer and the opportunity it presents?\" The research describes the opportunity (\"massive need, and opportunity, for providers\"). But that's the research's description, not the firms'. The sub-question is about \"the firms\". Since no firm-specific passages, not_found.\n\nHmm, but could I consider the research's own framing as a fact for \"how firms describe\"? No, that's about firms. Not found.\n\nFor a14 and a15, these are firm metrics (advisor headcount, net new assets). No firm figures. not_found.\n\nFor a16 comparison: no firm info. not_found.\n\nNow, one more consideration: the instruction says \"Positions others hold about the future (executives, analysts, surveys) are facts when the passage attributes and dates them.\" The research estimates are attributed to Cerulli and UBS, so they're facts. Good.\n\nAlso note for a1, there's a nuance: the question \"What is the estimated size and scale of the generational wealth transfer?\" The research figures are estimates. I'll label them facts (industry estimates) as instructed.\n\nLet me also double check the CERULLI#13 factor list - it's about \"Top-Five Factors Preventing Wealth Transfer Planning\" percentages. Could this be relevant to a4 (retention) or a6 (firm strategies)? It's about challenges clients face, not firm strategies or retention. Could be relevant to... none of the sub-questions directly. a4 asks \"whether heirs retain inherited assets and stay with same advisors\" - not the same as \"clients uncomfortable sharing financial info\". Not relevant.\n\nActually, wait - could the \"challenges\" list be relevant to a5 \"how firms describe the opportunity\"? No, it's about challenges, not opportunity. And it's a survey of advisors, not firms' description. Not relevant to any specific sub-question. I'll leave it out.\n\nNow let me write the cells.\n\nFor each cell, I need:\n- subquestion_id\n- label\n- items (array)\n- differs_because (string, \"\" if not different_quantity)\n- reason\n- derivation (object with operation \"\" and inputs [])\n\nLet me construct.\n\nFor a1.research: label \"fact\", differs_because \"\", reason \"Industry research estimates the size of the wealth transfer.\"\n\nItems for a1:\n1. text: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n   quote: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n   value: \"$123.7 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"households\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n2. text: \"Cerulli projects Generation Xers will inherit $39 trillion of transferred wealth.\"\n   quote: \"Generation Xers $39 trillion\"\n   value: \"$39 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"Generation X heirs\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n3. text: \"Cerulli projects Millennials will inherit $46 trillion of transferred wealth.\"\n   quote: \"Millennials $46 trillion\"\n   value: \"$46 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"Millennial heirs\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n4. text: \"Cerulli projects women in the Baby Boomer and older generations will receive $40 trillion in 'horizontal' transfers as they outlive their husbands.\"\n   quote: \"women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands\"\n   value: \"$40 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"women in Baby Boomer and older generations\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n5. text: \"Cerulli projects women in younger generations will receive $47 trillion of the wealth transferred intergenerationally.\"\n   quote: \"women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally\"\n   value: \"$47 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"women in younger generations\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n6. text: \"Cerulli estimates most wealth owned by older generations will be donated or passed down to Gen X or Millennial heirs, an estimated total of $85 trillion.\"\n   quote: \"Eventually, most of the wealth owned by older generations will be either donated or passed down to Gen X or Millennial heirs-an estimated total of $85 trillion.\"\n   value: \"$85 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"Gen X or Millennial heirs\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#13\"]\n\n7. text: \"UBS estimates USD 83 trillion in private wealth will change hands globally over the next two to three decades; another passage states USD 83 trillion in assets is expected to pass from one generation to the next over the next two decades.\"\n   quote: \"an estimated USD 83 trillion in private wealth will change hands globally\"\n   value: \"$83 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"global private wealth\"\n   definition: \"\"\n   chunk_ids: [\"UBS-NEXTGEN-2026#6\", \"UBS-NEXTGEN-2026#12\"]\n\nThat's 7 items. Reasonable.\n\nActually, the value for item 7 - I could write \"USD 83 trillion\". I'll write \"$83 trillion\" consistently. The quote has \"USD 83 trillion\". Fine.\n\nFor a2.research: label \"fact\", items:\n1. text: \"Cerulli projects the wealth transfer will occur between now and 2048.\"\n   quote: \"between now and 2048\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n2. text: \"UBS states the Great Wealth Transfer will occur over the next two to three decades.\"\n   quote: \"Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"UBS-NEXTGEN-2026#6\"]\n\n3. text: \"UBS states an estimated USD 83 trillion in assets is expected to pass from one generation to the next over the next two decades.\"\n   quote: \"Over the next two decades, an estimated USD 83 trillion in assets is expected to pass from one generation to the next\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"UBS-NEXTGEN-2026#12\"]\n\nreason: \"Industry research states the timeframe and horizon of the wealth transfer.\"\n\nFor a3.research: label \"fact\", items:\n1. text: \"Cerulli says wealth is now more likely to be held by older households, which will transfer it to heirs and charities.\"\n   quote: \"Wealth has been created and concentrated at a rapid pace in recent years and now is more likely to be held by older households.\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n2. text: \"Cerulli says the next generation-Generation Xers and Millennials-will inherit, while women in Baby Boomer and older generations will receive horizontal transfers and women in younger generations will receive intergenerational transfers.\"\n   quote: \"Not only will the next generation inherit substantial sums of money-Generation Xers $39 trillion and Millennials $46 trillion-women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n3. text: \"UBS says wealth is expected to pass from one generation to the next, and the inheriting next generation begins its involvement earlier through family discussions, governance structures, or growing responsibilities.\"\n   quote: \"an estimated USD 83 trillion in assets is expected to pass from one generation to the next\"\n   value: \"\"\n   unit: \"\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"UBS-NEXTGEN-2026#12\"]\n\nreason: \"Industry research identifies who transfers and who inherits wealth.\"\n\nFor a4.research: label \"not_found\", items: [], differs_because \"\", reason \"The passages do not address whether heirs retain inherited assets or stay with the same advisors.\" derivation empty.\n\nFor a5.research through a16.research: not_found, items empty, reason accordingly.\n\nLet me write reasons concisely.\n\na5: \"The passages are industry research and contain no statements from the named firms about how they describe the wealth transfer opportunity.\"\n\na6: \"...no statements from the named firms about their priorities and strategies.\"\n\na7: \"...no statements about engaging next-generation heirs.\"\n\na8: \"...no statements about hiring/training next-generation advisors.\"\n\na9: \"...no statements about technology and digital platforms.\"\n\na10: \"...no statements about education, family meeting, or next-generation programs.\"\n\na11: \"...no statements about retention strategies.\"\n\na12: \"...no statements about competitors and competitive pressures.\"\n\na13: \"...no statements about losing ground or pulling back.\"\n\na14: \"The research passages contain no advisor headcount figures from the named firms.\" \n\na15: \"The research passages contain no net new asset flow figures from the named firms.\"\n\na16: \"The research passages contain no firm-level comparisons of preparation.\"\n\nAll not_found.\n\nNow, one consideration about a14 and a15: they are marked [proxy] and [series, metric ...]. The instruction: \"A sub-question marked [proxy] names a stand-in figure... that named figure, as the firm reports it, is a fact.\" For research passages, if there were an industry figure for advisor headcount or net new assets, would it be a fact or different_quantity? The instruction says research figure is a fact for \"an aspect about the industry, clients or advisors in general\"; for \"a named firm's own figure it is a different_quantity\". But a14/a15 ask for firm figures (\"What advisor headcount figures do the firms report\"). There are no such figures in passages. So not_found.\n\nActually, wait: could there be an industry advisor headcount in the passages? No, the passages don't mention advisor headcounts or net new assets at all. So not_found.\n\nLet me make sure about the derivation object format. For non-not_disclosed, operation \"\" and inputs []. For not_found, also operation \"\" and inputs []. The schema requires operation and inputs. So for every cell, derivation: {\"operation\": \"\", \"inputs\": []}.\n\nNow let me also reconsider a1 item 7 combining two chunks. The quote is from #6. text mentions both. That's fine. Actually, I might split into two items to be precise, but it's the same $83T figure. I'll keep as one item to avoid duplicate figure. Actually, the two passages phrase it slightly differently (\"private wealth\" vs \"assets\"), but same figure. One item is fine. But chunk_ids include both.\n\nHmm, but the quote field \"exact words of the passage that support it\". If I cite both chunks, the quote only from #6 supports the $83T private wealth, and #12 has \"USD 83 trillion in assets\". I'll include both quotes? The field is a single string. I could do one item for #6 and one for #12. Let me just do two separate items to keep quotes clean.\n\nItem 7a: UBS #6 - \"Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally, marking the largest transfer of wealth in modern history.\" value \"$83 trillion\", scope \"global private wealth\".\n\nItem 7b: UBS #12 - \"Over the next two decades, an estimated USD 83 trillion in assets is expected to pass from one generation to the next.\" value \"$83 trillion\", scope \"global assets\".\n\nThat's cleaner. 8 items total for a1.\n\nActually, I already used these quotes for a2 items. It's fine to reuse across sub-questions.\n\nLet me finalize the items and write the JSON.\n\nFor value of USD 83 trillion: I'll use \"$83 trillion\" for both, unit \"USD\".\n\nLet me write out all cells now.\n\nDouble-check the schema: items array, each item requires text, quote, value, unit, period, scope, definition, chunk_ids. All strings/array. Good.\n\nAlso \"scope\": the part of the firm the figure covers. For research, I'll put the population as scope. For empty, \"\".\n\nLet me make sure the periods are empty strings for these projections (they're ranges, not point-in-time). Yes.\n\nNow write final answer with submit_extraction.\n\nLet me carefully craft each cell JSON.\n\nI'll produce the tool call now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "quote": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "value": "$123.7 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "households",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli projects Generation Xers will inherit $39 trillion of the transferred wealth.",
+            "quote": "Generation Xers $39 trillion",
+            "value": "$39 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Generation X heirs",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli projects Millennials will inherit $46 trillion of the transferred wealth.",
+            "quote": "Millennials $46 trillion",
+            "value": "$46 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Millennial heirs",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli projects women in the Baby Boomer and older generations will receive $40 trillion in 'horizontal' transfers as they outlive their husbands.",
+            "quote": "women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands",
+            "value": "$40 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "women in Baby Boomer and older generations",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli projects women in younger generations will receive $47 trillion of the wealth transferred intergenerationally.",
+            "quote": "women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally",
+            "value": "$47 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "women in younger generations",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli estimates most wealth owned by older generations will be donated or passed down to Gen X or Millennial heirs, an estimated total of $85 trillion.",
+            "quote": "Eventually, most of the wealth owned by older generations will be either donated or passed down to Gen X or Millennial heirs-an estimated total of $85 trillion.",
+            "value": "$85 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Gen X or Millennial heirs",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#13"
+            ]
+          },
+          {
+            "text": "UBS estimates USD 83 trillion in private wealth will change hands globally over the next two to three decades.",
+            "quote": "Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally",
+            "value": "$83 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "global private wealth",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          },
+          {
+            "text": "UBS states an estimated USD 83 trillion in assets is expected to pass from one generation to the next.",
+            "quote": "an estimated USD 83 trillion in assets is expected to pass from one generation to the next",
+            "value": "$83 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "global assets",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Industry research estimates the size and scale of the generational wealth transfer, attributed to Cerulli and UBS.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli projects the wealth transfer will occur between now and 2048.",
+            "quote": "between now and 2048",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "UBS states the Great Wealth Transfer will occur over the next two to three decades.",
+            "quote": "Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          },
+          {
+            "text": "UBS states an estimated USD 83 trillion in assets is expected to pass from one generation to the next over the next two decades.",
+            "quote": "Over the next two decades, an estimated USD 83 trillion in assets is expected to pass from one generation to the next",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Industry research states the timeframe and horizon over which the wealth transfer is expected to occur.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli says wealth is now more likely to be held by older households, which will transfer it to heirs and charities.",
+            "quote": "Wealth has been created and concentrated at a rapid pace in recent years and now is more likely to be held by older households.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Cerulli says the next generation (Generation Xers and Millennials) will inherit, while women in Baby Boomer and older generations will receive horizontal transfers and women in younger generations will receive intergenerational transfers.",
+            "quote": "Not only will the next generation inherit substantial sums of money-Generation Xers $39 trillion and Millennials $46 trillion-women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "UBS says wealth is expected to pass from one generation to the next, and the inheriting next generation often begins its involvement earlier through family discussions, governance structures, or growing responsibilities.",
+            "quote": "an estimated USD 83 trillion in assets is expected to pass from one generation to the next",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Industry research identifies who is transferring wealth and who is inheriting it across generations.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages do not address whether heirs retain inherited assets or stay with the same advisors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry research and contain no statements from the named firms about how they describe the wealth transfer opportunity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about their priorities and strategies for capturing the wealth transfer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about engaging next-generation heirs or building multi-generational relationships.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about hiring, training, or developing next-generation financial advisors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about technology or digital platforms for next-generation clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about education, family meeting, or next-generation programs.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a11.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about retention strategies for inherited assets and clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a12.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about competitors or competitive pressures around next-generation wealth.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a13.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements from the named firms about losing ground or pulling back in next-generation wealth.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a14.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages contain no advisor headcount figures from the named firms reflecting next-generation advisor hiring.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a15.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages contain no net new asset flow figures from the named firms reflecting captured transferred wealth.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a16.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages contain no firm-level information to compare the five firms' preparation for the wealth transfer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

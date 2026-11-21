@@ -1,0 +1,63 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "CERULLI-MASS-AFFLUENT-2026#0",
+    "KITCES-WELLBEING-2023#107",
+    "CERULLI-MASS-AFFLUENT-2026#1",
+    "KITCES-WELLBEING-2023#38"
+  ],
+  "at": "2026-11-20T21:15:08.215910-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3238,
+    "output_tokens": 986,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1958,
+    "reasoning_tokens": 777,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 11.38,
+  "tokens_per_s": 86.64,
+  "reasoning_content": "We need answer: extraction for two sub-questions a1.research (comparison which firm most explicit about serving mass-affluent) and a2.research (specific statements each firm made about serving mass-affluent clients). The passages are industry research, no firm-specific disclosures. We must return exactly one cell for each sub-question.\n\nWe need read passages. They are research about mass-affluent market opportunity, advisor wellbeing, client affluence. No named firms (Morgan Stanley, Schwab, Edward Jones, Merrill, Raymond James). The sub-question a1 asks \"Which firm has been most explicit...\" - this is a comparison. The passages contain no comparison among those firms, only Cerulli/Kitles research general statements. So for a1.research, likely not_found? We should label not_found because passages say nothing about any of the five firms' explicitness. For a2.research, asks specific statements each firm has made about serving mass-affluent clients. The passages are industry research and contain no statements by the named firms. They do contain general industry statements about mass-affluent. But the instruction says: research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity. Here sub-question a2 asks \"specific statements each firm has made\" - the passages don't include firm statements. So not_found for a2 as well? But maybe the research statements about mass-affluent clients are facts for the \"industry\" aspect? The sub-question is about the specific statements each firm has made. No named firm statements. So not_found.\n\nHowever, we need be careful: instructions say \"These passages are industry research, not one firm's documents; the cell ids end in .research. A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\" For a2, \"specific statements each firm has made about serving mass-affluent clients\" - there are no statements by firms. The research passages do make general statements about mass-affluent, but not attributed to a firm. The sub-question is fact about specific statements each firm made. So not_found.\n\nWe must submit cells for both subquestions. Items empty for not_found. derivation operation \"\", inputs empty. reason one sentence.\n\nBut wait: for a1, could the research passages support an answer? No, they don't name the five firms. So not_found.\n\nNeed ensure label enum includes not_found. Items required array, can be empty.\n\nLet's craft cells.\n\nFor a1.research:\n- label: not_found\n- items: []\n- differs_because: \"\" (required)\n- reason: \"The passages contain industry research about mass-affluent households and advisor wellbeing but do not mention any of the five named firms or compare how explicit they are about serving mass-affluent clients.\"\n- derivation: {\"operation\":\"\",\"inputs\":[]}\n\nFor a2.research:\n- label: not_found\n- items: []\n- differs_because: \"\"\n- reason: \"The passages contain no statements from Morgan Stanley, Schwab, Edward Jones, Merrill, or Raymond James about serving mass-affluent clients.\"\n- derivation: {\"operation\":\"\",\"inputs\":[]}\n\nCould there be a fact in a2 for industry? The sub-question is specific statements each firm has made. No. So not_found.\n\nLet's make sure we don't need to include items for research general statements as fact. The instruction says return one cell for each sub-question. The cell label can be not_found with empty items. Good.\n\nWe should call submit_extraction with these two cells.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry research about mass-affluent households and advisor wellbeing and do not name Morgan Stanley, Schwab, Edward Jones, Merrill, or Raymond James, nor do they compare how explicit any of them is about serving mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statements attributed to any of the five named firms about serving mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

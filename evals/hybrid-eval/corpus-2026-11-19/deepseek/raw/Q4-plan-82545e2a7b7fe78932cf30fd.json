@@ -1,0 +1,155 @@
+{
+  "question_id": "Q4",
+  "question": "What is Merrill's advisor growth strategy, and how has it changed?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "What is Merrill's advisor growth strategy, and how has it changed?",
+    "entities": [
+      "MER"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-20T13:58:10.325638-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1379,
+    "output_tokens": 5632,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 99,
+    "reasoning_tokens": 4731,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 42.56,
+  "tokens_per_s": 132.33,
+  "reasoning_content": "We need answer by submitting a plan, not answer question. Need list aspects literally. Question: \"What is Merrill's advisor growth strategy, and how has it changed?\" Firms: only MER named. Need aspects.\n\nQuestion asks: \"What is Merrill's advisor growth strategy\" and \"how has it changed?\" Two asks joined by \"and\". But the strategy itself has multiple dimensions. We need identify aspects. The question asks about Merrill's advisor growth strategy and how it has changed. Need list aspects literally in order question asks.\n\nLet's parse:\n1. Merrill's advisor growth strategy (what it is) - maybe overall strategy, priorities, tactics.\n2. How has it changed - change over time.\n\nThe instruction says: aspect is one thing question asks. List every one, in order asked:\n- each item of list, each \"and\" joining two asks, each metric or dimension question names;\n- what question asks without naming it. Example \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, priorities it states, competition it names, where it says losing ground/pulling back.\n\nFor \"What is Merrill's advisor growth strategy, and how has it changed?\" We need infer unstated dimensions: advisor growth strategy includes recruiting/hiring advisors, training, retention, compensation, team formation, client acquisition, technology, etc. But instruction says never add aspect question does not ask. However example indicates what question asks without naming it: management describes unit, priorities, competition, where losing ground. For \"advisor growth strategy\", what are aspects? We need enumerate components of a growth strategy: advisor headcount goals, recruiting, retention, training/development, compensation/incentives, teaming, acquisitions, technology/digital tools, new client acquisition. But question is broad. Need be careful not over-add? The instruction explicitly says for \"How do Firm X and Firm Y each handle branch staffing?\" asks whom they hire, how pay, train, results. So for \"advisor growth strategy\", we should list underlying aspects that constitute growth strategy.\n\nWe need produce aspects with search words. No firm names in aspect text or words. Firms empty because question asks aspect of every listed firm (only Merrill). But since only one firm named MER, firms can be empty for all. Actually \"Leave firms empty when question asks the aspect of every listed firm.\" There is only one firm listed. So empty for all aspects.\n\nNeed determine metric: advisor_headcount if aspect asks exactly that. Could include an aspect asking advisor headcount? The question \"advisor growth strategy\" may include advisor headcount growth as metric. But is that exactly asking advisor headcount? \"advisor growth strategy\" - growth of advisors. Could be a metric. The instruction says metric advisor_headcount when aspect asks exactly that registered metric. If we add aspect \"advisor headcount growth\" that asks exactly that metric, metric advisor_headcount. But question doesn't explicitly say \"advisor headcount\"; it says advisor growth strategy. Growth strategy might imply headcount growth. Is that an aspect? Hmm.\n\nLet's think about what aspects to list.\n\nQuestion: \"What is Merrill's advisor growth strategy, and how has it changed?\"\n\nAspects likely:\n1. Overall advisor growth strategy/priorities as management describes (fact/recency?) \n2. Changes to advisor growth strategy over time (comparison/series/recency)\nMaybe also specific components:\n3. Advisor recruitment/hiring strategy\n4. Advisor retention strategy\n5. Advisor training/development\n6. Advisor compensation/incentives\n7. Advisor headcount targets/growth\n8. Technology/digital tools/platform for advisors\n9. Team formation / teaming\n10. Client acquisition / leads\n11. Where Merrill is pulling back / losing ground? Maybe not.\n\nBut the instruction says \"List every one, in the order the question asks them\" and \"Do not add an aspect the question does not ask.\" For a broad question \"advisor growth strategy\", the unstated sub-asks are ambiguous. We should avoid excessive elaboration but include named dimensions if any. The question only names \"advisor growth strategy\" and \"how has it changed\". It does not name recruiting, retention, training, compensation. However the examples suggest expanding \"plan for unit\" into several aspects. But they also caution never add an aspect question doesn't ask. We need balance.\n\nMaybe best: treat \"advisor growth strategy\" as one aspect? But then \"how has it changed\" second aspect. Yet the instruction: \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back. That suggests a broad \"plan/strategy\" should be decomposed into components.\n\nFor \"advisor growth strategy\", what are the named dimensions? Growth strategy of advisors. Could decompose:\n- how management describes its advisor growth strategy (overall)\n- priorities stated (which growth avenues)\n- recruiting of experienced advisors\n- hiring/training of new advisors\n- retention of existing advisors\n- productivity/client acquisition\n- compensation/incentives tied to growth\n- technology/digital platform\n- targets/metrics (advisor headcount, net new households)\n- competition named? The question doesn't ask competition. But example says competition it names is part of plan. Hmm.\n\nBut \"Do not add an aspect the question does not ask\" is strict. The example \"plan for unit\" says what question asks without naming it includes management describes, priorities, competition, losing ground. For growth strategy, maybe similarly includes: management's stated priorities, avenues of growth, targets, and changes. But not necessarily every sub-component.\n\nLet's consider the search plan purpose: code searches each aspect once for each firm. We should create enough aspects to capture dimensions. The question asks about \"advisor growth strategy\" and \"how has it changed.\" We can define aspects:\n1. Current advisor growth strategy: overall strategy, priorities, initiatives (fact/recency)\n2. Changes to advisor growth strategy: how strategy evolved, shifts, prior vs current (comparison/series)\n3. Advisor recruiting strategy (experienced advisor recruitment) \n4. Advisor hiring/training (new advisor development)\n5. Advisor retention strategy\n6. Advisor compensation/incentives\n7. Advisor teaming/team formation\n8. Advisor headcount targets (metric advisor_headcount?)\n9. Technology/digital tools/platform for advisors\n10. Client acquisition/leads for advisors\n11. Where Merrill says it is losing ground or pulling back in advisor growth\n\nBut is that too many unasked? The question is only one firm and broad, likely they want a search plan listing aspects of advisor growth strategy. The user explicitly says \"never merge two aspects into one, never drop one, and do not stop at any number: a question with twelve asks has twelve aspects.\" But also \"Do not add an aspect the question does not ask.\"\n\nSo how many asks does this question have? \"advisor growth strategy\" is one ask, \"how has it changed\" is second. But \"advisor growth strategy\" itself comprises multiple dimensions if we consider \"what the question asks without naming it\". The example expands \"plan\" into multiple sub-questions. Let's identify what a growth strategy inherently asks: growth strategy for advisors includes how to grow the number of advisors (recruiting, hiring, retention), how to grow advisor productivity/assets (training, tools, client acquisition), and targets. The question \"advisor growth strategy\" may ask all these.\n\nI think the plan should include aspects for:\n- Overall advisor growth strategy and priorities\n- Changes in advisor growth strategy\n- Advisor headcount targets / growth targets\n- Experienced advisor recruiting\n- New advisor hiring/training\n- Advisor retention\n- Advisor compensation/incentives\n- Advisor teaming\n- Advisor productivity/client acquisition\n- Technology/digital platform for advisors\n- Competition named / losing ground? maybe.\n\nBut must be careful with metric and proxy. Let's think of keyword queries.\n\nWe need submit plan with aspects array. Let's craft.\n\nEach aspect: id, text, keyword_query, firms [], metric, kind, proxy.\n\nText one sentence, no firm names, no dates. Keyword query 5-25 words, documents' vocabulary, synonyms, metric names, no firm names/dates.\n\nLet's decide aspects.\n\nI'll list in order asked:\n1. Advisor growth strategy overall: \"What the advisor growth strategy is, including stated priorities and initiatives.\" kind fact? Or recency? The question asks what is strategy (current). kind fact. keyword: \"advisor growth strategy\" \"financial advisor growth\" \"wealth management advisor growth\" \"growth initiatives\" \"advisor force growth\" \"strategic priorities\". Need no firm names. Include \"advisor headcount growth strategy\"? okay.\n\n2. How strategy changed: \"How the advisor growth strategy has changed over time.\" kind comparison? The question asks how has it changed across periods -> comparison. Or series? It's a judgement across periods; instruction says judgement across firms or periods -> kind comparison. So kind comparison. keyword: \"advisor growth strategy\" \"shift\" \"pivot\" \"change\" \"evolve\" \"previously\" \"now\" \"strategic change\" \"reposition\" \"new strategy\" \"turnaround\". But keyword query should be 5-25 words. Maybe \"advisor growth strategy change shift pivot evolution new approach previously now reposition refocus turnaround\".\n\nBut this may be too abstract. However code searches full text per aspect. Fine.\n\nNow components (what question asks without naming it). Need decide which. Let's include specific dimensions likely in advisor growth strategy:\n\n3. Advisor headcount targets/growth: \"Advisor headcount growth targets and reported advisor headcount changes.\" metric advisor_headcount. kind fact? It asks figures. The question's \"advisor growth\" could mean headcount. But \"advisor growth strategy\" not explicitly \"headcount\". Yet \"advisor growth\" likely headcount growth. We can mark metric advisor_headcount because aspect asks exactly that registered metric? Hmm if we frame as \"advisor headcount growth and targets\" it asks advisor headcount. metric advisor_headcount. proxy false. kind fact or series? Advisor headcount over time is series. But \"targets\" are fact. Let's set kind series? The question doesn't explicitly ask series. But \"advisor growth strategy\" implies headcount growth over time. Could set kind fact for target and reported headcount. Actually metric advisor_headcount registered metric. The instruction says metric when aspect asks exactly that registered metric. So use metric advisor_headcount. kind: fact? The headcount is a disclosed figure. If asking over several periods (growth) -> series. I'd set kind series. Hmm. \"advisor headcount growth targets and reported changes\" asks a figure over periods. series.\n\n4. Experienced advisor recruiting: \"Recruiting of experienced advisors from competitors.\" fact. keyword: \"experienced advisor recruiting\" \"recruit experienced financial advisors\" \"lateral advisor hires\" \"advisor recruiting\" \"wirehouse recruiting\" \"recruiting bonuses\" \"transition packages\" \"hiring from competitors\".\n\n5. New advisor hiring and training: \"Hiring and training of new or early-career advisors.\" fact. keyword: \"new advisor hiring\" \"advisor training program\" \"financial advisor development program\" \"trainee advisors\" \"rookie advisors\" \"next gen advisors\" \"training\" \"licensing\".\n\n6. Advisor retention: \"Retention of existing advisors and reported advisor attrition.\" fact/series. keyword: \"advisor retention\" \"advisor attrition\" \"retention rate\" \"advisor turnover\" \"retention packages\" \"retention bonuses\" \"advisor departures\" \"defections\".\n\n7. Advisor compensation and incentives: \"Compensation and incentives used to attract and retain advisors.\" fact. keyword: \"advisor compensation\" \"compensation plan\" \"payout grid\" \"advisor incentives\" \"recruiting incentives\" \"retention awards\" \"deferred compensation\" \"compensation changes\".\n\n8. Advisor teaming/team formation: \"Teaming of advisors into teams and team growth.\" fact. keyword: \"advisor teams\" \"teaming\" \"team formation\" \"financial advisor teams\" \"team structure\" \"team growth\".\n\n9. Advisor productivity and client acquisition: \"Growing advisor productivity and client acquisition.\" fact. keyword: \"advisor productivity\" \"client acquisition\" \"new client acquisition\" \"households\" \"net new households\" \"assets per advisor\" \"production per advisor\" \"leads\".\n\n10. Technology/digital tools: \"Technology and digital tools supporting advisor growth.\" fact. keyword: \"advisor technology\" \"digital tools\" \"advisor platform\" \"CRM\" \"digital advice\" \"workstation\" \"technology platform\" \"digital capabilities\".\n\n11. Where Merrill says it is losing ground or pulling back: \"Areas where the firm says it is losing ground or pulling back in advisor growth.\" fact/recency. keyword: \"pulling back\" \"losing market share\" \"reduced recruiting\" \"slower advisor growth\" \"exiting\" \"de-emphasize\" \"scale back\" \"advisor growth slowdown\".\n\nMaybe also:\n12. Competition named: \"Competitors named in relation to advisor growth.\" But question doesn't ask competition. Example says plan asks competition it names. Could include \"competitors named in the advisor growth strategy.\" keyword: \"competitors\" \"wirehouse competitors\" \"independent registered investment advisor\" \"RIA\" \"competition for advisors\". Hmm.\n\nThe instruction explicitly says for plan: \"the competition it names\" is an aspect. So for advisor growth strategy, we can include competitors named. But the question is about Merrill only; still, management might name competitors. This is an unstated aspect. Include? The example lists \"the competition it names\" as one of aspects. So yes, include as aspect: \"Competitors the firm names in describing its advisor growth strategy.\" kind fact.\n\nAlso \"priorities it states\" - that's aspect 1. \"where it says it is losing ground or pulling back\" - aspect 11. \"how management describes the unit\" - aspect 1.\n\nI think we can include a reasonable set. But not too many.\n\nLet's consider whether each aspect's keyword query contains no firm names and no dates. Good.\n\nNeed ensure no firm names in text and words. \"Merrill\" no. \"firm\" okay.\n\nFirms: empty for all because only Merrill. Wait instruction: \"Leave firms empty when the question asks the aspect of every listed firm; code then searches it for all of them. Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" Here only firm is Merrill, and question asks about Merrill. Does \"every listed firm\" = Merrill. So empty. Alternatively fill MER? The instruction says leave empty when question asks aspect of every listed firm. Since only one listed firm and it asks of it, empty. Good.\n\nMetric fields: advisor_headcount for headcount aspect; maybe net_new_assets for client acquisition? The question doesn't ask net new assets explicitly. Don't set metric unless exactly asks registered metric. For advisor productivity/client acquisition, not exactly net_new_assets. So metric \"\".\n\nProxy: false for all except maybe if \"advisor growth strategy\" asked \"advisor headcount growth\" but not disclosed? Actually it is disclosed. No proxy.\n\nBut the instruction: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy.\" Does any aspect involve undisclosed figure? Advisor growth strategy may involve \"advisor headcount growth\" which is disclosed. No proxy needed. \"how has it changed\" not a proxy.\n\nCould include a proxy aspect for advisor headcount growth if exact growth rate not disclosed? Not necessary. But maybe \"advisor growth strategy\" asks for growth of advisor force; headcount is the metric. Fine.\n\nLet's refine aspect list count. I'd aim for maybe 10-12 aspects. Let's not overdo competition maybe. But example explicitly lists competition. Let's include.\n\nLet's finalize aspects in order:\n\n1. id: \"overall_growth_strategy\" text: \"What the advisor growth strategy is, including the priorities and initiatives management states.\" keyword_query: \"advisor growth strategy financial advisor growth strategy growth initiatives strategic priorities advisor force growth wealth management advisor growth\". firms [] metric \"\" kind fact proxy false.\n\n2. id: \"strategy_change\" text: \"How the advisor growth strategy has changed over time.\" keyword_query: \"advisor growth strategy change shift pivot evolution new approach reposition refocus turn previously now strategic shift\". kind comparison proxy false.\n\n3. id: \"headcount_targets\" text: \"Advisor headcount growth targets and reported advisor headcount changes.\" metric advisor_headcount kind series proxy false. keyword_query: \"advisor headcount growth target advisor headcount number of financial advisors advisor force size headcount growth advisor count\".\n\n4. id: \"experienced_recruiting\" text: \"Recruiting of experienced advisors from competitors.\" keyword_query: \"experienced advisor recruiting recruit experienced financial advisors lateral advisor hires advisor recruiting wirehouse recruiting recruiting bonuses transition packages hiring from competitors\". kind fact.\n\n5. id: \"new_advisor_hiring_training\" text: \"Hiring and training of new or early-career advisors.\" keyword_query: \"new advisor hiring advisor training program financial advisor development program trainee advisors rookie advisors next gen advisors training licensing advisor development\". kind fact.\n\n6. id: \"advisor_retention\" text: \"Retention of existing advisors and reported advisor attrition.\" keyword_query: \"advisor retention advisor attrition retention rate advisor turnover retention packages retention bonuses advisor departures defections advisor retention program\". kind fact maybe series? Retention/attrition over time. kind fact? Let's set fact. Could be series if reported attrition rate over periods. But okay fact.\n\n7. id: \"advisor_compensation\" text: \"Advisor compensation and incentives used to attract and retain advisors.\" keyword_query: \"advisor compensation compensation plan payout grid advisor incentives recruiting incentives retention awards deferred compensation compensation changes financial advisor pay\". kind fact.\n\n8. id: \"advisor_teaming\" text: \"Teaming of advisors into teams and growth of advisor teams.\" keyword_query: \"advisor teams teaming team formation financial advisor teams team structure team growth advisor teaming initiative\". kind fact.\n\n9. id: \"advisor_productivity_client_acquisition\" text: \"Growing advisor productivity and client acquisition.\" keyword_query: \"advisor productivity client acquisition new client acquisition households net new households assets per advisor production per advisor leads advisor productivity growth\". kind fact.\n\n10. id: \"advisor_technology\" text: \"Technology and digital tools supporting advisor growth.\" keyword_query: \"advisor technology digital tools advisor platform CRM digital advice advisor workstation technology platform digital capabilities advisor productivity tools\". kind fact.\n\n11. id: \"losing_ground_pullback\" text: \"Areas where the firm says it is losing ground or pulling back in advisor growth.\" keyword_query: \"pulling back losing market share reduced recruiting slower advisor growth exiting de-emphasize scale back advisor growth slowdown reduced advisor hiring\". kind fact.\n\n12. id: \"competitors_named\" text: \"Competitors the firm names in describing its advisor growth strategy.\" keyword_query: \"competitors wirehouse competitors independent registered investment advisor RIA competition for advisors competing firms rival firms advisor recruiting competition\". kind fact.\n\nIs 12 too many? The instruction says don't stop at any number. But \"do not add an aspect the question does not ask.\" Competitors named and losing ground/pullback are explicitly given as examples of what a \"plan\" question asks without naming. So okay.\n\nHowever, the question \"What is Merrill's advisor growth strategy, and how has it changed?\" is about strategy and change. The example \"plan for unit\" includes management description, priorities, competition, losing ground/pullback. For \"advisor growth strategy\" maybe components are recruiting, retention, training, compensation, teaming, technology, productivity. These are legitimate.\n\nBut do we risk adding aspects not asked? The instruction's first example: \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back. It does not mention hiring, pay, training (that's the branch staffing example). So for \"advisor growth strategy,\" a growth strategy typically includes recruiting, hiring, retention, compensation, etc. The branch staffing example says \"whom they hire, how they pay them, how they train them, and the results they report.\" That's analogous to advisor growth strategy. So including those is justified.\n\nLet's ensure each keyword query has 5-25 words. Let's count roughly. We'll keep within.\n\nLet's draft final aspects with precise text and keywords.\n\nNeed no firm names in aspect text or words. \"wirehouse\" is not a firm name, okay. \"RIA\" okay. \"CRM\" okay. \"next gen\" okay.\n\nFor metric: headcount_targets metric advisor_headcount. Others \"\".\n\nKind: \n- overall strategy: fact (disclosed strategy) or recency? The question asks what is current strategy; within time window? We don't know time window. kind fact.\n- change: comparison (across periods).\n- headcount: series.\n- recruiting: fact\n- hiring/training: fact\n- retention: fact (attrition could be series but fact)\n- compensation: fact\n- teaming: fact\n- productivity/client acquisition: fact\n- technology: fact\n- losing ground: recency? It asks where it says losing ground/pulling back, which is new inside time window maybe recency. But kind recency = what is new inside time window. Could set fact. I'll use fact.\n- competitors named: fact\n\nProxy false all.\n\nWait the instruction says kind comparison for \"judgement across firms or periods (whether figures can be set side by side, which firm says the most)\". \"How has it changed\" asks a judgement across periods, so comparison. Good.\n\nCould there be an aspect \"advisor growth strategy results reported\" (advisor headcount, net new households). The branch staffing example says results they report (staff numbers, departures). We have headcount and attrition. Good.\n\nMaybe add \"advisor headcount\" and \"advisor departures\" separately? We have retention including attrition and departures, but not exact advisor headcount except headcount_targets. Good.\n\nLet's consider \"advisor growth strategy\" may also ask \"net new households\" as client acquisition. We have that in productivity/client acquisition but no metric. Fine.\n\nNow final.\n\nNeed submit via submit_plan tool with aspects array. We must call function. No answer text. Let's produce JSON.\n\nDouble-check required fields all present.\n\nLet's write.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "overall_growth_strategy",
+        "text": "What the advisor growth strategy is, including the priorities and initiatives management states.",
+        "keyword_query": "advisor growth strategy financial advisor growth strategy growth initiatives strategic priorities advisor force growth wealth management advisor growth",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "strategy_change",
+        "text": "How the advisor growth strategy has changed over time.",
+        "keyword_query": "advisor growth strategy change shift pivot evolution new approach reposition refocus turn previously now strategic shift",
+        "firms": [],
+        "metric": "",
+        "kind": "comparison",
+        "proxy": false
+      },
+      {
+        "id": "headcount_targets",
+        "text": "Advisor headcount growth targets and reported advisor headcount changes.",
+        "keyword_query": "advisor headcount growth target advisor headcount number of financial advisors advisor force size headcount growth advisor count",
+        "firms": [],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "experienced_recruiting",
+        "text": "Recruiting of experienced advisors from competitors.",
+        "keyword_query": "experienced advisor recruiting recruit experienced financial advisors lateral advisor hires advisor recruiting wirehouse recruiting recruiting bonuses transition packages hiring from competitors",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "new_advisor_hiring_training",
+        "text": "Hiring and training of new or early-career advisors.",
+        "keyword_query": "new advisor hiring advisor training program financial advisor development program trainee advisors rookie advisors next gen advisors training licensing advisor development",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_retention",
+        "text": "Retention of existing advisors and reported advisor attrition.",
+        "keyword_query": "advisor retention advisor attrition retention rate advisor turnover retention packages retention bonuses advisor departures defections advisor retention program",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_compensation",
+        "text": "Advisor compensation and incentives used to attract and retain advisors.",
+        "keyword_query": "advisor compensation compensation plan payout grid advisor incentives recruiting incentives retention awards deferred compensation compensation changes financial advisor pay",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_teaming",
+        "text": "Teaming of advisors into teams and growth of advisor teams.",
+        "keyword_query": "advisor teams teaming team formation financial advisor teams team structure team growth advisor teaming initiative",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_productivity_client_acquisition",
+        "text": "Growing advisor productivity and client acquisition.",
+        "keyword_query": "advisor productivity client acquisition new client acquisition households net new households assets per advisor production per advisor leads advisor productivity growth",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "advisor_technology",
+        "text": "Technology and digital tools supporting advisor growth.",
+        "keyword_query": "advisor technology digital tools advisor platform CRM digital advice advisor workstation technology platform digital capabilities advisor productivity tools",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "losing_ground_pullback",
+        "text": "Areas where the firm says it is losing ground or pulling back in advisor growth.",
+        "keyword_query": "pulling back losing market share reduced recruiting slower advisor growth exiting de-emphasize scale back advisor growth slowdown reduced advisor hiring",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "competitors_named",
+        "text": "Competitors the firm names in describing its advisor growth strategy.",
+        "keyword_query": "competitors wirehouse competitors independent registered investment advisor RIA competition for advisors competing firms rival firms advisor recruiting competition",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      }
+    ]
+  }
+}

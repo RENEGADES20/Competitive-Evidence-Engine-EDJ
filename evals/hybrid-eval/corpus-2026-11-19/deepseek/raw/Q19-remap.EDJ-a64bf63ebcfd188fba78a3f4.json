@@ -1,0 +1,146 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ",
+    "a2.EDJ",
+    "a3.EDJ",
+    "a4.EDJ",
+    "a5.EDJ",
+    "a6.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "EDJ-10K-2025#213",
+    "EDJ-10Q-2026Q1#27",
+    "EDJ-10K-2025#233",
+    "EDJ-10Q-2025Q2#32",
+    "EDJ-10K-2025#238",
+    "EDJ-10Q-2025Q3#111",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10K-2025#286",
+    "EDJ-10Q-2026Q2#0",
+    "EDJ-10K-2025#57",
+    "EDJ-10Q-2026Q1#77",
+    "EDJ-10K-2025#21",
+    "EDJ-10Q-2025Q3#106",
+    "EDJ-10Q-2025Q2#130",
+    "EDJ-10K-2025#61",
+    "EDJ-10Q-2026Q2#19",
+    "EDJ-10K-2025#298",
+    "EDJ-10Q-2026Q1#48",
+    "EDJ-10K-2025#334",
+    "EDJ-10Q-2025Q3#21",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2025Q2#102",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10K-2025#240",
+    "EDJ-10Q-2026Q2#40",
+    "EDJ-10K-2025#241",
+    "EDJ-10Q-2025Q3#42",
+    "EDJ-10K-2025#229",
+    "EDJ-10Q-2025Q3#62",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2025Q2#0",
+    "EDJ-10K-2025#269",
+    "EDJ-10K-2025#267",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10K-2025#329",
+    "EDJ-10Q-2026Q2#76"
+  ],
+  "at": "2026-11-20T22:36:43.357166-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13688,
+    "output_tokens": 1642,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 12024,
+    "reasoning_tokens": 1159,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 15.8,
+  "tokens_per_s": 103.92,
+  "reasoning_content": "Let me analyze this task carefully.\n\nI need to extract evidence about Edward Jones (EDJ) for each sub-question. The sub-questions ask about preferences of younger investors and clients under 40 for wealth-management products, services, channels, fees, advice, etc.\n\nLooking at the passages provided, they are mostly financial statements, regulatory disclosures, management discussion, etc. None of them seem to discuss younger investors' preferences.\n\nLet me review each sub-question:\n\na1.EDJ: What preferences do younger investors and clients under 40 state for wealth-management products, services, channels, fees, and advice?\n\nPassages for a1 are about revenue recognition, receivables, net capital, etc. Nothing about younger investor preferences. So likely not_found.\n\na2.EDJ: What digital and mobile channel preferences do younger investors state?\n\nPassages: about executives (David Chubak, Keir Gumbs), cover page, competition from robo-advisors and fintech, capital table, BB Trust, etc. There's one passage about competition from robo-advisors and fintech with internet- and mobile-based platforms. But that's about competition, not about younger investors' stated digital/mobile preferences. Not a fact about younger investors' preferences. Could be different_quantity? No, it's not a quantity related. It's about the firm facing competition. Not about preferences of younger investors.\n\nActually, the question asks about preferences younger investors state. The passages don't have any statements from younger investors. So not_found.\n\na3.EDJ: What fee and pricing preferences do younger investors state?\n\nPassages: interest rate environment, fee waivers, revenue categories, etc. Nothing about younger investor fee preferences. not_found.\n\na4.EDJ: What investment product and asset preferences do younger investors state?\n\nPassages: fair value tables, etc. Nothing about younger investors. not_found.\n\na5.EDJ: What advice model and human interaction preferences do younger investors state?\n\nPassages: regulatory, related parties, etc. Nothing. not_found.\n\na6.EDJ: What communication and financial education preferences do younger investors state?\n\nPassages: operating expenses, communications and data processing, etc. Nothing about younger investors' preferences. not_found.\n\nSo all are not_found. But wait, let me be careful. The instruction says \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\"\n\nFor sub-questions marked [fact], they ask about preferences (not quantities per se, but qualitative statements). The passages provided appear to be unrelated financial/regulatory text. None mention younger investors, clients under 40, preferences, etc.\n\nTherefore each cell should be labeled not_found with empty items.\n\nLet me verify the passages once more to ensure there's no hidden relevant info.\n\na1 passages: revenue recognition notes, receivables, capital. No.\n\na2: executives, competition from robo-advisors (this is the closest but it's about firm risk, not younger investors stating preferences). No preferences stated by younger investors. The passage \"The Partnership is also subject to competition in the industry from robo-advisors and other lower cost options and from 'fintech' companies with internet- and mobile-based platforms...\" This describes the competitive environment, not younger investors' preferences. It's not a fact for a2.\n\nCould this be considered different_quantity? No, different_quantity is about a different, related quantity (a figure). Here there's no figure and it's not what the sub-question asks. So not_found.\n\na3: fee waivers in low interest rate environment - that's the firm's actions, not younger investors' fee preferences. Not a fact.\n\na4: fair value tables - the firm's own securities, not client preferences.\n\na5: regulatory and related parties - no.\n\na6: communications and data processing expense - firm spending on technology, not younger investors' communication/education preferences. Not a fact.\n\nSo all not_found.\n\nFor not_found cells, items should be empty array, differs_because \"\", reason short sentence, derivation with operation \"\" and inputs empty.\n\nLet me craft the cells.\n\nEach cell needs:\n- subquestion_id\n- label: \"not_found\"\n- items: []\n- differs_because: \"\"\n- reason: \"...\" \n- derivation: {operation: \"\", inputs: []}\n\nLet me write reasons.\n\na1: \"The passages discuss revenue recognition, receivables, and net capital, but none state preferences of younger investors or clients under 40.\"\n\na2: \"The passages mention competition from robo-advisors and fintech, but none state digital or mobile channel preferences of younger investors.\"\n\nActually, for a2, the closest passage is the competition one. I should note that it's not a statement of younger investors' preferences. reason: \"Passages discuss firm competition and executives, not digital/mobile preferences stated by younger investors.\"\n\na3: \"Passages discuss interest rate impacts and fee waivers by the firm, not fee or pricing preferences stated by younger investors.\"\n\na4: \"Passages discuss the firm's own fair-value holdings, not investment product or asset preferences stated by younger investors.\"\n\na5: \"Passages discuss regulatory matters and related-party transactions, not advice model or human interaction preferences stated by younger investors.\"\n\na6: \"Passages discuss operating expenses and technology investments, not communication or financial education preferences stated by younger investors.\"\n\nAll not_found, items empty.\n\nLet me make sure the JSON is valid.\n\nNow write the submit_extraction call with all six cells.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss revenue recognition, receivables, and net capital, but none state preferences of younger investors or clients under 40.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss firm executives and competition from robo-advisors and fintech, but none state digital or mobile channel preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss interest rate impacts and fee waivers by the firm, but none state fee or pricing preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss the firm's own fair-value holdings and revenue categories, but none state investment product or asset preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss regulatory matters and related-party transactions, but none state advice model or human interaction preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss operating expenses and technology investments, but none state communication or financial education preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

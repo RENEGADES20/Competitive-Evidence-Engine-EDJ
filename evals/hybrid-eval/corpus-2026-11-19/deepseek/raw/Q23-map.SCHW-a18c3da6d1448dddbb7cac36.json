@@ -1,0 +1,205 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a1.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "SCHW-TR-2026Q1#4",
+    "SCHW-PR-2026-10-15-01#10",
+    "SCHW-MONTHLY-2026-05#2",
+    "SCHW-DECK-2026Q3#73",
+    "SCHW-10K-2025#13",
+    "SCHW-10Q-2026Q2#71",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-PR-2026-07-21-01#37",
+    "SCHW-MONTHLY-2026-02#4",
+    "SCHW-DECK-2026-investor-day#38",
+    "SCHW-10K-2025#19",
+    "SCHW-10Q-2026Q1#22",
+    "SCHW-TR-2025Q2#38",
+    "SCHW-PR-2026-01-21-01#36",
+    "SCHW-DECK-2026Q2#22",
+    "SCHW-10Q-2025Q3#82",
+    "SCHW-TR-2025Q1#8",
+    "SCHW-DECK-2026Q1#10",
+    "SCHW-10Q-2026Q2#25",
+    "SCHW-TR-2025Q4#39",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-10K-2025#197",
+    "SCHW-10Q-2026Q1#60",
+    "SCHW-TR-2026Q2#5",
+    "SCHW-DECK-2026Q3#28",
+    "SCHW-10Q-2026Q2#86",
+    "SCHW-TR-2025Q3#0",
+    "SCHW-DECK-2026-investor-day#172",
+    "SCHW-10Q-2026Q1#296",
+    "SCHW-TR-2024Q4#12",
+    "SCHW-DECK-2026Q2#20",
+    "SCHW-TR-2025Q1#44",
+    "SCHW-DECK-2026Q2#10",
+    "SCHW-TR-2025Q1#4",
+    "SCHW-DECK-2026Q3#34",
+    "SCHW-TR-2026Q3#12",
+    "SCHW-DECK-2026Q1#46",
+    "SCHW-TR-2025Q4#4",
+    "SCHW-TR-2025Q4#10",
+    "SCHW-TR-2026Q2#14",
+    "SCHW-TR-2025Q2#6",
+    "SCHW-TR-2025Q2#12",
+    "SCHW-TR-2026Q3#13",
+    "SCHW-TR-2026Q1#0",
+    "SCHW-TR-2025Q3#48",
+    "SCHW-TR-2025Q3#14",
+    "SCHW-TR-2024Q4#3",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-TR-2024Q4#37",
+    "SCHW-TR-2025Q1#7",
+    "SCHW-TR-2025Q1#3",
+    "SCHW-TR-2025Q1#41",
+    "SCHW-TR-2025Q2#11",
+    "SCHW-10Q-2025Q2#9",
+    "SCHW-TR-2025Q2#8",
+    "SCHW-TR-2025Q3#33",
+    "SCHW-10Q-2025Q3#9",
+    "SCHW-TR-2025Q3#6",
+    "SCHW-PR-2026-01-21-01#9",
+    "SCHW-TR-2025Q4#45",
+    "SCHW-10K-2025#10",
+    "SCHW-PR-2026-04-16-01#9",
+    "SCHW-MONTHLY-2026-01#3",
+    "SCHW-TR-2026Q1#3",
+    "SCHW-PR-2026-07-21-01#11",
+    "SCHW-MONTHLY-2026-04#4",
+    "SCHW-TR-2026Q2#15",
+    "SCHW-MONTHLY-2026-08#2",
+    "SCHW-DECK-2026Q3#35",
+    "SCHW-PR-2026-10-15-01#36",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10K-2025#18",
+    "SCHW-10K-2025#23"
+  ],
+  "at": "2026-11-20T23:14:56.140025-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 19953,
+    "output_tokens": 6499,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 18289,
+    "reasoning_tokens": 5569,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 57.22,
+  "tokens_per_s": 113.58,
+  "reasoning_content": "We need answer extraction for subquestion a1.SCHW: advisor headcount over last eight quarters. We have passages. We need determine if any passage states advisor headcount (number of financial consultants/wealth advisors) over last eight quarters. We should label fact if exact quantity stated. Passages mention hiring financial consultants and wealth advisers, but no specific advisor headcount numbers. They mention \"hundreds of financial consultants and wealth advisors\", \"roughly 250 new financial and wealth consultants during the year\" (2025), \"hired hundreds of financial consultants and wealth advisors\" etc. But sub-question asks \"Advisor headcount over the last eight quarters\" \u2014 a series metric. They want actual headcount numbers per quarter. None provide exact headcount for last eight quarters. There are related figures: 16,000 firms (RIA firms on platform) is different quantity; 30,690 employees; 4,127 perform investment advisory functions; 16,763 registered reps; 6,584 IARs. Also \"more than 1,200 expert trading specialists\" but that's trading specialists, not advisors.\n\nNeed label. No passage states advisor headcount over last eight quarters. Are there statements of not disclosed? No passage says firm doesn't report it. Could be not_found because passages say nothing about advisor headcount numbers. But there are related different quantities: \"16,000 firms\" advisory firms (custody clients), 30,690 employees, 4,127 investment advisory functions, 6,584 IARs, 16,763 registered reps, \"1,200 expert trading specialists\", \"roughly 250 new financial and wealth consultants during the year\" (hiring number, not headcount? Actually \"grow roughly 250 new financial and wealth consultants during the year\" is an increase, not headcount; different_quantity? It's a related measure: net additions not headcount. Could be different_quantity because it's a different measure (hiring/additions) not advisor headcount. \"hundreds\" no figure. \n\nWe need choose label: different_quantity if no passage states asked quantity but one states a different related quantity. The instructions: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure (all employees or full-time equivalents for advisors, compensation expense for a payout grid or a headcount, client firms on a platform for the firm's own advisors, a regulatory form's label for a business metric), or an industry figure for a firm's own figure. A different period of the asked quantity is not a different quantity.\"\n\nAdvisor headcount could include financial consultants and wealth advisors. Passages state number of advisory firms served (16,000), which is \"client firms on a platform for the firm's own advisors\" \u2014 explicitly given as example different_quantity. Also ADV counts (employees, investment advisory functions) are all employees/registered reps/IARs. Those are different measures. So label should be different_quantity, not not_found, because there are related different quantities in passages.\n\nHowever, we need provide items one per figure/statement. For different_quantity, one item per figure? We can include relevant ones. But should we include all related different quantities or only the closest? The instruction: \"Items (fact and different_quantity only), one per figure or statement; a series is one item per period\". We can include multiple items. Need not overdo; include figures that are related to advisor headcount. Which passages are relevant:\n- SCHW-TR-2026Q3#10: \"we serve more than 16,000 firms representing $5.8 trillion in assets\" \u2014 advisory firms (RIA firms), not advisor headcount. different_quantity: client firms on platform.\n- SCHW-DECK-2026-investor-day#62: \"$5.2T Client Assets, 16K Advisory Firms, Households 3.9M in RIA Custodial Assets #1\" \u2014 same 16K advisory firms.\n- SCHW-ADV1A-2026#1: employees 30,690; 4,127 perform investment advisory functions; 16,763 registered reps; 6,584 IARs. These are regulatory form counts; different_quantity (all employees / investment advisory functions / registered reps / IARs). The question asks advisor headcount; closest might be \"4,127 perform investment advisory functions\" but that's a broader count maybe not wealth advisors. We can include as different_quantity.\n- SCHW-TR-2025Q1#44: \"expect to grow roughly 250 new financial and wealth consultants during the year\" \u2014 additions, not headcount; different_quantity.\n- SCHW-TR-2024Q4#12: \"We will hire hundreds of new financial consultants\" \u2014 no figure \"hundreds\"; not figure? It has no numeric value but \"hundreds\" could be a figure? They ask figure as printed; \"hundreds\" not precise. Could include? Maybe not necessary.\n- SCHW-TR-2025Q4#4: \"We opened 10 new branches and hired hundreds of financial consultants and wealth advisors.\" no precise number.\n- SCHW-TR-2025Q2#12: \"on track to open more than 10 retail branches this year and to hire hundreds of FCs and wealth consultants\" no precise.\n\nCould include items with precise figures. Need decide label and items.\n\nQuestion wants \"Advisor headcount over the last eight quarters.\" Last eight quarters likely from 2025Q1 to 2026Q4? Wait documents through 2026Q3. \"last eight quarters\" maybe trailing eight quarters from most recent (2026Q3?) Actually firm has latest period 2026Q3 (Sept 30 2026). Last eight quarters would be 2024Q4 through 2026Q3? Hmm from 2024Q4? Let's think: if current period is 2026Q3, last eight quarters = 2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1, 2026Q2, 2026Q3. Documents include 2024Q4 transcript and 2025 onward. But no headcount numbers.\n\nWe should label different_quantity and provide items for related figures. Need reason: no passage reports advisor headcount for the last eight quarters; related figures include advisory firms on platform, total employees, investment advisory function employees, registered reps, IARs, and expected annual additions of FCs/wealth consultants.\n\nNeed ensure each item has required fields. \"text\", \"quote\", \"value\", \"unit\", \"period\", \"scope\", \"definition\", \"chunk_ids\". For different_quantity items, value can be figure. period: for the 16K firms, period? Transcript Q3 2026 \"Today\" as of 2026Q3; deck investor day n/a \"16K\" no period? Maybe period \"\" or \"2026-05-14\" published but period n/a. The item's period says which; if not stated or no figure \"\". Actually for point-in-time? \"Today, we serve more than 16,000 firms\" from transcript period 2026-09-30. Could set period \"2026-09-30\". The deck investor-day (period n/a, published 2026-05-14) \"16K Advisory Firms\" as of investor day May 14 2026? Could period \"2026-05-14\" or \"\". Use \"2026-05-14\" for point? But period field allowed only \"YYYY-MM-DD\", \"YYYYQn\", etc. It says period \"YYYY-MM-DD\" for a point in time. Deck has period n/a published 2026-05-14; could use 2026-05-14. But maybe safer period \"2026-05-14\". Hmm.\n\nFor ADV counts period n/a, published 2026-10-21. ADV form data maybe as of filing 2026? No date. Use \"\".\n\nFor expected 250 new consultants, transcript 2025Q1, \"during the year\" means 2025. period \"2025\". value \"250\" unit \"new financial and wealth consultants\". It's an expected net addition, not headcount. Could include.\n\nDo we include \"more than 1,200 expert trading specialists\" from TR-2026Q3#13? That's trading specialists, not advisors. Probably less related than employees. Could include but maybe not. The instruction examples include all employees, client firms. We don't need every related. But maybe include to be thorough? Different_quantity items can be multiple; code likely uses them? It may compare firms? Actually the question says code and later step do that. We just extract. Include the most relevant related quantities.\n\nLet's enumerate candidate different_quantity items:\n\n1. 16,000 firms (RIA/advisory firms served) \u2014 quote \"we serve more than 16,000 firms representing $5.8 trillion in assets\" (SCHW-TR-2026Q3#10). value \"more than 16,000\" or \"16,000\"? The quote says \"more than 16,000 firms\". Value as printed \"16,000\" or \"more than 16,000\". Use \"16,000\"? Instruction value figure as printed. The printed number is \"16,000\" but phrase \"more than\". I'll use \"16,000\" with unit \"firms\" maybe text explains more than. Actually value \"16,000\"; text says more than 16,000 firms. Fine. But for different_quantity, differs_because \"number of advisory firms using Schwab's custody platform, not Schwab's own advisor headcount.\"\n\n2. 16K Advisory Firms from deck (SCHW-DECK-2026-investor-day#62). value \"16K\" unit \"Advisory Firms\". period maybe \"2026-05-14\". different_quantity. Might duplicate with item 1 but different period. Since \"series one item per period\" maybe include both? The same metric at two periods; okay, but not necessary. Could include as separate item because different source/period. But perhaps avoid redundancy. Yet instructions say one per figure or statement. We can include both as distinct statements. Hmm.\n\n3. 30,690 employees (all employees) from ADV. different_quantity: all employees (wider unit includes non-advisors). value \"30690\" unit \"employees\". period \"\". scope maybe \"investment adviser (Charles Schwab & Co.?)\" Actually ADV document, likely Charles Schwab & Co., Inc. or Schwab? It's \"SCHW adv\". We can scope \"\" or as passage says? The passage says \"employees\" no scope. Use \"\".\n\n4. 4,127 employees performing investment advisory functions (including research). Different measure. value \"4127\" unit \"employees performing investment advisory functions\". This is closest but includes research and maybe not advisors? diff_because \"regulatory form count of employees performing investment advisory functions, not the firm's advisor headcount metric.\"\n\n5. 16,763 registered representatives of a broker-dealer. Could be broader than advisors. include? Maybe yes.\n\n6. 6,584 IARs registered with state securities authorities. Also related. include? It could be a different_quantity. But question specifically advisor headcount; IARs are investment adviser representatives, which is a regulatory label, different. Include maybe.\n\n7. Expected \"roughly 250 new financial and wealth consultants during the year\" (2025 additions). value \"250\" or \"roughly 250\". unit \"new financial and wealth consultants\". period \"2025\". different_quantity: annual additions not headcount. This is quite related.\n\n8. \"We opened 10 new branches and hired hundreds of financial consultants and wealth advisors\" (2025) \u2014 no precise number; maybe skip. Value \"hundreds\"? Not numeric; probably skip.\n\n9. \"hundreds of new financial consultants\" 2025 plan. skip.\n\n10. \"more than 1,200 expert trading specialists\" \u2014 trading specialists, not advisor. Different but less relevant. Could include as different_quantity? It says trading specialists in research, education, coaching and service. Not advisor headcount. Maybe include? I'd skip to avoid noise. But maybe relevant because \"advisor headcount\" excludes trading specialists. Yet different quantity. Hmm.\n\nGiven instruction: label different_quantity when no asked quantity but a different related quantity. We can include related. But not_found? If we label different_quantity, we need items. We'll include a few strong items.\n\nNeed also consider whether there is any fact? Sub-question \"advisor headcount over the last eight quarters\" - no exact numbers. So no fact items.\n\nLabel could alternatively be not_found if we ignore related. But instruction explicitly says choose different_quantity when there's a different related quantity, and passages have many. So different_quantity.\n\nLet's craft cell:\nsubquestion_id: \"a1.SCHW\"\nlabel: \"different_quantity\"\nitems: array of items.\n\nFor each item fields:\n- text: one sentence stating what passage says, attributed to firm, in passage terms.\n- quote exact words max ~300 char.\n- value figure as printed.\n- unit.\n- period.\n- scope.\n- definition: \"\" (unless firm defines). For ADV counts maybe definition? The passage gives instructions on how to count (include full- and part-time, exclude clerical; count each function). Could include definition? The firm's own definition of the quantity? Actually for different_quantity items, definition can be \"\" or quoted definition. The item 5 A definition: \"Include full- and part-time employees but do not include any clerical workers.\" That's a definition of employees count. Could put in definition field for 30690 item. But sub-question asks advisor headcount, not how define employees; perhaps definition not necessary. But we can include quoted definitions when passage gives one. The instruction says \"The firm's own definition of a metric, quoted from a passage, is a fact for a sub-question that asks how the firm defines or reports it.\" Here not asked. For different_quantity, definition field can be \"\".\n\nNeed chunk_ids array with only ids listed. Use exact ids.\n\nLet's decide which items final. I'll include:\nA) 16,000 firms (TR-2026Q3#10) - \"we serve more than 16,000 firms representing $5.8 trillion in assets\". Value \"16,000\" unit \"firms\". period \"2026-09-30\" (point). scope \"\"? It's advisor services platform. Could scope \"Advisor Services platform\" maybe passage says \"adviser business\". Scope field: the part of the firm the figure covers as passage says. It says \"our adviser business\"; maybe \"adviser business\". Use \"adviser business\".\n\nB) 16K Advisory Firms (DECK investor day #62) - period \"2026-05-14\" published; scope \"Advisor Services\". Value \"16K\" unit \"Advisory Firms\".\n\nC) 30,690 employees (ADV) - value \"30690\" unit \"employees\" period \"\" scope \"\" definition \"Include full- and part-time employees but do not include any clerical workers.\" Actually definition from passage. This is for all employees.\n\nD) 4,127 investment advisory functions - value \"4127\" unit \"employees performing investment advisory functions\" period \"\" scope \"\"\n\nE) 16,763 registered representatives - value \"16763\" unit \"registered representatives of a broker-dealer\" period \"\" scope \"\"\n\nF) 6,584 IARs - value \"6584\" unit \"investment adviser representatives\" period \"\" scope \"\"\n\nG) roughly 250 new financial and wealth consultants in 2025 - value \"250\" unit \"new financial and wealth consultants\" period \"2025\" scope \"\" \n\nMaybe include \"1,200 expert trading specialists\"? Could. But maybe too many. I'll skip trading specialists.\n\nBut wait, \"Advisor headcount\" maybe could be inferred from \"We will hire hundreds...\" no.\n\nNow, the \"differs_because\" field for the whole cell: summarize: \"Passages give related counts (advisory firms on Schwab's platform, total employees, regulatory employee counts, and planned annual additions of financial consultants and wealth advisors), but no passage states Schwab's advisor headcount for the last eight quarters.\"\n\nReason: \"No passage reports Schwab's advisor headcount for the last eight quarters; only related, different quantities are reported.\"\n\nDerivation: operation \"\", inputs [].\n\nNeed ensure JSON format correct. We call submit_extraction with cells array. The tool schema requires \"items\" and \"differs_because\", \"reason\", \"derivation\". Items must have all fields. Let's carefully construct.\n\nFor each item text and quote. Keep quotes <=300 chars.\n\nItem A quote: \"Today, we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.\" length okay.\n\nItem B quote: \"$5.2T\\n\\nClient Assets\\n\\n16K\\n\\nAdvisory Firms\\n\\nHouseholds 3.9M in RIA Custodial Assets #1\" Hmm exact words with line breaks. Better quote: \"16K\\n\\nAdvisory Firms\" and maybe \"$5.2T Client Assets\". The exact quote should include support. Use \"16K\\n\\nAdvisory Firms\" but that is not full sentence? Quote can be exact words. Use \"$5.2T\\n\\nClient Assets\\n\\n16K\\n\\nAdvisory Firms\". But maybe keep simple: \"16K\\n\\nAdvisory Firms\". However text should state what passage says. Fine.\n\nItem C quote: \"Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 30690\". That's ~108 chars. Good.\n\nItem D quote: \"Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 4127\". Good.\n\nItem E quote: \"Approximately how many of the employees reported in 5.A. are registered representatives of a broker-dealer? 16763\". Good.\n\nItem F quote: \"Approximately how many of the employees reported in 5.A. are registered with one or more state securities authorities as investment adviser representatives? 6584\". Good.\n\nItem G quote: \"We expect to grow roughly 250 new financial and wealth consultants during the year.\" Good.\n\nNeed value for G \"250\" maybe \"roughly 250\". The figure as printed includes \"roughly 250\"; use \"250\"? The instruction says value the figure as printed (\"20,425\", \"$1.2 billion\"). \"roughly\" is qualifier; I'd use \"250\" and text says roughly. But maybe use \"250\". Fine. Unit \"new financial and wealth consultants\". period \"2025\" because \"during the year\" in 2025Q1 call. Scope \"\".\n\nFor item A value \"16,000\"; text says more than 16,000. unit \"firms\". period \"2026-09-30\". scope \"adviser business\". \n\nItem B value \"16K\"; unit \"Advisory Firms\"; period \"2026-05-14\"; scope \"Advisor Services\". Wait the deck says \"Advisor Services is in a position of strength... $5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1\". Scope \"Advisor Services\". Good.\n\nFor ADV items, what is scope? The ADV is for an investment adviser entity (likely Charles Schwab & Co. or Schwab Wealth Advisory?). The passage header says \"SCHW adv\". No scope. Use \"\".\n\nDefinition for C: Could put \"Include full- and part-time employees but do not include any clerical workers.\" But that's definition of employees, not asked quantity. It's fine but maybe not needed. The field definition: \"the firm's own definition of the quantity when a passage gives one, quoted; else ''.\" For item C, quantity is employees, so definition applies. But is it firm's own definition? The form instruction says include full/part-time, exclude clerical. We can quote. However, subquestion asks advisor headcount, and this item is different_quantity; definition field could be \"Include full- and part-time employees but do not include any clerical workers.\" It's okay. But maybe leave \"\" for all to keep simple. The instruction says definition for fact and different_quantity items; I can include where given.\n\nShould I include definitions for D/E/F? Passage says \"If an employee performs more than one function, you should count that employee in each of your responses...\" That's a counting instruction. Could be definition for these counts. But not necessary. I'd leave \"\" to avoid confusion.\n\nNow, could label be \"not_found\" instead? The instruction says \"different_quantity: no passage states the asked quantity, but one states a different, related quantity...\" There is definitely 16,000 advisory firms, which is the exact example \"client firms on a platform for the firm's own advisors\". So different_quantity.\n\nNeed not include not_disclosed.\n\nLet's write final tool call. Ensure cells is array with one object.\n\nLet me verify all field values.\n\nItem A:\ntext: \"Schwab says its adviser business serves more than 16,000 firms representing $5.8 trillion in assets.\"\nquote: \"Today, we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.\"\nvalue: \"16,000\"\nunit: \"firms\"\nperiod: \"2026-09-30\"\nscope: \"adviser business\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2026Q3#10\"]\n\nItem B:\ntext: \"Schwab's Advisor Services shows 16K advisory firms.\"\nquote: \"Advisor Services is in a position of strength & remains a driving force for Schwab.\\n\\n$5.2T\\n\\nClient Assets\\n\\n16K\\n\\nAdvisory Firms\"\nMaybe quote too long? 116 chars. Fine. But exact formatting maybe \"16K\\n\\nAdvisory Firms\". Use \"16K\\n\\nAdvisory Firms\". Text says. \nvalue: \"16K\"\nunit: \"Advisory Firms\"\nperiod: \"2026-05-14\"\nscope: \"Advisor Services\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-DECK-2026-investor-day#62\"]\n\nItem C:\ntext: \"Schwab reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers.\"\nquote: \"Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 30690\"\nvalue: \"30690\"\nunit: \"employees\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"Include full- and part-time employees but do not include any clerical workers.\"\nchunk_ids: [\"SCHW-ADV1A-2026#1\"]\n\nItem D:\ntext: \"Schwab reports that approximately 4,127 of those employees perform investment advisory functions, including research.\"\nquote: \"Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 4127\"\nvalue: \"4127\"\nunit: \"employees performing investment advisory functions\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-ADV1A-2026#1\"]\n\nItem E:\ntext: \"Schwab reports that approximately 16,763 of those employees are registered representatives of a broker-dealer.\"\nquote: \"Approximately how many of the employees reported in 5.A. are registered representatives of a broker-dealer? 16763\"\nvalue: \"16763\"\nunit: \"registered representatives of a broker-dealer\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-ADV1A-2026#1\"]\n\nItem F:\ntext: \"Schwab reports that approximately 6,584 of those employees are registered with state securities authorities as investment adviser representatives.\"\nquote: \"Approximately how many of the employees reported in 5.A. are registered with one or more state securities authorities as investment adviser representatives? 6584\"\nvalue: \"6584\"\nunit: \"investment adviser representatives\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-ADV1A-2026#1\"]\n\nItem G:\ntext: \"Schwab says it expects to grow roughly 250 new financial and wealth consultants during 2025.\"\nquote: \"We expect to grow roughly 250 new financial and wealth consultants during the year.\"\nvalue: \"250\"\nunit: \"new financial and wealth consultants\"\nperiod: \"2025\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q1#44\"]\n\nShould I include \"hundreds of financial consultants and wealth advisors\" from 2024Q4 or 2025Q4? Not precise. Maybe skip.\n\nBut \"advisor headcount over the last eight quarters\" might be interpreted as total advisor headcount (financial consultants + wealth advisors) as reported in Schwab's monthly metrics? Schwab doesn't report that in passages. Different_quantity okay.\n\nWait, the sub-question is marked [series, metric advisor_headcount]. It asks \"Advisor headcount over the last eight quarters.\" The passages include \"Financial Consultant & Wealth Advisor Coverage\" in deck but no numbers. So different_quantity.\n\nOne more consideration: The ADV counts \"4,127 employees perform investment advisory functions\" could arguably be a \"fact\" for advisor headcount? No, it's not \"advisor headcount\" as defined; it's regulatory count of employees performing investment advisory functions, which includes research and may include corporate roles. The instruction says regulatory form's label for a business metric is different_quantity. So yes.\n\nNow final answer with tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.SCHW",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Schwab says its adviser business serves more than 16,000 firms representing $5.8 trillion in assets.",
+            "quote": "Today, we serve more than 16,000 firms representing $5.8 trillion in assets with a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.",
+            "value": "16,000",
+            "unit": "firms",
+            "period": "2026-09-30",
+            "scope": "adviser business",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#10"
+            ]
+          },
+          {
+            "text": "Schwab's Advisor Services shows 16K advisory firms.",
+            "quote": "16K\n\nAdvisory Firms",
+            "value": "16K",
+            "unit": "Advisory Firms",
+            "period": "2026-05-14",
+            "scope": "Advisor Services",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#62"
+            ]
+          },
+          {
+            "text": "Schwab reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers.",
+            "quote": "Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 30690",
+            "value": "30690",
+            "unit": "employees",
+            "period": "",
+            "scope": "",
+            "definition": "Include full- and part-time employees but do not include any clerical workers.",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab reports that approximately 4,127 of those employees perform investment advisory functions, including research.",
+            "quote": "Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 4127",
+            "value": "4127",
+            "unit": "employees performing investment advisory functions",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab reports that approximately 16,763 of those employees are registered representatives of a broker-dealer.",
+            "quote": "Approximately how many of the employees reported in 5.A. are registered representatives of a broker-dealer? 16763",
+            "value": "16763",
+            "unit": "registered representatives of a broker-dealer",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab reports that approximately 6,584 of those employees are registered with state securities authorities as investment adviser representatives.",
+            "quote": "Approximately how many of the employees reported in 5.A. are registered with one or more state securities authorities as investment adviser representatives? 6584",
+            "value": "6584",
+            "unit": "investment adviser representatives",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab says it expects to grow roughly 250 new financial and wealth consultants during 2025.",
+            "quote": "We expect to grow roughly 250 new financial and wealth consultants during the year.",
+            "value": "250",
+            "unit": "new financial and wealth consultants",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q1#44"
+            ]
+          }
+        ],
+        "differs_because": "The passages report related but different quantities: the number of advisory firms on Schwab's custody platform, total employees, regulatory counts of employees by function/registration, and planned annual additions of financial consultants and wealth advisors. None of these is Schwab's own advisor headcount for the last eight quarters.",
+        "reason": "No passage states Schwab's advisor headcount for the last eight quarters; only related, different quantities are reported.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+    "entities": [
+      "MS",
+      "SCHW",
+      "EDJ",
+      "MER",
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-20T00:10:37.781643",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1454,
+    "output_tokens": 2600,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 174,
+    "reasoning_tokens": 2184,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 30.84,
+  "tokens_per_s": 84.31,
+  "reasoning_content": "The question asks: \"Client assets per advisor across the five -- and is that comparison even valid?\"\n\nFirms: MS, SCHW, EDJ, MER, RJF.\n\nI need to list aspects:\n1. Client assets per advisor for each firm \u2014 this is a computed ratio: client assets (total client assets) divided by advisor headcount. The question asks for the figure. This may be disclosed directly or needs proxy. Client assets per advisor is itself a derived metric. Actually the question asks \"Client assets per advisor across the five\" \u2014 so aspect asks the ratio. Since it's a computed figure, we might need numerator (client assets) and denominator (advisor headcount) as proxy aspects? The instructions: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy\". \n\nSo the main aspect: client assets per advisor (fact, maybe series). But it might not be disclosed. So we should also add aspects for the numerator (client assets) and denominator (advisor headcount) as proxy aspects to compute it.\n\nActually, \"Client assets per advisor\" is a ratio. The question asks the value. It also asks \"is that comparison even valid?\" \u2014 a comparison/judgement across firms: whether the figures can be set side by side, comparability of client assets definitions and advisor headcount definitions across firms.\n\nLet me think about aspects in order the question asks:\n1. Client assets per advisor (the figure for each firm). metric? This is a ratio, not exactly a registered metric. The registered metrics are advisor_headcount and net_new_assets. Client assets per advisor is not one of them. So metric = \"\". Kind: fact or series. It's a figure; could be over several periods (per advisor across time). The question \"across the five\" means across the five firms, not across periods. So kind: fact. But it might not be directly disclosed, so the closest disclosed figures (client assets, advisor headcount) are proxy aspects.\n\nActually, should \"client assets per advisor\" itself be marked proxy? No, it's what the question asks itself, so proxy false. But since it's a computed ratio, we need numerator and denominator as proxy aspects to compute it. The instructions say \"a numerator or denominator to compute it\" as proxy examples. So yes.\n\n2. Client assets (numerator) \u2014 proxy true.\n3. Advisor headcount (denominator) \u2014 proxy true, metric advisor_headcount.\n\nWait, advisor_headcount is a registered metric. The question asks per advisor, which requires advisor headcount. So advisor headcount aspect metric = \"advisor_headcount\", proxy true (it's the denominator to compute the ratio). Actually the metric is advisor_headcount, and it's a proxy for computing per-advisor.\n\n4. Validity of comparison \u2014 comparison aspect: whether the client assets per advisor figures can be compared across firms; definitions of client assets and advisor headcount differ across firms. kind: comparison, proxy false.\n\nShould there be separate aspects for \"comparability of client assets definitions\" and \"comparability of advisor headcount definitions\"? The question asks \"is that comparison even valid?\" \u2014 one judgement. But it may be useful to split into client assets comparability and advisor headcount comparability. The instruction says \"a judgement the question asks for across firms or periods (whether figures can be set side by side, which firm says the most) is its own aspect of kind comparison.\" It's one judgement: whether the comparison is valid. So one aspect. But it involves both numerator and denominator comparability. I'll make one comparison aspect covering both definitions' comparability.\n\nActually, let me consider if the question really asks one thing or multiple. \"Client assets per advisor across the five -- and is that comparison even valid?\" \n\nTwo asks:\n1. Client assets per advisor across the five (a figure for each of the five firms).\n2. Whether that comparison is valid (a judgement).\n\nPlus the proxy aspects for numerator and denominator to compute #1.\n\nSo aspects:\n1. client_assets_per_advisor \u2014 fact, proxy false. keyword query: \"client assets per advisor\", \"assets per advisor\", \"average client assets per financial advisor\".\n2. client_assets \u2014 proxy true, numerator. keyword: \"total client assets\", \"client assets\", \"assets under management\", \"AUM\".\n3. advisor_headcount \u2014 proxy true, denominator, metric advisor_headcount. keyword: \"number of financial advisors\", \"advisor headcount\", \"financial advisors\", \"advisors\".\n4. comparison_validity \u2014 comparison, proxy false. keyword: \"comparability\", \"definitions\", \"client assets definition\", \"advisor headcount definition\", \"methodology\", \"not directly comparable\", \"differs by firm\".\n\nWait, should client assets per advisor be marked as proxy? The question asks for it directly, but the metric may not be disclosed. The instruction: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy\". So client assets per advisor is the asked figure, not proxy. The numerator and denominator are proxy aspects.\n\nBut actually the ratio itself is disclosed by some firms (e.g., \"client assets per advisor\"). So keep it as fact, proxy false.\n\nFor firms: The question asks the aspect of every listed firm (across the five). So firms empty for all aspects, meaning code searches all five firms. The comparison aspect is across firms, so firms empty too (it's a judgement across all five).\n\nActually for the comparison aspect \"is that comparison even valid\", the question asks it across the five firms \u2014 so search all. Firms empty.\n\nLet me now write keyword queries carefully with no firm names, no dates.\n\nAspect 1: client assets per advisor.\nText: \"Client assets per financial advisor for each firm, expressed as total client assets divided by advisor headcount.\"\nkeyword_query: \"client assets per advisor\", \"assets per advisor\", \"client assets per financial advisor\", \"average assets per advisor\", \"assets per adviser\", \"client assets divided by advisors\".\nKind: fact. metric \"\". proxy false.\n\nActually, is it fact or series? The question \"across the five\" = across firms, a cross-sectional comparison. The figure itself is a fact at a point in time. I'll say fact. Could be series if multiple periods. The question doesn't specify periods, so fact.\n\nAspect 2: client assets (numerator).\nText: \"Total client assets or client assets under management for each firm, as the numerator for the per-advisor ratio.\"\nkeyword_query: \"total client assets\", \"client assets\", \"assets under management\", \"total client assets under management\", \"client AUM\", \"assets under administration\".\nKind: fact (or series). Proxy true. metric \"\".\n\nAspect 3: advisor headcount (denominator).\nText: \"Number of financial advisors (headcount) for each firm, as the denominator for the per-advisor ratio.\"\nkeyword_query: \"number of financial advisors\", \"financial advisor headcount\", \"advisor count\", \"financial advisers\", \"number of advisors\", \"advisors\".\nKind: fact. metric \"advisor_headcount\". Proxy true.\n\nAspect 4: comparison validity.\nText: \"Whether client assets per advisor can be validly compared across the five firms, given differences in how each defines client assets and advisor headcount.\"\nkeyword_query: \"comparability\", \"not directly comparable\", \"definitions\", \"methodology\", \"client assets definition\", \"advisor headcount definition\", \"basis of reporting\", \"differs across firms\", \"apples to apples\".\nKind: comparison. metric \"\". proxy false.\n\nWait, should aspect 4 be split into \"client assets definition comparability\" and \"advisor headcount definition comparability\"? The question asks one judgement: is the comparison valid. I'll keep one aspect but maybe the keyword query covers both. Actually, to be safe and thorough, the instruction says list every ask. The question has two asks (the figure and the validity judgement). The validity judgement is one aspect. I'll keep one.\n\nBut hmm, \"a judgement the question asks for across firms or periods (whether figures can be set side by side...) is its own aspect of kind comparison.\" Yes, one comparison aspect.\n\nLet me also think: does \"across the five\" imply a comparison aspect (which firm has highest/lowest)? The question says \"Client assets per advisor across the five\" \u2014 it wants the figures across the five firms, implicitly a comparison. But the explicit \"and is that comparison even valid?\" is the comparison judgement. The first part just wants figures. I'll treat the figures as fact aspects and the validity as the comparison.\n\nActually, could the first part also be a series (over periods)? Not specified. Keep fact.\n\nShould I add a comparison aspect for the per-advisor figures themselves (e.g., ranking)? The question \"across the five\" asks for the figures for all five. That's covered by the fact aspect searched for all firms. The comparison judgement \"is that comparison valid\" is separate. I think that's enough.\n\nLet me finalize. Order the question asks: client assets per advisor first, then validity. But I'm inserting numerator and denominator proxy aspects between? The order: \"Client assets per advisor across the five\" \u2014 the figure itself, then its components (proxy). Then \"is that comparison even valid?\" \u2014 comparison.\n\nThe instruction says list aspects in the order the question asks them. The question asks: (1) client assets per advisor, (2) whether comparison is valid. The proxy aspects are needed to compute #1; they're \"stand-ins\" the question implicitly asks. I'll put client assets per advisor first, then its two proxy components, then the validity comparison. Alternatively put components right after the ratio. That's fine.\n\nActually, should the proxy components come before the ratio? The ratio depends on them. But the question names the ratio first. I'll list ratio first, then numerator, then denominator, then validity.\n\nLet me write final JSON.\n\nDouble-check metric enum: advisor_headcount is valid. For the advisor headcount aspect, metric = \"advisor_headcount\". For client assets, metric = \"\" (not net_new_assets).\n\nKinds: ratio fact -> \"fact\"; numerator -> \"fact\"; denominator -> \"fact\"; validity -> \"comparison\".\n\nProxy flags: ratio false; numerator true; denominator true; validity false.\n\nFirms: all empty lists.\n\nNow produce the submit_plan call.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "client_assets_per_advisor",
+        "text": "Client assets per financial advisor for each firm, expressed as total client assets divided by advisor headcount.",
+        "keyword_query": "client assets per advisor, assets per advisor, client assets per financial advisor, average assets per advisor, assets per adviser, client assets divided by advisors",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "total_client_assets",
+        "text": "Total client assets or client assets under management for each firm, as the numerator for the per-advisor ratio.",
+        "keyword_query": "total client assets, client assets, assets under management, client assets under management, client AUM, assets under administration, total assets under management",
+        "firms": [],
+        "metric": "",
+        "kind": "fact",
+        "proxy": true
+      },
+      {
+        "id": "advisor_headcount",
+        "text": "Number of financial advisors (headcount) for each firm, as the denominator for the per-advisor ratio.",
+        "keyword_query": "number of financial advisors, financial advisor headcount, advisor count, number of advisors, financial advisers, total advisors, advisor workforce",
+        "firms": [],
+        "metric": "advisor_headcount",
+        "kind": "fact",
+        "proxy": true
+      },
+      {
+        "id": "comparison_validity",
+        "text": "Whether client assets per advisor can be validly compared across the five firms, given differences in how each defines client assets and advisor headcount.",
+        "keyword_query": "comparability, not directly comparable, definitions, methodology, client assets definition, advisor headcount definition, basis of reporting, differs across firms, apples to apples, reporting differences",
+        "firms": [],
+        "metric": "",
+        "kind": "comparison",
+        "proxy": false
+      }
+    ]
+  }
+}

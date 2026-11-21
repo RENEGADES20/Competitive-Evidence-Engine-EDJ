@@ -1,0 +1,193 @@
+{
+  "question_id": "Q27",
+  "question": "What has changed at Merrill since the start of the year?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "What has changed at Merrill since the start of the year?",
+    "entities": [
+      "MER"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": [
+      "2026-01-01",
+      "2026-11-17"
+    ],
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-20T14:19:05.882218-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1401,
+    "output_tokens": 6955,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 121,
+    "reasoning_tokens": 5997,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 49.36,
+  "tokens_per_s": 140.9,
+  "reasoning_content": "We need answer with submit_plan tool. Need parse question: \"What has changed at Merrill since the start of the year?\"\n\nThis is broad. Firms: MER only, named. Time window 2026-01-01 to 2026-11-17.\n\nWe need list aspects literally, every one, in order question asks. The question is broad: \"What has changed at Merrill since the start of the year?\" It asks what changed \u2014 no specific named aspects. We must infer aspects the question asks without naming it? The instruction says: what the question asks without naming it. Example broad \"What is Firm X's plan for its retirement-plan unit?\" also asks how management describes the unit, priorities, competition, losing ground/pulling back. So for \"What has changed at Merrill since start of year?\" we need infer changes across dimensions.\n\nNeed decide aspects. This is a change-over-time question for one firm. \"What has changed\" - broad. We need enumerate aspects likely relevant to a wealth-management firm. The prompt says code chooses firms, searches aspects. We only list aspects, search words, firms restrictions, metric, kind, proxy.\n\nWe need not answer, just plan. Need think about what aspects a \"what has changed\" question asks. The question asks for changes at Merrill since start of year. It's a single firm, named. Time window applied. Aspects should cover categories of change: leadership/executive changes, strategy/business unit changes, advisor headcount, client assets/net new assets, fees/pricing, products/offerings, hiring/compensation, technology/platform, regulatory/legal, branch/office changes, layoffs/reorganizations, acquisitions/divestitures, etc.\n\nBut instructions: \"Do not add an aspect the question does not ask.\" The question is very broad, so many aspects are implied. But we should not over-add? The example says broad plan question asks multiple specific things. Here \"What has changed\" implies all material changes. Hmm.\n\nWe need produce aspects list. Each aspect one thing question asks about. Since question asks \"what has changed\" - the aspects are the dimensions of change. The question asks for changes, so each aspect could be a category of change. But keyword_query should be 5-25 words documents use. No firm names.\n\nWe need fill firms: MER for all aspects? The question asks aspect of every listed firm, but listed firms only MER. So firms should be empty? Wait instruction: \"Leave firms empty when the question asks the aspect of every listed firm; code then searches it for all of them. Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" Here question asks Merrill only (named). Since the question restricts to Merrill, should we fill firms with [\"MER\"]? The rule: \"Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" Merrill is named, and there's only one firm. The question asks aspect of Merrill only, not every listed firm? But all listed firms are just MER. So leaving empty searches all (MER only) - same result. But instruction example: \"Firm X's fee levels and the hiring plans of the firms found through a group phrase\" asks fee levels of Firm X only and hiring plans of group firms only. So when question names a specific firm, fill that firm ID. Here question names Merrill, so fill [\"MER\"]. But code has only MER firm. Either works. I'll fill firms: [\"MER\"] because question asks Merrill only. Hmm but \"Leave firms empty when the question asks the aspect of every listed firm\" \u2014 the question is \"What has changed at Merrill\" = asks only Merrill, which is every listed firm? There's only one listed firm. Could leave empty. But explicit named firm likely fill MER. The guidance says fill when question itself asks aspect of some of them. Merrill named = some of them (one). I'll use [\"MER\"].\n\nBut wait: \"Competitors on the theme are searched for every aspect unless the question itself restricts it.\" Here the question doesn't mention competitors, and only Merrill named. So firms = [\"MER\"] for all aspects.\n\nNow aspect list. Need decide number. \"What has changed at Merrill since the start of the year?\" The question asks for changes. We can break into many aspects. But maybe a search plan should list aspects corresponding to the types of change. Let's think.\n\nThe instruction: \"List the aspects literally. An aspect is one thing the question asks about. List every one, in the order the question asks them:\n- each item of a list, each \"and\" joining two asks, each metric or dimension the question names;\n- what the question asks without naming it. Example: 'What is Firm X's plan for its retirement-plan unit?' also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back.\"\n\nFor \"What has changed at Merrill since the start of the year?\" There's no list. It asks changes generally. The implicit asks: leadership changes, strategy changes, advisor force changes, client asset changes, product/platform changes, compensation changes, office footprint changes, regulatory/legal changes, financial performance changes? But careful: \"What has changed\" is extremely broad. We should enumerate material dimensions for a wealth-management firm. Each aspect is one thing the question asks about = one kind of change.\n\nPotential aspects:\n1. Leadership and executive changes (CEO, heads of business, departures/appointments)\n2. Strategy changes / business priorities / reorganizations\n3. Advisor headcount changes (advisor_headcount metric)\n4. Client assets / net new assets changes (net_new_assets metric)\n5. Changes to products, services, or platform offerings\n6. Changes to fees or pricing\n7. Changes to advisor compensation / pay / recruiting incentives\n8. Branch office footprint changes (openings/closings/consolidations)\n9. Technology/digital platform changes\n10. Regulatory, legal, or compliance changes / settlements\n11. Financial performance changes (revenue, expenses, profitability)\n12. Workforce/layoffs/staffing changes beyond advisors\n\nBut question \"What has changed\" may ask for changes across time. Each aspect kind could be recency (what is new inside window) or series (figure over periods) or fact.\n\nNeed assign metric only when aspect asks exactly registered metric advisor_headcount or net_new_assets. So aspect 3 asks advisor headcount exactly -> metric advisor_headcount. Aspect 4 asks net new assets exactly -> metric net_new_assets. Others metric \"\".\n\nKinds:\n- Leadership changes: recency (new appointments/departures inside window) perhaps recency.\n- Strategy changes: recency.\n- Advisor headcount changes: series (figure over several periods) or fact? \"What has changed\" asks change over time; advisor headcount over periods = series. Could be metric. The question asks change since start of year -> series (multiple periods within window). Use kind series.\n- Net new assets: series or fact? metric. Since change over periods, series.\n- Product/service changes: recency.\n- Fee/pricing changes: recency.\n- Compensation changes: recency.\n- Branch footprint: series or recency? Could be fact/series. Use series? \"changed\" implies compare start to now. We can use series for headcount/footprint. But maybe branch office count series.\n- Technology changes: recency.\n- Regulatory/legal changes: recency.\n- Financial performance changes: series (revenue etc. over periods).\n- Staffing/layoffs: recency.\n\nBut instruction says \"Do not add an aspect the question does not ask.\" Could adding all these be considered adding aspects not asked? The question asks \"what has changed\" without specifying dimensions. The examples show we should infer. For a broad \"what changed\" question, we need infer. But how many? The instruction says \"do not stop at any number: a question with twelve asks has twelve aspects.\" That refers to named asks. Here one broad ask. We should expand to reasonable dimensions.\n\nHowever, the plan tool is for search; maybe aspects should be quite granular. Let's identify \"what has changed at Merrill since start of year\" - The question likely from a research benchmark wants changes like \"Merrill has paused...\" etc. The search plan should cover many possible change topics so search returns relevant documents.\n\nWe need craft keyword_query with 5-25 words each, no firm names, no dates.\n\nLet's think about Merrill specifics in 2026? We don't know actual events (knowledge cutoff maybe 2024). But time window 2026. We should not rely on actual. Use generic vocabulary.\n\nMaybe the question expects aspects like:\n- Executive/leadership changes\n- Strategy/business-unit changes\n- Advisor headcount\n- Net new assets / client flows\n- Products/platform/services\n- Fees/pricing\n- Advisor compensation/recruiting\n- Branch network\n- Technology/digital\n- Regulatory/legal\n- Financial results (revenue/expense/margin)\n- Headcount/layoffs\n\nWe can list 12 aspects. Is that too many? The instruction says do not stop at number; but \"Do not add an aspect the question does not ask.\" Broad question asks all changes, so these are all changes.\n\nBut perhaps we should be more focused: The question \"What has changed at Merrill since the start of the year?\" may be answerable by changes in leadership, strategy, advisor count, assets, products, fees, compensation, branch footprint, technology, regulatory. I think 10-12 aspects fine.\n\nLet's consider metric field: For advisor headcount and net new assets, if aspect asks exactly that metric, set metric. The question \"what has changed\" asks changes in advisor headcount? We infer. The registered metrics are advisor_headcount, net_new_assets. If we include aspects \"advisor headcount changes\" and \"net new assets changes\", set metric accordingly.\n\nBut note: \"metric: one of advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric, else ''\". So yes.\n\nProxy: \"true when the aspect asks for a stand-in for what the question asks (closest disclosed figure...); false for everything the question asks itself.\" Most aspects false because they are changes themselves. But some like financial performance changes might be proxy? No, it's an aspect we infer as asked. Not proxy unless the question asks for something not disclosed and we use closest. Here no undisclosed figure named.\n\nNow think: Should we include \"net new assets\" aspect? \"What has changed at Merrill\" asks changes; client assets and flows are central. Net new assets is a registered metric. Include.\n\nMaybe \"advisor headcount\" is also a key change metric. Include.\n\nOrder: \"in the order the question asks them\" \u2014 question doesn't name order. We can choose logical order. Maybe start with leadership, strategy, then metrics, products, fees, comp, branch, tech, regulatory, financial, staffing.\n\nNeed each aspect text one sentence without firm names. E.g., \"Changes in executive and senior leadership roles since the start of the year.\" No firm names.\n\nkeyword_query: documents' vocabulary. Need no firm names/dates.\n\nLet's craft:\n\n1. id: leadership_changes\ntext: \"Changes in executive and senior leadership roles since the start of the year.\"\nkeyword_query: \"executive leadership change appointment departure CEO president head of wealth management retirement succession\"\nfirms: [\"MER\"]\nmetric: \"\"\nkind: \"recency\"\nproxy: false\n\n2. id: strategy_changes\ntext: \"Changes in business strategy, priorities, and organizational structure.\"\nkeyword_query: \"strategy strategic priorities reorganization restructuring business unit new initiative pivot focus expansion exit\"\nfirms: [\"MER\"]\nmetric: \"\"\nkind: \"recency\"\nproxy: false\n\n3. id: advisor_headcount\ntext: \"Changes in advisor headcount since the start of the year.\"\nkeyword_query: \"advisor headcount financial advisors number of advisors experienced advisor hires attrition retention recruiting\"\nfirms: [\"MER\"]\nmetric: \"advisor_headcount\"\nkind: \"series\"\nproxy: false\n\n4. id: client_asset_flows\ntext: \"Changes in client assets and net new asset flows.\"\nkeyword_query: \"client assets assets under management net new assets flows inflows outflows client balances\"\nfirms: [\"MER\"]\nmetric: \"net_new_assets\"\nkind: \"series\"\nproxy: false\n\nWait metric net_new_assets only when aspect asks exactly that metric. Aspect text says changes in client assets and net new asset flows; it's two metrics maybe. But \"net new assets\" is registered. Should we split into client assets and net new assets? The question asks \"what changed\" and net new assets is a metric. We can have separate aspect for net new assets to assign metric. But client assets and net new assets are different. Instruction says each metric or dimension the question names; here not named, inferred. We can separate \"net new assets\" as its own aspect with metric, and \"client assets/balances\" as another? Hmm. The question asks changes broadly; assets are one dimension but net new assets and client assets are different metrics. To be safe, separate:\n- client_assets: changes in total client assets/balances (metric \"\")\n- net_new_assets: changes in net new asset flows (metric net_new_assets)\n\nBut maybe overkill. The instruction \"metric: one of advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric.\" If aspect text is \"changes in net new assets\", metric = net_new_assets. Let's split.\n\nSimilarly advisor headcount separate.\n\nLet's revise list:\n\n1 leadership_changes\n2 strategy_changes\n3 advisor_headcount (metric advisor_headcount)\n4 net_new_assets (metric net_new_assets)\n5 client_assets (total client balances)\n6 product_platform_changes\n7 fee_pricing_changes\n8 compensation_changes\n9 branch_office_changes\n10 technology_changes\n11 regulatory_legal_changes\n12 financial_performance_changes\n13 staffing_layoffs_changes\n\nIs 13 too many? Could be fine. But the question asks \"What has changed\" - could include all. Let's consider each:\n\n- client_assets: changes in client assets (AUM/AUA) since start of year. Kind series. metric \"\". Actually total client assets is a disclosed figure. Good.\n- net_new_assets: metric net_new_assets.\n- product_platform_changes: new products, services, platforms, offerings, investment products, banking/lending. Good.\n- fee_pricing_changes: fee schedules, pricing changes, discounts. Good.\n- compensation_changes: advisor compensation plan, payout grid, bonuses, recruiting packages. Good.\n- branch_office_changes: branch openings/closings/consolidations, office footprint. Good.\n- technology_changes: digital tools, AI, platform upgrades. Good.\n- regulatory_legal_changes: lawsuits, settlements, regulatory actions, compliance changes. Good.\n- financial_performance_changes: revenue, expense, net income, margin changes. Good.\n- staffing_layoffs_changes: layoffs, workforce reductions, non-advisor staffing. Could overlap with leadership and advisor. But question asks changes; layoffs are a change. Include maybe \"workforce and staffing changes\" distinct from advisor headcount.\n\nMaybe also \"M&A / business sales / acquisitions\" \u2014 but Merrill is a unit of BofA; could have acquisitions/divestitures. Include? The question \"what changed\" could include. But maybe too much. The examples suggest \"where it says it is losing ground or pulling back\" - a broad plan asks competition, priorities, losing ground. For \"what has changed\" we could include \"areas where it is pulling back or losing ground.\" Hmm.\n\nLet's focus: The question is from a QA benchmark where they want a list of changes from news. The search plan should cover likely change categories. I think 12 aspects is reasonable.\n\nBut we need ensure each aspect has 5-25 words. Let's draft carefully, no firm names/dates.\n\nPotential issue: keyword_query should include \"the words filings and calls use for it and exact synonyms.\" We can include metric names.\n\nLet's draft each:\n\n1. id: leadership_changes\ntext: \"Changes in executive and senior leadership roles at the firm since the start of the year.\"\nkeyword_query: \"executive leadership change appointment departure CEO president head of wealth management business head succession\"\nCount 14 words? \"executive leadership change appointment departure CEO president head of wealth management business head succession\" = 12. Good. firms [\"MER\"], metric \"\", kind recency, proxy false.\n\n2. id: strategy_changes\ntext: \"Changes in business strategy, priorities, and organizational structure.\"\nkeyword_query: \"strategy strategic priorities reorganization restructuring business unit new initiative pivot focus expansion exit pullback\"\n12 words. kind recency.\n\n3. id: advisor_headcount\ntext: \"Changes in the number of financial advisors since the start of the year.\"\nkeyword_query: \"advisor headcount financial advisors number of advisors advisor attrition advisor retention advisor recruiting experienced advisor hires\"\n15 words? count: advisor(1) headcount2 financial3 advisors4 number5 of6 advisors7 advisor8 attrition9 advisor10 retention11 advisor12 recruiting13 experienced14 advisor15 hires16. Fine.\nmetric advisor_headcount, kind series.\n\n4. id: net_new_assets\ntext: \"Changes in net new asset flows since the start of the year.\"\nkeyword_query: \"net new assets net new households asset flows inflows outflows new money client flows\"\n12 words. metric net_new_assets, kind series.\n\n5. id: client_assets\ntext: \"Changes in total client assets and balances since the start of the year.\"\nkeyword_query: \"client assets client balances assets under management assets under administration total client assets wealth management balances\"\n15 words. metric \"\", kind series.\n\n6. id: product_platform_changes\ntext: \"Changes to products, services, and platform offerings.\"\nkeyword_query: \"new products new services platform offering investment products banking lending digital capabilities product launch product expansion\"\n15 words. kind recency.\n\n7. id: fee_pricing_changes\ntext: \"Changes to fees, pricing, and account minimums.\"\nkeyword_query: \"fee schedule pricing changes account minimums fee changes pricing updates advisory fees commissions discounts\"\n13 words. kind recency.\n\n8. id: compensation_changes\ntext: \"Changes to advisor compensation, payouts, and recruiting incentives.\"\nkeyword_query: \"advisor compensation payout grid compensation plan bonuses recruiting incentives transition packages deferred compensation\"\n13 words. kind recency.\n\n9. id: branch_office_changes\ntext: \"Changes to the branch office footprint, including openings and closings.\"\nkeyword_query: \"branch office office footprint branch openings branch closings office consolidations branch network office locations\"\n13 words. kind series (or recency). I'd use series because count changes over periods. But if just \"changes since start\" maybe series. Use series.\n\n10. id: technology_changes\ntext: \"Changes to technology, digital tools, and platform capabilities.\"\nkeyword_query: \"technology digital tools platform upgrade artificial intelligence advisor workstation mobile app digital capabilities tech investment\"\n14 words. kind recency.\n\n11. id: regulatory_legal_changes\ntext: \"Changes in regulatory, legal, and compliance matters.\"\nkeyword_query: \"regulatory settlement lawsuit litigation enforcement action compliance change regulatory action investigation fine consent order\"\n14 words. kind recency.\n\n12. id: financial_performance_changes\ntext: \"Changes in financial performance, including revenue, expenses, and profitability.\"\nkeyword_query: \"revenue expenses net income profitability margin wealth management results financial performance earnings\"\n12 words. kind series.\n\n13. id: workforce_staffing_changes\ntext: \"Changes in workforce and staffing levels beyond financial advisors.\"\nkeyword_query: \"layoffs workforce reduction job cuts staffing levels headcount reduction employees reorganization support staff\"\n13 words. kind recency.\n\nDo we need \"where it is losing ground or pulling back\" aspect? The strategy_changes keyword includes pullback, exit. Good.\n\nMaybe include \"market position/competitive changes\"? The question doesn't ask. But broad \"what changed\" could include. Hmm maybe not.\n\nLet's revisit instruction: \"Do not add an aspect the question does not ask.\" The question is broad, so all material changes are asked. The dimensions above are reasonable.\n\nBut one could argue that \"What has changed at Merrill since the start of the year?\" asks only for \"changes\" and the aspects should be the individual changes themselves, but we don't know them. The plan must search categories. So yes.\n\nNow, \"kind\" field: fact, series, recency, comparison.\n- leadership_changes: recency (new inside window)\n- strategy_changes: recency\n- advisor_headcount: series (metric over periods) or fact? Since \"changed since start of year\" asks comparison across periods. Use series.\n- net_new_assets: series\n- client_assets: series\n- product_platform_changes: recency\n- fee_pricing_changes: recency\n- compensation_changes: recency\n- branch_office_changes: series (office count over periods)\n- technology_changes: recency\n- regulatory_legal_changes: recency\n- financial_performance_changes: series\n- workforce_staffing_changes: recency\n\nComparison kind? Not needed because only one firm and no cross-firm. The question asks changes over periods for one firm; could be comparison across periods. But comparison is \"a judgement across firms or periods.\" \"what has changed\" is a judgement across periods. Hmm. Should some aspects be kind comparison? The kind definition: comparison (a judgement across firms or periods). For \"what has changed since start of year,\" the core is comparison across periods. But individual aspects can be series (figure over several periods) or recency (what is new inside window). The question asks what changed, i.e., new facts inside window. Recency seems apt for most. For metrics, series.\n\nCould set all aspects kind \"recency\" because we search for new developments inside the time window. But advisor headcount and net new assets are figures over periods -> series. Financial performance changes -> series. Branch footprint changes -> series? Could be recency too. The instruction: kind: fact (a disclosed fact or figure), series (a figure over several periods), recency (what is new inside the time window), comparison (a judgement across firms or periods). Since the question is \"what changed since start of year,\" the aspects are all about what is new inside the window, so \"recency\" is most appropriate for event-like changes. For metrics (headcount, net new assets, client assets, financial performance), they are figures over several periods -> series.\n\nI'll use recency for event changes, series for metric changes.\n\nNow, should firms be empty or [\"MER\"]? The question names Merrill. \"Fill firms with IDs from the list only when the question itself asks the aspect of some of them.\" Here question asks the aspect of Merrill only, so fill [\"MER\"]. Since all listed firms is also MER, but named restriction is Merrill. I'll fill [\"MER\"] for all. Wait, but code \"searches every aspect you list once for each of its firms, and applies firm filters.\" If firms empty, code searches all listed firms (MER). If firms [\"MER\"], same. The instruction example for \"Firm X's fee levels\" says fill Firm X only. So fill MER.\n\nBut could leaving firms empty be more correct? \"Leave firms empty when the question asks the aspect of every listed firm\" \u2014 there is only one listed firm, and the question asks about Merrill, which is every listed firm. Ambiguous. But \"Firms (chosen by code; IDs to use in firms): MER (Merrill): named\" \u2014 named means the firm was named in question. The rule: fill when question restricts aspect to some of them. The question restricts to Merrill (named). I'll use [\"MER\"].\n\nNow, need submit_plan. We should include all aspects with required fields. We must not answer the question. Just call submit_plan.\n\nLet me ensure keyword_query length 5-25. Count each.\n\n1: \"executive leadership change appointment departure CEO president head of wealth management business head succession\"\nWords: executive(1), leadership2, change3, appointment4, departure5, CEO6, president7, head8, of9, wealth10, management11, business12, head13, succession14. 14 good.\n\n2: \"strategy strategic priorities reorganization restructuring business unit new initiative pivot focus expansion exit pullback\"\nCount: strategy1 strategic2 priorities3 reorganization4 restructuring5 business6 unit7 new8 initiative9 pivot10 focus11 expansion12 exit13 pullback14. Good.\n\n3: \"advisor headcount financial advisors number of advisors advisor attrition advisor retention advisor recruiting experienced advisor hires\"\nCount: advisor1 headcount2 financial3 advisors4 number5 of6 advisors7 advisor8 attrition9 advisor10 retention11 advisor12 recruiting13 experienced14 advisor15 hires16. Good.\n\n4: \"net new assets net new households asset flows inflows outflows new money client flows\"\nCount: net1 new2 assets3 net4 new5 households6 asset7 flows8 inflows9 outflows10 new11 money12 client13 flows14. Good.\n\n5: \"client assets client balances assets under management assets under administration total client assets wealth management balances\"\nCount: client1 assets2 client3 balances4 assets5 under6 management7 assets8 under9 administration10 total11 client12 assets13 wealth14 management15 balances16. Good.\n\n6: \"new products new services platform offering investment products banking lending digital capabilities product launch product expansion\"\nCount: new1 products2 new3 services4 platform5 offering6 investment7 products8 banking9 lending10 digital11 capabilities12 product13 launch14 product15 expansion16. Good.\n\n7: \"fee schedule pricing changes account minimums fee changes pricing updates advisory fees commissions discounts\"\nCount: fee1 schedule2 pricing3 changes4 account5 minimums6 fee7 changes8 pricing9 updates10 advisory11 fees12 commissions13 discounts14. Good.\n\n8: \"advisor compensation payout grid compensation plan bonuses recruiting incentives transition packages deferred compensation\"\nCount: advisor1 compensation2 payout3 grid4 compensation5 plan6 bonuses7 recruiting8 incentives9 transition10 packages11 deferred12 compensation13. Good.\n\n9: \"branch office office footprint branch openings branch closings office consolidations branch network office locations\"\nCount: branch1 office2 office3 footprint4 branch5 openings6 branch7 closings8 office9 consolidations10 branch11 network12 office13 locations14. Good.\n\n10: \"technology digital tools platform upgrade artificial intelligence advisor workstation mobile app digital capabilities tech investment\"\nCount: technology1 digital2 tools3 platform4 upgrade5 artificial6 intelligence7 advisor8 workstation9 mobile10 app11 digital12 capabilities13 tech14 investment15. Good.\n\n11: \"regulatory settlement lawsuit litigation enforcement action compliance change regulatory action investigation fine consent order\"\nCount: regulatory1 settlement2 lawsuit3 litigation4 enforcement5 action6 compliance7 change8 regulatory9 action10 investigation11 fine12 consent13 order14. Good.\n\n12: \"revenue expenses net income profitability margin wealth management results financial performance earnings\"\nCount: revenue1 expenses2 net3 income4 profitability5 margin6 wealth7 management8 results9 financial10 performance11 earnings12. Good.\n\n13: \"layoffs workforce reduction job cuts staffing levels headcount reduction employees reorganization support staff\"\nCount: layoffs1 workforce2 reduction3 job4 cuts5 staffing6 levels7 headcount8 reduction9 employees10 reorganization11 support12 staff13. Good.\n\nAll good.\n\nNow kind and proxy all false.\n\nShould we include comparison aspect? \"whether figures can be set side by side, which firm says the most\" not relevant. No.\n\nNow, maybe the question asks \"What has changed at Merrill since the start of the year?\" which is essentially a recency question. The aspects could be more consolidated. But 13 is fine.\n\nLet's also consider that the prompt says \"List every one, in the order the question asks them.\" There's no order. I'll order logical.\n\nDouble-check no firm names in aspect text or keyword_query. We must not include \"Merrill\" or \"Bank of America\". Our text says \"the firm\" for some, \"financial advisors\" etc. Good. No firm names.\n\nText for aspect 1 says \"at the firm\" no name. Good.\n\nNow submit.\n\nNeed ensure JSON valid. Use submit_plan with aspects array.\n\nLet me write final.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "leadership_changes",
+        "text": "Changes in executive and senior leadership roles at the firm since the start of the year.",
+        "keyword_query": "executive leadership change appointment departure CEO president head of wealth management business head succession",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "strategy_changes",
+        "text": "Changes in business strategy, priorities, and organizational structure.",
+        "keyword_query": "strategy strategic priorities reorganization restructuring business unit new initiative pivot focus expansion exit pullback",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "advisor_headcount",
+        "text": "Changes in the number of financial advisors since the start of the year.",
+        "keyword_query": "advisor headcount financial advisors number of advisors advisor attrition advisor retention advisor recruiting experienced advisor hires",
+        "firms": [
+          "MER"
+        ],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "net_new_assets",
+        "text": "Changes in net new asset flows since the start of the year.",
+        "keyword_query": "net new assets net new households asset flows inflows outflows new money client flows",
+        "firms": [
+          "MER"
+        ],
+        "metric": "net_new_assets",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "client_assets",
+        "text": "Changes in total client assets and balances since the start of the year.",
+        "keyword_query": "client assets client balances assets under management assets under administration total client assets wealth management balances",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "product_platform_changes",
+        "text": "Changes to products, services, and platform offerings.",
+        "keyword_query": "new products new services platform offering investment products banking lending digital capabilities product launch product expansion",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "fee_pricing_changes",
+        "text": "Changes to fees, pricing, and account minimums.",
+        "keyword_query": "fee schedule pricing changes account minimums fee changes pricing updates advisory fees commissions discounts",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "compensation_changes",
+        "text": "Changes to advisor compensation, payouts, and recruiting incentives.",
+        "keyword_query": "advisor compensation payout grid compensation plan bonuses recruiting incentives transition packages deferred compensation",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "branch_office_changes",
+        "text": "Changes to the branch office footprint, including openings and closings.",
+        "keyword_query": "branch office office footprint branch openings branch closings office consolidations branch network office locations",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "technology_changes",
+        "text": "Changes to technology, digital tools, and platform capabilities.",
+        "keyword_query": "technology digital tools platform upgrade artificial intelligence advisor workstation mobile app digital capabilities tech investment",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "regulatory_legal_changes",
+        "text": "Changes in regulatory, legal, and compliance matters.",
+        "keyword_query": "regulatory settlement lawsuit litigation enforcement action compliance change regulatory action investigation fine consent order",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "financial_performance_changes",
+        "text": "Changes in financial performance, including revenue, expenses, and profitability.",
+        "keyword_query": "revenue expenses net income profitability margin wealth management results financial performance earnings",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "series",
+        "proxy": false
+      },
+      {
+        "id": "workforce_staffing_changes",
+        "text": "Changes in workforce and staffing levels beyond financial advisors.",
+        "keyword_query": "layoffs workforce reduction job cuts staffing levels headcount reduction employees reorganization support staff",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      }
+    ]
+  }
+}
