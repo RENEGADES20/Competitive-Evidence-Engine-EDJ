@@ -4,7 +4,7 @@ Rewritten on 2026-11-21 from the W11 scored run (#250; [docs/results/w11-report.
 The run used DeepSeek `deepseek-v4-pro` (thinking on) and the map-reduce pipeline, with fts retrieval on
 `corpus-2026-11-19`.
 - **Scores:** adjudicated 18/30 (tier 1: 11/18), after the PR #267 second read (Q12 PASS -> FAIL). The blind full read gave 19/30 and the first, truncated read 20/30.
-- **Same plans, hybrid-norerank on `exp/hybrid`:** 22/30 adjudicated, 21/30 blind (#250 PR 2, #268).
+- **Same plans, hybrid-norerank on `exp/hybrid`:** 22/30 adjudicated (blind 21/30, tier 1 13/18; [report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md), merged into `exp/hybrid` as 4d656d8, PR #268).
 - **Earlier runs:** W10 with Claude, single answer call: 24/30 fts, 25/30 hybrid. The DeepSeek baseline #243, single
   answer call: 15/30.
 

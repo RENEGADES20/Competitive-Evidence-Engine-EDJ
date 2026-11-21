@@ -606,3 +606,4 @@ or the database changes, in any of the three PRs.
   - hybrid: Q25 FAIL -> PASS (borderline), adjudicated 22/30.
   - Reports, NEXT and README updated to the adjudicated scores.
   - Q12 sits in NEXT item 3; Q25's mode difference is answer-caused (TL ruling).
+- 2026-11-21 - closed out: PR #267 merged into `main` (b1e4b25), PR #268 merged into `exp/hybrid` (4d656d8). PR 3 (this docs-only PR) points the README Status and NEXT hybrid line at the merged hybrid report (adjudicated 22/30, blind 21/30, tier 1 13/18). #250 totals: 219 real calls, about $14.73; fts adjudicated 18/30, hybrid-norerank 22/30. 0 calls in PR 3.
