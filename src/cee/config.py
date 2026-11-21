@@ -44,9 +44,9 @@ class Settings:
     map_concurrency: int = 24    # parallel extraction calls (#272: one per firm x aspect cell)
     # #272: DeepSeek effort per stage (off | low | high | max; off = thinking disabled), the map's model
     # (empty = deepseek_model), streaming (on | off | nothink) and the map's input ceiling per call.
-    deepseek_effort_plan: str = "high"
-    deepseek_effort_map: str = "high"
-    deepseek_effort_reduce: str = "high"
+    deepseek_effort_plan: str = "off"
+    deepseek_effort_map: str = "low"
+    deepseek_effort_reduce: str = "low"
     deepseek_model_map: str = ""
     deepseek_stream: str = "on"
     map_call_tokens: int = 60000
@@ -81,9 +81,11 @@ MAP_CONCURRENCY_DEFAULT = 24  # #272: one call per firm x aspect cell (was 6: fi
 # plus room for the prompt, schema and pool passages listed for a sibling, so a normal cell is one call
 # (at 40000 the mock run with the #250 plans batched Q17's whole-corpus cells, 2026-11-21).
 MAP_CALL_TOKENS_DEFAULT = 60000
-# #272: DeepSeek effort per stage. Interim default high (the API's default, now sent explicitly) until test A.
+# #272: DeepSeek effort per stage, from test A by the plan's fixed rule (plans/0272-latency.md step 10): C1 = plan
+# off, map low, reduce low, the only config with 0 cut and 0 invalid outputs on Q5, Q10, Q19, Q21, Q24, Q26 (C2, map
+# off: 1 invalid; C3, map on deepseek-flash: 3 invalid); critical path p50 209 s vs 415 s in #250.
 EFFORTS = ("off", "low", "high", "max")
-EFFORT_DEFAULTS = {"plan": "high", "map": "high", "reduce": "high"}
+EFFORT_DEFAULTS = {"plan": "off", "map": "low", "reduce": "low"}
 STREAM_MODES = ("on", "off", "nothink")
 
 

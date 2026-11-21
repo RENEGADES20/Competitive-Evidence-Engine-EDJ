@@ -217,7 +217,7 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   adopted if a mode stays below its floor) and notes 2, 4-9 applied; note 3 answered with the cost paragraph.
 - 2026-11-21 12:40 - TL ruling on review round 1 (issuecomment-7067044356): approved with conditions 1-3, now written
   in (Owners line; per-cell citation sets; hybrid `gh pr checks`; USD ceiling; eligibility baseline 4/6).
-- 2026-11-21 13:20 - steps 0-8 done, 0 real calls. Commits be94cd6 (effort/cap/model/stream per stage, stage request
+- 2026-11-21 12:50 - steps 0-8 done, 0 real calls. Commits be94cd6 (effort/cap/model/stream per stage, stage request
   versions), c91fa94 (map per cell, batches, merge, progressive Ask page, latency_report), 2172170 (docs, run scripts,
   verify steps). Decisions made while building: (1) `MAP_CALL_TOKENS` default 60000, not 40000: at 40000 the mock run
   with the #250 plans batched Q17's whole-corpus cells (the cell budget 40000 plus prompt, schema and pool passages is
@@ -230,3 +230,18 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   chunk ids); map calls on the mock 75 -> 436 with the #250 plans. verify-cee all 10 features PASS
   (`.verify-runs/20261121-124310-c91fa94`; ask-progress steps 1-2: plan first, then an Edward Jones evidence card with
   a chip, no answer yet). `latency_report` on #250: fts p50 415 s, p90 822 s; hybrid p50 522 s.
+- 2026-11-21 12:54 - 9a stream probe: Q5 planner call (plan off, streamed): tool_calls, valid plan, wall 5.3 s, TTFT 2.0 s (1 call). Q5 count: 4 round-1 map calls; run max-calls 9, USD ceiling 4.97 (expected about 0.38).
+- 2026-11-21 12:55 - 9a probe passed: streaming works with strict tools in both modes (4 map calls low + 1 reduce low, all tool_calls, TTFT 1.4-3.8 s; 5 calls, USD 0.128). Q5 critical path 91.5 s (W11 139 s). DEEPSEEK_STREAM stays on; no repeat.
+- 2026-11-21 13:00 - C1 plan phase: 5 planner calls (Q10, Q19, Q21, Q24, Q26), USD 0.007. C1 count (0 calls): round-1 map calls Q5 4 (saved), Q10 31, Q19 25, Q21 46, Q24 20, Q26 8 = 130 new; input est 3.82M tokens (each cell call repeats its pool passages). C1 run --max-calls 266 (130 + 130 re-map ceiling + 6 reduces); USD hard ceiling 145 (every call at its cap, peak), expected about 9.
+- 2026-11-21 13:23 - C1 run (gate 2172170, worktree wt-272run at c024d21): 152 new calls (map 133 incl. Q5's 4 saved
+  from the probe, re-map 18, reduce 6; plans reused), USD 3.60 new (off-peak, Saturday). 0 cut, 0 invalid, 0 failed;
+  behavior matches expected on 6/6. Critical path p50 209 s, p90 313 s, max 383 s (Q21); first evidence p50 17 s.
+  Reduce is now the long pole (p50 134 s, 23.6k output tokens at effort low); map p50 29 s.
+- 2026-11-21 13:28 - C2 and C3 counts (0 calls): 134 round-1 map calls each (Q5's 4 now new: other map keys); --max-calls 274 each. USD hard ceiling C2 35 / C3 47, expected about 9 / 3 (peak).
+- 2026-11-21 13:50 - C2 run: 156 new calls, USD 0.83 new. Critical path p50 172 s, p90 289 s; first evidence p50 9 s; map p50 8.7 s (C1 29 s). 1 invalid output: Q19 map.a1.EDJ arguments not JSON (thinking off, strict; the #242 finding). Behavior 6/6. Not eligible by the step-10 rule (0 invalid required).
+- 2026-11-21 14:15 - C3 run (map on deepseek-flash): 149 new calls, USD 1.31 new. Critical path p50 206 s, p90 361 s;
+  first evidence p50 10 s. 3 invalid outputs, all flash maps with arguments that are not JSON (Q10 map.research, Q19
+  map.a6.EDJ, Q21 map.a5.SCHW). Not eligible. Test A fts total: 1 + 5 (probe) + 5 + 152 + 156 + 149 = 468 new calls,
+  USD about 5.87 (off-peak). Step 10 rule (`D:\ALLPROJECTS\EDJ\cache\ev272\testa.py`): eligible = C1 only (0 cut,
+  0 invalid, behavior 6/6 >= 4/6) -> **C1 chosen: plan off, map low, reduce low, map on deepseek-v4-pro**. Flash is not
+  adopted. Defaults set in `src/cee/config.py`; tests updated; pytest 1093 passed.

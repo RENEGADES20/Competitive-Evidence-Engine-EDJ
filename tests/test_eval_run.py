@@ -1020,7 +1020,7 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 128000 and rec["request_version"] == "ds-strict-2-plan-high-c128000-s1"   # #272
+    assert rec["max_tokens"] == 8000 and rec["request_version"] == "ds-strict-2-plan-off-c8000-s1"   # #272 default: plan off
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 

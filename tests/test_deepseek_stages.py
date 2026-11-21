@@ -76,13 +76,15 @@ def test_request_version_names_only_its_own_stage(monkeypatch):
     for v in ("DEEPSEEK_EFFORT_PLAN", "DEEPSEEK_EFFORT_MAP", "DEEPSEEK_EFFORT_REDUCE", "DEEPSEEK_STREAM"):
         monkeypatch.delenv(v, raising=False)
     base = {s: llm.request_version("deepseek", s) for s in llm.DEEPSEEK_STAGES}
-    assert base["map"] == "ds-strict-2-map-high-c128000-s1"
-    monkeypatch.setenv("DEEPSEEK_EFFORT_MAP", "low")
-    assert llm.request_version("deepseek", "map") == "ds-strict-2-map-low-c128000-s1"
+    assert base["map"] == "ds-strict-2-map-low-c128000-s1"   # the #272 defaults: plan off, map low, reduce low
+    assert base["plan"] == "ds-strict-2-plan-off-c8000-s1" and base["reduce"] == "ds-strict-2-reduce-low-c128000-s1"
+    monkeypatch.setenv("DEEPSEEK_EFFORT_MAP", "max")
+    assert llm.request_version("deepseek", "map") == "ds-strict-2-map-max-c128000-s1"
     assert llm.request_version("deepseek", "plan") == base["plan"]
     assert llm.request_version("deepseek", "reduce") == base["reduce"]
+    monkeypatch.setenv("DEEPSEEK_EFFORT_PLAN", "high")
+    assert llm.request_version("deepseek", "plan") == "ds-strict-2-plan-high-c128000-s1"
     monkeypatch.setenv("DEEPSEEK_EFFORT_PLAN", "off")
-    assert llm.request_version("deepseek", "plan") == "ds-strict-2-plan-off-c8000-s1"
     monkeypatch.setenv("DEEPSEEK_STREAM", "nothink")
     assert llm.request_version("deepseek", "map").endswith("-s0")
     assert llm.request_version("deepseek", "plan").endswith("-s1")
@@ -92,7 +94,7 @@ def test_stage_versions_join_every_cache_key(monkeypatch, tmp_path):
     from scripts import eval_run as er
     runner = er.RealRunner("deepseek", 0, "snap", tmp_path / "run", cache_dir=tmp_path / "c")
     first = (runner.plan_version, runner.map_version, runner.reduce_version, runner.map_model)
-    monkeypatch.setenv("DEEPSEEK_EFFORT_REDUCE", "low")
+    monkeypatch.setenv("DEEPSEEK_EFFORT_REDUCE", "high")
     monkeypatch.setenv("DEEPSEEK_MODEL_MAP", "deepseek-flash")
     again = er.RealRunner("deepseek", 0, "snap", tmp_path / "run", cache_dir=tmp_path / "c")
     assert again.plan_version == first[0] and again.map_version == first[1]
@@ -137,7 +139,7 @@ def test_a_stream_is_assembled_into_the_usual_response():
     assert payload["reasoning_content"] == "I think." and payload["content"] is None
     assert usage["output_tokens"] == 50 and usage["reasoning_tokens"] == 20 and usage["streamed"] is True
     assert usage["ttft_s"] is not None and usage["ttft_s"] >= 0
-    assert usage["thinking"] == "on" and usage["effort"] == "high" and usage["model"] == "m"
+    assert usage["thinking"] == "on" and usage["effort"] == "low" and usage["model"] == "m"
 
 
 def test_a_cut_stream_keeps_finish_reason_length():
