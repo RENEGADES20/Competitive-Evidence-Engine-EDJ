@@ -1,0 +1,56 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.MS",
+  "round": 2,
+  "entity": "MS",
+  "cells": [
+    "a6.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "MS-10K-2025#119",
+    "MS-SUPP-2026Q2#36",
+    "MS-10Q-2026Q1#12",
+    "MS-10K-2025#165",
+    "MS-10Q-2026Q2#16",
+    "MS-10K-2025#788",
+    "MS-10Q-2025Q3#229",
+    "MS-10Q-2025Q3#139",
+    "MS-TRADE-2026-08-22-RB-01#7"
+  ],
+  "at": "2026-11-20T20:57:24.531842-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4504,
+    "output_tokens": 791,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 3224,
+    "reasoning_tokens": 659,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 10.59,
+  "tokens_per_s": 74.69,
+  "reasoning_content": "We need answer: only one sub-question a6.MS. Need extract cell(s) for Morgan Stanley about \"The succession and continuity planning programs each firm offers advisors as a retention tool.\" Passages given are mostly irrelevant (climate, wealth management definitions, governance, pension plans, Forbes marketing). None mentions succession/continuity planning programs for advisors. We need determine label not_found likely, since passages say nothing about it. Need check if any passage references succession? MS-10Q-2026Q1#12 mentions \"Compensation, Management Development and Succession Committee\" charter. That's a committee charter, not succession and continuity planning programs offered advisors as retention tool. Different related quantity? Could be different_quantity? The sub-question asks succession and continuity planning programs each firm offers advisors as retention tool. A board committee named \"Compensation, Management Development and Succession Committee\" is about corporate governance/executive succession, not advisor succession/continuity planning retention programs. That's a different related quantity perhaps. But instructions: different_quantity: no passage states asked quantity, but one states a different related quantity: a wider unit... different measure... The committee is not a quantity. Items only for fact and different_quantity. For different_quantity, items one per figure or statement. Could include the mention of the Compensation, Management Development and Succession Committee charter as a different related statement, differs_because \"board committee charter relating to management succession, not a succession/continuity planning program offered to financial advisors as a retention tool.\" But is that appropriate? The sub-question is about programs offered to advisors. The passage about committee charters doesn't discuss advisor programs. It says a different related quantity? It is a \"different, related quantity\" concept? \"Succession Committee\" is related to succession but for management development and succession at board level, not advisors. Hmm.\n\nNeed decide label. Given no passage states anything about advisor succession and continuity planning programs. The only mention is \"Compensation, Management Development and Succession Committee\" in a list of board charters. This is not a figure or statement about advisor succession programs. Could label not_found because passages say nothing about the asked quantity. Different_quantity maybe if \"a different, related quantity: ... a regulatory form's label for a business metric\" no. The mention is a committee name, not a program. It doesn't state anything about programs. I'd choose not_found. Items empty. differs_because \"\". reason: no passage mentions succession or continuity planning programs for financial advisors; only a board committee name, which is not about advisor retention tools. Derivation empty operation \"\" inputs empty.\n\nNeed call submit_extraction with one cell. Ensure schema: items array empty. label not_found. subquestion_id a6.MS. differs_because \"\". reason. derivation operation \"\" inputs [].\n\nNeed be careful: instruction \"When unsure between fact and different_quantity, choose different_quantity and say why.\" But here unsure between not_found and different_quantity? It says only quantity named is fact; figure that only resembles it never a fact. A committee name isn't a quantity. So not_found is better.\n\nLet's craft.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.MS",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages do not state anything about Morgan Stanley's succession and continuity planning programs for financial advisors as a retention tool; the only related mention is a board committee charter name, not an advisor program.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

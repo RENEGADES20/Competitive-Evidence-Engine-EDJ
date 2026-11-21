@@ -1,0 +1,128 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ",
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#125",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#286",
+    "EDJ-10Q-2025Q3#51",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q1#5",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2025Q2#15",
+    "EDJ-10Q-2026Q2#9",
+    "EDJ-10Q-2025Q2#9",
+    "EDJ-10Q-2026Q1#8",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#6"
+  ],
+  "at": "2026-11-20T21:15:08.192519-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10191,
+    "output_tokens": 4598,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 8527,
+    "reasoning_tokens": 4027,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 46.91,
+  "tokens_per_s": 98.02,
+  "reasoning_content": "We need answer with extraction tool. We need provide cells for two subquestions: a1.EDJ (comparison - which firm most explicit) and a2.EDJ (fact - specific statements each firm has made about serving mass-affluent clients).\n\nBut instructions: \"You extract evidence about one firm from passages of its documents... Code has split the question into sub-questions; return exactly one cell for each sub-question listed. You do not answer the question and you do not compare firms.\" So for comparison subquestion a1.EDJ, we just need a cell for EDJ evidence. Since comparison involves all firms but we only have EDJ passages. We label based on whether passages state anything about which firm most explicit? Likely not_found, because passages say nothing about \"most explicit\" comparison. Need return one cell each.\n\nFor a2.EDJ: \"The specific statements each firm has made about serving mass-affluent clients\". Need extract EDJ statements about serving mass-affluent clients from passages. We must use only passages. Let's examine passages for any mention of \"mass-affluent\" or serving such clients. Scanning: passages mention serving individual investors, long-term investors, financial wellness for tens of millions of long-term investors, branch presence, \"primarily serves individual investors\". No mention of \"mass-affluent\" specifically. There is a trade passage about advisor launches SteadRock targeting families, pre-retirees, retirees, business owners, manufacturing sector - but that's an advisor who left Edward Jones, not EDJ statement. Another trade passage about retirement plan tool serving business owners and employees, \"local business owners every single day\". That's about business owners/retirement plans, not mass-affluent. Quicken integration mentions \"support their value proposition and advisor conversations with clients.\" Not mass-affluent.\n\nQuestion asks \"mass-affluent clients.\" EDJ passages do not mention mass-affluent. Could different_quantity? The closest: \"primarily serves individual investors\" and \"tens of millions of long-term investors\" - these are broader/different segments, not mass-affluent specifically. The instructions: different_quantity: no passage states asked quantity, but one states a different, related quantity: a wider unit that contains the asked one... different measure etc. \"Individual investors\" is a broader category that contains mass-affluent. \"long-term investors\" broad. So label different_quantity? The question a2 asks \"specific statements each firm has made about serving mass-affluent clients.\" EDJ has made statements about serving individual investors, long-term investors. That is a different, related quantity/segment (broader). We can label different_quantity with items describing those statements and differs_because explaining it's broader (\"individual investors\" not specifically mass-affluent).\n\nBut careful: a sub-question marked [proxy] names a stand-in figure. Here not proxy. So named quantity is \"serving mass-affluent clients\" (statements). A figure/statement about individual investors is different_quantity (wider unit that contains asked one). Yes.\n\nFor a1.EDJ comparison: \"Which firm has been most explicit about serving mass-affluent clients.\" Passages for EDJ don't discuss comparison across five firms. There is no statement about EDJ being most explicit or comparison. Label not_found? Could be different_quantity? No, no different related quantity for \"which firm has been most explicit\". The passages say EDJ serves individual investors. But that's not \"which firm most explicit.\" Could label not_found. Alternatively, if we interpret subquestion as evidence for EDJ being most explicit, we could provide different_quantity with statements about serving individual investors? Hmm.\n\nThe instructions: \"return exactly one cell for each sub-question listed. You do not answer the question and you do not compare firms: code and a later step do that.\" For a1.EDJ (comparison), likely we should return not_found unless there is direct statement. But maybe the comparison subquestion is not about extracting facts but about which firm; code uses evidence. We only provide EDJ's evidence. The passages listed under a1.EDJ include general description and trade news. None about \"most explicit\" or \"mass-affluent\". So not_found.\n\nBut is there any statement about serving mass-affluent in a1 passages? No. a1 passages include \"primarily serves individual investors\", \"tens of millions of long-term investors\", \"helping improve financial fulfillment for tens of millions of long-term investors\". Not mass-affluent. Could be different_quantity but comparison asks \"which firm has been most explicit\" not \"what statements.\" The instruction says for comparison we don't answer, code does. But what label? Maybe fact if passage states the firm made a statement relevant to comparison? Hmm, a1.EDJ [comparison] asks which firm has been most explicit about serving mass-affluent clients. Since we can't compare, we should not extract. But \"not_found: the passages say nothing about it.\" Yes, passages say nothing about which firm most explicit. So not_found.\n\nBut maybe the comparison subquestion's passages include those general statements because they are evidence for EDJ's explicitness. Yet the subquestion is comparison; code might combine cells from all firms. For each firm, a1.X cell perhaps should include any statements about serving mass-affluent as evidence? But a2 already collects specific statements. Hmm.\n\nLet's think about the overall design. The user says: \"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms. Code has split the question into sub-questions; return exactly one cell for each sub-question listed. You do not answer the question and you do not compare firms: code and a later step do that.\"\n\nSubquestions:\n- a1.EDJ [comparison]: Which firm has been most explicit about serving mass-affluent clients\n- a2.EDJ [fact]: The specific statements each firm has made about serving mass-affluent clients\n\nFor a2, clearly extract statements. For a1, the comparison, we might need evidence \"explicit about serving mass-affluent\". Since EDJ doesn't mention mass-affluent, label not_found or different_quantity with \"individual investors\". But comparison likely code will evaluate explicitness based on statements; the a1 cell could be not_found and code decides.\n\nWe must return one cell per subquestion. Each cell has label, items, differs_because, reason, derivation.\n\nLet's parse the schema: label enum fact, not_disclosed, not_found, different_quantity. items only for fact and different_quantity. So for not_found, items empty array, differs_because \"\", derivation operation \"\", inputs empty.\n\nFor a1: label not_found. reason: passages do not state anything about which firm has been most explicit about serving mass-affluent clients.\n\nFor a2: label? The question asks specific statements each firm has made about serving mass-affluent clients. Passages contain no mass-affluent statements but do contain statements about serving individual investors/long-term investors, which is a broader related client segment. So label different_quantity. Provide items with those statements. differs_because: EDJ statements refer to \"individual investors\" and \"long-term investors\" broadly, not specifically to \"mass-affluent\" clients. We should include multiple items, one per statement.\n\nNeed identify statements from passages (both a1 and a2? The passages are grouped by subquestion; we should use passages under a2 for a2 cell? The instructions: \"Use only the passages below.\" We can use any passages, but likely each subquestion has passages grouped. For a2, use a2 passages. But a1 passages also contain \"primarily serves individual investors\" etc. Could use them too? The grouping says passages grouped by sub-question they were found for. For a2, use a2 group. But I think we can use all passages; however for a2 specific statements, the relevant statements are in a1 group (EDJ-10K-2025#9, #125, #57) and a2 group (#204). Actually \"primarily serves individual investors\" appears in a2 group #204 too, and a1 #9. The \"tens of millions of long-term investors\" in a1 group. But a2 group doesn't have that, except #204 has individual investors. We can use a1 passages as well because they are all \"passages below\". The subquestion grouping is just how they were found. I think we can cite any chunk ids listed.\n\nLet's identify relevant statements for \"serving mass-affluent clients\":\n\n- \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada\" (EDJ-10K-2025#9, EDJ-10Q-2026Q2#28, EDJ-10K-2025#204). This is a statement about serving individual investors, a broader category.\n- \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.5 trillion in client assets under care as of December 31, 2025.\" (EDJ-10K-2025#125) This is about clients/assets, not mass-affluent specifically. Different related quantity? It's about number of clients, not \"mass-affluent\". Might be different_quantity? Hmm \"serve more than 9 million clients\" is broader.\n- \"the Firm is committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.\" (EDJ-10K-2025#125) broader \"long-term investors.\"\n- 10-Q 2025Q2 #57 similar: \"more than 20,000 financial advisors serve more than 9 million clients... committed to helping improve the financial wellness for tens of millions of long-term investors across North America...\" (period 2025-06-27).\n- Trade passages: \"Edward Jones currently has about $50 billion in assets across about 10 record keepers\", \"advisors serve over 263,000 workplace retirement plans...\" - about retirement plans, not mass-affluent. \"advisors are working with local business owners every single day\" - business owners, not mass-affluent. Could be different_quantity? It's a different client segment (business owners) but not mass-affluent. Probably not needed.\n\nThe subquestion a2 asks \"specific statements each firm has made about serving mass-affluent clients.\" So we should extract statements that are closest. The strongest different_quantity statements are \"primarily serves individual investors\" and \"tens of millions of long-term investors\" as broader categories that include mass-affluent. We can include those as items.\n\nBut wait: the instruction says \"A figure of a different measure than the one named ... is different_quantity.\" Here no figure. \"The asked quantity for periods other than those asked ... is also a fact.\" Not relevant. \"fact: a passage states what the sub-question asks for this firm, in full or in part.\" If a passage stated \"mass-affluent clients\" that would be fact. None. So different_quantity is correct: \"no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure...\" Here \"individual investors\" / \"long-term investors\" is a wider unit/segment that contains mass-affluent. So label different_quantity.\n\nNeed items with fields:\n- text: one sentence stating what passage says, attributed to firm, in passage's terms.\n- quote: exact words, at most about 300 characters.\n- value: \"\" when no figure.\n- unit: \"\" when no figure.\n- period: \"YYYY-MM-DD\" for point in time, etc.; \"\" when not stated or no figure.\n- scope: part of firm as passage says; \"\" for whole firm.\n- definition: \"\" (unless firm's own definition of mass-affluent, none).\n- chunk_ids: ids quoted.\n\nFor statements without figures, value \"\", unit \"\", period \"\" (unless the statement has a period). The statements about clients as of date include figures; could include those as fact? They are related quantities (client count, assets), but not mass-affluent. The subquestion asks statements about serving mass-affluent. Do we include client count as a different_quantity item? It is a different measure (number of clients, assets), not statements about mass-affluent. I think not necessary; keep to statements about whom they serve.\n\nLet's make items:\n\nItem 0: text: \"The Partnership states that, through its retail brokerage entities, it primarily serves individual investors in the U.S. and Canada.\" quote: \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\" Could be long >300 chars? Let's count. The first sentence is about 330. We can quote shorter: \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada\" (94 chars). That's fine. chunk_ids: maybe [EDJ-10K-2025#204] or #9. Use a2 group #204. Actually #204 has the exact. Also #9 and #28. We can cite multiple ids? \"chunk_ids: the ids of the passages quoted, only ids listed below.\" If quote appears in multiple, we can include one or multiple. Use [EDJ-10K-2025#204].\n\nItem 1: text: \"The Partnership states that it is committed to helping improve the financial fulfillment of tens of millions of long-term investors across North America through comprehensive, personalized planning and professional advice.\" quote: \"the Firm is committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.\" period? This is in 10-K 2025 as of Dec 31 2025? The statement is as of 2025-12-31. But not a figure; period \"\" maybe. Could set period \"2025-12-31\" as point in time? The instructions period for point in time, fiscal year, etc. For a statement with no figure, period \"\". I'd leave \"\".\nchunk_ids: EDJ-10K-2025#125.\n\nItem 2: text similar from 10-Q 2025Q2: \"The Partnership states it is committed to helping improve the financial wellness for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.\" quote from EDJ-10Q-2025Q2#57. period \"\" or \"2025-06-27\"? It's a statement in that report. But no figure. Leave \"\".\n\nItem 3: \"The Partnership states its more than 20,000 financial advisors serve more than 9 million clients with $2.5 trillion in client assets under care as of December 31, 2025.\" This is a related broader client count. Could include as different_quantity item. But does it relate to mass-affluent? It's about all clients, a broader measure. Could be useful evidence for serving many clients. But subquestion asks statements about serving mass-affluent; not exactly. Maybe include? Hmm.\n\nWe need be careful not to over-include different_quantity items that are not \"related\". \"serve more than 9 million clients\" is a client count, not a statement about whom they serve (mass-affluent vs individual). It's a different measure (total clients) that may include mass-affluent. But instructions: different_quantity examples include \"a different measure (all employees or full-time equivalents for advisors, compensation expense... client firms on a platform for the firm's own advisors...)\" The concept is a different measure than the one named. Here named is \"serving mass-affluent clients\" not a quantity. Related quantities would be broader client segments. Total clients/assets could be considered broader measure. But I'd keep to client-segment statements.\n\nMaybe include \"more than 20,000 financial advisors serve more than 9 million clients\" as a different_quantity item with differs? It is a measure of scale, not segment. Not necessary.\n\nThe cell's differs_because should explain: \"The statements describe Edward Jones as serving 'individual investors' and 'long-term investors' broadly, not the narrower mass-affluent client segment specifically.\" Good.\n\nFor a1 not_found: items [], differs_because \"\", reason \"No passage states which firm has been most explicit about serving mass-affluent clients, and no comparison across firms appears.\" derivation operation \"\", inputs empty.\n\nWait, should a1 perhaps be different_quantity too? The subquestion [comparison] asks \"Which firm has been most explicit about serving mass-affluent clients.\" The passages about EDJ mention \"individual investors\" - but that's not a comparison. The label should reflect whether the passage states what the sub-question asks. It doesn't. not_found. Yes.\n\nNow need ensure exact schema. Each cell object must have subquestion_id, label, items, differs_because, reason, derivation. For not_found, items empty array, differs_because \"\", derivation with operation \"\", inputs empty. For different_quantity, items array of objects with text, quote, value, unit, period, scope, definition, chunk_ids. differs_because string. derivation empty operation/inputs.\n\nLet's craft final call.\n\nNeed be careful quote lengths <= 300. Quotes:\n- \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada\" 107 chars.\n- \"the Firm is committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.\" That's ~177 chars.\n- 10-Q quote: \"the firm is committed to helping improve the financial wellness for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.\" ~172 chars.\n\nFor item text, one sentence stating what passage says, attributed to firm. Good.\n\nLet's consider whether \"individual investors\" is a fact rather than different_quantity? The subquestion asks \"specific statements each firm has made about serving mass-affluent clients.\" Does \"individual investors\" qualify as mass-affluent? Mass affluent is a subset of individual investors, but not all individual investors are mass-affluent. The statement is broader. The instructions: \"When unsure between fact and different_quantity, choose different_quantity and say why.\" So different_quantity correct.\n\nNow, do we need include the \"primarily serves individual investors\" statement for a1 too? No, one cell per subquestion. But a1 not_found. Fine.\n\nCould there be a fact in a2? The passage \"committed to helping improve the financial fulfillment for tens of millions of long-term investors\" - \"long-term investors\" broader. different_quantity.\n\nLet's produce cells.\n\nNeed no markdown, just tool call.",
+  "parse_flags": [
+    "trailing_braces"
+  ],
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no statement about which firm has been most explicit about serving mass-affluent clients, and no cross-firm comparison on that point.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "The Partnership states that, through its retail brokerage entities, it primarily serves individual investors in the U.S. and Canada.",
+            "quote": "Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#204"
+            ]
+          },
+          {
+            "text": "The Partnership states that it is committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.",
+            "quote": "the Firm is committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#125"
+            ]
+          },
+          {
+            "text": "The Partnership states that it is committed to helping improve the financial wellness for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.",
+            "quote": "the firm is committed to helping improve the financial wellness for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#57"
+            ]
+          }
+        ],
+        "differs_because": "Edward Jones's statements describe serving \"individual investors\" and \"long-term investors\" broadly, which are wider client categories that may include mass-affluent clients, rather than stating anything specifically about the narrower mass-affluent client segment.",
+        "reason": "No passage states that Edward Jones serves mass-affluent clients specifically, but several passages state it serves broader related client groups (individual investors and long-term investors), so this is a different, related quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

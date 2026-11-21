@@ -1,0 +1,192 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.1",
+  "call_id": "map.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a1.RJF",
+    "a2.RJF",
+    "a3.RJF",
+    "a4.RJF",
+    "a5.RJF",
+    "a6.RJF",
+    "a7.RJF",
+    "a8.RJF",
+    "a9.RJF",
+    "a10.RJF",
+    "a11.RJF",
+    "a12.RJF",
+    "a13.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-20T22:31:26.502065-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2606,
+    "output_tokens": 1802,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1326,
+    "reasoning_tokens": 933,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 15.34,
+  "tokens_per_s": 117.47,
+  "reasoning_content": "We need answer by calling submit_extraction tool. We need extract cells for each sub-question. We only have one passage chunk: RJF-DECK-2025-investor-day#42, with text \"Collaborative recruiting across channels / West Coast and Northeast focus / Next gen advisor strategy\". This is for a1.RJF (fact). But it's about \"next gen advisor strategy\", not preferences of younger investors/clients under 40. Actually sub-question a1 asks preferences of younger investors and clients under 40 for wealth-management products, services, channels, fees, advice. The passage does not state those preferences. It's about recruiting next gen advisor strategy. Is this a fact? It says \"Next gen advisor strategy\" \u2014 maybe that's not about investor preferences. Could be different_quantity? No, it doesn't state a related quantity. It's not a preference. For a1, likely not_found because the passage says nothing about younger investor preferences. But the instruction says use only passages. There is only one passage. So all sub-questions likely not_found except maybe a9? \"Next gen advisor strategy\" might relate to Edward Jones? Wait the question is about Edward Jones but firm is Raymond James Financial (RJF). The passage is from RJF deck, about RJF. The sub-questions ask about Edward Jones? Actually sub-questions a7-a13 mention Edward Jones management, offerings, etc. But firm is RJF. Hmm instructions say extract evidence about one firm from passages of its documents, for a question about wealth-management firms. The question \"How should the preferences of younger investors shape Edward Jones's offerings?\" But firm is Raymond James Financial (RJF). The sub-questions a7-a13 ask about Edward Jones, which is strange\u2014maybe these are not applicable? But we must return one cell for each sub-question. The passage is about RJF, not Edward Jones. So for sub-questions about Edward Jones, the passage says nothing about Edward Jones. So not_found.\n\nFor a1, the passage \"Next gen advisor strategy\" could perhaps be a fact about recruiting next gen advisors, but not younger investor preferences. The sub-question asks preferences of younger investors/clients under 40. The passage does not state that. Not_found.\n\nLet's carefully think if \"Next gen advisor strategy\" is a fact for a1? No, it's not a preference of younger investors. It might be related to serving younger investors, but no figure or statement. The instruction says \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" So not fact. Could it be different_quantity? \"different_quantity: no passage states the asked quantity, but one states a different, related quantity.\" \"Next gen advisor strategy\" is not a quantity. So not_different_quantity. Thus not_found.\n\nFor all sub-questions, likely not_found. We need provide cells for each with label, items empty, differs_because \"\", reason short, derivation empty operation \"\" inputs [].\n\nWe must include chunk ids only from listed. We won't quote since items empty.\n\nNeed ensure each cell has required fields. For not_found, items should be empty array, differs_because \"\", reason, derivation with operation \"\" inputs [].\n\nLet's craft reason for each: \"The passage does not state this.\" Or \"The only passage concerns next gen advisor recruiting, not younger-investor preferences.\" For a1 maybe reason mentions passage is about recruiting strategy and doesn't state younger-investor preferences.\n\nActually wait: the passage \"Next gen advisor strategy\" is listed under sub-question a1.RJF. Could it be relevant as a fact for a1? The sub-question asks \"What preferences do younger investors and clients under 40 state...\" The passage is not a preference. So no.\n\nBut maybe \"Next gen advisor strategy\" is a proxy? No, sub-question not marked [proxy]. It's fact. Not found.\n\nWe should not include items with quote for not_found. Items empty.\n\nLet's submit.\n\nNeed be careful about sub-question ids list: a1.RJF through a13.RJF. We'll create 13 cells.\n\nLet's write concise reasons.\n\nFor all: label \"not_found\". reason: \"The provided passage does not state this information.\" Could be slightly tailored.\n\nI'll produce JSON via submit_extraction.\n\nEnsure derivation object has operation \"\" and inputs []. \n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage is about next gen advisor recruiting strategy and does not state younger investors' or clients' stated preferences for products, services, channels, fees, or advice.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' digital and mobile channel preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' fee and pricing preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' investment product and asset preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' advice model and human interaction preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states younger investors' communication and financial education preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage describes how Edward Jones management characterizes younger investors or their needs.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage describes Edward Jones's current offerings, capabilities, or client experience relevant to younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states Edward Jones's priorities for serving younger investors; the only passage is Raymond James's next gen advisor recruiting strategy.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage names competition Edward Jones faces in serving younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a11.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states where Edward Jones is losing ground or pulling back among younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a12.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses recent or planned changes to Edward Jones's offerings for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a13.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage addresses how younger-investor preferences should shape Edward Jones's offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

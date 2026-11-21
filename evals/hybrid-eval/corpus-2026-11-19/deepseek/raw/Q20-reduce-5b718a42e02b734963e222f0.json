@@ -1,0 +1,278 @@
+{
+  "question_id": "Q20",
+  "question": "What evidence is there about how clients under 40 choose a financial advisor?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "answer",
+  "chunk_ids": [
+    "UBS-NEXTGEN-2026#83",
+    "CERULLI-GWT-2025#23",
+    "CERULLI-GWT-2025#1",
+    "FIDELITY-III-2025#0",
+    "UBS-NEXTGEN-2026#78",
+    "UBS-NEXTGEN-2026#81",
+    "FINRAF-INVESTORS-2025#45",
+    "SCHW-TR-2025Q3#11",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#8",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#5",
+    "BOFA-PB-STUDY-2026#5",
+    "BOFA-PB-STUDY-2026#14",
+    "UBS-NEXTGEN-2026#84",
+    "UBS-NEXTGEN-2026#76",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#37",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#30",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#15",
+    "BOFA-PB-STUDY-2026#17",
+    "BOFA-PB-STUDY-2024#12",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#60",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#2"
+  ],
+  "schema_fallback": [],
+  "enum_values": 82,
+  "at": "2026-11-20T22:46:44.312919-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7783,
+    "output_tokens": 8892,
+    "cache_hit_tokens": 1792,
+    "cache_miss_tokens": 5991,
+    "reasoning_tokens": 5923,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 66.09,
+  "tokens_per_s": 134.54,
+  "reasoning_content": "We need answer by calling submit_answer. Need understand what to write. This is a single question about evidence; multiple firms? Actually \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting <Firm>: \". But here the aspects are about clients under 40, sources are research firms (UBS, Cerulli, Fidelity, FINRA, Schwab, Wealthtender, BofA). We should organize aspect by aspect. Each claim starts \"<Firm>: \"? The instructions say \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\" So for each item, start with the firm name. Which firm? The source organization: UBS, Cerulli, Fidelity, FINRA, Schwab, Wealthtender, Bank of America Private Bank.\n\nNeed write claims for each cell, each with part_id of the cell (aspect id e.g. \"a1.all\" for fact cells). Wait: a cell id is part_id of what you write from it. For fact cells, part_id is \"a1.all\" etc. For comparison aspects, exactly one claim with aspect's id as part_id. Here all aspects are fact (not comparison), so each item becomes a claim with part_id being the cell id (a1.all, a2.all etc.). Good.\n\nNeed date every claim from its source line. We have source \"from\" dates. But for each item, \"page content as of\" date? Source lines include published dates. We should date each claim using source line's published date (and period if any). For UBS: published 2026-04-22. Cerulli 2025-10-29. Fidelity 2025-10-09. FINRA 2025-12-04. Schwab transcript period 2025-09-30 published 2025-10-16. Wealthtender 2025-08-13. BofA 2026-06-17, 2024-06-18.\n\nNeed \"Why it might matter\" only for recency aspects or time window. Question has no time window? \"clients under 40\" no time window. Aspects not marked recency. So no why-lines.\n\nNeed each claim state only periods an item has. Many items have no explicit period; use published date. For quotes marked \"quote not verbatim\" never put in quotation marks. For item a3 item 2 (quote not verbatim), a5 items 4 and 5, a6 item 3, a6 item 4 are quote not verbatim. So don't put quotation marks; can paraphrase.\n\nNeed item marked \"figure not found in its passage\" \u2014 none.\n\nNeed \"adjacent only\" cells \u2014 none marked adjacent. \"also under\" none.\n\nNeed \"computation\" lines? none. \"basis break\"? none.\n\nGaps added by code: none. We shouldn't add gaps? \"Add a gap of your own only for something those gaps do not name.\" Since code gaps none. We might need gaps if nothing? But no. The required answer has gaps array; can be empty.\n\nNeed include citations chunk_ids for each claim. For each item, chunk ids listed in item. We need map to chunk_ids.\n\nLet's list aspects and items with firms.\n\nAspect a1:\n1. UBS: experience and expertise 79%. cite #83. Source date 2026-04-22.\n2. UBS: 41% ability to fully understand needs. cite #83.\n3. UBS: gender priorities. cite #83. scope next generation.\n5. Cerulli: younger investors more comfortable self-directing online; advisors articulate benefits outside investing (financial planning, lending, tax). cite #23.\n6. Cerulli: younger prefer control. cite #1.\n7. Fidelity: wealthy next-gen households reshaping advisor-client relationship focus holistic financial planning, life goal achievement, non-traditional investment strategies. cite #0. period 2025.\n\nAspect a2:\n1. UBS: next gen rarely relies on single source; peer insights 27%, wealth managers 21%, tax 16%, lawyers 14%, family officers 13%. cite #78.\n2. UBS: younger adults 22-25 rely most peers 57%. cite #81.\n3. FINRA: investors under 35 less likely to rely on financial professionals; more likely use friends/family/colleagues; word of mouth 85%. cite #45.\n4. Schwab CEO: Gen Z learn finances via social media and family; Schwab meets them in channels. cite #11.\n5. Wealthtender: referrals 62%, search engines 49.8%. period 2025, scope ages 35-64. cite #8.\n6. Wealthtender: 25% AI tools; 32% online directories; social media 22%; webinars 19%, in-person 18%. cite #5.\n\nAspect a3:\n1. BofA: 65% younger investors prefer human advisor. cite #5,#14. period 2026. definition younger investors Gen Z and Millennials ages 21-45. quote verbatim? \"sixty five percent 65%...\" It's fine but awkward. Use quotes exactly as shown? The instruction \"quote each source's own words in quotation marks exactly as shown\" only for computation lines? For fact cells, quote line says use quotation marks if quote. Actually \"An item marked 'quote not verbatim' is never put in quotation marks.\" For others with quotes, we can quote. We should quote exactly as shown in the cell's quote field. We need not necessarily quote all, but standard says claims state what cited item says. The guidance says quotes are available; can include in quotes. We'll include quotes when not marked not verbatim.\n\nNeed be careful: \"Never use what you know from elsewhere; never estimate, convert, round or combine figures.\" So use exact figures as shown.\n\n2. BofA: 47% use AI research, 87% comfortable advisors using AI. quote not verbatim -> paraphrase, no quotes. cite #5,#14.\n3. UBS: 83% blended approach. cite #84.\n4. Cerulli: younger investors more comfortable directing own investing through online brokerages. cite #23.\n\nAspect a4:\n1. UBS: 67% strong personal connection important. cite #84.\n2. UBS: 56% want trusted relationships across generations. cite #83.\n3. UBS: want technical know-how plus rapport/communicate clearly. cite #76.\n4. UBS: continuity: 41% prefer existing bank, 31% new provider, 29% open switching. cite #81.\n5. UBS: quotes portfolio manager about committed and trustworthy long term. cite #81.\n\nAspect a5:\n3. Wealthtender: 48% pricing and overall anticipated costs top three factors. cite #37.\n4. Wealthtender: 62% want fee structure first, alongside specialization 64%. quote not verbatim. cite #30.\n5. Wealthtender: 73% transparency in fees/services crucial for credibility. quote not verbatim. cite #15.\n\nNote a5 has items numbered 3,4,5 (no item 1,2 shown). We only write shown items. No gaps because code says none; we won't mention missing items.\n\nAspect a6:\n1. BofA 2026 study methodology: 1,431 respondents, online survey by Escalent, Jan 8-Feb 5, 2026. cite #17.\n2. BofA 2026 findings 65% human, 47% AI research, 87% comfortable. cite #5,#14.\n3. BofA 2024 study methodology: 1,007 respondents, MOE +/-3%. quote not verbatim. cite #12.\n4. Fidelity 2025 study compares wealthy next-gen vs baby boomers. quote not verbatim. cite #0.\n5. Wealthtender 2025 study: 500 adults, ages 35-64, $100K+; from 1,557. cite #60.\n6. Wealthtender key takeaways: 97% multiple advisors, 96% online research, 83% reviews/awards, 64% specialization, 62% fee. cite #2.\n7. UBS research report: 79% experience/expertise, 56% trusted relationships. period 2026. cite #83.\n\nNeed decide about ordering: \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window. But should we order by aspects listed and within aspect items as listed. Yes.\n\nNeed each claim starts with \"<Firm>: \". For UBS, \"UBS: ...\". Cerulli, Fidelity, FINRA, Schwab, Wealthtender, Bank of America Private Bank.\n\nNeed date every claim from source line. We can say \"UBS's research report published April 22, 2026 states...\" etc. Some source lines have period n/a. We can date with publication date. For Schwab transcript: \"Schwab's CEO stated on the Q3 2025 earnings call (transcript published October 16, 2025) ...\" The source line says SCHW transcript period 2025-09-30 published 2025-10-16. We can phrase \"On Schwab's Q3 2025 earnings call (period ended September 30, 2025; transcript published October 16, 2025), the CEO stated ...\" That's good.\n\nFor Wealthtender items, source published 2025-08-13; period 2025 for survey. We can say \"Wealthtender's 2025 survey (published August 13, 2025)...\" For some items period 2025 in matrix.\n\nFor Fidelity: \"Fidelity's 2025 Investor Insights Study (published October 9, 2025) finds...\"\n\nFor Cerulli: \"Cerulli's research published October 29, 2025 reports...\"\n\nFor FINRA: \"FINRA investor research published December 4, 2025 finds...\"\n\nFor BofA 2026: \"Bank of America Private Bank's 2026 Study of Wealthy Americans (published June 17, 2026) finds...\" period 2026. The study was fielded Jan 8-Feb 5 2026.\n\nFor BofA 2024: \"The 2024 Bank of America Private Bank Study of Wealthy Americans (published June 18, 2024) ...\"\n\nNeed \"Every claim states what a cited item says, a figure code computed...\". OK.\n\nNeed not write \"Why it might matter\" since no time window. Good.\n\nNeed include part_id for each claim: a1.all etc. For claims with part_id the aspect id? Wait schema part_id enum includes \"a1.all\"... and a1...a6 and \"\". The instruction: \"A fact cell is a claim ... Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\" The cell id is \"a1.all\", so part_id = \"a1.all\". Yes.\n\nNow need write answer in JSON tool. Need fill answerable true, behavior \"answer\", claims array, adjacent array empty, gaps array empty.\n\nNeed ensure chunk_ids only from allowed list and match each item. Let's map.\n\na1 item1: chunk_ids [\"UBS-NEXTGEN-2026#83\"].\nitem2: same.\nitem3: same.\nitem5 Cerulli #23.\nitem6 Cerulli #1.\nitem7 Fidelity #0.\n\na2:\nitem1 #78\nitem2 #81\nitem3 #45\nitem4 #11\nitem5 #8\nitem6 #5\n\na3:\nitem1 #5,#14\nitem2 #5,#14\nitem3 #84\nitem4 #23\n\na4:\nitem1 #84\nitem2 #83\nitem3 #76\nitem4 #81\nitem5 #81\n\na5:\nitem3 #37\nitem4 #30\nitem5 #15\n\na6:\nitem1 #17\nitem2 #5,#14\nitem3 #12\nitem4 #0\nitem5 #60\nitem6 #2\nitem7 #83\n\nNow write claims. Need careful with quote not verbatim items: a3 item2, a5 item4, a5 item5, a6 item3, a6 item4. Do not put in quotation marks. Paraphrase. For others we can quote exact words. But is it required to quote? Not necessarily. The instruction: \"Every claim states what a cited item says...\" We can include quoted fragments to support. For items with quote field, it's good to include quote exactly as shown. But the quote field may have typo \"Twothirds\" (should we use verbatim \"Two-thirds\"? The quote line says \"Twothirds (67%) say...\" This is \"quote not verbatim\"? No, a4 item1 not marked not verbatim. It says quote \"Twothirds (67%) say a strong personal connection with their advisor is important.\" That's verbatim as shown, but \"Twothirds\" is a typo in source? It says use verbatim. Hmm the instruction says quotes exactly as shown. So if I quote, use \"Two-thirds\" maybe better paraphrase. Actually to avoid quoting awkward source, I can paraphrase all without quotation marks. Is that allowed? The rule about quote not verbatim only says never put in quotation marks when marked. It doesn't require quoting otherwise. But \"standard wording\" and evidence: perhaps include quotes to be precise. We can include short quotes. But for \"quote not verbatim\" must paraphrase.\n\nLet's craft claims:\n\na1:\n1. \"UBS: UBS's research report (published April 22, 2026) reports that when choosing a wealth manager, experience and expertise sit at the top of the next generation's wish list, at 79%.\" Add quote? Could include: ... reports that \"experience and expertise sit at the top of the next generation's wish list (79%).\" The quote line shows (79%). Use verbatim exactly: \"When choosing a wealth manager, experience and expertise sit at the top of the next generation's wish list (79%).\" I'll include that. chunk #83.\n\n2. \"UBS: The same UBS research report (published April 22, 2026) reports that 41% of next-generation respondents value a wealth manager's ability to fully understand the next generation's needs.\" quote maybe \"ability to fully understand the next generation's needs (41%)\". The quote line: \"Another plus point for advisors is their ability to fully understand the next generation's needs (41%).\" I'll paraphrase with quote fragment? I can include exact sentence. Fine.\n\n3. \"UBS: The same UBS research report (published April 22, 2026) reports that priorities vary by gender among next-generation respondents: women emphasize wealth managers' experience (90%), frequent engagement (35%), and early commitment to the next generation (40%), while men are more likely to prioritize advisors with a deep understanding of their financial goals (49%).\" Include quote exact: \"Women emphasize wealth managers' experience (90%), frequent engagement (35%), and early commitment to the next generation (40%). Men are more likely to prioritize advisors with a deep understanding of their financial goals (49%).\"\n\n5. Cerulli: \"Cerulli: Cerulli's research (published October 29, 2025) reports that younger investors typically are more comfortable directing their own investing through online brokerages, so financial advisors looking to connect with these prospective clients must be able to articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.\"\n\n6. Cerulli: \"Cerulli: Cerulli's research (published October 29, 2025) reports that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.\"\n\n7. Fidelity: \"Fidelity: Fidelity's 2025 Investor Insights Study (published October 9, 2025) finds wealthy next-generation households are reshaping the advisor-client relationship with a focus on holistic financial planning, life goal achievement, and non-traditional investment strategies.\"\n\na2:\n1. \"UBS: UBS's research report (published April 22, 2026) finds the next generation rarely relies on a single source of guidance for succession planning; peer insights are most popular (27%), just ahead of wealth managers (21%), with tax advisors (16%), lawyers (14%), and family officers (13%) ranking roughly even.\"\n\n2. \"UBS: UBS's research report (published April 22, 2026) finds younger adults (22 to 25 years) rely most on peers (57%) for succession-planning advice, while older respondents turn increasingly to formal legal advice.\"\n\n3. \"FINRA: FINRA investor research (published December 4, 2025) finds investors under 35 are somewhat less likely than older investors to rely on financial professionals and much more likely to use information from friends, family and colleagues; word of mouth from friends/family/colleagues is the most frequently mentioned source of investment information, used by 85% of investors under 35.\"\n\n4. \"Schwab: On Schwab's Q3 2025 earnings call (period ended September 30, 2025; transcript published October 16, 2025), the CEO stated that Gen Z learn about finances primarily through social media and family, and that Schwab meets them in the channels where they turn for information about investing.\"\n\n5. \"Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds the most-planned resource for finding a financial advisor is referrals from friends or family (62%), with search engines such as Google or Bing next (49.8%).\"\n\n6. \"Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds 25% plan to use AI tools like ChatGPT to start their advisor search; about one-third (32%) will use online advisor directories; social media platforms influence about 22%; and educational events (online webinars 19%, in-person seminars 18%) also play a role.\"\n\na3:\n1. \"Bank of America Private Bank: Bank of America Private Bank's 2026 Study of Wealthy Americans (published June 17, 2026) finds 65% of younger investors still prefer to receive investment advice from a human advisor; the study defines younger investors as Gen Z and Millennials, ages 21 to 45.\" Include quote? quote \"sixty five percent 65% still prefer...\" We can quote exact maybe \"still prefer to receive investment advice from a human advisor.\" But to avoid \"sixty five percent\" awkward, paraphrase. Fine.\n\n2. \"Bank of America Private Bank: The same 2026 study finds 47% of young investors use AI to research companies or markets and 87% are comfortable with advisors using AI to help manage portfolios.\" (no quotes)\n\n3. \"UBS: UBS's research report (published April 22, 2026) finds most next-generation respondents favor a blended approach to communicating (83%), combining digital convenience with in-person interaction.\"\n\n4. \"Cerulli: Cerulli's research (published October 29, 2025) reports younger investors typically are more comfortable directing their own investing through online brokerages.\"\n\na4:\n1. \"UBS: UBS's research report (published April 22, 2026) finds two-thirds (67%) of next-generation respondents say a strong personal connection with their advisor is important.\"\n\n2. \"UBS: UBS's research report (published April 22, 2026) finds more than half (56%) of next-generation respondents want advisors who can build trusted relationships across generations.\"\n\n3. \"UBS: UBS's research report (published April 22, 2026) finds the next generation want advisors with not just technical know-how, but the ability to build rapport with the family and communicate clearly with every generation.\"\n\n4. \"UBS: UBS's research report (published April 22, 2026) finds continuity is important in succession planning: 41% of next-generation respondents prefer to work with their family's existing bank, while 31% want a new provider and 29% are open to switching.\"\n\n5. \"UBS: UBS's research report (published April 22, 2026) quotes a next-generation portfolio manager saying good partners aren't easy to find, and when they find someone committed and trustworthy they want to work with them for the long term.\"\n\na5:\n3. \"Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds nearly half of participants (48%) said pricing and overall anticipated costs are among the top three factors leading them to choose one advisor over another.\"\n\n4. \"Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds that before contacting an advisor, 62% of people want to know the advisor's fee structure first, alongside areas of specialization (64%).\" no quotes.\n\n5. \"Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds fee transparency tops the trust list: 73% of participants said transparency in fees and services is crucial for establishing an advisor's credibility.\" no quotes.\n\na6:\n1. \"Bank of America Private Bank: Bank of America Private Bank's 2026 Study of Wealthy Americans was an online survey by Escalent among 1,431 wealthy U.S. individuals aged 21 or older with at least $3 million in investable assets (excluding primary residence), fielded January 8 to February 5, 2026.\" (published June 17, 2026). cite #17.\n2. \"Bank of America Private Bank: The 2026 Bank of America Private Bank Study of Wealthy Americans finds 65% of younger investors still prefer to receive investment advice from a human advisor, 47% use AI to research companies or markets, and 87% are comfortable with advisors using AI.\" cite #5,#14.\n3. \"Bank of America Private Bank: The 2024 Bank of America Private Bank Study of Wealthy Americans was an online survey by Escalent among 1,007 HNW U.S. respondents aged at least 21 with at least $3 million in investable assets (excluding primary residence), with a margin of error of +/-3% at 95% confidence.\" cite #12. no quotes.\n4. \"Fidelity: Fidelity's 2025 Investor Insights Study compares the evolving preferences and expectations of wealthy next-generation households with those of baby boomers.\" cite #0. no quotes.\n5. \"Wealthtender: The Wealthtender 2025 study surveyed 500 U.S. adults with household incomes over $100,000, selected from 1,557 screened individuals ages 35-64, focused on those who don't have a financial advisor or are considering a change and anticipate hiring an advisor within five years.\" cite #60.\n6. \"Wealthtender: Wealthtender's 2025 study key takeaways include: 97% plan to interview multiple advisors and 96% will do further research online before hiring; 83% research the advisor's reputation via online reviews and awards; the two most important pre-contact pieces of information are areas of specialization (64%) and fee/pricing structure (62%).\" cite #2.\n7. \"UBS: UBS's research report on what the next generation looks for in a wealth manager (published April 22, 2026) finds experience and expertise top the next generation's wish list (79%), with 56% wanting advisors who build trusted relationships across generations.\" cite #83.\n\nNeed be mindful of \"Every claim states ... the periods an item has\" - I include published dates. Good.\n\nDo we need to add quotes verbatim? It's optional. But \"quote not verbatim\" never in quotation marks. I have no quotes. Good. But the instruction says for fact cell quote line? It doesn't demand quotes. Fine.\n\nWait: \"Attribute strategy, priorities and intent to the firm or its management in their own words. Use each firm's own terms.\" We are stating reports, fine.\n\nPotential issue: The prompt says \"code has already decided the behavior; write the answer for it.\" We must call submit_answer with the evidence. We shouldn't answer in plain text. So final should be a tool call.\n\nNeed ensure schema: claims items require text, chunk_ids, part_id. adjacent and gaps empty arrays.\n\nLet's double-check chunk_ids allowed list includes all: yes.\n\nPotential nuance: a1 item 5 scope \"younger investors\" - not necessarily under 40? We state as source says \"younger investors.\" Fine. a2 item 5 scope \"survey respondents ages 35-64\" \u2014 that's not \"under 40\" fully; includes ages 35-64. The instruction \"A fact cell is a claim ... say what it covers (period, scope, sample).\" We must state scope accurately. I did \"respondents ages 35-64\". Good, because the asked group under 40 is partly covered but scope is broader. We should say what it covers. Good.\n\nSimilarly Wealthtender items a5 are ages 35-64. I mention scope. Good.\n\na6 item 5 says ages 35-64. I state.\n\nNeed possibly note FINRA \"investors under 35\" vs clients under 40 - source says under 35; we state under 35. Fine.\n\nNeed \"When a cell is partial... say what it covers\" - done.\n\nNeed \"Cell marked 'adjacent only'... never in claims\" none.\n\nNow, question has no comparison aspects? All aspects are fact. No comparison aspects marked. So no comparison claims needed.\n\nOne thing: aspect a6 is \"Survey, study, and research evidence on how clients under 40 choose financial advisors\" - item 3 is 2024 BofA study methodology; item 4 Fidelity; all fact. Fine.\n\nLet's consider \"Several firms: aspect by aspect in the order listed, firms in the order listed\". For a1 items are UBS, UBS, UBS, Cerulli, Cerulli, Fidelity. Good. a2 UBS, UBS, FINRA, Schwab, Wealthtender, Wealthtender. a3 BofA, BofA, UBS, Cerulli. a4 UBS all. a5 Wealthtender all. a6 BofA, BofA, BofA, Fidelity, Wealthtender, Wealthtender, UBS.\n\nNow should we include \"firms in the order listed\" meaning across answer? The aspect order defines order; within each aspect items as listed. Fine.\n\nLet's craft final JSON. Need part_id strings exactly \"a1.all\" etc.\n\nLet's write each claim text with \"Firm: \" prefix. Ensure no stray quotes around not-verbatim. Use no quotes at all, safe.\n\nDouble-check a4 item 1 quote \"Twothirds (67%) say a strong personal connection with their advisor is important.\" My paraphrase \"two-thirds (67%)\" fine, not quoting.\n\nNeed maybe include published date for each. For Fidelity a6 item4 and a1 item7 same #0. fine.\n\nLet's now produce submit_answer.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) reports that when choosing a wealth manager, experience and expertise sit at the top of the next generation's wish list, at 79%.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "UBS: The same UBS research report (published April 22, 2026) reports that 41% of next-generation respondents value a wealth manager's ability to fully understand the next generation's needs.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "UBS: The same UBS research report (published April 22, 2026) reports priorities vary by gender among next-generation respondents: women emphasize wealth managers' experience (90%), frequent engagement (35%), and early commitment to the next generation (40%), while men are more likely to prioritize advisors with a deep understanding of their financial goals (49%).",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli: Cerulli's research (published October 29, 2025) reports that younger investors typically are more comfortable directing their own investing through online brokerages, so financial advisors looking to connect with these prospective clients must be able to articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli: Cerulli's research (published October 29, 2025) reports that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#1"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Fidelity: Fidelity's 2025 Investor Insights Study (published October 9, 2025) finds wealthy next-generation households are reshaping the advisor-client relationship with a focus on holistic financial planning, life goal achievement, and non-traditional investment strategies.",
+        "chunk_ids": [
+          "FIDELITY-III-2025#0"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds the next generation rarely relies on a single source of guidance for succession planning; peer insights are most popular (27%), just ahead of wealth managers (21%), with tax advisors (16%), lawyers (14%), and family officers (13%) ranking roughly even.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#78"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds younger adults (22 to 25 years) rely most on peers (57%) for succession-planning advice, while older respondents turn increasingly to formal legal advice.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#81"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "FINRA: FINRA investor research (published December 4, 2025) finds investors under 35 are somewhat less likely than older investors to rely on financial professionals and much more likely to use information from friends, family and colleagues; word of mouth from friends/family/colleagues is the most frequently mentioned source of investment information, used by 85% of investors under 35.",
+        "chunk_ids": [
+          "FINRAF-INVESTORS-2025#45"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Schwab: On Schwab's Q3 2025 earnings call (period ended September 30, 2025; transcript published October 16, 2025), the CEO stated that Gen Z learn about finances primarily through social media and family, and that Schwab meets them in the channels where they turn for information about investing.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds the most-planned resource for finding a financial advisor is referrals from friends or family (62%), with search engines such as Google or Bing next (49.8%).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#8"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds 25% plan to use AI tools like ChatGPT to start their advisor search; about one-third (32%) will use online advisor directories; social media platforms influence about 22%; and educational events (online webinars 19%, in-person seminars 18%) also play a role.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#5"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Bank of America Private Bank: Bank of America Private Bank's 2026 Study of Wealthy Americans (published June 17, 2026) finds 65% of younger investors still prefer to receive investment advice from a human advisor; the study defines younger investors as Gen Z and Millennials, ages 21 to 45.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5",
+          "BOFA-PB-STUDY-2026#14"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Bank of America Private Bank: The same 2026 study finds 47% of young investors use AI to research companies or markets and 87% are comfortable with advisors using AI to help manage portfolios.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5",
+          "BOFA-PB-STUDY-2026#14"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds most next-generation respondents favor a blended approach to communicating (83%), combining digital convenience with in-person interaction.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#84"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Cerulli: Cerulli's research (published October 29, 2025) reports younger investors typically are more comfortable directing their own investing through online brokerages.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds two-thirds (67%) of next-generation respondents say a strong personal connection with their advisor is important.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#84"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds more than half (56%) of next-generation respondents want advisors who can build trusted relationships across generations.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds the next generation want advisors with not just technical know-how, but the ability to build rapport with the family and communicate clearly with every generation.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#76"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) finds continuity is important in succession planning: 41% of next-generation respondents prefer to work with their family's existing bank, while 31% want a new provider and 29% are open to switching.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#81"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "UBS: UBS's research report (published April 22, 2026) quotes a next-generation portfolio manager saying good partners aren't easy to find, and when they find someone committed and trustworthy they want to work with them for the long term.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#81"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds nearly half of participants (48%) said pricing and overall anticipated costs are among the top three factors leading them to choose one advisor over another.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds that before contacting an advisor, 62% of people want to know the advisor's fee structure first, alongside areas of specialization (64%).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#30"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's survey (published August 13, 2025; 2025 survey of respondents ages 35-64) finds fee transparency tops the trust list: 73% of participants said transparency in fees and services is crucial for establishing an advisor's credibility.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Bank of America Private Bank: Bank of America Private Bank's 2026 Study of Wealthy Americans (published June 17, 2026) was an online survey by Escalent among 1,431 wealthy U.S. individuals aged 21 or older with at least $3 million in investable assets (excluding primary residence), fielded January 8 to February 5, 2026.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#17"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Bank of America Private Bank: The 2026 Bank of America Private Bank Study of Wealthy Americans finds 65% of younger investors still prefer to receive investment advice from a human advisor, 47% use AI to research companies or markets, and 87% are comfortable with advisors using AI.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5",
+          "BOFA-PB-STUDY-2026#14"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Bank of America Private Bank: The 2024 Bank of America Private Bank Study of Wealthy Americans (published June 18, 2024) was an online survey by Escalent among 1,007 HNW U.S. respondents aged at least 21 with at least $3 million in investable assets (excluding primary residence), with a margin of error of +/-3% at 95% confidence.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2024#12"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Fidelity: Fidelity's 2025 Investor Insights Study (published October 9, 2025) compares the evolving preferences and expectations of wealthy next-generation households with those of baby boomers.",
+        "chunk_ids": [
+          "FIDELITY-III-2025#0"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Wealthtender: The Wealthtender 2025 study (published August 13, 2025) surveyed 500 U.S. adults with household incomes over $100,000, selected from 1,557 screened individuals ages 35-64, focused on those who don't have a financial advisor or are considering a change and anticipate hiring an advisor within five years.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#60"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Wealthtender: Wealthtender's 2025 study key takeaways include: 97% plan to interview multiple advisors and 96% will do further research online before hiring; 83% research the advisor's reputation via online reviews and awards; the two most important pre-contact pieces of information are areas of specialization (64%) and fee/pricing structure (62%).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#2"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "UBS: UBS's research report on what the next generation looks for in a wealth manager (published April 22, 2026) finds experience and expertise top the next generation's wish list (79%), with 56% wanting advisors who build trusted relationships across generations.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a6.all"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

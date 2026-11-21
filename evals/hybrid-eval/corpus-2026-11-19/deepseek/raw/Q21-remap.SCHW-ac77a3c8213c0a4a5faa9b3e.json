@@ -1,0 +1,95 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a1.SCHW",
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "SCHW-10Q-2025Q2#85",
+    "SCHW-TR-2026Q3#4",
+    "SCHW-10K-2025#216",
+    "SCHW-DECK-2026-investor-day#172",
+    "SCHW-PR-2026-04-16-01#0",
+    "SCHW-10Q-2025Q3#97",
+    "SCHW-TR-2026Q2#18",
+    "SCHW-10K-2025#141",
+    "SCHW-DECK-2026Q3#28",
+    "SCHW-10Q-2026Q2#100",
+    "SCHW-TR-2026Q1#11",
+    "SCHW-10K-2025#134",
+    "SCHW-DECK-2026Q1#20",
+    "SCHW-10Q-2026Q1#72",
+    "SCHW-TR-2024Q4#31",
+    "SCHW-DECK-2026-investor-day#17",
+    "SCHW-10Q-2026Q2#300",
+    "SCHW-DECK-2026Q3#27",
+    "SCHW-10Q-2026Q1#142",
+    "SCHW-10Q-2026Q2#185",
+    "SCHW-10Q-2026Q1#143",
+    "SCHW-10Q-2025Q2#2",
+    "SCHW-10Q-2025Q3#120",
+    "SCHW-TRADE-2026-08-26-WM-01#1",
+    "SCHW-TRADE-2026-10-28-WM-02#1",
+    "SCHW-TRADE-2026-10-15-RB-01#3",
+    "SCHW-TR-2025Q4#62",
+    "SCHW-10K-2025#326",
+    "SCHW-10Q-2025Q2#49",
+    "SCHW-TR-2025Q3#71",
+    "SCHW-10K-2025#38",
+    "SCHW-TR-2025Q1#45",
+    "SCHW-TR-2025Q1#46",
+    "SCHW-TR-2025Q4#30",
+    "SCHW-TR-2025Q4#24",
+    "SCHW-TRADE-2026-10-30-WM-01#2"
+  ],
+  "at": "2026-11-20T22:59:23.932501-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10746,
+    "output_tokens": 462,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 9082,
+    "reasoning_tokens": 280,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 5.89,
+  "tokens_per_s": 78.44,
+  "reasoning_content": "We need answer with submit_extraction tool. Need process two sub-questions for SCHW. Need determine labels based on passages.\n\nWe need extract facts about generational wealth transfer size and timeframe for SCHW from provided passages. Looking at passages, I see none about generational wealth transfer. They mostly discuss interest rate risk, client assets, NNA, AI, acquisitions, etc. Need be careful: maybe \"generational wealth transfer\" appears nowhere. So both likely not_found.\n\nLet me scan passages for relevant terms. a1 passages: no generational wealth transfer. a2 passages: no generational wealth transfer timeframe. So not_found for both.\n\nNeed produce cells with empty items, differs_because \"\", reason, derivation operation \"\" inputs empty. Label not_found.\n\nFor not_found, items must be empty array? Schema items required array; can be empty. derivation required object with operation \"\", inputs []. reason one sentence.\n\nLet's ensure subquestion ids exact a1.SCHW, a2.SCHW. \n\nFor each cell:\n- label: not_found\n- items: []\n- differs_because: \"\"\n- reason: \"The passages say nothing about the estimated size and scale of the generational wealth transfer.\" etc.\n- derivation: {operation:\"\", inputs:[]}\n\nNeed call submit_extraction once with cells array.\n\nLet's craft carefully.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the provided passages state the estimated size or scale of the generational wealth transfer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the provided passages state the timeframe or horizon over which the generational wealth transfer is expected to occur.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

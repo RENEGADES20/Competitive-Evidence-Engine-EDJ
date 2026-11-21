@@ -1,0 +1,57 @@
+{
+  "question_id": "Q13",
+  "question": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.MS",
+  "round": 2,
+  "entity": "MS",
+  "cells": [
+    "a1.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "MS-10K-2025#786",
+    "MS-10Q-2026Q1#209",
+    "MS-SUPP-2025Q4#35",
+    "MS-10K-2025#802",
+    "MS-10Q-2025Q3#16",
+    "MS-DECK-2026-strategic-update#7",
+    "MS-10K-2025#167",
+    "MS-10Q-2025Q2#226",
+    "MS-TRADE-2026-10-26-IN-01#4",
+    "MS-TRADE-2026-08-26-RB-01#1"
+  ],
+  "at": "2026-11-20T21:45:08.534485-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4580,
+    "output_tokens": 764,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 2916,
+    "reasoning_tokens": 638,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 8.41,
+  "tokens_per_s": 90.84,
+  "reasoning_content": "We need answer: extract evidence for one firm MS, sub-question a1.MS [fact]: How the firm converts workplace retirement plan participants into wealth management clients.\n\nWe need review passages. Most passages don't directly describe conversion mechanism. Need determine label: fact, different_quantity, not_disclosed, not_found. The sub-question asks \"How the firm converts workplace retirement plan participants into wealth management clients.\" It's marked [fact] but that's about how, not a quantity. We need extract facts from passages about how firm converts workplace retirement plan participants into wealth management clients. Passages provided: mostly 10-K compensation, Wealth Management channels including Workplace, definitions, etc. None describe a conversion mechanism. Maybe not_found. But let's carefully inspect each passage for any statements.\n\nSub-question id a1.MS only. Need return exactly one cell. We must decide label.\n\nPassages:\n\nMS-10K-2025#786: about PSUs, deferred cash comp, no workplace retirement participants.\n\nMS-10Q-2026Q1#209: describes Wealth Management supports clients through three channels: Advisor-Led, Self-Directed and Workplace. Workplace services including stock plan administration, retirement plan services. Doesn't say how participants converted into wealth management clients.\n\nMS-SUPP-2025Q4#35: client assets definition includes workplace services including stock plan administration and retirement plan services. No conversion.\n\nMS-10K-2025#802: 401(k) plan for U.S. employees, matching. This is about employees' own retirement plan, not workplace retirement plan participants/customers converting. Could be different quantity? It describes the firm's 401(k) for its own employees, not workplace plan participants converting to wealth management clients. Not asked.\n\nMS-10Q-2025Q3#16: IM description, no.\n\nMS-DECK-2026-strategic-update#7: mentions E*TRADE, Workplace, Financial Advisors integrated firm. No conversion.\n\nMS-10K-2025#167: Wealth Management segment: fee-based asset flows, self-directed channel assets/households, DARTs. No conversion.\n\nMS-10Q-2025Q2#226: IM, no.\n\nMS-TRADE-2026-10-26-IN-01#4: retention bonuses for advisors, no.\n\nMS-TRADE-2026-08-26-RB-01#1: Forbes ratings scandal, no.\n\nThus no passage states how Morgan Stanley converts workplace retirement plan participants into wealth management clients. Label not_found.\n\nBut note sub-question [fact]: maybe they expect fact or different_quantity. The instructions: not_found: passages say nothing about it. Yes.\n\nNeed call submit_extraction with one cell. For not_found, items empty, differs_because \"\", reason, derivation operation \"\" inputs empty. Let's craft.\n\nNeed ensure schema: label enum includes fact, not_disclosed, not_found, different_quantity. items array empty for not_found. reason one short sentence.\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MS",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states how Morgan Stanley converts workplace retirement plan participants into wealth management clients; the passages only describe Wealth Management's Workplace channel and related definitions without a conversion mechanism.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

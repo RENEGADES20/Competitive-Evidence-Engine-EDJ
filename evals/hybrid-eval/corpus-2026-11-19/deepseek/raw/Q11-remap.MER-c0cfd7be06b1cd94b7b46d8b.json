@@ -1,0 +1,53 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "BAC-SUPP-2026Q3#51",
+    "BAC-10Q-2025Q3#92",
+    "BAC-10K-2025#244",
+    "BAC-SUPP-2025Q4#53",
+    "BAC-10Q-2026Q2#87",
+    "BAC-SUPP-2026Q2#52"
+  ],
+  "at": "2026-11-20T21:30:01.928768-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4360,
+    "output_tokens": 371,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 3080,
+    "reasoning_tokens": 244,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 4.64,
+  "tokens_per_s": 79.96,
+  "reasoning_content": "The user wants me to extract evidence about Merrill (MER) for sub-question a4.MER: \"What each firm's advisor headcount definition excludes.\"\n\nI need to look at the passages provided. All passages are about BAC GWIM segment financial results - they show revenue, net income, balance sheet items, but none of them discuss advisor headcount or its definition/exclusions.\n\nLet me check each passage:\n- BAC-SUPP-2026Q3#51: financial table, no advisor headcount\n- BAC-10Q-2025Q3#92: deposits, allocated capital, period end - no advisor headcount\n- BAC-10K-2025#244: financial results - no advisor headcount\n- BAC-SUPP-2025Q4#53: financial results - no advisor headcount\n- BAC-10Q-2026Q2#87: balance sheet - no advisor headcount\n- BAC-SUPP-2026Q2#52: financial results - no advisor headcount\n\nNone say anything about advisor headcount definition or what it excludes. So the label should be not_found.\n\nNo items, no derivation, reason explaining why.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages contain only GWIM segment financial results (revenue, net income, balance sheet items) and say nothing about advisor headcount or what the definition excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
