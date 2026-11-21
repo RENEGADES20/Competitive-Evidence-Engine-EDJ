@@ -49,7 +49,7 @@ class Settings:
     deepseek_effort_reduce: str = "high"
     deepseek_model_map: str = ""
     deepseek_stream: str = "on"
-    map_call_tokens: int = 40000
+    map_call_tokens: int = 60000
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -77,9 +77,10 @@ def deepseek_thinking() -> bool:
 # lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
 SUBQUESTION_TOKENS_DEFAULT = 40000
 MAP_CONCURRENCY_DEFAULT = 24  # #272: one call per firm x aspect cell (was 6: five firms + research, #246)
-# #272: the input ceiling of one map call; a cell over it is split into batches. 40000 = SUBQUESTION_TOKENS, so
-# a cell's normal retrieval budget fits one call.
-MAP_CALL_TOKENS_DEFAULT = 40000
+# #272: the input ceiling of one map call; a cell over it is split into batches. 60000 = SUBQUESTION_TOKENS (40000)
+# plus room for the prompt, schema and pool passages listed for a sibling, so a normal cell is one call
+# (at 40000 the mock run with the #250 plans batched Q17's whole-corpus cells, 2026-11-21).
+MAP_CALL_TOKENS_DEFAULT = 60000
 # #272: DeepSeek effort per stage. Interim default high (the API's default, now sent explicitly) until test A.
 EFFORTS = ("off", "low", "high", "max")
 EFFORT_DEFAULTS = {"plan": "high", "map": "high", "reduce": "high"}

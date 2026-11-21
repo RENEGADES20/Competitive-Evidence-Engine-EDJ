@@ -10,6 +10,11 @@ built".
 
 ## Sub-features
 
+- `progressive` (#272): while the answer is built, the page shows the plan first ("Plan: Decomposing the
+  question ..."), then "Evidence so far" with one card per cited item of each map call as it lands
+  ("EVIDENCE - <firm> - <aspect>", with the citation chip of a retrieved passage), and the answer last.
+  Each card cites a chunk the map's code check kept (inside the cell's retrieved set), so rule 1 holds.
+
 - `progress-early`: the progress bar and the first step line appear before the answer.
 - `progress-facts`: the search line's passage count equals the footer's chunk count; the
   synthesize line reads "Synthesizing the answer from the evidence matrix (<provider>, one call)";
@@ -40,7 +45,12 @@ built".
 
 Preconditions: baseline.
 
-- **Early.** Ask the answerable question. As soon as "Synthesizing the answer" shows, the progress
+- **Plan first (#272).** Ask the answerable question. As soon as "Plan:" shows, the plan line reads
+  "Plan: Decomposing the question ..." and neither "Evidence so far" nor the meta line "LLM called:" is
+  on the page (screenshot).
+- **Evidence next (#272).** Once "Evidence so far" shows, at least one "EVIDENCE - Edward Jones" card with
+  a citation chip is there and "LLM called:" is not (screenshot); the answer follows.
+- **Early.** Still on the answerable question. As soon as "Synthesizing the answer" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).
 - **Collapsed.** A status box labelled "How this answer was built: 9 steps ..." is present
@@ -71,7 +81,7 @@ Preconditions: baseline.
 - The mock answers in milliseconds, and Streamlit merges a bar that is shown and removed
   within one update, so the bar would never be drawn. The verify app sets `MOCK_DELAY_S=1.5`:
   the mock map (`mock_extract`) and the mock reduce (`mock_reduce`) each wait that long, like a model
-  would. The answerable question takes map.EDJ -> behavior answer -> the reduce call, so the page is
+  would. The answerable question takes map.a1.EDJ (#272: one call per cell) -> behavior answer -> the reduce call, so the page is
   caught while "Synthesizing the answer" runs. Without the delay, do not expect to see the bar.
 - Streamlit renders `st.status` as an expander; open it by clicking its label.
 - `llm_calls` and `cost` count paid provider calls: on the mock they read 0 although the synthesize

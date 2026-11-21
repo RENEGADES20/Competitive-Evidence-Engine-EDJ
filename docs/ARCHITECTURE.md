@@ -60,14 +60,14 @@ W11 flow (ADR-021; the stages of `cee.ask`, shown live in the Ask page's progres
 | resolve | code | firms, segments, time window from aliases | `retrieve/fts.py` `resolve`, `config/entities.yaml` |
 | decompose | AI + code | the planner names aspects (one call); code expands firms x aspects into sub-questions | `retrieve/planner.py` |
 | search | code | each sub-question searched with entity, segment and time as SQL filters; full-text on `main`, hybrid on `exp/hybrid` | `retrieve/fts.py` `search` |
-| extract | AI | one call per firm, strict schema: fact / not_disclosed / not_found / different_quantity; code rejects ids outside the cell's retrieved set and flags quotes and figures not in the cited passage | `answer/extract.py` |
+| extract | AI | one call per firm x aspect cell (#272; batches above `MAP_CALL_TOKENS`), strict schema: fact / not_disclosed / not_found / different_quantity; code rejects ids outside the cell's retrieved set and flags quotes and figures not in the cited passage | `answer/extract.py` |
 | research | code + AI | one corrective re-search for `not_found` cells (wider words, used chunks excluded, same filters), then re-extraction | `answer/extract.py` `run_map` |
 | matrix | code | behavior, metric definitions, what may be computed, caveats, gaps | `answer/matrix.py`, `config/metric_definitions.yaml` |
 | synthesize | AI or code | one reduce call writes the answer from the matrix only; refuse, forecast requests, an undecided matrix or nothing to cite are written by code with no call | `answer/reduce.py` |
 | check, caveats | code | citations only to retrieved chunk IDs (flagged, never dropped), number and date checks, caveats and gaps inserted | `answer/validate.py`, `answer/reduce.py` |
 | log | code | the query, plan, every call with tokens and cost | `query_log`, `answer/cost.py` |
 
-The number of model calls follows the question: one planner call, one extraction call per firm,
+The number of model calls follows the question: one planner call, one extraction call per firm x aspect cell (#272),
 re-extractions for re-searched cells, and at most one reduce call. `MAP=off` keeps the legacy
 single answer call. With nothing retrieved the gap answer is built by code with no call.
 
