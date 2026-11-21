@@ -1,0 +1,136 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "What's new on Raymond James in the last 90 days?",
+    "entities": [
+      "RJF"
+    ],
+    "unmapped": [],
+    "themes": [],
+    "mode": "entity",
+    "window": [
+      "2026-08-19",
+      "2026-11-17"
+    ],
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false
+  },
+  "at": "2026-11-20T00:11:22.763159",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1404,
+    "output_tokens": 3424,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 124,
+    "reasoning_tokens": 2805,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 40.27,
+  "tokens_per_s": 85.03,
+  "reasoning_content": "The user asks: \"What's new on Raymond James in the last 90 days?\" with a single firm RJF, time window 2026-08-19 to 2026-11-17.\n\nI need to create a search plan listing aspects. The question is broad: \"What's new on Raymond James in the last 90 days?\" This is a recency question. The question asks what's new \u2014 recent developments, news, announcements. Since it's a single firm, all aspects are for RJF.\n\nI need to break down \"what's new\" into aspects. The question doesn't name specific asks. But per instructions, I should list aspects the question asks. \"What's new\" is a general recency ask. But the instructions say to list every aspect the question asks, including what it asks without naming it. However, this is very open-ended.\n\nLet me think. The question is essentially a recency/sentiment query: what are recent developments at Raymond James. The aspects should cover categories of \"new\" things: acquisitions/M&A, leadership/executive changes, strategic initiatives, product/offering launches, regulatory/legal, financial results, advisor headcount, net new assets, etc.\n\nBut I should be careful not to over-add aspects the question doesn't ask. The question asks \"what's new\" \u2014 which is broad. I think the plan should list aspects covering typical new developments: strategic moves, acquisitions, personnel/leadership, new offerings, financial performance, regulatory matters.\n\nActually, let me reconsider. The instruction says \"A question with twelve asks has twelve aspects. Do not add an aspect the question does not ask.\" Here \"what's new\" is one broad ask. But to search effectively, I need aspects. The example about \"What is Firm X's plan for its retirement-plan unit?\" shows breaking into sub-asks: how management describes the unit, priorities, competition, losing ground.\n\nFor \"What's new on Raymond James in the last 90 days?\" \u2014 this is a recency question asking for recent news/developments. I should list aspects representing dimensions of \"new\": \n- recent strategic developments/announcements\n- acquisitions, divestitures, partnerships\n- executive/leadership changes\n- new products, services, platform changes\n- financial results and guidance updates\n- regulatory, legal, compliance news\n- advisor recruiting/headcount changes\n- client asset flows (net new assets)\n\nSince the question is a single recency question, kind should be \"recency\" for most.\n\nHmm, but I need to be judicious. The question literally asks \"What's new on Raymond James in the last 90 days?\" The aspects are the things one would report as \"new\": announcements, developments, changes. Let me structure into a few aspects that capture \"what's new.\"\n\nGiven the open-endedness, I'll produce a reasonable set of aspects, all with kind recency (since the question is about what's new within the time window), firms [RJF] for all (since the question is only about Raymond James).\n\nLet me think about search words for each aspect.\n\nAspect 1: Recent company announcements and strategic developments. Keywords: announcement, announced, strategic initiative, new, launch, partnership, agreement, deal, expansion.\n\nAspect 2: Acquisitions, mergers, divestitures. Keywords: acquisition, acquire, merger, divestiture, divest, sale, buy, transaction, deal, purchase.\n\nAspect 3: Executive and leadership changes. Keywords: appointed, appointment, named, CEO, president, chief, executive, leadership, hire, hired, departure, resignation, retire.\n\nAspect 4: New products, services, and platform changes. Keywords: launch, launched, new offering, product, service, platform, rollout, introduced, enhanced, digital, technology.\n\nAspect 5: Financial results and guidance. Keywords: earnings, quarterly results, revenue, net income, earnings per share, guidance, outlook, fiscal quarter, record.\n\nAspect 6: Regulatory, legal, and compliance matters. Keywords: regulatory, investigation, lawsuit, litigation, settlement, fine, SEC, FINRA, consent order, enforcement.\n\nAspect 7: Advisor headcount changes. Keywords: advisor headcount, financial advisors, recruited, recruiting, retention, net new advisors, hiring.\n\nAspect 8: Client asset flows / net new assets. Keywords: net new assets, client assets, assets under administration, inflows, outflows, organic growth.\n\nThese are reasonable. But should I include advisor_headcount and net_new_assets metrics? Those are registered metrics. The question \"what's new\" might include those figures, but they're not explicitly asked. However, they are key disclosures in the wealth management space and \"what's new\" would include them. I think including advisor headcount and net new assets as aspects is reasonable since they're typical \"new\" disclosures. But I should mark metric only when the aspect asks for exactly that metric. If I include an aspect \"advisor headcount changes\" asking for that figure, metric = advisor_headcount. Similarly net new assets metric = net_new_assets.\n\nActually, let me reconsider the whole approach. The instruction: \"Do not add an aspect the question does not ask.\" The question \"What's new on Raymond James in the last 90 days?\" doesn't specifically ask for advisor headcount or net new assets. But it's asking for news, which would include these. Hmm.\n\nThe example: \"a figure that may not be disclosed also asks for the closest figure that is disclosed, as its own aspect, marked proxy\". This applies to specific figure asks.\n\nI think for a broad \"what's new\" question, the plan should include aspects that capture the types of news that would be found. The aspects are: strategic announcements, M&A, leadership changes, product/service launches, financial results, regulatory matters, advisor recruiting/headcount, client asset flows. These all fall under \"what's new.\"\n\nI'll include them all as recency aspects for RJF.\n\nLet me also consider a comparison aspect? The question doesn't ask for a comparison across firms or periods. So no comparison.\n\nThe question doesn't ask for a series (figures over several periods). It asks what's new in last 90 days, which is recency. But \"financial results\" could be a fact or recency. I'll mark financial results as recency since we want recent results within the window.\n\nActually, kind definitions: fact (a disclosed fact or figure), series (figure over several periods), recency (what is new inside the time window), comparison (judgement across firms or periods).\n\nFor \"what's new\" everything is recency. Good.\n\nLet me finalize the aspects. I'll write keyword queries with 5-25 words each, no firm names, no dates.\n\nLet me draft:\n\n1. id: announcements\n   text: Recent strategic announcements, initiatives and developments made by the firm.\n   keyword_query: \"announced announcement strategic initiative new plan expansion partnership agreement launch development news release\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n2. id: mna\n   text: Recent acquisitions, mergers, divestitures, and transactions involving the firm.\n   keyword_query: \"acquisition acquire acquired merger divestiture divest sale sold transaction deal purchase bought closing completed\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n3. id: leadership\n   text: Recent executive, leadership, and personnel changes announced by the firm.\n   keyword_query: \"appointed appointment named chief executive officer president leadership hire hired departure resignation retire resignation successor\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n4. id: products\n   text: Recent product, service, and platform launches or enhancements by the firm.\n   keyword_query: \"launch launched introduced new product service platform offering rollout enhanced digital technology capability added\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n5. id: financials\n   text: Recent financial results, earnings, and guidance reported by the firm.\n   keyword_query: \"earnings quarterly results revenue net income earnings per share guidance outlook fiscal quarter record results reported\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n6. id: regulatory\n   text: Recent regulatory, legal, and compliance developments involving the firm.\n   keyword_query: \"regulatory investigation lawsuit litigation settlement fine SEC FINRA consent order enforcement compliance arbitration complaint\"\n   metric: \"\"\n   kind: recency\n   proxy: false\n\n7. id: advisor_headcount\n   text: Recent changes in the firm's financial advisor headcount and recruiting.\n   keyword_query: \"financial advisors advisor headcount recruited recruiting retention net new advisors hiring additions\"\n   metric: \"advisor_headcount\"\n   kind: recency\n   proxy: false\n\n8. id: net_new_assets\n   text: Recent client asset flows and net new assets reported by the firm.\n   keyword_query: \"net new assets client assets assets under administration inflows outflows organic growth\"\n   metric: \"net_new_assets\"\n   kind: recency\n   proxy: false\n\nShould I include a general \"news\" aspect? Maybe not necessary; these cover it.\n\nWait, the instruction says \"List the aspects literally. An aspect is one thing the question asks about.\" The question asks only \"what's new\" \u2014 that's one thing. But then the instruction also says to expand. Hmm. I think breaking into categories is fine and expected for a search plan.\n\nActually, let me reconsider. Perhaps I'm overcomplicating. \"What's new on Raymond James in the last 90 days?\" \u2014 the single aspect could be \"recent news and developments about Raymond James.\" But the search engine runs one full-text search per aspect. A single broad aspect with generic words like \"announced, new, launch, acquisition...\" might be less effective. Breaking into topical aspects helps search precision.\n\nBut the instruction warns \"Do not add an aspect the question does not ask.\" The question asks \"what's new\" broadly \u2014 all these categories are what's new. I think it's defensible to break into categories because \"what's new\" encompasses news types.\n\nLet me also consider whether to include a \"recent news/headlines\" catch-all aspect. I'll add maybe not, to avoid redundancy.\n\nI think 8 aspects is reasonable. Maybe also add \"outlook/guidance\" separately? Already in financials. Fine.\n\nLet me reconsider metric field. The metric field should be one of advisor_headcount, net_new_assets \"when the aspect asks for exactly that registered metric\". My aspects 7 and 8 ask for exactly those metrics. So metric = advisor_headcount and net_new_assets respectively. Good.\n\nBut wait \u2014 does \"what's new\" ask for exactly advisor_headcount? It asks for news; advisor headcount is a metric that could be part of news. Hmm. I'll keep metric set for these two since they are registered metrics and the aspect is about that metric.\n\nActually, let me reconsider whether to keep these as separate aspects. The question \"What's new on Raymond James in the last 90 days?\" in a wealth-management context \u2014 the code presumably selected RJF as a wealth-management firm. The relevant \"new\" disclosures would include advisor headcount and net new assets (key metrics reported quarterly). So including them is appropriate.\n\nI'll finalize with 8 aspects.\n\nLet me also reconsider proxy: none are proxies since we're asking for actual news/figures. All false.\n\nFirms: all aspects restricted to RJF since the question is only about Raymond James. So firms: [\"RJF\"] for every aspect.\n\nKind: recency for all.\n\nLet me write keyword queries carefully, 5-25 words each. No firm names, no dates. Use document vocabulary.\n\nLet me refine:\n\n1. announcements:\n\"announced announces announcement strategic initiative plan expansion partnership agreement launch new initiative press release statement\"\nCount words: announced(1) announces(2) announcement(3) strategic(4) initiative(5) plan(6) expansion(7) partnership(8) agreement(9) launch(10) new(11) press(12) release(13) statement(14). Good.\n\n2. mna:\n\"acquisition acquire acquired merger divestiture divest sale sold transaction deal purchase buying closing completed combine\"\nCount: 15. Good.\n\n3. leadership:\n\"appointed appointment named chief executive officer president leadership hire hired departure resignation retire successor promoted promotion\"\nCount: 15.\n\n4. products:\n\"launch launched introduced new product service platform offering rollout enhanced digital technology capability added rollout\"\nActually \"rollout\" duplicated. Let me: \"launch launched introduced new product service platform offering rollout enhanced digital technology capability added expansion\"\n14 words.\n\n5. financials:\n\"earnings quarterly results revenue net income earnings per share guidance outlook fiscal quarter record results reported dividend\"\n14 words.\n\n6. regulatory:\n\"regulatory investigation lawsuit litigation settlement fine SEC FINRA consent order enforcement compliance arbitration complaint penalty\"\n14 words.\n\n7. advisor headcount:\n\"financial advisors advisor headcount recruited recruiting retention net new advisors hiring additions joined\"\n12 words.\n\n8. net new assets:\n\"net new assets client assets assets under administration assets under management inflows outflows organic growth\"\n14 words.\n\nGood.\n\nNow submit the plan.\n\nLet me make sure the ids are short labels, texts one sentence without firm names.\n\nAll good. Submit.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "announcements",
+        "text": "Recent strategic announcements, initiatives and developments made by the firm.",
+        "keyword_query": "announced announces announcement strategic initiative plan expansion partnership agreement launch new initiative press release statement",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "mna",
+        "text": "Recent acquisitions, mergers, divestitures and transactions involving the firm.",
+        "keyword_query": "acquisition acquire acquired merger divestiture divest sale sold transaction deal purchase buying closing completed combine",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "leadership",
+        "text": "Recent executive, leadership and personnel changes announced by the firm.",
+        "keyword_query": "appointed appointment named chief executive officer president leadership hire hired departure resignation retire successor promoted promotion",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "products",
+        "text": "Recent product, service and platform launches or enhancements by the firm.",
+        "keyword_query": "launch launched introduced new product service platform offering rollout enhanced digital technology capability added expansion",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "financials",
+        "text": "Recent financial results, earnings and guidance reported by the firm.",
+        "keyword_query": "earnings quarterly results revenue net income earnings per share guidance outlook fiscal quarter record results reported dividend",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "regulatory",
+        "text": "Recent regulatory, legal and compliance developments involving the firm.",
+        "keyword_query": "regulatory investigation lawsuit litigation settlement fine SEC FINRA consent order enforcement compliance arbitration complaint penalty",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "advisor_headcount",
+        "text": "Recent changes in the firm's financial advisor headcount and recruiting.",
+        "keyword_query": "financial advisors advisor headcount recruited recruiting retention net new advisors hiring additions joined",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "advisor_headcount",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "net_new_assets",
+        "text": "Recent client asset flows and net new assets reported by the firm.",
+        "keyword_query": "net new assets client assets assets under administration assets under management inflows outflows organic growth",
+        "firms": [
+          "RJF"
+        ],
+        "metric": "net_new_assets",
+        "kind": "recency",
+        "proxy": false
+      }
+    ]
+  }
+}
