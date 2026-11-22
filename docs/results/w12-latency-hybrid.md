@@ -1,7 +1,7 @@
 # W12 answer latency on hybrid-norerank (#272, exp/hybrid)
 
-**Test B hybrid-norerank (Gate 3), blind full read: 22/30 (tier 1 11/18). Floor (adjudicated >= 22/30): met by
-the blind read; the adjudicated score is this read plus the second read in the PR #274 review (as in #250).**
+**Test B hybrid-norerank (Gate 3): adjudicated 23/30 (tier 1 12/18) after the PR #274 second read; blind full read
+22/30 (tier 1 11/18). Floor (adjudicated >= 22/30): met. The second read moved Q25 FAIL -> PASS (borderline).**
 Against #250 hybrid: 22/30 adjudicated, 21/30 blind. fts on main (PR #273): 24/30 adjudicated.
 
 **Latency, Q1-Q30, end to end (critical path = plan + slowest map call + slowest re-map + reduce):**
@@ -73,14 +73,14 @@ Classes: r retrieval, s shape / part missing, b behavior, c corpus gap, i invali
 | Q22 | 1 | answer -> answer | PASS | PASS | **PASS** bl |  | 14.973 | 1.291 | 226.9 | 241.9 | 10.9 | 12 |
 | Q23 | 1 | answer -> answer | FAIL | FAIL | **FAIL** | r, c, s | 34.894 | 3.916 | 374.5 | 409.4 | 33.0 | 7 |
 | Q24 | 3 | answer -> answer | PASS | PASS | **PASS** bl |  | 8.798 | 0.243 | 319 | 327.8 | 17.9 | 22 |
-| Q25 | 1 | answer -> answer | PASS | PASS | **FAIL** bl | s | 11.936 | 0.308 | 302.9 | 314.8 | 10.8 | 37 |
+| Q25 | 1 | answer -> answer | PASS | PASS | **FAIL** bl (adjudicated **PASS** bl) | s | 11.936 | 0.308 | 302.9 | 314.8 | 10.8 | 37 |
 | Q26 | 1 | answer -> answer | PASS | PASS | **FAIL** bl | s | 3.843 | 0.967 | 285.8 | 289.6 | 11.5 | 10 |
 | Q27 | 1 | answer -> answer | FAIL | PASS | **PASS** bl |  | 4.807 | 1.125 | 200.1 | 204.9 | 15.8 | 10 |
 | Q28 | 1 | answer -> answer | PASS | FAIL | **FAIL** bl | s | 10.421 | 1.135 | 208.3 | 218.7 | 10.2 | 9 |
 | Q29 | 1 | gap_with_adjacent -> answer | FAIL | FAIL | **FAIL** | b, s | 6.726 | 0.719 | 116.7 | 123.4 | 28.1 | 7 |
 | Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | PASS | **PASS** |  | 1.23 | 0.172 | 96.3 | 97.5 | 72.3 | 3 |
 
-Changes against #250 hybrid (adjudicated): FAIL -> PASS Q5, Q12, Q18, Q27; PASS -> FAIL Q20, Q25, Q26, Q28.
+Changes against #250 hybrid (adjudicated): FAIL -> PASS Q5, Q12, Q18, Q27; PASS -> FAIL Q20, Q26, Q28. Q25 was PASS -> FAIL in the blind read and is PASS after the second read (PR #274 review).
 
 ## Latency tables
 
@@ -158,7 +158,7 @@ Retrieval (search_s): p50 19.75 s, p90 44.52 s, max 52.09 s; query embedding (em
 - Hybrid test B: 340 new calls (216 before the 402, 124 after), USD 9.94. The 30 answers used 538 calls (planner 30
   reused from fts, map 443, re-map 35, reduce 30), USD 13.05 for every call they used.
 - Hybrid total: 509 new calls, USD 13.17. #272 total (fts 848 / USD 17.81 + hybrid): 1,357 calls, USD 30.98.
-- Reduce-high re-run: not run (the blind read meets the floor; it is run once if the adjudicated score falls below 22).
+- Reduce-high re-run: not run (adjudicated 23/30 meets the floor).
 
 ## Findings
 
