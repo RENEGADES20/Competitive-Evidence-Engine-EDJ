@@ -1,7 +1,8 @@
 # W12 answer latency: effort per stage, map per cell, streaming (#272), fts
 
-**Test B fts (Gate 3), blind full read: 22/30 (tier 1: 11/18). Floor fts >= 18/30: met.** The adjudicated score
-is the blind read plus the second read in this PR's review (as in #250). Against #250: 18/30 adjudicated, 19/30 blind.
+**Test B fts (Gate 3): blind full read 22/30 (tier 1 11/18); adjudicated 24/30 (tier 1 12/18) after the reviewer's
+second read (PR #273 review round 1: Q8 and Q17 back to PASS, Q3 stays FAIL); floor fts >= 18/30 met.** Against #250:
+18/30 adjudicated, 19/30 blind.
 
 **Latency, Q1-Q30, end to end (critical path = plan + slowest map call + slowest re-map + reduce):
 p50 184 s, p90 251 s, max 3,750 s** (Q29: one reduce call stalled with no output until the 3600 s read timeout).
@@ -49,40 +50,43 @@ showed that streaming works with strict tools, thinking on and off.
 
 Classes: r retrieval, s shape / part missing, b behavior, c corpus gap, i invalid output. bl = borderline.
 
-| Q | Tier | Expected -> got | #250 adjudicated | Blind (this run) | Class | Critical path s | First evidence s | Calls |
-|---|---|---|---|---|---|---|---|---|
-| Q1 | 1 | answer -> answer | PASS | **PASS** |  | 28.4 | 17.9 | 3 |
-| Q2 | 1 | answer -> answer | PASS | **PASS** |  | 166.8 | 21.0 | 8 |
-| Q3 | 1 | answer -> answer | PASS | **FAIL** bl | s | 152.9 | 17.9 | 8 |
-| Q4 | 1 | answer -> answer | PASS | **PASS** bl |  | 197.4 | 20.2 | 9 |
-| Q5 | 1 | answer -> answer | FAIL | **PASS** |  | 91.5 | 25.7 | 6 |
-| Q6 | 1 | answer -> answer | PASS | **PASS** |  | 142.3 | 21.9 | 10 |
-| Q7 | 2 | answer -> answer | PASS | **PASS** bl |  | 246.9 | 19.9 | 38 |
-| Q8 | 2 | answer -> answer | PASS | **FAIL** bl | s | 120.1 | 19.2 | 6 |
-| Q9 | 3 | answer -> answer | PASS | **PASS** |  | 91.9 | 15.6 | 15 |
-| Q10 | 3 | answer -> answer | FAIL | **PASS** |  | 239 | 21.1 | 40 |
-| Q11 | 1 | answer -> answer | FAIL | **FAIL** | r, s | 165.1 | 7.9 | 34 |
-| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | **PASS** |  | 188.2 | 13.1 | 13 |
-| Q13 | 1 | answer -> answer | PASS | **PASS** |  | 169 | 17.3 | 10 |
-| Q14 | 3 | answer -> answer | PASS | **PASS** |  | 157.1 | 23.6 | 7 |
-| Q15 | 3 | answer -> answer | PASS | **PASS** bl |  | 208.1 | 12.2 | 43 |
-| Q16 | 3 | answer -> answer | FAIL | **PASS** bl |  | 204.1 | 14.3 | 26 |
-| Q17 | 1 | answer -> answer | PASS | **FAIL** bl | s | 284.7 | 41.5 | 20 |
-| Q18 | 3 | answer -> answer | FAIL | **PASS** bl |  | 215.6 | 19.0 | 16 |
-| Q19 | 3 | answer_with_boundary -> answer_with_boundary | PASS | **PASS** |  | 177.2 | 9.7 | 29 |
-| Q20 | 1 | answer -> answer | FAIL | **FAIL** bl | s, c | 218.8 | 9.1 | 29 |
-| Q21 | 2 | answer -> answer | FAIL | **PASS** bl |  | 383.2 | 13.4 | 56 |
-| Q22 | 1 | answer -> answer | PASS | **PASS** bl |  | 208.2 | 8.4 | 12 |
-| Q23 | 1 | answer -> answer | FAIL | **FAIL** bl | c, r | 144.2 | 32.9 | 7 |
-| Q24 | 3 | answer -> answer | PASS | **PASS** |  | 241.8 | 24.8 | 22 |
-| Q25 | 1 | answer -> answer | FAIL | **PASS** bl |  | 239.8 | 9.8 | 39 |
-| Q26 | 1 | answer -> answer | PASS | **PASS** bl |  | 179.3 | 11.6 | 10 |
-| Q27 | 1 | answer -> answer | PASS | **PASS** bl |  | 215.4 | 16.3 | 10 |
-| Q28 | 1 | answer -> answer | FAIL | **FAIL** bl | s | 173.2 | 9.2 | 9 |
-| Q29 | 1 | gap_with_adjacent -> None | FAIL | **FAIL** | i | 3749.8 | 30.1 | 7 |
-| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | **PASS** |  | 62.9 | 43.0 | 3 |
+| Q | Tier | Expected -> got | #250 adjudicated | Blind (this run) | Adjudicated (this run) | Class (blind) | Critical path s | First evidence s | Calls |
+|---|---|---|---|---|---|---|---|---|---|
+| Q1 | 1 | answer -> answer | PASS | **PASS** | **PASS** |  | 28.4 | 17.9 | 3 |
+| Q2 | 1 | answer -> answer | PASS | **PASS** | **PASS** |  | 166.8 | 21.0 | 8 |
+| Q3 | 1 | answer -> answer | PASS | **FAIL** bl | **FAIL** bl | s | 152.9 | 17.9 | 8 |
+| Q4 | 1 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 197.4 | 20.2 | 9 |
+| Q5 | 1 | answer -> answer | FAIL | **PASS** | **PASS** |  | 91.5 | 25.7 | 6 |
+| Q6 | 1 | answer -> answer | PASS | **PASS** | **PASS** |  | 142.3 | 21.9 | 10 |
+| Q7 | 2 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 246.9 | 19.9 | 38 |
+| Q8 | 2 | answer -> answer | PASS | **FAIL** bl | **PASS** bl | s | 120.1 | 19.2 | 6 |
+| Q9 | 3 | answer -> answer | PASS | **PASS** | **PASS** |  | 91.9 | 15.6 | 15 |
+| Q10 | 3 | answer -> answer | FAIL | **PASS** | **PASS** |  | 239 | 21.1 | 40 |
+| Q11 | 1 | answer -> answer | FAIL | **FAIL** | **FAIL** | r, s | 165.1 | 7.9 | 34 |
+| Q12 | 3 | answer_with_boundary -> answer_with_boundary | FAIL | **PASS** | **PASS** |  | 188.2 | 13.1 | 13 |
+| Q13 | 1 | answer -> answer | PASS | **PASS** | **PASS** |  | 169 | 17.3 | 10 |
+| Q14 | 3 | answer -> answer | PASS | **PASS** | **PASS** |  | 157.1 | 23.6 | 7 |
+| Q15 | 3 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 208.1 | 12.2 | 43 |
+| Q16 | 3 | answer -> answer | FAIL | **PASS** bl | **PASS** bl |  | 204.1 | 14.3 | 26 |
+| Q17 | 1 | answer -> answer | PASS | **FAIL** bl | **PASS** bl | s | 284.7 | 41.5 | 20 |
+| Q18 | 3 | answer -> answer | FAIL | **PASS** bl | **PASS** bl |  | 215.6 | 19.0 | 16 |
+| Q19 | 3 | answer_with_boundary -> answer_with_boundary | PASS | **PASS** | **PASS** |  | 177.2 | 9.7 | 29 |
+| Q20 | 1 | answer -> answer | FAIL | **FAIL** bl | **FAIL** bl | s, c | 218.8 | 9.1 | 29 |
+| Q21 | 2 | answer -> answer | FAIL | **PASS** bl | **PASS** bl |  | 383.2 | 13.4 | 56 |
+| Q22 | 1 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 208.2 | 8.4 | 12 |
+| Q23 | 1 | answer -> answer | FAIL | **FAIL** bl | **FAIL** bl | c, r | 144.2 | 32.9 | 7 |
+| Q24 | 3 | answer -> answer | PASS | **PASS** | **PASS** |  | 241.8 | 24.8 | 22 |
+| Q25 | 1 | answer -> answer | FAIL | **PASS** bl | **PASS** bl |  | 239.8 | 9.8 | 39 |
+| Q26 | 1 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 179.3 | 11.6 | 10 |
+| Q27 | 1 | answer -> answer | PASS | **PASS** bl | **PASS** bl |  | 215.4 | 16.3 | 10 |
+| Q28 | 1 | answer -> answer | FAIL | **FAIL** bl | **FAIL** bl | s | 173.2 | 9.2 | 9 |
+| Q29 | 1 | gap_with_adjacent -> None | FAIL | **FAIL** | **FAIL** | i | 3749.8 | 30.1 | 7 |
+| Q30 | 1 | gap_with_adjacent -> gap_with_adjacent | PASS | **PASS** | **PASS** |  | 62.9 | 43.0 | 3 |
 
-Changes against #250: PASS -> FAIL Q3, Q8, Q17; FAIL -> PASS Q5, Q10, Q12, Q16, Q18, Q21, Q25. Q29 is FAIL (i):
+Second read (PR #273 review round 1): Q3 FAIL (no concession by management is shown and the gap is not marked), Q8 PASS
+(borderline), Q17 PASS (borderline); every other question equals the blind verdict.
+Changes against #250, adjudicated: PASS -> FAIL Q3; FAIL -> PASS Q5, Q10, Q12, Q16, Q18, Q21, Q25 (blind read: also
+Q8 and Q17 PASS -> FAIL). Q29 is FAIL (i):
 its reduce call stalled with no output and timed out after 3660 s (saved as a failed call, never re-called).
 
 ## Latency tables

@@ -204,7 +204,7 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
 - [x] `python scripts/latency_report.py <run>/raw` prints the #250 baseline (fts median 415 s) and every run's table.
 - [ ] (fts done; hybrid open) Test A fts: Q5, Q10, Q19, Q21, Q24, Q26 under C1, C2, C3: latency table, 0 cut outputs for the chosen config,
       config chosen by the step-10 rule. Hybrid: the same six with the chosen config, 0 cut outputs.
-- [ ] (fts done: blind 22/30, adjudication in the PR review; hybrid open) Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
+- [ ] (fts done: blind 22/30, adjudicated 24/30; hybrid open) Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
       per mode in `docs/results/w12-latency.md`; a mode below its floor re-run once with reduce `high`.
 - [ ] (fts done: p50 18 s; hybrid open) First cited evidence time (plan `wall_s` + first landed round-1 map call, from the records) and end-to-end p50
       reported per mode (target 30 s; reported, not gated).
@@ -269,3 +269,5 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   reading its part in full: 8/10, 5/6, 3/5, 6/9 = **22/30** (tier 1 11/18); floor fts >= 18/30 met, so no reduce-high
   re-run. Report `docs/results/w12-latency.md`; evidence `docs/results/w12-latency/`. Next: PR to main ("Part of
   #272": hybrid sync, hybrid test A and B open), second read in the PR review, then step 13.
+- 2026-11-21 19:40 - PR #273 review round 1 (second read): adjudicated **24/30** (tier 1 12/18); Q8 and Q17 back to
+  PASS (borderline), Q3 stays FAIL. Report headline, Test B table (Adjudicated column) and PR body updated.
