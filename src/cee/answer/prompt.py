@@ -239,3 +239,23 @@ Standard wording (use verbatim when the case applies)
 - A trade-press item is a claim when its cell is a fact, attributed ("trade press reports ...");
   adjacent trade-press items carry differs_because "{TRADE_PRESS_NOTE}"
 Return the answer by calling the submit_answer tool; do not answer in plain text."""
+
+# #275: v5.3 adds one rule ("state each fact once"): the #272 answers repeat about 15 % of their text across
+# cells (the same figure or event under several aspects). Every cell that holds a fact keeps a claim of its
+# own, so no part loses its claim (check_parts would add a part gap). Chosen by REDUCE_PROMPT (default v5.2
+# until test A picks, plans/0275-reduce-speed.md); v5.2 is unchanged, so its outputs and cache keys stand.
+ONCE_RULE = ("- State each fact once in the whole answer. When an item gives a fact (the same figure, event or\n"
+             "  statement from the same passage) that you already wrote under an earlier cell, do not write it\n"
+             "  again; but every cell that holds a fact keeps at least one claim of its own, and every comparison\n"
+             "  aspect keeps its comparison claim.\n")
+_ALSO_UNDER = '- An item marked "also under" another aspect: write it once, under the first aspect where it appears.\n'
+SYSTEM_PROMPT_V53 = (SYSTEM_PROMPT_V5.replace(f"Prompt version: {REDUCE_VERSION}.", "Prompt version: v5.3.")
+                     .replace(_ALSO_UNDER, _ALSO_UNDER + ONCE_RULE))
+REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53}
+
+
+def reduce_prompt() -> tuple[str, str]:
+    """(version, system prompt) of the reduce call, from REDUCE_PROMPT (#275)."""
+    from cee.config import settings
+    v = settings().reduce_prompt
+    return v, REDUCE_PROMPTS[v]

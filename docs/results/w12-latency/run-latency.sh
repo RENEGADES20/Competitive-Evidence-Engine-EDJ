@@ -5,10 +5,12 @@
 # printed here. Options as environment variables:
 #   WT OUT CACHE MAXCALLS PHASE GATE_SHA [EFFORT_PLAN] [EFFORT_MAP] [EFFORT_REDUCE] [MAP_MODEL] [STREAM] [MODEL]
 #   [MODE] [REUSE_PLANS=1] [PLAN_VERSION] [FASTEMBED_PATH] [ENV_FILE] [QUESTIONS] [CONCURRENCY] [EV] [PY]
+#   [IDLE_S=120] [REDUCE_PROMPT=v5.2|v5.3]   (#275; PYTHONHASHSEED=0 is pinned, like run-latency.ps1)
 set -u
 : "${WT:?}" "${OUT:?}" "${CACHE:?}" "${MAXCALLS:?}" "${PHASE:?}" "${GATE_SHA:?}"
 EFFORT_PLAN="${EFFORT_PLAN:-off}"; EFFORT_MAP="${EFFORT_MAP:-low}"; EFFORT_REDUCE="${EFFORT_REDUCE:-low}"
 STREAM="${STREAM:-on}"; MODEL="${MODEL:-deepseek-v4-pro}"; CONCURRENCY="${CONCURRENCY:-24}"
+IDLE_S="${IDLE_S:-120}"; REDUCE_PROMPT="${REDUCE_PROMPT:-v5.2}"
 EV="${EV:-$HOME/cee-ev272}"; PY="${PY:-python3}"
 QUESTIONS="${QUESTIONS:-$(seq -s, -f 'Q%g' 1 30)}"; OUTDIR="$EV/$OUT"; H="$EV/$OUT.head-log.txt"
 [ "$PHASE" = count ] && MAXCALLS=0
@@ -27,9 +29,10 @@ trap 'rm -f "$WT/.env"; echo "$PHASE $OUT after $(date -u +%FT%TZ) HEAD $(git -C
   export LLM_PROVIDER=deepseek PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY="$CONCURRENCY" MAP_CALL_TOKENS=60000
   export PYTHONPATH="$WT/src" DEEPSEEK_MODEL="$MODEL" DEEPSEEK_BASE_URL=https://api.deepseek.com/beta
   export DEEPSEEK_EFFORT_PLAN="$EFFORT_PLAN" DEEPSEEK_EFFORT_MAP="$EFFORT_MAP" DEEPSEEK_EFFORT_REDUCE="$EFFORT_REDUCE" DEEPSEEK_STREAM="$STREAM"
+  export DEEPSEEK_IDLE_S="$IDLE_S" REDUCE_PROMPT="$REDUCE_PROMPT" PYTHONHASHSEED=0
   [ -n "${MAP_MODEL:-}" ] && export DEEPSEEK_MODEL_MAP="$MAP_MODEL"
   if [ -n "${MODE:-}" ] && [ "$MODE" != fts ]; then export CEE_VECTORS=on; [ -n "${FASTEMBED_PATH:-}" ] && export FASTEMBED_CACHE_PATH="$FASTEMBED_PATH"; fi
-  echo "settings: model $MODEL map model ${MAP_MODEL:-$MODEL} effort plan $EFFORT_PLAN map $EFFORT_MAP reduce $EFFORT_REDUCE stream $STREAM mode ${MODE:-fts} MAP_CONCURRENCY=$CONCURRENCY MAP_CALL_TOKENS=60000; args ${A[*]}" >> "$H"
+  echo "settings: model $MODEL map model ${MAP_MODEL:-$MODEL} effort plan $EFFORT_PLAN map $EFFORT_MAP reduce $EFFORT_REDUCE stream $STREAM idle $IDLE_S reduce prompt $REDUCE_PROMPT PYTHONHASHSEED=0 mode ${MODE:-fts} MAP_CONCURRENCY=$CONCURRENCY MAP_CALL_TOKENS=60000; args ${A[*]}" >> "$H"
   if [ "$PHASE" = count ]; then
     export DEEPSEEK_API_KEY=
     "$PY" -B scripts/eval_run.py "${A[@]}" > "$OUTDIR.log" 2>&1

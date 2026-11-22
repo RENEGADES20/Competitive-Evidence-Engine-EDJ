@@ -188,6 +188,22 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
 
 ## Reduce step (#247; ADR-021 rules 0-5)
 
+#275 (plans/0275-reduce-speed.md): **streamed claims, idle timeout, prompt v5.3.**
+- The DeepSeek reduce streams; `reduce.StreamItems` parses the tool-argument deltas and returns each object of
+  the top-level `claims` / `adjacent` arrays once complete. A claim is shown before the final answer only when
+  `reduce.check_item` passes it: a one-item Answer (behavior `answer`, hits = the matrix's citable hits) through
+  the why-line clean-up, `check_citations` (normative withheld, uncited cell moved to gaps, hand-off, numbers,
+  dates), outside-matrix, rule 3 and the why-line check; shown only if it is still the one claim with the same
+  text, nothing withheld, no gap, cited, and `flags == []`. Adjacent items are never shown early. Only at the
+  end: cut / empty / not-JSON output, duplicates, newest-first order, comparison and computability claims,
+  hand-off, part coverage, gaps, caveats, behavior. The mock streams its output through the same parser.
+- `DEEPSEEK_IDLE_S` (default 120): a streamed call with no chunk (a delta, finish_reason or usage) for that long
+  is aborted (watchdog; the streamed read timeout is the same plus 5 s) and fails with `llm.StreamIdle`; the
+  eval saves it as a failed call with `partial`, `output_seen`, `ttft_s`; never retried automatically.
+- Reduce effort `off` with streaming has a 64000-token cap (`ds-strict-2-reduce-off-c64000-s1`): the whole
+  answer is output. `REDUCE_PROMPT` = `v5.2` | `v5.3`; v5.3 adds "state each fact once ... every cell that
+  holds a fact keeps at least one claim of its own". The version and system text join the reduce cache key.
+
 Plan: `plans/0247-reduce.md`. Code: `src/cee/answer/reduce.py`; prompt `prompt.SYSTEM_PROMPT_V5`
 (`REDUCE_VERSION = "v5"`). One synthesis call writes the Answer from the evidence matrix only, for the
 behavior code decided; it cannot change it.

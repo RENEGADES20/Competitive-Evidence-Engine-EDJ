@@ -309,7 +309,11 @@ URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. Each stage has its own reas
 `DEEPSEEK_MODEL_MAP` sends only the map calls to another model; `DEEPSEEK_STREAM` (`on | nothink | off`)
 streams the calls, so the time to the first token is logged next to the wall time. `DEEPSEEK_THINKING`
 is only for the legacy single answer call (`MAP=off`). The Ask page shows the plan first, then each
-extraction call's cited evidence as it lands, then the answer.
+extraction call's cited evidence as it lands, then (#275) each claim of the answer as it streams, once it has
+passed its citation, figure and date checks ("Answer (in progress: checks running)"), then the full answer.
+`DEEPSEEK_IDLE_S` (default 120) stops a streamed call that sends nothing for that long: the call fails fast
+(saved with its partial output in an eval run), and the Ask page shows an error with a "Try again" button;
+nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3`) picks the reduce prompt version.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```
@@ -338,14 +342,19 @@ first cited evidence, and per stage the wall time, time to first token and token
 ```
 The #272 runs use `docs/results/w12-latency/run-latency.*` (one phase `plan | count | run`, every setting
 pinned; paid except `count`) and `run-mock.*` (0 calls). Run them from a clean worktree at the commit
-under test; the key file is copied in and removed again:
+under test; the key file is copied in and removed again. #275 adds `-IdleS` / `IDLE_S` (default 120) and
+`-ReducePrompt` / `REDUCE_PROMPT` (default `v5.2`), and pins `PYTHONHASHSEED=0`; a reduce-only re-run (for example
+`-EffortReduce off` on the cache of an earlier run) reuses every plan and extraction record by key, so its
+`count` phase shows one new reduce call per question and nothing else:
 ```powershell
 powershell -File docs\results\w12-latency\run-latency.ps1 -Wt <worktree> -Out a-c1 -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q5,Q10 -EffortPlan off -EffortMap low -EffortReduce low
 powershell -File docs\results\w12-latency\run-mock.ps1 -Wt <worktree> -Out mock-fts
+powershell -File docs\results\w12-latency\run-latency.ps1 -Wt <worktree> -Out r1-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -EffortReduce off -ReducePrompt v5.2 -IdleS 120 -EvDir <evidence dir>
 ```
 ```bash
 WT=<worktree> OUT=a-c1 CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q5,Q10 EFFORT_PLAN=off EFFORT_MAP=low EFFORT_REDUCE=low ENV_FILE=<repo>/.env bash docs/results/w12-latency/run-latency.sh
 WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
+WT=<worktree> OUT=r1-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> EFFORT_REDUCE=off REDUCE_PROMPT=v5.2 IDLE_S=120 EV=<evidence dir> bash docs/results/w12-latency/run-latency.sh
 ```
 
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).

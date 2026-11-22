@@ -395,6 +395,16 @@ def stage_version(provider: str, stage: str) -> str | None:
     return llm.request_version(provider, stage) if provider == "deepseek" else llm.request_version(provider)
 
 
+def idle_fields(e: BaseException) -> dict:
+    """#275: a stalled stream (llm.StreamIdle) is saved as a failed call with its partial output, whether any output
+    arrived, and the time to it; never re-called, never retried automatically."""
+    from cee.answer import llm
+    if not isinstance(e, llm.StreamIdle):
+        return {}
+    return {"idle_timeout": True, "idle_s": e.idle_s, "output_seen": e.output_seen, "ttft_s": e.ttft_s,
+            "partial": e.partial}
+
+
 def timing(t0: float, usage: dict | None) -> dict:
     """#242: wall time of one paid call and its output tokens per second (None when unknown)."""
     wall = round(time.monotonic() - t0, 2)
@@ -576,15 +586,16 @@ def reduce_cache_key(q: dict, snapshot: str, provider: str, model: str, max_toke
         return hashlib.sha256(text.encode()).hexdigest()
 
     schema, _ = R.reduce_schema(matrix)
-    parts = [q["id"], q["text"], R.REDUCE_VERSION, snapshot, provider, model, max_tokens, request,
-             sha(P.SYSTEM_PROMPT_V5), sha(R.reduce_message(q["text"], matrix, query)),
+    # #275: the prompt version and system text in use (REDUCE_PROMPT); v5.2 gives the #272 keys unchanged
+    parts = [q["id"], q["text"], R.prompt_version(), snapshot, provider, model, max_tokens, request,
+             sha(R.system_prompt()), sha(R.reduce_message(q["text"], matrix, query)),
              sha(json.dumps(schema, sort_keys=True))]
     return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
 
 
 def reduce_version() -> str:
-    from cee.answer.prompt import REDUCE_VERSION
-    return REDUCE_VERSION
+    from cee.answer.reduce import prompt_version
+    return prompt_version()
 
 
 def extract_version() -> str:
@@ -798,15 +809,16 @@ class RealRunner:
         self.calls += 1   # reserved and counted before the call: a failed call still cost money
         self.made += 1
         schema, fallback = R.reduce_schema(matrix)
-        meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.REDUCE_VERSION,
+        meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.prompt_version(),
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": R.max_tokens(self.provider), "request_version": self.reduce_version,
                 "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
                 "enum_values": R.enum_values(schema), "at": now_iso()}
         got: dict = {}
         t0 = time.monotonic()
+        early = R.EarlyClaims(matrix, query)   # #275: what the Ask page would show before the final answer
         try:
-            out = R.call_reduce(q["text"], matrix, query, self.provider, meta=got)
+            out = R.call_reduce(q["text"], matrix, query, self.provider, meta=got, on_item=early)
         except llm.ProviderStop as e:   # refused before any output: nothing to save, the run stops
             raise SystemExit(f"stopped: {e}") from e
         except llm.ModelOutputError as e:   # paid output that is not a valid Answer: keep it (#187)
@@ -820,16 +832,22 @@ class RealRunner:
             err = f"{type(e).__name__}: {e}"
             bad = getattr(e, "status_code", None) == 400
             self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
-                              "bad_request": bad, **timing(t0, None)})
+                              "bad_request": bad, **timing(t0, None), **idle_fields(e),
+                              "stream_items": early.stats()})
             if bad:
                 self.bad_request = err
             return None, "failed", {"error": err}
         flags = list(got.get("parse_flags") or [])
         self.last_stop = (got.get("stop_reason"), (got.get("usage") or {}).get("output_tokens"))
+        stream = early.stats()
         self._save(path, {**meta, "stop_reason": got.get("stop_reason"), "usage": got.get("usage"),
                           **timing(t0, got.get("usage")), **self._reasoning(got),
-                          **({"parse_flags": flags} if flags else {}), "raw": out})
-        return finish(R.to_answer(out, self.provider, got)), "called", info
+                          **({"parse_flags": flags} if flags else {}), "first_claim_s": stream["first_claim_s"],
+                          "stream_items": stream, "raw": out})
+        answer = finish(R.to_answer(out, self.provider, got))
+        final = {c.get("text") for c in answer.get("claims") or []}
+        info["stream_items"] = {**stream, "shown_not_final": sum(c.text not in final for c in early.shown)}
+        return answer, "called", info
     def plan(self, q: dict, query):
         """The question's plan (#214, ADR-020) from one planner call, cached like an answer: a saved
         plan (valid, invalid or a failed call) is always reused, so a re-run never calls the planner
@@ -885,7 +903,7 @@ class RealRunner:
             err = f"{type(e).__name__}: {e}"
             bad_request = getattr(e, "status_code", None) == 400
             self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
-                              "bad_request": bad_request, **timing(t0, None)})
+                              "bad_request": bad_request, **timing(t0, None), **idle_fields(e)})
             if bad_request:   # #245: the provider rejected the request itself (e.g. the schema);
                 # every planned call would fail the same way, so the run stops (saved, counted once)
                 raise SystemExit(f"stopped: planner request rejected with 400 ({err})") from e
@@ -971,7 +989,7 @@ class RealRunner:
                 err = f"{type(e).__name__}: {e}"
                 bad = getattr(e, "status_code", None) == 400
                 self._save(path, {**meta, "invalid": True, "failed_call": True, "error": err, "raw_payload": None,
-                                  "bad_request": bad, **timing(t0, None)})
+                                  "bad_request": bad, **timing(t0, None), **idle_fields(e)})
                 if bad:
                     self.bad_request = err
                 return CallResult(failed_call=True, error=err, bad_request=bad)
