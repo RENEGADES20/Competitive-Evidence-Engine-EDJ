@@ -226,7 +226,7 @@ delay, the pump logic is tested as a pure function).
         made `{"map": 2, "reduce": 1}`;
       - with `MOCK_FAIL_FILE` naming `reduce`: the error and Retry show, no claims; failed row stage
         `synthesize`; file removed, Retry -> the answer, reused `{"map": 3}`, made `{"reduce": 1}`.
-- [ ] `gh pr checks` green.
+- [x] `gh pr checks` green (PR #279, pytest pass).
 - [x] 0 real API calls (stated in the PR Verification section).
 
 ## Progress log
@@ -259,3 +259,4 @@ delay, the pump logic is tested as a pure function).
   from the interrupted run are counted only after the rerun settles.
 - 2026-11-22 12:50 - verify-cee all 11 features PASS (`.verify-runs/20261122-124300-a132160`); mock eval
   unchanged against `main` (33 / 2 on 35 questions); pytest 1160 passed; 0 real calls.
+- 2026-11-22 12:58 - PR #279 opened; `gh pr checks` pytest pass. Not merged (independent review).
