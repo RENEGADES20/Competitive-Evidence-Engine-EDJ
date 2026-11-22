@@ -7,7 +7,9 @@ Q<n>-map.<id>-<key>.json, Q<n>-remap.<id>-<key>.json, Q<n>-reduce-<key>.json, wi
 Per question:
 - critical path = plan + slowest round-1 map call + slowest re-map call + reduce (the stages run in series,
   the calls of one map round in parallel);
-- first evidence = plan + fastest round-1 map call (when the Ask page can show the first cited evidence).
+- first evidence = plan + fastest round-1 map call (when the Ask page can show the first cited evidence);
+- first claim (#275) = plan + slowest round-1 map + slowest re-map + the reduce's first_claim_s (when the Ask page
+  shows the first checked claim of the final answer while the reduce streams); "-" for records without it.
 Per stage: p50 / p90 / max of wall time, time to first token, output tokens and the reasoning share.
 A record reused from an earlier run keeps the time it was made with.
 
@@ -48,7 +50,7 @@ def load(raw_dir: Path, questions: set[str] | None = None) -> list[dict]:
                      "out": usage.get("output_tokens"), "reasoning": usage.get("reasoning_tokens"),
                      "cut": rec.get("stop_reason") == "length", "invalid": bool(rec.get("invalid")),
                      "failed": bool(rec.get("failed_call")), "model": rec.get("model"),
-                     "request_version": rec.get("request_version")})
+                     "request_version": rec.get("request_version"), "first_claim_s": rec.get("first_claim_s")})
     return rows
 
 
@@ -74,10 +76,13 @@ def per_question(rows: list[dict], retrieval: dict | None = None) -> list[dict]:
         plan, maps, remaps, reduce = sum(walls("plan")), walls("map"), walls("remap"), sum(walls("reduce"))
         crit = plan + (max(maps) if maps else 0) + (max(remaps) if remaps else 0) + reduce
         first = plan + min(maps) if maps else None
+        fc = [r["first_claim_s"] for r in rs if r["stage"] == "reduce" and r.get("first_claim_s") is not None]
+        first_claim = crit - reduce + fc[0] if fc else None
         out.append({"q": q, "plan_s": round(plan, 1), "map_calls": len(maps),
                     "map_max_s": round(max(maps), 1) if maps else None, "remap_calls": len(remaps),
                     "remap_max_s": round(max(remaps), 1) if remaps else None, "reduce_s": round(reduce, 1),
                     "critical_s": round(crit, 1), "first_evidence_s": round(first, 1) if first is not None else None,
+                    "first_claim_s": round(first_claim, 1) if first_claim is not None else None,
                     "calls": len(rs), "cut": sum(r["cut"] for r in rs), "invalid": sum(r["invalid"] for r in rs),
                     "failed": sum(r["failed"] for r in rs)})
         rt = retrieval.get(q) or {}
@@ -115,6 +120,7 @@ def per_stage(rows: list[dict]) -> list[dict]:
 def summary(qs: list[dict]) -> dict:
     crit = [q["critical_s"] for q in qs]
     first = [q["first_evidence_s"] for q in qs if q["first_evidence_s"] is not None]
+    claim = [q["first_claim_s"] for q in qs if q.get("first_claim_s") is not None]
     search = [q["search_s"] for q in qs if q.get("search_s") is not None]
     embed = [q["embed_s"] for q in qs if q.get("embed_s") is not None]
     withr = [q["with_retrieval_s"] for q in qs if q.get("with_retrieval_s") is not None]
@@ -125,6 +131,7 @@ def summary(qs: list[dict]) -> dict:
     return {**extra, "questions": len(qs), "critical_p50": pct(crit, 50), "critical_p90": pct(crit, 90),
             "critical_max": pct(crit, 100), "critical_min": min(crit) if crit else None,
             "first_evidence_p50": pct(first, 50), "first_evidence_p90": pct(first, 90),
+            "first_claim_p50": pct(claim, 50), "first_claim_p90": pct(claim, 90),
             "calls": sum(q["calls"] for q in qs), "cut": sum(q["cut"] for q in qs),
             "invalid": sum(q["invalid"] for q in qs), "failed": sum(q["failed"] for q in qs)}
 
@@ -139,7 +146,8 @@ def markdown(title: str, qs: list[dict], stages: list[dict], s: dict) -> str:
     lines = [f"### {title}", "",
              f"{s['questions']} questions, {s['calls']} call records: critical path p50 {_f(s['critical_p50'])} s, "
              f"p90 {_f(s['critical_p90'])} s, max {_f(s['critical_max'])} s; first evidence p50 "
-             f"{_f(s['first_evidence_p50'])} s, p90 {_f(s['first_evidence_p90'])} s; cut {s['cut']}, invalid "
+             f"{_f(s['first_evidence_p50'])} s, p90 {_f(s['first_evidence_p90'])} s; first claim p50 "
+             f"{_f(s.get('first_claim_p50'))} s, p90 {_f(s.get('first_claim_p90'))} s; cut {s['cut']}, invalid "
              f"{s['invalid']}, failed {s['failed']}.", ""]
     if "search_p50" in s:
         lines += [f"Retrieval (search_s): p50 {_f(s['search_p50'])} s, p90 {_f(s['search_p90'])} s, max "
@@ -150,13 +158,13 @@ def markdown(title: str, qs: list[dict], stages: list[dict], s: dict) -> str:
     ret = "search_p50" in s
     lines += [
              "| Q | " + ("retrieval s | embed s | " if ret else "") + "plan s | map calls | slowest map s | re-maps | "
-             "slowest re-map s | reduce s | critical path s | first evidence s | cut |",
-             "|---|" + ("---|---|" if ret else "") + "---|---|---|---|---|---|---|---|---|"]
+             "slowest re-map s | reduce s | critical path s | first evidence s | first claim s | cut |",
+             "|---|" + ("---|---|" if ret else "") + "---|---|---|---|---|---|---|---|---|---|"]
     for q in qs:
         lines.append(f"| {q['q']} | " + (f"{_f(q.get('search_s'))} | {_f(q.get('embed_s'))} | " if ret else "")
                      + f"{_f(q['plan_s'])} | {q['map_calls']} | {_f(q['map_max_s'])} | {q['remap_calls']} | "
                      f"{_f(q['remap_max_s'])} | {_f(q['reduce_s'])} | {_f(q['critical_s'])} | "
-                     f"{_f(q['first_evidence_s'])} | {q['cut']} |")
+                     f"{_f(q['first_evidence_s'])} | {_f(q.get('first_claim_s'))} | {q['cut']} |")
     lines += ["", "| Stage | calls | wall p50 s | wall p90 s | wall max s | TTFT p50 s | TTFT p90 s | output p50 | output max | reasoning share |",
               "|---|---|---|---|---|---|---|---|---|---|"]
     for st in stages:

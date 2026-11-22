@@ -51,6 +51,8 @@ def union_hits(hits: list[Hit], matrix) -> list[Hit]:
 Progress = Callable[[str, str, str], None]
 # #272: on_event(kind, data) for the progressive Ask page: ("plan", {"text", "plan"}) once the plan is made,
 # ("evidence", {"call", "lines"}) as each map call lands (lines: evidence_lines), in the calling thread.
+# #275: ("claim", {"n", "claim", "hits"}) for each reduce claim that passed the per-claim checks
+# (reduce.check_item) while the reduce streams, before the final answer; adjacent items are not sent early.
 Event = Callable[[str, dict], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
@@ -100,7 +102,8 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     mode: retrieval mode, "fts" | "hybrid" | "hybrid-norerank" (#125, #126); None -> RETRIEVAL_MODE (default fts).
     Every mode plans the question the same way; the hybrid modes search its sub-questions through main's
     loop with hybrid.search, and the map's re-search uses the same search (cee.retrieve.modes, #249).
-    on_event (#272): the plan, then each map call's cited evidence, as they are ready."""
+    on_event (#272): the plan, then each map call's cited evidence, as they are ready; #275: then each checked
+    claim of the reduce as it streams."""
     provider = provider or settings().llm_provider
     mode = resolve_mode(mode)
     t = _Trace(progress)
@@ -121,7 +124,8 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     matrix = map_step(query, plan, hits, provider, t, mode, on_event)
     every = union_hits(hits, matrix)
     info: dict = {}
-    answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix, info=info)
+    answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix, info=info,
+                              on_event=on_event)
     result = Result(query, every, answer, plan=plan, matrix=matrix, reduce=info, retrieval_mode=mode)
     if log:
         with t.stage("log", "Saving the query"):
@@ -232,7 +236,8 @@ def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace
 
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
                raw: Answer | None = None, trace: _Trace | None = None,
-               plan: Plan | None = None, matrix=None, info: dict | None = None) -> tuple[Answer, Answer | None]:
+               plan: Plan | None = None, matrix=None, info: dict | None = None,
+               on_event: Event | None = None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
     Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
     `matrix` (#247): the reduce step writes the answer from the evidence matrix (one call, or an
@@ -249,7 +254,7 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         t.report("caveats", "done", _caveats_text(answer))
         return answer, None
     if matrix is not None:
-        return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info)
+        return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event)
     if raw is None:
         with t.stage("synthesize", f"Writing the answer ({provider}, one legacy call)"):
             raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
@@ -274,11 +279,20 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
 REDUCE_RUNNING = "Synthesizing the answer from the evidence matrix"
 
 
-def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info):
-    """#247: the reduce step and every code check after it (cee.answer.reduce)."""
+def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event=None):
+    """#247: the reduce step and every code check after it (cee.answer.reduce). #275: with on_event, each claim
+    that passes the per-claim checks is sent as ("claim", ...) while the reduce streams (DeepSeek and the mock)."""
     from cee.answer import reduce as R
     code_built = not R.needs_call(matrix)
     finished_at = None
+    early = None
+    if on_event is not None and not code_built and raw is None:
+        by_id = {h.chunk_id: h for h in hits}
+
+        def show(claim) -> None:
+            on_event("claim", {"n": len(early.shown), "claim": claim,
+                               "hits": [by_id[c] for c in claim.chunk_ids if c in by_id]})
+        early = R.EarlyClaims(matrix, query, show)
     if code_built:
         raw = R.code_answer(matrix, query)
         t.report("synthesize", "skipped", f"No model call: the answer is built by code "
@@ -286,10 +300,10 @@ def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info):
     elif raw is None:
         with t.stage("synthesize", f"{REDUCE_RUNNING} ({provider}, one call)"):
             if provider == "mock":
-                raw = R.raw_answer(matrix, query, provider)
+                raw = R.raw_answer(matrix, query, provider, on_item=early)
             else:
                 meta: dict = {}
-                out = R.call_reduce(question, matrix, query, provider, meta=meta)
+                out = R.call_reduce(question, matrix, query, provider, meta=meta, on_item=early)
                 finished_at = dt.datetime.now().astimezone().isoformat()   # #248: for the cost
                 raw = R.to_answer(out, provider, meta)
         t.report("synthesize", "done", f"{REDUCE_RUNNING} ({provider}, one call): "
@@ -301,6 +315,8 @@ def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info):
                                        code_built=code_built)
     if info is not None:
         info.update(done, provider=provider, model=model_name(provider) if provider != "mock" else "mock")
+        if early is not None:   # #275: first checked claim, shown / held, early claims not in the final answer
+            info["stream_items"] = early.stats(answer)
         if finished_at:   # #248: a new reduce call's usage and completion time, for the logged cost
             info.update(usage=getattr(raw, "usage", None), finished_at=finished_at)
     t.report("check", "done", _check_text(answer, hits))

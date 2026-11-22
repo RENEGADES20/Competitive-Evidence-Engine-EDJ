@@ -51,6 +51,10 @@ class Settings:
     deepseek_model_map: str = ""
     deepseek_stream: str = "on"
     map_call_tokens: int = 60000
+    # #275: a streamed DeepSeek call with no chunk for this many seconds is aborted and saved as failed
+    # (no automatic retry); the reduce system prompt version (v5.2 | v5.3: v5.3 adds "state each fact once").
+    deepseek_idle_s: float = 120.0
+    reduce_prompt: str = "v5.2"
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -114,6 +118,25 @@ def _positive_int(name: str, default: int | None) -> int | None:
     return value
 
 
+DEEPSEEK_IDLE_S_DEFAULT = 120.0   # #275: seconds without a streamed chunk before a call is aborted
+REDUCE_PROMPTS = ("v5.2", "v5.3")
+REDUCE_PROMPT_DEFAULT = "v5.2"
+
+
+def _positive_float(name: str, default: float) -> float:
+    """A number setting > 0 (seconds); empty -> the default; anything else stops with a clear error."""
+    raw = os.getenv(name, "").strip().strip('"').strip()
+    if not raw:
+        return default
+    try:
+        value = float(raw)
+    except ValueError:
+        raise ValueError(f"{name}={raw!r} is not a number") from None
+    if value <= 0:
+        raise ValueError(f"{name}={raw!r} must be greater than 0")
+    return value
+
+
 def settings() -> Settings:
     return Settings(
         database_url=os.getenv("DATABASE_URL", "postgresql://cee:cee@localhost:5432/cee"),
@@ -137,6 +160,8 @@ def settings() -> Settings:
         deepseek_model_map=os.getenv("DEEPSEEK_MODEL_MAP", "").strip(),
         deepseek_stream=_choice("DEEPSEEK_STREAM", STREAM_MODES, "on"),
         map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),
+        deepseek_idle_s=_positive_float("DEEPSEEK_IDLE_S", DEEPSEEK_IDLE_S_DEFAULT),
+        reduce_prompt=_choice("REDUCE_PROMPT", REDUCE_PROMPTS, REDUCE_PROMPT_DEFAULT),
     )
 
 

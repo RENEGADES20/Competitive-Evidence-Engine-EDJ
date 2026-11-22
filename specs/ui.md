@@ -92,6 +92,15 @@ Page "Architecture" (#270; replaced the Design component gallery)
   then "Evidence so far": one card per cited item of each extraction call as it lands (label
   "EVIDENCE - <firm> - <aspect>", the citation chip of a retrieved, code-checked chunk, so every card
   cites a stored document), and the answer last.
+- Streamed answer (#275): while the reduce call streams, "Answer (in progress: checks running)" lists each
+  claim once its JSON object is complete and it has passed the per-claim checks (citation inside the matrix
+  and the retrieved set, figures and dates found in the cited passages, not normative, no why-line or rule-3
+  flag; `reduce.check_item`). Claims appear in arrival order; when the final answer is ready the block is
+  replaced by it, in the final order (newest first where it applies, duplicates removed, comparison and
+  computability claims, hand-off, gaps and caveats added), so order may change at the end. Adjacent items and
+  flagged claims appear only in the final answer. If the call fails, the block is removed and the error shown;
+  a stalled stream (no chunk for `DEEPSEEK_IDLE_S`) shows an error with a "Try again" button (the user's click;
+  never an automatic retry).
 - Architecture page: every module of the diagram shows its explanation on hover and on keyboard
   focus, and the list under the diagram holds the same text (#270).
 - Screenshot of each page attached to the PR.

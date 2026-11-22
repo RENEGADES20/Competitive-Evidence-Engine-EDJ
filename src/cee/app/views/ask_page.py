@@ -123,6 +123,14 @@ PLAN_HEADING = "Plan"
 EVIDENCE_HEADING = "Evidence so far"
 EVIDENCE_HELP = ("Cited passages found while the answer is written; each comes from a stored document. "
                  "The answer below is the complete result.")
+# #275: the reduce's claims as they stream, each after the per-claim checks (citation in the matrix, figures,
+# dates); replaced by the final answer once every check, gap and caveat is done.
+EARLY_HEADING = "Answer (in progress: checks running)"
+EARLY_HELP = ("Each point below has passed its citation, figure and date checks. The order may change and "
+              "duplicates may be removed when the remaining checks finish; gaps and caveats come with the full answer.")
+STALL_TEXT = ("The model stopped sending the answer (no output for {idle:g} s), so this answer was not built. "
+              "Nothing partial is shown.")
+RETRY_LABEL = "Try again"
 
 
 def evidence_label(line: dict) -> str:
@@ -139,6 +147,8 @@ def ask_with_trace(question: str, filters: dict | None = None, mode: str = "fts"
     bar = st.progress(0.0, text="Reading the question")
     plan_slot = st.empty()
     evidence = st.container()
+    early = st.empty()   # #275: the streamed claims; emptied when the final answer or a failure is shown
+    early_box = {"c": None}
     shown = {"n": 0}
     box = st.status("Building the answer", expanded=True)
     slot = box.empty()
@@ -147,6 +157,17 @@ def ask_with_trace(question: str, filters: dict | None = None, mode: str = "fts"
     def on_event(kind: str, data: dict) -> None:
         if kind == "plan":
             plan_slot.markdown(f"**{PLAN_HEADING}:** {escape(data['text'])}", unsafe_allow_html=True)
+            return
+        if kind == "claim":
+            if early_box["c"] is None:
+                early_box["c"] = early.container()
+                with early_box["c"]:
+                    st.markdown(f"**{EARLY_HEADING}**")
+                    st.caption(EARLY_HELP)
+            c = data["claim"]
+            chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in data["hits"]]
+            with early_box["c"]:
+                ui.claim_card(data["n"], c.text, chips, label="CLAIM (CHECKING)")
             return
         if kind != "evidence":
             return
@@ -172,15 +193,21 @@ def ask_with_trace(question: str, filters: dict | None = None, mode: str = "fts"
         r = ask(question, progress=progress, filters=filters, mode=mode, on_event=on_event)
     except Exception as e:
         bar.empty()
+        early.empty()   # #275: no early claim stays on screen without a final answer
         failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
         box.update(label=failed, state="error", expanded=True)
+        from cee.answer.llm import StreamIdle
         if mode != "fts" and type(e).__name__ in SMART_SETUP_ERRORS:
             st.error("Smart search is not fully set up on this computer. Switch to Exact match in the "
                      "sidebar and ask again.")
+        elif isinstance(e, StreamIdle):   # #275: a stalled stream; the user may ask again (no automatic retry)
+            st.error(STALL_TEXT.format(idle=e.idle_s))
+            st.button(RETRY_LABEL, key="retry-ask", on_click=lambda: st.session_state.update(retry_ask=True))
         else:
             st.error(f"The answer could not be built. {type(e).__name__}: {e}")
         return None
     bar.empty()
+    early.empty()
     box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
                state="complete", expanded=False)
     return r
@@ -199,6 +226,7 @@ def render() -> None:
                    "if nothing is stored, the answer says so.")
         question = st.text_input("Question", placeholder="What does Edward Jones's 10-K say about its number of financial advisors?")
         asked = st.button("Ask", type="primary")
+        asked = asked or bool(st.session_state.pop("retry_ask", False))   # #275: "Try again" after a stall
     with right:
         s = ui.corpus_stats()
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),

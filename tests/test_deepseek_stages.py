@@ -24,7 +24,8 @@ def test_each_stage_sends_its_own_effort_and_cap(monkeypatch, stage, var, effort
     if effort == "off":
         assert body == {"thinking": {"type": "disabled"}}
         assert req["tool_choice"] == {"type": "function", "function": {"name": "t"}}
-        assert req["max_tokens"] == llm.DEEPSEEK_OFF_CAPS[stage]
+        # #275: a streamed off reduce gets 64000 (it writes the whole answer); the other off caps are unchanged
+        assert req["max_tokens"] == (64000 if stage == "reduce" else llm.DEEPSEEK_OFF_CAPS[stage])
     else:
         assert body == {"thinking": {"type": "enabled"}, "reasoning_effort": effort}
         assert req["tool_choice"] == "auto" and req["max_tokens"] == 128000
