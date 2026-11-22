@@ -210,12 +210,13 @@ delay, the pump logic is tested as a pure function).
       calls and runs only the missing ones (exact call counts); a planner `Cancelled` never yields the rule
       plan; no stage reads "failed" after a stop; one Retry click makes one attempt; the stopped row's
       `filters.run.records` and `filters.run.stop_s` are present; the Retry poll draws no Stop and starts no run.
-- [x] `pytest` (whole suite) -> 1160 passed; `tests/test_no_paid_calls.py` green (0 real calls).
+- [x] `pytest` (whole suite) -> 1162 passed (review round 1); `tests/test_no_paid_calls.py` green (0 real calls).
 - [x] Mock eval: `python scripts/eval_run.py` -> PASS 33 | FAIL 2 on the 35-question bank, the same as the run on
       `main` earlier today (`.eval-runs/corpus-2026-11-19-20261122-115549`): every question's status and chunk ids
       identical (Q26 differs only in its as-of window date). The 2 FAILs (Q19, Q33) are pre-existing. The bank grew
       from 30 to 35 since the issue was written.
-- [x] `python scripts/verify_cee.py run` -> 11/11 features PASS (`.verify-runs/20261122-124300-a132160`); the new
+- [x] `python scripts/verify_cee.py run` -> 11/11 features PASS (review round 1: `.verify-runs/20261122-130235-46f3b2b`;
+      first run `.verify-runs/20261122-124300-a132160`); the new
       `ask-stop-retry` recipe shows:
       - Stop clicked after the first evidence card (during the map): "Stopped while extracting evidence" visible
         in < 1 s; the evidence card still shown; no "LLM called:", no "Answer (in progress", no Stop button;
@@ -260,3 +261,13 @@ delay, the pump logic is tested as a pure function).
 - 2026-11-22 12:50 - verify-cee all 11 features PASS (`.verify-runs/20261122-124300-a132160`); mock eval
   unchanged against `main` (33 / 2 on 35 questions); pytest 1160 passed; 0 real calls.
 - 2026-11-22 12:58 - PR #279 opened; `gh pr checks` pytest pass. Not merged (independent review).
+- 2026-11-22 13:10 - PR #279 review round 1 (CHANGES REQUESTED), all three taken:
+  (1) blocking: the driver read `stop_s` 0.0 as missing (`or 99`); now an explicit None check. A re-run of the
+  full verify-cee then failed nothing: 11/11 PASS, `.verify-runs/20261122-130235-46f3b2b` (stop_s 0.0, reason stop).
+  (2) a Stop click was logged with reason "page": the on_click came after the pump had set the token. The pump
+  now reads the clicked widget from Streamlit's rerun exception (`rerun_data.widget_states`, the Stop button's
+  trigger) and sets reason "stop"; any other click stays "page". Tests: `stop_clicked` on real WidgetStates protos,
+  and the pump with a Stop-trigger interrupt; the driver now asserts reason stop in the running app.
+  (3) change from the plan: Ask is disabled too (with "Finishing the stopped call ...") while a stopped run's
+  worker is still alive, after the same 2 s grace join, so no second run starts while an uncut call is in flight;
+  AppTest covers it. pytest 1162 passed; 0 real calls.

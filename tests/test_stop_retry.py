@@ -393,9 +393,47 @@ def test_a_click_during_the_run_sets_the_token_and_marks_the_run_stopped(monkeyp
     with pytest.raises(Click):
         P.ask_with_trace("q", {})
     run = st.session_state["ask_run"]
+    # a click on another widget (no Stop trigger in the rerun data): reason "page"
     assert run.status == "stopped" and run.token.is_set() and run.token.reason == "page" and run.stage == "extract"
     run.thread.join(3)
     assert not run.thread.is_alive()   # the worker saw the token and ended
+
+
+def stop_rerun(key: str, fired: bool = True) -> BaseException:
+    """A rerun exception like Streamlit's, carrying the widget states the browser sent with the click."""
+    from types import SimpleNamespace as NS
+
+    from streamlit.proto.WidgetStates_pb2 import WidgetStates
+    states = WidgetStates()
+    w = states.widgets.add()
+    w.id = f"$$ID-0123abcd-{key}"
+    w.trigger_value = fired
+    e = Click()
+    e.rerun_data = NS(widget_states=states)
+    return e
+
+
+def test_a_stop_click_is_recorded_as_stop_not_page(monkeypatch):
+    import streamlit as st
+
+    from cee.app.views import ask_page as P
+    assert P.stop_clicked(stop_rerun("stop-ask")) and not P.stop_clicked(stop_rerun("f_firms"))
+    assert not P.stop_clicked(stop_rerun("stop-ask", fired=False)) and not P.stop_clicked(Click())
+
+    def fake_ask(question, progress=None, filters=None, on_event=None, token=None, cache=None, **k):
+        with cancel.use(token):
+            progress("extract", "running", "Extracting")
+            cancel.sleep(30)
+    monkeypatch.setattr(P, "ask", fake_ask)
+
+    def click(*a, **k):
+        raise stop_rerun("stop-ask")
+    monkeypatch.setattr(P.ui, "trace_lines", click)
+    with pytest.raises(Click):
+        P.ask_with_trace("q", {})
+    run = st.session_state["ask_run"]
+    assert run.token.reason == "stop" and run.stop_clicked and run.token.stage == "extract"
+    run.thread.join(3)
 
 
 def late_page():
@@ -480,6 +518,24 @@ def test_the_retry_poll_while_the_old_worker_lives_draws_no_stop_and_starts_no_r
     at.session_state["retry_ask"] = True   # even a stale Retry flag starts nothing while the worker lives
     at.run()
     assert asked == [] and "Stop" not in [b.label for b in at.button]
+
+
+def test_ask_is_disabled_while_the_stopped_worker_still_runs(page_env):
+    """Ask, like Retry, starts no second run while an uncut call of the stopped run is still in flight."""
+    from streamlit.testing.v1 import AppTest
+    P, asked = page_env
+    at = AppTest.from_function(render_page)
+    at.session_state["ask_run"] = stopped_run(P, alive=True)
+    at.run()
+    ask_button = next(b for b in at.button if b.label == "Ask")
+    assert ask_button.disabled and P.ASK_BUSY_TEXT in " ".join(c.value for c in at.caption)
+    at.text_input[0].input("Another question").run()
+    assert asked == [] and next(b for b in at.button if b.label == "Ask").disabled
+    run = at.session_state["ask_run"]
+    run.thread = None   # the worker ended
+    at.run()
+    assert not next(b for b in at.button if b.label == "Ask").disabled and P.ASK_BUSY_TEXT not in " ".join(
+        c.value for c in at.caption)
 
 
 def test_retry_asks_once_with_the_saved_question_filters_and_cache(page_env):

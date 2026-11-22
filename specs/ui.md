@@ -112,7 +112,9 @@ Page "Architecture" (#270; replaced the Design component gallery)
   invalid call. One click is one attempt with the saved question and filters: calls that finished with a valid
   output come from the run cache (no new cost), the missing, failed, cut or cancelled ones run again. While the
   stopped run's worker is still finishing a call that cannot be cut (a non-streamed request), Retry is disabled
-  with a note and enabled once it ends. Ask always starts a new run (no reuse).
+  with a note and enabled once it ends; Ask is disabled the same way (no second run while a call is in flight).
+  Ask always starts a new run (no reuse). The run log names the reason: `stop` (the Stop button) or `page`
+  (another click interrupted the run).
 - Architecture page: every module of the diagram shows its explanation on hover and on keyboard
   focus, and the list under the diagram holds the same text (#270).
 - Screenshot of each page attached to the PR.

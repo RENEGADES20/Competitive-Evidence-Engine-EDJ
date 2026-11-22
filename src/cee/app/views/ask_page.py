@@ -111,6 +111,8 @@ STOPPED_TEXT = ("The answer was not built. The evidence found before the stop is
 PAGE_CHANGED_TEXT = "The run stopped because the page changed while the answer was being built."
 WAITING_TEXT = "The previous call is still finishing; Retry is available once it has ended."
 FAILED_RETRY_HELP = "Retry asks again with the same question and filters; calls that finished are reused."
+ASK_BUSY_TEXT = ("Finishing the stopped call; Ask is available again once it has ended "
+                 "(so no call runs twice and nothing is paid twice).")
 RUNNING_TEXT = "Working for {s:.0f} s. Stop ends the run; the evidence found so far stays on the page."
 STAGE_WORDS = {"resolve": "reading the question", "decompose": "planning the search", "search": "searching",
                "extract": "extracting evidence", "research": "re-searching", "synthesize": "writing the answer",
@@ -147,6 +149,24 @@ class Run:
 
     def alive(self) -> bool:
         return self.thread is not None and self.thread.is_alive()
+
+
+STOP_KEY = "stop-ask"
+
+
+def stop_clicked(e: BaseException) -> bool:
+    """#277: whether the rerun that interrupted the pump was caused by the Stop button: Streamlit's rerun exception
+    carries the new widget states, and the clicked button's state holds trigger_value true (its id ends with the
+    user key). Any other interruption (a filter, a new Ask, the tab closed) reads False ("page")."""
+    states = getattr(getattr(e, "rerun_data", None), "widget_states", None)
+    for w in getattr(states, "widgets", None) or []:
+        try:
+            fired = w.WhichOneof("value") == "trigger_value" and bool(w.trigger_value)
+        except (AttributeError, ValueError):
+            fired = bool(getattr(w, "trigger_value", False))
+        if fired and str(getattr(w, "id", "")).endswith(STOP_KEY):
+            return True
+    return False
 
 
 def _on_stop() -> None:   # runs at the start of the rerun the Stop click causes (the pump already set the token)
@@ -235,7 +255,7 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
         ui.trace_lines(list(steps.values()), slot)
 
     start = time.perf_counter()
-    stop_slot.button(STOP_LABEL, key="stop-ask", on_click=_on_stop)
+    stop_slot.button(STOP_LABEL, key=STOP_KEY, on_click=_on_stop)
     q: queue.Queue = queue.Queue()
     _start_worker(run, q)
     end: tuple | None = None
@@ -257,8 +277,10 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
                 tick = now
                 elapsed.caption(RUNNING_TEXT.format(s=now - start))
                 st.session_state.get("ask_run")   # a session-state read is a yield point too
-    except BaseException:   # Streamlit's rerun / stop exception: Stop or another click interrupted the script
-        run.token.set("page", run.stage)
+    except BaseException as e:   # Streamlit's rerun / stop exception: Stop or another click interrupted the script
+        stop = stop_clicked(e)
+        run.stop_clicked = run.stop_clicked or stop
+        run.token.set("stop" if stop else "page", run.stage)
         run.status = "stopped"
         raise
     bar.empty()
@@ -362,6 +384,11 @@ def has_failed_calls(r: Result | None) -> bool:
 def render() -> None:
     _ticker()
     filters = filters_sidebar()
+    run: Run | None = st.session_state.get("ask_run")
+    if run is not None and run.status != "running" and run.alive():
+        run.thread.join(GRACE_S)   # the usual case: the stopped worker ends within a second
+    # #277: while a stopped run's worker still finishes a call that cannot be cut, Ask (like Retry) starts nothing
+    busy = run is not None and run.status != "running" and run.alive()
     left, right = st.columns([3, 2], gap="large")
     with left:
         ui.eyebrow("Evidence, not opinion")
@@ -370,14 +397,15 @@ def render() -> None:
                    "Raymond James. Every point in the answer links to the stored document it comes from; "
                    "if nothing is stored, the answer says so.")
         question = st.text_input("Question", placeholder="What does Edward Jones's 10-K say about its number of financial advisors?")
-        asked = st.button("Ask", type="primary")
+        asked = st.button("Ask", type="primary", disabled=busy) and not busy
+        if busy:
+            st.caption(ASK_BUSY_TEXT)
     retry = bool(st.session_state.pop("retry_ask", False))   # #277: Retry (was #275's "Try again")
     with right:
         s = ui.corpus_stats()
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
                                          ("FIRMS", str(s["firms"]))])
 
-    run: Run | None = st.session_state.get("ask_run")
     if asked and question.strip():
         r = ask_with_trace(question, filters)   # a new run and a new run cache
         # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.

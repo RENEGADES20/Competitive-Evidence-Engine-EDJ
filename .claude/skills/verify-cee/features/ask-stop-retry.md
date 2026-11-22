@@ -12,7 +12,8 @@ attempt is logged in `query_log`: a stopped or failed attempt has no answer (NUL
 - `stop-map`: Stop clicked during the map. "Stopped while extracting evidence" appears within 5 s, with the
   evidence cards already shown. There is no "LLM called:" footer, no "Answer (in progress" block and no
   Stop button, and no card arrives afterwards.
-- `stop-log`: the stopped row has `answer` NULL and `filters.run.status = stopped`, stage `extract`. Its records
+- `stop-log`: the stopped row has `answer` NULL and `filters.run.status = stopped`, `reason` `stop` (a click on
+  another widget reads `page`), stage `extract`. Its records
   are `map.a1.MS` ok and `map.a1.RJF` cancelled (plus `map.research`, queued behind it), and `stop_s` (click to worker end) is 5 s or less.
 - `retry-after-stop`: Retry completes the answer. The new row has `run.attempt = 2` and `retry_of` = the
   stopped row. `reused` is `{"map": 1}` (the ok call) and `made` is `{"map": 2, "reduce": 1}` (the cancelled calls and the reduce).
@@ -59,7 +60,11 @@ Preconditions: baseline. The verify app runs the mock with `MOCK_DELAY_S=1.5` an
 - This feature runs last in `FEATURES`: it leaves rows with no answer. Every other feature reads the newest
   row `WHERE answer IS NOT NULL`.
 - A click on any other widget during a run (a sidebar filter, for example) stops the run the same way. The
-  Stopped view then adds "The run stopped because the page changed while the answer was being built."
+  Stopped view then adds "The run stopped because the page changed while the answer was being built.", and
+  the row's `reason` reads `page`. The pump tells the two apart from the widget states in Streamlit's rerun
+  exception (the Stop button's trigger).
+- While a stopped run's worker still finishes a call that cannot be cut, Ask and Retry are both disabled
+  ("Finishing the stopped call ..."), so no call runs twice (pytest; the mock's calls are always cut).
 - The driver always removes the mock-fail file, even when a step fails. A file left behind makes every later
   mock reduce of that app fail.
 - `made` counts the mock's calls too (0 paid calls). `filters.llm_calls` and `filters.cost` still count paid

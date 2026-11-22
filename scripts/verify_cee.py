@@ -1026,12 +1026,14 @@ def feature_ask_stop_retry(page, base, rec, ctx):
     n_ok = sum(st == "ok" for _, st in recs)
     n_cut = sum(st == "cancelled" for _, st in recs)
     rec.step("Read the newest query_log row (side effect)",
-             "answer NULL; filters.run: status stopped, stage extract, map.a1.MS ok, map.a1.RJF cancelled (and "
-             "map.research, queued behind it), stop_s <= 5",
+             "answer NULL; filters.run: status stopped, reason stop (the Stop button, not 'page'), stage extract, "
+             "map.a1.MS ok, map.a1.RJF cancelled (and map.research, queued behind it), stop_s <= 5",
              row.get("answered") is False and run.get("status") == "stopped" and run.get("stage") == "extract"
+             and run.get("reason") == "stop"
              and ("map.a1.MS", "ok") in recs and ("map.a1.RJF", "cancelled") in recs
-             and (run.get("stop_s") or 99) <= 5,
-             f"row {row.get('id')}: status={run.get('status')}, stage={run.get('stage')}, records={sorted(recs)}, "
+             and run.get("stop_s") is not None and run["stop_s"] <= 5,   # 0.0 is a valid (fast) stop
+             f"row {row.get('id')}: status={run.get('status')}, reason={run.get('reason')}, stage={run.get('stage')}, "
+             f"records={sorted(recs)}, "
              f"stop_s={run.get('stop_s')}")
     stopped_id = row.get("id")
     page.get_by_role("button", name="Retry").click()
