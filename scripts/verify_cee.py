@@ -453,7 +453,24 @@ def feature_ask_progress(page, base, rec, ctx):
     rec.step("Ask; look while the answer is being built", "progress bar and step lines, no answer yet",
              early, f"progress bar={bar}, first step shown={'Reading the question:' in body}, "
                     f"answer shown={'LLM called:' in body}")
+    # #275 streamed answer: the mock reduce feeds its output through the stream parser and waits MOCK_DELAY_S
+    # after the claim, so the checked claim is on the page before the final answer.
+    page.wait_for_function("() => document.body.innerText.includes('Answer (in progress')",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    early_cards = page.locator(".cee-claim", has_text="CLAIM (CHECKING)")
+    early_chips = early_cards.first.locator(".cee-chip").count() if early_cards.count() else 0
+    rec.step("Look while the answer streams (#275)",
+             "'Answer (in progress: checks running)' with a checked claim card carrying a citation chip; "
+             "no final answer yet",
+             early_cards.count() > 0 and early_chips > 0 and "LLM called:" not in body,
+             f"early claim cards={early_cards.count()}, chips on the first={early_chips}, "
+             f"answer shown={'LLM called:' in body}")
     wait_for_text(page, ["LLM called:"], "the answer")
+    body = page.locator("body").inner_text()
+    rec.step("Look once the answer is ready (#275)", "the in-progress block is gone; the final answer shows",
+             "Answer (in progress" not in body and "CLAIM (CHECKING)" not in body and "LLM called:" in body,
+             f"in-progress shown={'Answer (in progress' in body}, answer shown={'LLM called:' in body}")
     status = page.get_by_text("How this answer was built", exact=False)
     hidden = not page.locator(".cee-trace").first.is_visible()
     rec.step("Look above the answer", "a collapsed 'How this answer was built' box",

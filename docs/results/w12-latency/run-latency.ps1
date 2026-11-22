@@ -5,6 +5,9 @@
 #   powershell -File run-latency.ps1 -Wt <worktree> -Out <name> -Cache <dir> -MaxCalls <n> -Phase plan|count|run `
 #     -GateSha <sha> [-EffortPlan off] [-EffortMap low] [-EffortReduce low] [-MapModel <model>] [-Stream on] `
 #     [-Questions Q5,Q10] [-Mode hybrid-norerank] [-ReusePlans] [-PlanVersion <request version>] [-FastembedPath <dir>]
+#     [-IdleS 120] [-ReducePrompt v5.2|v5.3] [-EvDir <dir>]
+# #275: -IdleS pins DEEPSEEK_IDLE_S (a stalled stream fails, no retry), -ReducePrompt pins REDUCE_PROMPT, and
+# PYTHONHASHSEED=0 is pinned so set iteration order is the same in every process (reduce message stability).
 param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Parameter(Mandatory)][string]$Cache,
       [Parameter(Mandatory)][int]$MaxCalls, [Parameter(Mandatory)][ValidateSet('plan', 'count', 'run')][string]$Phase,
       [Parameter(Mandatory)][string]$GateSha,
@@ -14,6 +17,7 @@ param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Pa
       [string]$MapModel = '', [ValidateSet('on', 'off', 'nothink')][string]$Stream = 'on',
       [string]$Model = 'deepseek-v4-pro', [string]$Mode = '', [switch]$ReusePlans, [string]$PlanVersion = '',
       [string]$FastembedPath = '', [string]$EnvFile = 'D:\ALLPROJECTS\EDJ\repo\.env',
+      [double]$IdleS = 120, [ValidateSet('v5.2', 'v5.3')][string]$ReducePrompt = 'v5.2',
       [string]$Questions = ((1..30 | ForEach-Object { "Q$_" }) -join ','), [int]$Concurrency = 24,
       [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev272', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
 $h = Join-Path $EvDir "$Out.head-log.txt"; $outDir = Join-Path $EvDir $Out
@@ -29,7 +33,7 @@ if ($st -or $gate -or (Test-Path "$Wt\.env") -or (Test-Path $outDir)) {
 $vars = 'LLM_PROVIDER', 'LLM_MODEL', 'DEEPSEEK_MODEL', 'DEEPSEEK_MODEL_MAP', 'DEEPSEEK_BASE_URL', 'DEEPSEEK_THINKING',
         'DEEPSEEK_EFFORT_PLAN', 'DEEPSEEK_EFFORT_MAP', 'DEEPSEEK_EFFORT_REDUCE', 'DEEPSEEK_STREAM', 'PLANNER',
         'SUBQUESTION_TOKENS', 'MAP', 'MAP_CONCURRENCY', 'MAP_CALL_TOKENS', 'PYTHONPATH', 'CEE_VECTORS',
-        'FASTEMBED_CACHE_PATH', 'DEEPSEEK_API_KEY', 'ANTHROPIC_API_KEY'
+        'FASTEMBED_CACHE_PATH', 'DEEPSEEK_API_KEY', 'ANTHROPIC_API_KEY', 'DEEPSEEK_IDLE_S', 'REDUCE_PROMPT', 'PYTHONHASHSEED'
 $a = @('--real', '--max-calls', "$MaxCalls", '--naive-tz', 'America/Chicago', '--cache', $Cache, '--questions', $Questions,
        '--as-of', '2026-11-17', '--baseline', 'evals\baselines\corpus-2026-11-19\report.json', '--out', $outDir)
 if ($Phase -eq 'plan') { $a += '--plan-only' }
@@ -42,9 +46,10 @@ try {
   $env:DEEPSEEK_MODEL = $Model; $env:DEEPSEEK_BASE_URL = 'https://api.deepseek.com/beta'
   $env:DEEPSEEK_EFFORT_PLAN = $EffortPlan; $env:DEEPSEEK_EFFORT_MAP = $EffortMap; $env:DEEPSEEK_EFFORT_REDUCE = $EffortReduce
   $env:DEEPSEEK_STREAM = $Stream; if ($MapModel) { $env:DEEPSEEK_MODEL_MAP = $MapModel }
+  $env:DEEPSEEK_IDLE_S = "$IdleS"; $env:REDUCE_PROMPT = $ReducePrompt; $env:PYTHONHASHSEED = '0'
   if ($Mode -and $Mode -ne 'fts') { $env:CEE_VECTORS = 'on'; if ($FastembedPath) { $env:FASTEMBED_CACHE_PATH = $FastembedPath } }
   $mm = if ($MapModel) { $MapModel } else { $Model }; $md = if ($Mode) { $Mode } else { 'fts' }
-  "settings: model $Model map model $mm effort plan $EffortPlan map $EffortMap reduce $EffortReduce stream $Stream mode $md PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=$Concurrency MAP_CALL_TOKENS=60000; args $($a -join ' ')" | Add-Content $h
+  "settings: model $Model map model $mm effort plan $EffortPlan map $EffortMap reduce $EffortReduce stream $Stream idle $IdleS reduce prompt $ReducePrompt PYTHONHASHSEED=0 mode $md PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=$Concurrency MAP_CALL_TOKENS=60000; args $($a -join ' ')" | Add-Content $h
   if ($Phase -eq 'count') {
     $env:DEEPSEEK_API_KEY = ''
     & $Py -B scripts\eval_run.py @a *> "$outDir.log"

@@ -14,6 +14,10 @@ built".
   question ..."), then "Evidence so far" with one card per cited item of each map call as it lands
   ("EVIDENCE - <firm> - <aspect>", with the citation chip of a retrieved passage), and the answer last.
   Each card cites a chunk the map's code check kept (inside the cell's retrieved set), so rule 1 holds.
+- `streamed-answer` (#275): while the reduce streams, "Answer (in progress: checks running)" lists each claim
+  that passed the per-claim checks ("CLAIM (CHECKING)" cards with citation chips); when the final answer shows,
+  the block is gone. Adjacent items and flagged claims wait for the final answer. A stalled stream shows an
+  error with a "Try again" button (pytest `tests/test_reduce_stream.py`; the driver cannot stall the mock).
 
 - `progress-early`: the progress bar and the first step line appear before the answer.
 - `progress-facts`: the search line's passage count equals the footer's chunk count (in the hybrid
@@ -53,6 +57,9 @@ Preconditions: baseline.
   on the page (screenshot).
 - **Evidence next (#272).** Once "Evidence so far" shows, at least one "EVIDENCE - Edward Jones" card with
   a citation chip is there and "LLM called:" is not (screenshot); the answer follows.
+- **Streamed answer (#275).** After "Synthesizing the answer" shows, "Answer (in progress: checks running)"
+  appears with at least one "CLAIM (CHECKING)" card carrying a citation chip, and "LLM called:" is not on the
+  page (screenshot); once "LLM called:" shows, the in-progress block and its cards are gone.
 - **Early.** Still on the answerable question. As soon as "Synthesizing the answer" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).
@@ -87,7 +94,8 @@ Preconditions: baseline.
 - The mock answers in milliseconds, and Streamlit merges a bar that is shown and removed
   within one update, so the bar would never be drawn. The verify app sets `MOCK_DELAY_S=1.5`:
   the mock map (`mock_extract`) and the mock reduce (`mock_reduce`) each wait that long, like a model
-  would. The answerable question takes map.a1.EDJ (#272: one call per cell) -> behavior answer -> the reduce call, so the page is
+  would; on the Ask page the mock reduce then streams its output and waits that long again spread over its
+  items (#275), so the checked claim is seen before the final answer. The answerable question takes map.a1.EDJ (#272: one call per cell) -> behavior answer -> the reduce call, so the page is
   caught while "Synthesizing the answer" runs. Without the delay, do not expect to see the bar.
 - Streamlit renders `st.status` as an expander; open it by clicking its label.
 - `llm_calls` and `cost` count paid provider calls: on the mock they read 0 although the synthesize

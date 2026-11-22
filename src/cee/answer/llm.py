@@ -40,8 +40,13 @@ DEEPSEEK_MAX_TOKENS = {False: 20000, True: 64000}
 DEEPSEEK_PLANNER_MAX_TOKENS = {False: 8000, True: 64000}
 # Read timeout per read, not per request. The docs only say empty lines are sent while a request
 # waits (one not started after 10 minutes is closed); nothing about lines during inference, so the
-# whole generation may be one silent read: 3600 s covers 64000 tokens at about 18 tokens/s.
+# whole generation of a non-streamed call may be one silent read: 3600 s covers 64000 tokens at about
+# 18 tokens/s. #275: a streamed call (every W11 stage by default) is read with DEEPSEEK_IDLE_S instead
+# (default 120 s, plus IDLE_READ_MARGIN_S for the socket read), and a watchdog aborts it when no chunk
+# arrived for DEEPSEEK_IDLE_S (keep-alive lines are bytes but not chunks). A stalled call fails fast
+# (StreamIdle) and is saved as failed with its partial output; it is never retried automatically.
 DEEPSEEK_TIMEOUT_S, DEEPSEEK_CONNECT_S = 3600.0, 30.0
+IDLE_READ_MARGIN_S = 5.0
 DEEPSEEK_OK = ("tool_calls", "stop")   # finish_reason of a usable tool answer (forced choice: stop)
 DEEPSEEK_STOP_CODES = {401: "the API key was rejected (401); check DEEPSEEK_API_KEY in .env",
                        402: "insufficient balance (402); top up the DeepSeek account, then run again",
@@ -55,6 +60,11 @@ DEEPSEEK_STOP_CODES = {401: "the API key was rejected (401); check DEEPSEEK_API_
 DEEPSEEK_STAGES = ("plan", "map", "reduce")
 DEEPSEEK_THINKING_CAP = 128000
 DEEPSEEK_OFF_CAPS = {"plan": 8000, "map": 20000, "reduce": 20000}
+# #275: a thinking-off reduce writes the whole answer as output (the #272 answers reach 27,059 tokens), so a
+# streamed off reduce gets 64000 (the API allows 1..384K in both modes, api-docs.deepseek.com
+# /api/create-chat-completion, read 2026-11-22); a non-streamed one keeps 20000 (the SDK refuses a
+# non-streamed call above 21,333).
+DEEPSEEK_REDUCE_OFF_STREAMED_CAP = 64000
 
 
 def stage_effort(stage: str) -> str:
@@ -69,7 +79,11 @@ def stage_thinking(stage: str) -> bool:
 
 
 def stage_max_tokens(stage: str) -> int:
-    return DEEPSEEK_THINKING_CAP if stage_thinking(stage) else DEEPSEEK_OFF_CAPS[stage]
+    if stage_thinking(stage):
+        return DEEPSEEK_THINKING_CAP
+    if stage == "reduce" and stage_stream(stage):
+        return DEEPSEEK_REDUCE_OFF_STREAMED_CAP
+    return DEEPSEEK_OFF_CAPS[stage]
 
 
 def stage_model(stage: str) -> str:
@@ -330,7 +344,8 @@ def openai_client():
 def deepseek_client():
     """The DeepSeek client for the answer and the planner call (#242): the OpenAI SDK on
     DEEPSEEK_BASE_URL (default /beta, needed for strict tools), max_retries=0 (never a second paid
-    request), read timeout DEEPSEEK_TIMEOUT_S. Needs DEEPSEEK_API_KEY; never uses OPENAI_API_KEY."""
+    request), read timeout DEEPSEEK_TIMEOUT_S (a streamed call: DEEPSEEK_IDLE_S per read and the idle
+    watchdog, #275; a stall fails, never retried). Needs DEEPSEEK_API_KEY; never uses OPENAI_API_KEY."""
     import os
 
     import openai
@@ -377,19 +392,41 @@ def deepseek_request(question: str, hits: list[Hit], plan=None, window=None) -> 
         build_user_message(question, hits, plan, window), answer_max_tokens("deepseek"))
 
 
-def deepseek_create(client, request: dict):
+class StreamIdle(Exception):
+    """#275: a streamed call with no chunk for DEEPSEEK_IDLE_S seconds (or a silent socket), aborted. `partial` is
+    the message assembled so far (content, reasoning_content, tool_calls as JSON data), `output_seen` whether any
+    delta (text, reasoning or tool call) arrived, `ttft_s` the seconds to the first one. Saved as a failed call; no
+    automatic retry (TL ruling on #275)."""
+
+    def __init__(self, message: str, partial: dict, output_seen: bool, ttft_s: float | None, idle_s: float):
+        super().__init__(message)
+        self.partial, self.output_seen, self.ttft_s, self.idle_s = partial, output_seen, ttft_s, idle_s
+
+
+def stream_timeout(idle_s: float):
+    """The SDK timeout of a streamed request: each read waits at most idle_s + IDLE_READ_MARGIN_S."""
+    import openai
+    return openai.Timeout(idle_s + IDLE_READ_MARGIN_S, connect=DEEPSEEK_CONNECT_S)
+
+
+def deepseek_create(client, request: dict, on_delta=None):
     """Send one DeepSeek request; 401 / 402 / 429 become ProviderStop with a plain message. #272: a
     streamed request (stream=True) is read to the end and assembled into the same response shape as a
     non-streamed one (assemble_stream), with ttft_s, the seconds to the first chunk that carries text,
-    reasoning or a tool call. The read timeout applies to each chunk read, not to the whole stream."""
+    reasoning or a tool call. #275: a streamed request is read with the DEEPSEEK_IDLE_S timeout and a
+    watchdog; a stall raises StreamIdle with the partial output (no retry). `on_delta(index, name, text)`
+    gets each tool-call argument delta as it arrives (the reduce's streamed claims), in this thread."""
     import openai
 
     t0 = time.monotonic()
     try:
-        resp = client.chat.completions.create(**request)
-        if request.get("stream") and not (hasattr(resp, "choices") and not hasattr(resp, "__iter__")):
-            return assemble_stream(resp, t0)   # a whole response (a client that ignores stream) is used as is
-        return resp
+        if not request.get("stream"):
+            return client.chat.completions.create(**request)
+        idle = settings().deepseek_idle_s
+        resp = client.chat.completions.create(**request, timeout=stream_timeout(idle))
+        if hasattr(resp, "choices") and not hasattr(resp, "__iter__"):
+            return resp   # a whole response (a client that ignores stream) is used as is
+        return read_stream(resp, t0, idle, on_delta)
     except openai.APIStatusError as e:
         why = DEEPSEEK_STOP_CODES.get(getattr(e, "status_code", None))
         if why:
@@ -397,47 +434,120 @@ def deepseek_create(client, request: dict):
         raise
 
 
-def assemble_stream(chunks, t0: float | None = None):
-    """#272: one streamed chat completion as a response object (SimpleNamespace): choices[0].message
-    with content, reasoning_content and tool_calls (argument deltas joined by index), finish_reason,
-    usage (from the final usage chunk; None when the stream sent none), ttft_s and streamed=True."""
-    from types import SimpleNamespace as NS
+def _is_timeout(e: BaseException) -> bool:
+    import openai
+    return isinstance(e, openai.APITimeoutError) or "Timeout" in type(e).__name__
 
-    t0 = time.monotonic() if t0 is None else t0
-    content, reasoning, calls = [], [], {}
-    finish, usage, ttft = None, None, None
-    for ch in chunks:
+
+def read_stream(stream, t0: float, idle_s: float, on_delta=None):
+    """#275: assemble the stream under a watchdog thread that closes it when no chunk arrived for idle_s (the
+    iteration then ends or raises). A stall (the watchdog, or a read timeout of the SDK) raises StreamIdle with
+    the partial message; any other error propagates."""
+    import threading
+
+    asm = StreamAssembler(t0, on_delta)
+    done, fired = threading.Event(), threading.Event()
+
+    def watch():
+        while not done.wait(min(1.0, idle_s / 4)):
+            if time.monotonic() - asm.last > idle_s:
+                fired.set()
+                close = getattr(stream, "close", None)
+                if close is not None:
+                    try:
+                        close()
+                    except Exception:   # noqa: BLE001 - closing a dead stream may fail; the flag is what counts
+                        pass
+                return
+
+    threading.Thread(target=watch, daemon=True, name="deepseek-idle").start()
+    try:
+        for ch in stream:
+            if fired.is_set():
+                break
+            asm.feed(ch)
+    except Exception as e:   # noqa: BLE001 - a read error after the watchdog fired, or a read timeout
+        if not (fired.is_set() or _is_timeout(e)):
+            raise
+        fired.set()
+    finally:
+        done.set()
+    if fired.is_set():
+        raise StreamIdle(f"stream idle: no chunk for {idle_s:g} s (aborted after {time.monotonic() - t0:.1f} s; "
+                         f"{'some output arrived' if asm.ttft is not None else 'no output arrived'})",
+                         _jsonable(asm.message()), asm.ttft is not None, asm.ttft, idle_s)
+    return asm.response()
+
+
+class StreamAssembler:
+    """#272 / #275: one streamed chat completion, chunk by chunk: content, reasoning, tool calls (argument deltas
+    joined by index), finish_reason, usage, ttft_s; `last` = monotonic time of the last chunk that carried a
+    delta, a finish_reason or usage (the idle clock)."""
+
+    def __init__(self, t0: float | None = None, on_delta=None):
+        self.t0 = time.monotonic() if t0 is None else t0
+        self.last = time.monotonic()
+        self.on_delta = on_delta
+        self.content, self.reasoning, self.calls = [], [], {}
+        self.finish, self.usage, self.ttft = None, None, None
+
+    def feed(self, ch) -> None:
+        alive = False
         if getattr(ch, "usage", None) is not None:
-            usage = ch.usage
+            self.usage = ch.usage
+            alive = True
         for choice in getattr(ch, "choices", None) or []:
             d = getattr(choice, "delta", None)
             got = False
             if d is not None:
                 if getattr(d, "content", None):
-                    content.append(d.content)
+                    self.content.append(d.content)
                     got = True
                 if getattr(d, "reasoning_content", None):
-                    reasoning.append(d.reasoning_content)
+                    self.reasoning.append(d.reasoning_content)
                     got = True
                 for tc in getattr(d, "tool_calls", None) or []:
                     i = getattr(tc, "index", 0) or 0
-                    c = calls.setdefault(i, {"id": None, "name": "", "arguments": []})
+                    c = self.calls.setdefault(i, {"id": None, "name": "", "arguments": []})
                     c["id"] = getattr(tc, "id", None) or c["id"]
                     f = getattr(tc, "function", None)
                     if f is not None:
                         c["name"] = getattr(f, "name", None) or c["name"]
                         if getattr(f, "arguments", None):
                             c["arguments"].append(f.arguments)
+                            if self.on_delta is not None:
+                                self.on_delta(i, c["name"], f.arguments)
                     got = True
-            if got and ttft is None:
-                ttft = round(time.monotonic() - t0, 2)
+            if got and self.ttft is None:
+                self.ttft = round(time.monotonic() - self.t0, 2)
             if getattr(choice, "finish_reason", None):
-                finish = choice.finish_reason
-    tool_calls = [NS(id=c["id"], type="function", function=NS(name=c["name"], arguments="".join(c["arguments"])))
-                  for _, c in sorted(calls.items())]
-    msg = NS(role="assistant", content="".join(content) or None, reasoning_content="".join(reasoning) or None,
-             tool_calls=tool_calls or None)
-    return NS(choices=[NS(message=msg, finish_reason=finish)], usage=usage, ttft_s=ttft, streamed=True)
+                self.finish = choice.finish_reason
+                alive = True
+            alive = alive or got
+        if alive:
+            self.last = time.monotonic()
+
+    def message(self):
+        from types import SimpleNamespace as NS
+        tool_calls = [NS(id=c["id"], type="function", function=NS(name=c["name"], arguments="".join(c["arguments"])))
+                      for _, c in sorted(self.calls.items())]
+        return NS(role="assistant", content="".join(self.content) or None,
+                  reasoning_content="".join(self.reasoning) or None, tool_calls=tool_calls or None)
+
+    def response(self):
+        from types import SimpleNamespace as NS
+        return NS(choices=[NS(message=self.message(), finish_reason=self.finish)], usage=self.usage,
+                  ttft_s=self.ttft, streamed=True)
+
+
+def assemble_stream(chunks, t0: float | None = None, on_delta=None):
+    """#272: one streamed chat completion as a response object (SimpleNamespace): choices[0].message
+    with content, reasoning_content and tool_calls (argument deltas joined by index), finish_reason,
+    usage (from the final usage chunk; None when the stream sent none), ttft_s and streamed=True."""
+    asm = StreamAssembler(t0, on_delta)
+    for ch in chunks:
+        asm.feed(ch)
+    return asm.response()
 
 
 def _jsonable(obj):
