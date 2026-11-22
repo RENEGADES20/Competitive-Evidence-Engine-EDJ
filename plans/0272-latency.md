@@ -271,3 +271,8 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   #272": hybrid sync, hybrid test A and B open), second read in the PR review, then step 13.
 - 2026-11-21 19:40 - PR #273 review round 1 (second read): adjudicated **24/30** (tier 1 12/18); Q8 and Q17 back to
   PASS (borderline), Q3 stays FAIL. Report headline, Test B table (Adjudicated column) and PR body updated.
+- 2026-11-21 20:15 - hybrid side (step 13): sync branch tl/272-hybrid-sync (merge 8771e5a, embed timing 62d26d7). Checks: pytest 1194 passed; mock hybrid-norerank Q1-Q30 with the #250 plans vs exp/hybrid 4d656d8: 30/30 identical; fts parity on the branch vs main: 30/30 identical; verify-cee --mode hybrid 11 features PASS (open-citation and download-document re-run with the corpus path and PYTHONUTF8=1: a GBK console decode of psql output, also on exp/hybrid before the sync). Hybrid test A count (0 calls, cache-h seeded with the 30 fts plans): 141 round-1 maps; --max-calls 288; USD hard ceiling 154, expected about 8 peak.
+- 2026-11-21 20:50 - hybrid test A (ha-c1, gate 62d26d7, C1): 169 new calls, USD 3.23. 0 cut, 0 invalid, 0 failed;
+  behavior 6/6. Critical path p50 309 s, p90 415 s, max 497 s (fts C1 209 / 313 / 383 s; #250 hybrid same six:
+  see report); first evidence p50 15 s. Retrieval (search_s) p50 20 s, p90 45 s, max 52 s, of which query embedding
+  p50 0.46 s, max 0.9 s. Test B hybrid next.
