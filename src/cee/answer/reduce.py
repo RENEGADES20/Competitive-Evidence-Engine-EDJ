@@ -26,7 +26,16 @@ from cee.answer.matrix import EvidenceMatrix, holds, row_name
 from cee.answer.schema import Adjacent, Answer, Gap, llm_output_schema
 from cee.config import settings
 
-REDUCE_VERSION = P.REDUCE_VERSION
+REDUCE_VERSION = P.REDUCE_VERSION   # v5.2; the version a call uses is prompt_version() (REDUCE_PROMPT, #275)
+
+
+def prompt_version() -> str:
+    """The reduce prompt version in use (REDUCE_PROMPT: v5.2 | v5.3, #275)."""
+    return P.reduce_prompt()[0]
+
+
+def system_prompt() -> str:
+    return P.reduce_prompt()[1]
 TOOL = "submit_answer"
 CALLING = ("answer", "answer_with_boundary", "gap_with_adjacent")
 # Enum limits (review note 5): OpenAI structured outputs allow at most 1000 enum values across the
@@ -387,25 +396,25 @@ def requests(question: str, m: EvidenceMatrix, query, provider: str) -> dict:
     schema, _ = reduce_schema(m)
     user = reduce_message(question, m, query)
     if provider == "anthropic":
-        return {"model": settings().llm_model, "max_tokens": max_tokens(provider), "system": P.SYSTEM_PROMPT_V5,
+        return {"model": settings().llm_model, "max_tokens": max_tokens(provider), "system": system_prompt(),
                 "tools": [{"name": TOOL, "description": "Submit the cited answer.", "strict": True,
                            "input_schema": schema}],
                 "tool_choice": {"type": "auto"}, "messages": [{"role": "user", "content": user}]}
     if provider == "openai":
         return {"model": settings().openai_model,
-                "messages": [{"role": "system", "content": P.SYSTEM_PROMPT_V5 + "\nReturn JSON matching the schema."},
+                "messages": [{"role": "system", "content": system_prompt() + "\nReturn JSON matching the schema."},
                              {"role": "user", "content": user}],
                 "response_format": {"type": "json_schema",
                                     "json_schema": {"name": "answer", "strict": True, "schema": schema}}}
     if provider == "deepseek":
-        return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, P.SYSTEM_PROMPT_V5, user,
+        return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, system_prompt(), user,
                                          max_tokens(provider), stage="reduce")
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
 def input_tokens(question: str, m: EvidenceMatrix, query=None) -> int:
     schema, _ = reduce_schema(m)
-    return round((len(P.SYSTEM_PROMPT_V5) + len(json.dumps(schema)) + len(reduce_message(question, m, query))) / 4)
+    return round((len(system_prompt()) + len(json.dumps(schema)) + len(reduce_message(question, m, query))) / 4)
 
 
 def input_limit(provider: str) -> int | None:
@@ -417,12 +426,13 @@ def input_limit(provider: str) -> int | None:
 # --- the call ------------------------------------------------------------------------------------
 
 def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=None,
-                meta: dict | None = None) -> dict:
+                meta: dict | None = None, on_item=None) -> dict:
     """One reduce call; the raw tool input (a dict), or ModelOutputError when the output cannot be
     trusted (no tool call, cut at the cap, refusal, a DeepSeek finish_reason other than tool_calls /
     stop, not JSON, not a valid Answer, empty). `meta` gets stop_reason, usage, parse_flags and
     (deepseek) reasoning_content. ProviderStop and any other exception propagate. No trim: an input
-    over the model's limit is not sent (RuntimeError)."""
+    over the model's limit is not sent (RuntimeError). #275: `on_item(kind, item)` (DeepSeek, streamed) gets each
+    claim / adjacent item as soon as its JSON object is complete (StreamItems), in this thread; see EarlyClaims."""
     from cee.answer import llm
     meta = {} if meta is None else meta
     limit = input_limit(provider)
@@ -467,7 +477,16 @@ def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=N
             meta["parse_flags"] = flags
     elif provider == "deepseek":
         client = client or llm.deepseek_client()
-        resp = llm.deepseek_create(client, req)
+        if on_item is None:
+            resp = llm.deepseek_create(client, req)
+        else:
+            items = StreamItems()
+
+            def on_delta(index, name, text):
+                if name == TOOL:
+                    for kind, obj in items.feed(text):
+                        on_item(kind, obj)
+            resp = llm.deepseek_create(client, req, on_delta=on_delta)
         call, stop, usage, payload = llm.deepseek_tool_call(resp, TOOL, req)
         msg = payload if isinstance(payload, dict) else {}
         meta["stop_reason"], meta["usage"] = stop, usage
@@ -941,7 +960,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     """Every code step after the reduce (plan section 4), in order. Returns (answer, info for the log)."""
     from cee.answer.validate import (check_citations, check_parts, coverage_note, fill_suggested_sources,
                                      insert_caveats)
-    info: dict = {"version": REDUCE_VERSION, "code_built": code_built, "model_behavior": answer.behavior}
+    info: dict = {"version": prompt_version(), "code_built": code_built, "model_behavior": answer.behavior}
     decided = m.behavior if m.behavior is not None else "incomplete"
     answer.behavior = decided
     answer.answerable = decided in ("answer", "answer_with_boundary") and bool(citable(m))
@@ -1001,6 +1020,139 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     return answer, info
 
 
-def raw_answer(m: EvidenceMatrix, query, provider: str) -> Answer:
-    """The mock reduce as a checked Answer (0 calls)."""
-    return to_answer(mock_reduce(m, query), "mock")
+def raw_answer(m: EvidenceMatrix, query, provider: str, on_item=None) -> Answer:
+    """The mock reduce as a checked Answer (0 calls). #275: with `on_item`, its output is fed as tool JSON through
+    StreamItems in pieces (MOCK_DELAY_S spread over the items), so the mock exercises the streamed path."""
+    out = mock_reduce(m, query)
+    if on_item is not None:
+        text = json.dumps(out)
+        pause = settings().mock_delay_s / max(1, len(out["claims"]) + len(out["adjacent"]))
+        items = StreamItems()
+        for k in range(0, len(text), 40):
+            for kind, obj in items.feed(text[k:k + 40]):
+                on_item(kind, obj)
+                if pause:
+                    time.sleep(pause)
+    return to_answer(out, "mock")
+
+
+# --- streamed claims (#275) ------------------------------------------------------------------------
+
+STREAMED = ("claims", "adjacent")
+
+
+class StreamItems:
+    """#275: incremental parse of the reduce's streamed tool arguments. feed(delta) returns [(kind, item)] for each
+    object of the top-level `claims` or `adjacent` array completed by this delta (json.loads of its text). A
+    character scanner tracks string / escape state and the bracket stack, so deltas may split anywhere and key
+    order does not matter; an incomplete object (a cut or stalled stream) is never returned."""
+
+    def __init__(self):
+        self.text = ""
+        self.stack: list[str] = []
+        self.in_str = self.esc = False
+        self.str_start = 0
+        self.last_str = self.key = self.array_key = None
+        self.item_start = None
+
+    def feed(self, delta: str) -> list[tuple[str, dict]]:
+        out = []
+        base = len(self.text)
+        self.text += delta or ""
+        for k, ch in enumerate(delta or ""):
+            pos = base + k
+            if self.in_str:
+                if self.esc:
+                    self.esc = False
+                elif ch == "\\":
+                    self.esc = True
+                elif ch == '"':
+                    self.in_str = False
+                    if len(self.stack) == 1:
+                        self.last_str = self.text[self.str_start + 1:pos]
+                continue
+            if ch == '"':
+                self.in_str, self.str_start = True, pos
+            elif ch == ":" and len(self.stack) == 1:
+                self.key = self.last_str
+            elif ch in "{[":
+                if ch == "[" and len(self.stack) == 1:
+                    self.array_key = self.key
+                self.stack.append(ch)
+                if ch == "{" and len(self.stack) == 3 and self.stack[1] == "[" and self.array_key in STREAMED:
+                    self.item_start = pos
+            elif ch in "}]":
+                if ch == "}" and len(self.stack) == 3 and self.item_start is not None:
+                    try:
+                        obj = json.loads(self.text[self.item_start:pos + 1])
+                    except ValueError:
+                        obj = None
+                    if isinstance(obj, dict):
+                        out.append((self.array_key, obj))
+                    self.item_start = None
+                if self.stack:
+                    self.stack.pop()
+                if ch == "]" and len(self.stack) == 1:
+                    self.array_key = None
+        return out
+
+
+def check_item(raw: dict, m: EvidenceMatrix, query):
+    """#275 (TL condition 2): the per-item checks of finish_answer on a one-item Answer (behavior answer, hits =
+    the matrix's citable hits from m.hits): why-line clean-up, check_citations (with withhold_normative,
+    move_uncited_cells, ensure_handoff, the number and date checks), outside_matrix, rule 3, the why-line check.
+    Returns the checked Claim when it may be shown before the final answer: still in `claims` with the same
+    text, nothing withheld, no gap, no hand-off appended, cited, and `flags == []`; else None (held back)."""
+    from cee.answer.schema import Claim
+    from cee.answer.validate import check_citations
+    if not isinstance(raw, dict):
+        return None
+    try:
+        a = Answer(answerable=True, behavior="answer", claims=[Claim(**raw)])
+    except (ValueError, TypeError):
+        return None
+    x = a.claims[0]
+    text = x.text
+    clean_why_lines(a, m, query)
+    a = check_citations(a, [m.hits[c] for c in citable(m) if c in m.hits], derived=derived_values(m))
+    ok_ids = set(citable(m))
+    if any(c not in ok_ids for c in x.chunk_ids) and "outside_matrix" not in x.flags:
+        x.flags.append("outside_matrix")
+    check_adjacent(a, m)
+    check_why_lines(a, m, query)
+    shown = (len(a.claims) == 1 and a.claims[0] is x and x.text == text and not a.withheld and not a.gaps
+             and bool(x.chunk_ids) and x.text.strip() != P.BOUNDARY_HANDOFF and x.flags == [])
+    return x if shown else None
+
+
+class EarlyClaims:
+    """#275: on_item for call_reduce / raw_answer. A claim that passes check_item is shown at once (`show(claim)`);
+    adjacent items are held until the final answer (TL condition 1), as is every claim check_item holds back.
+    Keeps the time from the reduce start to the first shown claim (first_claim_s) and the counts."""
+
+    def __init__(self, m: EvidenceMatrix, query, show=None):
+        self.m, self.query, self.show = m, query, show
+        self.t0 = time.monotonic()
+        self.first_claim_s = None
+        self.shown: list = []
+        self.held = 0
+
+    def __call__(self, kind: str, raw: dict) -> None:
+        claim = check_item(raw, self.m, self.query) if kind == "claims" else None
+        if claim is None:
+            self.held += 1
+            return
+        self.shown.append(claim)
+        if self.first_claim_s is None:
+            self.first_claim_s = round(time.monotonic() - self.t0, 2)
+        if self.show is not None:
+            self.show(claim)
+
+    def stats(self, final: Answer | None = None) -> dict:
+        """first_claim_s, shown, held and (with the final answer) shown_not_final: early claims whose text is not
+        in the final answer's claims (only dedupe_claims may remove one)."""
+        out = {"first_claim_s": self.first_claim_s, "shown": len(self.shown), "held": self.held}
+        if final is not None:
+            texts = {c.text for c in final.claims}
+            out["shown_not_final"] = sum(c.text not in texts for c in self.shown)
+        return out

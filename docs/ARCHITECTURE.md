@@ -63,7 +63,7 @@ W11 flow (ADR-021; the stages of `cee.ask`, shown live in the Ask page's progres
 | extract | AI | one call per firm x aspect cell (#272; batches above `MAP_CALL_TOKENS`), strict schema: fact / not_disclosed / not_found / different_quantity; code rejects ids outside the cell's retrieved set and flags quotes and figures not in the cited passage | `answer/extract.py` |
 | research | code + AI | one corrective re-search for `not_found` cells (wider words, used chunks excluded, same filters), then re-extraction | `answer/extract.py` `run_map` |
 | matrix | code | behavior, metric definitions, what may be computed, caveats, gaps | `answer/matrix.py`, `config/metric_definitions.yaml` |
-| synthesize | AI or code | one reduce call writes the answer from the matrix only; refuse, forecast requests, an undecided matrix or nothing to cite are written by code with no call | `answer/reduce.py` |
+| synthesize | AI or code | one reduce call writes the answer from the matrix only; refuse, forecast requests, an undecided matrix or nothing to cite are written by code with no call; the call streams and each checked claim is shown as it completes (#275) | `answer/reduce.py` |
 | check, caveats | code | citations only to retrieved chunk IDs (flagged, never dropped), number and date checks, caveats and gaps inserted | `answer/validate.py`, `answer/reduce.py` |
 | log | code | the query, plan, every call with tokens and cost | `query_log`, `answer/cost.py` |
 

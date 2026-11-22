@@ -1342,7 +1342,7 @@ def _reduce_setup(monkeypatch, behave):
     m = q24_shaped()
     calls = []
 
-    def fake(question, matrix, query, provider, client=None, meta=None):
+    def fake(question, matrix, query, provider, client=None, meta=None, on_item=None):
         calls.append(provider)
         if meta is not None:
             meta.update(stop_reason="tool_calls", usage={"output_tokens": 10})
@@ -1529,7 +1529,7 @@ def _resume_env(monkeypatch):
         return out
     monkeypatch.setattr(extract, "call_extract", call_extract)
 
-    def call_reduce(question, matrix, query, provider, client=None, meta=None):
+    def call_reduce(question, matrix, query, provider, client=None, meta=None, on_item=None):
         calls["reduce"] += 1
         if meta is not None:
             meta.update(stop_reason="tool_calls", usage=dict(USAGE))

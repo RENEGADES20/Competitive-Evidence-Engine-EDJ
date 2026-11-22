@@ -1,0 +1,3072 @@
+{
+  "meta": {
+    "run_id": "corpus-2026-11-19-20261122-003820",
+    "snapshot": "corpus-2026-11-19",
+    "commit": "f19816a",
+    "k": "by question",
+    "min_coverage": 0.5,
+    "pool_per_group": 30,
+    "token_budget": 40000,
+    "planner": true,
+    "subquestion_tokens": 40000,
+    "planner_version": "plan-v3.1",
+    "plan_only": false,
+    "map_setting": true,
+    "legacy": false,
+    "mode": "real",
+    "baseline": "evals\\baselines\\corpus-2026-11-19\\report.json",
+    "as_of": "2026-11-17",
+    "real_calls": 1,
+    "calls_reserved": 1,
+    "reused": 5,
+    "max_calls": 1,
+    "map": true,
+    "map_only": false,
+    "extract_version": "extract-v1.2",
+    "map_concurrency": 24,
+    "reduce_version": "v5.2",
+    "map_max_tokens": 128000,
+    "reuse_plans": null,
+    "cache": "D:\\ALLPROJECTS\\EDJ\\cache\\ev272\\cache-a",
+    "cost": {
+      "calls": 6,
+      "by_type": {
+        "plan": 1,
+        "map": 4,
+        "remap": 0,
+        "reduce": 1,
+        "answer": 0
+      },
+      "new": 1,
+      "reused": 5,
+      "input_tokens": 120660,
+      "output_tokens": 20876,
+      "cache_hit_tokens": 7680,
+      "cache_miss_tokens": 112980,
+      "cache_write_tokens": 0,
+      "reasoning_tokens": 13422,
+      "usd": 0.116069,
+      "usd_new": 0.005821,
+      "usd_peak": 0.232139,
+      "peak_calls": 0,
+      "off_peak_calls": 6,
+      "unpriced_calls": 0,
+      "no_usage_calls": 0,
+      "naive_tz": "America/Chicago",
+      "prices": "config/pricing.yaml"
+    }
+  },
+  "summary": {
+    "tier1_doc_recall": 1.0,
+    "tier1_passage_recall": 1.0,
+    "tier1_with_key": 1,
+    "tier1_total": 1,
+    "recall_pool": 1.0,
+    "recall_final": 1.0,
+    "tier1_recall_pool": 1.0,
+    "tier1_recall_final": 1.0,
+    "with_rows": 1,
+    "tier1_with_rows": 1,
+    "passages": 186,
+    "tokens_est": 53160,
+    "tokens_median": 53160,
+    "tokens_max": 53160,
+    "peer_tokens": 0,
+    "search_s_median": 2.563,
+    "search_s_max": 2.563,
+    "refusal_gap": {
+      "ok": 0,
+      "of": 0,
+      "accuracy": null
+    },
+    "refusal_all": {
+      "ok": 1,
+      "of": 1,
+      "accuracy": 1.0
+    },
+    "cost": {
+      "calls": 6,
+      "by_type": {
+        "plan": 1,
+        "map": 4,
+        "remap": 0,
+        "reduce": 1,
+        "answer": 0
+      },
+      "new": 1,
+      "reused": 5,
+      "input_tokens": 120660,
+      "output_tokens": 20876,
+      "cache_hit_tokens": 7680,
+      "cache_miss_tokens": 112980,
+      "cache_write_tokens": 0,
+      "reasoning_tokens": 13422,
+      "usd": 0.116069,
+      "usd_new": 0.005821,
+      "usd_peak": 0.232139,
+      "peak_calls": 0,
+      "off_peak_calls": 6,
+      "unpriced_calls": 0,
+      "no_usage_calls": 0
+    }
+  },
+  "questions": [
+    {
+      "id": "Q5",
+      "text": "Where is Morgan Stanley investing in technology for its advisors?",
+      "use_case": "entity_brief",
+      "tier": 1,
+      "trap": false,
+      "expected_behavior": "answer",
+      "entities": [
+        "MS"
+      ],
+      "unmapped": [],
+      "theme_peers": [],
+      "mode": "entity",
+      "themes": [],
+      "theme_gaps": [],
+      "chunk_ids": [
+        "MS-TR-2026Q3#16",
+        "MS-10K-2025#109",
+        "MS-PR-2026-10-14-01#5",
+        "MS-10Q-2026Q2#20",
+        "MS-DECK-2026-strategic-update#17",
+        "MS-TR-2026Q1#44",
+        "MS-10K-2025#25",
+        "MS-PR-2026-07-15-01#6",
+        "MS-10Q-2025Q3#63",
+        "MS-DECK-2026-strategic-update#10",
+        "MS-TR-2025Q4#8",
+        "MS-10K-2025#23",
+        "MS-PR-2026-04-15-01#6",
+        "MS-10Q-2026Q1#50",
+        "MS-TR-2025Q3#13",
+        "MS-PR-2026-01-15-01#11",
+        "MS-TR-2026Q2#14",
+        "MS-PR-2026-10-14-01#6",
+        "MS-10Q-2025Q2#18",
+        "MS-TR-2025Q2#3",
+        "MS-PR-2026-01-15-01#5",
+        "MS-10Q-2025Q3#64",
+        "MS-TR-2024Q4#44",
+        "MS-PR-2026-07-15-01#5",
+        "MS-10Q-2026Q2#77",
+        "MS-TR-2025Q3#8",
+        "MS-PR-2026-10-14-01#4",
+        "MS-10Q-2025Q3#75",
+        "MS-TR-2026Q3#21",
+        "MS-PR-2026-01-15-01#7",
+        "MS-10Q-2026Q2#58",
+        "MS-TR-2025Q3#37",
+        "MS-PR-2026-04-15-01#5",
+        "MS-TR-2025Q4#72",
+        "MS-10Q-2025Q2#57",
+        "MS-TR-2025Q4#65",
+        "MS-10Q-2025Q2#51",
+        "MS-TR-2026Q3#32",
+        "MS-10Q-2026Q1#62",
+        "MS-TR-2026Q1#36",
+        "MS-10Q-2026Q1#168",
+        "MS-TR-2026Q1#41",
+        "MS-TR-2026Q2#3",
+        "MS-TR-2026Q2#12",
+        "MS-TR-2024Q4#11",
+        "MS-TRADE-2026-11-15-AH-01#0",
+        "MS-TRADE-2026-08-22-RB-01#19",
+        "MS-TRADE-2026-10-26-IN-01#0",
+        "MS-TRADE-2026-10-01-IN-01#2",
+        "MS-TRADE-2026-09-16-IN-01#0",
+        "MS-TRADE-2026-08-24-IN-01#2",
+        "MS-TRADE-2026-10-27-IN-01#2",
+        "MS-TRADE-2026-10-14-WM-01#2",
+        "MS-TRADE-2026-08-26-RB-01#4",
+        "MS-TRADE-2026-11-04-RB-01#12",
+        "MS-TRADE-2026-08-22-RB-01#11",
+        "MS-TRADE-2026-08-22-RB-01#3",
+        "MS-TRADE-2026-10-26-IN-01#3",
+        "MS-TRADE-2026-10-26-IN-01#2",
+        "MS-TRADE-2026-10-01-IN-01#3",
+        "MS-TR-2025Q4#9",
+        "MS-10Q-2026Q2#525",
+        "MS-10K-2025#312",
+        "MS-DECK-2026-strategic-update#32",
+        "MS-SUPP-2026Q3#37",
+        "MS-PR-2026-10-14-01#24",
+        "MS-TR-2026Q3#34",
+        "MS-10Q-2026Q1#41",
+        "MS-10K-2025#315",
+        "MS-DECK-2026-strategic-update#28",
+        "MS-SUPP-2026Q2#16",
+        "MS-PR-2026-07-15-01#24",
+        "MS-TR-2026Q2#23",
+        "MS-10Q-2025Q3#97",
+        "MS-10K-2025#451",
+        "MS-DECK-2026-strategic-update#22",
+        "MS-SUPP-2026Q1#14",
+        "MS-PR-2026-04-15-01#0",
+        "MS-TR-2025Q1#8",
+        "MS-10Q-2025Q2#42",
+        "MS-SUPP-2025Q4#36",
+        "MS-10Q-2026Q2#44",
+        "MS-SUPP-2020Q4#4",
+        "MS-PR-2026-01-15-01#26",
+        "MS-TR-2026Q1#43",
+        "MS-10Q-2025Q2#165",
+        "MS-SUPP-2026Q3#16",
+        "MS-TR-2025Q3#52",
+        "MS-10Q-2025Q2#189",
+        "MS-SUPP-2025Q4#42",
+        "MS-TR-2025Q2#35",
+        "MS-10Q-2026Q1#154",
+        "MS-SUPP-2026Q1#50",
+        "MS-TR-2025Q4#12",
+        "MS-10Q-2026Q2#173",
+        "MS-SUPP-2025Q4#3",
+        "MS-TR-2026Q2#60",
+        "MS-10Q-2025Q3#204",
+        "MS-SUPP-2026Q1#2",
+        "MS-TR-2026Q3#3",
+        "MS-10Q-2026Q1#187",
+        "MS-SUPP-2026Q2#3",
+        "MS-TR-2026Q3#30",
+        "MS-10Q-2025Q3#140",
+        "MS-SUPP-2026Q3#3",
+        "MS-TR-2026Q2#5",
+        "MS-SUPP-2026Q2#7",
+        "MS-TR-2025Q3#29",
+        "MS-SUPP-2020Q4#1",
+        "MS-TR-2025Q1#15",
+        "MS-TR-2025Q3#49",
+        "MS-TR-2025Q1#5",
+        "MS-TR-2026Q1#11",
+        "MS-TRADE-2026-10-26-IN-01#1",
+        "MS-TRADE-2026-11-15-AH-01#1",
+        "MS-TRADE-2026-11-04-RB-01#11",
+        "MS-TRADE-2026-10-30-IN-01#0",
+        "MS-TRADE-2026-10-27-IN-01#1",
+        "MS-TRADE-2026-10-21-IN-01#1",
+        "MS-TRADE-2026-08-26-RB-01#2",
+        "MS-TRADE-2026-08-24-IN-01#1",
+        "MS-TRADE-2026-08-22-RB-01#5",
+        "MS-TRADE-2026-10-01-IN-01#1",
+        "MS-TRADE-2026-10-26-IN-01#4",
+        "MS-TRADE-2026-10-21-IN-01#2",
+        "MS-TRADE-2026-10-21-IN-01#3",
+        "MS-TRADE-2026-10-30-IN-01#3",
+        "MS-TRADE-2026-11-04-RB-01#16",
+        "MS-TRADE-2026-08-22-RB-01#10",
+        "MS-TRADE-2026-08-24-IN-01#0",
+        "MS-TRADE-2026-10-01-IN-01#0",
+        "MS-TRADE-2026-11-04-RB-01#2",
+        "MS-10K-2025#76",
+        "MS-10Q-2026Q2#524",
+        "MS-TR-2026Q2#7",
+        "MS-10K-2025#111",
+        "MS-10Q-2026Q1#79",
+        "MS-TR-2026Q1#6",
+        "MS-10K-2025#372",
+        "MS-TR-2025Q1#73",
+        "MS-TR-2026Q3#8",
+        "MS-TR-2024Q4#98",
+        "MS-TR-2025Q4#21",
+        "MS-TR-2025Q3#84",
+        "MS-TR-2026Q2#37",
+        "MS-TR-2026Q2#38",
+        "MS-TR-2026Q3#42",
+        "MS-TR-2026Q1#64",
+        "MS-TR-2026Q1#65",
+        "MS-TR-2026Q3#89",
+        "MS-TR-2024Q4#18",
+        "MS-TR-2025Q1#12",
+        "MS-TR-2024Q4#25",
+        "MS-TRADE-2026-08-22-RB-01#2",
+        "MS-TR-2026Q3#49",
+        "MS-10K-2025#58",
+        "MS-10Q-2026Q2#16",
+        "MS-SUPP-2026Q3#41",
+        "MS-TR-2026Q1#66",
+        "MS-10K-2025#92",
+        "MS-10Q-2026Q1#61",
+        "MS-SUPP-2026Q1#28",
+        "MS-TR-2026Q2#17",
+        "MS-10K-2025#79",
+        "MS-10Q-2025Q3#184",
+        "MS-SUPP-2025Q4#39",
+        "MS-TR-2025Q3#2",
+        "MS-10Q-2025Q2#63",
+        "MS-TR-2024Q4#12",
+        "MS-10Q-2026Q2#28",
+        "MS-TR-2025Q4#5",
+        "MS-10Q-2026Q2#186",
+        "MS-TR-2025Q2#49",
+        "MS-10Q-2025Q2#74",
+        "MS-TR-2026Q1#10",
+        "MS-10Q-2025Q3#74",
+        "MS-TR-2026Q1#13",
+        "MS-10Q-2026Q1#66",
+        "MS-TR-2026Q3#35",
+        "MS-10Q-2025Q2#139",
+        "MS-TR-2025Q2#48",
+        "MS-10Q-2025Q3#16",
+        "MS-TRADE-2026-10-30-IN-01#2",
+        "MS-TRADE-2026-10-14-WM-01#3",
+        "MS-TRADE-2026-11-10-IN-01#2",
+        "MS-TRADE-2026-10-30-IN-01#4"
+      ],
+      "patterns": [
+        {
+          "pattern": "MS:transcript",
+          "available": true,
+          "hits": [
+            "MS-TR-2026Q3#16",
+            "MS-TR-2026Q1#44",
+            "MS-TR-2025Q4#8",
+            "MS-TR-2025Q3#13",
+            "MS-TR-2026Q2#14",
+            "MS-TR-2025Q2#3",
+            "MS-TR-2024Q4#44",
+            "MS-TR-2025Q3#8",
+            "MS-TR-2026Q3#21",
+            "MS-TR-2025Q3#37",
+            "MS-TR-2025Q4#72",
+            "MS-TR-2025Q4#65",
+            "MS-TR-2026Q3#32",
+            "MS-TR-2026Q1#36",
+            "MS-TR-2026Q1#41",
+            "MS-TR-2026Q2#3",
+            "MS-TR-2026Q2#12",
+            "MS-TR-2024Q4#11",
+            "MS-TR-2025Q4#9",
+            "MS-TR-2026Q3#34",
+            "MS-TR-2026Q2#23",
+            "MS-TR-2025Q1#8",
+            "MS-TR-2026Q1#43",
+            "MS-TR-2025Q3#52",
+            "MS-TR-2025Q2#35",
+            "MS-TR-2025Q4#12",
+            "MS-TR-2026Q2#60",
+            "MS-TR-2026Q3#3",
+            "MS-TR-2026Q3#30",
+            "MS-TR-2026Q2#5",
+            "MS-TR-2025Q3#29",
+            "MS-TR-2025Q1#15",
+            "MS-TR-2025Q3#49",
+            "MS-TR-2025Q1#5",
+            "MS-TR-2026Q1#11",
+            "MS-TR-2026Q2#7",
+            "MS-TR-2026Q1#6",
+            "MS-TR-2025Q1#73",
+            "MS-TR-2026Q3#8",
+            "MS-TR-2024Q4#98",
+            "MS-TR-2025Q4#21",
+            "MS-TR-2025Q3#84",
+            "MS-TR-2026Q2#37",
+            "MS-TR-2026Q2#38",
+            "MS-TR-2026Q3#42",
+            "MS-TR-2026Q1#64",
+            "MS-TR-2026Q1#65",
+            "MS-TR-2026Q3#89",
+            "MS-TR-2024Q4#18",
+            "MS-TR-2025Q1#12",
+            "MS-TR-2024Q4#25",
+            "MS-TR-2026Q3#49",
+            "MS-TR-2026Q1#66",
+            "MS-TR-2026Q2#17",
+            "MS-TR-2025Q3#2",
+            "MS-TR-2024Q4#12",
+            "MS-TR-2025Q4#5",
+            "MS-TR-2025Q2#49",
+            "MS-TR-2026Q1#10",
+            "MS-TR-2026Q1#13",
+            "MS-TR-2026Q3#35",
+            "MS-TR-2025Q2#48"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:10-K",
+          "available": true,
+          "hits": [
+            "MS-10K-2025#109",
+            "MS-10K-2025#25",
+            "MS-10K-2025#23",
+            "MS-10K-2025#312",
+            "MS-10K-2025#315",
+            "MS-10K-2025#451",
+            "MS-10K-2025#76",
+            "MS-10K-2025#111",
+            "MS-10K-2025#372",
+            "MS-10K-2025#58",
+            "MS-10K-2025#92",
+            "MS-10K-2025#79"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:deck",
+          "available": true,
+          "hits": [
+            "MS-DECK-2026-strategic-update#17",
+            "MS-DECK-2026-strategic-update#10",
+            "MS-DECK-2026-strategic-update#32",
+            "MS-DECK-2026-strategic-update#28",
+            "MS-DECK-2026-strategic-update#22"
+          ],
+          "type_only": []
+        },
+        {
+          "pattern": "MS:trade",
+          "available": true,
+          "hits": [
+            "MS-TRADE-2026-11-15-AH-01#0",
+            "MS-TRADE-2026-08-22-RB-01#19",
+            "MS-TRADE-2026-10-26-IN-01#0",
+            "MS-TRADE-2026-10-01-IN-01#2",
+            "MS-TRADE-2026-09-16-IN-01#0",
+            "MS-TRADE-2026-08-24-IN-01#2",
+            "MS-TRADE-2026-10-27-IN-01#2",
+            "MS-TRADE-2026-10-14-WM-01#2",
+            "MS-TRADE-2026-08-26-RB-01#4",
+            "MS-TRADE-2026-11-04-RB-01#12",
+            "MS-TRADE-2026-08-22-RB-01#11",
+            "MS-TRADE-2026-08-22-RB-01#3",
+            "MS-TRADE-2026-10-26-IN-01#3",
+            "MS-TRADE-2026-10-26-IN-01#2",
+            "MS-TRADE-2026-10-01-IN-01#3",
+            "MS-TRADE-2026-10-26-IN-01#1",
+            "MS-TRADE-2026-11-15-AH-01#1",
+            "MS-TRADE-2026-11-04-RB-01#11",
+            "MS-TRADE-2026-10-30-IN-01#0",
+            "MS-TRADE-2026-10-27-IN-01#1",
+            "MS-TRADE-2026-10-21-IN-01#1",
+            "MS-TRADE-2026-08-26-RB-01#2",
+            "MS-TRADE-2026-08-24-IN-01#1",
+            "MS-TRADE-2026-08-22-RB-01#5",
+            "MS-TRADE-2026-10-01-IN-01#1",
+            "MS-TRADE-2026-10-26-IN-01#4",
+            "MS-TRADE-2026-10-21-IN-01#2",
+            "MS-TRADE-2026-10-21-IN-01#3",
+            "MS-TRADE-2026-10-30-IN-01#3",
+            "MS-TRADE-2026-11-04-RB-01#16",
+            "MS-TRADE-2026-08-22-RB-01#10",
+            "MS-TRADE-2026-08-24-IN-01#0",
+            "MS-TRADE-2026-10-01-IN-01#0",
+            "MS-TRADE-2026-11-04-RB-01#2",
+            "MS-TRADE-2026-08-22-RB-01#2",
+            "MS-TRADE-2026-10-30-IN-01#2",
+            "MS-TRADE-2026-10-14-WM-01#3",
+            "MS-TRADE-2026-11-10-IN-01#2",
+            "MS-TRADE-2026-10-30-IN-01#4"
+          ],
+          "type_only": []
+        }
+      ],
+      "available_patterns": 4,
+      "hit_patterns": 4,
+      "coverage": 1.0,
+      "forbidden": [],
+      "doc_recall": 1.0,
+      "passage_recall": 1.0,
+      "recall_pool": 1.0,
+      "recall_final": 1.0,
+      "pool_size": 447,
+      "refusal_ok": true,
+      "misleading": [],
+      "recall": {
+        "rows": [
+          {
+            "ids": [
+              "MS-10K-2025"
+            ],
+            "found": [
+              "MS-10K-2025#109",
+              "MS-10K-2025#25",
+              "MS-10K-2025#23",
+              "MS-10K-2025#312",
+              "MS-10K-2025#315",
+              "MS-10K-2025#451",
+              "MS-10K-2025#76",
+              "MS-10K-2025#111",
+              "MS-10K-2025#372",
+              "MS-10K-2025#58",
+              "MS-10K-2025#92",
+              "MS-10K-2025#79"
+            ],
+            "pool": [
+              "MS-10K-2025#109",
+              "MS-10K-2025#110",
+              "MS-10K-2025#111",
+              "MS-10K-2025#114",
+              "MS-10K-2025#118",
+              "MS-10K-2025#125",
+              "MS-10K-2025#129",
+              "MS-10K-2025#15",
+              "MS-10K-2025#151",
+              "MS-10K-2025#156",
+              "MS-10K-2025#165",
+              "MS-10K-2025#166",
+              "MS-10K-2025#17",
+              "MS-10K-2025#171",
+              "MS-10K-2025#177",
+              "MS-10K-2025#178",
+              "MS-10K-2025#181",
+              "MS-10K-2025#189",
+              "MS-10K-2025#193",
+              "MS-10K-2025#219",
+              "MS-10K-2025#22",
+              "MS-10K-2025#224",
+              "MS-10K-2025#23",
+              "MS-10K-2025#234",
+              "MS-10K-2025#24",
+              "MS-10K-2025#25",
+              "MS-10K-2025#26",
+              "MS-10K-2025#276",
+              "MS-10K-2025#279",
+              "MS-10K-2025#281",
+              "MS-10K-2025#286",
+              "MS-10K-2025#294",
+              "MS-10K-2025#297",
+              "MS-10K-2025#299",
+              "MS-10K-2025#300",
+              "MS-10K-2025#31",
+              "MS-10K-2025#312",
+              "MS-10K-2025#313",
+              "MS-10K-2025#314",
+              "MS-10K-2025#315",
+              "MS-10K-2025#331",
+              "MS-10K-2025#349",
+              "MS-10K-2025#358",
+              "MS-10K-2025#371",
+              "MS-10K-2025#372",
+              "MS-10K-2025#374",
+              "MS-10K-2025#377",
+              "MS-10K-2025#379",
+              "MS-10K-2025#381",
+              "MS-10K-2025#419",
+              "MS-10K-2025#44",
+              "MS-10K-2025#451",
+              "MS-10K-2025#456",
+              "MS-10K-2025#492",
+              "MS-10K-2025#53",
+              "MS-10K-2025#530",
+              "MS-10K-2025#579",
+              "MS-10K-2025#58",
+              "MS-10K-2025#621",
+              "MS-10K-2025#701",
+              "MS-10K-2025#702",
+              "MS-10K-2025#709",
+              "MS-10K-2025#719",
+              "MS-10K-2025#72",
+              "MS-10K-2025#73",
+              "MS-10K-2025#76",
+              "MS-10K-2025#781",
+              "MS-10K-2025#79",
+              "MS-10K-2025#80",
+              "MS-10K-2025#862",
+              "MS-10K-2025#907",
+              "MS-10K-2025#92",
+              "MS-10K-2025#96",
+              "MS-10K-2025#98"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ]
+          },
+          {
+            "ids": [
+              "MS-TR-2025Q4"
+            ],
+            "found": [
+              "MS-TR-2025Q4#8",
+              "MS-TR-2025Q4#72",
+              "MS-TR-2025Q4#65",
+              "MS-TR-2025Q4#9",
+              "MS-TR-2025Q4#12",
+              "MS-TR-2025Q4#21",
+              "MS-TR-2025Q4#5"
+            ],
+            "pool": [
+              "MS-TR-2025Q4#12",
+              "MS-TR-2025Q4#21",
+              "MS-TR-2025Q4#35",
+              "MS-TR-2025Q4#5",
+              "MS-TR-2025Q4#65",
+              "MS-TR-2025Q4#72",
+              "MS-TR-2025Q4#8",
+              "MS-TR-2025Q4#9"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ]
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q1"
+            ],
+            "found": [
+              "MS-TR-2026Q1#44",
+              "MS-TR-2026Q1#36",
+              "MS-TR-2026Q1#41",
+              "MS-TR-2026Q1#43",
+              "MS-TR-2026Q1#11",
+              "MS-TR-2026Q1#6",
+              "MS-TR-2026Q1#64",
+              "MS-TR-2026Q1#65",
+              "MS-TR-2026Q1#66",
+              "MS-TR-2026Q1#10",
+              "MS-TR-2026Q1#13"
+            ],
+            "pool": [
+              "MS-TR-2026Q1#10",
+              "MS-TR-2026Q1#11",
+              "MS-TR-2026Q1#13",
+              "MS-TR-2026Q1#36",
+              "MS-TR-2026Q1#41",
+              "MS-TR-2026Q1#42",
+              "MS-TR-2026Q1#43",
+              "MS-TR-2026Q1#44",
+              "MS-TR-2026Q1#49",
+              "MS-TR-2026Q1#5",
+              "MS-TR-2026Q1#6",
+              "MS-TR-2026Q1#64",
+              "MS-TR-2026Q1#65",
+              "MS-TR-2026Q1#66",
+              "MS-TR-2026Q1#71",
+              "MS-TR-2026Q1#72",
+              "MS-TR-2026Q1#9"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ]
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q2"
+            ],
+            "found": [
+              "MS-TR-2026Q2#14",
+              "MS-TR-2026Q2#3",
+              "MS-TR-2026Q2#12",
+              "MS-TR-2026Q2#23",
+              "MS-TR-2026Q2#60",
+              "MS-TR-2026Q2#5",
+              "MS-TR-2026Q2#7",
+              "MS-TR-2026Q2#37",
+              "MS-TR-2026Q2#38",
+              "MS-TR-2026Q2#17"
+            ],
+            "pool": [
+              "MS-TR-2026Q2#12",
+              "MS-TR-2026Q2#14",
+              "MS-TR-2026Q2#16",
+              "MS-TR-2026Q2#17",
+              "MS-TR-2026Q2#23",
+              "MS-TR-2026Q2#3",
+              "MS-TR-2026Q2#37",
+              "MS-TR-2026Q2#38",
+              "MS-TR-2026Q2#5",
+              "MS-TR-2026Q2#60",
+              "MS-TR-2026Q2#7",
+              "MS-TR-2026Q2#9"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ]
+          },
+          {
+            "ids": [
+              "MS-TR-2026Q3"
+            ],
+            "found": [
+              "MS-TR-2026Q3#16",
+              "MS-TR-2026Q3#21",
+              "MS-TR-2026Q3#32",
+              "MS-TR-2026Q3#34",
+              "MS-TR-2026Q3#3",
+              "MS-TR-2026Q3#30",
+              "MS-TR-2026Q3#8",
+              "MS-TR-2026Q3#42",
+              "MS-TR-2026Q3#89",
+              "MS-TR-2026Q3#49",
+              "MS-TR-2026Q3#35"
+            ],
+            "pool": [
+              "MS-TR-2026Q3#13",
+              "MS-TR-2026Q3#16",
+              "MS-TR-2026Q3#17",
+              "MS-TR-2026Q3#18",
+              "MS-TR-2026Q3#20",
+              "MS-TR-2026Q3#21",
+              "MS-TR-2026Q3#23",
+              "MS-TR-2026Q3#3",
+              "MS-TR-2026Q3#30",
+              "MS-TR-2026Q3#32",
+              "MS-TR-2026Q3#34",
+              "MS-TR-2026Q3#35",
+              "MS-TR-2026Q3#41",
+              "MS-TR-2026Q3#42",
+              "MS-TR-2026Q3#49",
+              "MS-TR-2026Q3#8",
+              "MS-TR-2026Q3#89"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ]
+          },
+          {
+            "ids": [
+              "MS-DECK-2026-strategic-update"
+            ],
+            "found": [
+              "MS-DECK-2026-strategic-update#17",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-DECK-2026-strategic-update#22"
+            ],
+            "pool": [
+              "MS-DECK-2026-strategic-update#10",
+              "MS-DECK-2026-strategic-update#11",
+              "MS-DECK-2026-strategic-update#13",
+              "MS-DECK-2026-strategic-update#17",
+              "MS-DECK-2026-strategic-update#18",
+              "MS-DECK-2026-strategic-update#19",
+              "MS-DECK-2026-strategic-update#2",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-DECK-2026-strategic-update#23",
+              "MS-DECK-2026-strategic-update#26",
+              "MS-DECK-2026-strategic-update#27",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-DECK-2026-strategic-update#29",
+              "MS-DECK-2026-strategic-update#3",
+              "MS-DECK-2026-strategic-update#30",
+              "MS-DECK-2026-strategic-update#31",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-DECK-2026-strategic-update#33",
+              "MS-DECK-2026-strategic-update#34",
+              "MS-DECK-2026-strategic-update#5",
+              "MS-DECK-2026-strategic-update#6",
+              "MS-DECK-2026-strategic-update#7",
+              "MS-DECK-2026-strategic-update#9"
+            ],
+            "stage": "final",
+            "parts_pool": [
+              "a1.MS",
+              "a2.MS",
+              "a3.MS",
+              "a4.MS"
+            ],
+            "parts_final": [
+              "a1.MS",
+              "a2.MS"
+            ]
+          }
+        ],
+        "passages": 6,
+        "passages_found": 6,
+        "passage_recall": 1.0,
+        "passages_in_pool": 6,
+        "recall_pool": 1.0,
+        "recall_final": 1.0,
+        "expected_docs": [
+          "MS-10K-2025",
+          "MS-TR-2025Q4",
+          "MS-TR-2026Q1",
+          "MS-TR-2026Q2",
+          "MS-TR-2026Q3",
+          "MS-DECK-2026-strategic-update"
+        ],
+        "docs": 6,
+        "docs_found": 6,
+        "doc_recall": 1.0,
+        "misleading": [],
+        "outside_window": [],
+        "window": null,
+        "refusal_ok": true,
+        "source": "#56"
+      },
+      "status": "PASS",
+      "k": null,
+      "passages": 186,
+      "chars": 212639,
+      "tokens_est": 53160,
+      "budget_tokens": 160000,
+      "budgeted_chars": 212639,
+      "tokens_budgeted": 53160,
+      "peer_passages": 0,
+      "peer_chars": 0,
+      "peer_tokens": 0,
+      "max_hit_chars": 1500,
+      "fill": 0.332,
+      "search_s": 2.563,
+      "unattached": [],
+      "added_chunk_ids": {
+        "period": [],
+        "pinned": []
+      },
+      "plan": {
+        "source": "model",
+        "provider": "deepseek",
+        "model": "deepseek-v4-pro",
+        "version": "plan-v3.1",
+        "aspects": [
+          {
+            "id": "a1",
+            "text": "Where Morgan Stanley is investing in technology for its advisors",
+            "keyword_query": "technology investment advisors wealth management digital tools platform innovation advisor tech spend roadmap",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a2",
+            "text": "The specific tools and capabilities being built or deployed for advisors",
+            "keyword_query": "advisor workstation tools CRM portfolio analytics financial planning software digital capabilities rollout",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a3",
+            "text": "Artificial intelligence and automation initiatives directed at advisors",
+            "keyword_query": "artificial intelligence machine learning automation natural language processing AI advisor assistant",
+            "metric": null,
+            "kind": "recency",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a4",
+            "text": "How management describes the technology priorities for the advisor business",
+            "keyword_query": "technology priority strategy management commentary advisor experience client experience digital transformation",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          }
+        ],
+        "subquestions": [
+          {
+            "id": "a1.MS",
+            "entity": "MS",
+            "aspect": "a1",
+            "role": "named"
+          },
+          {
+            "id": "a2.MS",
+            "entity": "MS",
+            "aspect": "a2",
+            "role": "named"
+          },
+          {
+            "id": "a3.MS",
+            "entity": "MS",
+            "aspect": "a3",
+            "role": "named"
+          },
+          {
+            "id": "a4.MS",
+            "entity": "MS",
+            "aspect": "a4",
+            "role": "named"
+          }
+        ],
+        "parts": [
+          {
+            "id": "a1.MS",
+            "text": "Morgan Stanley: Where Morgan Stanley is investing in technology for its advisors",
+            "firms": [
+              "MS"
+            ],
+            "keyword_query": "technology investment advisors wealth management digital tools platform innovation advisor tech spend roadmap"
+          },
+          {
+            "id": "a2.MS",
+            "text": "Morgan Stanley: The specific tools and capabilities being built or deployed for advisors",
+            "firms": [
+              "MS"
+            ],
+            "keyword_query": "advisor workstation tools CRM portfolio analytics financial planning software digital capabilities rollout"
+          },
+          {
+            "id": "a3.MS",
+            "text": "Morgan Stanley: Artificial intelligence and automation initiatives directed at advisors",
+            "firms": [
+              "MS"
+            ],
+            "keyword_query": "artificial intelligence machine learning automation natural language processing AI advisor assistant"
+          },
+          {
+            "id": "a4.MS",
+            "text": "Morgan Stanley: How management describes the technology priorities for the advisor business",
+            "firms": [
+              "MS"
+            ],
+            "keyword_query": "technology priority strategy management commentary advisor experience client experience digital transformation"
+          }
+        ],
+        "corrections": [],
+        "error": null,
+        "calls": 1,
+        "usage": null,
+        "finished_at": null,
+        "searched": [
+          {
+            "id": "a1.MS",
+            "entity": "MS",
+            "aspect": "a1",
+            "role": "named",
+            "budget": 40000,
+            "pool": 200,
+            "floor_dropped": [],
+            "floor_emptied": false,
+            "period_hits": [],
+            "pinned": [],
+            "pins_cut": [],
+            "passages": 60,
+            "tokens": 17304,
+            "chunk_ids": [
+              "MS-TR-2026Q3#16",
+              "MS-10K-2025#109",
+              "MS-PR-2026-10-14-01#5",
+              "MS-10Q-2026Q2#20",
+              "MS-DECK-2026-strategic-update#17",
+              "MS-TR-2026Q1#44",
+              "MS-10K-2025#25",
+              "MS-PR-2026-07-15-01#6",
+              "MS-10Q-2025Q3#63",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-TR-2025Q4#8",
+              "MS-10K-2025#23",
+              "MS-PR-2026-04-15-01#6",
+              "MS-10Q-2026Q1#50",
+              "MS-TR-2025Q3#13",
+              "MS-PR-2026-01-15-01#11",
+              "MS-TR-2026Q2#14",
+              "MS-PR-2026-10-14-01#6",
+              "MS-10Q-2025Q2#18",
+              "MS-TR-2025Q2#3",
+              "MS-PR-2026-01-15-01#5",
+              "MS-10Q-2025Q3#64",
+              "MS-TR-2024Q4#44",
+              "MS-PR-2026-07-15-01#5",
+              "MS-10Q-2026Q2#77",
+              "MS-TR-2025Q3#8",
+              "MS-PR-2026-10-14-01#4",
+              "MS-10Q-2025Q3#75",
+              "MS-TR-2026Q3#21",
+              "MS-PR-2026-01-15-01#7",
+              "MS-10Q-2026Q2#58",
+              "MS-TR-2025Q3#37",
+              "MS-PR-2026-04-15-01#5",
+              "MS-TR-2025Q4#72",
+              "MS-10Q-2025Q2#57",
+              "MS-TR-2025Q4#65",
+              "MS-10Q-2025Q2#51",
+              "MS-TR-2026Q3#32",
+              "MS-10Q-2026Q1#62",
+              "MS-TR-2026Q1#36",
+              "MS-10Q-2026Q1#168",
+              "MS-TR-2026Q1#41",
+              "MS-TR-2026Q2#3",
+              "MS-TR-2026Q2#12",
+              "MS-TR-2024Q4#11",
+              "MS-TRADE-2026-11-15-AH-01#0",
+              "MS-TRADE-2026-08-22-RB-01#19",
+              "MS-TRADE-2026-10-26-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#2",
+              "MS-TRADE-2026-09-16-IN-01#0",
+              "MS-TRADE-2026-08-24-IN-01#2",
+              "MS-TRADE-2026-10-27-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#2",
+              "MS-TRADE-2026-08-26-RB-01#4",
+              "MS-TRADE-2026-11-04-RB-01#12",
+              "MS-TRADE-2026-08-22-RB-01#11",
+              "MS-TRADE-2026-08-22-RB-01#3",
+              "MS-TRADE-2026-10-26-IN-01#3",
+              "MS-TRADE-2026-10-26-IN-01#2",
+              "MS-TRADE-2026-10-01-IN-01#3"
+            ]
+          },
+          {
+            "id": "a2.MS",
+            "entity": "MS",
+            "aspect": "a2",
+            "role": "named",
+            "budget": 40000,
+            "pool": 172,
+            "floor_dropped": [],
+            "floor_emptied": false,
+            "period_hits": [],
+            "pinned": [],
+            "pins_cut": [],
+            "passages": 72,
+            "tokens": 21499,
+            "chunk_ids": [
+              "MS-TR-2025Q4#9",
+              "MS-10Q-2026Q2#525",
+              "MS-10K-2025#312",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-SUPP-2026Q3#37",
+              "MS-PR-2026-10-14-01#24",
+              "MS-TR-2026Q3#34",
+              "MS-10Q-2026Q1#41",
+              "MS-10K-2025#315",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-SUPP-2026Q2#16",
+              "MS-PR-2026-07-15-01#24",
+              "MS-TR-2026Q2#23",
+              "MS-10Q-2025Q3#97",
+              "MS-10K-2025#451",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-SUPP-2026Q1#14",
+              "MS-PR-2026-04-15-01#0",
+              "MS-TR-2025Q1#8",
+              "MS-10Q-2025Q2#42",
+              "MS-SUPP-2025Q4#36",
+              "MS-10Q-2026Q2#44",
+              "MS-SUPP-2020Q4#4",
+              "MS-PR-2026-01-15-01#26",
+              "MS-TR-2026Q1#43",
+              "MS-10Q-2025Q2#165",
+              "MS-SUPP-2026Q3#16",
+              "MS-TR-2025Q3#52",
+              "MS-10Q-2025Q2#189",
+              "MS-SUPP-2025Q4#42",
+              "MS-TR-2025Q2#35",
+              "MS-10Q-2026Q1#154",
+              "MS-SUPP-2026Q1#50",
+              "MS-TR-2025Q4#12",
+              "MS-10Q-2026Q2#173",
+              "MS-SUPP-2025Q4#3",
+              "MS-TR-2026Q2#60",
+              "MS-10Q-2025Q3#204",
+              "MS-SUPP-2026Q1#2",
+              "MS-TR-2026Q3#3",
+              "MS-10Q-2026Q1#187",
+              "MS-SUPP-2026Q2#3",
+              "MS-TR-2026Q3#30",
+              "MS-10Q-2025Q3#140",
+              "MS-SUPP-2026Q3#3",
+              "MS-TR-2026Q2#5",
+              "MS-SUPP-2026Q2#7",
+              "MS-TR-2025Q3#29",
+              "MS-SUPP-2020Q4#1",
+              "MS-TR-2025Q1#15",
+              "MS-TR-2025Q3#49",
+              "MS-TR-2025Q1#5",
+              "MS-TR-2026Q1#11",
+              "MS-TRADE-2026-10-26-IN-01#1",
+              "MS-TRADE-2026-11-15-AH-01#1",
+              "MS-TRADE-2026-11-04-RB-01#11",
+              "MS-TRADE-2026-10-30-IN-01#0",
+              "MS-TRADE-2026-10-27-IN-01#1",
+              "MS-TRADE-2026-10-21-IN-01#1",
+              "MS-TRADE-2026-08-26-RB-01#2",
+              "MS-TRADE-2026-08-24-IN-01#1",
+              "MS-TRADE-2026-08-22-RB-01#5",
+              "MS-TRADE-2026-10-01-IN-01#1",
+              "MS-TRADE-2026-10-26-IN-01#4",
+              "MS-TRADE-2026-10-21-IN-01#2",
+              "MS-TRADE-2026-10-21-IN-01#3",
+              "MS-TRADE-2026-10-30-IN-01#3",
+              "MS-TRADE-2026-11-04-RB-01#16",
+              "MS-TRADE-2026-08-22-RB-01#10",
+              "MS-TRADE-2026-08-24-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#0",
+              "MS-TRADE-2026-11-04-RB-01#2"
+            ]
+          },
+          {
+            "id": "a3.MS",
+            "entity": "MS",
+            "aspect": "a3",
+            "role": "named",
+            "budget": 40000,
+            "pool": 154,
+            "floor_dropped": [],
+            "floor_emptied": false,
+            "period_hits": [],
+            "pinned": [],
+            "pins_cut": [],
+            "passages": 22,
+            "tokens": 5370,
+            "chunk_ids": [
+              "MS-10K-2025#76",
+              "MS-10Q-2026Q2#524",
+              "MS-TR-2026Q2#7",
+              "MS-10K-2025#111",
+              "MS-10Q-2026Q1#79",
+              "MS-TR-2026Q1#6",
+              "MS-10K-2025#372",
+              "MS-TR-2025Q1#73",
+              "MS-TR-2026Q3#8",
+              "MS-TR-2024Q4#98",
+              "MS-TR-2025Q4#21",
+              "MS-TR-2025Q3#84",
+              "MS-TR-2026Q2#37",
+              "MS-TR-2026Q2#38",
+              "MS-TR-2026Q3#42",
+              "MS-TR-2026Q1#64",
+              "MS-TR-2026Q1#65",
+              "MS-TR-2026Q3#89",
+              "MS-TR-2024Q4#18",
+              "MS-TR-2025Q1#12",
+              "MS-TR-2024Q4#25",
+              "MS-TRADE-2026-08-22-RB-01#2"
+            ]
+          },
+          {
+            "id": "a4.MS",
+            "entity": "MS",
+            "aspect": "a4",
+            "role": "named",
+            "budget": 40000,
+            "pool": 201,
+            "floor_dropped": [],
+            "floor_emptied": false,
+            "period_hits": [],
+            "pinned": [],
+            "pins_cut": [],
+            "passages": 32,
+            "tokens": 8987,
+            "chunk_ids": [
+              "MS-TR-2026Q3#49",
+              "MS-10K-2025#58",
+              "MS-10Q-2026Q2#16",
+              "MS-SUPP-2026Q3#41",
+              "MS-TR-2026Q1#66",
+              "MS-10K-2025#92",
+              "MS-10Q-2026Q1#61",
+              "MS-SUPP-2026Q1#28",
+              "MS-TR-2026Q2#17",
+              "MS-10K-2025#79",
+              "MS-10Q-2025Q3#184",
+              "MS-SUPP-2025Q4#39",
+              "MS-TR-2025Q3#2",
+              "MS-10Q-2025Q2#63",
+              "MS-TR-2024Q4#12",
+              "MS-10Q-2026Q2#28",
+              "MS-TR-2025Q4#5",
+              "MS-10Q-2026Q2#186",
+              "MS-TR-2025Q2#49",
+              "MS-10Q-2025Q2#74",
+              "MS-TR-2026Q1#10",
+              "MS-10Q-2025Q3#74",
+              "MS-TR-2026Q1#13",
+              "MS-10Q-2026Q1#66",
+              "MS-TR-2026Q3#35",
+              "MS-10Q-2025Q2#139",
+              "MS-TR-2025Q2#48",
+              "MS-10Q-2025Q3#16",
+              "MS-TRADE-2026-10-30-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#3",
+              "MS-TRADE-2026-11-10-IN-01#2",
+              "MS-TRADE-2026-10-30-IN-01#4"
+            ]
+          }
+        ],
+        "research_tokens": 0,
+        "competitor_floor": {},
+        "raw": {
+          "aspects": [
+            {
+              "id": "tech_investment_areas",
+              "text": "Where Morgan Stanley is investing in technology for its advisors",
+              "keyword_query": "technology investment advisors wealth management digital tools platform innovation advisor tech spend roadmap",
+              "firms": [
+                "MS"
+              ],
+              "metric": "",
+              "kind": "fact",
+              "proxy": false
+            },
+            {
+              "id": "advisor_tooling",
+              "text": "The specific tools and capabilities being built or deployed for advisors",
+              "keyword_query": "advisor workstation tools CRM portfolio analytics financial planning software digital capabilities rollout",
+              "firms": [
+                "MS"
+              ],
+              "metric": "",
+              "kind": "fact",
+              "proxy": false
+            },
+            {
+              "id": "ai_automation",
+              "text": "Artificial intelligence and automation initiatives directed at advisors",
+              "keyword_query": "artificial intelligence machine learning automation natural language processing AI advisor assistant",
+              "firms": [
+                "MS"
+              ],
+              "metric": "",
+              "kind": "recency",
+              "proxy": false
+            },
+            {
+              "id": "management_priority",
+              "text": "How management describes the technology priorities for the advisor business",
+              "keyword_query": "technology priority strategy management commentary advisor experience client experience digital transformation",
+              "firms": [
+                "MS"
+              ],
+              "metric": "",
+              "kind": "fact",
+              "proxy": false
+            }
+          ]
+        }
+      },
+      "parts": 4,
+      "aspects": 4,
+      "subquestions": 4,
+      "research_passages": 0,
+      "research_tokens": 0,
+      "llm_calls": {
+        "planner": 1,
+        "answer": 1,
+        "map": 4,
+        "remap": 0
+      },
+      "subquestion_tokens": 53160,
+      "plan_origin": "cached: Q5-plan-b90601ee2034a7bf9a337d96.json (plan-v3.1, request_version ds-strict-2-plan-off-c8000-s1, made 2026-11-21T12:53:22.763967-06:00); no new planner call",
+      "plan_parse_flags": [],
+      "matrix": {
+        "version": "extract-v1.2",
+        "question": "Where is Morgan Stanley investing in technology for its advisors?",
+        "rows": [
+          "MS"
+        ],
+        "aspects": [
+          {
+            "id": "a1",
+            "text": "Where Morgan Stanley is investing in technology for its advisors",
+            "keyword_query": "technology investment advisors wealth management digital tools platform innovation advisor tech spend roadmap",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a2",
+            "text": "The specific tools and capabilities being built or deployed for advisors",
+            "keyword_query": "advisor workstation tools CRM portfolio analytics financial planning software digital capabilities rollout",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a3",
+            "text": "Artificial intelligence and automation initiatives directed at advisors",
+            "keyword_query": "artificial intelligence machine learning automation natural language processing AI advisor assistant",
+            "metric": null,
+            "kind": "recency",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          },
+          {
+            "id": "a4",
+            "text": "How management describes the technology priorities for the advisor business",
+            "keyword_query": "technology priority strategy management commentary advisor experience client experience digital transformation",
+            "metric": null,
+            "kind": "fact",
+            "firms": [],
+            "proxy": false,
+            "asked_firms": []
+          }
+        ],
+        "cells": {
+          "a1.MS": {
+            "id": "a1.MS",
+            "entity": "MS",
+            "aspect_id": "a1",
+            "role": "named",
+            "label": "fact",
+            "source": "model",
+            "items": [
+              {
+                "text": "Morgan Stanley says it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and the expansion of its workplace channel.",
+                "quote": "Ongoing investments in our world-class platform, including investments to support our advisors, a build-out of E*TRADE capabilities, and the expansion of our essential workplace channel, serve as an engine for future growth.",
+                "chunk_ids": [
+                  "MS-TR-2025Q2#3"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley names LeadIQ, its AI-powered lead distribution platform, which focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors, as one of its early AI use cases.",
+                "quote": "LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley names Parable, an interactive tool that quickly analyzes and summarizes data, as one of its early AI use cases.",
+                "quote": "Parable, an interactive tool that quickly analyzes and summarizes data",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley names the DevGen AI tool, which enhances developer efficiency by modernizing code, as one of its early AI use cases.",
+                "quote": "the DevGen AI tool, which enhances developer efficiency by modernizing code",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states that its scale supports continued investment in future technology, including AI and digital tools.",
+                "quote": "our scale supports continued investment in future technology, including AI and digital tools.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#16"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it continues to invest in deepening its competitive moats in areas such as its expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash.",
+                "quote": "we continue to invest, deepening our competitive moats in areas like our expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash.",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#13"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it has put significant resources toward lending products, including digital tools, digital enhancements, and using automation to help with the paper backlog associated with various lending products.",
+                "quote": "we've put in a lot of resources towards lending products more broadly. So digital tools, digital enhancements and using automation to be able to help with the paper backlog associated with some of the various lending products more broadly.",
+                "chunk_ids": [
+                  "MS-TR-2026Q1#36"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it was overweighted to AI from the early days in wealth, including some of the work it did with OpenAI.",
+                "quote": "We were, as you know, overweighted to AI from the early days in wealth with some of the work we did with OpenAI.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#49"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states that the insights from its size and scale allow its financial advisors to tailor advice and equip its own tools to deliver that advice to help clients achieve their goals.",
+                "quote": "It gives us insights given our size and scale that allow our FAs to tailor advice and equip our own tools to deliver that advice to help clients achieve their goals.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#34"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people.",
+                "quote": "We continue to invest across our technology stack, embracing AI tools to support our infrastructure, business growth and people.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it has been investing in its processes and systems across the technology side, in better understanding its data, and in better servicing its clients.",
+                "quote": "we've been investing in all of our processes and our systems in order to engage and make sure that we have a robust infrastructure... that has to do with everything that I mentioned across the technology side, across better understanding our data, better servicing our clients.",
+                "chunk_ids": [
+                  "MS-TR-2024Q4#44"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [
+                  "quote_not_found"
+                ],
+                "population": "",
+                "population_source": ""
+              }
+            ],
+            "differs_because": "",
+            "reason": "Multiple passages state specific areas where Morgan Stanley is investing in technology, including AI tools for advisors, platform investments, digital tools for lending, private markets and digital assets.",
+            "flags": [],
+            "derivation": null,
+            "researched": false,
+            "research_hits": 0,
+            "first": null,
+            "error": null,
+            "effective_label": "fact"
+          },
+          "a2.MS": {
+            "id": "a2.MS",
+            "entity": "MS",
+            "aspect_id": "a2",
+            "role": "named",
+            "label": "fact",
+            "source": "model",
+            "items": [
+              {
+                "text": "Morgan Stanley states that among its early AI use cases (some live and some in pilot) is LeadIQ, an AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.",
+                "quote": "LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025Q3",
+                "scope": "",
+                "definition": "AI-powered lead distribution platform",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it is investing in products like LeadIQ that will allow it to match individuals with advisers.",
+                "quote": "They're going into products like LeadIQ that will allow us to match individuals with advisers.",
+                "chunk_ids": [
+                  "MS-TR-2026Q2#23"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2026Q2",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+                "quote": "We are using our scale to invest in broadening capabilities for FAs that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+                "chunk_ids": [
+                  "MS-TR-2025Q4#9"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025Q4",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states its wealth team is focused on AI 'co-piloting' where a financial adviser has historical context of past client interactions, and that the firm is building 'corridors' or 'super agents' to drive efficiency and effectiveness across the wealth portfolio.",
+                "quote": "And so that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.",
+                "chunk_ids": [
+                  "MS-TR-2026Q1#43"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2026Q1",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it continues to invest and deepen its competitive moats through an expanded collaboration with Carta in private markets.",
+                "quote": "we continue to invest, deepening our competitive moats in areas like our expanded collaboration with Carta in private markets",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#13"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025Q3",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states it continues to invest in digital assets through announced partnerships with Zero Hash.",
+                "quote": "in digital assets through announced partnerships with Zero Hash",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#13"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025Q3",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley states its scale supports continued investment in future technology, including AI and digital tools.",
+                "quote": "our scale supports continued investment in future technology, including AI and digital tools.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#16"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2026Q3",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              }
+            ],
+            "differs_because": "",
+            "reason": "The passages directly state several specific tools and capabilities Morgan Stanley is building or deploying for its financial advisors, including LeadIQ, co-piloting/super agents, FA capabilities, Carta and Zero Hash partnerships, and general AI/digital tool investment.",
+            "flags": [],
+            "derivation": null,
+            "researched": false,
+            "research_hits": 0,
+            "first": null,
+            "error": null,
+            "effective_label": "fact"
+          },
+          "a3.MS": {
+            "id": "a3.MS",
+            "entity": "MS",
+            "aspect_id": "a3",
+            "role": "named",
+            "label": "fact",
+            "source": "model",
+            "items": [
+              {
+                "text": "Morgan Stanley's early AI use cases include LeadIQ, an AI-powered lead distribution platform that matches workplace and self-directed relationships and facilitates engagement with its financial advisors.",
+                "quote": "LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025-09-30",
+                "scope": "Wealth Management",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley's CEO described 'co-piloting' for financial advisers, with Jed Finn under Andy Saperstein spending time on 'corridors or super agents' to drive efficiency and effectiveness across the wealth portfolio.",
+                "quote": "that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.",
+                "chunk_ids": [
+                  "MS-TR-2026Q1#43"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2026-03-31",
+                "scope": "Wealth Management",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley is leveraging technology to improve automation and facilitate client acquisition openings, as well as increasing education with its advisors and clients.",
+                "quote": "leveraging technology to improve automation and facilitate the client acquisition openings, as well as increasing education with our advisors and our clients.",
+                "chunk_ids": [
+                  "MS-TR-2025Q4#21"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025-12-31",
+                "scope": "Wealth Management",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "Morgan Stanley has ongoing investments in automation and AI, and in assessing where it wants its people over the next five to ten years, in the context of a reduction in XFA headcount.",
+                "quote": "We have ongoing investments in automation, AI, and assessing where we want our people for the next five, 10 years.",
+                "chunk_ids": [
+                  "MS-TR-2025Q1#73"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "2025-03-31",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              }
+            ],
+            "differs_because": "",
+            "reason": "The passages describe specific AI and automation initiatives directed at Morgan Stanley's financial advisors (LeadIQ, co-piloting/super agents, automation for client acquisition and advisor education, and automation/AI investments in its advisor workforce).",
+            "flags": [],
+            "derivation": null,
+            "researched": false,
+            "research_hits": 0,
+            "first": null,
+            "error": null,
+            "effective_label": "fact"
+          },
+          "a4.MS": {
+            "id": "a4.MS",
+            "entity": "MS",
+            "aspect_id": "a4",
+            "role": "named",
+            "label": "fact",
+            "source": "model",
+            "items": [
+              {
+                "text": "CEO Edward Pick describes AI as a top priority for the firm's advisory role, saying the firm is now 'double overweight' on AI and that it is existentially important that Morgan Stanley be viewed as a trusted adviser in the middle of the ecosystem.",
+                "quote": "There is just no question that this is existentially important that we are viewed as a trusted adviser in the middle of the ecosystem... And for us to be part of the content and the thinking and the evolution of this is absolutely the top priority for the firm as the adviser",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#49"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [
+                  "quote_not_found"
+                ],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CFO Sharon Yeshaya describes early AI use cases, including LeadIQ, 'our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors,' as well as DevGen AI (enhancing developer efficiency) and Parable (an interactive tool analyzing and summarizing data).",
+                "quote": "LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.",
+                "chunk_ids": [
+                  "MS-TR-2025Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CFO Sharon Yeshaya states the firm's scale 'supports continued investment in future technology, including AI and digital tools.'",
+                "quote": "while our scale supports continued investment in future technology, including AI and digital tools.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#16"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Ted Pick states the firm is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+                "quote": "We are using our scale to invest in broadening capabilities for FAs that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+                "chunk_ids": [
+                  "MS-TR-2025Q4#9"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Edward Pick describes the ability to protect client assets and a resiliency theme as critical to clients, and states that although it is a people business, technology can help do a lot of the early work for financial advisers.",
+                "quote": "the ability to protect client assets... there will be a resiliency theme that will be super important to clients with real net worth... that is something that technology can help do a lot of the early work.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#35"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [
+                  "quote_not_found"
+                ],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Edward Pick describes the firm's 'world-class technology, world-class cyber defense and then the best trusted advisers sitting with the client' as the 'secret sauce,' including for the wealth management and financial adviser.",
+                "quote": "this is something we consider to be additive to what we have, which is world-class technology, world-class cyber defense and then the best trusted advisers sitting with the client.",
+                "chunk_ids": [
+                  "MS-TR-2026Q1#44"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Ted Pick states the firm continues to invest in Wealth, Institutional Securities, and Investment Management via human capital and technology, with growth plans embedding increasing adoption of AI tools throughout the enterprise and client base.",
+                "quote": "We continue to invest in each of our three business segments: Wealth, Institutional Securities, and Investment Management via human capital and technology. Our growth plans embed the increasing adoption of AI tools throughout the enterprise and inside our client base.",
+                "chunk_ids": [
+                  "MS-TR-2025Q4#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CFO Sharon Yeshaya states the firm continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people.",
+                "quote": "We continue to invest across our technology stack, embracing AI tools to support our infrastructure, business growth and people.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#8"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Edward Pick states cyber resiliency is a top priority across all of the firm's businesses, and that AI will bring efficiency and effectiveness that should not be dismissed as it transforms the firm.",
+                "quote": "cyber resiliency is a top priority at institutions like ours across all of our businesses... a lot of the good that AI is going to bring both as an efficiency and effectiveness matter should not get dismissed",
+                "chunk_ids": [
+                  "MS-TR-2026Q1#66"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [
+                  "quote_not_found"
+                ],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Edward Pick states the firm has built advantages against its advisor-led platform that make technology a differentiator in its favor.",
+                "quote": "we have built a number of advantages that not only allow us to preserve our moat, but actually make technology a differentiator in our favor.",
+                "chunk_ids": [
+                  "MS-TR-2026Q3#32"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [],
+                "population": "",
+                "population_source": ""
+              },
+              {
+                "text": "CEO Ted Pick describes the early digital asset transformation in wealth, including a partnership with Zero Hash, expansion into crypto and tokenized asset capabilities, and continued work on the E*TRADE platform for the active self-directed community.",
+                "quote": "the early days of the digital asset transformation side of wealth. We announced a partnership with Zero Hash last year... well positioned now in the crypto and tokenized asset space... continued work that we're doing in E*TRADE",
+                "chunk_ids": [
+                  "MS-TR-2025Q4#72"
+                ],
+                "value": "",
+                "unit": "",
+                "period": "",
+                "scope": "",
+                "definition": "",
+                "rejected_ids": [],
+                "flags": [
+                  "quote_not_found"
+                ],
+                "population": "",
+                "population_source": ""
+              }
+            ],
+            "differs_because": "",
+            "reason": "Multiple passages from management (CEO and CFO) directly describe the firm's technology priorities for the advisor/wealth business, including AI, cyber resiliency, digital assets, and broadening advisor capabilities.",
+            "flags": [],
+            "derivation": null,
+            "researched": false,
+            "research_hits": 0,
+            "first": null,
+            "error": null,
+            "effective_label": "fact"
+          }
+        },
+        "marks": {
+          "a1": {
+            "aspect_id": "a1",
+            "metric": null,
+            "status": "none",
+            "firms": [
+              "MS"
+            ],
+            "caveat": null,
+            "mark": null,
+            "shared_periods": []
+          },
+          "a2": {
+            "aspect_id": "a2",
+            "metric": null,
+            "status": "none",
+            "firms": [
+              "MS"
+            ],
+            "caveat": null,
+            "mark": null,
+            "shared_periods": []
+          },
+          "a3": {
+            "aspect_id": "a3",
+            "metric": null,
+            "status": "none",
+            "firms": [
+              "MS"
+            ],
+            "caveat": null,
+            "mark": null,
+            "shared_periods": []
+          },
+          "a4": {
+            "aspect_id": "a4",
+            "metric": null,
+            "status": "none",
+            "firms": [
+              "MS"
+            ],
+            "caveat": null,
+            "mark": null,
+            "shared_periods": []
+          }
+        },
+        "behavior": "answer",
+        "behavior_reason": "1a: the asked quantity in a1.MS, a2.MS, a3.MS, a4.MS",
+        "incomplete_note": null,
+        "gaps": [],
+        "caveats": [],
+        "breaks": [],
+        "calls": [
+          {
+            "id": "map.a1.MS",
+            "round": 1,
+            "entity": "MS",
+            "cells": [
+              "a1.MS"
+            ],
+            "chunk_ids": [
+              "MS-TR-2026Q3#16",
+              "MS-10K-2025#109",
+              "MS-PR-2026-10-14-01#5",
+              "MS-10Q-2026Q2#20",
+              "MS-DECK-2026-strategic-update#17",
+              "MS-TR-2026Q1#44",
+              "MS-10K-2025#25",
+              "MS-PR-2026-07-15-01#6",
+              "MS-10Q-2025Q3#63",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-TR-2025Q4#8",
+              "MS-10K-2025#23",
+              "MS-PR-2026-04-15-01#6",
+              "MS-10Q-2026Q1#50",
+              "MS-TR-2025Q3#13",
+              "MS-PR-2026-01-15-01#11",
+              "MS-TR-2026Q2#14",
+              "MS-PR-2026-10-14-01#6",
+              "MS-10Q-2025Q2#18",
+              "MS-TR-2025Q2#3",
+              "MS-PR-2026-01-15-01#5",
+              "MS-10Q-2025Q3#64",
+              "MS-TR-2024Q4#44",
+              "MS-PR-2026-07-15-01#5",
+              "MS-10Q-2026Q2#77",
+              "MS-TR-2025Q3#8",
+              "MS-PR-2026-10-14-01#4",
+              "MS-10Q-2025Q3#75",
+              "MS-TR-2026Q3#21",
+              "MS-PR-2026-01-15-01#7",
+              "MS-10Q-2026Q2#58",
+              "MS-TR-2025Q3#37",
+              "MS-PR-2026-04-15-01#5",
+              "MS-TR-2025Q4#72",
+              "MS-10Q-2025Q2#57",
+              "MS-TR-2025Q4#65",
+              "MS-10Q-2025Q2#51",
+              "MS-TR-2026Q3#32",
+              "MS-10Q-2026Q1#62",
+              "MS-TR-2026Q1#36",
+              "MS-10Q-2026Q1#168",
+              "MS-TR-2026Q1#41",
+              "MS-TR-2026Q2#3",
+              "MS-TR-2026Q2#12",
+              "MS-TR-2024Q4#11",
+              "MS-TRADE-2026-11-15-AH-01#0",
+              "MS-TRADE-2026-08-22-RB-01#19",
+              "MS-TRADE-2026-10-26-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#2",
+              "MS-TRADE-2026-09-16-IN-01#0",
+              "MS-TRADE-2026-08-24-IN-01#2",
+              "MS-TRADE-2026-10-27-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#2",
+              "MS-TRADE-2026-08-26-RB-01#4",
+              "MS-TRADE-2026-11-04-RB-01#12",
+              "MS-TRADE-2026-08-22-RB-01#11",
+              "MS-TRADE-2026-08-22-RB-01#3",
+              "MS-TRADE-2026-10-26-IN-01#3",
+              "MS-TRADE-2026-10-26-IN-01#2",
+              "MS-TRADE-2026-10-01-IN-01#3",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-SUPP-2026Q3#37",
+              "MS-TR-2026Q3#34",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-SUPP-2026Q2#16",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-SUPP-2026Q1#14",
+              "MS-SUPP-2025Q4#36",
+              "MS-SUPP-2020Q4#4",
+              "MS-SUPP-2026Q3#16",
+              "MS-TR-2025Q3#52",
+              "MS-SUPP-2025Q4#42",
+              "MS-TR-2026Q3#30",
+              "MS-10Q-2025Q3#140",
+              "MS-SUPP-2020Q4#1",
+              "MS-TRADE-2026-10-26-IN-01#1",
+              "MS-TRADE-2026-11-15-AH-01#1",
+              "MS-TRADE-2026-08-24-IN-01#1",
+              "MS-TRADE-2026-10-01-IN-01#1",
+              "MS-TRADE-2026-08-24-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#0",
+              "MS-10K-2025#76",
+              "MS-10Q-2026Q2#524",
+              "MS-10K-2025#111",
+              "MS-TR-2026Q1#6",
+              "MS-10K-2025#372",
+              "MS-TR-2026Q3#8",
+              "MS-TR-2026Q3#42",
+              "MS-TR-2026Q3#49",
+              "MS-10K-2025#58",
+              "MS-10K-2025#92",
+              "MS-TR-2026Q2#17",
+              "MS-10K-2025#79",
+              "MS-10Q-2025Q3#184",
+              "MS-10Q-2025Q2#63",
+              "MS-10Q-2026Q2#28",
+              "MS-10Q-2026Q2#186",
+              "MS-TR-2026Q1#10",
+              "MS-10Q-2025Q2#139",
+              "MS-TRADE-2026-10-14-WM-01#3"
+            ],
+            "provider": "deepseek",
+            "model": "deepseek-v4-pro",
+            "version": "extract-v1.2",
+            "stop_reason": "tool_calls",
+            "usage": {
+              "input_tokens": 30012,
+              "output_tokens": 4437,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 30012,
+              "reasoning_tokens": 3149,
+              "tool_calls": 1,
+              "thinking": "on",
+              "effort": "low",
+              "model": "deepseek-v4-pro",
+              "streamed": true,
+              "ttft_s": 3.59
+            },
+            "wall_s": null,
+            "error": null,
+            "invalid": false,
+            "failed_call": false,
+            "skipped": false,
+            "cached": true,
+            "bad_request": false,
+            "flags": [],
+            "finished_at": null,
+            "passages": 100,
+            "input_tokens_est": 33518
+          },
+          {
+            "id": "map.a2.MS",
+            "round": 1,
+            "entity": "MS",
+            "cells": [
+              "a2.MS"
+            ],
+            "chunk_ids": [
+              "MS-TR-2025Q4#9",
+              "MS-10Q-2026Q2#525",
+              "MS-10K-2025#312",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-SUPP-2026Q3#37",
+              "MS-PR-2026-10-14-01#24",
+              "MS-TR-2026Q3#34",
+              "MS-10Q-2026Q1#41",
+              "MS-10K-2025#315",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-SUPP-2026Q2#16",
+              "MS-PR-2026-07-15-01#24",
+              "MS-TR-2026Q2#23",
+              "MS-10Q-2025Q3#97",
+              "MS-10K-2025#451",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-SUPP-2026Q1#14",
+              "MS-PR-2026-04-15-01#0",
+              "MS-TR-2025Q1#8",
+              "MS-10Q-2025Q2#42",
+              "MS-SUPP-2025Q4#36",
+              "MS-10Q-2026Q2#44",
+              "MS-SUPP-2020Q4#4",
+              "MS-PR-2026-01-15-01#26",
+              "MS-TR-2026Q1#43",
+              "MS-10Q-2025Q2#165",
+              "MS-SUPP-2026Q3#16",
+              "MS-TR-2025Q3#52",
+              "MS-10Q-2025Q2#189",
+              "MS-SUPP-2025Q4#42",
+              "MS-TR-2025Q2#35",
+              "MS-10Q-2026Q1#154",
+              "MS-SUPP-2026Q1#50",
+              "MS-TR-2025Q4#12",
+              "MS-10Q-2026Q2#173",
+              "MS-SUPP-2025Q4#3",
+              "MS-TR-2026Q2#60",
+              "MS-10Q-2025Q3#204",
+              "MS-SUPP-2026Q1#2",
+              "MS-TR-2026Q3#3",
+              "MS-10Q-2026Q1#187",
+              "MS-SUPP-2026Q2#3",
+              "MS-TR-2026Q3#30",
+              "MS-10Q-2025Q3#140",
+              "MS-SUPP-2026Q3#3",
+              "MS-TR-2026Q2#5",
+              "MS-SUPP-2026Q2#7",
+              "MS-TR-2025Q3#29",
+              "MS-SUPP-2020Q4#1",
+              "MS-TR-2025Q1#15",
+              "MS-TR-2025Q3#49",
+              "MS-TR-2025Q1#5",
+              "MS-TR-2026Q1#11",
+              "MS-TRADE-2026-10-26-IN-01#1",
+              "MS-TRADE-2026-11-15-AH-01#1",
+              "MS-TRADE-2026-11-04-RB-01#11",
+              "MS-TRADE-2026-10-30-IN-01#0",
+              "MS-TRADE-2026-10-27-IN-01#1",
+              "MS-TRADE-2026-10-21-IN-01#1",
+              "MS-TRADE-2026-08-26-RB-01#2",
+              "MS-TRADE-2026-08-24-IN-01#1",
+              "MS-TRADE-2026-08-22-RB-01#5",
+              "MS-TRADE-2026-10-01-IN-01#1",
+              "MS-TRADE-2026-10-26-IN-01#4",
+              "MS-TRADE-2026-10-21-IN-01#2",
+              "MS-TRADE-2026-10-21-IN-01#3",
+              "MS-TRADE-2026-10-30-IN-01#3",
+              "MS-TRADE-2026-11-04-RB-01#16",
+              "MS-TRADE-2026-08-22-RB-01#10",
+              "MS-TRADE-2026-08-24-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#0",
+              "MS-TRADE-2026-11-04-RB-01#2",
+              "MS-TR-2026Q3#16",
+              "MS-10K-2025#109",
+              "MS-PR-2026-10-14-01#5",
+              "MS-10K-2025#25",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-TR-2025Q4#8",
+              "MS-10K-2025#23",
+              "MS-TR-2025Q3#13",
+              "MS-TR-2026Q2#14",
+              "MS-PR-2026-01-15-01#5",
+              "MS-TR-2025Q3#8",
+              "MS-PR-2026-10-14-01#4",
+              "MS-TR-2025Q4#72",
+              "MS-TR-2026Q1#36",
+              "MS-TR-2024Q4#11",
+              "MS-TRADE-2026-10-26-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#2",
+              "MS-TRADE-2026-09-16-IN-01#0",
+              "MS-TRADE-2026-08-24-IN-01#2",
+              "MS-TRADE-2026-10-27-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#2",
+              "MS-TRADE-2026-08-26-RB-01#4",
+              "MS-TRADE-2026-08-22-RB-01#3",
+              "MS-TRADE-2026-10-26-IN-01#3",
+              "MS-TRADE-2026-10-26-IN-01#2",
+              "MS-10K-2025#76",
+              "MS-10Q-2025Q2#139"
+            ],
+            "provider": "deepseek",
+            "model": "deepseek-v4-pro",
+            "version": "extract-v1.2",
+            "stop_reason": "tool_calls",
+            "usage": {
+              "input_tokens": 30885,
+              "output_tokens": 6546,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 30885,
+              "reasoning_tokens": 5619,
+              "tool_calls": 1,
+              "thinking": "on",
+              "effort": "low",
+              "model": "deepseek-v4-pro",
+              "streamed": true,
+              "ttft_s": 3.25
+            },
+            "wall_s": null,
+            "error": null,
+            "invalid": false,
+            "failed_call": false,
+            "skipped": false,
+            "cached": true,
+            "bad_request": false,
+            "flags": [],
+            "finished_at": null,
+            "passages": 99,
+            "input_tokens_est": 33773
+          },
+          {
+            "id": "map.a3.MS",
+            "round": 1,
+            "entity": "MS",
+            "cells": [
+              "a3.MS"
+            ],
+            "chunk_ids": [
+              "MS-10K-2025#76",
+              "MS-10Q-2026Q2#524",
+              "MS-TR-2026Q2#7",
+              "MS-10K-2025#111",
+              "MS-10Q-2026Q1#79",
+              "MS-TR-2026Q1#6",
+              "MS-10K-2025#372",
+              "MS-TR-2025Q1#73",
+              "MS-TR-2026Q3#8",
+              "MS-TR-2024Q4#98",
+              "MS-TR-2025Q4#21",
+              "MS-TR-2025Q3#84",
+              "MS-TR-2026Q2#37",
+              "MS-TR-2026Q2#38",
+              "MS-TR-2026Q3#42",
+              "MS-TR-2026Q1#64",
+              "MS-TR-2026Q1#65",
+              "MS-TR-2026Q3#89",
+              "MS-TR-2024Q4#18",
+              "MS-TR-2025Q1#12",
+              "MS-TR-2024Q4#25",
+              "MS-TRADE-2026-08-22-RB-01#2",
+              "MS-PR-2026-10-14-01#5",
+              "MS-TR-2026Q1#44",
+              "MS-10K-2025#25",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-TR-2025Q4#8",
+              "MS-TR-2025Q3#8",
+              "MS-TR-2026Q1#41",
+              "MS-TRADE-2026-11-15-AH-01#0",
+              "MS-TRADE-2026-10-26-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#2",
+              "MS-TRADE-2026-10-27-IN-01#2",
+              "MS-TRADE-2026-08-26-RB-01#4",
+              "MS-TRADE-2026-08-22-RB-01#11",
+              "MS-TRADE-2026-08-22-RB-01#3",
+              "MS-TRADE-2026-10-26-IN-01#2",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-SUPP-2026Q3#37",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-SUPP-2026Q2#16",
+              "MS-SUPP-2026Q1#14",
+              "MS-TR-2025Q1#8",
+              "MS-SUPP-2025Q4#36",
+              "MS-TR-2026Q1#43",
+              "MS-SUPP-2026Q3#16",
+              "MS-TR-2026Q2#5",
+              "MS-SUPP-2020Q4#1",
+              "MS-TRADE-2026-10-26-IN-01#1",
+              "MS-TRADE-2026-11-15-AH-01#1",
+              "MS-TRADE-2026-11-04-RB-01#11",
+              "MS-TRADE-2026-10-26-IN-01#4",
+              "MS-TRADE-2026-10-21-IN-01#2",
+              "MS-TRADE-2026-08-22-RB-01#10",
+              "MS-TRADE-2026-08-24-IN-01#0",
+              "MS-TR-2026Q3#49",
+              "MS-10K-2025#92",
+              "MS-10K-2025#79",
+              "MS-TR-2026Q3#35"
+            ],
+            "provider": "deepseek",
+            "model": "deepseek-v4-pro",
+            "version": "extract-v1.2",
+            "stop_reason": "tool_calls",
+            "usage": {
+              "input_tokens": 18600,
+              "output_tokens": 2341,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 18600,
+              "reasoning_tokens": 1707,
+              "tool_calls": 1,
+              "thinking": "on",
+              "effort": "low",
+              "model": "deepseek-v4-pro",
+              "streamed": true,
+              "ttft_s": 2.91
+            },
+            "wall_s": null,
+            "error": null,
+            "invalid": false,
+            "failed_call": false,
+            "skipped": false,
+            "cached": true,
+            "bad_request": false,
+            "flags": [],
+            "finished_at": null,
+            "passages": 59,
+            "input_tokens_est": 20100
+          },
+          {
+            "id": "map.a4.MS",
+            "round": 1,
+            "entity": "MS",
+            "cells": [
+              "a4.MS"
+            ],
+            "chunk_ids": [
+              "MS-TR-2026Q3#49",
+              "MS-10K-2025#58",
+              "MS-10Q-2026Q2#16",
+              "MS-SUPP-2026Q3#41",
+              "MS-TR-2026Q1#66",
+              "MS-10K-2025#92",
+              "MS-10Q-2026Q1#61",
+              "MS-SUPP-2026Q1#28",
+              "MS-TR-2026Q2#17",
+              "MS-10K-2025#79",
+              "MS-10Q-2025Q3#184",
+              "MS-SUPP-2025Q4#39",
+              "MS-TR-2025Q3#2",
+              "MS-10Q-2025Q2#63",
+              "MS-TR-2024Q4#12",
+              "MS-10Q-2026Q2#28",
+              "MS-TR-2025Q4#5",
+              "MS-10Q-2026Q2#186",
+              "MS-TR-2025Q2#49",
+              "MS-10Q-2025Q2#74",
+              "MS-TR-2026Q1#10",
+              "MS-10Q-2025Q3#74",
+              "MS-TR-2026Q1#13",
+              "MS-10Q-2026Q1#66",
+              "MS-TR-2026Q3#35",
+              "MS-10Q-2025Q2#139",
+              "MS-TR-2025Q2#48",
+              "MS-10Q-2025Q3#16",
+              "MS-TRADE-2026-10-30-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#3",
+              "MS-TRADE-2026-11-10-IN-01#2",
+              "MS-TRADE-2026-10-30-IN-01#4",
+              "MS-TR-2026Q3#16",
+              "MS-10K-2025#109",
+              "MS-PR-2026-10-14-01#5",
+              "MS-10Q-2026Q2#20",
+              "MS-DECK-2026-strategic-update#17",
+              "MS-TR-2026Q1#44",
+              "MS-10K-2025#25",
+              "MS-PR-2026-07-15-01#6",
+              "MS-10Q-2025Q3#63",
+              "MS-DECK-2026-strategic-update#10",
+              "MS-TR-2025Q4#8",
+              "MS-10K-2025#23",
+              "MS-PR-2026-04-15-01#6",
+              "MS-TR-2025Q3#13",
+              "MS-PR-2026-01-15-01#11",
+              "MS-TR-2026Q2#14",
+              "MS-PR-2026-10-14-01#6",
+              "MS-10Q-2025Q2#18",
+              "MS-PR-2026-01-15-01#5",
+              "MS-10Q-2025Q3#64",
+              "MS-PR-2026-07-15-01#5",
+              "MS-TR-2025Q3#8",
+              "MS-PR-2026-10-14-01#4",
+              "MS-TR-2026Q3#21",
+              "MS-PR-2026-01-15-01#7",
+              "MS-TR-2025Q3#37",
+              "MS-PR-2026-04-15-01#5",
+              "MS-TR-2025Q4#72",
+              "MS-TR-2025Q4#65",
+              "MS-TR-2026Q3#32",
+              "MS-TR-2026Q1#36",
+              "MS-10Q-2026Q1#168",
+              "MS-TRADE-2026-11-15-AH-01#0",
+              "MS-TRADE-2026-08-22-RB-01#19",
+              "MS-TRADE-2026-10-26-IN-01#0",
+              "MS-TRADE-2026-10-01-IN-01#2",
+              "MS-TRADE-2026-09-16-IN-01#0",
+              "MS-TRADE-2026-08-24-IN-01#2",
+              "MS-TRADE-2026-10-27-IN-01#2",
+              "MS-TRADE-2026-10-14-WM-01#2",
+              "MS-TRADE-2026-08-26-RB-01#4",
+              "MS-TRADE-2026-11-04-RB-01#12",
+              "MS-TRADE-2026-08-22-RB-01#11",
+              "MS-TRADE-2026-08-22-RB-01#3",
+              "MS-TRADE-2026-10-26-IN-01#3",
+              "MS-TRADE-2026-10-26-IN-01#2",
+              "MS-TRADE-2026-10-01-IN-01#3",
+              "MS-TR-2025Q4#9",
+              "MS-DECK-2026-strategic-update#32",
+              "MS-SUPP-2026Q3#37",
+              "MS-DECK-2026-strategic-update#28",
+              "MS-SUPP-2026Q2#16",
+              "MS-DECK-2026-strategic-update#22",
+              "MS-SUPP-2026Q1#14",
+              "MS-SUPP-2025Q4#36",
+              "MS-SUPP-2020Q4#4",
+              "MS-SUPP-2026Q3#16",
+              "MS-TR-2025Q3#52",
+              "MS-TR-2026Q3#30",
+              "MS-10Q-2025Q3#140",
+              "MS-SUPP-2020Q4#1",
+              "MS-TRADE-2026-10-26-IN-01#1",
+              "MS-TRADE-2026-11-15-AH-01#1",
+              "MS-TRADE-2026-10-30-IN-01#0",
+              "MS-TRADE-2026-10-27-IN-01#1",
+              "MS-TRADE-2026-08-24-IN-01#1",
+              "MS-TRADE-2026-10-01-IN-01#1",
+              "MS-TRADE-2026-10-21-IN-01#2",
+              "MS-TRADE-2026-10-01-IN-01#0",
+              "MS-10K-2025#76",
+              "MS-10Q-2026Q2#524",
+              "MS-10K-2025#111",
+              "MS-TR-2026Q1#6",
+              "MS-10K-2025#372",
+              "MS-TR-2026Q3#8"
+            ],
+            "provider": "deepseek",
+            "model": "deepseek-v4-pro",
+            "version": "extract-v1.2",
+            "stop_reason": "tool_calls",
+            "usage": {
+              "input_tokens": 32070,
+              "output_tokens": 4439,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 32070,
+              "reasoning_tokens": 2947,
+              "tool_calls": 1,
+              "thinking": "on",
+              "effort": "low",
+              "model": "deepseek-v4-pro",
+              "streamed": true,
+              "ttft_s": 3.91
+            },
+            "wall_s": null,
+            "error": null,
+            "invalid": false,
+            "failed_call": false,
+            "skipped": false,
+            "cached": true,
+            "bad_request": false,
+            "flags": [],
+            "finished_at": null,
+            "passages": 107,
+            "input_tokens_est": 35965
+          }
+        ],
+        "research": [],
+        "counts": {
+          "cells": 4,
+          "labels": {
+            "fact": 4
+          },
+          "calls": {
+            "map": 4
+          }
+        },
+        "grid": [
+          "MS: a1 fact, a2 fact, a3 fact, a4 fact"
+        ]
+      },
+      "map_behavior": "answer",
+      "map_behavior_reason": "1a: the asked quantity in a1.MS, a2.MS, a3.MS, a4.MS",
+      "expected_behavior_effective": "answer",
+      "map_calls": 4,
+      "remap_calls": 0,
+      "map_must_not": [],
+      "map_research": [],
+      "map_capped_calls": [],
+      "map_call_flags": {},
+      "corrective_chunk_ids": [],
+      "map_breaks": [],
+      "model": "called",
+      "behavior": "answer",
+      "answer": {
+        "answerable": true,
+        "behavior": "answer",
+        "claims": [
+          {
+            "text": "Morgan Stanley: Morgan Stanley says it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and the expansion of its workplace channel. (MS-TR-2025Q2#3)",
+            "chunk_ids": [
+              "MS-TR-2025Q2#3"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2025-06-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley names Parable, an interactive tool that quickly analyzes and summarizes data, as one of its early AI use cases. (MS-TR-2025Q3#8)",
+            "chunk_ids": [
+              "MS-TR-2025Q3#8"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2025-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley names the DevGen AI tool, which enhances developer efficiency by modernizing code, as one of its early AI use cases. (MS-TR-2025Q3#8)",
+            "chunk_ids": [
+              "MS-TR-2025Q3#8"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2025-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states it continues to invest in deepening its competitive moats in areas such as its expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash. (MS-TR-2025Q3#13)",
+            "chunk_ids": [
+              "MS-TR-2025Q3#13"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2025-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states it has put significant resources toward lending products, including digital tools, digital enhancements, and using automation to help with the paper backlog associated with various lending products. (MS-TR-2026Q1#36)",
+            "chunk_ids": [
+              "MS-TR-2026Q1#36"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2026-03-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states it was overweighted to AI from the early days in wealth, including some of the work it did with OpenAI. (MS-TR-2026Q3#49)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#49"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states that the insights from its size and scale allow its financial advisors to tailor advice and equip its own tools to deliver that advice to help clients achieve their goals. (MS-TR-2026Q3#34)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#34"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states it has been investing in its processes and systems across the technology side, in better understanding its data, and in better servicing its clients. (MS-TR-2024Q4#44)",
+            "chunk_ids": [
+              "MS-TR-2024Q4#44"
+            ],
+            "part_id": "a1.MS",
+            "source_label": "MS transcript 2024-12-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: In 2025Q3, among its early AI use cases (some live and some in pilot), Morgan Stanley states it has LeadIQ, an AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with its financial advisors. (MS-TR-2025Q3#8)",
+            "chunk_ids": [
+              "MS-TR-2025Q3#8"
+            ],
+            "part_id": "a2.MS",
+            "source_label": "MS transcript 2025-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: In 2026Q2, Morgan Stanley states it is investing in products like LeadIQ that will allow it to match individuals with advisers. (MS-TR-2026Q2#23)",
+            "chunk_ids": [
+              "MS-TR-2026Q2#23"
+            ],
+            "part_id": "a2.MS",
+            "source_label": "MS transcript 2026-06-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: In 2026Q1, Morgan Stanley states its wealth team is focused on AI 'co-piloting' where a financial adviser has historical context of past client interactions, and that the firm is building 'corridors' or 'super agents' to drive efficiency and effectiveness across the wealth portfolio. (MS-TR-2026Q1#43)",
+            "chunk_ids": [
+              "MS-TR-2026Q1#43"
+            ],
+            "part_id": "a2.MS",
+            "source_label": "MS transcript 2026-03-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: In 2026Q3, Morgan Stanley states its scale supports continued investment in future technology, including AI and digital tools. (MS-TR-2026Q3#16)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#16"
+            ],
+            "part_id": "a2.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley's CEO described 'co-piloting' for financial advisers, with Jed Finn under Andy Saperstein spending time on 'corridors or super agents' to drive efficiency and effectiveness across the wealth portfolio. (MS-TR-2026Q1#43)",
+            "chunk_ids": [
+              "MS-TR-2026Q1#43"
+            ],
+            "part_id": "a3.MS",
+            "source_label": "MS transcript 2026-03-31 [IR]",
+            "flags": [
+              "why_line_missing"
+            ]
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley is leveraging technology to improve automation and facilitate client acquisition openings, as well as increasing education with its advisors and clients. (MS-TR-2025Q4#21)",
+            "chunk_ids": [
+              "MS-TR-2025Q4#21"
+            ],
+            "part_id": "a3.MS",
+            "source_label": "MS transcript 2025-12-31 [IR]",
+            "flags": [
+              "why_line_missing"
+            ]
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley has ongoing investments in automation and AI, and in assessing where it wants its people over the next five to ten years, in the context of a reduction in XFA headcount. (MS-TR-2025Q1#73)",
+            "chunk_ids": [
+              "MS-TR-2025Q1#73"
+            ],
+            "part_id": "a3.MS",
+            "source_label": "MS transcript 2025-03-31 [IR]",
+            "flags": [
+              "why_line_missing"
+            ]
+          },
+          {
+            "text": "Morgan Stanley: CEO Edward Pick describes AI as a top priority for the firm's advisory role, saying the firm is now 'double overweight' on AI and that it is existentially important that Morgan Stanley be viewed as a trusted adviser in the middle of the ecosystem. (MS-TR-2026Q3#49)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#49"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CFO Sharon Yeshaya describes early AI use cases, including LeadIQ, an AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with financial advisors, as well as DevGen AI (enhancing developer efficiency) and Parable (an interactive tool analyzing and summarizing data). (MS-TR-2025Q3#8)",
+            "chunk_ids": [
+              "MS-TR-2025Q3#8"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2025-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CFO Sharon Yeshaya states the firm's scale supports continued investment in future technology, including AI and digital tools. (MS-TR-2026Q3#16)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#16"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Ted Pick states the firm is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending. (MS-TR-2025Q4#9)",
+            "chunk_ids": [
+              "MS-TR-2025Q4#9"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2025-12-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Edward Pick describes the ability to protect client assets and a resiliency theme as critical to clients, and states that although it is a people business, technology can help do a lot of the early work for financial advisers. (MS-TR-2026Q3#35)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#35"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Edward Pick describes the firm's 'world-class technology, world-class cyber defense and then the best trusted advisers sitting with the client' as the 'secret sauce,' including for the wealth management and financial adviser. (MS-TR-2026Q1#44)",
+            "chunk_ids": [
+              "MS-TR-2026Q1#44"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-03-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Ted Pick states the firm continues to invest in Wealth, Institutional Securities, and Investment Management via human capital and technology, with growth plans embedding increasing adoption of AI tools throughout the enterprise and client base. (MS-TR-2025Q4#8)",
+            "chunk_ids": [
+              "MS-TR-2025Q4#8"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2025-12-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CFO Sharon Yeshaya states the firm continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people. (MS-TR-2026Q3#8)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#8"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Edward Pick states cyber resiliency is a top priority across all of the firm's businesses, and that AI will bring efficiency and effectiveness that should not be dismissed as it transforms the firm. (MS-TR-2026Q1#66)",
+            "chunk_ids": [
+              "MS-TR-2026Q1#66"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-03-31 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Edward Pick states the firm has built advantages against its advisor-led platform that make technology a differentiator in its favor. (MS-TR-2026Q3#32)",
+            "chunk_ids": [
+              "MS-TR-2026Q3#32"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2026-09-30 [IR]",
+            "flags": []
+          },
+          {
+            "text": "Morgan Stanley: CEO Ted Pick describes the early digital asset transformation in wealth, including a partnership with Zero Hash, expansion into crypto and tokenized asset capabilities, and continued work on the E*TRADE platform for the active self-directed community. (MS-TR-2025Q4#72)",
+            "chunk_ids": [
+              "MS-TR-2025Q4#72"
+            ],
+            "part_id": "a4.MS",
+            "source_label": "MS transcript 2025-12-31 [IR]",
+            "flags": []
+          }
+        ],
+        "adjacent": [],
+        "gaps": [],
+        "caveats": [],
+        "coverage_note": "Coverage: searched Morgan Stanley. 186 passages from 36 documents: MS transcript (2024-12-31 to 2026-09-30); MS 10-K (2025-12-31); MS press, Wealth Management segment (2025-12-31 to 2026-09-30); MS 10-Q (2025-06-30 to 2026-06-30); MS deck (2026-01-15); MS 10-Q, Wealth Management segment (2025-06-30 to 2026-06-30); MS trade (2026-08-22 to 2026-11-15); MS supplement (2020-12-31 to 2026-09-30); MS supplement, Wealth Management segment (2020-12-31 to 2026-09-30); MS press (2026-03-31).",
+        "withheld": [],
+        "incomplete_note": "",
+        "llm_called": true,
+        "stop_reason": "tool_calls",
+        "usage": {
+          "input_tokens": 7790,
+          "output_tokens": 2818,
+          "cache_hit_tokens": 7680,
+          "cache_miss_tokens": 110,
+          "reasoning_tokens": null,
+          "tool_calls": 1,
+          "thinking": "off",
+          "effort": "off",
+          "model": "deepseek-v4-pro",
+          "streamed": true,
+          "ttft_s": 1.78
+        }
+      },
+      "reduce": {
+        "file": "Q5-reduce-d19782bcc95f4934e84f9372.json",
+        "message_sha": "aa1711c06a19038b",
+        "version": "v5.2",
+        "code_built": false,
+        "model_behavior": "answer",
+        "code_computability": [],
+        "why_line_removed": 0,
+        "why_line_restated": 0,
+        "why_line_unsaid": 0,
+        "why_lines_log": {
+          "removed": [],
+          "restated": [],
+          "unsaid": []
+        },
+        "behavior_rejudged": false,
+        "outside_matrix": 0,
+        "comparison_missing": [],
+        "why_line_missing": 4,
+        "reordered": 3,
+        "gaps_contradicting": [],
+        "gaps_merged": 0,
+        "duplicates_removed": [
+          {
+            "text": "Morgan Stanley: Morgan Stanley names LeadIQ, its AI-powered lead distribution platform, which focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors, as one of its early AI use cases. (MS-TR-2025Q3#8)",
+            "part_id": "a1.MS",
+            "kept": 11
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states that its scale supports continued investment in future technology, including AI and digital tools. (MS-TR-2026Q3#16)",
+            "part_id": "a1.MS",
+            "kept": 17
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley states it continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people. (MS-TR-2026Q3#8)",
+            "part_id": "a1.MS",
+            "kept": 29
+          },
+          {
+            "text": "Morgan Stanley: In 2025Q4, Morgan Stanley states it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending. (MS-TR-2025Q4#9)",
+            "part_id": "a2.MS",
+            "kept": 25
+          },
+          {
+            "text": "Morgan Stanley: In 2025Q3, Morgan Stanley states it continues to invest and deepen its competitive moats through an expanded collaboration with Carta in private markets. (MS-TR-2025Q3#13)",
+            "part_id": "a2.MS",
+            "kept": 5
+          },
+          {
+            "text": "Morgan Stanley: In 2025Q3, Morgan Stanley states it continues to invest in digital assets through announced partnerships with Zero Hash. (MS-TR-2025Q3#13)",
+            "part_id": "a2.MS",
+            "kept": 5
+          },
+          {
+            "text": "Morgan Stanley: Morgan Stanley's early AI use cases include LeadIQ, an AI-powered lead distribution platform that matches workplace and self-directed relationships and facilitates engagement with its financial advisors. (MS-TR-2025Q3#8)",
+            "part_id": "a3.MS",
+            "kept": 11
+          }
+        ],
+        "basis_breaks": [],
+        "flags": {
+          "why_line_missing": 3
+        },
+        "part_gaps": 0,
+        "stop_reason": "tool_calls",
+        "usage": {
+          "input_tokens": 7790,
+          "output_tokens": 2818,
+          "cache_hit_tokens": 7680,
+          "cache_miss_tokens": 110,
+          "reasoning_tokens": null,
+          "tool_calls": 1,
+          "thinking": "off",
+          "effort": "off",
+          "model": "deepseek-v4-pro",
+          "streamed": true,
+          "ttft_s": 1.78
+        },
+        "provider": "deepseek",
+        "model": "deepseek-v4-pro",
+        "stream_items": {
+          "first_claim_s": 4.97,
+          "shown": 29,
+          "held": 4,
+          "shown_not_final": 6
+        },
+        "how": "called"
+      },
+      "part_coverage": {
+        "a1.MS": "model",
+        "a2.MS": "model",
+        "a3.MS": "model",
+        "a4.MS": "model"
+      },
+      "stop_reason": "tool_calls",
+      "output_tokens": 2818,
+      "change": "UNCHANGED",
+      "cost": {
+        "calls": 6,
+        "by_type": {
+          "plan": 1,
+          "map": 4,
+          "remap": 0,
+          "reduce": 1,
+          "answer": 0
+        },
+        "new": 1,
+        "reused": 5,
+        "input_tokens": 120660,
+        "output_tokens": 20876,
+        "cache_hit_tokens": 7680,
+        "cache_miss_tokens": 112980,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 13422,
+        "usd": 0.116069,
+        "usd_new": 0.005821,
+        "usd_peak": 0.232139,
+        "peak_calls": 0,
+        "off_peak_calls": 6,
+        "unpriced_calls": 0,
+        "no_usage_calls": 0,
+        "rows": [
+          {
+            "type": "plan",
+            "file": "Q5-plan-b90601ee2034a7bf9a337d96.json",
+            "new": false,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 1303,
+              "output_tokens": 295,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 1303,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "usd": 0.001444,
+              "usd_peak": 0.002888,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-21T18:53:28.033967+00:00",
+              "status": "priced"
+            }
+          },
+          {
+            "type": "map",
+            "file": "Q5-map.a1.MS-56b64e6c0bf948826424483d.json",
+            "new": false,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 30012,
+              "output_tokens": 4437,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 30012,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 3149,
+              "usd": 0.028593,
+              "usd_peak": 0.057186,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-21T18:54:31.955963+00:00",
+              "status": "priced"
+            }
+          },
+          {
+            "type": "map",
+            "file": "Q5-map.a2.MS-84e734bef667efac5a084139.json",
+            "new": false,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 30885,
+              "output_tokens": 6546,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 30885,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 5619,
+              "usd": 0.033345,
+              "usd_peak": 0.06669,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-21T18:54:47.217968+00:00",
+              "status": "priced"
+            }
+          },
+          {
+            "type": "map",
+            "file": "Q5-map.a4.MS-ea2c2c71c6558aa72a20093b.json",
+            "new": false,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 32070,
+              "output_tokens": 4439,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 32070,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 2947,
+              "usd": 0.029955,
+              "usd_peak": 0.059911,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-21T18:54:31.799961+00:00",
+              "status": "priced"
+            }
+          },
+          {
+            "type": "map",
+            "file": "Q5-map.a3.MS-6fb126ace091d32d8ef4cdb6.json",
+            "new": false,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 18600,
+              "output_tokens": 2341,
+              "cache_hit_tokens": 0,
+              "cache_miss_tokens": 18600,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 1707,
+              "usd": 0.016911,
+              "usd_peak": 0.033822,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-21T18:54:20.017968+00:00",
+              "status": "priced"
+            }
+          },
+          {
+            "type": "reduce",
+            "file": "Q5-reduce-d19782bcc95f4934e84f9372.json",
+            "new": true,
+            "cost": {
+              "provider": "deepseek",
+              "model": "deepseek-v4-pro",
+              "input_tokens": 7790,
+              "output_tokens": 2818,
+              "cache_hit_tokens": 7680,
+              "cache_miss_tokens": 110,
+              "cache_write_tokens": 0,
+              "reasoning_tokens": 0,
+              "usd": 0.005821,
+              "usd_peak": 0.011642,
+              "period": "off_peak",
+              "tz": "record offset",
+              "finished_utc": "2026-11-22T06:38:42.961219+00:00",
+              "status": "priced"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
