@@ -1,0 +1,428 @@
+{
+  "question_id": "Q9",
+  "question": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10Q-2026Q1#16",
+    "MS-10Q-2026Q2#16",
+    "MS-10K-2025#125",
+    "MS-10K-2025#419",
+    "MS-10K-2025#190",
+    "MS-10Q-2026Q2#381",
+    "MS-TR-2026Q3#33",
+    "MS-TR-2025Q1#37",
+    "MS-10K-2025#349",
+    "MS-DECK-2026-strategic-update#31",
+    "MS-SUPP-2026Q3#38",
+    "MS-SUPP-2026Q3#16",
+    "MS-SUPP-2026Q2#16",
+    "MS-SUPP-2026Q1#14",
+    "MS-SUPP-2025Q4#15",
+    "MS-10Q-2026Q2#61",
+    "MS-TR-2026Q3#34",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-DECK-2026Q3#31",
+    "BAC-PR-2026-10-14-01#13",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-TRADE-2026-09-08-WM-01#0",
+    "BAC-PR-2026-04-15-01#11",
+    "BAC-PR-2026-07-14-01#11",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-PR-2026-01-14-01#13"
+  ],
+  "schema_fallback": [],
+  "enum_values": 119,
+  "at": "2026-11-21T14:57:37.592367-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10633,
+    "output_tokens": 11225,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 8969,
+    "reasoning_tokens": 6573,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.48
+  },
+  "wall_s": 55.67,
+  "tokens_per_s": 201.63,
+  "ttft_s": 1.48,
+  "reasoning_content": "Let me work through this. The question is about how Morgan Stanley and Merrill differ in how they segment clients by wealth tier.\n\nLet me organize by aspect. No time window mentioned in the question, so no why-lines needed.\n\nAspects:\n- a1 [fact]: How Morgan Stanley segments clients by wealth tier\n- a2 [fact]: How Merrill segments clients by wealth tier\n- a3 [fact]: thresholds/breakpoints\n- a4 [fact]: names/labels\n- a5 [fact]: service model and advisor assignment\n- a6 [series]: number of clients/households within each tier\n- a7 [comparison]: how they differ\n\nLet me write claims for each aspect.\n\na1.MS has 5 items (facts).\na2.MER has 5 items (facts).\na3.MS not found (code gap, don't repeat). a3.MER has 7 items.\na4.MS has 2 items. a4.MER has 5 items (item 2 \"also under a3: write it once\", item 4 \"also under a3: write it once\").\na5.MS adjacent only. a5.MER has 4 items.\na6.MS adjacent only. a6.MER has 10 items.\na7 comparison - exactly one claim with part_id a7.\n\nNote \"also under a3\" items: item 2 of a4.MER and item 4 of a4.MER are marked \"write it once\" \u2014 so write under a3 (first aspect where it appears). Wait, a3.MER item 7 is \"also under a3\"? Let me check. Actually a3.MER item 7 = \"Bank of America Private Bank, together with Merrill... targets high net worth and ultra high net worth clients.\" And a4.MER item 2 is marked [also under a3: write it once], item 4 marked [also under a3: write it once].\n\nWait, but a4.MER item 2 has \"[also under a3: write it once]\" meaning write it once under a3. So it appears in both a3.MER (as item 7) and a4.MER (item 2), but write once. Where first? a3 comes before a4, so write under a3.\n\nActually let me check a3.MER items. a3.MER item 7 = \"Bank of America Private Bank, together with Merrill... targets high net worth and ultra high net worth clients.\" This matches a4.MER item 2. So write once under a3 (item 7 of a3.MER).\n\na4.MER item 4 = \"Merrill Wealth Management's advisory business focuses on clients with over $250,000...\" marked [also under a3: write it once]. This matches a3.MER item 1. So write under a3 (item 1 of a3.MER).\n\nSo for a4.MER, I write items 1, 3, 5 (skip 2 and 4).\n\nWait, let me verify. a3.MER item 1 = \"$250,000 threshold\" = a4.MER item 4. Yes.\na3.MER item 7 = \"Private Bank + Merrill PWM targets HNW/UHNW\" = a4.MER item 2. Yes.\n\nSo in a4.MER, write items 1, 3, 5.\n\nNow for a7, one comparison claim. The two firms differ: Merrill defines formal tiers with dollar thresholds (Wealth Continuum: Mass Affluent $500K-$1MM, HNW $1MM-$10MM, plus $250K+ investable assets, $3MM+ Private Bank), while Morgan Stanley describes serving \"high and ultra-high net worth individuals\" without dollar thresholds.\n\nLet me now write the answer carefully.\n\nNote recency: The question has no time window specified. So no why-lines needed. Wait, let me check - \"Recency and order\" section says \"for every item of an aspect marked recency, and every item when the question has a time window\". No aspect marked recency, no time window. So no why-lines.\n\nNow let me write each claim with citations.\n\nLet me be careful about the \"also under a3\" items - I write them once under a3.\n\nLet me construct claims.\n\n**a1.MS** - Morgan Stanley segments clients (fact, part_id a1.MS):\nItem 1: Wealth Management segment provides services to individual investors including high and ultra-high net worth individuals, and businesses/institutions.\nItem 2: U.S. Bank Subsidiaries loans to high to ultra-high net worth individuals, large corporate/institutional clients.\nItem 3: tailored lending = bespoke lending to ultra-high net worth clients.\nItem 4: family office infrastructure for ultra-high net worth clients.\nItem 5: serves high-net-worth wealth businesses in Asia (Hong Kong).\n\n**a2.MER** (part_id a2.MER):\nItem 1: Wealth Continuum: Mass Affluent ($500K-$1MM) and High Net Worth ($1MM-$10MM).\nItem 2: advisory business focused on clients with over $250K total investable assets (not verbatim).\nItem 3: Private Wealth Management + Private Bank targets HNW and UHNW (not verbatim).\nItem 4: 750K households $500K+.\nItem 5: 54K households $10MM+.\n\n**a3.MER** (part_id a3.MER):\nItem 1: $250K threshold (also under a4, write once here).\nItem 2: households $250K+ investable assets definition.\nItem 3: net new households $500K+ assets (2026Q3).\nItem 4: 750K $500K+, 54K $10MM+ households.\nItem 5: Private Bank $3MM+ total balances definition.\nItem 6: Private Bank $3 million under management (2026Q3).\nItem 7: Private Bank + PWM targets HNW/UHNW (also under a4, write once here).\n\na3.MS: not found (code gap, don't repeat).\n\n**a4.MS** (part_id a4.MS):\nItem 1: Wealth Management segment provides services to individual investors including high and ultra-high net worth individuals.\nItem 2: CRE loans guaranteed by high or ultra-high net worth clients.\n\n**a4.MER** (part_id a4.MER):\nItem 1: Wealth Continuum labels.\nItem 3: household tiers $500K+ and $10MM+.\nItem 5: Private Bank $3MM+ total balances.\n(skip 2 and 4)\n\n**a5.MS** adjacent only (part_id a5.MS), with differs_because given.\n**a5.MER** (part_id a5.MER): 4 items.\n\n**a6.MS** adjacent only (part_id a6.MS).\n**a6.MER** (part_id a6.MER): 10 items.\n\n**a7** comparison claim (part_id a7).\n\nNote: for a6, \"Comparability (code): unverified... never compared across firms.\" So I should not compare/rank across firms in a6.\n\nLet me now write everything.\n\nFor the comparison aspect a7, exactly one claim. Let me write it.\n\nNow about the adjacent items for a5.MS and a6.MS - these go in adjacent array with differs_because.\n\nThe differs_because for a5.MS: \"Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models.\"\n\nFor a6.MS: \"Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers.\"\n\nNow let me write all text claims. I need to be careful about which items are \"quote not verbatim\" - never put in quotation marks.\n\nLet me draft.\n\nFor the a7 comparison, part_id a7, one claim citing items. Let me identify chunk ids. The comparison rests on: Merrill's Wealth Continuum (BAC-DECK-2025-investor-day#12), Merrill's $250K (BAC-10K-2025#246), Merrill household counts (BAC-DECK-2025-investor-day#18), and Morgan Stanley's description (MS-10K-2025#419, MS-10Q-2026Q2#381).\n\nLet me write it.\n\nNow, order: aspects in order listed, firms in order listed (MS then MER). Each claim starting \"<Firm>: \".\n\nActually for single aspect claims with part_id like a1.MS, the claim is for that firm. The instruction says \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nSo each claim starts with \"Morgan Stanley: \" or \"Merrill: \".\n\nLet me write everything now.\n\nFor a5.MS adjacent items, there are 4 items. Should I write them all as adjacent items? The adjacent array has items each with part_id, text, chunk_ids, differs_because. I think I write each item. Actually the cell a5.MS is \"different quantity (adjacent only)\" with 4 items. I'll write 4 adjacent items, or perhaps combine. Let me write them individually with the same differs_because.\n\nActually, let me think about whether to write one adjacent item or multiple. The evidence matrix lists 4 items under a5.MS. I'll write 4 adjacent entries, each carrying part_id a5.MS and the differs_because.\n\nSimilarly a6.MS has 7 items - write 7 adjacent entries with part_id a6.MS and differs_because.\n\nLet me now compose the full text for each.\n\nLet me write out all claims and adjacent items carefully.\n\nI'll date each claim from source line. Let me map sources to dates.\n\nMS-10Q-2026Q1#16: MS 10-Q, period 2026-03-31, published 2026-05-05.\nMS-10Q-2026Q2#16: period 2026-06-30, published 2026-08-04.\nMS-10K-2025#125: period 2025-12-31, published 2026-02-19.\nMS-10K-2025#419: same.\nMS-10K-2025#190: period 2025-12-31, published 2026-02-19.\nMS-10Q-2026Q2#381: period 2026-06-30, published 2026-08-04.\nMS-TR-2026Q3#33: period 2026-09-30, published 2026-10-14.\nMS-TR-2025Q1#37: period 2025-03-31, published 2025-04-11.\nMS-10K-2025#349: period 2025-12-31, published 2026-02-19.\n\nFor Merrill:\nBAC-DECK-2025-investor-day#12: published 2025-11-05.\nBAC-10K-2025#246: period 2025-12-31, published 2026-02-25.\nBAC-DECK-2025-investor-day#18: published 2025-11-05.\nBAC-DECK-2026Q3#31: period 2026-09-30, published 2026-10-14.\nBAC-PR-2026-10-14-01#13: period 2026-09-30, published 2026-10-14.\nBAC-TR-2026Q3#19: period 2026-09-30, published 2026-10-14.\nMER-PR-web...: undated web page, content as of 2026-11-03.\nMER-TRADE...: published 2026-09-08.\nBAC-PR-2026-04-15-01#11: period 2026-03-31, published 2026-04-15.\nBAC-PR-2026-07-14-01#11: period 2026-06-30, published 2026-07-14.\nBAC-PR-2026-10-14-01#12: period 2026-09-30, published 2026-10-14.\nBAC-PR-2026-01-14-01#13: period 2025-12-31, published 2026-01-14.\n\nNow let me write everything. This is a large answer. Let me be thorough.\n\nI'll write the claims in order.\n\nLet me draft all claims now.\n\n**a1.MS claims:**\n\n1. Morgan Stanley: The 1Q26 10-Q (period ended March 31, 2026) and 2Q26 10-Q (period ended June 30, 2026), and the 2025 10-K, state that Wealth Management provides a comprehensive array of financial services and solutions to individual investors, including high and ultra-high net worth individuals, and to businesses and institutions. \u2014 cite MS-10Q-2026Q1#16, MS-10Q-2026Q2#16, MS-10K-2025#125, MS-10K-2025#419.\n\n2. Morgan Stanley: The 2025 10-K states that its U.S. Bank Subsidiaries provide loans to a variety of customers, including high to ultra-high net worth individuals, as well as large corporate and institutional clients. \u2014 cite MS-10K-2025#190.\n\n3. Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) states that, within the Wealth Management business segment, tailored lending consists of bespoke lending arrangements provided to ultra-high net worth clients. \u2014 cite MS-10Q-2026Q2#381.\n\n4. Morgan Stanley: The 3Q26 earnings call (October 2026) indicates Morgan Stanley offers family office infrastructure solutions for ultra-high net worth clients. \u2014 cite MS-TR-2026Q3#33.\n\n5. Morgan Stanley: The 1Q25 earnings call (April 2025) indicates Morgan Stanley serves high-net-worth wealth businesses in Asia (Hong Kong). \u2014 cite MS-TR-2025Q1#37.\n\n**a2.MER claims:**\n\n1. Merrill: The 2025 investor day deck (November 2025) presents a \"Wealth Continuum\" that segments clients into Mass Affluent ($500K - $1MM) and High Net Worth ($1MM - $10MM). \u2014 cite BAC-DECK-2025-investor-day#12.\n\n2. Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business is focused on clients with over $250,000 in total investable assets. (not verbatim - no quotes) \u2014 cite BAC-10K-2025#246.\n\n3. Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's Private Wealth Management business, together with Bank of America Private Bank, targets high net worth and ultra high net worth clients. \u2014 cite BAC-10K-2025#246.\n\n4. Merrill: The 2025 investor day deck (November 2025) states Merrill serves 750K households with $500K+ in assets. \u2014 cite BAC-DECK-2025-investor-day#18.\n\n5. Merrill: The 2025 investor day deck (November 2025) states Merrill serves 54K households with $10MM+ in assets. \u2014 cite BAC-DECK-2025-investor-day#18.\n\n**a3.MER claims** (7 items):\n\n1. Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business focuses on clients with over $250,000 in total investable assets. \u2014 cite BAC-10K-2025#246.\n\n2. Merrill: The 3Q26 deck and the October 14, 2026 press release (period ended September 30, 2026) state Merrill defines its households as households with $250K+ in investable assets, excluding stock plan and banking-only households. \u2014 cite BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#13.\n\n3. Merrill: The 3Q26 earnings call (October 2026) states Merrill reports net new households with at least $500,000 in assets, adding about 4,200 in 3Q26 (up 17%). \u2014 cite BAC-TR-2026Q3#19.\n\n4. Merrill: The 2025 investor day deck (November 2025) states Merrill reports 750K households with $500K+ in assets and 54K households with $10MM+ in assets. \u2014 cite BAC-DECK-2025-investor-day#18.\n\n5. Merrill: The 3Q26 deck and October 14, 2026 press release state Bank of America Private Bank defines its relationships as relationships with $3MM+ in total balances, including third-party activities and excluding irrevocable trust-only, institutional philanthropic, and exiting relationships. \u2014 cite BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#13.\n\n6. Merrill: The 3Q26 earnings call (October 2026) states the Private Bank added 470 net new relationships with at least $3 million under management in 3Q26. \u2014 cite BAC-TR-2026Q3#19.\n\n7. Merrill: The 2025 10-K (period ended December 31, 2025) states Bank of America Private Bank, together with Merrill Wealth Management's Private Wealth Management business, targets high net worth and ultra high net worth clients. \u2014 cite BAC-10K-2025#246.\n\nNote item 5 is Bank of America Private Bank, not Merrill strictly. But it's listed under a3.MER. I'll note the scope.\n\n**a4.MS claims** (2 items):\n\n1. Morgan Stanley: The 2025 10-K states its Wealth Management segment provides financial services and solutions to individual investors, including high and ultra-high net worth individuals, as well as businesses and institutions. \u2014 cite MS-10K-2025#125.\n\n2. Morgan Stanley: The 2025 10-K states CRE loans in Wealth Management generally benefit from full or partial guarantees from high or ultra-high net worth clients. \u2014 cite MS-10K-2025#349.\n\n**a4.MER claims** (3 items: 1, 3, 5):\n\n1. Merrill: The 2025 investor day deck (November 2025) labels Merrill's wealth tiers within a framework it calls the \"Wealth Continuum,\" which includes \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM).\" \u2014 cite BAC-DECK-2025-investor-day#12.\n\n3. Merrill: The 2025 investor day deck (November 2025) identifies Merrill household wealth tiers of \"$500K+ households\" (750K) and \"$10MM+ households\" (54K). \u2014 cite BAC-DECK-2025-investor-day#18.\n\n5. Merrill: The 3Q26 deck (period ended September 30, 2026) states Bank of America Private Bank relationships are defined as those with $3MM+ in total balances. \u2014 cite BAC-DECK-2026Q3#31.\n\n**a5.MER claims** (4 items):\n\n1. Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets, and provides tailored solutions through investment management, brokerage, banking and retirement products. \u2014 cite BAC-10K-2025#246.\n\n2. Merrill: The 2025 10-K (period ended December 31, 2025) states Bank of America Private Bank, together with Merrill Wealth Management's Private Wealth Management business, provides comprehensive wealth management solutions targeted to high net worth and ultra high net worth clients, including customized solutions for wealth structuring, investment management, trust and banking needs. \u2014 cite BAC-10K-2025#246.\n\n3. Merrill: A Merrill recruiting web page (content as of November 3, 2026) states Merrill offers robust solutions for ultra-high-net-worth clients, including alternative investments and sustainable and impact investing strategies. \u2014 cite MER-PR-web-becoming-a-merrill-lynch-advisor#0.\n\n4. Merrill: Trade press (September 8, 2026) reports a team specializing in serving high-net-worth and ultra-high-net-worth clients joined Merrill Private Wealth Management, aligned with Merrill's Southeast private wealth division, indicating private wealth management serves that client tier. \u2014 cite MER-TRADE-2026-09-08-WM-01#0.\n\n**a6.MER claims** (10 items):\n\n1. Merrill: The 2025 investor day deck (November 2025) reports 750,000 households with $500K+ in assets. \u2014 cite BAC-DECK-2025-investor-day#18.\n2. Merrill: 54,000 households with $10MM+ in assets. \u2014 same.\n3. Merrill: 1Q26 press release (April 15, 2026) reports ~3.3K net new $500K+ households added in 1Q26. \u2014 BAC-PR-2026-04-15-01#11.\n4. Merrill: 2Q26 ~5.4K. \u2014 BAC-PR-2026-07-14-01#11.\n5. Merrill: 3Q26 ~4.2K. \u2014 BAC-PR-2026-10-14-01#12.\n6. Merrill: FY25 ~18K net new households. \u2014 BAC-PR-2026-01-14-01#13.\n7. Merrill: Private Bank ~280 net new relationships $3MM+ in 1Q26. \u2014 BAC-PR-2026-04-15-01#11.\n8. Merrill: ~430 in 2Q26. \u2014 BAC-PR-2026-07-14-01#11.\n9. Merrill: ~470 in 3Q26. \u2014 BAC-PR-2026-10-14-01#12.\n10. Merrill: ~1,600 in FY25. \u2014 BAC-PR-2026-01-14-01#13.\n\n**a7 comparison** (one claim):\n\nMorgan Stanley and Merrill: The two firms' segmentation schemes differ: Merrill defines formal wealth tiers with explicit dollar thresholds (a \"Wealth Continuum\" of Mass Affluent $500K-$1MM and High Net Worth $1MM-$10MM, plus an advisory-business focus on clients with over $250,000 in investable assets and $500K+/$10MM+ household breakpoints), whereas Morgan Stanley's disclosures describe serving \"high and ultra-high net worth individuals\" without specifying dollar thresholds or formal tier definitions. \u2014 cite multiple.\n\nLet me now also consider the gaps. Code gaps are already listed and I shouldn't repeat. But should I add any gaps of my own? The instruction says \"Add a gap of your own only for something those gaps do not name.\" The code gaps already cover a3.MS, a5.MS, a6.MS. I think no additional gaps needed.\n\nWait, there's a standard wording about advisor pay, but that's not relevant here.\n\nNow let me finalize the part_ids.\n\nClaims part_ids: a1.MS, a2.MER, a3.MER, a4.MS, a4.MER, a5.MER, a6.MER, a7.\n\nAdjacent part_ids: a5.MS, a6.MS.\n\nLet me now write the adjacent items.\n\nFor a5.MS adjacent, 4 items, differs_because = \"Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models.\"\n\nItems:\n1. Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) states Wealth Management supports clients through three channels\u2014Advisor-Led, Self-Directed and Workplace\u2014rather than segmenting by wealth tier. \u2014 MS-10Q-2026Q2#16.\n2. Morgan Stanley: The January 2026 strategic update deck states the Advisor-Led channel consists of client assets in accounts that have a Wealth Management representative assigned. \u2014 MS-DECK-2026-strategic-update#31.\n3. Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026) states the Self-Directed channel consists of active accounts which are not advisor-led. \u2014 MS-SUPP-2026Q3#38.\n4. Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026) states the Workplace channel includes equity compensation solutions for companies, their executives and employees. \u2014 MS-SUPP-2026Q3#38.\n\nFor a6.MS adjacent, 7 items, differs_because = \"Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers.\"\n\nItems:\n1. Self-directed households 8.8M at Sep 30 2026. \u2014 MS-SUPP-2026Q3#16.\n2. 8.7M at Jun 30 2026. \u2014 MS-SUPP-2026Q2#16.\n3. 8.6M at Mar 31 2026. \u2014 MS-SUPP-2026Q1#14.\n4. 8.5M at Dec 31 2025. \u2014 MS-SUPP-2025Q4#15.\n5. 6.6M stock plan participants Jun 30 2026. \u2014 MS-10Q-2026Q2#61.\n6. 6.5M Dec 31 2025. \u2014 MS-10Q-2026Q2#61.\n7. ~21 million households Sep 30 2026. \u2014 MS-TR-2026Q3#34.\n\nNow write everything. This is a lot. Let me produce the JSON.\n\nI need to be careful about which quotes are verbatim vs not. For items marked \"quote not verbatim\", I paraphrase without quotes.\n\nLet me write the final answer via submit_answer tool.\n\nActually, I need to double check the \"quote not verbatim\" items - I should not use quotation marks for those. Let me identify:\n- a2.MER item 2 (BAC-10K-2025#246): quote not verbatim. Paraphrase.\n- a2.MER item 3 (BAC-10K-2025#246): quote not verbatim.\n- a3.MER item 1 (BAC-10K-2025#246): quote not verbatim.\n- a3.MER item 7 (BAC-10K-2025#246): quote not verbatim.\n- a5.MER item 1 (BAC-10K-2025#246): quote not verbatim.\n- a5.MER item 2 (BAC-10K-2025#246): quote not verbatim.\n- a5.MER item 4 (MER-TRADE): quote not verbatim.\n\nOK let me write these without quotes.\n\nNow, for verbatim quotes I can use quotation marks. E.g., \"Wealth Continuum Mass Affluent ($500K - $1MM) High Net Worth ($1MM - $10MM)\".\n\nLet me write everything now.\n\nFor the a7 comparison claim, I need to cite the items it rests on. Let me cite: BAC-DECK-2025-investor-day#12, BAC-10K-2025#246, BAC-DECK-2025-investor-day#18, MS-10K-2025#419, MS-10Q-2026Q2#381.\n\nNow let me finalize and produce the answer.\n\nLet me carefully write the JSON. I'll write concise but complete claims.\n\nActually, one thing about the part_id for comparison - it's \"a7\" exactly. And for the spanning-firms claims... a7 is the comparison, single claim, part_id \"a7\".\n\nLet me write out everything now.\n\nFor a6.MER item 6 and 10 marked \"[period not stated in a usable form]\" - I should just not state a specific period? Actually \"period not stated in a usable form\" means I state what's available. The FY25 period is stated as FY25 in the quote. Hmm, actually the mark means the period isn't in a usable form for dating. But the source is BAC-PR-2026-01-14-01#13 which is FY25 (period 2025-12-31). I'll say \"the January 14, 2026 press release reports approximately 18K net new households added in FY25.\"\n\nActually the \"period not stated in a usable form\" is a note that I shouldn't try to give a precise period. The value \"FY25\" is given in the quote itself, so I can mention FY25.\n\nLet me write.\n\nI'll now produce the final tool call.\n\nFor a4.MER item 2 and item 4, they have \"[also under a3: write it once]\" and \"[period not stated in a usable form]\". I skip them in a4 and they appear in a3.\n\nWait, a4.MER item 2 = \"Bank of America Private Bank... targets HNW/UHNW\" with \"[also under a3: write it once]\". This corresponds to a3.MER item 7. Yes, write under a3.\n\na4.MER item 4 = \"$250K\" with \"[also under a3: write it once]\". Corresponds to a3.MER item 1. Write under a3.\n\nOK so a4.MER has items 1, 3, 5 only.\n\nLet me finalize.\n\nNow writing the complete answer.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: The 1Q26 10-Q (period ended March 31, 2026), the 2Q26 10-Q (period ended June 30, 2026), and the 2025 10-K state that Wealth Management provides a comprehensive array of financial services and solutions to individual investors, including high and ultra-high net worth individuals, and to businesses and institutions.",
+        "chunk_ids": [
+          "MS-10Q-2026Q1#16",
+          "MS-10Q-2026Q2#16",
+          "MS-10K-2025#125",
+          "MS-10K-2025#419"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2025 10-K states that its U.S. Bank Subsidiaries provide loans to a variety of customers, including high to ultra-high net worth individuals, as well as large corporate and institutional clients.",
+        "chunk_ids": [
+          "MS-10K-2025#190"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) states that, within the Wealth Management business segment, tailored lending consists of bespoke lending arrangements provided to ultra-high net worth clients.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#381"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 earnings call (October 2026) indicates Morgan Stanley offers family office infrastructure solutions for ultra-high net worth clients.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#33"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 1Q25 earnings call (April 2025) indicates Morgan Stanley serves high-net-worth wealth businesses in Asia (Hong Kong).",
+        "chunk_ids": [
+          "MS-TR-2025Q1#37"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) presents a \"Wealth Continuum\" that segments clients into Mass Affluent ($500K - $1MM) and High Net Worth ($1MM - $10MM).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business is focused on clients with over $250,000 in total investable assets.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's Private Wealth Management business, together with Bank of America Private Bank, targets high net worth and ultra high net worth clients.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) states Merrill serves 750K households with $500K+ in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) states Merrill serves 54K households with $10MM+ in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business focuses on clients with over $250,000 in total investable assets.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 deck and the October 14, 2026 press release (period ended September 30, 2026) state Merrill defines its households as households with $250K+ in investable assets, excluding stock plan and banking-only households.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q3#31",
+          "BAC-PR-2026-10-14-01#13"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 earnings call (October 2026) states Merrill reports net new households with at least $500,000 in assets, adding about 4,200 in 3Q26 (up 17%).",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) states Merrill reports 750K households with $500K+ in assets and 54K households with $10MM+ in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 deck and the October 14, 2026 press release (period ended September 30, 2026) state Bank of America Private Bank defines its relationships as relationships with $3MM+ in total balances, including third-party activities and excluding irrevocable trust-only, institutional philanthropic, and exiting relationships.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q3#31",
+          "BAC-PR-2026-10-14-01#13"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 earnings call (October 2026) states the Private Bank added 470 net new relationships with at least $3 million under management in 3Q26.",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Bank of America Private Bank, together with Merrill Wealth Management's Private Wealth Management business, targets high net worth and ultra high net worth clients.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Morgan Stanley: The 2025 10-K states its Wealth Management segment provides financial services and solutions to individual investors, including high and ultra-high net worth individuals, as well as businesses and institutions.",
+        "chunk_ids": [
+          "MS-10K-2025#125"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2025 10-K states CRE loans in Wealth Management generally benefit from full or partial guarantees from high or ultra-high net worth clients.",
+        "chunk_ids": [
+          "MS-10K-2025#349"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) labels Merrill's wealth tiers within a framework it calls the \"Wealth Continuum,\" which includes the tiers \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM).\"",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) identifies Merrill household wealth tiers of \"$500K+ households\" (750K) and \"$10MM+ households\" (54K).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 deck (period ended September 30, 2026) states Bank of America Private Bank relationships are defined as those with $3MM+ in total balances.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q3#31"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management's advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets, and provides tailored solutions through investment management, brokerage, banking and retirement products.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Bank of America Private Bank, together with Merrill Wealth Management's Private Wealth Management business, provides comprehensive wealth management solutions targeted to high net worth and ultra high net worth clients, including customized solutions for wealth structuring, investment management, trust and banking needs.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill: A Merrill recruiting web page (content as of November 3, 2026) states Merrill offers robust solutions for ultra-high-net-worth clients, including alternative investments and sustainable and impact investing strategies.",
+        "chunk_ids": [
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#0"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill: Trade press (September 8, 2026) reports a team specializing in serving high-net-worth and ultra-high-net-worth clients joined Merrill Private Wealth Management and is aligned with Merrill's Southeast private wealth division, indicating private wealth management serves that client tier.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-08-WM-01#0"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) reports 750,000 households with $500K+ in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The 2025 investor day deck (November 2025) reports 54,000 households with $10MM+ in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The April 15, 2026 press release (period ended March 31, 2026) reports approximately 3.3K net new $500K+ households added in 1Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#11"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The July 14, 2026 press release (period ended June 30, 2026) reports approximately 5.4K net new $500K+ households added in 2Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#11"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The October 14, 2026 press release (period ended September 30, 2026) reports approximately 4.2K net new $500K+ households added in 3Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#12"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The January 14, 2026 press release reports approximately 18K net new households added in FY25.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#13"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The April 15, 2026 press release (period ended March 31, 2026) reports Bank of America Private Bank added approximately 280 net new relationships with $3MM+ clients in 1Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#11"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The July 14, 2026 press release (period ended June 30, 2026) reports Bank of America Private Bank added approximately 430 net new relationships with $3MM+ clients in 2Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#11"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The October 14, 2026 press release (period ended September 30, 2026) reports Bank of America Private Bank added approximately 470 net new relationships with $3MM+ clients in 3Q26.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#12"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Merrill: The January 14, 2026 press release reports Bank of America Private Bank added approximately 1,600 net new relationships with $3MM+ clients in FY25.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#13"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "The two firms' wealth tier segmentation schemes differ from each other: Merrill defines formal wealth tiers with explicit dollar thresholds \u2014 a \"Wealth Continuum\" of Mass Affluent ($500K - $1MM) and High Net Worth ($1MM - $10MM), an advisory-business focus on clients with over $250,000 in total investable assets, and $500K+/$10MM+ household breakpoints \u2014 whereas Morgan Stanley's disclosures describe serving individual investors including high and ultra-high net worth individuals and describe bespoke lending to ultra-high net worth clients, but specify no dollar thresholds or formal tier definitions for those wealth tiers. This comparison is valid as a contrast of how each firm presents its segmentation; the firms' figures are not directly comparable because Morgan Stanley publishes no dollar-denominated tier definitions to set against Merrill's.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12",
+          "BAC-10K-2025#246",
+          "BAC-DECK-2025-investor-day#18",
+          "MS-10K-2025#419",
+          "MS-10Q-2026Q2#381"
+        ],
+        "part_id": "a7"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) states Wealth Management supports clients through three channels\u2014Advisor-Led, Self-Directed and Workplace\u2014rather than segmenting by wealth tier.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#16"
+        ],
+        "part_id": "a5.MS",
+        "differs_because": "Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models."
+      },
+      {
+        "text": "Morgan Stanley: The January 2026 strategic update deck states the Advisor-Led channel consists of client assets in accounts that have a Wealth Management representative assigned.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#31"
+        ],
+        "part_id": "a5.MS",
+        "differs_because": "Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models."
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026) states the Self-Directed channel consists of active accounts which are not advisor-led.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#38"
+        ],
+        "part_id": "a5.MS",
+        "differs_because": "Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models."
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026) states the Workplace channel includes equity compensation solutions for companies, their executives and employees.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#38"
+        ],
+        "part_id": "a5.MS",
+        "differs_because": "Morgan Stanley segments clients by service channel (Advisor-Led, Self-Directed, Workplace) and by whether a Wealth Management representative/advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds (e.g., $1M, $10M+) or tier-specific service models."
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026) reports 8.8 million self-directed households.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#16"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 2Q26 supplement (period ended June 30, 2026) reports 8.7 million self-directed households.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q2#16"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 1Q26 supplement (period ended March 31, 2026) reports 8.6 million self-directed households.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q1#14"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q25 supplement (period ended December 31, 2025) reports 8.5 million self-directed households.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#15"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) reports 6.6 million stock plan participants in the workplace channel.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#61"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 2Q26 10-Q (period ended June 30, 2026) reports 6.5 million stock plan participants in the workplace channel at December 31, 2025.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#61"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 earnings call (October 2026) states Morgan Stanley is reaching approximately 21 million households in wealth management as of September 30, 2026.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#34"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households/participants by service channel (advisor-led, self-directed, workplace). These channel-based household counts are a different segmentation from wealth tiers."
+      }
+    ],
+    "gaps": []
+  }
+}

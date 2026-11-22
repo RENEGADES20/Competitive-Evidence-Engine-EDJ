@@ -1,0 +1,91 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#282",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#283",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q2#88",
+    "EDJ-10Q-2025Q3#95",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2025Q2#93",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10Q-2026Q1#1",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10K-2025#309",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q3#92",
+    "EDJ-10Q-2025Q2#85",
+    "EDJ-10Q-2026Q2#79"
+  ],
+  "at": "2026-11-21T13:00:59.701069-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12382,
+    "output_tokens": 1160,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 12382,
+    "reasoning_tokens": 1024,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 7.14
+  },
+  "wall_s": 18.72,
+  "tokens_per_s": 61.97,
+  "ttft_s": 7.14,
+  "reasoning_content": "The sub-question asks whether and how explicitly Edward Jones names the \"mass-affluent\" client segment. I need to look through the passages for any mention of \"mass-affluent\" or explicit naming of a mass-affluent client segment.\n\nLooking at the passages, the 10-K chunk EDJ-10K-2025#88 mentions initiatives targeting new clients: High Net Worth, Workplace, and Next Generation investors. There's no mention of \"mass-affluent\" specifically.\n\nThe trade press passages mention \"families, pre-retirees, retirees, and business owners\" and \"manufacturing sector\" - but that's about an advisor who left Edward Jones.\n\nThere's no mention of \"mass-affluent\" anywhere in these passages. The firm names High Net Worth, Workplace, Next Generation investors as segments, but not mass-affluent.\n\nSo the answer is likely \"not_found\" - the passages say nothing about mass-affluent specifically.\n\nWait, let me check. The question is about mass-affluent clients. The passages mention High Net Worth (which is different from mass-affluent - it's a higher segment). There's no mention of \"mass-affluent.\"\n\nActually, could \"individual investors\" be relevant? The 10-Q passages say \"the Partnership primarily serves individual investors in the U.S. and Canada.\" That's a broad statement, not specifically mass-affluent.\n\nSo the label should be \"not_found\" since the passages say nothing about the mass-affluent client segment specifically.\n\nActually, let me reconsider. The firm does name client segments it targets: High Net Worth, Workplace, Next Generation investors. These are related to client segmentation but none is \"mass-affluent.\" High Net Worth is a different segment (higher wealth). So there's no explicit naming of mass-affluent.\n\nThe answer is not_found. There's no fact about mass-affluent, no different_quantity that clearly relates (well, \"High Net Worth\" is a different segment, and \"individual investors\" is broader). \n\nShould I report \"High Net Worth\" as a different_quantity? The sub-question asks whether/how explicitly the firm names the mass-affluent client segment. The firm names \"High Net Worth\" clients, which is a different (adjacent) segment, not the mass-affluent. This could be considered a different_quantity \u2014 a different client segment named rather than mass-affluent.\n\nActually, I think the most accurate answer is not_found, since there's no mention of mass-affluent at all. But the naming of \"High Net Worth\" is relevant context showing the firm names other segments but not mass-affluent.\n\nLet me think about what best serves the comparison. The question asks \"Whether and how explicitly each firm names the mass-affluent client segment.\" For Edward Jones, the passages don't mention mass-affluent. They mention \"High Net Worth\" and \"Next Generation investors\" as targeted client segments. This is relevant: it shows the firm names different segments but not mass-affluent.\n\nI'll report not_found, but I could optionally note the related segments. Actually the instructions say for different_quantity: \"a different measure... or an industry figure for a firm's own figure.\" The \"High Net Worth\" segment is not really a \"different measure\" of mass-affluent; it's a different client segment entirely.\n\nHmm, but I think the cleanest answer is not_found. The passages say nothing about mass-affluent.\n\nActually, let me reconsider whether \"High Net Worth\" counts as a different_quantity. The sub-question is about \"mass-affluent client segment.\" High Net Worth is a different client segment. This is arguably a \"related quantity\" - a different client segment. But the instructions say different_quantity is for \"a wider unit that contains the asked one\" or \"a different measure.\" High Net Worth is neither a wider unit containing mass-affluent nor a different measure.\n\nI'll go with not_found, and reason that the passages don't mention mass-affluent.\n\nActually, I could provide a different_quantity item noting \"High Net Worth\" and \"Next Generation\" as different client segments the firm does name, to help the comparison. But the instruction says only fact and different_quantity get items. For not_found, items is empty.\n\nLet me go with not_found for cleanliness, but actually I think there's value in noting the firm names \"High Net Worth\" but not mass-affluent. However, \"High Net Worth\" is a different segment, not a different measure of mass-affluent.\n\nI'll answer not_found with a clear reason. The passages mention targeting \"High Net Worth\" and \"Next Generation\" investors but never name \"mass-affluent.\"\n\nLet me finalize: label not_found, items empty, reason explaining that passages name other segments (High Net Worth, Next Generation, Workplace) but nothing about mass-affluent.\n\ndiffers_because should be \"\" for not_found. derivation operation \"\" and inputs empty.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages name client segments Edward Jones targets (High Net Worth, Workplace, Next Generation investors) and describe serving 'individual investors' broadly, but none mention or name a 'mass-affluent' client segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

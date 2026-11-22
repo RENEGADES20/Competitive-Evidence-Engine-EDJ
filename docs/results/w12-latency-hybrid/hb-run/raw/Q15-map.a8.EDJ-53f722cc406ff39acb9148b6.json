@@ -1,0 +1,233 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a8.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q2#69",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q3#82",
+    "EDJ-10K-2025#82",
+    "EDJ-10Q-2026Q1#57",
+    "EDJ-10Q-2025Q2#77",
+    "EDJ-10Q-2026Q2#70",
+    "EDJ-10Q-2025Q2#75",
+    "EDJ-10Q-2025Q3#0",
+    "EDJ-10Q-2025Q3#80",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-10Q-2026Q1#2",
+    "EDJ-10Q-2026Q1#48",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10K-2025#213",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2026Q2#67",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q1#58",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q3#62",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-10K-2025#333",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10K-2025#332",
+    "EDJ-10K-2025#126"
+  ],
+  "at": "2026-11-21T21:58:56.785903-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15313,
+    "output_tokens": 4714,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 13777,
+    "reasoning_tokens": 3329,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.12
+  },
+  "wall_s": 49.8,
+  "tokens_per_s": 94.66,
+  "ttft_s": 3.12,
+  "reasoning_content": "Let me analyze this sub-question: \"Advisor-led firms' trading commission and transactional revenue\" for Edward Jones.\n\nI need to find figures about trading commission and transactional revenue for Edward Jones.\n\nLooking at the passages, I can find:\n- Trade revenue (commissions + principal transactions) figures\n- Commissions revenue broken down by Equities, Mutual funds, Insurance products and other\n- Principal transactions\n\nLet me extract the commission revenue figures and trade revenue figures.\n\nFrom EDJ-10Q-2026Q2#69:\n- Total trade revenue $460 (quarter), $449 (prior quarter), $910 (six months), $892 (prior six months)\n- Actually let me look carefully. The table shows partial data.\n\nFrom EDJ-10Q-2026Q1#57:\n- Three months ended March 27, 2026:\n  - Commissions revenue: Equities $186, Mutual funds $116, Insurance products and other $93, Total commissions revenue $395\n  - Principal transactions $55\n  - Total trade revenue $450\n  - Prior (March 28, 2025): Equities $170, Mutual funds $118, Insurance products and other $96, Total commissions $384, Principal transactions $59, Total trade revenue $443\n\nFrom EDJ-10Q-2025Q3#80:\n- Total trade revenue $448 (Q3 2025), $442 (Q3 2024), $1,340 (nine months 2025), $1,299 (nine months 2024)\n- Principal transactions $66, $59, $191, $170\n\nFrom EDJ-10Q-2025Q3#78: \"Trade revenue... increased 1% and 3% in the third quarter and first nine months of 2025 to $448 and $1,340\"\n\nFrom EDJ-10Q-2025Q2#75:\n- Total trade revenue $449 (Q2 2025), $433 (Q2 2024), $892 (half 2025), $857 (half 2024)\n- Principal transactions $66, $57, $125, $111\n\nFrom EDJ-10Q-2025Q2#73: Trade revenue increased 4%... to $449 and $892\n\nFrom EDJ-10Q-2025Q3#82: mentions trade revenue, equities commissions, principal transactions\n\nFrom EDJ-10Q-2026Q2#70: Total trade revenue $460, $449 (Q2 2026 vs Q2 2025), $910, $892 (half)\n\nFrom EDJ-10Q-2026Q1#58: total client dollars invested $49.7, margin per $1,000 invested $9.1\n\nLet me collect the commission revenue breakdown figures.\n\nQ1 2026 (three months ended March 27, 2026):\n- Equities commissions $186, Mutual funds $116, Insurance products and other $93, Total commissions revenue $395\n- Principal transactions $55, Total trade revenue $450\n\nQ1 2025 (three months ended March 28, 2025):\n- Equities $170, Mutual funds $118, Insurance products and other $96, Total commissions $384\n- Principal transactions $59, Total trade revenue $443\n\nThese are the clearest \"trading commission and transactional revenue\" figures.\n\nThe sub-question asks for \"trading commission and transactional revenue\" - this matches commissions revenue and trade revenue (which includes principal transactions).\n\nLet me identify the relevant facts. The commissions revenue is the trading commission. Trade revenue is commissions + principal transactions (transactional revenue).\n\nI should provide facts for commissions revenue and trade revenue.\n\nLet me look at the different periods and figure out what's available.\n\nThe clearest, most complete data is from EDJ-10Q-2026Q1#57 which has a full breakdown for Q1 2026 and Q1 2025.\n\nAlso EDJ-10Q-2026Q2#69 shows partial (the top is cut off but shows total trade revenue $460, $449, $910, $892).\n\nLet me provide the facts. I'll include:\n\n1. Q1 2026 commissions revenue breakdown (equities, mutual funds, insurance, total) and total trade revenue\n2. Q1 2025 same\n3. Various trade revenue totals for other quarters\n\nLet me be systematic and provide items for the figures clearly stated.\n\nActually, the sub-question is specifically about \"trading commission and transactional revenue\". Both commissions revenue and trade revenue (which is commissions + principal transactions) are relevant.\n\nLet me extract:\n\nFact items:\n1. Total commissions revenue Q1 2026: $395 (EDJ-10Q-2026Q1#57)\n2. Equities commissions Q1 2026: $186\n3. Mutual funds commissions Q1 2026: $116\n4. Insurance products and other commissions Q1 2026: $93\n5. Principal transactions Q1 2026: $55\n6. Total trade revenue Q1 2026: $450\n7. Total commissions Q1 2025: $384\n8. Equities Q1 2025: $170\n9. Mutual funds Q1 2025: $118\n10. Insurance Q1 2025: $96\n11. Principal transactions Q1 2025: $59\n12. Total trade revenue Q1 2025: $443\n\nI should include the full table. Let me structure the items.\n\nActually, I need to be careful about what \"the asked quantity\" is. The sub-question is \"Advisor-led firms' trading commission and transactional revenue\". This is somewhat broad. The relevant figures are commission revenue and trade revenue.\n\nLet me provide a comprehensive set of facts covering commissions revenue and trade revenue across the periods mentioned.\n\nPeriods:\n- Q2 2026 (June 26, 2026): trade revenue $460 (EDJ-10Q-2026Q2#69)\n- Q2 2025 (June 27, 2025): $449\n- Half 2026: $910\n- Half 2025: $892\n- Q1 2026: $450, Q1 2025: $443 (EDJ-10Q-2026Q1#57) with full commissions breakdown\n- Q3 2025: $448, Q3 2024: $442, 9M 2025: $1,340, 9M 2024: $1,299 (EDJ-10Q-2025Q3#80)\n- Q2 2025: $449, Q2 2024: $433, half 2025: $892, half 2024: $857 (EDJ-10Q-2025Q2#75)\n\nLet me focus on providing the key facts with clear figures. I'll include the commissions breakdown from Q1 2026 (the most detailed), and the trade revenue totals across periods.\n\nLet me define periods using the format. For quarters, \"YYYYQn\" for calendar quarter. But these are fiscal quarters that don't align with calendar. Actually, the format says \"YYYYQn\" for a calendar quarter. Hmm.\n\nThe period format options: \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter, \"FYYYYY\" for a fiscal year, \"YYYY\" for a calendar year.\n\nFor quarterly data like \"three months ended March 27, 2026\", this is a fiscal quarter. I'll use the period as the quarter. But the format only allows calendar quarter \"YYYYQn\". Given the firm's fiscal year, \"three months ended March 27, 2026\" would be Q1 2026 (FQ1). \n\nActually, I could use \"2026-03-27\" as a point in time (period end date). That's cleaner and unambiguous. Let me use the period end dates.\n\nActually for quarterly figures, using the period end date as a point in time is reasonable. But it might be interpreted as a point-in-time snapshot rather than a period. Given the constraints, I'll use \"2026Q1\" style or period end date.\n\nLet me use the fiscal quarter notation. The instructions say \"YYYYQn\" for calendar quarter. Edward Jones fiscal year seems to align closely with calendar (December 31 year end). Actually their fiscal year ends December 31 (10-K period 2025-12-31). So their quarters align with calendar quarters.\n\nQ1 2026 = March 27, 2026 (first quarter)\nQ2 2026 = June 26, 2026\nQ3 2025 = September 26, 2025\nQ2 2025 = June 27, 2025\n\nSo these align with calendar quarters. I can use \"2026Q1\", \"2026Q2\", \"2025Q3\", \"2025Q2\".\n\nFor nine months = \"2025Q1-2025Q3\" but format doesn't support ranges. I'll use the period end or just note in scope/period. Actually, I can use the period as a string but the enum doesn't validate the period value (period is a free string). Let me check: period is \"type\": \"string\" with no enum. So I can write \"2025Q3 (nine months)\" or similar. Actually, let me just use clear strings.\n\nLet me use:\n- Q1 2026: \"2026Q1\"\n- Q2 2026: \"2026Q2\"\n- Q3 2025: \"2025Q3\"\n- Q2 2025: \"2025Q2\"\n- Nine months 2025: \"2025 nine months\" or \"2025Q1-Q3\"\n\nI'll use descriptive strings for periods since it's free text.\n\nLet me now write the items. I'll include the most important facts.\n\nFor the sub-question, I think the key figures are the commissions revenue and trade revenue. Let me provide a thorough set.\n\nI'll structure items:\n\nItem 0: Total commissions revenue Q1 2026 = $395\nItem 1: Equities commissions Q1 2026 = $186\nItem 2: Mutual funds commissions Q1 2026 = $116\nItem 3: Insurance products and other commissions Q1 2026 = $93\nItem 4: Principal transactions Q1 2026 = $55\nItem 5: Total trade revenue Q1 2026 = $450\n\nItem 6: Total commissions Q1 2025 = $384\nItem 7: Equities Q1 2025 = $170\nItem 8: Mutual funds Q1 2025 = $118\nItem 9: Insurance Q1 2025 = $96\nItem 10: Principal transactions Q1 2025 = $59\nItem 11: Total trade revenue Q1 2025 = $443\n\nItem 12: Total trade revenue Q2 2026 = $460\nItem 13: Total trade revenue Q2 2025 = $449\nItem 14: Total trade revenue half 2026 = $910\nItem 15: Total trade revenue half 2025 = $892\n\nItem 16: Total trade revenue Q3 2025 = $448, Q3 2024 = $442\nItem 17: 9M 2025 = $1,340, 9M 2024 = $1,299\n\nItem 18: Q2 2025 = $449, Q2 2024 = $433\nItem 19: half 2025 = $892, half 2024 = $857\n\nThis is getting comprehensive but might be excessive. Let me focus on the most relevant and clear figures. The sub-question is about \"trading commission and transactional revenue\" which maps to commissions revenue and trade revenue.\n\nI'll provide the key facts. Let me include the full commissions breakdown (Q1 2026 and Q1 2025 from the detailed table) plus the trade revenue totals for other periods.\n\nLet me write the cells now.\n\nActually, I want to be thorough but not overwhelming. Let me provide:\n\nFor commissions revenue (the \"trading commission\"):\n- Q1 2026 total and breakdown\n- Q1 2025 total and breakdown\n\nFor trade revenue (commissions + principal transactions = \"transactional revenue\"):\n- Q1 2026, Q1 2025\n- Q2 2026, Q2 2025, half 2026, half 2025\n- Q3 2025, Q3 2024, 9M 2025, 9M 2024\n- Q2 2025, Q2 2024, half 2025, half 2024\n\nI'll write these as fact items.\n\nLet me write the quotes carefully.\n\nFor Q1 2026 (EDJ-10Q-2026Q1#57):\n\"Three Months Ended March 27, 2026 ... Trade revenue: Commissions revenue: Equities $186, Mutual funds $116, Insurance products and other $93, Total commissions revenue $395, Principal transactions $55, Total trade revenue $450 ... March 28, 2025: Equities $170, Mutual funds $118, Insurance products and other $96, Total commissions revenue $384, Principal transactions $59, Total trade revenue $443\"\n\nI'll quote the specific lines.\n\nLet me now build the response.\n\nFor periods, I'll use:\n- \"2026Q1\" for three months ended March 27, 2026\n- \"2025Q1\" for three months ended March 28, 2025\n- \"2026Q2\" for three months ended June 26, 2026\n- \"2025Q2\" for three months ended June 27, 2025\n- \"2025Q3\" for three months ended September 26, 2025\n- \"2024Q3\" for three months ended September 27, 2024\n- \"2025Q2\" for three months ended June 27, 2025\n- \"2024Q2\" for three months ended June 28, 2024\n\nFor half year: \"2026H1\", \"2025H1\", \"2024H1\"\nFor nine months: \"2025 9M\", \"2024 9M\"\n\nLet me write these.\n\nI'll now compose the submit_extraction call.\n\nLet me determine the unit: \"USD\" (millions). The figures are in millions of dollars (dollars in millions). So unit \"USD millions\" or \"USD\". The value is the printed figure. I'll use unit \"USD\" and note in scope or text that it's in millions. Actually, the value as printed is \"395\" etc. The unit should reflect \"USD\" but the amount is in millions. I'll put unit as \"USD millions\" to be precise. Actually, let me use \"USD\" and mention \"millions\" in text. Hmm, but the value field should be \"the figure as printed\". So value \"395\", unit \"USD millions\" is fine. Let me use \"USD millions\".\n\nActually, let me check the note: the tables say \"(Dollars in millions)\" in the 10-K. The 10-Q tables show \"$ 395\" without explicit \"millions\" but contextually millions. I'll use unit \"USD (millions)\".\n\nLet me just use \"USD\" for unit and indicate millions in text, or use \"USD millions\". I'll use \"USD millions\" for clarity.\n\nNow writing items.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.EDJ",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The passages report Edward Jones' commissions revenue and trade revenue (commissions plus principal transactions), which are its trading commission and transactional revenue figures.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "For the three months ended March 27, 2026, Edward Jones reported total commissions revenue of $395, consisting of equities commissions of $186, mutual funds commissions of $116, and insurance products and other commissions of $93.",
+            "quote": "Commissions revenue: Equities $ 186 ... Mutual funds 116 ... Insurance products and other 93 ... Total commissions revenue $ 395",
+            "value": "395",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#57"
+            ]
+          },
+          {
+            "text": "For the three months ended March 27, 2026, Edward Jones reported principal transactions revenue of $55 and total trade revenue of $450.",
+            "quote": "Principal transactions 55 ... Total trade revenue $ 450",
+            "value": "450",
+            "unit": "USD millions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#57"
+            ]
+          },
+          {
+            "text": "For the three months ended March 28, 2025, Edward Jones reported total commissions revenue of $384, consisting of equities commissions of $170, mutual funds commissions of $118, and insurance products and other commissions of $96.",
+            "quote": "Equities $ 170 ... Mutual funds 118 ... Insurance products and other 96 ... Total commissions revenue $ 384",
+            "value": "384",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#57"
+            ]
+          },
+          {
+            "text": "For the three months ended March 28, 2025, Edward Jones reported principal transactions revenue of $59 and total trade revenue of $443.",
+            "quote": "Principal transactions 59 ... Total trade revenue $ 443",
+            "value": "443",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#57"
+            ]
+          },
+          {
+            "text": "For the second quarter and first half of 2026, Edward Jones reported total trade revenue of $460 and $910, respectively, compared to $449 and $892 in the same periods of 2025.",
+            "quote": "Total trade revenue $ 460 $ 449 2% $ 910 $ 892 2%",
+            "value": "460",
+            "unit": "USD millions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#69"
+            ]
+          },
+          {
+            "text": "For the first half of 2026, Edward Jones reported total trade revenue of $910.",
+            "quote": "Total trade revenue $ 910 $ 892",
+            "value": "910",
+            "unit": "USD millions",
+            "period": "2026H1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#69"
+            ]
+          },
+          {
+            "text": "For the third quarter and first nine months of 2025, Edward Jones reported total trade revenue of $448 and $1,340, respectively, compared to $442 and $1,299 in the same periods of 2024.",
+            "quote": "Total trade revenue $ 448 $ 442 1% $ 1,340 $ 1,299 3%",
+            "value": "448",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#80"
+            ]
+          },
+          {
+            "text": "For the first nine months of 2025, Edward Jones reported total trade revenue of $1,340.",
+            "quote": "Total trade revenue $ 1,340 $ 1,299",
+            "value": "1340",
+            "unit": "USD millions",
+            "period": "2025 9M",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#80"
+            ]
+          },
+          {
+            "text": "For the second quarter and first half of 2025, Edward Jones reported total trade revenue of $449 and $892, respectively, compared to $433 and $857 in the same periods of 2024.",
+            "quote": "Total trade revenue $ 449 $ 433 4% $ 892 $ 857 4%",
+            "value": "449",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#75"
+            ]
+          },
+          {
+            "text": "For the first half of 2025, Edward Jones reported total trade revenue of $892.",
+            "quote": "Total trade revenue $ 892 $ 857",
+            "value": "892",
+            "unit": "USD millions",
+            "period": "2025H1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#75"
+            ]
+          },
+          {
+            "text": "Edward Jones describes trade revenue as composed of commissions and principal transactions revenue, with commissions revenue earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "quote": "Trade revenue is composed of commissions and principal transactions revenue. Commissions revenues are earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Trade revenue is composed of commissions and principal transactions revenue; commissions revenue is earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#48"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

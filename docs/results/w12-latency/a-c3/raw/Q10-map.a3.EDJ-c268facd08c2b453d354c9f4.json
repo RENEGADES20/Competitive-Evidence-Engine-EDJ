@@ -1,0 +1,97 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#29",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#9",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#63",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2026Q2#76"
+  ],
+  "at": "2026-11-21T13:51:41.637202-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11515,
+    "output_tokens": 654,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 10491,
+    "reasoning_tokens": 332,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.12
+  },
+  "wall_s": 7.8,
+  "tokens_per_s": 83.85,
+  "ttft_s": 1.12,
+  "reasoning_content": "The sub-question asks how Edward Jones describes targeting or attracting mass-affluent clients. The passages: EDJ-10K-2025#88 mentions targeting new clients: High Net Worth, Workplace, and a new digital platform focused on Next Generation investors. That's not mass-affluent explicitly. So no passage states mass-affluent. But there's a related quantity: targeting high net worth clients \u2014 a different client segment. That's a different quantity? Hmm. The question asks \"how each firm describes targeting or attracting mass-affluent clients.\" EDJ describes targeting high net worth clients. That's a different segment (different quantity \u2014 a different client group). So different_quantity with differs_because: describes high-net-worth rather than mass-affluent segment.\n\nAny mention of mass affluent? None in passages. So label different_quantity with the HNW item, or not_found if no mention. Since a related but different segment is described, different_quantity is appropriate.\n\nI'll report the item from EDJ-10K-2025#88.\n\nItems: text describing initiatives including High Net Worth targeting, Workplace, digital platform for Next Generation investors. No figure, value \"\", unit \"\", period 2025-12-31? It's a 10-K at period 2025-12-31; the statement is about initiatives. Period \"2025-12-31\"? Hmm, no figure so period \"\" per instruction (\"'' when not stated or no figure\"). I'll put \"\".\n\ndiffers_because: passage describes targeting high net worth clients (and Next Generation investors, workplace), not mass-affluent clients.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones says its initiatives include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace; and a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "The passage describes client segments the firm targets (high net worth clients, workplace/business owners and their employees, and Next Generation investors) but does not describe targeting mass-affluent clients.",
+        "reason": "No passage mentions mass-affluent clients; the closest statement names other targeted client segments (notably high net worth), so it is a different quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

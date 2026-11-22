@@ -1,0 +1,185 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a3.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MS-10Q-2025Q2#15",
+    "SCHW-TRADE-2026-08-24-IN-01#1",
+    "EDJ-10K-2025#85",
+    "RJF-PR-web-independent-advisor#0",
+    "BAC-PR-2026-10-14-01#9",
+    "CAPGEMINI-WWR-2026#87",
+    "MS-SUPP-2026Q3#38",
+    "SCHW-10K-2025#100",
+    "RJF-DECK-2025-investor-day#40",
+    "BAC-PR-2026-07-14-01#8",
+    "SCHW-10K-2025#209",
+    "MS-10Q-2025Q2#225",
+    "SCHW-TR-2026Q1#19",
+    "SCHW-10Q-2025Q2#86",
+    "BAC-DECK-2025-investor-day#109",
+    "BAC-PR-2026-04-15-01#8",
+    "BAC-TR-2026Q2#30",
+    "RJF-TR-2026Q1#3",
+    "SCHW-TR-2025Q1#6",
+    "SCHW-TR-2026Q1#45",
+    "BAC-PR-2026-01-14-01#9",
+    "SCHW-TRADE-2026-10-23-WM-01#0",
+    "BAC-PR-2026-07-14-01#9",
+    "RJF-TRADE-2026-09-02-IN-01#3",
+    "SCHW-TRADE-2026-09-21-IN-01#0",
+    "BAC-TR-2025Q3#40",
+    "SCHW-TRADE-2026-08-26-WM-01#5",
+    "BAC-PR-2026-07-14-01#3",
+    "BAC-PR-2026-04-15-01#9",
+    "BAC-PR-2026-10-14-01#3",
+    "EDJ-10K-2025#70",
+    "MS-10K-2025#51",
+    "BAC-DECK-2025-investor-day#27",
+    "MS-10K-2025#170",
+    "BAC-10K-2025#18",
+    "RJF-10K-2025#25"
+  ],
+  "at": "2026-11-21T22:05:53.167711-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11736,
+    "output_tokens": 3151,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 10200,
+    "reasoning_tokens": 2170,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.09
+  },
+  "wall_s": 29.98,
+  "tokens_per_s": 105.1,
+  "ttft_s": 2.09,
+  "reasoning_content": "The question asks: \"What will receiving financial advice in the future look like for clients?\" The sub-question a3.all is about \"How the client experience of receiving advice is expected to change.\"\n\nI need to extract facts from the passages about how the client experience of receiving advice is expected to change.\n\nLet me look at the relevant passages. Several passages discuss AI, personalized insights, digital, etc.\n\nKey passages:\n- CAPGEMINI-WWR-2026#87: About Adaptive Experience AI Engine, personalized content, Unified Client Semantics Profile, Personal Wealth Coach - this describes future client experience changes. This is a research source, not a firm, but the question says \"All sources (no firm named)\". So this is relevant as a fact about how client experience is expected to change.\n\n- SCHW-TR-2026Q1#19: \"enhancing the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently\"\n\n- SCHW-TR-2026Q1#45: \"we've got genetic capabilities that will make everything at Schwab very easy... incredibly excited about AI as an accelerant\"\n\n- SCHW-TRADE-2026-08-26-WM-01#5: about digital workflows, innovation, advising facing technology\n\n- BAC-DECK-2025-investor-day#109: \"Intuitive, AI-enabled client and prospect insights; Integrating AI agents into core client team sales activities\"\n\n- SCHW-TRADE-2026-08-24-IN-01#1: \"growing demand for highly personalized advice and specialized expertise\"\n\n- BAC-TR-2025Q3#40: about Erika AI interfaces\n\nThe question is about the client experience of receiving advice is expected to change. The sub-question is a fact question, so I should extract statements that describe how the client experience is expected to change.\n\nLet me identify the most relevant passages that directly speak to how the client experience of receiving advice will change in the future.\n\n1. CAPGEMINI-WWR-2026#87 - research source describing future state: \"shift from episodic interactions to continuous, context-aware wealth and retirement experiences\" - this is a strong fact about how client experience changes.\n\n2. SCHW-TR-2026Q1#19 - CEO: \"enhancing the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently\" - future benefits of AI.\n\n3. SCHW-TR-2026Q1#45 - CEO: \"we've got agenetic capabilities that will make everything at Schwab very easy\" and \"incredibly excited about AI as an accelerant\"\n\n4. BAC-DECK-2025-investor-day#109 - \"Intuitive, AI-enabled client and prospect insights; Integrating AI agents into core client team sales activities\"\n\n5. SCHW-TRADE-2026-08-24-IN-01#1 - \"growing demand for highly personalized advice and specialized expertise\"\n\n6. SCHW-TRADE-2026-08-26-WM-01#5 - \"We want to see innovation, and we want to see more digital workflows happening at all of our custodians\"\n\nThese are all facts about expected changes to client experience.\n\nSince there's no firm named, all sources are treated. I'll return multiple fact items.\n\nLet me write up the items. Each item needs text, quote, value, unit, period, scope, definition, chunk_ids.\n\nMost of these are qualitative statements with no figures, so value and unit will be \"\" and period \"\".\n\nLet me compile the facts.\n\nFor the CAPGEMINI research passage, this describes future client experience. It's a research report (Capgemini World Wealth Report). It says: \"This north-star target-state implementation enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences.\"\n\nAlso \"An Adaptive Experience AI Engine... dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context.\"\n\n\"Personal Wealth Coach and Intelligence Marketplace equips RMs with governed AI copilots, personalized nudges...\"\n\nThese are future-oriented descriptions.\n\nLet me write items.\n\nItem 1: CAPGEMINI - shift from episodic to continuous, context-aware experiences.\n\nItem 2: SCHW CEO - personalized insights to more clients at scale, serving more efficiently.\n\nItem 3: BAC deck - intuitive AI-enabled insights, integrating AI agents.\n\nItem 4: Schwab trade - growing demand for highly personalized advice.\n\nItem 5: Schwab trade - more digital workflows, innovation.\n\nItem 6: CAPGEMINI - Adaptive Experience AI Engine tailoring content.\n\nI'll include the most relevant ones. Let me be thorough but focused.\n\nActually, let me carefully consider what belongs. The sub-question is \"How the client experience of receiving advice is expected to change.\" Facts are statements about future/expected changes.\n\nLet me list:\n\n1. CAPGEMINI-WWR-2026#87: \"enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences\" - future expected change.\n\n2. CAPGEMINI-WWR-2026#87: \"An Adaptive Experience AI Engine with Knowledge Management as a Service (KMaaS) dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context.\"\n\n3. CAPGEMINI-WWR-2026#87: \"a Personal Wealth Coach and Intelligence Marketplace equips RMs with governed AI copilots, personalized nudges, and meeting intelligence, supporting explainable recommendations\"\n\n4. SCHW-TR-2026Q1#19: \"enhancing the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently\"\n\n5. SCHW-TR-2026Q1#45: \"we've got agenetic capabilities that will make everything at Schwab very easy\" and \"incredibly excited about AI as an accelerant to our strategy\"\n\n6. BAC-DECK-2025-investor-day#109: \"Intuitive, AI-enabled client and prospect insights; Integrating AI agents into core client team sales activities\"\n\n7. SCHW-TRADE-2026-08-24-IN-01#1: \"growing demand for highly personalized advice and specialized expertise\"\n\n8. SCHW-TRADE-2026-08-26-WM-01#5: \"We want to see innovation, and we want to see more digital workflows happening at all of our custodians\"\n\nI think I should include all these as facts. They all describe expected changes to client experience.\n\nLet me write concise items.\n\nFor each, quote exact words.\n\nLet me draft.\n\nItem 1 (CAPGEMINI):\ntext: According to a Capgemini research report, the target-state implementation enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences.\nquote: \"This north-star target-state implementation enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\nchunk_ids: [\"CAPGEMINI-WWR-2026#87\"]\n\nItem 2 (CAPGEMINI - Adaptive Experience AI Engine):\ntext: The research describes an Adaptive Experience AI Engine that dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context.\nquote: \"An Adaptive Experience AI Engine with Knowledge Management as a Service (KMaaS) dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context.\"\nchunk_ids: [\"CAPGEMINI-WWR-2026#87\"]\n\nItem 3 (CAPGEMINI - Personal Wealth Coach):\ntext: The research describes a Personal Wealth Coach and Intelligence Marketplace that equips relationship managers with governed AI copilots and personalized nudges supporting explainable recommendations.\nquote: \"a Personal Wealth Coach and Intelligence Marketplace equips RMs with governed AI copilots, personalized nudges, and meeting intelligence, supporting explainable recommendations\"\nchunk_ids: [\"CAPGEMINI-WWR-2026#87\"]\n\nItem 4 (SCHW CEO):\ntext: Schwab's CEO says AI can enhance the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently.\nquote: \"enhancing the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently\"\nchunk_ids: [\"SCHW-TR-2026Q1#19\"]\n\nItem 5 (SCHW CEO - AI accelerant):\ntext: Schwab's CEO says the firm has capabilities that will make everything at Schwab very easy and is excited about AI as an accelerant to its strategy.\nquote: \"we've got agenetic capabilities that will make everything at Schwab very easy... incredibly excited about AI as an accelerant to our strategy, not as a headwind\"\nchunk_ids: [\"SCHW-TR-2026Q1#45\"]\n\nItem 6 (BAC deck):\ntext: Bank of America's investor day deck cites intuitive, AI-enabled client and prospect insights and integrating AI agents into core client team sales activities.\nquote: \"Intuitive, AI-enabled client and prospect insights \u00b7 Integrating AI agents into core client team sales activities\"\nchunk_ids: [\"BAC-DECK-2025-investor-day#109\"]\n\nItem 7 (SCHW trade):\ntext: A Schwab spokesperson said there is growing demand for highly personalized advice and specialized expertise from clients with $10 million or more in investable assets.\nquote: \"reflecting growing demand for highly personalized advice and specialized expertise\"\nchunk_ids: [\"SCHW-TRADE-2026-08-24-IN-01#1\"]\n\nItem 8 (SCHW trade - digital workflows):\ntext: An RIA principal says he wants to see more digital workflows and innovation at custodians, which is a development for customers.\nquote: \"We want to see innovation, and we want to see more digital workflows happening at all of our custodians.\"\nchunk_ids: [\"SCHW-TRADE-2026-08-26-WM-01#5\"]\n\nAll of these are facts about expected changes to client experience.\n\nThe reason: passages describe expected changes to how clients receive advice (AI, personalization, continuous experiences, digital workflows).\n\nI'll submit these.\n\nActually, let me also consider whether some are \"different_quantity\" - no, these are directly about client experience changes, which is the quantity asked.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.all",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The passages describe expected future changes to how clients experience receiving advice (AI personalization, continuous experiences, digital workflows).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "According to a Capgemini research report, the target-state implementation enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences for investors.",
+            "quote": "This north-star target-state implementation enables a shift from episodic interactions to continuous, context-aware wealth and retirement experiences.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CAPGEMINI-WWR-2026#87"
+            ]
+          },
+          {
+            "text": "The Capgemini research describes an Adaptive Experience AI Engine with Knowledge Management as a Service that dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context, enabling journeys to evolve in real time.",
+            "quote": "An Adaptive Experience AI Engine with Knowledge Management as a Service (KMaaS) dynamically tailors content depth, tone, and engagement pathways based on investor personas and life-event context. This enables journeys to evolve in real time rather than relying on static segmentation.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CAPGEMINI-WWR-2026#87"
+            ]
+          },
+          {
+            "text": "The Capgemini research describes a Personal Wealth Coach and Intelligence Marketplace that equips relationship managers with governed AI copilots, personalized nudges, and meeting intelligence, supporting explainable recommendations.",
+            "quote": "a Personal Wealth Coach and Intelligence Marketplace equips RMs with governed AI copilots, personalized nudges, and meeting intelligence, supporting explainable recommendations",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CAPGEMINI-WWR-2026#87"
+            ]
+          },
+          {
+            "text": "Schwab's CEO says AI can enhance the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently.",
+            "quote": "enhancing the client experience by bringing personalized insights to more clients at scale and serving more clients more efficiently",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#19"
+            ]
+          },
+          {
+            "text": "Schwab's CEO says the firm has capabilities that will make everything at Schwab very easy and is excited about AI as an accelerant to its strategy rather than a headwind.",
+            "quote": "we've got agenetic capabilities that will make everything at Schwab very easy... incredibly excited about AI as an accelerant to our strategy, not as a headwind",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#45"
+            ]
+          },
+          {
+            "text": "Bank of America's investor day deck cites intuitive, AI-enabled client and prospect insights and integrating AI agents into core client team sales activities.",
+            "quote": "Intuitive, AI-enabled client and prospect insights \u00b7 Integrating AI agents into core client team sales activities",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-DECK-2025-investor-day#109"
+            ]
+          },
+          {
+            "text": "A Schwab spokesperson said there is growing demand for highly personalized advice and specialized expertise from clients with $10 million or more in investable assets.",
+            "quote": "reflecting growing demand for highly personalized advice and specialized expertise",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TRADE-2026-08-24-IN-01#1"
+            ]
+          },
+          {
+            "text": "An RIA principal says he wants to see more innovation and more digital workflows at custodians, describing it as a great development for customers.",
+            "quote": "We want to see innovation, and we want to see more digital workflows happening at all of our custodians.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TRADE-2026-08-26-WM-01#5"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

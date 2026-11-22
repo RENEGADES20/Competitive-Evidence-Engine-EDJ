@@ -1,0 +1,146 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "query": {
+    "question": "What will receiving financial advice in the future look like for clients?",
+    "entities": [],
+    "unmapped": [],
+    "themes": [
+      "advice_future"
+    ],
+    "mode": "theme",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-20T14:09:51.247704-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1384,
+    "output_tokens": 5351,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 104,
+    "reasoning_tokens": 4516,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 42.56,
+  "tokens_per_s": 125.73,
+  "reasoning_content": "We need answer by calling submit_plan tool. We need parse question: \"What will receiving financial advice in the future look like for clients?\" Firms: none named (all sources). Themes: Future of advice delivery.\n\nWe need list aspects literally, every one, order question asks. The question is broad: what will receiving financial advice in the future look like for clients? It asks about future of advice delivery from client perspective. Need identify aspects. There are no firm names. Firms for each aspect empty because question asks of every listed firm? But no firms listed. The prompt says firms chosen by code none named (all sources). So aspects all have firms empty.\n\nNeed think of aspects the question asks. It asks one big thing: future of advice delivery for clients. But instruction says: \"List the aspects literally. An aspect is one thing the question asks about.\" For a broad future-of-advice question, what are the asks? We need decompose. The question asks what receiving financial advice in the future will look like for clients. That encompasses:\n- How advice will be delivered (channels, technology, human vs digital)\n- What the client experience will be like\n- What services/offerings clients will receive\n- How clients will interact with advisors\n- What technology/tools will be used (AI, robo, hybrid)\n- Fee/pricing models clients pay\n- Personalization\n- Access/availability (anytime, mobile)\n- Who provides advice (human advisors, digital platforms, hybrid)\n\nBut the instruction says don't add aspects the question doesn't ask. The question is vague but asks about future of advice delivery from client perspective. We should list aspects literally. Hmm.\n\nNeed produce a plan with aspects. The search engine runs one full-text search per aspect. We need list search words. Since no firms, firms empty for all. Metric: advisor_headcount or net_new_assets if aspect asks exactly that; likely none. Kind: fact/series/recency/comparison. The question asks about the future, so kind maybe \"recency\"? It asks future, not disclosed fact necessarily. \"What will ... look like\" is forward-looking. Kind could be recency for what is new? Or comparison? Hmm.\n\nWe need infer from instructions. They want search plan, aspects. The question is \"What will receiving financial advice in the future look like for clients?\" Themes: Future of advice delivery.\n\nWe should break into distinct aspects of future advice delivery as they'd search documents. Let's enumerate concrete aspects that question asks:\n\n1. Delivery channels/methods for financial advice (in-person, virtual, digital, hybrid) \u2014 how advice is delivered.\n2. Role and use of technology in advice (AI, digital platforms, robo-advisors, apps).\n3. Human advisor role / interaction model (human vs automated, hybrid advice).\n4. Client experience / engagement (what experience looks like, personalization, frequency).\n5. Services and scope of advice offered to clients (financial planning, holistic advice, wellness).\n6. Pricing/fee models clients will pay (subscription, fee-based, etc.)\n7. Accessibility/convenience (24/7, mobile, on-demand).\n8. Client demographics/segments served (mass affluent, younger investors) maybe.\n9. Regulatory/compliance shape? not necessarily client-facing.\n10. Data and personalization (use of client data, customized advice).\n\nBut question only asks \"what will receiving financial advice in the future look like for clients\" \u2014 it's essentially one aspect? The instruction says list every item, each \"and\", each metric or dimension the question names; what the question asks without naming it. For a broad question, we should identify implied dimensions.\n\nLet's think of how to structure aspects for search: The question asks about future of advice delivery. A search plan might list aspects:\n\n- Future state / predictions for how clients will receive financial advice\n- Delivery channels (in-person, virtual, digital, mobile)\n- Technology enabling advice delivery (AI, robo-advisor, digital platforms, automation)\n- Human advisor role in future delivery (hybrid human-digital model)\n- Client experience and engagement (personalization, omnichannel, frequency)\n- Pricing models for advice (fee, subscription)\n- Access and convenience (on-demand, anytime)\n- Services clients receive (holistic planning, financial wellness)\n- Client segments served\n- Data and personalization\n\nNeed keyword_query each 5-25 words, no firm names, no dates.\n\nMaybe metric field empty. Kind: For forward-looking question, kind likely \"recency\" for what is new, but \"fact\" for disclosed facts. The definition: kind: fact (a disclosed fact or figure), series (a figure over several periods), recency (what is new inside the time window), comparison (a judgement across firms or periods). The question is not about a figure. It asks future look, so kind could be recency because \"future\" within time window? Actually \"what is new inside the time window\" \u2014 future of advice delivery might be in forward-looking statements, not time window. I'd choose kind \"fact\" for descriptive aspects? But maybe \"recency\" for future outlook? The plan likely doesn't have time window explicitly. Hmm.\n\nLet's pick kind carefully:\n- \"future state of advice delivery\" \u2014 recency? It asks what's new/emerging. Could be \"recency\".\n- \"delivery channels\" \u2014 fact (disclosed how they deliver) or series? It asks future, so recency.\n- Actually \"recency (what is new inside the time window)\" - future is about new. I'd set most to \"recency\"? But the instruction says kind fact for disclosed fact or figure. The aspects are forward-looking predictions; these are disclosed in documents as forward-looking statements/trends. Maybe \"fact\" is better? Let me think.\n\nThe prompt is from a search planning system. Kind helps search. For a forward-looking question, \"recency\" seems appropriate for aspects like \"what is new/next\". But all aspects? The question itself is future. I'd set kind as \"recency\" for aspects about future trends and \"fact\" for current disclosures? Hmm.\n\nMaybe simpler: all aspects have kind \"fact\" except comparisons. But \"future\" is not a fact. The closest is recency. Yet kind enum doesn't include \"outlook\". The instruction defines recency: \"what is new inside the time window\". Future of advice delivery is forward-looking statements, which are \"new\" in recent filings. I think use \"recency\" for most. But let's not overthink.\n\nNeed obey: \"For each aspect give... metric: one of advisor_headcount, net_new_assets when the aspect asks for exactly that registered metric, else ''.\" So metric empty for all.\n\n\"proxy: true when the aspect asks for a stand-in...; false for everything the question asks itself.\" All aspects are asked itself, so false. Unless some aspect like \"cost to clients\" requires proxy? No.\n\nFirms empty for all because question asks of every listed firm? There are none named. The instruction says \"Leave firms empty when the question asks the aspect of every listed firm; code then searches it for all of them.\" Since none named, all aspects empty.\n\nNow decide number of aspects. The instruction says don't stop at any number; a question with twelve asks has twelve aspects. But here the question has one sentence. We need not invent too many? But \"what the question asks without naming it\" suggests we should list implied asks. We can list maybe 8-12.\n\nLet's parse the question semantically: \"What will receiving financial advice in the future look like for clients?\" The theme \"Future of advice delivery\" confirms focus on delivery. Aspects of advice delivery:\n- Mode/channel of delivery (digital, virtual, in-person, hybrid)\n- Technology used (AI, automation, robo)\n- Human vs automated interaction (advisor role)\n- Client experience/personalization\n- Access/timing (on-demand, 24/7, mobile)\n- Pricing/fees for advice\n- Scope of services (holistic planning, wellness)\n- Client segments served\n- Data usage/privacy/personalization\n- Platform/tools clients use\n- Frequency of contact\n- Outcomes/relationship model\n\nMaybe 10 aspects is reasonable. We must ensure each aspect has 5-25 words keyword_query.\n\nLet's draft:\n\n1. id: future_advice_delivery\ntext: \"How financial advice will be delivered to clients in the future overall.\"\nkeyword_query: \"future of advice delivery advice delivery model next generation wealth management advice digital advice transformation\"\nkind: recency? This is broad.\nMaybe too broad, overlapping. But okay as first aspect.\n\nActually aspects should be distinct. Let me define more cleanly:\n\nAspect 1: Delivery channels \u2014 in-person, virtual, digital, mobile, remote, omnichannel, hybrid.\ntext: \"The channels through which clients will receive financial advice in the future.\"\nkeyword_query: \"advice delivery channel virtual digital remote in-person hybrid omnichannel mobile app video meeting client portal\"\nkind: recency\n\nAspect 2: Technology and tools enabling advice \u2014 AI, machine learning, robo-advisor, automation, digital platforms, data analytics.\ntext: \"The technology and tools that will be used to deliver financial advice to clients.\"\nkeyword_query: \"artificial intelligence machine learning robo advisor digital advice platform automation technology data analytics advice tools\"\nkind: recency\n\nAspect 3: Human advisor role \u2014 human vs automated, advisor involvement, hybrid model.\ntext: \"The role human advisors will play in delivering advice to clients alongside technology.\"\nkeyword_query: \"human advisor role hybrid advice human plus digital advisor involvement automated advice personal relationship advisor client interaction\"\nkind: recency\n\nAspect 4: Client experience and personalization \u2014 tailored advice, client journey, engagement.\ntext: \"What the client experience and level of personalization will look like when receiving advice.\"\nkeyword_query: \"client experience personalized advice tailored advice client engagement client journey customization individual needs client centric\"\nkind: recency\n\nAspect 5: Access and convenience \u2014 on-demand, anytime, 24/7, mobile, self-service.\ntext: \"How and when clients will be able to access financial advice.\"\nkeyword_query: \"access advice anytime on demand 24/7 mobile access self service convenience real time availability client access\"\nkind: recency\n\nAspect 6: Pricing models \u2014 how clients will pay, subscription, fee, commission.\ntext: \"How clients will pay for financial advice in the future.\"\nkeyword_query: \"advice fees pricing model subscription fee flat fee fee based commission pricing advice cost payment\"\nkind: recency\n\nAspect 7: Scope of services \u2014 holistic financial planning, wellness, goals-based, comprehensive advice.\ntext: \"The range and type of advice services clients will receive.\"\nkeyword_query: \"holistic financial planning goals based advice financial wellness comprehensive advice planning services wealth management services advice offering\"\nkind: recency\n\nAspect 8: Client segments served \u2014 mass affluent, younger investors, underserved clients, HNW.\ntext: \"Which client segments will receive financial advice and how offerings differ by segment.\"\nkeyword_query: \"client segment mass affluent younger investors high net worth underserved retail clients advice for all demographics\"\nkind: recency\n\nAspect 9: Data and privacy \u2014 use of client data, data-driven insights, privacy/security.\ntext: \"How client data will be used to shape advice and the privacy considerations involved.\"\nkeyword_query: \"client data data driven insights personal data privacy security consent data aggregation financial data use\"\nkind: recency\n\nAspect 10: Communication and interaction frequency \u2014 how often and through what interactions.\nMaybe overlapping with channels/access. Could skip.\n\nAspect 10: Relationship model / trust \u2014 maybe.\nBut don't over-add. Let's maybe keep 8-9.\n\nThe instruction says \"Do not add an aspect the question does not ask.\" Data/privacy maybe not asked explicitly but implied by personalization/technology. However \"what will receiving financial advice look like for clients\" includes data use. Is that adding? It's a dimension of client experience. Could include.\n\nMaybe better to align with common industry research topics: future of advice delivery covers:\n- Digital/human hybrid advice\n- AI and automation\n- Personalization at scale\n- Omnichannel engagement\n- Fee/pricing models\n- Access (mobile, 24/7)\n- Client segments/demographics\n- Holistic financial wellness\n- Data-driven insights\n\nI think 9 aspects is good. But need not include overall aspect \"future_advice_delivery\" separately because it's the sum. But instruction says list aspects literally; the question itself is one ask \"what will receiving financial advice in the future look like.\" So maybe first aspect is the overall future outlook. However if we have all dimensions, overall is redundant. But the question asks literally the overall look. The instructions want aspects of the question, not necessarily sub-dimensions? Let's re-read: \"List the aspects literally. An aspect is one thing the question asks about. List every one, in the order the question asks them: - each item of a list, each 'and' joining two asks, each metric or dimension the question names; - what the question asks without naming it. Example: 'What is Firm X's plan for its retirement-plan unit?' also asks how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back.\"\n\nSo for \"What will receiving financial advice in the future look like for clients?\", it asks one thing but \"what the question asks without naming it\" includes dimensions of the future advice delivery. We should list them. The example expands \"plan for unit\" into descriptions, priorities, competition, losing ground/pulling back. Analogously, \"future of advice delivery for clients\" expands into channels, technology, advisor role, experience, access, pricing, services, segments, data, etc.\n\nSo list maybe 10 aspects. Ensure order roughly follows question: overall future first? The example lists \"how management describes the unit, the priorities it states, the competition it names, and where it says it is losing ground or pulling back\" \u2014 these are dimensions. For our question, order could be: how advice will be delivered (channels), what technology used, human advisor role, client experience, services, pricing, access, segments, data/privacy.\n\nLet's craft final aspects with id, text, keyword_query, firms [], metric \"\", kind, proxy false.\n\nNeed decide kind. Let me use:\n- For forward-looking descriptive aspects, kind \"recency\" (what is new/emerging in the time window). But the question doesn't specify time window. Hmm. The search likely includes future/forward-looking statements. The \"kind\" might influence search; \"recency\" means what is new inside time window. Future of advice delivery is about recent forward-looking disclosures, so recency seems apt for most.\n\nAlternatively, \"fact\" for current state of each dimension. But question asks future. I'll use \"recency\" for all aspects that ask what is emerging/new in that dimension. For comparison? None.\n\nLet's set kind:\n1 channels \u2014 recency\n2 technology \u2014 recency\n3 human advisor role \u2014 recency\n4 client experience/personalization \u2014 recency\n5 services \u2014 recency\n6 pricing \u2014 recency\n7 access \u2014 recency\n8 client segments \u2014 recency\n9 data/privacy \u2014 recency\n\nIs that okay? It might be too uniform. Maybe some are \"fact\": current disclosures about future plans are forward-looking, but kind recency captures what is new. I think fine.\n\nBut maybe overall question \"what will receiving financial advice in the future look like\" asks a comparison? No.\n\nMetric empty. Proxy false.\n\nNeed keyword_query 5-25 words, no firm names/dates. I'll ensure each within 25 words.\n\nLet's refine keyword queries using document vocabulary (filings, earnings calls, investor decks, press releases, Form ADV brochures, trade press, research reports). Include synonyms.\n\nAspect 1: future delivery channels\nkeywords: \"advice delivery channel virtual digital remote in person hybrid omnichannel mobile app video meeting client portal\" \u2014 15 words. Good.\n\nAspect 2: technology and tools\nkeywords: \"artificial intelligence machine learning robo advisor digital platform automation data analytics technology tools advice delivery\" \u2014 15. Good.\n\nAspect 3: human advisor role\nkeywords: \"human advisor role hybrid advice human plus digital advisor involvement automated advice personal relationship advisor client interaction\" \u2014 15. Good.\n\nAspect 4: client experience and personalization\nkeywords: \"client experience personalized advice tailored advice client engagement client journey customization individual needs client centric\" \u2014 14. Good.\n\nAspect 5: services and scope\nkeywords: \"holistic financial planning goals based advice financial wellness comprehensive advice planning services wealth management offering advice service\" \u2014 15. Good.\n\nAspect 6: pricing models\nkeywords: \"advice fees pricing model subscription fee flat fee fee based commission pricing advice cost payment\" \u2014 13. Good.\n\nAspect 7: access and convenience\nkeywords: \"access advice anytime on demand 24/7 mobile access self service convenience real time availability client access\" \u2014 14. Good.\n\nAspect 8: client segments\nkeywords: \"client segment mass affluent younger investors high net worth underserved retail clients advice for all demographics\" \u2014 15. Good.\n\nAspect 9: data and privacy\nkeywords: \"client data data driven insights personal data privacy security consent data aggregation financial data use\" \u2014 14. Good.\n\nMaybe add Aspect 10: communication frequency/relationship model\nkeywords: \"communication frequency ongoing advice relationship continuous planning touchpoints check ins proactive outreach advisor contact\" \u2014 12. But question \"receiving advice\" includes how often. Is that asked? Could be part of client experience. Might add as distinct: \"How frequently and through what interactions clients will engage with advisors.\" That is implied by \"receiving financial advice\". I think it's a legitimate aspect. Let's include to be thorough. But \"Do not add an aspect the question does not ask\" \u2014 communication frequency is part of what receiving advice looks like. Fine.\n\nAspect 10: relationship/engagement model\ntext: \"How often and through what types of interactions clients will engage with advisors and advice providers.\"\nkeywords: \"communication frequency ongoing advice relationship continuous planning touchpoints check ins proactive outreach advisor contact engagement cadence\" \u2014 15. Good.\nkind recency.\n\nMaybe Aspect 11: outcomes/measurement of advice \u2014 \"what outcomes clients can expect\" perhaps. But might be too much. The question asks \"look like for clients\" not outcomes. I'll keep 10.\n\nShould we include an overall aspect? Could be redundant. But maybe the first aspect should be \"overall future state of financial advice delivery for clients\" to capture the broad question. Then dimensions. The instruction \"List the aspects literally\" might expect the main ask first. I'll include an overall aspect? Hmm. If I include overall and 10 dimensions, that's 11 aspects. It may be acceptable. But the overall overlaps heavily with dimensions and could dilute searches? Actually code searches each aspect once per firm; broad overall aspect is useful to catch general discussions. The instruction says never drop one, but adding overall? The question asks the overall future look; that's one aspect. I think include it.\n\nLet's decide final list. I'll include 11 aspects:\n1. Overall future state of financial advice delivery for clients (broad).\n2. Delivery channels.\n3. Technology/tools.\n4. Human advisor role.\n5. Client experience/personalization.\n6. Scope of services.\n7. Pricing models.\n8. Access/convenience.\n9. Client segments.\n10. Data/privacy.\n11. Frequency/interaction model.\n\nWait, order: question asks \"What will receiving financial advice in the future look like for clients?\" The natural order: overall first, then how delivered (channels), by what technology, human role, experience, services, price, access, segments, data, frequency. Good.\n\nBut \"Do not add an aspect the question does not ask.\" The overall aspect is literally the question. The sub-aspects are what it asks without naming. Data/privacy might be a stretch, but data-driven advice is part of future delivery. Frequency is part of receiving. I think okay.\n\nNow keyword query for overall:\n\"future of advice delivery advice model transformation next generation wealth management client experience future trends forward looking\" \u2014 16. Good. But must avoid \"client experience\" overlap? Fine. No firm names/dates.\n\nMetric empty all. Kind: for overall \"recency\" too? It asks future/trends. Yes recency. For all recency.\n\nBut maybe \"kind\" should be \"fact\" for aspects like \"pricing models\" because it's asking what pricing models will be (a disclosed fact about future plans?). Hmm. The definitions: fact = a disclosed fact or figure; series = figure over several periods; recency = what is new inside time window; comparison = judgement across firms/periods. Since we are searching future/forward-looking statements, \"recency\" is the best match (new/emerging). I'll set all to recency except maybe overall \"comparison\"? No.\n\nWait, but the question asks across all sources, no comparison. So no comparison.\n\nLet's ensure \"firms\" empty lists. JSON arrays empty [].\n\nWe must call submit_plan tool with aspects array. Need include all required fields.\n\nLet me produce final.",
+  "raw": {
+    "aspects": [
+      {
+        "id": "overall_future_advice_delivery",
+        "text": "The overall future state of how clients will receive financial advice.",
+        "keyword_query": "future of advice delivery advice model transformation next generation wealth management client experience forward looking future trends advice evolution",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "delivery_channels",
+        "text": "The channels through which clients will receive financial advice in the future.",
+        "keyword_query": "advice delivery channel virtual digital remote in person hybrid omnichannel mobile app video meeting client portal",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "technology_tools",
+        "text": "The technology and tools that will be used to deliver financial advice to clients.",
+        "keyword_query": "artificial intelligence machine learning robo advisor digital advice platform automation data analytics technology tools advice delivery",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "human_advisor_role",
+        "text": "The role human advisors will play in delivering advice to clients alongside technology.",
+        "keyword_query": "human advisor role hybrid advice human plus digital advisor involvement automated advice personal relationship advisor client interaction",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "client_experience_personalization",
+        "text": "What the client experience and level of personalization will look like when receiving advice.",
+        "keyword_query": "client experience personalized advice tailored advice client engagement client journey customization individual needs client centric",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "advice_services_scope",
+        "text": "The range and type of advice services clients will receive.",
+        "keyword_query": "holistic financial planning goals based advice financial wellness comprehensive advice planning services wealth management offering advice service",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "pricing_models",
+        "text": "How clients will pay for financial advice in the future.",
+        "keyword_query": "advice fees pricing model subscription fee flat fee fee based commission pricing advice cost payment",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "access_convenience",
+        "text": "How and when clients will be able to access financial advice.",
+        "keyword_query": "access advice anytime on demand 24/7 mobile access self service convenience real time availability client access",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "client_segments",
+        "text": "Which client segments will receive financial advice and how offerings may differ by segment.",
+        "keyword_query": "client segment mass affluent younger investors high net worth underserved retail clients advice for all demographics",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "data_privacy",
+        "text": "How client data will be used to shape advice and the privacy considerations involved.",
+        "keyword_query": "client data data driven insights personal data privacy security consent data aggregation financial data use",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      },
+      {
+        "id": "interaction_frequency",
+        "text": "How often and through what types of interactions clients will engage with advisors and advice providers.",
+        "keyword_query": "communication frequency ongoing advice relationship continuous planning touchpoints check ins proactive outreach advisor contact engagement cadence",
+        "firms": [],
+        "metric": "",
+        "kind": "recency",
+        "proxy": false
+      }
+    ]
+  }
+}

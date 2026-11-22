@@ -1,0 +1,58 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a5.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#304",
+    "EDJ-ADV-2026#2",
+    "EDJ-10K-2025#223",
+    "EDJ-ADV-2026#3",
+    "EDJ-10K-2025#219",
+    "EDJ-ADV-2026#109"
+  ],
+  "at": "2026-11-21T17:48:39.001619-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3070,
+    "output_tokens": 726,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1534,
+    "reasoning_tokens": 572,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.73
+  },
+  "wall_s": 6.25,
+  "tokens_per_s": 116.16,
+  "ttft_s": 1.73,
+  "reasoning_content": "Let me analyze the sub-question: \"Recent changes each firm has disclosed to its advisor compensation structure\" for Edward Jones.\n\nLet me look at the passages. The passages mention:\n- \"competitive compensation program and employee benefits for financial advisors\" (general, no specific change)\n- \"Successor financial advisors receive reduced compensation for up to five years.\" - this is about compensation structure, but is it a \"recent change\"? It's a statement about how compensation works for successor advisors.\n- The ADV material changes summary discusses share class conversion, not advisor compensation.\n- $267 accrued for future payments to financial advisors who have already started a plan - this is about a deferred compensation or retirement plan.\n\nThe sub-question asks about \"recent changes\" disclosed to advisor compensation structure. None of the passages clearly disclose a recent change to the advisor compensation structure.\n\nThe \"Successor financial advisors receive reduced compensation for up to five years\" is a fact about the compensation structure (successor advisors get reduced compensation), but it's not framed as a \"recent change.\" It's a current description of the compensation structure. Actually, this could be a fact about the compensation structure, but the sub-question is about \"recent changes.\"\n\nHmm. Let me think carefully. The sub-question asks: \"Recent changes each firm has disclosed to its advisor compensation structure.\" So I need to find whether the firm disclosed any recent changes.\n\nLooking at the passages:\n1. EDJ-10K-2025#304: talks about competitive compensation program generally, no specific change.\n2. EDJ-ADV-2026#2: material changes are about share class conversion, not advisor compensation.\n3. EDJ-10K-2025#223: \"Successor financial advisors receive reduced compensation for up to five years\" and accrual amounts for future payments to advisors. This is a description of compensation structure but not a \"recent change.\"\n\nNone of the passages disclose a recent change to advisor compensation structure. So the answer is \"not_found\" - the passages say nothing about recent changes to advisor compensation.\n\nActually wait, is there anything that could be a \"change\"? The \"Successor financial advisors receive reduced compensation for up to five years\" could be a longstanding policy, not a recent change. There's no indication of a change.\n\nSo the label is not_found. The passages say nothing about recent changes to the advisor compensation structure.\n\nLet me write the cell with label not_found, empty items, reason.\n\nActually, let me reconsider whether \"Successor financial advisors receive reduced compensation for up to five years\" might be considered a fact about compensation structure (recent changes?). No, it's not a change. The sub-question specifically asks about \"recent changes.\"\n\nSo not_found is appropriate.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss Edward Jones' compensation program in general terms, successor financial advisor reduced compensation (a standing policy, not a change), and accruals for advisor payments, but none discloses a recent change to the advisor compensation structure. The ADV material changes section covers only share class conversion, not advisor compensation.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

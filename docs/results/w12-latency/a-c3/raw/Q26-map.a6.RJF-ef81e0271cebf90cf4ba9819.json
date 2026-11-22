@@ -1,0 +1,143 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a6.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-10-19-IN-01#2",
+    "RJF-TRADE-2026-10-19-IN-01#0",
+    "RJF-TRADE-2026-10-19-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1"
+  ],
+  "at": "2026-11-21T14:11:52.127938-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10812,
+    "output_tokens": 1816,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9404,
+    "reasoning_tokens": 1044,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.36
+  },
+  "wall_s": 9.3,
+  "tokens_per_s": 195.27,
+  "ttft_s": 1.36,
+  "reasoning_content": "The sub-question asks: What regulatory or legal developments has Raymond James disclosed?\n\nRelevant passages: the FINRA arbitration award (2026-10-19), and the SEC filing on SIMPLE IRA program (2026-09-16). Both are regulatory/legal developments.\n\nThe FINRA arbitration: panel ordered firm to pay two advisors ~$1.86 million; Marsh $1.23M, Kuras $628,000. That's a legal development disclosed/documented in the window.\n\nSEC filing: SIMPLE IRA program launched firm-wide, per SEC filing \u2014 a regulatory filing development.\n\nLet me construct items.\n\nItem 1: FINRA arbitration panel ordered Raymond James to pay two advisors close to $1.86 million in compensatory damages and interest. value \"1.86 million\", unit USD, period 2026-10-19 (published; award finalized last Thursday). Actually the award finalized... period: use 2026-10-19? The passage says \"finalized last Thursday\" \u2014 publication date 2026-10-19. Period as point in time... Hmm. I could set period \"\" or 2026-10-19. I'll say the arbitration award finalized recently; period 2026-10-19 (the publication date is the only date). Maybe safer: period \"\" for the award date, but the payload says period is the point in time the figure covers. Award finalized \"last Thursday\"; not stated exactly. I'll use \"\" for that item. Hmm, but guidance says the item's period says which. Use \"\" when not stated. For the total award, the date isn't stated precisely; I'll use \"\".\n\nActually for the damages figures per advisor: Marsh $1.23 million, Kuras $628,000 \u2014 these are sub-figures of same event. Could include as separate items, but they're not the asked quantity (asked quantity is regulatory/legal developments, not a number). Items are just evidence items. So include a few.\n\nItem: FINRA arbitration panel found Deutsche Bank liable and awarded Raymond James $16.4 million \u2014 that's 2023, older. Include? It's context, still a legal development but older, out of window. Could mention but not necessary. I'll include as it's a legal matter involving RJF; but it's from years ago. Maybe keep it brief; the sub-question asks what regulatory/legal developments disclosed in the last 90 days. I'll include the main current items and possibly the SEC filing.\n\nItem: SEC filing \u2014 SIMPLE IRA Employer Advisory and Consulting Services Program, filed with SEC, available to roughly 8,900 advisors.\n\nAlso note: passage says Raymond James no longer reports advisor headcount \u2014 not relevant here.\n\nCell label: fact. Items list.\n\nQuotes must be exact.\n\nLet me write items:\n\n1. text: \"A FINRA Dispute Resolution Services arbitration panel ordered Raymond James to pay two of its employee advisors close to $1.86 million in compensatory damages and interest.\" quote: \"An arbitration panel sanctioned by FINRA Dispute Resolutions Services ordered the firm to pay two advisors close to $1.86 million in compensatory damages and interest\" value \"1.86 million\" unit \"USD\" period \"\" scope \"\" definition \"\"\n\n2. text: \"The arbitration panel's award, finalized the week before publication, allocated $1.23 million in damages including interest to Patrick Marsh and $628,000 to Michael Kuras.\" Actually split into two items per figure? \"one per figure or statement\". Marsh $1.23M, Kuras $628,000 \u2014 two figures. I'd make two items.\n\nHmm, maybe combine is fine but instructions say one item per figure. Let's do two items.\n\n3. SEC filing item: text \"Raymond James launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, disclosed in a filing with the Securities and Exchange Commission.\" value \"\" unit \"\" period \"\" scope \"\". Quote from chunk RJF-TRADE-2026-09-16-WM-01#0.\n\nAlso item: the dispute dates back to RJF's 2016 purchase of Deutsche Bank's US private wealth group \u2014 background, maybe skip.\n\nAlso item: panel found no agreement between Raymond James and Kuras/Marsh governing distribution of prior award \u2014 that's a legal finding. Could include.\n\nNo derivation.\n\nLabel: fact. differs_because \"\".\n\nI'll include 4 items: total award, Marsh, Kuras, SEC filing. Maybe also the panel finding quote. Keep to 4-5.\n\nPeriods: none stated precisely except publication. Use \"\".\n\nActually for SEC filing, period \"\" too.\n\nScope: for arbitration, scope \"employee advisors\" \u2014 the firm's RJA. Passage says \"between Raymond James & Associates and two of its employee advisors\". Scope: \"Raymond James & Associates\". I'll set scope \"Raymond James & Associates\".\n\nFor SEC filing, scope \"firm-wide\" \u2014 set \"\" or \"firm-wide\". I'll set \"firm-wide\".",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "A FINRA Dispute Resolution Services arbitration panel ordered Raymond James to pay two of its employee advisors close to $1.86 million in compensatory damages and interest.",
+            "quote": "An arbitration panel sanctioned by FINRA Dispute Resolutions Services ordered the firm to pay two advisors close to $1.86 million in compensatory damages and interest in a dispute that harkened back to Raymond James\u2019 purchase in 2016 of Deutsche Bank\u2019s U.S. private wealth group",
+            "value": "1.86 million",
+            "unit": "USD",
+            "period": "",
+            "scope": "Raymond James & Associates",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#0"
+            ]
+          },
+          {
+            "text": "Per the arbitration panel's ruling, advisor Patrick Marsh is to receive $1.23 million in damages, which includes interest.",
+            "quote": "According to the arbitration panel\u2019s ruling, Marsh is to receive $1.23 million in damages, which includes interest, and Kuras $628,000.",
+            "value": "1.23 million",
+            "unit": "USD",
+            "period": "",
+            "scope": "Raymond James & Associates",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#1"
+            ]
+          },
+          {
+            "text": "Per the arbitration panel's ruling, advisor Michael Kuras is to receive $628,000 in damages.",
+            "quote": "According to the arbitration panel\u2019s ruling, Marsh is to receive $1.23 million in damages, which includes interest, and Kuras $628,000.",
+            "value": "628,000",
+            "unit": "USD",
+            "period": "",
+            "scope": "Raymond James & Associates",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#1"
+            ]
+          },
+          {
+            "text": "The arbitration panel found there was no agreement between Raymond James and Kuras and Marsh governing the distribution of the prior arbitration award or the allocation of legal fees.",
+            "quote": "\u201cThis panel has found there was no agreement between [Raymond James] and [Kuras and Marsh] governing the distribution of the prior arbitration award or the allocation of legal fees,\u201d according to the award.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Raymond James & Associates",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#2"
+            ]
+          },
+          {
+            "text": "Raymond James launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, according to a filing with the Securities and Exchange Commission.",
+            "quote": "The St. Petersburg, Fla.-based wealth manager has launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, according to the filing with the Securities and Exchange Commission.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "firm-wide",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-16-WM-01#0"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages in the window describe a FINRA arbitration award against the firm and an SEC filing for a new firm-wide program, both regulatory/legal developments.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a3.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-11-05-IN-01#1",
+    "RJF-TRADE-2026-10-23-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0"
+  ],
+  "at": "2026-11-21T20:48:44.092310-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11010,
+    "output_tokens": 8844,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9474,
+    "reasoning_tokens": 6077,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.66
+  },
+  "wall_s": 62.08,
+  "tokens_per_s": 142.46,
+  "ttft_s": 2.66,
+  "reasoning_content": "Let me analyze the sub-question a3.RJF: \"What is Raymond James's advisor headcount and any related recruiting or retention news?\"\n\nI need to extract facts about advisor headcount and recruiting/retention news.\n\nKey facts from passages:\n1. Advisor headcount: 8,943 advisors as fiscal year end (record, 2% increase YoY) - chunk RJF-TRADE-2026-11-05-IN-01#0\n2. About 8,900 advisors overseeing $1.92 trillion - RJF-TRADE-2026-10-16-WM-01#1\n3. Raymond James no longer reports advisor headcount, but had about 8,900 advisors last time headcount was officially broken out - RJF-TRADE-2026-10-29-WM-01#1\n4. About 8,900 advisors (SIMPLE IRA program available to roughly 8,900 advisors) - RJF-TRADE-2026-09-16-WM-01#0\n5. Recruiting: trailing 12-month production $538 million for recruited advisors, up from $407 million prior year; >$82 billion client assets - multiple chunks\n6. 70 advisors to be added via Synovus deal ($18.7B) - RJF-TRADE-2026-11-12-WM-01#0\n7. Various recruiting wins with advisor teams.\n\nLet me compile the items.\n\nThe sub-question asks for advisor headcount and related recruiting/retention news.\n\nFacts for advisor headcount:\n- 8,943 advisors record at fiscal year end, 2% YoY increase (period F2026)\n- about 8,900 advisors overseeing $1.92 trillion\n- no longer reports headcount, but had about 8,900 last time\n\nRecruiting/retention news:\n- trailing 12-month production $538 million, up from $407 million; >$82 billion client assets\n- 70 advisors to add via Synovus deal\n- strong recruiting gains across channels\n- various team additions\n\nLet me list items with text, quote, value, unit, period, scope, definition.\n\nLet me be careful about the headcount figure. The most recent official figure is 8,943 advisors at fiscal year end (2026 fiscal year). The \"about 8,900\" appears in multiple passages.\n\nLet me structure items.\n\nItem 1 (fact): headcount 8,943 advisors, record, 2% YoY increase.\nquote: \"As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year\"\nvalue: \"8,943\"\nunit: \"financial advisors\"\nperiod: fiscal year 2026 (F2026). But the passage says \"ended its fiscal year with a record 8,943 advisors\" - it's a point in time at fiscal year end. Fiscal year end is typically September 30. So period could be F2026. Actually let me use \"F2026\".\nscope: \"\" (whole firm)\nchunk_ids: RJF-TRADE-2026-11-05-IN-01#0\n\nItem 2 (fact): about 8,900 advisors overseeing $1.92 trillion.\nquote: \"Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.\"\nvalue: \"8,900\"\nunit: \"financial advisors\"\nperiod: \"\" - not clearly stated. Actually \"most recently reported\" - no specific period.\nchunk_ids: RJF-TRADE-2026-10-16-WM-01#1\n\nItem 3 (fact): no longer reports advisor headcount, but had about 8,900 last time.\nquote: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\nThis is partly a \"not disclosed\" statement but also gives a figure. Actually it says no longer reports headcount. This could be labeled as fact about the figure \"about 8,900\" with note. Or not_disclosed? The sub-question asks for headcount. The firm no longer reports it (per this passage), but the passage still gives the last reported figure.\n\nI think I should include this as a fact item with value 8,900, and note in text that the firm no longer reports headcount. Actually, this is more nuanced. Let me label it as fact for the \"about 8,900\" figure.\n\nActually, there's tension: one passage says 8,943 record at fiscal year end (Nov 5), another says \"no longer reports headcount\" (Oct 29). These are different trade press sources. I'll just report both facts.\n\nItem 4 (fact): about 8,900 advisors (SIMPLE IRA program available).\nquote: \"has made its small-business retirement plan available to its roughly 8,900 advisors\"\nvalue: \"8,900\"\nunit: \"financial advisors\"\nperiod: \"\" \nchunk_ids: RJF-TRADE-2026-09-16-WM-01#0\n\nItem 5 (fact): recruiting trailing 12-month production $538 million, up from $407 million.\nquote: \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year\"\nvalue: \"$538 million\"\nunit: \"USD (trailing 12-month production)\"\nperiod: F2026\nscope: \"domestic independent contractor and employee channels\"\nchunk_ids: RJF-TRADE-2026-11-05-WM-01#0, RJF-TRADE-2026-10-29-WM-01#0\n\nItem 6 (fact): those advisors represented more than $82 billion in client assets.\nvalue: \"$82 billion\"\nunit: \"USD (client assets)\"\nperiod: F2026\nchunk_ids: same\n\nItem 7 (fact): 70 advisors to add via Synovus deal.\nquote: \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division\"\nvalue: \"70\"\nunit: \"financial advisors\"\nperiod: \"\" (transition May 2027)\nscope: \"Financial Institutions Division\"\nchunk_ids: RJF-TRADE-2026-11-12-WM-01#0\n\nItem 8 (fact): strong recruiting gains across advisor channels, CEO credits flexibility.\nquote: \"The firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth.\"\nThis is more qualitative. value \"\", unit \"\".\nchunk_ids: RJF-TRADE-2026-11-12-WM-01#1\n\nAlso various recruiting wins (teams). These are recruiting news. The sub-question asks \"advisor headcount and any related recruiting or retention news.\" So I should include recruiting news items.\n\nThere are many team additions:\n- $700M team Southwest Florida to FID (from Truist) - RJF-TRADE-2026-10-23-WM-01#0\n- $1.5B PNC team in DC - RJF-TRADE-2026-11-05-WM-01#0\n- $1.2B Richmond duo from Truist - RJF-TRADE-2026-11-05-IN-01#0\n- $700M UBS team Beachwood Ohio - RJF-TRADE-2026-11-04-IN-01#0\n- $1.25B Iowa team + $500M Rochester team (total $1.75B) - RJF-TRADE-2026-09-24-WM-01#0\n- $500M Harris Wealth Partners from Commonwealth - RJF-TRADE-2026-09-24-IN-01#0\n- $400M veteran from UBS (Pearsall) - RJF-TRADE-2026-08-21-IN-01#1\n- $240M Stillwell from Ameriprise - RJF-TRADE-2026-08-26-IN-01#1\n- $550M Le Sage Mattiza from UBS - RJF-TRADE-2026-09-02-IN-01#2\n- $700M advisor team joined RJA earlier this week - RJF-TRADE-2026-11-06-IN-01#1\n\nAlso retention/loss news:\n- Janney added $3.5B Houston team from Raymond James (loss) - RJF-TRADE-2026-10-16-WM-01#0\n- The team had been with Raymond James ~23 years, $3.3B AUM.\n\nAlso Private Wealth Advisor designation program - ~450 advisors earned designation, key recruitment/retention signal - RJF-TRADE-2026-09-29-IN-01#3\n\nAlso Shoukry strategy of building advisory ranks through individualized recruitment rather than large-scale acquisitions - RJF-TRADE-2026-09-29-IN-01#4\n\nAlso recruiting from UBS due to compensation changes - RJF-TRADE-2026-11-04-IN-01#2\n\nThis is a lot. I should include the most relevant recruiting/retention items. The sub-question is about advisor headcount AND related recruiting/retention news. I'll include a comprehensive set.\n\nLet me think about how many items to include. I should include all facts relevant. But I need to be judicious - the instructions say \"one per figure or statement\". I'll include key items.\n\nLet me list a comprehensive set of items:\n\n1. Headcount 8,943 record FY end, 2% YoY (fact)\n2. About 8,900 advisors overseeing $1.92 trillion (fact)\n3. No longer reports headcount, last reported about 8,900 (fact)\n4. ~8,900 advisors for SIMPLE IRA program (fact)\n5. Recruiting TTM production $538M, up from $407M (fact)\n6. Recruited advisors >$82B client assets (fact)\n7. 70 advisors via Synovus deal (fact)\n8. Strong recruiting gains across channels, CEO credits flexibility (fact, qualitative)\n9. $700M Southwest FL team to FID (recruiting) - fact\n10. $1.5B PNC team DC (fact)\n11. $1.2B Richmond duo from Truist (fact)\n12. $700M UBS Beachwood (fact)\n13. $1.25B Iowa team + $500M Rochester (fact) - combined $1.75B\n14. $400M Pearsall UBS (fact)\n15. Janney $3.5B team loss from Raymond James (retention/loss, fact)\n16. ~450 advisors earned Private Wealth Advisor designation, key recruitment/retention signal (fact)\n17. Shoukry individualized recruitment strategy (fact)\n18. $500M Harris Wealth Partners (fact)\n19. $240M Stillwell (fact)\n20. $550M Le Sage (fact)\n\nThat's a lot but comprehensive. I'll include the important ones. Let me focus on the most clearly relevant.\n\nActually, let me be thorough but reasonable. I'll include all the major recruiting news and headcount figures.\n\nFor the retention/loss item (Janney), it's relevant as it shows advisors leaving Raymond James.\n\nLet me also note the \"strong recruiting gains\" and \"healthy pipelines\" items.\n\nLet me write each item carefully.\n\nFor item 5 and 6, they come from multiple chunks. I'll pick one chunk and quote from it.\n\nItem 5 quote from RJF-TRADE-2026-11-05-WM-01#0: \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year\"\n\nItem 6: \"Those advisors represented more than $82 billion in client assets.\"\n\nNow for periods. Fiscal year 2026. The earnings call was fiscal Q4. So F2026.\n\nLet me use \"F2026\" for fiscal year items.\n\nFor headcount 8,943, it's \"ended its fiscal year\" - so point in time at fiscal year end. I'll use \"F2026\" to be safe, or maybe note it's fiscal year end. Actually the period format options: \"YYYY-MM-DD\" point in time, \"FYYYYY\" fiscal year. I'll use \"F2026\".\n\nActually \"ended its fiscal year with a record 8,943 advisors\" - this is a fiscal year-end headcount. I'll use F2026.\n\nFor the 8,900 \"most recently reported\" - no period. I'll use \"\".\n\nFor \"about 8,900 last time headcount broken out\" - \"\".\n\nLet me now also consider the value/unit for the \"about 8,900\" items. value \"8,900\", unit \"financial advisors\".\n\nFor item 8 (strong recruiting gains) - value \"\", unit \"\".\n\nLet me also think about whether the \"healthy pipelines\" statement should be included. From RJF-TRADE-2026-11-05-IN-01#0: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" This is recruiting news (qualitative). I could include it, but it's a forward-looking statement. It's a fact (position the firm holds about future). Actually I could fold it into a recruiting item.\n\nI'll keep the list manageable. Let me finalize.\n\nLet me write out the items now.\n\nFor each item I need: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nLet me write concise text sentences.\n\nItem 1: text \"Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year.\" quote \"As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year\" value \"8,943\" unit \"financial advisors\" period \"F2026\" scope \"\" definition \"\" chunk [\"RJF-TRADE-2026-11-05-IN-01#0\"]\n\nItem 2: text \"Raymond James most recently reported about 8,900 advisors overseeing $1.92 trillion.\" quote \"Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.\" value \"8,900\" unit \"financial advisors\" period \"\" scope \"\" definition \"\" chunk [\"RJF-TRADE-2026-10-16-WM-01#1\"]\n\nItem 3: text \"Raymond James no longer reports advisor headcount, but had about 8,900 advisors the last time headcount was officially broken out.\" quote same. value \"8,900\" unit \"financial advisors\" period \"\" chunk [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\nItem 4: text \"Raymond James made its small-business retirement plan available to its roughly 8,900 advisors.\" quote \"has made its small-business retirement plan available to its roughly 8,900 advisors\" value \"8,900\" unit \"financial advisors\" period \"\" chunk [\"RJF-TRADE-2026-09-16-WM-01#0\"]\n\nItem 5: recruiting TTM production. text \"Raymond James recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during fiscal 2026, up from $407 million in the prior year.\" quote \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year\" value \"$538 million\" unit \"USD (trailing 12-month production)\" period \"F2026\" scope \"domestic independent contractor and employee channels\" chunk [\"RJF-TRADE-2026-11-05-WM-01#0\",\"RJF-TRADE-2026-10-29-WM-01#0\"]\n\nItem 6: text \"Those recruited advisors represented more than $82 billion in client assets.\" quote \"Those advisors represented more than $82 billion in client assets.\" value \"$82 billion\" unit \"USD (client assets)\" period \"F2026\" scope \"domestic independent contractor and employee channels\" chunk [\"RJF-TRADE-2026-11-05-WM-01#0\",\"RJF-TRADE-2026-10-29-WM-01#0\"]\n\nItem 7: 70 advisors Synovus. text \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division as an existing FID program merges with Synovus, with advisors expected to transition in May 2027.\" quote \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division\" value \"70\" unit \"financial advisors\" period \"\" scope \"Financial Institutions Division\" chunk [\"RJF-TRADE-2026-11-12-WM-01#0\"]\n\nItem 8: strong recruiting gains. text \"Raymond James recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options.\" quote \"The firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth.\" value \"\" unit \"\" period \"\" scope \"\" chunk [\"RJF-TRADE-2026-11-12-WM-01#1\"]\n\nItem 9: $700M SW Florida team to FID. text \"Raymond James recruited a team of advisors in Southwest Florida managing about $700 million in client assets to its Financial Institutions Division, joining Pinnacle Financial Partners' investment program from Truist Investment Services.\" quote \"Raymond James has recruited a team of advisors in Southwest Florida to its Financial Institutions Division... The team, which manages about $700 million in client assets\" value \"$700 million\" unit \"USD (client assets)\" period \"\" scope \"Financial Institutions Division\" chunk [\"RJF-TRADE-2026-10-23-WM-01#0\"]\n\nItem 10: $1.5B PNC team. text \"Raymond James & Associates welcomed a three-advisor team from PNC Private Bank in Washington, D.C. that managed over $1.5 billion in client assets.\" quote \"has welcomed Kenneth 'Ken' Killfoil... The team, based in Washington, D.C., arrives from PNC Private Bank, where it managed over $1.5 billion in client assets.\" value \"$1.5 billion\" unit \"USD (client assets)\" period \"\" scope \"Raymond James & Associates (employee channel)\" chunk [\"RJF-TRADE-2026-11-05-WM-01#0\"] - actually better chunk RJF-TRADE-2026-11-06-IN-01#0.\n\nLet me use RJF-TRADE-2026-11-06-IN-01#0 which has the detail. quote \"The team, based in Washington, D.C., arrives from PNC Private Bank, where it managed over $1.5 billion in client assets.\" value \"$1.5 billion\".\n\nItem 11: $1.2B Richmond duo. text \"A two-advisor Virginia team managing over $1.2 billion in client assets joined Raymond James & Associates from Truist Investment Services.\" quote \"Two veteran Virginia wealth managers have moved their practice to Raymond James & Associates, adding more than $1.2 billion in client assets\" value \"$1.2 billion\" unit \"USD (client assets)\" period \"\" scope \"Raymond James & Associates (employee channel)\" chunk [\"RJF-TRADE-2026-11-05-IN-01#0\"]\n\nItem 12: $700M UBS Beachwood. text \"A four-person team from UBS Financial Services managing more than $700 million in client assets joined Raymond James & Associates in Beachwood, Ohio.\" quote \"welcomed financial advisors Thomas Massey... The team... arrived from UBS Financial Services, where they collectively managed more than $700 million in client assets.\" value \"$700 million\" chunk [\"RJF-TRADE-2026-11-04-IN-01#0\"]\n\nItem 13: $1.75B two teams. text \"Raymond James added two teams totaling $1.75 billion, a $1.25 billion Iowa group to its employee channel and a $500 million Rochester, N.Y. team to its independent channel.\" quote \"Raymond James added two teams this week, including a $1.25 billion Iowa-based group that joined its employee advisor channel and a $500 million team out of Rochester, N.Y. via its independent channel.\" value \"$1.75 billion\" unit \"USD (client assets)\" chunk [\"RJF-TRADE-2026-09-24-WM-01#0\"]\n\nItem 14: $400M Pearsall. text \"Raymond James & Associates welcomed Adam Pearsall from UBS, who managed more than $400 million in client assets.\" quote \"welcomed Adam E. Pearsall, CFP, to its employee advisor channel from UBS Financial Services, where he managed more than $400 million in client assets.\" value \"$400 million\" chunk [\"RJF-TRADE-2026-08-21-IN-01#1\"]\n\nItem 15: Janney loss. text \"A Houston-based team led by Edward Fitzpatrick Group left Raymond James for Janney, having amassed $3.3 billion in client assets over about 23 years at Raymond James.\" quote \"The Edward Fitzpatrick Group... had been with Raymond James for about 23 years, during which it had amassed $3.3 billion in client assets under management\" value \"$3.3 billion\" unit \"USD (client assets under management)\" period \"\" scope \"\" chunk [\"RJF-TRADE-2026-10-16-WM-01#0\"]\n\nItem 16: Private Wealth Advisor designation. text \"As of September 2026, nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation, which the firm has described as a key recruitment and retention signal.\" quote \"As of September 2026, nearly 450 advisors have earned the designation... The program has been a key recruitment and retention signal for the firm\" value \"450\" unit \"advisors (Private Wealth Advisor designation)\" period \"2026-09\" scope \"\" chunk [\"RJF-TRADE-2026-09-29-IN-01#3\"]\n\nItem 17: Shoukry individualized recruitment. text \"CEO Paul Shoukry has emphasized building advisory ranks through individualized recruitment rather than large-scale acquisitions.\" quote \"Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions\" value \"\" unit \"\" period \"\" scope \"\" chunk [\"RJF-TRADE-2026-09-29-IN-01#4\"]\n\nItem 18: $500M Harris Wealth. text \"Raymond James Financial Services welcomed a five-advisor team from Commonwealth, adding approximately $500 million in client assets.\" quote \"welcomed a five-advisor team from Commonwealth Financial Network to its independent advisor channel, adding approximately $500 million in client assets\" value \"$500 million\" chunk [\"RJF-TRADE-2026-09-24-IN-01#0\"]\n\nItem 19: $240M Stillwell. text \"Independent advisor Jeffrey Stillwell affiliated with Raymond James Financial Services, having managed approximately $240 million at Ameriprise.\" quote \"has affiliated with Raymond James Financial Services... He managed approximately $240 million in client assets at his old firm, Ameriprise Financial Services.\" value \"$240 million\" chunk [\"RJF-TRADE-2026-08-26-IN-01#1\"]\n\nItem 20: $550M Le Sage. text \"A team in The Woodlands, Texas previously managing more than $550 million at UBS joined Raymond James & Associates.\" quote \"the team previously managed more than $550 million in client assets at UBS Financial Services.\" value \"$550 million\" chunk [\"RJF-TRADE-2026-09-02-IN-01#2\"]\n\nAlso healthy pipelines: \"healthy pipelines of advisor commitments heading into the coming year\" - could be an item. I'll include it as part of item 11 text? No, separate small fact. Actually I can skip it or add. Let me add a small item.\n\nActually I think I have enough. Let me also include the \"strong recruiting gains\" and the recruiting momentum.\n\nI think 20 items is comprehensive. Let me finalize.\n\nActually, let me reconsider item 3. The label for item 3 - it says \"no longer reports headcount but had about 8,900 last time.\" This is a fact about the figure but also indicates non-disclosure going forward. I'll label as fact with value 8,900, and note in text.\n\nBut wait - there's a subtlety. Two different sources: Nov 5 says 8,943 record at fiscal year end, Oct 29 says \"no longer reports headcount.\" These conflict slightly but I'll report both as facts from their respective passages.\n\nActually the 8,943 is \"record advisors at fiscal year end\" which is more specific/recent. The Oct 29 \"no longer reports headcount\" is odd but it's what the passage says. I'll report it.\n\nLet me finalize all items with proper fields.\n\nFor scope, I'll use \"\" for whole firm, or specify channel.\n\nNow let me write the submit_extraction call.\n\nFor definition field - mostly \"\" unless a passage gives a firm definition. The Private Wealth Advisor designation is \"advisors who specialize in high-net-worth clients - generally defined as those with at least $5 million in investable assets.\" That's a definition of the designation program, not the headcount. I could put it in definition for item 16. Actually definition is for \"the firm's own definition of the quantity.\" For item 16, the quantity is advisors with designation. I'll leave definition \"\" but mention in text.\n\nLet me write it all out now.\n\nI need to be careful with the period for item 16: \"As of September 2026\" \u2192 \"2026-09\". Actually format says \"YYYY-MM-DD\" for point in time. I could use \"2026-09\" but format lists \"YYYY-MM-DD\", \"YYYYQn\", \"FYYYYY\", \"YYYY\". September 2026 isn't exactly one of these. I'll use \"2026-09-01\"? Hmm. Better to use \"2026\" as calendar year? The passage says \"As of September 2026\". I'll use \"2026-09-30\"? That's making up a date. I'll use \"2026\" and note \"as of September 2026\" in text. Actually period format includes \"YYYY\" for calendar year. I'll use \"2026\".\n\nHmm, but \"as of September 2026\" is a point in time. The closest allowed is YYYY or YYYY-MM-DD. I'll use \"2026-09\" - but that's not in the enum list. The enum for period is just a string, no strict enum. The description says use \"YYYY-MM-DD\" for point in time. I'll use \"2026-09-01\"? No.\n\nI'll just use \"2026\" and keep the \"as of September 2026\" detail in text. Actually, let me use \"2026-09\" since that's clearest. The instructions give examples but aren't strictly limited. I'll use \"2026-09\".\n\nActually, re-reading: period: \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter, \"FYYYYY\" for a fiscal year, \"YYYY\" for a calendar year. So for \"as of September 2026\", a point in time, I could use \"2026-09-30\" but I don't know the exact day. I'll use \"2026\" to be safe, and note September in text. Or I'll just use \"2026-09\". \n\nI'll use \"2026\" for simplicity and clarity, noting \"as of September 2026\" in the text.\n\nLet me finalize and write.\n\nFor item 5 and 6 period F2026 - the fiscal year ending Sept 30, 2026. F2026.\n\nLet me write everything now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year, and signaled it expects continued momentum with healthy pipelines of advisor commitments heading into the coming year.",
+            "quote": "As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year, the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+            "value": "8,943",
+            "unit": "financial advisors",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James most recently reported about 8,900 advisors overseeing $1.92 trillion.",
+            "quote": "Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.",
+            "value": "8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-16-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James no longer reports advisor headcount, but had about 8,900 advisors the last time headcount was officially broken out.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "value": "8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James made its small-business retirement plan available to its roughly 8,900 advisors.",
+            "quote": "Raymond James has made its small-business retirement plan available to its roughly 8,900 advisors, according to a regulatory filing and a spokesperson.",
+            "value": "8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during fiscal 2026, up from $407 million in the prior year.",
+            "quote": "recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year",
+            "value": "$538 million",
+            "unit": "USD (trailing 12-month production)",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee channels",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0",
+              "RJF-TRADE-2026-10-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Those recruited advisors represented more than $82 billion in client assets.",
+            "quote": "Those advisors represented more than $82 billion in client assets.",
+            "value": "$82 billion",
+            "unit": "USD (client assets)",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee channels",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0",
+              "RJF-TRADE-2026-10-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division as an existing FID program merges with Synovus, with the advisors expected to transition in May 2027.",
+            "quote": "Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.",
+            "value": "70",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "Financial Institutions Division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth.",
+            "quote": "The firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James recruited a team of advisors in Southwest Florida managing about $700 million in client assets to its Financial Institutions Division, joining Pinnacle Financial Partners' investment program from Truist Investment Services.",
+            "quote": "Raymond James has recruited a team of advisors in Southwest Florida to its Financial Institutions Division... The team, which manages about $700 million in client assets, joins the investment program of Pinnacle Financial Partners from Truist Investment Services.",
+            "value": "$700 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Financial Institutions Division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-23-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James & Associates welcomed a three-advisor team in Washington, D.C. from PNC Private Bank that managed over $1.5 billion in client assets.",
+            "quote": "The team, based in Washington, D.C., arrives from PNC Private Bank, where it managed over $1.5 billion in client assets.",
+            "value": "$1.5 billion",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James & Associates (employee channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-06-IN-01#0"
+            ]
+          },
+          {
+            "text": "A two-advisor Virginia team managing more than $1.2 billion in client assets joined Raymond James & Associates from Truist Investment Services.",
+            "quote": "Two veteran Virginia wealth managers have moved their practice to Raymond James & Associates, adding more than $1.2 billion in client assets to the firm's employee advisor channel.",
+            "value": "$1.2 billion",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James & Associates (employee channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "A four-person team from UBS Financial Services managing more than $700 million in client assets joined Raymond James & Associates in Beachwood, Ohio.",
+            "quote": "The team, operating as 42\u00b0 North Advisors of Raymond James, arrived from UBS Financial Services, where they collectively managed more than $700 million in client assets.",
+            "value": "$700 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James & Associates (employee channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-04-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James added two teams totaling $1.75 billion, a $1.25 billion Iowa group to its employee channel and a $500 million Rochester, N.Y. team to its independent channel.",
+            "quote": "Raymond James added two teams this week, including a $1.25 billion Iowa-based group that joined its employee advisor channel and a $500 million team out of Rochester, N.Y. via its independent channel.",
+            "value": "$1.75 billion",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-24-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James & Associates welcomed Adam Pearsall from UBS Financial Services, who managed more than $400 million in client assets.",
+            "quote": "Raymond James & Associates welcomed Adam E. Pearsall, CFP, to its employee advisor channel from UBS Financial Services, where he managed more than $400 million in client assets.",
+            "value": "$400 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James & Associates (employee channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-08-21-IN-01#1"
+            ]
+          },
+          {
+            "text": "A Houston-based team, the Edward Fitzpatrick Group, left Raymond James for Janney after about 23 years, during which it had amassed $3.3 billion in client assets under management.",
+            "quote": "The Edward Fitzpatrick Group... had been with Raymond James for about 23 years, during which it had amassed $3.3 billion in client assets under management",
+            "value": "$3.3 billion",
+            "unit": "USD (client assets under management)",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "As of September 2026, nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation, which the firm has described as a key recruitment and retention signal.",
+            "quote": "As of September 2026, nearly 450 advisors have earned the designation, according to Raymond James. The program has been a key recruitment and retention signal for the firm",
+            "value": "450",
+            "unit": "advisors (Private Wealth Advisor designation)",
+            "period": "2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#3"
+            ]
+          },
+          {
+            "text": "CEO Paul Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions.",
+            "quote": "Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#4"
+            ]
+          },
+          {
+            "text": "Raymond James Financial Services welcomed a five-advisor team from Commonwealth Financial Network to its independent channel, adding approximately $500 million in client assets.",
+            "quote": "Raymond James Financial Services (RJFS) welcomed a five-advisor team from Commonwealth Financial Network to its independent advisor channel, adding approximately $500 million in client assets to its roster.",
+            "value": "$500 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James Financial Services (independent channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-24-IN-01#0"
+            ]
+          },
+          {
+            "text": "Independent advisor Jeffrey Stillwell affiliated with Raymond James Financial Services, having managed approximately $240 million in client assets at Ameriprise Financial Services.",
+            "quote": "independent financial advisor Jeffrey Stillwell, CLU, has affiliated with Raymond James Financial Services... He managed approximately $240 million in client assets at his old firm, Ameriprise Financial Services.",
+            "value": "$240 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James Financial Services (independent channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-08-26-IN-01#1"
+            ]
+          },
+          {
+            "text": "A team in The Woodlands, Texas that previously managed more than $550 million in client assets at UBS Financial Services joined Raymond James & Associates.",
+            "quote": "the team previously managed more than $550 million in client assets at UBS Financial Services.",
+            "value": "$550 million",
+            "unit": "USD (client assets)",
+            "period": "",
+            "scope": "Raymond James & Associates (employee channel)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-02-IN-01#2"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state Raymond James's advisor headcount figures and multiple recruiting and retention events within the window.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

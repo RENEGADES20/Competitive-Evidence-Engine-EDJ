@@ -408,8 +408,55 @@ advisor-headcount sources, #216). Gate 4 was scored **21/30** on `corpus-2026-11
 scores and the known gaps: [docs/results/gate4-report.md](results/gate4-report.md). What to
 build next: [docs/NEXT.md](NEXT.md).
 
-**Ask a question with the real model** (paid: about two calls per question, the question planner and the answer, ADR-020; CLAUDE.md "Paid API
-calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
+W11 (map-reduce, ADR-021) was scored on `corpus-2026-11-19` with DeepSeek (#250, adjudicated):
+**18/30** with full-text search on `main` ([docs/results/w11-report.md](results/w11-report.md)) and
+**22/30** with `hybrid-norerank` on `exp/hybrid`
+([report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md)).
+How the pipeline works: [ARCHITECTURE.md, Pipeline](ARCHITECTURE.md#pipeline), or the app's
+Architecture page.
+
+**How many calls one question makes** (ADR-021: the calls follow the question): one planner call
+(none when the plan is reused), one extraction call per firm, at most one re-extraction per firm
+with a re-searched cell, and at most one reduce call (none when code writes the answer). A
+one-firm question is 2 to 4 calls; a five-firm question 7 to 12. Every call is
+logged with tokens and cost.
+
+**Run each retrieval mode.** The engine is chosen by `RETRIEVAL_MODE` (app) or `--mode` (eval);
+the firm, segment and time filters are the same SQL in every mode. The commands below are free
+(mock provider, 0 calls); add `--real --max-calls <n>` and a provider as in the blocks further
+down for model answers.
+
+Full-text search (`fts`) on `main`, the default:
+```powershell
+git switch main
+.\.venv\Scripts\python.exe -m streamlit run src\ceepp\streamlit_app.py
+.\.venv\Scripts\python.exe scripts\eval_run.py --as-of 2026-11-17
+```
+```bash
+git switch main
+.venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+.venv/bin/python scripts/eval_run.py --as-of 2026-11-17
+```
+Hybrid without the reranker (`hybrid-norerank`) on `exp/hybrid`. It needs vectors on and every
+chunk embedded (section 1, "Vectors"); `hybrid` (with the reranker) also needs the reranker model
+(`exp/hybrid` RUN.md, "Hybrid retrieval"). The app reads `RETRIEVAL_MODE` from the environment or
+`.env`; the eval takes `--mode fts | hybrid | hybrid-norerank`:
+```powershell
+git switch exp/hybrid
+$env:CEE_VECTORS="on"; $env:RETRIEVAL_MODE="hybrid-norerank"
+.\.venv\Scripts\python.exe -m streamlit run src\ceepp\streamlit_app.py
+.\.venv\Scripts\python.exe scripts\eval_run.py --mode hybrid-norerank --as-of 2026-11-17
+```
+```bash
+git switch exp/hybrid
+export CEE_VECTORS=on RETRIEVAL_MODE=hybrid-norerank
+.venv/bin/python -m streamlit run src/cee/app/streamlit_app.py
+.venv/bin/python scripts/eval_run.py --mode hybrid-norerank --as-of 2026-11-17
+```
+Switch back with `git switch main` (and unset both variables, or open a new terminal).
+
+**Ask a question with the real model** (paid: the calls above, planner, extraction per firm,
+re-extraction and reduce; CLAUDE.md "Paid API calls"). Put your `ANTHROPIC_API_KEY` in `.env` and set the provider for this session only, so
 `.env` stays on mock:
 ```powershell
 $env:LLM_PROVIDER="anthropic"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
@@ -420,11 +467,15 @@ LLM_PROVIDER=anthropic .venv/bin/python -m streamlit run src/cee/app/streamlit_a
 Open http://localhost:8501, type a question, and click a citation to see the stored passage.
 The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
 
-**Ask with DeepSeek** (#242; paid, same two calls per question). Put `DEEPSEEK_API_KEY` in `.env`
+**Ask with DeepSeek** (#242; paid, the same calls per question). Put `DEEPSEEK_API_KEY` in `.env`
 and keep `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`; strict tool schemas need the `/beta`
-URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. `DEEPSEEK_THINKING` turns the model's
-reasoning on or off; leave it empty for the default, which was chosen in the #242 check
-(`docs/results/0242-deepseek-check.md`). With thinking on, an answer can take several minutes.
+URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. Each stage has its own reasoning effort (#272):
+`DEEPSEEK_EFFORT_PLAN`, `DEEPSEEK_EFFORT_MAP`, `DEEPSEEK_EFFORT_REDUCE`, each `off | low | high | max`
+(`off` = no thinking); leave them empty for the defaults set by the #272 test A (`plans/0272-latency.md`).
+`DEEPSEEK_MODEL_MAP` sends only the map calls to another model; `DEEPSEEK_STREAM` (`on | nothink | off`)
+streams the calls, so the time to the first token is logged next to the wall time. `DEEPSEEK_THINKING`
+is only for the legacy single answer call (`MAP=off`). The Ask page shows the plan first, then each
+extraction call's cited evidence as it lands, then the answer.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```
@@ -441,6 +492,27 @@ LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --naive-tz Ame
 If DeepSeek answers 402 (balance used up), 429 (rate limit) or 401 (key rejected), the question
 stops with that message and nothing is saved. Top up, wait or fix the key, then run again; saved
 outputs are reused.
+
+**Answer latency** (#272, free: reads saved records). `scripts/latency_report.py` prints, per question,
+the critical path (plan + slowest extraction call + slowest re-extraction + reduce) and the time to the
+first cited evidence, and per stage the wall time, time to first token and tokens (p50 / p90 / max):
+```powershell
+.\.venv\Scripts\python.exe scripts\latency_report.py <run folder>\raw --title "my run"
+```
+```bash
+.venv/bin/python scripts/latency_report.py <run folder>/raw --title "my run"
+```
+The #272 runs use `docs/results/w12-latency/run-latency.*` (one phase `plan | count | run`, every setting
+pinned; paid except `count`) and `run-mock.*` (0 calls). Run them from a clean worktree at the commit
+under test; the key file is copied in and removed again:
+```powershell
+powershell -File docs\results\w12-latency\run-latency.ps1 -Wt <worktree> -Out a-c1 -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q5,Q10 -EffortPlan off -EffortMap low -EffortReduce low
+powershell -File docs\results\w12-latency\run-mock.ps1 -Wt <worktree> -Out mock-fts
+```
+```bash
+WT=<worktree> OUT=a-c1 CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q5,Q10 EFFORT_PLAN=off EFFORT_MAP=low EFFORT_REDUCE=low ENV_FILE=<repo>/.env bash docs/results/w12-latency/run-latency.sh
+WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
+```
 
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).
 `--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,

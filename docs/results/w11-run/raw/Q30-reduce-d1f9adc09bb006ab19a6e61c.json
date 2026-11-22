@@ -1,0 +1,315 @@
+{
+  "question_id": "Q30",
+  "question": "What is Merrill's standalone profitability?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "gap_with_adjacent",
+  "chunk_ids": [
+    "BAC-SUPP-2026Q3#51",
+    "BAC-SUPP-2025Q4#53",
+    "BAC-DECK-2026Q3#30",
+    "BAC-DECK-2026Q2#19",
+    "BAC-DECK-2026Q1#26",
+    "BAC-PR-2026-01-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2026Q3#52",
+    "BAC-SUPP-2025Q4#54"
+  ],
+  "schema_fallback": [],
+  "enum_values": 44,
+  "at": "2026-11-20T19:04:37.170022-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7265,
+    "output_tokens": 9147,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 5601,
+    "reasoning_tokens": 4654,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 60.53,
+  "tokens_per_s": 151.12,
+  "reasoning_content": "We need answer behavior gap_with_adjacent. Need produce claims (none for asked quantity, since no fact), adjacent items for each aspect, gaps. We must not write claims for a1/a2/a3 because gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give adjacent items each with differs_because.\n\nWait, but evidence matrix cells are \"different quantity (adjacent only)\" for a1.MER, a2.MER, a3.MER. Each has items (fact figures). So we should write adjacent items, each with differs_because from the cell. We have three aspects; for each, adjacent items list. Do we write each item individually? Yes likely each adjacent item with part_id = cell id (a1.MER, a2.MER, a3.MER). Need cite chunk_ids per item. Also gaps: code gaps listed, do not repeat them. But the instructions say \"Add a gap of your own only for something those gaps do not name.\" Code gaps list [a1.MER] and [a1]. Hmm. Also standard: gap_with_adjacent: code gaps say what database does not support. The gaps added by code should be included? We're instructed \"do not repeat them\" in caveats? Wait: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\" This implies code adds gaps automatically? But we submit gaps array. Need determine what gaps to include. The tool schema requires gaps array. We should include gaps. But \"Gaps added by code (do not repeat them)\" suggests don't write them? Hmm. Actually the instructions say \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\" So code will add those gaps, we don't repeat. But we still must provide gaps array maybe with our own gaps only. Since no new gaps beyond those named? We might not add any. But the schema requires gaps array (could be empty). Let's consider.\n\nThe behavior gap_with_adjacent: no cell holds asked quantity, so write no claim for it; give adjacent items. The gaps added by code are already the ones saying not published. We should not duplicate. So gaps array could be empty. But schema requires \"gaps\" array. Provide empty array? Likely okay.\n\nNeed answerable false? The submit_answer requires answerable boolean. For gap_with_adjacent, answerable should be false? Since no fact. Behavior says gap_with_adjacent. I think answerable false.\n\nNow write adjacent items. Each adjacent text needs: firm name first? \"Several firms: ... each claim starting <Firm>: \" One firm. For adjacent, likely start with \"Merrill: \". Each adjacent carries part_id of cell. differs_because in your words same meaning.\n\nFor a1.MER: differs because 'No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank.' Need each item wording. The adjacent items are 10 items. We should write them as adjacent, each with differs_because. Could combine? The instruction says \"give the adjacent items, each with differs_because\". Probably each item separately. But that's a lot: 10 + 10 + 13 = 33 adjacent items. That's expected.\n\nNeed date every claim/adjacent from source line. For adjacent items too? \"Date every claim from its source line\" and \"For every item... end the claim with Why it might matter...\" Wait recency only applies when aspect marked recency, or question has time window. The question has no time window. So no why-lines. Good.\n\nNeed order: with time window, newest first. No time window here. Order aspect by aspect, firms in order. So a1 items in matrix order (2026Q3 down). Fine.\n\nLet's draft.\n\nFor each item, cite correct chunk id(s). Adjacent item text: \"Merrill: Bank of America reported Global Wealth and Investment Management net income of $1,540 million for the third quarter of 2026.\" Date? Source BAC-SUPP-2026Q3#51 is from \"BAC supplement, segment GWIM, period 2026-09-30, published 2026-10-14\". Should date claim: \"The 3Q26 supplement (period ended September 30, 2026) states ...\" But item says \"Bank of America reported ...\". We can write \"In the 3Q26 segment supplement (period ended September 30, 2026), Bank of America reported ...\" Cite BAC-SUPP-2026Q3#51. Actually period and source: BAC-SUPP-2026Q3#51 period 2026-09-30. For item 1-5 all from same source. We can date each.\n\nNeed not use quote verbatim? Quote optional. We can state figures.\n\nAdjacent differs_because: \"No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank.\"\n\nFor a1 items 6-10 from BAC-SUPP-2025Q4#53, period 2025-12-31, published 2026-01-14. Date as \"the 4Q25 supplement (period ended December 31, 2025)\". For yearly items 2025, 2024.\n\nWait item 6: \"Bank of America reported GWIM net income of $4,670 million for year ended Dec 31, 2025.\" Item 7 $4,263 for year ended 2024. Item 8 $993 2025Q2, item 9 $1,007 2025Q1, item 10 $1,171 2024Q4. All from BAC-SUPP-2025Q4#53.\n\nFor a2 similarly.\n\nFor a3 items: pretax margin various, operating margin, ROAC. a3 differs_because: 'No Merrill standalone profitability ratio is disclosed; figures are for the wider GWIM segment, which also includes Bank of America Private Bank. ROAC is return on average allocated capital, not profit margin, pre-tax margin, or return on equity.'\n\nFor ROAC items, item 11 has definition and cites BAC-DECK-2026Q3#30, BAC-SUPP-2026Q3#52. Item 12, 13 cite BAC-SUPP-2025Q4#53, BAC-SUPP-2025Q4#54.\n\nWe need include definition? Adjacent item should state figure and perhaps note ROAC definition? Since differs_because covers not same ratio. But item itself is adjacent. We can say \"Bank of America reported GWIM return on average allocated capital of 28 percent for 3Q26.\" The definition is unverified? Not marked. We can omit definition or include? The instructions: a fact cell is a claim... adjacent items carry differs_because. Definition isn't required. But for a3 item, to note ROAC not profit margin etc., differs_because already covers.\n\nShould we mention \"pretax margin\" not \"pre-tax\"? Use firm's own terms \"Pretax margin\". Fine.\n\nNow, do we need \"Merrill: \" prefix for each adjacent? Yes each claim starting \"<Firm>: \". For adjacent, likely also. We'll start each adjacent text with \"Merrill: \".\n\nNow gaps array. Code gaps: [a1.MER] and [a1]. We shouldn't repeat. But should we include them? The tool likely expects gaps array with code-added gaps? The instructions say code adds those gaps. But the submit_answer tool is our only output; code won't add automatically unless the system already knows? Hmm. The prompt says \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\" In this API, I think we are to include gaps in the gaps array, but \"code adds those gaps\" perhaps means those gaps are already handled by the evaluator, so we should not include them. But if we leave gaps empty, the answer may lack gaps. Let's parse: The instruction likely from a system that will compare our submitted claims/adjacent/gaps. \"Gaps added by code (do not repeat them)\" explicitly says do not repeat. So we should not include code-added gaps in our gaps array. But do we need any gap of our own? The standard wording for advisor pay etc. not relevant. There are no additional gaps not named. So gaps: [].\n\nBut wait, a1 gap code lists two: [a1.MER] and [a1]. The [a1] is a spanning aspect gap. We don't repeat. a2 and a3 have no code gaps? They are adjacent aspects. Since no fact, we give adjacent items. So no gaps for a2/a3. Okay.\n\nNeed answerable false.\n\nLet's think about whether we should write adjacent items for a2 and a3 as all items or maybe each aspect one combined adjacent? The instruction \"give the adjacent items, each with differs_because\" implies each item. We'll list all.\n\nLet's compose concise but dated.\n\nFor source dating: Use \"The 3Q26 supplement (period ended September 30, 2026) states...\" But for adjacent items, we can say \"Merrill: In the 3Q26 Global Wealth & Investment Management segment supplement (period ended September 30, 2026), Bank of America reported...\" That's a bit verbose. Use \"Merrill: The 3Q26 segment supplement (period ended September 30, 2026) reports...\" Good.\n\nLet's draft a1 adjacent items:\n\n1. \"Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,540 million for 3Q26.\" cite BAC-SUPP-2026Q3#51. differs_because: \"No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank.\"\n\n2. same source 2Q26 $1,413. But wait source period 2026-09-30 covers 3Q26 and also comparative quarters? The supplement 3Q26 shows 2Q26 and 1Q26 comparatives? Actually item 2 and 3 from BAC-SUPP-2026Q3#51, which is the 3Q26 supplement. The figures for 2Q26 and 1Q26 are comparative data within that source. So date: \"The 3Q26 supplement (period ended September 30, 2026) reports ... for 2Q26.\" Fine.\n\n3. $1,329 1Q26.\n\n4. $1,405 4Q25.\n\n5. $1,265 3Q25.\n\n6-10 from BAC-SUPP-2025Q4#53: \"The 4Q25 supplement (period ended December 31, 2025) reports ...\" Items: 2025 $4,670; 2024 $4,263; 2Q25 $993; 1Q25 $1,007; 4Q24 $1,171.\n\nWe must state period scope each: \"for the Global Wealth and Investment Management segment\" maybe. Include scope. Good.\n\nFor a2 similar.\n\nFor a3:\n\n1 pretax margin 29% 3Q26, cite BAC-DECK-2026Q3#30 (period 2026-09-30, published 2026-10-14). \"The 3Q26 deck (period ended September 30, 2026) reports a GWIM pretax margin of 29 percent for 3Q26.\"\n\n2 27% 2Q26 from BAC-DECK-2026Q2#19 (period 2026-06-30).\n3 26% 1Q26 from BAC-DECK-2026Q1#26.\n4 28% 4Q25 from BAC-PR-2026-01-14-01#11 (period 2025-12-31, published 2026-01-14).\n5 27% 3Q25 from BAC-PR-2026-01-14-01#11.\n6 22% 2Q25 from BAC-PR-2026-07-14-01#10.\n7 22% 1Q25 from BAC-PR-2026-04-15-01#10.\n8 26% 4Q24 from BAC-PR-2026-01-14-01#11.\n9 operating margin 25% 2025 from BAC-10K-2025#246 (period 2025-12-31, published 2026-02-25).\n10 operating margin 25% 2024 same.\n11 ROAC 28% 3Q26 cite BAC-DECK-2026Q3#30, BAC-SUPP-2026Q3#52.\n12 ROAC 24% 2025 cite BAC-SUPP-2025Q4#53, BAC-SUPP-2025Q4#54.\n13 ROAC 23% 2024 same.\n\ndiffers_because for all a3 same.\n\nFor ROAC items, perhaps in text say \"return on average allocated capital\" and note definition? The adjacent item is \"different quantity\". We can mention \"return on average allocated capital\" figure. Good.\n\nNow note: the instruction \"An item marked 'quote not verbatim' is never put in quotation marks.\" None marked. We don't need quotes.\n\n\"Never write cell ids, aspect ids, part ids or item numbers in the text.\" Good.\n\n\"Never use what you know from elsewhere.\" Fine.\n\n\"Attribute strategy...\" not relevant.\n\nNow, should claims array be empty? For gap_with_adjacent, yes claims empty.\n\nNow, answerable boolean. The question asks \"What is Merrill's standalone profitability?\" Since no fact, answerable false. Behavior gap_with_adjacent. Provide adjacent.\n\nLet's ensure part_id values match enum: \"a1.MER\", \"a2.MER\", \"a3.MER\", \"a1\", \"a2\", \"a3\", \"\". For adjacent items use a1.MER etc.\n\nNow, each adjacent item requires text, chunk_ids, part_id, differs_because. We'll include all.\n\nLet's count and ensure all chunk ids in enum. Yes.\n\nNow, do we need \"Merrill: \" prefix in adjacent text? The shape says \"Several firms: aspect by aspect... each claim starting <Firm>: \". It says claims, but adjacent items are part of answer. We'll start with \"Merrill: \" to be safe.\n\nPotential issue: The instruction for adjacent items: \"A cell marked 'adjacent only' ... goes in adjacent, never in claims, each with differs_because from the cell, in your words with the same meaning.\" The differs_because we write should be our words with same meaning as the cell's differs because. We can use the given phrase or paraphrase. We'll use near-verbatim.\n\nNow, should we include \"Global Wealth and Investment Management\" abbreviation GWIM? Use full first, maybe then GWIM. Fine.\n\nLet's write all texts carefully.\n\nI'll construct JSON.\n\nClaims: [].\n\nAdjacent: 33 entries.\n\nLet me write each.\n\na1.MER entries:\n\n1 text: \"Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,540 million for the third quarter of 2026 for the Global Wealth and Investment Management segment.\" chunk_ids [\"BAC-SUPP-2026Q3#51\"], part_id \"a1.MER\", differs_because \"No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank.\"\n\n2 similar $1,413 for 2Q26. Same chunk.\n\n3 $1,329 1Q26.\n\n4 $1,405 4Q25.\n\n5 $1,265 3Q25.\n\n6 \"The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $4,670 million for the year ended December 31, 2025...\" chunk BAC-SUPP-2025Q4#53.\n\n7 $4,263 year 2024.\n\n8 $993 2Q25.\n\n9 $1,007 1Q25.\n\n10 $1,171 4Q24.\n\nWait for item 6: source period 2025-12-31 (4Q25), but it's the supplement covering full year 2025 and comparatives. Date line: \"The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports ...\" Good.\n\na2.MER: same structure with income before income taxes.\n\n1 \"income before income taxes of $2,053 million for 3Q26\" cite BAC-SUPP-2026Q3#51.\n2 $1,884 2Q26.\n3 $1,772 1Q26.\n4 $1,874 4Q25.\n5 $1,686 3Q25.\n6 $6,227 year 2025 cite BAC-SUPP-2025Q4#53.\n7 $5,684 year 2024.\n8 $1,324 2Q25.\n9 $1,343 1Q25.\n10 $1,561 4Q24.\n\ndiffers_because: \"No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank.\"\n\na3.MER entries:\n\n1 \"pretax margin of 29 percent for 3Q26\" cite BAC-DECK-2026Q3#30.\n2 \"27 percent for 2Q26\" cite BAC-DECK-2026Q2#19.\n3 \"26 percent for 1Q26\" cite BAC-DECK-2026Q1#26.\n4 \"28 percent for 4Q25\" cite BAC-PR-2026-01-14-01#11.\n5 \"27 percent for 3Q25\" cite BAC-PR-2026-01-14-01#11.\n6 \"22 percent for 2Q25\" cite BAC-PR-2026-07-14-01#10.\n7 \"22 percent for 1Q25\" cite BAC-PR-2026-04-15-01#10.\n8 \"26 percent for 4Q24\" cite BAC-PR-2026-01-14-01#11.\n9 \"operating margin of 25 percent for 2025\" cite BAC-10K-2025#246.\n10 \"operating margin of 25 percent for 2024\" cite BAC-10K-2025#246.\n11 \"return on average allocated capital of 28 percent for 3Q26\" cite BAC-DECK-2026Q3#30, BAC-SUPP-2026Q3#52.\n12 \"return on average allocated capital of 24 percent for year ended December 31, 2025\" cite BAC-SUPP-2025Q4#53, BAC-SUPP-2025Q4#54.\n13 \"return on average allocated capital of 23 percent for year ended December 31, 2024\" cite same.\n\ndiffers_because for all a3: \"No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity.\"\n\nFor ROAC items, maybe mention segment scope \"for the Global Wealth and Investment Management segment.\" Yes.\n\nAlso should we date the ROAC items with source line? For item 11, source BAC-DECK-2026Q3#30 (3Q26 deck) and BAC-SUPP-2026Q3#52 (3Q26 supplement). Date \"The 3Q26 deck (period ended September 30, 2026) reports...\" But definition from supplement. We can say \"The 3Q26 Global Wealth & Investment Management materials (period ended September 30, 2026) report...\" Or just cite both. Simpler: \"Merrill: The 3Q26 Global Wealth & Investment Management materials (period ended September 30, 2026) report return on average allocated capital of 28 percent for 3Q26 for the Global Wealth and Investment Management segment.\" Cite both.\n\nItem 12/13: \"The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports ...\" cite BAC-SUPP-2025Q4#53, BAC-SUPP-2025Q4#54. Good.\n\nNow, do we need to include \"scope Global Wealth and Investment Management segment\" in each text? Yes, we can include.\n\nLet's also ensure no claim duplicates the code gaps. We have no claims.\n\nNow, answerable false.\n\nShould we include any gaps? gaps [].\n\nLet's consider whether the system expects us to include the code gaps anyway. The instruction \"code adds those gaps (listed under 'Gaps added by code')\" - in the tool call we're submitting; code may add gaps after. So we don't include. Good.\n\nNow let's produce final JSON. Need be careful with quotes and JSON validity.\n\nI'll write the submit_answer call.",
+  "raw": {
+    "answerable": false,
+    "behavior": "gap_with_adjacent",
+    "claims": [],
+    "adjacent": [
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,540 million for the third quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,413 million for the second quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,329 million for the first quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,405 million for the fourth quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports net income of $1,265 million for the third quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $4,670 million for the year ended December 31, 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $4,263 million for the year ended December 31, 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $993 million for the second quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $1,007 million for the first quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports net income of $1,171 million for the fourth quarter of 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "No Merrill standalone net income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports income before income taxes of $2,053 million for the third quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports income before income taxes of $1,884 million for the second quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports income before income taxes of $1,772 million for the first quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports income before income taxes of $1,874 million for the fourth quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management supplement (period ended September 30, 2026) reports income before income taxes of $1,686 million for the third quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#51"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports income before income taxes of $6,227 million for the year ended December 31, 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports income before income taxes of $5,684 million for the year ended December 31, 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports income before income taxes of $1,324 million for the second quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports income before income taxes of $1,343 million for the first quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports income before income taxes of $1,561 million for the fourth quarter of 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No Merrill standalone pre-tax income is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management deck (period ended September 30, 2026) reports a pretax margin of 29 percent for the third quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q3#30"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 2Q26 Global Wealth & Investment Management deck (period ended June 30, 2026) reports a pretax margin of 27 percent for the second quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q2#19"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 1Q26 Global Wealth & Investment Management deck (period ended March 31, 2026) reports a pretax margin of 26 percent for the first quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q1#26"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The Bank of America press release dated January 14, 2026 (period ended December 31, 2025) reports a pretax margin of 28 percent for the fourth quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The Bank of America press release dated January 14, 2026 (period ended December 31, 2025) reports a pretax margin of 27 percent for the third quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The Bank of America press release dated July 14, 2026 (period ended June 30, 2026) reports a pretax margin of 22 percent for the second quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The Bank of America press release dated April 15, 2026 (period ended March 31, 2026) reports a pretax margin of 22 percent for the first quarter of 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The Bank of America press release dated January 14, 2026 (period ended December 31, 2025) reports a pretax margin of 26 percent for the fourth quarter of 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) reports an operating margin of 25 percent for 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) reports an operating margin of 25 percent for 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 3Q26 Global Wealth & Investment Management materials (period ended September 30, 2026) report return on average allocated capital of 28 percent for the third quarter of 2026 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-DECK-2026Q3#30",
+          "BAC-SUPP-2026Q3#52"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports return on average allocated capital of 24 percent for the year ended December 31, 2025 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53",
+          "BAC-SUPP-2025Q4#54"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      },
+      {
+        "text": "Merrill: The 4Q25 Global Wealth & Investment Management supplement (period ended December 31, 2025) reports return on average allocated capital of 23 percent for the year ended December 31, 2024 for the Global Wealth and Investment Management segment.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#53",
+          "BAC-SUPP-2025Q4#54"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "No Merrill standalone profitability ratio is disclosed; the figures are for the wider Global Wealth and Investment Management segment, which also includes Bank of America Private Bank, and return on average allocated capital is not profit margin, pre-tax margin, or return on equity."
+      }
+    ],
+    "gaps": []
+  }
+}

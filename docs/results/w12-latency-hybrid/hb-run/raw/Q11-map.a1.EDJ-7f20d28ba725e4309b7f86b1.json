@@ -1,0 +1,120 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#41",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-10Q-2026Q1#2",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#140",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q1#102",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#329",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#334",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#130"
+  ],
+  "at": "2026-11-21T21:43:47.254517-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12886,
+    "output_tokens": 3533,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 11222,
+    "reasoning_tokens": 3148,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.81
+  },
+  "wall_s": 31.36,
+  "tokens_per_s": 112.66,
+  "ttft_s": 1.81,
+  "reasoning_content": "Let me analyze the passages to find how Edward Jones defines advisor headcount.\n\nThe sub-question asks: \"How the firm defines advisor headcount.\"\n\nLooking through passages, I need to find where the firm defines \"financial advisors\" headcount.\n\nKey passages:\n- EDJ-10Q-2025Q3#69: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" - this defines attrition %, not headcount itself.\n- EDJ-10Q-2026Q1#62: \"Counted on a full-time equivalent basis.\" - this relates to home office associates (operating expenses, a table). Actually \"Counted on a full-time equivalent basis\" footnote appears near financial advisor compensation. Let me look.\n\nActually, in EDJ-10Q-2026Q1#62, the footnote \"(1)\" says \"Counted on a full-time equivalent basis.\" This is in the context of a table, likely home office associates count. But the \"Financial advisors (actual)\" label uses \"(actual)\" as opposed to FTE.\n\nThe passages consistently label \"Financial advisors (actual)\" - meaning the headcount is \"actual\" not FTE.\n\nAlso EDJ-10K-2025#334 is notable: \"Edward D. Jones & Co., L.P. (\"Edward Jones\"), has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\" This is about the definition of financial advisors as service partners, not employees.\n\nActually, this is relevant to how the firm defines advisor headcount? The financial advisors are service partners of JFC, not employees of Edward Jones.\n\nLet me think about what a fact for \"how the firm defines advisor headcount\" would be.\n\nThe passages that define \"financial advisors\" metric:\n1. \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" - This defines attrition, not the headcount definition.\n\n2. EDJ-10K-2025#334: financial advisors are \"service partners of JFC and not employees of Edward Jones.\" This is a definition of who counts as financial advisors in terms of employment relationship.\n\n3. \"Counted on a full-time equivalent basis\" - this footnote applies to a different metric (home office associates or similar), while \"Financial advisors (actual)\" is labeled \"actual\".\n\nActually let me look more carefully. In EDJ-10Q-2026Q1#62, the table shows something then footnote (1) \"Counted on a full-time equivalent basis.\" The text after mentions \"financial advisor compensation and benefits expense.\" This is about expenses, not headcount.\n\nLet me focus on what the firm actually states about how it defines advisor headcount.\n\nThe \"Financial advisors (actual)\" labels indicate the firm reports financial advisor headcount on an \"actual\" basis (not FTE). The footnote \"(1) Counted on a full-time equivalent basis\" applies to a different metric (likely number of home office associates, or CSTPs).\n\nActually, looking at EDJ-10Q-2026Q1#62 again: the note says \"Counted on a full-time equivalent basis.\" This is footnote (1) to a table. The table likely includes \"home office associates\" counted on FTE basis. But I don't have full context.\n\nLet me look at EDJ-10K-2025#334 more carefully - this is the clearest definitional statement about who financial advisors are:\n\n\"The Partnership's principal operating subsidiary, Edward D. Jones & Co., L.P. (\"Edward Jones\"), has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\n\nThis tells us financial advisors are service partners of JFC, not employees of Edward Jones.\n\nAlso EDJ-10K-2025#202: \"NOTES TO CONSOLIDATED FINANCIAL STATEMENTS (Dollars in millions, except per unit information and the number of financial advisors)\" - just mentions the number of financial advisors is a unit.\n\nThe key definitional facts:\n1. Financial advisors are \"service partners of JFC and not employees of Edward Jones\" (EDJ-10K-2025#334).\n2. Financial advisor headcount is reported as \"(actual)\" (not FTE) - the labels \"Financial advisors (actual)\" throughout.\n3. Attrition definition references \"total number of financial advisors as of period end.\"\n\nIs there a clear statement defining what's included/excluded in advisor headcount? The passages don't give a detailed \"we count X and exclude Y\" definition.\n\nThe strongest fact: EDJ-10K-2025#334 states financial advisors are service partners of JFC, not employees of Edward Jones.\n\nAlso the \"Financial advisors (actual)\" label - \"actual\" vs \"full-time equivalent\" - indicates the headcount is actual headcount, not FTE.\n\nLet me think about what items to include.\n\nItem 1: From EDJ-10K-2025#334 - financial advisors are \"service partners of JFC and not employees of Edward Jones.\" This is a definitional statement about how the firm characterizes financial advisors.\n\nItem 2: \"Financial advisors (actual)\" labels - the firm reports advisor headcount on an \"actual\" basis (as opposed to FTE). Note the footnote \"(1) Counted on a full-time equivalent basis\" applies to other metrics (home office associates), while financial advisors are \"actual.\"\n\nActually, let me reconsider. The question is \"How the firm defines advisor headcount.\" \n\nThe clearest definitional content:\n- \"Financial advisors (actual)\" - this is how the firm labels the metric, distinguishing \"actual\" headcount.\n- EDJ-10K-2025#334 - financial advisors are service partners, not employees.\n\nLet me also check EDJ-10Q-2025Q3#69 and #66: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" This is about attrition, not headcount definition.\n\nI think the main facts are:\n1. Financial advisors are reported as \"(actual)\" headcount, distinguishing from FTE basis. Actually, \"Counted on a full-time equivalent basis\" footnote appears for a different metric.\n\n2. Financial advisors are service partners of JFC, not employees of Edward Jones.\n\nLet me look more carefully at EDJ-10Q-2026Q1#62 to understand what \"Counted on a full-time equivalent basis\" refers to.\n\nThe passage EDJ-10Q-2026Q1#62:\n\"Counted on a full-time equivalent basis.\n\nThe increase in operating expenses in the first quarter of 2026...\"\n\nSo the footnote \"Counted on a full-time equivalent basis\" is footnote (1) to a table that appears before this text. The table likely shows \"Home office associates\" or similar counted on FTE basis.\n\nThe \"Financial advisors (actual)\" is the firm's label, distinguishing \"actual\" from \"full-time equivalent.\"\n\nI'll include:\n1. Fact: The firm labels its advisor headcount \"Financial advisors (actual)\" - indicating actual headcount, not FTE. This is shown in multiple passages with \"Financial advisors (actual): At period end... Average...\"\n\n2. Fact: Financial advisors are service partners of JFC and not employees of Edward Jones (EDJ-10K-2025#334).\n\nActually, let me think about whether \"Financial advisors (actual)\" is really a \"definition.\" The \"actual\" is in parentheses, distinguishing from FTE. The firm elsewhere notes \"Counted on a full-time equivalent basis\" for a different metric. So the \"(actual)\" label is meaningful - the advisor headcount is actual (headcount), not FTE.\n\nI'll capture both.\n\nLet me determine values and periods.\n\nFor item 2 (service partners), no figure, no period. It's a definitional statement.\n\nFor item 1 (\"actual\" label), it's a definitional/reporting label. I could provide examples with figures and periods, but the definitional aspect is the \"(actual)\" label.\n\nActually, the instructions say for fact items, include value/unit/period. For a definitional statement without a figure, value=\"\" and unit=\"\" and period=\"\".\n\nLet me structure:\n\nItem 1: text about \"Financial advisors (actual)\" - the firm reports advisor headcount on an actual (headcount) basis, as indicated by the \"(actual)\" label, distinct from metrics \"counted on a full-time equivalent basis.\"\n\nQuote: \"Financial advisors (actual):\" and \"Counted on a full-time equivalent basis.\"\n\nActually these are from different chunks. Let me use the \"(actual)\" label quote from a passage and the FTE note.\n\nHmm, I think I should keep it simpler. Let me identify the clearest definitional facts.\n\nFact A (definition): Financial advisors are \"service partners of JFC and not employees of Edward Jones\" - EDJ-10K-2025#334.\n\nFact B (reporting basis): The firm labels the metric \"Financial advisors (actual),\" indicating actual headcount (as opposed to full-time equivalent). Multiple passages.\n\nFact C: Attrition definition references \"total number of financial advisors as of period end\" - but that's about attrition.\n\nI think A and B are the key facts.\n\nLet me write them.\n\nFor B, I'll quote \"Financial advisors (actual):\" from EDJ-10Q-2026Q2#60, and note the FTE distinction.\n\nActually, to keep each item with a single quote, I'll do:\n\nItem 1: definition - service partners, not employees. Quote from EDJ-10K-2025#334. value \"\", unit \"\", period \"\", scope \"\", definition \"financial advisors who are service partners of JFC and not employees of Edward Jones\".\n\nItem 2: reporting basis \"actual\" - quote \"Financial advisors (actual):\" from a passage. This is a fact about how it's reported.\n\nLet me think about whether item 2 is worth including. The question is \"How the firm defines advisor headcount.\" The \"(actual)\" label indicates it's a headcount, not FTE. This is a reporting nuance. I think it's a legitimate fact.\n\nAlso, the FTE note \"Counted on a full-time equivalent basis\" applies to a different metric (home office associates presumably), which contrasts. But I shouldn't conflate.\n\nI'll include both items as facts.\n\nLet me also consider whether there's a \"not_disclosed\" or \"not_found\" issue. The firm does give some definitional info (service partners, actual). So it's a fact (partial). The firm doesn't give a detailed include/exclude list, but partial facts are still facts.\n\nLet me finalize.\n\nFor item 2, I want to accurately state. The label \"Financial advisors (actual)\" appears in many passages. Let me quote from EDJ-10Q-2026Q2#60: \"Financial advisors (actual):\" and \"At period end 20,514 20,309 1%\".\n\nActually for a definitional/reporting label item, I might not need a figure. But I could include the example figure. Let me keep it as a definitional statement about the \"(actual)\" label.\n\nActually, let me reconsider. The \"actual\" in \"Financial advisors (actual)\" contrasts with \"full-time equivalent.\" The footnote \"Counted on a full-time equivalent basis\" in EDJ-10Q-2026Q1#62 and EDJ-10Q-2026Q2#75 applies to some metric (likely home office associates or CSTPs). So the distinction is: advisor headcount is \"actual\" headcount, while some other counts are FTE.\n\nI'll write item 2 as: The firm reports its advisor headcount metric under the label \"Financial advisors (actual),\" indicating a headcount (actual) basis rather than full-time equivalent.\n\nQuote: \"Financial advisors (actual):\" - from EDJ-10Q-2026Q2#60.\n\nI think I should include both facts. Let me also consider the attrition definition note which gives \"total number of financial advisors as of period end\" - this doesn't add much about definition of headcount itself.\n\nLet me finalize with 2 fact items.\n\nActually, let me reconsider whether item 2's \"actual\" is really a \"definition\" vs just a label. The instructions: \"The firm's own definition of a metric, quoted from a passage, is a fact for a sub-question that asks how the firm defines or reports it.\"\n\nSo reporting basis (\"actual\") is relevant to \"how the firm reports advisor headcount.\" The sub-question is \"How the firm defines advisor headcount.\" It's about definition AND reporting. The \"(actual)\" label is part of how it reports.\n\nI'll include it.\n\nLet me write the final answer.\n\nItem 1 (service partners):\n- text: \"Edward Jones reports that its financial advisors are service partners of The Jones Financial Companies, L.L.L.P. (JFC), not employees of Edward Jones, with Edward Jones making payments for their services under a written agreement.\"\n- quote: \"has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones\"\n- chunk_ids: [\"EDJ-10K-2025#334\"]\n- value: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"financial advisors who are service partners of JFC and not employees of Edward Jones\"\n\nItem 2 (actual label):\n- text: \"The firm labels its advisor count 'Financial advisors (actual),' reporting headcount on an actual basis rather than a full-time equivalent basis (other metrics are footnoted as 'Counted on a full-time equivalent basis').\"\n- quote: \"Financial advisors (actual):\"\n- chunk_ids: [\"EDJ-10Q-2026Q2#60\"]\n- value: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nHmm, for item 2 I reference the FTE note but the quote is from a different chunk. Let me keep it clean. I'll just note the \"(actual)\" label.\n\nActually I could also add a third item about the FTE contrast being a different quantity, but that's not needed.\n\nLet me finalize. I'll make the reason explain.\n\nActually, let me reconsider item 2. Is \"actual\" really a definitional statement, or just a label? I think it's borderline but defensible as a \"how it reports\" fact. The sub-question explicitly asks \"define and report.\"\n\nI'll include both.\n\nLet me write the submission.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "The firm states that Edward Jones has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones, with Edward Jones making payments to those service partners for the services provided.",
+            "quote": "has a written agreement with The Jones Financial Companies, L.L.L.P. (\u201cJFC\u201d) for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "financial advisors who are service partners of JFC and not employees of Edward Jones",
+            "chunk_ids": [
+              "EDJ-10K-2025#334"
+            ]
+          },
+          {
+            "text": "The firm reports its advisor headcount under the label \"Financial advisors (actual),\" distinguishing it as an actual headcount basis (as opposed to other metrics footnoted as \"Counted on a full-time equivalent basis\").",
+            "quote": "Financial advisors (actual):",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages give partial definitional information (advisors are JFC service partners, not employees, and headcount is reported on an actual rather than FTE basis), but no comprehensive include/exclude list.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

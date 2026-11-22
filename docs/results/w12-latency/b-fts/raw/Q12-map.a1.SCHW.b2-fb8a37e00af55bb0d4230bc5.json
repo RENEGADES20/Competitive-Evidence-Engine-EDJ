@@ -1,0 +1,127 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.SCHW.b2",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a1.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-10Q-2025Q2#126",
+    "SCHW-PR-2026-04-16-01#48",
+    "SCHW-PR-2026-01-21-01#55",
+    "SCHW-PR-2026-10-15-01#61",
+    "SCHW-DECK-2026Q2#28",
+    "SCHW-TR-2025Q1#29",
+    "SCHW-10Q-2026Q2#186",
+    "SCHW-PR-2026-01-21-01#59",
+    "SCHW-PR-2026-01-21-01#62",
+    "SCHW-10Q-2025Q3#29",
+    "SCHW-PR-2026-04-16-01#53",
+    "SCHW-TR-2025Q2#15",
+    "SCHW-TR-2025Q4#16",
+    "SCHW-TRADE-2026-11-02-RB-01#1"
+  ],
+  "at": "2026-11-21T15:02:23.609075-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5026,
+    "output_tokens": 3210,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3490,
+    "reasoning_tokens": 2414,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.33
+  },
+  "wall_s": 19.84,
+  "tokens_per_s": 161.79,
+  "ttft_s": 1.33,
+  "reasoning_content": "Let me analyze the sub-question: \"How Schwab utilizes its scale to cheaply acquire new clients\" for SCHW.\n\nI need to find passages that describe how Schwab uses scale to cheaply acquire clients.\n\nLooking at the passages, the most relevant one is SCHW-TR-2025Q1#29 which discusses scale and efficiency, broad capabilities that \"help us efficiently attract a wide range of investors driving sustainable organic growth.\"\n\nAlso SCHW-DECK-2026Q2#28: \"to make it easier for clients to work with us while keeping costs low & reinvesting in new capabilities.\"\n\nSCHW-TR-2025Q2#15: \"investing in scale and efficiency initiatives.\"\n\nSCHW-TR-2025Q4#16: \"Traders come to Schwab because we provide the platforms, capabilities, education, coaching, and service...\" and mentions traders bringing in nine times more NNA.\n\nThese are qualitative statements about how Schwab uses scale and efficiency to attract clients.\n\nLet me identify facts. The sub-question asks \"How Schwab utilizes its scale to cheaply acquire new clients\" - this is a qualitative/how question, not a numeric figure.\n\nThe passage SCHW-TR-2025Q1#29 is the most direct: \"The broader set of capabilities... helps us efficiently attract a wide range of investors driving sustainable organic growth... our scale and efficiency is a significant competitive advantage.\"\n\nSCHW-DECK-2026Q2#28: \"to make it easier for clients to work with us while keeping costs low & reinvesting in new capabilities.\"\n\nSCHW-TR-2025Q4#16: traders - thinkorswim platform, nine times more NNA, two times ROCA. This shows scale attracting traders.\n\nThese are facts about how Schwab utilizes scale.\n\nLet me create items for these.\n\nFor fact items, text, quote, value (empty), unit (empty), period (from source), scope, definition.\n\nLet me draft:\n\nItem 1 (from SCHW-TR-2025Q1#29): Schwab's broader set of capabilities spanning wealth management, trading, banking, asset management helps efficiently attract a wide range of investors driving sustainable organic growth; scale and efficiency is a significant competitive advantage enabling key investments and flexibility.\n\nquote: \"The broader set of capabilities, which spans wealth management, trading, banking, asset management, and much more, helps us efficiently attract a wide range of investors driving sustainable organic growth... our scale and efficiency is a significant competitive advantage, enabling us to maintain key investments and flexibility to navigate various macroeconomic environments.\"\n\nItem 2 (from SCHW-DECK-2026Q2#28): Schwab keeps costs low and reinvests in new capabilities to make it easier for clients to work with them.\n\nquote: \"to make it easier for clients to work with us while keeping costs low & reinvesting in new capabilities\"\n\nItem 3 (from SCHW-TR-2025Q4#16): Traders come to Schwab for platforms, capabilities, education, coaching, service; about half of new-to-firm retail clients initiated access to thinkorswim; traders bring in nine times more NNA than retail clients and two times ROCA.\n\nquote: \"Traders come to Schwab because we provide the platforms, capabilities, education, coaching, and service they need... In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.\"\n\nItem 4 (from SCHW-TR-2025Q2#15): Investing in scale and efficiency initiatives while attracting net new assets and new clients.\n\nquote: \"We're attracting net new assets and new clients to Schwab as we deepen relationships... We're investing in scale and efficiency initiatives.\"\n\nThese are all facts (qualitative statements). The sub-question is \"how\" so qualitative statements are facts.\n\nLet me set values to \"\" and units to \"\" and periods where possible.\n\nPeriod: \n- SCHW-TR-2025Q1#29: period 2025-03-31\n- SCHW-DECK-2026Q2#28: period 2026-06-30\n- SCHW-TR-2025Q4#16: period 2025-12-31\n- SCHW-TR-2025Q2#15: period 2025-06-30\n\nFor item 3, the \"nine times more NNA\" is a figure. value \"9\", unit \"times NNA vs retail clients\"? Actually it's a ratio. I could include it as value \"9x\" but let me keep it in text. Actually I can add a separate item for the NNA multiple.\n\nLet me be careful. The question is \"How Schwab utilizes its scale to cheaply acquire new clients.\" So relevant facts are about scale enabling efficient/low-cost client acquisition.\n\nItem with \"nine times more NNA than retail clients and two times ROCA\" shows traders are more valuable. This is relevant to scale attracting clients.\n\nI'll include these as facts.\n\nLet me write the text and quotes accurately.\n\nFor the definition field, empty since these aren't definitions of a metric.\n\nNow let me also consider whether any item is a \"different_quantity\" - probably not, since the question is qualitative \"how\".\n\nLet me finalize.\n\nActually, I should think about what the \"value\" and \"unit\" should be. For the \"nine times more NNA\" I could make it a separate item:\n\nItem: \"Traders bring in nine times more NNA than retail clients and two times the ROCA.\" value \"9x\", unit \"NNA multiple vs retail clients\", period \"2025\". Hmm, but the quote says \"Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.\" This is a fact.\n\nI'll include it as a fact with value \"9x\" and unit \"times NNA vs retail clients\".\n\nActually, to keep it simple and accurate, I'll include the value \"9x\" for NNA. But there are two figures (9x NNA, 2x ROCA). I'll make one item for the 9x NNA.\n\nLet me keep the thinkorswim \"about half\" as a fact too with value \"50%\" or \"about half\". I'll say value \"about half\", unit \"of new-to-firm retail clients\".\n\nLet me structure items clearly.\n\nI'll produce items:\n\n1. Broader capabilities + scale/efficiency (2025Q1)\n2. Keeping costs low & reinvesting (deck 2026Q2)\n3. Investing in scale and efficiency initiatives (2025Q2)\n4. Traders - platforms/capabilities, thinkorswim ~half of new-to-firm retail clients (2025Q4)\n5. Traders bring 9x more NNA and 2x ROCA (2025Q4)\n\nThat's a good set of facts.\n\nLet me write reason: \"The passages describe in qualitative terms how Schwab's scale, broad capabilities, and efficiency enable low-cost client acquisition.\"\n\nNow for the label: fact.\n\nLet me write each item carefully.\n\nFor period field, use the period from source. The deck is period 2026-06-30, transcript 2025-03-31, etc.\n\nActually for qualitative statements, period is less meaningful but I'll fill with the source period where applicable. For \"about half of new-to-firm retail clients in 2025\", period \"2025\".\n\nLet me write.\n\nItem 1:\ntext: \"Schwab states that its broader set of capabilities spanning wealth management, trading, banking, and asset management helps it efficiently attract a wide range of investors, driving sustainable organic growth, and that its scale and efficiency is a significant competitive advantage.\"\nquote: \"The broader set of capabilities, which spans wealth management, trading, banking, asset management, and much more, helps us efficiently attract a wide range of investors driving sustainable organic growth and allows us to deepen relationships with our clients... our scale and efficiency is a significant competitive advantage, enabling us to maintain key investments and flexibility to navigate various macroeconomic environments.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"2025-03-31\" (transcript date? or period 2025-03-31)\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q1#29\"]\n\nActually period should be period of the statement; the transcript is for Q1 2025. I'll put \"2025-03-31\".\n\nItem 2:\ntext: \"Schwab keeps costs low and reinvests in new capabilities to make it easier for clients to work with it.\"\nquote: \"to make it easier for clients to work with us while keeping costs low & reinvesting in new capabilities\"\nvalue: \"\", unit: \"\", period: \"2026-06-30\", scope: \"\", definition: \"\"\nchunk_ids: [\"SCHW-DECK-2026Q2#28\"]\n\nItem 3:\ntext: \"Schwab is attracting net new assets and new clients while investing in scale and efficiency initiatives.\"\nquote: \"We're attracting net new assets and new clients to Schwab as we deepen relationships to serve even more of their wealth and financial needs. We're investing in scale and efficiency initiatives\"\nvalue: \"\", unit: \"\", period: \"2025-06-30\", scope: \"\", definition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#15\"]\n\nItem 4:\ntext: \"Traders come to Schwab for its platforms, capabilities, education, coaching, and service, and in 2025 about half of new-to-firm retail clients initiated access to Schwab's thinkorswim platform.\"\nquote: \"Traders come to Schwab because we provide the platforms, capabilities, education, coaching, and service they need... In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.\"\nvalue: \"about half\", unit: \"of new-to-firm retail clients\", period: \"2025\", scope: \"\", definition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#16\"]\n\nItem 5:\ntext: \"Traders are highly engaged, bringing in nine times more net new assets (NNA) than retail clients and two times the ROCA.\"\nquote: \"Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.\"\nvalue: \"9\", unit: \"times NNA vs retail clients\", period: \"2025\", scope: \"\", definition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#16\"]\n\nHmm, \"9\" vs \"nine\". I'll use \"9x\" or \"nine times\". I'll use value \"9x\". Actually the instruction says value as printed \"20,425\", \"$1.2 billion\". So for \"nine times\" I'll put \"9x\"? Or \"nine times\"? I'll put \"9\" with unit \"times more NNA than retail clients\".\n\nActually, to be safe, I'll combine 4 and 5 or keep separate. Keep separate is fine.\n\nNow the derivation: empty operation \"\" and inputs [].\n\nLet me write the reason concisely.\n\nreason: \"The passages provide the firm's own qualitative explanations of how its scale, broad capabilities, and efficiency enable low-cost client attraction and acquisition.\"\n\ndiffers_because: \"\" (only for different_quantity).\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab states that its broader set of capabilities spanning wealth management, trading, banking, and asset management helps it efficiently attract a wide range of investors, driving sustainable organic growth, and that its scale and efficiency is a significant competitive advantage enabling it to maintain key investments.",
+            "quote": "The broader set of capabilities, which spans wealth management, trading, banking, asset management, and much more, helps us efficiently attract a wide range of investors driving sustainable organic growth and allows us to deepen relationships with our clients as their needs change over time... our scale and efficiency is a significant competitive advantage, enabling us to maintain key investments and flexibility to navigate various macroeconomic environments.",
+            "value": "",
+            "unit": "",
+            "period": "2025-03-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q1#29"
+            ]
+          },
+          {
+            "text": "Schwab keeps costs low and reinvests in new capabilities to make it easier for clients to work with the firm.",
+            "quote": "to make it easier for clients to work with us while keeping costs low & reinvesting in new capabilities",
+            "value": "",
+            "unit": "",
+            "period": "2026-06-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026Q2#28"
+            ]
+          },
+          {
+            "text": "Schwab is attracting net new assets and new clients while investing in scale and efficiency initiatives.",
+            "quote": "We're attracting net new assets and new clients to Schwab as we deepen relationships to serve even more of their wealth and financial needs. We're investing in scale and efficiency initiatives",
+            "value": "",
+            "unit": "",
+            "period": "2025-06-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#15"
+            ]
+          },
+          {
+            "text": "Traders come to Schwab for its platforms, capabilities, education, coaching, and service, and in 2025 about half of new-to-firm retail clients initiated access to Schwab's thinkorswim platform.",
+            "quote": "Traders come to Schwab because we provide the platforms, capabilities, education, coaching, and service they need... In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.",
+            "value": "about half",
+            "unit": "of new-to-firm retail clients",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#16"
+            ]
+          },
+          {
+            "text": "Traders are highly engaged, bringing in nine times more net new assets (NNA) than retail clients and two times the ROCA.",
+            "quote": "Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.",
+            "value": "9",
+            "unit": "times more NNA than retail clients",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#16"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain the firm's own qualitative explanations of how Schwab's scale, broad capabilities, and efficiency enable low-cost client attraction and acquisition, including specific figures on thinkorswim adoption and trader engagement.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

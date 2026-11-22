@@ -1,0 +1,162 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#32",
+    "EDJ-10K-2025#210",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2026Q2#40",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#20",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#129",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#2"
+  ],
+  "at": "2026-11-21T20:43:25.166730-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12717,
+    "output_tokens": 4755,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 11181,
+    "reasoning_tokens": 3808,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.34
+  },
+  "wall_s": 42.06,
+  "tokens_per_s": 113.05,
+  "ttft_s": 2.34,
+  "reasoning_content": "The sub-question a4.EDJ asks about whether the client assets per advisor figures across the five firms can be validly compared side by side, given differences in definitions, advisor counts, and client asset measures.\n\nI need to extract evidence about EDJ's definitions, advisor counts, and client asset measures that are relevant to whether comparison is valid.\n\nLet me identify relevant facts from the passages:\n- Client assets under care (\"AUC\") definition and total\n- Financial advisors count (actual) vs full-time equivalent basis\n- Client assets measures: client assets under care vs assets on which the Partnership earns asset-based fee revenue\n- Advisor counts: \"financial advisors (actual)\" - suggesting there's also a non-actual (FTE) measure\n- Home office associates counted on full-time equivalent basis\n\nThe question is about whether comparison is valid. Key relevant facts:\n1. EDJ reports \"client assets under care\" (AUC) - $2.4 trillion, more than 20,000 financial advisors serving 9 million clients\n2. Financial advisors reported on \"actual\" basis vs FTE basis (chunk EDJ-10Q-2026Q2#75 shows \"Counted on a full-time equivalent basis\" for home office associates, not advisors)\n3. AUC definition - total client assets under care includes advisory programs and other\n4. Assets on which Partnership earns asset-based fee revenue - a narrower measure (advisory programs + mutual fund assets outside advisory programs)\n5. Advisor count: financial advisors (actual) at year end and average\n\nThe question is really about comparability. Let me extract the facts that bear on this:\n\n- Client assets under care is the measure EDJ reports ($2.4 trillion total)\n- Financial advisors (actual) count: 20,425 at year end 2025, 20,550 at Q1 2026\n- Financial advisors counted on actual basis (vs FTE)\n- There's also \"assets on which the Partnership earns asset-based fee revenue\" which is a narrower measure (advisory programs + mutual fund assets)\n- \"Counted on a full-time equivalent basis\" applies to home office associates (not financial advisors)\n\nThe sub-question is [comparison], asking whether comparison is valid. I should extract facts that describe the definitions/counts/measures relevant to the comparison.\n\nLet me identify the relevant facts:\n\n1. EDJ reports \"client assets under care\" (AUC): $2.4 trillion as of Sept 26, 2025; more than 20,000 financial advisors serving more than 9 million clients. (chunk EDJ-10Q-2025Q3#60)\n\n2. Financial advisors (actual) at year end 2025: 20,425; average 20,331. (chunk EDJ-10K-2025#130)\n\n3. Financial advisors at period end Q1 2026: 20,550 (actual). (chunk EDJ-10Q-2026Q1#52, #51)\n\n4. Client assets under care total at year end 2025: $2,481 billion; average $2,311 billion. Advisory programs $1,080 billion at year end. (chunk EDJ-10K-2025#129)\n\n5. Assets on which the Partnership earns asset-based fee revenue - narrower measure, advisory programs + mutual fund assets held outside advisory programs. (chunk EDJ-10Q-2025Q3#78)\n\n6. \"Counted on a full-time equivalent basis\" - for home office associates (chunk EDJ-10Q-2026Q2#75). This is actually about home office associates, showing the firm uses FTE for some counts but \"actual\" for financial advisors.\n\n7. Financial advisor attrition definition. (chunk EDJ-10Q-2025Q2#66)\n\n8. Net new assets definition - excludes mutual fund capital gain distributions. (chunk EDJ-10Q-2025Q2#66)\n\nThe key point for the comparison question: EDJ reports \"client assets under care\" (AUC) which is a specific measure, and reports financial advisors on an \"actual\" basis (not FTE). Also it has a narrower \"assets on which the Partnership earns asset-based fee revenue\" measure.\n\nLet me focus on what's most relevant to comparability:\n- The AUC measure and its scope (total client assets under care)\n- The advisor count basis (actual vs FTE)\n- The existence of a different asset measure (asset-based fee revenue assets)\n\nLet me create items.\n\nFor the comparison sub-question, I think the relevant facts are about how EDJ defines/reports client assets and advisor counts, which bear on comparability.\n\nItem 1: Client assets under care (AUC) - EDJ reports \"$2.4 trillion in client assets under care\" as of September 26, 2025, with \"more than 20,000 financial advisors serve more than 9 million clients.\"\n\nItem 2: Financial advisors (actual) - reported on actual basis, 20,425 at year end 2025, 20,331 average.\n\nItem 3: Financial advisors at Q1 2026 period end 20,550 (actual).\n\nItem 4: Client assets under care total at year end 2025 $2,481 billion, advisory programs $1,080 billion.\n\nItem 5: Assets on which Partnership earns asset-based fee revenue (narrower measure): advisory programs $982.3 billion and mutual fund assets held outside advisory programs $704.5 billion (Q3 2025).\n\nItem 6: \"Counted on a full-time equivalent basis\" for home office associates - showing a distinction in count basis.\n\nLet me think about the definition field. The firm gives a definition of net new assets, attrition, client dollars invested. But for AUC, does it give a definition? The passages say \"assets under care (AUC)\" but I don't see an explicit definition of what AUC includes.\n\nActually, let me note the distinction: \"assets on which the Partnership earns asset-based fee revenue\" is a footnote definition, narrower than AUC.\n\nFor the comparison question, the most relevant facts:\n- EDJ uses \"client assets under care\" (AUC) as its asset measure\n- EDJ reports \"financial advisors (actual)\" - actual headcount, not FTE\n- EDJ also has \"assets on which the Partnership earns asset-based fee revenue\" narrower measure\n\nLet me write these up.\n\nActually, I think I should be careful about what the comparison sub-question is asking. It's asking about whether the comparison across five firms is valid. So the facts I extract should be about EDJ's definitions, advisor counts, and client asset measures that are relevant to that comparison.\n\nLet me produce the cells with items that are facts about EDJ's reporting.\n\nI'll structure:\n\nItems:\n1. EDJ's client asset measure: \"client assets under care\" (AUC) - $2.4 trillion total as of Sept 26, 2025. Fact.\n2. Financial advisors reported on \"actual\" basis (distinguished from FTE) - 20,425 year end 2025.\n3. Financial advisors average 20,331 for 2025.\n4. Client assets under care year end 2025: $2,481 billion total, $1,080 advisory programs.\n5. Assets on which Partnership earns asset-based fee revenue (narrower): advisory programs + mutual funds outside advisory programs.\n6. Home office associates counted on FTE basis (contrast to advisors on actual basis).\n\nLet me write the items carefully with quotes.\n\nActually, let me reconsider. The \"definition\" field should capture firm's own definition. For AUC, is there a definition? I don't see one explicitly. For \"financial advisors (actual)\", the parenthetical \"actual\" itself indicates a distinction.\n\nLet me be efficient and produce relevant items.\n\nFor item on FTE: chunk EDJ-10Q-2026Q2#75 footnote \"(1) Counted on a full-time equivalent basis.\" This refers to home office associates (the 8,808/8,887 numbers). So this shows the firm counts home office associates on FTE basis, while financial advisors are \"actual\". This is relevant to comparability of advisor counts.\n\nActually wait, let me look at the context of chunk EDJ-10Q-2026Q2#75. It shows numbers 9,455, 8,808, 8,887, 8,938, 9,419 with footnote \"Counted on a full-time equivalent basis.\" These appear to be home office associates or similar. Actually the passage mentions \"financial advisor compensation and benefits expense\" but the FTE footnote is about headcount. This is likely home office associates.\n\nThis is relevant: EDJ counts some associates on FTE basis while financial advisors are \"actual\". This affects comparability.\n\nLet me finalize. I'll label this as fact for the comparison question since it's directly about how EDJ counts advisors vs other staff, which bears on comparability.\n\nActually, I need to think about what label to use overall. The sub-question asks \"Whether the client assets per advisor figures across the five firms can be validly compared side by side.\" This is essentially asking me to extract facts about EDJ's definitions/counts/measures that would inform the comparison.\n\nThe facts I can extract:\n1. AUC measure and total\n2. Financial advisor count (actual basis)\n3. Narrower asset measure (asset-based fee revenue assets)\n4. FTE basis for some counts\n\nThese are all facts about EDJ's reporting. I'll label the cell as \"fact\" with multiple items.\n\nLet me write it up.\n\nItem 1: Client assets under care\n- text: Edward Jones reports \"client assets under care\" (AUC) as its client asset measure, totaling $2.4 trillion as of September 26, 2025, served by more than 20,000 financial advisors for more than 9 million clients.\n- quote: \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of September 26, 2025.\"\n- value: \"$2.4 trillion\"\n- unit: \"client assets under care\"\n- period: \"2025-09-26\"\n- scope: \"\" (whole firm, North America)\n- definition: \"client assets under care\"\n- chunk_ids: [\"EDJ-10Q-2025Q3#60\"]\n\nItem 2: Financial advisors actual count year end 2025\n- quote: \"Financial advisors (actual): At year end 20,425 ... Average 20,331\"\n- value: \"20,425\"\n- unit: \"financial advisors\"\n- period: \"2025-12-31\"\n- chunk: EDJ-10K-2025#130\n\nItem 3: average financial advisors 2025\n- value \"20,331\", period \"2025\"\n- chunk EDJ-10K-2025#130\n\nItem 4: client assets under care year end 2025 $2,481 billion, advisory programs $1,080 billion\n- chunk EDJ-10K-2025#129\n\nItem 5: assets on which Partnership earns asset-based fee revenue (narrower measure)\n- quote from chunk EDJ-10Q-2025Q3#78: \"(1) Assets on which the Partnership earns asset-based fee revenue.\"\n- This is a different measure than AUC. Actually this is a fact about how EDJ reports a narrower asset measure.\n\nItem 6: FTE basis footnote\n- quote \"(1) Counted on a full-time equivalent basis.\"\n- This shows the distinction.\n\nActually, let me reconsider whether these belong as \"fact\" or should I note the comparison relevance. The sub-question is labeled [comparison], and the instructions say \"Whether the client assets per advisor figures across the five firms can be validly compared side by side, given differences in definitions, advisor counts, and client asset measures.\"\n\nSo I'm extracting EDJ's facts relevant to: definitions, advisor counts, client asset measures. These are all \"fact\" items about EDJ's reporting.\n\nLet me also capture the definition of AUC if available. I don't see an explicit definition of what \"assets under care\" includes. But there's a note that \"client assets under care\" total includes advisory programs ($1.1 trillion) plus other.\n\nActually, the footnote in chunk EDJ-10Q-2025Q3#78 gives a definition: \"Assets on which the Partnership earns asset-based fee revenue.\" This is the definition of the narrower measure, not AUC.\n\nLet me finalize with these items.\n\nFor the definition field, I'll put relevant definitions where given.\n\nLet me also consider the net new assets definition which excludes mutual fund capital gain distributions - this shows EDJ's asset flow measure differs. But this is more about flows than assets.\n\nI think the key facts are:\n1. AUC measure ($2.4T, $2,481B)\n2. Financial advisors \"actual\" count (20,425)\n3. Narrower \"assets on which Partnership earns asset-based fee revenue\" measure\n4. FTE basis for some headcounts\n\nLet me write up the final submission.\n\nI'll make the label \"fact\" since these are facts about EDJ's reporting relevant to comparability.\n\nFor differs_because, since it's fact, leave \"\".\n\nFor derivation, operation \"\" inputs [].\n\nLet me write out each item with all required fields.\n\nActually, I realize I should be thorough but also consider whether some items are \"different_quantity\". The question is about \"client assets per advisor\" comparison. EDJ reports \"client assets under care\" and \"financial advisors (actual)\". Both of these are directly the numerator and denominator for the comparison. So these are facts (the asked quantities for the comparison are: definitions, advisor counts, client asset measures).\n\nThe sub-question text explicitly asks about \"differences in definitions, advisor counts, and client asset measures.\" So the relevant quantities are:\n- definitions\n- advisor counts\n- client asset measures\n\nAll facts about EDJ's advisor counts and client asset measures are facts for this sub-question.\n\nLet me finalize.\n\nI'll include these items:\n\n1. AUC $2.4 trillion as of 2025-09-26, >20,000 advisors, >9M clients (chunk EDJ-10Q-2025Q3#60)\n2. AUC total year end 2025 $2,481B, advisory programs $1,080B (chunk EDJ-10K-2025#129)\n3. Financial advisors (actual) year end 2025 20,425, average 20,331 (chunk EDJ-10K-2025#130)\n4. Financial advisors (actual) period end Q1 2026 20,550 (chunk EDJ-10Q-2026Q1#52)\n5. Assets on which Partnership earns asset-based fee revenue (narrower measure), advisory programs $982.3B and mutual funds outside advisory $704.5B (chunk EDJ-10Q-2025Q3#78)\n6. FTE basis footnote for headcount (chunk EDJ-10Q-2026Q2#75)\n\nLet me write these up.\n\nFor item 5, the footnote defines the narrower measure. This is relevant because EDJ reports both \"client assets under care\" and \"assets on which it earns asset-based fee revenue\" - two different asset measures, relevant to comparability.\n\nLet me write the definition for item 5: \"Assets on which the Partnership earns asset-based fee revenue.\"\n\nFor item 6, the definition: \"Counted on a full-time equivalent basis.\"\n\nNow writing everything.\n\nActually for item 6, I need to be careful about what these numbers are. The chunk shows \"9,455 -7% 8,808 9,455\" and \"Average 8,887 9,429 8,938 9,419\" with footnote \"(1) Counted on a full-time equivalent basis.\" These are likely home office associates or total associates. The context after discusses \"financial advisor compensation and benefits expense\" and \"Variable compensation... paid to associates.\" \n\nThe passage from chunk EDJ-10Q-2025Q3#60 also mentions \"approximately 55,000 associates\". So these FTE numbers (around 8,900) are likely home office associates (not including financial advisors).\n\nThis is relevant to the comparison: EDJ counts financial advisors on \"actual\" basis but home office associates on FTE basis. This shows the distinction between actual and FTE counts.\n\nI'll include it as a fact showing the FTE distinction.\n\nLet me write the item text carefully:\n- text: \"The Partnership counts home office associates on a full-time equivalent basis, distinct from financial advisors, which are reported on an 'actual' basis.\"\n\nActually, I need to be careful not to over-interpret. The footnote just says \"(1) Counted on a full-time equivalent basis.\" I don't know exactly what these numbers are (home office associates). Let me just state what the passage says.\n\nThe chunk shows a footnote for some headcount metric \"Counted on a full-time equivalent basis.\" Given the surrounding context (financial advisor compensation, variable compensation to associates), these are likely associate/home office counts.\n\nI'll state it as: \"Some headcount figures are counted on a full-time equivalent basis, per a footnote, while financial advisors are reported on an 'actual' basis.\"\n\nActually, I should be more precise. Let me just extract the fact that there's a footnote saying \"Counted on a full-time equivalent basis\" for certain headcounts, contrasting with \"financial advisors (actual)\".\n\nLet me write it concisely.\n\nI'll finalize now.\n\nFor the reason field: \"These passages state EDJ's client asset measures (AUC and asset-based fee revenue assets) and advisor counts (actual basis), which are the definitions and counts relevant to whether cross-firm comparison is valid.\"\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports 'client assets under care' (AUC) as its client asset measure, totaling $2.4 trillion as of September 26, 2025, served by more than 20,000 financial advisors for more than 9 million clients.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of September 26, 2025.",
+            "value": "$2.4 trillion",
+            "unit": "client assets under care",
+            "period": "2025-09-26",
+            "scope": "North America (U.S. and Canada)",
+            "definition": "client assets under care",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports total client assets under care of $2,481 billion at year end 2025, of which $1,080 billion was advisory programs AUC.",
+            "quote": "Client assets under care ($ billions): Total: At year end $ 2,481 ... Advisory programs: At year end $ 1,080",
+            "value": "$2,481 billion",
+            "unit": "client assets under care",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "client assets under care",
+            "chunk_ids": [
+              "EDJ-10K-2025#129"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors on an 'actual' basis (distinct from a full-time equivalent basis): 20,425 at year end 2025 and 20,331 average for 2025.",
+            "quote": "Financial advisors (actual): At year end 20,425 ... Average 20,331",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors on an 'actual' basis of 20,550 at period end for the first quarter of 2026.",
+            "quote": "The Partnership ended the first quarter with 20,550 financial advisors.",
+            "value": "20,550",
+            "unit": "financial advisors",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#52"
+            ]
+          },
+          {
+            "text": "Edward Jones also reports a narrower client asset measure, 'assets on which the Partnership earns asset-based fee revenue', which as of the third quarter of 2025 comprised advisory programs ($982.3 billion) and mutual fund assets held outside advisory programs ($704.5 billion).",
+            "quote": "Assets on which the Partnership earns asset-based fee revenue.",
+            "value": "$982.3 billion",
+            "unit": "client asset values (assets earning asset-based fee revenue)",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "Assets on which the Partnership earns asset-based fee revenue",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#78"
+            ]
+          },
+          {
+            "text": "Edward Jones uses a full-time equivalent basis for some headcount figures (per a footnote), distinct from the 'actual' basis used for financial advisors.",
+            "quote": "Counted on a full-time equivalent basis.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Counted on a full-time equivalent basis",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#75"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "These passages state Edward Jones's client asset measures (client assets under care and the narrower asset-based-fee-revenue asset measure) and its financial advisor counts on an 'actual' versus full-time-equivalent basis, which are the definitions, advisor counts and asset measures relevant to whether cross-firm client-assets-per-advisor comparisons are valid.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

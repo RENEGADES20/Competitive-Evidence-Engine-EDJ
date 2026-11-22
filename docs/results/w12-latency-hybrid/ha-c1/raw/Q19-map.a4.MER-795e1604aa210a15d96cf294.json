@@ -1,0 +1,96 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T20:26:26.793042-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3656,
+    "output_tokens": 1835,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2120,
+    "reasoning_tokens": 1270,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.67
+  },
+  "wall_s": 19.27,
+  "tokens_per_s": 95.23,
+  "ttft_s": 1.67,
+  "reasoning_content": "Let me analyze the sub-question: \"What growth in younger investors and clients under 40 do firms report?\" for Merrill (MER).\n\nI need to look at the passages. None of them report growth in younger investors or clients under 40. The passages mention \"advisors under 40\" (Financial Planning's Top 40 Brokers Under 40, Top 40 Advisors Under 40) - but these are about advisors, not clients/investors under 40. Also Forbes \"Top Next-Gen Wealth Advisors\" (advisors born 1986 or later).\n\nSo the passages talk about advisors under 40, not younger investors or clients under 40. This is a different quantity (advisors vs clients/investors).\n\nLet me determine the label. The sub-question asks for growth in younger investors and clients under 40. The passages mention advisors under 40 (a different quantity - the firm's own advisors, not clients). So this is different_quantity.\n\nActually, let me think. The recognition lists are about advisors, not clients. \"24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\" - this is about advisors under 40, not growth in younger investors/clients.\n\nSo the label should be different_quantity, with differs_because explaining it's about advisors under 40, not clients/investors under 40.\n\nLet me identify the relevant items. There are several passages mentioning advisors under 40:\n- MER-PR-web-becoming-a-merrill-lynch-advisor#3: Forbes 2025 \"Top Next-Gen Wealth Advisors Best-in-State\" - advisors born 1986 or later\n- BAC-PR-2026-10-14-01#11: 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\n- BAC-PR-2026-07-14-01#10: 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\n- BAC-PR-2026-04-15-01#10: 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\n- BAC-PR-2026-01-14-01#12: No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\n\nThese are all about advisors, not clients. So they are different_quantity.\n\nI should create items for these. Let me focus on the most relevant figures. Actually, these are recognition rankings, not growth figures. The question asks about \"growth in younger investors and clients under 40.\"\n\nNone of these report growth in younger investors or clients. The only related items are about advisors under 40.\n\nI'll label this different_quantity with items for the advisor-related figures.\n\nLet me create items:\n\n1. 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40 (appears in three quarters)\n2. No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\n3. Forbes 2025 \"Top Next-Gen Wealth Advisors Best-in-State\" - advisors born 1986 or later\n\nActually, the Forbes one is about the recognition methodology, not a specific figure for Merrill. It describes the criteria. But it's still relevant as different_quantity about advisors.\n\nLet me be careful about what to include. The key different quantity is \"advisors under 40\" vs \"clients under 40.\"\n\nI'll include the items that show advisor-under-40 counts/recognitions.\n\nFor the \"24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\" - value \"24\", unit \"advisors\", appears repeatedly.\n\nFor \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - value \"No. 1\", unit ranking.\n\nLet me set these up.\n\ndiffers_because: \"Passages report Merrill advisors under 40 (recognitions/rankings), not growth in younger investors or clients under 40.\"\n\nI'll include a few items. Let me write them.\n\nItem 1: 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\n- text: Merrill states that 24 Merrill advisors were on Financial Planning's 2026 Top 40 Brokers Under 40.\n- quote: \"24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\"\n- value: \"24\"\n- unit: \"advisors\"\n- period: \"2026\" (the list year)\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: BAC-PR-2026-10-14-01#11\n\nItem 2: No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\n- quote: \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\"\n- value: \"No. 1\"\n- unit: \"ranking\"\n- period: \"2025\"\n- chunk_ids: BAC-PR-2026-01-14-01#12\n\nItem 3: Forbes 2025 Top Next-Gen Wealth Advisors Best-in-State - advisors born 1986 or later\n- quote: \"2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list... considered advisors born in 1986 or later\"\n- Actually this is the methodology description. The Merrill page describes this list. It's about advisors born 1986 or later.\n\nActually, I think I should keep it focused. The main relevant different quantity is advisors under 40.\n\nLet me finalize with 2-3 items.\n\nI'll write reason: \"No passage reports growth in younger investors or clients under 40; the only related figures concern Merrill financial advisors under 40, a different quantity.\"\n\ndiffers_because: \"Figures concern Merrill financial advisors under 40 (recognition lists), not growth in younger investors or clients under 40.\"\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Merrill states that 24 of its advisors were on Financial Planning's 2026 Top 40 Brokers Under 40 list.",
+            "quote": "24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40",
+            "value": "24",
+            "unit": "advisors",
+            "period": "2026",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-10-14-01#11",
+              "BAC-PR-2026-07-14-01#10",
+              "BAC-PR-2026-04-15-01#10"
+            ]
+          },
+          {
+            "text": "Merrill states it was No. 1 on Financial Planning's Top 40 Advisors Under 40 List for 2025.",
+            "quote": "No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "No. 1",
+            "unit": "ranking",
+            "period": "2025",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          },
+          {
+            "text": "The firm's page describes the 2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list as considering advisors born in 1986 or later.",
+            "quote": "2025 Forbes \"Top Next-Gen Wealth Advisors Best-in-State\" list. Opinions provided by SHOOK\u00ae Research, LLC considered advisors born in 1986 or later with a minimum 4 years as an advisor.",
+            "value": "",
+            "unit": "advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "advisors born in 1986 or later with a minimum 4 years as an advisor",
+            "chunk_ids": [
+              "MER-PR-web-becoming-a-merrill-lynch-advisor#3"
+            ]
+          }
+        ],
+        "differs_because": "Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40.",
+        "reason": "No passage reports growth in younger investors or clients under 40; the only related figures concern Merrill's own financial advisors under 40, a different quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

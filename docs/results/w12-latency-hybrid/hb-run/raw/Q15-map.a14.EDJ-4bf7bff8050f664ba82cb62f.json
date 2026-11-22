@@ -1,0 +1,259 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a14.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a14.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10K-2025#141",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2025Q2#70",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2026Q2#83",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2025Q3#86",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10Q-2025Q2#78",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-10K-2025#149",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2026Q2#84",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2025Q2#90",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10K-2025#204",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10K-2025#129",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-10K-2025#333"
+  ],
+  "at": "2026-11-21T21:58:56.862144-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15481,
+    "output_tokens": 4219,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 14329,
+    "reasoning_tokens": 2645,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.3
+  },
+  "wall_s": 45.25,
+  "tokens_per_s": 93.24,
+  "ttft_s": 3.3,
+  "reasoning_content": "The sub-question asks for \"Advisor-led firms' cost of advisor compensation and support\" for Edward Jones. This is about advisor compensation and support costs.\n\nLet me identify the relevant figures. The passages clearly discuss:\n- Financial advisor compensation and benefits expense\n- Home office and branch compensation and benefits expense\n- Variable compensation\n\nThese are all facts relevant to \"cost of advisor compensation and support.\"\n\nLet me extract the key figures. The sub-question is about advisor compensation and support cost. The most direct figures are \"Financial advisor compensation and benefits expense\" and related \"Home office and branch compensation and benefits expense.\"\n\nLet me collect the figures:\n\nFinancial advisor compensation and benefits expense:\n- 2025: $6,969 (chunk EDJ-10K-2025#144, #141)\n- 2024: $6,208, 2023: $5,218 (chunk #141)\n- Note chunk #149 says $6,778 (but that seems to be a different segment - Canada? Actually #149 says \"Financial advisor compensation and benefits increased 12% to $6,778\" - this differs from $6,969. Let me check. #141 shows $6,969 for 2025. #149 shows $6,778. These are different scopes. #149 mentions \"home office operating expense increased 11% to $3,360\" - this is a segment (probably Canada or US segment vs total). Actually #149 seems to be a segment-level discussion.\n\nActually looking more carefully, chunk #144 and #141 are consolidated (total) figures, while #149 uses different figures ($6,778 vs $6,969, $3,360 home office operating vs $2,726 home office and branch). This might be a segment (Canada vs US).\n\nLet me note the main figures for the consolidated firm:\n\nFinancial advisor compensation and benefits:\n- 2025: $6,969 (full year)\n- 2024: $6,208\n- 2023: $5,218\n- Q1 2026: $1,875 (#60, #62)\n- Q2 2026: $2,001 (#75), but #83 says $1,946 (Canada segment)\n- First half 2026: $3,876 (#75), but #83 says $3,767 (Canada segment)\n\nHome office and branch compensation and benefits:\n- 2025: $2,726 (#141)\n- 2024: $2,461\n- 2023: $2,334\n\nVariable compensation:\n- 2025: $2,710 (#141, #144)\n- 2024: $2,436\n- 2023: $1,838\n\nTotal compensation and benefits:\n- 2025: $12,405 (#141)\n- 2024: $11,105\n- 2023: $9,390\n\nThis is a lot. I need to decide how to structure items. The sub-question asks for \"cost of advisor compensation and support.\" This includes financial advisor compensation and benefits, plus support (home office and branch, variable compensation).\n\nI think I should capture the key facts. Let me create items for each period of the main figures.\n\nLet me be careful about which figures are consolidated vs segment. The chunk #141 clearly shows the full year 2025/2024/2023 table for operating expenses, and these appear to be the consolidated totals.\n\nChunk #144 also shows 2025 figures consistent with #141 ($6,969 financial advisor, $2,710 variable).\n\nChunk #149 shows different figures ($6,778, $3,360) which appear to be a different segment - actually #149 might be the US segment only, or something. Actually, wait - looking at #149, it discusses \"Net revenue increased 11% to $17,224\" and \"Operating expenses increased 11% to $15,176\". But #132 says \"Operating expenses increased 11% to $15,610\". These differ. #129 says operating expenses $15,610, net revenue $17,700. #149 says $17,224 and $15,176.\n\nHmm, there seem to be multiple presentations. #149 might be a \"Canada\" segment (segment information section). Actually, the note \"Canada\" appears in #83 after discussing figures. Let me look - #83 ends with \"Canada\" heading, suggesting the preceding figures were the Canada segment.\n\nActually, the discrepancy: #149 mentions \"home office operating expense\" (not \"home office and branch\"). This is a different breakdown, likely for a segment.\n\nThis is getting complicated. For the purposes of this extraction, I'll focus on the consolidated firm figures which are clearly the main ones.\n\nLet me focus on the key items:\n\n1. Financial advisor compensation and benefits expense (consolidated):\n- 2025: $6,969 (million)\n- 2024: $6,208\n- 2023: $5,218\n- Q1 2026: $1,875\n- Q2 2026: $2,001 (note #83 gives $1,946 for Canada)\n- First half 2026: $3,876 (note #83 gives $3,767 Canada)\n- Q1 2025: $1,653 (from #60 table)\n- Q2 2025: $1,692 (#78)\n- First half 2025: $3,345 (#78)\n- Q3 2025: not given directly for financial advisor? #88 gives home office and branch. #75 gives Q2 2026.\n\n2. Home office and branch compensation and benefits:\n- 2025: $2,726\n- 2024: $2,461\n- 2023: $2,334\n- Q3 2025: $668, first nine months 2025: $2,021 (#88)\n- Q2 2025: $727, first half 2025: $1,353 (#78, #81)\n\n3. Variable compensation:\n- 2025: $2,710\n- 2024: $2,436\n- 2023: $1,838\n- Q1 2026: $748 (#62)\n- Q2 2026: $780 (#75)\n- First half 2026: $1,528 (#75)\n- Q3 2025: $790, first nine months: $1,989 (#88)\n\n4. Total compensation and benefits:\n- 2025: $12,405\n- 2024: $11,105\n- 2023: $9,390\n\nThis is a lot of items. I should be comprehensive but reasonable. The question is about \"cost of advisor compensation and support.\" The key metric is financial advisor compensation and benefits (advisor compensation), and support would be home office and branch compensation, and variable compensation.\n\nI'll create items for the main figures. Let me be systematic and capture the most important ones, especially the full-year consolidated figures which are most comparable.\n\nActually, let me think about what's most useful. I'll provide items for:\n\nFinancial advisor compensation and benefits:\n- 2025: $6,969\n- 2024: $6,208\n- 2023: $5,218\n\nHome office and branch:\n- 2025: $2,726\n- 2024: $2,461\n- 2023: $2,334\n\nVariable compensation:\n- 2025: $2,710\n- 2024: $2,436\n- 2023: $1,838\n\nTotal compensation and benefits:\n- 2025: $12,405\n- 2024: $11,105\n- 2023: $9,390\n\nAnd also the definition/description of variable compensation model.\n\nI think I should include the full-year figures as the primary items, and possibly the quarterly figures too. Given the complexity, I'll include a reasonable set.\n\nActually, I'll be comprehensive. Let me include the full-year figures (3 years each for the four categories) and note the quarterly figures too. But that could be a lot of items. Let me focus on what's clearly \"cost of advisor compensation and support.\"\n\nThe most directly relevant figure is \"Financial advisor compensation and benefits expense.\" That's the advisor compensation. Support would be \"home office and branch compensation and benefits\" and \"variable compensation.\"\n\nI'll create items for each. Let me decide on values and units. The values appear to be in millions of dollars (given the income statement context). The passages don't explicitly say \"millions\" but the figures like $6,969 clearly are in millions.\n\nLet me write out the items.\n\nFor full year figures from chunk #141:\n\nFinancial advisor:\n- 2025: $6,969\n- 2024: $6,208\n- 2023: $5,218\n\nHome office and branch:\n- 2025: $2,726\n- 2024: $2,461\n- 2023: $2,334\n\nVariable compensation:\n- 2025: $2,710\n- 2024: $2,436\n- 2023: $1,838\n\nTotal compensation and benefits:\n- 2025: $12,405\n- 2024: $11,105\n- 2023: $9,390\n\nI'll create these items. Unit: \"USD millions\" (the table header shows $ amounts).\n\nLet me write the text for each.\n\nI'll also add a fact item about the variable compensation model definition (bonuses and profit sharing, tied to profitability).\n\nNow let me also consider: is \"Financial advisor compensation and benefits\" the advisor compensation? Yes. \"Home office and branch compensation and benefits\" is support staff. \"Variable compensation\" is bonuses/profit sharing.\n\nThe sub-question is \"Advisor-led firms' cost of advisor compensation and support.\" So all these categories are relevant.\n\nLet me build the items.\n\nI'll include:\n1. Financial advisor compensation 2025\n2. 2024\n3. 2023\n4. Home office and branch 2025\n5. 2024\n6. 2023\n7. Variable compensation 2025\n8. 2024\n9. 2023\n10. Total compensation 2025\n11. 2024\n12. 2023\n13. Definition of variable compensation model\n\nActually, I could also add the quarterly figures but let me keep it to the full-year and maybe a few key quarterly. Given the detail, I'll include full-year figures primarily, plus the variable compensation definition.\n\nActually, let me include more to be thorough. I'll include full-year figures and the definition. That's about 13 items.\n\nLet me set periods:\n- 2025 = F2025 (fiscal year). Edward Jones fiscal year ends December 31, so calendar year 2025. Period \"2025\".\n- 2024 = \"2024\"\n- 2023 = \"2023\"\n\nActually the instructions say period \"FYYYYY\" for fiscal year, \"YYYY\" for calendar year. Edward Jones uses December 31 year end, so these are calendar years. I'll use \"2025\", \"2024\", \"2023\".\n\nLet me write the submission.\n\nFor the definition item, period is \"\", value \"\".\n\nLet me write text carefully with attribution.\n\nItem for financial advisor 2025: \"Edward Jones reported financial advisor compensation and benefits expense of $6,969 million in 2025, up 12% from $6,208 million in 2024.\"\n\nQuote: \"$ 6,969 $ 6,208 $ 5,218 12%\"\n\nActually let me use the exact table quote.\n\nLet me now write everything out.\n\nFor values, I'll put \"6,969\" and unit \"USD millions\".\n\nLet me finalize.\n\nActually, I need to double-check units. The income statement figures are clearly in millions. The table in #141 shows \"$ 6,969\" etc. Given net revenue is $17,224 million and operating expenses $15,610 million, yes these are millions.\n\nLet me write items now.\n\nI'll also add quarterly items for completeness? I think it's fine to focus on annual. But the question is about \"cost of advisor compensation and support\" as a driver. The key is the annual figures.\n\nLet me include the full-year figures and the variable compensation definition, plus maybe the total compensation.\n\nI'll produce around 13 items.\n\nLet me write it all out now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a14.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported financial advisor compensation and benefits expense of $6,969 in 2025, up 12% from 2024, primarily due to increases in revenues on which commissions are earned.",
+            "quote": "Financial advisor compensation and benefits expense increased 12% to $6,969 in 2025. The increase was primarily due to increases in revenues on which commissions are earned.",
+            "value": "6,969",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#144"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor compensation and benefits expense of $6,208 in 2024.",
+            "quote": "Financial advisor                          $                                      6,969      $          6,208      $          5,218                       12%",
+            "value": "6,208",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor compensation and benefits expense of $5,218 in 2023.",
+            "quote": "Financial advisor                          $                                      6,969      $          6,208      $          5,218                       12%",
+            "value": "5,218",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported home office and branch compensation and benefits expense of $2,726 in 2025, up 11% from 2024, primarily due to higher average wages, increases in healthcare costs and separation costs associated with Enterprise Reimagined.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334                       11%",
+            "value": "2,726",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141",
+              "EDJ-10K-2025#144"
+            ]
+          },
+          {
+            "text": "Edward Jones reported home office and branch compensation and benefits expense of $2,461 in 2024.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334                       11%",
+            "value": "2,461",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported home office and branch compensation and benefits expense of $2,334 in 2023.",
+            "quote": "Home office and branch                                                            2,726                 2,461                 2,334                       11%",
+            "value": "2,334",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported variable compensation expense of $2,710 in 2025, up 11% from 2024, primarily due to increased branch and overall firm profitability.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838                       11%",
+            "value": "2,710",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141",
+              "EDJ-10K-2025#144"
+            ]
+          },
+          {
+            "text": "Edward Jones reported variable compensation expense of $2,436 in 2024.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838                       11%",
+            "value": "2,436",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported variable compensation expense of $1,838 in 2023.",
+            "quote": "Variable compensation                                                             2,710                 2,436                 1,838                       11%",
+            "value": "1,838",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total compensation and benefits expense of $12,405 in 2025.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390                       12%",
+            "value": "12,405",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total compensation and benefits expense of $11,105 in 2024.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390                       12%",
+            "value": "11,105",
+            "unit": "USD millions",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total compensation and benefits expense of $9,390 in 2023.",
+            "quote": "Total compensation and benefits                                                  12,405                11,105                 9,390                       12%",
+            "value": "9,390",
+            "unit": "USD millions",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#141"
+            ]
+          },
+          {
+            "text": "Edward Jones states that variable compensation expands and contracts in relation to the Partnership's profitability and margin earned, and that a significant portion of the Partnership's profits is allocated to variable compensation paid to associates in the form of bonuses and profit sharing, a key component of the firm's performance-based compensation model.",
+            "quote": "Variable compensation expands and contracts in relation to the Partnership's profitability and margin earned. A significant portion of the Partnership's profits is allocated to variable compensation and paid to associates in the form of bonuses and profit sharing and remains a key component of the Firm's performance-based compensation model.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Variable compensation is a portion of the Partnership's profits allocated and paid to associates in the form of bonuses and profit sharing, which expands and contracts in relation to the Partnership's profitability and margin earned.",
+            "chunk_ids": [
+              "EDJ-10K-2025#144"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report financial advisor, home office and branch, variable, and total compensation and benefits expenses directly, which constitute the cost of advisor compensation and support.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

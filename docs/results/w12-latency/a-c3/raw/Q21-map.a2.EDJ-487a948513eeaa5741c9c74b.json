@@ -1,0 +1,140 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#78",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10K-2025#283",
+    "EDJ-10Q-2026Q1#70",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#304",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2025Q3#100",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#167",
+    "EDJ-10Q-2025Q2#93",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#16"
+  ],
+  "at": "2026-11-21T14:01:29.915251-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9153,
+    "output_tokens": 1685,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 7745,
+    "reasoning_tokens": 937,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.86
+  },
+  "wall_s": 14.47,
+  "tokens_per_s": 116.45,
+  "ttft_s": 0.86,
+  "reasoning_content": "The sub-question: \"What demographic trends and characteristics define the generational wealth transfer?\"\n\nRelevant passages: EDJ-10K-2025#56 mentions generational wealth transfer, changing client demographics, preferences and values. EDJ-10Q-2025Q2#67 mentions aging client base and generational wealth transfers outside the firm. #304 mentions generational wealth transfer, changing client demographics, preferences, values.\n\nThese are qualitative descriptions\u2014aging client base, changing demographics, preferences and values. Is that a \"fact\"? The sub-question asks for demographic trends and characteristics defining the generational wealth transfer. Edward Jones doesn't quantify it. So this is a fact: passages state characteristics (aging client base, changing client demographics, preferences and values, changing expectations for products and technology). It's not a numeric figure but a statement attributed to the firm. Label fact with items quoting.\n\nShould we also consider whether they don't disclose quantitative data? The instructions: fact when passage states what the sub-question asks for in full or in part. Yes: aging client base, generational wealth transfers outside the firm, changing client demographics/preferences/values. That's a partial answer \u2014 qualitative characteristics. Label fact.\n\nItems:\n1. EDJ-10Q-2025Q2#67: outflows impacted by aging client base and generational wealth transfers outside the firm. period 2025Q2.\n2. EDJ-10K-2025#56: generational wealth transfer and changing client demographics, preferences and values affect ability to compete; changing client expectations for expanded product offerings and technology. period 2025 (FY2025-12-31 \u2014 item says FYYYYY for fiscal year; \"F2025\").\n3. EDJ-10Q-2025Q3#72: aging client base, generational wealth transfers outside the firm. period 2025Q3.\n4. EDJ-10Q-2025Q2#69: aging client base and generational wealth transfers outside the firm. 2025Q2 (first half). Hmm duplicate\u2014could include but the same content as #67. I'll include maybe #304 too.\n\nAlso EDJ-10K-2025#304: strategic risks\u2014generational wealth transfer, changing client demographics, preferences and values. Include.\n\nLet me write items with quotes and no numeric value.\n\nItem for #67: \"Net new assets decreased by 10%...\" That's a figure but not relevant; but text can state the quote including aging client base. Value should be \"\" since the item states no figure \u2014 but quote contains 10%. Better to keep quote limited to the outflow factors sentence: \"These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.\" Good.\n\nItem for #56 quote: \"The Partnership's continued ability to compete and adapt its business model may be adversely impacted by the evolving financial services industry and generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.\" That's ~330 chars; trim to under 300: from \"continued ability to compete...\" Let's count: \"may be adversely impacted by the evolving financial services industry and generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.\" That's about 245 chars. Good.\n\nItem #304 quote: \"The Partnership seeks to address its strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes\" ~290. OK.\n\nItem #72 quote: \"The outflows relative to the prior-year period continue an increasing downward trend influenced by several factors, including an aging client base, generational wealth transfers outside the firm, macroeconomic volatility, inflationary pressures, and shifts in consumer spending.\"\n\nItem #69 similar; maybe skip to avoid duplicate. I'll include #69 too as separate period (1H 2025). Eh, it's duplicate; include for completeness? Keep it minimal but items one per statement. I'll include it.\n\nActually careful: instructions say items one per figure or statement; a series is one item per period. Fine.\n\nLabel: fact. differs_because \"\".\n\nNo derivation.\n\nScope: \"\" (whole firm / U.S. clients). For #67, outflows relate to the Partnership overall. Use \"\".",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones attributes elevated asset outflows in the second quarter of 2025 partly to an aging client base and generational wealth transfers outside the firm.",
+            "quote": "These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.",
+            "value": "",
+            "unit": "",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones attributes the continuing downward trend in net new asset outflows in the first nine months of 2025 partly to an aging client base and generational wealth transfers outside the firm.",
+            "quote": "The outflows relative to the prior-year period continue an increasing downward trend influenced by several factors, including an aging client base, generational wealth transfers outside the firm, macroeconomic volatility, inflationary pressures, and shifts in consumer spending.",
+            "value": "",
+            "unit": "",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#72"
+            ]
+          },
+          {
+            "text": "Edward Jones attributes higher asset outflows in the first half of 2025 partly to an aging client base and generational wealth transfers outside the firm.",
+            "quote": "These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm, macroeconomic volatility, inflation and consumer spending.",
+            "value": "",
+            "unit": "",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#69"
+            ]
+          },
+          {
+            "text": "Edward Jones states that its continued ability to compete may be adversely impacted by generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.",
+            "quote": "may be adversely impacted by the evolving financial services industry and generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.",
+            "value": "",
+            "unit": "",
+            "period": "F2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#56"
+            ]
+          },
+          {
+            "text": "Edward Jones names generational wealth transfer together with changing client demographics, preferences and values among the strategic risks it seeks to address.",
+            "quote": "The Partnership seeks to address its strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes",
+            "value": "",
+            "unit": "",
+            "period": "F2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#304"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state the demographic characteristics the firm associates with the generational wealth transfer (aging client base, changing client demographics, preferences and values, transfers outside the firm) without quantifying them.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

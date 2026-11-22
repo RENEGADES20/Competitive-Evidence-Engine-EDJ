@@ -1,0 +1,424 @@
+{
+  "question_id": "Q3",
+  "question": "What is Schwab's strategy for its RIA custody business?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-10K-2025#23",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-TRADE-2026-10-28-WM-01#0",
+    "SCHW-TRADE-2026-10-29-WM-01#0",
+    "SCHW-TR-2026Q1#48",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-TRADE-2026-10-29-WM-01#2",
+    "SCHW-TR-2025Q2#11",
+    "SCHW-TR-2024Q4#37",
+    "SCHW-TR-2026Q1#68",
+    "SCHW-TRADE-2026-08-26-WM-01#1",
+    "SCHW-10K-2025#13",
+    "SCHW-TRADE-2026-08-26-WM-01#0",
+    "SCHW-TRADE-2026-08-26-WM-01#3",
+    "SCHW-TRADE-2026-08-24-IN-01#2",
+    "SCHW-TRADE-2026-10-07-RB-01#4",
+    "SCHW-DECK-2026Q2#14",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-TRADE-2026-10-15-WM-01#3",
+    "SCHW-TRADE-2026-10-28-WM-01#2",
+    "SCHW-TR-2025Q1#14",
+    "SCHW-TR-2025Q4#12",
+    "SCHW-TR-2026Q3#5",
+    "SCHW-TRADE-2026-10-15-WM-01#1",
+    "SCHW-DECK-2026-investor-day#41",
+    "SCHW-TR-2025Q3#14",
+    "SCHW-TRADE-2026-10-28-WM-02#0"
+  ],
+  "schema_fallback": [],
+  "enum_values": 96,
+  "at": "2026-11-21T21:15:18.166729-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13200,
+    "output_tokens": 12081,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 11536,
+    "reasoning_tokens": 6913,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.02
+  },
+  "wall_s": 84.06,
+  "tokens_per_s": 143.72,
+  "ttft_s": 2.02,
+  "reasoning_content": "Let me work through this. The question asks about Schwab's RIA custody business strategy. Single firm (SCHW). Aspects a1-a6. There's a time window implied for a6 (recency), and \"newest first\" ordering within the whole answer? Actually recency ordering applies with time window.\n\nLet me note the structure: aspect by aspect in order a1-a6. Each claim starting \"The Charles Schwab Corporation: \" or \"Schwab: \"? Firms in order listed - \"The Charles Schwab Corporation (SCHW)\". I'll use \"Schwab: \" or full name. The instructions say each claim starting \"<Firm>: \". I'll use \"The Charles Schwab Corporation: \".\n\nFor a6, every item needs a why-line.\n\nLet me be careful about which items have \"figure not found in its passage\" (items 4,5,6,7 in a4 - do not state figures). Item 3 in a1 and others marked \"quote not verbatim\" - never put in quotation marks.\n\nLet me now write claims.\n\nAspect a1: 10 items. These are fact cells, each a claim. I need to date each claim from source line.\n\nitem 1: cite SCHW-TR-2026Q3#10 (period 2026-09-30, published 2026-10-15). CEO Rick Wurster states... quote verbatim.\n\nitem 2: SCHW-10K-2025#23 (2025-12-31). verbatim quote.\n\nitem 3: SCHW-10K-2025#23. quote not verbatim - no quotes.\n\nitem 4: SCHW-TR-2025Q3#13 (2025-09-30). verbatim.\n\nitem 5: SCHW-TRADE-2026-10-28-WM-01#0 (published 2026-10-28). quote is \"Our job and our role...\" verbatim. But note item 5 mentions \"will continue to focus on its custody services for RIAs with under $100 million AUM\" - trade press? Actually this is CEO statement from trade press. The quote shown is \"Our job and our role is to provide a platform and a support ecosystem that helps you support your clients and helps your firm thrive.\" That's verbatim.\n\nitem 6: SCHW-TRADE-2026-10-29-WM-01#0. quote verbatim.\n\nitem 7: SCHW-TR-2026Q1#48 (2026-03-31). verbatim.\n\nitem 8: SCHW-TR-2024Q4#13 (2024-12-31). verbatim.\n\nitem 9: SCHW-TRADE-2026-10-29-WM-01#2. quote not verbatim - no quotes.\n\nitem 10: SCHW-TRADE-2026-10-29-WM-01#0. verbatim.\n\nFor a1, part_id \"a1\" (span firms? Actually the instruction: \"Aspects (their ids are part ids for claims that span firms)\". For single firm, use a1.SCHW? Wait. The part_id enum includes \"a1.SCHW\", \"a1\", etc. The evidence matrix has a1.SCHW as cell id. \"a cell id is the part_id of what you write from it\". So for single firm, I use \"a1.SCHW\".\n\nLet me re-read: \"Several firms: aspect by aspect... each claim starting '<Firm>: '. One firm: aspect by aspect.\" And \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nSo for single firm, the cell ids are a1.SCHW, a2.SCHW, etc. So I use part_id \"a1.SCHW\" for all a1 items.\n\nFor a6 items, each item has a cell. The a6.SCHW cell is a fact with 12 items. part_id \"a6.SCHW\".\n\nNow a6 requires why-line for every item. The context lines give \"why it might matter\".\n\nLet me draft each.\n\nLet me write the answer now. I'll be thorough.\n\nFor dates: I'll date each claim with source line info like \"The 3Q26 earnings call (period ended September 30, 2026)\" or \"the 2025 10-K (period ended December 31, 2025)\".\n\nLet me construct carefully.\n\na1 items (part_id a1.SCHW):\n\n1. CEO Rick Wurster (3Q26 earnings call, October 2026) states Schwab has built its adviser business around helping independent advisers grow, compete and succeed. [SCHW-TR-2026Q3#10]\n\n2. The 2025 10-K (period ended December 31, 2025) states Schwab maintains its competitive position through sales, support, technology and business consulting teams dedicated to helping RIAs grow, compete, and succeed in serving their clients. [SCHW-10K-2025#23]\n\n3. The 2025 10-K (period ended December 31, 2025) states that, in addition to focusing on superior service, Schwab utilizes technology to provide RIAs with a highly-developed, scalable platform for administering their clients' assets easily and efficiently. [SCHW-10K-2025#23]\n\n4. CEO Rick Wurster (3Q25 earnings call, October 2025) states Schwab is deepening relationships with the RIA firms it serves by building a broader support ecosystem that extends beyond custody alone to add value for RIAs. [SCHW-TR-2025Q3#13]\n\n5. CEO Rick Wurster (at Schwab Impact, trade press October 28, 2026) states Schwab will continue to focus on its custody services for RIAs with under $100 million AUM, and that its role is to provide a platform and support ecosystem that helps advisors serve clients and helps their firms thrive. [SCHW-TRADE-2026-10-28-WM-01#0]\n\n6. CEO Rick Wurster (trade press October 29, 2026) states Schwab wants to give RIAs equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies. [SCHW-TRADE-2026-10-29-WM-01#0]\n\n7. CEO Rick Wurster (1Q26 earnings call, April 2026) states Schwab continues to invest in Advisor Services, making it easier for advisers to do business with Schwab and rounding out its offering by adding more lending capabilities. [SCHW-TR-2026Q1#48]\n\n8. CEO Rick Wurster (4Q24 earnings call, January 2025) states that in advisor services, Schwab is adding support and capabilities for RIAs of all sizes while helping new advisors transition to independence. [SCHW-TR-2024Q4#13]\n\n9. CEO Rick Wurster (trade press October 29, 2026) states Schwab has tried to make the path to independence as easy as possible for advisors, investing in its own process and working with partners to provide a ready experience and an easy transition. [SCHW-TRADE-2026-10-29-WM-01#2]\n\n10. CEO Rick Wurster (trade press October 29, 2026) states Schwab is increasingly trying to play the role of being the RIA's bank and helping them manage both sides of the balance sheet for their clients. [SCHW-TRADE-2026-10-29-WM-01#0]\n\na2 items (part_id a2.SCHW):\nSimilar.\n\na3 items (part_id a3.SCHW): competition.\n\na4 items (part_id a4.SCHW): results. Items 4,5,6,7 have figure not found - do not state figures. So I omit those figures. Actually \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" So I still write the claim but without the figure? Let me think. The instruction says keeps its figure out of your text. So I can state the fact but not the number.\n\nActually, for item 4: \"Schwab reports $5.7 trillion in RIA custodial assets\" - figure not found. So I write \"Schwab reports RIA custodial assets\" but without stating $5.7 trillion? Hmm, that's odd. Actually the claim essentially has no substance without the figure. Let me re-read.\n\n\"An item marked 'figure not found in its passage' keeps its figure out of your text.\"\n\nSo I should still write a claim but not include the figure. But that seems to leave nothing. Actually maybe the item still has other info. Item 4: value $5.7 trillion, unit RIA custodial assets, period 2026-06-30, quote \"$5.7T\". The deck says \"$5.7T\" but figure not found in passage context? \"figure not found in its passage\" means the figure isn't clearly in the passage. So I can't state the figure.\n\nI think I should write a claim like \"The 2Q26 investor presentation (period ended June 30, 2026) refers to RIA custodial assets, though the figure is not stated in the passage.\" Hmm, but that might be over-interpreting.\n\nActually, perhaps the cleanest: state what the source does say without the number. But there's nothing else. Let me write it carefully.\n\nActually, re-reading: \"A fact cell is a claim, also when it is partial... say what it covers.\" For \"figure not found\" items, the figure stays out. So I write a claim describing the metric but not the number.\n\nFor item 4: \"Schwab reports RIA custodial assets (figure not stated in the cited passage) as of June 30, 2026.\" Hmm.\n\nActually I think I'm overcomplicating. The instruction is clear: keep figure out. So I'll write claims without figures for those items, but I should still convey the period/scope.\n\nLet me write:\n\nitem 4: The 2Q26 investor presentation (period ended June 30, 2026) references RIA custodial assets; the figure is not stated in the passage. [SCHW-DECK-2026Q2#14]\n\nHmm, but this is awkward. Actually maybe better to just note the metric with period, omitting number.\n\nLet me reconsider - the simplest compliant approach: state the fact without the numeric figure.\n\nitem 4: \"Schwab's 2Q26 investor presentation (period ended June 30, 2026) reports RIA custodial assets.\" \u2014 no figure.\n\nitem 5: \"Schwab's investor day presentation (May 14, 2026) reports Advisor Services client assets.\" no figure.\n\nitem 6: \"reports 16,000 advisory firms in Advisor Services\" - wait figure is 16,000 which is \"figure not found\". So no figure. \"Schwab's investor day presentation (May 14, 2026) reports advisory firms in Advisor Services.\"\n\nitem 7: \"reports households in RIA custodial assets\" - no figure.\n\nThis is getting silly but compliant. Actually, I think the point is that the figure itself should not be cited because the evidence matrix couldn't verify it. So I'll state the metric name with period/scope but no number.\n\nLet me write these more naturally but without figures.\n\nFor item 4: value not stated. I'll write: \"The 2Q26 investor presentation (period ended June 30, 2026) reports RIA custodial assets.\" cite SCHW-DECK-2026Q2#14.\n\nitem 5: \"The 2026 investor day presentation (published May 14, 2026) reports Advisor Services client assets.\" cite SCHW-DECK-2026-investor-day#62.\n\nitem 6: \"The 2026 investor day presentation (published May 14, 2026) reports advisory firms in Advisor Services.\" \n\nitem 7: \"The 2026 investor day presentation (published May 14, 2026) reports households in RIA custodial assets.\"\n\nHmm wait, but these are still claims about what's reported. That's fine.\n\nActually, let me reconsider whether I should include these at all. The instruction says a fact cell is a claim. Even with figure not found, I write a claim. I'll write them without the figure.\n\na4 items 1,2,3,8,9 have figures - state them.\n\nitem 1: 16,000 RIA firms, period 2025-09-30. \"The 3Q25 earnings call (period ended September 30, 2025) states Schwab serves 16,000 RIA firms.\"\n\nitem 2: more than 16,000 advisory firms, period 2026-09-30. cite SCHW-TR-2026Q3#10.\n\nitem 3: $5.8 trillion assets, period 2026-09-30. cite SCHW-TR-2026Q3#10.\n\nitem 8: added 1,001 new RIAs in Q3 2026. trade press SCHW-TRADE-2026-10-15-WM-01#3. Trade press attribute.\n\nitem 9: more than 1,100 advisory firms added Schwab as custodian in 2025, more than 3x next closest. cite SCHW-TR-2026Q3#10.\n\na5: adjacent only. Two items, differs_because as given. part_id \"a5.SCHW\".\n\na6: 12 items, each with why-line. part_id \"a6.SCHW\".\n\nLet me write why-lines using context lines.\n\nitem 1: wealth.com strategic investment. Why-line from context: \"Schwab describes it as one part of its broader effort to provide more of an ecosystem for its RIA clients as they help them grow, compete, and succeed.\" Actually that's restating the item. The why-line should draw from \"context\" line - a reason/purpose the firm states, a first, record, change, consequence.\n\nHmm, but the context line for item 1 is largely the same content. Let me think about what \"why it might matter\" means. It should be a reason why the item matters, drawn from the passage or related lines.\n\nFor item 1, context mentions \"The wealth enhancements I have just described help us meet the ...\" and \"In addition to enhancing our estate planning capabilities and experience for clients\". So why it might matter: it enhances estate planning capabilities and experience for clients, part of meeting client needs.\n\nActually the instruction: \"one sentence on why it might matter, from one of two places: what the item's own passage says (its 'context' line: a reason or purpose the firm or the writer states, a first, a record, a change against an earlier period, a consequence the source names), or factual background from another passage listed under Sources (its 'related' lines...).\"\n\nSo I can use the context line's reason/purpose. For item 1, context says \"In addition to enhancing our estate planning capabilities and experience for clients, this investment is one part of our broader effort to provide more of an ecosystem for our RIA clients as we help them grow, compete, and succeed.\" The \"why\" is: it enhances estate planning capabilities/experience and helps meet client needs.\n\nLet me write why-lines:\n\nitem 1: Why it might matter: the investment enhances Schwab's estate planning capabilities and experience for clients and is part of meeting RIA clients' needs to grow, compete, and succeed. (from context)\n\nActually I need to be careful not to restate the item itself. The item is \"announced strategic investment in wealth.com... part of broader effort to provide ecosystem.\" The why should be distinct.\n\nLet me use: \"Why it might matter: Schwab says the investment enhances its estate planning capabilities and experience for clients, helping it meet client needs.\" That's from context line.\n\nitem 2: structured asset lending program. Context: \"historically, they've had to introduce a big bank to do that lending, and now they can keep that wealth relationship.\" Why: allows advisers to keep the wealth relationship rather than introducing a big bank for lending.\n\nitem 3: expanding wealth services, lending/trust, block trades. Context: \"designed to simplify processes and help advisors compete and serve their clients' comprehensive needs.\" Why: simplifies processes and helps advisors compete and serve comprehensive needs.\n\nitem 4: deepening relationships, ecosystem, no-transaction-fee platform, Advisor ProDirect. Context: \"Our first focus area is driving growth by deepening relationships with our clients.\" Why: it's part of Schwab's first focus area of driving growth by deepening client relationships.\n\nitem 5: Anthropic/Claude, Charley. Context: \"we're not slowing down as we continue to innovate across our businesses.\" Also \"first RIA custodian included in Claude.\" Why: it's a first (first RIA custodian in Claude for Financial Advisors) marking continued innovation. Let me use \"being the first RIA custodian included in Claude for Financial Advisors\" - actually that's restating. Use: \"Schwab frames it as part of continuing to innovate across its businesses.\"\n\nitem 6: being their bank. Context: \"clients have created enormous wealth on paper from stock positions... everyday liquidity needs\" and \"pledged asset lines as particularly fruitful growth area.\" Why: RIA clients hold stock positions they don't want to sell but need liquidity, and Wurster sees pledged asset lines as a fruitful growth area.\n\nitem 7: proprietary long-short strategy. Context: \"Schwab and Fidelity Investments have recently limited the use of long-short investment strategies to manage the high demand\" and \"run that product in a very efficient way from a balance sheet.\" Why: comes as Schwab and Fidelity have limited long-short strategies due to high demand, and would let Schwab run the product efficiently. Use \"as Schwab and Fidelity have recently limited long-short strategies to manage high demand\" as factual background.\n\nitem 8: curate alternatives. Context: \"we believe there will be opportunities for us to monetize the provision of those alternatives to our advisers.\" Why: Schwab sees opportunities to monetize the provision of alternatives to advisers.\n\nitem 9: under $100M custody focus. Context: Wurster's comments come after Fidelity told RIAs under $100M to leave. Why: comes after Fidelity Investments told RIAs with under $100 million in client assets they will have to leave the platform by June 30, 2027.\n\nitem 10: strategic priority broaden support + monetization. Context: listed among strategic priorities \"Meet the segmented needs... Blend best of people & technology... etc.\" Why: it's listed among Schwab's strategic priorities alongside meeting segmented client needs and enhancing product and advice capabilities. Use related or context.\n\nitem 11: OpenArc largest transition. Context: \"These investments are important because we know that clients who have an FC relationship have higher CPS scores\" - no that's retail. The OpenArc context: \"we supported the largest advisor transition in the history of our industry.\" Why: it's described as the largest advisor transition in the history of the industry. Hmm that's restating \"largest\". Actually the item already says \"largest advisor transition in the history of the industry.\" The why-line should add something else. Related: SCHW-TR-2024Q4#13 (adding support/capabilities for RIAs of all sizes helping new advisors transition to independence). Why: it advances Schwab's stated effort to help new advisors transition to independence. Use related line.\n\nitem 12: $4,800 Claude credit. Context: \"with the goal of giving smaller advisors access\" to the 20-seat minimum. Why: the goal is to give smaller advisors access to the enterprise plan's 20-seat minimum.\n\nOK. Now let me write everything out.\n\nFor a6 items, note some are trade press. I'll attribute accordingly. Items with \"quote not verbatim\" - no quotes.\n\nLet me also note for a6, the items themselves are the claims (fact cells), each with why-line.\n\nLet me carefully attribute each a6 item with date.\n\nitem 1: SCHW-TR-2025Q1#14 (period 2025-03-31, published 2025-04-17). CEO Rick Wurster/1Q25 earnings call.\n\nitem 2: SCHW-TR-2026Q1#48 (2026-03-31).\n\nitem 3: SCHW-TR-2025Q4#12 (2025-12-31).\n\nitem 4: SCHW-TR-2025Q3#13 (2025-09-30).\n\nitem 5: SCHW-TR-2026Q3#5 (2026-09-30).\n\nitem 6: SCHW-TRADE-2026-10-29-WM-01#0 (2026-10-29).\n\nitem 7: SCHW-TRADE-2026-10-15-WM-01#1 (2026-10-15).\n\nitem 8: SCHW-TR-2026Q1#68 (2026-03-31).\n\nitem 9: SCHW-TRADE-2026-10-28-WM-01#0 (2026-10-28).\n\nitem 10: SCHW-DECK-2026-investor-day#41 (2026-05-14).\n\nitem 11: SCHW-TR-2025Q3#14 (2025-09-30).\n\nitem 12: SCHW-TRADE-2026-10-28-WM-02#0 (2026-10-28).\n\nNow, ordering within a6: with time window, order newest first. But a6 is one aspect, items should be ordered newest first. Actually the recency/order instruction: \"With a time window, order claims and adjacent items newest first across the whole answer.\" Since a6 has a time window (recency), I should order a6 items newest first.\n\nHmm, actually the whole question\u2014is there a time window? The question doesn't explicitly state a time window. The a6 aspect is marked \"recency\" and \"within the time window\". So there is a time window for a6. I'll order a6 items newest first.\n\nLet me order a6 items by date newest first:\n- 2026-10-29: item 6 (SCHW-TRADE-2026-10-29-WM-01#0)\n- 2026-10-28: item 9 (SCHW-TRADE-2026-10-28-WM-01#0), item 12 (SCHW-TRADE-2026-10-28-WM-02#0)\n- 2026-10-15: item 7 (SCHW-TRADE-2026-10-15-WM-01#1)\n- 2026-09-30: item 5 (SCHW-TR-2026Q3#5)\n- 2026-05-14: item 10 (SCHW-DECK-2026-investor-day#41)\n- 2026-03-31: item 2 (SCHW-TR-2026Q1#48), item 8 (SCHW-TR-2026Q1#68)\n- 2025-12-31: item 3 (SCHW-TR-2025Q4#12)\n- 2025-09-30: item 4 (SCHW-TR-2025Q3#13), item 11 (SCHW-TR-2025Q3#14)\n- 2025-03-31: item 1 (SCHW-TR-2025Q1#14)\n\nThat's a reasonable newest-first ordering. I'll follow it.\n\nActually, let me keep it simpler and just order within a6 newest first as computed.\n\nNow for a1, a2, a3, a4 - do they need ordering? Only \"recency\" aspects and \"time window\" need newest first. a1-a4 are not recency, no time window stated. So no specific ordering requirement. I'll just present in item order as given.\n\nActually wait, the question itself: \"What is Schwab's strategy...\" - no time window in the question itself. So only a6 needs why-lines and newest-first.\n\nLet me now write everything.\n\nFor the part_id of claims: a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a6.SCHW. For adjacent a5: a5.SCHW.\n\nFor gaps: code already added gaps (a5.SCHW and a5). Do not repeat them. So I don't add gaps.\n\nWait, \"Gaps added by code (do not repeat them)\" - so I don't add those gaps. But should I add any gaps of my own? \"Add a gap of your own only for something those gaps do not name.\" For a5, the gap is already covered. I don't think I need additional gaps.\n\nActually, a5 is \"different quantity (adjacent only)\" - so I provide adjacent items with differs_because. The gap is already added by code. So no gaps from me.\n\nLet me now assemble the answer.\n\nLet me write claims carefully with proper citations and dates.\n\nFor a1, let me write all 10 items as claims.\n\nI'll write \"The Charles Schwab Corporation: \" prefix for each claim.\n\nLet me draft the full answer text.\n\nActually, given the volume, let me just write it all out in the claims array.\n\nLet me be efficient but complete.\n\nFor quotes: I'll use quotation marks only for verbatim quotes. For \"quote not verbatim\" items, paraphrase without quotes.\n\nLet me write.\n\nFor a1 item 1: quote verbatim \"We have built our adviser business around helping independent advisers grow, compete and succeed.\"\n\nI'll incorporate quotes where verbatim.\n\nLet me now produce the final tool call.\n\nFor a4 items 4-7 (figure not found), I'll write without figure. Actually, let me reconsider\u2014maybe I should phrase as \"refers to\" rather than \"reports X\" since I can't state the figure. I'll say \"reports RIA custodial assets\" without number. That's fine as a claim about what's reported (the metric), omitting the figure.\n\nActually to be safe and not misstate, I'll phrase: \"The 2Q26 investor presentation (period ended June 30, 2026) covers RIA custodial assets.\" Hmm. The claim is \"Schwab reports RIA custodial assets.\" I'll just write that without the number.\n\nLet me finalize.\n\nFor the trade-press items (a4 item 8, and a6 trade press items), attribute \"trade press reports\".\n\na4 item 8: \"Trade press (October 15, 2026) reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026.\" cite SCHW-TRADE-2026-10-15-WM-01#3.\n\nNow let me write everything out.\n\nI'll write the claims.\n\nLet me count chunk_ids per claim - each claim cites its source chunk(s). For why-lines in a6, I need to add the related/context passage's chunk id to the claim's chunk_ids.\n\nFor a6 why-lines, if I use the item's own context (same source), no additional chunk needed. If I use a \"related\" line, I add that related chunk id.\n\nLet me determine chunk_ids for each a6 item:\n- item 1: why from context (same source SCHW-TR-2025Q1#14). chunk_ids = [SCHW-TR-2025Q1#14]. But I could also add related. I'll keep just the source, or add related if I use it. I'll use context only \u2192 chunk_ids [SCHW-TR-2025Q1#14].\n\nActually, let me reconsider each why-line's source to determine chunk_ids.\n\nitem 1 why: \"enhances estate planning capabilities and experience\" \u2014 from context line, same source. chunk_ids: [SCHW-TR-2025Q1#14].\n\nitem 2 why: \"advisers can keep the wealth relationship rather than introducing a big bank\" \u2014 from context, same source SCHW-TR-2026Q1#48. chunk_ids: [SCHW-TR-2026Q1#48].\n\nitem 3 why: \"simplify processes and help advisors compete and serve comprehensive needs\" \u2014 context, SCHW-TR-2025Q4#12. chunk_ids: [SCHW-TR-2025Q4#12].\n\nitem 4 why: \"driving growth by deepening relationships\" \u2014 context SCHW-TR-2025Q3#13. chunk_ids: [SCHW-TR-2025Q3#13].\n\nitem 5 why: \"continuing to innovate across businesses\" \u2014 context SCHW-TR-2026Q3#5. chunk_ids: [SCHW-TR-2026Q3#5].\n\nitem 6 why: \"clients hold stock positions with liquidity needs; pledged asset lines fruitful growth area\" \u2014 context SCHW-TRADE-2026-10-29-WM-01#0. chunk_ids: [SCHW-TRADE-2026-10-29-WM-01#0].\n\nitem 7 why: \"Schwab and Fidelity have recently limited long-short strategies to manage high demand\" \u2014 context SCHW-TRADE-2026-10-15-WM-01#1. chunk_ids: [SCHW-TRADE-2026-10-15-WM-01#1].\n\nitem 8 why: \"opportunities to monetize provision of alternatives\" \u2014 context SCHW-TR-2026Q1#68. chunk_ids: [SCHW-TR-2026Q1#68].\n\nitem 9 why: \"comes after Fidelity told RIAs under $100M to leave by June 30, 2027\" \u2014 context SCHW-TRADE-2026-10-28-WM-01#0. chunk_ids: [SCHW-TRADE-2026-10-28-WM-01#0].\n\nitem 10 why: strategic priorities list \u2014 context SCHW-DECK-2026-investor-day#41. chunk_ids: [SCHW-DECK-2026-investor-day#41].\n\nitem 11 why: \"advances effort to help new advisors transition to independence\" \u2014 related SCHW-TR-2024Q4#13. chunk_ids: [SCHW-TR-2025Q3#14, SCHW-TR-2024Q4#13].\n\nitem 12 why: \"goal of giving smaller advisors access to 20-seat minimum enterprise plan\" \u2014 context SCHW-TRADE-2026-10-28-WM-02#0. chunk_ids: [SCHW-TRADE-2026-10-28-WM-02#0].\n\nGood.\n\nNow let me write all claims.\n\nFor dates, I'll phrase consistently:\n- Earnings calls: \"On the 3Q26 earnings call (period ended September 30, 2026), ...\"\n- 10-K: \"In its 2025 10-K (period ended December 31, 2025), ...\"\n- Trade press: \"Trade press (October 29, 2026) reports ...\" or \"According to trade press (October 29, 2026), ...\"\n- Deck: \"In its 2Q26 investor presentation (period ended June 30, 2026), ...\" / \"In its 2026 investor day presentation (May 14, 2026), ...\"\n\nLet me write.\n\nI'll now produce the answer. Given the length, I'll write all claims in one submit_answer call.\n\nLet me draft the text for each claim concisely but completely.\n\nI'll write it all now.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), CEO Rick Wurster stated Schwab \"has built our adviser business around helping independent advisers grow, compete and succeed.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2025 10-K (period ended December 31, 2025), Schwab states it maintains its competitive position primarily through the efforts of its sales, support, technology, and business consulting teams, which are dedicated to helping RIAs grow, compete, and succeed in serving their clients.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2025 10-K (period ended December 31, 2025), Schwab states that, in addition to focusing on superior service, it utilizes technology to provide RIAs with a highly-developed, scalable platform for administering their clients' assets easily and efficiently.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (period ended September 30, 2025), CEO Rick Wurster stated Schwab is \"deepening relationships with the 16,000 RIA firms we serve by building a broader support ecosystem that extends beyond custody alone to add value for RIAs.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 28, 2026), CEO Rick Wurster stated Schwab will continue to focus on its custody services for RIAs with under $100 million AUM, and that its role is to provide a platform and a support ecosystem that helps advisors serve clients and helps their firms thrive.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 29, 2026), CEO Rick Wurster stated Schwab wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q26 earnings call (period ended March 31, 2026), CEO Rick Wurster stated Schwab continues to invest in Advisor Services, making it easier for advisers to do business with Schwab and rounding out its offering by adding more lending capabilities.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (period ended December 31, 2024), CEO Rick Wurster stated that in advisor services, Schwab is \"adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.\"",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 29, 2026), CEO Rick Wurster stated Schwab has tried to make the path to independence as easy as possible for advisors, investing in its own process and working with partners to provide a ready experience and an easy transition.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#2"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 29, 2026), CEO Rick Wurster stated Schwab is increasingly trying to play the role of being the RIA's bank and helping them manage both sides of the balance sheet for their clients.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (period ended December 31, 2024), Schwab stated it is \"adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.\"",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated it has built its adviser business around helping independent advisers grow, compete and succeed, and that it is continuing to invest in the business to meet advisers' needs.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (period ended September 30, 2025), Schwab stated it is deepening relationships with the 16,000 RIA firms it serves by building a broader support ecosystem that extends beyond custody alone to add value for RIAs.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (period ended June 30, 2025), Schwab stated it launched Advisor ProDirect, a fee-based, membership-driven offer designed to support independence for new RIAs.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#11"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 28, 2026), Schwab stated it will continue to focus on its custody services for registered investment advisors with under $100 million AUM, and that its role is to provide a platform and a support ecosystem that helps advisors support clients and their firms thrive.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 29, 2026), Schwab stated it wants to give RIAs equal or better access than wirehouses to banking services such as lending, private market investing, and long-short investment strategies, citing these as focus areas for its custody offerings.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (period ended December 31, 2024), Schwab stated the opportunity going forward is to offer a more curated set of alternatives to its advisors rather than primarily custodying the assets.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#37"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q26 earnings call (period ended March 31, 2026), Schwab stated it could do more to curate and help advisers choose the right alternative investments for their clients and to make investing in alternatives easy for advisers.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#68"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2025 10-K (period ended December 31, 2025), Schwab states it maintains its competitive position through sales, support, technology, and business consulting teams dedicated to helping RIAs grow, compete, and succeed, and it utilizes technology to provide RIAs with a scalable platform for administering client assets.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (August 26, 2026), a Schwab spokesperson stated the firm \"remain[s] focused on investing in innovation, capabilities, and service to help advisors grow and investors succeed.\"",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#1"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2025 10-K (period ended December 31, 2025), Schwab states that in the Advisor Services arena it competes with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 28, 2026), Fidelity Investments is named as the second-largest custodian after Schwab, a competitor in RIA custody.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (August 26, 2026), Fidelity Investments is named, along with Schwab, as a legacy custodian with a commanding lead over Altruist.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (August 26, 2026), Vanguard, through its acquisition of Altruist, is described as a competitor that raises the stakes for legacy custodians Schwab and Fidelity in the RIA custody business.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (August 26, 2026), Vanguard is described as being set up to compete with Fidelity and Schwab in RIA custody.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#3"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (August 24, 2026), SEI, Goldman Sachs, and Robinhood are named as other custodians that RIAs might look to as alternatives to Schwab.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-24-IN-01#2"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 7, 2026), Fidelity is named as Schwab's close rival, and Altruist (Vanguard-owned) is named as another custodian.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-RB-01#4"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (period ended September 30, 2025), Schwab reports it serves 16,000 RIA firms.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), Schwab reports it serves more than 16,000 advisory firms.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), Schwab reports its adviser platform represents $5.8 trillion in assets.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2Q26 investor presentation (period ended June 30, 2026), Schwab reports RIA custodial assets; the figure is not stated in the cited passage.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#14"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor day presentation (published May 14, 2026), Schwab reports Advisor Services client assets; the figure is not stated in the cited passage.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor day presentation (published May 14, 2026), Schwab reports advisory firms in Advisor Services; the figure is not stated in the cited passage.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor day presentation (published May 14, 2026), Schwab reports households in RIA custodial assets in Advisor Services; the figure is not stated in the cited passage.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: Trade press (October 15, 2026) reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-15-WM-01#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), Schwab reports more than 1,100 advisory firms added Schwab as a custodian in 2025, more than 3x the number of the next closest provider.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 29, 2026), CEO Rick Wurster stated Schwab wants to give RIAs equal or better access than wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies, increasingly playing the role of being their bank. Why it might matter: Wurster noted RIA clients have created enormous wealth on paper from stock positions they do not want to sell but need everyday liquidity, and he sees pledged asset lines as a particularly fruitful growth area among RIAs.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 28, 2026), Schwab stated it will continue to focus on custody services for RIAs with under $100 million in client assets, providing a platform and support ecosystem rather than dictating how large firms should become. Why it might matter: the comments come after Fidelity Investments told RIAs in early October that firms with under $100 million in client assets will have to leave the platform by June 30, 2027.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 28, 2026), Schwab offers RIAs a $4,800 credit toward Claude enterprise seats, aimed at giving smaller advisors access to the 20-seat minimum enterprise plan. Why it might matter: the credit's stated goal is to give smaller advisors access to the enterprise plan's 20-seat minimum.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-02#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: According to trade press (October 15, 2026), Schwab is working on a proprietary long-short investment strategy, which it will update on soon, to sustain its ability to deliver long-short capabilities to clients. Why it might matter: Schwab and Fidelity Investments have recently limited the use of long-short investment strategies to manage high demand, and Schwab says it can run the product efficiently from a balance sheet standpoint.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-15-WM-01#1"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (period ended September 30, 2026), Schwab stated it collaborated with Anthropic to become the first RIA custodian included in Claude for Financial Advisors, and introduced Charley, a new AI-powered conversational assistant. Why it might matter: Schwab framed this as part of its continued innovation across its businesses, noting it is not slowing down.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#5"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor day presentation (published May 14, 2026), Schwab's stated strategic priority is to broaden support for RIAs while improving monetization. Why it might matter: it is listed among Schwab's strategic priorities alongside meeting the segmented needs of its clients and enhancing its product and advice capabilities to create a one-stop-shop.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#41"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q26 earnings call (period ended March 31, 2026), Schwab stated it recently launched a structured asset lending program for advisers, which lets advisers' clients borrow against alternative investments, restricted shares, and private shares rather than introducing a big bank. Why it might matter: historically advisers had to introduce a big bank to do that lending, and now they can keep the wealth relationship with Schwab.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q26 earnings call (period ended March 31, 2026), Schwab stated it believes it could do more to curate and help advisers choose the right alternative investments and create a helpful platform, and sees opportunities to monetize the provision of alternatives to advisers; it has leaned into making investing in alternatives easy for advisers. Why it might matter: Schwab said it believes there will be opportunities to monetize the provision of those alternatives to its advisers as that develops.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#68"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (period ended December 31, 2025), Schwab stated that in Advisor Services it is expanding its wealth services offer (including the Model Market Center platform and alternative investments), expanding lending and trust services to advisors through Charles Schwab Bank, and launching a high-touch trading service for block trades in Q1. Why it might matter: the wealth services offer is designed to simplify processes and help advisors compete and serve their clients' comprehensive needs.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#12"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (period ended September 30, 2025), Schwab stated it is deepening relationships with its RIA firms by building a broader support ecosystem that extends beyond custody alone, having grown lending support and alternatives capability, expanded its institutional no-transaction-fee mutual fund platform to nearly 60 managers, and launched Advisor ProDirect for breakaway advisors. Why it might matter: Schwab described driving growth by deepening relationships with its clients as its first focus area.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (period ended September 30, 2025), Schwab stated it supported the largest advisor transition in the history of the industry by welcoming OpenArc to its platform in September. Why it might matter: it advances Schwab's stated effort to add support and capabilities for RIAs of all sizes while helping new advisors transition to independence.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#14",
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q25 earnings call (period ended March 31, 2025), Schwab stated it announced a strategic investment in wealth.com, a leader in digital estate planning, which it describes as one part of its broader effort to provide more of an ecosystem for its RIA clients to help them grow, compete, and succeed. Why it might matter: the investment enhances Schwab's estate planning capabilities and experience for clients as part of meeting their needs.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#14"
+        ],
+        "part_id": "a6.SCHW"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: Schwab states it serves more than 16,000 RIA firms on its custody platform, a count of firms rather than a headcount of advisors (period ended September 30, 2026).",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "No passage states an advisor headcount for the RIA custody business; this reports a count of RIA firms, not the number of advisors at independent RIAs custodying with Schwab."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab noted it has some 3,000 financial advisors in-house, which are Schwab's own retail advisors rather than advisors at independent RIA firms custodying with Schwab.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#2"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "No passage states an advisor headcount for the RIA custody business; these are Schwab's own in-house retail advisors, not advisors at independent RIA firms custodying with Schwab."
+      }
+    ],
+    "gaps": []
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a7.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T20:26:26.802945-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3654,
+    "output_tokens": 1173,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2118,
+    "reasoning_tokens": 1022,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.61
+  },
+  "wall_s": 14.62,
+  "tokens_per_s": 80.23,
+  "ttft_s": 1.61,
+  "reasoning_content": "The sub-question asks: What offerings and strategies do competitors deploy to serve younger investors?\n\nThe passages are about Merrill's own recognitions (rankings of young advisors, \"Next-Gen Wealth Advisors\", \"Top 40 Brokers Under 40\", etc.). These aren't really about offerings/strategies deployed to serve younger investors. They're about advisor recognitions.\n\nActually, the question is about competitors, but the passages are about Merrill itself. The sub-question asks about competitors' offerings and strategies to serve younger investors. The passages mention \"Next-Gen Wealth Advisors\" and \"Advisors Under 40\" recognitions, which relate to younger advisors, not younger investors.\n\nLet me think about what these passages say. They're about advisor rankings (advisors born 1986 or later, advisors under 40). These are about the advisors themselves being young, not about serving younger investors.\n\nSo this is likely not_found or different_quantity. The passages don't describe offerings/strategies to serve younger investors.\n\nActually, \"Top Next-Gen Wealth Advisors\" and \"Advisors Under 40\" are about younger advisors, which is a different thing from serving younger investors.\n\nLet me consider: could \"next-gen\" advisors relate to serving next-gen (younger) investors? The Forbes list is \"advisors born in 1986 or later\" - so it's about the age of the advisor, not the client.\n\nSo these are different_quantity - a different related quantity (younger advisors, not offerings to younger investors).\n\nActually, the question asks about \"offerings and strategies competitors deploy to serve younger investors.\" The passages don't describe any offerings or strategies. They describe advisor recognition lists.\n\nI think the best label is not_found, because the passages say nothing about offerings/strategies to serve younger investors.\n\nBut wait - could the \"Next-Gen Wealth Advisors\" recognition be interpreted as a strategy? No, it's a recognition of individual advisors who are young.\n\nActually, let me reconsider. There might be a subtle connection: recognizing \"next-gen\" advisors could be a strategy to serve younger investors (younger clients prefer younger advisors?). But that's a stretch and would be speculation.\n\nThe passages clearly are about advisor recognition, not about serving younger investors. I'll label as not_found, or possibly different_quantity since they mention \"next-gen\" advisors (a different related quantity).\n\nThe \"different_quantity\" option says: \"a different measure... or an industry figure for a firm's own figure.\" The \"next-gen advisors\" recognitions are about younger advisors, which is different from offerings/strategies for younger investors.\n\nI think not_found is most accurate - the passages say nothing about offerings/strategies to serve younger investors. But there is a related concept (next-gen advisors). \n\nHmm, let me be careful. The question is about competitors, but passages are about Merrill itself (the firm). Actually the sub-question says \"competitors\" but we're extracting for this firm Merrill. Wait, the question says \"How should the preferences of younger investors shape Edward Jones's offerings?\" and the firm is Merrill. So Merrill is a competitor to Edward Jones.\n\nThe sub-question a7.MER asks \"What offerings and strategies do competitors deploy to serve younger investors?\" - here \"competitors\" means competitors to Edward Jones, which would include Merrill.\n\nSo the passages about Merrill are about what Merrill (a competitor) does. The passages mention advisor recognitions (Next-Gen advisors, advisors under 40). These relate to younger advisors, not offerings/strategies for younger investors.\n\nI'll go with not_found, as the passages describe advisor recognition lists, not offerings or strategies to serve younger investors.\n\nActually, let me reconsider whether \"different_quantity\" applies. The recognition lists (Top Next-Gen Wealth Advisors, Advisors Under 40) are about young advisors - this is a \"different measure\" related to \"younger\" but about advisors not investors and not about offerings/strategies.\n\nI think the cleanest answer is not_found. The passages do mention \"next-gen\" but that's about advisors' age, not about serving younger investors.\n\nLet me go with not_found.\n\nActually, wait - I should think about whether there's a fact here. \"24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\" - this is a recognition. Does it indicate a strategy to serve younger investors? Not directly.\n\nI'll label not_found with a clear reason.\n\nHmm, but actually I could argue these are different_quantity: they reveal Merrill has \"next-gen\" advisors (younger advisors), which is a related but different quantity than \"offerings and strategies to serve younger investors.\"\n\nI think not_found is most defensible because the passages say nothing about offerings or strategies for younger investors. The advisor age is a different topic entirely.\n\nLet me finalize: not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages describe Merrill's advisor recognition rankings (e.g., Forbes 'Top Next-Gen Wealth Advisors', 'Top 40 Brokers Under 40'), which concern the age/next-gen status of the advisors themselves, not any offerings or strategies Merrill deploys to serve younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

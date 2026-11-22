@@ -35,3 +35,17 @@ def test_failed_stage_is_marked_and_error_shown(monkeypatch):
     assert at.get("status")[0].label == "Searching 1 sub-question: failed (RuntimeError: database is down)"
     assert 'class="failed"' in trace_text(at)
     assert "database is down" in at.error[0].value
+
+
+def test_plan_and_evidence_show_before_the_answer_trace(monkeypatch):
+    """#272: the plan line and the evidence cards are drawn during the build (mock, 0 calls)."""
+    from tests.test_ask_progress import HITS
+    monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
+    monkeypatch.setattr(pipeline, "search", lambda q, plan=None, **kw: HITS)   # exp/hybrid: ask() calls modes.search
+    monkeypatch.setattr(pipeline, "_log", lambda r, p: 1)
+    at = AppTest.from_function(page).run()
+    assert not at.exception and not at.error
+    texts = [m.value for m in at.markdown]
+    plan_i = next(i for i, t in enumerate(texts) if t.startswith("**Plan:**"))
+    ev_i = next(i for i, t in enumerate(texts) if "EVIDENCE - Merrill" in t)
+    assert plan_i < ev_i and "BAC-10K-2025#244" in texts[ev_i]

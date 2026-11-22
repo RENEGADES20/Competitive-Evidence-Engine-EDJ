@@ -1,0 +1,240 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research",
+    "a10.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MCK-ADVISOR-SHORTAGE-2025#23",
+    "MCK-ADVISOR-SHORTAGE-2025#30",
+    "KITCES-WELLBEING-2023#131",
+    "KITCES-WELLBEING-2023#92"
+  ],
+  "at": "2026-11-21T21:29:08.701895-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3181,
+    "output_tokens": 6291,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1901,
+    "reasoning_tokens": 4745,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.89
+  },
+  "wall_s": 53.91,
+  "tokens_per_s": 116.69,
+  "ttft_s": 1.89,
+  "reasoning_content": "Let me analyze the passages. The question asks about Morgan Stanley, Merrill, and Raymond James specifically, but the passages are industry research (no firm). The sub-questions have \".research\" ids, meaning they ask about the industry in general.\n\nLet me go through each sub-question and see what the passages support.\n\nThe passages available:\n1. MCK-ADVISOR-SHORTAGE-2025#23 - about advisor recruitment support, lead flow as currency for recruitment, profitability.\n2. MCK-ADVISOR-SHORTAGE-2025#30 - succession planning, retention of assets, 32% of investors switch firms.\n3. KITCES-WELLBEING-2023#131 - recruiting focus, \"eat what you kill\" mentality.\n4. KITCES-WELLBEING-2023#92 - workload, early vs later stage advisors.\n\nSince these are research passages, and the sub-questions have \".research\" suffix, I should treat research figures as facts for aspects about the industry in general.\n\nBut wait - the sub-questions are phrased as \"How the firm approaches advisor recruiting\" etc. But since the firm is \"Industry research (no firm)\", these are about industry in general. The research passages give industry-level facts.\n\nLet me determine labels for each sub-question.\n\na1.research [fact]: How the firm approaches advisor recruiting\n- MCK-23: Advisor recruitment support - ensuring access to steady lead flow is important currency for recruitment. This is a fact about how firms approach recruiting.\n- KITCES-131: re-evaluate recruiting focus, \"eat what you kill\" mentality evolving toward service/nurture-oriented.\n\nThese are facts (industry-level).\n\na2.research [fact]: Whom the firm targets in recruiting\n- KITCES-131: attracting recruits with 'eat what you kill' mentality... early-stage advisors, advisors who work in teams. Actually let me read: \"new advisors and the industry at large transform...\" \"an advisor new to the business\" \"when advisors work in teams.\"\n- MCK-23: \"early- and mid-tenure solo practitioners, as well as teams.\"\n\nSo target groups: early- and mid-tenure solo practitioners, teams, new advisors.\n\na3.research [fact]: What the firm offers advisors as transition and recruiting compensation\n- MCK-23: lower compensation costs (lower payouts on clients sourced by firm). Not really about what's offered. Hmm.\n- MCK-30: \"increasing retirement packages to prevent flight to independence.\" That's retention, not transition compensation.\n- KITCES-131: \"Focus on serving clients but be sure to get paid what you are worth.\" Not specific.\n\nActually there's little on transition/recruiting compensation specifically. MCK-23 mentions \"lower payouts on clients sourced and prequalified by the firm\" - that's about compensation structure, not recruiting compensation offered. \n\nHmm, a3 is about what the firm offers as transition/recruiting compensation (like sign-on bonuses, transition packages). I don't see specific figures. Maybe not_found.\n\nActually MCK-30 mentions \"providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.\" These are succession/retention, not transition compensation. But \"providing capital to mid-career advisors to acquire practices\" could be a form of compensation/offer.\n\nLet me think about a4 (retention incentives): MCK-30 has clear retention approaches - succession planning, facilitating practice transitions, internal marketplace, capital for acquisitions, retirement packages.\n\na3 (transition/recruiting compensation): nothing really. Not_found or different_quantity. \"lower payouts\" is a compensation structure but not transition/recruiting compensation. I'd say not_found.\n\na5 (value proposition around platform, products, autonomy): MCK-23 mentions lead flow as currency. KITCES-92 mentions service teams. Not really autonomy. Not much. Possibly not_found.\n\nActually \"Ensuring access to a steady lead flow is an important currency for recruitment\" - this is about platform/capabilities. Could be a5.\n\na6 (advisor headcount over time): No headcount figures. not_found.\n\na7 (net new assets attributable to recruiting): No figures. not_found.\n\na8 (advisor turnover/departures): MCK-30 says \"32 percent of investors switch firms when their existing advisor leaves.\" That's about investors switching when advisors leave, not advisor turnover rate. This is a related but different quantity? Actually it's about investor behavior when advisor departs. Could be relevant to turnover but it's a different measure. Hmm.\n\nActually, the sub-question is \"advisor turnover and departures disclosed by the firm.\" The 32% figure is about investors switching firms when advisors leave, not advisor turnover. That's a different_quantity perhaps? Or it's relevant context. Let me think.\n\nThe 32% is \"investors switch firms when their existing advisor leaves\" - this relates to the impact of advisor departure, not the advisor turnover itself. I'd say different_quantity (a different measure - investor switching, not advisor turnover).\n\nActually, let me reconsider. The sub-question a8 is [series] about advisor turnover and departures. No firm turnover figures given. The 32% is about investor behavior. I could label as different_quantity with differs_because \"investor switching when advisors leave, not advisor turnover itself.\"\n\nHmm, but is it even a different quantity that's related? It's related to advisor departures' impact. I think different_quantity is defensible.\n\nAlternatively not_found. The instruction says when unsure between fact and different_quantity choose different_quantity. But between not_found and different_quantity... The 32% figure is about advisor departure consequences. I think it's related enough to be different_quantity. Actually, let me reconsider - it's really about client asset retention, not advisor turnover. But it's disclosed in context of advisor leaving.\n\nActually I'll treat it as not_found for a8, because the 32% is about investors, not advisors. But it is a departure-related stat. Hmm.\n\nLet me think about what's cleanest. The 32% figure: \"32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons.\" This is clearly about advisor departure (leaves) and its effect. For a8 (advisor turnover and departures disclosed), this is not the turnover rate but is a related disclosure about the consequence of departures.\n\nI'll go with different_quantity for a8, noting it's about investor switching when advisors leave, not the advisor turnover rate itself.\n\nActually wait, let me reconsider. The sub-question asks \"Advisor turnover and departures disclosed by the firm.\" The firm here is \"industry research\" - so it's about industry advisor turnover. The 32% investor switching figure is a related metric. I'll label different_quantity.\n\nHmm, but actually I could also see it as not_found since no turnover is disclosed. Let me go with different_quantity as it's clearly related and disclosed.\n\nActually, re-reading guidance: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity.\" The 32% is a different related quantity (investor switching rate when advisor departs). So different_quantity is appropriate.\n\na9 (recency, results of recruiting efforts): No results/figures. MCK-23 mentions \"faster growth trajectories for new recruits.\" Not a result figure. not_found.\n\na10 (comparison): No comparison of the three firms. not_found. Actually the passages are industry-wide, no firm comparison. not_found.\n\nNow let me carefully extract facts for a1, a2, a4, a5.\n\na1 (approaches advisor recruiting):\n- MCK-23: \"Advisor recruitment support. Ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads.\"\n- KITCES-131: \"Advisors' preferences toward service also have relevance at the firm level in terms of highlighting the need to re-evaluate recruiting focus. The industry's long-standing interest in attracting recruits with an 'eat what you kill' mentality must evolve as new advisors and the industry at large transform toward a more service and nurture-oriented way of working with clients.\"\n\nThese are facts about how the industry/firms approach recruiting.\n\na2 (whom targeted):\n- MCK-23: early- and mid-tenure solo practitioners, teams.\n- KITCES-131: new advisors, advisors new to business, advisors who work in teams. \"attracting recruits with an 'eat what you kill' mentality.\"\n\na4 (retention incentives):\n- MCK-30: succession planning approaches - codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming focused on succession, internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, increasing retirement packages to prevent flight to independence.\n\na5 (value proposition platform/products/autonomy):\n- MCK-23: lead flow as currency. KITCES-92: service teams, Service Advisor role. These are about platform. Maybe a fact about lead flow and service teams.\n\nHmm, autonomy - no mention. I think there's limited material. But MCK-23's lead flow is a value proposition. KITCES-92 about service teams is platform.\n\nActually, let me be careful. a5 is \"How the firm pitches its advisor value proposition around platform, products and autonomy.\" There's no explicit pitching of autonomy. The lead flow and service team content could be considered platform value. I could include as fact or not_found.\n\nGiven the guidance \"A sub-question marked [fact]\" - it's asking for facts. Let me include what's relevant.\n\nLet me also note the definition aspect. The metric definitions: advisor_headcount, net_new_assets. No definitions given. So for a6, a7 there are no definitions either.\n\nLet me also consider a6, a7 have [series, metric] tags but no data. not_found.\n\nNow, let me structure the cells.\n\nFor each sub-question, I need to return one cell with label, items (list), differs_because, reason, derivation.\n\nLet me write out items.\n\nFor a1.research, label fact, items:\nItem 0 (MCK-23): \"Research states that ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners and teams.\"\nQuote: \"Ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads.\"\nvalue \"\", unit \"\", period \"\", scope \"\", definition \"\", chunk_ids [\"MCK-ADVISOR-SHORTAGE-2025#23\"]\n\nItem 1 (KITCES-131): \"Research notes firms need to re-evaluate recruiting focus, moving from attracting recruits with an 'eat what you kill' mentality toward a more service and nurture-oriented way of working with clients.\"\nQuote: \"The industry's long-standing interest in attracting recruits with an 'eat what you kill' mentality must evolve as new advisors and the industry at large transform toward a more service and nurture-oriented way of working with clients.\"\nchunk_ids [\"KITCES-WELLBEING-2023#131\"]\n\na2.research, fact:\nItem 0: MCK-23 targets early- and mid-tenure solo practitioners and teams.\nItem 1: KITCES-131 new advisors / advisors new to business.\n\nActually both a1 and a2 draw from same passages. That's fine.\n\na2 items:\nItem 0 (MCK-23): \"Research identifies early- and mid-tenure solo practitioners, as well as teams, as recruiting targets that benefit from steady lead flow.\"\nItem 1 (KITCES-131): \"Research notes the industry's interest in attracting new advisors and that advisors new to the business benefit from team structures.\"\n\nHmm, let me quote precisely for KITCES-131: \"an advisor doesn't necessarily need to do both well, particularly an advisor new to the business. This is especially true when advisors work in teams.\"\n\na3.research: not_found (no transition/recruiting compensation). Actually, wait - MCK-23 mentions \"lower payouts on clients sourced and prequalified by the firm.\" This is compensation structure, but not transition/recruiting compensation offered to recruits. \n\nActually, \"lower compensation costs (due to lower payouts on clients sourced and prequalified by the firm)\" - this describes a compensation model, not what's offered to transition advisors. I think a3 is not_found.\n\nBut wait, MCK-30 \"providing capital to mid-career advisors to acquire practices, and increasing retirement packages\" - these are offers to advisors but for retention/succession, not recruiting/transition compensation. These belong to a4.\n\nSo a3: not_found. Reason: no passage states transition/recruiting compensation.\n\nActually, let me reconsider whether \"increasing retirement packages to prevent the flight to independence\" is recruiting/retention. It's retention. \"providing capital to mid-career advisors to acquire practices\" is succession/retention. Both are a4.\n\na3 not_found.\n\na4.research, fact:\nItem 0 (MCK-30): succession planning approaches to retain client assets: facilitating practice transitions, codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming, internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, increasing retirement packages.\n\nQuote: \"wealth management firms are enhancing their succession-planning strategies and broadening the options available to advisors to include codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming focused on succession, development of an internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.\"\n\na5.research: fact? Let me think. The value proposition around platform. \n\nMCK-23 lead flow: \"Ensuring access to a steady lead flow is an important currency for recruitment\" - this is a platform capability used as value prop.\n\nKITCES-92: service teams, Service Advisor, Lead Advisor roles - platform/structure.\n\nHmm, but these are more about recruiting than \"pitching value proposition around platform, products, autonomy.\" There's no mention of products or autonomy specifically.\n\nI think I could label a5 as fact with the lead flow item (platform capability) and service team item. Or not_found.\n\nGiven the passages are thin, and the lead flow is clearly a recruiting pitch (currency for recruitment), I lean toward including it as fact for a5 (platform capability). The service team structure could also be platform.\n\nActually, let me be careful not to overreach. a5 asks about \"value proposition around platform, products and autonomy.\" The lead flow and service team content are platform-related. I'll include as fact with these items, but they're partial.\n\nHmm, but actually, is \"lead flow\" a platform feature? It's a firm capability (client sourcing). I'd say yes, it's a platform/firm resource pitched to advisors.\n\nI'll do a5 as fact with two items.\n\nActually, let me reconsider. The distinction between a1 (how approaches recruiting) and a5 (value proposition around platform) is blurry. Lead flow appears in a1 already. To avoid double-counting awkwardness, I could put lead flow in a1 (approach) and service teams in a5 (platform).\n\nLet me decide:\n- a1: lead flow as recruitment currency + re-evaluate recruiting focus.\n- a5: service team structure (Service Advisor/Lead Advisor roles) as platform value. \n\nActually KITCES-92 is about workload and client-per-advisor ratios, not really a value proposition pitch. It describes how teams work. Not a pitch.\n\nHmm. I think a5 is quite thin. Let me consider not_found for a5, since nothing directly states how firms pitch value proposition around platform, products, autonomy.\n\nBut MCK-23's \"lead flow is important currency for recruitment\" could be seen as a value proposition. However I already used that in a1.\n\nI'll make a decision: a5 = not_found, reason: no passage states how firms pitch platform, products, or autonomy value proposition to advisors. The lead flow and service team content relate to recruiting approach and workload, not a value proposition pitch.\n\nActually wait, let me reconsider. \"Ensuring access to a steady lead flow is an important currency for recruitment\" - this IS pitching a platform capability as a recruiting value prop. It's borderline.\n\nI think to be safe and useful, I'll include a5 as fact with the lead flow item (it's a platform/resource value proposition), and note it's about lead flow. But then a1 also uses lead flow.\n\nHmm, but the instruction says each sub-question returns a cell; overlap is okay as long as each item is accurate to that sub-question.\n\nLet me reconsider the cleanest assignment:\n- a1 (approach to recruiting): KITCES-131 (re-evaluating focus, service/nurture orientation), MCK-23 (lead flow as recruitment currency).\n- a2 (whom targeted): MCK-23 (early/mid-tenure solo practitioners, teams), KITCES-131 (new advisors).\n- a5 (value prop platform/products/autonomy): this is where I'd say not_found, because lead flow is more about \"approach\" and there's no products/autonomy mention.\n\nI'll go with a5 not_found. Actually, let me reconsider once more.\n\nHmm, actually there might be a reasonable fact for a5 in KITCES-92 about service teams: \"later-stage advisors with more established practices can afford to be more selective... growing service teams often add a Service Advisor... while the original Lead Advisor focuses more on business development.\" This describes team structure, which is a platform/service capability. But it's descriptive of advisor practices, not a firm pitch.\n\nI'll keep a5 as not_found to be honest.\n\nWait, but I want to reconsider a3 as well. Actually is there anything about compensation? MCK-23: \"lower payouts on clients sourced and prequalified by the firm\" - this is about compensation for client-sourced business. Not transition/recruiting compensation. KITCES-131 title \"be sure to get paid what you are worth\" - no specific. So a3 not_found.\n\nLet me finalize.\n\na6: not_found (no headcount data).\na7: not_found (no net new assets data).\na8: different_quantity (32% investor switching) OR not_found.\n\nLet me think harder about a8. \"Advisor turnover and departures disclosed by the firm.\" The 32% figure is \"investors switch firms when their existing advisor leaves.\" This is about client behavior upon advisor departure, which is closely tied to advisor turnover/departures' impact. It's a related but different quantity (it measures investor attrition, not advisor turnover).\n\nI'll label a8 as different_quantity with the 32% figure, differs_because \"measures investor switching when advisors leave, not the advisor turnover/departure rate itself.\"\n\nActually, re-reading the label definitions again carefully:\n\n\"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit..., a different measure..., or an industry figure for a firm's own figure.\"\n\nThe 32% investor switching is a different measure. Yes, different_quantity fits.\n\na9: not_found (no results of recruiting efforts reported).\na10: not_found (no comparison).\n\nActually, wait. Let me reconsider a9. \"Results of recruiting efforts the firm reports, such as recruited teams and production.\" MCK-23 \"faster growth trajectories for new recruits\" - that's a projection/benefit, not a reported result. No figures. not_found.\n\na10: comparison. No comparison. not_found.\n\nNow let me also double check the a8 32% figure period. The passage: \"according to our survey of affluent and high-net-worth investors\" - no date/period. So period \"\".\n\nValue \"32\", unit \"percent of investors who switch firms when advisor leaves\", period \"\".\n\nActually value should be the figure as printed \"32 percent\" \u2192 \"32\", unit \"percent of investors who switch firms when their advisor leaves\".\n\nLet me write unit more precisely: \"percent of investors who switch firms when their advisor leaves\".\n\nNow let me finalize all cells and write them out.\n\nFor each item, I need: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nLet me write out the full submission.\n\nFor a1 items - no figures, so value \"\", unit \"\", period \"\", scope \"\", definition \"\".\n\nLet me write quotes accurately.\n\nMCK-23 quote for lead flow: \"Ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads.\"\n\nKITCES-131 quote: \"The industry's long-standing interest in attracting recruits with an 'eat what you kill' mentality must evolve as new advisors and the industry at large transform toward a more service and nurture-oriented way of working with clients.\"\n\na2 items:\nMCK-23 quote (targeting): \"as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads.\"\n\nKITCES-131 quote: \"an advisor doesn't necessarily need to do both well, particularly an advisor new to the business. This is especially true when advisors work in teams\"\n\na4 item MCK-30 quote as above.\n\nNow let me write everything.\n\nFor a3, a5, a6, a7, a9, a10: not_found, items empty, differs_because \"\", reason, derivation operation \"\" inputs [].\n\nFor a8: different_quantity, one item.\n\nLet me write reason strings concisely.\n\nLet me now produce the tool call.\n\nFor derivation, all have operation \"\" and inputs [].\n\nLet me write it all out.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Research states that ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners and teams.",
+            "quote": "Ensuring access to a steady lead flow is an important currency for recruitment, as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#23"
+            ]
+          },
+          {
+            "text": "Research states that firms must re-evaluate their recruiting focus, moving away from attracting recruits with an 'eat what you kill' mentality toward a more service- and nurture-oriented way of working with clients.",
+            "quote": "The industry's long-standing interest in attracting recruits with an 'eat what you kill' mentality must evolve as new advisors and the industry at large transform toward a more service and nurture-oriented way of working with clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#131"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe industry-level approaches to advisor recruiting (lead flow as a recruiting currency and a shift in recruiting focus).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Research identifies early- and mid-tenure solo practitioners and teams as the advisor groups that benefit from and are targeted through steady lead flow in recruiting.",
+            "quote": "as it can accelerate growth for early- and mid-tenure solo practitioners, as well as teams that tend to be more effective at converting leads",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#23"
+            ]
+          },
+          {
+            "text": "Research notes that new advisors (advisors new to the business) are a recruiting focus, and that teams are particularly important for them.",
+            "quote": "an advisor doesn't necessarily need to do both well, particularly an advisor new to the business. This is especially true when advisors work in teams",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#131"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages identify recruiting targets at an industry level (early/mid-tenure solo practitioners, teams, and new advisors).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states what firms offer as transition or recruiting compensation (e.g., signing bonuses or transition packages).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Research states that wealth management firms are enhancing succession-planning strategies and broadening options to retain client assets, including codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming, an internal marketplace for advisors to buy practices, capital to mid-career advisors to acquire practices, and increased retirement packages to prevent flight to independence.",
+            "quote": "wealth management firms are enhancing their succession-planning strategies and broadening the options available to advisors to include codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming focused on succession, development of an internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#30"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage lists firm-level retention incentives and succession programs used to retain advisors and client assets.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states how firms pitch their value proposition around platform, products, or autonomy; the lead flow and service team content concerns recruiting approach and workload rather than a value-proposition pitch.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses advisor headcount over time.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses net new assets attributable to advisor recruiting.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Research reports that 32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons, a measure of the client impact of advisor departures rather than advisor turnover itself.",
+            "quote": "32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons, according to our survey of affluent and high-net-worth investors.",
+            "value": "32",
+            "unit": "percent of investors who switch firms when their advisor leaves",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#30"
+            ]
+          }
+        ],
+        "differs_because": "It measures investor/client attrition when an advisor departs, not the advisor turnover or departure rate itself.",
+        "reason": "No passage discloses advisor turnover; the 32% figure is a related but different measure (investors switching when advisors leave).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage reports results of recruiting efforts such as recruited teams or production.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry-wide research and contain no comparison of the recruiting and retention approaches of Morgan Stanley, Merrill, and Raymond James.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

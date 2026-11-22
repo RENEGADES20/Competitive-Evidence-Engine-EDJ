@@ -1,0 +1,111 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#329",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q2#9",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10Q-2026Q2#9",
+    "EDJ-10Q-2025Q2#15",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2025Q2#51",
+    "EDJ-10Q-2025Q3#9",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#41",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#140",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#327",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q1#102",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#23",
+    "EDJ-10K-2025#334",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#130"
+  ],
+  "at": "2026-11-21T21:43:47.288519-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13874,
+    "output_tokens": 3353,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 12210,
+    "reasoning_tokens": 3071,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.42
+  },
+  "wall_s": 30.28,
+  "tokens_per_s": 110.73,
+  "ttft_s": 1.42,
+  "reasoning_content": "The sub-question asks: \"What the firm's advisor headcount definition includes\" for Edward Jones.\n\nLet me look for passages that describe the definition of advisor headcount. The passages show \"Financial advisors (actual): At period end\" and \"Average\" figures. I need to find whether there's any definition of what \"financial advisors\" includes.\n\nLooking through the passages, I see figures for financial advisors (actual) at period end and average, broken down by U.S. and Canada. But I don't see a definition of what the headcount includes.\n\nThere's a note about attrition %: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" This defines attrition but not the headcount definition itself.\n\nThere's also the passage about financial advisors who are \"service partners of JFC and not employees of Edward Jones.\" This is relevant to who counts as financial advisors - some financial advisors are service partners of JFC, not employees of Edward Jones. This is a partial description of what the headcount includes/excludes.\n\nActually, chunk EDJ-10K-2025#334: \"The Partnership's principal operating subsidiary, Edward D. Jones & Co., L.P. (\"Edward Jones\"), has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\n\nThis suggests some financial advisors are service partners of JFC, not employees. This is relevant to the definition - it implies the advisor headcount includes both employees of Edward Jones and service partners of JFC.\n\nBut does this define what the headcount includes? It's about the nature of the relationship, not really a definition of headcount.\n\nThe question is specifically \"What the firm's advisor headcount definition includes.\" I don't see an explicit definition in the passages. The passages just report \"Financial advisors (actual)\" figures without defining them.\n\nSo the answer is likely \"not_found\" - the passages say nothing about what the definition includes. Actually, there might be partial info.\n\nLet me reconsider. The attrition footnote says \"the total number of financial advisors as of period end\" - this is just explaining the attrition calculation denominator, not the definition.\n\nThe #334 chunk says \"certain financial advisors who are service partners of JFC and not employees of Edward Jones.\" This is a factual statement about the nature of some financial advisors, but it's not a definition of what the headcount includes.\n\nHmm. The sub-question is about \"what the definition includes.\" There's no explicit definition statement like \"financial advisors include X and exclude Y.\"\n\nActually, I think the most defensible answer is not_found, since no passage provides a definition of what the advisor headcount includes or excludes.\n\nWait, but let me consider whether the #334 chunk is a fact. It says \"certain financial advisors who are service partners of JFC and not employees of Edward Jones.\" This tells us the advisor headcount includes service partners of JFC (not employees of Edward Jones). This is arguably a fact about what the definition includes: it includes financial advisors who are service partners of JFC, not employees of Edward Jones.\n\nBut is this really \"what the definition includes\"? It's a statement about the nature of certain advisors' employment relationship. It's somewhat tangential but it does tell us the advisor population includes both employees and service partners.\n\nHmm, I think this is borderline. The instruction says \"fact: a passage states what the sub-question asks for this firm, in full or in part.\"\n\nThe sub-question asks \"What the firm's advisor headcount definition includes.\" The #334 passage does not explicitly define the headcount. It describes the payment arrangement for certain financial advisors who are service partners of JFC.\n\nI think this is more of a \"not_found\" situation because there's no definition of what the headcount includes. The passage #334 describes the nature of employment but doesn't define the headcount metric.\n\nActually, let me reconsider more carefully. The passage about service partners tells us something relevant to the definition: some financial advisors are not employees of Edward Jones but are service partners of JFC. This implies the \"financial advisors\" metric counts people who are not Edward Jones employees.\n\nThis is a partial fact about what the definition includes. I think it's worth including as a fact with a caveat, or as different_quantity.\n\nActually, I'll go with not_found as the primary label, but let me think about whether the service partner info is a fact.\n\nHmm. The question \"what does each definition include or exclude\" - the service partner statement tells us the headcount includes service partners who are not employees. That's about who is included.\n\nI think this is a legitimate partial fact. The definition of \"financial advisors\" (as reported) includes financial advisors who are service partners of JFC and not employees of Edward Jones.\n\nBut actually, the passage #334 is about the written agreement and payments, not about the headcount definition. It's describing an accounting note about revenue and expense. It says \"certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\n\nI'll treat this as a fact that partially describes what the headcount includes: it includes service partners of JFC (not employees of Edward Jones). But I'm not fully confident it's about the headcount definition.\n\nGiven the instruction \"When unsure between fact and different_quantity, choose different_quantity and say why\" - but this isn't really a different quantity either.\n\nLet me settle: The passages do not provide a definition of what the advisor headcount includes. There's no statement like \"financial advisors include...\". The closest relevant info is the service partner note, which describes the employment status of some advisors.\n\nI'll go with not_found, and maybe note the service partner info... but if label is not_found, I can't add items.\n\nActually, let me reconsider. The service partner note is genuinely relevant to the definition - it clarifies that \"financial advisors\" includes people who are not employees of Edward Jones. This is information about what the headcount includes.\n\nI'll provide a fact with the service partner info, acknowledging it partially describes the composition.\n\nActually, I think I'm overcomplicating. Let me re-read the guidance: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\"\n\nThe sub-question names \"what the advisor headcount definition includes\" - not a quantity/figure but a definitional matter.\n\nThe passages don't give a clear definition. The attrition footnote gives a definition of attrition, not headcount. The service partner note describes a payment arrangement.\n\nI'll go with not_found, since no passage defines what the advisor headcount includes.\n\nActually wait - let me reconsider the service partner note once more. It does state a fact about financial advisors: \"certain financial advisors who are service partners of JFC and not employees of Edward Jones.\" This is about the composition of the financial advisor group - it includes non-employees (service partners).\n\nI think this is a reasonable partial fact. The definition of \"financial advisors\" includes service partners of JFC who are not employees of Edward Jones.\n\nBut I'm hesitant because the passage is about accounting/payment, not headcount reporting.\n\nI'll go with not_found and explain that no passage defines what the headcount includes. Actually, let me include a fact about the service partner relationship since it's the only thing remotely about the composition.\n\nHmm, let me make a decision and be consistent. I think the best answer is:\n\nnot_found - because no passage provides a definition of what the advisor headcount includes or excludes. The passages report the \"Financial advisors (actual)\" metric but don't define it.\n\nBut actually there's the service partner note. Let me include it as a fact item, because it does state something about who is included in the financial advisor count (service partners of JFC, not employees of Edward Jones).\n\nI'll go with fact with one item about the service partner note.\n\nActually, re-reading: \"text: one sentence stating what the passage says, attributed to the firm.\" \n\nLet me create a fact:\n- text: Edward Jones has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\n- This indicates the financial advisor population includes individuals who are service partners of JFC rather than employees of Edward Jones.\n\nI think this is a legitimate partial fact about what the headcount includes.\n\nBut is it really about the \"headcount definition\"? It's about the nature of the relationship. It's indirect.\n\nGiven uncertainty, I'll label it as fact with a note in the text that it indicates the financial advisor population includes service partners of JFC.\n\nHmm, actually I worry this is over-reading. The passage is in Note 1 (Revenue and Expense) in Item 16, describing the written agreement. It's not about headcount definition.\n\nLet me go with not_found as the cleaner answer, but actually I think there IS relevant info. Let me reconsider the whole set of passages.\n\nActually, there's no explicit definition anywhere. The firm reports \"Financial advisors (actual): At period end\" and \"Average\" but never defines what \"financial advisor\" includes.\n\nThe attrition footnote defines attrition, not headcount.\n\nSo not_found is the most accurate: \"the passages say nothing about it [the definition].\"\n\nBut the service partner note... it's about compensation/revenue recognition, not headcount definition.\n\nI'll go with not_found, but I could also include the service partner note as a fact. Let me think about what's most useful and accurate.\n\nThe instruction says: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact.\"\n\nDoes the service partner note state \"what the headcount definition includes\"? Partially, it tells us the headcount includes non-employees (service partners). I think this is a stretch but defensible.\n\nI'll include it as a fact, being transparent about what it covers.\n\nActually, let me settle on not_found with a clear reason. The service partner note is about a payment arrangement, not a definition. There is no passage that defines what the advisor headcount includes.\n\nWait, but I want to be helpful and thorough. Let me include the service partner note as a fact since it's genuinely about the composition of who counts as a \"financial advisor\" (i.e., some are service partners of JFC, not employees of Edward Jones).\n\nFinal decision: I'll provide a fact with the service partner note, as it's the only passage touching on what the \"financial advisors\" count includes (it includes service partners of JFC who are not employees of Edward Jones).\n\nActually, let me reconsider one more time. The risk is labeling something as fact when it's not really about the definition. The guidance says \"A figure that only resembles it is never a fact\" and \"When unsure between fact and different_quantity, choose different_quantity.\"\n\nThe service partner note is not a \"figure\" but a statement. It's not really a \"different quantity\" either.\n\nI think the cleanest and most accurate answer is not_found, with reason: no passage defines what the advisor headcount includes.\n\nBut I'll also consider: is the service partner info actually helpful for the question \"what does the definition include\"? It tells us advisors include non-employees. That's relevant to include/exclude.\n\nI'll go with a fact containing the service partner note. It's the best available information about the composition of the advisor headcount.\n\nLet me finalize:\n\nLabel: fact\nItems: one item about the service partner note.\n\ntext: \"Edward Jones has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones, indicating the financial advisor population includes individuals who are service partners of JFC rather than employees of Edward Jones.\"\n\nquote: \"has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones\"\n\nvalue: \"\" (no figure)\nunit: \"\" \nperiod: \"\" (relates to years 2025, 2024, 2023 but no specific period for a definition)\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#334\"]\n\nHmm, but is this really \"what the definition includes\"? It's a statement about a payment arrangement. \n\nActually, I'll reconsider and go with not_found. The reason: the passages report \"Financial advisors (actual)\" figures and define \"attrition %\" but do not provide a definition of what the advisor headcount includes or excludes.\n\nBut the service partner note is genuinely relevant... \n\nOK let me make a final call. I think the service partner note is a legitimate partial fact about the composition of the \"financial advisors\" group, which is relevant to \"what the definition includes.\" I'll include it as a fact but be careful.\n\nActually, I realize I should think about what \"what the definition includes\" means precisely. The question asks about the definition of advisor headcount - what's included/excluded. \n\nThe service partner note tells us: some financial advisors are service partners of JFC, not employees of Edward Jones. This implies the \"financial advisors\" metric includes both employees and service partners (or at least the note treats service partners as \"financial advisors\").\n\nThis is a partial fact about the definition. I'll go with fact.\n\nBut there's a subtlety: does the note actually say these service partners are counted in \"financial advisors\"? It calls them \"financial advisors who are service partners of JFC.\" So yes, they're described as \"financial advisors.\"\n\nOK, final answer: fact with one item.\n\nLet me write it carefully.\n\ntext: \"Edward Jones states it has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones, indicating the 'financial advisors' population includes individuals who are service partners of JFC rather than employees of Edward Jones.\"\n\nreason: \"The only passage touching on the composition of the financial-advisor population states that some financial advisors are service partners of JFC rather than employees of Edward Jones; no passage gives a fuller definition of what the headcount includes.\"\n\nI'll go with this.\n\nActually, let me reconsider the label once more. I'm fairly confident now this is a fact (partial) about what the definition includes. Good.\n\ndiffers_because: \"\" (for fact)\n\nderivation: operation \"\", inputs [].\n\nLet me write the final submission.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones states it has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones, indicating the firm's financial-advisor population includes individuals who are service partners of JFC rather than employees of Edward Jones.",
+            "quote": "has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#334"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "No passage gives a full definition of what the advisor headcount includes; the only passage touching on the composition of the financial-advisor population states that certain financial advisors are service partners of JFC and not employees of Edward Jones.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

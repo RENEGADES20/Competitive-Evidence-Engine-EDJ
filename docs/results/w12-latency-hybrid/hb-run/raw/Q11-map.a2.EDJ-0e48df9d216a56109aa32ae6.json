@@ -1,0 +1,180 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#327",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q3#129",
+    "EDJ-10Q-2026Q2#115",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q1#102",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#140",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#329",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#23",
+    "EDJ-10K-2025#334",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#130"
+  ],
+  "at": "2026-11-21T21:43:47.281461-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13334,
+    "output_tokens": 4556,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 11798,
+    "reasoning_tokens": 3668,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.08
+  },
+  "wall_s": 37.64,
+  "tokens_per_s": 121.04,
+  "ttft_s": 3.08,
+  "reasoning_content": "Let me analyze the passages to extract the advisor headcount figures Edward Jones reports.\n\nThe sub-question asks for \"The advisor headcount figure the firm reports\" - metric advisor_headcount.\n\nI need to identify the \"Financial advisors (actual)\" figures that the firm reports. These appear in multiple chunks.\n\nLet me identify the figures:\n\nFrom EDJ-10K-2025#130 (annual, Item 7):\n- Financial advisors (actual): At year end: 20,425 (2025), 20,125 (2024), 19,232 (2023). Average: 20,331, 19,650, 18,945.\n\nFrom EDJ-10K-2025#148 (annual):\n- At year end: U.S. 19,540 (2025), 19,253 (2024), 18,378 (2023); Canada 885, 872, 854. Average: 19,456, 18,784, 18,102 (U.S.), 875, 866, 843 (Canada).\n\nFrom EDJ-10Q-2026Q2#60:\n- At period end 20,514 (2026Q2), 20,309 (2025Q2). Average 20,537, 20,316 (total); and 20,517, 20,265? Actually let me look. The chunk #60 shows:\n\"Financial advisors (actual):\n  At period end                              20,514                         20,309                      1%                            20,514                         20,309                      1%\n  Average                                    20,537                         20,316                      1%                            20,517                         20,265                      1%\"\n\nThis is confusing - seems to show total and then U.S.? Actually the two columns might be total (three months) and total (six months) or something. Actually it shows two sets of \"at period end\" and \"average\" with same values. Likely the left is a period and right is another period. But both \"at period end\" show 20,514 and 20,309. Hmm.\n\nWait, this might be Three months ended vs Six months ended. The at period end should be same. Average differs slightly (20,537 vs 20,517; 20,316 vs 20,265).\n\nActually for the 10-Q period 2026-06-26, the \"at period end\" is as of June 26, 2026 = 20,514. This is the total financial advisors.\n\nFrom EDJ-10Q-2026Q2#82:\n\"Financial advisors (actual):\n  At period end                            19,647                          19,435                     1%                                867                           874                      -1%\n  Average                                  19,642                          19,391                     1%                                875                           874                        \u2014\"\n\nThis is U.S. (19,647) and Canada (867) at period end. Wait actually looking at the header, it shows U.S. and Canada columns. So U.S. at period end 19,647 (2026) vs 19,435 (2025), Canada 867 vs 874.\n\nHmm wait, but the total at period end from #60 is 20,514. U.S. 19,647 + Canada 867 = 20,514. Yes.\n\nSo the firm reports \"Financial advisors (actual)\" both total and by segment (U.S. and Canada).\n\nThe question asks about the advisor headcount figure the firm reports. This is a fact. The firm reports \"Financial advisors (actual)\" as a metric. There's also a definition implied: attrition % uses \"total number of financial advisors as of period end.\"\n\nThere's also the note about financial advisors being \"service partners of JFC and not employees of Edward Jones\" (EDJ-10K-2025#334). This is relevant to what the definition includes/excludes.\n\nAlso EDJ-10K-2025#202: \"(Dollars in millions, except per unit information and the number of financial advisors)\".\n\nThe question is essentially asking for the headcount figure and its definition. I should report the fact of the advisor headcount figures.\n\nLet me decide how to structure. The sub-question asks \"The advisor headcount figure the firm reports\" [fact, metric advisor_headcount]. So I should report the figures.\n\nI'll provide items for the headcount figures. There are many periods. I should probably provide a representative set - the most recent total, and note the definition.\n\nActually, the key here is the definition: what does the firm's \"financial advisors\" include/exclude. The note #334 is important: financial advisors who are \"service partners of JFC and not employees of Edward Jones.\"\n\nLet me think about what \"define and report advisor headcount\" means. The question asks \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\"\n\nSo I need to capture:\n1. The reported figure (financial advisors actual)\n2. Any definitional info: financial advisors are \"service partners of JFC and not employees of Edward Jones.\"\n\nThe definition note: \"The Partnership's principal operating subsidiary, Edward D. Jones & Co., L.P. (\"Edward Jones\"), has a written agreement with The Jones Financial Companies, L.L.L.P. (\"JFC\") for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\n\nThis is a fact about the definition (financial advisors are service partners, not employees).\n\nAlso \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nLet me structure the items. I think I should report the headcount figures as facts, and the definitional statement as a fact too.\n\nThe label is \"fact\" for the sub-question. I'll list items.\n\nLet me focus on the most relevant/recent figures and the definition.\n\nActually, I need to be careful. The instruction says \"a series is one item per period.\" So I should list each period's figure as separate items.\n\nLet me compile the key figures. The annual figures (most complete) from #130:\n- At year end 2025: 20,425; 2024: 20,125; 2023: 19,232 (total)\n- Average 2025: 20,331; 2024: 19,650; 2023: 18,945\n\nAnd segment from #148:\n- U.S. at year end: 19,540 (2025), 19,253 (2024), 18,378 (2023)\n- Canada at year end: 885, 872, 854\n\nI could include these. But there's a lot. Given the instruction to return one cell per sub-question with items, I'll include the main figures.\n\nActually, I should think about what's most useful. The question is about definition and reporting. The definitional aspect is key. Let me include:\n\n1. A fact item about the definition: financial advisors are \"service partners of JFC and not employees of Edward Jones\" (from #334).\n2. Fact items with the headcount figures.\n\nI think I'll provide a reasonable set of figures. Let me include the annual total figures and the definition.\n\nActually, to be thorough but not overwhelming, I'll include:\n- The definitional note (#334): fact, no figure, definition text.\n- Annual at-year-end total: 20,425 (2025), 20,125 (2024), 19,232 (2023).\n- Maybe also note the \"actual\" terminology.\n\nLet me also note the metric is labeled \"Financial advisors (actual)\" with \"At period end\" and \"Average\".\n\nI think the most important thing is to capture the definition and the reported figures. Let me write items.\n\nFor the definition item:\ntext: \"The Partnership's principal operating subsidiary, Edward D. Jones & Co., L.P., has a written agreement with JFC for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\nquote: \"Edward Jones... has a written agreement with The Jones Financial Companies, L.L.L.P. (\u201cJFC\u201d) for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"financial advisors who are service partners of JFC and not employees of Edward Jones\"\n\nFor the figures, I'll provide the annual at-year-end total figures.\n\nActually, let me also consider: should the \"definition\" field be used to quote the definition? The instruction says definition field is for \"the firm's own definition of the quantity when a passage gives one, quoted.\"\n\nThe passage #334 gives a partial definition: financial advisors are service partners of JFC, not employees of Edward Jones. This is relevant to what the definition includes/excludes.\n\nAlso, there's no explicit definition of what \"financial advisors\" includes in terms of who counts. The closest is the attrition footnote and the #334 note.\n\nI think I'll create one item for the definitional note, and items for the figures.\n\nLet me finalize the figures to include. I'll include the total at-year-end for 2025 (20,425), 2024 (20,125), 2023 (19,232), and the segment breakdown for 2025 (U.S. 19,540, Canada 885).\n\nActually, to keep it manageable and accurate, let me include:\n- Definition note (fact, no figure)\n- Total at year end 2025: 20,425 (from #130)\n- Total at year end 2024: 20,125\n- Total at year end 2023: 19,232\n- Total average 2025: 20,331\n- U.S. at year end 2025: 19,540\n- Canada at year end 2025: 885\n\nHmm, but maybe I should also capture the \"more than 20,000 financial advisors\" statement from #53 and #46.\n\nActually the \"more than 20,000 financial advisors\" is a rounded statement. The precise \"actual\" figures are better.\n\nLet me be comprehensive but reasonable. I'll include the annual figures and the definition.\n\nActually, I realize I should think about scope. The sub-question is just about the advisor headcount figure the firm reports. The firm reports it at total and segment level. I'll note scope in each item.\n\nLet me write the items concisely.\n\nItem 0 (definition):\n- text: \"Edward Jones's financial advisors are service partners of JFC, not employees of Edward Jones; JFC has a written agreement with Edward Jones for the services of certain of these financial advisors.\"\n- quote: \"has a written agreement with The Jones Financial Companies, L.L.L.P. (\u201cJFC\u201d) for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"financial advisors who are service partners of JFC and not employees of Edward Jones\"\n- chunk_ids: [\"EDJ-10K-2025#334\"]\n\nItem 1 (total at year end 2025):\n- text: \"The firm reports financial advisors (actual) at year end 2025 of 20,425.\"\n- quote: \"Financial advisors (actual): At year end 20,425\"\n- value: \"20,425\"\n- unit: \"financial advisors\"\n- period: \"2025\"\n- scope: \"\"\n- chunk_ids: [\"EDJ-10K-2025#130\"]\n\nWait, period: it's at year end December 31, 2025. Should be \"2025-12-31\"? The instruction says \"2025-12-31 for a point in time\". Actually \"At year end\" is a point in time. But \"2025\" for calendar year. Hmm. The instruction: period: \"YYYY-MM-DD\" for a point in time, \"YYYY\" for calendar year. \"At year end\" is a point in time = 2025-12-31.\n\nBut the fiscal year for this firm: their 10-K period is 2025-12-31. So \"at year end\" = 2025-12-31.\n\nFor \"Average\" it's over the year = \"2025\".\n\nLet me use \"2025-12-31\" for at year end, and \"2025\" for average.\n\nActually, wait, the 10-K period is fiscal year ended December 31, 2025. So \"at year end\" = December 31, 2025.\n\nLet me include:\n- At year end 2025: 20,425, period 2025-12-31\n- At year end 2024: 20,125, period 2024-12-31\n- At year end 2023: 19,232, period 2023-12-31\n- Average 2025: 20,331, period 2025\n\nAnd segment (U.S. and Canada) at year end 2025 from #148:\n- U.S. 19,540, Canada 885, period 2025-12-31\n\nI could also include the more recent 10-Q figures, but that would be a lot. The annual figures are the most authoritative and complete.\n\nActually, I want to be careful about being comprehensive vs. focused. The question is about \"the advisor headcount figure the firm reports.\" I'll provide the definition and the headcount figures.\n\nLet me include the full annual set and note the definition. I think that's sufficient and accurate.\n\nLet me also consider the \"at period end\" vs \"average\" distinction - both are reported. I'll include both.\n\nI'll write the items now.\n\nActually, let me reconsider the definition item. The #334 note is about a compensation/expense arrangement, not really the \"definition\" of the headcount metric. But it does clarify that financial advisors are \"service partners of JFC and not employees of Edward Jones.\" This is relevant to what the definition includes/excludes (e.g., are they employees? No, they're service partners).\n\nI think this is worth including as a fact about the definition, since the question explicitly asks \"what does each definition include or exclude?\"\n\nAlso, is there anything about whether the headcount includes trainees? The #29 chunk mentions \"financial advisor trainees\" but doesn't say whether they're included in the count. I won't speculate.\n\nLet me finalize.\n\nI'll write the items and submit.\n\nFor the reason: \"The passages report the firm's 'Financial advisors (actual)' headcount figure, both in total and by U.S./Canada segment, and clarify that financial advisors are service partners of JFC rather than employees of Edward Jones.\"\n\nLet me write out all items clearly.\n\nActually, let me keep it focused but complete. I'll include:\n\n1. Definition fact (no figure)\n2. Total at year end 2025 (20,425)\n3. Total at year end 2024 (20,125)\n4. Total at year end 2023 (19,232)\n5. Total average 2025 (20,331)\n6. U.S. at year end 2025 (19,540)\n7. Canada at year end 2025 (885)\n\nThat's 7 items. Reasonable.\n\nActually, I'll also maybe add the U.S./Canada average for 2025? From #148: U.S. average 19,456, Canada average 875. And U.S. at year end 2024 19,253, 2023 18,378; Canada 872, 854.\n\nThis is getting detailed. I think including the total figures plus the segment split for the latest year is enough. But to be thorough for \"define and report\", maybe I'll include the segment year-end for all three years too? That might be overkill.\n\nI'll include total (3 years at year end + 1 average) and the latest segment split. Actually, let me include total at year end for 3 years, total average for 3 years, and segment for the latest year (U.S. and Canada at year end and average).\n\nHmm, that's a lot. Let me simplify to the essential: the definition + the total headcount figures (3 years) + note that it's also broken out by U.S. and Canada.\n\nActually, I'll just include a comprehensive but not excessive set. Let me do:\n\n1. Definition\n2. Total at year end 2025: 20,425\n3. Total at year end 2024: 20,125\n4. Total at year end 2023: 19,232\n5. Total average 2025: 20,331\n6. U.S. at year end 2025: 19,540\n7. Canada at year end 2025: 885\n\nI think that's good. Let me write it up.\n\nFor the period values:\n- At year end: \"2025-12-31\", \"2024-12-31\", \"2023-12-31\"\n- Average: \"2025\" (calendar year)\n\nActually \"average\" for year 2025 = period \"2025\" (calendar year). Good.\n\nLet me write the submission.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones's financial advisors are service partners of JFC and not employees of Edward Jones; JFC has a written agreement with Edward Jones for the services of certain of these financial advisors.",
+            "quote": "has a written agreement with The Jones Financial Companies, L.L.L.P. (\u201cJFC\u201d) for the services of certain financial advisors who are service partners of JFC and not employees of Edward Jones",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "financial advisors who are service partners of JFC and not employees of Edward Jones",
+            "chunk_ids": [
+              "EDJ-10K-2025#334"
+            ]
+          },
+          {
+            "text": "The firm reports financial advisors (actual) at year end 2025 of 20,425.",
+            "quote": "Financial advisors (actual):\n  At year end                                                                            20,425                20,125                19,232",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm reports financial advisors (actual) at year end 2024 of 20,125.",
+            "quote": "At year end                                                                            20,425                20,125                19,232",
+            "value": "20,125",
+            "unit": "financial advisors",
+            "period": "2024-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm reports financial advisors (actual) at year end 2023 of 19,232.",
+            "quote": "At year end                                                                            20,425                20,125                19,232",
+            "value": "19,232",
+            "unit": "financial advisors",
+            "period": "2023-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm reports average financial advisors (actual) for 2025 of 20,331.",
+            "quote": "Average                                                                                20,331                19,650                18,945",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm reports U.S. segment financial advisors (actual) at year end 2025 of 19,540.",
+            "quote": "Financial advisors (actual):\n  At year end                                                19,540                 19,253                 18,378                        1%                    885                  872                  854",
+            "value": "19,540",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          },
+          {
+            "text": "The firm reports Canada segment financial advisors (actual) at year end 2025 of 885.",
+            "quote": "At year end                                                19,540                 19,253                 18,378                        1%                    885                  872                  854",
+            "value": "885",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report the firm's 'Financial advisors (actual)' headcount (total and by U.S./Canada segment), and clarify that financial advisors are service partners of JFC rather than employees of Edward Jones.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

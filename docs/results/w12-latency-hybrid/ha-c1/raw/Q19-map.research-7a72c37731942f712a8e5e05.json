@@ -1,0 +1,273 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BOFA-PB-STUDY-2026#4",
+    "FINRAF-INVESTORS-2025#18",
+    "FINRAF-INVESTORS-2025#36",
+    "BOFA-PB-STUDY-2024#9"
+  ],
+  "at": "2026-11-21T20:26:36.283909-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3797,
+    "output_tokens": 4398,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 2517,
+    "reasoning_tokens": 2210,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.08
+  },
+  "wall_s": 31.92,
+  "tokens_per_s": 137.78,
+  "ttft_s": 2.08,
+  "reasoning_content": "Let me analyze the passages and sub-questions.\n\nThe passages are all industry research (no firm-specific Edward Jones data). The sub-questions a5, a6, a7, a8 ask about Edward Jones specifically and competitors. The research passages don't mention Edward Jones, Morgan Stanley, Schwab, Merrill, or Raymond James at all.\n\nLet me go through each sub-question.\n\na1.research [fact]: What product, service, and channel preferences do younger investors and clients under 40 express?\n\nThe research passages have facts about younger investors' preferences:\n- BOFA-PB-STUDY-2026#4: younger investors (Gen Z and Millennials, ages 21-45) embrace alternative investments and emerging technologies; 67% believe traditional stocks/bonds can't deliver above-average returns; allocate more to alternatives (15%) and crypto (13%); crypto ranks #1 wealth-creation opportunity; 88% likely to allocate more to alternatives.\n- FINRAF-INVESTORS-2025#18: younger investors (under 35) more likely to own individual stocks than mutual funds (82% vs 47%); more likely to have options account and traded options.\n- FINRAF-INVESTORS-2025#36: younger respondents invest for social responsibility, entertainment, social activity reasons.\n- BOFA-PB-STUDY-2024#9: younger investors (21-43) 72% believe no longer possible to achieve above-average returns with traditional stocks/bonds; allocations.\n\nThese are facts for a1.research.\n\na2.research [fact]: What communication and engagement channels do younger investors prefer?\n\nThe passages don't mention communication channels (no social media, apps, etc.). So not_found.\n\na3.research [fact]: What advice and service models do younger investors prefer, including self-directed versus full-service?\n\nThe passages don't mention advice/service models or self-directed vs full-service. So not_found.\n\na4.research [series]: What growth in younger investors and clients under 40 do firms report?\n\nNo firm reports growth. not_found.\n\na5.research: Edward Jones's current offerings align... no firm data. not_found.\n\na6.research: Edward Jones strategy... no data. not_found.\n\na7.research: competitors offerings... no data. not_found.\n\na8.research: comparison... no data. not_found.\n\nSo for a1, I'll create multiple fact items. Note the passages are research (industry figures). For a1.research, the sub-question is [fact] asking about preferences of younger investors in general \u2014 research figures ARE facts for aspects about investors in general. So these are facts.\n\nLet me construct items.\n\na1.research items:\n\nItem 0 (BOFA-PB-STUDY-2026#4): Younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, as they embrace alternative investments and emerging technologies.\n\nItem 1: 67% of younger investors believe traditional stocks and bonds can no longer deliver above-average returns.\n\nItem 2: Younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (15%) and crypto (13%) than older investors.\n\nItem 3: Crypto ranks as #1 \"wealth-creation opportunity\" for young wealthy: 29% rank it #1; 58% currently own crypto (up from 49% in 2024) and 92% either own or are interested.\n\nItem 4: 88% of younger investors say they're likely to allocate more to alternatives in the next few years, compared with just 15% of Boomers and Silents.\n\nItem 5 (FINRAF-INVESTORS-2025#18): Younger investors (under 35) are much more likely to own individual stocks than to own mutual funds (82 percent vs. 47 percent).\n\nItem 6: Younger investors are much more likely than older investors to have an options account and to have traded options. (68% have options account for 18-34, 43% have traded options).\n\nItem 7 (FINRAF-INVESTORS-2025#36): Younger respondents are much more likely than older respondents to invest for reasons other than long-term profits; half or more of those under 35 say they invest for social responsibility, entertainment and social activity reasons.\n\nItem 8: Among those who have purchased meme stocks or other viral investments, 66% cite entertainment and 65% social activity.\n\nItem 9 (BOFA-PB-STUDY-2024#9): Seventy-two percent of younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds.\n\nItem 10: younger high-net-worth investors: 47% of portfolios in stocks and bonds; 17% allocated to alternatives; 93% plan to allocate more; 49% own crypto.\n\nI'll include the main items with values.\n\nLet me be careful about value/unit/period/scope for each.\n\nFor these research items, scope: the passage is industry research, no firm. So scope could be \"\" (general). Actually scope should describe part of firm, but for industry research, maybe leave \"\" or describe \"younger investors (ages 21-45)\". I'll put scope describing the group.\n\nActually the scope field is \"the part of the firm the figure covers.\" Since this is industry research not a firm, I'll leave scope empty or put the demographic. I think I'll put the demographic group in scope or just leave empty. The instructions say scope for firm part. For research, I'll leave \"\" and describe the group in text.\n\nPeriod: these are research studies, period n/a. So period \"\".\n\nLet me write items concisely.\n\nFor value: \"67%\", unit \"younger investors believing traditional stocks/bonds can't deliver above-average returns\" \u2014 actually unit should be \"of younger investors\". Hmm. Let me use unit as \"percent of younger investors\" or similar. Actually the value is \"67%\", unit could be \"% of younger investors\". I'll keep simple.\n\nLet me draft.\n\nActually, let me be reasonable and not over-engineer. I'll include around 8-10 items for a1.\n\nLet me finalize cells.\n\nFor a2, a3, a4, a5, a6, a7, a8: not_found with empty items.\n\nWait, a4 is [series] about growth in younger investors/clients under 40 that firms report. The research doesn't report any firm's growth in younger clients. not_found.\n\na5, a6: Edward Jones specific \u2014 not found in research.\n\na7: competitors \u2014 not found.\n\na8: comparison \u2014 not found.\n\nAll not_found.\n\nLet me write the submit_extraction call.\n\nFor each not_found cell: label \"not_found\", items [], differs_because \"\", reason, derivation with operation \"\" and inputs [].\n\nLet me write items for a1 carefully with quotes.\n\nItem text and quote must match passage. Let me pull quotes.\n\nItem 0: quote \"Younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, as they embrace alternative investments and emerging technologies.\" value \"\", unit \"\", period \"\", scope \"\", definition \"\".\n\nItem 1: quote \"sixty seven percent\\n67%\\nof younger investors believe traditional stocks and bonds can no longer deliver above-average returns.\" value \"67%\", unit \"% of younger investors\", period \"\", scope \"\".\n\nItem 2: quote \"Younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (15%) and crypto (13%) than older investors.\" value \"\", maybe no single figure. I'll set value \"\" and note in text. Actually could split. I'll keep as one item with value \"\".\n\nItem 3: quote \"Crypto ranks as the #1 \"wealth-creation opportunity\" for young wealthy: 29% rank it #1; 58% currently own crypto (up from 49% in 2024) and 92% either own or are interested.\" value \"29%\", unit \"% ranking crypto #1 wealth-creation opportunity\", period \"\".\n\nItem 4: quote \"88% of younger investors say they're likely to allocate more to alternatives in the next few years, compared with just 15% of Boomers and Silents.\" value \"88%\", unit \"% of younger investors likely to allocate more to alternatives\", period \"\".\n\nItem 5: FINRAF 18: quote \"Younger investors (under 35) are much more likely to own individual stocks than to own mutual funds (82 percent vs. 47 percent, respectively).\" value \"82% vs 47%\", unit \"individual stocks vs mutual funds ownership\", period \"\".\n\nItem 6: quote \"Younger investors are much more likely than older investors to have an options account and to have traded options\" value \"68%\", unit \"% of 18-34 with options account\", period \"\". Actually the chart shows 68% for 18-34 have options account. I'll use that.\n\nItem 7: FINRAF 36: quote \"younger respondents are much more likely than older respondents to invest for reasons other than long-term profits. Half or more of those under 35 say they invest for social responsibility, entertainment and social activity reasons.\" value \"\", unit \"\".\n\nItem 8: quote \"Among those who have purchased meme stocks or other viral investments, 66 percent cite entertainment and 65 percent social activity as reasons for investing.\" value \"66%\", unit \"% citing entertainment\".\n\nItem 9: BOFA 2024: quote \"Seventy-two percent of younger investors (ages 21 to 43) believe it is no longer possible to achieve above average investment returns by investing solely in traditional stocks and bonds\" value \"72%\".\n\nItem 10: quote \"forty seven percent\\n47%\\nof their portfolios are in stocks and bonds... seventeen percent\\n17%\\nof their investment portfolios are allocated to alternatives... Most (93%) say they plan to allocate more to alternatives in the next few years.\" value \"47%\", unit \"% of portfolio in stocks and bonds\".\n\nThat's a lot. I'll include all these as facts. Actually let me consolidate somewhat but keep detail. I'll include maybe 10 items.\n\nI think this is fine. Let me write it out.\n\nFor period, these are all period n/a (published dates differ). I'll leave period \"\".\n\nNow write the tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The research passages describe younger investors' product and channel preferences in general, which is what this sub-question asks.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, embracing alternative investments and emerging technologies.",
+            "quote": "Younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, as they embrace alternative investments and emerging technologies.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors ages 21 to 45",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#4"
+            ]
+          },
+          {
+            "text": "67% of younger investors believe traditional stocks and bonds can no longer deliver above-average returns.",
+            "quote": "sixty seven percent\n67%\nof younger investors believe traditional stocks and bonds can no longer deliver above-average returns.",
+            "value": "67%",
+            "unit": "% of younger investors",
+            "period": "",
+            "scope": "younger investors ages 21 to 45",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#4"
+            ]
+          },
+          {
+            "text": "Younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (15%) and crypto (13%) than older investors.",
+            "quote": "Younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (\nfifteen percent\n15%\n) and crypto (\nthirteen percent\n13%\n) than older investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#4"
+            ]
+          },
+          {
+            "text": "Crypto ranks as the #1 wealth-creation opportunity for young wealthy investors: 29% rank it #1, 58% currently own crypto (up from 49% in 2024), and 92% either own or are interested.",
+            "quote": "Crypto ranks as the\nnumber one\n#1\n\u201cwealth-creation opportunity\u201d for young wealthy:\ntwenty nine percent\n29%\nrank it\nnumber one\n#1\n;\nfifty eight percent\n58%\ncurrently own crypto (up from\nforty nine percent\n49%\nin 2024) and\nninety two percent\n92%\neither own or are interested.",
+            "value": "29%",
+            "unit": "% ranking crypto #1 wealth-creation opportunity",
+            "period": "",
+            "scope": "young wealthy investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#4"
+            ]
+          },
+          {
+            "text": "88% of younger investors say they are likely to allocate more to alternatives in the next few years, compared with just 15% of Boomers and Silents.",
+            "quote": "eighty eight percent\n88%\nof younger investors say they\u2019re likely to allocate more to alternatives in the next few years, compared with just\nfifteen percent\n15%\nof Boomers and Silents.",
+            "value": "88%",
+            "unit": "% of younger investors likely to allocate more to alternatives",
+            "period": "",
+            "scope": "younger investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#4"
+            ]
+          },
+          {
+            "text": "Younger investors (under 35) are much more likely to own individual stocks than to own mutual funds (82 percent vs. 47 percent).",
+            "quote": "Younger investors (under 35) are much more likely to own individual stocks than to own mutual funds (82 percent vs. 47 percent, respectively).",
+            "value": "82% vs 47%",
+            "unit": "individual stocks vs mutual funds ownership",
+            "period": "",
+            "scope": "investors under 35",
+            "definition": "",
+            "chunk_ids": [
+              "FINRAF-INVESTORS-2025#18"
+            ]
+          },
+          {
+            "text": "Younger investors (18-34) are much more likely than older investors to have an options trading account (68%) and to have traded options (43%).",
+            "quote": "Younger investors are much more likely than older investors to have an options account and to have traded options",
+            "value": "68%",
+            "unit": "% of ages 18-34 with an options trading account",
+            "period": "",
+            "scope": "investors ages 18-34",
+            "definition": "",
+            "chunk_ids": [
+              "FINRAF-INVESTORS-2025#18"
+            ]
+          },
+          {
+            "text": "Younger respondents are much more likely than older respondents to invest for reasons other than long-term profits; half or more of those under 35 say they invest for social responsibility, entertainment and social activity reasons.",
+            "quote": "younger respondents are much more likely than older respondents to invest for reasons other than long-term profits. Half or more of those under 35 say they invest for social responsibility, entertainment and social activity reasons.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "investors under 35",
+            "definition": "",
+            "chunk_ids": [
+              "FINRAF-INVESTORS-2025#36"
+            ]
+          },
+          {
+            "text": "Among those who have purchased meme stocks or other viral investments, 66% cite entertainment and 65% social activity as reasons for investing.",
+            "quote": "Among those who have purchased meme stocks or other viral investments, 66 percent cite entertainment and 65 percent social activity as reasons for investing.",
+            "value": "66%",
+            "unit": "% citing entertainment as a reason",
+            "period": "",
+            "scope": "investors who purchased meme stocks or viral investments",
+            "definition": "",
+            "chunk_ids": [
+              "FINRAF-INVESTORS-2025#36"
+            ]
+          },
+          {
+            "text": "Seventy-two percent of younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds, compared to 28% of investors over age 44.",
+            "quote": "Seventy-two percent of younger investors (ages\ntwenty one to forty three\n21 - 43\n) believe it is no longer possible to achieve above average investment returns by investing solely in traditional stocks and bonds, compared to only\ntwenty eight percent\n28%\nof investors over the age of 44 that hold the same view.",
+            "value": "72%",
+            "unit": "% of younger investors",
+            "period": "",
+            "scope": "younger investors ages 21 to 43",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2024#9"
+            ]
+          },
+          {
+            "text": "Among younger high-net-worth investors, 47% of portfolios are in stocks and bonds (vs 74% for over-44), 17% is allocated to alternatives, 93% plan to allocate more to alternatives, and 49% own cryptocurrencies.",
+            "quote": "forty seven percent\n47%\nof their portfolios are in stocks and bonds, far lower than investors over the age of 44 (\nseventy four percent\n74%\n).\nseventeen percent\n17%\nof their investment portfolios are allocated to alternatives, compared to\nfive percent\n5%\nallocated by older investors. Most (\nninety three percent\n93%\n) say they plan to allocate more to alternatives in the next few years.\nNearly half (\nforty nine percent\n49%\n) own cryptocurrencies",
+            "value": "47%",
+            "unit": "% of portfolio in stocks and bonds",
+            "period": "",
+            "scope": "younger high-net-worth investors ages 21 to 43",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2024#9"
+            ]
+          }
+        ]
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "The passages discuss product/allocation and investing-attitude preferences but say nothing about communication or engagement channels.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage mentions advice or service models, or self-directed versus full-service preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage reports any firm's growth in younger investors or clients under 40.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage discusses Edward Jones's offerings at all.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage states Edward Jones's strategy or priorities for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage describes competitor offerings or strategies for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "differs_because": "",
+        "reason": "No passage compares Edward Jones's disclosures or initiatives to those of competitors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": []
+      }
+    ]
+  }
+}

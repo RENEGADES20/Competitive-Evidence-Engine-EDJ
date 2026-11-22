@@ -63,6 +63,13 @@ Page "Source"
 Page "Coverage"
   table: entity x doc_type -> count, earliest and latest published_at; empty cells highlighted
          (undated pages, date_basis = retrieved, are counted but kept out of the date span)
+
+Page "Architecture" (#270; replaced the Design component gallery)
+  diagram: the W11 pipeline (ADR-021), the same modules and labels as the README diagram
+           (text in src/cee/app/architecture.py); data / code step / AI step legend
+  each module: on hover and on keyboard focus (Tab), what it does, whether AI or code does it,
+           and the rule it enforces; the same text listed under the diagram (touch, screen readers)
+  inline HTML and CSS only: no script, no network fetch, no firm figures
 ```
 
 ## Acceptance
@@ -81,6 +88,12 @@ Page "Coverage"
   The trace adds no extra LLM call (it reports the planner call, the map calls and the reduce call;
   calls follow the decomposition, ADR-021 rule 7). The plan
   line lists the sub-question decomposition (#245, ADR-021 rule 6).
+- Progressive answer (#272): while the answer is built, the page shows the plan first ("Plan: ..."),
+  then "Evidence so far": one card per cited item of each extraction call as it lands (label
+  "EVIDENCE - <firm> - <aspect>", the citation chip of a retrieved, code-checked chunk, so every card
+  cites a stored document), and the answer last.
+- Architecture page: every module of the diagram shows its explanation on hover and on keyboard
+  focus, and the list under the diagram holds the same text (#270).
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

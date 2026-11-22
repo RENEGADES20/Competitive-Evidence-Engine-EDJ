@@ -1,0 +1,187 @@
+{
+  "question_id": "Q17",
+  "question": "What are these firms saying about AI in advice delivery, and who is claiming the most?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a6.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MS-10K-2025#22",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#1",
+    "SCHW-PR-2026-07-21-01#3",
+    "BAC-10K-2025#141",
+    "SCHW-DECK-2026Q3#73",
+    "BAC-TR-2025Q2#11",
+    "EDJ-10Q-2026Q1#2",
+    "MS-10K-2025#395",
+    "BAC-PR-2026-01-14-01#9",
+    "SCHW-DECK-2026-investor-day#90",
+    "BAC-TR-2026Q2#23",
+    "BAC-DECK-2025-investor-day#16",
+    "BAC-PR-2026-07-14-01#8",
+    "SCHW-TR-2026Q3#25",
+    "SCHW-TR-2026Q3#26",
+    "BAC-PR-2026-04-15-01#8",
+    "MS-TR-2026Q3#20",
+    "SCHW-TRADE-2026-11-02-RB-01#9",
+    "BAC-PR-2026-04-15-01#14",
+    "MS-TRADE-2026-11-04-RB-01#9",
+    "BAC-DECK-2026Q1#60",
+    "BAC-PR-2026-10-14-01#9",
+    "RJF-TR-2026Q2#36",
+    "EDJ-10K-2025#57",
+    "CAPGEMINI-WWR-2026#114",
+    "MER-TRADE-2026-10-15-WM-01#1",
+    "BAC-TR-2026Q2#18",
+    "RJF-10Q-2025Q2#239",
+    "EDJ-10Q-2025Q3#60",
+    "CFPB-MISINFO-2025#9",
+    "MER-TRADE-2026-09-29-RB-01#8",
+    "BAC-DECK-2025-investor-day#29",
+    "RJF-PR-2026-04-22-01#1",
+    "RJF-10Q-2026Q2#252",
+    "EDJ-10K-2025#33",
+    "RJF-TR-2025Q1#78",
+    "MS-10Q-2026Q2#28",
+    "BAC-DECK-2026Q3#51",
+    "RJF-10Q-2026Q1#239",
+    "RJF-10K-2025#175",
+    "RJF-TR-2026Q2#62",
+    "SCHW-TR-2025Q4#4",
+    "RJF-10Q-2025Q4#199",
+    "RJF-10Q-2025Q2#234",
+    "BAC-10K-2025#145",
+    "BAC-DECK-2025-investor-day#40",
+    "BAC-TR-2026Q2#32",
+    "SCHW-DECK-2026-investor-day#31",
+    "SCHW-TRADE-2026-10-23-WM-01#5",
+    "MS-TRADE-2026-11-04-RB-01#11"
+  ],
+  "at": "2026-11-21T22:09:40.492432-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14588,
+    "output_tokens": 5987,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 13052,
+    "reasoning_tokens": 5137,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.61
+  },
+  "wall_s": 48.84,
+  "tokens_per_s": 122.58,
+  "ttft_s": 2.61,
+  "reasoning_content": "Let me analyze this question. The sub-question is a6.all: \"Which firm makes the most extensive or strongest claims about AI in advice delivery.\"\n\nI need to extract evidence about AI in advice delivery from the passages, and return cells. But there are no firm-named passages specifically for a6.all; instead the search pool lists passages from various firms (MS, SCHW, BAC, EDJ, RJF, MER, etc.).\n\nWait, the question says \"Firm: All sources (no firm named)\". So this is a comparison question where I need to extract facts from multiple firms about their AI claims in advice delivery.\n\nActually, let me re-read. The sub-question is about \"Which firm makes the most extensive or strongest claims about AI in advice delivery.\" This is a comparison. The passages include multiple firms.\n\nI need to return one cell for sub-question a6.all, with label fact/different_quantity/not_disclosed/not_found.\n\nThe instruction says \"return exactly one cell for each sub-question listed.\" There's only one sub-question a6.all.\n\nSo I need to extract the evidence about AI claims in advice delivery from the various firms, and put it in items.\n\nLet me identify relevant passages about AI in advice delivery:\n\n1. SCHW-TR-2026Q3#26 (Rick Wurster CEO): \"in our wealth business, where we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business...\" This is a strong claim about AI in advice delivery (wealth business, delivering tax/trust/estate insights).\n\n2. SCHW-PR-2026-07-21-01#3: \"Introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance.\"\n\n3. SCHW-TR-2026Q3#25: question about Schwab allowing clients to connect LLMs to Schwab MCP servers.\n\n4. BAC-TR-2026Q2#18: \"New AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.\"\n\n5. BAC-TR-2026Q2#23: \"We're also using AI-enabled tools to help bankers accelerate their research...\" (commercial banking, not advice delivery)\n\n6. RJF-PR-2026-04-22-01#1: \"We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\"\n\n7. RJF-TR-2025Q1#78: new Chief AI Officer Stuart Feld, \"AI will be such a game changer for our industry...\"\n\n8. RJF-TR-2026Q2#36: \"we know it's going to be significant, but it's just too early to dimension it... making sure that we're not falling behind...\"\n\n9. EDJ-10K-2025#57: competition from robo-advisors, artificial intelligence changes.\n\n10. SCHW-TR-2025Q4#4: \"We leveraged artificial intelligence to serve clients more efficiently.\"\n\n11. BAC-TR-2025Q2#11: \"moving more money into the AI side and machine learning side.\"\n\n12. BAC-DECK-2025-investor-day#16: \"Leverage tech and AI to drive efficiency.\"\n\n13. SCHW-DECK-2026-investor-day#90: \"AI tools\" in mobile app upgrades.\n\n14. SCHW-DECK-2026-investor-day#31: \"The power of artificial intelligence.\"\n\n15. BAC-PR-2026-04-15-01#14: \"Best Solution Innovation in AI\" award.\n\n16. SCHW-TRADE-2026-11-02-RB-01#9: about Altruist's Hazel and Nevis - third party, not the firm itself.\n\n17. CAPGEMINI-WWR-2026#114: about RMs adopting AI-generated insights (research, generic).\n\n18. WEALTHTENDER-ADVISOR-SEARCH-2025#1: consumer survey about AI tools.\n\n19. CFPB-MISINFO-2025#9: consumer trust in generative AI.\n\nNow, the question is about \"AI in advice delivery\" - which firm makes the most extensive or strongest claims.\n\nSince this is a comparison sub-question, and the instruction says I should return facts about what firms say. The label would be \"fact\" with items for each firm's claims.\n\nActually, let me think about how to structure this. The sub-question a6.all is \"Which firm makes the most extensive or strongest claims about AI in advice delivery.\" This is a comparative judgment that code/later step does. My job is to extract the facts (claims by each firm about AI in advice delivery).\n\nSo I should return a cell with label \"fact\" and items listing each firm's AI claims relevant to advice delivery.\n\nLet me carefully identify which passages are about \"advice delivery\" specifically vs. general AI.\n\n\"Advice delivery\" = how advisors deliver advice to clients, wealth management advice.\n\nStrongest claims about AI in advice delivery:\n\n- Schwab (SCHW-TR-2026Q3#26): \"we're bringing AI to deliver tax insights and trust and estate insights to our clients... helping us engage them more in wealth conversations... fueling our record growth in our wealth business.\" Very strong claim - AI driving revenue and record growth.\n\n- Schwab (SCHW-PR-2026-07-21-01#3): \"Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance.\"\n\n- Schwab (SCHW-TR-2025Q4#4): \"We leveraged artificial intelligence to serve clients more efficiently.\"\n\n- BAC (BAC-TR-2026Q2#18): \"New AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.\"\n\n- RJF (RJF-PR-2026-04-22-01#1): \"increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\"\n\n- RJF (RJF-TR-2025Q1#78): Chief AI Officer, \"AI will be such a game changer for our industry and it will occur relatively rapidly.\"\n\n- RJF (RJF-TR-2026Q2#36): \"we know it's going to be significant, but it's just too early to dimension it... we're not prepared to sort of put a percentage increase in productivity.\"\n\n- BAC (BAC-TR-2025Q2#11): \"moving more money into the AI side and machine learning side.\"\n\n- EDJ (EDJ-10K-2025#57): AI mentioned as competitive risk, not a claim about their own AI.\n\n- MS (MS-10K-2025#22): general competitive stuff, no AI.\n\n- MS (MS-TR-2026Q3#20): AI CapEx, advising clients on AI, but not AI in advice delivery (it's about advising clients ON AI, which is different).\n\nActually MS-TR-2026Q3#20 is about Morgan Stanley advising clients on AI ecosystem, not using AI in advice delivery.\n\nNow for the comparison, I should provide items for each firm's claims. The items should be attributed to the firm.\n\nLet me structure. Since there's only one sub-question (a6.all), and it's a comparison, I'll return one cell with label \"fact\" and multiple items, each item being a firm's claim about AI in advice delivery.\n\nActually, wait - let me reconsider. The label options are fact, not_disclosed, not_found, different_quantity. For a comparison question about \"which firm makes the most extensive claims\", the answer is a comparison. But my role is to extract the evidence.\n\nI think I should return a \"fact\" cell with items representing each firm's claims about AI in advice delivery. Each item will have text, quote, etc.\n\nBut there's no \"firm\" field in the item schema. Hmm. The item schema has: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nI can put the firm name in the \"scope\" field or in the text. Actually scope is \"the part of the firm the figure covers\" - but for claims without figures, I can note the firm in the text.\n\nSince there are no figures for these claims (they're qualitative claims), value and unit would be \"\".\n\nLet me draft items for the key AI-in-advice-delivery claims.\n\nActually, I need to be careful. The question is specifically \"AI in advice delivery.\" Let me focus on claims about AI being used to deliver advice/wealth management services to clients.\n\nLet me identify the firm in each item via text.\n\nItems:\n\n1. Schwab: \"In our wealth business, where we're bringing AI to deliver tax insights and trust and estate insights to our clients... helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business.\" (SCHW-TR-2026Q3#26)\n\n2. Schwab: \"Introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance.\" (SCHW-PR-2026-07-21-01#3)\n\n3. Schwab: \"We leveraged artificial intelligence to serve clients more efficiently.\" (SCHW-TR-2025Q4#4)\n\n4. Schwab: allowing clients/traders to connect LLMs to Schwab MCP servers (SCHW-TR-2026Q3#25) - this is a question, not a claim.\n\n5. BAC: \"New AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.\" (BAC-TR-2026Q2#18)\n\n6. BAC: \"moving more money into the AI side and machine learning side\" (BAC-TR-2025Q2#11) - general, not advice-specific.\n\n7. RJF: \"increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\" (RJF-PR-2026-04-22-01#1)\n\n8. RJF: Chief AI Officer, \"AI will be such a game changer for our industry\" (RJF-TR-2025Q1#78)\n\n9. RJF: \"we know it's going to be significant, but it's just too early to dimension it\" (RJF-TR-2026Q2#36)\n\n10. EDJ: AI as competitive risk (EDJ-10K-2025#57) - this is about keeping pace, not a claim of their own AI.\n\nLet me decide what's most relevant. The comparison is \"which firm makes the most extensive or strongest claims about AI in advice delivery.\"\n\nI think I should include the strongest/most relevant claims. Schwab's claim (item 1) is the strongest - it claims AI is fueling record growth in wealth business.\n\nLet me write out the items with proper fields.\n\nFor each item, I need:\n- text: one sentence stating what passage says, attributed to firm\n- quote: exact words\n- value: \"\" (no figure)\n- unit: \"\"\n- period: \"\" (no figure) - but actually for some there might be a period implied. For SCHW-TR-2026Q3#26, the period is 2026Q3 (transcript period 2026-09-30). But there's no figure. The period field says \"\" when no figure. Hmm, but I could note the period. Actually the instructions say period is \"\" when not stated or no figure. For these qualitative claims, no figure, so period \"\".\n\nActually, let me reconsider - period could be relevant. The SCHW transcript is period 2026-09-30 (Q3 2026). But since no figure, I'll leave period as \"\". Actually I could put \"2026Q3\" to indicate when the claim was made. But the instruction says period \"\" when no figure. I'll leave \"\".\n\nHmm, but actually it might be useful to note the period. Let me think about what's cleaner. The instruction: 'period: \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter... \"\" when not stated or no figure'. Since these are claims without figures, I'll use \"\".\n\nActually, wait, I think for a comparison question it's fine to note periods in the text. But to follow instructions strictly, period=\"\" when no figure.\n\nLet me now also consider: should I include the \"not_found\" or \"not_disclosed\" for firms that don't mention AI? Like MS and EDJ.\n\nEDJ mentions AI but only as a competitive risk (not their own AI claims). MS mentions AI but only as advising clients on AI ecosystem, not advice delivery.\n\nActually, the question is a comparison across firms. I think the cleanest approach is to return a \"fact\" cell with items listing each firm's claims.\n\nLet me finalize the items. I'll focus on the most relevant claims about AI in advice delivery.\n\nActually, let me reconsider the whole structure. The task says \"return exactly one cell for each sub-question listed.\" There's one sub-question: a6.all.\n\nFor a comparison sub-question, the cell label should probably be \"fact\" (since there are facts/claims found), with items for each firm's claims.\n\nLet me write the items clearly, attributing firm in the text.\n\nI'll include these items:\n\nSchwab:\n1. SCHW-TR-2026Q3#26 - strongest claim about AI in wealth/advice delivery fueling record growth\n2. SCHW-PR-2026-07-21-01#3 - Portfolio Insights generative AI\n3. SCHW-TR-2025Q4#4 - leveraged AI to serve clients more efficiently\n\nBAC:\n4. BAC-TR-2026Q2#18 - new AI capabilities improved service, allowed teammates to focus on higher-value client interactions\n5. BAC-TR-2025Q2#11 - moving more money into AI side\n\nRJF:\n6. RJF-PR-2026-04-22-01#1 - increasing AI integration to give financial professionals more time to serve clients\n7. RJF-TR-2025Q1#78 - Chief AI Officer, AI game changer\n8. RJF-TR-2026Q2#36 - too early to dimension\n\nEDJ:\n9. EDJ-10K-2025#57 - AI as competitive change they must keep pace with (this is not a claim about their own AI in advice delivery, more a risk factor)\n\nMS:\n- MS-TR-2026Q3#20 - advising clients on AI (not advice delivery) - this is different_quantity? It's about AI but not in advice delivery.\n\nHmm. Let me be more focused. The question is about \"AI in advice delivery.\" So I should focus on claims about using AI to deliver advice/wealth management to clients.\n\nThe most relevant:\n- Schwab #26: AI delivering tax/trust/estate insights in wealth business \u2192 advice delivery\n- Schwab #3: Portfolio Insights (generative AI to understand portfolio performance) \u2192 advice/investing delivery\n- Schwab #4: AI to serve clients more efficiently\n- BAC #18: AI improved service, teammates focus on higher-value client interactions\n- RJF #1: AI integration to give financial professionals more time to serve clients\n- RJF #78: AI game changer (general)\n- RJF #36: too early to dimension (general)\n\nEDJ #57 is a risk factor, not a claim about their own AI in advice delivery. I could note it as a fact that EDJ only mentions AI as competitive risk, but that's more about \"not making claims.\"\n\nMS #20 is about advising clients on AI (investment banking/advising on AI CapEx), not AI in advice delivery. This is a different_quantity perhaps, or not_found for advice delivery.\n\nI think the cleanest is to return a fact cell with the key claims, focusing on advice delivery.\n\nLet me decide on the scope of items. I'll include the strongest, most directly relevant claims.\n\nActually, given the comparison nature, I want to capture all firms' claims so code can compare. Let me include items for each firm's claims relevant to AI in advice delivery (or general AI if that's what they have).\n\nLet me write it out now.\n\nFor the reason field, I'll say something like: \"Extracted each firm's stated claims about AI in advice/wealth delivery; Schwab makes the strongest claim (AI fueling record wealth growth).\"\n\nWait, but I shouldn't make the comparison myself - \"code and a later step do that.\" So my reason should be about the label choice, not the comparison conclusion.\n\nActually, the reason is \"one short sentence on why you chose the label.\" So I'll explain I chose \"fact\" because firms made claims about AI in advice delivery.\n\nLet me now write the items carefully with quotes.\n\nItem 1 (Schwab, strongest):\ntext: \"Schwab CEO Rick Wurster says the firm is bringing AI to deliver tax and trust/estate insights to clients in its wealth business, which is helping engage clients in wealth conversations and partly fueling record growth in the wealth business.\"\nquote: \"in our wealth business, where we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business\"\nchunk_ids: [\"SCHW-TR-2026Q3#26\"]\nvalue: \"\", unit: \"\", period: \"\", scope: \"Wealth business\", definition: \"\"\n\nItem 2 (Schwab):\ntext: \"Schwab introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance.\"\nquote: \"Introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance\"\nchunk_ids: [\"SCHW-PR-2026-07-21-01#3\"]\n\nItem 3 (Schwab):\ntext: \"Schwab says it leveraged artificial intelligence in 2025 to serve clients more efficiently.\"\nquote: \"We leveraged artificial intelligence to serve clients more efficiently.\"\nchunk_ids: [\"SCHW-TR-2025Q4#4\"]\n\nItem 4 (BAC):\ntext: \"Bank of America says new AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.\"\nquote: \"New AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.\"\nchunk_ids: [\"BAC-TR-2026Q2#18\"]\n\nItem 5 (RJF):\ntext: \"Raymond James says it is increasing AI integration to improve efficiency and give financial professionals more time to serve clients.\"\nquote: \"We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\"\nchunk_ids: [\"RJF-PR-2026-04-22-01#1\"]\n\nItem 6 (RJF):\ntext: \"Raymond James has appointed a Chief AI Officer and its leadership believes AI will be a game changer for the industry that will occur relatively rapidly.\"\nquote: \"we think the leadership team has conviction that AI will be such a game changer for our industry and it will occur relatively rapidly\"\nchunk_ids: [\"RJF-TR-2025Q1#78\"]\n\nItem 7 (RJF):\ntext: \"Raymond James CEO Paul Shoukry says AI will be significant but it is too early to dimension it, and the firm is not prepared to put a percentage increase in productivity.\"\nquote: \"we know it's going to be significant, but it's just too early to dimension it... we're not prepared to sort of put a percentage increase in productivity\"\nchunk_ids: [\"RJF-TR-2026Q2#36\"]\n\nItem 8 (EDJ):\ntext: \"Edward Jones notes competition from artificial intelligence and other technology changes, but does not describe its own use of AI in advice delivery.\"\nquote: \"which includes client, industry, technology, artificial intelligence and regulatory changes\"\nchunk_ids: [\"EDJ-10K-2025#57\"]\n\nHmm, item 8 is a bit odd - it's noting EDJ mentions AI only as risk. This might be better as a separate consideration. Actually, for a comparison, it's useful to note which firms make no claim. But the item schema is for \"fact\" items (statements). EDJ's statement about AI is a risk factor, not a claim about their own AI in advice delivery.\n\nActually, I think I should keep the focus tight. The sub-question asks \"which firm makes the most extensive/strongest claims about AI in advice delivery.\" The relevant facts are the claims. I'll include the claims.\n\nFor EDJ and MS, they don't make claims about their own AI in advice delivery. I could note this but it's not really a \"fact\" item in the sense of a claim.\n\nLet me think about whether to include a \"different_quantity\" or just note in text.\n\nActually, I think the simplest correct approach: return a single \"fact\" cell with items for each firm's AI-in-advice-delivery claims. The most relevant claims are from Schwab, BAC, and RJF.\n\nMS's MS-TR-2026Q3#20 is about advising clients on AI (their role as advisor on AI ecosystem), which is arguably \"AI\" but not \"AI in advice delivery\" (it's advising clients about AI investments, not using AI to deliver advice). I'll leave it out or mark as different_quantity.\n\nActually, let me keep it focused and clean. I'll include the main claims.\n\nLet me also reconsider whether BAC-TR-2025Q2#11 \"moving more money into the AI side and machine learning side\" is relevant - it's about investment, not advice delivery. I'll skip or include as a general claim. I'll skip since it's not advice-delivery specific.\n\nLet me finalize with the core items. I'll include items 1-7 (Schwab 3 items, BAC 1, RJF 3).\n\nActually, should I include SCHW-TR-2026Q3#25 (the analyst question about LLMs connecting to MCP servers)? That's a question, not a claim. Skip.\n\nAlso SCHW-DECK-2026-investor-day#90 \"AI tools\" in mobile app upgrades - general. Skip or include? It's a minor claim. I'll skip to keep focused.\n\nLet me also consider BAC-DECK-2025-investor-day#16 \"Leverage tech and AI to drive efficiency\" - general efficiency, not advice delivery. Skip.\n\nI'll finalize with the 7 items.\n\nNow, about the reason field and differs_because. For a \"fact\" label, differs_because should be \"\" (it's only for different_quantity).\n\nLet me write the full submission.\n\nActually, I realize I should double check the period field. The instructions say period \"\" when no figure. But for these claims, there's no figure. However, I could note the period of the statement in text. I'll leave period \"\".\n\nActually, wait - let me reconsider. For a comparison of \"who claims the most\", the temporal aspect matters a bit but not critically. I'll leave period \"\".\n\nLet me also reconsider scope. scope is \"the part of the firm the figure covers\" - but no figure. For Schwab item 1, the claim is about \"wealth business\" specifically, so scope=\"Wealth business\" is informative. For others, scope=\"\" (whole firm).\n\nLet me write final.\n\nFor the reason: \"These passages contain each firm's stated claims about using AI in advice/wealth delivery, so I labeled this a fact.\"\n\nLet me write out the JSON.\n\nI'll order items to reflect strength, but that's fine, code compares.\n\nLet me make sure quotes are accurate (under 300 chars).\n\nItem 1 quote is long (~180 chars) - fine.\n\nLet me write it all out.\n\nFor definition field, all \"\".\n\nNow finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab CEO Rick Wurster says the firm is bringing AI to deliver tax and trust-and-estate insights to clients in its wealth business, which is helping engage clients in wealth conversations and partly fueling record growth in the wealth business.",
+            "quote": "in our wealth business, where we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Wealth business",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#26"
+            ]
+          },
+          {
+            "text": "Schwab introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance.",
+            "quote": "Introduced Portfolio Insights, a generative AI-powered capability that helps investors understand portfolio performance",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-PR-2026-07-21-01#3"
+            ]
+          },
+          {
+            "text": "Schwab says it leveraged artificial intelligence during 2025 to serve clients more efficiently.",
+            "quote": "We leveraged artificial intelligence to serve clients more efficiently.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#4"
+            ]
+          },
+          {
+            "text": "Bank of America says new AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.",
+            "quote": "New AI capabilities have improved service, increased efficiency and allowed teammates to focus on higher-value client interactions.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-TR-2026Q2#18"
+            ]
+          },
+          {
+            "text": "Raymond James says it is developing industry-leading technology including increasing AI integration to improve efficiency and give its financial professionals more time to serve clients.",
+            "quote": "We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-2026-04-22-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James has a Chief AI Officer and its leadership has conviction that AI will be a game changer for the industry that will occur relatively rapidly.",
+            "quote": "we think the leadership team has conviction that AI will be such a game changer for our industry and it will occur relatively rapidly that we need to have that function internally",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2025Q1#78"
+            ]
+          },
+          {
+            "text": "Raymond James CEO Paul Shoukry says AI's impact will be significant but it is too early to dimension it, and the firm is not prepared to put a percentage increase in productivity.",
+            "quote": "we know it's going to be significant, but it's just too early to dimension it... we're not prepared to sort of put a percentage increase in productivity",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2026Q2#36"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain each firm's stated claims about using AI in advice and wealth delivery, so I labeled this a fact.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

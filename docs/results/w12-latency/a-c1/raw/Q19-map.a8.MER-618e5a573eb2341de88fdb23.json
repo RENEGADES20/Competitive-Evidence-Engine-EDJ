@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a8.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:05:17.586844-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2029,
+    "output_tokens": 1387,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 877,
+    "reasoning_tokens": 1057,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.05
+  },
+  "wall_s": 10.42,
+  "tokens_per_s": 133.11,
+  "ttft_s": 1.05,
+  "reasoning_content": "The sub-question asks about Edward Jones's disclosures and initiatives for younger investors compared to competitors, but the firm is Merrill (MER). The passages provided are about Bank of America (BAC) / Merrill, not Edward Jones. There's a mismatch - the question asks about Edward Jones but firm is Merrill.\n\nWait, let me re-read. The question: \"How should the preferences of younger investors shape Edward Jones's offerings?\" Firm: Merrill (MER). Sub-question a8.MER [comparison]: How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\n\nThis is confusing. The firm listed is Merrill, but the question is about Edward Jones. The passage is about BAC/Merrill.\n\nThe passage mentions \"Top Next Generation Advisors (2025)\" and \"Top 40 Advisors Under 40 List (2025)\" - these are about young advisors, not younger investors/clients.\n\nThe sub-question asks about Edward Jones's disclosures and initiatives for younger investors. But the passages are about Merrill's recognition for next generation advisors (advisors under 40), not younger investors/clients.\n\nThe passage doesn't discuss younger investors at all. It mentions \"Next Generation Advisors\" and \"Advisors Under 40\" which are about young financial advisors, not younger investors/clients.\n\nSo for the sub-question about younger investors, the passage content is about young advisors - a different quantity (different measure). Actually it's about advisors, not investors.\n\nLet me think about the label. The passage talks about \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\" - these are about advisors (employees), not investors (clients). This is a different_quantity.\n\nActually, wait - the firm here is Merrill (MER), but the question is about Edward Jones. The sub-question is a comparison asking about Edward Jones vs competitors. But the passages given are about Merrill (which is a competitor).\n\nHmm, this is a bit tangled. The instructions say \"You extract evidence about one firm from passages of its documents.\" The firm is Merrill. The sub-question asks about Edward Jones's disclosures compared to competitors.\n\nGiven the confusion, I should just extract what the passages say about Merrill (the firm). The passage mentions \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\" - these are about young advisors, not younger investors.\n\nThe sub-question asks about \"younger investors.\" The passage doesn't mention younger investors. It mentions young advisors (under 40, next generation advisors). These are different_quantity - different measure (advisors vs investors).\n\nActually, let me be careful. The sub-question is a comparison: \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\" The passages are about Merrill (a competitor). But the passage content is about advisor recognition, not younger investor initiatives.\n\nThe passage mentions \"Top Next Generation Advisors (2025)\" and \"Top 40 Advisors Under 40 List (2025)\" - these relate to \"younger\" professionals (advisors), but not younger investors/clients.\n\nSo this is a different_quantity: it's about young advisors, not younger investors. The differs_because: it's about advisors (the firm's own employees/contractors) rather than younger investors/clients.\n\nLet me formulate the answer.\n\nThe passage text: \"No. 1 on ... Top Next Generation Advisors (2025), and Top Wealth Management Teams High Net Worth (2025)\" and \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\".\n\nThese are recognitions for the firm's young/next generation advisors, not initiatives or disclosures for younger investors.\n\nSo label = different_quantity, differs_because = \"The passage describes recognition for the firm's next-generation and under-40 financial advisors, not disclosures or initiatives for younger investors/clients.\"\n\nItem:\n- text: Merrill states it is No. 1 on Forbes' Top Next Generation Advisors (2025) and Financial Planning's Top 40 Advisors Under 40 List (2025).\n- quote: \"No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025), and Top Wealth Management Teams High Net Worth (2025) ... No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\"\n- value: \"\"\n- unit: \"financial advisors\"\n- period: \"2025\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"BAC-PR-2026-01-14-01#12\"]\n\nActually the period \"2025\" for these awards.\n\nLet me keep it simple with one item.\n\ndiffers_because: \"These are rankings for the firm's young/next-generation financial advisors (advisors under 40), not disclosures or initiatives aimed at younger investors/clients.\"\n\nreason: \"The passage mentions awards for next-generation and under-40 advisors, a different group (advisors) than younger investors.\"",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Merrill states it is No. 1 on Forbes' Top Next Generation Advisors (2025) and No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).",
+            "quote": "No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025), and Top Wealth Management Teams High Net Worth (2025) ... No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          }
+        ],
+        "differs_because": "The passage describes rankings for the firm's next-generation and under-40 financial advisors (its own advisory professionals), not disclosures or initiatives aimed at younger investors/clients.",
+        "reason": "The passage mentions recognition for young advisors (advisors under 40 / next generation), which is a different measure than initiatives or disclosures for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a8.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#59",
+    "EDJ-10Q-2026Q2#70",
+    "EDJ-10K-2025#212",
+    "EDJ-10Q-2026Q1#48",
+    "EDJ-10K-2025#238",
+    "EDJ-10Q-2025Q3#79",
+    "EDJ-10Q-2025Q2#74",
+    "EDJ-10Q-2026Q1#57",
+    "EDJ-10Q-2026Q1#58",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10Q-2026Q2#68",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q2#75",
+    "EDJ-10K-2025#126",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10K-2025#236",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10K-2025#237",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2025Q2#34",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-10Q-2025Q2#35",
+    "EDJ-10Q-2025Q3#38",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#56",
+    "EDJ-10Q-2026Q2#67",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10K-2025#140",
+    "EDJ-10K-2025#213",
+    "EDJ-10K-2025#25",
+    "EDJ-10Q-2025Q3#82",
+    "EDJ-10Q-2025Q2#77",
+    "EDJ-10Q-2025Q2#59",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10Q-2025Q3#62",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#132",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10K-2025#214",
+    "EDJ-TRADE-2026-08-18-IN-01#0"
+  ],
+  "at": "2026-11-21T15:10:52.790149-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 19146,
+    "output_tokens": 4052,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 17610,
+    "reasoning_tokens": 2949,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 4.53
+  },
+  "wall_s": 47.31,
+  "tokens_per_s": 85.65,
+  "ttft_s": 4.53,
+  "reasoning_content": "The sub-question asks for \"Advisor-led firms' trading commission and transactional revenue\" for Edward Jones. This is a [fact] labeled sub-question.\n\nLet me look at what passages state about Edward Jones's trading commission and transactional revenue (trade revenue, commissions, principal transactions).\n\nThe passages provide detailed figures. I need to extract the fact cells about trade revenue (commissions and principal transactions), and specifically \"trading commission and transactional revenue.\"\n\nThe sub-question is [fact], so I'm looking for actual figures of commissions and principal transactions (trade revenue).\n\nLet me gather the figures:\n\nFrom EDJ-10K-2025#236: 2025 U.S. Commissions $1,526, Principal transactions $245, Total trade revenue $1,771; Canada Commissions $52, Principal transactions $9, Total $61; Total Commissions $1,578, Principal transactions $254, Total trade revenue $1,832.\n\nFrom EDJ-10K-2025#237: 2024 U.S. Commissions $1,483, Principal transactions $216, Total $1,699; Canada $50, $11, $61; Total $1,533, $227, $1,760.\n\nFrom EDJ-10K-2025#238: 2023 U.S. Commissions $1,210, Principal transactions $220, Total $1,430; Canada $40, $12, $52; Total $1,250, $232, $1,482.\n\nQuarterly figures too.\n\nI need to decide what to include. The question is about \"trading commission and transactional revenue.\" The firm reports \"trade revenue\" which is composed of commissions and principal transactions revenue. These are the relevant figures.\n\nI'll create fact items for each period. Let me include annual figures (2023, 2024, 2025) and maybe quarterly figures. But I should be careful - there are many. Let me focus on the key figures: commissions revenue and principal transactions (total trade revenue).\n\nActually, the question is a bit broad. Let me provide the fact figures. I'll include:\n- Total commissions and principal transactions (trade revenue) for each annual period and recent quarters.\n\nLet me be comprehensive but reasonable. The core fact is that Edward Jones reports \"trade revenue\" composed of commissions and principal transactions.\n\nLet me structure items. I'll include the definition first (fact that trade revenue is composed of commissions and principal transactions), then figures.\n\nActually the definition is a fact for how the firm defines/reports. But the sub-question asks for the trading commission and transactional revenue figures. Let me provide both definition and figures.\n\nLet me include the main annual figures and the definition.\n\nLet me list items:\n\n1. Definition of trade revenue (from EDJ-10K-2025#212 or #25): \"Trade revenue is composed of commissions and principal transactions revenue. Commissions are earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities. Principal transactions revenue primarily results from the Partnership's distribution of and participation in principal trading activities...\"\n\n2. 2025 total trade revenue: Commissions $1,578, Principal transactions $254, Total trade revenue $1,832.\n\n3. 2024: Commissions $1,533, Principal transactions $227, Total $1,760.\n\n4. 2023: Commissions $1,250, Principal transactions $232, Total $1,482.\n\nI could also include quarterly. But maybe I'll include the annual figures and note the definition. Actually the question asks for \"trading commission and transactional revenue\" - this maps to \"trade revenue\" = commissions + principal transactions.\n\nI think providing the annual total trade revenue, and commissions and principal transactions components, is the best.\n\nLet me also include some recent quarterly figures for completeness? There's a lot. I'll include annual figures primarily, and maybe the most recent quarters.\n\nActually, let me keep it manageable. I'll include:\n- Definition (fact)\n- Annual 2025, 2024, 2023 total trade revenue with components\n\nFor the definition item, value/unit/period would be \"\" since it's a definition.\n\nLet me draft.\n\nItem 1 (definition): text about trade revenue composition.\n\nItem 2: 2025 commissions total $1,578, principal transactions $254, total trade revenue $1,832.\n\nActually, should I make separate items for commissions and principal transactions, or combined? Each figure is a separate item. Let me do:\n\n- Total trade revenue for each year (one item each)\n- Commissions for each year\n- Principal transactions for each year\n\nThat's 9 items plus definition = 10 items. That might be a lot but it's thorough.\n\nActually let me be more focused. The sub-question asks for \"trading commission and transactional revenue.\" The key is trade revenue (commissions + principal transactions). I'll provide:\n\n1. Definition item\n2. Total trade revenue 2025 ($1,832)\n3. Total trade revenue 2024 ($1,760)\n4. Total trade revenue 2023 ($1,482)\n5. Commissions 2025 ($1,578)\n6. Commissions 2024 ($1,533)\n7. Commissions 2023 ($1,250)\n8. Principal transactions 2025 ($254)\n9. Principal transactions 2024 ($227)\n10. Principal transactions 2023 ($232)\n\nActually maybe I'll combine commissions and principal transactions into the total trade revenue item text and provide components. But the schema wants one figure per item with a single value and unit.\n\nI think providing total trade revenue plus the breakdown is fine. Let me do it as separate items but concise.\n\nActually, to keep it manageable and clear, I'll provide:\n- Definition item\n- For each year: total trade revenue (one item with value = total), and separately commissions and principal transactions.\n\nLet me write the items. Period should be \"2025\", \"2024\", \"2023\" (calendar years).\n\nActually, let me reconsider - the fiscal year is December 31, so calendar year \"2025\" works.\n\nLet me write the quotes from the relevant chunks.\n\nFor 2025: EDJ-10K-2025#236 \"2025 U.S. Canada Total ... Trade revenue: Commissions 1,526 52 1,578 Principal transactions 245 9 254 Total trade revenue 1,771 61 1,832\"\n\nFor 2024: EDJ-10K-2025#237 \"Commissions 1,483 50 1,533 Principal transactions 216 11 227 Total trade revenue 1,699 61 1,760\"\n\nFor 2023: EDJ-10K-2025#238 \"Commissions 1,210 40 1,250 Principal transactions 220 12 232 Total trade revenue 1,430 52 1,482\"\n\nFor definition: EDJ-10K-2025#212 \"Trade revenue - Revenue is derived from fees based on client transactions and includes commissions and principal transactions. The primary source of trade revenue is from commissions revenue earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities. Principal transactions revenue primarily results from the Partnership's distribution of and participation in principal trading activities in municipal obligations, certificates of deposit and corporate obligations.\"\n\nGood. Let me write it up.\n\nFor the definition item, quote, value \"\", unit \"\", period \"\", scope \"\", definition maybe the quote itself? Actually definition field is \"the firm's own definition of the quantity when a passage gives one\". The quantity here is trade revenue. So definition field should contain the quote about trade revenue definition.\n\nActually, let me think about how to handle the definition. The sub-question asks for \"trading commission and transactional revenue\" - the figure. The definition is a fact about how the firm defines/reports it. I can include the definition as a fact item, with definition field containing the definition text, or as text.\n\nI'll make one item that is the definition, with the definition field quoted and text describing it.\n\nLet me finalize. I'll write concise items.\n\nFor each figure item, I'll set unit as \"USD\" (millions? The figures are in millions presumably). The tables show $1,578 which is $1,578 million = $1.578 billion. The unit should be \"USD millions\" or just \"USD\". I'll say \"USD\" and value \"$1,578\" but actually these are in millions. Hmm. The passage says \"Net revenue $ 17,700\" etc. These are in millions. I'll note unit as \"USD\" but value as printed. Actually to be safe, I'll put value as printed and unit as \"USD (millions)\"? The instructions say value \"as printed\" and unit \"what is counted or measured\". \n\nI'll use unit \"USD\" and value as printed \"$1,578\". Actually I should indicate millions. Let me use unit \"USD millions\" to be accurate. The instructions say unit is what is counted or measured. I'll use \"USD\" and add a note in text that it's in millions. Actually, let me keep unit as \"USD\" and value \"$1,578\" with the text mentioning \"in millions\". Hmm, but the value should be \"as printed\". I'll set value \"$1,578\" and unit \"USD\".\n\nActually the tables don't say \"in millions\" explicitly in the visible text but standard 10-K tables are in millions. I'll note \"USD (millions)\" as unit. I think it's cleaner to put unit as \"USD\" and mention in the text. Let me just do unit \"USD\" and note millions in text.\n\nLet me finalize the cells.\n\nI'll do one cell for subquestion a8.EDJ with label \"fact\" and multiple items.\n\nLet me write the items carefully with quotes under 300 chars.\n\nItem 0 (definition):\ntext: \"Edward Jones defines trade revenue as derived from fees based on client transactions, composed of commissions and principal transactions revenue; commissions are earned from distribution of mutual fund shares and insurance products and purchase or sale of securities; principal transactions result from distribution and participation in principal trading in municipal obligations, certificates of deposit and corporate obligations.\"\nquote: \"Trade revenue - Revenue is derived from fees based on client transactions and includes commissions and principal transactions. The primary source of trade revenue is from commissions revenue earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"Trade revenue is composed of commissions and principal transactions revenue.\"\nchunk_ids: [\"EDJ-10K-2025#212\"]\n\nItem 1: 2025 commissions\ntext: \"Edward Jones reported total commissions revenue of $1,578 million in 2025.\"\nquote: \"Commissions 1,526 52 1,578\"\nvalue: \"$1,578\"\nunit: \"USD (millions)\"\nperiod: \"2025\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#236\"]\n\nHmm wait, let me be careful with value \"as printed\" - it's \"1,578\". The dollar sign context. I'll put value \"1,578\" and unit \"USD millions\". Actually the table shows \"$ 1,578\" style. I'll use value \"1,578\".\n\nLet me reconsider units. I'll use unit \"USD (millions)\" and value \"1,578\".\n\nActually simpler: value \"1,578\", unit \"USD millions\". Hmm \"millions\" is a scale. I'll go with unit \"USD\" and note in text \"millions\". But then value \"1,578\" in USD would be wrong.\n\nI'll use unit \"USD (millions)\" to be clear.\n\nLet me write all items.\n\nFor period, calendar year \"2025\", \"2024\", \"2023\".\n\nLet me finalize the full set of items:\n\n1. Definition (no value)\n2. 2025 commissions $1,578\n3. 2025 principal transactions $254\n4. 2025 total trade revenue $1,832\n5. 2024 commissions $1,533\n6. 2024 principal transactions $227\n7. 2024 total trade revenue $1,760\n8. 2023 commissions $1,250\n9. 2023 principal transactions $232\n10. 2023 total trade revenue $1,482\n\nThat's 10 items. Good.\n\nLet me write concise text and quotes.\n\nFor quotes, I'll pull the specific line.\n\nFor 2025 commissions: quote \"Commissions 1,526 52 1,578\" from #236.\nPrincipal transactions: \"Principal transactions 245 9 254\"\nTotal: \"Total trade revenue 1,771 61 1,832\"\n\n2024 from #237: \"Commissions 1,483 50 1,533\", \"Principal transactions 216 11 227\", \"Total trade revenue 1,699 61 1,760\"\n\n2023 from #238: \"Commissions 1,210 40 1,250\", \"Principal transactions 220 12 232\", \"Total trade revenue 1,430 52 1,482\"\n\nGood.\n\nNow the reason: \"The passages state Edward Jones's trade revenue (commissions and principal transactions) figures for 2023-2025, which are the advisor-led firm's trading commission and transactional revenue.\"\n\ndiffers_because: \"\" (since it's fact).\n\nderivation: operation \"\", inputs [].\n\nLet me write the submit call.\n\nActually, let me reconsider whether I should also include quarterly figures. The question is fairly general. The annual figures (2023, 2024, 2025) plus definition are sufficient and comprehensive. I'll also note there are quarterly figures available but I'll stick with annual for clarity. Actually, providing a few is fine. I'll stick with annual.\n\nLet me write the final response.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones defines trade revenue as revenue derived from fees based on client transactions, composed of commissions and principal transactions revenue. Commissions are earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities; principal transactions revenue primarily results from the Partnership's distribution of and participation in principal trading activities in municipal obligations, certificates of deposit and corporate obligations.",
+            "quote": "Trade revenue - Revenue is derived from fees based on client transactions and includes commissions and principal transactions. The primary source of trade revenue is from commissions revenue earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Trade revenue is composed of commissions and principal transactions revenue.",
+            "chunk_ids": [
+              "EDJ-10K-2025#212"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total commissions revenue of $1,578 million in 2025.",
+            "quote": "Trade revenue:\nCommissions 1,526 52 1,578",
+            "value": "1,578",
+            "unit": "USD (millions)",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#236"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total principal transactions revenue of $254 million in 2025.",
+            "quote": "Principal transactions 245 9 254",
+            "value": "254",
+            "unit": "USD (millions)",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#236"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total trade revenue of $1,832 million in 2025.",
+            "quote": "Total trade revenue 1,771 61 1,832",
+            "value": "1,832",
+            "unit": "USD (millions)",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#236"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total commissions revenue of $1,533 million in 2024.",
+            "quote": "Trade revenue:\nCommissions 1,483 50 1,533",
+            "value": "1,533",
+            "unit": "USD (millions)",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#237"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total principal transactions revenue of $227 million in 2024.",
+            "quote": "Principal transactions 216 11 227",
+            "value": "227",
+            "unit": "USD (millions)",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#237"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total trade revenue of $1,760 million in 2024.",
+            "quote": "Total trade revenue 1,699 61 1,760",
+            "value": "1,760",
+            "unit": "USD (millions)",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#237"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total commissions revenue of $1,250 million in 2023.",
+            "quote": "Trade revenue:\nCommissions 1,210 40 1,250",
+            "value": "1,250",
+            "unit": "USD (millions)",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#238"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total principal transactions revenue of $232 million in 2023.",
+            "quote": "Principal transactions 220 12 232",
+            "value": "232",
+            "unit": "USD (millions)",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#238"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total trade revenue of $1,482 million in 2023.",
+            "quote": "Total trade revenue 1,430 52 1,482",
+            "value": "1,482",
+            "unit": "USD (millions)",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#238"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state Edward Jones's trade revenue, composed of commissions and principal transactions revenue (its trading commission and transactional revenue), with figures for 2023, 2024 and 2025, and a definition of the quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

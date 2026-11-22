@@ -1,0 +1,71 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a6.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2026Q2#37",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-DECK-2026-investor-day#86"
+  ],
+  "at": "2026-11-21T20:26:26.752350-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5436,
+    "output_tokens": 862,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3900,
+    "reasoning_tokens": 737,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.56
+  },
+  "wall_s": 12.66,
+  "tokens_per_s": 68.09,
+  "ttft_s": 1.56,
+  "reasoning_content": "This sub-question asks about Edward Jones's strategy for younger investors, but the firm is Charles Schwab (SCHW). Wait, there's a mismatch. The question is about Edward Jones, but the firm is The Charles Schwab Corporation (SCHW). The passages are all about Schwab, not Edward Jones.\n\nLet me re-read. The question: \"How should the preferences of younger investors shape Edward Jones's offerings?\" Firm: The Charles Schwab Corporation (SCHW).\n\nSub-question a6.SCHW: \"How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?\"\n\nSo the sub-question asks about Edward Jones, but the firm is Schwab. The passages are all Schwab passages. So there's a mismatch - the sub-question asks about Edward Jones but the passages are about Schwab.\n\nActually, looking more carefully, this seems like a case where the question mentions Edward Jones but the firm being analyzed is Schwab. The passages are all about Schwab. The sub-question asks about \"Edward Jones\" but there are no passages about Edward Jones.\n\nWait, actually this is a common pattern in these extraction tasks where the question is about a different firm (Edward Jones) but the passages provided are for Schwab. This might be a test to see if I correctly identify that the passages don't address Edward Jones.\n\nThe sub-question explicitly asks \"How does Edward Jones state its strategy...\" but all passages are about Schwab. So the passages say nothing about Edward Jones.\n\nActually, let me reconsider. The sub-question is labeled [fact] and asks about Edward Jones's strategy. But the firm is Schwab. The passages are all Schwab's statements about their own strategy for younger investors.\n\nThe instruction says \"You extract evidence about one firm from passages of its documents.\" The firm is Schwab. But the sub-question asks about Edward Jones.\n\nHmm, this is confusing. The sub-question asks about Edward Jones, but we're analyzing Schwab. This seems like an error or a deliberate mismatch.\n\nGiven the instruction: \"Use only the passages below. Never use what you know from elsewhere.\"\n\nThe passages are all about Schwab, not Edward Jones. So the answer should be not_found, because the passages say nothing about Edward Jones.\n\nActually, wait. Let me reconsider the whole framing. The question is \"How should the preferences of younger investors shape Edward Jones's offerings?\" This is a comparative question. Perhaps the task is comparing Edward Jones (a different firm) with Schwab. But for this particular cell, the firm is Schwab, and we're asked to extract Schwab's evidence.\n\nBut the sub-question text says \"How does Edward Jones state its strategy...\" This is clearly asking about Edward Jones, not Schwab.\n\nThis is a mismatch. The correct answer is not_found, since the passages say nothing about Edward Jones's strategy (they're about Schwab).\n\nActually, I think there might be an error in the question setup where \"Edward Jones\" should be \"Schwab\" (the firm name). But I should follow the literal sub-question. Since the passages contain no information about Edward Jones, the answer is not_found.\n\nLet me go with not_found, since the passages are entirely about Schwab, not Edward Jones.\n\nActually wait, let me reconsider. The reason field should explain. The passages are about Schwab's strategy for younger investors, not Edward Jones's. So for the sub-question asking about Edward Jones, the answer is not_found.\n\nI'll return not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The sub-question asks about Edward Jones's strategy for younger investors, but all passages concern The Charles Schwab Corporation and contain no statements about Edward Jones.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

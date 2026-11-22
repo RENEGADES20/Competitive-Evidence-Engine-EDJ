@@ -737,7 +737,7 @@ def _planner_calls(monkeypatch, outcome):
             raise outcome
         return outcome
     monkeypatch.setattr(planner, "call_planner", call)
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     return calls
 
 
@@ -800,7 +800,7 @@ def test_planner_record_saves_stop_reason_and_usage(monkeypatch, tmp_path):
     from cee.retrieve.fts import resolve
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     raw = {"aspects": [{"id": "a", "text": "payout", "keyword_query": "payout grid", "firms": [], "metric": "", "kind": "fact"}]}
 
     def call(query, provider, client=None, meta=None):
@@ -1021,7 +1021,7 @@ def test_deepseek_plan_record_saves_reasoning_and_cap(monkeypatch, tmp_path):
     runner = er.RealRunner("deepseek", 1, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     runner.plan({"id": "Q7", "text": Q7_TEXT}, resolve(Q7_TEXT, dt.date(2026, 11, 17)))
     rec = saved(tmp_path / "cache")[0]
-    assert rec["max_tokens"] == 64000 and rec["request_version"] == "ds-strict-1-think-on-a64000-p64000"
+    assert rec["max_tokens"] == 8000 and rec["request_version"] == "ds-strict-2-plan-off-c8000-s1"   # #272 default: plan off
     assert rec["reasoning_content"] == "plan thoughts" and rec["raw"] == raw and rec["wall_s"] >= 0
 
 
@@ -1092,7 +1092,7 @@ def _plan_only_env(monkeypatch, outcome, cache):
 
     monkeypatch.setenv("LLM_PROVIDER", "anthropic")
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
@@ -1165,7 +1165,7 @@ def _map_setup(monkeypatch, behave=None):
     from cee.retrieve.fts import Hit, Query
 
     monkeypatch.setattr(ask, "model_name", lambda p: "fake-model")
-    monkeypatch.setattr(planner, "model_for", lambda p: "fake-model")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "fake-model")
     firms = ["MS", "SCHW", "EDJ", "MER", "RJF"]
     qry = Query(question="Advisor headcount across the five.", entities=firms)
     plan = planner.Plan(aspects=[planner.Aspect("a1", "Advisor headcount.")],
@@ -1191,7 +1191,7 @@ def test_map_calls_capped_exactly_and_a_capped_call_writes_no_cache_file(monkeyp
     qd, qry, plan, hits, calls = _map_setup(monkeypatch)
     zero = er.RealRunner("deepseek", 0, "snap", tmp_path / "r0", cache_dir=tmp_path / "cache")
     m = zero.map(qd, qry, plan, hits)
-    assert calls == [] and zero.map_capped == ["map.MS", "map.SCHW", "map.EDJ", "map.MER", "map.RJF"]
+    assert calls == [] and zero.map_capped == ["map.a1.MS", "map.a1.SCHW", "map.a1.EDJ", "map.a1.MER", "map.a1.RJF"]
     assert not (tmp_path / "cache").exists() or not any((tmp_path / "cache").iterdir())   # nothing saved
     assert all(c.label == "failed" for c in m.cells.values())
     three = er.RealRunner("deepseek", 3, "snap", tmp_path / "r3", cache_dir=tmp_path / "cache")
@@ -1206,7 +1206,7 @@ def test_map_calls_capped_exactly_and_a_capped_call_writes_no_cache_file(monkeyp
 
 def test_map_failed_call_is_saved_counted_and_never_called_again(monkeypatch, tmp_path):
     def behave(spec, meta):
-        if spec.id == "map.SCHW":
+        if spec.id == "map.a1.SCHW":
             raise TimeoutError("read timed out")
         from cee.answer import extract
         return extract.mock_extract(spec)
@@ -1215,7 +1215,7 @@ def test_map_failed_call_is_saved_counted_and_never_called_again(monkeypatch, tm
     m = r.map(qd, qry, plan, hits)
     assert m.cells["a1.SCHW"].label == "failed" and r.made == 5 and len(calls) == 5
     rec = [s for s in saved(tmp_path / "cache") if s.get("failed_call")]
-    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW" and rec[0]["error"].startswith("TimeoutError")
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.a1.SCHW" and rec[0]["error"].startswith("TimeoutError")
     again = er.RealRunner("deepseek", 9, "snap", tmp_path / "r2", cache_dir=tmp_path / "cache")
     m2 = again.map(qd, qry, plan, hits)
     assert len(calls) == 5 and again.made == 0 and m2.cells["a1.SCHW"].label == "failed"   # reused, not re-called
@@ -1229,10 +1229,10 @@ def test_a_400_in_round_1_stops_before_round_2_via_allow(monkeypatch, tmp_path):
     from cee.retrieve.fts import Hit
 
     def behave(spec, meta):
-        if spec.id == "map.SCHW":
+        if spec.id == "map.a1.SCHW":
             raise _BadRequest("schema rejected")
         raw = extract.mock_extract(spec)
-        if spec.id == "map.MS":   # a not_found cell, so the corrective re-search runs for it
+        if spec.id == "map.a1.MS":   # a not_found cell, so the corrective re-search runs for it
             for c in raw["cells"]:
                 c["label"], c["items"] = "not_found", []
         return raw
@@ -1245,12 +1245,12 @@ def test_a_400_in_round_1_stops_before_round_2_via_allow(monkeypatch, tmp_path):
     monkeypatch.setattr(planner, "corrective_search", lambda *a, **k: [new])
     r = er.RealRunner("deepseek", 20, "snap", tmp_path / "r1", cache_dir=tmp_path / "cache")
     m = r.map(qd, qry, plan, hits)
-    assert sorted(calls) == ["map.EDJ", "map.MER", "map.MS", "map.RJF", "map.SCHW"]   # round 1 finished
-    assert r.bad_request and r.map_stopped == ["remap.MS"] and "remap.MS" not in calls
-    remap = [c for c in m.calls if c["id"] == "remap.MS"][0]
+    assert sorted(calls) == ["map.a1.EDJ", "map.a1.MER", "map.a1.MS", "map.a1.RJF", "map.a1.SCHW"]   # round 1 finished
+    assert r.bad_request and r.map_stopped == ["remap.a1.MS"] and "remap.a1.MS" not in calls
+    remap = [c for c in m.calls if c["id"] == "remap.a1.MS"][0]
     assert remap["skipped"] and remap["error"] == "not run: the run stopped after a 400"
     rec = [s for s in saved(tmp_path / "cache") if s.get("bad_request")]
-    assert len(rec) == 1 and rec[0]["call_id"] == "map.SCHW"
+    assert len(rec) == 1 and rec[0]["call_id"] == "map.a1.SCHW"
     assert m.corrective and m.corrective[0].origin == "corrective"   # B1: tagged, kept on the matrix
 
 
@@ -1270,7 +1270,7 @@ def test_planner_recheck_records_trailing_brace_flags(monkeypatch, tmp_path):
     qry = resolve(Q7_TEXT, dt.date(2026, 11, 17))
     runner = er.RealRunner("deepseek", 0, "snap-1", tmp_path / "run", cache_dir=tmp_path / "cache")
     from dataclasses import asdict
-    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.request_version)
+    key = er.plan_cache_key(qd, "snap-1", "deepseek", "fake-model", asdict(qry), runner.plan_version)
     raw = {"aspects": [{"id": "a", "text": "pay", "keyword_query": "payout grid", "firms": [], "metric": "",
                         "kind": "fact", "proxy": False}]}
     (tmp_path / "cache").mkdir()
@@ -1286,7 +1286,7 @@ def test_map_invalid_output_saved_as_invalid_and_reused(monkeypatch, tmp_path):
     from cee.answer import llm
 
     def behave(spec, meta):
-        if spec.id == "map.EDJ":
+        if spec.id == "map.a1.EDJ":
             raise llm.ModelOutputError("Map output cut at max_tokens (64000 output tokens)", {"partial": 1},
                                        "deepseek", "length", {"output_tokens": 64000})
         from cee.answer import extract
@@ -1494,7 +1494,7 @@ def _resume_env(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "deepseek")
     monkeypatch.setenv("MOCK_DELAY_S", "0")
     monkeypatch.setattr(ask, "model_name", lambda p: "deepseek-v4-pro")
-    monkeypatch.setattr(planner, "model_for", lambda p: "deepseek-v4-pro")
+    monkeypatch.setattr(planner, "model_for", lambda p, stage=None: "deepseek-v4-pro")
     monkeypatch.setattr(fts, "resolve", lambda text, today=None: fts.Query(question=text, entities=["MS", "RJF"]))
     monkeypatch.setattr(fts, "searchable", lambda q: True)
     monkeypatch.setattr(er, "corpus_types", lambda: (set(), "test", {}))
@@ -1525,7 +1525,7 @@ def _resume_env(monkeypatch):
         if meta is not None:
             meta.update(stop_reason="tool_calls", usage=dict(USAGE))
         out = extract.mock_extract(spec)
-        if spec.id == "map.RJF":   # round 1: the firm's passage does not answer the aspect
+        if spec.id == "map.a1.RJF":   # round 1: the firm's passage does not answer the aspect (#272: per cell)
             out["cells"] = [{**c, "label": "not_found", "items": [], "reason": "not stated"} for c in out["cells"]]
         return out
     monkeypatch.setattr(extract, "call_extract", call_extract)
@@ -1559,7 +1559,7 @@ def test_a_resumed_run_reuses_every_saved_call(monkeypatch, tmp_path):
     rc, rep, r = _resume(tmp_path, "A", 3)
     assert rc == 0 and calls == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "corrective": 1}
     assert rep["meta"]["real_calls"] == 3 and rep["meta"]["reused"] == 0
-    assert r["map_capped_calls"] == ["remap.RJF"] and r["model"] == "cap"
+    assert r["map_capped_calls"] == ["remap.a1.RJF"] and r["model"] == "cap"
     assert r["map_behavior"] == "answer"     # MS's fact passed the checks: the reduce is capped, not code-built
     assert r["status"] == "NOT_EVALUATED" and r["note"] == "not run: --max-calls reached"
     assert r["cost"]["by_type"] == {"plan": 1, "map": 2, "remap": 0, "reduce": 0, "answer": 0}
@@ -1593,7 +1593,7 @@ def test_max_calls_caps_every_call_type(monkeypatch, tmp_path):
     calls = _resume_env(monkeypatch)
     rc, rep, r = _resume(tmp_path, "one", 1)
     assert calls["plan"] == 1 and calls["map"] == 0 and calls["reduce"] == 0 and rep["meta"]["real_calls"] == 1
-    assert sorted(r["map_capped_calls"]) == ["map.MS", "map.RJF"]
+    assert sorted(r["map_capped_calls"]) == ["map.a1.MS", "map.a1.RJF"]
 
 
 def test_legacy_resume_reuses_plan_and_answer(fake_model, monkeypatch, tmp_path):
@@ -1931,3 +1931,11 @@ def test_the_mock_map_re_search_uses_the_mode_search(monkeypatch, tmp_path, mode
     with pytest.raises(_MapSeen):
         er.main(["--questions", "Q29", "--mode", mode, "--out", str(tmp_path)])
     assert seen == (["default"] if mode == "fts" else [sentinel])
+
+
+def test_embed_stats_read_and_reset(monkeypatch):
+    """#272: the eval reads the query-embedding time of one search, then resets it."""
+    from cee.retrieve import embed
+    monkeypatch.setattr(embed, "QUERY_STATS", {"calls": 2, "s": 0.12345})
+    assert er._embed_stats() == {"calls": 2, "s": 0.123}
+    assert er._embed_stats(reset=True) == {"calls": 2, "s": 0.123} and embed.QUERY_STATS == {"calls": 0, "s": 0.0}

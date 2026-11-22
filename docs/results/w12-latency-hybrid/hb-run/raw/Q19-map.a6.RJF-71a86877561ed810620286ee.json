@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a6.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-21T20:26:33.861627-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1813,
+    "output_tokens": 788,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 277,
+    "reasoning_tokens": 571,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.5
+  },
+  "wall_s": 10.98,
+  "tokens_per_s": 71.77,
+  "ttft_s": 1.5,
+  "reasoning_content": "Let me analyze. The question is about Edward Jones, but the firm is Raymond James Financial (RJF). The sub-question asks how Edward Jones states its strategy for younger investors/clients under 40.\n\nThe passage given is about Raymond James, not Edward Jones. It mentions \"Next gen advisor strategy\" - that's about recruiting advisors, not about younger clients/investors.\n\nWait, there's a mismatch. The question asks about Edward Jones but the firm is RJF. The passages are from Raymond James deck.\n\nLet me think carefully. The sub-question asks about \"Edward Jones\" strategy. But the passages provided are Raymond James documents. There's a confusion here. The chunk is about Raymond James's \"Next gen advisor strategy\" which is about recruiting next generation advisors, not about younger investors/clients.\n\nActually, the question header says \"Firm: Raymond James Financial (RJF)\" but the question text is about \"Edward Jones\". This seems like a mismatch. But I should answer based on the passages provided.\n\nThe passage mentions \"Next gen advisor strategy\" which relates to recruiting advisors, not serving younger investors/clients. So this would be a different_quantity - a different measure (advisors vs clients/investors).\n\nActually, let me re-read. The sub-question asks how Edward Jones states strategy for younger investors and clients under 40. The passage is about Raymond James's next gen advisor strategy (recruiting advisors). This is a different quantity: it's about recruiting next generation advisors, not about serving younger clients.\n\nSo label: different_quantity, differs_because it's about recruiting next generation advisors (the firm's workforce/recruiting strategy), not about attracting/serving younger investors or clients under 40.\n\nThe passage is very sparse: \"Next gen advisor strategy\" as a bullet point.\n\nLet me construct the cell.\n\nitem:\n- text: \"Raymond James's recruiting materials reference a 'Next gen advisor strategy'.\"\n- quote: \"Next gen advisor strategy\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"RJF-DECK-2025-investor-day#42\"]\n\ndiffers_because: \"It concerns a strategy for recruiting next-generation financial advisors (the firm's workforce), not a strategy for attracting and serving younger investors or clients under 40.\"\n\nreason: \"The only related passage refers to a next gen advisor recruiting strategy, a different topic than serving younger clients.\"\n\nderivation: operation \"\", inputs [].\n\nNote: the question is actually about Edward Jones but firm is RJF. This is odd but I'll just report what the passages say about RJF. The sub-question id is a6.RJF, firm RJF. I'll answer for RJF.\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James's recruiting materials reference a 'Next gen advisor strategy'.",
+            "quote": "Next gen advisor strategy",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#42"
+            ]
+          }
+        ],
+        "differs_because": "It concerns a strategy for recruiting next-generation financial advisors (the firm's own workforce), not a strategy for attracting and serving younger investors or clients under 40.",
+        "reason": "The only related passage mentions a next-gen advisor recruiting strategy, a different topic than serving younger investors/clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

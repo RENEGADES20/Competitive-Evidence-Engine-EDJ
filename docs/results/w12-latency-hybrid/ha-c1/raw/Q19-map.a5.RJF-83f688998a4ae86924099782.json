@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a5.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-21T20:26:33.823165-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1806,
+    "output_tokens": 714,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 270,
+    "reasoning_tokens": 577,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.86
+  },
+  "wall_s": 10.94,
+  "tokens_per_s": 65.27,
+  "ttft_s": 1.86,
+  "reasoning_content": "The sub-question asks about Edward Jones's current offerings and younger investors' preferences, but the firm is Raymond James Financial (RJF). There's a chunk about \"Next gen advisor strategy\" which is about advisors, not younger investors' offerings.\n\nThe question is about Edward Jones's offerings, but the firm is RJF. The passages are about Raymond James. There's nothing about Edward Jones's offerings aligned with younger investors' preferences.\n\nThe only passage is about \"Next gen advisor strategy\" which is a different quantity (about advisors, not offerings/younger investors).\n\nLet me evaluate. The sub-question: \"How do Edward Jones's current offerings align with younger investors' preferences?\" This is about Edward Jones, not Raymond James. The passages are about Raymond James. So essentially not_found.\n\nThe chunk \"Next gen advisor strategy\" is about next-gen advisors (recruiting younger advisors), not about offerings to younger investors. This is a different quantity.\n\nActually, the question is confusing - the question is about Edward Jones, but the firm is RJF. Wait, re-reading: \"Question: How should the preferences of younger investors shape Edward Jones's offerings?\" and \"Firm: Raymond James Financial (RJF)\".\n\nHmm, this seems like a mismatch. But my job is to extract evidence about RJF. The sub-question asks about Edward Jones's current offerings. There are no passages about Edward Jones.\n\nThe chunk \"Next gen advisor strategy\" is about Raymond James's strategy for next-gen advisors, not Edward Jones's offerings for younger investors.\n\nI think the answer is not_found - the passages say nothing about Edward Jones's offerings aligning with younger investors' preferences.\n\nThe \"Next gen advisor strategy\" is a different_quantity perhaps - it's about advisors (next-gen advisors), not offerings to younger investors. But it's about Raymond James, not Edward Jones, and about advisor recruiting strategy, not offerings.\n\nActually, let me think. The chunk is minimal: \"Collaborative recruiting across channels, West Coast and Northeast focus, Next gen advisor strategy\". This is about recruiting advisors, not about offerings to younger investors.\n\nI think not_found is most appropriate since the passages say nothing about Edward Jones's offerings aligned with younger investors' preferences.\n\nActually, could \"Next gen advisor strategy\" be a different_quantity? It's about next generation advisors (i.e., younger advisors being recruited), not younger investors and their preferences for offerings. So it's quite different.\n\nI'll go with not_found, since the passages say nothing about this.\n\nWait, let me reconsider. The \"Next gen advisor strategy\" could be related to serving next generation clients (younger investors). But the chunk is in \"Recruiting\" section, so it's about recruiting next-gen advisors.\n\nGiven the minimal info, I'll label not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages concern Raymond James Financial, not Edward Jones, and say nothing about Edward Jones's offerings or younger investors' preferences; the only related snippet ('Next gen advisor strategy') is about recruiting advisors, not client offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

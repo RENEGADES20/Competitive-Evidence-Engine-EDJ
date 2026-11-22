@@ -1,0 +1,85 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a5.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#45",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#36",
+    "EDJ-10K-2025#38",
+    "EDJ-10Q-2026Q1#31",
+    "EDJ-10Q-2025Q2#13",
+    "EDJ-10Q-2026Q2#13"
+  ],
+  "at": "2026-11-21T13:52:29.583978-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4176,
+    "output_tokens": 963,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2640,
+    "reasoning_tokens": 499,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.95
+  },
+  "wall_s": 4.62,
+  "tokens_per_s": 208.44,
+  "ttft_s": 0.95,
+  "reasoning_content": "The sub-question asks how the firm defines or describes mass-affluent segment in terms of asset levels or income. The passages don't mention mass-affluent at all. The closest is describing \"more than 9 million clients with $2.4 trillion in client assets under care\" and \"long-term investors\". That's not a definition of mass-affluent. So label: not_found? Or not_disclosed? Passages say nothing about mass-affluent segment. not_found seems right.\n\nCould I argue a different_quantity: the passage describes clients generally\u2014\"tens of millions of long-term investors\" \u2014 a wider unit that contains mass-affluent. Hmm. Instructions: different_quantity when one passage states a different, related quantity: a wider unit that contains the asked one. The asked quantity is a description of mass-affluent segment in terms of asset levels or income. The passage states client count and total client assets across all clients \u2014 a wider unit containing mass-affluent. That's arguably different_quantity. But the asked quantity here isn't a figure; it's a definition/description. Hmm.\n\nI think the guidance for when unsure: choose different_quantity and say why. The passage describes the whole client base (more than 9 million clients, $2.4 trillion in client assets under care) as \"long-term investors\" \u2014 a wider group that would include mass-affluent, with no asset-level segmentation. I'll label different_quantity with that item, noting it covers the entire client base rather than a mass-affluent segment, and no asset-level thresholds given.\n\nActually consider: the question asks \"how the firm defines or describes the mass-affluent segment in terms of asset levels or income\". If the firm doesn't mention mass-affluent at all, then arguably not_found (passages say nothing about it). But the wider-unit rule fits: describes total client base including all wealth levels. I'll go with different_quantity and explain.\n\nHmm, though risk. The grader likely expects not_found since no mass-affluent mention. But the rubric says \"no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one\". The total client base is a wider unit containing mass-affluent clients. The description in terms of client count and total assets is a related description. I'll pick different_quantity.\n\nItems: one item for the client base description.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones describes its overall client base as more than 9 million clients served by more than 20,000 financial advisors with $2.4 trillion in client assets under care, describing them as long-term investors, without separating out a mass-affluent segment or giving asset or income thresholds.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of September 26, 2025.",
+            "value": "9 million",
+            "unit": "clients",
+            "period": "2025-09-26",
+            "scope": "whole firm (U.S. and Canada)",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#60"
+            ]
+          },
+          {
+            "text": "The firm says it is committed to helping improve the financial wellness of tens of millions of long-term investors across North America through comprehensive, personalized planning and professional advice, again without defining a mass-affluent segment by asset level or income.",
+            "quote": "the firm is committed to helping improve the financial wellness for tens of millions of long-term investors across North America by providing comprehensive, personalized planning and professional advice.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "whole firm (U.S. and Canada)",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#60"
+            ]
+          }
+        ],
+        "differs_because": "The passages describe the firm's entire client base (all clients / long-term investors, with total client assets under care) rather than a mass-affluent segment, and give no asset-level or income thresholds for any client segment.",
+        "reason": "No passage defines or describes a mass-affluent segment by asset levels or income; the closest statement covers the wider total client base.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-10K-2025#101",
+    "BAC-TR-2026Q1#5",
+    "SCHW-10Q-2025Q2#86",
+    "BAC-DECK-2025-investor-day#109",
+    "MS-10K-2025#73",
+    "BAC-PR-2026-04-15-01#8",
+    "MS-TR-2026Q1#43",
+    "SCHW-TR-2026Q1#45",
+    "BAC-PR-2026-01-14-01#9",
+    "SCHW-TRADE-2026-10-07-WM-01#0",
+    "SCHW-TRADE-2026-10-23-WM-01#0",
+    "BAC-DECK-2025-investor-day#92",
+    "RJF-10Q-2025Q2#227",
+    "SCHW-TRADE-2026-10-15-RB-01#3",
+    "BAC-10Q-2025Q2#87",
+    "SCHW-TRADE-2026-08-26-WM-01#5",
+    "BAC-10Q-2025Q3#87",
+    "BAC-10Q-2026Q2#82",
+    "EDJ-10K-2025#70",
+    "RJF-10Q-2026Q1#239",
+    "MS-10K-2025#170",
+    "RJF-10Q-2025Q4#199",
+    "EDJ-10Q-2026Q1#66",
+    "MS-TR-2026Q1#23",
+    "MS-TRADE-2026-10-26-IN-01#3",
+    "RJF-TRADE-2026-10-16-WM-01#1"
+  ],
+  "at": "2026-11-21T22:05:53.116855-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8819,
+    "output_tokens": 2416,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 7155,
+    "reasoning_tokens": 1851,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.08
+  },
+  "wall_s": 24.41,
+  "tokens_per_s": 98.98,
+  "ttft_s": 2.08,
+  "reasoning_content": "I need to answer the sub-question a1.all: \"How technology changes how clients receive financial advice\" as a fact question. I need to find passages that state how technology changes how clients receive financial advice.\n\nLet me look through the passages for relevant statements.\n\nThe sub-question is marked [fact] and asks \"How technology changes how clients receive financial advice.\" I need to find passages that describe how technology changes how clients receive financial advice.\n\nRelevant passages:\n\nMS-TR-2026Q1#43: Edward Pick talks about co-piloting, historical context between financial adviser and client, super agents driving efficiency and effectiveness in wealth. This is about technology (AI) changing how advice is delivered.\n\nSCHW-TR-2026Q1#45: \"we've got agenetic capabilities that will make everything at Schwab very easy\" - AI as accelerant. This is about AI making things easier.\n\nBAC-DECK-2025-investor-day#109: \"Intuitive, AI-enabled client and prospect insights\" and \"Integrating AI agents into core client team sales activities\" - about AI.\n\nSCHW-TRADE-2026-10-23-WM-01#0: Syntax integration with Schwab's iRebal to streamline direct indexing - technology for advisors.\n\nSCHW-TRADE-2026-10-15-RB-01#3: personalized investing.\n\nSCHW-TRADE-2026-08-26-WM-01#5: digital workflows at custodians.\n\nRJF-10K-2025#101: \"In addition to better serving clients, the effective use of technology increases efficiency and enables us to reduce costs.\"\n\nMS-10K-2025#73: about technology for self-directed brokerage platform and mobile services.\n\nLet me identify which are actually facts about how technology changes how clients receive financial advice.\n\nThe most directly relevant:\n1. RJF-10K-2025#101: \"In addition to better serving clients, the effective use of technology increases efficiency and enables us to reduce costs.\" - technology serving clients better.\n2. MS-TR-2026Q1#43: co-piloting with financial adviser, AI, historical context.\n3. SCHW-TR-2026Q1#45: AI as accelerant, agenetic capabilities making everything easy.\n4. BAC-DECK-2025-investor-day#109: AI-enabled insights, AI agents in client team sales.\n\nThese are all facts about how technology changes how clients receive financial advice.\n\nLet me write these up as fact items.\n\nLet me be careful with the schema. Each cell has subquestion_id, label, items (list), differs_because, reason, derivation.\n\nFor fact items, each item needs text, quote, value, unit, period, scope, definition, chunk_ids.\n\nMany of these are qualitative statements with no figure, so value=\"\", unit=\"\", period=\"\", scope=\"\", definition=\"\".\n\nLet me draft items.\n\nItem 1: RJF-10K-2025#101 - \"The firm states that the effective use of technology better serves clients, increases efficiency and enables cost reduction.\"\n\nquote: \"In addition to better serving clients, the effective use of technology increases efficiency and enables us to reduce costs.\"\n\nItem 2: MS-TR-2026Q1#43 - CEO describes AI co-piloting where financial adviser has historical context of past interactions with client.\n\nquote: \"you can have the historical context as between the financial adviser and the client where she is well aware of the past interactions and how that might drive against certain market dynamics, future action. And so that co-piloting...\"\n\nItem 3: SCHW-TR-2026Q1#45 - AI as accelerant to strategy, agenetic capabilities make everything easy.\n\nquote: \"we've got agenetic capabilities that will make everything at Schwab very easy\" and \"incredibly excited about AI as an accelerant to our strategy\"\n\nItem 4: BAC-DECK-2025-investor-day#109 - AI-enabled client insights, AI agents into client team sales.\n\nquote: \"Intuitive, AI-enabled client and prospect insights\" \"Integrating AI agents into core client team sales activities\"\n\nLet me also consider SCHW-TRADE-2026-08-26-WM-01#5 - \"more digital workflows happening at all of our custodians\" - this is a quote from Brown (Ritholtz), a third party, about custodians. It's about technology for advisors, not necessarily clients receiving advice. It's attributed to Brown, not the firm itself. The instruction says \"attributed to the firm.\" Actually for the \"All sources\" question, there's no specific firm. Hmm.\n\nActually the question says \"Firm: All sources (no firm named)\". So this is a cross-cutting question about how technology changes how clients receive financial advice, drawing from all firms.\n\nBut the sub-question is a1.all with [fact] label. I need to extract facts about how technology changes how clients receive financial advice.\n\nLet me include the most relevant ones. The RJF, MS, SCHW, BAC deck items are clearly about technology changing advice delivery.\n\nLet me also consider MS-10K-2025#73 - about self-directed brokerage platform and mobile services - \"external technology that allows our clients and customers to use our products and services (including our self-directed brokerage platform and mobile services)\". This is about clients using technology to access services. Could be relevant.\n\nActually, this is a risk factor discussion, not really about how advice changes. But \"self-directed brokerage platform and mobile services\" as ways clients access services. It's somewhat relevant but it's a risk disclosure.\n\nI'll focus on the clearest facts. Let me include the four main ones plus maybe SCHW trade press items about personalized investing and digital workflows.\n\nActually let me be more selective. The key facts about how technology changes how clients receive financial advice:\n\n1. RJF-10K-2025#101: technology better serves clients, increases efficiency, reduces costs (general statement).\n\n2. MS-TR-2026Q1#43: AI co-piloting for advisors, historical context of client interactions.\n\n3. SCHW-TR-2026Q1#45: AI as accelerant, agenetic capabilities make everything easy.\n\n4. BAC-DECK-2025-investor-day#109: AI-enabled client insights, AI agents in client team sales.\n\nThese four are the clearest. I'll submit these as fact items.\n\nLet me write the cell with label \"fact\".\n\nFor reason: \"The passages state how the firms expect technology/AI to change how clients receive advice.\"\n\nNow write out each item carefully.\n\nItem 0: RJF\ntext: \"Raymond James states that the effective use of technology better serves clients, increases efficiency and enables the firm to reduce costs.\"\nquote: \"In addition to better serving clients, the effective use of technology increases efficiency and enables us to reduce costs.\"\nchunk_ids: [\"RJF-10K-2025#101\"]\n\nItem 1: MS\ntext: \"Morgan Stanley's CEO describes AI-enabled 'co-piloting,' where the financial adviser is given the historical context of past interactions with the client to inform future action.\"\nquote: \"you can have the historical context as between the financial adviser and the client where she is well aware of the past interactions and how that might drive against certain market dynamics, future action. And so that co-piloting, I think, is something that... is spending a lot of time on\"\nchunk_ids: [\"MS-TR-2026Q1#43\"]\n\nItem 2: SCHW\ntext: \"Schwab's CEO states the firm has 'agenetic capabilities' that will make everything at Schwab very easy and describes AI as an accelerant to its strategy.\"\nquote: \"we've got agenetic capabilities that will make everything at Schwab very easy... incredibly excited about AI as an accelerant to our strategy, not as a headwind.\"\nchunk_ids: [\"SCHW-TR-2026Q1#45\"]\n\nItem 3: BAC deck\ntext: \"Bank of America's investor day materials list 'Intuitive, AI-enabled client and prospect insights' and 'Integrating AI agents into core client team sales activities'.\"\nquote: \"Intuitive, AI-enabled client and prospect insights \u00b7 Integrating AI agents into core client team sales activities\"\nchunk_ids: [\"BAC-DECK-2025-investor-day#109\"]\n\nThese are all facts. Good.\n\nNow, the derivation field is required with operation \"\" and inputs []. differs_because \"\".\n\nLet me submit.\n\nActually, I should double-check the \"period\" for these. BAC deck period is \"n/a\", published 2025-11-05. These are qualitative, no figure, so period \"\".\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James states that the effective use of technology better serves clients, increases efficiency and enables the firm to reduce costs.",
+            "quote": "In addition to better serving clients, the effective use of technology increases efficiency and enables us to reduce costs.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#101"
+            ]
+          },
+          {
+            "text": "Morgan Stanley's CEO describes AI-enabled 'co-piloting,' where the financial adviser is given the historical context of past interactions with the client to inform future action.",
+            "quote": "you can have the historical context as between the financial adviser and the client where she is well aware of the past interactions and how that might drive against certain market dynamics, future action. And so that co-piloting, I think, is something that",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-TR-2026Q1#43"
+            ]
+          },
+          {
+            "text": "Schwab's CEO states the firm has 'agenetic capabilities' that will make everything at Schwab very easy and describes AI as an accelerant to its strategy rather than a headwind.",
+            "quote": "we've got agenetic capabilities that will make everything at Schwab very easy... incredibly excited about AI as an accelerant to our strategy, not as a headwind.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#45"
+            ]
+          },
+          {
+            "text": "Bank of America's investor day materials list 'Intuitive, AI-enabled client and prospect insights' and 'Integrating AI agents into core client team sales activities.'",
+            "quote": "Intuitive, AI-enabled client and prospect insights \u00b7 Integrating AI agents into core client team sales activities",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-DECK-2025-investor-day#109"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "These passages state how each firm expects technology (AI, co-piloting, digital capabilities) to change how clients receive financial advice.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

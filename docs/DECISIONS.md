@@ -302,7 +302,9 @@ answer call, at most 2 per question.
 Amendment (#244, ADR-021): the 0-5 cap is relaxed with no fixed number (user decision 2026-11-19:
 quality first, cost reduced later). Calls follow the question's sub-question decomposition
 (map-reduce: planner 1, map one per firm plus research, re-extraction after a corrective re-search,
-reduce 1; ADR-021 rule 7). Unchanged: SQL filters for every sub-question, citations only to retrieved
+reduce 1; ADR-021 rule 7). Note (#272, W12 latency): the map is one call per firm x aspect cell (and one
+re-extraction per re-searched cell), in parallel, so the slowest call is shorter; each cell call may cite the
+same chunks it could in the firm call. Still no fixed number: the count follows the decomposition. Unchanged: SQL filters for every sub-question, citations only to retrieved
 chunks, caveats by code, every call logged (now with input / output tokens; cost from a configured
 price, #248), the mock covers every call so tests and CI make 0 real calls, and the work stays on
 `main`. Paid-call testing: one run of a planned question through the full answer flow counts every call

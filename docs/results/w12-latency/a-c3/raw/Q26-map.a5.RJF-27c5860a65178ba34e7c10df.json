@@ -1,0 +1,82 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a5.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#2",
+    "RJF-TRADE-2026-10-27-WM-01#1",
+    "RJF-TRADE-2026-08-19-IN-01#1",
+    "RJF-TRADE-2026-08-19-IN-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-11-05-WM-01#1"
+  ],
+  "at": "2026-11-21T14:11:52.114983-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11268,
+    "output_tokens": 330,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9860,
+    "reasoning_tokens": 191,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.12
+  },
+  "wall_s": 2.98,
+  "tokens_per_s": 110.74,
+  "ttft_s": 1.12,
+  "reasoning_content": "The sub-question asks: management or leadership changes announced by Raymond James. Passages: advisor moves, not management. Any leadership changes? Let's scan. CEO Paul Shoukry mentioned as CEO; Tash Elwyn PCG president; Doug Brigman president AMS; Stephen Kruchten president FID; Ken Novak head private markets. No announcements of leadership changes. No new appointments of executives. The passages mention \"Culture and leadership stability\" etc. So likely not_found. Could be not_disclosed? Not_disclosed means passages show firm does not report it. Nothing says no leadership changes. So not_found.\n\nBut maybe advisor hires are \"leadership\"? No, sub-question asks management or leadership changes. Advisor recruits are not leadership changes. Also Killfoil \"managing director of wealth management\" is a title of an incoming advisor, not a leadership change at the firm.\n\nSo label not_found with no items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages describe advisor recruitment, product launches and earnings, and name existing executives (CEO Paul Shoukry, PCG President Tash Elwyn, FID President Stephen Kruchten, AMS President Doug Brigman), but announce no management or leadership changes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a2.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-24-IN-01#3",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0"
+  ],
+  "at": "2026-11-21T14:11:52.050961-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10778,
+    "output_tokens": 3756,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9370,
+    "reasoning_tokens": 1413,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.97
+  },
+  "wall_s": 15.77,
+  "tokens_per_s": 238.17,
+  "ttft_s": 0.97,
+  "reasoning_content": "The sub-question asks for strategic announcements or corporate actions in last 90 days. Need to extract facts about strategic announcements/corporate actions. The cell label: fact if passages state what's asked. We need items for each announcement: Private Wealth Guided Portfolios launch, SIMPLE IRA program launch, Financial Institutions Division $18.7B/70 advisors Synovus/Pinnacle merger, Clark Capital acquisition closing May 2026 (outside window? published Sep 29 but transaction closed May 2026 \u2014 mention as context; period F? It's a corporate action, closed in May 2026, outside the 90-day window but the passage dated in window states it), ETF launches Oct 2025, Raimond AI pilot. Also advisor recruiting (not really strategic announcements? recruiting is corporate action of sorts). Also M&A commentary.\n\nI should list items with quotes, no figures where no figure. Let's include the main strategic items.\n\nFacts:\n1. Launch of Private Wealth Guided Portfolios (Sep 2026) \u2014 chunk RJF-TRADE-2026-09-29-WM-01#0.\n2. Launch firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, partnered with Capital Group American Funds (Sep 16).\n3. Financial Institutions Division to add $18.7B and 70 advisors via Synovus/Pinnacle merger, advisors expected May 2027 \u2014 value $18.7 billion, unit client assets? unit \"USD\"? The figure is assets; say value \"18.7\" unit \"USD billion\"? Spec says value as printed \"$18.7 billion\", unit what is counted. I'll use value \"$18.7 billion\", unit \"client assets\". Hmm, unit \"USD\" maybe. Use \"client assets\".\n4. Clark Capital acquisition closed May 2026, >$46 billion AUM \u2014 period 2026-05 (not allowed format; use \"2026\"?). Period \"2026\" calendar year... closed in May 2026. Use \"2026-05\"? Format requires YYYY-MM-DD for point in time. Use \"\" or \"2026\". I'll use \"2026\".\n5. Launched proprietary active ETFs Oct 2025 and piloting AI assistant Raimond \u2014 period \"2025\".\n6. Advisor recruitment additions \u2014 several. These are corporate actions? Recruiting is ongoing business. But \"strategic announcements\" \u2014 I'll include the big ones: $1.5B PNC team, $1.2B Truist team, $700M UBS team, $500M Commonwealth team, $240M Ameriprise advisor, $18.7B FID. Perhaps include a couple of representative items. Also \"no longer reports advisor headcount\" \u2014 that's disclosure change, a corporate action? Could be. Maybe include.\n\nAlso departing teams: Janney $3.5B Houston team leaving RJ, Ascentis four practices $1B leaving RJFS. These are corporate actions (attrition). Include maybe.\n\nAlso M&A strategy commentary (Shoukry: firm looks for acquisitions in wealth management) \u2014 position about future, fact.\n\nI'll produce a reasonable set, maybe 10-12 items. Keep quotes \u2264300 chars.\n\nLet me construct items.\n\nItem 0: Private Wealth Guided Portfolios launch.\ntext: \"Raymond James launched Private Wealth Guided Portfolios, risk-based model portfolios combining equity and fixed income with a dedicated alternatives sleeve for high-net-worth clients.\"\nquote: \"the firm announced the launch of Private Wealth Guided Portfolios, a risk-based model framework that combines equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies.\"\nchunk: RJF-TRADE-2026-09-29-IN-01#0\nvalue \"\", unit \"\", period \"2026-09-29\"? Published date, launch \"this week\". Period 2026-09-29? It's an announcement date; use \"2026-09-29\" fine? Point in time unspecified. I'll use \"2026-09-29\" as announcement; maybe \"\" safer. I'll use \"2026-09-29\".\n\nItem 1: SIMPLE IRA program.\nquote: \"The St. Petersburg, Fla.-based wealth manager has launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, according to the filing with the Securities and Exchange Commission. The firm has partnered with Capital Group American Funds...\"\nperiod 2026-09-16.\n\nItem 2: FID expansion $18.7B/70 advisors.\nquote: \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division ... as an existing FID program merges with Synovus Financial Corp.\"\nvalue \"$18.7 billion\", unit \"client assets\", scope \"Financial Institutions Division\".\nAlso advisors 70 \u2014 could be separate item? One figure per item. I'll keep $18.7B and mention 70 advisors in text? \"one per figure or statement\". Better separate? I'll do \"70 advisors\" as separate item maybe. Keep it simple: two items.\n\nItem 3: 70 advisors expected to transition May 2027.\n\nItem 4: Clark Capital acquisition closed May 2026, >$46B AUM.\nquote: \"the firm agreed to acquire Clark Capital Management Group, a Philadelphia-based asset manager with more than $46 billion under management ... That transaction closed in May 2026\".\nvalue \"$46 billion\", unit \"assets under management\", period \"2026\".\n\nItem 5: proprietary active ETFs Oct 2025 + Raimond AI pilot.\nquote: \"The firm also launched a suite of proprietary active exchange-traded funds in October 2025 and is piloting an AI-powered advisor assistant called Raimond\".\nperiod \"2025\".\n\nItem 6: advisor recruiting $1.5B PNC team.\nItem 7: $1.2B Truist team.\nItem 8: $700M UBS Ohio team.\nItem 9: $500M Commonwealth team.\nItem 10: $240M Ameriprise advisor Stillwell.\nItem 11: Departure to Janney $3.3B team.\nItem 12: Ascentis four practices >$1B leaving RJFS.\nItem 13: no longer reports advisor headcount (disclosure change).\nItem 14: M&A stance \u2014 Shoukry says firm looks for acquisitions in wealth management requiring cultural/strategic fit.\n\nAlso maybe \"record 8,943 advisors\" \u2014 that's a metric, not strategic action. But could be included as fact on headcount? Sub-question asks strategic announcements/corporate actions, so not needed.\n\nKeep ~13 items. That's fine.\n\nPeriod for recruiting items: announcement dates.\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James announced the launch of Private Wealth Guided Portfolios, risk-based model portfolios combining equity and fixed income with a dedicated alternatives sleeve for high-net-worth and ultra-high-net-worth clients.",
+            "quote": "the firm announced the launch of Private Wealth Guided Portfolios, a risk-based model framework that combines equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies.",
+            "value": "",
+            "unit": "",
+            "period": "2026-09-29",
+            "scope": "Private Client Group / high-net-worth and ultra-high-net-worth advisors",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#0",
+              "RJF-TRADE-2026-09-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program (SIACS), partnered with Capital Group American Funds, for small businesses with up to 100 employees.",
+            "quote": "The St. Petersburg, Fla.-based wealth manager has launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, according to the filing with the Securities and Exchange Commission. The firm has partnered with Capital Group American Funds for the program",
+            "value": "",
+            "unit": "",
+            "period": "2026-09-16",
+            "scope": "firm-wide advisors; small-business retirement plans",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James will add $18.7 billion to its Financial Institutions Division as an existing FID program merges with Synovus Financial Corp. in connection with Pinnacle Financial Partners.",
+            "quote": "Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.",
+            "value": "$18.7 billion",
+            "unit": "client assets",
+            "period": "2026-11-12",
+            "scope": "Financial Institutions Division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James said 70 advisors will be added to its Financial Institutions Division through the Synovus/Pinnacle program merger, expected to transition in May 2027.",
+            "quote": "The advisors are expected to transition in May 2027.",
+            "value": "70",
+            "unit": "advisors",
+            "period": "2026-11-12",
+            "scope": "Financial Institutions Division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James closed its acquisition of Clark Capital Management Group, a Philadelphia asset manager with more than $46 billion under management, in May 2026.",
+            "quote": "the firm agreed to acquire Clark Capital Management Group, a Philadelphia-based asset manager with more than $46 billion under management ... That transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.",
+            "value": "$46 billion",
+            "unit": "assets under management",
+            "period": "2026",
+            "scope": "Clark Capital Management Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#3"
+            ]
+          },
+          {
+            "text": "Raymond James has also launched a suite of proprietary active exchange-traded funds and is piloting an AI-powered advisor assistant called Raimond.",
+            "quote": "The firm also launched a suite of proprietary active exchange-traded funds in October 2025 and is piloting an AI-powered advisor assistant called Raimond",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#4"
+            ]
+          },
+          {
+            "text": "Raymond James & Associates added a PNC Private Bank team in Washington, D.C. managing over $1.5 billion in client assets, operating as KKM Wealth Partners within Alex. Brown.",
+            "quote": "Raymond James & Associates (RJA) - the firm's employee advisor channel - has welcomed Kenneth \"Ken\" Killfoil ... and Kris Morin ... The team, based in Washington, D.C., arrives from PNC Private Bank, where it managed over $1.5 billion in client assets.",
+            "value": "$1.5 billion",
+            "unit": "client assets",
+            "period": "2026-11-06",
+            "scope": "Raymond James & Associates employee advisor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-06-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James & Associates recruited a Richmond, Virginia duo from Truist Investment Services whose practice managed more than $1.2 billion in client assets.",
+            "quote": "Two veteran Virginia wealth managers have moved their practice to Raymond James & Associates, adding more than $1.2 billion in client assets to the firm's employee advisor channel.",
+            "value": "$1.2 billion",
+            "unit": "client assets",
+            "period": "2026-11-05",
+            "scope": "Raymond James & Associates employee advisor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James & Associates added a four-person UBS Financial Services team in Beachwood, Ohio that managed more than $700 million in client assets.",
+            "quote": "Raymond James & Associates (RJA), the firm's employee advisor channel, welcomed financial advisors Thomas Massey ... to its Beachwood, Ohio office. ... they collectively managed more than $700 million in client assets.",
+            "value": "$700 million",
+            "unit": "client assets",
+            "period": "2026-11-04",
+            "scope": "Raymond James & Associates employee advisor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-04-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James Financial Services added a five-advisor team from Commonwealth Financial Network in Rochester, New York, approximately $500 million in client assets, operating as Harris Wealth Partners.",
+            "quote": "Raymond James Financial Services (RJFS) welcomed a five-advisor team from Commonwealth Financial Network to its independent advisor channel , adding approximately $500 million in client assets to its roster.",
+            "value": "$500 million",
+            "unit": "client assets",
+            "period": "2026-09-24",
+            "scope": "Raymond James Financial Services independent advisor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-24-IN-01#0"
+            ]
+          },
+          {
+            "text": "Independent advisor Jeffrey Stillwell affiliated with Raymond James Financial Services from Ameriprise, where he managed approximately $240 million in client assets.",
+            "quote": "In New Jersey, independent financial advisor Jeffrey Stillwell, CLU, has affiliated with Raymond James Financial Services , the independent channel of Raymond James Financial. He managed approximately $240 million in client assets at his old firm, Ameriprise Financial Services.",
+            "value": "$240 million",
+            "unit": "client assets",
+            "period": "2026-08-26",
+            "scope": "Raymond James Financial Services independent channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-08-26-IN-01#1"
+            ]
+          },
+          {
+            "text": "Janney Montgomery Scott opened a Houston office with a team departing Raymond James that had amassed $3.3 billion in client assets under management.",
+            "quote": "The Edward Fitzpatrick Group ... had been with Raymond James for about 23 years, during which it had amassed $3.3 billion in client assets under management",
+            "value": "$3.3 billion",
+            "unit": "client assets under management",
+            "period": "2026-10-16",
+            "scope": "departing Raymond James team (Edward Fitzpatrick Group)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "Four advisory practices left Raymond James Financial Services for Ascentis Independent Advisors, bringing more than $1 billion in client assets, while continuing to use Raymond James as primary custodian.",
+            "quote": "Ascentis Independent Advisors ... has added more than $1 billion in client assets through four advisory practices that joined from Raymond James Financial Services ... will continue to use Raymond James as their primary custodian",
+            "value": "$1 billion",
+            "unit": "client assets",
+            "period": "2026-10-08",
+            "scope": "departing Raymond James Financial Services practices",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-08-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James no longer reports advisor headcount, having last officially broken it out at about 8,900 advisors.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "value": "8,900",
+            "unit": "advisors",
+            "period": "2026-10-29",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "On M&A, Chief Executive Paul Shoukry said Raymond James looks for acquisitions in wealth management but they must be a good cultural and strategic fit, done to grow revenues rather than slash costs.",
+            "quote": "When asked about M&A, Shoukry said the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit. \"We don't do acquisitions to slash costs,\" he said.",
+            "value": "",
+            "unit": "",
+            "period": "2026-10-29",
+            "scope": "wealth management",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages dated in the window report multiple strategic announcements and corporate actions by Raymond James (product launches, retirement plan program, FID expansion, Clark Capital deal close, recruiting wins and departures, disclosure change, M&A stance).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

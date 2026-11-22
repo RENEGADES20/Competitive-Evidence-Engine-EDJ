@@ -1,0 +1,139 @@
+{
+  "question_id": "Q22",
+  "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#38",
+    "EDJ-10Q-2026Q2#40",
+    "EDJ-10K-2025#220",
+    "EDJ-10Q-2026Q1#21",
+    "EDJ-10K-2025#54",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#69",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#63",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#332",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10K-2025#333",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2025Q2#66"
+  ],
+  "at": "2026-11-21T23:02:53.143734-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8624,
+    "output_tokens": 1696,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7088,
+    "reasoning_tokens": 887,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.3
+  },
+  "wall_s": 12.8,
+  "tokens_per_s": 132.5,
+  "ttft_s": 2.3,
+  "reasoning_content": "Let me analyze the sub-question. It asks for Edward Jones's own definition of the net new assets metric.\n\nLooking at passages, I find definitions:\n\nChunk EDJ-10Q-2025Q3#69 (footnote 4): \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nChunk EDJ-10K-2025#130 (footnote 2): \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nChunk EDJ-10Q-2026Q2#60 (footnote 3): \"Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nChunk EDJ-10Q-2026Q1#52 (footnote 2): \"Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nChunk EDJ-10Q-2025Q2#66 (footnote 4): \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nSo there are two definitions, evolving over time. The earlier definition (2025 quarters) excludes capital gain distributions only. The later definition (2026) includes \"including fees and commissions\" as well.\n\nThe sub-question asks for \"Each firm's own definition of the net new assets metric\". I should return facts for the definitions, one per statement.\n\nLet me create items for each distinct definition statement.\n\nItem 0: 2025Q2 footnote (chunk EDJ-10Q-2025Q2#66): \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nItem 1: 2025Q3 footnote (chunk EDJ-10Q-2025Q3#69): same wording.\n\nItem 2: 10-K 2025 (chunk EDJ-10K-2025#130): same wording.\n\nItem 3: 2026Q1 (chunk EDJ-10Q-2026Q1#52): \"including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nItem 4: 2026Q2 (chunk EDJ-10Q-2026Q2#60): same.\n\nThese are all definitions, so they're facts. Each item is a definition statement.\n\nI should include value \"\", unit \"\", period \"\", scope \"\", definition with the quoted definition.\n\nActually, for a definition, the \"definition\" field should contain the firm's own definition quoted. The text field should state what the passage says.\n\nLet me construct.\n\nFor each, quote should be the exact words. definition field: the firm's own definition of the quantity, quoted.\n\nLet me write items.\n\nItem 0 (2025Q2):\ntext: \"Edward Jones defines net new assets as cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\nquote: \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\ndefinition: \"cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients\"\nchunk_ids: [\"EDJ-10Q-2025Q2#66\"]\nperiod \"\" scope \"\" value \"\" unit \"\"\n\nItem 1 (2025Q3): chunk EDJ-10Q-2025Q3#69, same definition.\n\nItem 2 (10-K 2025): chunk EDJ-10K-2025#130.\n\nItem 3 (2026Q1): chunk EDJ-10Q-2026Q1#52, definition includes fees and commissions.\n\nItem 4 (2026Q2): chunk EDJ-10Q-2026Q2#60.\n\nI'll include all five as facts. These represent the evolving definition.\n\nLabel: fact. differs_because \"\". reason: the passages state the firm's definition of net new assets.\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "In its second quarter 2025 reporting, Edward Jones defines net new assets as cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "quote": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#66"
+            ]
+          },
+          {
+            "text": "In its third quarter 2025 reporting, Edward Jones defines net new assets as cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "quote": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#69"
+            ]
+          },
+          {
+            "text": "In its 2025 annual reporting, Edward Jones defines net new assets as cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "quote": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "In its first quarter 2026 reporting, Edward Jones defines net new assets as cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "quote": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#52"
+            ]
+          },
+          {
+            "text": "In its second quarter 2026 reporting, Edward Jones defines net new assets as cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "quote": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain the firm's own stated definition of the net new assets metric, with the wording evolving between 2025 and 2026 to include fees and commissions.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

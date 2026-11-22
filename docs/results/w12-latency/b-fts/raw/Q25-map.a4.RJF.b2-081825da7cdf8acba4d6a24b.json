@@ -1,0 +1,152 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.RJF.b2",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-SUPP-2026Q1#42",
+    "RJF-SUPP-2025Q3#26",
+    "RJF-TRADE-2026-11-06-IN-01#4"
+  ],
+  "at": "2026-11-21T17:47:39.183325-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2877,
+    "output_tokens": 5322,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1341,
+    "reasoning_tokens": 4252,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.12
+  },
+  "wall_s": 38.88,
+  "tokens_per_s": 136.88,
+  "ttft_s": 1.12,
+  "reasoning_content": "Let me analyze the sub-question. The question asks about \"Recruiting compensation, transition pay, and forgivable loans disclosed for advisor compensation\" for Raymond James Financial (RJF).\n\nLooking at the passages provided:\n- RJF-SUPP-2026Q1#42: discusses return on common equity, pre-tax margin, total compensation ratio - nothing about recruiting compensation, transition pay, or forgivable loans.\n- RJF-SUPP-2025Q3#26: shows acquisition-related retention compensation, other acquisition-related compensation - this is about acquisition-related retention, not advisor recruiting compensation/transition pay/forgivable loans.\n- RJF-TRADE-2026-11-06-IN-01#4: this is about Cetera, not Raymond James. It mentions \"recruiting advisors is strong but remains expensive\" from Cetera CEO Mike Durbin. This is about Cetera, not RJF.\n\nSo none of the passages disclose RJF's recruiting compensation, transition pay, or forgivable loans.\n\nThe \"acquisition-related retention\" compensation is a different quantity - it's about acquisition-related retention (for acquired companies), not advisor recruiting/transition pay. Actually this is acquisition-related retention, which is a form of retention compensation, but it relates to acquisitions, not advisor recruiting compensation.\n\nLet me think about whether the \"Acquisition-related retention\" is a fact or different_quantity. The sub-question asks about \"Recruiting compensation, transition pay, and forgivable loans.\" Acquisition-related retention is related but different - it's for acquisitions, not advisor recruiting. So it could be a different_quantity.\n\nActually, the question is about advisor compensation structures - recruiting compensation, transition pay, forgivable loans. The acquisition-related retention compensation is a form of compensation related to acquisitions, which is different from recruiting compensation for advisors.\n\nI think the most accurate label is not_found, since the passages say nothing about RJF's recruiting compensation, transition pay, or forgivable loans.\n\nBut wait, the \"Acquisition-related retention\" could be considered a different quantity. It's retention compensation tied to acquisitions. This is related but different from advisor recruiting compensation/transition pay.\n\nHmm, let me be careful. The sub-question specifically asks about \"Recruiting compensation, transition pay, and forgivable loans disclosed for advisor compensation.\"\n\nThe acquisition-related retention is a non-GAAP adjustment, retention compensation for acquired entities. This is not the same as recruiting compensation or transition pay or forgivable loans for advisors.\n\nActually, I could label the acquisition-related retention as a different_quantity since it's a form of retention compensation (related to advisor compensation) but for a different purpose (acquisitions vs recruiting).\n\nBut it's quite far. Let me consider: \"forgivable loans\" - these are loans given to advisors that are forgiven over time, often as recruiting incentives. Acquisition-related retention is retention bonuses for acquired advisors. These are somewhat related but distinct.\n\nThe Cetera passage mentions \"recruiting advisors is strong but remains expensive\" - this is about Cetera, a different firm, not RJF.\n\nGiven the instruction: \"never estimate, never compute.\" And \"not_found: the passages say nothing about it.\"\n\nI think the best answer is not_found, with maybe noting the acquisition-related retention as a different_quantity.\n\nActually, let me reconsider. The instruction says to identify different_quantity when \"a different, related quantity: ... a different measure... or an industry figure for a firm's own figure.\"\n\nAcquisition-related retention compensation is a related quantity - it's compensation related to retention of acquired advisors, which is somewhat related to recruiting/transition compensation but for a different purpose.\n\nHmm, but the question is quite specific about \"recruiting compensation, transition pay, and forgivable loans.\" The acquisition-related retention is not really any of these.\n\nI think I'll go with not_found, but I could mention the acquisition-related retention as a different_quantity. Actually, let me think about which is more accurate.\n\nThe acquisition-related retention is a \"Compensation, commissions and benefits\" expense item related to acquisitions. It's a retention bonus, not a recruiting/transition/forgivable loan. These are genuinely different quantities.\n\nGiven the uncertainty guidance \"When unsure between fact and different_quantity, choose different_quantity and say why,\" but here I'm unsure between not_found and different_quantity.\n\nI think the acquisition-related retention is a different_quantity because it's a form of advisor retention compensation, but for acquisitions rather than recruiting. It's tangentially related.\n\nActually, let me be more precise. The passages don't really discuss advisor compensation structures at all in the way asked. The compensation ratio footnote defines \"total compensation ratio\" which is a broad measure. The acquisition-related retention is a non-GAAP adjustment.\n\nI think the most honest answer is not_found - the passages say nothing about recruiting compensation, transition pay, or forgivable loans for advisors.\n\nBut I could add a different_quantity item for the acquisition-related retention, noting it differs because it's acquisition-related retention rather than recruiting/transition compensation.\n\nLet me decide: I'll provide not_found as the main label, since nothing about the asked quantity is disclosed. Actually, wait - should I include a different_quantity? The label is a single choice. If I choose not_found, I shouldn't have items.\n\nHmm, but the structure allows me to have items only for fact and different_quantity. For not_found, items should be empty.\n\nLet me reconsider whether acquisition-related retention qualifies as different_quantity. It's \"acquisition-related retention\" compensation - this is a form of retention compensation paid to acquired advisors/employees. This is related to transition pay in a loose sense (retention after transition), but it's not \"recruiting compensation, transition pay, or forgivable loans.\"\n\nI'll go with different_quantity for the acquisition-related retention, explaining it differs because it relates to acquisitions (retention of acquired advisors) rather than recruiting/transition/forgivable loans.\n\nActually, thinking more carefully: The question asks specifically about recruiting compensation, transition pay, and forgivable loans. The acquisition-related retention is retention compensation related to acquisitions - it's a form of retention pay, which is conceptually closer to \"transition pay\" but tied to acquisitions rather than recruiting.\n\nI think different_quantity is defensible. But honestly, the passage is about non-GAAP reconciliation adjustments for acquisition expenses, not really about advisor compensation structures disclosure.\n\nLet me go with not_found as primary, since the passages genuinely don't discuss the asked quantities. But I could note the acquisition-related retention.\n\nActually, I'll make a decision: The acquisition-related retention and \"other acquisition-related compensation\" are the closest related quantities. They are forms of compensation (retention, acquisition-related) but not recruiting compensation, transition pay, or forgivable loans for advisors.\n\nI'll label as different_quantity with the acquisition-related retention items, and explain why.\n\nWait, but actually the cleanest and most accurate answer given the passages is not_found, because RJF doesn't disclose recruiting compensation/transition pay/forgivable loans in these passages, and the acquisition-related retention is not really a substitute for those.\n\nLet me re-read the different_quantity definition: \"a different, related quantity: a wider unit that contains the asked one..., a different measure..., or an industry figure for a firm's own figure.\"\n\nAcquisition-related retention is a different measure/purpose of compensation. It's related but different. I think it fits \"different quantity\" loosely.\n\nGiven the guidance to prefer different_quantity when unsure, I'll go with different_quantity, providing the acquisition-related retention and other acquisition-related compensation items, and clearly state in differs_because that these relate to acquisitions rather than advisor recruiting/transition/forgivable loans.\n\nActually, let me reconsider one more time. The guidance \"when unsure between fact and different_quantity\" applies to fact vs different_quantity, not not_found vs different_quantity.\n\nI think the acquisition-related retention compensation is genuinely a different quantity (acquisition retention vs recruiting/transition). So different_quantity is appropriate with the acquisition-related retention item.\n\nLet me also note the Cetera passage is about a different firm (Cetera), not RJF, so it's an \"industry figure\" or \"another firm's figure\" - not applicable to RJF. I won't include it.\n\nActually, the Cetera passage says \"Cetera CEO Mike Durbin said earlier this year that recruiting advisors is strong but remains expensive.\" This is about Cetera, not RJF. It's not relevant to RJF's own disclosure. So I'll exclude it.\n\nSo my answer:\n- Label: different_quantity\n- Items: acquisition-related retention compensation (and other acquisition-related compensation)\n- differs_because: \"Acquisition-related retention compensation and other acquisition-related compensation relate to acquisitions, not advisor recruiting, transition pay, or forgivable loans.\"\n\nLet me build the items.\n\nItem 1: Acquisition-related retention (17) - from the table. Values: 9, 8, 8, 9, 6 for the five quarters, and 42, 31 for twelve months.\n\nActually this is a series with multiple periods. Each period is a separate item per the instructions (\"a series is one item per period\").\n\nLet me list the periods:\n- Three months ended September 30, 2024: $9 million\n- Three months ended December 31, 2024: $8 million\n- Three months ended March 31, 2025: $8 million\n- Three months ended June 30, 2025: $9 million\n- Three months ended September 30, 2025: $6 million\n- Twelve months ended September 30, 2024: $42 million\n- Twelve months ended September 30, 2025: $31 million\n\nAnd \"Other acquisition-related compensation\": - for most, and 4 for three months ended September 30, 2025.\n\nThis is getting complex. Let me decide what's most useful.\n\nActually, I think I'm overcomplicating this. The key insight is that RJF discloses \"acquisition-related retention\" compensation (a non-GAAP adjustment), not advisor recruiting compensation, transition pay, or forgivable loans.\n\nLet me provide a reasonable set of items for the acquisition-related retention and other acquisition-related compensation.\n\nActually, I'll keep it focused. The main related quantity is \"Acquisition-related retention\" compensation expense. I'll provide items for a few key periods or summarize.\n\nLet me provide items for the acquisition-related retention for the periods, and the \"other acquisition-related compensation\" note.\n\nActually, given the complexity, I'll provide a couple of representative items and note the full series in text.\n\nLet me think about period format. \"Three months ended September 30, 2024\" is a fiscal quarter. RJF's fiscal year ends September 30. So:\n- Three months ended September 30, 2024 = fiscal Q4 2024, i.e., \"F2024Q4\" or just use calendar? The period ended 2024-09-30.\n\nThe instruction says period format: \"YYYY-MM-DD\" for point in time, \"YYYYQn\" for calendar quarter, \"FYYYYY\" for fiscal year, \"YYYY\" for calendar year.\n\n\"Three months ended September 30, 2024\" - this is a quarter ending 2024-09-30. It could be \"2024Q3\" (calendar quarter) but RJF's fiscal Q4 ends September 30. Hmm. Given the period ends September 30, 2024, I could use \"2024Q3\" as calendar quarter, but it's really RJF's fiscal Q4 2024.\n\nActually, since RJF's fiscal year ends September 30, the \"three months ended September 30, 2024\" is fiscal Q4 2024. But the format options don't have a fiscal quarter. I'll use \"2024-09-30\" or \"2024Q3\".\n\nGiven the ambiguity, I'll use \"2024Q3\" for calendar quarter ending September 30, 2024. Actually, \"three months ended September 30, 2024\" spans July-September 2024, which is calendar Q3 2024. So \"2024Q3\" works.\n\nFor twelve months ended September 30, 2024 = fiscal year 2024 = \"F2024\". For twelve months ended September 30, 2025 = \"F2025\".\n\nLet me write out the items concisely. I'll include the acquisition-related retention series as the key related quantity.\n\nActually, let me simplify and provide a few items:\n1. Acquisition-related retention for three months ended September 30, 2024: $9 million\n2. Acquisition-related retention for three months ended September 30, 2025: $6 million\n3. Acquisition-related retention for twelve months ended September 30, 2025: $31 million\n4. Other acquisition-related compensation for three months ended September 30, 2025: $4 million\n\nHmm, but I should be thorough. Let me provide the full series.\n\nActually, I'll provide the key items and keep it manageable. The point is that these are different quantities (acquisition-related, not recruiting/transition/forgivable loans).\n\nLet me finalize. I'll provide a few representative items.\n\nActually, given the instruction to be thorough with \"one item per period\" for a series, I should provide all periods. But that's a lot. Let me provide the quarterly items (5 quarters) and the two twelve-month items.\n\nLet me write it out.\n\nQuarterly acquisition-related retention:\n- 2024-09-30 (Q4 FY2024): $9 million\n- 2024-12-31 (Q1 FY2025): $8 million\n- 2025-03-31 (Q2 FY2025): $8 million\n- 2025-06-30 (Q3 FY2025): $9 million\n- 2025-09-30 (Q4 FY2025): $6 million\n\nTwelve-month:\n- F2024: $42 million\n- F2025: $31 million\n\nOther acquisition-related compensation:\n- 2025-09-30: $4 million\n\nThis is a lot of items. Let me just do it, or maybe consolidate.\n\nActually, I'll provide a focused set. The key related quantity is \"acquisition-related retention\" and \"other acquisition-related compensation\" - I'll note they're acquisition-related, not recruiting/transition/forgivable loans.\n\nI think I'll provide the items for all periods to be thorough, since the instructions say one item per period for a series.\n\nLet me write the final answer.\n\nFor the period, I'll use fiscal quarter notation. Actually, RJF fiscal year ends Sept 30. So \"three months ended Sept 30, 2024\" is F2024Q4. But the format doesn't include fiscal quarter. I'll use \"2024Q3\" (calendar Q3 = Jul-Sep 2024) which matches \"three months ended September 30, 2024.\"\n\nHmm wait, actually let me reconsider. The simplest correct approach: use \"2024-09-30\" for point-in-time? No, these are periods.\n\nI'll use calendar quarter notation:\n- Three months ended 2024-09-30 \u2192 2024Q3\n- Three months ended 2024-12-31 \u2192 2024Q4\n- Three months ended 2025-03-31 \u2192 2025Q1\n- Three months ended 2025-06-30 \u2192 2025Q2\n- Three months ended 2025-09-30 \u2192 2025Q3\n- Twelve months ended 2024-09-30 \u2192 F2024\n- Twelve months ended 2025-09-30 \u2192 F2025\n\nThese are calendar quarters which technically correspond. Good enough.\n\nActually, let me just keep it simpler and focus on being correct. I'll provide the items.\n\nLet me draft the text for each item:\n- \"RJF reported acquisition-related retention compensation expense of $9 million for the three months ended September 30, 2024.\"\n- etc.\n\nQuote: \"Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31\"\n\nActually the quote should be the exact words. The table cell values. Let me quote the row.\n\nThe quote from the table: \"Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31\"\n\nValue: \"9\" (for first), unit \"USD millions\", period \"2024Q3\".\n\nLet me write it all out now.\n\nActually, I realize I should double check the chunk ids. The acquisition retention is in chunk \"RJF-SUPP-2025Q3#26\".\n\nLet me finalize the response.\n\nI'll go with different_quantity label. Actually, let me reconsider whether not_found is more appropriate.\n\nThe sub-question: \"Recruiting compensation, transition pay, and forgivable loans disclosed for advisor compensation.\"\n\nThe passages contain \"Acquisition-related retention\" and \"Other acquisition-related compensation\" - these are compensation expenses related to acquisitions (retention bonuses for acquired entities). This is a related but different quantity from recruiting compensation/transition pay/forgivable loans.\n\nI'll label as different_quantity, and clearly explain in differs_because.\n\nFinal answer with the items.\n\nLet me write out concise items. I'll include the full series of acquisition-related retention and the other acquisition-related compensation.\n\nGiven time, I'll provide:\n- 5 quarterly items for acquisition-related retention\n- 2 twelve-month items\n- 1 item for other acquisition-related compensation (Q4 2025 = $4 million)\n\nActually, let me consolidate a bit to keep it reasonable but still thorough. I'll provide all items.\n\nLet me write the text and quotes.\n\nFor scope: the table is for RJF as a whole (consolidated non-GAAP reconciliation), so scope = \"\" (whole firm).\n\nDefinition: \"Acquisition-related retention\" - footnote (17) might define it, but not shown. I'll leave definition \"\" or note it's non-GAAP adjustment.\n\nActually the definition field is for \"the firm's own definition of the quantity when a passage gives one.\" No definition given for acquisition-related retention here. So \"\".\n\ndiffers_because: \"These are acquisition-related retention and other acquisition-related compensation (non-GAAP adjustments related to acquisitions), not advisor recruiting compensation, transition pay, or forgivable loans.\"\n\nreason: \"The passages disclose acquisition-related retention compensation, a related but different quantity from advisor recruiting/transition/forgivable-loan compensation.\"\n\nLet me finalize.\n\nActually, I want to reconsider whether to also mention the Cetera passage. It's about Cetera, a different firm. It says \"recruiting advisors is strong but remains expensive.\" This is an industry/other-firm statement, not RJF's disclosure. I'll exclude it from items since it's not RJF's own disclosure and not the asked quantity for RJF.\n\nOK, finalizing.\n\nLet me write out all items clearly.\n\nItem 0: acquisition-related retention, Q ended 2024-09-30, $9 million\nItem 1: acquisition-related retention, Q ended 2024-12-31, $8 million\nItem 2: acquisition-related retention, Q ended 2025-03-31, $8 million\nItem 3: acquisition-related retention, Q ended 2025-06-30, $9 million\nItem 4: acquisition-related retention, Q ended 2025-09-30, $6 million\nItem 5: acquisition-related retention, twelve months ended 2024-09-30, $42 million\nItem 6: acquisition-related retention, twelve months ended 2025-09-30, $31 million\nItem 7: other acquisition-related compensation, Q ended 2025-09-30, $4 million\n\nThat's 8 items. Let me write them.\n\nActually, this is quite verbose. But I'll do it for thoroughness.\n\nLet me write the submission.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $9 million for the three months ended September 30, 2024.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "9",
+            "unit": "USD millions",
+            "period": "2024Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $8 million for the three months ended December 31, 2024.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "8",
+            "unit": "USD millions",
+            "period": "2024Q4",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $8 million for the three months ended March 31, 2025.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "8",
+            "unit": "USD millions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $9 million for the three months ended June 30, 2025.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "9",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $6 million for the three months ended September 30, 2025.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "6",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $42 million for the twelve months ended September 30, 2024.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "42",
+            "unit": "USD millions",
+            "period": "F2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported acquisition-related retention compensation expense of $31 million for the twelve months ended September 30, 2025.",
+            "quote": "Acquisition-related retention (17) | 9 | 8 | 8 | 9 | 6 | 42 | 31",
+            "value": "31",
+            "unit": "USD millions",
+            "period": "F2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          },
+          {
+            "text": "RJF reported other acquisition-related compensation expense of $4 million for the three months ended September 30, 2025.",
+            "quote": "Other acquisition-related compensation | - | - | - | - | 4 | - | 4",
+            "value": "4",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-SUPP-2025Q3#26"
+            ]
+          }
+        ],
+        "differs_because": "The passages disclose acquisition-related retention and other acquisition-related compensation (non-GAAP adjustments tied to acquisitions), not advisor recruiting compensation, transition pay, or forgivable loans.",
+        "reason": "The only compensation-structure-related figures disclosed are acquisition-related retention/compensation, which are a related but different quantity from the advisor recruiting/transition/forgivable-loan compensation the sub-question asks about; no passage states recruiting, transition, or forgivable-loan compensation.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

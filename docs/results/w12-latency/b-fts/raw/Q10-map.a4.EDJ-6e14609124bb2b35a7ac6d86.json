@@ -1,0 +1,87 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#38",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q2#35",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10Q-2025Q2#110",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-10Q-2026Q1#55",
+    "EDJ-10Q-2025Q3#76",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10K-2025#88",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#9",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2025Q2#91"
+  ],
+  "at": "2026-11-21T13:00:59.704624-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12557,
+    "output_tokens": 542,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 12557,
+    "reasoning_tokens": 392,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 6.67
+  },
+  "wall_s": 12.91,
+  "tokens_per_s": 41.98,
+  "ttft_s": 6.67,
+  "reasoning_content": "The question asks about what Edward Jones has said about serving mass-affluent clients, specifically the products, services, platforms, or fee levels they offer mass-affluent clients.\n\nLooking at the passages, none of them mention \"mass-affluent\" specifically. The passages talk about individual investors, high net worth, next generation investors, workplace, etc.\n\nThe sub-question asks: \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\"\n\nThe passages don't mention mass-affluent clients at all. There's mention of High Net Worth targeting (chunk EDJ-10K-2025#88), Next Generation investors, Workplace. But nothing about mass-affluent specifically.\n\nSo the answer is likely not_found for mass-affluent specific offerings.\n\nLet me consider: chunk #88 mentions \"High Net Worth\" and \"Next Generation\" and \"Workplace\" but not \"mass-affluent.\" These are different client segments.\n\nThere's no mention of \"mass-affluent\" anywhere in the passages.\n\nSo the label should be not_found, since nothing addresses mass-affluent clients specifically.\n\nActually, let me think about whether any of these are \"different_quantity.\" The High Net Worth initiative is a different segment (high net worth, not mass-affluent). Next Generation is different. So these would be different_quantity if I wanted to report what they said about other segments. But the question is about mass-affluent specifically.\n\nActually, the passages mention targeting different client segments: High Net Worth, Next Generation, Workplace. None mention mass-affluent. So I think not_found is the right label - the passages say nothing about mass-affluent clients specifically.\n\nThe products/services mentioned (advisory programs, mutual funds, insurance, trust services, retirement plans, financial planning services) are offered to \"individual investors\" generally, not specifically mass-affluent.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention 'mass-affluent' clients or any products, services, platforms, or fee levels specifically offered to mass-affluent clients. The passages describe offerings for individual investors generally and other segments (High Net Worth, Next Generation, Workplace), not mass-affluent.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

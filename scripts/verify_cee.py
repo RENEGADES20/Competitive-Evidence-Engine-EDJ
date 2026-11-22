@@ -6,6 +6,7 @@ Used by the verify-cee skill (.claude/skills/verify-cee/SKILL.md). Run with the 
   python scripts/verify_cee.py run             # launch, drive every feature, clean up
   python scripts/verify_cee.py run ask-answer gap-path
   python scripts/verify_cee.py launch | drive <feature...> | cleanup
+  python scripts/verify_cee.py shots           # README images into docs/assets, after launch (#270)
   python scripts/verify_cee.py run --source-db cee_84 --port 8684   # a private copy (#84)
 
 It never touches your own database or app: it copies database `cee` (or --source-db) to
@@ -64,7 +65,9 @@ TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruitin
 # RJF is the gap; with trade press loaded (#57) RJF has on-theme articles and no firm is).
 THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
 THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback", "search-mode"]
+FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback",
+            "search-mode", "architecture-page"]
+ASSETS = REPO / "docs" / "assets"
 
 
 # ---------- helpers ----------
@@ -424,8 +427,24 @@ def feature_ask_progress(page, base, rec, ctx):
     wait_idle(page)
     page.get_by_role("textbox", name="Question").fill(ANSWERABLE_Q)
     page.get_by_role("button", name="Ask").click()
+    # #272 progressive page: the plan first (the mock map waits MOCK_DELAY_S, so the evidence is not there
+    # yet), then the map call's cited evidence (the mock reduce waits too, so the answer is not there yet).
+    page.wait_for_function("() => document.body.innerText.includes('Plan:')", timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    rec.step("Ask; look as soon as the plan shows (#272)", "the plan line, no evidence and no answer yet",
+             "Plan: Decomposing the question" in body and "Evidence so far" not in body and "LLM called:" not in body,
+             next((l for l in body.splitlines() if l.startswith("Plan:")), "")[:200])
+    page.wait_for_function("() => document.body.innerText.includes('Evidence so far')",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    cards = page.locator(".cee-claim", has_text="EVIDENCE - Edward Jones")
+    chips = cards.first.locator(".cee-chip").count() if cards.count() else 0
+    rec.step("Look again while the answer is still being written (#272)",
+             "'Evidence so far' with at least one Edward Jones evidence card carrying a citation chip; no answer yet",
+             cards.count() > 0 and chips > 0 and "LLM called:" not in body,
+             f"evidence cards={cards.count()}, chips on the first={chips}, answer shown={'LLM called:' in body}")
     # The verify app's mock waits MOCK_DELAY_S in the mock map and the mock reduce (#248: the question
-    # takes map.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
+    # takes map.a1.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
     page.wait_for_function("() => document.body.innerText.includes('Synthesizing the answer')",
                            timeout=RENDER_TIMEOUT_S * 1000)
     body = page.locator("body").inner_text()
@@ -851,12 +870,131 @@ def feature_search_mode(page, base, rec, ctx):
         rec.step("Send feedback; read its mode back", f"feedback row linked to a {want_mode} query", fb == want_mode, fb or "no row")
 
 
+ARCH_HOVER, ARCH_FOCUS = "F", "M"   # #270: Search (hover), Evidence matrix (keyboard focus)
+
+
+def tip_text(page, mid: str) -> str:
+    return " ".join(page.locator(f"#tip-{mid}").inner_text().split())
+
+
+def _flat(text: str) -> str:
+    return " ".join(text.split())
+
+
+def feature_architecture_page(page, base, rec, ctx):
+    from cee.app.architecture import KINDS, MODULES, by_id
+    page.goto(base + "architecture")
+    wait_for_text(page, ["Every module"], "the Architecture page")
+    page.locator("#node-F").wait_for(timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    nav = (page.get_by_role("link", name="Architecture").count() > 0
+           and page.get_by_role("link", name="Design", exact=True).count() == 0)
+    rec.step("Open Architecture from the top navigation", "nav shows Architecture, not Design", nav,
+             "Architecture in nav, no Design" if nav else "nav differs")
+    missing = [m.label for m in MODULES if page.locator(f"#node-{m.id}").count() != 1 or m.label not in body]
+    rec.step("Read the diagram", f"all {len(MODULES)} modules drawn as boxes", not missing,
+             f"missing: {missing}" if missing else f"{len(MODULES)} boxes")
+    hidden = not any(page.locator(f"#tip-{m.id}").is_visible() for m in MODULES)
+    rec.step("Before any hover", "no explanation box is open", hidden, "none open" if hidden else "one is open")
+    m = by_id()[ARCH_HOVER]
+    page.locator(f"#node-{m.id}").hover()
+    page.wait_for_timeout(400)
+    tip = tip_text(page, m.id)
+    ok = (page.locator(f"#tip-{m.id}").is_visible() and _flat(m.does) in tip and _flat(m.rule) in tip
+          and KINDS[m.kind].upper() in tip)
+    rec.step(f"Hover over '{m.label}'", f"its box shows what it does, '{KINDS[m.kind]}' and the rule",
+             ok, tip[:200] if tip else "no tooltip text")
+    page.mouse.move(2, 2)
+    page.wait_for_timeout(300)
+    m = by_id()[ARCH_FOCUS]
+    # Keyboard: from the box before it, Tab moves focus to it, as a keyboard user would.
+    order = [x.id for x in MODULES]
+    page.locator(f"#node-{order[order.index(m.id) - 1]}").focus()
+    page.keyboard.press("Tab")
+    page.wait_for_timeout(400)
+    focused = page.evaluate("() => document.activeElement && document.activeElement.id")
+    tip = tip_text(page, m.id)
+    ok = focused == f"node-{m.id}" and page.locator(f"#tip-{m.id}").is_visible() and _flat(m.rule) in tip
+    rec.step(f"Tab to '{m.label}' with the keyboard", "focus lands on it and its explanation shows",
+             ok, f"focus={focused}; {tip[:160]}")
+    page.evaluate("() => document.activeElement && document.activeElement.blur()")
+    items = page.locator("ol.arch-list li")
+    listed = items.count() == len(MODULES) and all(
+        _flat(x.rule) in _flat(items.nth(i).inner_text()) for i, x in enumerate(MODULES))
+    rec.step("Read the list under the diagram", f"{len(MODULES)} modules with the same text (touch, screen readers)",
+             listed, f"{items.count()} items")
+    figures = re.search(r"\$\s?\d|\d[\d,]*\s?(billion|million)", body, re.I)
+    rec.step("Look for firm figures", "none on the page", not figures, figures.group(0) if figures else "none")
+    page.goto(base + "design")
+    wait_idle(page)
+    page.wait_for_timeout(1000)
+    gone = "Design language" not in page.locator("body").inner_text()
+    rec.step("Open the old /design address", "the Design gallery is gone", gone,
+             "no Design gallery" if gone else "Design gallery still served")
+
+
+def _save_clip(page, path: Path, top: float, bottom: float) -> None:
+    """Streamlit scrolls inside its own container, so the viewport is made tall enough first."""
+    main = page.locator('[data-testid="stMainBlockContainer"]').bounding_box()
+    page.screenshot(path=str(path), clip={"x": main["x"], "y": top, "width": main["width"], "height": bottom - top})
+
+
+def _answer_clip(page, path: Path) -> None:
+    """From the question box to the meta line under the answer."""
+    top = page.get_by_text("Question", exact=True).first.bounding_box()["y"] - 12
+    meta = page.get_by_text("LLM called:").last.bounding_box()
+    _save_clip(page, path, top, meta["y"] + meta["height"] + 12)
+
+
+def shots() -> bool:
+    """#270: the README images, from the verify instance (mock provider), into the run folder and
+    docs/assets (answer, source, gap, architecture). Run after `launch`."""
+    from playwright.sync_api import sync_playwright
+    st = load_state()
+    if not (st and health(st["port"])):
+        raise RuntimeError("No verify instance is running. Run: python scripts/verify_cee.py launch")
+    out = RUNS / st["run_id"] / "shots"
+    out.mkdir(parents=True, exist_ok=True)
+    base = f"http://localhost:{st['port']}/"
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1400, "height": 2400})
+        ask(page, base, ANSWERABLE_Q)
+        page.evaluate("() => document.activeElement && document.activeElement.blur()")
+        _answer_clip(page, out / "answer.png")
+        chunk_id = citation_links(page).first.inner_text().strip()
+        page.goto(base + "?chunk=" + quote(chunk_id))
+        wait_for_text(page, SOURCE_PAGE_DONE, "the source page")
+        wait_for_cited(page, chunk_id)
+        top = page.get_by_text("Back to question").first.bounding_box()["y"] - 12
+        cited = page.locator(".cee-ctx.cited").first.bounding_box()
+        _save_clip(page, out / "source.png", top, cited["y"] + cited["height"] + 16)
+        ask(page, base, NO_EVIDENCE_Q)
+        page.evaluate("() => document.activeElement && document.activeElement.blur()")
+        _answer_clip(page, out / "gap.png")
+        page.goto(base + "architecture")
+        wait_for_text(page, ["Every module"], "the Architecture page")
+        page.set_viewport_size({"width": 1400, "height": 1100})
+        page.locator("#node-F").hover()
+        page.wait_for_timeout(500)
+        box = page.locator(".arch-wrap").bounding_box()
+        top = page.locator(".cee-eyebrow").first.bounding_box()["y"] - 16
+        _save_clip(page, out / "architecture.png", top, box["y"] + box["height"] + 16)
+        browser.close()
+    ASSETS.mkdir(parents=True, exist_ok=True)
+    for name in ("answer", "source", "gap", "architecture"):
+        shutil.copyfile(out / f"{name}.png", ASSETS / f"{name}.png")
+        print(f"  {name}.png -> {ASSETS / (name + '.png')}")
+    print(f"Shots kept in {out}")
+    return True
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
            "filters": feature_filters, "feedback": feature_feedback,
-           "search-mode": feature_search_mode}
+           "search-mode": feature_search_mode, "architecture-page": feature_architecture_page}
 
 
 def drive(features: list[str]) -> bool:
@@ -903,7 +1041,7 @@ def set_source_db(name: str) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run"])
+    ap.add_argument("command", choices=["doctor", "launch", "drive", "cleanup", "run", "shots"])
     ap.add_argument("features", nargs="*", help=f"default: all of {', '.join(FEATURES)}")
     ap.add_argument("--port", type=int, default=PORT)
     ap.add_argument("--mode", choices=["fts", "hybrid"], help="search mode for the app (RETRIEVAL_MODE); default: .env")
@@ -930,6 +1068,8 @@ def main() -> int:
         if a.command == "cleanup":
             cleanup()
             return 0
+        if a.command == "shots":
+            return 0 if shots() else 1
         if not doctor(a.port):
             return 1
         try:

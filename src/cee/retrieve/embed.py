@@ -98,8 +98,18 @@ def embed_texts(texts: Sequence[str], batch_size: int = EMBED_BATCH) -> list[lis
     return [v.tolist() for v in model().embed(list(texts), batch_size=batch_size)]
 
 
+# #272: time spent embedding query texts (the hybrid vector leg), for the latency report. The eval resets it before
+# each question's search and reads it after; nothing else depends on it.
+QUERY_STATS = {"calls": 0, "s": 0.0}
+
+
 def embed_query(question: str) -> list[float]:
-    return next(iter(model().query_embed(question))).tolist()
+    import time
+    t0 = time.perf_counter()
+    vec = next(iter(model().query_embed(question))).tolist()
+    QUERY_STATS["calls"] += 1
+    QUERY_STATS["s"] += time.perf_counter() - t0
+    return vec
 
 
 def vector_literal(vec: Iterable[float]) -> str:

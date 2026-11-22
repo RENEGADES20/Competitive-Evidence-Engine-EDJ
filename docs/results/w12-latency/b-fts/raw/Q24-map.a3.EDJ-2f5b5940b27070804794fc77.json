@@ -1,0 +1,183 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10Q-2025Q2#84",
+    "EDJ-10Q-2025Q2#88",
+    "EDJ-10Q-2025Q3#91",
+    "EDJ-10Q-2025Q3#95",
+    "EDJ-10Q-2026Q1#65",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#79",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#59",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q2#28"
+  ],
+  "at": "2026-11-21T13:16:16.516011-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11360,
+    "output_tokens": 7397,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9824,
+    "reasoning_tokens": 6306,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.14
+  },
+  "wall_s": 47.52,
+  "tokens_per_s": 155.66,
+  "ttft_s": 2.14,
+  "reasoning_content": "Let me analyze the sub-question a3.EDJ: \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed\" [proxy].\n\nI need to determine whether client assets per advisor is computed or disclosed. Let me look at the passages.\n\nThe passages contain:\n- Client assets under care (AUC) figures: $2.5 trillion at year end 2025, $2.3 trillion Q2 2025, $2.6 trillion Q2 2026, etc.\n- Financial advisors count: 20,425 at year end 2025, 20,309 Q2 2025, 20,514 Q2 2026, 20,550 Q1 2026, etc.\n\nSo the numerator (client assets) and denominator (financial advisors) are both disclosed, but the ratio \"client assets per advisor\" is not directly disclosed. The sub-question is a proxy - it names the stand-in figure: client assets per advisor. Actually the question says \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSo client assets per advisor is not directly disclosed. But the components are disclosed. This is a proxy question where the named figure is \"client assets per advisor\" but actually the closest disclosed figures are client assets under care and financial advisors count separately.\n\nWait, let me re-read the instructions. \"[proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nHmm, the sub-question is \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\" So the question is asking for client assets per advisor, which is a ratio. The firm does not directly disclose this ratio. The closest disclosed figures are the numerator (client assets under care) and denominator (financial advisors).\n\nSo the numerator and denominator are facts. The ratio itself is not disclosed directly, but it can be derived from the disclosed figures.\n\nActually, let me think about how to label this. The question asks \"Client assets per advisor computed or disclosed.\" Since it's a proxy, the named figure is client assets per advisor. But the firm doesn't report that ratio directly. The components (client assets under care and financial advisor count) are reported.\n\nSo I should report:\n- Fact: client assets under care (numerator) - various periods\n- Fact: financial advisors count (denominator) - various periods\n\nAnd then the ratio can be derived. Actually, the derivation instruction: \"when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells (a ratio, a sum or a difference)... label it not_disclosed and set derivation.\"\n\nWait, but the label needs to be fact, different_quantity, not_disclosed, or not_found. Let me think.\n\nActually, the instruction says for proxy questions, the named figure is a fact. But here the \"named figure\" is \"client assets per advisor\" which is a ratio, not directly disclosed.\n\nLet me re-read more carefully. \"[proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo the question's sub-question text is \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\" This is a bit ambiguous. The proxy is asking for the closest disclosed figure. The closest disclosed figures are total client assets (numerator) and financial advisors count (denominator).\n\nI think the right approach is to report:\n1. Fact items for client assets under care (numerator) - total client AUC at period end and average\n2. Fact items for financial advisors count (denominator)\n\nAnd then note that client assets per advisor is not directly disclosed but can be derived as a ratio.\n\nActually, let me think about the derivation mechanism. The derivation field allows me to mark not_disclosed with a ratio operation combining numerator and denominator items.\n\nHmm, but the label choices for the cell are fact, not_disclosed, not_found, different_quantity. \n\nI think the cleanest approach: Since this is a proxy sub-question asking for \"client assets per advisor\", and the firm does NOT directly disclose this ratio, but DOES disclose the components, I should:\n- Provide fact items for the components (numerator: client assets under care; denominator: financial advisors)\n- The ratio itself is not directly disclosed\n\nBut actually, let me reconsider. The question is a single sub-question with a single cell. The cell should contain items. \n\nLet me think about what's most useful. The question is \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nThe most faithful extraction:\n- The firm discloses total client assets under care (AUC) and the number of financial advisors separately.\n- The firm does NOT disclose \"client assets per advisor\" as a single metric.\n\nSo the closest disclosed figures are:\n- Client assets under care: $2.5 trillion (year-end 2025), $2.3 trillion (Q2 2025), $2.6 trillion (Q2 2026), etc.\n- Financial advisors: 20,425 (year-end 2025), 20,309 (Q2 2025), 20,514 (Q2 2026), etc.\n\nI'll report these as facts, with each being a separate item.\n\nFor the ratio itself, it's not disclosed. But I could add a derivation. However, the derivation requires label not_disclosed with ratio operation.\n\nActually, I think the best approach is to report facts for the numerator and denominator (both are \"the closest disclosed figures\"), and mark the cell label as \"fact\" since the proxy names these figures.\n\nWait, but the sub-question is ONE cell. The label applies to the whole cell. Let me think.\n\nActually, re-reading: \"Return the cells by calling the submit_extraction tool.\" Each cell has a subquestion_id and label and items.\n\nThe label should be fact if the passage states what the sub-question asks. The sub-question asks \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSince client assets per advisor is not directly disclosed, but the closest disclosed figures (client assets and advisor count) are disclosed, I should report those as facts (they are the named proxy figures).\n\nActually the proxy note says the named figure is \"total client assets or the firm's count of financial advisors\" - these are facts. So I'll report:\n\nLabel: fact (because the proxy figures - client assets and advisor count - are disclosed)\n\nItems:\n1. Client assets under care - total, at period end - various periods\n2. Financial advisors - various periods\n\nLet me compile the key figures.\n\nClient assets under care (AUC):\n- Year-end 2025: $2.5 trillion (chunk 131): \"ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC\"\n- Q2 2025: $2.3 trillion (chunk 67): \"ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion\"\n- Q2 2026: $2.6 trillion (chunk 53): \"$2.6 trillion in client assets under care as of June 26, 2026\"\n- Q1 2026: $2.4 trillion (chunk 46): \"$2.4 trillion in client assets under care as of March 27, 2026\"\n- Q1 2026 (chunk 51): \"At period end $2,417 [billion]\"\n- Q2 2026 (chunk 59): \"At period end $2,647 [billion]\"\n- Q2 2025 (chunk 63): \"At period end $2,306 [billion]\"\n\nFinancial advisors:\n- Year-end 2025: 20,425 (chunk 131)\n- Q2 2025: 20,309 (chunk 67)\n- Q2 2026: 20,514 (chunk 61)\n- Q1 2026: 20,550 (chunk 52)\n\nNow, the question also asks \"is that comparison even valid?\" but that's not part of my extraction task - I just return the figure.\n\nLet me structure the items. I'll report facts for both numerator and denominator, and note the ratio is not directly disclosed but derivable.\n\nActually, I think I should think about whether to use a single cell with label \"fact\" containing all these items, or use the derivation mechanism.\n\nThe cleanest: label \"fact\" with items being:\n- Client assets under care figures (the numerator)\n- Financial advisor counts (the denominator)\n\nAnd I can add a note in reason that the ratio itself isn't disclosed but components are.\n\nActually wait, let me reconsider the derivation. The instruction says: \"Derivation: when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells (a ratio, a sum or a difference) for the same period and scope, label it not_disclosed and set derivation...\"\n\nSo if I want to mark \"client assets per advisor\" as not_disclosed with derivation, I'd need to do that. But then I'd also need fact items for the components.\n\nHmm, but the cell can only have one label. So I can't have both fact and not_disclosed in the same cell.\n\nLet me think. The sub-question asks for \"client assets per advisor\". This ratio is NOT disclosed directly. So the answer should be:\n- Label: not_disclosed (the ratio itself isn't disclosed)\n- But provide fact items? No, a not_disclosed cell wouldn't have fact items typically.\n\nActually, I think the proxy note clarifies: \"A sub-question marked [proxy] names a stand-in figure... that named figure, as the firm reports it, is a fact.\"\n\nThe named figure in the sub-question is \"Client assets per advisor\" ... but wait, actually the sub-question says \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSo the proxy instruction is telling me: the named figure (client assets per advisor) is not directly disclosed, so report the closest disclosed figure. The closest disclosed figures are the components.\n\nHmm, this is getting complicated. Let me settle on a practical approach:\n\nThe firm discloses:\n1. Total client assets under care (AUC) - the numerator\n2. Number of financial advisors - the denominator\n\nThese are the closest disclosed figures. They are facts. I'll report them as fact items.\n\nThe ratio \"client assets per advisor\" is not directly disclosed. I'll note this in the reason.\n\nSo I'll use label \"fact\" and report the numerator and denominator as items. Each item will note it's a component.\n\nActually, I realize I should be careful. Let me think about what makes the most sense for the downstream comparison task.\n\nThe downstream task will compare \"client assets per advisor\" across five firms. For each firm, it needs the numerator (client assets) and denominator (advisors). So I should provide both.\n\nLet me report:\n- Fact items for client assets under care (numerator), with periods\n- Fact items for financial advisors count (denominator), with periods\n\nI'll use the most recent consistent periods. The most recent complete data is year-end 2025 (from 10-K): $2.5 trillion AUC and 20,425 advisors. But also Q2 2026: $2.6 trillion AUC and 20,514 advisors.\n\nActually, I should report all the figures I find, as separate items, so the downstream can choose.\n\nLet me compile a comprehensive list.\n\nClient assets under care (total):\n1. Year-end 2025: $2.5 trillion (chunk 131)\n2. Q2 2025: $2.3 trillion (chunk 67)\n3. Q2 2026: $2.6 trillion (chunk 53)\n4. Q1 2026: $2.4 trillion (chunk 46)\n\nFinancial advisors:\n1. Year-end 2025: 20,425 (chunk 131)\n2. Q2 2025: 20,309 (chunk 67)\n3. Q2 2026: 20,514 (chunk 61)\n4. Q1 2026: 20,550 (chunk 52)\n\nThese are the key facts.\n\nI could also include more precise figures from tables, but the headline figures are sufficient.\n\nNow for the structure. I'll create one cell with label \"fact\" containing all these items.\n\nActually, I wonder if I should mark the ratio as not_disclosed and provide derivation. But since the cell can have one label, and the components are facts, I'll go with \"fact\" for the cell and include the components.\n\nWait, let me reconsider. The question explicitly asks \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\" \n\nI think the intent is: the \"client assets per advisor\" ratio is the target, but since it's not directly disclosed (a proxy), report the closest disclosed figure. The closest disclosed figures are:\n- Client assets under care (numerator)\n- Financial advisor count (denominator)\n\nBoth are facts. So the cell label is \"fact\" with these items.\n\nI'll also make clear in each item's text/definition what it represents (component for the ratio).\n\nLet me write the items.\n\nFor client assets under care, note it's the numerator. For financial advisors, the denominator.\n\nLet me draft:\n\nItem 1 (numerator, year-end 2025):\n- text: \"Edward Jones ended the year 2025 with client assets under care (AUC) of $2.5 trillion.\"\n- quote: \"The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion\"\n- value: \"$2.5 trillion\" \u2192 actually value field should be \"2.5\" with unit \"trillion USD\"? Or \"$2.5 trillion\"?\n\nThe instruction says value as printed: \"20,425\", \"$1.2 billion\". So value: \"$2.5 trillion\", unit: \"USD (client assets under care)\".\n\nHmm, let me use value \"$2.5 trillion\" and unit \"client AUC\". Actually unit is what is counted/measured. So unit \"client assets under care (USD)\".\n\nLet me keep it simple: value \"$2.5 trillion\", unit \"client assets under care\".\n\nFor financial advisors: value \"20,425\", unit \"financial advisors\".\n\nLet me write all items now.\n\nI'll include both at period end and possibly average, but keep to the headline figures for clarity.\n\nActually, let me focus on the key comparable figures. The most useful single pair is year-end 2025: $2.5 trillion AUC, 20,425 advisors.\n\nBut I'll include multiple periods to be thorough.\n\nLet me also consider: is there any figure for \"average client AUC\"? Yes, \"Average client AUC increased 12%\" and \"Average client AUC increased 17%\" etc. But no absolute average figure except in tables. E.g., chunk 59: \"Average $2,580\" (billions) for Q2 2026. Chunk 63: \"Average $2,212\" for Q2 2025.\n\nBut these are for total AUC average. For a \"per advisor\" ratio, period-end AUC and period-end advisor count are the natural pairing.\n\nI'll include:\n- Period-end client AUC for several periods\n- Period-end financial advisor count for same periods\n\nLet me finalize with 4 AUC items and 4 advisor items, matching periods where possible.\n\nMatching:\n- Year-end 2025 (2025-12-31): AUC $2.5 trillion, advisors 20,425\n- Q2 2025 (2025Q2): AUC $2.3 trillion, advisors 20,309\n- Q2 2026 (2026Q2): AUC $2.6 trillion, advisors 20,514\n- Q1 2026 (2026Q1): AUC $2.4 trillion, advisors 20,550\n\nThese all match.\n\nNow, periods format:\n- Year-end 2025: \"2025-12-31\"\n- Q2 2025: \"2025Q2\"\n- Q2 2026: \"2026Q2\"\n- Q1 2026: \"2026Q1\"\n\nLet me write out the items.\n\nActually, I realize the period format for Q2 2025: the 10-Q period is 2025-06-27. The format options: \"YYYYQn\" for calendar quarter. So \"2025Q2\".\n\nFor year-end: \"2025-12-31\".\n\nLet me write everything out.\n\nFor the reason: \"Client assets per advisor is not directly disclosed, but the firm discloses client assets under care and the number of financial advisors separately, which are the closest disclosed figures (numerator and denominator).\"\n\nLabel: fact (because the components are disclosed facts).\n\nActually, wait. Let me reconsider whether the label should be \"fact\" or something else. The sub-question asks for \"client assets per advisor\". The firm does NOT disclose this. So is it \"not_disclosed\"?\n\nThe proxy instruction says: \"A sub-question marked [proxy] names a stand-in figure... that named figure, as the firm reports it, is a fact.\"\n\nThe named figure in the sub-question is \"client assets per advisor... and the closest disclosed figure if not directly disclosed.\" This is a bit of a compound. The proxy note examples: \"total client assets or the firm's count of financial advisors\" - these are the stand-in figures, which are facts.\n\nSo the stand-in figures (client assets and advisor count) are facts. I report them as fact items.\n\nThe ratio \"client assets per advisor\" itself is not disclosed, and it could be derived. But since the proxy is telling me to report the components as facts, and the downstream computes the ratio, I'll report the components as facts.\n\nActually, I could also add a derivation note. But the derivation requires not_disclosed label. I think the cleanest is:\n\nLabel: fact, with items being the numerator and denominator components.\n\nAnd in reason, note that the ratio is not directly disclosed but components are.\n\nHmm, but actually maybe I should think about whether to provide a derivation for the ratio. The downstream comparison needs \"client assets per advisor\" computed. If I provide both numerator and denominator as facts, the downstream can compute the ratio.\n\nBut the derivation mechanism is for cases where I mark not_disclosed and provide the operation. That's more for when a single quantity (like a margin) is derived from other quantities.\n\nHere, the ratio is directly computable from two disclosed facts. I'll provide both facts and let the downstream compute.\n\nActually, I think providing a derivation could be helpful. But since the cell label is \"fact\" (for the components), I can't also mark not_disclosed.\n\nLet me just go with fact label and components, with clear reasoning.\n\nLet me finalize.\n\nActually, I want to reconsider the value and unit format for consistency.\n\nFor AUC: value \"$2.5 trillion\", unit \"client assets under care (USD)\"\n\nFor advisors: value \"20,425\", unit \"financial advisors\"\n\nLet me write the items now.\n\nI'll write 8 items (4 AUC + 4 advisors). Actually, maybe I should be more concise and just report the key ones. But more data is helpful for downstream. Let me include all 4 matching periods.\n\nLet me draft each item carefully with quotes.\n\nItem 0: AUC year-end 2025\n- text: \"Edward Jones ended 2025 with client assets under care (AUC) of $2.5 trillion.\"\n- quote: \"The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion\"\n- value: \"$2.5 trillion\"\n- unit: \"client assets under care (USD)\"\n- period: \"2025-12-31\"\n- scope: \"\" (whole firm, but note includes U.S. and Canada)\n- definition: \"\" (AUC defined elsewhere? Actually \"assets under care\" is the term)\n- chunk_ids: [\"EDJ-10K-2025#131\"]\n\nItem 1: AUC Q2 2025\n- text: \"Edward Jones ended the second quarter of 2025 with client assets under care (AUC) of $2.3 trillion.\"\n- quote: \"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion\"\n- value: \"$2.3 trillion\"\n- unit: \"client assets under care (USD)\"\n- period: \"2025Q2\"\n- chunk_ids: [\"EDJ-10Q-2025Q2#67\"]\n\nItem 2: AUC Q2 2026\n- text: \"Edward Jones reported $2.6 trillion in client assets under care as of June 26, 2026.\"\n- quote: \"with a total of $2.6 trillion in client assets under care as of June 26, 2026\"\n- value: \"$2.6 trillion\"\n- unit: \"client assets under care (USD)\"\n- period: \"2026Q2\"\n- chunk_ids: [\"EDJ-10Q-2026Q2#53\"]\n\nItem 3: AUC Q1 2026\n- text: \"Edward Jones reported $2.4 trillion in client assets under care as of March 27, 2026.\"\n- quote: \"with a total of $2.4 trillion in client assets under care as of March 27, 2026\"\n- value: \"$2.4 trillion\"\n- unit: \"client assets under care (USD)\"\n- period: \"2026Q1\"\n- chunk_ids: [\"EDJ-10Q-2026Q1#46\"]\n\nItem 4: advisors year-end 2025\n- text: \"Edward Jones ended 2025 with 20,425 financial advisors.\"\n- quote: \"The Partnership ended the year with 20,425 financial advisors.\"\n- value: \"20,425\"\n- unit: \"financial advisors\"\n- period: \"2025-12-31\"\n- chunk_ids: [\"EDJ-10K-2025#131\"]\n\nItem 5: advisors Q2 2025\n- text: \"Edward Jones ended the second quarter of 2025 with 20,309 financial advisors.\"\n- quote: \"The Partnership ended the second quarter with 20,309 financial advisors.\"\n- value: \"20,309\"\n- unit: \"financial advisors\"\n- period: \"2025Q2\"\n- chunk_ids: [\"EDJ-10Q-2025Q2#67\"]\n\nItem 6: advisors Q2 2026\n- text: \"Edward Jones ended the second quarter of 2026 with 20,514 financial advisors.\"\n- quote: \"The Partnership ended the second quarter with 20,514 financial advisors.\"\n- value: \"20,514\"\n- unit: \"financial advisors\"\n- period: \"2026Q2\"\n- chunk_ids: [\"EDJ-10Q-2026Q2#61\"]\n\nItem 7: advisors Q1 2026\n- text: \"Edward Jones ended the first quarter of 2026 with 20,550 financial advisors.\"\n- quote: \"The Partnership ended the first quarter with 20,550 financial advisors.\"\n- value: \"20,550\"\n- unit: \"financial advisors\"\n- period: \"2026Q1\"\n- chunk_ids: [\"EDJ-10Q-2026Q1#52\"]\n\nThese are all facts (components of the ratio).\n\nNow, should I mark the label as \"fact\" or \"not_disclosed\"? Since I'm reporting facts (the components), the label is \"fact\".\n\nBut wait, the question is asking for \"client assets per advisor\". The actual ratio is not disclosed. So maybe I should think about it differently.\n\nActually, I think there's a subtlety. The proxy note says the named figure (which is the stand-in) is a fact. The sub-question says \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nThe \"closest disclosed figure\" for \"client assets per advisor\" is really two figures: client assets (numerator) and advisor count (denominator). Both are disclosed.\n\nSo I report both as facts. The label is \"fact\".\n\nI'll add a clear reason explaining that the ratio itself isn't disclosed but its components are.\n\nLet me also consider whether to note the derivation. I could add a derivation in the cell, but the derivation requires \"not_disclosed\" label. Since I'm labeling \"fact\", I'll skip derivation and just note in reason.\n\nActually, re-reading the derivation instruction once more: \"Derivation: when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells (a ratio, a sum or a difference) for the same period and scope, label it not_disclosed and set derivation...\"\n\nSo the derivation is an alternative to fact. If the quantity (ratio) is not disclosed but derivable, I could mark not_disclosed with a ratio derivation.\n\nBut then I wouldn't have fact items. Hmm.\n\nActually, I think there's a cleaner interpretation. The sub-question is a proxy. The instruction for proxy: \"the named figure, as the firm reports it, is a fact.\" The \"named figure\" is \"client assets per advisor\" \u2014 but that's not directly reported.\n\nWait, let me re-read the proxy note very carefully:\n\n\"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo the proxy note is saying: when a question asks for something like \"revenue per advisor\" (which is a ratio not directly reported), the proxy names a stand-in figure like \"total client assets\" or \"financial advisors count\", and THAT named figure is a fact.\n\nIn this case, the sub-question text itself says \"Client assets per advisor... and the closest disclosed figure if not directly disclosed.\" So the \"closest disclosed figure\" is what I should report as facts. The closest disclosed figures are:\n1. Total client assets (numerator)\n2. Financial advisor count (denominator)\n\nBoth are facts.\n\nSo my approach is correct: report both as fact items, label \"fact\".\n\nLet me finalize and submit.\n\nActually, I want to double check the value/unit format. The instruction example: value \"20,425\", unit \"financial advisors\"; value \"$1.2 billion\", unit \"USD\".\n\nSo for AUC, value \"$2.5 trillion\", unit \"USD\"? Or \"client assets under care\"? \n\nThe unit is \"what is counted or measured\". For AUC, it's client assets, measured in USD. I'll use unit \"client assets under care (USD)\" or just \"USD\".\n\nI think \"USD\" is cleaner per the example, but \"client assets under care\" adds clarity. Let me use \"USD\" as unit and put \"client assets under care\" in the text/definition.\n\nActually, let me use unit = \"client assets under care (USD)\" to be clear, and for advisors unit = \"financial advisors\".\n\nHmm, the example \"$1.2 billion\" with unit \"USD\" suggests just currency. But \"20,425\" with \"financial advisors\" suggests the thing counted.\n\nFor AUC, the thing counted is client assets, in USD. I'll use \"client assets under care (USD)\".\n\nLet me finalize with these units.\n\nNow writing the final submission.\n\nFor the reason field (one per cell): \"The ratio 'client assets per advisor' is not directly disclosed, but the firm separately discloses its components \u2014 total client assets under care (numerator) and the number of financial advisors (denominator) \u2014 which are the closest disclosed figures.\"\n\ndiffers_because: \"\" (empty, since label is fact, not different_quantity).\n\nderivation: operation \"\", inputs [].\n\nLet me write it all out.\n\nActually, I should double check the periods. The chunk EDJ-10K-2025 is period 2025-12-31. So year-end 2025 = 2025-12-31. Good.\n\nQ2 2025 = 2025Q2 (period 2025-06-27). Good.\nQ2 2026 = 2026Q2 (period 2026-06-26). Good.\nQ1 2026 = 2026Q1 (period 2026-03-27). Good.\n\nThese match the calendar quarter format \"YYYYQn\".\n\nLet me finalize all items and submit.\n\nI'll keep scope as \"\" for whole firm (partnership, U.S. and Canada).\n\nDefinition: The AUC term is \"assets under care\" (AUC). I could note the definition if given. The passages don't give a formal definition of AUC, just use the term. So definition \"\".\n\nActually, one item (chunk 73) gives a definition footnote: \"Assets on which the Partnership earns asset-based fee revenue.\" But that's for a specific sub-metric (client asset values), not total AUC. I'll leave definition empty.\n\nLet me write the final answer.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "Edward Jones does not disclose a single 'client assets per advisor' ratio, but it separately discloses both components \u2014 total client assets under care (numerator) and the number of financial advisors (denominator) \u2014 which are the closest disclosed figures for computing the ratio.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Edward Jones ended the year 2025 with client assets under care (AUC) of $2.5 trillion, which is the numerator for computing client assets per advisor.",
+            "quote": "The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.",
+            "value": "$2.5 trillion",
+            "unit": "client assets under care (USD)",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2025 with client assets under care (AUC) of $2.3 trillion, the numerator for computing client assets per advisor.",
+            "quote": "The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion",
+            "value": "$2.3 trillion",
+            "unit": "client assets under care (USD)",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported $2.6 trillion in client assets under care as of June 26, 2026, the numerator for computing client assets per advisor.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.6 trillion in client assets under care as of June 26, 2026.",
+            "value": "$2.6 trillion",
+            "unit": "client assets under care (USD)",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#53"
+            ]
+          },
+          {
+            "text": "Edward Jones reported $2.4 trillion in client assets under care as of March 27, 2026, the numerator for computing client assets per advisor.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.",
+            "value": "$2.4 trillion",
+            "unit": "client assets under care (USD)",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#46"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the year 2025 with 20,425 financial advisors, the denominator for computing client assets per advisor.",
+            "quote": "The Partnership ended the year with 20,425 financial advisors.",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2025 with 20,309 financial advisors, the denominator for computing client assets per advisor.",
+            "quote": "The Partnership ended the second quarter with 20,309 financial advisors.",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2026 with 20,514 financial advisors, the denominator for computing client assets per advisor.",
+            "quote": "The Partnership ended the second quarter with 20,514 financial advisors.",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#61"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the first quarter of 2026 with 20,550 financial advisors, the denominator for computing client assets per advisor.",
+            "quote": "The Partnership ended the first quarter with 20,550 financial advisors.",
+            "value": "20,550",
+            "unit": "financial advisors",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#52"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

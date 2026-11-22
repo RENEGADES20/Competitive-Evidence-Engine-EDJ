@@ -1,0 +1,396 @@
+{
+  "question_id": "Q14",
+  "question": "How does Raymond James's affiliation-choice model work commercially?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "RJF-10K-2025#10",
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-10K-2025#11",
+    "RJF-TR-2026Q1#44",
+    "RJF-TR-2026Q2#26",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-TR-2024Q3#93",
+    "RJF-10K-2025#223",
+    "RJF-10K-2025#227",
+    "RJF-TR-2025Q3#8",
+    "RJF-TR-2025Q3#4",
+    "RJF-TR-2026Q2#6",
+    "RJF-TR-2026Q2#5",
+    "RJF-TR-2026Q1#4",
+    "RJF-10K-2025#28",
+    "RJF-SUPP-2025Q3#43",
+    "RJF-TR-2026Q2#59",
+    "RJF-TR-2025Q3#26",
+    "RJF-TR-2026Q1#5",
+    "RJF-TR-2025Q4#50",
+    "RJF-TR-2025Q4#98",
+    "RJF-TR-2026Q2#60",
+    "RJF-TR-2024Q4#23",
+    "RJF-TRADE-2026-09-29-IN-01#4"
+  ],
+  "schema_fallback": [],
+  "enum_values": 86,
+  "at": "2026-11-21T15:09:15.241397-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10056,
+    "output_tokens": 12636,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 8392,
+    "reasoning_tokens": 8359,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.09
+  },
+  "wall_s": 68.34,
+  "tokens_per_s": 184.9,
+  "ttft_s": 3.09,
+  "reasoning_content": "Let me analyze this task. I need to write the answer for a single firm (Raymond James Financial). Aspects a1-a5, each with part_id a1.RJF, etc.\n\nNote: the aspects are marked as [fact] and [series], not comparison. So no comparison aspects here.\n\nLet me organize the claims by aspect, in order a1, a2, a3, a4, a5.\n\nNote item 2 under a2 is marked \"also under a1: write it once\" \u2014 so I write it under a1 (its first appearance).\n\nLet me check a1 items. Item 2 (a1) has quote not verbatim. Item 8 (a1) is the same as a2 item 2? Let me check: a1 item 8 is \"Independent contractor financial advisors are generally responsible...\" cite RJF-10K-2025#11. a2 item 2 is same content, cite RJF-10K-2025#11, marked \"also under a1: write it once\". So it's already in a1 (item 8). So I write it under a1.\n\nActually wait, a2 item 2 is marked \"[also under a1: write it once]\". This means it appears in both a1 and a2, write it once under the first (a1). In a1, item 8 is that item. So under a1 I write item 8, and under a2 I skip item 2.\n\nLet me write each claim.\n\nFor facts, no why-line needed (not recency, no time window). The question has no time window specified. So no why-lines.\n\nOrder: newest first across the whole answer when there's a time window. No time window here, so I follow aspect order and item order.\n\nActually, let me check: is there a time window? The question is \"How does Raymond James's affiliation-choice model work commercially?\" \u2014 no time window. So no recency ordering, no why-lines.\n\nLet me write claims.\n\nAspect a1 (part_id a1.RJF):\nItem 1: period FY2025, quote verbatim.\nItem 2: quote not verbatim \u2014 don't put in quotes.\nItem 3: quote verbatim.\nItem 4: period FY2025, quote verbatim.\nItem 5: value Up to 50%, unit payout. cite RJF-PR-web-affiliation-options#1. Page content as of 2026-04-21.\nItem 6: 70-80% gross payout.\nItem 7: 81% to 90% payout.\nItem 8: period FY2025, quote verbatim. (This is the one \"also under a1\")\nItem 9: quote not verbatim.\nItem 10: period FY2025, quote verbatim.\nItem 11: quote verbatim.\nItem 12: quote verbatim.\n\nWait, item 12 quote: \"EMPLOYEE INDEPENDENT CONTRACTOR...\" It's a deck slide. I'll paraphrase it as a claim.\n\nFor the website items (RJF-PR-web-affiliation-options), I should date with \"page content as of 2026-04-21\".\n\nAspect a2 (part_id a2.RJF):\nItem 1: quote not verbatim.\nItem 2: skip (also under a1).\nItem 3: Up to 50% payout, Traditional Employee.\nItem 4: 70-80% gross payout, Advisor Select.\nItem 5: 81% to 90% payout, Independent Contractor.\nItem 6: Bank & Credit Union.\nItem 7: 81% to 90% payout, Corporate RIA.\nItem 8: RIA & Custody Services.\nItem 9: quote verbatim.\nItem 10: scope Employee advisors.\nItem 11: scope RIA custody.\nItem 12: scope RCS division, quote not verbatim.\n\nAspect a3 (part_id a3.RJF):\nBasis break noted. Items 1,2,3 (whole firm). Items 8,9 (domestic channels). Items 4,5,6,7,10,11.\n\nNote item 4: \"period not stated in a usable form\". Item 5, 6, 7, 10 also period not stated in usable form.\n\nI need to state basis breaks. The code caveat already states this, but I should state each basis with its own periods in the claims. Actually the instruction says \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo I write items with their scope/period clearly. The caveat is added by code and I shouldn't repeat it, but I should structure claims appropriately.\n\nLet me just write each item as its own claim, noting scope/period.\n\nAspect a4 (part_id a4.RJF):\nItem 1: definition. It's a definition claim.\n\nAspect a5 (part_id a5.RJF):\nItems 1-11. Items 2, 8, 11 quote not verbatim. Item 11 trade press.\n\nFor a5 item 11: trade press, attributed \"trade press reports\" or \"Management (per trade press)\". The item says \"Management (per trade press) states...\". Actually it's attributed to management per trade press. Let me write as trade press reports management states...\n\nLet me now write everything out.\n\nFor each claim I need text, chunk_ids, part_id.\n\nLet me carefully draft.\n\nSince this is a single firm, each claim starts with \"<Firm>: \"? The instruction says \"Several firms: ... each claim starting '<Firm>: '\". For one firm: \"aspect by aspect\". Hmm, \"One firm: aspect by aspect.\" Does it still start with firm name? The multi-firm case says start with firm name. One firm just \"aspect by aspect\". But part_ids are a1.RJF etc., so firm is identified. I think I can include firm name for clarity, but the instruction only mandates \"<Firm>: \" for several firms. For one firm, I'll just write claims without firm prefix, or maybe include. Let me not prefix since one firm.\n\nActually, to be safe and clear, I'll write without firm prefix since it's a single firm. The part_id encodes the firm.\n\nLet me write all claims now.\n\na1 items:\n\n1. The FY2025 10-K (period ended September 30, 2025) states: \"We offer multiple affiliation options, which we refer to as AdvisorChoice\u00ae. Financial advisors primarily affiliate with us directly as either employees or independent contractors or as employees of third-party Registered Investment Advisors (\"RIAs\") and broker-dealers to which we provide services through our RIA and Custody Services (\"RCS\") division.\" [RJF-10K-2025#10]\n\n2. Raymond James's recruiting page (page content as of April 21, 2026) describes AdvisorChoice\u00ae as a platform of dynamic options and the freedom to choose among them, letting advisors match their professional goals to the affiliation option that is right for them. [RJF-PR-web-affiliation-options#0] \u2014 no quotes.\n\n3. The affiliation options listed on Raymond James's recruiting page (page content as of April 21, 2026) include: \"Traditional Employee: Get everything you expect from working for a firm with a powerful difference \u2013 book ownership. Advisor Select: Lead your own branch with access to administrative support and full corporate benefits. Independent Contractor: Operate as an independent financial advisor backed by the resources of a national leader. Bank & Credit Union: Leverage national strength and local impact to grow your advisory business. Corporate RIA: Exercise true autonomy and support refined for fee-only practices under our established RIA.\" [RJF-PR-web-affiliation-options#0]\n\n4. The FY2025 10-K (period ended September 30, 2025) states: \"Employee financial advisors work in a traditional branch supported by local management and administrative staff. They provide services predominantly to retail clients. Compensation for these financial advisors primarily includes a payout on revenues they generate and such advisors also participate in the firm's employee benefit plans.\" [RJF-10K-2025#10]\n\n5. Under the Traditional Employee model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive up to a 50% payout plus a full array of competitive employee benefits offerings, with a minimum of 5 years of experience required. [RJF-PR-web-affiliation-options#1]\n\n6. Under the Advisor Select model, per the affiliation-options page (page content as of April 21, 2026), advisors receive a 70-80% gross payout plus a full array of competitive employee benefits offerings, and run their own branch. [RJF-PR-web-affiliation-options#1]\n\n7. Under the Independent Contractor model, per the affiliation-options page (page content as of April 21, 2026), advisors receive an 81% to 90% payout and leverage Raymond James' third-party partnerships to build their own benefits package. [RJF-PR-web-affiliation-options#1]\n\n8. The FY2025 10-K (period ended September 30, 2025) states: \"Our financial advisors who are independent contractors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.\" [RJF-10K-2025#11]\n\n9. On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said independent payouts are higher than employee payouts because independent advisors cover their own overhead costs, real estate, and health insurance, while the employee side uses tiered payout systems where higher production moves an advisor up the payout grid. [RJF-TR-2026Q1#44] \u2014 no quotes.\n\n10. The FY2025 10-K (period ended September 30, 2025) states: \"Independent contractor financial advisors may affiliate with us directly or through an affiliated bank or credit union in our Financial Institutions Division. With specific approval, and on a limited basis, they are permitted to conduct certain other approved business activities, such as offering insurance products, independent registered investment advisory services, and accounting and tax services.\" [RJF-10K-2025#11]\n\n11. On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said Raymond James is agnostic about how an advisor affiliates (employee vs independent contractor vs RIA custody), wanting advisors to choose based on fit with its culture, values, platform and capabilities. [RJF-TR-2026Q2#26]\n\n12. Raymond James's 2025 Investor Day deck (published June 5, 2025) presents the affiliation spectrum from employee (RJA) to independent contractor (ICD) to RIA & Custody Services, including Employee Advisor, Advisor Select, Independent Advisor, Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, described as servicing the largest addressable market in the industry. [RJF-DECK-2025-investor-day#38]\n\nNow a2 items (skip item 2):\n\n1. The FY2025 10-K (period ended September 30, 2025) states that compensation for employee financial advisors primarily includes a payout on revenues they generate, plus participation in the firm's employee benefit plans. [RJF-10K-2025#10] \u2014 no quotes.\n\n3. Under the Traditional Employee model, per the affiliation-options page (page content as of April 21, 2026), advisors receive up to a 50% payout plus the full array of competitive employee benefits offerings. [RJF-PR-web-affiliation-options#1]\n\n4. Under the Advisor Select model, advisors receive a 70-80% gross payout plus the full array of competitive employee benefits offerings. [RJF-PR-web-affiliation-options#1]\n\n5. Under the Independent Contractor model, advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships. [RJF-PR-web-affiliation-options#1]\n\n6. Under the Bank & Credit Union model, per the affiliation-options page (page content as of April 21, 2026), advisors receive a competitive compensation package from the financial institution in partnership with Raymond James. [RJF-PR-web-affiliation-options#2]\n\n7. Under the Corporate RIA model, advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships. [RJF-PR-web-affiliation-options#2]\n\n8. Under the RIA & Custody Services model, advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package. [RJF-PR-web-affiliation-options#2]\n\n9. On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said independent advisor payouts are higher than employee payouts because independent advisors cover their own overhead costs, real estate, and health insurance. [RJF-TR-2026Q1#44]\n\n10. On the same call, management said even on the employee side Raymond James has tiered payout systems, so as production increases advisors get higher up on the payout grid. [RJF-TR-2026Q1#44]\n\n11. On the fiscal 4Q24 earnings call (period ended September 30, 2024), management said that for RIA custody the margin on a P&L basis is actually higher because the attachment revenue booked is much lower, whereas in other businesses Raymond James grosses up the revenues pre-payout, and ROCA varies with the RIA's asset mix and pricing structure. [RJF-TR-2024Q3#93]\n\n12. The FY2025 10-K (period ended September 30, 2025) states that for firms affiliated through the RIA and Custody Services division, revenues related to their assets in the PCG segment are included in Account and service fees. [RJF-10K-2025#223] \u2014 no quotes.\n\na3 items:\n\n1. As of September 30, 2025, Raymond James reported 8,943 total financial advisors, consisting of 3,878 employee financial advisors and 5,065 independent contractor advisors. [RJF-10K-2025#227]\n\n2. As of September 30, 2024, Raymond James reported 8,787 total financial advisors, consisting of 3,826 employees and 4,961 independent contractors. [RJF-10K-2025#227]\n\n3. As of September 30, 2023, Raymond James reported 8,712 total financial advisors, consisting of 3,693 employees and 5,019 independent contractors. [RJF-10K-2025#227]\n\n4. On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said Raymond James ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year, reflecting solid advisor retention and strong recruiting results. [RJF-TR-2025Q3#8]\n\n5. On the fiscal 4Q25 earnings call, management reported record trailing 12-month production for recruited financial advisors of $407 million for fiscal 2025, in the domestic independent contractor and employee channels. [RJF-TR-2025Q3#4]\n\n6. On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said through the first 9 months of fiscal 2026 Raymond James recruited advisors with trailing 12-month production totaling $393 million. [RJF-TR-2026Q2#6]\n\n7. On the same call, management said recruited advisors represented more than $56 billion of client assets at their previous firms through the first 9 months of fiscal 2026. [RJF-TR-2026Q2#6]\n\n8. In the fiscal third quarter (ended June 30, 2026), Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $156 million and nearly $23 billion of client assets at their previous firms. [RJF-TR-2026Q2#5]\n\n9. In the fiscal second quarter (ended March 31, 2026), Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $141 million and nearly $21 billion of client assets at their previous firms, the second-highest quarterly result in its history. [RJF-TR-2026Q1#4]\n\n10. The FY2025 10-K (period ended September 30, 2025) states that for the year ended September 30, 2025, Raymond James's domestic financial advisor retention remained very strong. [RJF-10K-2025#28]\n\n11. On the fiscal 3Q26 earnings call (period ended June 30, 2026), CEO Paul Shoukry said Raymond James reports a 97% advisor satisfaction rate with its surveys, the best he knows of in the industry, and cited this retention as the foundation for growth. [RJF-TR-2026Q2#26]\n\na4:\n\n1. Raymond James defines domestic Private Client Group net new assets as domestic Private Client Group client inflows, including dividends and interest, less domestic Private Client Group client outflows, including commissions, advisory fees, and other fees. [RJF-SUPP-2025Q3#43]\n\na5:\n\n1. On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said Raymond James does not lead with the highest transition check but leads with culture and capabilities, requiring competitive economics while offering a differentiated value proposition, and remaining disciplined on transition assistance and advisor economics. [RJF-TR-2026Q2#59]\n\n2. On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said the firm is focused on the long term and providing a stable platform, attracting and retaining advisors with unique culture, leading service and robust platform rather than the largest check. [RJF-TR-2025Q3#26] \u2014 no quotes.\n\n3. On the same call, management said Raymond James values independence to foster an environment where advisors can provide objective advice, unlike competitors that change comp plans each year to cross-sell bank products. [RJF-TR-2025Q3#26]\n\n4. On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said the firm has the largest addressable market in the industry because it offers all affiliation options and is agnostic about how advisors affiliate. [RJF-TR-2026Q2#26]\n\n5. On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said advisors do not have to choose between culture and capabilities, offering a unique combination of an advisor- and client-focused culture with leading technology, products and solutions. [RJF-TR-2026Q1#5]\n\n6. On the fiscal 1Q26 earnings call (period ended December 31, 2025), management said the firm has the largest addressable market across its affiliation options (employee to independent contractor to RIA custody) with critical mass and decades of experience in all of them. [RJF-TR-2025Q4#50]\n\n7. On the fiscal 1Q26 earnings call (period ended December 31, 2025), management described advisor recruiting as a long-term marathon, not a sprint, targeting advisors who want to stay long-term rather than those moving for the highest check. [RJF-TR-2025Q4#98]\n\nWait, item 7 quote is \"We have to have a competitive check, but we want the advisors that want to be here over the long term...\" The claim text says \"describes advisor recruiting as a long-term 'marathon, not a sprint,' targeting advisors who want to stay long-term rather than those moving for the highest check.\" Hmm, but the quote given is different. Let me check the evidence: item 7's quote is \"We have to have a competitive check, but we want the advisors that want to be here over the long term to make more money and be satisfied here over the rest of their careers.\"\n\nThe claim text says \"describes advisor recruiting as a long-term 'marathon, not a sprint,' targeting advisors who want to stay long-term rather than those moving for the highest check.\" This seems to paraphrase. Actually the \"marathon, not a sprint\" isn't in the quote. Hmm, but the item's claim text is what I should write. Wait, actually I need to be careful. The item text (claim) is provided. I should write a claim based on the item. The item text includes \"marathon, not a sprint\" but the quote doesn't contain that phrase.\n\nActually, let me re-read. The item is given with \"claim text\" essentially: \"Management describes advisor recruiting as a long-term 'marathon, not a sprint,' targeting advisors who want to stay long-term rather than those moving for the highest check.\" and quote \"We have to have a competitive check...\"\n\nHmm, this is the item's summary. The quote provided is the verbatim quote from the source. The \"marathon, not a sprint\" phrase\u2014is it in quotes in the claim? It has single quotes around \"marathon, not a sprint\" in the item text. But the quote doesn't contain it. Since the quote field is what I'm allowed to put in quotation marks, and \"marathon, not a sprint\" is not in the quote, I should not put it in quotation marks.\n\nActually, I think I should be careful and just paraphrase without quoting \"marathon, not a sprint\" since it's not verbatim. Let me write: Management described advisor recruiting as a long-term effort rather than a sprint, targeting advisors who want to stay long-term rather than those moving for the highest check.\n\nHmm, but actually the instruction says never estimate. Let me just base the claim on the quote. The quote says \"We have to have a competitive check, but we want the advisors that want to be here over the long term to make more money and be satisfied here over the rest of their careers.\"\n\nSo the claim should reflect this: Management said the firm must have a competitive check but wants advisors who want to stay long term and be satisfied over the rest of their careers.\n\nBut the item text gives a richer summary. I think I should follow the item's claim text as the meaning, but since \"marathon, not a sprint\" is quoted in the item text, and it's not in the quote field... Actually, wait. Let me reconsider. The item's text is what the evidence matrix provides as the \"claim\". The quote is the verbatim support. The claim text might paraphrase including phrases not literally in the single quote provided.\n\nThe instruction: \"An item marked 'quote not verbatim' is never put in quotation marks.\" This item is NOT marked quote not verbatim. So the quote IS verbatim. But the claim text uses \"marathon, not a sprint\" which isn't in the verbatim quote.\n\nI think the safest approach: write the claim based on the item's meaning, but don't put \"marathon, not a sprint\" in quotation marks (since it's not in the verbatim quote). Actually the item text itself has it in single quotes. Hmm.\n\nLet me just write it carefully. I'll paraphrase: Management said the firm must have a competitive check but wants advisors who want to be at the firm long term and make more money and be satisfied over the rest of their careers, rather than those moving for the highest check.\n\nActually, I'll incorporate the \"long-term marathon, not a sprint\" idea but without quotes, since I can't verify it's verbatim. Actually, let me just stick close to the quote and the item's claim meaning.\n\nI'll write: On the fiscal 1Q26 earnings call (period ended December 31, 2025), management described advisor recruiting as a long-term marathon rather than a sprint, saying the firm must have a competitive check but wants advisors who want to stay long term and be satisfied over the rest of their careers. [RJF-TR-2025Q4#98]\n\nI'll drop the single quotes to be safe. Actually, the item text literally says 'marathon, not a sprint' with quotes. But since I can't find \"marathon\" in the quote, I'll avoid quoting it. I'll paraphrase without quotes.\n\n8. On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said consistency is a critical concept in recruiting and retaining advisors, focusing on finding advisors who are good cultural fits across affiliation options. [RJF-TR-2026Q2#60] \u2014 no quotes.\n\n9. On the fiscal 1Q25 earnings call (period ended December 31, 2024), management described a 'best of both worlds' value proposition combining scope and breadth of products and capabilities with a culture anchored on putting people first. [RJF-TR-2024Q4#23]\n\nWait, item 9 quote is \"We are unique in having the scope and breadth of products and capabilities to serve complex needs of clients, combined with our strong culture that is anchored on putting people first.\" The claim text says \"describes a 'best of both worlds' value proposition\". Again \"best of both worlds\" not in quote. Same issue. I'll paraphrase: Management described a value proposition combining the scope and breadth of products and capabilities to serve complex client needs with a strong culture anchored on putting people first.\n\n10. On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said its strong balance sheet and commitment to independence are proving to be a differentiator for advisors evaluating alternatives. [RJF-TR-2025Q3#8]\n\n11. Trade press reports (published September 29, 2026) that both CEO Paul Shoukry and [Elwyn] said the advisor, not the home office, is the client, and that Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one. [RJF-TRADE-2026-09-29-IN-01#4] \u2014 no quotes.\n\nWait, item 11 is \"Management (per trade press) states...\" So it's a trade-press item but it's a fact cell? The instruction says \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\". So it's a claim. Attributed \"trade press reports...\".\n\nBut also this is management stating, per trade press. The item text says \"Management (per trade press) states the advisor, not the home office, is the client...\"\n\nI'll write: Trade press reports (published September 29, 2026) that CEO Paul Shoukry and [a colleague] said the advisor, not the home office, is the client, and that Shoukry emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one. [RJF-TRADE-2026-09-29-IN-01#4]\n\nThe name \"Elwyn\" \u2014 it's mentioned in the quote. I can say \"CEO Paul Shoukry and Elwyn\". Actually the quote says \"both Chief Executive Officer Paul Shoukry and Elwyn said\". I'll keep it.\n\nNow, for the quote not verbatim items, I need to paraphrase, never quote.\n\nLet me finalize. Also note: for the website items, I should date them with \"page content as of 2026-04-21\".\n\nNow about gaps and adjacent: No gaps added by code, no adjacent items indicated. The standard wording about \"Advisor pay\" \u2014 is this applicable? The question is about affiliation model commercially including payouts. But the standard wording for advisor pay says: \"a firm whose cited items state payout percentages or ranges gets them as claims, dated with the 'page content as of' date, and the gap 'Headline payout ranges are published...'\". \n\nHmm, wait. This is the standard wording for \"Advisor pay\" aspect. But here aspect a2 is \"How the affiliation-choice model works commercially (payouts, fees, economics by affiliation type)\". This is about payouts by affiliation type, which is exactly what's covered. The standard wording about \"Advisor pay: a firm whose cited items state payout percentages or ranges gets them as claims, dated with 'page content as of' date, and the gap 'Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public.'\"\n\nIs this aspect the \"Advisor pay\" aspect? The standard wording is generic for \"Advisor pay\". Aspect a2 is about payouts/fees/economics by affiliation type. The cited items DO state payout percentages/ranges (items 3,4,5,7). So per the standard wording, I should add the gap \"Headline payout ranges are published (company recruiting page, as of 2026-04-21); the full payout grid is not public.\"\n\nHmm, this is tricky. The standard wording says \"Advisor pay: a firm whose cited items state payout percentages or ranges gets them as claims, dated with the 'page content as of' date, and the gap...\"\n\nActually, let me reconsider whether this standard wording applies to aspect a2. Aspect a2 is \"How the affiliation-choice model works commercially (payouts, fees, economics by affiliation type)\". This is specifically about payouts. The standard wording \"Advisor pay\" seems to be a generic case that would apply.\n\nBut wait, the standard wording for \"Advisor pay\" specifically: \"a firm whose cited items state payout percentages or ranges gets them as claims, dated with the 'page content as of' date, and the gap 'Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public.' with <date> filled in\".\n\nHmm. But is this \"Advisor pay\" aspect? The question is about the affiliation-choice model. The payouts here are part of the affiliation model. I think the standard wording is meant for when the question is specifically about advisor pay grids.\n\nActually, I think I should be cautious. The standard wording cases are conditional on \"when the case applies\". The case here is \"Advisor pay\". Is aspect a2 \"Advisor pay\"? It's \"How the affiliation-choice model works commercially (payouts, fees, economics by affiliation type)\". The payouts are stated as ranges/percentages from the recruiting page. \n\nI think the \"Advisor pay\" standard wording is a specific scenario where the question asks about advisor payout grids. Here the question is about the affiliation model commercially, and payouts are one part. The payouts are stated as headline ranges from the recruiting page, which is exactly the \"Headline payout ranges are published\" situation.\n\nHmm, but I'm not fully sure. Let me think about whether the code would have added a gap for this. The \"Gaps added by code\" says \"none\". So no gap was added by code.\n\nThe standard wording for advisor pay adds a gap: \"Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public.\"\n\nThis is a gap I should add myself? The instruction: \"Add a gap of your own only for something those gaps do not name.\" And the standard wording says the firm \"gets them as claims... and the gap 'Headline payout ranges are published...'\".\n\nI think the standard wording is meant to apply. Since the firm's cited items state payout percentages/ranges (from the recruiting page, page content as of 2026-04-21), I should add the gap.\n\nActually, let me re-read the standard wording more carefully:\n\n\"Advisor pay: a firm whose cited items state payout percentages or ranges gets them as claims, dated with the 'page content as of' date, and the gap 'Headline payout ranges are published (company recruiting page, as of <date>); the full payout grid is not public.' with <date> filled in; a firm with nothing published gets 'Payout grids are not public.'\"\n\nSo this applies. The firm's cited items (a2 items 3,4,5,7) state payout percentages/ranges. So I add the gap.\n\nThe gap: \"Headline payout ranges are published (company recruiting page, as of 2026-04-21); the full payout grid is not public.\" with part_id a2.RJF.\n\nsuggested_source for the gap \u2014 what should it be? The gap schema has \"what\" and \"suggested_source\". suggested_source is a free text. I'll put something like \"company payout grid / internal documents\" or \"company advisor compensation documents\".\n\nActually, the gap schema: what (required), suggested_source (required), part_id (required). suggested_source is a string, free text. I'll write \"Company payout grid documentation (not public)\".\n\nLet me think what's appropriate. suggested_source = a source where this could be found. I'll write \"Company internal payout grid documents\".\n\nNow, I need to determine if this standard wording truly applies. The question is \"How does Raymond James's affiliation-choice model work commercially?\" This includes payouts. The aspect a2 is specifically \"payouts, fees, economics by affiliation type\". The firm states payout percentages/ranges (headline ranges from recruiting page). So yes, the advisor pay standard wording applies.\n\nActually wait, let me reconsider. The \"Advisor pay\" standard wording might be a very specific scenario tied to an \"advisor pay\" aspect. But here the aspect is broader. However, the standard wording says \"a firm whose cited items state payout percentages or ranges gets them as claims, dated with the 'page content as of' date, and the gap...\".\n\nI'll apply it. The claims already state the payout percentages/ranges with the page content as of date. And I add the gap.\n\nLet me finalize the gap: what = \"Headline payout ranges are published (company recruiting page, as of 2026-04-21); the full payout grid is not public.\"\n\nActually, I realize I should be careful. Let me just include this gap with part_id a2.RJF.\n\nNow let me also double check: is there anything about \"Aggregate compensation expense goes in adjacent\"? That's part of the \"Advisor pay\" standard wording, but only if the firm has aggregate compensation expense cited. There's no such item in a2. So no adjacent for that.\n\nNow let me also verify no comparison aspects. All five are fact/series, no \"comparison\" marked. Good.\n\nLet me also verify recency: no aspect marked recency, no time window in question. So no why-lines.\n\nNow let me write the full answer via submit_answer.\n\nLet me also reconsider ordering. No time window, so no newest-first requirement. I'll order aspect by aspect, items in order given.\n\nLet me write out all claims now with proper part_ids.\n\nFor a3, there's a basis break. I should note the bases. I'll write items in order, but the instruction says \"state each basis with its own periods; never join them\". So items 1-3 are whole firm (rjf_advisors_excl_rcs), items 8-9 are domestic channels. I should make clear in each claim the scope. Items 1-3 state total advisors (whole firm). Items 8-9 state \"domestic independent contractor and employee channels\".\n\nThe caveat (added by code) already explains the basis break, and I shouldn't repeat it. But I should still write each item with its own scope/period. I'll do that naturally.\n\nLet me write final claims.\n\nActually, I want to reconsider the \"quote verbatim\" items where the quote is shown. I can put them in quotation marks. Let me make sure I use the exact quote text.\n\nFor a1 item 1, quote: \"We offer multiple affiliation options, which we refer to as AdvisorChoice\u00ae. Financial advisors primarily affiliate with us directly as either employees or independent contractors or as employees of third-party Registered Investment Advisors (\"RIAs\") and broker-dealers to which we provide services through our RIA and Custody Services (\"RCS\") division.\"\n\nI'll include this verbatim in quotes.\n\nLet me now write everything.\n\nFor the website items, I need to date them. The source line is \"page content as of 2026-04-21 (undated web page)\". So I date: \"Raymond James's affiliation-options recruiting page (page content as of April 21, 2026)\".\n\nLet me finalize and submit.\n\nLet me count claims and ensure all items covered.\n\na1: 12 items (all). \na2: items 1,3,4,5,6,7,8,9,10,11,12 (skip 2). = 11 items.\na3: 11 items.\na4: 1 item.\na5: 11 items.\n\nTotal claims = 12 + 11 + 11 + 1 + 11 = 46 claims.\n\nPlus 1 gap for a2.\n\nNow write.\n\nFor part_id: single firm, aspects have part_ids a1.RJF etc. The schema allows part_id enum includes \"a1.RJF\", \"a2.RJF\", ..., \"a1\", \"a2\", ..., \"\". Since it's a single firm, and the matrix uses a1.RJF, I should use \"a1.RJF\" etc. for the claims.\n\nActually wait \u2014 the aspect ids are \"a1\", \"a2\", etc., and the cell ids are \"a1.RJF\". The instruction says \"A fact cell is a claim... a cell id is the part_id of what you write from it\". So part_id = \"a1.RJF\" for the fact cell. And \"comparison aspects: ... exactly one claim with that aspect's id as part_id\". Since no comparison aspects, all claims use cell ids (a1.RJF, etc.).\n\nSo part_id for all a1 claims = \"a1.RJF\", a2 = \"a2.RJF\", etc.\n\nLet me write the submit.\n\nI'll write concise but complete claims. Let me be careful with verbatim quotes vs paraphrase.\n\nLet me now produce the final answer.\n\nFor a5 item 11, trade press \u2014 I need to attribute. \"trade press reports...\" and since it's a fact cell, it's a claim.\n\nLet me write item 11 text: \"Trade press (published September 29, 2026) reports that CEO Paul Shoukry and Elwyn said the advisor, not the home office, is the client, and that Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one.\" [RJF-TRADE-2026-09-29-IN-01#4]\n\nNow finalize.\n\nFor the gap suggested_source, I'll write \"Raymond James internal advisor payout grid (not public)\".\n\nLet me write everything now.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states: \"We offer multiple affiliation options, which we refer to as AdvisorChoice\u00ae. Financial advisors primarily affiliate with us directly as either employees or independent contractors or as employees of third-party Registered Investment Advisors (\u201cRIAs\u201d) and broker-dealers to which we provide services through our RIA and Custody Services (\u201cRCS\u201d) division.\"",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James's affiliation-options recruiting page (page content as of April 21, 2026) describes AdvisorChoice\u00ae as a platform of dynamic options and the freedom to choose among them, letting advisors match their professional goals to the affiliation option that is right for them.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The affiliation options listed on Raymond James's recruiting page (page content as of April 21, 2026) include: \"Traditional Employee: Get everything you expect from working for a firm with a powerful difference \u2013 book ownership. Advisor Select: Lead your own branch with access to administrative support and full corporate benefits. Independent Contractor: Operate as an independent financial advisor backed by the resources of a national leader. Bank & Credit Union: Leverage national strength and local impact to grow your advisory business. Corporate RIA: Exercise true autonomy and support refined for fee-only practices under our established RIA.\"",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states: \"Employee financial advisors work in a traditional branch supported by local management and administrative staff. They provide services predominantly to retail clients. Compensation for these financial advisors primarily includes a payout on revenues they generate and such advisors also participate in the firm\u2019s employee benefit plans.\"",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Under the Traditional Employee model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive up to a 50% payout plus a full array of competitive employee benefits offerings, with a minimum of 5 years of experience required.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Under the Advisor Select model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive a 70-80% gross payout plus a full array of competitive employee benefits offerings, and run their own branch (an employee affiliation option for advisors who want to lead a team).",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Under the Independent Contractor model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive an 81% to 90% payout and leverage Raymond James' third-party partnerships to build their own benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states: \"Our financial advisors who are independent contractors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.\"",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said independent payouts are higher than employee payouts because independent advisors cover their own overhead costs, real estate, and health insurance, while even on the employee side Raymond James has tiered payout systems, so as production increases an advisor moves higher up on the payout grid.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states: \"Independent contractor financial advisors may affiliate with us directly or through an affiliated bank or credit union in our Financial Institutions Division. With specific approval, and on a limited basis, they are permitted to conduct certain other approved business activities, such as offering insurance products, independent registered investment advisory services, and accounting and tax services.\"",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said Raymond James is agnostic about how an advisor affiliates (employee vs independent contractor vs RIA custody), wanting advisors to choose based on fit with its culture, values, platform and capabilities.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James's 2025 Investor Day deck (published June 5, 2025) presents the affiliation spectrum ranging from employee (RJA) to independent contractor (ICD) to RIA & Custody Services, including Employee Advisor (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, described by Raymond James as servicing the largest addressable market in the industry.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#38"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states that employee financial advisors work in a traditional branch and their compensation primarily includes a payout on revenues they generate, plus participation in the firm's employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Traditional Employee model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive up to a 50% payout plus the full array of competitive employee benefits offerings.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Advisor Select model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive a 70-80% gross payout plus the full array of competitive employee benefits offerings.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Independent Contractor model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Bank & Credit Union model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive a competitive compensation package from the financial institution in partnership with Raymond James.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Corporate RIA model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the RIA & Custody Services model, per Raymond James's affiliation-options page (page content as of April 21, 2026), advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said independent advisor payouts are higher than employee payouts because independent advisors cover their own overhead costs, real estate, and health insurance.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said even on the employee side Raymond James has tiered payout systems, so as production increases advisors get higher up on the payout grid.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q24 earnings call (period ended September 30, 2024), management said that for RIA custody the margin on a P&L basis is actually higher because the attachment revenue booked is much lower, whereas in Raymond James's other businesses it grosses up the revenues pre-payout, and ROCA varies with the RIA's asset mix and pricing structure.",
+        "chunk_ids": [
+          "RJF-TR-2024Q3#93"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states that for firms affiliated through the RIA and Custody Services division, revenues related to their assets in the PCG segment are included in Account and service fees.",
+        "chunk_ids": [
+          "RJF-10K-2025#223"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James reported 8,943 total financial advisors, consisting of 3,878 employee financial advisors and 5,065 independent contractor advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2024, Raymond James reported 8,787 total financial advisors, consisting of 3,826 employees and 4,961 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2023, Raymond James reported 8,712 total financial advisors, consisting of 3,693 employees and 5,019 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said Raymond James ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year, reflecting solid advisor retention and strong recruiting results.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q25 earnings call (period ended September 30, 2025), management reported record trailing 12-month production for recruited financial advisors of $407 million for fiscal 2025, in the domestic independent contractor and employee channels.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#4"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said through the first 9 months of fiscal 2026 Raymond James recruited advisors with trailing 12-month production totaling $393 million.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#6"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said recruited advisors represented more than $56 billion of client assets at their previous firms through the first 9 months of fiscal 2026.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#6"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "In the fiscal third quarter (ended June 30, 2026), Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $156 million and nearly $23 billion of client assets at their previous firms.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#5"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "In the fiscal second quarter (ended March 31, 2026), Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $141 million and nearly $21 billion of client assets at their previous firms, the second-highest quarterly result in its history.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#4"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "The FY2025 10-K (period ended September 30, 2025) states that for the year ended September 30, 2025, Raymond James's domestic financial advisor retention remained very strong.",
+        "chunk_ids": [
+          "RJF-10K-2025#28"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), CEO Paul Shoukry said Raymond James reports a 97% advisor satisfaction rate with its surveys, the best he knows of in the industry, and cited this retention as the foundation for growth.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James defines domestic Private Client Group net new assets as domestic Private Client Group client inflows, including dividends and interest, less domestic Private Client Group client outflows, including commissions, advisory fees, and other fees.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#43"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said Raymond James does not lead with the highest transition check but leads with culture and capabilities, requiring competitive economics while offering a differentiated value proposition, and remaining disciplined on transition assistance and advisor economics.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#59"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said the firm is focused on the long term and providing a stable platform, attracting and retaining advisors with unique culture, leading service and robust platform rather than the largest check.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said Raymond James values independence to foster an environment where advisors can provide objective advice, unlike competitors that change comp plans each year to cross-sell bank products.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said the firm has the largest addressable market in the industry because it offers all affiliation options and is agnostic about how advisors affiliate, wanting them drawn to its culture, values, platform and capabilities.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 2Q26 earnings call (period ended March 31, 2026), management said advisors do not have to choose between culture and capabilities, offering a unique combination of an advisor- and client-focused culture with leading technology, products and solutions.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#5"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 1Q26 earnings call (period ended December 31, 2025), management said the firm has the largest addressable market across its affiliation options (employee to independent contractor to RIA custody) with critical mass and decades of experience in all of them.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#50"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 1Q26 earnings call (period ended December 31, 2025), management described advisor recruiting as a long-term effort rather than a sprint, saying the firm must have a competitive check but wants advisors who want to stay long term and be satisfied over the rest of their careers.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#98"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 3Q26 earnings call (period ended June 30, 2026), management said consistency is a critical concept in recruiting and retaining advisors, focusing on finding advisors who are good cultural fits across affiliation options.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#60"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 1Q25 earnings call (period ended December 31, 2024), management described a value proposition combining the scope and breadth of products and capabilities to serve complex client needs with a strong culture anchored on putting people first.",
+        "chunk_ids": [
+          "RJF-TR-2024Q4#23"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 4Q25 earnings call (period ended September 30, 2025), management said its strong balance sheet and commitment to independence are proving to be a differentiator for advisors evaluating alternatives.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Trade press (published September 29, 2026) reports that CEO Paul Shoukry and Elwyn said the advisor, not the home office, is the client, and that Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a5.RJF"
+      }
+    ],
+    "adjacent": [],
+    "gaps": [
+      {
+        "what": "Headline payout ranges are published (company recruiting page, as of 2026-04-21); the full payout grid is not public.",
+        "suggested_source": "Raymond James internal advisor payout grid documentation (not public)",
+        "part_id": "a2.RJF"
+      }
+    ]
+  }
+}

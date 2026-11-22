@@ -1,0 +1,290 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a7.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-09-02-IN-01#3",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-23-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#1"
+  ],
+  "at": "2026-11-21T20:48:44.105375-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11086,
+    "output_tokens": 6343,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9550,
+    "reasoning_tokens": 3889,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.64
+  },
+  "wall_s": 45.83,
+  "tokens_per_s": 138.4,
+  "ttft_s": 2.64,
+  "reasoning_content": "Let me analyze the sub-question. The question is about Raymond James business segments updates/commentary in the last 90 days.\n\nI need to extract facts about Raymond James's business segments updates and commentary from the passages.\n\nKey facts:\n1. Financial Institutions Division (FID) - adding $18.7B and 70 advisors from Synovus deal (Nov 12)\n2. Recruiting - $538M trailing 12-month production, $82B client assets (fiscal Q4 earnings)\n3. Private Client Group - record quarterly net revenue $3.06B, pre-tax income $458M, record quarter-end client assets $1.87 trillion, domestic PCG net new assets $98B fiscal year, $23B quarter\n4. Private Wealth Guided Portfolios launch (Sept 29)\n5. SIMPLE IRA program launch (Sept 16)\n6. FID serves ~950 advisors across 160 institutions (Oct 23)\n7. Advisor headcount - record 8,943 advisors, 2% YoY increase (Nov 5)\n8. No longer reports advisor headcount (Oct 29)\n\nThese are all facts about Raymond James business segments.\n\nLet me compile these into cells. The sub-question is broad - \"updates or commentary on business segments\". I should capture the key facts.\n\nLet me identify the segments: Private Client Group (PCG), Financial Institutions Division (FID), independent contractor channel, employee advisor channel (RJA), RIA custody channel, Asset Management Services, etc.\n\nI'll create multiple fact items.\n\nLet me be careful about scope and period. Many are fiscal Q4 (which ended Sept 30, 2026 presumably) or fiscal year 2026.\n\nLet me write the items.\n\nActually, I should provide a comprehensive set of fact items for the sub-question. Let me identify key business segment updates:\n\n1. PCG record quarterly net revenue $3.06B (up 15% YoY) - period FQ4 2026\n2. PCG pre-tax income $458M (up 10% YoY)\n3. Record quarter-end client assets under administration $1.87 trillion (up 1% seq, 12% YoY)\n4. Domestic PCG net new assets $98B+ fiscal year (up 88%), $23B quarter, 5.3% annualized growth\n5. Recruited $538M TTM production (up from $407M), $82B+ client assets\n6. FID adding $18.7B, 70 advisors from Synovus deal\n7. FID serves ~950 advisors across 160 institutions\n8. Record 8,943 advisors, 2% YoY\n9. No longer reports advisor headcount, ~8,900 last time\n10. Private Wealth Guided Portfolios launch\n11. SIMPLE IRA program launch\n12. M&A commentary - looks for acquisitions in wealth management\n13. Recruiting spread across all affiliation channels, RIA custody growing at high percentage\n\nLet me write these as items.\n\nI'll create one cell for a7.RJF with multiple fact items.\n\nLet me write each item with text, quote, value, unit, period, scope, definition, chunk_ids.\n\nLet me do the key ones.\n\nItem 1: PCG record quarterly net revenue $3.06B\nQuote: \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\"\nvalue: \"$3.06 billion\", unit \"USD\", period FQ4 2026 (fiscal fourth quarter), scope \"Private Client Group\"\nchunk: RJF-TRADE-2026-10-29-WM-01#1\n\nItem 2: PCG pre-tax income $458M\nvalue \"$458 million\"\n\nItem 3: client assets under administration $1.87 trillion\nQuote: \"record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\n\nItem 4: domestic PCG net new assets $98B fiscal year, up 88%\nQuote: \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\n\nItem 5: net new assets for quarter $23B, 5.3% annualized growth\nQuote: \"Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nItem 6: recruited $538M TTM production, $82B assets\nQuote: \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. Those advisors represented more than $82 billion in client assets.\"\n\nItem 7: FID $18.7B and 70 advisors\nQuote: \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division\"\n\nItem 8: FID serves ~950 advisors across 160 institutions\nQuote: \"The division currently serves about 950 advisors across 160 institutions.\"\n\nItem 9: record 8,943 advisors, 2% YoY\nQuote: \"Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year\"\n\nItem 10: no longer reports advisor headcount, ~8,900 last time\nQuote: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\n\nItem 11: Private Wealth Guided Portfolios launch\nQuote: \"announced the launch of Private Wealth Guided Portfolios\"\n\nItem 12: SIMPLE IRA program\nQuote: \"launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program\"\n\nItem 13: M&A commentary\nQuote: \"the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit.\"\n\nItem 14: recruiting spread across all affiliation channels\nQuote: \"recruiting success is spread across all its affiliation channels, including its RIA custody channel. The independent contractor channel is seeing the most interest in terms of dollar volume.\"\n\nItem 15: RIA custody growing at high percentage rate\nQuote: \"But the RIA custody division on a smaller base is growing at a high percentage rate as well\"\n\nThese are all facts about business segments.\n\nLet me also note the Clark Capital acquisition (closed May 2026) - that's investment management segment but it's about a prior period, still relevant commentary. Actually the question is \"updates or commentary provided on business segments\" - the Clark Capital acquisition is commentary on Investment Management segment. It's dated Sept 29 2026 passage, so within window. It says \"transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.\"\n\nI could include it. But it's a fact about the segment. Let me include it briefly.\n\nActually, I'll focus on the main updates. Let me include a comprehensive set.\n\nFor periods: fiscal Q4 2026 = F2026 Q4. The fiscal year ends September 30. So FQ4 is quarter ending ~Sept 30, 2026. I'll use \"F2026Q4\" - but the format says \"FYYYYY\" for fiscal year, \"YYYYQn\" for calendar quarter. Fiscal quarter isn't clearly specified. I'll use \"F2026Q4\"? The format only lists \"FYYYYY\" for fiscal year. For fiscal quarter, I might use \"F2026\" with note, or use period as fiscal year 2026 for the fiscal year figures.\n\nActually the instructions: period: \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter, \"FYYYYY\" for a fiscal year, \"YYYY\" for a calendar year.\n\nFor fiscal fourth quarter figures, I'll use \"F2026\" (fiscal year 2026) since that's the closest. Actually the quarterly net revenue is for the fiscal fourth quarter specifically. But the allowed format doesn't include fiscal quarters. I could use \"F2026\" to indicate fiscal year 2026 for the fiscal year figures, and for quarterly figures... hmm.\n\nLet me think. The fiscal year 2026 ended Sept 30, 2026. The \"fiscal fourth quarter\" is part of F2026. I'll denote quarterly figures with period \"F2026\" and note in text it's the fiscal fourth quarter. Or I could use a point-in-time or just leave it.\n\nActually, I think I'll use \"F2026\" for fiscal year figures and for the quarterly figures I'll note \"F2026\" with the text clarifying it's the fiscal fourth quarter. The period field is somewhat constrained. I'll use \"F2026\" for fiscal-year figures and for the quarter figures I'll use \"F2026\" too, since the quarter is within F2026.\n\nActually, let me be more precise. I could use \"2026-09-30\" as the quarter-end date for quarterly figures. That's a point in time. Hmm, but net revenue is a flow over the quarter.\n\nI think using \"F2026\" is reasonable for fiscal year figures, and for the fiscal fourth quarter, I'll write period as \"F2026\" with scope/text noting quarter. Or maybe I'll just describe in text.\n\nLet me use \"F2026\" for fiscal year items and \"F2026Q4\" is not in allowed enum but the period is a free string. Actually the period field in the item schema is just \"string\" with no enum. Wait, let me check. The item schema has \"period\": {\"type\": \"string\"}. No enum. The instructions describe formats but the schema is free string.\n\nSo I can use \"F2026Q4\" for fiscal fourth quarter. But to be safe and follow the described format, I'll use \"F2026\" for fiscal year and for quarters... Actually let me just use \"F2026\" for fiscal-year figures and describe quarter in text. For the quarterly revenue/income, I'll use period \"F2026\" and note in text it's the fiscal fourth quarter.\n\nHmm, actually let me just be descriptive. I'll set period to \"F2026\" for all fiscal 2026 items and clarify in the text.\n\nFor the FID Synovus deal, it's a future event (May 2027 transition), no period - it's an announcement. period \"\".\n\nFor the FID 950 advisors, it's current/point in time - period \"2026-10-23\" (passage date) or \"\". I'll use \"\" since it's a current state without specific date, or use the passage date. I'll use \"2026-10-23\".\n\nActually for \"currently serves about 950 advisors\" - that's as of the passage. I'll set period \"2026-10-23\".\n\nLet me finalize. I'll write a comprehensive set of items.\n\nFor value/unit/period/scope/definition, I need to fill these carefully.\n\nLet me now write the submission.\n\nI'll include around 14-16 items.\n\nLet me draft the text and quotes carefully.\n\nItem list:\n\n1. PCG record quarterly net revenue\ntext: \"Raymond James reported that the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year, for the fiscal fourth quarter.\"\nquote: \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year\"\nvalue \"$3.06 billion\", unit \"USD\", period \"F2026\", scope \"Private Client Group\"\n\n2. PCG pre-tax income $458M\ntext: \"...pre-tax income of $458 million, up 10% year-over-year.\"\nquote: \"pre-tax income of $458 million, up 10% year-over-year\"\nvalue \"$458 million\"\n\n3. client assets under administration $1.87 trillion\ntext: \"record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nquote: \"record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nvalue \"$1.87 trillion\", period F2026, scope \"\" (whole firm? actually client assets under administration is firm-wide)\n\n4. domestic PCG net new assets $98B+ fiscal year\nquote \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\nvalue \"more than $98 billion\", scope \"Domestic Private Client Group\", period F2026\n\n5. quarterly net new assets ~$23B, 5.3% annualized\nquote \"Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\nvalue \"nearly $23 billion\"\n\n6. recruited $538M TTM production\nquote \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year.\"\nvalue \"$538 million\", unit \"USD\", period F2026, scope \"domestic independent contractor and employee channels\"\n\n7. $82B client assets from recruited advisors\nquote \"Those advisors represented more than $82 billion in client assets.\"\nvalue \"more than $82 billion\"\n\n8. FID Synovus $18.7B, 70 advisors\nquote \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division\"\nvalue \"$18.7 billion\", unit \"USD (client assets) and 70 advisors\", period \"\", scope \"Financial Institutions Division\"\n\nActually value should be a single figure. I'll split into two items or combine. Let me split:\n8a. FID $18.7B\n8b. FID 70 advisors\n\nActually I can combine with value \"$18.7 billion and 70 advisors\". But the instruction says \"one item per figure or statement\". It's cleaner to keep as one item since it's one statement. I'll set value \"$18.7 billion\", unit \"client assets; plus 70 advisors\". Hmm. Let me just do one item with text covering both.\n\nLet me set: text mentions both $18.7B and 70 advisors. value \"$18.7 billion\", unit \"client assets (plus 70 advisors)\". Actually simpler to have two items.\n\nI'll do:\n8. text \"Raymond James will add $18.7 billion in client assets to its Financial Institutions Division...\" value \"$18.7 billion\" unit \"client assets\" scope \"Financial Institutions Division\" period \"\"\n9. text \"...and 70 advisors to its Financial Institutions Division...\" value \"70\" unit \"financial advisors\" scope \"Financial Institutions Division\" period \"\"\n\n10. FID serves ~950 advisors across 160 institutions\nquote \"The division currently serves about 950 advisors across 160 institutions.\"\nvalue \"about 950\" unit \"advisors\" scope \"Financial Institutions Division\" period \"2026-10-23\"\n\n11. record 8,943 advisors, 2% YoY\nquote \"Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year\"\nvalue \"8,943\" unit \"financial advisors\" period F2026\n\n12. no longer reports advisor headcount, ~8,900 last time\nquote \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\nvalue \"about 8,900\" unit \"financial advisors\"\n\n13. Private Wealth Guided Portfolios launch\nquote \"announced the launch of Private Wealth Guided Portfolios, a risk-based model framework that combines equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies.\"\nvalue \"\" unit \"\" period \"2026-09-29\"\n\n14. SIMPLE IRA program launch\nquote \"launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program\"\nvalue \"\" period \"2026-09-16\"\n\n15. M&A commentary\nquote \"the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit.\"\nvalue \"\"\n\n16. recruiting spread across channels\nquote \"the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel. The independent contractor channel is seeing the most interest in terms of dollar volume.\"\nvalue \"\"\n\n17. RIA custody growing at high percentage\nquote \"the RIA custody division on a smaller base is growing at a high percentage rate as well\"\nvalue \"\"\n\n18. Clark Capital acquisition closed May 2026\nquote \"That transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.\"\nvalue \"\" period \"2026-05\" scope \"Raymond James Investment Management\"\n\nThis is a lot. I'll include the most relevant ones. Given the breadth, I'll include all these as fact items since they're all updates/commentary on business segments.\n\nLet me finalize and write the submit call.\n\nFor definition field, most will be \"\".\n\nLet me write it out.\n\nFor period format for fiscal items, I'll use \"F2026\". For the point-in-time FID count, I'll use \"2026-10-23\". For Synovus deal (future), \"\". For launches, I'll use passage date as point in time or leave \"\". I'll leave \"\" for product launches since it's not a figure.\n\nActually for product launches, value \"\" and period \"\" - the launch date is the passage date but I'll put period \"\" since no figure. Hmm, but the period field could reflect the announcement. I'll leave \"\" for non-figure items.\n\nLet me write reason for the cell: \"The passages contain numerous fact statements about Raymond James's business segments (Private Client Group, Financial Institutions Division, channels, recruiting, and product launches).\"\n\ndiffers_because \"\" since it's all fact.\n\nderivation: operation \"\", inputs [].\n\nNow write the submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James reported that its Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year, for the fiscal fourth quarter.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year",
+            "value": "$3.06 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported Private Client Group pre-tax income of $458 million for the fiscal fourth quarter, up 10% year-over-year.",
+            "quote": "pre-tax income of $458 million, up 10% year-over-year",
+            "value": "$458 million",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "quote": "record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year",
+            "value": "$1.87 trillion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported that domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "value": "more than $98 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported net new assets for the fiscal fourth quarter of nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "nearly $23 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported it recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year.",
+            "quote": "recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million from the prior year",
+            "value": "$538 million",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee channels",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#0",
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James said the recruited advisors represented more than $82 billion in client assets.",
+            "quote": "Those advisors represented more than $82 billion in client assets",
+            "value": "more than $82 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee channels",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#0",
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James will add $18.7 billion to its Financial Institutions Division (the unit dedicated to bank and credit union advisors) as an existing FID program merges with Synovus Financial Corp.",
+            "quote": "Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division, the unit dedicated to bank and credit union advisors",
+            "value": "$18.7 billion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Financial Institutions Division",
+            "definition": "the unit dedicated to bank and credit union advisors",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James will add 70 advisors to its Financial Institutions Division as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027.",
+            "quote": "Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division ... The advisors are expected to transition in May 2027.",
+            "value": "70",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "Financial Institutions Division",
+            "definition": "the unit dedicated to bank and credit union advisors",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James' Financial Institutions Division (FID) currently serves about 950 advisors across 160 institutions.",
+            "quote": "The division currently serves about 950 advisors across 160 institutions.",
+            "value": "about 950",
+            "unit": "advisors",
+            "period": "2026-10-23",
+            "scope": "Financial Institutions Division",
+            "definition": "established in 1987 to provide banks and credit unions with wealth management, investment and brokerage services",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-23-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year, and signaled it expects continued momentum with healthy pipelines of advisor commitments.",
+            "quote": "Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year",
+            "value": "8,943",
+            "unit": "financial advisors",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "value": "about 8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James announced the launch of Private Wealth Guided Portfolios, a risk-based model framework combining equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies, for high-net-worth and ultra-high-net-worth clients.",
+            "quote": "announced the launch of Private Wealth Guided Portfolios, a risk-based model framework that combines equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies",
+            "value": "",
+            "unit": "",
+            "period": "2026-09-29",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#0",
+              "RJF-TRADE-2026-09-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, available to its roughly 8,900 advisors, partnering with Capital Group American Funds.",
+            "quote": "The St. Petersburg, Fla.-based wealth manager has launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program",
+            "value": "",
+            "unit": "",
+            "period": "2026-09-16",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-16-WM-01#0"
+            ]
+          },
+          {
+            "text": "CEO Paul Shoukry said the firm does look for acquisitions in the wealth management business in particular, but only where there is a good cultural and strategic fit, and that it does acquisitions to grow revenues rather than to slash costs.",
+            "quote": "the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit. 'We don't do acquisitions to slash costs,' he said. 'We do acquisitions to grow revenues and to be better firms together over time.'",
+            "value": "",
+            "unit": "",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "CEO Paul Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel, with the independent contractor channel seeing the most interest in dollar volume, and the RIA custody division growing at a high percentage rate on a smaller base.",
+            "quote": "Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel. The independent contractor channel is seeing the most interest in terms of dollar volume. 'But the RIA custody division on a smaller base is growing at a high percentage rate as well,' he said.",
+            "value": "",
+            "unit": "",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James' acquisition of Clark Capital Management Group closed in May 2026, adding Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.",
+            "quote": "That transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure.",
+            "value": "",
+            "unit": "",
+            "period": "2026-05",
+            "scope": "Raymond James Investment Management",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-09-29-IN-01#3"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain many direct statements from Raymond James about its business segments (Private Client Group, Financial Institutions Division, recruiting channels, and product launches), so the cell is labeled fact.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

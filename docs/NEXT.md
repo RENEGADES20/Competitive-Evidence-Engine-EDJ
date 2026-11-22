@@ -1,32 +1,85 @@
 # What to build next
 
-Rewritten on 2026-11-19 from the W10 scored run on `corpus-2026-11-19` (24/30, tier 1 14/18;
-[docs/results/w10-report.md](results/w10-report.md)). Gate 4 was 21/30 on `corpus-2026-11-17`
-([docs/results/gate4-report.md](results/gate4-report.md)). The six failures are Q11, Q19, Q20, Q23,
-Q24 and Q26 (Q19 after the second read and a TL decision; the first read gave 25/30). Ten questions
-were read twice (Q7, Q15, Q16, Q17, Q19, Q22, Q24, Q25, Q26, Q28). The items are
-ranked by how many questions each would move and by how sure we are of the cause. Each item names
-the question IDs behind it, a rough size (S = under a day, M = 1-3 days, L = a week or more) and the
-check that would show it worked. Nothing here is started.
+Rewritten on 2026-11-21 from the W11 scored run (#250; [docs/results/w11-report.md](results/w11-report.md)).
+The run used DeepSeek `deepseek-v4-pro` (thinking on) and the map-reduce pipeline, with fts retrieval on
+`corpus-2026-11-19`.
+- **Scores:** adjudicated 18/30 (tier 1: 11/18), after the PR #267 second read (Q12 PASS -> FAIL). The blind full read gave 19/30 and the first, truncated read 20/30.
+- **Same plans, hybrid-norerank on `exp/hybrid`:** 22/30 adjudicated (blind 21/30, tier 1 13/18; [report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md), merged into `exp/hybrid` as 4d656d8, PR #268).
+- **Earlier runs:** W10 with Claude, single answer call: 24/30 fts, 25/30 hybrid. The DeepSeek baseline #243, single
+  answer call: 15/30.
 
-Done in W10 and dropped from this list: per-part answers and named gaps (#214, #215, #224: Q3, Q12,
-Q28 now pass), the comparison grid from the question (Q7 passes, empty cells in gaps), the Q22 empty
-answer (#230, #232), the Q25 gap naming (#215: every undisclosed part is now a gap), and the Gate 4
-missed passages for Q17, Q19 and Q25 (now retrieved and cited).
+The twelve fts failures are Q5, Q10, Q11, Q12, Q16, Q18, Q20, Q21, Q23, Q25, Q28 and Q29. Items are ranked by how many
+questions each would move and by how sure we are of the cause. Each item names:
+- the question IDs behind it;
+- a rough size (S = under a day, M = 1-3 days, L = a week or more);
+- the check that would show it worked.
 
-| # | Build | Questions | Size | Shows it worked |
-|---|---|---|---|---|
-| 1 | **Behavior when most firms lack the figure: decide, then align the bank.** Q11, Q20 and Q23 choose `gap_with_adjacent` where the bank expects `answer`, putting the evidence that exists (EDJ and RJF definitions, the EDJ series, survey findings) into adjacent items; Q25 does the reverse (`answer` with every undisclosed part in gaps, bank `gap_with_adjacent`, accepted by the TL in #213). Decide with the project lead whether "a partial answer plus named gaps" is `answer` for benchmark and survey questions; record it in an ADR, then adjust the prompt rule and add new bank questions with the agreed expectation (the bank is append-only). Decided in ADR-021 (#244, rules 1 and 3; Q24, Q25, Q28 superseded, Q31-Q35 appended); built in #246 / #247. | Q11, Q20, Q23 (Q25 as check) | S | decision in an ADR; the three answers take the agreed behavior; Q25 keeps its gaps |
-| 2 | **A cross-firm conclusion for five-firm comparison questions.** With every planner part spanning all five firms, Q24 lists per-firm assets, counts and definitions but never says in one place whether the comparison is valid, and computes no ratio where both inputs are disclosed on one basis (Edward Jones: $2.6T assets under care and 20,514 advisors, same 10-Q). Gate 4's answer had that sentence. A prompt rule ("answer the comparison itself in one claim, cited to the inputs") or a planner part for the comparison. Decided in ADR-021 (#244, rules 2 and 4); built in #246 / #247. | Q24 (Q15, Q10 as checks) | S-M | Q24 states the comparison's validity in one cited claim and gives the EDJ ratio with both inputs cited; Q15 states the mechanism, not only rows |
-| 3 | **Recency answers: why each item matters, strict order, primary sources.** Q26 lists items newest first but with no line on why each might matter, places one outlook item last, and has only trade press in its 90-day window. (a) Prompt: one "why it might matter" line per item and no exception to the order (S); decided in ADR-021 (#244, rule 5), built in #247. (b) Ingest Raymond James and Merrill press releases and 8-Ks on a weekly schedule so the window holds the firm's own documents (M). | Q26 (Q27 as check) | S + M | Q26: every item has a why-line, 0 order inversions, at least one RJF release or filing inside the window |
-| 4 | **Passage-level recall and sense.** Passages the corpus holds still miss their question: Q20 `FIDELITY-III-2025#0`, `UBS-NEXTGEN-2026#119` / `#13`; Q22 Schwab's 3Q26 core NNA `SCHW-PR-2026-10-15-01#3` (retrieved for Q3 and Q12, not for Q22, which names the quarter as a gap); Q15 `SCHW-10K-2025#27`; Q7 `MS-10K-2025#153`. And a word right in its main sense still pulls wrong-sense passages (Q25 "payout" -> Schwab dividend-payout deck chunks in #224; not retrieved this run, not fixed). Options: ranking or a reranker that reads the passage (the hybrid branch, ADR-010/011: #212 hybrid-norerank scored 21/30, level with Gate 4 fts, with Q17 lost to retrieval), or a per-part second query from the answer's own gaps (ADR-021: no fixed call cap). | Q20, Q22, Q15, Q7, Q25 | M-L | each named passage in the retrieved set (mock and one real run); Q25 retrieves no must-not chunk under three plans; no PASS -> FAIL |
-| 5 | **Advisor headcount still thin.** After #216 the corpus has a 2020 Morgan Stanley count (`MS-SUPP-2020Q4#1`), a 2023 GWIM-plus-Consumer count (`BAC-SUPP-2023Q4#2`) and Form ADV Part 1A employee counts (employees, not advisors: outside #179's definition scope, never retrieved for Q11, Q23 or Q24). No current count for Morgan Stanley, Schwab or Merrill alone, and no Raymond James quarterly series. Look for current published counts (Raymond James quarterly supplements' advisor table, firm fact sheets); store each with its definition (ground rule 4). Also set the segment on `MS-SUPP-2020Q4#0` / `#1` (NULL today; `#2`-`#5` are Wealth Management). | Q11, Q23, Q24 | M | Q23 has a series for at least three firms with definitions; Q11 quotes four definitions; segment set (SQL check) |
-| 6 | **Eval and check fixes.** (a) Q22's `must_not_return` `MS-PR-2026-04-15-01#15` also holds the NNA definition (footnote 12) that Q22 rightly cites; replace it with a fee-flow-only passage. (b) Q24's must-not `SCHW-TR-2026Q3#10` is cited, correctly labelled as custody firms; decide whether the key or the answer should change (with item 2). (c) Q19's pattern-coverage check (coverage 0.2) agrees with the reading only by chance: the answer fails on a missing leg (item 8), not on the patterns; check what the patterns test. (d) Number check: 5 date false positives (Q17, Q18, Q24) and 2 real misses where the figure sits in a sibling passage (Q1 `MS-TR-2026Q1#3` vs cited `#23`; Q4 `MER-TRADE-2026-10-14-IN-02#0` vs cited `#1/#3`): ignore dates, and name the retrieved passage that does hold the figure. | Q24 (Q22, Q19, Q1, Q4 as checks) | S | mock statuses equal the reading (Q19, Q22, Q24); 0 date flags; the two real misses still flagged with the right passage named (tests) |
-| 7 | **A second scorer on every scored run.** The W10 run has nine borderline verdicts; Q24 and Q26 flip between readings of the same answer shape (#230 passed both). Keep the independent second read of borderline questions in every scored run's review, and write the reading rule for "why it matters" (Q26) and "answers the second half directly" (Q24) into the bank's notes so both scorers apply it the same way. | Q24, Q26 (borderline: Q7, Q15, Q16, Q17, Q19, Q22, Q25) | S | two verdicts per borderline question in the run's PR; differences discussed and resolved |
-| 8 | **Planner firm scope for home-firm questions.** Q19 asks how younger investors' preferences should shape Edward Jones's offerings; `passes_if` also wants competitor moves aimed at that cohort. The planner scoped all four parts to Edward Jones (`firms=['EDJ']`), so no Morgan Stanley, Schwab, Merrill or Raymond James product or pricing move was searched, and the answer did not name the missing leg as a gap (second read FAIL, TL decision). ADR-018 already searches competitors on the theme for home-firm questions, but only as theme peers (2 passages each, outside the parts). Let a planner part take the four competitors when the question asks about the home firm's market (a plan rule plus code that allows covered firms the question implies), or raise the theme-peer share for those questions. Decided in ADR-021 (#244, rule 6); built in #245. | Q19 (Q12 as check) | S-M | Q19's plan has a competitor part; the answer cites at least two competitor moves aimed at younger investors, or names the leg as a gap; Q12 keeps its hand-off |
-| 9 | **"Not reported since" by code for series that end early (#247 part 3 follow-up).** Q11 passes (part 3, borderline) but MS's only count is the 4Q2020 supplement, dated yet not said to be discontinued. When a firm's latest registered count is older than the asked window (registry `count_date` / the series' last point) and later documents of the same family are searched with no count, code adds "last reported count <date> (<chunk>); no count in the <doc types> searched since" (an absence over the documents searched, never "discontinued"). **Built in #247 part 4** (`plans/0247-reduce-4.md`), worded after plan review as "latest count found in the <doc type>: <date> (<chunk>); no count found in the <doc type> read since (<docs>)"; Q11, Q23, Q24 carry it for MS (2020-12-31) and Merrill / Bank of America (2023-12-31); blind re-score pending. | Q11, Q23 | S | Q11 / Q23 name MS 4Q2020 and BAC 4Q2023 as the last reported counts, citing the searched later supplements |
-| 10 | **Q23 retrieval miss: RJF investor-day count.** `RJF-DECK-2025-investor-day#43` ("Mar. 31, 2025 ... FINANCIAL ADVISORS ... 8,731", tier 3) is retrieved for Q11 but not for Q23, so Q23 lacks RJF 2025Q1 (the only quarterly RJF count in the corpus for the window; #247 part 3 results section 9). Candidate: the period pass or the headcount pins reach investor-day decks (deck doc type in the headcount registry `see_also` for RJF). **Built in #247 part 4**: registry `series_pins` (dated counts in undated documents, pinned for series aspects; a corpus scan finds only #43); Q23's real run (2 calls) lists RJF 8,731 at 2025-03-31 citing #43; blind re-score pending. | Q23 | S | Q23 lists RJF 8,731 at 2025-03-31 with its source |
-| 11 | **Advisor headcount corpus gaps (Q23, Q11).** SQL (#247 part 3, section 9): no advisor count in any MS, BAC or RJF supplement from 2024Q4 (BAC "Total wealth advisors" stops at 4Q2023; MS drops the line after 4Q2020; RJF supplements never had it, counts are in RJF earnings releases); no EDJ 3Q26 10-Q; no written MS / EDJ / Schwab definition. Ingest RJF quarterly earnings releases (2024Q4-2026Q3) and the EDJ 3Q26 10-Q; MS / BAC counts after those dates do not exist in firm filings (trade press only, tier 4). | Q23 (Q11, Q24 as checks) | M | Q23: RJF quarterly counts from the releases; EDJ 2026Q3; MS / BAC marked last reported (item 9) |
+Nothing here is started.
 
-Out of scope for this list (term rules): alerts, live web browsing, recommendations, forecasts,
-internal or client data, multi-user.
+1. **Output cut at the 64,000-token cap: the output limit and the reasoning budget** (Q20, Q21 fts; Q27 hybrid;
+   class i). Three outputs were cut at `max_tokens`, with the reasoning taking most of the budget:
+   - Q20 `map.all`;
+   - Q21 reduce;
+   - Q27 `map.MER` (hybrid).
+
+   It cost two fts questions and one hybrid question, all of which would otherwise have been read. Options:
+   - a lower reasoning effort for map calls;
+   - splitting a firm's map call when its cells or passages are many (Q21 has 12 calls; Q20 is one theme call
+     over many passages);
+   - a planned re-call at a larger cap (none exists today).
+
+   Size M. Check: the three saved inputs re-run once each in a planned real check, with valid outputs; a 0-call count
+   names any other call near the cap.
+2. **Behavior choice in the reduce** (Q10, Q18, Q29; class b).
+   - Q10 returned `gap_with_adjacent` where the bank expects `answer`: no firm is named or ranked as most explicit,
+     although the dated statements are there. Hybrid's Q10 answered and passed.
+   - Q18 refused (`comparison_missing`), although the corpus holds Form ADV fee schedules, McKinsey fee-pressure
+     research and firm fee disclosures.
+   - Q29 answered where the bank expects `gap_with_adjacent`: it never says payout grids are not public, and it uses
+     trade press as if it were the answer.
+
+   Size M. Check: the three reduces re-run from their saved matrices (planned real calls); the behavior matches the
+   bank's, and the other 27 are unchanged on a 0-call replay.
+3. **Required part or shape missing** (Q5, Q12, Q16, Q25, Q28; class s).
+   - Q5 keeps two claims from 51 passages.
+   - Q12 does not set out Edward Jones's own cost structure, read against a literal `passes_if` (FAIL in both modes after the second reads).
+   - Q16 is organised by sub-question and firm, not by position, with off-topic claims.
+   - Q25 leans on trade press for Schwab and MS pay and does not mark Schwab's structure as not public.
+   - Q28 never states plainly how net headcount change differs from attrition.
+
+   Q16, Q25 and Q28 are borderline FAILs, confirmed by the second read. Hybrid's Q25 passes: it labels its trade press and marks the undisclosed cells. Size
+   M (reduce prompt rules for "by position", "not public" and the home firm's side, with tests on the rendered message). Check: the five
+   answers re-scored blind after a planned re-run.
+4. **Definitions and series limited by the corpus** (Q11, Q23; r, s, c). These are unchanged since W10 and #247:
+   - Q11 has no written MS, EDJ or Schwab definition in tier 1-3;
+   - Q23's series stops at 2020 for MS and 2023 for Merrill, RJF has four points, and Schwab has none (#247 part 4,
+     the old NEXT item 11).
+
+   Size L (corpus: new filings or supplements). Check: SQL over the new documents, then Q11 and Q23 re-run.
+5. **A reduce caveat the code writes from saved map outputs is not deterministic** (Q12; both modes).
+   - The 0-call replay of each run, from the same saved map records, built Q12's series-span caveat differently:
+     "2024 to 2026Q3" in the run, "2024Q4 to 2026Q3" in the replay.
+   - So the reduce key changed and the saved answer was not reused.
+   - The scored record is the run's own answer.
+
+   Size S. Check: two 0-call replays give byte-identical matrices for all 30 questions; a test pins the caveat on
+   reordered map results.
+6. **A mode-aware competitor floor** (Q19; `exp/hybrid`). The ADR-018 floor compares `ts_rank` across firms in fts;
+   in hybrid-norerank it compares per-firm RRF ranks and almost never fires. On the DeepSeek plans it cut Q19 a1.MER
+   (4 of 5) and a1.RJF (1, emptied) in fts only. The TL decisions on #250 attribute the Q19 differences to the floor.
+   Size M (`exp/hybrid`). Check: the floor table from #249 / #250 shows comparable cuts in both modes.
+7. **Scoring method for large dumps.**
+   - A 30-answer dump is about 1.2-1.4 MB. The first fts scorer cut passages to about 110 characters to fit it, and
+     the full read moved Q12, Q25 and Q28.
+   - Both runs were therefore read by four scorers, each over a question range.
+
+   Size S (a dump with each cited passage once per question, and the split built in). Check: one scorer reads a whole
+   range without truncating.
+
+Done in W11 and dropped from this list:
+- map-reduce with per-firm extraction, corrective re-search and a reduce call (#245-#248);
+- the Q24 EDJ ratio and the Q26 newest-first window (both pass);
+- the Q19 competitor leg (passes in both modes);
+- the Q3, Q7, Q8, Q15, Q17 drops of #243 (pass again).
+
+W10 failures now passing in W11 fts: Q19, Q24, Q26.

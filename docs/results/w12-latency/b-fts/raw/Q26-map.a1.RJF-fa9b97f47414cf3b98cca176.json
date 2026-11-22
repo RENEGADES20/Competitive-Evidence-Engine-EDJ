@@ -1,0 +1,239 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a1.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1"
+  ],
+  "at": "2026-11-21T13:20:18.433207-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10953,
+    "output_tokens": 5240,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9417,
+    "reasoning_tokens": 3659,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.06
+  },
+  "wall_s": 33.89,
+  "tokens_per_s": 154.62,
+  "ttft_s": 2.06,
+  "reasoning_content": "Let me analyze the sub-question: What financial results has Raymond James reported in the last 90 days?\n\nI need to extract financial results (revenue, EPS, assets under administration, net new assets, pre-tax income, advisor headcount, recruiting production, etc.) that Raymond James reported in the last 90 days (2026-08-19 to 2026-11-17).\n\nLet me look at passages for financial results.\n\nKey financial results reported:\n1. Chunk RJF-TRADE-2026-10-29-WM-01#1: record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% YoY. Private Client Group record quarterly net revenue of $3.06 billion, up 15% YoY, pre-tax income of $458 million, up 10% YoY. Domestic PCG net new assets rose 88% for fiscal year to record of more than $98 billion. Net new assets for quarter nearly $23 billion, annualized growth 5.3%. Non-GAAP EPS of $3.59, revenue of $4.74 billion up 13% YoY. Also advisor headcount about 8,900 last time broken out (no longer reports).\n\n2. Chunk RJF-TRADE-2026-11-05-WM-01#0: recruited $538 million in trailing 12-month production for advisors entering domestic independent contractor and employee channels during fiscal year, up from $407 million prior year. Those advisors represented more than $82 billion in client assets.\n\n3. Chunk RJF-TRADE-2026-11-05-IN-01#0: record 8,943 advisors - 2% increase YoY.\n\n4. Chunk RJF-TRADE-2026-10-29-WM-01#0: trailing 12-month production $538 million, up from $407 million.\n\n5. Chunk RJF-TRADE-2026-10-16-WM-01#1: about 8,900 advisors overseeing $1.92 trillion.\n\nThese are the financial results. Let me create fact items for each.\n\nNote: The question asks \"What financial results has Raymond James reported in the last 90 days?\" These are all facts about financial results reported by Raymond James.\n\nLet me compile the items.\n\nFor a1.RJF, label = fact.\n\nItems:\n1. Client assets under administration of $1.87 trillion (record quarter-end), up 1% sequentially and 12% YoY. Chunk RJF-TRADE-2026-10-29-WM-01#1.\n   value: \"$1.87 trillion\", unit \"client assets under administration\", period - this is quarter-end. The earnings were fiscal Q4. The quarter-end date would be... Raymond James fiscal year ends September 30. So fiscal Q4 ended 2026-09-30. Actually the period isn't stated in the passage. I'll put period as \"\" or maybe just leave blank since not stated.\n\nActually, let me think about period. The passage says \"record quarter-end client assets under administration of $1.87 trillion\". The quarter-end isn't explicitly dated in the passage. Raymond James fiscal Q4 earnings reported \"last week\" (from Nov 5 article). So fiscal Q4 ended around September 30, 2026. But I shouldn't estimate. I'll leave period \"\" for items where not stated, or use F2026 for fiscal year items.\n\nActually, let me be careful. The instruction says period: \"YYYY-MM-DD\" for point in time, \"FYYYYY\" for fiscal year, etc., \"\" when not stated.\n\nFor \"fiscal fourth quarter\" figures, I could put period as F2026 (fiscal year 2026) since the fiscal Q4 is part of fiscal year 2026. Actually the fiscal year ended, so fiscal year 2026. Hmm, but quarter figures are quarterly.\n\nLet me just use \"\" when the specific period isn't clearly stated, or use F2026 for fiscal year items.\n\nActually the passages mention \"fiscal fourth quarter\" and \"fiscal year\". Raymond James fiscal year 2026 ended Sept 30, 2026 (given Q4 earnings reported late October). I'll use F2026 for fiscal year figures and for fiscal Q4 figures maybe use \"2026Q3\" (calendar quarter)? No, fiscal Q4 doesn't map cleanly.\n\nI think safest to use \"\" for period when not clearly stated, but for \"fiscal year\" I can use F2026.\n\nLet me just be reasonable. The passages don't state exact dates. I'll use:\n- Quarter-end client assets: period \"\" (point in time, not dated)\n- Fiscal year net new assets: F2026\n- Quarter net new assets: \"\" \n- EPS/revenue: \"\" (quarterly)\n- Private Client Group quarterly net revenue/pre-tax income: \"\"\n- Trailing 12-month production: F2026 (fiscal year)\n- Advisor headcount 8,943: \"\" (as of fiscal year end) - could be F2026\n\nActually, the 8,943 advisors is \"As Raymond James ended its fiscal year with a record 8,943 advisors\". So F2026.\n\nLet me set period values accordingly. For items where the period is \"the quarter\" without a date, I'll leave \"\" but note in text.\n\nActually, I'll try to be more specific. The earnings call was for fiscal Q4. Raymond James' fiscal year ends September 30. So fiscal Q4 2026 ended 2026-09-30. But I shouldn't estimate dates not in passages. However \"F2026\" is a reasonable representation for \"fiscal year\" and \"fiscal fourth quarter\".\n\nHmm, let me just use F2026 for fiscal-year-related and leave quarter items with \"\" or describe.\n\nLet me compile the list of items:\n\nItem 0: Client assets under administration - $1.87 trillion, record quarter-end, up 1% seq, 12% YoY.\ntext: \"Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nquote: \"the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nvalue: \"$1.87 trillion\", unit \"client assets under administration\", period \"\", scope \"\", definition \"\", chunk ids [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\nItem 1: Private Client Group quarterly net revenue $3.06 billion, up 15% YoY.\ntext: \"The Private Client Group reported record quarterly net revenue of $3.06 billion, up 15% year-over-year.\"\nquote: \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\"\nvalue: \"$3.06 billion\", unit \"USD\", period \"\", scope \"Private Client Group\", chunk [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\nItem 2: Private Client Group pre-tax income $458 million, up 10% YoY.\nvalue \"$458 million\", unit \"USD\", scope \"Private Client Group\", period \"\".\n\nItem 3: Domestic PCG net new assets rose 88% for fiscal year to record of more than $98 billion.\nvalue \"more than $98 billion\", unit \"USD\", period F2026, scope \"Domestic Private Client Group\".\n\nItem 4: Net new assets for quarter nearly $23 billion, annualized growth 5.3%.\nvalue \"nearly $23 billion\", unit \"USD\", period \"\", scope \"Domestic PCG\".\n\nItem 5: Non-GAAP EPS $3.59, beating expectations by $0.32.\nvalue \"$3.59\", unit \"USD\", period \"\".\n\nItem 6: Revenue $4.74 billion, up 13% YoY.\nvalue \"$4.74 billion\", unit \"USD\", period \"\".\n\nItem 7: Advisor headcount about 8,900 last time broken out; no longer reports.\nThis is a fact about reporting? The question asks financial results reported. Advisor headcount about 8,900. Also \"no longer reports advisor headcount\". This could be noted.\nvalue \"about 8,900\", unit \"financial advisors\", period \"\".\n\nItem 8: Record 8,943 advisors, 2% increase YoY (from 2026-11-05-IN-01#0).\nvalue \"8,943\", unit \"financial advisors\", period F2026.\n\nItem 9: Trailing 12-month production $538 million for recruited advisors, up from $407 million prior year (fiscal year).\nvalue \"$538 million\", unit \"USD\", period F2026, scope \"recruited advisors entering domestic independent contractor and employee channels\".\n\nItem 10: Those advisors represented more than $82 billion in client assets.\nvalue \"more than $82 billion\", unit \"USD\", period F2026.\n\nItem 11: about 8,900 advisors overseeing $1.92 trillion (from 2026-10-16-WM-01#1).\nActually this one says \"Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.\" This is a bit different from the $1.87 trillion quarter-end figure. Hmm, $1.92 trillion vs $1.87 trillion. Different sources/time. Actually the 10-16 article predates earnings (10-29). The $1.92 trillion might be an earlier figure. But it's still a reported financial result within the window.\n\nActually wait, the 10-16 article says \"about 8,900 advisors overseeing $1.92 trillion\" - this could be a different period (prior quarter). But it's reported within the 90-day window. I'll include it as a fact with period \"\".\n\nHmm, actually the $1.87 trillion is \"record quarter-end\" and the $1.92 trillion might be assets under advisement from an earlier period. There's inconsistency. But my job is just to extract facts as stated. I'll include both.\n\nActually, let me reconsider. The 10-16 article's $1.92 trillion might be total client assets or assets under advisement, possibly a slightly different measure. I'll include it but note scope/definition carefully. The passage says \"about 8,900 advisors overseeing $1.92 trillion\" - doesn't specify the metric exactly. I'll include as fact.\n\nLet me also consider the \"record quarterly client assets\" mention in RJF-TRADE-2026-11-12-WM-01#1: \"The firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels\". No figure. Could be a fact (statement without figure). I'll include as a fact item with value \"\".\n\nActually, that's a statement of \"record quarterly client assets\" without a specific figure. It's still a financial result reported. I could include it. But it duplicates the $1.87 trillion. I'll include it briefly or skip. I'll include it as a fact (no figure).\n\nLet me also check: is there anything about fiscal fourth-quarter earnings in 11-05-WM-01#0: \"recruited $538 million in trailing 12-month production... up from $407 million in the prior year. Those advisors represented more than $82 billion in client assets.\" This is same as item 9, 10.\n\nLet me finalize. I'll keep the list manageable but comprehensive.\n\nLet me decide periods more carefully:\n- Fiscal Q4 earnings figures: Raymond James fiscal year ends September 30. So fiscal Q4 2026 = July-Sept 2026. The earnings were reported late October. I could label period as F2026 for fiscal year items, but quarter items... I'll use \"2026Q3\" for calendar? No. \n\nI think the cleanest is: for \"fiscal year\" items use F2026, for \"quarter\" items leave \"\" since the exact quarter-end date isn't stated, though I could note \"fiscal fourth quarter\".\n\nActually, I realize I can note the period in text. The period field should reflect what's stated. For quarter-end client assets, the period is \"quarter-end\" without date - I'll leave \"\". For fiscal year items, F2026.\n\nLet me write everything out.\n\nFor the derivation field: not applicable, so operation \"\" and inputs [].\n\ndiffers_because: \"\" for fact items.\n\nreason: short sentence.\n\nLet me now write all items.\n\nI'll produce the cells now.\n\nFor label: fact (since many financial results are reported).\n\nLet me write concise reasons.\n\nNow, let me also reconsider whether the \"8,900 advisors\" and \"8,943 advisors\" are both facts. Yes.\n\nAlso \"no longer reports advisor headcount\" - this is a statement about what they report. It's relevant to the recency of financial results. I could note it but it's not a financial result figure. Actually it could be worth noting as a fact (they no longer report advisor headcount). But it's more of a reporting note. I'll skip or include briefly. Actually it clarifies the 8,900 figure. I'll include it in the text of the headcount item.\n\nLet me finalize items list with about 11 items.\n\nLet me write them out carefully with quotes.\n\nI need to be careful with quotes matching exactly.\n\nItem quotes:\n1. \"the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\" (from #1)\n\n2. \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\" - this covers two items. I'll split.\n\nFor item 2 (net revenue): quote \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year\"\nFor item 3 (pre-tax income): quote \"pre-tax income of $458 million, up 10% year-over-year.\"\n\n4. \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\n\n5. \"Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\n6. \"non-GAAP earnings per share of $3.59, beating analysts' expectations by $0.32\"\n\n7. \"revenue of $4.74 billion, up 13% year-over-year\"\n\n8. \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\n\n9. \"record 8,943 advisors - a 2% increase year-over-year\"\n\n10. \"recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year.\"\n\n11. \"Those advisors represented more than $82 billion in client assets.\"\n\n12. \"about 8,900 advisors overseeing $1.92 trillion\" from #1 of 10-16.\n\n13. \"record quarterly client assets\" (no figure) from 11-12.\n\nI think I'll include 12 and 13 as well. Maybe combine.\n\nActually let me limit to be thorough but not excessive. I'll include all meaningful financial figures.\n\nLet me write out the final submission.\n\nFor the $1.92 trillion item: text \"Raymond James most recently reported about 8,900 advisors overseeing $1.92 trillion.\" value could be two figures. I'll make it one item about advisors + assets? Better to separate or combine. The quote \"about 8,900 advisors overseeing $1.92 trillion\" - I'll treat value as \"$1.92 trillion\" unit \"client assets\" and mention advisors in text. Actually it's ambiguous. I'll make two items or one. I'll do one item with value \"$1.92 trillion\" unit \"assets under advisement/overseeing\" hmm.\n\nActually the passage from 10-16-WM-01#1: \"Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.\" The unit for $1.92 trillion isn't fully specified (assets under advisement vs administration). The preceding sentence says Janney has \"nearly $200 billion in assets under advisement\". So the parallel suggests $1.92 trillion is assets under advisement. I'll note that.\n\nI'll make item: value \"$1.92 trillion\", unit \"assets (advisors overseeing)\", period \"\", scope \"\".\n\nAnd separately the 8,900 advisors is already covered by item 8. So I'll just include the $1.92 trillion.\n\nLet me finalize.\n\nActually, to avoid over-complication, I'll write the $1.92 trillion as a separate fact item.\n\nTotal items ~12. That's fine.\n\nLet me write the text fields.\n\nI'll now produce the tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.RJF",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The passages report multiple financial results Raymond James disclosed during the window.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "quote": "the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year",
+            "value": "$1.87 trillion",
+            "unit": "client assets under administration",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "The Private Client Group reported record quarterly net revenue of $3.06 billion, up 15% year-over-year.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year",
+            "value": "$3.06 billion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "The Private Client Group reported pre-tax income of $458 million, up 10% year-over-year.",
+            "quote": "pre-tax income of $458 million, up 10% year-over-year",
+            "value": "$458 million",
+            "unit": "USD",
+            "period": "",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion",
+            "value": "more than $98 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%",
+            "value": "nearly $23 billion",
+            "unit": "USD",
+            "period": "",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported non-GAAP earnings per share of $3.59, beating analysts' expectations by $0.32.",
+            "quote": "non-GAAP earnings per share of $3.59, beating analysts' expectations by $0.32",
+            "value": "$3.59",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported revenue of $4.74 billion, up 13% year-over-year.",
+            "quote": "revenue of $4.74 billion, up 13% year-over-year",
+            "value": "$4.74 billion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out",
+            "value": "about 8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year.",
+            "quote": "As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year",
+            "value": "8,943",
+            "unit": "financial advisors",
+            "period": "F2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year.",
+            "quote": "recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year",
+            "value": "$538 million",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "recruited advisors entering domestic independent contractor and employee channels",
+            "definition": "trailing 12-month production",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Those recruited advisors represented more than $82 billion in client assets.",
+            "quote": "Those advisors represented more than $82 billion in client assets",
+            "value": "more than $82 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "recruited advisors",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James most recently reported about 8,900 advisors overseeing $1.92 trillion in assets.",
+            "quote": "Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion",
+            "value": "$1.92 trillion",
+            "unit": "assets under advisement",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-16-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James recently posted record quarterly client assets, without a stated figure in this passage.",
+            "quote": "The firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#1"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-10Q-2025Q3#92",
+    "BAC-10K-2025#244"
+  ],
+  "at": "2026-11-21T21:45:05.582473-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2136,
+    "output_tokens": 380,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 472,
+    "reasoning_tokens": 238,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.77
+  },
+  "wall_s": 5.05,
+  "tokens_per_s": 75.25,
+  "ttft_s": 1.77,
+  "reasoning_content": "Let me analyze the passages. The sub-question asks: \"What the firm's advisor headcount definition excludes\" for Merrill (MER).\n\nThe passages provided don't mention advisor headcount at all. They contain balance sheet/segment financial data and income statement data. There's a number \"322,924\" and \"323,735\", \"331,635\" which might be headcount but context is unclear - the chunk is fragmented. Actually \"322,924\" appears with footnote (1) and \"323,735\", \"331,635\" with footnote (2). These could be headcount figures but there's no definition of what's excluded.\n\nThe passages don't discuss advisor headcount definition or what it excludes. So the answer is not_found.\n\nActually wait, let me look. The first chunk has truncated columns. \"322,924\" could be number of full-time employees or financial advisors. But no definition of exclusions is given. The second chunk is income statement data, nothing about advisor headcount.\n\nSo the label is not_found - the passages say nothing about the advisor headcount definition's exclusions.\n\nThere are no items since not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain GWIM segment financial data and some headcount-like figures (e.g., 322,924, 323,735, 331,635) but no text describing how Merrill defines advisor headcount or what its definition excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

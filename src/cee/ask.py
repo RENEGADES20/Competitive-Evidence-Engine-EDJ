@@ -49,6 +49,9 @@ def union_hits(hits: list[Hit], matrix) -> list[Hit]:
 
 
 Progress = Callable[[str, str, str], None]
+# #272: on_event(kind, data) for the progressive Ask page: ("plan", {"text", "plan"}) once the plan is made,
+# ("evidence", {"call", "lines"}) as each map call lands (lines: evidence_lines), in the calling thread.
+Event = Callable[[str, dict], None]
 """progress(stage, state, text) for the Ask page trace (#80). stage is one of STAGES; state is
 "running", "done", "skipped" or "failed"; text says what the stage really did."""
 
@@ -92,11 +95,12 @@ def describe_query(q: Query) -> str:
 
 def ask(question: str, provider: str | None = None, log: bool = True,
         progress: Progress | None = None, filters: dict | None = None,
-        mode: str | None = None) -> Result:
+        mode: str | None = None, on_event: Event | None = None) -> Result:
     """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
     mode: retrieval mode, "fts" | "hybrid" | "hybrid-norerank" (#125, #126); None -> RETRIEVAL_MODE (default fts).
     Every mode plans the question the same way; the hybrid modes search its sub-questions through main's
-    loop with hybrid.search, and the map's re-search uses the same search (cee.retrieve.modes, #249)."""
+    loop with hybrid.search, and the map's re-search uses the same search (cee.retrieve.modes, #249).
+    on_event (#272): the plan, then each map call's cited evidence, as they are ready."""
     provider = provider or settings().llm_provider
     mode = resolve_mode(mode)
     t = _Trace(progress)
@@ -106,13 +110,15 @@ def ask(question: str, provider: str | None = None, log: bool = True,
     with t.stage("decompose", "Decomposing the question"):
         plan = plan_question(query, provider)
     t.report("decompose", "done", plan_text(plan))
+    if on_event is not None:
+        on_event("plan", {"text": plan_text(plan), "plan": plan})
     searching = f"Searching {_n(len(plan.subquestions), 'sub-question')}"
     with t.stage("search", searching):
         hits = search(query, mode=mode, plan=plan, as_of=dt.date.today())
     docs = len({h.doc_id for h in hits})
     t.report("search", "done", f"{searching}: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
                                + ("" if mode == "fts" else f" ({mode})"))
-    matrix = map_step(query, plan, hits, provider, t, mode)
+    matrix = map_step(query, plan, hits, provider, t, mode, on_event)
     every = union_hits(hits, matrix)
     info: dict = {}
     answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix, info=info)
@@ -160,7 +166,27 @@ def research_text(matrix, provider: str) -> tuple[str, str]:
                     f"{_n(len(remaps), 're-extraction')} ({who})")
 
 
-def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace, mode: str = "fts"):
+def evidence_lines(spec, cells) -> list[dict]:
+    """#272: one line per cited item of a map call's fact cells, for the Ask page while the answer is built.
+    Only items whose chunk ids passed the map's code check (parse_output keeps ids inside the cell's
+    retrieved set; others are in rejected_ids), so every line cites a stored, retrieved passage (rule 1)."""
+    by_id = {h.chunk_id: h for h in spec.hits}
+    out = []
+    for c in cells:
+        if c.effective_label != "fact":
+            continue
+        for i in c.items:
+            hits = [by_id[x] for x in i.chunk_ids if x in by_id]
+            if not hits:
+                continue
+            out.append({"cell": c.id, "entity": c.entity, "aspect": c.aspect_id,
+                        "text": " ".join(str(i.text or i.quote).split()), "value": i.value,
+                        "chunk_ids": [h.chunk_id for h in hits], "hits": hits})
+    return out
+
+
+def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace, mode: str = "fts",
+             on_event: Event | None = None):
     """#246: the map step (on by default since #247): extraction per firm, corrective re-search, the
     evidence matrix the reduce step writes the answer from. MAP=off: the legacy single answer call.
     #248: two trace stages, extract (round 1) and research (corrective re-search and round 2)."""
@@ -185,10 +211,15 @@ def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace
 
     t.report("extract", "running", running)
     try:
+        def on_call(spec, cells) -> None:   # #272: each map call's evidence, as it lands
+            lines = evidence_lines(spec, cells)
+            if lines and on_event is not None:
+                on_event("evidence", {"call": spec.id, "lines": lines})
+
         # exp/hybrid (#249): the re-search searches as the mode does; fts passes nothing (main's default)
         fn = search_fn(mode)
         matrix = run_map(query, plan, hits, provider, as_of=dt.date.today(), on_research=on_research,
-                         **({"search_fn": fn} if fn is not None else {}))
+                         on_call=on_call, **({"search_fn": fn} if fn is not None else {}))
     except Exception as e:
         stage = state["stage"]
         text = running if stage == "extract" else RESEARCH_RUNNING

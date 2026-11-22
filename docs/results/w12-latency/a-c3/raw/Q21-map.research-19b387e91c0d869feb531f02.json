@@ -1,0 +1,360 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "CERULLI-GWT-2025#24",
+    "CERULLI-GWT-2025#2",
+    "BOFA-PB-STUDY-2026#16",
+    "UBS-NEXTGEN-2026#6"
+  ],
+  "at": "2026-11-21T14:02:25.523613-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3293,
+    "output_tokens": 6150,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 2141,
+    "reasoning_tokens": 3823,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.91
+  },
+  "wall_s": 38.0,
+  "tokens_per_s": 161.84,
+  "ttft_s": 0.91,
+  "reasoning_content": "Let me analyze the passages. There are 4 chunks: CERULLI-GWT-2025#24, CERULLI-GWT-2025#2, BOFA-PB-STUDY-2026#16, UBS-NEXTGEN-2026#6.\n\nSub-questions each need a cell.\n\na1: estimated size and scale. Facts: $123.7 trillion to heirs and charities between now and 2048; $105 trillion to heirs, $18 trillion to charities; Gen X $39T, Millennials $46T; women Boomer+ $40T horizontal; younger women $47T. UBS: USD 83 trillion globally over next 2-3 decades. All facts.\n\na2: demographic trends. \"wealth more likely held by older households\", \"aging demographics, longer life expectancies\", women horizontal transfers, generational splits. Facts.\n\na3: net_new_assets metric \u2014 how firms prepare to retain assets. Research passages don't name firms' net new assets. The research talks about industry practices. No net new assets figures. Should be not_found? Or different_quantity? The sub-question asks how these firms prepare\u2014about named firms' own actions. Research is industry research, not firm docs. It speaks generally, not firm-specific. Hmm. The sub-question is about \"these firms\" preparation. Research passage CERULLI#24 says advisors/firms should... that's industry guidance, not firm-specific net new assets. No net new assets figure at all. So not_disclosed? not_found? The passages say nothing about net new assets. Actually metric net_new_assets \u2014 nothing about it. Label not_found seems right: the passages say nothing about it. But maybe different_quantity for wealth transfer? Hmm.\n\nWait, note the instruction: \"This sub-question marked [fact, metric net_new_assets]\". Perhaps research discusses retention. There's no net new assets. I'd say not_found.\n\nActually consider: \"not_disclosed: the passages show the firm does not report it (they say so, or they report the surrounding figures without it).\" There are no firm figures at all. not_found: passages say nothing about it. Since it asks about these firms' preparation metric, and research says nothing on net new assets \u2014 not_found.\n\na4: advisor succession/retirement. Research doesn't discuss aging advisor force explicitly. Not_found.\n\na5: products, services, platforms to attract next-gen. Research: \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" That's industry advice, not firm's offered products. Fact? The sub-question asks about \"these firms offer\". Research doesn't name any. Hmm. Could be not_found. But there is BOFA-PB-STUDY-2026#16 mentioning Bank of America Private Bank offering alternatives, trust and estate planning\u2014but that's a different firm (Bank of America Private Bank, not Merrill... though Merrill is part of BofA). Actually Merrill is a BofA subsidiary, but the passage names \"Bank of America Private Bank\" not Merrill. Hmm \u2014 Bank of America Private Bank is a different unit than Merrill. Per rules, a wider unit that contains the asked one? Merrill is a segment of BofA. The passage is about Bank of America Private Bank, which is a sibling of Merrill within BofA wealth management. Not the asked firm. So could be different_quantity (a different unit). But that's a stretch; the passage states products/services of a related but different entity.\n\nHmm, this is industry research task with named firms in question. The passages are \"industry research, not one firm's documents\". So for aspects about a named firm's own figure, it's different_quantity as an industry figure.\n\nFor a5, CERULLI#24 says home offices must provide expertise, investment products, and technology \u2014 that's industry-level. It's a fact for an aspect about the industry. But a5 asks what \"these firms offer\". Since research is industry research, a statement about what firms in general should offer... Hmm.\n\nI think the correct approach: the research applies to all sub-questions. For a5, the passage CERULLI#24 speaks about industry participants needing to provide expertise, investment products, technology \u2014 a general statement, not about named firms. The rule: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\" But a5 isn't a figure; it's qualitative. Since the passages describe industry practices generally, and no named firm's offering is described (except BofA Private Bank), I'd label not_found... but there is BOFA-PB mentioning services. However BofA Private Bank is not one of the five named firms (though Merrill is part of BofA). Hmm.\n\nActually maybe a5 fact: the industry research says firms must provide expertise, investment products, technology. And BofA Private Bank offers trust/estate planning, business succession, alternatives. But BofA Private Bank \u2260 Merrill. I'll treat it as different_quantity? Or not_found for these firms.\n\nLet me be pragmatic. Since these are research passages and not firm documents, and the question is about the five firms' offerings, and research describes industry in general, I'll mark a5 as fact with the general industry statements (CERULLI#24 and maybe BofA). Actually the BofA passage is a research study (BOFA-PB-STUDY-2026) \u2014 \"Research research\" - it's Bank of America Private Bank's own study document. Hmm, it's labeled source=\"Research research\". It describes BofA Private Bank. That's a Bank of America entity, related to Merrill.\n\nI'll handle carefully: For a5, items:\n- CERULLI#24: firms must provide expertise, investment products, and technology to win future HNW clients (industry, no figure, no period).\n- BOFA#16: Bank of America Private Bank offers trust and estate planning, business succession, family education, alternative investments \u2014 but that's BofA Private Bank, not the five firms. This is a different entity, so different_quantity? Actually it's about \"Bank of America Private Bank\" not Merrill. I'll include as fact but note scope, or different_quantity. Hmm.\n\nGiven ambiguity, I'll mark a5 as fact with the industry statement, plus BOFA item noted as different_quantity? A cell has one label. Let me label a5 fact with items including CERULLI#24 general and note BofA as separate. Actually I could put BofA item within a6 (family engagement) since it talks about multigenerational planning.\n\nLet me reconsider each sub-question and assign best-fit items from the 4 chunks.\n\na1: fact. Items: $123.7T total; $105T heirs; $18T charities; Gen X $39T; Millennials $46T; women Boomer+ $40T; younger women $47T; USD 83T global (UBS). All facts. That's a lot of items. I'll include several.\n\na2: fact. Items: wealth held by older households (CERULLI#2); aging demographics, longer life expectancies, rising asset prices (UBS#6); women horizontal transfers (CERULLI#2). \n\na3: net_new_assets \u2014 not_found (no firm reports). Actually the passages say nothing about net new assets. not_found.\n\nHmm, but a3 asks \"how do these firms prepare to retain assets and relationships as wealth passes\". The research CERULLI#24 talks about firms needing to shift strategies. That's qualitative, not net_new_assets metric. Since no net new assets figure, could be fact with qualitative statement? The metric is net_new_assets. No figure. I think not_found is safest for the metric.\n\nWait, but the question also has a general framing \"how do these firms prepare to retain assets\". Research passages don't name the firms. So not_found.\n\nActually, reconsider: The sub-questions are all \"how do these firms prepare...\" Research applies to all. The only firm-specific info is BofA Private Bank (a6). The research general statements (CERULLI#24) apply to aspects about the industry. Since the sub-question asks about \"these firms\", and research is industry-general, I think for qualitative sub-questions we can still use the industry statement as fact for the industry aspect. But the instructions say research figure is a fact for industry aspects.\n\nLet me just do: a3 = not_found (no net new assets disclosure), a4 = not_found (no advisor succession discussion), a5 = fact (industry: expertise, products, technology), a6 = fact (CERULLI: whole family; BofA: family education, cross-generation conversations), a7 = not_found? a7 asks strategic initiatives and leadership statements per firm. Research has no firm leadership statements except the quote \"we're equipping them\" from an executive (unnamed consultant). That's an executive statement about industry. Could be fact. Hmm, \"Positions others hold about the future (executives...) are facts when the passage attributes and dates them.\" The quote is attributed to \"An executive who consults with HNW-focused advisors on family governance planning.\" Not a firm leader. So maybe a7 not_found.\n\na8: series net_new_assets proxy \u2014 client assets and retention. No firm figures. Not_found.\n\na9: comparison \u2014 which firm most prepared. Research doesn't compare the five. Not_found.\n\nLet me settle.\n\nActually, let me reconsider whether research passages, being explicitly provided for all sub-questions, should yield facts for a3-a9 too. The task setup: the question is about the generational wealth transfer and these firms. But the provided passages are all industry research (no firm docs). So many sub-questions will be not_found/not_disclosed because the passages don't discuss the named firms. That's the point of the exercise \u2014 showing the research doesn't have firm-specific data.\n\nBut wait \u2014 a3-a9 say \"these firms\". Since passages are industry research and the note says \"for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure)\". But these sub-questions don't have firm figures; they're qualitative. The industry statements could be \"fact for an aspect about the industry\". Hmm. But the sub-question asks specifically about the firms. \n\nI think the cleanest: for qualitative \"how do these firms\" sub-questions, the research gives general industry guidance which is about the industry, not the firms. Since there's no firm-specific evidence, use not_found for firm-specific asks, but the industry guidance could be a different_quantity (industry figure, not firm's disclosure)? The rule \"different_quantity\" applies to figures. For qualitative, hmm.\n\nGiven the difficulty, I'll make reasonable calls:\n\na1: fact (multiple items)\na2: fact (multiple items)\na3: not_found \u2014 no passage states firm's net new assets retention data; research gives generic advice not firm-specific net new assets. Actually could be different_quantity? net_new_assets is the metric. There's zero figure. not_found.\n\nHmm, but actually maybe I should provide the CERULLI#24 statement as fact since it says firms must retain by shifting strategies. But the metric is net_new_assets. I'll do not_disclosed? \"passages show the firm does not report it (they report the surrounding figures without it)\". There are no surrounding firm figures. not_found better.\n\nLet me reconsider a4: advisor success/retirement. Research mentions \"advisors\" generally but not aging advisor force or succession. not_found.\n\na5: Products/services. I'll make this fact with two items: CERULLI#24 industry (expertise, investment products, technology) and BOFA#16 (BofA Private Bank services: trust/estate, succession, alternatives). But BOFA is not one of the 5 firms exactly (Merrill is a BofA unit). I'll include BOFA as a separate item with scope \"Bank of America Private Bank\" \u2014 but the firm is \"Industry research\" and named firms include Merrill. BofA Private Bank is different from Merrill. I'll note scope. Actually to be safe, mark a5 fact with CERULLI item only, and mention BofA in a6.\n\nHmm but BOFA#16 explicitly answers products/services and multigenerational planning. Let me put BOFA in both a5 and a6 as fact with scope \"Bank of America Private Bank\". The rule about different_quantity is for figures; qualitative statements about a related entity... I'll just present as fact with scope clearly stated. Actually including BofA Private Bank statement as \"these firms\" is questionable but it's the closest evidence. I'll present it and note scope.\n\nLet me structure:\n\na5: fact\n- item 0: Home offices must support advisors with expertise, investment products, technology to win future HNW clients (CERULLI#24). \n- item 1: BofA Private Bank offers trust/estate planning, business succession, family education, alternatives (BOFA#16). scope: Bank of America Private Bank.\n\na6: fact\n- item 0: Advisors must see client as entire family; equipping to serve whole family (CERULLI#24) - executive quote.\n- item 1: BofA Private Bank facilitates conversations across generations (BOFA#16).\n\na7: strategic initiatives/leadership statements per firm. Research: no firm-specific strategic initiatives. The executive quote in CERULLI#24 is a leadership-ish statement but unnamed consultant. Hmm. a7 asks \"each firm's commitment\". Not_found. But there's \"we're equipping them to shift to that mindset\" \u2014 an executive consulting. Could be a fact qualifying as executive statement. I'll mark a7 not_found because no firm-specific strategic initiative/leadership statement. Actually the instruction says positions of executives are facts when attributed and dated. This quote is attributed to \"An executive who consults with HNW-focused advisors on family governance planning\" but not dated and not a firm. I'll put it maybe as fact? It's about advisors generally. I'll mark not_found for a7 (no firm-specific).\n\nHmm, but to be safe and not leave empty, maybe a7 fact with the executive quote? The sub-question is about \"each firm's commitment\". Research has none. not_found.\n\na8: series client assets/retention proxy. No firm figures. not_found.\n\na9: comparison. not_found.\n\nLet me reconsider a3 and a4 once more. Given the research explicitly advises on these themes (CERULLI#24: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning\"; \"Home offices must support their advisors\"). This is about retaining relationships. For a3 (net_new_assets metric), no figure. not_found.\n\nFor a4 (advisor_headcount metric), no figure. not_found.\n\nOK. But maybe not_disclosed is better? No\u2014not_disclosed implies the passages show the firm doesn't report. Here passages never mention the firms. not_found.\n\nNow values. Let me write items for a1 and a2 carefully.\n\na1 items:\n0: Cerulli projects households will transfer $123.7 trillion to heirs and charities between now and 2048. value 123.7, unit USD trillion? The value \"123.7\" unit \"trillion USD\". Hmm unit should be what counted: \"USD trillion\". I'll set value \"123.7\" unit \"USD trillion\". Period: covers now to 2048 \u2014 period \"\" maybe or \"2025-2048\". The schema period format is a point/quarter/year. I'll leave \"\" since it's a projection range. Actually could put \"\" .\n1: $105 trillion to heirs. value 105.\n2: $18 trillion to charities. 18.\n3: Generation Xers $39 trillion. 39.\n4: Millennials $46 trillion. 46.\n5: Women in Baby Boomer and older generations receive $40 trillion horizontal transfers. 40.\n6: Women in younger generations $47 trillion of wealth transferred intergenerationally. 47.\n7: UBS: USD 83 trillion in private wealth will change hands globally over next two to three decades. 83.\n\na2 items:\n0: Wealth is more likely to be held by older households. no figure.\n1: Wealth transfer driven by aging demographics, longer life expectancies, decades of rising asset prices (UBS). no figure.\n2: Horizontal transfers to women in Baby Boomer+ generations ($40 trillion) as they outlive husbands; younger women $47 trillion intergenerational. (could reuse)\nActually a2 demographic characteristics: I'll include item about women horizontal transfers, item about older households, item about aging demographics/longevity.\n\nLet me finalize quote texts (\u2264300 chars).\n\nFor period, most are \"\". I'll use \"\" per \"when not stated\".\n\nNow write the tool call.\n\nFor a5 BofA item, period \"\" scope \"Bank of America Private Bank\".\n\nLet me write.\n\nFor a6 CERULLI quote: \"Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\" attributed to an executive. Fine.\n\nAlso CERULLI#24 has \"Advisors should be fully aware... involved in their clients' intergenerational planning.\" That's a6 too maybe. I'll add.\n\nLet me produce final cells with reasons.\n\nDerivation empty for all.\n\nFor not_found cells, items = [], differs_because \"\", derivation operation \"\" inputs [].\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli projects households will transfer $123.7 trillion to heirs and charities between now and 2048.",
+            "quote": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "value": "123.7",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "households, industry study",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Of the projected transfer, $105 trillion goes to heirs.",
+            "quote": "households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion)",
+            "value": "105",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "heirs",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Of the projected transfer, $18 trillion goes to charities.",
+            "quote": "to heirs ($105 trillion) and charities ($18 trillion) between now and 2048",
+            "value": "18",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "charities",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Generation Xers are expected to inherit $39 trillion.",
+            "quote": "Generation Xers $39 trillion and Millennials $46 trillion",
+            "value": "39",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "Generation X",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Millennials are expected to inherit $46 trillion.",
+            "quote": "Generation Xers $39 trillion and Millennials $46 trillion",
+            "value": "46",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "Millennials",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Women in the Baby Boomer and older generations are expected to receive $40 trillion in horizontal transfers as they outlive their husbands.",
+            "quote": "women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands",
+            "value": "40",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "women in Baby Boomer and older generations",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally.",
+            "quote": "women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally",
+            "value": "47",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "women in younger generations",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "UBS estimates USD 83 trillion in private wealth will change hands globally over the next two to three decades.",
+            "quote": "Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally",
+            "value": "83",
+            "unit": "USD trillion",
+            "period": "",
+            "scope": "global private wealth",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Multiple passages give projected sizes of the generational wealth transfer, in total and by heir group; these are facts as stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Wealth has been created and concentrated at a rapid pace and is now more likely to be held by older households.",
+            "quote": "Wealth has been created and concentrated at a rapid pace in recent years and now is more likely to be held by older households.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "industry",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "The transfer is driven by aging demographics, longer life expectancies and decades of rising asset prices.",
+            "quote": "Driven by aging demographics, longer life expectancies and decades of rising asset prices, this shift is set to reshape the wealth landscape as we know it.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "global",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          },
+          {
+            "text": "Part of the transfer is 'horizontal': women in the Baby Boomer and older generations outlive their husbands and inherit, while women in younger generations receive intergenerational wealth.",
+            "quote": "women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands. Meanwhile, women in younger generations are expected to receive $47 trillion",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "women, by generation",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "The next generation coming of age is characterized by global mobility, rapid technological change, and evolving expectations around purpose and impact.",
+            "quote": "Tomorrow's leaders and investors are coming of age in a world characterized by global mobility, rapid technological change, and evolving expectations around purpose and impact.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "next generation globally",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages describe the demographic drivers and generational characteristics of the wealth transfer as stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states a firm's net new assets or retention figures; only generic industry guidance is given.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "Passages do not discuss advisor succession, retirement, or advisor headcount for any firm.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "The research states home offices must support advisors by providing the expertise, investment products, and technology required to win future HNW clients.",
+            "quote": "Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "industry",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Bank of America Private Bank offers trust and estate planning, business succession strategies, family education, and access to alternative investments.",
+            "quote": "Bank of America Private Bank helps families plan for longevity and wealth transfer through trust and estate planning, business succession strategies, and family education.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Bank of America Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#16"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages describe the products/services recommended and one named entity's offerings as stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "An executive advises that advisors must see the client as the entire family and is equipping them to serve the whole family.",
+            "quote": "Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\"",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "HNW-focused advisors (consultant view)",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Advisors should be thoroughly involved in their clients' intergenerational planning.",
+            "quote": "Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "industry",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Bank of America Private Bank advisors facilitate conversations across generations to align financial plans with family values.",
+            "quote": "Advisors facilitate conversations across generations to align financial plans with family values, helping clients preserve wealth, prepare heirs, and plan for extended lifespans.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Bank of America Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#16"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages describe multi-generational engagement and whole-family planning as stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage contains a firm-specific strategic initiative or leadership statement about capturing the wealth transfer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses client assets or retention figures for any firm as a proxy for wealth transfer capture.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages do not compare the named firms' preparedness; no firm-level comparison is stated.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

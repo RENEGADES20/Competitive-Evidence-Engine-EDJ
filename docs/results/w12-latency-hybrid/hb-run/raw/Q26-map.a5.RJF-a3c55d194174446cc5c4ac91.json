@@ -1,0 +1,82 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a5.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-08-19-IN-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-23-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3"
+  ],
+  "at": "2026-11-21T20:48:44.098693-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10887,
+    "output_tokens": 479,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9351,
+    "reasoning_tokens": 345,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.92
+  },
+  "wall_s": 6.2,
+  "tokens_per_s": 77.26,
+  "ttft_s": 2.92,
+  "reasoning_content": "The sub-question asks about management or leadership changes Raymond James has announced. I need to look through the passages for any management/leadership changes.\n\nLet me scan the passages. Most are about advisor recruitment (advisors joining/leaving), not management/leadership changes.\n\nLooking for executive/leadership changes: CEO, president, division heads, board, etc.\n\nChunk RJF-TRADE-2026-11-12-WM-01 mentions Stephen Kruchten, president of FID. But no change announced.\n\nRJF-TRADE-2026-10-23-WM-01: \"Stephen Kruchten currently serves as the division's president.\" No change.\n\nRJF-TRADE-2026-11-06-IN-01#3: Ameriprise CEO Jim Cracchiolo - not RJF.\n\nNone of these passages announce a management or leadership change at Raymond James. The passages are about advisor moves and product launches.\n\nSo the answer is not_found - no passages state any management/leadership change.\n\nWait, let me double check. \"Massey, senior vice president of wealth management\" - that's about a team joining, describing team members' titles, not leadership changes at RJF.\n\nThe question is \"What management or leadership changes has Raymond James announced?\" This refers to changes in the firm's own management/leadership (executives, division presidents, etc.).\n\nNo passage announces any such change. So label not_found.\n\nActually, let me consider if advisor departures/arrivals count as \"management or leadership changes\" - no, those are advisor moves, not firm leadership changes.\n\nSo the cell is not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages cover advisor recruitment/departures, product launches, and business-unit descriptions, but none announce a management or leadership change (executive, division president, or board) at Raymond James itself.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

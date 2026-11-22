@@ -854,3 +854,15 @@ def test_hard_filters_in_hybrid_mode_on_the_database(rerank):
         else:
             assert all(h.date_basis == "source" and lo.isoformat() <= h.published_at <= hi.isoformat()
                        and h.doc_type != "adv" for h in hits)
+
+
+def test_query_embedding_time_is_counted(monkeypatch):
+    """#272: embed_query adds its time and a count to QUERY_STATS (the eval's embed_s)."""
+    from types import SimpleNamespace
+
+    from cee.retrieve import embed
+    import numpy as np
+    monkeypatch.setattr(embed, "model", lambda: SimpleNamespace(query_embed=lambda q: iter([np.zeros(3)])))
+    monkeypatch.setattr(embed, "QUERY_STATS", {"calls": 0, "s": 0.0})
+    assert embed.embed_query("advisor payout") == [0.0, 0.0, 0.0]
+    assert embed.QUERY_STATS["calls"] == 1 and embed.QUERY_STATS["s"] >= 0

@@ -1,0 +1,80 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.SCHW.b2",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-10Q-2025Q2#22",
+    "SCHW-TR-2025Q4#3",
+    "SCHW-PR-2026-07-21-01#43",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-DECK-2026Q2#8",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-DECK-2026Q1#8",
+    "SCHW-10Q-2026Q1#16",
+    "SCHW-TR-2025Q2#3",
+    "SCHW-PR-2026-01-21-01#41",
+    "SCHW-10Q-2025Q2#16",
+    "SCHW-10Q-2025Q3#16",
+    "SCHW-DECK-2026Q3#52",
+    "SCHW-10Q-2026Q2#16",
+    "SCHW-DECK-2026Q3#19",
+    "SCHW-PR-2026-04-16-01#41",
+    "SCHW-TR-2024Q4#7",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#229",
+    "SCHW-10K-2025#114",
+    "SCHW-TR-2025Q4#71",
+    "SCHW-PR-2026-04-16-01#48",
+    "SCHW-10Q-2025Q3#25",
+    "SCHW-PR-2026-01-21-01#55",
+    "SCHW-PR-2026-01-21-01#59",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-TR-2025Q2#15",
+    "SCHW-TR-2025Q4#16"
+  ],
+  "at": "2026-11-21T15:02:23.620063-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8671,
+    "output_tokens": 1566,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7135,
+    "reasoning_tokens": 1420,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.56
+  },
+  "wall_s": 12.67,
+  "tokens_per_s": 123.6,
+  "ttft_s": 1.56,
+  "reasoning_content": "Let me analyze the sub-question: a2.SCHW asks for Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client [proxy].\n\nLooking at the passages, none disclose an actual client acquisition cost figure. The passages discuss new brokerage accounts, core net new assets, client accounts, scale/efficiency initiatives, cost to serve clients low, etc.\n\nThe closest disclosed figure? There's a mention of \"keeping our cost to serve them low\" but no actual figure. There's no dollar figure for acquisition cost per new client.\n\nLet me think about what could be the \"closest disclosed figure indicating cost per new client.\" The passages mention \"cost to serve\" but no number. There's \"total expenses excluding interest\" figures but those are broader.\n\nActually, none of the passages disclose a client acquisition cost or cost per new client. There's no related quantity like marketing expense, or CAC.\n\nThe passages do mention \"scale and efficiency initiatives will continue to fuel our ability to invest in our clients while keeping our cost to serve them low\" - but no figure.\n\nSo the answer is likely not_found - the passages say nothing about client acquisition cost.\n\nWait, but there might be a different_quantity consideration. The \"total expenses excluding interest\" of $3.1 billion is a different measure (total expenses, not acquisition cost). But that's not really a proxy for cost per new client. Also new brokerage accounts counts are disclosed, but those are the denominator, not cost.\n\nActually, the sub-question is marked [proxy], meaning a stand-in figure like total client assets or count of financial advisors could be a fact. But the named quantity is \"client acquisition cost or the closest disclosed figure indicating cost per new client.\"\n\nHmm. Let me think. There's no figure for cost per new client anywhere. The \"total expenses excluding interest\" could be a numerator but it's total expenses not acquisition cost - that would be a different_quantity.\n\nActually I think the honest answer is not_found: the passages say nothing about client acquisition cost or cost per new client.\n\nLet me check the passages again for anything about marketing or acquisition expense. No. There's \"total expenses excluding interest were $3.1 billion\" which is a different, related quantity (all expenses, not client acquisition cost). But that's quite a stretch as \"closest disclosed figure indicating cost per new client.\"\n\nThe sub-question is [proxy], which suggests they expect some proxy figure. But the instructions say \"a different measure ... is different_quantity.\"\n\nLet me consider: is \"total expenses excluding interest\" a reasonable proxy? It's total operating expenses, not acquisition cost. That's a different measure. It could be a different_quantity with differs_because \"total operating expenses for the whole firm, not specifically client acquisition cost.\"\n\nBut actually, is there any closer figure? The \"cost to serve\" is mentioned qualitatively but no figure. No marketing/advertising expense figure.\n\nI think the most defensible answer is not_found, since no passage discloses client acquisition cost or a figure indicating cost per new client.\n\nActually wait - let me reconsider. The question is about how Schwab utilizes scale to cheaply acquire clients. The closest figure might be \"cost to serve\" but no figure given.\n\nGiven the passages, I'll go with not_found. There is no client acquisition cost disclosed, nor any figure that would serve as a proxy (like marketing expense per new client).\n\nActually, let me reconsider the \"total expenses excluding interest\" as different_quantity. The instructions say: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one... a different measure...\"\n\nTotal expenses excluding interest is a wider/different measure than client acquisition cost. It's arguably \"a different measure.\" But is it \"the closest disclosed figure indicating cost per new client\"? The proxy instruction says \"a sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure...).\"\n\nThe sub-question says \"Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client.\" So the \"closest disclosed figure indicating cost per new client\" - could be total expenses (numerator) divided by new accounts (denominator). But that's not what the firm reports as a single figure.\n\nHmm, this is getting complicated. I think the cleanest is: the firm does not disclose client acquisition cost. The passages show total expenses figures but no acquisition cost. So not_disclosed or not_found?\n\n\"not_disclosed: the passages show the firm does not report it (they say so, or they report the surrounding figures without it).\"\n\nThe passages report surrounding figures (new accounts, total expenses) but no acquisition cost. But they don't explicitly say \"we don't report acquisition cost.\"\n\nActually, I think the best answer is not_found because the passages simply don't say anything about client acquisition cost or cost per new client. They report new brokerage accounts and total expenses, but those are not presented as \"cost per new client.\"\n\nActually, let me reconsider whether \"total expenses excluding interest\" should be a different_quantity item. It's a related quantity (a cost measure) but very different from client acquisition cost. I think I could include it as different_quantity, but it's quite a stretch and might be misleading.\n\nGiven the strict instructions (\"never estimate, never compute a figure\", \"Only the quantity a sub-question names is a fact\"), and that no passage gives any cost-per-client figure, I'll go with not_found.\n\nActually, wait. Let me re-read: the sub-question is about \"cost per new client.\" The passages give \"new brokerage accounts\" (denominator) and \"total expenses excluding interest\" (a cost, but total). Neither is \"cost per new client.\"\n\nI'll go with not_found as the cleanest answer. But let me think if there's value in noting the total expenses as different_quantity.\n\nThe reason field should explain. I think not_found is most accurate: \"The passages discuss new brokerage accounts, net new assets, and scale/efficiency initiatives, but none disclose a client acquisition cost or any cost-per-new-client figure.\"\n\nActually, I'll consider adding a different_quantity for \"total expenses excluding interest\" since that is arguably the closest disclosed cost figure. But it's total expenses, not acquisition cost, and doesn't relate specifically to new clients.\n\nI think the cleanest and most defensible is not_found. The instructions emphasize being careful: \"A figure of a different measure than the one named ... is different_quantity.\" But here the \"named\" quantity is \"client acquisition cost or closest disclosed figure indicating cost per new client.\" There's no figure indicating cost per new client at all.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages disclose a client acquisition cost or any figure indicating cost per new client; they report new brokerage account counts, net new assets, and qualitative statements about scale/efficiency keeping cost to serve low, but no cost-per-client or acquisition-cost metric.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

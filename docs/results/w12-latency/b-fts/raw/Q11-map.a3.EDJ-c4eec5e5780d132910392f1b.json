@@ -1,0 +1,86 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q3#54",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#47",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2026Q1#0",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#41",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#276"
+  ],
+  "at": "2026-11-21T14:59:26.263651-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10410,
+    "output_tokens": 532,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 8874,
+    "reasoning_tokens": 387,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.03
+  },
+  "wall_s": 6.5,
+  "tokens_per_s": 81.85,
+  "ttft_s": 2.03,
+  "reasoning_content": "The sub-question a3.EDJ asks: What the firm's advisor headcount definition includes.\n\nI need to find any passage that defines what the advisor headcount includes. Let me look through the passages.\n\nLooking at the passages, I see many references to \"Financial advisors (actual): At period end\" and \"Average\" figures. But do any passages define what \"financial advisors\" includes?\n\nThere's a passage about \"Attrition %\" definition: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nThat's about attrition, not the headcount definition itself.\n\nNone of the passages actually define what the advisor headcount includes or excludes. The passages describe financial advisor training programs, legal proceedings, various business segments, etc.\n\nLet me check the passage EDJ-10K-2025#29 about onboarding program - it mentions \"financial advisor trainees\" but doesn't define the headcount.\n\nActually, there's no passage that defines what the advisor headcount includes. So the answer should be not_found.\n\nWait, let me reconsider. The sub-question is specifically about \"what the firm's advisor headcount definition includes.\" None of the passages provide a definition of what's included in the advisor headcount.\n\nThe passages do report the headcount figures (\"Financial advisors (actual)\"), but they don't define what's included.\n\nSo the label should be not_found, since nothing defines what's included.\n\nActually, let me think more carefully. There's the attrition definition which mentions \"financial advisors that left or retired\" but that's about attrition, not headcount definition.\n\nThe onboarding passage mentions \"financial advisor trainees\" - could suggest that trainees are separate from financial advisors, but doesn't define the headcount.\n\nI'll go with not_found.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages report financial advisor headcount figures (actual, at period/year end, and average, split between U.S. and Canada) and define the Attrition % metric, but none of the passages states what the advisor headcount definition includes or excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

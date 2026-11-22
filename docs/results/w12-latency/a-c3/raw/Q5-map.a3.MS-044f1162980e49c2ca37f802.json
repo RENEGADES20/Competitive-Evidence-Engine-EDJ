@@ -1,0 +1,148 @@
+{
+  "question_id": "Q5",
+  "question": "Where is Morgan Stanley investing in technology for its advisors?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.MS",
+  "round": 1,
+  "entity": "MS",
+  "cells": [
+    "a3.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MS-10K-2025#76",
+    "MS-10Q-2026Q2#524",
+    "MS-TR-2026Q2#7",
+    "MS-10K-2025#111",
+    "MS-10Q-2026Q1#79",
+    "MS-TR-2026Q1#6",
+    "MS-10K-2025#372",
+    "MS-TR-2025Q1#73",
+    "MS-TR-2026Q3#8",
+    "MS-TR-2024Q4#98",
+    "MS-TR-2025Q4#21",
+    "MS-TR-2025Q3#84",
+    "MS-TR-2026Q2#37",
+    "MS-TR-2026Q2#38",
+    "MS-TR-2026Q3#42",
+    "MS-TR-2026Q1#64",
+    "MS-TR-2026Q1#65",
+    "MS-TR-2026Q3#89",
+    "MS-TR-2024Q4#18",
+    "MS-TR-2025Q1#12",
+    "MS-TR-2024Q4#25",
+    "MS-TRADE-2026-08-22-RB-01#2",
+    "MS-PR-2026-10-14-01#5",
+    "MS-TR-2026Q1#44",
+    "MS-10K-2025#25",
+    "MS-DECK-2026-strategic-update#10",
+    "MS-TR-2025Q4#8",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2026Q1#41",
+    "MS-TRADE-2026-11-15-AH-01#0",
+    "MS-TRADE-2026-10-26-IN-01#0",
+    "MS-TRADE-2026-10-01-IN-01#2",
+    "MS-TRADE-2026-10-27-IN-01#2",
+    "MS-TRADE-2026-08-26-RB-01#4",
+    "MS-TRADE-2026-08-22-RB-01#11",
+    "MS-TRADE-2026-08-22-RB-01#3",
+    "MS-TRADE-2026-10-26-IN-01#2",
+    "MS-DECK-2026-strategic-update#32",
+    "MS-SUPP-2026Q3#37",
+    "MS-DECK-2026-strategic-update#28",
+    "MS-SUPP-2026Q2#16",
+    "MS-SUPP-2026Q1#14",
+    "MS-TR-2025Q1#8",
+    "MS-SUPP-2025Q4#36",
+    "MS-TR-2026Q1#43",
+    "MS-SUPP-2026Q3#16",
+    "MS-TR-2026Q2#5",
+    "MS-SUPP-2020Q4#1",
+    "MS-TRADE-2026-10-26-IN-01#1",
+    "MS-TRADE-2026-11-15-AH-01#1",
+    "MS-TRADE-2026-11-04-RB-01#11",
+    "MS-TRADE-2026-10-26-IN-01#4",
+    "MS-TRADE-2026-10-21-IN-01#2",
+    "MS-TRADE-2026-08-22-RB-01#10",
+    "MS-TRADE-2026-08-24-IN-01#0",
+    "MS-TR-2026Q3#49",
+    "MS-10K-2025#92",
+    "MS-10K-2025#79",
+    "MS-TR-2026Q3#35"
+  ],
+  "at": "2026-11-21T13:50:05.682823-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18616,
+    "output_tokens": 3502,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 18616,
+    "reasoning_tokens": 3019,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.06
+  },
+  "wall_s": 19.28,
+  "tokens_per_s": 181.64,
+  "ttft_s": 1.06,
+  "reasoning_content": "We need answer one cell for sub-question a3.MS: \"Artificial intelligence and automation initiatives directed at advisors\". Need extract evidence from passages about MS investing in technology for advisors, specifically AI and automation initiatives directed at advisors. Need label fact/different_quantity/not_disclosed/not_found. We have many passages, some irrelevant. Need identify relevant passages.\n\nRelevant likely:\n- MS-TR-2025Q3#8: \"Our early AI use cases, some live and some in pilot, are showing progress. These include the DevGen AI tool... Parable... LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" This directly mentions AI initiative directed at facilitating engagement with financial advisors. Fact? It names AI tool LeadIQ and purpose. It's an initiative. But sub-question asks \"Artificial intelligence and automation initiatives directed at advisors\" likely qualitative evidence, not a numerical quantity. We can provide item text and quote. Fact.\n- MS-TR-2026Q1#43: \"co-piloting... Jed Finn under leadership... corridors or super agents... efficiency and effectiveness across the portfolio in wealth.\" Directly AI directed at wealth advisors? It says financial adviser and client historical context; co-piloting; super agents in wealth. Fact? It's qualitative, no figure. Yes.\n- MS-TR-2026Q1#44: \"client agent inside electronic trading platform\" and \"best trusted advisers\" - maybe AI for advisors? It says complex questions answered by client agent inside electronic trading platform; advisory? Might be relevant but more broad.\n- MS-TR-2025Q1#73: \"ongoing investments in automation, AI, and assessing where we want our people...\" mentions automation/AI but not specifically directed at advisors; headcount XFAs. Could be different_quantity? The question asks initiatives directed at advisors. This passage is about workforce and automation, not advisor-directed. Maybe not_found for that specific. But we need one cell overall; we can include relevant items. If there is direct evidence, label fact.\n- MS-TR-2025Q4#21: \"leveraging technology to improve automation and facilitate the client acquisition openings, as well as increasing education with our advisors and our clients.\" This mentions technology/automation and advisors, but not AI specifically? Sub-question says AI and automation initiatives directed at advisors. This is automation directed at client acquisition/education with advisors. Relevant fact.\n- MS-TR-2026Q1#41: question about AI feature announcements, automation tools, implications on wealth. Not answer from firm, just question. Not evidence.\n- MS-TR-2026Q3#42: \"AI tools that salespeople can use\" in equities, not advisors. Different scope. Maybe different_quantity? It is AI tools for salespeople, not advisors. But we already have direct facts.\n- MS-TR-2026Q3#8: \"invest across our technology stack, embracing AI tools to support our infrastructure, business growth and people\" general, not advisors. Could be fact for broad AI investment but not directed at advisors.\n- MS-TR-2026Q1#65: Anthropic Mythos model, cyber, not advisors.\n- MS-PR-2026-10-14-01#5: \"higher technology spend\" in wealth management, but not specifically AI/automation directed at advisors. Different quantity? It's technology spend. Not amount. No figure.\n- MS-DECK-2026-strategic-update#10: \"Market Leading Platform to Power Growth for Financial Advisors\" heading only, no detail.\n- MS-TR-2025Q4#8: \"growth plans embed increasing adoption of AI tools throughout enterprise and inside client base\" broad, not advisors specifically.\n- MS-TR-2026Q3#49: overweight AI in wealth, OpenAI, wealth manager/asset allocator/banker; broad.\n- MS-TR-2026Q3#35: protect client assets, technology helps early work, financial advisers; broad.\n- MS-10K-2025#25: Wealth Management technology supporting evolving client needs including generative AI. Fact? It's general, not initiative directed at advisors. Could be.\n- MS-TR-2026Q1#41 question mentions \"investing for a number of years\" but not answer.\n- MS-TR-2025Q4#21 is direct.\n\nNeed decide how many items. Sub-question asks \"Artificial intelligence and automation initiatives directed at advisors\" likely expects qualitative initiatives. We can return fact with multiple items each quote. Label fact. No numerical value, unit, period maybe 2025Q3, 2026Q1 etc. If no figure, period blank? The item says period \"YYYY-MM-DD\" for point in time, \"YYYYQn\" for quarter; \"\" when not stated or no figure. But for statements, maybe period if passage period? The transcript period is 2025-09-30. Since it's not a quantity but initiative, maybe period of statement should be transcript quarter. The instructions: period when not stated or no figure -> \"\". But positions/executives future etc. Hmm. For qualitative fact, period can be the period of the transcript. I'll set period to the passage period (e.g., 2025Q3, 2026Q1) because it dates the statement; but \"when no figure\" says \"\". To be safe, for qualitative items no figure, period can be transcript quarter? It says period \"\" when not stated or no figure. It is stated in source. But sub-question recency; likely they want recency. I'll set period to transcript period as it dates initiative/statement, e.g., 2025Q3, 2026Q1. Scope: maybe Wealth Management or financial advisors. Unit/value empty.\n\nNeed ensure quote max ~300 chars exact. Use exact words. Chunk ids only listed.\n\nPotential items:\n1. LeadIQ: text: \"Morgan Stanley said LeadIQ, its AI-powered lead distribution platform, focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.\" Quote: \"LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" chunk MS-TR-2025Q3#8, value \"\", unit \"\", period \"2025Q3\", scope \"Wealth Management / financial advisors\", definition \"\".\n2. Co-piloting/super agents: text: \"Morgan Stanley said it is developing co-piloting 'super agents' in wealth to use historical context between financial advisers and clients to drive efficiency and effectiveness across portfolios.\" Quote: \"what about the effectiveness where you can have the historical context as between the financial adviser and the client ... And so that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.\" That quote maybe >300 chars. Need shorter: \"And so that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.\" ~300? Let's count maybe 294. Good.\n3. Automation and client acquisition/education with advisors: text: \"Morgan Stanley said it is leveraging technology to improve automation and facilitate client acquisition openings, along with increasing education with its advisors and clients.\" Quote: \"Growth reflects our efforts to deepen client penetration with SBLs, leveraging technology to improve automation and facilitate the client acquisition openings, as well as increasing education with our advisors and our clients.\" chunk MS-TR-2025Q4#21, period 2025Q4, scope maybe Wealth Management lending? Value empty.\n4. Maybe generic: \"AI tools to support infrastructure, business growth and people\" not advisors. Could label different_quantity? No need.\n5. Maybe 10-K: \"technology supporting evolving client needs, including generative artificial intelligence\" in Wealth Management. It's a risk/competition statement, not initiative. Could be fact for technology investment? It says ability to compete affected by technology supporting evolving client needs including gen AI. Not directed at advisors. Maybe not include.\n\nNeed maybe include a different_quantity item for technology spend? The sub-question asks initiatives, no numeric. If passages have \"higher technology spend\" but no amount, not a quantity. Hmm.\n\nCould label fact with items. Need reason.\n\nBut ensure not accidentally mark not_found because direct. Label fact.\n\nCould include MS-TR-2026Q1#44: \"client agent inside of electronic trading platform\" and best trusted advisers. This is AI for client/advisor? Text: \"Morgan Stanley described a client agent inside its electronic trading platform that can answer complex technical questions, alongside its trusted advisers.\" But this is directed at clients/institutional equities, not advisors. Not include.\n\nCould include MS-TR-2026Q1#43 direct.\n\nNeed perhaps include \"AI use cases ... DevGen, Parable, LeadIQ\" as one item. LeadIQ only directed at advisors; DevGen developer, Parable data analysis. Could mention only LeadIQ. Maybe phrase \"Among early AI use cases, LeadIQ is directed at facilitating engagement with financial advisors.\" Good.\n\nCould include \"co-piloting\" item.\n\nCould include \"automation and client acquisition\" item.\n\nNeed exactly one cell with subquestion_id a3.MS. Items array. Label fact. differs_because empty. Derivation empty.\n\nNeed maybe if the sub-question asks \"Where is Morgan Stanley investing in technology for its advisors?\" It's asking location/business. Evidence in wealth management. We don't answer question, just evidence.\n\nNeed include quotes exact. Ensure chunk ids exactly.\n\nLet's format.\n\nNeed maybe include item for \"We continue to invest across our technology stack, embracing AI tools to support our infrastructure, business growth and people\" but this is broad and not advisors. If we include as different_quantity, differs_because \"firm-wide technology/AI investment, not advisors specifically.\" But question asks initiatives directed at advisors. Since we have direct facts, we don't need different_quantity. But maybe code expects all evidence? The instructions say extract evidence about one firm from passages; one cell for each sub-question. Items can include relevant facts. Not mandatory all. But should include all relevant. The broad one maybe not.\n\nMaybe include \"Wealth Management business ... technology supporting evolving client needs, including generative artificial intelligence\" as a fact? It is not an initiative but says technology supporting client needs. It's a factor. Could include as context. But \"initiatives directed at advisors\" not exactly; it's clients. I'd skip.\n\nLet's ensure item text \"Morgan Stanley said...\" attributed.\n\nFor period: transcript period 2025-09-30 -> \"2025Q3\" per calendar quarter. For 2026Q1 -> \"2026Q1\". For 2025Q4 -> \"2025Q4\". Scope: \"Wealth Management\" or \"financial advisors\". The LeadIQ scope \"Wealth Management / financial advisors\" maybe okay. Co-piloting scope \"Wealth Management\". Automation scope \"Wealth Management, securities-based lending\" or \"Wealth Management\". The passage is company rep talking bank lending balances, maybe wealth. Use \"Wealth Management\".\n\nNeed no values. Definition blank.\n\nCheck quote exact:\nLeadIQ quote from chunk: \"These include the DevGen AI tool, which enhances developer efficiency by modernizing code, Parable, an interactive tool that quickly analyzes and summarizes data, and LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" We can quote just \"LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" exact.\nCo-piloting quote exact from chunk: \"And so that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.\" exact. Good.\nAutomation quote exact: \"Growth reflects our efforts to deepen client penetration with SBLs, leveraging technology to improve automation and facilitate the client acquisition openings, as well as increasing education with our advisors and our clients.\" exact.\n\nCould include item from MS-TR-2025Q1#73: \"We have ongoing investments in automation, AI, and assessing where we want our people for the next five, 10 years.\" This is firm-wide, not advisors. Maybe different_quantity: \"AI/automation investment described in workforce planning, not specifically advisor-directed.\" But not needed. If include, label different_quantity. But the sub-question asks initiatives directed at advisors; this quote mentions automation/AI and headcount XFAs (financial advisors?) \"headcount XFAs\" maybe XFAs = experienced financial advisors? Actually XFAs maybe \"experienced financial advisors\"? The passage says reduction of 3% headcount XFAs. It mentions ongoing investments in automation, AI, assessing where people for next 5, 10 years. Not directed at advisors. Could be different_quantity because it's firm-wide workforce automation. But maybe useful as evidence of automation investment. Should we include? The label for the cell is overall; if any fact, cell fact. Items can include different_quantity? The instructions allow items fact and different_quantity. Could include one different_quantity item for broad AI/automation investment. But the sub-question is specifically \"initiatives directed at advisors\"; broad firm-wide is related but not directed. It may be a different_quantity? The definition says different_quantity: no passage states asked quantity but one states a different related quantity. Since we have fact, no need. But if we include, differs_because \"firm-wide AI/automation investment and workforce planning, not advisor-specific initiative.\" Could be okay but might confuse. I'd include only direct facts.\n\nNeed maybe \"Artificial intelligence and automation initiatives\" might be a list, no numeric. Fine.\n\nLet's submit one cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.MS",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Morgan Stanley said LeadIQ, its AI-powered lead distribution platform, focuses on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.",
+            "quote": "LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.",
+            "chunk_ids": [
+              "MS-TR-2025Q3#8"
+            ],
+            "value": "",
+            "unit": "",
+            "period": "2025Q3",
+            "scope": "Wealth Management / financial advisors",
+            "definition": ""
+          },
+          {
+            "text": "Morgan Stanley said it is developing co-piloting \u201csuper agents\u201d in wealth that use the historical context between a financial adviser and client to drive efficiency and effectiveness across portfolios.",
+            "quote": "And so that co-piloting, I think, is something that Jed Finn under the leadership of Andy Saperstein is spending a lot of time on where they effectively have corridors or super agents that are going to be working to drive, again, efficiency and effectiveness across the portfolio in wealth.",
+            "chunk_ids": [
+              "MS-TR-2026Q1#43"
+            ],
+            "value": "",
+            "unit": "",
+            "period": "2026Q1",
+            "scope": "Wealth Management",
+            "definition": ""
+          },
+          {
+            "text": "Morgan Stanley said it is leveraging technology to improve automation and facilitate client acquisition openings, as well as increasing education with its advisors and clients.",
+            "quote": "Growth reflects our efforts to deepen client penetration with SBLs, leveraging technology to improve automation and facilitate the client acquisition openings, as well as increasing education with our advisors and our clients.",
+            "chunk_ids": [
+              "MS-TR-2025Q4#21"
+            ],
+            "value": "",
+            "unit": "",
+            "period": "2025Q4",
+            "scope": "Wealth Management",
+            "definition": ""
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state specific AI and automation initiatives connected to financial advisors in Wealth Management.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

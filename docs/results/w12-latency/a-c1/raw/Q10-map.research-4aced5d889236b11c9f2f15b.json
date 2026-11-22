@@ -1,0 +1,114 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "CERULLI-MASS-AFFLUENT-2026#0",
+    "CERULLI-MASS-AFFLUENT-2026#1"
+  ],
+  "at": "2026-11-21T13:01:19.546770-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2754,
+    "output_tokens": 1341,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 2754,
+    "reasoning_tokens": 810,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.12
+  },
+  "wall_s": 13.98,
+  "tokens_per_s": 95.92,
+  "ttft_s": 2.12,
+  "reasoning_content": "This is industry research, not firm-specific documents. The passages are Cerulli research about the mass-affluent segment in general. No firm is named specifically except Scott Smith (Cerulli). The firms in the question (Morgan Stanley, Schwab, Edward Jones, Merrill, Raymond James) are not mentioned in these passages.\n\nSo for each sub-question, the passages discuss the mass-affluent segment in general, not each firm's own figures. The research figure about the industry/clients is a fact for aspects about the industry, clients, or advisors in general. But the sub-questions ask about each firm's own statements (a1 asks \"each firm names the mass-affluent client segment\", etc.). Since the passages are industry research and don't name any firm, these are not_found for firm-specific aspects.\n\nWait, but the sub-question ids end in .research, and the instruction says: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nSo the sub-questions ask about \"each firm\" - these are firm-specific. Since the research passages don't name firms, they say nothing about each firm's statements. So not_found.\n\nBut wait, a5 asks about defining/describing the mass-affluent segment in terms of asset levels or income. The research passage does define it: \"middle-market and mass-affluent households with between $100,000 and $2 million in financial assets\". This is a fact for the industry definition of the mass-affluent segment. But the sub-question asks \"How each firm defines or describes the mass-affluent segment.\" This is firm-specific.\n\nHmm. The sub-question framing is about \"each firm\", but the passages are industry research. The instruction clarifies that research figures are facts for aspects about the industry/clients/advisors in general, but different_quantity for a named firm's own figure.\n\nGiven there are no firm names in the passages, none of the sub-questions can be answered for any specific firm. So all cells should be not_found.\n\nActually, let me reconsider. The sub-questions are about each firm. Since the passages contain no firm-specific information, the answer for all sub-questions is not_found.\n\nBut wait, a5 could be a fact about the industry definition of mass-affluent. But the question asks \"each firm defines or describes\" - that's firm-specific. So not_found.\n\nActually, let me re-read the overall question: \"Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?\" Firm: Industry research (no firm; firms in the question: Morgan Stanley, Schwab, Edward Jones, Merrill, Raymond James).\n\nSo the passages are research about the industry, not firm documents. The research does not mention any of the five firms. Therefore, for each sub-question about each firm, the passages say nothing = not_found.\n\nI should return one cell per sub-question, all not_found, with empty items and empty derivation.\n\nLet me write concise reasons.\n\nFor a5, the research does define mass-affluent as $100k-$2M, but that's the industry definition, not each firm's definition. The sub-question asks \"How each firm defines or describes.\" Since it's about each firm, not_found.\n\nActually, let me reconsider whether the research definition should be a fact for a5. The sub-question a5 is \"[fact]: How each firm defines or describes the mass-affluent segment in terms of asset levels or income\". The research gives a definition of the mass-affluent segment. But it's Cerulli's definition, not any firm's. So for \"each firm\" it's not_found.\n\nI'll return all six as not_found with empty items and empty derivation.\n\nLet me produce the cells.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are Cerulli industry research and name no individual firm (Morgan Stanley, Schwab, Edward Jones, Merrill, Raymond James), so they say nothing about how explicitly any of the five firms names the mass-affluent segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages discuss the mass-affluent segment in general but attribute no statements to any of the five named firms, so nothing is said about what each firm has said about serving mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No firm is named in the research passages, so there is no statement about how any of the five firms describes targeting or attracting mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no firm-specific disclosures about products, services, platforms, or fee levels for mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research gives Cerulli's own industry definition of mass-affluent ($100,000 to $2 million), but it is not attributed to any of the five firms, so nothing is found on how each firm defines the segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No firm-specific recent statements about mass-affluent clients appear in the research passages.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a4.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TRADE-2026-09-23-RB-01#3",
+    "BAC-TR-2025Q3#40",
+    "BAC-PR-2026-10-14-01#28",
+    "SCHW-10Q-2026Q2#86",
+    "RJF-TR-2026Q1#25",
+    "BAC-DECK-2025-investor-day#27",
+    "MS-10K-2025#170",
+    "EDJ-10K-2025#150",
+    "SCHW-10Q-2026Q1#60",
+    "SCHW-DECK-2026-investor-day#266",
+    "SCHW-TR-2025Q1#42",
+    "SCHW-TR-2025Q1#43",
+    "RJF-TR-2026Q1#23",
+    "BAC-TR-2025Q3#59",
+    "MS-TR-2025Q1#53",
+    "MS-TR-2025Q1#54",
+    "SCHW-TR-2025Q4#42"
+  ],
+  "at": "2026-11-21T22:05:53.204714-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6060,
+    "output_tokens": 2544,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4524,
+    "reasoning_tokens": 1658,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.08
+  },
+  "wall_s": 25.25,
+  "tokens_per_s": 100.75,
+  "ttft_s": 2.08,
+  "reasoning_content": "Let me analyze the passages. The sub-question is a4.all: How service and delivery models for financial advice are shifting. The passages are a mix of different firms (SCHW, BAC, RJF, MS, EDJ). This is \"All sources (no firm named)\".\n\nI need to find passages that state how service and delivery models for financial advice are shifting.\n\nLet me look at relevant passages:\n\n- SCHW-TR-2025Q1#43: Rick Wurster talks about branch network being critical, one-to-one relationship, opening 16 new branches. This is about service/delivery model.\n- SCHW-TR-2025Q4#42: growth, winning young investor, Gen Z investors, attracting them in places they are.\n- BAC-TR-2025Q3#40: AI, Erika, 2 million interfaces, technology applied.\n- MS-TR-2025Q1#54: integrated firm, funnel, E*TRADE, self-directed, workplace, financial advisor at top.\n- SCHW-TR-2025Q1#42: buildout of branch network and advisor base.\n\nThe question is about how service and delivery models are shifting. Let me find statements that actually describe shifts in service/delivery models.\n\nLet me think about what counts as a \"fact\" for this sub-question.\n\n- SCHW-TR-2025Q1#43: Wurster states branch network critical, opening 16 new branches, one-to-one relationship drives NNA, client satisfaction. This is about delivery model (branches, advisor base). Fact.\n\n- SCHW-TR-2025Q4#42: average age of client fallen by 10 years in decade, now in 40s. A third of new-to-firm clients last year were Gen Z, attracting them in places they are. This describes shifting delivery to younger investors. Somewhat fact about client demographics.\n\n- BAC-TR-2025Q3#40: Erika AI, 2 million interfaces. This is about technology in service delivery.\n\n- MS-TR-2025Q1#54: funnel from E*TRADE self-directed, workplace, to financial advisor. This describes delivery model.\n\n- BAC-TR-2025Q3#59: AI managing expense base.\n\nLet me focus on which passages directly address \"service and delivery models for financial advice are shifting.\"\n\nActually the passages listed are in the \"search pool\" for this sub-question. The most relevant ones about delivery model shifts:\n\n1. SCHW-TR-2025Q1#43 - branch network, one-to-one relationship, 16 new branches.\n2. SCHW-TR-2025Q4#42 - winning young investor, Gen Z, attracting in places they are.\n3. MS-TR-2025Q1#54 - integrated funnel from self-directed to advisor.\n4. BAC-TR-2025Q3#40 - AI Erika interfaces.\n\nLet me write cells. Since it's \"All sources\", each item can come from a different firm. But the sub-question id is a4.all. There's only one sub-question id, so I return one cell for it with multiple items.\n\nWait, the instruction says \"return exactly one cell for each sub-question listed.\" There's only one sub-question: a4.all. So I return one cell for a4.all, with multiple items.\n\nLet me identify the facts:\n\nItem 1: Schwab - branch network critical, one-to-one relationship, opening 16 new branches this year.\nText: Schwab states that its branch network is critical to success and that it expects to open around 16 new branches this year, with dedicated one-to-one client relationships driving higher net new assets, client satisfaction, and engagement in wealth and bank solutions.\nQuote: \"We expect to open up around 16 new branches this year.\" and \"We know that when we have a dedicated one-to-one relationship with a client, NNA goes up appreciably.\"\nValue: \"16\", unit: \"new branches\", period: \"2025\" (this year, transcript 2025Q1).\n\nItem 2: Schwab - attracting young/Gen Z investors in places they are.\nText: Schwab states its average client age has fallen about 10 years in the last decade to the 40s, a third of new-to-firm clients last year were Gen Z, and it attracts them \"in the places they are.\"\nQuote: \"A third of our new-to-firm clients last year were Gen Z investors, and we're going and attracting them in the places they are.\"\nValue: \"\", period \"2025\".\n\nItem 3: BAC - AI Erika, 2 million interfaces.\nText: Bank of America's CEO states that in the last 24 hours there were 2 million interfaces where a consumer got an answer from Erika, and that the technology is applied on an institutional basis and models are all over the company.\nQuote: \"in the last 24 hours, there were 2 million interfaces where a consumer got an answer from Erika in our company.\"\nValue \"2 million\", unit \"consumer interfaces (Erika)\", period \"2025-09-30\" (24 hours before the call).\n\nItem 4: MS - integrated funnel from self-directed to advisor.\nText: Morgan Stanley's CEO states people are coming toward the platform, investing in E*TRADE, the self-directed channel, and workplace product, with the financial advisor at the top of the funnel offering access to intellectual capital, technology, and compensation.\nQuote: \"Ultimately, when you get to the top of the funnel, it is about the financial advisor...\"\nValue \"\", period \"\".\n\nActually, let me be careful. The question is about \"How service and delivery models for financial advice are shifting.\" \n\nSome passages are less directly relevant (compensation expense, recruiting, etc.). Those are more about advisor retention than client service delivery models.\n\nLet me select the most relevant facts. I think the four items above are reasonable facts about shifting service/delivery models.\n\nActually, let me reconsider SCHW-TR-2025Q1#42 - it's a question about buildout, not a statement. Skip.\n\nBAC-TR-2025Q3#59 - about AI managing expense base, not really service delivery for clients. Could include but weaker.\n\nLet me also consider the BAC-DECK-2025-investor-day#27 - \"Accelerate advisor-driven asset growth through retention, recruiting, and development\" - not really delivery model shift.\n\nI'll go with the 4 key items.\n\nLet me also consider SCHW-TR-2025Q4#42 more carefully - it does talk about growth and demographics but \"attracting them in the places they are\" suggests digital/channel delivery shift.\n\nFor period of item 2, the \"last year\" refers to 2025 (transcript 2025-12-31). Average age now in 40s (point in time 2025-12-31). I'll put period \"2025\".\n\nActually for value, item 2 has no clear figure. I'll leave value \"\" and unit \"\".\n\nLet me write the derivation as empty and inputs empty.\n\nFor label, all are fact.\n\nLet me finalize.\n\nFor item 1, chunk SCHW-TR-2025Q1#43, period \"2025\" (opening around 16 branches this year).\n\nActually the transcript period is 2025-03-31 (2025Q1). \"This year\" = 2025. I'll put period \"2025\".\n\nFor item 3, period: \"last 24 hours\" before 2025-09-30. I'll put period \"2025-09-30\".\n\nFor item 4, no figure, period \"\".\n\nLet me write the items.\n\nAlso should I include scope? These are whole firm statements mostly. Leave scope \"\".\n\ndefinition: \"\" for most.\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Charles Schwab's CEO states the branch network is critical to the firm's success and that a dedicated one-to-one relationship with a client drives appreciably higher net new assets, higher client satisfaction, and greater engagement in wealth and bank solutions; the firm expects to open around 16 new branches this year.",
+            "quote": "The branch network is critical to the success of our firm and in what distinguishes us as a firm. We know that when we have a dedicated one-to-one relationship with a client, NNA goes up appreciably. Client satisfaction goes up, and their engagement in other solutions outside of just pure investing increases... We expect to open up around 16 new branches this year.",
+            "value": "16",
+            "unit": "new branches",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q1#43"
+            ]
+          },
+          {
+            "text": "Charles Schwab's CEO states the firm's average client age has fallen by about 10 years in the last decade and is now in the 40s, a third of new-to-firm clients last year were Gen Z investors, and the firm is attracting them 'in the places they are.'",
+            "quote": "Our average age of our client has fallen by about 10 years in the last decade and is now in the 40s. A third of our new-to-firm clients last year were Gen Z investors, and we're going and attracting them in the places they are.",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#42"
+            ]
+          },
+          {
+            "text": "Bank of America's CEO states that in the last 24 hours there were 2 million interfaces where a consumer got an answer from Erika, its AI assistant, and that the same technology is applied on the institutional basis and models are deployed all over the company, with the implementations already in production.",
+            "quote": "in the last 24 hours, there were 2 million interfaces where a consumer got an answer from Erika in our company. That same technology is applied in the institutional basis... We have models all over the company... these are not proofs of concept and things like that. They're past tense things happening. 2 million customer interfaces yesterday.",
+            "value": "2 million",
+            "unit": "consumer interfaces (Erika)",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-TR-2025Q3#40"
+            ]
+          },
+          {
+            "text": "Morgan Stanley's CEO states people are coming toward the platform, with investment in E*TRADE, the self-directed channel, and the workplace product, and that at the top of the funnel it is about the financial advisor who can offer access to intellectual capital, world-class technology, and fair, motivating compensation.",
+            "quote": "People are coming toward the platform... We're investing in E*TRADE. The self-directed channel is very busy... the workplace product where we added another $20 billion... Ultimately, when you get to the top of the funnel, it is about the financial advisor, and the financial advisor is seeing the integrated firm for what it is, which is we can offer unique access to intellectual capital, world-class technology, compensation that is viewed to be fair and motivating, and the entire thing works.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MS-TR-2025Q1#54"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "These passages contain firm statements describing how advice is delivered and how delivery is shifting (branch/one-to-one relationships, digital and AI channels, integrated self-directed-to-advisor funnel, targeting younger clients).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -374,7 +374,10 @@ def enum_values(schema: dict) -> int:
 
 
 def max_tokens(provider: str) -> int:
+    """#272: deepseek by the reduce stage's effort (off 20000, thinking 128000); else the answer cap."""
     from cee.answer import llm
+    if provider == "deepseek":
+        return llm.stage_max_tokens("reduce")
     return llm.answer_max_tokens(provider)
 
 
@@ -396,7 +399,7 @@ def requests(question: str, m: EvidenceMatrix, query, provider: str) -> dict:
                                     "json_schema": {"name": "answer", "strict": True, "schema": schema}}}
     if provider == "deepseek":
         return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, P.SYSTEM_PROMPT_V5, user,
-                                         max_tokens(provider))
+                                         max_tokens(provider), stage="reduce")
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
@@ -465,7 +468,7 @@ def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=N
     elif provider == "deepseek":
         client = client or llm.deepseek_client()
         resp = llm.deepseek_create(client, req)
-        call, stop, usage, payload = llm.deepseek_tool_call(resp, TOOL)
+        call, stop, usage, payload = llm.deepseek_tool_call(resp, TOOL, req)
         msg = payload if isinstance(payload, dict) else {}
         meta["stop_reason"], meta["usage"] = stop, usage
         meta["reasoning_content"] = msg.get("reasoning_content")

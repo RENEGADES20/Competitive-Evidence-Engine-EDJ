@@ -1,0 +1,91 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.RJF.b2",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a7.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-SUPP-2025Q3#43",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-27-WM-01#0",
+    "RJF-10K-2025#28",
+    "RJF-10K-2025#248",
+    "RJF-10K-2025#11",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-SUPP-2026Q2#12",
+    "RJF-10K-2025#116",
+    "RJF-SUPP-2025Q4#11",
+    "RJF-SUPP-2025Q3#12",
+    "RJF-SUPP-2026Q1#12",
+    "RJF-10K-2025#452",
+    "RJF-DECK-2025-investor-day#65"
+  ],
+  "at": "2026-11-21T14:51:27.127049-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6540,
+    "output_tokens": 1489,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 5004,
+    "reasoning_tokens": 1054,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.52
+  },
+  "wall_s": 15.03,
+  "tokens_per_s": 99.07,
+  "ttft_s": 2.52,
+  "reasoning_content": "The sub-question asks about \"Net new assets attributable to advisor recruiting\" for Raymond James.\n\nLet me look at the passages. There's a passage RJF-TRADE-2026-10-29-WM-01#1 that mentions \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nBut this is total net new assets, not net new assets attributable to advisor recruiting. The question asks specifically about \"Net new assets attributable to advisor recruiting.\"\n\nThe RJF-10K-2025#248 passage mentions \"successful financial advisor retention and recruiting\" as a driver of increase in assets, but doesn't quantify net new assets attributable to recruiting.\n\nSo there's no figure for \"net new assets attributable to advisor recruiting\" specifically. The net new assets figure is total, not attributable to recruiting.\n\nThe passages show net new assets (total), but not attributable to advisor recruiting. So this is a different_quantity - net new assets total vs net new assets attributable to advisor recruiting.\n\nActually, let me think carefully. The question asks about \"Net new assets attributable to advisor recruiting.\" This is a specific breakdown. The firm reports total net new assets, but not the portion attributable to recruiting.\n\nRJF-SUPP-2025Q3#43 defines domestic Private Client Group net new assets (total). Not attributable to recruiting.\n\nRJF-10K-2025#248 mentions recruiting as a driver but no figure.\n\nRJF-TRADE-2026-10-29-WM-01#1 gives total net new assets figures.\n\nSo the answer: the passages do not state net new assets attributable to advisor recruiting. The closest is total domestic PCG net new assets, which is a different quantity (total, not the recruiting-attributable portion).\n\nLet me provide a different_quantity item for the total net new assets, with differs_because explaining it's total net new assets, not the portion attributable to advisor recruiting.\n\nLet me identify the figures:\n- \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion\" - fiscal year 2026? The passage is published 2026-10-29, so fiscal year ended September 2026.\n- \"Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nThese are total net new assets, not attributable to recruiting.\n\nI'll provide a different_quantity cell.\n\nActually, let me reconsider. The definition passage RJF-SUPP-2025Q3#43 defines \"Domestic Private Client Group net new assets\" - this is the definition of net new assets (total), which is a related but different measure from \"net new assets attributable to advisor recruiting.\"\n\nSo the label should be different_quantity because the passages state net new assets (total) but not attributable to advisor recruiting.\n\nLet me create the items:\n1. Total domestic PCG net new assets for fiscal year (more than $98 billion)\n2. Total net new assets for the quarter (nearly $23 billion)\n\nBoth from RJF-TRADE-2026-10-29-WM-01#1.\n\ndiffers_because: The passage reports total domestic Private Client Group net new assets, not the portion attributable to advisor recruiting.\n\nPeriod for fiscal year: \"F2026\" (fiscal year ended September 2026). The passage published 2026-10-29 discusses fiscal year. \"rose 88% for the fiscal year\" - fiscal 2026.\n\nQuarter: \"nearly $23 billion\" for the quarter - likely fiscal Q4 2026 (quarter ended September 30, 2026). Actually the passage is from October 2026 discussing quarterly results. The quarter would be the three months ended September 30, 2026, which is F2026Q4.\n\nLet me set periods:\n- Fiscal year: F2026\n- Quarter: 2026Q3 (calendar Q3 2026)? The instruction says \"YYYYQn\" for a calendar quarter. The quarter ended September 30, 2026 would be calendar Q3 2026 = \"2026Q3\".\n\nActually let me be careful. The firm's fiscal year ends September 30. The quarter reported in the October 2026 trade article would be the quarter ended September 30, 2026, which is calendar 2026Q3.\n\nFor fiscal year, \"F2026\".\n\nLet me write the cell.\n\nActually, I should consider whether the net new assets \"attributable to advisor recruiting\" is simply not disclosed vs different quantity. The passages report net new assets total, but not broken out by source (recruiting vs organic). So the total net new assets is a different, related quantity (wider measure that includes recruiting-attributable plus organic).\n\nLabel: different_quantity.\n\nLet me write items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James reported Domestic Private Client Group net new assets of more than $98 billion for the fiscal year, up 88%, and net new assets of nearly $23 billion for the quarter.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "more than $98 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported net new assets of nearly $23 billion for the quarter.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "nearly $23 billion",
+            "unit": "USD",
+            "period": "2026Q3",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "The passages report total Domestic Private Client Group net new assets, not the portion attributable specifically to advisor recruiting.",
+        "reason": "No passage states net new assets attributable to advisor recruiting; the closest reported measure is total net new assets, which is a wider figure that does not isolate the recruiting-attributable portion.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

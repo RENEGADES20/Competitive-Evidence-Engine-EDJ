@@ -1,0 +1,98 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a5.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-PR-2026-04-22-01#1",
+    "SCHW-DECK-2026-investor-day#59",
+    "BAC-DECK-2025-investor-day#20",
+    "SCHW-TR-2026Q1#7",
+    "SCHW-DECK-2026-investor-day#266",
+    "SCHW-TR-2025Q1#42",
+    "SCHW-TR-2025Q1#43",
+    "BAC-TR-2025Q4#106",
+    "MS-TRADE-2026-10-26-IN-01#5"
+  ],
+  "at": "2026-11-21T22:05:53.252428-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3166,
+    "output_tokens": 1979,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1630,
+    "reasoning_tokens": 1499,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.0
+  },
+  "wall_s": 19.56,
+  "tokens_per_s": 101.18,
+  "ttft_s": 2.0,
+  "reasoning_content": "The task asks me to extract evidence about tools and capabilities advisors will use to deliver advice, for a5.all. The passages listed are in the search pool but are listed \"for another sub-question of this firm.\" I need to review these passages and determine what relates to the tools and capabilities advisors will use.\n\nLet me look through the passages:\n\n1. RJF-PR-2026-04-22-01#1: mentions \"We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\" This relates to tools/capabilities advisors will use - AI integration. This is a fact.\n\n2. SCHW-DECK-2026-investor-day#59: \"Leading today. Defining tomorrow.\" - general, no specific tools.\n\n3. BAC-DECK-2025-investor-day#20: recruiting, retention, training - not about tools advisors use.\n\n4. SCHW-TR-2026Q1#7: mentions AI-powered estate planning tools (Wealth.com), AI-powered tax planning, structured asset line offer to adviser clients. These are tools/capabilities advisors use.\n\n5. SCHW-DECK-2026-investor-day#266: \"Harness AI capabilities\" - about efficiency.\n\n6. SCHW-TR-2025Q1#42, #43: branch network, advisor base - not tools.\n\n7. BAC-TR-2025Q4#106: recruiting/training - not tools.\n\n8. MS-TRADE-2026-10-26-IN-01#5: recruiting competition - not tools.\n\nSo the relevant facts are about AI integration (RJF), AI-powered estate planning and tax planning tools, structured asset line (SCHW).\n\nWait, the question is \"What tools and capabilities advisors will use to deliver advice.\" The sub-question is [fact]: What tools and capabilities advisors will use to deliver advice.\n\nNote: the firm is \"All sources (no firm named)\" - so I'm extracting from multiple firms? Actually the instruction says \"You extract evidence about one firm from passages.\" But the firm is \"All sources\" meaning no single firm. Hmm. But the sub-question id is a5.all.\n\nActually wait, let me re-read. The question is about the future of financial advice. The firm is \"All sources (no firm named).\" So this seems to be a cross-firm extraction. But the instructions say \"You extract evidence about one firm from passages of its documents.\" \n\nThe passages include multiple firms: RJF, SCHW, BAC, MS. Each is a different firm. But the sub-question is a5.all and there's only one cell to return.\n\nHmm, this is a bit confusing. The label says \"All sources (no firm named)\" so I think I should extract all relevant facts about tools and capabilities advisors will use, from all these passages.\n\nLet me identify the facts:\n\n1. RJF-PR-2026-04-22-01#1: Raymond James - \"We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\"\n\n2. SCHW-TR-2026Q1#7: Schwab - AI-powered estate planning tools (Wealth.com), AI-powered tax planning capability, structured asset line offer to adviser clients (expanding collateral types including alternative investments).\n\n3. SCHW-DECK-2026-investor-day#266: \"Harness AI capabilities\" - this is about efficiency, could be a fact but vague.\n\nLet me focus on the most concrete items.\n\nFor fact items, I should provide text, quote, value, unit, period, scope, definition, chunk_ids.\n\nFor RJF: no specific figure, so value=\"\", unit=\"\", period=\"\".\n\nActually, these are statements about future capabilities, not figures. So value/unit/period would be empty.\n\nLet me write the items.\n\nItem 1 (RJF): Raymond James says it continues to develop technology solutions including increasing AI integration to improve efficiency and give financial professionals more time to serve clients.\n\nItem 2 (SCHW): Schwab is using AI-powered estate planning tools from Wealth.com and working to launch AI-powered tax planning.\n\nItem 3 (SCHW): Schwab began rollout of structured asset line offer to adviser clients, expanding types of securities usable as collateral including alternative investments.\n\nThese are all tools/capabilities advisors will use to deliver advice.\n\nShould I include the SCHW-DECK-2026-investor-day#266 \"Harness AI capabilities\"? It's very vague, just a bullet point. It could be a fact but not specific. I'll skip or maybe include as it's about AI capabilities.\n\nActually, let me be careful. The instruction says only include what relates to the sub-question. \"Harness AI capabilities\" and \"Drive incremental scale\" are about efficiency/expense discipline, not specifically about tools advisors use to deliver advice. I'll skip.\n\nThe BAC items are about recruiting/training, not tools.\n\nThe MS item is about recruiting competition, not tools.\n\nSo I'll include 3 fact items.\n\nActually, let me also consider the SCHW-DECK-2026-investor-day#59 \"Defining tomorrow\" - too vague.\n\nLet me finalize with 3 fact items.\n\nFor each item, I need definition field (\"\" mostly), scope (\"\"), period (\"\").\n\nLet me write the quotes.\n\nRJF quote: \"We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.\"\n\nSCHW AI estate planning: \"We also increased our strategic investment in Wealth.com, which we are already using to bring AI-powered estate planning tools to our clients. We're also working to launch their AI-powered tax planning capability in the near future.\"\n\nSCHW structured asset line: \"We successfully began the rollout of our structured asset line offer to adviser clients, expanding the type of securities they can use as collateral, including alternative investments.\"\n\nThese two SCHW quotes are from the same chunk id SCHW-TR-2026Q1#7. I could combine or split. They're separate capabilities, so I'll split into two items.\n\nActually, the estate planning and tax planning are one theme (AI-powered planning tools), structured asset line is a separate lending tool. I'll split into two items, or maybe three? Estate planning + tax planning could be one item or two. I'll do estate planning and tax planning as one item since they're both about Wealth.com AI-powered planning tools.\n\nLet me write:\n\nItem 0: RJF - AI integration technology solutions\nItem 1: SCHW - AI-powered estate planning tools (and tax planning)\nItem 2: SCHW - structured asset line offer\n\nScope: for RJF, whole firm. For SCHW, whole firm (adviser clients).\n\nPeriod: no figure, so \"\".\n\nValue, unit: \"\".\n\nLet me submit.\n\nActually, I should double check: the sub-question is a5.all and only one cell. All these items go into the single cell's items array.\n\nLet me finalize the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James states it continues to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide its financial professionals with more time to serve their clients.",
+            "quote": "We continue to develop industry-leading technology solutions, including increasing AI integration, to improve efficiency and provide our financial professionals with more time to serve their clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-2026-04-22-01#1"
+            ]
+          },
+          {
+            "text": "Schwab says it increased its strategic investment in Wealth.com and is already using it to bring AI-powered estate planning tools to clients, and is working to launch an AI-powered tax planning capability in the near future.",
+            "quote": "We also increased our strategic investment in Wealth.com, which we are already using to bring AI-powered estate planning tools to our clients. We're also working to launch their AI-powered tax planning capability in the near future.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#7"
+            ]
+          },
+          {
+            "text": "Schwab says it began the rollout of its structured asset line offer to adviser clients, expanding the types of securities they can use as collateral, including alternative investments.",
+            "quote": "We successfully began the rollout of our structured asset line offer to adviser clients, expanding the type of securities they can use as collateral, including alternative investments.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#7"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state specific tools and capabilities (AI integration, AI-powered estate and tax planning tools, structured asset lines) that advisors will use to deliver advice.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

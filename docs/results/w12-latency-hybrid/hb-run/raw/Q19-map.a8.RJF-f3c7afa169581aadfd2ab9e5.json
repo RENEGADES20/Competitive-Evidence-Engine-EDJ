@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a8.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-21T20:26:36.279819-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1810,
+    "output_tokens": 312,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 274,
+    "reasoning_tokens": 183,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.03
+  },
+  "wall_s": 5.2,
+  "tokens_per_s": 60.0,
+  "ttft_s": 2.03,
+  "reasoning_content": "The sub-question asks about Edward Jones's disclosures and initiatives for younger investors compared to competitors. The firm is Raymond James Financial (RJF). The passages provided are only about RJF's own next gen advisor strategy, not about Edward Jones or younger investors (investors, not advisors).\n\nThe passages say nothing about Edward Jones's disclosures/initiatives for younger investors. The chunk mentions \"Next gen advisor strategy\" which is about advisors, not investors, and it's about RJF not Edward Jones.\n\nSo label should be not_found.\n\nActually, let me consider: \"Next gen advisor strategy\" - this is about advisors, not younger investors. It's a different quantity potentially. But the sub-question is a comparison about Edward Jones's disclosures and initiatives for younger investors. The passage doesn't mention Edward Jones at all, nor younger investors (it's about advisors).\n\nSo not_found is appropriate.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage discusses Raymond James's own 'Next gen advisor strategy' (about advisors, not younger investors) and says nothing about Edward Jones's disclosures or initiatives for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

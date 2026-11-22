@@ -1,0 +1,108 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2025Q3#41",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-DECK-2026-investor-day#86",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2026Q2#37"
+  ],
+  "at": "2026-11-21T20:26:26.717693-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5404,
+    "output_tokens": 822,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3868,
+    "reasoning_tokens": 431,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.31
+  },
+  "wall_s": 9.05,
+  "tokens_per_s": 90.83,
+  "ttft_s": 1.31,
+  "reasoning_content": "Let me analyze the sub-question: What communication and engagement channels do younger investors prefer?\n\nLooking at passages, I need to find where Schwab describes what channels younger investors prefer for communication and engagement.\n\nKey passage SCHW-TR-2025Q3#11: \"We know they learn about finances primarily through social media and family.\" and \"we're meeting them in the channels where they turn for information about investing.\"\n\nSCHW-TR-2025Q3#12: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\n\nThese are facts about channels younger investors prefer.\n\nSCHW-TR-2025Q3#41: mentions 35 hours a week of live content, engagement off the charts, support/service/education/platform.\n\nLet me identify the facts:\n\n1. Younger investors (Gen Z) learn about finances primarily through social media and family. (SCHW-TR-2025Q3#11)\n2. Their top online resource is YouTube. (SCHW-TR-2025Q3#12)\n\nThese are the direct statements about communication/engagement channels.\n\nAlso \"we're going and attracting them in the places they are\" (SCHW-TR-2025Q4#42) - vague.\n\nLet me create cells.\n\nThe sub-question is a fact sub-question. Let me provide fact items for the channels.\n\nItem 1: Gen Z learn about finances primarily through social media and family.\nQuote: \"We know they learn about finances primarily through social media and family.\"\nchunk: SCHW-TR-2025Q3#11\n\nItem 2: Their top online resource is YouTube.\nQuote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\nchunk: SCHW-TR-2025Q3#12\n\nBoth are facts. No figure/value.\n\nLet me also consider the \"meeting them in the channels where they turn for information about investing\" - that's also relevant. But it's a bit general.\n\nI'll include two fact items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab states that younger investors (Gen Z) learn about finances primarily through social media and family.",
+            "quote": "We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab states that younger investors' top online resource is YouTube, and that Schwab is the number one financial services firm on YouTube by followers.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab states it is meeting younger investors in the channels where they turn for information about investing.",
+            "quote": "One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages explicitly state the communication/engagement channels younger investors prefer (social media, family, YouTube), so these are facts.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
