@@ -199,32 +199,35 @@ caption is the guaranteed one either way); how long AppTest lets a worker thread
 delay, the pump logic is tested as a pure function).
 
 ## Acceptance
-- [ ] Linked questions: Q29 (the stall path now shows Retry, unit test with a fake idle stream); any question
-      for Stop (verify uses the two-firm question "How do Morgan Stanley and Raymond James approach advisor
-      recruiting?", 2 map calls).
-- [ ] Spec items: ui.md Stop / Retry / Stopped view lines; answer-citations.md cancel token, run cache and
-      run log lines; rule 1 on a stopped page.
-- [ ] `pytest tests/test_stop_retry.py` -> green, covering: the token stops new calls and closes a fake
-      stream mid-way (close called, `Cancelled` within ~1 s); cancelled, failed, cut, invalid and idle records
-      are never reused by the cache; a valid result landing after the stop is reused; a retry reuses finished
+- [x] Linked questions: Q29 (the stall path now shows Retry: `tests/test_reduce_stream.py::test_a_stall_shows_an_error_and_retry`,
+      fake idle stream); any question for Stop (verify uses the two-firm question "How do Morgan Stanley and Raymond James
+      approach advisor recruiting?", 3 map calls on the mock: map.a1.MS, map.a1.RJF, map.research).
+- [x] Spec items: ui.md Stop / Retry / Stopped view lines; answer-citations.md cancel token, run cache and
+      run log lines; rule 1 on a stopped page (AppTest: no "LLM called:", no "CLAIM (CHECKING)").
+- [x] `pytest tests/test_stop_retry.py` -> 29 passed, covering: the token stops new calls and closes a fake
+      stream mid-way (close called, `Cancelled` < 2 s, partial kept); cancelled, failed, cut, invalid, idle and skipped
+      records are never reused by the cache; a valid result landing after the stop is reused; a retry reuses finished
       calls and runs only the missing ones (exact call counts); a planner `Cancelled` never yields the rule
       plan; no stage reads "failed" after a stop; one Retry click makes one attempt; the stopped row's
-      `filters.run.records` and `filters.run.stop_s` are present.
-- [ ] `pytest` (whole suite) -> green; `tests/test_no_paid_calls.py` green (0 real calls).
-- [ ] Mock 30/30: `python scripts/eval_run.py` on mock -> the same 30/30 summary as on `main`.
-- [ ] `python scripts/verify_cee.py run` -> every feature PASS, with screenshots and `steps.jsonl`; the new
+      `filters.run.records` and `filters.run.stop_s` are present; the Retry poll draws no Stop and starts no run.
+- [x] `pytest` (whole suite) -> 1160 passed; `tests/test_no_paid_calls.py` green (0 real calls).
+- [x] Mock eval: `python scripts/eval_run.py` -> PASS 33 | FAIL 2 on the 35-question bank, the same as the run on
+      `main` earlier today (`.eval-runs/corpus-2026-11-19-20261122-115549`): every question's status and chunk ids
+      identical (Q26 differs only in its as-of window date). The 2 FAILs (Q19, Q33) are pre-existing. The bank grew
+      from 30 to 35 since the issue was written.
+- [x] `python scripts/verify_cee.py run` -> 11/11 features PASS (`.verify-runs/20261122-124300-a132160`); the new
       `ask-stop-retry` recipe shows:
-      - Stop clicked after the first evidence card (during the map): "Stopped" visible <= 5 s after the
-        click; the first evidence card still shown; no "LLM called:", no behavior header, no
-        "Answer (in progress"; 5 s later no new card appeared;
-      - newest `query_log` row: `answer` NULL, `filters.run.status = stopped`, stage `extract`, 1 map call
-        made, >= 1 cancelled, `stop_s` <= 5;
-      - Retry completes the answer ("LLM called:" shows); newest row `filters.run.attempt = 2`, map reused
-        = 1, made = the missing map call + the reduce;
-      - with `MOCK_FAIL_FILE` naming `reduce`: the error and Retry show, no claims; file removed, Retry ->
-        the answer; the row shows every map call reused and the reduce made.
+      - Stop clicked after the first evidence card (during the map): "Stopped while extracting evidence" visible
+        in < 1 s; the evidence card still shown; no "LLM called:", no "Answer (in progress", no Stop button;
+        5 s later no new card;
+      - newest `query_log` row: `answer` NULL, `filters.run.status = stopped`, stage `extract`, map.a1.MS ok,
+        map.a1.RJF and map.research cancelled, `stop_s` 0.06-0.11;
+      - Retry completes the answer; newest row `attempt` 2, `retry_of` the stopped row, reused `{"map": 1}`,
+        made `{"map": 2, "reduce": 1}`;
+      - with `MOCK_FAIL_FILE` naming `reduce`: the error and Retry show, no claims; failed row stage
+        `synthesize`; file removed, Retry -> the answer, reused `{"map": 3}`, made `{"reduce": 1}`.
 - [ ] `gh pr checks` green.
-- [ ] 0 real API calls (stated in the PR Verification section).
+- [x] 0 real API calls (stated in the PR Verification section).
 
 ## Progress log
 - 2026-11-22 12:12 - plan written (branch `tl/277-stop-retry` from `main` 621aaec, database up to date:
@@ -249,3 +252,10 @@ delay, the pump logic is tested as a pure function).
   ProviderStop's "cancelled after the provider stopped the run" (reviewer note 1).
   Surprise: the page's failure path now logs a row, and two existing AppTest tests wrote 4 rows into the local
   `cee` query_log; the tests now stub `_log_attempt` and the 4 rows were deleted. pytest 1160 passed.
+- 2026-11-22 12:45 - specs, `.env.example`, recipe `ask-stop-retry.md` + driver. First verify runs: the map has
+  3 calls on the mock (map.research too), so the driver takes the reused / made counts from the stopped row; the
+  Stopped view first showed "still finishing" because the worker was still writing the stopped row, so the view
+  now joins the worker for up to 2 s (`GRACE_S`) before it falls back to the 1 s fragment poll. Stale cards
+  from the interrupted run are counted only after the rerun settles.
+- 2026-11-22 12:50 - verify-cee all 11 features PASS (`.verify-runs/20261122-124300-a132160`); mock eval
+  unchanged against `main` (33 / 2 on 35 questions); pytest 1160 passed; 0 real calls.

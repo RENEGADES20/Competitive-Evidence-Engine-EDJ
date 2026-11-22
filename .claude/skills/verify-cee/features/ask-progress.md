@@ -17,7 +17,8 @@ built".
 - `streamed-answer` (#275): while the reduce streams, "Answer (in progress: checks running)" lists each claim
   that passed the per-claim checks ("CLAIM (CHECKING)" cards with citation chips); when the final answer shows,
   the block is gone. Adjacent items and flagged claims wait for the final answer. A stalled stream shows an
-  error with a "Try again" button (pytest `tests/test_reduce_stream.py`; the driver cannot stall the mock).
+  error with a "Retry" button (#277; was "Try again"; pytest `tests/test_reduce_stream.py`; the driver cannot
+  stall the mock). Stop and Retry: [ask-stop-retry](ask-stop-retry.md).
 
 - `progress-early`: the progress bar and the first step line appear before the answer.
 - `progress-facts`: the search line's passage count equals the footer's chunk count; the

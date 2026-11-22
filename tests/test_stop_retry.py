@@ -449,7 +449,7 @@ def stopped_run(P, alive=False):
     run.evidence = [{"text": "MS recruited advisors.", "hits": [MER_HITS[0]], "entity": "MS", "aspect": "a1"}]
     run.steps = {"extract": ("stopped", "Extracting: stopped")}
     if alive:
-        run.thread = type("Alive", (), {"is_alive": lambda self: True})()
+        run.thread = type("Alive", (), {"is_alive": lambda self: True, "join": lambda self, timeout=None: None})()
     return run
 
 

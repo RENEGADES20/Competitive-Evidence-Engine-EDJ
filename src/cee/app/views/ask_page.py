@@ -116,6 +116,7 @@ STAGE_WORDS = {"resolve": "reading the question", "decompose": "planning the sea
                "extract": "extracting evidence", "research": "re-searching", "synthesize": "writing the answer",
                "check": "checking citations", "caveats": "adding caveats and gaps", "log": "saving the query"}
 PUMP_S = 0.2   # #277: how often the script thread draws the worker's messages (and yields to a click)
+GRACE_S = 2.0  # #277: how long the Stopped view waits for the stopped worker before showing "still finishing"
 
 
 def evidence_label(line: dict) -> str:
@@ -305,7 +306,10 @@ def _stopped_note(run: Run) -> None:
 def _retry_button(run: Run, label: str = RETRY_LABEL) -> None:
     """#277: Retry (key "retry-ask", sets session_state.retry_ask; one click = one attempt). While the previous
     worker is still finishing (a call that cannot be cut), a disabled button and a note, refreshed each second
-    by a fragment; it reruns the page once the worker has ended. Never starts a run and draws no Stop button."""
+    by a fragment; it reruns the page once the worker has ended. Never starts a run and draws no Stop button.
+    The usual case first waits up to GRACE_S for the worker: a cut call and the stopped row's log end in ~1 s."""
+    if run.alive():
+        run.thread.join(GRACE_S)
     if run.alive():
         _wait_for_worker()
         return
