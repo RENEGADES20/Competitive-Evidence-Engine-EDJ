@@ -1,0 +1,147 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#27",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10Q-2025Q2#9",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#21",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2026Q2#9",
+    "EDJ-10Q-2026Q2#19",
+    "EDJ-10K-2025#71",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#26",
+    "EDJ-10Q-2026Q2#23",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#141",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q1#23"
+  ],
+  "at": "2026-11-21T23:23:26.398160-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11731,
+    "output_tokens": 3196,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 10195,
+    "reasoning_tokens": 2442,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.05
+  },
+  "wall_s": 26.14,
+  "tokens_per_s": 122.26,
+  "ttft_s": 3.05,
+  "reasoning_content": "Let me analyze the sub-question: \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's\" \u2014 this is a comparison question. I need to extract evidence about Edward Jones's advisor attrition rate.\n\nThe key passages: EDJ-10K-2025#27 states \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.\" This is a statement about comparability.\n\nAlso there are attrition figures:\n- EDJ-10Q-2025Q3#70: \"Financial advisor attrition was 6.1%\" (Q3 2025)\n- EDJ-10Q-2025Q2#67: \"Financial advisor attrition increased to 6.4%\" (Q2 2025)\n- EDJ-10Q-2025Q3#68: \"6.1% ... 4.7%\" (attrition % for Q3 2025 vs Q3 2024)\n- EDJ-10Q-2025Q2#64: attrition % table (Q2 2025)\n- EDJ-10Q-2025Q2#66: definition of attrition %\n\nThe sub-question is a [comparison] type, asking whether Edward Jones's advisor attrition rate can be compared to Merrill's.\n\nThe definition is provided in EDJ-10Q-2025Q2#66: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nThis definition is important for comparability. The comparison question asks whether it can be compared to Merrill's. The fact that Edward Jones defines attrition in a specific way (annualized, includes retirements, compared to period-end total) is relevant.\n\nThe statement in EDJ-10K-2025#27 about \"in line with comparable firms\" is a fact about comparability.\n\nLet me identify what facts to extract:\n\n1. The definition of attrition % (fact for the comparison question - the firm's own definition matters for comparability).\n2. The attrition figures themselves (6.1%, 6.4%, etc.).\n3. The statement \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.\"\n\nSince the question is about whether the rate can be compared to Merrill's, the key facts are:\n- The definition (which includes retirements, annualized, vs period-end total)\n- The attrition figures\n- The statement about \"in line with comparable firms\"\n\nLet me build the cell for a5.EDJ.\n\nThe sub-question asks about \"advisor attrition rate\" comparability. I should extract the attrition rate figures and the definition.\n\nLet me list items:\n\nItem 0: The definition of attrition % from EDJ-10Q-2025Q2#66 (also #69): \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nItem 1: Q3 2025 attrition 6.1% (EDJ-10Q-2025Q3#70)\nItem 2: Q2 2025 attrition 6.4% (EDJ-10Q-2025Q2#67)\nItem 3: Q3 2025 vs Q3 2024 attrition: 6.1% vs 4.7% (EDJ-10Q-2025Q3#68)\nItem 4: Statement \"in line with comparable firms\" (EDJ-10K-2025#27)\n\nActually, let me think about the comparability statement. The question is \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's.\" The firm itself states it believes its attrition is \"in line with comparable firms.\" This is a fact about comparability.\n\nAlso the definition is crucial: Edward Jones's attrition includes retirements, which is important because many firms' attrition rates may or may not include retirements. This affects comparability.\n\nLet me focus on what's clearly relevant:\n\nThe definition footnote is a fact - it defines how the firm reports attrition.\n\nThe attrition figures are facts.\n\nThe \"in line with comparable firms\" is a fact about comparability.\n\nFor the Q3 2025 figures: EDJ-10Q-2025Q3#68 shows \"6.1% vs 4.7%\" for three-month period, and \"6.0% vs 5.1%\" for nine-month period. Let me be careful.\n\nActually, let me look at the values more carefully. EDJ-10Q-2025Q3#68: \"Attrition %(5) 6.1% 4.7% 30% 6.0% 5.1% 18%\". So three months ended: Q3 2025 = 6.1%, Q3 2024 = 4.7%. Nine months ended: 2025 = 6.0%, 2024 = 5.1%.\n\nEDJ-10Q-2025Q2#64 shows attrition % row but the values are cut off. Let me check the chunk. Actually the Q2 2025 attrition is 6.4% per #67. The #64 table shows \"Attrition %(5)\" but the value is not shown in the chunk (it's cut off). Actually wait, in #67 it says \"Financial advisor attrition increased to 6.4%\".\n\nLet me compile the items with figures:\n\nItem for definition (fact).\nItems for attrition figures:\n- Q3 2025: 6.1%\n- Q2 2025: 6.4%\n- Q3 2024: 4.7% (for comparison)\n\nThe \"in line with comparable firms\" statement.\n\nI'll produce a comprehensive cell.\n\nFor periods:\n- Q3 2025: 2025Q3 (period ended 2025-09-26)\n- Q2 2025: 2025Q2 (period ended 2025-06-27)\n- Q3 2024: 2024Q3\n\nActually the fiscal quarter naming. Edward Jones uses a 4-4-5 calendar? The quarter ended September 26, 2025 is Q3 2025. Let me use 2025Q3.\n\nLet me write the items.\n\nItem 0: definition (fact)\ntext: \"Edward Jones defines attrition % as the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\nquote: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: the quoted definition\nchunk_ids: [\"EDJ-10Q-2025Q2#66\"]\n\nItem 1: Q2 2025 attrition 6.4%\ntext: \"Edward Jones's financial advisor attrition increased to 6.4% in the second quarter of 2025, primarily due to an increase in retirements.\"\nquote: \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\"\nvalue: \"6.4%\"\nunit: \"financial advisor attrition rate\"\nperiod: \"2025Q2\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10Q-2025Q2#67\"]\n\nItem 2: Q3 2025 attrition 6.1%\ntext: \"Edward Jones's financial advisor attrition was 6.1% in the third quarter of 2025.\"\nquote: \"Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.\"\nvalue: \"6.1%\"\nunit: \"financial advisor attrition rate\"\nperiod: \"2025Q3\"\nscope: \"\"\nchunk_ids: [\"EDJ-10Q-2025Q3#70\"]\n\nItem 3: Q3 2024 attrition 4.7% and Q3 2025 6.1% (comparison from table)\nActually this overlaps with item 2. Let me use the table chunk #68 for the 6.1% vs 4.7% and 6.0% vs 5.1%.\n\nActually I already have 6.1% from #70. The table #68 gives 6.1% vs 4.7% (three months) and 6.0% vs 5.1% (nine months).\n\nLet me add Q3 2024 4.7% as a separate item for completeness. But this may be redundant. I'll include the Q3 2024 comparison figure.\n\nActually, the sub-question is about comparability to Merrill, not about specific periods. The key facts are:\n1. The definition (includes retirements, annualized, vs period-end)\n2. The actual attrition rates (to show what Edward Jones reports)\n3. The statement \"in line with comparable firms\"\n\nI think I should include the definition and the attrition figures and the \"in line with comparable firms\" statement.\n\nLet me also consider: the statement in #27 \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms\" is directly about comparability.\n\nLet me finalize items:\n\n1. Definition (fact)\n2. Q2 2025: 6.4% (fact)\n3. Q3 2025: 6.1% (fact)\n4. Q3 2024: 4.7% (fact, from table)\n5. Statement \"in line with comparable firms\" (fact)\n\nFor item 5, the statement about comparability:\ntext: \"Edward Jones states it believes its rate of attrition of financial advisors is in line with comparable firms.\"\nquote: \"although the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#27\"]\n\nI'll also include the \"in line with comparable firms\" as it directly addresses comparability.\n\nLet me determine the label: fact (since it's evidence about the firm's attrition rate and comparability).\n\nNow for the derivation: none needed.\n\nLet me write the full response.\n\nFor item 4, Q3 2024 attrition 4.7%, from #68:\nquote: \"6.1% 4.7% 30% 6.0% 5.1% 18%\"\nActually the quote should be more targeted. The chunk shows \"Attrition %(5) 6.1% 4.7% 30% 6.0% 5.1% 18%\". \n\nLet me quote: \"Attrition %(5)                                                                6.1%                            4.7%                     30%                                6.0%                             5.1%                     18%\"\n\nFor Q3 2024, value \"4.7%\", period \"2024Q3\".\n\nActually, I could combine. But let me keep items clean.\n\nLet me also add the nine-month figures 6.0% and 5.1%? These might be overkill. The question is about comparability, so the key is the definition and the fact that it's reported, plus the \"in line with comparable firms\" statement.\n\nI'll keep it reasonably focused: definition, a few attrition figures, and the comparability statement.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones defines its attrition % as the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "quote": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#66"
+            ]
+          },
+          {
+            "text": "Edward Jones states it believes its rate of attrition of financial advisors is in line with comparable firms.",
+            "quote": "although the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#27"
+            ]
+          },
+          {
+            "text": "Edward Jones's financial advisor attrition was 6.1% in the third quarter of 2025, driven by a variety of factors including a rise in departures with tenure of five years or less.",
+            "quote": "Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.",
+            "value": "6.1%",
+            "unit": "financial advisor attrition rate",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#70"
+            ]
+          },
+          {
+            "text": "Edward Jones's financial advisor attrition increased to 6.4% in the second quarter of 2025, primarily due to an increase in retirements.",
+            "quote": "Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.",
+            "value": "6.4%",
+            "unit": "financial advisor attrition rate",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 6.1% in the third quarter of 2025 versus 4.7% in the third quarter of 2024.",
+            "quote": "Attrition %(5)                                                                6.1%                            4.7%                     30%                                6.0%                             5.1%                     18%",
+            "value": "4.7%",
+            "unit": "financial advisor attrition rate",
+            "period": "2024Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state Edward Jones's attrition rate definition, its actual attrition figures, and its own statement that its attrition is in line with comparable firms, which bear directly on comparability to Merrill.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

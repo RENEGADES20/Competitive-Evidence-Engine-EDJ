@@ -1,0 +1,155 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a1.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TR-2025Q3#8",
+    "RJF-10Q-2025Q4#256",
+    "RJF-10K-2025#228",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-TR-2026Q1#3",
+    "RJF-10Q-2026Q1#306",
+    "RJF-10K-2025#12",
+    "RJF-DECK-2026Q2#6",
+    "RJF-TR-2024Q4#8",
+    "RJF-10Q-2025Q4#199",
+    "RJF-10K-2025#125",
+    "RJF-TR-2024Q3#10",
+    "RJF-10Q-2026Q1#239",
+    "RJF-TR-2026Q2#67",
+    "RJF-TR-2025Q4#4",
+    "RJF-TR-2025Q2#6",
+    "RJF-TR-2024Q4#6",
+    "RJF-TR-2025Q3#4",
+    "RJF-TR-2024Q3#7",
+    "RJF-TR-2024Q3#9",
+    "RJF-TR-2026Q2#6",
+    "RJF-TR-2024Q4#0",
+    "RJF-TR-2025Q3#0",
+    "RJF-TR-2026Q1#5",
+    "RJF-TR-2025Q4#0",
+    "RJF-TR-2026Q2#60",
+    "RJF-TR-2025Q2#0",
+    "RJF-TR-2025Q4#5",
+    "RJF-TR-2024Q4#19",
+    "RJF-TR-2024Q4#7",
+    "RJF-TR-2024Q4#47",
+    "RJF-TR-2025Q1#6",
+    "RJF-TR-2025Q1#40",
+    "RJF-TR-2025Q1#59",
+    "RJF-TR-2025Q2#7",
+    "RJF-10Q-2025Q2#25",
+    "RJF-TR-2025Q2#4",
+    "RJF-10K-2025#394",
+    "RJF-TR-2025Q3#20",
+    "RJF-PR-2025-10-22-01#107",
+    "RJF-TR-2025Q4#98",
+    "RJF-10Q-2025Q4#21",
+    "RJF-PR-2026-01-28-01#23",
+    "RJF-TR-2026Q1#4",
+    "RJF-10Q-2026Q1#23",
+    "RJF-PR-2026-04-22-01#102",
+    "RJF-TR-2026Q2#5",
+    "RJF-10Q-2026Q2#315",
+    "RJF-PR-2026-07-22-01#55",
+    "RJF-10K-2025#227",
+    "RJF-10K-2025#24",
+    "RJF-DECK-2025-investor-day#43"
+  ],
+  "at": "2026-11-21T23:07:17.264220-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14278,
+    "output_tokens": 6174,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 12742,
+    "reasoning_tokens": 5465,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.39
+  },
+  "wall_s": 50.75,
+  "tokens_per_s": 121.66,
+  "ttft_s": 2.39,
+  "reasoning_content": "Let me analyze the sub-question. The question asks for advisor headcount over the last eight quarters for RJF. This is a series.\n\nLet me identify the figures stated in the passages about financial advisor headcount.\n\nKey facts:\n- RJF-10K-2025#227: Financial advisors table as of September 30:\n  - 2025: Employees 3,878, Independent contractors 5,065, Total 8,943\n  - 2024: 3,826 / 4,961 / 8,787\n  - 2023: 3,693 / 5,019 / 8,712\n\n- RJF-TR-2024Q3#9: \"This quarter, we reported financial advisors of 8,787.\" Period 2024-09-30 (fiscal Q4 2024).\n\n- RJF-TR-2025Q3#4: \"a record number of financial advisors of 8,943\" period 2025-09-30.\n\nSo I have quarterly headcount data points:\n- 2023-09-30: 8,712 total (from 10K table)\n- 2024-09-30: 8,787 (from 10K table and transcript)\n- 2025-09-30: 8,943 (from 10K table and transcript)\n\nThese are annual (September 30) points, not quarterly. The question asks \"over the last eight quarters\" - a series.\n\nThe last eight quarters - what's the \"now\"? The passages go up to 2026Q2 (period 2026-06-30). The latest deck is RJF-DECK-2026Q2 (period 2026-06-30, published 2026-07-22). So \"last eight quarters\" would be roughly from Q3 2024 (Sep 2024) through Q2 2026 (Jun 2026)? Actually eight quarters back from 2026-06-30.\n\nHmm, but the question is a series asking for advisor headcount over last eight quarters. I have only year-end (September 30) figures: 2023, 2024, 2025.\n\nLet me check for any other advisor headcount figures in the passages.\n\nRJF-DECK-2025-investor-day#43: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" - this shows FY2022, FY2023, FY2024 maybe? Actually the numbers: 8,011 (FY2022?), 8,787, 8,731. Wait, \"Mar. 31, 2025**\" is mentioned. Hmm. This is confusing. Let me re-read.\n\nThe deck chunk shows:\n\"95.0 75.3 60.7 8.5% 7.7% 5.5% FY 2022 FY 2023 FY 2024 DOMESTIC NET NEW ASSETS GROWTH ANNUALIZED % 6.5% Average* FY 2019 FY 2024 Mar. 31, 2025** Employees Independent Contractors FINANCIAL ADVISORS 8,011 8,787 8,731 2% 5-Yr CAGR\"\n\nThis is messy. There's \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and \"Mar. 31, 2025**\". This seems to indicate financial advisors at some dates. 8,731 might be Mar 31, 2025? Actually 8,787 is FY2024 (Sep 30, 2024) which we know. 8,731 could be Mar 31, 2025. 8,011 could be FY2019 or FY2022.\n\nThis is a deck with unclear mapping. I should be cautious. The key figure \"Mar. 31, 2025**\" with \"FINANCIAL ADVISORS\" and \"8,731\" could be the March 31, 2025 headcount. But the formatting is jumbled.\n\nActually, this is a slide about \"Retaining and attracting the best advisors\". It shows financial advisors over time. The numbers 8,011, 8,787, 8,731 with a 2% 5-yr CAGR. 8,011 might be FY2019 (5 years before FY2024), 8,787 is FY2024, and 8,731 is Mar 31 2025 (interim).\n\nGiven the ambiguity and jumbled text, I'm cautious. But there's \"Mar. 31, 2025**\" clearly associated. The 8,731 figure could be the financial advisor count as of March 31, 2025.\n\nActually, let me think about what's clearly attributable. The chunk is jumbled from a slide. I have:\n- \"FINANCIAL ADVISORS 8,011 8,787 8,731 2% 5-Yr CAGR\"\n- \"Mar. 31, 2025**\"\n\nThe 5-yr CAGR from FY2019 to FY2024: 8,011 \u2192 8,787 over 5 years = about 1.86% \u2248 2%. So 8,011 is FY2019. 8,787 is FY2024. 8,731 with \"Mar. 31, 2025**\" would be March 31, 2025 interim figure.\n\nThis is a valid data point for advisor headcount as of March 31, 2025 = 8,731.\n\nBut wait, this deck is published 2025-06-05 (Investor Day). So the Mar 31, 2025 figure makes sense.\n\nSo I have potential quarterly data points:\n- 2024-09-30: 8,787\n- 2025-03-31: 8,731 (from deck, though jumbled)\n- 2025-09-30: 8,943\n\nThe last eight quarters - I'm not sure of the exact range expected. The question is part of a broader analysis comparing five firms. I should extract what facts I find about advisor headcount over recent quarters.\n\nLet me be careful about the deck figure. The formatting is very jumbled. The \"Mar. 31, 2025**\" and \"8,731\" association is uncertain. But there's reasonable basis. Actually, I think I should include it but note it carefully.\n\nActually, let me reconsider. The \"8,731\" - is that really March 31, 2025? The order in the jumbled text: \"FINANCIAL ADVISORS 8,011 8,787 8,731 2% 5-Yr CAGR\". The values 8,011, 8,787, 8,731. And separately \"Mar. 31, 2025**\" appears. Also \"FY 2019 FY 2024\" and \"Average*\".\n\nI think this is a chart with bars for FY2019 (8,011), FY2024 (8,787), and Mar 31 2025 (8,731). The \"Mar. 31, 2025**\" label corresponds to 8,731.\n\nGiven the uncertainty, I'll include the Mar 31, 2025 figure as a fact with a note, but actually the instructions say to attribute in passage's terms. I can cite the value 8,731 with period 2025-03-31 but I'm not 100% sure of the mapping.\n\nHmm, actually let me be more conservative. The clearest facts are:\n1. Total advisors as of September 30, 2025: 8,943 (employees 3,878 + independent 5,065)\n2. September 30, 2024: 8,787\n3. September 30, 2023: 8,712\n\nThese are annual points. The question asks for the last eight quarters (a quarterly series). I only have year-end (fiscal year-end September 30) figures, plus possibly March 31, 2025.\n\nThe last eight quarters: If \"now\" is around mid-2026 (latest data 2026-06-30), then last eight quarters = Sep 2024 through Jun 2026. In that window, I have:\n- Sep 30, 2024: 8,787\n- Mar 31, 2025: 8,731 (deck, uncertain)\n- Sep 30, 2025: 8,943\n\nI don't have quarterly headcount for each of the 8 quarters. The firm only reports advisor headcount at fiscal year-end (September 30), and maybe once more.\n\nI'll report the facts I have: the year-end totals for 2023, 2024, 2025, and the Mar 31 2025 figure from the deck (if I include it).\n\nActually, let me reconsider whether to include the deck figure. The jumbled text makes it risky. But there's a clear \"Mar. 31, 2025**\" and \"8,731\" and \"FINANCIAL ADVISORS\". I'll include it as a fact, noting the period.\n\nActually, I realize I should also note the definition: \"Advisors in our RCS division are not included in our financial advisor metric\" (RJF-10K-2025#228). This is a definitional fact.\n\nLet me structure items:\n\nItem 0: Total advisors as of September 30, 2025: 8,943\n- quote from RJF-10K-2025#227: \"Total advisors 8,943\" (and employees 3,878, independent 5,065)\n- value 8,943, unit \"financial advisors\", period 2025-09-30\n\nItem 1: September 30, 2024: 8,787\nItem 2: September 30, 2023: 8,712\n\nItem 3: March 31, 2025: 8,731 (deck)\n\nAlso the transcript RJF-TR-2025Q3#4 gives 8,943 for \"record number of financial advisors\" and RJF-TR-2024Q3#9 gives 8,787.\n\nLet me include the breakdown (employees vs independent contractors) as separate items? The sub-question asks for \"advisor headcount\" which is total. The 10K table gives employees, independent contractors, and total. I'll report total as the main fact, but I could also include the components. The question asks \"Advisor headcount\" = total advisors. I'll focus on total.\n\nActually, I could include the components as facts too since they're part of the metric breakdown. But the question is about total headcount. I'll include the total and maybe note components within the text. Let me keep it clean: total advisors per period.\n\nLet me also consider: is \"record number of financial advisors of 8,943\" in transcript, and \"8,943\" in 10K. Both are fiscal year-end 2025 (Sep 30, 2025).\n\nFor the last eight quarters, I don't have all eight quarters. I should note that the firm only discloses at fiscal year-end (and possibly one interim). My label is \"fact\" with items for the periods I found. I'll include a reason.\n\nLet me decide on the deck figure more carefully. The chunk text:\n\n\"95.0 75.3 60.7 8.5% 7.7% 5.5% FY 2022 FY 2023 FY 2024 DOMESTIC NET NEW ASSETS GROWTH ANNUALIZED % 6.5% Average* FY 2019 FY 2024 Mar. 31, 2025** Employees Independent Contractors FINANCIAL ADVISORS 8,011 8,787 8,731 2% 5-Yr CAGR\"\n\nThere are two charts on this slide probably: top chart \"Domestic net new assets growth\" (FY2022, FY2023, FY2024 with 8.5%, 7.7%, 5.5%, average 6.5%), bottom chart \"Financial advisors\" with 8,011 (FY2019), 8,787 (FY2024), 8,731 (Mar 31 2025), 2% 5-yr CAGR.\n\nSo \"8,731\" = financial advisors as of Mar 31, 2025. This is a legitimate data point.\n\nBut wait, 8,787 is FY2024 (Sep 30, 2024) and 8,731 is Mar 31, 2025 - so headcount declined slightly then rose to 8,943 by Sep 2025. That's plausible given some OSJ departures mentioned.\n\nI'll include the Mar 31, 2025 figure.\n\nActually, I'm somewhat hesitant about \"8,731\" mapping because it could also be a different metric. But \"FINANCIAL ADVISORS\" label and \"Mar. 31, 2025**\" strongly suggest it. I'll include with quote and note.\n\nLet me also consider: The question is a \"series\" asking for 8 quarters. The firm doesn't provide quarterly advisor headcount; it provides fiscal year-end figures. So I should note this in reason. I'll provide the facts I found (year-end points plus one interim).\n\nNow, should I mark this as \"fact\" or something else? The label \"fact\" applies because passages state what the sub-question asks (advisor headcount), in part (some periods). So fact.\n\nLet me write the items.\n\nItem 0 (Sept 30, 2025 total 8,943):\n- text: Raymond James reported a record 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee advisors and 5,065 independent contractors.\n- quote: \"Total advisors 8,943\" \u2014 actually the full quote from table. Let me use from 10K: \"Employees 3,878 3,826 3,693 ... Independent contractors 5,065 4,961 5,019 ... Total advisors 8,943 8,787 8,712\"\n\nHmm the quote needs to be at most 300 chars. Let me use the transcript quote \"a record number of financial advisors of 8,943\" for item 0.\n\nActually for the table, I'll quote \"Total advisors                                        8,943                8,787                8,712\" \u2014 but the exact spacing is hard. Let me use a cleaner quote.\n\nI'll use:\n- Item 0 quote: \"record number of financial advisors of 8,943\" from RJF-TR-2025Q3#4. And also could cite 10K. I'll use the transcript quote and chunk id.\n\nActually, better to use the 10K table since it has the breakdown. But the quote with weird spacing. Let me quote: \"Total advisors                                        8,943                8,787                8,712\"\n\nI'll just provide a reasonable quote. The instruction says \"copied\" but with table formatting it's hard. I'll use the transcript quote for 8,943 and note breakdown from 10K in text.\n\nLet me use both chunks for item 0. chunk_ids can list multiple.\n\nItem 0: \n- text: As of September 30, 2025, Raymond James reported a record 8,943 total financial advisors (3,878 employee advisors and 5,065 independent contractors).\n- quote: \"a record number of financial advisors of 8,943\" (transcript) \u2014 but I also want breakdown. I'll add another sentence. Actually single quote. Let me combine: quote from 10K \"Employees 3,878 ... Independent contractors 5,065 ... Total advisors 8,943\" is too long/awkward.\n\nI'll use quote: \"a record number of financial advisors of 8,943\" and chunk_ids include both RJF-TR-2025Q3#4 and RJF-10K-2025#227.\n\nActually for clarity, let me make separate items or include full detail. I'll keep one item with text mentioning breakdown and quote the transcript.\n\nLet me finalize items:\n\n1. 2025-09-30: 8,943 total\n2. 2024-09-30: 8,787 total\n3. 2023-09-30: 8,712 total\n4. 2025-03-31: 8,731 total (deck)\n\nFor item 2 (2024-09-30), quote from 10K table \"8,787\" and transcript \"we reported financial advisors of 8,787\" (RJF-TR-2024Q3#9).\n\nFor item 3 (2023-09-30), from 10K table \"8,712\".\n\nFor item 4, deck.\n\nLet me also include the definition item about RCS advisors not included. Actually that's relevant to \"how the firm reports it\" but the sub-question is just headcount series. The definition is useful context. I could include it as a definition field on items, or as a separate fact item. The instructions say: \"The firm's own definition of a metric, quoted from a passage, is a fact for a sub-question that asks how the firm defines or reports it.\" This sub-question doesn't ask for definition, just headcount series. So I'll put the definition in the definition field of items where applicable.\n\nThe definition: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" I'll include this in the definition field.\n\nLet me write the definition field: \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\"\n\nNow the reason: The firm reports advisor headcount only at fiscal year-end (September 30) and once interim (March 31); I found these points, not all eight quarters.\n\nLet me also double check: is there any quarterly advisor headcount in the 10-Q filings? The passages don't include any quarterly advisor count tables in 10-Qs. Only the 10K (annual) has the table. So no quarterly series.\n\nAlso the \"8,011\" FY2019 figure - that's older, not in the last eight quarters, but I could include it as context? The question asks last eight quarters, so FY2019 is not relevant. I'll skip it. Actually, it's a \"different period of the asked quantity\" which is still a fact for the periods it covers... but it's very old (FY2019), not relevant to \"last eight quarters.\" I'll skip to keep focus.\n\nActually, wait - should I include FY2019 (8,011)? The question is about last eight quarters. FY2019 is 6 years earlier. Not relevant. Skip.\n\nLet me finalize the derivation: \"\" and inputs empty.\n\nNow write the submit_extraction call.\n\nFor the deck item 4, quote: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and \"Mar. 31, 2025**\". I'll quote \"FINANCIAL ADVISORS 8,011 8,787 8,731\" with the Mar 31 2025 label. Actually to be safe about the mapping, I'll quote both fragments. But the quote field is one string. I'll use: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and note in text the Mar 31, 2025 label.\n\nHmm, actually I'm now worried about the correctness of mapping 8,731 to Mar 31, 2025. Let me think again. The slide is \"Retaining and attracting the best advisors to drive strong net new asset growth\". It likely shows a bar chart of financial advisors over time: FY2019 (8,011), FY2024 (8,787), and Mar 31, 2025 (8,731). The asterisk \"**\" on Mar 31 2025 suggests a footnote (partial year). This is consistent.\n\nI'll include it but the text will say \"approximately 8,731 financial advisors as of March 31, 2025\" with a note that it's from an investor-day slide.\n\nActually, let me be careful and phrase it faithfully: \"An investor-day slide lists financial advisor figures of 8,011 (FY2019), 8,787 (FY2024), and 8,731 labeled as of March 31, 2025.\"\n\nI'll write text clearly attributing.\n\nLet me write all items now.\n\nValue for item 4: \"8,731\", unit \"financial advisors\", period \"2025-03-31\".\n\nDefinition field for all: the RCS exclusion note. Actually I'll put it in definition for the items. Or just once. I'll add to each item's definition or just include in the reason. The definition field is per item. I'll add it to item 0 and maybe others. To keep simple, I'll add the definition to each item consistently.\n\nActually the definition field should capture \"the firm's own definition of the quantity when a passage gives one.\" The relevant definitional note is the RCS exclusion. I'll add it to item 0 and others.\n\nLet me write the final answer.\n\nI'll include 4 items. All labeled fact.\n\nLet me write concise text for each.\n\nItem 0:\ntext: \"Raymond James reported a record 8,943 total financial advisors as of September 30, 2025 (3,878 employee advisors and 5,065 independent contractors).\"\nquote: \"a record number of financial advisors of 8,943\"\nvalue: \"8,943\", unit \"financial advisors\", period \"2025-09-30\", scope \"\", definition \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\"\nchunk_ids: [\"RJF-TR-2025Q3#4\", \"RJF-10K-2025#227\"]\n\nItem 1:\ntext: \"Raymond James reported 8,787 total financial advisors as of September 30, 2024 (3,826 employee advisors and 4,961 independent contractors).\"\nquote: \"we reported financial advisors of 8,787\"\nvalue \"8,787\", unit \"financial advisors\", period \"2024-09-30\", definition same, chunk_ids [\"RJF-TR-2024Q3#9\", \"RJF-10K-2025#227\"]\n\nItem 2:\ntext: \"Raymond James reported 8,712 total financial advisors as of September 30, 2023 (3,693 employee advisors and 5,019 independent contractors).\"\nquote: \"Total advisors                                        8,943                8,787                8,712\" \u2014 I'll use a cleaner quote: \"Total advisors ... 8,712\". Hmm. Let me quote the table line. I'll use \"Total advisors\" line. Actually simpler quote: \"8,712\" is too little. I'll quote: \"Total advisors 8,943 8,787 8,712\".\n\nLet me use quote: \"Total advisors                                        8,943                8,787                8,712\". This is from the 10K. It's fine.\n\nvalue \"8,712\", period \"2023-09-30\", chunk_ids [\"RJF-10K-2025#227\"]\n\nItem 3:\ntext: \"An investor-day slide lists 8,731 financial advisors as of March 31, 2025 (with 8,011 for fiscal 2019 and 8,787 for fiscal 2024).\"\nquote: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and \"Mar. 31, 2025**\"\nActually I'll use quote: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and note Mar 31 2025 label in text. But I want to capture the Mar 31 2025 label. Let me combine: \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and mention \"Mar. 31, 2025**\".\n\nI'll put quote = \"FINANCIAL ADVISORS 8,011 8,787 8,731\" and text mentions \"labeled 'Mar. 31, 2025**'\".\n\nvalue \"8,731\", period \"2025-03-31\", chunk_ids [\"RJF-DECK-2025-investor-day#43\"]\n\ndiffers_because: \"\" for all fact items.\n\nreason: \"Passages state total financial advisor headcount at fiscal year-ends (and one interim March 31, 2025 point), which partially covers the last eight quarters; quarterly counts for each quarter are not disclosed.\"\n\nActually reason should be one short sentence. I'll write: \"Passages state advisor headcount at fiscal year-end dates and one interim date, not a full eight-quarter series.\"\n\nLet me finalize.\n\nOne more consideration: Should I mark this as fact or should I note that quarterly series is not disclosed? The sub-question asks for \"advisor headcount over the last eight quarters\" as a series. I have partial facts (fiscal year-end points). Label \"fact\" with items for the periods. The reason explains partial coverage.\n\nI think that's correct.\n\nLet me write the derivation field: {\"operation\": \"\", \"inputs\": []}.\n\nNow submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James reported a record 8,943 total financial advisors as of September 30, 2025 (3,878 employee advisors and 5,065 independent contractors).",
+            "quote": "a record number of financial advisors of 8,943",
+            "value": "8,943",
+            "unit": "financial advisors",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.",
+            "chunk_ids": [
+              "RJF-TR-2025Q3#4",
+              "RJF-10K-2025#227"
+            ]
+          },
+          {
+            "text": "Raymond James reported 8,787 total financial advisors as of September 30, 2024 (3,826 employee advisors and 4,961 independent contractors).",
+            "quote": "we reported financial advisors of 8,787",
+            "value": "8,787",
+            "unit": "financial advisors",
+            "period": "2024-09-30",
+            "scope": "",
+            "definition": "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.",
+            "chunk_ids": [
+              "RJF-TR-2024Q3#9",
+              "RJF-10K-2025#227"
+            ]
+          },
+          {
+            "text": "Raymond James reported 8,712 total financial advisors as of September 30, 2023 (3,693 employee advisors and 5,019 independent contractors).",
+            "quote": "Total advisors                                        8,943                8,787                8,712",
+            "value": "8,712",
+            "unit": "financial advisors",
+            "period": "2023-09-30",
+            "scope": "",
+            "definition": "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.",
+            "chunk_ids": [
+              "RJF-10K-2025#227"
+            ]
+          },
+          {
+            "text": "An investor-day slide lists 8,731 financial advisors as of March 31, 2025 (alongside 8,011 for fiscal 2019 and 8,787 for fiscal 2024).",
+            "quote": "FINANCIAL ADVISORS 8,011 8,787 8,731",
+            "value": "8,731",
+            "unit": "financial advisors",
+            "period": "2025-03-31",
+            "scope": "",
+            "definition": "Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#43"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state total financial advisor headcount only at fiscal year-end dates and one interim March 31, 2025 point, not a full eight-quarter series.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a2.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a2.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TR-2025Q4#53",
+    "RJF-10K-2025#41",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-10Q-2026Q2#308",
+    "RJF-PR-2026-07-22-01#7",
+    "RJF-TR-2025Q2#3",
+    "RJF-DECK-2025-investor-day#36",
+    "RJF-10Q-2026Q1#239",
+    "RJF-PR-web-bank-and-credit-union-advisors#3",
+    "RJF-10K-2025#65",
+    "RJF-DECK-2025-investor-day#69",
+    "RJF-10Q-2025Q4#30",
+    "RJF-PR-web-independent-advisor#1",
+    "RJF-10K-2025#26",
+    "RJF-10Q-2025Q2#334",
+    "RJF-10Q-2025Q2#224",
+    "RJF-10Q-2025Q4#311",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-08-28-IN-01#0"
+  ],
+  "at": "2026-11-21T20:22:26.723122-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6282,
+    "output_tokens": 584,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4746,
+    "reasoning_tokens": 450,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.58
+  },
+  "wall_s": 6.47,
+  "tokens_per_s": 90.26,
+  "ttft_s": 1.58,
+  "reasoning_content": "Let me analyze the passages to find what Raymond James has said about serving mass-affluent clients. I need to look for any mention of \"mass-affluent\" in the passages.\n\nScanning the passages, none of them mention \"mass-affluent\" at all. The passages discuss various topics: Clark Capital acquisition, Volcker Rule, deposit insurance, Tash Elwyn bio, fee-based accounts, press release, conference calls, compensation, InvestmentNews award, reputational risk, treasury management, business description, independent advisor web page, associate development, liquidity, market risk, advisor recruiting news.\n\nNone mention \"mass-affluent\" or serving mass-affluent clients. So the label should be not_found.\n\nWait, let me double-check. Is there anything about \"retail\" clients? The 10-Q mentions \"providing investment management services to retail and institutional clients.\" But that's not mass-affluent specifically. \"Retail\" is a broader term than mass-affluent, could be considered a different_quantity? Actually, mass-affluent is a subset of retail. But the question is about \"serving mass-affluent clients\" - what the firm has said. There's nothing about mass-affluent specifically.\n\nThe \"retail and institutional clients\" mention is a different, related concept (retail vs mass-affluent). But is that worth labeling as different_quantity? The sub-question is \"What each firm has said about serving mass-affluent clients\". \n\nHmm, \"retail\" is a broader term that encompasses mass-affluent, but it's not a quantity/measure. The different_quantity label is about a different quantity/measure. Here there's no quantity at all; the question asks about what the firm has said (qualitative statements).\n\nActually the sub-question is marked [fact] and asks \"What each firm has said about serving mass-affluent clients.\" This is asking for qualitative statements. Since no passage mentions mass-affluent, the answer is not_found.\n\nI don't think \"retail\" qualifies as a meaningful different_quantity here since it's a vague term and doesn't specifically relate to mass-affluent. I'll go with not_found.\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention mass-affluent clients or what Raymond James has said about serving them; the only related reference is to 'retail and institutional clients,' which does not address mass-affluent specifically.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

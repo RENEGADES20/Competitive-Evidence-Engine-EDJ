@@ -1,0 +1,119 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a6.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-10-19-IN-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-23-WM-01#1",
+    "RJF-TRADE-2026-10-19-IN-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0"
+  ],
+  "at": "2026-11-21T20:48:44.102662-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10990,
+    "output_tokens": 1570,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9454,
+    "reasoning_tokens": 1038,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.38
+  },
+  "wall_s": 13.38,
+  "tokens_per_s": 117.34,
+  "ttft_s": 1.38,
+  "reasoning_content": "Let me analyze the sub-question a6.RJF: What regulatory or legal developments has Raymond James disclosed?\n\nLooking at the passages, the key one is about regulatory/legal developments. The chunk RJF-TRADE-2026-10-19-IN-01#0 and #1 discuss the arbitration award involving Raymond James, advisors Kuras and Marsh, and Deutsche Bank.\n\nLet me extract the relevant legal/regulatory developments:\n\n1. The FINRA arbitration panel found Deutsche Bank liable and awarded Raymond James $16.4 million (chunk #1).\n\n2. Kuras and Marsh sued Raymond James in 2023 over the matter, and a FINRA arbitration panel ordered Raymond James to pay two advisors close to $1.86 million in compensatory damages and interest (chunk #0).\n\nLet me build the items.\n\nThe key legal developments disclosed:\n- FINRA arbitration: Deutsche Bank liable, awarded Raymond James $16.4 million in compensatory damages and accrued interest.\n- FINRA arbitration panel ordered Raymond James to pay two advisors (Kuras and Marsh) close to $1.86 million in compensatory damages and interest. Marsh to receive $1.23 million, Kuras $628,000.\n\nThese are facts about regulatory/legal developments.\n\nLet me write these as fact items.\n\nItem 1: FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.\n\nItem 2: FINRA arbitration panel ordered Raymond James to pay two advisors close to $1.86 million in compensatory damages and interest.\n\nItem 3: Marsh to receive $1.23 million, Kuras $628,000.\n\nLet me consider the scope/period. The arbitration award was finalized last Thursday (relative to 2026-10-19).\n\nLet me write the cells.\n\nFor the sub-question, I'll provide fact items.\n\nLet me set up each item carefully.\n\nItem 0: \ntext: A FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.\nquote: \"a FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.\"\nvalue: \"16.4\"\nunit: \"USD (million)\"\nperiod: \"\" (not clearly stated, but finalized around Oct 2026). Actually the award was finalized \"last Thursday\" relative to published 2026-10-19. So period could be 2026-10. Hmm. Let me use \"\" since not precisely stated. Actually I can note period. The text says \"the award, which was finalized last Thursday.\" Published 2026-10-19 (Monday). Last Thursday would be 2026-10-15. I could put period \"2026-10-15\". But it's a bit inferred. Let me use \"\" to be safe, or actually state 2026-10. I'll leave period as \"\" since not clearly stated in exact date terms... Actually \"last Thursday\" from a Monday-published article = 2026-10-15. But I shouldn't over-compute. I'll leave \"\".\n\nActually, let me keep period empty.\n\nItem 1: FINRA arbitration panel ordered Raymond James to pay two advisors close to $1.86 million in compensatory damages and interest.\nvalue: \"1.86\"\nunit: \"USD (million)\"\nperiod: \"\"\nquote: \"An arbitration panel sanctioned by FINRA Dispute Resolutions Services ordered the firm to pay two advisors close to $1.86 million in compensatory damages and interest\"\n\nItem 2: Marsh is to receive $1.23 million, Kuras $628,000.\nThis is part of the same award. Could be one item or two. Let me do separate items or combine.\n\nActually, these are details of the award. I'll include them.\n\nLet me create the cell with these items.\n\nAlso the chunk #1 mentions the underlying Deutsche Bank arbitration (the 2021 claim), and then Kuras/Marsh sued Raymond James in 2023.\n\nLet me structure clearly:\n\nItem 0: FINRA arbitration panel found Deutsche Bank liable and awarded Raymond James $16.4 million (compensatory damages + accrued interest).\nItem 1: FINRA arbitration panel ordered Raymond James to pay advisors Kuras and Marsh close to $1.86 million in compensatory damages and interest.\nItem 2: Marsh to receive $1.23 million including interest; Kuras $628,000.\n\nThese are all facts.\n\ndiffers_because: \"\" (since label is fact)\n\nreason: passages disclose specific arbitration outcomes (legal developments).\n\nderivation: operation \"\", inputs [].\n\nLet me write the items with all required fields.\n\nFor chunk_ids, use \"RJF-TRADE-2026-10-19-IN-01#1\" and \"RJF-TRADE-2026-10-19-IN-01#0\".\n\nLet me write it all out.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "A FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.",
+            "quote": "a FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.",
+            "value": "16.4",
+            "unit": "USD (million)",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#1"
+            ]
+          },
+          {
+            "text": "A FINRA Dispute Resolution Services arbitration panel ordered Raymond James to pay two advisors (Michael Kuras and Patrick Marsh) close to $1.86 million in compensatory damages and interest, in a dispute dating back to Raymond James' 2016 purchase of Deutsche Bank's U.S. private wealth group.",
+            "quote": "An arbitration panel sanctioned by FINRA Dispute Resolutions Services ordered the firm to pay two advisors close to $1.86 million in compensatory damages and interest",
+            "value": "1.86",
+            "unit": "USD (million)",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#0"
+            ]
+          },
+          {
+            "text": "According to the arbitration panel's ruling, Marsh is to receive $1.23 million in damages (including interest) and Kuras $628,000.",
+            "quote": "According to the arbitration panel's ruling, Marsh is to receive $1.23 million in damages, which includes interest, and Kuras $628,000.",
+            "value": "1.23",
+            "unit": "USD (million)",
+            "period": "",
+            "scope": "Marsh (advisor)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-19-IN-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages disclose specific FINRA arbitration outcomes involving Raymond James (Deutsche Bank award to the firm, and the award to two advisors), which are regulatory/legal developments.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

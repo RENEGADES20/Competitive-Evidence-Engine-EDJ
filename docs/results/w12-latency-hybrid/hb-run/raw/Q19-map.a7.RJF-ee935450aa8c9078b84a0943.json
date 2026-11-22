@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a7.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a7.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-21T20:26:34.266823-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1804,
+    "output_tokens": 560,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 268,
+    "reasoning_tokens": 313,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.91
+  },
+  "wall_s": 7.2,
+  "tokens_per_s": 77.78,
+  "ttft_s": 1.91,
+  "reasoning_content": "I need to extract evidence for sub-question a7.RJF about what offerings and strategies competitors deploy to serve younger investors.\n\nLet me look at the passages. There's only one chunk provided: RJF-DECK-2025-investor-day#42 which mentions \"Next gen advisor strategy\" - but this is about recruiting advisors, not about serving younger investors.\n\nActually, the question is about competitors' offerings/strategies to serve younger investors. The passage mentions \"Next gen advisor strategy\" which is about recruiting next-gen advisors, not serving younger investors (clients).\n\nWait, \"Next gen\" could refer to next generation clients or advisors. The context is \"Recruiting\" p.38, \"Collaborative recruiting across channels\", \"Next gen advisor strategy\" - this is about recruiting next-gen advisors, not serving younger investors.\n\nSo this is a different_quantity or not_found. The passage talks about \"next gen advisor strategy\" in the context of recruiting advisors, not about offerings/strategies to serve younger investors.\n\nThis is a different quantity: a recruiting strategy for next-gen advisors, not offerings to serve younger investors. Actually, \"next gen advisor\" means the advisor is next-gen (younger advisor), not the client.\n\nSo the passage doesn't state anything about serving younger investors. It's about recruiting next-gen advisors.\n\nI'd label this as different_quantity: the \"next gen advisor strategy\" relates to recruiting advisors of the next generation, not offerings/strategies to serve younger investors.\n\nLet me create the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James mentions a \"Next gen advisor strategy\" in the context of its recruiting efforts, alongside collaborative recruiting across channels and a West Coast and Northeast focus.",
+            "quote": "Collaborative recruiting across channels\n\nWest Coast and Northeast focus\n\nNext gen advisor strategy",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#42"
+            ]
+          }
+        ],
+        "differs_because": "The passage describes a recruiting strategy targeting next-generation financial advisors (the firm's own personnel), not offerings or strategies deployed to serve younger investors (clients).",
+        "reason": "The only relevant passage concerns recruiting next-gen advisors, which is a different subject from serving younger investor clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

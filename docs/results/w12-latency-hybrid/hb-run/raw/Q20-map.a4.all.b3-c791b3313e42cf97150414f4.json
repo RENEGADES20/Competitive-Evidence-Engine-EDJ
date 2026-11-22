@@ -1,0 +1,78 @@
+{
+  "question_id": "Q20",
+  "question": "What evidence is there about how clients under 40 choose a financial advisor?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a4.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TRADE-2026-11-02-RB-01#7",
+    "MS-SUPP-2025Q4#36",
+    "MS-TRADE-2026-11-04-RB-01#3",
+    "EDJ-10K-2025#26",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#60",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "BAC-10K-2025#142",
+    "BAC-TR-2026Q3#5",
+    "MS-TRADE-2026-10-26-IN-01#2",
+    "SCHW-TRADE-2026-11-02-RB-01#1",
+    "SCHW-TRADE-2026-10-15-WM-01#1",
+    "MS-10K-2025#79",
+    "RJF-PR-2026-01-28-01#1",
+    "BAC-DECK-2025-investor-day#77",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#63",
+    "RJF-10K-2025#25",
+    "MS-10K-2025#109",
+    "SCHW-DECK-2026-investor-day#239",
+    "MS-TR-2025Q3#13",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "MS-TRADE-2026-10-26-IN-01#3",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "SCHW-TRADE-2026-10-23-WM-01#5"
+  ],
+  "at": "2026-11-21T22:47:36.054945-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8861,
+    "output_tokens": 1100,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7325,
+    "reasoning_tokens": 952,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.16
+  },
+  "wall_s": 12.36,
+  "tokens_per_s": 89.0,
+  "ttft_s": 2.16,
+  "reasoning_content": "I need to analyze the question: \"What evidence is there about how clients under 40 choose a financial advisor?\" Sub-question a4.all asks about the role of digital tools, apps and technology in how clients under 40 select an advisor.\n\nLet me review the passages. None of them specifically discuss clients under 40 choosing an advisor based on digital tools. Let me look through:\n\n- Various chunks about Schwab, MS, EDJ, BAC, RJF - none discuss clients under 40 selecting advisors.\n\nThe WEALTHTENDER chunk mentions survey of ages 35-64, not under 40 specifically, and about online-only meetings preference (one-third prefer online-only meetings). This is a related but different quantity - it's about meeting format preference, not about selecting an advisor, and ages 35-64, not under 40.\n\nActually, \"One-third of our survey participants actually prefer online-only meetings\" - this is about meeting preference, not advisor selection. And age range is 35-64, not under 40.\n\nSo the answer for a4.all is likely not_found - no passage states how digital tools play a role in clients under 40 selecting an advisor.\n\nThe WEALTHTENDER chunk is about preferring online-only meetings (not selection), and age 35-64 (not under 40). This is a different_quantity at best - different measure (meeting format preference vs advisor selection) and different age group.\n\nActually, let me think carefully. The question is about \"how clients under 40 select an advisor\" and the role of digital tools. None of the passages address this.\n\nThe WEALTHTENDER one is about meeting format preference (online-only meetings) among 35-64 year olds, which is about the advisor relationship, not selection. It's a different quantity.\n\nI think the cleanest answer is not_found, since no passage talks about digital tools' role in how under-40 clients select advisors.\n\nActually, let me consider whether to flag WEALTHTENDER as different_quantity. It states \"One-third of our survey participants actually prefer online-only meetings.\" This relates to digital/virtual (technology) but about meeting preference, not selection, and age group 35-64 not under 40. This is a stretch.\n\nI'll go with not_found as the primary label, since the passages say nothing about the role of digital tools in under-40 clients selecting advisors.\n\nActually, wait - should I include the different_quantity item for WEALTHTENDER? The instructions say different_quantity when a passage states a different, related quantity. The WEALTHTENDER passage does state something related: online-only meeting preference (technology/digital) among survey participants ages 35-64.\n\nBut the key issue: the question is specifically about clients under 40 selecting an advisor, and the role of digital tools in that selection. The WEALTHTENDER survey is about people ages 35-64 (overlapping but not specifically under 40), and about meeting format preference, not about how they select an advisor.\n\nThis is quite tangential. I think it's a different_quantity at most, but honestly it's about meeting format not selection. Let me mark it as not_found with a note, or different_quantity.\n\nActually, I'll go with not_found since the evidence doesn't address the question. But I could add a different_quantity item for the WEALTHTENDER chunk to be thorough, noting it differs because it's about meeting format preference (not selection) and age 35-64 (not under 40).\n\nLet me provide both: label as not_found with empty items, but actually if I include a different_quantity item, the label should be different_quantity.\n\nHmm. The label applies to the whole cell. If I think there's a relevant related quantity, I'd use different_quantity with that item. If I think nothing is relevant, not_found.\n\nI'll go with not_found, because the WEALTHTENDER data is about meeting format preference among 35-64 year olds, which is not about how under-40 clients select advisors based on digital tools.\n\nActually, let me reconsider. The question is broad: \"What evidence is there about how clients under 40 choose a financial advisor?\" with sub-question about digital tools' role in selection. The WEALTHTENDER survey is the closest thing but it's ages 35-64 and about meeting preference. It doesn't directly answer.\n\nI'll mark not_found. The reason: no passage discusses digital tools' role in under-40 clients' advisor selection.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.all",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages discusses the role of digital tools, apps or technology in how clients under 40 select an advisor; the closest content (WEALTHTENDER) concerns a preference for online-only meetings among ages 35-64, not advisor selection by under-40 clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -202,11 +202,11 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
 - [x] Ask page shows plan, then evidence lines (each with a chunk chip from the retrieved set), then the answer:
       verify-cee screenshots on mock, recipe `ask-progress.md` and `scripts/verify_cee.py` updated.
 - [x] `python scripts/latency_report.py <run>/raw` prints the #250 baseline (fts median 415 s) and every run's table.
-- [ ] (fts done; hybrid open) Test A fts: Q5, Q10, Q19, Q21, Q24, Q26 under C1, C2, C3: latency table, 0 cut outputs for the chosen config,
+- [x] Test A fts: Q5, Q10, Q19, Q21, Q24, Q26 under C1, C2, C3: latency table, 0 cut outputs for the chosen config,
       config chosen by the step-10 rule. Hybrid: the same six with the chosen config, 0 cut outputs.
-- [ ] (fts done: blind 22/30, adjudicated 24/30; hybrid open) Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
+- [x] (fts adjudicated 24/30; hybrid blind 22/30, adjudication in PR #274) Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
       per mode in `docs/results/w12-latency.md`; a mode below its floor re-run once with reduce `high`.
-- [ ] (fts done: p50 18 s; hybrid open) First cited evidence time (plan `wall_s` + first landed round-1 map call, from the records) and end-to-end p50
+- [x] First cited evidence time (plan `wall_s` + first landed round-1 map call, from the records) and end-to-end p50
       reported per mode (target 30 s; reported, not gated).
 - [ ] `gh pr checks` green on the main PR, the sync PR and the hybrid PR; real call counts per run in each PR.
 
@@ -284,3 +284,9 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   Resume: `run-latency.ps1 -Wt D:\ALLPROJECTS\EDJ\wt-272h -Out hb-run3 -Cache D:\ALLPROJECTS\EDJ\cache\ev272\cache-h
   -MaxCalls 634 -Phase run -GateSha 62d26d7 -Mode hybrid-norerank -FastembedPath D:\ALLPROJECTS\EDJ\cache\fastembed`
   with Q1-Q30 (saved records reused). Evidence so far: `docs/results/w12-latency-hybrid/`.
+- 2026-11-22 01:30 - hybrid test B resumed after the top-up (hb-run3): 124 new calls, USD 3.84; Q1-Q30 complete,
+  0 cut, 0 invalid, 0 failed. Hybrid test B total 340 new calls, USD 9.94; hybrid total 509 calls, USD 13.17.
+  Latency p50 237 s, p90 338 s, max 455 s; with retrieval 246 / 368 / 547 s; retrieval p50 7.7 s (embedding 0.29 s);
+  first evidence p50 18 s (28 s with retrieval). Blind scoring, four fresh Sonnet scorers: 10/10, 4/6, 4/5, 4/9 =
+  **22/30** (tier 1 11/18), meeting the 22/30 floor; adjudication by the PR #274 second read. Report
+  `docs/results/w12-latency-hybrid.md`.

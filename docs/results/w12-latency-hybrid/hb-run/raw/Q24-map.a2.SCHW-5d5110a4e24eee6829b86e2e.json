@@ -1,0 +1,145 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-10K-2025#13",
+    "SCHW-DECK-2026-investor-day#306",
+    "SCHW-10Q-2026Q2#7",
+    "SCHW-PR-2026-10-15-01#10",
+    "SCHW-MONTHLY-2026-05#2",
+    "SCHW-TR-2025Q4#10",
+    "SCHW-10K-2025#19",
+    "SCHW-DECK-2026Q2#22",
+    "SCHW-10Q-2026Q1#60",
+    "SCHW-MONTHLY-2026-02#4",
+    "SCHW-TR-2026Q1#4",
+    "SCHW-10K-2025#543",
+    "SCHW-DECK-2026Q1#46",
+    "SCHW-10Q-2025Q2#327",
+    "SCHW-TR-2025Q1#6",
+    "SCHW-DECK-2026Q3#73",
+    "SCHW-TR-2025Q1#9",
+    "SCHW-DECK-2026-investor-day#38",
+    "SCHW-10Q-2025Q3#0",
+    "SCHW-TR-2025Q4#55",
+    "SCHW-DECK-2026-investor-day#305",
+    "SCHW-10Q-2026Q1#22",
+    "SCHW-TR-2025Q1#34",
+    "SCHW-DECK-2026Q3#28",
+    "SCHW-TR-2025Q4#13",
+    "SCHW-10Q-2026Q2#25",
+    "SCHW-TR-2026Q3#13",
+    "SCHW-10Q-2026Q2#71",
+    "SCHW-TR-2026Q1#2",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10K-2025#18",
+    "SCHW-10K-2025#23",
+    "SCHW-PR-2026-01-21-01#36",
+    "SCHW-10K-2025#124",
+    "SCHW-TR-2026Q3#4",
+    "SCHW-TR-2025Q4#8",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-PR-2026-07-21-01#37",
+    "SCHW-10Q-2025Q3#9",
+    "SCHW-PR-2026-07-21-01#11",
+    "SCHW-MONTHLY-2026-08#4",
+    "SCHW-PR-2026-04-16-01#30",
+    "SCHW-10Q-2026Q1#9",
+    "SCHW-MONTHLY-2026-07#5",
+    "SCHW-MONTHLY-2026-05#4",
+    "SCHW-10K-2025#12",
+    "SCHW-PR-2026-04-16-01#1",
+    "SCHW-10Q-2025Q3#82",
+    "SCHW-MONTHLY-2026-02#7",
+    "SCHW-MONTHLY-2026-01#5",
+    "SCHW-PR-2026-10-15-01#36",
+    "SCHW-10K-2025#49",
+    "SCHW-MONTHLY-2026-08#2",
+    "SCHW-10Q-2025Q2#9",
+    "SCHW-PR-2026-04-16-01#9"
+  ],
+  "at": "2026-11-21T20:43:25.113168-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18497,
+    "output_tokens": 2468,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 16961,
+    "reasoning_tokens": 1893,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.39
+  },
+  "wall_s": 31.58,
+  "tokens_per_s": 78.15,
+  "ttft_s": 2.39,
+  "reasoning_content": "Let me analyze the sub-question: \"Advisor headcount for the firm\" - the firm's count of financial advisors (or advisors/wealth advisors).\n\nLet me look through the passages for any advisor headcount figures.\n\nThe passages mention:\n- \"We're continuing to hire financial consultants and wealth advisers\" (SCHW-TR-2026Q1#4)\n- \"growth in headcount, including financial consultants and wealth advisors\" (SCHW-10Q-2026Q1#22, SCHW-10Q-2026Q2#25, SCHW-10Q-2026Q2#71)\n- SCHW-ADV1A-2026#1: This is Form ADV Item 5 - employees. \"Approximately how many employees do you have?\" 30690. \"how many of the employees reported in 5.A. perform investment advisory functions (including research)?\" 4127. \"registered representatives of a broker-dealer?\" 16763. \"registered with state securities authorities as investment adviser representatives?\" 6584.\n\nSo there's a headcount figure: employees performing investment advisory functions = 4,127. This is a different measure - it's employees performing investment advisory functions (from Form ADV), not \"advisors\" per se. Also 30,690 total employees.\n\nThe sub-question asks \"Advisor headcount for the firm\" - the number of financial advisors/wealth advisors.\n\nThe passages mention hiring financial consultants and wealth advisors but no specific count of advisors. \n\nThe Form ADV gives \"employees who perform investment advisory functions (including research)\" = 4,127. This is a different quantity - it's a regulatory form's label for a business metric, which includes research. This is a different_quantity.\n\nActually, let me think about what \"advisor headcount\" means. The question is about \"client assets per advisor\" - so advisor headcount would be financial advisors / wealth advisors. Schwab reports \"financial consultants and wealth advisors\" growth in headcount but no specific number.\n\nThe Form ADV figure 4,127 is \"employees who perform investment advisory functions (including research)\". This is a related but different measure. It's from a regulatory filing (Form ADV). This is a different_quantity - a regulatory form's label for a business metric.\n\nAlso 30,690 total employees (full- and part-time, excluding clerical). That's a different measure (all employees).\n\nThe 10-K human capital: \"approximately 33,000 full-time employees\" (full-time equivalents). Also different.\n\nSo my answer: no passage states advisor headcount. The closest is the Form ADV 4,127 employees performing investment advisory functions, which is a different quantity (regulatory label, includes research, excludes some categories).\n\nLet me identify the items.\n\ndifferent_quantity items:\n1. Form ADV: 4,127 employees perform investment advisory functions (including research). Value \"4,127\", unit \"employees performing investment advisory functions\", period n/a (published 2026-10-21). scope - this is for the registered investment adviser (Charles Schwab & Co or the specific adviser filing). Actually the ADV form's Item 5 is about \"your advisory business\" employees. \n\n2. 30,690 total employees (full- and part-time, excluding clerical). \n\n3. 33,000 full-time employees (10-K 2025).\n\nActually, let me focus. The sub-question is \"Advisor headcount for the firm\". The most relevant different quantity is the 4,127 \"perform investment advisory functions (including research)\". This is the closest to advisor headcount.\n\nBut I should also note that the passages mention hiring financial consultants and wealth advisors but give no count. So there's no fact for advisor headcount.\n\nLet me also consider: does the 4,127 count as a \"different measure\" or could it be a fact? The sub-question asks \"advisor headcount\" - the firm's advisors. The Form ADV figure is \"employees who perform investment advisory functions (including research)\". This is a regulatory label and includes research, and it's a count of employees performing advisory functions, not exactly \"advisors\". This is a different_quantity per instructions: \"a regulatory form's label for a business metric\".\n\nSo I'll label the cell different_quantity with the 4,127 item, and maybe also 30,690 and 33,000 as additional different quantities (different measures - all employees/full-time employees).\n\nActually the instructions say items are \"one per figure or statement\". I can include multiple different-quantity items.\n\nLet me determine differs_because for the cell. The cell-level differs_because field. Since I might have multiple items with different reasons... but differs_because is a single field at cell level. Hmm. Actually, I could put the main reason.\n\nLet me think about how to structure. The cell has one label and one differs_because. I'll include the key items.\n\nActually, maybe I should provide the most relevant different quantity (4,127 investment advisory functions employees), and note total employees (30,690 and 33,000) as additional items. But differs_because at cell level needs to summarize.\n\nLet me keep it focused: the 4,127 is the closest to \"advisor headcount\". I'll make that the primary item. I could also add the 30,690 and 33,000 as separate items within the same different_quantity cell, but their differs_because would be \"all employees, not advisors\".\n\nActually, since differs_because is cell-level, and items have their own \"text\" and \"definition\", I can describe differences in the item text. But the differs_because field is one string. I'll summarize.\n\nLet me consider whether to make this not_found vs different_quantity. There IS a related quantity (4,127 investment advisory function employees). So different_quantity is more appropriate than not_found.\n\nI'll produce the cell with different_quantity, items including:\n1. 4,127 employees perform investment advisory functions (including research) - Form ADV\n2. 30,690 total employees (full/part-time, excluding clerical)\n3. 33,000 full-time employees (FTE equivalent) - 10-K\n\nActually, let me focus on what's most relevant to \"advisor headcount\". The 4,127 is clearly the closest. The others (30,690, 33,000) are total employees, which is a \"different measure (all employees... for advisors)\".\n\nI'll include all three as items, each with appropriate description. differs_because at cell level: \"No passage states the firm's advisor headcount; passages give related but different measures (employees performing investment advisory functions per Form ADV, total employees, and full-time-equivalent employees).\"\n\nLet me write the items.\n\nItem 1: text: \"Schwab's Form ADV reports that approximately 4,127 of its employees perform investment advisory functions (including research).\" quote: \"Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 4127\" value \"4,127\", unit \"employees performing investment advisory functions\", period \"\" (n/a, no date), scope \"\", definition \"\".\n\nActually period: the ADV is published 2026-10-21, period n/a. The instruction says period \"\" when not stated or no figure. I'll leave \"\".\n\nItem 2: \"30,690\" total employees. quote: \"Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 30690\" value \"30,690\", unit \"employees (full- and part-time, excluding clerical)\", period \"\", scope \"\".\n\nItem 3: \"33,000\" FTE. quote: \"As of December 31, 2025, Schwab had full-time, part-time, and temporary employees, and persons employed on a contract basis, that represented the equivalent of approximately 33,000 full-time employees.\" value \"33,000\", unit \"full-time equivalent employees\", period \"2025-12-31\", scope \"\".\n\nchunk_ids: item1 and item2 from SCHW-ADV1A-2026#1; item3 from SCHW-10K-2025#49.\n\nreason: \"No passage reports the firm's advisor headcount; the passages give related but different measures.\"\n\nderivation: operation \"\", inputs [].\n\nNow, should I also mention that Schwab mentions hiring financial consultants and wealth advisors but no count? That supports not_disclosed? No, not_disclosed requires the firm says it doesn't report it. They don't say that explicitly. So different_quantity is right.\n\nLet me finalize.\n\nActually, let me reconsider whether the 4,127 \"perform investment advisory functions\" is the best single different-quantity, and whether including total employees muddies things. The instructions allow items one per figure. I'll include all three but the cell differs_because should note the key point.\n\nLet me write concise text for each.\n\nI'll proceed to submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Schwab's Form ADV reports that approximately 4,127 of its employees perform investment advisory functions (including research).",
+            "quote": "Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 4127",
+            "value": "4,127",
+            "unit": "employees performing investment advisory functions",
+            "period": "",
+            "scope": "",
+            "definition": "perform investment advisory functions (including research)",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab's Form ADV reports that it has approximately 30,690 employees (full- and part-time, excluding clerical workers).",
+            "quote": "Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 30690",
+            "value": "30,690",
+            "unit": "employees (full- and part-time, excluding clerical workers)",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Schwab's 10-K states that as of December 31, 2025, Schwab had full-time, part-time, and temporary employees, and persons employed on a contract basis, representing the equivalent of approximately 33,000 full-time employees.",
+            "quote": "As of December 31, 2025, Schwab had full-time, part-time, and temporary employees, and persons employed on a contract basis, that represented the equivalent of approximately 33,000 full-time employees.",
+            "value": "33,000",
+            "unit": "full-time equivalent employees",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10K-2025#49"
+            ]
+          }
+        ],
+        "differs_because": "No passage states the firm's advisor headcount; passages give related but different measures: employees performing investment advisory functions (a Form ADV regulatory label, including research), total employees (full- and part-time, excluding clerical), and full-time-equivalent employees.",
+        "reason": "The passages mention hiring financial consultants and wealth advisors but give no advisor headcount figure; the closest figures are different measures (investment advisory function employees and total employees).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

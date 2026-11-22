@@ -1,0 +1,62 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#116",
+    "EDJ-10K-2025#328",
+    "EDJ-10Q-2025Q3#137",
+    "EDJ-10K-2025#7",
+    "EDJ-10Q-2025Q2#121",
+    "EDJ-10K-2025#334",
+    "EDJ-10Q-2025Q2#126",
+    "EDJ-10Q-2025Q2#125",
+    "EDJ-10Q-2026Q2#70",
+    "EDJ-10Q-2026Q2#82"
+  ],
+  "at": "2026-11-21T20:27:54.400975-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4946,
+    "output_tokens": 427,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 3282,
+    "reasoning_tokens": 288,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.28
+  },
+  "wall_s": 4.16,
+  "tokens_per_s": 102.64,
+  "ttft_s": 1.28,
+  "reasoning_content": "Let me analyze the passages. The sub-question asks: \"What growth in younger investors and clients under 40 do firms report?\"\n\nI need to look through the passages for anything about younger investors or clients under 40 growth. The passages provided are all about exhibits, partnership certificates, revenue/expense, trade revenue, net new assets, financial advisors.\n\nNone of the passages mention younger investors or clients under 40. So this is not_found.\n\nLet me verify each chunk:\n- EDJ-10Q-2026Q2#116: exhibit list\n- EDJ-10K-2025#328: exhibit list\n- EDJ-10Q-2025Q3#137: exhibit list\n- EDJ-10K-2025#7: business description, partners count\n- EDJ-10Q-2025Q2#121: exhibit list\n- EDJ-10K-2025#334: revenue/expense note\n- EDJ-10Q-2025Q2#126: exhibit list\n- EDJ-10Q-2025Q2#125: exhibit list\n- EDJ-10Q-2026Q2#70: trade revenue\n- EDJ-10Q-2026Q2#82: net new assets, financial advisors\n\nNothing about younger investors or clients under 40. So label not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention growth in younger investors or clients under 40; they cover partnership/exhibit lists, partner counts, revenue/expense notes, trade revenue, net new assets, and financial advisor headcounts.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

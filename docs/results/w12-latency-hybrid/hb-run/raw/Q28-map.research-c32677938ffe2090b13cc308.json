@@ -1,0 +1,104 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "KITCES-WELLBEING-2023#17",
+    "KITCES-WELLBEING-2023#55",
+    "MCK-SIGNAL-SELLOFF-2026#9",
+    "MCK-ADVISOR-SHORTAGE-2025#7"
+  ],
+  "at": "2026-11-21T23:23:26.447191-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3217,
+    "output_tokens": 700,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1937,
+    "reasoning_tokens": 333,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.81
+  },
+  "wall_s": 6.8,
+  "tokens_per_s": 102.94,
+  "ttft_s": 1.81,
+  "reasoning_content": "The question asks about Edward Jones's and Merrill's advisor attrition rates. The passages are industry research, not about specific firms. Let me look at the passages.\n\nThe passages discuss advisor wellbeing, likelihood of leaving employer, industry headcount projections, fee pressure. None mention Edward Jones or Merrill specifically, nor their attrition rates.\n\nSo for each sub-question:\n- a1.research: Edward Jones's advisor attrition rate - not_found (no passage mentions Edward Jones)\n- a2.research: closest disclosed measure to Edward Jones's advisor attrition rate - not_found\n- a3.research: Merrill's advisor attrition rate - not_found\n- a4.research: closest disclosed measure to Merrill's - not_found\n- a5.research: whether comparable - not_found\n\nActually, wait. There are industry figures about advisors leaving employer. But that's not about a specific firm's attrition. The a5 asks whether Edward Jones's rate can be compared to Merrill's. No passage addresses comparison.\n\nThe KITCES passage has \"Struggling advisors were 4X as likely to be leaving their employer within the next 12 months\" and \"Nearly one in 10 Struggling advisors were extremely likely to be leaving their employer.\" These are industry-level figures about likelihood of leaving, not attrition rates for a specific firm, and not about Edward Jones or Merrill.\n\nSo these are all not_found, since no passages mention Edward Jones or Merrill at all.\n\nLet me confirm no passage mentions these firms. Correct, none do.\n\nSo all five cells: not_found with empty items.\n\nLet me write the reasons.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions Edward Jones or its advisor attrition rate; passages are general industry research about advisor wellbeing and headcount trends.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses any Edward Jones advisor headcount or a proxy measure for its attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions Merrill or its advisor attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses any Merrill advisor headcount or a proxy measure for its attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage compares Edward Jones's and Merrill's attrition rates or addresses their comparability.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

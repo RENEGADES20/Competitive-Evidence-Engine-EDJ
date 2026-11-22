@@ -1,0 +1,227 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#327",
+    "EDJ-10Q-2026Q2#115",
+    "EDJ-10Q-2025Q2#120",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#102",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-10Q-2026Q2#9",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#58"
+  ],
+  "at": "2026-11-21T20:43:25.142696-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10050,
+    "output_tokens": 3690,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 8514,
+    "reasoning_tokens": 2345,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.39
+  },
+  "wall_s": 37.8,
+  "tokens_per_s": 97.62,
+  "ttft_s": 2.39,
+  "reasoning_content": "Let me analyze the passages to find advisor headcount for Edward Jones.\n\nThe sub-question is \"Advisor headcount for the firm\" - metric advisor_headcount.\n\nLooking at passages, I find several with \"Financial advisors (actual)\" figures.\n\nKey facts:\n- EDJ-10K-2025#130: \"At year end 20,425 / 20,125 / 19,232\" for 2025, 2024, 2023. Average 20,331 / 19,650 / 18,945.\n- EDJ-10Q-2026Q2#60: At period end 20,514 / 20,309; Average 20,537 / 20,316.\n- EDJ-10Q-2025Q2#64: At period end 20,309 / 19,589; Average 20,316 / 19,522.\n- EDJ-10Q-2025Q3#67: At period end 20,429 / 19,885; Average 20,368 / 19,749.\n- EDJ-10K-2025#148: U.S. and Canada breakdown. At year end 19,540/19,253/18,378 U.S., 885/872/854 Canada.\n- EDJ-10Q-2025Q3#93: U.S. 19,559/19,013, Canada 870/872.\n\nThese are all \"actual\" financial advisors headcount. This is a fact.\n\nNote the sub-question is marked [fact, metric advisor_headcount]. So advisor headcount is the named figure.\n\nLet me collect the figures. The \"actual\" financial advisors counts are facts. There's also a note about \"full-time equivalent basis\" in EDJ-10Q-2026Q2#75 - but that appears to be about a different metric (some other headcount - 9,455 etc). Actually that's likely \"home office associates\" or similar counted on FTE basis.\n\nThe question asks for advisor headcount. I should provide items for each period.\n\nLet me list periods and values.\n\nFrom EDJ-10K-2025#130 (year end): 2025-12-31: 20,425; 2024-12-31: 20,125; 2023-12-31: 19,232. Average: 20,331/19,650/18,945.\n\nFrom EDJ-10Q-2026Q2#60: period 2026-06-26: At period end 20,514 (2026) vs 20,309 (2025); Average 20,537 vs 20,316.\n\nFrom EDJ-10Q-2026Q1#66: U.S. breakdown: At period end 19,674/19,413 U.S., 876/875 Canada. Wait this is #66 which shows U.S. figures. Actually the full firm? Let me check. #66 shows \"U.S.\" label with 19,674/19,413 and 876/875 (Canada). But that's the segment breakdown.\n\nFrom EDJ-10Q-2025Q3#93: U.S. 19,559/19,013, Canada 870/872, \"At period end\", \"Average\".\n\nFrom EDJ-10Q-2025Q2#64: firm-wide 20,309/19,589 at period end (2025Q2 vs 2024Q2); Average 20,316/19,522.\n\nFrom EDJ-10Q-2025Q3#67: firm-wide 20,429/19,885 at period end; Average 20,368/19,749.\n\nThe sub-question asks for advisor headcount for the firm. I should report the main consolidated figures. I'll provide items for each period I have clear data.\n\nI think I should include the firm-wide \"Financial advisors (actual)\" figures. Let me include all of them as facts, each with period.\n\nLet me be comprehensive but organized. I'll include the year-end and average figures, plus quarterly figures.\n\nActually, let me focus on the key figures. The question \"Advisor headcount for the firm\" - I'll provide fact items.\n\nLet me create items:\n\n1. Year-end 2025: 20,425 (EDJ-10K-2025#130)\n2. Year-end 2024: 20,125\n3. Year-end 2023: 19,232\n4. Average 2025: 20,331\n5. Average 2024: 19,650\n6. Average 2023: 18,945\n7. 2026Q2 period end: 20,514 (EDJ-10Q-2026Q2#60)\n8. 2026Q1 period end: 19,674 U.S.? Actually #51 shows firm-wide \"At period end\" but cut off. #66 shows U.S. 19,674 and Canada 876.\n\nHmm, let me think about what's most useful. The question is just advisor headcount. I'll provide the consolidated firm-wide figures as facts, plus note the segment breakdowns.\n\nLet me be careful. I'll provide items for the main periods.\n\nActually, I should keep it manageable but complete. Let me include:\n\nConsolidated (firm-wide) figures:\n- 2023 year end: 19,232\n- 2024 year end: 20,125\n- 2025 year end: 20,425\n- 2026Q2 period end (June 26, 2026): 20,514\n- Averages similarly.\n\nAlso segment breakdown for 2025 year end: U.S. 19,540, Canada 885.\n\nI'll include the most important ones. Given this is for computing client assets per advisor, the year-end total figures are most relevant.\n\nLet me write items with period, value, unit \"financial advisors\".\n\nFor the periods:\n- 2023-12-31: 19,232\n- 2024-12-31: 20,125\n- 2025-12-31: 20,425\n- 2026-06-26: 20,514 (Q2 2026 period end)\n\nAnd averages:\n- FY2023 average: 18,945\n- FY2024 average: 19,650\n- FY2025 average: 20,331\n\nI'll include these as fact items. Also include quarterly figures maybe. Let me include a reasonable set.\n\nActually, let me include all the distinct period-end figures I can find to be thorough but not overwhelming. I'll present them clearly.\n\nLet me list all fact items with appropriate period labels.\n\nFor period format:\n- \"2023-12-31\", \"2024-12-31\", \"2025-12-31\" for year ends\n- \"2026-06-26\" for Q2 2026 period end\n- \"2025-09-26\" for Q3 2025\n- \"2025-06-27\" for Q2 2025\n\nAverages: period \"2023\" (calendar year), \"2024\", \"2025\".\n\nLet me write the items.\n\nI'll include the firm-wide figures primarily. Let me also add the segment (U.S./Canada) breakdown as fact items with scope, since they're part of advisor headcount and could be relevant. But that might be overkill. The sub-question just asks advisor headcount for the firm. I'll include the consolidated figures and maybe the segment breakdown for completeness.\n\nLet me keep it focused: consolidated firm-wide advisor headcount (actual) at period/year end and average.\n\nFinal items (facts):\n\n1. 2023 year end 19,232\n2. 2024 year end 20,125\n3. 2025 year end 20,425\n4. 2025 average 20,331\n5. 2024 average 19,650\n6. 2023 average 18,945\n7. 2026 Q2 period end 20,514\n8. 2026 Q2 average 20,537\n9. 2026 Q1 period end (from #51, cut off) - skip or use #66 U.S.\n\nActually #66 is U.S./Canada breakdown for Q1 2026. The consolidated would be 19,674 + 876 = 20,550 for Q1 2026. But I shouldn't compute; I'll report the segment figures as separate items with scope.\n\nLet me include segment items too:\n- U.S. 2025 year end 19,540, Canada 885 (EDJ-10K-2025#148)\n- U.S. 2025 average 19,456, Canada 875\n- Q3 2025 U.S. 19,559, Canada 870 (EDJ-10Q-2025Q3#93)\n\nHmm, this is getting complex. Let me keep it clean with the main consolidated figures and note there's a segment breakdown.\n\nI think the best approach: provide fact items for the consolidated firm-wide \"Financial advisors (actual)\" figures, both period-end and average, across available periods. I'll include:\n\nYear-end (period-end):\n- 2023-12-31: 19,232\n- 2024-12-31: 20,125\n- 2025-12-31: 20,425\n\nQuarter period-ends:\n- 2025-06-27 (Q2 2025): 20,309\n- 2025-09-26 (Q3 2025): 20,429\n- 2026-06-26 (Q2 2026): 20,514\n\nAverages:\n- 2023: 18,945\n- 2024: 19,650\n- 2025: 20,331\n- 2026 Q2: 20,537\n\nI'll include these. Also note segment breakdown for 2025 (U.S. 19,540 + Canada 885).\n\nI'll add a couple of segment items for the year-end 2025 to show the breakdown, since it's directly relevant to advisor headcount and the \"comparison valid\" aspect (U.S. vs Canada).\n\nLet me finalize. I'll produce a comprehensive set of fact items.\n\nActually, I'll be a bit selective but thorough. Let me include the key facts.\n\nFor the definition, the passages don't give a specific definition of \"financial advisor\" count, but they say \"actual\" and there's a note about FTE basis for some other count. I'll leave definition \"\".\n\nLet me write the quotes.\n\nFor EDJ-10K-2025#130: \"Financial advisors (actual): At year end 20,425 20,125 19,232 1% Average 20,331 19,650 18,945 3%\"\n\nLet me write out each item.\n\nI'll produce items now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported 19,232 financial advisors (actual) at year end 2023.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "19,232",
+            "unit": "financial advisors",
+            "period": "2023-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,125 financial advisors (actual) at year end 2024.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,125",
+            "unit": "financial advisors",
+            "period": "2024-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,425 financial advisors (actual) at year end 2025.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 18,945 financial advisors for 2023.",
+            "quote": "Average 20,331 19,650 18,945 3%",
+            "value": "18,945",
+            "unit": "financial advisors",
+            "period": "2023",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 19,650 financial advisors for 2024.",
+            "quote": "Average 20,331 19,650 18,945 3%",
+            "value": "19,650",
+            "unit": "financial advisors",
+            "period": "2024",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,331 financial advisors for 2025.",
+            "quote": "Average 20,331 19,650 18,945 3%",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,309 financial advisors (actual) at period end for the second quarter of 2025 (June 27, 2025).",
+            "quote": "Financial advisors (actual): At period end 20,309 19,589 4%",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#64"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,429 financial advisors (actual) at period end for the third quarter of 2025 (September 26, 2025).",
+            "quote": "Financial advisors (actual): At period end 20,429 19,885 3%",
+            "value": "20,429",
+            "unit": "financial advisors",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 20,514 financial advisors (actual) at period end for the second quarter of 2026 (June 26, 2026).",
+            "quote": "Financial advisors (actual): At period end 20,514 20,309 1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,537 financial advisors for the second quarter of 2026.",
+            "quote": "Average 20,537 20,316 1%",
+            "value": "20,537",
+            "unit": "financial advisors",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 19,540 financial advisors (actual) at year end 2025 in its U.S. segment.",
+            "quote": "Financial advisors (actual): At year end 19,540 19,253 18,378 1% 885 872 854 1%",
+            "value": "19,540",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          },
+          {
+            "text": "Edward Jones reported 885 financial advisors (actual) at year end 2025 in its Canada segment.",
+            "quote": "885 872 854 1%",
+            "value": "885",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report financial advisor headcount (actual and average) for multiple periods, which is exactly the quantity asked.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

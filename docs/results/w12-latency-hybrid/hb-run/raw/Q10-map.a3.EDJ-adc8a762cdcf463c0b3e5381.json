@@ -1,0 +1,121 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2026Q2#2",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2026Q1#11",
+    "EDJ-10Q-2026Q2#9",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#286",
+    "EDJ-10Q-2026Q1#2",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#209",
+    "EDJ-10K-2025#208",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#82",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2026Q2#76"
+  ],
+  "at": "2026-11-21T20:19:54.380031-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13757,
+    "output_tokens": 1521,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 12221,
+    "reasoning_tokens": 1147,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.64
+  },
+  "wall_s": 17.81,
+  "tokens_per_s": 85.4,
+  "ttft_s": 1.64,
+  "reasoning_content": "Let me analyze the passages to find how Edward Jones describes targeting or attracting mass-affluent clients.\n\nThe key passage is EDJ-10K-2025#88 which mentions targeting new clients: \"High Net Worth, focused on attracting and serving high net worth clients... Workplace... and a new digital platform, focused on attracting and retaining Next Generation investors.\"\n\nThere's no mention of \"mass-affluent\" specifically. The firm serves \"individual investors\" broadly. The question asks about mass-affluent clients.\n\nSo there's no passage that explicitly mentions mass-affluent. The firm mentions \"individual investors\" broadly (a wider group that includes mass-affluent). And it mentions \"High Net Worth\" clients and \"Next Generation investors\" as specific targets.\n\nMass-affluent is not mentioned. The closest related is \"individual investors\" (broader) or \"high net worth\" (different, higher wealth segment).\n\nLet me determine the label. The sub-question is about \"targeting or attracting mass-affluent clients.\" No passage mentions mass-affluent. The passages mention \"individual investors\" (broader group) and \"High Net Worth\" (a different wealth segment).\n\nSo this would be not_found (nothing about mass-affluent) or different_quantity. \"individual investors\" is a wider group that contains mass-affluent - that could be different_quantity. \"High Net Worth\" is a different segment (different wealth level).\n\nActually, let me think about the distinction. The question asks how each firm describes targeting/attracting mass-affluent clients. Edward Jones does NOT mention mass-affluent. It mentions \"individual investors\" broadly and \"High Net Worth\" specifically.\n\n\"Individual investors\" is a broader category that includes mass-affluent. That's a different_quantity (wider unit that contains the asked one).\n\n\"High Net Worth\" is a different wealth segment - also different_quantity.\n\nI think the most accurate label is different_quantity, with items for \"individual investors\" (broader) and \"High Net Worth\" (different wealth segment).\n\nActually, let me reconsider. The guidance says: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\"\n\n\"primarily serves individual investors in the U.S. and Canada\" - individual investors is a wider unit that contains mass-affluent. So this is different_quantity.\n\n\"High Net Worth, focused on attracting and serving high net worth clients\" - this is a different wealth segment (higher than mass-affluent). Also different_quantity.\n\nLet me create items for both.\n\nItem 1: The firm primarily serves individual investors in the U.S. and Canada. This is a wider category.\n\nItem 2: The firm targets High Net Worth clients through an initiative focused on attracting and serving high net worth clients.\n\nBoth are different_quantity. differs_because should explain.\n\nLet me write the cell.\n\nActually, I should consider whether \"not_found\" is more appropriate. The passages say nothing specifically about mass-affluent. But they do mention related quantities (individual investors, high net worth). The guidance says when unsure between fact and different_quantity, choose different_quantity. And different_quantity is for when a different related quantity is stated.\n\nI'll go with different_quantity.\n\nLet me write out the items.\n\nItem 1: individual investors\n- text: Edward Jones (the Partnership) states it primarily serves individual investors in the U.S. and Canada.\n- quote: \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"EDJ-10K-2025#9\"] or other chunks. Multiple chunks repeat this. Use EDJ-10K-2025#9.\n\nItem 2: High Net Worth initiative\n- text: Edward Jones states it is targeting new clients through a \"High Net Worth\" initiative focused on attracting and serving high net worth clients.\n- quote: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models\"\n- chunk_ids: [\"EDJ-10K-2025#88\"]\n\ndiffers_because: \"The passages describe serving individual investors broadly and targeting high net worth (a wealthier segment) and Next Generation investors, but do not mention mass-affluent clients specifically.\"\n\nLet me also consider the \"new digital platform, focused on attracting and retaining Next Generation investors\" - that's also a different segment.\n\nI'll keep two main items but could add Next Generation. Actually, let me keep it focused. The two items (individual investors broad, high net worth specific) capture the key related quantities.\n\nActually, I think I should include all three: individual investors (broad), high net worth (different/higher segment), next generation (different/younger segment). But the core question is about mass-affluent. High net worth is the most relevant \"different\" segment (different wealth level). Individual investors is the broader category.\n\nLet me keep it to two items for clarity: individual investors (wider) and High Net Worth (different wealth segment). I could add Next Generation too but it's less directly about wealth level.\n\nActually, let me be thorough and include the High Net Worth item which is the most directly \"different\" wealth segment, and the individual investors broad item.\n\nI'll submit with label different_quantity and two items.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones (the Partnership) states that it primarily serves individual investors in the U.S. and Canada, a broader client category than mass-affluent.",
+            "quote": "Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#9"
+            ]
+          },
+          {
+            "text": "Edward Jones states it is targeting new clients through a 'High Net Worth' initiative focused on attracting and serving high net worth clients, a wealthier segment than mass-affluent.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "The passages describe serving individual investors broadly and targeting high net worth (a wealthier segment) and Next Generation investors, but do not use or define the term 'mass-affluent.'",
+        "reason": "No passage mentions mass-affluent clients; the closest related quantities are the broader 'individual investors' group and the separate 'high net worth' segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a8.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T20:26:26.828278-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3660,
+    "output_tokens": 1784,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2124,
+    "reasoning_tokens": 1063,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.0
+  },
+  "wall_s": 19.12,
+  "tokens_per_s": 93.31,
+  "ttft_s": 1.0,
+  "reasoning_content": "The question asks about Edward Jones's disclosures and initiatives for younger investors compared to competitors, specifically for Merrill (MER). Let me look at the passages.\n\nThe passages are about Merrill's advisor recognition lists (Forbes Top Next-Gen Wealth Advisors, Barron's, Financial Planning's Top 40 Advisors Under 40, Forbes Top Next Generation Advisors). These are about young advisors, not younger investors/clients.\n\nThe sub-question a8.MER asks: \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\" This is a comparison sub-question. But the passages provided are for Merrill (MER), not Edward Jones. The passages discuss Merrill's rankings/recognitions of advisors (next-gen advisors, advisors under 40), not disclosures and initiatives for younger investors.\n\nThe passages are about advisors born in 1986 or later, \"Top Next-Gen Wealth Advisors\", \"Top 40 Brokers Under 40\", \"Top Next Generation Advisors\". These are about the advisors themselves being young, not about initiatives for younger investors/clients.\n\nSo for the sub-question about \"disclosures and initiatives for younger investors\", the passages don't state anything about younger investors. The advisor rankings are a different quantity - they relate to younger advisors, not younger investors.\n\nActually, let me think carefully. The question asks about younger investors (clients). The passages mention \"Next-Gen Wealth Advisors\" - these are advisors who serve next-gen/younger investors perhaps? Actually \"Next-Gen Wealth Advisors\" refers to advisors who are themselves next-generation (born 1986 or later). \"Top Next Generation Advisors\" similarly refers to young advisors.\n\nThese are not \"disclosures and initiatives for younger investors\". They are recognitions of young advisors. This is a different quantity - related to younger advisors rather than younger investors.\n\nSo the label should be different_quantity? Or not_found?\n\nThe sub-question asks about \"disclosures and initiatives for younger investors\" - comparing Edward Jones to competitors (Merrill). The passages describe Merrill's recognitions of next-gen/young advisors. This is about advisors, not investors. It's a different measure/quantity.\n\nActually, \"Next-Gen Wealth Advisors\" could be interpreted as advisors who serve next-gen clients, but the definition given explicitly says \"advisors born in 1986 or later with a minimum 4 years as an advisor.\" So it's about young advisors.\n\nThis is a different_quantity - the passages discuss younger advisors (next-gen advisors), not younger investors or initiatives/disclosures for younger investors.\n\nLet me decide: The passages mention recognitions of young advisors (\"Top Next-Gen Wealth Advisors\", \"Top Next Generation Advisors\", \"Top 40 Advisors Under 40\", \"Top 40 Brokers Under 40\"). These are about young advisors, not younger investors.\n\nSo different_quantity with differs_because: \"Passages discuss rankings/recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients.\"\n\nI'll create one cell with label different_quantity and items for these figures.\n\nLet me identify the items:\n1. \"2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list... advisors born in 1986 or later with a minimum 4 years as an advisor\" - chunk MER-PR-web-becoming-a-merrill-lynch-advisor#3\n2. \"24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40\" - multiple chunks\n3. \"No. 1 on Forbes' Top Next Generation Advisors (2025)\" - chunk BAC-PR-2026-01-14-01#12\n4. \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - chunk BAC-PR-2026-01-14-01#12\n\nThese all relate to young advisors, not younger investors.\n\nActually, should this be \"not_found\" or \"different_quantity\"? The passages say nothing about \"disclosures and initiatives for younger investors\". They discuss recognitions of young advisors. That's a different, related quantity (young advisors vs younger investors).\n\nI think different_quantity is appropriate since these are related but different - the passages discuss next-generation advisors rather than younger investors.\n\nLet me write the items concisely. I'll pick a few key items.\n\nItem 1: Forbes 2025 \"Top Next-Gen Wealth Advisors Best-in-State\" list - advisors born 1986 or later with min 4 years.\nItem 2: 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40.\nItem 3: No. 1 on Forbes' Top Next Generation Advisors (2025).\nItem 4: No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).\n\nI'll combine into items.\n\nActually, let me be careful. The instruction says \"Items (fact and different_quantity only), one per figure or statement\". So I'll list each as a separate item.\n\nLet me write them.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.MER",
+        "label": "different_quantity",
+        "differs_because": "The passages concern rankings and recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients.",
+        "reason": "No passage discusses disclosures or initiatives for younger investors; the only related content is recognitions of young advisors (next-gen, under 40), which is a different subject.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Merrill notes the 2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list, which considers advisors born in 1986 or later with a minimum 4 years as an advisor.",
+            "quote": "2025 Forbes \"Top Next-Gen Wealth Advisors Best-in-State\" list. Opinions provided by SHOOK\u00ae Research, LLC considered advisors born in 1986 or later with a minimum 4 years as an advisor.",
+            "value": "",
+            "unit": "advisors",
+            "period": "",
+            "scope": "Merrill advisors",
+            "definition": "advisors born in 1986 or later with a minimum 4 years as an advisor",
+            "chunk_ids": [
+              "MER-PR-web-becoming-a-merrill-lynch-advisor#3"
+            ]
+          },
+          {
+            "text": "Merrill reports 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40.",
+            "quote": "24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40",
+            "value": "24",
+            "unit": "Merrill advisors (Top 40 Brokers Under 40)",
+            "period": "2026",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-10-14-01#11",
+              "BAC-PR-2026-07-14-01#10",
+              "BAC-PR-2026-04-15-01#10"
+            ]
+          },
+          {
+            "text": "Merrill reports it ranked No. 1 on Forbes' Top Next Generation Advisors (2025).",
+            "quote": "No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025)",
+            "value": "No. 1",
+            "unit": "ranking (Top Next Generation Advisors)",
+            "period": "2025",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          },
+          {
+            "text": "Merrill reports it ranked No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).",
+            "quote": "No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "No. 1",
+            "unit": "ranking (Top 40 Advisors Under 40)",
+            "period": "2025",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

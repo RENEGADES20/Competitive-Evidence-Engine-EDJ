@@ -1,0 +1,638 @@
+{
+  "question_id": "Q18",
+  "question": "Where is the industry heading on fee structures and pricing transparency?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MCK-SIGNAL-SELLOFF-2026#9",
+    "MCK-ADVISOR-SHORTAGE-2025#6",
+    "CERULLI-AFFLUENT-FEE#0",
+    "CERULLI-AFFLUENT-FEE#1",
+    "DELOITTE-AGENTIC-2026#4",
+    "KITCES-WELLBEING-2023#121",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#15",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#57",
+    "MER-TRADE-2026-09-29-RB-01#7",
+    "MER-TRADE-2026-09-29-RB-01#5",
+    "SCHW-TRADE-2026-09-30-IN-01#4",
+    "EDJ-10K-2025#151",
+    "RJF-10K-2025#100",
+    "BAC-10K-2025#138",
+    "MS-10K-2025#26",
+    "EDJ-10K-2025#56",
+    "EDJ-10K-2025#57",
+    "MS-10K-2025#111",
+    "RJF-TRADE-2026-10-27-WM-01#1",
+    "SCHW-TR-2026Q1#30",
+    "SCHW-TR-2026Q1#55",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#37",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#33",
+    "MER-TRADE-2026-09-29-RB-01#0",
+    "MER-TRADE-2026-09-29-RB-01#1",
+    "RJF-10K-2025#110",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#21",
+    "FINRA-OVERSIGHT-2026#207",
+    "FINRA-OVERSIGHT-2026#140",
+    "MER-TRADE-2026-09-29-RB-01#8",
+    "MER-TRADE-2026-10-16-IN-01#1",
+    "MER-TRADE-2026-10-02-IN-01#2",
+    "MER-TRADE-2026-10-15-WM-01#0",
+    "RJF-10K-2025#109",
+    "SCHW-10K-2025#95",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#20",
+    "BAC-10K-2025#139",
+    "MS-10K-2025#110",
+    "SCHW-10K-2025#94",
+    "MS-TR-2026Q2#58",
+    "RJF-10K-2025#108",
+    "FIDELITY-III-2025#0",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#30",
+    "RJF-10K-2025#197",
+    "RJF-TR-2026Q1#48",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#63",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#40",
+    "RJF-10Q-2025Q4#217",
+    "MER-ADV-2026#469",
+    "MER-TRADE-2026-09-29-RB-01#2",
+    "MER-TRADE-2026-10-16-IN-01#0",
+    "MS-ADV-2026#155",
+    "MS-ADV-2026#218",
+    "RJF-ADV-2026#33",
+    "EDJ-ADV-2026#118",
+    "MER-TRADE-2026-09-29-RB-01#3",
+    "SCHW-TRADE-2026-09-30-IN-01#3",
+    "SCHW-DECK-2026-investor-day#211"
+  ],
+  "schema_fallback": [],
+  "enum_values": 156,
+  "at": "2026-11-21T22:41:21.371383-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 24875,
+    "output_tokens": 26171,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 23211,
+    "reasoning_tokens": 18570,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.84
+  },
+  "wall_s": 183.27,
+  "tokens_per_s": 142.8,
+  "ttft_s": 2.84,
+  "reasoning_content": "Let me analyze this task carefully. I need to write an answer based on the evidence matrix provided. The question is about where the industry is heading on fee structures and pricing transparency.\n\nLet me organize my understanding of the aspects:\n\n- a1 [series]: How are fee structures changing across the industry - 24 items (fact cells)\n- a2 [series]: How is pricing transparency changing across the industry - 13 items\n- a3 [recency]: regulatory pressure - 1 item, needs why-line\n- a4 [recency]: competitive pressure - 20 items, needs why-lines\n- a5 [recency]: client demand - 16 items, needs why-lines\n- a6 [comparison]: which firms leading/lagging - 19 items, needs exactly one comparison claim\n\nThe question has no time window (the question doesn't specify a time window). Wait, let me check. The question is \"Where is the industry heading on fee structures and pricing transparency?\" - no time window. But aspects a3, a4, a5 are marked \"recency\" so they need why-lines on every item.\n\nActually, the recency aspects need why-lines for every item. The rule says: \"For every item of an aspect marked recency, and every item when the question has a time window, end the claim with 'Why it might matter: '...\"\n\nSo a3, a4, a5 all need why-lines for every item.\n\nLet me also note: a6 is a comparison aspect, needs exactly one comparison claim with part_id a6.\n\nThe comparison aspect: comparability is \"unverified: not in the metric definitions file; never compared across firms\". So I need to write one claim that says whether the comparison can be made.\n\nLet me think about the comparison. The aspect asks \"Which firms are leading or lagging on fee structure changes and transparency\". The comparability note says \"unverified: not in the metric definitions file; never compared across firms\". So the comparison is not valid - firms cannot be compared/ranked.\n\nActually, let me re-read the comparison instructions:\n\n\"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on...\"\n\nSo for a6, I write one claim that says the comparison cannot be made (not valid) because the definitions are unverified and not in the metric definitions file, so firms cannot be compared.\n\nWait, but let me think more carefully. The comparison aspect a6 items are individual firm facts. The comparison itself is about \"which firms are leading or lagging\". Since comparability says \"unverified: not in the metric definitions file; never compared across firms\", the comparison is not valid.\n\nActually wait - let me re-read. The \"Comparability (code)\" notes appear for a1, a2: \"unverified: not in the metric definitions file; never compared across firms\". For a6, there's no explicit comparability note listed. But the comparison rule says I need to determine valid/not valid.\n\nHmm, let me look at a6 more carefully. It doesn't have a \"Comparability\" line. So I need to make the determination myself based on the items.\n\nThe items in a6 include different firms with different kinds of facts: Merrill Lynch data fee conflicts, Raymond James pricing structure statements, Morgan Stanley data fees, Edward Jones settlement, various settlements (Wells Fargo/Merrill $4.4M, Raymond James $13M, Schwab $187M), data fee introduction dates (Schwab over 7 years ago, UBS mid-2010s), data fee rates (Morgan Stanley $25K-$500K vs Merrill $125K-$860K).\n\nThese are heterogeneous - different firms, different quantities, different time periods, different scopes. There's no shared basis or shared period to rank firms. So the comparison is not valid.\n\nI need to write exactly one comparison claim for a6 that says the comparison can't be made (not valid) and why.\n\nLet me now plan the writing.\n\nFirst, order: \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nWait, but this is an industry-level question, not firm-by-firm. The aspects a1, a2, a3, a4, a5 are \"All sources\" with items from various firms/research. Hmm.\n\nActually, let me re-read: \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nBut this question is about the industry, not a specific set of firms. The items in a1-a5 are from research firms (McKinsey, Cerulli, Deloitte, Kitces, Wealthtender), trade press, and various wealth management firms (Edward Jones, Raymond James, Bank of America, Morgan Stanley, Schwab).\n\nThe part_id for these spanning claims is the aspect id (a1.all? or a1?). Wait, let me look at the part_id enum.\n\nThe part_id enum includes: \"a1.all\", \"a2.all\", \"a3.all\", \"a4.all\", \"a5.all\", \"a6.all\", \"a1\", \"a2\", \"a3\", \"a4\", \"a5\", \"a6\", \"\".\n\nThe instructions say: \"A cell id is the part_id of what you write from it\". And \"a1.all All sources: fact\" - so the cell id is \"a1.all\".\n\nWait, but also \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id\". So the comparison claim uses part_id \"a6\" (not a6.all).\n\nHmm, let me re-read: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself\".\n\nSo the comparison claim for a6 uses part_id \"a6\".\n\nFor the regular fact cells, the part_id is the cell id. For a1, the cell id appears to be \"a1.all\" (as shown in \"a1.all All sources: fact\").\n\nActually wait, let me look more carefully. The matrix says:\n\n\"Aspect a1: How are fee structures changing across the industry\n  Comparability (code): unverified...\n  a1.all All sources: fact\n    ...item 1, item 2, etc.\"\n\nSo \"a1.all\" is the cell, and each item within it. The part_id for each item's claim would be \"a1.all\".\n\nBut the enum also has \"a1\" and \"a2\" etc. These might be for the comparison claims.\n\nActually, the instruction says: \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nSo for spanning claims (a1, a2, a3, a4, a5 items), the part_id is the cell id which is \"a1.all\", \"a2.all\", etc.\n\nWait, but actually let me reconsider. The enum lists both \"a1\" and \"a1.all\". Let me think about which to use.\n\nThe instruction says \"A cell id is the part_id of what you write from it\". The cells shown are \"a1.all\", \"a2.all\", \"a3.all\", \"a4.all\", \"a5.all\", \"a6.all\".\n\nSo the part_id for items from these cells should be \"a1.all\", etc.\n\nBut the comparison claim uses \"the aspect's id\" which is \"a6\" (the enum has \"a6\").\n\nHmm wait, let me re-read the comparison instruction again: \"write exactly one claim with that aspect's id as part_id\". The aspects are named a1, a2, ..., a6. So \"aspect's id\" = \"a6\".\n\nBut for the items, \"the part_id of the cell it comes from\" = \"a6.all\".\n\nActually, wait. Let me reconsider. Looking at the aspect headers, they say \"a1 [series]\" and \"a1.all All sources\". So the \"aspect id\" is \"a1\" and the cell is \"a1.all\".\n\nFor the comparison claim, use \"a6\". For the fact items, use \"a6.all\".\n\nHmm, but actually, is the comparison claim separate from the fact items? Let me re-read.\n\n\"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence...\"\n\nSo for a6, I write ONE comparison claim (part_id \"a6\"), AND I also write the fact items (part_id \"a6.all\").\n\nWait, no. Let me re-read more carefully.\n\nActually, looking at the structure: a6 has items (1-19) which are fact cells. But a6 is also a comparison aspect. So there's a tension.\n\nLet me re-read the comparison section:\n\n\"Comparison aspects\n- For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on...\"\n\nSo for a6 (comparison), I write exactly one claim with part_id \"a6\" answering whether the comparison can be made.\n\nBut a6 also has items (fact cells). Do I write those too? The items in a6.all are fact cells. Hmm.\n\nActually, I think the comparison aspect means I write the one comparison claim INSTEAD of writing individual firm claims, OR in addition?\n\nLet me re-read the \"What goes where\" section:\n\n\"A fact cell is a claim...\"\n\nAnd the comparison section says write exactly one claim for the comparison.\n\nI think for a6, the items listed under \"a6.all All sources: fact\" are the evidence that the comparison claim rests on. The comparison claim cites these items.\n\nSo for a6, I write ONE comparison claim (part_id \"a6\"), and that claim cites the items (using their chunk_ids).\n\nWait, but actually, are the a6 items to be written as separate claims? The matrix lists them as \"item 1... item 19\" under \"a6.all All sources: fact\". These are fact cells.\n\nHmm, this is confusing. Let me think about the structure more holistically.\n\nFor a1, a2, a3, a4, a5: these are \"series\" and \"recency\" aspects. They have \"All sources: fact\" cells with items. Each item is a fact cell \u2192 a claim.\n\nFor a6: it's a \"comparison\" aspect. It has \"All sources: fact\" with items. But comparison aspects get \"exactly one claim\" for the comparison itself.\n\nI think the resolution is: for a6, the items are the evidence, and I write one comparison claim (part_id \"a6\") that answers \"which firms are leading/lagging\" - which is \"not valid\" because there's no shared basis.\n\nBut wait, do I still write the fact items as claims? The comparison claim \"citing the items it rests on\" suggests the items are cited within the single comparison claim.\n\nActually, I think I should write the single comparison claim for a6, citing the relevant items. The items themselves might be presented as part of that claim, or the comparison claim just references them.\n\nLet me look at the instruction again more carefully:\n\n\"Comparison aspects\n- For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on (the definitions, the figures compared). Compare or rank figures across firms only when the aspect is marked same_basis...\"\n\nSo: write exactly ONE claim for a6, with part_id \"a6\". This claim answers whether the comparison can be made.\n\nGiven the comparability note (unverified, never compared across firms) applies to a1/a2, and a6 has heterogeneous items (different firms, different quantities, different periods, different scopes), the comparison is \"not valid\".\n\nSo I write one claim: \"The comparison of which firms are leading or lagging cannot be made on this evidence, because the cited items cover different firms, different quantities (settlement amounts, data fee rates, fee disclosures), different periods, and different scopes, with no shared basis or shared periods to rank firms against each other.\"\n\nLet me now think about whether I need to write the individual a6 items as claims too.\n\nHmm. Actually, re-reading again, I think the comparison claim replaces the individual item claims. The instruction \"write exactly one claim\" is pretty clear.\n\nBut wait, that seems odd given the items are fact cells. Let me look at the \"What goes where\" again:\n\n\"- A fact cell is a claim, also when it is partial...\"\n\nAnd the comparison aspect section. I think the comparison aspect is special: instead of writing each item as a claim, I write one claim about the comparison.\n\nActually, I think the answer is: for a6, I write the comparison claim (one claim, part_id \"a6\"). The individual items are cited within that claim.\n\nLet me also reconsider: the question is about \"the industry\" heading. The aspects a1-a5 are industry-level. a6 is about specific firms (leading/lagging).\n\nOK let me now plan the full answer.\n\nSince the question has no time window (it's \"Where is the industry heading\"), but a3, a4, a5 are recency aspects, I need why-lines for those.\n\nActually, wait, let me re-read the recency rule:\n\n\"Recency and order\n- For every item of an aspect marked recency, and every item when the question has a time window, end the claim with 'Why it might matter: '...\"\n\nSo a3, a4, a5 (marked recency) \u2192 every item gets a why-line.\n\na1, a2 (series) \u2192 no why-line.\n\na6 (comparison) \u2192 one comparison claim, no why-line.\n\nFor the why-lines, I use either:\n1. The item's own \"context\" line (a reason/purpose/first/record/change/consequence)\n2. Factual background from \"related\" lines (another passage)\n\nLet me collect the why-line content for each item in a3, a4, a5.\n\nThis is a huge task. Let me carefully go through each aspect.\n\nActually, let me first understand the scope. This is a large answer with many claims. Let me be systematic.\n\nLet me start organizing by aspect.\n\n### Aspect a1 (series) - 24 items, no why-lines\n\nBasis break: advisor teams surveyed: 2023; survey participants: 2025. State each basis with its own periods.\n\nLet me write each item as a claim. Each claim cites the chunk_id and uses part_id \"a1.all\".\n\nActually wait, I need to reconsider the part_id. Let me look at the enum again and the instruction.\n\n\"A cell id is the part_id of what you write from it\" and the cell is \"a1.all\".\n\nActually, I realize I should double check. The instruction says \"an aspect id for a claim that spans firms\". Hmm.\n\nLet me just use \"a1.all\" for a1 items, \"a2.all\" for a2 items, \"a3.all\" for a3 items, \"a4.all\" for a4 items, \"a5.all\" for a5 items. And \"a6\" for the comparison claim.\n\nWait, but actually, let me reconsider. The enum has both \"a1\" and \"a1.all\". The comparison uses \"a6\" (aspect id). \n\nFor the fact cells, I think \"a1.all\" etc. is correct because that's the cell id shown in the matrix.\n\nActually, let me reconsider once more. The instruction \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nThe cells are \"a1.all\", \"a2.all\", etc. So part_id = \"a1.all\".\n\nBut then \"an aspect id for a claim that spans firms\" - hmm, this suggests the aspect id \"a1\" for spanning claims.\n\nThis is ambiguous. Let me think about what \"cell\" means. Each item is a \"fact cell\". The group header is \"a1.all All sources: fact\".\n\nI think the part_id should be \"a1.all\" for the items, matching the cell grouping. But actually, looking at the comparison instruction which explicitly says \"aspect's id\" = \"a6\", and the fact instruction says \"cell id\".\n\nHmm wait, actually re-reading the comparison: \"write exactly one claim with that aspect's id as part_id\". The aspect id is \"a6\".\n\nAnd for facts: \"the part_id of the cell it comes from\". The cell... \n\nActually, I think each individual item might not have its own cell id beyond the aspect. The \"a1.all\" is the cell grouping all items.\n\nLet me just go with: items use \"a1.all\", \"a2.all\", \"a3.all\", \"a4.all\", \"a5.all\", and the comparison claim uses \"a6\".\n\nActually, wait. Let me reconsider. Maybe the \"a1.all\" vs \"a1\" distinction is: \"a1\" is used when there's a single claim spanning firms (like the comparison), and \"a1.all\" is... no.\n\nLet me look at the enum once more: [\"a1.all\", \"a2.all\", \"a3.all\", \"a4.all\", \"a5.all\", \"a6.all\", \"a1\", \"a2\", \"a3\", \"a4\", \"a5\", \"a6\", \"\"].\n\nSo there are 6 \"*.all\" ids and 6 bare ids.\n\nI think:\n- \"*.all\" = the fact cell that spans all sources (the items)\n- bare aspect id = for comparison claims (a6) or possibly other single-spanning claims\n\nGiven the comparison instruction explicitly says \"aspect's id\" (bare \"a6\"), and the fact cells are \"*.all\", I'll use:\n- a1, a2, a3, a4, a5 items \u2192 \"a1.all\" ... \"a5.all\"\n- a6 comparison claim \u2192 \"a6\"\n\nThis seems right. Let me go with this.\n\nNow let me write everything out.\n\nGiven the enormous size, I'll write concise but complete claims.\n\nLet me note some important rules:\n- Quote verbatim only when not marked \"quote not verbatim\"\n- Date every claim from its source line\n- Items marked \"figure not found\" or \"quote not verbatim\" handled appropriately\n\nLet me go through each aspect and write claims.\n\nLet me first note the source dates for dating claims. Actually, many sources are \"Research research\" with published dates. Let me use the published dates.\n\nFor dating, I need to state the source and date. E.g., \"McKinsey (published April 8, 2026) states...\" or \"In its 2025 10-K (period ended September 30, 2025), Raymond James states...\"\n\nLet me be efficient but correct.\n\nLet me start writing.\n\n### Aspect a1 - 24 items\n\nI need to handle the basis break. The instruction: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo for a1.all, there's a basis break: \"advisor teams surveyed: 2023; survey participants: 2025\". This means item 6 (Kitces, 79% of advisor teams, 2023) and items 4, 7, 8, 22 (survey participants, 2025) have different bases.\n\nActually, the caveat says: \"the figures cover different bases and are not one series: advisor teams surveyed: 2023; survey participants: 2025.\"\n\nSo I just need to state each item with its own period/scope, and not join them. The items already have their periods/scopes stated.\n\nLet me write each item.\n\nItem 1: McKinsey believes fee pressure will be uneven... quote verbatim (not marked not verbatim). Cite MCK-SIGNAL-SELLOFF-2026#9.\nPublished 2026-04-08.\n\nItem 2: McKinsey (PriceMetrix) reports fee rates stabilized after 2013-2018 compression. Quote verbatim (though has \"2013to 2018\" and \"havestabilized\" typos). Period not stated. Cite MCK-ADVISOR-SHORTAGE-2025#6. Published 2025-02-10.\n\nItem 3: Cerulli: past decade shift from commission to asset-related fee. Cite CERULLI-AFFLUENT-FEE#0.\n\nItem 4: Cerulli 33% asset-based, 21% no-fee, 20% commission, 36% prefer fee-based. period 2025. Cite CERULLI-AFFLUENT-FEE#1.\n\nItem 5: Deloitte. Cite DELOITTE-AGENTIC-2026#4.\n\nItem 6: Kitces 79% advisor teams AUM fees. 2023. Cite KITCES-WELLBEING-2023#121.\n\nItem 7: Wealthtender 73% transparency most important. 2025. Quote NOT verbatim (never quote). Cite WEALTHTENDER-ADVISOR-SEARCH-2025#15.\n\nItem 8: Wealthtender 38% red flag. 2025. Quote verbatim. Cite WEALTHTENDER-ADVISOR-SEARCH-2025#57.\n\nItem 9: platform tolls traceable to zero commissions. Cite MER-TRADE-2026-09-29-RB-01#7.\n\nItem 10: data analytics fees common. Cite MER-TRADE-2026-09-29-RB-01#5.\n\nItem 11: cash sweep debate. period 2026. Cite SCHW-TRADE-2026-09-30-IN-01#4.\n\nItem 12: Edward Jones fee compression mutual fund. Cite EDJ-10K-2025#151.\n\nItem 13: Raymond James shift to passive. Cite RJF-10K-2025#100.\n\nItem 14: BAC increasing pressure. Cite BAC-10K-2025#138.\n\nItem 15: MS Investment Management downward pressure. Cite MS-10K-2025#26.\n\nItem 16: EDJ robo-advice. Cite EDJ-10K-2025#56.\n\nItem 17: EDJ robo-advisors competition. Cite EDJ-10K-2025#57.\n\nItem 18: MS price competition. Quote NOT verbatim. Cite MS-10K-2025#111.\n\nItem 19: Cerulli 7.8% fee-only RIAs $5B. Cite RJF-TRADE-2026-10-27-WM-01#1.\n\nItem 20: Schwab model. Cite SCHW-TR-2026Q1#30.\n\nItem 21: Schwab CEO adapted. Cite SCHW-TR-2026Q1#55.\n\nItem 22: 48% pricing top three. Cite WEALTHTENDER-ADVISOR-SEARCH-2025#37.\n\nItem 23: research recommends fee pages. Cite WEALTHTENDER-ADVISOR-SEARCH-2025#33.\n\nItem 24: Merrill data/shelf fees. Quote NOT verbatim. Cite MER-TRADE-2026-09-29-RB-01#0, MER-TRADE-2026-09-29-RB-01#1.\n\nThis is a lot. Let me write these concisely.\n\nGiven the scale, I'll write each claim with proper attribution and dating.\n\nLet me think about the dating format. The source lines give \"published YYYY-MM-DD\" and sometimes \"period YYYY-MM-DD\".\n\nFor research sources: \"McKinsey (research published April 8, 2026) states...\"\n\nFor 10-Ks: \"Edward Jones's 2025 10-K (fiscal year ended December 31, 2025, published March 13, 2026) states...\"\n\nFor transcripts: \"On Schwab's 1Q26 earnings call (period ended March 31, 2026, published April 16, 2026)...\"\n\nFor trade press: \"Trade press (published September 29, 2026) reports...\"\n\nLet me now write all of this out in a systematic manner.\n\nGiven the volume, I'll be somewhat concise but still date every claim and attribute properly.\n\nLet me draft the full answer now.\n\nActually, I realize I should be careful about a few things:\n\n1. The item marked \"quote not verbatim\" - never put in quotation marks. So I paraphrase.\n\n2. The item \"figure not found in its passage\" - none of these appear marked that way, so all figures are fine.\n\n3. For \"period not stated in a usable form\" (item 2), I just don't state a specific period.\n\nLet me write.\n\nFor the why-lines in a3, a4, a5, I need to derive from context or related lines.\n\nLet me collect the why-line content.\n\n#### Aspect a3 (1 item)\n\nItem 1: Raymond James regulatory requirements \u2192 price transparency. Context provided.\n\nWhy-line: From context: \"Our trading margins have been further compressed by the shift from high- to low-touch services over time, which has created additional competitive pressure. We believe that price competition and pricing pressures in these and other areas will continue.\"\n\nSo why it might matter: the transparency-driven price competition is part of continued pricing pressure Raymond James believes will persist, further compressing trading margins.\n\nActually, I should use the context line's own stated consequence/change. The context says \"decreased trading margins\" and \"will continue\". \n\nWhy it might matter: Raymond James states in the same passage that its trading margins have been further compressed by the shift to low-touch services and that it believes price competition and pricing pressures will continue.\n\nI need to cite an additional chunk id for the why-line? Actually, the why-line uses the item's own context (same passage), so I don't need to add a new chunk. But the rule says \"then add that passage's chunk id to the claim's chunk_ids\" - if I use a \"related\" passage, I add that chunk. If I use the item's own \"context\" line (same source), no additional chunk needed (it's already cited).\n\nActually, re-reading: \"end the claim with 'Why it might matter: ' and one sentence on why it might matter, from one of two places: what the item's own passage says (its 'context' line...) or factual background from another passage listed under Sources (its 'related' lines...); then add that passage's chunk id to the claim's chunk_ids.\"\n\nSo if I use the item's own context (same passage, same chunk), no new chunk. If I use a \"related\" line, I add that chunk id.\n\nLet me try to use the context lines primarily, since they're already in the item's passage.\n\nFor a3 item 1, context is same passage (RJF-10K-2025#110). So why-line from context, no new chunk.\n\nActually, let me reconsider whether the why-line can use the context (same source) without adding a chunk. The rule says \"then add that passage's chunk id\" - \"that passage\" refers to whichever I used. If I used the item's own passage (context), the chunk is already cited, so no change.\n\nOK, let me write all the why-lines using context primarily.\n\nLet me now draft everything carefully.\n\nGiven the massive scale, I'll write efficiently.\n\nLet me write the claims.\n\nFor a3 item 1:\nClaim text: \"Raymond James's 2025 10-K (fiscal year ended September 30, 2025) states that in fixed income and equity markets, regulatory requirements have resulted in greater price transparency, which has led to price competition and decreased trading margins.\"\nWhy: \"Why it might matter: in the same passage Raymond James states that its trading margins have been further compressed by the shift from high- to low-touch services, and that it believes price competition and pricing pressures in these and other areas will continue.\"\nchunk_ids: [\"RJF-10K-2025#110\"]\n\n#### Aspect a4 (20 items) - each needs why-line\n\nLet me go through each.\n\nItem 1: BAC increasing pressure. context available.\nWhy: context says \"We operate in a highly competitive environment and experience intense competition from local and global bank and nonbank financial institutions and new market entrants.\" Also mentions disadvantaged by size/jurisdictions.\n\nActually the context for item 1: \"... financial services industry. We operate in a highly competitive environment and experience intense competition from local and global bank and nonbank financial institutions and new market entrants. Increasing pressure to provide products and services on more attractive terms, including lower fees, lower cost investment strategies and higher interest rates on deposits, may impact our ability to effectively compete. Also, we may be disadvantaged by our size...\"\n\nWhy-line: \"Why it might matter: Bank of America states in the same passage that it operates in a highly competitive environment and experiences intense competition from bank and nonbank institutions and new market entrants, so the pricing pressure may affect its ability to compete effectively.\"\n\nItem 2: MS Investment Management. context: \"investments offered by other investment managers, including by investment managers who may be subject to less stringent legal and regulatory regimes...\"\nWhy: \"Why it might matter: in the same passage Morgan Stanley notes it faces competition from other investment managers, including those subject to less stringent legal and regulatory regimes.\"\n\nItem 3: MS price competition electronic. context: \"...introduction and application of new technologies, including generative artificial intelligence and tokenization, will likely continue the pressure on revenues. The trend toward direct access to automated, electronic markets will likely continue...\"\nWhy: \"Why it might matter: Morgan Stanley states in the same passage that the introduction of new technologies including generative AI and tokenization, and the trend toward direct access to automated electronic markets, will likely continue the pressure on revenues.\"\n\nItem 4: RJF regulatory transparency \u2192 competition. context same as a3 item1.\nWhy: \"Why it might matter: Raymond James states in the same passage that its trading margins have been further compressed by the shift from high- to low-touch services, and it believes price competition and pricing pressures will continue.\"\n\nItem 5: RJF competition pricing pressure. context: \"...or have entered into partnerships with banks to provide banking services. We also compete indirectly for investment assets with insurance companies, real estate firms, and hedge funds...\"\nWhy: \"Why it might matter: in the same passage Raymond James notes it also competes indirectly for investment assets with insurance companies, real estate firms, and hedge funds.\"\n\nItem 6: RJF asset management fees decline. context: \"most of our clients may withdraw funds from under our management at their discretion at any time... In addition, the market environment in recent years has resulted in a shift to passive investment products, which generate lower fees than actively managed products.\"\nWhy: \"Why it might matter: in the same passage Raymond James notes that the market environment has resulted in a shift to passive investment products that generate lower fees than actively managed products.\"\n\nItem 7: Schwab price competition. context: \"...rates on deposits and loans, fees for advisory services, expense ratios on mutual funds and ETFs, trade commission rates, and other pricing and incentives to sustain our competitive position.\"\nWhy: \"Why it might matter: Schwab states in the same passage that it adjusts rates on deposits and loans, advisory fees, expense ratios, and commission rates to sustain its competitive position.\"\n\nItem 8: EDJ robo-advisors. context: \"The Partnership may be subject to operational, financial and other impacts if the Partnership is unable to keep pace with this rapidly changing environment... If the Partnership does not meet client needs, the Partnership could lose clients, thereby reducing revenues...\"\nWhy: \"Why it might matter: Edward Jones states in the same passage that if it cannot keep pace with this rapidly changing environment and meet client needs, it could lose clients and reduce revenues.\"\n\nItem 9: Wealthtender fee transparency competitive advantage. context: mentions \"media/awards... credible third-party features\".\nWhy: \"Why it might matter: the same passage notes fee transparency as a competitive advantage, describing clear fee communication as a powerful differentiator.\" \n\nHmm, actually item 9's own text already says that. The why-line shouldn't restate the item. Let me use the related lines.\n\nActually, the why-line rule says \"Never restate the item itself.\" So I should pick a related fact or context detail.\n\nItem 9 context: \"... in media / awards #10 \u2014 11.8% Moderate-high I may weigh credible third-party features more than the public does, since they can indicate peer recognition or vetted expertise. Source: ChatGPT Fee Transparency as Competitive Advantage (73% Priority) Clear fee communication isn't just ethical, it's a powerful differentiator.\"\n\nThe context doesn't add much beyond the item. Let me use related: WEALTHTENDER-ADVISOR-SEARCH-2025#63 \"noted that economic stress might increase the importance of fee sensitivity and the urgency of financial planning needs.\"\n\nWhy: \"Why it might matter: the same survey noted that economic stress might increase the importance of fee sensitivity and the urgency of financial planning needs.\" Add chunk WEALTHTENDER-ADVISOR-SEARCH-2025#63.\n\nItem 10: McKinsey uneven fee pressure. context: \"Historically, fee rates for relationships of more than $1 million have remained remarkably steady at about 104 basis points since 2019, even as digital tools have proliferated.\"\nWhy: \"Why it might matter: in the same passage McKinsey notes that fee rates for relationships over $1 million have remained steady at about 104 basis points since 2019 even as digital tools proliferated, so the anticipated fee pressure is about transparency and unbundling rather than lower basis points.\"\n\nActually this is close to restating. But it's adding the 104bps fact which is background. OK.\n\nItem 11: Deloitte competitive pressure compress fees. context: \"Margin expansion for some, pressure for others. Lower cost-to-serve can expand margins for firms that execute and maintain pricing.\"\nWhy: \"Why it might matter: Deloitte states in the same passage that lower cost-to-serve can expand margins for firms that execute and maintain pricing, so the outcome is margin expansion for some and pressure for others.\"\n\nItem 12: BAC emerging tech low/no fees. context: \"...lowered geographic and monetary barriers, made it easier for non-depository institutions to offer traditional banking products and services...\"\nWhy: \"Why it might matter: Bank of America states in the same passage that emerging technologies have lowered geographic and monetary barriers, making it easier for non-depository institutions to offer traditional banking products and services.\"\n\nItem 13: MS pricing pressure competitors reduce fees. context: \"In addition, certain of our competitors may be subject to different and, in some cases, less stringent, legal and regulatory regimes than we are, thereby putting us at a competitive disadvantage.\"\nWhy: \"Why it might matter: Morgan Stanley states in the same passage that certain competitors may be subject to less stringent legal and regulatory regimes, putting it at a competitive disadvantage.\"\n\nItem 14: Schwab aggressive price competition. context: \"...Such events could result in material financial losses, legal or regulatory claims, and reputational harm...\"\nActually context: \"... to continue to operate or provide services for Schwab clients. Such events could result in material financial losses, legal or regulatory claims, and reputational harm, even if we are not at fault. Our industry is highly competitive and characterized by aggressive price competition.\"\n\nHmm, the context before is about other things. The \"aggressive price competition\" is the item itself. Let me use related: MS-TR-2026Q2#58 about smaller RIAs aggressive pricing.\n\nWhy: \"Why it might matter: a Morgan Stanley executive (2026 2Q earnings call) noted press coverage highlighting smaller RIAs employing more aggressive pricing to compete for workplace business.\" Add chunk MS-TR-2026Q2#58.\n\nItem 15: platform fees zero commissions. context: \"The revenue replacement has to come from somewhere, if loads aren't being charged on funds... Distributors have real costs to distributing. Still, Merrill can't lean quite as heavily on that argument. For its full-service brokers...\"\nWhy: \"Why it might matter: the same trade-press passage notes that distributors have real costs of distributing and must replace transaction revenue somewhere since loads are no longer charged on funds.\"\n\nItem 16: wires data fees. context: \"Fidelity introduced ETF platform and revenue sharing fees in March 2024 \u2013 including a $100 ticket charge on trades of funds that refused to pay shelf-space fees...\"\nWhy: \"Why it might matter: the same trade-press passage notes that Fidelity introduced ETF platform and revenue-sharing fees in March 2024, including a $100 ticket charge on trades of funds that refused to pay shelf-space fees.\"\n\nItem 17: MS exec smaller RIAs aggressive pricing. context: \"The M&A strength showcase certainly highlights your leading position, the benefits of the Carta partnership... I was hoping you could speak to how the competitive landscape is evolving in workplace...\"\nWhy: \"Why it might matter: in the same earnings-call exchange, the questioner frames this as part of how the competitive landscape in workplace business is evolving, amid Morgan Stanley's leading position.\"\n\nItem 18: RJF competes on pricing. context: \"Over time, there has been substantial consolidation and convergence among companies in the financial services industry, which has significantly increased the capital base and geographic reach of our competitors.\"\nWhy: \"Why it might matter: Raymond James states in the same passage that substantial consolidation in financial services has significantly increased the capital base and geographic reach of its competitors.\"\n\nItem 19: SEC cash sweep. context: \"Advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.\"\nWhy: \"Why it might matter: the same trade-press passage advises that advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.\"\n\nItem 20: 48% pricing top factors. context: \"Pricing clarity can be a dealbreaker (or deal maker)... This isn't necessarily about finding the cheapest option, it's about understanding exactly what you'll pay and feeling confident you're getting good value.\"\nWhy: \"Why it might matter: the same survey notes that pricing clarity can be a dealbreaker, and that this is about understanding what you'll pay and feeling confident you're getting good value rather than finding the cheapest option.\"\n\n#### Aspect a5 (16 items) - each needs why-line\n\nItem 1: Schwab model lower fees. context: \"To the extent those preferences change at some point in the future, Schwab has a lot of flexibility to continue supporting investors and RIAs...\"\nWhy: \"Why it might matter: in the same earnings-call passage Schwab states it has a lot of flexibility to continue supporting investors and RIAs if those preferences change in the future.\"\n\nItem 2: Fidelity next-gen transparency. context: \"Advisors must adapt to these shifting dynamics to effectively serve the distinctive demands of this generation...\"\nWhy: \"Why it might matter: the same study states that advisors must adapt to these shifting dynamics to effectively serve the distinctive demands of this generation.\"\n\nItem 3: 62% fee structure first. context: \"This makes practical sense as you'll want to know if the advisor actually helps people in situations like yours, and you want to understand what their help will cost.\"\nWhy: \"Why it might matter: the same survey explains that prospective clients want to know whether the advisor helps people in their situation and what the help will cost before making initial contact.\"\n\nItem 4: 73% fee transparency trust. context: \"Always ask for a clear, written explanation of all costs before engaging an advisor... Lack of fee transparency was identified as a red flag by 38% of survey participants. Reputable advisors should be able to clearly explain their fee structure...\"\nWhy: \"Why it might matter: the same passage advises always asking for a clear written explanation of all costs before engaging an advisor, and notes that lack of fee transparency was identified as a red flag by 38% of survey participants.\"\n\nItem 5: fee explanation pages. context: \"'Fear of the unknown' is real, especially among consumers who haven't worked with an advisor before and don't know what to expect.\"\nWhy: \"Why it might matter: the same research notes that fear of the unknown is real among consumers who haven't worked with an advisor before, so clear fee explanations help build confidence.\"\n\nItem 6: McKinsey uneven. Same as a4 item 10.\nWhy: same - 104bps steady.\n\nItem 7: McKinsey willingness to pay for human advice. context: \"Increasing demand for human advice is one of the factors behind the stable to slightly increasing advisory fee rates across delivery models... the share willing to pay a premium of 100 basis points or more grew by 50 percent...\"\nWhy: \"Why it might matter: in the same passage McKinsey attributes stable to slightly increasing advisory fee rates to increasing demand for human advice, and notes the share of investors with over $1 million willing to pay a premium of 100 basis points or more grew by 50 percent.\"\n\nItem 8: RJF higher yields cash. context: \"future changes to regulatory rules or interpretations governing the fees the firm earns on cash sweep balances could also impact the rates we pay to clients on cash balances.\"\nWhy: \"Why it might matter: Raymond James states in the same passage that future changes to regulatory rules governing the fees it earns on cash sweep balances could also impact the rates it pays to clients on cash balances.\"\n\nItem 9: RJF fair pricing structure. context: \"I mean we look at that on an ongoing basis for all of our pricing fees and payout.\"\nWhy: \"Why it might matter: in the same earnings-call passage the CEO states the firm looks at pricing, fees and payout on an ongoing basis.\"\n\nItem 10: Wealthtender 73% priority. Same as a4 item 9.\nWhy: economic stress (related WEALTHTENDER-ADVISOR-SEARCH-2025#63).\n\nItem 11: 73% top priority. context: \"2) Online reputation (83% research reputation)... 3) Response time (50% expect 24-48 hour response)... 4) Specialization clarity (64%...)\".\nWhy: \"Why it might matter: the same survey lists online reputation (83%), response time (50%), and specialization clarity (64%) as other priorities alongside fee transparency, framing fee transparency as the top focus.\"\n\nItem 12: 48% pricing top factors. context: \"Avoid anyone who uses high-pressure tactics, can't clearly explain their fees, or gives you a bad feeling...\"\nWhy: \"Why it might matter: the same survey advises avoiding advisors who cannot clearly explain their fees, and frames the data as about demonstrating clear value rather than being cheapest.\"\n\nItem 13: advisors avoid discussing fees. context: \"Professional certifications provide objective credibility, but many advisors don't effectively communicate their value to prospects.\"\nWhy: \"Why it might matter: the same passage notes that while professional certifications provide objective credibility, many advisors don't effectively communicate their value to prospects.\"\n\nItem 14: cash sweep debate. context: same as a4 item 19.\nWhy: advisors should be prepared to explain custodian sweep structure.\n\nItem 15: RJF higher yields FDIC. context: \"Such programs include our ESP, where such deposits are held by Raymond James Bank, offer...\"\nWhy: \"Why it might matter: in the same passage Raymond James notes such programs include its Enhanced Savings Program where deposits are held by Raymond James Bank.\"\n\nItem 16: firms tread carefully on cash. context: same sentence basically. \"Now that clients can make a decent return on cash again...\"\nWhy: \"Why it might matter: the same trade-press passage notes this caution arises now that clients can again make a decent return on cash, following the recent Merrill Lynch actions.\"\n\nOK. Now let me write the comparison claim for a6.\n\nFor a6, I write exactly one claim with part_id \"a6\":\n\n\"The comparison of which firms are leading or lagging on fee structure changes and transparency cannot be made on this evidence: the cited items cover different firms, different quantities (settlement amounts of $4.4 million, $13 million, $187 million, and $320,754.72; data-fee rates ranging from $25,000 to $860,000; advisory fee rates up to 2.25% and $400 per hour), different periods (settlements in 2022, 2023, and 2026; fee disclosures in 2026), and different scopes (firm-wide versus single-segment or single-program disclosures), with no shared basis or shared periods across firms to rank them against one another.\"\n\nI should cite the items it rests on. Let me cite the key chunks.\n\nActually, let me think about what \"leading/lagging\" comparison rests on. The items include:\n- Merrill data fees later than peers (MER-TRADE-2026-09-29-RB-01#5)\n- Schwab data fees over 7 years ago (MER-TRADE-2026-09-29-RB-01#7)\n- UBS mid-2010s (MER-TRADE-2026-09-29-RB-01#8)\n- Morgan Stanley lower data fees $25K-$500K (MER-TRADE-2026-09-29-RB-01#3)\n- Merrill data fees $125K-$860K (MER-TRADE-2026-09-29-RB-01#2)\n- Various settlements\n\nSome of these are actually comparable in a narrow sense (data fee introduction dates and rates). But overall the aspect is about \"leading or lagging on fee structure changes and transparency\" broadly, which involves heterogeneous measures.\n\nThe comparability note for a1/a2 says \"unverified: not in the metric definitions file; never compared across firms\". a6 has no such note, but the heterogeneous nature means no valid ranking.\n\nI'll write: not valid (cannot rank firms) because the items are heterogeneous with no shared basis.\n\nLet me write the comparison claim concisely but with the citations.\n\nActually, I should cite a reasonable set of the items. Let me cite the most relevant: the data fee comparison items (MER-TRADE-2026-09-29-RB-01#5, #7, #8, #3, #2) and settlement items.\n\nLet me write:\n\n\"The comparison of which firms are leading or lagging on fee structure changes and transparency cannot be made on this evidence. The cited items are heterogeneous: some concern data-fee introduction timing (Schwab over seven years ago, UBS in the mid-2010s, Merrill later than peers), some concern data-fee rate levels (Morgan Stanley $25,000\u2013$500,000 versus Merrill $125,000\u2013$860,000), and others concern regulatory settlements of different amounts and dates ($187 million in 2022 for Schwab, $13 million in July 2023 for Raymond James, $4.4 million for Wells Fargo and Merrill, $320,754.72 per state for Edward Jones), with no shared basis, shared period, or shared scope across firms that would permit ranking them as leading or lagging.\"\n\nchunk_ids: I'll include the relevant ones.\n\nOK. Now let me also double check: is the question asking about specific firms? The question \"Where is the industry heading on fee structures and pricing transparency?\" - it's industry-level, and the aspects a1-a5 are industry/research-level. a6 is firm-level comparison.\n\nThe instruction \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nHmm, but this question isn't really firm-by-firm for a1-a5. The items are from research firms and trade press and various wealth management firms. \n\nActually, I think the \"several firms\" instruction applies when the question is about comparing firms. Here, the question is industry-level, so I write aspect by aspect, and within each aspect, I write the items as claims (not grouped by firm, since the items are from mixed sources).\n\nI don't think I need to prefix each claim with \"<Firm>: \" because the question isn't asking about specific firms. But wait, the instruction says \"Several firms: ... each claim starting '<Firm>: '.\"\n\nHmm. But this isn't a firm-comparison question per se. The items are attributed to their sources (McKinsey, Cerulli, Raymond James, etc.) within the claim text anyway.\n\nActually, let me reconsider. The instruction about \"Several firms\" vs \"One firm\" is about how to structure the answer. This question spans the whole industry, not a fixed set of firms. So I'll write aspect by aspect, and each claim naturally attributes its source.\n\nI won't force \"<Firm>: \" prefixes since the \"firms\" here are actually research firms, trade press, and various wealth managers, not a fixed comparison set.\n\nActually, to be safe, let me just attribute within the claim text naturally (which I'm doing anyway with the source and date). I think that's fine.\n\nLet me now also reconsider: do I need to worry about \"adjacent\" items or \"gaps\"? The code says \"Gaps added by code: none\". And there's no \"adjacent only\" marking in the matrix. So no adjacent items, no gaps.\n\nAlso \"answer_with_boundary\" - not the case here. The behavior is \"answer\".\n\nSo my answer structure:\n- claims: all items from a1, a2, a3, a4, a5 (with part_ids a1.all...a5.all), plus the a6 comparison claim (part_id a6)\n- adjacent: [] (empty)\n- gaps: [] (empty)\n\nWait, but should I include the a6 items as claims too? Let me reconsider.\n\nThe a6 items are fact cells listed under \"a6.all All sources: fact\". But a6 is a comparison aspect, which gets \"exactly one claim\" for the comparison.\n\nHmm, but the comparison claim \"citing the items it rests on\". So the items are cited within the comparison claim, not written separately.\n\nActually, wait. Let me re-read very carefully once more.\n\n\"Comparison aspects\n- For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on (the definitions, the figures compared).\"\n\nSo yes, for a6, I write exactly ONE claim (part_id \"a6\"), and it cites the items. I do NOT write the individual a6 items as separate claims.\n\nThis is different from a1-a5 where I write each item as a claim.\n\nOK so my final structure:\n- a1 items: 24 claims, part_id \"a1.all\"\n- a2 items: 13 claims, part_id \"a2.all\"\n- a3 items: 1 claim with why-line, part_id \"a3.all\"\n- a4 items: 20 claims with why-lines, part_id \"a4.all\"\n- a5 items: 16 claims with why-lines, part_id \"a5.all\"\n- a6: 1 comparison claim, part_id \"a6\"\n\nTotal: 24+13+1+20+16+1 = 75 claims.\n\nThis is a very large answer. Let me write it all out.\n\nLet me be efficient with the writing while maintaining accuracy.\n\nActually, I realize I should double-check the part_id for the a3, a4, a5 items. These are recency aspects, and their cell is \"a3.all\", \"a4.all\", \"a5.all\". So part_id \"a3.all\", \"a4.all\", \"a5.all\".\n\nWait, but actually, let me reconsider the enum. The enum has both \"a3\" and \"a3.all\". The comparison instruction says use \"a6\" (bare). For fact cells, use \"*.all\".\n\nActually, I realize I should reconsider whether the recency aspects (a3, a4, a5) use \"a3.all\" or \"a3\". Let me look at the matrix again:\n\n\"Aspect a3: What regulatory pressure or rules are shaping fee structures and transparency\n  a3.all All sources: fact\n    item 1: ...\"\n\nSo the cell is \"a3.all\". Items use part_id \"a3.all\".\n\nFor a6 comparison claim, part_id \"a6\" (bare).\n\nOK, I'm confident now. Let me write.\n\nLet me now carefully write out all claims. I'll aim for accuracy and proper dating.\n\nFor dating, I'll use a consistent approach:\n- Research (published date): \"McKinsey (research published April 8, 2026) states...\"\n- 10-K: \"Edward Jones's 2025 Form 10-K (fiscal year ended December 31, 2025, filed March 13, 2026) states...\"\n- Transcript: \"On Schwab's 1Q26 earnings call (quarter ended March 31, 2026, published April 16, 2026)...\"\n- Trade press: \"Trade press (published September 29, 2026) reports...\"\n- ADV: \"Merrill Lynch's 2026 Form ADV (filed October 30, 2026) discloses...\"\n\nLet me write everything now. This will be long.\n\nActually, let me reconsider the quote handling for items marked \"quote not verbatim\". Those should NOT be in quotation marks. I'll paraphrase those. For items with verbatim quotes (not marked), I can use quotation marks.\n\nLet me identify which items have \"quote not verbatim\":\n- a1 item 7 (WEALTHTENDER#15): not verbatim\n- a1 item 18 (MS-10K-2025#111): not verbatim\n- a1 item 24 (MER-TRADE#0,#1): not verbatim\n- a2 item 6 (FINRA#140): not verbatim\n- a2 item 9 (WEALTHTENDER#15): not verbatim\n- a4 item 3 (MS-10K-2025#111): not verbatim\n- a4 item 4 (RJF-10K-2025#110): not verbatim\n- a4 item 6 (RJF-10K-2025#100): not verbatim\n- a4 item 9 (WEALTHTENDER#20): not verbatim\n- a4 item 16 (MER-TRADE#8): not verbatim\n- a4 item 20 (WEALTHTENDER#37): not verbatim\n- a5 item 3 (WEALTHTENDER#30): not verbatim\n- a5 item 7 (MCK-ADVISOR-SHORTAGE#6): not verbatim\n- a5 item 9 (RJF-TR#48): not verbatim\n- a5 item 10 (WEALTHTENDER#20): not verbatim\n- a5 item 11 (WEALTHTENDER#63): not verbatim\n- a5 item 12 (WEALTHTENDER#40): not verbatim\n- a5 item 13 (WEALTHTENDER#21): not verbatim\n- a5 item 14 (SCHW-TRADE#4): not verbatim\n- a6 item 6 (RJF-TR#48): not verbatim\n- a6 item 10 (EDJ-10K-2025#151): not verbatim\n- a6 item 19 (RJF-TRADE#1): not verbatim\n\nFor these, I paraphrase without quotes.\n\nFor the ones with verbatim quotes, I can include the quote. But honestly, for brevity I'll mostly paraphrase and only use exact quotes where it's natural. Actually, the instruction says I should quote verbatim where the cell provides a verbatim quote. But paraphrasing is also acceptable for claims as long as I don't misattribute.\n\nActually, the instruction says: \"An item marked 'quote not verbatim' is never put in quotation marks.\" This implies that items NOT marked should be quoted verbatim (in quotation marks) when I use the quote. But it's not strictly required to quote - I can also state the fact.\n\nI think the cleanest approach: state each claim in my own words (paraphrase), and only use quotation marks for verbatim quotes where I explicitly quote. For items marked \"quote not verbatim\", I must NOT quote.\n\nActually, to be safe and clear, I'll paraphrase everything and use quotation marks only where I'm confident the quote is verbatim AND I choose to include it. But honestly, paraphrasing everything is simpler and safe.\n\nBut wait, some items have specific figures where quoting helps. Let me just paraphrase naturally, and use quotes sparingly.\n\nActually, let me reconsider. The core requirement is: don't put non-verbatim text in quotes. Paraphrasing is fine. So I'll paraphrase everything, and where a verbatim quote is important (like the exact McKinsey belief), I might quote it verbatim.\n\nFor efficiency and safety, I'll paraphrase throughout, and use quotation marks only for a few key verbatim quotes.\n\nLet me write the answer now.\n\nLet me draft carefully, aspect by aspect.\n\nI'll write the claims concisely but completely.\n\n---\n\n**Aspect a1 (part_id a1.all)** - 24 claims\n\n1. McKinsey (research published April 8, 2026) states its belief that fee pressure will be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points, while anticipating a repricing of services where clients perceive no differentiation such as basic tax projections. [MCK-SIGNAL-SELLOFF-2026#9]\n\n2. McKinsey, citing PriceMetrix, reports that after a period of fee compression for advisory relationships from 2013 to 2018, fee rates have stabilized. [MCK-ADVISOR-SHORTAGE-2025#6]\n\n3. Cerulli (research published May 28, 2025) states that for the past decade, financial firms have shifted their compensation models from largely commission-based to an asset-related fee structure. [CERULLI-AFFLUENT-FEE#0]\n\n4. Cerulli (research published May 28, 2025) finds that in 2025, 33% of affluent investors compensate their provider via an asset-based fee, 21% use a no-fee platform, and 20% use a commission-based method, while 36% prefer a fee-based arrangement. [CERULLI-AFFLUENT-FEE#1]\n\n5. Deloitte (research published May 20, 2026) states that lower cost-to-serve can expand margins for firms that maintain pricing, while competitive pressure may compress fees as planning outputs become easier to compare. [DELOITTE-AGENTIC-2026#4]\n\n6. Kitces (research published December 20, 2023) reports that 79% of surveyed advisor teams in 2023 primarily derive client revenue from AUM fees. [KITCES-WELLBEING-2023#121]\n\n7. Wealthtender's study (research published August 13, 2025) finds that in 2025, 73% of survey participants consider transparency in fees and services the most important trust factor in an advisor. [WEALTHTENDER-ADVISOR-SEARCH-2025#15] (paraphrase, not quote)\n\n8. Wealthtender's study (research published August 13, 2025) finds that in 2025, lack of fee transparency was identified as a red flag by 38% of survey participants. [WEALTHTENDER-ADVISOR-SEARCH-2025#57]\n\n9. Industry reporting (published September 29, 2026) states that platform tolls (data/support fees) at large distributors are directly or indirectly traceable to the zeroing out of commissions in the brokerage industry. [MER-TRADE-2026-09-29-RB-01#7]\n\n10. Industry reporting (published September 29, 2026) notes that data analytics fees have become common among large distributors, with several peers having sold advisor data for years. [MER-TRADE-2026-09-29-RB-01#5]\n\n11. Industry reporting (published September 30, 2026) states that in 2026 the debate over cash sweep transparency and pricing remains a live issue, with SEC focus on sweep disclosures and litigation over low client yields. [SCHW-TRADE-2026-09-30-IN-01#4]\n\n12. Edward Jones's 2025 Form 10-K (fiscal year ended December 31, 2025) notes ongoing fee compression across the mutual fund industry in recent years. [EDJ-10K-2025#151]\n\n13. Raymond James's 2025 Form 10-K (fiscal year ended September 30, 2025) notes the market environment has resulted in a shift to passive investment products, which generate lower fees than actively managed products. [RJF-10K-2025#100]\n\n14. Bank of America's 2025 Form 10-K (fiscal year ended December 31, 2025) states it faces increasing pressure to provide products and services on more attractive terms, including lower fees, lower cost investment strategies and higher interest rates on deposits. [BAC-10K-2025#138]\n\n15. Morgan Stanley's 2025 Form 10-K states that in its Investment Management business, other investment managers and distributors continue to put downward pressure on fees. [MS-10K-2025#26]\n\n16. Edward Jones's 2025 Form 10-K states the financial services industry is seeing an increasing number of firms providing lower cost, computer-based robo-advice. [EDJ-10K-2025#56]\n\n17. Edward Jones's 2025 Form 10-K states it is subject to competition from robo-advisors and other lower cost options and from fintech companies with internet- and mobile-based platforms. [EDJ-10K-2025#57]\n\n18. Morgan Stanley's 2025 Form 10-K states it continues to experience price competition in some businesses as electronic execution and new technologies put pressure on revenues. [MS-10K-2025#111] (paraphrase)\n\n19. Cerulli Associates data (reported in trade press published October 27, 2026) shows the number of fee-only RIAs at the $5 billion level grew 7.8% over five years. [RJF-TRADE-2026-10-27-WM-01#1]\n\n20. Schwab (1Q26 earnings call, quarter ended March 31, 2026) states its model is informed by investors' preferences for lower explicit fees without sacrificing product access, convenience or service. [SCHW-TR-2026Q1#30]\n\n21. Schwab's CEO (1Q26 earnings call) states the firm adapted as commissions went down. [SCHW-TR-2026Q1#55]\n\n22. A consumer survey (research published August 13, 2025) found 48% of participants said pricing and overall anticipated costs are among the top three factors leading them to choose one advisor over another. [WEALTHTENDER-ADVISOR-SEARCH-2025#37]\n\n23. Research (published August 13, 2025) recommends advisors develop clear, comprehensive fee explanation pages to ensure prospects understand what services may cost before engaging. [WEALTHTENDER-ADVISOR-SEARCH-2025#33]\n\n24. Trade press (published September 29, 2026) reports that Merrill Lynch is creating new data and shelf fees (fee bundles) that third-party managers pay for listing and visibility with its advisors. [MER-TRADE-2026-09-29-RB-01#0, MER-TRADE-2026-09-29-RB-01#1] (paraphrase)\n\n**Aspect a2 (part_id a2.all)** - 13 claims\n\n1. Raymond James's 2025 Form 10-K states that in fixed income and equity markets, regulatory requirements have resulted in greater price transparency, which has led to price competition and decreased trading margins. [RJF-10K-2025#110]\n\n2. McKinsey (research published April 8, 2026) states its belief that fee pressure will be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points. [MCK-SIGNAL-SELLOFF-2026#9]\n\n3. Wealthtender's study (published August 13, 2025) notes that many advisors avoid discussing fees upfront, creating an opportunity for transparent advisors. [WEALTHTENDER-ADVISOR-SEARCH-2025#21]\n\n4. Wealthtender's study (published August 13, 2025) shows 73% of people consider fee transparency the most important trust factor. [WEALTHTENDER-ADVISOR-SEARCH-2025#57]\n\n5. FINRA (oversight research published December 9, 2025) references an SEC amendment requiring mark-up/mark-down disclosure on confirmations for trades with retail investors in corporate and agency bonds. [FINRA-OVERSIGHT-2026#207]\n\n6. FINRA (published December 9, 2025) notes the disclosure obligation to provide retail customers with full and fair disclosures of all material facts, including material fees received as a result of recommendations made such as revenue sharing. [FINRA-OVERSIGHT-2026#140] (paraphrase)\n\n7. Trade press (published September 29, 2026) notes the widespread adoption of data fees to offset declining transaction revenue, tracing back to 2019 when Charles Schwab began charging for data it had historically provided for free. [MER-TRADE-2026-09-29-RB-01#8]\n\n8. Trade press (published October 16, 2026) reports that under NASAA-led settlements with major broker-dealers, the firms must certify that their commission policies and supervisory procedures have been revised to ensure all charges are fair and reasonable going forward. [MER-TRADE-2026-10-16-IN-01#1]\n\n9. Wealthtender research (published August 13, 2025) found that in 2025, nearly three-quarters (73%) of survey participants said transparency in fees and services is crucial for establishing an advisor's credibility. [WEALTHTENDER-ADVISOR-SEARCH-2025#15] (paraphrase)\n\n10. The same Wealthtender research (2025) found that nearly half (48%) of survey participants said pricing and overall anticipated costs are among the top three factors that lead them to choose one advisor over another. [WEALTHTENDER-ADVISOR-SEARCH-2025#37]\n\n11. Trade press (published September 30, 2026) reports that the broader debate over cash sweep transparency and pricing remains a live issue, with the SEC's sustained focus on sweep disclosures and a wave of litigation against major firms over allegedly low client yields. [SCHW-TRADE-2026-09-30-IN-01#4]\n\n12. Trade press (published October 2, 2026) reports that, in the wake of recent Merrill Lynch actions, firms realize they must tread carefully when it comes to paying appropriate interest rates to clients on their cash. [MER-TRADE-2026-10-02-IN-01#2]\n\n13. Trade press (published October 15, 2026) reports that Wells Fargo and Merrill Lynch will collectively pay $4.4 million to settle allegations from state securities regulators that they charged unreasonable commissions to retail customers following small-dollar transactions. [MER-TRADE-2026-10-15-WM-01#0]\n\n**Aspect a3 (part_id a3.all)** - 1 claim with why-line\n\n1. Raymond James's 2025 Form 10-K states that in fixed income and equity markets, regulatory requirements have resulted in greater price transparency, leading to price competition and decreased trading margins. Why it might matter: in the same passage Raymond James states that its trading margins have been further compressed by the shift from high- to low-touch services over time, and it believes price competition and pricing pressures in these and other areas will continue. [RJF-10K-2025#110]\n\n**Aspect a4 (part_id a4.all)** - 20 claims with why-lines\n\nLet me write these.\n\n**Aspect a5 (part_id a5.all)** - 16 claims with why-lines\n\n**Aspect a6 (part_id a6)** - 1 comparison claim\n\nOK, let me now write the full tool call. This is going to be very long but I'll do it carefully.\n\nLet me finalize the why-lines and write everything.\n\nActually, for efficiency, I'll now produce the final JSON. Let me write all claims.\n\nLet me reconsider the why-line for a4 item 1 more carefully. The context line for a4 item 1:\n\n\"... financial services industry. We operate in a highly competitive environment and experience intense competition from local and global bank and nonbank financial institutions and new market entrants. Increasing pressure to provide products and services on more attractive terms, including lower fees, lower cost investment strategies and higher interest rates on deposits, may impact our ability to effectively compete. Also, we may be disadvantaged by our size, the jurisdictions in which we are organized or operate or from more stringent regulatory requirements applicable to us than to nonbank ...\"\n\nWhy: \"Why it might matter: Bank of America states in the same passage that it operates in a highly competitive environment with intense competition from bank and nonbank institutions and new market entrants, and that this pricing pressure may impact its ability to effectively compete.\"\n\nGood.\n\nLet me finalize everything and write the answer.\n\nI need to be careful about the \"date every claim\" rule. I've been including dates. Let me make sure each claim has a date.\n\nFor the trade press sources, they have \"published\" dates but \"period n/a\". I'll use the published date.\n\nLet me write the complete answer now.\n\nActually, I want to reconsider the a4 item 9 and a5 item 10 (same underlying: WEALTHTENDER#20). Both have \"73% priority\" and \"Fee Transparency as Competitive Advantage\". They're in different aspects but same source. Both need why-lines.\n\nFor a4 item 9 (competitive pressure): why-line about economic stress (related #63).\nFor a5 item 10 (client demand): same. Actually a5 item 10 is also WEALTHTENDER#20. And a5 item 11 is WEALTHTENDER#63.\n\nThese overlap. Let me just write them appropriately.\n\na4 item 9: Wealthtender survey identifies fee transparency as competitive advantage (73% priority). Why: economic stress increases fee sensitivity (related #63).\n\na5 item 10: Wealthtender survey found fee transparency 73% priority, clear fee communication powerful differentiator. Why: ... hmm. The context for a5 item 10 is the same WEALTHTENDER#20 context. Let me use related #15 (73% crucial for credibility) or #37.\n\nActually for a5 item 10, context is: \"Source: ChatGPT Fee Transparency as Competitive Advantage (73% Priority) Clear fee communication isn't just ethical, it's a powerful differentiator.\" This doesn't add much. Related lines: #15, #37, #63.\n\nWhy for a5 item 10: \"Why it might matter: the same survey found that 73% of participants said transparency in fees and services is crucial for establishing an advisor's credibility.\" (related #15).\n\nHmm, but that's basically the same 73% figure. Let me use #37: \"nearly half (48%) said pricing and overall anticipated costs are among the top three factors.\"\n\nWhy for a5 item 10: \"Why it might matter: the same research found that nearly half (48%) of survey participants said pricing and overall anticipated costs are among the top three factors in choosing an advisor.\" Add #37.\n\nOK, and a4 item 9 why: use #63 economic stress. Add #63.\n\nLet me also handle a5 item 11 (WEALTHTENDER#63): \"fee transparency top priority (73%), economic stress might increase fee sensitivity.\" Why-line from context: lists other priorities.\n\nWhy for a5 item 11: \"Why it might matter: the same survey's guidance lists online reputation (83%), response time (50%), and specialization clarity (64%) as the other highest-impact findings, framing fee transparency as the top priority for advisors to focus on.\"\n\nOK. Let me write everything now.\n\nI'll now compose the final tool call with all claims.\n\nOne more consideration: the ordering. \"With a time window, order claims and adjacent items newest first across the whole answer.\" The question has no time window (no explicit time window in the question). So I don't need to reorder by recency. I'll keep the order as listed in the matrix (aspect by aspect, items in order).\n\nActually wait, is there a time window? The question \"Where is the industry heading...\" - this is a forward-looking question but not a specific time window like \"since 2020\". So no time window. Order stays as-is.\n\nLet me write the final answer.\n\nFor the comparison claim (a6), let me write it carefully and cite appropriate chunks.\n\nLet me finalize the comparison claim text:\n\n\"The comparison of which firms are leading or lagging on fee structure changes and transparency cannot be made on this evidence: the items are heterogeneous, spanning different quantities, periods, and scopes with no shared basis or shared periods across firms. Some items concern data-fee introduction timing (trade press reports Charles Schwab introduced data fees over seven years ago, UBS in the mid-2010s, and Merrill Lynch later than many peers), others concern data-fee rate levels (Morgan Stanley between $25,000 and $500,000 versus Merrill's $125,000 to $860,000), and still others concern regulatory settlements of differing amounts and dates (Charles Schwab $187 million in 2022, Raymond James $13 million in July 2023, Wells Fargo and Merrill $4.4 million, Edward Jones $320,754.72 per state), so no valid ranking of firms as leading or lagging can be constructed from this evidence.\"\n\nchunk_ids for this: MER-TRADE-2026-09-29-RB-01#7 (Schwab over 7 years), MER-TRADE-2026-09-29-RB-01#8 (UBS mid-2010s), MER-TRADE-2026-09-29-RB-01#5 (Merrill later), MER-TRADE-2026-09-29-RB-01#3 (MS rates), MER-TRADE-2026-09-29-RB-01#2 (Merrill rates), SCHW-TRADE-2026-09-30-IN-01#3 (Schwab $187M), MER-TRADE-2026-10-16-IN-01#1 (RJF $13M), MER-TRADE-2026-10-15-WM-01#0 (Wells/Merrill $4.4M), EDJ-ADV-2026#118 (EDJ $320,754.72).\n\nThat's a reasonable citation set.\n\nNow let me write the complete answer. I'll produce it in the submit_answer tool.\n\nLet me write all claims with proper structure. This is going to be long.\n\nI need to make sure each claim has: text, chunk_ids, part_id.\n\nLet me write it all out now.\n\nFor the why-lines, I need to make sure the additional chunk (from \"related\") is added when I use a related passage, but NOT when I use the item's own context.\n\nLet me carefully finalize each why-line and its chunk_ids.\n\na3 item 1: context (own passage RJF-10K-2025#110). chunk_ids: [RJF-10K-2025#110]. No additional.\n\na4 items - let me list chunk_ids:\n\n1. BAC-10K-2025#138 (context own). chunk: [BAC-10K-2025#138]\n2. MS-10K-2025#26 (context own). chunk: [MS-10K-2025#26]\n3. MS-10K-2025#111 (context own). chunk: [MS-10K-2025#111]\n4. RJF-10K-2025#110 (context own). chunk: [RJF-10K-2025#110]\n5. RJF-10K-2025#109 (context own). chunk: [RJF-10K-2025#109]\n6. RJF-10K-2025#100 (context own). chunk: [RJF-10K-2025#100]\n7. SCHW-10K-2025#95 (context own). chunk: [SCHW-10K-2025#95]\n8. EDJ-10K-2025#57 (context own). chunk: [EDJ-10K-2025#57]\n9. WEALTHTENDER#20, why from related #63. chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#20, WEALTHTENDER-ADVISOR-SEARCH-2025#63]\n10. MCK-SIGNAL-SELLOFF-2026#9 (context own - 104bps). chunk: [MCK-SIGNAL-SELLOFF-2026#9]\n11. DELOITTE-AGENTIC-2026#4 (context own). chunk: [DELOITTE-AGENTIC-2026#4]\n12. BAC-10K-2025#139 (context own). chunk: [BAC-10K-2025#139]\n13. MS-10K-2025#110 (context own). chunk: [MS-10K-2025#110]\n14. SCHW-10K-2025#94, why from related MS-TR-2026Q2#58. chunk: [SCHW-10K-2025#94, MS-TR-2026Q2#58]\n15. MER-TRADE-2026-09-29-RB-01#7 (context own). chunk: [MER-TRADE-2026-09-29-RB-01#7]\n16. MER-TRADE-2026-09-29-RB-01#8 (context own - Fidelity). chunk: [MER-TRADE-2026-09-29-RB-01#8]\n17. MS-TR-2026Q2#58 (context own). chunk: [MS-TR-2026Q2#58]\n18. RJF-10K-2025#108 (context own). chunk: [RJF-10K-2025#108]\n19. SCHW-TRADE-2026-09-30-IN-01#4 (context own). chunk: [SCHW-TRADE-2026-09-30-IN-01#4]\n20. WEALTHTENDER#37 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#37]\n\na5 items:\n\n1. SCHW-TR-2026Q1#30 (context own). chunk: [SCHW-TR-2026Q1#30]\n2. FIDELITY-III-2025#0 (context own). chunk: [FIDELITY-III-2025#0]\n3. WEALTHTENDER#30 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#30]\n4. WEALTHTENDER#57 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#57]\n5. WEALTHTENDER#33 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#33]\n6. MCK-SIGNAL-SELLOFF-2026#9 (context own - 104bps). chunk: [MCK-SIGNAL-SELLOFF-2026#9]\n7. MCK-ADVISOR-SHORTAGE-2025#6 (context own). chunk: [MCK-ADVISOR-SHORTAGE-2025#6]\n8. RJF-10K-2025#197 (context own). chunk: [RJF-10K-2025#197]\n9. RJF-TR-2026Q1#48 (context own). chunk: [RJF-TR-2026Q1#48]\n10. WEALTHTENDER#20, why from related #37. chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#20, WEALTHTENDER-ADVISOR-SEARCH-2025#37]\n11. WEALTHTENDER#63 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#63]\n12. WEALTHTENDER#40 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#40]\n13. WEALTHTENDER#21 (context own). chunk: [WEALTHTENDER-ADVISOR-SEARCH-2025#21]\n14. SCHW-TRADE-2026-09-30-IN-01#4 (context own). chunk: [SCHW-TRADE-2026-09-30-IN-01#4]\n15. RJF-10Q-2025Q4#217 (context own). chunk: [RJF-10Q-2025Q4#217]\n16. MER-TRADE-2026-10-02-IN-01#2 (context own). chunk: [MER-TRADE-2026-10-02-IN-01#2]\n\nGood.\n\nNow let me write the full answer. I'll be thorough.\n\nActually, I realize the answer is enormous. Let me just carefully produce it.\n\nI need to double check one thing about a5 item 16 - the context is essentially the same as the item. \"Now that clients can make a decent return on cash again, firms, in the wake of the recent Merrill Lynch actions, realize they must tread carefully when it comes to paying appropriate interest rates to clients on their cash.\"\n\nThe context line shows the same text. So there's nothing additional in context. The related lines are: MER-ADV-2026#469 (Merrill data analytics conflict), SCHW-TRADE-2026-09-30-IN-01#4, BAC-10K-2025#138.\n\nWhy for a5 item 16: use related SCHW-TRADE-2026-09-30-IN-01#4: \"the SEC's sustained focus on sweep disclosures combined with litigation keeps the question of who benefits from rising rates on uninvested cash a live issue.\"\n\nSo: \"Why it might matter: trade press notes the SEC's sustained focus on sweep disclosures combined with litigation against firms over low client yields keeps the question of who benefits from rising rates on uninvested cash a live issue.\" Add chunk SCHW-TRADE-2026-09-30-IN-01#4.\n\nSo chunk: [MER-TRADE-2026-10-02-IN-01#2, SCHW-TRADE-2026-09-30-IN-01#4].\n\nGood.\n\nNow, let me also reconsider a5 item 14 - it's about cash sweep debate, essentially same as a4 item 19. Its context: \"Advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.\"\n\nWhy: \"Why it might matter: the same trade-press passage advises that advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.\"\n\nOK let me finalize and write.\n\nLet me now produce the complete submit_answer call.\n\nI'll write all the text now in final form.\n\nFor dating, let me be consistent. I'll write dates inline.\n\nLet me produce it all.\n\nOne concern: the instruction says \"Several firms: ... each claim starting '<Firm>: '\". But I've decided this question isn't a firm-comparison in the traditional sense. However, to be safe and clear, I'll naturally attribute sources in the text (which serves the same purpose). I won't force the \"<Firm>: \" prefix format since the items are from mixed research/trade-press/firm sources.\n\nActually, let me reconsider. The a6 items ARE firm-specific (Merrill, Morgan Stanley, Raymond James, etc.). But I'm only writing ONE comparison claim for a6, not individual firm claims.\n\nFor a1-a5, the items are industry-level observations from research firms, trade press, and various firms. I'll just attribute naturally.\n\nOK, I'm confident. Let me write the final answer.\n\nLet me write it all out now in the tool call.\n\nI'll keep claim text reasonably concise but complete with dates and attribution.\n\nFinal answer structure confirmed. Let me write.\n\nI need to be careful with quotation marks. For verbatim quotes I can use them; for \"not verbatim\" items I must not. To keep things simple and safe, I'll mostly paraphrase and use quotation marks only for a few clearly verbatim short phrases where helpful. Actually, I'll minimize quoting to avoid errors, but I should still include some verbatim quotes where the cell provides them and they're important.\n\nLet me include verbatim quotes for key items (e.g., McKinsey belief) since they're not marked \"not verbatim\".\n\nActually, for efficiency and correctness, I'll paraphrase everything and only quote the McKinsey \"We believe fee pressure will be uneven...\" quote verbatim (since it's central and verbatim).\n\nHmm, but actually paraphrasing is always safe. Quoting verbatim is only required to be accurate when done. I'll paraphrase to be safe, but include a couple verbatim quotes.\n\nLet me finalize. I'll write naturally.\n\nLet me write the complete answer now.\n\nActually, given the length, let me just carefully write each claim and produce the final JSON in one go.\n\nI'll write it now.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "McKinsey (research published April 8, 2026) states its belief that fee pressure will be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points, while anticipating a repricing of services where clients perceive no differentiation, such as basic tax projections.",
+        "chunk_ids": [
+          "MCK-SIGNAL-SELLOFF-2026#9"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "McKinsey, citing PriceMetrix (research published February 10, 2025), reports that after a period of fee compression for advisory relationships from 2013 to 2018, fee rates have stabilized.",
+        "chunk_ids": [
+          "MCK-ADVISOR-SHORTAGE-2025#6"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli (research published May 28, 2025) states that for the past decade, financial firms have shifted their compensation models from largely commission-based to an asset-related fee structure.",
+        "chunk_ids": [
+          "CERULLI-AFFLUENT-FEE#0"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli (research published May 28, 2025) finds that in 2025, 33% of affluent investors compensate their provider via an asset-based fee, 21% use a no-fee platform, and 20% use a commission-based method, while 36% prefer a fee-based arrangement.",
+        "chunk_ids": [
+          "CERULLI-AFFLUENT-FEE#1"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Deloitte (research published May 20, 2026) states that lower cost-to-serve can expand margins for firms that maintain pricing, while competitive pressure may compress fees as planning outputs become easier to compare.",
+        "chunk_ids": [
+          "DELOITTE-AGENTIC-2026#4"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Kitces (research published December 20, 2023) reports that in 2023, 79% of surveyed advisor teams primarily derive client revenue from AUM fees.",
+        "chunk_ids": [
+          "KITCES-WELLBEING-2023#121"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Wealthtender's study (research published August 13, 2025) finds that in 2025, 73% of survey participants consider transparency in fees and services the most important trust factor in an advisor.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Wealthtender's study (research published August 13, 2025) finds that in 2025, lack of fee transparency was identified as a red flag by 38% of survey participants.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#57"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Industry reporting (trade press, published September 29, 2026) states that platform tolls (data/support fees) at large distributors are directly or indirectly traceable to the zeroing out of commissions in the brokerage industry.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#7"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Industry reporting (trade press, published September 29, 2026) notes that data analytics fees have become common among large distributors, with several peers having sold advisor data for years.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#5"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Industry reporting (trade press, published September 30, 2026) states that in 2026 the debate over cash sweep transparency and pricing remains a live issue, with SEC focus on sweep disclosures and litigation over low client yields.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-09-30-IN-01#4"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Edward Jones's 2025 Form 10-K (fiscal year ended December 31, 2025) notes ongoing fee compression across the mutual fund industry in recent years.",
+        "chunk_ids": [
+          "EDJ-10K-2025#151"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K (fiscal year ended September 30, 2025) notes the market environment has resulted in a shift to passive investment products, which generate lower fees than actively managed products.",
+        "chunk_ids": [
+          "RJF-10K-2025#100"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Bank of America's 2025 Form 10-K (fiscal year ended December 31, 2025) states it faces increasing pressure to provide products and services on more attractive terms, including lower fees, lower cost investment strategies and higher interest rates on deposits.",
+        "chunk_ids": [
+          "BAC-10K-2025#138"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Morgan Stanley's 2025 Form 10-K (fiscal year ended December 31, 2025) states that in its Investment Management business, other investment managers and distributors continue to put downward pressure on fees.",
+        "chunk_ids": [
+          "MS-10K-2025#26"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Edward Jones's 2025 Form 10-K states the financial services industry is seeing an increasing number of firms providing lower cost, computer-based robo-advice.",
+        "chunk_ids": [
+          "EDJ-10K-2025#56"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Edward Jones's 2025 Form 10-K states it is subject to competition from robo-advisors and other lower cost options and from fintech companies with internet- and mobile-based platforms.",
+        "chunk_ids": [
+          "EDJ-10K-2025#57"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Morgan Stanley's 2025 Form 10-K states it continues to experience price competition in some businesses as electronic execution and new technologies put pressure on revenues.",
+        "chunk_ids": [
+          "MS-10K-2025#111"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli Associates data (reported in trade press published October 27, 2026) shows the number of fee-only RIAs at the $5 billion level grew 7.8% over five years.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-27-WM-01#1"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Schwab (1Q26 earnings call, quarter ended March 31, 2026, published April 16, 2026) states its model is informed by investors' preferences for lower explicit fees without sacrificing product access, convenience or service.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#30"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Schwab's CEO (1Q26 earnings call) states the firm adapted as commissions went down.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#55"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "A consumer survey (research published August 13, 2025) found that 48% of participants said pricing and overall anticipated costs are among the top three factors leading them to choose one advisor over another.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Research (published August 13, 2025) recommends advisors develop clear, comprehensive fee explanation pages to ensure prospects understand what services may cost before engaging.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#33"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Trade press (published September 29, 2026) reports that Merrill Lynch is creating new data and shelf fees (fee bundles) that third-party managers pay for listing and visibility with its advisors.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#0",
+          "MER-TRADE-2026-09-29-RB-01#1"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states that in fixed income and equity markets, regulatory requirements have resulted in greater price transparency, which has led to price competition and decreased trading margins.",
+        "chunk_ids": [
+          "RJF-10K-2025#110"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "McKinsey (research published April 8, 2026) states its belief that fee pressure will be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points.",
+        "chunk_ids": [
+          "MCK-SIGNAL-SELLOFF-2026#9"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Wealthtender's study (published August 13, 2025) notes that many advisors avoid discussing fees upfront, creating an opportunity for transparent advisors.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#21"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Wealthtender's study (published August 13, 2025) shows 73% of people consider fee transparency the most important trust factor.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#57"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "FINRA (oversight research published December 9, 2025) references an SEC amendment requiring mark-up/mark-down disclosure on confirmations for trades with retail investors in corporate and agency bonds.",
+        "chunk_ids": [
+          "FINRA-OVERSIGHT-2026#207"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "FINRA (published December 9, 2025) notes the disclosure obligation to provide retail customers with full and fair disclosures of all material facts, including material fees received as a result of recommendations made such as revenue sharing.",
+        "chunk_ids": [
+          "FINRA-OVERSIGHT-2026#140"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Trade press (published September 29, 2026) notes the widespread adoption of data fees to offset declining transaction revenue, tracing back to 2019 when Charles Schwab began charging for data it had historically provided for free.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#8"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Trade press (published October 16, 2026) reports that under NASAA-led settlements with major broker-dealers, the firms must certify that their commission policies and supervisory procedures have been revised to ensure all charges are fair and reasonable going forward.",
+        "chunk_ids": [
+          "MER-TRADE-2026-10-16-IN-01#1"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Wealthtender research (published August 13, 2025) found that in 2025, nearly three-quarters (73%) of survey participants said transparency in fees and services is crucial for establishing an advisor's credibility.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "The same Wealthtender research (published August 13, 2025) found that in 2025, nearly half (48%) of survey participants said pricing and overall anticipated costs are among the top three factors that lead them to choose one advisor over another.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Trade press (published September 30, 2026) reports that the broader debate over cash sweep transparency and pricing remains a live issue, with the SEC's sustained focus on sweep disclosures and a wave of litigation against major firms over allegedly low client yields.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-09-30-IN-01#4"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Trade press (published October 2, 2026) reports that, in the wake of recent Merrill Lynch actions, firms realize they must tread carefully when it comes to paying appropriate interest rates to clients on their cash.",
+        "chunk_ids": [
+          "MER-TRADE-2026-10-02-IN-01#2"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Trade press (published October 15, 2026) reports that Wells Fargo and Merrill Lynch will collectively pay $4.4 million to settle allegations from state securities regulators that they charged unreasonable commissions to retail customers following small-dollar transactions.",
+        "chunk_ids": [
+          "MER-TRADE-2026-10-15-WM-01#0"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states that in fixed income and equity markets, regulatory requirements have resulted in greater price transparency, leading to price competition and decreased trading margins. Why it might matter: in the same passage Raymond James states that its trading margins have been further compressed by the shift from high- to low-touch services over time, and it believes price competition and pricing pressures in these and other areas will continue.",
+        "chunk_ids": [
+          "RJF-10K-2025#110"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Bank of America's 2025 Form 10-K states it faces increasing pressure to provide products and services on more attractive terms, including lower fees and lower-cost investment strategies. Why it might matter: in the same passage Bank of America states it operates in a highly competitive environment with intense competition from bank and nonbank financial institutions and new market entrants, and that this pricing pressure may impact its ability to effectively compete.",
+        "chunk_ids": [
+          "BAC-10K-2025#138"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Morgan Stanley's 2025 Form 10-K states it has experienced and expects competitive pressures in its Investment Management segment as other investment managers and distributors continue to put downward pressure on fees. Why it might matter: in the same passage Morgan Stanley notes it faces competition from other investment managers, including those that may be subject to less stringent legal and regulatory regimes.",
+        "chunk_ids": [
+          "MS-10K-2025#26"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Morgan Stanley's 2025 Form 10-K states it continues to experience price competition, with electronic trading and new technologies likely to continue pressure on revenues. Why it might matter: in the same passage Morgan Stanley states the introduction and application of new technologies, including generative artificial intelligence and tokenization, and the trend toward direct access to automated electronic markets, will likely continue the pressure on revenues.",
+        "chunk_ids": [
+          "MS-10K-2025#111"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states that regulatory requirements have resulted in greater price transparency, leading to price competition and decreased trading margins, and that it believes price competition and pricing pressures will continue. Why it might matter: in the same passage Raymond James states its trading margins have been further compressed by the shift from high- to low-touch services over time, which has created additional competitive pressure.",
+        "chunk_ids": [
+          "RJF-10K-2025#110"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states competition from other financial services firms could result in pricing pressure. Why it might matter: in the same passage Raymond James notes it also competes indirectly for investment assets with insurance companies, real estate firms, and hedge funds.",
+        "chunk_ids": [
+          "RJF-10K-2025#109"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states its asset management fees may decline over time due to increased competition, and notes a shift to passive investment products that generate lower fees. Why it might matter: in the same passage Raymond James notes the market environment has resulted in a shift to passive investment products that generate lower fees than actively managed products.",
+        "chunk_ids": [
+          "RJF-10K-2025#100"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Schwab's 2025 Form 10-K (fiscal year ended December 31, 2025) states increased price competition from other financial services firms, such as reduced commissions and reduced fund expense ratios, could impact its results. Why it might matter: in the same passage Schwab states it adjusts rates on deposits and loans, advisory fees, expense ratios on mutual funds and ETFs, trade commission rates, and other pricing and incentives to sustain its competitive position.",
+        "chunk_ids": [
+          "SCHW-10K-2025#95"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Edward Jones's 2025 Form 10-K states it is subject to competition from robo-advisors and other lower-cost options and from fintech companies. Why it might matter: in the same passage Edward Jones states that if it cannot keep pace with this rapidly changing environment and meet client needs, it could lose clients, thereby reducing revenues.",
+        "chunk_ids": [
+          "EDJ-10K-2025#57"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A Wealthtender survey (published August 13, 2025) identifies fee transparency as a competitive advantage, with clear fee communication described as a powerful differentiator (73% priority). Why it might matter: the same survey noted that economic stress might increase the importance of fee sensitivity and the urgency of financial planning needs.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#20",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#63"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "McKinsey (research published April 8, 2026) states it believes fee pressure will be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points. Why it might matter: in the same passage McKinsey notes that fee rates for relationships of more than $1 million have remained remarkably steady at about 104 basis points since 2019 even as digital tools proliferated.",
+        "chunk_ids": [
+          "MCK-SIGNAL-SELLOFF-2026#9"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Deloitte (research published May 20, 2026) notes that competitive pressure may compress fees as planning outputs become easier to compare. Why it might matter: in the same passage Deloitte states that lower cost-to-serve can expand margins for firms that execute and maintain pricing, so the outcome is margin expansion for some and pressure for others.",
+        "chunk_ids": [
+          "DELOITTE-AGENTIC-2026#4"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Bank of America's 2025 Form 10-K states that emerging technologies and the growth of e-commerce have allowed non-traditional financial service providers and technology companies to compete by offering electronic securities trading with low or no fees and commissions. Why it might matter: in the same passage Bank of America states emerging technologies have lowered geographic and monetary barriers, making it easier for non-depository institutions to offer traditional banking products and services.",
+        "chunk_ids": [
+          "BAC-10K-2025#139"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Morgan Stanley's 2025 Form 10-K states it has experienced and may continue to experience pricing pressures as some competitors seek market share by reducing prices and fees, eliminating commissions, or providing more favorable terms of business. Why it might matter: in the same passage Morgan Stanley states certain competitors may be subject to different and, in some cases, less stringent legal and regulatory regimes, putting it at a competitive disadvantage.",
+        "chunk_ids": [
+          "MS-10K-2025#110"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Charles Schwab's 2025 Form 10-K states that its industry is highly competitive and characterized by aggressive price competition. Why it might matter: a Morgan Stanley executive (2Q26 earnings call, published July 15, 2026) noted press coverage highlighting efforts by smaller RIAs employing more aggressive pricing to compete for workplace business.",
+        "chunk_ids": [
+          "SCHW-10K-2025#94",
+          "MS-TR-2026Q2#58"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A trade press source (published September 29, 2026) attributes platform fees at major distributors to the zeroing out of commissions in the brokerage industry, as distributors need to replace transaction revenue. Why it might matter: the same trade-press passage notes that distributors have real costs of distributing and must replace transaction revenue somewhere since loads are no longer charged on funds.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#7"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A trade press source (published September 29, 2026) notes that major wires introduced data fees to offset declining transaction revenue, with an analyst first predicting widespread adoption of data fees when Schwab began charging for data it had provided free. Why it might matter: the same trade-press passage notes that Fidelity introduced ETF platform and revenue-sharing fees in March 2024, including a $100 ticket charge on trades of funds that refused to pay shelf-space fees.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#8"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A Morgan Stanley executive (2Q26 earnings call, published July 15, 2026) notes press coverage highlighting efforts by smaller RIAs employing more aggressive pricing to compete for workplace business, a sign of evolving competitive pressure on pricing. Why it might matter: in the same earnings-call exchange, the questioner frames this as part of how the competitive landscape in workplace business is evolving, amid Morgan Stanley's leading position.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#58"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states it competes on pricing, including execution pricing and fee levels, among other factors. Why it might matter: in the same passage Raymond James states substantial consolidation and convergence among financial services firms has significantly increased the capital base and geographic reach of its competitors.",
+        "chunk_ids": [
+          "RJF-10K-2025#108"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A trade press source (published September 30, 2026) states that the SEC's sustained focus on cash sweep disclosures, combined with litigation against firms over low client yields, keeps the question of who benefits from rising rates on uninvested cash a live issue driving transparency. Why it might matter: the same trade-press passage advises that advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-09-30-IN-01#4"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "A survey (published August 13, 2025) found that nearly half (48%) of participants consider pricing and overall anticipated cost among the top factors in choosing an advisor, and that pricing clarity can be a dealbreaker, reflecting client-driven pressure for fee transparency. Why it might matter: the same survey notes that pricing clarity can be a dealbreaker or deal maker, and that this is about understanding what you will pay and feeling confident you are getting good value rather than finding the cheapest option.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "Schwab (1Q26 earnings call) states that its model is informed by investors' preferences for lower explicit fees without sacrificing product access, convenience or service. Why it might matter: in the same earnings-call passage Schwab states it has a lot of flexibility to continue supporting investors and RIAs if those preferences change in the future.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#30"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Fidelity's 2025 Investor Insights Study (published October 9, 2025) finds that wealthy next generation (Gen X, Y, and Z) high-net-worth households seek transparency in advisor compensation. Why it might matter: the same study states that advisors must adapt to these shifting dynamics to effectively serve the distinctive demands of this generation.",
+        "chunk_ids": [
+          "FIDELITY-III-2025#0"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "A survey (published August 13, 2025) finds that 62% of people want to know an advisor's fee structure before making initial contact, making it one of the two most important pieces of information sought. Why it might matter: the same survey explains that prospective clients want to know whether the advisor actually helps people in situations like theirs, and to understand what the help will cost.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#30"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "A study (published August 13, 2025) shows 73% of people consider fee transparency the most important trust factor. Why it might matter: the same passage advises always asking for a clear, written explanation of all costs before engaging an advisor, and notes that lack of fee transparency was identified as a red flag by 38% of survey participants.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#57"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Research (published August 13, 2025) recommends clear, comprehensive fee explanation pages because prospects want confidence about costs and fear of the unknown is real among consumers who haven't worked with an advisor before. Why it might matter: the same research notes that fear of the unknown is real, especially among consumers who have not worked with an advisor before and do not know what to expect.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#33"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "McKinsey (research published April 8, 2026) expects fee pressure to be uneven, manifesting as demands for transparency and unbundled pricing rather than a blanket reduction in basis points. Why it might matter: in the same passage McKinsey notes that fee rates for relationships of more than $1 million have remained remarkably steady at about 104 basis points since 2019 even as digital tools proliferated.",
+        "chunk_ids": [
+          "MCK-SIGNAL-SELLOFF-2026#9"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "McKinsey (research published February 10, 2025) notes clients' growing willingness to pay for human-delivered advice. Why it might matter: in the same passage McKinsey attributes stable to slightly increasing advisory fee rates to increasing demand for human advice, and notes that among investors with more than $1 million in investable assets, the share willing to pay a premium of 100 basis points or more grew by 50 percent.",
+        "chunk_ids": [
+          "MCK-ADVISOR-SHORTAGE-2025#6"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Raymond James's 2025 Form 10-K states it has sought to meet client demand for higher yields on cash balances without sacrificing FDIC insurance, by introducing new deposit products such as its Enhanced Savings Program. Why it might matter: in the same passage Raymond James states that future changes to regulatory rules governing the fees it earns on cash sweep balances could also impact the rates it pays to clients on cash balances.",
+        "chunk_ids": [
+          "RJF-10K-2025#197"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Raymond James (1Q26 earnings call, published April 22, 2026) states it wants a profitable, competitive and fair pricing structure and would be flexible and open to evolving pricing, fees and payout based on competitive dynamics and client preferences. Why it might matter: in the same earnings-call passage the CEO states the firm looks at pricing, fees and payout on an ongoing basis.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#48"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "A Wealthtender consumer survey (published August 13, 2025) found fee transparency to be a 73% priority, describing clear fee communication as a powerful differentiator and competitive advantage, not merely an ethical matter. Why it might matter: the same research found that nearly half (48%) of survey participants said pricing and overall anticipated costs are among the top three factors in choosing an advisor.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#20",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#37"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "The same survey (published August 13, 2025) identified fee transparency as the top priority to focus on (73% priority), and noted that economic stress might increase the importance of fee sensitivity and the urgency of financial planning needs. Why it might matter: the same survey's guidance lists online reputation (83% research reputation), response time (50%), and specialization clarity (64%) as the other highest-impact findings, framing fee transparency as the top priority for advisors to focus on.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#63"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Consumers (survey published August 13, 2025) look for advisors who are transparent about pricing and can clearly explain their fees, and 48% consider pricing among top factors; the data shows this is about demonstrating clear value for fees rather than being the cheapest. Why it might matter: the same survey advises avoiding advisors who use high-pressure tactics or cannot clearly explain their fees, and frames the data as about demonstrating clear value rather than being the cheapest.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#40"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Research (published August 13, 2025) notes many advisors avoid discussing fees upfront, creating an opportunity for transparent advisors; recommended practices include website fee pages, addressing pricing within the first 10 minutes of initial consultations, and providing clear written fee estimates. Why it might matter: the same passage notes that while professional certifications provide objective credibility, many advisors do not effectively communicate their value to prospects.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#21"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "The broader debate over cash sweep transparency and pricing (trade press, published September 30, 2026) remains a live issue, with the question of who benefits from rising rates on uninvested cash unlikely to fade from client conversations; advisors should be prepared to explain how their custodian's sweep structure works. Why it might matter: the same trade-press passage advises that advisors should be prepared to explain how their custodian's sweep structure works and how it may shift with the rate environment.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-09-30-IN-01#4"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Raymond James (10-Q for the quarter ended December 31, 2025) states it has sought to continue to meet client demand for higher yields on cash balances, without sacrificing FDIC insurance benefits, by providing FDIC-insured deposit products and enhanced-rate initiatives. Why it might matter: in the same passage Raymond James notes such programs include its Enhanced Savings Program, where deposits are held by Raymond James Bank.",
+        "chunk_ids": [
+          "RJF-10Q-2025Q4#217"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "Trade press (published October 2, 2026) reports that now that clients can make a decent return on cash again, firms realize they must tread carefully when it comes to paying appropriate interest rates to clients on their cash. Why it might matter: trade press notes the SEC's sustained focus on sweep disclosures combined with litigation against firms over low client yields keeps the question of who benefits from rising rates on uninvested cash a live issue.",
+        "chunk_ids": [
+          "MER-TRADE-2026-10-02-IN-01#2",
+          "SCHW-TRADE-2026-09-30-IN-01#4"
+        ],
+        "part_id": "a5.all"
+      },
+      {
+        "text": "The comparison of which firms are leading or lagging on fee structure changes and transparency cannot be made on this evidence: the cited items are heterogeneous, spanning different quantities, periods, and scopes with no shared basis or shared periods across firms. Some items concern data-fee introduction timing (trade press reports Charles Schwab introduced data fees over seven years ago, UBS in the mid-2010s, and Merrill Lynch later than many peers), others concern data-fee rate levels (Morgan Stanley between $25,000 and $500,000 versus Merrill's $125,000 to $860,000), and still others concern regulatory settlements of differing amounts and dates (Charles Schwab $187 million in 2022, Raymond James $13 million in July 2023, Wells Fargo and Merrill $4.4 million, Edward Jones $320,754.72 per state), so no valid ranking of firms as leading or lagging can be constructed from this evidence.",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#7",
+          "MER-TRADE-2026-09-29-RB-01#8",
+          "MER-TRADE-2026-09-29-RB-01#5",
+          "MER-TRADE-2026-09-29-RB-01#3",
+          "MER-TRADE-2026-09-29-RB-01#2",
+          "SCHW-TRADE-2026-09-30-IN-01#3",
+          "MER-TRADE-2026-10-16-IN-01#1",
+          "MER-TRADE-2026-10-15-WM-01#0",
+          "EDJ-ADV-2026#118"
+        ],
+        "part_id": "a6"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

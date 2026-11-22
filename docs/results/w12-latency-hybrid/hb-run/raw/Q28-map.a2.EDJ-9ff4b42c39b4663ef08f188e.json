@@ -1,0 +1,171 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#141",
+    "EDJ-10Q-2026Q1#0",
+    "EDJ-10K-2025#0",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#86",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2026Q2#73",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#71",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2025Q3#26",
+    "EDJ-10K-2025#27",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2025Q2#9",
+    "EDJ-10Q-2025Q3#21",
+    "EDJ-10Q-2026Q2#9"
+  ],
+  "at": "2026-11-21T23:23:26.393175-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10919,
+    "output_tokens": 6152,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9383,
+    "reasoning_tokens": 4988,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.91
+  },
+  "wall_s": 49.2,
+  "tokens_per_s": 125.04,
+  "ttft_s": 2.91,
+  "reasoning_content": "Let me analyze the question. The sub-question is: \"Closest disclosed measure to Edward Jones's advisor attrition rate\" [proxy].\n\nThe proxy is advisor attrition rate. The firm discloses \"Attrition %\" which represents \"the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nSo attrition % figures are facts. Let me find the figures.\n\nFrom EDJ-10Q-2025Q3#68: \"Attrition %(5) ... 6.1% ... 4.7% ... 6.0% ... 5.1%\"\n\nFrom EDJ-10Q-2025Q3#70: \"Financial advisor attrition was 6.1% as a result of a variety of factors...\"\n\nFrom EDJ-10Q-2025Q2#67: \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements...\"\n\nFrom EDJ-10Q-2025Q2#64: \"Attrition %(5)\" but the figure is cut off.\n\nLet me collect the figures with periods.\n\nEDJ-10Q-2025Q3#68: attrition % - three months ended September 26, 2025 vs September 27, 2024: 6.1% vs 4.7%, and nine months: 6.0% vs 5.1%.\n\nActually the layout: The table shows two sets of columns - probably \"Three Months Ended September 26, 2025\" and \"Three Months Ended September 27, 2024\", then \"% Change\", then \"Nine Months Ended...\" Let me look.\n\nActually in the chunk: \"Attrition %(5) 6.1% 4.7% 30% 6.0% 5.1% 18%\". So three months 2025: 6.1%, 2024: 4.7%, change 30%; nine months: 6.0% vs 5.1%, change 18%.\n\nThe attrition % in these tables appears to be U.S. only? Let me check. In EDJ-10Q-2025Q2#86, there's \"Financial advisors (actual): At period end 19,435 18,724 4% 874 865 1%\" - and then \"U.S.\" label. Actually the table has U.S. and Canada columns.\n\nIn #68, the attrition % row shows only one set of numbers (6.1% 4.7% 30% 6.0% 5.1% 18%), suggesting it's U.S. only (or combined). Actually, looking at #69 which is the footnote section for Q3, and #68 shows attrition %.\n\nWait, let me look more carefully. The attrition appears to be a U.S. metric. In the Q2 data, the financial advisors table shows U.S. and Canada separately. The attrition % row might only be for U.S.\n\nActually, I should just report the figures as printed, with the periods and note scope if determinable.\n\nLet me identify the periods:\n\nQ3 2025 (three months ended Sept 26, 2025): 6.1%\nQ3 2024 (three months ended Sept 27, 2024): 4.7%\nNine months ended Sept 26, 2025: 6.0%\nNine months ended Sept 27, 2024: 5.1%\n\nQ2 2025 (three months ended June 27, 2025): 6.4% (from narrative #67)\nQ2 2025 attrition % from table #64 is cut off.\n\nLet me also check the definition footnote #5: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nSo the attrition rate is the closest disclosed measure, and it's the proxy. So these are facts.\n\nLet me report items:\n\n1. Q3 2025 attrition %: 6.1% (three months)\n2. Q3 2024 attrition %: 4.7% (three months)\n3. Nine months 2025: 6.0%\n4. Nine months 2024: 5.1%\n5. Q2 2025 attrition: 6.4% (from narrative)\n\nAlso definition of attrition % from footnote.\n\nLet me determine scope. The attrition % table in #68 - does it apply to U.S. only? Looking at #86 for Q2, \"Financial advisors (actual)\" shows two sets: U.S. (19,435, 18,724) and Canada (874, 865). The attrition % row in #64 seems to be in the U.S. section (the header \"U.S.\" appears at end of #86).\n\nActually, the tables seem to have U.S. on left and Canada on right. The attrition % row in #68 shows 6.1% 4.7% 30% 6.0% 5.1% 18% - only one set of figures, suggesting it's U.S. only (the Canada column might be blank or \"\u2014\").\n\nHmm, but I'm not 100% sure. Let me look at the overall structure. In #68, the attrition row shows \"6.1% 4.7% 30% 6.0% 5.1% 18%\". Then \"Dow Jones Industrial Average (actual)\" shows \"46,247 42,313 9% 46,247 42,313 9%\" and \"S&P 500 Index\" shows two sets (U.S. and presumably same for both). Actually these index rows show duplicate values for U.S. and Canada since it's the same market data.\n\nSo the attrition % row showing only one set of values (6.1% 4.7% 30% 6.0% 5.1% 18%) suggests it's a combined or U.S.-only figure that's not split by Canada.\n\nActually wait, looking more carefully at #68, the index rows show \"46,247 42,313 9% 46,247 42,313 9%\" - this is 6 numbers = three columns (2025, 2024, % change) for \"At period end\" and three for... no wait.\n\nLet me reconsider. The table likely has these columns for each of two segments (U.S. and Canada):\n- Three months ended Sept 26 2025\n- Three months ended Sept 27 2024\n- % Change\n- Nine months ended Sept 26 2025\n- Nine months ended Sept 27 2024\n- % Change\n\nThat's 6 columns, and for U.S. then repeated for Canada (12 columns total).\n\nFor attrition % row: \"6.1% 4.7% 30% 6.0% 5.1% 18%\" = 6 values = one segment (U.S.).\n\nFor index \"At period end\" row: \"46,247 42,313 9% 46,247 42,313 9%\" = 6 values = one segment. But then it shows \"Average\" with more.\n\nHmm, actually this is getting complicated. The key point: attrition % is reported for the U.S. segment primarily (financial advisors are mostly U.S.). \n\nActually, I think the attrition % is a U.S. metric. The narrative in #70 says \"The Partnership ended the third quarter with 20,429 financial advisors. Financial advisor attrition was 6.1%...\"\n\n20,429 is the total (U.S. + Canada? No). Let me check: In #86 (Q2), \"Financial advisors (actual): At period end 19,435 ... 18,724 ... 4% ... 874 ... 865 ... 1%\". So U.S. is 19,435 and Canada is 874. Total would be 20,309.\n\nIn #68 (Q3), \"At period end 20,429 19,885 3% 20,429 19,885 3%\". So 20,429 is total? Actually it shows the same number twice, meaning it's a combined/total figure shown in both U.S. and Canada columns? No.\n\nActually looking at Q3 #86: \"At period end 20,429 19,885 3% 20,429 19,885 3%\" - this appears to be the \"total\" shown. And #70 says \"20,429 financial advisors\" as the total.\n\nWait, but Q2 #86 shows 19,435 (U.S.) and 874 (Canada), totaling 20,309. Q2 #64 shows \"At period end 20,309 19,589 4% 20,309 19,589 4%\" which is the total 20,309.\n\nSo in some tables, the financial advisors row shows combined total (20,309) in both columns. Confusing. But the attrition % row only shows one set of values.\n\nActually, I think I'm overcomplicating. The attrition % of 6.1% (Q3 2025) is the firm-wide figure as stated in narrative #70. The narrative says \"Financial advisor attrition was 6.1%\".\n\nFor the periods, I'll report:\n- Q3 2025: 6.1%\n- Q2 2025: 6.4% (from narrative)\n- The table figures for Q3 (three months 6.1% vs 4.7%, nine months 6.0% vs 5.1%)\n\nLet me be careful about scope. The attrition % definition says \"financial advisors that left or retired from the Partnership\" - so firm-wide (Partnership). The narrative treats it as firm-wide.\n\nActually, looking again at the structure of the table in #68, the attrition % row shows 6 values, which might be the U.S. segment only (with Canada being \"\u2014\" or not shown). But the narrative #70 clearly states \"Financial advisor attrition was 6.1%\" for the Partnership.\n\nI'll treat the 6.1% and 6.4% as firm-wide (Partnership) attrition rates, since the definition refers to \"the Partnership\" and the narrative describes it for the whole firm.\n\nLet me also include the definition as a fact (the sub-question is about \"closest disclosed measure\" and the definition footnote).\n\nNow, should I include the annual figures? The 10-K for 2025 - does it mention attrition rate? Looking through the chunks, I don't see an attrition % figure in the 10-K chunks. The 10-K mentions \"The Partnership believes its rate of attrition of financial advisors is in line with comparable firms\" (#27) but no figure.\n\nSo I'll report the quarterly figures and the definition.\n\nLet me now determine the items and periods precisely.\n\nItems (facts):\n\n1. Attrition % for three months ended September 26, 2025: 6.1%\n   - From #68 and #70\n   \n2. Attrition % for three months ended September 27, 2024: 4.7%\n   - From #68\n\n3. Attrition % for nine months ended September 26, 2025: 6.0%\n   - From #68\n\n4. Attrition % for nine months ended September 27, 2024: 5.1%\n   - From #68\n\n5. Financial advisor attrition for Q2 2025 (three months ended June 27, 2025): 6.4%\n   - From #67\n\n6. Definition of attrition % (footnote 5): \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n   - From #69, #66\n\nFor period formats:\n- Q3 2025: three months ended Sept 26, 2025 \u2192 \"2025Q3\"\n- Q3 2024: \"2024Q3\"\n- Nine months ended Sept 26, 2025 \u2192 hmm, this is a nine-month period. The format given: \"YYYYQn\" for a calendar quarter, \"YYYY\" for a calendar year. For nine months, I'll use \"2025-01-01 to 2025-09-26\"? Actually the period format options are limited. I'll use a descriptive period string. The instructions say period: \"YYYY-MM-DD\" for point in time, \"YYYYQn\" for calendar quarter, \"FYYYYY\" for fiscal year, \"YYYY\" for calendar year, \"\" when not stated.\n\nFor nine-month periods, there's no specific format. I could use \"2025 YTD Q3\" or just describe in text. Let me use \"2025Q1-Q3\" or similar. Actually I'll put the period as \"2025Q3\" for the three-month and for the nine-month I'll describe it in the text and use a period value like \"2025-01-01_2025-09-26\". Hmm.\n\nActually, let me keep it simple. I'll use \"2025Q3\" for three months ended Sept 26 2025, \"2024Q3\" for three months ended Sept 27 2024, and for nine months I'll use a descriptive period. Since the format doesn't have a \"nine months\" option, I'll note in text \"nine months ended\" and use period \"2025\" with scope noting? No.\n\nI'll use period \"2025Q3\" and note in text \"nine months ended September 26, 2025\". Actually the period should be accurate. Let me use a string like \"2025YTD-Q3\". I think it's acceptable to use a descriptive string since the enum doesn't cover nine months. But the instructions give specific formats. Let me use \"\" and describe in text? No, period should be filled when a figure is present.\n\nI'll use \"2025Q3\" for the three-month and for nine-month I'll write \"2025-01-01 to 2025-09-26\" in text and period \"2025\" ... hmm that's not right either.\n\nActually I'll use period \"2025Q3\" for Q3 three-month, and for nine-month I'll use a custom \"2025Q1-3\" format. Let me just be descriptive in the text and use period \"2025\" (calendar year) - no, that's wrong.\n\nLet me reconsider. The value is a rate (percentage), unit \"percent\" or \"%\". Period for nine months: I'll use \"2025\" but that implies full year. Better to use a descriptive period.\n\nI'll go with period strings:\n- Three months: \"2025Q3\", \"2024Q3\"\n- Nine months: \"2025Q1-Q3\", \"2024Q1-Q3\"\n\nThese are reasonable descriptive strings. Actually, let me keep consistency and clarity. I'll use \"2025Q3\" for the quarter and for nine months I'll describe in text clearly and use period \"2025Q1-Q3\".\n\nFor Q2 2025 (6.4%): three months ended June 27, 2025 \u2192 \"2025Q2\".\n\nNow the definition item: no figure, period \"\".\n\nLet me also note: the attrition % appears to be a metric reported in the \"Related metrics\" table for U.S. Actually, I realize I should double check whether attrition % is U.S. only. Given the narrative in #70 says \"20,429 financial advisors\" and \"Financial advisor attrition was 6.1%\", and 20,429 appears to be the total including Canada... wait.\n\nLet me check Q3 #86 more carefully: \"Financial advisors: At period end 20,429 19,885 3% 20,429 19,885 3%\". This shows 20,429 for 2025 and 19,885 for 2024, repeated. So 20,429 is the total (U.S. + Canada combined), since Q2 showed 19,435 U.S. + 874 Canada = 20,309.\n\nWait but then Q2 #64 shows \"At period end 20,309 19,589 4% 20,309 19,589 4%\" and Q2 #86 shows \"19,435 18,724 4% 874 865 1%\". \n\nSo there seem to be two different tables: one showing combined totals (20,309) and one showing U.S. and Canada separately (19,435 and 874).\n\nThe attrition % in #68 appears in the table that shows combined figures (20,429 appears as the financial advisor figure). So the attrition % is likely a combined/total figure.\n\nActually, looking at the attrition % row in #68 showing only 6 values (not 12), and the index rows showing 6 values (for U.S.) then the \"Average\" line... \n\nHmm, the index \"At period end\" row shows \"46,247 42,313 9% 46,247 42,313 9%\" = 6 values. This is likely: three months 2025 (46,247), three months 2024 (42,313), % change (9%), then nine months 2025 (46,247), nine months 2024 (42,313), % change (9%). So it's ONE segment's 6 columns (3 for three-month + 3 for nine-month), not two segments.\n\nSo the table has 6 columns: [3M 2025, 3M 2024, % change, 9M 2025, 9M 2024, % change].\n\nWait but then the financial advisors row \"At period end 20,429 19,885 3% 20,429 19,885 3%\" has 6 values matching this structure (3M end 2025, 3M end 2024, change, 9M end 2025, 9M end 2024, change). Makes sense!\n\nSo the table is: for the whole Partnership (combined), 6 columns: three months 2025, three months 2024, % change, nine months 2025, nine months 2024, % change.\n\nSo attrition % row: 6.1% (3M 2025), 4.7% (3M 2024), 30% change, 6.0% (9M 2025), 5.1% (9M 2024), 18% change.\n\nGreat, so this is combined Partnership-wide attrition.\n\nSo my items are correct with scope \"\" (whole firm).\n\nNow let me finalize.\n\nFor the definition, quote the footnote.\n\nLet me write the items.\n\nItem 0: Q3 2025 three-month attrition 6.1%\n- text: \"Edward Jones reported financial advisor attrition of 6.1% for the three months ended September 26, 2025.\"\n- quote: \"Attrition %(5) ... 6.1% ... 4.7% ... 30% ... 6.0% ... 5.1% ... 18%\" \u2014 but this is a table. Better to quote from narrative #70: \"Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.\"\n- value: \"6.1%\"\n- unit: \"%\" (or \"attrition rate\")\n- period: \"2025Q3\"\n\nItem 1: Q3 2024 three-month 4.7%\n- quote from #68 table\n- period \"2024Q3\"\n\nItem 2: nine months 2025 6.0%\nItem 3: nine months 2024 5.1%\n\nItem 4: Q2 2025 6.4%\n- quote #67: \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\"\n- period \"2025Q2\"\n\nItem 5: definition\n- quote footnote #5\n\nLet me write out. For the table quote, I'll quote the relevant line from #68.\n\nActually for items 0-3, I'll use #68's table. Let me quote: \"Attrition %(5) ... 6.1% ... 4.7% ... 30% ... 6.0% ... 5.1% ... 18%\"\n\nThat's a reasonable quote.\n\nFor the definition, I'll quote from #69: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nNow unit: \"%\" for the rate. Actually I'll use \"attrition rate\" or \"%\". I'll use \"%\".\n\nLet me also think about the scope. The attrition % is firm-wide (Partnership, U.S. and Canada). I'll leave scope \"\".\n\nActually, wait - is it U.S. only? The attrition % definition says \"financial advisors that left or retired from the Partnership\". \"Partnership\" = whole firm. And narrative says \"financial advisor attrition was 6.1%\". I'll treat as firm-wide.\n\nLet me also consider whether to include the 10-K statement \"The Partnership believes its rate of attrition of financial advisors is in line with comparable firms\" (#27). This is a fact about the rate relative to comparable firms, which is actually relevant to the question \"compared to Merrill's\". But the sub-question is \"Closest disclosed measure to Edward Jones's advisor attrition rate\" [proxy]. So the proxy is the attrition rate itself. The statement about \"in line with comparable firms\" is qualitative and not a figure. I could include it as a fact item (a statement without a figure). But it's more of a comparison statement. I'll include it as it's relevant context, actually it might be useful for the \"compared to Merrill's\" part. But the sub-question is just about the measure. I'll include it as a fact item (statement, no figure).\n\nActually, let me keep focused. The sub-question asks for the closest disclosed measure to advisor attrition rate. The answer is the attrition % figures and the definition. I'll include the definition and the figures.\n\nI'll also include the qualitative statement from #27 as it's directly relevant. Actually it says \"rate of attrition... in line with comparable firms\" - this is a fact (a statement about the rate). I'll include it.\n\nLet me finalize with 7 items:\n0. Q3 2025 6.1%\n1. Q3 2024 4.7%\n2. 9M 2025 6.0%\n3. 9M 2024 5.1%\n4. Q2 2025 6.4%\n5. definition\n6. qualitative statement about in line with comparable firms\n\nLet me write these out.\n\nFor period of nine months, I'll use \"2025Q1-Q3\" and \"2024Q1-Q3\".\n\nFor definition item, period \"\" and value \"\" and unit \"\".\n\nFor qualitative item #27, value \"\" unit \"\" period \"\" (no figure).\n\nLet me write the final answer.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported financial advisor attrition of 6.1% for the three months ended September 26, 2025, which it attributed to a variety of factors including a rise in financial advisor departures with tenure of five years or less.",
+            "quote": "Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.",
+            "value": "6.1%",
+            "unit": "attrition rate",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#70"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 4.7% for the three months ended September 27, 2024.",
+            "quote": "Attrition %(5)                                                                6.1%                            4.7%                     30%                                6.0%                             5.1%                     18%",
+            "value": "4.7%",
+            "unit": "attrition rate",
+            "period": "2024Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 6.0% for the nine months ended September 26, 2025.",
+            "quote": "Attrition %(5)                                                                6.1%                            4.7%                     30%                                6.0%                             5.1%                     18%",
+            "value": "6.0%",
+            "unit": "attrition rate",
+            "period": "2025Q1-Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 5.1% for the nine months ended September 27, 2024.",
+            "quote": "Attrition %(5)                                                                6.1%                            4.7%                     30%                                6.0%                             5.1%                     18%",
+            "value": "5.1%",
+            "unit": "attrition rate",
+            "period": "2024Q1-Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68"
+            ]
+          },
+          {
+            "text": "Edward Jones reported that financial advisor attrition increased to 6.4% for the second quarter of 2025, primarily due to an increase in retirements, consistent with industry trends.",
+            "quote": "Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.",
+            "value": "6.4%",
+            "unit": "attrition rate",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones defines attrition % as the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "quote": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#69"
+            ]
+          },
+          {
+            "text": "Edward Jones stated that it believes its rate of attrition of financial advisors is in line with comparable firms.",
+            "quote": "the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#27"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The proxy is Edward Jones's advisor attrition rate, which it discloses as 'Attrition %'; the passages state the attrition figures for several periods and the firm's definition.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

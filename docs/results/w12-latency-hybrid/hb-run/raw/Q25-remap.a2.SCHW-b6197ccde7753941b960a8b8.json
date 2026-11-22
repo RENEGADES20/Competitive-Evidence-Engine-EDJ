@@ -1,0 +1,96 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a2.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-ADV-2026#73",
+    "SCHW-10K-2025#398",
+    "SCHW-10Q-2026Q2#233",
+    "SCHW-DECK-2026Q3#34",
+    "SCHW-TR-2025Q4#64",
+    "SCHW-TR-2025Q4#65",
+    "SCHW-ADV1A-2026#0",
+    "SCHW-10K-2025#317",
+    "SCHW-10Q-2026Q1#45",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2025Q1#34",
+    "SCHW-ADV-2026#1",
+    "SCHW-10K-2025#124",
+    "SCHW-10Q-2025Q3#191",
+    "SCHW-DECK-2026Q1#2",
+    "SCHW-TR-2026Q1#52",
+    "SCHW-TR-2026Q1#53",
+    "SCHW-ADV-2026#28",
+    "SCHW-10Q-2025Q2#188",
+    "SCHW-TR-2025Q4#8",
+    "SCHW-10Q-2025Q3#61",
+    "SCHW-10Q-2025Q2#162",
+    "SCHW-DECK-2026Q3#35",
+    "SCHW-10Q-2026Q2#201",
+    "SCHW-DECK-2026-investor-day#190",
+    "SCHW-10Q-2025Q2#81",
+    "SCHW-DECK-2026-investor-day#277",
+    "SCHW-10Q-2026Q1#21",
+    "SCHW-DECK-2026Q3#9",
+    "SCHW-10Q-2026Q2#24",
+    "SCHW-DECK-2026Q1#21"
+  ],
+  "at": "2026-11-21T23:16:34.261176-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9295,
+    "output_tokens": 1248,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 7631,
+    "reasoning_tokens": 824,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.95
+  },
+  "wall_s": 11.91,
+  "tokens_per_s": 104.79,
+  "ttft_s": 1.95,
+  "reasoning_content": "Let me analyze the passages. The sub-question asks about payout grid or payout rate each firm discloses for its advisors.\n\nLooking at the passages, most are about unrelated topics (mortgages, trading revenue, bank deposit fees, etc.). The relevant passages for advisor compensation:\n\n- SCHW-ADV-2026#28: This is a \"Grandfathered SWA Fee Schedule\" - this is the fee schedule for the Schwab Wealth Advisory wrap fee program (client fees, not advisor compensation). This is what clients pay, not advisor payout.\n\nNone of the passages discuss advisor compensation structures, payout grids, or payout rates for advisors.\n\nThe fee schedule in #28 is client fees (Annual Percentage Rate on billable assets), which is a different quantity - it's what clients pay, not what advisors are paid (payout).\n\nSo this is a different_quantity: the fee schedule is a different measure (client fee schedule rather than advisor payout).\n\nActually, let me think carefully. The question asks \"payout grid or payout rate each firm discloses for its advisors.\" The SWA fee schedule is about client fees (annual percentage rate charged to clients based on billable assets), not advisor compensation. This is a different measure - it relates to client fees, not advisor payout.\n\nSo label: different_quantity. differs_because: \"The passage discloses the client-facing fee schedule (annual percentage rates charged to clients based on billable assets) for the Schwab Wealth Advisory wrap fee program, not the payout grid/rate paid to advisors.\"\n\nLet me capture the items.\n\nItem from #28:\n- text: Schwab discloses a Grandfathered SWA Fee Schedule showing annual percentage rates charged to clients based on billable assets.\n- quote: \"Billable Assets | Annual Percentage Rate | Amounts up to US$1 million | 0.80% ...\"\n- value: \"\" (or the rates)\n- unit: \"annual percentage rate on billable assets\"\n- period: \"\"\n- scope: \"Schwab Wealth Advisory wrap fee program\"\n\nActually the fee schedule has multiple tiers. I can list it as one item or multiple. Since it's a different quantity, one item is fine, but I could provide the tiers.\n\nLet me provide one item summarizing the fee schedule.\n\nActually, the instructions say \"Items (fact and different_quantity only), one per figure or statement; a series is one item per period.\" The fee schedule is a tiered schedule. I'll do one item describing the schedule.\n\nLet me write the item:\n- text: \"Schwab's Grandfathered SWA Fee Schedule sets annual percentage rates charged to clients on billable assets, with tiers of 0.80% up to $1 million, 0.75% for the next $1 million, 0.70% for the next $3 million, and 0.30% for assets over $5 million.\"\n- quote: \"| Billable Assets | Annual Percentage Rate | Amounts up to US$1 million | 0.80% | Next US$1 million (more than US$1M up to US$2M) | 0.75% | Next US$3 million (more than US$2M up to US$5M) | 0.70% | Assets over US$5 million | 0.30%\"\n- value: \"\" \n- unit: \"annual percentage rate on billable assets (client fee)\"\n- period: \"\"\n- scope: \"Schwab Wealth Advisory wrap fee program (grandfathered clients)\"\n- definition: \"\"\n- chunk_ids: [\"SCHW-ADV-2026#28\"]\n\ndiffers_because: \"This is a client-facing fee schedule (what clients pay), not the payout grid or payout rate paid to the firm's advisors.\"\n\nreason: \"No passage discloses a payout grid or rate paid to advisors; the only related figure is the client-facing wrap fee schedule, a different measure.\"\n\nI think this is the right approach. Let me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Schwab discloses a Grandfathered Schwab Wealth Advisory (SWA) Fee Schedule setting the annual percentage rates charged to clients on billable assets, with tiers of 0.80% on amounts up to $1 million, 0.75% on the next $1 million (over $1M up to $2M), 0.70% on the next $3 million (over $2M up to $5M), and 0.30% on assets over $5 million.",
+            "quote": "| Billable Assets | Annual Percentage Rate | Amounts up to US$1 million | 0.80% | Next US$1 million (more than US$1M up to US$2M) | 0.75% | Next US$3 million (more than US$2M up to US$5M) | 0.70% | Assets over US$5 million | 0.30% |",
+            "value": "",
+            "unit": "annual percentage rate on billable assets (client fee)",
+            "period": "",
+            "scope": "Schwab Wealth Advisory wrap fee program (grandfathered clients)",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-ADV-2026#28"
+            ]
+          }
+        ],
+        "differs_because": "The passage discloses a client-facing wrap fee schedule (annual percentage rates clients pay on billable assets), not the payout grid or payout rate paid to the firm's advisors.",
+        "reason": "No passage states a payout grid or rate for advisors; the only related figure is the client-facing SWA fee schedule, which is a different measure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
