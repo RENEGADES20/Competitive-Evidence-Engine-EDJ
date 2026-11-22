@@ -1,0 +1,263 @@
+{
+  "question_id": "Q13",
+  "question": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2026Q2#28",
+    "MS-TR-2025Q4#12",
+    "MS-TR-2024Q4#77",
+    "MS-TR-2025Q3#42",
+    "MS-TR-2026Q3#23",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2026Q2#23",
+    "MS-TR-2026Q2#60",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2026Q2#21",
+    "MS-TR-2025Q4#7",
+    "MS-TR-2024Q4#9",
+    "MS-TR-2025Q3#15",
+    "MS-TR-2026Q2#16",
+    "MS-TR-2025Q4#20",
+    "MS-TR-2026Q1#13",
+    "MS-TR-2025Q1#13",
+    "MS-TR-2025Q2#34",
+    "MS-TR-2025Q3#25",
+    "MS-TR-2026Q3#15",
+    "MS-TR-2026Q1#11",
+    "MS-TR-2025Q4#19",
+    "MS-TR-2026Q1#24"
+  ],
+  "schema_fallback": [],
+  "enum_values": 80,
+  "at": "2026-11-20T17:38:27.318068-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7098,
+    "output_tokens": 10044,
+    "cache_hit_tokens": 1792,
+    "cache_miss_tokens": 5306,
+    "reasoning_tokens": 6724,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 49.5,
+  "tokens_per_s": 202.91,
+  "reasoning_content": "Let me analyze this task. I need to write an answer about Morgan Stanley's conversion of workplace and stock-plan participants into wealth management clients, following the evidence matrix.\n\nThe question has no time window mentioned, so no recency ordering requirement beyond what's specified. Actually, let me check: \"For every item of an aspect marked recency, and every item when the question has a time window...\" The question doesn't have a time window. Aspects are all marked [fact], not recency. So no \"Why it might matter\" lines needed.\n\nFirms: Morgan Stanley (MS). One firm. So \"One firm: aspect by aspect.\" Claims start with firm name? \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nSo for one firm, just aspect by aspect. I think each claim still may not need \"<Firm>: \" prefix since it's one firm. Actually the instruction says \"each claim starting '<Firm>: '\" only in the several firms case. For one firm, just aspect by aspect.\n\nLet me go through each aspect and item.\n\nAspect a1: one item (a1.MS item 1). Fact. Quote verbatim. Write a claim with part_id a1.MS.\n\nText: On the 2Q26 earnings call (period ended June 30, 2026), management said the firm is working on a referral model for workplace participants who do not yet have an advice-based relationship, beginning as early as financial education and including 401(k) plans and new 401(k) assets, to help them understand where they could use advice.\n\nNeed to date: source MS-TR-2026Q2#28 is from MS transcript, period 2026-06-30, published 2026-07-15. So \"The 2Q26 earnings call (period ended June 30, 2026)\".\n\nQuote verbatim is allowed. I can include the quote.\n\nAspect a2: four items.\n\nitem 1: quote not verbatim - never put in quotation marks. So paraphrase. Date: MS-TR-2025Q4#12, period 2025-12-31, published 2026-01-15. \"The 4Q25 earnings call (period ended December 31, 2025)\".\n\nMorgan Stanley at Work, through its exclusive partnership with Carta, positions the firm as an early trusted advisor to more than 50,000 private companies; employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice.\n\nitem 2: quote not verbatim. MS-TR-2024Q4#77, period 2024-12-31, published 2025-01-16. \"The 4Q24 earnings call (period ended December 31, 2024)\".\n\nCarta will refer private companies with stock plans to Morgan Stanley as they move toward going public; firm committed to seamless transition.\n\nitem 3: quote not verbatim. MS-TR-2025Q3#42, period 2025-09-30, published 2025-10-15. \"The 3Q25 earnings call (period ended September 30, 2025)\".\n\nCarta relationship began as referral-based model; companies moving private to public referred to Morgan Stanley; conversions seen into public-side business during the year.\n\nitem 4: quote verbatim. MS-TR-2026Q3#23, period 2026-09-30, published 2026-10-14. \"The 3Q26 earnings call (period ended September 30, 2026)\".\n\nClients brought to E*TRADE through corporate stock plan context (workplace), where appropriate become fee-based flows to advisers.\n\nAspect a3: five items.\n\nitem 1: quote verbatim. MS-TR-2025Q3#8, period 2025-09-30. LeadIQ, AI-powered lead distribution platform, matching workplace and self-directed relationships, facilitating engagement with financial advisors.\n\nitem 2: quote verbatim. MS-TR-2026Q2#23, period 2026-06-30. Invests in referral models and products like LeadIQ to match individuals with advisers; goal principal financial adviser.\n\nitem 3: quote not verbatim. MS-TR-2026Q2#28, period 2026-06-30. Referral model begins as early as financial education, includes 401(k)s and new 401(k) assets, helping participants understand where they could use advice.\n\nitem 4: quote not verbatim. MS-TR-2026Q2#60, period 2026-06-30. Financial advice and financial wellness, technology to match advisers to clients, products, alternatives, solutions across life cycles.\n\nitem 5: quote verbatim. MS-TR-2025Q4#9, period 2025-12-31. Invests in broadening FA capabilities: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, tailored lending.\n\nAspect a4: six items.\n\nitem 1: fact with value 70%, period 2026Q2. quote verbatim. MS-TR-2026Q2#21.\n\nitem 2: quote verbatim. MS-TR-2025Q4#7, period 2025-12-31.\n\nitem 3: quote verbatim. MS-TR-2024Q4#9, period 2024-12-31.\n\nitem 4: quote verbatim. MS-TR-2025Q3#15, period 2025-09-30.\n\nitem 5: quote verbatim. MS-TR-2025Q4#12, period 2025-12-31.\n\nitem 6: quote verbatim. MS-TR-2026Q2#16, period 2026-06-30.\n\nAspect a5: items 1-14 (no item 6).\n\nitem 1: fact. MS-TR-2025Q4#20, period 2025-12-31. Record $99 billion for full-year 2025, vs historical ~$60 billion/year. quote verbatim.\n\nitem 2: fact. MS-TR-2025Q4#20. Historical averages ~$60 billion/year. quote verbatim.\n\nitem 3: fact. MS-TR-2026Q1#13, period 2026-03-31. Since 2020, over $400 billion new adviser-led assets from Workplace or E*TRADE. quote verbatim.\n\nitem 4: fact. MS-TR-2026Q1#13. Inclusive of Workplace assets pre-E*TRADE acquisition, total adviser-led assets >$1.2 trillion. quote verbatim.\n\nitem 5: fact. MS-TR-2026Q1#13. ~20% of current $5.8 trillion adviser-led assets. quote verbatim.\n\nitem 7: fact. MS-TR-2025Q1#13, period 2025-03-31. Q1 2025 incremental $20 billion, adding to ~$300 billion since 2020. quote verbatim.\n\nitem 8: fact. MS-TR-2025Q2#34, period 2025-06-30. 70% of workplace-originated flows are net new assets. quote verbatim.\n\nitem 9: fact. MS-TR-2025Q3#25, period 2025-09-30. Previously cited ~$60 billion/year workplace migration; exceeding by 3Q25 on full-year basis. quote verbatim.\n\nitem 10: fact. MS-TR-2026Q2#16, period 2026-06-30. 2Q26 stock plan IPO flows just over half of overall NNA. quote verbatim.\n\nitem 11: fact. MS-TR-2026Q3#15, period 2026-09-30. 3Q26 IPO-related flows just over half of overall NNA. quote verbatim.\n\nitem 12: fact. MS-TR-2026Q1#11, period 2026-03-31. 1Q26 Workplace sourced clients aggregating assets, benefit from stock plan vesting. quote verbatim.\n\nitem 13: fact. MS-TR-2025Q4#19, period 2025-12-31. Full-year 2025, Workplace and E*TRADE relationships continue to seek advice. quote verbatim.\n\nitem 14: fact (quote not verbatim). MS-TR-2026Q1#24, period 2026-03-31. Greater retention of vested Workplace assets \u2192 NNA; channel migration helped contribute to over $1 trillion total assets in adviser-led strategy. value $1 trillion.\n\nNow, no gaps added by code, no caveats. No comparison aspects (all fact). So no comparisons.\n\nNo adjacent items needed. Gaps: none (code says none, and I shouldn't add unless something not named - but there are no gaps needed; all aspects have facts). Actually the instruction says \"Add a gap of your own only for something those gaps do not name.\" The gaps added by code are \"none\". Do I need to add any gap? Only if something those gaps do not name requires a gap. I don't think so. The standard wording about advisor pay doesn't apply here. So gaps = empty array.\n\nAdjacent = empty array.\n\nClaims: one claim per item, with part_id = the cell id (a1.MS, a2.MS, etc.).\n\nWait, part_id enum includes a1.MS, a2.MS, a3.MS, a4.MS, a5.MS, a1, a2, a3, a4, a5, \"\". So part_id for items in a1.MS is \"a1.MS\", etc. Good.\n\nFor aspect a1, the cell id is a1.MS (only one item). Each item's part_id is the cell id. Since each cell has one item, part_id = cell id.\n\nActually looking carefully, each aspect has a single cell (a1.MS, a2.MS, etc.) with multiple items. The part_id is the cell id. So all items under a2.MS get part_id \"a2.MS\".\n\nLet me write each claim.\n\nOrder: aspect by aspect (a1, a2, a3, a4, a5). No time window, so no need to order newest first. Within aspect, items in listed order.\n\nEach claim starts with... one firm. The instruction \"One firm: aspect by aspect.\" No \"<Firm>: \" prefix required. But I could include \"Morgan Stanley: \" for clarity? The several-firms case explicitly requires \"<Firm>: \". For one firm, it just says aspect by aspect. I'll not add the prefix, or maybe add it for consistency. Let me re-read.\n\n\"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nSo for one firm, no firm prefix needed. I'll write claims without the \"Morgan Stanley: \" prefix. Actually it might be cleaner to just state the facts directly. But some guidance says attribute to the firm. I'll write naturally, attributing to \"the firm\" / \"management\".\n\nLet me make sure to date every claim from its source line.\n\nFor quote not verbatim items, never use quotation marks. For verbatim quotes, I can include them in quotation marks.\n\nLet me draft each claim.\n\na1.MS:\n\"The 2Q26 earnings call (period ended June 30, 2026) states that the firm is working on a referral model for workplace participants who do not yet have an advice-based relationship, which can begin as early as financial education and includes 401(k) plans and new 401(k) assets, to help them understand where they could use advice. Management said: 'for those that might not yet have the advice-based relationship, we're working on that referral model. And that's something that can begin as early as the financial education spot, and it can also begin -- like I said, we have examples with 401(k)s and new 401(k) assets that come in that is not necessarily an IPO-specific workplace where we're really giving people that ability to better understand where they could use advice.'\"\n\nchunk_ids: [\"MS-TR-2026Q2#28\"], part_id \"a1.MS\".\n\na2.MS item 1 (not verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), the firm said Morgan Stanley at Work, through its exclusive partnership with Carta, positions Morgan Stanley as an early trusted advisor to more than 50,000 private companies, and that employees across its workplace companies benefit from management of equity compensation plans, liquidity opportunities, and full-service advice.\"\nchunk: MS-TR-2025Q4#12.\n\nitem 2 (not verbatim):\n\"On the 4Q24 earnings call (period ended December 31, 2024), the firm said its exclusive partnership with Carta means Carta will refer private companies with stock plans to Morgan Stanley as they move toward going public, and that the firm is committed to making that transition a seamless experience.\"\nchunk: MS-TR-2024Q4#77.\n\nitem 3 (not verbatim):\n\"On the 3Q25 earnings call (period ended September 30, 2025), the firm said the Carta relationship began as a referral-based model under which companies moving from the private side to the public side were referred to Morgan Stanley, and that it has seen conversions into its public-side business during the year.\"\nchunk: MS-TR-2025Q3#42.\n\nitem 4 (verbatim):\n\"On the 3Q26 earnings call (period ended September 30, 2026), the firm said clients are brought to E*TRADE through the corporate stock plan (workplace) context and, where appropriate, become fee-based flows to advisers: 'we are very excited about the attachment points ultimately that bring clients to E*TRADE, that we are close with them in the corporate stock plan context, i.e., workplace, but then ultimately, where it's appropriate, fee-based flows that make their way to the advisers.'\"\nchunk: MS-TR-2026Q3#23.\n\na3.MS:\n\nitem 1 (verbatim):\n\"On the 3Q25 earnings call (period ended September 30, 2025), the firm said it uses LeadIQ, an AI-powered lead distribution platform, to match workplace and self-directed relationships and facilitate engagement with financial advisors: 'LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.'\"\nchunk: MS-TR-2025Q3#8.\n\nitem 2 (verbatim):\n\"On the 2Q26 earnings call (period ended June 30, 2026), the firm said its investments go into referral models and products like LeadIQ to match individuals with advisers, with the goal of being their principal financial adviser: 'They're going into creating our referral models. They're going into products like LeadIQ that will allow us to match individuals with advisers. And our goal is to be their principal financial adviser.'\"\nchunk: MS-TR-2026Q2#23.\n\nitem 3 (not verbatim):\n\"On the 2Q26 earnings call (period ended June 30, 2026), the firm said the referral model can begin as early as financial education and includes 401(k)s and new 401(k) assets, helping participants understand where they could use advice.\"\nchunk: MS-TR-2026Q2#28.\n\nitem 4 (not verbatim):\n\"On the 2Q26 earnings call (period ended June 30, 2026), the firm said it offers financial advice and financial wellness to clients, uses technology to match advisers to the right clients, and offers products, alternatives, and different types of solutions across different points in client life cycles.\"\nchunk: MS-TR-2026Q2#60.\n\nitem 5 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), the firm said it is using its scale to invest in broadening financial-advisor capabilities, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending: 'We are using our scale to invest in broadening capabilities for FAs that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.'\"\nchunk: MS-TR-2025Q4#9.\n\na4.MS:\n\nitem 1 (verbatim, value):\n\"On the 2Q26 earnings call (period ended June 30, 2026), management said the firm has about 70% of the top 100 unicorns by market cap in its workplace pipeline and has invested to service these companies from early stages: 'we have about 70% of the top 100 unicorns by market cap in terms of our workplace pipeline. So we've spent a lot of time thinking about how do we service some of these companies at the very early stages.'\"\nchunk: MS-TR-2026Q2#21.\n\nitem 2 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), management described the financial advisor, Workplace, and E*TRADE channels as each a category leader that together comprise the firm's strategic client acquisition model: 'Our financial advisors, Workplace, and E*TRADE, each a category leader, which taken together comprise our strategic client acquisition model.'\"\nchunk: MS-TR-2025Q4#7.\n\nitem 3 (verbatim):\n\"On the 4Q24 earnings call (period ended December 31, 2024), management said investments in self-directed and Workplace channels drive the firm's differentiated client acquisition funnel: 'In Wealth Management, investments in our self-directed and Workplace channels drive our differentiated client acquisition funnel.'\"\nchunk: MS-TR-2024Q4#9.\n\nitem 4 (verbatim):\n\"On the 3Q25 earnings call (period ended September 30, 2025), management described the workplace channel as a powerful asset acquisition tool: 'further evidence that our workplace channel serves as a powerful asset acquisition tool.'\"\nchunk: MS-TR-2025Q3#15.\n\nitem 5 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), management said Morgan Stanley at Work, with its exclusive Carta partnership, positions the firm as an early trusted advisor to more than 50,000 private companies: 'Our Morgan Stanley at Work business, with its exclusive partnership with Carta, positions us as an early trusted advisor to over 50,000 private companies.'\"\nchunk: MS-TR-2025Q4#12.\n\nitem 6 (verbatim):\n\"On the 2Q26 earnings call (period ended June 30, 2026), management said Workplace brings relationships and assets onto the platform and that the firm is well positioned to support these new relationships: 'Workplace brings relationships and assets onto the platform, and we are well positioned to support these new relationships.'\"\nchunk: MS-TR-2026Q2#16.\n\na5.MS:\n\nitem 1 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), the firm reported that advisor-led assets originating from workplace and E*TRADE relationships accelerated to a record $99 billion for full-year 2025, compared with historical averages of around $60 billion per year: 'Advisor-led assets originating from workplace and E*TRADE relationships accelerated, growing to a record $99 billion for the full year, compared to historical averages of around $60 billion per year.'\"\nchunk: MS-TR-2025Q4#20.\n\nitem 2 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), the firm said historical averages of advisor-led assets originating from workplace and E*TRADE were around $60 billion per year: 'compared to historical averages of around $60 billion per year.'\"\nchunk: MS-TR-2025Q4#20.\n\nitem 3 (verbatim):\n\"On the 1Q26 earnings call (period ended March 31, 2026), the firm reported that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE: 'Since 2020, we have generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.'\"\nchunk: MS-TR-2026Q1#13.\n\nitem 4 (verbatim):\n\"On the 1Q26 earnings call (period ended March 31, 2026), the firm said that, inclusive of Workplace assets on its platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion: 'inclusive of Workplace assets on our platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion.'\"\nchunk: MS-TR-2026Q1#13.\n\nitem 5 (verbatim):\n\"On the 1Q26 earnings call (period ended March 31, 2026), the firm said this represents roughly 20% of its current $5.8 trillion of adviser-led assets: 'This represents roughly 20% of our current $5.8 trillion of adviser-led assets.'\"\nchunk: MS-TR-2026Q1#13.\n\nitem 7 (verbatim):\n\"On the 1Q25 earnings call (period ended March 31, 2025), the firm reported that assets migrating to the advisor-led channel that originated from the workplace channel grew by an incremental $20 billion in the quarter, adding to roughly $300 billion accumulated from workplace since 2020: 'assets migrating to the advisor-led channel that originated from the workplace channel as these relationships grow, with an incremental $20 billion this quarter, adding to the roughly $300 billion accumulated from workplace since we expanded our channel in 2020.'\"\nchunk: MS-TR-2025Q1#13.\n\nitem 8 (verbatim):\n\"On the 2Q25 earnings call (period ended June 30, 2025), the firm said 70% of the flows that originate from workplace are net new assets to the firm: '70% of the flows that come from workplace, that originate from workplace, is actually net new assets to the firm.'\"\nchunk: MS-TR-2025Q2#34.\n\nitem 9 (verbatim):\n\"On the 3Q25 earnings call (period ended September 30, 2025), the firm said it has previously cited about $60 billion of workplace migration per year and, three quarters into 2025, was exceeding those numbers on a full-year basis: 'we've said that we've seen about $60 billion of migration per year. We're already three quarters into it, and we're exceeding those numbers from a full-year basis.'\"\nchunk: MS-TR-2025Q3#25.\n\nitem 10 (verbatim):\n\"On the 2Q26 earnings call (period ended June 30, 2026), the firm said stock plan IPO flows represented just over half of overall net new assets in the quarter: 'Stock plan IPO flows represented just over half of the overall NNA this quarter.'\"\nchunk: MS-TR-2026Q2#16.\n\nitem 11 (verbatim):\n\"On the 3Q26 earnings call (period ended September 30, 2026), the firm said IPO-related flows once again contributed just over half of overall net new assets: 'IPO-related flows once again contributed to just over half of the overall NNA.'\"\nchunk: MS-TR-2026Q3#15.\n\nitem 12 (verbatim):\n\"On the 1Q26 earnings call (period ended March 31, 2026), the firm said Workplace stood out as having sourced clients who continue to aggregate assets onto the platform and benefit from stock plan vesting events: 'Workplace stood out as having sourced clients who continue to aggregate assets onto our platform and benefit from stock plan vesting events.'\"\nchunk: MS-TR-2026Q1#11.\n\nitem 13 (verbatim):\n\"On the 4Q25 earnings call (period ended December 31, 2025), the firm said Workplace and E*TRADE relationships continue to seek out advice for full-year 2025: 'Workplace and E-Trade relationships continue to seek out advice.'\"\nchunk: MS-TR-2025Q4#19.\n\nitem 14 (not verbatim):\n\"On the 1Q26 earnings call (period ended March 31, 2026), the firm said it saw greater retention of vested Workplace assets in the quarter, which translated into net new assets, and that channel migration has helped contribute to over $1 trillion of total assets in its adviser-led strategy.\"\nchunk: MS-TR-2026Q1#24.\n\nAll good. Now, no \"Why it might matter\" lines since no recency and no time window.\n\nThe part_id for each claim: a1.MS, a2.MS, a3.MS, a4.MS, a5.MS.\n\nLet me double-check the chunk_ids enum - all listed chunk ids are valid. The enum list includes all of them. Good.\n\nanswerable: true. behavior: \"answer\". claims: array. adjacent: empty array. gaps: empty array.\n\nNow let me verify the \"quote not verbatim\" items: a2 item 1, 2, 3; a3 item 3, 4; a5 item 14. These must not be in quotation marks. My drafts don't use quotation marks for those. Good.\n\nFor verbatim quotes, use exact wording as shown in the quote field.\n\nLet me verify each quote matches exactly.\n\na1 item 1 quote: \"for those that might not yet have the advice-based relationship, we're working on that referral model. And that's something that can begin as early as the financial education spot, and it can also begin -- like I said, we have examples with 401(k)s and new 401(k) assets that come in that is not necessarily an IPO-specific workplace where we're really giving people that ability to better understand where they could use advice.\" \u2713\n\na2 item 4 quote: \"we are very excited about the attachment points ultimately that bring clients to E*TRADE, that we are close with them in the corporate stock plan context, i.e., workplace, but then ultimately, where it's appropriate, fee-based flows that make their way to the advisers\" \u2713\n\na3 item 1 quote: \"LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" \u2713\n\na3 item 2 quote: \"They're going into creating our referral models. They're going into products like LeadIQ that will allow us to match individuals with advisers. And our goal is to be their principal financial adviser.\" \u2713\n\na3 item 5 quote: \"We are using our scale to invest in broadening capabilities for FAs that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.\" \u2713\n\na4 item 1 quote: \"we have about 70% of the top 100 unicorns by market cap in terms of our workplace pipeline. So we've spent a lot of time thinking about how do we service some of these companies at the very early stages.\" \u2713\n\na4 item 2 quote: \"Our financial advisors, Workplace, and E*TRADE, each a category leader, which taken together comprise our strategic client acquisition model.\" \u2713\n\na4 item 3 quote: \"In Wealth Management, investments in our self-directed and Workplace channels drive our differentiated client acquisition funnel.\" \u2713\n\na4 item 4 quote: \"further evidence that our workplace channel serves as a powerful asset acquisition tool.\" \u2713\n\na4 item 5 quote: \"Our Morgan Stanley at Work business, with its exclusive partnership with Carta, positions us as an early trusted advisor to over 50,000 private companies.\" \u2713\n\na4 item 6 quote: \"Workplace brings relationships and assets onto the platform, and we are well positioned to support these new relationships.\" \u2713\n\na5 item 1 quote: \"Advisor-led assets originating from workplace and E*TRADE relationships accelerated, growing to a record $99 billion for the full year, compared to historical averages of around $60 billion per year.\" \u2713\n\na5 item 2 quote: \"compared to historical averages of around $60 billion per year.\" \u2713\n\na5 item 3 quote: \"Since 2020, we have generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.\" \u2713\n\na5 item 4 quote: \"inclusive of Workplace assets on our platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion.\" \u2713\n\na5 item 5 quote: \"This represents roughly 20% of our current $5.8 trillion of adviser-led assets.\" \u2713\n\na5 item 7 quote: \"assets migrating to the advisor-led channel that originated from the workplace channel as these relationships grow, with an incremental $20 billion this quarter, adding to the roughly $300 billion accumulated from workplace since we expanded our channel in 2020.\" \u2713\n\na5 item 8 quote: \"70% of the flows that come from workplace, that originate from workplace, is actually net new assets to the firm.\" \u2713\n\na5 item 9 quote: \"we've said that we've seen about $60 billion of migration per year. We're already three quarters into it, and we're exceeding those numbers from a full-year basis.\" \u2713\n\na5 item 10 quote: \"Stock plan IPO flows represented just over half of the overall NNA this quarter\" \u2713\n\na5 item 11 quote: \"IPO-related flows once again contributed to just over half of the overall NNA.\" \u2713\n\na5 item 12 quote: \"Workplace stood out as having sourced clients who continue to aggregate assets onto our platform and benefit from stock plan vesting events.\" \u2713\n\na5 item 13 quote: \"Workplace and E-Trade relationships continue to seek out advice.\" \u2713\n\nNote item 13 uses \"E-Trade\" in the quote, but my text says \"E*TRADE\" - that's fine outside the quote, but I should use exact quote wording in the quote. I'll keep quote verbatim as \"Workplace and E-Trade relationships continue to seek out advice.\"\n\nNow, one more consideration: for a5 item 2, the quote is \"compared to historical averages of around $60 billion per year.\" This is a fragment. I can write it as a claim with the quote. It's fine.\n\nEverything seems ready. Let me now produce the final tool call with all claims.\n\nI need to be careful about the part_id values. The enum allows \"a1.MS\" etc. Good.\n\nLet me finalize.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The 2Q26 earnings call (period ended June 30, 2026) states that the firm is working on a referral model for workplace participants who do not yet have an advice-based relationship, which can begin as early as financial education and includes 401(k) plans and new 401(k) assets, to help them understand where they could use advice. Management said: \"for those that might not yet have the advice-based relationship, we're working on that referral model. And that's something that can begin as early as the financial education spot, and it can also begin -- like I said, we have examples with 401(k)s and new 401(k) assets that come in that is not necessarily an IPO-specific workplace where we're really giving people that ability to better understand where they could use advice.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the firm said Morgan Stanley at Work, through its exclusive partnership with Carta, positions Morgan Stanley as an early trusted advisor to more than 50,000 private companies, and that employees across its workplace companies benefit from management of equity compensation plans, liquidity opportunities, and full-service advice.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), the firm said its exclusive partnership with Carta means Carta will refer private companies with stock plans to Morgan Stanley as they move toward going public, and that the firm is committed to making that transition a seamless experience.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#77"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), the firm said the Carta relationship began as a referral-based model under which companies moving from the private side to the public side were referred to Morgan Stanley, and that it has seen conversions into its public-side business during the year.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#42"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), the firm said clients are brought to E*TRADE through the corporate stock plan (workplace) context and, where appropriate, become fee-based flows to advisers: \"we are very excited about the attachment points ultimately that bring clients to E*TRADE, that we are close with them in the corporate stock plan context, i.e., workplace, but then ultimately, where it's appropriate, fee-based flows that make their way to the advisers.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q3#23"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), the firm said it uses LeadIQ, an AI-powered lead distribution platform, to match workplace and self-directed relationships and facilitate engagement with financial advisors: \"LeadIQ, our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the firm said its investments go into referral models and products like LeadIQ to match individuals with advisers, with the goal of being their principal financial adviser: \"They're going into creating our referral models. They're going into products like LeadIQ that will allow us to match individuals with advisers. And our goal is to be their principal financial adviser.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the firm said the referral model can begin as early as financial education and includes 401(k)s and new 401(k) assets, helping participants understand where they could use advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the firm said it offers financial advice and financial wellness to clients, uses technology to match advisers to the right clients, and offers products, alternatives, and different types of solutions across different points in client life cycles.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#60"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the firm said it is using its scale to invest in broadening financial-advisor capabilities, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending: \"We are using our scale to invest in broadening capabilities for FAs that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), management said the firm has about 70% of the top 100 unicorns by market cap in its workplace pipeline and has invested to service these companies from early stages: \"we have about 70% of the top 100 unicorns by market cap in terms of our workplace pipeline. So we've spent a lot of time thinking about how do we service some of these companies at the very early stages.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q2#21"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), management described the financial advisor, Workplace, and E*TRADE channels as each a category leader that together comprise the firm's strategic client acquisition model: \"Our financial advisors, Workplace, and E*TRADE, each a category leader, which taken together comprise our strategic client acquisition model.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call (period ended December 31, 2024), management said investments in self-directed and Workplace channels drive the firm's differentiated client acquisition funnel: \"In Wealth Management, investments in our self-directed and Workplace channels drive our differentiated client acquisition funnel.\"",
+        "chunk_ids": [
+          "MS-TR-2024Q4#9"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), management described the workplace channel as a powerful asset acquisition tool: \"further evidence that our workplace channel serves as a powerful asset acquisition tool.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q3#15"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), management said Morgan Stanley at Work, with its exclusive Carta partnership, positions the firm as an early trusted advisor to more than 50,000 private companies: \"Our Morgan Stanley at Work business, with its exclusive partnership with Carta, positions us as an early trusted advisor to over 50,000 private companies.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), management said Workplace brings relationships and assets onto the platform and that the firm is well positioned to support these new relationships: \"Workplace brings relationships and assets onto the platform, and we are well positioned to support these new relationships.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the firm reported that advisor-led assets originating from workplace and E*TRADE relationships accelerated to a record $99 billion for full-year 2025, compared with historical averages of around $60 billion per year: \"Advisor-led assets originating from workplace and E*TRADE relationships accelerated, growing to a record $99 billion for the full year, compared to historical averages of around $60 billion per year.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#20"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the firm said historical averages of advisor-led assets originating from workplace and E*TRADE were around $60 billion per year: \"compared to historical averages of around $60 billion per year.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#20"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the firm reported that since 2020 it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE: \"Since 2020, we have generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the firm said that, inclusive of Workplace assets on its platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion: \"inclusive of Workplace assets on our platform prior to the acquisition of E*TRADE, the total value of adviser-led assets sourced from Workplace and E*TRADE exceeds $1.2 trillion.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the firm said this represents roughly 20% of its current $5.8 trillion of adviser-led assets: \"This represents roughly 20% of our current $5.8 trillion of adviser-led assets.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q25 earnings call (period ended March 31, 2025), the firm reported that assets migrating to the advisor-led channel that originated from the workplace channel grew by an incremental $20 billion in the quarter, adding to roughly $300 billion accumulated from workplace since 2020: \"assets migrating to the advisor-led channel that originated from the workplace channel as these relationships grow, with an incremental $20 billion this quarter, adding to the roughly $300 billion accumulated from workplace since we expanded our channel in 2020.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q1#13"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 2Q25 earnings call (period ended June 30, 2025), the firm said 70% of the flows that originate from workplace are net new assets to the firm: \"70% of the flows that come from workplace, that originate from workplace, is actually net new assets to the firm.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call (period ended September 30, 2025), the firm said it has previously cited about $60 billion of workplace migration per year and, three quarters into 2025, was exceeding those numbers on a full-year basis: \"we've said that we've seen about $60 billion of migration per year. We're already three quarters into it, and we're exceeding those numbers from a full-year basis.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q3#25"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 2Q26 earnings call (period ended June 30, 2026), the firm said stock plan IPO flows represented just over half of overall net new assets in the quarter: \"Stock plan IPO flows represented just over half of the overall NNA this quarter.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call (period ended September 30, 2026), the firm said IPO-related flows once again contributed just over half of overall net new assets: \"IPO-related flows once again contributed to just over half of the overall NNA.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q3#15"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the firm said Workplace stood out as having sourced clients who continue to aggregate assets onto the platform and benefit from stock plan vesting events: \"Workplace stood out as having sourced clients who continue to aggregate assets onto our platform and benefit from stock plan vesting events.\"",
+        "chunk_ids": [
+          "MS-TR-2026Q1#11"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call (period ended December 31, 2025), the firm said Workplace and E*TRADE relationships continue to seek out advice for full-year 2025: \"Workplace and E-Trade relationships continue to seek out advice.\"",
+        "chunk_ids": [
+          "MS-TR-2025Q4#19"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call (period ended March 31, 2026), the firm said it saw greater retention of vested Workplace assets in the quarter, which translated into net new assets, and that channel migration has helped contribute to over $1 trillion of total assets in its adviser-led strategy.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#24"
+        ],
+        "part_id": "a5.MS"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a8.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-09-02-IN-01#3"
+  ],
+  "at": "2026-11-21T14:11:52.216489-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10949,
+    "output_tokens": 837,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9541,
+    "reasoning_tokens": 476,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.22
+  },
+  "wall_s": 4.81,
+  "tokens_per_s": 174.01,
+  "ttft_s": 1.22,
+  "reasoning_content": "The sub-question asks: What guidance or forward outlook has Raymond James provided?\n\nWe need to find forward-looking statements/guidance. Passages: RJF-TRADE-2026-11-05-IN-01#0: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" That's an outlook. Also LJ-TRADE-2026-11-12-WM-01#0: advisors expected to transition in May 2027 \u2014 a forward statement but about transition timing, not guidance. May be a fact about forward outlook? It's a plan/expectation. Hmm.\n\nAlso RJF-TRADE-2026-09-29-IN-01#4 mentions strategy; conference signals more to come. But no explicit guidance figures.\n\nThe sub-question asks about guidance/forward outlook. The best item: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year\" \u2014 no figure, period coming year, scope advisor recruiting.\n\nAny guidance like revenue/EPS guidance? None. Not disclosed? But there is a forward outlook statement. I'd label fact with the one item.\n\nAlso the Synovus advisor transition in May 2027 is an expectation (forward-looking) but it's a plan not guidance. Could include as a second item? The sub-question is \"guidance or forward outlook.\" A statement of expected transition timing is arguably forward outlook. I'll include it cautiously as fact? Hmm, risk. The instruction: \"Positions others hold about the future (executives, analysts, surveys) are facts when the passage attributes and dates them.\" The May 2027 transition is attributed to firm. I'll include as a fact item with period 2027-05 (not a valid format though; period formats are YYYY-MM-DD etc). Could use \"2027-05\" \u2014 not allowed. Maybe leave period \"\" and scope Financial Institutions Division. Actually a point in time... \"2027-05-01\"? That would be inventing. Better use \"\" period.\n\nI think one item is safer for the guidance item. But adding the transition gives extra evidence; but it may be considered not guidance. I'll include only the momentum statement as fact.\n\nLabel: fact.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year, after ending its fiscal year with a record 8,943 advisors.",
+            "quote": "As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year, the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "advisor recruiting",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James said the 70 advisors joining its Financial Institutions Division through the Pinnacle/Synovus program expansion are expected to transition in May 2027.",
+            "quote": "The advisors are expected to transition in May 2027.",
+            "value": "70",
+            "unit": "advisors",
+            "period": "",
+            "scope": "Financial Institutions Division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-12-WM-01#0"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages attribute forward-looking statements about advisor-recruiting momentum and a dated expected advisor transition to the firm; no numeric financial guidance is given.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

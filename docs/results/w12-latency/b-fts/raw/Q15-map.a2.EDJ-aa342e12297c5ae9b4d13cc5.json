@@ -1,0 +1,206 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#126",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10K-2025#236",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10K-2025#237",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2025Q2#34",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-10Q-2025Q2#35",
+    "EDJ-10Q-2025Q3#38",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#56",
+    "EDJ-10Q-2026Q2#67",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10K-2025#140",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10K-2025#213",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10K-2025#25",
+    "EDJ-10Q-2025Q2#59",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q1#55",
+    "EDJ-10K-2025#135",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q2#48",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#59",
+    "EDJ-10K-2025#212",
+    "EDJ-10Q-2026Q1#48",
+    "EDJ-10K-2025#238",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q3#62",
+    "EDJ-10K-2025#131",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#208",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-10K-2025#183",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10Q-2025Q2#70",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-10K-2025#182",
+    "EDJ-TRADE-2026-08-18-IN-01#0"
+  ],
+  "at": "2026-11-21T15:10:52.760148-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 19387,
+    "output_tokens": 2686,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 17851,
+    "reasoning_tokens": 1704,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.66
+  },
+  "wall_s": 25.09,
+  "tokens_per_s": 107.05,
+  "ttft_s": 2.66,
+  "reasoning_content": "Let me analyze this. The sub-question is: \"How an advisor-led model earns revenue on client assets\" for Edward Jones.\n\nThe passages describe Edward Jones's revenue model extensively. Key passages:\n- EDJ-10K-2025#126: describes net revenue categories, asset-based fees (advisory program fees based on average daily market value of client assets), trade revenue, etc.\n- EDJ-10K-2025#23: service fees, other asset-based fees, cash solutions, money market fund, trust services\n- EDJ-10K-2025#207, #208: revenue recognition, asset-based fee revenue definitions\n- EDJ-10K-2025#22: advisory programs (Guided Solutions, etc.)\n\nThese are facts about how an advisor-led model earns revenue on client assets. I should extract fact items describing the mechanism.\n\nLet me identify key facts:\n\n1. Asset-based fees include advisory program fees based on average daily market value of client assets in the program and contractual rates (EDJ-10K-2025#126, #207).\n\n2. Service fees and other asset-based fees earned on clients' assets (EDJ-10K-2025#23).\n\n3. Trade revenue (commissions and principal transactions) earned from distribution of mutual funds, insurance products, purchase/sale of securities (not exactly \"on client assets\" but is part of revenue model).\n\n4. Revenue model described broadly: fees for investment advisory, fees for assets held by clients, commissions for distribution of mutual fund shares.\n\nThe sub-question asks \"How an advisor-led model earns revenue on client assets.\" So the mechanism is primarily asset-based fees: advisory program fees (percentage of AUM), service fees (revenue sharing), cash solutions fees, other asset-based fees.\n\nLet me focus on facts that describe how revenue is earned on client assets.\n\nI'll create fact items:\n\nItem 0: Advisory program fees are based on average daily market value of client assets in the program, as well as contractual rates. (EDJ-10K-2025#126)\n\nItem 1: Asset-based fees include advisory program fees, service fees, cash solutions fees, other asset-based fees. The primary source of asset-based fee revenue is program fees for investment advisory services. (EDJ-10K-2025#207)\n\nItem 2: Service fees - revenue sharing received under agreements with mutual fund and insurance companies, based on average daily market value of client assets held. (EDJ-10K-2025#208, #23)\n\nItem 3: Cash solutions revenue from IBD Program (interest-bearing cash). (EDJ-10K-2025#23)\n\nItem 4: Trade revenue - commissions from distribution of mutual fund shares and insurance products and purchase/sale of securities; principal transactions. (EDJ-10K-2025#126)\n\nItem 5: Other asset-based fees - revenue sharing, fund adviser fees, cash solutions, Trust Co. fees. (EDJ-10K-2025#208)\n\nThese describe how the advisor-led model earns revenue.\n\nI should also capture the overall description: \"primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions...\" (EDJ-10Q-2025Q2#28)\n\nLet me build a comprehensive set of fact items. I'll keep them focused on the mechanism (how revenue is earned on client assets), not specific figures (though some figures could be included, but the question is about \"how\" - mechanism).\n\nActually the question is qualitative: \"How an advisor-led model earns revenue on client assets.\" So the answer is about the mechanism. I'll provide fact items describing the mechanism.\n\nLet me write the items.\n\nItem 0 (advisory program fees):\ntext: Edward Jones states that asset-based fees include advisory program fees, which are based on the average daily market value of client assets in the program, as well as contractual rates.\nquote: \"Asset-based fees include advisory program fees which are based on the average daily market value of client assets in the program, as well as contractual rates.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 1 (primary source of asset-based fee revenue):\ntext: The primary source of asset-based fee revenue is program fees for investment advisory services, with fees determined by the underlying value of client assets.\nquote: \"The primary source of asset-based fee revenue is generated from program fees for investment advisory services.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 2 (service fees/revenue sharing):\ntext: The firm earns revenue on clients' assets through service fees and revenue sharing received under agreements with certain mutual fund and insurance companies.\nquote: \"The Partnership earns revenue on clients' assets through service fees and revenue sharing received under agreements with certain mutual fund and insurance companies.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 3 (service fees based on average daily market value):\ntext: Service fees are generally based on the average daily market value of client assets held in a company's mutual fund or insurance product.\nquote: \"Service fees are generally based on the average daily market value of client assets held in a company's mutual fund or insurance product.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 4 (cash solutions):\ntext: Cash solutions revenue is earned from the Edward Jones Insured Bank Deposit Program, an interest-bearing cash management solution.\nquote: \"Cash solutions revenue is earned from the Edward Jones Insured Bank Deposit Program\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 5 (other asset-based fees):\ntext: Other asset-based fee revenue consists of revenue sharing, fund adviser fees, cash solutions and Trust Co. fees.\nquote: \"Other asset-based fee revenue consists of revenue sharing, fund adviser fees, cash solutions and Trust Co. fees.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 6 (trade revenue):\ntext: Trade revenue is composed of commissions and principal transactions; commissions are earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\nquote: \"Commissions revenue is earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nItem 7 (overall model):\ntext: The Partnership primarily derives revenues from fees for providing investment advisory and other account services, fees for assets held by clients, and commissions for distribution of mutual fund shares and insurance products and purchase or sale of securities.\nquote: \"primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nThese are all facts. The label is \"fact\".\n\nShould I include definitions? The sub-question isn't asking for definitions explicitly, but these mechanism descriptions are the answer.\n\nI'll provide these items. Let me set chunk_ids correctly.\n\nItem 0: EDJ-10K-2025#126\nItem 1: EDJ-10K-2025#207\nItem 2: EDJ-10K-2025#23\nItem 3: EDJ-10K-2025#208\nItem 4: EDJ-10K-2025#23\nItem 5: EDJ-10K-2025#208\nItem 6: EDJ-10K-2025#126 (or #25)\nItem 7: EDJ-10Q-2025Q2#28\n\nLet me finalize. The definition field is for the firm's own definition of the quantity when asked how firm defines it. Here not applicable, so \"\".\n\nActually, these mechanism descriptions are essentially definitions. But the sub-question is \"how...earns revenue\", so these are the facts describing the mechanism. I'll leave definition empty and put the mechanism in text.\n\nLet me write the response.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones states that its asset-based fees include advisory program fees, which are based on the average daily market value of client assets in the program, as well as contractual rates.",
+            "quote": "Asset-based fees include advisory program fees which are based on the average daily market value of client assets in the program, as well as contractual rates.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#126"
+            ]
+          },
+          {
+            "text": "The primary source of the firm's asset-based fee revenue is program fees for investment advisory services, with revenue derived from fees determined by the underlying value of client assets.",
+            "quote": "The primary source of asset-based fee revenue is generated from program fees for investment advisory services.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#207"
+            ]
+          },
+          {
+            "text": "The firm earns revenue on clients' assets through service fees and revenue sharing received under agreements with certain mutual fund and insurance companies.",
+            "quote": "The Partnership earns revenue on clients' assets through service fees and revenue sharing received under agreements with certain mutual fund and insurance companies.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#23"
+            ]
+          },
+          {
+            "text": "Service fees are generally based on the average daily market value of client assets held in a company's mutual fund or insurance product.",
+            "quote": "Service fees are generally based on the average daily market value of client assets held in a company's mutual fund or insurance product.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#208"
+            ]
+          },
+          {
+            "text": "Cash solutions revenue is earned from the Edward Jones Insured Bank Deposit Program, an interest-bearing cash management solution for clients offering FDIC insurance coverage.",
+            "quote": "Cash solutions revenue is earned from the Edward Jones Insured Bank Deposit Program (\"IBD Program\"), which is an interest-bearing cash management solution for clients",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#23"
+            ]
+          },
+          {
+            "text": "Other asset-based fee revenue consists of revenue sharing, fund adviser fees, cash solutions and Trust Co. fees.",
+            "quote": "Other asset-based fee revenue consists of revenue sharing, fund adviser fees, cash solutions and Trust Co. fees.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#208"
+            ]
+          },
+          {
+            "text": "The firm also earns trade revenue composed of commissions and principal transactions, with commissions earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "quote": "Trade revenue is composed of commissions and principal transactions revenue. Commissions revenue is earned from the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#126"
+            ]
+          },
+          {
+            "text": "Edward Jones primarily derives revenues from fees for providing investment advisory and other account services, fees for assets held by clients, and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "quote": "primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#28"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe how Edward Jones (an advisor-led model) earns revenue on client assets: primarily asset-based fees such as advisory program fees, service fees, cash solutions and other asset-based fees, plus trade revenue commissions.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

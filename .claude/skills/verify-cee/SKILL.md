@@ -46,6 +46,9 @@ What it does:
 Step by step, when you need to look around in between: `launch`, then `drive <feature>`
 (repeat), then `cleanup`. Always run `cleanup` after a failed attempt.
 
+README images (#270): after `launch`, `PY scripts/verify_cee.py shots` saves answer, source, gap
+and architecture screenshots into the run's `shots/` folder and copies them to `docs/assets/`.
+
 ## Features
 
 The map in [features/README.md](features/README.md) is the source of truth: one file per
@@ -59,6 +62,7 @@ user-facing feature, how a user reaches it, how the script drives it, what prove
 | `invalid-chunk` | An unknown chunk ID shows a clear error |
 | `coverage` | The Coverage page shows per-firm, per-type counts and dates that match the database |
 | `download-document` | The stored document downloads with the right sha256 |
+| `architecture-page` | The Architecture page draws every module; hover and Tab focus show each explanation |
 
 ## Reading the result
 

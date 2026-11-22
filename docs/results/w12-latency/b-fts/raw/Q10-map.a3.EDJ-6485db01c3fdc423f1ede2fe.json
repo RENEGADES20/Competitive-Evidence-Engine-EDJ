@@ -1,0 +1,97 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#29",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#9",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#63",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2026Q2#76"
+  ],
+  "at": "2026-11-21T13:00:59.703061-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11499,
+    "output_tokens": 967,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 11499,
+    "reasoning_tokens": 665,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 6.28
+  },
+  "wall_s": 16.19,
+  "tokens_per_s": 59.73,
+  "ttft_s": 6.28,
+  "reasoning_content": "Let me analyze this question. The sub-question asks: \"How each firm describes targeting or attracting mass-affluent clients\" for Edward Jones.\n\nLooking at the passages, the key one is EDJ-10K-2025#88 which says: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients...\"\n\nThis is about High Net Worth clients, not mass-affluent. Mass-affluent is a different client segment (typically $100K-$1M in investable assets), while high net worth is typically $1M+.\n\nSo the firm describes targeting High Net Worth clients, but not mass-affluent. This would be a different_quantity? Actually, the question asks about \"mass-affluent clients\". The passage describes \"High Net Worth\" targeting - that's a different client segment.\n\nActually, let me think. Mass-affluent is a specific term. The passage mentions \"High Net Worth\" and \"Next Generation investors\" and \"Workplace\". None mention \"mass-affluent\" specifically.\n\nSo the passages say nothing about mass-affluent specifically. The closest is \"High Net Worth\" targeting, which is a different (adjacent) client segment.\n\nActually, \"primarily serves individual investors\" is a broad statement. Mass-affluent is a subset of individual investors. But that's quite broad.\n\nThe most relevant is the \"High Net Worth\" targeting. This is a different client segment than mass-affluent. So this would be different_quantity with differs_because noting it's about High Net Worth (higher wealth tier) rather than mass-affluent.\n\nLet me think about what to return. The sub-question asks \"How each firm describes targeting or attracting mass-affluent clients.\" The firm describes targeting High Net Worth clients, not mass-affluent. This is a different quantity (different client segment).\n\nActually, I should consider whether the general \"primarily serves individual investors\" is relevant. Individual investors includes mass-affluent but is much broader. That's also a different quantity.\n\nThe most precise: \"High Net Worth, focused on attracting and serving high net worth clients\" - this is a different client segment than mass-affluent.\n\nI'll label as different_quantity, with one item about High Net Worth targeting.\n\nLet me draft the item.\n\nText: Edward Jones states that its initiatives include targeting new clients, specifically a \"High Net Worth\" initiative focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models.\n\nQuote: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models...\"\n\nValue: \"\" (no figure)\n\nUnit: \"\" \n\nPeriod: \"\" \n\nScope: \"\" \n\nDefinition: \"\"\n\nchunk_ids: [\"EDJ-10K-2025#88\"]\n\ndiffers_because: \"The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients, which are not mentioned.\"\n\nreason: \"No passage mentions mass-affluent clients; the firm instead describes targeting High Net Worth clients, a different wealth segment.\"\n\nDerivation: operation \"\", inputs [].\n\nThis is a single cell. Let me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones states that its initiatives include targeting new clients, specifically a \"High Net Worth\" initiative focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients; mass-affluent is not mentioned anywhere.",
+        "reason": "No passage mentions mass-affluent clients; the firm instead describes targeting High Net Worth clients, a different wealth segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

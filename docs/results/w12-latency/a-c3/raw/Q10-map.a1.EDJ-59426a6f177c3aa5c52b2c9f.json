@@ -1,0 +1,91 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#282",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#283",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q2#88",
+    "EDJ-10Q-2025Q3#95",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2025Q2#93",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10Q-2026Q1#1",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10K-2025#309",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q3#92",
+    "EDJ-10Q-2025Q2#85",
+    "EDJ-10Q-2026Q2#79"
+  ],
+  "at": "2026-11-21T13:51:41.613813-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12398,
+    "output_tokens": 806,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 11374,
+    "reasoning_tokens": 685,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.94
+  },
+  "wall_s": 9.41,
+  "tokens_per_s": 85.65,
+  "ttft_s": 0.94,
+  "reasoning_content": "The sub-question asks whether and how explicitly the firm names the mass-affluent client segment. Passages: only mention \"High Net Worth\" initiative, not mass-affluent. So the firm does not name mass-affluent segment \u2014 not_disclosed? The passages show the firm names high net worth, next generation, workplace \u2014 but not mass-affluent. Is that not_disclosed (reports surrounding figures without it) or not_found (says nothing about it)? The passages say nothing about mass-affluent at all; they mention a \"High Net Worth\" target segment. Since the firm does discuss target client segments but not mass-affluent, this is arguably not_disclosed \u2014 it discusses its client segments (HNW, workplace, next gen) without naming mass-affluent. I'd choose not_disclosed, with an item? Items for not_disclosed could include the different segments mentioned? But the label guidance: not_disclosed. Items: a fact cannot be for the asked quantity. But different_quantity for a wider unit? Hmm. \"High Net Worth\" is arguably a different quantity \u2014 a different client segment than mass-affluent (adjacent, not wider). Actually mass-affluent is below HNW. The firm's stated target segments are HNW, workplace, next generation \u2014 mass-affluent is not among them. That's not a different quantity of the asked metric; it's the firm naming other segments instead.\n\nI think best: label not_disclosed, items include one item describing the segments it does name (the passage text), since that supports the \"surrounding figures without it\" \u2014 but items are only fact/different_quantity. Hmm, items for not_disclosed could be empty. But providing an item describing the HNW initiative may be useful; however an item labeling requires text of what the passage says \u2014 a not_disclosed cell can include items? The spec says \"Items (fact and different_quantity only)\". So items should be empty for not_disclosed. I'll leave items empty and put the reasoning in reason.\n\nAlternatively label different_quantity with the HNW segment item, differs_because: it names high-net-worth clients, not mass-affluent. That seems plausible too \u2014 different measure of client segment. Hmm. Which is more accurate? The instruction: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\" HNW doesn't contain mass-affluent; mass-affluent is a lower tier. So not a wider unit. I'll go with not_disclosed: the passages describe target client segments (HNW, workplace, next-gen) but not mass-affluent.\n\nActually, wait \u2014 is mass-affluent perhaps included within \"individual investors in the U.S. and Canada\"? The firm serves individual investors broadly. Saying \"primarily serves individual investors\" \u2014 that's wider and would include mass-affluent. Hmm, that could be a different_quantity: wider unit (all individual investors) containing mass-affluent. But it's not really naming a wealth segment. The sub-question asks \"whether and how explicitly each firm names the mass-affluent client segment\" \u2014 answer: not explicitly at all. not_disclosed is right.\n\nI'll include items: maybe one item to support. I'll leave items empty.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_disclosed",
+        "items": [],
+        "differs_because": "",
+        "reason": "The firm describes targeting high-net-worth clients, workplace clients and next-generation investors, and says it serves individual investors generally, but never names a mass-affluent segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

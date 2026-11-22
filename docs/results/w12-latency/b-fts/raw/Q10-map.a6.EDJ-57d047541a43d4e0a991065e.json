@@ -1,0 +1,84 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a6.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#87",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10K-2025#63",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2026Q1#69",
+    "EDJ-10Q-2026Q2#83",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2026Q2#76",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2025Q2#91",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#66"
+  ],
+  "at": "2026-11-21T13:00:59.707141-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10775,
+    "output_tokens": 1172,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 10775,
+    "reasoning_tokens": 1026,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 6.06
+  },
+  "wall_s": 17.27,
+  "tokens_per_s": 67.86,
+  "ttft_s": 6.06,
+  "reasoning_content": "Let me analyze this. The question is about what Edward Jones has said about serving mass-affluent clients, and the specific sub-question is about recency - what is new or most recent in their statements about mass-affluent clients.\n\nI need to look through the passages for any statements about mass-affluent clients specifically.\n\nLooking through all passages, I see mentions of:\n- High Net Worth clients (targeting new clients: High Net Worth)\n- \"financial wellness for tens of millions of long-term investors across North America\"\n- Next Generation investors\n- Workplace\n- business owners and their employees\n\nThere's no mention of \"mass-affluent\" specifically in any of these passages.\n\nThe chunk EDJ-10K-2025#88 mentions targeting new clients: High Net Worth, Workplace, Next Generation investors. This is about high net worth, not mass-affluent.\n\nThe chunk EDJ-10Q-2025Q2#68 mentions \"strategic ambition to improve the financial wellness for tens of millions of long-term investors across North America\".\n\nThere's no direct statement about \"mass-affluent\" clients anywhere.\n\nSo the answer is likely not_found - the passages say nothing about mass-affluent clients.\n\nLet me check if there's anything resembling mass-affluent. \"tens of millions of long-term investors\" is a broader/different statement - not specifically mass-affluent. \"Next Generation investors\" is different. \"High Net Worth\" is different (higher wealth).\n\nThe question asks specifically about \"mass-affluent clients\" - a specific wealth segment (typically $100k-$1M investable assets). None of these passages mention \"mass-affluent\" or that specific segment.\n\nSo I should label this as not_found, since the passages say nothing about mass-affluent clients.\n\nActually, let me think about whether \"tens of millions of long-term investors across North America\" could be considered a different_quantity or related statement. It's a broad statement about serving long-term investors, not specifically mass-affluent. It could arguably be a related but different measure - it's about serving a broad base of investors, which is different from explicitly serving mass-affluent clients.\n\nActually the sub-question is about \"what is new or most recent in each firm's statements about mass-affluent clients.\" The passages don't contain any statements about mass-affluent clients. The closest is \"high net worth\" (a different wealth segment) and \"tens of millions of long-term investors.\"\n\nI think not_found is the right label because there's no statement about mass-affluent clients at all. The \"high net worth\" targeting is a different (higher) wealth segment, not mass-affluent.\n\nBut wait - should I consider \"tens of millions of long-term investors\" as a different_quantity? It's a broad statement about who they serve, but not specifically mass-affluent. It's more of a general mission statement, not about a specific wealth segment.\n\nActually, \"High Net Worth\" is explicitly a different wealth segment (higher than mass-affluent). This could be a different_quantity - they talk about targeting high net worth, not mass-affluent. But actually that's the opposite direction - they're focusing on high net worth, which is a different segment than mass-affluent.\n\nI think the cleanest answer is not_found: the passages contain no statements specifically about mass-affluent clients. The mentions of \"High Net Worth\" and \"Next Generation investors\" are different client segments, not mass-affluent.\n\nActually, let me reconsider. The question asks about \"serving mass-affluent clients\" - which segment. Edward Jones traditionally serves mass-affluent clients, but these passages don't explicitly say \"mass-affluent.\"\n\nI'll go with not_found, with a reason noting that passages mention \"High Net Worth\" and \"Next Generation investors\" (different segments) but nothing about \"mass-affluent\" specifically.\n\nLet me draft the cell.\n\nLabel: not_found\nitems: []\ndiffers_because: \"\"\nreason: \"None of the passages mention 'mass-affluent' clients; they reference 'High Net Worth,' 'Next Generation investors,' and 'tens of millions of long-term investors,' which are different client segments or broader characterizations.\"\n\nActually, should I reconsider whether \"tens of millions of long-term investors\" is a fact/different_quantity for mass-affluent? The phrase \"improve the financial wellness for tens of millions of long-term investors across North America\" is a strategic ambition about serving a broad investor base. Mass-affluent is typically a specific segment. This is arguably different_quantity (a broader group). But the sub-question is about \"recency - what is new or most recent in statements about mass-affluent clients.\" \n\nI think not_found is most accurate, as there are no statements about mass-affluent clients specifically. The \"tens of millions of long-term investors\" is a broad mission, not a mass-affluent statement.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention 'mass-affluent' clients specifically; the closest statements reference different client segments (High Net Worth, Next Generation investors) or a broad mission of serving 'tens of millions of long-term investors,' not the mass-affluent segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

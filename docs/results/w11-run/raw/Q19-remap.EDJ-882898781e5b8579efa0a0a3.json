@@ -1,0 +1,138 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.1",
+  "call_id": "remap.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ",
+    "a2.EDJ",
+    "a3.EDJ",
+    "a4.EDJ",
+    "a5.EDJ",
+    "a6.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-1-think-on-a64000-p64000",
+  "chunk_ids": [
+    "EDJ-10K-2025#233",
+    "EDJ-10Q-2025Q2#32",
+    "EDJ-10K-2025#238",
+    "EDJ-10K-2025#69",
+    "EDJ-10K-2025#28",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#298",
+    "EDJ-10Q-2026Q2#105",
+    "EDJ-10K-2025#322",
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2025Q3#45",
+    "EDJ-10K-2025#229",
+    "EDJ-10Q-2025Q2#39",
+    "EDJ-10K-2025#297",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#126",
+    "EDJ-10K-2025#282",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#302",
+    "EDJ-10Q-2026Q2#45",
+    "EDJ-10K-2025#287",
+    "EDJ-10K-2025#43",
+    "EDJ-10Q-2026Q2#107",
+    "EDJ-10K-2025#115",
+    "EDJ-10Q-2026Q2#72",
+    "EDJ-10K-2025#116"
+  ],
+  "at": "2026-11-20T03:17:53.436697",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10776,
+    "output_tokens": 1023,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 9496,
+    "reasoning_tokens": 578,
+    "tool_calls": 1,
+    "thinking": "on"
+  },
+  "wall_s": 13.91,
+  "tokens_per_s": 73.54,
+  "reasoning_content": "We need answer by extracting cells for sub-questions a1-a6 EDJ. We must use only provided passages. These passages are mostly irrelevant financial/legal; there's no content about younger investors preferences. We need label each not_found likely. But we need carefully check each sub-question's passages. They don't mention younger investors or client preferences at all. Let's analyze.\n\nSub-question a1: preferences of younger investors/clients under 40 for products, services, channels, fees, advice. Passages: receivables, bank charter, fee revenue table. Nothing about younger investors. So not_found.\n\na2: digital and mobile channel preferences. Passages: learning and development, FTE, advisory programs, related parties, net new assets, retirement plans. No digital/mobile channel preferences of younger investors. not_found.\n\na3: fee and pricing preferences. Passages: credit exposure, interest rate risk, auditor fees, compensation. No fee/pricing preferences. not_found.\n\na4: investment product and asset preferences. Passages: fair value, margin loans, AUC, net revenue categories. No younger investor preferences. not_found.\n\na5: advice model and human interaction preferences. Passages: code of conduct, basis of presentation, privacy, litigation, executive bios. No preferences. not_found.\n\na6: communication and financial education preferences. Passages: ERISA, disclosure controls, cybersecurity, operating expenses. No preferences. not_found.\n\nSo all not_found. The output schema requires items (empty array when not_found), differs_because (\"\" for not_found), reason, derivation with operation \"\" and inputs empty.\n\nNeed return one cell per sub-question. Labels not_found. No items. reason one short sentence.\n\nWe should ensure no accidental fact. Let's double-check each subquestion for any proxy? None marked [proxy]. They all [fact] asking preferences. So only if passages state preferences. They don't.\n\nBut the instruction: \"Items (fact and different_quantity only), one per figure or statement; a series is one item per period\". For not_found, items should be empty. differ_because \"\" for not_found? The field exists; probably \"\". derivation operation \"\" inputs [].\n\nNeed call submit_extraction with cells array. Use exact subquestion_id strings.\n\nLet's craft reason for each: \"The passages provided do not discuss younger investors' stated preferences for wealth-management products, services, channels, fees, or advice.\" etc.\n\nNeed be concise. Use quotes? No items, so no quotes.\n\nLet's prepare JSON.\n\nEach cell: subquestion_id, label \"not_found\", items [], differs_because \"\", reason \"...\", derivation {\"operation\": \"\", \"inputs\": []}.\n\nLet's write final with tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not discuss younger investors' or clients under 40's stated preferences for wealth-management products, services, channels, fees, or advice.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not state any digital or mobile channel preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not state any fee or pricing preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not state any investment product or asset preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not state any advice model or human interaction preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The provided passages do not state any communication or financial education preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

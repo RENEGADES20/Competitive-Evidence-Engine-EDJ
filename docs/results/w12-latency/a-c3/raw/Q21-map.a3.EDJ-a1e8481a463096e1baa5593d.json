@@ -1,0 +1,280 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10K-2025#74",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#100",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2025Q2#95",
+    "EDJ-10Q-2026Q1#72",
+    "EDJ-10Q-2026Q2#86",
+    "EDJ-10Q-2025Q2#48",
+    "EDJ-10Q-2025Q3#45",
+    "EDJ-10Q-2026Q1#33",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#304",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#78",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10Q-2026Q1#70",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-10K-2025#222",
+    "EDJ-10Q-2025Q2#93",
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2026Q2#40",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#26",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10Q-2025Q2#42",
+    "EDJ-10K-2025#117",
+    "EDJ-10Q-2025Q2#1",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#71",
+    "EDJ-10Q-2025Q3#102",
+    "EDJ-10K-2025#103",
+    "EDJ-10K-2025#154"
+  ],
+  "at": "2026-11-21T14:01:29.936413-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18574,
+    "output_tokens": 4142,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 17166,
+    "reasoning_tokens": 2058,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.11
+  },
+  "wall_s": 39.5,
+  "tokens_per_s": 104.86,
+  "ttft_s": 1.11,
+  "reasoning_content": "We need a cell for sub-question a3.EDJ, metric net_new_assets. The sub-question: \"How do these firms prepare to retain assets and relationships as wealth passes to next-generation heirs?\" Metric net_new_assets is a proxy figure presumably. So we should extract net new assets figures as facts.\n\nNet new assets figures from EDJ-10K-2025#130: Net new assets for the year ($ billions): 2025: $74, 2024: $74, 2023: $97. Period F2025, F2024, F2023.\n\nFrom EDJ-10Q-2026Q2#60: Net new assets for the period ($ billions): $18 (Q2 2026), $17 (Q2 2025), 6%; and $36 (six months 2026), $34 (six months 2025).\n\nAlso there are mentions of net new assets decreasing in 2025 quarters (10Q-2025Q2#67: decreased 10% Q2 2025; #69 decreased 8% first half; 10Q-2025Q3#72 decreased 4% first nine months). Those are percentages not dollar figures \u2014 could be facts too? The sub-question names net_new_assets; percentage changes are statements about it. Hmm. We could include items with value \"\" for percentage statements, or value \"10%\"? The value field: figure as printed. A percentage change is a quantity related. I'd include the main absolute figures as facts, and maybe one qualitative item about generational wealth transfers contributing to outflows (that's relevant to the question of preparation and relates to retention).\n\nAlso preparation content: digital platform focused on attracting and retaining Next Generation investors (10K-2025#88); Financial Planning Services, High Net Worth, Workplace initiatives. That's about preparing to retain assets/relationships \u2014 relevant to the sub-question. The metric is net_new_assets though; the label applies to the sub-question. Instructions: \"Only the quantity a sub-question names is a fact for it\" \u2014 with [proxy] note. Actually the sub-question field says \"[fact, metric net_new_assets]\". So the named quantity is net_new_assets. Preparation statements relate to the actual question but the metric is net new assets. Hmm. I think best: items for net new asset figures (facts), plus items about the initiatives for Next Generation investors (as context/narrative, value \"\"). The narrative items about preparation are effectively evidence for the question; the metric tag suggests the asked quantity is net new assets. Including a qualitative item with no figure seems acceptable as an item (text with no figure). I'll include key strategic statements.\n\nAlso generational wealth transfer mentioned as headwind: 10Q-2025Q2#67: \"generational wealth transfers outside the firm\"; 10K-2025#56: risk from generational wealth transfer; 10K-2025#304: seeks to address strategic risks ... generational wealth transfer through initiatives to deliver enhanced value.\n\nAlso retirement transition plans (10K-2025#222) \u2014 continuity for retiring advisors' clients. That's about retaining relationships. Include as narrative.\n\nLet's craft items:\n\n0. Annual net new assets F2025 $74B \u2014 EDJ-10K-2025#130, quote about line: \"Net new assets for the year ($ billions)(2)      $                                         74      $             74      $             97                          \u2014\" plus definition: \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\" scope: \"\" (whole firm). unit USD billions.\n\n1. F2024 $74B.\n2. F2023 $97B.\n3. Q2 2026 $18B (EDJ-10Q-2026Q2#60), period 2026Q2.\n4. Q2 2025 $17B, period 2025Q2.\n5. Six months 2026 $36B \u2014 period? \"2026H1\" not allowed format; use \"\" or \"F2026\"? Format options: YYYY-MM-DD, YYYYQn, FYYYYY, YYYY. Six-month period \u2192 \"\" perhaps. Use \"\" with scope \"six months ended June 26, 2026\". Hmm scope should be part of firm; but ok. Better period \"\" and note in text.\n6. Six months 2025 $34B.\n7. Q2 2025 net new assets decreased 10% vs Q2 2024, attributed to higher outflows including aging client base and generational wealth transfers outside the firm \u2014 value \"10\", unit \"percent\". Chunk 10Q-2025Q2#67.\n8. First half 2025 net new assets decreased 8%; net new asset decrease attributable to existing clients \u2014 chunk #69, value \"8\", percent, period 2025H1? use \"\".\n9. First nine months 2025 net new assets decreased 4%, influenced by aging client base, generational wealth transfers outside the firm \u2014 #72, value \"4\", percent, period \"\".\n10. Initiatives: digital platform focused on attracting and retaining Next Generation investors; Financial Planning Services; High Net Worth; Workplace \u2014 10K-2025#88, value \"\".\n11. Retirement transition plans for retiring advisors \u2014 10K-2025#222.\n12. 10K-2025#304 strategic risk response.\n\nMaybe too many; but fine. Perhaps limit to ~10 items. Include also 10K-2025#58? Not needed.\n\nDerivation: \"\" empty.\n\nLabel: fact.\n\nLet me write quotes accurately.\n\n#130 quote: \"Client households at year end 6.7 6.6 6.3 2%\\nNet new assets for the year ($ billions)(2) $ 74 $ 74 $ 97 \u2014\" \u2014 keep \u2264300 chars. Use: \"Net new assets for the year ($ billions)(2)      $                                         74      $             74      $             97\" plus definition quote separately in definition field: \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nFor #60 quote: \"Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%      $                         36      $                      34                      6%\" and definition \"(3) Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nCareful: in Q2 2026 the definition includes fees and commissions. Good.\n\nFor items 3-6, need separate quotes but same chunk; quote can be the whole line for each; fine.\n\nPeriod for F2025 annual: 2025.\n\nWrite texts.\n\nItem for #67: text \"The Partnership said second quarter 2025 net new assets decreased 10% versus the second quarter of 2024, continuing a downward trend attributed to higher asset outflows, which are impacted by an aging client base and generational wealth transfers outside the firm.\" value \"10\", unit \"percent\", period 2025Q2 (as change vs 2024Q2). Scope \"\".\n\nItem #88: quote \"These initiatives also include targeting new clients: High Net Worth ... and a new digital platform, focused on attracting and retaining Next Generation investors.\" Quote exact: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.\" That's under 300? ~380 chars. Trim: \"These initiatives also include targeting new clients: High Net Worth...; Workplace...; and a new digital platform, focused on attracting and retaining Next Generation investors.\" Using ellipses may violate \"exact words\" \u2014 better to cut quote to a portion: \"and a new digital platform, focused on attracting and retaining Next Generation investors.\" That's exact.\n\nItem #222 quote: \"Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement.\"\n\nItem #304 quote: \"The Partnership is continuing to make significant investments to attract and retain qualified talent and offers a competitive compensation program and employee benefits for financial advisors, CSTPs and home office associates that promote a long-term career\" \u2014 hmm, the relevant part is the strategic risk response re generational wealth transfer. Quote: \"The Partnership seeks to address its strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes, through its initiatives to deliver enhanced value and impact for millions of current and potential clients\" \u2014 350 chars. Trim: \"The Partnership seeks to address its strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology\" ~ 260 chars. Good.\n\nAlso could include 10K-2025#56 risk statement. Skip maybe; include as one item? The question about generational wealth transfer. I'll include #56 briefly as narrative: \"The Partnership is subject to risk from ... generational wealth transfer, including changing client expectations...\" I'll include as item too? Keep items manageable: I'll include it.\n\nActually care: items should be one per figure or statement. Fine.\n\nOrder items so derivation indices fine (no derivation).\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported net new assets of $74 billion for the year ended December 31, 2025.",
+            "quote": "Net new assets for the year ($ billions)(2)      $                                         74      $             74      $             97",
+            "value": "74",
+            "unit": "USD billions",
+            "period": "2025",
+            "scope": "",
+            "definition": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $74 billion for the year ended December 31, 2024.",
+            "quote": "Net new assets for the year ($ billions)(2)      $                                         74      $             74      $             97",
+            "value": "74",
+            "unit": "USD billions",
+            "period": "2024",
+            "scope": "",
+            "definition": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $97 billion for the year ended December 31, 2023.",
+            "quote": "Net new assets for the year ($ billions)(2)      $                                         74      $             74      $             97",
+            "value": "97",
+            "unit": "USD billions",
+            "period": "2023",
+            "scope": "",
+            "definition": "Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $18 billion for the second quarter of 2026.",
+            "quote": "Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%",
+            "value": "18",
+            "unit": "USD billions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $17 billion for the second quarter of 2025.",
+            "quote": "Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%",
+            "value": "17",
+            "unit": "USD billions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $36 billion for the six months ended June 26, 2026.",
+            "quote": "Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%      $                         36      $                      34                      6%",
+            "value": "36",
+            "unit": "USD billions",
+            "period": "",
+            "scope": "six months ended June 26, 2026",
+            "definition": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $34 billion for the six months ended June 27, 2025.",
+            "quote": "Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%      $                         36      $                      34                      6%",
+            "value": "34",
+            "unit": "USD billions",
+            "period": "",
+            "scope": "six months ended June 27, 2025",
+            "definition": "Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "The Partnership said second quarter 2025 net new assets decreased 10% versus the second quarter of 2024, continuing a downward trend attributed to higher asset outflows, which it said are impacted by an aging client base and generational wealth transfers outside the firm.",
+            "quote": "Net new assets decreased by 10% compared to the second quarter of 2024, continuing a downward trend which can be attributed to higher asset outflows. These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm",
+            "value": "10",
+            "unit": "percent",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "The Partnership said net new assets decreased 8% in the first half of 2025 and that the decrease was attributable to existing clients, with outflows impacted by an aging client base and generational wealth transfers outside the firm.",
+            "quote": "Net new assets decreased 8% in the first half of 2025, continuing a downward trend which can be attributed to higher asset outflows. These outflows are impacted by a variety of factors, including, without limitation, an aging client base and generational wealth transfers outside the firm ... The net new asset decrease was attributable to existing clients.",
+            "value": "8",
+            "unit": "percent",
+            "period": "",
+            "scope": "first half of 2025",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#69"
+            ]
+          },
+          {
+            "text": "The Partnership said net new assets decreased 4% in the first nine months of 2025, with elevated outflows it said were influenced by an aging client base and generational wealth transfers outside the firm.",
+            "quote": "Net new assets decreased 4% in the first nine months of 2025. This year to date decline reflects elevated asset outflows, which were partially offset by stronger inflows. The outflows relative to the prior-year period continue an increasing downward trend influenced by several factors, including an aging client base, generational wealth transfers outside the firm",
+            "value": "4",
+            "unit": "percent",
+            "period": "",
+            "scope": "first nine months of 2025",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#72"
+            ]
+          },
+          {
+            "text": "Among the Partnership's initiatives to meet client needs, it cites targeting new clients including High Net Worth, Workplace, and a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "and a new digital platform, focused on attracting and retaining Next Generation investors",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "The Partnership offers eligible retiring financial advisors individually tailored retirement transition plans that compensate them for successfully providing client transition services under a retirement and transition agreement, generally over a five-year term.",
+            "quote": "Eligible retiring financial advisors are offered individually tailored retirement transition plans. Each retirement transition plan compensates a retiring financial advisor for successfully providing client transition services in accordance with a retirement and transition agreement. Generally, the retirement and transition agreement is for five years.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#222"
+            ]
+          },
+          {
+            "text": "The Partnership states it seeks to address strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, and technology, through its initiatives to deliver enhanced value to current and potential clients.",
+            "quote": "The Partnership seeks to address its strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#304"
+            ]
+          },
+          {
+            "text": "The Partnership identified generational wealth transfer, including changing client expectations for expanded product offerings and technology needs and changing client demographics, preferences and values, as a factor that may adversely impact its ability to compete and adapt its business model.",
+            "quote": "The Partnership's continued ability to compete and adapt its business model may be adversely impacted by the evolving financial services industry and generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#56"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report the named net new assets metric (annual and quarterly dollar figures plus percentage changes) and describe retention-related initiatives, so each item is a fact.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

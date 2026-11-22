@@ -1,0 +1,86 @@
+{
+  "question_id": "Q18",
+  "question": "Where is the industry heading on fee structures and pricing transparency?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a5.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-ADV-2026#48",
+    "SCHW-TR-2026Q1#16",
+    "RJF-PR-web-bank-and-credit-union-advisors#3",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "SCHW-10Q-2026Q1#175",
+    "BAC-SUPP-2026Q1#36",
+    "SCHW-ADV-2026#31",
+    "RJF-PR-2026-07-22-01#4",
+    "SCHW-DECK-2026-investor-day#9"
+  ],
+  "at": "2026-11-21T15:22:59.956261-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4322,
+    "output_tokens": 2125,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2786,
+    "reasoning_tokens": 1732,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.41
+  },
+  "wall_s": 15.05,
+  "tokens_per_s": 141.2,
+  "ttft_s": 1.41,
+  "reasoning_content": "Let me analyze this sub-question: \"What client demand or expectations are shaping fees and transparency\" for a5.all (all firms, no firm named).\n\nI need to look at the passages and find facts about client demand or expectations shaping fees and transparency.\n\nLet me review the passages:\n\n1. SCHW-ADV-2026#48 - About compensation CS&Co. receives from mutual fund companies, conflict of interest. Not client demand.\n\n2. SCHW-TR-2026Q1#16 - \"more than half of our clients are willing to pay for AI financial tools\" - this is client demand/expectations about paying for AI tools. Also \"new fee-based offers that will create value we believe our clients will be willing to pay for.\" This is a fact about client demand/willingness to pay for AI financial tools.\n\n3. RJF-PR-web-bank... - about award, not relevant.\n\n4. EDJ-TRADE... - about retirement plans, RPAG benchmarking, fee comparisons. Not client demand.\n\n5. SCHW-10Q - about mortgages, credit quality. Not relevant.\n\n6. BAC-SUPP - financial tables. Not relevant.\n\n7. SCHW-ADV-2026#31 - about fees not covered by SWA fee. Not client demand.\n\n8. RJF-PR-2026-07-22-01#4 - about fee-based accounts growth, net new assets. This could indicate client demand for fee-based accounts. \"Record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22%\". This shows growth in fee-based accounts, which could reflect client demand/expectations shaping fees. Also \"net inflows into PCG fee-based accounts\".\n\n9. SCHW-DECK - strategy, not client demand.\n\nSo the key facts:\n- SCHW-TR: \"more than half of our clients are willing to pay for AI financial tools\" - client demand/expectations about paying for AI tools (fee-based offers).\n- RJF-PR: fee-based accounts growth - client shift toward fee-based accounts (demand shaping fee structures).\n\nLet me think about the SCHW transcript item. The statement is \"more than half of our clients are willing to pay for AI financial tools. According to research...\" This is attributed to CEO Richard Wurster. This is a fact about client demand/willingness to pay.\n\nThe RJF item about fee-based accounts: \"Record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22% over June 2025 and 11% over March 2026\". This shows client demand for fee-based accounts. But is this \"client demand or expectations shaping fees\"? It's a data point showing shift to fee-based, which reflects demand. I could label it as fact but need to be careful. It's a fact about the growth in fee-based accounts.\n\nActually, the sub-question is about client demand or expectations shaping fees and transparency. The RJF data on fee-based account growth is evidence of client demand for fee-based accounts. I think it's a fact that reflects demand.\n\nLet me also consider whether the RJF item \"net inflows into PCG fee-based accounts\" is relevant. The passage says \"higher asset management and related administrative fees... mainly due to market appreciation and net inflows into PCG fee-based accounts.\"\n\nI'll extract the most relevant facts.\n\nFor SCHW-TR-2026Q1#16: \"more than half of our clients are willing to pay for AI financial tools\" - fact, value \"more than half\" but that's not a clean number. Value could be \"\" or \"more than half\". I'll put text describing it.\n\nActually let me create the cells.\n\nItem 1 (SCHW): fact - \"more than half of our clients are willing to pay for AI financial tools\" - this is client demand/expectation shaping new fee-based offers.\n\nItem 2 (RJF): fact - fee-based accounts growth, $1.15 trillion up 22% - reflects client demand for fee-based accounts.\n\nLet me write these out.\n\nFor SCHW: text: \"Schwab CEO Richard Wurster stated that more than half of the firm's clients are willing to pay for AI financial tools, which will create opportunities for new fee-based offers.\" quote: \"more than half of our clients are willing to pay for AI financial tools.\" value: \"more than half\", unit: \"clients\", period: \"\", scope: \"\". Actually period n/a.\n\nHmm, value \"more than half\" isn't really a number. I'll put value \"\" or \"more than half\". The instructions say value is \"the figure as printed\". \"more than half\" is printed. But unit would be \"clients\". I'll set value \"\" and unit \"\" maybe, or value \"more than half\".\n\nLet me set value \"\" since it's not a precise figure, and put the statement in text.\n\nActually, I'll be reasonable. The quote \"more than half of our clients are willing to pay for AI financial tools\" - value could be \"more than half\", unit \"clients\". I'll go with that.\n\nFor RJF: text about fee-based accounts. value \"$1.15 trillion\", unit \"USD\", period \"2026-06-30\" (fiscal third quarter end June 30, 2026). Scope \"Private Client Group\". This is assets in fee-based accounts.\n\nActually the period: \"Record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion\" - quarter-end June 30, 2026. Period \"2026-06-30\".\n\nThis is a fact about client demand for fee-based accounts (shift to fee-based). I'll note it reflects demand.\n\nLet me also consider: is the RJF fee-based account growth really \"client demand shaping fees\"? It's evidence that clients are moving to fee-based accounts. I think it's a reasonable fact to include, but I should be careful. The sub-question asks about client demand/expectations shaping fees. The growth in fee-based accounts indicates demand for fee-based pricing.\n\nI'll include it as a fact with a note in text.\n\nNow let me also double check the SCHW transcript also mentions \"new fee-based offers that will create value we believe our clients will be willing to pay for.\"\n\nLet me write the final cells.\n\nI'll submit two items under a5.all, both fact.\n\nActually, should I split into two items? The SCHW item has two related statements. I'll keep one item for the \"more than half willing to pay\" and maybe mention the fee-based offers.\n\nLet me do two items for SCHW? Actually I'll combine into one item with the main fact being the willingness to pay.\n\nLet me write clearly.\n\nCell 1 (SCHW): \n- text: \"Schwab CEO Richard Wurster said that, according to research, more than half of the firm's clients are willing to pay for AI financial tools, which he said creates opportunities for new fee-based offers clients would be willing to pay for.\"\n- quote: \"more than half of our clients are willing to pay for AI financial tools\"\n- value: \"more than half\"\n- unit: \"clients\"\n- period: \"\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"SCHW-TR-2026Q1#16\"]\n\nCell 2 (RJF):\n- text: \"Raymond James reported record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22% over June 2025 and 11% over March 2026, with net inflows into fee-based accounts.\"\n- quote: \"Record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22% over June 2025 and 11% over March 2026\"\n- value: \"$1.15 trillion\"\n- unit: \"USD\"\n- period: \"2026-06-30\"\n- scope: \"Private Client Group\"\n- definition: \"\"\n- chunk_ids: [\"RJF-PR-2026-07-22-01#4\"]\n\nreason for both: fact, passage states client willingness/demand.\n\ndiffers_because: \"\" for both.\n\nderivation: operation \"\", inputs [].\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab CEO Richard Wurster stated that, according to research, more than half of the firm's clients are willing to pay for AI financial tools, which he said creates opportunities for new fee-based offers clients would be willing to pay for.",
+            "quote": "more than half of our clients are willing to pay for AI financial tools",
+            "value": "more than half",
+            "unit": "clients",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#16"
+            ]
+          },
+          {
+            "text": "Raymond James reported record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22% over June 2025 and 11% over March 2026, with net inflows into PCG fee-based accounts.",
+            "quote": "Record quarter-end Private Client Group assets in fee-based accounts of $1.15 trillion, up 22% over June 2025 and 11% over March 2026",
+            "value": "$1.15 trillion",
+            "unit": "USD",
+            "period": "2026-06-30",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-2026-07-22-01#4"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state client willingness to pay for AI financial tools and client inflows into fee-based accounts, which reflect client demand shaping fees.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

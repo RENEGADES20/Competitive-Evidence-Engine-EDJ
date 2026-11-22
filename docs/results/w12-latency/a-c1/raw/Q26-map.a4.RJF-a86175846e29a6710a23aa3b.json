@@ -1,0 +1,143 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#4",
+    "RJF-TRADE-2026-11-05-WM-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-10-23-WM-01#0"
+  ],
+  "at": "2026-11-21T13:20:18.439428-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10831,
+    "output_tokens": 4907,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9295,
+    "reasoning_tokens": 4144,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.16
+  },
+  "wall_s": 34.31,
+  "tokens_per_s": 143.02,
+  "ttft_s": 2.16,
+  "reasoning_content": "Let me analyze the sub-question: What are Raymond James's net new assets and client asset flows?\n\nI need to find passages about net new assets and client asset flows for Raymond James.\n\nThe key passage is RJF-TRADE-2026-10-29-WM-01#1 which contains:\n- \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nThis is directly about net new assets. Let me identify the facts:\n1. Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\n2. Net new assets for the quarter were nearly $23 billion.\n3. Annualized growth from the beginning of the quarter of 5.3%.\n\nAlso client asset flows related: record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\n\nAlso recruiting: trailing 12-month production of $538 million for recruited advisors, $82 billion in client assets (RJF-TRADE-2026-10-29-WM-01#0).\n\nThe sub-question asks about \"net new assets and client asset flows\". Net new assets is directly stated. Client asset flows could relate to the recruiting inflows.\n\nLet me identify the facts for net new assets:\n- Domestic PCG net new assets for fiscal year: more than $98 billion (record), up 88% year-over-year.\n- Net new assets for the quarter: nearly $23 billion.\n- Annualized growth from beginning of quarter: 5.3%.\n\nThese are facts. The scope is \"Domestic PCG\" for the fiscal year figure. The quarter figure says \"Net new assets for the quarter\" - likely domestic PCG too, but let me be careful. The passage says \"Domestic PCG net new assets rose 88% for the fiscal year... Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" This is in the same paragraph, so likely domestic PCG.\n\nClient asset flows - recruited advisors represented more than $82 billion in client assets during fiscal year (from RJF-TRADE-2026-10-29-WM-01#0). That's a client asset flow (recruiting inflow).\n\nAlso trailing 12-month production $538 million.\n\nLet me think about what to include. The sub-question is about net new assets and client asset flows. So the key facts:\n\n1. Domestic PCG net new assets fiscal year record > $98 billion, up 88% YoY.\n2. Net new assets for quarter nearly $23 billion.\n3. Annualized growth 5.3% from beginning of quarter.\n4. Record quarter-end client assets under administration $1.87 trillion, up 1% sequential, 12% YoY (this is client assets, a related flow/base).\n\nActually, client assets under administration is a stock, not a flow. But it's related to \"client asset flows\" - the question asks about net new assets and client asset flows. Client asset flows include recruited assets, net new assets.\n\nLet me include the recruited advisors $82 billion in client assets as a client asset flow (inflow from recruiting).\n\nLet me also note the advisor headcount figure (record 8,943 advisors) is not related to net new assets.\n\nI'll focus on:\n- fact: Domestic PCG net new assets fiscal year > $98 billion, record, up 88%.\n- fact: Net new assets for the quarter nearly $23 billion.\n- fact: annualized growth 5.3% from beginning of quarter.\n- fact: record quarter-end client assets under administration $1.87 trillion (this is a client asset figure, part of \"client asset flows\" context - actually it's a stock, but it's client assets).\n\nHmm, but the question specifically says \"net new assets and client asset flows\". The client assets under administration is arguably a different quantity (stock vs flow). But it's a client asset figure. Let me consider it as related.\n\nActually, I think the core facts are the net new assets figures. The client asset flows could be the recruiting inflow ($82 billion client assets from recruited advisors).\n\nLet me also consider the $538 million trailing 12-month production - that's production, not assets, so different_quantity or not relevant.\n\nLet me structure the cell. This is a fact cell for net new assets and client asset flows.\n\nItems:\n1. Domestic PCG net new assets for fiscal year: more than $98 billion, record, up 88% year-over-year. Value \"$98 billion\", unit \"net new assets\" / \"USD\". Period F2026 (fiscal year ended... Raymond James fiscal year ends September). The passage is from October 29, 2026, discussing fiscal fourth quarter earnings. Raymond James fiscal year ends September 30. So F2026.\n\nActually period - \"for the fiscal year\" = fiscal year 2026 (ended September 30, 2026). Period \"F2026\".\n\n2. Net new assets for the quarter: nearly $23 billion. Period: fiscal fourth quarter 2026 = F2026Q4. Hmm, but the period format given is \"YYYYQn\" for calendar quarter, \"FYYYYY\" for fiscal year, \"YYYY\" for calendar year. There's no fiscal quarter format explicitly. Let me use \"F2026Q4\" maybe? The instructions say period formats: \"YYYY-MM-DD\", \"YYYYQn\", \"FYYYYY\", \"YYYY\". No fiscal quarter format. \n\nHmm. The quarter is fiscal Q4 2026. I could use \"F2026Q4\" but that's not in the list. Actually maybe I should just note it in text. Let me use \"F2026Q4\" as it's descriptive, or just put the period as \"F2026Q4\". Actually the allowed format doesn't include fiscal quarter. But I'll describe in text \"for the quarter\" and put period as \"F2026Q4\" anyway? \n\nLet me reconsider. The instruction lists period values but they might be examples. I'll use \"F2026Q4\" to be precise, or maybe just \"F2026\" won't distinguish. Actually, I'll write the text clearly and use period \"F2026Q4\". Given the format guidance, maybe I should just use \"F2026\" is wrong. Let me use \"F2026Q4\".\n\nActually, re-reading: \"period: \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter, \"FYYYYY\" for a fiscal year, \"YYYY\" for a calendar year; \"\" when not stated or no figure\".\n\nThere's no fiscal quarter option. The quarter here is fiscal Q4 2026. I'll describe in text \"for the fiscal fourth quarter\" and put period as \"F2026Q4\" which is a reasonable extension. Or I could just leave it as describing in text. I'll use \"F2026Q4\".\n\nActually, to be safe and consistent, I'll put period \"F2026Q4\" for the quarter and \"F2026\" for fiscal year.\n\n3. Annualized growth 5.3% from beginning of quarter.\n\n4. Record quarter-end client assets under administration $1.87 trillion, up 1% sequential, 12% YoY - this is client assets, a related figure. Should I include it? It's client assets (stock), not net new assets. But \"client asset flows\" might include this. Hmm. Actually I think it's more of a different_quantity (client assets vs net new assets). But it's still client assets which is relevant context.\n\nActually, let me think about what \"client asset flows\" means. Net new assets IS a client asset flow. The recruited advisor assets ($82 billion) is a client asset flow (inflow). Client assets under administration is a stock.\n\nI think the main facts are net new assets. The recruited assets ($82 billion) is a client asset flow related to recruiting, which is directly about client asset flows.\n\nLet me include:\n1. Domestic PCG net new assets fiscal year > $98 billion (fact)\n2. Net new assets quarter ~ $23 billion (fact)\n3. Annualized growth 5.3% (fact)\n4. Recruited advisors $82 billion client assets (fact - client asset flow/inflow)\n5. Record client assets under administration $1.87 trillion (fact or different_quantity - it's client assets, related)\n\nI think I'll include #5 as a fact since it's client assets, but note it's AUA (stock). Actually, \"client asset flows\" - AUA is not a flow. But it's closely related. I'll include it but be careful with labeling. Actually, the question asks \"net new assets and client asset flows\". Client assets under administration is a client asset figure, arguably a \"client asset\" flow context. I'll label it as fact for client assets, but note in text that it's assets under administration (stock, not flow).\n\nHmm, to be careful, let me treat:\n- Net new assets figures: fact (directly asked)\n- Recruited client assets $82 billion: fact (client asset flow - inflow from recruiting)\n- Client assets under administration $1.87 trillion: this is a client asset figure but not a \"flow\". It's related. I could label it different_quantity with differs_because \"client assets under administration is a stock/level, not a flow\".\n\nActually, I think the cleanest approach: The sub-question is \"net new assets and client asset flows\". The net new assets are facts. The recruited assets inflow is a fact for \"client asset flows\". The AUA is a different quantity (stock).\n\nLet me include the AUA as fact actually, since \"client asset flows\" is somewhat broad and client assets under administration is directly a client asset metric. But it's a stock not a flow. I'll mark it as fact but describe it clearly.\n\nActually, I'll be more conservative and include it as a fact for \"client assets\" with clear description. The question is about client asset flows, and total client assets is a key related metric that the passage reports alongside. I'll include it.\n\nLet me finalize. I'll produce a fact cell with multiple items.\n\nLet me write items:\n\nItem 0: text: \"For fiscal year 2026, domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion.\"\nquote: \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\nvalue: \"$98 billion\" (actually \"more than $98 billion\" - value should be the figure as printed). Value: \"more than $98 billion\"? The instruction says value \"the figure as printed\". I'll put \"$98 billion\" and mention \"more than\" in text. Actually let me put value as \"more than $98 billion\". Hmm, value should be figure. I'll put \"$98 billion\" and note \"more than\" in text/quote. Actually let me keep value clean: \"$98 billion\", unit \"net new assets (USD)\", period \"F2026\", scope \"Domestic Private Client Group\".\n\nItem 1: text: \"Net new assets for the fiscal fourth quarter were nearly $23 billion.\"\nquote: \"Net new assets for the quarter were nearly $23 billion\"\nvalue: \"$23 billion\" (nearly), unit \"net new assets (USD)\", period \"F2026Q4\", scope \"Domestic PCG\" (inferred - same paragraph). Actually scope: the passage says \"Domestic PCG net new assets\" then \"Net new assets for the quarter\". It's likely domestic PCG. I'll note scope \"Domestic Private Client Group (implied)\".\n\nHmm, to be careful, I'll set scope \"\" but note in text it's within domestic PCG discussion. Actually the paragraph clearly continues about domestic PCG. I'll put scope \"Domestic Private Client Group\".\n\nItem 2: text: \"Annualized net new asset growth from the beginning of the quarter was 5.3%.\"\nquote: \"with annualized growth from the beginning of the quarter of 5.3%\"\nvalue: \"5.3%\", unit \"annualized growth rate\", period \"F2026Q4\", scope \"Domestic Private Client Group\".\n\nItem 3: text: \"Recruited advisors joining Raymond James's domestic independent contractor and employee channels during fiscal 2026 represented more than $82 billion in client assets.\"\nquote: \"Those advisors represented more than $82 billion in client assets\"\nvalue: \"$82 billion\", unit \"client assets\", period \"F2026\", scope \"domestic independent contractor and employee channels (recruited advisors)\".\n\nItem 4: text: \"Record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nquote: \"the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year\"\nvalue: \"$1.87 trillion\", unit \"client assets under administration\", period \"F2026Q4\", scope \"\".\n\nAlso trailing 12-month production $538 million - that's production, different quantity, not client assets. I'll skip or include as different_quantity. Actually it's not directly about client assets. I'll skip it.\n\nI think the label is \"fact\" overall since net new assets are directly stated.\n\nLet me also consider: is there any \"client asset flows\" beyond these? The recruiting outflow (teams leaving Raymond James) - e.g., $3.3 billion leaving to Janney, $1 billion to Ascentis, etc. Those are client asset outflows. Should I include those? They are client asset flows (outflows from competitor moves). \n\nThe question \"net new assets and client asset flows\" - I think the focus is on the firm's reported net new assets and client asset flows. The recruiting departures (teams leaving Raymond James) are also relevant client asset flows.\n\nHmm, but these are individual team moves reported in trade press, not the firm's reported net new assets. They could be considered \"client asset flows\" - inflows and outflows.\n\nLet me consider including the outflow figures as facts (client asset outflows):\n- $3.3 billion team left to Janney (Edward Fitzpatrick Group, ~23 years at RJ)\n- $200 million advisor (Lance Murphy) leaving\n- $1 billion to Ascentis (four practices)\n- $1.2 billion team left? No, that's joining Raymond James from Truist (inflow).\n\nInflows:\n- $1.5B PNC team to RJA (DC)\n- $1.2B Truist duo to RJA (Richmond)\n- $700M UBS team to Beachwood\n- $700M Truist team to Southwest Florida (FID)\n- $500M Commonwealth team to RJFS (Rochester)\n- $400M UBS veteran to RJA (Glens Falls)\n- $240M Ameriprise advisor to RJFS (NJ)\n- $700M advisor team (mentioned multiple times)\n\nOutflows:\n- $3.3B to Janney (Houston)\n- $200M to Janney (Lance Murphy)\n- $1B to Ascentis (four practices)\n\nThese are all \"client asset flows\" in the sense of advisor recruiting moves. But the sub-question is about \"net new assets and client asset flows\" as a metric the firm reports. The firm's net new assets is the key metric.\n\nActually, I think the primary answer is the net new assets figures. The recruiting inflow/outflow are individual team moves, which are \"client asset flows\" in a broader sense.\n\nGiven the recency angle (\"what's new in last 90 days\"), and the question asks about net new assets and client asset flows, I think the most relevant facts are:\n\n1. Net new assets (firm-reported): FY >$98B, quarter ~$23B, 5.3% annualized growth.\n2. Recruited advisor client assets: $82B (trailing 12 months).\n3. Client assets under administration: $1.87T record.\n\nThe individual team moves are also client asset flows but they're more \"advisor moves\" news. I think I should focus on the firm-reported metrics.\n\nActually, let me reconsider the scope of the question. The sub-question is labeled \"[recency, metric net_new_assets]\". So it's specifically about the net new assets metric. The \"client asset flows\" is part of the description.\n\nI'll include the net new assets figures as the primary facts, plus the recruited assets inflow and client assets under administration as related client asset figures.\n\nI think I'll also include the recruiting inflow total ($82B) and note the individual team moves are covered by that. But actually the individual team moves are specific client asset flows that might be worth noting.\n\nGiven the complexity, I'll include the core firm-reported metrics as facts, and keep it focused. I'll include:\n1. FY net new assets > $98B (fact)\n2. Quarter net new assets ~ $23B (fact)\n3. Annualized growth 5.3% (fact)\n4. Recruited advisors $82B client assets (fact - inflow)\n5. Record client assets under administration $1.87T (fact)\n\nActually, I realize I should think about whether to include the individual team move inflows/outflows. These are \"client asset flows\" (advisor recruitment = client asset flows). The $82 billion figure already captures the trailing 12-month recruited advisor assets. \n\nI'll keep the answer focused on the firm's reported net new assets and the key client asset flow figures. I'll include the 5 items above.\n\nLet me also double check the period format. Raymond James fiscal year 2026 ended September 30, 2026. The quarter ended September 30, 2026 is fiscal Q4 2026.\n\nFor period, I'll use \"F2026\" for fiscal year and \"F2026Q4\" for the quarter. Since \"F2026Q4\" isn't in the listed format but is the most accurate, I'll use it.\n\nActually, let me reconsider - maybe I should just use \"\" and describe in text, or use a simpler format. The instruction gives examples. I'll use \"F2026\" and \"F2026Q4\".\n\nLet me write the derivation: empty (not needed, facts are directly stated). operation \"\", inputs [].\n\nNow write the submit call.\n\nFor the \"definition\" field - the passage doesn't give a specific definition of net new assets. So \"\".\n\nLet me write everything out.\n\nReason: \"The passage directly reports Raymond James's domestic PCG net new assets for the fiscal year and quarter, plus related client asset flow figures.\"\n\nLet me finalize the items with proper text, quotes, values.\n\nFor item 3 (recruited advisors $82B), the quote is from chunk RJF-TRADE-2026-10-29-WM-01#0. \"Those advisors represented more than $82 billion in client assets\".\n\nFor item 4 (AUA $1.87T), quote from RJF-TRADE-2026-10-29-WM-01#1.\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "For fiscal year 2026, Raymond James's domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "value": "$98 billion",
+            "unit": "net new assets (USD)",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "For the fiscal fourth quarter, Raymond James's net new assets were nearly $23 billion.",
+            "quote": "Net new assets for the quarter were nearly $23 billion",
+            "value": "$23 billion",
+            "unit": "net new assets (USD)",
+            "period": "F2026Q4",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Annualized net new asset growth from the beginning of the fiscal fourth quarter was 5.3%.",
+            "quote": "with annualized growth from the beginning of the quarter of 5.3%",
+            "value": "5.3%",
+            "unit": "annualized net new asset growth rate",
+            "period": "F2026Q4",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Recruited advisors joining Raymond James's domestic independent contractor and employee channels during fiscal year 2026 represented more than $82 billion in client assets (trailing 12-month production of $538 million, up from $407 million the prior year).",
+            "quote": "Those advisors represented more than $82 billion in client assets, said CEO Paul Shoukry",
+            "value": "$82 billion",
+            "unit": "client assets (USD)",
+            "period": "F2026",
+            "scope": "domestic independent contractor and employee channels (recruited advisors)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#0"
+            ]
+          },
+          {
+            "text": "Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "quote": "the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year",
+            "value": "$1.87 trillion",
+            "unit": "client assets under administration (USD)",
+            "period": "F2026Q4",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages directly report Raymond James's net new assets (fiscal year and quarter) and related client asset flow figures, including recruited advisor assets and total client assets under administration.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

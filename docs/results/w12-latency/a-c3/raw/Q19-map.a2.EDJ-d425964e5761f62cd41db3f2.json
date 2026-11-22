@@ -1,0 +1,86 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q2#96",
+    "EDJ-10K-2025#15",
+    "EDJ-10Q-2026Q2#91",
+    "EDJ-10K-2025#255",
+    "EDJ-10Q-2026Q1#47",
+    "EDJ-10Q-2025Q3#105",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10Q-2025Q3#100",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10Q-2026Q2#86",
+    "EDJ-10Q-2026Q1#73",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10K-2025#57",
+    "EDJ-10K-2025#26",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-10K-2025#16",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10K-2025#33",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10K-2025#10",
+    "EDJ-10K-2025#74",
+    "EDJ-10Q-2026Q1#70",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10K-2025#73"
+  ],
+  "at": "2026-11-21T13:56:22.609677-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11259,
+    "output_tokens": 427,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9851,
+    "reasoning_tokens": 301,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.73
+  },
+  "wall_s": 4.89,
+  "tokens_per_s": 87.32,
+  "ttft_s": 0.73,
+  "reasoning_content": "The sub-question asks what communication and engagement channels younger investors prefer. Passages: EDJ-10K-2025#88 mentions new digital platform focused on attracting and retaining Next Generation investors. Chunk #26, #56 mention digital experiences, fintech internet/mobile platforms. But does any passage state preferences of younger investors for communication channels? No explicit statement of preferences. The closest: \"a new digital platform, focused on attracting and retaining Next Generation investors\" \u2014 that's a firm initiative, not a statement of preference. Client preferences: \"changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values\" \u2014 not specific.\n\nSo the asked quantity (preferred communication and engagement channels of younger investors) is not stated. Is there a different quantity? The passages state a digital platform targeting Next Generation investors \u2014 that's a firm action, not a quantity. not_found seems right; but maybe not_disclosed? The passages don't show the firm reports channel preferences. I'd say not_found: passages say nothing about younger investors' preferred channels. Actually #88 says the digital platform targets Next Generation investors \u2014 implies digital channel but doesn't state preference. I'll label not_found with reason.\n\nHmm, but could argue \"different_quantity\" \u2014 no quantity. The instruction says different_quantity requires a passage stating a different related quantity. There's no figure/quantity here. So not_found.\n\nMaybe mention items empty.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states which communication or engagement channels younger/Next Generation investors prefer; passages only describe the firm's own digital platform initiative and generic digital-experience competition, with no stated channel preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

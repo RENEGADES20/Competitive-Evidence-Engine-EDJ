@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a8.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:56:22.760239-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2045,
+    "output_tokens": 918,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 1021,
+    "reasoning_tokens": 569,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.06
+  },
+  "wall_s": 8.25,
+  "tokens_per_s": 111.27,
+  "ttft_s": 1.06,
+  "reasoning_content": "The sub-question asks about Edward Jones's disclosures/initiatives for younger investors compared to competitors, for firm Merrill. The passages: one chunk from BAC press about awards including \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\". Nothing about Edward Jones. The question is a comparison but firm is Merrill. Passages say nothing about Edward Jones's disclosures. Hmm \u2014 the passage does mention awards for next-gen advisors, which relates to younger advisors, not younger investors.\n\nLabel: not_found \u2014 passages say nothing about Edward Jones's disclosures for younger investors. But there's a chunk about Merrill's awards for young advisors \u2014 different quantity? The asked quantity is Edward Jones's disclosures/initiatives for younger investors compared to competitors. Nothing about younger investors or Edward Jones. I'd say not_found. Alternatively different_quantity with the recognition of advisors under 40 \u2014 that's a different measure (advisor awards, not investor offerings). Hmm, per guidance: \"When unsure between fact and different_quantity, choose different_quantity and say why.\" But the passage is about advisors, not investors, and it's about Merrill not Edward Jones. I think not_found is best since nothing addresses younger investors' preferences or disclosures. Actually the chunk mentions \"Top Next Generation Advisors\" which relates to younger advisors, not investors \u2014 so it's a different quantity, one that resembles. I'll go not_found with reason, but could include the different_quantity item... The instruction: not_found when passages say nothing about it. The passage does say something adjacent (awards for advisors under 40). Hmm.\n\nI'll label not_found \u2014 but to be safe, maybe different_quantity citing the passage about recognition for young advisors as a related but different measure. Guidance says prefer different_quantity when unsure. I'll go with different_quantity.\n\nActually the question is about offerings for younger investors. Awards for advisors under 40 is a completely different thing (advisor demographics, not investor offerings), and it's about Merrill, not Edward Jones. But the firm is Merrill, so the passage is about the firm. I'll use different_quantity.\n\nHmm, but risk. I'll choose not_disclosed? No \u2014 not_disclosed requires passages showing firm doesn't report. not_found is \"passages say nothing about it.\" Let me go with not_found since nothing about younger investors or Edward Jones.\n\nHmm, the guidance urges different_quantity when unsure. But is the sub-question quantity \"disclosures and initiatives for younger investors\"? The passage gives recognition for advisors under 40 \u2014 a different measure (advisor recognition rather than investor offerings). I'll do different_quantity.\n\nActually a cleaner decision: include the different_quantity item and note differs_because.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Merrill (Bank of America) reports that it ranked No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025) and Top Next Generation Advisors (2025) by Forbes.",
+            "quote": "No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025), and Top Wealth Management Teams High Net Worth (2025) \u2022 No. 1 on Barron's Top 1200 Wealth Financial Advisors List (2025) ... \u2022 No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          }
+        ],
+        "differs_because": "The passage gives third-party recognition rankings of the firm's young/next-generation financial advisors, not disclosures or initiatives aimed at younger investors, and it says nothing about Edward Jones.",
+        "reason": "The only passage speaks to awards for advisors under 40, a related but different matter than offerings or disclosures for younger investors, and mentions no Edward Jones comparison.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

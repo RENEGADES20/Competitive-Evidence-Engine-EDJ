@@ -444,10 +444,11 @@ def openai_plan_request(q: Query) -> dict:
 
 
 def planner_max_tokens(provider: str) -> int:
-    """The planner call's output cap (#242): by thinking mode for deepseek, else PLANNER_MAX_TOKENS."""
+    """The planner call's output cap (#242): by thinking mode for deepseek, else PLANNER_MAX_TOKENS.
+    #272: deepseek by the planner stage's effort (off 8000, thinking 128000)."""
     if provider == "deepseek":
-        from cee.answer.llm import DEEPSEEK_PLANNER_MAX_TOKENS
-        return DEEPSEEK_PLANNER_MAX_TOKENS[settings().deepseek_thinking]
+        from cee.answer.llm import stage_max_tokens
+        return stage_max_tokens("plan")
     return PLANNER_MAX_TOKENS
 
 
@@ -455,7 +456,7 @@ def deepseek_plan_request(q: Query) -> dict:
     """#242: strict function submit_plan (OpenAI strict schema: no array limits), explicit max_tokens."""
     from cee.answer.llm import deepseek_tool_request
     return deepseek_tool_request(PLAN_TOOL, "Submit the search plan.", plan_schema(strict=True),
-                                 system_prompt(), planner_message(q), planner_max_tokens("deepseek"))
+                                 system_prompt(), planner_message(q), planner_max_tokens("deepseek"), stage="plan")
 
 
 def _block_dict(b) -> dict:
@@ -506,8 +507,9 @@ def call_planner(q: Query, provider: str, client=None, meta: dict | None = None)
         return out
     if provider == "deepseek":   # #242: same checks and order as llm._deepseek
         client = client or llm.deepseek_client()
-        resp = llm.deepseek_create(client, deepseek_plan_request(q))
-        call, stop, usage, payload = llm.deepseek_tool_call(resp, PLAN_TOOL)
+        req = deepseek_plan_request(q)
+        resp = llm.deepseek_create(client, req)
+        call, stop, usage, payload = llm.deepseek_tool_call(resp, PLAN_TOOL, req)
         msg = payload if isinstance(payload, dict) else {}
         meta["stop_reason"], meta["usage"] = stop, usage
         meta["reasoning_content"] = msg.get("reasoning_content")
@@ -529,8 +531,12 @@ def call_planner(q: Query, provider: str, client=None, meta: dict | None = None)
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
-def model_for(provider: str) -> str:
+def model_for(provider: str, stage: str | None = None) -> str:
+    """The model a provider's call uses; #272: deepseek's map may use DEEPSEEK_MODEL_MAP."""
     s = settings()
+    if provider == "deepseek" and stage is not None:
+        from cee.answer.llm import stage_model
+        return stage_model(stage)
     return {"anthropic": s.llm_model, "openai": s.openai_model,
             "deepseek": s.deepseek_model}.get(provider, provider)
 

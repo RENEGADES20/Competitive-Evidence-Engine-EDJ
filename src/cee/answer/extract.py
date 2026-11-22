@@ -31,7 +31,8 @@ from cee.config import settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, Query
 
-EXTRACT_VERSION = "extract-v1.1"   # #247: the asked quantity for other periods is a fact (ADR-021 rule 3)
+EXTRACT_VERSION = "extract-v1.2"   # #272: one call per firm x aspect cell (pool passages listed with the cell)
+# extract-v1.1 (#247): the asked quantity for other periods is a fact (ADR-021 rule 3)
 EXTRACT_TOOL = "submit_extraction"
 
 # Approval condition 1 (plan review 2): one proxy text, used verbatim in the firm and research prompts.
@@ -129,11 +130,15 @@ class MapSpec:
     groups: dict[str, list[Hit]]          # cell id -> passages listed under it (input order)
     allowed: dict[str, set[str]]          # cell id -> chunk ids it may cite (section 6)
     pools: dict[str, int | None] = field(default_factory=dict)   # for the "no passages" line
+    # #272: a cell call's passages from the cell's search pool that the firm call listed under a sibling cell
+    # (they were citable in the firm call: allowed = own | pool & firm input); listed after the cell's own
+    shared: dict[str, list[Hit]] = field(default_factory=dict)
+    cell_of: str | None = None   # #272: the cell a batch belongs to (merged by merge_batches), else None
 
     @property
     def hits(self) -> list[Hit]:
         seen, out = set(), []
-        for hs in self.groups.values():
+        for hs in [*self.groups.values(), *self.shared.values()]:
             for h in hs:
                 if h.chunk_id not in seen:
                     seen.add(h.chunk_id)
@@ -184,6 +189,109 @@ def map_specs(q: Query, plan, hits: list[Hit]) -> tuple[list[MapSpec], list[Cell
                              {cells[0].id: research, **{c.id: [] for c in cells[1:]}},
                              {c.id: set(ids) for c in cells}))
     return specs, code_cells
+
+
+# --- #272: one call per firm x aspect cell ------------------------------------------------------
+
+def no_passage_cell(c: CellSpec) -> Cell:
+    """The code cell of a sub-question with no passage it may cite (the firm-level rule of map_specs)."""
+    return Cell(c.id, c.entity, c.aspect.id, c.role, "not_found", source="code",
+                reason="no passages retrieved", flags=["no_passages"])
+
+
+def _passage_tokens(h: Hit) -> int:
+    from cee.answer.llm import _chunk
+    return round((len(_chunk(h)) + 1) / 4)
+
+
+def split_cell(spec: MapSpec, question: str, window, firms, limit: int | None) -> list[MapSpec]:
+    """A one-cell spec as itself, or, when its input is over `limit` tokens, batches `<id>.b<n>` of its
+    passages in input order (own first, then shared), each under the limit; a batch may cite only its own
+    passages within the cell's allowed set."""
+    if limit is None or input_tokens(question, spec, window, firms) <= limit:
+        return [spec]
+    c = spec.cells[0]
+    empty = replace(spec, groups={c.id: []}, shared={c.id: []})
+    base = input_tokens(question, empty, window, firms)
+    rows = [("own", h) for h in spec.groups.get(c.id, [])] + [("shared", h) for h in spec.shared.get(c.id, [])]
+    batches: list[list] = [[]]
+    used = base
+    for kind, h in rows:
+        t = _passage_tokens(h)
+        if batches[-1] and used + t > limit:
+            batches.append([])
+            used = base
+        batches[-1].append((kind, h))
+        used += t
+    if len(batches) == 1:   # one passage over the ceiling on its own: sent whole, never cut
+        return [spec]
+    out = []
+    for n, rows_b in enumerate(batches, start=1):
+        own = [h for k, h in rows_b if k == "own"]
+        shared = [h for k, h in rows_b if k == "shared"]
+        ids = {h.chunk_id for _, h in rows_b}
+        out.append(replace(spec, id=f"{spec.id}.b{n}", groups={c.id: own}, shared={c.id: shared},
+                           allowed={c.id: spec.allowed.get(c.id, set()) & ids}, cell_of=c.id))
+    return out
+
+
+def fan_out(specs: list[MapSpec], question: str, window=None, firms=None,
+            limit: int | None = None) -> tuple[list[MapSpec], list[Cell]]:
+    """#272 (TL condition 1): each firm spec of map_specs split into one call per cell. A cell call lists the
+    cell's own passages (groups, as in the firm call) and, apart, the firm's input passages in its search pool
+    that are listed under a sibling (shared); allowed is the firm call's set for that cell, unchanged
+    (own | pool & firm input). A cell whose allowed set is empty gets the no-passage code cell and no call.
+    Research specs are kept whole. Cells over `limit` input tokens are split into batches."""
+    out: list[MapSpec] = []
+    code_cells: list[Cell] = []
+    for spec in specs:
+        if spec.research:
+            out.append(spec)
+            continue
+        for c in spec.cells:
+            allowed = set(spec.allowed.get(c.id, set()))
+            if not allowed:
+                code_cells.append(no_passage_cell(c))
+                continue
+            own = list(spec.groups.get(c.id) or [])
+            own_ids = {h.chunk_id for h in own}
+            shared = [h for h in spec.hits if h.chunk_id in allowed and h.chunk_id not in own_ids]
+            prefix = "remap" if spec.round == 2 else "map"
+            one = MapSpec(f"{prefix}.{c.id}", spec.round, spec.entity, False, [c], {c.id: own}, {c.id: allowed},
+                          {c.id: spec.pools.get(c.id)}, shared={c.id: shared})
+            out.extend(split_cell(one, question, window, firms, limit))
+    return out, code_cells
+
+
+_LABEL_ORDER = ("fact", "different_quantity", "not_disclosed", "not_found")
+
+
+def merge_batches(cell_id: str, parts: list[Cell]) -> Cell:
+    """#272: the cells of one sub-question's batches as one cell. Items joined in batch order (an item whose
+    chunk ids were all cited by an earlier item is dropped); label fact if any batch has one, else
+    different_quantity, else not_disclosed, else not_found; a failed batch with no fact makes the cell failed.
+    Reason, flags and the derivation come from the batch that gave the label."""
+    if len(parts) == 1:
+        return parts[0]
+    failed = [c for c in parts if c.label == "failed"]
+    ok = [c for c in parts if c.label != "failed"]
+    facts = [c for c in ok if c.effective_label == "fact"]
+    if failed and not facts:
+        f = failed[0]
+        return replace(f, reason=f"{len(failed)} of {len(parts)} batches failed: {f.reason}")
+    pick = min(ok, key=lambda c: _LABEL_ORDER.index(c.effective_label) if c.effective_label in _LABEL_ORDER else 9)
+    items, seen = [], set()
+    for c in ok:
+        for i in c.items:
+            key = tuple(i.chunk_ids)
+            if key and key in seen:
+                continue
+            seen.add(key)
+            items.append(i)
+    flags = list(dict.fromkeys(f for c in parts for f in c.flags))
+    if failed:
+        flags.append("batch_failed")
+    return replace(pick, items=items if pick.label in ("fact", "different_quantity") else pick.items, flags=flags)
 
 
 # --- schema and messages ----------------------------------------------------------------------
@@ -256,15 +364,19 @@ def extract_message(question: str, spec: MapSpec, window=None, firms: list[str] 
             lines.append("(the research passages are listed under the first sub-question; they apply to every one)")
         else:
             lines.append(NO_PASSAGES if spec.pools.get(c.id) == 0 else KEPT_ELSEWHERE)
+        extra = spec.shared.get(c.id) or []
+        if extra:   # #272: the cell's pool passages that the firm's input listed under a sibling cell
+            lines.append("Also in this sub-question's search pool (listed for another sub-question of this firm):")
+            lines += [_chunk(h) for h in extra]
     return "\n".join(lines)
 
 
 def extract_max_tokens(provider: str) -> int:
-    """The map call's output cap: deepseek by thinking mode (as the answer), else llm.MAX_TOKENS.
-    It joins the map cache key directly; llm.request_version is unchanged."""
+    """The map call's output cap: deepseek by the map stage's effort (#272: off 20000, thinking 128000),
+    else llm.MAX_TOKENS. It joins the map cache key directly."""
     from cee.answer import llm
     if provider == "deepseek":
-        return llm.DEEPSEEK_MAX_TOKENS[settings().deepseek_thinking]
+        return llm.stage_max_tokens("map")
     return llm.MAX_TOKENS
 
 
@@ -290,7 +402,7 @@ def deepseek_extract_request(question: str, spec: MapSpec, window=None, firms=No
     from cee.answer.llm import deepseek_tool_request
     return deepseek_tool_request(EXTRACT_TOOL, "Submit the extracted cells.", extraction_schema(spec, strict=True),
                                  system_prompt(spec.research), extract_message(question, spec, window, firms),
-                                 extract_max_tokens("deepseek"))
+                                 extract_max_tokens("deepseek"), stage="map")
 
 
 def input_tokens(question: str, spec: MapSpec, window=None, firms=None) -> int:
@@ -395,8 +507,9 @@ def call_extract(question: str, spec: MapSpec, provider: str, window=None, firms
             meta["parse_flags"] = flags
     elif provider == "deepseek":
         client = client or llm.deepseek_client()
-        resp = llm.deepseek_create(client, deepseek_extract_request(question, spec, window, firms))
-        call, stop, usage, payload = llm.deepseek_tool_call(resp, EXTRACT_TOOL)
+        req = deepseek_extract_request(question, spec, window, firms)
+        resp = llm.deepseek_create(client, req)
+        call, stop, usage, payload = llm.deepseek_tool_call(resp, EXTRACT_TOOL, req)
         msg = payload if isinstance(payload, dict) else {}
         meta["stop_reason"], meta["usage"] = stop, usage
         meta["reasoning_content"] = msg.get("reasoning_content")
@@ -652,10 +765,13 @@ def input_limit(provider: str) -> int | None:
 
 
 def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, concurrency: int,
-              allow: Callable[[MapSpec], bool] | None = None, provider: str = "mock") -> list[CallResult]:
+              allow: Callable[[MapSpec], bool] | None = None, provider: str = "mock",
+              on_result: Callable[[int, CallResult], None] | None = None) -> list[CallResult]:
     """One round in parallel; results in spec order. Specs over the input limit or refused by
     `allow` (the eval's --max-calls reservation, made here in the calling thread) are skipped.
-    A ProviderStop cancels the calls not yet started, lets running ones finish, then propagates."""
+    A ProviderStop cancels the calls not yet started, lets running ones finish, then propagates.
+    #272: `on_result(i, result)` is called in the calling thread as each call lands (the Ask page draws
+    from it; Streamlit cannot draw from a worker thread)."""
     from cee.answer.llm import ProviderStop
     results: list[CallResult | None] = [None] * len(specs)
     todo = []
@@ -685,6 +801,8 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
                 i = futures[f]
                 try:
                     results[i] = f.result()
+                    if on_result is not None and results[i] is not None:
+                        on_result(i, results[i])
                 except CancelledError:
                     results[i] = CallResult(skipped=True, error="cancelled after the provider stopped the run")
                 except ProviderStop as e:
@@ -701,7 +819,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
     from cee.retrieve.planner import model_for
     return {"id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
             "chunk_ids": [h.chunk_id for h in spec.hits], "provider": provider,
-            "model": "mock" if provider == "mock" else model_for(provider), "version": EXTRACT_VERSION,
+            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": EXTRACT_VERSION,
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
             "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,
@@ -725,10 +843,13 @@ def eligible_for_research(cell: Cell, aspect) -> bool:
 def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: CallFn | None = None,
             concurrency: int | None = None, search_fn=None, as_of: dt.date | None = None,
             allow: Callable[[MapSpec], bool] | None = None, sources=None,
-            on_research: Callable[[], None] | None = None) -> EvidenceMatrix:
+            on_research: Callable[[], None] | None = None,
+            on_call: Callable[[MapSpec, list[Cell]], None] | None = None) -> EvidenceMatrix:
     """The map step: round 1, corrective re-search, round 2, then the code rules (matrix.finish).
     `on_research` (#248, the app's progress): called once, after round 1 and before the corrective
-    re-search, so the trace can show round 1 done while the re-search runs."""
+    re-search, so the trace can show round 1 done while the re-search runs.
+    #272: one call per firm x aspect cell (fan_out; batches over MAP_CALL_TOKENS, merged per cell);
+    `on_call(spec, cells)` gets each call's checked cells as it lands, in the calling thread."""
     from cee.retrieve import planner
     provider = provider or settings().llm_provider
     call = call or provider_call(provider)
@@ -736,14 +857,31 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     window = query_window(q)
     firms = [e for e, _ in planner.firm_scope(q) if e]
     by_id = {h.chunk_id: h for h in hits}
-    specs, code_cells = map_specs(q, plan, hits)
-    results = run_round(specs, call, q.question, window, firms, concurrency, allow, provider)
+    limit = settings().map_call_tokens
+    firm_specs, code_cells = map_specs(q, plan, hits)
+    specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit)
+    code_cells = code_cells + empty_cells
+    source = "mock" if provider == "mock" else "model"
+    landed: dict[int, list[Cell]] = {}
+
+    def land(specs_r: list[MapSpec], src: str):
+        def cb(i: int, r: CallResult) -> None:
+            landed[id(specs_r[i])] = _cells_of(specs_r[i], r, by_id, src)
+            if on_call is not None:
+                on_call(specs_r[i], landed[id(specs_r[i])])
+        return cb
+
+    results = run_round(specs, call, q.question, window, firms, concurrency, allow, provider, land(specs, source))
     cells: dict[str, Cell] = {c.id: c for c in code_cells}
     calls = []
+    parts: dict[str, list[Cell]] = {}
     for spec, r in zip(specs, results):
         calls.append(_call_log(spec, r, provider, input_tokens(q.question, spec, window, firms)))
-        for c in _cells_of(spec, r, by_id, "mock" if provider == "mock" else "model"):
-            cells[c.id] = c
+        got = landed.get(id(spec)) or _cells_of(spec, r, by_id, source)
+        for c in got:
+            parts.setdefault(c.id, []).append(c)
+    for cid, cs in parts.items():
+        cells[cid] = merge_batches(cid, cs)
     order = [sq.id for sq in plan.subquestions] + [f"{a.id}.research" for a in plan.aspects]
     aspects = {a.id: a for a in plan.aspects}
     # Corrective re-search (CRAG): once per not_found sub-question, every used chunk excluded.
@@ -765,17 +903,15 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
                                  "chunk_ids": [h.chunk_id for h in found]})
             if found:
                 new_hits[sq.id] = found
-    # Round 2: one re-extraction per firm over only the re-searched sub-questions with new chunks.
+    # Round 2: #272 one re-extraction per re-searched sub-question with new chunks (remap.<cell id>,
+    # batched like round 1), over only its new chunks.
     remaps: list[MapSpec] = []
-    groups: dict[str, list] = {}
     for sq in plan.subquestions:
         if sq.id in new_hits:
-            groups.setdefault(_row_key(sq.entity), []).append(sq)
-    for key, sqs in groups.items():
-        own = {sq.id: new_hits[sq.id] for sq in sqs}
-        remaps.append(MapSpec(f"remap.{key}", 2, sqs[0].entity, False,
-                              [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text) for sq in sqs],
-                              own, {sq.id: {h.chunk_id for h in own[sq.id]} for sq in sqs}))
+            own = new_hits[sq.id]
+            one = MapSpec(f"remap.{sq.id}", 2, sq.entity, False, [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text)],
+                          {sq.id: own}, {sq.id: {h.chunk_id for h in own}})
+            remaps.extend(split_cell(one, q.question, window, firms, limit))
     extra = []
     for sq_id, hs in new_hits.items():   # #247 B1: corrective hits keep their sub-question, origin tagged
         for h in hs:
@@ -783,14 +919,19 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
                 extra.append(replace(h, part_id=h.part_id or sq_id, origin="corrective"))
     by_id.update({h.chunk_id: h for h in extra})
     if remaps:
-        results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider)
+        results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider,
+                             land(remaps, "reextract"))
+        parts2: dict[str, list[Cell]] = {}
         for spec, r in zip(remaps, results2):
             calls.append(_call_log(spec, r, provider, input_tokens(q.question, spec, window, firms)))
-            for c in _cells_of(spec, r, by_id, "reextract"):
-                old = cells[c.id]
-                c.first = asdict(old)
-                c.researched, c.research_hits = True, old.research_hits
-                cells[c.id] = c
+            for c in landed.get(id(spec)) or _cells_of(spec, r, by_id, "reextract"):
+                parts2.setdefault(c.id, []).append(c)
+        for cid, cs in parts2.items():
+            c = merge_batches(cid, cs)
+            old = cells[c.id]
+            c.first = asdict(old)
+            c.researched, c.research_hits = True, old.research_hits
+            cells[c.id] = c
     m = EvidenceMatrix(q.question, rows=[], aspects=list(plan.aspects),
                        cells={k: cells[k] for k in order if k in cells}, calls=calls, research=research_log,
                        version=EXTRACT_VERSION)

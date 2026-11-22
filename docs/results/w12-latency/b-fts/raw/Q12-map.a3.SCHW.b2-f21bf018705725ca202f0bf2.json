@@ -1,0 +1,199 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.SCHW.b2",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a3.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-PR-2026-04-16-01#41",
+    "SCHW-PR-2026-10-15-01#52",
+    "SCHW-10Q-2025Q2#9",
+    "SCHW-TR-2024Q4#7",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-DECK-2026-investor-day#229",
+    "SCHW-10K-2025#19",
+    "SCHW-MONTHLY-2026-05#2",
+    "SCHW-10K-2025#187",
+    "SCHW-DECK-2026Q2#47",
+    "SCHW-DECK-2026-investor-day#239",
+    "SCHW-TR-2025Q2#15",
+    "SCHW-TR-2025Q4#16"
+  ],
+  "at": "2026-11-21T15:02:23.646429-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4937,
+    "output_tokens": 4037,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3401,
+    "reasoning_tokens": 2630,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.58
+  },
+  "wall_s": 23.09,
+  "tokens_per_s": 174.84,
+  "ttft_s": 1.58,
+  "reasoning_content": "Let me analyze the passages to find information about Schwab's scale-driven sources and channels for acquiring new clients at low cost.\n\nThe sub-question is: \"The scale-driven sources and channels Schwab cites for acquiring new clients at low cost\"\n\nLet me look through the passages for relevant information about client acquisition sources/channels.\n\nKey passages:\n- SCHW-TR-2025Q2#9: \"We attract 606,000 new-to-firm households in the first half of the year. We're continuing to win with younger investors and traders.\" Mentions younger investors and traders as channels. Digital assets through ETFs, futures, closed-end funds.\n- SCHW-TR-2026Q3#11: \"We are attracting younger clients, approximately 70% of new-to-firm retail households are Gen Z and millennials.\"\n- SCHW-TR-2025Q4#16: \"Traders come to Schwab because we provide the platforms, capabilities, education, coaching, and service... In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.\"\n- SCHW-10K-2025#19: advisory solutions, self-directed platforms, Schwab Trading Powered by Ameritrade, educational resources.\n\nThe question specifically asks about \"scale-driven sources and channels Schwab cites for acquiring new clients at low cost.\" This is about net_new_assets metric but really about the sources/channels.\n\nLet me identify facts. The passages describe channels/sources:\n1. Younger investors and traders (SCHW-TR-2025Q2#9)\n2. thinkorswim platform (SCHW-TR-2025Q4#16)\n3. Digital assets investing (SCHW-TR-2025Q2#9)\n4. Self-directed digital platforms, Schwab Trading Powered by Ameritrade (SCHW-10K-2025#19)\n5. Educational resources (SCHW-10K-2025#19)\n6. Referrals to independent RIAs through Schwab Advisor Network (SCHW-10K-2025#19)\n7. RIA business (Advisor Services) supporting advisors of all sizes (SCHW-TR-2025Q2#9)\n\nThese are facts about sources/channels for acquiring new clients.\n\nLet me create items. The sub-question is about \"scale-driven sources and channels Schwab cites for acquiring new clients at low cost.\"\n\nLet me capture each distinct channel/source as a fact item.\n\n1. Traders - thinkorswim platform: \"In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.\" (SCHW-TR-2025Q4#16)\n\n2. Younger investors and traders: \"We're continuing to win with younger investors and traders. In fact, one in six new-to-firm retail households are under the age of 24.\" (SCHW-TR-2025Q2#9)\n\n3. Digital assets: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" (SCHW-TR-2025Q2#9)\n\n4. Self-directed platforms / Schwab Trading Powered by Ameritrade (SCHW-10K-2025#19)\n\n5. Educational resources (SCHW-10K-2025#19)\n\n6. Referrals to independent RIAs through Schwab Advisor Network (SCHW-10K-2025#19)\n\n7. RIA business supporting advisors of all sizes (SCHW-TR-2025Q2#9)\n\n8. Younger clients Gen Z and millennials ~70% of new-to-firm retail households (SCHW-TR-2026Q3#11)\n\nThese are all facts about the sources/channels.\n\nI should be careful about \"scale-driven\" and \"low cost\" - the passages may not explicitly tie these to low cost. But the sub-question asks for sources/channels. The label should be fact for these statements since they state the channels/sources Schwab cites for acquiring new clients.\n\nActually, let me think about whether these are \"different_quantity\" - no, they are exactly about acquiring new clients through various channels.\n\nLet me structure the answer with multiple items.\n\nFor values: some have figures (606,000 households, one in six, 70%, half, 20% share), some don't.\n\nLet me write out each item.\n\nItem 1: Traders via thinkorswim platform\ntext: Schwab states that in 2025, about half of new-to-firm retail clients initiated access to its thinkorswim platform.\nquote: \"In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"2025\"\nscope: \"retail\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#16\"]\n\nItem 2: Younger investors and traders\ntext: Schwab states it is winning with younger investors and traders, with one in six new-to-firm retail households under the age of 24, over 30% of new-to-firm clients under age 30, and nearly 60% under age 40.\nquote: \"We're continuing to win with younger investors and traders. In fact, one in six new-to-firm retail households are under the age of 24. More than 30% of our new-to-firm clients are under the age of 30, and nearly 60% are under the age of 40.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"retail\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nItem 3: Digital assets\ntext: Schwab states investors and traders of all ages are turning to Schwab to invest in digital assets through ETFs, futures, and closed-end funds.\nquote: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nItem 4: Gen Z and millennials\ntext: Schwab states approximately 70% of new-to-firm retail households are Gen Z and millennials.\nquote: \"We are attracting younger clients, approximately 70% of new-to-firm retail households are Gen Z and millennials.\"\nvalue: \"70%\"\nunit: \"new-to-firm retail households\"\nperiod: \"2026Q3\"\nscope: \"retail\"\nchunk_ids: [\"SCHW-TR-2026Q3#11\"]\n\nItem 5: Self-directed digital platforms / Schwab Trading Powered by Ameritrade\ntext: Schwab states for self-directed clients it provides digital and software based trading platforms, real-time market data, research tools, and multichannel support; Schwab Trading Powered by Ameritrade offers the thinkorswim suite.\nquote: \"For self-directed clients, Schwab provides robust digital and software based trading platforms... Schwab Trading Powered by Ameritrade\u00ae offers access to the thinkorswim\u00ae suite, along with specialized education and 24/7 support.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nchunk_ids: [\"SCHW-10K-2025#19\"]\n\nItem 6: Educational resources\ntext: Schwab states educational resources include articles, videos, podcasts, interactive courses, live events, and tools such as Schwab Equity Ratings.\nquote: \"Educational resources include articles, videos, podcasts, interactive courses, live events, and tools such as Schwab Equity Ratings\u00ae.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nchunk_ids: [\"SCHW-10K-2025#19\"]\n\nItem 7: Referrals to independent RIAs via Schwab Advisor Network\ntext: Schwab states it provides referrals to independent registered investment advisors through the Schwab Advisor Network.\nquote: \"We also provide referrals to independent registered investment advisors through the Schwab Advisor Network\u00ae\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nchunk_ids: [\"SCHW-10K-2025#19\"]\n\nItem 8: RIA business supporting advisors\ntext: Schwab states its best-in-class RIA business supports advisors of all sizes.\nquote: \"Our best-in-class RIA business supports advisors of all sizes.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nThat's a good set. Let me also consider the 606,000 new-to-firm households figure.\n\nItem: 606,000 new-to-firm households in first half of 2025.\ntext: Schwab attracted 606,000 new-to-firm households in the first half of 2025.\nquote: \"In our retail business, we attract 606,000 new-to-firm households in the first half of the year.\"\nvalue: \"606,000\"\nunit: \"new-to-firm households\"\nperiod: \"2025Q2\" (first half of year, so H1 2025)\nActually period format - \"2025H1\"? The allowed periods are \"YYYY-MM-DD\", \"YYYYQn\", \"FYYYYY\", \"YYYY\". Hmm. First half of 2025 doesn't fit neatly. I could use \"2025Q2\" as the period it was reported (transcript period 2025-06-30). But the figure covers first half. The period field guidelines are limited. I'll put \"2025Q2\" and note in text it's first half of year.\n\nActually, this is about net new clients, not exactly net_new_assets metric. The sub-question is about \"sources and channels for acquiring new clients at low cost.\" The household count is a source/channel of client acquisition (new-to-firm households). It's relevant.\n\nLet me include it.\n\nItem 9: 606,000 new-to-firm households\ntext: Schwab attracted 606,000 new-to-firm households in its retail business in the first half of 2025.\nquote: \"In our retail business, we attract 606,000 new-to-firm households in the first half of the year.\"\nvalue: \"606,000\"\nunit: \"new-to-firm households\"\nperiod: \"2025Q2\"\nscope: \"retail\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nI think this is a good comprehensive answer. Let me also consider the \"traders bring in nine times more NNA\" statement which relates to scale/channels.\n\n\"Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.\"\n\nThis is a fact about traders as a source of net new assets.\n\nItem 10: Traders bring nine times more NNA\ntext: Schwab states traders bring in nine times more net new assets than retail clients and two times the ROCA.\nquote: \"Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#16\"]\n\nThis is relevant to scale-driven sources of new clients/assets.\n\nAlso the \"20% share of spot crypto exchange-traded products\" and crypto trading launch - relevant to channels.\n\nItem 11: Spot crypto\ntext: Schwab states its clients hold about a 20% share of spot crypto exchange-traded products and it remains on track to launch spot trading on Bitcoin and Ethereum in the first half of 2026.\nquote: \"Schwab clients hold about a 20% share of spot crypto exchange-traded products, and we remain on track to launch spot trading on Bitcoin and Ethereum in the first half of this year.\"\nvalue: \"20%\"\nunit: \"share of spot crypto exchange-traded products\"\nperiod: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#16\"]\n\nThis is a channel for acquiring clients (crypto offering).\n\nI think I have enough. Let me finalize. The label is \"fact\" since passages state the sources/channels.\n\nReason: The passages describe Schwab's sources and channels for acquiring new clients, including traders/thinkorswim, younger investors, digital assets, self-directed platforms, and referrals.\n\nI'll set differs_because to \"\" and derivation with empty operation and inputs.\n\nLet me write the final submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab states that in 2025, about half of new-to-firm retail clients initiated access to its thinkorswim trading platform.",
+            "quote": "In 2025, about half of new-to-firm retail clients initiated access to our industry-leading thinkorswim platform.",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#16"
+            ]
+          },
+          {
+            "text": "Schwab states it is winning with younger investors and traders, with one in six new-to-firm retail households under age 24, more than 30% of new-to-firm clients under age 30, and nearly 60% under age 40.",
+            "quote": "We're continuing to win with younger investors and traders. In fact, one in six new-to-firm retail households are under the age of 24. More than 30% of our new-to-firm clients are under the age of 30, and nearly 60% are under the age of 40.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab states investors and traders of all ages are turning to Schwab to invest in digital assets through ETFs, futures, and closed-end funds.",
+            "quote": "investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab states approximately 70% of new-to-firm retail households are Gen Z and millennials.",
+            "quote": "We are attracting younger clients, approximately 70% of new-to-firm retail households are Gen Z and millennials.",
+            "value": "70%",
+            "unit": "new-to-firm retail households",
+            "period": "2026Q3",
+            "scope": "retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab states it attracted 606,000 new-to-firm households in its retail business in the first half of 2025.",
+            "quote": "In our retail business, we attract 606,000 new-to-firm households in the first half of the year.",
+            "value": "606,000",
+            "unit": "new-to-firm households",
+            "period": "2025Q2",
+            "scope": "retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab states traders bring in nine times more net new assets than retail clients and two times the ROCA.",
+            "quote": "Traders are highly engaged, bringing in nine times more NNA than retail clients and two times the ROCA.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#16"
+            ]
+          },
+          {
+            "text": "Schwab states its clients hold about a 20% share of spot crypto exchange-traded products and it remains on track to launch spot trading on Bitcoin and Ethereum in the first half of 2026.",
+            "quote": "Schwab clients hold about a 20% share of spot crypto exchange-traded products, and we remain on track to launch spot trading on Bitcoin and Ethereum in the first half of this year.",
+            "value": "20%",
+            "unit": "share of spot crypto exchange-traded products",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#16"
+            ]
+          },
+          {
+            "text": "Schwab states that for self-directed clients it provides digital and software based trading platforms, real-time market data, research tools, and multichannel support, and that Schwab Trading Powered by Ameritrade offers the thinkorswim suite with specialized education and 24/7 support.",
+            "quote": "For self-directed clients, Schwab provides robust digital and software based trading platforms, real-time market data, research tools, and multichannel support. Schwab Trading Powered by Ameritrade\u00ae offers access to the thinkorswim\u00ae suite, along with specialized education and 24/7 support.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "self-directed clients",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10K-2025#19"
+            ]
+          },
+          {
+            "text": "Schwab states its educational resources include articles, videos, podcasts, interactive courses, live events, and tools such as Schwab Equity Ratings.",
+            "quote": "Educational resources include articles, videos, podcasts, interactive courses, live events, and tools such as Schwab Equity Ratings\u00ae.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10K-2025#19"
+            ]
+          },
+          {
+            "text": "Schwab states it provides referrals to independent registered investment advisors through the Schwab Advisor Network.",
+            "quote": "We also provide referrals to independent registered investment advisors through the Schwab Advisor Network\u00ae",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10K-2025#19"
+            ]
+          },
+          {
+            "text": "Schwab states its best-in-class RIA business supports advisors of all sizes.",
+            "quote": "Our best-in-class RIA business supports advisors of all sizes.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe the specific sources and channels Schwab cites for acquiring new clients, including traders via thinkorswim, younger investors, digital assets, self-directed platforms, educational resources, and RIA referrals.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

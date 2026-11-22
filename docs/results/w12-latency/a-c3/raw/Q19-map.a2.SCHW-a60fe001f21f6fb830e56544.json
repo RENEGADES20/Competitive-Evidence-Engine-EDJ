@@ -1,0 +1,91 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q3#12"
+  ],
+  "at": "2026-11-21T13:56:22.674850-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4600,
+    "output_tokens": 1768,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 3192,
+    "reasoning_tokens": 1437,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.23
+  },
+  "wall_s": 13.86,
+  "tokens_per_s": 127.56,
+  "ttft_s": 1.23,
+  "reasoning_content": "We need answer one cell for subquestion a2.SCHW: \"What communication and engagement channels do younger investors prefer?\" Need extract evidence from passages about Schwab. We need label fact/different_quantity etc. The subquestion asks communication and engagement channels younger investors prefer. There are passages: SCHW-TR-2025Q3#11 says \"meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" That's a fact: younger investors learn primarily through social media and family. Also SCHW-TR-2025Q3#12: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" That's fact: top online resource YouTube. Also deck #99 lists engagement offerings for younger investors (Schwab Starter Kit, Schwab Teen Investor Account, No/low commissions), but that's not preference channel. Deck #106: \"42% of thinkorswim users are Millennial or Gen Z, 28% growth in Trader Talks subscribers\" - Trader Talks could be engagement channel, but not preference. TR 2025Q3#41: 35 hours/week live content, engagement off charts; not specific younger preferred channels. TR 2026Q2#36: AI used for research and trading; that's channel? AI as tool. Could be fact: AI driving trading as people use AI to research and invest. But asks communication and engagement channels younger investors prefer. The strongest facts: social media and family, YouTube. Need decide label fact, items. Could include both items, maybe also AI? We should include only what passages state.\n\nNeed ensure only passages listed under subquestion? It says \"Passages, grouped by sub-question they were found for\" plus also in search pool listed for another sub-question. We can use all passages below? The search pool includes extra chunks. Use relevant.\n\nNeed output cell:\nsubquestion_id a2.SCHW\nlabel fact (since passages state what they ask in part). Items: one per figure or statement. We can have multiple items. Each item text, quote exact, chunk_ids, value \"\", unit \"\", period, scope, definition \"\".\n\nNeed period: SCHW-TR-2025Q3#11 period 2025-09-30 (point in time? transcript quarter). Use \"2025-09-30\"? The instruction period \"YYYY-MM-DD\" for point in time, \"YYYYQn\" for calendar quarter. Transcript period 2025-09-30, likely quarter? But format says 2025-09-30 maybe point in time. Use \"2025-09-30\" as period. Similarly #12. Scope: younger investors / retail? We can write \"young investors\" or \"Gen Zers, investors between ages 13 and 28\" maybe. The statement about channels: \"We know they learn about finances primarily through social media and family\" refers to Gen Zers? In passage: \"This year, nearly one-third of new-to-firm retail households at Schwab are Gen Zers... One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" So scope young investors/Gen Z. Include quote exact maybe the two sentences. Value empty, unit empty.\n\nSecond item #12: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" Scope younger investors. Need quote. Maybe also \"younger investors at Schwab are highly engaged...\". But top online resource refers \"Their\" likely younger investors. Include.\n\nShould we include \"Trader Talks\" as engagement channel? Passage deck #106: \"28% growth in Trader Talks subscribers Y/Y\" - not preference. Not ness. \"42% of thinkorswim users are Millennial or Gen Z\" not channel preference exactly platform engagement; thinkorswim is a trading platform, an engagement channel. But question asks communication and engagement channels younger investors prefer. The deck #99 lists offerings: \"Younger investors | Schwab Starter Kit, Schwab Teen Investor Account, No/low commissions\". Those are products, not channels. Could be engagement channels? No.\n\nCould include \"AI\" from TR-2026Q2#36: \"AI is absolutely benefactor in our trading levels ... as people use AI to both do research on how to position themselves and how to invest as well as use AI in more of an algorithmic fashion to drive some of their trading.\" This is a channel/tool for engagement, but not specifically younger investors. So not fact for younger investor preference. Avoid.\n\nWhat about \"social media and family\" and \"YouTube\" are two specific channels. Should label fact. The cell items can be multiple. Need reason: \"Passages state younger investors learn primarily through social media and family and use YouTube as top online resource.\" Good.\n\nNeed maybe include only item(s) as fact. We can mention no figures. Each item needs value \"\", unit \"\". Period as 2025-09-30. Scope \"young investors\" or \"Gen Z investors\". definition \"\".\n\nCould there be \"different_quantity\" for deck #99 offerings? No.\n\nWe should call submit_extraction with cells array.\n\nNeed ensure exact quote <= ~300 chars. Quote for #11: \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" That's ~232 chars. Good. Text: \"Schwab says younger investors (Gen Z) learn about finances primarily through social media and family.\" Good.\n\nQuote #12: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\" ~108 chars. Text: \"Schwab says younger investors' top online resource is YouTube.\" Good.\n\nNeed perhaps item for \"live content 35 hours/week\" as engagement channel? It says \"We put on 35 hours a week of live content for our investors about how to learn how to trade...\" That's not necessarily younger investors prefer. It is a channel (live content), but not preference. Could be fact if asks channels younger investors prefer? It says \"what we can offer the young investor in terms of support, service, education...\" and \"engagement in those types of things off charts\" but not directly preference. Hmm maybe as evidence of engagement channel. But the subquestion asks \"What communication and engagement channels do younger investors prefer?\" The passage #41 says live content engagement off charts, but not that younger investors prefer it. Avoid.\n\nCould include SCHW-DECK-2026-investor-day#106 \"Trader Talks subscribers\" as engagement channel? It doesn't say younger investors prefer. No.\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says younger investors learn about finances primarily through social media and family, and that it meets them in the channels where they seek investing information.",
+            "quote": "One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ],
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "young investors",
+            "definition": ""
+          },
+          {
+            "text": "Schwab says younger investors' top online resource is YouTube.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ],
+            "value": "",
+            "unit": "",
+            "period": "2025-09-30",
+            "scope": "young investors",
+            "definition": ""
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages directly state the channels younger investors use for investing information: social media and family, with YouTube as their top online resource.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

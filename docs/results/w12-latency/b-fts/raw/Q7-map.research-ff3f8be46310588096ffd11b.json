@@ -1,0 +1,164 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research",
+    "a10.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MCK-ADVISOR-SHORTAGE-2025#30",
+    "MCK-ADVISOR-SHORTAGE-2025#12",
+    "KITCES-WELLBEING-2023#58",
+    "KITCES-WELLBEING-2023#40"
+  ],
+  "at": "2026-11-21T14:51:31.822484-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3223,
+    "output_tokens": 3532,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1943,
+    "reasoning_tokens": 2771,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.66
+  },
+  "wall_s": 26.27,
+  "tokens_per_s": 134.45,
+  "ttft_s": 1.66,
+  "reasoning_content": "Let me analyze the passages and sub-questions. These are industry research passages, not firm-specific. The sub-questions ask about Morgan Stanley, Merrill, and Raymond James specifically, but the passages are generic industry research.\n\nThe instructions say: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo for sub-questions about how Morgan Stanley, Merrill, Raymond James each approach recruiting, these are about named firms. The passages are industry research. They don't mention these firms specifically. So the passages say nothing about these firms' own approaches.\n\nLet me check each sub-question. The passages are industry-wide research (McKinsey advisor shortage, Kitces wellbeing). None of them name Morgan Stanley, Merrill, or Raymond James.\n\nSo for all sub-questions, the answer is likely not_found (the passages say nothing about these firms).\n\nActually, let me re-read the instructions carefully. \"Firm: Industry research (no firm; firms in the question: Morgan Stanley, Merrill, Raymond James Financial)\".\n\nThe passages are about the industry in general. For aspects about a named firm's own figure, a research figure would be different_quantity (industry figure). But do the passages even give industry figures relevant to these specific sub-questions?\n\nLet me think about each:\n\na1.research: How the firm approaches advisor recruiting - the passages describe industry approaches (succession planning, recruitment of new-to-industry advisors). This is industry, not firm-specific. For a named firm's approach, this would be... hmm.\n\nActually, the passages describe what wealth managers can do in general, not what Morgan Stanley/Merrill/Raymond James do. So it's not_found for the specific firms.\n\nLet me consider whether there's any relevant content at all.\n\nThe passages:\n1. MCK-ADVISOR-SHORTAGE-2025#30: succession planning, 32% of investors switch firms, approaches to improve retention (facilitating practice transitions, retirement packages).\n2. MCK-ADVISOR-SHORTAGE-2025#12: advisor supply/demand projections, recruitment of new-to-industry advisors (entry-level talent and career switchers).\n3. KITCES-WELLBEING-2023#58: wellbeing drivers - autonomy, experience, team; money as recruiting approach.\n4. KITCES-WELLBEING-2023#40: positive wellbeing important for minimizing turnover.\n\nNone of these mention Morgan Stanley, Merrill, or Raymond James.\n\nThe sub-questions all ask about \"the firm\" (each of the three firms). Since these are firm-specific questions and the research passages don't mention any of these firms, the answer is not_found for each.\n\nWait, but let me reconsider. The sub-questions are labeled [fact], [series], etc. But the passages are all industry research. The question is about the three firms' approaches. The research passages don't provide firm-specific information.\n\nActually, for a1 through a5 and a9, a10, these are about firm approaches - not found in research passages.\n\nFor a6 (advisor headcount over time), a7 (net new assets), a8 (turnover) - these are firm-specific metrics, also not found.\n\nThe research gives industry figures: projected advisor count 290, net new advisors 30-80, etc. These are industry figures, not firm figures.\n\nShould I mark these as not_found or different_quantity? The research figures are about the industry, not the firm. The instructions say a research figure is a fact \"for an aspect about the industry, clients or advisors in general.\" But these sub-questions are about the firms, not the industry.\n\nActually, I think the cleanest answer is not_found for all, since the passages say nothing about Morgan Stanley, Merrill, or Raymond James specifically.\n\nBut wait, let me reconsider whether some sub-questions could have a different_quantity. For example, a6 asks for advisor headcount of the firm. The research gives industry advisor count projections. That's a different quantity (industry vs firm), so could be different_quantity with differs_because \"industry figure, not firm's disclosure.\"\n\nHmm, but the instruction says: \"for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo industry figures could be marked as different_quantity when they relate to a named firm's own figure. But do these passages provide industry figures that relate to the sub-questions?\n\na6: advisor headcount - industry projection 290 thousand advisors (US advisor supply). This is an industry headcount, not a firm headcount. Could be different_quantity: \"industry figure, not firm's disclosure.\"\n\na7: net new assets - no relevant figure in passages.\n\na8: turnover - no firm turnover figure. There's a 32% of investors switch firms when advisor leaves - that's about investors, not advisor turnover.\n\na1-a5: recruiting approach, targets, compensation, retention, value proposition - these are about firm approaches. Research describes industry approaches, not firm approaches. Could be different_quantity (industry approach vs firm approach)?\n\nActually this gets complicated. Let me think about what's most defensible.\n\nThe core question: \"How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?\" The passages are industry research that doesn't mention these firms.\n\nFor a research figure to be a \"different_quantity\" for a named firm's figure, there should be an industry figure that relates to the named firm's figure. \n\nFor a1 (approach to recruiting): The research describes industry recruiting approaches (recruitment of new-to-industry advisors, entry-level and career switchers). This is an industry approach, not the firm's approach. Could be different_quantity.\n\nBut honestly, I think the cleanest interpretation is: these passages are industry research and don't disclose firm-specific information. So the answer is not_found for all sub-questions.\n\nHowever, the instructions emphasize that research figures are facts \"for an aspect about the industry, clients or advisors in general.\" This suggests that when the sub-question is about the industry (not a firm), research figures are facts.\n\nBut all these sub-questions (a1-a10) are explicitly about the firms (Morgan Stanley, Merrill, Raymond James). The sub-question IDs all have \".research\" suffix, but that seems to be just the firm identifier.\n\nWait, re-reading: \"Firm: Industry research (no firm; firms in the question: Morgan Stanley, Merrill, Raymond James Financial)\".\n\nSo the \"firm\" being extracted is \"Industry research\", but the actual question is about the three named firms. The research passages are the only source.\n\nGiven the research passages don't mention any of the three firms, and don't provide firm-specific figures, I think not_found is the correct answer for all sub-questions.\n\nBut let me reconsider the different_quantity angle more carefully, because the instruction explicitly sets up research figures as different_quantity for firm figures.\n\n\"For an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nThis means: if a sub-question asks about a firm's own figure (e.g., firm's advisor headcount), and the passage gives an industry figure (industry advisor headcount), then mark as different_quantity.\n\nLet me map:\n- a6: advisor headcount over time. Passage MCK#12 gives \"Projected advisor count based on current trends: 290 [thousand]\". This is US advisor supply, industry. This is an industry advisor count, not firm's. So different_quantity possible.\n\nActually, is it worth marking? The sub-question is [series, metric advisor_headcount]. The research gives a single projection figure (290 thousand). It's not a series. And it's industry, not firm.\n\nHmm. I think I should be careful. Let me decide based on the strongest reading.\n\nGiven the complexity, I think the most accurate answer is not_found for all sub-questions, because the passages contain no information about Morgan Stanley, Merrill, or Raymond James specifically, and the sub-questions all ask about these firms.\n\nActually, wait. Let me reconsider. The instructions say \"the cells end in .research\" and \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nThis is guidance for how to label research figures. But it only applies when there IS a research figure relevant to the sub-question. If there's no relevant figure at all, it's not_found.\n\nLet me go through each sub-question and see if there's any relevant research figure:\n\na1: How the firm approaches advisor recruiting. Research: \"Recruitment of new-to-industry advisors... entry-level talent and career switchers\" - this is industry recruiting approach. Not firm-specific. The sub-question asks about the firm. Is this a \"different_quantity\"? It's a different subject (industry vs firm), not a different quantity of the same thing.\n\nHmm, actually \"approach\" isn't a quantity. different_quantity is about quantities/measures. \"a wider unit that contains the asked one... a different measure... or an industry figure for a firm's own figure.\"\n\n\"an industry figure for a firm's own figure\" - this fits when the sub-question asks for a figure and the research gives an industry figure.\n\nFor a1-a5, a10, these are qualitative (how does the firm approach/pitch/compare). The research gives industry-level qualitative descriptions. These aren't \"figures.\" So not_found is more appropriate? Or different_quantity?\n\nActually, the label different_quantity is defined as: \"no passage states the asked quantity, but one states a different, related quantity.\" It's about quantities. For qualitative sub-questions, different_quantity doesn't quite fit.\n\nLet me just go with not_found for the qualitative ones (a1-a5, a10) and consider for the quantitative ones.\n\na6: advisor headcount. Research gives \"Projected advisor count based on current trends: 290\" (thousand). This is industry. It's a related quantity (industry advisor headcount vs firm advisor headcount). Could be different_quantity.\n\nActually, I think I'm overcomplicating. The instruction also says \"When unsure between fact and different_quantity, choose different_quantity and say why.\" But that's between fact and different_quantity, not about not_found vs different_quantity.\n\nLet me settle: The passages are industry research that never mentions the three firms. The sub-questions ask about the three firms. Therefore, for every sub-question, the passages say nothing about the firms \u2192 not_found.\n\nThe different_quantity guidance is for when an industry figure is given that could serve as a proxy. But here, do the research figures actually relate to what's asked?\n\na6 asks for \"Advisor headcount over time\" for the firm. Research gives industry advisor supply projection. This is arguably a different quantity (industry vs firm). I could mark it different_quantity.\n\nBut actually, let me reconsider the whole framing. The sub-question IDs are \"a1.research\" etc., suggesting these are the \"research\" cells, and the \"firm\" is \"Industry research\". So maybe the extraction is meant to capture the research findings as facts about the industry?\n\nRe-reading the question: \"Question: How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention? Firm: Industry research (no firm; firms in the question: Morgan Stanley, Merrill, Raymond James Financial)\".\n\nSo this extraction task is specifically for \"Industry research\" as a pseudo-firm, but the actual answer to the question is about the three named firms. The research passages won't answer firm-specific questions.\n\nGiven the passages provided are all generic industry research, and none mention the three firms, I believe the correct answer is not_found for all ten sub-questions.\n\nActually, let me reconsider a10 (comparison): \"How the three firms' recruiting and retention approaches compare.\" The research doesn't compare the three firms at all. not_found.\n\nI'll go with not_found for all ten.\n\nLet me write the cells. Each needs: subquestion_id, label, items (empty for not_found), differs_because (empty), reason, derivation (empty operation, empty inputs).\n\nFor not_found, items should be empty array, differs_because \"\", reason short sentence.\n\nLet me write a reason for each, similar: \"The passages are industry-wide research and do not mention [firm name] or its [topic].\"\n\nActually, since it's one firm \"Industry research\" but question about three firms, I'll write reasons referencing that the passages don't mention the firms.\n\nLet me produce all 10 cells.\n\nFor reason, I should be specific. E.g., \"The research passages discuss industry-wide advisor trends and do not name Morgan Stanley, Merrill, or Raymond James or describe their recruiting approaches.\"\n\nLet me draft concise reasons.\n\nI'll submit now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry-wide research (McKinsey, Kitces) and do not name Morgan Stanley, Merrill, or Raymond James or describe any of those firms' recruiting approaches.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages discuss industry talent segments (entry-level, career switchers) generally, but do not state whom any of the three named firms target in recruiting.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states transition or recruiting compensation for Morgan Stanley, Merrill, or Raymond James.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages describe industry retention practices in general but do not identify incentives or programs of the three named firms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage describes the platform, product, or autonomy value proposition of any of the three named firms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages give an industry-wide US advisor supply projection (290 thousand), not advisor headcount for Morgan Stanley, Merrill, or Raymond James.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage reports net new assets attributable to advisor recruiting for any of the three named firms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses advisor turnover or departures for Morgan Stanley, Merrill, or Raymond James; the 32% figure is about investors switching, not advisor turnover.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage reports recruiting results (recruited teams or production) for any of the three named firms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages do not compare the recruiting and retention approaches of Morgan Stanley, Merrill, and Raymond James.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

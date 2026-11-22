@@ -471,11 +471,21 @@ def now_iso() -> str:
     return dt.datetime.now().astimezone().isoformat()
 
 
+def stage_version(provider: str, stage: str) -> str | None:
+    """#272: the request version of one W11 stage (plan, map, reduce): deepseek's names that stage's effort,
+    cap and streaming; anthropic / openai have one version for every call."""
+    from cee.answer import llm
+    return llm.request_version(provider, stage) if provider == "deepseek" else llm.request_version(provider)
+
+
 def timing(t0: float, usage: dict | None) -> dict:
     """#242: wall time of one paid call and its output tokens per second (None when unknown)."""
     wall = round(time.monotonic() - t0, 2)
     out = (usage or {}).get("output_tokens")
-    return {"wall_s": wall, "tokens_per_s": round(out / wall, 2) if out and wall > 0 else None}
+    out_t = {"wall_s": wall, "tokens_per_s": round(out / wall, 2) if out and wall > 0 else None}
+    if usage and usage.get("ttft_s") is not None:   # #272: streamed calls, time to first token
+        out_t["ttft_s"] = usage["ttft_s"]
+    return out_t
 
 
 def parts_of(plan) -> list | None:
@@ -559,10 +569,11 @@ class SavedPlans:
     """--reuse-plans in a mock run (#240, #248): each plan from the planner output a real run with this
     provider / model / request version saved; the planner is never called (no client is built)."""
 
-    def __init__(self, provider: str, model: str, snapshot: str, cache_dir: Path | None = None):
-        from cee.answer import llm
+    def __init__(self, provider: str, model: str, snapshot: str, cache_dir: Path | None = None,
+                 request: str | None = None):
         self.provider, self.model, self.snapshot, self.cache_dir = provider, model, snapshot, cache_dir or CACHE
-        self.request_version = llm.request_version(provider)
+        # #272: the planner stage's version, or the one named in --reuse-plans PROVIDER:MODEL@VERSION
+        self.request_version = request or stage_version(provider, "plan")
 
     def plan(self, q: dict, query):
         from cee.retrieve import planner
@@ -722,6 +733,12 @@ class RealRunner:
         self.model, self.prompt_version = model_name(provider), PROMPT_VERSION
         self.max_tokens = llm.answer_max_tokens(provider)   # #242: deepseek by thinking mode
         self.request_version = llm.request_version(provider)   # #232: "strict-1" for anthropic
+        # #272: each W11 stage's own request version and the map's model (DEEPSEEK_MODEL_MAP)
+        self.plan_version = stage_version(provider, "plan")
+        self.map_version = stage_version(provider, "map")
+        self.reduce_version = stage_version(provider, "reduce")
+        from cee.retrieve.planner import model_for
+        self.map_model = model_for(provider, "map") if provider == "deepseek" else self.model
         self.calls, self.reused, self.last_file = 0, 0, None
         self.last_stop: tuple[str | None, int | None] = (None, None)   # stop_reason, output tokens (#230)
         self.cache_dir, self.raw_dir = cache_dir, run_dir / "raw"
@@ -824,7 +841,7 @@ class RealRunner:
             answer, _ = answer_for(q["text"], query, hits, self.provider, plan=plan, matrix=matrix, info=info)
             return answer.model_dump(), "code_built", info
         key = reduce_cache_key(q, self.snapshot, self.provider, self.model, R.max_tokens(self.provider),
-                               self.request_version, matrix, query)
+                               self.reduce_version, matrix, query)
         path = self.cache_dir / f"{q['id']}-reduce-{key}.json"
         self.last_file = path.name
 
@@ -867,7 +884,7 @@ class RealRunner:
         schema, fallback = R.reduce_schema(matrix)
         meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.REDUCE_VERSION,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                "max_tokens": R.max_tokens(self.provider), "request_version": self.request_version,
+                "max_tokens": R.max_tokens(self.provider), "request_version": self.reduce_version,
                 "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
                 "enum_values": R.enum_values(schema), "at": now_iso()}
         got: dict = {}
@@ -911,7 +928,7 @@ class RealRunner:
         if not settings().planner or not fts.searchable(query) or fts.budget_tokens(query) is None:
             self.last_plan_origin = "no planner call (rules or passage plan)"
             return planner.plan_question(query, self.provider)
-        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, self.request_version)
+        path = plan_path(self.cache_dir, q, query, self.snapshot, self.provider, self.model, self.plan_version)
         if path.is_file():
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.reused += 1
@@ -929,10 +946,10 @@ class RealRunner:
         self.calls += 1   # counted before the call: a failed call still cost money
         self.made += 1
         self.last_plan_origin = (f"new planner call: {path.name} ({planner.PLANNER_VERSION}, request_version "
-                                 f"{self.request_version})")
+                                 f"{self.plan_version})")
         meta = {"question_id": q["id"], "question": q["text"], "planner_version": planner.PLANNER_VERSION,
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.request_version,
+                "max_tokens": planner.planner_max_tokens(self.provider), "request_version": self.plan_version,
                 "query": asdict(query),
                 "at": now_iso()}
         from cee.answer.llm import ProviderStop
@@ -978,8 +995,8 @@ class RealRunner:
 
         def path_of(spec) -> Path:
             if spec.id not in paths:
-                key = map_cache_key(q, self.snapshot, self.provider, self.model, self.map_max_tokens,
-                                    self.request_version, spec, window)
+                key = map_cache_key(q, self.snapshot, self.provider, self.map_model, self.map_max_tokens,
+                                    self.map_version, spec, window)
                 paths[spec.id] = self.cache_dir / f"{q['id']}-{spec.id}-{key}.json"
             return paths[spec.id]
 
@@ -1019,8 +1036,8 @@ class RealRunner:
                 self.made += 1
             meta = {"question_id": q["id"], "question": q["text"], "extract_version": extract.EXTRACT_VERSION,
                     "call_id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
-                    "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                    "max_tokens": self.map_max_tokens, "request_version": self.request_version,
+                    "snapshot": self.snapshot, "provider": self.provider, "model": self.map_model,
+                    "max_tokens": self.map_max_tokens, "request_version": self.map_version,
                     "chunk_ids": [h.chunk_id for h in spec.hits], "at": now_iso()}
             got: dict = {}
             t0 = time.monotonic()
@@ -1368,21 +1385,24 @@ def main(argv: list[str] | None = None) -> int:
     cache_dir = args.cache or CACHE
     saved_plans = None
     if args.reuse_plans:  # #240 / #248: plans only from saved planner outputs, checked before any search
-        from cee.answer import llm
         from cee.ask import model_name
         provider, _, model = args.reuse_plans.partition(":")
+        # #272: PROVIDER:MODEL@VERSION reads plans saved under another planner request version (e.g. the #250
+        # plans, ds-strict-1-think-on-a64000-p64000); without @ the planner stage's current version
+        model, _, plan_request = model.partition("@")
         if not provider or not model:
-            ap.error("--reuse-plans takes PROVIDER:MODEL, e.g. deepseek:deepseek-v4-pro")
+            ap.error("--reuse-plans takes PROVIDER:MODEL[@REQUEST_VERSION], e.g. deepseek:deepseek-v4-pro")
         if args.real and (provider != settings().llm_provider or model != model_name(provider)):
             ap.error(f"--reuse-plans {args.reuse_plans} is not this run's provider and model "
                      f"({settings().llm_provider}:{model_name(settings().llm_provider)}); nothing was called")
+        plan_request = plan_request or stage_version(provider, "plan")
         missing = missing_plans(bank, resolve, args.as_of, snapshot, provider, model,
-                                llm.request_version(provider), args.k, cache_dir)
+                                plan_request, args.k, cache_dir)
         if missing:
             print(f"--reuse-plans: no saved plan for {', '.join(missing)}; nothing was searched or called.")
             return 2
         if not args.real:
-            saved_plans = SavedPlans(provider, model, snapshot, cache_dir)
+            saved_plans = SavedPlans(provider, model, snapshot, cache_dir, request=plan_request)
     if args.real and not args.naive_tz and C.needs_time(settings().llm_provider):
         naive = naive_records(cache_dir)   # #248: priced by period, so their zone must be given
         if naive:
@@ -1414,6 +1434,8 @@ def main(argv: list[str] | None = None) -> int:
                 real = (RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir, cache_dir=args.cache)
                         if args.cache else RealRunner(settings().llm_provider, args.max_calls, snapshot, run_dir))
                 real.plans_only = bool(args.reuse_plans)
+                if args.reuse_plans:   # #272: the plans' request version (@VERSION or the planner stage's)
+                    real.plan_version = plan_request
                 real.retrieval_mode = retrieval_mode   # exp/hybrid (#249): the map's re-search searches as the mode
             else:
                 real = None

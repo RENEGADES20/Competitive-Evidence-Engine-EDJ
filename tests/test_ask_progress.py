@@ -187,7 +187,7 @@ def test_corrective_hits_join_the_answer_hits_and_the_log(monkeypatch):
 
     new = replace(hit("BAC-10Q-2026Q3#9", "BAC-10Q-2026Q3"), part_id="a1.MER", origin="corrective")
 
-    def fake_map(q, plan, hits, provider, as_of=None, on_research=None):
+    def fake_map(q, plan, hits, provider, as_of=None, on_research=None, on_call=None):
         a = Aspect("a1", "Merrill profitability.")
         m = EvidenceMatrix(q.question, rows=["MER"], aspects=[a], cells={"a1.MER": Cell(
             "a1.MER", "MER", "a1", "named", "fact", items=[Item("t", "q", ["BAC-10Q-2026Q3#9"])])})
@@ -219,7 +219,7 @@ def test_research_stage_runs_between_extract_and_synthesize(monkeypatch):
     import cee.answer.extract as extract
     seen = []
 
-    def fake_map(q, plan, hits, provider, as_of=None, on_research=None):
+    def fake_map(q, plan, hits, provider, as_of=None, on_research=None, on_call=None):
         on_research()
         seen.append("research started")
         return _research_matrix(q, hits, provider)
@@ -240,7 +240,7 @@ def test_a_failing_re_search_marks_the_research_stage(monkeypatch):
     monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
     monkeypatch.setattr(pipeline, "search", lambda q, plan=None, **kw: HITS)
 
-    def fake_map(q, plan, hits, provider, as_of=None, on_research=None):
+    def fake_map(q, plan, hits, provider, as_of=None, on_research=None, on_call=None):
         on_research()
         raise RuntimeError("search down")
     monkeypatch.setattr(extract, "run_map", fake_map)
@@ -310,3 +310,38 @@ def test_the_map_re_search_uses_the_mode_search(monkeypatch):
     pipeline.ask("Merrill profitability?", provider="mock", log=False, mode="hybrid-norerank")
     pipeline.ask("Merrill profitability?", provider="mock", log=False, mode="fts")
     assert seen == [fn, "default"]
+
+# --- #272: progressive Ask page events ------------------------------------------------------------
+
+def test_plan_then_evidence_events_in_order(monkeypatch):
+    monkeypatch.setattr(pipeline, "resolve", lambda q: Query(question=q, entities=["MER"]))
+    monkeypatch.setattr(pipeline, "search", lambda q, plan=None, **kw: HITS)   # exp/hybrid: ask() calls modes.search
+    seen = []
+    result = pipeline.ask("Merrill profitability?", provider="mock", log=False,
+                          progress=lambda s, st, t: seen.append(("stage", s, st)),
+                          on_event=lambda kind, data: seen.append((kind, data)))
+    kinds = [e[0] for e in seen if e[0] in ("plan", "evidence")]
+    assert kinds == ["plan", "evidence"]
+    plan_at = next(i for i, e in enumerate(seen) if e[0] == "plan")
+    ev_at = next(i for i, e in enumerate(seen) if e[0] == "evidence")
+    synth_at = next(i for i, e in enumerate(seen) if e[:2] == ("stage", "synthesize"))
+    assert plan_at < ev_at < synth_at                                     # plan, evidence, then the answer
+    assert seen[plan_at][1]["text"].startswith("Decomposing the question (rules, no model call)")
+    lines = seen[ev_at][1]["lines"]
+    assert seen[ev_at][1]["call"] == "map.a1.MER" and len(lines) == 1
+    assert lines[0]["chunk_ids"] == ["BAC-10K-2025#244"] and lines[0]["hits"][0].chunk_id == "BAC-10K-2025#244"
+    assert result.answer.behavior == "answer"
+
+
+def test_evidence_lines_only_cite_checked_retrieved_chunks():
+    from cee.answer.extract import CellSpec, MapSpec
+    from cee.answer.matrix import Cell, Item
+    h = HITS[0]
+    spec = MapSpec("map.a1.MER", 1, "MER", False, [CellSpec("a1.MER", "MER", None, "named", "t")],
+                   {"a1.MER": [h]}, {"a1.MER": {h.chunk_id}})
+    fact = Cell("a1.MER", "MER", "a1", "named", "fact", items=[
+        Item("cited", "q", [h.chunk_id]),
+        Item("rejected only", "q", [], rejected_ids=["NOT-RETRIEVED#1"])])
+    nf = Cell("a2.MER", "MER", "a2", "named", "not_found")
+    lines = pipeline.evidence_lines(spec, [fact, nf])
+    assert [(x["text"], x["chunk_ids"]) for x in lines] == [("cited", [h.chunk_id])]

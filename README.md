@@ -16,39 +16,93 @@ Built by a 7-person student team for the strategy function of a wealth-managemen
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/assets/source.png" alt="Source view: the stored passage behind a citation, with section, chunk ID and filing date"></td>
-    <td width="50%"><img src="docs/assets/gap.png" alt="No-evidence answer: the corpus holds no LPL Financial documents, and the sources that would fill the gap are named"></td>
+    <td width="50%"><img src="docs/assets/answer.png" alt="Ask page on the mock provider: the question about Edward Jones's financial advisors, a claim quoted from the stored 10-K with its citation chip (chunk ID and tier), and the coverage note"></td>
+    <td width="50%"><img src="docs/assets/source.png" alt="Source view: the stored passage behind a citation, highlighted among its neighbours, with section, chunk ID and filing date"></td>
   </tr>
   <tr>
+    <td align="center"><sub>Every claim carries its citations.</sub></td>
     <td align="center"><sub>Every citation opens the stored passage it came from.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/assets/gap.png" alt="No-evidence answer: the corpus holds no LPL Financial documents, and the sources that would fill the gap are named"></td>
+    <td width="50%"><img src="docs/assets/architecture.png" alt="Architecture page: the pipeline diagram with data, code and AI steps; hovering the Search box explains that firm, segment and time filters are SQL WHERE clauses"></td>
+  </tr>
+  <tr>
     <td align="center"><sub>No evidence is a valid answer: it names what is missing.</sub></td>
+    <td align="center"><sub>The Architecture page explains each module on hover or keyboard focus.</sub></td>
   </tr>
 </table>
 
-<sub>Screenshots use the mock provider (`LLM_PROVIDER=mock`), which quotes the top retrieved
-passages instead of writing an answer. They show retrieval, citations and the gap path, not
-answer quality.</sub>
+<sub>Screenshots are from the running app on the mock provider (`LLM_PROVIDER=mock`, 2026-11-21,
+snapshot `corpus-2026-11-19`). The mock quotes the top retrieved passages instead of writing an
+answer, so they show retrieval, citations and the gap path, not answer quality.</sub>
 
 ## How it works
 
 ```mermaid
 flowchart LR
     subgraph Build["Corpus (built ahead of time)"]
-        S["Public sources<br/>10-K, 10-Q, releases,<br/>decks, calls"] --> I["Ingest<br/>parse, chunk,<br/>tag segment"]
-        I --> DB[("Postgres<br/>documents, chunks,<br/>manifest")]
+        direction TB
+        S["Public sources<br/>filings, decks, calls, press, research"] --> I["Ingest<br/>parse, chunk, tag firm, segment, date"]
+        I --> DB[("Postgres<br/>documents, chunks, manifest; dated snapshots")]
     end
-    Q["Question"] --> R["Resolve firms<br/>and synonyms"]
-    R --> F["Full-text search<br/>firm and segment<br/>filters in SQL"]
+    subgraph Find["1. Find the evidence"]
+        direction TB
+        Q["Question<br/>plain language"] --> R["Resolve firms<br/>aliases, segments, time window"]
+        R --> P["Plan sub-questions<br/>aspects x firms"]
+        P --> F["Search<br/>per sub-question, filters in SQL"]
+    end
+    subgraph Read["2. Read it, decide in code"]
+        direction TB
+        X["Extract per firm<br/>fact, not disclosed, not found, other figure"] --> C["Re-search<br/>empty cells, one round"]
+        C --> M["Evidence matrix<br/>behavior, definitions, caveats"]
+    end
+    subgraph Write["3. Write and check"]
+        direction TB
+        W["Write the answer<br/>from the matrix only"] --> K["Check<br/>citations, numbers, caveats, gaps"]
+        K --> U["Streamlit app<br/>answer, sources, coverage"]
+    end
     DB --> F
-    F -->|passages found| L["One LLM call<br/>Answer JSON"]
-    F -->|nothing stored| G["Gap answer<br/>names the missing source"]
-    L --> C["Citation check<br/>only retrieved chunk IDs;<br/>caveats added by code"]
-    C --> U["Streamlit<br/>answer + source view"]
-    G --> U
+    F --> X
+    M --> W
+    subgraph Legend
+        direction TB
+        k1[("Data")]
+        k2["Code step"]
+        k3["AI step"]
+        k4["AI + code step"]
+    end
+    classDef data fill:#ECEAE3,stroke:#57534E,color:#1C2321
+    classDef code fill:#FFFFFF,stroke:#1C2321,stroke-width:2px,color:#1C2321
+    classDef ai fill:#D4F53C,stroke:#1C2321,color:#1C2321
+    classDef aicode fill:#D4F53C,stroke:#1C2321,stroke-width:2px,stroke-dasharray:5 3,color:#1C2321
+    class S,DB,Q,k1 data
+    class I,R,F,M,K,U,k2 code
+    class X,W,k3 ai
+    class P,C,k4 aicode
 ```
 
-The rules behind the design are in [CLAUDE.md](CLAUDE.md); the details in
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+The corpus is built ahead of time: public sources are parsed, cut into passages that never cross
+a section, tagged with firm, segment and date, and stored in Postgres as a dated snapshot. A
+question then goes through three phases (ADR-021):
+
+1. **Find the evidence.** Code resolves the firms, segments and time window from
+   `config/entities.yaml`. The planner (AI) names the aspects the question asks about, and code
+   expands firms x aspects into sub-questions. Each sub-question is searched with the firm, segment
+   and time filters as SQL `WHERE` clauses (full-text search on `main`, hybrid on `exp/hybrid`).
+2. **Read it, decide in code.** One extraction call per firm (AI) fills a cell per sub-question:
+   fact, not disclosed, not found, or a different quantity. Cells left empty get one corrective
+   re-search and re-extraction. Code builds the evidence matrix and decides the answer's
+   behavior, the metric definitions (`config/metric_definitions.yaml`), what may be computed, the
+   caveats and the gaps.
+3. **Write and check.** One reduce call (AI) writes the answer from the matrix only, or code
+   writes it when no call is needed (a refusal, nothing to cite). Code then checks that every
+   citation is a retrieved chunk ID (unmatched ones are flagged, not dropped), checks the figures,
+   inserts the caveats and names each gap with the source that would fill it.
+
+**AI reads and writes; code decides and checks.** The app's Architecture page shows the same
+diagram and explains each module on hover. The rules behind the design are in
+[CLAUDE.md](CLAUDE.md); the details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Example: a firm that does not file on its own
 
@@ -62,7 +116,7 @@ Resolved   firms: MER
 Filter     entity = MER  OR  (entity = BAC AND segment IN ('GWIM', 'Merrill'))   -- SQL, not prompt
 Citation   BAC-10K-2025#246   "BAC 10-K - GWIM segment 2025-12-31 [filing]"
 Caveat     GWIM is not Merrill: the segment also includes Bank of America Private Bank.
-           (inserted by code from config/entities.yaml; in progress, #40)
+           (inserted by code from config/entities.yaml)
 ```
 
 The label always reads "BAC 10-K - GWIM segment", never "Merrill 10-K", and BAC passages
@@ -72,7 +126,7 @@ engine answers "No evidence" and lists the filings that would close the gap
 
 ## Status
 
-As of 2026-11-19.
+As of 2026-11-21.
 
 **Corpus.** Snapshot `corpus-2026-11-19` (#216) holds all 224 documents in `main`'s manifest
 and 21,161 passages: SEC filings, Form ADV Part 2A brochures (#55), supplements, monthly
@@ -107,7 +161,7 @@ budget, question planner, per-part gaps, headcount sources), the same 30 questio
 **24/30** on `corpus-2026-11-19` (real run on 2026-11-19, scored by the TL agent; tier 1: 14/18;
 ten questions read twice in review: the first read gave 25/30, the second read failed Q19 and the
 TL kept it as FAIL): [docs/results/w10-report.md](docs/results/w10-report.md);
-next steps: [docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
+W11 (map-reduce: one extraction call per firm, corrective re-search, one reduce call) with DeepSeek `deepseek-v4-pro`, thinking on, on the same snapshot: **18/30** adjudicated (tier 1: 11/18; real run on 2026-11-20; blind full read by four scorers 19/30, a first scorer that truncated passages 20/30; the second read in review failed Q12). Three outputs were cut at the 64,000-token output cap (Q20, Q21 here; Q27 in hybrid). The same plans with hybrid-norerank on `exp/hybrid`: 22/30 adjudicated (blind 21/30, tier 1 13/18; [report](https://github.com/RENEGADES20/Competitive-Evidence-Engine-EDJ/blob/4d656d8/evals/hybrid-eval/corpus-2026-11-19/deepseek/report.md), merged into `exp/hybrid` as 4d656d8, PR #268). The two scored runs made 219 new DeepSeek calls, about $14.73 (fts run $6.59, hybrid run $7.84, 22 planner calls $0.31; [cost section](docs/results/w11-report.md#cost)). The DeepSeek baseline before map-reduce (#243) scored 15/30: [docs/results/w11-report.md](docs/results/w11-report.md); next steps: [docs/NEXT.md](docs/NEXT.md). The "PASS 7 / FAIL 21" in the 2026-10-20 log is the retrieval
 check on snapshot `corpus-2026-10-18`, not a gate score.
 
 **Retrieval.** Postgres full-text search is the default on `main`. A hybrid mode (keyword +
@@ -142,9 +196,10 @@ powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 |---|---|
 | `src/cee/ingest/` | EDGAR fetch, PDF parser, chunking, loading, manifest checks |
 | `src/cee/retrieve/fts.py` | Entity resolution and full-text search with SQL hard filters |
-| `src/cee/answer/` | Answer JSON, the single LLM call (mock / anthropic / openai / deepseek), citation checks |
+| `src/cee/retrieve/planner.py` | Question planner: aspects, sub-questions (firms x aspects) |
+| `src/cee/answer/` | Per-firm extraction (map), evidence matrix, reduce call, citation and number checks; providers mock / anthropic / openai / deepseek |
 | `src/cee/ask.py` | The end-to-end pipeline, logs every query |
-| `src/cee/app/streamlit_app.py` | Web interface and source view |
+| `src/cee/app/` | Web interface: Ask, source view, Coverage, Architecture (`architecture.py` holds the module text) |
 | `db/schema.sql`, `docker-compose.yml` | Database |
 | `scripts/*.ps1` | `restore`, `build-snapshot`, `ingest` |
 | `tests/` | Offline tests (`python -m pytest -q`) |
@@ -156,10 +211,11 @@ powershell -ExecutionPolicy Bypass -File scripts\restore.ps1
 | [CLAUDE.md](CLAUDE.md) | Ground rules, architecture invariants, which spec to read, branch rules |
 | [PLANS.md](PLANS.md) | ExecPlan template used for every task |
 | [docs/BRIEF.md](docs/BRIEF.md) | What we are building, use cases, firms, gates |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline, schema draft, retrieval modes, reference projects |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | W11 pipeline, schema, retrieval modes, reference projects |
 | [docs/TEAM.md](docs/TEAM.md) | Roles and week-by-week tasks |
-| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting, Gate 4 run |
+| [docs/RUN.md](docs/RUN.md) | Install, daily use, snapshots, troubleshooting, real-model and retrieval-mode runs |
 | [docs/results/gate4-report.md](docs/results/gate4-report.md) | Gate 4 results: 30 answers with citations, scores, known gaps |
+| [docs/results/w11-report.md](docs/results/w11-report.md) | W11 map-reduce results (fts), cost, comparison with hybrid |
 | [docs/NEXT.md](docs/NEXT.md) | What to build next |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Status log and weekly scores |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture decision records (ADRs) |

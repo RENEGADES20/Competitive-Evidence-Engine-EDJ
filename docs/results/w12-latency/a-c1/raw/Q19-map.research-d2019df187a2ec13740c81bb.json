@@ -1,0 +1,238 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "CERULLI-GWT-2025#1",
+    "BOFA-PB-STUDY-2026#15",
+    "BOFA-PB-STUDY-2024#0",
+    "BOFA-PB-STUDY-2024#7"
+  ],
+  "at": "2026-11-21T13:05:17.589844-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3499,
+    "output_tokens": 3877,
+    "cache_hit_tokens": 896,
+    "cache_miss_tokens": 2603,
+    "reasoning_tokens": 2430,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.41
+  },
+  "wall_s": 27.05,
+  "tokens_per_s": 143.33,
+  "ttft_s": 2.41,
+  "reasoning_content": "Let me analyze the passages and extract cells for each sub-question.\n\nThe passages available are all research passages (BOFA-PB-STUDY and CERULLI). Note: the sub-questions a1-a8 all refer to the same research passages.\n\nLet me extract facts from the passages for each sub-question.\n\na1.research [fact]: What product, service, and channel preferences do younger investors and clients under 40 express?\n\nFrom CERULLI: \"While older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.\"\n\nFrom BOFA-PB-STUDY-2026#15: \"forty seven percent 47% of young investors use AI to research companies or markets, and eighty seven percent 87% are comfortable with advisors using AI to help manage portfolios, yet sixty five percent 65% still prefer to receive investment advice from a human advisor.\" Also \"forty two percent 42% of younger respondents own art; among those who do not, seventy five percent 75% are interested in own art and ninety four percent 94% own collectables.\" Also \"Percentage of portfolio allocated to socks by generation: Gen Z / Millennials: 32 percent younger investors; Gen X / Baby Boomers: 58 percent older investors\"\n\nFrom BOFA-PB-STUDY-2024#0: Millennials and Gen Z allocate three times more to alternative investments. Greatest opportunities for growth: age 21-43: 31% real estate, 28% crypto/digital assets, 26% private equity, 24% personal company/brand, 22% direct investment into companies, 21% companies focused on positive impact, 17% bonds.\n\nThese are facts about younger investors' preferences.\n\na2.research [fact]: communication and engagement channels. Nothing specific about channels in passages. Actually maybe AI use for research is more a1. Nothing about channels. not_found.\n\na3.research [fact]: advice and service models, self-directed vs full-service. CERULLI: \"younger investors prefer to retain a greater degree of control of at least part of their investing lives.\" Also BOFA 65% prefer human advisor. These could be facts.\n\na4.research [series]: growth in younger investors - nothing reported. not_found.\n\na5-a8: about Edward Jones and competitors - nothing in these research passages about Edward Jones specifically. not_found.\n\nLet me structure the cells.\n\nFor a1, I'll list multiple items (facts).\n\nFor a3, items about advice/service models.\n\nLet me carefully craft.\n\na1 items:\n1. Younger investors prefer to retain greater degree of control over part of investing lives (CERULLI).\n2. 47% of young investors use AI to research companies/markets; 87% comfortable with advisors using AI; 65% prefer human advisor (BOFA 2026). This might span a1 and a3. I'll put the human advisor preference in a3, and AI in a1.\n3. 42% own art; 75% interested; 94% own collectables.\n4. Gen Z/Millennials allocate 32% of portfolio to stocks vs 58% older.\n5. Millennials and Gen Z allocate three times more to alternative investments.\n6. Greatest opportunities for growth (21-43): real estate 31%, crypto 28%, private equity 26%, personal company/brand 24%, direct investment 22%, positive impact 21%, bonds 17%.\n\na3 items:\n1. Younger investors prefer greater control (CERULLI).\n2. 65% still prefer to receive investment advice from a human advisor (BOFA 2026).\n3. 87% comfortable with advisors using AI to help manage portfolios.\n\nActually let me be careful about which sub-question each belongs to. a1 is product/service/channel preferences. a3 is advice/service models including self-directed vs full-service.\n\nThe \"human advisor\" preference is advice model -> a3. The \"control\" preference is service model -> a3. AI use for research and comfort with AI managing portfolios -> could be a1 (product/channel) or a3. AI managing portfolios is a service model. I'll put AI comfort in a3 perhaps, and AI use for research in a1.\n\nActually, let me not over-engineer. I'll distribute reasonably.\n\nLet me define:\n\na1.research:\n- Item 0: Millennials and Gen Z allocate three times more of portfolios to alternative investments than older generations. value \"\" (it's a ratio, three times). Actually \"three times more\" - value \"3\", unit \"times\"? Hmm. I'll put value \"3x\" or just note. Let me put value \"\" and text describes. Actually value field is \"figure as printed\". \"Three Times More\" - value \"3\", unit \"times\". I'll do value \"3\", unit \"times more than older generations\". Keep simple: value \"\", unit \"\".\n\nLet me be practical and put figures where clear.\n\nLet me write items carefully.\n\nItem for BOFA 2024 #0:\n- text: \"Millennials and Gen Z allocate three times more of their investment portfolios to alternative investments than older generations.\"\n- quote: \"Millennials and Gen Z Allocate Three Times More of Their Investment Portfolios to Alternative Investments Than Older Generations\"\n- value: \"3\", unit: \"times\", period: \"\", scope: \"\" (it's about investors generally, not a firm). Actually scope is about the part of firm; here it's research about investors. I'll leave scope \"\".\n\n- text: \"Among investors ages 21-43, the greatest opportunities for growth are real estate investments (31%), crypto/digital assets (28%), private equity (26%), personal company/brand (24%), direct investment into companies (22%), and companies focused on positive impact (21%).\"\n- quote from #0.\n- value \"\", unit \"\", period \"\", scope \"ages 21-43\".\n\nItem for #15:\n- 47% of young investors use AI to research companies/markets.\n- 87% comfortable with advisors using AI.\n- 42% own art; 75% interested; 94% own collectables.\n- Gen Z/Millennials 32% stocks vs older 58%.\n\nItem CERULLI:\n- younger investors prefer greater control.\n\na3 items:\n- 65% still prefer human advisor (BOFA #15).\n- 87% comfortable with advisors using AI to manage portfolios.\n- younger investors prefer greater control (CERULLI). Hmm I already put control in a1. I could put in a3 instead since it's about service model. Let me put \"greater control\" in a3, and keep a1 to product preferences.\n\nActually \"greater control\" is about self-directed vs full-service, which is a3. Let me put it in a3.\n\nLet me finalize.\n\na2: not_found - no communication channels mentioned.\n\na4: not_found - no growth figures for younger investors/clients reported by firms.\n\na5: not_found (no Edward Jones info).\n\na6: not_found.\n\na7: not_found.\n\na8: not_found (no competitor or Edward Jones disclosures).\n\nNow, all items must have chunk_ids. The chunk ids are \"CERULLI-GWT-2025#1\", \"BOFA-PB-STUDY-2026#15\", \"BOFA-PB-STUDY-2024#0\", \"BOFA-PB-STUDY-2024#7\".\n\nLet me build the cells.\n\nFor a1, multiple items.\n\nLet me write final cells.\n\nFor each item, definition \"\" (no firm definition given). scope \"\" mostly.\n\nLet me write.\n\na1 items:\n\n1. text: \"Younger investors prefer to retain a greater degree of control of at least part of their investing lives, while older investors tend to be more advisor-reliant.\"\nActually this is more a3. Let me put in a3.\n\nHmm, but a1 also includes \"channel preferences\". Control isn't really channel. It's service model. I'll put it in a3.\n\na1 items (product/service/channel preferences):\n- Alternative investments: three times more allocation.\n- Greatest opportunities for growth list (21-43).\n- Stock allocation: Gen Z/Millennials 32% vs Gen X/Baby Boomers 58%.\n- Art/collectables: 42% own art, 75% interested, 94% own collectables.\n- AI to research: 47% use AI.\n\na3 items (advice/service models):\n- 65% prefer human advisor.\n- 87% comfortable with advisors using AI to manage portfolios.\n- younger investors prefer greater control.\n\nLet me write out all.\n\nNow for values/units/periods. These research figures don't have specific periods (they're study years). Period \"\" is fine.\n\nLet me construct.\n\nFor a1 item 2 (greatest opportunities list), I'll quote part.\n\nLet me write the submit_extraction call.\n\nI'll write carefully with proper quotes.\n\nQuote for alternative: \"Millennials and Gen Z Allocate Three Times More of Their Investment Portfolios to Alternative Investments Than Older Generations\" - this is from #0.\n\nQuote for growth list from #0: \"31 percent are Real estate investments\\n28 percent are Crypto/digital assets\\n26 percent is Private equity\\n24 percent is Personal company/brand\\n22 percent are Direct investment into companies\\n21 percent are Companies focused on positive impact\"\n\nQuote for stocks from #15: \"Gen Z / Millennials: 32 percent younger investors\\nGen X / Baby Boomers: 58 percent older investors\"\n\nQuote for art/collectables from #15: \"forty two percent\\n42%\\nof younger respondents own art; among those who do not,\\nseventy five percent\\n75%\\nare interested in own art and\\nninety four percent\\n94%\\nown collectables.\"\n\nQuote for AI research from #15: \"forty seven percent\\n47%\\nof young investors use AI to research companies or markets\"\n\nQuote for human advisor: \"sixty five percent\\n65%\\nstill prefer to receive investment advice from a human advisor.\"\n\nQuote for AI comfort: \"eighty seven percent\\n87%\\nare comfortable with advisors using AI to help manage portfolios\"\n\nQuote for control from CERULLI: \"While older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.\"\n\nNow build cells.\n\nFor a1, I'll combine AI research as one item, and note it's about research. Actually AI use to research is a tool/channel. Could fit a1. Fine.\n\nLet me write all items.\n\nI'll set value fields:\n- Alternative: value \"3\", unit \"times\".\n- Growth list: value \"\", unit \"\".\n- Stocks: value \"32%\", unit \"% of portfolio\" - but there are two figures (32 and 58). I'll describe in text and put value \"32\", unit \"% (Gen Z/Millennials)\". Actually simpler: value \"\", text covers both.\n- Art: value \"\" (multiple figures).\n- AI research: value \"47%\", unit \"% of young investors\".\n- Human advisor: value \"65%\", unit \"%\".\n- AI comfort: value \"87%\", unit \"%\".\n- Control: value \"\", unit \"\".\n\nI'll keep values simple where multiple figures.\n\nLet me finalize and submit.\n\nreason fields concise.\n\nFor not_found cells, items empty, differs_because \"\", reason.\n\nLet me write the tool call now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Millennials and Gen Z allocate three times more of their investment portfolios to alternative investments than older generations.",
+            "quote": "Millennials and Gen Z Allocate Three Times More of Their Investment Portfolios to Alternative Investments Than Older Generations",
+            "value": "3",
+            "unit": "times",
+            "period": "",
+            "scope": "Millennials and Gen Z vs older generations",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2024#0"
+            ]
+          },
+          {
+            "text": "Among investors ages 21-43, the greatest opportunities for growth are real estate investments (31%), crypto/digital assets (28%), private equity (26%), personal company/brand (24%), direct investment into companies (22%), and companies focused on positive impact (21%).",
+            "quote": "31 percent are Real estate investments\n28 percent are Crypto/digital assets\n26 percent is Private equity\n24 percent is Personal company/brand\n22 percent are Direct investment into companies\n21 percent are Companies focused on positive impact",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "ages 21-43",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2024#0"
+            ]
+          },
+          {
+            "text": "Gen Z and Millennial younger investors allocate 32 percent of their portfolio to stocks, compared with 58 percent for Gen X and Baby Boomer older investors.",
+            "quote": "Gen Z / Millennials: 32 percent younger investors\nGen X / Baby Boomers: 58 percent older investors",
+            "value": "32%",
+            "unit": "percent of portfolio allocated to stocks",
+            "period": "",
+            "scope": "Gen Z / Millennials",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
+          },
+          {
+            "text": "42% of younger respondents own art; among those who do not, 75% are interested in owning art, and 94% own collectables.",
+            "quote": "forty two percent\n42%\nof younger respondents own art; among those who do not,\nseventy five percent\n75%\nare interested in own art and\nninety four percent\n94%\nown collectables.",
+            "value": "42%",
+            "unit": "percent of younger respondents",
+            "period": "",
+            "scope": "younger respondents",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
+          },
+          {
+            "text": "47% of young investors use AI to research companies or markets.",
+            "quote": "forty seven percent\n47%\nof young investors use AI to research companies or markets",
+            "value": "47%",
+            "unit": "percent of young investors",
+            "period": "",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The research passages state product and asset-class preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states communication or engagement channel preferences of younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "65% of young investors still prefer to receive investment advice from a human advisor.",
+            "quote": "sixty five percent\n65%\nstill prefer to receive investment advice from a human advisor.",
+            "value": "65%",
+            "unit": "percent of young investors",
+            "period": "",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
+          },
+          {
+            "text": "87% of young investors are comfortable with advisors using AI to help manage portfolios.",
+            "quote": "eighty seven percent\n87%\nare comfortable with advisors using AI to help manage portfolios",
+            "value": "87%",
+            "unit": "percent of young investors",
+            "period": "",
+            "scope": "young investors",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#15"
+            ]
+          },
+          {
+            "text": "Younger investors prefer to retain a greater degree of control of at least part of their investing lives, while older investors tend to be more advisor-reliant.",
+            "quote": "While older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "younger vs older investors",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state younger investors' preferences for human advice, AI-enabled management, and self-directed control.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage reports growth in younger investors or clients under 40 for any firm.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry research and say nothing about Edward Jones's offerings.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage states Edward Jones's strategy or priorities for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage describes competitor offerings or strategies for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage compares Edward Jones's disclosures or initiatives for younger investors with competitors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

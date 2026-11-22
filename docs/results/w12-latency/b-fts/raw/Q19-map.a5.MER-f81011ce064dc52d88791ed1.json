@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a5.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:05:17.555843-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2025,
+    "output_tokens": 622,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 873,
+    "reasoning_tokens": 483,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.55
+  },
+  "wall_s": 6.62,
+  "tokens_per_s": 93.96,
+  "ttft_s": 1.55,
+  "reasoning_content": "Let me analyze this. The question asks about Edward Jones's offerings and younger investors' preferences, but the firm is Merrill (MER). The sub-question is about how Edward Jones's current offerings align with younger investors' preferences.\n\nThe passages provided are about Merrill/Bank of America, not Edward Jones. There's one chunk about BAC press, segment GWIM, which discusses digitally active Private Bank core relationships, and various awards including \"Top Next Generation Advisors\" and \"Top 40 Advisors Under 40\".\n\nThe question is about Edward Jones, but this is the Merrill firm. Wait, the sub-question asks \"How do Edward Jones's current offerings align with younger investors' preferences?\" This is a comparison question where we're extracting evidence about Merrill.\n\nActually, re-reading the instructions: \"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms.\" The firm is Merrill (MER). The sub-question asks about Edward Jones's offerings. But the passages are about Merrill.\n\nThe passage mentions \"Top Next Generation Advisors (2025)\" and \"Top 40 Advisors Under 40 List (2025)\" - these relate to younger advisors, not younger investors. This is about younger advisors, not younger investors' preferences.\n\nThere's also \"digitally active Private Bank core relationships\" which relates to digital activity.\n\nNone of this is about Edward Jones's offerings aligning with younger investors' preferences. The passage is about Merrill, not Edward Jones.\n\nSo the answer should be not_found - the passages say nothing about Edward Jones's offerings aligning with younger investors' preferences.\n\nActually, wait - let me think about whether \"digitally active\" or \"younger advisors\" relates. The sub-question asks about younger investors' preferences. The passage mentions \"Next Generation Advisors\" and \"Advisors Under 40\" - these are about advisors, not investors. That's a different quantity/person.\n\nSo there's nothing about younger investors' preferences or Edward Jones's offerings. The label should be not_found.\n\nActually, could \"digitally active\" be relevant to younger investors' preferences? Digital engagement is often associated with younger investors, but the passage doesn't connect it to younger investors. It's just about digitally active Private Bank core relationships. That's a different measure and doesn't mention younger investors.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passage is about Merrill/Bank of America and mentions younger advisors (Next Generation Advisors, Advisors Under 40) and digitally active Private Bank relationships, but says nothing about Edward Jones's offerings or younger investors' preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

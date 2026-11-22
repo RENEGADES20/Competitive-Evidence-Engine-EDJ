@@ -1,0 +1,128 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a8.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#304",
+    "EDJ-10Q-2026Q2#38",
+    "EDJ-10K-2025#290",
+    "EDJ-10Q-2026Q1#39",
+    "EDJ-10K-2025#313",
+    "EDJ-10Q-2025Q3#54",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10Q-2026Q1#69",
+    "EDJ-10Q-2025Q2#112",
+    "EDJ-10Q-2026Q2#39",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q3#85",
+    "EDJ-10Q-2025Q2#39",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#15",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10K-2025#16",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#30",
+    "EDJ-10K-2025#238",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#107",
+    "EDJ-10Q-2025Q2#17",
+    "EDJ-10Q-2025Q3#19",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2026Q1#78",
+    "EDJ-10Q-2026Q2#11",
+    "EDJ-10Q-2026Q2#58",
+    "EDJ-10K-2025#75",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10K-2025#74",
+    "EDJ-10K-2025#8",
+    "EDJ-10K-2025#73",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2026Q2#22",
+    "EDJ-10Q-2025Q3#42"
+  ],
+  "at": "2026-11-21T13:56:22.654333-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15682,
+    "output_tokens": 3566,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 14658,
+    "reasoning_tokens": 3240,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.16
+  },
+  "wall_s": 23.17,
+  "tokens_per_s": 153.91,
+  "ttft_s": 1.16,
+  "reasoning_content": "We need answer one cell for sub-question a8.EDJ comparison. Need extract evidence about Edward Jones disclosures/initiatives for younger investors. Compare to competitors? The sub-question asks how Edward Jones disclosures and initiatives for younger investors compare to competitors. We only extract evidence about this firm, not compare. Need label fact/different_quantity/not_disclosed/not_found. Need identify passages relevant.\n\nKey passages:\nEDJ-10K-2025#88: initiatives include targeting new clients: High Net Worth; Workplace; and a new digital platform, focused on attracting and retaining Next Generation investors. This is fact for \"initiatives for younger investors\" \u2014 new digital platform focused on Next Generation investors. It's not comparison to competitors but evidence of initiative. Sub-question asks comparison of disclosures and initiatives. The passage states initiative. Could label fact with text. No figure. period 2025-12-31? It's 10-K period. scope? \"new digital platform\" initiative.\n\nEDJ-10K-2025#304: strategic risks competition ... generational wealth transfer, changing client demographics, preferences and values... initiatives to deliver enhanced value. General, no specific younger investors.\n\nEDJ-10K-2025#56: competition, generational wealth transfer, changing client expectations, demographics preferences. General.\n\nEDJ-10K-2025#26: competition from broker-dealers etc. no younger.\n\nEDJ-TRADE-2026-08-18-IN-01#2: Quicken minority stake, integrating PFM, still determining deployment. Could be relevant to younger? Not explicitly younger. It is initiative, but not younger investors. It's a trade article. Could be \"initiative for clients\" not specifically younger.\n\nEDJ-TRADE-2026-09-30-WM-01#1: workplace retirement platform, not younger specifically.\n\nEDJ-10K-2025#15: digital tools, not younger.\n\nEDJ-10K-2025#16: understanding needs of clients and investors, not younger.\n\nEDJ-10K-2025#33: BRGs, serve clients as demographics change. General.\n\nNeed possibly \"disclosures\" for younger investors: no specific disclosure metrics on younger investors. The passages don't give comparison to competitors. The closest is initiative \"new digital platform focused on attracting and retaining Next Generation investors\" and mentions generational wealth transfer as risk. Also competition from firms with digital/robo-advice. For comparison, no direct competitor comparison data. We should label maybe fact for initiative, and maybe not_found/not_disclosed for comparison? But one cell per sub-question. Need include items for facts/different quantities. If a sub-question asks comparison and no passage gives comparative data, could label not_found? But there are facts about initiatives, and passages mention competition. Need choose label? The cell label can be fact if a passage states what sub-question asks in full or part. The sub-question asks \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\" No passage states comparison to competitors' younger-investor disclosures/initiatives. It does state Edward Jones's initiative (Next Generation digital platform) and general competitive landscape. But no comparative. Could label not_found? However label not_found = passages say nothing about it. They say something about initiatives for younger (Next Generation) but nothing about competitors' comparable initiatives/disclosures. Could be fact partial: it states Edward Jones initiative but not comparison. \"Partial is still a fact (some periods, a narrower group or sample, one of several figures)\" Partial for scope could be one side of comparison. The instructions: fact if passage states what sub-question asks for this firm, in full or in part. Since asks comparison, firm-specific disclosure/initiative is part. So label fact with items for EDJ initiative and competitive context? But comparison to competitors requires competitor info, which is not our firm. We shouldn't include competitor data. But the passage can state Edward Jones competes with firms providing robo-advice etc. That isn't about younger investors. Could include as fact? It doesn't answer younger comparison.\n\nNeed maybe item from EDJ-10K-2025#88: \"Edward Jones has a new digital platform focused on attracting and retaining Next Generation investors.\" That's direct fact. It doesn't quantify. Another item from #304 or #56: \"Edward Jones identifies generational wealth transfer and changing client demographics/preferences as strategic risks and competitive pressures.\" This is fact about disclosure (risk disclosure) related to younger/generational. Could include. But no competitor comparison.\n\nCould also include #26? \"Edward Jones competes with firms of all sizes providing enhanced digital experiences, robo-advice, zero commissions, fintech\" \u2014 that's competitor landscape but not younger. Maybe different_quantity? Hmm.\n\nSub-question specifically \"disclosures and initiatives for younger investors compare to those of competitors\". Evidence:\n- EDJ discloses a Next Generation digital platform initiative.\n- EDJ risk factors mention generational wealth transfer and changing client preferences, but no metrics or dedicated younger-investor disclosures.\n- No passage names competitor initiatives for younger investors.\n\nWe can label fact with one item for the Next Generation platform and one for risk disclosure on generational wealth transfer. The comparison part absent; maybe reason says \"Passages state Edward Jones's Next Generation initiative and generational-transfer risk disclosure, but no competitor comparison.\" But if label fact, items only fact/different_quantity. The cell can contain fact items. Maybe no item for missing comparison. The label indicates overall? Hmm.\n\nCould label not_disclosed because passages show firm does not report younger-investor-specific metrics or comparison? But it does report initiative. The label not_disclosed = passages show the firm does not report it (they say so, or report surrounding figures without it). The \"it\" is comparison. They don't report comparison. But they do report initiative. If no direct comparison, not_disclosed could be appropriate? But sub-question asks compare disclosures and initiatives, not a quantity. It may be not_found for competitor comparison. But we have facts. The tool expects one label per subquestion. Usually for comparison questions, if no comparison data, label not_found? Need infer from task style: \"You extract evidence about one firm from passages... for a question about wealth-management firms. Code has split the question... return cells.\" They likely expect each cell labels evidence. For comparison sub-question, passages include competitor mentions? Here only EDJ. If passages don't contain competitor disclosures, not_found? But the sub-question asks \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\" Since we only extract EDJ evidence, and no passage compares, but there is firm initiative. Maybe label fact due to partial. The \"fact\" item can be \"Edward Jones is developing a new digital platform focused on attracting and retaining Next Generation investors\" and \"Edward Jones cites generational wealth transfer and changing client demographics/preferences as strategic risks.\" These are disclosures/initiatives for younger investors. The comparison to competitors is absent but the subquestion's firm side is stated. I'd choose fact. Need not include competitor claims.\n\nNeed include exact quote <=300 chars. Chunk ids exact.\n\nLet's craft items:\n1. text: \"Edward Jones states that its initiatives include a new digital platform focused on attracting and retaining Next Generation investors.\" quote from #88: \"and a new digital platform, focused on attracting and retaining Next Generation investors.\" value \"\" unit \"\" period \"2025-12-31\" scope \"New digital platform initiative\" definition \"\" chunk IDs [\"EDJ-10K-2025#88\"].\nIs period 2025-12-31 (point in time 10-K). Fine.\n\n2. text: \"Edward Jones identifies generational wealth transfer and changing client demographics, preferences and values as strategic risks and competitive pressures shaping its initiatives.\" quote from #304: \"competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes\" value \"\" unit \"\" period \"2025-12-31\" scope \"\" definition \"\" chunk [\"EDJ-10K-2025#304\"].\nThis is a disclosure about younger investors? It mentions generational wealth transfer and demographics, not explicitly younger. It's related. Maybe include.\n\n3. Could include from #56: \"Edward Jones says its ability to compete may be adversely impacted by generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.\" Quote. This is risk disclosure. Could duplicate. Maybe one item enough. But multiple periods? same.\n\n4. Maybe EDJ-TRADE Quicken: \"Edward Jones announced a minority stake in Quicken to integrate personal financial management capabilities into Edward Jones, with deployment strategy still being determined.\" This is an initiative but not explicitly younger. It could be relevant to younger investor preferences for digital tools. But not named younger. Should we include? It is a fact about initiative; but sub-question asks younger investors. \"Quicken\" not younger. Including might be overreach. However \"personal finance app\" might target digital. But no younger. I'd avoid or include as different_quantity? No.\n\nMaybe \"new digital platform\" is the only direct younger initiative. The rest is general.\n\nNeed maybe \"not_disclosed\" for specific younger-investor disclosures/metrics? The passages don't show metrics. But if label fact, no not_disclosed items. That's okay.\n\nNeed consider \"comparison\" and label. Maybe the correct label is not_found because no passage compares Edward Jones to competitors on younger investors. But then ignore the Next Generation fact? The instructions: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" Here no quantity. \"fact: a passage states what the sub-question asks for this firm, in full or in part.\" The subquestion asks compare disclosures/initiatives. A passage states initiative for younger investors; that is part. So fact.\n\nBut if no passage mentions competitor's younger-investor initiatives, the comparison cannot be made. However our cell can still be fact with EDJ side. The later step does comparison? It says \"You do not answer the question and you do not compare firms: code and a later step do that.\" So we just extract evidence. Therefore fact is fine.\n\nNeed maybe include item from #26 about competitors: \"Edward Jones faces competition from broker-dealers, RIAs, banks, insurers, fintech, robo-advice.\" This is about competitors generally, but not younger. Could be relevant to \"compare to competitors\" but not on younger. It is a fact about competitive landscape. But subquestion asks younger investors; competitor landscape not younger. Include? Hmm.\n\nThe passages grouped under a8.EDJ include #26 and #56, likely retrieved for competition. They don't mention younger. A \"different_quantity\" might be \"competition from firms offering robo-advice\" \u2014 different because it's general competition, not younger-investor disclosures/initiatives. But the instruction says different_quantity when no passage states asked quantity but one states different related quantity: wider unit etc. Here the asked is comparison, not a quantity. Could label different_quantity for competitor landscape? It might say competitor set but not younger. But item text could say \"Edward Jones describes intense competition from broker-dealers, RIAs, banks, insurers and fintech firms offering digital experiences and robo-advice\" \u2014 differs because it describes general competitive landscape, not competitors' younger-investor initiatives. Is that useful? It might be. But the cell label must be one label. If we have fact items, label fact. different_quantity items can be included? The schema doesn't restrict items for fact to only fact? It says \"Items (fact and different_quantity only)\" so a cell can have both? Probably if label fact, items are fact. But it says label each cell; items can be fact/different. Hmm.\n\nBetter keep simple: label fact with 2 fact items. No different.\n\nNeed exact quote for #88: The quote should include \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.\" That's about 380 chars. Need at most ~300. Use shorter: \"and a new digital platform, focused on attracting and retaining Next Generation investors.\" That supports. Good.\n\nFor #304 quote: Need <=300. \"competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes\" ~230. Good.\n\nShould period for #304 be \"2025-12-31\". Scope \"\" because strategic risks whole Partnership. Definition \"\".\n\nMaybe item 2 text should be \"Edward Jones identifies generational wealth transfer and changing client demographics, preferences and values as strategic risks it seeks to address through initiatives.\" Good.\n\nNeed reason: \"Passages state Edward Jones's Next Generation digital-platform initiative and its generational-transfer risk disclosure, but no passage gives a competitor comparison; the firm's side is still stated.\" Maybe label fact. But reason should short.\n\nNeed output JSON. No derivation. differs_because empty.\n\nBut maybe subquestion id a8.EDJ. Need one cell.\n\nLet's ensure no \"not_disclosed\" needed. Could mention no competitor comparison? The reason can say no competitor comparison in passages, but label fact. Is that contradictory? The label fact because partial. Fine.\n\nNeed maybe include \"definition\": for #304? no.\n\nLet's think if \"Next Generation investors\" equals younger investors? Yes.\n\nCould there be \"younger investors\" in passages? Search mentally: no explicit \"younger\". \"Next Generation\" is proxy. The subquestion says younger investors; passage says Next Generation. That's a fact? It's the firm's term. Yes.\n\nPotential issue: The subquestion asks \"disclosures and initiatives for younger investors compare to those of competitors\" and item 1 is initiative, not disclosure comparison. It is partial. Fine.\n\nCould include \"Edward Jones does not disclose younger-investor-specific metrics\" as not_disclosed? No passage says so. But it reports surrounding figures without it? Many passages. But no. Not include.\n\nNeed maybe include \"Workplace\" initiative connecting business owners/employees, not younger. no.\n\nNeed maybe include \"High Net Worth\" not younger. no.\n\nNeed maybe include \"Enterprise Reimagined\" to improve financial wellness for tens of millions of long-term investors across North America; not younger. no.\n\nOk final tool call.\n\nNeed ensure JSON valid. Items fields all required. chunk_ids array. For item 1 period \"2025-12-31\"; scope \"new digital platform initiative\" or \"Next Generation investors\". The scope field: part of firm figure covers as passage says. Since no figure, scope can be \"new digital platform initiative\". Maybe \"Next Generation investors\" is the target. Use \"new digital platform for Next Generation investors\".\n\nFor item 2 scope \"\".\n\nValue \"\" unit \"\".\n\nText one sentence attributed. Good.\n\nLet's craft.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones states that its initiatives include a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "new digital platform for Next Generation investors",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones identifies generational wealth transfer and changing client demographics, preferences and values as strategic risks it seeks to address through its initiatives.",
+            "quote": "competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, changing client demographics, preferences and values, technology, artificial intelligence, and regulatory changes",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#304"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state Edward Jones's Next Generation digital-platform initiative and its generational-transfer risk disclosure, though no passage gives a competitor comparison.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

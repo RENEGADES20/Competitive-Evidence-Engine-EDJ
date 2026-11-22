@@ -1,0 +1,164 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#91",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2025Q2#28"
+  ],
+  "at": "2026-11-21T14:09:28.434130-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9376,
+    "output_tokens": 2222,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 7968,
+    "reasoning_tokens": 1301,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.11
+  },
+  "wall_s": 17.78,
+  "tokens_per_s": 124.97,
+  "ttft_s": 1.11,
+  "reasoning_content": "The sub-question asks for client assets (total client assets under management/advisement) for the firm. Edward Jones reports \"client assets under care\" (AUC) at period end. We have multiple periods. Provide facts per period.\n\nPeriods:\n- 2025-12-31: $2.5 trillion (10-K 2025#131), 20,425 advisors.\n- 2026-03-27: $2.4 trillion (10Q 2026Q1#46), and $2,417 billion at period end (10Q 2026Q1#51), average $2,498.\n- 2026-06-26: $2.6 trillion (2026Q2#61), $2,647 billion at period end (2026Q2#59), average $2,580.\n- 2025-06-27: $2,306 billion at period end, average $2,212 (2025Q2#63).\n- 2025-09-26: $2,421 billion at period end, average $2,365 (2025Q3#66).\n\nAlso advisory programs AUC as subsets \u2014 that's a different scope but same measure? The asked is \"total client assets under management/advisement.\" Advisory programs AUC is part of total; it's narrower. Hmm, \"a narrower group or sample\" is still a fact. Advisory programs is a component of total AUC. I think I can include it as fact with scope \"advisory programs\". But to keep manageable, include totals per period. Maybe include advisory programs too as subcomponents? The instruction says the item says what it covers; partial still fact. I'll include a few advisory figures maybe not all. Let's include totals for each period plus advisory program AUC for the latest period perhaps. I'll keep focused: totals for 5 dates + maybe advisory programs at 2026-06-26.\n\nAlso note the definition: assets under care (\"AUC\"). The sub-question asks for the definition \u2014 the firm's own definition when a passage gives one. \"client assets under care\" isn't defined explicitly besides note (1) \"Assets on which the Partnership earns asset-based fee revenue\" for advisory programs. So definition \"\".\n\nLet's build items:\n\n1. 2025-12-31: $2.5 trillion at year end, including $1.1 trillion advisory programs AUC. Quote from #131. value \"2.5\", unit \"USD trillion\". Period 2025-12-31, scope \"\".\n2. 2025-06-27: $2,306 billion at period end. From #63.\n3. 2025-09-26: $2,421 billion at period end. From #66.\n4. 2026-03-27: $2,417 billion at period end. From #51.\n5. 2026-06-26: $2,647 billion at period end. From #59.\n6. Average client AUC figures? Those are averages, a different measure than \"total client assets\" at a point in time. Could be different_quantity? The ask is \"Client assets (total client assets under management/advisement)\". Average AUC is a different measure (average vs period end). Hmm. I could include as different_quantity. But simpler: include period-end facts only, plus one average as different_quantity? I'll include the 2026-06-26 average as different_quantity noting it's an average over the quarter, not period-end. Actually being careful, better include as different_quantity.\n\nAlso advisory programs AUC = narrower scope fact.\n\nI'll include:\n7. 2026-06-26 advisory programs AUC $1,198 billion (scope advisory programs) \u2014 fact.\n8. 2025-12-31 advisory programs $1.1 trillion \u2014 covered in item 1 quote already.\n\nAverage: item for 2026Q2 average $2,580 billion \u2014 different_quantity, differs because average over the quarter vs period end.\n\nHmm, but adding too many. Fine, keep items 1-6 plus advisory fact and average different_quantity.\n\nActually careful: item 6 average as different_quantity is fine but I need differs_because field. Yes there's a field.\n\nLet's assemble.\n\nItem 1: text \"Edward Jones reported a 14% increase in client AUC to $2.5 trillion at December 31, 2025, including $1.1 trillion of advisory programs AUC.\" quote: \"The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.\" value \"2.5\", unit \"USD trillion\", period \"2025-12-31\", scope \"\".\n\nItem 2: quote \"The Partnership ended the second quarter of 2025 with a 12% increase in client assets under care (\"AUC\") to $2.3 trillion\" \u2014 but table gives $2,306. Use table: \"At period end $ 2,306 $ 2,062 12%\" from #63. I'll use the table quote for value. Quote: \"Client assets under care ($ billions): Total: At period end $ 2,306 $ 2,062 12%\" \u2014 exact wording from passage. value \"2,306\", unit \"USD billions\", period \"2025-06-27\".\n\nItem 3: #66 value 2,421 period 2025-09-26.\n\nItem 4: #51 value 2,417 period 2026-03-27.\n\nItem 5: #59 value 2,647 period 2026-06-26.\n\nItem 6: advisory programs 2026-06-26 $1,198 billion, scope \"advisory programs\", fact.\n\nItem 7: average client AUC 2,580 for 2026Q2 \u2014 different_quantity? Hmm. The asked quantity is a point-in-time total. Average is \"a different measure\". I'll include as different_quantity.\n\nMaybe also include the $2.6 trillion ended second quarter 2026 from #61 \u2014 that duplicates item 5. Skip.\n\nReady.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones ended 2025 with client AUC of $2.5 trillion, including $1.1 trillion of advisory programs AUC.",
+            "quote": "The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.",
+            "value": "2.5",
+            "unit": "USD trillion",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          },
+          {
+            "text": "The firm reported total client assets under care of $2,306 billion at period end in the second quarter of 2025.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,306 $ 2,062 12%",
+            "value": "2,306",
+            "unit": "USD billions",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#63"
+            ]
+          },
+          {
+            "text": "The firm reported total client assets under care of $2,421 billion at period end in the third quarter of 2025.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,421 $ 2,176 11%",
+            "value": "2,421",
+            "unit": "USD billions",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#66"
+            ]
+          },
+          {
+            "text": "The firm reported total client assets under care of $2,417 billion at period end in the first quarter of 2026.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12%",
+            "value": "2,417",
+            "unit": "USD billions",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "The firm reported total client assets under care of $2,647 billion at period end in the second quarter of 2026.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,647 $ 2,306 15%",
+            "value": "2,647",
+            "unit": "USD billions",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "Advisory programs assets under care, a component of total client AUC, were $1,198 billion at period end in the second quarter of 2026.",
+            "quote": "Advisory programs: At period end $ 1,198 $ 931 29%",
+            "value": "1,198",
+            "unit": "USD billions",
+            "period": "2026-06-26",
+            "scope": "advisory programs",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "Average client AUC for the second quarter of 2026 was $2,580 billion.",
+            "quote": "Average $ 2,580 $ 2,212 17%",
+            "value": "2,580",
+            "unit": "USD billions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          }
+        ],
+        "differs_because": "Item 6 reports average client AUC over the quarter rather than total client assets at a point in time.",
+        "reason": "Passages state the firm's total client assets under care for several period ends (with one average-period figure labelled as a different measure).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
