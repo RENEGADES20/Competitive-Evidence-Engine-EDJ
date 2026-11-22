@@ -1,0 +1,59 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#272",
+    "EDJ-10Q-2026Q2#23",
+    "EDJ-10K-2025#142",
+    "EDJ-10Q-2025Q3#6",
+    "EDJ-10K-2025#7",
+    "EDJ-10Q-2025Q2#18",
+    "EDJ-10Q-2025Q3#86"
+  ],
+  "at": "2026-11-21T21:45:05.579473-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3502,
+    "output_tokens": 413,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 1838,
+    "reasoning_tokens": 291,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.52
+  },
+  "wall_s": 4.73,
+  "tokens_per_s": 87.32,
+  "ttft_s": 1.52,
+  "reasoning_content": "Let me analyze the passages to determine what Edward Jones's advisor headcount definition excludes.\n\nThe sub-question asks: \"What the firm's advisor headcount definition excludes.\"\n\nLooking at the passages, I see figures for \"Financial advisors\" but no definition of what the advisor headcount excludes. The passages mention:\n- Financial advisors: At year end 20,425, 20,125, 19,232; Average 20,331, 19,650, 18,945\n- Client support team professionals\n- Number of physical branches\n- Partners info\n\nNone of the passages actually state what the advisor headcount definition excludes. There's no definition given.\n\nSo this is not_found - the passages say nothing about what the advisor headcount definition excludes.\n\nWait, let me check if any passage gives a definition of financial advisors. The chunk EDJ-10K-2025#142 shows \"Financial advisors: At year end 20,425\" but no definition of what's excluded.\n\nChunk EDJ-10Q-2025Q3#86 shows \"Financial advisors: At period end 20,429\" but no definition.\n\nSo there's no definition of exclusions. The answer is not_found.\n\nActually, let me reconsider. The sub-question is specifically about what the definition excludes. No passage describes exclusions. So not_found.\n\nThe label should be not_found with empty items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages describe what Edward Jones's advisor headcount definition excludes; they only report headcount figures without any definition or exclusion criteria.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

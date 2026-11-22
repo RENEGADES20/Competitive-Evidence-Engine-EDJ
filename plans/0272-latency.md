@@ -276,3 +276,11 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   behavior 6/6. Critical path p50 309 s, p90 415 s, max 497 s (fts C1 209 / 313 / 383 s; #250 hybrid same six:
   see report); first evidence p50 15 s. Retrieval (search_s) p50 20 s, p90 45 s, max 52 s, of which query embedding
   p50 0.46 s, max 0.9 s. Test B hybrid next.
+- 2026-11-21 22:40 - hybrid test B count (0 calls): 302 round-1 maps (the six test-A questions reuse their records);
+  --max-calls 634; USD hard ceiling 350, expected about 24 peak. Run hb-run stopped at Q17 with DeepSeek 429 (no
+  output); after 5 minutes resumed once as hb-run2 (same settings and cache), which stopped at Q17 with DeepSeek 402
+  "insufficient balance". BLOCKED until the account is topped up. State: Q1-Q16 complete, Q17 partial, Q18-Q30 not
+  run; 0 cut, 0 invalid so far. Hybrid test B new calls so far 216, USD 6.10; hybrid test A 169 new, USD 3.23.
+  Resume: `run-latency.ps1 -Wt D:\ALLPROJECTS\EDJ\wt-272h -Out hb-run3 -Cache D:\ALLPROJECTS\EDJ\cache\ev272\cache-h
+  -MaxCalls 634 -Phase run -GateSha 62d26d7 -Mode hybrid-norerank -FastembedPath D:\ALLPROJECTS\EDJ\cache\fastembed`
+  with Q1-Q30 (saved records reused). Evidence so far: `docs/results/w12-latency-hybrid/`.

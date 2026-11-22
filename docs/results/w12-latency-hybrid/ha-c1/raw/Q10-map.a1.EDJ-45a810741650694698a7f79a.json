@@ -1,0 +1,133 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10K-2025#286",
+    "EDJ-10Q-2026Q1#2",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q2#2",
+    "EDJ-10Q-2025Q3#95",
+    "EDJ-10Q-2026Q1#5",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#88",
+    "EDJ-10Q-2026Q2#117",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2026Q2#2",
+    "EDJ-10Q-2025Q3#2",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#82",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-10K-2025#333",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2026Q2#6",
+    "EDJ-10Q-2025Q3#6"
+  ],
+  "at": "2026-11-21T20:19:54.359002-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13393,
+    "output_tokens": 2095,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 11857,
+    "reasoning_tokens": 1572,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.67
+  },
+  "wall_s": 25.52,
+  "tokens_per_s": 82.09,
+  "ttft_s": 1.67,
+  "reasoning_content": "The sub-question asks whether and how explicitly Edward Jones names the mass-affluent client segment. Let me look at the passages for any mention of \"mass-affluent.\"\n\nScanning the passages, I don't see \"mass-affluent\" mentioned anywhere. The firm mentions \"individual investors,\" \"high net worth clients,\" \"Next Generation investors,\" \"business owners,\" etc. There's no explicit naming of \"mass-affluent.\"\n\nThe closest is the 10-K #88 passage: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients... Workplace... and a new digital platform, focused on attracting and retaining Next Generation investors.\"\n\nThis mentions high net worth and Next Generation, but not mass-affluent. So mass-affluent is not named.\n\nThe firm primarily serves \"individual investors.\" That's a broader segment than mass-affluent. Is \"individual investors\" a different quantity? It's not a different quantity in the sense of a segment name - the sub-question asks whether the firm names the \"mass-affluent client segment.\"\n\nThe firm doesn't name mass-affluent. It names \"individual investors\" (broader), \"High Net Worth\" and \"Next Generation\" (different segments). These could be different_quantity items? Actually the question is about naming a specific client segment. The firm names other segments but not mass-affluent.\n\nI think the answer is not_found or fact? The firm does describe its client segments - \"individual investors,\" \"high net worth,\" \"Next Generation investors.\" But none is \"mass-affluent.\"\n\nLet me think about the label. The sub-question: \"Whether and how explicitly each firm names the mass-affluent client segment.\" \n\nThe firm doesn't name mass-affluent. It names other segments. Should I label this as not_found (passages say nothing about mass-affluent) or different_quantity?\n\nActually, the firm does name client segments, just not mass-affluent. The fact that it names \"individual investors\" broadly, and targets \"High Net Worth\" and \"Next Generation\" - these are related but different segments.\n\nThe question is whether the firm names mass-affluent. Since no passage names mass-affluent, this is not_found. But there are related segments named.\n\nActually, I could provide different_quantity items noting the firm names \"individual investors\" (broader) and \"high net worth\" and \"Next Generation\" (different segments), but not mass-affluent.\n\nThe instruction says: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity.\"\n\n\"individual investors\" is a broader/wider unit that contains mass-affluent. So it could be different_quantity.\n\nBut actually, the asked quantity is \"whether/how explicitly the firm names mass-affluent client segment.\" This is more of a qualitative question. The firm does not name mass-affluent.\n\nI think the best answer: the firm does not name \"mass-affluent\" specifically. It primarily serves \"individual investors\" and has initiatives targeting \"High Net Worth\" and \"Next Generation investors.\" These are related but different segments.\n\nLet me provide different_quantity items for the related segments the firm does name.\n\nActually, let me reconsider. The core finding is that mass-affluent is not named. I'll label as not_found with a reason, but also I could note related segments as different_quantity items.\n\nHmm, but if I label not_found, I can't include items. Items are only for fact and different_quantity.\n\nLet me think what's most accurate. The firm says it \"primarily serves individual investors.\" \"Individual investors\" is a broad category that would include mass-affluent but is not specifically mass-affluent. This is a different_quantity (wider unit).\n\nThe firm also explicitly targets \"High Net Worth\" and \"Next Generation investors\" - these are different segments (mass-affluent is between these perhaps).\n\nSo I'll provide different_quantity items:\n1. The firm primarily serves \"individual investors\" in the U.S. and Canada (broader segment).\n2. The firm targets \"High Net Worth\" clients (different segment).\n3. The firm targets \"Next Generation investors\" (different segment).\n\nWait, but actually the question is specifically about mass-affluent. The firm doesn't name mass-affluent at all. \n\nI think the cleanest answer: label not_found (or different_quantity), noting the firm does not use the term \"mass-affluent\" but does name other client segments.\n\nLet me go with different_quantity, since the firm does name client segments (just not mass-affluent). The items would be the related segment names.\n\nActually, re-reading: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\"\n\n\"individual investors\" is a wider unit containing mass-affluent. So that's a valid different_quantity.\n\n\"High Net Worth\" and \"Next Generation\" are different segments, not wider/narrower of mass-affluent exactly. But they're related (different client segments).\n\nI'll provide different_quantity with items for the segment names the firm does use.\n\nLet me craft:\n\nItem 1: Firm \"primarily serves individual investors in the U.S. and Canada.\" This is a broader category than mass-affluent.\n\nItem 2: Firm targets \"High Net Worth\" clients - a different (higher) segment.\n\nItem 3: Firm targets \"Next Generation investors\" - a different segment.\n\ndiffers_because: The firm does not use the term \"mass-affluent\"; it describes serving \"individual investors\" broadly and separately targets \"High Net Worth\" and \"Next Generation\" investor segments.\n\nActually, I think it might be cleaner to just note not_found since mass-affluent is never mentioned, but provide the different segments.\n\nLet me decide on the label. The instructions emphasize choosing fact vs different_quantity. Since mass-affluent is never named, and the firm names other segments (broader \"individual investors\" and other specific segments), I'll use different_quantity.\n\nActually wait - is naming other segments really \"a different, related quantity\"? The question is \"whether and how explicitly the firm names the mass-affluent segment.\" The answer to \"whether\" is \"no.\" The related quantities are the segments it does name.\n\nI'll go with different_quantity and list the related segments as items, with differs_because explaining.\n\nLet me write the items carefully with quotes.\n\nFor \"individual investors\": quote from EDJ-10K-2025#9: \"the Partnership primarily serves individual investors in the U.S. and Canada\"\n\nFor \"High Net Worth\" and \"Next Generation\": quote from EDJ-10K-2025#88: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.\"\n\nLet me create three items.\n\nActually, I should think about whether \"individual investors\" is really the best different_quantity. It's the firm's general client description, and mass-affluent is a subset. Yes.\n\nLet me finalize with different_quantity label, three items.\n\nValue/unit/period: no figures, so value \"\", unit \"\", period \"\".\n\nFor \"individual investors\" item, unit could be \"clients\" but it's qualitative. I'll leave value, unit, period empty.\n\nLet me write the items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones states that it primarily serves individual investors in the U.S. and Canada, which is a broader client category that would encompass mass-affluent clients but does not specifically name a mass-affluent segment.",
+            "quote": "the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "U.S. and Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#9"
+            ]
+          },
+          {
+            "text": "Edward Jones describes a new client initiative targeting High Net Worth clients, focused on attracting and serving high net worth clients, which is a different (higher-wealth) segment than mass-affluent.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones describes a new digital platform initiative focused on attracting and retaining Next Generation investors, a different (younger) client segment than mass-affluent.",
+            "quote": "and a new digital platform, focused on attracting and retaining Next Generation investors",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "Edward Jones does not use the term 'mass-affluent' anywhere in the passages. It describes its client base broadly as 'individual investors' and separately names other client segments ('High Net Worth' and 'Next Generation investors'), but no passage names a mass-affluent segment.",
+        "reason": "No passage names the mass-affluent segment; the firm names a broader category ('individual investors') and other, different segments (High Net Worth, Next Generation), which are related but distinct quantities.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

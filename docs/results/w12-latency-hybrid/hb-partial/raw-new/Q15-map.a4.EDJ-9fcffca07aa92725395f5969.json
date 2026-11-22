@@ -1,0 +1,187 @@
+{
+  "question_id": "Q15",
+  "question": "What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2026Q2#104",
+    "EDJ-10K-2025#172",
+    "EDJ-10Q-2026Q1#89",
+    "EDJ-10K-2025#149",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#109",
+    "EDJ-10Q-2025Q3#118",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2026Q2#84",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2026Q1#90",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2026Q1#58",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10K-2025#213",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#97",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2025Q2#90",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q3#82",
+    "EDJ-10Q-2025Q2#77",
+    "EDJ-10Q-2026Q2#70",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10K-2025#129",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10K-2025#333",
+    "EDJ-10K-2025#144",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2025Q2#70",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10K-2025#173",
+    "EDJ-10K-2025#332",
+    "EDJ-10K-2025#126"
+  ],
+  "at": "2026-11-21T21:58:56.752662-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16195,
+    "output_tokens": 5404,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 14659,
+    "reasoning_tokens": 4184,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.62
+  },
+  "wall_s": 55.78,
+  "tokens_per_s": 96.88,
+  "ttft_s": 3.62,
+  "reasoning_content": "Let me analyze the sub-question: \"How much advisor-led firms earn from client cash balances and net interest\"\n\nThe passages include \"Net Interest and Dividends\" revenue figures for Edward Jones. Let me find those.\n\nFrom EDJ-10Q-2025Q3#82: \"Net interest and dividends revenue decreased 8% to $211 and $646 in both the third quarter and first nine months of 2025, respectively\"\n\nFrom EDJ-10Q-2025Q2#77: \"Net interest and dividends revenue decreased 8% to $216 and 9% to $435 in the second quarter and first half of 2025, respectively\"\n\nFrom EDJ-10K-2025#129: \"Interest expense 197 253 282 ... Net revenue 17,700 16,004 13,798\" - but this shows interest expense, not net interest and dividends.\n\nAlso the interest rate sensitivity analysis about net interest income.\n\nLet me think about what the sub-question asks: \"How much advisor-led firms earn from client cash balances and net interest.\"\n\nThe firm reports \"Net interest and dividends revenue\" figures. These are facts about how much EDJ earns from net interest (and dividends). Let me capture those.\n\nAlso there's the interest rate sensitivity: net interest income could increase by $152 (10-K 2025) or $145 (10Q 2026Q1).\n\nThe core \"net interest and dividends revenue\" figures are the most direct facts.\n\nLet me identify the figures:\n\n1. Net interest and dividends revenue for Q3 2025: $211 (decreased 8%)\n2. Net interest and dividends revenue for 9M 2025: $646\n3. Net interest and dividends revenue for Q2 2025: $216 (decreased 8%)\n4. Net interest and dividends revenue for H1 2025: $435 (decreased 9%)\n\nThese are in millions presumably (dollars in millions).\n\nAlso the interest-earning assets: client margin loans and investments, with average balances and rates. These relate to interest earned but not exactly \"net interest\" revenue.\n\nThe sub-question asks \"How much advisor-led firms earn from client cash balances and net interest.\" So net interest and dividends revenue is the most relevant.\n\nLet me also consider the interest and dividends revenue definition from #213: \"Interest and dividends revenue is earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities.\"\n\nAlso the note about net interest income sensitivity ($152 increase, $154 decrease for 100bps) from #173.\n\nLet me structure items. I'll provide facts for the net interest and dividends revenue figures.\n\nActually, the sub-question is about \"how much advisor-led firms earn from client cash balances and net interest.\" The relevant metric is \"net interest and dividends revenue\" (net of interest expense).\n\nLet me create fact items for each period:\n\n1. Q3 2025: $211 (decreased 8%)\n2. 9M 2025: $646\n3. Q2 2025: $216 (decreased 8%)\n4. H1 2025: $435 (decreased 9%)\n\nThese are the net interest and dividends revenue figures.\n\nAlso there might be additional figures. Let me check if there are full-year figures for net interest and dividends. The 10-K #129 shows \"Interest expense 197 253 282\" and net revenue. But not explicitly \"net interest and dividends revenue\" full year figure. Actually #126 describes categories but doesn't give full year figure.\n\nHmm, but the question is about \"how much advisor-led firms earn from client cash balances and net interest.\" This is a bit odd - the sub-question combines \"client cash balances\" and \"net interest.\"\n\nActually, let me re-read the question: \"What drives the difference between how Schwab earns on client assets and how an advisor-led model earns?\" Sub-question: \"How much advisor-led firms earn from client cash balances and net interest.\"\n\nSo the key figure is net interest and dividends revenue. Let me capture those figures.\n\nI'll also note the interest-earning assets figures and rates as related, but they might be different_quantity. Actually the net interest income sensitivity is a fact about net interest income.\n\nLet me focus on the most direct facts: net interest and dividends revenue.\n\nAlso there's the definition of interest and dividends revenue in #213 which is relevant.\n\nLet me also include the interest rate sensitivity of net interest income as a fact (it's about net interest, the firm's estimate).\n\nActually, let me be careful. The sub-question asks \"How much... earn from client cash balances and net interest.\" The net interest and dividends revenue figures directly answer \"how much\" they earn from net interest.\n\nLet me provide:\n- Fact: Net interest and dividends revenue $216 (Q2 2025)\n- Fact: Net interest and dividends revenue $435 (H1 2025)\n- Fact: Net interest and dividends revenue $211 (Q3 2025)\n- Fact: Net interest and dividends revenue $646 (9M 2025)\n\nAlso the definition from #213.\n\nAnd the sensitivity estimates (net interest income) could be facts too but they're about sensitivity, not \"how much earned.\" I'll include them as facts about net interest income sensitivity, but they might be less relevant. Actually they are \"net interest income\" not \"net interest and dividends revenue.\" Let me consider them as fact since they are about net interest.\n\nHmm, the sensitivity is about the change in net interest income per 100bps, not the absolute amount. I think these are relevant facts but secondary.\n\nLet me focus and provide the net interest and dividends revenue figures as facts, plus the definition.\n\nAlso, there's the interest-earning assets details (client margin loans and investments averaged $3.6B and $17.0B earning 7.07% and 4.20%). These are about interest-earning assets, related to but not the same as \"net interest revenue.\" These could be different_quantity? Actually they describe the interest-earning assets and rates, which drive net interest. But the sub-question asks \"how much they earn from client cash balances and net interest.\" The net interest and dividends revenue is the answer.\n\nI'll provide the net interest and dividends revenue figures as the main facts.\n\nLet me also consider the sensitivity figures as facts (net interest income).\n\nActually, let me include the sensitivity as a fact item, since it's about net interest income (a close measure).\n\nLet me decide on final items:\n\nFacts (net interest and dividends revenue):\n1. Q2 2025: $216 (decreased 8%)\n2. H1 2025: $435 (decreased 9%)\n3. Q3 2025: $211 (decreased 8%)\n4. 9M 2025: $646 (decreased 8%)\n\nPlus the definition (interest and dividends revenue).\n\nPlus maybe the sensitivity facts.\n\nLet me write the items. Units are millions of dollars (dollars in millions). The passages say figures like \"$216\" - these are in millions based on the statement \"(Dollars in millions)\". But the item unit should be \"USD millions\" or similar. Actually the value as printed is \"$216\". I'll put value \"$216\" and unit \"USD millions\" \u2014 but actually the text says \"decreased 8% to $216\". Let me note the unit as \"USD millions\" since the statements are in millions. Actually, I should be careful. The chunk doesn't explicitly say millions in that specific chunk, but the overall 10-Q uses millions. I'll note in the text.\n\nActually, for accuracy, let me just quote and give value \"$216\" with unit \"USD millions\". The period is \"2025Q2\" and \"2025Q2\" for Q2, \"2025Q3\" for Q3, H1 2025 = \"2025\" (first half, so period could be \"2025\" with scope noting H1). Hmm.\n\nPeriod format: \"YYYY-Qn\" for calendar quarter. But the instructions say \"YYYYQn\" for a calendar quarter. So \"2025Q2\" and \"2025Q3\".\n\nFor H1 and 9M, these are year-to-date periods. The period format options don't include half-year or 9-month. I could use \"2025\" for the calendar year but that would be inaccurate. Maybe use \"2025Q2\" won't work for H1. \n\nActually, let me think. The period field should reflect what the figure covers. For \"first half of 2025\" and \"first nine months of 2025\", there's no exact format. I could use \"2025\" with a note in text, but better to be specific in the text. The period field format is limited. I'll use \"2025\" for the year and clarify in text/scope? \n\nActually, let me reconsider. The allowed period formats: \"YYYY-MM-DD\" point in time, \"YYYYQn\" calendar quarter, \"FYYYYY\" fiscal year, \"YYYY\" calendar year. For H1 and 9M, I'll put \"2025\" and note \"first half\" / \"first nine months\" in the text. But that's imprecise.\n\nAlternatively, I can note in the item text clearly. The period field I'll use \"2025\" for both H1 and 9M, but the text will say \"first half of 2025\" / \"first nine months of 2025\".\n\nActually, maybe I should just focus on the quarterly figures and full period figures. Let me provide all four figures clearly.\n\nLet me finalize. I'll provide the four net interest and dividends revenue figures, plus the definition, plus the sensitivity facts.\n\nActually, for the sensitivity, let me include them as facts too since they quantify net interest income (a close proxy to \"how much they earn from net interest\").\n\nSensitivity facts:\n- 10-K 2025 (#173): 100bps increase \u2192 net interest income +$152; 100bps decrease \u2192 -$154\n- 10Q 2026Q1 (#90): 100bps increase \u2192 +$145; decrease \u2192 -$147\n\nThese are estimates of changes in annual net interest income.\n\nI'll include these as facts.\n\nAlso, the interest-earning assets detail (#172, #104, #89, #109, #118) about client margin loans and investments average balances and rates - these are different_quantity (they describe interest-earning assets, not net interest revenue). Actually, they're related but not the \"how much earned from net interest.\" I could include them as different_quantity. But I think the main answer is net interest and dividends revenue.\n\nLet me keep it focused. I'll provide:\n1. Definition of interest and dividends revenue (fact) - from #213\n2. Q2 2025 net interest and dividends revenue $216 (fact)\n3. H1 2025 $435 (fact)\n4. Q3 2025 $211 (fact)\n5. 9M 2025 $646 (fact)\n6. Sensitivity facts (net interest income)\n\nActually, let me reconsider whether the definition belongs. The sub-question asks \"How much... earn from client cash balances and net interest.\" The definition helps clarify. I'll include it as a fact item (definition).\n\nLet me write everything.\n\nFor the definition item: quote from #213: \"Interest and dividends revenue is earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.\"\n\nValue \"\", unit \"\", period \"\", scope \"\", definition: the quote.\n\nNow let me write the cells. I'll have one cell for a4.EDJ with label \"fact\" and multiple items.\n\nLet me also consider the \"net interest and dividends revenue (net of interest expense)\" categorization from #126. That's a definition too.\n\nLet me write the items carefully.\n\nFor the sensitivity, I'll include two items (2025 and 2026Q1).\n\nActually, let me reconsider the sensitivity. The question is \"how much advisor-led firms earn from client cash balances and net interest.\" The sensitivity is about the impact of rate changes, not the amount earned. It's tangential. But it does quantify net interest income magnitude indirectly. I'll include it as a fact since it's about net interest income.\n\nActually, I think I'll keep the sensitivity as facts but they might be seen as different_quantity (net interest income vs net interest and dividends revenue). The instructions say \"net interest income\" sensitivity - the question asks about \"net interest.\" Net interest income is essentially the same as \"net interest and dividends revenue\" minus dividends. It's very close. I'll include as fact with a note, or maybe as a fact since it's about net interest.\n\nLet me include it as fact with clear text.\n\nLet me finalize.\n\nFor period values:\n- Q2 2025: \"2025Q2\"\n- H1 2025: \"2025\" (note first half in text)\n- Q3 2025: \"2025Q3\"\n- 9M 2025: \"2025\" (note first nine months)\n\nFor the sensitivity: no specific period, it's \"annual\" - I'll use \"\" period and note annual.\n\nLet me write out.\n\nFor units, these are in millions. The chunk EDJ-10Q-2025Q3#82 says \"$211 and $646\". The 10-Q statements are in millions. I'll note \"USD millions\" in unit and clarify in text.\n\nActually wait - let me check: are these figures in millions? The net revenue figures elsewhere are like \"$4,418\", \"$12,594\", \"$17,700\" - and total AUC is \"$2.4 trillion\". Net revenue of $17,700 million = $17.7 billion, which matches \"Net revenue increased 11% to $17,700 in 2025\" with AUC $2.5 trillion. So yes, net revenue $17,700 is in millions ($17.7B). So net interest and dividends of $211 is $211 million.\n\nSo unit = \"USD millions\".\n\nLet me write value as \"$211\", \"$646\", \"$216\", \"$435\".\n\nNow let me write the full response.\n\nI need to be careful about the \"items\" required fields including \"definition\".\n\nLet me construct.\n\nItem 1 (definition): \ntext: \"Edward Jones defines interest and dividends revenue as revenue earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.\"\nquote: \"Interest and dividends revenue - Interest and dividends revenue is earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: same quote, chunk_ids: [\"EDJ-10K-2025#213\"]\n\nItem 2 (Q2 2025):\ntext: \"Net interest and dividends revenue decreased 8% to $216 million in the second quarter of 2025 compared to 2024.\"\nquote: \"Net interest and dividends revenue decreased 8% to $216 and 9% to $435 in the second quarter and first half of 2025, respectively\"\nvalue: \"$216\", unit: \"USD millions\", period: \"2025Q2\", scope: \"\", definition: \"\", chunk_ids: [\"EDJ-10Q-2025Q2#77\"]\n\nItem 3 (H1 2025):\ntext: \"Net interest and dividends revenue decreased 9% to $435 million in the first half of 2025.\"\nvalue: \"$435\", unit: \"USD millions\", period: \"2025\" (first half), scope: \"\", chunk_ids: [\"EDJ-10Q-2025Q2#77\"]\n\nItem 4 (Q3 2025):\ntext: \"Net interest and dividends revenue decreased 8% to $211 million in the third quarter of 2025.\"\nquote: \"Net interest and dividends revenue decreased 8% to $211 and $646 in both the third quarter and first nine months of 2025, respectively\"\nvalue: \"$211\", unit: \"USD millions\", period: \"2025Q3\", chunk_ids: [\"EDJ-10Q-2025Q3#82\"]\n\nItem 5 (9M 2025):\nvalue: \"$646\", period: \"2025\", text mentions first nine months, chunk_ids: [\"EDJ-10Q-2025Q3#82\"]\n\nItem 6 (sensitivity 2025):\ntext: \"Edward Jones estimates a 100 bps increase in short-term rates could increase annual net interest income by ~$152 million, and a 100 bps decrease could decrease it by ~$154 million.\"\nquote from #173\nvalue: \"$152\" ... hmm this has two values. I could split into two items or use one item with value \"\". Actually a figure with increase and decrease. I'll make two items or one item with combined text and value \"\".\n\nLet me make two items for clarity? Or one item noting both. I'll do one item with value \"\" and text describing both, or better, separate.\n\nActually, simpler to keep the sensitivity as a single fact item with text describing both directions and value \"\". But value field is for \"the figure as printed\". I'll put \"\" and describe in text.\n\nHmm, but I want to be precise. Let me do two items for 2025 sensitivity and possibly skip 2026Q1 to avoid redundancy, or include both.\n\nActually, to keep it manageable, I'll include the 2025 sensitivity (10-K, most recent annual) as one fact item describing both increase and decrease, value \"\".\n\nAnd maybe also the 2026Q1 one. But that's redundant. I'll include just the annual 2025 one, plus maybe note the 2026Q1 as another item. Actually let me include both since they're different periods/snapshots.\n\nLet me keep it simpler: include the sensitivity as fact items.\n\nActually, I'll reconsider: the sensitivity is a \"different\" kind of figure (a sensitivity estimate, not an amount earned). But it's still about net interest income. I think it's acceptable as a fact. However, to avoid overcomplicating, I'll include the 2025 annual sensitivity as one fact item.\n\nLet me finalize with these items. I'll include 6 items total (definition, 4 revenue figures, 1 sensitivity).\n\nActually let me reconsider the sensitivity - it could arguably be different_quantity (it's a sensitivity measure, not \"how much they earn\"). But it does give a sense. I'll label it as fact with clear text. Actually, I worry it might muddy. The core answer is the net interest and dividends revenue. The sensitivity is supplementary.\n\nI'll include it as fact since it's genuinely about net interest income (the closest metric to what's asked).\n\nLet me write the final answer now.\n\nFor the sensitivity item value, I'll put \"\" since it's about a change, not an absolute amount. Unit \"\". Period \"\" (annual, point-in-time estimate).\n\nActually the sensitivity is \"annual net interest income\" - period could be \"2025\" for the 10-K estimate. I'll put period \"2025\".\n\nLet me write.\n\ndiffers_because: \"\" (since it's fact, but field required). I'll set to \"\".\n\nreason: explain.\n\nLet me write it all out now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones defines interest and dividends revenue as revenue earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.",
+            "quote": "Interest and dividends revenue - Interest and dividends revenue is earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "Interest and dividends revenue is earned on client margin loan balances, cash and cash equivalents, cash and investments segregated under federal regulations, securities purchased under agreements to resell, Partnership loans and investment securities, none of which is based on revenue contracts with clients.",
+            "chunk_ids": [
+              "EDJ-10K-2025#213"
+            ]
+          },
+          {
+            "text": "Net interest and dividends revenue decreased 8% to $216 million in the second quarter of 2025 compared to the same period in 2024.",
+            "quote": "Net interest and dividends revenue decreased 8% to $216 and 9% to $435 in the second quarter and first half of 2025, respectively, compared to the same periods in 2024.",
+            "value": "$216",
+            "unit": "USD millions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#77"
+            ]
+          },
+          {
+            "text": "Net interest and dividends revenue decreased 9% to $435 million in the first half of 2025 compared to the same period in 2024.",
+            "quote": "Net interest and dividends revenue decreased 8% to $216 and 9% to $435 in the second quarter and first half of 2025, respectively, compared to the same periods in 2024.",
+            "value": "$435",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#77"
+            ]
+          },
+          {
+            "text": "Net interest and dividends revenue decreased 8% to $211 million in the third quarter of 2025 compared to the same period in 2024.",
+            "quote": "Net interest and dividends revenue decreased 8% to $211 and $646 in both the third quarter and first nine months of 2025, respectively, compared to the same periods in 2024.",
+            "value": "$211",
+            "unit": "USD millions",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#82"
+            ]
+          },
+          {
+            "text": "Net interest and dividends revenue decreased 8% to $646 million in the first nine months of 2025 compared to the same period in 2024.",
+            "quote": "Net interest and dividends revenue decreased 8% to $211 and $646 in both the third quarter and first nine months of 2025, respectively, compared to the same periods in 2024.",
+            "value": "$646",
+            "unit": "USD millions",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#82"
+            ]
+          },
+          {
+            "text": "Edward Jones estimates that a 100 basis point increase in short-term interest rates could increase its annual net interest income by approximately $152 million, and a 100 basis point decrease could decrease annual net interest income by approximately $154 million (2025 estimate).",
+            "quote": "the Partnership estimates that a 100-basis point (1.00%) increase in short-term interest rates could increase its annual net interest income by approximately $152. Conversely, the Partnership estimates that a 100-basis point (1.00%) decrease in short-term interest rates could decrease the Partnership\u2019s annual net interest income by approximately $154.",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#173"
+            ]
+          },
+          {
+            "text": "Edward Jones estimates that a 100 basis point increase in short-term interest rates could increase its annual net interest income by approximately $145 million, and a 100 basis point decrease could decrease annual net interest income by approximately $147 million (first quarter 2026 estimate).",
+            "quote": "the Partnership estimates that a 100-basis point (1.00%) increase in short-term interest rates could increase its annual net interest income by approximately $145. Conversely, the Partnership estimates that a 100-basis point (1.00%) decrease in short-term interest rates could decrease the Partnership\u2019s annual net interest income by approximately $147.",
+            "value": "",
+            "unit": "",
+            "period": "2026",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#90"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state Edward Jones's net interest and dividends revenue figures for multiple periods, the firm's definition of interest and dividends revenue, and its net interest income sensitivity estimates, which directly address how much an advisor-led firm earns from net interest and client cash balances.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

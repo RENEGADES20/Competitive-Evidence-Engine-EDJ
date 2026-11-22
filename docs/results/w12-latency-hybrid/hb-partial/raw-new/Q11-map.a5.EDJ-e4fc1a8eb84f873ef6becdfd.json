@@ -1,0 +1,182 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10K-2025#202",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10K-2025#41",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#140",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#203",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#327",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#268",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q1#102",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#42",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#329",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10Q-2025Q2#15",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#23",
+    "EDJ-10K-2025#334"
+  ],
+  "at": "2026-11-21T21:43:47.311589-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14026,
+    "output_tokens": 6550,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 12490,
+    "reasoning_tokens": 5575,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.62
+  },
+  "wall_s": 53.3,
+  "tokens_per_s": 122.89,
+  "ttft_s": 2.62,
+  "reasoning_content": "Let me analyze the passages to answer the sub-question about how Edward Jones reports and discloses advisor headcount.\n\nKey passages:\n- EDJ-10K-2025#130: \"Financial advisors (actual): At year end 20,425... Average 20,331...\" with footnote. This shows how they report financial advisors.\n- EDJ-10K-2025#202: \"NOTES TO CONSOLIDATED FINANCIAL STATEMENTS (Dollars in millions, except per unit information and the number of financial advisors)\"\n- EDJ-10K-2025#148: \"Financial advisors (actual): At year end 19,540... U.S. ... Canada 885...\"\n- EDJ-10Q-2026Q1#46: \"more than 20,000 financial advisors serve more than 9 million clients\"\n- EDJ-10Q-2025Q3#69: \"Attrition % represents the annualized number of financial advisors that left or retired...\"\n- EDJ-10Q-2026Q1#62: \"Counted on a full-time equivalent basis.\" - this appears in context of home office associates count, not financial advisors.\n\nActually let me focus. The sub-question is \"How the firm reports and discloses advisor headcount.\"\n\nThe firm reports financial advisors \"actual\" (at year/period end and average), broken down by U.S. and Canada segments.\n\nLet me extract key facts:\n\n1. Financial advisors (actual) at year end and average - reported in Item 7 (MD&A). Example: 2025 year end 20,425; average 20,331; 2024: 20,125 / 19,650; 2023: 19,232 / 18,945. (EDJ-10K-2025#130)\n\n2. Financial advisors broken into U.S. and Canada segments. EDJ-10K-2025#148: U.S. at year end 19,540, Canada 885 (2025); etc.\n\n3. The notes state \"except... the number of financial advisors\" (EDJ-10K-2025#202) - meaning financial advisors are reported in actual numbers, not millions.\n\n4. Attrition % definition: \"annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" (EDJ-10Q-2025Q3#69)\n\n5. \"Financial advisors (actual)\" label indicates they report \"actual\" count (not FTE) for financial advisors. Note the \"Counted on a full-time equivalent basis\" footnote appears to be for home office associates count (branch team associates?), not financial advisors.\n\nActually, looking at EDJ-10Q-2026Q1#62 and EDJ-10Q-2026Q2#75, the \"Counted on a full-time equivalent basis\" footnote seems to apply to a different table (home office and branch associates). The financial advisors are labeled \"(actual)\".\n\nSo the key facts:\n- Reports financial advisors as \"(actual)\" - actual headcount, at period/year end and average.\n- Breaks down by U.S. and Canada segments.\n- \"more than 20,000 financial advisors\" in narrative.\n\nLet me also note the definition of attrition.\n\nI should capture items as facts. The sub-question is about \"How the firm reports and discloses advisor headcount.\" So facts include:\n- Label \"Financial advisors (actual)\" with \"At year end\" and \"Average\" figures.\n- Breakdown into U.S. and Canada.\n- Notes state figures in actual count (not dollars in millions).\n- Narrative \"more than 20,000 financial advisors.\"\n\nLet me create items.\n\nItem 1: The firm reports \"Financial advisors (actual)\" at year end and average. Period 2025-12-31. Values 20,425 (year end), 20,331 (average), 20,125/19,650 (2024), 19,232/18,945 (2023).\n\nActually a series is one item per period. Let me think about how to structure. The sub-question is about \"how reports and discloses\" not a specific numeric request. So I should capture the reporting methodology and the figures.\n\nI'll make items:\n1. Fact: Reports financial advisors (actual) at year end and average - 2025 figures 20,425 and 20,331. Also 2024 and 2023.\n2. Fact: Breaks down by U.S. and Canada segments (EDJ-10K-2025#148).\n3. Fact: Notes indicate financial advisors reported in actual numbers, not millions (EDJ-10K-2025#202).\n4. Fact: Narrative \"more than 20,000 financial advisors\" (EDJ-10Q-2026Q1#46).\n5. Fact: Attrition % definition (related but maybe not directly asked). Actually this is about advisor headcount reporting - attrition definition relates to headcount. But it's a different metric (attrition). Could be a fact for \"how reports advisor headcount\"? The attrition definition uses \"total number of financial advisors.\" I think it's relevant context but it's about attrition metric, not headcount. I'll include it as a fact about how they define advisor-related metrics? Actually the question is specifically \"advisor headcount.\" Attrition is a different metric. But it does disclose the total number of financial advisors definition implicitly.\n\nLet me be careful. The sub-question asks \"How the firm reports and discloses advisor headcount.\" The key facts are:\n- Reported as \"Financial advisors (actual)\" - actual headcount (not FTE).\n- At year end / period end and average.\n- By U.S. and Canada segments.\n\nLet me also note that \"Counted on a full-time equivalent basis\" footnote applies to a different measure (home office associates), NOT financial advisors. This is a different_quantity context. Actually, that footnote is about home office associates count which is a different quantity. I could include it as different_quantity to note the distinction that financial advisors are \"actual\" while associates are FTE. But actually that's helpful context showing financial advisors are NOT FTE.\n\nHmm, let me check EDJ-10Q-2026Q1#62 more carefully: \"Counted on a full-time equivalent basis.\" appears right before \"The increase in operating expenses...\". It's a footnote to the table above (which showed home office and branch associates numbers). So the \"Counted on a full-time equivalent basis\" refers to the home office and branch associates counts, not financial advisors.\n\nThis is relevant to distinguish: financial advisors are \"(actual)\" while home office associates are FTE. I could note this as a fact or different_quantity.\n\nLet me structure the answer primarily with facts about how they report financial advisor headcount.\n\nI'll include:\n1. Fact: \"Financial advisors (actual)\" reported at year end and average, with 2025/2024/2023 figures (EDJ-10K-2025#130).\n2. Fact: Financial advisors split by U.S. and Canada segments (EDJ-10K-2025#148).\n3. Fact: Note states financial advisor count is an exception to \"dollars in millions\" presentation (EDJ-10K-2025#202).\n4. Fact: Narrative \"more than 20,000 financial advisors\" (EDJ-10Q-2026Q1#46).\n\nI think I'll consolidate. Let me write the items.\n\nFor item 1, text: \"The Partnership reports 'Financial advisors (actual)' at year end and on an average basis; at year end 2025 the count was 20,425 and the average was 20,331, versus 20,125 and 19,650 in 2024 and 19,232 and 18,945 in 2023.\"\n\nActually a series should be one item per period. But here the sub-question is about \"how reports\" not a specific numeric figure. I think I can combine into a couple items describing the methodology and include figures.\n\nLet me think about the instruction: \"Items (fact and different_quantity only), one per figure or statement; a series is one item per period.\"\n\nSo for the figures, I should do one item per period. But actually the key point is \"how the firm reports.\" I'll create items that are statements about reporting methodology plus the key figures.\n\nLet me create:\n\nItem 0 (fact): Reporting method - \"Financial advisors (actual)\" at year end and average. Quote: \"Financial advisors (actual): At year end 20,425 20,125 19,232 1% Average 20,331 19,650 18,945 3%\". Value: \"\" (or the method statement). Actually this is a statement about how reported.\n\nHmm, I think the cleanest is to have a fact item describing the reporting label and then fact items with the actual figures.\n\nLet me just do a few fact items:\n\n1. Fact - reports \"Financial advisors (actual)\" with \"At year end\" and \"Average\" - this is the labeling/methodology. Text describes it. Quote includes the label.\n\n2. Fact - year-end 2025 figure 20,425 (and average 20,331). This is a figure.\n\n3. Fact - U.S./Canada breakdown.\n\n4. Fact - \"more than 20,000 financial advisors\" narrative.\n\n5. Fact - notes \"except... the number of financial advisors\".\n\n6. different_quantity - home office associates counted on FTE basis (to contrast).\n\nLet me write these out properly.\n\nActually, I'll keep it focused. The core answer to \"how does the firm report and disclose advisor headcount\" is:\n\n- It reports \"Financial advisors (actual)\" \u2014 meaning actual headcount (individuals), not full-time equivalents.\n- Reported at period/year end and on an average basis.\n- Broken out by U.S. and Canada operating segments.\n- The count is disclosed in MD&A (Item 7 for 10-K, Item 2 for 10-Q), and noted in financial statements as an exception to \"dollars in millions.\"\n- Narrative also references \"more than 20,000 financial advisors.\"\n\nLet me write items with figures for a couple periods.\n\nI'll produce items:\n\nItem 0: fact, method: reports \"Financial advisors (actual)\" at year end and average.\ntext: \"Edward Jones reports financial advisor headcount under the label 'Financial advisors (actual),' presented at year end and on an average basis.\"\nquote: \"Financial advisors (actual): At year end 20,425 20,125 19,232 ... Average 20,331 19,650 18,945\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\nchunk_ids: EDJ-10K-2025#130\n\nItem 1: fact, year-end 2025 figure 20,425 and average 20,331.\nActually let me split at year end and average? \"a series is one item per period.\" The year end and average are two different figures for same period. I could do separate items or combine. I'll combine the at-year-end figure into one item and mention average.\n\nHmm, to be safe and precise, let me do:\n\nItem 1 (fact): At year end 2025, 20,425 financial advisors; 2024: 20,125; 2023: 19,232. Average 2025: 20,331; 2024: 19,650; 2023: 18,945.\n\nThis is a bit much for one item. But it's a series of the \"at year end\" figure across periods. I'll do one item for \"at year end\" series and one for \"average\" series. Actually the instruction says \"one item per period.\" So for at-year-end, three periods = three items? That seems excessive for a \"how reports\" question.\n\nI think the practical answer: the question isn't asking for specific numeric values across all periods, but rather how the firm defines and reports. So I'll capture the methodology with a couple representative figures.\n\nI'll do:\n- Item 0: fact, method statement (label \"Financial advisors (actual)\", at year end and average).\n- Item 1: fact, the 2025 year-end value 20,425 (whole firm).\n- Item 2: fact, U.S./Canada breakdown (2025: U.S. 19,540, Canada 885).\n- Item 3: fact, narrative \"more than 20,000 financial advisors.\"\n- Item 4: fact, notes \"except... number of financial advisors.\"\n- Item 5: different_quantity, \"Counted on a full-time equivalent basis\" for home office associates (contrast).\n\nLet me write text and quotes carefully.\n\nFor Item 0:\ntext: \"Edward Jones discloses advisor headcount under the label 'Financial advisors (actual),' reported 'At year end' and on an 'Average' basis.\"\nquote: \"Financial advisors (actual):\\n  At year end ... 20,425 20,125 19,232 ... Average 20,331 19,650 18,945\"\nvalue: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\"\n\nActually I'll set unit \"financial advisors\" and leave value \"\".\n\nFor Item 1 (year end 2025):\ntext: \"At year end 2025, Edward Jones had 20,425 financial advisors (actual), with 20,125 in 2024 and 19,232 in 2023.\"\nquote: \"At year end 20,425 20,125 19,232 1%\"\nvalue: \"20,425\", unit: \"financial advisors\", period: \"2025-12-31\", scope: \"\"\nchunk_ids: EDJ-10K-2025#130\n\nWait, the 10-K period is 2025-12-31 but the fiscal year end is December 31, 2025. \"At year end\" means December 31, 2025. Period \"2025-12-31\" is fine as point in time. Actually for a year-end figure, I could use \"2025-12-31\" as point in time.\n\nFor the \"Average\" figure, period would be the year 2025 (calendar). I'll do a separate item maybe, or just note.\n\nLet me include the average as part of item 1 text or a separate item. I'll do a separate item for average to be clean.\n\nActually, I think I'm overcomplicating. Let me include both at-year-end and average in one item each with clear text.\n\nLet me finalize:\n\nItem 0: fact, method. Label \"Financial advisors (actual)\".\n\nItem 1: fact, at year end 2025 = 20,425 (and 2024=20,125, 2023=19,232). I'll include all three in text, value = \"20,425\", period \"2025-12-31\".\n\nItem 2: fact, average 2025 = 20,331 (2024=19,650, 2023=18,945). value \"20,331\", period \"2025\".\n\nItem 3: fact, U.S./Canada breakdown. U.S. year end 2025 = 19,540, Canada = 885. value \"19,540\", scope \"U.S.\", period \"2025-12-31\". Also Canada 885.\n\nActually EDJ-10K-2025#148 shows: \"At year end 19,540 19,253 18,378 ... 885 872 854\" with \"U.S.\" and \"Canada\" columns. So U.S. 19,540, Canada 885 for 2025.\n\nItem 4: fact, narrative \"more than 20,000 financial advisors\" (EDJ-10Q-2026Q1#46, as of March 27, 2026).\n\nItem 5: fact, notes \"except per unit information and the number of financial advisors\" (EDJ-10K-2025#202) - indicates reported in actual counts.\n\nItem 6: different_quantity - \"Counted on a full-time equivalent basis\" footnote relates to home office associates, contrasting that financial advisors are \"actual.\" Actually this could be a fact that distinguishes. But the footnote refers to a different quantity (home office associates), so it's different_quantity with differs_because \"refers to home office associates count, not financial advisor headcount.\"\n\nHmm wait, is it clear the footnote \"Counted on a full-time equivalent basis\" refers to home office associates? In EDJ-10Q-2026Q1#62, the passage shows footnote \"(1) Counted on a full-time equivalent basis.\" placed after some table. Looking at EDJ-10Q-2026Q2#75: \"9,455 -7% 8,808 9,455 -7% Average 8,887 9,429 -6% 8,938 9,419 -5% (1) Counted on a full-time equivalent basis.\"\n\nThis looks like home office and branch associates table. So \"Counted on a full-time equivalent basis\" applies to those associate numbers, not financial advisors.\n\nThis is useful context: financial advisors are \"actual\" while associates are \"FTE.\" I'll include as a fact actually, noting it distinguishes. But strictly, it's about a different quantity (home office associates). So different_quantity.\n\nActually, I think the most valuable distinction is: the firm reports financial advisors \"actual\" (headcount), while home office associates are \"counted on a full-time equivalent basis.\" This contrast helps define what \"actual\" means. I'll label it different_quantity with differs_because.\n\nLet me also consider the attrition definition as a fact about how they use advisor headcount. The attrition % definition references \"total number of financial advisors as of period end.\" This is a related metric, not the headcount itself. I'll skip it or include as context. I'll skip to keep focused.\n\nActually, I think I should include the attrition footnote because it's part of how they disclose advisor-related info, but it's a different metric. I'll leave it out; it's not about headcount.\n\nLet me finalize the cells. One cell for sub-question a5.EDJ with label \"fact\" (since there are facts about how it reports), containing multiple items.\n\ndiffers_because: \"\" (since overall label is fact). But I have one different_quantity item within. The schema has \"differs_because\" at the cell level and \"label\" at cell level. Hmm.\n\nWait, looking at schema: each cell has a \"label\" (fact/not_disclosed/not_found/different_quantity), and \"items\" array, and \"differs_because\" string.\n\nSo the label is at the cell level, not per item. So I need to choose one label for the whole cell. Since the primary answer is \"fact\" (the firm does report advisor headcount), the cell label should be \"fact\".\n\nBut then where do I put the different_quantity info about home office associates? The \"differs_because\" field is for when label is different_quantity. If label is fact, differs_because should be \"\".\n\nHmm. Actually, the different_quantity item about home office associates is a secondary point. Since the cell label must be \"fact\" (because the firm clearly reports advisor headcount), I think I should just not include the different_quantity item, OR I include it but the cell label is fact and I explain in the item text.\n\nActually, re-reading: \"Label each cell: fact / different_quantity / not_disclosed / not_found.\" The label is at cell level. The items within a fact cell are all facts. The different_quantity label applies when the cell is about a different quantity.\n\nSince the sub-question is \"How the firm reports and discloses advisor headcount,\" and the firm clearly reports it (fact), the label is \"fact\". The home office FTE contrast is not the answer to this sub-question, so I'll exclude it to avoid confusion. Actually, it could be a useful fact: financial advisors are reported \"actual\" (not FTE). That's already captured in the \"Financial advisors (actual)\" label item.\n\nI'll keep it clean: label = fact, with fact items.\n\nLet me also reconsider: is \"actual\" a meaningful definition? The label \"Financial advisors (actual)\" distinguishes from FTE. So the fact item about \"actual\" captures the definition aspect.\n\nLet me write the final items.\n\nItem 0 (method/label):\ntext: \"Edward Jones reports advisor headcount under the label 'Financial advisors (actual),' disclosed at year end (or period end) and on an average basis, in the MD&A.\"\nquote: \"Financial advisors (actual):\\n  At year end 20,425 20,125 19,232 1%\\n  Average 20,331 19,650 18,945 3%\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#130\"]\n\nItem 1 (year-end 2025):\ntext: \"At year end 2025, Edward Jones reported 20,425 financial advisors (actual), compared with 20,125 at year end 2024 and 19,232 at year end 2023.\"\nquote: \"At year end 20,425 20,125 19,232 1%\"\nvalue: \"20,425\"\nunit: \"financial advisors\"\nperiod: \"2025-12-31\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#130\"]\n\nItem 2 (average 2025):\ntext: \"Edward Jones reported an average of 20,331 financial advisors for 2025, compared with 19,650 in 2024 and 18,945 in 2023.\"\nquote: \"Average 20,331 19,650 18,945 3%\"\nvalue: \"20,331\"\nunit: \"financial advisors\"\nperiod: \"2025\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#130\"]\n\nItem 3 (U.S./Canada breakdown):\ntext: \"The financial advisor headcount is broken out by operating segment: at year end 2025, 19,540 in the U.S. and 885 in Canada.\"\nquote: \"At year end 19,540 19,253 18,378 1% 885 872 854 1%\"\nvalue: \"19,540\"\nunit: \"financial advisors\"\nperiod: \"2025-12-31\"\nscope: \"U.S.\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#148\"]\n\nShould I add a separate item for Canada 885? I'll mention in text but the value is U.S. Actually let me add Canada as separate or combine. I'll make the item about the breakdown with scope \"U.S.\" and value \"19,540\", and note Canada 885 in text. Alternatively add a Canada item. To be thorough, I'll add a Canada item.\n\nActually, let me keep item 3 as U.S. and add item 4 for Canada. But then renumber.\n\nLet me also add the narrative \"more than 20,000\" and the notes \"number of financial advisors\" exception.\n\nFinal items:\n\n1. method label (fact)\n2. year-end 2025 whole firm 20,425 (fact)\n3. average 2025 whole firm 20,331 (fact)\n4. U.S. year-end 2025 19,540 (fact)\n5. Canada year-end 2025 885 (fact)\n6. narrative \"more than 20,000 financial advisors\" (fact)\n7. notes exception \"number of financial advisors\" (fact)\n\nLet me write them all.\n\nFor narrative item:\ntext: \"As of March 27, 2026, the Partnership states its 'more than 20,000 financial advisors serve more than 9 million clients.'\"\nquote: \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"2026-03-27\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10Q-2026Q1#46\"]\n\nFor notes exception:\ntext: \"In the notes to the consolidated financial statements, the number of financial advisors is presented as an exception to the 'Dollars in millions' convention, i.e., reported as actual counts.\"\nquote: \"(Dollars in millions, except per unit information and the number of financial advisors)\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#202\"]\n\nFor Canada item:\ntext: \"At year end 2025, Edward Jones reported 885 financial advisors in Canada (compared with 872 in 2024 and 854 in 2023).\"\nquote: \"885 872 854 1%\"\nvalue: \"885\"\nunit: \"financial advisors\"\nperiod: \"2025-12-31\"\nscope: \"Canada\"\ndefinition: \"\"\nchunk_ids: [\"EDJ-10K-2025#148\"]\n\nNote EDJ-10K-2025#148 shows U.S. at year end 19,540 19,253 18,378 and Canada 885 872 854. Good.\n\nNow, the reason: \"The firm reports financial advisor headcount as 'Financial advisors (actual),' at period/year end and average, broken out by U.S. and Canada, so these are facts.\"\n\nderivation: operation \"\", inputs [].\n\nLet me write the submit call.\n\nFor the definition field, the firm doesn't give an explicit definition of \"financial advisor\" in these passages beyond \"actual\" and the attrition footnote. I'll leave definition \"\" mostly. Actually the attrition footnote gives a sense but it's about attrition. I'll leave definition \"\".\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports advisor headcount under the label 'Financial advisors (actual),' disclosed 'At year end' (or period end) and on an 'Average' basis in Management's Discussion and Analysis.",
+            "quote": "Financial advisors (actual):\n  At year end                                                                            20,425                20,125                19,232                         1%\n  Average                                                                                20,331                19,650                18,945                         3%",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "At year end 2025, Edward Jones reported 20,425 financial advisors (actual), compared with 20,125 at year end 2024 and 19,232 at year end 2023.",
+            "quote": "At year end                                                                            20,425                20,125                19,232                         1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reported an average of 20,331 financial advisors for 2025, compared with 19,650 in 2024 and 18,945 in 2023.",
+            "quote": "Average                                                                                20,331                19,650                18,945                         3%",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The financial advisor headcount is broken out by operating segment: at year end 2025, 19,540 financial advisors in the U.S. (compared with 19,253 in 2024 and 18,378 in 2023).",
+            "quote": "At year end                                                19,540                 19,253                 18,378                        1%",
+            "value": "19,540",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          },
+          {
+            "text": "At year end 2025, Edward Jones reported 885 financial advisors in Canada (compared with 872 in 2024 and 854 in 2023).",
+            "quote": "885                  872                  854               1%",
+            "value": "885",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          },
+          {
+            "text": "As of March 27, 2026, the Partnership states its 'more than 20,000 financial advisors serve more than 9 million clients.'",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.4 trillion in client assets under care as of March 27, 2026.",
+            "value": "",
+            "unit": "",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#46"
+            ]
+          },
+          {
+            "text": "In the notes to the consolidated financial statements, the number of financial advisors is presented as an exception to the 'Dollars in millions' convention, i.e., reported as actual counts.",
+            "quote": "(Dollars in millions, except per unit information and the number of financial advisors)",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#202"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state that Edward Jones discloses advisor headcount as 'Financial advisors (actual)' at year/period end and average, broken out by U.S. and Canada, so these are facts about how it reports and discloses the metric.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

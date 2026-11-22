@@ -1,0 +1,64 @@
+{
+  "question_id": "Q9",
+  "question": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a3.MS",
+  "round": 2,
+  "entity": "MS",
+  "cells": [
+    "a3.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MS-10Q-2026Q1#415",
+    "MS-SUPP-2026Q1#42",
+    "MS-10K-2025#346",
+    "MS-10Q-2025Q3#456",
+    "MS-SUPP-2026Q2#29",
+    "MS-10K-2025#257",
+    "MS-10Q-2025Q2#128",
+    "MS-10K-2025#256",
+    "MS-10Q-2026Q2#130",
+    "MS-10Q-2025Q2#124",
+    "MS-10Q-2026Q2#132",
+    "MS-10Q-2025Q3#93"
+  ],
+  "at": "2026-11-21T21:38:29.660694-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4835,
+    "output_tokens": 417,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 3171,
+    "reasoning_tokens": 267,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.0
+  },
+  "wall_s": 5.38,
+  "tokens_per_s": 77.51,
+  "ttft_s": 2.0,
+  "reasoning_content": "Let me analyze the passages. The sub-question asks about wealth thresholds or asset breakpoints Morgan Stanley uses to define client tiers. None of the passages mention client tiers, wealth thresholds, or asset breakpoints for segmenting clients. Some passages mention \"ultra-high net worth clients\" for tailored lending, but that's not a wealth threshold/breakpoint.\n\nLet me check: MS-10K-2025#346 mentions \"ultra-high net worth clients\" - but no threshold given. That's about lending, not client tiers.\n\nNo passages state wealth thresholds or asset breakpoints. So the answer is not_found.\n\nWait, \"ultra-high net worth clients\" is mentioned but no threshold. That's a mention of a tier name but no breakpoint. It doesn't give the thresholds. So not_found is appropriate - the passages say nothing about the thresholds/breakpoints.\n\nActually, should I consider \"ultra-high net worth clients\" as a partial fact? The sub-question asks for \"wealth thresholds or asset breakpoints\" used to define client tiers. The passage mentions \"ultra-high net worth clients\" but gives no threshold/breakpoint. That's not a fact about thresholds. It's just a mention. No figure. So not_found.\n\nLet me answer not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.MS",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages state any wealth thresholds or asset breakpoints that Morgan Stanley uses to define client tiers; the passages only mention regulatory capital, leverage ratios, client asset definitions, and lending (including a passing reference to 'ultra-high net worth clients' with no threshold figure).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

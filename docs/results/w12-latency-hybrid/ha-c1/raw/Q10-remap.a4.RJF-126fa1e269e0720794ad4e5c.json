@@ -1,0 +1,87 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.RJF",
+  "round": 2,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-10Q-2026Q1#35",
+    "RJF-10K-2025#32",
+    "RJF-TR-2025Q2#64",
+    "RJF-10Q-2025Q2#295",
+    "RJF-10K-2025#8",
+    "RJF-10Q-2026Q2#328",
+    "RJF-10K-2025#406",
+    "RJF-10Q-2025Q4#238",
+    "RJF-10Q-2025Q4#265",
+    "RJF-10Q-2025Q4#40"
+  ],
+  "at": "2026-11-21T20:22:26.733145-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4248,
+    "output_tokens": 1104,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 2584,
+    "reasoning_tokens": 607,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.27
+  },
+  "wall_s": 9.45,
+  "tokens_per_s": 116.83,
+  "ttft_s": 1.27,
+  "reasoning_content": "The sub-question asks for specific products, services, platforms, or fee levels RJF says it offers mass-affluent clients.\n\nLooking at the passages, none of them mention \"mass-affluent\" specifically. The passages describe general retail/institutional services, fee-based accounts, managed programs, etc., but none specifically reference mass-affluent clients.\n\nLet me look carefully. The passages describe:\n- Investment management services to retail and institutional clients\n- Fee-based accounts, managed programs\n- Various services\n\nNone mention \"mass-affluent\" clients specifically. So this would be not_found, or possibly the fee-based accounts info is a different_quantity (general retail, not mass-affluent specifically).\n\nActually, the question is about \"mass-affluent clients\" specifically. None of the passages mention mass-affluent. The passages mention \"retail\" clients generally, which is a wider group than mass-affluent.\n\nSo the products/services are described for retail clients broadly, not mass-affluent specifically. That could be different_quantity (retail clients is a wider unit that contains mass-affluent).\n\nBut wait - the sub-question asks \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients\". Since no passage mentions mass-affluent specifically, but there are passages about fee-based accounts, managed programs for retail clients, these are related but not specific to mass-affluent.\n\nActually, let me reconsider. The instruction says a wider unit that contains the asked one is a different_quantity. \"Retail clients\" is wider than \"mass-affluent clients\". So the fee-based accounts / managed programs descriptions are different_quantity with differs_because \"describes retail clients generally, not mass-affluent clients specifically.\"\n\nLet me choose the most relevant passage: RJF-10Q-2025Q4#238 which describes fee-based accounts, managed programs, fee levels. And RJF-10Q-2025Q2#295 which describes fee-based accounts.\n\nActually, I think the best approach is different_quantity, noting that these describe retail/investment management services generally, not mass-affluent specifically.\n\nLet me identify items:\n1. Fee-based accounts invested in \"Managed programs\" - from RJF-10Q-2025Q4#238\n2. Fee-based accounts wide array of products - from RJF-10Q-2025Q2#295\n\nThese describe fee levels too: \"Fees received from such accounts are based on the value of client assets in fee-based accounts and vary based on the specific account types.\"\n\nI'll label different_quantity with differs_because that these describe retail clients generally, not mass-affluent clients specifically.\n\nActually, let me think about whether this should be not_found or different_quantity. The passages say nothing about mass-affluent clients specifically. But they do describe products/services/fee levels for a wider group (retail clients). So different_quantity is appropriate.\n\nLet me craft the response.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James offers fee-based accounts invested in 'Managed programs' overseen by AMS, and fees received from such accounts are based on the value of client assets and vary based on the specific account types in which the client invests and the level of assets in the client relationship.",
+            "quote": "We also offer our clients fee-based accounts that are invested in \"Managed programs\" overseen by AMS, which is part of our Asset Management segment... Fees received from such accounts are based on the value of client assets in fee-based accounts and vary based on the specific account types in which the client invests and the level of assets in the client relationship.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retail clients (PCG segment)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10Q-2025Q4#238"
+            ]
+          },
+          {
+            "text": "Fee-based accounts within the PCG segment comprise a wide array of products and programs, the majority of which are programs where financial advisors provide investment advisory services on a discretionary or non-discretionary basis.",
+            "quote": "Fee-based accounts within our PCG segment are comprised of a wide array of products and programs that we offer our clients. The majority of assets in fee-based accounts within our PCG segment are invested in programs for which our financial advisors provide investment advisory services, either on a discretionary or non-discretionary basis.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "retail clients (PCG segment)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10Q-2025Q2#295"
+            ]
+          }
+        ],
+        "differs_because": "Passages describe products, services, and fee levels offered to retail clients broadly (PCG segment), not mass-affluent clients specifically; no passage references mass-affluent clients.",
+        "reason": "No passage mentions mass-affluent clients; the products/fee descriptions apply to the wider retail client group that contains mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

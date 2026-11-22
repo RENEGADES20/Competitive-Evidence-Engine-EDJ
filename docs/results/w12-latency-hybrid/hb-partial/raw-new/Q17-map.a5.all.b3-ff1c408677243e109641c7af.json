@@ -1,0 +1,116 @@
+{
+  "question_id": "Q17",
+  "question": "What are these firms saying about AI in advice delivery, and who is claiming the most?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a5.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TR-2026Q2#32",
+    "EDJ-10Q-2025Q2#66",
+    "MS-10K-2025#395",
+    "SCHW-DECK-2026-investor-day#218",
+    "BAC-TR-2026Q2#23",
+    "BAC-DECK-2025-investor-day#16",
+    "SCHW-TR-2026Q2#23",
+    "BAC-DECK-2025-investor-day#17",
+    "SCHW-TR-2026Q3#25",
+    "SCHW-TR-2026Q3#26",
+    "BAC-DECK-2025-investor-day#27",
+    "SCHW-TRADE-2026-11-02-RB-01#9",
+    "EDJ-10K-2025#86",
+    "SCHW-DECK-2026-investor-day#22",
+    "BAC-10K-2025#1078",
+    "EDJ-10K-2025#88",
+    "MS-10K-2025#15",
+    "RJF-10Q-2026Q1#244",
+    "MS-DECK-2026-strategic-update#18",
+    "RJF-10K-2025#376",
+    "RJF-10Q-2025Q4#191",
+    "RJF-DECK-2025-investor-day#68",
+    "BAC-DECK-2025-investor-day#90",
+    "BAC-PR-2026-10-14-01#1",
+    "SCHW-DECK-2026-investor-day#96",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#0"
+  ],
+  "at": "2026-11-21T22:09:40.451790-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7122,
+    "output_tokens": 2833,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 5586,
+    "reasoning_tokens": 2342,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.61
+  },
+  "wall_s": 25.73,
+  "tokens_per_s": 110.1,
+  "ttft_s": 1.61,
+  "reasoning_content": "Let me analyze the passages to find results and metrics firms report from using AI in advice delivery.\n\nThe sub-question asks: \"What results and metrics firms report from using AI in advice delivery.\"\n\nLet me look at relevant passages. The passages listed are from many firms (RJF, EDJ, MS, SCHW, BAC). I need to find results/metrics from using AI in advice delivery.\n\nLooking at SCHW-TR-2026Q3#26: Richard Wurster says AI is driving revenue gains, client engagement up, DAT strength, wealth business bringing AI to deliver tax insights and trust/estate insights, fueling record growth in wealth business, highest client promoter score.\n\nThis is a fact - results/metrics from AI in advice delivery. Schwab reports AI driving revenue gains, client engagement up, record wealth growth.\n\nSCHW-DECK-2026-investor-day#96: \"Calls through AI engine per day\" - a metric. But this is about service/research assistant, not specifically advice delivery. Hmm.\n\nBAC-PR-2026-10-14-01#1: Moynihan says AI investments helping teammates serve clients better, work faster, manage risk. Not specific metrics.\n\nBAC-TR-2026Q2#23: AI-enabled tools help bankers accelerate research, prepare materials, identify client opportunities. Not metrics, more qualitative. Actually this is about bankers, not advisors. It's Global Banking.\n\nLet me focus. The question asks for results and metrics firms report from using AI in advice delivery.\n\nThe most relevant fact is SCHW-TR-2026Q3#26. Let me extract those.\n\nActually, I need to be careful. The sub-question is about \"results and metrics firms report from using AI in advice delivery.\" Since the firm is \"All sources (no firm named)\", I should extract facts across all firms in the passages.\n\nLet me identify concrete facts:\n\n1. SCHW-TR-2026Q3#26 (Richard Wurster): AI is driving part of revenue gains, client engagement up, fueling DAT strength, wealth business bringing AI to deliver tax insights and trust/estate insights, fueling record growth in wealth business.\n\nThese are qualitative claims about results, not specific metrics. But they are facts (positions/statements attributed to the firm). Actually the question asks \"results and metrics firms report\" - these are results the firm reports.\n\n2. SCHW-DECK-2026-investor-day#96: \"Calls through AI engine per day\" - this is a metric label but no figure given. Not advice delivery specifically - it's about Research Assistant, Service Assistant, Sales reps as users. Not advice.\n\n3. BAC-PR-2026-10-14-01#1: Moynihan's quote about AI helping teammates - no specific metric.\n\n4. BAC-TR-2026Q2#23: AI-enabled tools helping bankers - no metric, and it's about bankers not advisors.\n\nLet me think about what's most relevant and report facts.\n\nThe primary fact is from SCHW-TR-2026Q3#26. This is clearly about AI in advice delivery (wealth business, tax insights, trust/estate insights).\n\nLet me extract that as fact items.\n\nActually the instruction says \"one cell for each sub-question.\" So I return one cell for a5.all with label fact (since there are some facts) and items listing the facts.\n\nLet me identify the concrete statements:\n\nItem 1 (SCHW-TR-2026Q3#26): \"AI is already driving part of our revenue gains... client engagement is up because of AI, and that is fueling some of our continued DAT strength.\" No specific figure.\n\nItem 2: \"in our wealth business, where we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business.\"\n\nThese are qualitative results, no figures. value=\"\", unit=\"\", period=\"\".\n\nActually, should I also include BAC-PR quote? \"Our disciplined investments in AI are helping teammates serve clients better, work faster and manage risk more effectively.\" This is about results from AI but broadly, not specifically advice delivery, and no metrics. It's about teammates generally.\n\nBAC-TR-2026Q2#23: \"We're also using AI-enabled tools to help bankers accelerate their research, prepare materials, and identify relevant client opportunities more efficiently.\" This is about bankers (commercial/corporate), not advice delivery. Different_quantity maybe? It's not advice delivery; it's about bankers. Could be considered different_quantity (different business, not advice).\n\nHmm, but the question is specifically \"AI in advice delivery.\" The banker AI tools are not advice delivery.\n\nLet me focus on the clearest facts relevant to advice delivery.\n\nSCHW-TR-2026Q3#26 is the clearest. Let me extract those items.\n\nActually, also consider: the question is about \"results and metrics firms report from using AI in advice delivery.\" Schwab's statements are results (qualitative). No specific metrics reported.\n\nLet me also check SCHW-TR-2026Q2#23: \"continue to make investments in key strategic initiatives... as well as artificial intelligence.\" This is about investments, not results/metrics.\n\nI think the main facts are from SCHW-TR-2026Q3#26.\n\nLet me also consider BAC-PR-2026-10-14-01#1 quote as a fact about results (qualitative).\n\nLet me structure the cell with label \"fact\" and items.\n\nFor the items, I'll include:\n1. Schwab: AI driving part of revenue gains, client engagement up, DAT strength (SCHW-TR-2026Q3#26)\n2. Schwab: AI delivering tax/trust/estate insights fueling record wealth growth (SCHW-TR-2026Q3#26)\n3. BAC: disciplined AI investments helping teammates serve clients better, work faster, manage risk (BAC-PR)\n\nActually, let me be careful about what qualifies. The sub-question is \"results and metrics firms report from using AI in advice delivery.\"\n\nThe Schwab statements are clearly about advice delivery (wealth business, tax/trust/estate insights). These are results.\n\nThe BAC statements are more general (serve clients, work faster, manage risk) - arguably about serving clients but not specifically advice delivery. I could include as different_quantity or just include as fact with note. Actually \"serve clients better\" could relate to advice. But it's general.\n\nI'll focus on the Schwab facts as the primary, and possibly include BAC as a fact since it does mention AI helping serve clients.\n\nLet me write the items carefully.\n\nItem 0: \ntext: \"Schwab's CEO states that AI is already driving part of the firm's revenue gains, that client engagement is up because of AI, and that this is fueling continued strength in daily average trades (DAT).\"\nquote: \"I think AI is already driving part of our revenue gains... I believe client engagement is up because of AI, and that is fueling some of our continued DAT strength.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2026Q3#26\"]\n\nItem 1:\ntext: \"Schwab's CEO states the firm is bringing AI to deliver tax insights and trust and estate insights to clients, which is helping engage clients in wealth conversations and is in part fueling record growth in the firm's wealth business.\"\nquote: \"we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2026Q3#26\"]\n\nThese are facts (qualitative results, no specific metric figures).\n\nShould I include BAC? The Moynihan quote is about AI helping teammates serve clients better - somewhat general. I'll include it as a fact but note it's about client service broadly. Actually, \"serve clients better, work faster and manage risk more effectively\" - this is about results from AI, but not specifically advice delivery and not metric. It could be considered a fact about results.\n\nHmm, but I want to be careful. The instruction says facts are what the sub-question asks. The sub-question asks about \"results and metrics firms report from using AI in advice delivery.\" BAC's statement is about AI helping teammates serve clients (which could be advice-related). It's a qualitative result.\n\nI'll include it as a fact item too, noting it's broad.\n\nActually, let me reconsider. There's ambiguity. The safest is to include the Schwab facts as clearly relevant, and possibly BAC as a related fact.\n\nLet me include BAC-PR quote as a fact item about results (qualitative).\n\nActually I think I'll include it. The quote: \"Our disciplined investments in AI are helping teammates serve clients better, work faster and manage risk more effectively.\" This is a result statement about AI.\n\nBut is \"serve clients better\" advice delivery? It's client service generally. I'll include it but perhaps note scope.\n\nLet me keep it simpler and include both Schwab items and the BAC item.\n\nActually, let me reconsider the whole thing. The question wants \"results and metrics.\" The only specific metric-ish thing is SCHW-DECK#96 \"Calls through AI engine per day\" but that's a metric label without a figure and about service/research assistant, not advice delivery.\n\nI'll report facts as the qualitative result statements.\n\nLet me finalize with:\n- fact label\n- 3 items (2 Schwab, 1 BAC)\n\nActually, for BAC-TR-2026Q2#23, the banker AI tools are in Global Banking (commercial/corporate), not advice delivery. So that's different_quantity (different business). But I'll leave it out or note. Actually since I'm returning one cell, I can only have one label. The cell label should reflect the overall finding.\n\nSince there are facts, label = fact. I can include the Schwab and BAC items.\n\nFor BAC-TR-2026Q2#23 - it's about bankers, not advice delivery. I'll skip it as it's not advice delivery (it's research/prep for bankers). Actually it could be relevant as \"AI in client-facing\" but not advice. I'll leave it out to avoid noise, or include as a fact? It's a different context. I'll leave it out.\n\nLet me write the final answer.\n\nActually, I should reconsider whether to include the BAC-PR item. The question is specifically about \"advice delivery.\" The BAC quote \"serve clients better, work faster and manage risk\" is general, includes risk management which is not advice delivery. It's somewhat different_quantity (broader than advice delivery). But it does mention serving clients.\n\nI'll include it as a fact but keep the text faithful. Actually, to be safe and precise, I'll note in the text what it covers.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab's CEO states that AI is already driving part of the firm's revenue gains, that client engagement is up because of AI, and that this is fueling some of the firm's continued daily average trades (DAT) strength.",
+            "quote": "I think AI is already driving part of our revenue gains... I believe client engagement is up because of AI, and that is fueling some of our continued DAT strength.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#26"
+            ]
+          },
+          {
+            "text": "Schwab's CEO states the firm is bringing AI to deliver tax insights and trust and estate insights to clients, which is helping engage clients more in wealth conversations and is in part fueling record growth in the firm's wealth business.",
+            "quote": "we're bringing AI to deliver tax insights and trust and estate insights to our clients. And that's helping us engage them more in wealth conversations, which is in part fueling our record growth in our wealth business",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q3#26"
+            ]
+          },
+          {
+            "text": "Bank of America's Chair and CEO states that the firm's disciplined investments in AI are helping teammates serve clients better, work faster and manage risk more effectively.",
+            "quote": "Our disciplined investments in AI are helping teammates serve clients better, work faster and manage risk more effectively.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-10-14-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Schwab and Bank of America executives state qualitative results from using AI in client/wealth engagement, though no specific numeric metrics tied to AI in advice delivery are reported in these passages.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

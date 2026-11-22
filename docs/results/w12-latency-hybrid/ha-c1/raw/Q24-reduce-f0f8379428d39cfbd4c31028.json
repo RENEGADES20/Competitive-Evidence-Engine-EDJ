@@ -1,0 +1,930 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2024Q4#14",
+    "MS-TR-2025Q2#3",
+    "MS-TR-2025Q2#18",
+    "MS-TR-2025Q3#3",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2025Q3#17",
+    "MS-PR-2026-01-15-01#0",
+    "MS-TR-2025Q4#25",
+    "MS-TR-2025Q4#4",
+    "MS-TR-2026Q1#3",
+    "MS-TR-2026Q2#2",
+    "MS-TR-2026Q2#19",
+    "MS-TR-2026Q3#18",
+    "MS-TR-2026Q3#2",
+    "MS-SUPP-2020Q4#1",
+    "MS-10K-2025#166",
+    "MS-SUPP-2025Q4#14",
+    "MS-10K-2025#165",
+    "MS-SUPP-2026Q2#37",
+    "SCHW-DECK-2026-investor-day#231",
+    "SCHW-10K-2025#129",
+    "SCHW-PR-2026-01-21-01#40",
+    "SCHW-10Q-2026Q1#16",
+    "SCHW-10Q-2025Q2#9",
+    "SCHW-10Q-2025Q3#9",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-PR-2026-10-15-01#41",
+    "SCHW-MONTHLY-2026-08#1",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10K-2025#49",
+    "SCHW-PR-2026-07-21-01#2",
+    "SCHW-PR-2026-01-21-01#2",
+    "SCHW-PR-2026-10-15-01#2",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-PR-2026-10-15-01#10",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-DECK-2026-investor-day#306",
+    "SCHW-10Q-2026Q2#331",
+    "EDJ-10K-2025#129",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q2#75",
+    "BAC-10K-2025#248",
+    "BAC-SUPP-2026Q3#53",
+    "BAC-SUPP-2026Q2#55",
+    "BAC-SUPP-2026Q1#45",
+    "BAC-SUPP-2023Q4#1",
+    "BAC-PR-2026-01-14-01#13",
+    "BAC-PR-2026-04-15-01#11",
+    "BAC-PR-2026-07-14-01#11",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-SUPP-2023Q4#2",
+    "MER-ADV1A-2026#1",
+    "BAC-SUPP-2026Q1#46",
+    "BAC-10K-2025#249",
+    "RJF-SUPP-2025Q3#9",
+    "RJF-SUPP-2025Q4#8",
+    "RJF-SUPP-2026Q1#9",
+    "RJF-SUPP-2026Q2#9",
+    "RJF-10K-2025#9",
+    "RJF-10K-2025#227",
+    "RJF-DECK-2025-investor-day#30",
+    "RJF-10K-2025#12",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-DECK-2025-investor-day#32"
+  ],
+  "schema_fallback": [],
+  "enum_values": 228,
+  "at": "2026-11-21T20:44:56.261982-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 25354,
+    "output_tokens": 34104,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 23690,
+    "reasoning_tokens": 23583,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 4.84
+  },
+  "wall_s": 224.78,
+  "tokens_per_s": 151.72,
+  "ttft_s": 4.84,
+  "reasoning_content": "Let me carefully work through this. I need to write the answer following the structure.\n\nAspects:\n- a1 [fact]: Client assets (total client assets under management/advisement) - fact cells for MS, SCHW, EDJ, MER, RJF\n- a2 [fact]: Advisor headcount - fact cells MS, EDJ, RJF; SCHW and MER are different quantity (adjacent only)\n- a3 [fact, proxy: stand-in figure, adjacent only]: Client assets per advisor computed/disclosed\n- a4 [comparison]: exactly one comparison claim, part_id a4\n\nLet me note the structure. Several firms: aspect by aspect, firms in order, each claim starting \"<Firm>: \".\n\nFor a1, there are many items. For a2, fact cells. For a3, adjacent items (stand-in figures). For a4, one comparison claim spanning firms with part_id \"a4\".\n\nLet me think about which items are facts (claims) vs adjacent vs gaps.\n\na1 is \"fact\" for all firms, so all items become claims.\n\nWait, but note some items marked \"figure not found in its passage\" or \"quote not verbatim\". The figure-not-found means \"keeps its figure out of your text\". Quote not verbatim means never put in quotation marks.\n\nLet me carefully handle a1.SCHW items 1-5: marked \"figure not found in its passage: do not state this figure\". So I cannot state these figures. Hmm, but these are facts. Wait, the instruction says: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\"\n\nSo for a1.SCHW items 1-5 (2021-2025 total client assets from investor day deck), I cannot state the figure. But I still need to write a claim? Actually the figure is the value. If I can't state the figure, what do I write?\n\nHmm, let me re-read. \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" So I should write the claim but without stating the figure. But a fact cell claim is essentially the figure. This is tricky.\n\nActually, let me reconsider. These items are marked \"[quote not verbatim: never put it in quotation marks; figure not found in its passage: do not state this figure]\".\n\nSo I write a claim but the figure (value) is not stated. The claim would describe... what? Actually I think these items should essentially be skipped or the figure omitted. But a fact cell requires a claim.\n\nWait, let me re-read more carefully. The instruction for facts: \"A fact cell is a claim, also when it is partial... State only the periods an item has.\"\n\nFor \"figure not found in its passage\" - \"keeps its figure out of your text\". This means I write the claim without the number. But then what's the point?\n\nActually, maybe I should think about this differently. The item has a value ($8.1 trillion etc.) but the passage doesn't actually contain that figure (the quote is a row of numbers without labels clearly, \"figure not found\"). So the figure is essentially unreliable. I should not state it.\n\nBut the claim needs to say something. Perhaps I write something like \"Schwab's investor day deck presents total client assets figures across 2021-2025...\" without stating the numbers? That seems odd.\n\nActually, let me reconsider. Maybe these items should be treated as: I cannot state the figure, so effectively there's no claim content. But I need to write something for the fact cell.\n\nHmm, let me think about what's most reasonable given the instructions. The instruction says \"keeps its figure out of your text\" - meaning I write the rest of the claim but not the figure.\n\nActually for a fact cell, the claim is essentially \"X reported Y at Z.\" If I can't state Y, then I might write \"X's investor day deck presents total client assets for 2021 through 2025\" without the specific values.\n\nBut wait, this is getting complicated. Let me look at whether there are later items that DO give the same period figures from other sources. For instance, a1.SCHW item 7 gives $10,101.3 billion at 2024-12-31 (which is ~$10.1 trillion, matching item 4's $10.1 trillion for 2024). Item 6 gives $11.90 trillion at 2025-12-31. Item 5 is $11.9 trillion for 2025 (matches).\n\nSo items 1-5 are the annual figures from the investor day deck that have \"figure not found in passage\" issues. Items 6-14 give quarter-end figures from other sources.\n\nI think the cleanest approach: for items marked \"figure not found\", I still write a claim but omit the specific figure. Actually, let me reconsider - maybe I should just write the claim noting the period but not the figure, essentially a degenerate claim.\n\nActually, re-reading again: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\"\n\nI think the intent is: I write the claim but don't state the number. So for a1.SCHW item 4, I'd write: \"Schwab's investor day deck presents total client assets for 2024.\" Hmm, but that's meaningless without a figure.\n\nLet me look at this from a different angle. The whole point of these \"figure not found\" marks is that the code couldn't find the figure in the passage, so it's unreliable. Perhaps the appropriate treatment is to write the claim with the period and definition but state \"the figure is not stated in the passage\" or just describe without number.\n\nActually, I think I'm overcomplicating. Let me just write claims for these items, describing the period, but NOT include the specific dollar figure. I'll describe what the source covers.\n\nFor example, a1.SCHW item 1: \"Schwab: Schwab's 2026 investor day deck presents a series of total client assets figures for 2021 through 2025.\" But that's one item. Each item is a separate period.\n\nHmm, this is really awkward. Let me consider: maybe I just note these items but state the figure isn't in the passage.\n\nActually, I'll take a pragmatic approach: for \"figure not found\" items, I'll write the claim with the period and note the deck presents the figure, but I won't state the specific dollar value. I'll keep it minimal.\n\nWait, actually, let me reconsider the whole thing. There might be a cleaner interpretation. The \"figure not found in its passage\" note means the code extracted a value but couldn't verify it against the passage. So I shouldn't state that specific figure. But the claim still needs to convey something factual.\n\nLet me write something like: \"Schwab: The 2026 investor day deck (published May 14, 2026) presents a chart of total client assets for the years 2021 through 2025.\" and cite SCHW-DECK-2026-investor-day#231. This is a factual statement without the figure.\n\nActually, I realize I should focus and just produce reasonable claims. Let me not overthink the \"figure not found\" items too much - I'll write claims that describe the period without the unverifiable figure.\n\nHmm wait, but actually, there's a subtlety. These five items (2021-2025) overlap with other items that DO have verifiable figures. Item 7 gives $10,101.3B at 2024-12-31. Item 6 gives $11.90T at 2025-12-31. So 2024 and 2025 are covered by other items.\n\nFor 2021, 2022, 2023 - these are only in the deck with \"figure not found\". So I can't state $8.1T, $7.0T, $8.5T.\n\nI think for these, I'll write claims acknowledging the deck presents these but not stating figures. Actually, let me just be brief and note the limitation.\n\nLet me draft. Actually, I realize the cleanest is to treat each item and write what I can.\n\nLet me also handle the \"quote not verbatim\" notes - these mean I don't use quotation marks but I can paraphrase/state the figure (as long as not marked \"figure not found\").\n\nLet me now think about the time window. The question asks \"Client assets per advisor across the five -- and is that comparison even valid?\" No explicit time window mentioned in the question. So no time window, no recency why-lines needed. Wait, let me check: \"For every item of an aspect marked recency, and every item when the question has a time window...\" \n\nThe aspects are marked [fact], [fact, metric advisor_headcount], [fact, proxy], [comparison]. None marked \"recency\". No time window in question. So no why-lines needed.\n\nOrder: \"With a time window, order claims... newest first.\" No time window, so I follow aspect order and firm order.\n\nNow let me carefully build each aspect.\n\n### Aspect a1: Client assets (fact)\n\nFirms: MS, SCHW, EDJ, MER, RJF.\n\n**MS** items 1-7 (facts). All are fine, quotes verbatim (no \"not verbatim\" mark). Definitions given.\n\nItem 1: MS-TR-2024Q4#14, period 2024-12-31, $7.9 trillion.\nItem 2: $8.2 trillion, 2025-06-30, MS-TR-2025Q2#3, MS-TR-2025Q2#18.\nItem 3: $8.9 trillion, 2025-09-30, MS-TR-2025Q3#3, #8, #17.\nItem 4: $9.3 trillion, 2025-12-31, MS-PR-2026-01-15-01#0, MS-TR-2025Q4#25, #4.\nItem 5: $9 trillion, 2026-03-31, MS-TR-2026Q1#3.\nItem 6: $10 trillion, 2026-06-30, MS-TR-2026Q2#2, #19.\nItem 7: $10.5 trillion, 2026-09-30, MS-TR-2026Q3#18, #2.\n\nThese are all claims. Date each claim from source line. Definition: \"Client assets represents the sum of Wealth Management client assets and Investment Management AUM.\"\n\n**SCHW** items 1-14. Items 1-5: figure not found, don't state figure. Items 6-14: various.\n\nItem 1-5: figure not found in passage. I need to write claims without the figure.\n\nActually, let me reconsider. For \"figure not found in its passage\" items, maybe the right move is to still write the claim but clearly not state a figure. Given these are all essentially \"the deck presents total client assets by year\", and item 1-5 cover 2021-2025, I could write one combined... no, each item separately.\n\nLet me write each:\nItem 1: \"Schwab: The 2026 investor day deck (published 2026-05-14) presents total client assets for 2021.\" \u2014 cite SCHW-DECK-2026-investor-day#231. But no figure.\n\nThis feels very thin. But I'll follow instructions: keep figure out of text.\n\nActually, wait. Let me reconsider whether I should write claims at all for these. The instruction says \"A fact cell is a claim.\" These are fact cells (a1.SCHW is \"fact\"). So I must write claims. The figure is out. So I write a claim describing what the deck shows without the figure.\n\nHmm, but that's weird because the value IS the content of a fact. Let me think about what makes sense. I'll write: \"Schwab: Schwab's investor day deck (published May 14, 2026) presents a total client assets series spanning 2021 through 2025.\" and just do it once? No, each item is a separate cell.\n\nActually, I'll treat items 1-5 individually but keep them very short and without figures. Actually, since all 5 come from the same chart and same source, and none have verifiable figures, maybe I should write them but acknowledge the figure isn't stated.\n\nLet me just do it. For each, I'll write a minimal claim.\n\nActually, you know what, I think the cleanest and most defensible approach given the note \"do not state this figure\" is to write the claim describing the period and source, without the number. I'll write:\n\nItem 1: \"Schwab: The 2026 investor day deck (May 14, 2026) presents total client assets for 2021 (the specific figure is not stated in the passage).\"\n\nHmm, but \"the specific figure is not stated in the passage\" is essentially repeating the caveat. Let me just not state the figure and describe.\n\nActually, I'll simplify: I'll write these five as claims that describe the deck's presentation, grouped logically. But each needs its own part_id? No - the part_id for a1.SCHW is \"a1.SCHW\" for all items in a1.SCHW. Wait, let me check the part_id enum.\n\nThe part_id enum includes: a1.MS, a2.MS, a3.MS, a4.MS, a1.SCHW, ..., a1, a2, a3, a4, \"\".\n\nSo for fact cells, the part_id is the cell id (e.g., \"a1.MS\"). All items in a1.MS get part_id \"a1.MS\". All items in a1.SCHW get part_id \"a1.SCHW\". Etc.\n\nFor the comparison aspect a4, the single comparison claim gets part_id \"a4\".\n\nOK so multiple claims can share the same part_id. That's fine.\n\nLet me now write out all the claims.\n\nFor SCHW items 1-5 (figure not found), I'll write concise claims. Let me actually reconsider - maybe I can just note them. I'll write for each period the deck presents it, without figure.\n\nLet me write:\n\na1.SCHW item 1: \"Schwab: The 2026 investor day deck (published May 14, 2026) presents total client assets for 2021.\" (no figure stated)\n\nActually, I worry this is too thin and might be considered wrong. But the instruction is explicit: don't state the figure. Let me add the definition/context where available. There's no definition given for these. So just period + source + no figure.\n\nI'll write them concisely. Let me combine the meaning: since the note says \"figure not found in its passage\", I think the intent is these figures are unreliable and I should not report them. So perhaps the cleanest is a brief claim.\n\nLet me now write everything out.\n\nActually, let me reconsider the whole \"figure not found\" for SCHW items 1-5. I'll write a single claim noting that the deck presents annual total client assets from 2021 to 2025 (but specific figures are not stated). Hmm, but that merges 5 items.\n\nI think I'll just write 5 separate short claims. Each: \"Schwab: Schwab's 2026 investor day deck (May 14, 2026) presents a total client assets figure for [year].\" without the number.\n\nLet me proceed to write all claims now.\n\nLet me also handle SCHW item 6: $11.90 trillion, 2025-12-31, quote not verbatim (no quotation marks). Value $11.90 trillion. Actually \"quote not verbatim\" only - so figure is fine, just no quotes.\n\nItem 7: $10,101.3 billion, 2024-12-31. This is actually a quote from SCHW-PR-2026-01-21-01#40. No \"not verbatim\" mark. So can quote. The quote is \"Total client assets 18% 3% $ 11,903.0 $ 11,593.9 $ 10,757.3 $ 9,929.7 $ 10,101.3\". This is a series; the value $10,101.3 billion at 2024-12-31 is the last number. Hmm, is it verbatim? It's marked without \"not verbatim\", so I can use it. But the figure $10,101.3 billion corresponds to 2024-12-31 (period). Let me write it as a claim with the value.\n\nActually wait, I need to be careful. Item 7 period is 2024-12-31, value $10,101.3 billion. The quote shows a series of numbers. The last number $10,101.3 corresponds to... actually looking at the series \"$ 11,903.0 $ 11,593.9 $ 10,757.3 $ 9,929.7 $ 10,101.3\" - these are quarterly figures. The 2024 year-end would be $10,101.3. This is marked as verbatim quote (no not-verbatim note). I'll cite it.\n\nItem 8: $9,929.7 billion, 2025-03-31. quote \"Client assets (in billions, at quarter end) $ 11,767.9 $ 9,929.7 19%\". Value $9,929.7 billion. Actually wait, this shows 11,767.9 and 9,929.7. The period 2025-03-31 corresponds to $9,929.7 billion (which is the \"19%\" comparison to prior year). This is fine.\n\nItem 9: $10.76 trillion, 2025-06-30, quote not verbatim.\nItem 10: $11.59 trillion, 2025-09-30, quote not verbatim.\nItem 11: $11,767.9 billion, 2026-03-31.\nItem 12: $13.08 trillion, 2026-06-30.\nItem 13: $13,333.2 billion, 2026-09-30.\nItem 14: $13.41 trillion, 2026-08-31 (month-end August).\n\nThese all fine.\n\n**EDJ** items 1-12. Facts. Items 1, 3, 5, 7, 9, 10, 11, 12 have verbatim quotes; items 2, 4, 6, 8 \"quote not verbatim\".\n\nItem 1: $2,481 billion, 2025-12-31. quote verbatim \"Client assets under care ($ billions): Total: At year end $ 2,481 $ 2,171 $ 1,919 14%\".\nItem 2: $2,311 billion average, 2025, quote not verbatim.\nItem 3: $2,647 billion, 2026-06-26 (end of 2Q26).\nItem 4: $2,580 billion average 2026Q2, not verbatim.\nItem 5: $2,417 billion, 2026-03-27.\nItem 6: $2,498 billion average 2026Q1, not verbatim.\nItem 7: $2,421 billion, 2025-09-26.\nItem 8: $2,365 billion average 2025Q3, not verbatim.\nItem 9: $2,306 billion, 2025-06-27.\nItem 10: $1,080 billion advisory programs AUC, 2025-12-31, scope Advisory programs.\nItem 11: $1,198 billion advisory programs, 2026-06-26.\nItem 12: $1,064 billion advisory programs, 2026-03-27.\n\n**MER** items 1-14. Facts. All have \"quote not verbatim\" for most, some verbatim.\n\nItem 1: $3,992,312 million, 2025-12-31, not verbatim.\nItem 2: $3,578,513 million, 2024-12-31, not verbatim.\nItem 3: $4,240,601 million, 2026-09-30, not verbatim.\nItem 4: $4,132,451 million, 2026-06-30, not verbatim.\nItem 5: $3,815,389 million, 2026-03-31, not verbatim.\nItem 6: $3,896,124 million, 2025-09-30. (no not-verbatim mark? Let me check - item 6 has no bracket note, so verbatim quote. quote \"Merrill Wealth Management | $ 3,815,389 | $ 3,992,312 | $ 3,896,124 | $ 3,695,213 | $ 3,486,594\". Actually wait, item 6 value $3,896,124 at 2025-09-30. The quote lists \"$ 3,896,124\" in position... this is fine.)\n\nActually item 6-8 don't have \"not verbatim\" marks. Let me check:\nItem 6: quote \"Merrill Wealth Management | $ 3,815,389 | $ 3,992,312 | $ 3,896,124 | $ 3,695,213 | $ 3,486,594\" - no bracket note. So verbatim.\nItem 7: quote same, no bracket note, verbatim.\nItem 8: quote same, no bracket note, verbatim.\nItem 9: quote \"Client Balances by Business, at period end Merrill Wealth Management $ 3,182,735 $ 2,822,910 $ 3,182,735 $ 2,978,229 $ 3,057,680 $ 2,952,681 $ 2,822,910\" - no bracket note? Item 9 doesn't show a bracket. So verbatim.\nItem 10: quote \"Merrill Wealth Management $ 3,182,735 $ 2,822,910\" - verbatim.\nItem 11: $1.7 trillion AUM, 2025-12-31, quote \"Merrill Wealth Management Highlights Client Engagement \u2022 $4 trillion in client balances(B) \u2022 $1.7 trillion in AUM balances(B)\" - verbatim.\nItem 12: $1.7 trillion AUM, 2026-03-31, verbatim.\nItem 13: $1.8 trillion AUM, 2026-06-30, verbatim.\nItem 14: $1.9 trillion AUM, 2026-09-30, verbatim.\n\nOK.\n\n**RJF** items 1-9. Facts.\n\nItem 1: $1,571.1 billion, 2024-09-30.\nItem 2: $1,557.5 billion, 2024-12-31.\nItem 3: $1,535.9 billion, 2025-03-31.\nItem 4: $1,637.1 billion, 2025-06-30.\nItem 5: $1,730.6 billion, 2025-09-30.\nItem 6: $1,773.1 billion, 2025-12-31.\nItem 7: $1,762.9 billion, 2026-03-31.\nItem 8: $1,922.4 billion, 2026-06-30.\nItem 9: $1.67 trillion PCG AUA, 2025-09-30, scope PCG.\n\nAll these are \"client assets under administration\".\n\n### Aspect a2: Advisor headcount (fact)\n\nMS: items 1-3 (facts). Wealth Management representatives.\nSCHW: different quantity - adjacent only. Items 1-3.\nEDJ: items 1-12 (facts).\nMER: different quantity - adjacent only. Items 1-4.\nRJF: items 1-3 (facts).\n\nFor MS items 1-3:\nItem 1: 15,950, 2020-12-31.\nItem 2: 15,469, 2020-09-30.\nItem 3: 15,468, 2019-12-31.\n\nThese are claims.\n\nSCHW (adjacent): items 1-3. differs_because given: 'No passage states the firm's advisor headcount; passages give related but different measures...'\n\nItem 1: 4,127 employees performing investment advisory functions.\nItem 2: 30,690 employees.\nItem 3: 33,000 FTE.\n\nEDJ items 1-12 (facts, claims):\nItem 1: 19,232, 2023-12-31.\nItem 2: 20,125, 2024-12-31.\nItem 3: 20,425, 2025-12-31.\nItem 4: 18,945 avg 2023.\nItem 5: 19,650 avg 2024.\nItem 6: 20,331 avg 2025.\nItem 7: 20,309, 2025-06-27.\nItem 8: 20,429, 2025-09-26.\nItem 9: 20,514, 2026-06-26.\nItem 10: 20,537 avg 2026Q2.\nItem 11: 19,540 US, 2025-12-31.\nItem 12: 885 Canada, 2025-12-31.\n\nMER (adjacent): items 1-4. differs_because: 'No passage states Merrill's own advisor headcount; the closest figures are wider units...'\n\nItem 1: >15K wealth advisors (Merrill + Private Bank).\nItem 2: 18,916, 2023-12-31 (GWIM + Consumer Banking).\nItem 3: 19,273, 2022-12-31.\nItem 4: 26,599 registered representatives.\n\nRJF items 1-3 (facts, claims):\nItem 1: 8,943, 2025-09-30.\nItem 2: 8,787, 2024-09-30.\nItem 3: 8,712, 2023-09-30.\n\n### Aspect a3: Client assets per advisor (stand-in figures, adjacent only)\n\nMS: adjacent items 1-7.\nSCHW: adjacent items 1-4.\nEDJ: not disclosed (code gap). Items 1-6 given but \"a3.EDJ is not a fact\" - the computation was rejected.\nMER: adjacent items 1-8.\nRJF: adjacent items 1-6.\n\nWait, the a3 aspect is marked \"proxy: a stand-in figure, adjacent only\". So ALL items in a3 are adjacent, not claims.\n\nMS items 1-7 (adjacent). Each needs differs_because.\n\nFor a3.MS, the stand-in figures are advisor-led client assets, total client assets (WM), and advisor headcount. These are used as inputs for computing per-advisor, but no computation is disclosed. So they're stand-ins.\n\ndiffers_because for a3.MS: these are not \"client assets per advisor\" - they're the underlying figures (advisor-led client assets, total client assets, advisor headcount) that could be used to compute it, but the per-advisor figure isn't disclosed.\n\nHmm, but I need to write differs_because for each adjacent item. Let me think about what differs_because means per item.\n\nActually, let me re-read the adjacent instruction: \"A cell marked 'adjacent only' (a different quantity, or a stand-in figure) goes in adjacent, never in claims, each with differs_because from the cell, in your words with the same meaning.\"\n\nSo each adjacent item gets a differs_because explaining why it differs from the asked quantity (client assets per advisor).\n\nFor a3.MS items: the asked quantity is \"client assets per advisor computed or disclosed\". The items are advisor-led client assets (a numerator-ish figure), total client assets, advisor headcount (a denominator). These are inputs, not the per-advisor ratio.\n\nLet me write differs_because generically but meaningfully. Actually, since these are stand-in figures, the differs_because should explain they're components/inputs rather than the per-advisor figure.\n\nLet me think about a concise differs_because for each.\n\nActually, for the a3 aspect, there's no single \"differs_because\" text provided in the matrix (unlike a2.SCHW and a2.MER which have explicit differs_because). So I need to write my own differs_because.\n\nFor a3.MS: the items are:\n- Items 1-2: advisor-led client assets ($5,715B, $4,758B)\n- Items 3-4: total client assets WM ($7,381B, $6,194B)\n- Items 5-7: advisor headcount (15,950, 15,469, 15,468)\n\nThese are the numerator and denominator components. differs_because: \"This is a component input (client assets or advisor count), not a computed or disclosed client-assets-per-advisor figure.\"\n\nFor a3.SCHW: items 1-4 are total client assets and Advisor Services segment assets. differs_because: these are client asset totals/segment figures, not a per-advisor ratio, and Schwab publishes no advisor headcount.\n\nFor a3.MER: items 1-8: client balances (numerator) and advisor counts (wider scope). differs_because: components, not per-advisor.\n\nFor a3.RJF: items 1-6: PCG AUA, advisor count, RCS AUA, FID AUM per advisor.\n\nItem 6 (RJF) is actually \"$166 million in average AUM per advisor\" for FID division - this is the closest disclosed per-advisor figure, but it's a different measure (AUM not AUA) and narrower scope (FID only).\n\nLet me write differs_because for each.\n\nActually, this is getting very long. Let me be efficient but thorough.\n\nLet me note the a3.MS items 5-7 are duplicates of a2.MS items (advisor headcount). They're marked in a3 as well but with scope \"Advisor-Led Channel (Wealth Management)\". Note the instruction about \"also under another aspect\" - but that's for items marked \"[also under a2: write it once]\". Let me check.\n\nIn a3.EDJ, items 4-6 are marked \"[also under a2: write it once]\". So those should be written once (under a2, the first aspect where they appear).\n\nIn a3.MS, items 5-7 are advisor headcount but NOT marked \"[also under a2]\". Hmm. But they're the same figures as a2.MS items 1-3. \n\nWait, let me check. a3.MS items 5-7:\nItem 5: 15,950 WM representatives, 2020-12-31, scope Advisor-Led Channel.\nItem 6: 15,469, 2020-09-30.\nItem 7: 15,468, 2019-12-31.\n\nThese match a2.MS items 1-3. But a3.MS items 5-7 are NOT marked \"[also under a2]\". However, they are in a3 (adjacent). Since a3 is \"adjacent only\", these items are adjacent.\n\nThe instruction \"An item marked 'also under' another aspect: write it once, under the first aspect where it appears.\" applies only to items marked \"[also under ...]\".\n\na3.EDJ items 4-6 are marked \"[also under a2: write it once]\". So I write those under a2 only, not under a3.\n\nBut a3.MS items 5-7 are NOT marked \"[also under a2]\", so I write them under a3 as adjacent items.\n\nHmm wait, but actually a3.EDJ is \"not disclosed (code gap)\" - so there's no cell to write for a3.EDJ. The items 1-6 are listed but the cell is a gap. So the \"also under a2\" note means those items (4-6) are already written under a2, don't write again under a3. But a3.EDJ is a gap anyway, so nothing to write.\n\nActually, let me re-read a3.EDJ: \"not disclosed (code gap); a computation was proposed and rejected by code: input a3.EDJ is not a fact\". So a3.EDJ has no claim AND no adjacent (it's a gap). The items 1-6 are listed but serve as context for the rejected computation.\n\nSo for a3.EDJ, I write a gap. The code gap list... wait, let me check the \"Gaps added by code\" section. It lists:\n- [a2.SCHW] advisor headcount not published\n- [a2.MER] advisor headcount not published\n\nIt does NOT list a3.EDJ. So a3.EDJ is a gap I need to add myself? Or is it handled?\n\nThe instruction: \"gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items... the code gaps say what the database does not support.\"\n\nHmm, a3.EDJ is \"not disclosed (code gap)\". The code gaps listed under \"Gaps added by code\" don't include a3.EDJ. But the a3.EDJ cell itself is marked \"not disclosed (code gap); a computation was proposed and rejected by code\".\n\nWait, actually let me re-read the gaps instruction: \"Add a gap of your own only for something those gaps do not name.\"\n\nThe code gaps are a2.SCHW and a2.MER. a3.EDJ is not named there. So I need to add a gap for a3.EDJ.\n\nActually, let me reconsider. The a3.EDJ cell says \"not disclosed (code gap)\". So there's a gap for a3.EDJ. I should write it as a gap.\n\nWhat's the gap? \"Edward Jones - Client assets per advisor: not disclosed; a computation was proposed but rejected because the input (a3.EDJ) is not a fact.\"\n\nHmm, let me think about what the gap should say. The suggested_source field... \n\nLet me structure the gap: what = \"Edward Jones - client assets per advisor\", suggested_source = some source to find it.\n\nActually, I think the cleanest: \nwhat: \"Edward Jones \u2014 Client assets per advisor: not disclosed in the documents searched.\"\nsuggested_source: \"Edward Jones financial advisor productivity disclosures or investor materials.\"\n\nHmm, let me look at how gaps are formatted. The gap object has \"what\", \"suggested_source\", \"part_id\".\n\nFor a3.EDJ, part_id = \"a3.EDJ\".\n\nLet me write:\nwhat: \"Edward Jones \u2014 Client assets per advisor (computed or disclosed)\"\nsuggested_source: \"Edward Jones disclosures of advisor productivity (e.g., assets under care per advisor)\"\n\nActually, let me be more careful. The note says \"a computation was proposed and rejected by code: input a3.EDJ is not a fact\". This suggests the gap is about not being able to compute per-advisor because a3.EDJ isn't a fact cell.\n\nI'll write a gap noting EDJ's per-advisor figure is not disclosed and a computation isn't supportable from the evidence.\n\nOK let me also think: are there other gaps I need to add? The code gaps list a2.SCHW and a2.MER. Those are \"do not repeat them\" - but wait, actually the gaps added by code are listed and I should NOT repeat them. But do I still need to include them in the gaps array?\n\nLet me re-read: \"Gaps added by code (do not repeat them)\" and \"Caveats added by code (do not repeat them)\".\n\nHmm, so the code already adds these gaps and caveats. I should NOT repeat them. So my gaps array should only include gaps that code did NOT already add.\n\nWait, but then how do the code gaps get into the output? The instruction says code adds them. So the final answer will have code gaps appended. I just shouldn't duplicate them.\n\nSo for my gaps array, I only add a3.EDJ (which is not in the code gaps list).\n\nActually wait, let me reconsider. The gaps added by code are a2.SCHW and a2.MER (advisor headcount). These are gaps I should not repeat.\n\na3.EDJ is \"not disclosed (code gap)\" but it's not in the \"Gaps added by code\" list. Hmm. Actually, \"code gap\" in the cell description vs \"Gaps added by code\" section might be different.\n\nLet me look again. The \"Gaps added by code\" section lists:\n- [a2.SCHW] \n- [a2.MER]\n\nThe a3.EDJ cell says \"not disclosed (code gap); a computation was proposed and rejected by code\".\n\nI think \"code gap\" here refers to the fact that code determined this is a gap (no disclosure). But it's not in the \"Gaps added by code\" list (which lists specific gaps code will add as text).\n\nGiven the instruction \"Add a gap of your own only for something those gaps do not name\", and a3.EDJ is not named in the code gaps, I should add a gap for a3.EDJ myself.\n\nLet me write it.\n\nActually, let me reconsider the whole gap situation. The code gaps are:\n1. a2.SCHW advisor headcount not published\n2. a2.MER advisor headcount not published\n\nThese correspond to the \"different quantity (adjacent only)\" cells in a2. So for a2.SCHW and a2.MER, I write adjacent items AND code adds a gap. I don't write the gap myself.\n\nFor a3.EDJ, it's a gap (not disclosed), not adjacent. So I need to write the gap myself since code doesn't list it.\n\nHmm, but actually, wait. Let me reconsider. Is a3.EDJ \"adjacent only\" or \"gap\"? The cell says \"not disclosed (code gap)\". The aspect a3 is \"proxy: a stand-in figure, adjacent only\". But a3.EDJ specifically is \"not disclosed (code gap)\".\n\nSo a3.EDJ has no adjacent items and no claim - it's a pure gap. I write the gap.\n\nOK, let me also reconsider: the a3 items for EDJ (1-6) are listed but the cell is a gap. Should I include the adjacent items? The note \"a computation was proposed and rejected by code: input a3.EDJ is not a fact\". This means there's no stand-in figure either. So just a gap.\n\nLet me now write the a4 comparison claim.\n\n### Aspect a4: comparison (one claim, part_id \"a4\")\n\nThis needs to answer: can client assets per advisor be validly compared across the five firms?\n\nThe comparison rests on:\n- Client asset measures differ: MS \"client assets\" (WM + IM AUM sum, or advisor-led channel), SCHW \"total client assets\" (brokerage + workplace + banking + custodial RIA), EDJ \"client assets under care\" (AUC), MER \"client balances\" (AUM + brokerage + deposits + loans), RJF \"client assets under administration\" (AUA).\n- Advisor counts differ: MS \"Wealth Management representatives\" (2020 data only), SCHW no advisor count (only employees/RIAs), EDJ \"financial advisors (actual)\", MER no Merrill-specific count (wider GWIM/Consumer Banking), RJF \"financial advisors (employee + independent contractor, RCS excluded)\".\n- Also a3 figures are unverified (not in metric definitions) and are stand-ins/adjacent only.\n\nSo the comparison is NOT valid. I need to write one comparison claim explaining why, citing the relevant items.\n\nThe comparison claim should state: not valid, because the firms define client assets differently, advisor counts differently, and the per-advisor figures are stand-ins/unverified.\n\nLet me cite the relevant a4 items:\n- MS: a4.MS items 1-6 (definitions of client assets, advisor-led, fee-based, self-directed, headcount \"Wealth Management representatives\", advisor-led $5,715B)\n- SCHW: a4.SCHW items 1-6 (total client assets spans brokerage/workplace/banking/custodial; 16,000 RIAs not individual advisors; 33,000 employees not advisors)\n- EDJ: a4.EDJ items 1-6 (AUC measure; advisors \"actual\"; FTE vs actual)\n- MER: a4.MER items 1-5 (Total wealth advisors wider scope; AUM definition; client balances composition; >15K advisors Merrill+Private Bank)\n- RJF: a4.RJF items 1-6 (client asset definitions inconsistent across companies; RCS advisors excluded; 8,943 advisors; PCG AUA $1.67T)\n\nAlso the registered definitions listed under a2 (context).\n\nThe comparison claim needs to cite the items it rests on. Let me write a comprehensive single claim.\n\nLet me now also think about the part_id for the comparison. It's \"a4\" (the aspect id for comparison that spans firms). The instruction says: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id\".\n\nSo part_id = \"a4\".\n\nNow let me write everything out.\n\nLet me draft the comparison claim text:\n\n\"The client assets per advisor figures cannot be validly compared side by side across the five firms. The firms measure client assets differently: Morgan Stanley reports 'client assets' (the sum of Wealth Management client assets and Investment Management AUM, with a narrower 'advisor-led client assets' of $5,715 billion at December 31, 2025 excluding self-directed and workplace channels); Schwab reports 'total client assets' that spans brokerage, workplace, banking, and custodial RIA assets; Edward Jones reports 'client assets under care' (AUC); Merrill reports 'client balances' (AUM plus brokerage, deposits, and loans); and Raymond James reports 'client assets under administration' (AUA), itself warning that 'the definitions for client assets may be inconsistent across companies.' The advisor counts also differ: Morgan Stanley reports 'Wealth Management representatives' (15,950 at December 31, 2020); Schwab reports no advisor count (only ~4,127 employees performing investment advisory functions, 16,000 independent RIA firms, or ~33,000 employees); Edward Jones reports 'financial advisors (actual)'; Merrill's count is only available at a wider scope (GWIM plus Consumer Banking, or Merrill plus Private Bank); and Raymond James counts employee and independent contractor advisors while excluding RCS-division advisors whose assets are nonetheless included in AUA. Finally, the per-advisor figures themselves are not part of a shared metric definition and are only stand-in components. For these reasons the figures are not on the same basis and cannot be validly compared.\"\n\nI need to cite all the relevant chunks.\n\nLet me collect chunk ids for the comparison:\n- MS definitions: MS-10K-2025#165 (client assets definition), MS-SUPP-2026Q2#37 (advisor-led, fee-based, self-directed), MS-10K-2025#166 (advisor-led $5,715B), MS-SUPP-2020Q4#1 (15,950 WM reps)\n- SCHW: SCHW-PR-2026-10-15-01#10 (client assets composition), SCHW-TR-2026Q3#10 (16,000 firms), SCHW-10K-2025#49 (33,000 employees), SCHW-ADV1A-2026#1 (4,127)\n- EDJ: EDJ-10Q-2025Q3#60 (AUC $2.4T), EDJ-10K-2025#129 (AUC), EDJ-10K-2025#130 (advisors actual), EDJ-10Q-2026Q2#75 (FTE)\n- MER: BAC-SUPP-2023Q4#2 (18,916 total wealth advisors wider scope), BAC-10K-2025#248 (client balances composition), BAC-SUPP-2026Q1#46 (AUM definition), BAC-DECK-2025-investor-day#9 (>15K)\n- RJF: RJF-DECK-2025-investor-day#32 (definitions inconsistent), RJF-10K-2025#12 (RCS excluded), RJF-10K-2025#227 (8,943), RJF-10K-2025#9 (PCG AUA $1.67T)\n\nThat's a lot of chunk ids but that's fine.\n\nLet me finalize.\n\nActually, I need to be careful about the citation constraint: chunk_ids must be from the enum. Let me verify all the ids I want to use are in the enum.\n\nAll the ids I listed are in the source list, so they should be in the enum.\n\nNow let me carefully write out the full answer.\n\nLet me organize by aspect and write all claims/adjacent/gaps.\n\nLet me start writing. This will be long.\n\nFor each claim, format: \"Firm: text\" with chunk_ids and part_id.\n\nLet me write a1 claims first.\n\n**a1.MS claims** (part_id \"a1.MS\"):\n\n1. \"Morgan Stanley: The 4Q24 earnings transcript (period ended December 31, 2024) states the firm ended 2024 with total client assets at $7.9 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.\" cite MS-TR-2024Q4#14.\n\nActually let me date each claim from source line. The instruction: \"Date every claim from its source line, e.g. 'The 2Q26 10-Q (period ended June 26, 2026) states ...'\".\n\nSo I should reference the source document and period.\n\nLet me write more carefully.\n\nFor MS item 1: source \"MS transcript, period 2024-12-31, published 2025-01-16\". So \"The 4Q24 earnings transcript (period ended December 31, 2024) states ...\"\n\nLet me write each MS claim:\n\n1. \"Morgan Stanley: The 4Q24 earnings transcript (period ended December 31, 2024) states the firm ended 2024 with total client assets at $7.9 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2024Q4#14]\n\n2. \"Morgan Stanley: The 2Q25 earnings transcript (period ended June 30, 2025) states total client assets across wealth and investment management climbed to over $8.2 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2025Q2#3, MS-TR-2025Q2#18]\n\n3. \"Morgan Stanley: The 3Q25 earnings transcript (period ended September 30, 2025) states total client assets across wealth and investment management reached $8.9 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2025Q3#3, MS-TR-2025Q3#8, MS-TR-2025Q3#17]\n\n4. \"Morgan Stanley: The 4Q25 earnings materials (period ended December 31, 2025) state total client assets in Wealth and Investment Management grew to $9.3 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-PR-2026-01-15-01#0, MS-TR-2025Q4#25, MS-TR-2025Q4#4]\n\n5. \"Morgan Stanley: The 1Q26 earnings transcript (period ended March 31, 2026) states total client assets across Wealth and Investment Management exceeded $9 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2026Q1#3]\n\n6. \"Morgan Stanley: The 2Q26 earnings transcript (period ended June 30, 2026) states total client assets across Wealth and Investment Management stood at $10 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2026Q2#2, MS-TR-2026Q2#19]\n\n7. \"Morgan Stanley: The 3Q26 earnings transcript (period ended September 30, 2026) states total client assets across Wealth and Investment Management reached a record $10.5 trillion, with client assets representing the sum of Wealth Management client assets and Investment Management AUM.\" [MS-TR-2026Q3#18, MS-TR-2026Q3#2]\n\nGood.\n\n**a1.SCHW claims** (part_id \"a1.SCHW\"):\n\nItems 1-5: figure not found. Write without figure.\n\nItem 1: \"Schwab: The 2026 investor day deck (published May 14, 2026) presents total client assets for 2021 in a chart of total client assets from 2021 through 2025.\" \u2014 hmm, this states no figure.\n\nActually, let me reconsider. The note is \"[quote not verbatim: never put it in quotation marks; figure not found in its passage: do not state this figure]\".\n\nSo I write a claim but without the figure and without quotes. What can I state? Just that the deck presents total client assets for that year.\n\nLet me write concisely for each of items 1-5. Actually, I realize I could group them but they're separate cells. Let me write 5 separate minimal claims.\n\nHmm, actually, I wonder if it's better to just acknowledge in one place. But each item is a cell with part_id a1.SCHW. Multiple claims can share part_id a1.SCHW.\n\nLet me write:\n\nItem 1: \"Schwab: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2021.\" [SCHW-DECK-2026-investor-day#231]\nItem 2: \"...for 2022.\"\nItem 3: \"...for 2023.\"\nItem 4: \"...for 2024.\"\nItem 5: \"...for 2025.\"\n\nThis is quite thin but complies with \"do not state this figure\".\n\nActually, I think this is acceptable. But let me reconsider whether I should state these at all. The figure \"not found in passage\" means I literally cannot verify, so I shouldn't claim the number. Writing \"presents a total client assets figure for 2021\" is factually true (the chart has a 2021 column) without stating the number.\n\nAlternatively, I could just write one combined claim. But I'll follow item-by-item.\n\nActually, let me reconsider - maybe I'm overcomplicating and should just not state figures but note the deck has annual figures. I'll write them.\n\nLet me continue with items 6-14 which have figures.\n\nItem 6: \"Schwab: The 2025 10-K (period ended December 31, 2025) states Schwab's total client assets reached $11.90 trillion at December 31, 2025, up 18% on the year.\" [SCHW-10K-2025#129] (quote not verbatim, so no quotes)\n\nItem 7: \"Schwab: The fourth-quarter 2025 earnings release (period ended December 31, 2025) states Schwab's total client assets were $10,101.3 billion at December 31, 2024.\" [SCHW-PR-2026-01-21-01#40]\n\nItem 8: \"Schwab: The 1Q26 10-Q (period ended March 31, 2026) states Schwab's client assets were $9,929.7 billion at March 31, 2025.\" [SCHW-10Q-2026Q1#16]\n\nItem 9: \"Schwab: The 2Q25 10-Q (period ended June 30, 2025) states Schwab's total client assets were $10.76 trillion at June 30, 2025.\" [SCHW-10Q-2025Q2#9] (not verbatim, no quotes)\n\nItem 10: \"Schwab: The 3Q25 10-Q (period ended September 30, 2025) states Schwab's total client assets were $11.59 trillion at September 30, 2025.\" [SCHW-10Q-2025Q3#9]\n\nItem 11: \"Schwab: The 1Q26 10-Q (period ended March 31, 2026) states Schwab's client assets were $11,767.9 billion at March 31, 2026, down 1% from year-end 2025.\" [SCHW-10Q-2026Q1#16]\n\nItem 12: \"Schwab: The 2Q26 10-Q (period ended June 30, 2026) states Schwab's total client assets increased to $13.08 trillion at June 30, 2026, up 10% from year-end 2025.\" [SCHW-10Q-2026Q2#22]\n\nItem 13: \"Schwab: The third-quarter 2026 earnings release (period ended September 30, 2026) states Schwab's total client assets were $13,333.2 billion at September 30, 2026.\" [SCHW-PR-2026-10-15-01#41]\n\nItem 14: \"Schwab: The monthly activity highlights release (period August 31, 2026) states Schwab's total client assets equaled $13.41 trillion as of month-end August 2026, up 19% from August 2025.\" [SCHW-MONTHLY-2026-08#1]\n\n**a1.EDJ claims** (part_id \"a1.EDJ\"):\n\nItem 1: \"Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported total client assets under care (AUC) of $2,481 billion at year-end 2025 (compared with $2,171 billion in 2024 and $1,919 billion in 2023).\" [EDJ-10K-2025#129]\n\nItem 2: \"Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported average total client assets under care (AUC) of $2,311 billion for 2025 (compared with $2,070 billion in 2024 and $1,764 billion in 2023).\" [EDJ-10K-2025#129]\n\nItem 3: \"Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported total client assets under care (AUC) of $2,647 billion at the end of the second quarter of 2026 (compared with $2,306 billion a year earlier).\" [EDJ-10Q-2026Q2#59]\n\nItem 4: \"Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported average total client assets under care (AUC) of $2,580 billion for the second quarter of 2026 (compared with $2,212 billion a year earlier).\" [EDJ-10Q-2026Q2#59]\n\nItem 5: \"Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported total client assets under care (AUC) of $2,417 billion at the end of the first quarter of 2026 (compared with $2,159 billion a year earlier).\" [EDJ-10Q-2026Q1#51]\n\nItem 6: \"Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported average total client assets under care (AUC) of $2,498 billion for the first quarter of 2026 (compared with $2,195 billion a year earlier).\" [EDJ-10Q-2026Q1#51]\n\nItem 7: \"Edward Jones: The 3Q25 10-Q (period ended September 26, 2025) states the Partnership reported total client assets under care (AUC) of $2,421 billion at the end of the third quarter of 2025 (compared with $2,176 billion a year earlier).\" [EDJ-10Q-2025Q3#66]\n\nItem 8: \"Edward Jones: The 3Q25 10-Q (period ended September 26, 2025) states the Partnership reported average total client assets under care (AUC) of $2,365 billion for the third quarter of 2025 (compared with $2,118 billion a year earlier).\" [EDJ-10Q-2025Q3#66]\n\nItem 9: \"Edward Jones: The 2Q25 10-Q (period ended June 27, 2025) states the Partnership reported total client assets under care (AUC) of $2,306 billion at the end of the second quarter of 2025 (compared with $2,062 billion a year earlier).\" [EDJ-10Q-2025Q2#63]\n\nItem 10: \"Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported advisory programs client assets under care of $1,080 billion at year-end 2025 (compared with $862 billion in 2024 and $743 billion in 2023), representing the portion of assets under management/advisement.\" [EDJ-10K-2025#129]\n\nItem 11: \"Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported advisory programs client assets under care of $1,198 billion at the end of the second quarter of 2026 (compared with $931 billion a year earlier).\" [EDJ-10Q-2026Q2#59]\n\nItem 12: \"Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported advisory programs client assets under care of $1,064 billion at the end of the first quarter of 2026 (compared with $860 billion a year earlier).\" [EDJ-10Q-2026Q1#51]\n\n**a1.MER claims** (part_id \"a1.MER\"):\n\nItem 1: \"Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management reported total client balances of $3,992,312 million at December 31, 2025.\" [BAC-10K-2025#248]\n\nItem 2: \"Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management reported total client balances of $3,578,513 million at December 31, 2024.\" [BAC-10K-2025#248]\n\nItem 3: \"Merrill: The 3Q26 GWIM supplement (period ended September 30, 2026) states Merrill Wealth Management reported total client balances of $4,240,601 million at September 30, 2026.\" [BAC-SUPP-2026Q3#53]\n\nItem 4: \"Merrill: The 2Q26 GWIM supplement (period ended June 30, 2026) states Merrill Wealth Management reported total client balances of $4,132,451 million at June 30, 2026.\" [BAC-SUPP-2026Q2#55]\n\nItem 5: \"Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,815,389 million at March 31, 2026.\" [BAC-SUPP-2026Q1#45]\n\nItem 6: \"Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,896,124 million at September 30, 2025.\" [BAC-SUPP-2026Q1#45]\n\nItem 7: \"Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,695,213 million at June 30, 2025.\" [BAC-SUPP-2026Q1#45]\n\nItem 8: \"Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,486,594 million at March 31, 2025.\" [BAC-SUPP-2026Q1#45]\n\nItem 9: \"Merrill: The 4Q23 GWIM supplement (period ended December 31, 2023) states Merrill Wealth Management reported total client balances of $3,182,735 million at December 31, 2023.\" [BAC-SUPP-2023Q4#1]\n\nItem 10: \"Merrill: The 4Q23 GWIM supplement (period ended December 31, 2023) states Merrill Wealth Management reported total client balances of $2,822,910 million at December 31, 2022.\" [BAC-SUPP-2023Q4#1]\n\nItem 11: \"Merrill: The 4Q25 earnings release (period ended December 31, 2025) states Merrill reported $1.7 trillion in assets under management balances at December 31, 2025.\" [BAC-PR-2026-01-14-01#13]\n\nItem 12: \"Merrill: The 1Q26 earnings release (period ended March 31, 2026) states Merrill reported $1.7 trillion in assets under management balances at March 31, 2026.\" [BAC-PR-2026-04-15-01#11]\n\nItem 13: \"Merrill: The 2Q26 earnings release (period ended June 30, 2026) states Merrill reported $1.8 trillion in assets under management balances at June 30, 2026.\" [BAC-PR-2026-07-14-01#11]\n\nItem 14: \"Merrill: The 3Q26 earnings release (period ended September 30, 2026) states Merrill reported $1.9 trillion in assets under management balances at September 30, 2026.\" [BAC-PR-2026-10-14-01#12]\n\n**a1.RJF claims** (part_id \"a1.RJF\"):\n\nItem 1: \"Raymond James Financial: The 4Q24 supplement (period ended September 30, 2024) states Raymond James Financial's total client assets under administration were $1,571.1 billion as of September 30, 2024.\" [RJF-SUPP-2025Q3#9]\n\nWait, let me check the source dates. RJF-SUPP-2025Q3#9 is \"period 2025-09-30, published 2025-10-22\". The item 1 says period 2024-09-30, value $1,571.1 billion, cite RJF-SUPP-2025Q3#9.\n\nHmm, the quote \"Client assets under administration | $ 1,571.1 | $ 1,557.5 | $ 1,535.9 | $ 1,637.1 | $ 1,730.6\" - this is a 5-quarter series in the 2025Q3 supplement. The $1,571.1 is the oldest (2024-09-30) and $1,730.6 is the newest (2025-09-30).\n\nSo item 1 (2024-09-30, $1,571.1B) is from RJF-SUPP-2025Q3#9 (published 2025-10-22, period 2025-09-30).\n\nI'll date from the source line: \"The 4Q25 supplement (period ended September 30, 2025) states ...\"\n\nActually, RJF fiscal year ends Sept 30. So \"4Q25\" = period ended 2025-09-30. But the supplement naming... let me just use the source period. RJF-SUPP-2025Q3#9 has period 2025-09-30.\n\nActually, the supplement is labeled \"2025Q3\" but RJF's fiscal Q3 ends June 30, 2025, and fiscal Q4 ends September 30, 2025. Hmm. Let me not overthink; I'll date by the source's period field which is 2025-09-30.\n\nLet me write: \"Raymond James Financial: The supplement for the period ended September 30, 2025 states Raymond James Financial's total client assets under administration were $1,571.1 billion as of September 30, 2024.\"\n\nActually, simpler to just state the date of the figure and cite. Let me write a consistent format.\n\nLet me define a consistent dating approach: reference the source document and its period, then state the figure's date.\n\nFor RJF items, I'll write:\n\nItem 1: \"Raymond James Financial: The September 30, 2025 supplement states total client assets under administration were $1,571.1 billion as of September 30, 2024.\" [RJF-SUPP-2025Q3#9]\n\nItem 2: \"Raymond James Financial: The December 31, 2024 supplement states total client assets under administration were $1,557.5 billion as of December 31, 2024.\" [RJF-SUPP-2025Q4#8]\n\nItem 3: \"Raymond James Financial: The March 31, 2025 supplement states total client assets under administration were $1,535.9 billion as of March 31, 2025.\" [RJF-SUPP-2026Q1#9]\n\nItem 4: \"Raymond James Financial: The June 30, 2025 supplement states total client assets under administration were $1,637.1 billion as of June 30, 2025.\" [RJF-SUPP-2026Q2#9]\n\nItem 5: \"Raymond James Financial: The September 30, 2025 supplement states total client assets under administration were $1,730.6 billion as of September 30, 2025; a press release states total client assets are $1.73 trillion.\" [RJF-SUPP-2025Q3#9]\n\nItem 6: \"Raymond James Financial: The December 31, 2025 supplement states total client assets under administration were $1,773.1 billion as of December 31, 2025.\" [RJF-SUPP-2025Q4#8]\n\nItem 7: \"Raymond James Financial: The March 31, 2026 supplement states total client assets under administration were $1,762.9 billion as of March 31, 2026.\" [RJF-SUPP-2026Q1#9]\n\nItem 8: \"Raymond James Financial: The June 30, 2026 supplement states total client assets under administration were $1,922.4 billion as of June 30, 2026.\" [RJF-SUPP-2026Q2#9]\n\nItem 9: \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states total client assets under administration in the Private Client Group segment were $1.67 trillion as of September 30, 2025.\" [RJF-10K-2025#9]\n\nOK. Now aspect a2.\n\n**a2.MS claims** (part_id \"a2.MS\"):\n\nItem 1: \"Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,950 Wealth Management representatives as of December 31, 2020 in its Wealth Management segment.\" [MS-SUPP-2020Q4#1]\n\nItem 2: \"...15,469 Wealth Management representatives as of September 30, 2020...\" [MS-SUPP-2020Q4#1]\n\nItem 3: \"...15,468 Wealth Management representatives as of December 31, 2019...\" [MS-SUPP-2020Q4#1]\n\n**a2.SCHW adjacent** (part_id \"a2.SCHW\"):\n\nItem 1: \"The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 4,127 of its employees perform investment advisory functions (including research).\" [SCHW-ADV1A-2026#1]\ndiffers_because: \"No passage states Schwab's advisor headcount; this is a count of employees performing investment advisory functions (a Form ADV regulatory label, including research), not a financial-advisor headcount.\"\n\nItem 2: \"...approximately 30,690 employees (full- and part-time, excluding clerical workers).\" [SCHW-ADV1A-2026#1]\ndiffers_because: \"No passage states Schwab's advisor headcount; this is total employees (full- and part-time, excluding clerical), not financial advisors.\"\n\nItem 3: \"...equivalent of approximately 33,000 full-time employees as of December 31, 2025.\" [SCHW-10K-2025#49]\ndiffers_because: \"No passage states Schwab's advisor headcount; this is a full-time-equivalent count of all employees, not financial advisors.\"\n\nThe differs_because is given: 'No passage states the firm's advisor headcount; passages give related but different measures: employees performing investment advisory functions (a Form ADV regulatory label, including research), total employees (full- and part-time, excluding clerical), and full-time-equivalent employees.'\n\nI should use this meaning in my own words. Let me write a consistent differs_because for each, or maybe a general one.\n\nActually, I'll write per-item differs_because that captures the specific difference.\n\n**a2.EDJ claims** (part_id \"a2.EDJ\"):\n\nItem 1: \"Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 19,232 financial advisors (actual) at year end 2023.\" [EDJ-10K-2025#130]\nItem 2: \"...20,125 financial advisors (actual) at year end 2024.\" \nItem 3: \"...20,425 financial advisors (actual) at year end 2025.\"\nItem 4: \"...average of 18,945 financial advisors for 2023.\"\nItem 5: \"...average of 19,650 financial advisors for 2024.\"\nItem 6: \"...average of 20,331 financial advisors for 2025.\"\nItem 7: \"The 2Q25 10-Q (period ended June 27, 2025) reports 20,309 financial advisors (actual) at period end for the second quarter of 2025 (June 27, 2025).\" [EDJ-10Q-2025Q2#64]\nItem 8: \"The 3Q25 10-Q (period ended September 26, 2025) reports 20,429 financial advisors (actual) at period end for the third quarter of 2025 (September 26, 2025).\" [EDJ-10Q-2025Q3#67]\nItem 9: \"The 2Q26 10-Q (period ended June 26, 2026) reports 20,514 financial advisors (actual) at period end for the second quarter of 2026 (June 26, 2026).\" [EDJ-10Q-2026Q2#60]\nItem 10: \"The 2Q26 10-Q (period ended June 26, 2026) reports an average of 20,537 financial advisors for the second quarter of 2026.\" [EDJ-10Q-2026Q2#60]\nItem 11: \"The 2025 10-K (period ended December 31, 2025) reports 19,540 financial advisors (actual) at year end 2025 in its U.S. segment.\" [EDJ-10K-2025#148]\nItem 12: \"The 2025 10-K (period ended December 31, 2025) reports 885 financial advisors (actual) at year end 2025 in its Canada segment.\" [EDJ-10K-2025#148]\n\n**a2.MER adjacent** (part_id \"a2.MER\"):\n\nItem 1: \"Merrill: Bank of America's 2025 investor day deck states that Merrill and the Private Bank together have more than 15,000 wealth advisors.\" [BAC-DECK-2025-investor-day#9]\ndiffers_because: \"No passage states Merrill's own advisor headcount; this is a count covering Merrill plus Private Bank (GWIM), a wider unit than Merrill alone.\"\n\nItem 2: \"Merrill: Bank of America's GWIM supplement reports total wealth advisors of 18,916 at year-end 2023, including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\ndiffers_because: \"No passage states Merrill's own advisor headcount; this count spans all wealth management businesses in GWIM and Consumer Banking, a wider scope than Merrill alone.\"\n\nItem 3: \"Merrill: Bank of America's GWIM supplement reports total wealth advisors of 19,273 at year-end 2022, including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\ndiffers_because: same.\n\nItem 4: \"Merrill: Merrill's Form ADV (published November 11, 2026) reports approximately 26,599 of its employees are registered representatives of a broker-dealer (and approximately 25,721 perform investment advisory functions).\" [MER-ADV1A-2026#1]\ndiffers_because: \"No passage states Merrill's own advisor headcount; this is a count of registered representatives of a broker-dealer, a different measure than financial-advisor headcount.\"\n\n**a2.RJF claims** (part_id \"a2.RJF\"):\n\nItem 1: \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025) reports 8,943 total financial advisors (employee and independent contractor) as of September 30, 2025.\" [RJF-10K-2025#227]\nItem 2: \"...8,787 total financial advisors (employee and independent contractor) as of September 30, 2024.\"\nItem 3: \"...8,712 total financial advisors (employee and independent contractor) as of September 30, 2023.\"\n\n**a3 adjacent items**:\n\n**a3.MS** (part_id \"a3.MS\"):\n\nItem 1: \"Morgan Stanley: The 2025 10-K (period ended December 31, 2025) reports advisor-led client assets of $5,715 billion at December 31, 2025, defined as client assets in accounts that have a Wealth Management representative assigned.\" [MS-10K-2025#166]\ndiffers_because: \"This is advisor-led client assets (a client-asset measure), not a computed or disclosed client-assets-per-advisor figure.\"\n\nItem 2: \"...$4,758 billion at December 31, 2024...\" [MS-10K-2025#166]\n\nItem 3: \"Morgan Stanley: The 4Q25 supplement (period ended December 31, 2025) reports total client assets of $7,381 billion at December 31, 2025 in its Wealth Management segment.\" [MS-SUPP-2025Q4#14] (not verbatim)\ndiffers_because: \"This is total Wealth Management client assets, not a per-advisor figure.\"\n\nItem 4: \"...$6,194 billion at December 31, 2024...\" [MS-SUPP-2025Q4#14]\n\nItem 5-7: advisor headcount (same as a2.MS but not marked \"also under a2\", so I write them here as adjacent).\n\nWait, actually, let me reconsider. Items 5-7 in a3.MS are advisor headcount figures, identical to a2.MS items 1-3. They're NOT marked \"[also under a2]\". \n\nBut actually, hmm, are these really needed as adjacent? The a3 aspect asks for \"client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed\". The stand-in figures include the numerator (client assets) and denominator (advisor headcount).\n\nItem 5: \"Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,950 Wealth Management representatives at December 31, 2020.\" [MS-SUPP-2020Q4#1]\ndiffers_because: \"This is advisor headcount (a denominator), not a per-advisor assets figure.\"\n\nItem 6: 15,469 at 2020-09-30.\nItem 7: 15,468 at 2019-12-31.\n\nThese are somewhat redundant with a2.MS, but since they're not marked \"also under a2\", I'll write them in a3.\n\nActually wait, let me reconsider. The \"also under\" note is what triggers writing once. Since a3.MS items 5-7 don't have that note, they should be written under a3. But they're identical to a2.MS. This creates duplication, but I follow the instructions literally: only items marked \"[also under ...]\" are written once.\n\nHmm, but actually there might be a subtlety. Let me just write them in a3 as adjacent since that's what the matrix shows.\n\nActually, let me reconsider. The scope differs: a3.MS items 5-7 have scope \"Advisor-Led Channel (Wealth Management)\" while a2.MS has scope \"Wealth Management\". But the values are the same. I'll just write them.\n\n**a3.SCHW** (part_id \"a3.SCHW\"):\n\nItem 1: \"The Charles Schwab Corporation: The 2Q26 earnings release (period ended June 30, 2026) states Schwab reported total client assets of $13.08 trillion at June 30, 2026, up 22% year-over-year.\" [SCHW-PR-2026-07-21-01#2]\ndiffers_because: \"This is total client assets, not a client-assets-per-advisor figure; Schwab publishes no financial-advisor headcount.\"\n\nItem 2: \"...$11.90 trillion at December 31, 2025, up 18%...\" [SCHW-PR-2026-01-21-01#2]\n\nItem 3: \"...$13.33 trillion at September 30, 2026, up 15%...\" [SCHW-PR-2026-10-15-01#2]\n\nItem 4: \"The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) states Schwab's Advisor Services segment held $5.2 trillion in client assets.\" [SCHW-DECK-2026-investor-day#62]\ndiffers_because: \"This is Advisor Services segment client assets (a wealth-management-related subset), not a per-advisor figure.\"\n\n**a3.EDJ**: gap (no claim, no adjacent). I write a gap.\n\n**a3.MER** (part_id \"a3.MER\"):\n\nItem 1: \"Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management client balances were $3,992,312 million at year end 2025.\" [BAC-10K-2025#248]\ndiffers_because: \"This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure.\"\n\nItem 2: $3,578,513 million at year end 2024.\n\nItem 3: \"Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management client balances were $3,815,389 million at March 31, 2026.\" [BAC-SUPP-2026Q1#45]\n\nItem 4: \"Merrill: The 2Q26 GWIM supplement (period ended June 30, 2026) states Merrill Wealth Management client balances were $4,132,451 million at June 30, 2026.\" [BAC-SUPP-2026Q2#55]\n\nItem 5: \"Merrill: The 3Q26 GWIM supplement (period ended September 30, 2026) states Merrill Wealth Management client balances were $4,240,601 million at September 30, 2026.\" [BAC-SUPP-2026Q3#53]\n\nItem 6: \"Merrill: At period end 2023, Bank of America reported 18,916 'Total wealth advisors'; this headcount includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill alone.\" [BAC-SUPP-2023Q4#2]\ndiffers_because: \"This is a wealth-advisor count spanning GWIM and Consumer Banking, a wider scope than Merrill, not a per-advisor assets figure.\"\n\nItem 7: \"Merrill: At period end 2022, Bank of America reported 19,273 'Total wealth advisors' (wider scope: all wealth management businesses in GWIM and Consumer Banking).\" [BAC-SUPP-2023Q4#2]\n\nItem 8: \"Merrill: In its November 2025 investor day materials, Bank of America cited more than 15,000 wealth advisors for Merrill | Private Bank (GWIM).\" [BAC-DECK-2025-investor-day#9] \u2014 figure not found: don't state the figure \">15,000\".\n\nHmm wait, item 8 has \"figure not found in its passage: do not state this figure\". So I shouldn't state \">15,000\". But then what do I write?\n\nThe item says: \"In its November 2025 investor day materials, the firm cited more than 15,000 wealth advisors for Merrill | Private Bank (GWIM), a wider scope than Merrill alone.\"\n\nBut \"figure not found\" means don't state \">15,000\". Hmm. So I write it without the figure.\n\nActually, this is a bit odd. The value is \">15,000\" but marked \"figure not found\". So I write: \"Merrill: In its November 2025 investor day materials, Bank of America cited wealth advisors for Merrill | Private Bank (GWIM), a wider scope than Merrill alone.\" without the \">15K\" number.\n\nBut that loses meaning. Let me write it as: \"...cited a wealth-advisor figure for Merrill | Private Bank (GWIM)...\" \n\nHmm, actually, I realize the \"figure not found in passage\" for this item is strange because a4.MER item 5 and a2.MER item 1 both cite \">15K Wealth Advisors\" from BAC-DECK-2025-investor-day#9 without the \"figure not found\" mark (well, a4.MER item 5 DOES have \"figure not found in its passage: do not state this figure\").\n\nLet me check: a4.MER item 5: \"Bank of America states it has more than 15,000 wealth advisors across Merrill and the Private Bank.\" with \"[figure not found in its passage: do not state this figure]\".\n\nAnd a2.MER item 1: \"Bank of America's investor day deck states that Merrill and the Private Bank together have more than 15,000 wealth advisors.\" \u2014 no \"figure not found\" mark. Wait, let me check.\n\na2.MER item 1: value >15K, quote \">15K Wealth Advisors\", cite BAC-DECK-2025-investor-day#9. No bracket note about figure not found. So this one I CAN state \">15,000\".\n\na3.MER item 8: has \"[figure not found in its passage: do not state this figure]\".\n\na4.MER item 5: has \"[figure not found in its passage: do not state this figure]\".\n\nSo for a2.MER item 1, I state \"more than 15,000 wealth advisors\". For a3.MER item 8 and a4.MER item 5, I don't state the figure.\n\nInteresting inconsistency, but I follow the marks literally.\n\nSo a3.MER item 8: write without \">15,000\". \"Merrill: In its November 2025 investor day materials, Bank of America cited wealth advisors for Merrill | Private Bank (GWIM), a wider scope than Merrill alone.\" [BAC-DECK-2025-investor-day#9]\n\ndiffers_because: \"This is a wealth-advisor count covering Merrill plus Private Bank (GWIM), a wider scope than Merrill alone, not a per-advisor assets figure.\"\n\n**a3.RJF** (part_id \"a3.RJF\"):\n\nItem 1: \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states total client assets under administration (AUA) in its Private Client Group segment were $1.67 trillion as of September 30, 2025.\" [RJF-10K-2025#9]\ndiffers_because: \"This is PCG client assets under administration (a numerator), not a client-assets-per-advisor figure.\"\n\nItem 2: \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states Raymond James had 8,943 employee and independent contractor financial advisors affiliated with it as of September 30, 2025.\" [RJF-10K-2025#9]\ndiffers_because: \"This is advisor headcount (a denominator), not a per-advisor assets figure.\"\n\nItem 3: \"Raymond James Financial: Raymond James investor day materials (published June 5, 2025) state client assets under administration of $1.48 trillion.\" \u2014 figure not found: don't state figure. So write without figure.\n\nActually, item 3 has \"[figure not found in its passage: do not state this figure]\". So I write: \"Raymond James Financial: Raymond James investor day materials (published June 5, 2025) state a client assets under administration figure.\" [RJF-DECK-2025-investor-day#30]\n\nHmm, that's thin. Let me write: \"...present client assets under administration.\"\n\nItem 4: \"Raymond James Financial: Raymond James investor day materials (published June 5, 2025) state 8,731 PCG advisors.\" [RJF-DECK-2025-investor-day#30]\ndiffers_because: \"This is a PCG advisor count, not a client-assets-per-advisor figure.\"\n\nItem 5: \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states financial advisors associated with RCS firms are not included in its financial advisor counts, although their client assets are included in AUA; RCS AUA totaled $217.3 billion as of September 30, 2025.\" [RJF-10K-2025#12]\ndiffers_because: \"This describes which advisors and assets are included in the counts, relevant to whether a per-advisor comparison is valid, but is not itself a per-advisor figure.\"\n\nItem 6: \"Raymond James Financial: Raymond James discloses $166 million in average assets under management per advisor for its Financial Institutions Division (a subset of 940 advisors across 160 financial institutions).\" [RJF-PR-web-bank-and-credit-union-advisors#0]\ndiffers_because: \"This is average assets under management per advisor for the Financial Institutions Division only (a different measure and narrower scope), not firm-wide client assets per advisor.\"\n\nNow the a3.EDJ gap.\n\nGap for a3.EDJ:\nwhat: \"Edward Jones \u2014 Client assets per advisor (computed or disclosed)\"\nsuggested_source: \"Edward Jones disclosures of advisor productivity (e.g., client assets under care per financial advisor)\"\n\npart_id: \"a3.EDJ\".\n\nActually, let me think about what the gap should convey. The note says \"not disclosed (code gap); a computation was proposed and rejected by code: input a3.EDJ is not a fact\".\n\nSo the gap is: Edward Jones does not disclose client assets per advisor, and a computation is not supportable.\n\nwhat: \"Edward Jones \u2014 client assets per advisor figure (computed or disclosed)\"\nsuggested_source: \"Edward Jones financial advisor productivity metrics (not in the documents searched)\"\n\nOK.\n\nNow the a4 comparison claim (part_id \"a4\").\n\nLet me write a thorough comparison claim.\n\nThe claim should state: whether it can be made (not valid), and why (different definitions, advisor counts, asset measures), citing items.\n\nLet me draft:\n\n\"The client assets per advisor figures cannot be validly compared side by side across the five firms. The client asset measures differ in definition: Morgan Stanley's 'client assets' is the sum of Wealth Management client assets and Investment Management AUM, with its advisor-led channel (client assets in accounts with a Wealth Management representative assigned) of $5,715 billion at December 31, 2025 excluding self-directed and workplace channels; Schwab's 'total client assets' spans brokerage accounts, workplace plan participant accounts, banking accounts, and custodial assets held for independent advisors; Edward Jones uses 'client assets under care' (AUC); Merrill uses 'client balances' composed of AUM, brokerage and other assets, deposits, and loans and leases; and Raymond James uses 'client assets under administration' (AUA), itself cautioning that 'the definitions for client assets may be inconsistent across companies.' The advisor counts also differ in definition: Morgan Stanley reports 'Wealth Management representatives' (15,950 at December 31, 2020); Schwab reports no financial-advisor headcount (only ~4,127 employees performing investment advisory functions, ~16,000 independent RIA firms, or ~33,000 full-time employees); Edward Jones reports 'financial advisors (actual)' (distinct from a full-time equivalent basis); Merrill's available count spans GWIM and Consumer Banking (or Merrill plus Private Bank), not Merrill alone; and Raymond James counts employee and independent contractor advisors while excluding RCS-division advisors whose assets are nonetheless included in AUA. Because the numerators, denominators, and their definitions all differ, and because the per-advisor figures themselves are stand-in components rather than a shared disclosed metric, the figures are not on the same basis and cannot be validly compared.\"\n\nThis is comprehensive. Let me cite the chunks.\n\nChunks to cite:\n- MS: MS-10K-2025#165 (client assets definition), MS-SUPP-2026Q2#37 (advisor-led/self-directed definitions), MS-10K-2025#166 ($5,715B), MS-SUPP-2020Q4#1 (15,950)\n- SCHW: SCHW-PR-2026-10-15-01#10 (composition), SCHW-ADV1A-2026#1 (4,127), SCHW-TR-2026Q3#10 (16,000 firms), SCHW-10K-2025#49 (33,000)\n- EDJ: EDJ-10Q-2025Q3#60 (AUC), EDJ-10K-2025#130 (advisors actual), EDJ-10Q-2026Q2#75 (FTE)\n- MER: BAC-SUPP-2023Q4#2 (18,916 wider), BAC-10K-2025#248 (client balances composition), BAC-DECK-2025-investor-day#9 (Merrill+Private Bank), BAC-SUPP-2026Q1#46 (AUM definition)\n- RJF: RJF-DECK-2025-investor-day#32 (definitions inconsistent), RJF-10K-2025#12 (RCS excluded), RJF-10K-2025#227 (8,943), RJF-10K-2025#9 (PCG AUA)\n\nThat's a lot of chunk ids. All should be in the enum.\n\nLet me verify each is in the enum... The enum lists many ids. Let me trust they're all there since they're all in the Sources list.\n\nNow, let me also double check: is the comparison claim \"not valid\" or \"valid only for some\"? Given all the differences, it's \"not valid\".\n\nLet me also make sure I state the comparison answer clearly: \"cannot be validly compared\" / \"not valid\".\n\nNow let me also reconsider: the instruction says for comparison aspects, \"Compare or rank figures across firms only when the aspect is marked same_basis\". a4 is NOT marked same_basis (it's marked \"comparison\"). So I should NOT compare/rank figures; instead say they're not comparable and why.\n\nGood, my draft does that.\n\nNow, let me also double-check the \"recency\" and time window. No time window in the question. No \"recency\" marks. So no why-lines.\n\nLet me also verify: the question is \"Client assets per advisor across the five -- and is that comparison even valid?\"\n\nThis is essentially asking a3 (per-advisor) and a4 (comparison validity). But the behavior says \"1a: the asked quantity in a1.MS, a2.MS, a1.SCHW, a1.EDJ, a2.EDJ, a1.MER, a1.RJF, a2.RJF\".\n\nSo the answer covers a1 (client assets), a2 (advisor headcount), a3 (per-advisor stand-ins), and a4 (comparison). That's all four aspects.\n\nOK. Let me now assemble the full answer.\n\nOne more consideration: the order of claims. \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '.\"\n\nSo order: a1 (MS, SCHW, EDJ, MER, RJF), then a2 (MS, SCHW, EDJ, MER, RJF), then a3 (MS, SCHW, EDJ, MER, RJF), then a4 (one claim).\n\nWithin a1, order items as listed (1, 2, 3...). I'll keep item order.\n\nFor a2, MS items, SCHW adjacent items, EDJ items, MER adjacent items, RJF items.\n\nFor a3, MS adjacent, SCHW adjacent, EDJ gap, MER adjacent, RJF adjacent.\n\nThen a4 comparison.\n\nNow let me also make sure about the part_id for each. For fact cells: part_id = the cell id (a1.MS, a1.SCHW, a1.EDJ, a1.MER, a1.RJF, a2.MS, a2.EDJ, a2.RJF). For adjacent cells: a2.SCHW, a2.MER, a3.MS, a3.SCHW, a3.MER, a3.RJF. For gap: a3.EDJ. For comparison: a4.\n\nLet me finalize and write the submit_answer call.\n\nI need to be careful about the text not using quotation marks for \"not verbatim\" items. Let me check which items I'm using quotes on.\n\nFor the comparison claim, I quote \"the definitions for client assets may be inconsistent across companies\" from RJF-DECK-2025-investor-day#32. Is that item marked \"not verbatim\"? Let me check a4.RJF item 1: quote \"The definitions for client assets may be inconsistent across companies. Peer Group Median includes...\" \u2014 no \"not verbatim\" mark. So it's verbatim, I can quote it.\n\nBut wait, I shortened it. The exact quote is \"The definitions for client assets may be inconsistent across companies.\" Let me use that exact phrasing in quotes.\n\nActually, let me use the exact quoted text. The instruction says \"quote each source's own words in quotation marks exactly as shown\" \u2014 but that's for computation lines. For general claims, I should use the firm's own terms.\n\nLet me quote \"the definitions for client assets may be inconsistent across companies\" \u2014 but the exact quote is \"The definitions for client assets may be inconsistent across companies.\" I'll quote it exactly.\n\nActually, I'll just write it inline as part of the claim, quoting exactly: 'the definitions for client assets may be inconsistent across companies'. To be safe, I'll use the exact capitalization: \"The definitions for client assets may be inconsistent across companies.\"\n\nLet me finalize the comparison claim text carefully.\n\nNow, one thing about the a4 comparison claim - it should be ONE claim with part_id \"a4\". Let me write it as one claim.\n\nLet me also reconsider: do I need to cite the registered definitions in the comparison? The registered definitions are \"context, cite only if under Sources\". They ARE under Sources (they're listed). But they're context. I think I can cite them if needed, but I already have the a4 fact items which cover the definitions. I'll cite the a4 items primarily.\n\nLet me now also reconsider the SCHW items 1-5 (figure not found). I'll write them as claims without figures. Let me write them concisely.\n\nActually, I want to reconsider whether I should even include these as separate claims. The instruction says \"A fact cell is a claim.\" These are fact cells (a1.SCHW is fact). But \"figure not found\" means don't state figure. So the claim is essentially empty of content.\n\nI'll write: \"Schwab: The 2026 investor day deck (published May 14, 2026) presents a chart of total client assets for the years 2021 through 2025.\" \u2014 but this is one claim covering all 5 items, not 5 separate.\n\nHmm, but each item is a separate cell. Let me write 5 separate but minimal claims. Actually, I think it's cleaner to write them individually since each represents a distinct period cell.\n\nLet me write:\n1. \"Schwab: The 2026 investor day deck (published May 14, 2026) presents total client assets for 2021.\" [SCHW-DECK-2026-investor-day#231]\n2. \"...for 2022.\"\n3. \"...for 2023.\"\n4. \"...for 2024.\"\n5. \"...for 2025.\"\n\nI'll do this. It's a bit repetitive but complies.\n\nActually, I realize I could make them slightly more informative while still not stating figures. But there's nothing else to say. I'll keep minimal.\n\nNow let me write out the full answer JSON.\n\nLet me count all claims and adjacent items to make sure I have them all.\n\na1.MS: 7 claims\na1.SCHW: 14 claims (5 without figure, 9 with)\na1.EDJ: 12 claims\na1.MER: 14 claims\na1.RJF: 9 claims\na2.MS: 3 claims\na2.SCHW: 3 adjacent\na2.EDJ: 12 claims\na2.MER: 4 adjacent\na2.RJF: 3 claims\na3.MS: 7 adjacent\na3.SCHW: 4 adjacent\na3.EDJ: 1 gap\na3.MER: 8 adjacent\na3.RJF: 6 adjacent\na4: 1 comparison claim\n\nTotal claims: 7+14+12+14+9+3+12+3+1 = 75 claims\nAdjacent: 3+4+7+4+8+6 = 32 adjacent\nGaps: 1\n\nThat's a lot but let me write it all.\n\nLet me be efficient in writing. I'll write the full JSON.\n\nActually, let me reconsider the a3.MS items 5-7 (advisor headcount duplicated). These duplicate a2.MS. Since they're not marked \"also under a2\", I write them. But they add noise. However, I'll follow instructions.\n\nActually wait, let me reconsider once more. The a3 aspect says \"stand-in figure (adjacent only)\". The stand-in for \"client assets per advisor\" would be the numerator (client assets) and denominator (advisor count). Items 1-2 are advisor-led client assets (numerator), items 3-4 total client assets (numerator), items 5-7 advisor headcount (denominator).\n\nThese are all components. I'll write them all as adjacent.\n\nLet me finalize the text for each and write the JSON.\n\nFor the differs_because fields, I need concise explanations. Let me use consistent phrasing.\n\nLet me write the answer now.\n\nActually, I realize I should double check the dating convention. The instruction says \"Date every claim from its source line\". So I should mention the source document name and period.\n\nI've been doing that. Let me make sure each claim has a date reference.\n\nFor the press releases, I'll reference like \"the fourth-quarter 2025 earnings release (period ended December 31, 2025)\".\n\nLet me finalize. I'll write the full answer.\n\nFor efficiency, let me write compact but complete claims.\n\nLet me also verify the figure-not-found items once more:\n- a1.SCHW items 1-5: figure not found \u2192 no figure\n- a1.SCHW items 6, 9, 10: \"quote not verbatim\" only \u2192 figure OK, no quotes\n- a1.SCHW item 7, 8, 11, 12, 13, 14: no mark \u2192 figure + verbatim OK\n\nWait, let me recheck a1.SCHW item 7. It says quote \"Total client assets 18% 3% $ 11,903.0 $ 11,593.9 $ 10,757.3 $ 9,929.7 $ 10,101.3\". No \"not verbatim\" mark. So verbatim. But I'm not quoting anyway (I'm just stating the figure). Fine.\n\nActually, I realize for \"not verbatim\" items, I just don't use quotation marks. For non-marked items, I could use quotes but it's not required. I'll mostly paraphrase and state figures. I'll only use quotes where it adds value (like the RJF \"definitions may be inconsistent\" quote in the comparison).\n\nOK, let me write the final answer now.\n\nFor the a4 comparison, I'll cite a comprehensive set of chunk ids.\n\nLet me write it all out in the submit_answer call.\n\nActually, let me reconsider the a3.EDJ gap wording more carefully, and whether the \"computation rejected\" should be reflected.\n\nwhat: \"Edward Jones \u2014 client assets per advisor (computed or disclosed): not disclosed; a computation is not supportable from the evidence because the per-advisor cell for Edward Jones is not a fact.\"\n\nHmm, that's awkward. Let me simplify:\n\nwhat: \"Edward Jones \u2014 client assets per advisor: not disclosed in the documents searched, and not computable from the evidence on this basis.\"\nsuggested_source: \"Edward Jones financial advisor productivity or assets-under-care-per-advisor disclosures.\"\n\nOK.\n\nNow, let me also make sure I'm not missing the \"suggested_source\" field format. It's a string. Fine.\n\nLet me write the full answer now. This is going to be a large JSON.\n\nLet me carefully write each claim's text, chunk_ids, and part_id.\n\nI'll write it all out now.\n\nFor brevity in my writing, I'll produce the complete JSON.\n\nLet me finalize the comparison claim and its citations precisely.\n\nComparison claim citations (chunk_ids):\n[\"MS-10K-2025#165\", \"MS-SUPP-2026Q2#37\", \"MS-10K-2025#166\", \"MS-SUPP-2020Q4#1\", \"SCHW-PR-2026-10-15-01#10\", \"SCHW-ADV1A-2026#1\", \"SCHW-TR-2026Q3#10\", \"SCHW-10K-2025#49\", \"EDJ-10Q-2025Q3#60\", \"EDJ-10K-2025#130\", \"EDJ-10Q-2026Q2#75\", \"BAC-SUPP-2023Q4#2\", \"BAC-10K-2025#248\", \"BAC-DECK-2025-investor-day#9\", \"RJF-DECK-2025-investor-day#32\", \"RJF-10K-2025#12\", \"RJF-10K-2025#227\", \"RJF-10K-2025#9\"]\n\nAll these should be in the enum. Let me verify a few: MS-SUPP-2026Q2#37 \u2713, SCHW-PR-2026-10-15-01#10 \u2713, SCHW-TR-2026Q3#10 \u2713, EDJ-10Q-2026Q2#75 \u2713, RJF-DECK-2025-investor-day#32 \u2713, RJF-10K-2025#9 \u2713, RJF-10K-2025#12 \u2713, RJF-10K-2025#227 \u2713, BAC-10K-2025#248 \u2713, BAC-SUPP-2023Q4#2 \u2713, BAC-DECK-2025-investor-day#9 \u2713, MS-10K-2025#165 \u2713, MS-SUPP-2026Q2#37 \u2713, MS-10K-2025#166 \u2713, MS-SUPP-2020Q4#1 \u2713, SCHW-10K-2025#49 \u2713, SCHW-ADV1A-2026#1 \u2713, EDJ-10Q-2025Q3#60 \u2713, EDJ-10K-2025#130 \u2713, SCHW-PR-2026-10-15-01#10 \u2713.\n\nGood.\n\nNow writing final answer.\n\nI need to write this all out. Let me be systematic and complete.\n\nFor the a1.SCHW \"figure not found\" items, I'll write them concisely.\n\nLet me write everything now in the final tool call.\n\nActually, one more check on a1.SCHW item 6: it's from SCHW-10K-2025#129, quote \"Schwab's total client assets reached $11.90 trillion at December 31, 2025, up 18% on the year.\" with \"[quote not verbatim: never put it in quotation marks]\". So no quotes but figure OK.\n\nAlso item 9: SCHW-10Q-2025Q2#9, $10.76 trillion, \"quote not verbatim\". So no quotes.\n\nItem 10: SCHW-10Q-2025Q3#9, $11.59 trillion, not verbatim.\n\nOK all set.\n\nLet me also double check a1.MER item 6, 7, 8 have no \"not verbatim\" mark so they're verbatim \u2014 but I'm just stating figures, no quotes needed anyway.\n\nAlright, writing final answer now.\n\nLet me write the complete JSON structure with all claims, adjacent, and gaps.\n\nI'll write the text for each item now carefully.\n\nFinal note on part_id: For the a4 comparison claim, part_id is \"a4\". For fact/adjacent cells, use the cell id like \"a1.MS\".\n\nLet me write it all.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: The 4Q24 earnings transcript (period ended December 31, 2024) states the firm ended 2024 with total client assets at $7.9 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2Q25 earnings transcript (period ended June 30, 2025) states total client assets across wealth and investment management climbed to over $8.2 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#3",
+          "MS-TR-2025Q2#18"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 3Q25 earnings transcript (period ended September 30, 2025) states total client assets across wealth and investment management reached $8.9 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#3",
+          "MS-TR-2025Q3#8",
+          "MS-TR-2025Q3#17"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 4Q25 earnings materials (period ended December 31, 2025) state total client assets in Wealth and Investment Management grew to $9.3 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-PR-2026-01-15-01#0",
+          "MS-TR-2025Q4#25",
+          "MS-TR-2025Q4#4"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 1Q26 earnings transcript (period ended March 31, 2026) states total client assets across Wealth and Investment Management exceeded $9 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#3"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 2Q26 earnings transcript (period ended June 30, 2026) states total client assets across Wealth and Investment Management stood at $10 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#2",
+          "MS-TR-2026Q2#19"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 3Q26 earnings transcript (period ended September 30, 2026) states total client assets across Wealth and Investment Management reached a record $10.5 trillion, where client assets represents the sum of Wealth Management client assets and Investment Management AUM.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#18",
+          "MS-TR-2026Q3#2"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2021.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#231"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2022.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#231"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2023.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#231"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2024.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#231"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) presents a total client assets figure for 2025.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#231"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states Schwab's total client assets reached $11.90 trillion at December 31, 2025, up 18% on the year.",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The fourth-quarter 2025 earnings release (period ended December 31, 2025) states Schwab's total client assets were $10,101.3 billion at December 31, 2024.",
+        "chunk_ids": [
+          "SCHW-PR-2026-01-21-01#40"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 1Q26 10-Q (period ended March 31, 2026) states Schwab's client assets were $9,929.7 billion at March 31, 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#16"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q25 10-Q (period ended June 30, 2025) states Schwab's total client assets were $10.76 trillion at June 30, 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q2#9"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 3Q25 10-Q (period ended September 30, 2025) states Schwab's total client assets were $11.59 trillion at September 30, 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q3#9"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 1Q26 10-Q (period ended March 31, 2026) states Schwab's client assets were $11,767.9 billion at March 31, 2026, down 1% from year-end 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#16"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 10-Q (period ended June 30, 2026) states Schwab's total client assets increased to $13.08 trillion at June 30, 2026, up 10% from year-end 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The third-quarter 2026 earnings release (period ended September 30, 2026) states Schwab's total client assets were $13,333.2 billion at September 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The monthly activity highlights release (period August 31, 2026) states Schwab's total client assets equaled $13.41 trillion as of month-end August 2026, up 19% from August 2025.",
+        "chunk_ids": [
+          "SCHW-MONTHLY-2026-08#1"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported total client assets under care (AUC) of $2,481 billion at year-end 2025 (compared with $2,171 billion in 2024 and $1,919 billion in 2023).",
+        "chunk_ids": [
+          "EDJ-10K-2025#129"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported average total client assets under care (AUC) of $2,311 billion for 2025 (compared with $2,070 billion in 2024 and $1,764 billion in 2023).",
+        "chunk_ids": [
+          "EDJ-10K-2025#129"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported total client assets under care (AUC) of $2,647 billion at the end of the second quarter of 2026 (compared with $2,306 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#59"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported average total client assets under care (AUC) of $2,580 billion for the second quarter of 2026 (compared with $2,212 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#59"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported total client assets under care (AUC) of $2,417 billion at the end of the first quarter of 2026 (compared with $2,159 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#51"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported average total client assets under care (AUC) of $2,498 billion for the first quarter of 2026 (compared with $2,195 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#51"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 3Q25 10-Q (period ended September 26, 2025) states the Partnership reported total client assets under care (AUC) of $2,421 billion at the end of the third quarter of 2025 (compared with $2,176 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 3Q25 10-Q (period ended September 26, 2025) states the Partnership reported average total client assets under care (AUC) of $2,365 billion for the third quarter of 2025 (compared with $2,118 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q25 10-Q (period ended June 27, 2025) states the Partnership reported total client assets under care (AUC) of $2,306 billion at the end of the second quarter of 2025 (compared with $2,062 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#63"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) states the Partnership reported advisory programs client assets under care of $1,080 billion at year-end 2025 (compared with $862 billion in 2024 and $743 billion in 2023), representing the portion of assets under management/advisement.",
+        "chunk_ids": [
+          "EDJ-10K-2025#129"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) states the Partnership reported advisory programs client assets under care of $1,198 billion at the end of the second quarter of 2026 (compared with $931 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#59"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) states the Partnership reported advisory programs client assets under care of $1,064 billion at the end of the first quarter of 2026 (compared with $860 billion a year earlier).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#51"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management reported total client balances of $3,992,312 million at December 31, 2025.",
+        "chunk_ids": [
+          "BAC-10K-2025#248"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management reported total client balances of $3,578,513 million at December 31, 2024.",
+        "chunk_ids": [
+          "BAC-10K-2025#248"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 GWIM supplement (period ended September 30, 2026) states Merrill Wealth Management reported total client balances of $4,240,601 million at September 30, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#53"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 2Q26 GWIM supplement (period ended June 30, 2026) states Merrill Wealth Management reported total client balances of $4,132,451 million at June 30, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q2#55"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,815,389 million at March 31, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#45"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,896,124 million at September 30, 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#45"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,695,213 million at June 30, 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#45"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management reported total client balances of $3,486,594 million at March 31, 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#45"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 4Q23 GWIM supplement (period ended December 31, 2023) states Merrill Wealth Management reported total client balances of $3,182,735 million at December 31, 2023.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#1"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 4Q23 GWIM supplement (period ended December 31, 2023) states Merrill Wealth Management reported total client balances of $2,822,910 million at December 31, 2022.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#1"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 4Q25 earnings release (period ended December 31, 2025) states Merrill reported $1.7 trillion in assets under management balances at December 31, 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#13"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 1Q26 earnings release (period ended March 31, 2026) states Merrill reported $1.7 trillion in assets under management balances at March 31, 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#11"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 2Q26 earnings release (period ended June 30, 2026) states Merrill reported $1.8 trillion in assets under management balances at June 30, 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-07-14-01#11"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: The 3Q26 earnings release (period ended September 30, 2026) states Merrill reported $1.9 trillion in assets under management balances at September 30, 2026.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#12"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended September 30, 2025 states Raymond James Financial's total client assets under administration were $1,571.1 billion as of September 30, 2024.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended December 31, 2024 states Raymond James Financial's total client assets under administration were $1,557.5 billion as of December 31, 2024.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q4#8"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended March 31, 2025 states Raymond James Financial's total client assets under administration were $1,535.9 billion as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q1#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended June 30, 2025 states Raymond James Financial's total client assets under administration were $1,637.1 billion as of June 30, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended September 30, 2025 states Raymond James Financial's total client assets under administration were $1,730.6 billion as of September 30, 2025; a press release states total client assets are $1.73 trillion.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended December 31, 2025 states Raymond James Financial's total client assets under administration were $1,773.1 billion as of December 31, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q4#8"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended March 31, 2026 states Raymond James Financial's total client assets under administration were $1,762.9 billion as of March 31, 2026.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q1#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The supplement for the period ended June 30, 2026 states Raymond James Financial's total client assets under administration were $1,922.4 billion as of June 30, 2026.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states total client assets under administration in the Private Client Group segment were $1.67 trillion as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,950 Wealth Management representatives as of December 31, 2020 in its Wealth Management segment.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,469 Wealth Management representatives as of September 30, 2020 in its Wealth Management segment.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,468 Wealth Management representatives as of December 31, 2019 in its Wealth Management segment.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 19,232 financial advisors (actual) at year end 2023.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 20,125 financial advisors (actual) at year end 2024.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 20,425 financial advisors (actual) at year end 2025.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports an average of 18,945 financial advisors for 2023.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports an average of 19,650 financial advisors for 2024.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports an average of 20,331 financial advisors for 2025.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q25 10-Q (period ended June 27, 2025) reports 20,309 financial advisors (actual) at period end for the second quarter of 2025 (June 27, 2025).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#64"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 3Q25 10-Q (period ended September 26, 2025) reports 20,429 financial advisors (actual) at period end for the third quarter of 2025 (September 26, 2025).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#67"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) reports 20,514 financial advisors (actual) at period end for the second quarter of 2026 (June 26, 2026).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q26 10-Q (period ended June 26, 2026) reports an average of 20,537 financial advisors for the second quarter of 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 19,540 financial advisors (actual) at year end 2025 in its U.S. segment.",
+        "chunk_ids": [
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) reports 885 financial advisors (actual) at year end 2025 in its Canada segment.",
+        "chunk_ids": [
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) reports 8,943 total financial advisors (employee and independent contractor) as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) reports 8,787 total financial advisors (employee and independent contractor) as of September 30, 2024.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) reports 8,712 total financial advisors (employee and independent contractor) as of September 30, 2023.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "The client assets per advisor figures cannot be validly compared side by side across the five firms. The client asset measures differ in definition: Morgan Stanley's client assets is the sum of Wealth Management client assets and Investment Management AUM, with its advisor-led channel (client assets in accounts with a Wealth Management representative assigned) of $5,715 billion at December 31, 2025 excluding self-directed and workplace channels; Schwab's total client assets span brokerage accounts, workplace plan participant accounts, banking accounts, and custodial assets held for independent advisors; Edward Jones uses client assets under care (AUC); Merrill uses client balances composed of assets under management, brokerage and other assets, deposits, and loans and leases; and Raymond James uses client assets under administration (AUA), itself cautioning that 'The definitions for client assets may be inconsistent across companies.' The advisor counts also differ in definition: Morgan Stanley reports Wealth Management representatives (15,950 at December 31, 2020); Schwab reports no financial-advisor headcount (only approximately 4,127 employees performing investment advisory functions, more than 16,000 independent RIA firms, or approximately 33,000 full-time employees); Edward Jones reports financial advisors (actual), distinct from a full-time equivalent basis; Merrill's available count spans all wealth management businesses in GWIM and Consumer Banking (or Merrill plus Private Bank), not Merrill alone; and Raymond James counts employee and independent contractor advisors while excluding RCS-division advisors whose assets are nonetheless included in AUA. Because the numerators, denominators, and their definitions all differ, and because the per-advisor figures are stand-in components rather than a shared disclosed metric, the figures are not on the same basis and cannot be validly compared.",
+        "chunk_ids": [
+          "MS-10K-2025#165",
+          "MS-SUPP-2026Q2#37",
+          "MS-10K-2025#166",
+          "MS-SUPP-2020Q4#1",
+          "SCHW-PR-2026-10-15-01#10",
+          "SCHW-ADV1A-2026#1",
+          "SCHW-TR-2026Q3#10",
+          "SCHW-10K-2025#49",
+          "EDJ-10Q-2025Q3#60",
+          "EDJ-10K-2025#130",
+          "EDJ-10Q-2026Q2#75",
+          "BAC-SUPP-2023Q4#2",
+          "BAC-10K-2025#248",
+          "BAC-DECK-2025-investor-day#9",
+          "RJF-DECK-2025-investor-day#32",
+          "RJF-10K-2025#12",
+          "RJF-10K-2025#227",
+          "RJF-10K-2025#9"
+        ],
+        "part_id": "a4"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports that approximately 4,127 of its employees perform investment advisory functions (including research).",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "No passage states Schwab's advisor headcount; this is a count of employees performing investment advisory functions (a Form ADV regulatory label, including research), not a financial-advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab's Form ADV (published October 21, 2026) reports approximately 30,690 employees (full- and part-time, excluding clerical workers).",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "No passage states Schwab's advisor headcount; this is total employees (full- and part-time, excluding clerical workers), not a financial-advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states Schwab had the equivalent of approximately 33,000 full-time employees as of December 31, 2025.",
+        "chunk_ids": [
+          "SCHW-10K-2025#49"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "No passage states Schwab's advisor headcount; this is a full-time-equivalent count of all employees, not a financial-advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America's 2025 investor day deck states that Merrill and the Private Bank together have more than 15,000 wealth advisors.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No passage states Merrill's own advisor headcount; this is a count covering Merrill plus Private Bank (GWIM), a wider unit than Merrill alone."
+      },
+      {
+        "text": "Merrill: Bank of America's GWIM supplement reports total wealth advisors of 18,916 at year-end 2023, including advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No passage states Merrill's own advisor headcount; this count spans all wealth management businesses in GWIM and Consumer Banking, a wider scope than Merrill alone."
+      },
+      {
+        "text": "Merrill: Bank of America's GWIM supplement reports total wealth advisors of 19,273 at year-end 2022, including advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No passage states Merrill's own advisor headcount; this count spans all wealth management businesses in GWIM and Consumer Banking, a wider scope than Merrill alone."
+      },
+      {
+        "text": "Merrill: Merrill's Form ADV (published November 11, 2026) reports that approximately 26,599 of its employees are registered representatives of a broker-dealer (and approximately 25,721 perform investment advisory functions).",
+        "chunk_ids": [
+          "MER-ADV1A-2026#1"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "No passage states Merrill's own advisor headcount; this is a count of registered representatives of a broker-dealer, a different measure than financial-advisor headcount."
+      },
+      {
+        "text": "Morgan Stanley: The 2025 10-K (period ended December 31, 2025) reports advisor-led client assets of $5,715 billion at December 31, 2025, defined as client assets in accounts that have a Wealth Management representative assigned.",
+        "chunk_ids": [
+          "MS-10K-2025#166"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is advisor-led client assets (a client-asset measure), not a computed or disclosed client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 2025 10-K (period ended December 31, 2025) reports advisor-led client assets of $4,758 billion at December 31, 2024, defined as client assets in accounts that have a Wealth Management representative assigned.",
+        "chunk_ids": [
+          "MS-10K-2025#166"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is advisor-led client assets (a client-asset measure), not a computed or disclosed client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q25 supplement (period ended December 31, 2025) reports total client assets of $7,381 billion at December 31, 2025 in its Wealth Management segment.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#14"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is total Wealth Management client assets, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q25 supplement (period ended December 31, 2025) reports total client assets of $6,194 billion at December 31, 2024 in its Wealth Management segment.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#14"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is total Wealth Management client assets, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,950 Wealth Management representatives at December 31, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is advisor headcount (a denominator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,469 Wealth Management representatives at September 30, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is advisor headcount (a denominator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Morgan Stanley: The 4Q20 supplement (period ended December 31, 2020) reports 15,468 Wealth Management representatives at December 31, 2019.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is advisor headcount (a denominator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 earnings release (period ended June 30, 2026) states Schwab reported total client assets of $13.08 trillion at June 30, 2026, up 22% year-over-year.",
+        "chunk_ids": [
+          "SCHW-PR-2026-07-21-01#2"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "This is total client assets, not a client-assets-per-advisor figure; Schwab publishes no financial-advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The fourth-quarter 2025 earnings release (period ended December 31, 2025) states Schwab reported total client assets of $11.90 trillion at December 31, 2025, up 18% year-over-year.",
+        "chunk_ids": [
+          "SCHW-PR-2026-01-21-01#2"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "This is total client assets, not a client-assets-per-advisor figure; Schwab publishes no financial-advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The third-quarter 2026 earnings release (period ended September 30, 2026) states Schwab reported total client assets of $13.33 trillion at September 30, 2026, up 15% year-over-year.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#2"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "This is total client assets, not a client-assets-per-advisor figure; Schwab publishes no financial-advisor headcount."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2026 investor day deck (published May 14, 2026) states Schwab's Advisor Services segment held $5.2 trillion in client assets.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "This is Advisor Services segment client assets (a wealth-management-related subset), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management client balances were $3,992,312 million at year end 2025.",
+        "chunk_ids": [
+          "BAC-10K-2025#248"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: The 2025 10-K (period ended December 31, 2025) states Merrill Wealth Management client balances were $3,578,513 million at year end 2024.",
+        "chunk_ids": [
+          "BAC-10K-2025#248"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: The 1Q26 GWIM supplement (period ended March 31, 2026) states Merrill Wealth Management client balances were $3,815,389 million at March 31, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#45"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: The 2Q26 GWIM supplement (period ended June 30, 2026) states Merrill Wealth Management client balances were $4,132,451 million at June 30, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q2#55"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: The 3Q26 GWIM supplement (period ended September 30, 2026) states Merrill Wealth Management client balances were $4,240,601 million at September 30, 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#53"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is Merrill Wealth Management client balances (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: At period end 2023, Bank of America reported 18,916 'Total wealth advisors'; this headcount includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill alone.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is a wealth-advisor count spanning GWIM and Consumer Banking, a wider scope than Merrill, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: At period end 2022, Bank of America reported 19,273 'Total wealth advisors' (wider scope: all wealth management businesses in GWIM and Consumer Banking).",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is a wealth-advisor count spanning GWIM and Consumer Banking, a wider scope than Merrill, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Merrill: In its November 2025 investor day materials, Bank of America cited a wealth-advisor figure for Merrill | Private Bank (GWIM), a wider scope than Merrill alone.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a3.MER",
+        "differs_because": "This is a wealth-advisor count covering Merrill plus Private Bank (GWIM), a wider scope than Merrill, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states total client assets under administration (AUA) in its Private Client Group segment were $1.67 trillion as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#9"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This is PCG client assets under administration (a numerator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states Raymond James had 8,943 employee and independent contractor financial advisors affiliated with it as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#9"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This is advisor headcount (a denominator), not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James investor day materials (published June 5, 2025) present client assets under administration.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#30"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This is client assets under administration, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James investor day materials (published June 5, 2025) state 8,731 PCG advisors.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#30"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This is a Private Client Group advisor count, not a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: The 2025 10-K (period ended September 30, 2025) states financial advisors associated with firms in its RCS division are not included in its financial advisor counts, although their client assets are included in AUA; AUA associated with firms in its RCS division totaled $217.3 billion as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#12"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This describes which advisors and assets are included in the counts (relevant to whether a per-advisor comparison is valid), but is not itself a client-assets-per-advisor figure."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James discloses $166 million in average assets under management per advisor for its Financial Institutions Division (a subset of 940 advisors across 160 financial institutions).",
+        "chunk_ids": [
+          "RJF-PR-web-bank-and-credit-union-advisors#0"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "This is average assets under management per advisor for the Financial Institutions Division only (a different measure and narrower scope), not firm-wide client assets per advisor."
+      }
+    ],
+    "gaps": [
+      {
+        "what": "Edward Jones \u2014 client assets per advisor (computed or disclosed): not disclosed in the documents searched, and a per-advisor computation is not supportable from this evidence.",
+        "suggested_source": "Edward Jones financial advisor productivity or client-assets-under-care-per-advisor disclosures.",
+        "part_id": "a3.EDJ"
+      }
+    ]
+  }
+}

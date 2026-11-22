@@ -1,0 +1,321 @@
+{
+  "question_id": "Q5",
+  "question": "Where is Morgan Stanley investing in technology for its advisors?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2025Q3#8",
+    "MS-TR-2025Q4#35",
+    "MS-TR-2025Q2#3",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2025Q4#8",
+    "MS-TR-2025Q3#24",
+    "MS-TR-2025Q1#70",
+    "MS-TR-2025Q3#13",
+    "MS-TR-2026Q3#16",
+    "MS-TR-2026Q3#32",
+    "MS-TR-2026Q2#23",
+    "MS-TR-2026Q3#49",
+    "MS-TR-2026Q3#35",
+    "MS-10K-2025#25",
+    "MS-TR-2026Q1#71",
+    "MS-TR-2025Q4#34",
+    "MS-TR-2024Q4#44",
+    "MS-DECK-2026-strategic-update#10"
+  ],
+  "schema_fallback": [],
+  "enum_values": 64,
+  "at": "2026-11-21T20:17:41.861181-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8288,
+    "output_tokens": 9843,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 6624,
+    "reasoning_tokens": 6573,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.84
+  },
+  "wall_s": 60.52,
+  "tokens_per_s": 162.64,
+  "ttft_s": 1.84,
+  "reasoning_content": "This is a single firm (Morgan Stanley). I need to write claims aspect by aspect. Each claim carries the part_id of the cell it comes from (a1.MS, a2.MS, a3.MS, a4.MS).\n\nLet me go through each aspect.\n\nAspect a1: fact, no recency, no why-line. Items 1-10.\n\nItem 6: \"quote not verbatim: never put it in quotation marks\" - so don't use quotation marks.\n\nItem 6 quote: \"we're also bringing in new clients, and that's a lot of the tools that we've been giving to our advisors.\" - quote not verbatim, don't put in quotes.\n\nLet me write each item as a claim.\n\nNote the standard wording: single firm, aspect by aspect, each claim starting \"<Firm>: \".\n\nActually for single firm, claims start with \"Morgan Stanley: \".\n\nLet me write them.\n\nFor a3 (recency), every item needs a why-line. I need to use context or related passages. Each item has context and related lines. I should use those to write \"Why it might matter: ...\".\n\nLet me carefully construct.\n\nItem 1 (a3.MS): LeadIQ described. context line has DevGen AI tool, Parable. related: deck, 2026Q3#32, 2025Q2#3. \n\nWhy it might matter: use context - \"the source says these early AI use cases, some live and some in pilot, are showing progress.\" Actually context: \"... in pilot, are showing progress. These include the DevGen AI tool...\" So the context says these are in pilot and showing progress.\n\nI'll write why-line based on context: \"Why it might matter: the source states these early AI use cases, some live and some in pilot, are showing progress.\"\n\nItem 2 (a3.MS): LeadIQ helping introduce advisors. context: \"technology that can be used both on the revenue side and on the expense side that should help us drive the margin on both the top and the bottom line.\" \n\nWhy: the source states this technology can be used on both the revenue and expense side to help drive margin.\n\nItem 3 (a3.MS): CEO says overweighted to AI. context: \"We were overweighted... we are now double overweight. There is just no question that this is existentially...\" \n\nWhy: context says now \"double overweight.\"\n\nItem 4 (a3.MS): growth plans embed AI. context: \"With each passing quarter, our confidence continues to increase in the potential for both the efficiency and the effectiveness of AI-related technologies.\"\n\nWhy: confidence continues to increase in efficiency and effectiveness potential.\n\nItem 5 (a3.MS): technology can help do a lot of early work. context: \"...of their own financial needs... technology can help do a lot of the early work.\"\n\nWhy: context about financial needs decisions.\n\nItem 6 (a3.MS): 10-K technology supporting evolving client needs. context: \"...different channels... affected by multiple factors including... technology supporting evolving client needs, including generative AI and tokenization.\"\n\nperiod not stated in usable form. So I state no period? Actually item 6 has \"[period not stated in a usable form]\". I should say scope Wealth Management. Date from source line: 10-K period 2025-12-31.\n\nWhy-line for item 6: use context or related. The related lines: 2025Q4#8 (continue to invest via human capital and technology), 2026Q3#16 (scale supports continued investment), 2026Q3#35 (technology priorities protecting client assets and resiliency). \n\nI'll use related: cite MS-TR-2026Q3#35 - \"Management describes technology priorities for the advisor business as including protecting client assets and resiliency.\"\n\nWhy it might matter: the firm elsewhere describes technology priorities as including protecting client assets and resiliency.\n\nActually I need to add that passage's chunk id to the claim's chunk_ids. So the claim for item 6 would cite MS-10K-2025#25 (main) plus the related chunk id.\n\nItem 7 (a3.MS): analyst noted advisers empowered by AI. context: analyst question about pretax margin. related: 2026Q2#23 (investment dollars into LeadIQ), 2026Q3#35.\n\nWhy-line: use context - \"an analyst framed the discussion of advisers being empowered by AI in the context of wealth pretax margin sustainability.\" Or use related.\n\nLet me use context: the analyst asked whether pretax margin could go upward given advisers empowered by AI. Actually I should keep to what the passage says.\n\nWhy it might matter: The analyst raised the question of advisers being empowered by AI in the context of whether the 30% wealth pretax margin could be sustained or rise. But this might be \"restating the item itself\"? No, it's the consequence/context the source names.\n\nActually simpler: use related 2026Q2#23 - investment dollars going into LeadIQ to match individuals with advisers.\n\nLet me be careful. Each why-line must come from the item's own context line or related passages.\n\nFor item 7, related: cite MS-TR-2026Q2#23 - \"Morgan Stanley's CFO said investment dollars are going into products like LeadIQ that will allow the firm to match individuals with advisers.\"\n\nWhy it might matter: management separately said investment dollars are going into AI products like LeadIQ to match individuals with advisers.\n\nI'll add chunk MS-TR-2026Q2#23 to chunk_ids.\n\nNow let me construct all claims.\n\nFor claims, each must be dated. \"Date every claim from its source line.\"\n\nSource dates:\n- MS-TR-2025Q3#8: period 2025-09-30, published 2025-10-15 (3Q25 earnings call)\n- MS-TR-2025Q4#35: period 2025-12-31\n- MS-TR-2025Q2#3: period 2025-06-30\n- MS-TR-2025Q4#9: period 2025-12-31\n- MS-TR-2025Q4#8: period 2025-12-31\n- MS-TR-2025Q3#24: period 2025-09-30\n- MS-TR-2025Q1#70: period 2025-03-31\n- MS-TR-2025Q3#13: period 2025-09-30\n- MS-TR-2026Q3#16: period 2026-09-30\n- MS-TR-2026Q3#32: period 2026-09-30\n- MS-TR-2026Q2#23: period 2026-06-30\n- MS-TR-2026Q3#49: period 2026-09-30\n- MS-TR-2026Q3#35: period 2026-09-30\n- MS-10K-2025#25: 10-K period 2025-12-31, published 2026-02-19\n- MS-TR-2026Q1#71: period 2026-03-31\n- MS-TR-2025Q4#34: period 2025-12-31\n- MS-TR-2024Q4#44: period 2024-12-31\n- MS-DECK-2026-strategic-update#10: period n/a, published 2026-01-15\n\nNow, note that claims with multiple chunks: e.g., a3 items have why-line requiring adding related chunk id. But the main item already has its cite. For why-line I add the related chunk.\n\nActually the instructions say for recency why-line, add that passage's chunk id to the claim's chunk_ids. So the claim cites both main item chunk and related chunk.\n\nLet me write everything now.\n\nFor a1, each item is a claim with part_id \"a1.MS\".\n\nActually wait - part_id enum includes \"a1.MS\", \"a2.MS\", \"a3.MS\", \"a4.MS\", \"a1\", \"a2\", \"a3\", \"a4\", \"\". The cells are a1.MS etc. So part_id should be \"a1.MS\" for single firm? The instruction: \"a cell id is the part_id of what you write from it\". Cell id is \"a1.MS\". So part_id = \"a1.MS\".\n\nLet me write claims.\n\nFor a1 items, no why-line (fact aspect). Start each with \"Morgan Stanley: \".\n\nLet me draft.\n\na1 item 1: \"Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm described LeadIQ as 'our AI-powered lead distribution platform,' focused on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.\"\n\nWait, need to date. Source period 2025-09-30 published 2025-10-15. I'll say \"On the 3Q25 earnings call (period ended September 30, 2025)\".\n\nActually I'll follow the format examples: \"The 2Q26 10-Q (period ended June 26, 2026) states...\" For transcripts: \"On the 3Q26 earnings call (October 2026), management said...\"\n\nLet me write dates clearly.\n\nFor MS-TR-2025Q3#8: \"On the 3Q25 earnings call (October 2025)...\"\n\nI'll write all items now.\n\nActually, let me be efficient and just produce the full answer via submit_answer tool.\n\nLet me carefully list each claim.\n\nAspect a1 (10 items):\n\n1. Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm described LeadIQ, \"our AI-powered lead distribution platform,\" as focusing on matching workplace and self-directed relationships and facilitating engagement with its financial advisors. [MS-TR-2025Q3#8]\n\n2. Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated that LeadIQ is helping introduce its advisors to clients who are interested in advice, and that this is happening using AI, as technology used on the revenue side. [MS-TR-2025Q4#35]\n\n3. Morgan Stanley: On the 2Q25 earnings call (July 2025), the firm stated it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and the expansion of its workplace channel. [MS-TR-2025Q2#3]\n\n4. Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending. [MS-TR-2025Q4#9]\n\n5. Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated its growth plans embed the increasing adoption of AI tools throughout the enterprise and inside its client base. [MS-TR-2025Q4#8]\n\n6. Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm stated it has been giving tools to its advisors to attract new clients and existing clients and assets held away. [MS-TR-2025Q3#24] (no quotes, since not verbatim)\n\n7. Morgan Stanley: On the 1Q25 earnings call (April 2025), the firm referenced next best action tools through which advisors send next best actions to their individual retail clients. [MS-TR-2025Q1#70]\n\n8. Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm stated it continues to invest, deepening competitive moats in areas like its expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash. [MS-TR-2025Q3#13]\n\n9. Morgan Stanley: On the 3Q26 earnings call (October 2026), the firm stated its scale supports continued investment in future technology, including AI and digital tools. [MS-TR-2026Q3#16]\n\n10. Morgan Stanley: On the 3Q26 earnings call (October 2026), the firm stated that its technology enables it to be a differentiator in its favor across the advisor-led and integrated wealth funnel, making technology a competitive advantage for its advisors. [MS-TR-2026Q3#32]\n\nAspect a2 (9 items):\n\n1. Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said LeadIQ is the firm's AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors. [MS-TR-2025Q3#8]\n\n2. Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the DevGen AI tool enhances developer efficiency by modernizing code, and is one of the firm's early AI use cases (some live and some in pilot). [MS-TR-2025Q3#8]\n\n3. Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said Parable is an interactive tool that quickly analyzes and summarizes data, and is one of the firm's early AI use cases (some live and some in pilot). [MS-TR-2025Q3#8]\n\n4. Morgan Stanley: On the 1Q25 earnings call (April 2025), the CFO said advisors use a next best action capability, sending next best actions to their individual retail clients. [MS-TR-2025Q1#70]\n\n5. Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the firm is deepening its competitive moats through an expanded collaboration with Carta in private markets. [MS-TR-2025Q3#13]\n\n6. Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the firm is deepening its competitive moats in digital assets through announced partnerships with Zero Hash. [MS-TR-2025Q3#13]\n\n7. Morgan Stanley: On the 4Q25 earnings call (January 2026), the CEO said the firm is investing in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending. [MS-TR-2025Q4#9]\n\n8. Morgan Stanley: On the 2Q26 earnings call (July 2026), the CFO said investment dollars are going into products like LeadIQ that will allow the firm to match individuals with advisers. [MS-TR-2026Q2#23]\n\n9. Morgan Stanley: On the 4Q25 earnings call (January 2026), a company representative said LeadIQ helps introduce the firm's advisors to clients interested in advice, and that this happens using AI. [MS-TR-2025Q4#35]\n\nAspect a3 (7 items, each with why-line):\n\n1. Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm described LeadIQ as \"our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" Why it might matter: the source states these early AI use cases, some live and some in pilot, are showing progress. [MS-TR-2025Q3#8]\n\n2. Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm said LeadIQ \"is helping us introduce our advisors to our clients who are interested in advice,\" and that this is happening using AI. Why it might matter: the source states this technology can be used on both the revenue side and the expense side to help drive margin on both the top and the bottom line. [MS-TR-2025Q4#35]\n\n3. Morgan Stanley: On the 3Q26 earnings call (October 2026), the CEO said the firm was \"overweighted to AI from the early days in wealth with some of the work we did with OpenAI.\" Why it might matter: the source states the firm has since become \"double overweight\" on AI, given that it matters to clients and to the firm. [MS-TR-2026Q3#49]\n\n4. Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm said its \"growth plans embed the increasing adoption of AI tools throughout the enterprise and inside our client base.\" Why it might matter: the source states that with each passing quarter the firm's confidence continues to increase in the potential for both the efficiency and the effectiveness of AI-related technologies across business units and infrastructure. [MS-TR-2025Q4#8]\n\n5. Morgan Stanley: On the 3Q26 earnings call (October 2026), the CEO said technology \"can help do a lot of the early work\" supporting the decisions financial advisers make with their clients. Why it might matter: the source states this is about clients deciding based on the complexity and singularity of their own financial needs at a particular point in life. [MS-TR-2026Q3#35]\n\nWait, the context for item 5: \"...of their own financial needs at a particular point in life with respect to their parents, their kids, how they want to go about philanthropy, how they want to go about taxes, the whole thing, that is something that technology can help do a lot of the early work.\"\n\nWhy it might matter: the source states this concerns clients' financial needs at a particular point in life, such as regarding their parents, kids, philanthropy and taxes.\n\n6. Morgan Stanley: In its 2025 10-K (filed February 2026), the firm stated that its Wealth Management segment's ability to compete is affected by \"our technology supporting evolving client needs, including generative artificial intelligence and tokenization.\" Why it might matter: management separately describes technology priorities for the advisor business as including protecting client assets and resiliency. [MS-10K-2025#25, MS-TR-2026Q3#35]\n\n7. Morgan Stanley: On the 1Q26 earnings call (April 2026), an analyst noted that Morgan Stanley's leadership \"talked about advisers really being empowered by AI.\" Why it might matter: the CFO separately said investment dollars are going into products like LeadIQ that will allow the firm to match individuals with advisers. [MS-TR-2026Q1#71, MS-TR-2026Q2#23]\n\nAspect a4 (11 items):\n\n1. Morgan Stanley: On the 4Q25 earnings call (January 2026), management said the firm continues to invest in Wealth, Institutional Securities and Investment Management via human capital and technology, with growth plans embedding the increasing adoption of AI tools throughout the enterprise and inside its client base. [MS-TR-2025Q4#8]\n\n2. Morgan Stanley: On the 4Q25 earnings call (January 2026), management stated the firm is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending. [MS-TR-2025Q4#9]\n\n3. Morgan Stanley: On the 3Q25 earnings call (October 2025), management described early AI use cases including LeadIQ, an AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors. [MS-TR-2025Q3#8]\n\n4. Morgan Stanley: On the 3Q26 earnings call (October 2026), management described technology priorities for the advisor business as including protecting client assets and resiliency, and noted that world-class technology can help financial advisors by doing a lot of the early work for client decisions. [MS-TR-2026Q3#35] (quote not verbatim, no quotes)\n\n5. Morgan Stanley: On the 4Q25 earnings call (January 2026), management described using technology for both efficiency (cost side) and revenue (including some AI), as part of the investment story in technology, including in the E*TRADE franchise and E*TRADE Pro. [MS-TR-2025Q4#34]\n\n6. Morgan Stanley: On the 3Q26 earnings call (October 2026), management described that against its platform of self-directed, workplace and advisor-led channels, the firm has built advantages that make technology a differentiator in its favor. [MS-TR-2026Q3#32]\n\n7. Morgan Stanley: On the 3Q26 earnings call (October 2026), management stated the firm's scale supports continued investment in future technology, including AI and digital tools, positioning it to lead as the future of wealth management takes shape. [MS-TR-2026Q3#16]\n\n8. Morgan Stanley: On the 3Q26 earnings call (October 2026), management described the firm as having been overweighted to AI from the early days in wealth, citing work done with OpenAI. [MS-TR-2026Q3#49]\n\n9. Morgan Stanley: On the 4Q25 earnings call (January 2026), management described LeadIQ as using AI to introduce the firm's advisors to clients who are interested in advice, using technology on both the revenue and expense side to drive margin. [MS-TR-2025Q4#35] (quote not verbatim, no quotes)\n\n10. Morgan Stanley: On the 4Q24 earnings call (January 2025), management described investing in all processes and systems to build robust infrastructure, across the technology side, better understanding of data, and better servicing of clients. [MS-TR-2024Q4#44] (quote not verbatim)\n\n11. Morgan Stanley: In its strategic update deck (January 2026), the firm described a \"Market Leading Platform to Power Growth for Financial Advisors.\" [MS-DECK-2026-strategic-update#10]\n\nWait, the deck quote: \"Market Leading Platform to Power Growth for Financial Advisors\" - this is a verbatim quote, so I can use quotes. It's a heading. Cite MS-DECK-2026-strategic-update#10.\n\nNow note there's no time window in the question (no explicit time window), so ordering newest first only applies \"with a time window\". No time window here, so I keep aspect order and item order.\n\nActually the question is \"Where is Morgan Stanley investing in technology for its advisors?\" - no time window specified. So no reordering needed. Keep aspect by aspect, item order as given.\n\nNow, the \"also under\" instruction: \"An item marked 'also under' another aspect: write it once, under the first aspect where it appears.\" None of these items appear marked \"also under\", so I write each aspect's items.\n\nActually wait - there might be duplication between aspects (e.g., a1 item 1 and a2 item 1 are similar, a3 item 1 same). But the matrix lists them separately under each aspect, and they're not marked \"also under\". So I write each.\n\nActually, let me reconsider. The instruction says \"An item marked 'also under' another aspect\". None are marked \"also under\", so write all.\n\nNow for the why-lines, I need to be careful the why-line doesn't restate the item itself. Let me check.\n\nItem 3 (a3): item is \"overweighted to AI from early days with OpenAI work.\" Why-line: \"now double overweight.\" That's different - good.\n\nItem 1 (a3): item is LeadIQ described as AI-powered lead distribution platform. Why: \"early AI use cases some live and some in pilot showing progress.\" Different - good. This comes from context which mentions DevGen, Parable, LeadIQ as \"in pilot, showing progress.\"\n\nItem 2: why about revenue/expense side driving margin. Good.\n\nItem 4: why about confidence increasing in efficiency/effectiveness. Good.\n\nItem 5: why about financial needs at point in life. Good.\n\nItem 6: why about protecting client assets and resiliency (related). Good - different from item.\n\nItem 7: why about LeadIQ matching individuals (related). Good.\n\nNow I need to make sure chunk_ids arrays use valid enum values. The chunk ids I use: MS-TR-2025Q3#8, MS-TR-2025Q4#35, MS-TR-2025Q2#3, MS-TR-2025Q4#9, MS-TR-2025Q4#8, MS-TR-2025Q3#24, MS-TR-2025Q1#70, MS-TR-2025Q3#13, MS-TR-2026Q3#16, MS-TR-2026Q3#32, MS-TR-2026Q2#23, MS-TR-2026Q3#49, MS-TR-2026Q3#35, MS-10K-2025#25, MS-TR-2026Q1#71, MS-TR-2025Q4#34, MS-TR-2024Q4#44, MS-DECK-2026-strategic-update#10.\n\nAll are in the enum. Good.\n\nNow, part_id: for each claim, \"a1.MS\", \"a2.MS\", \"a3.MS\", \"a4.MS\".\n\nGaps: none added by code. Do I add my own? The instruction says \"Add a gap of your own only for something those gaps do not name.\" There are no gaps. I don't think I need to add any. The question is answered by facts. So gaps empty array.\n\nAdjacent: none (no adjacent-only items). Empty array.\n\nAnswerable: true.\n\nLet me finalize.\n\nActually, one more consideration about dating. The instruction says \"Date every claim from its source line.\" For transcripts, I'll use \"On the XQ earnings call (month year)\". Let me map:\n\n- MS-TR-2025Q3#8: 3Q25, period ended Sep 30 2025, published Oct 15 2025. \u2192 \"On the 3Q25 earnings call (October 2025)\"\n- MS-TR-2025Q4#35: 4Q25, Dec 31 2025, Jan 15 2026 \u2192 \"On the 4Q25 earnings call (January 2026)\"\n- MS-TR-2025Q2#3: 2Q25, Jun 30 2025, Jul 16 2025 \u2192 \"On the 2Q25 earnings call (July 2025)\"\n- MS-TR-2025Q4#9: 4Q25 \u2192 Jan 2026\n- MS-TR-2025Q4#8: 4Q25 \u2192 Jan 2026\n- MS-TR-2025Q3#24: 3Q25 \u2192 Oct 2025\n- MS-TR-2025Q1#70: 1Q25, Mar 31 2025, Apr 11 2025 \u2192 \"On the 1Q25 earnings call (April 2025)\"\n- MS-TR-2025Q3#13: 3Q25 \u2192 Oct 2025\n- MS-TR-2026Q3#16: 3Q26, Sep 30 2026, Oct 14 2026 \u2192 \"On the 3Q26 earnings call (October 2026)\"\n- MS-TR-2026Q3#32: 3Q26 \u2192 Oct 2026\n- MS-TR-2026Q2#23: 2Q26, Jun 30 2026, Jul 15 2026 \u2192 \"On the 2Q26 earnings call (July 2026)\"\n- MS-TR-2026Q3#49: 3Q26 \u2192 Oct 2026\n- MS-TR-2026Q3#35: 3Q26 \u2192 Oct 2026\n- MS-10K-2025#25: 10-K period 2025-12-31, published 2026-02-19 \u2192 \"In its 2025 10-K (filed February 2026)\"\n- MS-TR-2026Q1#71: 1Q26, Mar 31 2026, Apr 15 2026 \u2192 \"On the 1Q26 earnings call (April 2026)\"\n- MS-TR-2025Q4#34: 4Q25 \u2192 Jan 2026\n- MS-TR-2024Q4#44: 4Q24, Dec 31 2024, Jan 16 2025 \u2192 \"On the 4Q24 earnings call (January 2025)\"\n- MS-DECK-2026-strategic-update#10: deck, published 2026-01-15 \u2192 \"In its strategic update deck (January 2026)\"\n\nGood.\n\nNow let me write the final answer.\n\nFor a3 item 3, I need to double-check the CEO title. Item says \"Morgan Stanley's CEO says\". Context quotes \"Edward N. Pick CEO & Chairman of the Board\". So CEO. Good.\n\nLet me also check item 3 why-line uses \"double overweight\" - context: \"I would say we are now double overweight. There is just no question that this is existentially...\" I'll say \"the source states the firm has since become double overweight on AI given that it matters not just to clients but to the firm.\"\n\nActually let me keep it faithful: \"the source states the firm has now become 'double overweight' on AI in light of it being something that matters not just to clients but to the firm.\"\n\nI'll keep quotes where verbatim. \"double overweight\" is verbatim from context. Fine, I can quote it.\n\nLet me write everything out now in the tool call.\n\nI need to be careful with the \"quote not verbatim\" items - items 6 in a1 (MS-TR-2025Q3#24), a4 item 4 (MS-TR-2026Q3#35), a4 item 9 (MS-TR-2025Q4#35), a4 item 10 (MS-TR-2024Q4#44). These never use quotation marks.\n\nFor a4 item 4, the quote is a combination of multiple snippets anyway (not verbatim), so no quotes.\n\nLet me finalize all texts. I'll write them concisely.\n\nNow writing the submit_answer call.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm described LeadIQ, \"our AI-powered lead distribution platform,\" as focusing on matching workplace and self-directed relationships and facilitating engagement with its financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated that LeadIQ is helping introduce its advisors to clients who are interested in advice, and that this is happening using AI, as technology used on the revenue side.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#35"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 2Q25 earnings call (July 2025), the firm stated it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and the expansion of its workplace channel.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#3"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm stated its growth plans embed the increasing adoption of AI tools throughout the enterprise and inside its client base.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm stated it has been giving tools to its advisors to attract new clients and existing clients and assets held away.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#24"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q25 earnings call (April 2025), the firm referenced next best action tools through which advisors send next best actions to their individual retail clients.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#70"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm stated it continues to invest, deepening competitive moats in areas like its expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), the firm stated its scale supports continued investment in future technology, including AI and digital tools.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), the firm stated that its technology enables it to be a differentiator in its favor across the advisor-led and integrated wealth funnel, making technology a competitive advantage for its advisors.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said LeadIQ is the firm's AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the DevGen AI tool enhances developer efficiency by modernizing code, and is one of the firm's early AI use cases (some live and some in pilot).",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said Parable is an interactive tool that quickly analyzes and summarizes data, and is one of the firm's early AI use cases (some live and some in pilot).",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q25 earnings call (April 2025), the CFO said advisors use a next best action capability, sending next best actions to their individual retail clients.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#70"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the firm is deepening its competitive moats through an expanded collaboration with Carta in private markets.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the CFO said the firm is deepening its competitive moats in digital assets through announced partnerships with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the CEO said the firm is investing in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 2Q26 earnings call (July 2026), the CFO said investment dollars are going into products like LeadIQ that will allow the firm to match individuals with advisers.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), a company representative said LeadIQ helps introduce the firm's advisors to clients interested in advice, and that this happens using AI.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#35"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), the firm described LeadIQ as \"our AI-powered lead distribution platform, focusing on matching workplace and self-directed relationships and facilitating engagement with our financial advisors.\" Why it might matter: the source states these early AI use cases, some live and some in pilot, are showing progress.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm said LeadIQ \"is helping us introduce our advisors to our clients who are interested in advice,\" and that this is happening using AI. Why it might matter: the source states this technology can be used on both the revenue side and the expense side to help drive the margin on both the top and the bottom line.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#35"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), the CEO said the firm was \"overweighted to AI from the early days in wealth with some of the work we did with OpenAI.\" Why it might matter: the source states the firm is now \"double overweight\" on AI, in light of it being something that matters not just to clients but to the firm.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), the firm said its \"growth plans embed the increasing adoption of AI tools throughout the enterprise and inside our client base.\" Why it might matter: the source states that with each passing quarter the firm's confidence continues to increase in the potential for both the efficiency and the effectiveness of AI-related technologies across the business units and infrastructure.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#8"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), the CEO said technology \"can help do a lot of the early work\" supporting the decisions financial advisers make with their clients. Why it might matter: the source states this concerns clients' financial needs at a particular point in life, such as regarding their parents, their kids, philanthropy and taxes.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#35"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: In its 2025 10-K (filed February 2026), the firm stated that its Wealth Management segment's ability to compete is affected by \"our technology supporting evolving client needs, including generative artificial intelligence and tokenization.\" Why it might matter: management separately describes technology priorities for the advisor business as including protecting client assets and resiliency.",
+        "chunk_ids": [
+          "MS-10K-2025#25",
+          "MS-TR-2026Q3#35"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 1Q26 earnings call (April 2026), an analyst noted that Morgan Stanley's leadership \"talked about advisers really being empowered by AI.\" Why it might matter: the CFO separately said investment dollars are going into products like LeadIQ that will allow the firm to match individuals with advisers.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#71",
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), management said the firm continues to invest in Wealth, Institutional Securities and Investment Management via human capital and technology, with growth plans embedding the increasing adoption of AI tools throughout the enterprise and inside its client base.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), management stated the firm is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q25 earnings call (October 2025), management described early AI use cases including LeadIQ, an AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with the firm's financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), management described technology priorities for the advisor business as including protecting client assets and resiliency, and noted that world-class technology can help financial advisors by doing a lot of the early work for client decisions.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#35"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), management described using technology for both efficiency (cost side) and revenue (including some AI), as part of the investment story in technology, including in the E*TRADE franchise and E*TRADE Pro.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#34"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), management described that against its platform of self-directed, workplace and advisor-led channels, the firm has built advantages that make technology a differentiator in its favor.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), management stated the firm's scale supports continued investment in future technology, including AI and digital tools, positioning it to lead as the future of wealth management takes shape.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 3Q26 earnings call (October 2026), management described the firm as having been overweighted to AI from the early days in wealth, citing work done with OpenAI.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q25 earnings call (January 2026), management described LeadIQ as using AI to introduce the firm's advisors to clients who are interested in advice, using technology on both the revenue and expense side to drive margin.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#35"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: On the 4Q24 earnings call (January 2025), management described investing in all processes and systems to build robust infrastructure, across the technology side, better understanding of data, and better servicing of clients.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#44"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley: In its strategic update deck (January 2026), the firm described a \"Market Leading Platform to Power Growth for Financial Advisors.\"",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#10"
+        ],
+        "part_id": "a4.MS"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

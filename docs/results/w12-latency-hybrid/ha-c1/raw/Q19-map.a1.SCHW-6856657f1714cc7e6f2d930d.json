@@ -1,0 +1,156 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a1.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a1.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2026Q2#37",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-DECK-2026-investor-day#86"
+  ],
+  "at": "2026-11-21T20:26:26.697123-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5412,
+    "output_tokens": 4411,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3876,
+    "reasoning_tokens": 3523,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.72
+  },
+  "wall_s": 35.11,
+  "tokens_per_s": 125.63,
+  "ttft_s": 1.72,
+  "reasoning_content": "We need to answer sub-question a1.SCHW: What product, service, and channel preferences do younger investors and clients under 40 express?\n\nWe need to extract facts from passages. Let me identify passages that state product, service, channel preferences of younger investors/clients under 40.\n\nLooking through passages:\n\nSCHW-TR-2025Q3#11: \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" - channel preferences: social media and family. Also #12: \"Their top online resource is YouTube\" - channel preference.\n\nSCHW-DECK-2026-investor-day#106: \"42% of thinkorswim users are Millennial or Gen Z\" - this is about demographics not preferences exactly. Engagement with education.\n\nSCHW-DECK-2026-investor-day#99: table lists \"Younger investors | Schwab Starter Kit | Schwab Teen Investor Account | No/low commissions\" - products/services for younger investors. But this is firm offerings, not preferences expressed by younger investors.\n\nSCHW-TR-2025Q2#33: \"young investors who want to think about how to pay off their college debt, how to buy a house\" - preferences/needs.\n\nSCHW-TR-2025Q3#12: younger investors highly engaged building wealth over long term; one-third retail households who created financial plan under 40.\n\nSCHW-TR-2025Q2#9: younger investors and traders; digital assets through ETFs, futures, closed-end funds.\n\nSCHW-TR-2026Q2#36: AI, options trading.\n\nLet me focus on the sub-question: \"What product, service, and channel preferences do younger investors and clients under 40 express?\"\n\nKey facts:\n1. Channel: learn about finances primarily through social media and family (SCHW-TR-2025Q3#11). Top online resource YouTube (SCHW-TR-2025Q3#12).\n2. Service: financial planning - one-third of retail households who created a financial plan within last two years are under 40.\n3. Product: digital assets through ETFs, futures, closed-end funds (SCHW-TR-2025Q2#9) - \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" That's all ages, not specifically younger. Hmm.\n4. Trading: younger traders recognize trading potential; platforms, tools, education, coaching, expertise, service (SCHW-TR-2025Q3#12).\n\nLet me identify what is clearly about preferences of younger investors.\n\nThe sub-question asks for \"product, service, and channel preferences\" expressed by younger investors/clients under 40.\n\nChannel preferences:\n- \"we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\" (SCHW-TR-2025Q3#11)\n- \"Their top online resource is YouTube\" (SCHW-TR-2025Q3#12)\n\nService preferences:\n- Financial planning: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\" (SCHW-TR-2025Q3#12)\n- \"young investors who want to think about how to pay off their college debt, how to buy a house\" (SCHW-TR-2025Q2#33) - needs, maybe not preferences.\n\nProduct preferences:\n- Trading platforms/tools: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service\" (SCHW-TR-2025Q3#12)\n- Digital assets: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" (SCHW-TR-2025Q2#9) - not specific to younger.\n\nThe question is about preferences younger investors express. I should extract facts that describe preferences.\n\nLet me be careful. The sub-question is quite specific. Let me produce fact items with appropriate labels.\n\nSince this is a single cell for a1.SCHW, I'll return facts. Most passages give statements about younger investors' preferences.\n\nLet me list items:\n\n1. Channel - social media and family: text: \"The firm says younger investors learn about finances primarily through social media and family.\" quote: \"We know they learn about finances primarily through social media and family.\" period \"\". Actually no figure, no period.\n\nActually \"value\", \"unit\", \"period\", \"scope\" - for statements without figures, use \"\".\n\n2. Channel - YouTube: \"Their top online resource is YouTube\" - top online resource for learning about finances.\n\n3. Service - financial plan: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\" value \"1/3\" or \"one-third\"? Value as printed. It says \"one-third\". unit \"retail households who created a financial plan\" period \"\" (within last two years). Actually period is \"within last two years\" - not a specific period. I'll put value \"one-third\", unit \"of retail households who created a financial plan in the last two years under age 40\".\n\n4. Service - college debt, buying a house: \"young investors who want to think about how to pay off their college debt, how to buy a house\" - this is preferences/needs.\n\n5. Product - trading platforms/tools/education/coaching: \"Younger traders are turning to Schwab because... platforms, tools, education, coaching, expertise, and service.\"\n\n6. Product - digital assets: \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds\" - but this is all ages, not specifically younger. Could be different_quantity or fact? The sub-question asks younger investors' preferences. This statement says \"all ages\", includes younger but not specifically younger. I'd maybe include as fact with scope noting all ages? Actually it's not specifically about younger. I'll consider it not the asked quantity. But it does describe preferences (digital assets) of investors including younger. Hmm.\n\nLet me think about what's most defensible. The sub-question asks for preferences of younger investors/clients under 40. I'll focus on statements that are about younger investors.\n\nLet me also consider SCHW-DECK-2026-investor-day#106: \"42% of thinkorswim users are Millennial or Gen Z\" - this is about demographics of users, not a preference. It shows younger use thinkorswim. Could be a fact indicating product preference (thinkorswim trading platform). Actually it's \"42% of thinkorswim users are Millennial or Gen Z\" - demographic composition, not preference expressed. Might be borderline. It indicates engagement with thinkorswim among younger. I could include as fact showing younger investors use thinkorswim trading platform. But it's demographic not preference. I'll include maybe as fact with careful text: \"42% of thinkorswim users are Millennial or Gen Z.\" value \"42%\".\n\nActually the sub-question asks preferences expressed. The \"Interest across demographics Engagement with education\" - \"Expanding product use\" - 42% thinkorswim users Millennial/Gen Z. This indicates product use. I think it's relevant to product preference (thinkorswim).\n\nLet me also consider SCHW-TR-2025Q2#9: \"New clients who exhibit more advanced trading behavior... account for 1/3 of new traders\" - not specifically younger.\n\n\"More than 30% of our new-to-firm clients are under the age of 30, and nearly 60% are under the age of 40\" - demographic, not preference.\n\nSCHW-TR-2025Q3#11: \"industry research shows Gen Z is 45% more likely to start investing by age 21\" - this is about Gen Z starting investing, a preference/behavior.\n\nI think the core facts for the sub-question are channel preferences (social media/family, YouTube), service (financial planning), product (trading platforms/tools, thinkorswim, digital assets).\n\nLet me also include SCHW-TR-2025Q4#42: \"we're going and attracting them in the places they are\" - vague.\n\nLet me now decide on the items. I'll return a fact cell with multiple items.\n\nItems list:\n\nItem 0 (channel - social media and family):\n- text: \"Younger investors learn about finances primarily through social media and family, and Schwab meets them in the channels where they turn for information about investing.\"\n- quote: \"One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.\"\n- value \"\", unit \"\", period \"\", scope \"\", definition \"\", chunk_ids [\"SCHW-TR-2025Q3#11\"]\n\nItem 1 (channel - YouTube):\n- text: \"The top online resource for younger investors learning about finances is YouTube.\"\n- quote: \"Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.\"\n- chunk_ids [\"SCHW-TR-2025Q3#12\"]\n\nItem 2 (service - financial planning):\n- text: \"One-third of retail households that created a financial plan within the last two years are under age 40.\"\n- quote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\"\n- value \"one-third\", unit \"retail households who created a financial plan in the last two years\", period \"\", scope \"\", definition \"\", chunk_ids [\"SCHW-TR-2025Q3#12\"]\n\nItem 3 (service/needs - college debt, house):\n- text: \"Younger investors want to think about how to pay off their college debt and how to buy a house.\"\n- quote: \"young investors who want to think about how to pay off their college debt, how to buy a house\"\n- chunk_ids [\"SCHW-TR-2025Q2#33\"]\n\nItem 4 (product - trading platforms/tools/education):\n- text: \"Younger traders turn to Schwab because they recognize trading's potential to build wealth over time and for the platforms, tools, education, coaching, expertise, and service.\"\n- quote: \"Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed\"\n- chunk_ids [\"SCHW-TR-2025Q3#12\"]\n\nItem 5 (product - thinkorswim):\n- text: \"42% of thinkorswim users are Millennial or Gen Z, indicating engagement with the thinkorswim trading platform among younger investors.\"\n- quote: \"42% of thinkorswim\u2192 users are Millennial or Gen Z\"\n- value \"42%\", unit \"thinkorswim users\", period \"\", chunk_ids [\"SCHW-DECK-2026-investor-day#106\"]\n\nItem 6 (product - digital assets):\n- text: \"Investors and traders of all ages, including younger ones, are turning to Schwab to invest in digital assets through ETFs, futures, and closed-end funds.\"\n- Actually this is all ages, not specifically younger. Maybe skip or mark as fact with scope \"investors and traders of all ages\". Hmm. I'll consider including but it's about all ages. I think it's borderline. The sub-question is about younger investors' preferences. Digital assets appeal to younger, and there's also #39 \"Crypto will be great for clients and will certainly appeal to young investors.\" That's a statement that crypto appeals to young investors. Let me include that.\n\nSCHW-TR-2025Q3#39: \"Crypto will be great for clients and will certainly appeal to young investors.\" This is a fact about preference (crypto appeals to young investors).\n\nItem 6 (product - crypto): \n- text: \"Crypto will appeal to young investors, according to the CEO.\"\n- quote: \"Crypto will be great for clients and will certainly appeal to young investors.\"\n- chunk_ids [\"SCHW-TR-2025Q3#39\"]\n\nActually #39 is a forward-looking statement by the CEO, which counts as fact (position held about future attributed). \"will certainly appeal to young investors\" - yes.\n\nLet me also consider the digital assets from #9. \"investors and traders of all ages are turning to us to invest in digital assets through ETFs, futures, and closed-end funds.\" This is all ages, not younger specifically. I'll skip or include as fact with scope all ages. Given the sub-question is specifically younger, I'll leave it out or note. Actually I could include it as it mentions \"investors and traders of all ages\" which includes younger, but it's not specifically about younger preference. I'll skip to avoid overreach.\n\nAlso #41: \"what we can offer the young investor in terms of the support, the service, the education, and of course, the leading platform with thinkorswim and our digital capabilities\" - describes offerings, not preferences. Skip or include? It's about what Schwab offers young investors, not what young investors express. Skip.\n\nLet me also think about \"channel\" preferences more. #11 mentions \"channels where they turn for information about investing\" - social media and family. #12 YouTube. Those are channel preferences. Good.\n\nAlso #41: \"35 hours a week of live content... how to learn how to trade\" - education, but not preference.\n\nNow, the derivation: not needed, it's a fact cell.\n\nLet me write the reason: \"The passages state several product, service, and channel preferences of younger investors (social media/family and YouTube channels, financial planning, trading platforms and thinkorswim, college debt and home buying needs, and crypto appeal).\"\n\nNow let me format the cell. All items must have text, quote, value, unit, period, scope, definition, chunk_ids.\n\nFor items without figures, value=\"\", unit=\"\", period=\"\", scope=\"\", definition=\"\".\n\nLet me finalize.\n\nFor item 2, value \"one-third\" - as printed. unit: \"retail households who created a financial plan within the last two years\". period: \"\" (the \"last two years\" is relative). Actually I could put period \"\" since no specific date. scope \"\".\n\nLet me also reconsider whether \"one-third of retail households who created a financial plan within last two years are under 40\" is a \"service preference.\" Financial planning is a service. Yes.\n\nAlso \"young investors want to think about college debt and buying a house\" - these are financial needs, arguably service preferences. I'll include.\n\nI think 7 items is fine.\n\nLet me also double check the value formatting: \"42%\" printed as \"42%\". The quote has \"42% of thinkorswim\u2192 users\". I'll use value \"42%\".\n\nNow write the submit_extraction call.\n\nActually, let me reconsider item 5 thinkorswim - is it a preference expressed? \"42% of thinkorswim users are Millennial or Gen Z\" is a demographic fact, not a preference. But under \"Interest across demographics / Engagement with education / Expanding product use\", it indicates product use by younger demographics. It's somewhat a fact showing product usage. I'll keep it but frame carefully as \"indicates younger investors' use of thinkorswim.\" Actually to be safe, I could label it as fact since it's a statistic about younger users of a product. It's relevant to product preference. I'll keep.\n\nActually, re-reading the sub-question: \"What product, service, and channel preferences do younger investors and clients under 40 express?\" The thinkorswim stat doesn't express preference, just usage. But usage is evidence of preference. I'll keep it as fact with clear framing.\n\nLet me finalize the submission.\n\nI need to be careful about the \"scope\" field - for item 2 \"retail households\" is in unit already. scope \"\" (whole firm retail).\n\nFor item 5 thinkorswim users - scope \"\" (whole firm thinkorswim users).\n\nAlright, write the call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.SCHW",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The passages state several product, service, and channel preferences of younger investors and clients under 40: they learn about finances through social media, family, and YouTube (channels); they create financial plans and want help with college debt and home buying (services); and they turn to Schwab for trading platforms/tools, thinkorswim, and crypto (products).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Younger investors learn about finances primarily through social media and family, and Schwab meets them in the channels where they turn for information about investing.",
+            "quote": "One of the reasons they're turning to Schwab is because we're meeting them in the channels where they turn for information about investing. We know they learn about finances primarily through social media and family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "The top online resource for younger investors learning about finances is YouTube.",
+            "quote": "Their top online resource is YouTube, and we're the number one financial services firm on YouTube by followers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "One-third of retail households that created a financial plan within the last two years are under the age of 40, indicating younger investors' engagement with financial planning services.",
+            "quote": "one-third of retail households who created a financial plan within the last two years are under the age of 40",
+            "value": "one-third",
+            "unit": "retail households who created a financial plan within the last two years",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Younger investors want to think about how to pay off their college debt and how to buy a house.",
+            "quote": "young investors who want to think about how to pay off their college debt, how to buy a house",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#33"
+            ]
+          },
+          {
+            "text": "Younger traders turn to Schwab because they recognize the potential of trading to help build wealth over time and for the platforms, tools, education, coaching, expertise, and service Schwab provides.",
+            "quote": "Younger traders are turning to us because they recognize the potential that trading has in helping build wealth over time. And they are turning to Schwab because we have the platforms, tools, education, coaching, expertise, and service they need to help them succeed",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "42% of thinkorswim users are Millennial or Gen Z, indicating engagement with the thinkorswim trading platform among younger investors.",
+            "quote": "42% of thinkorswim\u2192 users are Millennial or Gen Z",
+            "value": "42%",
+            "unit": "thinkorswim users",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#106"
+            ]
+          },
+          {
+            "text": "According to the CEO, crypto will appeal to young investors.",
+            "quote": "Crypto will be great for clients and will certainly appeal to young investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#39"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

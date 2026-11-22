@@ -1,0 +1,57 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a5.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T20:26:26.794872-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3656,
+    "output_tokens": 675,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2120,
+    "reasoning_tokens": 549,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.62
+  },
+  "wall_s": 10.48,
+  "tokens_per_s": 64.41,
+  "ttft_s": 1.62,
+  "reasoning_content": "The sub-question asks: \"How do Edward Jones's current offerings align with younger investors' preferences?\" but the firm is Merrill (MER). Wait, there's a mismatch. The question is about Edward Jones, but the firm is Merrill. The sub-question is about \"Edward Jones's current offerings.\"\n\nThe passages are all about Merrill (Merrill advisors, Merrill Private Bank, Bank of America GWIM). None are about Edward Jones.\n\nThe sub-question asks about Edward Jones's offerings aligning with younger investors' preferences. But the firm given is Merrill (MER), and all passages are about Merrill.\n\nThis seems like a trick - the passages don't mention Edward Jones at all. So the answer is not_found (no passage says anything about Edward Jones's offerings aligning with younger investors' preferences).\n\nActually, let me re-read. The firm is Merrill (MER). The sub-question is about Edward Jones's current offerings. This is confusing - perhaps the question is mislabeled, but I should just answer based on the passages.\n\nNone of the passages mention Edward Jones. They mention Merrill advisors, Forbes Top Next-Gen Wealth Advisors, Top 40 Brokers Under 40, Top Next Generation Advisors, etc.\n\nThe sub-question asks specifically about \"Edward Jones's current offerings\" aligning with \"younger investors' preferences.\" There is no mention of Edward Jones in any passage.\n\nSo the label should be not_found, since the passages say nothing about Edward Jones's offerings aligning with younger investors' preferences.\n\nWait, but actually, maybe I should consider: the question is about how preferences of younger investors should shape Edward Jones's offerings, and the sub-question for Merrill is about \"How do Edward Jones's current offerings align with younger investors' preferences?\" This is odd - asking about Edward Jones for a Merrill firm.\n\nBut regardless, I need to check if any passage addresses Edward Jones's offerings. None do. The passages mention \"next-gen\" advisors, \"under 40\" advisors - these are about the advisors themselves being young, not about offerings for younger investors.\n\nSo not_found is appropriate.\n\nActually, let me reconsider. The passages mention \"Top Next-Gen Wealth Advisors\", \"Top 40 Brokers Under 40\", \"Top Next Generation Advisors\", \"Top 40 Advisors Under 40\". These are about young advisors, not about offerings for younger investors. These are different_quantity at best, but they're not even about Edward Jones - they're about Merrill.\n\nThe sub-question is specifically about Edward Jones's offerings. Since no passage mentions Edward Jones at all, it's not_found.\n\nLet me submit with label not_found, no items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "All passages concern Merrill and Bank of America's GWIM segment; none mention Edward Jones or its offerings, and none discuss how offerings align with younger investors' preferences.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

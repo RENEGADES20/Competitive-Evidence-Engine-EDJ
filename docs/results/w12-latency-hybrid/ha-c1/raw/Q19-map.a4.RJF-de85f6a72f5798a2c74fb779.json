@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-DECK-2025-investor-day#42"
+  ],
+  "at": "2026-11-21T20:26:33.835064-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1806,
+    "output_tokens": 697,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 270,
+    "reasoning_tokens": 480,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.11
+  },
+  "wall_s": 9.81,
+  "tokens_per_s": 71.05,
+  "ttft_s": 2.11,
+  "reasoning_content": "I need to analyze the passages for sub-question a4.RJF about growth in younger investors and clients under 40.\n\nThe passages available are essentially empty - there's a chunk about \"Next gen advisor strategy\" and recruiting, but nothing about younger investors/clients under 40 growth.\n\nLet me review the chunk:\n- RJF-DECK-2025-investor-day#42: about collaborative recruiting, West Coast and Northeast focus, Next gen advisor strategy.\n\nThis is about recruiting advisors, not about younger investors/clients under 40 growth. It mentions \"Next gen advisor strategy\" but that's about advisors, not clients.\n\nSo nothing states growth in younger investors/clients under 40. The chunk is about advisors (next gen advisor strategy) - that's a different quantity (advisors vs clients).\n\nActually, the \"Next gen advisor strategy\" refers to recruiting next generation advisors, not younger clients/investors. This is a different_quantity - it's about advisors, not clients.\n\nLet me determine: The sub-question asks about growth in younger investors and clients under 40. The passage mentions \"Next gen advisor strategy\" - this is about advisors, which is a different quantity (advisors, not clients/investors).\n\nI'll label this as different_quantity, with differs_because saying it's about next generation advisors (recruiting), not younger investors/clients.\n\nActually, let me think more carefully. The chunk is very sparse. It says \"Next gen advisor strategy\" under \"Collaborative recruiting across channels\". This is about recruiting advisors, not about younger clients/investors.\n\nSo it's a different_quantity - about advisors (next gen advisors), not younger investors/clients under 40.\n\nLet me construct the item.\n\ntext: \"Raymond James's recruiting materials reference a 'Next gen advisor strategy' as part of collaborative recruiting across channels.\"\nquote: \"Next gen advisor strategy\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"RJF-DECK-2025-investor-day#42\"]\n\ndiffers_because: \"The passage refers to a strategy for recruiting next-generation financial advisors, not growth in younger investors or clients under 40.\"\n\nreason: \"The only related content is about next-generation advisors (a different group), not younger investors/clients.\"\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Raymond James's recruiting materials reference a \"Next gen advisor strategy\" as part of collaborative recruiting across channels.",
+            "quote": "Next gen advisor strategy",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#42"
+            ]
+          }
+        ],
+        "differs_because": "The passage refers to a strategy for next-generation financial advisors (recruiting), not growth in younger investors or clients under 40.",
+        "reason": "The only related content concerns next-generation advisors, a different group from younger investors/clients under 40.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

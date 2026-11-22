@@ -1,0 +1,159 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.MS",
+  "round": 1,
+  "entity": "MS",
+  "cells": [
+    "a2.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "MS-TR-2026Q3#32",
+    "MS-DECK-2026-strategic-update#32",
+    "MS-10K-2025#168",
+    "MS-10Q-2026Q2#230",
+    "MS-SUPP-2026Q3#38",
+    "MS-PR-2026-10-14-01#8",
+    "MS-TR-2025Q2#35",
+    "MS-DECK-2026-strategic-update#31",
+    "MS-10Q-2026Q1#52",
+    "MS-SUPP-2020Q4#3",
+    "MS-PR-2026-07-15-01#8",
+    "MS-TR-2026Q2#41",
+    "MS-10K-2025#39",
+    "MS-10Q-2025Q3#14",
+    "MS-SUPP-2026Q2#38",
+    "MS-PR-2026-04-15-01#8",
+    "MS-TR-2025Q4#71",
+    "MS-10K-2025#44",
+    "MS-10Q-2025Q2#0",
+    "MS-SUPP-2026Q1#44",
+    "MS-TR-2025Q1#2",
+    "MS-10Q-2026Q2#61",
+    "MS-TR-2024Q4#94",
+    "MS-10Q-2026Q1#53",
+    "MS-TR-2025Q3#24",
+    "MS-10Q-2026Q1#73",
+    "MS-TR-2025Q2#34",
+    "MS-10Q-2025Q2#1",
+    "MS-TR-2025Q1#73",
+    "MS-10Q-2025Q2#56",
+    "MS-TR-2025Q1#27",
+    "MS-10Q-2025Q3#57",
+    "MS-TR-2024Q4#7",
+    "MS-TR-2024Q4#12",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2025Q4#35",
+    "MS-TR-2025Q3#35",
+    "MS-TR-2026Q3#35",
+    "MS-TR-2025Q2#14",
+    "MS-ADV1A-2026#1",
+    "MS-TR-2026Q2#2",
+    "MS-SUPP-2026Q3#37",
+    "MS-10K-2025#165",
+    "MS-SUPP-2020Q4#1",
+    "MS-DECK-2026-strategic-update#28",
+    "MS-TR-2024Q4#10",
+    "MS-PR-2026-01-15-01#13",
+    "MS-SUPP-2025Q4#36",
+    "MS-SUPP-2020Q4#4",
+    "MS-TR-2025Q1#12",
+    "MS-10Q-2025Q2#224",
+    "MS-10Q-2026Q2#57",
+    "MS-TR-2024Q4#14",
+    "MS-TR-2025Q4#20",
+    "MS-10K-2025#167",
+    "MS-TR-2025Q4#4",
+    "MS-SUPP-2026Q1#43",
+    "MS-SUPP-2025Q4#35",
+    "MS-TR-2025Q1#13",
+    "MS-10Q-2025Q3#60",
+    "MS-10Q-2025Q3#56",
+    "MS-10Q-2026Q1#49",
+    "MS-10Q-2026Q1#50",
+    "MS-10K-2025#166",
+    "MS-SUPP-2026Q2#37",
+    "MS-10Q-2025Q2#57",
+    "MS-SUPP-2026Q1#42",
+    "MS-10Q-2026Q1#207",
+    "MS-10Q-2025Q2#14",
+    "MS-TR-2025Q4#8"
+  ],
+  "at": "2026-11-21T20:43:25.094386-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 20796,
+    "output_tokens": 1544,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 19260,
+    "reasoning_tokens": 1078,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.8
+  },
+  "wall_s": 14.38,
+  "tokens_per_s": 107.37,
+  "ttft_s": 1.8,
+  "reasoning_content": "Let me identify the sub-question: advisor headcount for Morgan Stanley.\n\nLooking at passages, I need to find advisor headcount. The metric asks for \"advisor headcount\" for the firm.\n\nKey candidate: MS-SUPP-2020Q4#1 shows \"Wealth Management representatives 15,950 15,469 15,468\" for periods Dec 31 2020, Sep 30 2020, Dec 31 2019. This is the \"Wealth Management representatives\" count, which is the advisor headcount metric.\n\nAlso MS-TR-2025Q1#73 mentions \"reduction of 3% of our headcount XFAs\" - no figure.\n\nMS-TR-2025Q1#12 mentions \"headcount\" - no figure.\n\nMS-ADV1A-2026#1 gives employees 29481, registered representatives 26985, investment advisory functions 13000. These are different quantities (all employees, registered reps of broker-dealer). Actually \"registered representatives of a broker-dealer\" 26985 might be closer to advisor headcount but it's a regulatory form count of employees performing advisory functions, not exactly financial advisors.\n\nThe \"Wealth Management representatives\" figure is the advisor headcount for Wealth Management. The sub-question asks \"Advisor headcount for the firm.\" \n\nThe fact: Wealth Management representatives = 15,950 (Dec 31 2020), 15,469 (Sep 30 2020), 15,468 (Dec 31 2019). These are from MS-SUPP-2020Q4#1.\n\nThis is the \"Wealth Management representatives\" which is the advisor headcount metric. So it's a fact.\n\nLet me capture these three figures.\n\nThe definition: \"Wealth Management representatives\" is the advisor headcount. There's no explicit definition given in the passage but it's the advisor headcount.\n\nActually, let me check - the metric advisor_headcount. The firm reports \"Wealth Management representatives\" which represents financial advisors / advisors.\n\nLet me also consider the ADV1A figures as different_quantity. But the sub-question is just \"advisor headcount.\" The best fact is Wealth Management representatives.\n\nActually, I should consider whether \"Wealth Management representatives\" is exactly advisor headcount. In Morgan Stanley's terminology, \"Wealth Management representatives\" is their financial advisor count. This is the standard metric.\n\nSo fact items:\n1. Dec 31 2020: 15,950 Wealth Management representatives\n2. Sep 30 2020: 15,469\n3. Dec 31 2019: 15,468\n\nAll from chunk MS-SUPP-2020Q4#1.\n\nLet me write these as three items.\n\nQuote: \"Wealth Management representatives 15,950 15,469 15,468 3% 3%\"\n\nPeriod for each:\n- Dec 31 2020 \u2192 \"2020-12-31\"\n- Sep 30 2020 \u2192 \"2020-09-30\"\n- Dec 31 2019 \u2192 \"2019-12-31\"\n\nScope: Wealth Management segment.\n\nUnit: \"Wealth Management representatives\" (advisors).\n\nLet me also consider the ADV1A data as different_quantity (registered representatives 26,985). But I'll focus on the fact first. Actually I could add a different_quantity item for the regulatory form? No, I should keep it clean. The primary fact is Wealth Management representatives.\n\nActually, let me think about whether I should also note the ADV1A \"registered representatives of a broker-dealer\" 26,985 as different_quantity. It's a regulatory form label, a different measure (registered representatives of the broker-dealer vs financial advisors/wealth management representatives). The instructions say a regulatory form's label for a business metric is a different_quantity.\n\nBut I think the main answer is the fact. I could add a different_quantity for completeness, but it might be unnecessary. Let me include the fact items only, since the sub-question is directly answered by Wealth Management representatives.\n\nActually, I'll include just the fact items. The reason: Wealth Management representatives is the advisor headcount.\n\nLet me write the cell.\n\nThe label is \"fact\". items: three figures.\n\nLet me write out.\n\nItem 1: text \"Morgan Stanley reported 15,950 Wealth Management representatives as of December 31, 2020 in its Wealth Management segment.\"\n\nquote: \"Wealth Management representatives 15,950 15,469 15,468 3% 3%\"\n\nvalue: \"15,950\", unit: \"Wealth Management representatives\", period \"2020-12-31\", scope \"Wealth Management\".\n\nItem 2: Sep 30 2020, 15,469.\n\nItem 3: Dec 31 2019, 15,468.\n\ndefinition: \"\" (no explicit definition given). Actually the term is \"Wealth Management representatives\" which is self-explanatory; no definition provided in the passage.\n\nreason: \"The passage states the firm's Wealth Management representative (advisor) headcount for the listed periods.\"\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MS",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Morgan Stanley reported 15,950 Wealth Management representatives as of December 31, 2020 in its Wealth Management segment.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468 3% 3%",
+            "value": "15,950",
+            "unit": "Wealth Management representatives",
+            "period": "2020-12-31",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          },
+          {
+            "text": "Morgan Stanley reported 15,469 Wealth Management representatives as of September 30, 2020 in its Wealth Management segment.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468 3% 3%",
+            "value": "15,469",
+            "unit": "Wealth Management representatives",
+            "period": "2020-09-30",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          },
+          {
+            "text": "Morgan Stanley reported 15,468 Wealth Management representatives as of December 31, 2019 in its Wealth Management segment.",
+            "quote": "Wealth Management representatives 15,950 15,469 15,468 3% 3%",
+            "value": "15,468",
+            "unit": "Wealth Management representatives",
+            "period": "2019-12-31",
+            "scope": "Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "MS-SUPP-2020Q4#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage reports the firm's Wealth Management representative (advisor) headcount for the stated periods, which is the advisor headcount metric asked for.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

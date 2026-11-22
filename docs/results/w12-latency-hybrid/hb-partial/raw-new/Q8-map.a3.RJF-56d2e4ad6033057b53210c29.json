@@ -1,0 +1,207 @@
+{
+  "question_id": "Q8",
+  "question": "Compare how Schwab and Raymond James describe their value proposition to independent advisors.",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a3.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TR-2025Q4#4",
+    "RJF-10Q-2026Q1#230",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-10K-2025#10",
+    "RJF-PR-web-independent-ria-custody-services#0",
+    "RJF-TR-2025Q3#3",
+    "RJF-10Q-2026Q2#81",
+    "RJF-DECK-2025-investor-day#44",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-TR-2025Q2#40",
+    "RJF-10Q-2025Q4#65",
+    "RJF-10K-2025#81",
+    "RJF-TR-2026Q2#26",
+    "RJF-10Q-2026Q1#76",
+    "RJF-TR-2025Q1#6",
+    "RJF-10K-2025#11",
+    "RJF-TR-2024Q4#7",
+    "RJF-TR-2024Q3#8",
+    "RJF-TR-2025Q4#27",
+    "RJF-TR-2025Q4#23",
+    "RJF-TR-2026Q2#6",
+    "RJF-TR-2025Q3#7",
+    "RJF-TR-2026Q2#65",
+    "RJF-TR-2025Q1#3",
+    "RJF-TRADE-2026-11-05-WM-01#1",
+    "RJF-TRADE-2026-10-27-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TR-2025Q4#5",
+    "RJF-PR-web-independent-advisor#0",
+    "RJF-10K-2025#27",
+    "RJF-10Q-2026Q2#237",
+    "RJF-TR-2026Q2#7",
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-10K-2025#9",
+    "RJF-TR-2026Q1#5",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-TR-2025Q3#8",
+    "RJF-TR-2025Q2#7",
+    "RJF-PR-web-advisor-select#0",
+    "RJF-TR-2024Q4#23",
+    "RJF-PR-web-independent-ria-custody-services#2",
+    "RJF-TR-2025Q1#7",
+    "RJF-PR-web-independent-advisor#1",
+    "RJF-TR-2024Q3#10",
+    "RJF-PR-web-bank-and-credit-union-advisors#2",
+    "RJF-TR-2025Q4#50",
+    "RJF-TR-2025Q3#31",
+    "RJF-PR-web-independent-advisor#2",
+    "RJF-TR-2026Q2#23",
+    "RJF-TR-2025Q4#34",
+    "RJF-TR-2025Q2#4",
+    "RJF-TR-2025Q3#26",
+    "RJF-TR-2026Q1#4",
+    "RJF-TR-2025Q1#34",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-11-06-IN-01#2"
+  ],
+  "at": "2026-11-21T21:33:21.066909-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16135,
+    "output_tokens": 3412,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 14599,
+    "reasoning_tokens": 2250,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.73
+  },
+  "wall_s": 27.53,
+  "tokens_per_s": 123.94,
+  "ttft_s": 2.73,
+  "reasoning_content": "This sub-question asks: \"How Schwab and Raymond James value propositions to independent advisors compare side by side.\" This is a comparison sub-question. I need to return one cell for a3.RJF.\n\nBut the passages are all about Raymond James only. The comparison requires Schwab's value proposition too. Since this is only RJF passages, I should extract what RJF says about its own value proposition to independent advisors. There's no Schwab content here.\n\nActually, the instruction says \"return exactly one cell for each sub-question listed\" and \"You do not answer the question and you do not compare firms: code and a later step do that.\"\n\nSo for this sub-question, I extract facts about RJF's value proposition to independent advisors from these passages. The label should reflect whether passages state the quantity.\n\nThe sub-question is a comparison. For RJF, the relevant content is RJF's own value proposition. There are many passages describing RJF's value proposition.\n\nLet me think about what to extract. The question is about the value proposition to independent advisors. RJF has \"AdvisorChoice\" affiliation options, \"best of both worlds\" value proposition, advisor and client-focused culture plus leading technology/capabilities, independence, etc.\n\nI should provide fact items with the firm's own description of its value proposition to independent advisors.\n\nLet me identify key quotes:\n\n1. RJF-PR-web-independent-advisor#0: \"When you affiliate with Raymond James as an independent contractor, you can access our full capabilities...\" \"Powerful independence. Serve your clients and grow your independent practice without wanting for capability...\" \"Enjoy the rewards of running your own practice with the support of a full-service, self-clearing New York Stock Exchange-member broker/dealer.\"\n\n2. RJF-PR-web-independent-ria-custody-services#0: \"you'll have complete freedom and control... along with the robust support of a premier financial services firm.\" \"Do it all your way, but never alone.\" \"true strategic, financial and administrative control... free from retail conflict...\"\n\n3. RJF-TR-2025Q3#8: \"Our best-of-both-worlds value proposition, where we offer a unique combination of an advisor and client-focused culture coupled with leading technology and solutions, continues to resonate with advisors across all of our affiliation options.\"\n\n4. RJF-TR-2026Q2#6: \"advisers do not have to choose between culture and capabilities. We offer a unique combination of an adviser and client-focused culture along with the leading technology, products and solutions advisers need to serve clients at a high level.\"\n\n5. RJF-10K-2025#10: AdvisorChoice options.\n\n6. RJF-TR-2026Q2#26: \"we have the largest addressable market in the industry because we have all the affiliation options... adviser choice where we're agnostic...\"\n\n7. RJF-10K-2025#11: independent contractor options \"designed to help our advisors build their businesses with as much or as little of our support...\"\n\nThese are all facts about RJF's value proposition to independent advisors. Since this is a comparison sub-question, and the passages only contain RJF's own value proposition (no Schwab), the appropriate approach is to extract the facts about RJF.\n\nActually, I should think carefully. The sub-question is \"How Schwab and Raymond James value propositions to independent advisors compare side by side.\" This is a comparison question. The instructions say \"You do not answer the question and you do not compare firms: code and a later step do that.\"\n\nSo my job is to extract facts relevant to this comparison for RJF. The facts are about RJF's value proposition to independent advisors.\n\nSince the passages do state RJF's value proposition to independent advisors, this is a fact.\n\nLet me compile items. I should pick the most relevant ones describing the value proposition.\n\nI'll provide multiple fact items, each with text, quote, value (empty), unit (empty), period (empty mostly), scope, definition, chunk_ids.\n\nLet me draft the items:\n\nItem 0: RJF describes its \"best of both worlds\" value proposition: advisor/client-focused culture coupled with leading technology and solutions.\nQuote from RJF-TR-2025Q3#8: \"Our best-of-both-worlds value proposition, where we offer a unique combination of an advisor and client-focused culture coupled with leading technology and solutions, continues to resonate with advisors across all of our affiliation options.\"\n\nItem 1: From RJF-TR-2026Q2#6: \"advisers do not have to choose between culture and capabilities...\"\n\nItem 2: Independent contractor value prop from RJF-PR-web-independent-advisor#0.\n\nItem 3: RIA & custody services value prop from RJF-PR-web-independent-ria-custody-services#0.\n\nItem 4: AdvisorChoice from RJF-10K-2025#10 / affiliation options page.\n\nItem 5: RJF-TR-2026Q2#26: largest addressable market, all affiliation options, agnostic.\n\nItem 6: RJF-10K-2025#11: independent contractor options designed to help advisors build businesses with as much or as little support.\n\nItem 7: RJF-TR-2025Q3#26: value independence, stable platform, etc.\n\nI'll include the most relevant. Let me write them.\n\nActually, I need to be careful about scope/period. Most of these are qualitative statements without figures. value=\"\", unit=\"\", period=\"\", scope=\"\".\n\nFor items with figures (like $1.1 billion technology spend, 97% advisor satisfaction), those are related but maybe not directly the value proposition. I'll focus on qualitative value proposition statements.\n\nLet me write concise items.\n\nFor definition field: some passages may give definitions. Not really here.\n\nLet me finalize.\n\nI'll produce maybe 6-7 fact items.\n\nLet me write each:\n\n1. text: Raymond James describes its value proposition to advisors as a \"best of both worlds\" proposition combining an advisor- and client-focused culture with leading technology and solutions.\nquote: \"Our best-of-both-worlds value proposition, where we offer a unique combination of an advisor and client-focused culture coupled with leading technology and solutions, continues to resonate with advisors across all of our affiliation options.\"\nchunk_ids: [\"RJF-TR-2025Q3#8\"]\n\n2. text: Raymond James states that advisors \"do not have to choose between culture and capabilities,\" offering an advisor- and client-focused culture along with leading technology, products and solutions.\nquote: \"advisers do not have to choose between culture and capabilities. We offer a unique combination of an adviser and client-focused culture along with the leading technology, products and solutions advisers need to serve clients at a high level.\"\nchunk_ids: [\"RJF-TR-2026Q2#6\"]\n\n3. text: For independent contractors, Raymond James promises access to full capabilities and \"powerful independence\" with the support of a full-service, self-clearing broker/dealer.\nquote: \"Powerful independence. Serve your clients and grow your independent practice without wanting for capability, expert insight or client resources... Enjoy the rewards of running your own practice with the support of a full-service, self-clearing New York Stock Exchange-member broker/dealer.\"\nchunk_ids: [\"RJF-PR-web-independent-advisor#0\"]\n\n4. text: For independent RIAs, Raymond James offers \"complete freedom and control\" with the support of a premier financial services firm\u2014\"do it all your way, but never alone.\"\nquote: \"you'll have complete freedom and control to do what's best for both, along with the robust support of a premier financial services firm... Do it all your way, but never alone.\"\nchunk_ids: [\"RJF-PR-web-independent-ria-custody-services#0\"]\n\n5. text: Raymond James offers multiple affiliation options (\"AdvisorChoice\") spanning employee, independent contractor, and RIA & Custody Services, giving advisors the freedom to choose among them.\nquote: \"Through AdvisorChoice\u00ae, you have the ability to match your professional goals to the affiliation option that's right for you, each offering a unique combination of support, freedom and flexibility...\"\nchunk_ids: [\"RJF-PR-web-affiliation-options#0\"]\n\n6. text: Raymond James states it has \"the largest addressable market in the industry\" because it offers all affiliation options and is \"agnostic\" as to how an advisor affiliates.\nquote: \"we have the largest addressable market in the industry because we have all the affiliation options that an adviser could possibly want... we're agnostic into how you affiliate with Raymond James.\"\nchunk_ids: [\"RJF-TR-2026Q2#26\"]\n\n7. text: Raymond James says its independent contractor options are \"designed to help our advisors build their businesses with as much or as little of our support as they determine they need.\"\nquote: \"Our independent contractor financial advisor options are designed to help our advisors build their businesses with as much or as little of our support as they determine they need.\"\nchunk_ids: [\"RJF-10K-2025#11\"]\n\n8. text: Raymond James says it values independence \"to foster an environment where our advisors can provide objective advice to their clients,\" and offers a stable long-term platform versus competitors seeking exit in three to five years.\nquote: \"We value independence to foster an environment where our advisors can provide objective advice to their clients, whereas many of our competitors change their comp plans every year to cross-sell more bank products.\"\nchunk_ids: [\"RJF-TR-2025Q3#26\"]\n\nThat's a good set. All are facts.\n\nNow reason: passages describe Raymond James's value proposition to independent advisors across affiliation options (independent contractor, RIA & custody), so these are facts.\n\ndiffers_because: \"\" for facts.\n\nderivation: operation \"\", inputs [].\n\nLet me finalize with the submit tool.\n\nFor each item, definition \"\" (no specific metric definition). scope \"\" (whole firm / affiliation option). Actually scope could indicate which affiliation channel. But the value proposition spans affiliation options. I'll leave scope \"\" for whole-firm statements, or note the channel.\n\nActually, for item 3 (independent contractor) and item 4 (RIA), the scope is that specific channel. I could put scope \"independent contractor channel\" and \"RIA & Custody Services\". Let me set scope appropriately.\n\nFor item 3: scope \"Independent contractor channel\". Item 4: scope \"RIA & Custody Services (RCS)\". Item 5: scope \"\" (all affiliation options). Item 6: whole firm.\n\nLet me write them clearly.\n\nI'll now produce the final tool call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James describes its value proposition to advisors as a \"best of both worlds\" proposition combining an advisor- and client-focused culture with leading technology and solutions.",
+            "quote": "Our best-of-both-worlds value proposition, where we offer a unique combination of an advisor and client-focused culture coupled with leading technology and solutions, continues to resonate with advisors across all of our affiliation options.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "all affiliation options",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2025Q3#8"
+            ]
+          },
+          {
+            "text": "Raymond James states that advisors \"do not have to choose between culture and capabilities,\" offering an advisor- and client-focused culture along with leading technology, products and solutions.",
+            "quote": "advisers do not have to choose between culture and capabilities. We offer a unique combination of an adviser and client-focused culture along with the leading technology, products and solutions advisers need to serve clients at a high level.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2026Q2#6"
+            ]
+          },
+          {
+            "text": "For independent contractors, Raymond James promises \"powerful independence\" and access to full capabilities with the support of a full-service, self-clearing broker/dealer.",
+            "quote": "Powerful independence. Serve your clients and grow your independent practice without wanting for capability, expert insight or client resources. Everything we have is yours when you want it... Enjoy the rewards of running your own practice with the support of a full-service, self-clearing New York Stock Exchange-member broker/dealer.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "independent contractor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-web-independent-advisor#0"
+            ]
+          },
+          {
+            "text": "For independent RIAs, Raymond James offers \"complete freedom and control\" with the robust support of a premier financial services firm, described as \"do it all your way, but never alone.\"",
+            "quote": "you'll have complete freedom and control to do what's best for both, along with the robust support of a premier financial services firm... Do it all your way, but never alone.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "RIA & Custody Services (RCS)",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-web-independent-ria-custody-services#0"
+            ]
+          },
+          {
+            "text": "Raymond James offers multiple affiliation options under \"AdvisorChoice,\" letting advisors match their goals to the affiliation option offering a combination of support, freedom and flexibility.",
+            "quote": "Through AdvisorChoice\u00ae, you have the ability to match your professional goals to the affiliation option that's right for you, each offering a unique combination of support, freedom and flexibility \u2013 and all backed by the full support of a leading independent financial firm.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "all affiliation options",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-PR-web-affiliation-options#0"
+            ]
+          },
+          {
+            "text": "Raymond James states it has \"the largest addressable market in the industry\" because it offers all affiliation options and is \"agnostic\" as to how an advisor affiliates.",
+            "quote": "we have the largest addressable market in the industry because we have all the affiliation options that an adviser could possibly want. And we have adviser choice where we're agnostic into how you affiliate with Raymond James.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "all affiliation options",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2026Q2#26"
+            ]
+          },
+          {
+            "text": "Raymond James says its independent contractor options are designed to help advisors build their businesses with as much or as little support as they determine they need.",
+            "quote": "Our independent contractor financial advisor options are designed to help our advisors build their businesses with as much or as little of our support as they determine they need.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "independent contractor channel",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#11"
+            ]
+          },
+          {
+            "text": "Raymond James says it values independence to foster objective advice, and contrasts its stable long-term platform with competitors seeking an exit in three to five years or changing comp plans to cross-sell bank products.",
+            "quote": "We value independence to foster an environment where our advisors can provide objective advice to their clients, whereas many of our competitors change their comp plans every year to cross-sell more bank products.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2025Q3#26"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain Raymond James's own description of its value proposition to independent advisors across its affiliation options (independent contractor, RIA & Custody, AdvisorChoice), which are the facts relevant to this comparison for RJF.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

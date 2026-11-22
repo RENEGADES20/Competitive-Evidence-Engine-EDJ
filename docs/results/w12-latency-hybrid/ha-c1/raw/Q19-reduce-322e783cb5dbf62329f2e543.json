@@ -1,0 +1,784 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer_with_boundary",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#56",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-10K-2025#8",
+    "EDJ-10K-2025#304",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026Q3#23",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "RJF-DECK-2025-investor-day#42",
+    "BOFA-PB-STUDY-2026#4",
+    "FINRAF-INVESTORS-2025#18",
+    "FINRAF-INVESTORS-2025#36",
+    "BOFA-PB-STUDY-2024#9"
+  ],
+  "schema_fallback": [],
+  "enum_values": 233,
+  "at": "2026-11-21T20:27:58.954295-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16405,
+    "output_tokens": 31907,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 14741,
+    "reasoning_tokens": 23444,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.48
+  },
+  "wall_s": 222.31,
+  "tokens_per_s": 143.52,
+  "ttft_s": 2.48,
+  "reasoning_content": "Let me analyze this carefully. The question is normative (\"How should...\"), and behavior is answer_with_boundary. I need to write the evidence half only; code adds the hand-off sentence.\n\nLet me go through each aspect and write claims.\n\nFirms in row order: Edward Jones (EDJ), Morgan Stanley (MS), The Charles Schwab Corporation (SCHW), Merrill (MER), Raymond James Financial (RJF).\n\nAspects: a1 through a8.\n\nNote: a1.research items \u2014 these are \"fact\" cells, so they are claims (not adjacent). They are under a1.research part_id. Let me note the part_ids available include \"a1.research\", \"a2.research\", etc.\n\nLet me carefully build the answer.\n\nFor the time window: no explicit time window stated in the question, so I don't need why-lines on every item. Actually let me check: \"When the question has a time window\" \u2014 this question doesn't specify a time window, so no why-lines needed. And recency aspect: none marked recency. So no why-lines.\n\nLet me write claims aspect by aspect.\n\nAspect a1: What product, service, and channel preferences do younger investors and clients under 40 express?\n\nFirms: EDJ not found (code gap), MS not found (code gap), SCHW fact (7 items), MER not found (code gap), RJF not found (code gap), research fact (11 items).\n\nThe a1.EDJ and a1 (competitors) gaps are code gaps. I don't repeat them. But I should write the SCHW and research claims.\n\nWait, actually for a1, a1.research has items. These get part_id a1.research.\n\nLet me write each item as a claim.\n\nFor a1.SCHW items:\n1. Younger investors learn about finances primarily through social media and family... cite SCHW-TR-2025Q3#11\n2. Top online resource is YouTube. cite SCHW-TR-2025Q3#12\n3. One-third of retail households who created financial plan under 40. cite SCHW-TR-2025Q3#12\n4. Younger investors want to pay off college debt, buy house. cite SCHW-TR-2025Q2#33\n5. Younger traders turn to Schwab for trading potential, platforms/tools/etc. cite SCHW-TR-2025Q3#12\n6. 42% thinkorswim users Millennial/Gen Z. cite SCHW-DECK-2026-investor-day#106\n7. Crypto appeal to young investors (CEO). cite SCHW-TR-2025Q3#39\n\nAll these are fact cells \u2192 claims.\n\nFor a1.research items (11 items), item 10 is \"figure not found in its passage: do not state this figure\". So item 10 I skip the figure but... actually \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" So I state the claim without the figure? Let me re-read.\n\n\"An item marked 'figure not found in its passage' keeps its figure out of your text.\"\n\nSo I write the claim but omit the figure value. Item 10: \"Seventy-two percent of younger investors (ages 21 to 43) believe...\" \u2014 the figure 72% should be omitted. But then the claim would be \"Younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds, compared to 28% of investors over age 44.\" Hmm but 28% is also a figure. Actually the whole item is about the figure. The mark says do not state this figure. I think I should state the claim qualitatively without the specific numbers. Let me think.\n\nActually, \"figure not found in its passage\" means the quoted figure (72%) wasn't actually found. So I should write the claim without that specific number. The \"28%\" is part of the same figure statement. I'll state it qualitatively: younger investors believe it is no longer possible to achieve above-average returns investing solely in traditional stocks and bonds, whereas a smaller share of older investors hold that view.\n\nLet me be careful and write it appropriately.\n\nActually, let me reconsider. The instruction is: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" So just omit the numeric figure. Write: \"Industry research reports that younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds, a view held by a smaller share of investors over age 44.\"\n\nHmm, but \"28%\" is also a figure. Let me keep it qualitative without any numbers.\n\nLet me now also handle a1.research item 11 (BOFA-PB-STUDY-2024#9) \u2014 this is a fact cell with figures, not marked figure-not-found. So I state figures.\n\nWait, item 11 is BOFA-PB-STUDY-2024#9, which is a different source from item 1-5 (BOFA-PB-STUDY-2026#4). Both are research. Fine.\n\nNow, this is getting very long. Let me be efficient but complete.\n\nLet me think about the structure and part_ids.\n\nEach claim needs a part_id. For a1.SCHW items, part_id is \"a1.SCHW\". For a1.research items, part_id \"a1.research\".\n\nFor the firms with not-found (code gap), I don't write claims; code gaps already list them. I only write claims for cells that have facts.\n\nActually wait \u2014 the instructions say \"Cells with code gaps get no claim; code adds those gaps\". So I skip EDJ, MS, MER, RJF for a1 (code gaps), and only write SCHW and research.\n\nBut should I write anything for the \"not found\" firms? No, code gaps cover them.\n\nLet me also note: for a4, the \"Comparability (code): unverified\" \u2014 this is a series aspect, not marked comparison. So no comparison claim needed. Just fact cells and adjacent cells.\n\na4.SCHW has 16 items, but several are \"figure not found in its passage\" (items 2, 4, 5, 11, 14). And item 15 \"quote not verbatim\", item 16 \"quote not verbatim\".\n\nLet me handle each a4.SCHW item:\n1. 70% new-to-firm retail households Gen Z/millennials, 2026Q3. cite SCHW-TR-2026Q3#11, SCHW-DECK-2026Q3#24. (fact)\n2. Gen Z ~third of new accounts 2025 - figure not found \u2192 skip figure\n3. ~60% new accounts under 40, 2025. cite SCHW-TR-2025Q4#11. (fact)\n4. ~one-third new-to-firm households Gen Z 2025 - figure not found \u2192 skip\n5. 1 in 6 under 24 2025 - figure not found \u2192 skip\n6. >30% under 30, 2025. cite SCHW-TR-2025Q2#9. (fact)\n7. ~60% under 40, 2025. cite SCHW-TR-2025Q2#9. (fact)\n8. 61% new clients Gen Z & Millennial. cite SCHW-DECK-2026-investor-day#131. (fact)\n9. 33% under 30 2024. cite SCHW-TR-2024Q4#11. (fact)\n10. >50% under 40 2024. cite SCHW-TR-2024Q4#11. (fact)\n11. one-third under 40 financial plan 2025Q3 - figure not found \u2192 skip\n12. average age getting younger 2025Q3. cite SCHW-TR-2025Q3#12. (fact)\n13. ~10 years decline, now 40s, 2025Q4. cite SCHW-TR-2025Q4#42. (fact)\n14. third of new-to-firm clients Gen Z 2025 - figure not found \u2192 skip\n15. over 60% under 40. cite SCHW-DECK-2026-investor-day#100. quote not verbatim. (fact)\n16. 42% thinkorswim users. cite SCHW-DECK-2026-investor-day#106. quote not verbatim. (fact)\n\nFor \"figure not found in its passage\" items, I should still write a claim but without the figure. Actually, let me reconsider \u2014 do I write these at all? The instruction says \"keeps its figure out of your text.\" So I write the claim but omit the figure. For item 2: \"Schwab reports that Gen Z investors comprise nearly a third of new retail client accounts opened in 2025\" \u2014 the figure is \"nearly a third\". Without it, I'd write \"Schwab reports that Gen Z investors comprise a share of new retail client accounts opened in 2025.\" Hmm, that seems awkward but I'll do it.\n\nActually, let me reconsider. These items still convey meaningful info. Item 2 without figure: Gen Z investors comprise [share] of new retail client accounts opened in 2025. I'll phrase: \"On the 4Q25 earnings call, Schwab reported that Gen Z investors make up a portion of new retail client accounts opened in 2025.\" Actually the quote includes \"nearly 60% are under the age of 40\" which is item 3's figure. \n\nHmm wait, item 2's quote is \"Gen Z investors comprise nearly a third of new retail client accounts opened in 2025, and nearly 60% are under the age of 40.\" The \"nearly a third\" is the figure marked not found. The \"nearly 60% under 40\" is item 3's figure which is found. So for item 2, I omit \"nearly a third\" but the \"nearly 60% under 40\" is covered in item 3.\n\nFor item 2 without the figure: \"Schwab reports that Gen Z investors comprise a meaningful share of new retail client accounts opened in 2025.\" I'll write something minimal.\n\nActually, let me reconsider the whole approach. This is a very large answer. Let me be systematic and thorough but not overly verbose. I need to produce all claims.\n\nLet me also note for item 15 (quote not verbatim): \"Schwab reports that over 60% of new-to-firm retail households are under age 40.\" cite SCHW-DECK-2026-investor-day#100. The quote shown is \"of New-to-Firm Retail HHs <40 +60%\" but marked quote not verbatim, so I don't put in quotes. I just state it.\n\nItem 16 (quote not verbatim): \"Schwab reports that 42% of thinkorswim users are Millennial or Gen Z.\" cite SCHW-DECK-2026-investor-day#106.\n\nNow a4.MER is adjacent (different quantity). a4.RJF is adjacent.\n\na4.MER item 1, 2, 3 \u2192 adjacent with differs_because \"Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40.\"\n\nActually, the differs_because is given per the cell. I use that.\n\nLet me write the MER adjacent items. Each needs part_id a4.MER.\n\na4.RJF item 1 \u2192 adjacent, differs_because \"The passage refers to a strategy for next-generation financial advisors (recruiting), not growth in younger investors or clients under 40.\"\n\nNow let me think about how many claims total. This is huge. Let me just write them all.\n\nLet me also handle the \"quote not verbatim\" items: never put in quotation marks. So I paraphrase and don't use quotes.\n\nFor a5, a6: EDJ fact items.\n\na5.EDJ:\n1. new digital platform initiative for Next Generation investors, plus high net worth and workplace. cite EDJ-10K-2025#88\n2. minority stake in Quicken (trade press). cite EDJ-TRADE-2026-08-18-IN-01#2 \u2014 quote not verbatim, so no quotes. And this is trade press, so \"trade press reports ...\".\n\na6.EDJ:\n1. initiatives include digital platform for Next Gen. cite EDJ-10K-2025#88\n2. strategic ambition anticipate needs, attract new segments. cite EDJ-10K-2025#8\n3. generational wealth transfer risk. cite EDJ-10K-2025#56\n4. strategic risks addressed. cite EDJ-10K-2025#304\n\na6.MER adjacent (different quantity), a6.RJF adjacent.\n\na7: SCHW fact (9 items), RJF adjacent.\n\na7.SCHW items 1-9. Item 5 quote not verbatim. Item 9 quote not verbatim.\n\na8: comparison aspect \u2192 exactly one claim part_id a8.\n\nAlso a8 has fact cells for EDJ (3 items) and SCHW (21 items), MER adjacent (4 items).\n\nWait, a8 is the comparison aspect. It says \"needs exactly one comparison claim, part_id a8\". But also a8.EDJ, a8.SCHW have fact items, and a8.MER adjacent. So I write the fact claims under their part_ids (a8.EDJ, a8.SCHW, a8.MER) AND one comparison claim with part_id \"a8\".\n\nWait, let me re-read: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id\". The aspect id is \"a8\". So the comparison claim uses part_id \"a8\".\n\nBut the fact cells a8.EDJ, a8.SCHW are separate cells with their own part_ids. They are also listed as evidence. Hmm, but a8 is marked as \"comparison\". Let me check the aspect list:\n\n\"- a8 [comparison]: How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors? -> needs exactly one comparison claim, part_id a8\"\n\nSo a8 is a comparison aspect. The evidence matrix shows a8.EDJ, a8.MS, a8.SCHW, a8.MER, a8.RJF, a8.research cells. These are the underlying facts that the comparison rests on.\n\nActually, looking more carefully at how other comparison aspects typically work: the comparison claim cites the items. But here the items are also listed as fact cells with part_ids a8.EDJ, a8.SCHW, etc.\n\nHmm. This is ambiguous. Let me think. The part_ids available in the schema include \"a8.EDJ\", \"a8.SCHW\", \"a8.MER\", and also \"a8\" (and \"a8.MS\", \"a8.RJF\", \"a8.research\").\n\nThe instruction says: \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself.\"\n\nSo I write ONE claim with part_id \"a8\" for the comparison.\n\nBut do I also write claims for a8.EDJ, a8.SCHW, a8.MER fact cells? The a8.EDJ and a8.SCHW cells are \"fact\" type. The a8.MER is \"different quantity (adjacent only)\".\n\nI think yes \u2014 I should write the fact claims for a8.EDJ, a8.SCHW, and adjacent for a8.MER, plus the one comparison claim.\n\nActually wait, let me reconsider. Looking at the structure, the comparison aspect a8 needs the underlying facts. The facts are provided as cells with their own part_ids. So I write:\n\n- a8.EDJ claims (fact cells, part_id a8.EDJ)\n- a8.SCHW claims (fact cells, part_id a8.SCHW)\n- a8.MER adjacent (part_id a8.MER)\n- a8.MS, a8.RJF, a8.research: not found (code gaps \u2014 but wait, are these code gaps? Let me check the gaps list)\n\nLooking at gaps added by code: I see a1, a2, a3, a4, a7 gaps listed, but I don't see a8 gaps listed. Hmm.\n\nActually the code gaps list doesn't include a8 gaps. But the evidence matrix shows a8.MS = not found, a8.RJF = not found, a8.research = not found.\n\nHmm, but the gaps added by code don't list a8 gaps. Wait, let me re-read the gaps list carefully. The gaps are:\n\na1.EDJ, a1 (competitors MS, MER, RJF), a2.EDJ, a2.research, a2 (competitors MS MER RJF), a3.research, a3 (competitors), a4.EDJ, a4.MER, a4.RJF, a4.research, a4 (MS), a7.RJF, a7 (MS, MER).\n\nNo a5, a6, a8 gaps listed. But a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research are all \"not found\". And a6.MS, a6.SCHW, a6.research \"not found\", a6.MER \"different quantity\", a6.RJF \"different quantity\". And a8.MS, a8.RJF, a8.research \"not found\".\n\nHmm, so there are more not-found cells than the code gaps list covers. The instruction says \"Cells with code gaps get no claim; code adds those gaps.\" and \"Add a gap of your own only for something those gaps do not name.\"\n\nWait, but the gaps are for things \"not found in the documents searched\" \u2014 these are gaps. But the instruction says I should add a gap of my own only for something those gaps don't name.\n\nActually, let me re-read: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo the \"not found\" cells that aren't in the code gaps list \u2014 should I add gaps for them? Hmm. But a5.MS, a5.SCHW etc are \"not found (code gap)\" per the matrix. Wait, let me check the matrix notation.\n\nIn the matrix: \"a1.EDJ Edward Jones: not found (code gap)\". So the matrix itself marks them as \"code gap\". The gaps added by code section lists them.\n\nBut for a5, a6, a8, the matrix says \"not found (code gap)\" for some and \"different quantity (adjacent only)\" for others, but the \"Gaps added by code\" section doesn't list a5/a6/a8 gaps.\n\nHmm wait, let me look more carefully. The \"Gaps added by code\" section says \"(do not repeat them)\" and lists specific gaps. Let me check if a5/a6/a8 gaps are listed... \n\nThe gaps listed:\n- a1.EDJ\n- a1 (competitors)\n- a2.EDJ\n- a2.research\n- a2 (competitors)\n- a3.research\n- a3 (competitors)\n- a4.EDJ\n- a4.MER\n- a4.RJF\n- a4.research\n- a4 (MS)\n- a7.RJF\n- a7 (competitors)\n\nSo a5, a6, a8 gaps are NOT listed. But the matrix marks a5.MS etc as \"not found (code gap)\".\n\nThis is a discrepancy. The instruction says \"Add a gap of your own only for something those gaps do not name.\" So for a5, a6, a8 not-found cells, I should add gaps myself? Or are they simply \"not found\" and I just don't write claims?\n\nActually, let me reconsider. The matrix cells marked \"not found (code gap)\" for a1, a2, a3, a4, a7 are covered by code gaps. The a5, a6, a8 \"not found (code gap)\" cells are NOT in the gaps list.\n\nWait, actually let me re-read the matrix for a5, a6, a8:\n\na5.MS: \"not found (code gap)\"\na5.SCHW: \"not found (code gap)\"\na5.MER: \"not found (code gap)\"\na5.RJF: \"not found (code gap)\"\na5.research: \"not found (code gap)\"\n\na6.MS: \"not found (code gap)\"\na6.SCHW: \"not found (code gap)\"\na6.research: \"not found (code gap)\"\na6.MER: \"different quantity (adjacent only)\"\na6.RJF: \"different quantity (adjacent only)\"\n\na8.MS: \"not found (code gap)\"\na8.RJF: \"not found (code gap)\"\na8.research: \"not found (code gap)\"\na8.MER: \"different quantity (adjacent only)\"\n\nSo these \"not found (code gap)\" cells are marked as code gaps in the matrix, but not listed in \"Gaps added by code\". This is strange.\n\nGiven the instruction \"Add a gap of your own only for something those gaps do not name\", and these not-found cells aren't named in the code gaps list... but they ARE marked \"(code gap)\" in the matrix.\n\nHmm, actually I think the intent is: the \"Gaps added by code\" section is what code will add. The matrix marks \"(code gap)\" for all not-found cells. The gaps list is a subset that I must not repeat.\n\nActually wait \u2014 re-reading: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\"\n\nSo cells with code gaps \u2192 no claim. The code gaps are listed. For a5/a6/a8 not-found cells, are they \"code gaps\"?\n\nI think there might be an inconsistency in the prompt, but the safest interpretation: the matrix's \"(code gap)\" notation indicates these are gaps. The \"Gaps added by code\" section is the authoritative list of what code adds. For cells marked \"(code gap)\" but not in that list, I should... hmm.\n\nActually, let me reconsider. The instruction about adding my own gaps: \"Add a gap of your own only for something those gaps do not name.\"\n\nThis suggests that if there's a not-found cell not covered by the code gaps list, I should add a gap for it. But the matrix clearly marks these as \"(code gap)\".\n\nI think the cleanest approach given ambiguity: For not-found cells, write no claims. For the gaps, I only need to worry about not repeating code gaps. Since a5/a6/a8 not-found cells aren't in the code gaps list, but they're marked \"(code gap)\" in the matrix...\n\nActually, I realize I'm overthinking this. The key rule: \"Cells with code gaps get no claim.\" All \"not found (code gap)\" cells get no claim. The \"(code gap)\" annotation in the matrix tells me these are code gaps. The \"Gaps added by code\" list is informational for me to not repeat them in my own gaps.\n\nBut wait, the gaps I write in the \"gaps\" field \u2014 I should only add gaps for things NOT covered. Since a5/a6/a8 not-found cells ARE marked \"(code gap)\", they're code gaps and I shouldn't write claims OR gaps for them. But they're not in the \"Gaps added by code\" list...\n\nHmm, let me just focus on what matters: I write claims and adjacent items, plus the comparison claim. The \"gaps\" field \u2014 I'll add gaps only for genuine gaps not covered by code.\n\nActually, re-reading once more very carefully:\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nI think the practical interpretation is: the code will add all the gaps listed under \"Gaps added by code\". For any not-found cell NOT in that list (like a5.MS, a6.MS, a8.MS, etc.), those are... also code gaps? But not listed?\n\nGiven the matrix explicitly says \"not found (code gap)\" for these, and the gaps list is a summary that's clearly incomplete (it doesn't cover a5/a6/a8), I think the safest is to not write claims for any \"not found\" cells, and not add duplicate gaps (since they're all \"code gaps\" per the matrix).\n\nActually, I'll reconsider the whole \"gaps\" field. I think I should only populate \"gaps\" with genuine additional gaps I identify, if any. Given the extensive code gaps, and my uncertainty, I'll add no additional gaps unless there's a clear one.\n\nWait, but there's a subtlety. The instruction says I must not repeat code gaps, and I should add my own gap \"only for something those gaps do not name.\" If a5.MS is \"not found\" but not in the code gaps list, is that \"something those gaps do not name\"? \n\nLet me look at whether the code gaps list actually covers a5, a6, a8. It lists a1, a2, a3, a4, a7. It does NOT list a5, a6, a8.\n\nBut actually, maybe a5, a6, a8 not-found cells should be treated differently. Let me look at what firms have data in a5, a6, a8:\n\na5: only EDJ has fact; MS, SCHW, MER, RJF, research all \"not found\".\na6: EDJ fact; MER, RJF adjacent; MS, SCHW, research \"not found\".\na8: EDJ fact, SCHW fact, MER adjacent; MS, RJF, research \"not found\".\n\nThese \"not found\" cells for a5/a6/a8 are not in the code gaps list. So per the instruction, I should add gaps for them? That seems like a lot.\n\nHmm, actually, I wonder if the code gaps list is just incomplete in this prompt, and I shouldn't worry too much. The core deliverable is claims, adjacent, and the comparison claim.\n\nLet me take a pragmatic approach:\n1. Write all fact claims and adjacent items.\n2. Write the comparison claim for a8.\n3. For the \"gaps\" field, I'll add gaps for the not-found cells that are NOT in the code gaps list, because the instruction explicitly says \"Add a gap of your own only for something those gaps do not name.\"\n\nActually wait, but that would be a LOT of gaps, and many of them ARE marked \"(code gap)\" in the matrix. The matrix marking \"(code gap)\" strongly suggests code handles them.\n\nLet me reconsider the meaning. The \"Gaps added by code\" section header says \"(do not repeat them)\". The list is what code adds. If a5/a6/a8 not-found cells are NOT in this list, then code does NOT add them, so I need to add them myself.\n\nBut that contradicts the matrix \"(code gap)\" annotation.\n\nI think there might be a genuine inconsistency/error in the prompt, but I'll go with: the \"Gaps added by code\" list is authoritative for what code adds. Cells marked \"(code gap)\" but not in the list \u2014 I'll treat as needing my own gap.\n\nActually, let me step back. This is getting too deep. The most important thing is to produce correct claims and adjacent items and the comparison. For gaps, I'll add the clearly-missing ones to be safe, focusing on the not-found cells for a5, a6, a8 that aren't in the code gaps list.\n\nActually, you know what, let me reconsider. Let me re-read: \"Gaps added by code (do not repeat them):\" followed by a list.\n\nThe list includes a1.EDJ, a1 (competitors), etc. It does NOT include a5/a6/a8.\n\nBut the matrix says a5.MS = \"not found (code gap)\". \n\nHmm. I think there's a real tension. Let me look at the exact wording in the matrix vs the gaps list.\n\nMatrix: \"a5.MS Morgan Stanley: not found (code gap)\"\n\nGaps list: doesn't mention a5.MS.\n\nI think the \"(code gap)\" in the matrix is the annotation that this is a code gap, and the \"Gaps added by code\" section should have listed it but the prompt author may have truncated. But since I'm told \"do not repeat them\" and \"add a gap of your own only for something those gaps do not name\", I'll interpret:\n\nThe gaps I write should only be for gaps NOT named in the code gaps list. Since a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research, a6.MS, a6.SCHW, a6.research, a8.MS, a8.RJF, a8.research are \"not found\" but NOT in the code gaps list, I should add gaps for them.\n\nHmm, but actually, wait. Let me reconsider whether these should even be gaps. The question is about Edward Jones primarily. The aspects a5, a6 are Edward Jones-specific (a5: \"How do Edward Jones's current offerings align\", a6: \"How does Edward Jones state its strategy\"). For these, MS/SCHW/MER/RJF are \"not found\" \u2014 they're not applicable/not disclosed.\n\nFor a8 (comparison), MS/RJF/research not found.\n\nI think the cleanest approach is to add gaps for these not-found cells that aren't in the code gaps list. But honestly, this is a huge number of gaps and I'm not sure it's intended.\n\nLet me reconsider the entire instruction flow. Actually, I think the key realization: the \"gaps\" in the output are things I discovered that the database doesn't support, that code hasn't already flagged. The code gaps list covers a1, a2, a3, a4, a7. For a5, a6, a8, the \"not found\" cells should also be gaps, but maybe they were considered less important.\n\nActually, I'll take a measured approach: I'll add gaps for the not-found cells in a5, a6, a8 that aren't in the code gaps list, since the instruction explicitly asks me to add gaps for things the code gaps don't name.\n\nBut wait, there's also a concern: is adding gaps even required? Let me re-read the shape instructions.\n\n\"gaps\" is a required field in the schema (it's in the required list). So I must provide at least an empty array or actual gaps.\n\nOK let me just decide and move on. I'll add gaps for the clearly missing not-found cells in a5, a6, a8.\n\nActually, let me reconsider once more. This is a lot. Let me look at what's truly needed and be reasonable.\n\nThe core question: \"How should the preferences of younger investors shape Edward Jones's offerings?\" This is normative, answered with boundary (evidence half only).\n\nThe evidence half needs to present: what younger investors prefer (a1, a2, a3), growth data (a4), EDJ alignment (a5), EDJ strategy (a6), competitor offerings (a7), and comparison (a8).\n\nLet me just write everything properly and include reasonable gaps.\n\nActually, I'll reconsider the gaps issue one final time and go with a minimal approach: I'll only add gaps where there's a genuine \"not found\" that's not already in the code gaps list AND that matters. But to be safe and complete, I'll add them.\n\nHmm, but actually there's a risk of over-adding. Let me look at the gaps I'm confident about.\n\nActually, let me reconsider: the instruction \"Add a gap of your own only for something those gaps do not name.\" The \"those gaps\" = \"Gaps added by code\". So I add gaps for not-found things NOT in that list.\n\nThe not-found things not in the list:\n- a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research (competitors' alignment \u2014 not applicable)\n- a6.MS, a6.SCHW, a6.research (competitors' strategy)\n- a8.MS, a8.RJF, a8.research (comparison)\n\nWait, but actually for a5 and a6, these are EDJ-specific aspects. The competitors' \"not found\" makes sense because a5/a6 are about Edward Jones specifically. The matrix lists them as \"not found (code gap)\" anyway.\n\nI think I'm massively overanalyzing. Let me make a decision:\n\nI will NOT add gaps for a5/a6/a8 not-found cells, because they are marked \"(code gap)\" in the matrix, indicating code handles them. The \"Gaps added by code\" list being incomplete is likely a prompt truncation. My \"gaps\" field will contain only genuinely new gaps I identify, which in this case is likely none.\n\nActually, wait. Let me reconsider. There's a risk either way. But the downside of adding wrong gaps is lower than omitting. Actually no \u2014 the instruction says \"Add a gap of your own only for something those gaps do not name.\" This is a constraint. If I add gaps for things marked \"(code gap)\", I'm violating \"do not repeat them\" potentially.\n\nHmm. But a5/a6/a8 not-found are NOT in the code gaps list, so they're not \"repeating\".\n\nUgh. OK, final decision: I'll add gaps for the not-found cells in a5, a6, a8 that aren't in the code gaps list, but phrase them minimally. Actually, let me reconsider the practical value.\n\nActually, I realize I should just focus on getting the claims right, which is the bulk of the work, and include a reasonable set of gaps. Let me include gaps for the missing not-found cells not covered by code gaps.\n\nLet me now think about the comparison claim for a8.\n\na8 comparison: \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\"\n\nThis is marked \"comparison\" but is it \"same_basis\"? Let me check. The instruction says \"Compare or rank figures across firms only when the aspect is marked same_basis\". a8 is not marked same_basis. So I should say whether the comparison is valid or not.\n\nActually, the comparison here is qualitative (disclosures and initiatives), not quantitative. Let me think about what the comparison claim should say.\n\nThe comparison rests on:\n- EDJ: digital platform for Next Gen investors, acknowledges generational wealth transfer risk, minority stake in Quicken.\n- SCHW: extensive quantitative disclosures (70% new-to-firm households Gen Z/millennials, etc.) and specific products (Starter Kit, Teen Investor Account, no/low commissions, YouTube, crypto).\n- MER: only advisor rankings (adjacent, different quantity).\n- RJF: only \"Next gen advisor strategy\" (recruiting, different quantity).\n- MS: not found.\n\nSo the comparison: Edward Jones's disclosures are more qualitative/forward-looking (a new digital platform initiative, risk-factor acknowledgment), while Schwab provides detailed quantitative metrics on younger client growth and specific product offerings for younger investors. Merrill and Raymond James's materials concern next-generation financial advisors, not younger investors/clients, and Morgan Stanley was not found.\n\nWhether \"valid\": The comparison is valid qualitatively \u2014 I can compare disclosures and initiatives. But since a8 is not marked same_basis, and the figures are not comparable (different units/scopes), I should note that quantitative comparison isn't possible but qualitative comparison of disclosures/initiatives is.\n\nActually, let me think about what \"valid\" means here. The comparison aspect asks whether disclosures/initiatives compare. I can say:\n\nThe comparison can be made at the level of disclosures and initiatives: Edward Jones discloses a new digital platform initiative targeting Next Generation investors and acknowledges generational wealth transfer as a risk, while Schwab discloses detailed quantitative metrics on younger client growth (e.g., ~70% of new-to-firm retail households are Gen Z and millennials) and lists specific younger-investor offerings (Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions). Merrill and Raymond James's materials concern next-generation financial advisors rather than younger investors/clients, and Morgan Stanley's disclosures were not found; therefore these are not directly comparable to Edward Jones's younger-investor disclosures.\n\nI need to cite the items. The comparison claim cites items that it rests on.\n\nLet me draft it as one claim with part_id \"a8\".\n\nFor the citation chunk_ids, I'll include the relevant sources: EDJ-10K-2025#88, EDJ-10K-2025#56, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99, MER-PR-web-becoming-a-merrill-lynch-advisor#3, BAC-PR-2026-01-14-01#12, RJF-DECK-2025-investor-day#42, etc.\n\nNow let me carefully write everything.\n\nLet me also double check the a1.research item 10 (figure not found) and item 11 (BOFA-PB-STUDY-2024#9).\n\nItem 10: \"Seventy-two percent of younger investors (ages 21 to 43) believe...\" figure not found \u2192 don't state 72%. Also don't state 28%? The 28% is \"of investors over age 44\". Both are figures. I'll write qualitatively.\n\nItem 11: BOFA-PB-STUDY-2024#9, fact with figures: 47% stocks/bonds, 17% alternatives, 93% plan more alternatives, 49% crypto. These are found (not marked figure-not-found). So state them.\n\nWait, let me check item 11's mark. It says value 47%, unit, scope \"younger high-net-worth investors ages 21 to 43\", quote \"...\", cite BOFA-PB-STUDY-2024#9. No \"figure not found\" mark. So state figures.\n\nActually wait, item 11's quote has multiple figures: 47% stocks/bonds (74% over-44), 17% alternatives (5% older), 93% plan more, 49% crypto. The value field says \"47%\" but the quote has more. I should state what the item covers: \"Among younger high-net-worth investors (ages 21 to 43), 47% of portfolios are in stocks and bonds (vs 74% for over-44), 17% allocated to alternatives, 93% plan to allocate more to alternatives, and 49% own cryptocurrencies.\" That's what the item describes.\n\nOK let me now write all claims. I'll be thorough.\n\nLet me organize by aspect, and within aspect by firm order (EDJ, MS, SCHW, MER, RJF), then research.\n\nFor a1:\n- EDJ: not found (skip, code gap)\n- MS: not found (skip)\n- SCHW: 7 fact items (claims, part_id a1.SCHW)\n- MER: not found (skip)\n- RJF: not found (skip)\n- research: 11 fact items (claims, part_id a1.research)\n\nLet me write the SCHW a1 claims with proper dating.\n\nSCHW-TR-2025Q3#11 and #12 are from period 2025-09-30, published 2025-10-16. SCHW-TR-2025Q2#33 is 2025-06-30, published 2025-07-18. SCHW-DECK-2026-investor-day#106 is published 2026-05-14. SCHW-TR-2025Q3#39 is 2025-09-30.\n\nSo dating: \"On the 3Q25 earnings call (October 2025), management said...\" for SCHW-TR-2025Q3. \"On the 2Q25 earnings call (July 2025)...\" for SCHW-TR-2025Q2. \"In its 2026 investor-day materials (May 2026)...\" for SCHW-DECK.\n\nFor BOFA-PB-STUDY-2026#4, published 2026-06-17 \u2192 \"A Bank of America Private Bank study (published June 2026)...\" Actually it's \"Research research\". I'll say \"An industry study (published June 2026)\". Actually the source is \"Research research\" \u2014 industry research. I'll say \"Industry research (Bank of America Private Bank study, published June 2026)\".\n\nFINRAF-INVESTORS-2025#18 and #36, published 2025-12-04 \u2192 \"FINRA investor research (published December 2025)\".\n\nBOFA-PB-STUDY-2024#9, published 2024-06-18 \u2192 \"Industry research (published June 2024)\".\n\nLet me now write. I need to be careful with dates and quotes.\n\nLet me write out the full answer now.\n\nFor a1.SCHW, item 1: \"On the 3Q25 earnings call (October 2025), Schwab stated that younger investors learn about finances primarily through social media and family, and that Schwab is meeting them in the channels where they turn for information about investing.\" cite SCHW-TR-2025Q3#11.\n\nItem 2: \"On the 3Q25 earnings call (October 2025), Schwab stated that younger investors' top online resource for learning about finances is YouTube, and that Schwab is 'the number one financial services firm on YouTube by followers.'\" cite SCHW-TR-2025Q3#12.\n\nItem 3: \"On the 3Q25 earnings call (October 2025), Schwab stated that one-third of retail households who created a financial plan within the last two years are under the age of 40.\" cite SCHW-TR-2025Q3#12.\n\nItem 4: \"On the 2Q25 earnings call (July 2025), Schwab stated that young investors want to think about how to pay off their college debt and how to buy a house.\" cite SCHW-TR-2025Q2#33.\n\nItem 5: \"On the 3Q25 earnings call (October 2025), Schwab stated that younger traders turn to Schwab because they recognize the potential of trading to build wealth over time, and for the platforms, tools, education, coaching, expertise, and service Schwab provides.\" cite SCHW-TR-2025Q3#12.\n\nItem 6: \"In its 2026 investor-day materials (May 2026), Schwab stated that 42% of thinkorswim users are Millennial or Gen Z.\" cite SCHW-DECK-2026-investor-day#106.\n\nItem 7: \"On the 3Q25 earnings call (October 2025), Schwab's CEO stated that crypto 'will certainly appeal to young investors.'\" cite SCHW-TR-2025Q3#39.\n\nFor a1.research:\nItem 1: \"An industry study (Bank of America Private Bank, published June 2026) reports that younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, embracing alternative investments and emerging technologies.\" cite BOFA-PB-STUDY-2026#4.\n\nItem 2: \"The same study reports that 67% of younger investors (ages 21 to 45) believe traditional stocks and bonds can no longer deliver above-average returns.\" cite BOFA-PB-STUDY-2026#4.\n\nItem 3: \"The study reports that younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (15%) and crypto (13%) than older investors.\" cite BOFA-PB-STUDY-2026#4.\n\nItem 4: \"The study reports that crypto ranks as the #1 wealth-creation opportunity for young wealthy investors: 29% rank it #1, 58% currently own crypto (up from 49% in 2024), and 92% either own or are interested.\" cite BOFA-PB-STUDY-2026#4.\n\nItem 5: \"The study reports that 88% of younger investors say they are likely to allocate more to alternatives in the next few years, compared with just 15% of Boomers and Silents.\" cite BOFA-PB-STUDY-2026#4.\n\nItem 6: \"FINRA investor research (published December 2025) reports that younger investors (under 35) are much more likely to own individual stocks than mutual funds (82 percent vs. 47 percent).\" cite FINRAF-INVESTORS-2025#18.\n\nItem 7: \"FINRA investor research (published December 2025) reports that younger investors (ages 18-34) are much more likely than older investors to have an options trading account (68%) and to have traded options (43%).\" cite FINRAF-INVESTORS-2025#18.\n\nItem 8: \"FINRA investor research (published December 2025) reports that younger respondents are much more likely than older respondents to invest for reasons other than long-term profits; half or more of those under 35 say they invest for social responsibility, entertainment, and social activity reasons.\" cite FINRAF-INVESTORS-2025#36.\n\nItem 9: \"FINRA investor research (published December 2025) reports that among those who have purchased meme stocks or other viral investments, 66% cite entertainment and 65% social activity as reasons for investing.\" cite FINRAF-INVESTORS-2025#36.\n\nItem 10 (figure not found): \"An industry study (Bank of America Private Bank, published June 2024) reports that younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds, a view held by a much smaller share of investors over age 44.\" cite BOFA-PB-STUDY-2024#9. \u2014 no figures.\n\nItem 11: \"The same study reports that among younger high-net-worth investors (ages 21 to 43), 47% of portfolios are in stocks and bonds (vs 74% for over-44), 17% is allocated to alternatives, 93% plan to allocate more to alternatives, and 49% own cryptocurrencies.\" cite BOFA-PB-STUDY-2024#9.\n\nNow a2:\n- EDJ, MS, MER, RJF not found (code gaps).\n- SCHW 3 fact items.\n- research not found.\n\na2.SCHW item 1: same as a1 item 1 basically. \"On the 3Q25 earnings call (October 2025), Schwab stated that younger investors (Gen Z) learn about finances primarily through social media and family.\" cite SCHW-TR-2025Q3#11.\n\nItem 2: \"On the 3Q25 earnings call (October 2025), Schwab stated that younger investors' top online resource is YouTube, and that Schwab is the number one financial services firm on YouTube by followers.\" cite SCHW-TR-2025Q3#12.\n\nItem 3: \"On the 3Q25 earnings call (October 2025), Schwab stated it is meeting younger investors in the channels where they turn for information about investing.\" cite SCHW-TR-2025Q3#11.\n\na3:\n- EDJ: 2 fact items.\n- MS, MER, RJF not found (code gaps).\n- SCHW 3 fact items.\n- research not found.\n\na3.EDJ item 1: \"Edward Jones's 10-K (period ended December 31, 2025, published March 2026) states that one of its new-client initiatives is 'a new digital platform, focused on attracting and retaining Next Generation investors,' indicating the firm is targeting younger investors through a digital service model rather than its traditional full-service branch model.\" cite EDJ-10K-2025#88.\n\nItem 2: \"Edward Jones's 10-K states that its continued ability to compete may be adversely impacted by 'generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.'\" cite EDJ-10K-2025#56.\n\na3.SCHW item 1: \"In its 2026 investor-day materials (May 2026), Schwab's framework groups 'Younger investors' with self-directed offerings\u2014Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions\u2014and lists full-service advice (Wealth Advisory, Advisor Network, Managed accounts) under a separate 'Advice seekers' segment.\" cite SCHW-DECK-2026-investor-day#99.\n\nItem 2: \"On the 3Q25 earnings call (October 2025), Schwab stated that younger traders turn to Schwab because it offers the platforms, tools, education, coaching, expertise, and service they need to succeed (a self-directed-with-support model).\" cite SCHW-TR-2025Q3#12.\n\nItem 3: \"On the 3Q25 earnings call (October 2025), Schwab stated that one-third of retail households who created a financial plan within the last two years are under age 40, indicating younger investors are a minority among those using financial planning.\" cite SCHW-TR-2025Q3#12.\n\na4:\n- EDJ not found (code gap).\n- MS not found (code gap).\n- SCHW 16 items (some figure-not-found, some quote-not-verbatim).\n- MER adjacent.\n- RJF adjacent.\n- research not found (code gap).\n\nComparability note: \"unverified: not in the metric definitions file; never compared across firms\". This is a series aspect, not comparison. So no comparison claim. But I should note the unverified definition? The instruction says for derived cells: \"say the definition is unverified when the cell is marked so.\" This is not a derived cell, it's a \"Comparability (code)\" note. Actually this note is about comparability across firms. Since a4 is not a comparison aspect, I don't write a comparison. But should I mention \"never compared across firms\"?\n\nHmm, the note says \"unverified: not in the metric definitions file; never compared across firms\". This means for a4, I should not compare across firms. Since a4 is a \"series\" aspect (not comparison), I just write the fact cells. No comparison needed.\n\nActually wait, there's a caveat: \"The Charles Schwab Corporation - What growth... the series in the documents searched runs from 2024 to 2026Q3 (5 points); no figure after 2026Q3 was found.\" This is a caveat added by code; I shouldn't repeat it.\n\nLet me write a4.SCHW claims.\n\nItem 1 (fact): \"On the 3Q26 earnings call (October 2026), Schwab reported that approximately 70% of new-to-firm retail households are Gen Z and millennials.\" cite SCHW-TR-2026Q3#11, SCHW-DECK-2026Q3#24.\n\nItem 2 (figure not found): \"On the 4Q25 earnings call (January 2026), Schwab reported that Gen Z investors comprise a share of new retail client accounts opened in 2025.\" Actually the figure \"nearly a third\" is not found. Write without figure: \"On the 4Q25 earnings call (January 2026), Schwab reported that Gen Z investors comprise a portion of new retail client accounts opened in 2025.\" cite SCHW-TR-2025Q4#11.\n\nHmm, actually this is awkward. Let me just write: \"On the 4Q25 earnings call (January 2026), Schwab reported that Gen Z investors comprise a notable share of new retail client accounts opened in 2025.\" Actually I think better to phrase neutrally without implying a figure. Maybe: \"...reported on the share of new retail client accounts opened in 2025 that are Gen Z investors.\"\n\nActually, the cleanest: since the figure isn't found, I state the qualitative fact: \"On the 4Q25 earnings call (January 2026), Schwab reported that Gen Z investors make up a portion of new retail client accounts opened in 2025.\" I'll keep it simple.\n\nItem 3 (fact): \"On the 4Q25 earnings call (January 2026), Schwab reported that nearly 60% of new retail client accounts opened in 2025 are under the age of 40.\" cite SCHW-TR-2025Q4#11.\n\nItem 4 (figure not found): \"On the 3Q25 earnings call (October 2025), Schwab reported that nearly one-third of new-to-firm retail households are Gen Zers (investors between ages 13 and 28).\" \u2014 figure \"nearly one-third\" not found. Write without figure: \"On the 3Q25 earnings call (October 2025), Schwab reported that a share of new-to-firm retail households are Gen Zers, defined as investors between the ages of 13 and 28.\" cite SCHW-TR-2025Q3#11.\n\nItem 5 (figure not found): \"On the 2Q25 earnings call (July 2025), Schwab reported that one in six new-to-firm retail households are under the age of 24.\" \u2014 figure not found. \"On the 2Q25 earnings call (July 2025), Schwab reported on the share of new-to-firm retail households that are under the age of 24.\" cite SCHW-TR-2025Q2#9.\n\nHmm, these figure-not-found items are awkward. Let me think about whether to state them more carefully.\n\nActually, re-reading: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" This means I still write the claim, but I omit the specific figure value. So for item 5, I write: \"On the 2Q25 earnings call (July 2025), Schwab reported that a portion of new-to-firm retail households are under the age of 24.\" But actually the fact itself (that Schwab reported some share under 24) is still a fact.\n\nI think the cleanest is to state the claim with a generic descriptor instead of the number. Let me use \"a share/portion\" phrasing.\n\nActually, for items 2, 4, 5, 11, 14 \u2014 these have figures that weren't found in the passage. I'll write them without the specific figure.\n\nBut wait \u2014 items 2, 4, 5, 11, 14 \u2014 for item 11, the value \"1/3\" and the fact \"one-third of retail households who created a financial plan within the last two years are under age 40\". But actually this same fact appears in a1 (item 3) and a3 (item 3) and a4 item 11, all citing SCHW-TR-2025Q3#12. In a1 item 3 and a3 item 3, it's NOT marked figure-not-found (the value \"one-third\" is found there). But in a4 item 11, it's marked \"figure not found in its passage\".\n\nInteresting. So in a4 item 11, the figure is not found. But the same quote appears elsewhere. This is a per-item marking. I'll follow the marking for a4 item 11: omit the figure.\n\nItem 11 (figure not found): \"On the 3Q25 earnings call (October 2025), Schwab reported that a share of retail households who created a financial plan within the last two years are under the age of 40.\" cite SCHW-TR-2025Q3#12.\n\nItem 14 (figure not found): \"On the 4Q25 earnings call (January 2026), Schwab reported that a share of its new-to-firm clients last year were Gen Z investors.\" cite SCHW-TR-2025Q4#42.\n\nItem 6 (fact): \"On the 2Q25 earnings call (July 2025), Schwab reported that more than 30% of its new-to-firm clients are under the age of 30.\" cite SCHW-TR-2025Q2#9.\n\nItem 7 (fact): \"On the 2Q25 earnings call (July 2025), Schwab reported that nearly 60% of its new-to-firm clients are under the age of 40.\" cite SCHW-TR-2025Q2#9.\n\nItem 8 (fact): \"In its 2026 investor-day materials (May 2026), Schwab reported that 61% of new clients are Gen Z and Millennial investors.\" cite SCHW-DECK-2026-investor-day#131.\n\nItem 9 (fact): \"On the 4Q24 earnings call (January 2025), Schwab reported that 33% of new-to-firm retail households are under the age of 30 (2024).\" cite SCHW-TR-2024Q4#11.\n\nItem 10 (fact): \"On the 4Q24 earnings call (January 2025), Schwab reported that more than 50% of new-to-firm retail households are under the age of 40 (2024).\" cite SCHW-TR-2024Q4#11.\n\nItem 12 (fact): \"On the 3Q25 earnings call (October 2025), Schwab reported that the average age of its clients continues to get younger.\" cite SCHW-TR-2025Q3#12.\n\nItem 13 (fact): \"On the 4Q25 earnings call (January 2026), Schwab reported that the average age of its client has fallen by about 10 years in the last decade and is now in the 40s.\" cite SCHW-TR-2025Q4#42.\n\nItem 15 (fact, quote not verbatim): \"In its 2026 investor-day materials (May 2026), Schwab reported that over 60% of new-to-firm retail households are under age 40.\" cite SCHW-DECK-2026-investor-day#100. (no quotes)\n\nItem 16 (fact, quote not verbatim): \"In its 2026 investor-day materials (May 2026), Schwab reported that 42% of thinkorswim users are Millennial or Gen Z.\" cite SCHW-DECK-2026-investor-day#106. (no quotes)\n\na4.MER adjacent (3 items):\nItem 1: \"Merrill states that 24 of its advisors were on Financial Planning's 2026 Top 40 Brokers Under 40 list.\" cite BAC-PR-2026-10-14-01#11, BAC-PR-2026-07-14-01#10, BAC-PR-2026-04-15-01#10. differs_because: \"Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40.\"\n\nItem 2: \"Merrill states it was No. 1 on Financial Planning's Top 40 Advisors Under 40 List for 2025.\" cite BAC-PR-2026-01-14-01#12.\n\nItem 3: \"Merrill's page describes the 2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list as considering advisors born in 1986 or later.\" cite MER-PR-web-becoming-a-merrill-lynch-advisor#3. (quote not verbatim \u2192 no quotes)\n\na4.RJF adjacent (1 item):\nItem 1: \"Raymond James's recruiting materials reference a 'Next gen advisor strategy' as part of collaborative recruiting across channels.\" cite RJF-DECK-2025-investor-day#42. differs_because: \"The passage refers to a strategy for next-generation financial advisors (recruiting), not growth in younger investors or clients under 40.\"\n\na5:\n- EDJ 2 fact items.\n- MS, SCHW, MER, RJF, research not found (code gaps, but not in code gaps list).\n\na5.EDJ item 1: \"Edward Jones's 10-K (period ended December 31, 2025) states it is pursuing a new digital platform initiative, focused on attracting and retaining Next Generation investors, as one of several initiatives to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs.\" cite EDJ-10K-2025#88.\n\nItem 2: \"Trade press (published August 2026) reports that Edward Jones announced it has taken a minority stake in the personal finance app Quicken, with the stated intention of integrating Quicken's personal financial management capabilities more directly into Edward Jones to support its value proposition and advisor conversations with clients, though the firm notes it is still determining its actual deployment strategy.\" cite EDJ-TRADE-2026-08-18-IN-01#2. (quote not verbatim \u2192 no quotes; trade press \u2192 attribute \"trade press reports\")\n\na6:\n- EDJ 4 fact items.\n- MS, SCHW, research not found.\n- MER adjacent.\n- RJF adjacent.\n\na6.EDJ item 1: \"Edward Jones's 10-K states that its initiatives to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs include targeting new clients, including a new digital platform focused on attracting and retaining Next Generation investors.\" cite EDJ-10K-2025#88.\n\nItem 2: \"Edward Jones's 10-K states its strategic ambition includes anticipating clients' needs with the right offering at the right time, now and for generations to come, and attracting and serving new client segments.\" cite EDJ-10K-2025#8.\n\nItem 3: \"Edward Jones's 10-K states its continued ability to compete and adapt its business model may be adversely impacted by generational wealth transfer and changing client demographics, preferences and values, including changing client expectations for expanded product offerings and technology needs.\" cite EDJ-10K-2025#56.\n\nItem 4: \"Edward Jones's 10-K states it addresses strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, and changing client demographics, preferences and values, through its initiatives to deliver enhanced value and impact.\" cite EDJ-10K-2025#304.\n\na6.MER adjacent (3 items):\nItem 1: \"Merrill states that 24 Merrill advisors appeared on Financial Planning's 2026 Top 40 Brokers Under 40 list.\" cite BAC-PR-2026-10-14-01#11. differs_because: \"The passages concern Merrill's financial advisors under 40 (next-gen/next-generation advisors) and their recognition rankings, not a stated strategy for attracting and serving younger investors or clients under 40.\"\n\nItem 2: \"Merrill states it is No. 1 on Forbes' Top Next Generation Advisors (2025) and No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).\" cite BAC-PR-2026-01-14-01#12. (quote not verbatim \u2192 no quotes)\n\nItem 3: \"Merrill describes the Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list as considering advisors born in 1986 or later with a minimum of 4 years as an advisor.\" cite MER-PR-web-becoming-a-merrill-lynch-advisor#3.\n\na6.RJF adjacent (1 item):\nItem 1: \"Raymond James's recruiting materials reference a 'Next gen advisor strategy'.\" cite RJF-DECK-2025-investor-day#42. differs_because: \"It concerns a strategy for recruiting next-generation financial advisors (the firm's own workforce), not a strategy for attracting and serving younger investors or clients under 40.\"\n\na7:\n- MS not found (code gap).\n- SCHW 9 fact items.\n- MER not found (code gap).\n- RJF adjacent.\n- research not found (code gap).\n\na7.SCHW item 1: \"In its 2026 investor-day materials (May 2026), Schwab lists a Schwab Starter Kit as an offering to serve younger investors.\" cite SCHW-DECK-2026-investor-day#99.\n\nItem 2: \"...Schwab Teen Investor Account...\" cite SCHW-DECK-2026-investor-day#99.\n\nItem 3: \"...no/low commissions...\" cite SCHW-DECK-2026-investor-day#99.\n\nItem 4: \"On the 3Q25 earnings call (October 2025), Schwab stated it provides platforms, tools, education, coaching, expertise, and service that younger traders need to succeed.\" cite SCHW-TR-2025Q3#12.\n\nItem 5 (quote not verbatim): \"On the 3Q25 earnings call (October 2025), Schwab stated it meets younger investors in the channels where they turn for information, noting it is the number one financial services firm on YouTube by followers.\" cite SCHW-TR-2025Q3#11, SCHW-TR-2025Q3#12.\n\nItem 6: \"On the 3Q25 earnings call (October 2025), Schwab viewed crypto as an offering that will appeal to young investors.\" cite SCHW-TR-2025Q3#39.\n\nItem 7: \"On the 3Q25 earnings call (October 2025), Schwab stated it puts on 35 hours a week of live content teaching investors how to trade, invest, and about the power of compounding.\" cite SCHW-TR-2025Q3#41.\n\nItem 8: \"On the 2Q26 earnings call (July 2026), Schwab attributed growth in young investors partly to the removal of commissions, which brought more people with less money into the market.\" cite SCHW-TR-2026Q2#36.\n\nItem 9 (quote not verbatim): \"In its 2026 investor-day materials (May 2026), Schwab lists 24/7 service and education & research as offerings, alongside thinkorswim, specialist teams, and Schwab Network for traders, and Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions for younger investors.\" cite SCHW-DECK-2026-investor-day#99.\n\nActually, let me re-read item 9's quote: \"Traders | thinkorswim \u00ae | Specialist teams | Schwab Network ... Younger investors | Schwab Starter Kit TM | Schwab Teen Investor TM Account | No / low commissions\". And the claim text is \"Schwab provides 24/7 service and education & research as offerings for younger investors.\"\n\nHmm, the \"24/7 service and education & research\" isn't in the quote shown. The quote shows traders section and younger investors section. So item 9's claim \"24/7 service and education & research as offerings for younger investors\" \u2014 I should write based on the claim text, but the quote doesn't support it directly. Since it's quote not verbatim, I won't quote. I'll write the claim as given: \"In its 2026 investor-day materials (May 2026), Schwab lists 24/7 service and education & research as offerings for younger investors.\" Hmm, but that's a bit odd since the quote is about traders/younger investors offerings.\n\nActually, let me just write the claim text as provided, paraphrased, without quotes. The claim says \"Schwab provides 24/7 service and education & research as offerings for younger investors.\" I'll write that, dated.\n\nActually wait, the quote includes \"Traders | thinkorswim | Specialist teams | Schwab Network\" and \"Younger investors | Schwab Starter Kit | Schwab Teen Investor Account | No / low commissions\". The \"24/7 service\" and \"education & research\" aren't in the shown quote but may be in the full deck. Since I can only cite what's shown, I'll write the claim as stated in the item. I'll trust the item text.\n\nLet me write: \"In its 2026 investor-day materials (May 2026), Schwab lists 24/7 service and education & research as offerings for younger investors.\" cite SCHW-DECK-2026-investor-day#99.\n\na7.RJF adjacent (1 item):\nItem 1: \"Raymond James mentions a 'Next gen advisor strategy' in the context of its recruiting efforts, alongside collaborative recruiting across channels and a West Coast and Northeast focus.\" cite RJF-DECK-2025-investor-day#42. (quote not verbatim \u2192 no quotes) differs_because: \"The passage describes a recruiting strategy targeting next-generation financial advisors (the firm's own personnel), not offerings or strategies deployed to serve younger investors (clients).\"\n\na8: comparison aspect. Write:\n1. a8.EDJ fact items (3).\n2. a8.SCHW fact items (21).\n3. a8.MER adjacent (4).\n4. a8.MS, a8.RJF, a8.research not found (code gaps, not in code gaps list).\n5. One comparison claim part_id \"a8\".\n\nThis is a LOT. a8.SCHW has 21 items. Let me write them all but be concise.\n\nActually, many a8.SCHW items duplicate a4 items. Let me write them.\n\nLet me go through a8.EDJ:\nItem 1: \"Edward Jones's 10-K states its initiatives to target new clients include a new digital platform focused on attracting and retaining Next Generation investors.\" cite EDJ-10K-2025#88.\n\nItem 2: \"Edward Jones's 10-K states the Partnership seeks to address its strategic risks, including generational wealth transfer and changing client demographics, preferences and values, through its initiatives.\" cite EDJ-10K-2025#304.\n\nItem 3: \"Edward Jones's 10-K states the Partnership's ability to compete may be adversely impacted by generational wealth transfer and changing client demographics, preferences and values, including changing expectations for expanded product offerings and technology needs.\" cite EDJ-10K-2025#56.\n\na8.SCHW (21 items):\n1. ~70% new-to-firm retail households Gen Z/millennials, 2026Q3. cite SCHW-TR-2026Q3#11.\n2. Gen Z nearly a third of new accounts 2025. cite SCHW-TR-2025Q4#11. (note: in a8 this item is NOT marked figure-not-found; value \"nearly a third\" is stated). So state \"nearly a third\".\n\nWait, let me check. In a8.SCHW item 2: \"Schwab states that Gen Z investors comprise nearly a third of new retail client accounts opened in 2025.\" value \"nearly a third\", no \"figure not found\" mark. So state \"nearly a third\".\n\nInteresting \u2014 in a4 item 2, the same fact was marked \"figure not found\", but in a8 item 2 it's not. I follow each cell's own marking.\n\n3. nearly 60% under 40, 2025. cite SCHW-TR-2025Q4#11.\n4. generations next-gen to retirees, 2026Q3. cite SCHW-DECK-2026Q3#23.\n5. nearly one-third Gen Zers (13-28), 2025Q3. cite SCHW-TR-2025Q3#11.\n6. younger investors learn via social media/family, 2025Q3. cite SCHW-TR-2025Q3#11.\n7. 42% thinkorswim users Millennial/Gen Z. cite SCHW-DECK-2026-investor-day#106.\n8. one in six under 24, 2025Q2. cite SCHW-TR-2025Q2#9.\n9. >30% under 30, 2025Q2. cite SCHW-TR-2025Q2#9.\n10. nearly 60% under 40, 2025Q2. cite SCHW-TR-2025Q2#9.\n11. 61% new clients Gen Z/Millennial. cite SCHW-DECK-2026-investor-day#131.\n12. 33% under 30, 2024Q4. cite SCHW-TR-2024Q4#11.\n13. >50% under 40, 2024Q4. cite SCHW-TR-2024Q4#11.\n14. Starter Kit, Teen Investor Account, no/low commissions. cite SCHW-DECK-2026-investor-day#99.\n15. ~70% Gen Z & Millennials, 2026Q3. cite SCHW-DECK-2026Q3#24.\n16. #1 financial services firm on YouTube, 2025Q3. cite SCHW-TR-2025Q3#12.\n17. one-third under 40 financial plan, 2025Q3. cite SCHW-TR-2025Q3#12.\n18. average age fallen ~10 years, 40s, 2025Q4. cite SCHW-TR-2025Q4#42.\n19. a third of new-to-firm clients Gen Z, 2025. cite SCHW-TR-2025Q4#42.\n20. over 60% under 40. cite SCHW-DECK-2026-investor-day#100.\n21. 35 hours live content. cite SCHW-TR-2025Q3#41.\n\nNone of these a8.SCHW items are marked \"figure not found\" or \"quote not verbatim\"? Let me check... Looking at the a8.SCHW items, I don't see \"figure not found\" or \"quote not verbatim\" marks. All appear to be regular fact items with quotes. Good.\n\nWait, let me double-check item 20: \"over 60% of new-to-firm retail households are under age 40\" quote \"of New-to-Firm Retail HHs <40 1 +60%\". No quote-not-verbatim mark in a8. But in a4 item 15, the same was marked \"quote not verbatim\". In a8 item 20, no such mark. So I can quote it? Actually the quote has \"1\" inserted which is odd. But no mark means I can quote. Hmm, but the quote is weird (\"of New-to-Firm Retail HHs <40 1 +60%\"). I'll paraphrase to be safe, but actually I should follow the marking. No mark = I can quote. But the quote is strange. I'll just state it plainly: \"Schwab states that over 60% of new-to-firm retail households are under age 40.\"\n\nActually, I don't strictly need to quote everything; I need to cite. I'll write claims with appropriate quoting.\n\nLet me be efficient. For a8.SCHW, many items duplicate a4 items. I'll write them concisely.\n\nThis is a massive answer. Let me write it all out now in the final tool call.\n\nFor the comparison claim (a8), I need to write exactly one claim.\n\nLet me draft the comparison claim:\n\n\"Comparison: Edward Jones's disclosures for younger investors are forward-looking and initiative-based\u2014a new digital platform targeting Next Generation investors, an acknowledgment of generational wealth transfer as a strategic risk, and a minority stake in Quicken\u2014whereas Schwab discloses detailed quantitative metrics on younger client acquisition (for example, approximately 70% of new-to-firm retail households being Gen Z and millennials as of 3Q26) and names specific younger-investor offerings (Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions, YouTube, crypto). Merrill's and Raymond James's cited materials concern next-generation financial advisors (recognition lists and a 'Next gen advisor strategy' recruiting effort) rather than younger investors or clients, and Morgan Stanley's disclosures were not found; these are therefore not directly comparable to Edward Jones's younger-investor disclosures and initiatives.\"\n\nI need to decide \"valid\" status. The comparison of disclosures/initiatives can be made qualitatively (valid), but quantitative figures are not comparable across firms (different definitions, and a4 comparability is unverified). Since a8 is not marked same_basis, I should say the figures are not comparable. But the disclosure/initiative comparison is qualitative.\n\nActually, let me think about what \"valid\" means for a8. The aspect is \"How do Edward Jones's disclosures and initiatives compare to those of competitors?\" This is fundamentally a qualitative comparison. I can say: valid qualitatively (comparing what each firm discloses and does), but note that quantitative metrics are not comparable across firms (different definitions/scopes, and the younger-client metrics are not in the verified definitions file).\n\nI'll write the comparison claim to state it's valid at the qualitative level but figures aren't comparable.\n\nLet me write the full claim with citations.\n\nNow let me also figure out the gaps I'll add.\n\nGiven the extensive code gaps covering a1, a2, a3, a4, a7, and the not-found cells in a5, a6, a8 NOT in the code gaps list, I need to decide.\n\na5 not-found: MS, SCHW, MER, RJF, research.\na6 not-found: MS, SCHW, research.\na8 not-found: MS, RJF, research.\n\nThese are not in the code gaps list. Per instruction \"Add a gap of your own only for something those gaps do not name\", I should add gaps for these.\n\nBut wait \u2014 is this really intended? The a5 aspect is \"How do Edward Jones's current offerings align with younger investors' preferences?\" \u2014 competitors aren't relevant here, so \"not found\" for competitors isn't really a \"gap\" in the same sense.\n\nSimilarly a6 is EDJ-specific.\n\nFor a8 (comparison), MS, RJF, research not found IS relevant to the comparison.\n\nHmm. Let me add gaps for these to be safe. Actually, I'll add gaps for the a8 not-found (MS, RJF, research) since those are clearly relevant to a comparison, and possibly for a5/a6 not-found.\n\nActually, let me reconsider the scope of \"gaps\". The gaps are meant to flag what the database doesn't support. The code gaps already cover the main \"not found\" items for a1-a4, a7. For a5, a6, a8, the not-found cells should also be flagged.\n\nLet me add gaps for:\n- a5: MS, SCHW, MER, RJF (competitors' alignment with younger investors' preferences - not found). Actually a5 is about EDJ's offerings aligning. Competitors' \"not found\" under a5 is odd since a5 is EDJ-specific. But the matrix lists a5.MS etc. as \"not found\".\n\n- a6: MS, SCHW (competitors' strategy - not found). a6 is EDJ-specific.\n\n- a8: MS, RJF, research (not found).\n\nThis is getting complicated. Let me just add a reasonable set of gaps for the not-found cells not in the code gaps list.\n\nActually, I'll reconsider whether to add these gaps at all. The risk: if I add gaps that are actually code gaps (code will add them), I'm duplicating. If I don't add gaps that code won't add, I'm missing.\n\nThe instruction is clear: \"Add a gap of your own only for something those gaps do not name.\" Since a5/a6/a8 not-found cells are NOT named in the code gaps list, I should add gaps for them.\n\nBut there's also the consideration that these might genuinely be \"not applicable\" rather than \"gaps\". For a5/a6 (EDJ-specific), competitors' non-disclosure isn't really a gap.\n\nLet me look at how a4.MER and a4.RJF are handled: they're \"different quantity (adjacent only)\" and the code gaps list includes them as \"not published... closest disclosed figure is... (adjacent)\". So the code gaps list explicitly handles adjacent cases for a4 and a7.\n\nFor a5, a6, a8, the \"not found (code gap)\" cells are simply not mentioned in code gaps list at all.\n\nI'll make a decision: I'll add gaps for the a8 not-found cells (MS, RJF, research) because a8 is a comparison aspect where missing competitor disclosures matter. For a5 and a6 (EDJ-specific aspects), I'll add brief gaps too, but actually, hmm.\n\nActually, let me reconsider the whole thing more holistically. I think the prompt's \"Gaps added by code\" list is what I should treat as authoritative, and I should add my own gaps for anything clearly missing. The a5/a6/a8 not-found cells are clearly missing from the list.\n\nLet me just add gaps for all the not-found cells not covered by code gaps:\n- a5: Morgan Stanley, Schwab, Merrill, Raymond James (alignment aspect - not applicable/disclosed)\n- a6: Morgan Stanley, Schwab (strategy aspect)\n- a8: Morgan Stanley, Raymond James, research\n\nActually, I realize I should keep this focused and not over-engineer. Let me add gaps for the a8 comparison-relevant missing items (MS, RJF, research), and for a5/a6 I'll add them too since they're marked not-found.\n\nHmm, let me reconsider \u2014 actually the cleanest reading: the matrix marks everything \"not found\" as \"(code gap)\". The \"Gaps added by code\" list I'm given is what I must NOT repeat. Since a5/a6/a8 aren't in that list, but the matrix says \"(code gap)\", there's ambiguity about whether code adds them.\n\nGiven the strong signal in the matrix (\"code gap\") for a5/a6/a8 too, and that the gaps list is likely just a partial summary, I'll lean towards NOT adding duplicate gaps, but I'll add a few clearly-important ones for the comparison (a8) where competitor data is genuinely missing.\n\nActually, you know what, let me just be safe and add gaps for the not-found cells in a5, a6, a8 that aren't in the code gaps list. It's better to have them than not, and the instruction explicitly asks.\n\nLet me enumerate the gaps I'll add:\n\na5 (alignment aspect - competitors):\nActually a5 is \"How do Edward Jones's current offerings align with younger investors' preferences?\" \u2014 this is EDJ-specific. MS, SCHW, MER, RJF, research \"not found\" makes sense (they're not asked about in a5). But the matrix lists them. I'll add a combined gap or skip.\n\nHmm, actually I realize the a5 competitors \"not found\" is a bit strange. Let me not overthink and add gaps for the genuinely missing comparison-relevant data (a8), and for a5/a6 I'll add minimal gaps.\n\nActually, let me reconsider from scratch what gaps are truly needed. The instruction's spirit: gaps flag \"the database does not support\" certain things. The code already flags a lot. I should add gaps for things code didn't flag.\n\nThe clearest missing gaps:\n- a5: competitors (MS, SCHW, MER, RJF) alignment not found, and research not found.\n- a6: competitors (MS, SCHW) strategy not found, research not found.\n- a8: MS, RJF, research not found (comparison data).\n\nI'll add these. But I'm worried about over-engineering. Let me just add a focused set.\n\nActually, I'll reconsider: given the enormous length of the answer already, and that the \"gaps\" field is required, I'll add a modest number of gaps for the clearly-missing items.\n\nLet me finalize. I'll add gaps for:\n1. a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research \u2014 I'll combine into one or two gaps. Actually gaps are per part_id. Each gap needs a part_id. Let me add individual gaps.\n\nHmm, but the code gaps list uses combined entries like \"[a1] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - ...\". So I can use part_id \"a1\" (without firm) for combined competitor gaps.\n\nFor a5, a6, a8, I could add:\n- [a5] Competitors (Morgan Stanley, Schwab, Merrill, Raymond James) - alignment...: not found. part_id \"a5\".\n- [a6] Competitors (Morgan Stanley, Schwab) - strategy...: not found. part_id \"a6\".\n- [a8] Morgan Stanley, Raymond James - disclosures/initiatives...: not found. part_id \"a8\".\n\nBut wait, a5 is EDJ-specific. Are competitors even supposed to have a5 data? Looking at the matrix, a5.MS, a5.SCHW, a5.MER, a5.RJF are all \"not found (code gap)\". So the framework did look for them and found nothing.\n\nOK I'll add gaps. Let me write them concisely.\n\nActually, let me step back and reconsider whether I'm overcomplicating the \"gaps\" portion. Given the instruction says \"Add a gap of your own only for something those gaps do not name\", and there ARE things not named (a5/a6/a8 not-found cells), I should add them.\n\nFinal gaps to add:\n1. part_id \"a5\": \"Competitors (Morgan Stanley, Schwab, Merrill, Raymond James Financial) \u2014 alignment of current offerings with younger investors' preferences: not found in the documents searched.\" suggested_source maybe.\n\nActually, the gap schema requires \"what\", \"suggested_source\", \"part_id\". Let me fill suggested_source with something reasonable like \"Not published in the documents searched.\"\n\nLet me keep gaps minimal and focused on a8 (comparison) since that's most impactful, plus a5/a6.\n\nActually, I'll now just write the entire thing. Let me be efficient in the writing.\n\nFor the \"suggested_source\" field, I'll put a brief note like \"No source found in the documents searched.\"\n\nLet me now also double check: do I need \"why it might matter\" lines? The question doesn't have a time window, and no aspect is marked \"recency\". So no why-lines.\n\nLet me also verify there's no \"derived cell\" or \"computation\" or \"basis break\" in this matrix. Scanning... I see no \"computation\" lines, no \"basis break\", no \"derived cell\" notes. a4 has \"Comparability (code): unverified\" but that's a series aspect, not comparison. So no derived/computation claims.\n\nNow, one more check on a4: \"Comparability (code): unverified: not in the metric definitions file; never compared across firms\". This is a note about a4. Since a4 is not a comparison aspect, I just write fact cells without comparing. But should I mention the unverified definition anywhere? The instruction about \"unverified\" applies to derived cells (\"say the definition is unverified when the cell is marked so\"). a4 is not a derived cell. So no.\n\nBut wait, should I write anything about a4 comparability? No, a4 is just a \"series\" aspect listing figures. I write the fact cells.\n\nOK, let me also make sure about the \"quote not verbatim\" handling: never put in quotation marks. So I paraphrase.\n\nLet me now write the complete answer.\n\nFor chunk_ids in each claim, I use the exact source ids.\n\nLet me carefully compile the final answer.\n\nOne more consideration: the answer format. Multiple firms, so \"aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '\".\n\nWait, but for research cells (a1.research), they're not a firm. How to handle? The firms are EDJ, MS, SCHW, MER, RJF. Research is \"Industry research\". The instruction says \"firms in the order listed\". Research isn't a firm. I'll just write research claims without a firm prefix, or with \"Industry research:\" prefix.\n\nActually, looking at the structure, research items have part_id \"a1.research\". They're separate. I'll write them after the firms, starting with something like \"Industry research:\".\n\nHmm, but the instruction says \"each claim starting '<Firm>: '\". Research is not a firm. I'll just write them clearly attributed to the research source.\n\nLet me write research claims starting with the source attribution, e.g., \"Industry research (Bank of America Private Bank study): ...\".\n\nNow let me also handle the firm prefix. For SCHW claims, start with \"The Charles Schwab Corporation: \" or just \"Schwab: \"? The instruction says use each firm's own terms, and firms listed as \"The Charles Schwab Corporation (SCHW)\". I'll start claims with \"The Charles Schwab Corporation: \" ... actually that's verbose. Let me use a reasonable firm name.\n\nThe instruction: \"each claim starting '<Firm>: '\". So I should use the firm name. For SCHW, \"The Charles Schwab Corporation\". For EDJ, \"Edward Jones\". For MER, \"Merrill\". For RJF, \"Raymond James Financial\". For MS, \"Morgan Stanley\".\n\nThis makes claims very verbose but I'll follow it.\n\nActually, for research (not a firm), I'll use \"Industry research:\" as a prefix.\n\nLet me write it all out now.\n\nActually, given the length, let me be reasonably concise while complete. I'll write firm prefix once per claim.\n\nLet me draft the final JSON.\n\nI'll organize claims in aspect order a1\u2192a8, and within each aspect firm order.\n\nLet me write out all claims now carefully.\n\nFor dates:\n- EDJ 10-K: period 2025-12-31, published 2026-03-13 \u2192 \"Edward Jones's 10-K (period ended December 31, 2025, published March 2026)\"\n- EDJ trade: published 2026-08-18 \u2192 \"Trade press (published August 2026)\"\n- SCHW-TR-2025Q3: period 2025-09-30, published 2025-10-16 \u2192 \"the 3Q25 earnings call (October 2025)\"\n- SCHW-TR-2025Q2: period 2025-06-30, published 2025-07-18 \u2192 \"the 2Q25 earnings call (July 2025)\"\n- SCHW-TR-2024Q4: period 2024-12-31, published 2025-01-21 \u2192 \"the 4Q24 earnings call (January 2025)\"\n- SCHW-TR-2025Q4: period 2025-12-31, published 2026-01-21 \u2192 \"the 4Q25 earnings call (January 2026)\"\n- SCHW-TR-2026Q2: period 2026-06-30, published 2026-07-21 \u2192 \"the 2Q26 earnings call (July 2026)\"\n- SCHW-TR-2026Q3: period 2026-09-30, published 2026-10-15 \u2192 \"the 3Q26 earnings call (October 2026)\"\n- SCHW-DECK-2026-investor-day: published 2026-05-14 \u2192 \"2026 investor-day materials (May 2026)\"\n- SCHW-DECK-2026Q3: period 2026-09-30, published 2026-10-15 \u2192 \"3Q26 deck (October 2026)\"\n- BAC-PR: press releases, periods noted\n- MER-PR-web: page content as of 2026-11-03\n- RJF-DECK: published 2025-06-05\n- BOFA-PB-STUDY-2026: published 2026-06-17\n- BOFA-PB-STUDY-2024: published 2024-06-18\n- FINRAF-INVESTORS-2025: published 2025-12-04\n\nOK, let me write the final answer now.\n\nI'll now carefully produce the JSON. Given the volume, I'll write concisely but completely.\n\nFor the comparison claim part_id \"a8\", I'll write one claim.\n\nLet me write it all.\n\nActually, I need to reconsider the \"behavior\" \u2014 answer_with_boundary means evidence half only; code adds the hand-off sentence. So I just submit claims/adjacent/gaps.\n\nLet me finalize.\n\nFor gaps, I'll include the a5, a6, a8 missing items.\n\nLet me write the gaps:\n\n1. what: \"Morgan Stanley, The Charles Schwab Corporation, Merrill, Raymond James Financial \u2014 how current offerings align with younger investors' preferences (a5): not found in the documents searched.\" part_id \"a5\". Actually, a5 is EDJ-specific. Hmm.\n\nWait, actually I need to reconsider. Is it appropriate to add gaps for competitors under a5 (an EDJ-specific aspect)? The matrix does list them as \"not found (code gap)\". Since they're marked \"code gap\" in the matrix, and the code gaps list doesn't include them, there's inconsistency.\n\nI'll make a final decision: I'll add gaps only for the comparison aspect (a8) missing competitor/research data, since that's clearly relevant, and skip a5/a6 (EDJ-specific aspects where competitor non-disclosure is less a \"gap\" and more \"not applicable\").\n\nActually, even for a8, MS and RJF \"not found\" and research \"not found\". RJF has adjacent data (next-gen advisor strategy). MS has nothing. Research has nothing relevant.\n\nLet me finalize gaps as:\n1. part_id \"a8\": \"Morgan Stanley \u2014 disclosures and initiatives for younger investors: not found in the documents searched.\" \n2. part_id \"a8\": \"Industry research \u2014 disclosures/initiatives comparison: not found...\" \n\nHmm, actually this is getting too deep. Let me simplify and just add a couple of gaps.\n\nActually, let me reconsider. Maybe I'm overthinking the gaps entirely. The instruction says gaps are for \"what the database does not support\". The code has already added extensive gaps. I'll add gaps for the clearly-missing comparison-relevant items.\n\nLet me add these gaps (minimal):\n1. part_id \"a8\", what: \"Morgan Stanley \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched.\"\n2. part_id \"a8\", what: \"Raymond James Financial \u2014 disclosures and initiatives for younger investors and clients under 40 (the cited material concerns next-generation financial advisors, not younger investors/clients).\"\n\nActually RJF already has adjacent coverage. Hmm.\n\nI think I'll add a minimal set of gaps and move on. Let me include:\n- a8: Morgan Stanley not found (comparison data missing)\n- a5: competitors not found (alignment data missing for MS/SCHW/MER/RJF) - actually skip\n\nI'll keep it simple: add 2-3 gaps for the most clearly-missing comparison-relevant data.\n\nActually, let me reconsider the whole gaps requirement. I'll add gaps for the not-found cells in a5, a6, a8 that aren't in the code gaps list. This is the literal instruction. Let me enumerate and write them.\n\nNot-found cells not in code gaps list:\na5: MS, SCHW, MER, RJF, research (5 cells)\na6: MS, SCHW, research (3 cells)\na8: MS, RJF, research (3 cells)\n\nTotal 11 cells. I'll group them:\n\n1. part_id \"a5\": \"Morgan Stanley, Schwab, Merrill, Raymond James Financial, and industry research \u2014 how current offerings align with younger investors' preferences: not found in the documents searched.\" (but a5 is EDJ-specific...)\n\nHmm, actually a5 is \"How do Edward Jones's current offerings align with younger investors' preferences?\" It's inherently about EDJ. The competitor cells are irrelevant. But the matrix lists them.\n\nI think the cleanest is to NOT add gaps for a5/a6 (they're EDJ-specific and competitors don't apply), and only add gaps for a8 (comparison) where MS/RJF/research are genuinely missing.\n\nLet me finalize:\n- gap 1 (part_id \"a8\"): \"Morgan Stanley \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched.\"\n- gap 2 (part_id \"a8\"): \"Industry research \u2014 disclosures and initiatives for younger investors: not found in the documents searched.\"\n\nRJF has adjacent coverage under a8 (it's not \"not found\" \u2014 wait, let me check. a8.RJF is \"not found (code gap)\". But a8.MER is \"different quantity (adjacent only)\".\n\nWait, let me re-check a8.RJF: \"a8.RJF Raymond James Financial: not found (code gap)\". Yes, a8.RJF is \"not found\", not adjacent. So RJF has no a8 data (its \"Next gen advisor strategy\" was only under a4, a6, a7 as adjacent, not a8).\n\nHmm wait, but a6.RJF and a7.RJF are adjacent (different quantity), while a8.RJF is \"not found\". OK.\n\nSo a8 gaps: MS, RJF, research all \"not found\".\n\nI'll add:\n1. part_id \"a8\": \"Morgan Stanley \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched.\"\n2. part_id \"a8\": \"Raymond James Financial \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched.\"\n3. part_id \"a8\": \"Industry research \u2014 disclosures and initiatives for younger investors: not found in the documents searched.\"\n\nAnd for a5, a6, I'll add:\n4. part_id \"a5\": \"Competitors (Morgan Stanley, Schwab, Merrill, Raymond James Financial) \u2014 alignment of offerings with younger investors' preferences: not found in the documents searched.\" \u2014 actually a5 is EDJ-specific so this is odd.\n\nI'll skip a5/a6 gaps since those aspects are EDJ-specific and competitor non-applicability isn't really a \"gap\".\n\nActually, wait. Let me reconsider. The instruction \"Add a gap of your own only for something those gaps do not name\" \u2014 combined with the fact that a5/a6/a8 not-found cells ARE marked \"(code gap)\" in the matrix \u2014 suggests the matrix author considers them code gaps but the \"Gaps added by code\" list is incomplete.\n\nI'll make a final pragmatic decision: I'll add a small number of gaps for the a8 comparison (MS, RJF, research) since those clearly matter for the comparison, and I'll NOT add gaps for a5/a6 (EDJ-specific aspects).\n\nLet me finalize with 3 gaps for a8.\n\nActually, let me reconsider once more and simplify: I'll just add gaps where the comparison is affected. 3 gaps for a8 (MS, RJF, research).\n\nFor \"suggested_source\", I'll write \"Not published in the documents searched.\"\n\nOK, now let me write the complete final answer.\n\nLet me carefully write out every claim with correct chunk_ids and part_ids.\n\nI'll write the answer now.\n\nFor part_ids:\n- a1.SCHW items \u2192 \"a1.SCHW\"\n- a1.research items \u2192 \"a1.research\"\n- a2.SCHW items \u2192 \"a2.SCHW\"\n- a3.EDJ items \u2192 \"a3.EDJ\"\n- a3.SCHW items \u2192 \"a3.SCHW\"\n- a4.SCHW items \u2192 \"a4.SCHW\"\n- a4.MER items \u2192 \"a4.MER\" (adjacent)\n- a4.RJF items \u2192 \"a4.RJF\" (adjacent)\n- a5.EDJ items \u2192 \"a5.EDJ\"\n- a6.EDJ items \u2192 \"a6.EDJ\"\n- a6.MER items \u2192 \"a6.MER\" (adjacent)\n- a6.RJF items \u2192 \"a6.RJF\" (adjacent)\n- a7.SCHW items \u2192 \"a7.SCHW\"\n- a7.RJF items \u2192 \"a7.RJF\" (adjacent)\n- a8.EDJ items \u2192 \"a8.EDJ\"\n- a8.SCHW items \u2192 \"a8.SCHW\"\n- a8.MER items \u2192 \"a8.MER\" (adjacent)\n- comparison claim \u2192 \"a8\"\n\nNote: a4.MS, a4.EDJ, a5.MS, etc. are \"not found\" \u2192 no claims.\n\nAlso note: a7.MS and a7.MER are \"not found (code gap)\" \u2192 no claims (code gap covers them).\n\nWait, a7.MS: \"a7.MS Morgan Stanley: not found (code gap)\". And the code gap list has \"[a7] Competitors (Morgan Stanley, Merrill)\". So a7.MS and a7.MER are covered.\n\na8.MS, a8.RJF, a8.research: \"not found (code gap)\" but NOT in code gaps list. So I add gaps.\n\nOK writing now.\n\nLet me make sure about a5.MS etc: a5.MS \"not found (code gap)\", a5.SCHW, a5.MER, a5.RJF, a5.research all \"not found (code gap)\". Not in code gaps list.\n\na6.MS \"not found (code gap)\", a6.SCHW \"not found (code gap)\", a6.research \"not found (code gap)\". Not in code gaps list.\n\nGiven my earlier decision, I'll add gaps for a8 only (MS, RJF, research) and... actually let me reconsider a5 and a6 too. \n\nYou know, to be thorough and safe, I'll add gaps for all not-found cells not in the code gaps list. But I'll group a5 competitors into one gap and a6 competitors into one gap.\n\nFinal gaps:\n1. part_id \"a5\": what \"Morgan Stanley, The Charles Schwab Corporation, Merrill, and Raymond James Financial \u2014 how current offerings align with younger investors' preferences: not found in the documents searched.\" \u2014 hmm but this is weird because a5 is EDJ-specific.\n\nActually, I'll reconsider: is it meaningful to say competitors \"should\" have a5 data? No. a5 is \"How do Edward Jones's current offerings align...\". Only EDJ is relevant. The competitor \"not found\" cells are just the framework checking all firms.\n\nI think the cleanest interpretation: the \"not found (code gap)\" in the matrix for a5.MS etc. means code would flag them, but the \"Gaps added by code\" list I was given just doesn't include a5/a6/a8 (maybe truncated).\n\nI'll add gaps for a8 (clearly relevant to comparison) and skip a5/a6 (EDJ-specific, competitors not applicable).\n\nFinal: 3 gaps for a8 (MS, RJF, research).\n\nAlright, writing the complete answer now. This is going to be long but I'll be complete and accurate.\n\nLet me write the claims.\n\nActually, I realize I should double-check one thing about the \"quote not verbatim\" items for the trade press a5.EDJ item 2. It's trade press and quote not verbatim. So: \"Trade press reports that Edward Jones announced...\" with no quotes.\n\nLet me also verify EDJ-TRADE-2026-08-18-IN-01#2 is a trade source. Yes, \"EDJ trade\". And the standard wording says \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\" So I write \"Trade press reports that...\" and it's a claim (fact cell).\n\nGood.\n\nNow writing.\n\nI need to be careful about one thing: the a5.EDJ item 2 says \"though the firm notes it is still determining its actual deployment strategy.\" This is part of the cell description. Let me include it.\n\nLet me write the full final answer JSON now.\n\nI'll write concise but complete claims. Let me go.\n\nFor dates on the BAC press releases, they're quarterly press releases. I'll date them by period/published.\n\nBAC-PR-2026-10-14-01#11: period 2026-09-30, published 2026-10-14.\nBAC-PR-2026-07-14-01#10: period 2026-06-30, published 2026-07-14.\nBAC-PR-2026-04-15-01#10: period 2026-03-31, published 2026-04-15.\nBAC-PR-2026-01-14-01#12: period 2025-12-31, published 2026-01-14.\n\nFor MER adjacent items, I'll date appropriately.\n\nOK, final write.\n\nLet me write each claim text concisely.\n\nI'll now produce the final answer.\n\nFor a8.SCHW items, since there are 21 and many duplicate a4, I'll write them all but concisely, each with proper date and citation.\n\nLet me write everything.\n\nActually, I want to be careful about length but complete. Let me just write it all.\n\nLet me draft the full claims array in my head and then output.\n\nI'll go aspect by aspect.\n\nGiven the massive size, I'll write it directly in the tool call.\n\nLet me finalize dates for a8.SCHW items:\n1. 3Q26 call (Oct 2026) \u2014 SCHW-TR-2026Q3#11\n2. 4Q25 call (Jan 2026) \u2014 SCHW-TR-2025Q4#11\n3. 4Q25 call (Jan 2026) \u2014 SCHW-TR-2025Q4#11\n4. 3Q26 deck (Oct 2026) \u2014 SCHW-DECK-2026Q3#23\n5. 3Q25 call (Oct 2025) \u2014 SCHW-TR-2025Q3#11\n6. 3Q25 call (Oct 2025) \u2014 SCHW-TR-2025Q3#11\n7. investor day (May 2026) \u2014 SCHW-DECK-2026-investor-day#106\n8. 2Q25 call (Jul 2025) \u2014 SCHW-TR-2025Q2#9\n9. 2Q25 call (Jul 2025) \u2014 SCHW-TR-2025Q2#9\n10. 2Q25 call (Jul 2025) \u2014 SCHW-TR-2025Q2#9\n11. investor day (May 2026) \u2014 SCHW-DECK-2026-investor-day#131\n12. 4Q24 call (Jan 2025) \u2014 SCHW-TR-2024Q4#11\n13. 4Q24 call (Jan 2025) \u2014 SCHW-TR-2024Q4#11\n14. investor day (May 2026) \u2014 SCHW-DECK-2026-investor-day#99\n15. 3Q26 deck (Oct 2026) \u2014 SCHW-DECK-2026Q3#24\n16. 3Q25 call (Oct 2025) \u2014 SCHW-TR-2025Q3#12\n17. 3Q25 call (Oct 2025) \u2014 SCHW-TR-2025Q3#12\n18. 4Q25 call (Jan 2026) \u2014 SCHW-TR-2025Q4#42\n19. 4Q25 call (Jan 2026) \u2014 SCHW-TR-2025Q4#42\n20. investor day (May 2026) \u2014 SCHW-DECK-2026-investor-day#100\n21. 3Q25 call (Oct 2025) \u2014 SCHW-TR-2025Q3#41\n\nOK. Writing final answer now.\n\nI'll produce the tool call with all claims, adjacent, gaps.\n\nLet me be mindful of \"answerable\": the question is answerable with evidence (the evidence half). answerable = true.\n\nLet me write it all out.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer_with_boundary",
+    "claims": [
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger investors learn about finances primarily through social media and family, and that Schwab is meeting them in the channels where they turn for information about investing.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger investors' top online resource for learning about finances is YouTube, and that Schwab is 'the number one financial services firm on YouTube by followers.'",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said young investors want to think about how to pay off their college debt and how to buy a house.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#33"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger traders turn to Schwab because they recognize the potential of trading to help build wealth over time, and for the platforms, tools, education, coaching, expertise, and service Schwab provides.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab stated that 42% of thinkorswim users are Millennial or Gen Z.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#106"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), the CEO said crypto 'will certainly appeal to young investors.'",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#39"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Industry research: A Bank of America Private Bank study (published June 2026) reports that younger investors (Gen Z and Millennials, ages 21 to 45) are reshaping how wealth is built and diversified, embracing alternative investments and emerging technologies.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: The same study reports that 67% of younger investors (ages 21 to 45) believe traditional stocks and bonds can no longer deliver above-average returns.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: The study reports that younger investors allocate nearly half as much to stocks as older generations, while allocating more to alternatives (15%) and crypto (13%) than older investors.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: The study reports that crypto ranks as the #1 wealth-creation opportunity for young wealthy investors: 29% rank it #1, 58% currently own crypto (up from 49% in 2024), and 92% either own or are interested.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: The study reports that 88% of younger investors say they are likely to allocate more to alternatives in the next few years, compared with just 15% of Boomers and Silents.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: FINRA investor research (published December 2025) reports that younger investors (under 35) are much more likely to own individual stocks than mutual funds (82 percent vs. 47 percent).",
+        "chunk_ids": [
+          "FINRAF-INVESTORS-2025#18"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: FINRA investor research (published December 2025) reports that younger investors (ages 18-34) are much more likely than older investors to have an options trading account (68%) and to have traded options (43%).",
+        "chunk_ids": [
+          "FINRAF-INVESTORS-2025#18"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: FINRA investor research (published December 2025) reports that younger respondents are much more likely than older respondents to invest for reasons other than long-term profits; half or more of those under 35 say they invest for social responsibility, entertainment, and social activity reasons.",
+        "chunk_ids": [
+          "FINRAF-INVESTORS-2025#36"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: FINRA investor research (published December 2025) reports that among those who have purchased meme stocks or other viral investments, 66% cite entertainment and 65% social activity as reasons for investing.",
+        "chunk_ids": [
+          "FINRAF-INVESTORS-2025#36"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: A Bank of America Private Bank study (published June 2024) reports that younger investors (ages 21 to 43) believe it is no longer possible to achieve above-average investment returns by investing solely in traditional stocks and bonds, a view held by a much smaller share of investors over age 44.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2024#9"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "Industry research: The same study reports that among younger high-net-worth investors (ages 21 to 43), 47% of portfolios are in stocks and bonds (vs 74% for over-44), 17% is allocated to alternatives, 93% plan to allocate more to alternatives, and 49% own cryptocurrencies.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2024#9"
+        ],
+        "part_id": "a1.research"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger investors (Gen Z) learn about finances primarily through social media and family.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger investors' top online resource is YouTube, and that Schwab is the number one financial services firm on YouTube by followers.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab is meeting younger investors in the channels where they turn for information about investing.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Edward Jones: Its 10-K (period ended December 31, 2025, published March 2026) states that one of its new-client initiatives is 'a new digital platform, focused on attracting and retaining Next Generation investors,' indicating the firm is targeting younger investors through a digital service model rather than its traditional full-service branch model.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states its continued ability to compete may be adversely impacted by 'generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values,' pointing to evolving preferences toward technology and expanded offerings.",
+        "chunk_ids": [
+          "EDJ-10K-2025#56"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab's framework groups 'Younger investors' with self-directed offerings\u2014Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions\u2014and lists full-service advice (Wealth Advisory, Advisor Network, Managed accounts) under a separate 'Advice seekers' segment.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger traders turn to Schwab because it offers the platforms, tools, education, coaching, expertise, and service they need to succeed (a self-directed-with-support model).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said one-third of retail households who created a financial plan within the last two years are under age 40, indicating younger investors are a minority among those using financial planning.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (October 2026), management said approximately 70% of new-to-firm retail households are Gen Z and millennials.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#11",
+          "SCHW-DECK-2026Q3#24"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management reported on the share of new retail client accounts opened in 2025 that are Gen Z investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said nearly 60% of new retail client accounts opened in 2025 are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management reported on the share of new-to-firm retail households that are Gen Zers, defined as investors between the ages of 13 and 28.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management reported on the share of new-to-firm retail households that are under the age of 24.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said more than 30% of its new-to-firm clients are under the age of 30.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said nearly 60% of its new-to-firm clients are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab reported that 61% of new clients are Gen Z and Millennial investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#131"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (January 2025), management said 33% of its new-to-firm retail households are under the age of 30 (2024).",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#11"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (January 2025), management said more than 50% of its new-to-firm retail households are under the age of 40 (2024).",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#11"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management reported on the share of retail households who created a financial plan within the last two years that are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said the average age of its clients continues to get younger.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said the average age of its client has fallen by about 10 years in the last decade and is now in the 40s.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management reported on the share of its new-to-firm clients last year that were Gen Z investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab reported that over 60% of new-to-firm retail households are under age 40.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#100"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab reported that 42% of thinkorswim users are Millennial or Gen Z.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#106"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states it is pursuing a new digital platform initiative, focused on attracting and retaining Next Generation investors, as one of several initiatives to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press (published August 2026) reports that Edward Jones announced it has taken a minority stake in the personal finance app Quicken, with the stated intention of integrating Quicken's personal financial management capabilities more directly into Edward Jones to support its value proposition and advisor conversations with clients, though the firm notes it is still determining its actual deployment strategy.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-08-18-IN-01#2"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states that its initiatives to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs include targeting new clients, including a new digital platform focused on attracting and retaining Next Generation investors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states its strategic ambition includes anticipating clients' needs with the right offering at the right time, now and for generations to come, and attracting and serving new client segments.",
+        "chunk_ids": [
+          "EDJ-10K-2025#8"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states its continued ability to compete and adapt its business model may be adversely impacted by generational wealth transfer and changing client demographics, preferences and values, including changing client expectations for expanded product offerings and technology needs.",
+        "chunk_ids": [
+          "EDJ-10K-2025#56"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states it addresses strategic risks, most notably competition for clients and personnel in light of the evolving financial services industry and generational wealth transfer, and changing client demographics, preferences and values, through its initiatives to deliver enhanced value and impact.",
+        "chunk_ids": [
+          "EDJ-10K-2025#304"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab lists a Schwab Starter Kit as an offering to serve younger investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab lists a Schwab Teen Investor Account as an offering to serve younger investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab lists no/low commissions as an offering for younger investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab provides platforms, tools, education, coaching, expertise, and service that younger traders need to succeed.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab meets younger investors in the channels where they turn for information, noting it is the number one financial services firm on YouTube by followers.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11",
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), Schwab viewed crypto as an offering that will appeal to young investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#39"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab puts on 35 hours a week of live content teaching investors how to trade, invest, and about the power of compounding.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#41"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q26 earnings call (July 2026), management attributed growth in young investors partly to the removal of commissions, which brought more people with less money into the market.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#36"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab lists 24/7 service and education & research as offerings, alongside thinkorswim, specialist teams, and Schwab Network for traders, and Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions for younger investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a7.SCHW"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states its initiatives to target new clients include a new digital platform focused on attracting and retaining Next Generation investors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a8.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states the Partnership seeks to address its strategic risks, including generational wealth transfer and changing client demographics, preferences and values, through its initiatives.",
+        "chunk_ids": [
+          "EDJ-10K-2025#304"
+        ],
+        "part_id": "a8.EDJ"
+      },
+      {
+        "text": "Edward Jones: Its 10-K states the Partnership's ability to compete may be adversely impacted by generational wealth transfer and changing client demographics, preferences and values, including changing expectations for expanded product offerings and technology needs.",
+        "chunk_ids": [
+          "EDJ-10K-2025#56"
+        ],
+        "part_id": "a8.EDJ"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (October 2026), management said approximately 70% of new-to-firm retail households are Gen Z and millennials.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said Gen Z investors comprise nearly a third of new retail client accounts opened in 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said nearly 60% of new retail clients opened in 2025 are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 3Q26 deck (October 2026), Schwab described its generations served as spanning from next-gen to retirees.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#23"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said nearly one-third of new-to-firm retail households are Gen Zers, defined as investors between the ages of 13 and 28.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said younger investors learn about finances primarily through social media and family, and that Schwab meets them in those channels.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab stated that 42% of thinkorswim users are Millennial or Gen Z.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#106"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said one in six new-to-firm retail households are under the age of 24.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said more than 30% of its new-to-firm clients are under the age of 30.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q25 earnings call (July 2025), management said nearly 60% of its new-to-firm clients are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab stated that 61% of new clients are Gen Z and Millennial investors.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#131"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (January 2025), management said 33% of its new-to-firm retail households are under the age of 30.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q24 earnings call (January 2025), management said more than 50% of its new-to-firm retail households are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#11"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab lists initiatives for younger investors including Schwab Starter Kit, Schwab Teen Investor Account, and no/low commissions.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#99"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 3Q26 deck (October 2026), Schwab stated that approximately 70% of new-to-firm retail households are Gen Z and Millennials.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#24"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab is the number one financial services firm on YouTube by followers.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said one-third of retail households who created a financial plan within the last two years are under the age of 40.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said the average age of its client has fallen by about 10 years in the last decade and is now in the 40s.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), management said a third of its new-to-firm clients last year were Gen Z investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 2026 investor-day materials (May 2026), Schwab stated that over 60% of new-to-firm retail households are under age 40.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#100"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q25 earnings call (October 2025), management said Schwab provides 35 hours a week of live content for investors on how to trade and invest, offered as support, service and education for young investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#41"
+        ],
+        "part_id": "a8.SCHW"
+      },
+      {
+        "text": "Comparison: Edward Jones's younger-investor disclosures are forward-looking and initiative-based\u2014a new digital platform targeting Next Generation investors, an acknowledgment of generational wealth transfer as a strategic risk, and a minority stake in Quicken\u2014whereas Schwab discloses detailed quantitative metrics on younger-client acquisition (for example, approximately 70% of new-to-firm retail households being Gen Z and millennials as of 3Q26) and names specific younger-investor offerings (Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions, YouTube, crypto). Merrill's and Raymond James's cited materials concern next-generation financial advisors (recognition lists and a next-gen advisor recruiting strategy) rather than younger investors or clients, and Morgan Stanley's disclosures were not found; the quantitative metrics are therefore not comparable across firms (different definitions and scopes), so the comparison can be made only qualitatively at the level of disclosures and initiatives.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88",
+          "EDJ-10K-2025#56",
+          "EDJ-TRADE-2026-08-18-IN-01#2",
+          "SCHW-TR-2026Q3#11",
+          "SCHW-DECK-2026-investor-day#99",
+          "SCHW-TR-2025Q3#39",
+          "SCHW-TR-2025Q3#12",
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+          "BAC-PR-2026-01-14-01#12",
+          "RJF-DECK-2025-investor-day#42"
+        ],
+        "part_id": "a8"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Merrill: Merrill states that 24 of its advisors were on Financial Planning's 2026 Top 40 Brokers Under 40 list.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11",
+          "BAC-PR-2026-07-14-01#10",
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40."
+      },
+      {
+        "text": "Merrill: Merrill states it was No. 1 on Financial Planning's Top 40 Advisors Under 40 List for 2025.",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#12"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40."
+      },
+      {
+        "text": "Merrill: Merrill's page describes the 2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list as considering advisors born in 1986 or later.",
+        "chunk_ids": [
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#3"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "Passages report figures about Merrill financial advisors under 40 (recognition lists and rankings), not growth in younger investors or clients under 40."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James's recruiting materials reference a 'Next gen advisor strategy' as part of collaborative recruiting across channels.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#42"
+        ],
+        "part_id": "a4.RJF",
+        "differs_because": "The passage refers to a strategy for next-generation financial advisors (recruiting), not growth in younger investors or clients under 40."
+      },
+      {
+        "text": "Merrill: Merrill states that 24 Merrill advisors appeared on Financial Planning's 2026 Top 40 Brokers Under 40 list.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11"
+        ],
+        "part_id": "a6.MER",
+        "differs_because": "The passages concern Merrill's financial advisors under 40 (next-gen/next-generation advisors) and their recognition rankings, not a stated strategy for attracting and serving younger investors or clients under 40."
+      },
+      {
+        "text": "Merrill: Merrill states it is No. 1 on Forbes' Top Next Generation Advisors (2025) and No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#12"
+        ],
+        "part_id": "a6.MER",
+        "differs_because": "The passages concern Merrill's financial advisors under 40 (next-gen/next-generation advisors) and their recognition rankings, not a stated strategy for attracting and serving younger investors or clients under 40."
+      },
+      {
+        "text": "Merrill: Merrill describes the Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list as considering advisors born in 1986 or later with a minimum of 4 years as an advisor.",
+        "chunk_ids": [
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#3"
+        ],
+        "part_id": "a6.MER",
+        "differs_because": "The passages concern Merrill's financial advisors under 40 (next-gen/next-generation advisors) and their recognition rankings, not a stated strategy for attracting and serving younger investors or clients under 40."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James's recruiting materials reference a 'Next gen advisor strategy'.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#42"
+        ],
+        "part_id": "a6.RJF",
+        "differs_because": "It concerns a strategy for recruiting next-generation financial advisors (the firm's own workforce), not a strategy for attracting and serving younger investors or clients under 40."
+      },
+      {
+        "text": "Raymond James Financial: Raymond James mentions a 'Next gen advisor strategy' in the context of its recruiting efforts, alongside collaborative recruiting across channels and a West Coast and Northeast focus.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#42"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "The passage describes a recruiting strategy targeting next-generation financial advisors (the firm's own personnel), not offerings or strategies deployed to serve younger investors (clients)."
+      },
+      {
+        "text": "Merrill: Merrill notes the 2025 Forbes 'Top Next-Gen Wealth Advisors Best-in-State' list, which considers advisors born in 1986 or later with a minimum 4 years as an advisor.",
+        "chunk_ids": [
+          "MER-PR-web-becoming-a-merrill-lynch-advisor#3"
+        ],
+        "part_id": "a8.MER",
+        "differs_because": "The passages concern rankings and recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients."
+      },
+      {
+        "text": "Merrill: Merrill reports 24 Merrill advisors on Financial Planning's 2026 Top 40 Brokers Under 40.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11",
+          "BAC-PR-2026-07-14-01#10",
+          "BAC-PR-2026-04-15-01#10"
+        ],
+        "part_id": "a8.MER",
+        "differs_because": "The passages concern rankings and recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients."
+      },
+      {
+        "text": "Merrill: Merrill reports it ranked No. 1 on Forbes' Top Next Generation Advisors (2025).",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#12"
+        ],
+        "part_id": "a8.MER",
+        "differs_because": "The passages concern rankings and recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients."
+      },
+      {
+        "text": "Merrill: Merrill reports it ranked No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).",
+        "chunk_ids": [
+          "BAC-PR-2026-01-14-01#12"
+        ],
+        "part_id": "a8.MER",
+        "differs_because": "The passages concern rankings and recognitions of young (next-generation) advisors, not disclosures or initiatives for younger investors/clients."
+      }
+    ],
+    "gaps": [
+      {
+        "what": "Morgan Stanley \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched.",
+        "suggested_source": "Not published in the documents searched.",
+        "part_id": "a8"
+      },
+      {
+        "what": "Raymond James Financial \u2014 disclosures and initiatives for younger investors and clients under 40: not found in the documents searched (the cited material concerns next-generation financial advisors).",
+        "suggested_source": "Not published in the documents searched.",
+        "part_id": "a8"
+      },
+      {
+        "what": "Industry research \u2014 disclosures and initiatives for younger investors usable for the firm comparison: not found in the documents searched.",
+        "suggested_source": "Not published in the documents searched.",
+        "part_id": "a8"
+      }
+    ]
+  }
+}

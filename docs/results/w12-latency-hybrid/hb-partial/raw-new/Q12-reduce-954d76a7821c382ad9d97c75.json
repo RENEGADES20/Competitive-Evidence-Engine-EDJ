@@ -1,0 +1,479 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer_with_boundary",
+  "chunk_ids": [
+    "SCHW-TR-2025Q4#9",
+    "SCHW-10K-2025#14",
+    "SCHW-10K-2025#13",
+    "SCHW-TR-2026Q2#18",
+    "SCHW-TR-2025Q4#18",
+    "SCHW-TR-2025Q1#21",
+    "SCHW-DECK-2026Q3#34",
+    "SCHW-TR-2026Q3#14",
+    "SCHW-10Q-2026Q2#8",
+    "SCHW-DECK-2026Q2#29",
+    "SCHW-TR-2026Q2#14",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-TR-2025Q4#10",
+    "SCHW-10K-2025#19",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-10K-2025#119",
+    "SCHW-10K-2025#122",
+    "SCHW-10K-2025#129",
+    "SCHW-10K-2025#136",
+    "SCHW-PR-2026-01-21-01#2",
+    "SCHW-10Q-2025Q3#22",
+    "SCHW-10Q-2025Q2#22",
+    "SCHW-TR-2025Q1#3",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-PR-2026-10-15-01#3",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2026Q3#8",
+    "SCHW-TR-2026Q2#13",
+    "EDJ-10K-2025#88",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q2#66"
+  ],
+  "schema_fallback": [],
+  "enum_values": 121,
+  "at": "2026-11-21T21:48:50.068535-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12192,
+    "output_tokens": 17840,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 10528,
+    "reasoning_tokens": 11905,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.86
+  },
+  "wall_s": 118.53,
+  "tokens_per_s": 150.51,
+  "ttft_s": 2.86,
+  "reasoning_content": "Let me analyze this task. I need to write an answer following the evidence matrix carefully.\n\nLet me go through the aspects and their items.\n\nAspect a1 (fact): How Schwab utilizes scale to cheaply acquire new clients. Items 1-9, all claims with part_id a1.SCHW.\n\nAspect a2 (stand-in figure, adjacent only): cost per client account figures. These go in adjacent, not claims. part_id a2.SCHW. differs_because? The cell is \"stand-in figure (adjacent only)\". Need to note differs because it's cost per client account, not cost per new client.\n\nActually the aspect a2 is \"Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client\" - it's a proxy. The items are cost per client account. So adjacent with differs_because something like \"This is cost per client account (existing accounts), not cost per new client.\"\n\nAspect a3 (fact): scale-driven sources/channels. Items 1-13, claims part_id a3.SCHW.\n\nAspect a4 (series): new client/account growth figures. Items 1-15. Claims part_id a4.SCHW.\n\nAspect a5 (fact): How Edward Jones currently acquires clients. Items 1-4, claims part_id a5.EDJ.\n\nAspect a6 (fact): Edward Jones cost structure. Items 1-4, claims part_id a6.EDJ.\n\nAspect a7 (comparison): needs exactly one comparison claim, part_id a7. Plus adjacent items (a7.SCHW items 1-5 are adjacent only, differs because...), and a7.EDJ is \"not found (code gap)\".\n\nWait, let me re-read a7. The a7.SCHW cell is \"different quantity (adjacent only)\" with items 1-5, differs because \"These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether/how Edward Jones specifically could replicate the strategy.\"\n\na7.EDJ is \"not found (code gap)\".\n\nAnd a7 comparison needs exactly one comparison claim with part_id a7.\n\nThe comparison claim: whether and how Edward Jones could replicate Schwab's strategy. This cannot be made on this evidence because no passage mentions Edward Jones in relation to Schwab's scale strategy, and Schwab's items are adjacent (they describe Schwab's own advantage and general difficulty of replication, not Edward Jones specifically).\n\nNow recency: question has no time window? Let me check. The question is \"How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?\" No time window specified. So recency applies only for aspects marked recency. None of the aspects appear to be marked \"recency\". So no why-lines needed.\n\nActually let me check: aspects a1-a7 - none marked \"recency\". So no why-lines.\n\nOrder: several firms, aspect by aspect in order listed, firms in order listed. Each claim starts \"<Firm>: \".\n\nSince there are multiple firms (SCHW and EDJ), I write aspect by aspect, and within each aspect, firms in order. For SCHW items, start with \"The Charles Schwab Corporation: \" or just \"Schwab\"? The instructions say \"<Firm>: \". The firm listed is \"The Charles Schwab Corporation (SCHW)\" and \"Edward Jones (EDJ)\". I'll use \"The Charles Schwab Corporation: \" and \"Edward Jones: \".\n\nActually, let me think about the format. Each claim starts with \"<Firm>: \". So I'll use \"The Charles Schwab Corporation: \" and \"Edward Jones: \".\n\nNow let me write out all claims.\n\nLet me be careful about the \"quote not verbatim\" items - never put in quotation marks. And items marked \"figure not found in its passage\" - not applicable here apparently.\n\nLet me draft.\n\nAspect a1 (fact), a1.SCHW items 1-9:\n\nItem 1: Schwab states that its sheer scale, combined with efficiency efforts that make it easier for clients to do business with it, keeps its cost-to-serve clients low, which in turn allows it to invest in client capabilities that fuel growth. Quote is verbatim so can quote.\n\nItem 2: verbatim quote.\n\nItem 3: verbatim.\n\nItem 4: quote not verbatim - never put in quotes.\n\nItem 5: value 20% decrease.\n\nItem 6: value 20% improvement.\n\nItem 7: 90% accounts opened digitally.\n\nItem 8: verbatim.\n\nItem 9: quote not verbatim.\n\nEach claim cites the chunk id.\n\nAspect a2 (adjacent only), a2.SCHW items 1-4:\n\nThese go in adjacent. Each with differs_because.\n\nThe aspect is \"Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client\" and it's a proxy (stand-in figure). differs_because: cost per client account is not cost per new client (acquisition cost).\n\nLet me write differs_because: \"This is cost per client account (total expenses excluding interest divided by average active brokerage accounts), not a cost per new client or client acquisition cost.\"\n\nActually the definition is provided. Let me phrase: \"This is a cost per client account figure, not a cost per new client: it divides total expenses by average active brokerage accounts rather than measuring the cost of acquiring each new client.\"\n\nAll four items are cost per client account figures. part_id a2.SCHW.\n\nAspect a3 (fact), a3.SCHW items 1-13: all claims.\n\nItem 1: verbatim quote.\nItem 2: verbatim.\nItem 3: quote not verbatim.\nItem 4: verbatim.\nItem 5: verbatim.\nItem 6: quote not verbatim.\nItem 7: value 20%.\nItem 8: verbatim.\nItem 9: quote not verbatim.\nItem 10: value 1,100 advisory firms.\nItem 11: 1.9 million new retail households.\nItem 12: verbatim.\nItem 13: a third of new-to-firm clients were Gen Z.\n\nAspect a4 (series), a4.SCHW items 1-15: claims. These are mostly definitions and figures.\n\nItem 1: definition core net new client assets.\nItem 2: definition net new client assets.\nItem 3: definition new brokerage accounts.\nItem 4: 2025 figures.\nItem 5: 2024 figures.\nItem 6: Q4 2025.\nItem 7: Q3 2025.\nItem 8: Q2 2025.\nItem 9: Q1 2025.\nItem 10: Q1 2026.\nItem 11: Q2 2026.\nItem 12: Q3 2026.\nItem 13: 1.9 million new retail households.\nItem 14: active brokerage accounts Dec 31 2025.\nItem 15: active brokerage accounts June 30 2026.\n\nAspect a5 (fact), a5.EDJ items 1-4: claims.\n\nItem 1: verbatim.\nItem 2: quote not verbatim.\nItem 3: verbatim? It's a trade-press item? Wait, EDJ-TRADE-2026-09-30-WM-01#1 is a trade source. Item 3 quote \"RPMC will leverage Aboon Workplace, an AI-native platform that lets advisors find and win retirement plans all in one place\". This is trade press. But it's a fact cell, so it's a claim attributed to trade press.\n\nActually item 2 also trade press (EDJ-TRADE...). Item 4 trade press (EDJ-TRADE-2026-08-18-IN-01#2).\n\nFor trade-press items: \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\"\n\nSo for items 2, 3, 4 (trade sources), attribute as trade press reports.\n\nItem 1 is from EDJ-10K-2025#88 (10-K), so it's the firm's own statement.\n\nItem 2: trade press. quote not verbatim. \"trade press reports ...\" - actually item 2 quote not verbatim, so no quotes. Attribute: \"trade press reports that Edward Jones advisors work with local business owners...\"\n\nItem 3: trade press, verbatim quote.\n\nItem 4: trade press, quote not verbatim.\n\nAspect a6 (fact), a6.EDJ items 1-4: claims.\n\nItem 1: advertising expense $43 million 2026Q1. From 10-Q. Firm's own statement.\nItem 2: $39 million 2025Q1.\nItem 3: definition net new households.\nItem 4: quote (initiatives targeting new clients).\n\nAspect a7 (comparison): one comparison claim part_id a7.\n\nThe comparison claim: whether Edward Jones could replicate Schwab's strategy. Not valid on this evidence because no passage assesses Edward Jones specifically.\n\nAdjacent: a7.SCHW items 1-5, with differs_because as given.\n\na7.EDJ: not found code gap. But gaps added by code says \"none\". Hmm, wait - the a7.EDJ cell is marked \"not found (code gap)\". But \"Gaps added by code (do not repeat them): - none\".\n\nHmm, this is a bit confusing. The a7.EDJ cell says \"not found (code gap)\". The instruction says \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\"\n\nBut gaps added by code says \"none\". So there's a discrepancy. The a7.EDJ \"not found\" - I think this means there's no item for EDJ under a7, and I shouldn't write a gap for it (since code gaps says none and I'm told not to repeat code gaps, and there are none listed).\n\nActually wait, let me reconsider. The \"not found (code gap)\" marker on a7.EDJ means the cell has no figure. The \"Gaps added by code\" section lists gaps code adds, and it says \"none\". So I don't add a gap for a7.EDJ.\n\nActually, re-reading: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\" So cells with code gaps get no claim from me, and code adds the gaps. The list of gaps added by code is \"none\", meaning... hmm, but a7.EDJ is \"not found (code gap)\".\n\nI think the \"not found (code gap)\" means the cell itself is a code gap - no claim, and I don't need to add a gap because it's covered. Actually, let me think again about what \"gaps\" are in the output.\n\nThe gaps array in submit_answer has \"what\", \"suggested_source\", \"part_id\". \n\n\"Add a gap of your own only for something those gaps do not name.\"\n\nThe code gaps list is \"none\". So there are no gaps I need to be aware of that are added by code. But a7.EDJ is marked \"not found (code gap)\".\n\nHmm, actually I think the interpretation is: a7.EDJ has no evidence (not found), and this is a code gap (code will handle it). Since \"Gaps added by code\" says none, maybe the a7.EDJ not-found is implicitly a gap.\n\nActually, let me reconsider. The a7.EDJ cell being \"not found (code gap)\" - I think this means I should not write a claim for it. The comparison claim (a7) will explain that Edward Jones has no evidence on this.\n\nLet me focus on the comparison claim for a7. The comparison aspect needs exactly one claim with part_id a7 that answers: whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy.\n\nThe answer: not valid / cannot be determined on this evidence, because no source assesses Edward Jones specifically in relation to Schwab's scale strategy. Schwab's passages only describe its own advantage and general difficulty of replication. Edward Jones's passages describe its own current acquisition approach but nothing about replicating Schwab's scale.\n\nSo the comparison claim should state it cannot be made on this evidence and why.\n\nLet me write the comparison claim:\n\n\"The Charles Schwab Corporation and Edward Jones: Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined from this evidence. The Schwab passages (its 10-K and earnings transcripts) describe Schwab's own scale-based cost advantage and state that this advantage is difficult for competitors generally to replicate, but none mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy; and the Edward Jones passages describe Edward Jones's own current client-acquisition initiatives (High Net Worth, Workplace, digital platform) and its advertising expense, but do not address replication of Schwab's scale-based approach.\"\n\nWait, but I need to cite items. The comparison claim should cite the items it rests on. Let me cite the relevant chunk ids: the Schwab adjacent items (SCHW-TR-2025Q4#11, SCHW-TR-2026Q3#8, SCHW-TR-2026Q2#13, SCHW-10K-2025#14, SCHW-TR-2026Q2#18) and the EDJ items (EDJ-10K-2025#88, EDJ-10Q-2026Q1#60).\n\nNow, for the comparison claim, I need to be careful about the part_id. The instruction says \"write exactly one claim with that aspect's id as part_id\". The aspect id is a7. So part_id = \"a7\".\n\nNow let me also think about the adjacent items for a7.SCHW. These have part_id a7.SCHW (or a7.SCHW). Wait, the part_id enum includes \"a7.SCHW\" and \"a7.EDJ\". So the a7.SCHW adjacent items get part_id \"a7.SCHW\".\n\nThe differs_because for a7.SCHW: \"These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether/how Edward Jones specifically could replicate the strategy.\"\n\nSo each of the 5 adjacent items should carry this differs_because (or similar). Actually, the instruction says the cell's differs_because. The cell is a7.SCHW, marked \"different quantity (adjacent only): differs because '...'\".\n\nSo all 5 items in a7.SCHW go to adjacent with the same differs_because (in my words with same meaning).\n\nLet me now write everything out carefully.\n\nActually, let me reconsider the structure of the output. It's a submit_answer call with claims array, adjacent array, gaps array.\n\nLet me enumerate all claims:\n\na1.SCHW items 1-9 (9 claims)\na3.SCHW items 1-13 (13 claims)\na4.SCHW items 1-15 (15 claims)\na5.EDJ items 1-4 (4 claims)\na6.EDJ items 1-4 (4 claims)\na7 comparison (1 claim)\n\nTotal claims: 9 + 13 + 15 + 4 + 4 + 1 = 46 claims.\n\nAdjacent:\na2.SCHW items 1-4 (4 adjacent)\na7.SCHW items 1-5 (5 adjacent)\n\nTotal adjacent: 9.\n\nGaps: none (code gaps says none, and I shouldn't add gaps that are named).\n\nWait, but let me reconsider a2. The aspect a2 is a series with \"proxy: a stand-in figure, adjacent only\". So all items go to adjacent. Yes.\n\nNow, \"Comparability (code): unverified: not in the metric definitions file; never compared across firms.\" This is a caveat. I don't repeat caveats.\n\nLet me write out each claim with proper attribution and dates.\n\nFor each claim, I need to date from source line. Source lines give period and published dates.\n\nLet me carefully write.\n\nLet me now write the full answer. I'll structure claims in order of aspect, firms in order.\n\nActually, the order: \"Several firms: aspect by aspect in the order listed, firms in the order listed.\"\n\nAspects order: a1, a2, a3, a4, a5, a6, a7.\n\nWithin a1: only SCHW. Within a2: only SCHW (adjacent). Within a3: only SCHW. Within a4: only SCHW. Within a5: only EDJ. Within a6: only EDJ. Within a7: comparison claim, then adjacent.\n\nSo I'll organize claims by aspect.\n\nLet me write.\n\nNow, careful with quotes. Let me check which are verbatim vs not:\n\na1 items:\n1. verbatim (quote given without \"not verbatim\" marker). Actually item 1: quote \"our sheer scale...fuel our growth\" - no marker, so verbatim.\n2. verbatim.\n3. verbatim.\n4. \"quote not verbatim\" - no quotes.\n5. verbatim (quote \"Our scale, combined...\").\n6. verbatim (quote \"This balanced approach...\").\n7. verbatim (quote \"90% Accounts opened digitally\").\n8. verbatim (quote \"We have several goals...\").\n9. \"quote not verbatim\" - no quotes.\n\na3 items:\n1. verbatim.\n2. verbatim.\n3. \"quote not verbatim\" - no quotes.\n4. verbatim.\n5. verbatim.\n6. \"quote not verbatim\" - no quotes.\n7. verbatim (value 20%).\n8. verbatim.\n9. \"quote not verbatim\" - no quotes.\n10. verbatim (1,100 firms).\n11. verbatim (1.9 million).\n12. verbatim.\n13. verbatim (a third... Gen Z).\n\na4 items:\n1. verbatim (definition).\n2. verbatim.\n3. verbatim.\n4. \"quote not verbatim\" - no quotes.\n5. \"quote not verbatim\".\n6. verbatim (\"Record 4Q core net new assets...\").\n7. \"quote not verbatim\".\n8. \"quote not verbatim\".\n9. verbatim (\"entrusting us with $138 billion...\").\n10. \"quote not verbatim\".\n11. \"quote not verbatim\".\n12. \"quote not verbatim\".\n13. verbatim (\"1.9 million new retail households turn to Schwab in 2025.\").\n14. verbatim.\n15. verbatim.\n\na5 items:\n1. verbatim (10-K).\n2. \"quote not verbatim\" (trade press).\n3. verbatim (trade press) - quote \"RPMC will leverage Aboon Workplace...\" no \"not verbatim\" marker? Let me check. Item 3: quote \"RPMC will leverage Aboon Workplace, an AI-native platform that lets advisors find and win retirement plans all in one place\" - no \"not verbatim\" marker, so verbatim. But wait, is it trade press? Source EDJ-TRADE-2026-09-30-WM-01#1 is a trade source. Hmm.\n\nActually, let me check: item 3's cite is EDJ-TRADE-2026-09-30-WM-01#1. \"EDJ trade\" in source name means trade press. So attribute as \"trade press reports\".\n\nItem 2 cite EDJ-TRADE-2026-09-30-WM-01#0, \"quote not verbatim\".\nItem 3 cite EDJ-TRADE-2026-09-30-WM-01#1, verbatim.\nItem 4 cite EDJ-TRADE-2026-08-18-IN-01#2, \"quote not verbatim\".\n\na6 items:\n1. verbatim (\"Advertising 43 39\"). value 43, 2026Q1.\n2. verbatim (\"Advertising 43 39\"). value 39, 2025Q1.\n3. verbatim (definition).\n4. verbatim (initiatives).\n\nNow let me write all claims.\n\nFor trade press attribution, standard wording: \"trade press reports ...\" for claims.\n\nFor item 2 of a5 (trade press, quote not verbatim): \"trade press reports that Edward Jones advisors work with local business owners...\".\n\nActually let me reconsider whether item 2 and item 3 are trade press. The source name \"EDJ-TRADE-2026-09-30-WM-01\" - \"trade\" indicates trade press. The instruction: \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\"\n\nSo yes, attribute.\n\nNow let me write the full text. This is going to be long. Let me be efficient but complete.\n\nLet me write each claim concisely but with required elements: date, attribution, content, citation.\n\nI'll write dates from source lines.\n\nSource dates:\n- SCHW-TR-2025Q4#9: period 2025-12-31, published 2026-01-21 \u2192 \"4Q25 earnings call (January 2026)\".\n- SCHW-10K-2025#14: period 2025-12-31, published 2026-02-25 \u2192 \"the 2025 10-K (filed February 2026)\".\n- SCHW-10K-2025#13: same.\n- SCHW-TR-2026Q2#18: period 2026-06-30, published 2026-07-21 \u2192 \"2Q26 earnings call (July 2026)\".\n- SCHW-TR-2025Q4#18: 4Q25 earnings call (January 2026).\n- SCHW-TR-2025Q1#21: period 2025-03-31, published 2025-04-17 \u2192 \"1Q25 earnings call (April 2025)\".\n- SCHW-DECK-2026Q3#34: period 2026-09-30, published 2026-10-15 \u2192 \"3Q26 deck (October 2026)\".\n- SCHW-TR-2026Q3#14: period 2026-09-30, published 2026-10-15 \u2192 \"3Q26 earnings call (October 2026)\".\n- SCHW-10Q-2026Q2#8: period 2026-06-30, published 2026-08-07 \u2192 \"2Q26 10-Q\".\n- SCHW-DECK-2026Q2#29: period 2026-06-30, published 2026-07-21 \u2192 \"2Q26 deck (July 2026)\".\n- SCHW-TR-2026Q2#14: 2Q26 earnings call.\n- SCHW-TR-2025Q3#13: period 2025-09-30, published 2025-10-16 \u2192 \"3Q25 earnings call (October 2025)\".\n- SCHW-TR-2026Q3#10: 3Q26 earnings call.\n- SCHW-TR-2025Q4#10: 4Q25 earnings call.\n- SCHW-10K-2025#19: 2025 10-K.\n- SCHW-TR-2025Q4#42: 4Q25 earnings call.\n- SCHW-10K-2025#119, #122, #129, #136: 2025 10-K.\n- SCHW-PR-2026-01-21-01#2: press release, published 2026-01-21.\n- SCHW-10Q-2025Q3#22: 3Q25 10-Q.\n- SCHW-10Q-2025Q2#22: 2Q25 10-Q.\n- SCHW-TR-2025Q1#3: 1Q25 earnings call.\n- SCHW-10Q-2026Q1#19: 1Q26 10-Q.\n- SCHW-10Q-2026Q2#22: 2Q26 10-Q.\n- SCHW-PR-2026-10-15-01#3: press release, published 2026-10-15.\n- SCHW-TR-2025Q4#11: 4Q25 earnings call.\n- SCHW-TR-2026Q3#8: 3Q26 earnings call.\n- SCHW-TR-2026Q2#13: 2Q26 earnings call.\n- EDJ-10K-2025#88: EDJ 10-K, period 2025-12-31, published 2026-03-13.\n- EDJ-TRADE-2026-09-30-WM-01#0, #1: trade, published 2026-09-30.\n- EDJ-TRADE-2026-08-18-IN-01#2: trade, published 2026-08-18.\n- EDJ-10Q-2026Q1#60: EDJ 10-Q, period 2026-03-27, published 2026-05-07.\n- EDJ-10Q-2025Q2#66: EDJ 10-Q, period 2025-06-27, published 2025-08-08.\n\nOK. I'll use reasonable date phrases. Since there's no time window, no why-lines needed.\n\nLet me now write the answer. I'll be thorough but concise per claim.\n\nI'll now compose the claims array.\n\nFor each claim, text, chunk_ids (array), part_id.\n\nLet me write.\n\nActually, I realize I need to be careful: the comparison claim a7 should have part_id \"a7\" and cite the items it rests on.\n\nLet me write the comparison claim text carefully.\n\nComparison claim (part_id \"a7\"):\n\"The Charles Schwab Corporation and Edward Jones: Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined from this evidence. Schwab's passages describe only Schwab's own scale-based cost advantage and state that this advantage is difficult for competitors generally to replicate (for example, the 3Q26 earnings call states Schwab's combination of people, technology, scale and value is 'a powerful advantage and one that is very difficult to replicate,' and the 2Q26 earnings call states it is 'a position that is difficult for any competitor to match'), but none of these passages mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy. Edward Jones's own passages describe its current client-acquisition initiatives (High Net Worth, Workplace, and a digital platform) and its advertising expense, but do not address replication of Schwab's scale-based approach.\"\n\nchunk_ids: SCHW-TR-2026Q3#8, SCHW-TR-2026Q2#13, SCHW-TR-2025Q4#11, SCHW-10K-2025#14, SCHW-TR-2026Q2#18, EDJ-10K-2025#88, EDJ-10Q-2026Q1#60.\n\nGood.\n\nNow let me write all claims.\n\nI'll write everything now in the tool call.\n\nLet me carefully construct the full text for each item.\n\nAspect a1 (part_id a1.SCHW), firm \"The Charles Schwab Corporation: \" prefix.\n\n1. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts that make it easier for clients to do business with it, keeps its cost-to-serve clients low, which in turn allows it to invest in client capabilities that fuel growth: 'our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth.'\" cite SCHW-TR-2025Q4#9.\n\n2. \"The Charles Schwab Corporation: The 2025 10-K states that coupled with scale, Schwab's operating efficiency and sharing of infrastructure across businesses creates a cost advantage that enables it to competitively price products and services while profitably serving clients of various sizes: 'Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes.'\" cite SCHW-10K-2025#14.\n\n3. \"The Charles Schwab Corporation: The 2025 10-K states that as one of the largest investment services firms in the U.S., Schwab is able to spread operating costs and amortize new investments over a large base of clients, and harness resources to evolve capabilities to meet client needs: 'As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.'\" cite SCHW-10K-2025#13.\n\n4. \"The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab stated that its ability to execute at scale continues to drive efficiencies that allow it to reinvest in growth, with cost per account continuing to decrease and expense on client assets being the lowest in the industry, so that scale powers its reinvestment capacity.\" cite SCHW-TR-2026Q2#18. (no quotes)\n\n5. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its scale combined with expense discipline has allowed it to decrease its cost per account 20% over the last five years while remaining the industry leader as measured by expense on client assets (EOCA).\" cite SCHW-TR-2025Q4#18.\n\n6. \"The Charles Schwab Corporation: On its 1Q25 earnings call (April 2025), Schwab stated that its balanced approach to expense management has enabled it to drive expense on client assets down into the low double digits and improve cost per account by more than 20% over the last decade.\" cite SCHW-TR-2025Q1#21.\n\n7. \"The Charles Schwab Corporation: In its 3Q26 deck (October 2026), Schwab states that 90% of accounts are opened digitally, part of its effort to simplify and automate work so its people and technology can support more growth and leverage scale to maintain a structural cost advantage.\" cite SCHW-DECK-2026Q3#34.\n\n8. \"The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab stated that its scale and efficiency efforts drive productivity, make Schwab easier to work with, and keep its structural cost advantage, all of which allow it to reinvest in new capabilities and growth: 'We have several goals with our scale and efficiency efforts to drive productivity, make Schwab easier to work with and keep our structural cost advantage, all of which allow us to reinvest in new capabilities and growth.'\" cite SCHW-TR-2026Q3#14.\n\n9. \"The Charles Schwab Corporation: The 2Q26 10-Q states that management works to couple Schwab's scale and resources with ongoing expense discipline to keep costs low and ensure that products and solutions are affordable as well as responsive to client needs.\" cite SCHW-10Q-2026Q2#8. (no quotes)\n\nAspect a2 (adjacent, part_id a2.SCHW):\n\n1. \"$442 GAAP cost per client account for 2020.\" cite SCHW-DECK-2026Q2#29. differs_because: \"This is a cost per client account figure (total expenses excluding interest divided by average active brokerage accounts), not a cost per new client or client acquisition cost.\"\n\nActually let me write the text more fully. Each adjacent item should be a claim-like text with date and figure.\n\n1. \"The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses a GAAP cost per client account of $442 for 2020, defined as total expenses excluding interest divided by average active brokerage accounts.\" differs_because...\n\nActually, adjacent items should carry differs_because. Let me write text + differs_because.\n\nLet me write all four a2 adjacent items:\n\n1. text: \"The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses a GAAP cost per client account of $442 for 2020.\" differs_because: \"This is a cost per client account (total expenses excluding interest divided by average active brokerage accounts), not a cost per new client or a client acquisition cost.\"\n\n2. \"$404 adjusted (non-GAAP) cost per client account for 2020.\" \n\n3. \"$332 GAAP cost per client account for 2025.\"\n\n4. \"$319 adjusted cost per client account for 2025.\"\n\nI'll make the differs_because consistent.\n\ndiffers_because: \"This is a cost per client account figure (GAAP or adjusted total expenses divided by average active brokerage accounts), not the cost of acquiring a new client.\"\n\nLet me write a single consistent differs_because for all four: \"This is a cost per client account figure, not a client acquisition cost: it divides total (or adjusted) expenses by average active brokerage accounts rather than measuring the cost of acquiring each new client.\"\n\nAspect a3 (part_id a3.SCHW), 13 items.\n\nAspect a4 (part_id a4.SCHW), 15 items.\n\nAspect a5 (part_id a5.EDJ), 4 items.\n\nAspect a6 (part_id a6.EDJ), 4 items.\n\nAspect a7 (part_id a7) comparison, 1 item. Adjacent a7.SCHW 5 items (part_id a7.SCHW).\n\nLet me now write everything in full.\n\nI'll be thorough. Let me draft the full JSON now.\n\nFor a3 items:\n\n1. \"The Charles Schwab Corporation: The 2025 10-K states that coupled with scale, its operating efficiency and sharing of infrastructure across businesses creates a cost advantage that enables it to competitively price products and services while profitably serving clients: 'Operating Efficiency - Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes across multiple channels.'\" cite SCHW-10K-2025#14.\n\n2. \"The Charles Schwab Corporation: The 2025 10-K states that as one of the largest investment services firms in the U.S., Schwab is able to spread operating costs and amortize new investments over a large base of clients: 'Scale and Size of the Business - As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.'\" cite SCHW-10K-2025#13.\n\n3. \"The Charles Schwab Corporation: The 2025 10-K states that Schwab's brand and corporate reputation enable it to attract clients and employees and credibly introduce new products.\" cite SCHW-10K-2025#14. (no quotes)\n\n4. \"The Charles Schwab Corporation: The 2025 10-K states that Schwab's service culture earns trust and loyalty and increases the likelihood that clients will refer others, a channel for acquiring new clients: 'Service Culture - Delivering a great client experience earns the trust and loyalty of clients and increases the likelihood that those clients will refer others.'\" cite SCHW-10K-2025#14.\n\n5. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts, keeps its cost-to-serve clients low and allows it to invest in client capabilities that fuel growth: 'our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth and fuel experiences that drive more efficiencies.'\" cite SCHW-TR-2025Q4#9.\n\n6. \"The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab stated that its cost per account continues to decrease and its expense on client assets is the lowest in the industry, and that its scale powers reinvestment capacity and durable earnings power.\" cite SCHW-TR-2026Q2#18. (no quotes)\n\n7. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its scale combined with expense discipline decreased its cost per account 20% over the last five years while remaining the industry leader on expense on client assets (EOCA): 'Our scale, combined with our expense discipline, has allowed us to decrease our cost per account 20% over the last five years while driving our ability to remain the industry leader as measured by expense on client assets, or EOCA.'\" cite SCHW-TR-2025Q4#18.\n\n8. \"The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab cited investments in more branches in local communities, more financial consultants, strategic marketing and advertising (including adapting its marketing to the increased influence of LLMs), the build-out of an RIA support ecosystem, and investments in bringing the breadth of Schwab to its workplace clients as supporting new client growth.\" cite SCHW-TR-2026Q2#14.\n\n9. \"The Charles Schwab Corporation: On its 3Q25 earnings call (October 2025), Schwab stated that it builds a broader support ecosystem for the 16,000 RIA firms it serves and launched Advisor ProDirect to help breakaway advisors on their path to independence, channels for acquiring new advisor clients.\" cite SCHW-TR-2025Q3#13. (no quotes)\n\n10. \"The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab stated that more than 1,100 advisory firms added Schwab as a custodian last year, more than 3x the number of the next closest provider.\" cite SCHW-TR-2026Q3#10.\n\n11. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that 1.9 million new retail households turned to Schwab in 2025, and that it attracts net new assets from new and existing advisors in Advisor Services.\" cite SCHW-TR-2025Q4#10.\n\n12. \"The Charles Schwab Corporation: The 2025 10-K states that Schwab provides referrals to independent registered investment advisors through the Schwab Advisor Network, a channel for acquiring clients seeking advice: 'We also provide referrals to independent registered investment advisors through the Schwab Advisor Network\u00ae.'\" cite SCHW-10K-2025#19.\n\n13. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that a third of its new-to-firm clients last year (2025) were Gen Z investors and that it is going to and attracting them in the places they are.\" cite SCHW-TR-2025Q4#42.\n\nAspect a4 (part_id a4.SCHW), 15 items:\n\n1. \"The Charles Schwab Corporation: The 2025 10-K defines core net new client assets as net new client assets before significant one-time inflows or outflows, such as acquisitions/divestitures or extraordinary flows (generally greater than $25 billion ($10 billion prior to 2025)) relating to a specific client, and activity from off-platform brokered CDs issued by CSB.\" cite SCHW-10K-2025#119.\n\n2. \"The Charles Schwab Corporation: The 2025 10-K defines net new client assets as total inflows of client cash and securities to Schwab less client outflows, with inflows including dividends and interest and outflows including commissions and fees, and capital gains distributions excluded.\" cite SCHW-10K-2025#122.\n\n3. \"The Charles Schwab Corporation: The 2025 10-K defines new brokerage accounts as all brokerage accounts opened during the period, as well as any accounts added via acquisition.\" cite SCHW-10K-2025#122.\n\n4. \"The Charles Schwab Corporation: In full-year 2025 Schwab attracted $519.4 billion in core net new assets, up 42% from the prior year, and clients opened 4.7 million new brokerage accounts, up 13%.\" cite SCHW-10K-2025#129. (no quotes)\n\n5. \"The Charles Schwab Corporation: In full-year 2024 Schwab attracted $366.9 billion in core net new assets, up 20% from 2023, and clients opened 4.2 million new brokerage accounts, up 10%.\" cite SCHW-10K-2025#136. (no quotes)\n\n6. \"The Charles Schwab Corporation: In the fourth quarter of 2025 Schwab attracted a record $163.9 billion in core net new assets, bringing total 2025 asset gathering to $519.4 billion, up 42% versus the prior year.\" cite SCHW-PR-2026-01-21-01#2.\n\n7. \"The Charles Schwab Corporation: In the third quarter of 2025 Schwab attracted $137.5 billion in core net new assets, up 44% from the prior-year period, and clients opened 1.1 million new brokerage accounts, up 18%.\" cite SCHW-10Q-2025Q3#22. (no quotes)\n\n8. \"The Charles Schwab Corporation: In the second quarter of 2025 Schwab attracted $80.3 billion in core net new assets, up 31% year-over-year, and clients opened 1.1 million new brokerage accounts, up 11%.\" cite SCHW-10Q-2025Q2#22. (no quotes)\n\n9. \"The Charles Schwab Corporation: In the first quarter of 2025 Schwab attracted $138 billion in core net new assets, up 44% year-over-year, and clients opened 1.2 million new accounts.\" cite SCHW-TR-2025Q1#3.\n\n10. \"The Charles Schwab Corporation: In the first quarter of 2026 Schwab attracted $140.0 billion in core net new assets, up 2% year-over-year, and clients opened 1.3 million new brokerage accounts, up 10%.\" cite SCHW-10Q-2026Q1#19. (no quotes)\n\n11. \"The Charles Schwab Corporation: In the second quarter of 2026 Schwab attracted $119.8 billion in core net new assets, up 49% year-over-year, and clients opened 1.4 million new brokerage accounts, up 26%.\" cite SCHW-10Q-2026Q2#22. (no quotes)\n\n12. \"The Charles Schwab Corporation: In the third quarter of 2026 Schwab attracted $190.4 billion in core net new assets, up 38% versus 3Q25, and clients opened 1.2 million new brokerage accounts.\" cite SCHW-PR-2026-10-15-01#3. (no quotes)\n\n13. \"The Charles Schwab Corporation: In 2025, 1.9 million new retail households turned to Schwab.\" cite SCHW-TR-2025Q4#10.\n\n14. \"The Charles Schwab Corporation: Active brokerage accounts totaled 38.5 million as of December 31, 2025, up 6% from year-end 2024.\" cite SCHW-10K-2025#129.\n\n15. \"The Charles Schwab Corporation: Active brokerage accounts reached 39.8 million at June 30, 2026, up 6% year-over-year.\" cite SCHW-10Q-2026Q2#22.\n\nAspect a5 (part_id a5.EDJ), 4 items:\n\n1. \"Edward Jones: The 2025 10-K states that Edward Jones targets new clients through several initiatives: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform focused on attracting and retaining Next Generation investors.\" cite EDJ-10K-2025#88.\n\n2. \"Edward Jones: Trade press reports (September 2026) that Edward Jones advisors work with local business owners in their communities every day, and that the firm aims to create opportunities for advisors to expand access to retirement plans to business owners who either don't have a plan today or have a smaller workforce.\" cite EDJ-TRADE-2026-09-30-WM-01#0. (no quotes)\n\n3. \"Edward Jones: Trade press reports (September 2026) that Edward Jones is developing a retirement plan management platform whose prospecting module will let advisors find and win retirement plans, leveraging Aboon's AI-native platform: 'RPMC will leverage Aboon Workplace, an AI-native platform that lets advisors find and win retirement plans all in one place.'\" cite EDJ-TRADE-2026-09-30-WM-01#1.\n\n4. \"Edward Jones: Trade press reports (August 2026) that Edward Jones took a minority stake in the personal finance app Quicken, with the explicit intention that the investment is a step towards integrating Quicken's personal financial management capabilities more directly into Edward Jones as a way to support its value proposition and advisor conversations with clients.\" cite EDJ-TRADE-2026-08-18-IN-01#2. (no quotes)\n\nAspect a6 (part_id a6.EDJ), 4 items:\n\n1. \"Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) reports advertising expense of $43 million in the first quarter of 2026, versus $39 million in the first quarter of 2025.\" cite EDJ-10Q-2026Q1#60.\n\n2. \"Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) reports advertising expense of $39 million in the first quarter of 2025.\" cite EDJ-10Q-2026Q1#60.\n\n3. \"Edward Jones: The 2Q25 10-Q (period ended June 27, 2025) defines net new households as new client households opened less client households closed during the period, rounded to the nearest thousand, and notes the metric is estimated based on available information.\" cite EDJ-10Q-2025Q2#66.\n\n4. \"Edward Jones: The 2025 10-K states that Edward Jones's initiatives include targeting new clients through High Net Worth (attracting and serving high net worth clients), Workplace (connecting local business owners and their employees with financial solutions), and a new digital platform focused on attracting and retaining Next Generation investors.\" cite EDJ-10K-2025#88.\n\nAspect a7 comparison (part_id a7): 1 claim as drafted above.\n\nAdjacent a7.SCHW (part_id a7.SCHW), 5 items:\n\n1. \"The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab's CEO stated that at Schwab's scale, the opportunity to do more for existing clients is at a magnitude that can't be easily replicated.\" cite SCHW-TR-2025Q4#11. differs_because: \"These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy.\"\n\n2. \"The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab's CEO described the combination of people, technology, scale and value as a powerful advantage and one that is very difficult to replicate.\" cite SCHW-TR-2026Q3#8.\n\n3. \"The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab's CEO stated that its platform advantage from product and capability breadth, people, AI, and scale is a position that is difficult for any competitor to match.\" cite SCHW-TR-2026Q2#13.\n\n4. \"The Charles Schwab Corporation: The 2025 10-K states that Schwab's operating efficiency coupled with scale and shared infrastructure creates a cost advantage that enables it to competitively price products and services.\" cite SCHW-10K-2025#14.\n\n5. \"The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab's CEO stated that its ability to execute at scale drives efficiencies that allow reinvestment in growth, with cost per account decreasing and expense on client assets the lowest in the industry.\" cite SCHW-TR-2026Q2#18.\n\nFor the differs_because, I'll use a consistent phrasing for all 5.\n\nNow gaps: none. The code gaps say none. But wait, should I include a gap for a7.EDJ being \"not found\"? The instruction: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\" And \"Gaps added by code (do not repeat them): - none\".\n\nSo a7.EDJ \"not found (code gap)\" - the cell has no claim, and I should NOT write a gap (since gaps added by code lists none, and \"not found\" is handled by... hmm).\n\nActually, I think \"not found (code gap)\" means the cell's content is \"not found\" and this is represented as a code gap. But since \"Gaps added by code\" says \"none\", maybe there's nothing to add.\n\nLet me not add any gaps. The gaps array will be empty.\n\nActually wait, let me reconsider. The \"not found (code gap)\" for a7.EDJ: I think this is telling me that for Edward Jones under a7, there's no evidence, and this is a code gap. Since the code already handles it (the gap is implicitly there), and \"Gaps added by code\" says \"none\" (meaning no additional gaps I need to list), I'll leave gaps empty.\n\nHmm, but actually \"Gaps added by code\" being \"none\" is odd given a7.EDJ is \"not found (code gap)\". Let me just go with: no gaps added by me.\n\nActually, let me re-read more carefully:\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\"\n\nSo code adds gaps that are listed under \"Gaps added by code\". That list is \"none\". So no gaps.\n\nThe \"not found (code gap)\" marker on a7.EDJ - this might just indicate the cell is a code gap and gets no claim. But since the gaps list is \"none\", maybe it's already covered differently.\n\nI'll go with empty gaps. Actually, let me think whether I should add a gap for the a7.EDJ not found. The rule \"Add a gap of your own only for something those gaps do not name.\" The code gaps (none) don't name anything. The a7.EDJ \"not found\" is itself a code gap, so I shouldn't add it.\n\nOK, I'll leave gaps empty (or not include gaps at all - but the schema requires gaps array, so I'll pass empty array).\n\nActually, let me reconsider whether there are gaps I should add. The answerable is true, behavior answer_with_boundary. Code adds the hand-off sentence.\n\nI think gaps should be empty array.\n\nWait, actually, let me reconsider the \"not found (code gap)\" for a7.EDJ. Hmm. It says \"not found (code gap)\". I think this means: the a7.EDJ cell has \"not found\" as its content, which is a code gap. So no claim for it, and code adds a gap for it. But \"Gaps added by code\" says \"none\"... \n\nThis is contradictory but I'll trust \"Gaps added by code: none\" and not add gaps. The comparison claim itself already explains the EDJ side has no evidence.\n\nLet me finalize.\n\nActually, I want to reconsider one more time about whether the comparison claim should mention that Edward Jones has no evidence. Yes, the comparison claim covers it.\n\nLet me also double check: do I need to worry about \"recency\" ordering? No time window, no recency aspects. So no why-lines, no specific ordering requirement beyond aspect order.\n\nNow, let me also verify the part_id values used are in the enum: a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a5.EDJ, a6.EDJ, a7.SCHW, a7.EDJ, a1, a2, ..., a7, \"\".\n\nYes all valid.\n\nNow let me write the final tool call.\n\nFor chunk_ids, I need to list all cited chunk ids for each claim. Each claim cites one chunk id (most items have single cite). Some might need multiple. The comparison claim cites multiple.\n\nLet me make sure I include the chunk_ids correctly.\n\nLet me finalize and write.\n\nOne more consideration: the text should be concise but I've written fairly detailed. That's fine.\n\nLet me write the submit_answer call now.\n\nFor the comparison claim, let me refine wording to be clear it's \"not valid\" / cannot be made.\n\nFinal comparison claim text:\n\"The Charles Schwab Corporation and Edward Jones: Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined from this evidence. Schwab's passages describe only Schwab's own scale-based low-cost advantage and state that this advantage is difficult for competitors generally to replicate (for example, Schwab's CEO on the 3Q26 earnings call calls the combination of people, technology, scale and value 'a powerful advantage and one that is very difficult to replicate,' and on the 2Q26 earnings call calls the platform advantage 'a position that is difficult for any competitor to match'); none of these passages mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy. Edward Jones's own passages describe its current client-acquisition initiatives (High Net Worth, Workplace, and a new digital platform) and its advertising expense, but do not address replication of Schwab's scale-based approach.\"\n\nchunk_ids: [\"SCHW-TR-2026Q3#8\", \"SCHW-TR-2026Q2#13\", \"SCHW-TR-2025Q4#11\", \"SCHW-10K-2025#14\", \"SCHW-TR-2026Q2#18\", \"EDJ-10K-2025#88\", \"EDJ-10Q-2026Q1#60\"].\n\nGood.\n\nNow let me write the complete answer.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer_with_boundary",
+    "claims": [
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts that make it easier for clients to do business with it, keeps its cost-to-serve clients low, which in turn allows it to invest in client capabilities that fuel growth: \"our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#9"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that coupled with scale, Schwab's operating efficiency and sharing of infrastructure across businesses creates a cost advantage that enables it to competitively price products and services while profitably serving clients of various sizes: \"Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that as one of the largest investment services firms in the U.S., Schwab is able to spread operating costs and amortize new investments over a large base of clients, and harness resources to evolve capabilities to meet client needs: \"As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab stated that its ability to execute at scale continues to drive efficiencies that allow it to reinvest in growth, with cost per account continuing to decrease and expense on client assets being the lowest in the industry, so that scale powers its reinvestment capacity.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#18"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its scale combined with expense discipline has allowed it to decrease its cost per account 20% over the last five years while remaining the industry leader as measured by expense on client assets (EOCA).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 1Q25 earnings call (April 2025), Schwab stated that its balanced approach to expense management has enabled it to drive expense on client assets down into the low double digits and improve cost per account by more than 20% over the last decade.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#21"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In its 3Q26 deck (October 2026), Schwab states that 90% of accounts are opened digitally, part of its effort to simplify and automate work so its people and technology can support more growth and leverage scale to maintain a structural cost advantage.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#34"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab stated that its scale and efficiency efforts drive productivity, make Schwab easier to work with, and keep its structural cost advantage, all of which allow it to reinvest in new capabilities and growth: \"We have several goals with our scale and efficiency efforts to drive productivity, make Schwab easier to work with and keep our structural cost advantage, all of which allow us to reinvest in new capabilities and growth.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#14"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 10-Q states that management works to couple Schwab's scale and resources with ongoing expense discipline to keep costs low and ensure that products and solutions are affordable as well as responsive to client needs.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#8"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that coupled with scale, its operating efficiency and sharing of infrastructure across businesses creates a cost advantage that enables it to competitively price products and services while profitably serving clients: \"Operating Efficiency - Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes across multiple channels.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that as one of the largest investment services firms in the U.S., Schwab is able to spread operating costs and amortize new investments over a large base of clients: \"Scale and Size of the Business - As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that Schwab's brand and corporate reputation enable it to attract clients and employees and credibly introduce new products.",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that Schwab's service culture earns trust and loyalty and increases the likelihood that clients will refer others, a channel for acquiring new clients: \"Service Culture - Delivering a great client experience earns the trust and loyalty of clients and increases the likelihood that those clients will refer others.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts, keeps its cost-to-serve clients low and allows it to invest in client capabilities that fuel growth: \"our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth and fuel experiences that drive more efficiencies.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#9"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab stated that its cost per account continues to decrease and its expense on client assets is the lowest in the industry, and that its scale powers reinvestment capacity and durable earnings power.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#18"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that its scale combined with expense discipline decreased its cost per account 20% over the last five years while remaining the industry leader on expense on client assets (EOCA): \"Our scale, combined with our expense discipline, has allowed us to decrease our cost per account 20% over the last five years while driving our ability to remain the industry leader as measured by expense on client assets, or EOCA.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab cited investments in more branches in local communities, more financial consultants, strategic marketing and advertising (including adapting its marketing to the increased influence of LLMs), the build-out of an RIA support ecosystem, and investments in bringing the breadth of Schwab to its workplace clients as supporting new client growth.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#14"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 3Q25 earnings call (October 2025), Schwab stated that it builds a broader support ecosystem for the 16,000 RIA firms it serves and launched Advisor ProDirect to help breakaway advisors on their path to independence, channels for acquiring new advisor clients.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab stated that more than 1,100 advisory firms added Schwab as a custodian last year, more than 3x the number of the next closest provider.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that 1.9 million new retail households turned to Schwab in 2025, and that it attracts net new assets from new and existing advisors in Advisor Services.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#10"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that Schwab provides referrals to independent registered investment advisors through the Schwab Advisor Network, a channel for acquiring clients seeking advice: \"We also provide referrals to independent registered investment advisors through the Schwab Advisor Network\u00ae.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#19"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab stated that a third of its new-to-firm clients last year (2025) were Gen Z investors and that it is going to and attracting them in the places they are.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K defines core net new client assets as net new client assets before significant one-time inflows or outflows, such as acquisitions/divestitures or extraordinary flows (generally greater than $25 billion ($10 billion prior to 2025)) relating to a specific client, and activity from off-platform brokered CDs issued by CSB.",
+        "chunk_ids": [
+          "SCHW-10K-2025#119"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K defines net new client assets as total inflows of client cash and securities to Schwab less client outflows, with inflows including dividends and interest and outflows including commissions and fees, and capital gains distributions excluded.",
+        "chunk_ids": [
+          "SCHW-10K-2025#122"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K defines new brokerage accounts as all brokerage accounts opened during the period, as well as any accounts added via acquisition.",
+        "chunk_ids": [
+          "SCHW-10K-2025#122"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In full-year 2025 Schwab attracted $519.4 billion in core net new assets, up 42% from the prior year, and clients opened 4.7 million new brokerage accounts, up 13%.",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In full-year 2024 Schwab attracted $366.9 billion in core net new assets, up 20% from 2023, and clients opened 4.2 million new brokerage accounts, up 10%.",
+        "chunk_ids": [
+          "SCHW-10K-2025#136"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the fourth quarter of 2025 Schwab attracted a record $163.9 billion in core net new assets, bringing total 2025 asset gathering to $519.4 billion, up 42% versus the prior year.",
+        "chunk_ids": [
+          "SCHW-PR-2026-01-21-01#2"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the third quarter of 2025 Schwab attracted $137.5 billion in core net new assets, up 44% from the prior-year period, and clients opened 1.1 million new brokerage accounts, up 18%.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q3#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the second quarter of 2025 Schwab attracted $80.3 billion in core net new assets, up 31% year-over-year, and clients opened 1.1 million new brokerage accounts, up 11%.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the first quarter of 2025 Schwab attracted $138 billion in core net new assets, up 44% year-over-year, and clients opened 1.2 million new accounts.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the first quarter of 2026 Schwab attracted $140.0 billion in core net new assets, up 2% year-over-year, and clients opened 1.3 million new brokerage accounts, up 10%.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#19"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the second quarter of 2026 Schwab attracted $119.8 billion in core net new assets, up 49% year-over-year, and clients opened 1.4 million new brokerage accounts, up 26%.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the third quarter of 2026 Schwab attracted $190.4 billion in core net new assets, up 38% versus 3Q25, and clients opened 1.2 million new brokerage accounts.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In 2025, 1.9 million new retail households turned to Schwab.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: Active brokerage accounts totaled 38.5 million as of December 31, 2025, up 6% from year-end 2024.",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: Active brokerage accounts reached 39.8 million at June 30, 2026, up 6% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K states that Edward Jones targets new clients through several initiatives: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform focused on attracting and retaining Next Generation investors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press reports (September 2026) that Edward Jones advisors work with local business owners in their communities every day, and that the firm aims to create opportunities for advisors to expand access to retirement plans to business owners who either don't have a plan today or have a smaller workforce.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-09-30-WM-01#0"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press reports (September 2026) that Edward Jones is developing a retirement plan management platform whose prospecting module will let advisors find and win retirement plans, leveraging Aboon's AI-native platform: \"RPMC will leverage Aboon Workplace, an AI-native platform that lets advisors find and win retirement plans all in one place.\"",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-09-30-WM-01#1"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press reports (August 2026) that Edward Jones took a minority stake in the personal finance app Quicken, with the explicit intention that the investment is a step towards integrating Quicken's personal financial management capabilities more directly into Edward Jones as a way to support its value proposition and advisor conversations with clients.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-08-18-IN-01#2"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) reports advertising expense of $43 million in the first quarter of 2026, versus $39 million in the first quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#60"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 1Q26 10-Q (period ended March 27, 2026) reports advertising expense of $39 million in the first quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#60"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2Q25 10-Q (period ended June 27, 2025) defines net new households as new client households opened less client households closed during the period, rounded to the nearest thousand, and notes the metric is estimated based on available information.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#66"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K states that Edward Jones's initiatives include targeting new clients through High Net Worth (attracting and serving high net worth clients), Workplace (connecting local business owners and their employees with financial solutions), and a new digital platform focused on attracting and retaining Next Generation investors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "The Charles Schwab Corporation and Edward Jones: Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined from this evidence. Schwab's passages describe only Schwab's own scale-based low-cost advantage and state that this advantage is difficult for competitors generally to replicate (for example, Schwab's CEO on the 3Q26 earnings call describes the combination of people, technology, scale and value as \"a powerful advantage and one that is very difficult to replicate,\" and on the 2Q26 earnings call describes the platform advantage as \"a position that is difficult for any competitor to match\"); none of these passages mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy. Edward Jones's own passages describe its current client-acquisition initiatives (High Net Worth, Workplace, and a new digital platform) and its advertising expense, but do not address replication of Schwab's scale-based approach.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#8",
+          "SCHW-TR-2026Q2#13",
+          "SCHW-TR-2025Q4#11",
+          "SCHW-10K-2025#14",
+          "SCHW-TR-2026Q2#18",
+          "EDJ-10K-2025#88",
+          "EDJ-10Q-2026Q1#60"
+        ],
+        "part_id": "a7"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses a GAAP cost per client account of $442 for 2020.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "This is a cost per client account figure, not a client acquisition cost: it divides total expenses (excluding interest) by average active brokerage accounts rather than measuring the cost of acquiring each new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses an adjusted (non-GAAP) cost per client account of $404 for 2020.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "This is a cost per client account figure, not a client acquisition cost: it divides adjusted total expenses by average active brokerage accounts rather than measuring the cost of acquiring each new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses a GAAP cost per client account of $332 for 2025.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "This is a cost per client account figure, not a client acquisition cost: it divides total expenses (excluding interest) by average active brokerage accounts rather than measuring the cost of acquiring each new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 deck (July 2026) discloses an adjusted (non-GAAP) cost per client account of $319 for 2025.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "This is a cost per client account figure, not a client acquisition cost: it divides adjusted total expenses by average active brokerage accounts rather than measuring the cost of acquiring each new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 4Q25 earnings call (January 2026), Schwab's CEO stated that at Schwab's scale, the opportunity to do more for existing clients is at a magnitude that can't be easily replicated.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a7.SCHW",
+        "differs_because": "These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 3Q26 earnings call (October 2026), Schwab's CEO described the combination of people, technology, scale and value as a powerful advantage and one that is very difficult to replicate.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#8"
+        ],
+        "part_id": "a7.SCHW",
+        "differs_because": "These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab's CEO stated that its platform advantage from product and capability breadth, people, AI, and scale is a position that is difficult for any competitor to match.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#13"
+        ],
+        "part_id": "a7.SCHW",
+        "differs_because": "These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy."
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K states that Schwab's operating efficiency coupled with scale and shared infrastructure creates a cost advantage that enables it to competitively price products and services.",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a7.SCHW",
+        "differs_because": "These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy."
+      },
+      {
+        "text": "The Charles Schwab Corporation: On its 2Q26 earnings call (July 2026), Schwab's CEO stated that its ability to execute at scale drives efficiencies that allow reinvestment in growth, with cost per account decreasing and expense on client assets the lowest in the industry.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#18"
+        ],
+        "part_id": "a7.SCHW",
+        "differs_because": "These passages describe Schwab's own scale-based low-cost advantage and its view that this advantage is difficult for competitors generally to replicate; no passage mentions Edward Jones or assesses whether or how Edward Jones specifically could replicate the strategy."
+      }
+    ],
+    "gaps": []
+  }
+}

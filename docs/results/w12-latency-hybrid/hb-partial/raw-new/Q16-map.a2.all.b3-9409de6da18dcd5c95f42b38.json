@@ -1,0 +1,73 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a2.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#3",
+    "RJF-10K-2025#228",
+    "MS-10K-2025#51",
+    "BAC-10K-2025#288",
+    "BAC-DECK-2025-investor-day#27",
+    "SCHW-DECK-2026-investor-day#59",
+    "MS-10K-2025#170",
+    "RJF-10K-2025#90",
+    "BAC-10K-2025#18",
+    "BAC-DECK-2025-investor-day#20",
+    "RJF-10K-2025#25",
+    "BAC-10K-2025#149",
+    "SCHW-DECK-2026-investor-day#306",
+    "MS-TRADE-2026-10-26-IN-01#5",
+    "SCHW-TR-2026Q1#49",
+    "MS-TRADE-2026-10-01-IN-01#0",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "MS-TRADE-2026-08-22-RB-01#12",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "MS-TRADE-2026-08-25-RB-01#3",
+    "SCHW-TRADE-2026-10-28-WM-01#0"
+  ],
+  "at": "2026-11-21T22:05:53.136383-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6957,
+    "output_tokens": 671,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 5421,
+    "reasoning_tokens": 522,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.41
+  },
+  "wall_s": 8.17,
+  "tokens_per_s": 82.13,
+  "ttft_s": 2.41,
+  "reasoning_content": "The question asks: \"How the role of the human advisor changes in delivering advice to clients\" for firm \"All sources (no firm named)\". The passages are about wealth management firms but none actually address how the role of the human advisor changes in delivering advice to clients.\n\nLet me look through the passages. None of them discuss the changing role of the human advisor in delivering advice. They discuss recruiting, retention, advisor counts, compensation, fiduciary model, RIA transitions, custody, etc.\n\nThe sub-question is about \"How the role of the human advisor changes in delivering advice to clients.\" Let me check if any passage addresses this.\n\n- SCHW-TR-2026Q1#49: \"the advisers continue to win in the marketplace because the fiduciary model works, because there's a bull market for advice and convenience and the independent advisers have a great model.\" This is somewhat about the fiduciary model working but not really about how the role changes.\n\nActually none of these passages discuss the changing role of the human advisor in delivering advice. They discuss recruiting trends, advisor headcounts, etc.\n\nSo the label should be not_found for the most part. But wait, let me consider whether any of these are \"different_quantity\" \u2014 a different, related quantity. The sub-question is about how the role of the human advisor changes. This is a qualitative question, not a quantity. So there's no \"quantity\" to be a fact or different_quantity.\n\nActually the sub-question is a qualitative one: \"How the role of the human advisor changes in delivering advice to clients.\" So I'm looking for passages that discuss the changing role of the advisor.\n\nLooking at passages, none directly address this. Some are about recruiting advisors (which is about the advisor force, not the role in delivering advice).\n\nSCHW-TR-2026Q1#49 mentions \"fiduciary model works\" and \"bull market for advice\" - but this doesn't describe how the role changes.\n\nI think the answer is not_found.\n\nActually, let me reconsider. The instructions say \"not_found: the passages say nothing about it.\" That seems right here.\n\nThere's no figure involved, so I should return an empty items array.\n\nLet me write the cell for a2.all with label not_found.\n\nreason: None of the passages discuss how the role of the human advisor changes in delivering advice to clients; they cover advisor recruiting, retention, headcounts, compensation, and the fiduciary/independent RIA model, but not a change in the advisor's role.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.all",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages describe how the role of the human advisor changes in delivering advice to clients; they discuss advisor recruiting, retention, headcounts, compensation, succession, and the fiduciary/independent RIA custody model, but not a change in the advisor's role in delivering advice.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
