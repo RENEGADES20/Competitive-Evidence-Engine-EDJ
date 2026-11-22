@@ -41,7 +41,15 @@ class Settings:
     # call. On by default since #247; MAP=off keeps the legacy single answer call (prompt v4.1) for
     # comparison only (TL D3). The eval maps unless --legacy.
     map_on: bool = True
-    map_concurrency: int = 6     # parallel extraction calls (five firms + research)
+    map_concurrency: int = 24    # parallel extraction calls (#272: one per firm x aspect cell)
+    # #272: DeepSeek effort per stage (off | low | high | max; off = thinking disabled), the map's model
+    # (empty = deepseek_model), streaming (on | off | nothink) and the map's input ceiling per call.
+    deepseek_effort_plan: str = "off"
+    deepseek_effort_map: str = "low"
+    deepseek_effort_reduce: str = "low"
+    deepseek_model_map: str = ""
+    deepseek_stream: str = "on"
+    map_call_tokens: int = 60000
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -68,7 +76,27 @@ def deepseek_thinking() -> bool:
 # fixed rule (plans/0245-decompose.md; ADR-019 amendment): only 40000 was eligible (12000 and 20000
 # lose recall@final against corpus-2026-11-19); at 40000 the 30 baseline lists keep their recall.
 SUBQUESTION_TOKENS_DEFAULT = 40000
-MAP_CONCURRENCY_DEFAULT = 6   # #246: five firms + research in parallel
+MAP_CONCURRENCY_DEFAULT = 24  # #272: one call per firm x aspect cell (was 6: five firms + research, #246)
+# #272: the input ceiling of one map call; a cell over it is split into batches. 60000 = SUBQUESTION_TOKENS (40000)
+# plus room for the prompt, schema and pool passages listed for a sibling, so a normal cell is one call
+# (at 40000 the mock run with the #250 plans batched Q17's whole-corpus cells, 2026-11-21).
+MAP_CALL_TOKENS_DEFAULT = 60000
+# #272: DeepSeek effort per stage, from test A by the plan's fixed rule (plans/0272-latency.md step 10): C1 = plan
+# off, map low, reduce low, the only config with 0 cut and 0 invalid outputs on Q5, Q10, Q19, Q21, Q24, Q26 (C2, map
+# off: 1 invalid; C3, map on deepseek-flash: 3 invalid); critical path p50 209 s vs 415 s in #250.
+EFFORTS = ("off", "low", "high", "max")
+EFFORT_DEFAULTS = {"plan": "off", "map": "low", "reduce": "low"}
+STREAM_MODES = ("on", "off", "nothink")
+
+
+def _choice(name: str, allowed: tuple, default: str) -> str:
+    """A setting from a fixed list; empty -> the default; anything else stops with a clear error."""
+    raw = os.getenv(name, "").strip().strip('"').strip().lower()
+    if not raw:
+        return default
+    if raw not in allowed:
+        raise ValueError(f"{name}={raw!r} is not understood; use one of {', '.join(allowed)}")
+    return raw
 
 
 def _positive_int(name: str, default: int | None) -> int | None:
@@ -101,6 +129,12 @@ def settings() -> Settings:
         deepseek_thinking=deepseek_thinking(),
         map_on=os.getenv("MAP", "on").strip().strip('"').strip().lower() not in OFF_WORDS,
         map_concurrency=_positive_int("MAP_CONCURRENCY", MAP_CONCURRENCY_DEFAULT),
+        deepseek_effort_plan=_choice("DEEPSEEK_EFFORT_PLAN", EFFORTS, EFFORT_DEFAULTS["plan"]),
+        deepseek_effort_map=_choice("DEEPSEEK_EFFORT_MAP", EFFORTS, EFFORT_DEFAULTS["map"]),
+        deepseek_effort_reduce=_choice("DEEPSEEK_EFFORT_REDUCE", EFFORTS, EFFORT_DEFAULTS["reduce"]),
+        deepseek_model_map=os.getenv("DEEPSEEK_MODEL_MAP", "").strip(),
+        deepseek_stream=_choice("DEEPSEEK_STREAM", STREAM_MODES, "on"),
+        map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),
     )
 
 

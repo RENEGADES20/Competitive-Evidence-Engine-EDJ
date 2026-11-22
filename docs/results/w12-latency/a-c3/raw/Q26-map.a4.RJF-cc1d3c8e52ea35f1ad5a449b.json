@@ -1,0 +1,107 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#4",
+    "RJF-TRADE-2026-11-05-WM-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-10-23-WM-01#0"
+  ],
+  "at": "2026-11-21T14:11:52.079906-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10847,
+    "output_tokens": 2330,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 9439,
+    "reasoning_tokens": 1967,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.19
+  },
+  "wall_s": 11.81,
+  "tokens_per_s": 197.29,
+  "ttft_s": 1.19,
+  "reasoning_content": "We need answer sub-question a4.RJF net new assets and client asset flows. Need identify passages stating net new assets. Chunk RJF-TRADE-2026-10-29-WM-01#1: \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" This is fact. Need periods: fiscal year probably FY2026 (fiscal year ended? fiscal fourth quarter call, published 2026-10-29). The passage says fiscal year and quarter. Period F2026? We need know fiscal year end. Raymond James fiscal year ends September 30. Published Oct 29 2026 reporting fiscal fourth quarter, so fiscal year 2026. We can set F2026 for fiscal year, and quarter likely 2026Q3? Wait fiscal Q4 calendar quarter Jul-Sep 2026. The schema period \"YYYYQn\" calendar quarter. Fiscal fourth quarter likely calendar Q3 2026. But passage says \"quarter\" and fiscal year context. Could use F2026? For quarter maybe \"2026Q3\" if fiscal Q4 corresponds calendar Q3. But not explicitly stated. Safer maybe period \"\"? Hmm. Instructions: period YYYY-MM-DD for point, YYYYQn for calendar quarter, FYYYYY for fiscal year, YYYY for calendar year; \"\" when not stated. The passage says \"for the fiscal year\" and \"for the quarter\", with annualized growth from beginning of quarter. Since published Oct 29 after fiscal year end Sep 30, fiscal year 2026 (F2026) and quarter likely fiscal fourth quarter ending Sep 30, 2026. But \"calendar quarter\" format? Could use 2026Q3 if Aug? Let's think. Fiscal Q4 FY2026 = calendar Q3 2026 (Jul-Sep). But passage doesn't say calendar. Could set \"F2026Q4\"? Not allowed. Maybe period \"F2026\" for fiscal year and for quarter \"\"? But asks period. I can use \"2026Q3\" for quarter (calendar quarter Jul-Sep). That's reasonable.\n\nAlso client asset flows? Passage includes client assets under administration $1.87 trillion record, up 1% sequentially and 12% YoY. But sub-question asks \"net new assets and client asset flows.\" It doesn't explicitly ask AUA, but \"client asset flows\" could be net new assets. We can include NNA facts. Also perhaps \"record quarterly client assets\" in chunk #1, but no flow. We should focus on net new assets. The passage has:\n- Domestic PCG net new assets rose 88% for fiscal year to record >$98 billion.\n- Net new assets for quarter nearly $23 billion, annualized growth from beginning of quarter 5.3%.\nThese are two items maybe same passage. Need one per figure/statement, series one per period. So item 0: fiscal year domestic PCG NNA >$98B, up 88%. Item 1: quarterly NNA nearly $23B, annualized growth 5.3%. Both fact.\n\nNeed include quote exact. For fiscal year: \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\" For quarter: \"Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nScope: Domestic PCG for first. For second, the passage says \"Net new assets for the quarter\" following domestic PCG context\u2014probably Domestic PCG. Scope \"Domestic Private Client Group\". Use \"Domestic PCG\". Period F2026 and 2026Q3.\n\nDefinition: none. Value: \"more than $98 billion\" as printed? Value should be figure as printed. Could use \"more than $98 billion\", unit \"USD\", period F2026. For quarter \"nearly $23 billion\". The value field wants figure as printed (\"20,425\", \"$1.2 billion\"), maybe \"more than $98 billion\" okay? We'll use \"$98 billion\" or \"more than $98 billion\". Better as printed \"more than $98 billion\". Unit \"USD\".\n\nAny other net new assets? No.\n\nNeed not use client assets because not asked? The question \"net new assets and client asset flows\" maybe includes \"client assets\" but \"flows\" is NNA. The passage says record client assets under administration $1.87T, but that's stock not flow. Could be a different quantity? The sub-question asks net new assets and client asset flows. If no explicit client asset flows beyond NNA, the NNA is fact. Maybe include AUA as different_quantity? It is not asked; it's a stock of client assets, related but different. But instructions: only the quantity a sub-question names is fact; a figure that only resembles it is never a fact. If we include AUA, label different_quantity and say it's total client assets under administration, not net new assets/flows. But do we need to include it? Items only for figures relevant. The sub-question asks \"net new assets and client asset flows\" \u2014 AUA is not a flow. We could include as different_quantity for context. But the cell's label overall? The cell label is \"fact\" if a passage states what the sub-question asks. Since it does state net new assets, label fact. Items can include different_quantity? The instructions say \"Items (fact and different_quantity only), one per figure or statement\". So within a fact cell, we can include different_quantity items? It says items one per figure; label each cell, but items don't have label field. Hmm items don't include label. The cell has an overall label. It says \"Label each cell\" fact/different_quantity/not_disclosed/not_found. Items are just items. If cell label fact, items should be facts? The instruction \"Items (fact and different_quantity only)\" maybe means items can be of those types but no per-item label; differs_because is cell-level. So probably include only facts for the asked quantity. Don't include AUA.\n\nBut \"client asset flows\" might be net new assets; okay.\n\nNeed check for \"record quarterly client assets and strong recruiting gains\" in chunk 11-12, no figure. Not needed.\n\nNeed include \"record quarterly client assets\" maybe not.\n\nWe need use only passages. The cell should have subquestion_id \"a4.RJF\", label \"fact\", items two, differs_because \"\", reason, derivation empty.\n\nLet's ensure no \"client asset flows\" specific. The passage says \"net new assets\" exactly. Good.\n\nPotential issue: period for quarterly NNA. Since fiscal Q4 2026 ended Sep 30 2026. The passage published Oct 29, 2026 says \"for the quarter\" during fiscal fourth quarter earnings call. In many extraction tasks, period for fiscal quarter might be \"F2026Q4\" but schema only FYYYYY. Could use \"2026Q3\" as calendar quarter. Is that safe? The instructions say \"YYYYQn\" for a calendar quarter; \"FYYYYY\" for a fiscal year. It does not provide fiscal quarter. Maybe use \"F2026\" for the quarter? No. Could set \"2026Q3\" because quarter ended Sep 30, 2026. But if fiscal Q4 = calendar Q3, yes. However the passage doesn't explicitly say quarter end date. But it's fiscal fourth quarter call; fiscal year 2026 ended Sep 30. I'll use 2026Q3. For fiscal year F2026.\n\nWhat about \"up 88% for fiscal year\" and \"record >$98B\". The 88% is a growth rate, part of statement. Fine.\n\nNeed exact quote at most ~300 chars. We can quote both sentences maybe within 300? \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" That's ~260. But items separate; quote corresponding sentence.\n\nNeed chunk_ids [\"RJF-TRADE-2026-10-29-WM-01#1\"].\n\nValue for item 0: \"more than $98 billion\" unit \"USD\" period \"F2026\" scope \"Domestic PCG\". Text: \"Raymond James reported domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\" definition \"\".\n\nItem 1: text \"Raymond James reported quarterly net new assets of nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" value \"nearly $23 billion\" unit USD period \"2026Q3\" scope \"Domestic PCG\". Quote exact.\n\nReason: \"A passage reports the firm's domestic PCG net new assets for the fiscal year and quarter.\" Good.\n\nDerivation empty.\n\nLet's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James reported that domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "value": "more than $98 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic PCG",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported quarterly net new assets of nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "nearly $23 billion",
+            "unit": "USD",
+            "period": "2026Q3",
+            "scope": "Domestic PCG",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "A passage states the firm's domestic PCG net new assets for the fiscal year and the quarter.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

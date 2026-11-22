@@ -1,0 +1,90 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a5.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-10K-2025#244",
+    "BAC-DECK-2026Q3#30",
+    "BAC-10Q-2026Q2#85",
+    "BAC-DECK-2026Q2#19",
+    "BAC-10Q-2026Q1#70",
+    "BAC-DECK-2026Q1#26",
+    "BAC-10Q-2025Q3#90",
+    "BAC-10Q-2025Q2#90",
+    "BAC-TR-2026Q2#63",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2026Q1#26",
+    "BAC-PR-2026-01-14-01#12",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-TR-2025Q2#34",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2025Q4#106",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-TR-2025Q1#28",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q2#21",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2025Q2#35",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-PR-2026-09-15-01#3",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1"
+  ],
+  "at": "2026-11-21T17:55:16.050066-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12750,
+    "output_tokens": 764,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 11214,
+    "reasoning_tokens": 623,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.97
+  },
+  "wall_s": 6.98,
+  "tokens_per_s": 109.46,
+  "ttft_s": 1.97,
+  "reasoning_content": "The sub-question is about whether Edward Jones's advisor attrition rate can be compared to Merrill's. This is a comparison question. I need to look at the passages provided for Merrill to see if they state anything about advisor attrition rate for Merrill and whether it can be compared to Edward Jones.\n\nLooking at the passages, I see:\n- BAC-TR-2026Q2#63: \"adviser attrition is now at near historic lows\" - this is a fact about Merrill's advisor attrition being at historic lows, but no specific figure.\n- No mention of Edward Jones anywhere.\n\nThe sub-question asks whether Edward Jones's advisor attrition rate can be compared to Merrill's. The passages are only about Merrill. There's no mention of Edward Jones, no mention of a comparison.\n\nActually, the Merrill passages mention advisor attrition qualitatively (\"adviser attrition is now at near historic lows\") but nothing about Edward Jones, and no comparison.\n\nSo for the comparison sub-question, I need to determine if there's information about whether the attrition rate can be compared to Edward Jones's.\n\nThe passages say nothing about Edward Jones or about comparability. There's a qualitative statement about Merrill's advisor attrition being near historic lows, but no rate figure and no mention of Edward Jones.\n\nFor the comparison sub-question, I think the answer is not_found - the passages say nothing about comparing to Edward Jones.\n\nActually, let me think about what \"fact\" would mean here. The sub-question is \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's.\" This is essentially asking for evidence about comparability between the two firms' attrition rates.\n\nThe Merrill passages mention advisor attrition qualitatively but nothing about Edward Jones. So there's no basis to compare.\n\nThere's a qualitative statement \"adviser attrition is now at near historic lows\" which is a fact about Merrill's attrition but doesn't provide a rate or any comparison basis.\n\nFor the comparison question, I think not_found is appropriate - nothing about Edward Jones or comparability.\n\nWait, but should I also note the qualitative statement about Merrill's attrition? The sub-question is specifically about comparison to Edward Jones. The Merrill qualitative statement about attrition is relevant to Merrill's own attrition, but the sub-question here is about comparison, not about Merrill's own attrition rate.\n\nGiven the instructions, I think the answer is not_found because no passage mentions Edward Jones or comparability.\n\nLet me return a single cell for a5.MER with label not_found.\n\nActually, wait - let me reconsider. The qualitative statement \"adviser attrition is now at near historic lows\" from BAC-TR-2026Q2#63 is about Merrill's advisor attrition. But it's not a rate, and it's not a comparison to Edward Jones.\n\nThe sub-question asks whether Edward Jones's advisor attrition rate can be compared to Merrill's. This requires information about both firms or about comparability. The passages only cover Merrill and don't mention Edward Jones or comparability.\n\nSo not_found is the correct label.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the Merrill passages mention Edward Jones, its advisor attrition rate, or any basis for comparing the two firms' attrition rates; Merrill only makes a qualitative statement that its own adviser attrition is 'near historic lows' without a rate figure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

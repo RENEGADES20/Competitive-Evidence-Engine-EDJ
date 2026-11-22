@@ -421,8 +421,24 @@ def feature_ask_progress(page, base, rec, ctx):
     wait_idle(page)
     page.get_by_role("textbox", name="Question").fill(ANSWERABLE_Q)
     page.get_by_role("button", name="Ask").click()
+    # #272 progressive page: the plan first (the mock map waits MOCK_DELAY_S, so the evidence is not there
+    # yet), then the map call's cited evidence (the mock reduce waits too, so the answer is not there yet).
+    page.wait_for_function("() => document.body.innerText.includes('Plan:')", timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    rec.step("Ask; look as soon as the plan shows (#272)", "the plan line, no evidence and no answer yet",
+             "Plan: Decomposing the question" in body and "Evidence so far" not in body and "LLM called:" not in body,
+             next((l for l in body.splitlines() if l.startswith("Plan:")), "")[:200])
+    page.wait_for_function("() => document.body.innerText.includes('Evidence so far')",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    cards = page.locator(".cee-claim", has_text="EVIDENCE - Edward Jones")
+    chips = cards.first.locator(".cee-chip").count() if cards.count() else 0
+    rec.step("Look again while the answer is still being written (#272)",
+             "'Evidence so far' with at least one Edward Jones evidence card carrying a citation chip; no answer yet",
+             cards.count() > 0 and chips > 0 and "LLM called:" not in body,
+             f"evidence cards={cards.count()}, chips on the first={chips}, answer shown={'LLM called:' in body}")
     # The verify app's mock waits MOCK_DELAY_S in the mock map and the mock reduce (#248: the question
-    # takes map.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
+    # takes map.a1.EDJ -> behavior answer -> the reduce call): the page is caught mid-run.
     page.wait_for_function("() => document.body.innerText.includes('Synthesizing the answer')",
                            timeout=RENDER_TIMEOUT_S * 1000)
     body = page.locator("body").inner_text()

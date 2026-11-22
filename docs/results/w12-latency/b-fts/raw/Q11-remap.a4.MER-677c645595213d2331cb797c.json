@@ -1,0 +1,63 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-10Q-2025Q2#88",
+    "BAC-DECK-2026Q3#30",
+    "BAC-10K-2025#244",
+    "BAC-10Q-2025Q3#92",
+    "BAC-DECK-2026Q2#19",
+    "BAC-10Q-2026Q1#69",
+    "BAC-DECK-2026Q1#26",
+    "BAC-10Q-2025Q2#89",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-10Q-2025Q3#90",
+    "BAC-DECK-2025-investor-day#0"
+  ],
+  "at": "2026-11-21T15:00:31.006839-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4808,
+    "output_tokens": 403,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3272,
+    "reasoning_tokens": 267,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.0
+  },
+  "wall_s": 5.3,
+  "tokens_per_s": 76.04,
+  "ttft_s": 3.0,
+  "reasoning_content": "The passages provided are all about GWIM segment financials, deposits, AUM flows, client balances, etc. None of them discuss advisor headcount definition or what it excludes.\n\nThe sub-question asks: \"What the firm's advisor headcount definition excludes\"\n\nNone of the passages mention advisor headcount at all. So this is not_found.\n\nLet me verify - looking through all chunks:\n- BAC-10Q-2025Q2#88: just segment name\n- BAC-DECK-2026Q3#30: financial summary\n- BAC-10K-2025#244: financials\n- BAC-10Q-2025Q3#92: deposits, allocated capital\n- BAC-DECK-2026Q2#19: financials\n- BAC-10Q-2026Q1#69: financials\n- BAC-DECK-2026Q1#26: financials\n- BAC-10Q-2025Q2#89: financials\n- BAC-DECK-2025-investor-day#12: Wealth continuum\n- BAC-10Q-2025Q3#90: financials\n- BAC-DECK-2025-investor-day#0: \"1\"\n\nNone mention advisor headcount. So not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention advisor headcount or any definition of what it includes or excludes; all passages cover GWIM segment financials, deposits, AUM flows, client balances, and wealth-continuum segmentation.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

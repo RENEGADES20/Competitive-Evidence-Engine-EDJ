@@ -1,0 +1,148 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#38",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q2#35",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10Q-2025Q2#110",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-10Q-2026Q1#55",
+    "EDJ-10Q-2025Q3#76",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10K-2025#88",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#9",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2025Q2#91"
+  ],
+  "at": "2026-11-21T13:51:41.648723-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12573,
+    "output_tokens": 1740,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 11549,
+    "reasoning_tokens": 1030,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.11
+  },
+  "wall_s": 16.75,
+  "tokens_per_s": 103.88,
+  "ttft_s": 1.11,
+  "reasoning_content": "The sub-question asks: specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients. Passages: EDJ 10-K mentions initiatives: Financial Planning Services, High Net Worth initiative (focused on attracting high net worth clients), Workplace, new digital platform focused on Next Generation investors. No mention of \"mass-affluent.\" So the firm doesn't mention mass-affluent. What's the label? The passage discusses client segments but not mass-affluent products. Is it not_disclosed or not_found? The asked quantity: products/services offered to mass-affluent clients. No passage states that. But there is a related item: a High Net Worth initiative (different segment - high net worth rather than mass affluent) \u2014 that's a different, related group. Hmm, per instructions, different_quantity applies when a passage states a different, related quantity: wider unit that contains asked one, different measure, or industry figure. A high-net-worth segment isn't mass affluent \u2014 it's a different segment. Could be different_quantity with differs_because \"it describes a high net worth initiative, not mass-affluent clients.\"\n\nAlternatively not_disclosed: passages show the firm does not report it. Hmm. There's no explicit statement that they don't report mass-affluent offerings. I think different_quantity is the safer call: the EDJ-10K-2025#88 passage describes products/services targeted at specific client segments \u2014 high net worth, workplace, next generation \u2014 but not mass-affluent.\n\nLet me build items:\n1. Financial Planning Services \u2014 clients receive more personalized experience with additional planning capabilities (from #88). Different quantity (not mass-affluent-specific).\n2. High Net Worth initiative \u2014 targeting new clients High Net Worth, expanded advice, planning, products across multiple service models.\n3. Workplace initiative.\n4. new digital platform for Next Generation investors.\n\nAll different_quantity, differs_because: describes initiatives for other client segments (high net worth, workplace, next generation), not mass-affluent clients.\n\nShould I include other items like the retail brokerage entities serving individual investors broadly (#204)? That's a general individual-investor service description, no mass-affluent mention. Could include as different_quantity too (serves individual investors generally, not specifically mass-affluent). Hmm, \"individual investors in the U.S. and Canada\" is a wider group containing mass-affluent. That fits different_quantity (wider unit that contains the asked one). Include it.\n\nAlso trust services offered to U.S. clients \u2014 that's a service offered generally. Could include. Maybe keep it modest: items 1-5.\n\nLet me keep: general retail brokerage/advisory services to individual investors (wider group), Financial Planning Services, High Net Worth initiative, Workplace, digital platform for Next Gen. Maybe trust services too. I'll include trust services as a product offering but scope whole firm clients \u2014 but that's not tied to mass-affluent; it's different_quantity. I'll keep items to 5 to be reasonable.\n\nLabel: different_quantity. reason: no passage addresses mass-affluent clients; passages describe offerings to broader or other client segments.\n\nQuotes must be exact and \u2264~300 chars.\n\nItem 1 quote: \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients\" \u2014 chunk EDJ-10K-2025#204. value \"\" unit \"\" period \"2025-12-31\"? Period is point in time of 10-K; but no figure. Set period \"\" since no figure... guidance: period \"when not stated or no figure\". Since no figure, period \"\". Hmm but scope should describe. I'll set period \"\" and scope \"U.S. and Canada individual investors\".\n\nItem 2 Financial Planning Services quote: \"recently launched products and solutions such as Financial Planning Services, where clients receive a more personalized experience with additional planning capabilities\" \u2014 value \"\", unit \"\", period \"\", scope \"\".\n\nItem 3 High Net Worth: quote \"targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models\".\n\nItem 4 Workplace: \"Workplace, which connects local business owners and their employees with financial solutions through their workplace\".\n\nItem 5 digital platform: \"a new digital platform, focused on attracting and retaining Next Generation investors\".\n\nI could combine 3-5 in one item but better separate.\n\nAlso maybe add item for advisory programs fees / fee levels? Sub-question asks \"fee levels\" for mass-affluent. No data on fee levels. Skip; not needed. Actually \"specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients\" \u2014 the firm doesn't discuss fee levels for mass affluent. Could add not_disclosed? No, only one label per cell. Fine.\n\nDerivation: empty.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones says that through its retail brokerage entities it primarily serves individual investors in the U.S. and Canada, earning fees for investment advisory and other account services, fees for assets held and commissions on mutual fund shares, insurance products and securities \u2014 a broad individual-investor base, not a stated mass-affluent segment.",
+            "quote": "Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "individual investors in the U.S. and Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#204"
+            ]
+          },
+          {
+            "text": "Edward Jones lists Financial Planning Services among recently launched products, where clients receive a more personalized experience with additional planning capabilities (not attributed to a mass-affluent segment).",
+            "quote": "recently launched products and solutions such as Financial Planning Services, where clients receive a more personalized experience with additional planning capabilities",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones describes a High Net Worth initiative targeting new clients, serving high net worth clients through expanded advice, planning, products and services across multiple service models.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "High Net Worth clients",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones describes a Workplace initiative connecting local business owners and their employees with financial solutions through their workplace.",
+            "quote": "Workplace, which connects local business owners and their employees with financial solutions through their workplace",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "workplace/business-owner clients",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones describes a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "and a new digital platform, focused on attracting and retaining Next Generation investors",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Next Generation investors",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          }
+        ],
+        "differs_because": "No passage describes products, services, platforms or fee levels offered to mass-affluent clients specifically; the passages describe the general individual-investor base or target segments that are not mass affluent (high net worth, workplace/business owners, Next Generation investors).",
+        "reason": "The passages give offerings to broader or different client segments but never address mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

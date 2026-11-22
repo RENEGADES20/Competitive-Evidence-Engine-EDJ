@@ -303,9 +303,13 @@ The model is `LLM_MODEL` in `.env` (Gate 4 used `claude-sonnet-5-5`).
 
 **Ask with DeepSeek** (#242; paid, the same calls per question). Put `DEEPSEEK_API_KEY` in `.env`
 and keep `DEEPSEEK_BASE_URL=https://api.deepseek.com/beta`; strict tool schemas need the `/beta`
-URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. `DEEPSEEK_THINKING` turns the model's
-reasoning on or off; leave it empty for the default, which was chosen in the #242 check
-(`docs/results/0242-deepseek-check.md`). With thinking on, an answer can take several minutes.
+URL. `DEEPSEEK_MODEL` defaults to `deepseek-v4-pro`. Each stage has its own reasoning effort (#272):
+`DEEPSEEK_EFFORT_PLAN`, `DEEPSEEK_EFFORT_MAP`, `DEEPSEEK_EFFORT_REDUCE`, each `off | low | high | max`
+(`off` = no thinking); leave them empty for the defaults set by the #272 test A (`plans/0272-latency.md`).
+`DEEPSEEK_MODEL_MAP` sends only the map calls to another model; `DEEPSEEK_STREAM` (`on | nothink | off`)
+streams the calls, so the time to the first token is logged next to the wall time. `DEEPSEEK_THINKING`
+is only for the legacy single answer call (`MAP=off`). The Ask page shows the plan first, then each
+extraction call's cited evidence as it lands, then the answer.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```
@@ -322,6 +326,27 @@ LLM_PROVIDER=deepseek .venv/bin/python scripts/eval_run.py --real --naive-tz Ame
 If DeepSeek answers 402 (balance used up), 429 (rate limit) or 401 (key rejected), the question
 stops with that message and nothing is saved. Top up, wait or fix the key, then run again; saved
 outputs are reused.
+
+**Answer latency** (#272, free: reads saved records). `scripts/latency_report.py` prints, per question,
+the critical path (plan + slowest extraction call + slowest re-extraction + reduce) and the time to the
+first cited evidence, and per stage the wall time, time to first token and tokens (p50 / p90 / max):
+```powershell
+.\.venv\Scripts\python.exe scripts\latency_report.py <run folder>\raw --title "my run"
+```
+```bash
+.venv/bin/python scripts/latency_report.py <run folder>/raw --title "my run"
+```
+The #272 runs use `docs/results/w12-latency/run-latency.*` (one phase `plan | count | run`, every setting
+pinned; paid except `count`) and `run-mock.*` (0 calls). Run them from a clean worktree at the commit
+under test; the key file is copied in and removed again:
+```powershell
+powershell -File docs\results\w12-latency\run-latency.ps1 -Wt <worktree> -Out a-c1 -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q5,Q10 -EffortPlan off -EffortMap low -EffortReduce low
+powershell -File docs\results\w12-latency\run-mock.ps1 -Wt <worktree> -Out mock-fts
+```
+```bash
+WT=<worktree> OUT=a-c1 CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q5,Q10 EFFORT_PLAN=off EFFORT_MAP=low EFFORT_REDUCE=low ENV_FILE=<repo>/.env bash docs/results/w12-latency/run-latency.sh
+WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
+```
 
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).
 `--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,

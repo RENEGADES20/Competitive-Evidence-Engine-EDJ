@@ -6,7 +6,7 @@ Rules and invariants: [CLAUDE.md](../CLAUDE.md). Decisions: ADR-002, ADR-003, AD
 ## Purpose
 
 Turn retrieved chunks into a cited answer through the ADR-021 map-reduce flow (since #247, `MAP=on` by
-default): one planner call, one extraction call per firm (plus research) with a corrective
+default): one planner call, one extraction call per firm x aspect cell (#272; plus research) with a corrective
 re-search, an evidence matrix built by code, then one reduce call that writes the answer from the
 matrix (or an answer built by code with no call); calls follow the sub-question decomposition, with
 no fixed number. Then check it in code: every citation resolves to the matrix, every number appears
@@ -99,10 +99,20 @@ Plan: `plans/0246-map.md`. Code: `src/cee/answer/extract.py` (calls), `src/cee/a
 (rules). **On by default since #247**: `ask()` builds and logs the matrix (`query_log.filters.map`),
 and the reduce step (below) writes the answer from it. The eval maps unless `--legacy`.
 
-- **Calls (map-reduce, map side).** Round 1: one structured extraction call per firm whose
-  sub-questions kept passages (`map.<FIRM>`), plus `map.research` for the research passages, in
-  parallel (`MAP_CONCURRENCY`, default 6). A firm with no passage gets code cells `not_found`, no call.
-  Prompt `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
+- **Calls (map-reduce, map side).** Round 1 (#272): one structured extraction call per sub-question (firm x
+  aspect cell, `map.<cell id>`), plus `map.research` for the research passages, in parallel
+  (`MAP_CONCURRENCY`, default 24). The firm's call spec is built as before, then split per cell: a cell call
+  lists the cell's own passages and, apart ("Also in this sub-question's search pool"), the firm's input
+  passages in the cell's search pool that are listed under a sibling cell; the cell may cite exactly the set
+  it could cite in the firm call (own | pool & firm input). A cell with nothing it may cite, like a firm with
+  no passage, gets the code cell `not_found` ("no passages retrieved", flag `no_passages`), no call. A cell
+  whose input is over `MAP_CALL_TOKENS` (default 60000) is split in input order into batches
+  `map.<cell id>.b<n>`, merged per cell: items joined (a repeated citation dropped); label `fact` if any batch
+  has one, else `different_quantity`, else `not_disclosed`, else `not_found`; a failed batch with no fact
+  makes the cell `failed` (a failed batch next to a fact adds the flag `batch_failed`). The merged cells have
+  the per-firm shape, so the matrix and the reduce input are unchanged. Prompt `extract-v1.2` (#272: the pool
+  passages line; otherwise `extract-v1.1`).
+  `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
   those asked is a fact for the periods it covers, never `different_quantity`); tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
   required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
   supports the object / integer / enum types used, guide checked 2026-11-20).
@@ -138,8 +148,8 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   comparison cells) through `planner.corrective_search`, every chunk already retrieved excluded, words
   widened by `extract.widen_words` (the firm's metric definition entry: quote, includes, the
   full-text search phrases in `looked_in`; adjacent quarters as words; the SQL window never widens).
-  Round 2: one re-extraction per firm over only the re-searched sub-questions that found new chunks,
-  and only those chunks; final. A re-extraction's derivation can use only its own cells (its input
+  Round 2: one re-extraction per re-searched sub-question that found new chunks (`remap.<cell id>`, #272;
+  batched like round 1), over only those chunks; final. A re-extraction's derivation can use only its own cells (its input
   holds no round-1 item), so derivations are proposed in round 1.
 - **Behavior (rule 1), by code, first match wins**: a request for the system's own forecast ->
   `refuse`; a normative question (a modal with the home firm as subject, or "how should <x> shape

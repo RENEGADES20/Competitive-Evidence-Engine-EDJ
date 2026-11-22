@@ -84,13 +84,45 @@ def filters_text(f: dict) -> str:
     return "; ".join(parts) or "none"
 
 
+PLAN_HEADING = "Plan"
+EVIDENCE_HEADING = "Evidence so far"
+EVIDENCE_HELP = ("Cited passages found while the answer is written; each comes from a stored document. "
+                 "The answer below is the complete result.")
+
+
+def evidence_label(line: dict) -> str:
+    """'EVIDENCE - Edward Jones - a1' style label of one evidence line (firm, aspect)."""
+    from cee.retrieve.planner import firm_name
+    firm = firm_name(line["entity"]) if line.get("entity") else "Research"
+    return f"EVIDENCE - {firm} - {line.get('aspect', '')}"
+
+
 def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
     """Progress bar + one line per stage while the answer is built (#80). The trace stays on the
-    page, collapsed, once the answer is ready; a failed stage is marked and its error shown."""
+    page, collapsed, once the answer is ready; a failed stage is marked and its error shown.
+    #272: the plan shows first, then each map call's cited evidence as it lands, then the answer."""
     bar = st.progress(0.0, text="Reading the question")
+    plan_slot = st.empty()
+    evidence = st.container()
+    shown = {"n": 0}
     box = st.status("Building the answer", expanded=True)
     slot = box.empty()
     steps: dict[str, tuple[str, str]] = {}
+
+    def on_event(kind: str, data: dict) -> None:
+        if kind == "plan":
+            plan_slot.markdown(f"**{PLAN_HEADING}:** {escape(data['text'])}", unsafe_allow_html=True)
+            return
+        if kind != "evidence":
+            return
+        with evidence:
+            if shown["n"] == 0:
+                st.markdown(f"**{EVIDENCE_HEADING}**")
+                st.caption(EVIDENCE_HELP)
+            for line in data["lines"]:
+                shown["n"] += 1
+                chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in line["hits"]]
+                ui.claim_card(shown["n"], line["text"], chips, label=evidence_label(line))
 
     def progress(stage: str, state: str, text: str) -> None:
         steps[stage] = (state, text)
@@ -100,7 +132,7 @@ def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
 
     start = time.perf_counter()
     try:
-        r = ask(question, progress=progress, filters=filters)
+        r = ask(question, progress=progress, filters=filters, on_event=on_event)
     except Exception as e:
         bar.empty()
         failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")

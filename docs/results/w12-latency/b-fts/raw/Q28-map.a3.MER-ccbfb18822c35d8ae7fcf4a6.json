@@ -1,0 +1,110 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a3.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a3.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-TR-2026Q2#63",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2026Q1#26",
+    "BAC-PR-2026-01-14-01#12",
+    "BAC-DECK-2026Q2#20",
+    "BAC-10K-2025#249",
+    "BAC-TR-2025Q3#27",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-DECK-2026Q1#27",
+    "BAC-TR-2025Q2#34",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2025Q4#106",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-TR-2025Q1#28",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q2#21",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2025Q2#35",
+    "BAC-PR-2026-01-14-01#11",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "BAC-PR-2026-04-15-01#12",
+    "BAC-PR-2026-10-14-01#13",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-PR-2026-09-15-01#3",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "BAC-10K-2025#244",
+    "BAC-DECK-2026Q3#30",
+    "BAC-10Q-2026Q2#85",
+    "BAC-DECK-2026Q2#19",
+    "BAC-10Q-2026Q1#70",
+    "BAC-DECK-2026Q1#26",
+    "BAC-10Q-2025Q3#90",
+    "BAC-10Q-2025Q2#90"
+  ],
+  "at": "2026-11-21T17:55:16.040834-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14905,
+    "output_tokens": 1219,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 13369,
+    "reasoning_tokens": 1005,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.98
+  },
+  "wall_s": 10.31,
+  "tokens_per_s": 118.23,
+  "ttft_s": 1.98,
+  "reasoning_content": "The sub-question asks for Merrill's advisor attrition rate. Let me look for any passage stating the attrition rate.\n\nThe key chunk is BAC-TR-2026Q2#63: \"Well, adviser attrition is now at near historic lows.\" This is a qualitative statement, not a specific figure. No numeric attrition rate is given.\n\nThere's no numeric advisor attrition rate anywhere. The closest is \"adviser attrition is now at near historic lows\" which is a qualitative statement, not a figure.\n\nAlso there's advisor headcount data (BAC-SUPP-2023Q4#2: Total wealth advisors 18,916...). But that's headcount, not attrition rate.\n\nSo the answer is: the firm doesn't disclose a numeric attrition rate; only a qualitative statement that it's \"at near historic lows.\"\n\nIs the qualitative statement a \"fact\"? It states the attrition rate qualitatively (near historic lows), but doesn't give a figure. The sub-question asks for the attrition rate. A qualitative statement is a partial fact? Actually, it states something about attrition but no figure.\n\nI think the best label is \"not_disclosed\" - the firm does not report a specific attrition rate figure. Actually, let me reconsider. The statement \"adviser attrition is now at near historic lows\" is a fact about attrition, but it's qualitative, no figure.\n\nThe question asks for the attrition rate. There's no numeric rate given. I think I should label this as not_found or not_disclosed. The firm says attrition is \"near historic lows\" which is qualitative. This is a fact statement but without a figure.\n\nActually, \"fact\" can be partial - \"a passage states what the sub-question asks for this firm, in full or in part.\" The qualitative statement \"adviser attrition is now at near historic lows\" does state something about attrition rate, in part, but without a figure.\n\nI think the most appropriate is to record this as a fact with no figure, since it's a qualitative statement about the attrition rate. Or should it be not_disclosed since no actual rate is disclosed?\n\nLet me think. The instruction: \"fact: a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact... the item says what it covers.\"\n\nThe statement \"adviser attrition is now at near historic lows\" does describe attrition qualitatively but no numeric figure. This is a fact about the attrition rate (that it's near historic lows), but doesn't provide a numeric rate.\n\nHmm, but the sub-question is asking for the attrition rate as a number presumably (to compare with Edward Jones). No number is given.\n\nI think I should mark it as a fact with no value, since it does state something about advisor attrition - that it's at near historic lows. The value field would be \"\" and I note it's qualitative.\n\nActually, let me reconsider what's most useful. The question wants the attrition rate figure. No figure exists. The qualitative statement is the only thing. \n\nI'll record a fact item with the qualitative statement, value=\"\", and note it's qualitative in text. This is the most accurate - the firm does say something about attrition.\n\nAlternatively, not_disclosed might be more appropriate if we interpret \"the firm does not report it\" - it doesn't report a numeric rate. But the firm does discuss attrition qualitatively.\n\nI'll go with a fact item capturing the qualitative statement, with empty value. Period would be 2026-06-30 (2Q26) when the statement was made.\n\nLet me write it up.\n\nActually, let me reconsider the label. The statement is a qualitative characterization, not a figure. Is it a \"fact\" for the sub-question \"Merrill's advisor attrition rate\"? It says attrition is near historic lows - this is relevant but doesn't give a rate.\n\nI think a single fact item with the qualitative statement, no value, is appropriate. The reason: the passage states that advisor attrition is near historic lows, which addresses the attrition rate qualitatively but without a number.\n\nLet me also consider: is there anything about \"5% guide\" - \"the Merrill 5% guide, where we said we are aiming for 5% over the course of the next 3 to 5 years.\" This is a target for growth, not attrition. Actually \"5% guide\" - could it relate to attrition? Let me read: \"First, I think you were referring to the Merrill 5% guide, where we said we are aiming for 5% over the course of the next 3 to 5 years.\" This seems to be about something else (perhaps sales force growth or margin), not attrition. Actually in context it's about growing the sales force. So it's not attrition rate.\n\nSo the answer: fact with qualitative statement, no figure.\n\nLet me write the item.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Merrill's CFO stated that adviser attrition is now at near historic lows, without providing a numeric attrition rate.",
+            "quote": "adviser attrition is now at near historic lows. So we're pretty happy with that.",
+            "value": "",
+            "unit": "",
+            "period": "2026-06-30",
+            "scope": "Merrill",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-TR-2026Q2#63"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The only statement addressing adviser attrition is qualitative (near historic lows); no numeric attrition rate is given anywhere in the passages.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

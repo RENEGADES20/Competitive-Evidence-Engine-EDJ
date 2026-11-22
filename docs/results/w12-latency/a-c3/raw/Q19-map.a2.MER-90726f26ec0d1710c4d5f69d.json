@@ -1,0 +1,53 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a2.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a2.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:56:22.734219-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2037,
+    "output_tokens": 246,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 629,
+    "reasoning_tokens": 130,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.84
+  },
+  "wall_s": 3.23,
+  "tokens_per_s": 76.16,
+  "ttft_s": 0.84,
+  "reasoning_content": "The question asks about younger investors' preferred communication and engagement channels. The passages: chunk BAC-PR-2026-01-14-01#12 \u2014 a footnote about digitally active Private Bank core relationships, plus awards list. Nothing about younger investors' preferred channels. So not_found.\n\nBut wait \u2014 the only chunk is about digital activity percentage among Private Bank relationships, and awards. No statement about younger investors' channels. Label not_found.\n\nCould the \"digitally active\" percentage be a different_quantity? The sub-question asks what channels younger investors prefer \u2014 no passage states that. Not a quantity. So not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage in the pool discusses digitally active Private Bank relationships and award rankings; it says nothing about which communication or engagement channels younger investors prefer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

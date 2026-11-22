@@ -1,0 +1,130 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#301",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10K-2025#71",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10Q-2025Q3#98",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10Q-2026Q2#83",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10Q-2025Q2#80",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#3",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#132",
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10Q-2026Q2#84",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-10K-2025#8",
+    "EDJ-10K-2025#10",
+    "EDJ-10K-2025#86",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#3"
+  ],
+  "at": "2026-11-21T15:02:23.674573-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13178,
+    "output_tokens": 1831,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 11642,
+    "reasoning_tokens": 1221,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.73
+  },
+  "wall_s": 12.97,
+  "tokens_per_s": 141.17,
+  "ttft_s": 1.73,
+  "reasoning_content": "Let me analyze the sub-question: \"How Edward Jones currently acquires clients.\"\n\nI need to find passages that state how Edward Jones acquires clients. Let me look through the passages.\n\nKey passage: EDJ-10K-2025#88 - \"targeting new clients: High Net Worth... Workplace... new digital platform, focused on attracting and retaining Next Generation investors.\"\n\nAlso EDJ-10K-2025#71 - \"The Partnership relies heavily on referrals from its current financial advisors in recruiting new financial advisors\" - but this is about recruiting advisors, not acquiring clients. Actually wait, that's recruiting financial advisors, not clients.\n\nLet me look at the branch office model - EDJ-10K-2025#10: \"The Partnership's branch office model is designed to serve clients through deep, personal relationships and comprehensive advice and planning with financial advisors and client support team professionals located in the communities where clients live and work.\"\n\nEDJ-TRADE-2026-09-30-WM-01#0: about workplace retirement plans, advisors working with local business owners.\n\nEDJ-10K-2025#88 is the most direct about how EDJ acquires/targets new clients: initiatives targeting new clients - High Net Worth, Workplace, new digital platform for Next Generation investors.\n\nLet me construct the fact items.\n\nItem 1: The Partnership targets new clients through initiatives: High Net Worth (attracting and serving high net worth clients), Workplace (connects local business owners and employees with financial solutions through workplace), and a new digital platform focused on attracting and retaining Next Generation investors.\n\nQuote from EDJ-10K-2025#88.\n\nItem 2: branch office model - serves clients through deep personal relationships and advice with advisors located in communities. This is more about how they serve, but relates to client acquisition through local community presence.\n\nItem 3: Workplace - advisors working with local business owners every day (EDJ-TRADE-2026-09-30-WM-01#0).\n\nLet me focus on facts about how EDJ currently acquires clients.\n\nThe clearest facts:\n1. EDJ-10K-2025#88: initiatives targeting new clients (High Net Worth, Workplace, digital platform for Next Generation investors).\n2. EDJ-10K-2025#10: branch office model - advisors in communities, deep personal relationships.\n3. EDJ-TRADE-2026-09-30-WM-01#0: advisors working with local business owners every day; workplace retirement plan tool.\n\nAlso note EDJ-10K-2025#71 about referrals - but that's recruiting advisors, not clients.\n\nActually, let me be careful. The question asks \"How Edward Jones currently acquires clients.\" The referral passage is about recruiting financial advisors, not acquiring clients. So that's different_quantity or not relevant. Actually it's about recruiting advisors, not clients, so it's a different quantity (advisor recruitment vs client acquisition). But it's tangential; the question is about client acquisition.\n\nI'll include the main facts about client acquisition.\n\nLet me write the items. Each fact item needs text, quote, value, unit, period, scope, definition, chunk_ids.\n\nFor narrative facts, value/unit/period can be empty.\n\nLet me structure:\n\nItem 0 (fact): The Partnership targets new clients through initiatives including High Net Worth (attracting and serving high net worth clients), Workplace (connecting local business owners and their employees with financial solutions through their workplace), and a new digital platform focused on attracting and retaining Next Generation investors.\n\nQuote: \"These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.\"\n\nItem 1 (fact): The Partnership's branch office model serves clients through deep, personal relationships and comprehensive advice with financial advisors located in communities where clients live and work.\n\nQuote: \"The Partnership's branch office model is designed to serve clients through deep, personal relationships and comprehensive advice and planning with financial advisors and client support team professionals (\"CSTPs\") located in the communities where clients live and work.\"\n\nItem 2 (fact): Advisors work with local business owners every day; Edward Jones partners to develop retirement plan management technology to help advisors serve business owners and their employees, with prospecting module.\n\nQuote from EDJ-TRADE-2026-09-30-WM-01#0: \"Given our strong footprint in our communities, our advisors are working with local business owners every single day\" and the prospecting module.\n\nActually, let me use the prospecting module from #1: \"The technology platform... will cover the entire workplace retirement plan lifecycle, from prospecting to plan servicing.\"\n\nThese are all facts about how EDJ acquires clients.\n\nLet me also consider whether I should include the referral passage as a fact about client acquisition - no, it's about advisor recruitment. I'll leave it out or mark as not relevant. Since the instruction says only include fact/different_quantity items, and the referral is about advisor recruiting (different quantity from client acquisition), I could include it as different_quantity. But it's a different question focus. The sub-question is specifically \"how EDJ currently acquires clients.\" The referral passage is about recruiting advisors, which is a different quantity.\n\nActually, I think the main answer should focus on the client acquisition methods. Let me include the key facts.\n\nI'll provide the cell with label \"fact\" and the items above.\n\nLet me finalize. I'll include 3-4 fact items.\n\nFor the reasoning: The passages describe how EDJ acquires clients via targeted initiatives (High Net Worth, Workplace, digital platform for Next Generation) and its community-based branch model.\n\nLet me write the submit_extraction call.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones targets new clients through initiatives including High Net Worth (attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models), Workplace (connecting local business owners and their employees with financial solutions through their workplace), and a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones acquires and serves clients through its branch office model, in which financial advisors and client support team professionals located in the communities where clients live and work build deep, personal relationships and provide comprehensive advice and planning.",
+            "quote": "The Partnership's branch office model is designed to serve clients through deep, personal relationships and comprehensive advice and planning with financial advisors and client support team professionals (\"CSTPs\") located in the communities where clients live and work.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#10"
+            ]
+          },
+          {
+            "text": "Edward Jones advisors work with local business owners every day, leveraging the firm's footprint in local communities to prospect and win workplace retirement plans through a new end-to-end retirement plan management technology platform covering the full plan lifecycle from prospecting to plan servicing.",
+            "quote": "Given our strong footprint in our communities, our advisors are working with local business owners every single day... RPMC will leverage Aboon Workplace, an AI-native platform that lets advisors find and win retirement plans all in one place.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-TRADE-2026-09-30-WM-01#0",
+              "EDJ-TRADE-2026-09-30-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe Edward Jones' client acquisition approaches: targeted initiatives (High Net Worth, Workplace, digital/Next Generation platform) and a community-based branch model plus workplace retirement-plan prospecting.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

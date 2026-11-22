@@ -1,0 +1,84 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a6.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#87",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10K-2025#132",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10K-2025#63",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2026Q1#69",
+    "EDJ-10Q-2026Q2#83",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2026Q2#76",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2025Q2#91",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q2#85",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#70",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q2#66"
+  ],
+  "at": "2026-11-21T13:51:41.662728-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10791,
+    "output_tokens": 949,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 9767,
+    "reasoning_tokens": 824,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.09
+  },
+  "wall_s": 10.38,
+  "tokens_per_s": 91.43,
+  "ttft_s": 1.09,
+  "reasoning_content": "We need answer sub-question a6.EDJ: What is new or most recent in each firm's statements about mass-affluent clients. We need extract evidence from passages. Need label. Do passages mention mass-affluent? Let's examine. None mention \"mass-affluent\" explicitly. Closest: EDJ-10K-2025#88 mentions initiatives targeting new clients: High Net Worth, Workplace, digital platform for Next Generation investors. No mass-affluent. Other passages mention clients generally, planning etc. Need decide fact vs not_found vs different_quantity. The sub-question asks what is new or most recent in statements about mass-affluent clients. No passage uses mass-affluent. Could mention High Net Worth as different quantity? Mass-affluent is different from high net worth. But a passage about targeting high net worth is a different, related client segment, not mass-affluent. Could label different_quantity, with item about High Net Worth initiative? Need think.\n\nThe task: extract evidence about one firm, question asks most explicit about serving mass-affluent clients, subquestion recency: what is new or most recent in each firm's statements about mass-affluent clients. Passages include 10-K risk factor about strategies, initiatives, including targeting High Net Worth, Workplace, digital platform. No mass-affluent. If no passage states mass-affluent, but one states different related client segment (high net worth), different_quantity maybe. However \"mass-affluent\" is a wealth segment below high net worth; high net worth is not a wider unit containing mass-affluent; it's a different segment. The instructions for different_quantity: wider unit containing asked one, different measure, etc. A different client segment is not exactly wider unit. Could be not_found because passages say nothing about mass-affluent. But there is a passage about targeting \"new clients: High Net Worth\" and \"Next Generation investors\" and \"Workplace\" - not mass-affluent. Is that related enough? The question specifically mass-affluent. Since no passage mentions mass-affluent, and no stated quantity. However the sub-question is not a quantity; asks \"what is new or most recent in statements about mass-affluent clients\". The extractor expects fact if a passage states what subquestion asks for. No passage does. not_found if passages say nothing about it. They do say nothing about mass-affluent. So not_found likely. But maybe \"high net worth\" is different_quantity? But different_quantity is for a quantity, not a statement. It says no passage states asked quantity but one states a different related quantity. Here no quantity. Could label not_found and maybe no items. Need include only one cell.\n\nNeed be careful: Question maybe expects firm's statements about mass-affluent clients. Edward Jones may not use term mass-affluent; passages say \"millions of current and potential clients\" and \"tens of millions of long-term investors\". Could \"mass-affluent\" be inferred? No. Never estimate. So not_found.\n\nBut perhaps \"High Net Worth\" initiative is the most recent statement about targeting a wealth segment. Could label different_quantity because high net worth is a different, related segment. However definition: \"a wider unit that contains the asked one (a parent company, a segment that also holds other businesses)\" High net worth doesn't contain mass-affluent; it's a narrower/adjacent segment. \"different measure\" no. \"industry figure for firm's own figure\" no. So not different_quantity.\n\nCould label not_disclosed? No, passages don't show firm does not report it. They simply don't mention. not_found.\n\nNeed produce cell with subquestion_id, label not_found, items empty, differs_because \"\", reason. derivation empty.\n\nNeed maybe mention passages \"no passage mentions mass-affluent; the closest is High Net Worth initiative, a different client segment\" in reason. But \"not_found\" because passages say nothing. Let's submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions mass-affluent clients or any recent statement about serving them; the closest reference is a High Net Worth initiative, which is a different client segment and not the asked quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

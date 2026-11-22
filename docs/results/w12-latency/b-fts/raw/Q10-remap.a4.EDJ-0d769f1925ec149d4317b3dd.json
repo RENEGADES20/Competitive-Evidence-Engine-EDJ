@@ -1,0 +1,113 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a4.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#15",
+    "EDJ-10Q-2026Q1#48",
+    "EDJ-10K-2025#57",
+    "EDJ-10Q-2026Q2#105",
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2025Q2#34",
+    "EDJ-10Q-2026Q2#65",
+    "EDJ-10Q-2025Q2#71",
+    "EDJ-10Q-2026Q2#66",
+    "EDJ-10Q-2026Q1#35"
+  ],
+  "at": "2026-11-21T13:02:17.328586-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5131,
+    "output_tokens": 2806,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 3979,
+    "reasoning_tokens": 2058,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.45
+  },
+  "wall_s": 20.12,
+  "tokens_per_s": 139.46,
+  "ttft_s": 1.45,
+  "reasoning_content": "Let me analyze the passages for sub-question a4.EDJ: \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\"\n\nThe passages describe Edward Jones's products, services, platforms, and fee levels, but none of them specifically mention \"mass-affluent\" clients. The passages describe what the firm offers generally (individual investors).\n\nLet me look at what's actually there. The passages describe products/services the firm offers to clients generally, not specifically mass-affluent clients.\n\nKey relevant passages:\n- EDJ-10K-2025#10: \"The Partnership offers a variety of different solutions to clients, including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.\"\n- EDJ-10Q-2025Q3#31: describes services - fees for investment advisory, account services, fees for assets held, commissions for mutual funds, insurance products, purchase/sale of securities. Trust services, money market fund, Bridge Builder Trust.\n- EDJ-10Q-2026Q1#48: fee revenue categories - asset-based fees, account and activity fees, advisory program fees.\n- EDJ-10Q-2025Q2#34: disaggregated revenue - fee levels.\n\nThe question asks specifically about products/services offered to mass-affluent clients. None of the passages mention \"mass-affluent\" clients at all. So this is about whether the firm says it offers these to mass-affluent clients.\n\nThe sub-question is \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\" Since none of the passages mention mass-affluent clients, the products/services described are for clients generally (individual investors), not specifically mass-affluent.\n\nSo the products/services described are a different_quantity? Actually, the products/services are described for clients generally, not specifically mass-affluent. The mass-affluent segment is a narrower group. So describing products for \"individual investors\" generally is a wider scope than mass-affluent.\n\nActually, let me think. The question asks what the firm says it offers mass-affluent clients. The passages say what the firm offers \"clients\" or \"individual investors\" generally. This is a wider group than mass-affluent. So it's a different_quantity - a wider unit that contains the asked one (mass-affluent is a subset of individual investors/clients).\n\nBut wait, let me reconsider. The products/services are described without any client segment specificity. The question is about whether these are specifically for mass-affluent clients.\n\nActually, I think the right answer here is that Edward Jones does not mention \"mass-affluent\" anywhere in these passages. The passages describe products/services offered to clients/individual investors generally.\n\nThe products, services, platforms, fee levels described are for all clients/individual investors, which is broader than mass-affluent. So these would be different_quantity with differs_because \"described for clients/individual investors generally, not specifically mass-affluent.\"\n\nActually, let me reconsider the whole framing. The question is \"Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?\" The sub-question for EDJ is about specific products/services offered to mass-affluent clients.\n\nNone of the passages mention \"mass-affluent.\" So Edward Jones doesn't appear to be explicit about mass-affluent in these passages.\n\nThe products/services described are offered to clients generally. This is a different_quantity (wider unit - all clients vs mass-affluent subset).\n\nLet me structure the cell as different_quantity with items describing the products/services offered to clients generally.\n\nActually, let me reconsider. There might be an argument that these are \"not_found\" because nothing says anything about mass-affluent specifically. But the instructions say: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one.\"\n\nSo the products/services offered to \"individual investors\"/\"clients\" generally is a wider unit than mass-affluent. So it's different_quantity.\n\nLet me capture the items:\n\n1. EDJ-10K-2025#10: \"The Partnership offers a variety of different solutions to clients, including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.\"\n\n2. EDJ-10Q-2025Q3#31: services - \"fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\" Also trust services, money market fund, Bridge Builder Trust.\n\n3. EDJ-10Q-2026Q1#48: fee revenue categories - asset-based fees (advisory program fees), account and activity fees, trade revenue (commissions, principal transactions).\n\n4. EDJ-10Q-2025Q2#34: disaggregated revenue with fee levels.\n\nThese are all products/services/fee levels offered to clients generally, not mass-affluent specifically.\n\nLet me build the items. I'll list several items as facts about what the firm offers to clients generally (different_quantity because not mass-affluent specific).\n\nLet me write the cell.\n\nLabel: different_quantity\ndiffers_because: \"The passages describe products, services, and fee levels offered to the firm's clients/individual investors generally, not specifically to mass-affluent clients; no passage mentions 'mass-affluent'.\"\n\nItems:\n1. Text: Edward Jones offers investment advisory programs, brokerage and retirement accounts, cash and lending solutions, and financial planning offerings to its clients. Quote from #10. Value \"\", unit \"\", period \"\", scope \"clients generally\", definition \"\".\n\n2. Text: The firm earns fees for providing investment advisory and other account services, fees for assets held by clients, and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities. Quote from #31.\n\n3. Trust services offered to U.S. clients through Edward Jones Trust Company; investment advisory services for the Edward Jones Money Market Fund and Bridge Builder Trust through Olive Street.\n\n4. Fee revenue composed of asset-based fees (including advisory program fees) and account and activity fees; trade revenue from commissions and principal transactions.\n\n5. Fee levels from disaggregated revenue table.\n\nLet me be careful to keep items focused. I'll include the main ones.\n\nActually, I should provide a reasonable set of items. Let me write them clearly with quotes.\n\nLet me draft the items.\n\nItem 0 (products/services):\ntext: \"The Partnership states it offers clients a variety of solutions including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.\"\nquote: \"The Partnership offers a variety of different solutions to clients, including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.\"\nchunk: EDJ-10K-2025#10\nvalue \"\", unit \"\", period \"\", scope \"clients generally (U.S. and Canada)\", definition \"\"\n\nItem 1 (revenue sources/services):\ntext: \"The firm derives revenues from fees for investment advisory and other account services, fees for assets held by clients, and commissions for distributing mutual fund shares and insurance products and for securities transactions.\"\nquote: \"primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\"\nchunk: EDJ-10Q-2025Q3#31\nvalue \"\", unit \"\", period \"\", scope \"individual investors in the U.S. and Canada\", definition \"\"\n\nItem 2 (trust and advisory):\ntext: \"Trust services are offered to U.S. clients through Edward Jones Trust Company, and investment advisory services for the Money Market Fund and Bridge Builder Trust are provided through Olive Street.\"\nquote: \"Trust services are offered to Edward Jones' U.S. clients through Edward Jones Trust Company... Olive Street... provides investment advisory services to the Edward Jones Money Market Fund... and the twelve sub-advised mutual funds comprising the Bridge Builder\u00ae Trust.\"\nchunk: EDJ-10Q-2025Q3#31\nvalue \"\", unit \"\", period \"\", scope \"U.S. clients\", definition \"\"\n\nItem 3 (fee categories):\ntext: \"Fee revenue is composed of asset-based fees (including advisory program fees based on the average daily market value of client assets in the program) and account and activity fees; trade revenue is composed of commissions and principal transactions.\"\nquote: \"fee revenue is composed of asset-based fees and account and activity fees. Asset-based fees include advisory program fees which are based on the average daily market value of client assets in the program, as well as contractual rates.\"\nchunk: EDJ-10Q-2026Q1#48\nvalue \"\", unit \"\", period \"\", scope \"\", definition \"\"\n\nItem 4 (fee levels): Maybe include a specific fee figure. The disaggregated revenue shows advisory programs fees $2,605 for three months ended June 27, 2025. But these are revenue, not \"fee levels\" per se. Fee levels might mean the rates. There aren't specific fee rates in the passages.\n\nActually \"fee levels\" - the passages don't give fee rates, only fee revenue amounts. I could include a revenue figure as an item but it's really revenue not fee level. I'll skip specific figures as they're revenue not fee levels offered to mass-affluent.\n\nActually, I think I'll keep it to the products/services items. The disaggregated revenue figures are revenue amounts, not fee levels. I'll leave those out or note.\n\nI think 3-4 items is sufficient.\n\nreason: \"No passage mentions 'mass-affluent' clients; the passages describe products, services, and fees for the firm's clients/individual investors generally, a broader group than mass-affluent.\"\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "The Partnership states it offers clients a variety of solutions including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.",
+            "quote": "The Partnership offers a variety of different solutions to clients, including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "clients generally (U.S. and Canada)",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#10"
+            ]
+          },
+          {
+            "text": "The firm derives revenues from fees for providing investment advisory and other account services, fees for assets held by clients, and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "quote": "primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "individual investors in the U.S. and Canada",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#31"
+            ]
+          },
+          {
+            "text": "Trust services are offered to Edward Jones' U.S. clients through Edward Jones Trust Company, and investment advisory services for the Edward Jones Money Market Fund and the twelve sub-advised mutual funds comprising the Bridge Builder Trust are provided through Olive Street Investment Advisers, LLC.",
+            "quote": "Trust services are offered to Edward Jones' U.S. clients through Edward Jones Trust Company (\"Trust Co.\")... Olive Street Investment Advisers, LLC (\"Olive Street\")... provides investment advisory services to the Edward Jones Money Market Fund... and the twelve sub-advised mutual funds comprising the Bridge Builder\u00ae Trust.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "U.S. clients",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#31"
+            ]
+          },
+          {
+            "text": "Fee revenue is composed of asset-based fees (including advisory program fees based on the average daily market value of client assets in the program and contractual rates) and account and activity fees; trade revenue is composed of commissions and principal transactions.",
+            "quote": "fee revenue is composed of asset-based fees and account and activity fees. Asset-based fees include advisory program fees which are based on the average daily market value of client assets in the program, as well as contractual rates.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#48"
+            ]
+          }
+        ],
+        "differs_because": "No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about.",
+        "reason": "The passages describe Edward Jones' products, services, and fee categories for clients generally, but none mention or specifically address mass-affluent clients, so this is a wider related quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

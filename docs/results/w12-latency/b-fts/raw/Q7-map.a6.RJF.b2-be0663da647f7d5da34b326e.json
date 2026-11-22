@@ -1,0 +1,109 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.RJF.b2",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a6.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-10K-2025#223",
+    "RJF-DECK-2026Q1#4",
+    "RJF-PR-2025-10-22-01#0",
+    "RJF-10Q-2025Q4#118",
+    "RJF-10Q-2026Q1#306",
+    "RJF-10Q-2026Q2#245",
+    "RJF-10Q-2026Q2#250",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-10K-2025#28",
+    "RJF-DECK-2025-investor-day#79",
+    "RJF-10Q-2026Q1#294",
+    "RJF-10Q-2026Q2#303",
+    "RJF-10K-2025#248",
+    "RJF-DECK-2025-investor-day#132",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-DECK-2025-investor-day#37",
+    "RJF-10K-2025#452",
+    "RJF-10K-2025#24",
+    "RJF-DECK-2025-investor-day#65",
+    "RJF-10Q-2025Q4#233"
+  ],
+  "at": "2026-11-21T14:51:20.655554-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6597,
+    "output_tokens": 1123,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 5061,
+    "reasoning_tokens": 668,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.2
+  },
+  "wall_s": 13.62,
+  "tokens_per_s": 82.45,
+  "ttft_s": 2.2,
+  "reasoning_content": "The sub-question asks for advisor headcount over time. Let me look for headcount figures in the passages.\n\nPassages mentioning advisor headcount:\n- RJF-DECK-2025-investor-day#126: \"approximately 9,000 employee and independent financial advisors\" - this is a figure but doesn't have a clear date/period (deck published 2025-06-05).\n- RJF-10K-2025#24: \"As of September 30, 2025, we had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.\" This is advisor headcount: 3,878 employee financial advisors and 5,065 independent advisors as of 2025-09-30.\n\nThese are facts. The sub-question asks \"Advisor headcount over time\" [series]. So I should provide the figures.\n\nThe #24 gives 3,878 employee financial advisors and 5,065 independent advisors as of September 30, 2025. Total = 8,943.\n\n#126 gives \"approximately 9,000 employee and independent financial advisors\" but no date clearly (deck published 2025-06-05, investor day). It's a bio. Period is not stated clearly. I could include it with period \"\" or note it's approximate.\n\nLet me include both as facts.\n\nFor #24: two items - employee financial advisors (3,878) and independent advisors (5,065). Both as of 2025-09-30.\n\nFor #126: approximately 9,000 employee and independent financial advisors. Period not stated explicitly but deck is from 2025-06-05 investor day. I'll leave period \"\" since no clear date for the figure, or use \"\".\n\nActually the figure is \"approximately 9,000\". Let me capture it.\n\nLet me build the items.\n\nItem 0: employee financial advisors, value \"3,878\", unit \"employee financial advisors\", period \"2025-09-30\", scope \"\" (domestic? The passage says \"we had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors\"). The context is global associates but employee financial advisors and independent advisors... The PCG section. Actually #24 is in segment Private Client Group, Item 1. The 3,878 employee and 5,065 independent advisors. I'll note scope as \"\" but maybe \"domestic\" - actually the deck #126 says \"domestic wealth management businesses\". The 10-K #24 doesn't specify domestic vs global for advisors. I'll leave scope \"\".\n\nItem 1: independent advisors, value \"5,065\".\n\nItem 2: approximately 9,000 employee and independent financial advisors (from #126).\n\nLet me write quotes.\n\nQuote #24: \"As of September 30, 2025, we had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.\"\n\nQuote #126: \"leading the firm's domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors\"\n\nNow for the label: fact for both.\n\nLet me submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "As of September 30, 2025, Raymond James had 3,878 employee financial advisors.",
+            "quote": "As of September 30, 2025, we had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.",
+            "value": "3,878",
+            "unit": "employee financial advisors",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#24"
+            ]
+          },
+          {
+            "text": "As of September 30, 2025, Raymond James had 5,065 independent advisors.",
+            "quote": "As of September 30, 2025, we had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.",
+            "value": "5,065",
+            "unit": "independent advisors",
+            "period": "2025-09-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#24"
+            ]
+          },
+          {
+            "text": "Raymond James's Private Client Group president leads domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors.",
+            "quote": "leading the firm's domestic wealth management businesses that include approximately 9,000 employee and independent financial advisors",
+            "value": "9,000",
+            "unit": "employee and independent financial advisors",
+            "period": "",
+            "scope": "domestic wealth management businesses",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-DECK-2025-investor-day#126"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state advisor headcount figures (employee and independent advisors) for the firm.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

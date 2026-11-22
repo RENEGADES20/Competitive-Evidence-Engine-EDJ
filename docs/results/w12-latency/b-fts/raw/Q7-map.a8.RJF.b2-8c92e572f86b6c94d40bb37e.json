@@ -1,0 +1,109 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a8.RJF.b2",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a8.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-10Q-2025Q4#244",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TR-2024Q4#35",
+    "RJF-10K-2025#225",
+    "RJF-10K-2025#233",
+    "RJF-10Q-2026Q1#242",
+    "RJF-10Q-2026Q1#306",
+    "RJF-DECK-2025-investor-day#68",
+    "RJF-10Q-2026Q1#238",
+    "RJF-10Q-2026Q2#245",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-10K-2025#248",
+    "RJF-DECK-2025-investor-day#126",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-10K-2025#452",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-10Q-2026Q2#417",
+    "RJF-10Q-2025Q4#233",
+    "RJF-10K-2025#111",
+    "RJF-10Q-2025Q2#158"
+  ],
+  "at": "2026-11-21T14:51:29.911510-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6649,
+    "output_tokens": 3306,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 5113,
+    "reasoning_tokens": 2791,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.2
+  },
+  "wall_s": 24.28,
+  "tokens_per_s": 136.16,
+  "ttft_s": 2.2,
+  "reasoning_content": "I need to answer sub-question a8.RJF about \"Advisor turnover and departures disclosed by the firm\" for Raymond James Financial.\n\nLet me look through the passages for anything about advisor turnover, departures, headcount, churn.\n\nKey passages:\n- RJF-TRADE-2026-10-29-WM-01#1: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\" This is about headcount, not turnover/departures per se. Actually this is a statement that they no longer report advisor headcount.\n- RJF-TR-2024Q4#35: mentions \"$5 billion large branch that off-boarded\" - \"the $5 billion large branch that off-boarded\". This is about a departure of a large branch.\n- RJF-10K-2025#225: \"were negatively impacted by the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025.\"\n\nSo the question asks about \"Advisor turnover and departures disclosed by the firm.\" There are mentions of departures: \"the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025\" and \"the $5 billion large branch that off-boarded\".\n\nAlso \"Raymond James no longer reports advisor headcount\" is a statement relevant to the question\u2014the firm no longer reports advisor headcount (turnover/departures).\n\nLet me think about what counts as \"fact\" for \"Advisor turnover and departures disclosed by the firm.\"\n\nFacts:\n1. The firm disclosed departure of \"primarily one large branch in our independent contractor division in our first fiscal quarter of 2025\" (RJF-10K-2025#225). This negatively impacted net new assets.\n2. The $5 billion large branch that off-boarded (RJF-TR-2024Q4#35).\n3. Raymond James no longer reports advisor headcount (RJF-TRADE-2026-10-29-WM-01#1).\n\nThese are facts about departures.\n\nLet me capture these as items.\n\nFor the departure: \"the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025\" - period would be fiscal first quarter of 2025 (F2025 Q1, i.e., quarter ended December 31, 2024). Actually \"first fiscal quarter of 2025\" - Raymond James fiscal year 2025 ends September 30, 2025, so first fiscal quarter is October-December 2024.\n\nThe $5 billion large branch off-boarded - the \"$5 billion large branch\" - value \"$5 billion\" unit of assets.\n\nThe \"no longer reports advisor headcount\" is a fact about disclosure - the firm no longer reports advisor headcount, had about 8,900 advisors last time broken out.\n\nLet me write these items.\n\nItem 1: departure of large branch - fact about departures.\nQuote: \"domestic PCG net new assets, as well as our PCG AUA and assets in fee-based accounts, were negatively impacted by the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025\"\n\nItem 2: $5 billion large branch off-boarded.\nQuote: \"the $5 billion large branch that off-boarded\"\n\nItem 3: no longer reports advisor headcount.\nQuote: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\n\nThese are all facts (partial disclosure of departures).\n\nLet me build the cell. Label: fact. Items list.\n\nFor item 1: value \"\", unit \"\", period \"F2025Q1\" - actually the fiscal first quarter of 2025. Let me use period as \"F2025Q1\"? The format given: \"FYYYYY\" for fiscal year, \"YYYYQn\" for calendar quarter. Fiscal quarter isn't explicitly listed. Hmm. But I could put \"F2025\" as fiscal year? No, it's a specific quarter. Actually the departure was \"in our first fiscal quarter of 2025\". The period format options don't include fiscal quarter. I could write \"2024-12-31\" (calendar quarter end) since fiscal Q1 2025 = quarter ended Dec 31, 2024. Let me use \"F2025Q1\" or \"2024-12-31\"? The instruction says period should be one of those formats. I'll use \"F2025Q1\" - but that's not in the list. Actually, let me re-read: \"period: 'YYYY-MM-DD' for a point in time, 'YYYYQn' for a calendar quarter, 'FYYYYY' for a fiscal year, 'YYYY' for a calendar year\".\n\nSo fiscal quarter isn't listed. I'll express the departure quarter. Raymond James fiscal Q1 2025 = Oct-Dec 2024 = calendar quarter 2024Q4. I'll use \"2024Q4\" with a note? Actually I could just state it in text and period as \"2024Q4\". But to be safe, I'll put period as \"2024Q4\" and note in text it's fiscal first quarter of 2025.\n\nActually, the value/unit are \"\" since no figure for item 1. The text will mention it.\n\nFor item 2: value \"$5 billion\", unit \"assets\" (or \"branch assets\"). Period not clearly stated - the $5 billion large branch off-boarded. The quarter was 2024Q4 (the transcript is period 2024-12-31). Actually the transcript RJF-TR-2024Q4 has period 2024-12-31. The off-boarded branch discussed in that quarter. So period \"2024Q4\".\n\nActually, wait - the off-boarding of the large branch happened in \"our first fiscal quarter of 2025\" per 10-K, which is the quarter ended December 31, 2024. The transcript 2024Q4 (period 2024-12-31) discusses it. So same event.\n\nLet me keep item 2 value \"$5 billion\", unit \"client assets\" perhaps. The quote says \"$5 billion large branch that off-boarded\" - the $5 billion refers to the branch's assets. I'll say unit \"assets of departing branch\".\n\nFor item 3: value \"8,900\", unit \"financial advisors\", period \"\" (not stated). This is about headcount, not turnover. Hmm. Is \"no longer reports advisor headcount\" a fact for \"advisor turnover and departures\"? It's about disclosure of headcount, which is related to turnover/departures. Actually the statement \"no longer reports advisor headcount\" is directly relevant\u2014the firm stopped disclosing advisor count (which would be needed for turnover). \n\nActually the sub-question is \"Advisor turnover and departures disclosed by the firm.\" The key facts are the departures disclosed (the large branch departure) and the fact that they no longer report advisor headcount.\n\nThe headcount \"8,900\" figure is a different quantity (headcount, not turnover/departures). But the statement \"no longer reports advisor headcount\" is a fact about disclosure.\n\nI think I'll include the departure items as facts, and the \"no longer reports headcount\" as a fact too (it's a statement about what they disclose regarding advisor departures/counts).\n\nLet me be careful. The headcount 8,900 is a headcount figure, which is a different measure than \"turnover and departures.\" But the disclosure statement \"no longer reports advisor headcount\" is relevant to the sub-question about what they disclose. I'll treat the disclosure statement as a fact, but note the 8,900 is historical headcount.\n\nActually, let me focus: the sub-question asks \"Advisor turnover and departures disclosed by the firm.\" \n\nFacts directly about departures:\n- The departure of primarily one large branch (independent contractor division) in fiscal Q1 2025.\n- The $5 billion large branch off-boarded.\n\nThese are the departures disclosed. The \"no longer reports advisor headcount\" is a related disclosure fact.\n\nI'll include all three as facts. For the headcount item, I could mark it as fact (about disclosure) with the headcount figure being a historical data point.\n\nActually let me think about whether \"8,900 advisors\" headcount is a \"different_quantity\" for \"advisor turnover and departures.\" The sub-question is about turnover and departures, not headcount. Headcount is a different measure. But the disclosure \"no longer reports advisor headcount\" is about what they report/disclose regarding advisors.\n\nI think the cleanest approach: The main fact items are the departures. The headcount statement is a fact about disclosure (they no longer report advisor headcount), which is relevant. I'll include it as a fact item with the note.\n\nLet me finalize.\n\nActually, I'll include:\n1. Fact: departure of primarily one large branch in independent contractor division in fiscal Q1 2025.\n2. Fact: $5 billion large branch off-boarded.\n3. Fact: no longer reports advisor headcount (last broken out ~8,900).\n\nFor item 3, the \"8,900 advisors\" is a headcount figure. I'll put value \"8,900\", unit \"financial advisors\" and note in text it's the last officially reported headcount. This is a fact about what they disclosed (historically) and that they no longer report.\n\nActually, is \"8,900 advisors\" a \"different_quantity\" relative to \"turnover and departures\"? It's headcount, which is different. But the item is really about \"no longer reports advisor headcount\" disclosure. Hmm.\n\nI'll keep it simple: label fact, items being the departures and the disclosure statement. The headcount 8,900 I'll include as part of the disclosure item.\n\nLet me write the cell.\n\ndiffers_because: \"\" (since label is fact).\n\nreason: brief.\n\nderivation: operation \"\", inputs [].\n\nLet me draft items carefully with quotes.\n\nItem 0:\ntext: \"Raymond James disclosed that domestic PCG net new assets and PCG AUA were negatively impacted by the departure of primarily one large branch in its independent contractor division in the first fiscal quarter of 2025.\"\nquote: \"domestic PCG net new assets, as well as our PCG AUA and assets in fee-based accounts, were negatively impacted by the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025\"\nvalue: \"\"\nunit: \"\"\nperiod: \"2024Q4\" (fiscal Q1 2025). Actually I'll put \"F2025Q1\"? Not allowed. I'll put \"2024Q4\".\n\nHmm, but the period instruction lists specific formats. \"F2025Q1\" is not listed. Let me just use \"2024Q4\" and the text explains it's fiscal first quarter of 2025.\n\nActually wait, I need to be careful: is it calendar quarter 2024Q4 = Oct-Dec 2024. Raymond James fiscal year 2025 = Oct 2024 - Sep 2025. First fiscal quarter = Oct-Dec 2024 = 2024Q4. Yes.\n\nItem 1:\ntext: \"A KBW analyst noted the $5 billion large branch that off-boarded, and asked about industry churn related to recruiting.\"\nActually the off-boarding statement is from the analyst's question. Let me quote: \"I think you noted 5.4% x the $5 billion large branch that off-boarded.\"\n\nThis is a fact about a $5 billion large branch departing. value \"$5 billion\", unit \"client assets (departing branch)\" or just \"assets\". period \"2024Q4\".\n\nItem 2:\ntext: \"Raymond James no longer reports advisor headcount; the last officially broken-out headcount was about 8,900 advisors.\"\nquote: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\"\nvalue \"8,900\", unit \"financial advisors\", period \"\".\n\nThis item is about disclosure (no longer reports headcount), with the historical figure.\n\nI think these three items are good.\n\nLet me also consider whether there's any \"not_disclosed\" aspect. The firm \"no longer reports advisor headcount\" - but that's about headcount, not turnover/departures. There's no turnover rate disclosed. The sub-question asks about turnover and departures. The firm discloses a departure event (large branch). It doesn't disclose a turnover rate or advisor count.\n\nI'll label the cell \"fact\" since there are facts about departures.\n\nLet me write the final answer.\n\nFor the definition field, leave \"\".\n\nscope: for item 0, \"independent contractor division\"; for item 1, \"\"; for item 2, \"\".\n\nActually item 0 scope: \"independent contractor division\". \n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James disclosed that domestic PCG net new assets and PCG AUA were negatively impacted by the departure of primarily one large branch in its independent contractor division in the first fiscal quarter of 2025.",
+            "quote": "domestic PCG net new assets, as well as our PCG AUA and assets in fee-based accounts, were negatively impacted by the departure of primarily one large branch in our independent contractor division in our first fiscal quarter of 2025",
+            "value": "",
+            "unit": "",
+            "period": "2024Q4",
+            "scope": "independent contractor division",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#225"
+            ]
+          },
+          {
+            "text": "During the quarter, Raymond James experienced the off-boarding of a $5 billion large branch, as noted in a KBW analyst's question.",
+            "quote": "I think you noted 5.4% x the $5 billion large branch that off-boarded.",
+            "value": "$5 billion",
+            "unit": "client assets of departing branch",
+            "period": "2024Q4",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2024Q4#35"
+            ]
+          },
+          {
+            "text": "Raymond James no longer reports advisor headcount; the last time headcount was officially broken out it was about 8,900 advisors.",
+            "quote": "Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.",
+            "value": "8,900",
+            "unit": "financial advisors",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages disclose a large-branch departure (fiscal Q1 2025) and state the firm no longer reports advisor headcount, which are the departures/disclosures the sub-question asks for; no turnover rate is given.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

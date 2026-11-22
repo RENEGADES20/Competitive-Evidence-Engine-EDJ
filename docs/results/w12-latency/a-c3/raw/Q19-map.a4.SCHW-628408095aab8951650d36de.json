@@ -1,0 +1,227 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a4.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "SCHW-DECK-2026-investor-day#86",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37"
+  ],
+  "at": "2026-11-21T13:56:22.682610-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5212,
+    "output_tokens": 8497,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 3804,
+    "reasoning_tokens": 6911,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 0.77
+  },
+  "wall_s": 33.59,
+  "tokens_per_s": 252.96,
+  "ttft_s": 0.77,
+  "reasoning_content": "We need answer one cell for a4.SCHW with series items of growth in younger investors and clients under 40. Need extract passages only. Need label likely fact because passages state percentages of new-to-firm retail households under various ages, Gen Z, millennials, etc. Need one item per figure/period. We need identify all figures about growth in younger investors/clients under 40. Sub-question asks \"What growth in younger investors and clients under 40 do firms report?\" [series]. We should include facts: percentages of new-to-firm households / clients by age, perhaps \"average age fallen by about 10 years and now in 40s\" maybe different? It's growth/trend in younger clients. But items should relate. Need not answer. Need one cell with items per figure or statement. We can include multiple periods.\n\nNeed be careful: \"growth in younger investors and clients under 40\" \u2014 figures like 70% of new-to-firm retail households Gen Z and millennials (2026Q3), 61% Gen Z & Millennial investors percent of new clients (investor day 2026 maybe no period), nearly 60% under 40 in 2025, 33% under 30, more than 50% under 40 in 2024, nearly one-third Gen Z new-to-firm retail households 2025, one in six under 24 and >30% under 30, nearly 60% under 40 in H1 2025, one-third of retail households creating financial plan under 40, 42% thinkorswim users Millennial/Gen Z, new-to-firm retail household growth 1.0M 2023, 1.1M 2024, 1.2M 2025 +10% CAGR (not specifically younger; but passage says in addition marketing driving growth & winning with young investors; maybe not direct). Should include only figures for younger investors/under 40. The question asks growth in younger investors and clients under 40 firms report. Could include \"average age of client fallen by about 10 years in last decade, now in 40s\" \u2014 that's a trend but not a growth figure. Include as fact? It states what sub-question asks (growth in younger clients) perhaps yes, a statement. Also \"New-to-Firm Retail Household Growth 1.0M 1.1M 1.2M 2023 2024 2025 +10% CAGR\" is overall not younger, so different_quantity? It is a different measure (overall NTF households, not younger) maybe not include because subquestion specifically younger. But can include as different_quantity? The instructions: \"a different quantity: ... a wider unit that contains the asked one\". Overall NTF household growth includes younger but not only. Could include as different_quantity. But the cell can contain multiple items fact/different. Need \"one cell\" for subquestion. We can put facts and maybe different_quantity items. However likely not necessary; but maybe test expects all relevant. Need return one cell with label. Label likely fact. Items include all facts. Should not overdo with repeated same metric.\n\nNeed parse period labels. Chunks:\n- SCHW-TR-2026Q3#11 period 2026-09-30: ~70% of new-to-firm retail households are Gen Z and millennials. period 2026Q3, scope new-to-firm retail households.\n- SCHW-TR-2025Q3#11 period 2025-09-30: nearly one-third of new-to-firm retail households are Gen Zers, ages 13-28; also one-third of retail households who created financial plan within last two years under 40 (chunk #12 same period). The first is 2025? \"This year\" => 2025, period 2025 (or 2025Q3? The passage period 2025-09-30; statement says this year, likely 2025. Use period 2025? They want YYYY for calendar year. Could use 2025. The transcript period is 2025-09-30, but \"this year\" likely 2025. Use 2025. Scope new-to-firm retail households. Value \"nearly one-third\" as printed, unit \"% of new-to-firm retail households\"? value maybe \"one-third\", unit \"of new-to-firm retail households\". Better value \"nearly one-third\", unit \"%\". Hmm unit what is counted measured. Could be \"share of new-to-firm retail households\" with value \"nearly one-third\". The schema value figure as printed; unit \"new-to-firm retail households\"? The value isn't a number. Maybe use value \"nearly one-third\", unit \"share of new-to-firm retail households\". \n- SCHW-TR-2025Q4#11 period 2025-12-31: Gen Z investors nearly a third of new retail client accounts opened in 2025, and nearly 60% under age 40. Two figures. One item for Gen Z share, one for under 40 share. Period 2025. Scope new retail client accounts.\n- SCHW-DECK-2026-investor-day#131: 61% Gen Z & Millennial Investors Percent of New Clients. Period n/a. This is a figure, likely 2025? Deck published 2026-05-14, no period stated. Use period \"\". Scope new clients. \n- SCHW-TR-2025Q2#9 period 2025-06-30: one in six new-to-firm retail households under age 24; more than 30% new-to-firm clients under age 30; nearly 60% under age 40. Three items. Period H1 2025? Passage says first half of year, and transcript period Q2 2025. Use \"2025H1\"? Allowed period formats only YYYY-MM-DD, YYYYQn, FYYYYY, YYYY. They did not mention H1. Could use 2025Q2 or 2025. \"in first half of the year\" -> period 2025 (calendar year? no, half). The allowed format doesn't include half. We may use \"2025Q2\" as transcript period, though statement covers first half. Better period \"2025\" maybe. But item text can say first half of 2025. Period \"2025\" as calendar year not exact. Hmm.\n- SCHW-TR-2024Q4#11 period 2024-12-31: 33% new-to-firm retail households under age 30, more than 50% under age 40. Period 2024. Two items.\n- SCHW-TR-2025Q4#42 period 2025-12-31: average age of client fallen by about 10 years in last decade and now in 40s; a third of new-to-firm clients last year Gen Z. The latter duplicate of Gen Z nearly a third. We can include average age trend as fact maybe. Period 2025.\n- SCHW-DECK-2026Q3#24 period 2026-09-30: ~70% NTF Retail HH are Gen Z & Millennials. Duplicate of transcript 2026Q3. Include maybe deck and transcript one item? Since one item per figure/statement; could cite both chunk ids? It says chunk_ids ids of passages quoted; quote exact words. Could quote deck. To avoid duplicate, include one item for ~70% with chunk id #24 or #11. Maybe include both in same item? But quote one. Could include chunk_ids both? The quote exact words from one. Better one item.\n- SCHW-DECK-2026-investor-day#100: \"of New-to-Firm Retail HHs <40 1 +60%\" This likely says percent of NTF retail HHs <40 +60%? Need exact context unclear. The text line: \"#1 in trading... #1 in Retail options... of New-to-Firm Retail HHs <40 1 +60%\" Could mean \"of New-to-Firm Retail HHs <40 +60%\" maybe share or growth? Not clear. Maybe item \"New-to-firm retail households under 40 grew 60%\"? But passage is fragment; quote doesn't state clear. We should not infer. Could skip or include with text \"A slide lists 'of New-to-Firm Retail HHs <40' with '+60%' but does not state the measure.\" That may be fact? Hmm not safe. Since exact quote \"of New-to-Firm Retail HHs <40 1 +60%\" ambiguous, not a clear quantity. Could omit.\n- SCHW-DECK-2026-investor-day#106: 42% of thinkorswim users are Millennial or Gen Z; period n/a. This is younger users share within trading platform. Include fact? It is related to younger investors, but \"growth in\" maybe share. Include.\n- SCHW-DECK-2026-investor-day#86: NTF retail household growth 1.0M 2023, 1.1M 2024, 1.2M 2025 +10% CAGR. Not younger-specific; but chunk says \"driving strong growth & winning with young investors\". The figure is total NTF households. Could be different_quantity (overall NTF retail household growth, not specifically young). But subquestion asks growth in younger investors; overall is wider. Could include as different_quantity if helpful. Need maybe include? The cell label could be fact and include different_quantity item? The schema label per cell not per item; label describes cell. If any different_quantity, label? Usually label should reflect overall. But instructions say label each cell; item can be different_quantity. If cell has both facts and different, label fact? Hmm ambiguous. Better only facts to keep label fact. We can omit overall.\n\nNeed perhaps include \"70% of retail assets held by ultra-high net worth and high net worth households\" not younger. No.\n\nNeed \"retention rate around wealth transfers extremely high\" not younger. No.\n\nNeed \"younger investors at Schwab highly engaged... one-third of retail households who created financial plan within last two years under 40.\" Include fact. Period 2025Q3? Statement \"within last two years\" as of 2025. Period 2025? Scope retail households creating financial plan. Value \"one-third\", unit \"share of retail households who created a financial plan\". It says one-third of retail households who created a financial plan within last two years are under age 40. Good.\n\nNeed \"industry research shows Gen Z 45% more likely to start investing by age 21 vs Millennials\" This is industry figure, not firm's own figure. Subquestion asks what growth firms report; it's a position/industry research but attributed. Could include? It is not the firm's own client growth; but factual statement about industry. Maybe skip or include as context? The item would be fact? It states industry research, not firm's client growth. The subquestion is about what firms report, maybe include as \"Schwab cites industry research...\" but not a firm figure. Could be fact because attributed. But question specifically \"growth in younger investors and clients under 40 do firms report\"; this is a forecast/industry stat. Maybe include? It says \"industry research shows Gen Z is 45% more likely to start investing by the age of 21 as compared to Millennials.\" That's not growth at Schwab. Maybe omit to avoid clutter.\n\nNeed \"New-to-Firm Retail HHs +14% 2024-2025\" and \"NNA +25%\" \u2014 overall, not younger. Skip.\n\nNeed \"61% Gen Z & Millennial Investors Percent of New Clients\" likely a specific stat. Include.\n\nNeed maybe \"42% of thinkorswim users are Millennial or Gen Z\" as fact. Period n/a.\n\nNeed \"average age of client has fallen by about 10 years in last decade and now in 40s\" Include as fact: average age trend. Value \"about 10 years\", unit \"years\", period \"last decade\"/2025? It says last decade; as of 2025. The question asks growth in younger investors. This is a trend. Include maybe. But the item value \"about 10 years\" and \"now in the 40s\" no exact figure. Could include one item text. Period 2025. Scope whole client base. Definition \"\".\nNeed maybe \"average age of our clients continues to get younger\" (2025Q3) no figure. That's a statement. Could include but no figure. Since series of growth figures, maybe not.\n\nNeed \"Gen Z investors comprise nearly a third of new retail client accounts opened in 2025, and nearly 60% are under the age of 40.\" Good.\n\nNeed \"one in six new-to-firm retail households are under the age of 24\" and \"more than 30% under 30\" and \"nearly 60% under 40\" - 2025 first half. Include.\n\nNeed \"33% of new-to-firm retail households under age 30, and more than 50% under age 40\" 2024. Include.\n\nNeed \"nearly one-third of new-to-firm retail households at Schwab are Gen Zers, investors between ages 13 and 28\" 2025. Include.\n\nNeed \"~70% NTF retail HH Gen Z & Millennials\" 2026Q3. Include.\n\nNeed \"61% Gen Z & Millennial Investors Percent of New Clients\" maybe 2025? The deck investor day 2026 likely references 2025 or current. It says \"61% Gen Z & Millennial Investors Percent of New Clients 1\" no period. Include period \"\".\n\nNeed \"42% of thinkorswim users Millennial or Gen Z\" period \"\". Include.\n\nNeed \"one-third of retail households who created a financial plan within last two years are under age 40\" 2025. Include.\n\nMaybe \"70% of new-to-firm retail households are Gen Z and millennials\" is same as \"61%\"? Different period/source, include both.\n\nNeed \"New-to-Firm Retail Household Growth 1.0M 1.1M 1.2M 2023 2024 2025 +10% CAGR\" overall. Could include as different_quantity? It is a growth series but not younger. Subquestion asks \"growth in younger investors and clients under 40\"; overall NTF household growth is wider. The instructions say item per figure; a series is one item per period. If include, three items plus CAGR. But label would need different_quantity for these. Maybe not necessary. But perhaps the test expects \"what growth in younger investors and clients under 40 do firms report?\" and passage #86 is about growth in NTF retail households, not younger. Could include as different_quantity to show it's not young-specific. But cell already has facts. The label \"fact\" can still include a different_quantity item? The schema says label each cell; items have no label. So if we include a different item in a fact cell, it's not labeled. Hmm. The cell label must be one. I think just include facts. No need.\n\nNeed answer exactly one cell with subquestion_id a4.SCHW. Use tool. Items array.\n\nNeed ensure quotes exact at most ~300 chars. We'll copy exact snippets. Need chunk_ids only listed. Use quotes no ellipses? Can use exact words. Need not include entire passage.\n\nNeed decide period. Use:\n- 2026Q3 for 70% NTF Gen Z/millennials (chunk #11 or #24). The transcript period is 2026-09-30. Use \"2026Q3\".\n- 2025 for nearly one-third Gen Z ages 13-28 (chunk 2025Q3#11; statement \"This year\" in transcript period 2025-09-30). Use 2025.\n- 2025 for one-third financial plan under 40 (chunk #12).\n- 2025 for Gen Z nearly a third of new retail accounts and nearly 60% under 40 (2025Q4#11).\n- 2025 for one in six under 24; >30% under 30; nearly 60% under 40 (2025Q2#9). Use 2025.\n- 2024 for 33% under 30 and >50% under 40 (2024Q4#11).\n- \"\" for 61% Gen Z & Millennial new clients (deck).\n- \"\" for 42% thinkorswim users.\n- 2025 for average age fallen 10 years, now 40s (2025Q4#42). Period 2025? It says last decade; maybe period \"2025\". \n- Maybe 2025 for \"one-third of new-to-firm clients last year were Gen Z\" duplicate. Skip duplicate.\n\nNeed maybe include \"Gen Z investors comprise nearly a third of new retail client accounts opened in 2025, and nearly 60% are under the age of 40.\" The \"nearly 60%\" refers to new retail client accounts? The sentence: \"Gen Z investors comprise nearly a third of new retail client accounts opened in 2025, and nearly 60% are under the age of 40.\" \"are\" likely new retail client accounts. Scope new retail client accounts. Good.\n\nNeed \"one in six new-to-firm retail households are under the age of 24\" \u2014 value \"one in six\", unit \"share of new-to-firm retail households\". Good.\n\nNeed \"More than 30% of our new-to-firm clients are under the age of 30\" scope new-to-firm clients. Good.\n\nNeed \"nearly 60% are under the age of 40\" \u2014 same passage, scope new-to-firm clients. Good.\n\nNeed \"33% of our new-to-firm retail households under the age of 30\" and \"more than 50% under the age of 40\" from 2024. Good.\n\nNeed \"~70% NTF Retail HH are Gen Z & Millennials\" quote from deck #24: \"~70% NTF Retail HH are Gen Z & Millennials 1\". Use chunk id #24. Period 2026Q3 because deck period 2026-09-30. Scope new-to-firm retail households.\n\nNeed \"61% Gen Z & Millennial Investors Percent of New Clients 1\" quote. Scope new clients. Period \"\" (not stated). \nNeed \"42% of thinkorswim\u2192 users are Millennial or Gen Z 1\" exact quote; maybe arrow character. Use \"42% of thinkorswim\u2192 users are Millennial or Gen Z 1\". Scope thinkorswim users. Period \"\".\n\nNeed \"average age of our client has fallen by about 10 years in the last decade and is now in the 40s.\" Quote exact: \"Our average age of our client has fallen by about 10 years in the last decade and is now in the 40s.\" Scope whole client base. Period 2025. Value \"about 10 years\", unit \"years\". It's not a percentage but okay.\n\nNeed \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" Quote exact: \"one-third of retail households who created a financial plan within the last two years are under the age of 40.\" Scope retail households creating a financial plan. Period 2025. Value \"one-third\", unit \"share of retail households\".\n\nNeed \"nearly one-third of new-to-firm retail households at Schwab are Gen Zers, investors between the ages of 13 and 28.\" Quote exact. Period 2025. Scope new-to-firm retail households. Value \"nearly one-third\", unit \"share of new-to-firm retail households\". Definition maybe \"Gen Zers, investors between the ages of 13 and 28\" can be definition? The schema definition is firm's own definition of quantity. Could set \"\" because not needed. But for Gen Z item, definition \"investors between the ages of 13 and 28\" maybe the firm's definition of Gen Z. The sub-question asks younger investors; definition may be relevant. We can include in text and definition. But definition is \"firm's own definition of the quantity when a passage gives one\". For Gen Z, yes \"Gen Zers, investors between the ages of 13 and 28\". We can put that as definition. For under 40 no.\n\nNeed maybe \"Gen Z & Millennial Investors\" no definition.\n\nNeed \"more than 50% under 40\" in 2024: value \"more than 50%\", unit \"% of new-to-firm retail households\".\n\nNeed \"33%\" value \"33%\", unit \"% of new-to-firm retail households\".\n\nNeed maybe \"under the age of 30\" 33% is not under 40 but part of younger clients. Include.\n\nNeed \"under age 24 one in six\" also.\n\nNeed \"42% thinkorswim\" is a share of users, not growth. It fits \"younger investors\" engagement. Include.\n\nCould the label be \"fact\" because several facts. Reason: passages report multiple shares of younger/under-40 clients across periods. Derivation empty.\n\nNeed ensure quote length <=300. All short.\n\nNeed tool call with cells array containing one object. Need include differs_because \"\" for fact. derivation {operation:\"\", inputs:[]}. Reason short.\n\nNeed decide how many items. 11 items. That's okay. Could include 10. Need maybe item for 2025Q3 \"One-third of retail households who created a financial plan...\" yes.\n\nLet's formulate items carefully.\n\nItem 0:\ntext: \"Schwab says approximately 70% of new-to-firm retail households are Gen Z and millennials.\"\nquote: \"~70% NTF Retail HH are Gen Z & Millennials 1\"\nvalue: \"~70%\"\nunit: \"% of new-to-firm retail households\"\nperiod: \"2026Q3\"\nscope: \"new-to-firm retail households\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-DECK-2026Q3#24\"]\n\nItem 1:\ntext: \"Schwab says nearly one-third of new-to-firm retail households are Gen Zers, whom it defines as investors between the ages of 13 and 28.\"\nquote: \"nearly one-third of new-to-firm retail households at Schwab are Gen Zers, investors between the ages of 13 and 28\"\nvalue: \"nearly one-third\"\nunit: \"share of new-to-firm retail households\"\nperiod: \"2025\"\nscope: \"new-to-firm retail households\"\ndefinition: \"Gen Zers, investors between the ages of 13 and 28\"\nchunk_ids: [\"SCHW-TR-2025Q3#11\"]\n\nItem 2:\ntext: \"Schwab says one-third of retail households that created a financial plan in the prior two years are under age 40.\"\nquote: \"one-third of retail households who created a financial plan within the last two years are under the age of 40\"\nvalue: \"one-third\"\nunit: \"share of retail households creating a financial plan\"\nperiod: \"2025\"\nscope: \"retail households that created a financial plan within the last two years\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q3#12\"]\n\nItem 3:\ntext: \"Schwab says Gen Z investors were nearly one-third of new retail client accounts opened in 2025.\"\nquote: \"Gen Z investors comprise nearly a third of new retail client accounts opened in 2025\"\nvalue: \"nearly a third\"\nunit: \"share of new retail client accounts\"\nperiod: \"2025\"\nscope: \"new retail client accounts opened in 2025\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#11\"]\n\nItem 4:\ntext: \"Schwab says nearly 60% of new retail client accounts opened in 2025 were held by clients under age 40.\"\nquote: \"nearly 60% are under the age of 40\"\nvalue: \"nearly 60%\"\nunit: \"% of new retail client accounts\"\nperiod: \"2025\"\nscope: \"new retail client accounts opened in 2025\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#11\"]\nWait quote alone \"nearly 60% are under the age of 40\" lacks context; text adds. Fine.\n\nItem 5:\ntext: \"Schwab says one in six new-to-firm retail households in the first half of 2025 were under age 24.\"\nquote: \"one in six new-to-firm retail households are under the age of 24\"\nvalue: \"one in six\"\nunit: \"share of new-to-firm retail households\"\nperiod: \"2025\"\nscope: \"new-to-firm retail households\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nItem 6:\ntext: \"Schwab says more than 30% of new-to-firm clients in the first half of 2025 were under age 30.\"\nquote: \"More than 30% of our new-to-firm clients are under the age of 30\"\nvalue: \"More than 30%\"\nunit: \"% of new-to-firm clients\"\nperiod: \"2025\"\nscope: \"new-to-firm clients\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nItem 7:\ntext: \"Schwab says nearly 60% of new-to-firm clients in the first half of 2025 were under age 40.\"\nquote: \"nearly 60% are under the age of 40\"\nvalue: \"nearly 60%\"\nunit: \"% of new-to-firm clients\"\nperiod: \"2025\"\nscope: \"new-to-firm clients\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q2#9\"]\n\nItem 8:\ntext: \"Schwab says 33% of new-to-firm retail households in 2024 were under age 30.\"\nquote: \"33% of our new-to-firm retail households under the age of 30\"\nvalue: \"33%\"\nunit: \"% of new-to-firm retail households\"\nperiod: \"2024\"\nscope: \"new-to-firm retail households\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2024Q4#11\"]\n\nItem 9:\ntext: \"Schwab says more than 50% of new-to-firm retail households in 2024 were under age 40.\"\nquote: \"more than 50% under the age of 40\"\nvalue: \"more than 50%\"\nunit: \"% of new-to-firm retail households\"\nperiod: \"2024\"\nscope: \"new-to-firm retail households\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2024Q4#11\"]\n\nItem 10:\ntext: \"Schwab says 61% of new clients are Gen Z or millennial investors.\"\nquote: \"61% Gen Z & Millennial Investors Percent of New Clients 1\"\nvalue: \"61%\"\nunit: \"% of new clients\"\nperiod: \"\"\nscope: \"new clients\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-DECK-2026-investor-day#131\"]\n\nItem 11:\ntext: \"Schwab says 42% of thinkorswim users are millennial or Gen Z.\"\nquote: \"42% of thinkorswim\u2192 users are Millennial or Gen Z 1\"\nvalue: \"42%\"\nunit: \"% of thinkorswim users\"\nperiod: \"\"\nscope: \"thinkorswim users\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-DECK-2026-investor-day#106\"]\n\nItem 12:\ntext: \"Schwab says the average age of its client has fallen by about 10 years over the last decade and is now in the 40s.\"\nquote: \"Our average age of our client has fallen by about 10 years in the last decade and is now in the 40s.\"\nvalue: \"about 10 years\"\nunit: \"years\"\nperiod: \"2025\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"SCHW-TR-2025Q4#42\"]\n\nCould include item for \"a third of new-to-firm clients last year were Gen Z\" duplicate. Skip.\n\nNeed maybe item for \"70% of new-to-firm retail households Gen Z and millennials\" transcript #11 quote exact: \"approximately 70% of new-to-firm retail households are Gen Z and millennials.\" If using deck quote, okay. But the transcript says \"approximately\". Deck \"~70%\". Fine.\n\nNeed consider \"one-third of new-to-firm retail households at Schwab are Gen Zers\" in 2025; also \"nearly a third of new retail client accounts opened in 2025\" maybe overlapping. Fine.\n\nNeed label \"fact\" and reason.\n\nPotential issue: \"growth\" subquestion asks \"What growth in younger investors and clients under 40 do firms report?\" The items mostly shares, not growth rates. But passage #100 has \"+60% of New-to-Firm Retail HHs <40\", which may be growth. Should we include? The fragment \"of New-to-Firm Retail HHs <40 1 +60%\" is ambiguous but maybe intended as \"+60% of New-to-Firm Retail HHs <40\" maybe means growth? Let's inspect chunk #100 text:\n\"Younger investors\n\nAdvice seekers\n\nH/UHNW\n\n#1 in trading, executing ~1/3 of all Retail brokerage trades\n\n#1\n\nin Retail options trading volume & margin balance usage\n\nof New-to-Firm Retail HHs <40 1 +60%\n\n$68B\n\nRecord net flows into Managed Investing in 2025, including $25B for SWA\n\n+27% UHNW year-over-year asset growth; fastest among any wealth tier 2\"\nThis is a slide with columns. \"of New-to-Firm Retail HHs <40 1 +60%\" could mean \"+60%\" something (maybe net new assets? or growth in NTF HHs under 40). Not clear. If the subquestion asks growth in younger investors, this is likely a relevant figure: +60% for NTF retail households under 40. But exact measure missing. Should we include as fact? The item text would need say \"A slide lists 'of New-to-Firm Retail HHs <40' with '+60%'.\" That's not a complete statement of what grew. It may be a fact that the deck shows +60% associated with NTF Retail HHs <40 but no label. Could be risky. Maybe include as different_quantity? Hmm.\n\nMaybe there is a hidden expected item: \"of New-to-Firm Retail HHs <40 +60%\" likely the share of NTF retail households under 40 increased 60%? Actually \"of New-to-Firm Retail HHs <40\" with \"+60%\" could be \"growth of New-to-Firm Retail HHs <40 +60%\". The phrase \"of\" preceding suggests a bullet: \"of New-to-Firm Retail HHs <40 1 +60%\" maybe as in \"??% of New-to-Firm Retail HHs <40\" and \"+60%\" separate? The layout:\n#1 in trading...\n#1 in Retail options...\nof New-to-Firm Retail HHs <40 1 +60%\n$68B ...\nCould be \"??% of New-to-Firm Retail HHs <40\" with a footnote 1, and \"+60%\" is another stat. But the text extraction lost the number before \"of\". Hmm. We cannot infer. Skip.\n\nNeed maybe include \"New-to-Firm Retail Household Growth 1.0M/1.1M/1.2M +10% CAGR\" not younger. Skip.\n\nNeed decide if any not_disclosed? No, facts exist. So label fact. No different_quantity. Reason \"Passages report multiple shares of Gen Z, millennial, under-30 and under-40 clients across periods.\" Good.\n\nNeed ensure tool call JSON no markdown. We'll call submit_extraction.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab says approximately 70% of new-to-firm retail households are Gen Z and millennials.",
+            "quote": "~70% NTF Retail HH are Gen Z & Millennials 1",
+            "value": "~70%",
+            "unit": "% of new-to-firm retail households",
+            "period": "2026Q3",
+            "scope": "new-to-firm retail households",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026Q3#24"
+            ]
+          },
+          {
+            "text": "Schwab says nearly one-third of new-to-firm retail households are Gen Zers, whom it defines as investors between the ages of 13 and 28.",
+            "quote": "nearly one-third of new-to-firm retail households at Schwab are Gen Zers, investors between the ages of 13 and 28",
+            "value": "nearly one-third",
+            "unit": "share of new-to-firm retail households",
+            "period": "2025",
+            "scope": "new-to-firm retail households",
+            "definition": "Gen Zers, investors between the ages of 13 and 28",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#11"
+            ]
+          },
+          {
+            "text": "Schwab says one-third of retail households that created a financial plan within the last two years are under age 40.",
+            "quote": "one-third of retail households who created a financial plan within the last two years are under the age of 40",
+            "value": "one-third",
+            "unit": "share of retail households creating a financial plan",
+            "period": "2025",
+            "scope": "retail households that created a financial plan within the last two years",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q3#12"
+            ]
+          },
+          {
+            "text": "Schwab says Gen Z investors were nearly one-third of new retail client accounts opened in 2025.",
+            "quote": "Gen Z investors comprise nearly a third of new retail client accounts opened in 2025",
+            "value": "nearly a third",
+            "unit": "share of new retail client accounts",
+            "period": "2025",
+            "scope": "new retail client accounts opened in 2025",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#11"
+            ]
+          },
+          {
+            "text": "Schwab says nearly 60% of new retail client accounts opened in 2025 were held by clients under age 40.",
+            "quote": "nearly 60% are under the age of 40",
+            "value": "nearly 60%",
+            "unit": "% of new retail client accounts",
+            "period": "2025",
+            "scope": "new retail client accounts opened in 2025",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#11"
+            ]
+          },
+          {
+            "text": "Schwab says one in six new-to-firm retail households in the first half of 2025 were under age 24.",
+            "quote": "one in six new-to-firm retail households are under the age of 24",
+            "value": "one in six",
+            "unit": "share of new-to-firm retail households",
+            "period": "2025",
+            "scope": "new-to-firm retail households",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab says more than 30% of new-to-firm clients in the first half of 2025 were under age 30.",
+            "quote": "More than 30% of our new-to-firm clients are under the age of 30",
+            "value": "More than 30%",
+            "unit": "% of new-to-firm clients",
+            "period": "2025",
+            "scope": "new-to-firm clients",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab says nearly 60% of new-to-firm clients in the first half of 2025 were under age 40.",
+            "quote": "nearly 60% are under the age of 40",
+            "value": "nearly 60%",
+            "unit": "% of new-to-firm clients",
+            "period": "2025",
+            "scope": "new-to-firm clients",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q2#9"
+            ]
+          },
+          {
+            "text": "Schwab says 33% of new-to-firm retail households in 2024 were under age 30.",
+            "quote": "33% of our new-to-firm retail households under the age of 30",
+            "value": "33%",
+            "unit": "% of new-to-firm retail households",
+            "period": "2024",
+            "scope": "new-to-firm retail households",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2024Q4#11"
+            ]
+          },
+          {
+            "text": "Schwab says more than 50% of new-to-firm retail households in 2024 were under age 40.",
+            "quote": "more than 50% under the age of 40",
+            "value": "more than 50%",
+            "unit": "% of new-to-firm retail households",
+            "period": "2024",
+            "scope": "new-to-firm retail households",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2024Q4#11"
+            ]
+          },
+          {
+            "text": "Schwab says 61% of new clients are Gen Z or millennial investors.",
+            "quote": "61% Gen Z & Millennial Investors Percent of New Clients 1",
+            "value": "61%",
+            "unit": "% of new clients",
+            "period": "",
+            "scope": "new clients",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#131"
+            ]
+          },
+          {
+            "text": "Schwab says 42% of thinkorswim users are millennial or Gen Z.",
+            "quote": "42% of thinkorswim\u2192 users are Millennial or Gen Z 1",
+            "value": "42%",
+            "unit": "% of thinkorswim users",
+            "period": "",
+            "scope": "thinkorswim users",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#106"
+            ]
+          },
+          {
+            "text": "Schwab says the average age of its client has fallen by about 10 years over the last decade and is now in the 40s.",
+            "quote": "Our average age of our client has fallen by about 10 years in the last decade and is now in the 40s.",
+            "value": "about 10 years",
+            "unit": "years",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2025Q4#42"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report multiple shares of Gen Z, millennial, under-30, and under-40 clients across periods.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

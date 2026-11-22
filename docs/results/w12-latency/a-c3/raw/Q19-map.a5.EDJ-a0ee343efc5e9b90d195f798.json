@@ -1,0 +1,175 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#75",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q2#63",
+    "EDJ-10Q-2025Q2#68",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2025Q3#71",
+    "EDJ-10Q-2026Q2#83",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2025Q2#80",
+    "EDJ-10Q-2025Q2#70",
+    "EDJ-10K-2025#57",
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#15",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-09-24-IN-01#0",
+    "EDJ-10K-2025#16",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-TRADE-2026-08-18-IN-01#3",
+    "EDJ-10Q-2025Q3#60",
+    "EDJ-10K-2025#73",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-TRADE-2026-11-12-IN-01#3"
+  ],
+  "at": "2026-11-21T13:56:22.639308-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15882,
+    "output_tokens": 1723,
+    "cache_hit_tokens": 1408,
+    "cache_miss_tokens": 14474,
+    "reasoning_tokens": 640,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-flash",
+    "streamed": true,
+    "ttft_s": 1.08
+  },
+  "wall_s": 11.8,
+  "tokens_per_s": 146.02,
+  "ttft_s": 1.08,
+  "reasoning_content": "The sub-question asks: How do Edward Jones's current offerings align with younger investors' preferences? We need evidence from passages. Relevant: EDJ-10K-2025#88 mentions \"a new digital platform, focused on attracting and retaining Next Generation investors.\" Also EDJ-10K-2025#56 mentions generational wealth transfer, changing client expectations. EDJ-10K-2025#15 digital tools. Trade press Quicken.\n\nThe item format is for facts about quantities, but here the sub-question is qualitative. We should still produce items: text statements attributed to firm, quote, chunk_ids, value \"\", unit \"\", period \"\", scope, definition.\n\nLabel: fact \u2014 passages state what the firm is doing regarding younger/next generation investors (digital platform). That's a fact in full or in part. Include items:\n\n1. New digital platform focused on attracting and retaining Next Generation investors (EDJ-10K-2025#88).\n2. Financial Planning Services more personalized experience with additional planning capabilities (same chunk) \u2014 maybe include as part of same item? Better separate.\n3. Enterprise Reimagined - adopting new capabilities, processes and technology to deliver more value and create a better client experience (EDJ-10Q-2025Q2#68) \u2014 relevant to offerings.\n4. Digital and Data division invests in technology infrastructure and digital initiatives to provide new tools for branch teams... (EDJ-10K-2025#15).\n5. Minority stake in Quicken to integrate personal financial management capabilities (trade, EDJ-TRADE-2026-08-18-IN-01#2) \u2014 attributed to firm announcement; it's a fact of what the firm did.\n6. Competition risk statement: changing client demographics, preferences and values including generational wealth transfer (EDJ-10K-2025#56) \u2014 fact about what firm says.\n\nShould we include a not_disclosed? The question asks how current offerings align with younger investors' preferences \u2014 the passages don't quantify, but they do state a digital platform aimed at Next Generation investors. That's fact (partial). I'd label fact with items. No differing quantity needed.\n\nMaybe include 5-6 items. Period: \"\" for most since no date stated except trade press published dates. EDJ-10K-2025#88 period 2025-12-31? The 10-K period is FY2025; statements about initiatives as of the filing. Could use \"2025-12-31\" for those. Hmm, the item's period says when the figure/statement applies. Safer to use the document period \"2025-12-31\" for 10-K statements. For trade press no period stated \u2014 \"\" or publication date. I'll use \"\" where no period is stated in the passage; for 10-K items use 2025-12-31 since that's the reporting period. Actually text says \"The Partnership has been actively pursuing...\" \u2014 as of the filing period. Use \"2025-12-31\", scope \"whole firm\" \u2192 \"\".\n\nLet me write cells.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones states that among its initiatives to meet clients' needs is a new digital platform focused on attracting and retaining Next Generation investors.",
+            "quote": "These initiatives also include targeting new clients: High Net Worth, focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models; Workplace, which connects local business owners and their employees with financial solutions through their workplace; and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones states it has made substantial investments in additional strategies, solutions, products, structures and third-party relationships to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs, including Financial Planning Services offering a more personalized experience with additional planning capabilities.",
+            "quote": "The Partnership has been actively pursuing and making substantial investments in additional strategies, solutions, products, structures and third-party relationships (collectively, \"initiatives\") to meet clients' planning, investing, saving, spending, borrowing and comprehensive needs. These initiatives include both potential future solutions currently in development as well as recently launched products and solutions such as Financial Planning Services, where clients receive a more personalized experience with additional planning capabilities.",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones states that generational wealth transfer and changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values, may affect its ability to compete and adapt its business model.",
+            "quote": "The Partnership's continued ability to compete and adapt its business model may be adversely impacted by the evolving financial services industry and generational wealth transfer, including changing client expectations for expanded product offerings and technology needs, and changing client demographics, preferences and values.",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#56"
+            ]
+          },
+          {
+            "text": "Edward Jones states that its Digital and Data division supports significant investment in technology infrastructure and digital initiatives to provide new tools for branch teams, and that branch teams leverage new tools for deeper discovery conversations with clients and more comprehensive advice and planning.",
+            "quote": "The Partnership's Digital and Data division supports the significant investment in technology infrastructure and digital initiatives to provide new tools for branch teams to better serve clients, enhance the operational support the home office provides to the branch teams and create operational efficiencies that reduce manual processes. Branch teams leverage new tools for deeper discovery conversations with clients and more comprehensive advice and planning.",
+            "value": "",
+            "unit": "",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#15"
+            ]
+          },
+          {
+            "text": "Edward Jones states that its Enterprise Reimagined initiative will adopt new capabilities, processes and technology to deliver more value and create a better client experience.",
+            "quote": "the firm has embarked on a multi-tiered initiative, called \"Enterprise Reimagined,\" that the firm believes will create more efficient operations by restructuring and reducing the size of the home office, removing redundancies, and adopting new capabilities, processes and technology to deliver more value and create a better client experience.",
+            "value": "",
+            "unit": "",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#68"
+            ]
+          },
+          {
+            "text": "Edward Jones announced it took a minority stake in the personal finance app Quicken with the intention of integrating Quicken's personal financial management capabilities more directly into Edward Jones to support its value proposition and advisor conversations with clients, and the firm noted it is still determining the deployment strategy.",
+            "quote": "it's notable that this month, Edward Jones announced that they have taken a minority stake in the personal finance app Quicken , with an explicit intention that the investment is a step towards integrating Quicken's personal financial management capabilities more directly into Edward Jones as a way to support their value proposition and advisor conversations with clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-TRADE-2026-08-18-IN-01#2"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages state the firm's offerings and initiatives directed at meeting evolving client needs, including a new digital platform aimed at Next Generation investors, without quantifying an alignment measure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

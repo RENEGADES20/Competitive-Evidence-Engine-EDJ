@@ -1,0 +1,104 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "KITCES-WELLBEING-2023#23",
+    "KITCES-WELLBEING-2023#17",
+    "MCK-ADVISOR-SHORTAGE-2025#25",
+    "MCK-SIGNAL-SELLOFF-2026#9"
+  ],
+  "at": "2026-11-21T17:55:16.071861-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3108,
+    "output_tokens": 737,
+    "cache_hit_tokens": 1280,
+    "cache_miss_tokens": 1828,
+    "reasoning_tokens": 390,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.27
+  },
+  "wall_s": 5.86,
+  "tokens_per_s": 125.77,
+  "ttft_s": 1.27,
+  "reasoning_content": "The passages are industry research, not firm-specific disclosures. None of them mention Edward Jones or Merrill's advisor attrition rates. Let me analyze each sub-question.\n\nThe passages discuss advisor wellbeing, advisor shortage, teaming, fees. Nothing about Edward Jones or Merrill advisor attrition.\n\nSo for a1.research (Edward Jones's advisor attrition rate) - not_found, nothing about it.\n\na2.research - closest disclosed measure to Edward Jones's advisor attrition rate (proxy: advisor_headcount). Nothing disclosed about Edward Jones headcount either. Not found.\n\na3.research Merrill - not found.\n\na4.research - not found.\n\na5.research comparison - not found, nothing compares them.\n\nActually, let me check the passage about \"Struggling advisors were 4X as likely to be leaving their employer\" - that's about advisor turnover likelihood, industry-wide, not firm-specific. It could be a different_quantity for attrition? Attrition rate vs likelihood of leaving. But it's not attributed to Edward Jones or Merrill.\n\nThe question is specifically about Edward Jones vs Merrill. The research passages are industry-level. For a firm's own figure, research figure is different_quantity. But there's nothing specifically about Edward Jones or Merrill here.\n\nFor a1.research: Edward Jones's advisor attrition rate - not_found (no passage about Edward Jones).\n\nActually wait - the research figure about \"Struggling advisors 4X as likely to leave\" is an industry figure, not about Edward Jones. So not applicable.\n\nI'll label all as not_found, except maybe consider the industry turnover figures as different_quantity? No, they don't relate to the named firm's own figure.\n\nLet me just mark all not_found with empty items.\n\nActually, let me reconsider a5 comparison: whether rates can be compared. Nothing in passages about comparing them. Not found.\n\nAll not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions Edward Jones or its advisor attrition rate; the passages are general industry research.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses any Edward Jones advisor headcount or attrition proxy.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions Merrill or its advisor attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses any Merrill advisor headcount or attrition proxy.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage compares Edward Jones's and Merrill's advisor attrition rates.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

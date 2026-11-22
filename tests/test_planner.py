@@ -333,8 +333,8 @@ def _ds_plan_response(finish="tool_calls", args=None, name=planner.PLAN_TOOL, ex
 def test_deepseek_plan_request_and_call(monkeypatch):
     from tests.test_llm_deepseek import FakeDeepSeek
     for mode, cap_tokens, choice in (("off", 8000, {"type": "function", "function": {"name": planner.PLAN_TOOL}}),
-                                     ("on", 64000, "auto")):
-        monkeypatch.setenv("DEEPSEEK_THINKING", mode)
+                                     ("high", 128000, "auto")):   # #272: the planner stage's effort
+        monkeypatch.setenv("DEEPSEEK_EFFORT_PLAN", mode)
         client = FakeDeepSeek(_ds_plan_response())
         meta: dict = {}
         raw = planner.call_planner(q7(), "deepseek", client=client, meta=meta)

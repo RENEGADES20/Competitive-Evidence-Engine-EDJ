@@ -1,0 +1,66 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a4.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-21T13:05:17.553845-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2025,
+    "output_tokens": 620,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 873,
+    "reasoning_tokens": 355,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.64
+  },
+  "wall_s": 6.64,
+  "tokens_per_s": 93.37,
+  "ttft_s": 1.64,
+  "reasoning_content": "The sub-question asks: \"What growth in younger investors and clients under 40 do firms report?\" for Merrill (MER).\n\nThe passage (chunk BAC-PR-2026-01-14-01#12) is about Bank of America's GWIM segment, mentioning \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" and \"Top Next Generation Advisors (2025)\".\n\nThis passage mentions advisors under 40, not clients under 40 growth. The question asks about growth in younger investors and clients under 40.\n\nThe passage does mention \"Top 40 Advisors Under 40 List\" - that's advisors, not clients/investors. That's a different quantity (advisors vs clients).\n\nAlso \"Top Next Generation Advisors\" - again advisors.\n\nNothing about growth in younger investors or clients under 40.\n\nSo the answer is not_found or different_quantity. The \"Advisors Under 40\" is a different measure - advisors, not clients/investors. So it's a different_quantity.\n\nLet me label it different_quantity with the item about \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\".\n\nActually, let me think. The question asks about \"growth in younger investors and clients under 40\". The passage mentions \"Top 40 Advisors Under 40\" and \"Top Next Generation Advisors\" - these are about advisors (employees), not clients. This is a different measure.\n\nSo different_quantity, differs_because: it's about financial advisors under 40, not clients/investors under 40, and no growth figure is given.\n\nLet me create the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Merrill (Bank of America GWIM segment) was named No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).",
+            "quote": "No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "",
+            "unit": "",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          }
+        ],
+        "differs_because": "The passage concerns financial advisors under 40 (employees), not the growth in younger investors or clients under 40 that the question asks about, and it reports no growth figure.",
+        "reason": "The only related content concerns advisors under 40, a different measure than clients/investors under 40, with no growth figure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

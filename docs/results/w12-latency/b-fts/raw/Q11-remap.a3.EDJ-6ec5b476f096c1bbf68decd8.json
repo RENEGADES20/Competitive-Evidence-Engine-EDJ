@@ -1,0 +1,56 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.2",
+  "call_id": "remap.a3.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10K-2025#238",
+    "EDJ-10K-2025#10"
+  ],
+  "at": "2026-11-21T15:00:30.974839-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2896,
+    "output_tokens": 452,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1360,
+    "reasoning_tokens": 317,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.02
+  },
+  "wall_s": 5.77,
+  "tokens_per_s": 78.34,
+  "ttft_s": 3.02,
+  "reasoning_content": "Let me analyze the passages to determine what Edward Jones's advisor headcount definition includes.\n\nThe sub-question asks: What the firm's advisor headcount definition includes.\n\nLooking at passages:\n- EDJ-10Q-2025Q2#57: \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients\" and \"the firm's approximately 55,000 associates\"\n- EDJ-10K-2025#10: describes financial advisors and CSTPs in branch office model\n- EDJ-10K-2025#204: retail brokerage entities\n\nNone of the passages give a specific definition of what advisor headcount includes or excludes. They mention \"financial advisors\" and \"associates\" but don't define what's included/excluded in the advisor headcount.\n\nSo the sub-question asks for the definition. The passages don't state a definition. They just report \"more than 20,000 financial advisors\" and \"approximately 55,000 associates\".\n\nThe question is what the definition includes. There's no passage giving a definition of what \"financial advisors\" includes or excludes.\n\nSo label: not_found, since no passage gives the definition.\n\nActually, let me consider - the passages mention \"financial advisors\" vs \"associates\" and \"CSTPs\". This suggests financial advisors are distinct from CSTPs. But that's not really a definition of what advisor headcount includes.\n\nThere's no explicit definition. So not_found.\n\nI'll return a single cell with label not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage provides a definition of what the firm's advisor headcount includes or excludes; passages only report the count (e.g., 'more than 20,000 financial advisors') without defining its composition.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
