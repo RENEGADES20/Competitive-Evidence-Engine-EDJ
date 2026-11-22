@@ -40,3 +40,27 @@ def test_critical_path_first_evidence_and_stages(tmp_path, capsys):
 def test_percentiles_interpolate():
     assert L.pct([1, 2, 3, 4], 50) == 2.5 and L.pct([5], 90) == 5 and L.pct([], 50) is None
     assert L.pct([None, 10, 20], 100) == 20
+
+
+def test_retrieval_times_from_the_report(tmp_path, capsys):
+    """#272 (exp/hybrid): search_s and embed_s per question from the run's report.json."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    _rec(raw / "Q5-plan-aa11.json", 10)
+    _rec(raw / "Q5-map.a1.MS-bb22.json", 30)
+    _rec(raw / "Q5-reduce-ee55.json", 20)
+    (tmp_path / "report.json").write_text(json.dumps({"questions": [
+        {"id": "Q5", "search_s": 9.5, "embed_s": 0.4, "embed_calls": 3}]}), encoding="utf-8")
+    assert L.main([str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "Retrieval (search_s): p50 9.5 s" in out and "| Q5 | 9.5 | 0.4 | 10 |" in out
+    q = L.per_question(L.load(raw), L.load_retrieval(tmp_path / "report.json"))[0]
+    assert q["with_retrieval_s"] == 69.5 and q["first_with_retrieval_s"] == 49.5 and q["embed_calls"] == 3
+
+
+def test_no_report_keeps_the_old_table(tmp_path, capsys):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    _rec(raw / "Q5-plan-aa11.json", 10)
+    assert L.main([str(raw)]) == 0
+    assert "Retrieval" not in capsys.readouterr().out

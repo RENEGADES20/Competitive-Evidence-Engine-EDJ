@@ -11,7 +11,11 @@ Per question:
 Per stage: p50 / p90 / max of wall time, time to first token, output tokens and the reasoning share.
 A record reused from an earlier run keeps the time it was made with.
 
-  python scripts/latency_report.py <run>/raw [--questions Q5,Q10] [--title "C1"] [--json out.json]
+With the run's report.json (--report; the run folder's own is read when present), each question also gets its
+retrieval time (`search_s`: every sub-question search before the map) and, in the hybrid modes, the time spent
+embedding the query texts (`embed_s`, exp/hybrid #272); "with retrieval" adds search_s to the critical path.
+
+  python scripts/latency_report.py <run>/raw [--questions Q5,Q10] [--title "C1"] [--json out.json] [--report report.json]
 """
 from __future__ import annotations
 
@@ -59,7 +63,8 @@ def pct(xs: list[float], p: float) -> float | None:
     return round(xs[lo] + (xs[hi] - xs[lo]) * (k - lo), 2)
 
 
-def per_question(rows: list[dict]) -> list[dict]:
+def per_question(rows: list[dict], retrieval: dict | None = None) -> list[dict]:
+    retrieval = retrieval or {}
     out = []
     for q in sorted({r["q"] for r in rows}, key=lambda x: int(x[1:])):
         rs = [r for r in rows if r["q"] == q]
@@ -75,7 +80,18 @@ def per_question(rows: list[dict]) -> list[dict]:
                     "critical_s": round(crit, 1), "first_evidence_s": round(first, 1) if first is not None else None,
                     "calls": len(rs), "cut": sum(r["cut"] for r in rs), "invalid": sum(r["invalid"] for r in rs),
                     "failed": sum(r["failed"] for r in rs)})
+        rt = retrieval.get(q) or {}
+        if rt.get("search_s") is not None:
+            out[-1].update(search_s=rt["search_s"], embed_s=rt.get("embed_s"), embed_calls=rt.get("embed_calls"),
+                           with_retrieval_s=round(crit + rt["search_s"], 1),
+                           first_with_retrieval_s=round(first + rt["search_s"], 1) if first is not None else None)
     return out
+
+
+def load_retrieval(report: Path) -> dict:
+    """search_s / embed_s / embed_calls per question from an eval run's report.json."""
+    rep = json.loads(report.read_text(encoding="utf-8"))
+    return {r["id"]: {k: r.get(k) for k in ("search_s", "embed_s", "embed_calls")} for r in rep.get("questions", [])}
 
 
 def per_stage(rows: list[dict]) -> list[dict]:
@@ -99,7 +115,14 @@ def per_stage(rows: list[dict]) -> list[dict]:
 def summary(qs: list[dict]) -> dict:
     crit = [q["critical_s"] for q in qs]
     first = [q["first_evidence_s"] for q in qs if q["first_evidence_s"] is not None]
-    return {"questions": len(qs), "critical_p50": pct(crit, 50), "critical_p90": pct(crit, 90),
+    search = [q["search_s"] for q in qs if q.get("search_s") is not None]
+    embed = [q["embed_s"] for q in qs if q.get("embed_s") is not None]
+    withr = [q["with_retrieval_s"] for q in qs if q.get("with_retrieval_s") is not None]
+    extra = ({"search_p50": pct(search, 50), "search_p90": pct(search, 90), "search_max": pct(search, 100),
+              "embed_p50": pct(embed, 50), "embed_p90": pct(embed, 90), "embed_max": pct(embed, 100),
+              "with_retrieval_p50": pct(withr, 50), "with_retrieval_p90": pct(withr, 90),
+              "with_retrieval_max": pct(withr, 100)} if search else {})
+    return {**extra, "questions": len(qs), "critical_p50": pct(crit, 50), "critical_p90": pct(crit, 90),
             "critical_max": pct(crit, 100), "critical_min": min(crit) if crit else None,
             "first_evidence_p50": pct(first, 50), "first_evidence_p90": pct(first, 90),
             "calls": sum(q["calls"] for q in qs), "cut": sum(q["cut"] for q in qs),
@@ -117,11 +140,21 @@ def markdown(title: str, qs: list[dict], stages: list[dict], s: dict) -> str:
              f"{s['questions']} questions, {s['calls']} call records: critical path p50 {_f(s['critical_p50'])} s, "
              f"p90 {_f(s['critical_p90'])} s, max {_f(s['critical_max'])} s; first evidence p50 "
              f"{_f(s['first_evidence_p50'])} s, p90 {_f(s['first_evidence_p90'])} s; cut {s['cut']}, invalid "
-             f"{s['invalid']}, failed {s['failed']}.", "",
-             "| Q | plan s | map calls | slowest map s | re-maps | slowest re-map s | reduce s | critical path s | first evidence s | cut |",
-             "|---|---|---|---|---|---|---|---|---|---|"]
+             f"{s['invalid']}, failed {s['failed']}.", ""]
+    if "search_p50" in s:
+        lines += [f"Retrieval (search_s): p50 {_f(s['search_p50'])} s, p90 {_f(s['search_p90'])} s, max "
+                  f"{_f(s['search_max'])} s; query embedding (embed_s): p50 {_f(s['embed_p50'])} s, p90 "
+                  f"{_f(s['embed_p90'])} s, max {_f(s['embed_max'])} s; critical path with retrieval: p50 "
+                  f"{_f(s['with_retrieval_p50'])} s, p90 {_f(s['with_retrieval_p90'])} s, max "
+                  f"{_f(s['with_retrieval_max'])} s.", ""]
+    ret = "search_p50" in s
+    lines += [
+             "| Q | " + ("retrieval s | embed s | " if ret else "") + "plan s | map calls | slowest map s | re-maps | "
+             "slowest re-map s | reduce s | critical path s | first evidence s | cut |",
+             "|---|" + ("---|---|" if ret else "") + "---|---|---|---|---|---|---|---|---|"]
     for q in qs:
-        lines.append(f"| {q['q']} | {_f(q['plan_s'])} | {q['map_calls']} | {_f(q['map_max_s'])} | {q['remap_calls']} | "
+        lines.append(f"| {q['q']} | " + (f"{_f(q.get('search_s'))} | {_f(q.get('embed_s'))} | " if ret else "")
+                     + f"{_f(q['plan_s'])} | {q['map_calls']} | {_f(q['map_max_s'])} | {q['remap_calls']} | "
                      f"{_f(q['remap_max_s'])} | {_f(q['reduce_s'])} | {_f(q['critical_s'])} | "
                      f"{_f(q['first_evidence_s'])} | {q['cut']} |")
     lines += ["", "| Stage | calls | wall p50 s | wall p90 s | wall max s | TTFT p50 s | TTFT p90 s | output p50 | output max | reasoning share |",
@@ -139,14 +172,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--questions", default="", help="comma-separated IDs, e.g. Q5,Q10")
     ap.add_argument("--title", default="")
     ap.add_argument("--json", type=Path, default=None, help="also write the numbers as JSON here")
+    ap.add_argument("--report", type=Path, default=None,
+                    help="the run's report.json for retrieval times (default: the run folder's, when present)")
     a = ap.parse_args(argv)
     raw = a.raw / "raw" if (a.raw / "raw").is_dir() else a.raw
+    report = a.report or (raw.parent / "report.json" if (raw.parent / "report.json").is_file() else None)
     wanted = {x.strip() for x in a.questions.split(",") if x.strip()} or None
     rows = load(raw, wanted)
     if not rows:
         print(f"No call records in {raw}")
         return 1
-    qs, stages = per_question(rows), per_stage(rows)
+    qs, stages = per_question(rows, load_retrieval(report) if report else None), per_stage(rows)
     s = summary(qs)
     sys.stdout.write(markdown(a.title or str(raw), qs, stages, s))
     if a.json:

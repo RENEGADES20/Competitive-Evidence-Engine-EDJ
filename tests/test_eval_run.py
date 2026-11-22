@@ -1931,3 +1931,11 @@ def test_the_mock_map_re_search_uses_the_mode_search(monkeypatch, tmp_path, mode
     with pytest.raises(_MapSeen):
         er.main(["--questions", "Q29", "--mode", mode, "--out", str(tmp_path)])
     assert seen == (["default"] if mode == "fts" else [sentinel])
+
+
+def test_embed_stats_read_and_reset(monkeypatch):
+    """#272: the eval reads the query-embedding time of one search, then resets it."""
+    from cee.retrieve import embed
+    monkeypatch.setattr(embed, "QUERY_STATS", {"calls": 2, "s": 0.12345})
+    assert er._embed_stats() == {"calls": 2, "s": 0.123}
+    assert er._embed_stats(reset=True) == {"calls": 2, "s": 0.123} and embed.QUERY_STATS == {"calls": 0, "s": 0.0}

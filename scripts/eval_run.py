@@ -471,6 +471,20 @@ def now_iso() -> str:
     return dt.datetime.now().astimezone().isoformat()
 
 
+def _embed_stats(reset: bool = False) -> dict:
+    """#272: query-embedding time and count since the last reset (cee.retrieve.embed.QUERY_STATS), rounded;
+    zeros when the embedding module was never loaded (fts mode, no vectors)."""
+    import sys
+    mod = sys.modules.get("cee.retrieve.embed")
+    stats = getattr(mod, "QUERY_STATS", None) if mod else None
+    if stats is None:
+        return {"calls": 0, "s": 0.0}
+    out = {"calls": stats["calls"], "s": round(stats["s"], 3)}
+    if reset:
+        stats["calls"], stats["s"] = 0, 0.0
+    return out
+
+
 def stage_version(provider: str, stage: str) -> str | None:
     """#272: the request version of one W11 stage (plan, map, reduce): deepseek's names that stage's effort,
     cap and streaming; anthropic / openai have one version for every call."""
@@ -1616,16 +1630,19 @@ def run_bank(args, bank, keys, corpus, subs, base, real, retrieval_mode, run_id,
                     else plan_question(query, "mock"))
             if plan is None:   # the planner call would pass --max-calls: rule plan, no answer call
                 plan, capped = rules_plan(query), True
+        embed_stats = _embed_stats(reset=True)   # #272: the query embeddings of this search (hybrid modes)
         t0 = time.perf_counter()
         # exp/hybrid (#249): fts with a plan = planner.search_subquestions exactly as main; the hybrid
         # modes pass hybrid.search as its search_fn
         hits = modes.search(query, k=args.k, mode=retrieval_mode, trace=trace, plan=plan, part_pools=pools,
                             as_of=args.as_of)
         search_s = round(time.perf_counter() - t0, 3)
+        embed_stats = _embed_stats()
         r = evaluate(q, query, hits, corpus, subs, args.min_coverage, key_for(q, keys), args.as_of, doc_dates,
                      trace.ids())
         r |= prompt_size(k, hits, b_tokens, trace.peers)
-        r |= {"search_s": search_s, "unattached": list(trace.unattached),
+        r |= {"search_s": search_s, "embed_s": embed_stats["s"], "embed_calls": embed_stats["calls"],
+              "unattached": list(trace.unattached),
               # #247 part 2: the passages the per-period and pin passes added, by origin
               "added_chunk_ids": {o: [h.chunk_id for h in hits if getattr(h, "origin", "search") == o]
                                   for o in ("period", "pinned")}}
