@@ -54,6 +54,9 @@ class Settings:
     # (no automatic retry); the reduce system prompt version (v5.2 | v5.3: v5.3 adds "state each fact once").
     deepseek_idle_s: float = 120.0
     reduce_prompt: str = "v5.2"
+    # #277 verify-cee only: while this file names a stage (map | reduce), the mock call of that stage fails
+    # (extract.mock_failure). Empty (the default): never. Never read for a real provider.
+    mock_fail_file: str = ""
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -160,6 +163,7 @@ def settings() -> Settings:
         map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),
         deepseek_idle_s=_positive_float("DEEPSEEK_IDLE_S", DEEPSEEK_IDLE_S_DEFAULT),
         reduce_prompt=_choice("REDUCE_PROMPT", REDUCE_PROMPTS, REDUCE_PROMPT_DEFAULT),
+        mock_fail_file=os.getenv("MOCK_FAIL_FILE", "").strip(),
     )
 
 

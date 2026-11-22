@@ -239,3 +239,13 @@ delay, the pump logic is tested as a pure function).
 - 2026-11-22 12:40 - plan review round 2: APPROVE (all 8 findings checked in the plan). Build note from the
   reviewer: while the old worker is alive, the Retry poll (`st.rerun`) must not draw a second Stop button or
   start a run; add a test for it in step 6.
+- 2026-11-22 12:35 - steps 1-6 built: `cancel.py`, `runcache.py`, checks in llm / extract / reduce / planner,
+  `ask()` with token + cache + stopped / failed rows, Ask page worker + pump, Stop, Stopped view, Retry.
+  Changes from the plan: (a) the Retry wait while the old worker lives is a `st.fragment(run_every=1)` that
+  reruns the page once the worker ends, not a 15 s blocking poll (no blocking, nothing to start); (b) the trace
+  gets a "stopped" mark and colour (`src/cee/app/components.py`, 2 lines, outside the file list);
+  (c) `cancel.sleep(0)` neither waits nor checks, so a mock with no delay never cuts a call that has its output;
+  (d) user-stop records are `cancelled` with `CallResult.cancelled` and `STOPPED_ERROR`, distinct from a
+  ProviderStop's "cancelled after the provider stopped the run" (reviewer note 1).
+  Surprise: the page's failure path now logs a row, and two existing AppTest tests wrote 4 rows into the local
+  `cee` query_log; the tests now stub `_log_attempt` and the 4 rows were deleted. pytest 1160 passed.

@@ -1,12 +1,17 @@
 """Ask page: question box, answer with citation chips, caveats and gaps (always visible)."""
 from __future__ import annotations
 
+import queue
+import threading
 import time
+from dataclasses import dataclass, field
 from html import escape
 
 import streamlit as st
 
 from cee.app import components as ui
+from cee.answer.cancel import CancelToken
+from cee.answer.runcache import RunCache
 from cee.answer.validate import WITHHELD_NOTICE, source_label
 from cee.ask import STAGES, Result, ask
 from cee.config import entities_config, settings
@@ -95,7 +100,22 @@ EARLY_HELP = ("Each point below has passed its citation, figure and date checks.
               "duplicates may be removed when the remaining checks finish; gaps and caveats come with the full answer.")
 STALL_TEXT = ("The model stopped sending the answer (no output for {idle:g} s), so this answer was not built. "
               "Nothing partial is shown.")
-RETRY_LABEL = "Try again"
+# #277: Stop while the answer is built; Retry after a stop or any failure (replaces #275's stall-only "Try again",
+# same key and flag). One click = one attempt; finished calls are reused from the run cache.
+STOP_LABEL = "Stop"
+RETRY_LABEL = "Retry"
+RETRY_FAILED_LABEL = "Retry the failed calls"
+STOPPED_HEADING = "Stopped while {stage}"
+STOPPED_TEXT = ("The answer was not built. The evidence found before the stop is below; each item cites a stored "
+                "passage. Retry asks again with the same question and filters; calls that finished are reused.")
+PAGE_CHANGED_TEXT = "The run stopped because the page changed while the answer was being built."
+WAITING_TEXT = "The previous call is still finishing; Retry is available once it has ended."
+FAILED_RETRY_HELP = "Retry asks again with the same question and filters; calls that finished are reused."
+RUNNING_TEXT = "Working for {s:.0f} s. Stop ends the run; the evidence found so far stays on the page."
+STAGE_WORDS = {"resolve": "reading the question", "decompose": "planning the search", "search": "searching",
+               "extract": "extracting evidence", "research": "re-searching", "synthesize": "writing the answer",
+               "check": "checking citations", "caveats": "adding caveats and gaps", "log": "saving the query"}
+PUMP_S = 0.2   # #277: how often the script thread draws the worker's messages (and yields to a click)
 
 
 def evidence_label(line: dict) -> str:
@@ -105,22 +125,84 @@ def evidence_label(line: dict) -> str:
     return f"EVIDENCE - {firm} - {line.get('aspect', '')}"
 
 
-def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
+@dataclass
+class Run:
+    """#277: one attempt of the Ask page, held in st.session_state["ask_run"]. The worker thread never touches
+    Streamlit; it writes only to the queue and the run cache. The script thread (the pump) fills the rest."""
+    question: str
+    filters: dict
+    cache: RunCache
+    token: CancelToken = field(default_factory=CancelToken)
+    thread: threading.Thread | None = None
+    status: str = "running"   # running | done | stopped | failed
+    stage: str | None = None
+    stop_clicked: bool = False
+    plan_text: str | None = None
+    evidence: list[dict] = field(default_factory=list)
+    steps: dict = field(default_factory=dict)
+    error: str | None = None
+    idle_s: float | None = None
+    result: Result | None = None
+
+    def alive(self) -> bool:
+        return self.thread is not None and self.thread.is_alive()
+
+
+def _on_stop() -> None:   # runs at the start of the rerun the Stop click causes (the pump already set the token)
+    run = st.session_state.get("ask_run")
+    if run is not None:
+        run.stop_clicked = True
+        run.token.set("stop", run.stage)
+
+
+def _on_retry() -> None:
+    st.session_state["retry_ask"] = True
+
+
+def _running_stage(steps: dict) -> str | None:
+    return next((s for s, (state, _) in reversed(list(steps.items())) if state == "running"), None)
+
+
+def _start_worker(run: Run, q: queue.Queue) -> None:
+    """The answer flow in a worker thread (#277): every progress line and event goes on the queue; the end is
+    ("done", result) or ("error", exception). Never touches st."""
+    def work() -> None:
+        try:
+            r = ask(run.question, progress=lambda *a: q.put(("progress", a)), filters=run.filters,
+                    on_event=lambda kind, data: q.put(("event", (kind, data))), token=run.token, cache=run.cache)
+            q.put(("done", r))
+        except BaseException as e:   # noqa: BLE001 - cancel.Cancelled included; the pump decides what to show
+            q.put(("error", e))
+
+    run.thread = threading.Thread(target=work, daemon=True, name="cee-ask")
+    run.thread.start()
+
+
+def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache | None = None) -> Result | None:
     """Progress bar + one line per stage while the answer is built (#80). The trace stays on the
     page, collapsed, once the answer is ready; a failed stage is marked and its error shown.
-    #272: the plan shows first, then each map call's cited evidence as it lands, then the answer."""
+    #272: the plan shows first, then each map call's cited evidence as it lands, then the answer.
+    #277: the flow runs in a worker thread; this (script) thread pumps its messages onto the page and shows a
+    Stop button. A click (Stop, or any widget) makes Streamlit raise its rerun exception at the pump's next draw:
+    the pump sets the run's cancel token, marks the run stopped and lets the rerun draw the Stopped view.
+    `cache`: Retry passes the earlier attempt's run cache (finished calls reused); None starts a new one."""
+    filters = dict(filters or {})
+    run = Run(question, filters, cache if cache is not None else RunCache(question, filters))
+    st.session_state["ask_run"] = run   # replaced before the new worker starts
     bar = st.progress(0.0, text="Reading the question")
     plan_slot = st.empty()
     evidence = st.container()
     early = st.empty()   # #275: the streamed claims; emptied when the final answer or a failure is shown
     early_box = {"c": None}
-    shown = {"n": 0}
+    stop_slot = st.empty()
+    elapsed = st.empty()
     box = st.status("Building the answer", expanded=True)
     slot = box.empty()
-    steps: dict[str, tuple[str, str]] = {}
+    steps = run.steps
 
     def on_event(kind: str, data: dict) -> None:
         if kind == "plan":
+            run.plan_text = data["text"]
             plan_slot.markdown(f"**{PLAN_HEADING}:** {escape(data['text'])}", unsafe_allow_html=True)
             return
         if kind == "claim":
@@ -137,40 +219,140 @@ def ask_with_trace(question: str, filters: dict | None = None) -> Result | None:
         if kind != "evidence":
             return
         with evidence:
-            if shown["n"] == 0:
+            if not run.evidence:
                 st.markdown(f"**{EVIDENCE_HEADING}**")
                 st.caption(EVIDENCE_HELP)
             for line in data["lines"]:
-                shown["n"] += 1
-                chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in line["hits"]]
-                ui.claim_card(shown["n"], line["text"], chips, label=evidence_label(line))
+                run.evidence.append(line)
+                _evidence_card(len(run.evidence), line)
 
     def progress(stage: str, state: str, text: str) -> None:
         steps[stage] = (state, text)
+        run.stage = _running_stage(steps) or run.stage
         finished = sum(s != "running" for s, _ in steps.values())
-        bar.progress(finished / len(STAGES), text=text)
+        bar.progress(min(1.0, finished / len(STAGES)), text=text)
         ui.trace_lines(list(steps.values()), slot)
 
     start = time.perf_counter()
+    stop_slot.button(STOP_LABEL, key="stop-ask", on_click=_on_stop)
+    q: queue.Queue = queue.Queue()
+    _start_worker(run, q)
+    end: tuple | None = None
     try:
-        r = ask(question, progress=progress, filters=filters, on_event=on_event)
-    except Exception as e:
-        bar.empty()
-        early.empty()   # #275: no early claim stays on screen without a final answer
-        failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
-        box.update(label=failed, state="error", expanded=True)
-        from cee.answer.llm import StreamIdle
-        if isinstance(e, StreamIdle):   # #275: a stalled stream; the user may ask again (no automatic retry)
-            st.error(STALL_TEXT.format(idle=e.idle_s))
-            st.button(RETRY_LABEL, key="retry-ask", on_click=lambda: st.session_state.update(retry_ask=True))
-        else:
-            st.error(f"The answer could not be built. {type(e).__name__}: {e}")
-        return None
+        tick = 0.0
+        while end is None:
+            try:
+                kind, payload = q.get(timeout=PUMP_S)
+            except queue.Empty:
+                kind, payload = None, None
+            if kind == "progress":
+                progress(*payload)
+            elif kind == "event":
+                on_event(*payload)
+            elif kind in ("done", "error"):
+                end = (kind, payload)
+            now = time.perf_counter()
+            if end is None and now - tick >= 1.0:   # a draw each second: Streamlit's yield point for a click
+                tick = now
+                elapsed.caption(RUNNING_TEXT.format(s=now - start))
+                st.session_state.get("ask_run")   # a session-state read is a yield point too
+    except BaseException:   # Streamlit's rerun / stop exception: Stop or another click interrupted the script
+        run.token.set("page", run.stage)
+        run.status = "stopped"
+        raise
     bar.empty()
-    early.empty()
-    box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
-               state="complete", expanded=False)
-    return r
+    early.empty()   # #275: no early claim stays on screen without a final answer
+    stop_slot.empty()
+    elapsed.empty()
+    kind, payload = end
+    if kind == "done" and not run.token.is_set():
+        run.status, run.result = "done", payload
+        box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
+                   state="complete", expanded=False)
+        return payload
+    from cee.answer.cancel import Cancelled
+    from cee.answer.llm import StreamIdle
+    if kind == "done" or isinstance(payload, Cancelled):   # stopped (a late result is never shown)
+        run.status = "stopped"
+        box.update(label=STOPPED_HEADING.format(stage=STAGE_WORDS.get(run.stage or "", "building the answer")),
+                   state="error", expanded=False)
+        _stopped_note(run)
+        _retry_button(run)
+        return None
+    run.status = "failed"
+    failed = next((t for s, t in steps.values() if s == "failed"), "A step failed")
+    box.update(label=failed, state="error", expanded=True)
+    if isinstance(payload, StreamIdle):   # #275: a stalled stream; the user may ask again (no automatic retry)
+        run.idle_s = payload.idle_s
+        run.error = STALL_TEXT.format(idle=payload.idle_s)
+    else:
+        run.error = f"The answer could not be built. {type(payload).__name__}: {payload}"
+    st.error(run.error)
+    _retry_button(run)
+    return None
+
+
+def _evidence_card(n: int, line: dict) -> None:
+    chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in line["hits"]]
+    ui.claim_card(n, line["text"], chips, label=evidence_label(line))
+
+
+def _stopped_note(run: Run) -> None:
+    st.warning(f"**{STOPPED_HEADING.format(stage=STAGE_WORDS.get(run.stage or '', 'building the answer'))}.** "
+               + STOPPED_TEXT + ("" if run.stop_clicked or run.token.reason == "stop" else " " + PAGE_CHANGED_TEXT))
+
+
+def _retry_button(run: Run, label: str = RETRY_LABEL) -> None:
+    """#277: Retry (key "retry-ask", sets session_state.retry_ask; one click = one attempt). While the previous
+    worker is still finishing (a call that cannot be cut), a disabled button and a note, refreshed each second
+    by a fragment; it reruns the page once the worker has ended. Never starts a run and draws no Stop button."""
+    if run.alive():
+        _wait_for_worker()
+        return
+    st.button(label, key="retry-ask", on_click=_on_retry, help=FAILED_RETRY_HELP)
+
+
+@st.fragment(run_every=1.0)
+def _wait_for_worker() -> None:
+    run = st.session_state.get("ask_run")
+    if run is None or not run.alive():
+        st.rerun()
+    st.button(RETRY_LABEL, key="retry-wait", disabled=True)
+    st.caption(WAITING_TEXT)
+
+
+def show_halted(run: Run) -> None:
+    """#277: the page of a stopped or failed run, on any later rerun (the Stop click's rerun included): the plan
+    line, the note, the evidence cards (each code-checked and cited), the trace and Retry. Rule 1: never the
+    streamed claims, never a final answer."""
+    if run.plan_text:
+        st.markdown(f"**{PLAN_HEADING}:** {escape(run.plan_text)}", unsafe_allow_html=True)
+    if run.status == "stopped":
+        _stopped_note(run)
+    else:
+        st.error(run.error or "The answer could not be built.")
+    _retry_button(run)
+    if run.evidence:
+        st.markdown(f"**{EVIDENCE_HEADING}**")
+        st.caption("Cited passages found before the run ended; each comes from a stored document. "
+                   "They are not an answer.")
+        for i, line in enumerate(run.evidence, start=1):
+            _evidence_card(i, line)
+    if run.steps:
+        label = (STOPPED_HEADING.format(stage=STAGE_WORDS.get(run.stage or "", "building the answer"))
+                 if run.status == "stopped" else "How far the answer got")
+        with st.status(label, state="error", expanded=False):
+            ui.trace_lines(list(run.steps.values()))
+
+
+def has_failed_calls(r: Result | None) -> bool:
+    """#277: a finished answer with a failed or invalid call (a map cell, or the planner's rule-plan fallback after
+    a failed call): Retry the failed calls is offered under it."""
+    if r is None:
+        return False
+    calls = getattr(r.matrix, "calls", None) or []
+    plan_failed = r.plan is not None and r.plan.source == "fallback" and bool(r.plan.calls)
+    return plan_failed or any(c.get("failed_call") or c.get("invalid") for c in calls)
 
 
 def render() -> None:
@@ -185,24 +367,37 @@ def render() -> None:
                    "if nothing is stored, the answer says so.")
         question = st.text_input("Question", placeholder="What does Edward Jones's 10-K say about its number of financial advisors?")
         asked = st.button("Ask", type="primary")
-        asked = asked or bool(st.session_state.pop("retry_ask", False))   # #275: "Try again" after a stall
+    retry = bool(st.session_state.pop("retry_ask", False))   # #277: Retry (was #275's "Try again")
     with right:
         s = ui.corpus_stats()
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
                                          ("FIRMS", str(s["firms"]))])
 
+    run: Run | None = st.session_state.get("ask_run")
     if asked and question.strip():
-        r = ask_with_trace(question, filters)
+        r = ask_with_trace(question, filters)   # a new run and a new run cache
         # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.
         st.session_state["last_answer"] = (r, filters) if r else None
         if r is None:
             return
+    elif retry and run is not None and run.status != "running" and not run.alive():
+        # #277: one attempt with the saved question and filters; finished calls come from the run cache
+        r = ask_with_trace(run.question, run.filters, cache=run.cache)
+        st.session_state["last_answer"] = (r, run.filters) if r else None
+        if r is None:
+            return
+    elif run is not None and run.status in ("stopped", "failed"):
+        show_halted(run)   # the Stop click's rerun included: never starts a run
+        return
     last = st.session_state.get("last_answer")
     if not last:
         ui.empty_state("No question yet. Type one above and click Ask; the answer appears here, "
                        "with a link to the source of every point.")
         return
     show_answer(*last)
+    run = st.session_state.get("ask_run")
+    if run is not None and run.status == "done" and run.result is last[0] and has_failed_calls(run.result):
+        _retry_button(run, RETRY_FAILED_LABEL)
 
 
 def show_answer(r: Result, filters: dict) -> None:

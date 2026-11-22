@@ -103,7 +103,7 @@ CSS = f"""
 .cee-trace{{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:{INK}}}
 .cee-trace .m{{display:inline-block;width:1.5rem;font-weight:700}}
 .cee-trace .running .m{{color:{ORANGE}}} .cee-trace .done .m{{color:#3F6212}}
-.cee-trace .skipped{{color:{MUTED}}} .cee-trace .failed{{color:#B91C1C;font-weight:700}}
+.cee-trace .skipped{{color:{MUTED}}} .cee-trace .failed{{color:#B91C1C;font-weight:700}} .cee-trace .stopped{{color:#92400E;font-weight:700}}
 </style>
 """
 
@@ -250,7 +250,7 @@ def coverage_cell(state: str, text: str) -> None:
     _html(coverage_cell_html(state, text))
 
 
-TRACE_MARKS = {"running": "…", "done": "✓", "skipped": "–", "failed": "✗"}
+TRACE_MARKS = {"running": "…", "done": "✓", "skipped": "–", "failed": "✗", "stopped": "■"}   # #277: stopped
 
 
 def trace_lines(steps: list[tuple[str, str]], where=None) -> None:
