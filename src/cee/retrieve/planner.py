@@ -467,9 +467,11 @@ def _block_dict(b) -> dict:
 def call_planner(q: Query, provider: str, client=None, meta: dict | None = None):
     """The raw plan from one provider call; PlannerOutputError when the output is not a plan.
     `meta` (#230, bookkeeping only): when a dict is passed, it gets the call's stop_reason and usage,
-    so the eval saves why every real output stopped."""
-    from cee.answer import llm
+    so the eval saves why every real output stopped. #277: not sent after Stop (cancel.Cancelled, a
+    BaseException, so plan_question never turns a stop into the rule-plan fallback)."""
+    from cee.answer import cancel, llm
 
+    cancel.check()
     meta = {} if meta is None else meta
     if provider == "anthropic":
         client = client or llm.anthropic_client()

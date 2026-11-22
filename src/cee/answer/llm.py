@@ -279,6 +279,8 @@ def build_user_message(question: str, hits: list[Hit], plan=None, window=None) -
 def generate(question: str, hits: list[Hit], provider: str | None = None, plan=None,
              window=None) -> Answer:
     provider = provider or settings().llm_provider
+    from cee.answer import cancel
+    cancel.check()   # #277: no new call after Stop
     if provider == "mock":
         return _mock(hits, plan)
     if provider == "anthropic":
@@ -298,7 +300,8 @@ def _clip(text: str, n: int = 300) -> str:
 def _mock(hits: list[Hit], plan=None) -> Answer:
     """The top 3 hits verbatim; each claim carries its hit's plan part (#215), so the part check
     runs on mock answers too (a part the mock does not cite gets a code gap)."""
-    time.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80)
+    from cee.answer import cancel
+    cancel.sleep(settings().mock_delay_s)  # 0 unless MOCK_DELAY_S is set (verify-cee, #80); a Stop cuts it (#277)
     ids = {p.id for p in getattr(plan, "parts", None) or []}
     claims = [{"text": _clip(" ".join(h.text.split())), "chunk_ids": [h.chunk_id],
                "part_id": h.part_id if getattr(h, "part_id", None) in ids else ""} for h in hits[:3]]
@@ -418,6 +421,8 @@ def deepseek_create(client, request: dict, on_delta=None):
     gets each tool-call argument delta as it arrives (the reduce's streamed claims), in this thread."""
     import openai
 
+    from cee.answer import cancel
+    cancel.check()   # #277: no new call after Stop
     t0 = time.monotonic()
     try:
         if not request.get("stream"):
@@ -442,16 +447,22 @@ def _is_timeout(e: BaseException) -> bool:
 def read_stream(stream, t0: float, idle_s: float, on_delta=None):
     """#275: assemble the stream under a watchdog thread that closes it when no chunk arrived for idle_s (the
     iteration then ends or raises). A stall (the watchdog, or a read timeout of the SDK) raises StreamIdle with
-    the partial message; any other error propagates."""
+    the partial message; any other error propagates. #277: the watchdog also closes the stream when the run's
+    cancel token is set (Stop), and the read raises cancel.Cancelled (with `partial`) instead of StreamIdle;
+    the loop checks the token between chunks too."""
     import threading
 
+    from cee.answer import cancel
+
     asm = StreamAssembler(t0, on_delta)
-    done, fired = threading.Event(), threading.Event()
+    done, fired, stopped = threading.Event(), threading.Event(), threading.Event()
+    token = cancel.current()
 
     def watch():
-        while not done.wait(min(1.0, idle_s / 4)):
-            if time.monotonic() - asm.last > idle_s:
-                fired.set()
+        while not done.wait(min(0.5, idle_s / 4)):
+            cut = token is not None and token.is_set()
+            if cut or time.monotonic() - asm.last > idle_s:
+                (stopped if cut else fired).set()
                 close = getattr(stream, "close", None)
                 if close is not None:
                     try:
@@ -463,15 +474,30 @@ def read_stream(stream, t0: float, idle_s: float, on_delta=None):
     threading.Thread(target=watch, daemon=True, name="deepseek-idle").start()
     try:
         for ch in stream:
-            if fired.is_set():
+            if token is not None and token.is_set():
+                stopped.set()
+            if fired.is_set() or stopped.is_set():
                 break
             asm.feed(ch)
     except Exception as e:   # noqa: BLE001 - a read error after the watchdog fired, or a read timeout
-        if not (fired.is_set() or _is_timeout(e)):
+        if stopped.is_set() or (token is not None and token.is_set()):
+            stopped.set()
+        elif not (fired.is_set() or _is_timeout(e)):
             raise
-        fired.set()
+        else:
+            fired.set()
     finally:
         done.set()
+    if stopped.is_set():
+        close = getattr(stream, "close", None)
+        if close is not None:
+            try:
+                close()
+            except Exception:   # noqa: BLE001 - already closed by the watchdog
+                pass
+        e = cancel.Cancelled(f"stream closed by Stop after {time.monotonic() - t0:.1f} s")
+        e.partial = _jsonable(asm.message())   # type: ignore[attr-defined]
+        raise e
     if fired.is_set():
         raise StreamIdle(f"stream idle: no chunk for {idle_s:g} s (aborted after {time.monotonic() - t0:.1f} s; "
                          f"{'some output arrived' if asm.ttft is not None else 'no output arrived'})",

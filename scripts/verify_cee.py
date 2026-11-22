@@ -65,8 +65,10 @@ TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruitin
 # RJF is the gap; with trade press loaded (#57) RJF has on-theme articles and no firm is).
 THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
 THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
+# ask-stop-retry (#277) runs last: it leaves query_log rows with no answer (the other features read the newest
+# answered row anyway)
 FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback",
-            "architecture-page"]
+            "architecture-page", "ask-stop-retry"]
 ASSETS = REPO / "docs" / "assets"
 
 
@@ -211,8 +213,9 @@ def launch(port: int = PORT) -> dict:
     run_dir.mkdir(parents=True)
     # MOCK_DELAY_S: the mock waits like a model would, so the progress trace can be seen mid-run (#80).
     # MAP=on (#247): the default, set explicitly so a teammate's older .env (MAP=off) cannot change the run.
+    # MOCK_FAIL_FILE (#277): the ask-stop-retry driver writes "reduce" there to inject a failure, then removes it.
     env = {**os.environ, "DATABASE_URL": db_url(VERIFY_DB), "LLM_PROVIDER": "mock", "MOCK_DELAY_S": "1.5",
-           "MAP": "on"}
+           "MAP": "on", "MOCK_FAIL_FILE": str(run_dir / MOCK_FAIL_NAME)}
     log = open(run_dir / "app.log", "w", encoding="utf-8")
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if WINDOWS else 0
     proc = subprocess.Popen(
@@ -338,7 +341,7 @@ def check_part_gaps(rec, page, what: str) -> None:
     import json as _json
     # base64: passage text holds non-ASCII characters the console code page cannot decode
     b64 = psql(VERIFY_DB, "SELECT encode(convert_to(json_build_object('parts', filters->'plan'->'parts', "
-                          "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log ORDER BY query_id DESC LIMIT 1")
+                          "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
     # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
@@ -382,7 +385,7 @@ def feature_ask_answer(page, base, rec, ctx):
                "coalesce(filters->'reduce'->>'outside_matrix', 'none') || '|' || "
                "(SELECT count(*) FROM jsonb_array_elements(answer->'claims') c, "
                "jsonb_array_elements_text(c->'chunk_ids') id WHERE NOT (id = ANY(q.chunk_ids))) "
-               "FROM query_log q ORDER BY query_id DESC LIMIT 1")
+               "FROM query_log q WHERE q.answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     parts = row.split("|")
     same = len(parts) == 5 and (parts[0] == parts[1] or (parts[1] == "answer_with_boundary" and parts[2] == "true"))
     unlinked = "not in the retrieved set" in page.locator("body").inner_text()
@@ -517,7 +520,7 @@ def feature_ask_progress(page, base, rec, ctx):
              f"{plan} | {search_line} | {extract_line}")
     row = psql(VERIFY_DB, "SELECT (filters->'plan'->>'source') || '|' || jsonb_array_length(filters->'plan'->'parts')"
                           " || '|' || (filters->'llm_calls')::text || '|' || (filters->'cost'->>'calls') || '|' || "
-                          "(filters->'cost'->>'usd') FROM query_log ORDER BY query_id DESC LIMIT 1")
+                          "(filters->'cost'->>'usd') FROM query_log WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     rec.step("Read the newest query_log row (side effect)",
              "plan source rules, 2 sub-questions, llm_calls all 0 and cost 0 calls / $0 (#248; the mock map and "
              "reduce are not paid calls)",
@@ -789,7 +792,7 @@ def feature_filters(page, base, rec, ctx):
     rec.step("Read back the cited chunks: keyword", f"every cited chunk contains '{FILTER_KEYWORD}'",
              not nokw and bool(rows), f"{len(nokw)} without the keyword {nokw[:3]}")
     logged = psql(VERIFY_DB, "SELECT filters->>'firm_filter', filters->>'date_range', filters->>'keywords' "
-                             "FROM query_log ORDER BY query_id DESC LIMIT 1")
+                             "FROM query_log WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     rec.step("Check the query log (side effect)", "filters stored with the query",
              FILTER_FIRM in logged and FILTER_FROM in logged and FILTER_KEYWORD in logged, logged)
     prompt = (REPO / "src/cee/answer/prompt.py").read_text(encoding="utf-8")
@@ -950,12 +953,138 @@ def shots() -> bool:
     return True
 
 
+MOCK_FAIL_NAME = "mock-fail.txt"   # #277: MOCK_FAIL_FILE of the verify app, inside the run folder
+
+
+def mock_fail_file() -> Path:
+    st = load_state()
+    return RUNS / st["run_id"] / MOCK_FAIL_NAME
+
+
+def newest_run_row(answered: bool | None = None) -> dict:
+    """The newest query_log row's id, whether it has an answer, and filters.run (#277)."""
+    where = "" if answered is None else ("WHERE answer IS NOT NULL" if answered else "WHERE answer IS NULL")
+    raw = psql(VERIFY_DB, "SELECT json_build_object('id', query_id, 'answered', answer IS NOT NULL, "
+                          f"'run', filters->'run')::text FROM query_log {where} ORDER BY query_id DESC LIMIT 1")
+    return json.loads(raw) if raw else {}
+
+
+def wait_for_row(pred, what: str, timeout_s: float = 15) -> dict:
+    """The stopped run's row is written by its worker once it has ended (after the page shows Stopped)."""
+    end = time.monotonic() + timeout_s
+    row: dict = {}
+    while time.monotonic() < end:
+        row = newest_run_row()
+        if row and pred(row):
+            return row
+        time.sleep(0.5)
+    return row
+
+
+def feature_ask_stop_retry(page, base, rec, ctx):
+    """#277: Stop during the map, Retry after the stop (finished map call reused), Retry after an injected failure."""
+    fail = mock_fail_file()
+    fail.unlink(missing_ok=True)
+    before = newest_run_row().get("id") or 0
+    page.goto(base)
+    wait_idle(page)
+    page.get_by_role("textbox", name="Question").fill(TWO_FIRM_Q)
+    page.get_by_role("button", name="Ask").click()
+    # The verify app's mock map waits MOCK_DELAY_S x (k + 1) per call: map.a1.MS lands at ~1.5 s, map.a1.RJF at ~3 s.
+    page.wait_for_function("() => document.body.innerText.includes('EVIDENCE - ')", timeout=RENDER_TIMEOUT_S * 1000)
+    shown = page.locator(".cee-claim", has_text="EVIDENCE - ").count()
+    stop = page.get_by_role("button", name="Stop")
+    rec.step("Ask the two-firm question; look when the first evidence card lands",
+             "a Stop button, at least one evidence card, no answer yet",
+             stop.count() == 1 and shown >= 1 and "LLM called:" not in page.locator("body").inner_text(),
+             f"Stop buttons={stop.count()}, evidence cards={shown}")
+    t0 = time.monotonic()
+    stop.click()
+    try:
+        page.wait_for_function("() => document.body.innerText.includes('Stopped while')", timeout=10000)
+    except Exception:   # playwright TimeoutError: reported by the step below
+        pass
+    took = time.monotonic() - t0
+    wait_idle(page)   # the old run's elements leave once the rerun is drawn
+    body = page.locator("body").inner_text()
+    cards = page.locator(".cee-claim", has_text="EVIDENCE - ").count()
+    rec.step("Click Stop during the map (#277)",
+             "'Stopped while extracting evidence' within 5 s; the evidence card(s) stay; no answer "
+             "('LLM called:'), no 'Answer (in progress', no Stop button",
+             "Stopped while extracting evidence" in body and took <= 5 and cards >= 1 and "LLM called:" not in body
+             and "Answer (in progress" not in body and page.get_by_role("button", name="Stop").count() == 0,
+             f"stopped after {took:.1f} s, evidence cards={cards}, answer shown={'LLM called:' in body}")
+    page.wait_for_timeout(5000)
+    body = page.locator("body").inner_text()
+    later = page.locator(".cee-claim", has_text="EVIDENCE - ").count()
+    rec.step("Wait 5 s after the stop", "no new evidence card, still no answer, Retry offered",
+             later == cards and "LLM called:" not in body and page.get_by_role("button", name="Retry").count() == 1,
+             f"evidence cards {cards} -> {later}, answer shown={'LLM called:' in body}")
+    row = wait_for_row(lambda r: r["id"] > before and not r["answered"], "the stopped row")
+    run = row.get("run") or {}
+    recs = {(x["id"], x["status"]) for x in run.get("records", [])}
+    n_ok = sum(st == "ok" for _, st in recs)
+    n_cut = sum(st == "cancelled" for _, st in recs)
+    rec.step("Read the newest query_log row (side effect)",
+             "answer NULL; filters.run: status stopped, reason stop (the Stop button, not 'page'), stage extract, "
+             "map.a1.MS ok, map.a1.RJF cancelled (and map.research, queued behind it), stop_s <= 5",
+             row.get("answered") is False and run.get("status") == "stopped" and run.get("stage") == "extract"
+             and run.get("reason") == "stop"
+             and ("map.a1.MS", "ok") in recs and ("map.a1.RJF", "cancelled") in recs
+             and run.get("stop_s") is not None and run["stop_s"] <= 5,   # 0.0 is a valid (fast) stop
+             f"row {row.get('id')}: status={run.get('status')}, reason={run.get('reason')}, stage={run.get('stage')}, "
+             f"records={sorted(recs)}, "
+             f"stop_s={run.get('stop_s')}")
+    stopped_id = row.get("id")
+    page.get_by_role("button", name="Retry").click()
+    wait_for_text(page, ["LLM called:"], "the answer after Retry")
+    row = newest_run_row(answered=True)
+    run = row.get("run") or {}
+    rec.step("Click Retry (#277)",
+             f"the answer shows; the newest row: attempt 2, retry_of the stopped row, map reused {n_ok} (the ok calls), "
+             f"made map {n_cut} (the cancelled ones) + reduce 1",
+             row.get("id", 0) > (stopped_id or 0) and run.get("attempt") == 2 and run.get("retry_of") == stopped_id
+             and run.get("reused") == {"map": n_ok} and run.get("made") == {"map": n_cut, "reduce": 1},
+             f"row {row.get('id')}: attempt={run.get('attempt')}, retry_of={run.get('retry_of')}, "
+             f"reused={run.get('reused')}, made={run.get('made')}")
+    # Retry after an injected failure: the mock reduce fails while MOCK_FAIL_FILE names it
+    fail.write_text("reduce", encoding="utf-8")
+    try:
+        page.goto(base)
+        wait_idle(page)
+        page.get_by_role("textbox", name="Question").fill(TWO_FIRM_Q)
+        page.get_by_role("button", name="Ask").click()
+        wait_for_text(page, ["The answer could not be built"], "the injected failure")
+        body = page.locator("body").inner_text()
+        rec.step("Ask again with an injected reduce failure (MOCK_FAIL_FILE)",
+                 "'The answer could not be built ... injected reduce failure', a Retry button, no answer",
+                 "injected reduce failure" in body and "LLM called:" not in body
+                 and page.get_by_role("button", name="Retry").count() == 1,
+                 next((l for l in body.splitlines() if "could not be built" in l), "")[:200])
+        failed = wait_for_row(lambda r: not r["answered"] and (r.get("run") or {}).get("status") == "failed",
+                              "the failed row")
+    finally:
+        fail.unlink(missing_ok=True)
+    page.get_by_role("button", name="Retry").click()
+    wait_for_text(page, ["LLM called:"], "the answer after Retry")
+    row = newest_run_row(answered=True)
+    run = row.get("run") or {}
+    frun = failed.get("run") or {}
+    rec.step("Remove the injected failure; click Retry (#277)",
+             f"the answer shows; failed row: stage synthesize; newest row: every map call reused ({n_ok + n_cut}), "
+             "made reduce 1",
+             frun.get("stage") == "synthesize" and run.get("retry_of") == failed.get("id")
+             and run.get("reused") == {"map": n_ok + n_cut} and run.get("made") == {"reduce": 1},
+             f"failed row {failed.get('id')} stage={frun.get('stage')}; row {row.get('id')}: "
+             f"retry_of={run.get('retry_of')}, reused={run.get('reused')}, made={run.get('made')}")
+
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
            "filters": feature_filters, "feedback": feature_feedback,
-           "architecture-page": feature_architecture_page}
+           "architecture-page": feature_architecture_page, "ask-stop-retry": feature_ask_stop_retry}
 
 
 def drive(features: list[str]) -> bool:

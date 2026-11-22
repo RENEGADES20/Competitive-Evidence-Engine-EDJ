@@ -31,10 +31,12 @@ def test_failed_stage_is_marked_and_error_shown(monkeypatch):
     def broken(q, plan, **kw):
         raise RuntimeError("database is down")
     monkeypatch.setattr(pipeline, "search_subquestions", broken)
+    monkeypatch.setattr(pipeline, "_log_attempt", lambda *a, **k: None)   # #277: no row in the local database
     at = AppTest.from_function(page).run()
     assert at.get("status")[0].label == "Searching 1 sub-question: failed (RuntimeError: database is down)"
     assert 'class="failed"' in trace_text(at)
     assert "database is down" in at.error[0].value
+    assert [b.label for b in at.button] == ["Retry"]   # #277: Retry after any failure, not only a stall
 
 
 def test_plan_and_evidence_show_before_the_answer_trace(monkeypatch):

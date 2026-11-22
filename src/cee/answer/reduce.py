@@ -432,8 +432,10 @@ def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=N
     stop, not JSON, not a valid Answer, empty). `meta` gets stop_reason, usage, parse_flags and
     (deepseek) reasoning_content. ProviderStop and any other exception propagate. No trim: an input
     over the model's limit is not sent (RuntimeError). #275: `on_item(kind, item)` (DeepSeek, streamed) gets each
-    claim / adjacent item as soon as its JSON object is complete (StreamItems), in this thread; see EarlyClaims."""
-    from cee.answer import llm
+    claim / adjacent item as soon as its JSON object is complete (StreamItems), in this thread; see EarlyClaims.
+    #277: not sent after Stop (cancel.Cancelled); a streamed call is cut by Stop (llm.read_stream)."""
+    from cee.answer import cancel, llm
+    cancel.check()
     meta = {} if meta is None else meta
     limit = input_limit(provider)
     if limit is not None and input_tokens(question, m, query) > limit:
@@ -566,8 +568,10 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
     """Deterministic, 0 calls: per aspect and row, a holding fact cell -> one claim from its first
     counting item; a derived cell -> one claim with the formula (no ids); a different-quantity or proxy
     cell -> one adjacent item; a comparison aspect -> one claim citing its holding cells (else none, so
-    the code gap fires); recency items end with the why-line. Behavior = the matrix's."""
-    time.sleep(settings().mock_delay_s)
+    the code gap fires); recency items end with the why-line. Behavior = the matrix's. #277: waits through
+    cancel.sleep (a Stop cuts it)."""
+    from cee.answer import cancel
+    cancel.sleep(settings().mock_delay_s)
     claims = []
     for a in m.aspects:
         cells = [c for c in m.cells.values() if c.aspect_id == a.id]
@@ -1022,8 +1026,15 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
 
 def raw_answer(m: EvidenceMatrix, query, provider: str, on_item=None) -> Answer:
     """The mock reduce as a checked Answer (0 calls). #275: with `on_item`, its output is fed as tool JSON through
-    StreamItems in pieces (MOCK_DELAY_S spread over the items), so the mock exercises the streamed path."""
+    StreamItems in pieces (MOCK_DELAY_S spread over the items), so the mock exercises the streamed path.
+    #277: a Stop cuts the waits (cancel.Cancelled); MOCK_FAIL_FILE naming `reduce` makes it fail (verify-cee)."""
+    from cee.answer import cancel
+    from cee.answer.extract import mock_failure
+    cancel.check()
     out = mock_reduce(m, query)
+    injected = mock_failure("reduce")
+    if injected:
+        raise RuntimeError(injected.split(": ", 1)[1])
     if on_item is not None:
         text = json.dumps(out)
         pause = settings().mock_delay_s / max(1, len(out["claims"]) + len(out["adjacent"]))
@@ -1032,7 +1043,7 @@ def raw_answer(m: EvidenceMatrix, query, provider: str, on_item=None) -> Answer:
             for kind, obj in items.feed(text[k:k + 40]):
                 on_item(kind, obj)
                 if pause:
-                    time.sleep(pause)
+                    cancel.sleep(pause)
     return to_answer(out, "mock")
 
 
