@@ -166,6 +166,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-21 | W11 DeepSeek map-reduce fts scored run: 18/30 adjudicated (19/30 blind full read, 20/30 first read), 101 real calls, ~$6.90; NEXT rewritten (#267) | 3 outputs cut at the 64k cap, Q12 caveat not deterministic | PR 2 (hybrid 22/30 adjudicated), PR 3 |
 | 2026-11-21 | #250 closed out: README / NEXT cite the merged hybrid report (22/30 adjudicated, fts 18/30) (#269) | none | TL closes #250 |
 | 2026-11-21 | #270 W11 close-out: Architecture page (hover and keyboard explanations from one module list) replaces Design; README diagram, screenshots and Status, ARCHITECTURE and RUN updated for W11 (#271) | none | sync main into exp/hybrid to carry the page |
+| 2026-11-22 | W12 latency (#272, fts): effort per stage (plan off, map low, reduce low), map per cell, streaming, progressive Ask page; fts Q1-Q30 adjudicated 24/30 (blind 22/30), latency p50 415 s -> 184 s, first evidence 18 s, 848 calls / $17.81 (#273) | Q29 reduce stalled to the 3600 s timeout (follow-up: shorter stream read timeout) | main -> exp/hybrid sync, hybrid test A and B |
 
 ## Weekly score (from W6)
 
