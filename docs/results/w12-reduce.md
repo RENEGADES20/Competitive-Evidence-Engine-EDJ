@@ -3,19 +3,30 @@
 Plan: `plans/0275-reduce-speed.md`. Evidence: `docs/results/w12-reduce/` (committed copies) and
 `D:\ALLPROJECTS\EDJ\cache\ev275\` (working copies).
 
-**Result: test A found no eligible config, so by the plan's fixed rule (step 11) the reduce stays at effort `low`
-and test B was not run.** Thinking off cuts the reduce from p50 134 s to 32-45 s on the six questions, and the first
-checked claim shows about 4-6 s after the reduce starts. But each off config breaks one quality guard against the
-#272 `low` answers:
-- R1 (prompt v5.2): 2 part gaps (Q10), 1 missing comparison claim (Q19) and 13 missing why-lines (Q5, Q10).
-- R2 (prompt v5.3): every guard holds except one claim with an invented chunk id (Q21, `SCHW-TR-2025Q5#11`, no such
-  quarter). Code flagged it `outside_matrix`, and it was never shown early.
+**Result: R2 (reduce off, prompt v5.3) fails the quality floor, so the reduce stays `low`.** Test B fts scored
+**20/30 blind** against the floor of 24/30 (the #272 `low` run scored 22/30 blind and 24/30 adjudicated), so
+`DEEPSEEK_EFFORT_REDUCE` stays `low` and v5.3 stays behind `REDUCE_PROMPT` (default v5.2). The speed is real:
 
-The TL decides whether to change the rule or the config before any test B.
+| | End to end p50 / p90 / max | Reduce wall p50 / p90 / max | First claim on the page p50 / p90 |
+|---|---|---|---|
+| R2, Q1-Q30 | 108 / 193 / 224 s | 35 / 107 / 117 s | 80 / 97 s |
+| #272 `low` | 184 / 251 / 3,750 s | 126 / 160 / 3,660 s | - |
+
+How the decision was reached:
+- Test A first found no eligible config under the plan's fixed rule (step 11). R1 broke three quality guards; R2
+  broke one, a single invented chunk id that code flagged.
+- The TL overrode that rule and sent R2 to test B (see "TL override"). Test B then failed the floor.
 
 What landed regardless (code, 0 calls to prove): the stream idle timeout (`DEEPSEEK_IDLE_S`, default 120 s, no
 automatic retry), streamed claims with per-claim checks on the Ask page (with any effort), the 64000-token cap for a
 streamed off reduce, prompt v5.3 behind `REDUCE_PROMPT`, and the first-claim time in `latency_report`.
+
+## TL override (2026-11-22)
+The TL chose option (b): R2 (reduce off, prompt v5.3) is adopted as the candidate, overriding the pre-fixed test-A
+rule, and test B fts runs with it. Reason: R2's only flag was one invented chunk id on Q21, which code caught and never
+showed early (the ground-rule path working); R2 cuts the reduce p50 from 134 s to 45 s; test B's floor (fts
+adjudicated >= 24/30) is the real quality judge. Open item, not investigated now: the invented id
+`SCHW-TR-2025Q5#11` passed the strict chunk-id enum (the request carried it; `schema_fallback` empty).
 
 ## Setup
 - Gate f19816a (worktree `D:\ALLPROJECTS\EDJ\wt-275gate`), `run-latency.ps1` with every setting pinned
@@ -85,6 +96,34 @@ R2 is chosen when it is eligible and at least 10 % faster than R1; else R1 when 
   - Arrival order differs from the final order, as `specs/ui.md` states.
 - **Chosen: none. The reduce stays `low`, and prompt v5.2 stays the default.**
 
+## Test B (fts, Q1-Q30, reduce-only with R2; Gate 3)
+- **Calls and checks:**
+  - Count `cnt-b-r2` (0 calls): 0 plan, map or re-map calls not reused; 24 new reduce calls; the six test-A
+    questions reused their R2 records.
+  - Run `b-r2` (gate f19816a, `--max-calls 24`): 24 real calls, USD 0.599 as priced by eval_run.
+  - 0 cut, invalid or failed outputs; 0 idle events.
+  - Q29, which stalled in #272, answered in 21.9 s.
+- **Latency** (`b-r2-tables.md`):
+  - End to end: p50 108 s, p90 193 s, max 224 s (#272 `low`: 184 / 251 / 3,750 s).
+  - Reduce wall: p50 35 s, p90 107 s, max 117 s; TTFT p50 2.6 s.
+  - First checked claim on the page: p50 80 s, p90 97 s.
+  - First cited evidence: p50 18 s, unchanged.
+- **Blind scoring**, the #272 method:
+  - Four fresh Sonnet scorers by range (Q1-Q10, Q11-Q16, Q17-Q21, Q22-Q30), each reading its part in full.
+  - Inputs: only `ev275\blind-in-b-r2\` (the dump made by `dump272.py`, `questions.yaml`, the #250
+    `verdict-rule.txt`; hashes in `blind-in-b-r2-hashes.txt`).
+  - Merged verdicts: `verdicts-b-r2-full.json`, sha256
+    `5c200a23bec9a0bd436aa41d77520241c52f52862635a7f459ff227c61842d40`.
+- **Score: 20/30 blind** (8 + 4 + 4 + 4), tier 1 10/18. #272 `low` scored 22/30 blind and 24/30 adjudicated, tier 1
+  11/18 blind.
+- **Changes against the #272 blind verdicts:**
+  - Q7, Q15, Q25 and Q26 went PASS -> FAIL, all class s and borderline. Q7 and Q26 state RJF's FY2025 headcount
+    8,943 as FY2026. Q15 gives no mechanism. Q25 leans on trade-press reconstructions.
+  - Q8 and Q17 went FAIL -> PASS, both borderline.
+- **Decision:** the floor is 24/30, and 20/30 blind is below it. Even if the PR reviewer's second read flips the 4
+  borderline FAILs, the result is 24 at most, and that needs every one of them. Per the TL's instruction the reduce
+  stays `low`, and v5.3 stays behind `REDUCE_PROMPT`.
+
 ## Streamed claims (what the page gains with any effort)
 - With thinking off, the first checked claim arrived 3.0-6.6 s after the reduce started.
 - R1 showed 180 claims early and held 46. R2 showed 349 early and held 96. Every adjacent item and every flagged
@@ -97,16 +136,17 @@ R2 is chosen when it is eligible and at least 10 % faster than R1; else R1 when 
 | a-r1-q5 (probe) | 1 | 0.006 |
 | a-r1 | 5 | 0.060 |
 | a-r2 | 6 | 0.190 |
-| **Total** | **12** | **0.256** |
+| b-r2 (test B fts) | 24 | 0.599 |
+| **Total** | **36** | **0.855** |
 
 - Every call is a `deepseek-v4-pro` reduce. No plan, map or re-map calls; no repeats or retries; no idle events.
-- Test B was not run, so the Gate 3 go-ahead was not used.
+- Test B used the Gate 3 go-ahead on the issue, after the TL's override.
 
 ## Open for the TL
-1. Test B (fts, then the hybrid sync and hybrid): not run, because no config is eligible.
-2. Options the TL may choose:
-   - **(a) Keep `low`.** The reduce stays the long pole, at p50 134 s on these six.
-   - **(b) Accept R2.** Its one failed guard is an invented id that code flagged and never showed. Then run test B
-     fts with R2, about 24-30 reduce calls, as planned.
-   - **(c) A follow-up.** Find out why the strict chunk-id enum did not hold on R2's Q21 output (thinking off,
-     strict tool, `/beta`), then rerun R2 on Q21 only.
+1. **Strict enum.** `SCHW-TR-2025Q5#11` passed the strict chunk-id enum on R2 Q21 (thinking off, `/beta`). Not
+   investigated (TL).
+2. **Hybrid.** No sync and no hybrid test B, because R2 failed fts.
+3. **Answer quality with thinking off.** The test-B FAILs are answer shape and accuracy: a FY2025 figure stated as
+   FY2026, missing mechanisms, and reliance on trade press. A faster reduce with the same quality would need another
+   approach, e.g. a cheaper reduce with thinking `low` but a shorter output (prompt v5.3 at `low`). Each would need a
+   new plan.

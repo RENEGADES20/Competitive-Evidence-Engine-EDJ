@@ -310,7 +310,7 @@ versions); the PR says so.
       question, nothing else.
 - [x] (no config eligible: R1 fails three guards, R2 one; reduce stays `low`) Test A fts (Q5, Q10, Q19, Q21, Q24, Q26), R1 and R2: latency table (reduce wall, TTFT, first claim, end to
       end), 0 cut / invalid outputs, config chosen by the step-11 rule.
-- [ ] (not run: step 11 chose none, so by the plan no test B; open for the TL) Test B reduce-only Q1-Q30: fts >= 24/30 and hybrid-norerank >= 23/30 adjudicated (blind); below a floor that
+- [x] (fts run after the TL override with R2: blind 20/30 < 24, so reduce stays `low`; hybrid not run, open) Test B reduce-only Q1-Q30: fts >= 24/30 and hybrid-norerank >= 23/30 adjudicated (blind); below a floor that
       mode keeps `low`, reported.
 - [x] `latency_report` prints the first-claim time per question and p50 / p90.
 - [x] A stalled stream fails within `DEEPSEEK_IDLE_S` and is saved as failed with its partial output, no automatic
@@ -378,3 +378,24 @@ versions); the PR says so.
   `low`, REDUCE_PROMPT stays v5.2, no test B** (stop and report to the TL, as planned). Test A total 12 real calls,
   USD 0.256; 0 idle events. Report `docs/results/w12-reduce.md`; evidence `docs/results/w12-reduce/`. Defaults
   unchanged, so no step-11 commit and no mock re-check needed.
+- 2026-11-22 01:20 - **TL override of the step-11 rule (coordinator message, TL decision on test A, option b):** R2
+  (reduce off, prompt v5.3) is adopted as the candidate and test B fts runs with it. Reason (TL): R2's only flag was
+  one invented chunk id on Q21, which code caught (`unmatched_citation`, `outside_matrix`) and never showed early,
+  i.e. the ground-rule path working; R2 cuts the reduce p50 from 134 s to 45 s; test B's floor (fts adjudicated >=
+  24/30) is the real quality judge at about USD 1.5. Rule for the result: >= 24/30 -> R2 becomes the default (reduce
+  off, REDUCE_PROMPT v5.3); below -> keep `low`, v5.3 stays behind its setting. Open item (not investigated now):
+  `SCHW-TR-2025Q5#11` passed the strict chunk-id enum (R2 Q21, `schema_fallback` empty). Test B: gate f19816a, cache
+  `ev272\cache-a`, count phase first (only reduce calls may be new; the six test-A questions reuse their R2 records).
+- 2026-11-22 01:35 - test B count `cnt-b-r2` (0 calls): 0 plan / map / re-map not reused; 24 new reduce calls, 6
+  reused (the test-A R2 records). Run `b-r2` with --max-calls 24; USD hard ceiling 7.9 (every call 55k input at the
+  miss rate + 64000 output, peak), expected about 1.2.
+- 2026-11-22 01:29 - test B fts `b-r2` (24 real calls, gate f19816a, --max-calls 24): USD 0.599; 0 cut / invalid /
+  failed, 0 idle events (Q29 answered in 21.9 s). Latency Q1-Q30: end to end p50 108 s, p90 193 s, max 224 s (#272
+  low: 184 / 251 / 3,750 s); reduce wall p50 35 s, p90 107 s, max 117 s; first checked claim on the page p50 80 s, p90
+  97 s; first evidence p50 18 s.
+- 2026-11-22 01:50 - blind scoring (four fresh Sonnet scorers by range, each reading its part in full; inputs
+  `ev275lind-in-b-r2\` only): 8 + 4 + 4 + 4 = **20/30** (tier 1 10/18), against #272 low 22/30 blind and 24/30
+  adjudicated. Changes: Q7, Q15, Q25, Q26 PASS -> FAIL (class s, borderline); Q8, Q17 FAIL -> PASS. **Below the floor
+  (24/30): reduce stays `low`, v5.3 stays behind `REDUCE_PROMPT` (default v5.2), no default change; no hybrid sync.**
+  #275 total: 36 real calls (12 test A + 24 test B), USD 0.855. Report and evidence updated
+  (`docs/results/w12-reduce.md`, `docs/results/w12-reduce/b-r2/`, `verdicts-b-r2-full.json`).
