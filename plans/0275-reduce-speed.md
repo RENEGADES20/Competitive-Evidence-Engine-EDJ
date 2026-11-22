@@ -295,25 +295,25 @@ planned probe repeat (no automatic retry). Test A is three runs, not one (probe 
 versions); the PR says so.
 
 ## Acceptance
-- [ ] Unit tests: incremental parse of streamed tool JSON (fake client), per-item checks before display (early items
+- [x] Unit tests: incremental parse of streamed tool JSON (fake client), per-item checks before display (early items
       ⊆ final), idle timeout (watchdog and read-timeout paths; one `create` call, no retry); off reduce cap; the adjacent-first and
       the held-back-path tests (normative, uncited cell, unmatched id). `pytest -q` and
       `tests/test_no_paid_calls.py` green.
-- [ ] Mock Q1-Q30 fts unchanged (30/30 behavior, cells, labels, claims and chunk ids against the pre-change run);
+- [x] Mock Q1-Q30 fts unchanged (30/30 behavior, cells, labels, claims and chunk ids against the pre-change run);
       verify-cee on mock shows early claims with the in-progress mark, then the final answer; recipe
       `ask-progress.md` and `scripts/verify_cee.py` updated.
-- [ ] Reduce answer tokens measured from the #272 records (table above) and the trim decided by the 0-call
+- [x] Reduce answer tokens measured from the #272 records (table above) and the trim decided by the 0-call
       simulation and the step-11 rule.
-- [ ] 0-call key proofs: every count phase shows 0 new plan, map and re-map calls. Reduce new calls are 0 in the
+- [x] 0-call key proofs: every count phase shows 0 new plan, map and re-map calls. Reduce new calls are 0 in the
       `low` count, except Q21 fts, named as the exception with its cause recorded; before any paid run Q21 is counted
       in two separate processes, with the reduce shas and map file lists shown. Each run's own count = one reduce per
       question, nothing else.
-- [ ] Test A fts (Q5, Q10, Q19, Q21, Q24, Q26), R1 and R2: latency table (reduce wall, TTFT, first claim, end to
+- [x] (no config eligible: R1 fails three guards, R2 one; reduce stays `low`) Test A fts (Q5, Q10, Q19, Q21, Q24, Q26), R1 and R2: latency table (reduce wall, TTFT, first claim, end to
       end), 0 cut / invalid outputs, config chosen by the step-11 rule.
-- [ ] Test B reduce-only Q1-Q30: fts >= 24/30 and hybrid-norerank >= 23/30 adjudicated (blind); below a floor that
+- [ ] (not run: step 11 chose none, so by the plan no test B; open for the TL) Test B reduce-only Q1-Q30: fts >= 24/30 and hybrid-norerank >= 23/30 adjudicated (blind); below a floor that
       mode keeps `low`, reported.
-- [ ] `latency_report` prints the first-claim time per question and p50 / p90.
-- [ ] A stalled stream fails within `DEEPSEEK_IDLE_S` and is saved as failed with its partial output, no automatic
+- [x] `latency_report` prints the first-claim time per question and p50 / p90.
+- [x] A stalled stream fails within `DEEPSEEK_IDLE_S` and is saved as failed with its partial output, no automatic
       retry; the Ask page shows an error with a "Try again" button (unit tests; any real idle event reported).
 - [ ] `gh pr checks` green on the main PR, the sync PR and the hybrid PR; real call counts and USD per run in each PR.
 
@@ -331,3 +331,50 @@ versions); the PR says so.
   except Q21 fts named with its cause, Q21 counted in two processes before any paid run. Notes applied:
   `PYTHONHASHSEED=0` pinned; ceiling recomputed after the probe if the cap changes; R2 needs a >= 10 % lower median
   reduce wall; arrival vs final order in `specs/ui.md`; fake streams block on an event; plan-key text corrected.
+- 2026-11-22 00:05 - step 1: DeepSeek API docs (api-docs.deepseek.com/api/create-chat-completion, read 2026-11-22):
+  `max_tokens` 1..384K (393216) in both modes (defaults 8K non-thinking, 64K thinking), so the streamed off reduce cap
+  stays 64000 and the ceilings stand. Steps 1-7 built (commits 50d3a4b, f19816a): idle watchdog and streamed read
+  timeout (`StreamIdle`, no retry), off reduce cap 64000, `StreamItems`, `check_item`, `EarlyClaims` (adjacent held),
+  claim events and the in-progress block with "Try again", eval idle fields / `first_claim_s` / `stream_items`,
+  reduce file and message sha in the report (for the key proofs), latency_report first-claim column, prompt v5.3
+  behind `REDUCE_PROMPT`, run scripts (`-IdleS`, `-ReducePrompt`, `PYTHONHASHSEED=0`), docs. New tests:
+  `tests/test_stream_idle.py` (8, fake streams block on an event), `tests/test_reduce_stream.py` (30).
+  Step 2 evidence: `docs/results/w12-reduce/{redsize,repeats,trim}.py` and `baseline-*.txt`; the trim simulation
+  removes a repeat only while its part_id keeps another claim, so every part and comparison aspect that had a cited
+  claim keeps one (no new part gap by construction).
+- 2026-11-22 00:25 - step 8 mock checks (0 calls): `pytest -q` 1131 passed; mock Q1-Q30 fts before (clean `main`
+  99c6569, worktree wt-275main) vs after (50d3a4b): rule plans 30/30 identical, #250 plans 30/30 identical (status,
+  chunk ids, behavior, cells, claims and chunk ids; map calls 74 / 436 both). verify-cee all 10 features PASS
+  (`.verify-runs/20261122-002001-50d3a4b`; ask-progress "Look while the answer streams": 1 early claim card with a
+  chip, no final answer; then the block is gone and the answer shows). Gate for the paid runs: f19816a, worktree
+  `D:\ALLPROJECTS\EDJ\wt-275gate`, evidence `D:\ALLPROJECTS\EDJ\cache\ev275`.
+- 2026-11-22 00:45 - step 9 key proofs (0 calls, gate f19816a, cache `ev272\cache-a`; `docs/results/w12-reduce/countcheck.py`):
+  `cnt-low-all` (Q1-Q30, reduce low): 0 plan / map / re-map not reused, 29 reduce records reused, Q29's failed record
+  reused; **Q21 needs no new reduce** (its key is the C1 record `d6a44cc2...`). Q21 counted in two separate processes
+  (`cnt-q21-a`, `cnt-q21-b`, PYTHONHASHSEED=0) and a third with PYTHONHASHSEED=4242 (`cnt-q21-seed`): the same reduce
+  file, message sha `ed4b956ab0e22e36` and 54 map files each. Finding: the #272 test-B Q21 record `5feac3a2...`
+  (made 15:31 in the b-fts run) is not reproduced and the hash seed is not its cause; cause not found (noted; the
+  reduce key is stable in every process here). `cnt-r1-all6` (reduce off, v5.2): 0 plan / map / re-map, exactly 6 new
+  reduce calls (Q21 message sha the same as under low). Q5 probe: USD ceiling 0.33 (55k input at the miss rate +
+  64000 output, peak).
+- 2026-11-22 00:39 - 10a probe (1 real call, `a-r1-q5`): Q5 reduce off, 64000 cap accepted (no 400), tool_calls,
+  2,818 output tokens, wall 19.9 s (C1 38.6 s), TTFT 1.8 s, first checked claim 5.0 s, 29 shown / 4 held; USD 0.006
+  (off-peak). The cap stands; no probe repeat. 10b R1 on Q10, Q19, Q21, Q24, Q26: 5 calls, --max-calls 5, USD
+  ceiling 1.45.
+- 2026-11-22 00:44 - 10b R1 (5 real calls, `a-r1`): 0 cut / invalid / failed; reduce wall p50 32 s (C1 134 s), max 69 s
+  (Q21; C1 303 s); TTFT p50 1.8 s; first checked claim p50 3.8 s after the reduce starts; end to end p50 104 s (C1
+  209 s); answer tokens p50 4,926 (C1 7,875); behavior 6/6. Quality flags against C1 (summed over the six): part_gap
+  2 vs 0 (Q10: two Merrill parts not answered), comparison_missing 1 vs 0 (Q19), why_line_missing 13 vs 0 (Q5 3, Q10
+  10); number_not_found 3 vs 8, date_mismatch 2 vs 8. shown_not_final = only duplicates removed by dedupe (Q5 6 of
+  7, Q10 1 of 2, Q19 21 of 21, Q26 3 of 3). By the step-11 rule R1 is not eligible. 10c R2 (v5.3) on the six: 6
+  calls, --max-calls 6, USD ceiling 1.72.
+- 2026-11-22 00:53 - 10c R2 (6 real calls, `a-r2`): 0 cut / invalid / failed; reduce wall p50 45 s, max 107 s;
+  TTFT p50 3.2 s; first checked claim p50 5.8 s after the reduce starts; end to end p50 113 s; answer tokens p50
+  6,786; behavior 6/6; part_gap 0, comparison_missing 0, why_line_missing 0, number_not_found 3 (C1 8),
+  date_mismatch 2 (C1 8), **outside_matrix 1** (C1 0): Q21 cites the invented id `SCHW-TR-2025Q5#11` although the
+  request carried the chunk-id enum (flagged `unmatched_citation`, `outside_matrix`; never shown early).
+  shown_not_final = only dedupe removals. Step 11 (`docs/results/w12-reduce/testa.py`): R1 not eligible (part_gap,
+  comparison_missing, why_line_missing), R2 not eligible (outside_matrix 1 > 0) -> **none chosen: reduce stays
+  `low`, REDUCE_PROMPT stays v5.2, no test B** (stop and report to the TL, as planned). Test A total 12 real calls,
+  USD 0.256; 0 idle events. Report `docs/results/w12-reduce.md`; evidence `docs/results/w12-reduce/`. Defaults
+  unchanged, so no step-11 commit and no mock re-check needed.
