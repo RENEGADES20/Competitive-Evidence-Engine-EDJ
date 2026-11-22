@@ -771,6 +771,10 @@ class RealRunner:
                                self.reduce_version, matrix, query)
         path = self.cache_dir / f"{q['id']}-reduce-{key}.json"
         self.last_file = path.name
+        # #275: the reduce record's file and a sha of its rendered message, in the report even when the call is
+        # capped (count phase), so a reduce-only re-run can show which reduce keys are new and why
+        info["file"] = path.name
+        info["message_sha"] = hashlib.sha256(R.reduce_message(q["text"], matrix, query).encode()).hexdigest()[:16]
 
         def finish(raw_answer):
             answer, _ = answer_for(q["text"], query, hits, self.provider, raw=raw_answer, plan=plan,
