@@ -1,0 +1,62 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.2",
+  "call_id": "map.a6.RJF.b2",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a6.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#2",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-10-23-WM-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#1"
+  ],
+  "at": "2026-11-21T17:47:57.839105-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4990,
+    "output_tokens": 362,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3454,
+    "reasoning_tokens": 229,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.2
+  },
+  "wall_s": 4.78,
+  "tokens_per_s": 75.73,
+  "ttft_s": 2.2,
+  "reasoning_content": "The question asks about advisor compensation structures for Raymond James Financial. The sub-question is a6.RJF [comparison]: Comparison of how much detail each firm actually discloses about advisor compensation.\n\nThe passages provided are all about advisor recruiting/moves, not about compensation structures. None of them discuss advisor compensation structures (payout grids, compensation expense, etc.).\n\nSo the label should be not_found, since the passages say nothing about advisor compensation structures.\n\nLet me verify: The passages mention recruited production ($538 million trailing 12-month production), advisor counts, client assets, etc. But nothing about advisor compensation structures.\n\nThe sub-question asks for \"Comparison of how much detail each firm actually discloses about advisor compensation.\" This is essentially asking what the firm has disclosed about advisor compensation structures.\n\nNone of the passages discuss advisor compensation structures. So not_found.\n\nActually, let me think carefully. The \"$538 million in trailing 12-month production for advisors entering...\" - this is recruiting production, not compensation structure. Not a different quantity of compensation structure either - it's about recruiting.\n\nSo label is not_found.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss advisor recruiting moves, client assets, advisor headcount, and recruited production, but none address Raymond James's advisor compensation structures (payout grids, compensation formulas, or related disclosures).",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

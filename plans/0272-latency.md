@@ -195,18 +195,18 @@ USD ceiling: before each paid run the count phase's estimated input tokens and t
 Every raw response is saved in the run's evidence folder; no call is repeated except the planned ones above.
 
 ## Acceptance
-- [ ] Effort, cap, model and streaming settings are in the built request and in the stage's cache key (unit tests on
+- [x] Effort, cap, model and streaming settings are in the built request and in the stage's cache key (unit tests on
       the request, fake client); `pytest -q` green, `tests/test_no_paid_calls.py` green.
-- [ ] Map split and merge: merged cells equal the per-firm shape (unit tests); mock Q1-Q30 fts (rule plans and #250
+- [x] Map split and merge: merged cells equal the per-firm shape (unit tests); mock Q1-Q30 fts (rule plans and #250
       plans) unchanged in behavior, cells, labels and claim chunk ids (30/30) against the pre-change run.
-- [ ] Ask page shows plan, then evidence lines (each with a chunk chip from the retrieved set), then the answer:
+- [x] Ask page shows plan, then evidence lines (each with a chunk chip from the retrieved set), then the answer:
       verify-cee screenshots on mock, recipe `ask-progress.md` and `scripts/verify_cee.py` updated.
-- [ ] `python scripts/latency_report.py <run>/raw` prints the #250 baseline (fts median 415 s) and every run's table.
-- [ ] Test A fts: Q5, Q10, Q19, Q21, Q24, Q26 under C1, C2, C3: latency table, 0 cut outputs for the chosen config,
+- [x] `python scripts/latency_report.py <run>/raw` prints the #250 baseline (fts median 415 s) and every run's table.
+- [ ] (fts done; hybrid open) Test A fts: Q5, Q10, Q19, Q21, Q24, Q26 under C1, C2, C3: latency table, 0 cut outputs for the chosen config,
       config chosen by the step-10 rule. Hybrid: the same six with the chosen config, 0 cut outputs.
-- [ ] Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
+- [ ] (fts done: blind 22/30, adjudication in the PR review; hybrid open) Test B: Q1-Q30 fts >= 18/30 and hybrid-norerank >= 22/30 adjudicated (blind), with latency p50 / p90 and score
       per mode in `docs/results/w12-latency.md`; a mode below its floor re-run once with reduce `high`.
-- [ ] First cited evidence time (plan `wall_s` + first landed round-1 map call, from the records) and end-to-end p50
+- [ ] (fts done: p50 18 s; hybrid open) First cited evidence time (plan `wall_s` + first landed round-1 map call, from the records) and end-to-end p50
       reported per mode (target 30 s; reported, not gated).
 - [ ] `gh pr checks` green on the main PR, the sync PR and the hybrid PR; real call counts per run in each PR.
 
@@ -259,3 +259,13 @@ Every raw response is saved in the run's evidence folder; no call is repeated ex
   reduce message is not byte-stable across processes (as Q12 in the #250 replay). Not in this plan's scope; noted.
   Resume after top-up: the same command with `-Out b-fts-r3` (cache-a, gate 4a64f79, --max-calls 672); every saved
   record is reused, so only Q25-Q30's remaining calls are made.
+- 2026-11-21 16:10 - account topped up (user via coordinator); resuming test B fts as b-fts-r3, same settings and cache.
+- 2026-11-21 17:45 - b-fts-r3 stopped before any call: the database was down (Docker Desktop had stopped; psycopg ConnectionTimeout), 0 calls. Docker restarted, sync-db -Check up to date; resumed as b-fts-r4.
+- 2026-11-21 19:01 - b-fts-r4 finished (58 new calls, USD 1.68): Q25-Q30 done. Q29's reduce call stalled with no output
+  and failed at the 3600 s read timeout (wall 3660 s), saved as a failed call (never re-called): Q29 has no answer
+  (class i). 0 cut, 1 failed in 545 records. Test B: 380 new calls, USD 11.94; #272 total 848 new calls, USD 17.81.
+  Latency Q1-Q30 p50 184 s, p90 251 s, max 3,750 s (Q29); without Q29 max 383 s; first evidence p50 18 s, p90 30 s.
+- 2026-11-21 19:10 - blind scoring, four fresh Sonnet scorers by range (Q1-Q10, Q11-Q16, Q17-Q21, Q22-Q30), each
+  reading its part in full: 8/10, 5/6, 3/5, 6/9 = **22/30** (tier 1 11/18); floor fts >= 18/30 met, so no reduce-high
+  re-run. Report `docs/results/w12-latency.md`; evidence `docs/results/w12-latency/`. Next: PR to main ("Part of
+  #272": hybrid sync, hybrid test A and B open), second read in the PR review, then step 13.

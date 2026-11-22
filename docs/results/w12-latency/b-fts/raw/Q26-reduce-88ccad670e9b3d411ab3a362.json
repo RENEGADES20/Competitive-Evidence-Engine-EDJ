@@ -1,0 +1,454 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-23-WM-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-10-19-IN-01#0",
+    "RJF-TRADE-2026-10-19-IN-01#1",
+    "RJF-TRADE-2026-10-19-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#4"
+  ],
+  "schema_fallback": [],
+  "enum_values": 100,
+  "at": "2026-11-21T13:21:02.717263-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 29166,
+    "output_tokens": 22906,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 27502,
+    "reasoning_tokens": 16128,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.95
+  },
+  "wall_s": 130.72,
+  "tokens_per_s": 175.23,
+  "ttft_s": 2.95,
+  "reasoning_content": "Let me analyze this task carefully. I need to write the answer to a question about Raymond James in the last 90 days, using the evidence matrix provided.\n\nThe answer is for one firm (Raymond James Financial / RJF). Aspects a1-a8, with a5 being a code gap (not found).\n\nLet me organize the claims aspect by aspect, in the order listed, with each claim carrying its part_id. Every item under recency aspects needs a why-line. Order newest first across the whole answer (time window).\n\nLet me work through each aspect.\n\nFirst, understand the rules:\n- Every claim states what a cited item says.\n- Date every claim from its source line.\n- Items marked \"quote not verbatim\" are never in quotation marks.\n- Items marked \"also under\" another aspect: write once, under the first aspect where it appears.\n- Every item of recency aspect needs a why-line ending.\n\nThe why-line: from the item's own passage context line, or factual background from another passage's related lines. Add that passage's chunk id.\n\nLet me also note \"figure not found in its passage\" items - none seem marked that way.\n\nLet me go through aspect by aspect.\n\n**Aspect a1**: What financial results reported? Items 1-13. Several items marked \"also under\" other aspects, but here a1 is the first aspect where they appear, so write them here.\n\nWait, let me check \"also under\" markings:\n- a1 item 8 (8,900 advisors no longer reports headcount): no \"also under\" marking. But a3 item 2 is the same item marked \"[also under a1: write it once]\". So write it once under a1 (first aspect).\n- a1 item 9 (8,943 advisors record): no also under. a3 item 1 is same but different... actually a1 item 9 is \"ended fiscal year with record 8,943 advisors, 2% increase year-over-year\". a3 item 1 is same plus \"signaled continued momentum\". Different cells though.\n- a1 item 10, 11, 12, 13.\n\nLet me identify \"also under\" items to write once:\n- a1 item 4 (Domestic PCG net new assets rose 88%... more than $98 billion): a4 item 1 also has this \"[period not stated]\" but not marked \"also under\". a7 item 3 marked \"[also under a1: write it once]\". So write a1 item 4 in a1, skip a7 item 3.\n\nActually wait, let me check. a1 item 4 has no \"also under\" tag in its own cell, but a7 item 3 says \"[also under a1: write it once]\". And a4 item 1 - \"For fiscal year 2026, Raymond James's domestic Private Client Group net new assets rose 88%...\" with \"[period not stated in a usable form]\" but no \"also under\".\n\nHmm, this is getting complex. Let me carefully map.\n\nThe \"also under\" marking appears on an item to say \"this item also appears under another aspect; write it once under the first aspect where it appears.\"\n\nItems marked \"[also under a1: write it once]\" are in a3, a4, a7 aspects:\n- a3 item 2: \"Raymond James no longer reports advisor headcount... about 8,900\" [also under a1: write it once] \u2192 appears in a1 as item 8. Write in a1.\n- a4 item 5: \"record quarter-end client assets $1.87 trillion\" [also under a1] \u2192 a1 item 1. Write in a1.\n- a7 item 3: \"Domestic PCG net new assets rose 88%... more than $98 billion\" [also under a1] \u2192 a1 item 4. Write in a1.\n- a7 item 4: \"Net new assets for the quarter nearly $23 billion\" [also under a1] \u2192 a1 item 5. Write in a1.\n- a7 item 5: \"record quarter-end client assets $1.87 trillion\" [also under a1] \u2192 a1 item 1. Already in a1.\n- a7 item 6: \"no longer reports advisor headcount 8,900\" [also under a1] \u2192 a1 item 8. Already in a1.\n- a7 item 8: \"recruited advisors $82 billion\" [also under a1] \u2192 a1 item 11. Write in a1.\n- a7 item 13: \"ended fiscal year record 8,943\" [also under a1] \u2192 a1 item 9. Write in a1.\n\nSo for a1, I write all 13 items. For a3, skip item 2. For a4, skip item 5. For a7, skip items 3, 4, 5, 6, 8, 13.\n\nWait, but a4 item 1 (\"For fiscal year 2026... net new assets rose 88% to more than $98 billion\") is the same as a1 item 4. Is a4 item 1 marked \"also under a1\"? Let me check. a4 item 1: \"[period not stated in a usable form]\" - no \"also under\" marking. But it's essentially the same content as a1 item 4.\n\nHmm, but a1 item 4 is in a1 (first aspect), so a1 item 4 is written in a1. a4 item 1 is a separate cell in a4 without \"also under\" marking. Actually, let me re-read.\n\na1 item 4: \"Domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.\" with \"[period not stated in a usable form]\".\n\na4 item 1: \"For fiscal year 2026, Raymond James's domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion.\" with \"[period not stated in a usable form]\".\n\nThese are essentially the same but different cells. a4 item 1 doesn't have \"also under a1\" marking. But a7 item 3 does have \"[also under a1]\".\n\nHmm wait, actually let me look more carefully. The a7 item 3 is \"Domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.\" marked \"[also under a1: write it once]\".\n\nSo the \"also under a1\" is specifically attached to the a7 cell. The a1 item 4 and a4 item 1 are separate cells. Since a1 comes first, a1 item 4 is written in a1.\n\nBut then a4 item 1 - is it the \"same item\"? It says \"For fiscal year 2026...\" which is essentially the same. But it's a separate cell without the \"also under\" marker. Hmm.\n\nActually, the instruction says: \"An item marked 'also under' another aspect: write it once, under the first aspect where it appears.\"\n\nSo only items explicitly marked \"also under\" get consolidated. a4 item 1 is NOT marked \"also under\", so it should be written in a4.\n\nWait, but that would be duplicative. Let me re-check the a4 items.\n\na4 items:\n- item 1: \"For fiscal year 2026, Raymond James's domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion.\" [period not stated] - no \"also under\" marker.\n- item 2: \"For the fiscal fourth quarter... net new assets nearly $23 billion\" [period not stated] - no \"also under\".\n- item 3: \"Annualized... 5.3%\" [period not stated] - no marker.\n- item 4: \"Recruited advisors... $82 billion\" [period not stated] - no marker.\n- item 5: \"record quarter-end client assets $1.87 trillion\" [also under a1] - skip in a4.\n\nSo a4 items 1, 2, 3, 4 are written in a4 (they are not marked \"also under\"). Item 5 is skipped (also under a1).\n\nHmm but wait, item 1 of a4 and item 4 of a1 are essentially the same fact. But code treats them as separate cells with separate part_ids (a1.RJF vs a4.RJF). Since a4 item 1 isn't marked \"also under a1\", I write it in a4 too.\n\nActually, let me reconsider. The \"also under\" marker indicates the SAME item appears in multiple aspects. When it's the same item (same chunk/quote), it's marked \"also under\". When it's a different item (different quote/value/scope), it's a separate cell.\n\na1 item 4: quote \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion\", value \"more than $98 billion\", scope \"Domestic Private Client Group\".\n\na4 item 1: quote \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\", value \"$98 billion\", scope \"Domestic Private Client Group\".\n\nThese are basically the same. But a4 item 1 isn't marked \"also under\". Hmm, this is inconsistent, but I'll follow the markers exactly. Only a4 item 5 is marked \"also under a1\".\n\nActually wait, let me look at a7 item 3 vs a4 item 1 vs a1 item 4 more carefully.\n\na7 item 3: \"[period not stated in a usable form] [also under a1: write it once]\" - quote \"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\n\nSo a7 item 3 = a1 item 4 (same item), marked \"also under a1\".\n\na4 item 1 is a separate cell (in a4, the net_new_assets aspect). It has a slightly different presentation (\"For fiscal year 2026...\") but same underlying fact. It's NOT marked \"also under\".\n\nSo the situation: the same underlying fact appears as:\n- a1 item 4 (aspect a1, financial results)\n- a4 item 1 (aspect a4, net new assets) - NOT marked also under\n- a7 item 3 (aspect a7, business segments) - marked also under a1\n\nGiven the markers, I write a1 item 4 in a1, a4 item 1 in a4, and skip a7 item 3.\n\nBut that seems odd because a1 item 4 and a4 item 1 are essentially identical. However, I must follow the code's markers strictly. The code decided the behavior. Only \"also under\" items get consolidated.\n\nActually, re-reading: \"An item marked 'also under' another aspect: write it once, under the first aspect where it appears.\"\n\nThe key is which items are marked \"also under\". Those marked are:\n- a3 item 2 \u2192 write under a1 (a1 item 8)\n- a4 item 5 \u2192 write under a1 (a1 item 1)\n- a7 item 3 \u2192 write under a1 (a1 item 4)\n- a7 item 4 \u2192 write under a1 (a1 item 5)\n- a7 item 5 \u2192 write under a1 (a1 item 1)\n- a7 item 6 \u2192 write under a1 (a1 item 8)\n- a7 item 8 \u2192 write under a1 (a1 item 11)\n- a7 item 13 \u2192 write under a1 (a1 item 9)\n\nSo in a3, skip item 2. In a4, skip item 5. In a7, skip items 3, 4, 5, 6, 8, 13.\n\na4 items 1, 2, 3, 4 remain in a4 (not marked also under).\n\nOK so my plan:\n\n**a1** (part_id a1.RJF): 13 items, all need why-lines. But wait - are all 13 items in a1? Yes, items 1-13.\n\nActually, some of these items are somewhat overlapping but each is a separate cell, so write each.\n\nLet me write each a1 item as a claim with part_id \"a1.RJF\" and a why-line.\n\nHmm wait, actually the part_id for the firm-level cells is \"a1.RJF\", \"a2.RJF\", etc. And comparison aspects (a1, a2, ... without .RJF) are for claims spanning firms. Since this is one firm, the aspects a1-a8 are... let me check.\n\nThe part_id enum includes both \"a1.RJF\" ... \"a8.RJF\" and \"a1\" ... \"a8\". The \"Firms (row order): Raymond James Financial (RJF)\" and \"Aspects (their ids are part ids for claims that span firms)\".\n\nSo for single-firm claims, I use \"a1.RJF\" etc. The \"a1\", \"a2\" etc. are for claims that span firms (comparison aspects). Since this is a single firm and the aspects are recency (not comparison), I use the .RJF part ids.\n\nWait, let me re-read: \"Aspects (their ids are part ids for claims that span firms)\". And the cell id is \"a1.RJF\" etc. \"a cell id is the part_id of what you write from it\".\n\nSo each cell a1.RJF has part_id \"a1.RJF\". Each item in that cell gets part_id \"a1.RJF\".\n\nSo all items in a1.RJF \u2192 part_id \"a1.RJF\".\n\nOK let me now draft all claims.\n\nLet me go aspect by aspect, newest first ordering. The instruction says \"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nSo I need to order by publication date, newest first. But I also need to write aspect by aspect in order listed. Hmm, there's tension: \"Several firms: aspect by aspect in the order listed\" and \"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nActually for one firm: \"One firm: aspect by aspect.\" And the time window ordering \"newest first across the whole answer.\"\n\nLet me interpret: within each aspect, order newest first. And maybe across the whole answer too? The \"across the whole answer\" suggests global ordering. But aspect-by-aspect is also required.\n\nActually, I think the cleanest interpretation: write aspect by aspect (a1 through a8), and within each aspect, order items newest first. The \"newest first across the whole answer\" applies within aspects.\n\nHmm, but \"across the whole answer\" is explicit. Let me think about what's practical. Given aspect-by-aspect structure is required (\"aspect by aspect in the order listed\"), I'll order within each aspect newest first.\n\nActually, let me reconsider. The instruction lists both requirements. For a single firm, \"aspect by aspect\". And time window means \"order claims and adjacent items newest first across the whole answer.\" \n\nI think the most reasonable reading given the structure: within each aspect, sort newest first. The aspects themselves are in a fixed order. This is the standard behavior.\n\nLet me now list items with dates and order them.\n\nLet me compile all items with their publication dates:\n\n**a1** (financial results):\n- item 1: $1.87 trillion record AUA - RJF-TRADE-2026-10-29-WM-01#1 (Oct 29)\n- item 2: PCG net revenue $3.06B - Oct 29\n- item 3: PCG pre-tax income $458M - Oct 29\n- item 4: Domestic PCG NNA $98B - Oct 29\n- item 5: NNA nearly $23B - Oct 29\n- item 6: EPS $3.59 - Oct 29\n- item 7: revenue $4.74B - Oct 29\n- item 8: 8,900 advisors - Oct 29\n- item 9: 8,943 advisors - RJF-TRADE-2026-11-05-IN-01#0 (Nov 5)\n- item 10: $538M recruited production - RJF-TRADE-2026-11-05-WM-01#0 (Nov 5)\n- item 11: $82B recruited assets - Nov 5\n- item 12: 8,900 advisors / $1.92T - RJF-TRADE-2026-10-16-WM-01#1 (Oct 16)\n- item 13: record quarterly client assets (no figure) - RJF-TRADE-2026-11-12-WM-01#1 (Nov 12)\n\nOrder newest first: Nov 12 (item 13), Nov 5 (items 9, 10, 11), Oct 29 (items 1-8), Oct 16 (item 12).\n\nWithin Nov 5: items 9, 10, 11. Order? Probably keep code order or by date then original order. Let me order: item 13 (Nov 12), then items 9,10,11 (Nov 5), then items 1-8 (Oct 29), then item 12 (Oct 16).\n\nActually, I'll order newest first: Nov 12 \u2192 Nov 5 \u2192 Oct 29 \u2192 Oct 16.\n\nThis is a lot of work. Let me carefully write each claim with why-lines.\n\nFor why-lines, I need to pick from context line (reason/purpose/first/record/change/consequence) or related lines (earlier period figure, target, firm's statement). And add that chunk id.\n\nLet me draft each claim.\n\nLet me be efficient but thorough.\n\n---\n\n**Aspect a1 claims** (part_id \"a1.RJF\"):\n\nitem 13 (Nov 12): Raymond James recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth; no figure is stated in this passage.\n\nWhy-line: context says \"CEO Paul Shoukry crediting flexibility in affiliation options for the growth.\" Hmm that's part of the item itself basically. The related line: RJF-TRADE-2026-10-29-WM-01#1 \"record quarter-end client assets $1.87 trillion up 1% sequential 12% YoY\". \n\nActually for why-line I need \"a reason or purpose... a first, a record, a change, a consequence the source names\" or factual background from another passage. The item itself says \"record quarterly client assets and strong recruiting gains.\" The record is the reason it might matter. But I shouldn't restate the item itself.\n\nFor item 13, the related line RJF-TRADE-2026-10-29-WM-01#1 gives the actual figure ($1.87 trillion, up 1% sequentially, 12% YoY) which is a record. That's factual background.\n\nWhy-line: \"Why it might matter: the same record quarter-end client assets under administration were $1.87 trillion, up 1% sequentially and 12% year-over-year (RJF-TRADE-2026-10-29-WM-01#1).\"\n\nThat works - factual background from another passage, add chunk id.\n\nitem 9 (Nov 5): Raymond James ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year. (period not stated usable)\n\nWhy-line: context says \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" That's a stated expectation/consequence. But that's in the context. Actually the context line is the full passage. The \"signaled continued momentum\" is a related point. \n\nActually the item 9 is just the record 8,943. The context line includes \"signaled continued momentum.\" For why-line, I can use the context: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\"\n\nWhy-line: \"Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" (cite RJF-TRADE-2026-11-05-IN-01#0). This is a stated consequence/forward statement from the context line. But it's from the same passage (the item's own passage). The rules allow \"what the item's own passage says (its context line)\". Yes.\n\nActually wait, \"a record\" is a reason it might matter. The item says \"record 8,943 advisors.\" I can say the record nature matters. But I need to not restate. The context provides \"signaled continued momentum.\"\n\nLet me use: \"Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" cite RJF-TRADE-2026-11-05-IN-01#0.\n\nitem 10 (Nov 5): Raymond James recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. (period not usable; definition \"trailing 12-month production\")\n\nWhy-line: context says \"Those advisors represented more than $82 billion in client assets.\" That's a consequence. Or related RJF-TRADE-2026-10-29-WM-01#0 about $82 billion.\n\nWhy-line: \"Why it might matter: those recruited advisors represented more than $82 billion in client assets.\" cite RJF-TRADE-2026-11-05-WM-01#0.\n\nitem 11 (Nov 5): Those recruited advisors represented more than $82 billion in client assets. (period not usable)\n\nWhy-line: related RJF-TRADE-2026-10-29-WM-01#0 \"Recruited advisors joining... $82 billion...\" Hmm. Or the up from $407M prior year.\n\nActually item 11's context: \"recruited $538 million... up from $407 million in prior year. Those advisors represented more than $82 billion.\" The \"up from $407 million\" is a change against earlier period.\n\nWhy-line: \"Why it might matter: the $538 million in trailing 12-month production for these recruits was up from $407 million in the prior year.\" cite RJF-TRADE-2026-11-05-WM-01#0.\n\nitems 1-8 (Oct 29):\n\nitem 1: record quarter-end AUA $1.87T, up 1% sequential, 12% YoY.\nWhy-line: context mentions PCG record net revenue. Or the record nature. \"record quarter-end\" is a record. Actually I shouldn't restate. Related: could cite that this is a record. The context line already says \"record.\" \n\nWhy-line options: \"the firm reported record...\" is the item. For why, use a related fact. E.g., related RJF-TRADE-2026-10-16-WM-01#0 about Houston team leaving. Not relevant.\n\nHmm, let me use the context's other facts. The context line lists many records. For item 1 (record AUA), a why-line could be: \"Why it might matter: the Private Client Group also had record quarterly net revenue of $3.06 billion, up 15% year-over-year.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nActually, better: the \"record\" aspect itself - it's a record (a first/high point). But I think using a related figure from the same passage is fine.\n\nLet me keep why-lines simple and grounded. For each item, pick one contextual/consequence/related fact.\n\nLet me just do it systematically. I'll write concise why-lines.\n\nActually, let me reconsider the volume. There are 13 items in a1, 4 in a2, 15 in a3 (minus 1 = 14), 5 in a4 (minus 1 = 4), 0 in a5 (gap), 7 in a6, 14 in a7 (minus 6 = 8), 4 in a8.\n\nTotal claims: 13 + 4 + 14 + 4 + 0 + 7 + 8 + 4 = 54 claims. That's a lot but let me do it.\n\nLet me be efficient with why-lines, keeping them accurate.\n\nLet me now write everything carefully.\n\nFor each item I need: text (the claim), chunk_ids (cite the item's cite id, plus any why-line additional chunk id), part_id.\n\nLet me note the chunk_ids field: for a claim, chunk_ids should include the item's cite id(s), and for why-line, add the additional passage's chunk id.\n\nLet me draft.\n\n---\n\n**a1.RJF** (order newest first: item 13 Nov 12, items 9-11 Nov 5, items 1-8 Oct 29, item 12 Oct 16)\n\nActually wait, I should double check dates:\n- item 9: RJF-TRADE-2026-11-05-IN-01#0 = Nov 5\n- item 10: RJF-TRADE-2026-11-05-WM-01#0 = Nov 5\n- item 11: RJF-TRADE-2026-11-05-WM-01#0 = Nov 5\n- item 13: RJF-TRADE-2026-11-12-WM-01#1 = Nov 12\n- items 1-8: Oct 29\n- item 12: RJF-TRADE-2026-10-16-WM-01#1 = Oct 16\n\nSo order: item 13 (Nov 12), item 9 (Nov 5), item 10 (Nov 5), item 11 (Nov 5), items 1-8 (Oct 29), item 12 (Oct 16).\n\nLet me write them.\n\nNow let me carefully craft each claim with dates and why-lines.\n\nI'll write the answer now. Given the complexity, I'll draft all claims and submit.\n\nLet me write out each aspect.\n\nFor why-lines, I'll draw from context/related lines, adding the chunk id.\n\nLet me go.\n\n**Aspect a1 (a1.RJF):**\n\n1. Item 13 (Nov 12):\nText: \"Raymond James: On 2026-11-12, trade press reported that the firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth; no figure is stated in this passage. Why it might matter: the record quarter-end client assets under administration were $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-11-12-WM-01#1\", \"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n2. Item 9 (Nov 5):\nText: \"Raymond James: On 2026-11-05, trade press reported that the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year. Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\"\nchunk_ids: [\"RJF-TRADE-2026-11-05-IN-01#0\"]\n\n3. Item 10 (Nov 5):\nText: \"Raymond James: On 2026-11-05, trade press reported that the firm recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. Why it might matter: those recruited advisors represented more than $82 billion in client assets.\"\nchunk_ids: [\"RJF-TRADE-2026-11-05-WM-01#0\"]\n\n4. Item 11 (Nov 5):\nText: \"Raymond James: On 2026-11-05, trade press reported that the recruited advisors represented more than $82 billion in client assets. Why it might matter: the $538 million in trailing 12-month production for these recruits was up from $407 million in the prior year.\"\nchunk_ids: [\"RJF-TRADE-2026-11-05-WM-01#0\"]\n\n5. Item 1 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year. Why it might matter: the Private Client Group also had record quarterly net revenue of $3.06 billion, up 15% year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n6. Item 2 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year. Why it might matter: the Private Client Group also had pre-tax income of $458 million, up 10% year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n7. Item 3 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the Private Client Group had pre-tax income of $458 million, up 10% year-over-year. Why it might matter: the Private Client Group also had record quarterly net revenue of $3.06 billion, up 15% year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n8. Item 4 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion. Why it might matter: net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n9. Item 5 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%. Why it might matter: domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n10. Item 6 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the firm reported non-GAAP earnings per share of $3.59, beating analysts' expectations by $0.32 (per Seeking Alpha). Why it might matter: this was on revenue of $4.74 billion, up 13% year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n11. Item 7 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the firm reported revenue of $4.74 billion, up 13% year-over-year. Why it might matter: non-GAAP earnings per share of $3.59 beat analysts' expectations by $0.32.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\n12. Item 8 (Oct 29):\nText: \"Raymond James: On 2026-10-29, trade press reported that the firm no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out. Why it might matter: the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year.\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\", \"RJF-TRADE-2026-11-05-IN-01#0\"]\n\n13. Item 12 (Oct 16):\nText: \"Raymond James: On 2026-10-16, trade press reported that the firm most recently reported about 8,900 advisors overseeing $1.92 trillion in assets. Why it might matter: Janney, the comparison parent, reports about 900 financial advisors with nearly $200 billion in assets under advisement.\"\nchunk_ids: [\"RJF-TRADE-2026-10-16-WM-01#1\"]\n\nWait, for item 12 why-line, the context is about Janney comparison (Houston team leaving for Janney). The reason it matters: comparison with Janney. Actually the context line provides \"team will be with a much smaller parent in terms of advisor headcount and assets than Raymond James.\" \n\nWhy-line: \"Why it might matter: the Houston team will be with a much smaller parent in terms of advisor headcount and assets than Raymond James.\" That's the context's stated reason (consequence/comparison).\n\nActually, let me use a cleaner why. The context says the team leaving for Janney, and Janney is much smaller. This highlights RJ's size. But the item is about RJ's 8,900 advisors/$1.92T.\n\nWhy-line: \"Why it might matter: the departing Houston team will be with a much smaller parent in terms of advisor headcount and assets than Raymond James.\"\n\nLet me use that. cite RJF-TRADE-2026-10-16-WM-01#1.\n\nActually I'll keep it. Let me finalize with that.\n\nNow let me also reconsider: should I write the date as \"published 2026-10-29\"? The instruction says \"Date every claim from its source line\". The source line shows \"published 2026-10-29\". So I date claims with publication date.\n\nI'll say \"In an article published 2026-11-12, trade press reported...\" or similar. Actually simpler: \"On 2026-11-12 (trade press), ...\". Let me use a consistent format.\n\nLet me use: \"Raymond James: Trade press reported on 2026-11-12 that ...\" and for why-lines.\n\nActually, let me keep it clean. I'll write \"Trade press reported (2026-11-12) that ...\".\n\nLet me finalize format as: \"Raymond James: [date], trade press reported that [claim]. Why it might matter: [why].\"\n\nNow aspect a2 (a2.RJF):\n\nItems:\n- item 1 (Nov 12): will add $18.7B to FID, merges with Synovus. period 2026-11-12.\n- item 2 (Nov 12): adds 70 advisors, expected transition May 2027.\n- item 3 (Sep 29): launched Private Wealth Guided Portfolios.\n- item 4 (Sep 16): launched SIMPLE IRA program with Capital Group.\n\nOrder newest first: item 1 (Nov 12), item 2 (Nov 12), item 3 (Sep 29), item 4 (Sep 16).\n\nitem 1 (Nov 12):\nText: \"Raymond James: Trade press reported (2026-11-12) that the firm will add $18.7 billion in client assets to its Financial Institutions Division as its existing FID program merges with Synovus Financial Corp., expanding Pinnacle Financial Partners' relationship with Raymond James. Why it might matter: the deal also adds 70 advisors to the Financial Institutions Division.\"\nActually the why should be from context or related. The context line: \"The deal expands Pinnacle Financial Partners' relationship with Raymond James...\" \n\nWhy-line: \"Why it might matter: the deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management.\" Hmm that's partly the item. \n\nActually item 1 already says \"expanding Pinnacle Financial Partners' relationship.\" Let me use the 70 advisors as why (related). Or related line RJF-TRADE-2026-10-23-WM-01#0 about Southwest Florida team joining FID.\n\nWhy-line: \"Why it might matter: this builds on the firm's recent recruitment of a Southwest Florida advisor team to its Financial Institutions Division, managing about $700 million in client assets.\" cite RJF-TRADE-2026-10-23-WM-01#0.\n\nHmm, that's related line. Good.\n\nActually simpler, use item 2's content (70 advisors) as why since it's in same passage context. But item 2 is a separate cell. Let me use the 70 advisors fact as why-line from same passage.\n\nWhy-line: \"Why it might matter: the expansion adds 70 advisors, expected to transition in May 2027.\" cite RJF-TRADE-2026-11-12-WM-01#0.\n\nThat's fine - it's from the same passage context.\n\nitem 2 (Nov 12):\nText: \"Raymond James: Trade press reported (2026-11-12) that the FID expansion adds 70 advisors, expected to transition in May 2027. Why it might matter: the firm will add $18.7 billion in client assets to its Financial Institutions Division.\"\nchunk_ids: [\"RJF-TRADE-2026-11-12-WM-01#0\"]\n\nitem 3 (Sep 29):\nText: \"Raymond James: Trade press reported (2026-09-29) that the firm launched Private Wealth Guided Portfolios, a risk-based model framework combining equity and fixed income with a dedicated alternatives sleeve (private markets and hedged strategies) for high-net-worth and ultra-high-net-worth clients. Why it might matter: nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation, which the firm cites as a key recruitment and retention signal.\"\nchunk_ids: [\"RJF-TRADE-2026-09-29-WM-01#0\", \"RJF-TRADE-2026-09-29-IN-01#3\"]\n\nitem 4 (Sep 16):\nText: \"Raymond James: Trade press reported (2026-09-16) that the firm launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, partnering with Capital Group American Funds, designed for small businesses with up to 100 employees. Why it might matter: the program was made available to the firm's roughly 8,900 advisors.\"\nchunk_ids: [\"RJF-TRADE-2026-09-16-WM-01#0\"]\n\n**Aspect a3 (a3.RJF):** skip item 2 (also under a1). Items 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15.\n\nOrder newest first:\n- item 1 (Nov 5): 8,943 advisors\n- item 3 (Oct 16): 8,900/$1.92T\n- item 4 (Sep 16): 8,900 advisors retirement plan\n- item 5 (Oct 29): $538M production\n- item 6 (Oct 23): Southwest Florida $700M\n- item 7 (Nov 6): KKM $1.5B\n- item 8 (Nov 5): Mintz & Gow $1.2B\n- item 9 (Nov 6): $700M Beachwood\n- item 10 (Sep 24): Harris Wealth $500M\n- item 11 (Sep 2): Le Sage $550M\n- item 12 (Aug 26): Stillwell $240M\n- item 13 (Oct 16): Fitzpatrick leaving $3.3B\n- item 14 (Oct 8): Ascentis $1B\n- item 15 (Sep 29): 450 designation\n\nOrder newest first:\nNov 6: item 7, item 9\nNov 5: item 1, item 8\nOct 29: item 5\nOct 23: item 6\nOct 16: item 3, item 13\nOct 8: item 14\nSep 29: item 15\nSep 24: item 10\nSep 16: item 4\nSep 2: item 11\nAug 26: item 12\n\nLet me order: \n1. item 7 (Nov 6)\n2. item 9 (Nov 6)\n3. item 1 (Nov 5)\n4. item 8 (Nov 5)\n5. item 5 (Oct 29)\n6. item 6 (Oct 23)\n7. item 3 (Oct 16)\n8. item 13 (Oct 16)\n9. item 14 (Oct 8)\n10. item 15 (Sep 29)\n11. item 10 (Sep 24)\n12. item 4 (Sep 16)\n13. item 11 (Sep 2)\n14. item 12 (Aug 26)\n\nLet me write each with why-lines.\n\nitem 7 (Nov 6): Raymond James & Associates welcomed KKM Wealth Partners from PNC Private Bank managing over $1.5B.\nWhy: context \"practice focuses on comprehensive wealth management for high-net-worth individuals...\" Or related. Let me use: \"Why it might matter: it was the employee advisor channel (RJA) that welcomed the team, operating as KKM Wealth Partners within Alex. Brown.\" Hmm.\n\nActually context line: \"Raymond James & Associates (RJA) - the firm's employee advisor channel - has welcomed Kenneth Killfoil... The team... arrives from PNC Private Bank, where it managed over $1.5 billion.\" The item value is $1.5B client assets. Why-line could be: the team arrived from PNC Private Bank (change). \n\nLet me use: \"Why it might matter: the team arrived from PNC Private Bank, operating within Alex. Brown as KKM Wealth Partners.\" cite RJF-TRADE-2026-11-06-IN-01#0.\n\nActually, I want a substantive why. The context also says nothing about a record. Let me use related: item 8 (Mintz & Gow) as a similar recruit. Or use the firm's recruitment momentum.\n\nI'll keep it simple and grounded. For each recruiting item, why-line can note the channel/scope or the broader recruiting momentum.\n\nLet me use related lines where helpful.\n\nitem 7 why: \"Why it might matter: the team operates as KKM Wealth Partners within Alex. Brown, focusing on comprehensive wealth management for high-net-worth individuals, multigenerational families, and corporate executives.\" cite RJF-TRADE-2026-11-06-IN-01#0.\n\nitem 9 (Nov 6): $700M Beachwood team, second in as many weeks to join managing that amount.\nWhy: context \"the firm's reputation along with its platform, products and services all resonate with growing teams... making us a destination of choice.\" That's the stated reason (why teams join).\n\nWhy-line: \"Why it might matter: a firm spokesperson attributed the recruiting to the firm's reputation, platform, products and services resonating with growing teams, making it a destination of choice.\" cite RJF-TRADE-2026-11-06-IN-01#1.\n\nitem 1 (Nov 5): record 8,943 advisors, 2% increase, signaled continued momentum.\nWhy: context \"signaled it expects continued momentum, with healthy pipelines.\" Already used in a1 item 9. But this is a3, different cell. Use same why.\n\nWhy-line: \"Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" cite RJF-TRADE-2026-11-05-IN-01#0.\n\nitem 8 (Nov 5): Mintz & Gow Group $1.2B to employee channel.\nWhy: context \"The pair previously...\" (from Truist). Or related item 7.\n\nWhy-line: \"Why it might matter: the pair previously worked at Truist, joining Raymond James & Associates as managing directors.\" Hmm, context says \"The pair previously ...\" truncated. Let me use related: \"Why it might matter: the firm added more than $1.2 billion in client assets to its employee advisor channel.\" That's the item itself.\n\nLet me use related line item 9 ($700M team) or the record 8,943. Actually related line for item 8 includes RJF-TRADE-2026-09-24-IN-01#0 (Harris Wealth), RJF-TRADE-2026-11-06-IN-01#0 (KKM), RJF-TRADE-2026-09-02-IN-01#2 (Le Sage).\n\nWhy-line: \"Why it might matter: this followed the firm's other recent employee-channel recruits, including KKM Wealth Partners in Washington, D.C., which managed over $1.5 billion in client assets.\" cite RJF-TRADE-2026-11-06-IN-01#0.\n\nitem 5 (Oct 29): $538M production, $82B assets (combined item).\nWhy: context \"Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel.\" \n\nWhy-line: \"Why it might matter: CEO Paul Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel.\" cite RJF-TRADE-2026-10-29-WM-01#0.\n\nitem 6 (Oct 23): Southwest Florida $700M FID, Pinnacle, from Truist.\nWhy: context \"the unit dedicated to bank and credit union advisors.\" Or related RJF-TRADE-2026-11-12-WM-01#0 ($18.7B FID expansion).\n\nWhy-line: \"Why it might matter: this builds on the firm's Financial Institutions Division, which will also add $18.7 billion in client assets through the Synovus Financial Corp. merger.\" cite RJF-TRADE-2026-11-12-WM-01#0.\n\nitem 3 (Oct 16): 8,900 advisors / $1.92T.\nWhy: context about Janney comparison.\n\nWhy-line: \"Why it might matter: the departing Houston team will be with a much smaller parent in terms of advisor headcount and assets than Raymond James, which reports about 900 advisors for Janney.\" Hmm.\n\nActually the context: \"Janney reports about 900 financial advisors with nearly $200 billion in assets under advisement. Raymond James most recently reported that it has about 8,900 advisors overseeing $1.92 trillion.\"\n\nWhy-line: \"Why it might matter: by comparison, Janney reports about 900 financial advisors with nearly $200 billion in assets under advisement.\" cite RJF-TRADE-2026-10-16-WM-01#1.\n\nitem 13 (Oct 16): Fitzpatrick Group left for Janney, $3.3B, 23 years.\nWhy: context \"The Houston location will build on Philadelphia-based Janney's push into Texas, which began in 2025.\" Or related RJF-TRADE-2026-09-29-IN-01#3 (Clark Capital acquisition).\n\nWhy-line: \"Why it might matter: the team had been with Raymond James for about 23 years and amassed $3.3 billion in client assets under management before leaving for Janney.\" Hmm, that's the item.\n\nLet me use related: the team left for Janney which is building Texas presence. \n\nWhy-line: \"Why it might matter: the Houston office will build on Janney's push into Texas, which began in 2025 with the opening of a Dallas office.\" cite RJF-TRADE-2026-10-16-WM-01#0.\n\nitem 14 (Oct 8): four practices $1B+ joined Ascentis from RJFS.\nWhy: context \"Ascentis Independent Advisors, a relatively new Dallas-based registered investment advisor platform.\" Or related.\n\nWhy-line: \"Why it might matter: the four practices joined Ascentis Independent Advisors, a Dallas-based registered investment advisor platform owned by Ascentis Wealth Holdings.\" cite RJF-TRADE-2026-10-08-WM-01#0.\n\nitem 15 (Sep 29): nearly 450 Private Wealth Advisor designation.\nWhy: context \"program has been a key recruitment and retention signal... competes for advisors who build practices around affluent households.\"\n\nWhy-line: \"Why it might matter: the program has been a key recruitment and retention signal for the firm as it competes for advisors who build practices around affluent households.\" cite RJF-TRADE-2026-09-29-IN-01#3.\n\nitem 10 (Sep 24): Harris Wealth $500M to independent channel.\nWhy: context \"bringing in established teams with deep client relationships and substantial books of business across New York and Washington state.\"\n\nWhy-line: \"Why it might matter: the firm has been bringing in established teams with deep client relationships and substantial books of business across New York and Washington state.\" cite RJF-TRADE-2026-09-24-IN-01#0.\n\nitem 4 (Sep 16): retirement plan to 8,900 advisors.\nWhy: context \"according to a regulatory filing and a spokesperson.\"\n\nWhy-line: \"Why it might matter: the plan was made available to the firm's roughly 8,900 advisors, according to a regulatory filing and a spokesperson.\" Hmm, that's the item.\n\nLet me use related RJF-TRADE-2026-09-29-IN-01#3 (Clark Capital acquisition) - not really related. \n\nActually, why-line could note: \"Why it might matter: the firm has partnered with Capital Group American Funds for the program, designed for small businesses with up to 100 employees.\" cite RJF-TRADE-2026-09-16-WM-01#0.\n\nitem 11 (Sep 2): Le Sage $550M from UBS.\nWhy: context \"Le Sage, who began his financial services career in 1972, brings more than five decades of industry experience.\"\n\nWhy-line: \"Why it might matter: advisor Le Sage, who began his financial services career in 1972, brings more than five decades of industry experience to the firm.\" cite RJF-TRADE-2026-09-02-IN-01#2.\n\nitem 12 (Aug 26): Stillwell $240M from Ameriprise.\nWhy: context quote \"Many of our clients are business owners and we wanted broader capabilities to support them through growth, financing, mergers and acquisitions and other liquidity...\"\n\nWhy-line: \"Why it might matter: Stillwell said many of his clients are business owners and he wanted broader capabilities to support them through growth, financing, mergers and acquisitions and other liquidity events.\" cite RJF-TRADE-2026-08-26-IN-01#1.\n\nOK this is getting very long. Let me now also do a4, a6, a7, a8.\n\n**Aspect a4 (a4.RJF):** skip item 5 (also under a1). Items 1, 2, 3, 4.\n\nOrder newest first:\n- item 1 (Oct 29): FY26 NNA $98B\n- item 2 (Oct 29): Q NNA $23B\n- item 3 (Oct 29): 5.3% annualized\n- item 4 (Oct 29): $82B recruited\n\nAll Oct 29. Order within: items 1, 2, 3, 4 (as listed) or keep. I'll order by original (all same date).\n\nitem 1: \"For fiscal year 2026, Raymond James's domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion.\"\nWhy: context \"Net new assets for the quarter were nearly $23 billion, with annualized growth... 5.3%.\"\n\nWhy-line: \"Why it might matter: net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nitem 2: \"For the fiscal fourth quarter, Raymond James's net new assets were nearly $23 billion.\"\nWhy-line: \"Why it might matter: domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nitem 3: \"Annualized net new asset growth from the beginning of the fiscal fourth quarter was 5.3%.\"\nWhy-line: \"Why it might matter: net new assets for the quarter were nearly $23 billion.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nitem 4: \"Recruited advisors joining Raymond James's domestic independent contractor and employee channels during fiscal year 2026 represented more than $82 billion in client assets (trailing 12-month production of $538 million, up from $407 million the prior year).\"\nWhy-line: \"Why it might matter: CEO Paul Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel.\" cite RJF-TRADE-2026-10-29-WM-01#0.\n\n**Aspect a6 (a6.RJF):** items 1-7.\n\nOrder newest first: all items relate to 2026-10-19 article. Items have periods: item 1 (2026-10-19), item 2 (2026-10-19), item 3 (2026-10-19), item 4 (2026-10-19), item 5 (2023), item 6 (2023), item 7 (2026-10-19).\n\nAll cited from RJF-TRADE-2026-10-19-IN-01#0/#1/#2 (published 2026-10-19).\n\nOrder: I'll keep in a logical order but \"newest first\" - all same publication date. I'll order items 1-7 as listed (they tell a story chronologically but publication same). Actually newest first by period: items with period 2026-10-19 (1,2,3,4,7) before 2023 (5,6).\n\nI'll order: item 1, 2, 3, 4, 7, 5, 6. Or just keep 1-7 as listed. Let me keep 1-7 order since publication dates are all 2026-10-19.\n\nActually item 5 and 6 have period 2023 (prior events). For \"newest first,\" the 2023 events are older. So order: 1, 2, 3, 4, 7 (2026-10-19 events), then 5, 6 (2023 events).\n\nLet me write them.\n\nitem 1: \"An arbitration panel sanctioned by FINRA Dispute Resolution Services ordered Raymond James & Associates to pay two of its employee advisors (Michael Kuras and Patrick Marsh) close to $1.86 million in compensatory damages and interest (period 2026-10-19).\"\nWhy: context \"a dispute that harkened back to Raymond James' purchase in 2016 of Deutsche Bank's U.S. private wealth group, which operates as the Alex. Brown brand.\"\n\nWhy-line: \"Why it might matter: the dispute harkened back to Raymond James' 2016 purchase of Deutsche Bank's U.S. private wealth group, which operates as the Alex. Brown brand.\" cite RJF-TRADE-2026-10-19-IN-01#0.\n\nitem 2: \"According to the arbitration panel's ruling, Marsh is to receive $1.23 million in damages (including interest) (period 2026-10-19).\"\nWhy: context \"The two had originally asked for many times the awarded dollar amount in damages.\"\n\nWhy-line: \"Why it might matter: the two advisors had originally asked for many times the awarded dollar amount in damages.\" cite RJF-TRADE-2026-10-19-IN-01#1.\n\nitem 3: \"According to the arbitration panel's ruling, Kuras is to receive $628,000 in damages (period 2026-10-19).\"\nWhy: context \"The two had originally asked for many times the awarded dollar amount in damages.\"\n\nWhy-line: \"Why it might matter: the two advisors had originally asked for many times the awarded dollar amount in damages.\" cite RJF-TRADE-2026-10-19-IN-01#1.\n\nitem 4: \"The arbitrators used a standard grid payout rate of 40% as the basis for their calculation of the award amount, while also taking account of other monetary factors (period 2026-10-19).\"\nWhy: context/related. \n\nWhy-line: \"Why it might matter: the panel adopted a proportionate approach factoring in the advisors' percentage share of the recovery equivalent to the 40% grid rate.\" cite RJF-TRADE-2026-10-19-IN-01#2.\n\nitem 7: \"The arbitration panel found there was no agreement between Raymond James and Kuras and Marsh governing the distribution of the prior arbitration award or the allocation of legal fees (period 2026-10-19).\"\nWhy: context \"To accomplish this, the panel adopted a proportionate approach, factoring in the advisors' percentage share of the recovery equivalent to the 40% grid rate...\"\n\nWhy-line: \"Why it might matter: to accomplish this, the panel adopted a proportionate approach factoring in the advisors' percentage share of the recovery equivalent to the 40% grid rate and their share of the recovery compared to the total award.\" cite RJF-TRADE-2026-10-19-IN-01#2.\n\nitem 5: \"In a prior proceeding (period 2023), a FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest.\"\nWhy: context \"Jump forward two years...\" \n\nWhy-line: \"Why it might matter: the three-person arbitration panel ordered Deutsche Bank to pay the award to Raymond James, ruling that the brokerage firm was jointly and severally responsible for remitting any portion of the award to which Kuras and Marsh were entitled.\" cite RJF-TRADE-2026-10-19-IN-01#1.\n\nitem 6: \"Kuras and Marsh sued Raymond James in 2023, alleging breach of contract, wage theft, civil theft and other claims against the firm (period 2023).\"\nWhy: context.\n\nWhy-line: \"Why it might matter: this followed the prior arbitration in which Raymond James was awarded $16.4 million from Deutsche Bank, portions of which Kuras and Marsh claimed they were entitled to.\" Hmm, let me keep it grounded to the context.\n\nActually item 6 context: \"according to the InvestmentNews report, ruling that the brokerage firm was 'jointly and severally responsible' for remitting any portion of the award to which Kuras and Marsh were entitled. Then, Kuras and Marsh in 2023 sued...\"\n\nWhy-line: \"Why it might matter: the suit followed a prior ruling that Raymond James was jointly and severally responsible for remitting any portion of the award to which Kuras and Marsh were entitled.\" cite RJF-TRADE-2026-10-19-IN-01#1.\n\n**Aspect a7 (a7.RJF):** skip items 3, 4, 5, 6, 8, 13 (also under a1). Write items 1, 2, 7, 9, 10, 11, 12, 14.\n\nWait let me list a7 items:\n- item 1: PCG record net revenue $3.06B (Oct 29)\n- item 2: PCG pre-tax $458M (Oct 29)\n- item 3: skip (also under a1)\n- item 4: skip (also under a1)\n- item 5: skip (also under a1)\n- item 6: skip (also under a1)\n- item 7: $538M recruited (Nov 5)\n- item 8: skip (also under a1)\n- item 9: Private Wealth Guided Portfolios (Sep 29)\n- item 10: 450 designation (Sep 29)\n- item 11: Clark Capital acquisition (Sep 29)\n- item 12: Shoukry M&A commentary (Oct 29)\n- item 13: skip (also under a1)\n- item 14: retirement plan 8,900 (Sep 16)\n\nSo write: items 1, 2, 7, 9, 10, 11, 12, 14.\n\nOrder newest first:\n- item 7 (Nov 5)\n- item 1 (Oct 29)\n- item 2 (Oct 29)\n- item 12 (Oct 29)\n- item 9 (Sep 29)\n- item 10 (Sep 29)\n- item 11 (Sep 29)\n- item 14 (Sep 16)\n\nLet me write with why-lines.\n\nitem 7 (Nov 5): \"$538M recruited... up from $407M prior year.\"\nWhy: \"Why it might matter: those recruited advisors represented more than $82 billion in client assets.\" cite RJF-TRADE-2026-11-05-WM-01#0.\n\nitem 1 (Oct 29): PCG record net revenue $3.06B up 15%.\nWhy: \"Why it might matter: the Private Client Group also had pre-tax income of $458 million, up 10% year-over-year.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nitem 2 (Oct 29): PCG pre-tax $458M up 10%.\nWhy: \"Why it might matter: the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year.\" cite RJF-TRADE-2026-10-29-WM-01#1.\n\nitem 12 (Oct 29): Shoukry M&A commentary.\nWhy: related RJF-TRADE-2026-09-29-IN-01#4 \"building advisory ranks through individualized recruitment rather than large-scale acquisitions.\"\n\nWhy-line: \"Why it might matter: CEO Paul Shoukry has separately emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions.\" cite RJF-TRADE-2026-09-29-IN-01#4.\n\nitem 9 (Sep 29): Private Wealth Guided Portfolios launch.\nWhy: \"Why it might matter: the offering is designed to give advisors a structured, research-backed way to bring alternative investments to clients with significant wealth.\" cite RJF-TRADE-2026-09-29-IN-01#0.\n\nitem 10 (Sep 29): 450 designation since 2022.\nWhy: \"Why it might matter: the program provides training, coaching, and a peer network for advisors who specialize in high-net-worth clients, generally defined as those with at least $5 million in investable assets.\" cite RJF-TRADE-2026-09-29-IN-01#3.\n\nitem 11 (Sep 29): Clark Capital acquisition, $46B AUM, closed May 2026.\nWhy: \"Why it might matter: Clark Capital is known for advisor-centric model portfolios and a dedicated high-net-worth service team.\" cite RJF-TRADE-2026-09-29-IN-01#3.\n\nitem 14 (Sep 16): retirement plan to 8,900 advisors.\nWhy: \"Why it might matter: the firm partnered with Capital Group American Funds for the program, designed for small businesses with up to 100 employees.\" cite RJF-TRADE-2026-09-16-WM-01#0.\n\n**Aspect a8 (a8.RJF):** items 1-4.\n\nOrder newest first:\n- item 3 (Nov 12): will add $18.7B, 70 advisors, transition May 2027\n- item 1 (Nov 5): continued advisor-recruiting momentum\n- item 2 (Oct 29): Shoukry M&A\n- item 4 (Sep 29): individualized recruitment strategy\n\nitem 3 (Nov 12): \"Raymond James will add $18.7 billion and 70 advisors to its Financial Institutions Division, with the advisors expected to transition in May 2027.\"\nWhy: \"Why it might matter: the deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management.\" cite RJF-TRADE-2026-11-12-WM-01#0.\n\nitem 1 (Nov 5): \"Raymond James has signaled it expects continued advisor-recruiting momentum, with healthy pipelines of advisor commitments heading into the coming year, after ending its fiscal year with a record 8,943 advisors, up 2% year-over-year.\"\nWhy: \"Why it might matter: the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year.\" cite RJF-TRADE-2026-11-05-IN-01#0.\n\nHmm, but that's essentially restating the item. Let me use a related line instead: RJF-TRADE-2026-10-29-WM-01#0 \"trailing 12-month production $538M.\"\n\nWhy-line: \"Why it might matter: the firm reported trailing 12-month production of $538 million for recruited advisors coming into its domestic independent contractor and employee channels during the fiscal year, up from $407 million the prior year.\" cite RJF-TRADE-2026-10-29-WM-01#0.\n\nitem 2 (Oct 29): Shoukry M&A.\nWhy: related RJF-TRADE-2026-09-29-IN-01#4.\n\nWhy-line: \"Why it might matter: CEO Paul Shoukry has separately emphasized building advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor on a one-on-one basis.\" cite RJF-TRADE-2026-09-29-IN-01#4.\n\nitem 4 (Sep 29): individualized recruitment strategy.\nWhy: context \"The firm also launched a suite of proprietary active exchange-traded funds in October 2025 and is piloting an AI-powered advisor assistant called Raimond.\"\n\nWhy-line: \"Why it might matter: the firm also launched a suite of proprietary active exchange-traded funds in October 2025 and is piloting an AI-powered advisor assistant called Raimond.\" cite RJF-TRADE-2026-09-29-IN-01#4.\n\nNow for a5, there's a code gap. I should not repeat the code gaps. The gaps are added by code. So I don't need to add them in the \"gaps\" field? Wait, let me re-read.\n\n\"Gaps added by code (do not repeat them)\" lists:\n- [a5.RJF] ... not found...\n- [a5] The database does not support this today...\n\nAnd instruction: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo I should NOT add the a5 gaps (they're added by code). I should only add gaps for things not covered by code gaps.\n\nSo my \"gaps\" field should be empty (or only contain gaps I add myself). Since code already handles a5, I don't add anything.\n\nActually wait, let me check the submit_answer schema - gaps is required. I can provide empty array.\n\nNow, also need to consider \"adjacent\" items. Are there any adjacent items? Looking at the evidence matrix, all cells are \"fact\" except a5 which is \"not found\". No \"adjacent only\" cells. So adjacent is empty.\n\nAlso, no \"comparison\" aspects here (all recency). So no comparison claims.\n\nAlso no derived cells or computation lines mentioned in this matrix. All items are plain facts.\n\nNow, the \"answerable\" field: true (there are facts).\n\nLet me also reconsider the ordering requirement \"newest first across the whole answer.\" Since I'm doing aspect by aspect, I'll order within each aspect newest first. I've done that.\n\nLet me also double-check: for items marked \"quote not verbatim\", I must not use quotation marks. For items with verbatim quotes, I can paraphrase or quote. I'll mostly paraphrase and use quotation marks only where the quote is verbatim. Actually, to be safe and simple, I'll paraphrase and avoid quotation marks entirely, unless I want to quote. The instruction says items marked \"quote not verbatim\" never in quotation marks. For others, I can quote or paraphrase. I'll paraphrase throughout to be safe, but I can include short quoted phrases for verbatim items if helpful. I'll generally paraphrase.\n\nActually, some items have verbatim quotes that are fine to quote. But to keep it simple and correct, I'll paraphrase everything, and where a quote is verbatim I may include it in quotes. But risk of error. I'll paraphrase all, avoiding quotation marks, which is always safe (paraphrase is fine; only verbatim quotes are restricted when marked \"not verbatim\").\n\nWait, but for verbatim items, should I quote? The instruction doesn't require quoting; it just prohibits quoting non-verbatim items. So paraphrase is fine for all. I'll paraphrase.\n\nLet me also make sure about \"trailing 12-month production\" definition - I should mention it's a defined term. For item 10 in a1, I mention \"trailing 12-month production\" as the metric name, which is fine.\n\nNow let me also handle the date attribution format. I'll write \"Trade press reported (published 2026-10-29) that...\" Actually, simpler to write dates inline.\n\nLet me finalize all claims and write the submit_answer call.\n\nLet me carefully compile the full list of claims with correct part_ids and chunk_ids.\n\nI need to be careful about chunk_ids: include the item's own cite id(s), plus for why-lines that reference another passage, add that passage's chunk id.\n\nLet me now also double check: for why-lines, the additional chunk id must be from Sources list. All related/context chunk ids are in Sources. Good.\n\nLet me write out everything now.\n\nFor a1 item 8, why-line references RJF-TRADE-2026-11-05-IN-01#0 (8,943 record). chunk_ids = [\"RJF-TRADE-2026-10-29-WM-01#1\", \"RJF-TRADE-2026-11-05-IN-01#0\"].\n\nFor a1 item 13, why references RJF-TRADE-2026-10-29-WM-01#1. chunk_ids = [\"RJF-TRADE-2026-11-12-WM-01#1\", \"RJF-TRADE-2026-10-29-WM-01#1\"].\n\nOK. Let me also reconsider: the item 13 text should not restate \"record quarterly client assets\" figure (none given). I'll say \"recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth; no figure is stated in this passage.\"\n\nNow let me write the final answer.\n\nActually, I realize I should double-check the a3 item ordering and not miss anything. Let me finalize.\n\nAlso I realize for the \"answer\" behavior, I should also provide \"answerable\": true.\n\nLet me also reconsider whether I should write why-lines for EVERY item (all aspects are recency). Yes, every item needs a why-line. All aspects a1-a8 are marked recency (a5 has no items).\n\nAlso note: a5 is not found, so no claims, and code gap handles it.\n\nLet me now write out all claims carefully in the submit_answer call.\n\nI'll list claims in order: a1 (13), a2 (4), a3 (14), a4 (4), a6 (7), a7 (8), a8 (4).\n\nTotal = 13+4+14+4+7+8+4 = 54 claims.\n\nLet me write them all now. I'll be careful with each.\n\nLet me reconsider a1 ordering once more. I'll order newest first:\n- item 13 (Nov 12)\n- item 9 (Nov 5)\n- item 10 (Nov 5)\n- item 11 (Nov 5)\n- items 1-8 (Oct 29)\n- item 12 (Oct 16)\n\nGood.\n\nFor items within Oct 29 (1-8), keep as listed order (1,2,3,4,5,6,7,8).\n\nNow writing final.\n\nLet me write concise but complete claims.\n\nActually, one more consideration: the instruction says \"Each claim starting '<Firm>: '\". So I start each claim with \"Raymond James: \".\n\nLet me finalize.\n\nI'll now produce the tool call with all claims.\n\nFor gaps: empty array (code adds a5 gaps). Actually, should I include anything in gaps? The instruction: \"Add a gap of your own only for something those gaps do not name.\" Code gaps cover a5 (not found). Nothing else is missing. So gaps = [].\n\nadjacent = [].\n\nanswerable = true.\n\nLet me write it all out now.\n\nI need to be careful with the exact part_id strings: \"a1.RJF\", \"a2.RJF\", etc.\n\nLet me write the claims array.\n\nI'll write each claim object with text, chunk_ids, part_id.\n\nLet me carefully draft final text for each.\n\nGiven length, I'll write them out fully.\n\nFinal answer submission.",
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-12) that the firm recently posted record quarterly client assets and strong recruiting gains across its advisor channels, with CEO Paul Shoukry crediting flexibility in affiliation options for the growth; no figure is stated in this passage. Why it might matter: the record quarter-end client assets under administration were $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#1",
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year. Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-IN-01#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the firm recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. Why it might matter: those recruited advisors represented more than $82 billion in client assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-WM-01#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the recruited advisors represented more than $82 billion in client assets. Why it might matter: the $538 million in trailing 12-month production for these recruits was up from $407 million in the prior year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-WM-01#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year. Why it might matter: the Private Client Group also had record quarterly net revenue of $3.06 billion, up 15% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year. Why it might matter: the Private Client Group also had pre-tax income of $458 million, up 10% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the Private Client Group had pre-tax income of $458 million, up 10% year-over-year. Why it might matter: the Private Client Group also had record quarterly net revenue of $3.06 billion, up 15% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion. Why it might matter: net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%. Why it might matter: domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the firm reported non-GAAP earnings per share of $3.59, beating analysts' expectations by $0.32 (according to Seeking Alpha). Why it might matter: this was on revenue of $4.74 billion, up 13% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the firm reported revenue of $4.74 billion, up 13% year-over-year. Why it might matter: non-GAAP earnings per share of $3.59 beat analysts' expectations by $0.32.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the firm no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out. Why it might matter: the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1",
+          "RJF-TRADE-2026-11-05-IN-01#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-16) that the firm most recently reported about 8,900 advisors overseeing $1.92 trillion in assets. Why it might matter: by comparison, Janney reports about 900 financial advisors with nearly $200 billion in assets under advisement.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-16-WM-01#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-12) that the firm will add $18.7 billion in client assets to its Financial Institutions Division as its existing FID program merges with Synovus Financial Corp., expanding Pinnacle Financial Partners' relationship with Raymond James. Why it might matter: the expansion adds 70 advisors, expected to transition in May 2027.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-12) that the FID expansion adds 70 advisors, expected to transition in May 2027. Why it might matter: the firm will add $18.7 billion in client assets to its Financial Institutions Division.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that the firm launched Private Wealth Guided Portfolios, a risk-based model framework combining equity and fixed income with a dedicated alternatives sleeve (private markets and hedged strategies) for high-net-worth and ultra-high-net-worth clients. Why it might matter: nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation, which the firm cites as a key recruitment and retention signal.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-WM-01#0",
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-16) that the firm launched a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program, partnering with Capital Group American Funds, designed for small businesses with up to 100 employees. Why it might matter: the program was made available to the firm's roughly 8,900 advisors.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-16-WM-01#0"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-06) that Raymond James & Associates welcomed a Washington, D.C. team (KKM Wealth Partners) from PNC Private Bank that managed over $1.5 billion in client assets. Why it might matter: the team operates as KKM Wealth Partners within Alex. Brown, focusing on comprehensive wealth management for high-net-worth individuals, multigenerational families, and corporate executives.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-06-IN-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-06) that a $700 million advisor team joined RJA in Beachwood, Ohio, the second in as many weeks to join the firm managing that amount. Why it might matter: a firm spokesperson attributed the recruiting to the firm's reputation, platform, products and services resonating with growing teams, making it a destination of choice.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-06-IN-01#1"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the firm ended its fiscal year with a record 8,943 advisors, a 2% increase year-over-year, and signaled it expects continued momentum with healthy advisor pipelines. Why it might matter: the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-IN-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that two Virginia wealth managers (Mintz & Gow Group) moved to Raymond James & Associates, adding more than $1.2 billion in client assets to the employee advisor channel. Why it might matter: this followed the firm's other recent employee-channel recruits, including KKM Wealth Partners in Washington, D.C., which managed over $1.5 billion in client assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-IN-01#0",
+          "RJF-TRADE-2026-11-06-IN-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the firm reported trailing 12-month production of $538 million for recruited advisors coming into its domestic independent contractor and employee channels during the fiscal year, representing more than $82 billion in client assets. Why it might matter: CEO Paul Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-23) that the firm recruited a team of advisors in Southwest Florida to its Financial Institutions Division, managing about $700 million in client assets, joining Pinnacle Financial Partners' investment program from Truist Investment Services. Why it might matter: this builds on the Financial Institutions Division, which will also add $18.7 billion in client assets through the Synovus Financial Corp. merger.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-23-WM-01#0",
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-16) that the firm most recently reported about 8,900 advisors overseeing $1.92 trillion. Why it might matter: by comparison, Janney reports about 900 financial advisors with nearly $200 billion in assets under advisement.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-16-WM-01#1"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-16) that a Houston team (Edward Fitzpatrick Group) left Raymond James for Janney, having amassed $3.3 billion in client assets under management during about 23 years with Raymond James. Why it might matter: the Houston office will build on Janney's push into Texas, which began in 2025 with the opening of a Dallas office.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-16-WM-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-08) that four advisory practices (over $1 billion in client assets) joined Ascentis Independent Advisors from Raymond James Financial Services. Why it might matter: the four practices joined Ascentis Independent Advisors, a Dallas-based registered investment advisor platform owned by Ascentis Wealth Holdings.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-08-WM-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation as of September 2026, which the firm cites as a key recruitment and retention signal. Why it might matter: the program has been a key recruitment and retention signal for the firm as it competes for advisors who build practices around affluent households.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-24) that Raymond James Financial Services welcomed a five-advisor team (Harris Wealth Partners) from Commonwealth Financial Network, adding approximately $500 million in client assets to its independent channel. Why it might matter: the firm has been bringing in established teams with deep client relationships and substantial books of business across New York and Washington state.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-24-IN-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-16) that the firm made its small-business retirement plan available to its roughly 8,900 advisors. Why it might matter: the firm partnered with Capital Group American Funds for the program, which is designed for small businesses with up to 100 employees.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-16-WM-01#0"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-02) that a Texas team (Le Sage Mattiza Maggard Wealth Management) previously managed more than $550 million in client assets at UBS Financial Services before joining Raymond James & Associates. Why it might matter: advisor Le Sage, who began his financial services career in 1972, brings more than five decades of industry experience to the firm.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-02-IN-01#2"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-08-26) that Jeffrey Stillwell affiliated with Raymond James Financial Services, having managed approximately $240 million in client assets at Ameriprise Financial Services. Why it might matter: Stillwell said many of his clients are business owners and he wanted broader capabilities to support them through growth, financing, mergers and acquisitions and other liquidity events.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-08-26-IN-01#1"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that for fiscal year 2026, the firm's domestic Private Client Group net new assets rose 88% year-over-year to a record of more than $98 billion. Why it might matter: net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that for the fiscal fourth quarter, the firm's net new assets were nearly $23 billion. Why it might matter: domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that annualized net new asset growth from the beginning of the fiscal fourth quarter was 5.3%. Why it might matter: net new assets for the quarter were nearly $23 billion.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that recruited advisors joining the firm's domestic independent contractor and employee channels during fiscal year 2026 represented more than $82 billion in client assets (trailing 12-month production of $538 million, up from $407 million the prior year). Why it might matter: CEO Paul Shoukry said the firm's recruiting success is spread across all its affiliation channels, including its RIA custody channel.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that an arbitration panel sanctioned by FINRA Dispute Resolution Services ordered Raymond James & Associates to pay two of its employee advisors (Michael Kuras and Patrick Marsh) close to $1.86 million in compensatory damages and interest (period 2026-10-19). Why it might matter: the dispute harkened back to Raymond James' 2016 purchase of Deutsche Bank's U.S. private wealth group, which operates as the Alex. Brown brand.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#0"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that according to the arbitration panel's ruling, Marsh is to receive $1.23 million in damages (including interest) (period 2026-10-19). Why it might matter: the two advisors had originally asked for many times the awarded dollar amount in damages.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#1"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that according to the arbitration panel's ruling, Kuras is to receive $628,000 in damages (period 2026-10-19). Why it might matter: the two advisors had originally asked for many times the awarded dollar amount in damages.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#1"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that the arbitrators used a standard grid payout rate of 40% as the basis for their calculation of the award amount, while also taking account of other monetary factors (period 2026-10-19). Why it might matter: the panel adopted a proportionate approach factoring in the advisors' percentage share of the recovery equivalent to the 40% grid rate.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#1",
+          "RJF-TRADE-2026-10-19-IN-01#2"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that the arbitration panel found there was no agreement between Raymond James and Kuras and Marsh governing the distribution of the prior arbitration award or the allocation of legal fees (period 2026-10-19). Why it might matter: to accomplish this, the panel adopted a proportionate approach factoring in the advisors' percentage share of the recovery equivalent to the 40% grid rate and their share of the recovery compared to the total award.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#2"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that in a prior proceeding (period 2023), a FINRA arbitration panel found Deutsche Bank liable on all 10 loan transactions and awarded Raymond James $16.4 million in compensatory damages and accrued interest. Why it might matter: the three-person arbitration panel ordered Deutsche Bank to pay the award to Raymond James, ruling that the brokerage firm was jointly and severally responsible for remitting any portion of the award to which Kuras and Marsh were entitled.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#1"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-19) that Kuras and Marsh sued Raymond James in 2023, alleging breach of contract, wage theft, civil theft and other claims against the firm (period 2023). Why it might matter: the suit followed a prior ruling that Raymond James was jointly and severally responsible for remitting any portion of the award to which Kuras and Marsh were entitled.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-19-IN-01#1"
+        ],
+        "part_id": "a6.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the firm recruited $538 million in trailing 12-month production for advisors entering its domestic independent contractor and employee channels during the fiscal year, up from $407 million in the prior year. Why it might matter: those recruited advisors represented more than $82 billion in client assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-WM-01#0"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year (period 2026Q3). Why it might matter: the Private Client Group also had pre-tax income of $458 million, up 10% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that the Private Client Group had pre-tax income of $458 million, up 10% year-over-year (period 2026Q3). Why it might matter: the Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that CEO Paul Shoukry said the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit; he said the firm does acquisitions to grow revenues rather than to slash costs. Why it might matter: CEO Paul Shoukry has separately emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1",
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that the firm announced the launch of Private Wealth Guided Portfolios, a risk-based model framework that combines equity and fixed income allocations with a dedicated alternatives sleeve covering private markets and hedged strategies. Why it might matter: the offering is designed to give advisors a structured, research-backed way to bring alternative investments to clients with significant wealth.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#0"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that since the program launched in 2022, nearly 450 advisors have earned the Raymond James Private Wealth Advisor designation. Why it might matter: the program provides training, coaching, and a peer network for advisors who specialize in high-net-worth clients, generally defined as those with at least $5 million in investable assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-WM-01#1",
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that the firm agreed to acquire Clark Capital Management Group, a Philadelphia-based asset manager with more than $46 billion under management; the transaction closed in May 2026 and added Clark Capital as an independent boutique within Raymond James Investment Management's multi-boutique structure. Why it might matter: Clark Capital is known for advisor-centric model portfolios and a dedicated high-net-worth service team.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-16) that the firm made its small-business retirement plan available to its roughly 8,900 advisors, launching a firm-wide SIMPLE IRA Employer Advisory and Consulting Services Program with Capital Group American Funds. Why it might matter: the firm partnered with Capital Group American Funds for the program, which is designed for small businesses with up to 100 employees.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-16-WM-01#0"
+        ],
+        "part_id": "a7.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-12) that the firm will add $18.7 billion and 70 advisors to its Financial Institutions Division, with the advisors expected to transition in May 2027. Why it might matter: the deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a8.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-11-05) that the firm has signaled it expects continued advisor-recruiting momentum, with healthy pipelines of advisor commitments heading into the coming year, after ending its fiscal year with a record 8,943 advisors, up 2% year-over-year. Why it might matter: the firm reported trailing 12-month production of $538 million for recruited advisors coming into its domestic independent contractor and employee channels during the fiscal year, up from $407 million the prior year.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-05-IN-01#0",
+          "RJF-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a8.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-10-29) that CEO Paul Shoukry said the firm does look for acquisitions, in the wealth management business in particular, but they would have to be a good cultural and strategic fit, and that the firm does acquisitions to grow revenues rather than to slash costs. Why it might matter: CEO Paul Shoukry has separately emphasized building the firm's advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor on a one-on-one basis.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-10-29-WM-01#1",
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a8.RJF"
+      },
+      {
+        "text": "Raymond James: Trade press reported (published 2026-09-29) that CEO Paul Shoukry has emphasized the firm's strategy of building its advisory ranks through individualized recruitment rather than large-scale acquisitions, noting that the firm evaluates each prospective advisor on a one-on-one basis. Why it might matter: the firm also launched a suite of proprietary active exchange-traded funds in October 2025 and is piloting an AI-powered advisor assistant called Raimond.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a8.RJF"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}
