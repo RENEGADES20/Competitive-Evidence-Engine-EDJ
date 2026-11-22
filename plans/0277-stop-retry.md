@@ -236,3 +236,6 @@ delay, the pump logic is tested as a pure function).
   wrapped too; uncut steps and "cost unknown" documented, Retry disabled while the old worker lives; worker
   never touches `st`, late results never shown, the Stop rerun starts no run; stop-retry recipe last and
   newest-row reads skip NULL answers.
+- 2026-11-22 12:40 - plan review round 2: APPROVE (all 8 findings checked in the plan). Build note from the
+  reviewer: while the old worker is alive, the Retry poll (`st.rerun`) must not draw a second Stop button or
+  start a run; add a test for it in step 6.
