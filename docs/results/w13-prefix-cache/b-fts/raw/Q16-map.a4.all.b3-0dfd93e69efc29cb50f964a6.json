@@ -1,0 +1,244 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a4.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a4.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MS-SUPP-2025Q4#14",
+    "RJF-TR-2026Q1#20",
+    "RJF-PR-2026-04-22-01#4",
+    "MS-10K-2025#167",
+    "RJF-DECK-2025-investor-day#142",
+    "MS-10Q-2026Q1#51",
+    "RJF-10K-2025#225",
+    "MS-SUPP-2020Q4#1",
+    "SCHW-10Q-2025Q3#88",
+    "MS-TR-2025Q4#34",
+    "SCHW-DECK-2026-investor-day#99",
+    "MS-10Q-2025Q2#59",
+    "RJF-10Q-2025Q4#244",
+    "MS-10Q-2026Q2#60",
+    "BAC-PR-2026-10-14-01#28",
+    "MS-10Q-2025Q3#59",
+    "SCHW-10Q-2026Q1#62",
+    "BAC-PR-2026-01-14-01#1",
+    "RJF-TR-2026Q2#14",
+    "BAC-PR-2026-04-15-01#1",
+    "SCHW-TRADE-2026-08-20-RB-01#4",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "EDJ-10K-2025#58",
+    "SCHW-DECK-2026-investor-day#306",
+    "SCHW-10Q-2026Q1#22",
+    "RJF-TR-2025Q4#7",
+    "RJF-10Q-2025Q2#304",
+    "SCHW-TR-2026Q1#49",
+    "RJF-TR-2025Q1#7"
+  ],
+  "at": "2026-11-22T23:43:19.225125-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10797,
+    "output_tokens": 4915,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9261,
+    "reasoning_tokens": 3204,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.06
+  },
+  "wall_s": 49.64,
+  "tokens_per_s": 99.01,
+  "ttft_s": 2.06,
+  "reasoning_content": "The question asks about how service and delivery models for financial advice are shifting (future of receiving financial advice). The sub-question is a4.all [fact]: How service and delivery models for financial advice are shifting.\n\nI need to look through the passages and extract facts about how service/delivery models for financial advice are shifting.\n\nLet me identify relevant passages:\n\n1. MS-TR-2025Q4#34 - talks about fee-based flows, advice-based model, self-directed activity, technology, AI on revenue side. This is relevant - shifting toward fee-based advice and technology/AI.\n\n2. RJF-TR-2026Q1#20 - \"investing in the people, platforms and capabilities that help our financial professionals deliver more holistic more personalized advice to clients\" - relevant.\n\n3. SCHW-TRADE-2026-08-20-RB-01#4 - Schwab keeping leads of $5M or less in-house, adding branch consultants, feeding to Schwab Wealth Advisory, \"unmatched conversion funnel\", only 5% of retail households in fee-based advice, 31% want advice. Relevant - shifting service/delivery model.\n\n4. SCHW-DECK-2026-investor-day#99 - Traders table showing segments and offerings. Relevant to service models.\n\n5. SCHW-TR-2026Q1#49 - fiduciary model, \"bull market for advice and convenience\". Relevant.\n\n6. RJF-TRADE-2026-08-26-IN-01#1 - \"relationship-based advisory model\", team approach. Relevant.\n\n7. SCHW-10Q-2026Q1#22 - \"growth in headcount, including financial consultants and wealth advisors to support our expanding client base\". Relevant.\n\n8. SCHW-DECK-2026-investor-day#306 - SWA non-discretionary, SAN advisors independent. Relevant to delivery models.\n\n9. BAC-PR passages - digital active clients (86%, 88% Merrill and Private Bank clients digitally active). Relevant to shifting toward digital.\n\n10. RJF-10K-2025#225 - \"clients' preference for fee-based alternatives versus transaction-based accounts\". Relevant.\n\nLet me focus on the most relevant ones for \"how service and delivery models for financial advice are shifting.\"\n\nKey facts:\n- Morgan Stanley: building out fee-based revenues/assets, introducing new clients to \"the power of the advice-based model\", investing in self-directed E*TRADE, using AI/technology on revenue side.\n- Raymond James: delivering \"more holistic more personalized advice\", relationship-based advisory model, team approach.\n- Schwab: keeping leads in-house, moving to fee-based advice, fiduciary model, \"bull market for advice\", adding financial consultants and wealth advisors.\n\nLet me compile cells. Each cell is one item. Actually the instruction says \"one cell for each sub-question\" but then \"items\" array can contain multiple items. So I return one cell for a4.all with multiple items.\n\nLet me extract relevant items.\n\nItem 1: Morgan Stanley - \"We have consistently added fee-based flows... building out the fee-based revenues and the fee-based assets... as we do introduce new clients to the power of the advice-based model. But there are also clients who just want self-directed activity.\"\n\nQuote: \"building out the fee-based revenues and the fee-based assets. And that is happening as we do introduce new clients to the power of the advice-based model. But there are also clients who just want self-directed activity.\"\n\nItem 2: Morgan Stanley - \"We are also using technology to help us from an efficiency perspective... some of the AI that we've been doing is actually also on the revenue side.\"\n\nItem 3: Raymond James - \"keep investing in the people, platforms and capabilities that help our financial professionals deliver more holistic more personalized advice to clients\"\n\nItem 4: Schwab - \"only 5% of Schwab retail households are in fee-based advice. He called the 31% who want advice a captive retail base and an 'unmatched conversion funnel.'\"\n\nItem 5: Schwab - \"Adding thousands of branch consultants expands the top end of that funnel... feed clients to Schwab Wealth Advisory (SWA), which is Schwab's managed account program.\"\n\nItem 6: Schwab - \"the fiduciary model works, because there's a bull market for advice and convenience and the independent advisers have a great model.\"\n\nItem 7: Raymond James (trade) - \"the kind of deeply personal, relationship-based advice that clients value, with a team approach built on collaboration, accessibility...\"\n\nItem 8: Schwab 10-Q - \"growth in headcount, including financial consultants and wealth advisors to support our expanding client base\"\n\nItem 9: Raymond James 10-K - \"many clients' preference for fee-based alternatives versus transaction-based accounts\"\n\nItem 10: BAC press - \"86% of Merrill and Private Bank clients digitally active\" / \"88% of Merrill and Private Bank clients digitally active\"\n\nThese are all facts about how service/delivery models are shifting.\n\nLet me write these as items with proper metadata.\n\nActually, let me be careful. The sub-question is about \"how service and delivery models for financial advice are shifting.\" I should extract facts that describe shifts.\n\nLet me structure the items. For each item I need: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nMost of these are qualitative statements without figures, so value=\"\", unit=\"\", period=\"\".\n\nLet me write.\n\nItem 0 (Morgan Stanley fee-based shift):\ntext: Morgan Stanley says it is building out fee-based revenues and fee-based assets and introducing new clients to \"the power of the advice-based model,\" while also serving clients who want self-directed activity.\nquote: \"building out the fee-based revenues and the fee-based assets. And that is happening as we do introduce new clients to the power of the advice-based model. But there are also clients who just want self-directed activity.\"\nchunk_ids: [\"MS-TR-2025Q4#34\"]\n\nItem 1 (Morgan Stanley technology/AI):\ntext: Morgan Stanley says it is using technology for efficiency and that some of the AI it has been doing is on the revenue side.\nquote: \"We are also using technology to help us from an efficiency perspective, both on the cost and the revenue side. I'd note to you that some of the AI that we've been doing is actually also on the revenue side.\"\nchunk_ids: [\"MS-TR-2025Q4#34\"]\n\nItem 2 (Raymond James holistic personalized advice):\ntext: Raymond James says its strategy is to keep investing in people, platforms and capabilities that help financial professionals deliver more holistic, more personalized advice to clients.\nquote: \"Our strategy is to keep investing in the people, platforms and capabilities that help our financial professionals deliver more holistic more personalized advice to clients\"\nchunk_ids: [\"RJF-TR-2026Q1#20\"]\n\nItem 3 (Schwab fee-based advice conversion funnel):\ntext: Schwab's CEO said only 5% of Schwab retail households are in fee-based advice and called the 31% who want advice a captive retail base and an \"unmatched conversion funnel.\"\nquote: \"only 5% of Schwab retail households are in fee-based advice. He called the 31% who want advice a captive retail base and an 'unmatched conversion funnel.'\"\nchunk_ids: [\"SCHW-TRADE-2026-08-20-RB-01#4\"]\n\nItem 4 (Schwab branch consultants feeding to SWA):\ntext: Schwab is adding thousands of branch consultants, Series 7 brokers who feed clients to Schwab Wealth Advisory (SWA), Schwab's managed account program.\nquote: \"Adding thousands of branch consultants expands the top end of that funnel. The branch personnel tend to be Series 7 brokers who in turn feed clients to Schwab Wealth Advisory (SWA), which is Schwab's managed account program.\"\nchunk_ids: [\"SCHW-TRADE-2026-08-20-RB-01#4\"]\n\nItem 5 (Schwab fiduciary model):\ntext: Schwab's CEO says advisers continue to win because the fiduciary model works and there is a bull market for advice and convenience.\nquote: \"the advisers continue to win in the marketplace because the fiduciary model works, because there's a bull market for advice and convenience and the independent advisers have a great model.\"\nchunk_ids: [\"SCHW-TR-2026Q1#49\"]\n\nItem 6 (Raymond James relationship-based advisory model):\ntext: LPL's chief growth officer (quoted in a Raymond James trade item) describes the kind of deeply personal, relationship-based advice clients value, with a team approach.\nquote: \"the kind of deeply personal, relationship-based advice that clients value, with a team approach built on collaboration, accessibility and a genuine commitment to helping families navigate each stage of their financial lives\"\nchunk_ids: [\"RJF-TRADE-2026-08-26-IN-01#1\"]\n\nWait, this quote is from Marc Cohen of LPL, not Raymond James. But it's describing a relationship-based advisory model. The source is a Raymond James trade item. It's still a fact about the industry shifting to relationship-based advice. But it's attributed to LPL's chief growth officer. That's fine - positions others hold are facts when attributed.\n\nItem 7 (Schwab headcount growth):\ntext: Schwab says growth in headcount includes financial consultants and wealth advisors to support its expanding client base.\nquote: \"growth in headcount, including financial consultants and wealth advisors to support our expanding client base\"\nchunk_ids: [\"SCHW-10Q-2026Q1#22\"]\n\nItem 8 (Raymond James fee-based preference):\ntext: Raymond James says PCG assets in fee-based accounts continue to be a significant percentage of overall PCG AUA due to many clients' preference for fee-based alternatives versus transaction-based accounts.\nquote: \"PCG assets in fee-based accounts continued to be a significant percentage of overall PCG AUA due to many clients' preference for fee-based alternatives versus transaction-based accounts\"\nchunk_ids: [\"RJF-10K-2025#225\"]\n\nItem 9 (BAC digital):\ntext: Bank of America says 86% (later 88%) of Merrill and Private Bank clients are digitally active.\nquote: \"88% of Merrill and Private Bank clients digitally active\"\nchunk_ids: [\"BAC-PR-2026-04-15-01#1\"]\n\nActually let me use both periods. The BAC press releases show 86% in 2025 and 88% in Q1 2026. These show shift toward digital. I could include both.\n\nLet me also consider SCHW-DECK-2026-investor-day#99 which shows the segmentation/offerings. This describes service models by segment. It's a fact about how service is delivered.\n\nItem: Schwab's investor day deck shows service/delivery offerings by client segment: self-direct investors get 24/7 service and education, traders get thinkorswim, younger investors get Schwab Starter Kit, advice seekers get Wealth Advisory/Advisor Network/managed accounts, H/UHNW get consultant relationships and dedicated service.\n\nquote: \"Self-direct investors | 24/7 service... H/UHNW | Consultant relationships | Dedicated service | Relationship pricing\"\n\nThis is relevant.\n\nLet me finalize. I'll create one cell for a4.all with all these items.\n\nActually, I should be careful about scope of \"firm\" - the question says \"All sources (no firm named)\". So all firms' statements are relevant facts.\n\nLet me write the final cell. I need to provide reason, differs_because (empty for fact), derivation (empty).\n\nLet me also note the periods where applicable. Most qualitative items have no period.\n\nFor the BAC digital one, I'll include two items or one item with a note. Actually I can do one item citing 88% from the latest, and mention the shift. But to be precise, let me do two items or one item. I'll do one item for 88% (Q1 2026) and maybe mention 86% for 2025.\n\nActually, let me keep it simple with the items I've identified.\n\nLet me finalize values:\n- Item 3: 5% and 31% are figures. value could be \"5%\" but there are two figures. I'll put value \"5%\" and text mentions both. Actually the unit would be \"of Schwab retail households\". Hmm, this is tricky. I'll keep value \"5%\" and unit \"of Schwab retail households in fee-based advice\" or just leave value as \"5%\" with a description. Actually for the \"31% who want advice\", that's another figure. I could split into two items.\n\nLet me split item 3 into:\nItem 3a: 5% in fee-based advice. value \"5%\", unit \"of Schwab retail households in fee-based advice\".\nItem 3b: 31% want advice. value \"31%\", unit \"of Schwab retail households who want advice\".\n\nActually these are from CEO Rick Wurster. Period n/a (July 21 analysts' call mentioned). The trade published 2026-08-20.\n\nLet me keep them as two items for clarity with values.\n\nFor BAC digital, value \"88%\", unit \"of Merrill and Private Bank clients digitally active\", period \"2026-03-31\".\n\nAlso 86% for period \"2025-12-31\".\n\nLet me finalize.\n\nFor the reason: \"The passages describe shifts in service and delivery models (fee-based advice, technology/AI, digital engagement, relationship-based advice), so these are facts.\"\n\nNow let me write all items.\n\nI'll be thorough but not over-include. Let me settle on these items:\n\n1. MS fee-based/advice model shift (MS-TR-2025Q4#34)\n2. MS technology/AI on revenue side (MS-TR-2025Q4#34)\n3. RJF holistic personalized advice (RJF-TR-2026Q1#20)\n4. RJF fee-based preference (RJF-10K-2025#225)\n5. SCHW 5% fee-based (SCHW-TRADE)\n6. SCHW 31% want advice (SCHW-TRADE)\n7. SCHW branch consultants feed SWA (SCHW-TRADE)\n8. SCHW fiduciary model/bull market for advice (SCHW-TR-2026Q1#49)\n9. SCHW headcount growth financial consultants/wealth advisors (SCHW-10Q-2026Q1#22)\n10. SCHW investor day segment offerings (SCHW-DECK-2026-investor-day#99)\n11. LPL relationship-based advice (RJF-TRADE-2026-08-26-IN-01#1)\n12. BAC digital 88% (BAC-PR-2026-04-15-01#1)\n13. BAC digital 86% (BAC-PR-2026-01-14-01#1)\n\nThat's comprehensive. Let me write.\n\nFor value/unit/period on qualitative items, leave empty.\n\nLet me write it all out now.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.all",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Morgan Stanley says it has consistently added fee-based flows and is building out fee-based revenues and fee-based assets by introducing new clients to 'the power of the advice-based model,' while also serving clients who just want self-directed activity.",
+            "quote": "building out the fee-based revenues and the fee-based assets. And that is happening as we do introduce new clients to the power of the advice-based model. But there are also clients who just want self-directed activity.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MS-TR-2025Q4#34"
+            ]
+          },
+          {
+            "text": "Morgan Stanley says it is using technology for efficiency on both the cost and revenue side, and that some of the AI it has been doing is on the revenue side.",
+            "quote": "We are also using technology to help us from an efficiency perspective, both on the cost and the revenue side. I'd note to you that some of the AI that we've been doing is actually also on the revenue side.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MS-TR-2025Q4#34"
+            ]
+          },
+          {
+            "text": "Raymond James says its strategy is to keep investing in the people, platforms and capabilities that help its financial professionals deliver more holistic, more personalized advice to clients.",
+            "quote": "Our strategy is to keep investing in the people, platforms and capabilities that help our financial professionals deliver more holistic more personalized advice to clients",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TR-2026Q1#20"
+            ]
+          },
+          {
+            "text": "Raymond James says Private Client Group assets in fee-based accounts continue to be a significant percentage of overall PCG AUA due to many clients' preference for fee-based alternatives versus transaction-based accounts.",
+            "quote": "PCG assets in fee-based accounts continued to be a significant percentage of overall PCG AUA due to many clients' preference for fee-based alternatives versus transaction-based accounts",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-10K-2025#225"
+            ]
+          },
+          {
+            "text": "Schwab CEO Rick Wurster said only 5% of Schwab retail households are in fee-based advice.",
+            "quote": "only 5% of Schwab retail households are in fee-based advice",
+            "value": "5%",
+            "unit": "of Schwab retail households in fee-based advice",
+            "period": "",
+            "scope": "Schwab retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TRADE-2026-08-20-RB-01#4"
+            ]
+          },
+          {
+            "text": "Schwab CEO Rick Wurster said 31% of Schwab retail households want advice, calling them a captive retail base and an 'unmatched conversion funnel.'",
+            "quote": "He called the 31% who want advice a captive retail base and an 'unmatched conversion funnel.'",
+            "value": "31%",
+            "unit": "of Schwab retail households who want advice",
+            "period": "",
+            "scope": "Schwab retail",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TRADE-2026-08-20-RB-01#4"
+            ]
+          },
+          {
+            "text": "Schwab is adding thousands of branch consultants, who tend to be Series 7 brokers, who feed clients to Schwab Wealth Advisory (SWA), Schwab's managed account program.",
+            "quote": "Adding thousands of branch consultants expands the top end of that funnel. The branch personnel tend to be Series 7 brokers who in turn feed clients to Schwab Wealth Advisory (SWA), which is Schwab's managed account program.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TRADE-2026-08-20-RB-01#4"
+            ]
+          },
+          {
+            "text": "Schwab CEO Rick Wurster said advisers continue to win in the marketplace because the fiduciary model works and because there is a bull market for advice and convenience, and the independent advisers have a great model.",
+            "quote": "the advisers continue to win in the marketplace because the fiduciary model works, because there's a bull market for advice and convenience and the independent advisers have a great model",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-TR-2026Q1#49"
+            ]
+          },
+          {
+            "text": "Schwab says expense growth reflects growth in headcount, including financial consultants and wealth advisors, to support its expanding client base.",
+            "quote": "growth in headcount, including financial consultants and wealth advisors to support our expanding client base",
+            "value": "",
+            "unit": "",
+            "period": "2026-03-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10Q-2026Q1#22"
+            ]
+          },
+          {
+            "text": "Schwab's investor day deck presents service and delivery offerings by client segment, including 24/7 service for self-direct investors, thinkorswim and specialist teams for traders, Wealth Advisory, Advisor Network and managed accounts for advice seekers, and consultant relationships and dedicated service for high/ultra-high net worth clients.",
+            "quote": "Self-direct investors | 24/7 service | Education & research | Proprietary funds ... Advice seekers | Wealth Advisory | Advisor Network | Managed accounts ... H/UHNW | Consultant relationships | Dedicated service | Relationship pricing",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-DECK-2026-investor-day#99"
+            ]
+          },
+          {
+            "text": "LPL Financial's chief growth officer describes a deeply personal, relationship-based advisory model with a team approach built on collaboration, accessibility and a commitment to helping families navigate each stage of their financial lives.",
+            "quote": "the kind of deeply personal, relationship-based advice that clients value, with a team approach built on collaboration, accessibility and a genuine commitment to helping families navigate each stage of their financial lives",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-08-26-IN-01#1"
+            ]
+          },
+          {
+            "text": "Bank of America says 88% of Merrill and Private Bank clients are digitally active.",
+            "quote": "88% of Merrill and Private Bank clients digitally active",
+            "value": "88%",
+            "unit": "of Merrill and Private Bank clients digitally active",
+            "period": "2026-03-31",
+            "scope": "Merrill and Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-04-15-01#1"
+            ]
+          },
+          {
+            "text": "Bank of America says 86% of Merrill and Private Bank clients are digitally active.",
+            "quote": "86% of Merrill and Private Bank clients digitally active",
+            "value": "86%",
+            "unit": "of Merrill and Private Bank clients digitally active",
+            "period": "2025-12-31",
+            "scope": "Merrill and Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain direct statements from firms about how financial advice service and delivery models are shifting (fee-based advice, technology/AI, digital engagement, relationship-based advice), so these are facts.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

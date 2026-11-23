@@ -1,0 +1,67 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a1.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#142",
+    "EDJ-10Q-2026Q2#36",
+    "EDJ-10K-2025#34",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#37",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2025Q2#80",
+    "EDJ-10Q-2025Q2#35"
+  ],
+  "at": "2026-11-22T23:24:31.329443-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4647,
+    "output_tokens": 390,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3111,
+    "reasoning_tokens": 255,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.69
+  },
+  "wall_s": 5.16,
+  "tokens_per_s": 75.58,
+  "ttft_s": 1.69,
+  "reasoning_content": "I need to answer the sub-question a1.EDJ: \"How the firm defines advisor headcount\" for Edward Jones.\n\nLet me look through the passages to find any definition of \"financial advisors\" or advisor headcount.\n\nLooking at the passages, I see:\n- EDJ-10K-2025#142: financial advisors at year end figures, but no definition.\n- EDJ-10K-2025#34: \"The Partnership ended the year with 20,425 financial advisors with branches in over two-thirds of U.S. counties and all Canadian provinces...\" This gives a number but not a definition of what's included/excluded.\n- Various other passages give figures but no definition.\n\nNone of the passages provide a definition of how the firm defines advisor headcount. There's no statement about what \"financial advisors\" includes or excludes.\n\nSo this is not_found - the passages say nothing about how the firm defines advisor headcount.\n\nActually, let me check more carefully. The sub-question asks \"How the firm defines advisor headcount\". None of the passages provide a definition. The passages give headcount figures but no definition of what constitutes a \"financial advisor\".\n\nSo the label is not_found.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages report the number of financial advisors (e.g., 20,425 at year-end 2025) but none state how Edward Jones defines advisor headcount or what the definition includes or excludes.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

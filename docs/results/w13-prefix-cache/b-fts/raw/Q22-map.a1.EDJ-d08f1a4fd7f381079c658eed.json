@@ -1,0 +1,168 @@
+{
+  "question_id": "Q22",
+  "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10K-2025#55",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10K-2025#170",
+    "EDJ-10Q-2026Q1#73",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2025Q2#66"
+  ],
+  "at": "2026-11-23T00:24:38.088880-06:00",
+  "prefix_group": "e86243e7c6ba36b4",
+  "prefix_role": "leader",
+  "gate_wait_s": 0.0,
+  "leader_cached": null,
+  "prefix_chars": 43701,
+  "request_chars": 44200,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9165,
+    "output_tokens": 7141,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7629,
+    "reasoning_tokens": 6338,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.08
+  },
+  "wall_s": 84.88,
+  "tokens_per_s": 84.13,
+  "ttft_s": 2.08,
+  "reasoning_content": "I need to extract the net new assets by quarter for Edward Jones from the passages.\n\nLet me go through the passages under a1.EDJ to find quarterly net new assets figures.\n\nChunk EDJ-10Q-2026Q2#60: \"Net new assets for the period ($ billions)(3) $ 18 $ 17 6% $ 36 $ 34 6%\" - this is second quarter 2026 vs second quarter 2025, and first half (six months) 2026 vs 2025. So Q2 2026 = $18 billion, Q2 2025 = $17 billion, six months 2026 = $36, six months 2025 = $34.\n\nAlso definition note (3): \"Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nBut wait, the task says answer only a1.EDJ, which is the series of quarterly net new assets.\n\nLet me identify the quarterly figures across the various 10-Q filings.\n\nI need to collect quarterly net new assets figures. Let me look at each quarter's figures.\n\nQ2 2026 (period 2026-06-26): EDJ-10Q-2026Q2#60 shows \"Net new assets for the period ($ billions) $ 18 $ 17\" - Q2 2026 = $18, Q2 2025 = $17.\n\nActually wait, let me look more carefully. The table has \"Net new assets for the period\" with columns for current quarter, prior year quarter, % change, then six months current, six months prior, % change.\n\nSo Q2 2026 = $18 billion, Q2 2025 = $17 billion.\n\nSix months 2026 = $36 billion, six months 2025 = $34 billion.\n\nQ1 2026: EDJ-10Q-2026Q1#51 shows \"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\" - Q1 2026 = $18, Q1 2025 = $17.\n\nWait, but EDJ-10Q-2026Q1#66 shows \"Net new assets for the period ($ billions) $ 17.6 $ 16.8 5% $ 0.4 $ 0.5 -20%\" - this appears to be a US/Canada breakdown. U.S. = $17.6, Canada = $0.4.\n\nLet me organize. There's a U.S. and Canada breakdown in some tables.\n\nActually, let me focus on the firm-wide quarterly figures.\n\nLet me look at each 10-Q and identify the firm-wide (total Partnership) quarterly net new assets.\n\nQ1 2026: EDJ-10Q-2026Q1#51 shows \"$18 vs $17, 4%\". This is the total (first quarter 2026 vs first quarter 2025). Also #52 says \"Net new assets increased by 4% compared to the first quarter of 2025.\"\n\nActually wait, let me reconsider. #51 shows \"$18 $17 4%\". Hmm, but #66 shows U.S. $17.6 and Canada $0.4 for Q1 2026. That's 17.6 + 0.4 = 18.0. Consistent.\n\nQ2 2026: EDJ-10Q-2026Q2#60 shows \"$18 $17 6%\" for the quarter. #79 shows U.S. $17.7 and Canada $0.2 for Q2 2026 = 17.9 \u2248 18. #82 shows \"$35.3 $33.2\" for six months.\n\nQ1 2025: from Q1 2026 filing, prior year Q1 2025 = $17 (total). \n\nQ2 2025: from Q2 2026 filing, prior year Q2 2025 = $17. But also from Q2 2025 filing (EDJ-10Q-2025Q2#64) shows \"$17 $19 -10%\" for the quarter (Q2 2025 vs Q2 2024).\n\nHmm wait, there are discrepancies due to rounding. Let me look at the actual quarterly filings.\n\nLet me list all the quarterly figures from each 10-Q.\n\nQ1 2025 (three months ended March 2025): From EDJ-10Q-2025Q2 filing (six months ended June 2025), we'd get Q1 2025. Actually, Q1 2025 10-Q would show Q1 2025 = $17 (from #51 prior year). Actually #51 is Q1 2026 filing showing Q1 2026 = $18 vs Q1 2025 = $17.\n\nLet me be careful and just extract all the quarterly net new assets figures with periods.\n\nActually, this is getting complex. The sub-question asks for \"Net new assets by quarter for each firm.\" I should extract quarterly net new assets figures as facts, one item per quarter.\n\nLet me identify the firm-wide quarterly net new assets:\n\nFrom EDJ-10Q-2026Q2#60 (Q2 2026 filing): Q2 2026 = $18B, Q2 2025 = $17B (quarter); six months 2026 = $36B, six months 2025 = $34B.\n\nFrom EDJ-10Q-2026Q1#51 (Q1 2026 filing): Q1 2026 = $18B, Q1 2025 = $17B.\n\nFrom EDJ-10Q-2025Q3#67 (Q3 2025 filing): Q3 2025 = $17B, Q3 2024 = $16B (quarter); nine months 2025 = $51B, nine months 2024 = $53B.\n\nFrom EDJ-10Q-2025Q2#64 (Q2 2025 filing): Q2 2025 = $17B, Q2 2024 = $19B (quarter); six months 2025 = $34B, six months 2024 = $37B.\n\nSo I have these quarterly figures for the total Partnership.\n\nNow the question asks for \"by quarter.\" So I should provide each quarter's figure.\n\nQuarters identified:\n- Q1 2025: $17B (from EDJ-10Q-2026Q1#51, prior year column)\n- Q2 2025: $17B (from EDJ-10Q-2026Q2#60 prior year, or EDJ-10Q-2025Q2#64)\n- Q3 2025: $17B (from EDJ-10Q-2025Q3#67)\n- Q4 2025: need to derive? Actually Q4 2025 isn't directly shown as a quarter in these passages. The 10-K shows full year 2025 = $74B (or $71.8B in one table?). \n\nWait, there are discrepancies. EDJ-10K-2025#148 shows \"Net new assets for the period ($ billions) $ 71.8 $ 71.9 $ 94.3\" - this appears to be U.S. breakdown with three years. Actually the table has 3 columns (2025, 2024, 2023). Hmm, actually it shows \"$71.8 $71.9 $94.3\" for U.S. and \"$2.1 $2.0 $2.3\" for Canada.\n\nEDJ-10K-2025#130 shows \"Net new assets for the year ($ billions)(2) $ 74 $ 74 $ 97\" - this is total firm (U.S. + Canada), for 2025, 2024, 2023.\n\nSo full year 2025 = $74B total.\n\nQ4 2025 would be full year minus Q1+Q2+Q3. But the instruction says don't compute. Actually, derivation is allowed for \"a quantity the firm does not report but which follows from figures in your other cells.\" But Q4 is not directly stated.\n\nActually, let me focus on what's asked: \"Net new assets by quarter.\" I should report each quarter where a passage states the figure.\n\nLet me identify all quarterly figures clearly:\n\n1. Q1 2025 (first quarter 2025): $17 billion \u2014 from EDJ-10Q-2026Q1#51 (prior year) and EDJ-10Q-2026Q1#52. Actually #51 shows \"Net new assets for the period ($ billions)(2) $18 $17 4%\".\n\nWait, but #51's table\u2014let me check if it's firm-wide. It shows \"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\" with columns. Given #52 says \"Net new assets increased by 4% compared to the first quarter of 2025\" and \"The Partnership ended the first quarter with 20,550 financial advisors\" (total). So Q1 2026 = $18B, Q1 2025 = $17B.\n\n2. Q2 2025: $17 billion \u2014 from EDJ-10Q-2026Q2#60 (prior year Q2 2025 = $17) or EDJ-10Q-2025Q2#64 (Q2 2025 = $17, Q2 2024 = $19).\n\n3. Q3 2025: $17 billion \u2014 from EDJ-10Q-2025Q3#67 (Q3 2025 = $17, Q3 2024 = $16).\n\n4. Q1 2026: $18 billion \u2014 from EDJ-10Q-2026Q1#51.\n\n5. Q2 2026: $18 billion \u2014 from EDJ-10Q-2026Q2#60.\n\nAlso there are more precise U.S./Canada figures, but those are segment-level. The question is about the firm's net new assets, so I should use firm-wide.\n\nActually, I should also note Q2 2024 = $19B, Q3 2024 = $16B as facts (they're quarterly figures for prior periods, still facts).\n\nLet me also check: are there any Q4 2025 quarterly figures? No, the 10-K only gives full year. Q4 would need to be derived but the instruction says don't compute; but derivation is for not_disclosed label. Actually Q4 2025 net new assets is not directly stated, so it's not a fact. But it could be derived from full year minus Q1-Q3. However, the instruction says \"when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells... label it not_disclosed and set derivation.\"\n\nHmm, but Q4 net new assets is a quarter figure. The firm reports full year and Q1-Q3. Q4 follows from full year minus Q1-Q3. But actually, is that \"a quantity the firm does not report\"? Q4 is implicitly derivable. But I think I should just report the facts (the quarters directly stated) and not worry about Q4 unless I want to add a derivation.\n\nActually, let me keep it simple and report the quarterly figures that are directly stated as facts. Each quarter that has a stated figure.\n\nLet me compile the full list of quarterly net new assets figures (firm-wide, total Partnership):\n\nFrom EDJ-10Q-2025Q2#64 (Q2 2025 10-Q):\n- Q2 2025 = $17B\n- Q2 2024 = $19B\n- Six months 2025 = $34B, six months 2024 = $37B (these are half-year, not quarter)\n\nFrom EDJ-10Q-2025Q3#67 (Q3 2025 10-Q):\n- Q3 2025 = $17B\n- Q3 2024 = $16B\n- Nine months 2025 = $51B, nine months 2024 = $53B\n\nFrom EDJ-10Q-2026Q1#51 (Q1 2026 10-Q):\n- Q1 2026 = $18B\n- Q1 2025 = $17B\n\nFrom EDJ-10Q-2026Q2#60 (Q2 2026 10-Q):\n- Q2 2026 = $18B\n- Q2 2025 = $17B\n- Six months 2026 = $36B, six months 2025 = $34B\n\nSo the quarterly figures (firm-wide):\n- Q1 2025: $17B\n- Q2 2025: $17B\n- Q3 2025: $17B\n- Q1 2026: $18B\n- Q2 2026: $18B\n- Q2 2024: $19B (prior year)\n- Q3 2024: $16B (prior year)\n\nThe question asks \"Net new assets by quarter.\" I'll report the quarterly figures. I should focus on the most recent relevant quarters but also include prior-year quarters since they are stated facts.\n\nActually, I think the intent is to report each quarter's net new assets. Let me include all distinct quarterly figures with their periods.\n\nLet me create items for each quarter:\n\n1. Q2 2024 (three months ended June 2024): $19B \u2014 EDJ-10Q-2025Q2#64\n2. Q3 2024 (three months ended Sept 2024): $16B \u2014 EDJ-10Q-2025Q3#67\n3. Q1 2025 (three months ended March 2025): $17B \u2014 EDJ-10Q-2026Q1#51 (prior year) and EDJ-10Q-2026Q1#52\n4. Q2 2025 (three months ended June 2025): $17B \u2014 EDJ-10Q-2025Q2#64, EDJ-10Q-2026Q2#60\n5. Q3 2025 (three months ended Sept 2025): $17B \u2014 EDJ-10Q-2025Q3#67\n6. Q1 2026 (three months ended March 2026): $18B \u2014 EDJ-10Q-2026Q1#51\n7. Q2 2026 (three months ended June 2026): $18B \u2014 EDJ-10Q-2026Q2#60\n\nI think this is a comprehensive list of quarterly figures.\n\nActually, I should be careful about the periods. Let me note the period format. The instruction says period \"YYYYQn\" for a calendar quarter. So:\n- Q2 2024 = 2024Q2\n- Q3 2024 = 2024Q3\n- Q1 2025 = 2025Q1\n- Q2 2025 = 2025Q2\n- Q3 2025 = 2025Q3\n- Q1 2026 = 2026Q1\n- Q2 2026 = 2026Q2\n\nFor fiscal year, Edward Jones uses calendar year essentially (fiscal year ends Dec 31). So calendar quarters.\n\nNow, let me also note the definitions. The definition note (3) in #60 and (2) in #51, #52: \"Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.\"\n\nBut note: the definition in EDJ-10Q-2025Q2#66 (which is in the a2 sub-question pool) says \"Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.\" \u2014 slightly different (doesn't mention \"including fees and commissions\"). Actually #66 is footnote (4).\n\nThe definition varies slightly across filings. But for a1, I'm just reporting the quantity. I could include the definition in the \"definition\" field for completeness, but the definition is asked in a2. For a1, I'll just report the figures.\n\nActually, the item schema has a \"definition\" field. For a1 (series of net new assets), I could leave definition empty, or quote it. Since a2 asks for the definition, I'll leave definition empty for a1 items, or maybe include briefly. I'll leave it empty to keep a1 focused on the figures.\n\nActually, let me reconsider whether to include the definition in each item. The instructions say \"definition: the firm's own definition of the quantity when a passage gives one, quoted; else ''.\" For a1, this is optional. I'll leave it empty since it's covered in a2.\n\nLet me also double check the U.S. vs total. The question is \"Net new assets by quarter for each firm\" \u2014 firm-level. So total Partnership.\n\nNow, should I include the half-year and nine-month and full-year figures? No, those aren't quarters. The sub-question asks \"by quarter.\" So I'll only include quarterly figures.\n\nBut wait, should I also note that the full-year figure exists? No, keep it to quarters.\n\nLet me also consider: are there any Q4 quarterly figures? No.\n\nLet me finalize the items. I'll produce one item per quarter.\n\nActually, let me reconsider the periods more carefully and pick the best chunk for each.\n\nFor Q1 2025: The figure $17B appears in EDJ-10Q-2026Q1#51 as prior year. Let me verify #51's table. \"#51\" shows:\n\"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\"\n\nThis is three columns: current quarter (Q1 2026) = $18, prior year quarter (Q1 2025) = $17, % change = 4%.\n\nSo Q1 2025 = $17B. Period 2025Q1.\n\nFor Q2 2025: EDJ-10Q-2026Q2#60 shows \"$18 $17 6%\" \u2014 Q2 2026 = $18, Q2 2025 = $17. So Q2 2025 = $17B. Also EDJ-10Q-2025Q2#64 shows \"$17 $19 -10%\" \u2014 Q2 2025 = $17, Q2 2024 = $19.\n\nFor Q3 2025: EDJ-10Q-2025Q3#67 shows \"$17 $16 6%\" \u2014 Q3 2025 = $17, Q3 2024 = $16.\n\nFor Q1 2026: $18B from #51.\n\nFor Q2 2026: $18B from #60.\n\nFor Q2 2024: $19B from EDJ-10Q-2025Q2#64.\n\nFor Q3 2024: $16B from EDJ-10Q-2025Q3#67.\n\nI think I'll include all of these.\n\nLet me write the items.\n\nItem 0: Q2 2024 = $19 billion\n- text: Edward Jones reported net new assets of $19 billion for the second quarter of 2024.\n- quote: \"Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%\" \u2014 actually the quote should be exact. Let me get the exact text from #64: \"Net new assets for the period ($ billions)(4):      $                           17      $                      19                    -10%\"\n\nHmm, the chunk text has lots of spaces. Let me quote cleanly: \"Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%\"\n\n- value: \"19\"\n- unit: \"USD billions\" \u2014 actually unit should be \"billions of dollars\" or \"USD\". The figure is \"$ billions\". I'll use \"USD (billions)\". Let me use \"USD billions\".\n\nActually the instruction says unit: what is counted or measured. For net new assets, it's \"USD\" (billions). I'll put \"USD billions\".\n\nLet me use value \"19\" and unit \"billions of USD\" or \"USD billions\". I'll use \"USD (billions)\".\n\nLet me settle on value = \"19\", unit = \"USD billions\", period = \"2024Q2\".\n\nActually for consistency I'll use unit \"USD billions\".\n\nItem for Q2 2024: value \"19\", period \"2024Q2\".\n\nItem 1: Q3 2024 = $16B, period 2024Q3, value \"16\".\n\nItem 2: Q1 2025 = $17B, period 2025Q1, value \"17\".\n\nItem 3: Q2 2025 = $17B, period 2025Q2, value \"17\".\n\nItem 4: Q3 2025 = $17B, period 2025Q3, value \"17\".\n\nItem 5: Q1 2026 = $18B, period 2026Q1, value \"18\".\n\nItem 6: Q2 2026 = $18B, period 2026Q2, value \"18\".\n\nLet me write quotes for each.\n\nFor Q2 2024: chunk EDJ-10Q-2025Q2#64: \"Net new assets for the period ($ billions)(4):      $                           17      $                      19                    -10%      $                         34      $                       37                     -8%\"\n\nFor Q3 2024: chunk EDJ-10Q-2025Q3#67: \"Net new assets for the period ($ billions)(4):      $                           17      $                       16                      6%      $                           51      $                        53                     -4%\"\n\nFor Q1 2025: chunk EDJ-10Q-2026Q1#51: \"Net new assets for the period ($ billions)(2)      $                           18      $                       17                       4%\"\n\nFor Q2 2025: chunk EDJ-10Q-2026Q2#60: \"Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%\" (prior year Q2 2025 = $17). Or use EDJ-10Q-2025Q2#64.\n\nFor Q3 2025: chunk EDJ-10Q-2025Q3#67 (current quarter).\n\nFor Q1 2026: chunk EDJ-10Q-2026Q1#51.\n\nFor Q2 2026: chunk EDJ-10Q-2026Q2#60.\n\nNow, should I worry about whether these are firm-wide (total) or U.S.-only? Let me verify.\n\nEDJ-10Q-2026Q2#60 \u2014 the top-level summary table shows total firm figures (financial advisors at period end 20,514, which matches total). So firm-wide.\n\nEDJ-10Q-2026Q1#51 \u2014 total (financial advisors 20,550, matches total in #52).\n\nEDJ-10Q-2025Q3#67 \u2014 total (financial advisors 20,429, matches total).\n\nEDJ-10Q-2025Q2#64 \u2014 total (financial advisors 20,309, matches total).\n\nSo these are firm-wide total figures.\n\nThe U.S./Canada breakdown figures (like $17.6 U.S., $0.4 Canada) are in separate chunks (#66, #79, #82, #86, #89, #93, #96). Those are segment breakdowns, not what I need for the firm-level series. I'll ignore them, or note them as different? No, the firm-level total is available, so I use it.\n\nActually, wait \u2014 should I double-check that the total firm figure includes both U.S. and Canada? The total financial advisors includes U.S. and Canada (e.g., 20,514 = U.S. 19,647 + Canada 867). And net new assets total = U.S. + Canada. E.g., Q2 2026: U.S. $17.7 + Canada $0.2 = $17.9 \u2248 $18 (rounded). Yes, consistent.\n\nSo the firm-wide quarterly figures are correct.\n\nNow let me write it all up.\n\nFor the reason: \"The passages state the firm's net new assets for each quarter.\"\n\ndiffers_because: \"\" (empty since it's a fact).\n\nderivation: operation \"\", inputs [].\n\nLet me write the final cell with items.\n\nFor scope: \"\" (whole firm).\n\nFor definition: I'll leave \"\" since it's asked in a2. Actually, I could include the definition note. But the instruction says a2 is a separate sub-question for the definition. I'll leave definition \"\" for a1 items. Actually, it might be nice to include it but it's redundant. I'll leave empty.\n\nActually, wait - let me reconsider. Should I include all 7 quarters or just the most recent? The question is \"Net new assets by quarter for each firm.\" This is a series. I'll include all quarters that are stated.\n\nLet me finalize.\n\nFor chunk_ids, I can only cite chunks listed. All my chunks are under a1.EDJ, so they're fine.\n\nLet me write out the items carefully with exact quotes (trimming excessive whitespace).\n\nItem 0 (Q2 2024): \nquote: \"Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%\"\nvalue \"19\", unit \"USD billions\", period \"2024Q2\"\nchunk_ids: [\"EDJ-10Q-2025Q2#64\"]\n\nItem 1 (Q3 2024):\nquote: \"Net new assets for the period ($ billions)(4): $ 17 $ 16 6%\"\nvalue \"16\", period \"2024Q3\"\nchunk_ids: [\"EDJ-10Q-2025Q3#67\"]\n\nItem 2 (Q1 2025):\nquote: \"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\"\nvalue \"17\", period \"2025Q1\"\nchunk_ids: [\"EDJ-10Q-2026Q1#51\"]\n\nItem 3 (Q2 2025):\nquote: \"Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%\"\nvalue \"17\", period \"2025Q2\"\nchunk_ids: [\"EDJ-10Q-2025Q2#64\"]\n\nWait, for Q2 2025, the figure $17 appears as the current quarter in EDJ-10Q-2025Q2#64. Let me use that quote. But actually the value is the first number ($17) in \"$17 $19\". So quote should clearly indicate $17 is Q2 2025.\n\nActually the quote \"$17 $19 -10%\" has Q2 2025 = $17 (first), Q2 2024 = $19 (second). So for Q2 2025, value $17.\n\nItem 4 (Q3 2025):\nquote: \"Net new assets for the period ($ billions)(4): $ 17 $ 16 6%\"\nvalue \"17\", period \"2025Q3\"\nchunk_ids: [\"EDJ-10Q-2025Q3#67\"]\n\nItem 5 (Q1 2026):\nquote: \"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\"\nvalue \"18\", period \"2026Q1\"\nchunk_ids: [\"EDJ-10Q-2026Q1#51\"]\n\nItem 6 (Q2 2026):\nquote: \"Net new assets for the period ($ billions)(3) $ 18 $ 17 6%\"\nvalue \"18\", period \"2026Q2\"\nchunk_ids: [\"EDJ-10Q-2026Q2#60\"]\n\nThese look good. Let me write the text field for each.\n\nActually, I want to make sure the quotes are accurate. Let me look at exact text.\n\nEDJ-10Q-2025Q2#64: \"Net new assets for the period ($ billions)(4):      $                           17      $                      19                    -10%      $                         34      $                       37                     -8%\"\n\nSo quote: \"Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%\"\n\nEDJ-10Q-2025Q3#67: \"Net new assets for the period ($ billions)(4):      $                           17      $                       16                      6%      $                           51      $                        53                     -4%\"\n\nQuote: \"Net new assets for the period ($ billions)(4): $ 17 $ 16 6%\"\n\nEDJ-10Q-2026Q1#51: \"Net new assets for the period ($ billions)(2)      $                           18      $                       17                       4%\"\n\nQuote: \"Net new assets for the period ($ billions)(2) $ 18 $ 17 4%\"\n\nEDJ-10Q-2026Q2#60: \"Net new assets for the period ($ billions)(3)      $                           18      $                      17                      6%      $                         36      $                      34                      6%\"\n\nQuote: \"Net new assets for the period ($ billions)(3) $ 18 $ 17 6%\"\n\nGood.\n\nNow write everything.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "differs_because": "",
+        "reason": "The passages state the Partnership's net new assets for each reported quarter, which is the quantity the sub-question asks for.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "Edward Jones reported net new assets of $19 billion for the second quarter of 2024.",
+            "quote": "Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%",
+            "value": "19",
+            "unit": "USD billions",
+            "period": "2024Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#64"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $16 billion for the third quarter of 2024.",
+            "quote": "Net new assets for the period ($ billions)(4): $ 17 $ 16 6%",
+            "value": "16",
+            "unit": "USD billions",
+            "period": "2024Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $17 billion for the first quarter of 2025.",
+            "quote": "Net new assets for the period ($ billions)(2) $ 18 $ 17 4%",
+            "value": "17",
+            "unit": "USD billions",
+            "period": "2025Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $17 billion for the second quarter of 2025.",
+            "quote": "Net new assets for the period ($ billions)(4): $ 17 $ 19 -10%",
+            "value": "17",
+            "unit": "USD billions",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#64"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $17 billion for the third quarter of 2025.",
+            "quote": "Net new assets for the period ($ billions)(4): $ 17 $ 16 6%",
+            "value": "17",
+            "unit": "USD billions",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $18 billion for the first quarter of 2026.",
+            "quote": "Net new assets for the period ($ billions)(2) $ 18 $ 17 4%",
+            "value": "18",
+            "unit": "USD billions",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "Edward Jones reported net new assets of $18 billion for the second quarter of 2026.",
+            "quote": "Net new assets for the period ($ billions)(3) $ 18 $ 17 6%",
+            "value": "18",
+            "unit": "USD billions",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

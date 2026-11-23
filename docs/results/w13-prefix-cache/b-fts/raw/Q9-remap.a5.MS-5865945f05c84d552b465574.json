@@ -1,0 +1,88 @@
+{
+  "question_id": "Q9",
+  "question": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a5.MS",
+  "round": 2,
+  "entity": "MS",
+  "cells": [
+    "a5.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MS-10K-2025#382",
+    "MS-10Q-2026Q2#232",
+    "MS-SUPP-2025Q4#36",
+    "MS-TR-2026Q3#16",
+    "MS-PR-2026-10-14-01#3",
+    "MS-10K-2025#314",
+    "MS-10Q-2026Q1#247",
+    "MS-SUPP-2026Q3#33",
+    "MS-TR-2026Q2#28",
+    "MS-PR-2026-07-15-01#3",
+    "MS-10K-2025#167",
+    "MS-10Q-2025Q3#119",
+    "MS-SUPP-2026Q1#21",
+    "MS-TR-2026Q3#26",
+    "MS-10Q-2025Q2#419",
+    "MS-PR-2026-04-15-01#3",
+    "MS-10Q-2026Q2#126",
+    "MS-SUPP-2025Q4#14",
+    "MS-PR-2026-01-15-01#3",
+    "MS-10Q-2026Q1#85",
+    "MS-SUPP-2026Q1#25",
+    "MS-10Q-2025Q2#97",
+    "MS-PR-2026-01-15-01#0",
+    "MS-10Q-2025Q2#515",
+    "MS-PR-2026-01-15-01#6",
+    "MS-10Q-2025Q3#112",
+    "MS-PR-2026-07-15-01#6",
+    "MS-PR-2026-10-14-01#6",
+    "MS-TRADE-2026-08-22-RB-01#16",
+    "MS-TRADE-2026-08-22-RB-01#5"
+  ],
+  "at": "2026-11-22T23:21:12.074924-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10811,
+    "output_tokens": 1099,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9275,
+    "reasoning_tokens": 953,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.77
+  },
+  "wall_s": 13.27,
+  "tokens_per_s": 82.82,
+  "ttft_s": 1.77,
+  "reasoning_content": "The sub-question asks about the service model and advisor assignment Morgan Stanley attaches to each wealth tier. Let me look at the passages to find anything about wealth tiers, service models, and advisor assignment.\n\nLooking through the passages, I see references to Wealth Management channels: Advisor-Led, Self-Directed, and Workplace. There's mention of \"high and ultra-high net worth individuals.\" But nothing about specific wealth tiers and service model/advisor assignment per tier.\n\nLet me examine the passages more carefully:\n\nMS-10Q-2026Q2#232: \"Wealth Management provides a comprehensive array of financial services and solutions to individual investors, including high and ultra-high net worth individuals, and businesses and institutions. Wealth Management supports clients through three channels: Advisor-Led, Self-Directed and Workplace.\"\n\nMS-SUPP-2025Q4#36: \"Advisor-led client assets represent client assets in accounts that have a Wealth Management representative assigned.\"\n\nThese describe channels and advisor assignment (advisor-led = has representative assigned), but not wealth tiers with specific service models.\n\nThe question is about how MS segments clients by wealth tier and the service model/advisor assignment attached to each tier. The passages mention \"high and ultra-high net worth individuals\" but don't provide specific tiers with service models.\n\nActually, I don't find anything about wealth tiers with specific service models and advisor assignment. The passages mention high and ultra-high net worth individuals as a client type, and describe the three channels (Advisor-Led, Self-Directed, Workplace).\n\nThe advisor-led channel has a Wealth Management representative assigned (fact about advisor assignment for that channel). Self-directed = active accounts not advisor-led.\n\nBut these are channels, not wealth tiers. The question is specifically about wealth tiers.\n\nLet me think about the label. The sub-question is \"The service model and advisor assignment each firm attaches to each wealth tier.\"\n\nThe passages don't segment clients by wealth tier (e.g., $X to $Y million = this tier). They mention \"high and ultra-high net worth individuals\" as a general client description, and three channels.\n\nI think this is essentially not_found - the passages don't describe wealth tiers with service models and advisor assignments.\n\nActually, wait. Let me reconsider. The channel structure (Advisor-Led, Self-Directed, Workplace) is a service model/advisor assignment. Advisor-led = advisor assigned; self-directed = no advisor. But is this \"wealth tier\" segmentation? No, it's channel segmentation, not wealth tier.\n\nThe question asks how the firm segments clients by wealth tier. The service model and advisor assignment attached to each wealth tier. The passages don't show wealth tier segmentation.\n\nI'll label this not_found, because the passages say nothing about wealth tiers with associated service models/advisor assignments.\n\nActually, let me reconsider whether \"high and ultra-high net worth individuals\" is a wealth tier. It's a broad descriptor of the client base, not a segmentation with attached service models. The passages don't attach a specific service model or advisor assignment to high vs ultra-high net worth.\n\nSo not_found is appropriate.\n\nLet me be careful. The instructions say:\n- fact: a passage states what the sub-question asks\n- different_quantity: a different, related quantity\n- not_disclosed: passages show firm doesn't report it\n- not_found: passages say nothing about it\n\nThe passages mention channels and advisor assignment (advisor-led has representative assigned), but not tied to wealth tiers. The service model/advisor assignment exists in the context of channels, not wealth tiers.\n\nHmm, is the channel structure a \"different quantity\"? The question is about wealth tier segmentation with service model. The channels are a different segmentation (not wealth-based). This could be considered different_quantity - a different measure of segmentation.\n\nActually, I think the closest relevant info is the three channels and the advisor assignment. But the question is specifically \"how they segment clients by wealth tier\" and the service model/advisor assignment attached to each wealth tier.\n\nThe passages don't segment by wealth tier at all. They mention \"high and ultra-high net worth individuals\" but without tier definitions or service models.\n\nI'll go with not_found since there's no wealth tier segmentation described at all, and no service model/advisor assignment tied to wealth tiers.\n\nWait, but there is advisor assignment info (advisor-led has representative assigned, self-directed doesn't). This is about channels though, not wealth tiers.\n\nGiven the instructions, I think the most accurate label is not_found. The passages don't describe wealth tier segmentation with service models/advisor assignment.\n\nLet me finalize with not_found, empty items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.MS",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages describe Wealth Management's three channels (Advisor-Led, Self-Directed, Workplace) and note it serves high and ultra-high net worth individuals, but none segment clients by wealth tier or attach a specific service model or advisor assignment to any wealth tier.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

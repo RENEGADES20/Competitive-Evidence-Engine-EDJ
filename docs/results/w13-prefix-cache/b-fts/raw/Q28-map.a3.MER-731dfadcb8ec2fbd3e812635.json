@@ -1,0 +1,116 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a3.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a3.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "BAC-TR-2026Q2#63",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2026Q1#26",
+    "BAC-PR-2026-01-14-01#12",
+    "BAC-DECK-2026Q2#20",
+    "BAC-10K-2025#249",
+    "BAC-TR-2025Q3#27",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-DECK-2026Q1#27",
+    "BAC-TR-2025Q2#34",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2025Q4#106",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-TR-2025Q1#28",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q2#21",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2025Q2#35",
+    "BAC-PR-2026-01-14-01#11",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "BAC-PR-2026-04-15-01#12",
+    "BAC-PR-2026-10-14-01#13",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-PR-2026-09-15-01#3",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "BAC-10K-2025#244",
+    "BAC-DECK-2026Q3#30",
+    "BAC-10Q-2026Q2#85",
+    "BAC-DECK-2026Q2#19",
+    "BAC-10Q-2026Q1#70",
+    "BAC-DECK-2026Q1#26",
+    "BAC-10Q-2025Q3#90",
+    "BAC-10Q-2025Q2#90"
+  ],
+  "at": "2026-11-23T01:06:04.867431-06:00",
+  "prefix_group": "9698c3d2ad278033",
+  "prefix_role": "leader",
+  "gate_wait_s": 0.0,
+  "leader_cached": null,
+  "prefix_chars": 64544,
+  "request_chars": 65119,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15772,
+    "output_tokens": 504,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 14236,
+    "reasoning_tokens": 293,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.66
+  },
+  "wall_s": 10.95,
+  "tokens_per_s": 46.03,
+  "ttft_s": 2.66,
+  "reasoning_content": "The question asks for Merrill's advisor attrition rate. Looking at the passages, the only relevant statement is from BAC-TR-2026Q2#63: \"adviser attrition is now at near historic lows.\" This is a statement about attrition but doesn't give a specific figure/rate. It's a qualitative statement.\n\nIs this a fact? The sub-question is marked [fact]: Merrill's advisor attrition rate. The passage states advisor attrition is \"at near historic lows\" - no specific number. This is a qualitative statement about attrition, not a rate figure.\n\nActually, it does state something about attrition - that it's near historic lows. This is a fact (partial) about attrition, but no numeric value.\n\nI should include this as a fact item with no value, period 2026-06-30 (the quarter it was said, 2026Q2).\n\nLet me provide one cell with subquestion_id a3.MER, label fact, with one item about advisor attrition being near historic lows.\n\nThe period would be 2026Q2 (or 2026-06-30). The quote: \"adviser attrition is now at near historic lows.\"\n\nValue: \"\" (no figure), unit: \"\" (advisor attrition rate - no number).\n\nActually, let me think about the unit. The quantity is \"advisor attrition rate\" but no figure given. So value \"\" and unit \"\".\n\nLet me write the text.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Merrill's CFO Alastair Borthwick stated that adviser attrition is now at near historic lows, without giving a specific attrition rate figure.",
+            "quote": "adviser attrition is now at near historic lows. So we're pretty happy with that.",
+            "value": "",
+            "unit": "",
+            "period": "2026-06-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-TR-2026Q2#63"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage states qualitatively that adviser attrition is near historic lows but discloses no numeric attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

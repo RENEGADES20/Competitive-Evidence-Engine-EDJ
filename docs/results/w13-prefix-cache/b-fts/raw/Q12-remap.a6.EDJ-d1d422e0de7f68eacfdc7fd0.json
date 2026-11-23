@@ -1,0 +1,69 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a6.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a6.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#55",
+    "EDJ-10K-2025#149",
+    "EDJ-10Q-2025Q3#84",
+    "EDJ-10K-2025#141",
+    "EDJ-10Q-2025Q2#90",
+    "EDJ-10Q-2026Q2#36",
+    "EDJ-10Q-2025Q2#37",
+    "EDJ-10Q-2025Q2#38",
+    "EDJ-10Q-2025Q3#40",
+    "EDJ-10Q-2025Q3#41",
+    "EDJ-10Q-2026Q2#37"
+  ],
+  "at": "2026-11-22T23:27:21.671075-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5340,
+    "output_tokens": 827,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 3804,
+    "reasoning_tokens": 697,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.62
+  },
+  "wall_s": 10.22,
+  "tokens_per_s": 80.92,
+  "ttft_s": 1.62,
+  "reasoning_content": "I need to answer the sub-question a6.EDJ about Edward Jones's current cost structure and economics for client acquisition relative to Schwab's scale advantages.\n\nLet me look at the passages. The passages are mostly about operating expenses, compensation, net revenue. There's nothing specific about client acquisition cost or Schwab's scale advantages, or a comparison.\n\nThe sub-question asks for \"Edward Jones's current cost structure and economics for client acquisition relative to Schwab's scale advantages.\" The passages provide cost structure (operating expenses, compensation breakdown) but nothing about client acquisition specifically, and nothing about Schwab or comparison.\n\nSo this is largely not_found or different_quantity. The passages give operating expense figures, financial advisor compensation, etc. These are cost structure but not \"client acquisition\" specifically, and not relative to Schwab.\n\nActually, the sub-question is marked [fact]. But the passages don't provide client acquisition economics relative to Schwab.\n\nI think the best answer is not_found, since nothing in the passages addresses client acquisition costs or Schwab's scale advantages. There's no comparison with Schwab at all.\n\nActually wait, let me think about whether there are different_quantity items. The passages show Edward Jones's cost structure (operating expenses, compensation and benefits breakdown). But the sub-question asks specifically about \"cost structure and economics for client acquisition relative to Schwab's scale advantages.\" \n\nThe cost structure (operating expenses) is a related but different quantity \u2014 it's the firm's overall cost structure, not specifically client acquisition economics, and there's no Schwab comparison.\n\nGiven the instructions: \"Only the quantity a sub-question names is a fact for it.\" The named quantity is \"client acquisition cost structure and economics relative to Schwab's scale advantages.\" None of the passages mention client acquisition, nor Schwab.\n\nSo I think not_found is the right label. The passages are about overall operating expenses and compensation, which are not client acquisition.\n\nActually, could I consider the operating expense figures as different_quantity? The sub-question is about \"cost structure and economics for client acquisition.\" The passages give overall cost structure (operating expenses, compensation). These are related but different \u2014 they're the firm's overall cost structure, not client acquisition costs.\n\nHmm. But the instruction says different_quantity is for \"a different measure\" or \"a wider unit that contains the asked one.\" The overall operating expenses is a wider concept that contains client acquisition costs. But there's no explicit client acquisition cost discussed.\n\nI think the cleanest answer is not_found, since nothing addresses client acquisition or Schwab.\n\nActually, let me reconsider. The passages do give Edward Jones's cost structure (operating expenses breakdown). But the question is specifically about \"client acquisition\" economics. There's nothing about client acquisition at all. And nothing about Schwab.\n\nI'll go with not_found.\n\nLet me write a reason.\n\nActually, I want to be careful. The sub-question combines two things: (1) Edward Jones's current cost structure, (2) economics for client acquisition relative to Schwab's scale advantages. The passages give the cost structure (operating expenses). But \"cost structure and economics for client acquisition\" is more specific.\n\nI think not_found is appropriate because none of the passages discuss client acquisition costs or any comparison to Schwab.\n\nLet me submit with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages report Edward Jones's overall operating expenses, compensation, and segment profitability, but none discuss client acquisition costs, acquisition economics, or any comparison to Schwab's scale advantages.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

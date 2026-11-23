@@ -1,0 +1,451 @@
+{
+  "question_id": "Q14",
+  "question": "How does Raymond James's affiliation-choice model work commercially?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-10K-2025#10",
+    "RJF-10K-2025#11",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-PR-web-independent-advisor#0",
+    "RJF-PR-web-advisor-select#0",
+    "RJF-PR-web-independent-ria-custody-services#0",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-TR-2026Q1#44",
+    "RJF-10K-2025#227",
+    "RJF-TR-2025Q3#8",
+    "RJF-10K-2025#28",
+    "RJF-SUPP-2026Q2#9",
+    "RJF-10K-2025#224",
+    "RJF-DECK-2025-investor-day#44",
+    "RJF-10K-2025#223",
+    "RJF-10Q-2026Q1#297",
+    "RJF-10Q-2025Q4#235",
+    "RJF-TR-2026Q2#26",
+    "RJF-TR-2026Q2#59",
+    "RJF-TR-2025Q3#26",
+    "RJF-TR-2025Q4#50",
+    "RJF-TR-2026Q1#5",
+    "RJF-TR-2025Q4#98"
+  ],
+  "schema_fallback": [],
+  "enum_values": 84,
+  "at": "2026-11-22T23:33:39.179555-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12121,
+    "output_tokens": 10668,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 10457,
+    "reasoning_tokens": 6330,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.8
+  },
+  "wall_s": 87.33,
+  "tokens_per_s": 122.16,
+  "ttft_s": 1.8,
+  "reasoning_content": "Let me analyze this. I need to write an answer with claims for each aspect. This is a single firm (RJF), so aspect by aspect, each claim starting \"Raymond James Financial: \" (actually the instruction says \"Several firms: ... each claim starting '<Firm>: '. One firm: aspect by aspect.\" Wait, let me re-read.\n\n\"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nSo for one firm, aspect by aspect, no firm prefix needed. But the part_id enum includes \"a1.RJF\" and \"a1\". Since it's a single firm, I should use... The part_ids for claims are the cell ids. The cell id is \"a1.RJF\" etc. So part_id should be \"a1.RJF\" for individual firm cells. Actually the instruction says \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nSo individual firm items use \"a1.RJF\" etc. Since there's only one firm, all claims are at the .RJF level. Actually wait - the aspects a1-a5 are marked \"[fact]\" not comparison. So each item gets its own claim with part_id = a1.RJF, etc.\n\nLet me think about the time window. The question doesn't specify a time window. So recency doesn't apply (no time window, and no aspect marked recency).\n\nSo no \"Why it might matter\" lines needed.\n\nLet me structure. For each aspect, write claims for each item.\n\nFor a3 and a4 which are series, each item is a separate claim (fact cell). Each claim states figure and period.\n\nFor a4, there's a basis break. I need to state each basis with its own periods, never join.\n\nAlso note items marked \"figure not found in its passage\" - none here. \"quote not verbatim\" - many items; never put in quotation marks.\n\nLet me also note some items have \"quote not verbatim\" so I paraphrase without quotes.\n\nLet me write the claims.\n\nFor a4, the registered definition is context; cite only if under Sources. RJF-10K-2025#224 is under Sources. The definition appears in items too. I don't need to separately cite the registered definition unless relevant.\n\nActually the instruction: \"A registered definition listed under an aspect is context: cite it only when its chunk id is under Sources.\" It's for comparison aspects mostly. a4 is not comparison. So I just write the fact claims.\n\nLet me be careful with basis break for a4. I need to state each basis with its own periods. The basis break line tells me the grouping:\n- domestic Private Client Group: 2025-06-30, 2025-09-30, 2025-12-31, 2026-03-31, 2026-06-30 (items 1-5, plus items 6-7 nine months)\n- domestic PCG: FY2023, FY2024, FY2025 (items 8-10)\n- Employee affiliation model: 2020-03-31, 2025-03-31 (items 11-12)\n- Independent contractor affiliation model: 2020-03-31, 2025-03-31 (items 13-14)\n- RIA & Custody Services (RCS) affiliation model: 2020-03-31, 2025-03-31 (items 15-16)\n- RCS division: 2023-09-30, 2024-09-30, 2025-09-30, 2025-12-31, 2026-03-31 (items 17-19, 21-22)\n- whole firm: 2026-06-30 (items 23-24)\n\nWait item 20 is missing (jumped from 19 to 21). That's fine.\n\nActually I should state each basis with its own periods. I can group items by basis and add a note. But the instruction says \"state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo for each claim I state its period and scope. I think I just need to make sure I clearly indicate the basis. Each item already has scope and period. I'll write claims that clearly state the scope/basis.\n\nLet me write out all claims. I'll group by aspect.\n\nNote items 6 and 7 in a4 are \"nine months ended\" figures - these are part of domestic Private Client Group basis but with cumulative periods. Actually the basis break lists \"domestic Private Client Group: 2025-06-30, 2025-09-30, 2025-12-31, 2026-03-31, 2026-06-30\" - these are quarterly. Items 6-7 are nine-month cumulative. Hmm, the period for item 6 is 2026-06-30, item 7 is 2025-06-30. Both fall under domestic Private Client Group.\n\nI'll just state each item's own period and scope.\n\nLet me write claims. I'll be thorough but concise.\n\nFor a1, items 1-8 are facts. All \"quote not verbatim\" except none explicitly marked? Let me check: items 1,2,3,4,5,6,7,8 all marked \"[quote not verbatim: never put it in quotation marks]\". So no quotation marks.\n\nLet me write.\n\na1 items:\n1. AdvisorChoice platform offers multiple affiliation options. Cite #0.\n2. 10-K: multiple affiliation options, advisors affiliate as employees, independent contractors, or employees of third-party RIAs. period 2025-09-30. Cite #10.\n3. Employee FAs work in traditional branch, retail clients, payout. Cite #10.\n4. Independent contractor FAs responsible for direct costs, higher payout. Cite #11.\n5. AdvisorChoice spectrum spans Employee to RIA & Custody Services. Cite DECK#38.\n6. Independent contractor access full capabilities. Cite web-independent-advisor#0.\n7. Advisor Select employee affiliation option. Cite web-advisor-select#0.\n8. RCS division independent RIA freedom. Cite web-independent-ria-custody-services#0.\n\na2 items 1-10.\n1. Traditional Employee up to 50% payout + benefits. Cite #1.\n2. Advisor Select 70-80% gross payout. Cite #1.\n3. Independent Contractor 81-90% payout. Cite #1.\n4. Corporate RIA 81-90% payout. Cite #2.\n5. Bank & Credit Union competitive compensation. Cite #2.\n6. RIA & Custody Services determine compensation. Cite #2.\n7. Employee FA payout. Cite #10.\n8. Independent contractor higher payout. Cite #11.\n9. CEO higher payouts independent cover overhead. Cite TR-2026Q1#44.\n10. CEO tiered payout employee. Cite TR-2026Q1#44.\n\na3 items 1-7.\n1. 8,943 total FAs 2025-09-30. Cite #227.\n2. 8,787 2024. Cite #227.\n3. 8,712 2023. Cite #227.\n4. 3,878 employee 2025. Cite #227.\n5. 5,065 independent contractor 2025. Cite #227.\n6. record number FAs, 2% higher. Cite TR-2025Q3#8.\n7. retention strong. Cite #28.\n\na4 items 1-24 (minus 20).\n\na5 items 1-6.\n\nNow, about the \"quote not verbatim\" - I never use quotation marks. For items not marked, I can quote? Actually items 8 in a2 is NOT marked \"quote not verbatim\" - let me check. Item 8 in a2: no \"[quote not verbatim]\" marker. So I can quote it. Item 9 and 10 in a2: no marker, so quote allowed. Let me check item 9: quote \"...the independent payouts are higher because they cover their overhead costs, their real estate, their health insurance, et cetera\" - no \"not verbatim\" marker, so verbatim, can quote.\n\nItem 10: \"even on the employee side...\" no marker, quote.\n\nItem 2 in a2: quote with \"**\" - no not-verbatim marker, so verbatim but contains footnote markers. I can quote.\n\nActually, let me be careful. The instruction says: \"An item marked 'quote not verbatim' is never put in quotation marks.\" So unmarked items can be quoted. But for simplicity and safety, I can paraphrase most and quote a few where exact wording matters (like payout percentages).\n\nLet me write the claims with part_ids.\n\nFor a3 items, note item 6 and 7 have \"[period not stated in a usable form]\". I should still state period from source line. Item 6 is from TR-2025Q3#8, period 2025-09-30. Item 7 from 10K#28, period 2025-09-30.\n\nLet me draft everything now.\n\nFor the \"gaps\" - code added no gaps. I should add a gap of my own only for something not covered. I think there are no additional gaps needed. Actually, for advisor payout (a2), the standard wording about payout grids... but that's for a specific question about advisor pay. Here a2 is about economics by affiliation type, and the firm's cited items state payout percentages. So I don't think I need the \"payout grids not public\" gap. The standard wording applies to advisor pay questions. This isn't strictly that. I'll skip.\n\nActually, let me reconsider. The gap instructions: \"Cells with code gaps get no claim; code adds those gaps.\" There are no code gaps here. I add gaps only for something not named by code gaps. I think no additional gaps needed.\n\nLet me write the final answer.\n\nFor recency/why-lines: no time window, no recency aspects. Skip.\n\nNow let me carefully write each claim with proper attribution and dates.\n\nDate every claim from source line. For web pages: \"page content as of 2026-04-21\". For 10-K: \"period 2025-09-30\" or \"fiscal year ended September 30, 2025\".\n\nLet me write.\n\nI'll write claims now in a structured way.\n\nFor part_id, since single firm, I'll use \"a1.RJF\" etc. for the .RJF cells.\n\nLet me draft the text for each.\n\na1:\n1. \"Raymond James Financial: \" - wait, single firm, no prefix needed. Let me re-read once more.\n\n\"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nSo one firm \u2192 aspect by aspect, no \"<Firm>:\" prefix. Good.\n\nLet me write concise claims.\n\nI'll produce all claims.\n\nActually I realize the part_id enum includes both \"a1.RJF\" and \"a1\" and \"\". Since the cell id is \"a1.RJF\", I use that. The \"a1\" is for comparison claims that span firms (none here). So all my claims use a1.RJF ... a5.RJF.\n\nLet me write.\n\nFor a4, I need to handle the basis break carefully. I'll state the basis in each claim. Since the caveat already flags the break, I should \"state each basis with its own periods.\"\n\nLet me write the claims with clear scope and period for each.\n\nNow writing the full answer via submit_answer tool.\n\nLet me enumerate claims with chunk_ids.\n\nI'll write each claim's text carefully.\n\na1 (8 claims):\n1. text: \"The AdvisorChoice\u00ae platform (page content as of 2026-04-21) offers financial advisors multiple affiliation options, each with a unique combination of support, freedom and flexibility: Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, and Corporate RIA.\" chunk [RJF-PR-web-affiliation-options#0]\n\n2. text: \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states it offers multiple affiliation options referred to as AdvisorChoice\u00ae, and that financial advisors primarily affiliate directly as either employees or independent contractors, or as employees of third-party registered investment advisors and broker-dealers served through its RIA and Custody Services (RCS) division.\" [RJF-10K-2025#10]\n\n3. \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that employee financial advisors work in a traditional branch supported by local management and administrative staff, serve predominantly retail clients, and receive compensation primarily as a payout on the revenues they generate plus participation in the firm's employee benefit plans.\" [RJF-10K-2025#10]\n\n4. \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that independent contractor financial advisors are generally responsible for all of their direct costs and accordingly receive a higher payout percentage on revenues than employee financial advisors; they may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with approval may conduct other approved business activities such as insurance, independent RIA services, and accounting/tax services.\" [RJF-10K-2025#11]\n\n5. \"Raymond James's 2025 investor day deck (published June 5, 2025) presents the AdvisorChoice spectrum spanning Employee (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, and states that the movement to 'independence' is not channel-specific.\" [RJF-DECK-2025-investor-day#38]\n\n6. \"The independent advisor web page (page content as of 2026-05-19) states that as an independent contractor an advisor can access Raymond James's full capabilities (private wealth, technology, marketing) while operating an independent practice backed by a full-service, self-clearing NYSE-member broker/dealer.\" [RJF-PR-web-independent-advisor#0]\n\n7. \"The Advisor Select web page (page content as of 2026-03-11) states that Advisor Select\u00ae is an employee affiliation option providing established advisors the full benefits of the employee channel with the independence to create their own branches and run their branch's P&L to earn a higher rate on production.\" [RJF-PR-web-advisor-select#0]\n\n8. \"The independent RIA custody services web page (page content as of 2026-07-12) states that through the RIA & Custody Services (RCS) division, an independent registered investment advisor retains complete freedom and control of its business, using as much or as little of Raymond James's support as needed, with strategic, financial and administrative control free from retail conflict.\" [RJF-PR-web-independent-ria-custody-services#0]\n\na2 (10 claims):\n1. \"Raymond James states (page content as of 2026-04-21) that in its Traditional Employee affiliation model advisors receive up to 50% payout plus a full array of competitive employee benefits offerings.\" [RJF-PR-web-affiliation-options#1]\n\n2. \"Raymond James states (page content as of 2026-04-21) that in its Advisor Select affiliation model advisors receive a 70-80% gross payout plus a full array of competitive employee benefits offerings.\" [#1]\n\n3. \"Raymond James states (page content as of 2026-04-21) that in its Independent Contractor affiliation model advisors receive an 81% to 90% payout, leveraging third-party partnerships to create a benefits package.\" [#1]\n\n4. \"Raymond James states (page content as of 2026-04-21) that in its Corporate RIA affiliation model advisors receive an 81% to 90% payout, leveraging third-party partnerships to create a benefits package.\" [#2]\n\n5. \"Raymond James states (page content as of 2026-04-21) that in its Bank & Credit Union affiliation model advisors receive a competitive compensation package from the financial institution in partnership with Raymond James during their transition.\" [#2]\n\n6. \"Raymond James states (page content as of 2026-04-21) that in its RIA & Custody Services affiliation model advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package.\" [#2]\n\n7. \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that compensation for its employee financial advisors primarily includes a payout on revenues they generate, and such advisors also participate in the firm's employee benefit plans.\" [#10]\n\n8. \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that its independent contractor financial advisors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.\" [#11]\n\n9. \"On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), Raymond James's CEO explained that 'the independent payouts are higher because they cover their overhead costs, their real estate, their health insurance, et cetera.'\" [#44]\n\n10. \"On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), Raymond James's CEO stated that 'even on the employee side, we have tiered payout systems. And so as production increases, you kind of get higher up on the payout grid as well.'\" [#44]\n\na3 (7 claims):\n1. \"As of September 30, 2025, Raymond James had 8,943 total financial advisors (employees plus independent contractors), per its fiscal 2025 Form 10-K.\" [#227]\n2. \"As of September 30, 2024, Raymond James had 8,787 total financial advisors.\" [#227]\n3. \"As of September 30, 2023, Raymond James had 8,712 total financial advisors.\" [#227]\n4. \"As of September 30, 2025, Raymond James had 3,878 employee financial advisors.\" [#227]\n5. \"As of September 30, 2025, Raymond James had 5,065 independent contractor financial advisors.\" [#227]\n6. \"On its fiscal 2025 Q4 earnings call (period ended September 30, 2025), Raymond James stated that it ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year.\" [TR-2025Q3#8]\n\nWait, TR-2025Q3#8 period is 2025-09-30, published 2025-10-22. This is the Q4 fiscal call? Actually \"period 2025-09-30\" means fiscal year end. The transcript is labeled TR-2025Q3 but period 2025-09-30. Let me call it \"On the earnings call covering the period ended September 30, 2025\".\n\nLet me just say \"On the earnings call dated October 2025 (period ended September 30, 2025)\".\n\n7. \"In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James stated that for the year ended September 30, 2025, its domestic financial advisor retention remained very strong.\" [#28]\n\na4 (23 claims, items 1-19, 21-24). Note item 20 missing.\n\nLet me write each with scope and period, and note basis.\n\nFor domestic Private Client Group quarterly items (1-5), and nine-month items (6-7), and domestic PCG FY items (8-10), Employee/Independent/RCS affiliation model items (11-16), RCS division items (17-19, 21-22), whole firm items (23-24).\n\nI'll state scope clearly.\n\n1. \"For the fiscal third quarter ended June 30, 2026, Raymond James reported domestic Private Client Group net new assets of $21,692 million.\" [SUPP#9] \u2014 definition noted.\nActually I should mention definition? The instruction says a fact cell is a claim. The definition is given in the item. I could mention the definition. But to keep concise, I can state the figure and period/scope. The definition is part of the item, optional. I'll include a brief note about definition for the net new assets items maybe once. Actually, I'll just state figures. The definition is context. I think it's fine to state scope \"domestic Private Client Group net new assets.\"\n\nLet me keep claims clean.\n\nI'll write them all.\n\nFor items 11-16, these are domestic PCG AUA by affiliation model. Note these are AUA (assets under administration), which is a different metric than net new assets. But a4 is \"Client assets and net new assets reported across the affiliation-choice model\" - so AUA is client assets, net new assets is the flow. Both fit.\n\nI'll state clearly \"domestic PCG assets under administration.\"\n\nLet me write final.\n\nActually, let me note the caveat about basis break. I should state each basis with its own periods. I'll add a brief note in each claim's scope. Since the caveat is already added by code, I shouldn't repeat it, but the instruction for basis break says \"state each basis with its own periods; never join them.\"\n\nI think stating scope + period in each claim satisfies this. I won't add a separate basis-break claim since code already flagged it in caveats.\n\nLet me write all a4 claims concisely.\n\n1. \"For the fiscal third quarter ended June 30, 2026, Raymond James reported domestic Private Client Group net new assets of $21,692 million.\" [#9]\n2. \"For the fiscal second quarter ended March 31, 2026, Raymond James reported domestic Private Client Group net new assets of $22,954 million.\" [#9]\n3. \"For the fiscal first quarter ended December 31, 2025, Raymond James reported domestic Private Client Group net new assets of $30,828 million.\" [#9]\n4. \"For the fiscal fourth quarter ended September 30, 2025, Raymond James reported domestic Private Client Group net new assets of $17,930 million.\" [#9]\n5. \"For the fiscal third quarter ended June 30, 2025, Raymond James reported domestic Private Client Group net new assets of $11,651 million.\" [#9]\n6. \"For the nine months ended June 30, 2026, Raymond James reported domestic Private Client Group net new assets of $75,474 million.\" [#9]\n7. \"For the nine months ended June 30, 2025, Raymond James reported domestic Private Client Group net new assets of $34,501 million.\" [#9]\n8. \"For fiscal year 2025 (ended September 30, 2025), Raymond James reported domestic PCG net new assets of $52,431 million, or 3.8% growth.\" [#224]\n9. \"For fiscal year 2024 (ended September 30, 2024), Raymond James reported domestic PCG net new assets of $60,709 million, or 5.5% growth.\" [#224]\n10. \"For fiscal year 2023 (ended September 30, 2023), Raymond James reported domestic PCG net new assets of $73,254 million, or 7.7% growth.\" [#224]\n11. \"As of March 31, 2025, Raymond James reported $631 billion of domestic PCG assets under administration in its Employee affiliation model.\" [#44]\n12. \"As of March 31, 2020, Raymond James reported $332 billion of domestic PCG assets under administration in its Employee affiliation model.\" [#44]\n13. \"As of March 31, 2025, Raymond James reported $543 billion of domestic PCG assets under administration in its Independent contractor affiliation model.\" [#44]\n14. \"As of March 31, 2020, Raymond James reported $318 billion of domestic PCG assets under administration in its Independent contractor affiliation model.\" [#44]\n15. \"As of March 31, 2025, Raymond James reported $186 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) affiliation model.\" [#44]\n16. \"As of March 31, 2020, Raymond James reported $46 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) affiliation model.\" [#44]\n17. \"As of September 30, 2025, PCG AUA included assets associated with firms affiliated through the RCS division of $217.3 billion, of which $188.0 billion were assets in fee-based accounts.\" [#223]\n18. \"As of September 30, 2024, PCG AUA included assets associated with firms affiliated through the RCS division of $180.7 billion.\" [#223]\n19. \"As of September 30, 2023, PCG AUA included assets associated with firms affiliated through the RCS division of $133.3 billion.\" [#223]\n21. \"As of March 31, 2026, PCG AUA included assets associated with firms affiliated through the RCS division of $228.2 billion, of which $199.1 billion were assets in fee-based accounts.\" [#297]\n22. \"As of December 31, 2025, PCG AUA included assets associated with firms affiliated through the RCS division of $224.6 billion, of which $195.0 billion were assets in fee-based accounts.\" [#235]\n23. \"As of June 30, 2026, Raymond James reported total client assets under administration of $1,922.4 billion.\" [#9]\n24. \"As of June 30, 2026, Raymond James reported Private Client Group assets under administration of $1,856.5 billion.\" [#9]\n\nNote item 20 is absent (skipped in numbering), so I skip it.\n\na5 (6 claims):\n1. \"On the fiscal 2026 Q3 earnings call (period ended June 30, 2026), CEO Paul Shoukry stated Raymond James has the largest addressable market in the industry because it has all the affiliation options an adviser could want, and that the firm is agnostic about how an adviser affiliates, wanting advisers drawn by the culture, values, platform and capabilities.\" [#26]\n2. \"On the fiscal 2026 Q3 earnings call (period ended June 30, 2026), CEO Paul Shoukry stated the firm does not lead with the highest check but with culture and capabilities, has a true differentiated value proposition, and remains disciplined on transition assistance and economics to advisers.\" [#59]\n3. \"On the earnings call for the period ended September 30, 2025, CEO Paul Shoukry stated the firm is focused on the long term and providing a stable platform, attracting and retaining financial advisors with its unique culture, leading service and robust platform rather than the largest check, and valuing independence.\" [TR-2025Q3#26]\n4. \"On the earnings call for the period ended December 31, 2025, CEO Paul Shoukry stated the value proposition is having the largest addressable market across affiliation options, from employee to independent contractor to RIA custody, with critical mass and decades of experience in all of them.\" [TR-2025Q4#50]\n5. \"On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), CEO Paul Shoukry stated advisers do not have to choose between culture and capabilities, as the firm offers a unique combination of an adviser- and client-focused culture with leading technology, products and solutions, plus a strong balance sheet, long-term thinking and commitment to independence.\" [TR-2026Q1#5]\n6. \"On the earnings call for the period ended December 31, 2025, CEO Paul Shoukry stated recruiting is a long-term process that cannot be dialed up or down quarter by quarter, and that the firm wants advisors who want to be there over the long term rather than those moving for the highest check.\" [TR-2025Q4#98]\n\nNow let me finalize. The item 6 in a5 has \"quote not verbatim\" marker - so no quotes, paraphrase. My paraphrase is fine.\n\nFor a5 item 3, the period is 2025-09-30, published 2025-10-22. Label \"earnings call for the period ended September 30, 2025\".\n\nFor a5 item 4, period 2025-12-31, published 2026-01-28. \"earnings call for the period ended December 31, 2025\".\n\nFor a5 item 6, same period 2025-12-31.\n\nFor a3 item 6, TR-2025Q3#8 period 2025-09-30 published 2025-10-22.\n\nGood.\n\nNow submit. answerable: true. behavior: \"answer\". claims: all above. adjacent: [] (none). gaps: [].\n\nActually, wait - should I include any gaps? The standard wording for advisor pay isn't triggered here. No gaps needed. I'll provide empty arrays.\n\nLet me write the full JSON.",
+  "first_claim_s": 60.59,
+  "stream_items": {
+    "first_claim_s": 60.59,
+    "shown": 44,
+    "held": 10
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The AdvisorChoice\u00ae platform (page content as of 2026-04-21) offers financial advisors multiple affiliation options, each with a unique combination of support, freedom and flexibility: Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, and Corporate RIA.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states it offers multiple affiliation options referred to as AdvisorChoice\u00ae, and that financial advisors primarily affiliate directly as either employees or independent contractors, or as employees of third-party registered investment advisors and broker-dealers served through its RIA and Custody Services (RCS) division.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that employee financial advisors work in a traditional branch supported by local management and administrative staff, serve predominantly retail clients, and receive compensation primarily as a payout on the revenues they generate plus participation in the firm's employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that independent contractor financial advisors are generally responsible for all of their direct costs and accordingly receive a higher payout percentage on revenues than employee financial advisors; they may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with approval may conduct other approved business activities such as insurance, independent RIA services, and accounting/tax services.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James's 2025 investor day deck (published June 5, 2025) presents the AdvisorChoice spectrum spanning Employee (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, and states that the movement to 'independence' is not channel-specific.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#38"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The independent advisor web page (page content as of 2026-05-19) states that as an independent contractor an advisor can access Raymond James's full capabilities (private wealth, technology, marketing) while operating an independent practice backed by a full-service, self-clearing NYSE-member broker/dealer.",
+        "chunk_ids": [
+          "RJF-PR-web-independent-advisor#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The Advisor Select web page (page content as of 2026-03-11) states that Advisor Select\u00ae is an employee affiliation option providing established advisors the full benefits of the employee channel with the independence to create their own branches and run their branch's P&L to earn a higher rate on production.",
+        "chunk_ids": [
+          "RJF-PR-web-advisor-select#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The independent RIA custody services web page (page content as of 2026-07-12) states that through the RIA & Custody Services (RCS) division, an independent registered investment advisor retains complete freedom and control of its business, using as much or as little of Raymond James's support as needed, with strategic, financial and administrative control free from retail conflict.",
+        "chunk_ids": [
+          "RJF-PR-web-independent-ria-custody-services#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its Traditional Employee affiliation model advisors receive up to 50% payout plus a full array of competitive employee benefits offerings.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its Advisor Select affiliation model advisors receive a 70-80% gross payout plus a full array of competitive employee benefits offerings.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its Independent Contractor affiliation model advisors receive an 81% to 90% payout, leveraging third-party partnerships to create a benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its Corporate RIA affiliation model advisors receive an 81% to 90% payout, leveraging third-party partnerships to create a benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its Bank & Credit Union affiliation model advisors receive a competitive compensation package from the financial institution in partnership with Raymond James during their transition.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James states (page content as of 2026-04-21) that in its RIA & Custody Services affiliation model advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that compensation for its employee financial advisors primarily includes a payout on revenues they generate, and such advisors also participate in the firm's employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James states that its independent contractor financial advisors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), Raymond James's CEO explained that 'the independent payouts are higher because they cover their overhead costs, their real estate, their health insurance, et cetera.'",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), Raymond James's CEO stated that 'even on the employee side, we have tiered payout systems. And so as production increases, you kind of get higher up on the payout grid as well.'",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had 8,943 total financial advisors (employees plus independent contractors), per its fiscal 2025 Form 10-K.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2024, Raymond James had 8,787 total financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2023, Raymond James had 8,712 total financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had 3,878 employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had 5,065 independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call covering the period ended September 30, 2025 (published October 22, 2025), Raymond James stated that it ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "In its fiscal 2025 Form 10-K (period ended September 30, 2025), Raymond James stated that for the year ended September 30, 2025, its domestic financial advisor retention remained very strong.",
+        "chunk_ids": [
+          "RJF-10K-2025#28"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "For the fiscal third quarter ended June 30, 2026, Raymond James reported domestic Private Client Group net new assets of $21,692 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the fiscal second quarter ended March 31, 2026, Raymond James reported domestic Private Client Group net new assets of $22,954 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the fiscal first quarter ended December 31, 2025, Raymond James reported domestic Private Client Group net new assets of $30,828 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the fiscal fourth quarter ended September 30, 2025, Raymond James reported domestic Private Client Group net new assets of $17,930 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the fiscal third quarter ended June 30, 2025, Raymond James reported domestic Private Client Group net new assets of $11,651 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the nine months ended June 30, 2026, Raymond James reported domestic Private Client Group net new assets of $75,474 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For the nine months ended June 30, 2025, Raymond James reported domestic Private Client Group net new assets of $34,501 million.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For fiscal year 2025 (ended September 30, 2025), Raymond James reported domestic PCG net new assets of $52,431 million, or 3.8% growth.",
+        "chunk_ids": [
+          "RJF-10K-2025#224"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For fiscal year 2024 (ended September 30, 2024), Raymond James reported domestic PCG net new assets of $60,709 million, or 5.5% growth.",
+        "chunk_ids": [
+          "RJF-10K-2025#224"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "For fiscal year 2023 (ended September 30, 2023), Raymond James reported domestic PCG net new assets of $73,254 million, or 7.7% growth.",
+        "chunk_ids": [
+          "RJF-10K-2025#224"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2025, Raymond James reported $631 billion of domestic PCG assets under administration in its Employee affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2020, Raymond James reported $332 billion of domestic PCG assets under administration in its Employee affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2025, Raymond James reported $543 billion of domestic PCG assets under administration in its Independent contractor affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2020, Raymond James reported $318 billion of domestic PCG assets under administration in its Independent contractor affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2025, Raymond James reported $186 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2020, Raymond James reported $46 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) affiliation model.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, PCG AUA included assets associated with firms affiliated through the RCS division of $217.3 billion, of which $188.0 billion were assets in fee-based accounts.",
+        "chunk_ids": [
+          "RJF-10K-2025#223"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of September 30, 2024, PCG AUA included assets associated with firms affiliated through the RCS division of $180.7 billion.",
+        "chunk_ids": [
+          "RJF-10K-2025#223"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of September 30, 2023, PCG AUA included assets associated with firms affiliated through the RCS division of $133.3 billion.",
+        "chunk_ids": [
+          "RJF-10K-2025#223"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of March 31, 2026, PCG AUA included assets associated with firms affiliated through the RCS division of $228.2 billion, of which $199.1 billion were assets in fee-based accounts.",
+        "chunk_ids": [
+          "RJF-10Q-2026Q1#297"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of December 31, 2025, PCG AUA included assets associated with firms affiliated through the RCS division of $224.6 billion, of which $195.0 billion were assets in fee-based accounts.",
+        "chunk_ids": [
+          "RJF-10Q-2025Q4#235"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of June 30, 2026, Raymond James reported total client assets under administration of $1,922.4 billion.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "As of June 30, 2026, Raymond James reported Private Client Group assets under administration of $1,856.5 billion.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "On the fiscal 2026 Q3 earnings call (period ended June 30, 2026), CEO Paul Shoukry stated Raymond James has the largest addressable market in the industry because it has all the affiliation options an adviser could want, and that the firm is agnostic about how an adviser affiliates, wanting advisers drawn by the culture, values, platform and capabilities.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 2026 Q3 earnings call (period ended June 30, 2026), CEO Paul Shoukry stated the firm does not lead with the highest check but with culture and capabilities, has a true differentiated value proposition, and remains disciplined on transition assistance and economics to advisers.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#59"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the earnings call covering the period ended September 30, 2025, CEO Paul Shoukry stated the firm is focused on the long term and providing a stable platform for its advisors, bankers and associates, and that it attracts and retains financial advisors with its unique culture, leading service and robust platform rather than the largest check, valuing independence.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the earnings call covering the period ended December 31, 2025, CEO Paul Shoukry stated the value proposition is having the largest addressable market across its affiliation options, from employee to independent contractor to RIA custody, with critical mass and decades of experience in all of them.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#50"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the fiscal 2026 Q1 earnings call (period ended March 31, 2026), CEO Paul Shoukry stated advisers do not have to choose between culture and capabilities, as the firm offers a unique combination of an adviser- and client-focused culture with leading technology, products and solutions, plus a strong balance sheet, long-term thinking and commitment to independence.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#5"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the earnings call covering the period ended December 31, 2025, CEO Paul Shoukry stated recruiting is a marathon, not a sprint, that it cannot be dialed up or down quarter by quarter without losing quality advisors, and that the firm wants advisors who want to be there over the long term rather than those moving for the highest check.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#98"
+        ],
+        "part_id": "a5.RJF"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

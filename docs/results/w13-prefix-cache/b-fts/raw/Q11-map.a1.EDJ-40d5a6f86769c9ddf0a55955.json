@@ -1,0 +1,90 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#41",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q3#54",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#42",
+    "EDJ-10K-2025#19",
+    "EDJ-10K-2025#267",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#276",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10K-2025#264"
+  ],
+  "at": "2026-11-22T23:23:28.791533-06:00",
+  "prefix_group": "7803a010e4ed7552",
+  "prefix_role": "leader",
+  "gate_wait_s": 0.0,
+  "leader_cached": null,
+  "prefix_chars": 81708,
+  "request_chars": 82328,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16774,
+    "output_tokens": 678,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 15238,
+    "reasoning_tokens": 546,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.16
+  },
+  "wall_s": 8.92,
+  "tokens_per_s": 76.01,
+  "ttft_s": 2.16,
+  "reasoning_content": "I need to answer sub-question a1.EDJ: How the firm defines advisor headcount.\n\nI need to look for a definition of advisor headcount. The passages show \"Financial advisors (actual)\" figures but do I see a definition of how advisor headcount is defined?\n\nLet me look. The passages mostly show the metric \"Financial advisors (actual)\" with \"At period end\" and \"Average\" figures. There's no explicit definition of what counts as a financial advisor in the headcount.\n\nNote that in a5 passages there's \"Counted on a full-time equivalent basis\" but that's footnote (1) likely referring to client support team professionals and home office associates, not financial advisors. Let me check EDJ-10Q-2026Q1#61: it shows \"Financial advisors\" and \"Client support team professionals(1)\" and \"Home office associates(1)\". The (1) footnote \"Counted on a full-time equivalent basis\" applies to CSTP and home office associates, not financial advisors.\n\nSo the financial advisors figure is \"(actual)\" meaning actual headcount, not FTE.\n\nFor a1.EDJ (definition), there's no explicit definition given in the passages. The passages just report \"Financial advisors (actual)\" figures. There's no definition of what is included/excluded.\n\nSo this would be not_found - the passages say nothing about how the firm defines advisor headcount.\n\nActually, let me think more carefully. The metric label is \"Financial advisors (actual)\" which implies actual (not FTE) headcount. But is that a \"definition\"? The question asks \"How the firm defines advisor headcount.\"\n\nThe passages don't provide a definition. The term \"Financial advisors (actual)\" is a label, and the \"(actual)\" contrasts with the FTE basis used for other roles. But there's no definition of what counts as a financial advisor.\n\nI think not_found is appropriate. There's no explicit definition.\n\nLet me confirm there's no definition statement anywhere. Searching through, I see descriptions of financial advisor training (onboarding program), financial advisor compensation, etc., but no definition of \"financial advisor\" headcount.\n\nSo the answer is not_found with reason that the passages report the figure labeled \"Financial advisors (actual)\" but do not define what constitutes a financial advisor.\n\nActually, wait - should I consider \"Financial advisors (actual)\" as a partial fact? The \"(actual)\" designation indicates the headcount is counted as actual headcount, not full-time equivalents. But that's not really a \"definition\" of advisor headcount in the sense of what's included/excluded.\n\nI'll go with not_found.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages report the metric labeled 'Financial advisors (actual)' with at-period-end and average figures, but none of them defines what constitutes a financial advisor or how the headcount is defined.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

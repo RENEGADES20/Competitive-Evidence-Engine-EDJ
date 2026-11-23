@@ -1,0 +1,62 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a3.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2025Q2#57",
+    "EDJ-10K-2025#238",
+    "EDJ-10K-2025#10"
+  ],
+  "at": "2026-11-22T23:24:31.332661-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2901,
+    "output_tokens": 476,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1365,
+    "reasoning_tokens": 342,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.55
+  },
+  "wall_s": 5.89,
+  "tokens_per_s": 80.81,
+  "ttft_s": 1.55,
+  "reasoning_content": "Let me analyze the sub-question: \"What the firm's advisor headcount definition includes\" for Edward Jones.\n\nI need to find passages that define what advisor headcount includes. Let me look at the passages.\n\nThe passages mention \"more than 20,000 financial advisors\" and \"approximately 55,000 associates\" and \"financial advisors and client support team professionals\". But none of them explicitly define what the advisor headcount definition includes or excludes.\n\nLet me check each passage:\n- EDJ-10K-2025#204: talks about business operations, no definition of advisor headcount.\n- EDJ-10Q-2025Q2#57: \"more than 20,000 financial advisors serve more than 9 million clients\" and \"approximately 55,000 associates\". Distinguishes financial advisors from associates.\n- EDJ-10K-2025#238: revenue table, no advisor headcount.\n- EDJ-10K-2025#10: \"financial advisors and client support team professionals\" - distinguishes advisors from CSTPs.\n\nNone of these give a definition of what the advisor headcount includes or excludes. So this is likely not_found.\n\nActually, the sub-question is specifically \"What the firm's advisor headcount definition includes\". None of the passages provide a definition. They just report \"financial advisors\" as a count, distinguishing them from associates and CSTPs.\n\nSo label: not_found. No passages state what the definition includes.\n\nLet me consider whether \"financial advisors and client support team professionals\" is a distinction, but that's not a definition of what advisor headcount includes.\n\nI'll return not_found with empty items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages states what Edward Jones's advisor headcount definition includes or excludes; they only report the count of financial advisors (distinguishing them from associates and CSTPs) without defining it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

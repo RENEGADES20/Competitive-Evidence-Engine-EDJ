@@ -1,0 +1,154 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a6.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a6.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MER-ADV-2026#5",
+    "MER-ADV-2026#264",
+    "MER-ADV-2026#27",
+    "MER-ADV-2026#400",
+    "MER-PR-web-advisor-development-program#1",
+    "BAC-DECK-2025-investor-day#8",
+    "MER-ADV-2026#406",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "BAC-10K-2025#246",
+    "MER-ADV-2026#408",
+    "MER-PR-2026-09-15-01#2",
+    "MER-PR-web-advisor-development-program#2",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "MER-PR-2026-09-15-01#1",
+    "MER-TRADE-2026-09-11-WM-01#1",
+    "MER-TRADE-2026-11-12-IN-01#1",
+    "MER-TRADE-2026-10-14-IN-02#0",
+    "MER-TRADE-2026-11-03-WM-01#2",
+    "MER-TRADE-2026-09-29-RB-01#6",
+    "MER-TRADE-2026-10-16-IN-01#0",
+    "MER-TRADE-2026-10-15-WM-01#2",
+    "MER-TRADE-2026-09-29-RB-01#7",
+    "MER-TRADE-2026-10-14-IN-02#2",
+    "MER-PR-2026-09-15-01#3",
+    "BAC-TR-2026Q3#19",
+    "MER-ADV-2026#500",
+    "BAC-TR-2026Q2#21",
+    "BAC-TR-2026Q1#26",
+    "BAC-TR-2026Q2#20",
+    "BAC-TR-2026Q2#63",
+    "MER-TRADE-2026-11-03-WM-01#0",
+    "MER-TRADE-2026-10-15-WM-01#0",
+    "MER-TRADE-2026-10-02-IN-01#1",
+    "MER-TRADE-2026-09-29-RB-01#3",
+    "MER-ADV-2026#411",
+    "BAC-TR-2025Q2#35",
+    "MER-ADV-2026#412",
+    "BAC-TR-2025Q1#28",
+    "MER-ADV1A-2026#1",
+    "BAC-TR-2025Q2#34",
+    "MER-ADV-2026#425",
+    "MER-TRADE-2026-11-16-AH-01#1",
+    "MER-TRADE-2026-11-12-IN-01#2",
+    "MER-TRADE-2026-11-03-WM-01#1",
+    "MER-TRADE-2026-11-12-IN-01#0",
+    "MER-TRADE-2026-11-16-AH-01#0",
+    "MER-ADV-2026#414",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "MER-ADV-2026#430",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#12",
+    "MER-TRADE-2026-09-11-WM-01#0",
+    "MER-TRADE-2026-10-14-IN-01#2",
+    "MER-TRADE-2026-10-14-IN-01#1"
+  ],
+  "at": "2026-11-23T00:44:07.715620-06:00",
+  "prefix_group": "c537e596f143ffae",
+  "prefix_role": "follower",
+  "gate_wait_s": 5.05,
+  "leader_cached": false,
+  "prefix_chars": 121809,
+  "request_chars": 123660,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 28792,
+    "output_tokens": 4263,
+    "cache_hit_tokens": 27904,
+    "cache_miss_tokens": 888,
+    "reasoning_tokens": 3597,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.91
+  },
+  "wall_s": 70.53,
+  "tokens_per_s": 60.44,
+  "ttft_s": 1.91,
+  "reasoning_content": "This sub-question a6.MER asks for a comparison of how much detail each firm actually discloses about advisor compensation. But the instruction says answer only a6.MER for Merrill, and \"Comparison of how much detail each firm actually discloses\" - this is a comparison question.\n\nActually, wait - the task is about extracting facts about Merrill (MER). The sub-question a6.MER asks about \"Comparison of how much detail each firm actually discloses about advisor compensation.\" This is a comparison question, but for this firm I should just extract what Merrill has disclosed. Actually, the comparison itself would be done by a later step comparing firms.\n\nBut what does a6.MER ask for me to extract? It's marked [comparison]. The instruction says \"Code has split the question into sub-questions; return exactly one cell for each sub-question.\" For a6.MER, I need to determine the label.\n\nThe question is about \"how much detail each firm actually discloses about advisor compensation.\" This is a comparison. For Merrill, I'd be assessing the level of detail Merrill discloses.\n\nActually, let me think. The overall instruction is about extracting evidence about advisor compensation. a6.MER is \"Comparison of how much detail each firm actually discloses.\" This is not asking for a specific figure. It's a qualitative comparison.\n\nHmm, but the framework wants labels: fact, different_quantity, not_disclosed, not_found.\n\nFor a6.MER, what quantity am I looking for? \"how much detail each firm actually discloses about advisor compensation.\" This is a meta-question about disclosure detail.\n\nActually, I think this sub-question is essentially answered by the comparison step, not by extraction. But I still need to return one cell.\n\nLet me think about what facts Merrill has disclosed about advisor compensation detail. Actually, the comparison sub-question likely relies on the other sub-questions (a1-a5) which capture the actual disclosures. The a6 is a synthesis.\n\nGiven the instructions, I should determine whether Merrill has disclosed detail about advisor compensation. There's substantial disclosure in the passages - the MER-ADV passages discuss advisor compensation structure, recruitment payments, incentive awards, etc.\n\nBut \"how much detail\" is not a fact I can extract from a passage - it's an assessment. The passages under a6.MER mostly discuss fees (Support Fees, Data Analytics) rather than advisor compensation directly.\n\nActually, looking more carefully, the a6.MER passages are about fees received by Merrill from third parties (Support Fees, Data Analytics fees), not advisor compensation. So for the comparison of \"how much detail each firm discloses about advisor compensation,\" these a6 passages are actually not about advisor compensation detail per se.\n\nWait, but I should focus on what I can extract. The sub-question a6.MER asks \"Comparison of how much detail each firm actually discloses about advisor compensation.\" This is inherently a comparison question that code/later step does.\n\nGiven the constraints, what label do I assign? The question asks about how much detail Merrill discloses. Merrill does disclose substantial detail about advisor compensation (in the MER-ADV passages from a1). So this would be... a fact? But there's no single \"figure\" for \"how much detail.\"\n\nActually, I think for a comparison sub-question, the extraction is probably not applicable in the normal sense. But I need to provide a cell.\n\nLet me reconsider. The a6.MER is a comparison sub-question. The passages provided under a6.MER are mostly about fees to third parties, not advisor compensation. The relevant detail about advisor compensation is in a1-a5.\n\nFor the comparison, the relevant \"fact\" would be that Merrill discloses a certain level of detail about advisor compensation. But \"how much detail\" is a qualitative judgment.\n\nI think the most honest answer is that the a6.MER sub-question is a comparison question, and for this firm, what I extract is whether Merrill discloses detail about advisor compensation. Given the passages, Merrill does disclose substantial detail (compensation structure based on revenue, incentive awards based on growth targets, recruitment payments).\n\nBut wait - the a6.MER sub-question's own passages are about Support Fees and Data Analytics fees (revenue sharing), which is different from advisor compensation. These are fees Merrill receives, not advisor compensation.\n\nHmm, actually the comparison is \"how much detail each firm actually discloses about advisor compensation.\" The extraction for Merrill should reflect the detail Merrill discloses.\n\nI think for a comparison sub-question, I should probably mark it based on what the passages reveal. Since the comparison itself is done by code/later, maybe I should just note the facts that support the comparison.\n\nActually, let me re-read the overall task instruction carefully:\n\n\"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms. Code has split the question into sub-questions; return exactly one cell for each sub-question the message asks you to answer.\"\n\n\"return exactly one cell, with subquestion_id a6.MER.\"\n\nSo I need to return one cell for a6.MER.\n\nThe labels available: fact, different_quantity, not_disclosed, not_found.\n\nFor a6.MER [comparison], the question is essentially: how much detail does Merrill disclose about advisor compensation? This is a comparison question but for Merrill's own disclosure.\n\nGiven the passages, Merrill discloses substantial detail about advisor compensation. The passages under a1 (MER-ADV-2026#400, #406, #408, etc.) contain detailed disclosure about compensation structure, incentive awards, recruitment payments.\n\nBut I'm told to cite only passages listed under a6.MER and the search pool passages listed. Let me check what's relevant.\n\nThe a6.MER passages (MER-ADV-2026#5, #264, #27) are about Support Fees, Data Analytics fees, and fiduciary obligations. These are not directly about advisor compensation.\n\nActually, for the comparison of \"how much detail each firm discloses about advisor compensation,\" the relevant facts come from the other sub-questions' passages. The search pool includes MER-ADV-2026#400, #406, #408, #411, #412, #443, #425, #241, #245, #414, #430 which all discuss advisor compensation.\n\nSo Merrill does disclose significant detail. This is a fact that Merrill discloses compensation structure details.\n\nBut how do I frame this as a \"fact\" with a value? The comparison question doesn't have a numeric figure.\n\nI think the answer here is that a6.MER is a comparison/synthesis question, and the \"evidence\" is the disclosure detail found in a1-a5. Since there's no single quantitative figure to extract, I should mark it appropriately.\n\nGiven the nature, I think the most defensible answer is \"not_found\" if the a6 passages don't address advisor compensation detail comparison... but that's not right either because the comparison is about Merrill's disclosures which DO exist in the search pool.\n\nActually, let me reconsider the whole thing. The comparison sub-question a6.MER asks about \"how much detail each firm actually discloses about advisor compensation.\" This is asking me to compare firms. But the task says \"You do not answer the question and you do not compare firms: code and a later step do that.\"\n\nSo for a6.MER, I should extract the facts about Merrill's disclosure of advisor compensation detail that would feed into the comparison. \n\nThe relevant facts about Merrill's advisor compensation disclosure (which would be the \"detail\" that feeds the comparison) are already captured in a1-a5 sub-questions. But a6.MER needs its own cell.\n\nHmm, this is getting complicated. Let me think about what's the cleanest approach.\n\nFor a comparison sub-question, the extraction task is essentially: what has Merrill disclosed about advisor compensation (in terms of detail)? The facts are the same as a1 but framed as \"detail of disclosure.\"\n\nActually, I think the key insight is that a6.MER is asking me to characterize Merrill's disclosure detail level. The passages show Merrill discloses:\n- Advisor compensation structure (revenue-based, from Merrill Lynch Fee, sales charges, referrals)\n- Incentive awards (growth targets in households, assets/liabilities)\n- Recruitment payments (salary guarantees, upfront awards, deferred payments, recruitment loans)\n- Reduction in incentive grid for failing growth\n\nThis is substantial detail. This is a fact.\n\nBut the label \"fact\" requires a figure. The instruction says \"value: the figure as printed... '' when the item states no figure.\"\n\nSo I could have a fact item with no figure, just a statement about what Merrill discloses.\n\nActually, re-reading: \"Items (fact and different_quantity only), one per figure or statement.\" So a statement without a figure is fine.\n\nFor a6.MER, I think the answer is that Merrill discloses detailed information about advisor compensation structure. This is a fact (the firm discloses this detail), but it's more of a synthesis.\n\nActually, wait. Let me reconsider what a6.MER is really asking and whether it's answerable as fact/not_found.\n\nThe sub-question is \"[comparison]: Comparison of how much detail each firm actually discloses about advisor compensation.\" \n\nThis is inherently a comparative assessment. For Merrill specifically, the answer would be \"Merrill discloses X level of detail.\" \n\nI think the appropriate extraction is to note that Merrill discloses detailed advisor compensation information (structure, incentive awards, recruitment payments, etc.), which is a fact.\n\nHowever, given the difficulty, and that the a6.MER passages themselves (the ones grouped under a6.MER) are about Support Fees/Data Analytics fees which are NOT advisor compensation, I wonder if the intent is that a6.MER is essentially answered by a1-a5.\n\nLet me just provide a fact cell indicating Merrill discloses detailed compensation information, citing the relevant passages.\n\nActually, let me reconsider. The comparison question a6.MER - what \"fact\" would I extract for Merrill? The fact is about the level of detail Merrill discloses. Merrill discloses:\n1. Compensation structure based on revenue (Merrill Lynch Fee, sales charges, referrals) - MER-ADV-2026#400\n2. Incentive awards based on growth targets - MER-ADV-2026#406\n3. Recruitment payments (salary guarantees, upfront awards, deferred, loans) - MER-ADV-2026#408\n4. Reduction in incentive grid - MER-ADV-2026#406\n\nThis is detailed disclosure. So a fact.\n\nBut actually, I realize the comparison question is really a meta-analysis that code does. The extraction for a6.MER should probably capture the key disclosure detail points that would let code compare.\n\nGiven the complexity, I'll provide a fact cell that states Merrill discloses detailed advisor compensation information including structure, incentive awards, and recruitment payments, with items for each key disclosure.\n\nActually, let me simplify. The instruction says return exactly one cell. One cell can have multiple items.\n\nLet me identify the key facts about Merrill's advisor compensation disclosure that would be relevant for the comparison:\n\n1. MER-ADV-2026#400: Advisors earn compensation based on revenue Merrill earns from Merrill Lynch Fee and other fees, sales charges, referrals. Detailed structure disclosure.\n\n2. MER-ADV-2026#406: Incentive award based on growth targets (new households, assets/liabilities); reduction in incentive grid if fail growth for two consecutive years.\n\n3. MER-ADV-2026#408: Recruitment payments (salary guarantees, upfront awards, deferred payments, recruitment loans), based on size of prior firm business.\n\nThese are the key disclosures. This shows Merrill discloses substantial detail.\n\nI'll mark a6.MER as \"fact\" with items capturing these disclosures.\n\nActually, but wait - is this really what a6.MER wants? The comparison question \"how much detail each firm actually discloses\" - the answer for Merrill is essentially \"detailed disclosure of structure, awards, and recruitment.\" \n\nI think the cleanest answer is a fact cell noting Merrill discloses detailed compensation information, with items.\n\nLet me write it up.\n\nActually, I realize I'm overcomplicating. Let me think about whether a6.MER should be fact or not_found or something else.\n\nThe sub-question is a comparison question. The framework's labels are designed for factual extraction. For a comparison question, the \"fact\" would be the disclosure detail that Merrill provides.\n\nSince Merrill DOES provide detailed disclosure (clearly documented in the passages), the label should be \"fact\" with items describing what Merrill discloses.\n\nLet me create the cell with items for the key compensation disclosures that Merrill makes, which constitute the \"detail\" for the comparison.\n\nKey items:\n1. Advisor compensation structure: revenue-based (Merrill Lynch Fee, sales charges, referrals) - MER-ADV-2026#400\n2. Incentive awards: growth targets - MER-ADV-2026#406\n3. Recruitment payments - MER-ADV-2026#408\n\nI'll write these as fact items.\n\nLet me draft:\n\nsubquestion_id: a6.MER\nlabel: fact\n\nItems:\n\nItem 0:\ntext: Merrill discloses that its Advisors earn compensation based on revenue Merrill earns from the Merrill Lynch Fee, sales charges on brokerage transactions, and referrals to Affiliates.\nquote: \"Your Advisor earns compensation based on the revenue that Merrill earns from the Merrill Lynch Fee paid by you in the Program and other revenue derived from certain, but not all, of the other fees and costs you incur... They also earn compensation based on the revenue that Merrill earns from Sales Charges related to securities transactions... as well as from the revenue derived from the referrals to Affiliates\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MER-ADV-2026#400\"]\n\nItem 1:\ntext: Merrill discloses that Advisors are eligible for a compensation award from an incentive program based on meeting growth targets in new households and in assets and liabilities, and that an Advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years.\nquote: \"Advisors are eligible to receive a compensation award... from an incentive program that is currently based on meeting growth targets from the prior year in new households and in assets and liabilities... An Advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MER-ADV-2026#406\"]\n\nItem 2:\ntext: Merrill discloses that Advisors who join from other firms generally receive recruitment payments that may take forms including salary guarantees, upfront awards, and compensation contingent on continued employment (deferred payments, recruitment loans), generally based on the size of the business at their prior firm.\nquote: \"Advisors who join Merrill from other firms generally receive payments in connection with that move. These payments may take various forms, including salary guarantees, upfront awards and various forms of compensation contingent on continued employment (e.g., deferred payments, recruitment loans).\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MER-ADV-2026#408\"]\n\nreason: Merrill discloses detailed information about its advisor compensation structure, incentive awards, and recruitment payments.\n\ndiffers_because: \"\"\nderivation: operation \"\", inputs []\n\nThis seems reasonable.\n\nActually, wait. Let me reconsider whether a6.MER's answer should be \"fact\" or something else. The comparison question is about \"how much detail each firm actually discloses.\" \n\nHmm, but actually re-reading the a6.MER passages that were found specifically for a6.MER - they're about Support Fees and Data Analytics fees (revenue sharing with third parties), not advisor compensation. So the search for a6.MER found passages about a different topic.\n\nThis is a bit odd. The a6.MER passages (MER-ADV-2026#5, #264, #27) are about:\n- #5: Support Fees, Data Analytics fees from third parties\n- #264: fees for annuities, precious metals\n- #27: fiduciary obligations\n\nNone of these are about advisor compensation detail. So the \"how much detail\" comparison for advisor compensation would actually draw from the a1-a5 disclosures.\n\nI think my approach is correct: extract the fact that Merrill discloses detailed compensation information (from the search pool passages that ARE about advisor compensation).\n\nLet me finalize. The fact is that Merrill discloses substantial detail about advisor compensation, which I'll capture with the three key items.\n\nActually, I want to be careful. The reason field should be concise. And I should make sure the label is appropriate.\n\nFor a6.MER (comparison), the fact is that Merrill discloses detailed advisor compensation information. This is indeed a fact - Merrill does disclose this detail.\n\nLet me finalize the cell.\n\nActually, one more consideration: should I mark this as \"fact\" with the items being the specific disclosures, or should the \"fact\" be more meta (\"Merrill discloses detailed compensation structure, awards, and recruitment payments\")?\n\nI'll go with fact + items describing each key disclosure type. This gives code the material to compare.\n\nLet me write the final answer.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Merrill discloses that its Advisors earn compensation based on the revenue Merrill earns from the Merrill Lynch Fee, from Sales Charges related to securities transactions in brokerage accounts, and from revenue derived from referrals to Affiliates (including banking products or services).",
+            "quote": "Your Advisor earns compensation based on the revenue that Merrill earns from the Merrill Lynch Fee paid by you in the Program and other revenue derived from certain, but not all, of the other fees and costs you incur... They also earn compensation based on the revenue that Merrill earns from Sales Charges related to securities transactions in any brokerage account you may have as well as from the revenue derived from the referrals to Affiliates",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MER-ADV-2026#400"
+            ]
+          },
+          {
+            "text": "Merrill discloses that Advisors are eligible for a compensation award, payable over a defined period, from an incentive program based on meeting growth targets in new households and in assets and liabilities, and that an Advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years in the assets and liabilities component.",
+            "quote": "Advisors are eligible to receive a compensation award, payable over a defined period of time, from an incentive program that is currently based on meeting growth targets from the prior year in new households and in assets and liabilities... An Advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years in the assets and liabilities component of the award.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MER-ADV-2026#406"
+            ]
+          },
+          {
+            "text": "Merrill discloses that Advisors who join Merrill from other firms generally receive recruitment payments that may take forms including salary guarantees, upfront awards and compensation contingent on continued employment (deferred payments, recruitment loans), generally based to a large extent on the size of the business at their prior firm.",
+            "quote": "Advisors who join Merrill from other firms generally receive payments in connection with that move. These payments may take various forms, including salary guarantees, upfront awards and various forms of compensation contingent on continued employment (e.g., deferred payments, recruitment loans). The amount paid to Advisors under these arrangements is generally based to a large extent on the size of the business at their prior firm.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MER-ADV-2026#408"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Merrill discloses substantial detail about its advisor compensation across structure, incentive awards and recruitment payments, which is the disclosure detail to be compared.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,492 @@
+{
+  "question_id": "Q6",
+  "question": "What has Raymond James said about its affiliation models, and has the mix shifted?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "RJF-10K-2025#10",
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-10K-2025#11",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-PR-web-advisor-select#0",
+    "RJF-PR-web-independent-advisor#1",
+    "RJF-TR-2026Q2#26",
+    "RJF-TR-2026Q1#23",
+    "RJF-TR-2026Q2#6",
+    "RJF-DECK-2025-investor-day#49",
+    "RJF-TR-2026Q1#22",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-PR-web-traditional-employee-advisor#0",
+    "RJF-10K-2025#90",
+    "RJF-TR-2025Q2#30",
+    "RJF-TR-2025Q4#25",
+    "RJF-TR-2025Q2#44",
+    "RJF-TR-2025Q3#26",
+    "RJF-10K-2025#109",
+    "RJF-TR-2026Q2#59",
+    "RJF-10K-2025#91",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-10K-2025#227",
+    "RJF-DECK-2025-investor-day#44",
+    "RJF-TR-2026Q1#44",
+    "RJF-TR-2024Q3#66",
+    "RJF-TR-2026Q1#46",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-10K-2025#24"
+  ],
+  "schema_fallback": [],
+  "enum_values": 108,
+  "at": "2026-11-22T23:06:46.597266-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12047,
+    "output_tokens": 21745,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 10383,
+    "reasoning_tokens": 16197,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.25
+  },
+  "wall_s": 182.97,
+  "tokens_per_s": 118.84,
+  "ttft_s": 2.25,
+  "reasoning_content": "Let me work through this carefully. I need to write the answer as claims, adjacent items, and gaps, calling submit_answer.\n\nLet me go aspect by aspect.\n\n**a1 (fact): What Raymond James has said about its affiliation models**\n\nItems 1-9. All quotes not verbatim, so no quotation marks. Each claim carries part_id a1.RJF (since single firm, but the item cell id is a1.RJF).\n\nActually wait - part_id enum includes both \"a1.RJF\" and \"a1\". The evidence matrix uses a1.RJF as cell id. So I should use part_id \"a1.RJF\" for each claim? Let me think. The instructions: \"a cell id is the part_id of what you write from it\". Cells are labeled a1.RJF, a2.RJF, etc. So claims from those cells get part_id \"a1.RJF\".\n\nFor comparison aspect a6, \"write exactly one claim with that aspect's id as part_id\" - so part_id \"a6\".\n\nFor a7 (adjacent only), adjacent items with part_id \"a7.RJF\".\n\nLet me write out each claim.\n\na1 items - each is a claim. Single firm so start with firm name? \"Several firms: aspect by aspect... each claim starting '<Firm>: '\". One firm: \"aspect by aspect.\" Hmm, \"One firm: aspect by aspect.\" So for one firm, do I still prefix \"<Firm>: \"? The instruction says \"each claim starting '<Firm>: '\" is under \"Several firms\". For one firm, just aspect by aspect. I'll not prefix firm name, or maybe I should. Let me just write claims without firm prefix since it's one firm. Actually to be safe, since only one firm, I'll not prefix.\n\nActually let me re-read: \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nSo for one firm, no firm prefix needed.\n\nLet me write all claims.\n\n**a1 claims** (part_id a1.RJF):\n\n1. Raymond James offers multiple affiliation options, collectively referred to as AdvisorChoice\u00ae, through which financial advisors primarily affiliate with the firm directly as employees, as independent contractors, or as employees of third-party RIAs and broker-dealers served through its RIA and Custody Services (RCS) division. (cite RJF-10K-2025#10)\n\n2. Through AdvisorChoice\u00ae, the firm offers a platform of affiliation options \u2014 Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, Corporate RIA, and RIA & Custody Services \u2014 each offering a unique combination of support, freedom and flexibility. (cite RJF-PR-web-affiliation-options#0)\n\n3. The AdvisorChoice spectrum spans Employee (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, and the firm states the movement to 'independence' is not channel-specific. (cite RJF-DECK-2025-investor-day#38)\n\n4. Employee financial advisors work in a traditional branch supported by local management and administrative staff, provide services predominantly to retail clients, and receive compensation primarily as a payout on revenues they generate plus participation in the firm's employee benefit plans. (cite RJF-10K-2025#10)\n\n5. Independent contractor financial advisors are generally responsible for all of their direct costs and therefore receive a higher payout percentage than employee advisors; they may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with approval may conduct certain other approved business activities. (cite RJF-10K-2025#11)\n\n6. The firm's affiliation spectrum details payout and qualifications by model: Traditional Employee (up to 50% payout, minimum 5 years experience), Advisor Select (70-80% gross payout, minimum 3 years and $3.5 million annual branch fees and commission revenue), and Independent Contractor (81-90% payout, minimum 3 years). (cite RJF-PR-web-affiliation-options#1)\n\n7. Bank & Credit Union, Corporate RIA, and RIA & Custody Services models have their own qualifications and payout structures, including Corporate RIA (81-90% payout, minimum $50 million assets under advisement) and RIA & Custody Services (minimum $100 million to establish a new RIA). (cite RJF-PR-web-affiliation-options#2)\n\n8. Advisor Select\u00ae provides established advisors the full benefits of the employee channel with the independence to create their own branches, letting them run their branch's P&L to earn a higher rate on production. (cite RJF-PR-web-advisor-select#0)\n\n9. The Corporate RIA affiliation model lets fee-based advisors get the RIA experience while streamlining many of its burdens through an all-inclusive affiliation model. (cite RJF-PR-web-independent-advisor#1) \u2014 this one quote is verbatim, but I don't need to quote it necessarily. It's a fact, write as claim.\n\n**a2 claims** (part_id a2.RJF):\n\n1. Raymond James says it is 'agnostic' about how advisors affiliate and wants them to 'fall in love' with its culture, values, platform and capabilities, and that having all affiliation options gives it 'the largest addressable market in the industry.' (cite RJF-TR-2026Q2#26) \u2014 verbatim quote allowed. I can use quotation marks since it's a real quote? Actually the quote line says quote \"...\" but no \"quote not verbatim\" marker. So it IS verbatim. I can quote. But I can also paraphrase. I'll paraphrase but keep key phrases in quotes where appropriate. Actually, let me just write it plainly; the instruction says date every claim from source line.\n\nActually for transcripts, dates: RJF-TR-2026Q2 = period 2026-06-30, published 2026-07-22. So \"On the 2Q26 earnings call (period ended June 30, 2026), management said...\".\n\nLet me write these with dates.\n\nActually, let me be efficient but follow rules. Each claim needs a date attribution. For 10-K items, \"The 2025 10-K (period ended September 30, 2025, published November 25, 2025) states ...\". For press web pages, \"page content as of 2026-04-21\". For transcripts, \"On the 2Q26 earnings call (June 2026), management said...\". For decks, \"published 2025-06-05\".\n\nLet me write each claim with proper dating.\n\nThis is going to be long. Let me be thorough but concise.\n\nLet me draft.\n\nFor a1 items, most are from 10-K or press web pages or deck.\n\nItem 1: cite RJF-10K-2025#10 - 10-K period 2025-09-30, published 2025-11-25.\n\nI'll write \"Raymond James Financial: ...\" Actually, let me reconsider firm prefix. Since it's one firm, I'll skip prefix. But actually the examples... I'll skip.\n\nLet me just write clean claims.\n\nActually, given the volume, I'll write each claim starting with a date.\n\nLet me produce the final structure.\n\nFor a4 (recency) - every item needs a why-line. Items 1 and 2 both cite RJF-TRADE-2026-11-12-WM-01#0 (trade press). Context says the deal expands Pinnacle's relationship, advisors expected to transition May 2027.\n\nItem 1: $18.7 billion in client assets to FID. Item 2: 70 advisors to FID.\n\nWhy-lines: use context line. The context says \"The deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management.\" That's a consequence/reason. Or \"advisors expected to transition in May 2027.\"\n\nFor item 1 why: \"Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James as an existing FID program merges with Synovus Financial Corp.\"\n\nFor item 2 why: similar. Actually I need to vary or can reuse. Let me use the context for both appropriately.\n\nItem 1 context mentions: \"The deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management, the firm's asset and wealth management ...\"\n\nFor why-lines I can use related lines too. Related includes RJF-10K-2025#11 (independent contractor higher payout), RJF-PR-web-affiliation-options#2 (Bank & Credit Union qualifications), RJF-10K-2025#10.\n\nLet me write why-lines:\n\nItem 1 ($18.7B): \"Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James as an existing FID program merges with Synovus Financial Corp.\" Add chunk id RJF-TRADE-2026-11-12-WM-01#0 (already cited). Actually the why-line must cite the passage. The context is from the same chunk RJF-TRADE-2026-11-12-WM-01#0. But the claim already cites that. I add the why-line and cite the chunk. Since it's the same chunk, chunk_ids will just include it once.\n\nActually I can use a related line from another passage for variety. For item 2 (70 advisors), use related RJF-10K-2025#11: \"Independent contractor financial advisors are generally responsible for all of their direct costs and therefore receive a higher payout percentage than employee advisors.\" Hmm, not very relevant to why it matters.\n\nLet me just use the context for both. It's fine.\n\nItem 1 why: \"the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.\" cite RJF-TRADE-2026-11-12-WM-01#0.\n\nItem 2 why: \"the source states the advisors are expected to transition in May 2027.\" Also cite RJF-TRADE-2026-11-12-WM-01#0.\n\nActually wait, the transition in May 2027 is part of the item's own statement (\"the advisors are expected to transition in May 2027\" appears in item 2 text). Hmm, item 2 text already says \"the advisors are expected to transition in May 2027\". So I shouldn't restate. The instruction says \"Never restate the item itself.\"\n\nLet me look at item 1 text: \"Raymond James announced it will add $18.7 billion in client assets to its Financial Institutions Division (the unit dedicated to bank and credit union advisors) as an existing FID program merges with Synovus Financial Corp., expanding its relationship with Pinnacle Financial Partners; the advisors are expected to transition in May 2027.\"\n\nSo the item already includes \"expanding its relationship with Pinnacle Financial Partners\" and \"transition in May 2027\". Both items essentially same content. Hmm.\n\nThe context line provides: \"The deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management, the firm's asset and wealth management ...\"\n\nFor item 1 ($18.7B), the item says \"expanding its relationship with Pinnacle Financial Partners\" \u2014 so that's already in the item. What else can I use? The context adds \"merges Synovus Securities and Pinnacle Asset Management, the firm's asset and wealth management [division]\". That detail is NOT in the item. So I can use: \"the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle's asset and wealth management arm.\"\n\nFor item 2 (70 advisors), the item already says \"transition in May 2027\" and \"merges with Synovus\". Hmm.\n\nActually, both items share the same context. Let me differentiate:\n\nItem 1 why: \"the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James as it merges Synovus Securities and Pinnacle Asset Management.\" \u2014 this uses the \"expands relationship\" + merger detail.\n\nWait \"expands relationship\" is in item 1 text already (\"expanding its relationship with Pinnacle Financial Partners\"). So use the merger detail specifically.\n\nItem 1 why: \"Why it might matter: the source states the existing FID program merges with Synovus Financial Corp. and the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle's asset and wealth management arm.\"\n\nHmm, \"merges with Synovus Financial Corp.\" is in the item too. Let me just use \"merges Synovus Securities and Pinnacle Asset Management\" which is a new detail.\n\nActually, let me simplify. For both items, the context is the same passage. The why-line should add something. The cleanest new detail from context: \"The deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management.\"\n\nI'll write:\nItem 1 why: \"Why it might matter: the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle Financial Partners' asset and wealth management arm.\"\n\nItem 2 why: I can use a related line. Related RJF-10K-2025#11: independent contractors responsible for direct costs, higher payout. Not really. Related RJF-PR-web-affiliation-options#2: Bank & Credit Union model qualifications. That's relevant \u2014 the FID is bank & credit union. \"the Bank & Credit Union affiliation model requires minimum 3 years experience and $250,000 in production.\" Hmm.\n\nActually simpler: for item 2, use the same context detail about the merger expanding relationship. But item 2 text already says \"as an existing FID program merges with Synovus Financial Corp.\" \n\nLet me use for item 2: \"the source states the advisors are expected to transition in May 2027\" \u2014 but that's in the item text.\n\nHmm wait, let me re-read item 2 text: \"Raymond James announced it will add 70 advisors to its Financial Institutions Division (the bank and credit union advisor unit) as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027.\"\n\nSo transition May 2027 is in item 2 but NOT in item 1's main statement... actually item 1 also says \"the advisors are expected to transition in May 2027\".\n\nBoth items basically identical. Let me just use the same why-line for both, from the context: merger of Synovus Securities and Pinnacle Asset Management.\n\nActually, I realize I'm overthinking. Let me use context for both:\n\nItem 1: \"Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James as an existing FID program merges with Synovus Financial Corp., merging Synovus Securities and Pinnacle Asset Management.\"\n\nItem 2: \"Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.\" \n\nBoth cite RJF-TRADE-2026-11-12-WM-01#0.\n\nThis is acceptable. The why-line just needs a reason/purpose/consequence/first/record/change named by source. \"Expands relationship\" is a consequence named by source.\n\nActually, let me make item 1's why about the merger detail and item 2's about \"expands relationship\".\n\nLet me finalize.\n\nFor a5 (series) - fact items with dates. Items 1-9 cite RJF-10K-2025#227 (10-K period 2025-09-30, published 2025-11-25). But the values have \"[period not stated in a usable form]\" \u2014 the quote shows \"Employees 3,878 3,826 3,693\" and item says \"as of September 30, 2023\" etc. Actually item 1 says \"as of September 30, 2023\" in text. But marker says \"[period not stated in a usable form]\".\n\nHmm. The instruction: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" But here it's \"period not stated in a usable form\" \u2014 this is different. The item states the period in its text (\"as of September 30, 2023\"). \n\nWait, but a7 items have \"period 2025-09-30\" explicitly, while a5 items have \"[period not stated in a usable form]\". This is confusing. Let me look more carefully.\n\na5 item 1: \"Raymond James had 3,693 employee financial advisors as of September 30, 2023. | value 3,693 | unit financial advisors | quote \"Employees 3,878 3,826 3,693\" | cite RJF-10K-2025#227 [period not stated in a usable form]\"\n\nSo the item text includes \"as of September 30, 2023\" but the marker says \"period not stated in a usable form\". This likely means the underlying quote/passage doesn't clearly map which column is which year in a usable form for code. \n\nThe instruction about \"period not stated in a usable form\" \u2014 hmm. There's no explicit rule about this marker. Let me think. The rules say: \"A fact cell is a claim... State only the periods an item has; code names the asked periods a firm does not cover.\"\n\nActually the marker \"[period not stated in a usable form]\" \u2014 I think I should still state the period as given in the item text (September 30, 2023, etc.) but note the period is not stated in a usable form in the source? Actually the rule about \"quote not verbatim\" says never quote. \"figure not found in its passage\" keeps figure out.\n\nFor \"period not stated in a usable form\", I think I should include the period as the item states it, but perhaps with a caveat. Actually, let me reconsider. The item text already says \"as of September 30, 2023\". I'll just state it as the item does. The \"[period not stated in a usable form]\" is likely an internal note that the source quote itself (the 10-K table) doesn't have explicit period labels in the extracted passage.\n\nActually, the source is RJF-10K-2025#227 which is Item 7 (MD&A). The quote \"Employees 3,878 3,826 3,693\" is a table row. The periods would be September 30, 2025, 2024, 2023 (fiscal year ends). The item maps them. So I'll state them.\n\nHmm, but wait \u2014 should I add a note? The instructions don't have a specific rule for \"period not stated in a usable form\". I'll just write the claims with the periods as stated in the items, dating them to the 10-K.\n\nActually, let me reconsider. The marker \"[period not stated in a usable form]\" might mean I shouldn't assert a specific date because the source doesn't clearly tie the number to a date. But the item text literally says \"as of September 30, 2023\". \n\nGiven the item text explicitly provides the date, I'll use it. The bracket is a code note, not a content instruction for me (unlike \"figure not found\" or \"quote not verbatim\" which have explicit rules).\n\nLet me just write a5 claims with the as-of dates given.\n\na5 items:\n1. Employee advisors 3,693 as of Sept 30, 2023.\n2. 3,826 as of Sept 30, 2024.\n3. 3,878 as of Sept 30, 2025.\n4. Independent contractor 5,019 as of Sept 30, 2023.\n5. 4,961 as of Sept 30, 2024.\n6. 5,065 as of Sept 30, 2025.\n7. Total 8,712 as of Sept 30, 2023.\n8. 8,787 as of Sept 30, 2024.\n9. 8,943 as of Sept 30, 2025.\n\n10-17: assets under administration (AUA) by model, period 2020-03-31 and 2025-03-31, cite RJF-DECK-2025-investor-day#44.\n\n10. Employee $332B as of Mar 31 2020.\n11. Employee $631B as of Mar 31 2025.\n12. Independent contractor $318B Mar 31 2020.\n13. Independent contractor $543B Mar 31 2025.\n14. RCS $46B Mar 31 2020.\n15. RCS $186B Mar 31 2025.\n16. Total $696B Mar 31 2020.\n17. Total $1,360B Mar 31 2025.\n\nThese are fact claims, part_id a5.RJF.\n\nNote the caveat says series runs 2025-03-31 to 2025-03-31 (1 point) and earlier 2020-03-31 segment. That's a code caveat, I don't repeat it. But I should note basis break? There's no \"basis break\" line on these items. There's a caveat about separate segments. I'll just write the claims with their periods.\n\nActually wait, the caveat says \"the series ... runs from 2025-03-31 to 2025-03-31 (1 points; earlier points 2020-03-31 to 2020-03-31, 1 points, are a separate segment)\". This is about the comparison/series. But a5 is a \"fact\" aspect, not comparison or series. Hmm, but the aspect is labeled \"[series]\". Let me check: \"a5 [series]: The mix of advisors, assets, or revenue across Raymond James affiliation models\".\n\nIt's a series aspect. The instruction about \"basis break\" applies when a cell has a \"basis break\" line. These cells don't have basis break lines. The caveat is added by code and I shouldn't repeat it.\n\nSo I just write the claims as facts with their periods. Fine.\n\nFor a6 (comparison) - exactly one claim with part_id \"a6\". It answers whether the mix has shifted.\n\nThe comparison: whether mix has shifted over time. Same basis? The aspect is marked comparison but not same_basis (I don't see \"same_basis\" mark). Actually the instruction: \"Compare or rank figures across firms only when the aspect is marked same_basis\". Here it's a single firm, mix over time. \n\nThe items in a6 are qualitative statements from management about mix shifts. So the comparison claim should state whether the mix shift can be determined on this evidence.\n\nLet me write: the mix shift can be assessed on this evidence via management statements and the AUA series. Actually, the comparison is \"whether the mix across affiliation models has shifted over time.\"\n\nI should write one claim answering this. The evidence: a5 has AUA by model at 2020-03-31 and 2025-03-31, and advisor headcount by model at 2023-2025 (a7). And a6 has management qualitative statements.\n\nSo the answer: Yes, the mix has shifted over time, and I can describe this. The AUA figures show: employee went from $332B (2020) to $631B (2025); independent contractor $318B to $543B; RCS $46B to $186B; total $696B to $1,360B.\n\nSo the mix (shares) shifted: RCS grew fastest. But I'm told not to compute figures myself. Hmm. \"never compute a figure yourself\" \u2014 but the comparison claim can cite the figures and note the shift qualitatively.\n\nActually, the comparison claim should say \"whether it can be made on this evidence (valid...), and why, citing the items it rests on.\"\n\nSo I write: The mix shift can be assessed on this evidence, resting on management's own statements (a6 items) and the AUA-by-model figures (a5 items 10-17) and advisor headcount (a7). Management (CEO Paul Shoukry) said recruiting has come more from the independent side vs employee side, a mix shift (RJF-TR-2026Q1#44); CEO Paul Reilly said RCS has the highest percentage growth and that this year the employee channel led in total dollars while a couple years ago independent led (RJF-TR-2024Q3#66).\n\nI need to be careful: comparison claim part_id is \"a6\" (the aspect id). Let me write one claim.\n\nAlso, note the definitions are unverified (\"unverified: not in the metric definitions file; never compared across firms\"). So a6 comparison is about a single firm's own mix over time, not across firms, so I can compare within RJF.\n\nActually the note says \"unverified: not in the metric definitions file; never compared across firms\". Since a6 is within-firm comparison over time, and the definition \"not in metric definitions file\" means the definition is unverified. Hmm. The rule for comparison: \"Compare or rank figures across firms only when the aspect is marked same_basis\". This is within-firm, not across firms, so I can compare within firm.\n\nBut \"an unverified definition\" is listed as a reason for \"not comparable\". But that's in context of cross-firm comparison. Here it's within-firm.\n\nLet me write the a6 comparison claim describing the mix shift using management statements (qualitative) and the figures.\n\nActually, I think the cleanest approach: the comparison is answerable (valid) using management's own statements about the mix shift and the disclosed AUA and advisor headcount by model. Cite the items.\n\nLet me write:\n\n\"Raymond James Financial: On this evidence, whether the mix across affiliation models has shifted over time can be assessed. Management has stated a mix shift: CEO Paul Shoukry said (2Q26 earnings call... wait RJF-TR-2026Q1 is period 2026-03-31)...\n\nLet me get dates right.\n\nRJF-TR-2026Q1 = period 2026-03-31, published 2026-04-22. So this is 2Q fiscal 2026? Raymond James fiscal year ends September 30. So period ended March 31, 2026 = Q2 FY2026. The 10-K is 2025 (period 2025-09-30). \n\nLet me date transcripts by their period. I'll say \"On the earnings call for the quarter ended March 31, 2026 (published April 22, 2026), CEO Paul Shoukry said...\"\n\nFor RJF-TR-2024Q3 = period 2024-09-30, published 2024-10-23. \"On the earnings call for the quarter ended September 30, 2024 (published October 23, 2024), CEO Paul Reilly said...\"\n\nLet me now write everything out.\n\nActually, let me reconsider the why-lines requirement scope. a4 is marked [recency]. Every item of a recency aspect needs a why-line. a4 has items 1 and 2. Both need why-lines.\n\nAlso \"every item when the question has a time window\" \u2014 does the question have a time window? The question \"has the mix shifted?\" implies over time but there's no explicit time window given. I think no explicit time window. So only a4 items need why-lines.\n\nLet me also check: a5 is [series], a7 is [series]. These are not [recency], so no why-lines.\n\nNow let me write all the text.\n\nFor a6 comparison, part_id \"a6\".\n\nLet me also determine if I need gaps. Gaps added by code: none. I should add a gap only for something not covered. \n\nThe a7 aspect is \"advisor headcount by affiliation model as the closest disclosed figure\" \u2014 it's a \"stand-in figure (adjacent only)\". So a7 items go in adjacent, not claims, each with differs_because.\n\ndiffers_because for a7: \"Advisor headcount by affiliation model is a stand-in for the mix; the asked quantity is the mix of advisors, assets, or revenue across affiliation models.\" Actually, the aspect a7 is a \"proxy\" for the mix. The instruction for adjacent items: \"each with differs_because from the cell, in your words with the same meaning.\"\n\nThe cell a7.RJF is marked \"stand-in figure (adjacent only)\". The proxy note: \"Advisor headcount by affiliation model as the closest disclosed figure for the mix\". So differs_because = \"Advisor headcount by affiliation model is the closest disclosed stand-in for the mix across affiliation models, not the mix itself.\"\n\nEach adjacent item gets differs_because. Items 1-9 (headcount by model) and item 10.\n\nWait, item 10 is \"approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors\" \u2014 this is a bit redundant with item 1 (3,878 employee) and item 4 (5,065 independent). But it's listed as its own item. I'll include it as adjacent.\n\nActually, item 10 gives \"approximately 19,500 associates\" which includes non-advisor associates. The value is 5,065 independent advisors. It's a different statement. I'll include it.\n\nLet me write adjacent items for a7 (part_id \"a7.RJF\").\n\nHmm, but wait \u2014 the standard wording about \"adjacent only\" items. Each adjacent item carries part_id and differs_because.\n\nFor a7 items, all share the same differs_because essentially. Let me write it once per item or use same text.\n\ndiffers_because: \"Advisor headcount by affiliation model is a stand-in proxy for the mix across affiliation models, not the mix of advisors, assets, or revenue itself.\"\n\nLet me now also consider: a5 items 1-9 (advisor headcount by model) are fact claims (not adjacent), while a7 items 1-9 are the SAME figures but marked adjacent (stand-in). This seems duplicative. But the matrix has them in both a5 (as fact, the mix of advisors) and a7 (as proxy/adjacent).\n\nWait, a5 is \"The mix of advisors, assets, or revenue across affiliation models\" \u2014 a fact aspect. a5 items include advisor headcount (1-9) and AUA (10-17). These are fact claims.\n\na7 is \"Advisor headcount by affiliation model as the closest disclosed figure for the mix\" \u2014 a series with proxy, adjacent only.\n\nSo the advisor headcount figures appear in a5 (as facts about the mix) AND in a7 (as adjacent/proxy). Hmm, that's odd but I'll follow the matrix: a5 items 1-9 are claims; a7 items 1-9 are adjacent.\n\nActually wait, let me reconsider. a5 is the mix of advisors/assets/revenue. The advisor headcount by model (employee vs independent contractor) IS a mix of advisors. So a5 items 1-9 are legitimate fact claims about advisor headcount mix. And a7 is specifically \"advisor headcount by affiliation model\" as a proxy for... something else? \n\nThe a7 aspect title: \"Advisor headcount by affiliation model as the closest disclosed figure for the mix\". This is redundant with a5's advisor headcount items. But a7 is marked \"stand-in figure (adjacent only)\".\n\nHmm, this is a bit confusing. Perhaps the intent: a7 asks for a full breakdown by all affiliation models (all 6 models), but only employee vs independent contractor is disclosed, so the \"advisor headcount by affiliation model\" as a stand-in.\n\nActually, the key distinction: a5 is \"the mix of advisors, assets, or revenue\" \u2014 general. a7 is specifically \"advisor headcount by affiliation model\" which is a PROXY for the mix (since assets by model only covers 3 models, and headcount only covers 2 categories employee/IC).\n\nI'll just follow the matrix literally: a5 items 1-9 and 10-17 are claims; a7 items 1-10 are adjacent with differs_because.\n\nLet me write the adjacent differs_because. Since a7 is \"a stand-in figure, adjacent only\", the differs_because should explain why it's adjacent/stand-in.\n\ndiffers_because: \"Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue itself.\"\n\nFor items 7-9 (total advisors) and 10, similar.\n\nActually let me just use one consistent differs_because for all a7 items.\n\nNow, let me also double check the a5 \"period not stated in a usable form\" issue. I'll include dates as given in item text.\n\nActually, re-reading: the item text for a5 items 1-9 says \"as of September 30, 2023/2024/2025\", but marker \"[period not stated in a usable form]\". I think this means: in the source passage (the table), the period labels aren't clearly extractable, but the code mapped them. The item gives me the dates, so I use them. But should I flag \"period not stated in a usable form\"?\n\nThe rules don't mention this marker explicitly. The closest is \"figure not found in its passage\" (keep figure out) and \"quote not verbatim\" (no quotes). \"period not stated in a usable form\" \u2014 I'll just state the period as the item does, since the item itself provides it.\n\nHmm, but actually, wait. Let me reconsider. In a7 items, the periods are given as \"period 2025-09-30\" etc. (clean). In a5 items, the marker is \"[period not stated in a usable form]\". This suggests that in a5, I should NOT assert a specific date, because the source doesn't clearly state it.\n\nBut the item text says \"as of September 30, 2023\". This is contradictory. \n\nI think the safest interpretation: the item text is what I write from, and it already includes the date. The \"[period not stated in a usable form]\" is a code note meaning the passage itself didn't have a clean date. Since I'm told to \"date every claim from its source line\", I should date it to the 10-K (period 2025-09-30, published 2025-11-25) and state the as-of date as the item gives.\n\nActually, I'll write the claims stating the as-of dates (Sept 30 2023/2024/2025) and attribute to the 10-K. This is the most faithful.\n\nLet me finalize all text now. I'll write concisely.\n\nFor a1, I should date each claim. Let me use source lines:\n\n- RJF-10K-2025#10: \"RJF 10-K, segment Private Client Group, period 2025-09-30, published 2025-11-25, Item 1\"\n- RJF-PR-web-affiliation-options#0: \"RJF press, period n/a, page content as of 2026-04-21 (undated web page)\"\n- RJF-DECK-2025-investor-day#38: \"published 2025-06-05\"\n- RJF-10K-2025#11: same 10-K\n- RJF-PR-web-affiliation-options#1: page content as of 2026-04-21\n- RJF-PR-web-affiliation-options#2: page content as of 2026-04-21\n- RJF-PR-web-advisor-select#0: page content as of 2026-03-11\n- RJF-PR-web-independent-advisor#1: page content as of 2026-05-19\n\nOK let me write. I'll aim for clear dating.\n\nLet me write the final answer now.\n\nFor a2:\n- RJF-TR-2026Q2#26: period 2026-06-30, published 2026-07-22 \u2192 \"On the earnings call for the quarter ended June 30, 2026, management said...\"\n- RJF-TR-2026Q1#23: period 2026-03-31 \u2192 \"On the earnings call for the quarter ended March 31, 2026...\"\n- RJF-TR-2026Q2#6: same as #26\n- RJF-DECK-2025-investor-day#49: published 2025-06-05\n- RJF-TR-2026Q1#22: period 2026-03-31\n- RJF-TRADE-2026-09-29-IN-01#4: published 2026-09-29 (trade press)\n- RJF-PR-web-traditional-employee-advisor#0: page content as of 2026-05-16\n- RJF-10K-2025#90: 10-K\n\na3:\n- RJF-TR-2025Q2#30: period 2025-06-30\n- RJF-TR-2025Q4#25: period 2025-12-31\n- RJF-TR-2025Q2#44: period 2025-06-30\n- RJF-TR-2025Q3#26: period 2025-09-30\n- RJF-10K-2025#109: 10-K\n- RJF-10K-2025#90: 10-K\n- RJF-TR-2026Q1#22: period 2026-03-31\n- RJF-TR-2026Q2#59: period 2026-06-30\n- RJF-10K-2025#91: 10-K\n\nOK. Now let me write everything out and produce the tool call.\n\nFor the \"quote not verbatim\" items, I must not use quotation marks. I'll paraphrase. For verbatim quotes, I can use quotes but I'll mostly paraphrase to keep it clean, though I may keep key terms in quotes where it's genuinely verbatim (e.g., 'agnostic', 'fall in love', 'adviser choice').\n\nActually, for items NOT marked \"quote not verbatim\", I can quote. But it's cleaner to paraphrase with attribution. I'll paraphrase and use quotes sparingly for distinctive terms.\n\nLet me write the claims now.\n\nI'll structure the answer aspect by aspect.\n\nLet me write out each claim text carefully.\n\n---\n\nAspect a1 claims (part_id a1.RJF):\n\n1. \"Raymond James Financial: The 2025 10-K (period ended September 30, 2025, published November 25, 2025) states the firm offers multiple affiliation options, which it refers to as AdvisorChoice\u00ae, through which financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party RIAs and broker-dealers served through its RIA and Custody Services (RCS) division.\" \u2014 cite RJF-10K-2025#10\n\n2. \"The firm's affiliation-options web page (content as of April 21, 2026) states that through AdvisorChoice\u00ae, the firm offers a platform of affiliation options \u2014 Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, Corporate RIA, and RIA & Custody Services \u2014 each offering a unique combination of support, freedom and flexibility.\" \u2014 cite RJF-PR-web-affiliation-options#0\n\n3. \"The 2025 investor-day deck (published June 5, 2025) states the AdvisorChoice spectrum spans Employee Advisor (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, and that the movement to independence is not channel-specific.\" \u2014 cite RJF-DECK-2025-investor-day#38\n\n4. \"The 2025 10-K states employee financial advisors work in a traditional branch supported by local management and administrative staff, provide services predominantly to retail clients, and receive compensation primarily as a payout on revenues they generate plus participation in the firm's employee benefit plans.\" \u2014 cite RJF-10K-2025#10\n\n5. \"The 2025 10-K states independent contractor financial advisors are generally responsible for all of their direct costs and therefore receive a higher payout percentage on the revenues they generate than employee financial advisors, may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with approval may conduct certain other approved business activities.\" \u2014 cite RJF-10K-2025#11\n\n6. \"The firm's affiliation-options web page (content as of April 21, 2026) details payout and qualifications by model: Traditional Employee has up to 50% payout and a minimum of 5 years of experience; Advisor Select has 70-80% gross payout and a minimum of 3 years of experience and $3.5 million or higher in annual branch fees and commission revenue; and Independent Contractor has 81% to 90% payout and a minimum of 3 years of experience.\" \u2014 cite RJF-PR-web-affiliation-options#1\n\n7. \"The firm's affiliation-options web page (content as of April 21, 2026) states the Bank & Credit Union, Corporate RIA, and RIA & Custody Services models have their own qualifications and payout structures, including Corporate RIA at 81% to 90% payout with a minimum of $50 million in assets under advisement, and RIA & Custody Services requiring $100 million or more in assets to establish a new RIA.\" \u2014 cite RJF-PR-web-affiliation-options#2\n\n8. \"The firm's Advisor Select web page (content as of March 11, 2026) states Advisor Select\u00ae provides established advisors the full benefits of the employee channel with the independence to create their own branches, letting them run their branch's P&L to earn a higher rate on production.\" \u2014 cite RJF-PR-web-advisor-select#0\n\n9. \"The firm's independent-advisor web page (content as of May 19, 2026) states the Corporate RIA affiliation model lets fee-based advisors get the RIA experience while streamlining many of its burdens through an all-inclusive affiliation model.\" \u2014 cite RJF-PR-web-independent-advisor#1\n\nAspect a2 (part_id a2.RJF):\n\n1. \"On the earnings call for the quarter ended June 30, 2026, management said Raymond James is agnostic about how advisors affiliate and wants them to fall in love with its culture, values, platform and capabilities, and that having all affiliation options gives it the largest addressable market in the industry.\" \u2014 cite RJF-TR-2026Q2#26\n\n2. \"On the earnings call for the quarter ended March 31, 2026, management said the firm's focus is to remain the absolute best destination for financial advisers and their clients across all of its affiliation options, which it calls adviser choice.\" \u2014 cite RJF-TR-2026Q1#23\n\n3. \"On the earnings call for the quarter ended June 30, 2026, management said the firm's differentiated value proposition is that advisers do not have to choose between culture and capabilities, pairing an advisor- and client-focused culture with leading technology, products and solutions.\" \u2014 cite RJF-TR-2026Q2#6\n\n4. \"The 2025 investor-day deck (published June 5, 2025) lists the firm's strategy pillars as Multiple Affiliation Options, Best of Both Worlds, Advisor and Book Ownership, and RJF Stability, to inspire and empower the world's best financial professionals.\" \u2014 cite RJF-DECK-2025-investor-day#49\n\n5. \"On the earnings call for the quarter ended March 31, 2026, management described the firm's consistent focus as being the absolute best destination and firm for financial advisers and their clients and matching that culture with capabilities that are very hard to find in the marketplace.\" \u2014 cite RJF-TR-2026Q1#22\n\n6. \"Trade press (September 29, 2026) reports CEO Paul Shoukry has emphasized the strategy of building Raymond James' advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor on a one-on-one basis.\" \u2014 cite RJF-TRADE-2026-09-29-IN-01#4\n\n8. \"The firm's traditional-employee-advisor web page (content as of May 16, 2026) describes the employee advisor experience as redefined and enabled by advisor book ownership, with advisors free to succeed on their own terms with no quotas and no product pushing.\" \u2014 cite RJF-PR-web-traditional-employee-advisor#0\n\n9. \"The 2025 10-K states Raymond James seeks to mitigate advisor-departure risk through financial advisor succession planning and by providing its financial advisors with a broad range of services and resources to support their practices.\" \u2014 cite RJF-10K-2025#90\n\nAspect a3 (part_id a3.RJF):\n\n1. \"On the earnings call for the quarter ended June 30, 2025, management said private equity-backed roll-ups are a competitive pressure, and that in the absence of a value proposition, they compete with big checks.\" \u2014 cite RJF-TR-2025Q2#30\n\n2. \"On the earnings call for the quarter ended December 31, 2025, management said there are more competitive pressures now from private equity-backed roll-ups.\" \u2014 cite RJF-TR-2025Q4#25\n\n3. \"On the earnings call for the quarter ended June 30, 2025, management said PE-backed roll-ups have been cropping up everywhere over the last three years and paying increasingly high multiples.\" \u2014 cite RJF-TR-2025Q2#44\n\n4. \"On the earnings call for the quarter ended September 30, 2025, management contrasted its approach with competitors that are looking for an exit in three to five years, that compete with the largest check, and that change their comp plans every year to cross-sell bank products.\" \u2014 cite RJF-TR-2025Q3#26\n\n5. \"The 2025 10-K states Raymond James competes directly with national full-service broker-dealers, investment banking firms, commercial banks, investment advisors, investment managers, and, to a lesser extent, discount brokers and dealers, and faces competition from more recent entrants including fintechs.\" \u2014 cite RJF-10K-2025#109\n\n6. \"The 2025 10-K identifies the industry-wide trend of financial advisors departing traditional firms to form independent RIAs or join third-party RIAs, some backed by private equity investors, as creating a highly competitive recruiting environment.\" \u2014 cite RJF-10K-2025#90\n\n7. \"On the earnings call for the quarter ended March 31, 2026, management said private equity has been competitive over the last five years, as well as some of the strategic firms.\" \u2014 cite RJF-TR-2026Q1#22\n\n8. \"On the earnings call for the quarter ended June 30, 2026, management said Raymond James does not lead with the highest check, and that competitors lacking a differentiated value proposition must compete on the highest check.\" \u2014 cite RJF-TR-2026Q2#59\n\n9. \"The 2025 10-K states Raymond James participates, with limited exceptions, in the Protocol for Broker Recruiting, notes that competitors may withdraw from it, and that companies in the industry frequently claim competitors engaged in unfair hiring practices when their employees or independent contractors move.\" \u2014 cite RJF-10K-2025#91\n\nAspect a4 (recency, part_id a4.RJF), with why-lines:\n\n1. \"Trade press (November 12, 2026) reports Raymond James will add $18.7 billion in client assets to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027. Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James, merging Synovus Securities and Pinnacle Asset Management.\" \u2014 cite RJF-TRADE-2026-11-12-WM-01#0\n\n2. \"Trade press (November 12, 2026) reports Raymond James will add 70 advisors to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027. Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.\" \u2014 cite RJF-TRADE-2026-11-12-WM-01#0\n\nHmm, both why-lines similar. Let me differentiate: item 1's why uses the merger detail; item 2's why uses the \"expands relationship\". Actually, both are essentially the same. It's fine.\n\nActually, wait \u2014 I should reconsider whether the why-line \"the source states the deal expands Pinnacle's relationship\" is a \"consequence the source names\". Yes, it's a consequence. Good.\n\nBut actually item 1's text already says \"expanding its relationship with Pinnacle Financial Partners\". So using \"expands Pinnacle's relationship\" as why would restate the item. Let me use the merger detail for item 1 (Synovus Securities and Pinnacle Asset Management merger) which is NOT in item text.\n\nItem 1 text: \"...as an existing FID program merges with Synovus Financial Corp., expanding its relationship with Pinnacle Financial Partners; the advisors are expected to transition in May 2027.\"\n\nSo \"merges with Synovus Financial Corp.\" is in item. \"expanding relationship with Pinnacle\" is in item. \"transition in May 2027\" is in item.\n\nContext line adds: \"The deal expands Pinnacle Financial Partners' relationship with Raymond James, as it merges Synovus Securities and Pinnacle Asset Management, the firm's asset and wealth management ...\"\n\nNew detail: \"merges Synovus Securities and Pinnacle Asset Management, the firm's asset and wealth management [division].\"\n\nSo for item 1 why: \"the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle Financial Partners' asset and wealth management arm.\"\n\nFor item 2 why: I need a different angle. The context doesn't have much else. Related lines: RJF-10K-2025#11 (independent contractor higher payout), RJF-PR-web-affiliation-options#2 (Bank & Credit Union qualifications), RJF-10K-2025#10.\n\nFor item 2 (70 advisors to FID), a related line could be RJF-PR-web-affiliation-options#2: \"the Bank & Credit Union model requires minimum 3 years of experience and $250,000 in production.\" That gives context about the FID (bank/credit union) model.\n\nSo item 2 why: \"Why it might matter: the Bank & Credit Union affiliation model requires a minimum of 3 years of experience and $250,000 in production, per the firm's affiliation-options page.\" cite RJF-PR-web-affiliation-options#2.\n\nHmm, but that's a bit tangential. Alternatively, use RJF-10K-2025#11 about independent contractors. The FID advisors are independent contractors through banks/credit unions.\n\nActually, let me keep it simple and consistent. For item 2, use the merger detail too but differently, or use the related line about the bank & credit union model.\n\nActually the instruction says why-line can come from \"factual background from another passage listed under Sources (its 'related' lines...)\". The related lines are listed. For item 2, related includes RJF-PR-web-affiliation-options#0, RJF-10K-2025#10, RJF-10K-2025#11.\n\nI'll use for item 2: \"Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James as an existing FID program merges with Synovus Financial Corp.\" \u2014 but \"expands relationship\" and \"merges with Synovus\" are in item text.\n\nUgh. Both items have nearly identical content. Let me just accept some overlap and use:\n\nItem 1 why: \"the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle's asset and wealth management arm.\" (new detail)\n\nItem 2 why: \"the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.\" \u2014 wait this is in item 1 but item 2's text says \"...as an existing FID program merges with Synovus Financial Corp.\" \u2014 item 2 does NOT include \"expanding its relationship with Pinnacle Financial Partners\". Let me check item 2 text again:\n\nItem 2: \"Raymond James announced it will add 70 advisors to its Financial Institutions Division (the bank and credit union advisor unit) as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027.\"\n\nYes! Item 2 does NOT mention \"expanding relationship with Pinnacle\". So I can use \"expands Pinnacle Financial Partners' relationship with Raymond James\" for item 2's why-line.\n\nItem 1 text DOES include \"expanding its relationship with Pinnacle Financial Partners\". So for item 1, use the merger detail (Synovus Securities and Pinnacle Asset Management).\n\nGood, this works:\n\nItem 1 why: \"the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle Financial Partners' asset and wealth management arm.\"\nItem 2 why: \"the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.\"\n\nBoth cite RJF-TRADE-2026-11-12-WM-01#0.\n\nNow a5 claims (part_id a5.RJF):\n\n1. \"Raymond James had 3,693 employee financial advisors as of September 30, 2023.\" cite RJF-10K-2025#227\n2. \"...3,826... September 30, 2024.\"\n3. \"...3,878... September 30, 2025.\"\n4. \"...5,019 independent contractor... September 30, 2023.\"\n5. \"...4,961... September 30, 2024.\"\n6. \"...5,065... September 30, 2025.\"\n7. \"...8,712 total... September 30, 2023.\"\n8. \"...8,787... September 30, 2024.\"\n9. \"...8,943... September 30, 2025.\"\n\n10-17: AUA.\n10. \"$332 billion of domestic PCG assets under administration in its employee affiliation model as of March 31, 2020.\"\n11. \"$631 billion ... March 31, 2025.\"\n12. \"$318 billion ... independent contractor ... March 31, 2020.\"\n13. \"$543 billion ... March 31, 2025.\"\n14. \"$46 billion ... RCS ... March 31, 2020.\"\n15. \"$186 billion ... RCS ... March 31, 2025.\"\n16. \"$696 billion total ... March 31, 2020.\"\n17. \"$1,360 billion total ... March 31, 2025.\"\n\nAll cite RJF-DECK-2025-investor-day#44 for items 10-17.\n\nFor a5 items 1-9, the period is \"not stated in a usable form\". I'll state the as-of dates and attribute to 10-K. I could add a note. Actually, let me just write them with dates; the item text gives dates.\n\nHmm, but actually, wait \u2014 should I date these claims? The rule \"date every claim from its source line\". Source is RJF-10K-2025#227 (period 2025-09-30, published 2025-11-25). So I date to the 10-K, and the as-of date is the fiscal year-end.\n\nLet me write: \"The 2025 10-K (period ended September 30, 2025) reports Raymond James had 3,693 employee financial advisors as of September 30, 2023.\" etc.\n\nActually for a7, items are given with clean periods and I write adjacent. Let me do those separately.\n\nFor a5 items, I'll write \"Raymond James had X ... as of [date], per the 2025 10-K.\"\n\nActually, to keep it simpler and consistent with a7's clean presentation, I'll write each a5 claim with the as-of date and cite the 10-K.\n\nLet me finalize a5 text.\n\na6 comparison claim (part_id \"a6\"):\n\n\"Raymond James Financial: Whether the mix across its affiliation models has shifted over time can be assessed on this evidence, resting on management's own statements and the disclosed figures. On the earnings call for the quarter ended March 31, 2026, CEO Paul Shoukry said that over the last year much more of the firm's recruiting has come from the independent side versus the employee side, representing a mix shift (RJF-TR-2026Q1#44), and later clarified the mix shift referred to the compensation ratio given the payout difference between the independent and employee channels (RJF-TR-2026Q1#46). On the earnings call for the quarter ended September 30, 2024, CEO Paul Reilly said the RCS division has by far the highest percentage growth, that a couple of years ago the independent channel led in total dollars while this year the employee channel led, and that the old pattern of independents growing faster in down markets no longer holds (RJF-TR-2024Q3#66). Trade press (October 29, 2026) reports the firm's recruiting success is spread across all its affiliation channels, with the independent contractor channel seeing the most interest in dollar volume and the RIA custody division growing at a high percentage rate on a smaller base (RJF-TRADE-2026-10-29-WM-01#0). The disclosed domestic PCG assets under administration by model (2025 investor-day deck) moved from $332 billion (employee), $318 billion (independent contractor), and $46 billion (RCS) as of March 31, 2020, to $631 billion, $543 billion, and $186 billion respectively as of March 31, 2025 (RJF-DECK-2025-investor-day#44); the definition is unverified.\"\n\nHmm, that's long but it's the comparison claim. Actually, I should keep it focused on the comparison answer. The comparison is \"whether the mix has shifted\" \u2014 answer: yes it has, based on management statements and figures.\n\nLet me write it as one claim citing the relevant items.\n\nNote: \"the definition is unverified\" \u2014 I should mention because the a5 note says \"unverified: not in the metric definitions file; never compared across firms\". But this is within-firm comparison, not across firms. The \"unverified definition\" matters if I'm doing cross-firm comparison. Here it's within-firm mix over time. Still, I should note the definition is unverified per the caveat? Actually the caveat \"unverified: not in the metric definitions file\" \u2014 I think I should mention it's unverified.\n\nActually, let me re-read the a5 comparability note: \"Comparability (code): unverified: not in the metric definitions file; never compared across firms\". This is about a5's comparability for cross-firm comparison. Since a6 is within-firm, I don't need to worry about cross-firm. But I could mention the definition is unverified.\n\nI'll mention \"the metric definitions are unverified\" briefly.\n\nLet me write a cleaner a6 claim.\n\nNow a7 adjacent items (part_id a7.RJF), with differs_because:\n\n1. \"As of September 30, 2025, Raymond James had 3,878 employee financial advisors.\" cite RJF-10K-2025#227\n2. \"...3,826... September 30, 2024.\"\n3. \"...3,693... September 30, 2023.\"\n4. \"...5,065 independent contractor... September 30, 2025.\"\n5. \"...4,961... September 30, 2024.\"\n6. \"...5,019... September 30, 2023.\"\n7. \"...8,943 total financial advisors (employees plus independent contractors)... September 30, 2025.\" cite RJF-10K-2025#227\n8. \"...8,787... September 30, 2024.\"\n9. \"...8,712... September 30, 2023.\"\n10. \"As of September 30, 2025, Raymond James had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.\" cite RJF-10K-2025#24\n\nEach with differs_because: \"Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue itself.\"\n\nHmm, but actually the registered definition says \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\" This is relevant context. For items 7-9 (total advisors), the definition applies. I could mention it in the text of items 7-9, which already include \"employees plus independent contractors\" and the definition note.\n\nThe item 7 text already includes: definition \"Advisors in our RCS division are not included in our financial advisor metric although their client assets are included in PCG AUA.\"\n\nI'll incorporate: \"As of September 30, 2025, Raymond James had 8,943 total financial advisors (employees plus independent contractors); the firm notes that advisors in its RCS division are not included in this financial advisor metric although their client assets are included in PCG AUA.\"\n\nFor items 1-6, no definition needed.\n\nNow the differs_because. All a7 items share the proxy nature. Let me write it.\n\nActually, I realize there might be redundancy: a7 items 1-9 are the SAME figures as a5 items 1-9. But a5 treats them as claims (facts about the mix) and a7 treats them as adjacent (proxy). I'll just follow the matrix.\n\nWait, actually, let me reconsider. Is a5 really supposed to have advisor headcount as \"claims\"? a5 is \"The mix of advisors, assets, or revenue across affiliation models\". The advisor headcount by employee vs independent IS a mix of advisors. So yes, claims.\n\nAnd a7 is \"advisor headcount by affiliation model as the closest disclosed figure for the mix\" \u2014 this is essentially the same data but framed as a proxy. The \"proxy\" note and \"stand-in figure, adjacent only\" suggests a7 is asking for a FULL breakdown by all 6 affiliation models, but only employee vs IC headcount is disclosed, so it's a stand-in.\n\nI'll follow the matrix literally.\n\ndiffers_because for a7: The aspect title is \"Advisor headcount by affiliation model as the closest disclosed figure for the mix\". So the stand-in is \"advisor headcount by affiliation model\" standing in for \"the mix across affiliation models\".\n\ndiffers_because: \"Advisor headcount by affiliation model is the closest disclosed stand-in for the mix across affiliation models, not the mix itself (and it covers only employee vs. independent contractor, not all affiliation models).\"\n\nHmm, but items 7-9 are \"total advisors\" which isn't by affiliation model (it's the sum). Item 10 is \"associates and independent advisors\".\n\nLet me just use a consistent differs_because: \"Advisor headcount (employee vs. independent contractor) is the closest disclosed proxy for the mix across affiliation models, not the full mix of advisors, assets, or revenue across all affiliation models.\"\n\nOK, I'll finalize.\n\nNow let me also think about gaps. Code gaps: none. Should I add a gap? The a7 aspect is a proxy/stand-in, meaning the full \"advisor headcount by each of the 6 affiliation models\" is NOT available (only employee vs IC). Should I add a gap noting that advisor headcount by individual affiliation model (e.g., Advisor Select, Corporate RIA, RCS) is not disclosed?\n\nThe instruction: \"Add a gap of your own only for something those gaps do not name.\" Since code gaps are \"none\", I could add a gap. But is there something genuinely missing? The full breakdown by all 6 models isn't disclosed \u2014 but that's captured by the \"stand-in figure\" adjacent treatment.\n\nActually, the registered definition note: \"Advisors in our RCS division are not included in our financial advisor metric.\" This means RCS advisor headcount is NOT disclosed. So there's a gap: advisor headcount for RCS division (and other specific models) is not disclosed.\n\nHmm, but the aspect a7 is specifically \"advisor headcount by affiliation model as the closest disclosed figure\" \u2014 meaning the closest disclosed is employee vs IC, and full model breakdown isn't available. The \"stand-in figure, adjacent only\" already signals this.\n\nI think I should add a gap noting that advisor headcount is disclosed only as employee vs. independent contractor, not broken out by individual affiliation model (e.g., Advisor Select, Corporate RIA, RCS).\n\nLet me add a gap:\nwhat: \"Advisor headcount broken out by individual affiliation model (e.g., Advisor Select, Corporate RIA, RCS, Bank & Credit Union) rather than only employee vs. independent contractor.\"\nsuggested_source: \"Raymond James disclosures that break out financial advisor headcount by each affiliation model.\"\npart_id: \"a7.RJF\"\n\nActually, is this a gap \"code gaps do not name\"? Code gaps are \"none\". So yes I can add. But I should be careful not to over-add. The instruction says add a gap only for something not covered. The full-model breakdown is genuinely not disclosed. I'll add it.\n\nHmm, but actually, let me reconsider. The registered definition explicitly says RCS advisors are NOT in the financial advisor metric. This is a known limitation. The a7 aspect already handles this via \"stand-in figure\". \n\nI think adding one gap is reasonable and correct. Let me add it.\n\nActually, let me reconsider the whole thing. The gaps field is for \"the database does not support\" things. For a7, the database only supports employee vs IC headcount, not per-model. That's a gap.\n\nI'll add:\nwhat: \"Advisor headcount broken out by each individual affiliation model (such as Advisor Select, Corporate RIA, RIA & Custody Services, or Bank & Credit Union); the firm discloses only employee and independent contractor headcount.\"\nsuggested_source: \"Raymond James filings or investor materials that break out financial advisor headcount by individual affiliation model.\"\npart_id: \"a7.RJF\"\n\nOK. Now let me also double-check: do I need a gap for a1-a6? Probably not; they're well covered.\n\nLet me now assemble the full tool call.\n\nActually, let me reconsider the dating format for transcripts. The instruction example: \"On the 3Q26 earnings call (October 2026), management said ...\". So I can use \"On the earnings call for the quarter ended June 30, 2026 (published July 22, 2026), ...\". Or simpler \"(June 2026)\".\n\nI'll use a consistent format: \"On the earnings call for the quarter ended June 30, 2026, management said...\".\n\nLet me also note fiscal vs calendar. Raymond James fiscal year ends September 30. Period 2026-06-30 is fiscal Q3 2026 actually (Sep 2025 year end, so Q3 ends June 30, 2026). Hmm. But I don't need to label fiscal quarter precisely; I'll just use the period date.\n\nActually the source labels: RJF-TR-2026Q2 = period 2026-06-30. The \"2026Q2\" in the ID refers to fiscal Q2? Raymond James FY2026: Q1 ends Dec 31 2025, Q2 ends Mar 31 2026, Q3 ends Jun 30 2026, Q4 ends Sep 30 2026.\n\nWait, RJF-TR-2026Q2#26 has period 2026-06-30. And RJF-TR-2026Q1#23 has period 2026-03-31. So \"2026Q2\" = quarter ended June 30 2026 (fiscal Q3?), but they label it Q2. Hmm, maybe \"2026Q2\" means calendar Q2 2026 = April-June 2026, ending June 30. And \"2026Q1\" = Jan-Mar 2026, ending March 31. So the labeling is calendar quarters!\n\nRJF-TR-2025Q2#30 = period 2025-06-30 = calendar Q2 2025. RJF-TR-2025Q3#26 = period 2025-09-30 = calendar Q3 2025. RJF-TR-2025Q4#25 = period 2025-12-31 = calendar Q4 2025. RJF-TR-2024Q3#66 = period 2024-09-30 = calendar Q3 2024.\n\nYes, calendar quarters. So I'll date them by period date.\n\nI'll write \"On the earnings call for the quarter ended [date], management said...\"\n\nLet me finalize everything now. This is a big answer. Let me write it all out in the tool call.\n\nLet me write concise claim texts.\n\nI need to be careful with chunk_ids \u2014 only cite ids under Sources. All the ids I'm using are in the enum and Sources.\n\nFor a1 item 1 and 4 both cite RJF-10K-2025#10. Fine.\n\nLet me also make sure I don't use quotation marks for \"quote not verbatim\" items. Items marked \"quote not verbatim\": a1 items 1,2,3,4,5,6,7,8; a2 item 4, item 8; a3 item 4, item 8, item 9; a5 items 10-17; a6 item 2, item 5. Actually let me just avoid quotation marks everywhere to be safe, except where I'm confident it's verbatim and useful. Actually, simplest: avoid quotation marks entirely, paraphrase everything. That's safest given many are \"not verbatim\".\n\nBut some terms like AdvisorChoice\u00ae, Advisor Select\u00ae are trademarked terms I can use without quotes (they're proper nouns). That's fine.\n\nFor the \"fall in love\", \"agnostic\", \"adviser choice\", \"largest addressable market\" \u2014 these are from verbatim quotes (not marked \"not verbatim\"), so I could quote. But paraphrasing is safer and fine. I'll paraphrase but may keep short distinctive phrases in quotes where clearly verbatim.\n\nActually, I'll keep it simple and paraphrase, occasionally using quotes for very distinctive exact phrases where the source is verbatim. But to be safe, I'll mostly paraphrase.\n\nLet me write final answer now.\n\nOne more consideration: the answer is a single firm, so I write \"aspect by aspect\" without firm prefix. But the part_id will be a1.RJF, a2.RJF, etc.\n\nActually wait, re-reading part_id enum: it includes both \"a1\" and \"a1.RJF\". The instruction says \"A cell id is the part_id of what you write from it\" and cells are \"a1.RJF\" etc. For comparison a6, \"write exactly one claim with that aspect's id as part_id\" \u2192 \"a6\".\n\nSo:\n- a1 claims \u2192 part_id \"a1.RJF\"\n- a2 \u2192 \"a2.RJF\"\n- a3 \u2192 \"a3.RJF\"\n- a4 \u2192 \"a4.RJF\"\n- a5 \u2192 \"a5.RJF\"\n- a6 comparison \u2192 \"a6\"\n- a7 adjacent \u2192 \"a7.RJF\"\n\nGood.\n\nLet me write the final JSON now.\n\nFor the gaps, part_id \"a7.RJF\".\n\nLet me finalize all claim texts concisely.\n\nI'll now write the complete tool call.\n\nFor a6, I need to make sure it's exactly ONE claim with part_id \"a6\".\n\nLet me write a6 claim text concisely but completely.\n\nLet me also verify: for a4 why-lines, I cite the chunk. The chunk RJF-TRADE-2026-11-12-WM-01#0 is already the main cite. The why-line's additional chunk would also be RJF-TRADE-2026-11-12-WM-01#0 (from context, same source). So chunk_ids = [\"RJF-TRADE-2026-11-12-WM-01#0\"]. For item 2, I might use RJF-PR-web-affiliation-options#2 as related. Let me decide: item 2 why uses \"expands Pinnacle's relationship\" (from context, same chunk). So both why-lines cite RJF-TRADE-2026-11-12-WM-01#0.\n\nActually, I could make item 2's why use a related line for variety and better \"why it might matter\". But \"expands relationship\" is a fine consequence. I'll keep both from the same chunk.\n\nLet me write final.\n\nActually, let me reconsider item 1 and 2's why lines more carefully to avoid restating the item.\n\nItem 1 ($18.7B): item text includes \"expanding its relationship with Pinnacle Financial Partners\". So don't use that. Use \"merges Synovus Securities and Pinnacle Asset Management\" (new from context).\n\nItem 2 (70 advisors): item text includes \"merges with Synovus Financial Corp.\" and \"transition in May 2027\". Does NOT include \"expands Pinnacle's relationship\". So use \"expands Pinnacle Financial Partners' relationship with Raymond James\".\n\nBoth from context. Good.\n\nFinal answer writing now.\n\nLet me write out full text for each claim succinctly. I'll produce the submit_answer call.\n\nFor a5 items, I'll attribute: \"The 2025 10-K (period ended September 30, 2025) reports ...\" for items 1-9. For items 10-17: \"The 2025 investor-day deck (published June 5, 2025) reports ...\".\n\nLet me write.",
+  "first_claim_s": 150.31,
+  "stream_items": {
+    "first_claim_s": 150.31,
+    "shown": 31,
+    "held": 25
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The 2025 10-K (period ended September 30, 2025, published November 25, 2025) states Raymond James offers multiple affiliation options, which it refers to as AdvisorChoice\u00ae, through which financial advisors primarily affiliate with the firm directly as either employees or independent contractors, or as employees of third-party RIAs and broker-dealers served through its RIA and Custody Services (RCS) division.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The firm's affiliation-options web page (content as of April 21, 2026) states that through AdvisorChoice\u00ae, the firm offers a platform of affiliation options \u2014 Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, Corporate RIA, and RIA & Custody Services \u2014 each offering a unique combination of support, freedom and flexibility.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) states the AdvisorChoice spectrum spans Employee Advisor (RJA), Advisor Select, Independent Advisor (ICD), Banks and Credit Unions, IAR (Corporate RIA), and RIA & Custody Services, and that the movement to independence is not channel-specific.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#38"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The 2025 10-K states employee financial advisors work in a traditional branch supported by local management and administrative staff, provide services predominantly to retail clients, and receive compensation primarily as a payout on revenues they generate plus participation in the firm's employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The 2025 10-K states independent contractor financial advisors are generally responsible for all of their direct costs and accordingly receive a higher payout percentage on the revenues they generate than employee financial advisors, may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with approval may conduct certain other approved business activities.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The firm's affiliation-options web page (content as of April 21, 2026) details payout and qualifications by model: Traditional Employee has up to 50% payout and a minimum of 5 years of experience; Advisor Select has 70-80% gross payout and a minimum of 3 years of experience and $3.5 million or higher in annual branch fees and commission revenue; and Independent Contractor has 81% to 90% payout and a minimum of 3 years of experience.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The firm's affiliation-options web page (content as of April 21, 2026) states the Bank & Credit Union, Corporate RIA, and RIA & Custody Services models have their own qualifications and payout structures, including Corporate RIA at 81% to 90% payout with a minimum of $50 million in assets under advisement, and RIA & Custody Services requiring $100 million or more in assets to establish a new RIA.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The firm's Advisor Select web page (content as of March 11, 2026) states Advisor Select\u00ae provides established advisors the full benefits of the employee channel with the independence to create their own branches, letting them run their branch's P&L to earn a higher rate on production.",
+        "chunk_ids": [
+          "RJF-PR-web-advisor-select#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The firm's independent-advisor web page (content as of May 19, 2026) states the Corporate RIA affiliation model lets fee-based advisors get the RIA experience while streamlining many of its burdens through an all-inclusive affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-independent-advisor#1"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, management said Raymond James is agnostic about how advisors affiliate and wants them to fall in love with its culture, values, platform and capabilities, and that having all the affiliation options gives it the largest addressable market in the industry.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended March 31, 2026, management said the firm's focus is to remain the absolute best destination for financial advisers and their clients across all of its affiliation options, which it calls adviser choice.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#23"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, management said the firm's differentiated value proposition is that advisers do not have to choose between culture and capabilities, offering a unique combination of an adviser- and client-focused culture along with leading technology, products and solutions.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#6"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) lists the firm's strategy pillars as Multiple Affiliation Options, Best of Both Worlds, Advisor and Book Ownership, and RJF Stability, to inspire and empower the world's best financial professionals.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#49"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended March 31, 2026, management described the firm's consistent focus as being the absolute best destination and firm for financial advisers and their clients and matching that culture with capabilities that are very hard to find in the marketplace.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#22"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Trade press (September 29, 2026) reports CEO Paul Shoukry has emphasized the strategy of building Raymond James' advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor on a one-on-one basis.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "The firm's traditional-employee-advisor web page (content as of May 16, 2026) describes the employee advisor experience as redefined and enabled by advisor book ownership, with advisors free to succeed on their own terms with no quotas and no product pushing.",
+        "chunk_ids": [
+          "RJF-PR-web-traditional-employee-advisor#0"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "The 2025 10-K states Raymond James seeks to mitigate advisor-departure risk through financial advisor succession planning and by providing its financial advisors with a broad range of services and resources to support their practices.",
+        "chunk_ids": [
+          "RJF-10K-2025#90"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2025, management said private equity-backed roll-ups are a competitive pressure, and that in the absence of a value proposition, they compete with big checks.",
+        "chunk_ids": [
+          "RJF-TR-2025Q2#30"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended December 31, 2025, management said there are more competitive pressures now from private equity-backed roll-ups.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#25"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2025, management said PE-backed roll-ups have been cropping up everywhere over the last three years in particular and have been extremely aggressive in paying at higher and higher multiples.",
+        "chunk_ids": [
+          "RJF-TR-2025Q2#44"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended September 30, 2025, management contrasted its approach with competitors that are increasingly looking for an exit in three to five years or less, that compete with the largest check, and that change their comp plans every year to cross-sell more bank products.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "The 2025 10-K states Raymond James competes directly with other national full-service broker-dealers, investment banking firms, commercial banks, investment advisors, investment managers and, to a lesser extent, discount brokers and dealers, and faces competition from more recent entrants including fintechs and increased use of alternative sales channels by other firms.",
+        "chunk_ids": [
+          "RJF-10K-2025#109"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "The 2025 10-K identifies the continued industry-wide trend in which financial advisors depart traditional firms to form independent RIAs or join third-party RIAs, some backed by private equity investors, as resulting in a highly competitive recruiting environment.",
+        "chunk_ids": [
+          "RJF-10K-2025#90"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended March 31, 2026, management said private equity has certainly been competitive over the last 5 years, as well as some of the strategic firms.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#22"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, management said Raymond James does not lead with the highest check, and that in the absence of a true differentiated value proposition, the highest check is all a competitor has.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#59"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "The 2025 10-K states Raymond James participates, with limited exceptions, in the Protocol for Broker Recruiting, notes that certain of its competitors may withdraw from it, and that companies in the industry frequently claim that competitors have engaged in unfair hiring practices when their employees or independent contractors accept positions with competitors.",
+        "chunk_ids": [
+          "RJF-10K-2025#91"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Trade press (November 12, 2026) reports Raymond James will add $18.7 billion in client assets to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027. Why it might matter: the source states the deal merges Synovus Securities and Pinnacle Asset Management, Pinnacle Financial Partners' asset and wealth management arm.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Trade press (November 12, 2026) reports Raymond James will add 70 advisors to its Financial Institutions Division, the unit dedicated to bank and credit union advisors, as an existing FID program merges with Synovus Financial Corp.; the advisors are expected to transition in May 2027. Why it might matter: the source states the deal expands Pinnacle Financial Partners' relationship with Raymond James.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-11-12-WM-01#0"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 3,693 employee financial advisors as of September 30, 2023.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 3,826 employee financial advisors as of September 30, 2024.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 3,878 employee financial advisors as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 5,019 independent contractor financial advisors as of September 30, 2023.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 4,961 independent contractor financial advisors as of September 30, 2024.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 5,065 independent contractor financial advisors as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 8,712 total financial advisors as of September 30, 2023.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 8,787 total financial advisors as of September 30, 2024.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 10-K reports Raymond James had 8,943 total financial advisors as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $332 billion of domestic PCG assets under administration in its employee affiliation model as of March 31, 2020.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $631 billion of domestic PCG assets under administration in its employee affiliation model as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $318 billion of domestic PCG assets under administration in its independent contractor affiliation model as of March 31, 2020.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $543 billion of domestic PCG assets under administration in its independent contractor affiliation model as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $46 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) model as of March 31, 2020.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $186 billion of domestic PCG assets under administration in its RIA & Custody Services (RCS) model as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $696 billion of total domestic PCG assets under administration as of March 31, 2020.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "The 2025 investor-day deck (published June 5, 2025) reports Raymond James had $1,360 billion of total domestic PCG assets under administration as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Whether the mix across Raymond James affiliation models has shifted over time can be assessed on this evidence and the answer is yes, resting on management's own statements and the disclosed figures (with the metric definitions unverified). On the earnings call for the quarter ended March 31, 2026, CEO Paul Shoukry said that over the last year much more of the firm's recruiting has come from the independent side of the business versus the employee side, representing a mix shift, and clarified this mix shift was about the compensation ratio given the payout difference between the independent and employee channels. On the earnings call for the quarter ended September 30, 2024, CEO Paul Reilly said the RCS division has by far the highest percentage growth, that in total dollars a couple of years ago the independent channel led while this year the employee channel led, and that the old pattern of independents growing faster in down markets no longer holds. Trade press (October 29, 2026) reports the firm's recruiting success is spread across all its affiliation channels, with the independent contractor channel seeing the most interest in dollar volume and the RIA custody division growing at a high percentage rate on a smaller base. The disclosed domestic PCG assets under administration by model (2025 investor-day deck) show the employee model at $332 billion, the independent contractor model at $318 billion, and RCS at $46 billion as of March 31, 2020, versus $631 billion, $543 billion, and $186 billion respectively as of March 31, 2025.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44",
+          "RJF-TR-2026Q1#46",
+          "RJF-TR-2024Q3#66",
+          "RJF-TRADE-2026-10-29-WM-01#0",
+          "RJF-DECK-2025-investor-day#44"
+        ],
+        "part_id": "a6"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "As of September 30, 2025, Raymond James had 3,878 employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2024, Raymond James had 3,826 employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2023, Raymond James had 3,693 employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had 5,065 independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2024, Raymond James had 4,961 independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2023, Raymond James had 5,019 independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had 8,943 total financial advisors (employees plus independent contractors); the firm notes that advisors in its RCS division are not included in this financial advisor metric although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2024, Raymond James had 8,787 total financial advisors (employees plus independent contractors); the firm notes that advisors in its RCS division are not included in this financial advisor metric although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2023, Raymond James had 8,712 total financial advisors (employees plus independent contractors); the firm notes that advisors in its RCS division are not included in this financial advisor metric although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#24"
+        ],
+        "part_id": "a7.RJF",
+        "differs_because": "Advisor headcount by affiliation model is a stand-in figure \u2014 the closest disclosed proxy for the mix across affiliation models \u2014 rather than the full mix of advisors, assets, or revenue across all affiliation models."
+      }
+    ],
+    "gaps": [
+      {
+        "what": "Advisor headcount broken out by each individual affiliation model (such as Advisor Select, Corporate RIA, RIA & Custody Services, or Bank & Credit Union); the firm discloses only employee and independent contractor headcount.",
+        "suggested_source": "Raymond James filings or investor materials that break out financial advisor headcount by individual affiliation model.",
+        "part_id": "a7.RJF"
+      }
+    ]
+  }
+}

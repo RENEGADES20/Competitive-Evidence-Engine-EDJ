@@ -1,0 +1,59 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a4.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-23T00:01:12.842918-06:00",
+  "prefix_group": "5a44271c670b7d49",
+  "prefix_role": "follower",
+  "gate_wait_s": 5.73,
+  "leader_cached": false,
+  "prefix_chars": 8788,
+  "request_chars": 9133,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2457,
+    "output_tokens": 626,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 921,
+    "reasoning_tokens": 477,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.84
+  },
+  "wall_s": 9.25,
+  "tokens_per_s": 67.68,
+  "ttft_s": 1.84,
+  "reasoning_content": "The sub-question a4.MER asks about growth in younger investors and clients under 40. The only passage available is BAC-PR-2026-01-14-01#12, which mentions \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" and other rankings. This is about advisors under 40, not clients/investors under 40 growth.\n\nThe passage doesn't state any growth figures in younger investors/clients under 40. It mentions rankings about advisors under 40 (Financial Planning's Top 40 Advisors Under 40 List). That's about advisors, not investors/clients. This is a different quantity - advisors vs clients/investors.\n\nActually, the question asks about growth in younger investors and clients under 40. The passage has no growth figures. The \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List\" is about advisors under 40, not growth in clients/investors. This would be different_quantity (advisors under 40 vs growth in investors/clients under 40), but actually it's not even a growth figure - it's a ranking of advisors.\n\nActually, let me think. The passage mentions advisors under 40, which is a different group (employees/advisors, not investors/clients). And it's not a growth figure. So it's arguably not_found - nothing about growth in younger investors/clients.\n\nBut there is mention of \"Top 40 Advisors Under 40\" - that's about advisors, a different population. But it doesn't report growth. The question asks for growth.\n\nI think the best answer is not_found, because the passage says nothing about growth in younger investors/clients under 40. The advisors under 40 list is not about growth in investors/clients.\n\nActually, could it be different_quantity? The instruction says different_quantity is for a different measure (all employees or FTE for advisors, etc.). Here we have advisors under 40 (a ranking), not growth in investors/clients under 40. This is quite different - it's about advisors, not clients/investors, and it's a ranking, not growth.\n\nI'll go with not_found since nothing about growth in younger investors/clients under 40 is stated.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The only passage available mentions rankings for advisors under 40 (e.g., Financial Planning's Top 40 Advisors Under 40 List), which concerns the firm's own advisors rather than growth in younger investors or clients under 40, and states no growth figures for that population.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

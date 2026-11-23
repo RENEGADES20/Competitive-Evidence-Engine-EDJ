@@ -1,0 +1,169 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10K-2025#202",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q1#23",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#59",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10Q-2025Q3#87"
+  ],
+  "at": "2026-11-23T00:36:34.473051-06:00",
+  "prefix_group": "44738ccc0300e1ee",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.44,
+  "leader_cached": false,
+  "prefix_chars": 91296,
+  "request_chars": 91745,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18333,
+    "output_tokens": 5366,
+    "cache_hit_tokens": 9984,
+    "cache_miss_tokens": 8349,
+    "reasoning_tokens": 4514,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.31
+  },
+  "wall_s": 68.91,
+  "tokens_per_s": 77.87,
+  "ttft_s": 2.31,
+  "reasoning_content": "The sub-question a2.EDJ asks for advisor headcount for the firm (Edward Jones). I need to extract facts about financial advisor headcount.\n\nLooking at passages under a2.EDJ, there are many figures for financial advisors (actual) at period end and average, for total, U.S., and Canada.\n\nLet me collect the total firm financial advisor headcount figures.\n\nFrom EDJ-10K-2025#130: \"Financial advisors (actual): At year end 20,425... Average 20,331\" for the firm (total). Period year end December 31, 2025.\n\nFrom EDJ-10Q-2026Q2#60: \"Financial advisors (actual): At period end 20,514... Average 20,537\" (this is Q2 2026 vs Q2 2025 - at period end 20,514, 20,309; average 20,537, 20,316). Wait let me read carefully.\n\n\"At period end 20,514 20,309 ... Average 20,537 20,316 ... 20,514 20,309 ... 20,517 20,265\"\n\nSo for Q2 2026 (three months) and six months:\n- At period end: 20,514 (2026) vs 20,309 (2025)\n- Average: 20,537 vs 20,316 (three months), 20,517 vs 20,265 (six months)\n\nFrom EDJ-10Q-2026Q2#53 (in a1 list but wait, that's not citable for a2... actually the message says cite only passages listed under a2.EDJ and these passages listed under another sub-question: EDJ-10K-2025#79, EDJ-10Q-2026Q1#51, EDJ-10K-2025#204, EDJ-10K-2025#22, EDJ-10K-2025#59, EDJ-10Q-2026Q2#75, EDJ-10Q-2025Q2#27, EDJ-10Q-2025Q3#87.)\n\nSo I can cite passages under a2.EDJ and those specific ones.\n\nNote EDJ-10Q-2026Q2#53 is in a1 list, but it's not in the allowed cross-citation list. Actually wait, the message says \"the message may list the firm's other sub-questions and their passages for context only.\" And \"Cite only the passages listed under Sub-question a2.EDJ and these passages of its search pool listed under another sub-question: ...\"\n\nSo for a2, I can cite passages under a2.EDJ plus the listed ones. EDJ-10Q-2026Q2#53 mentions \"more than 20,000 financial advisors\" - but it's not in my allowed list. Actually EDJ-10Q-2026Q2#53 is under a1.EDJ and not in the cross-cite list. So I shouldn't cite it. Actually wait, let me check - it's not in the cross-list. So skip.\n\nThe main facts I need are advisor headcount. Let me gather all the total firm (U.S. + Canada combined) financial advisor headcount figures.\n\nTotal firm figures (Financial advisors (actual)):\n- EDJ-10K-2025#130: At year end 20,425 (Dec 31, 2025), 20,125 (2024), 19,232 (2023); Average 20,331, 19,650, 18,945\n- EDJ-10Q-2026Q2#60: Q2 2026 at period end 20,514; average 20,537; Q2 2025 at period end 20,309; average 20,316; six months 20,517 vs 20,265\n- EDJ-10Q-2025Q2#64: at period end 20,309 (June 27, 2025), average 20,316; 2024 19,589; six months 20,309/20,265\n- EDJ-10Q-2025Q3#67: at period end 20,429 (Sept 26, 2025), average 20,368\n- EDJ-10Q-2026Q1#51 (cross-listed): \"Financial advisors (actual): At period end\" and #52 \"20,550 20,288 ... Average 20,506 20,221\"\n\nWait, EDJ-10Q-2026Q1#51 and #52 are under a1.EDJ. But #51 is in the cross-cite list. #52 is not. Let me check: cross list is EDJ-10K-2025#79, EDJ-10Q-2026Q1#51, EDJ-10K-2025#204, EDJ-10K-2025#22, EDJ-10K-2025#59, EDJ-10Q-2026Q2#75, EDJ-10Q-2025Q2#27, EDJ-10Q-2025Q3#87.\n\nSo EDJ-10Q-2026Q1#51 is allowed (it has \"Financial advisors (actual): At period end\" header and the table continues). #51 shows \"Financial advisors (actual): At period end\" but the numbers (20,550, 20,288) appear in #52. Actually #51 ends with \"Financial advisors (actual): At period end\" and #52 starts with \"20,550 20,288 1% Average 20,506 20,221\".\n\nHmm. #51 is allowed, #52 not. But #51 doesn't have the actual numbers; it has the header. Actually let me re-read #51.\n\nEDJ-10Q-2026Q1#51: \"...Financial advisors (actual): At period end\" - it ends there, no numbers.\n\nEDJ-10Q-2026Q1#52: \"20,550 20,288 1% Average 20,506 20,221 1%... The Partnership ended the first quarter with 20,550 financial advisors.\"\n\nSo #52 has \"The Partnership ended the first quarter with 20,550 financial advisors.\" But #52 is not in the allowed list. Hmm.\n\nWait, let me re-read the instructions. \"Cite only the passages listed under Sub-question a2.EDJ and these passages of its search pool listed under another sub-question: EDJ-10K-2025#79, EDJ-10Q-2026Q1#51, EDJ-10K-2025#204, EDJ-10K-2025#22, EDJ-10K-2025#59, EDJ-10Q-2026Q2#75, EDJ-10Q-2025Q2#27, EDJ-10Q-2025Q3#87.\"\n\nSo #52 is not allowed. But actually the firm's total advisor headcount at Q1 2026 is also available from a2 passages? Let me check the a2 passages again.\n\na2.EDJ passages:\n- EDJ-10Q-2026Q2#60: Q2 2026\n- EDJ-10K-2025#58: no numbers (discussion)\n- EDJ-10Q-2025Q3#69: no FAs numbers, it's about attrition? Actually it shows \"100 102 -2% Average 99 100...\" - that's attrition %? No, let me look. It's likely net new households or something. Actually #69 shows attrition %? No.\n\nActually, let me focus. The task is to extract advisor headcount for the firm. The key total figures I can clearly cite:\n\n1. EDJ-10K-2025#130: At year end 20,425 (Dec 31, 2025). This is the firm total (U.S. + Canada). Actually wait - is it total firm or just U.S.? Let me check. #130 shows \"Financial advisors (actual): At year end 20,425 20,125 19,232 ... Average 20,331 19,650 18,945\". This is in Item 7, the \"related metrics\" table, likely total firm.\n\nThen #148 shows U.S. segment: \"Financial advisors (actual): At year end 19,540 19,253 18,378 ... 885 872 854\" (U.S. and Canada).\n\nSo #130 = total firm (20,425 at year end 2025), #148 = U.S. (19,540) and Canada (885).\n\n2. EDJ-10Q-2026Q2#60: total firm Q2 2026 at period end 20,514.\n\n3. EDJ-10Q-2025Q2#64: total firm Q2 2025 at period end 20,309.\n\n4. EDJ-10Q-2025Q3#67: total firm Q3 2025 at period end 20,429.\n\n5. EDJ-10Q-2026Q1#52 has 20,550 but not allowed. Hmm. Actually wait, is #52 under a2 or a1? Let me check. #52 is under a1.EDJ (it's in the a1 list). Actually looking, #51 and #52 are both listed under a1.EDJ. #51 is cross-listed as allowed.\n\nActually, let me reconsider. The cross-listed passages are \"these passages of its search pool listed under another sub-question\". So these are additional passages I'm allowed to cite that appear under other sub-questions. \n\nEDJ-10Q-2026Q1#51 is allowed and it has the \"Financial advisors (actual): At period end\" header but the number 20,550 is in #52.\n\nActually, re-reading #51 carefully: it ends with \"Financial advisors (actual): At period end\" - no number. So I can't get 20,550 from #51.\n\nBut wait, do I need Q1 2026 total? I have plenty of other figures. Let me just report the facts I can cite clearly.\n\nActually, the question just asks for \"Advisor headcount for the firm.\" I should provide the various headcount figures as items.\n\nLet me determine which figures are \"the firm\" (total, U.S. + Canada) vs U.S. vs Canada.\n\nTotal firm financial advisors:\n- EDJ-10K-2025#130: At year end Dec 31, 2025: 20,425; 2024: 20,125; 2023: 19,232. Average 2025: 20,331.\n- EDJ-10Q-2026Q2#60: Q2 2026 at period end 20,514; average 20,537; Q2 2025 20,309; average 20,316; six months 20,517 (2026), 20,265 (2025).\n- EDJ-10Q-2025Q2#64: Q2 2025 at period end 20,309; average 20,316; prior year 19,589; six months 20,309, 19,589; average 20,265, 19,418.\n- EDJ-10Q-2025Q3#67: Q3 2025 at period end 20,429; average 20,368.\n- EDJ-10Q-2026Q1#51 (allowed, but no number).\n\nWait, actually, let me check EDJ-10Q-2026Q1#66 and #82 - these are under a2 and show U.S. and Canada.\n\nEDJ-10Q-2026Q1#66 (under a2): \"Financial advisors (actual): At period end 19,674 19,413 1% 876 875 \u2014 Average 19,627 19,346 1% 879 875 \u2014 U.S.\" This is U.S. and Canada split.\n\nEDJ-10Q-2026Q2#82 (under a2): \"At period end 19,647 19,435 1% 867 874 -1% Average 19,642 19,391 1% 875 874 \u2014\" U.S. and Canada.\n\nEDJ-10Q-2025Q2#86 and #89 (under a2): U.S. 19,435 and Canada 874.\n\nEDJ-10Q-2025Q3#93 (under a2): U.S. 19,559 and Canada 870.\n\nThese are segment splits. The total firm is the sum of U.S. + Canada.\n\nFor the firm-level advisor headcount, I should report total firm figures.\n\nThe main \"the firm\" headcount figures:\n- Dec 31, 2025 (year end): 20,425 (from #130)\n- Q2 2026 period end: 20,514 (from #60)\n- Q2 2025 period end: 20,309 (from #64/#60)\n- Q3 2025 period end: 20,429 (from #67)\n\nI think I should provide a comprehensive set. But to keep it manageable, I'll list the key total firm figures with their periods.\n\nActually, the instruction says \"a series is one item per period.\" So I should list each period's headcount as a separate item.\n\nLet me decide which items to include. The sub-question is \"Advisor headcount for the firm\" - a fact, metric advisor_headcount. I'll provide the total firm financial advisor headcount figures.\n\nLet me list items for total firm financial advisors (actual, at period end, and maybe average):\n\n1. EDJ-10K-2025#130: \"At year end\" 20,425 (Dec 31, 2025). Period 2025-12-31. Total firm.\n2. EDJ-10K-2025#130: 20,125 (Dec 31, 2024), 19,232 (Dec 31, 2023).\n3. EDJ-10Q-2026Q2#60: 20,514 (June 26, 2026).\n4. EDJ-10Q-2025Q2#64: 20,309 (June 27, 2025).\n5. EDJ-10Q-2025Q3#67: 20,429 (Sept 26, 2025).\n\nI think I should be reasonably comprehensive but not overwhelming. Let me include the total firm at period end figures for the most recent and key periods, plus averages maybe.\n\nActually, the question is fairly simple - \"advisor headcount for the firm\". I'll provide the total firm figures. I'll include period-end and average for the main periods.\n\nLet me focus on providing clear facts. I'll create items:\n\n1. At year end Dec 31, 2025: 20,425 financial advisors (total firm).\n2. At year end Dec 31, 2024: 20,125.\n3. At year end Dec 31, 2023: 19,232.\n4. Average 2025: 20,331.\n5. Q2 2026 period end (June 26, 2026): 20,514.\n6. Q2 2025 period end: 20,309.\n7. Q3 2025 period end: 20,429.\n\nActually I should keep it focused but complete. Let me include all these.\n\nAlso, I should note the definition: \"financial advisors\" - the firm counts them as \"actual\" (not FTE). Actually there's a note: EDJ-10Q-2026Q1#62 says \"Counted on a full-time equivalent basis.\" - but that's about home office associates? Let me check #62: \"Counted on a full-time equivalent basis.\" - this is in context of... Actually it's about home office associates or some other metric. The financial advisors are counted \"actual\".\n\nLet me check #75 (cross-listed, a4): \"Average 8,887 9,429 -6% 8,938 9,419 -5% (1) Counted on a full-time equivalent basis.\" This is about home office associates (FTE). So home office associates are FTE, financial advisors are \"actual\".\n\nSo the advisor headcount is \"actual\" (not FTE). Good.\n\nFor the definition field, I could note the firm reports \"financial advisors (actual)\".\n\nLet me also note the scope: total firm = U.S. + Canada. The #130 figure appears to be total firm (consolidated). Actually, let me verify #130 is total. It says \"Financial advisors (actual): At year end 20,425...\" in Item 7 overview. This is likely the consolidated total. #148 shows U.S. (19,540) and Canada (885) = 20,425. Yes, 19,540 + 885 = 20,425. So #130 is total firm.\n\nGreat, so scope is \"\" (whole firm).\n\nLet me write the items now.\n\nFor period formats:\n- Year end Dec 31, 2025 \u2192 \"2025-12-31\"\n- Year end Dec 31, 2024 \u2192 \"2024-12-31\"\n- Year end Dec 31, 2023 \u2192 \"2023-12-31\"\n- Average 2025 \u2192 \"2025\" (calendar year)\n- Q2 2026 period end June 26, 2026 \u2192 \"2026-06-26\"\n- Q2 2025 period end June 27, 2025 \u2192 \"2025-06-27\"\n- Q3 2025 period end Sept 26, 2025 \u2192 \"2025-09-26\"\n\nLet me write concise items.\n\nActually, I'll include the most relevant figures. Let me include a good set.\n\nLet me draft the items:\n\nItem 0: At year end Dec 31, 2025, total firm had 20,425 financial advisors.\nquote: \"Financial advisors (actual): At year end 20,425 20,125 19,232 1%\"\nvalue: \"20,425\", unit: \"financial advisors\", period: \"2025-12-31\", scope: \"\", definition: \"\"\nchunk_ids: [\"EDJ-10K-2025#130\"]\n\nItem 1: 20,125 at year end 2024.\nItem 2: 19,232 at year end 2023.\nItem 3: Average 20,331 for 2025.\nItem 4: Q2 2026 period end 20,514.\nItem 5: Q2 2025 period end 20,309.\nItem 6: Q3 2025 period end 20,429.\n\nI'll include these. Also could include averages for other periods but I'll keep it focused on period-end and one average.\n\nActually, let me also include the Q2 2026 average 20,537 and Q2 2025 average 20,316? Maybe not necessary. I'll include period end figures primarily, and the year average.\n\nLet me finalize. I'll produce one cell with label \"fact\" and multiple items.\n\ndiffers_because: \"\" (fact, not different quantity)\nreason: passages state financial advisor headcount for the firm.\nderivation: operation \"\", inputs [].\n\nLet me write the items carefully with exact quotes.\n\nItem 0 quote from #130: \"Financial advisors (actual): At year end 20,425 20,125 19,232 1%\"\n\nItem 1 (2024): same quote covers 20,125.\n\nItem 2 (2023): same quote covers 19,232.\n\nItem 3 (average 2025): \"Average 20,331 19,650 18,945 3%\"\n\nItem 4 (Q2 2026): from #60: \"At period end 20,514 20,309 1% ... Average 20,537 20,316 1% ... 20,514 20,309 1% ... 20,517 20,265 1%\"\n\nActually #60 quote: \"Financial advisors (actual): At period end 20,514 20,309 1% 20,514 20,309 1% Average 20,537 20,316 1% 20,517 20,265 1%\"\n\nItem 5 (Q2 2025 period end 20,309): from #64 or #60.\n\nItem 6 (Q3 2025 period end 20,429): from #67: \"At period end 20,429 19,885 3% 20,429 19,885 3%\"\n\nLet me write them.\n\nI'll now compose the final answer.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "The Partnership (Edward Jones, U.S. and Canada) had 20,425 financial advisors at year end December 31, 2025.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The Partnership had 20,125 financial advisors at year end December 31, 2024.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,125",
+            "unit": "financial advisors",
+            "period": "2024-12-31",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The Partnership had 19,232 financial advisors at year end December 31, 2023.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "19,232",
+            "unit": "financial advisors",
+            "period": "2023-12-31",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The Partnership had an average of 20,331 financial advisors during 2025.",
+            "quote": "Average 20,331 19,650 18,945 3%",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "financial advisors (actual), average",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2026 with 20,514 financial advisors.",
+            "quote": "Financial advisors (actual): At period end 20,514 20,309 1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "The Partnership ended the second quarter of 2025 with 20,309 financial advisors.",
+            "quote": "At period end 20,309 19,589 4%",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#64"
+            ]
+          },
+          {
+            "text": "The Partnership ended the third quarter of 2025 with 20,429 financial advisors.",
+            "quote": "At period end 20,429 19,885 3%",
+            "value": "20,429",
+            "unit": "financial advisors",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "financial advisors (actual)",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#67"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state the firm's financial advisor headcount (actual) at various period ends and averages.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

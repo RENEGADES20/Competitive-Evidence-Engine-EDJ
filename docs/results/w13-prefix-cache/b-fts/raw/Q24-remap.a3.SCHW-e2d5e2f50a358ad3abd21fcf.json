@@ -1,0 +1,146 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a3.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a3.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-PR-2026-10-15-01#10",
+    "SCHW-10K-2025#118",
+    "SCHW-10Q-2026Q1#9",
+    "SCHW-DECK-2026-investor-day#43",
+    "SCHW-MONTHLY-2026-05#8",
+    "SCHW-10K-2025#116",
+    "SCHW-10Q-2025Q3#22",
+    "SCHW-DECK-2026-investor-day#41",
+    "SCHW-MONTHLY-2026-05#2",
+    "SCHW-10Q-2026Q2#186",
+    "SCHW-DECK-2026-investor-day#20",
+    "SCHW-10K-2025#126",
+    "SCHW-10Q-2026Q1#16",
+    "SCHW-10Q-2026Q1#18",
+    "SCHW-10Q-2026Q2#62"
+  ],
+  "at": "2026-11-23T00:39:05.939185-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5620,
+    "output_tokens": 3684,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4084,
+    "reasoning_tokens": 2867,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 0.84
+  },
+  "wall_s": 49.5,
+  "tokens_per_s": 74.42,
+  "ttft_s": 0.84,
+  "reasoning_content": "Let me analyze the sub-question: \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nI need to look at the passages for client assets per advisor. The passages show client assets figures ($13.33 trillion, $11.77 trillion, $13.14 trillion, etc.) but I don't see any advisor count or client assets per advisor figure.\n\nLet me look at the passages. There's no financial advisor headcount disclosed in these passages. So client assets per advisor is not disclosed, and there's no advisor count to compute it.\n\nThe sub-question is marked [proxy], asking for the closest disclosed figure. The closest figure would be client assets (total). That's the numerator. But there's no advisor count.\n\nLet me check: is there any advisor count? No. The passages mention \"independent investment advisors\" but not a count of Schwab's own financial advisors.\n\nSo the label: client assets per advisor is not disclosed. The closest disclosed figure is total client assets.\n\nActually, the sub-question is a proxy sub-question asking: \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSo client assets (total) is disclosed - $13.33 trillion (2026-09-30), $11.77 trillion (2026-03-31), $13.14 trillion (2026-05-31), and average client assets $12,050.3 billion (2026Q1).\n\nSince client assets per advisor is not directly disclosed (no advisor count), but client assets is disclosed as the closest figure (numerator of the proxy).\n\nI should return facts for client assets (the closest disclosed figure), and note that the per-advisor ratio is not disclosed because no advisor count is given.\n\nLet me think about the label. The sub-question asks for \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\" This is a [proxy] sub-question. So the named figure is client assets per advisor, but as proxy, the closest disclosed figure (client assets total) counts as a fact.\n\nActually, let me re-read: \"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo the named figure here is \"client assets per advisor\", and the closest disclosed figure would be client assets (total). The instructions say the closest measure such as total client assets is a fact.\n\nHmm, but it says \"that named figure, as the firm reports it, is a fact.\" The named figure is \"client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nI think the intent: since client assets per advisor is not directly disclosed, I should report the closest disclosed figure (client assets) as facts.\n\nBut wait - client assets is the numerator. There's no advisor count (denominator). So I cannot compute per advisor.\n\nLet me structure: The client assets per advisor is not disclosed. The closest disclosed figure is total client assets. I'll report client assets figures as facts (the proxy numerator).\n\nActually, I need to be careful. The sub-question asks for \"client assets per advisor\". The closest disclosed figure is \"client assets\" (the numerator). The advisor count (denominator) is not disclosed in these passages.\n\nI'll label the cell as fact (proxy) with items for client assets, and note in reason that per-advisor is not disclosed because no advisor headcount is given.\n\nActually, let me reconsider the labeling. Should I label it \"fact\" with client assets items, or \"not_disclosed\" with a derivation?\n\nThe per-advisor ratio itself is not disclosed. But the proxy sub-question explicitly asks for \"the closest disclosed figure if not directly disclosed\" - meaning client assets (total).\n\nI think the best approach: label as \"fact\" for the proxy (client assets total), since the sub-question is a proxy asking for the closest disclosed figure. But actually the ratio cannot be computed (no advisor count), so I can't do a derivation.\n\nLet me report client assets as facts. The items:\n1. $13.33 trillion client assets (SCHW-PR-2026-10-15-01#10, 2026-09-30)\n2. $13.14 trillion client assets (SCHW-MONTHLY-2026-05#2, 2026-05-31)\n3. $11.77 trillion client assets (SCHW-10Q-2026Q1#9, 2026-03-31)\n4. $11,767.9 billion client assets at quarter end (SCHW-10Q-2026Q1#16, 2026-03-31)\n5. Average client assets $12,050.3 billion (SCHW-10Q-2026Q1#16, 2026Q1)\n\nAlso there's the definition of client assets from SCHW-10K-2025#118.\n\nI should note that client assets per advisor is not disclosed because no financial advisor headcount is provided in these passages.\n\nLet me think about what label to use overall. The instruction says for a [proxy] sub-question, the named figure (client assets per advisor, or its closest measure like total client assets) is a fact. So I'll label it \"fact\" and include client assets items.\n\nWait, actually, I need to be careful. The proxy is \"client assets per advisor\". The closest disclosed figure is \"client assets\" (total, numerator). Since advisor count isn't disclosed, I can't even do the denominator.\n\nI'll label as \"fact\" with items being the client assets figures (the closest disclosed proxy), and note in the reason that per-advisor cannot be computed because no advisor headcount is disclosed.\n\nActually, let me reconsider. Perhaps I should think about whether the \"closest disclosed figure\" is client assets total. Yes, that's the numerator of the per-advisor ratio. The denominator (advisor count) is not disclosed.\n\nLet me include the definition of client assets as a fact too.\n\nLet me finalize the items:\n\nItem 0: Definition of client assets from SCHW-10K-2025#118:\n\"Client assets: The market value, as of the end of the reporting period, of all client assets in our custody, BDA balances, and proprietary products, which includes both cash and securities.\"\n\nItem 1: $13.33 trillion client assets (2026-09-30) from SCHW-PR-2026-10-15-01#10\nItem 2: $13.14 trillion client assets (2026-05-31) from SCHW-MONTHLY-2026-05#2\nItem 3: $11.77 trillion client assets (2026-03-31) from SCHW-10Q-2026Q1#9\nItem 4: $11,767.9 billion client assets at quarter end (2026-03-31) from SCHW-10Q-2026Q1#16\nItem 5: Average client assets $12,050.3 billion (2026Q1) from SCHW-10Q-2026Q1#16\n\nAlso, assets receiving ongoing advisory services $6,042.8 billion (SCHW-10Q-2026Q1#16) - this is a different but related figure (assets receiving ongoing advisory services, not total client assets). This could be a different_quantity? Actually it's a related measure. But the proxy is \"client assets per advisor\", and closest is total client assets. Assets receiving ongoing advisory services is a narrower measure.\n\nHmm, I think I should focus on total client assets as the closest disclosed figure. Assets receiving ongoing advisory services is a different measure.\n\nActually, let me keep it focused. The sub-question is \"client assets per advisor\". The closest disclosed figure is total client assets. I'll report total client assets as facts.\n\nFor the label, I'll use \"fact\" since the proxy allows the closest disclosed figure (client assets) to be a fact.\n\nLet me write the reason: \"Client assets per advisor is not directly disclosed because no financial advisor headcount appears in these passages; the closest disclosed figure is total client assets, which the proxy sub-question asks for.\"\n\nNow, should I also add a not_disclosed for the ratio itself? The sub-question is one cell. I'll make it \"fact\" with the client assets items.\n\nActually, re-reading more carefully: the label options are fact, different_quantity, not_disclosed, not_found. The proxy instruction says the closest measure (total client assets) is a fact. So \"fact\" is correct.\n\nLet me write out the items carefully with proper quotes.\n\nItem 0 (definition):\ntext: \"Schwab defines client assets as the market value, as of the end of the reporting period, of all client assets in its custody, BDA balances, and proprietary products, which includes both cash and securities.\"\nquote: \"Client assets: The market value, as of the end of the reporting period, of all client assets in our custody, BDA balances, and proprietary products, which includes both cash and securities.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"The market value, as of the end of the reporting period, of all client assets in our custody, BDA balances, and proprietary products, which includes both cash and securities.\"\nchunk_ids: [\"SCHW-10K-2025#118\"]\n\nItem 1:\ntext: \"Schwab reported $13.33 trillion in client assets.\"\nquote: \"$13.33 trillion in client assets\"\nvalue: \"13.33\"\nunit: \"USD trillion\" - actually the unit is \"trillion USD\" or \"USD\". Let me use \"USD\" but value \"13.33 trillion\"? The instruction says value is \"the figure as printed\". So value: \"$13.33 trillion\"? The example says value: \"20,425\" or \"$1.2 billion\". So value should be \"$13.33 trillion\". Unit: \"client assets\".\n\nLet me follow: value = \"13.33\" unit = \"trillion USD\"? Hmm. The example shows value \"20,425\" unit \"financial advisors\" and \"$1.2 billion\" unit \"USD\". So they include the $ and scale in value, unit is \"USD\".\n\nI'll do value: \"$13.33 trillion\", unit: \"USD\" or \"client assets\". Let me use unit \"client assets\" actually since that's what's measured. But the example uses \"USD\" for \"$1.2 billion\". Hmm.\n\nActually the unit should be what is counted/measured. For client assets, the unit could be \"USD\" (currency) or \"client assets\". The example \"$1.2 billion\" with unit \"USD\" suggests currency unit. But \"20,425\" with \"financial advisors\" suggests the thing counted.\n\nI'll use value \"$13.33 trillion\" and unit \"client assets\" to be clear. Actually, let me be consistent: the figure is a dollar amount, so unit \"USD\" makes sense. But client assets is the measure. I'll use unit \"client assets (USD)\". Hmm, that's verbose.\n\nLet me just use unit \"USD\" and value \"$13.33 trillion\".\n\nActually, I'll reconsider - to be safe, I'll use unit \"client assets\" since that's the quantity, and value \"13.33\" with... no, the $ matters.\n\nI'll go with: value \"$13.33 trillion\", unit \"client assets\". This is clear enough.\n\nHmm, but the guidance says unit is \"what is counted or measured\". So \"client assets\" is what's measured, expressed in USD. I'll use unit \"client assets\".\n\nLet me settle: value includes the currency symbol and scale as printed. unit = \"client assets\".\n\nItem 1:\nperiod: \"2026-09-30\"\nvalue: \"$13.33 trillion\"\n\nItem 2:\nvalue: \"$13.14 trillion\", period \"2026-05-31\"\n\nItem 3:\nvalue: \"$11.77 trillion\", period \"2026-03-31\"\n\nItem 4:\nvalue: \"$11,767.9 billion\", period \"2026-03-31\"\n\nItem 5:\nvalue: \"$12,050.3 billion\", period \"2026Q1\" (average client assets). Actually it's \"first quarter of 2026\" average. Period \"2026Q1\".\n\nLet me write these up.\n\nFor the definition item, I'll keep value empty.\n\nNow about the label and reason.\n\nlabel: \"fact\"\ndiffers_because: \"\" (fact doesn't use differs_because? Actually differs_because is for different_quantity. For fact, it's empty.)\n\nreason: \"Client assets per advisor is not directly disclosed because no financial advisor headcount appears in the passages; as a proxy, the closest disclosed figure is total client assets, which Schwab reports.\"\n\nderivation: operation \"\", inputs [].\n\nLet me write the final answer.\n\nActually, I should double check: is there any advisor count anywhere? No. The passages mention \"independent investment advisors\" (RIA clients) and \"advisors of all sizes\" but no headcount of Schwab's own financial advisors.\n\nSo client assets per advisor cannot be computed. The proxy asks for the closest disclosed figure = total client assets.\n\nI'll report that.\n\nLet me finalize the items and submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.SCHW",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Schwab defines client assets as the market value, as of the end of the reporting period, of all client assets in its custody, BDA balances, and proprietary products, which includes both cash and securities.",
+            "quote": "Client assets: The market value, as of the end of the reporting period, of all client assets in our custody, BDA balances, and proprietary products, which includes both cash and securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "The market value, as of the end of the reporting period, of all client assets in our custody, BDA balances, and proprietary products, which includes both cash and securities.",
+            "chunk_ids": [
+              "SCHW-10K-2025#118"
+            ]
+          },
+          {
+            "text": "Schwab reported $13.33 trillion in client assets as of September 30, 2026.",
+            "quote": "$13.33 trillion in client assets",
+            "value": "$13.33 trillion",
+            "unit": "client assets",
+            "period": "2026-09-30",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-PR-2026-10-15-01#10"
+            ]
+          },
+          {
+            "text": "Schwab reported $13.14 trillion in client assets as of May 31, 2026.",
+            "quote": "$13.14 trillion in client assets as of May 31, 2026",
+            "value": "$13.14 trillion",
+            "unit": "client assets",
+            "period": "2026-05-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-MONTHLY-2026-05#2"
+            ]
+          },
+          {
+            "text": "Schwab reported $11.77 trillion in client assets as of the first quarter of 2026.",
+            "quote": "the Company's $11.77 trillion in client assets",
+            "value": "$11.77 trillion",
+            "unit": "client assets",
+            "period": "2026-03-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10Q-2026Q1#9"
+            ]
+          },
+          {
+            "text": "Schwab reported client assets of $11,767.9 billion at quarter end March 31, 2026.",
+            "quote": "Client assets (in billions, at quarter end)                        $                       11,767.9",
+            "value": "$11,767.9 billion",
+            "unit": "client assets",
+            "period": "2026-03-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10Q-2026Q1#16"
+            ]
+          },
+          {
+            "text": "Schwab reported average client assets of $12,050.3 billion in the first quarter of 2026.",
+            "quote": "Average client assets (in billions)                                $                       12,050.3",
+            "value": "$12,050.3 billion",
+            "unit": "client assets",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "SCHW-10Q-2026Q1#16"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Schwab does not disclose client assets per advisor and no financial advisor headcount appears in the passages, so the ratio cannot be formed; the proxy sub-question asks for the closest disclosed figure, which is total client assets, and Schwab reports that.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "question_id": "Q16",
+  "question": "What will receiving financial advice in the future look like for clients?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a8.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a8.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-MONTHLY-2026-04#4",
+    "RJF-PR-2026-07-22-01#4",
+    "SCHW-PR-2026-07-21-01#11",
+    "RJF-DECK-2025-investor-day#77",
+    "MS-PR-2026-04-15-01#5",
+    "EDJ-10Q-2026Q2#61",
+    "RJF-PR-web-independent-ria-custody-services#0",
+    "MS-PR-2026-01-15-01#8",
+    "SCHW-10Q-2026Q1#14",
+    "SCHW-10Q-2025Q3#14",
+    "MER-TRADE-2026-10-16-IN-01#0",
+    "BAC-10K-2025#246",
+    "MS-SUPP-2026Q2#37",
+    "EDJ-10Q-2025Q2#130",
+    "SCHW-DECK-2026Q3#23",
+    "RJF-DECK-2025-investor-day#121",
+    "EDJ-10Q-2026Q2#82",
+    "MS-SUPP-2025Q4#14",
+    "SCHW-DECK-2026Q2#17",
+    "RJF-10K-2025#225",
+    "MS-SUPP-2020Q4#1",
+    "RJF-10Q-2025Q4#244",
+    "BAC-PR-2026-01-14-01#1",
+    "RJF-10Q-2026Q2#245",
+    "RJF-10Q-2026Q2#250",
+    "BAC-PR-2026-04-15-01#1",
+    "MS-TR-2025Q1#27",
+    "MS-TR-2026Q2#27",
+    "RJF-TRADE-2026-08-26-IN-01#1"
+  ],
+  "at": "2026-11-22T23:43:19.512408-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10700,
+    "output_tokens": 1652,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 9164,
+    "reasoning_tokens": 1503,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.91
+  },
+  "wall_s": 21.7,
+  "tokens_per_s": 76.13,
+  "ttft_s": 1.91,
+  "reasoning_content": "We need to extract one cell for sub-question a8.all: \"How advisor headcount and staffing levels are projected to change with future advice delivery\" metric advisor_headcount, fact label.\n\nI need to review the passages for anything about advisor headcount or staffing levels projected to change with future advice delivery.\n\nLet me scan the passages for headcount/financial advisor counts.\n\n- SCHW monthly: 39.3M accounts, no advisor headcount.\n- RJF press: PCG, no advisor headcount projections.\n- SCHW press: no.\n- RJF deck investor day: key metrics mentions \"180+ professionals, 78 MDs\", \"150+ professionals\", \"95+ professionals\" \u2014 these are headcount for Public Finance, Affordable Housing, RJL Canada, not advisor headcount projections. Different quantity? Actually these are staffing levels but not advisors and not projections about future advice delivery.\n- MS press: no headcount.\n- EDJ 10-Q: \"ended the second quarter with 20,514 financial advisors.\" That's advisor headcount, current, not projection about future change.\n- RJF press web: no headcount.\n- MS press Jan: no.\n- SCHW 10-Q: \"Our ability to attract and retain talent\" - risk factor, not projection.\n- MER trade: no.\n- BAC 10K: no headcount.\n- MS supplement: definitions, no headcount.\n- EDJ 10-Q 2025Q2: no.\n- SCHW deck 2026Q3: engagement preferences, no.\n- RJF deck investor day: \"RJnet & Advisor Access GenAI Search...\" no headcount.\n- EDJ 10Q 2026Q2: \"Financial advisors (actual): At period end 19,647 ... 19,435\" - advisor headcount current period comparison, not projection about future advice delivery.\n- MS supplement 2025Q4: no headcount.\n- SCHW deck 2026Q2: \"Powerful Combo of People + AI\" - implies people + AI for advice delivery, but no headcount projection.\n- RJF 10K 2025: no.\n- MS supplement 2020Q4: \"Wealth Management representatives 15,950...\" historical.\n- RJF 10Q: no.\n- BAC PR: no.\n- RJF 10Q: no.\n- BAC PR: no.\n- MS TR 2025Q1: recruiting side, no headcount projection.\n- MS TR 2026Q2: no headcount.\n- RJF trade: no.\n\nSo the question asks about projections of advisor headcount/staffing levels with future advice delivery. The passages do not provide any projection of advisor headcount changing with future advice delivery.\n\nThere's EDJ financial advisors count (current actual), MS Wealth Management representatives (historical), RJF deck professionals counts (for non-advisor business units). These are different_quantity? Actually the asked quantity is \"how advisor headcount and staffing levels are projected to change with future advice delivery.\" This is about projections. The current headcount figures are not projections about future change.\n\nThe sub-question is metric advisor_headcount. Hmm. The guidance says: \"fact: a passage states what the sub-question asks for this firm.\" The sub-question asks how headcount is projected to change. No passage gives projections.\n\nThere are current advisor headcount figures (EDJ: 20,514 and 19,647). Is that a fact? The sub-question asks \"How advisor headcount and staffing levels are projected to change with future advice delivery.\" The named metric is advisor_headcount. But the question is about projections.\n\nActually the metric is \"advisor_headcount\" - the fact label is for that metric. But the sub-question text is about projections. Hmm.\n\nGiven the instruction: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\" The sub-question names advisor_headcount. But the full question is about projections of change.\n\nLet me think. The sub-question is \"How advisor headcount and staffing levels are projected to change with future advice delivery.\" The metric tagged is advisor_headcount.\n\nI think there's no projection in the passages. So the answer is not_found, or perhaps there are advisor headcount facts (current) that are not about projections.\n\nActually, the current advisor headcount figures (EDJ 20,514, 19,647, and MS reps 15,950) are advisor headcount facts, but they don't address \"projected to change with future advice delivery.\" The question is about future projections.\n\nGiven the strict instruction: \"Only the quantity a sub-question names is a fact for it.\" The quantity named is advisor headcount, but the sub-question also specifies \"projected to change with future advice delivery.\" A current headcount is not a projection about future change.\n\nI think the correct label is not_found because no passage says anything about how advisor headcount/staffing is projected to change with future advice delivery.\n\nBut wait - could the current headcount be considered a fact for the advisor_headcount metric? The question asks specifically about projections of change. Current headcount doesn't answer that.\n\nHmm, but let me reconsider. The label \"fact\" is \"a passage states what the sub-question asks for this firm, in full or in part. Partial is still a fact (some periods, a narrower group or sample...).\"\n\nThe sub-question asks about how headcount is projected to change. Current headcount is not a projection of change.\n\nI'll go with not_found, since no passage discusses projections of advisor headcount/staffing levels with future advice delivery.\n\nActually, let me reconsider whether there's any \"different_quantity\" here. There are staffing levels (RJf deck: 180+ professionals, 150+ professionals, 95+ professionals) but those are for Public Finance, Affordable Housing, RJL Canada - not advisors. Those are staffing levels for different business units, not advisor headcount projections.\n\nThe question is about advisor headcount projections for future advice delivery. None of the passages address that.\n\nI'll answer not_found with empty items.\n\nActually wait, should I consider the \"People + AI\" mention from SCHW deck as relevant? \"Powerful Combo of People + AI\" - this suggests future advice delivery involves people + AI, but doesn't project headcount changes. Not a fact for advisor headcount.\n\nSo not_found is appropriate.\n\nLet me write the reason: \"No passage projects how advisor headcount or staffing levels will change with future advice delivery; passages only report current or historical headcount figures and non-advisor staffing.\"\n\nActually, should I be careful about \"current headcount\" being a fact? Let me re-read the sub-question and metric.\n\nSub-question: \"How advisor headcount and staffing levels are projected to change with future advice delivery\" [fact, metric advisor_headcount]\n\nThe \"fact\" in brackets indicates the expected label type is fact, but I should choose based on what's actually in the passages. The passages don't contain any projection.\n\nI'll submit not_found.\n\nLet me write the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.all",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage projects how advisor headcount or staffing levels will change with future advice delivery; passages only report current or historical headcount figures (e.g., EDJ's 20,514 financial advisors) and non-advisor staffing counts, none of which are projections about future advice delivery.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

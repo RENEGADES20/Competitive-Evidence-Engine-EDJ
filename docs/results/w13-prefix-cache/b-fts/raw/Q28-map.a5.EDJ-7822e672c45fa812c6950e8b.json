@@ -1,0 +1,91 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#27",
+    "EDJ-10K-2025#78",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10K-2025#103",
+    "EDJ-10Q-2025Q3#87",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2025Q2#95",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2026Q2#86",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10K-2025#71",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q1#72",
+    "EDJ-10Q-2025Q3#102",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10K-2025#33",
+    "EDJ-10K-2025#74",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q1#62"
+  ],
+  "at": "2026-11-23T01:06:12.253690-06:00",
+  "prefix_group": "2dc99d65c734bbe1",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.36,
+  "leader_cached": false,
+  "prefix_chars": 67336,
+  "request_chars": 68015,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13766,
+    "output_tokens": 860,
+    "cache_hit_tokens": 5376,
+    "cache_miss_tokens": 8390,
+    "reasoning_tokens": 710,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.44
+  },
+  "wall_s": 17.55,
+  "tokens_per_s": 49.0,
+  "ttft_s": 2.44,
+  "reasoning_content": "Let me analyze sub-question a5.EDJ: \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's.\"\n\nI need to determine if there's any passage about comparing Edward Jones's attrition rate to Merrill's specifically, or whether it can be compared.\n\nLooking at the passages, the key one is EDJ-10K-2025#27 which states: \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.\"\n\nThis is a statement about comparable firms in general, not specifically Merrill. It doesn't mention Merrill at all.\n\nThe question asks whether Edward Jones's advisor attrition rate can be compared to Merrill's. There's no passage that specifically discusses Merrill or comparing to Merrill.\n\nThe passage EDJ-10K-2025#27 mentions \"comparable firms\" but not Merrill specifically. This is a general statement about comparability to \"comparable firms.\"\n\nActually, the definition of attrition is also given: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nBut the question is about whether it can be compared to Merrill's specifically. No passage mentions Merrill.\n\nThe closest thing is EDJ-10K-2025#27: \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms.\" This is a statement about comparability but to \"comparable firms\" generally, not Merrill specifically.\n\nSo for a5.EDJ, I think the answer is not_found - no passage discusses whether it can be compared to Merrill's specifically.\n\nActually wait, let me think about whether the \"comparable firms\" statement is a fact or different_quantity. The question is specifically about Merrill. The passage says \"comparable firms\" which is a general category, not Merrill specifically. So it's not a direct answer to whether EDJ's rate can be compared to Merrill's.\n\nI think the label should be not_found, since no passage addresses comparison to Merrill specifically.\n\nActually, let me reconsider. The statement \"the Partnership believes its rate of attrition of financial advisors is in line with comparable firms\" is a statement about comparability of the attrition rate to other firms (comparable firms). This is related but doesn't specifically address Merrill.\n\nSince the question asks specifically about Merrill, and no passage mentions Merrill, I'll go with not_found.\n\nBut wait - could this be a fact? The question is \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's.\" The passage says the rate is \"in line with comparable firms.\" Merrill could be considered a comparable firm, but the passage doesn't say that.\n\nI think not_found is the most appropriate answer. The passages don't address whether EDJ's attrition rate can be compared to Merrill's specifically.\n\nActually, let me think more carefully. There's also the definition of the attrition metric. EDJ-10Q-2025Q2#66 gives the definition: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nThis definition could be relevant to whether it can be compared to Merrill's, but it doesn't tell us Merrill's definition or whether they're comparable.\n\nI'll go with not_found. The passages say nothing about comparing EDJ's attrition rate to Merrill's.\n\nLet me write the reason clearly.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discusses whether Edward Jones's advisor attrition rate can be compared to Merrill's; the only related statement (EDJ-10K-2025#27) says the rate is 'in line with comparable firms' generally, without naming Merrill or addressing comparability to it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "question_id": "Q20",
+  "question": "What evidence is there about how clients under 40 choose a financial advisor?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a3.all.b3",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a3.all"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-TR-2024Q4#3",
+    "SCHW-MONTHLY-2026-02#8",
+    "MS-TR-2025Q3#9",
+    "BAC-SUPP-2025Q4#18",
+    "MS-SUPP-2025Q4#35",
+    "SCHW-MONTHLY-2026-01#3",
+    "SCHW-PR-2026-04-16-01#45"
+  ],
+  "at": "2026-11-23T00:07:57.710869-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4443,
+    "output_tokens": 472,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 2907,
+    "reasoning_tokens": 330,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.5
+  },
+  "wall_s": 6.89,
+  "tokens_per_s": 68.51,
+  "ttft_s": 1.5,
+  "reasoning_content": "Let me analyze this task. The question asks about evidence regarding how clients under 40 choose a financial advisor. Sub-question a3.all asks: What financial priorities and life-stage needs shape how clients under 40 choose an advisor?\n\nThe passages provided are all about Schwab, Morgan Stanley, BAC - none of them discuss clients under 40, financial priorities, life-stage needs, or how they choose an advisor. None of these passages contain any information about the topic.\n\nLet me review the passages:\n- SCHW-TR-2024Q4#3: Rick Wurster introductory remarks about Schwab's purpose\n- SCHW-MONTHLY-2026-02#8: trading days, workplace plan accounts, client activity data\n- MS-TR-2025Q3#9: Sharon Yeshaya about Institutional Securities\n- BAC-SUPP-2025Q4#18: balance sheet liabilities\n- MS-SUPP-2025Q4#35: definitions of client assets, net new assets, etc.\n- SCHW-MONTHLY-2026-01#3: About Charles Schwab description\n- SCHW-PR-2026-04-16-01#45: footnotes\n\nNone of these mention clients under 40, financial priorities, life-stage needs, or advisor choice.\n\nSo the label should be not_found, since the passages say nothing about it.\n\nActually, let me reconsider - none of these are different_quantity either. There's no related quantity mentioned about clients under 40 choosing advisors.\n\nThe answer is not_found with no items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.all",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages discuss financial priorities or life-stage needs shaping how clients under 40 choose an advisor; they concern Schwab's corporate purpose, monthly activity metrics, Morgan Stanley institutional securities results, Bank of America balance sheet items, and metric definitions.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

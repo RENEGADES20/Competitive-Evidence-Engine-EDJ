@@ -1,0 +1,174 @@
+{
+  "question_id": "Q30",
+  "question": "What is Merrill's standalone profitability?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a1.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-TR-2026Q2#21",
+    "BAC-DECK-2026Q3#30",
+    "BAC-10Q-2026Q2#88",
+    "BAC-SUPP-2026Q1#43",
+    "BAC-10K-2025#246",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-TR-2025Q3#26",
+    "BAC-DECK-2026Q2#19",
+    "BAC-10Q-2026Q1#71",
+    "BAC-SUPP-2026Q3#51",
+    "BAC-10K-2025#247",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q1#26",
+    "BAC-DECK-2026Q1#26",
+    "BAC-10Q-2025Q3#93",
+    "BAC-SUPP-2026Q2#52",
+    "BAC-10K-2025#244",
+    "BAC-PR-2026-01-14-01#11",
+    "BAC-TR-2024Q4#30",
+    "BAC-DECK-2025-investor-day#10",
+    "BAC-10Q-2025Q2#93",
+    "BAC-SUPP-2025Q4#53",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "BAC-TR-2025Q1#28",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-PR-2026-01-14-01#13",
+    "BAC-TR-2026Q2#20",
+    "BAC-10Q-2025Q2#94",
+    "BAC-PR-2026-04-15-01#11",
+    "BAC-TR-2026Q1#25",
+    "BAC-PR-2026-07-14-01#11",
+    "BAC-10Q-2026Q2#89",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-10Q-2025Q3#94",
+    "BAC-PR-2026-01-14-01#12",
+    "BAC-10Q-2025Q3#95",
+    "BAC-10Q-2026Q1#72",
+    "BAC-10Q-2025Q2#90",
+    "BAC-10Q-2026Q2#85",
+    "BAC-10Q-2026Q1#69",
+    "MER-TRADE-2026-11-12-IN-01#2",
+    "MER-TRADE-2026-10-02-IN-01#1"
+  ],
+  "at": "2026-11-23T01:15:03.427716-06:00",
+  "prefix_group": "a5eeb9c5c6b14798",
+  "prefix_role": "solo",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": 66409,
+  "request_chars": 66808,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17155,
+    "output_tokens": 2619,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 15619,
+    "reasoning_tokens": 1662,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.59
+  },
+  "wall_s": 41.36,
+  "tokens_per_s": 63.32,
+  "ttft_s": 2.59,
+  "reasoning_content": "The sub-question asks for Merrill's standalone profitability. Looking at the passages, Merrill's profitability is not reported on a standalone basis. GWIM consists of Merrill Wealth Management and Bank of America Private Bank. Profitability (net income, pretax income) is reported only at the GWIM segment level, not split into Merrill vs Private Bank.\n\nHowever, revenue is reported separately for Merrill Wealth Management (\"Merrill Wealth Management revenue of $5.7 billion\", \"$20.7 billion\", \"$4.9 billion\", \"$5.3 billion\"), but that's revenue, not profitability.\n\nSo the question asks for standalone profitability, and the closest disclosed proxy where a standalone figure is not reported.\n\nThe passages show:\n- Merrill Wealth Management revenue (a proxy, but revenue not profitability) - different_quantity\n- GWIM net income (a wider unit containing Merrill and Private Bank) - different_quantity\n\nThe question asks for profitability. GWIM net income is the closest proxy but it's a wider unit. Merrill revenue is a different measure (revenue vs profitability).\n\nLet me think about what to label. The sub-question is a [fact] type asking for Merrill's standalone profitability and closest disclosed proxy.\n\nSince no standalone profitability is reported, the closest proxy would be GWIM net income (the profitability of the segment that includes Merrill). That's a different_quantity (wider unit).\n\nAlso there's Merrill revenue figures, which is a different measure.\n\nThe instructions: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\"\n\nSo GWIM net income is a wider unit. I should label different_quantity.\n\nAlso Merrill revenue ($158B in revenue per investor day deck, \"$20.7 billion\", \"$5.7 billion\", \"$4.9 billion\", \"$5.3 billion\") - these are revenue, a different measure, but the question asks for profitability, so revenue is a different quantity too.\n\nThe closest disclosed proxy where a standalone figure is not reported - this suggests we should capture the proxy. The proxy for profitability would be GWIM net income.\n\nLet me decide what to include. I think the most relevant items:\n1. GWIM net income (wider unit proxy) - different_quantity\n2. Merrill Wealth Management revenue (different measure) - different_quantity\n\nActually, let me re-read the sub-question. It's marked [fact] but that's just the fact-type label in the list. The instruction says to label cells fact/different_quantity/etc based on whether the passage states what's asked.\n\nThe question asks for \"profitability attributed to or reported for Merrill on a standalone basis, and the closest disclosed proxy where a standalone figure is not reported.\"\n\nNo standalone Merrill profitability is reported. So the answer is: no standalone figure exists; closest proxy is GWIM net income (segment-level).\n\nI'll provide a cell labeled different_quantity with items capturing:\n- GWIM net income (the segment profitability, wider unit)\n- Merrill Wealth Management revenue (the closest Merrill-specific disclosed figure, but it's revenue not profitability)\n\nActually, let me think about what's the \"closest disclosed proxy.\" Revenue is Merrill-specific but is not profitability. GWIM net income is profitability but not Merrill-specific.\n\nThe sub-question says \"profitability ... on a standalone basis, and the closest disclosed proxy where a standalone figure is not reported.\" So the proxy is meant to be a profitability proxy. GWIM net income is the profitability proxy (wider unit).\n\nI'll include both GWIM net income and Merrill revenue as different_quantity items, explaining differs_because.\n\nLet me structure this. The cell should have label different_quantity, differs_because explaining, and items.\n\nActually, since the question is specifically about \"profitability,\" the most relevant proxy is GWIM net income. Merrill revenue is arguably a different measure (revenue, not profitability). Both are different_quantity.\n\nLet me include the key items:\n\n1. GWIM net income figures (segment-level, includes both Merrill and Private Bank). Various periods.\n2. Merrill Wealth Management revenue figures (Merrill-specific but revenue not profitability).\n\nFor the differs_because, I'll explain that no standalone Merrill profitability is disclosed; GWIM net income is segment-level including Private Bank, and Merrill revenue is reported but is revenue not profitability.\n\nLet me pick the items carefully. I'll provide multiple items for the GWIM net income across periods and the Merrill revenue.\n\nActually, I should be careful and focus. Let me include:\n\nGWIM net income items (different_quantity, wider unit):\n- 3Q26 net income $1,540M\n- 2Q26 net income $1,413M\n- 1Q26 net income $1,329M\n- 4Q25 net income $1,405M\n- FY2025 net income $4,670M\n- FY2024 net income $4,263M\n\nMerrill revenue items (different_quantity, different measure):\n- Merrill Wealth Management revenue $20.7 billion (FY2025)\n- Merrill Wealth Management revenue $5.7 billion (2Q26)\n- Merrill Wealth Management revenue $5.3 billion (3Q25)\n- Merrill Wealth Management revenue $4.9 billion (2Q25)\n\nActually I think I should keep it focused but comprehensive. The core point is: no standalone Merrill profitability is disclosed. The closest proxy is GWIM net income (segment includes Merrill + Private Bank). Merrill's own revenue is disclosed but not profitability.\n\nLet me write the cell.\n\ndiffers_because: \"No standalone Merrill profitability is disclosed; GWIM profitability (net income) is reported only at the combined GWIM segment level (Merrill Wealth Management plus Bank of America Private Bank), and Merrill is disclosed separately only for revenue, not profitability.\"\n\nI'll include items for both.\n\nLet me write out the items. I'll include a reasonable set.\n\nFor GWIM net income (wider unit):\nItem 0: 3Q26 net income $1,540M, period 2026-09-30\nItem 1: 2Q26 net income $1,413M, period 2026-06-30\nItem 2: FY2025 net income $4,670M, period FY2025\nItem 3: FY2024 net income $4,263M, period FY2024\n\nFor Merrill revenue (different measure):\nItem 4: FY2025 Merrill revenue $20.7 billion\nItem 5: 2Q26 Merrill revenue $5.7 billion\nItem 6: 3Q25 Merrill revenue $5.3 billion\n\nI think this is sufficient. Let me get the exact quotes.\n\nFor 3Q26 GWIM net income: \"Net income $1,540 $1,413 $1,265\" from BAC-PR-2026-10-14-01#11. Net income $1,540 for 9/30/2026.\n\nFor FY2025: BAC-10K-2025#244 shows Net income $4,670 for 2025, $4,263 for 2024.\n\nFor Merrill revenue FY2025: BAC-10K-2025#247 \"Merrill Wealth Management revenue of $20.7 billion increased nine percent\"\n\nFor 2Q26 Merrill revenue: BAC-10Q-2026Q2#89 \"Merrill Wealth Management revenue of $5.7 billion increased 16 percent\"\n\nFor 3Q25 Merrill revenue: BAC-10Q-2025Q3#94 \"Merrill Wealth Management revenue of $5.3 billion increased 10 percent\"\n\nOK let me write it up. I'll keep items concise.\n\nLet me finalize the values and units. Net income in millions of USD. Revenue in billions of USD (as stated).\n\nPeriod format: 3Q26 = 2026-09-30 (point in time). FY2025 = FY2025.\n\nLet me write.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MER",
+        "label": "different_quantity",
+        "differs_because": "No standalone Merrill profitability (net income / pretax income) is disclosed; profitability is reported only at the combined GWIM segment level, which contains both Merrill Wealth Management and Bank of America Private Bank (a wider unit). Merrill is disclosed separately only for revenue, not profitability (a different measure).",
+        "reason": "The passages never report a standalone Merrill profitability figure; they report GWIM segment net income (a wider unit including the Private Bank) and Merrill-only revenue (a different measure), which are the closest disclosed proxies.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        },
+        "items": [
+          {
+            "text": "GWIM segment net income of $1,540 million for the three months ended September 30, 2026, reported at the combined GWIM level (Merrill Wealth Management plus Bank of America Private Bank).",
+            "quote": "Net income $1,540 $1,413 $1,265",
+            "value": "1,540",
+            "unit": "USD millions",
+            "period": "2026-09-30",
+            "scope": "GWIM segment (Merrill Wealth Management and Bank of America Private Bank)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-10-14-01#11"
+            ]
+          },
+          {
+            "text": "GWIM segment net income of $1,413 million for the three months ended June 30, 2026, reported at the combined GWIM level.",
+            "quote": "Net income $1,413 $1,329 $993",
+            "value": "1,413",
+            "unit": "USD millions",
+            "period": "2026-06-30",
+            "scope": "GWIM segment (Merrill Wealth Management and Bank of America Private Bank)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-07-14-01#10"
+            ]
+          },
+          {
+            "text": "GWIM segment net income of $4,670 million for the year ended December 31, 2025, reported at the combined GWIM level.",
+            "quote": "Net income                                  $            4,670      $            4,263            10",
+            "value": "4,670",
+            "unit": "USD millions",
+            "period": "FY2025",
+            "scope": "GWIM segment (Merrill Wealth Management and Bank of America Private Bank)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-10K-2025#244"
+            ]
+          },
+          {
+            "text": "Merrill Wealth Management revenue of $20.7 billion for the year ended December 31, 2025, reported for Merrill alone (revenue, not profitability).",
+            "quote": "Merrill Wealth Management revenue of $20.7 billion increased nine percent primarily driven by higher asset management fees",
+            "value": "20.7",
+            "unit": "USD billions",
+            "period": "FY2025",
+            "scope": "Merrill Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-10K-2025#247"
+            ]
+          },
+          {
+            "text": "Merrill Wealth Management revenue of $5.7 billion for the three months ended June 30, 2026, reported for Merrill alone (revenue, not profitability).",
+            "quote": "Merrill Wealth Management revenue of $5.7 billion increased 16 percent primarily driven by higher asset management fees",
+            "value": "5.7",
+            "unit": "USD billions",
+            "period": "2026-06-30",
+            "scope": "Merrill Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-10Q-2026Q2#89"
+            ]
+          },
+          {
+            "text": "Merrill Wealth Management revenue of $5.3 billion for the three months ended September 30, 2025, reported for Merrill alone (revenue, not profitability).",
+            "quote": "Merrill Wealth Management revenue of $5.3 billion increased 10 percent primarily driven by higher asset management fees",
+            "value": "5.3",
+            "unit": "USD billions",
+            "period": "2025-09-30",
+            "scope": "Merrill Wealth Management",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-10Q-2025Q3#94"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

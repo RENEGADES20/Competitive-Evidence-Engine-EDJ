@@ -1,0 +1,125 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a4.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a4.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#4",
+    "RJF-TRADE-2026-11-05-WM-01#1",
+    "RJF-TRADE-2026-11-12-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-10-23-WM-01#0"
+  ],
+  "at": "2026-11-23T00:51:44.952957-06:00",
+  "prefix_group": "f6e7f82bc55e676f",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.39,
+  "leader_cached": false,
+  "prefix_chars": 75816,
+  "request_chars": 76993,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17604,
+    "output_tokens": 1029,
+    "cache_hit_tokens": 8832,
+    "cache_miss_tokens": 8772,
+    "reasoning_tokens": 526,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.77
+  },
+  "wall_s": 14.25,
+  "tokens_per_s": 72.21,
+  "ttft_s": 2.77,
+  "reasoning_content": "I need to answer sub-question a4.RJF about net new assets and client asset flows for Raymond James.\n\nLet me look at the passages I can cite. The most relevant passage is RJF-TRADE-2026-10-29-WM-01#1 which contains specific net new assets figures.\n\nKey facts from RJF-TRADE-2026-10-29-WM-01#1:\n- record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year\n- Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion\n- Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%\n\nAlso RJF-TRADE-2026-10-29-WM-01#0: recruited advisors represented more than $82 billion in client assets, trailing 12-month production of $538 million.\n\nAlso RJF-TRADE-2026-11-05-WM-01#0: recruited $538 million in trailing 12-month production... more than $82 billion in client assets.\n\nThe net new assets metric is specifically the $98 billion fiscal year and $23 billion quarter. Also client assets under administration $1.87 trillion.\n\nLet me extract these as facts. The sub-question asks net new assets and client asset flows.\n\nI'll create one cell with multiple items (facts).\n\nItems:\n1. Net new assets fiscal year: \"more than $98 billion\" - domestic PCG net new assets rose 88% for fiscal year to record\n2. Net new assets for quarter: \"nearly $23 billion\" - annualized growth 5.3%\n3. Client assets under administration: $1.87 trillion, up 1% sequential, 12% YoY\n\nThese are all facts about net new assets and client asset flows.\n\nLet me get the quotes.\n\nFrom RJF-TRADE-2026-10-29-WM-01#1:\n\"Overall, the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\"\n\n\"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\"\n\nI'll make items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "quote": "Overall, the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.",
+            "value": "$1.87 trillion",
+            "unit": "client assets under administration",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "value": "more than $98 billion",
+            "unit": "net new assets",
+            "period": "FY2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James reported net new assets for the fiscal fourth quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "nearly $23 billion",
+            "unit": "net new assets",
+            "period": "2026Q4",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage explicitly states Raymond James's client assets under administration and net new assets figures for the fiscal year and quarter.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

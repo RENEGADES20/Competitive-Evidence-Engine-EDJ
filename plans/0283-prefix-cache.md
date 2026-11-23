@@ -54,7 +54,8 @@ cache-hit share rises from 4% to >= 50%, $/question falls below #272's $0.52, ad
   scripts before the full run.
 - **NB1** no-enum schema and firm-block layout apply to anthropic and openai requests too. **NB2** the prefix lists
   every sub-question of the firm spec, incl. cells with an empty allowed set (as the firm call did); test asserts it.
-  **NB3** PR adds the mock `eval_run.py --as-of 2026-11-17 --baseline evalsaselines\corpus-2026-11-19eport.json`
+  **NB3** PR adds the mock `eval_run.py --as-of 2026-11-17 --baseline evalsaselines\corpus-2026-11-19
+eport.json`
   result. **NB4** if the gate moves to `done`, Q10 keeps its probe timings (noted in the doc). **NB6** `docs/RUN.md`
   gets both OS blocks for the new settings.
 
@@ -83,13 +84,14 @@ cache-hit share rises from 4% to >= 50%, $/question falls below #272's $0.52, ad
 7. Results doc, scoring inputs, PR. verify-cee not run: the app shows nothing different (CLAUDE.md "Verification").
 
 ## Acceptance
-- [ ] `pytest -q` -> all pass locally and `gh pr checks` green; tests (a)-(d) and step 3 present.
-- [ ] Mock compare (step 5, `cmp_mock.py` method) -> 30/30 identical to clean `main`.
-- [ ] Real run report: map cache-hit share of map input >= 50% (or the doc explains the measured ceiling); overall
+- [x] `pytest -q` -> all pass locally (1192; CI on the PR) and `gh pr checks` green; tests (a)-(d) and step 3 present.
+- [x] Mock compare (step 5, `cmp_mock.py` method) -> 30/30 identical to clean `main`.
+- [~] Real run report: map cache-hit share of map input >= 50% (or the doc explains the measured ceiling); overall
   share; tokens and $ per question < $0.52 with the drop; map and critical-path p50 vs #272 test B; critical-path
-  p50 <= 184 s + measured `gate_wait_s` p50.
-- [ ] B3: `cmp_cells.py` table and trigger result in the results doc.
-- [ ] Quality: blind + adjudicated per #272 "Scoring"; adjudicated >= 24/30. Every raw record saved; calls and $ in the PR.
+  p50 <= 184 s + measured `gate_wait_s` p50. -> hit share 0.597 MET; off-peak $0.398/q MET (billed $0.562 mixed
+  tiers); critical path 272 s NOT MET (provider slowdown confounds).
+- [x] B3: `cmp_cells.py` table and trigger result in the results doc (trigger YES).
+- [ ] Quality (pending scorers): blind + adjudicated per #272 "Scoring"; adjudicated >= 24/30. Every raw record saved; calls and $ in the PR.
 
 ## Paid calls (TL go-ahead 2026-11-22 on #283, incl. Gate 3)
 Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepseek-v4-pro on `/beta`, settings as
@@ -131,3 +133,7 @@ Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepse
 - 2026-11-22 22:53 - full-run count phase at gate 8f36b7d (0 calls): 412 new round-1 maps (Q10 reused), usd.py
   ceiling `-MaxCalls 854`; expected about 460 new calls (412 maps + re-maps + 29 reduces), about $8 off-peak.
   Stopped here: the coordinator starts the full run.
+- 2026-11-23 07:30 - full run (coordinator; 477 new calls, $16.15 billed, 228 calls in the peak window). Map hit share
+  0.597 (followers 0.894); off-peak like for like $0.398/q vs $0.519; critical path p50 272 s (provider output speed
+  down: reduce 126 -> 158 s p50 though unchanged). B3 trigger YES (labels 18%, unmatched 2.43% vs 0.07%): layout
+  named as suspected cause. Results `docs/results/w13-prefix-cache.md`; blind inputs ready; scores pending.

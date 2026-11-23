@@ -1,0 +1,84 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a8.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a8.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "BAC-PR-2026-01-14-01#12"
+  ],
+  "at": "2026-11-23T00:01:12.850418-06:00",
+  "prefix_group": "5a44271c670b7d49",
+  "prefix_role": "follower",
+  "gate_wait_s": 5.73,
+  "leader_cached": false,
+  "prefix_chars": 8788,
+  "request_chars": 9171,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2461,
+    "output_tokens": 1097,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 925,
+    "reasoning_tokens": 696,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.66
+  },
+  "wall_s": 15.11,
+  "tokens_per_s": 72.6,
+  "ttft_s": 1.66,
+  "reasoning_content": "The sub-question a8.MER asks how Edward Jones's disclosures and initiatives for younger investors compare to those of competitors. But the firm is Merrill (MER). I have only one passage to cite: BAC-PR-2026-01-14-01#12, which is about Bank of America / Merrill's disclosures, mentioning \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" and similar.\n\nWait, the question is about Edward Jones's disclosures compared to competitors. But I'm answering for Merrill (MER). The passage is about Merrill/BofA's disclosures. The sub-question a8 is a comparison, but I'm asked to extract facts about this firm (Merrill).\n\nActually, looking at the structure: a8.MER [comparison] asks how Edward Jones's disclosures and initiatives for younger investors compare to those of competitors. But the firm is Merrill. This seems like a comparison sub-question where I need to extract what Merrill (a competitor) discloses about younger investors, which would then be compared to Edward Jones.\n\nThe passage BAC-PR-2026-01-14-01#12 mentions: \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" and \"Top Next Generation Advisors (2025)\".\n\nThis is a fact about Merrill's disclosures regarding younger/next generation advisors. But the sub-question asks about comparison with Edward Jones. Since I'm extracting for Merrill (the competitor), the relevant fact is what Merrill discloses about younger investors/next-gen.\n\nActually, let me think about the label. The sub-question is about \"Edward Jones's disclosures and initiatives for younger investors compare to those of competitors.\" For Merrill, the relevant disclosures are about Merrill's own next-gen advisors. This would be a fact about Merrill's disclosures/initiatives regarding younger (next generation) advisors.\n\nThe passage mentions \"No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\" - this is about advisors under 40, which is relevant to younger investors/next generation.\n\nLet me extract this as a fact.\n\nActually, \"Top Next Generation Advisors (2025)\" and \"Top 40 Advisors Under 40 List (2025)\" are both relevant to younger/next-gen advisors.\n\nLet me form the cell. The sub-question is a comparison, but for the firm Merrill, I should extract what Merrill discloses about younger investors/next-gen initiatives.\n\nLabel: fact - Merrill discloses that it ranks No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025) and Forbes' Top Next Generation Advisors (2025).\n\nActually, let me be careful. The items should be figures or statements. These are rankings, not quantities per se. They're facts about disclosures.\n\nLet me create items:\n\nItem 1: No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)\nItem 2: No. 1 on Forbes' Top Next Generation Advisors (2025)\n\nThese are both facts about Merrill's disclosure of younger/next-gen advisor recognition.\n\nValue: \"No. 1\", unit: \"ranking\", period \"2025\" for these. Actually the Top 40 Advisors Under 40 List is 2025.\n\nLet me write these items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Merrill (Bank of America's GWIM segment) states it ranked No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025), reflecting recognition of its advisors under 40.",
+            "quote": "No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025)",
+            "value": "No. 1",
+            "unit": "ranking",
+            "period": "2025",
+            "scope": "Global Wealth & Investment Management (GWIM)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          },
+          {
+            "text": "Merrill (Bank of America's GWIM segment) states it ranked No. 1 on Forbes' Top Next Generation Advisors list (2025).",
+            "quote": "No. 1 on Forbes' Top Women Wealth Advisors Best-in-State (2025), Best-in-State Wealth Management Teams (2026), Top Next Generation Advisors (2025)",
+            "value": "No. 1",
+            "unit": "ranking",
+            "period": "2025",
+            "scope": "Global Wealth & Investment Management (GWIM)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-PR-2026-01-14-01#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage contains Merrill's disclosure of recognition for younger/next-generation advisors, which is the competitor-side information relevant to comparing Edward Jones's disclosures and initiatives for younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

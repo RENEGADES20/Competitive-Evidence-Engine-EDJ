@@ -1,0 +1,162 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "BAC-TR-2026Q2#63",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9"
+  ],
+  "schema_fallback": [],
+  "enum_values": 72,
+  "at": "2026-11-23T01:07:38.023097-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5526,
+    "output_tokens": 7031,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 3862,
+    "reasoning_tokens": 5615,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.5
+  },
+  "wall_s": 103.91,
+  "tokens_per_s": 67.66,
+  "ttft_s": 1.5,
+  "reasoning_content": "Let me analyze the evidence matrix and construct the answer.\n\nAspects:\n- a1 [fact]: Edward Jones's advisor attrition rate\n- a2 [series, adjacent only]: Closest disclosed measure to EDJ's advisor attrition rate\n- a3 [fact]: Merrill's advisor attrition rate\n- a4 [series, adjacent only]: Closest disclosed measure to Merrill's advisor attrition rate\n- a5 [comparison]: one comparison claim, part_id a5\n\nFirms in order: Edward Jones (EDJ), Merrill (MER).\n\nNo time window in question, so no recency required? The question doesn't specify a time window. So no \"why it might matter\" needed... wait, let me check. Recency: \"For every item of an aspect marked recency, and every item when the question has a time window\". No aspects marked recency here, and no time window. So no why-lines.\n\nNow let me write claims.\n\na1: Edward Jones's advisor attrition rate (fact). 4 items.\n\nItem 1: 6.1% for Q3 2025. Cite EDJ-10Q-2025Q3#70, EDJ-10Q-2025Q2#66.\nItem 2: 6.4% Q2 2025. Cite EDJ-10Q-2025Q2#67, EDJ-10Q-2025Q2#66.\nItem 3: 6.0% nine months ended Sept 26, 2025 vs 5.1% nine months ended Sept 27, 2024. Cite EDJ-10Q-2025Q3#68, EDJ-10Q-2025Q3#69. Note period label says 2025Q3 but it's nine months.\nItem 4: 4.7% Q3 2024. Cite EDJ-10Q-2025Q3#68, EDJ-10Q-2025Q3#69.\n\nThese are fact cells. part_id for each: a1.EDJ? Wait, the part_id enum includes \"a1.EDJ\", \"a2.EDJ\", \"a5.EDJ\", \"a3.MER\", \"a4.MER\", \"a5.MER\", and a1.research etc., and a1, a2, a3, a4, a5, \"\".\n\nThe cell id is a1.EDJ. So part_id for claims from a1.EDJ is \"a1.EDJ\".\n\nActually wait, the instruction says \"A fact cell is a claim... A cell id is the part_id of what you write from it.\" So part_id = \"a1.EDJ\" for the four items.\n\na2: adjacent only. stand-in figure. Each adjacent item carries differs_because. part_id \"a2.EDJ\".\n\na3: Merrill's advisor attrition rate (fact). One item: Borthwick stated adviser attrition near historic lows, no specific rate. part_id \"a3.MER\".\n\na4: adjacent. part_id \"a4.MER\".\n\na5: comparison claim, part_id \"a5\".\n\nLet me draft.\n\nFor a1 items, I need to state definition and periods. Date every claim.\n\nClaim a1 item 1: \"Edward Jones: The 10-Q for the period ended September 26, 2025 states financial advisor attrition was 6.1% for the third quarter of 2025, attributing it to a variety of factors including a rise in departures of advisors with tenure of five years or less.\" Cite EDJ-10Q-2025Q3#70, EDJ-10Q-2025Q2#66.\n\nActually the definition source is EDJ-10Q-2025Q2#66. Let me include definition.\n\nLet me write with period and definition.\n\nItem 1: period 2025Q3, value 6.1%.\nItem 2: period 2025Q2, 6.4%.\nItem 3: nine months ended Sep 26, 2025, 6.0%, vs 5.1% nine months ended Sep 27, 2024.\nItem 4: period 2024Q3, 4.7%.\n\nFor item 3, period labeled 2025Q3 but actually nine months. I should say what it covers: \"for the nine months ended September 26, 2025\".\n\nThe definition: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" I can state this once or in each. I'll state it briefly.\n\nActually I'll write each item clearly with the definition context. Since items 1 and 2 share definition cite EDJ-10Q-2025Q2#66.\n\nLet me write.\n\na1.EDJ claims (4 items):\n\n1. \"Edward Jones: The 10-Q for the period ended September 26, 2025 states financial advisor attrition was 6.1% for the third quarter of 2025, attributing it to a variety of factors including a rise in departures of advisors with tenure of five years or less. The company defines attrition % as the annualized number of financial advisors that left or retired during the period compared to the total number of financial advisors as of period end.\" cite #70, #66.\n\n2. \"Edward Jones: The 10-Q for the period ended June 27, 2025 states financial advisor attrition increased to 6.4% for the second quarter of 2025, primarily due to an increase in retirements, consistent with industry trends. [definition]\" cite #67, #66.\n\n3. \"Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 6.0% for the nine months ended September 26, 2025, versus 5.1% for the nine months ended September 27, 2024.\" cite #68, #69.\n\n4. \"Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 4.7% for the third quarter of 2024.\" cite #68, #69.\n\nWait, item 3's period is labeled 2025Q3 but the value covers nine months. Item 4 period 2024Q3. Both cite #68, #69.\n\na2 adjacent items (5 items):\n\nEach is adjacent with differs_because. These are headcount figures, stand-in for attrition rate.\n\nItem 1: 20,429 financial advisors, period 2025-09-26. differs_because \"Financial advisor headcount is not an attrition rate.\"\nItem 2: 20,309, 2025-06-27.\nItem 3: 20,514, 2026-06-26.\nItem 4: 20,425, 2025-12-31.\nItem 5: definition of attrition % - this is a definition, not a figure. Hmm, item 5 is a definition cell. It's a stand-in figure? Actually item 5 is the definition itself. It's adjacent only.\n\nFor item 5, the text is the definition. differs_because: \"This is the definition of attrition, not a disclosed attrition rate figure.\"\n\nActually, let me think about differs_because for each. The aspect is \"Closest disclosed measure to Edward Jones's advisor attrition rate\". These are headcount figures (stand-in). differs_because should explain why it's not the attrition rate.\n\nI'll use \"Financial advisor headcount at period end is not an attrition rate.\" for items 1-4. For item 5, \"This defines attrition %, but is not itself a disclosed attrition rate.\"\n\na3.MER claim (1 item): Merrill: CFO Alastair Borthwick stated adviser attrition is now at near historic lows, without giving a specific attrition rate figure. On the 2Q26 earnings call (period ended June 30, 2026), management said... cite BAC-TR-2026Q2#63.\n\na4.MER adjacent items (2 items):\n\nItem 1: GWIM reported total wealth advisors at period end of 18,916 as of year-end 2023. quote not verbatim, so no quotation marks. differs_because: \"GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.\" Actually the standard wording applies here: \"GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.\"\n\nItem 2: Merrill and the Private Bank have more than 15,000 wealth advisors, as stated at the 2025 investor day. differs_because: this is a headcount figure not an attrition rate, and also includes Private Bank. Let me use: \"This is a wealth advisor headcount, not an attrition rate, and it covers Merrill and the Private Bank.\"\n\nActually the standard wording for GWIM figures going to Merrill is for the GWIM figure. Item 1 is GWIM total wealth advisors, scope \"all wealth management businesses in GWIM and Consumer Banking\". So differs_because = \"GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.\" But this is headcount not attrition. Hmm.\n\nActually the aspect a4 is \"Closest disclosed measure to Merrill's advisor attrition rate\" - stand-in figure. Both items are headcount figures, stand-in for attrition rate. The differs_because should explain difference from attrition rate. But also the GWIM caveat applies.\n\nLet me write:\nItem 1 differs_because: \"This is a wealth advisor headcount figure, not an attrition rate, and it is a GWIM figure: GWIM includes both Merrill and Bank of America Private Bank, so GWIM figures are not Merrill's.\"\n\nItem 2 differs_because: \"This is a wealth advisor headcount, not an attrition rate, and it covers Merrill and the Private Bank.\"\n\nHmm, but the standard wording is specifically given. Let me apply it as directed: \"Bank of America GWIM figures for Merrill go in adjacent with differs_because 'GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.'\"\n\nItem 1 is a GWIM figure. So differs_because should use that standard wording. But it's also a headcount not attrition. The aspect is stand-in for attrition rate. I think I should combine: the headcount is a stand-in for attrition rate, and additionally GWIM scope.\n\nActually the differs_because field is for why the adjacent item differs from the asked quantity. The asked quantity is attrition rate. The item is headcount (stand-in). So differs_because = it's headcount not attrition. But item 1 is also GWIM not Merrill.\n\nI'll write item 1 differs_because: \"Total wealth advisors is a headcount, not an attrition rate; and it is a GWIM figure: GWIM includes both Merrill and Bank of America Private Bank, so GWIM figures are not Merrill's.\"\n\nFor item 2, \"More than 15,000 wealth advisors is a headcount, not an attrition rate, and it covers Merrill and the Private Bank.\"\n\nNow a5 comparison claim, part_id \"a5\".\n\nThe comparison: whether EDJ's attrition rate can be compared to Merrill's. EDJ has specific attrition rates (6.1%, 6.4%, etc.), while Merrill only has \"near historic lows\" without a specific figure. So they are not comparable because Merrill doesn't disclose a specific rate.\n\nI write one claim with part_id \"a5\":\n\n\"The comparison cannot be made on this evidence: Edward Jones discloses a specific, annualized financial advisor attrition rate (e.g., 6.1% for the third quarter of 2025), whereas Merrill does not disclose a specific attrition rate \u2014 its CFO only stated that adviser attrition is now at near historic lows without giving a figure. Because Merrill provides no numeric attrition rate, the two firms' attrition rates cannot be compared or ranked.\" Cite EDJ-10Q-2025Q3#70, BAC-TR-2026Q2#63.\n\nLet me make sure citations are correct. EDJ attrition rate cites EDJ-10Q-2025Q3#70 and EDJ-10Q-2025Q2#66. Merrill cites BAC-TR-2026Q2#63.\n\nNow, about ordering. \"With a time window, order claims newest first across the whole answer.\" No time window here. So I follow aspect order and firm order.\n\nNow let me finalize the text. Date every claim from source line.\n\nFor EDJ claims, the source line: EDJ-10Q-2025Q3#70 \"period 2025-09-26, published 2025-11-07, Item 2\".\n\nLet me write properly.\n\nLet me construct all claims.\n\na1.EDJ (4 fact claims):\n\n1. part_id \"a1.EDJ\", text: \"Edward Jones: The 10-Q for the period ended September 26, 2025 states financial advisor attrition was 6.1% for the third quarter of 2025, attributing it to a variety of factors including a rise in departures of advisors with tenure of five years or less. Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" chunk_ids [\"EDJ-10Q-2025Q3#70\",\"EDJ-10Q-2025Q2#66\"].\n\n2. part_id \"a1.EDJ\": \"Edward Jones: The 10-Q for the period ended June 27, 2025 states financial advisor attrition increased to 6.4% for the second quarter of 2025, primarily due to an increase in retirements, consistent with industry trends.\" chunk_ids [\"EDJ-10Q-2025Q2#67\",\"EDJ-10Q-2025Q2#66\"].\n\n3. part_id \"a1.EDJ\": \"Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 6.0% for the nine months ended September 26, 2025, versus 5.1% for the nine months ended September 27, 2024.\" chunk_ids [\"EDJ-10Q-2025Q3#68\",\"EDJ-10Q-2025Q3#69\"].\n\n4. part_id \"a1.EDJ\": \"Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 4.7% for the third quarter of 2024.\" chunk_ids [\"EDJ-10Q-2025Q3#68\",\"EDJ-10Q-2025Q3#69\"].\n\na2.EDJ adjacent (5 items):\n\n1. part_id \"a2.EDJ\": \"Edward Jones: The 10-Q for the period ended September 26, 2025 states the Partnership ended the third quarter with 20,429 financial advisors.\" differs_because \"Financial advisor headcount at period end is not an attrition rate.\" chunk_ids [\"EDJ-10Q-2025Q3#70\"].\n\n2. \"Edward Jones: The 10-Q for the period ended June 27, 2025 states the Partnership ended the second quarter with 20,309 financial advisors.\" chunk_ids [\"EDJ-10Q-2025Q2#67\"].\n\n3. \"Edward Jones: The 10-Q for the period ended June 26, 2026 reports 20,514 financial advisors at period end.\" chunk_ids [\"EDJ-10Q-2026Q2#60\"].\n\n4. \"Edward Jones: The 10-K for the year ended December 31, 2025 reports 20,425 financial advisors at year end.\" chunk_ids [\"EDJ-10K-2025#130\"].\n\n5. \"Edward Jones: The 10-Q for the period ended June 27, 2025 defines Attrition % as the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" differs_because \"This is the definition of attrition, not a disclosed attrition rate figure.\" chunk_ids [\"EDJ-10Q-2025Q2#66\"].\n\nFor items 1-4, differs_because same. Actually I should give each its differs_because. All are headcount vs attrition rate.\n\na3.MER claim:\n\npart_id \"a3.MER\": \"Merrill: On the 2Q26 earnings call (period ended June 30, 2026), CFO Alastair Borthwick stated that adviser attrition is now at near historic lows, without giving a specific attrition rate figure.\" chunk_ids [\"BAC-TR-2026Q2#63\"].\n\na4.MER adjacent (2 items):\n\n1. part_id \"a4.MER\": \"Merrill: The Bank of America supplement for the period ended December 31, 2023 reports total wealth advisors at period end of 18,916 as of year-end 2023.\" differs_because \"GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.\" chunk_ids [\"BAC-SUPP-2023Q4#2\"].\n\nActually wait, but this item is headcount, not attrition. The differs_because standard wording covers the GWIM vs Merrill issue. But the aspect is \"closest disclosed measure to attrition rate\", and this is headcount. Hmm.\n\nI think I'll combine: differs_because \"This is a wealth advisor headcount, not an attrition rate; and GWIM includes both Merrill and Bank of America Private Bank, so GWIM figures are not Merrill's.\"\n\nBut the standard wording says to use verbatim. Let me re-read: \"Bank of America GWIM figures for Merrill go in adjacent with differs_because 'GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.'\"\n\nThis is a specific instruction. I'll use that verbatim wording for item 1. But should I also note it's headcount? The aspect itself is \"closest disclosed measure to attrition rate\" as stand-in figure. The differs_because should state why it differs from the asked quantity. The asked quantity for a4 is... actually a4 is itself the stand-in aspect. Hmm.\n\nActually let me reconsider. The aspect a4 is \"Closest disclosed measure to Merrill's advisor attrition rate\" - proxy stand-in. So the \"asked quantity\" here is attrition rate, and these are stand-in figures (headcount). The differs_because explains why these are not the attrition rate.\n\nFor item 1 (GWIM wealth advisors), two differences: (1) it's headcount not attrition rate, (2) GWIM not Merrill.\n\nThe standard wording gives the GWIM reason. I think I should include both, but the standard wording is verbatim. Let me just use the standard wording for the GWIM issue, and add \"and it is a headcount, not an attrition rate.\"\n\nActually, let me be careful. The instruction says use verbatim when the case applies. The case here: \"Bank of America GWIM figures for Merrill go in adjacent with differs_because '...'\". Item 1 IS a GWIM figure. So differs_because = that verbatim.\n\nBut it's also headcount vs attrition. Hmm, but the standard wording is specifically about GWIM vs Merrill, and it's the \"differs_because\" for GWIM figures. I'll use the verbatim wording, and note headcount in the text itself maybe.\n\nActually, I think the cleanest is: differs_because for item 1 = \"GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's.\" (verbatim). The headcount-not-attrition point is captured by the fact that a4 is a \"stand-in figure\" aspect.\n\nFor item 2, \"Merrill and the Private Bank have more than 15,000 wealth advisors\" - this is headcount, and covers Merrill + Private Bank. differs_because: \"This is a wealth advisor headcount, not an attrition rate, and it covers Merrill and the Private Bank.\"\n\nHmm, but item 2 scope says \"Merrill | Private Bank\". So it's not purely Merrill either. differs_because: \"This is a wealth advisor headcount, not an attrition rate, and it covers Merrill and the Private Bank together.\"\n\nLet me finalize.\n\na5 comparison claim:\n\npart_id \"a5\": \"Whether Edward Jones's advisor attrition rate can be compared to Merrill's: the comparison cannot be made on this evidence. Edward Jones discloses a specific, annualized financial advisor attrition rate (6.1% for the third quarter of 2025), whereas Merrill does not disclose a numeric attrition rate \u2014 its CFO only stated that adviser attrition is now at near historic lows without giving a figure. With no numeric rate for Merrill, the two firms' attrition rates cannot be compared or ranked.\" chunk_ids [\"EDJ-10Q-2025Q3#70\",\"BAC-TR-2026Q2#63\"].\n\nGaps: none added by code, and I don't need to add my own (the aspect a1.research etc. are \"not found (code gap)\" \u2014 wait, these are code gaps listed within the matrix as \"Industry research: not found (code gap)\"). Actually those are marked \"not found (code gap)\". The \"Gaps added by code\" section says \"none\". Hmm, but a1.research, a2.research, a3.research, a4.research, a5.research are all \"not found (code gap)\".\n\nThe instruction: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\" But \"Gaps added by code\" says \"none\". \n\nHmm, the \"not found (code gap)\" for research rows \u2014 are these gaps I should report? The \"Gaps added by code\" list is \"none\", so code isn't adding them to gaps. But the matrix shows \"a1.research Industry research: not found (code gap)\".\n\nActually, re-reading: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSince \"Gaps added by code\" is \"none\", the research not-found cells are... hmm. The part_id enum includes \"a1.research\", \"a2.research\", \"a3.research\", \"a4.research\", \"a5.research\". These are available as part_ids for gaps.\n\nActually, I think these \"not found (code gap)\" entries mean the code has marked them as gaps, but they're listed under \"Gaps added by code\" which says \"none\". This is contradictory. Let me interpret: the code gaps section says \"none\", so I shouldn't add gaps for research not found. The \"not found (code gap)\" in the matrix is just informational.\n\nActually wait, let me reconsider. The part_id enum for gaps includes \"a1.research\" etc. So maybe I should add gaps for the industry research not found? But \"Gaps added by code\" says \"none\".\n\nHmm. The phrase \"code gap\" in the matrix likely refers to the fact that code found nothing, and code will handle it. Since \"Gaps added by code\" = none, and I'm told \"Add a gap of your own only for something those gaps do not name\" \u2014 but I'm also told not to repeat code gaps.\n\nI think the safest interpretation: the research rows are simply not found, meaning no industry research is cited, and I don't need to add gaps for them. The answer's gaps array can be empty.\n\nActually, let me think about whether I need a gap. The question asks about advisor attrition rate for EDJ vs Merrill. EDJ has data, Merrill only has qualitative. There's no missing data that needs a \"gap\" flag beyond what's stated.\n\nI'll set gaps to empty array.\n\nWait, but actually, should I add a gap noting Merrill doesn't disclose a specific attrition rate? That's already covered in the comparison claim and the a3.MER claim. Not needed as a separate gap.\n\nLet me finalize. gaps = [].\n\nNow, one more consideration: the a3.MER item is a fact cell. It's a statement that Merrill's CFO said attrition is near historic lows without a specific figure. That's the \"fact\" for a3. Good.\n\nLet me also double-check: do I need \"Why it might matter\" lines? No time window, no recency aspects. Skip.\n\nNow, about ordering within aspects: no time window, so just list in given order.\n\nLet me write the final answer via submit_answer tool.\n\nFor the claims, each text should start with firm name \"Edward Jones: \" or \"Merrill: \".\n\nLet me finalize all.\n\nActually, re-examine a2 items: item 5 is a definition cell (not a figure). Is it \"adjacent only\"? It's listed under a2.EDJ \"stand-in figure (adjacent only)\". The definition item 5 has no value, just definition and quote. It's the definition of attrition. It's adjacent. differs_because: \"This defines the attrition measure but is not itself a disclosed attrition rate.\"\n\nLet me write final.\n\nLet me also reconsider whether the definition needs a citation to #66 which is under sources - yes it's cited.\n\nNow write everything.\n\nFor a2 items 1-4, differs_because: \"Financial advisor headcount at period end is not an attrition rate.\"\n\nLet me produce the JSON.\n\npart_id values:\n- a1.EDJ claims: \"a1.EDJ\"\n- a2.EDJ adjacent: \"a2.EDJ\"\n- a3.MER claim: \"a3.MER\"\n- a4.MER adjacent: \"a4.MER\"\n- a5 claim: \"a5\"\n\nGood.\n\nLet me write out all the claims text carefully.\n\nFinal answer.",
+  "first_claim_s": 93.75,
+  "stream_items": {
+    "first_claim_s": 93.75,
+    "shown": 5,
+    "held": 8
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Edward Jones: The 10-Q for the period ended September 26, 2025 states financial advisor attrition was 6.1% for the third quarter of 2025, attributing it to a variety of factors including a rise in departures of advisors with tenure of five years or less. Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#70",
+          "EDJ-10Q-2025Q2#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended June 27, 2025 states financial advisor attrition increased to 6.4% for the second quarter of 2025, primarily due to an increase in retirements, consistent with industry trends.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#67",
+          "EDJ-10Q-2025Q2#66"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 6.0% for the nine months ended September 26, 2025, versus 5.1% for the nine months ended September 27, 2024.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#68",
+          "EDJ-10Q-2025Q3#69"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended September 26, 2025 reports attrition of 4.7% for the third quarter of 2024.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#68",
+          "EDJ-10Q-2025Q3#69"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Merrill: On the 2Q26 earnings call (period ended June 30, 2026), CFO Alastair Borthwick stated that adviser attrition is now at near historic lows, without giving a specific attrition rate figure.",
+        "chunk_ids": [
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Whether Edward Jones's advisor attrition rate can be compared to Merrill's: the comparison cannot be made on this evidence. Edward Jones discloses a specific, annualized financial advisor attrition rate (6.1% for the third quarter of 2025), whereas Merrill does not disclose a numeric attrition rate \u2014 its CFO only stated that adviser attrition is now at near historic lows without giving a figure. With no numeric rate for Merrill, the two firms' attrition rates cannot be compared or ranked.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#70",
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a5"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Edward Jones: The 10-Q for the period ended September 26, 2025 states the Partnership ended the third quarter with 20,429 financial advisors.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#70"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "Financial advisor headcount at period end is not an attrition rate."
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended June 27, 2025 states the Partnership ended the second quarter with 20,309 financial advisors.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#67"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "Financial advisor headcount at period end is not an attrition rate."
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended June 26, 2026 reports 20,514 financial advisors at period end.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "Financial advisor headcount at period end is not an attrition rate."
+      },
+      {
+        "text": "Edward Jones: The 10-K for the year ended December 31, 2025 reports 20,425 financial advisors at year end.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "Financial advisor headcount at year end is not an attrition rate."
+      },
+      {
+        "text": "Edward Jones: The 10-Q for the period ended June 27, 2025 defines Attrition % as the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#66"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "This defines the attrition measure but is not itself a disclosed attrition rate."
+      },
+      {
+        "text": "Merrill: The Bank of America supplement for the period ended December 31, 2023 reports total wealth advisors at period end of 18,916 as of year-end 2023.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's."
+      },
+      {
+        "text": "Merrill: Merrill and the Private Bank have more than 15,000 wealth advisors, as stated at the 2025 investor day.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "This is a wealth advisor headcount, not an attrition rate, and it covers Merrill and the Private Bank together."
+      }
+    ],
+    "gaps": []
+  }
+}

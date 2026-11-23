@@ -1,0 +1,76 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a7.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a7.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37"
+  ],
+  "at": "2026-11-23T00:01:13.991503-06:00",
+  "prefix_group": "f69a46a86e1aac62",
+  "prefix_role": "follower",
+  "gate_wait_s": 6.89,
+  "leader_cached": false,
+  "prefix_chars": 22573,
+  "request_chars": 23304,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6042,
+    "output_tokens": 396,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4506,
+    "reasoning_tokens": 275,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.8
+  },
+  "wall_s": 6.86,
+  "tokens_per_s": 57.73,
+  "ttft_s": 1.8,
+  "reasoning_content": "The question asks about competitors' offerings and strategies to serve younger investors, but the passages are about Schwab itself (SCHW is the firm). The sub-question a7 asks about competitors. But all passages are about Schwab's own offerings.\n\nWait, let me re-read. The firm is The Charles Schwab Corporation. Sub-question a7 asks \"What offerings and strategies do competitors deploy to serve younger investors?\"\n\nThe passages all describe Schwab's own offerings. None describe competitors. So this would be not_found.\n\nActually, let me check. The passages describe Schwab's offerings (Schwab Starter Kit, Schwab Teen Investor Account, thinkorswim, etc.). These are Schwab's own offerings, not competitors.\n\nSo for a7 (competitors), there are no passages about competitors. The answer is not_found.\n\nActually wait - some passages might mention \"digitally native firms\" or \"digital and native public firms\" in crypto context. SCHW-TR-2025Q3#39 mentions \"digitally native firms are making in crypto are enormous\" - but that's about crypto revenue, not specifically about offerings/strategies to serve younger investors.\n\nSo the label should be not_found, since no passages describe competitors' offerings and strategies for younger investors.\n\nLet me write the cell with not_found label.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "All provided passages describe Schwab's own offerings and strategies for younger investors; none describe competitors' offerings or strategies to serve younger investors.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

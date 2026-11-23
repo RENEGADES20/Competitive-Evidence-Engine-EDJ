@@ -1,0 +1,105 @@
+{
+  "question_id": "Q29",
+  "question": "What does Morgan Stanley pay its financial advisors?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a2.MS",
+  "round": 2,
+  "entity": "MS",
+  "cells": [
+    "a2.MS"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MS-10K-2025#699",
+    "MS-10Q-2026Q1#415",
+    "MS-SUPP-2026Q3#12",
+    "MS-TR-2026Q2#60",
+    "MS-PR-2026-10-14-01#4",
+    "MS-10K-2025#460",
+    "MS-10Q-2026Q2#27",
+    "MS-SUPP-2026Q2#12",
+    "MS-TR-2024Q4#82",
+    "MS-PR-2026-07-15-01#4",
+    "MS-10K-2025#905",
+    "MS-10Q-2025Q3#27",
+    "MS-SUPP-2025Q4#12",
+    "MS-TR-2026Q2#24",
+    "MS-TR-2026Q2#25",
+    "MS-PR-2026-01-15-01#23",
+    "MS-10Q-2025Q2#115",
+    "MS-PR-2026-01-15-01#29",
+    "MS-10Q-2025Q2#443",
+    "MS-SUPP-2025Q4#25",
+    "MS-SUPP-2026Q2#13",
+    "MS-SUPP-2026Q3#13"
+  ],
+  "at": "2026-11-23T01:11:09.200906-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9105,
+    "output_tokens": 1984,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 7569,
+    "reasoning_tokens": 1580,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.25
+  },
+  "wall_s": 34.62,
+  "tokens_per_s": 57.31,
+  "ttft_s": 2.25,
+  "reasoning_content": "The sub-question asks about pay grid levels, payout percentages, and compensation tiers for financial advisors at Morgan Stanley.\n\nLooking at the passages, none of them describe pay grid levels, payout percentages, or compensation tiers for financial advisors. The passages talk about compensation expense in general (segment compensation), stock-based awards, compensation incentive plans (exhibit list), but not the specific pay grid for financial advisors.\n\nThe compensation figures (Compensation $2,632 million, etc.) are compensation expense, which is a different measure than a payout grid. That would be different_quantity.\n\nActually, let me think. The question asks \"pay grid levels, payout percentages and compensation tiers for financial advisors\". The passages contain compensation expense figures (segment Wealth Management compensation). These are a different measure - total compensation expense, not payout percentages or grid levels.\n\nSo I should label this as different_quantity, with items being compensation expense figures, and differs_because saying these are total compensation expense, not payout percentages/grid levels.\n\nActually, wait - the compensation expense figures include compensation for all employees in the segment, not just financial advisors. So it's a different quantity - total compensation expense for the segment.\n\nLet me consider the compensation figures available:\n- MS-PR-2026-10-14-01: Compensation $2,632 (3Q 2026), $2,422 (3Q 2025)\n- MS-PR-2026-07-15-01: Compensation $2,980 (2Q 2026), $2,430 (2Q 2025)\n- MS-PR-2026-01-15-01: Compensation and benefits 7,063, 7,442, 6,289 (quarterly?) and 29,216, 26,178 (yearly)\n- MS-SUPP figures are Institutional Securities, not Wealth Management.\n\nActually these are Wealth Management segment compensation figures.\n\nThe label should be different_quantity since these are total compensation expense, not the pay grid/payout percentages.\n\nActually, let me reconsider. The question is specifically about \"pay grid levels, payout percentages and compensation tiers for financial advisors\". None of the passages contain this. The compensation expense is a different measure (aggregate compensation expense for the segment, not a payout grid).\n\nSo different_quantity with items for the compensation figures.\n\nLet me capture the main compensation figures. Actually, I should include the compensation figures as different_quantity items.\n\nLet me decide which chunks to cite. The relevant ones with compensation:\n- MS-PR-2026-10-14-01#4: Wealth Management Compensation $2,632 (3Q 2026), $2,422 (3Q 2025)\n- MS-PR-2026-07-15-01#4: Compensation $2,980 (2Q 2026), $2,430 (2Q 2025)\n- MS-PR-2026-01-15-01#23: Compensation and benefits 7,063, 7,442, 6,289 (quarterly) and 29,216, 26,178 (yearly) - these are likely Institutional Securities or total firm? Actually this is Wealth Management segment. Wait, the source says \"segment Wealth Management\". Let me look.\n\nMS-PR-2026-01-15-01#23 source: \"MS press, segment Wealth Management\". The figures: \"10,046 8,611 17%\", \"Net revenues 17,890 18,224 16,223\", \"Compensation and benefits 7,063 7,442 6,289\", \"29,216 26,178\".\n\nHmm, actually these are somewhat confusing. But \"Compensation and benefits\" appears to be a Wealth Management segment figure.\n\nActually, I think the cleanest approach is to note that the passages do not contain the pay grid, payout percentages, or compensation tiers. The closest is total compensation expense for the Wealth Management segment.\n\nLet me provide a few items as different_quantity.\n\nActually, I want to be careful. The instruction says: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity... a different measure (all employees or full-time equivalents for advisors, compensation expense for a payout grid or a headcount...)\".\n\nSo compensation expense for a payout grid is explicitly given as an example of different_quantity. Great.\n\nSo label = different_quantity, differs_because = \"Passages report total compensation expense for the Wealth Management segment, not pay grid levels, payout percentages, or compensation tiers for financial advisors.\"\n\nItems: I'll include the compensation figures.\n\nLet me pick the most relevant ones. I'll include several:\n\n1. Wealth Management compensation expense 3Q 2026: $2,632 million, vs 3Q 2025 $2,422 million.\n2. 2Q 2026: $2,980 vs $2,430.\n3. Compensation and benefits (annual?) 29,216 vs 26,178.\n\nActually, I'll keep it concise but include a few items.\n\nFor the items, I need text, quote, value, unit, period, scope, definition, chunk_ids.\n\nLet me write these.\n\nItem 1:\ntext: \"Morgan Stanley's Wealth Management segment reported compensation expense of $2,632 million in the third quarter of 2026, up from $2,422 million a year earlier.\"\nquote: \"Compensation                      $2,632       $2,422\"\nvalue: \"2,632\"\nunit: \"USD millions (compensation expense)\"\nperiod: \"2026Q3\"\nscope: \"Wealth Management segment\"\ndefinition: \"\"\nchunk_ids: [\"MS-PR-2026-10-14-01#4\"]\n\nItem 2 (same quote could cover 2025Q3): Actually I could do one item per figure. Let me do 2Q 2026 too.\n\nItem 2:\ntext: \"Morgan Stanley's Wealth Management segment reported compensation expense of $2,980 million in the second quarter of 2026, up from $2,430 million a year earlier.\"\nquote: \"Compensation                      $2,980       $2,430\"\nvalue: \"2,980\"\nunit: \"USD millions (compensation expense)\"\nperiod: \"2026Q2\"\nscope: \"Wealth Management segment\"\nchunk_ids: [\"MS-PR-2026-07-15-01#4\"]\n\nThat's probably enough. I could also add the annual compensation and benefits figure but the periods are unclear. I'll keep to these two clear items.\n\nActually, let me add the full-year 2025 compensation and benefits figure from MS-PR-2026-01-15-01#23. The numbers: \"29,216 26,178\" with 12% change. And \"Compensation and benefits 7,063 7,442 6,289\". This is ambiguous. The 29,216 might be full-year. But I'm not certain about the periods. I'll skip to avoid confusion, or include the quarterly 7,063 with note.\n\nActually, I'll keep it simple with the two clear quarterly items.\n\nLet me also consider: is there any mention of compensation tiers? The MS-10K-2025#460 discusses stock-based awards but not pay grid for advisors. Not relevant.\n\nI'll finalize with different_quantity and two items.\n\nreason: \"No passage describes pay grid levels, payout percentages, or compensation tiers for financial advisors; only total Wealth Management segment compensation expense is reported.\"\n\nLet me write the submit.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MS",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Morgan Stanley's Wealth Management segment reported compensation expense of $2,632 million in the third quarter of 2026, up from $2,422 million in the third quarter of 2025.",
+            "quote": "Compensation                      $2,632       $2,422",
+            "value": "2,632",
+            "unit": "USD millions (compensation expense)",
+            "period": "2026Q3",
+            "scope": "Wealth Management segment",
+            "definition": "",
+            "chunk_ids": [
+              "MS-PR-2026-10-14-01#4"
+            ]
+          },
+          {
+            "text": "Morgan Stanley's Wealth Management segment reported compensation expense of $2,980 million in the second quarter of 2026, up from $2,430 million in the second quarter of 2025.",
+            "quote": "Compensation                      $2,980       $2,430",
+            "value": "2,980",
+            "unit": "USD millions (compensation expense)",
+            "period": "2026Q2",
+            "scope": "Wealth Management segment",
+            "definition": "",
+            "chunk_ids": [
+              "MS-PR-2026-07-15-01#4"
+            ]
+          }
+        ],
+        "differs_because": "The passages report total compensation expense for the Wealth Management segment rather than the pay grid levels, payout percentages, or compensation tiers for financial advisors.",
+        "reason": "No passage describes the asked pay grid levels, payout percentages, or compensation tiers for financial advisors; the closest figures are aggregate segment compensation expense, which is a different measure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

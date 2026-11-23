@@ -1,0 +1,384 @@
+{
+  "question_id": "Q3",
+  "question": "What is Schwab's strategy for its RIA custody business?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-10K-2025#23",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-DECK-2026-investor-day#35",
+    "SCHW-DECK-2026-investor-day#41",
+    "SCHW-TRADE-2026-10-29-WM-01#0",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-10K-2025#13",
+    "SCHW-TRADE-2026-10-07-RB-01#4",
+    "SCHW-TRADE-2026-10-28-WM-01#0",
+    "SCHW-TRADE-2026-08-26-WM-01#3",
+    "SCHW-TRADE-2026-08-24-IN-01#2",
+    "SCHW-TRADE-2026-10-29-WM-01#2",
+    "SCHW-DECK-2026Q2#14",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-PR-2026-10-15-01#41",
+    "SCHW-TRADE-2026-10-15-WM-01#3",
+    "SCHW-DECK-2026Q3#22",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-TRADE-2026-10-28-WM-01#2",
+    "SCHW-TRADE-2026-10-27-IN-01#1",
+    "SCHW-TR-2026Q3#5",
+    "SCHW-TR-2026Q1#48",
+    "SCHW-TR-2026Q3#68",
+    "SCHW-TRADE-2026-10-28-WM-02#0",
+    "SCHW-TRADE-2026-11-02-RB-01#2"
+  ],
+  "schema_fallback": [],
+  "enum_values": 92,
+  "at": "2026-11-22T22:58:24.269650-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11581,
+    "output_tokens": 12147,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 9917,
+    "reasoning_tokens": 7869,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 4.05
+  },
+  "wall_s": 100.39,
+  "tokens_per_s": 121.0,
+  "ttft_s": 4.05,
+  "reasoning_content": "Let me carefully write the answer following the instructions. One firm (Schwab), so aspect by aspect, no \"<Firm>: \" prefix needed.\n\nLet me go aspect by aspect.\n\na1: strategy for RIA custody business. Items 1-5, fact cells. Write claims. Item 2 quote not verbatim, don't put quotes.\n\na2: priorities. Items 1-5, 8. Item 4 quote not verbatim.\n\na3: competition. Items 1-9.\n\na4: results. basis break - state each basis with own periods.\n\na5: adjacent only (different quantity). Give adjacent items with differs_because.\n\na6: recency - each item needs why-line.\n\nLet me write each claim with proper part_id (aspect id for claims spanning firms - actually single firm, so use aspect id a1, a2, a3, a4, a6; for a5 adjacent items use a5.SCHW).\n\nWait, part_id rules: \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nFor single firm, aspects use a1, a2, a3, a4, a5, a6 as part ids? The enum includes both a1.SCHW and a1. Since it's single firm, comparison aspects... Actually a1-a6 are fact aspects (not comparison). Let me look.\n\nThe instructions say \"Aspects (their ids are part ids for claims that span firms)\". Since there's only one firm, I think the part_id should be the aspect id. But cells are a1.SCHW etc.\n\nHmm. Let me re-read: \"Every claim, adjacent item and gap carries the part_id of the cell it comes from (an aspect id for a claim that spans firms).\"\n\nThe cells are a1.SCHW, a2.SCHW, etc. So part_id should be a1.SCHW for those cells? But then \"an aspect id for a claim that spans firms\" \u2014 comparison aspects span firms and use aspect id.\n\nActually for a single firm, there's no comparison aspect that spans firms. So the claims come from cells a1.SCHW etc., so part_id = a1.SCHW.\n\nWait but the enum includes both \"a1.SCHW\" and \"a1\". The comparison aspect note says \"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id\". None of a1-a6 are marked comparison (a4 is marked \"Comparability (code): unverified: not in the metric definitions file; never compared across firms\" \u2014 but it's not a comparison aspect).\n\nSo all aspects a1-a6 are fact/series aspects. Their cells are a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a5.SCHW, a6.SCHW.\n\nSo part_id should be a1.SCHW, a2.SCHW, etc.\n\nActually let me think about which is correct. The \"why\" line says \"the asked quantity in a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a6.SCHW\". So cells are a1.SCHW etc.\n\nI'll use part_id = a1.SCHW for a1 claims, a2.SCHW for a2, a3.SCHW for a3, a4.SCHW for a4, a5.SCHW for a5 adjacent, a6.SCHW for a6.\n\nGaps: code adds gaps for a5.SCHW and a5. Do not repeat them. So I don't add those gaps. But I need to provide adjacent items for a5 (the adjacent only cell).\n\nThe a5 cell is marked \"different quantity (adjacent only)\". So write adjacent items with differs_because. Items 1-4.\n\nAlso there's the standard wording about advisor pay - not relevant here (that's for payout).\n\nLet me also note: \"gap_with_adjacent\" - a5 is adjacent only, so no claim, give adjacent items.\n\nNow let me write everything.\n\nFor a6, each item needs a why-line ending \"Why it might matter: ...\". Use context or related lines.\n\nLet me carefully construct.\n\na1 claims (part_id a1.SCHW):\n\nItem 1: period 2026-09-30. \"The 3Q26 transcript (period ended September 30, 2026) states Schwab has built its adviser business around helping independent advisers grow, compete and succeed, through a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support, serving more than 16,000 firms representing $5.8 trillion in assets.\"\n\nItem 2: period 2025-12-31, scope Advisor Services segment. quote not verbatim, paraphrase. \"Schwab's 2025 10-K (period ended December 31, 2025, Advisor Services segment) states its strategy is to maintain its competitive position primarily through its sales, support, technology, and business consulting teams dedicated to helping RIAs grow, compete, and succeed in serving their clients, plus a highly-developed, scalable platform to administer clients' assets easily and efficiently.\"\n\nItem 3: period 2025-09-30, Advisor Services. \"The 3Q25 transcript (period ended September 30, 2025) states Schwab is deepening relationships with the RIA firms it serves by building a broader support ecosystem that extends beyond custody alone to add value for RIAs.\"\n\nItem 4: quote. \"Schwab's 2026 investor day deck describes its goal as providing the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment/lending products, and technology in addition to custody and service.\"\n\nItem 5: \"Schwab's 2026 investor day deck lists Broaden support for RIAs while improving monetization as one of its strategic priorities under Serve More Clients & Deepen Relationships.\"\n\nFor dates: deck period n/a, published 2026-05-14.\n\na2 claims:\n\nItem 1: Advisor Services. \"The 3Q25 transcript states in advisor services Schwab is deepening relationships with the 16,000 RIA firms it serves by building a broader support ecosystem that extends beyond custody alone, growing lending support, alternatives capability, and expanding its institutional no-transaction-fee mutual fund platform to include funds from nearly 60 managers with no transaction fees for clients.\"\n\nItem 2: investor day deck. priority leading RIA support ecosystem...\n\nItem 3: 10-K 2025. maintain competitive position through teams.\n\nItem 4: quote not verbatim. trade press? No, SCHW-TRADE-2026-10-29-WM-01#0. It's trade press. Actually \"trade press reports\" - is this trade press? The item says \"Schwab states it wants to give RIAs...\" attributed to Schwab. cite SCHW-TRADE-2026-10-29-WM-01#0. This is a trade source. But the item content is \"Schwab states...\" so it's a fact attributed to Schwab from trade press. The instructions say \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\".\n\nHmm, but here it says \"Schwab states\" - it's Schwab's statement reported. Let me attribute appropriately. The quote is from Wurster speaking. I'll write \"trade press reports Schwab stated it wants to give RIAs equal or better access than wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies, and to play the role of being their bank.\"\n\nActually let me check - the source is \"SCHW trade\" which is trade press. So attribute as trade press reports.\n\nItem 5: \"The 4Q24 transcript (period ended December 31, 2024) states that in advisor services Schwab is adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.\"\n\nItem 8: \"The 3Q26 transcript states Schwab is continuing to invest in the RIA custody business to meet advisers' needs.\"\n\na3 competition:\n\nItem 1: period 2025-12-31. \"Schwab's 2025 10-K (period ended December 31, 2025, Advisor Services) states that in the Advisor Services arena Schwab competes with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.\"\n\nItem 2: trade press. \"Trade press reports Fidelity Investments as Schwab's close rival, offering up to 1.94% on sweep cash and 3.49% through its money market funds.\" Actually the quote mentions Fidelity as close rival and second-largest RIA custodian. Let me use the item description: \"Schwab names Fidelity Investments as a close rival and the second-largest RIA custodian after Schwab.\" But it's trade press. Hmm. Item 2's cite is SCHW-TRADE-2026-10-07-RB-01#4 (trade press). The item description says \"Schwab names Fidelity...\" - but actually it's a trade press article. The quote is \"Schwab's close rival, Fidelity, offers...\" This is the writer's framing. \n\nI should attribute trade press. Item 2: \"Trade press reports Fidelity Investments as Schwab's close rival and the second-largest RIA custodian after Schwab, offering up to 1.94% on sweep cash and 3.49% through its money market funds.\"\n\nItem 3: trade press. \"Schwab's trade press notes Fidelity Investments is the second-largest custodian after Schwab, and that Schwab will continue to focus on custody for RIAs under $100M AUM after Fidelity told such firms to leave.\"\n\nItem 4: \"Trade press reports Altruist, described as now Vanguard-owned custodian, as a competitor offering a high-yield cash account (0.05% in sweep accounts and a maximum 3.75% through a high-yield cash account).\"\n\nItem 5: \"Trade press reports Vanguard (through its acquisition of Altruist) as a competitor setting up to compete with Fidelity and Schwab in RIA custody.\"\n\nItem 8: \"A recruiter, quoted in trade press, names SEI, Goldman, and Robinhood as other custodians RIAs may look to after Schwab's referral changes.\"\n\nItem 9: \"Trade press reports BNY Pershing named as a custodian alongside Schwab for a breakaway advisory firm.\"\n\na4 results (basis break - state each basis with own periods):\n\nWhole firm basis: 2025, 2026-06-30, 2026-09-30, 2026Q3.\nAdvisor Services segment basis: 2025-09-30, 2025-12-31, 2026-03-31, 2026-06-30, 2026-09-30, 2026Q2, 2026Q3.\n\nLet me identify which items are whole firm vs segment.\n\nItem 1: 16,000 advisory firms, period 2026-09-30 - whole firm. \"serves more than 16,000 firms\".\nItem 2: $5.8 trillion, 2026-09-30 - whole firm.\nItem 3: 1,100 advisory firms added, period 2025 - whole firm.\nItem 4: #1 RIA custodial assets $5.7T, 2026-06-30 - whole firm.\nItem 5: $5.2T client assets Advisor Services, #1 - segment (scope Advisor Services).\nItem 6: 16,000 advisory firms Advisor Services - figure not found, do not state.\nItem 7: 3.9M households - this is from investor day #62 which is Advisor Services context? The item doesn't have scope listed. quote \"Households 3.9M in RIA Custodial Assets #1\". Hmm. It's from SCHW-DECK-2026-investor-day#62 which is \"Our Purpose\". No scope marked. I'll state it without scope, or note it's reported.\n\nActually item 5 has scope Advisor Services and item 7 doesn't. Item 6 has scope Advisor Services. Item 7 - no scope listed, so just report.\n\nItem 8-12: Advisor Services segment client assets. $5,845.9B at 2026-09-30, $5,741.9B at 2026-06-30, $5,201.5B at 2026-03-31, $5,195.5B at 2025-12-31, $5,016.7B at 2025-09-30.\n\nItem 13: net new assets $120.1B 2026Q3 segment.\nItem 14: $80.2B 2026Q2 segment.\nItem 15: 1,001 new RIAs Q3 2026 (trade press, whole firm? scope not listed). period 2026Q3.\nItem 16: 1,101 custodians added to ADVs 3Q26.\n\nI need to state basis break. The instruction: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo I'll group claims by basis. Actually I can just write each item with its period and scope, being careful to label whole firm vs segment.\n\nLet me organize a4 into two groups.\n\nWhole firm:\n- Item 1: more than 16,000 firms, 2026-09-30\n- Item 2: $5.8 trillion, 2026-09-30\n- Item 3: 1,100 firms added in 2025 (period 2025)\n- Item 4: #1 at $5.7T RIA custodial assets, 2026-06-30 (quote not verbatim)\n- Item 7: 3.9M households (from investor day, whole firm? not marked scope)\n- Item 15: 1,001 new RIAs Q3 2026 (trade)\n- Item 16: 1,101 custodians added to ADVs 3Q26\n\nAdvisor Services segment:\n- Item 5: $5.2T client assets, #1\n- Item 8-12: segment client assets\n- Item 13-14: net new assets\n\nItem 6 skip (figure not found).\n\nItem 15 & 16 are both Q3 2026 new RIAs, different numbers (1,001 vs 1,101). Trade press vs deck. I'll state both.\n\nItem 15 is trade press, quote not verbatim. Item 16 is deck.\n\nLet me write these.\n\nActually, I need to be careful with item 4 \"quote not verbatim\" - paraphrase.\n\nItem 5 has \"figure not found\"? No, item 5 value $5.2T, not marked figure not found. But wait item 5 says value $5.2T, unit USD, scope Advisor Services. The quote \"$5.2T Client Assets 16K Advisory Firms Households 3.9M in RIA Custodial Assets #1\". Item 6 (16,000) is \"figure not found in its passage: do not state this figure\". But the 16K appears in the same passage as item 5. Odd, but item 6 specifically marked figure not found. Item 5 value $5.2T is fine to state. Item 7 3.9M households fine.\n\nActually item 5 also ranks #1 in RIA custodial assets.\n\nLet me write a4 with basis separation clearly.\n\nI'll add a note that figures cover different bases.\n\nLet me now write why-lines for a6 items.\n\na6 item 1: Anthropic/Claude first RIA custodian. Why it might matter: from context - \"we're not slowing down as we continue to innovate across our businesses\" or related: Claude made available through central platform with $4,800 credit to give smaller advisors access. Use related line. I'll say: \"Why it might matter: trade press reports Schwab made Claude for Financial Advisors available through its central RIA platform and is offering a $4,800 credit for the enterprise version to give smaller advisors access.\" cite SCHW-TRADE-2026-10-28-WM-02#0 and SCHW-TRADE-2026-11-02-RB-01#2.\n\nItem 2: Advisor ProDirect, period 2025-09-30. Why: from related - Schwab recently launched structured asset lending program (SCHW-TR-2026Q1#48) or from context. Context: launched after expanding mutual fund platform. Related line SCHW-TR-2024Q4#13: adding support and capabilities for RIAs of all sizes. I'll use the related about structured asset lending: \"Why it might matter: Schwab also recently launched a structured asset lending program enabling RIA clients to borrow against alternative investments and restricted or private shares (SCHW-TR-2026Q1#48).\"\n\nItem 3: structured asset lending, period 2026-03-31. Why: context says advisers love it because historically they'd introduce a big bank. Related SCHW-TR-2026Q3#68 long/short. I'll use context: \"Why it might matter: the source states advisers love the program because historically they had to introduce a big bank for such lending, and now they can keep it in-house.\" cite SCHW-TR-2026Q1#48.\n\nItem 4: long/short strategy, period 2026-09-30, quote not verbatim. Why: context - able to run product efficiently from balance sheet/operational standpoint to sustain delivery. \"Why it might matter: Schwab states it will be able to run the product efficiently from a balance sheet and operational standpoint to help sustain delivery of long/short capabilities to clients.\" cite SCHW-TR-2026Q3#68.\n\nItem 5: banking access, period 2026-10-29. Why: context - Wurster sees pledged asset lines as fruitful growth area. \"Why it might matter: the source notes Wurster sees pledged asset lines as a particularly fruitful growth area among RIAs, given clients have enormous wealth on paper from stock positions they don't want to sell but have everyday liquidity needs.\" cite SCHW-TRADE-2026-10-29-WM-01#0.\n\nItem 6: Claude through central platform, period 2026-10-28. Why: context - \"with the goal of giving smaller advisors access\". \"Why it might matter: the source states the $4,800 credit for the enterprise version is offered with the goal of giving smaller advisors access.\" cite SCHW-TRADE-2026-10-28-WM-02#0, SCHW-TRADE-2026-11-02-RB-01#2.\n\nOrder within a6: The time window - need order newest first across the whole answer. Actually \"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nHmm, the question has a time window (a6 is recency within time window). So order claims newest first across the whole answer?\n\nWait, let me re-read: \"Recency and order: ... With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nHmm, but the \"Shape\" section says \"Several firms: aspect by aspect in the order listed, firms in the order listed\". And \"One firm: aspect by aspect.\"\n\nSo I should still go aspect by aspect, but within? Actually \"order claims and adjacent items newest first across the whole answer\" - this conflicts with \"aspect by aspect\".\n\nLet me think. The \"Recency and order\" section is under general. \"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nActually I think the aspect order should be preserved (aspect by aspect in order listed), but within each aspect, items should be ordered newest first? Or the whole answer newest first?\n\nHmm. The two instructions: Shape says \"aspect by aspect in the order listed\". Recency says \"order claims and adjacent items newest first across the whole answer.\"\n\nThis is a bit conflicting. I think the more specific \"aspect by aspect\" governs the overall structure, and within each aspect I order items newest first (since there's a time window).\n\nActually, re-reading: \"With a time window, order claims and adjacent items newest first across the whole answer.\" \n\nBut there's a tension. Let me consider: the question does have a time window (a6 \"within the time window\"). So I should order newest first.\n\nI think the intended interpretation: aspects in the listed order, but within the aspects order items newest first. Actually \"across the whole answer\" suggests global ordering.\n\nHmm, this is tricky. Let me look more carefully. The \"Shape\" says several firms vs one firm. The recency ordering might apply within the \"several firms\" case where you group by aspect but order... \n\nActually, I think the safest is: keep aspect order as listed (a1, a2, a3, a4, a5, a6), and within each aspect order items newest first. For a6 specifically, order items newest first (by period: 2026-10-29, 2026-10-28, 2026-09-30, 2026-03-31, 2025-09-30).\n\nActually the a6 items are already roughly ordered. Let me order them newest first:\n- item 5: 2026-10-29\n- item 6: 2026-10-28\n- item 1: 2026-09-30\n- item 4: 2026-09-30\n- item 3: 2026-03-31\n- item 2: 2025-09-30\n\nItems 1 and 4 both 2026-09-30. Keep relative order (1 before 4? they're different topics). I'll keep original order within same date.\n\nActually, let me just order newest first within each aspect to be safe, and also for a6 order newest first.\n\nFor a1: periods 2026-09-30, 2025-12-31, 2025-09-30, and deck (n/a, published 2026-05-14). Items 4,5 are deck (2026-05-14). So order: 2026-09-30 (item1), 2026-05-14 (items 4,5), 2025-12-31 (item2), 2025-09-30 (item3).\n\nHmm, this is getting complicated. But honestly, I think the \"newest first across the whole answer\" primarily applies to the recency aspects and time-window questions. Given the \"aspect by aspect\" instruction is more structural, I'll keep aspect order but within each aspect order items newest first.\n\nActually, let me reconsider. I'll keep it simple and follow aspect-by-aspect order, and within aspects maintain the given item order (which is mostly chronological anyway), but for a6 order newest first explicitly.\n\nActually the given item order for a6 is: item1 (2026-09-30), item2 (2025-09-30), item3 (2026-03-31), item4 (2026-09-30), item5 (2026-10-29), item6 (2026-10-28). That's not chronological. So I should reorder newest first.\n\nLet me reorder a6: item5 (10-29), item6 (10-28), item1 (9-30), item4 (9-30), item3 (3-31), item2 (2025-09-30).\n\nFor the other aspects, the items are largely in reasonable order, but not strictly newest first. Given the time window instruction, I'll reorder each aspect newest first too. But this is a lot of work and risk. \n\nLet me focus: the instruction says \"With a time window, order claims and adjacent items newest first across the whole answer.\" I'll interpret this as within each aspect (since aspects are ordered by structure), order newest first. Actually, \"across the whole answer\" might really mean global.\n\nI think I'm overanalyzing. Let me do aspect by aspect (as required by Shape), and within each aspect order items newest first. This satisfies both reasonably.\n\nActually wait - re-reading Shape more carefully: \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '. One firm: aspect by aspect.\"\n\nAnd Recency: \"With a time window, order claims and adjacent items newest first across the whole answer.\"\n\nGiven the tension, I'll prioritize the structural \"aspect by aspect\" and within each aspect sort newest first. This is the most reasonable reading.\n\nLet me now also handle the a5 adjacent items. The differs_because is given as one combined statement. I'll use it for each adjacent item, or state once. The instruction: \"give the adjacent items, each with differs_because.\"\n\nSo each adjacent item gets differs_because. I'll use a concise version of the given differs_because for each.\n\nActually the differs_because text is one long paragraph. I can use it verbatim or paraphrase. I'll use a shorter version for each item, or the full text for each. The instruction says \"differs_because from the cell, in your words with the same meaning.\" The cell's differs_because is the long text. I can write each with a tailored differs_because.\n\nLet me write:\n- Item 1 (6,584 IARs): differs_because \"This is Schwab's own employees registered as investment adviser representatives firm-wide, not the advisor headcount of the RIAs that custody with Schwab.\"\n- Item 2 (4,127): differs_because \"This counts Schwab's own employees performing investment advisory functions, not independent advisors at RIAs that custody with Schwab.\"\n- Item 3 (3,000 in-house): differs_because \"This is Schwab's in-house financial advisors, not the advisors at RIAs that custody with Schwab.\"\n- Item 4 (3,000 serving advisors): differs_because \"This counts Schwab employees dedicated to serving advisors, not the advisor headcount at RIAs.\"\n\nThese are all fine and capture the meaning.\n\nGaps: code adds gaps for a5.SCHW and a5. Don't repeat. So no gaps from me.\n\nActually wait, I should double check - do I need to add any gaps? The instruction says \"Add a gap of your own only for something those gaps do not name.\" The code gaps cover a5 fully. So no additional gaps.\n\nNow let me also check: a4 comparability note \"unverified: not in metric definitions file; never compared across firms\". Single firm, no comparison needed. Just state figures.\n\nAlso a4 definition for segment items 8-12: \"The Advisor Services segment provides custodial, trading, banking and trust, and support services to independent RIAs...\" I can cite the definition? It's part of the item. The instruction says \"say what it covers (period, scope, sample)\". I'll mention scope.\n\nLet me write all claims now.\n\nFor dates: use source line format. \"The 3Q26 transcript (period ended September 30, 2026)\" etc.\n\nLet me write the final claims.\n\nActually, I realize I need to double-check the part_id. The enum has both \"a1.SCHW\" and \"a1\". For single firm, which to use?\n\nThe cells are named a1.SCHW etc. The instruction \"Every claim, adjacent item and gap carries the part_id of the cell it comes from.\" The cell is a1.SCHW. So part_id = a1.SCHW.\n\nBut also \"an aspect id for a claim that spans firms\" - for comparison aspects. None here.\n\nSo I'll use a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a5.SCHW, a6.SCHW.\n\nLet me write everything out.\n\nFor a4, I need to clearly separate bases. Let me structure with clear labels in text.\n\nLet me write the answer now.\n\nFor the why-lines in a6, I need to make sure the chunk_ids include both the item's cite and the why-line source cite.\n\nLet me finalize each a6 item's chunk_ids:\n\nItem 1: cite SCHW-TR-2026Q3#5, why from related SCHW-TRADE-2026-10-28-WM-02#0 and SCHW-TRADE-2026-11-02-RB-01#2. chunk_ids: all three.\n\nItem 5 (10-29): cite SCHW-TRADE-2026-10-29-WM-01#0, why from context (same source). chunk_ids: [SCHW-TRADE-2026-10-29-WM-01#0].\n\nItem 6 (10-28): cite SCHW-TRADE-2026-10-28-WM-02#0, SCHW-TRADE-2026-11-02-RB-01#2. why from context (goal of giving smaller advisors access). chunk_ids: both.\n\nItem 1 (9-30): done above.\n\nItem 4 (9-30): cite SCHW-TR-2026Q3#68, why from context same source.\n\nItem 3 (3-31): cite SCHW-TR-2026Q1#48, why from context same source.\n\nItem 2 (2025-09-30): cite SCHW-TR-2025Q3#13, why from related SCHW-TR-2026Q1#48.\n\nOrder: item5, item6, item1, item4, item3, item2.\n\nWait, item1 and item4 both 9-30. Original order item1 then item4. I'll keep item1 before item4.\n\nLet me write it all out now.\n\nFor a6 item 1's why, the related line: \"Schwab made Claude for Financial Advisors available through its central RIA platform and is offering a $4,800 credit for the enterprise version to give smaller ...\" So I'll write: \"Why it might matter: trade press reports Schwab made Claude for Financial Advisors available through its central RIA platform and is offering a $4,800 credit for the enterprise version to give smaller advisors access.\"\n\nNow write the final answer via submit_answer.\n\nLet me be careful about \"trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\".\n\nFor a3 items 2,3,4,5,8,9 - these are trade press. Items 2,3,4,5 describe competition. Attribute as trade press reports. Item 8 is recruiter quoted. Item 9 trade press.\n\nFor a2 item 4 - it's trade press but \"Schwab states\" (Wurster said). Actually the source is SCHW-TRADE (trade). The item says \"Schwab states it wants to give RIAs...\". Since it's a fact cell with Schwab's statement reported by trade press, I'll attribute as \"trade press reports Schwab stated...\". Actually the quote is Wurster's direct quote. I'll say \"trade press reports Schwab stated it wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies, and is increasingly trying to play the role of being their bank.\"\n\nNote quote not verbatim, so no quotes.\n\nFor a6 item 5 and 6 are trade press too. Item 5: \"Schwab is pushing...\" period 2026-10-29. Item 6: trade press. I'll attribute these as trade press reports.\n\nActually item 5 is \"Schwab is pushing to give RIAs...\" - Wurster said. It's trade press. Attribute.\n\nLet me write.\n\nNow let me also make sure dates. For trade press items, \"period n/a, published date\". So say \"trade press (October 29, 2026) reports...\"\n\nOK let me compose the full JSON.\n\nFor a1 item 4 and 5 (deck, published 2026-05-14): \"Schwab's 2026 investor day deck (May 14, 2026)...\"\n\nLet me write.\n\nNow a4 items. Item 15 trade press, item 16 deck.\n\nItem 16: \"1,101 349 339 202 79 Custodians Added to ADVs 2 3Q26\". So Schwab added 1,101 custodians to ADVs in 3Q26, versus peers 349, 339, 202, 79.\n\nItem 15: \"Schwab added 1,001 new RIAs to its custody platform in Q3 2026, with nearest peers adding 349, 339, 202, 79.\"\n\nThese two are slightly different (1,001 new RIAs vs 1,101 custodians added to ADVs). Different sources, different numbers. I'll state both, noting they're different figures from different sources (trade press vs deck).\n\nItem 15 quote not verbatim, item 16 quote not marked not verbatim (has quotes \"1,101 349 339 202 79 Custodians Added to ADVs 2 3Q26\"). Actually item 16 doesn't have \"[quote not verbatim]\" so I can quote. But it's a deck snippet. I'll paraphrase or quote. It says quote with the exact text. I'll state the numbers.\n\nLet me write item 16 as claim: \"Schwab's 3Q26 deck reports 1,101 custodians added to ADVs in 3Q26, versus peers 349, 339, 202, and 79.\"\n\nItem 15: \"Trade press reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026, with its nearest peers adding 349, 339, 202, and 79 respectively.\"\n\nBoth are Q3 2026 whole-firm (custody platform). \n\nNow let me finalize the whole answer.\n\nI'll write claims array with all items.\n\nLet me count and write carefully.\n\nFor a4, I'll present with basis labels. I'll write each claim noting \"whole firm\" or \"Advisor Services segment\".\n\nLet me write out the final text for each.\n\nI'm going to produce the submit_answer now.\n\nFor a6 item ordering and why-lines, let me finalize chunk_ids.\n\nLet me write.\n\nActually, one more consideration: the \"why-line\" for a6 uses \"from one of two places: what the item's own passage says (its context line...) or factual background from another passage listed under Sources (its related lines...)\". Then \"add that passage's chunk id to the claim's chunk_ids.\"\n\nSo for item 1, I use related line, add SCHW-TRADE-2026-10-28-WM-02#0 and SCHW-TRADE-2026-11-02-RB-01#2 to chunk_ids.\n\nFor items using context (same passage), chunk_ids just the item's cite (already there).\n\nOK let me finalize.\n\na6 item 2 why: I'll use related SCHW-TR-2026Q1#48 (structured asset lending). Actually item 3 is about structured asset lending. To avoid redundancy, maybe use SCHW-TR-2024Q4#13 (adding support and capabilities for RIAs of all sizes). Both fine. I'll use the structured lending as it's more specific and a \"consequence/development\". Actually let me use context instead: context mentions launched Advisor ProDirect which helps breakaway advisors on path to independence - that's restating the item. Related SCHW-TR-2024Q4#13 is about adding support/capabilities. I'll use related SCHW-TR-2026Q1#48.\n\nWhy it might matter for item 2: \"Why it might matter: Schwab also recently launched a structured asset lending program enabling RIA clients to borrow against alternative investments and restricted or private shares, extending the support ecosystem for advisors.\" cite SCHW-TR-2026Q1#48.\n\nOK finalizing now.\n\nLet me write the complete claims.\n\nFor part_ids, use a1.SCHW etc.\n\nLet me write everything.",
+  "first_claim_s": 75.55,
+  "stream_items": {
+    "first_claim_s": 75.55,
+    "shown": 35,
+    "held": 8
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The 3Q26 transcript (period ended September 30, 2026) states Schwab has built its adviser business around helping independent advisers grow, compete and succeed, through a platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support, today serving more than 16,000 firms representing $5.8 trillion in assets.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's 2026 investor day deck (published May 14, 2026) describes its goal as providing the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment/lending products, and technology in addition to custody and service.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#35"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's 2026 investor day deck (published May 14, 2026) lists Broaden support for RIAs while improving monetization as one of its strategic priorities under Serve More Clients & Deepen Relationships.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#41"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's 2025 10-K (period ended December 31, 2025, Advisor Services segment) states its strategy is to maintain its competitive position primarily through the efforts of its sales, support, technology, and business consulting teams dedicated to helping RIAs grow, compete, and succeed in serving their clients, plus a highly-developed, scalable platform for administering their clients' assets easily and efficiently.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The 3Q25 transcript (period ended September 30, 2025, Advisor Services) states Schwab is deepening relationships with the RIA firms it serves by building a broader support ecosystem that extends beyond custody alone to add value for RIAs.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The 3Q26 transcript (period ended September 30, 2026) states Schwab is continuing to invest in the RIA custody business to meet advisers' needs.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The 3Q25 transcript (period ended September 30, 2025, Advisor Services) states that in advisor services Schwab is deepening relationships with the 16,000 RIA firms it serves by building a broader support ecosystem that extends beyond custody alone, having grown its lending support, alternatives capability, and expanded its institutional no-transaction-fee mutual fund platform to include funds from nearly 60 managers with no transaction fees for clients.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's 2026 investor day deck (published May 14, 2026, Advisor Services) describes its priority as building the leading RIA support ecosystem to help advisors serve their clients, providing wealth tools, investment/lending products, and technology in addition to custody and service.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#35"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's 2025 10-K (period ended December 31, 2025, Advisor Services segment) states it maintains its competitive position primarily through its sales, support, technology, and business consulting teams dedicated to helping RIAs grow, compete, and succeed in serving their clients.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Trade press (October 29, 2026) reports Schwab stated it wants to give registered investment advisors equal or better access than their wirehouse counterparts to banking services such as lending, private market investing, and long-short investment strategies, and is increasingly trying to play the role of being their bank and helping them manage both sides of the balance sheet for their clients.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The 4Q24 transcript (period ended December 31, 2024, Advisor Services) states that in advisor services Schwab is adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's 2025 10-K (period ended December 31, 2025, Advisor Services) states that in the Advisor Services arena Schwab competes with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press (October 7, 2026) reports Fidelity Investments as Schwab's close rival and the second-largest RIA custodian after Schwab, noting Fidelity offers up to 1.94% on sweep cash and 3.49% through its money market funds.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-RB-01#4"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press (October 28, 2026) notes Fidelity Investments is the second-largest custodian after Schwab, and that Schwab will continue to focus on custody for RIAs under $100 million in assets after Fidelity told such firms they must leave its platform by June 30, 2027.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press (October 7, 2026) reports Altruist, described as the now Vanguard-owned custodian, as a competitor offering 0.05% in sweep accounts and a maximum 3.75% through a high-yield cash account.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-RB-01#4"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press (August 26, 2026) reports Vanguard (through its acquisition of Altruist) as a competitor setting up to compete with Fidelity and Schwab in RIA custody.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#3"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "A recruiter, quoted in trade press (August 24, 2026), names SEI, Goldman, and Robinhood as other custodians RIAs may look to after Schwab's referral changes.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-24-IN-01#2"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press (October 29, 2026) reports BNY Pershing named as a custodian alongside Schwab for a breakaway advisory firm, an advisory duo that managed about $18.6 billion in client assets at J.P. Morgan Advisors.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#2"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2026-09-30: The 3Q26 transcript states Schwab serves more than 16,000 advisory firms on its platform.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2026-09-30: The 3Q26 transcript states those advisory firms represent $5.8 trillion in assets.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2025: The 3Q26 transcript states that last year more than 1,100 advisory firms added Schwab as a custodian, more than 3x the number of the next closest provider.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2026-06-30: Schwab's 2Q26 deck reports it ranks #1 in RIA custodial assets at $5.7 trillion.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#14"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis: Schwab's 2026 investor day deck reports 3.9 million households in RIA custodial assets, where it ranks #1.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2026Q3: Trade press reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026, with its nearest peers adding 349, 339, 202, and 79, respectively.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-15-WM-01#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Whole-firm basis, period 2026Q3: Schwab's 3Q26 deck reports 1,101 custodians added to ADVs in 3Q26, versus peers at 349, 339, 202, and 79.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis: Schwab's 2026 investor day deck reports $5.2 trillion in client assets in Advisor Services, which it describes as being in a position of strength, and ranks #1 in RIA custodial assets.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#62"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2026-09-30: Schwab's press release (October 15, 2026) reports Advisor Services client assets of $5,845.9 billion at September 30, 2026; the Advisor Services segment provides custodial, trading, banking and trust, and support services to independent RIAs, independent retirement advisors, and recordkeepers.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2026-06-30: Schwab's press release (October 15, 2026) reports Advisor Services client assets of $5,741.9 billion at June 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2026-03-31: Schwab's press release (October 15, 2026) reports Advisor Services client assets of $5,201.5 billion at March 31, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2025-12-31: Schwab's press release (October 15, 2026) reports Advisor Services client assets of $5,195.5 billion at December 31, 2025.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2025-09-30: Schwab's press release (October 15, 2026) reports Advisor Services client assets of $5,016.7 billion at September 30, 2025.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2026Q3: Schwab's press release (October 15, 2026) reports Advisor Services net new assets of $120.1 billion for the quarter ended September 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services segment basis, period 2026Q2: Schwab's press release (October 15, 2026) reports Advisor Services net new assets of $80.2 billion for the quarter ended June 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Trade press (October 29, 2026) reports Schwab is pushing to give RIAs equal or better access than wirehouses to banking services such as lending, private market investing, and long-short investment strategies, increasingly trying to play the role of their bank. Why it might matter: the source states Wurster sees pledged asset lines as a particularly fruitful growth area among RIAs, given clients have created enormous wealth on paper from stock positions they don't want to sell but also have everyday liquidity needs.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press (October 28, 2026) reports Schwab made Claude for Financial Advisors available through its central RIA platform and is offering a $4,800 credit for the enterprise version, and also requires RIAs to use Docusign and is partnering with Nevis for digital onboarding. Why it might matter: the source states the $4,800 credit for the enterprise version is offered with the goal of giving smaller advisors access.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-02#0",
+          "SCHW-TRADE-2026-11-02-RB-01#2"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The 3Q26 transcript (period ended September 30, 2026) states Schwab collaborated with Anthropic and is the first RIA custodian included in Claude for Financial Advisors. Why it might matter: trade press reports Schwab made Claude for Financial Advisors available through its central RIA platform and is offering a $4,800 credit for the enterprise version to give smaller advisors access.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#5",
+          "SCHW-TRADE-2026-10-28-WM-02#0",
+          "SCHW-TRADE-2026-11-02-RB-01#2"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The 3Q26 transcript (period ended September 30, 2026) states Schwab expects to offer a proprietary long/short investment strategy, extending its direct indexing capability, to deliver long/short capabilities to RIA clients. Why it might matter: Schwab states it will be able to run that product in a very efficient way from a balance sheet and operational standpoint to help sustain the ability to deliver long/short capabilities to clients.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#68"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The 1Q26 transcript (period ended March 31, 2026) states Schwab recently launched a structured asset lending program enabling RIA clients to borrow against alternative investments and restricted or private shares. Why it might matter: the source states advisers love the program because historically they had to introduce a big bank for such lending, and now they can keep it with Schwab.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "The 3Q25 transcript (period ended September 30, 2025) states Schwab launched Advisor ProDirect, a membership-based program to help independent RIA firms accelerate sustainable growth and support breakaway advisors on their path to independence. Why it might matter: Schwab also recently launched a structured asset lending program enabling RIA clients to borrow against alternative investments and restricted or private shares, extending the support ecosystem for advisors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13",
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a6.SCHW"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Schwab's Form ADV reports that approximately 6,584 of its employees are registered with one or more state securities authorities as investment adviser representatives.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "This is Schwab's own firm-wide employees registered as investment adviser representatives, not the advisor headcount of the independent RIAs that custody with Schwab."
+      },
+      {
+        "text": "Schwab's Form ADV reports that approximately 4,127 of its employees perform investment advisory functions (including research).",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "This counts Schwab's own firm-wide employees performing investment advisory functions, not the advisors at RIAs that custody with Schwab."
+      },
+      {
+        "text": "Trade press reports Schwab noted it has some 3,000 financial advisors in-house, many of whom hold CFPs.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#2"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "This is Schwab's in-house financial advisors, not the advisor headcount of the RIAs that custody with Schwab."
+      },
+      {
+        "text": "Trade press reports Schwab has more than 3,000 employees dedicated to serving advisors.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-27-IN-01#1"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "This counts Schwab employees dedicated to serving advisors, not the advisor headcount at the RIAs that custody with Schwab."
+      }
+    ],
+    "gaps": []
+  }
+}

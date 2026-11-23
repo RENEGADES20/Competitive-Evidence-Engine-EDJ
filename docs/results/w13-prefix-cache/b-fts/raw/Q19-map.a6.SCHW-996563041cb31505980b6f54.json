@@ -1,0 +1,77 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a6.SCHW",
+  "round": 1,
+  "entity": "SCHW",
+  "cells": [
+    "a6.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#11",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-DECK-2026Q3#23",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2026Q2#36",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2026Q2#37",
+    "SCHW-DECK-2026-investor-day#86"
+  ],
+  "at": "2026-11-23T00:01:14.046145-06:00",
+  "prefix_group": "f69a46a86e1aac62",
+  "prefix_role": "follower",
+  "gate_wait_s": 6.89,
+  "leader_cached": false,
+  "prefix_chars": 22573,
+  "request_chars": 23379,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6065,
+    "output_tokens": 930,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4529,
+    "reasoning_tokens": 781,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.64
+  },
+  "wall_s": 13.25,
+  "tokens_per_s": 70.19,
+  "ttft_s": 1.64,
+  "reasoning_content": "The sub-question a6.SCHW asks: \"How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?\"\n\nBut the firm is The Charles Schwab Corporation (SCHW), not Edward Jones. This is a mismatch. The question asks about Edward Jones, but the passages are all about Schwab. So the passages about Schwab describe Schwab's strategy, not Edward Jones's strategy.\n\nWait, let me re-read. The question is about Edward Jones, but the firm is SCHW. Actually this seems like a template error where the question is about Edward Jones but we're extracting for SCHW. \n\nActually, looking more carefully - the overall question is about how younger investors' preferences should shape Edward Jones's offerings. The firm being analyzed is SCHW (a competitor). So a6.SCHW asks \"How does Edward Jones state its strategy and priorities for attracting and serving younger investors.\"\n\nBut wait, the passages are all Schwab passages. There are no Edward Jones passages. So for a6.SCHW, asking about Edward Jones's strategy, but we only have Schwab passages.\n\nHmm, this is confusing. Actually, the sub-questions have been mapped oddly. a6.SCHW asks about Edward Jones, but this is SCHW's extraction. Since we only have Schwab passages, and the passages talk about Schwab's strategy, not Edward Jones's strategy.\n\nActually wait - re-reading the instructions: \"the message may list the firm's other sub-questions and their passages for context only.\" And \"Answer in this call: sub-question a6.SCHW only.\"\n\nSo I need to answer a6.SCHW: \"How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?\"\n\nThe passages are all about Schwab, not Edward Jones. There's no Edward Jones information. So this would be \"not_found\" because the passages say nothing about Edward Jones's strategy.\n\nActually, let me think. This is a strange situation. The sub-question asks about Edward Jones, but we're analyzing Schwab. The passages are Schwab's own statements about its own strategy. None of them mention Edward Jones's strategy.\n\nSo the answer is not_found - the passages say nothing about Edward Jones's strategy and priorities for attracting younger investors.\n\nLet me verify - is there anything about Edward Jones in the passages? No. All passages are Schwab's CEO and deck talking about Schwab.\n\nSo the correct label is \"not_found\" - the passages say nothing about Edward Jones's strategy.\n\nActually, wait. Let me reconsider. Could this be a labeling where a6.SCHW is about the firm's (Schwab's) own strategy? No, the sub-question explicitly says \"How does Edward Jones state its strategy...\"\n\nThe whole question set is about how younger investors' preferences should shape Edward Jones's offerings. The sub-questions a5, a6, a8 are about Edward Jones specifically. But this is the SCHW extraction, and Schwab's passages don't contain Edward Jones information.\n\nSo a6.SCHW = not_found, because the passages (all Schwab) say nothing about Edward Jones's strategy.\n\nActually, hold on. Let me reconsider the structure. The firm is SCHW. The sub-questions a1-a8 are all labeled .SCHW. But some ask about Edward Jones (a5, a6, a8). These are odd because Edward Jones is a competitor, not SCHW.\n\nFor a6.SCHW, asking about Edward Jones's strategy, with only Schwab passages available, the answer is not_found.\n\nI'll return not_found with an empty items list and reason explaining the passages are about Schwab, not Edward Jones.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a6.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The sub-question asks how Edward Jones states its strategy and priorities for younger investors, but all available passages are statements by The Charles Schwab Corporation (Schwab executives and deck) about Schwab's own strategy, with no mention of Edward Jones's strategy or priorities.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

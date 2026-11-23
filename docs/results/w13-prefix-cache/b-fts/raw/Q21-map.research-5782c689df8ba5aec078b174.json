@@ -1,0 +1,368 @@
+{
+  "question_id": "Q21",
+  "question": "What do we know about the generational wealth transfer, and how are these five preparing for it?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "CERULLI-GWT-2025#24",
+    "CERULLI-GWT-2025#2",
+    "BOFA-PB-STUDY-2026#16",
+    "UBS-NEXTGEN-2026#6"
+  ],
+  "at": "2026-11-23T00:14:44.679885-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3188,
+    "output_tokens": 15272,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 1524,
+    "reasoning_tokens": 12788,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.64
+  },
+  "wall_s": 193.0,
+  "tokens_per_s": 79.13,
+  "ttft_s": 1.64,
+  "reasoning_content": "Let me analyze this task carefully. The question asks about the generational wealth transfer and how five firms are preparing for it. But the passages are all \"industry research\" (not firm-specific documents). The sub-questions have labels like [fact], [fact, metric net_new_assets], etc.\n\nWait, the sub-question ids are a1.research through a9.research. All of these are marked with \".research\" indicating they're industry research, not firm-specific.\n\nThe instruction says: \"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms.\" But here the firm is \"Industry research (no firm...)\". \n\nThe key instruction: \"These passages are industry research, not one firm's documents; the cell ids end in .research. A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nSo for the sub-questions about firms' preparation (a3-a9 which ask \"how do these firms prepare...\", \"what products... do these firms offer\", etc.), these are asking about named firms' own figures/actions. But the passages are industry research, not firm disclosures. So for firm-specific aspects, a research figure would be different_quantity (or not_found if nothing is said).\n\nLet me carefully go through each sub-question and figure out the label.\n\na1.research [fact]: \"What is the estimated size and scale of the generational wealth transfer opportunity?\" This is about the industry in general. Research figures are facts for industry aspects. The CERULLI passage states $123.7 trillion (to heirs $105T and charities $18T) between now and 2048. Also UBS states USD 83 trillion globally. These are facts for a1.\n\na2.research [fact]: \"What demographic trends and characteristics define the generational wealth transfer?\" CERULLI passage has: Generation Xers $39 trillion, Millennials $46 trillion, women Baby Boomer and older $40 trillion horizontal, women younger generations $47 trillion. Also \"older households\" hold wealth. UBS: aging demographics, longer life expectancies, rising asset prices. These are facts.\n\na3.research [fact, metric net_new_assets]: \"How do these firms prepare to retain assets and relationships as wealth passes to next-generation heirs?\" This asks about the firms' (named firms) preparation. The passages are industry research. They mention \"Advisors should...\" and \"Home offices must support...\" and \"Advisors must see the client as the entire family...\" - these are industry recommendations, not a named firm's own actions. \n\nActually, let me think. The instruction says research figures about \"clients or advisors in general\" are facts. But a3 asks \"How do these firms prepare to retain assets...\" This is about the named firms. Since no passage describes a named firm's specific preparation (the BOFA-PB one is about Bank of America Private Bank, which is not one of the five firms... wait, actually Merrill is Bank of America's wealth management arm. Hmm, but the question lists Merrill as a firm, and BOFA Private Bank is a different entity).\n\nActually wait - the BOFA-PB-STUDY passage is about \"Bank of America Private Bank\" which is not in the list of five firms (Morgan Stanley, Charles Schwab, Edward Jones, Merrill, Raymond James). Merrill is Bank of America's wealth management, but Private Bank is distinct. So that's a different firm.\n\nThe CERULLI passages provide industry-level recommendations/best practices. These are about the industry in general, not named firms.\n\nFor a3-a9, the sub-questions ask about \"these firms\" (the five named firms). The passages are industry research that don't contain the named firms' own disclosures. \n\nLet me think about what \"fact\" vs \"not_found\" vs \"different_quantity\" means here.\n\nThe instruction: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo for a3 which asks \"How do these firms prepare to retain assets...\" - this is about the named firms' own actions. The passages give industry recommendations (\"Advisors should be fully aware...\", \"Home offices must support...\"). These are industry guidance, not the firms' own disclosures. \n\nHmm, but there's a nuance. The passages are all under \"Research research\" source. The question a3 asks specifically about \"these firms\" (the five named). Since the research passages don't state anything about the named firms' specific preparations, and the only content is industry-level guidance...\n\nActually, let me reconsider the overall structure. The message says \"Firm: Industry research (no firm; firms in the question: Morgan Stanley, ...)\". So this extraction is for the \"Industry research\" firm context. The sub-questions are all \".research\".\n\nThe instruction at the end: \"These passages are industry research, not one firm's documents... A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nSo:\n- a1 (size/scale of opportunity): industry aspect \u2192 fact\n- a2 (demographic trends): industry aspect \u2192 fact\n- a3 (how firms prepare to retain assets): named firms' own figure \u2192 the research gives industry guidance, which is different_quantity (industry figure, not firm disclosure). Or not_found?\n\nActually, let me think more carefully. The distinction is between \"fact\" (industry aspect) and \"different_quantity\" (named firm's own figure where research gives industry figure).\n\nFor a3-a9, these ask about \"these firms\" (named firms). The research passages don't provide the named firms' own disclosures. The CERULLI passage provides industry best practices/recommendations about what advisors/firms \"should\" do. This is industry guidance, not what any specific firm does.\n\nHmm, but is \"industry figure for a firm's own figure\" the right frame? The instruction's example: \"a different measure... client firms on a platform for the firm's own advisors... an industry figure for a firm's own figure.\"\n\nSo for a3, the research says \"Advisors should be fully aware of the risks... Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" This is industry-level advice about how firms should prepare, not a named firm's disclosure. This could be \"different_quantity\" - an industry figure/statement, not the firm's disclosure.\n\nActually, I think the cleaner interpretation: since these sub-questions (a3-a9) ask specifically about \"these firms\" (named firms), and the passages are industry research that don't mention those firms' own disclosures, the answer is either not_found (nothing said about them) or different_quantity (industry-level statements as a proxy).\n\nLet me look at what's actually in the passages relevant to each sub-question.\n\nPassages available:\n1. CERULLI-GWT-2025#24 - industry best practices, advisors should be aware of risks, home offices must support advisors, \"Advisors must see the client as the entire family\"\n2. CERULLI-GWT-2025#2 - $123.7 trillion projection, demographics\n3. BOFA-PB-STUDY-2026#16 - Bank of America Private Bank (not a named firm), trust/estate planning, business succession, family education, alternatives\n4. UBS-NEXTGEN-2026#6 - USD 83 trillion, aging demographics, next generation perspective\n\nSo the passages are:\n- CERULLI (industry research about wealth transfer, projections, demographics, best practices)\n- BOFA Private Bank (a specific firm, but NOT one of the five named firms)\n- UBS (industry research, foreword)\n\nFor a1: fact (size/scale). CERULLI $123.7T, UBS $83T.\nFor a2: fact (demographics). CERULLI Gen X $39T, Millennials $46T, women $40T horizontal, $47T intergenerational; UBS aging demographics, longer life expectancies.\n\nFor a3: \"How do these firms prepare to retain assets and relationships...\" - the CERULLI #24 passage has industry best practices: advisors should be aware of risks, be involved in intergenerational planning, home offices must support advisors. Also \"Advisors must see the client as the entire family.\" These are industry recommendations, not the five firms' own disclosures. Since the question asks about \"these firms\" (named firms), and these are industry statements, this is different_quantity (industry figure/statement, not firm disclosure).\n\nActually wait, let me reconsider. The sub-question a3 is about \"these firms\" = the five named firms. But there's also the note that this is the \".research\" extraction. Hmm.\n\nActually, re-reading the top instruction more carefully:\n\n\"You extract evidence about one firm from passages of its documents, for a question about wealth-management firms.\"\n\n\"Firm: Industry research (no firm; firms in the question: ...)\"\n\nSo this particular extraction is about \"Industry research\" as a source, and the question mentions the five firms. The sub-questions a1-a9 are the ones for this \"firm\" (industry research).\n\nThe note: \"These passages are industry research, not one firm's documents; the cell ids end in .research. A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nSo the question has both industry-level aspects (a1, a2) and firm-level aspects (a3-a9 ask about \"these firms\").\n\nFor a1 and a2: industry aspects \u2192 research figures are facts.\n\nFor a3-a9: these ask about the named firms. The research passages describe industry-level recommendations and a different firm (BOFA Private Bank). So:\n- Industry recommendations \u2192 different_quantity (industry statement, not firm's own disclosure)\n- BOFA Private Bank \u2192 different firm, different_quantity\n\nActually, for a3 specifically: \"How do these firms prepare to retain assets and relationships as wealth passes to next-generation heirs?\" \n\nThe CERULLI #24 passage says: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning. Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\"\n\nThis is industry guidance, not the five firms' own disclosures. So it's different_quantity (industry statement as a proxy for what firms do).\n\nHmm, but actually, is this even a \"figure\"? The label different_quantity is defined as \"no passage states the asked quantity, but one states a different, related quantity.\" The \"quantity\" here for a3 is a qualitative description of how firms prepare. \n\nActually, let me reconsider the whole thing. These sub-questions are largely qualitative (a3-a9), not quantitative figures. The labels fact/different_quantity/not_found/not_disclosed apply.\n\nLet me think about each:\n\na3: \"How do these firms prepare to retain assets and relationships...\" - The research passages don't describe the five named firms' preparations. The CERULLI passage gives industry best practices (advisors should, home offices must). BOFA-PB describes a different firm. \n\nI think the most honest answer: the passages don't state what the five named firms do. They give industry recommendations and a different firm's approach. So this is different_quantity (industry guidance / different firm), or not_found.\n\nGiven the instruction: \"for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo the industry best practices (advisors should be involved in intergenerational planning, home offices must support advisors, see client as entire family) are \"industry figures/statements\" that relate to the firms' own actions but are not the firms' disclosures. \u2192 different_quantity.\n\nActually, I think for a3, a4, a5, a6, a7, the industry recommendations in CERULLI #24 are relevant but they're industry guidance, not the named firms' disclosures. So different_quantity with differs_because \"industry-level recommendation/guidance, not a named firm's own disclosure.\"\n\nLet me be careful about what's a \"fact\" vs \"different_quantity\" for the research questions.\n\na1 [fact] size/scale: CERULLI and UBS give specific figures about the wealth transfer. These are industry figures, and a1 asks about \"the generational wealth transfer opportunity\" (industry aspect). \u2192 fact.\n\na2 [fact] demographics: CERULLI gives demographic breakdowns. \u2192 fact.\n\na3 [fact, metric net_new_assets]: \"How do these firms prepare to retain assets...\" This asks about the five firms. The metric note is net_new_assets (the quantity of assets retained). The research doesn't give net new assets figures for these firms. It gives industry recommendations. \u2192 different_quantity (industry guidance, not firm disclosure) OR not_found.\n\nHmm, actually, I need to think about what the intended answer is. This is a benchmark/task where I need to extract the correct labels.\n\nLet me reconsider. The note says: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nSo the key question for each sub-question: is it about the industry/clients/advisors in general (fact) or about a named firm's own figure (different_quantity)?\n\na1: \"estimated size and scale of the generational wealth transfer opportunity\" \u2192 industry in general \u2192 fact\na2: \"demographic trends and characteristics\" \u2192 industry in general \u2192 fact\na3: \"How do these firms prepare to retain assets\" \u2192 named firms \u2192 different_quantity (or not_found)\na4: \"How do these firms prepare for advisor succession\" \u2192 named firms \u2192 different_quantity/not_found\na5: \"What products/services do these firms offer\" \u2192 named firms \u2192 different_quantity/not_found\na6: \"How do these firms engage entire families\" \u2192 named firms \u2192 different_quantity/not_found\na7: \"strategic initiatives and leadership statements of each firm\" \u2192 named firms \u2192 different_quantity/not_found\na8: \"closest disclosed figures for client assets\" \u2192 named firms \u2192 different_quantity/not_found\na9: \"which of these firms appears most prepared\" \u2192 named firms \u2192 not_found (comparison needs firm data)\n\nNow, for each of a3-a9, I need to determine if there's ANY relevant content in the passages that would be a \"different_quantity\" (an industry figure or related quantity) vs \"not_found\" (nothing said).\n\nThe passages:\n- CERULLI #24: industry best practices (advisors should be involved in intergenerational planning, home offices must support advisors, see client as entire family). These are relevant to a3 (retain assets/relationships), a4 (advisor succession), a6 (family engagement).\n- CERULLI #2: projections and demographics. Relevant to a1, a2, and possibly a8 (client assets? no, it's about transfer amounts, not firm client assets).\n- BOFA-PB #16: Bank of America Private Bank's approach (trust/estate planning, business succession, family education, alternatives). This is a different firm (not one of the five). Relevant to a3, a5, a6 as a \"different firm\" - but actually it's a different_quantity (a different firm's approach, not the named firms').\n- UBS #6: USD 83 trillion, aging demographics. Relevant to a1, a2.\n\nWait, but the five firms are Morgan Stanley, Charles Schwab, Edward Jones, Merrill, Raymond James. Bank of America Private Bank is not in this list (Merrill is a different BofA entity). UBS is also not in the list.\n\nSo for a3-a9, the passages don't contain the five named firms' own disclosures at all. The content is:\n- Industry recommendations (CERULLI #24)\n- A different firm (BOFA Private Bank) - but actually, is BOFA-PB relevant? It's a different firm, so for \"these firms\" (the five), it's a different_quantity (a different firm's disclosure).\n\nHmm wait, but actually BOFA-PB is a research document (source \"Research research\"). So even BOFA-PB's statements are \"research\" not the firm's own disclosure. But it's still about a specific firm (BofA Private Bank), which is different from the five named firms.\n\nThis is getting complicated. Let me simplify based on the guidance:\n\n\"For an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nThe sub-questions a3-a9 ask about \"these firms\" (the five named firms). The passages are industry research. The industry research gives:\n1. Industry-level recommendations (advisors should, home offices must)\n2. Industry projections (transfer amounts)\n3. A different firm's (BOFA Private Bank) approach\n\nNone of these are the five named firms' own disclosures. So for a3-a9, the label should be either different_quantity (industry figure/statement as proxy) or not_found (nothing relevant said).\n\nLet me determine which is more appropriate for each.\n\nActually, I think the cleaner approach given the instructions:\n\nThe instruction says research figures are \"fact\" only for industry/client/advisor-general aspects. For \"a named firm's own figure\", research gives \"different_quantity.\"\n\nBut a3-a9 ask about \"these firms\" (named firms). Since the research doesn't disclose the named firms' own figures, but DOES give industry-level related content (recommendations), the label is \"different_quantity\" where there's related industry content, and \"not_found\" where there's nothing at all.\n\nLet me map:\n\na3 \"retain assets/relationships as wealth passes to heirs\" - CERULLI #24: \"Advisors should be fully aware of the risks... be thoroughly involved in their clients' intergenerational planning.\" \"Advisors must see the client as the entire family.\" This is industry guidance about retaining assets/relationships. \u2192 different_quantity (industry guidance, not the named firms' disclosure).\n\nActually, wait. Let me reconsider whether the instruction wants me to treat these industry recommendations as \"facts\" about the industry.\n\nThe note says: \"A research figure is a fact for an aspect about the industry, clients or advisors in general.\"\n\n\"Advisors should be fully aware of the risks...\" - this is about advisors in general, a recommendation. Is this \"an aspect about the industry, clients or advisors in general\"? \n\nHmm, but the sub-question a3 is specifically framed as \"How do these firms prepare...\" - it's about the firms, not about advisors in general. So even though the passage talks about advisors, the question asks about firms.\n\nI think the distinction hinges on the sub-question's subject: is it asking about the industry in general or about named firms?\n\na1: \"the generational wealth transfer opportunity\" \u2192 industry \u2192 fact\na2: \"demographic trends\" \u2192 industry \u2192 fact\na3: \"these firms prepare\" \u2192 named firms \u2192 different_quantity (industry guidance is a proxy)\na4: \"these firms prepare for advisor succession\" \u2192 named firms \u2192 different_quantity/not_found\na5: \"these firms offer\" \u2192 named firms \u2192 different_quantity/not_found\na6: \"these firms engage entire families\" \u2192 named firms \u2192 different_quantity/not_found\na7: \"each firm's commitment\" \u2192 named firms \u2192 different_quantity/not_found\na8: \"closest disclosed figures for client assets\" \u2192 named firms \u2192 different_quantity/not_found\na9: \"which of these firms appears most prepared\" \u2192 named firms \u2192 not_found\n\nFor a3-a9, since the passages are industry research (not the named firms' documents), and they don't contain the named firms' own disclosures, the appropriate label is either different_quantity (where there's relevant industry content) or not_found.\n\nLet me go through the passages for each sub-question to find relevant content.\n\na3 (retain assets/relationships): \n- CERULLI #24: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.\" - relevant to retaining relationships\n- \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" - relevant\n- \"Advisors must see the client as the entire family...\" - relevant to relationships\nThese are industry guidance \u2192 different_quantity.\n\na4 (advisor succession/retirement, aging advisor force):\n- CERULLI #24 doesn't specifically discuss advisor succession/retirement. It discusses client wealth transfer.\n- BOFA-PB #16: \"business succession strategies\" - this is about client business succession, not advisor succession. And it's a different firm.\n- Actually, nothing about advisor succession/retirement in the passages. \u2192 not_found.\n\nHmm wait, let me check. CERULLI #24: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices\" - this is about practices, not advisor succession. Nothing about aging advisor force or advisor retirement.\n\nActually, the sub-question a4 is \"[fact, metric advisor_headcount]\" about \"advisor succession and retirement given aging advisor force and clients.\" The passages don't discuss advisor headcount or advisor succession. \u2192 not_found.\n\na5 (products/services/platforms for next-gen clients):\n- CERULLI #24: \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" - mentions investment products and technology as what home offices should provide. This is industry guidance.\n- BOFA-PB #16: \"access to a broad range of alternative investment strategies, including private equity, real estate...\" - this is a different firm's offerings.\n\u2192 different_quantity (industry guidance / different firm).\n\na6 (engage entire families, multi-generational planning):\n- CERULLI #24: \"Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\" - this is about family engagement, industry guidance.\n- BOFA-PB #16: \"Advisors facilitate conversations across generations to align financial plans with family values\" - different firm.\n\u2192 different_quantity.\n\na7 (strategic initiatives and leadership statements):\n- CERULLI #24: the executive quote \"Advisors must see the client as the entire family...\" - this is a leadership statement, but from an unnamed executive (industry consultant), not from the five firms.\n\u2192 different_quantity (industry executive statement, not a named firm's).\n\na8 (closest disclosed figures for client assets/retention as proxy):\n- CERULLI #2: $123.7 trillion transfer, $105T to heirs, $18T to charities. These are about the wealth transfer, not firm client assets. Could be a \"different quantity\" - the wealth transfer size vs firm client assets. Hmm.\n- Actually, the metric is net_new_assets (proxy). The sub-question asks for \"closest disclosed figures for client assets and retention.\" The passages don't disclose any firm's client assets. The CERULLI $123.7T is the industry transfer figure, not client assets.\n\u2192 not_found (no firm client assets figures), or different_quantity (industry transfer figure as proxy).\n\nHmm, this is tricky. a8 is \"[series, metric net_new_assets, proxy]\" - asks for \"closest disclosed figures for client assets and retention serving as a proxy.\" Since no firm client assets are disclosed, and the research only has industry transfer projections, this is... \n\nActually, the \"$123.7 trillion\" transfer figure could be seen as a \"different quantity\" - it's the wealth transfer amount, not client assets. But it's also not really a proxy for \"client assets and retention\" of these firms.\n\nI think for a8, not_found is more appropriate, since there's no client assets figure at all (not even a different measure that's close). The $123.7T is the transfer size (industry), which is a1's subject, not a proxy for firm client assets.\n\nActually, wait. Let me reconsider. The instruction says \"different_quantity: ... a different measure ... a wider unit that contains the asked one (a parent company...) ... an industry figure for a firm's own figure.\"\n\nSo \"an industry figure for a firm's own figure\" - the industry wealth transfer figure ($123.7T) vs the firm's client assets. This could be \"different_quantity\" (industry figure).\n\nBut is $123.7T a proxy for \"client assets and retention\"? It's the size of the opportunity, not client assets. I think it's a stretch.\n\nHmm, let me think about what's most defensible. For a8, the question is about \"client assets and retention\" figures for these firms. The passages don't contain any firm client assets or retention figures. The $123.7T is the industry transfer size. This is a different quantity (industry transfer size, not firm client assets). So different_quantity with differs_because \"industry wealth transfer projection, not a firm's client assets.\"\n\nActually, I realize I might be overcomplicating this. Let me step back and think about what the benchmark likely expects.\n\nThis appears to be a test where the firm is \"Industry research\" and the sub-questions a1-a9 are being asked. The passages are all research documents (Cerulli, BofA PB study, UBS). \n\nThe key insight from the instruction: research figures are facts for industry aspects (a1, a2) and different_quantity for firm-specific aspects (a3-a9).\n\nFor a1: The size of wealth transfer \u2192 fact. CERULLI $123.7T, UBS $83T.\n\nFor a2: Demographics \u2192 fact. Gen X $39T, Millennials $46T, women $40T/$47T.\n\nFor a3-a9: These ask about \"these firms\" (named firms). The research doesn't provide the named firms' disclosures. So different_quantity where there's related industry content, not_found where there's nothing.\n\nLet me finalize my approach and be thorough.\n\nActually, let me reconsider a3. The sub-question is labeled \"[fact, metric net_new_assets]\". The \"[fact]\" might indicate this is still expected to have fact content? No wait, the labels in brackets describe the expected type. \"[fact]\" means the sub-question is a factual question. \"[fact, metric net_new_assets]\" means it's a fact about the metric net_new_assets.\n\nHmm, but these bracket labels are about the question type, not the answer label. The answer labels are fact/different_quantity/not_found/not_disclosed.\n\nActually, wait. Let me re-read: \"Sub-questions (return one cell for each, with this id): a1.research [fact]: ...\" \n\nThe \"[fact]\" here is describing the expected answer type for the sub-question. But actually, the instruction in the main body says the labels are fact/different_quantity/not_found/not_disclosed. The [fact] in the sub-question list might be a hint about the expected label.\n\nHmm, but that doesn't quite work either, because a3 is \"[fact, metric net_new_assets]\" and a8 is \"[series, metric net_new_assets, proxy]\".\n\nActually, I think the [fact], [series], [comparison], [recency], [proxy] annotations are metadata about the sub-question type, not the expected answer label. The answer label is determined by my analysis.\n\nLet me just focus on doing the extraction correctly according to the instructions.\n\nFinal plan:\n\na1.research [fact] - size/scale: fact\n- CERULLI: $123.7 trillion to heirs ($105T) and charities ($18T) between now and 2048\n- UBS: USD 83 trillion globally over next 2-3 decades\n\na2.research [fact] - demographics: fact\n- CERULLI: Gen X $39T, Millennials $46T, women Boomer+ $40T horizontal, women younger $47T intergenerational\n- UBS: aging demographics, longer life expectancies, rising asset prices\n- CERULLI: wealth concentrated in older households\n\na3.research - retain assets/relationships: different_quantity\n- CERULLI #24: industry guidance (advisors should be involved in intergenerational planning, home offices must support advisors)\n- differs_because: industry-level recommendation, not a named firm's own disclosure\n\na4.research - advisor succession/retirement: not_found\n- No passage discusses advisor succession/retirement/headcount\n\na5.research - products/services/platforms: different_quantity\n- CERULLI #24: home offices must provide expertise, investment products, technology (industry guidance)\n- BOFA-PB #16: alternatives (different firm)\n- differs_because: industry guidance / different firm\n\na6.research - family engagement: different_quantity\n- CERULLI #24: \"Advisors must see the client as the entire family\"\n- BOFA-PB #16: \"conversations across generations\"\n- differs_because: industry guidance / different firm\n\na7.research - strategic initiatives/leadership statements: different_quantity\n- CERULLI #24: executive quote (unnamed industry consultant)\n- differs_because: industry consultant statement, not a named firm's leadership\n\na8.research - client assets/retention proxy: not_found or different_quantity\n- No firm client assets. The $123.7T is industry transfer, which is a different quantity.\n- I'll go with not_found since there's no client assets or retention figure at all. Actually, the $123.7T/$83T are about transfer size, already used in a1. For a8 asking about \"client assets and retention\" of firms, there's nothing. not_found.\n\nHmm, but wait. Let me reconsider a8. \"What are the closest disclosed figures for client assets and retention serving as a proxy for wealth transfer capture?\" \n\nThe metric is net_new_assets. The proxy. The passages don't have any firm client assets. So not_found seems right. But one could argue the $123.7T transfer is a \"different quantity\" (industry transfer vs firm client assets).\n\nI'll go with not_found for a8 because there's genuinely no client asset or retention figure for any firm, and the transfer figure isn't a \"proxy\" for client assets - it's the opportunity size (a1's subject).\n\nActually, let me reconsider. The instruction for different_quantity includes \"an industry figure for a firm's own figure.\" The $123.7T is an industry figure (transfer size), and the asked quantity is \"client assets and retention\" (a firm's own figure). So the industry transfer figure could be a different_quantity.\n\nBut it's a stretch. The transfer size is not really \"client assets\" - it's the flow of wealth. \n\nI think I'll go with not_found for a8, reasoning that no client asset or retention figures are disclosed, and the wealth transfer projections are about the opportunity, not firm client assets.\n\nActually, hold on. Let me reconsider more holistically. The reason there's a \"proxy\" annotation on a8 is that the metric \"net_new_assets\" isn't directly disclosed, so we look for proxies. But in the research passages, there are no firm-specific client asset figures. So not_found.\n\na9.research - comparison of preparedness: not_found\n- The passages don't compare the five firms. They're industry research.\n- not_found.\n\nNow let me also reconsider: for a3, is the CERULLI #24 \"Advisors should...\" content actually a \"fact\" about the industry (advisors in general) or \"different_quantity\" (firms)?\n\nThe sub-question a3 asks \"How do these firms prepare to retain assets...\" - it's about the named firms. The CERULLI content is about \"advisors\" and \"home offices\" in general (recommendations). This is industry guidance, not the named firms' disclosures.\n\nPer the instruction: \"for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo a3 \u2192 different_quantity (industry guidance about retaining assets/relationships, not the named firms' disclosures).\n\nActually, wait. Let me reconsider whether the \"Advisors should...\" content should be a \"fact\" for a3. The note says research figures are facts for \"aspects about the industry, clients or advisors in general.\" a3 asks about firms, but the passage talks about advisors in general.\n\nThe sub-question's framing matters. a3 is \"How do these firms prepare...\" - \"these firms\" = named firms. So it's about firms, not advisors in general. The research guidance about advisors is a \"different quantity\" relative to the asked \"how firms prepare.\"\n\nI'll go with different_quantity for a3, a5, a6, a7 (where there's related industry content), and not_found for a4, a8, a9 (where there's no relevant content).\n\nLet me now also double check a5. \"What products, services, and platforms do these firms offer to attract and serve next-generation clients?\"\n\nCERULLI #24: \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" - this is industry guidance about what home offices should provide.\n\nBOFA-PB #16: \"access to a broad range of alternative investment strategies, including private equity, real estate, and select opportunistic investments\" - this is BofA Private Bank (a different firm).\n\nSo for a5, different_quantity. The BOFA-PB is a different firm's offering (not one of the five named firms). The CERULLI is industry guidance.\n\nActually, I realize I should think about whether to include BOFA-PB content. BOFA-PB is a \"research\" source, but it's about a specific firm (BofA Private Bank). Since Merrill (one of the five) is BofA's wealth management arm, but Private Bank is distinct, it's a different firm. So BOFA-PB content is \"different_quantity\" for the five firms (different firm's disclosure).\n\nHmm, but actually the instruction says these are all \"industry research, not one firm's documents.\" So even BOFA-PB is research. But it describes BofA Private Bank's approach, which is a different firm from the five.\n\nFor the \"differs_because\" field, I need to explain how it differs.\n\nOK let me now write out the cells.\n\nLet me be careful about the item format. Each item needs: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nFor fact items, I need to extract figures with their periods.\n\na1 items:\n1. CERULLI: $123.7 trillion transfer to heirs ($105T) and charities ($18T) between now and 2048.\n   - text: \"Cerulli projects households will transfer $123.7 trillion to heirs and charities between now and 2048.\"\n   - quote: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n   - value: \"$123.7 trillion\"\n   - unit: \"USD\"\n   - period: \"\" (between now and 2048 - not a specific period)\n   Actually, period is \"now to 2048\" - I could put period as \"\" since it's a projection range. Or I could note it in text.\n   \n   Hmm, let me think about period. The period field is for a point in time or year. \"Between now and 2048\" is a range. I'll put period \"\" and describe in text.\n\n   Actually, let me break into sub-items: $123.7T total, $105T heirs, $18T charities.\n\n   Let me keep it as one or a few items.\n\n2. UBS: USD 83 trillion over next 2-3 decades.\n   - value: \"$83 trillion\" (or \"USD 83 trillion\")\n   - unit: \"USD\"\n   - period: \"\"\n\nLet me write comprehensive items.\n\nFor a2 items:\n1. Gen X $39 trillion, Millennials $46 trillion inherit\n2. Women Boomer+ $40 trillion horizontal transfers\n3. Women younger generations $47 trillion intergenerational\n4. Wealth concentrated in older households (CERULLI #2)\n5. UBS: aging demographics, longer life expectancies, rising asset prices\n\nLet me now write everything out.\n\nActually, I need to be mindful of how many items and how detailed. Let me produce a reasonable set.\n\nLet me also reconsider: should a1 have both CERULLI and UBS figures? Yes, both are facts about the size of the transfer.\n\nFor periods:\n- CERULLI: \"between now and 2048\" - period is a range. I'll leave period \"\" and put it in text. Actually, maybe I can note the period as \"now-2048\" but the format says YYYY-MM-DD, YYYYQn, FYYYYY, YYYY. A range doesn't fit. I'll use \"\" for period and describe in text.\n\nActually, let me reconsider. The period field format examples don't include ranges. For \"between now and 2048\", I could just leave it \"\" and put the range in the text.\n\nFor UBS: \"Over the next two to three decades\" - no specific period. period \"\".\n\nLet me finalize.\n\nFor the different_quantity items, I still need text, quote, value, unit, period, scope, definition, chunk_ids. But value/unit/period would mostly be \"\" since these are qualitative statements.\n\nLet me write out all cells now.\n\nActually, let me reconsider the labels once more, being very careful.\n\na1 [fact]: fact. \u2713\n\na2 [fact]: fact. \u2713\n\na3 [fact, metric net_new_assets]: The sub-question asks \"How do these firms prepare to retain assets and relationships as wealth passes to next-generation heirs?\" \n\nThe [fact, metric net_new_assets] annotation... hmm. \"metric net_new_assets\" suggests this is tied to net new assets metric. But the question text is about \"retain assets and relationships.\"\n\nThe passages: CERULLI #24 has \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.\" and \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" and \"Advisors must see the client as the entire family.\"\n\nThese are industry best-practice recommendations, not the named firms' disclosures. Since a3 asks about \"these firms\" (named), this is different_quantity.\n\nActually, wait. Let me reconsider. Is there a subtlety where the \"[fact]\" in the sub-question list means the expected label is \"fact\"?\n\nLooking at the sub-question list:\n- a1.research [fact]\n- a2.research [fact]\n- a3.research [fact, metric net_new_assets]\n- a4.research [fact, metric advisor_headcount]\n- a5.research [fact]\n- a6.research [fact]\n- a7.research [recency]\n- a8.research [series, metric net_new_assets, proxy]\n- a9.research [comparison]\n\nThese [fact], [recency], [series], [comparison] are clearly sub-question type annotations, not answer labels. They describe what kind of sub-question it is.\n\nSo the answer labels are determined by my analysis. Good.\n\nGiven that all these sub-questions ask about \"these firms\" (named firms) for a3-a9, and the passages are industry research (not the firms' documents), the labels should be different_quantity (where related industry content exists) or not_found (where nothing relevant).\n\nLet me reconsider a3-a9 with fresh eyes on what content is actually relevant:\n\na3 \"retain assets and relationships\": \n- CERULLI #24 has relevant industry guidance. \u2192 different_quantity.\n\na4 \"advisor succession and retirement given aging advisor force and clients\":\n- No passage discusses advisor succession, advisor retirement, advisor headcount, or aging advisor force. CERULLI #2 mentions \"wealth... more likely to be held by older households\" (about clients, not advisors). CERULLI #24 doesn't discuss advisor succession. \u2192 not_found.\n\na5 \"products, services, platforms for next-gen clients\":\n- CERULLI #24: \"Home offices must support their advisors by providing the expertise, investment products, and technology\" - industry guidance about products/technology.\n- BOFA-PB #16: \"access to a broad range of alternative investment strategies\" - different firm (BofA Private Bank).\n\u2192 different_quantity.\n\na6 \"engage entire families, multi-generational planning\":\n- CERULLI #24: \"Advisors must see the client as the entire family\" - industry guidance.\n- BOFA-PB #16: \"Advisors facilitate conversations across generations\" - different firm.\n\u2192 different_quantity.\n\na7 \"strategic initiatives and leadership statements\":\n- CERULLI #24: \"Advisors must see the client as the entire family\u2026 and we're equipping them...\" - executive quote (unnamed industry consultant).\n\u2192 different_quantity (industry consultant's statement, not a named firm's leadership).\n\na8 \"client assets and retention proxy\":\n- No firm client assets or retention figures. \u2192 not_found.\n\na9 \"which firm most prepared and why\":\n- No comparison of the five firms. \u2192 not_found.\n\nOK. Let me also reconsider whether for a7, the executive quote should be a \"fact\" since it's \"a position others hold about the future... attributed and dated\" - but no, it's an industry consultant's statement, not a named firm's leadership. The sub-question asks about \"each firm's commitment.\" So it's different_quantity (industry consultant statement, not a firm's).\n\nActually, wait. Let me reconsider. The instruction says: \"Positions others hold about the future (executives, analysts, surveys) are facts when the passage attributes and dates them.\"\n\nBut this is about positions about the future. The executive quote \"Advisors must see the client as the entire family\" is a recommendation/strategy, not really a position about the future. And it's from an unnamed industry consultant, not one of the five firms.\n\nFor a7, which asks about \"each firm's commitment,\" the consultant's statement is not a firm's commitment. So different_quantity.\n\nHmm, but actually, I'm now unsure whether the instruction about \"positions others hold about the future\" applies here. Let me not overthink. The key distinction is: a7 asks about \"each firm's commitment\" (named firms). The passage has an industry consultant's statement, not a named firm's commitment. \u2192 different_quantity.\n\nLet me now also reconsider whether I should even include the BOFA-PB content for a5/a6, since BOFA-PB is a different firm and the \"differs_because\" would be \"different firm (Bank of America Private Bank), not one of the five named firms.\"\n\nActually, the instruction about different_quantity examples: \"a different measure ... a wider unit that contains the asked one (a parent company, a segment...)\". BOFA Private Bank is neither a parent nor segment of the five firms. It's a completely different firm. Hmm.\n\nBut \"an industry figure for a firm's own figure\" is listed as different_quantity. And \"a different firm's disclosure\" could fall under \"different_quantity\" too, broadly.\n\nActually, let me reconsider. The note says: \"for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nThe parenthetical says \"an industry figure, not the firm's disclosure.\" So different_quantity here means: industry figure (research) vs firm's own figure.\n\nFor BOFA-PB content, it's about BofA Private Bank, which is neither \"industry\" nor \"the firm\" (the five firms). It's a different firm. But since the source is \"Research research,\" it's still research, not a firm's own document.\n\nI think for simplicity, I'll treat BOFA-PB content as different_quantity with differs_because noting it's about a different firm (BofA Private Bank) and/or industry guidance, not the five named firms' disclosures.\n\nActually, let me reconsider the whole framing once more. The task says \"Firm: Industry research (no firm...)\". So the \"firm\" for this extraction is \"Industry research\" - there's no single firm. The sub-questions a3-a9 ask about \"these firms\" (the five named firms in the broader question).\n\nGiven the passages are all industry research, and they don't contain the five firms' own disclosures, the honest labels are:\n- a1, a2: fact (industry aspects)\n- a3, a5, a6, a7: different_quantity (industry guidance/statements as proxy, or different firm)\n- a4, a8, a9: not_found\n\nThis seems right.\n\nLet me write out the final cells now.\n\nActually, let me reconsider a3 more. Is there really \"industry guidance about retaining assets/relationships\"? \n\nCERULLI #24: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.\" - yes, this is about retaining relationships through intergenerational planning.\n\n\"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\" - about winning future clients' business.\n\nThese are industry recommendations. \u2192 different_quantity with differs_because \"industry-level best-practice recommendations, not a named firm's own disclosure.\"\n\nOK, I think I have a solid plan. Let me write the cells.\n\nFor the different_quantity items, value/unit/period/scope will be \"\" (qualitative). definition \"\" too.\n\nLet me draft each cell.\n\nCell a1.research - fact:\nItems:\n1. CERULLI total transfer: $123.7 trillion\n   text: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n   quote: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n   value: \"$123.7 trillion\"\n   unit: \"USD\"\n   period: \"\"\n   scope: \"\"\n   definition: \"\"\n   chunk_ids: [\"CERULLI-GWT-2025#2\"]\n\n2. CERULLI to heirs: $105 trillion\n   Actually, I can combine or split. Let me do a few items.\n\nLet me do:\nItem 0: $123.7 trillion total (heirs + charities), now-2048.\nItem 1: $105 trillion to heirs.\nItem 2: $18 trillion to charities.\nItem 3 (UBS): $83 trillion globally, next 2-3 decades.\n\nActually, maybe I'll do fewer, combining where natural. But the instruction says \"one item per figure or statement; a series is one item per period.\" So separate figures = separate items.\n\nLet me do:\nItem 0: $123.7 trillion total\nItem 1: $105 trillion to heirs\nItem 2: $18 trillion to charities\nItem 3: $83 trillion (UBS)\n\nFor a2:\nItem 0: Gen X $39 trillion\nItem 1: Millennials $46 trillion\nItem 2: Women Boomer+ $40 trillion horizontal\nItem 3: Women younger $47 trillion intergenerational\nItem 4: Wealth concentrated in older households (qualitative, no figure)\nItem 5: UBS aging demographics/longer life expectancies (qualitative)\n\nLet me write all this out in the tool call.\n\nLet me be efficient but thorough. I'll write out the full extraction.\n\nFor definition field: CERULLI #2 gives definitions implicitly. The \"horizontal transfers\" is defined as \"as they outlive their husbands.\" I could quote that. But I'll keep definition \"\" unless there's a clear definition.\n\nActually, for a2 item 2, \"horizontal transfers\" - the passage explains \"as they outlive their husbands\" which is a sort of definition. I could put it in definition. But I'll keep it simple and put it in text.\n\nLet me also double check the value/unit format. The instruction: \"value: the figure as printed ('20,425', '$1.2 billion')\". So I should copy as printed: \"$123.7 trillion\", \"$105 trillion\", \"$18 trillion\", \"$39 trillion\", \"$46 trillion\", \"$40 trillion\", \"$47 trillion\", \"$83 trillion\".\n\nUnit: \"USD\" or the unit. The figures are in trillions of dollars. Unit could be \"USD\" or \"trillion USD\". I'll use \"USD\" as the instruction example uses \"USD\".\n\nActually, the value is \"$123.7 trillion\" and unit \"USD\" - that's a bit redundant. But following the instruction example (\"$1.2 billion\" value, \"USD\" unit), I'll do value \"$123.7 trillion\", unit \"USD\".\n\nHmm, actually the example shows value \"$1.2 billion\" and unit \"USD\". So the unit is just the currency. OK.\n\nNow let me finalize all the text fields.\n\nFor a3 (different_quantity):\nItems (qualitative):\n1. \"Advisors should be thoroughly involved in their clients' intergenerational planning.\"\n   quote: \"Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.\"\n   value: \"\", unit: \"\", period: \"\", scope: \"\", definition: \"\", chunk_ids: [\"CERULLI-GWT-2025#24\"]\n\n2. \"Home offices must support their advisors by providing expertise, investment products, and technology.\"\n   quote: \"Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.\"\n   \n3. \"Advisors must see the client as the entire family.\"\n   quote: \"Advisors must see the client as the entire family\u2026\"\n\ndiffers_because: \"Industry-level best-practice recommendations about how advisors and home offices should retain relationships, not a named firm's own disclosure.\"\n\nFor a5 (different_quantity):\n1. \"Home offices must provide expertise, investment products, and technology.\"\n2. BOFA-PB: \"access to a broad range of alternative investment strategies including private equity, real estate.\"\n\ndiffers_because: \"Industry guidance and a different firm's (Bank of America Private Bank) offerings, not the five named firms' disclosures.\"\n\nFor a6 (different_quantity):\n1. \"Advisors must see the client as the entire family.\"\n2. BOFA-PB: \"Advisors facilitate conversations across generations.\"\n\nFor a7 (different_quantity):\n1. \"Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\" - executive quote (unnamed industry consultant).\n\ndiffers_because: \"Statement from an unnamed industry consultant who consults with HNW-focused advisors, not a leadership statement from any of the five named firms.\"\n\nFor a4, a8, a9: not_found. Items empty. reason explains.\n\nFor not_found, items should be empty array. reason: short sentence.\n\nLet me check the schema: for not_found, items would be empty, differs_because \"\", reason \"no passage...\", derivation operation \"\" inputs [].\n\nFor fact cells, differs_because \"\" (since not different_quantity), derivation operation \"\" inputs [].\n\nLet me write the final tool call.\n\nLet me carefully write out each cell's full structure.\n\nActually, I realize I should double-check: does the derivation need to be present for every cell? Yes, the schema requires derivation object with operation and inputs for every cell. For non-derivation cells, operation \"\" and inputs [].\n\nLet me write everything.\n\nFor a1 items, let me finalize quotes precisely from the passages.\n\nCERULLI #2 quote: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.\"\n\nFull passage text: \"Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048. Not only will the next generation inherit substantial sums of money-Generation Xers $39 trillion and Millennials $46 trillion-women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands. Meanwhile, women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally.\"\n\nUBS #6 quote: \"Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally, marking the largest transfer of wealth in modern history.\"\n\nOK. Let me write it all out now.\n\nFor period on a1 items, the CERULLI is \"between now and 2048\" - I'll leave period \"\" and note in text. Actually, I could put the end year? No, it's a range. Leave \"\".\n\nFor UBS, \"next two to three decades\" - period \"\".\n\nLet me write final.\n\nOne more consideration for a2: the instruction says demographic trends. Let me include:\n- wealth held by older households (CERULLI #2): \"Wealth... now is more likely to be held by older households. This dynamic has driven wealth transfer projections significantly higher\"\n- Gen X $39T, Millennials $46T\n- women Boomer+ $40T horizontal, younger women $47T intergenerational\n- UBS: aging demographics, longer life expectancies, rising asset prices\n\nThese are all facts for a2.\n\nLet me write out all cells now in the tool call.\n\nI'll structure the response with a single submit_extraction call containing all 9 cells.\n\nLet me carefully write each cell.\n\nActually, for the different_quantity cells, I want to make sure I'm consistent. Let me write concise text and accurate quotes.\n\nLet me write it all.\n\nFor a7, the quote: \"Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\" - An executive who consults with HNW-focused advisors on family governance planning\n\nThe passage shows this as a quote with attribution. The text should attribute it: \"An executive who consults with HNW-focused advisors on family governance planning states advisors must see the client as the entire family.\"\n\nOK, writing final tool call now.\n\nLet me also reconsider a8 one more time. Should I make it different_quantity with the $123.7T transfer as \"an industry figure for a firm's own figure (client assets)\"? \n\nThe sub-question a8: \"What are the closest disclosed figures for client assets and retention serving as a proxy for wealth transfer capture?\"\n\nThe passages don't disclose any firm's client assets. The $123.7T is the industry transfer projection. Is that a \"closest disclosed figure\" for client assets? It's really a different thing - it's the flow of wealth, not assets under management.\n\nI think not_found is more accurate. There's genuinely no client asset or retention figure disclosed for these firms in these passages.\n\nActually, wait - let me reconsider. The note says \"an industry figure for a firm's own figure\" is a different_quantity. The $123.7T is an industry figure (wealth transfer size). The \"firm's own figure\" would be \"client assets and retention.\" So $123.7T (industry transfer) vs firm client assets \u2192 different_quantity?\n\nBut it's a weak match. The transfer size is not \"client assets\" or \"retention.\" It's the opportunity size.\n\nI'll go with not_found, reasoning that no client asset or retention figures for these firms are disclosed in the passages.\n\nHmm, but actually, there might be an argument that the $123.7T and $83T figures ARE the relevant \"client assets\" proxy at industry level. But the sub-question a8 is specifically about \"these firms\" (named firms) and \"client assets and retention\" as a proxy for \"wealth transfer capture.\"\n\nGiven the metric is \"net_new_assets\" and no firm has net new assets disclosed, and no client assets disclosed, I'll go with not_found.\n\nFinal decision: not_found for a8.\n\nLet me write everything now.\n\nActually, I want to reconsider whether I'm being too aggressive with different_quantity vs not_found for a3, a5, a6, a7.\n\nThe instruction defines different_quantity as: \"no passage states the asked quantity, but one states a different, related quantity.\"\n\nFor a3 (retain assets/relationships), the asked \"quantity\" is really a qualitative description of firm actions. The passage states industry recommendations (advisors should...). Is that a \"different, related quantity\"? It's related (both about retaining relationships), but it's industry guidance vs firm action.\n\nI think it's defensible as different_quantity. The differs_because field will clarify.\n\nAlternatively, one could argue not_found because the passages don't say what the five firms do at all - they only give generic industry advice. But the instruction explicitly says \"an industry figure for a firm's own figure\" is different_quantity, suggesting industry-level content should be marked different_quantity when the question asks about firms.\n\nI'll go with different_quantity for a3, a5, a6, a7, and not_found for a4, a8, a9.\n\nLet me write the final answer now.\n\nActually, let me reconsider a4 once more. \"How do these firms prepare for advisor succession and retirement given aging advisor force and clients?\"\n\nPassages: Nothing about advisor succession, advisor retirement, advisor headcount, aging advisor force.\n\nCERULLI #2 mentions \"wealth... more likely to be held by older households\" - about clients, not advisors. And \"women in the Baby Boomer and older generations\" - about clients.\n\nNothing about advisors aging or succession. \u2192 not_found. \u2713\n\nOK final.\n\nLet me also make sure for a9 (comparison), not_found. The passages don't compare the five firms. \u2192 not_found. \u2713\n\nNow writing the complete tool call.\n\nFor each cell I need:\n- subquestion_id\n- label\n- items (array)\n- differs_because (string, \"\" for non-different_quantity)\n- reason (string)\n- derivation (object with operation and inputs)\n\nLet me write it all out carefully.\n\nFor fact items, I need to fill all fields including value, unit, period, scope, definition, chunk_ids, text, quote.\n\nLet me write concise but complete items.\n\nI'll now compose the full JSON.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli projects households will transfer $123.7 trillion to heirs and charities between now and 2048.",
+            "quote": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "value": "$123.7 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Of the projected transfer, $105 trillion will go to heirs.",
+            "quote": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "value": "$105 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Of the projected transfer, $18 trillion will go to charities.",
+            "quote": "Cerulli projects households will transfer $123.7 trillion to heirs ($105 trillion) and charities ($18 trillion) between now and 2048.",
+            "value": "$18 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "UBS estimates USD 83 trillion in private wealth will change hands globally over the next two to three decades.",
+            "quote": "Over the next two to three decades, an estimated USD 83 trillion in private wealth will change hands globally, marking the largest transfer of wealth in modern history.",
+            "value": "$83 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Both Cerulli and UBS state the projected size of the wealth transfer, which is an industry-level figure and the subject of this sub-question.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Generation X is expected to inherit $39 trillion.",
+            "quote": "Generation Xers $39 trillion and Millennials $46 trillion",
+            "value": "$39 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Millennials are expected to inherit $46 trillion.",
+            "quote": "Generation Xers $39 trillion and Millennials $46 trillion",
+            "value": "$46 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands.",
+            "quote": "women in the Baby Boomer and older generations are expected to receive $40 trillion in 'horizontal' transfers as they outlive their husbands",
+            "value": "$40 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "'horizontal' transfers as they outlive their husbands",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally.",
+            "quote": "women in younger generations are expected to receive $47 trillion of the wealth to be transferred intergenerationally",
+            "value": "$47 trillion",
+            "unit": "USD",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "Wealth is now more likely to be held by older households, which has driven wealth transfer projections higher.",
+            "quote": "Wealth has been created and concentrated at a rapid pace in recent years and now is more likely to be held by older households.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#2"
+            ]
+          },
+          {
+            "text": "The shift is driven by aging demographics, longer life expectancies and decades of rising asset prices.",
+            "quote": "Driven by aging demographics, longer life expectancies and decades of rising asset prices, this shift is set to reshape the wealth landscape as we know it.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "UBS-NEXTGEN-2026#6"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages state demographic breakdowns of the transfer, which are industry-level demographic facts.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Advisors should be thoroughly involved in their clients' intergenerational planning to retain relationships as wealth passes to heirs.",
+            "quote": "Advisors should be fully aware of the risks future wealth transfers may pose to their practices and be thoroughly involved in their clients' intergenerational planning.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Home offices must support their advisors by providing expertise, investment products, and technology required to win the business of future HNW clients.",
+            "quote": "Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          }
+        ],
+        "differs_because": "These are industry-level best-practice recommendations about how advisors and home offices should retain assets and relationships, not a disclosure of how the five named firms actually prepare.",
+        "reason": "The question asks how the named firms prepare; the passages give only generic industry guidance, which is a related but different quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discusses advisor succession, advisor retirement, advisor headcount, or an aging advisor force.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Home offices should provide the expertise, investment products, and technology required to win the business of future HNW clients.",
+            "quote": "Home offices must support their advisors by providing the expertise, investment products, and technology required to win the business of future HNW clients.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Bank of America Private Bank offers access to a broad range of alternative investment strategies, including private equity, real estate, and select opportunistic investments.",
+            "quote": "The Private Bank offers access to a broad range of alternative investment strategies, including private equity, real estate, and select opportunistic investments, alongside traditional portfolios.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#16"
+            ]
+          }
+        ],
+        "differs_because": "These are industry guidance and a different firm's (Bank of America Private Bank) offerings, not the five named firms' disclosures.",
+        "reason": "The passages give industry-level product guidance and a different firm's offerings, not the named firms' own products and platforms.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Advisors must see the client as the entire family and serve the whole family, per an executive who consults with HNW-focused advisors.",
+            "quote": "Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          },
+          {
+            "text": "Bank of America Private Bank's advisors facilitate conversations across generations to align financial plans with family values.",
+            "quote": "Advisors facilitate conversations across generations to align financial plans with family values, helping clients preserve wealth, prepare heirs, and plan for extended lifespans.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "BOFA-PB-STUDY-2026#16"
+            ]
+          }
+        ],
+        "differs_because": "These are industry-level family-governance guidance and a different firm's (Bank of America Private Bank) approach, not the five named firms' disclosures.",
+        "reason": "The passages describe family engagement as industry guidance and a different firm's practice, not the named firms' own multi-generational planning.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "An executive who consults with HNW-focused advisors on family governance planning states advisors must see the client as the entire family and are being equipped to serve the whole family.",
+            "quote": "Advisors must see the client as the entire family\u2026 and we're equipping them to shift to that mindset and put in the practices to serve the whole family.\" - An executive who consults with HNW-focused advisors on family governance planning",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "CERULLI-GWT-2025#24"
+            ]
+          }
+        ],
+        "differs_because": "This is a statement from an unnamed industry consultant, not a leadership statement or strategic initiative from any of the five named firms.",
+        "reason": "The question asks for each named firm's commitment; the passage gives only an industry consultant's statement, not a named firm's leadership.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses client assets or retention figures for any of the five firms; the transfer projections are the size of the opportunity, not firm client assets.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages are industry research and do not compare the five firms' preparedness for the wealth transfer.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

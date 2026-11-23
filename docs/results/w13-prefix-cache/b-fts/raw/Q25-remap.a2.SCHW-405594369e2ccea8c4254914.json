@@ -1,0 +1,82 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a2.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a2.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-ADV-2026#1",
+    "SCHW-10Q-2026Q2#233",
+    "SCHW-10K-2025#317",
+    "SCHW-TR-2026Q1#67",
+    "SCHW-DECK-2026-investor-day#298",
+    "SCHW-PR-2026-10-15-01#47",
+    "SCHW-ADV-2026#28",
+    "SCHW-10Q-2025Q3#220",
+    "SCHW-10K-2025#46",
+    "SCHW-TR-2026Q1#45",
+    "SCHW-DECK-2026-investor-day#98",
+    "SCHW-PR-2026-01-21-01#47",
+    "SCHW-ADV-2026#25",
+    "SCHW-10Q-2026Q1#45",
+    "SCHW-10K-2025#27",
+    "SCHW-TR-2026Q1#55",
+    "SCHW-10Q-2025Q2#0",
+    "SCHW-DECK-2026-investor-day#68",
+    "SCHW-10Q-2026Q2#201",
+    "SCHW-10Q-2026Q1#21",
+    "SCHW-10Q-2025Q3#197",
+    "SCHW-10Q-2026Q1#165",
+    "SCHW-10Q-2025Q2#178",
+    "SCHW-10Q-2025Q2#29"
+  ],
+  "at": "2026-11-23T00:45:53.439299-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8128,
+    "output_tokens": 543,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 6592,
+    "reasoning_tokens": 405,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.36
+  },
+  "wall_s": 10.36,
+  "tokens_per_s": 52.41,
+  "ttft_s": 1.36,
+  "reasoning_content": "The sub-question asks about the payout grid or payout rate each firm discloses for its advisors. For Schwab, I need to look through the passages for any disclosure of advisor compensation payout grid or payout rate.\n\nLooking at the passages, I see fee schedules for clients (SWA fee schedule - what clients pay), not advisor payout rates. These are client fee schedules, not advisor compensation. There's no mention of advisor payout grid or payout rate.\n\nThe passages mention:\n- Fee schedules (what clients pay)\n- Revenue figures\n- Regulatory matters\n- Mortgage loans\n- etc.\n\nNone of these disclose advisor compensation payout grid or payout rate.\n\nSo the answer is not_found - the passages say nothing about advisor payout grid/payout rate.\n\nActually, wait - let me consider whether the client fee schedule could be considered a \"different_quantity.\" The question asks about advisor compensation (payout grid or payout rate). The client fee schedule is what clients pay, not what advisors are paid. That's not a \"wider unit\" containing the asked quantity, nor a related measure in the sense described. It's a client fee, not advisor compensation.\n\nThe different_quantity examples given are: wider unit (parent company, segment), different measure (all employees vs advisors, compensation expense for payout grid, client firms on platform), industry figure for firm's own figure.\n\nThe client fee schedule is not really a different measure of advisor compensation. It's what clients pay the firm, not what the firm pays advisors. This is quite different - it's client fees, not advisor pay.\n\nI'll label this as not_found since no passage states the payout grid/payout rate for advisors, nor a related quantity like compensation expense for advisors.\n\nActually, let me reconsider. Is there anything that could be \"different_quantity\"? The compensation expense for advisors would be a different_quantity. But I don't see compensation expense disclosed either. The passages don't mention advisor compensation at all.\n\nSo not_found is appropriate.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages disclose a payout grid or payout rate for Schwab's advisors, nor any related quantity such as advisor compensation expense; the fee schedules shown are what clients pay Schwab, not what advisors are paid.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}
