@@ -108,9 +108,9 @@ def request_version(provider: str, stage: str | None = None) -> str | None:
     if provider == "anthropic":
         return ANTHROPIC_REQUEST_VERSION
     if provider == "deepseek" and stage is not None:
-        # #283: the map request carries the shared firm prefix up to MAP_PREFIX_TOKENS (one tool schema, the
-        # cell's instruction last): "-pf<ceiling>" keeps those keys apart from the per-cell #272 map records
-        pf = f"-pf{settings().map_prefix_tokens}" if stage == "map" else ""
+        # #283, MAP_PREFIX=firm only: the map request carries the shared firm prefix up to MAP_PREFIX_TOKENS (one tool
+        # schema, the cell's instruction last): "-pf<ceiling>" keeps those keys apart; off = the #272 string
+        pf = f"-pf{settings().map_prefix_tokens}" if stage == "map" and settings().map_prefix == "firm" else ""
         return (f"ds-strict-2-{stage}-{stage_effort(stage)}-c{stage_max_tokens(stage)}"
                 f"-s{1 if stage_stream(stage) else 0}{pf}")
     if provider == "deepseek":

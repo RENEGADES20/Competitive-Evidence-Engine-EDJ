@@ -34,8 +34,9 @@ from cee.config import settings
 from cee.retrieve import fts
 from cee.retrieve.fts import Hit, Query
 
-EXTRACT_VERSION = "extract-v1.3"   # #283: shared firm prefix, the cell named last; one tool schema (no id enum)
-# extract-v1.2 (#272): one call per firm x aspect cell (pool passages listed with the cell)
+EXTRACT_VERSION = "extract-v1.2"   # #272: one call per firm x aspect cell (pool passages listed with the cell)
+# #283 (MAP_PREFIX=firm only; not adopted, default off): shared firm prefix, the cell named last, one tool schema
+EXTRACT_VERSION_FIRM = "extract-v1.3"
 # extract-v1.1 (#247): the asked quantity for other periods is a fact (ADR-021 rule 3)
 EXTRACT_TOOL = "submit_extraction"
 
@@ -50,8 +51,7 @@ different_quantity, choose different_quantity and say why."""
 
 SYSTEM_PROMPT = """You extract evidence about one firm from passages of its documents, for a question about
 wealth-management firms. Code has split the question into sub-questions; return exactly one cell
-for each sub-question the message asks you to answer (the message may list the firm's other
-sub-questions and their passages for context only). You do not answer the question and you do not compare firms: code
+for each sub-question listed. You do not answer the question and you do not compare firms: code
 and a later step do that.
 
 Use only the passages below. Never use what you know from elsewhere, never estimate, never compute
@@ -79,7 +79,7 @@ Items (fact and different_quantity only), one per figure or statement; a series 
 period:
 - text: one sentence stating what the passage says, attributed to the firm, in the passage's terms;
 - quote: the exact words of the passage that support it, copied, at most about 300 characters;
-- chunk_ids: the ids of the passages quoted, only ids the message lets you cite;
+- chunk_ids: the ids of the passages quoted, only ids listed below;
 - value: the figure as printed ("20,425", "$1.2 billion"), "" when the item states no figure;
 - unit: what is counted or measured ("financial advisors", "USD"), "" when no figure;
 - period: "YYYY-MM-DD" for a point in time, "YYYYQn" for a calendar quarter, "FYYYYY" for a fiscal
@@ -108,8 +108,30 @@ aspect about a named firm's own figure it is a different_quantity (an industry f
 firm's disclosure)."""
 
 
+# #283, MAP_PREFIX=firm only: the two sentences that differ from SYSTEM_PROMPT (the message names the one cell to answer)
+FIRM_PROMPT_CHANGES = (
+    ("return exactly one cell\nfor each sub-question listed.",
+     "return exactly one cell\nfor each sub-question the message asks you to answer (the message may list the firm's other\n"
+     "sub-questions and their passages for context only)."),
+    ("only ids listed below;", "only ids the message lets you cite;"),
+)
+
+
+def prefix_mode() -> bool:
+    """#283: MAP_PREFIX=firm (shared firm prefix, one tool schema, extract-v1.3); off (default) = the #272 request."""
+    return settings().map_prefix == "firm"
+
+
+def extract_version() -> str:
+    """The extract version that joins map keys and records: EXTRACT_VERSION, or extract-v1.3 with MAP_PREFIX=firm."""
+    return EXTRACT_VERSION_FIRM if prefix_mode() else EXTRACT_VERSION
+
+
 def system_prompt(research: bool = False) -> str:
     text = SYSTEM_PROMPT.format(proxy_rule=PROXY_RULE, tool=EXTRACT_TOOL)
+    if prefix_mode():
+        for old, new in FIRM_PROMPT_CHANGES:
+            text = text.replace(old, new)
     return text + ("\n\n" + RESEARCH_NOTE if research else "")
 
 
@@ -315,22 +337,24 @@ def extraction_schema(spec: MapSpec, strict: bool = False) -> dict:
     """strict=True: the OpenAI and DeepSeek schema (no array limits); strict=False: the Anthropic
     tool's schema (strict tool since #232; minItems 1 on cells). Every property required, no extra
     properties, "" for none (no nullable types)."""
-    # #283: one schema for every map call (no enum of cell ids), so the tool definition is part of the shared
-    # prefix; ids are checked by code (parse_output: foreign_cell, unknown_cell, unknown_ref)
+    # #283, MAP_PREFIX=firm: one schema for every map call (no enum of cell ids), so the tool definition is part of
+    # the shared prefix; ids are checked by code (parse_output: foreign_cell, unknown_cell, unknown_ref). Off: the
+    # #272 schema with the call's cell ids as enum.
+    ids = {"type": "string"} if prefix_mode() else {"type": "string", "enum": spec.cell_ids}
     item = {"type": "object", "additionalProperties": False,
             "properties": {k: {"type": "string"} for k in
                            ("text", "quote", "value", "unit", "period", "scope", "definition")}
             | {"chunk_ids": {"type": "array", "items": {"type": "string"}}},
             "required": ["text", "quote", "chunk_ids", "value", "unit", "period", "scope", "definition"]}
     ref = {"type": "object", "additionalProperties": False,
-           "properties": {"subquestion_id": {"type": "string"}, "item": {"type": "integer"}},
+           "properties": {"subquestion_id": dict(ids), "item": {"type": "integer"}},
            "required": ["subquestion_id", "item"]}
     derivation = {"type": "object", "additionalProperties": False,
                   "properties": {"operation": {"type": "string", "enum": list(OPERATIONS)},
                                  "inputs": {"type": "array", "items": ref}},
                   "required": ["operation", "inputs"]}
     cell = {"type": "object", "additionalProperties": False,
-            "properties": {"subquestion_id": {"type": "string"},
+            "properties": {"subquestion_id": dict(ids),
                            "label": {"type": "string", "enum": list(LABELS)},
                            "items": {"type": "array", "items": item},
                            "differs_because": {"type": "string"}, "reason": {"type": "string"},
@@ -1054,7 +1078,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
     from cee.retrieve.planner import model_for
     return {"id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
             "chunk_ids": [h.chunk_id for h in spec.hits], "provider": provider,
-            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": EXTRACT_VERSION,
+            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": extract_version(),
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
             "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,
@@ -1096,7 +1120,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     by_id = {h.chunk_id: h for h in hits}
     limit = settings().map_call_tokens
     firm_specs, code_cells = map_specs(q, plan, hits)
-    specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit, settings().map_prefix_tokens)
+    specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit,
+                                 settings().map_prefix_tokens if prefix_mode() else None)
     code_cells = code_cells + empty_cells
     source = "mock" if provider == "mock" else "model"
     landed: dict[int, list[Cell]] = {}
@@ -1176,7 +1201,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
             cells[c.id] = c
     m = EvidenceMatrix(q.question, rows=[], aspects=list(plan.aspects),
                        cells={k: cells[k] for k in order if k in cells}, calls=calls, research=research_log,
-                       version=EXTRACT_VERSION)
+                       version=extract_version())
     rows = []
     for c in m.cells.values():
         key = "research" if c.role == "research" else _row_key(c.entity)

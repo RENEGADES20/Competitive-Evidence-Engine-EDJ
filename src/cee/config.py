@@ -53,6 +53,7 @@ class Settings:
     # #283: the map's shared prefix per firm (one byte-identical firm block, the cell's instruction last) up to
     # this many estimated input tokens, above it the per-cell layout; the leader-first gate (first_chunk | done |
     # off) and the followers' extra wait after it opens.
+    map_prefix: str = "off"   # #283: off (default; the #272 map request) | firm (not adopted, kept for experiments)
     map_prefix_tokens: int = 150000
     map_prefix_gate: str = "first_chunk"
     map_prefix_wait_s: float = 5.0
@@ -128,8 +129,12 @@ def _positive_int(name: str, default: int | None) -> int | None:
 
 # #283 (plans/0283-prefix-cache.md): the firm block ceiling (estimate from the #272 test B map records: map cache-hit
 # share about 0.73 at 150000, largest call about 147k tokens; 0.90 with no ceiling but calls up to 372k), and the
-# leader-first gate. MAP_PREFIX_GATE is pinned from the Q10 probe by the plan's fixed rule (TL condition B4): Q10 on
+# leader-first gate (both only with MAP_PREFIX=firm). MAP_PREFIX_GATE is pinned from the Q10 probe by the plan's fixed
+# rule (TL condition B4): Q10 on
 # 2026-11-22, 25 followers, cache-hit share of their prefix 0.929 >= 0.50 -> first_chunk (docs/results/w13-prefix-cache/).
+# TL ruling after review (PR #286): the layout is NOT adopted (adjudicated 23/30 < 24, latency acceptance unmet, cell
+# regressions), so MAP_PREFIX defaults to off; firm turns the whole #283 request on (extract-v1.3, -pf map version).
+MAP_PREFIX_MODES = ("off", "firm")
 MAP_PREFIX_TOKENS_DEFAULT = 150000
 MAP_PREFIX_GATES = ("first_chunk", "done", "off")
 MAP_PREFIX_GATE_DEFAULT = "first_chunk"
@@ -191,6 +196,7 @@ def settings() -> Settings:
         deepseek_model_map=os.getenv("DEEPSEEK_MODEL_MAP", "").strip(),
         deepseek_stream=_choice("DEEPSEEK_STREAM", STREAM_MODES, "on"),
         map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),
+        map_prefix=_choice("MAP_PREFIX", MAP_PREFIX_MODES, "off"),
         map_prefix_tokens=_positive_int("MAP_PREFIX_TOKENS", MAP_PREFIX_TOKENS_DEFAULT),
         map_prefix_gate=_choice("MAP_PREFIX_GATE", MAP_PREFIX_GATES, MAP_PREFIX_GATE_DEFAULT),
         map_prefix_wait_s=_nonneg_float("MAP_PREFIX_WAIT_S", MAP_PREFIX_WAIT_S_DEFAULT),

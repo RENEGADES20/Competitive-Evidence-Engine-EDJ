@@ -127,17 +127,21 @@ def plan_key(query, provider: str) -> str:
 
 
 def map_key(question: str, spec, provider: str, window=None) -> str:
-    from cee.answer.extract import EXTRACT_VERSION, extract_max_tokens
+    from cee.answer.extract import extract_max_tokens, extract_version
     from cee.answer.llm import request_version
     from cee.retrieve.planner import model_for
     cells = [[c.id, c.text, c.aspect.kind, c.aspect.metric, bool(getattr(c.aspect, "proxy", False))]
              for c in spec.cells]
     model = "mock" if provider == "mock" else model_for(provider, "map")
-    return f"{spec.id}-" + _sha([question, EXTRACT_VERSION, provider, model,
-                                 extract_max_tokens(provider) if provider != "mock" else None,
-                                 request_version(provider, "map"), spec.id, cells,
-                                 [h.chunk_id for h in spec.hits],
-                                 [str(w) for w in window] if window else None])[:24]
+    parts = [question, extract_version(), provider, model,
+             extract_max_tokens(provider) if provider != "mock" else None,
+             request_version(provider, "map"), spec.id, cells,
+             [h.chunk_id for h in spec.hits],
+             [str(w) for w in window] if window else None]
+    prefix = getattr(spec, "prefix", None)
+    if prefix is not None:   # #283 MAP_PREFIX=firm: the shared firm block is part of the request
+        parts.append([[c.id, c.text] for c in prefix.cells] + [h.chunk_id for h in prefix.hits])
+    return f"{spec.id}-" + _sha(parts)[:24]
 
 
 def reduce_key(question: str, matrix, query, provider: str) -> str:

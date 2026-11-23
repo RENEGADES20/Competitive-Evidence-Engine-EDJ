@@ -34,6 +34,7 @@ def cell_specs(plan=None, hits=None, prefix_limit=10**9):
 @pytest.fixture
 def ds(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "deepseek")
+    monkeypatch.setenv("MAP_PREFIX", "firm")
     monkeypatch.setenv("MAP_PREFIX_WAIT_S", "0")
     monkeypatch.setenv("MAP_PREFIX_GATE", "done")
 
@@ -99,14 +100,63 @@ def test_mock_output_is_the_same_in_both_layouts(ds):
     assert [extract.mock_extract(s, 0) for s in shared] == [extract.mock_extract(s, 0) for s in per_cell]
 
 
-def test_map_request_version_changes_and_the_plan_version_does_not(monkeypatch):
+def test_map_request_version_changes_only_in_firm_mode_and_the_plan_version_never(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "deepseek")
+    for v in ("MAP_PREFIX", "MAP_PREFIX_TOKENS", "DEEPSEEK_EFFORT_MAP", "DEEPSEEK_STREAM"):
+        monkeypatch.delenv(v, raising=False)
+    assert llm.request_version("deepseek", "map") == "ds-strict-2-map-low-c128000-s1"   # off: the #272 string
+    assert extract.extract_version() == extract.EXTRACT_VERSION == "extract-v1.2"
+    monkeypatch.setenv("MAP_PREFIX", "firm")
     assert llm.request_version("deepseek", "map").endswith("-pf150000")
     assert llm.request_version("deepseek", "plan") == "ds-strict-2-plan-off-c8000-s1"
     assert not llm.request_version("deepseek", "reduce").endswith("-pf150000")
     monkeypatch.setenv("MAP_PREFIX_TOKENS", "90000")
     assert llm.request_version("deepseek", "map").endswith("-pf90000")
-    assert extract.EXTRACT_VERSION == "extract-v1.3"
+    assert extract.extract_version() == "extract-v1.3"
+
+
+# --- default off: byte-identical to main (TL ruling after review, PR #286) --------------------------------
+
+# sha256 of the map requests (deepseek, anthropic, openai) and map cache keys (eval, Ask run cache) of a fixed
+# two-firm question with a research call, computed on clean main 0b359d3 (docs/results/w13-prefix-cache/golden.py)
+MAIN_SHA = "8fb7c4f8da82166f4446847a221da1ecdf4706a93081b0649d0037833b9fd130"
+
+
+def test_off_is_byte_identical_to_main(monkeypatch):
+    import hashlib
+    from cee.answer import runcache
+    from scripts import eval_run as er
+    monkeypatch.setenv("LLM_PROVIDER", "deepseek")
+    for v in ("MAP_PREFIX", "MAP_PREFIX_TOKENS", "DEEPSEEK_EFFORT_MAP", "DEEPSEEK_STREAM"):
+        monkeypatch.delenv(v, raising=False)
+    plan = plan3()
+    plan.pools = {"a2.EDJ": {"EDJ-10K-2025#0"}}
+    hits = [hit(f"{f}-10K-2025#{n}", entity=f, part=f"{a.id}.{f}") for f in ("EDJ", "MS") for n, a in enumerate(A[:3])]
+    hits.append(hit("R-1#1", entity=None, part="research"))
+    fs, _ = extract.map_specs(Q, plan, hits)
+    specs, _ = extract.fan_out(fs, Q.question, None, None, 60000)
+    reqs = [[extract.deepseek_extract_request(Q.question, s), extract.anthropic_extract_request(Q.question, s),
+             extract.openai_extract_request(Q.question, s)] for s in specs]
+    keys = [[er.map_cache_key({"id": "Q1", "text": Q.question}, "snap", "deepseek", "m", 1,
+                              llm.request_version("deepseek", "map"), s),
+             runcache.map_key(Q.question, s, "deepseek")] for s in specs]
+    blob = json.dumps([reqs, keys], sort_keys=True)
+    assert hashlib.sha256(blob.encode()).hexdigest() == MAIN_SHA
+    sid = extract.extraction_schema(specs[0], strict=True)["properties"]["cells"]["items"]["properties"]["subquestion_id"]
+    assert sid["enum"] == ["a1.EDJ"]                                           # the per-cell enum schema
+
+
+def test_run_map_off_never_uses_the_shared_prefix(monkeypatch):
+    for v in ("MAP_PREFIX", "MAP_PREFIX_TOKENS"):
+        monkeypatch.delenv(v, raising=False)
+    seen = []
+
+    def call(spec, *a):
+        seen.append(spec.prefix)
+        return CallResult(raw=extract.mock_extract(spec, 0))
+    m = extract.run_map(Q, plan3(), hits3(), "deepseek", call=call, sources=lambda e: "")
+    assert seen and all(p is None for p in seen) and {c["prefix_role"] for c in m.calls} == {"cell"}
+    assert m.version == "extract-v1.2"
 
 
 # --- strict ids (TL condition B1) -----------------------------------------------------------------

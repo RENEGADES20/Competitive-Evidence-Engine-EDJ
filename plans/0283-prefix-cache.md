@@ -137,3 +137,6 @@ Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepse
   0.597 (followers 0.894); off-peak like for like $0.398/q vs $0.519; critical path p50 272 s (provider output speed
   down: reduce 126 -> 158 s p50 though unchanged). B3 trigger YES (labels 18%, unmatched 2.43% vs 0.07%): layout
   named as suspected cause. Results `docs/results/w13-prefix-cache.md`; blind inputs ready; scores pending.
+- 2026-11-23 - TL ruling after review (PR #286): adjudicated 23/30 < 24, latency unmet, cell regressions confirmed
+  (Q12, Q7) -> NOT ADOPTED. Shipped switched off: `MAP_PREFIX=off|firm`, default off = the #272 request byte for
+  byte (test against a hash from clean main). No new paid calls.

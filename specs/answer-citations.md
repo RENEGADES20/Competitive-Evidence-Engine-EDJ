@@ -112,7 +112,10 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   makes the cell `failed` (a failed batch next to a fact adds the flag `batch_failed`). The merged cells have
   the per-firm shape, so the matrix and the reduce input are unchanged. Prompt `extract-v1.2` (#272: the pool
   passages line; otherwise `extract-v1.1`).
-  **#283 shared prefix (`extract-v1.3`, `plans/0283-prefix-cache.md`).** When the firm call's message is at most
+  **#283 shared prefix: off by default, not adopted** (TL ruling, PR #286: adjudicated 23/30 < 24, latency
+  acceptance unmet, cell regressions; `docs/results/w13-prefix-cache.md`). `MAP_PREFIX=off` (default) sends the
+  request above unchanged (byte-identical to #272, per-cell enum schema, `extract-v1.2`). Only with
+  `MAP_PREFIX=firm` (`extract-v1.3`): when the firm call's message is at most
   `MAP_PREFIX_TOKENS` (default 150000), every cell call of that firm sends it unchanged as the start of its message
   (every sub-question of the firm, incl. cells with nothing citable, and the passages grouped by sub-question),
   then the cell's own part: "Answer in this call: sub-question <id> only", and the pool passages listed under a

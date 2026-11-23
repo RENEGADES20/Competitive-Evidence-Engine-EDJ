@@ -1,5 +1,12 @@
 # W13 map prefix cache: shared firm prefix, one tool schema, leader-first gate (#283), fts
 
+**TL ruling (after review, PR #286): NOT ADOPTED. The layout ships switched off: `MAP_PREFIX=off` is the default and
+sends the #272 map request byte for byte; `MAP_PREFIX=firm` turns the #283 request on for experiments.** Reasons:
+adjudicated 23/30, below the 24/30 gate; latency acceptance unmet; cell regressions confirmed (Q12's EDJ cost cell
+`not_found`, Q7's Merrill cells lost). A finding, not a re-roll: no new paid calls.
+
+**Scores: blind 21/30, adjudicated 23/30** (#272: blind 22/30, adjudicated 24/30). Only change against #272
+adjudicated: Q12 PASS -> FAIL.
 **Map cache-hit share 59.7% of map input (followers 89.4%, leaders 2.4%, over-ceiling per-cell calls 3.5%), up from
 3.8% in #272 test B.** All 548 records: 58.3% (#272: 4%).
 **Cost, like for like** (the same 30 answers' records re-priced at one tier, `cost.md`): off-peak **$0.398 per
@@ -13,8 +20,6 @@ apart from this one run.
 **Cell check (TL condition B3) trigger: YES on both rules** (labels changed 18.0% > 10%; unmatched_citation 2.43% of
 items vs 0.07%, > 2x). Before any score is read: **the shared-prefix layout is the suspected cause** of the cell
 changes (each cell now sees its siblings' passages it may not cite).
-**Scores: blind and adjudicated: pending** (fresh Sonnet scorers launched by the coordinator; the PR reviewer
-adjudicates). Gate: adjudicated >= 24/30.
 
 ## How this was run
 
@@ -96,9 +101,28 @@ returns `answer` (expected `gap_with_adjacent`; #272: invalid).
 
 ## Scores
 
-Pending. Inputs `D:\ALLPROJECTS\EDJ\cache\ev283\blind-in-fts\` made the #272 way: `answers-dump.txt` (dump272.py:
-every claim with each cited passage), split by range into `answers-partA..D.txt` (Q1-Q10, Q11-Q16, Q17-Q21,
-Q22-Q30), `questions.yaml`, the #250 `verdict-rule.txt` (same sha256 as #272); hashes `blind-in-fts-hashes.txt`.
+Blind: four fresh Sonnet scorers by range (Q1-Q10, Q11-Q16, Q17-Q21, Q22-Q30), inputs only
+`D:\ALLPROJECTS\EDJ\cache\ev283\blind-in-fts\` made the #272 way (`dump272.py` answers with each cited passage,
+`questions.yaml`, the #250 `verdict-rule.txt`, same sha256 as #272; hashes `w13-prefix-cache/blind-in-fts-hashes.txt`).
+Adjudication by the PR reviewer (PR #286 review). Files: `w13-prefix-cache/verdicts-blind-full.json`,
+`w13-prefix-cache/verdicts-adjudicated.json`.
+
+| Q | #272 adjudicated | Blind (#283) | Adjudicated (#283) | Class |
+|---|---|---|---|---|
+| Q3 | FAIL | FAIL | FAIL | s |
+| Q8 | PASS | FAIL bl | **PASS** bl (same wording as #272's Q8) | s |
+| Q11 | FAIL | FAIL | FAIL | r, s |
+| **Q12** | PASS | FAIL bl | **FAIL** bl: EDJ's own cost lines (#272 C52-C58) came back `not_found` | r, s |
+| Q16 | PASS | FAIL bl | **PASS** bl (same shape as #272's Q16) | s |
+| Q20 | FAIL | FAIL | FAIL | s |
+| Q23 | FAIL | FAIL | FAIL | r |
+| Q28 | FAIL | FAIL | FAIL | s |
+| Q29 | FAIL | FAIL | FAIL (expected `gap_with_adjacent`, got `answer`) | s, b |
+| other 21 | PASS | PASS | PASS | |
+
+Q7 stays PASS, but the reviewer found Merrill transition and recruiting compensation (a3.MER) with neither a claim
+nor a gap line, and Merrill retention incentives (a4.MER) down from 9 claims to `not found`: the cell regressions the
+B3 check flagged reach the answers.
 
 ## Calls
 
@@ -106,14 +130,32 @@ Probe 41 new calls ($0.67, off-peak). Full run 477 new calls ($16.15 as billed; 
 plans and the 41 Q10 probe records). **Total new for #283: 518 calls, $16.81.** The 30 answers use 548 records (30
 plans, 442 map, 46 re-map, 30 reduce); as billed they cost $16.85 (the reused plans at their #272 price).
 
+## TL ruling and what ships
+
+Not adopted (PR #286). The code stays, switched off: `MAP_PREFIX` (`off` default | `firm`). With `off` the map request
+is byte-identical to `main` (same message layout, per-cell enum tool schema, `extract-v1.2`, map request version
+`ds-strict-2-map-low-c128000-s1`, every cache key), so the #272 map records are reused by key; a test checks it against
+a hash computed on clean `main` (`w13-prefix-cache/golden.py`). With `firm`, the whole #283 request (shared prefix,
+no-enum schema, prompt sentences, `extract-v1.3`, `-pf<ceiling>`, leader-first gate). The latency report's cache-hit
+columns and the run scripts' `-MapPrefix` option stay.
+
+## Follow-up idea (no issue opened)
+
+A same-session A/B (the #272 layout and a candidate in one session, alternating questions) is needed before any
+latency claim, because provider speed moved between sessions. A cheaper layout should keep each cell to its own
+citable passages: for example order each cell's own passages after a firm block of only the passages every cell of
+the firm may cite, or share the prefix only among cells with the same citable set, so no cell reads passages it
+cannot cite.
+
 ## Findings
 
 1. The shared prefix works where it applies: followers hit 89% of their input. The cost drop (-23% like for like) is
    capped by leaders and by the firms over the 150k ceiling.
 2. Cells change more than the trigger allows. Seeing the whole firm block costs citation discipline (unmatched 35x)
-   and items. The score decides whether this matters for answers.
-3. Latency is worse, but the reduce, untouched by #283, slowed by the same factor: provider throughput was lower in
-   this session. A like-for-like latency read needs both layouts in one session (follow-up, not run).
+   and items, and it reached the answers: Q12 fails, Q7 loses Merrill content (adjudicated 23/30).
+3. Latency is worse. The reduce, untouched by #283, also slowed, and provider throughput was lower in this session,
+   but that is a hypothesis without a same-session comparison; first evidence also worsened (18 -> 22 s p50). The
+   latency acceptance is unmet.
 
 Evidence: `docs/results/w13-prefix-cache/` (raw records and reports of the probe and the full run, head logs,
 latency, cost and cell comparison, mock compare, run scripts); working copies `D:\ALLPROJECTS\EDJ\cache\ev283\`.
