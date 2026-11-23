@@ -172,6 +172,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-23 | Leaner workflow: experiment track (exp/ branch + results doc), one owner per check (CI pytest, implementer verify-cee/eval, reviewer reads evidence), verify-cee only for app-visible changes, plan review only on risk items, one-page plans; label type:experiment (#281) (#282) | none | prefix-cache order and shorter reduce as the first issues under the new rules |
 | 2026-11-23 | #283 map prefix cache tested and not adopted: cache hits 4% -> 60%, off-peak $0.52 -> $0.40/q, but adjudicated 23/30 (< 24) and latency p50 272 s; shipped behind MAP_PREFIX (default off = #272 request byte for byte) (#286) | none | follow-up idea only: a same-session latency A/B, and layouts that keep each cell to its own citable passages |
 | 2026-11-23 | Reduce v6 (item refs rendered by code) shipped off by default behind REDUCE_PROMPT; stage 1 (6 calls, $0.394) stopped under rule B1: answer tokens halved but reasoning grew (output p50 24.5k vs 23.6k), default stays v5.2 (#287) | none | next levers on the reasoning: cheaper why-lines, v5.3 on v6, or the split design |
+| 2026-11-23 | Facts table code (FACTS off, no rows) + ADR-022 Deferred; G0 stop: at most 5/485 #272 map calls servable (#288) | DeepSeek balance ran out (402) before the extraction | revisit facts only with more registered metrics or a question mix that asks bare figures |
 
 ## Weekly score (from W6)
 
