@@ -23,8 +23,11 @@ Task states: **Todo -> In Progress -> Done -> Approved.** This command moves the
    `evals/questions.yaml`.
 4. **Plan.** Switch to plan mode (or, if not available, do not edit files yet). Draft an ExecPlan
    using the template in `PLANS.md`: Goal / Files to change / Steps / Acceptance / Progress log.
-   Acceptance must list the linked question IDs or concrete checks. Show it to the user and
-   revise until they approve. Tiny config/data-only tasks may skip the ExecPlan (say so).
+   Acceptance must list the linked question IDs or concrete checks. Keep it to one page (about
+   80 lines); put longer design material in a results doc or ADR and link it. Show it to the user
+   and revise until they approve. Tiny config/data-only tasks may skip the ExecPlan (say so).
+   An issue labelled `type:experiment` writes an experiment note instead (`PLANS.md`) on branch
+   `exp/$ARGUMENTS-<short-slug>`.
 5. **Create the branch.** `git switch -c <role>/$ARGUMENTS-<short-slug>` (role in lower case,
    e.g. `c2/$ARGUMENTS-rjf-transcripts`).
 6. **Save the plan** as `plans/<issue number padded to 4 digits>-<slug>.md` and add the first

@@ -69,19 +69,33 @@ If your change touches two areas, read both specs and mention both in the PR.
 - Start with `/start-task <issue#>`; finish with `/finish-task`. See
   `.claude/commands/start-task.md` and `.claude/commands/finish-task.md`.
 - ExecPlans follow `PLANS.md` and are saved in `plans/NNNN-slug.md`. Tiny config/data-only
-  tasks may skip the ExecPlan.
+  tasks may skip the ExecPlan. A plan is one page; design detail goes in a results doc or an
+  ADR and the plan links to it. Write each fact once and link to it elsewhere.
+- **Two tracks.** *Delivery* (code that lands on `main`): the full flow above. *Experiment*
+  (a question to settle with data, e.g. "does reduce effort off keep 24/30?"; issue label
+  `type:experiment`): branch `exp/<issue#>-<slug>`, never merged; no ExecPlan, plan review,
+  verify-cee or PR review. It starts with an experiment note (`PLANS.md`) and ends with a results
+  doc that lands on `main` in a docs-only PR. A winning change is then built on the delivery track
+  under its own issue. Paid-call rules apply on both tracks.
 - PRs use `.github/pull_request_template.md` and include "Closes #N" (or "Part of #N" with
   the open items listed, when the issue is only partly done).
 - The tech lead reviews and merges. Do not merge your own PR. Exception (TL only): PRs for
   `role:tl` issues are reviewed and merged by an independent reviewer agent through `/tl-run`
   and `/tl-review` (`.claude/commands/tl-run.md`, `.claude/commands/tl-review.md`; see
-  `docs/DASHBOARD.md` section 3b). Teammate PRs: the tech lead reviews and merges.
+  `docs/DASHBOARD.md` section 3b). The plan gets its own review only when it carries risk
+  (paid calls, an ADR or ground-rule change, schema / corpus / snapshot changes, deleted data);
+  otherwise the PR review is the one review. Teammate PRs: the tech lead reviews and merges.
 
 ## Verification
 
-- **Prove it in the running app.** Before `/finish-task`, any change to `src/`, `config/`,
-  the database or the corpus runs the `verify-cee` skill (`.claude/skills/verify-cee/`).
-  Tests passing or "it compiles" is not proof.
+- **Prove it in the running app.** Before `/finish-task`, any change a user could see in the
+  app (UI, answer content or behavior, retrieval results, the database or the corpus) runs the
+  `verify-cee` skill (`.claude/skills/verify-cee/`). Tests passing or "it compiles" is not proof.
+  A change the app cannot show (request assembly, cache keys, logging, scripts, eval tooling)
+  is proved by pytest plus the mock eval instead; the PR says why verify-cee was not run.
+- **Each check has one owner.** CI runs pytest; the implementer runs verify-cee and the eval and
+  keeps the evidence; the reviewer reads that evidence and re-runs only what is missing, failed,
+  stale or in doubt (`.claude/commands/tl-review.md`, "Check rule").
 - **Evidence, not opinion.** Report what was run, the result, and where the evidence is.
   A claim with no evidence is unverified; say "not verified" rather than guess.
 - **A changed user feature updates its recipe** in `.claude/skills/verify-cee/features/`
@@ -102,7 +116,7 @@ team money. The default is zero calls. Follow these steps whenever a task might 
    and how many runs of each. Use the fewest questions that prove the point.
    One run of a planned question through the full answer flow (every call the flow makes,
    ADR-021; the plan states the expected count) needs no tech-lead approval. Running the same question again (e.g. a second prompt version)
-   is planned in the ExecPlan before the first call. There is no per-task total.
+   is planned in the ExecPlan (or the experiment note) before the first call. There is no per-task total.
    The 30-question scored run (Gate 3) needs an explicit go-ahead from the tech lead.
 3. **Make each call count.** Call only on finished code, after every mock check passes. Run the
    planned questions together in one run. Save every raw response (question, prompt version,
