@@ -20,7 +20,8 @@ the corpus covers, leave feedback. No accounts, no mobile, no alerts.
 ```
 Page "Ask"
   inputs: question text, optional filters (company multiselect, date range, keywords)
-  output: answer claims, each with numbered citations [1] [2]
+  output: answer claims as one paragraph with footnotes [1] [2] into the evidence cards below (#291; a numbered
+          list for a window / recency answer), then the full evidence list (each card with its citation chip)
           citation chip = source_label + tier label (filing | licensed | IR | trade press (indicative only) | research)
           caveats box (always visible if present), gaps box with suggested sources (code flags
           such as part_gap / uncited_cell as chips, #215), coverage note
@@ -91,8 +92,8 @@ Page "Architecture" (#270; replaced the Design component gallery)
 - Progressive answer (#272): while the answer is built, the page shows the plan first ("Plan: ..."),
   then "Evidence so far": one card per cited item of each extraction call as it lands (label
   "EVIDENCE - <firm> - <aspect>", the citation chip of a retrieved, code-checked chunk, so every card
-  cites a stored document), and the answer last.
-- Streamed answer (#275): while the reduce call streams, "Answer (in progress: checks running)" lists each
+  cites a stored document), and the answer last (drawn above the evidence since #291).
+- Streamed answer (#275; drawn above the evidence since #291): while the reduce call streams, "Answer (in progress: checks running)" lists each
   claim once its JSON object is complete and it has passed the per-claim checks (citation inside the matrix
   and the retrieved set, figures and dates found in the cited passages, not normative, no why-line or rule-3
   flag; `reduce.check_item`). Claims appear in arrival order; when the final answer is ready the block is
@@ -101,6 +102,19 @@ Page "Architecture" (#270; replaced the Design component gallery)
   flagged claims appear only in the final answer. If the call fails, the block is removed and the error shown;
   a stalled stream (no chunk for `DEEPSEEK_IDLE_S`) shows an error with a "Try again" button (the user's click;
   never an automatic retry). #277 renames it "Retry" (below).
+- Answer above the evidence (#291, plans/0291-answer-above-evidence.md): the streamed claims of #275 show above the
+  first evidence card (a zero-height `st.empty()` slot between the plan line and the evidence: no reserved space),
+  sentence by sentence with a fade-in (CSS keyframes, off under `prefers-reduced-motion`), with the "checks running"
+  caption; the final answer replaces them there. The claims are one paragraph (a sentence per claim, in order), each
+  followed by superscript footnotes `[n]` linking to evidence card n (`#cee-ev-n`; the card flashes via `:target`)
+  and its flag chips; with the question's own time window or a recency aspect they are a numbered list (an item per
+  claim, its why-line on its own line). Footnotes are mapped by code: each cited chunk id -> the first evidence card
+  citing it; a cited chunk with no card gets an extra `SOURCE` card (its source chip and a passage excerpt) at the
+  end of the list; an id outside the retrieved set keeps the flagged, unlinked chip (no card, never a composed
+  source). Without evidence lines (MAP=off, a code-built answer) the cards are the answer's cited chunks. After the
+  run and on every rerun (a page switch, a feedback click) the page draws, from session state with no new run:
+  answer -> adjacent / withheld / caveats / gaps / coverage -> "Evidence" (the full list) -> footer and feedback.
+  A stopped or failed run empties the slot (#277 rule 1).
 - Stop and Retry (#277, plans/0277-stop-retry.md): the answer flow runs in a worker thread; the page (the
   script thread) draws its progress and shows a **Stop** button and "Working for N s" while it runs. A click
   (Stop, or any other widget) interrupts the page at its next draw (at most about 1 s); the page sets the run's

@@ -10,7 +10,8 @@ attempt is logged in `query_log`: a stopped or failed attempt has no answer (NUL
 ## Sub-features
 
 - `stop-map`: Stop clicked during the map. "Stopped while extracting evidence" appears within 5 s, with the
-  evidence cards already shown. There is no "LLM called:" footer, no "Answer (in progress" block and no
+  evidence cards already shown. There is no "LLM called:" footer, no answer block above the evidence (#291), no
+  "Answer (in progress" block and no
   Stop button, and no card arrives afterwards.
 - `stop-log`: the stopped row has `answer` NULL and `filters.run.status = stopped`, `reason` `stop` (a click on
   another widget reads `page`), stage `extract`. Its records

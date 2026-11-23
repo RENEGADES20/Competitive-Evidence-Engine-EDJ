@@ -57,6 +57,7 @@ user-facing feature, how a user reaches it, how the script drives it, what prove
 | ID | Proves |
 |---|---|
 | `ask-answer` | A question returns an answer with citation links; the query is logged |
+| `ask-layout` | The answer sits above the evidence, footnotes reach their cards, a page switch keeps both |
 | `open-citation` | A citation opens the stored passage, and it matches the database |
 | `gap-path` | A question with no stored evidence says so, with no invented citation |
 | `invalid-chunk` | An unknown chunk ID shows a clear error |

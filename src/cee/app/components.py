@@ -100,6 +100,18 @@ CSS = f"""
 [class*="st-key-placeholder"] label,[class*="st-key-placeholder"] label p{{color:{MUTED} !important;opacity:1 !important}}
 [data-testid="stCaptionContainer"],[data-testid="stCaptionContainer"] p,[data-testid="stCaptionContainer"] a{{color:{MUTED} !important;opacity:1 !important}}
 .cee-soon{{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.06em;color:{MUTED}}}
+.cee-claim:target{{animation:cee-flash 2s ease-out;border-color:{ORANGE}}}
+@keyframes cee-flash{{from{{background:{LIME}}}to{{background:{SURFACE}}}}}
+.cee-answer{{color:{INK};font-size:1.02rem;line-height:1.75;margin:.6rem 0 .9rem}}
+.cee-answer p{{margin:0}} .cee-answer ol{{margin:0;padding-left:1.4rem}} .cee-answer li{{margin:.15rem 0 .55rem}}
+.cee-answer .why{{display:block;color:{MUTED};font-size:.92rem}}
+.cee-answer .cee-cite{{vertical-align:baseline}} .cee-answer .cee-flag{{font-size:.68rem}}
+.cee-fn{{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;margin-left:.1rem}}
+.cee-fn a{{color:{ORANGE} !important;text-decoration:none !important;padding:0 .05rem}}
+.cee-fn a:hover{{background:{LIME};color:{INK} !important}}
+.cee-fade{{animation:cee-fade .45s ease-out both}}
+@keyframes cee-fade{{from{{opacity:0;transform:translateY(4px)}}to{{opacity:1;transform:none}}}}
+@media (prefers-reduced-motion:reduce){{.cee-fade,.cee-claim:target{{animation:none}}}}
 .cee-trace{{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:{INK}}}
 .cee-trace .m{{display:inline-block;width:1.5rem;font-weight:700}}
 .cee-trace .running .m{{color:{ORANGE}}} .cee-trace .done .m{{color:#3F6212}}
@@ -175,16 +187,56 @@ def behavior_header(text: str, code: str) -> None:
 
 
 def claim_card(n: int, text: str, chips: list[tuple], source_label: str = "",
-               flags: list[str] | None = None, label: str = "", note: str = "", link: bool = True) -> None:
-    """chips: (chunk_id, tier) or (chunk_id, tier, source_label, linkable) per citation."""
+               flags: list[str] | None = None, label: str = "", note: str = "", link: bool = True,
+               anchor: bool = False) -> None:
+    """chips: (chunk_id, tier) or (chunk_id, tier, source_label, linkable) per citation.
+    anchor (#291): the card gets id="cee-ev-<n>", the target of the answer's footnote [n]."""
     chip_html = "".join(citation_chip_html(c[0], c[1], link and (c[3] if len(c) > 3 else True),
                                            c[2] if len(c) > 2 else "") for c in chips)
     flag_html = "".join(f' <span class="cee-flag">{escape(FLAG_TEXT.get(f, f))}</span>' for f in flags or [])
     top = f'<div class="lbl">{escape(label)}</div>' if label else ""
     src = f'<div class="src">{escape(source_label)}</div>' if source_label else ""
     extra = f'<div class="src"><b>Differs because:</b> {escape(note)}</div>' if note else ""
-    _html(f'<div class="cee-claim">{top}<span class="n">{n:02d}</span>{escape(text)}{flag_html}'
+    ident = f' id="{EVIDENCE_ANCHOR}{n}"' if anchor else ""
+    _html(f'<div class="cee-claim"{ident}>{top}<span class="n">{n:02d}</span>{escape(text)}{flag_html}'
           f'<div>{chip_html}</div>{src}{extra}</div>')
+
+
+EVIDENCE_ANCHOR = "cee-ev-"   # #291: evidence card n is <div id="cee-ev-n">; footnote [n] links to #cee-ev-n
+
+
+def footnotes_html(numbers: list[int]) -> str:
+    """#291: superscript [n] links to the evidence cards (a click scrolls there; the card flashes via :target)."""
+    links = "".join(f'<a href="#{EVIDENCE_ANCHOR}{n}" title="Evidence card {n}">[{n}]</a>' for n in numbers)
+    return f'<sup class="cee-fn">{links}</sup>' if links else ""
+
+
+def answer_html(items: list[dict], as_list: bool, fade_from: int | None = 0, block_fade: bool = False) -> str:
+    """#291: the answer's claims as one paragraph (a sentence per claim) or, for a window / recency answer, a
+    numbered list (an item per claim, its why-line on its own line). Each item: text, footnotes (card numbers),
+    unlinked (chunk ids outside the retrieved set: a flagged chip, no link), flags. Items from fade_from on fade
+    in (None: none do); block_fade fades the whole block in (a final answer with no streamed claims before it)."""
+    from cee.answer.prompt import WHY_LINE
+    parts = []
+    for k, it in enumerate(items):
+        text = " ".join(str(it["text"]).split())
+        body, why = (text.split(WHY_LINE, 1) + [""])[:2] if as_list else (text, "")
+        unlinked = "".join(" " + citation_chip_html(cid, None, False, "not in the retrieved set")
+                           for cid in it.get("unlinked") or [])
+        flags = "".join(f' <span class="cee-flag">{escape(FLAG_TEXT.get(f, f))}</span>' for f in it.get("flags") or [])
+        why_html = f'<span class="why">{escape(WHY_LINE + why.strip())}</span>' if as_list and why.strip() else ""
+        fade = " cee-fade" if fade_from is not None and k >= fade_from else ""
+        inner = f'{escape(body.strip())}{footnotes_html(it.get("footnotes") or [])}{unlinked}{flags}{why_html}'
+        parts.append(f'<li class="cee-sent{fade}">{inner}</li>' if as_list
+                     else f'<span class="cee-sent{fade}">{inner}</span>')
+    cls = "cee-answer cee-fade" if block_fade else "cee-answer"
+    if as_list:
+        return f'<div class="{cls}"><ol>{"".join(parts)}</ol></div>'
+    return f'<div class="{cls}"><p>{" ".join(parts)}</p></div>'
+
+
+def answer_block(items: list[dict], as_list: bool, fade_from: int | None = 0, block_fade: bool = False) -> None:
+    _html(answer_html(items, as_list, fade_from, block_fade))
 
 
 def caveat_box(text: str) -> None:
