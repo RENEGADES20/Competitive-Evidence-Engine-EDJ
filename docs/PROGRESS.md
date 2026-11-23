@@ -170,6 +170,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-22 | #275 reduce speed: idle timeout, streamed checked claims on the Ask page, off cap 64000, prompt v5.3 behind a setting; reduce off (R2) cuts the fts end to end p50 184 -> 108 s but scores 20/30 blind (< 24), so the reduce stays low (#276) | none | TL: strict-enum open item; whether to try another reduce speed-up |
 | 2026-11-22 | Ask page Stop and Retry: a cancel token stops new calls, queued map calls and open DeepSeek streams within ~1 s; Retry after a stop or any failure reuses valid finished calls from a session run cache; stopped and failed attempts are logged (answer NULL, filters.run); verify-cee 11/11 incl. new ask-stop-retry, 0 real calls (#277) (#279) | none | exp/hybrid sync |
 | 2026-11-23 | Leaner workflow: experiment track (exp/ branch + results doc), one owner per check (CI pytest, implementer verify-cee/eval, reviewer reads evidence), verify-cee only for app-visible changes, plan review only on risk items, one-page plans; label type:experiment (#281) (#282) | none | prefix-cache order and shorter reduce as the first issues under the new rules |
+| 2026-11-23 | #283 map prefix cache tested and not adopted: cache hits 4% -> 60%, off-peak $0.52 -> $0.40/q, but adjudicated 23/30 (< 24) and latency p50 272 s; shipped behind MAP_PREFIX (default off = #272 request byte for byte) (#286) | none | follow-up idea only: a same-session latency A/B, and layouts that keep each cell to its own citable passages |
 
 ## Weekly score (from W6)
 
