@@ -89,7 +89,18 @@ text (Q11 "define ... include or exclude", Q22 "definition", Q24 "per advisor", 
 
 ## Mock compare, FACTS off vs clean main (0 calls)
 
-PENDING
+Branch `dbba1ea` (no code change after it) vs a clean `main` worktree at `cda5ebf`, `FACTS` unset (off), mock Q1-Q30
+fts, as-of 2026-11-17 (`w13-facts/mocks.sh` driving `w12-latency/run-mock.sh`; compared with `w12-latency/cmp_mock.py`:
+status, retrieved chunks, behavior, every cell label, every claim and its chunk ids). Result `w13-facts/mock-compare.txt`;
+evidence `D:\ALLPROJECTS\EDJ\cache\ev285\mock-*`.
+
+| Plans | Result | Map calls main / branch |
+|---|---|---|
+| Rule plans | identical 30/30 | 74 / 74 |
+| #272 plans (`ev284\plans-272`) | identical 30/30 | 454 / 454 |
+
+With `FACTS=on` and rows, `tests/test_facts.py` proves the uncovered round-1 and re-map requests are byte-identical to
+`FACTS=off`; with `FACTS=off` the hook does nothing (`test_facts_off_never_calls_serve`).
 
 ## Plan-time estimate from the #272 records (0 calls; an upper bound, superseded by G0)
 
