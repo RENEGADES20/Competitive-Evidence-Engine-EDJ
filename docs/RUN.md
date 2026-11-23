@@ -368,11 +368,11 @@ defaults. `latency_report.py` adds the cache-hit share per stage and per role (l
 wait in the critical path. The #283 runs use `docs/results/w13-prefix-cache/run-prefix.*` (phases `count | run`,
 every setting pinned) and `cmp_cells.py` (0 calls: cell labels and citation flags against the #272 run):
 ```powershell
-powershell -File docs\results\w13-prefix-cache\run-prefix.ps1 -Wt <worktree> -Out probe-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q10 -ReusePlans -PlanVersion ds-strict-2-plan-off-c8000-s1 -Gate first_chunk
+powershell -File docs\results\w13-prefix-cache\run-prefix.ps1 -Wt <worktree> -Out probe-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q10 -ReusePlans -PlanVersion ds-strict-2-plan-off-c8000-s1 -PrefixGate first_chunk
 .\.venv\Scripts\python.exe docs\results\w13-prefix-cache\cmp_cells.py <run folder>\report.json
 ```
 ```bash
-WT=<worktree> OUT=probe-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q10 REUSE_PLANS=1 PLAN_VERSION=ds-strict-2-plan-off-c8000-s1 GATE=first_chunk bash docs/results/w13-prefix-cache/run-prefix.sh
+WT=<worktree> OUT=probe-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q10 REUSE_PLANS=1 PLAN_VERSION=ds-strict-2-plan-off-c8000-s1 PREFIX_GATE=first_chunk bash docs/results/w13-prefix-cache/run-prefix.sh
 .venv/bin/python docs/results/w13-prefix-cache/cmp_cells.py <run folder>/report.json
 ```
 

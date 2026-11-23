@@ -1,13 +1,13 @@
 # #283 (plans/0283-prefix-cache.md): one phase (count | run) of the map prefix-cache run on DeepSeek, every setting
 # pinned; copied from w12-latency/run-latency.ps1 (#272) plus the #283 settings -PrefixTokens (MAP_PREFIX_TOKENS),
-# -Gate (MAP_PREFIX_GATE, pinned from the Q10 probe) and -WaitS (MAP_PREFIX_WAIT_S). Test A comments below are #272's.
+# -PrefixGate (MAP_PREFIX_GATE, pinned from the Q10 probe) and -WaitS (MAP_PREFIX_WAIT_S). Test A comments below are #272's.
 # Test A configs: C1 = -EffortPlan off -EffortMap low -EffortReduce low; C2 = C1 with -EffortMap off; C3 = C1 with
 # -MapModel deepseek-flash. The key comes from -EnvFile (the main repo's .env), copied into the worktree inside try and
 # removed in finally; never read or printed here. Run from a clean worktree at the gate commit.
 #   powershell -File run-latency.ps1 -Wt <worktree> -Out <name> -Cache <dir> -MaxCalls <n> -Phase plan|count|run `
 #     -GateSha <sha> [-EffortPlan off] [-EffortMap low] [-EffortReduce low] [-MapModel <model>] [-Stream on] `
 #     [-Questions Q5,Q10] [-Mode hybrid-norerank] [-ReusePlans] [-PlanVersion <request version>] [-FastembedPath <dir>]
-#     [-IdleS 120] [-ReducePrompt v5.2|v5.3] [-EvDir <dir>] [-PrefixTokens 150000] [-Gate first_chunk|done|off] [-WaitS 5]
+#     [-IdleS 120] [-ReducePrompt v5.2|v5.3] [-EvDir <dir>] [-PrefixTokens 150000] [-PrefixGate first_chunk|done|off] [-WaitS 5]
 # #275: -IdleS pins DEEPSEEK_IDLE_S (a stalled stream fails, no retry), -ReducePrompt pins REDUCE_PROMPT, and
 # PYTHONHASHSEED=0 is pinned so set iteration order is the same in every process (reduce message stability).
 param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Parameter(Mandatory)][string]$Cache,
@@ -21,7 +21,7 @@ param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Pa
       [string]$FastembedPath = '', [string]$EnvFile = 'D:\ALLPROJECTS\EDJ\repo\.env',
       [double]$IdleS = 120, [ValidateSet('v5.2', 'v5.3')][string]$ReducePrompt = 'v5.2',
       [string]$Questions = ((1..30 | ForEach-Object { "Q$_" }) -join ','), [int]$Concurrency = 24,
-      [int]$PrefixTokens = 150000, [ValidateSet('first_chunk', 'done', 'off')][string]$Gate = 'first_chunk',
+      [int]$PrefixTokens = 150000, [ValidateSet('first_chunk', 'done', 'off')][string]$PrefixGate = 'first_chunk',
       [double]$WaitS = 5,
       [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev283', [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
 $h = Join-Path $EvDir "$Out.head-log.txt"; $outDir = Join-Path $EvDir $Out
@@ -52,10 +52,10 @@ try {
   $env:DEEPSEEK_EFFORT_PLAN = $EffortPlan; $env:DEEPSEEK_EFFORT_MAP = $EffortMap; $env:DEEPSEEK_EFFORT_REDUCE = $EffortReduce
   $env:DEEPSEEK_STREAM = $Stream; if ($MapModel) { $env:DEEPSEEK_MODEL_MAP = $MapModel }
   $env:DEEPSEEK_IDLE_S = "$IdleS"; $env:REDUCE_PROMPT = $ReducePrompt; $env:PYTHONHASHSEED = '0'
-  $env:MAP_PREFIX_TOKENS = "$PrefixTokens"; $env:MAP_PREFIX_GATE = $Gate; $env:MAP_PREFIX_WAIT_S = "$WaitS"
+  $env:MAP_PREFIX_TOKENS = "$PrefixTokens"; $env:MAP_PREFIX_GATE = $PrefixGate; $env:MAP_PREFIX_WAIT_S = "$WaitS"
   if ($Mode -and $Mode -ne 'fts') { $env:CEE_VECTORS = 'on'; if ($FastembedPath) { $env:FASTEMBED_CACHE_PATH = $FastembedPath } }
   $mm = if ($MapModel) { $MapModel } else { $Model }; $md = if ($Mode) { $Mode } else { 'fts' }
-  "settings: model $Model map model $mm effort plan $EffortPlan map $EffortMap reduce $EffortReduce stream $Stream idle $IdleS reduce prompt $ReducePrompt PYTHONHASHSEED=0 mode $md PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=$Concurrency MAP_CALL_TOKENS=60000 MAP_PREFIX_TOKENS=$PrefixTokens MAP_PREFIX_GATE=$Gate MAP_PREFIX_WAIT_S=$WaitS; args $($a -join ' ')" | Add-Content $h
+  "settings: model $Model map model $mm effort plan $EffortPlan map $EffortMap reduce $EffortReduce stream $Stream idle $IdleS reduce prompt $ReducePrompt PYTHONHASHSEED=0 mode $md PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=$Concurrency MAP_CALL_TOKENS=60000 MAP_PREFIX_TOKENS=$PrefixTokens MAP_PREFIX_GATE=$PrefixGate MAP_PREFIX_WAIT_S=$WaitS; args $($a -join ' ')" | Add-Content $h
   if ($Phase -eq 'count') {
     $env:DEEPSEEK_API_KEY = ''
     & $Py -B scripts\eval_run.py @a *> "$outDir.log"
