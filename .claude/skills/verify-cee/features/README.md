@@ -46,5 +46,6 @@ Each file: an H1, one paragraph of user-visible behavior, then exactly these H2s
 - [feedback](feedback.md): rate an answer and comment; one query_feedback row per query.
 - [search-mode](search-mode.md): Exact match / Smart search switch, mode on every answer (exp/hybrid).
 - [architecture-page](architecture-page.md): the pipeline diagram; hover and keyboard focus explain each module.
+- [ask-stop-retry](ask-stop-retry.md): Stop a run mid-way; Retry after a stop or a failure reuses finished calls.
 
 Every user feature in specs/ui.md is mapped. Add a file here in the PR that builds a new one.

@@ -100,7 +100,21 @@ Page "Architecture" (#270; replaced the Design component gallery)
   computability claims, hand-off, gaps and caveats added), so order may change at the end. Adjacent items and
   flagged claims appear only in the final answer. If the call fails, the block is removed and the error shown;
   a stalled stream (no chunk for `DEEPSEEK_IDLE_S`) shows an error with a "Try again" button (the user's click;
-  never an automatic retry).
+  never an automatic retry). #277 renames it "Retry" (below).
+- Stop and Retry (#277, plans/0277-stop-retry.md): the answer flow runs in a worker thread; the page (the
+  script thread) draws its progress and shows a **Stop** button and "Working for N s" while it runs. A click
+  (Stop, or any other widget) interrupts the page at its next draw (at most about 1 s); the page sets the run's
+  cancel token, so no new model call starts, queued map calls never start and open DeepSeek streams are closed.
+  The page then shows "Stopped while <stage>" with the plan line and the evidence cards already found (each
+  code-checked and cited) and **Retry**; never the streamed "CLAIM (CHECKING)" block, a final answer or the
+  "LLM called:" footer (rule 1). Retry (key `retry-ask`; it replaces "Try again") is shown after a stop, after any
+  failed run (a stall keeps its message) and, as "Retry the failed calls", under an answer with a failed or
+  invalid call. One click is one attempt with the saved question and filters: calls that finished with a valid
+  output come from the run cache (no new cost), the missing, failed, cut or cancelled ones run again. While the
+  stopped run's worker is still finishing a call that cannot be cut (a non-streamed request), Retry is disabled
+  with a note and enabled once it ends; Ask is disabled the same way (no second run while a call is in flight).
+  Ask always starts a new run (no reuse). The run log names the reason: `stop` (the Stop button) or `page`
+  (another click interrupted the run).
 - Architecture page: every module of the diagram shows its explanation on hover and on keyboard
   focus, and the list under the diagram holds the same text (#270).
 - Screenshot of each page attached to the PR.
