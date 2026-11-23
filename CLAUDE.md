@@ -32,9 +32,11 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
 - **LLM calls follow the question's decomposition; no fixed number.** Firms x aspects, every
   sub-question keeps the SQL filters; every call is logged with tokens and cost (cost: #248). See
   ADR-021 (amends ADR-012).
-- **Model-based work is developed on a branch, not `main`.** Anything that needs a model
-  besides the answer LLM calls (embeddings, rerankers, any local or hosted model in
-  retrieval or validation) is built and tested there (today `exp/hybrid`). See ADR-011.
+- **Model-based work is developed on a branch, not `main`.** Anything that needs a model at
+  query time besides the answer LLM calls (embeddings, rerankers, any local or hosted model in
+  retrieval or validation) is built and tested there (today `exp/hybrid`). See ADR-011. An offline
+  ingest extraction whose output is stored, code-checked data (the facts table) may land on `main`:
+  query time then needs no other model (ADR-022).
 - **Chunks never cross a section boundary.** PDFs keep page numbers.
 - **Citations point only at `chunk_id`s** that were in the retrieved set; unmatched
   citations are flagged, never silently dropped.

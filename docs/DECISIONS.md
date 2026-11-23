@@ -1038,3 +1038,44 @@ comments 7037522138 and 7037650142; prompt v5.1):
   metric, a definition-wording change across one firm's documents, and where each firm's disclosed series
   starts and stops; a firm with only a different quantity has a gap naming that closest figure.
 
+
+## ADR-022: Facts table: metric figures extracted once at ingest by a model, stored as data, served by SQL
+Status: Proposed (#285; the tech lead asked for this work on 2026-11-22, so the amendment of ADR-011 is approved in
+substance; Accepted when the #285 PR merges). Amends ADR-011 (branch rule) and ADR-021 rules 6-7 (map calls).
+Context: the corpus is fixed (snapshot `corpus-2026-11-19`), yet every question has the LLM map re-read raw passages
+to pull out the same figures again: #272 made 454 map calls for 30 questions (p50 34 s each) and nothing carried over
+between questions. `config/metric_definitions.yaml` already holds hand-checked definitions, but the figures are
+extracted per question. Pre-extracting structured attributes once and answering them by query is the pattern of
+EVAPORATE, LOTUS and DocETL (RAG review section 6). ADR-011 keeps any model "besides the answer LLM calls" on a branch.
+Decision:
+- **Extraction is offline ingest work.** A one-time model pass (`scripts/extract_facts.py`, the answer stack's provider
+  settings) reads only the chunks that can hold a target metric (code prefilter over tier 2-3 firm documents) and
+  proposes rows. It runs once per snapshot or per extraction version, as a planned paid run with every raw output
+  saved (CLAUDE.md "Paid API calls"); never in tests, CI or at query time.
+- **Only code-checked rows are stored.** Entity and segment come from the chunk, never from the model. A row is kept
+  only if its value is a verbatim substring of its quote, the quote a verbatim substring of the chunk text (whitespace
+  squashed), the model's firm equals the document's entity and its segment the chunk's (or empty), and its period
+  parses. Other rows are dropped and counted. An independent audit samples the stored rows (#285: 50 rows).
+- **The facts are data, so `main` runs without a model.** Checked rows live in `config/facts.jsonl` (git, versioned by
+  extraction version, with the model named per row); `cee.facts load` fills the `facts` table from it (run by
+  `sync-db` and `ingest`, so the next snapshot carries it). Query time is SQL plus code. The mock provider, tests and
+  CI read the same rows; with no table or no rows every cell takes the LLM map as before.
+- **Serving rule.** A map cell is built from facts, with no LLM call, only when it is a firm row, its aspect is kind
+  fact, series or recency and not a proxy, the aspect text names a target metric's figure and no non-figure word
+  (`config/facts.yaml`), and the lookup returns rows (series: at least two periods). An empty lookup never becomes
+  "not disclosed": the cell goes to the LLM map, so the gap and closest-figure paths are unchanged. Target metrics come
+  from the data: the registered metrics plus any figure asked in at least two questions of the latest scored run.
+- **The lookup is a retrieval pass.** It applies the sub-question's own hard filters with the `fts` SQL builders
+  (entity and Merrill segment, time window on `published_at`, Ask-page filters, document-type scope). Its chunks join
+  that sub-question's retrieved set, so every served item cites a retrieved chunk (citation invariant). Facts-served
+  cells are removed after the map fan-out: the LLM cells' requests are byte-identical with facts on or off, and no
+  facts chunk enters a map message.
+- **Calls (ADR-021 rule 7).** Map calls follow the decomposition minus the facts-served cells; the run log records
+  facts-served and LLM cells per question.
+- **Branch rule (ADR-011), amended.** Model work at query time (embeddings, rerankers, any local or hosted model in
+  retrieval or validation) stays on a branch. An offline ingest extraction whose output is stored, code-checked data
+  may land on `main`, because `main` then needs no model beyond the answer LLM calls.
+Consequences: metric cells cost no call and no wait; the saving grows with how often questions ask registered figures.
+The facts must be re-extracted (planned, paid) when the corpus or the target metrics change, and a stale file is
+visible by its snapshot and version. Wrong rows would repeat in every answer that uses them, hence the checks and the
+audit. Narrative cells, revenue lines and other one-question figures stay with the LLM map.
