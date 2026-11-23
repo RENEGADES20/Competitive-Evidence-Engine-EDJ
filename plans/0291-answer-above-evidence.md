@@ -37,17 +37,24 @@ from session state. Page only: Answer JSON, prompts and calls unchanged.
 5. Tests, then verify-cee on mock (Q5, Q8, Q24, Q26 + the driver features), recipe, driver, spec.
 
 ## Acceptance
-- [ ] pytest green (CI), with tests for the footnote mapping (card found, extra card added, id outside the
+- [x] pytest green (CI), with tests for the footnote mapping (card found, extra card added, id outside the
       retrieved set) and the window / recency list choice.
-- [ ] verify-cee on mock, with screenshots: Q5 (single firm), Q8 (comparison), Q24 (gap_with_adjacent),
+- [x] verify-cee on mock, with screenshots: Q5 (single firm), Q8 (comparison), Q24 (gap_with_adjacent),
       Q26 (window: list form). Each: answer above the first evidence card; every footnote target exists; after
       Coverage -> Ask, answer and evidence both shown.
-- [ ] A stopped run still shows the evidence and no answer (#277 behaviour unchanged).
-- [ ] Mock eval fts Q1-Q30 answer JSON identical to main (page-only change).
-- [ ] 0 paid calls.
+- [x] A stopped run still shows the evidence and no answer (#277 behaviour unchanged).
+- [x] Mock eval fts Q1-Q30 answer JSON identical to main (page-only change).
+- [x] 0 paid calls.
 
 ## Paid calls
 0. Everything runs on `LLM_PROVIDER=mock`; the change is the page layout only.
 
 ## Progress log
 - 2026-11-23 16:58 - plan written; plan review skipped (no risk item: 0 paid calls, no ADR / schema / corpus change)
+- 2026-11-23 17:04 - ask_page / components / ask.py done (the "plan" event also carries the query, for the list form
+  while streaming); tests/test_answer_footnotes.py added; local pytest 1200 passed
+- 2026-11-23 17:20 - verify-cee ask-layout (new), ask-progress, ask-stop-retry PASS on mock (run
+  20261123-170548-47186a3). The empty answer slot is display:none, height 0 (measured in the browser: the gap
+  plan line -> "Evidence so far" is the normal 16 px). Mock Q24 answers `answer`, not `gap_with_adjacent` (mock)
+- 2026-11-23 17:40 - mock eval (fts, all 35) on the branch and on main: identical answer JSON for Q1-Q30 (and
+  Q31-Q35), 33 PASS / 2 FAIL on both; 0 real calls. Full verify-cee run on 46ce139: 12 features PASS (20261123-171554-46ce139)
