@@ -50,7 +50,8 @@ def union_hits(hits: list[Hit], matrix) -> list[Hit]:
 
 
 Progress = Callable[[str, str, str], None]
-# #272: on_event(kind, data) for the progressive Ask page: ("plan", {"text", "plan"}) once the plan is made,
+# #272: on_event(kind, data) for the progressive Ask page: ("plan", {"text", "plan", "query"}) once the plan is made
+# (#291: the resolved query, for the answer's list form while it streams),
 # ("evidence", {"call", "lines"}) as each map call lands (lines: evidence_lines), in the calling thread.
 # #275: ("claim", {"n", "claim", "hits"}) for each reduce claim that passed the per-claim checks
 # (reduce.check_item) while the reduce streams, before the final answer; adjacent items are not sent early.
@@ -140,7 +141,7 @@ def ask(question: str, provider: str | None = None, log: bool = True,
             state["plan"] = plan
             t.report("decompose", "done", plan_text(plan))
             if on_event is not None:
-                on_event("plan", {"text": plan_text(plan), "plan": plan})
+                on_event("plan", {"text": plan_text(plan), "plan": plan, "query": query})
             cancel.check()
             searching = f"Searching {_n(len(plan.subquestions), 'sub-question')}"
             with t.stage("search", searching):

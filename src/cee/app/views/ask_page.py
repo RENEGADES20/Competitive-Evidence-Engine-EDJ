@@ -28,7 +28,8 @@ BEHAVIOR_TEXT = {
 
 # One plain sentence under the heading, so a first-time reader knows what kind of answer this is.
 BEHAVIOR_HELP = {
-    "answer": "Each numbered point below comes from a stored document; click its code to read the passage.",
+    "answer": "Each point ends with footnotes [n]: click one to jump to the evidence card it comes from; "
+              "the card links to the stored passage.",
     "answer_with_boundary": "These are the facts on record. Deciding what they mean for your firm is left to you.",
     "gap_with_adjacent": "The stored documents do not answer this directly. Anything close is shown "
                          "below and marked as adjacent; the box says what is missing.",
@@ -92,11 +93,17 @@ def filters_text(f: dict) -> str:
 PLAN_HEADING = "Plan"
 EVIDENCE_HEADING = "Evidence so far"
 EVIDENCE_HELP = ("Cited passages found while the answer is written; each comes from a stored document. "
-                 "The answer below is the complete result.")
+                 "The answer appears above them once its checks are done.")
+# #291: after the run (and on every rerun) the full evidence list sits under the answer; footnote [n] -> card n
+EVIDENCE_FINAL_HEADING = "Evidence"
+EVIDENCE_FINAL_HELP = ("Every passage the answer cites, each from a stored document; footnote [n] in the answer "
+                       "opens card n. A SOURCE card is a cited passage with no extracted evidence line.")
+SOURCE_LABEL = "SOURCE"
+EXCERPT_CHARS = 240
 # #275: the reduce's claims as they stream, each after the per-claim checks (citation in the matrix, figures,
-# dates); replaced by the final answer once every check, gap and caveat is done.
+# dates); replaced by the final answer once every check, gap and caveat is done. #291: drawn above the evidence.
 EARLY_HEADING = "Answer (in progress: checks running)"
-EARLY_HELP = ("Each point below has passed its citation, figure and date checks. The order may change and "
+EARLY_HELP = ("Each point has passed its citation, figure and date checks. The order may change and "
               "duplicates may be removed when the remaining checks finish; gaps and caveats come with the full answer.")
 STALL_TEXT = ("The model stopped sending the answer (no output for {idle:g} s), so this answer was not built. "
               "Nothing partial is shown.")
@@ -126,6 +133,63 @@ def evidence_label(line: dict) -> str:
     from cee.retrieve.planner import firm_name
     firm = firm_name(line["entity"]) if line.get("entity") else "Research"
     return f"EVIDENCE - {firm} - {line.get('aspect', '')}"
+
+
+def list_form(query, aspects) -> bool:
+    """#291: a window / recency answer (the question's own time window, or a recency aspect: the why-line items,
+    reduce.own_window / check_why_lines) is drawn as a numbered list; any other answer as one paragraph."""
+    from cee.answer.reduce import own_window
+    return bool(own_window(query)) or any(getattr(a, "kind", "") == "recency" for a in aspects or [])
+
+
+def answer_aspects(r: Result) -> list:
+    if r.matrix is not None:
+        return list(getattr(r.matrix, "aspects", []) or [])
+    return list(r.plan.aspects) if r.plan is not None else []
+
+
+def _excerpt(h) -> str:
+    text = " ".join(str(getattr(h, "text", "") or "").split())
+    return text if len(text) <= EXCERPT_CHARS else text[:EXCERPT_CHARS].rsplit(" ", 1)[0] + " ..."
+
+
+def line_card(line: dict) -> dict:
+    return {"label": evidence_label(line), "text": line["text"], "hits": list(line["hits"])}
+
+
+def footnote_items(cards: list[dict], claims, by_id: dict) -> list[dict]:
+    """#291: one answer item per claim with its footnotes: for each cited chunk id in the retrieved set (by_id), the
+    first card that cites it; a cited chunk no card cites gets a SOURCE card appended to `cards` (so every footnote
+    resolves, ground rule 1). An id outside the retrieved set gets no footnote and no card: it stays a flagged,
+    unlinked chip (never a composed source). Mutates `cards`."""
+    first: dict[str, int] = {}
+    for n, c in enumerate(cards, start=1):
+        for h in c["hits"]:
+            first.setdefault(h.chunk_id, n)
+    items = []
+    for c in claims:
+        notes: list[int] = []
+        unlinked: list[str] = []
+        for cid in c.chunk_ids:
+            h = by_id.get(cid)
+            if h is None:
+                unlinked.append(cid)
+                continue
+            if cid not in first:
+                cards.append({"label": SOURCE_LABEL, "text": _excerpt(h), "hits": [h]})
+                first[cid] = len(cards)
+            if first[cid] not in notes:
+                notes.append(first[cid])
+        items.append({"text": c.text, "footnotes": notes, "unlinked": unlinked, "flags": list(c.flags)})
+    return items
+
+
+def evidence_cards(lines: list[dict], claims, hits) -> tuple[list[dict], list[dict]]:
+    """#291: (cards, items): the evidence cards (the run's evidence lines in order, then the extra SOURCE cards) and
+    the answer items with footnotes into them. No evidence lines (MAP=off, a code-built answer, an answer from the
+    run cache): the cards are the answer's cited chunks."""
+    cards = [line_card(line) for line in lines]
+    return cards, footnote_items(cards, claims, {h.chunk_id: h for h in hits})
 
 
 @dataclass
@@ -212,9 +276,12 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
     st.session_state["ask_run"] = run   # replaced before the new worker starts
     bar = st.progress(0.0, text="Reading the question")
     plan_slot = st.empty()
-    evidence = st.container()
-    early = st.empty()   # #275: the streamed claims; emptied when the final answer or a failure is shown
-    early_box = {"c": None}
+    # #291: the answer's slot sits between the plan line and the evidence; st.empty() takes no height until the
+    # first checked claim streams in, so nothing is reserved. The final answer replaces the streamed claims there.
+    answer_slot = st.empty()
+    ev_slot = st.empty()
+    evidence = ev_slot.container()
+    stream: dict = {"cards": [], "claims": [], "by_id": {}, "query": None, "aspects": []}
     stop_slot = st.empty()
     elapsed = st.empty()
     box = st.status("Building the answer", expanded=True)
@@ -224,28 +291,29 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
     def on_event(kind: str, data: dict) -> None:
         if kind == "plan":
             run.plan_text = data["text"]
+            stream["query"], stream["aspects"] = data.get("query"), list(getattr(data.get("plan"), "aspects", []))
             plan_slot.markdown(f"**{PLAN_HEADING}:** {escape(data['text'])}", unsafe_allow_html=True)
             return
-        if kind == "claim":
-            if early_box["c"] is None:
-                early_box["c"] = early.container()
-                with early_box["c"]:
-                    st.markdown(f"**{EARLY_HEADING}**")
-                    st.caption(EARLY_HELP)
-            c = data["claim"]
-            chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in data["hits"]]
-            with early_box["c"]:
-                ui.claim_card(data["n"], c.text, chips, label="CLAIM (CHECKING)")
+        if kind == "claim":   # #291: sentence by sentence into the answer slot; only the new one fades in
+            stream["claims"].append(data["claim"])
+            stream["by_id"].update({h.chunk_id: h for h in data["hits"]})
+            cards = stream["cards"]
+            drawn = len(cards)
+            items = footnote_items(cards, stream["claims"], stream["by_id"])
+            _draw_cards(evidence, cards, drawn)
+            with answer_slot.container():
+                st.markdown(f"**{EARLY_HEADING}**")
+                st.caption(EARLY_HELP)
+                ui.answer_block(items, list_form(stream["query"], stream["aspects"]), fade_from=len(items) - 1)
             return
         if kind != "evidence":
             return
-        with evidence:
-            if not run.evidence:
-                st.markdown(f"**{EVIDENCE_HEADING}**")
-                st.caption(EVIDENCE_HELP)
-            for line in data["lines"]:
-                run.evidence.append(line)
-                _evidence_card(len(run.evidence), line)
+        drawn = len(stream["cards"])
+        for line in data["lines"]:
+            run.evidence.append(line)
+            stream["cards"].append(line_card(line))
+            stream["by_id"].update({h.chunk_id: h for h in line["hits"]})
+        _draw_cards(evidence, stream["cards"], drawn)
 
     def progress(stage: str, state: str, text: str) -> None:
         steps[stage] = (state, text)
@@ -284,15 +352,22 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
         run.status = "stopped"
         raise
     bar.empty()
-    early.empty()   # #275: no early claim stays on screen without a final answer
     stop_slot.empty()
     elapsed.empty()
     kind, payload = end
     if kind == "done" and not run.token.is_set():
         run.status, run.result = "done", payload
+        # #291: the final answer replaces the streamed claims in the same slot; the evidence slot becomes the full
+        # list (with the SOURCE cards the final answer needs); the footer and feedback follow (render).
+        cards, items = evidence_cards(run.evidence, payload.answer.claims, payload.hits)
+        with answer_slot.container():
+            answer_body(payload, filters, items, fade=not stream["claims"])
+        with ev_slot.container():
+            evidence_list(cards)
         box.update(label=f"How this answer was built: {len(steps)} steps in {time.perf_counter() - start:.1f} s",
                    state="complete", expanded=False)
         return payload
+    answer_slot.empty()   # #275 / #277 rule 1: no streamed claim stays on screen without a final answer
     from cee.answer.cancel import Cancelled
     from cee.answer.llm import StreamIdle
     if kind == "done" or isinstance(payload, Cancelled):   # stopped (a late result is never shown)
@@ -315,9 +390,33 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
     return None
 
 
+def _card(n: int, card: dict) -> None:
+    chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in card["hits"]]
+    ui.claim_card(n, card["text"], chips, label=card["label"], anchor=True)
+
+
 def _evidence_card(n: int, line: dict) -> None:
-    chips = [(h.chunk_id, h.source_tier, source_label(h), True) for h in line["hits"]]
-    ui.claim_card(n, line["text"], chips, label=evidence_label(line))
+    _card(n, line_card(line))
+
+
+def _draw_cards(where, cards: list[dict], drawn: int) -> None:
+    """Append cards[drawn:] to the running page's evidence container (the heading before the first card)."""
+    with where:
+        if drawn == 0 and cards:
+            st.markdown(f"**{EVIDENCE_HEADING}**")
+            st.caption(EVIDENCE_HELP)
+        for n in range(drawn + 1, len(cards) + 1):
+            _card(n, cards[n - 1])
+
+
+def evidence_list(cards: list[dict]) -> None:
+    """#291: the full evidence list under a finished answer (first draw and every rerun)."""
+    if not cards:
+        return
+    st.markdown(f"**{EVIDENCE_FINAL_HEADING}**")
+    st.caption(EVIDENCE_FINAL_HELP)
+    for n, card in enumerate(cards, start=1):
+        _card(n, card)
 
 
 def _stopped_note(run: Run) -> None:
@@ -406,17 +505,18 @@ def render() -> None:
         ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
                                          ("FIRMS", str(s["firms"]))])
 
+    fresh = None   # #291: a run that just finished has drawn its answer and evidence already
     if asked and question.strip():
-        r = ask_with_trace(question, filters)   # a new run and a new run cache
+        fresh = ask_with_trace(question, filters)   # a new run and a new run cache
         # Kept for reruns: clicking a feedback control reruns the page, the answer must stay.
-        st.session_state["last_answer"] = (r, filters) if r else None
-        if r is None:
+        st.session_state["last_answer"] = (fresh, filters) if fresh else None
+        if fresh is None:
             return
     elif retry and run is not None and run.status != "running" and not run.alive():
         # #277: one attempt with the saved question and filters; finished calls come from the run cache
-        r = ask_with_trace(run.question, run.filters, cache=run.cache)
-        st.session_state["last_answer"] = (r, run.filters) if r else None
-        if r is None:
+        fresh = ask_with_trace(run.question, run.filters, cache=run.cache)
+        st.session_state["last_answer"] = (fresh, run.filters) if fresh else None
+        if fresh is None:
             return
     elif run is not None and run.status in ("stopped", "failed"):
         show_halted(run)   # the Stop click's rerun included: never starts a run
@@ -426,36 +526,41 @@ def render() -> None:
         ui.empty_state("No question yet. Type one above and click Ask; the answer appears here, "
                        "with a link to the source of every point.")
         return
-    show_answer(*last)
     run = st.session_state.get("ask_run")
+    if fresh is not None:
+        answer_footer(*last)
+    else:   # #291: any rerun draws answer, boxes, the run's evidence list, footer and feedback from session state
+        show_answer(*last, evidence=run.evidence if run is not None and run.result is last[0] else None)
     if run is not None and run.status == "done" and run.result is last[0] and has_failed_calls(run.result):
         _retry_button(run, RETRY_FAILED_LABEL)
 
 
-def show_answer(r: Result, filters: dict) -> None:
-    a = r.answer
+def _chips(r: Result, chunk_ids) -> list[tuple]:
+    """One chip per citation: its own source label and tier. An id that is not in the
+    retrieved set is shown, flagged, and not linked (no composed source)."""
     by_id = {h.chunk_id: h for h in r.hits}
+    out = []
+    for cid in chunk_ids:
+        h = by_id.get(cid)
+        out.append((cid, h.source_tier, source_label(h), True) if h
+                   else (cid, None, "not in the retrieved set", False))
+    return out
 
-    def chips(chunk_ids):
-        """One chip per citation: its own source label and tier. An id that is not in the
-        retrieved set is shown, flagged, and not linked (no composed source)."""
-        out = []
-        for cid in chunk_ids:
-            h = by_id.get(cid)
-            out.append((cid, h.source_tier, source_label(h), True) if h
-                       else (cid, None, "not in the retrieved set", False))
-        return out
 
+def answer_body(r: Result, filters: dict, items: list[dict], fade: bool = False) -> None:
+    """#291: the answer (a paragraph with footnotes, or a numbered list for a window / recency answer), then the
+    adjacent items, withheld notice, caveats, gaps and coverage note (never collapsed)."""
+    a = r.answer
     ui.behavior_header(BEHAVIOR_TEXT[a.behavior], a.behavior)
     st.caption(BEHAVIOR_HELP[a.behavior])
     if a.incomplete_note:   # #247: shown on any behavior (incomplete, or a boundary answer with a failed extraction)
         st.warning(a.incomplete_note)
     if a.behavior in ("refuse", "gap_with_adjacent") and filters_text(filters) != "none":
         st.info(FILTERS_HINT)
-    for i, c in enumerate(a.claims, start=1):
-        ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags)
+    if items:
+        ui.answer_block(items, list_form(r.query, answer_aspects(r)), fade_from=None, block_fade=fade)
     for i, c in enumerate(a.adjacent, start=1):
-        ui.claim_card(i, c.text, chips(c.chunk_ids), "", c.flags,
+        ui.claim_card(i, c.text, _chips(r, c.chunk_ids), "", c.flags,
                       label="ADJACENT EVIDENCE", note=c.differs_because)
     if a.withheld:
         ui.withheld_box(WITHHELD_NOTICE)
@@ -465,9 +570,22 @@ def show_answer(r: Result, filters: dict) -> None:
         ui.gap_box(g.what, g.suggested_source, g.flags)
     if a.coverage_note:
         ui.coverage_box(a.coverage_note)
+
+
+def answer_footer(r: Result, filters: dict) -> None:
+    a = r.answer
     st.markdown(f'<div class="cee-meta">Query #{r.query_id} | firms: {footer_firms(r.query)} | '
                 f'filters: {escape(filters_text(filters))} | {len(r.hits)} passages found | model: {settings().llm_provider} | LLM called: {a.llm_called}</div>', unsafe_allow_html=True)
     feedback_form(r.query_id)
+
+
+def show_answer(r: Result, filters: dict, evidence: list[dict] | None = None) -> None:
+    """#291: a finished answer from session state: answer, boxes, the full evidence list (the run's evidence lines
+    plus SOURCE cards; without evidence lines, the answer's cited chunks), footer and feedback. No run, no call."""
+    cards, items = evidence_cards(evidence or [], r.answer.claims, r.hits)
+    answer_body(r, filters, items)
+    evidence_list(cards)
+    answer_footer(r, filters)
 
 
 RATINGS = {"Helpful": HELPFUL, "Not helpful": NOT_HELPFUL}
