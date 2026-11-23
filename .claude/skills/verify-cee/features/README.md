@@ -36,6 +36,7 @@ Each file: an H1, one paragraph of user-visible behavior, then exactly these H2s
 ## Features
 
 - [ask-answer](ask-answer.md): ask a question, get cited claims, query is logged.
+- [ask-layout](ask-layout.md): the answer above the evidence, footnotes into the cards, kept after a page switch.
 - [ask-progress](ask-progress.md): progress bar and step trace while the answer is built.
 - [open-citation](open-citation.md): open the stored passage behind a citation.
 - [gap-path](gap-path.md): no evidence is reported honestly.

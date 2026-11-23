@@ -12,11 +12,12 @@ built".
 
 - `progressive` (#272): while the answer is built, the page shows the plan first ("Plan: Decomposing the
   question ..."), then "Evidence so far" with one card per cited item of each map call as it lands
-  ("EVIDENCE - <firm> - <aspect>", with the citation chip of a retrieved passage), and the answer last.
+  ("EVIDENCE - <firm> - <aspect>", with the citation chip of a retrieved passage). The answer appears above
+  the evidence (#291; layout: [ask-layout](ask-layout.md)).
   Each card cites a chunk the map's code check kept (inside the cell's retrieved set), so rule 1 holds.
-- `streamed-answer` (#275): while the reduce streams, "Answer (in progress: checks running)" lists each claim
-  that passed the per-claim checks ("CLAIM (CHECKING)" cards with citation chips); when the final answer shows,
-  the block is gone. Adjacent items and flagged claims wait for the final answer. A stalled stream shows an
+- `streamed-answer` (#275, #291): while the reduce streams, "Answer (in progress: checks running)" shows above
+  the first evidence card, sentence by sentence (each fades in), each claim that passed the per-claim checks with
+  footnotes [n] into the evidence cards; when the final answer shows, it replaces them in the same place. Adjacent items and flagged claims wait for the final answer. A stalled stream shows an
   error with a "Retry" button (#277; was "Try again"; pytest `tests/test_reduce_stream.py`; the driver cannot
   stall the mock). Stop and Retry: [ask-stop-retry](ask-stop-retry.md).
 
@@ -55,9 +56,10 @@ Preconditions: baseline.
   on the page (screenshot).
 - **Evidence next (#272).** Once "Evidence so far" shows, at least one "EVIDENCE - Edward Jones" card with
   a citation chip is there and "LLM called:" is not (screenshot); the answer follows.
-- **Streamed answer (#275).** After "Synthesizing the answer" shows, "Answer (in progress: checks running)"
-  appears with at least one "CLAIM (CHECKING)" card carrying a citation chip, and "LLM called:" is not on the
-  page (screenshot); once "LLM called:" shows, the in-progress block and its cards are gone.
+- **Streamed answer (#275, #291).** After "Synthesizing the answer" shows, "Answer (in progress: checks running)"
+  appears above the first evidence card with at least one sentence (`.cee-answer .cee-sent`) whose footnotes
+  `#cee-ev-n` all have their card, and "LLM called:" is not on the page (screenshot); once "LLM called:" shows,
+  the in-progress block is gone.
 - **Early.** Still on the answerable question. As soon as "Synthesizing the answer" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).

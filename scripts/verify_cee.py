@@ -65,9 +65,12 @@ TWO_FIRM_Q = "How do Morgan Stanley and Raymond James approach advisor recruitin
 # RJF is the gap; with trade press loaded (#57) RJF has on-theme articles and no firm is).
 THEME_GAP_Q = "What do we know about the generational wealth transfer, and how are these five preparing for it?"
 THEME_GAP_NOTE = "No passages on the theme (Generational wealth transfer) for"
+# ask-layout (#291): the answer above the evidence, footnotes into the cards, kept on a Coverage -> Ask round trip.
+# (question id, list form expected): Q26 has its own time window, so its answer is a numbered list.
+LAYOUT_QS = [("Q5", False), ("Q8", False), ("Q24", False), ("Q26", True)]
 # ask-stop-retry (#277) runs last: it leaves query_log rows with no answer (the other features read the newest
 # answered row anyway)
-FEATURES = ["ask-answer", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback",
+FEATURES = ["ask-answer", "ask-layout", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback",
             "architecture-page", "ask-stop-retry"]
 ASSETS = REPO / "docs" / "assets"
 
@@ -359,6 +362,84 @@ def check_part_gaps(rec, page, what: str) -> None:
                  f"{[(g['part_id'], g['what'][:70]) for g in gaps]}; shown {len(shown)}; chips {body.count('part_gap')}")
 
 
+def question_text(qid: str) -> str:
+    import yaml
+    data = yaml.safe_load((REPO / "evals" / "questions.yaml").read_text(encoding="utf-8"))
+    return next(q["text"] for q in data["questions"] if q["id"] == qid)
+
+
+LAYOUT_JS = """() => {
+  const top = el => el ? el.getBoundingClientRect().top : null;
+  const ans = document.querySelector('.cee-answer');
+  const head = document.querySelector('.cee-behavior h2');
+  const cards = [...document.querySelectorAll('.cee-claim[id^="cee-ev-"]')];
+  const hrefs = [...document.querySelectorAll('.cee-answer a[href^="#cee-ev-"]')].map(a => a.getAttribute('href'));
+  return {answer: top(ans), heading: top(head), firstCard: top(cards[0]), cards: cards.length,
+          list: !!document.querySelector('.cee-answer ol'), paragraph: !!document.querySelector('.cee-answer p'),
+          footnotes: hrefs.length, missing: hrefs.filter(h => !document.getElementById(h.slice(1))),
+          streamed: document.body.innerText.includes('Answer (in progress')};
+}"""
+
+
+def answer_layout(page) -> dict:
+    return page.evaluate(LAYOUT_JS)
+
+
+def check_layout(rec, page, what: str, want_list: bool) -> dict:
+    """#291: the answer (or, with no claims, its heading) above the first evidence card; every footnote [n] has
+    its card #cee-ev-n; a window / recency answer is a numbered list, any other a paragraph."""
+    lay = answer_layout(page)
+    above = lay["answer"] if lay["answer"] is not None else lay["heading"]
+    form_ok = lay["answer"] is None or (lay["list"] if want_list else (lay["paragraph"] and not lay["list"]))
+    ok = (above is not None and lay["cards"] > 0 and above < lay["firstCard"] and not lay["missing"]
+          and (lay["footnotes"] > 0 or lay["answer"] is None) and form_ok and not lay["streamed"])
+    rec.step(what, f"answer above the first evidence card, every footnote resolves, "
+                   f"{'a numbered list' if want_list else 'a paragraph'}",
+             ok, f"answer top={lay['answer']}, heading top={lay['heading']}, first card top={lay['firstCard']}, "
+                 f"cards={lay['cards']}, footnotes={lay['footnotes']}, missing={lay['missing']}, "
+                 f"list={lay['list']}, paragraph={lay['paragraph']}")
+    return lay
+
+
+def nav_to(page, name: str) -> None:
+    """A click on the top navigation (same session: session state is kept), not page.goto (a new session)."""
+    page.locator('[data-testid="stTopNavLink"]', has_text=name).first.click()
+
+
+def check_footnote_click(rec, page) -> None:
+    link = page.locator('.cee-answer a[href^="#cee-ev-"]').first
+    if not link.count():
+        return
+    href = link.get_attribute("href")
+    link.click()
+    page.wait_for_timeout(300)
+    target = page.evaluate("() => (document.querySelector(':target') || {}).id || null")
+    rec.step("Click the first footnote (#291)", f"the page jumps to its evidence card ({href})",
+             target == href[1:], f"location target={target}")
+
+
+def feature_ask_layout(page, base, rec, ctx):
+    """#291: answer above the evidence for Q5, Q8, Q24, Q26; footnotes resolve; a Coverage -> Ask round trip keeps
+    the answer and the evidence (drawn from session state, no new run)."""
+    for qid, want_list in LAYOUT_QS:
+        ask(page, base, question_text(qid))
+        lay = check_layout(rec, page, f"Ask {qid}; read the layout", want_list)
+        if qid == "Q5":
+            check_footnote_click(rec, page)
+        before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
+        nav_to(page, "Coverage")
+        wait_for_text(page, ["are not shown yet"], "the Coverage page")
+        nav_to(page, "Ask")
+        wait_for_text(page, ["LLM called:"], "the Ask page after the round trip")
+        again = check_layout(rec, page, f"{qid}: Coverage -> Ask round trip", want_list)
+        after = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
+        rec.step(f"{qid}: compare with the answer before the round trip",
+                 "same evidence cards and footnotes, no new run (query_log unchanged)",
+                 again["cards"] == lay["cards"] and again["footnotes"] == lay["footnotes"] and after == before,
+                 f"cards {lay['cards']} -> {again['cards']}, footnotes {lay['footnotes']} -> {again['footnotes']}, "
+                 f"query_log {before} -> {after}")
+
+
 def feature_ask_answer(page, base, rec, ctx):
     before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
     ask(page, base, ANSWERABLE_Q)
@@ -455,14 +536,15 @@ def feature_ask_progress(page, base, rec, ctx):
     page.wait_for_function("() => document.body.innerText.includes('Answer (in progress')",
                            timeout=RENDER_TIMEOUT_S * 1000)
     body = page.locator("body").inner_text()
-    early_cards = page.locator(".cee-claim", has_text="CLAIM (CHECKING)")
-    early_chips = early_cards.first.locator(".cee-chip").count() if early_cards.count() else 0
-    rec.step("Look while the answer streams (#275)",
-             "'Answer (in progress: checks running)' with a checked claim card carrying a citation chip; "
-             "no final answer yet",
-             early_cards.count() > 0 and early_chips > 0 and "LLM called:" not in body,
-             f"early claim cards={early_cards.count()}, chips on the first={early_chips}, "
-             f"answer shown={'LLM called:' in body}")
+    lay = answer_layout(page)
+    sentences = page.locator(".cee-answer .cee-sent").count()
+    rec.step("Look while the answer streams (#275, #291)",
+             "'Answer (in progress: checks running)' above the first evidence card: checked sentences with "
+             "footnotes into the cards, every footnote resolves; no final answer yet",
+             sentences > 0 and lay["footnotes"] > 0 and not lay["missing"] and lay["answer"] is not None
+             and lay["firstCard"] is not None and lay["answer"] < lay["firstCard"] and "LLM called:" not in body,
+             f"streamed sentences={sentences}, footnotes={lay['footnotes']}, missing={lay['missing']}, "
+             f"answer top={lay['answer']}, first card top={lay['firstCard']}, answer shown={'LLM called:' in body}")
     wait_for_text(page, ["LLM called:"], "the answer")
     body = page.locator("body").inner_text()
     rec.step("Look once the answer is ready (#275)", "the in-progress block is gone; the final answer shows",
@@ -1010,9 +1092,10 @@ def feature_ask_stop_retry(page, base, rec, ctx):
     cards = page.locator(".cee-claim", has_text="EVIDENCE - ").count()
     rec.step("Click Stop during the map (#277)",
              "'Stopped while extracting evidence' within 5 s; the evidence card(s) stay; no answer "
-             "('LLM called:'), no 'Answer (in progress', no Stop button",
+             "('LLM called:', no answer block above the evidence, #291), no 'Answer (in progress', no Stop button",
              "Stopped while extracting evidence" in body and took <= 5 and cards >= 1 and "LLM called:" not in body
-             and "Answer (in progress" not in body and page.get_by_role("button", name="Stop").count() == 0,
+             and "Answer (in progress" not in body and page.locator(".cee-answer").count() == 0
+             and page.get_by_role("button", name="Stop").count() == 0,
              f"stopped after {took:.1f} s, evidence cards={cards}, answer shown={'LLM called:' in body}")
     page.wait_for_timeout(5000)
     body = page.locator("body").inner_text()
@@ -1079,7 +1162,7 @@ def feature_ask_stop_retry(page, base, rec, ctx):
              f"retry_of={run.get('retry_of')}, reused={run.get('reused')}, made={run.get('made')}")
 
 
-DRIVERS = {"ask-answer": feature_ask_answer, "ask-progress": feature_ask_progress,
+DRIVERS = {"ask-answer": feature_ask_answer, "ask-layout": feature_ask_layout, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
