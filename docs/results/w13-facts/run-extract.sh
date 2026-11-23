@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 # #285 (plans/0285-facts.md): the facts extraction on DeepSeek (map-stage settings pinned), one phase: count (0 calls) |
 # run (paid, planned) | write (0 calls: saved records -> config/facts.jsonl). Mac / Linux twin of run-extract.ps1. The
 # key comes from ENV_FILE (the main repo's .env), copied into the worktree and removed on exit; never read or printed.

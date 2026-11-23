@@ -1,3 +1,4 @@
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 """#285 G0 (TL ruling): upper bound of map calls saved on the #272 test-B records under the tightened serving rules
 (B3 positive rule on aspect text, sub-question text and question; metric tag and kind; B2 registry status quoted).
 Every eligible cell is assumed fully covered by facts. 0 calls. Run with PYTHONPATH=<worktree>/src.

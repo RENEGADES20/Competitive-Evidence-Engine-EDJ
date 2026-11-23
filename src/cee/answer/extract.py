@@ -1123,16 +1123,6 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit,
                                  settings().map_prefix_tokens if prefix_mode() else None)
     code_cells = code_cells + empty_cells
-    # #285 (ADR-022, TL condition B4): after the fan-out, the cells the facts table serves lose their calls; every
-    # other spec is untouched (byte-identical requests), and facts chunks join nothing the map reads (hits, used,
-    # plan.pools); they reach by_id, m.hits and m.pools only after round 2.
-    from cee import facts as facts_mod
-    served: dict = {}
-    facts_log: list[dict] = []
-    if facts_mod.enabled():
-        candidates = list(dict.fromkeys(s.cell_of or s.cells[0].id for s in specs if not s.research))
-        served, facts_log = facts_mod.serve(q, plan, as_of, candidates)
-        specs = [s for s in specs if s.research or (s.cell_of or s.cells[0].id) not in served]
     source = "mock" if provider == "mock" else "model"
     landed: dict[int, list[Cell]] = {}
 
@@ -1143,12 +1133,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
                 on_call(specs_r[i], landed[id(specs_r[i])])
         return cb
 
-    if on_call is not None:   # #285: facts-served evidence shows at once, before any call lands
-        for cid, sv in served.items():
-            on_call(MapSpec(f"facts.{cid}", 1, sv.cell.entity, False, [], {cid: list(sv.hits)}, {}), [sv.cell])
     results = run_round(specs, call, q.question, window, firms, concurrency, allow, provider, land(specs, source))
     cells: dict[str, Cell] = {c.id: c for c in code_cells}
-    cells.update({cid: sv.cell for cid, sv in served.items()})
     calls = []
     parts: dict[str, list[Cell]] = {}
     for spec, r in zip(specs, results):
@@ -1213,15 +1199,9 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
             c.first = asdict(old)
             c.researched, c.research_hits = True, old.research_hits
             cells[c.id] = c
-    facts_hits = []   # #285 B4: facts chunks join the retrieved set only now, after round 2
-    for sv in served.values():
-        for h in sv.hits:
-            if h.chunk_id not in by_id and all(h.chunk_id != f.chunk_id for f in facts_hits):
-                facts_hits.append(h)
-    by_id.update({h.chunk_id: h for h in facts_hits})
     m = EvidenceMatrix(q.question, rows=[], aspects=list(plan.aspects),
                        cells={k: cells[k] for k in order if k in cells}, calls=calls, research=research_log,
-                       version=extract_version(), facts=facts_log)
+                       version=extract_version())
     rows = []
     for c in m.cells.values():
         key = "research" if c.role == "research" else _row_key(c.entity)
@@ -1233,6 +1213,5 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     # population rule "a population source counts only when it is in the input cell's pool"
     pools = getattr(plan, "pools", {}) or {}
     m.pools = {sq.id: set(pools.get(sq.id, set())) | {h.chunk_id for h in hits if h.part_id == sq.id}
-               | {h.chunk_id for h in new_hits.get(sq.id, [])}
-               | ({h.chunk_id for h in served[sq.id].hits} if sq.id in served else set()) for sq in plan.subquestions}
-    return finish(m, q, hits + extra + facts_hits, sources, as_of=as_of)
+               | {h.chunk_id for h in new_hits.get(sq.id, [])} for sq in plan.subquestions}
+    return finish(m, q, hits + extra, sources, as_of=as_of)

@@ -1044,7 +1044,7 @@ Status: Deferred (#285, TL ruling 2026-11-23 at the go/no-go gate G0). The decis
 allowed only when a future extraction is run and adopted, and only then does the branch rule change (CLAUDE.md is
 unchanged: no ingest-time model output lands on `main`). G0 finding: under the serving rule below, on the #272
 test-B records at most 5 of 485 map and re-map calls would be saved (Q23 EDJ, MER, MS, RJF; Q26 RJF), below the
-gate's 15, even with a perfect extraction (`docs/results/w13-facts.md`). The code ships with `FACTS=off` and no rows. Amends ADR-011 (branch rule) and ADR-021 rules 6-7 (map calls).
+gate's 15, even with a perfect extraction (`docs/results/w13-facts.md`). The code shipped switched off with no rows (code removed by #289, 2026-11-23: a revival rebuilds from PR #288). Amends ADR-011 (branch rule) and ADR-021 rules 6-7 (map calls).
 Context: the corpus is fixed (snapshot `corpus-2026-11-19`), yet every question has the LLM map re-read raw passages
 to pull out the same figures again: #272 made 454 map calls for 30 questions (p50 34 s each) and nothing carried over
 between questions. `config/metric_definitions.yaml` already holds hand-checked definitions, but the figures are
@@ -1082,8 +1082,8 @@ Decision:
 - **Branch rule (ADR-011), to be lifted for the facts table only, when adopted.** Once an extraction is run and
   adopted, its output may land on `main` because it is stored, code-checked data and `main` needs no model beyond the
   answer LLM calls; CLAUDE.md changes then. Every other model work (embeddings, rerankers, any model in retrieval or
-  validation, other ingest-time model work) stays on a branch until its own ADR. Until then (Deferred) the code is on
-  `main` with `FACTS=off` and no rows, and nothing on `main` was produced by a model at ingest.
+  validation, other ingest-time model work) stays on a branch until its own ADR. Until then (Deferred) no facts code or rows are on
+  `main` (code removed by #289), and nothing on `main` was produced by a model at ingest.
 Consequences: metric cells cost no call and no wait; the saving grows with how often questions ask registered figures.
 The facts must be re-extracted (planned, paid) when the corpus or the target metrics change, and a stale file is
 visible by its snapshot and version. Wrong rows would repeat in every answer that uses them, hence the checks and the

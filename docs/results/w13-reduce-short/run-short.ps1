@@ -1,3 +1,4 @@
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 # #284 (plans/0284-reduce-short.md): copied from w13-prefix-cache/run-prefix.ps1 (#283) with -ReducePrompt v6 allowed and the evidence folder ev284. #283: one phase (count | run) of the map prefix-cache run on DeepSeek, every setting
 # pinned; copied from w12-latency/run-latency.ps1 (#272) plus the #283 settings -MapPrefix (MAP_PREFIX; the #283 runs
 # were made before this switch existed and equal -MapPrefix firm; default off since the TL ruling), -PrefixTokens (MAP_PREFIX_TOKENS),

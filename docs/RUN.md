@@ -313,8 +313,7 @@ extraction call's cited evidence as it lands, then (#275) each claim of the answ
 passed its citation, figure and date checks ("Answer (in progress: checks running)"), then the full answer.
 `DEEPSEEK_IDLE_S` (default 120) stops a streamed call that sends nothing for that long: the call fails fast
 (saved with its partial output in an eval run), and the Ask page shows an error with a "Try again" button;
-nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3 | v6`) picks the reduce prompt version; with `v6`
-(#284) the model names evidence items by reference and code writes each claim's source, date and text.
+nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3`) picks the reduce prompt version.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```
@@ -358,18 +357,6 @@ WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
 WT=<worktree> OUT=r1-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> EFFORT_REDUCE=off REDUCE_PROMPT=v5.2 IDLE_S=120 EV=<evidence dir> bash docs/results/w12-latency/run-latency.sh
 ```
 
-The #284 reduce-only run uses `docs/results/w13-reduce-short/run-short.*` (the #283 script with `-ReducePrompt v6`
-allowed and the evidence folder `ev284`), and `render_check.py` checks the v6 rendering on the mock and on a count
-phase's real matrices (0 calls):
-```powershell
-powershell -File docs\results\w13-reduce-short\run-short.ps1 -Wt <worktree> -Out b-v6-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -ReducePrompt v6 -EvDir <evidence dir>
-$env:REDUCE_PROMPT="v6"; $env:PYTHONPATH="<worktree>\src"; .\.venv\Scripts\python.exe docs\results\w13-reduce-short\render_check.py <summary.json> --as-of 2026-11-17 --out <run folder>
-```
-```bash
-WT=<worktree> OUT=b-v6-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> REDUCE_PROMPT=v6 EV=<evidence dir> bash docs/results/w13-reduce-short/run-short.sh
-REDUCE_PROMPT=v6 PYTHONPATH=<worktree>/src .venv/bin/python docs/results/w13-reduce-short/render_check.py <summary.json> --as-of 2026-11-17 --out <run folder>
-```
-
 **Map prefix cache** (#283, `plans/0283-prefix-cache.md`; **off by default, not adopted**:
 `docs/results/w13-prefix-cache.md`). `MAP_PREFIX` is `off` (default: the #272 extraction request, unchanged) or
 `firm` (for experiments only; it cost answer quality in the #283 run). With `firm`, the extraction calls of one firm
@@ -390,23 +377,6 @@ powershell -File docs\results\w13-prefix-cache\run-prefix.ps1 -Wt <worktree> -Ou
 ```bash
 WT=<worktree> OUT=probe-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q10 REUSE_PLANS=1 PLAN_VERSION=ds-strict-2-plan-off-c8000-s1 MAP_PREFIX=firm PREFIX_GATE=first_chunk bash docs/results/w13-prefix-cache/run-prefix.sh
 .venv/bin/python docs/results/w13-prefix-cache/cmp_cells.py <run folder>/report.json
-```
-
-**Facts table** (#285, `plans/0285-facts.md`; ADR-022 **Deferred**, `FACTS` **off by default**, no rows yet:
-`docs/results/w13-facts.md`). The code is in place for a later decision: `scripts/extract_facts.py` reads the
-candidate chunks of the firms' filings, supplements, press releases, monthly reports and decks (`config/facts.yaml`),
-makes one DeepSeek call per document (paid; plan it first), keeps only rows that pass the code checks and writes
-`config/facts.jsonl`; `python -m cee.facts load` fills the `facts` table from that file; `FACTS=on` then serves the
-cells the rule allows. `--count`, `--write`, `--verify` and `--audit` make no call:
-```powershell
-powershell -File docs\results\w13-facts\run-extract.ps1 -Wt <worktree> -Phase count -GateSha <commit>
-.\.venv\Scripts\python.exe scripts\extract_facts.py --verify
-.\.venv\Scripts\python.exe -m cee.facts load
-```
-```bash
-bash docs/results/w13-facts/run-extract.sh <worktree> count <commit>
-.venv/bin/python scripts/extract_facts.py --verify
-.venv/bin/python -m cee.facts load
 ```
 
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).
