@@ -344,11 +344,18 @@ def check_part_gaps(rec, page, what: str) -> None:
     import json as _json
     # base64: passage text holds non-ASCII characters the console code page cannot decode
     b64 = psql(VERIFY_DB, "SELECT encode(convert_to(json_build_object('parts', filters->'plan'->'parts', "
+                          "'cells', filters->'map'->'cells', 'version', filters->'reduce'->>'version', "
                           "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
     # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
     cited = {c.get("part_id") for c in [*row["answer"]["claims"], *row["answer"]["adjacent"]]}
+    if row.get("version") == "v7":   # #292: a sentence with an aspect id covers each cell of it whose chunk it cites
+        for cid, cell in (row.get("cells") or {}).items():
+            own = {k for i in cell.get("items") or [] for k in i.get("chunk_ids") or []}
+            if any(c.get("part_id") == cell.get("aspect_id") and own & set(c.get("chunk_ids") or [])
+                   for c in row["answer"]["claims"]):
+                cited.add(cid)
     gapped = {g.get("part_id") for g in row["answer"]["gaps"] if "part_gap" not in (g.get("flags") or [])}
     expected = [p for p in parts if p not in cited and p not in gapped]
     gaps = [g for g in row["answer"]["gaps"] if "part_gap" in (g.get("flags") or [])]

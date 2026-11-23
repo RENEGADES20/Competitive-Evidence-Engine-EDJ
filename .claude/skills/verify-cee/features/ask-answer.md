@@ -31,6 +31,8 @@ A user types a question and gets an answer whose claims each link to a stored pa
   cite; since #245 every sub-question (firm x aspect) is a part, so a five-firm mock answer can
   show up to four such gaps (expected, not a failure). An uncited grid cell moved to gaps (`uncited_cell`) needs a model; proven by
   `tests/test_part_check.py`, not driven here.
+  With `REDUCE_PROMPT=v7` (#292) a synthesis sentence whose part_id is an aspect id covers each cell of that aspect
+  whose chunk it cites (`part_coverage` state `aspect`); the driver reads the cells from `filters.map.cells`.
 - `ask-theme-gap`: a question about several firms on one theme (Q21) gets a coverage line
   "No passages on the theme (...) for X" naming each firm with no passage on it (#117).
 
