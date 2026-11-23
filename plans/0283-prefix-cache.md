@@ -29,6 +29,35 @@ cache-hit share rises from 4% to >= 50%, $/question falls below #272's $0.52, ad
 - **Request version bump**: map stage only, `ds-strict-2-map-low-c128000-s1` -> `...-s1-pf150000`; plan and reduce
   versions unchanged (plans reused from #272). Old map records never match (new version + extract-v1.3).
 
+## TL conditions (review round 1, issuecomment-7091445276; binding)
+- **B1 strict ids.** `parse_output` drops an output cell whose id is not this call's: `foreign_cell` (another
+  sub-question of the question) or `unknown_cell` (no such id), flagged on the call's cells; the call's own cell
+  stays `missing_cell` if absent. A derivation whose inputs name a cell outside the call is dropped
+  (`derivation=None`, flag `unknown_ref`). Tests for all three.
+- **B2 gate.** Leaders are chosen after the skip / `allow()` filter, from calls that really run. The gate opens in a
+  `finally` however the leader ends (landed, invalid, failed, `ProviderStop`, `Cancelled`, cache hit, non-streamed:
+  opens at done); a cached leader also skips `MAP_PREFIX_WAIT_S`. Followers wait with `Event.wait(0.1)` in a loop
+  that checks `cancel.is_set()`; the extra wait uses `cancel.sleep`. Group key = sha256 of system + tool schema +
+  prefix bytes, so batches and over-ceiling per-cell specs never group; a group of 1 is `solo`, nothing waits.
+  No deadlock: all leaders and solos precede all followers in the FIFO queue, so a leader never waits for a free
+  worker. Tests: cached leader, skipped leader, leader `ProviderStop`, Stop during a follower's wait,
+  `first_chunk` with a non-streamed leader, concurrency 1 and concurrency < groups (must finish).
+- **B3 layout check (0 calls).** `docs/results/w13-prefix-cache/cmp_cells.py` compares the new `report.json`
+  with `w12-latency/b-fts/report.json` per cell (label changed, items lost / gained) and the per-item rates of
+  `unmatched_citation`, `quote_not_found`, `number_not_found`. Trigger, fixed now: unmatched_citation rate more
+  than 2x #272, or > 10% of model cells change label -> the results doc names the layout as the suspected cause
+  before any score is read. No re-roll.
+- **B4 probe rule.** Follower share = sum(`cache_hit_tokens`) / sum(prefix tokens) over Q10 follower records whose
+  leader was not cached; prefix tokens of a record = `input_tokens` x `prefix_chars` / `request_chars` (both saved
+  in the record: system + schema + prefix message, and the whole request). >= 0.50 -> `first_chunk`; < 0.50 ->
+  `done`. Fewer than 5 such followers (inconclusive) -> `done`. The chosen value is pinned in `config.py` and the run
+  scripts before the full run.
+- **NB1** no-enum schema and firm-block layout apply to anthropic and openai requests too. **NB2** the prefix lists
+  every sub-question of the firm spec, incl. cells with an empty allowed set (as the firm call did); test asserts it.
+  **NB3** PR adds the mock `eval_run.py --as-of 2026-11-17 --baseline evalsaselines\corpus-2026-11-19eport.json`
+  result. **NB4** if the gate moves to `done`, Q10 keeps its probe timings (noted in the doc). **NB6** `docs/RUN.md`
+  gets both OS blocks for the new settings.
+
 ## Files to change
 - `src/cee/answer/extract.py` - schema, prompt, prefix/suffix message, group + leader gate in `run_round`, flags, records.
 - `src/cee/answer/llm.py` - map request-version suffix; first-chunk hook. `src/cee/config.py` - the three settings.
@@ -59,6 +88,7 @@ cache-hit share rises from 4% to >= 50%, $/question falls below #272's $0.52, ad
 - [ ] Real run report: map cache-hit share of map input >= 50% (or the doc explains the measured ceiling); overall
   share; tokens and $ per question < $0.52 with the drop; map and critical-path p50 vs #272 test B; critical-path
   p50 <= 184 s + measured `gate_wait_s` p50.
+- [ ] B3: `cmp_cells.py` table and trigger result in the results doc.
 - [ ] Quality: blind + adjudicated per #272 "Scoring"; adjudicated >= 24/30. Every raw record saved; calls and $ in the PR.
 
 ## Paid calls (TL go-ahead 2026-11-22 on #283, incl. Gate 3)
@@ -90,3 +120,5 @@ Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepse
 ## Progress log
 - 2026-11-22 22:13 - plan written (start-task steps 1-6; DB up to date corpus-2026-11-19; 0 calls). Estimates
   from `w12-latency/b-fts/raw` map records.
+- 2026-11-22 23:05 - review round 1 CHANGES REQUESTED; TL ruling: B1-B4 and NB1-4, NB6 binding, written in as
+  "TL conditions". Build starts; full run waits for the coordinator after the Q10 probe.
