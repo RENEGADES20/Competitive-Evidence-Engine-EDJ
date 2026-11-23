@@ -42,6 +42,36 @@ writes its text (source, date, item text, scope) from the matrix. Reduce output 
   0 cut / invalid, adjudicated >= 24/30, tier 1 >= 12/18 (#272 adjudicated), and the rule checks below hold. Otherwise
   the default stays v5.2 and the doc records the finding. A miss is not re-rolled.
 
+## TL conditions (review round 1, issuecomment-7094718155 + TL rulings; binding, no second review)
+- **B1 stage-1 rule** (raw v6 output and rendered records of Q5, Q10, Q19, Q21, Q24, Q26; #272 = the test-A C1 records
+  of the same six, `ev272\a-c1`). Continue to the other 24 only if all hold: 0 `unknown_ref`, 0 `ref_part_mismatch`,
+  0 `no_citation` counted before the move to gaps, 0 `outside_matrix`; 0 cut / invalid / failed; `number_not_found`
+  in model text <= 8 (#272 C1 on the six) and 0 in rendered text; output-token p50 <= 14,171 (0.60 x 23,618); wall
+  p50 <= 93.8 s (0.70 x 134.0). Any miss: stop, report at once, results doc as a finding, default stays v5.2, no re-roll.
+- **B2 ref / part.** The firm prefix comes from the ref's own cell. A ref whose cell is not the claim's `part_id` (cell
+  part) or not in its aspect (aspect part) is dropped with flag `ref_part_mismatch`. Ref enum = counting items without
+  `number_not_found`, numbered as in the message (index in `c.items` + 1). Tests for all three; counts in the doc.
+- **B3 rule 4.** Matrix-provenance count on final claims: every figure (`validate.figures`) of a final claim must occur
+  in an item value / text / quote / definition of a cited cell or in a derived value; split into rendered text and
+  model text (`text`, `why`); rendered = 0 required, model-text figures listed by question. **Adoption checks, in full:**
+  output p50 <= 11,187; wall p50 <= 70 s; 0 cut / invalid; adjudicated >= 24/30; tier 1 >= 12/18; 0 shown claims
+  without a citation; 0 `outside_matrix`; 0 `ref_part_mismatch`; rendered-text provenance misses = 0;
+  `number_not_found` <= #272's (30 questions, same counter).
+- **B4 render fidelity** (test over the 30 mock matrices in step 4 and the #272 matrices in step 5), per rendered claim:
+  the ref item's `_q(text)` verbatim; prefix = the ref cell's row name (multi-firm / research); scope present; source
+  label and date = `validate.source_label` (without tier) of the item's first chunk id; derived ref = the cell's
+  `formula_text` with its input ids; the why-line exactly once after `P.WHY_LINE`; chunk ids = union of refs' ids and
+  `chunk_ids`. Mutation test: a wrong cell and a dropped scope make the check fail.
+- **B5 streaming.** Tests with mock v6: `EarlyClaims` shows > 0 claims; per question `shown_not_final` = the claims
+  `dedupe_claims` removed; each shown claim's text equals its final text; a claim with an unknown ref or a
+  `ref_part_mismatch`, and every adjacent item, is held; the saved-raw reuse path in `ask.py` goes through
+  `render_output`. verify-cee ask-progress: the check that reads claims arriving before the final answer is named
+  in the evidence.
+- **NB1** period / value / unit rendered when the item text lacks them (test). **NB2** the doc says what a miss means
+  (e.g. 15,000 tokens / 90 s -> v5.3 at `low` or the split option). **NB3** #272 records, not #283's: like for like
+  with the baseline, and #283 ships off by default. **NB4** the count phase asserts Q21's plan / map records reuse.
+  **NB5** "quotes are not rendered" noted in `specs/answer-citations.md`.
+
 ## Files to change
 - `src/cee/answer/reduce.py` - v6 message lines, schema, `render_output`, mock v6, `EarlyClaims` render. `prompt.py` - `SYSTEM_PROMPT_V6`.
 - `src/cee/config.py` (`REDUCE_PROMPT` choice), `scripts/eval_run.py` (raw v6 output + rendered output in the record).
@@ -78,10 +108,11 @@ writes its text (source, date, item text, scope) from the matrix. Reduce output 
 30 `deepseek-v4-pro` reduce calls (effort `low`, `/beta`), one per question Q1-Q30, fts, every plan / map / re-map
 record reused from #272 test B (C1, `PYTHONHASHSEED=0`, as-of 2026-11-17, snapshot corpus-2026-11-19). No re-maps
 (the design changes no map). Why the mock cannot show it: output length, reasoning length and answer quality.
-Order: Q5, Q10, Q19, Q21, Q24, Q26 first (6 calls); stop and report if any shown claim is uncited or outside the
-matrix; else the other 24 (`--max-calls` pinned per stage). Gate 3 go-ahead: TL 2026-11-22. Off-peak (not UTC 01-04,
+Order: Q5, Q10, Q19, Q21, Q24, Q26 first (6 calls); continue only under rule B1 (TL conditions); else the other 24
+(`--max-calls` pinned per stage). Gate 3 go-ahead: TL 2026-11-22. Off-peak (not UTC 01-04,
 06-10 Mon-Fri); each call's tier from `cost.py`, $ reported at off-peak like for like with #272. Raw outputs in
 `ev284\`. No repeats, no retries.
 
 ## Progress log
 - 2026-11-23 - plan written on `tl/284-reduce-short` (from main b32d1f2, after #286 merged); worktree `wt-284`.
+- 2026-11-23 - plan review round 1 CHANGES REQUESTED; TL rulings folded in as "TL conditions"; build starts.
