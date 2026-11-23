@@ -95,15 +95,15 @@ writes its text (source, date, item text, scope) from the matrix. Reduce output 
 8. Blind scoring inputs (#272 method), results doc, `/finish-task`. Scoring and adjudication by the coordinator.
 
 ## Acceptance
-- [ ] pytest green locally and `gh pr checks` green; step 2-3 tests present.
-- [ ] Mock compare (step 4) as stated; render check (step 5) all zeros.
-- [ ] Real run, fts Q1-Q30, reduce only: output tokens p50 <= 11,187; wall p50 <= 70 s, p90 and max reported; 0 cut;
+- [x] pytest green locally (1221) and `gh pr checks` green; step 2-3 tests present (`tests/test_reduce_v6.py`).
+- [x] Mock compare (step 4) as stated; render check (step 5) all zeros at gate 1c9aca2 (after the step-5 fix).
+- [ ] (not reached: stage 1 stopped under B1) Real run, fts Q1-Q30, reduce only: output tokens p50 <= 11,187; wall p50 <= 70 s, p90 and max reported; 0 cut;
   first claim on the page p50 reported.
-- [ ] Rule checks from the records: 0 shown claims without a citation; 0 `outside_matrix`; `number_not_found` and
+- [x] (on the six) Rule checks from the records: 0 shown claims without a citation; 0 `outside_matrix`; `number_not_found` and
   `unknown_ref` counts reported (number_not_found <= #272's).
-- [ ] Scoring inputs in `ev284\blind-in-fts\` (dump in 4 parts as #272, `questions.yaml`, `verdict-rule.txt`, hashes);
+- [ ] (not reached: no 30-question run) Scoring inputs in `ev284\blind-in-fts\` (dump in 4 parts as #272, `questions.yaml`, `verdict-rule.txt`, hashes);
   adjudicated >= 24/30, tier 1 >= 12/18 (scored by the coordinator) -> adoption rule applied.
-- [ ] verify-cee ask-answer, ask-progress, ask-stop-retry PASS (mock, v6), evidence in `ev284\verify\`.
+- [x] verify-cee ask-answer, ask-progress, ask-stop-retry PASS (mock, v6) at 1c9aca2, evidence in `ev284\verify\`.
 
 ## Paid calls
 30 `deepseek-v4-pro` reduce calls (effort `low`, `/beta`), one per question Q1-Q30, fts, every plan / map / re-map
@@ -123,3 +123,7 @@ Order: Q5, Q10, Q19, Q21, Q24, Q26 first (6 calls); continue only under rule B1 
   verbatim in the passage, no map flag: "more than 15,000" for a deck's "15K+"; one from the value rendering). Fix
   (0 calls): such items get no ref (`referable`, a stricter B2 enum) and the value is rendered only when its figures
   are not in the text. All 0-call checks re-run at the new gate.
+- 2026-11-23 - gate 1c9aca2: all 0-call checks re-run and pass; verify-cee 3/3 PASS.
+- 2026-11-23 10:00-10:30 UTC - stage 1 (6 paid reduce calls, off-peak, $0.394). B1 stop: output p50 24,518 (> 14,171),
+  wall p50 281 s (> 93.8), 1 unknown_ref (Q24, an enum leak, dropped by code). Reasoning grew while answer tokens
+  halved. Stage 2 not run; default stays v5.2; results doc `docs/results/w13-reduce-short.md` records the finding.

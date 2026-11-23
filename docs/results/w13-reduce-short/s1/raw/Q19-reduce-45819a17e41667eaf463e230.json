@@ -1,0 +1,964 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "reduce_version": "v6",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer_with_boundary",
+  "chunk_ids": [
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#56",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-10K-2025#15",
+    "EDJ-10K-2025#8",
+    "EDJ-10K-2025#304",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-TR-2025Q3#12",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-DECK-2026-investor-day#106",
+    "SCHW-DECK-2026-investor-day#99",
+    "SCHW-TR-2025Q3#39",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2025Q4#42",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-DECK-2026Q3#24",
+    "SCHW-DECK-2026-investor-day#131",
+    "SCHW-DECK-2026-investor-day#100",
+    "SCHW-TR-2025Q3#41",
+    "SCHW-TR-2025Q2#33",
+    "SCHW-TR-2026Q2#36",
+    "BAC-PR-2026-01-14-01#12",
+    "BOFA-PB-STUDY-2024#0",
+    "BOFA-PB-STUDY-2026#15",
+    "CERULLI-GWT-2025#1"
+  ],
+  "schema_fallback": [],
+  "enum_values": 397,
+  "at": "2026-11-23T04:06:49.265593-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17887,
+    "output_tokens": 26481,
+    "cache_hit_tokens": 1920,
+    "cache_miss_tokens": 15967,
+    "reasoning_tokens": 21821,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.34
+  },
+  "wall_s": 310.48,
+  "tokens_per_s": 85.29,
+  "ttft_s": 2.34,
+  "reasoning_content": "Let me analyze this task carefully.\n\nThe question is normative (\"How should...\"), behavior is answer_with_boundary. So I write the evidence half, and code adds the hand-off sentence.\n\nLet me organize the answer by aspects (a1 through a8), firms in row order (EDJ, MS, SCHW, MER, RJF).\n\nKey rules:\n- Fact cells get item claims with refs, text empty (or short lead).\n- \"no ref\" items: text claim without figure, cite chunk ids.\n- \"quote not verbatim\": never quote.\n- derived cells: not present here.\n- comparison (a8): exactly one comparison claim, part_id a8.\n- a4 has basis break - state each basis separately.\n- a4 is \"unverified: never compared across firms\".\n- a4.MER is \"different quantity (adjacent only)\".\n- a8.MER is \"different quantity (adjacent only)\".\n\nRecency: The question doesn't have a time window explicitly stated in the behavior? The behavior is answer_with_boundary, why 1e normative. No time window mentioned. So no why-lines required (recency only when aspect marked recency or time window). Let me check: no aspect is marked recency, and no time window in question. So why empty everywhere.\n\nComparison aspect a8: exactly one text claim with part_id a8 that answers whether the comparison can be made.\n\nLet me think about a8 comparison claim. The aspect asks: \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\" Competitors MS, MER, RJF are \"not found\". Schwab has data. So comparison can be made only EDJ vs SCHW (and partially), not with MS/MER/RJF.\n\nActually a8 has facts for EDJ and SCHW, adjacent for MER (different quantity), and not found for MS, RJF, research.\n\nComparison claim: I need to say whether comparison is valid, valid only for some firms, or not valid. Given a8 is not marked same_basis, and figures are different quantities (Schwab gives growth % of new-to-firm households; EDJ gives initiatives not growth figures). So the disclosures are not comparable on the same basis.\n\nLet me write the comparison claim: \"Edward Jones's disclosures for younger investors can be compared with Schwab's only qualitatively, not on the same basis.\" Actually let me think.\n\nThe a8 aspect is \"comparison\" but not marked same_basis. So I should not compare figures across firms. I should say comparison can be made only for some firms (EDJ and Schwab have disclosures; MS, Merrill, RJF have none), and the two firms' disclosures are on different bases (EDJ discloses initiatives; Schwab discloses growth figures), so they are not directly comparable.\n\nLet me write the comparison claim text.\n\nNow let me enumerate all claims.\n\nAspect a1 (fact): product/service/channel preferences of younger investors.\n\nEDJ: a1.EDJ/1, a1.EDJ/2 (two items)\nMS: not found (code gap, skip)\nSCHW: a1.SCHW/1 through a1.SCHW/8\nMER: not found\nRJF: not found\nresearch: a1.research/1 (no ref, figure not found), a1.research/2, a1.research/3, a1.research/4, a1.research/5\n\nFor a1.research/1: \"no ref\" and \"figure not found in its passage: do not state this figure\". So I write a text claim without the figure. The item is \"Millennials and Gen Z allocate three times more...\" - but figure not found, so I state without figure: \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" Hmm, but I need to be careful - \"do not state this figure\" means I can state the qualitative fact but not \"three times more\". Actually the figure is \"3 times\". So I write text claim without the number.\n\nWait, let me re-read. \"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nSo for a1.research/1: it's \"no ref\" and \"figure not found\". I state it as text claim, part_id a1.research, without figure \"three times\". So \"Millennials and Gen Z allocate more of their investment portfolios to alternative investments than older generations.\" Cite BOFA-PB-STUDY-2024#0.\n\nActually wait - the item a1.research/1 says \"(no ref)\" and figure not found. Let me be careful: \"no ref\" means it should be a text claim (no refs in items), and figure not found means don't state the figure.\n\nSimilarly a4.SCHW/3, /6, /7, /9, /15 are \"no ref\" with figure not found.\n\nLet me list all \"no ref\" items:\n- a1.research/1 (no ref, figure not found)\n- a4.SCHW/3 (no ref, figure not found)\n- a4.SCHW/6 (no ref, figure not found)\n- a4.SCHW/7 (no ref, figure not found)\n- a4.SCHW/9 (no ref, figure not found)\n- a4.SCHW/15 (no ref, figure not found)\n\nThese get text claims without figures, cite chunk ids in chunk_ids.\n\nFor \"quote not verbatim\" items, never quote, but they can still be item claims with refs (text empty).\n\nLet me now go aspect by aspect building the answer.\n\nActually, let me be careful about the structure. The claims array has items, text, chunk_ids, why, part_id. For item claims, items = [refs], text empty, chunk_ids empty (or why background), why empty.\n\nFor text claims (comparison, computation, no-ref items), items empty, text = the claim, chunk_ids = cited ids.\n\nFor no-ref items: text claim, items empty, text describes the item without figure, chunk_ids = the source id.\n\nLet me write out each.\n\n**Aspect a1**\n\nClaims:\n1. a1.EDJ, items [a1.EDJ/1], text \"\", chunk_ids [], why \"\"\n2. a1.EDJ, items [a1.EDJ/2], text \"\", chunk_ids [], why \"\"\n3. a1.SCHW/1 through a1.SCHW/8: item claims.\n   - a1.SCHW/5 is \"quote not verbatim\": item claim with ref, text empty, no quote (code renders). Fine, item claim.\n4. a1.research/1: text claim (no ref, no figure). part_id a1.research, items [], text, chunk_ids [BOFA-PB-STUDY-2024#0].\n5. a1.research/2, /3, /4, /5: item claims with refs.\n\nFor a1.research/1 text: \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" Cite BOFA-PB-STUDY-2024#0.\n\nActually the original says \"three times more\". Without figure: \"Millennials and Gen Z allocate more of their investment portfolios to alternative investments than older generations.\"\n\n**Aspect a2**\n\nEDJ: a2.EDJ/1 (quote not verbatim). Item claim.\nSCHW: a2.SCHW/1, a2.SCHW/2. Item claims.\nMS, MER, RJF, research: not found (code gaps).\n\n**Aspect a3**\n\nEDJ: a3.EDJ/1 item claim.\nSCHW: a3.SCHW/1 through /5 item claims.\nresearch: a3.research/1, /2, /3 item claims.\n\n**Aspect a4** (series, basis break)\n\nSCHW only. Basis break: whole firm (2024, 2025, 2026Q3) vs retail households who created financial plan (2025Q3).\n\nActually the basis break says: \"whole firm: 2024, 2025, 2026Q3; retail households who created a financial plan within the last two years: 2025Q3\". So I state each basis with its own periods, never join.\n\nLet me group:\n- whole firm basis items: a4.SCHW/1 (2024), /2 (2024), /3 (2025, no ref), /4 (2025), /5 (2025), /6 (2025, no ref), /7 (2025, no ref), /8 (2025), /9 (2025, no ref), /10 (2025), /11 (2026Q3), /12 (2026Q3), /13 (no period, investor day), /14 (no period, quote not verbatim), /16 (thinkorswim, no period)\n- financial plan basis: /15 (2025Q3, no ref)\n\nHmm, this is getting complex. The basis break mentions two bases: \"whole firm\" and \"retail households who created a financial plan within the last two years\". Item /15 is the financial plan one (2025Q3). Items /1-/14, /16 are \"whole firm\".\n\nWait, /13 (61% of new clients Gen Z & Millennial) and /14 (+60% NTF retail households <40) are from investor-day deck without period. /16 (42% thinkorswim users) is scope thinkorswim users.\n\nI need to state each basis with its own periods. So I'll group claims: first whole firm claims (with their periods), then the financial plan claim.\n\nActually, the instruction says \"give each basis its own claims; never join them into one series.\" This mainly means I shouldn't merge. I can just list them in order with the periods stated. Since code renders the item text including period, it's fine. But I should note the basis in a lead or just order them.\n\nActually, I think the simplest correct approach: list all item claims for a4.SCHW in date order (newest first per recency? but no time window, so... actually no recency requirement). The basis break is handled by code adding caveats. I just need to not join them.\n\nBut the instruction says \"give each basis its own claims\". Let me add a short lead label. Actually, leads are allowed to \"label a position\" or \"group items\". So I could add a lead text like \"Whole-firm basis:\" and \"Retail households who created a financial plan basis:\".\n\nHmm, but lead text with refs: \"a short lead of a few words is allowed only to label a position or group items\". So I can put a lead in text while items have refs.\n\nLet me do: for whole firm items, I can just list them. For the financial plan item /15, it's \"no ref\", so text claim.\n\nActually let me reconsider. The \"no ref\" items (a4.SCHW/3, /6, /7, /9, /15) need text claims.\n\nLet me write:\n\nWhole firm basis (2024, 2025, 2026Q3):\n- a4.SCHW/1 (2024, 33%): item claim\n- a4.SCHW/2 (2024, >50%): item claim\n- a4.SCHW/3 (2025 H1, 1 in 6 under 24): no ref \u2192 text claim, no figure\n- a4.SCHW/4 (2025 H1, >30% under 30): item claim\n- a4.SCHW/5 (2025 H1, ~60% under 40): item claim\n- a4.SCHW/6 (2025, ~1/3 Gen Z): no ref \u2192 text claim, no figure\n- a4.SCHW/7 (2025, ~1/3 Gen Z accounts): no ref \u2192 text claim, no figure\n- a4.SCHW/8 (2025, ~60% under 40): item claim\n- a4.SCHW/9 (2025, 1/3 Gen Z): no ref \u2192 text claim\n- a4.SCHW/10 (2025, avg age fell ~10 years): item claim\n- a4.SCHW/11 (2026Q3, ~70% Gen Z & Millennials): item claim\n- a4.SCHW/12 (2026Q3, ~70%): item claim (duplicate of /11? both ~70% same period). Hmm, /11 and /12 both say ~70% of new-to-firm retail households Gen Z & Millennials, period 2026Q3. One from transcript, one from deck. \"skip an item that only repeats an item you already used\". These are essentially the same figure from two sources. I should skip one. Actually /11 cites SCHW-TR-2026Q3#11, /12 cites SCHW-DECK-2026Q3#24. They're the same stat from two sources. I can pick one, or combine as two refs in one claim since \"put two refs in one claim only when they say the same thing from two sources.\"\n\nSo combine a4.SCHW/11 and /12 into one claim: items [a4.SCHW/11, a4.SCHW/12].\n\n- a4.SCHW/13 (61% of new clients): item claim\n- a4.SCHW/14 (+60% under 40, quote not verbatim): item claim\n- a4.SCHW/16 (42% thinkorswim, quote not verbatim): item claim\n\nFinancial plan basis:\n- a4.SCHW/15 (2025Q3, 1/3 under 40): no ref \u2192 text claim, no figure.\n\nMER: adjacent only (a4.MER/1).\n\nNow the basis break: \"whole firm: 2024, 2025, 2026Q3; retail households who created a financial plan within the last two years: 2025Q3\". So /15 is the financial plan basis. All others are whole firm.\n\nI'll add lead labels to distinguish. Actually, I think I can just present them and code will add the caveat about basis break. But the instruction explicitly says \"give each basis its own claims; never join them into one series.\" I'll add a lead text for grouping.\n\nLet me add lead \"Whole-firm basis\" to the first whole-firm claim and \"Retail households who created a financial plan within the last two years\" lead to /15.\n\nActually simpler: I'll just order them and rely on code caveats. But to be safe, I'll add short lead text.\n\nHmm, actually let me keep it clean. I'll group with a lead text on the whole-firm items and a lead on the financial-plan item.\n\nLet me also consider: for a4, \"unverified: never compared across firms\". So I don't compare. Just report Schwab's figures.\n\n**Aspect a5** (EDJ alignment)\n\na5.EDJ/1: item claim (quote verbatim? \"a new digital platform, focused on attracting and retaining Next Generation investors\" - quote present, not marked not verbatim). Item claim.\na5.EDJ/2: item claim.\na5.EDJ/3: quote not verbatim. Item claim.\na5.EDJ/4: quote not verbatim. Item claim.\na5.EDJ/5: item claim.\n\n**Aspect a6** (EDJ strategy)\n\na6.EDJ/1: quote not verbatim. Item claim.\na6.EDJ/2: item claim (quote \"\u2022 Attract and serve new client segments\").\n\nSCHW a6.SCHW/1 through /8: item claims. Note a6.SCHW/3 (YouTube #1) is same as a1.SCHW/2/a2.SCHW/2. \"An item marked 'also under' another aspect: use it once, under the first aspect where it appears.\" But these aren't marked \"also under\". So they're distinct cells. I should use them under their own aspects.\n\nWait, but there might be duplication concerns. The instruction about \"also under\" only applies when marked. None are marked \"also under\" here, so I use each in its own aspect.\n\n**Aspect a7** (competitors)\n\nSCHW only (a7.SCHW/1 through /8). MS, MER, RJF not found.\n\na7.SCHW/2 is quote not verbatim. Item claim.\na7.SCHW/3: item claim (35 hours).\netc.\n\n**Aspect a8** (comparison) - exactly one comparison claim.\n\nPlus a8.EDJ items (fact), a8.SCHW items (fact), a8.MER adjacent.\n\nWait, a8 is \"comparison\" aspect but it also has fact cells (a8.EDJ, a8.SCHW). So do I write item claims for those fact cells AND one comparison claim?\n\nThe instruction: \"For each aspect marked comparison, write exactly one text claim with that aspect's id as part_id that answers the comparison itself...\".\n\nAnd \"A fact cell gets at least one item claim\". So a8.EDJ and a8.SCHW are fact cells - I write item claims for them. Plus the comparison claim with part_id a8.\n\nActually wait, let me reconsider. The comparison claim part_id is \"a8\" (the aspect id). The fact cells have part_id a8.EDJ, a8.SCHW. So yes, I write item claims for a8.EDJ and a8.SCHW, and one comparison claim for a8.\n\nLet me figure out the comparison claim.\n\na8 comparison: \"How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?\"\n\nEvidence:\n- EDJ: disclosures about digital platform, aspirations, generational wealth transfer risk, Quicken stake, trade-press critique.\n- SCHW: disclosures with specific growth figures (~70% Gen Z/Millennial NTF households), specific offerings (Starter Kit, Teen Investor, no/low commissions), channels (YouTube, social media), live content, thinkorswim.\n- MER: adjacent (advisor rankings, different quantity).\n- MS, RJF: not found.\n\nSo comparison can be made between EDJ and Schwab (qualitatively), but MS, Merrill, RJF have no comparable disclosures. And EDJ and Schwab disclose different types of information: Schwab quantifies younger-investor growth and lists specific products/channels, while EDJ describes initiatives qualitatively without growth figures.\n\nSo the comparison is \"valid only for some firms\" - specifically EDJ vs Schwab, but on different bases (not same_basis), so figures are not comparable. EDJ does not report growth figures for younger investors, while Schwab does.\n\nI should write: the comparison can be made only between Edward Jones and Schwab (Morgan Stanley, Merrill, and Raymond James have no comparable disclosures), and even then not on the same basis: Schwab quantifies younger-client growth and lists specific offerings/channels, while Edward Jones discloses initiatives qualitatively without reporting younger-investor growth figures. So direct quantitative comparison is not valid; only qualitative.\n\nLet me write this text and cite chunk_ids. What chunk_ids? The items it rests on. I should cite the key items. For a comparison claim, chunk_ids = \"the items a comparison... rests on\".\n\nI'll cite: EDJ-10K-2025#88 (EDJ digital platform), SCHW-TR-2026Q3#11 (Schwab ~70%), SCHW-DECK-2026-investor-day#99 (Starter Kit etc.).\n\nActually the comparison claim should cite the items it rests on. Let me cite a few representative chunk ids. I'll use:\n- EDJ-10K-2025#88 (EDJ initiative)\n- SCHW-TR-2026Q3#11 (Schwab growth)\n- SCHW-DECK-2026-investor-day#99 (Schwab offerings)\n\nNow, let me also handle the comparison claim's item list. For a text claim, items empty.\n\nNow let me also reconsider: are a8.EDJ and a8.SCHW fact cells needing item claims? The aspect a8 is comparison, but the cells a8.EDJ and a8.SCHW are \"fact\". The instruction says fact cells get at least one item claim. So yes.\n\nBut wait - for a comparison aspect, is there a risk of double-reporting? The instruction is clear: comparison aspect gets exactly one comparison claim AND the fact cells get their item claims. Let me write item claims for a8.EDJ and a8.SCHW.\n\na8.EDJ items: /1 through /8. Let me check which are quote not verbatim:\n- a8.EDJ/1: quote verbatim (long quote). Item claim.\n- a8.EDJ/2: quote verbatim. Item claim.\n- a8.EDJ/3: quote verbatim. Item claim.\n- a8.EDJ/4: quote verbatim. Item claim.\n- a8.EDJ/5: quote verbatim (Quicken). Item claim.\n- a8.EDJ/6: quote not verbatim. Item claim.\n- a8.EDJ/7: quote verbatim. Item claim.\n- a8.EDJ/8: quote not verbatim. Item claim.\n\na8.SCHW items: /1 through /15.\n- /1: two refs (SCHW-TR-2026Q3#11, SCHW-DECK-2026Q3#24), value ~70%. Item claim with two refs.\n- /2: item claim (nearly one-third Gen Z).\n- /3: item claim (Gen Z nearly a third, ~60% under 40).\n- /4: item claim (one in six under 24).\n- /5: item claim (>30% under 30, ~60% under 40).\n- /6: item claim (33% under 30, >50% under 40).\n- /7: quote not verbatim. Item claim.\n- /8: item claim (Starter Kit etc).\n- /9: quote not verbatim. Item claim.\n- /10: two refs. Item claim.\n- /11: item claim (35 hours).\n- /12: item claim (+60% under 40).\n- /13: item claim (61% Gen Z & Millennial).\n- /14: item claim (one-third under 40).\n- /15: item claim (crypto).\n\nNote many of these a8.SCHW items duplicate a4.SCHW items. But they're in different aspects. The \"also under\" rule only if marked. Not marked. So I include them. However, this creates a lot of duplication within the answer. But I must follow the rules.\n\nHmm wait, actually there's significant overlap. a8.SCHW/1 = a4.SCHW/11+/12. a8.SCHW/2 = a4.SCHW/6. a8.SCHW/3 = a4.SCHW/7+/8. a8.SCHW/4 = a4.SCHW/3. a8.SCHW/5 = a4.SCHW/4+/5. a8.SCHW/6 = a4.SCHW/1+/2. a8.SCHW/7 = a4.SCHW/10+/9. a8.SCHW/9 = a4.SCHW/16. a8.SCHW/12 = a4.SCHW/14. a8.SCHW/13 = a4.SCHW/13. a8.SCHW/14 = a4.SCHW/15.\n\nBut these are in different aspects, so per rules I report both. The rules don't say to skip across aspects unless marked \"also under\".\n\nActually wait, re-reading: \"An item marked 'also under' another aspect: use it once, under the first aspect where it appears.\" Only marked items. None marked here. So I report each in its own aspect.\n\nOK this is a large answer but I'll follow the rules.\n\nActually, let me reconsider whether I need to report ALL items or pick items that answer the cell. \"Pick the items that answer the cell; skip an item that only repeats an item you already used.\" This \"repeats an item you already used\" - does \"you already used\" mean within the same cell/aspect, or across the whole answer? I think it means within the cell (same aspect). Across aspects, they're different questions, so each cell needs its items.\n\nBut there's ambiguity. Given the overlap between a4 and a8, reporting all of a8.SCHW would heavily duplicate a4.SCHW. However, the aspects are different: a4 is \"growth\", a8 is \"comparison of disclosures and initiatives\". Both legitimately use the same underlying facts.\n\nI'll report them faithfully. It's a lot but correct.\n\nActually, let me reconsider the scope. This is going to be a very long answer. Let me be efficient but complete.\n\nLet me now also handle the \"recency\" - no time window, no recency marks. So why empty everywhere.\n\nLet me also double check: \"positions about the future that others hold: group by position\". a1.SCHW/7 and a6.SCHW/8 and a7.SCHW/8 and a8.SCHW/15 about crypto appealing to young investors - these are Schwab's own statements (forecast about crypto appealing to young investors). Is this a \"position about the future that others hold\"? The instruction: \"Positions about the future that others hold: group the claims by position (the lead labels the position); report two sources that disagree as disagreeing; no forecast of your own.\"\n\nThese crypto statements are Schwab's own forecast (\"crypto will appeal to young investors\"). This is arguably a position about the future. But it's a single source (Schwab), no disagreement. I think I can just report them as normal items without special grouping since there's no disagreement. Actually the instruction about grouping is mainly when there are multiple positions. Here there's one statement repeated across aspects.\n\nI'll just report them as normal item claims in each aspect.\n\nNow let me also verify the \"no ref\" text claims wording for a4.SCHW items.\n\na4.SCHW/3: \"Schwab reported that one in six of its new-to-firm retail households in the first half of 2025 were under the age of 24.\" Figure \"1 in 6\" not found. So text claim without figure: \"Schwab reported that a minority of its new-to-firm retail households in the first half of 2025 were under the age of 24.\" Hmm, \"one in six\" is a specific figure. Without figure: \"Schwab reported that a share of its new-to-firm retail households in the first half of 2025 were under the age of 24.\"\n\nActually \"do not state this figure\" - the figure is \"one in six\". So I state the fact qualitatively. \"Schwab reported that some of its new-to-firm retail households in the first half of 2025 were under the age of 24.\" That's weak but it's the instruction.\n\nHmm, actually let me reconsider. The item is marked \"no ref\" AND \"figure not found in its passage\". The instruction says \"may be stated only in a text claim, without its figure.\" So I state the claim's meaning minus the figure.\n\nFor a4.SCHW/3: meaning = Schwab reported new-to-firm retail households under age 24 in H1 2025 (some proportion). Text: \"Schwab reported that in the first half of 2025, some of its new-to-firm retail households were under the age of 24.\"\n\nFor a4.SCHW/6: Gen Z (~1/3). \"Schwab reported that in 2025, a substantial share of its new-to-firm retail households were Gen Zers (investors between ages 13 and 28).\" Without \"nearly one-third\".\n\nFor a4.SCHW/7: ~1/3 Gen Z new retail client accounts. \"Schwab reported that Gen Z investors comprised a substantial share of new retail client accounts opened in 2025.\"\n\nFor a4.SCHW/9: 1/3 new-to-firm clients Gen Z. \"Schwab reported that a substantial share of its new-to-firm clients last year (2025) were Gen Z investors.\"\n\nFor a4.SCHW/15: 1/3 retail households who created financial plan under 40. \"Schwab reported that a share of retail households who created a financial plan within the last two years are under the age of 40.\"\n\nFor a1.research/1: 3x more alts. \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\"\n\nHmm wait, these \"no ref\" claims with \"do not state figure\" - but actually, do I even include them? The instruction says \"An item listed 'no ref' ... may be stated only in a text claim, without its figure.\" So yes, include as text claim without figure.\n\nActually, let me reconsider \"no ref\" vs \"figure not found\". There are two markers:\n- \"no ref\" (no figure found / figure not found)\n- \"figure not found in its passage: do not state this figure\"\n\nFor a1.research/1: \"(no ref)\" and \"figure not found in its passage: do not state this figure\". So both.\n\nFor a4.SCHW/3, /6, /7, /9, /15: \"(no ref)\" and \"figure not found in its passage: do not state this figure\".\n\nSo all six: text claims without figure.\n\nNow, the date for text claims: \"In a text claim: date it from its source line\". So I should date from source.\n\nLet me write them with dates where possible.\n\nActually, this is getting quite detailed. Let me be careful but not over-engineer. The text claim for no-ref items should state the item without the figure, citing the chunk id.\n\nFor a1.research/1: source BOFA-PB-STUDY-2024#0, published 2024-06-18.\n\nLet me now also think about whether I need to include the comparison claim's reasoning about same_basis. a8 is NOT marked same_basis. So: \"otherwise say they are not comparable and why.\"\n\nOK let me now draft everything.\n\nLet me also check: a8 comparison claim - \"valid only for some firms\" is the answer. Because MS, MER, RJF have no disclosures. And EDJ vs Schwab not on same basis.\n\nLet me write the comparison claim text:\n\n\"This comparison can be made only between Edward Jones and Schwab, and only qualitatively, not on the same basis. Morgan Stanley, Merrill and Raymond James Financial disclose nothing about younger-investor initiatives in the documents searched (Merrill's only item concerns its own under-40 advisors, a different quantity). Edward Jones discloses its initiatives for next-generation investors qualitatively (a new digital platform, new client segments, a Quicken stake) but publishes no growth figures for younger investors; Schwab, by contrast, quantifies younger-client growth (for example, approximately 70% of new-to-firm retail households being Gen Z and millennials) and lists specific products and channels. The two firms therefore report different things, so their disclosures are not directly comparable on any shared basis.\"\n\nThat's a good comparison claim. Cite chunk_ids: EDJ-10K-2025#88, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99, BAC-PR-2026-01-14-01#12 (for Merrill different quantity). Actually the Merrill adjacent is separate. For the comparison claim, I'll cite the EDJ and Schwab items.\n\nchunk_ids: [EDJ-10K-2025#88, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99]\n\nNow, let me finalize all claims.\n\nLet me count and write each claim object.\n\nI'll write the full JSON.\n\nFor item claims: part_id, items (refs), text \"\", chunk_ids [], why \"\".\n\nFor \"quote not verbatim\" item claims: still item claims (refs present), text empty, no quotes in text. Code renders the item text. Fine.\n\nNow let me carefully map each item's part_id.\n\nAspect a1 claims:\n1. part a1.EDJ, items [a1.EDJ/1]\n2. part a1.EDJ, items [a1.EDJ/2]\n3. part a1.SCHW, items [a1.SCHW/1]\n4. part a1.SCHW, items [a1.SCHW/2]\n5. part a1.SCHW, items [a1.SCHW/3]\n6. part a1.SCHW, items [a1.SCHW/4]\n7. part a1.SCHW, items [a1.SCHW/5]\n8. part a1.SCHW, items [a1.SCHW/6]\n9. part a1.SCHW, items [a1.SCHW/7]\n10. part a1.SCHW, items [a1.SCHW/8]\n11. part a1.research, items [], text \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" chunk [BOFA-PB-STUDY-2024#0]\n12. part a1.research, items [a1.research/2]\n13. part a1.research, items [a1.research/3]\n14. part a1.research, items [a1.research/4]\n15. part a1.research, items [a1.research/5]\n\nAspect a2:\n16. part a2.EDJ, items [a2.EDJ/1]\n17. part a2.SCHW, items [a2.SCHW/1]\n18. part a2.SCHW, items [a2.SCHW/2]\n\nAspect a3:\n19. part a3.EDJ, items [a3.EDJ/1]\n20. part a3.SCHW, items [a3.SCHW/1]\n21. part a3.SCHW, items [a3.SCHW/2]\n22. part a3.SCHW, items [a3.SCHW/3]\n23. part a3.SCHW, items [a3.SCHW/4]\n24. part a3.SCHW, items [a3.SCHW/5]\n25. part a3.research, items [a3.research/1]\n26. part a3.research, items [a3.research/2]\n27. part a3.research, items [a3.research/3]\n\nAspect a4:\nWhole firm:\n28. part a4.SCHW, items [a4.SCHW/1]\n29. part a4.SCHW, items [a4.SCHW/2]\n30. part a4.SCHW, items [], text (no ref /3)\n31. part a4.SCHW, items [a4.SCHW/4]\n32. part a4.SCHW, items [a4.SCHW/5]\n33. part a4.SCHW, items [], text (no ref /6)\n34. part a4.SCHW, items [], text (no ref /7)\n35. part a4.SCHW, items [a4.SCHW/8]\n36. part a4.SCHW, items [], text (no ref /9)\n37. part a4.SCHW, items [a4.SCHW/10]\n38. part a4.SCHW, items [a4.SCHW/11, a4.SCHW/12] (combined)\n39. part a4.SCHW, items [a4.SCHW/13]\n40. part a4.SCHW, items [a4.SCHW/14]\n41. part a4.SCHW, items [a4.SCHW/16]\nFinancial plan basis:\n42. part a4.SCHW, items [], text (no ref /15)\n\nAdjacent a4.MER:\n- adjacent item a4.MER/1 with differs_because.\n\nAspect a5:\n43-47. a5.EDJ/1 through /5.\n\nAspect a6:\n48. a6.EDJ/1\n49. a6.EDJ/2\n50-57. a6.SCHW/1 through /8.\n\nAspect a7:\n58-65. a7.SCHW/1 through /8.\n\nAspect a8:\n66-73. a8.EDJ/1 through /8.\n74-88. a8.SCHW/1 through /15.\n89. comparison claim part a8.\nAdjacent a8.MER/1.\n\nThat's a huge number of claims. Let me write them all.\n\nActually, let me reconsider whether to combine duplicate a8.SCHW items or just report. I'll report all.\n\nLet me be careful about a8.SCHW/1: items [a8.SCHW/1] (it has two cite ids but it's one item ref \"a8.SCHW/1\"). The item ref is \"a8.SCHW/1\", single ref. So items [a8.SCHW/1].\n\nWait, let me check the item refs. Each item has a single ref like \"a8.SCHW/1\". Some items have \"also under\" or two cite ids, but the ref is a single item id. Looking at the items enum, refs are like \"a1.EDJ/1\", \"a4.SCHW/11\", etc. Each is a single item identifier.\n\nSo a8.SCHW/1 is a single item (with two source citations internally). items [a8.SCHW/1].\n\na8.SCHW/10 also has two cite ids but single item ref \"a8.SCHW/10\".\n\na7.SCHW/2 has two cite ids but single ref \"a7.SCHW/2\".\n\nOK.\n\nNow for a4 combining /11 and /12: these are two separate item refs \"a4.SCHW/11\" and \"a4.SCHW/12\". I can combine into one claim items [a4.SCHW/11, a4.SCHW/12] since they say the same thing from two sources. Actually the rule: \"put two refs in one claim only when they say the same thing from two sources.\" /11 (~70% NTF retail HH Gen Z & Millennials, transcript) and /12 (~70% NTF retail HH Gen Z & Millennials, deck). Same stat, two sources. So combine.\n\nAlternatively, I could just report both as separate item claims. But combining reduces redundancy. I'll combine.\n\nActually, wait - let me reconsider. The deck /12 says \"~70% NTF Retail HH are Gen Z & Millennials\" (SCHW-DECK-2026Q3#24), transcript /11 says \"approximately 70% of new-to-firm retail households are Gen Z and millennials\" (SCHW-TR-2026Q3#11). Same figure. Combine.\n\nOK.\n\nNow, let me also handle the \"no ref\" text claims with dates. I'll write concise text.\n\nFor a4.SCHW/3 text: \"Schwab reported that in the first half of 2025, some of its new-to-firm retail households were under the age of 24.\" chunk [SCHW-TR-2025Q2#9].\n\nFor a4.SCHW/6 text: \"Schwab reported that in 2025, a substantial share of its new-to-firm retail households were Gen Zers (investors between the ages of 13 and 28).\" chunk [SCHW-TR-2025Q3#11].\n\nFor a4.SCHW/7 text: \"Schwab reported that Gen Z investors comprised a substantial share of new retail client accounts opened in 2025.\" chunk [SCHW-TR-2025Q4#11].\n\nFor a4.SCHW/9 text: \"Schwab reported that a substantial share of its new-to-firm clients last year (2025) were Gen Z investors.\" chunk [SCHW-TR-2025Q4#42].\n\nFor a4.SCHW/15 text: \"Schwab reported that a share of retail households who created a financial plan within the last two years are under the age of 40.\" chunk [SCHW-TR-2025Q3#12].\n\nFor a1.research/1 text: \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" chunk [BOFA-PB-STUDY-2024#0].\n\nHmm, wait. For \"no ref\" items, the instruction says \"may be stated only in a text claim, without its figure.\" But also \"cite chunk_ids\". For text claims, chunk_ids cites the source. Good.\n\nActually, let me reconsider whether \"without its figure\" means I should avoid stating any number. \"one in six\", \"nearly one-third\", \"1/3\" are figures. So I avoid them. My wording \"some\", \"a substantial share\", \"a share\" works.\n\nNow for the why field: all empty (no recency, no time window).\n\nNow the gaps: code adds gaps. Do I need to add my own gaps? \"Add a gap of your own only for something those gaps do not name.\" The code gaps cover a1 competitors, a2 research/competitors, a3 competitors, a4.EDJ, a4.MER, a4.research, a4 competitors, a7 competitors. \n\nWhat's missing? a6 competitors (MS, MER, RJF) are \"not found\" - but is there a gap listed? Let me check gaps added by code:\n- a1 competitors\n- a2.research\n- a2 competitors\n- a3 competitors\n- a4.EDJ\n- a4.MER\n- a4.research\n- a4 competitors (MS, RJF)\n- a7 competitors (MS, MER, RJF)\n\nMissing: a6.MS, a6.MER, a6.RJF (not found). Also a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research (not found). Also a6.research. Also a1.MS, a1.MER, a1.RJF (covered by \"a1 competitors\"). a8.MS, a8.RJF, a8.research (not found) - not in gaps list!\n\nLet me check the code gaps again carefully:\n\n- [a1] Competitors (MS, MER, RJF) - product/service/channel preferences: not found. \u2713 covers a1.MS, a1.MER, a1.RJF.\n- [a2.research] Industry research: not found.\n- [a2] Competitors (MS, MER, RJF): not found.\n- [a3] Competitors (MS, MER, RJF): not found.\n- [a4.EDJ]: not found.\n- [a4.MER]: not published; closest disclosed figure... (adjacent).\n- [a4.research]: not found.\n- [a4] Competitors (MS, RJF): not found.\n- [a7] Competitors (MS, MER, RJF): not found.\n\nMissing gaps:\n- a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research (all \"not found\")\n- a6.MS, a6.MER, a6.RJF, a6.research (\"not found\")\n- a8.MS, a8.RJF, a8.research (\"not found\") - a8.MER is adjacent (handled via adjacent item)\n\nSo I need to add gaps for these \"not found\" cells that aren't covered.\n\nActually, let me reconsider. The instruction: \"Cells with code gaps get no claim; code adds those gaps.\" And \"Add a gap of your own only for something those gaps do not name.\"\n\nSo I need gaps for:\n- a5: MS, SCHW, MER, RJF, research (not found)\n- a6: MS, MER, RJF, research (not found)\n- a8: MS, RJF, research (not found); MER is adjacent.\n\nWait, but a5.SCHW is \"not found\" too. And a5 covers \"How do Edward Jones's current offerings align with younger investors' preferences?\" - only EDJ has data. So a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research all \"not found\".\n\nHmm, but actually a5 is about EDJ's own offerings alignment, so competitors' cells being \"not found\" makes sense.\n\nLet me add gaps for these. The gap format: what, suggested_source, part_id.\n\nFor gaps, what should I write? The code gap format is \"Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What product...: not found in the documents searched.\"\n\nI'll write similar gaps.\n\nLet me add:\n- a5 (MS, SCHW, MER, RJF, research): \"not found in the documents searched.\" Part_id? Each gap has a part_id. I need to specify which cell. Since a5 competitors are not found, I'll add gaps with part_id a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research.\n\nActually, wait. Let me reconsider. The part_id enum for gaps includes \"a5.MS\", \"a5.SCHW\", \"a5.MER\", \"a5.RJF\", \"a5.research\". Yes.\n\nBut should I add a gap per cell, or one combined gap? The code gaps combine \"a1 Competitors (MS, MER, RJF)\". I think I should add gaps that aren't already named.\n\nHmm, this is getting complicated. Let me think about what's actually important. The gaps are informational - they tell the reader what's missing. The code gaps already cover a lot. The remaining \"not found\" cells are:\n\na5: MS, SCHW, MER, RJF, research \u2192 not found\na6: MS, MER, RJF, research \u2192 not found\na8: MS, RJF, research \u2192 not found (MER is adjacent)\n\nLet me add gaps for these. I'll group them reasonably.\n\nActually, let me reconsider the purpose. The instruction says \"Add a gap of your own only for something those gaps do not name.\" The gaps name specific cells. So for cells not named, I add gaps.\n\nLet me add:\n1. a5.SCHW (Schwab) - \"How do Edward Jones's current offerings align with younger investors' preferences?\" - not found (Schwab). Actually this seems odd to list Schwab under a5. But a5.SCHW cell is \"not found\". \n\nHmm, actually wait - is a5.SCHW really \"not found\"? Let me re-read. Aspect a5: \"How do Edward Jones's current offerings align with younger investors' preferences?\" a5.EDJ has items, a5.MS/SCHW/MER/RJF/research \"not found\".\n\nThis aspect is about EDJ's own offerings, so other firms' cells being \"not found\" is a bit odd but that's what the matrix says. I'll add a gap.\n\nActually, let me reconsider - maybe I'm overcomplicating. The gaps are a minor part. Let me add a reasonable set of gaps for the not-found cells not covered by code.\n\nLet me write gaps for:\n- a5 competitors (MS, SCHW, MER, RJF) + research: \"not found in the documents searched\" \u2014 actually, since a5 is specifically about EDJ, competitor cells not being found is expected. But I'll add a gap naming them.\n\nLet me structure gaps:\n\n1. part a5.MS, what \"Morgan Stanley - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\"\n\nHmm wait, that doesn't quite make sense (a5 is about EDJ). But the matrix literally has a5.MS \"not found\". \n\nActually, I think the cleaner interpretation: these competitor cells under a5/a6 are marked \"not found\" meaning those firms don't disclose EDJ-relevant info, which is trivially true. The code didn't add gaps for them, possibly because they're not meaningful. But the instruction is strict: add gaps for anything not named.\n\nLet me be pragmatic and add gaps for the clearly-meaningful missing cells:\n- a5.SCHW: Schwab doesn't say how EDJ's offerings align (trivial, skip? No, add).\n\nActually, I'll reconsider. The a5, a6 aspects are specifically about Edward Jones. Competitor cells there being \"not found\" isn't really a \"gap\" in the same sense - it's just that the aspect is EDJ-specific. The code gaps list doesn't include a5 or a6 at all, which suggests the code considers these covered/expected.\n\nBut a8.MS and a8.RJF are \"not found\" and ARE meaningful (competitor disclosures comparison). Those aren't in the code gaps. a8.research too.\n\nLet me focus on the meaningful gaps:\n- a8.MS: Morgan Stanley - not found (competitor disclosures for younger investors)\n- a8.RJF: Raymond James - not found\n- a8.research: industry research - not found\n\nAnd a6.SCHW actually HAS items (a6.SCHW/1-8). So a6.SCHW is not \"not found\". Let me re-check.\n\nAspect a6: a6.EDJ (items), a6.MS (not found), a6.SCHW (items 1-8), a6.MER (not found), a6.RJF (not found), a6.research (not found).\n\nSo a6.MS, a6.MER, a6.RJF, a6.research are not found. These are competitor strategy cells. Not in code gaps.\n\nAspect a5: a5.EDJ (items), a5.MS/SCHW/MER/RJF/research not found.\n\nSo meaningful gaps to add:\n- a5: MS, SCHW, MER, RJF, research (all not found)\n- a6: MS, MER, RJF, research (not found)\n- a8: MS, RJF, research (not found)\n\nThat's a lot of gaps. But they're mostly trivial (\"competitor X doesn't disclose\").\n\nHmm. Let me think about whether the code intended these. The code gaps list is explicitly enumerated. The instruction says \"Add a gap of your own only for something those gaps do not name.\"\n\nI'll add gaps for the not-found cells. To keep it manageable, I'll group them like the code does.\n\nLet me write:\n\n1. a5.SCHW: \"Schwab - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\" (part a5.SCHW)\n\nActually, grouping by aspect and firm is awkward for these. Let me just write one gap per not-found cell with appropriate part_id.\n\nActually, I realize I'm overthinking. Let me list the meaningful gaps concisely:\n\nFor a5 (EDJ alignment - only EDJ has data):\n- a5.SCHW, a5.MS, a5.MER, a5.RJF, a5.research: not found\n\nFor a6 (EDJ strategy - EDJ and SCHW have data):\n- a6.MS, a6.MER, a6.RJF, a6.research: not found\n\nFor a8 (comparison - EDJ and SCHW have data, MER adjacent):\n- a8.MS, a8.RJF, a8.research: not found\n\nI'll add these gaps. Let me write them grouped or individually.\n\nI'll write individual gaps with part_id and \"what\" text.\n\nActually, to reduce noise, let me write combined gaps similar to code style but for the missing cells. But the part_id needs to be a single cell. Hmm.\n\nThe gap schema: what (string), suggested_source (string), part_id (single cell).\n\nI'll write individual gaps. Suggested_source can be empty string or something. Let me look at what \"suggested_source\" should be. The code gaps presumably have suggested sources. For my own gaps, I'll put empty string or a suggestion like \"not found\".\n\nActually, \"suggested_source\" - what is it for? Probably a hint where to find the info. For not-found, I'll put empty or \"n/a\". Let me put \"\" empty string... actually let me put something reasonable. I'll use empty string.\n\nHmm, actually let me reconsider. Maybe I should keep gaps minimal. The instruction: \"Add a gap of your own only for something those gaps do not name.\" \n\nThe code gaps name: a1 competitors, a2 research+competitors, a3 competitors, a4 (EDJ, MER, research, MS/RJF competitors), a7 competitors.\n\nNot named: a5 (all non-EDJ), a6 (MS, MER, RJF, research), a8 (MS, RJF, research).\n\nI'll add gaps for these. Let me write them.\n\nActually, I'll reconsider a5 and a6. a5 is \"How do Edward Jones's current offerings align...\" - this is fundamentally about EDJ. Competitor cells \"not found\" here are expected. But the matrix still has them as \"not found (code gap)\"? No wait - let me re-read the matrix.\n\n\"a5.MS Morgan Stanley: not found (code gap)\" - it says \"not found\" but does it say \"(code gap)\"? Let me check.\n\nLooking at the matrix: \n\"a5.MS Morgan Stanley: not found (code gap)\" - actually I need to look carefully. The matrix text says:\n\n\"a5.MS Morgan Stanley: not found (code gap)\" \u2014 wait, actually let me re-read the exact text.\n\nIn the matrix, I see:\n\"a5.MS Morgan Stanley: not found (code gap)\" \n\nHmm, actually the matrix shows \"not found (code gap)\" for some and just \"not found\" for others? Let me look.\n\nLooking at the evidence matrix:\n- a1.MS: \"not found (code gap)\"\n- a1.MER: \"not found (code gap)\"\n- a1.RJF: \"not found (code gap)\"\n- a2.MS: \"not found (code gap)\"\n- a2.MER: \"not found (code gap)\"\n- a2.RJF: \"not found (code gap)\"\n- a2.research: \"not found (code gap)\"\n- a3.MS: \"not found (code gap)\"\n- a3.MER: \"not found (code gap)\"\n- a3.RJF: \"not found (code gap)\"\n- a4.EDJ: \"not found (code gap)\"\n- a4.MS: \"not found (code gap)\"\n- a4.MER: \"different quantity (adjacent only)\"\n- a4.RJF: \"not found (code gap)\"\n- a4.research: \"not found (code gap)\"\n- a5.MS: \"not found (code gap)\"?\n- a5.SCHW: \"not found (code gap)\"?\n- a5.MER: \"not found (code gap)\"?\n- a5.RJF: \"not found (code gap)\"?\n- a5.research: \"not found (code gap)\"?\n\nWait, let me re-read the actual matrix text carefully.\n\nFrom the matrix:\n\"a5.MS Morgan Stanley: not found (code gap)\" - actually the text I see is \"not found (code gap)\".\n\nHmm wait, let me look at the exact rendering in the prompt. The matrix shows:\n\n\"  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nActually, I'm not 100% sure they say \"(code gap)\". Let me look at the original text more carefully.\n\nFrom the prompt, aspect a5:\n\"  a5.EDJ Edward Jones: fact\n    [items...]\n  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nHmm, actually I see in the provided text it's written as \"not found (code gap)\" for a1.MS etc. Let me verify by looking at the exact text again.\n\nLooking at the prompt text for a1:\n\"  a1.MS Morgan Stanley: not found (code gap)\"\n\"  a1.MER Merrill: not found (code gap)\"\n\"  a1.RJF Raymond James Financial: not found (code gap)\"\n\nYes, it says \"(code gap)\".\n\nFor a5:\n\"  a5.MS Morgan Stanley: not found (code gap)\"\n\"  a5.SCHW The Charles Schwab Corporation: not found (code gap)\"\n\"  a5.MER Merrill: not found (code gap)\"\n\"  a5.RJF Raymond James Financial: not found (code gap)\"\n\"  a5.research Industry research: not found (code gap)\"\n\nFor a6:\n\"  a6.MS Morgan Stanley: not found (code gap)\"\n\"  a6.MER Merrill: not found (code gap)\"\n\"  a6.RJF Raymond James Financial: not found (code gap)\"\n\"  a6.research Industry research: not found (code gap)\"\n\nFor a8:\n\"  a8.MS Morgan Stanley: not found (code gap)\"\n\"  a8.RJF Raymond James Financial: not found (code gap)\"\n\"  a8.research Industry research: not found (code gap)\"\n\nWait, but the \"Gaps added by code\" section doesn't list all of these. Let me check what \"(code gap)\" means vs what's actually listed in \"Gaps added by code\".\n\nThe \"Gaps added by code\" section lists:\n- [a1] Competitors (MS, MER, RJF)\n- [a2.research]\n- [a2] Competitors (MS, MER, RJF)\n- [a3] Competitors (MS, MER, RJF)\n- [a4.EDJ]\n- [a4.MER]\n- [a4.research]\n- [a4] Competitors (MS, RJF)\n- [a7] Competitors (MS, MER, RJF)\n\nHmm, but the matrix marks many cells as \"(code gap)\". There's a discrepancy. Some cells marked \"(code gap)\" in matrix aren't in the \"Gaps added by code\" list.\n\nWait, actually, let me re-read. The matrix cells say \"not found (code gap)\" \u2014 but maybe that means \"not found\" and \"there's a code gap for it\". The \"Gaps added by code\" list is the authoritative list of what code adds.\n\nLooking more carefully, the \"Gaps added by code\" list uses combined names like \"[a1] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What product, service, and channel preferences...\". This covers a1.MS, a1.MER, a1.RJF.\n\nBut a5, a6, a8 are NOT in the \"Gaps added by code\" list at all. Yet the matrix shows a5.MS as \"not found (code gap)\".\n\nHmm, wait. Let me re-read the matrix labels. Actually, I think I need to look very carefully. The matrix might say \"not found (code gap)\" only where code adds a gap, and the \"Gaps added by code\" list is the full list.\n\nLet me recount the \"Gaps added by code\" list carefully from the prompt:\n\n1. [a1] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What product, service, and channel preferences do younger investors and clients under 40 express?: not found in the documents searched.\n2. [a2.research] Industry research - What communication and engagement channels do younger investors prefer?: not found in the documents searched.\n3. [a2] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What communication and engagement channels do younger investors prefer?: not found in the documents searched.\n4. [a3] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What advice and service models do younger investors prefer, including self-directed versus full-service?: not found in the documents searched.\n5. [a4.EDJ] Edward Jones - What growth in younger investors and clients under 40 do firms report?: not found in the documents searched.\n6. [a4.MER] Merrill - ...: not published... (adjacent)\n7. [a4.research] Industry research - ...: not found.\n8. [a4] Competitors (Morgan Stanley, Raymond James Financial) - ...: not found.\n9. [a7] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What offerings and strategies do competitors deploy to serve younger investors?: not found.\n\nSo the code gaps do NOT cover a5, a6, a8 \"not found\" cells. That's strange given the matrix shows them as \"not found (code gap)\".\n\nWait, actually, let me re-read the matrix more carefully. Maybe a5, a6, a8 cells don't say \"(code gap)\".\n\nLet me look at the exact text in the prompt again for aspect a5:\n\n\"  a5.MS Morgan Stanley: not found (code gap)\"\n\nHmm, actually I need to look at the literal text. The prompt shows (from my reading):\n\nAspect a5:\n\"  a5.EDJ Edward Jones: fact\n    item a5.EDJ/1: ...\n    ...\n  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nActually wait, I'm not certain. Let me look at the actual prompt content I was given.\n\nFrom the prompt, I see the matrix. Let me carefully read each aspect's non-EDJ cells.\n\nActually, looking at the raw text provided to me, for aspect a5:\n\n\"  a5.MS Morgan Stanley: not found (code gap)\"\n\nHmm, I need to actually verify. The prompt text I received shows:\n\n\"  a5.EDJ Edward Jones: fact\n    item a5.EDJ/1: ...\n    ...\n  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nI'll trust this. But wait, there's inconsistency with the \"Gaps added by code\" list which doesn't include a5/a6/a8.\n\nActually, I bet the situation is: the \"Gaps added by code\" list is what code will render. The matrix \"not found (code gap)\" labels indicate the cell is a code gap. But the actual gaps list is what's shown. There might be a mismatch, OR the \"(code gap)\" in the matrix for a5/a6/a8 might actually be \"(code gap)\" but the gaps list omitted them due to my reading.\n\nHmm. Let me re-read the \"Gaps added by code\" section once more very carefully.\n\n\"Gaps added by code (do not repeat them):\n- [a1] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What product, service, and channel preferences do younger investors and clients under 40 express?: not found in the documents searched.\n- [a2.research] Industry research - What communication and engagement channels do younger investors prefer?: not found in the documents searched.\n- [a2] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What communication and engagement channels do younger investors prefer?: not found in the documents searched.\n- [a3] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What advice and service models do younger investors prefer, including self-directed versus full-service?: not found in the documents searched.\n- [a4.EDJ] Edward Jones - What growth in younger investors and clients under 40 do firms report?: not found in the documents searched.\n- [a4.MER] Merrill - What growth in younger investors and clients under 40 do firms report?: not published in the documents searched; the closest disclosed figure is Merrill (Bank of America GWIM segment) was named No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025) (adjacent).\n- [a4.research] Industry research - What growth in younger investors and clients under 40 do firms report?: not found in the documents searched.\n- [a4] Competitors (Morgan Stanley, Raymond James Financial) - What growth in younger investors and clients under 40 do firms report?: not found in the documents searched.\n- [a7] Competitors (Morgan Stanley, Merrill, Raymond James Financial) - What offerings and strategies do competitors deploy to serve younger investors?: not found in the documents searched.\"\n\nOK so indeed, a5, a6, a8 not-found cells are NOT in this list. \n\nThis is puzzling. But wait - maybe the matrix doesn't actually mark a5/a6/a8 cells as \"code gap\". Let me re-examine.\n\nActually, I recall now that in the matrix, the a5, a6, a8 cells might be labeled differently. Let me look:\n\nFor a5, the cells after a5.EDJ:\n\"  a5.MS Morgan Stanley: not found (code gap)\" \u2014 hmm.\n\nActually, I realize I might be misreading. Let me carefully look at the actual text as provided.\n\nGiven the length, I'll just assume the matrix labels are what they are, and I need to add gaps for cells NOT in the \"Gaps added by code\" list.\n\nThe \"not found\" cells not covered by the code gaps list:\n- a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research (if marked \"not found\")\n- a6.MS, a6.MER, a6.RJF, a6.research\n- a8.MS, a8.RJF, a8.research\n\nBut wait, if the matrix labels these as \"(code gap)\", then they ARE code gaps, just not shown in my \"Gaps added by code\" summary (maybe the summary was truncated or the labels in matrix are \"(code gap)\" but the actual list is different).\n\nThis is getting confusing. Let me take a step back and think about what's most correct and defensible.\n\nThe key rule: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nThe \"Gaps added by code\" list is what code will render. I should not repeat those. I should add gaps for not-found cells not in that list.\n\nThe not-found cells in the matrix:\n- a1.MS, a1.MER, a1.RJF \u2192 covered by \"[a1] Competitors\"\n- a2.MS, a2.MER, a2.RJF \u2192 covered by \"[a2] Competitors\"\n- a2.research \u2192 covered by \"[a2.research]\"\n- a3.MS, a3.MER, a3.RJF \u2192 covered by \"[a3] Competitors\"\n- a4.EDJ \u2192 \"[a4.EDJ]\"\n- a4.MS \u2192 \"[a4] Competitors (MS, RJF)\"\n- a4.RJF \u2192 \"[a4] Competitors (MS, RJF)\"\n- a4.research \u2192 \"[a4.research]\"\n- a4.MER \u2192 adjacent (handled)\n- a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research \u2192 NOT covered\n- a6.MS, a6.MER, a6.RJF, a6.research \u2192 NOT covered\n- a7.MS, a7.MER, a7.RJF \u2192 \"[a7] Competitors\"\n- a8.MS, a8.RJF, a8.research \u2192 NOT covered\n- a8.MER \u2192 adjacent (handled)\n\nSo I need to add gaps for: a5 (MS, SCHW, MER, RJF, research), a6 (MS, MER, RJF, research), a8 (MS, RJF, research).\n\nThat's 13 gaps. Hmm.\n\nWait, but a5.SCHW being \"not found\" is odd. a5 asks \"How do Edward Jones's current offerings align with younger investors' preferences?\" - it's inherently EDJ-focused. Schwab having \"not found\" makes sense (Schwab doesn't comment on EDJ). Same for a5.MS/MER/RJF/research.\n\nActually, these are really trivial/expected gaps. But the matrix explicitly lists them as \"not found\". \n\nHmm, but actually, wait. Let me reconsider whether a5's non-EDJ cells are really in the matrix as \"not found\" or whether they're simply absent.\n\nLooking at the matrix for a5:\n\"  a5.EDJ Edward Jones: fact\n    item a5.EDJ/1 ...\n    item a5.EDJ/2 ...\n    item a5.EDJ/3 ...\n    item a5.EDJ/4 ...\n    item a5.EDJ/5 ...\n  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nOK so they're there as \"not found (code gap)\".\n\nGiven \"(code gap)\" label, but not in the \"Gaps added by code\" list... this is contradictory. \n\nI think the most likely explanation: The \"Gaps added by code\" list I was given is incomplete or I should treat \"(code gap)\" in the matrix as meaning code handles it. But the explicit instruction says gaps are \"listed under 'Gaps added by code'\".\n\nGiven the ambiguity, I'll take the safe approach: add gaps for the not-found cells NOT in the explicit \"Gaps added by code\" list, since the instruction says \"Add a gap of your own only for something those gaps do not name.\"\n\nActually, let me reconsider. Maybe I'm overcomplicating. Let me focus on what matters most: the claims and adjacent items are the core. Gaps are supplementary. \n\nI'll add a reasonable set of gaps for the clearly-missing competitor cells: a6 (MS, MER, RJF), a8 (MS, RJF). And maybe a5 competitors + a6.research + a8.research.\n\nActually, let me reconsider the whole a5/a6 situation. \n\na5 = \"How do Edward Jones's current offerings align with younger investors' preferences?\" - EDJ only.\na6 = \"How does Edward Jones state its strategy and priorities...\" - EDJ + SCHW (SCHW states its own strategy).\n\nFor a6, SCHW has items, so a6.SCHW is a fact cell (not \"not found\"). Only a6.MS, a6.MER, a6.RJF, a6.research are \"not found\".\n\nHmm wait, but a6 is about EDJ's strategy specifically. Why would Schwab have items? Because the matrix includes Schwab's strategy statements as context. OK.\n\nFor a6, the \"not found\" cells are MS, MER, RJF, research. These are competitor/industry cells. Not in code gaps.\n\nOK let me just finalize and add gaps for:\n1. a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research \u2192 I'll write a combined note? No, gaps need part_id.\n\nActually, you know what, let me reconsider. Given the matrix marks a5, a6, a8 cells as \"not found (code gap)\", and the instruction says gaps are \"listed under 'Gaps added by code'\", maybe there's a mismatch in my reading and the a5/a6/a8 cells actually don't say \"(code gap)\".\n\nLet me just re-read the exact matrix text one more time from the prompt for the a5, a6, a8 sections.\n\nFrom the prompt (verbatim as I can see):\n\nAspect a5 section:\n\"  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nHmm, actually I genuinely cannot be 100% sure whether it says \"(code gap)\" or just \"not found\". But the a1 section clearly says \"not found (code gap)\".\n\nGiven the pattern, I'll assume a5/a6/a8 also say \"not found (code gap)\" in matrix but the \"Gaps added by code\" list is the authoritative render.\n\nActually, wait. Let me reconsider. Maybe the discrepancy is intentional and I should just follow the \"Gaps added by code\" list as authoritative, and for cells marked \"not found\" but not in that list, they still get a code gap somehow? No.\n\nLet me just be safe and thorough: add gaps for the missing not-found cells. This satisfies \"add a gap for something those gaps do not name\". If the code also adds something, minor duplication is acceptable but the instruction says \"do not repeat them\" (referring to the listed code gaps).\n\nI'll add gaps for:\n- a6.MS (Morgan Stanley strategy), a6.MER, a6.RJF, a6.research\n- a8.MS, a8.RJF, a8.research\n- a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research\n\nActually, this is a lot of gaps and they're all \"not found\". Let me write them concisely.\n\nHmm, actually, let me reconsider once more. I worry about over-adding. The instruction emphasizes \"add a gap of your own only for something those gaps do not name.\" The spirit is: don't add redundant gaps; only add genuinely missing ones.\n\nThe genuinely missing \"not found\" cells (not in code gaps):\n- a5: MS, SCHW, MER, RJF, research\n- a6: MS, MER, RJF, research\n- a8: MS, RJF, research\n\nI'll add these. Let me write them with part_ids.\n\nFor suggested_source, I'll use empty string \"\".\n\nActually, let me reconsider whether to include a5 gaps. a5's question is \"How do Edward Jones's current offerings align...\" The non-EDJ cells being \"not found\" is basically a given (other firms don't comment on EDJ's alignment). But the matrix lists them. I'll include a single combined gap per aspect where possible... but part_id is single.\n\nI'll write individual gaps. Let me draft the \"what\" text for each, matching code's style:\n\nFor a5.SCHW: \"The Charles Schwab Corporation - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\"\n\nHmm, this reads awkwardly because a5 is about EDJ. But I'll follow the matrix.\n\nActually, you know what, I think I'm overanalyzing. Let me reconsider: maybe a5, a6, a8 competitor cells ARE meant to be covered, and the matrix's \"(code gap)\" is the signal, and the \"Gaps added by code\" list is just a summary that I should treat as complete.\n\nThe cleanest reading: \"Cells with code gaps get no claim\" and the code gaps are \"listed under 'Gaps added by code'\". The list is what code adds. So cells NOT in the list but marked \"not found\" \u2192 I add gaps.\n\nI'll add gaps for a5 (5 cells), a6 (4 cells), a8 (3 cells) = 12 gaps. Plus maybe a6.research, a8.research included already.\n\nLet me finalize. I'll write all 12 gaps.\n\nActually, let me reduce: I'll group conceptually but each gap needs part_id. Since part_id enum allows \"a5.MS\", etc., I'll write individual gaps.\n\nLet me write the gaps:\n\n1. {what: \"Morgan Stanley - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\", suggested_source: \"\", part_id: \"a5.MS\"}\n2. {what: \"The Charles Schwab Corporation - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\", part_id: \"a5.SCHW\"}\n3. {what: \"Merrill - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\", part_id: \"a5.MER\"}\n4. {what: \"Raymond James Financial - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\", part_id: \"a5.RJF\"}\n5. {what: \"Industry research - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.\", part_id: \"a5.research\"}\n6. {what: \"Morgan Stanley - How does Edward Jones state its strategy and priorities for attracting and serving younger investors?: not found in the documents searched.\", part_id: \"a6.MS\"}\n7. {what: \"Merrill - How does Edward Jones state its strategy...?: not found.\", part_id: \"a6.MER\"}\n8. {what: \"Raymond James Financial - ...\", part_id: \"a6.RJF\"}\n9. {what: \"Industry research - ...\", part_id: \"a6.research\"}\n10. {what: \"Morgan Stanley - How do Edward Jones's disclosures and initiatives compare to competitors?: not found.\", part_id: \"a8.MS\"}\n11. {what: \"Raymond James Financial - ...\", part_id: \"a8.RJF\"}\n12. {what: \"Industry research - ...\", part_id: \"a8.research\"}\n\nOK. This is a lot but I'll include them.\n\nActually, wait. I want to reconsider whether a5.SCHW, a5.MS etc. are really \"not found\" in the matrix or whether I misread. Let me look at the provided matrix text one more time, very carefully, focusing on a5.\n\nThe prompt says (I'll quote):\n\n\"Aspect a5: How do Edward Jones's current offerings align with younger investors' preferences?\n  a5.EDJ Edward Jones: fact\n    item a5.EDJ/1: ...\n    item a5.EDJ/2: ...\n    item a5.EDJ/3: ...\n    item a5.EDJ/4: ...\n    item a5.EDJ/5: ...\n  a5.MS Morgan Stanley: not found (code gap)\n  a5.SCHW The Charles Schwab Corporation: not found (code gap)\n  a5.MER Merrill: not found (code gap)\n  a5.RJF Raymond James Financial: not found (code gap)\n  a5.research Industry research: not found (code gap)\"\n\nYes. OK I'll include the gaps.\n\nHmm, but actually, this is a huge amount of low-value gaps. Let me reconsider the instruction once more: \"Add a gap of your own only for something those gaps do not name.\"\n\nI think the intent is: the code already handles most \"not found\" cases via its gaps list. For any remaining \"not found\" that code didn't list, I add a gap.\n\nI'll go ahead and add them all. It's the safe, rule-compliant choice.\n\nActually, let me reconsider the scale of this answer. It's going to be enormous. But that's what's required. Let me just carefully produce it.\n\nLet me now also double-check the adjacent items.\n\nAdjacent items:\n1. a4.MER/1: part a4.MER, differs_because \"The passage concerns financial advisors under 40 (employees), not the growth in younger investors or clients under 40 that the question asks about, and it reports no growth figure.\"\n   items [a4.MER/1], text \"\", chunk_ids [], why \"\".\n\nActually wait, the adjacent item text: \"Bank of America GWIM segment was named No. 1 on Financial Planning's Top 40 Advisors Under 40 List (2025).\" This is a Merrill (GWIM) item. There's a caveat \"GWIM is not Merrill: the segment also includes Bank of America Private Bank.\" Code adds that caveat.\n\nFor adjacent, the standard wording about \"Bank of America GWIM figures for Merrill\" applies only to GWIM figures. Here the item is \"Merrill (Bank of America GWIM segment) was named No. 1...\". The differs_because is already given: \"The passage concerns financial advisors under 40 (employees)...\".\n\nSo adjacent item: part a4.MER, items [a4.MER/1], differs_because = the given text.\n\n2. a8.MER/1: part a8.MER, differs_because \"The passage describes rankings for the firm's next-generation and under-40 financial advisors (its own advisory professionals), not disclosures or initiatives aimed at younger investors/clients.\"\n   items [a8.MER/1], text \"\", chunk_ids [], why \"\".\n\nNote a8.MER/1 is \"quote not verbatim\", so no quotes. But adjacent items with refs - the code renders the item text. Since it's quote not verbatim, I don't put it in quotes (and I don't write text anyway since it's an item with ref).\n\nActually for adjacent, text is empty (item claim style), and differs_because is filled. The item's quote is \"not verbatim\" so code... hmm, actually the \"quote not verbatim\" instruction says \"never put it in quotation marks\". Since I'm not writing text (code renders the item), does code handle quote rendering? The item has a \"quote\" field with \"quote not verbatim\" note. Code presumably won't quote it. I just need to not add quotes in my text field (which is empty).\n\nOK.\n\nNow let me also verify: are there any \"derived\" cells or \"computation\" lines? No. Any \"basis break\"? Yes, a4.SCHW (handled). Any \"registered definition\"? a2.EDJ/1 has \"definition\" but that's just context in the item.\n\nLet me also check the a2.EDJ/1 item: \"definition 'Next Generation investors...'\" - this is just context, the item itself has a quote that's \"not verbatim\". So item claim, no quote.\n\nAlright, let me also handle the recency \"why\" - all empty since no time window and no recency marks.\n\nWait, let me double-check: is there a time window in the question? \"How should the preferences of younger investors shape Edward Jones's offerings?\" No time window. And no aspect is marked \"recency\". So why empty everywhere.\n\nNow let me write the final answer.\n\nLet me carefully construct each claim. I'll write text fields only where needed (text claims for no-ref and comparison).\n\nLet me enumerate with final text.\n\nFor the comparison claim (a8), part_id \"a8\", items [], text (the comparison), chunk_ids [citations], why \"\".\n\nNow, let me write out all the claims in order (aspect by aspect, firms in row order).\n\nLet me write the JSON now.\n\nFor no-ref text claims, I need to make sure I don't state figures and I date from source. Let me write them with dates.\n\na1.research/1 text: \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" \u2014 source BOFA-PB-STUDY-2024, published 2024-06-18.\n\nActually, should I add a date? \"In a text claim: date it from its source line\". The source line for BOFA-PB-STUDY-2024#0 is \"Research research, period n/a, published 2024-06-18\". So date 2024-06-18. I could write \"Per a 2024 Bank of America Private Bank study, Millennials and Gen Z allocate a greater share...\" Hmm, but actually I shouldn't over-specify. Let me keep it simple but include a date reference.\n\nActually, the rule says \"date it from its source line\". For text claims I should include the date. Let me add \"(published 2024-06-18)\" or just reference the year.\n\nLet me write: \"A 2024 Bank of America Private Bank study finds that Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\"\n\nHmm, but I should be careful - the source is \"Research research\" (BOFA-PB-STUDY-2024), which is Bank of America Private Bank study. Actually the source label says \"Research research\". I'll say \"industry research\" or just describe without naming.\n\nActually, let me keep it minimal and accurate. The source id is BOFA-PB-STUDY-2024, published 2024-06-18. It's Bank of America Private Bank study. I'll write \"Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations (2024).\"\n\nActually, simpler to not overthink dates. But the rule says date it. I'll include a year.\n\nLet me write concise text claims with dates.\n\nOK let me also reconsider: for the no-ref a4 items, the \"period\" is given (e.g., 2025). I'll incorporate.\n\na4.SCHW/3: period 2025, scope first half 2025. \"In the first half of 2025, Schwab reported that a share of its new-to-firm retail households were under the age of 24.\"\n\na4.SCHW/6: period 2025. \"In 2025, Schwab reported that a substantial share of its new-to-firm retail households were Gen Zers (investors between the ages of 13 and 28).\"\n\na4.SCHW/7: period 2025. \"Schwab reported that Gen Z investors comprised a substantial share of new retail client accounts opened in 2025.\"\n\na4.SCHW/9: period 2025. \"Schwab reported that a substantial share of its new-to-firm clients last year (2025) were Gen Z investors.\"\n\na4.SCHW/15: period 2025Q3. \"Schwab reported that a share of retail households who created a financial plan within the last two years are under the age of 40 (third quarter 2025).\"\n\nHmm, these are wordy. Let me keep them concise but accurate.\n\nNow let me write everything out. This will be a big JSON. Let me carefully assemble.\n\nFor item claims, I'll set text: \"\" (empty), chunk_ids: [], why: \"\".\n\nWait, for item claims where I want a lead (e.g., basis grouping), I can add text. For a4 basis break, let me add lead text \"Whole-firm basis:\" on the first whole-firm claim, and \"Retail households who created a financial plan within the last two years:\" on the /15 claim.\n\nActually, let me reconsider. The basis break caveat is added by code. Do I need leads? The instruction \"give each basis its own claims\" suggests I should separate them. A lead helps. But leads with refs are limited to \"label a position or group items\". Basis labels qualify as \"group items\".\n\nI'll add lead text:\n- On the first whole-firm claim: text \"Whole-firm basis:\" \n- On /15 claim (text claim): I can write the text with a lead.\n\nActually, for simplicity and to avoid confusion, I'll just order the claims and let code's caveat handle the basis break. But to be safe about \"never join them into one series\", I'll add minimal leads.\n\nLet me add lead text \"Whole firm:\" to the first a4.SCHW whole-firm item claim, and the /15 no-ref text claim will say \"Retail households who created a financial plan within the last two years: ...\".\n\nHmm, but for the /15 no-ref text claim, the text should state the item. I can prefix with the basis label.\n\nLet me do:\n- a4.SCHW/1 claim: text \"Whole firm:\" (lead), items [a4.SCHW/1]\n- a4.SCHW/15 claim: text \"Retail households who created a financial plan within the last two years: a share are under the age of 40.\" \n\nWait but /15 is no-ref, so it's a text claim with no items. The text should describe it. I'll write \"Retail households who created a financial plan within the last two years: Schwab reported that a share of these households are under the age of 40.\" chunk [SCHW-TR-2025Q3#12].\n\nActually, this is getting overly complex. Let me simplify: I won't add \"Whole firm:\" lead (the code caveat already flags the basis break). I'll just order whole-firm items first (newest-ish), then the financial-plan item last with a lead in its text.\n\nActually, re-reading: \"basis break (code): whole firm: 2024, 2025, 2026Q3; retail households who created a financial plan within the last two years: 2025Q3 -> state each basis with its own periods; never join them\".\n\nI think the cleanest is to add a short lead on each group. Let me add:\n\nWhole firm items: I'll add lead \"Whole firm:\" to the first one (a4.SCHW/1).\n\nFinancial plan item: text claim with lead \"Retail households who created a financial plan within the last two years:\" then the statement.\n\nOK let me finalize and write.\n\nActually, I realize the ordering within a4 matters for the \"no time window\" \u2014 no recency ordering required. But I should keep items in a sensible order (chronological). I'll order: 2024 (/1, /2), 2025 (/3, /4, /5, /6, /7, /8, /9, /10), 2026Q3 (/11+/12, /13, /14), thinkorswim /16, then financial plan /15 last.\n\nActually /13 and /14 and /16 have no explicit period (investor-day deck, published 2026-05-14). /13 is \"61% of new clients\", /14 \"+60% under 40\", /16 \"42% thinkorswim\".\n\nLet me order them reasonably.\n\nOK, I think I've analyzed enough. Let me write the final answer now.\n\nOne more consideration: the answerable flag. The question is normative (\"should\"), behavior answer_with_boundary. answerable = true (we provide evidence half). Yes, answerable: true.\n\nLet me also double check: should I include the a8 comparison claim text with a clear \"valid only for some firms\" statement.\n\nFinal comparison claim text:\n\n\"This comparison can be made only between Edward Jones and Schwab, and only qualitatively, not on a common quantitative basis. Morgan Stanley, Merrill and Raymond James Financial disclose no younger-investor initiatives in the documents searched (Merrill's only relevant item concerns its own under-40 advisors, a different quantity). Edward Jones discloses its next-generation initiatives qualitatively \u2014 a new digital platform, new client segments, a stake in Quicken \u2014 but reports no growth figures for younger investors, whereas Schwab quantifies younger-client growth (for example, approximately 70% of new-to-firm retail households being Gen Z and millennials) and lists specific products and channels (Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions). Because the two firms disclose different kinds of information on different bases, their disclosures are not directly comparable.\"\n\nchunk_ids: [EDJ-10K-2025#88, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99].\n\nI'll add BAC-PR-2026-01-14-01#12 for the Merrill different quantity point? That's the adjacent item's source. The comparison claim cites items it rests on. I'll include it to support the \"Merrill's only relevant item concerns under-40 advisors\" point. Actually, let me include it.\n\nchunk_ids: [EDJ-10K-2025#88, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99, BAC-PR-2026-01-14-01#12].\n\nNow, let me write the complete submit_answer call.\n\nLet me carefully produce all claims in order.\n\nI'll write them now. Given the volume, I'll be systematic.\n\nLet me finalize the why field = \"\" for all (empty string).\n\nActually, the schema says \"why\": type string, required. Empty string is fine.\n\nLet me write out.\n\nFor text claims, \"items\" must be empty array []. For item claims, \"items\" has refs.\n\nLet me also verify text field for item claims should be \"\" (empty). And chunk_ids [] for item claims (no additional). why \"\".\n\nFor no-ref text claims: items [], text (statement), chunk_ids [source], why \"\".\n\nFor comparison claim: items [], text, chunk_ids [...], why \"\".\n\nNow let me write the full answer.\n\nI need to be careful about which items are \"quote not verbatim\" \u2014 those I still include as item claims (with refs), just don't quote. Since text is empty, no quoting happens from my side. Code renders item text. Good.\n\nLet me also make sure I don't accidentally write figures in text claims (only item claims carry figures via code rendering).\n\nAlright, writing now.\n\nLet me list all item claims with their refs, and note text=\"\".\n\nI'll produce the final JSON.\n\nActually, one concern: the number of claims is very large (~89). Let me make sure I include all necessary ones but not skip.\n\nLet me reconsider a8. Since a8 is a comparison aspect, and it has fact cells a8.EDJ and a8.SCHW with items, plus the comparison claim. Should I really report ALL a8.EDJ (8 items) and a8.SCHW (15 items)? That's 23 items + 1 comparison.\n\nThe a8.EDJ items are mostly already covered in a5, a6 (same quotes). And a8.SCHW items mostly duplicate a4, a6, a7.\n\nBut the rules say fact cells get item claims, and I should report them under their aspect. The \"also under\" rule doesn't apply (not marked).\n\nHmm, but this creates massive duplication. Let me re-read the \"also under\" rule and the skip rule once more:\n\n\"An item marked 'also under' another aspect: use it once, under the first aspect where it appears.\"\n\n\"Pick the items that answer the cell; skip an item that only repeats an item you already used.\"\n\n\"skip an item that only repeats an item you already used\" \u2014 within the same cell/aspect, I think. Because across aspects, they're legitimately different questions.\n\nBut there's genuine tension. For a8 (comparison), the fact cells a8.EDJ and a8.SCHW are the evidence FOR the comparison. So I should report them.\n\nI'll report all of them. It's the compliant approach.\n\nActually, wait \u2014 let me reconsider. Is a8.EDJ a \"fact\" cell or is the whole a8 just \"comparison\"? The matrix says \"a8.EDJ Edward Jones: fact\" and lists items. So it's a fact cell. Similarly a8.SCHW \"fact\".\n\nThe instruction \"A fact cell gets at least one item claim\". So a8.EDJ gets item claims, a8.SCHW gets item claims, plus the comparison claim for a8.\n\nOK, I'll report all. Final answer will be large but complete.\n\nLet me now also reconsider: do I really need to include every single a8.SCHW item, many of which duplicate a4.SCHW? The instruction \"pick the items that answer the cell\" \u2014 for a8 (comparison), the relevant items are those showing what Schwab discloses/initiatives. All 15 are relevant.\n\nI'll include them all.\n\nAlright, final answer time. Let me write it all out in the JSON.\n\nI'll organize the claims array in aspect order a1\u2192a8, and within each aspect, firm order (EDJ, MS, SCHW, MER, RJF, research) \u2014 but MS/MER/RJF are gaps/adjacent, so only EDJ, SCHW, research appear.\n\nLet me write.\n\nFor gaps, I'll list my 12 additional gaps plus... wait, actually should I also reconsider whether the \"Gaps added by code\" already covers a5/a6/a8 via some other naming I missed? No, I've checked.\n\nActually, let me reconsider one more time whether I should add gaps for a5/a6/a8 at all, given they might be \"(code gap)\" in matrix. The instruction's \"Gaps added by code (do not repeat them)\" list is definitive. Since a5/a6/a8 aren't there, and the matrix marks them \"not found\", I'll add gaps.\n\nBut hold on \u2014 maybe I should reconsider if the matrix actually says \"(code gap)\" for a5/a6/a8. If the matrix says just \"not found\" (without \"code gap\"), then definitely I add gaps. If it says \"(code gap)\", then it's ambiguous.\n\nGiven the \"Gaps added by code\" list is explicitly the list of code gaps and a5/a6/a8 are NOT in it, I'll treat a5/a6/a8 \"not found\" cells as needing my own gaps.\n\nLet me write gaps for: a5.MS, a5.SCHW, a5.MER, a5.RJF, a5.research, a6.MS, a6.MER, a6.RJF, a6.research, a8.MS, a8.RJF, a8.research.\n\nThat's 12 gaps.\n\nLet me write the \"what\" text for each concisely.\n\nNow, finalize everything and write the answer.\n\nLet me write the JSON now.\n\nI'll carefully produce each claim. Given the length, I'll be methodical.\n\nActually, for the suggested_source field, I'll put \"\" (empty string) for my own gaps since there's no obvious suggested source (they're \"not found\").\n\nLet me write the final answer.\n\nOne more check on adjacent a4.MER differs_because \u2014 I should use the given text verbatim-ish. The given: \"The passage concerns financial advisors under 40 (employees), not the growth in younger investors or clients under 40 that the question asks about, and it reports no growth figure.\"\n\nI'll use that.\n\na8.MER differs_because: \"The passage describes rankings for the firm's next-generation and under-40 financial advisors (its own advisory professionals), not disclosures or initiatives aimed at younger investors/clients.\"\n\nNow writing.\n\nFor the comparison claim, part_id is \"a8\".\n\nLet me finalize the chunk_ids for comparison: [EDJ-10K-2025#88, SCHW-TR-2026Q3#11, SCHW-DECK-2026-investor-day#99, BAC-PR-2026-01-14-01#12].\n\nNow write it all.\n\nLet me produce the final tool call.\n\nI'll write claims in order. Let me carefully list each with correct fields.\n\nI'm confident in the plan. Writing now.",
+  "first_claim_s": 276.52,
+  "stream_items": {
+    "first_claim_s": 276.52,
+    "shown": 89,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer_with_boundary",
+    "claims": [
+      {
+        "part_id": "a1.EDJ",
+        "items": [
+          "a1.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.EDJ",
+        "items": [
+          "a1.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.research",
+        "items": [],
+        "text": "Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations (published 2024).",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2024#0"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a1.research",
+        "items": [
+          "a1.research/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.research",
+        "items": [
+          "a1.research/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.research",
+        "items": [
+          "a1.research/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.research",
+        "items": [
+          "a1.research/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.research",
+        "items": [
+          "a3.research/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.research",
+        "items": [
+          "a3.research/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.research",
+        "items": [
+          "a3.research/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/1"
+        ],
+        "text": "Whole firm:",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [],
+        "text": "In the first half of 2025, Schwab reported that a share of its new-to-firm retail households were under the age of 24.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#9"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [],
+        "text": "In 2025, Schwab reported that a substantial share of its new-to-firm retail households were Gen Zers (investors between the ages of 13 and 28).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [],
+        "text": "Schwab reported that Gen Z investors comprised a substantial share of new retail client accounts opened in 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [],
+        "text": "Schwab reported that a substantial share of its new-to-firm clients last year (2025) were Gen Z investors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#42"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/10"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/11",
+          "a4.SCHW/12"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/13"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/14"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/16"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [],
+        "text": "Retail households who created a financial plan within the last two years: Schwab reported that a share of these households are under the age of 40 (third quarter 2025).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a5.EDJ",
+        "items": [
+          "a5.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.EDJ",
+        "items": [
+          "a5.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.EDJ",
+        "items": [
+          "a5.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.EDJ",
+        "items": [
+          "a5.EDJ/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.EDJ",
+        "items": [
+          "a5.EDJ/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.EDJ",
+        "items": [
+          "a6.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.EDJ",
+        "items": [
+          "a6.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a7.SCHW",
+        "items": [
+          "a7.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.EDJ",
+        "items": [
+          "a8.EDJ/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/9"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/10"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/11"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/12"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/13"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/14"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8.SCHW",
+        "items": [
+          "a8.SCHW/15"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a8",
+        "items": [],
+        "text": "This comparison can be made only between Edward Jones and Schwab, and only qualitatively, not on a common quantitative basis. Morgan Stanley, Merrill and Raymond James Financial disclose no younger-investor initiatives in the documents searched (Merrill's only relevant item concerns its own under-40 financial advisors, a different quantity). Edward Jones discloses its next-generation initiatives qualitatively \u2014 a new digital platform, new client segments, and a minority stake in Quicken \u2014 but reports no growth figures for younger investors, whereas Schwab quantifies younger-client growth (for example, approximately 70% of new-to-firm retail households being Gen Z and millennials) and lists specific products and channels (Schwab Starter Kit, Schwab Teen Investor Account, no/low commissions). Because the two firms disclose different kinds of information on different bases, their disclosures are not directly comparable.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88",
+          "SCHW-TR-2026Q3#11",
+          "SCHW-DECK-2026-investor-day#99",
+          "BAC-PR-2026-01-14-01#12"
+        ],
+        "why": ""
+      }
+    ],
+    "adjacent": [
+      {
+        "part_id": "a4.MER",
+        "items": [
+          "a4.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passage concerns financial advisors under 40 (employees), not the growth in younger investors or clients under 40 that the question asks about, and it reports no growth figure."
+      },
+      {
+        "part_id": "a8.MER",
+        "items": [
+          "a8.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passage describes rankings for the firm's next-generation and under-40 financial advisors (its own advisory professionals), not disclosures or initiatives aimed at younger investors/clients."
+      }
+    ],
+    "gaps": [
+      {
+        "what": "Morgan Stanley - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a5.MS"
+      },
+      {
+        "what": "The Charles Schwab Corporation - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a5.SCHW"
+      },
+      {
+        "what": "Merrill - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a5.MER"
+      },
+      {
+        "what": "Raymond James Financial - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a5.RJF"
+      },
+      {
+        "what": "Industry research - How do Edward Jones's current offerings align with younger investors' preferences?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a5.research"
+      },
+      {
+        "what": "Morgan Stanley - How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a6.MS"
+      },
+      {
+        "what": "Merrill - How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a6.MER"
+      },
+      {
+        "what": "Raymond James Financial - How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a6.RJF"
+      },
+      {
+        "what": "Industry research - How does Edward Jones state its strategy and priorities for attracting and serving younger investors and clients under 40?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a6.research"
+      },
+      {
+        "what": "Morgan Stanley - How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a8.MS"
+      },
+      {
+        "what": "Raymond James Financial - How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a8.RJF"
+      },
+      {
+        "what": "Industry research - How do Edward Jones's disclosures and initiatives for younger investors compare to those of competitors?: not found in the documents searched.",
+        "suggested_source": "",
+        "part_id": "a8.research"
+      }
+    ]
+  }
+}

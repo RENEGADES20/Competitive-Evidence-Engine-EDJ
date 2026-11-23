@@ -53,7 +53,9 @@ def row(qid, rep, rec):
     ans = (rep or {}).get("answer") or {}
     flags = red.get("flags") or {}
     claims = ans.get("claims") or []
-    return {"q": qid, "how": red.get("how"), "stop": (rec or {}).get("stop_reason"),
+    cost = next((x.get("cost") or {} for x in ((rep or {}).get("cost") or {}).get("rows") or []
+                 if x.get("type") == "reduce"), {})
+    return {"period": cost.get("period"), "usd": cost.get("usd"), "usd_peak": cost.get("usd_peak"),"q": qid, "how": red.get("how"), "stop": (rec or {}).get("stop_reason"),
             "failed": bool((rec or {}).get("failed_call") or (rec or {}).get("invalid")),
             "out": out, "reasoning": rea, "answer_tokens": (out - rea) if out is not None and rea is not None else None,
             "wall": (rec or {}).get("wall_s"), "ttft": (rec or {}).get("ttft_s"),
@@ -95,6 +97,9 @@ def main():
                   "r_uncited", "r_rendered_outside", "r_model_outside", "r_rendered_number_not_found",
                   "r_model_number_not_found", "r_text_claims", "r_refs"):
             summ[f"{name}_{k}_sum"] = sum(r[k] or 0 for r in rs)
+        summ[f"{name}_reduce_usd"] = round(sum(r["usd"] or 0 for r in rs), 4)
+        summ[f"{name}_reduce_usd_at_peak"] = round(sum(r["usd_peak"] or 0 for r in rs), 4)
+        summ[f"{name}_periods"] = {k: sum(r["period"] == k for r in rs) for k in {r["period"] for r in rs}}
         summ[f"{name}_cut_invalid_failed"] = sum(r["failed"] or r["stop"] == "length" or r["how"] in ("invalid", "failed")
                                                  for r in rs)
         summ[f"{name}_fallback_questions"] = [r["q"] for r in rs if r["fallback"]]
