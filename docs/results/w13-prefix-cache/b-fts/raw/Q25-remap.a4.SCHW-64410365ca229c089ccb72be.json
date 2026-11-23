@@ -1,0 +1,78 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a4.SCHW",
+  "round": 2,
+  "entity": "SCHW",
+  "cells": [
+    "a4.SCHW"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "SCHW-10Q-2025Q3#129",
+    "SCHW-10K-2025#579",
+    "SCHW-ADV-2026#42",
+    "SCHW-TR-2026Q3#5",
+    "SCHW-DECK-2026Q3#35",
+    "SCHW-10Q-2026Q2#357",
+    "SCHW-10K-2025#211",
+    "SCHW-ADV-2026#64",
+    "SCHW-TR-2025Q4#4",
+    "SCHW-DECK-2026-investor-day#234",
+    "SCHW-10Q-2026Q1#272",
+    "SCHW-10K-2025#570",
+    "SCHW-ADV-2026#44",
+    "SCHW-TR-2024Q4#12",
+    "SCHW-DECK-2026-investor-day#14",
+    "SCHW-10Q-2025Q3#334",
+    "SCHW-TR-2024Q4#24",
+    "SCHW-TR-2024Q4#14",
+    "SCHW-DECK-2026-investor-day#96",
+    "SCHW-TRADE-2026-09-23-RB-01#4"
+  ],
+  "at": "2026-11-23T00:45:53.443292-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6166,
+    "output_tokens": 1286,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4630,
+    "reasoning_tokens": 1137,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.84
+  },
+  "wall_s": 23.62,
+  "tokens_per_s": 54.45,
+  "ttft_s": 1.84,
+  "reasoning_content": "The question asks about recruiting compensation, transition pay, and forgivable loans disclosed for advisor compensation at Schwab. Let me look at the passages.\n\nNone of the passages specifically discuss recruiting compensation, transition pay, or forgivable loans for advisors. The passages discuss FC compensation generally (enrolling clients in SWA Program), incentive compensation risk, bonus plans, stock incentive plans, hiring of financial consultants, etc.\n\nLet me check each passage:\n\n- SCHW-10Q-2025Q3#129: discusses adjusted diluted EPS and return on tangible common equity as performance criteria for employee bonus and executive management incentive compensation. This is about employee bonus, not recruiting/transition/forgivable loans for advisors. Could be different_quantity? Actually this is about bonus compensation criteria, not recruiting compensation/transition pay/forgivable loans. It's a different quantity.\n\n- SCHW-10K-2025#579: lists exhibit forms - RSU agreements, bonus plan, severance pay plan. Severance pay plan is different from transition pay. Actually severance is different from recruiting/transition/forgivable loans. Not specifically recruiting compensation.\n\n- SCHW-ADV-2026#42: FCs receive compensation for enrolling clients and ongoing service. This is general FC compensation, not recruiting/transition/forgivable loans.\n\n- SCHW-ADV-2026#64: compensation CS&Co. expects to receive from alternative investment issuers. Not advisor compensation.\n\n- Others: hiring financial consultants, no disclosure of recruiting compensation, transition pay, or forgivable loans.\n\nSo the sub-question asks specifically about recruiting compensation, transition pay, and forgivable loans. None of the passages disclose these. So label not_found, or maybe different_quantity.\n\nActually, let me think. The passages do discuss compensation structures broadly (bonus, incentive comp), but not recruiting compensation, transition pay, or forgivable loans specifically.\n\nThe severance pay plan (SCHW-10K-2025#579) is related but it's severance, not transition pay. Transition pay is typically upfront money to move firms. Severance is money when leaving. These are different.\n\nI think the best label is not_found, since nothing specifically about recruiting compensation, transition pay, or forgivable loans.\n\nBut wait, could there be different_quantity? The passages mention:\n- bonus plan (Corporate Executive Bonus Plan)\n- incentive compensation risk\n- FC compensation for enrolling clients and ongoing service\n- RSU agreements\n\nThese are all different quantities (general compensation structures), not recruiting/transition/forgivable loans specifically.\n\nThe question says \"different_quantity: no passage states the asked quantity, but one states a different, related quantity\". The asked quantity is \"recruiting compensation, transition pay, and forgivable loans\". Related quantities like severance pay plan, bonus plan, FC compensation for enrolling clients.\n\nHmm. Actually, I think these are related but the question specifically asks about recruiting compensation, transition pay, forgivable loans. The FC compensation for enrolling clients is ongoing compensation, not recruiting. The bonus plan is general. Severance is different.\n\nI could label as not_found since nothing discloses recruiting compensation/transition pay/forgivable loans. But there are related quantities disclosed.\n\nActually, let me reconsider. The guidance says \"different_quantity\" for a different measure. Severance pay plan vs transition pay - these are different. Bonus plan vs recruiting compensation - different.\n\nI think the cleanest answer is not_found, but I could note the related disclosures as different_quantity. Let me think about what's most accurate.\n\nThe instruction says: \"Only the quantity a sub-question names is a fact for it\". The sub-question names \"Recruiting compensation, transition pay, and forgivable loans\". None of the passages mention these.\n\n\"not_found: the passages say nothing about it.\"\n\nThe passages do say things about compensation (bonus, severance, FC comp), but nothing about recruiting compensation, transition pay, or forgivable loans specifically.\n\nI think not_found is most accurate. But wait, could I argue the severance pay plan and bonus plan are \"different, related quantities\"? The guidance for different_quantity lists examples like \"a different measure\". Severance pay vs transition pay is arguably a different measure/type of compensation.\n\nActually, I'll go with not_found, since the passages genuinely don't discuss recruiting compensation, transition pay, or forgivable loans. The related items (bonus, severance, FC ongoing comp) are tangential.\n\nHmm, but let me reconsider. The sub-question is \"Recruiting compensation, transition pay, and forgivable loans disclosed for advisor compensation\". This is asking specifically about these three things. None disclosed. So not_found.\n\nActually, I think there might be an argument that the FC compensation (SCHW-ADV-2026#42) is related - it's compensation for FCs. But it's about ongoing service compensation, not recruiting/transition/forgivable loans.\n\nI'll go with not_found with a clear reason. But should I include any different_quantity items? I think the safest is not_found because none of the passages address the specific asked quantities.\n\nActually, let me reconsider whether the severance pay plan might be relevant. No - severance is for departing employees, transition pay is for recruiting (getting advisors to move). Different.\n\nFinal answer: not_found.\n\nReason: None of the passages mention recruiting compensation, transition pay, or forgivable loans for advisors.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.SCHW",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention recruiting compensation, transition pay, or forgivable loans for advisors; the only compensation disclosures concern ongoing FC compensation for enrolling/servicing clients, bonus/incentive plan criteria, and a severance pay plan, none of which address the asked quantities.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

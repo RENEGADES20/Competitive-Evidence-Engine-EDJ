@@ -1,0 +1,101 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a3.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10Q-2025Q2#84",
+    "EDJ-10Q-2025Q2#88",
+    "EDJ-10Q-2025Q3#91",
+    "EDJ-10Q-2025Q3#95",
+    "EDJ-10Q-2026Q1#65",
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#79",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#59",
+    "EDJ-10K-2025#88",
+    "EDJ-10Q-2025Q2#28"
+  ],
+  "at": "2026-11-23T00:36:34.480055-06:00",
+  "prefix_group": "44738ccc0300e1ee",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.44,
+  "leader_cached": false,
+  "prefix_chars": 91296,
+  "request_chars": 92024,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18489,
+    "output_tokens": 3685,
+    "cache_hit_tokens": 9984,
+    "cache_miss_tokens": 8505,
+    "reasoning_tokens": 3502,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.03
+  },
+  "wall_s": 55.83,
+  "tokens_per_s": 66.0,
+  "ttft_s": 2.03,
+  "reasoning_content": "The question is a3.EDJ: Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\n\nLet me look at the passages. Client assets per advisor is a ratio of client assets to advisor headcount. Does EDJ disclose this? Let me check.\n\nThe passages provide client assets under care (AUC) and financial advisor headcount, but no direct \"client assets per advisor\" figure. The closest disclosed figures would be:\n- Client assets under care (total)\n- Financial advisors headcount\n\nThe sub-question asks for \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSo this is a [proxy] question. The named quantity is \"client assets per advisor\" - which is not directly disclosed. The closest disclosed figures are client AUC and advisor headcount.\n\nLet me determine the label. Since client assets per advisor is not directly disclosed, but the components (client assets and advisor headcount) are disclosed, I should probably mark this as not_disclosed with a derivation (ratio of client assets to advisor headcount).\n\nActually, let me think about the instructions. The sub-question is marked [proxy]. \"a3.EDJ [fact, proxy]: Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nThe [proxy] marking means the sub-question names a stand-in figure (the closest measure). Actually the instruction says: \"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo for [proxy], the named figure is \"client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\" Hmm, this is a bit ambiguous.\n\nThe question asks for \"Client assets per advisor.\" This is not directly disclosed. The closest disclosed figures are total client assets (AUC) and financial advisor headcount.\n\nSince the figure \"client assets per advisor\" is not directly disclosed, but it follows from figures (client assets / advisor headcount), I should label it not_disclosed with a derivation.\n\nActually, let me think more carefully. The derivation instructions say: \"when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells (a ratio, a sum or a difference) for the same period and scope, label it not_disclosed and set derivation to the operation and its inputs.\"\n\nBut wait - the derivation inputs reference \"sub-question id and item number.\" For a3.EDJ, the inputs would need to be from a1.EDJ (client assets) and a2.EDJ (advisor headcount). But those are different sub-questions and I'm only answering a3.EDJ.\n\nActually, the derivation inputs can reference other sub-question ids. Let me re-read: \"set derivation to the operation and its inputs (sub-question id and item number, counting from 0; numerator first).\"\n\nSo I can reference a1.EDJ item 0 (client assets) and a2.EDJ item 0 (advisor headcount).\n\nBut wait, I'm only answering a3.EDJ. The derivation can reference other sub-questions. The numerator is client assets (a1), denominator is advisor headcount (a2).\n\nHowever, I need to be careful. The proxy instruction says the named figure (closest measure) as the firm reports it is a fact. But \"client assets per advisor\" is a ratio, not a directly reported figure.\n\nLet me think about what's the best approach here. The question is \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSo:\n1. Client assets per advisor - not directly disclosed\n2. Closest disclosed figure - the components: client AUC and advisor headcount\n\nGiven the [proxy] designation and the instructions, I think the right approach is:\n- The \"client assets per advisor\" figure is not directly disclosed \u2192 label not_disclosed with derivation (ratio of a1 client assets to a2 advisor headcount)\n\nBut also, the proxy instruction says to provide the closest disclosed figure. The closest disclosed figures are:\n- Total client AUC (e.g., $2.6 trillion as of June 26, 2026)\n- Financial advisors (e.g., 20,514)\n\nHmm, but these belong to a1 and a2 respectively, which are separate sub-questions. Since I'm only answering a3, maybe I should provide these as fact items within a3 too?\n\nActually, re-reading the proxy instruction more carefully: \"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo for a3, the \"closest disclosed figure if not directly disclosed\" - this is the proxy. The named stand-in figure would be... client assets per advisor is the asked quantity, but since not disclosed, the closest disclosed figure is what should be a fact.\n\nHmm, this is getting complicated. Let me focus on what's the most useful and correct extraction.\n\nThe sub-question a3.EDJ asks: \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSince client assets per advisor is NOT directly disclosed (no passage states a per-advisor figure), and it can be computed from client assets / advisor headcount, I should:\n\nLabel: not_disclosed\nDerivation: ratio, inputs = a1.EDJ (client assets) and a2.EDJ (advisor headcount)\n\nBut also, the \"closest disclosed figure\" part - the closest disclosed figures are the components. But those are already in a1 and a2.\n\nActually, I think the cleanest answer is to label it not_disclosed with a derivation. But I should also consider whether to include fact items for the closest disclosed figure.\n\nWait, let me reconsider. The instruction about proxy: \"Only the quantity a sub-question names is a fact for it; a figure that only resembles it is never a fact.\"\n\nThe quantity a3 names is \"client assets per advisor.\" This is not directly disclosed in any passage. No passage shows a per-advisor asset figure.\n\nSo the answer should be not_disclosed with a derivation showing ratio of client assets (a1) to advisor headcount (a2).\n\nActually, but there's also the consideration: is there any \"closest disclosed figure\" that IS disclosed and should be a fact? The proxy marking suggests I should identify the closest disclosed figure and mark it as fact.\n\nLet me re-read: \"a3.EDJ [fact, proxy]: Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed\"\n\nThe label includes [fact, proxy], suggesting the expected answer could be \"fact\" for the closest disclosed figure (proxy).\n\nHmm. The instruction says: \"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo for a proxy sub-question, the named figure is the \"closest disclosed figure\" = total client assets (a numerator) or count of financial advisors (a denominator). These are facts.\n\nBut wait, a3 asks for \"client assets per advisor\" AND \"the closest disclosed figure if not directly disclosed.\" The closest disclosed figures are total client assets and advisor headcount, which are already covered by a1 and a2.\n\nI think the intended answer is:\n- Client assets per advisor is not disclosed \u2192 not_disclosed with derivation (ratio)\n- OR provide the closest disclosed figures as facts (client AUC and advisor headcount)\n\nGiven the complexity, and that the derivation mechanism exists specifically for this, I'll go with not_disclosed + derivation.\n\nActually, let me reconsider the whole thing. The derivation mechanism: \"when a sub-question asks for a quantity the firm does not report but which follows from figures in your other cells (a ratio, a sum or a difference) for the same period and scope, label it not_disclosed and set derivation...\"\n\nThis fits perfectly: client assets per advisor = client assets (a1) / advisor headcount (a2), same period and scope.\n\nSo label = not_disclosed, derivation operation = ratio, inputs = a1.EDJ item 0 (client assets) and a2.EDJ item 0 (advisor headcount).\n\nBut what are the item numbers? In a1, the client assets items would be numbered. In a2, advisor headcount items numbered.\n\nFor a1 (client assets), the year-end 2025 figure is $2.5 trillion AUC (EDJ-10K-2025#131: \"14% increase in client AUC to $2.5 trillion\"). Item 0 would presumably be the most recent/primary.\n\nFor a2 (advisor headcount), year-end 2025 = 20,425 (EDJ-10K-2025#130).\n\nI don't know the exact item numbers in a1 and a2 since I'm not extracting those. But I can reference them.\n\nActually, this is tricky. The derivation inputs reference specific items. Since I'm only answering a3, I need to reference items from a1 and a2 by their item numbers (counting from 0). But I don't know how many items a1 and a2 will have.\n\nHmm, let me think. I should probably pick the most comparable period: year-end 2025, where client AUC = $2.5 trillion and advisors = 20,425.\n\nFor a1, the year-end 2025 client AUC figure. For a2, the year-end 2025 advisor headcount = 20,425.\n\nBut the item numbers... I'll have to estimate. Actually, the instruction says I should reference \"sub-question id and item number, counting from 0; numerator first.\"\n\nThis is getting quite complex. Let me simplify and consider what's most defensible.\n\nActually, I think there might be a simpler interpretation. The question is fundamentally: is \"client assets per advisor\" disclosed? No. Can it be computed? Yes (ratio). So not_disclosed with derivation.\n\nFor the derivation, numerator = client assets (a1), denominator = advisor headcount (a2).\n\nI'll reference a1.EDJ item 0 (assuming the first client assets item) and a2.EDJ item 0.\n\nBut actually, I realize I should think about whether there might be a different approach. The sub-question is [proxy]. Maybe the intent is that I should report the \"closest disclosed figure\" as facts, which would be the client AUC and advisor headcount.\n\nGiven the ambiguity, and re-reading the key instruction again:\n\n\"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nI think for a3, since \"client assets per advisor\" is what the overall question ultimately wants (for comparison across firms), but it's not directly disclosed, the proxy is to use the components. The \"closest disclosed figure\" would be total client assets and advisor headcount.\n\nBut these are already in a1 and a2. So a3's role is to note that the ratio is not disclosed and provide the derivation.\n\nI'll go with not_disclosed + derivation. This is the cleanest.\n\nLet me also double check: is there any passage that actually states a \"per advisor\" figure? Searching... No. The passages state client AUC and advisor headcount separately but never a per-advisor asset figure.\n\nSo the answer:\n\nlabel: not_disclosed\nreason: \"The firm discloses total client assets under care and financial advisor headcount separately, but no per-advisor asset figure; the ratio can be derived from these.\"\n\nderivation: operation \"ratio\", inputs:\n- a1.EDJ item 0 (client assets / AUC)\n- a2.EDJ item 0 (advisor headcount)\n\nWait, but I need to be careful about which item numbers. Let me think about what a1 and a2 would contain.\n\na1.EDJ [fact]: Client assets (total client assets under management/advisement). This would have multiple items (year-end 2025, Q1 2026, Q2 2026, average figures, etc.).\n\na2.EDJ [fact, metric advisor_headcount]: Advisor headcount. Multiple items.\n\nFor a clean ratio, I'd want matching period and scope. Year-end 2025: AUC $2.5 trillion (from #131), advisors 20,425 (from #130).\n\nActually, the derivation inputs should point to specific items. I'll reference item 0 in each, assuming item 0 is the most recent year-end figure.\n\nHmm, but actually I'm not confident about item ordering. Let me just pick a reasonable reference.\n\nActually, I realize the derivation is more of a hint for code to compute. I'll reference:\n- numerator: a1.EDJ item 0 (client assets, year-end figure)\n- denominator: a2.EDJ item 0 (advisor headcount, year-end figure)\n\nBoth should be year-end 2025 for consistency, but I'll leave it as item 0 with the assumption that item 0 is the primary year-end 2025 figure.\n\nActually, let me reconsider. Maybe I should also provide fact items for the closest disclosed figures (the components), since the sub-question explicitly asks \"and the closest disclosed figure if not directly disclosed.\"\n\nBut the components are already in a1 and a2. Adding them again in a3 would be redundant. The proxy instruction says the named figure (closest measure) is a fact - but that named figure is arguably \"total client assets\" and \"count of financial advisors\" which are a1 and a2.\n\nI think the best answer is not_disclosed with derivation. Let me finalize.\n\nActually wait, let me reconsider once more whether it should be not_disclosed or whether I should provide the closest disclosed figure as a fact/different_quantity.\n\nThe sub-question: \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed.\"\n\nSince it's not directly disclosed, and it can be computed (ratio from disclosed figures), the instruction's derivation mechanism applies: not_disclosed with derivation.\n\nBut there's also a subtlety: \"the closest disclosed figure if not directly disclosed.\" This asks me to also report the closest disclosed figure. The closest disclosed figures are client AUC (a1) and advisor headcount (a2). \n\nHmm, but if I mark not_disclosed and provide a derivation, that covers the \"computed\" part. The \"closest disclosed figure\" part is already covered by a1 and a2 being separate sub-questions.\n\nI'll go with not_disclosed + derivation. The reason should mention that no per-advisor figure is disclosed, but client assets and advisor headcount are separately disclosed (in a1 and a2), from which the ratio can be computed.\n\nLet me write the final answer.\n\nderivation inputs: I'll reference a1.EDJ item 0 and a2.EDJ item 0.\n\nActually, I want to reconsider the item numbering. Since I'm not extracting a1 and a2 in this call, I need to make a reasonable assumption. The most natural \"primary\" figure would be year-end 2025 (from the 10-K), which is the most recent annual figure.\n\nFor a1: item 0 could be the year-end 2025 AUC of $2.5 trillion.\nFor a2: item 0 could be year-end 2025 advisors of 20,425.\n\nI'll reference these as item 0 for both.\n\nLet me finalize.\n\nitems: empty (since not_disclosed)\n\ndiffers_because: \"\" (empty for not_disclosed)\n\nreason: \"No passage discloses a per-advisor client asset figure; the firm reports total client assets under care and financial advisor headcount separately, from which the ratio follows.\"\n\nderivation:\noperation: \"ratio\"\ninputs: [{subquestion_id: \"a1.EDJ\", item: 0}, {subquestion_id: \"a2.EDJ\", item: 0}]\n\nThis seems right. Let me write it up.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_disclosed",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage discloses a client-assets-per-advisor figure; the firm reports total client assets under care and financial advisor headcount as separate metrics (covered by a1 and a2), so the ratio follows from those disclosed figures rather than being stated directly.",
+        "derivation": {
+          "operation": "ratio",
+          "inputs": [
+            {
+              "subquestion_id": "a1.EDJ",
+              "item": 0
+            },
+            {
+              "subquestion_id": "a2.EDJ",
+              "item": 0
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

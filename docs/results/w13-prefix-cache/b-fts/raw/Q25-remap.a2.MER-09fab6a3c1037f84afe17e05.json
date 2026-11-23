@@ -1,0 +1,61 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a2.MER",
+  "round": 2,
+  "entity": "MER",
+  "cells": [
+    "a2.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MER-ADV-2026#22",
+    "MER-ADV-2026#230",
+    "MER-ADV-2026#237"
+  ],
+  "at": "2026-11-23T00:45:53.452707-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2552,
+    "output_tokens": 404,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 1016,
+    "reasoning_tokens": 252,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.09
+  },
+  "wall_s": 7.89,
+  "tokens_per_s": 51.2,
+  "ttft_s": 1.09,
+  "reasoning_content": "The user asks about \"payout grid or payout rate\" disclosed for Merrill's advisors. Let me examine the passages. None of them discuss advisor payout grids or payout rates. They discuss Program Fee, Merrill Lynch Fee Rate, Style Manager Fee, Manager Fee - these are fees charged to clients, not advisor compensation/payout.\n\nThe sub-question is about \"The payout grid or payout rate each firm discloses for its advisors.\" The passages don't mention payout grid or payout rate for advisors. \n\nChunk #230 mentions \"more compensation to your Advisor\" but no payout rate or grid figure.\n\nChunk #22 is about corporate structure.\n\nChunk #237 is about Manager Fee.\n\nNone state a payout grid or rate. They don't state a different related quantity either (like compensation expense). Actually, chunk #230 mentions compensation to Advisor but no figure.\n\nSo the answer is not_found - passages say nothing about the payout grid or payout rate.\n\nWait, but should I consider whether any passage states a \"different quantity\"? No passage states a figure about advisor compensation (like compensation expense or a payout). Chunk #230 just says \"more compensation to your Advisor\" without a figure.\n\nSo not_found is appropriate.\n\nLet me construct the cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MER",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages state a payout grid or payout rate for advisors; they discuss Program Fee components charged to clients (Merrill Lynch Fee Rate, Style Manager Fee) and corporate structure, with only a passing mention that higher fees mean 'more compensation to your Advisor' without any payout figure.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

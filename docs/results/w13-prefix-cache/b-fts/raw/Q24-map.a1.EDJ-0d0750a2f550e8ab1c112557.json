@@ -1,0 +1,206 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#23",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#79",
+    "EDJ-10Q-2026Q1#91",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2026Q2#62",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2025Q3#78",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2025Q2#69",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#207",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2025Q3#72",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#81",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2025Q2#28"
+  ],
+  "at": "2026-11-23T00:36:26.895433-06:00",
+  "prefix_group": "44738ccc0300e1ee",
+  "prefix_role": "leader",
+  "gate_wait_s": 0.0,
+  "leader_cached": null,
+  "prefix_chars": 91296,
+  "request_chars": 91841,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18387,
+    "output_tokens": 4736,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 16851,
+    "reasoning_tokens": 3313,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.52
+  },
+  "wall_s": 60.44,
+  "tokens_per_s": 78.36,
+  "ttft_s": 2.52,
+  "reasoning_content": "The sub-question a1.EDJ asks for Client assets (total client assets under management/advisement) for the firm.\n\nI need to find facts about total client assets under care (AUC). Edward Jones reports \"client assets under care\" (AUC), not \"assets under management/advisement\" exactly. But the question is about total client assets.\n\nLet me look at passages. The firm reports \"assets under care\" (AUC). Key figures:\n\n- EDJ-10Q-2026Q2#53: \"more than 9 million clients with a total of $2.6 trillion in client assets under care as of June 26, 2026\"\n- EDJ-10Q-2026Q2#61: \"ended the second quarter of 2026 with $2.6 trillion of assets under care (\"AUC\"), including $1.2 trillion of advisory programs AUC\"\n- EDJ-10Q-2026Q1#52: \"$2.4 trillion of assets under care (\"AUC\") ... first quarter of 2026\"\n- EDJ-10Q-2026Q1#51: \"Client assets under care ($ billions): Total: At period end $2,417 ... Average $2,498\"\n- EDJ-10Q-2025Q2#63: \"Total: At period end $2,306 ... Average $2,212\"\n- EDJ-10Q-2025Q3#66: \"Total: At period end $2,421 ... Average $2,365\"\n- EDJ-10K-2025#131: \"ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC\"\n- EDJ-10Q-2026Q2#59: \"Total: At period end $2,647 ... Average $2,580\"\n- EDJ-10Q-2026Q2#81: \"Client assets under care ($ billions): At period end $2,591.3 ... Average $2,501.4\" (U.S. segment)\n\nWait, the \"assets under care\" is the term Edward Jones uses. The question asks for \"total client assets under management/advisement.\" The closest is \"assets under care\" (AUC). This is a fact \u2014 the firm reports total client assets under care.\n\nActually, the question is \"Client assets (total client assets under management/advisement)\". AUC is the firm's measure of total client assets. I should treat AUC as the fact since it's the firm's reported total client assets figure.\n\nLet me collect the figures with periods.\n\nFacts:\n1. EDJ-10Q-2026Q2#53: $2.6 trillion client assets under care as of June 26, 2026. (More than 9 million clients)\n2. EDJ-10Q-2026Q2#61: $2.6 trillion AUC end of Q2 2026, including $1.2 trillion advisory programs.\n3. EDJ-10Q-2026Q2#59: Total AUC at period end $2,647 billion, average $2,580 billion (Q2 2026). Note this is the \"Total\" column for consolidated.\n4. EDJ-10Q-2026Q1#52/#51: $2.4 trillion AUC end Q1 2026, Total at period end $2,417, average $2,498.\n5. EDJ-10Q-2025Q3#66: Total at period end $2,421, average $2,365 (Q3 2025).\n6. EDJ-10Q-2025Q2#63: Total at period end $2,306, average $2,212 (Q2 2025).\n7. EDJ-10K-2025#131: $2.5 trillion AUC end of year 2025, including $1.1 trillion advisory.\n\nI should provide items. Each item is a figure. Let me include the main figures with periods.\n\nThe question is about \"client assets\" for the firm. AUC is the firm's term for total client assets. I'll treat these as facts.\n\nLet me list items:\n\nItem 0: $2.6 trillion client assets under care as of June 26, 2026 (period 2026-06-26). Quote from #53.\nItem 1: $2,647 billion total AUC at period end Q2 2026 (period 2026-06-26). Quote from #59.\nItem 2: $2,580 billion average AUC Q2 2026.\nActually maybe I should keep it manageable. Let me provide a reasonable set.\n\nActually, the instruction says \"one item per figure; a series is one item per period\". I'll provide the key figures.\n\nLet me think about what's cleanest. The \"total client assets under care\" at period end and average for several quarters.\n\nI'll include:\n- Q2 2026 (2026-06-26): $2,647B at period end, $2,580B average (consolidated), and $2.6 trillion statement.\n- Q1 2026 (2026-03-27): $2,417B at period end, $2,498B average.\n- Q3 2025 (2025-09-26): $2,421B at period end, $2,365B average.\n- Q2 2025 (2025-06-27): $2,306B at period end, $2,212B average.\n- Year-end 2025: $2.5 trillion.\n\nThat's a lot of items. Let me be reasonable and include the key period-end and average figures.\n\nActually, let me be careful about units. The values are in $ billions or trillions.\n\nLet me write items with value as printed.\n\nFor the consolidated \"Total\" AUC figures:\n- #59 (Q2 2026): At period end $2,647, Average $2,580 ($ billions)\n- #51 (Q1 2026): At period end $2,417, Average $2,498\n- #66 (Q3 2025): At period end $2,421, Average $2,365\n- #63 (Q2 2025): At period end $2,306, Average $2,212\n\nAlso the \"trillion\" statements:\n- #53: $2.6 trillion as of June 26, 2026\n- #131: $2.5 trillion end of year 2025, $1.1 trillion advisory programs\n- #61: $2.6 trillion, $1.2 trillion advisory\n- #52: $2.4 trillion, $1.1 trillion advisory\n\nI'll provide a good set of items. Let me define units as \"USD billions\" or \"USD trillions\" appropriately.\n\nLet me structure. I'll include the period-end and average consolidated figures for the quarters plus the annual figures.\n\nActually, to keep it focused and correct, I'll include items:\n\n1. Q2 2026 at period end: $2,647 billion (from #59), quote.\n2. Q2 2026 average: $2,580 billion.\n3. Q1 2026 at period end: $2,417 billion (#51).\n4. Q1 2026 average: $2,498 billion.\n5. Q3 2025 at period end: $2,421 billion (#66).\n6. Q3 2025 average: $2,365 billion.\n7. Q2 2025 at period end: $2,306 billion (#63).\n8. Q2 2025 average: $2,212 billion.\n9. Year-end 2025: $2.5 trillion (#131).\n\nAlso the $2.6 trillion statement from #53 is essentially the same as $2,647 billion. I could note it but might be redundant. I'll include it as a separate item since it's \"more than 9 million clients with total $2.6 trillion.\"\n\nI think I should be reasonably thorough but not overly redundant. Let me include the main period figures.\n\nFor units: The table says \"Client assets under care ($ billions)\". So value \"2,647\" unit \"USD billions\" (client assets under care). For the trillion statements, value \"2.6\" unit \"USD trillions\" or \"2.5 trillion\".\n\nLet me write them properly.\n\nActually, I'll set unit as \"client assets under care (USD)\" and value as printed. Better to be explicit.\n\nLet me define:\n- value: \"2,647\", unit \"USD billions (client assets under care)\", period \"2026-06-26\"\n- value: \"2.6\", unit \"USD trillions (client assets under care)\"\n\nI'll keep units simple: \"USD billions\" with a note in text.\n\nLet me write the final items.\n\nI'll include ~8-9 items covering the periods. Actually let me include both the \"trillion\" narrative and the precise table figures.\n\nLet me finalize.\n\nNote on scope: the \"Total\" figures in the tables are consolidated (whole firm, U.S. + Canada). The #81 and #65 have U.S. vs Canada split but the \"Total\" in #59, #51, #66, #63 is consolidated. Actually looking at #59, it shows \"Total\" columns for Q2 2026 vs Q2 2025. So \"At period end $2,647\" is total firm. Good.\n\nWait, but #81 shows \"At period end $2,591.3 ... $56.1\" which is U.S. and Canada separately (2,591.3 + 56.1 \u2248 2,647.4). So consolidated total = 2,647. Yes.\n\nSo the \"Total\" figures I'm citing are consolidated firm-wide.\n\nFor period values:\n- Q2 2026: period \"2026Q2\" (calendar quarter) \u2014 but Edward Jones uses fiscal quarters ending June 26, 2026. I'll use period \"2026-06-26\" for at period end, and \"2026Q2\" for average? The instruction says period format: \"YYYY-MM-DD\" for point in time, \"YYYYQn\" for calendar quarter. At period end is a point in time (the date). Average is for the quarter.\n\nI'll use:\n- At period end: period \"2026-06-26\" (point in time)\n- Average: period \"2026Q2\" (calendar quarter)\n\nActually for the average, \"YYYYQn\" for a calendar quarter. Q2 2026 = \"2026Q2\".\n\nFor year-end: \"F2025\" fiscal year? Edward Jones fiscal year ends Dec 31, so \"2025\" calendar year. The 10-K is for year ended 2025-12-31. Use \"2025\".\n\nLet me write it all out.\n\nLet me also consider: the question mentions \"client assets under management/advisement\". AUC is broader than AUM/AUA. Is AUC a \"different quantity\"? No \u2014 the question asks for \"total client assets\" and AUC is the firm's reported total client assets figure. The instruction for [fact] says \"Client assets (total client assets under management/advisement)\". AUC (assets under care) is the firm's total client assets measure. I'll treat as fact since it's the firm's reported total client assets figure and the proxy question a3 uses \"total client assets.\"\n\nActually, note that a3 is the proxy sub-question for client assets per advisor. For a1, the asked quantity is \"total client assets under management/advisement\". Edward Jones reports \"assets under care\" which is the total client assets. I'll treat AUC as fact, noting the definition \"assets under care (AUC)\".\n\nI think it's fine to label fact with the firm's own term.\n\nLet me write items now.\n\nI'll produce about 8 items. Let me write concise text and quotes.\n\nItem 0 (Q2 2026 at period end, consolidated, precise table):\ntext: Edward Jones reported total client assets under care of $2,647 billion at period end for the second quarter of 2026.\nquote: \"Client assets under care ($ billions): Total: At period end $ 2,647 ... Average $ 2,580\" \u2014 need exact quote.\n\nLet me get exact quotes from #59:\n\"Client assets under care ($ billions):\n  Total:\n  At period end                                      $                        2,647      $                   2,306                     15%      $                      2,647      $                   2,306                     15%\n  Average                                            $                        2,580      $                   2,212                     17%      $                      2,556      $                   2,210                     16%\"\n\nQuote for at period end: \"Client assets under care ($ billions): Total: At period end $ 2,647 $ 2,306\"\n\nI'll use a cleaner quote. \"At period end $ 2,647 ... $ 2,306\" hmm.\n\nLet me just quote: \"Total: At period end $ 2,647 $ 2,306 15% $ 2,647 $ 2,306 15%\"\n\nActually simpler to quote the relevant portion.\n\nI'll write quotes reasonably.\n\nLet me finalize the items list. I'll keep it to the most important figures, perhaps 9 items.\n\nActually, to avoid over-complication and redundancy, I'll include:\n\n1. Q2 2026 at period end: $2,647 billion (also $2.6 trillion narrative)\n2. Q2 2026 average: $2,580 billion\n3. Q1 2026 at period end: $2,417 billion\n4. Q1 2026 average: $2,498 billion\n5. Q3 2025 at period end: $2,421 billion\n6. Q3 2025 average: $2,365 billion\n7. Q2 2025 at period end: $2,306 billion\n8. Q2 2025 average: $2,212 billion\n9. Year-end 2025: $2.5 trillion (narrative)\n\nAnd maybe the $2.6 trillion narrative from #53 and #61.\n\nI'll include the narrative \"$2.6 trillion\" as item 0 or a separate item for Q2 2026.\n\nLet me just include both narrative and table where they give different precision. Actually I'll consolidate: include the $2.6 trillion narrative as one item, and the table figures as other items.\n\nI'll produce a comprehensive set. Let me write now.\n\nFor the definition field: The firm defines \"assets under care\" \u2014 is there a definition in passages? #91 says \"excludes client assets held off-balance sheet in Money Market Fund and at third-party banks in IBD program\" \u2014 that's about an analysis exclusion, not a full definition. I don't have a clean definition of AUC. I'll leave definition \"\" mostly.\n\nActually, there's a note: #91 \"This analysis excludes client assets that are held off-balance sheet in the Partnership's Money Market Fund and at third-party banks participating in the Partnership's Insured Bank Deposit program.\" This relates to AUC definition potentially. But not clearly a definition of AUC. I'll leave it.\n\nLet me write the items.\n\nFinal answer structure: one cell with subquestion_id a1.EDJ, label fact, items array, differs_because \"\", reason, derivation {operation \"\", inputs []}.\n\nLet me write items concisely.\n\nI'll now compose.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported total client assets under care of $2.6 trillion as of June 26, 2026 (end of second quarter 2026), serving more than 9 million clients.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.6 trillion in client assets under care as of June 26, 2026.",
+            "value": "2.6",
+            "unit": "USD trillions (client assets under care)",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#53"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total client assets under care of $2,647 billion at period end for the second quarter of 2026.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,647 $ 2,306 15% $ 2,647 $ 2,306 15%",
+            "value": "2,647",
+            "unit": "USD billions (client assets under care)",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "Edward Jones reported average total client assets under care of $2,580 billion for the second quarter of 2026.",
+            "quote": "Average $ 2,580 $ 2,212 17% $ 2,556 $ 2,210 16%",
+            "value": "2,580",
+            "unit": "USD billions (client assets under care)",
+            "period": "2026Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#59"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total client assets under care of $2,417 billion at period end for the first quarter of 2026, and described it as $2.4 trillion of assets under care.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,417 $ 2,159 12%",
+            "value": "2,417",
+            "unit": "USD billions (client assets under care)",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "Edward Jones reported average total client assets under care of $2,498 billion for the first quarter of 2026.",
+            "quote": "Average $ 2,498 $ 2,195 14%",
+            "value": "2,498",
+            "unit": "USD billions (client assets under care)",
+            "period": "2026Q1",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#51"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total client assets under care of $2,421 billion at period end for the third quarter of 2025.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,421 $ 2,176 11% $ 2,421 $ 2,176 11%",
+            "value": "2,421",
+            "unit": "USD billions (client assets under care)",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#66"
+            ]
+          },
+          {
+            "text": "Edward Jones reported average total client assets under care of $2,365 billion for the third quarter of 2025.",
+            "quote": "Average $ 2,365 $ 2,118 12% $ 2,262 $ 2,035 11%",
+            "value": "2,365",
+            "unit": "USD billions (client assets under care)",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#66"
+            ]
+          },
+          {
+            "text": "Edward Jones reported total client assets under care of $2,306 billion at period end for the second quarter of 2025, and described a 12% increase in client AUC to $2.3 trillion.",
+            "quote": "Client assets under care ($ billions): Total: At period end $ 2,306 $ 2,062 12% $ 2,306 $ 2,062 12%",
+            "value": "2,306",
+            "unit": "USD billions (client assets under care)",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#63"
+            ]
+          },
+          {
+            "text": "Edward Jones reported average total client assets under care of $2,212 billion for the second quarter of 2025.",
+            "quote": "Average $ 2,212 $ 2,028 9% $ 2,210 $ 1,992 11%",
+            "value": "2,212",
+            "unit": "USD billions (client assets under care)",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#63"
+            ]
+          },
+          {
+            "text": "Edward Jones reported a 14% increase in client assets under care to $2.5 trillion at the end of fiscal year 2025, including $1.1 trillion of advisory programs AUC.",
+            "quote": "The Partnership ended the year with a 14% increase in client AUC to $2.5 trillion, including $1.1 trillion of advisory programs AUC.",
+            "value": "2.5",
+            "unit": "USD trillions (client assets under care)",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#131"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Edward Jones reports its total client assets as 'assets under care' (AUC), which is the firm's total client assets figure, so the reported AUC amounts are facts for total client assets.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

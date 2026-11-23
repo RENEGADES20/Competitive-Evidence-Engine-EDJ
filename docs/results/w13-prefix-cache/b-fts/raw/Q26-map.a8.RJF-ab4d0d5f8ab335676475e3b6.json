@@ -1,0 +1,113 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a8.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a8.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-09-02-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-09-02-IN-01#3"
+  ],
+  "at": "2026-11-23T00:51:44.907952-06:00",
+  "prefix_group": "f6e7f82bc55e676f",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.38,
+  "leader_cached": false,
+  "prefix_chars": 75816,
+  "request_chars": 77027,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17631,
+    "output_tokens": 1515,
+    "cache_hit_tokens": 8832,
+    "cache_miss_tokens": 8799,
+    "reasoning_tokens": 1162,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.44
+  },
+  "wall_s": 23.56,
+  "tokens_per_s": 64.3,
+  "ttft_s": 2.44,
+  "reasoning_content": "The sub-question a8.RJF asks: What guidance or forward outlook has Raymond James provided?\n\nLet me look for guidance or forward outlook statements in the cited passages.\n\nKey passage: RJF-TRADE-2026-10-29-WM-01#1 - \"As Raymond James ended its fiscal year... the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\" Wait, that's in RJF-TRADE-2026-11-05-IN-01#0 actually.\n\nLet me check. RJF-TRADE-2026-11-05-IN-01#0 says: \"As Raymond James ended its fiscal year with a record 8,943 advisors - a 2% increase year-over-year, the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\"\n\nThis is forward outlook - the firm expects continued momentum with healthy pipelines of advisor commitments heading into the coming year.\n\nAlso RJF-TRADE-2026-10-29-WM-01#1: Shoukry's comments on M&A - \"the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit.\" This is more strategy than forward outlook.\n\nLet me look for more explicit guidance.\n\nThe forward-looking statement: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\"\n\nThis is the main forward outlook/guidance statement. Let me extract this as a fact.\n\nAlso Shoukry's M&A comments might count as forward outlook. But \"we do acquisitions to grow revenues\" is more strategic commentary.\n\nThe clearest guidance/forward outlook is the \"expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\"\n\nLet me create one cell with this fact.\n\nChunk id: RJF-TRADE-2026-11-05-IN-01#0\n\nText: Raymond James has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\n\nQuote: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year\"\n\nValue: \"\" (no specific figure)\n\nActually there's also the M&A commentary. Let me think whether to include it as a second item.\n\nShoukry: \"the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit. We don't do acquisitions to slash costs... We do acquisitions to grow revenues.\"\n\nThis is more about strategy/approach to M&A, not really \"guidance or forward outlook\" in the earnings sense. It's forward-looking in a sense but it's strategic commentary.\n\nI think the main fact is the \"continued momentum\" statement. I could include the M&A comment as well but it's a bit of a stretch for \"guidance or forward outlook.\"\n\nActually, the question is broad: \"What guidance or forward outlook has Raymond James provided?\" The \"expects continued momentum with healthy pipelines of advisor commitments\" is clearly forward outlook.\n\nLet me just include the one clear forward outlook statement. Maybe also include the M&A forward-looking commentary as a second item since it expresses future intent.\n\nActually, I'll focus on the clearest one. The \"expects continued momentum\" statement is a fact for guidance/forward outlook.\n\nLet me also consider the M&A statement as a fact item. It's attributed to Shoukry, and it's about future acquisition approach. I'll include it as a second item perhaps. But the instruction says to be careful. Let me include both as facts, since both are forward-looking statements.\n\nActually, let me reconsider. The \"expects continued momentum\" is the firm's own outlook. The M&A comment is a statement about the firm's approach to future acquisitions - that's forward-looking.\n\nI'll include the \"continued momentum\" item as the primary fact. I could add the M&A item too.\n\nLet me create the cell with one or two items.\n\nPeriod: no specific period for the forward outlook - \"the coming year\" relates to fiscal year following. I'll leave period \"\".\n\nLet me write:\n\nItem 1 (continued momentum):\n- text: Raymond James has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.\n- quote: \"the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year\"\n- value: \"\"\n- unit: \"\"\n- period: \"\"\n- scope: \"\"\n- definition: \"\"\n- chunk_ids: [\"RJF-TRADE-2026-11-05-IN-01#0\"]\n\nItem 2 (M&A):\n- text: CEO Paul Shoukry said the firm looks for acquisitions in the wealth management business in particular, but they would have to be a good cultural and strategic fit, and that the firm does acquisitions to grow revenues, not to slash costs.\n- quote: \"the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit.\" ... \"We don't do acquisitions to slash costs... We do acquisitions to grow revenues\"\n- chunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\nI'll include both. Both are forward-looking/strategic statements.\n\nActually, let me be careful - the M&A comment is more strategic positioning than \"guidance or forward outlook.\" But it does express the firm's forward intent regarding acquisitions. I think it's reasonable to include as a fact.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a8.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year.",
+            "quote": "the firm has signaled it expects continued momentum, with healthy pipelines of advisor commitments heading into the coming year",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-11-05-IN-01#0"
+            ]
+          },
+          {
+            "text": "CEO Paul Shoukry said the firm looks for acquisitions in the wealth management business in particular, but they would have to be a good cultural and strategic fit, and that the firm does acquisitions to grow revenues rather than to slash costs.",
+            "quote": "the firm does look for acquisitions in the wealth management business in particular, but it would have to be a good cultural and strategic fit... We don't do acquisitions to slash costs... We do acquisitions to grow revenues",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages contain forward-looking statements from Raymond James about continued advisor recruiting momentum and its approach to future acquisitions.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

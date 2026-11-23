@@ -1,0 +1,88 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a5.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a5.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-11-06-IN-01#2",
+    "RJF-TRADE-2026-10-27-WM-01#1",
+    "RJF-TRADE-2026-08-19-IN-01#1",
+    "RJF-TRADE-2026-08-19-IN-01#0",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-11-04-IN-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-24-WM-01#1",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-11-12-WM-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#2",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-11-05-WM-01#1"
+  ],
+  "at": "2026-11-23T00:51:44.895952-06:00",
+  "prefix_group": "f6e7f82bc55e676f",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.36,
+  "leader_cached": false,
+  "prefix_chars": 75816,
+  "request_chars": 76913,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17560,
+    "output_tokens": 645,
+    "cache_hit_tokens": 8832,
+    "cache_miss_tokens": 8728,
+    "reasoning_tokens": 511,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.73
+  },
+  "wall_s": 13.28,
+  "tokens_per_s": 48.57,
+  "ttft_s": 2.73,
+  "reasoning_content": "The sub-question a5.RJF asks about management or leadership changes Raymond James has announced.\n\nLet me look at the passages under sub-question a5.RJF and the cited passages from other sub-questions.\n\nThe passages under a5.RJF:\n- RJF-TRADE-2026-11-06-IN-01#2: About Ameriprise welcoming back Ricardo Baptiste after six-year stint at Raymond James. This is about a departure from Raymond James (advisor left to Ameriprise). Not really a management/leadership change announcement by Raymond James.\n- RJF-TRADE-2026-10-27-WM-01#1: About Cerulli, fee-based firms, no management changes.\n- RJF-TRADE-2026-08-19-IN-01#1: Advisor moves, De Jesus joins RJFS from Edward Jones.\n- RJF-TRADE-2026-08-19-IN-01#0: Advisor moves.\n\nNone of these seem to discuss management or leadership changes at Raymond James.\n\nThe other cited passages are about advisor recruiting, financial results, etc. None mention management/leadership changes.\n\nWait, let me think about whether \"management or leadership changes\" includes advisor hires/recruiting of \"managing directors\" or \"head of wealth management\" etc. Actually the sub-question is about management or leadership changes announced by Raymond James - like executive changes, CEO, president, etc.\n\nLet me scan the cited passages:\n- RJF-TRADE-2026-11-06-IN-01#1: \"Tony Barrett, North Atlantic regional director for RJA, confirmed the hire. Steve Pryor, Chesapeake complex manager...\" - these are regional directors confirming hires, not leadership changes.\n- RJF-TRADE-2026-11-12-WM-01#0: Stephen Kruchten, president of FID, statement. Not a leadership change.\n- Various others mention CEO Paul Shoukry, Tash Elwyn (PCG President), etc. - these are existing leaders, no change announced.\n\nNone of the passages announce management or leadership changes. So the answer is not_found.\n\nActually, let me reconsider. The passages mention recruiting of advisors who are \"managing directors\" but those are new advisor hires, not management/leadership changes of the firm itself.\n\nSo the label should be not_found, since no passage states management or leadership changes.\n\nLet me write the cell with not_found label.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.RJF",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the cited passages announce any management or leadership changes at Raymond James; they concern advisor recruiting, financial results, product launches, and litigation, with no executive appointment, departure, or leadership restructuring disclosed.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

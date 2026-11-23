@@ -1,0 +1,346 @@
+{
+  "question_id": "Q7",
+  "question": "How do Morgan Stanley, Merrill and Raymond James each approach advisor recruiting and retention?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research",
+    "a7.research",
+    "a8.research",
+    "a9.research",
+    "a10.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MCK-ADVISOR-SHORTAGE-2025#30",
+    "MCK-ADVISOR-SHORTAGE-2025#12",
+    "KITCES-WELLBEING-2023#58",
+    "KITCES-WELLBEING-2023#40"
+  ],
+  "at": "2026-11-22T23:10:13.164250-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3122,
+    "output_tokens": 7900,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 3122,
+    "reasoning_tokens": 5640,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.59
+  },
+  "wall_s": 72.31,
+  "tokens_per_s": 109.25,
+  "ttft_s": 1.59,
+  "reasoning_content": "Let me analyze the passages carefully. This is industry research, and the sub-questions all have the \".research\" suffix, meaning I should treat the research figures as facts for industry-level aspects, but different_quantity for named firm's own figures.\n\nThe passages are all industry research. None of them mention Morgan Stanley, Merrill, or Raymond James by name specifically. They discuss industry-wide trends.\n\nLet me go through each sub-question:\n\na1.research [fact]: How the firm approaches advisor recruiting - This is about a \"firm\" but since it's research, the passages describe industry approaches. The passages mention recruiting approaches: \"Recruitment of new-to-industry advisors\" with entry-level talent and career switchers as best options. Also \"high or even unlimited income potential being a traditional recruiting approach.\"\n\nActually, let me re-read. The sub-question says \"How the firm approaches advisor recruiting\" but the firm is \"Industry research (no firm...)\". So the research passages describe industry-wide recruiting approaches. Since these are research, and the aspect is about industry in general, a research figure is a fact for aspects about the industry.\n\nSo a1.research: the passages describe recruiting approaches - entry-level talent and career switchers are best options for attracting new advisors. Traditional recruiting approach of high/unlimited income potential.\n\na2.research [fact]: Whom the firm targets in recruiting - entry-level talent and career switchers. Two segments represent best options.\n\na3.research [fact]: What the firm offers advisors as transition and recruiting compensation - \"high or even unlimited income potential being a traditional recruiting approach\". Also \"increasing retirement packages\" - that's retention though. Actually the passages mention \"providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.\"\n\na4.research [fact]: Incentives and programs to retain advisors - succession planning, retirement packages, capital to acquire practices, internal marketplace for buying practices, matchmaking services, codified transition approaches.\n\na5.research [fact]: value proposition around platform, products, autonomy - Autonomy is mentioned as a key wellbeing driver. \"build and own your own business\" opportunities. \n\na6.research [series, metric advisor_headcount]: Advisor headcount over time - The McKinsey passage has \"Projected advisor count based on current trends 290\" and \"Net new advisors 30-80\". These are industry projections, not firm-specific. Since it's about the industry (advisor supply/demand), these could be facts about the industry. But the sub-question is about \"advisor headcount over time\" for a firm. Since no firm, it's industry headcount. The passage has projected advisor count 290 (thousands).\n\nActually wait, the sub-questions are all marked with \".research\" and the firm is \"Industry research\". So the metric advisor_headcount would be industry advisor headcount. The passage provides \"Projected advisor count based on current trends 290\" thousands of advisors. This is a fact about the industry.\n\nBut let me be careful. The question originally asks about Morgan Stanley, Merrill, Raymond James. The firm here is \"Industry research (no firm...)\". So these are research passages about the industry. The sub-questions ask about \"the firm\" but there's no firm - it's industry research.\n\nGiven the instruction: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity (an industry figure, not the firm's disclosure).\"\n\nSo for advisor_headcount, the research figure (290 thousand projected advisors) is about advisors in general, so it's a fact for the industry headcount aspect.\n\na7.research [series, metric net_new_assets]: Net new assets attributable to advisor recruiting - no passage mentions net new assets. not_found.\n\na8.research [series]: Advisor turnover and departures disclosed - \"32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons\". This is about investor switching, not advisor turnover directly. Hmm. Actually it's about client asset retention when advisor leaves, not advisor turnover. Could be a different quantity? Actually it's about investors switching firms, which relates to advisor departures but isn't advisor turnover itself. The passage says \"minimizing advisor turnover and retaining their employees\" in KITCES-WELLBEING-2023#40. That mentions advisor turnover but no figure.\n\nActually \"32 percent of investors switch firms when their existing advisor leaves\" - this is a different quantity (client attrition, not advisor turnover).\n\na9.research [recency]: Results of recruiting efforts - \"Net new advisors 30-80\" (thousands) - this is a projection of net new advisors, which is a result of recruiting/hiring. Could be a fact about recruiting results (industry).\n\na10.research [comparison]: How the three firms' approaches compare - no passage compares the three firms. not_found.\n\nLet me now be careful about each and construct items.\n\nLet me go through each sub-question and decide label.\n\na1.research [fact]: How the firm approaches advisor recruiting.\nThe passages describe industry recruiting approaches. Items:\n- \"Recruitment of new-to-industry advisors: Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers.\" (MCK-ADVISOR-SHORTAGE-2025#12)\n- \"high or even unlimited income potential being a traditional recruiting approach for enticing new advisors\" (KITCES-WELLBEING-2023#58)\n- \"accelerated hiring and better retention of new-to-industry advisors\" (increased supply through accelerated hiring...)\n\nThese are facts about the industry approach.\n\na2.research [fact]: Whom the firm targets - entry-level talent and career switchers. Item:\n- \"Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers.\" (MCK-ADVISOR-SHORTAGE-2025#12)\n\na3.research [fact]: transition and recruiting compensation.\n- \"high or even unlimited income potential being a traditional recruiting approach\" (KITCES-WELLBEING-2023#58) - this is recruiting compensation (income potential).\n- \"increasing retirement packages\" (MCK-ADVISOR-SHORTAGE-2025#30) - this is more retention/transition, but retirement packages are transition compensation. Actually \"increasing retirement packages to prevent the flight to independence\" is retention.\n- \"providing capital to mid-career advisors to acquire practices\" - this is capital, transition.\n\nHmm. The transition and recruiting compensation specifically. The KITCES passage about \"Getting Paid What You're Worth to Serve\" cluster - \"high or even unlimited income potential being a traditional recruiting approach\" is recruiting compensation (income).\n\na4.research [fact]: Incentives and programs to retain advisors.\n- \"enhancing their succession-planning strategies and broadening options... codified transition approaches, matchmaking services, internal marketplace, providing capital to mid-career advisors, increasing retirement packages to prevent flight to independence\" (MCK-ADVISOR-SHORTAGE-2025#30)\n- \"positive wellbeing is particularly important for employers or platforms interested in minimizing advisor turnover and retaining their employees\" (KITCES-WELLBEING-2023#40)\n\na5.research [fact]: value proposition around platform, products, autonomy.\n- \"Autonomy\" is a key wellbeing driver (KITCES-WELLBEING-2023#58)\n- \"build and own your own business\" opportunities (KITCES-WELLBEING-2023#58)\n- \"Getting Paid What You're Worth to Serve\" cluster\n\na6.research [series, metric advisor_headcount]: \n- \"Projected advisor count based on current trends 290\" thousands of advisors (MCK-ADVISOR-SHORTAGE-2025#12). This is a fact about industry advisor headcount projection.\n- \"Advisors needed by 2034 320-370\" (thousands)\n- \"Advisors needed to meet projected demand at current productivity levels 380-400\"\n\nThese are all projections about advisor count. The metric advisor_headcount - these are relevant. But are they \"headcount over time\"? They're projections to 2034. Still fact for the periods.\n\nActually, let me think about what's the cleanest. The sub-question is about advisor headcount over time for \"the firm\" (industry). The passage gives projected advisor count 290 (thousands) based on current trends. This is a point-in-time-ish projection. Period is n/a (published 2025-02-10, but the projection is to 2034).\n\nI'll include the \"Projected advisor count based on current trends 290\" as a fact, with period as \"\" since the projection year isn't precisely stated (it's a baseline projection). Actually \"US advisor supply and demand by 2034\" - so these are projections to 2034. But \"projected advisor count based on current trends 290\" is a starting point of current trends. Hmm.\n\nLet me keep it simple. I'll provide the figures as facts with appropriate periods.\n\nActually, given the ambiguity, I'll include:\n- Projected advisor count based on current trends: 290 (thousands of advisors)\n- Net new advisors: 30-80 (thousands)\n- Advisors needed by 2034: 320-370 (thousands)\n\nThese are industry figures (about advisors in general), so facts.\n\na7.research [series, metric net_new_assets]: not_found - no passage mentions net new assets.\n\na8.research [series]: Advisor turnover and departures.\n- \"32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons\" - this is about client switching when advisor leaves, a different quantity (client attrition rate, not advisor turnover). Actually it's disclosed as a research survey result. Is it a fact about turnover/departures? It's about what happens when advisors depart, not the departure rate itself. I'd call it different_quantity (client switching rate, not advisor turnover).\n- \"minimizing advisor turnover\" - mentioned but no figure.\n\nActually, \"32 percent of investors switch firms when their existing advisor leaves\" - this is about client asset retention, related to advisor departures. It's a different quantity from advisor turnover/departures themselves.\n\nHmm, but the sub-question is about \"advisor turnover and departures disclosed by the firm\". The 32% figure is about investors (clients) switching, which is a consequence of advisor departures. It's related but different. I'll mark it different_quantity.\n\na9.research [recency]: Results of recruiting efforts - \n- \"Net new advisors 30-80\" (thousands) - projection of net new advisors from accelerated hiring. This is a result of recruiting efforts (industry). Fact.\n- \"Increased supply through accelerated hiring and better retention of new-to-industry advisors\" - this describes the mechanism.\n\nActually \"Net new advisors 30-80\" is a projection of how many net new advisors would be added. This is a result of recruiting efforts. Fact about industry.\n\na10.research [comparison]: How the three firms' approaches compare - no passage compares Morgan Stanley, Merrill, Raymond James. not_found.\n\nNow, one consideration: the sub-questions are marked [fact], [series], etc. and all have \".research\" suffix. The firm is \"Industry research\". So I'm extracting industry-level facts.\n\nLet me also reconsider a6. The metric is \"advisor_headcount\". The research gives \"Projected advisor count based on current trends 290\" (thousands). This is a headcount figure for the industry. Fact.\n\nLet me now write out the cells.\n\nFor a1.research, I'll include multiple items:\n1. Text about recruiting new-to-industry advisors, entry-level and career switchers.\n2. Text about traditional recruiting approach of high/unlimited income potential.\n\nActually, item 2 overlaps with a3. Let me think about allocation. a3 is specifically \"transition and recruiting compensation\". The \"high or even unlimited income potential\" is about income/compensation as a recruiting approach. It fits both a1 (recruiting approach) and a3 (recruiting compensation). \n\nI'll put it in a3 (compensation) primarily, and keep a1 focused on the \"accelerated hiring\" and \"entry-level talent and career switchers\" approach.\n\nActually, let me allocate carefully to avoid over-duplication but it's fine to have some overlap. Each sub-question should answer what's asked.\n\na1: approaches to recruiting\n- \"Recruitment of new-to-industry advisors: Two segments represent best options... entry-level talent and career switchers. Improving value proposition of a career as advisor.\"\n- \"increased supply through accelerated hiring and better retention of new-to-industry advisors\"\n\na2: whom targeted\n- \"entry-level talent and career switchers\"\n\na3: transition and recruiting compensation\n- \"high or even unlimited income potential being a traditional recruiting approach for enticing new advisors\"\n- \"Getting Paid What You're Worth to Serve\" cluster (wellbeing driver about compensation)\n- \"increasing retirement packages to prevent flight to independence\" (transition compensation - retirement packages)\n\na4: retention incentives/programs\n- succession planning strategies: codified transition approaches, matchmaking services, internal marketplace, providing capital to mid-career advisors, increasing retirement packages\n- \"positive wellbeing important for minimizing advisor turnover and retaining\"\n\na5: value proposition platform/products/autonomy\n- \"Autonomy\" key wellbeing driver\n- \"build and own your own business\" opportunities\n- \"Entrepreneurial Business Builder\" cluster\n\na6: advisor headcount\n- Projected advisor count 290 thousands\n- Net new advisors 30-80 thousands (also a9)\n- Advisors needed by 2034 320-370 thousands\n\na7: net new assets - not_found\n\na8: turnover/departures\n- \"32 percent of investors switch firms when existing advisor leaves\" - different_quantity (client attrition, not advisor turnover)\n- \"minimizing advisor turnover\" mentioned (no figure) - not really a fact with figure.\n\na9: results of recruiting\n- Net new advisors 30-80 thousands\n\na10: comparison - not_found\n\nLet me now write the items properly.\n\nFor each item, I need: text, quote, value, unit, period, scope, definition, chunk_ids.\n\nLet me write carefully.\n\nFor a1.research, label fact.\n\nItem 0:\ntext: \"McKinsey research states that recruitment of new-to-industry advisors should focus on two segments: entry-level talent and career switchers, and that improving the value proposition of a career as an advisor will be critical to success.\"\nquote: \"Recruitment of new-to-industry advisors Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers. In both cases, improving the value proposition of a career as an advisor will be critical to success.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nItem 1:\ntext: \"McKinsey research states that increased advisor supply can come through accelerated hiring and better retention of new-to-industry advisors.\"\nquote: \"Increased supply through accelerated hiring and better retention of new-to-industry advisors\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nActually, item 1 could also fit a2/a4. It's fine as a1 (approach).\n\nFor a2.research, fact:\nItem 0:\ntext: \"McKinsey research identifies entry-level talent and career switchers as the two segments representing the best options for attracting new advisors.\"\nquote: \"Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nFor a3.research, fact:\nItem 0:\ntext: \"Kitces research notes that high or even unlimited income potential has been a traditional recruiting approach for enticing new advisors to the industry.\"\nquote: \"Despite the promise of high or even unlimited income potential being a traditional recruiting approach for enticing new advisors to the industry\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"KITCES-WELLBEING-2023#58\"]\n\nItem 1:\ntext: \"McKinsey research states that wealth management firms are increasing retirement packages to prevent the flight to independence.\"\nquote: \"increasing retirement packages to prevent the flight to independence\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#30\"]\n\nFor a4.research, fact:\nItem 0:\ntext: \"McKinsey research states that wealth management firms are enhancing succession-planning strategies and broadening options available to advisors, including codified transition approaches within teams, matchmaking services for junior-senior advisor teaming, an internal marketplace for buying practices, capital to mid-career advisors to acquire practices, and increasing retirement packages.\"\nquote: \"wealth management firms are enhancing their succession-planning strategies and broadening the options available to advisors to include codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming focused on succession, development of an internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#30\"]\n\nItem 1:\ntext: \"Kitces research notes that positive wellbeing is particularly important for employers or platforms interested in minimizing advisor turnover and retaining their employees or affiliates.\"\nquote: \"positive wellbeing is particularly important for employers or platforms interested in minimizing advisor turnover and retaining their employees or affiliates in what is a very competitive market for both.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"KITCES-WELLBEING-2023#40\"]\n\nFor a5.research, fact:\nItem 0:\ntext: \"Kitces research identifies Autonomy as one of the three most key drivers of advisor wellbeing.\"\nquote: \"the 3 most key drivers - Autonomy, Experience, and Team\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"KITCES-WELLBEING-2023#58\"]\n\nItem 1:\ntext: \"Kitces research notes that advisors with a more entrepreneurial mindset showed a positive leaning on wellbeing given the 'build and own your own business' opportunities the financial advisory profession provides.\"\nquote: \"A unique segment of those with a more entrepreneurial mindset did, in fact, show a positive leaning on wellbeing, given the \\\"build and own your own business\\\" opportunities that the financial advisory professional often provides.\"\nvalue: \"\"\nunit: \"\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"KITCES-WELLBEING-2023#58\"]\n\nFor a6.research, series advisor_headcount, fact:\nItem 0:\ntext: \"McKinsey projects the US advisor count based on current trends at 290 thousand advisors.\"\nquote: \"Projected advisor count based on current trends 290\"\nvalue: \"290\"\nunit: \"thousands of advisors\"\nperiod: \"\"\nscope: \"US\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nItem 1:\ntext: \"McKinsey projects net new advisors of 30-80 thousand.\"\nquote: \"Net new advisors 30-80\"\nvalue: \"30-80\"\nunit: \"thousands of advisors\"\nperiod: \"\"\nscope: \"US\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nItem 2:\ntext: \"McKinsey projects advisors needed by 2034 at 320-370 thousand.\"\nquote: \"Advisors needed by 2034 320-370\"\nvalue: \"320-370\"\nunit: \"thousands of advisors\"\nperiod: \"2034\"\nscope: \"US\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nWait, for the period, \"Projected advisor count based on current trends 290\" - this is a current baseline, not a specific year. The chart is \"US advisor supply and demand by 2034\". The 290 is \"based on current trends\" which is likely a current (2025) baseline projection. I'll leave period \"\" for item 0 and item 1 (net new advisors 30-80 is cumulative to 2034? unclear). Actually \"Net new advisors 30-80\" is the gap to be filled. Hmm.\n\nI'll leave period blank where unclear and put \"2034\" for the \"by 2034\" figures.\n\nActually, \"Advisors needed to meet projected demand at current productivity levels 380-400\" is another figure. I could include it too, but it's about demand, not headcount supply. I'll skip to avoid confusion, or include as a fact. The metric is advisor_headcount. \"Advisors needed by 2034 320-370\" is the projected headcount needed. I'll include 290 (projected count) and 320-370 (needed by 2034) and 30-80 (net new).\n\nFor a7.research, not_found:\nNo passage mentions net new assets. \n\nitems: [], reason: \"No passage mentions net new assets attributable to advisor recruiting.\"\n\nFor a8.research, series (turnover and departures):\nThe passage mentions \"32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons\". This is about client switching when advisors depart, not advisor turnover itself.\n\nLabel: different_quantity? Or fact? The sub-question asks \"Advisor turnover and departures disclosed by the firm\". The 32% is about investors (clients) switching, which is a consequence. It's a different quantity (client asset/relationship attrition, not advisor turnover).\n\nI'll label it different_quantity.\n\nItem 0:\ntext: \"McKinsey's survey finds that 32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons.\"\nquote: \"32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons, according to our survey of affluent and high-net-worth investors.\"\nvalue: \"32 percent\"\nunit: \"investors who switch firms when advisor leaves\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#30\"]\n\ndiffers_because: \"States the share of investors (clients) who switch firms when an advisor departs, not the advisor turnover or departure rate itself.\"\n\nAlso the KITCES passage mentions \"minimizing advisor turnover\" but no figure. Not a fact with a figure. I'll just note in reason.\n\nActually, let me reconsider whether the 32% is really a \"different_quantity\" or whether it could be considered a fact about departures. The sub-question is about \"advisor turnover and departures disclosed by the firm\". The 32% figure is about what happens when advisors leave - it's a client retention statistic, not a turnover statistic. It's related to departures but measures a different thing (client behavior). I'll mark different_quantity.\n\nFor a9.research, recency (results of recruiting efforts):\n\"Net new advisors 30-80\" (thousands) is a projection of net new advisors from accelerated hiring. This is a result of recruiting efforts.\n\nItem 0:\ntext: \"McKinsey projects that increased supply through accelerated hiring and better retention of new-to-industry advisors will add 30-80 thousand net new advisors.\"\nquote: \"Net new advisors 30-80\"\nvalue: \"30-80\"\nunit: \"thousands of advisors\"\nperiod: \"\"\nscope: \"US\"\ndefinition: \"\"\nchunk_ids: [\"MCK-ADVISOR-SHORTAGE-2025#12\"]\n\nLabel: fact (about industry recruiting results).\n\nFor a10.research, comparison: not_found. No passage compares the three firms.\n\nitems: [], reason.\n\nNow let me also double check the \"research\" instruction about facts vs different_quantity: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nAll sub-questions here are \".research\" and the firm is \"Industry research\", so the aspects are about the industry/advisors in general. So the research figures are facts. Good.\n\nFor a8, the 32% is about investors (clients), which is \"clients... in general\" - so it could be a fact about clients. But the sub-question asks about advisor turnover/departures, not client switching. So it's a different_quantity relative to what's asked (advisor turnover). The instruction says \"a different measure\" is different_quantity. Client switching rate vs advisor turnover - different measure. So different_quantity is right.\n\nLet me finalize the cells.\n\nNow writing the derivation field for each: for fact/not_found/different_quantity cells, derivation is {\"operation\": \"\", \"inputs\": []}.\n\nFor not_disclosed cells, would need derivation, but I don't have any not_disclosed.\n\nLet me write all cells.\n\nActually wait, let me reconsider a7 (net new assets). The question is about \"net new assets attributable to advisor recruiting\". No passage mentions assets. not_found.\n\nLet me also reconsider whether any sub-question should be not_disclosed. No, the passages don't say the firm doesn't report something.\n\nNow let me write out everything.\n\nFor period fields with no date, use \"\".\n\nLet me finalize.\n\nFor a6 item values, units. The chart says \"thousands of advisors\". So unit \"thousands of advisors\" or \"advisors (thousands)\". I'll use \"thousands of advisors\".\n\nActually the instruction says unit is \"what is counted or measured\". \"advisors\" with value \"290,000\"? The figure is \"290\" (thousands). I'll keep value \"290\" and unit \"thousands of advisors\".\n\nLet me write final submission.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "McKinsey research states that recruitment of new-to-industry advisors should focus on two segments, entry-level talent and career switchers, and that improving the value proposition of a career as an advisor will be critical to success.",
+            "quote": "Recruitment of new-to-industry advisors Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers. In both cases, improving the value proposition of a career as an advisor will be critical to success.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          },
+          {
+            "text": "McKinsey research states that increased advisor supply can come through accelerated hiring and better retention of new-to-industry advisors.",
+            "quote": "Increased supply through accelerated hiring and better retention of new-to-industry advisors",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The research passages describe industry-wide recruiting approaches (attracting new-to-industry advisors via entry-level talent and career switchers, and accelerated hiring), which are facts about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "McKinsey research identifies entry-level talent and career switchers as the two segments that represent the best options for attracting new advisors.",
+            "quote": "Two segments in particular represent the best options for attracting new advisors: entry-level talent and career switchers.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage states whom the industry targets in recruiting new advisors, which is a fact about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Kitces research notes that high or even unlimited income potential has been a traditional recruiting approach for enticing new advisors to the industry.",
+            "quote": "Despite the promise of high or even unlimited income potential being a traditional recruiting approach for enticing new advisors to the industry",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#58"
+            ]
+          },
+          {
+            "text": "McKinsey research states that wealth management firms are increasing retirement packages to prevent the flight to independence.",
+            "quote": "increasing retirement packages to prevent the flight to independence",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#30"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe income potential as a traditional recruiting inducement and retirement packages as compensation, facts about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "McKinsey research states that wealth management firms are enhancing succession-planning strategies and broadening options to include codified transition approaches within teams, matchmaking services for junior-senior advisor teaming, an internal marketplace for buying practices, capital to mid-career advisors to acquire practices, and increasing retirement packages.",
+            "quote": "wealth management firms are enhancing their succession-planning strategies and broadening the options available to advisors to include codified transition approaches within existing advisor teams, matchmaking services for junior-senior advisor teaming focused on succession, development of an internal marketplace for advisors to buy practices, providing capital to mid-career advisors to acquire practices, and increasing retirement packages to prevent the flight to independence.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#30"
+            ]
+          },
+          {
+            "text": "Kitces research notes that positive wellbeing is particularly important for employers or platforms interested in minimizing advisor turnover and retaining their employees or affiliates.",
+            "quote": "positive wellbeing is particularly important for employers or platforms interested in minimizing advisor turnover and retaining their employees or affiliates in what is a very competitive market for both.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#40"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe industry-wide retention programs and the role of wellbeing in retention, facts about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Kitces research identifies Autonomy as one of the three most key drivers of advisor wellbeing.",
+            "quote": "the 3 most key drivers - Autonomy, Experience, and Team",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#58"
+            ]
+          },
+          {
+            "text": "Kitces research notes that a unique segment of advisors with a more entrepreneurial mindset showed a positive leaning on wellbeing given the 'build and own your own business' opportunities the financial advisory profession provides.",
+            "quote": "A unique segment of those with a more entrepreneurial mindset did, in fact, show a positive leaning on wellbeing, given the \"build and own your own business\" opportunities that the financial advisory professional often provides.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "KITCES-WELLBEING-2023#58"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe autonomy and entrepreneurship as elements of the advisor value proposition, facts about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "McKinsey projects the US advisor count based on current trends at 290 thousand advisors.",
+            "quote": "Projected advisor count based on current trends 290",
+            "value": "290",
+            "unit": "thousands of advisors",
+            "period": "",
+            "scope": "US",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          },
+          {
+            "text": "McKinsey projects net new advisors of 30-80 thousand.",
+            "quote": "Net new advisors 30-80",
+            "value": "30-80",
+            "unit": "thousands of advisors",
+            "period": "",
+            "scope": "US",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          },
+          {
+            "text": "McKinsey projects advisors needed by 2034 at 320-370 thousand.",
+            "quote": "Advisors needed by 2034 320-370",
+            "value": "320-370",
+            "unit": "thousands of advisors",
+            "period": "2034",
+            "scope": "US",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage provides industry advisor headcount projections, which are facts about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a7.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions net new assets attributable to advisor recruiting.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a8.research",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "McKinsey's survey finds that 32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons.",
+            "quote": "32 percent of investors switch firms when their existing advisor leaves for retirement or other reasons, according to our survey of affluent and high-net-worth investors.",
+            "value": "32 percent",
+            "unit": "investors who switch firms when advisor leaves",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#30"
+            ]
+          }
+        ],
+        "differs_because": "States the share of investors (clients) who switch firms when an advisor departs, a client-retention measure, rather than the advisor turnover or departure rate itself.",
+        "reason": "The passage reports a related client-attrition figure tied to advisor departures, not an advisor turnover/departure rate, so it is a different quantity.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a9.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "McKinsey projects that increased supply through accelerated hiring and better retention of new-to-industry advisors will add 30-80 thousand net new advisors.",
+            "quote": "Net new advisors 30-80",
+            "value": "30-80",
+            "unit": "thousands of advisors",
+            "period": "",
+            "scope": "US",
+            "definition": "",
+            "chunk_ids": [
+              "MCK-ADVISOR-SHORTAGE-2025#12"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passage states a projected result of recruiting efforts (net new advisors), a fact about advisors in general.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a10.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage compares the recruiting and retention approaches of Morgan Stanley, Merrill, and Raymond James.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

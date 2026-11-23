@@ -1,0 +1,347 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer_with_boundary",
+  "chunk_ids": [
+    "SCHW-10K-2025#13",
+    "SCHW-10K-2025#14",
+    "SCHW-TR-2025Q4#9",
+    "SCHW-TR-2025Q4#18",
+    "SCHW-TR-2025Q1#13",
+    "SCHW-DECK-2026-investor-day#130",
+    "SCHW-10Q-2025Q2#8",
+    "SCHW-DECK-2026Q2#29",
+    "SCHW-TR-2024Q4#14",
+    "SCHW-TR-2025Q1#21",
+    "SCHW-TR-2026Q2#14",
+    "SCHW-10K-2025#136",
+    "SCHW-10K-2025#129",
+    "SCHW-TR-2025Q1#3",
+    "SCHW-10Q-2025Q2#22",
+    "SCHW-10Q-2025Q3#22",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-TR-2026Q3#3",
+    "SCHW-PR-2026-10-15-01#3",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#10",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2"
+  ],
+  "schema_fallback": [],
+  "enum_values": 97,
+  "at": "2026-11-22T23:27:31.986474-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 9082,
+    "output_tokens": 12945,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 7418,
+    "reasoning_tokens": 9078,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 0.81
+  },
+  "wall_s": 106.36,
+  "tokens_per_s": 121.71,
+  "ttft_s": 0.81,
+  "reasoning_content": "Let me work through this carefully. I need to write the answer following the evidence matrix and rules.\n\nAspects in order: a1, a2, a3, a4, a5, a6, a7.\n\nFirms in order: SCHW, EDJ.\n\nLet me organize claims by aspect.\n\na1 [fact]: How Schwab utilizes its scale to cheaply acquire new clients\n- a1.SCHW items 1-6, 8 (item 7 missing? No item 7 listed, just 1,2,3,4,5,6,8).\n\na2 [series, proxy, adjacent only]: Schwab's disclosed client acquisition cost\n- a2.SCHW items 1-7, all adjacent (stand-in figures). These go in adjacent, each with differs_because.\n\na3 [fact]: scale-driven sources/channels\n- a3.SCHW items 2-5.\n\na4 [series]: new client/account growth\n- a4.SCHW items 1-15.\n\na5 [fact]: EDJ acquires clients\n- a5.EDJ items 1-4.\n\na6 [fact]: EDJ cost structure - code gap.\n\na7 [comparison]: one comparison claim, part_id a7.\n\nNow let me think about recency and order. The question has a time window? The question doesn't seem to have an explicit time window. But aspects marked \"recency\"? None explicitly marked recency. The question itself doesn't state a time window. So no why-lines needed unless aspect marked recency. Let me check - no aspects are marked \"recency\" in the aspect list. So no why-lines.\n\nActually, let me re-read. \"For every item of an aspect marked recency, and every item when the question has a time window\". No time window in question, no recency marks. So no why-lines.\n\nOrder: \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window, so just aspect by aspect.\n\nFor a2 (adjacent), each item is adjacent with differs_because. The standard wording for adjacent a2: The a2 aspect is \"proxy: a stand-in figure, adjacent only\". So all items are adjacent. differs_because should explain why it's a stand-in. The stand-in figure is \"cost per client account\" which is not exactly \"client acquisition cost\" but closest disclosed figure indicating cost per new client.\n\ndiffers_because for these: \"Cost per client account is a measure of cost to serve existing accounts, not the cost to acquire new clients.\" Actually let me think. The aspect is \"Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client\". The stand-in is cost per client account.\n\ndiffers_because: \"Schwab discloses cost per client account (total expenses divided by average active brokerage accounts), which is a cost-to-serve measure, not the cost of acquiring a new client.\"\n\nI'll write a differs_because for each item. Since items share the same nature, I can use the same differs_because, but each item is separate.\n\nActually, I should group? No, each item is a separate adjacent entry. Let me write each.\n\nLet me now carefully craft each.\n\nFor a1.SCHW, facts (claims):\n1. item 1: quote verbatim. \"Scale and Size of the Business - As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.\" cite SCHW-10K-2025#13. Period 2025-12-31.\n\n2. item 2: \"Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes across multiple channels.\" cite SCHW-10K-2025#14.\n\n3. item 3: quote verbatim. cite SCHW-TR-2025Q4#9.\n\n4. item 4: value 20%, cost per account decrease, period not stated usable. quote verbatim. cite SCHW-TR-2025Q4#18.\n\n5. item 5: value 40%. quote. cite SCHW-TR-2025Q1#13.\n\n6. item 6: quote. cite SCHW-DECK-2026-investor-day#130.\n\n8. item 8: quote not verbatim - never in quotation marks. cite SCHW-10Q-2025Q2#8.\n\nEach claim must state period/date from source line. Let me write dates.\n\nFor item 4, \"period not stated in a usable form\" - I should note the value and that period isn't stated. Actually the instruction: \"State only the periods an item has; code names the asked periods a firm does not cover.\" The item 4 has \"[period not stated in a usable form]\". So I just don't state a period for that value, but I do date the claim from the source line (4Q25 transcript).\n\nLet me write all claims now.\n\na1.SCHW claims:\n1. \"The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that as one of the largest investment services firms in the U.S., its scale allows it to spread operating costs and amortize new investments over a large base of clients, which keeps its costs low: 'Scale and Size of the Business - As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.'\"\n\n2. \"The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that coupled with scale, its operating efficiency and sharing of infrastructure across different businesses creates a cost advantage enabling it to competitively price products and services while profitably serving clients of various sizes across multiple channels: 'Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes across multiple channels.'\"\n\n3. \"The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts that make it easier for clients to do business with it, keeps its cost-to-serve clients low and allows it to invest in client capabilities that fuel growth: 'our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth and fuel experiences that drive more efficiencies.'\"\n\n4. \"The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), Schwab stated that its scale, combined with expense discipline, has allowed it to decrease its cost per account by 20% over the last five years while remaining the industry leader on expense on client assets.\"\n\n5. \"The Charles Schwab Corporation: On the 1Q25 earnings call (April 2025), Schwab stated that its marketing spend drives approximately 40% of new-to-firm retail clients.\"\n\n6. \"The Charles Schwab Corporation: In an investor day deck (May 2026), Schwab stated that marketing is a core growth engine for consistent client and asset growth, and that its data and insight-led model drives efficiency at scale.\"\n\n8. \"The Charles Schwab Corporation: The 2Q25 10-Q (period ended June 30, 2025) states that management couples Schwab's scale and resources with ongoing expense discipline to keep costs low and ensure products and solutions are affordable.\" (no quotation marks)\n\nNow a2.SCHW adjacent items (stand-in figures). Each with differs_because.\n\nitem 1: 2020 GAAP $442. differs_because: \"Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client.\"\nitem 2: 2020 adjusted $404.\nitem 3: 2025 GAAP $332.\nitem 4: 2025 adjusted $319, -21%.\nitem 5: 20% decrease cost per account, 2025.\nitem 6: >25% decrease last decade, ~50% inflation-adjusted, 2024.\nitem 7: >20% improvement last decade, 2025.\n\nEach adjacent text must carry part_id a2.SCHW and differs_because. The adjacent text should be a claim-like statement.\n\nLet me draft differs_because consistently: \"Schwab does not disclose a client acquisition cost; its cost per client account measures the cost to serve existing accounts, not the cost to acquire new clients.\"\n\nActually, the aspect a2 is \"Schwab's disclosed client acquisition cost or the closest disclosed figure indicating cost per new client\". The stand-in is \"cost per client account\". So differs_because: \"Cost per client account is a cost-to-serve measure (total expenses divided by average active brokerage accounts), not the cost to acquire a new client.\"\n\nI'll write each adjacent item.\n\nLet me draft:\n\nitem 1: \"The Charles Schwab Corporation: Schwab reported GAAP cost per client account of $442 in 2020, calculated by dividing total expenses excluding interest by average active brokerage accounts.\" (no quotes, quote not verbatim)\n\ndiffers_because: \"Cost per client account measures the cost to serve accounts, not the cost to acquire a new client.\"\n\nitem 2: \"...adjusted (non-GAAP) cost per client account of $404 in 2020, calculated by dividing adjusted total expenses (non-GAAP) by average active brokerage accounts.\"\n\nitem 3: \"...GAAP cost per client account of $332 in 2025...\"\n\nitem 4: \"...adjusted (non-GAAP) cost per client account of $319 in 2025, a decrease of 21%...\"\n\nitem 5: \"Schwab stated its scale combined with expense discipline allowed it to decrease its cost per account by 20% over the last five years.\" (2025)\n\nitem 6: \"Schwab stated its cost per client account has decreased more than 25% over the last decade, and nearly 50% on an inflation-adjusted basis.\" (2024)\n\nitem 7: \"Schwab stated it improved cost per account by more than 20% over the last decade.\" (2025)\n\nFor items 5, 6, 7 these are about cost per account changes - same stand-in nature.\n\nNow a3.SCHW facts:\nitem 2: marketing core growth engine - quote not verbatim. cite SCHW-DECK-2026-investor-day#130.\nitem 3: scale/size - period 2025-12-31. quote verbatim partial. cite SCHW-10K-2025#13.\nitem 4: sheer scale + efficiency - period 2025Q4. cite SCHW-TR-2025Q4#9.\nitem 5: channels - period 2026Q2. cite SCHW-TR-2026Q2#14. quote verbatim.\n\nitem 5 is key - lists channels: more branches, more financial consultants, strategic marketing and advertising (including adapting to LLMs), RIA support ecosystem, workplace investments.\n\nNote: a3 item 1 is missing (there's item 2,3,4,5 but no item 1). I'll write items 2-5.\n\nNote items 2,3,4 overlap with a1 items. But instruction \"also under another aspect\" - not marked here. I'll write them under a3 as listed.\n\na4.SCHW facts: items 1-15. These are the new client/account growth figures. All facts.\n\nLet me draft each with dates.\n\nitem 1: 2024 - 4.2 million new brokerage accounts up 10%, core net new assets $366.9B up 20%. cite SCHW-10K-2025#136. quote not verbatim.\n\nitem 2: 2024 core net new assets $366.9B up 20%. cite SCHW-10K-2025#136.\n\nitem 3: 2025 - 4.7 million new brokerage accounts, +13%. cite SCHW-10K-2025#129.\n\nitem 4: 2025 core net new assets $519.4B, +42%. cite SCHW-10K-2025#129.\n\nitem 5: 2025Q1 - 1.2 million new accounts. cite SCHW-TR-2025Q1#3.\n\nitem 6: 2025Q2 - 1.1 million new brokerage accounts, up 11%. cite SCHW-10Q-2025Q2#22.\n\nitem 7: 2025Q2 core net new assets $80.3B, up 31%. cite SCHW-10Q-2025Q2#22.\n\nitem 8: 2025Q3 - 1.1 million, up 18%. cite SCHW-10Q-2025Q3#22.\n\nitem 9: 2025Q3 core net new assets $137.5B, +44%. cite SCHW-10Q-2025Q3#22.\n\nitem 10: 2026Q1 - 1.3 million, up 10%. cite SCHW-10Q-2026Q1#19.\n\nitem 11: 2026Q1 core net new assets $140.0B, +2%. cite SCHW-10Q-2026Q1#19.\n\nitem 12: 2026Q2 - 1.4 million, up 26%. cite SCHW-10Q-2026Q2#22.\n\nitem 13: 2026Q2 core net new assets $119.8B, +49%. cite SCHW-10Q-2026Q2#22.\n\nitem 14: 2026Q3 - 1.2 million. cite SCHW-TR-2026Q3#3.\n\nitem 15: 2026Q3 core net new assets $190.4B, +38%. cite SCHW-PR-2026-10-15-01#3.\n\nThese go as claims under part_id a4.SCHW.\n\nNote item 1 and item 2 both cite same source and overlap; I write both as separate claims.\n\na5.EDJ facts:\nitem 1: three initiatives. cite EDJ-10K-2025#88. quote verbatim.\nitem 2: branch office model. cite EDJ-10K-2025#10. quote verbatim.\nitem 3: advisors work with local business owners, ~2/3 US advisors have group retirement plan client. scope U.S. advisors. cite EDJ-TRADE-2026-09-30-WM-01#0. quote not verbatim. Trade press - attributed \"trade press reports\".\nitem 4: minority stake in Quicken. cite EDJ-TRADE-2026-08-18-IN-01#2. quote not verbatim. Trade press.\n\nWait, item 3 and 4 are trade-press items (EDJ-TRADE...). Rule: \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...')\". So these are facts but attributed to trade press.\n\nActually item 3 and 4 - are they fact cells? Yes, a5.EDJ is fact aspect. So they are claims attributed as trade press reports.\n\nLet me draft:\n\nitem 3: \"Edward Jones: Trade press reports that Edward Jones's advisors work with local business owners in their communities every day to expand access to workplace retirement plans, and that about two-thirds of its U.S. advisors have a group retirement plan client.\"\n\nitem 4: \"Edward Jones: Trade press reports that Edward Jones took a minority stake in the personal finance app Quicken, intending to integrate its personal financial management capabilities into Edward Jones to support its value proposition and advisor conversations with clients.\"\n\na6.EDJ: code gap. I add no claim, no gap (gap added by code, don't repeat). Actually \"gap_with_adjacent\" not the case here. a6.EDJ is \"not found (code gap)\". So no claim. The code gap covers it. I don't add anything.\n\nWait, but do I need to write a gap? The instruction says gaps added by code - do not repeat. So I don't add a gap for a6.\n\na7 comparison: one comparison claim, part_id a7. Need to answer whether Edward Jones could replicate Schwab's strategy, and whether it can be made on this evidence.\n\nBoth a7.SCHW and a7.EDJ are \"not found (code gap)\". So there's no evidence directly on whether EDJ could replicate. So the comparison: not valid on this evidence - because no evidence found on whether/how EDJ could replicate.\n\nActually, let me think about what the comparison aspect a7 requires. It asks \"Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy\". The comparison needs exactly one claim answering whether the comparison can be made.\n\nSince a7.SCHW and a7.EDJ are both code gaps (not found), there's no direct evidence addressing this comparison. So the answer is: this comparison cannot be made (not valid) on this evidence because no documents found address whether/how Edward Jones could replicate Schwab's strategy.\n\nBut wait - the normative part. The question has a normative part (\"how could Edward Jones replicate\"). The behavior is answer_with_boundary. So code adds the hand-off sentence. I write the evidence half only.\n\nFor a7 comparison claim, I state it's not valid because no evidence found directly comparing/assessing EDJ's ability to replicate.\n\nLet me write: \"a7: Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined on this evidence: the documents searched contain no statement addressing whether or how Edward Jones could replicate Schwab's approach (neither firm's documents were found with content on this), so the comparison is not valid on this evidence.\"\n\nActually I need to cite items it rests on. There's nothing found. So I cite... hmm. The comparison claim needs to cite items. Since both are not found, there's nothing to cite. But I can reference the definitions? The definitions are context.\n\nActually, I think I can say it's not valid because no evidence found. I'll cite nothing? But chunk_ids is required. Hmm. Actually I could cite the relevant underlying facts that would be needed (a1, a5, a6). But the rule says cite items it rests on (the definitions, the figures compared).\n\nLet me think. The comparison \"whether EDJ could replicate Schwab's scale-based low-cost strategy\" would rest on Schwab's scale advantages (a1) and EDJ's current cost structure (a6). a6 is not found. So the comparison cannot be made because EDJ's cost structure/economics (a6) is not found.\n\nSo my comparison claim: not valid because EDJ's current cost structure and economics relative to Schwab's scale advantages (the basis for assessing replicability) was not found in the documents.\n\nI'll cite a1.SCHW items (scale advantages) and note a6 not found. Actually for chunk_ids, I can cite the Schwab scale sources. Let me cite SCHW-10K-2025#13 and SCHW-10K-2025#14 (scale advantage), and note a6 EDJ not found.\n\nLet me write: \"Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined on this evidence, so the comparison is not valid. Schwab's scale advantage is documented (e.g., the 2025 10-K states it spreads operating costs and amortizes new investments over a large client base, and shares infrastructure across businesses for a cost advantage), but no document found states Edward Jones's current cost structure and economics for client acquisition relative to Schwab's scale advantages, so there is no basis on this evidence to assess whether or how Edward Jones could replicate it.\"\n\nChunk ids: SCHW-10K-2025#13, SCHW-10K-2025#14.\n\nNow, the part_id for the comparison claim is a7 (not a7.SCHW or a7.EDJ). The enum has \"a7\" as an option. Yes.\n\nLet me now assemble all.\n\nNow, about the \"answer_with_boundary\" - code adds hand-off sentence. I just provide evidence half.\n\nAlso, I need to include gaps. The code gaps are added by code, don't repeat. But should I include any gaps in my gaps array? The instruction says gaps added by code are listed; I add a gap of my own only for something those gaps don't name.\n\nDo I need to add any gap? a6 is covered by code gap. a7 covered by code gaps. I think I don't need to add gaps. But let me consider - is there anything not covered?\n\nThe standard wording for advisor pay doesn't apply. The \"gap_with_adjacent\" doesn't apply. \n\nActually, let me reconsider a2. The a2 aspect is \"proxy: a stand-in figure, adjacent only\". All items go to adjacent, no claim. Good.\n\nLet me also double-check: a2 has no claim cells, all adjacent. So no claim for a2.\n\nNow, about recency/why-lines: no time window, no recency marks. Skip.\n\nLet me verify order within aspects. No time window, so aspect by aspect, firms in order listed. Within aspect a4, items listed in order 1-15 which is already roughly chronological (2024, 2024, 2025, 2025, 2025Q1, 2025Q2, ...). Actually item order isn't strictly newest-first, but no time window so I keep matrix order. I'll keep the listed order.\n\nActually, let me reconsider - should I reorder a4 to newest first? The rule \"With a time window, order claims... newest first\" only applies with time window. No time window here. So keep matrix order.\n\nBut wait, the matrix order for a4 goes 2024 \u2192 2026Q3, which is chronological oldest to newest. That's fine, no reordering required.\n\nLet me now write everything out.\n\nFor a1, item ordering: 1,2,3,4,5,6,8. Item 7 missing. I'll write in order.\n\nLet me finalize chunk_ids for each claim.\n\na1.SCHW:\n1. SCHW-10K-2025#13\n2. SCHW-10K-2025#14\n3. SCHW-TR-2025Q4#9\n4. SCHW-TR-2025Q4#18\n5. SCHW-TR-2025Q1#13\n6. SCHW-DECK-2026-investor-day#130\n8. SCHW-10Q-2025Q2#8\n\na2 adjacent (all SCHW-DECK-2026Q2#29 for 1-4, SCHW-TR-2025Q4#18 for 5, SCHW-TR-2024Q4#14 for 6, SCHW-TR-2025Q1#21 for 7).\n\na3.SCHW:\n2. SCHW-DECK-2026-investor-day#130\n3. SCHW-10K-2025#13\n4. SCHW-TR-2025Q4#9\n5. SCHW-TR-2026Q2#14\n\na4.SCHW: items 1-15 with respective cites.\n\na5.EDJ:\n1. EDJ-10K-2025#88\n2. EDJ-10K-2025#10\n3. EDJ-TRADE-2026-09-30-WM-01#0\n4. EDJ-TRADE-2026-08-18-IN-01#2\n\na7: SCHW-10K-2025#13, SCHW-10K-2025#14 (and maybe a1 items).\n\nLet me write the full answer now.\n\nFor part_id on claims: each claim's part_id is the cell id. a1.SCHW, a2.SCHW (adjacent), a3.SCHW, a4.SCHW, a5.EDJ, a7 (comparison).\n\nWait, a1.SCHW items all get part_id \"a1.SCHW\". a3.SCHW items \"a3.SCHW\". a4.SCHW \"a4.SCHW\". a5.EDJ \"a5.EDJ\". a7 comparison \"a7\".\n\nAdjacent a2.SCHW items get part_id \"a2.SCHW\".\n\nLet me write the claims text carefully.\n\nFor item 4 (a1), period not usable. I'll write value 20% without period beyond source.\n\nLet me write.\n\nActually for a1 item 4, I should state the 20% decrease. \"decrease its cost per account by 20% over the last five years while remaining the industry leader as measured by expense on client assets\". Period: the source is 4Q25 transcript. The \"last five years\" is relative; I'll just date to the call.\n\nLet me finalize all text.\n\nNow, I realize for adjacent items, I need differs_because field. Let me write a consistent differs_because.\n\ndiffers_because for a2 items: \"Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client.\"\n\nThat's clear and accurate.\n\nNow let me write the submit_answer.\n\nFor gaps array - I think I should leave it empty or include nothing. Actually the schema requires \"gaps\" array (required). I'll provide empty array.\n\nWait, do I need to add any gap? Let me reconsider. The instruction: \"Cells with code gaps get no claim; code adds those gaps.\" And \"gaps added by code (do not repeat them)\". So I don't add gaps. gaps = [].\n\nBut actually, is there a case for gap_with_adjacent? No.\n\nLet me also reconsider: the answerable field. The question has a normative part. answer_with_boundary. answerable = ? I think answerable should be true for the evidence half, or false? The behavior is answer_with_boundary, meaning the evidence half only, code adds hand-off. I'll set answerable to... hmm.\n\nActually, the normative part (\"how could Edward Jones replicate\") is not answerable from evidence. But answer_with_boundary means I answer the factual/evidence half and code adds boundary. The answerable flag likely indicates whether the full question is answerable. Given the normative part, perhaps answerable = false? But the evidence half IS answerable.\n\nThe behavior \"answer_with_boundary\" suggests I provide what's answerable and code adds the boundary sentence. I think answerable should be true (I am answering the evidence portion). Hmm, but actually let me think about what \"answerable\" means in this schema.\n\nGiven the why \"1e: the question has a normative part\", and behavior answer_with_boundary. I think answerable reflects whether the question as asked (including normative) can be answered. Since there's a normative part that cannot be answered from evidence, answerable = false would signal that. But then I still provide claims.\n\nActually, re-reading: \"Return the answer by calling the submit_answer tool\". The answerable field - I'll set it to true since I'm providing the evidence-based answer with boundary. Hmm.\n\nLet me think more carefully. \"answer_with_boundary: the evidence half only; code adds the hand-off sentence.\" This means the boundary is added by code, so I just provide evidence. The answerable flag... \n\nI think answerable = true is fine since the factual aspects are answerable. But the normative part makes the overall question partially unanswerable. \n\nGiven ambiguity, I'll set answerable = true (the evidence is answerable and I'm delivering it). Actually, let me reconsider - the a7 comparison is \"not valid\" (cannot be made on evidence), which is itself a valid answer to the comparison aspect.\n\nI'll go with answerable = true.\n\nHmm, but actually the normative \"how could EDJ replicate\" is genuinely not answerable from evidence, and that's the core of the question. The boundary sentence handles that. I think answerable should reflect that I cannot fully answer. Let me set answerable = false? \n\nActually, let me reconsider the whole structure. The \"answerable\" boolean likely gates whether the answer is considered answerable. Given behavior answer_with_boundary, and the hand-off sentence is added by code, the answerable flag probably relates to the evidence portion being answerable.\n\nI'll set answerable = true. This is my best judgment; the evidence matrix has substantial factual content.\n\nActually, wait. Let me reconsider. Looking more carefully, I think \"answerable\" = true means \"I'm providing an answer\" vs false meaning \"I cannot answer\". Since I'm providing claims, answerable = true.\n\nI'll go with true.\n\nNow let me write all the text carefully and completely.\n\nLet me finalize.\n\nFor a4 item 1: quote not verbatim, so no quotes. \"In 2024, Schwab clients opened 4.2 million new brokerage accounts, up 10% year-over-year, and core net new assets totaled $366.9 billion, up 20% from 2023.\" I can state these figures as facts (the value/unit/period are given). Date: 2025 10-K period ended Dec 31 2025.\n\nActually the source is SCHW-10K-2025#136, Item 7, period 2025-12-31. The figure is about 2024. I date the claim by source: \"The 2025 10-K (period ended December 31, 2025) states that in 2024...\"\n\nLet me write everything now.\n\nFor a5 item 1: quote verbatim (not marked not-verbatim). So quote in quotation marks. It's long but fine.\n\nitem 2: quote verbatim.\n\nitem 3: quote not verbatim, no quotes. Trade press.\n\nitem 4: quote not verbatim, no quotes. Trade press.\n\nNow write full answer.\n\nLet me be careful with quotation marks only for verbatim quotes.\n\na1 item 1: verbatim - quoted.\na1 item 2: verbatim - quoted.\na1 item 3: verbatim - quoted.\na1 item 4: quote verbatim (not marked not-verbatim). So I can quote. Actually item 4 has a quote field and value. It's verbatim. I'll include in quotes or paraphrase with figures. Let me include the quote.\na1 item 5: quote verbatim. value 40%.\na1 item 6: quote verbatim.\na1 item 8: quote not verbatim - no quotes.\n\na3 item 2: quote not verbatim - no quotes.\na3 item 3: quote verbatim.\na3 item 4: quote verbatim.\na3 item 5: quote verbatim.\n\na4 items: mostly quote not verbatim (item 1, and several). Let me check which are not verbatim:\nitem 1: quote not verbatim\nitem 2: (no \"not verbatim\" mark) - verbatim\nitem 3: no mark - verbatim\nitem 4: no mark - verbatim\nitem 5: no mark - verbatim\nitem 6: no mark - verbatim\nitem 7: no mark - verbatim\nitem 8: no mark - verbatim\nitem 9: no mark - verbatim\nitem 10: no mark - verbatim\nitem 11: no mark - verbatim\nitem 12: no mark - verbatim\nitem 13: no mark - verbatim\nitem 14: no mark - verbatim\nitem 15: no mark - verbatim\n\nOnly item 1 is marked \"quote not verbatim\". Items 2-15 verbatim. So I can quote items 2-15.\n\nActually, I'll paraphrase with the figures to keep it clean, but for verbatim items I can quote. The instruction says quote in quotation marks when verbatim, and state figures. I'll include quotes for verbatim ones where helpful, but honestly I can just state the facts since they're fact cells with value/unit/period. The rule about quotes is mainly about not misquoting. Let me include quotes for the verbatim ones to be safe and accurate, or just state figures.\n\nActually, re-reading: \"A fact cell is a claim\". I should state the figure. Quoting is optional but when I do quote, must be exact. For fact cells with clear values, I'll state the figure and date it, optionally including a short quote.\n\nTo keep it clean and avoid errors, I'll state figures and dates, and include verbatim quotes where they add precision (especially the scale/channel language in a1/a3).\n\nLet me write concise but complete claims.\n\nI'll now produce the final tool call.\n\nFor a4, I'll write each as a dated claim with figures.\n\nLet me write out all a4 items concisely:\n\n1. \"The 2025 10-K (period ended December 31, 2025) states that in 2024 Schwab clients opened 4.2 million new brokerage accounts, a year-over-year increase of 10%, and that core net new assets totaled $366.9 billion in 2024, up 20% from 2023.\" (quote not verbatim, no quotes)\n\n2. \"The 2025 10-K (period ended December 31, 2025) states that core net new assets totaled $366.9 billion in 2024, up 20% from 2023.\"\n\n3. \"The 2025 10-K (period ended December 31, 2025) states that in 2025 clients opened 4.7 million new brokerage accounts, an increase of 13% from the prior year.\"\n\n4. \"The 2025 10-K (period ended December 31, 2025) states that core net new assets for 2025 totaled $519.4 billion, increasing 42% from the prior year.\"\n\n5. \"On the 1Q25 earnings call (April 2025), Schwab stated that clients opened 1.2 million new accounts in the first quarter of 2025.\"\n\n6. \"The 2Q25 10-Q (period ended June 30, 2025) states that clients opened 1.1 million new brokerage accounts in the second quarter of 2025, up 11% year-over-year.\"\n\n7. \"The 2Q25 10-Q (period ended June 30, 2025) states that core net new assets, inclusive of seasonal tax payments, were $80.3 billion in the second quarter of 2025, up 31% year-over-year.\"\n\n8. \"The 3Q25 10-Q (period ended September 30, 2025) states that clients opened 1.1 million new brokerage accounts in the third quarter of 2025, up 18% year-over-year.\"\n\n9. \"The 3Q25 10-Q (period ended September 30, 2025) states that core net new assets totaled $137.5 billion in the third quarter of 2025, increasing 44% year-over-year.\"\n\n10. \"The 1Q26 10-Q (period ended March 31, 2026) states that clients opened 1.3 million new brokerage accounts in the first quarter of 2026, up 10% from the prior-year first quarter.\"\n\n11. \"The 1Q26 10-Q (period ended March 31, 2026) states that core net new assets rose 2% year-over-year in the first quarter of 2026 to $140.0 billion.\"\n\n12. \"The 2Q26 10-Q (period ended June 30, 2026) states that new brokerage accounts were 1.4 million in the second quarter of 2026, up 26% year-over-year.\"\n\n13. \"The 2Q26 10-Q (period ended June 30, 2026) states that Schwab attracted core net new assets of $119.8 billion in the second quarter of 2026, up 49% from the same period in 2025.\"\n\n14. \"On the 3Q26 earnings call (October 2026), Schwab stated that clients opened 1.2 million brokerage accounts in the third quarter.\"\n\n15. \"In the press release dated October 15, 2026 (period ended September 30, 2026), Schwab stated that core net new assets totaled $190.4 billion in the third quarter of 2026, up 38% versus 3Q25.\"\n\nGood.\n\nNow let me write the a3 items:\n\n2. \"In an investor day deck (May 2026), Schwab describes marketing as a core growth engine for consistent client and asset growth, with a data and insight-led model that drives efficiency at scale.\" (no quotes)\n\n3. \"The 2025 10-K (period ended December 31, 2025) cites Schwab's scale and size of the business as enabling it to spread operating costs and amortize new investments over a large base of clients.\"\n\n4. \"On the 4Q25 earnings call (January 2026), Schwab stated that its sheer scale combined with efficiency efforts keeps its cost-to-serve clients low, allowing it to invest in client capabilities that fuel growth.\"\n\n5. \"On the 2Q26 earnings call (July 2026), Schwab cited channels for acquiring new clients including more branches in local communities, more financial consultants, strategic marketing and advertising (including adapting its marketing to the increased influence of LLMs), the build-out of an RIA support ecosystem, and investments in bringing the breadth of Schwab to its workplace clients.\"\n\nGood.\n\na5.EDJ:\n\n1. \"Edward Jones: The 2025 10-K (period ended December 31, 2025) states that Edward Jones targets new clients through three initiatives: High Net Worth (focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models); Workplace (which connects local business owners and their employees with financial solutions through their workplace); and a new digital platform (focused on attracting and retaining Next Generation investors).\"\n\n2. \"Edward Jones: The 2025 10-K (period ended December 31, 2025) states that Edward Jones acquires and serves clients through a branch office model in which financial advisors and client support team professionals located in the communities where clients live and work build deep, personal relationships.\"\n\n3. \"Edward Jones: Trade press reports that Edward Jones's advisors work with local business owners in their communities every day to expand access to workplace retirement plans, and that about two-thirds of its U.S. advisors have a group retirement plan client.\"\n\n4. \"Edward Jones: Trade press reports that Edward Jones took a minority stake in the personal finance app Quicken, intending to integrate Quicken's personal financial management capabilities into Edward Jones to support its value proposition and advisor conversations with clients.\"\n\na7 comparison:\n\n\"Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined on this evidence, so the comparison is not valid. Schwab's scale advantage is documented (the 2025 10-K states it spreads operating costs and amortizes new investments over a large base of clients, and that sharing infrastructure across businesses creates a cost advantage), but the documents searched contain no statement of Edward Jones's current cost structure and economics for client acquisition relative to Schwab's scale advantages, so there is no basis on this evidence to assess whether or how Edward Jones could replicate the strategy.\"\n\nchunk_ids: SCHW-10K-2025#13, SCHW-10K-2025#14.\n\npart_id: \"a7\".\n\nNow assemble everything.\n\nLet me finalize the claim list in aspect order with part_ids.\n\nI'll produce the submit_answer.\n\nFor adjacent a2 items, part_id \"a2.SCHW\".\n\nLet me write each adjacent text.\n\n1. \"The Charles Schwab Corporation: Schwab reported GAAP cost per client account of $442 in 2020, calculated by dividing total expenses excluding interest by average active brokerage accounts.\" cite SCHW-DECK-2026Q2#29.\n\n2. \"...adjusted (non-GAAP) cost per client account of $404 in 2020, calculated by dividing adjusted total expenses (non-GAAP) by average active brokerage accounts.\"\n\n3. \"...GAAP cost per client account of $332 in 2025...\"\n\n4. \"...adjusted (non-GAAP) cost per client account of $319 in 2025, a decrease of 21%...\"\n\n5. \"...Schwab stated its scale combined with expense discipline allowed it to decrease its cost per account by 20% over the last five years.\" cite SCHW-TR-2025Q4#18.\n\n6. \"...Schwab stated its cost per client account has decreased more than 25% over the last decade, and nearly 50% on an inflation-adjusted basis.\" cite SCHW-TR-2024Q4#14.\n\n7. \"...Schwab stated it improved cost per account by more than 20% over the last decade.\" cite SCHW-TR-2025Q1#21.\n\nNote: item 5 duplicates a1 item 4 (20% decrease). But it's under a2 as a stand-in for acquisition cost. Fine.\n\ndiffers_because for all: \"Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client.\"\n\nAlright, I'm confident. Let me write the final answer.\n\nFor a2, since these are \"stand-in figures (adjacent only)\", all adjacent. Good.\n\nLet me write the final submit_answer call now.\n\nI need to double check the part_id enum values include \"a2.SCHW\" - yes, and \"a1.SCHW\", \"a3.SCHW\", \"a4.SCHW\", \"a5.EDJ\", \"a7\". Good.\n\nLet me write it all out.",
+  "first_claim_s": 84.25,
+  "stream_items": {
+    "first_claim_s": 84.25,
+    "shown": 30,
+    "held": 8
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer_with_boundary",
+    "claims": [
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that as one of the largest investment services firms in the U.S., its scale allows it to spread operating costs and amortize new investments over a large base of clients, which keeps its costs low: \"Scale and Size of the Business - As one of the largest investment services firms in the U.S., we are able to spread operating costs and amortize new investments over a large base of clients, and harness the resources to evolve capabilities to meet client needs.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that coupled with scale, its operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables it to competitively price products and services while profitably serving clients of various sizes across multiple channels: \"Coupled with scale, our operating efficiency and sharing of infrastructure across different businesses creates a cost advantage that enables us to competitively price products and services while profitably serving clients of various sizes across multiple channels.\"",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), Schwab stated that its sheer scale, combined with efficiency efforts that make it easier for clients to do business with it, keeps its cost-to-serve clients low and allows it to invest in client capabilities that fuel growth: \"our sheer scale, combined with efficiency efforts that make it easier for clients to do business with us, keeps our cost-to-serve clients low. This also allows us to invest in client capabilities that will fuel our growth and fuel experiences that drive more efficiencies.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#9"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), Schwab stated that its scale, combined with expense discipline, has allowed it to decrease its cost per account by 20% over the last five years while remaining the industry leader as measured by expense on client assets: \"Our scale, combined with our expense discipline, has allowed us to decrease our cost per account 20% over the last five years while driving our ability to remain the industry leader as measured by expense on client assets, or EOCA.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q25 earnings call (April 2025), Schwab stated that its marketing spend drives approximately 40% of new-to-firm retail clients.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In an investor day deck (May 2026), Schwab stated that marketing is a core growth engine for consistent client and asset growth, and that its data and insight-led model drives efficiency at scale.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#130"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q25 10-Q (period ended June 30, 2025) states that management couples Schwab's scale and resources with ongoing expense discipline to keep costs low and ensure products and solutions are affordable as well as responsive to client needs.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q2#8"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In an investor day deck (May 2026), Schwab describes marketing as a core growth engine for consistent client and asset growth, with a data and insight-led model that drives efficiency at scale.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#130"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) cites Schwab's scale and size of the business as enabling it to spread operating costs and amortize new investments over a large base of clients.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 4Q25 earnings call (January 2026), Schwab stated that its sheer scale combined with efficiency efforts keeps its cost-to-serve clients low, allowing it to invest in client capabilities that fuel growth.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#9"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 2Q26 earnings call (July 2026), Schwab cited channels for acquiring new clients including more branches in local communities, more financial consultants, strategic marketing and advertising (including adapting its marketing to the increased influence of LLMs), the build-out of an RIA support ecosystem, and investments in bringing the breadth of Schwab to its workplace clients.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#14"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that in 2024 Schwab clients opened 4.2 million new brokerage accounts, a year-over-year increase of 10%, and that core net new assets totaled $366.9 billion in 2024, up 20% from 2023.",
+        "chunk_ids": [
+          "SCHW-10K-2025#136"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that core net new assets totaled $366.9 billion in 2024, up 20% from 2023.",
+        "chunk_ids": [
+          "SCHW-10K-2025#136"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that in 2025 clients opened 4.7 million new brokerage accounts, an increase of 13% from the prior year.",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 10-K (period ended December 31, 2025) states that core net new assets for 2025 totaled $519.4 billion, increasing 42% from the prior year.",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 1Q25 earnings call (April 2025), Schwab stated that clients opened 1.2 million new accounts in the first quarter of 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q25 10-Q (period ended June 30, 2025) states that clients opened 1.1 million new brokerage accounts in the second quarter of 2025, up 11% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q25 10-Q (period ended June 30, 2025) states that core net new assets, inclusive of seasonal tax payments, were $80.3 billion in the second quarter of 2025, up 31% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 3Q25 10-Q (period ended September 30, 2025) states that clients opened 1.1 million new brokerage accounts in the third quarter of 2025, up 18% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q3#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 3Q25 10-Q (period ended September 30, 2025) states that core net new assets totaled $137.5 billion in the third quarter of 2025, increasing 44% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q3#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 1Q26 10-Q (period ended March 31, 2026) states that clients opened 1.3 million new brokerage accounts in the first quarter of 2026, up 10% from the prior-year first quarter.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#19"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 1Q26 10-Q (period ended March 31, 2026) states that core net new assets rose 2% year-over-year in the first quarter of 2026 to $140.0 billion.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#19"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 10-Q (period ended June 30, 2026) states that new brokerage accounts were 1.4 million in the second quarter of 2026, up 26% year-over-year.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2Q26 10-Q (period ended June 30, 2026) states that Schwab attracted core net new assets of $119.8 billion in the second quarter of 2026, up 49% from the same period in 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the 3Q26 earnings call (October 2026), Schwab stated that clients opened 1.2 million brokerage accounts in the third quarter.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: In the press release dated October 15, 2026 (period ended September 30, 2026), Schwab stated that core net new assets totaled $190.4 billion in the third quarter of 2026, up 38% versus 3Q25.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) states that Edward Jones targets new clients through three initiatives: High Net Worth (focused on attracting and serving high net worth clients through expanded advice, planning, products and services across multiple service models); Workplace (which connects local business owners and their employees with financial solutions through their workplace); and a new digital platform (focused on attracting and retaining Next Generation investors).",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: The 2025 10-K (period ended December 31, 2025) states that Edward Jones acquires and serves clients through a branch office model in which financial advisors and client support team professionals located in the communities where clients live and work build deep, personal relationships.",
+        "chunk_ids": [
+          "EDJ-10K-2025#10"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press reports that Edward Jones's advisors work with local business owners in their communities every day to expand access to workplace retirement plans, and that about two-thirds of its U.S. advisors have a group retirement plan client.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-09-30-WM-01#0"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Edward Jones: Trade press reports that Edward Jones took a minority stake in the personal finance app Quicken, intending to integrate Quicken's personal financial management capabilities into Edward Jones to support its value proposition and advisor conversations with clients.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-08-18-IN-01#2"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be determined on this evidence, so the comparison is not valid. Schwab's scale advantage is documented (the 2025 10-K states it spreads operating costs and amortizes new investments over a large base of clients, and that sharing infrastructure across businesses creates a cost advantage), but the documents searched contain no statement of Edward Jones's current cost structure and economics for client acquisition relative to Schwab's scale advantages, so there is no basis on this evidence to assess whether or how Edward Jones could replicate the strategy.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13",
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a7"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "The Charles Schwab Corporation: Schwab reported GAAP cost per client account of $442 in 2020, calculated by dividing total expenses excluding interest by average active brokerage accounts.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab reported adjusted (non-GAAP) cost per client account of $404 in 2020, calculated by dividing adjusted total expenses (non-GAAP) by average active brokerage accounts.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab reported GAAP cost per client account of $332 in 2025, calculated by dividing total expenses excluding interest by average active brokerage accounts.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab reported adjusted (non-GAAP) cost per client account of $319 in 2025, a decrease of 21%.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab stated its scale combined with expense discipline allowed it to decrease its cost per account by 20% over the last five years.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab stated its cost per client account has decreased more than 25% over the last decade, and nearly 50% on an inflation-adjusted basis.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#14"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      },
+      {
+        "text": "The Charles Schwab Corporation: Schwab stated it improved cost per account by more than 20% over the last decade.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#21"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per client account is a cost-to-serve measure, not the cost of acquiring a new client."
+      }
+    ],
+    "gaps": []
+  }
+}

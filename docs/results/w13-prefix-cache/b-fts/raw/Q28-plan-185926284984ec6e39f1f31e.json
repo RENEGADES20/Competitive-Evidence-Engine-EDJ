@@ -1,0 +1,108 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "planner_version": "plan-v3.1",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 8000,
+  "request_version": "ds-strict-2-plan-off-c8000-s1",
+  "query": {
+    "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+    "entities": [
+      "EDJ",
+      "MER"
+    ],
+    "unmapped": [],
+    "themes": [
+      "advisor_recruiting"
+    ],
+    "mode": "entity+theme",
+    "window": null,
+    "firm_filter": [],
+    "date_range": null,
+    "keywords": [],
+    "theme_peers": [],
+    "terms": null,
+    "scope": null,
+    "on_theme_only": false,
+    "period_range": null,
+    "exclude_ids": []
+  },
+  "at": "2026-11-21T14:32:23.333482-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 1334,
+    "output_tokens": 379,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 182,
+    "reasoning_tokens": null,
+    "tool_calls": 1,
+    "thinking": "off",
+    "effort": "off",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.41
+  },
+  "wall_s": 3.36,
+  "tokens_per_s": 112.8,
+  "ttft_s": 1.41,
+  "reasoning_content": null,
+  "raw": {
+    "aspects": [
+      {
+        "id": "edj_advisor_attrition_rate",
+        "text": "Edward Jones's advisor attrition rate",
+        "keyword_query": "advisor attrition rate financial advisor turnover retention departure rate percentage advisors leaving",
+        "firms": [
+          "EDJ"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "edj_advisor_attrition_closest",
+        "text": "Closest disclosed measure to Edward Jones's advisor attrition rate",
+        "keyword_query": "financial advisor count headcount retention turnover attrition departure number of advisors",
+        "firms": [
+          "EDJ"
+        ],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": true
+      },
+      {
+        "id": "mer_advisor_attrition_rate",
+        "text": "Merrill's advisor attrition rate",
+        "keyword_query": "advisor attrition rate financial advisor turnover retention departure rate percentage advisors leaving",
+        "firms": [
+          "MER"
+        ],
+        "metric": "",
+        "kind": "fact",
+        "proxy": false
+      },
+      {
+        "id": "mer_advisor_attrition_closest",
+        "text": "Closest disclosed measure to Merrill's advisor attrition rate",
+        "keyword_query": "financial advisor count headcount retention turnover attrition departure number of advisors",
+        "firms": [
+          "MER"
+        ],
+        "metric": "advisor_headcount",
+        "kind": "series",
+        "proxy": true
+      },
+      {
+        "id": "attrition_comparison",
+        "text": "Whether Edward Jones's advisor attrition rate can be compared to Merrill's",
+        "keyword_query": "advisor attrition turnover retention rate comparison benchmark financial advisor count",
+        "firms": [],
+        "metric": "",
+        "kind": "comparison",
+        "proxy": false
+      }
+    ]
+  }
+}

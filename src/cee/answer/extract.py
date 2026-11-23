@@ -21,6 +21,7 @@ import datetime as dt
 import itertools
 import json
 import re
+import threading
 import time
 from concurrent.futures import CancelledError, ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, field, replace
@@ -34,6 +35,8 @@ from cee.retrieve import fts
 from cee.retrieve.fts import Hit, Query
 
 EXTRACT_VERSION = "extract-v1.2"   # #272: one call per firm x aspect cell (pool passages listed with the cell)
+# #283 (MAP_PREFIX=firm only; not adopted, default off): shared firm prefix, the cell named last, one tool schema
+EXTRACT_VERSION_FIRM = "extract-v1.3"
 # extract-v1.1 (#247): the asked quantity for other periods is a fact (ADR-021 rule 3)
 EXTRACT_TOOL = "submit_extraction"
 
@@ -105,8 +108,30 @@ aspect about a named firm's own figure it is a different_quantity (an industry f
 firm's disclosure)."""
 
 
+# #283, MAP_PREFIX=firm only: the two sentences that differ from SYSTEM_PROMPT (the message names the one cell to answer)
+FIRM_PROMPT_CHANGES = (
+    ("return exactly one cell\nfor each sub-question listed.",
+     "return exactly one cell\nfor each sub-question the message asks you to answer (the message may list the firm's other\n"
+     "sub-questions and their passages for context only)."),
+    ("only ids listed below;", "only ids the message lets you cite;"),
+)
+
+
+def prefix_mode() -> bool:
+    """#283: MAP_PREFIX=firm (shared firm prefix, one tool schema, extract-v1.3); off (default) = the #272 request."""
+    return settings().map_prefix == "firm"
+
+
+def extract_version() -> str:
+    """The extract version that joins map keys and records: EXTRACT_VERSION, or extract-v1.3 with MAP_PREFIX=firm."""
+    return EXTRACT_VERSION_FIRM if prefix_mode() else EXTRACT_VERSION
+
+
 def system_prompt(research: bool = False) -> str:
     text = SYSTEM_PROMPT.format(proxy_rule=PROXY_RULE, tool=EXTRACT_TOOL)
+    if prefix_mode():
+        for old, new in FIRM_PROMPT_CHANGES:
+            text = text.replace(old, new)
     return text + ("\n\n" + RESEARCH_NOTE if research else "")
 
 
@@ -136,6 +161,9 @@ class MapSpec:
     # (they were citable in the firm call: allowed = own | pool & firm input); listed after the cell's own
     shared: dict[str, list[Hit]] = field(default_factory=dict)
     cell_of: str | None = None   # #272: the cell a batch belongs to (merged by merge_batches), else None
+    # #283: the firm spec whose message is this cell call's shared prefix (the cell is named after it), else None
+    prefix: "MapSpec | None" = None
+    known: frozenset = frozenset()   # #283: every sub-question id of the question (foreign_cell vs unknown_cell)
 
     @property
     def hits(self) -> list[Hit]:
@@ -167,6 +195,7 @@ def map_specs(q: Query, plan, hits: list[Hit]) -> tuple[list[MapSpec], list[Cell
     for sq in plan.subquestions:
         groups.setdefault(_row_key(sq.entity), []).append(sq)
     single = len(plan.subquestions) == 1
+    known = frozenset([sq.id for sq in plan.subquestions] + [f"{a.id}.research" for a in plan.aspects])
     specs, code_cells = [], []
     for key, sqs in groups.items():
         own = {sq.id: list(by_sub.get(sq.id, [])) for sq in sqs}
@@ -182,14 +211,14 @@ def map_specs(q: Query, plan, hits: list[Hit]) -> tuple[list[MapSpec], list[Cell
                    | (set(getattr(plan, "pools", {}).get(sq.id, set())) & input_ids) for sq in sqs}
         specs.append(MapSpec(f"map.{key}", 1, sqs[0].entity, False,
                              [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text) for sq in sqs],
-                             own, allowed, {sq.id: pools.get(sq.id) for sq in sqs}))
+                             own, allowed, {sq.id: pools.get(sq.id) for sq in sqs}, known=known))
     research = [h for h in hits if h.part_id == "research"]
     if research:
         cells = [CellSpec(f"{a.id}.research", None, a, "research", a.text) for a in plan.aspects]
         ids = {h.chunk_id for h in research}
         specs.append(MapSpec("map.research", 1, None, True, cells,
                              {cells[0].id: research, **{c.id: [] for c in cells[1:]}},
-                             {c.id: set(ids) for c in cells}))
+                             {c.id: set(ids) for c in cells}, known=known))
     return specs, code_cells
 
 
@@ -238,18 +267,23 @@ def split_cell(spec: MapSpec, question: str, window, firms, limit: int | None) -
 
 
 def fan_out(specs: list[MapSpec], question: str, window=None, firms=None,
-            limit: int | None = None) -> tuple[list[MapSpec], list[Cell]]:
+            limit: int | None = None, prefix_limit: int | None = None) -> tuple[list[MapSpec], list[Cell]]:
     """#272 (TL condition 1): each firm spec of map_specs split into one call per cell. A cell call lists the
     cell's own passages (groups, as in the firm call) and, apart, the firm's input passages in its search pool
     that are listed under a sibling (shared); allowed is the firm call's set for that cell, unchanged
     (own | pool & firm input). A cell whose allowed set is empty gets the no-passage code cell and no call.
-    Research specs are kept whole. Cells over `limit` input tokens are split into batches."""
+    Research specs are kept whole. Cells over `limit` input tokens are split into batches.
+    #283: with `prefix_limit`, a firm whose own message (the firm call's) is at most that many estimated tokens
+    sends it as every cell call's shared prefix (`prefix`), the cell named last; such calls are never batched.
+    A firm over it keeps the per-cell layout above."""
     out: list[MapSpec] = []
     code_cells: list[Cell] = []
     for spec in specs:
         if spec.research:
             out.append(spec)
             continue
+        shared_prefix = (prefix_limit is not None and spec.round == 1
+                         and input_tokens(question, spec, window, firms) <= prefix_limit)
         for c in spec.cells:
             allowed = set(spec.allowed.get(c.id, set()))
             if not allowed:
@@ -260,8 +294,9 @@ def fan_out(specs: list[MapSpec], question: str, window=None, firms=None,
             shared = [h for h in spec.hits if h.chunk_id in allowed and h.chunk_id not in own_ids]
             prefix = "remap" if spec.round == 2 else "map"
             one = MapSpec(f"{prefix}.{c.id}", spec.round, spec.entity, False, [c], {c.id: own}, {c.id: allowed},
-                          {c.id: spec.pools.get(c.id)}, shared={c.id: shared})
-            out.extend(split_cell(one, question, window, firms, limit))
+                          {c.id: spec.pools.get(c.id)}, shared={c.id: shared}, known=spec.known,
+                          prefix=spec if shared_prefix else None)
+            out.extend([one] if shared_prefix else split_cell(one, question, window, firms, limit))
     return out, code_cells
 
 
@@ -302,21 +337,24 @@ def extraction_schema(spec: MapSpec, strict: bool = False) -> dict:
     """strict=True: the OpenAI and DeepSeek schema (no array limits); strict=False: the Anthropic
     tool's schema (strict tool since #232; minItems 1 on cells). Every property required, no extra
     properties, "" for none (no nullable types)."""
-    ids = spec.cell_ids
+    # #283, MAP_PREFIX=firm: one schema for every map call (no enum of cell ids), so the tool definition is part of
+    # the shared prefix; ids are checked by code (parse_output: foreign_cell, unknown_cell, unknown_ref). Off: the
+    # #272 schema with the call's cell ids as enum.
+    ids = {"type": "string"} if prefix_mode() else {"type": "string", "enum": spec.cell_ids}
     item = {"type": "object", "additionalProperties": False,
             "properties": {k: {"type": "string"} for k in
                            ("text", "quote", "value", "unit", "period", "scope", "definition")}
             | {"chunk_ids": {"type": "array", "items": {"type": "string"}}},
             "required": ["text", "quote", "chunk_ids", "value", "unit", "period", "scope", "definition"]}
     ref = {"type": "object", "additionalProperties": False,
-           "properties": {"subquestion_id": {"type": "string", "enum": ids}, "item": {"type": "integer"}},
+           "properties": {"subquestion_id": dict(ids), "item": {"type": "integer"}},
            "required": ["subquestion_id", "item"]}
     derivation = {"type": "object", "additionalProperties": False,
                   "properties": {"operation": {"type": "string", "enum": list(OPERATIONS)},
                                  "inputs": {"type": "array", "items": ref}},
                   "required": ["operation", "inputs"]}
     cell = {"type": "object", "additionalProperties": False,
-            "properties": {"subquestion_id": {"type": "string", "enum": ids},
+            "properties": {"subquestion_id": dict(ids),
                            "label": {"type": "string", "enum": list(LABELS)},
                            "items": {"type": "array", "items": item},
                            "differs_because": {"type": "string"}, "reason": {"type": "string"},
@@ -337,7 +375,57 @@ def query_window(q: Query):
     return (max(s[0] for s in spans), min(s[1] for s in spans))
 
 
+SUFFIX_MARK = "Answer in this call: sub-question "   # #283: where a shared-prefix call's own part starts
+
+
 def extract_message(question: str, spec: MapSpec, window=None, firms: list[str] | None = None) -> str:
+    """The map call's user message. #283: a cell call with a `prefix` is the firm's message (byte-identical for
+    every cell of that firm) followed by the cell's own part (cell_suffix)."""
+    if spec.prefix is not None:
+        return prefix_message(question, spec.prefix, window, firms) + cell_suffix(spec)
+    return _message(question, spec, window, firms, "Sub-questions (return one cell for each, with this id):")
+
+
+def prefix_message(question: str, firm: MapSpec, window=None, firms: list[str] | None = None) -> str:
+    """#283: the shared prefix: the firm call's message (every sub-question of the firm spec, incl. cells with
+    nothing citable, and its passages grouped by sub-question)."""
+    return _message(question, firm, window, firms,
+                    "Sub-questions of this firm (answer only the one named at the end of this message):")
+
+
+def _tags(c: CellSpec) -> str:
+    return ", ".join([c.aspect.kind] + ([f"metric {c.aspect.metric}"] if c.aspect.metric else [])
+                     + (["proxy"] if getattr(c.aspect, "proxy", False) else []))
+
+
+def cell_suffix(spec: MapSpec) -> str:
+    """#283: the call-specific end of a shared-prefix message: which sub-question to answer, what it may cite."""
+    c = spec.cells[0]
+    extra = [h.chunk_id for h in spec.shared.get(c.id) or []]
+    cite = f"Cite only the passages listed under Sub-question {c.id}"
+    if extra:
+        cite += " and these passages of its search pool listed under another sub-question: " + ", ".join(extra)
+    lines = [f"{SUFFIX_MARK}{c.id} only. Return exactly one cell, with subquestion_id {c.id}.",
+             f"- {c.id} [{_tags(c)}]: {' '.join(c.aspect.text.split())}", cite + "."]
+    return "\n\n" + "\n".join(lines)
+
+
+def prefix_text(question: str, spec: MapSpec, window=None, firms=None) -> str | None:
+    """#283: the bytes every call of a prefix group shares (system prompt, tool schema, firm message); None for a
+    call without a shared prefix (per-cell layout, batches, research, re-maps)."""
+    if spec.prefix is None:
+        return None
+    return (system_prompt(spec.research) + json.dumps(extraction_schema(spec, strict=True))
+            + prefix_message(question, spec.prefix, window, firms))
+
+
+def request_chars(question: str, spec: MapSpec, window=None, firms=None) -> int:
+    """#283: characters of one map request (system prompt, tool schema, message)."""
+    return (len(system_prompt(spec.research)) + len(json.dumps(extraction_schema(spec, strict=True)))
+            + len(extract_message(question, spec, window, firms)))
+
+
+def _message(question: str, spec: MapSpec, window, firms, heading: str) -> str:
     from cee.answer.llm import KEPT_ELSEWHERE, NO_PASSAGES, _chunk
     from cee.answer.matrix import row_name
     if spec.research:
@@ -351,11 +439,9 @@ def extract_message(question: str, spec: MapSpec, window=None, firms: list[str] 
     lines = [f"Question: {question}", f"Firm: {head}"]
     if window:
         lines.append(f"Time window: {window[0]} to {window[1]} (only passages dated in it were searched).")
-    lines += ["", "Sub-questions (return one cell for each, with this id):"]
+    lines += ["", heading]
     for c in spec.cells:
-        tags = [c.aspect.kind] + ([f"metric {c.aspect.metric}"] if c.aspect.metric else []) \
-            + (["proxy"] if getattr(c.aspect, "proxy", False) else [])
-        lines.append(f"- {c.id} [{', '.join(tags)}]: {' '.join(c.aspect.text.split())}")
+        lines.append(f"- {c.id} [{_tags(c)}]: {' '.join(c.aspect.text.split())}")
     lines += ["", "Passages, grouped by the sub-question they were found for:"]
     for c in spec.cells:
         own = spec.groups.get(c.id) or []
@@ -569,13 +655,20 @@ def parse_output(raw: dict, spec: MapSpec, by_id: dict[str, Hit], source: str = 
     rejected (flag unmatched_citation, kept in rejected_ids); the quote must be in a cited chunk
     (quote_not_found); the figure must be in a cited chunk (number_not_found); periods normalised
     (period_unparsed). A missing cell is not_found (missing_cell); a duplicate is dropped (flag on
-    the kept one)."""
+    the kept one).
+    #283 (TL condition B1; the schema has no id enum): an output cell for another sub-question of the question is
+    dropped (flag foreign_cell on this call's cells), one with an id of no sub-question likewise (unknown_cell); a
+    derivation whose inputs name a cell outside this call is dropped (derivation None, flag unknown_ref)."""
     out = MapOutput(**raw)
     specs = {c.id: c for c in spec.cells}
     cells: dict[str, Cell] = {}
+    call_flags: list[str] = []
     for co in out.cells:
         cs = specs.get(co.subquestion_id)
         if cs is None:
+            flag = "foreign_cell" if co.subquestion_id in spec.known else "unknown_cell"
+            if flag not in call_flags:
+                call_flags.append(flag)
             continue
         if cs.id in cells:
             if "duplicate_cell" not in cells[cs.id].flags:
@@ -602,15 +695,22 @@ def parse_output(raw: dict, spec: MapSpec, by_id: dict[str, Hit], source: str = 
                 item.flags.append("number_not_found")
             items.append(item)
         derivation = None
+        cell_flags: list[str] = []
         if co.derivation.operation:
-            derivation = {"operation": co.derivation.operation,
-                          "inputs": [r.model_dump() for r in co.derivation.inputs]}
+            if all(r.subquestion_id in specs for r in co.derivation.inputs):
+                derivation = {"operation": co.derivation.operation,
+                              "inputs": [r.model_dump() for r in co.derivation.inputs]}
+            else:
+                cell_flags.append("unknown_ref")
         cells[cs.id] = Cell(cs.id, cs.entity, cs.aspect.id, cs.role, co.label, source=source, items=items,
-                            differs_because=co.differs_because, reason=co.reason, derivation=derivation)
+                            differs_because=co.differs_because, reason=co.reason, derivation=derivation,
+                            flags=cell_flags)
     for cs in spec.cells:
         if cs.id not in cells:
             cells[cs.id] = Cell(cs.id, cs.entity, cs.aspect.id, cs.role, "not_found", source=source,
                                 reason="the output had no cell for this sub-question", flags=["missing_cell"])
+    for c in cells.values():
+        c.flags.extend(f for f in call_flags if f not in c.flags)
     return [cells[c.id] for c in spec.cells]
 
 
@@ -710,6 +810,18 @@ class CallResult:
     flags: list = field(default_factory=list)   # e.g. trailing_braces (#246 TL decision on Q24)
     finished_at: str | None = None   # #248: when this call ended, offset-aware, stamped in the worker
     cancelled: bool = False   # #277: not made or cut because the user pressed Stop (not a ProviderStop)
+    # #283: the call's shared-prefix group (sha256 of the prefix bytes, first 16 hex), its role in it (leader,
+    # follower, solo; "cell" = no shared prefix) and the seconds it waited for the leader's gate
+    prefix_group: str | None = None
+    prefix_role: str | None = None
+    gate_wait_s: float | None = None
+
+
+# #283: the prefix fields of the map call running in this context (set by run_round before the call), so a caller's
+# call function (the eval's) can save them in its record: prefix_group, prefix_role, gate_wait_s, leader_cached
+# (followers), prefix_chars, request_chars. None outside run_round.
+PREFIX_INFO: contextvars.ContextVar = contextvars.ContextVar("cee_map_prefix", default=None)
+PROVIDER_STOPPED = "cancelled after the provider stopped the run"
 
 
 STOPPED_ERROR = "cancelled: stopped by the user"   # #277; a ProviderStop keeps its own "cancelled after ..." text
@@ -796,6 +908,35 @@ def input_limit(provider: str) -> int | None:
     return None if window is None else window - extract_max_tokens(provider)
 
 
+def prefix_roles(specs: list[MapSpec], todo: list[int], question: str, window, firms) -> dict[int, dict]:
+    """#283 (TL condition B2): the prefix group and role of each call that will really run (`todo`, after the skip
+    and allow() filter). Group key = sha256 of the prefix bytes (system prompt, tool schema, firm message), so
+    batches, over-ceiling per-cell specs, research and re-maps (no prefix) never group. The first call of a group
+    of >= 2 is its leader, the rest followers; a group of 1 is solo; no prefix: cell."""
+    import hashlib
+    keys: dict[int, str | None] = {}
+    for i in todo:
+        text = prefix_text(question, specs[i], window, firms)
+        keys[i] = None if text is None else hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+    size: dict[str, int] = {}
+    for k in keys.values():
+        if k is not None:
+            size[k] = size.get(k, 0) + 1
+    seen: set[str] = set()
+    out: dict[int, dict] = {}
+    for i in todo:
+        k = keys[i]
+        if k is None:
+            role = "cell"
+        elif size[k] == 1:
+            role = "solo"
+        else:
+            role = "follower" if k in seen else "leader"
+            seen.add(k)
+        out[i] = {"prefix_group": k, "prefix_role": role}
+    return out
+
+
 def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, concurrency: int,
               allow: Callable[[MapSpec], bool] | None = None, provider: str = "mock",
               on_result: Callable[[int, CallResult], None] | None = None) -> list[CallResult]:
@@ -807,8 +948,15 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     #277: each call runs in its own copy of the caller's context (the cancel token travels in a context
     variable). Once the token is set (Stop), no further call starts, queued calls are cancelled, running ones
     end (an open stream is closed; a valid result that lands is kept), and cancel.Cancelled propagates with
-    `not_started` (spec ids never started) and `results`. The executor never waits for queued calls."""
-    from cee.answer import cancel
+    `not_started` (spec ids never started) and `results`. The executor never waits for queued calls.
+    #283 (TL condition B2): calls sharing a prefix (prefix_roles) run leader first on deepseek (MAP_PREFIX_GATE
+    first_chunk | done; off, or another provider: no wait). Leaders, solos and cells are queued before every
+    follower, so a leader never waits for a free worker (no deadlock at any concurrency). A follower waits for its
+    leader's gate (Event.wait in 0.1 s steps, checking Stop), then MAP_PREFIX_WAIT_S (skipped when the leader's
+    record was reused). The gate opens in a finally however the leader ends (first streamed chunk with
+    first_chunk; else when it ends: landed, invalid, failed, cached, ProviderStop, Stop). After a ProviderStop the
+    waiting followers make no call."""
+    from cee.answer import cancel, llm
     from cee.answer.llm import ProviderStop
     results: list[CallResult | None] = [None] * len(specs)
     todo = []
@@ -826,19 +974,63 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     stop: Exception | None = None
     cut = False   # #277: the user pressed Stop during this round
     not_started: list[str] = []
+    roles = prefix_roles(specs, todo, question, window, firms)
+    s = settings()
+    gate_mode = s.map_prefix_gate if provider == "deepseek" else "off"
+    gates: dict[str, dict] = {r["prefix_group"]: {"open": threading.Event(), "cached": False, "stop": False}
+                              for r in roles.values() if r["prefix_role"] == "leader"}
+    if gate_mode != "off":   # leaders, solos and cells first, then the followers (each in spec order)
+        todo = [i for i in todo if roles[i]["prefix_role"] != "follower"] + \
+               [i for i in todo if roles[i]["prefix_role"] == "follower"]
     if todo:
-        def timed(spec, *args) -> CallResult:
+        def timed(i: int, spec, *args) -> CallResult:
             if cancel.is_set():   # #277: queued behind the Stop click: never started
                 return CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
-            # #248: each call's own completion time (pricing by period), not one time for the round
-            r = call(spec, *args)
+            role = roles[i]
+            gate = gates.get(role["prefix_group"]) if gate_mode != "off" else None
+            waited = 0.0
+            if gate is not None and role["prefix_role"] == "follower":
+                t0 = time.monotonic()
+                while not gate["open"].wait(0.1):
+                    if cancel.is_set():
+                        return CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
+                if gate["stop"]:
+                    return CallResult(skipped=True, error=PROVIDER_STOPPED)
+                if not gate["cached"]:
+                    cancel.sleep(s.map_prefix_wait_s)
+                waited = round(time.monotonic() - t0, 2)
+            info = {**role, "gate_wait_s": waited if gate is not None else None,
+                    "leader_cached": bool(gate["cached"]) if gate is not None and role["prefix_role"] == "follower"
+                    else None, "prefix_chars": None, "request_chars": None}
+            if role["prefix_group"] is not None:
+                info["prefix_chars"] = len(prefix_text(question, spec, window, firms) or "")
+                info["request_chars"] = request_chars(question, spec, window, firms)
+            PREFIX_INFO.set(info)
+            leader = gate is not None and role["prefix_role"] == "leader"
+            if leader and gate_mode == "first_chunk":
+                llm.FIRST_CHUNK.set(gate["open"].set)
+            try:
+                # #248: each call's own completion time (pricing by period), not one time for the round
+                r = call(spec, *args)
+                if leader and r is not None and r.cached:
+                    gate["cached"] = True
+            except ProviderStop:
+                if leader:
+                    gate["stop"] = True
+                raise
+            finally:
+                if leader:
+                    gate["open"].set()
             if r is not None and r.finished_at is None and not r.cached:
                 r.finished_at = dt.datetime.now().astimezone().isoformat()
+            if r is not None:
+                r.prefix_group, r.prefix_role, r.gate_wait_s = role["prefix_group"], role["prefix_role"], \
+                    info["gate_wait_s"]
             return r
 
         ex = ThreadPoolExecutor(max_workers=max(1, concurrency))
         try:   # #277: no `with` block: its exit waits for every queued call
-            futures = {ex.submit(contextvars.copy_context().run, timed, specs[i], question, window, firms): i
+            futures = {ex.submit(contextvars.copy_context().run, timed, i, specs[i], question, window, firms): i
                        for i in todo}
             for f in as_completed(futures):
                 i = futures[f]
@@ -854,13 +1046,16 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
                         results[i] = CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
                         not_started.append(specs[i].id)
                     else:
-                        results[i] = CallResult(skipped=True, error="cancelled after the provider stopped the run")
+                        results[i] = CallResult(skipped=True, error=PROVIDER_STOPPED)
                 except cancel.Cancelled:   # a call cut by Stop (its stream closed, or the mock's wait cut)
                     cut = True
                     results[i] = CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
                 except ProviderStop as e:
                     stop = stop or e
                     results[i] = CallResult(skipped=True, error=str(e))
+                    for gate in gates.values():   # #283: waiting followers make no call
+                        gate["stop"] = True
+                        gate["open"].set()
                     for g in futures:
                         g.cancel()
                 if not cut and cancel.is_set():
@@ -883,11 +1078,12 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
     from cee.retrieve.planner import model_for
     return {"id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
             "chunk_ids": [h.chunk_id for h in spec.hits], "provider": provider,
-            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": EXTRACT_VERSION,
+            "model": "mock" if provider == "mock" else model_for(provider, "map"), "version": extract_version(),
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
             "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,
-            "cancelled": r.cancelled,
+            "cancelled": r.cancelled, "prefix_group": r.prefix_group, "prefix_role": r.prefix_role,
+            "gate_wait_s": r.gate_wait_s,
             "passages": len(spec.hits), "input_tokens_est": est}   # #247 part 2: per-call size before the run
 
 
@@ -924,7 +1120,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     by_id = {h.chunk_id: h for h in hits}
     limit = settings().map_call_tokens
     firm_specs, code_cells = map_specs(q, plan, hits)
-    specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit)
+    specs, empty_cells = fan_out(firm_specs, q.question, window, firms, limit,
+                                 settings().map_prefix_tokens if prefix_mode() else None)
     code_cells = code_cells + empty_cells
     source = "mock" if provider == "mock" else "model"
     landed: dict[int, list[Cell]] = {}
@@ -978,7 +1175,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
         if sq.id in new_hits:
             own = new_hits[sq.id]
             one = MapSpec(f"remap.{sq.id}", 2, sq.entity, False, [CellSpec(sq.id, sq.entity, sq.aspect, sq.role, sq.text)],
-                          {sq.id: own}, {sq.id: {h.chunk_id for h in own}})
+                          {sq.id: own}, {sq.id: {h.chunk_id for h in own}},
+                          known=firm_specs[0].known if firm_specs else frozenset())
             remaps.extend(split_cell(one, q.question, window, firms, limit))
     extra = []
     for sq_id, hs in new_hits.items():   # #247 B1: corrective hits keep their sub-question, origin tagged
@@ -1003,7 +1201,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
             cells[c.id] = c
     m = EvidenceMatrix(q.question, rows=[], aspects=list(plan.aspects),
                        cells={k: cells[k] for k in order if k in cells}, calls=calls, research=research_log,
-                       version=EXTRACT_VERSION)
+                       version=extract_version())
     rows = []
     for c in m.cells.values():
         key = "research" if c.role == "research" else _row_key(c.entity)

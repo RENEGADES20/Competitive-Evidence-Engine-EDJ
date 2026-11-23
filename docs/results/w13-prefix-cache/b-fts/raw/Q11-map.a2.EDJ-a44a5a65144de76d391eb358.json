@@ -1,0 +1,190 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10K-2025#202",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2026Q2#73",
+    "EDJ-10Q-2026Q1#61",
+    "EDJ-10Q-2025Q2#27",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10Q-2026Q1#56",
+    "EDJ-10Q-2025Q3#86",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2025Q3#30",
+    "EDJ-10K-2025#19",
+    "EDJ-10Q-2026Q2#27",
+    "EDJ-10K-2025#267",
+    "EDJ-10K-2025#302",
+    "EDJ-10K-2025#264"
+  ],
+  "at": "2026-11-22T23:23:36.011965-06:00",
+  "prefix_group": "7803a010e4ed7552",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.14,
+  "leader_cached": false,
+  "prefix_chars": 81708,
+  "request_chars": 82414,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16831,
+    "output_tokens": 4754,
+    "cache_hit_tokens": 8320,
+    "cache_miss_tokens": 8511,
+    "reasoning_tokens": 3583,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.95
+  },
+  "wall_s": 41.06,
+  "tokens_per_s": 115.78,
+  "ttft_s": 1.95,
+  "reasoning_content": "The sub-question a2.EDJ asks for the advisor headcount figure the firm reports. I need to find the reported figures for financial advisors.\n\nLooking at the passages, there are many \"Financial advisors (actual)\" figures. These are the reported headcount figures.\n\nKey figures:\n- 20,514 at period end (Q2 2026), average 20,537\n- 20,425 at year end 2025, average 20,331\n- 20,309 at period end Q2 2025\n- 20,429 at period end Q3 2025\n- 20,550 at period end Q1 2026 (from EDJ-10Q-2026Q1#52)\n- 19,540 U.S. at year end, 885 Canada (from 10K)\n- 19,647 U.S., 867 Canada (Q2 2026)\n- 19,674 U.S., 876 Canada (Q1 2026)\n- 19,559 U.S., 870 Canada (Q3 2025)\n- 19,435 U.S., 874 Canada (Q2 2025)\n- 20,550 financial advisors total (Q1 2026)\n\nAlso \"The Partnership's more than 20,000 financial advisors\" from EDJ-10Q-2026Q2#53.\n\nThe question asks for \"The advisor headcount figure the firm reports.\" This is a fact - the firm reports financial advisors (actual) at period end and average, plus segment breakdown.\n\nI need to return one cell. The cell can contain multiple items (one per figure/period).\n\nLet me compile the key reported figures. I'll focus on the main total figures (financial advisors at period end and average) and segment figures.\n\nThe most notable reported figures:\n1. 20,425 at year end 2025 (EDJ-10K-2025#130), average 20,331\n2. 20,514 at period end Q2 2026, average 20,537 (EDJ-10Q-2026Q2#60)\n3. 20,550 at period end Q1 2026 (EDJ-10Q-2026Q1#52), average 20,506\n4. 20,309 at period end Q2 2025 (EDJ-10Q-2025Q2#64)\n5. 20,429 at period end Q3 2025 (EDJ-10Q-2025Q3#67)\n6. 20,425 (10K), 20,125, 19,232 year ends\n7. Segment figures U.S. and Canada\n\nThe main total figure is the \"Financial advisors (actual)\" line. There's also a segment breakdown U.S. and Canada.\n\nLet me capture the key total figures across periods, plus the segment breakdown.\n\nI'll include items for the total financial advisors figures (at period end and average) from the various periods, and possibly the U.S./Canada segment breakdown.\n\nSince a series is one item per period, I'll list the main total figures.\n\nLet me be careful about which chunks I can cite. I can cite chunks under a2.EDJ plus the listed passages from other sub-questions.\n\nAllowed chunks (from the list at the end):\n- EDJ-10Q-2026Q2#60 (a1)\n- EDJ-10K-2025#130 (a1)\n- EDJ-10Q-2025Q3#69 (a1)\n- EDJ-10Q-2026Q1#51 (a1)\n- EDJ-10K-2025#58 (a1)\n- EDJ-10Q-2025Q2#64 (a1)\n- EDJ-10Q-2025Q2#86 (a1)\n- EDJ-10Q-2025Q2#89 (a1)\n- EDJ-10Q-2025Q3#67 (a1)\n- EDJ-10Q-2025Q3#93 (a1)\n- EDJ-10Q-2026Q1#66 (a1)\n- EDJ-10Q-2026Q2#79 (a1)\n- EDJ-10Q-2026Q2#82 (a1)\n- EDJ-10K-2025#29 (a3)\n- EDJ-10K-2025#22 (a3)\n- EDJ-10Q-2025Q3#30 (a3)\n- EDJ-10K-2025#19 (a4)\n- EDJ-10Q-2026Q2#27 (a4)\n- EDJ-10K-2025#267 (a4)\n- EDJ-10K-2025#302 (a4)\n- EDJ-10K-2025#264 (a5)\n\nPlus all under a2.EDJ (EDJ-10Q-2025Q2#66, EDJ-10K-2025#70, EDJ-10Q-2025Q3#96, EDJ-10K-2025#202, EDJ-10Q-2026Q2#53, EDJ-10K-2025#148, EDJ-10Q-2026Q1#60, EDJ-10Q-2026Q2#73, EDJ-10Q-2026Q1#61, EDJ-10Q-2025Q2#27, EDJ-10Q-2025Q2#92, EDJ-10Q-2025Q3#99, EDJ-10Q-2026Q1#56, EDJ-10Q-2025Q3#86).\n\nNote EDJ-10Q-2026Q1#52 is NOT in the list. So I can't cite it. Let me check - the message says \"these passages of its search pool listed under another sub-question\" and lists specific ids. EDJ-10Q-2026Q1#52 is not listed. So I should avoid citing it, or use the ones I can.\n\nActually, EDJ-10Q-2026Q1#52 contains \"The Partnership ended the first quarter with 20,550 financial advisors\" and the average figure 20,506. But it's not in the allowed list.\n\nWait, let me re-read. The allowed list includes EDJ-10Q-2026Q1#51 (a1) which shows \"At period end 20,550, 20,288\" partially cut off. Actually EDJ-10Q-2026Q1#51 shows \"Financial advisors (actual): At period end\" and then cut off. Let me check #51: it shows \"At period end\" but the figure is cut. Actually it ends with \"Financial advisors (actual): At period end\" without showing the number.\n\nEDJ-10Q-2026Q1#61 shows \"Financial advisors: At period end 20,550, 20,288; Average 20,506, 20,221\". That's in a2 list. Good.\n\nSo I can cite #61 for Q1 2026 figures.\n\nLet me now identify the main reported figures with citable chunks:\n\n1. Year end 2025: 20,425 (at year end), 20,331 average - EDJ-10K-2025#130 (also #202 notes \"number of financial advisors\"). Also segment: 19,540 U.S. / 885 Canada at year end (EDJ-10K-2025#148).\n\n2. Q2 2026: 20,514 at period end, 20,537 average - EDJ-10Q-2026Q2#60. Segment: 19,647 U.S. / 867 Canada (EDJ-10Q-2026Q2#79 or #82).\n\n3. Q2 2025: 20,309 at period end, 20,316 average - EDJ-10Q-2025Q2#64. Segment: 19,435 U.S. / 874 Canada (EDJ-10Q-2025Q2#86).\n\n4. Q3 2025: 20,429 at period end, 20,368 average - EDJ-10Q-2025Q3#67. Segment: 19,559 U.S. / 870 Canada (EDJ-10Q-2025Q3#93).\n\n5. Q1 2026: 20,550 at period end, 20,506 average - EDJ-10Q-2026Q1#61. Segment: 19,674 U.S. / 876 Canada (EDJ-10Q-2026Q1#66).\n\n6. Q1 2025: 20,288 at period end, 20,221 average - EDJ-10Q-2026Q1#61.\n\n7. \"more than 20,000 financial advisors\" - EDJ-10Q-2026Q2#53.\n\nAlso year-end segment: 19,540 U.S., 885 Canada (2025), 19,253/872 (2024), 18,378/854 (2023) - EDJ-10K-2025#148.\n\nI'll compile a reasonable set of items. The question is a fact question asking for the reported figure. I should provide the figures.\n\nI'll include the total \"Financial advisors (actual)\" figures for the main periods, plus note the segment breakdown and the \"more than 20,000\" statement.\n\nLet me decide how many items. I'll do the key total figures (period end and average) for recent periods, and the segment breakdown as separate items.\n\nActually, to keep it manageable, I'll provide items for:\n- Year end 2025 total: 20,425 (period end), average 20,331\n- Year end 2024: 20,125, 19,232 (these are in #130)\n- Q2 2026: 20,514 / 20,537\n- Q1 2026: 20,550 / 20,506\n- Q3 2025: 20,429 / 20,368\n- Q2 2025: 20,309 / 20,316\n- Segment breakdown U.S./Canada year end 2025: 19,540/885\n- \"more than 20,000 financial advisors\" statement\n\nThat's a lot. I'll combine period end and average into items but the schema wants one item per figure. A series is one item per period. So for a given period, \"at period end\" and \"average\" are two different figures. I could treat them as separate items or combine in text.\n\nLet me include both in text where reasonable, but value should be the figure. I think I'll create items for the main \"at period end\" figures (the primary headcount) and mention average in text.\n\nActually, the headcount figure is typically \"at period end\" (20,514, etc.) and \"average\". Both are reported. Let me include the \"at period end\" as primary items and note averages.\n\nI'll produce items:\n\n1. Year end 2025: 20,425 at period end (financial advisors), scope whole firm. Quote from #130.\n2. Average year 2025: 20,331 (from #130).\n3. Q2 2026 period end: 20,514 (from #60).\n4. Q1 2026 period end: 20,550 (from #61).\n5. Q3 2025 period end: 20,429 (from #67).\n6. Q2 2025 period end: 20,309 (from #64).\n7. Segment: year end 2025 U.S. 19,540, Canada 885 (from #148).\n8. \"more than 20,000 financial advisors\" (#53).\n\nThis is getting extensive but that's fine for a \"fact\" cell with multiple items.\n\nActually, let me be more concise but complete. I'll include the key figures. The value field holds the printed figure. For period-end figures, value is the number.\n\nLet me write items.\n\nFor each item, text, quote, value, unit, period, scope, definition, chunk_ids.\n\nUnit: \"financial advisors\".\n\nLet me define periods:\n- Year end 2025: \"2025\" (calendar year) for year-end, but \"at year end\" is a point in time 2025-12-31. The report is for fiscal year ending 2025-12-31. I'll use period \"2025-12-31\" for \"at year end\" and \"2025\" for average? Actually average is for the year 2025.\n\nHmm, \"at year end\" = 2025-12-31. Average = 2025 (year).\n\nFor Q2 2026, period end = 2026-06-26, but the schema says period format is YYYY-MM-DD for point in time, YYYYQn for quarter. Q2 2026 = 2026Q2. The \"at period end\" is 2026-06-26. I'll use the quarter for period-end? The schema: period \"YYYY-MM-DD\" for a point in time, \"YYYYQn\" for a calendar quarter. At period end is a point in time = 2026-06-26.\n\nActually I'll use the point-in-time dates where known: 2026-06-26, 2026-03-27, 2025-09-26, 2025-06-27, 2025-12-31.\n\nFor average, I'll use the quarter/year.\n\nLet me simplify. I'll focus on \"at period end\" figures which are the canonical headcount, with periods as point-in-time dates.\n\nLet me write the items:\n\nItem 0: Year end 2025, 20,425 financial advisors at year end. period 2025-12-31.\nItem 1: Year end 2025 average 20,331. period 2025.\nItem 2: Q2 2026 at period end 20,514. period 2026-06-26.\nItem 3: Q1 2026 at period end 20,550. period 2026-03-27.\nItem 4: Q3 2025 at period end 20,429. period 2025-09-26.\nItem 5: Q2 2025 at period end 20,309. period 2025-06-27.\nItem 6: Segment year end 2025: U.S. 19,540, Canada 885. scope U.S. and Canada.\nItem 7: \"more than 20,000 financial advisors\" statement. value \"\".\n\nActually, I think I should keep it focused. The sub-question asks \"the advisor headcount figure the firm reports.\" I'll provide the main figures.\n\nI'll write it now. For quotes, I'll copy the exact relevant lines.\n\nLet me get quotes:\n\n#130: \"Financial advisors (actual): At year end 20,425 20,125 19,232\" and \"Average 20,331 19,650 18,945\".\n\n#60: \"Financial advisors (actual): At period end 20,514 20,309 1% ... Average 20,537 20,316 1%\".\n\n#61: \"Financial advisors: At period end 20,550 20,288 1% Average 20,506 20,221 1%\".\n\n#67: \"Financial advisors (actual): At period end 20,429 19,885 3% Average 20,368 19,749 3%\".\n\n#64: \"Financial advisors (actual): At period end 20,309 19,589 4% Average 20,316 19,522 4%\".\n\n#148: \"Financial advisors (actual): At year end 19,540 19,253 18,378 1% ... 885 872 854 1% Average 19,456 18,784 18,102 ... 875 866 843\". Scope U.S. and Canada.\n\n#53: \"The Partnership's more than 20,000 financial advisors serve more than 9 million clients\".\n\nOK. I'll write the cell now.\n\nI'll keep items focused on the total figures plus one segment breakdown item and the \"more than 20,000\" statement.\n\nActually for a cleaner answer, let me include the period-end figures (the key headcount) for each recent period and the average, and the segment breakdown. I'll produce about 7-8 items.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports financial advisors (actual) at year end 2025 of 20,425, with 20,125 in 2024 and 19,232 in 2023.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reports average financial advisors of 20,331 for 2025 (19,650 in 2024 and 18,945 in 2023).",
+            "quote": "Average 20,331 19,650 18,945 3%",
+            "value": "20,331",
+            "unit": "financial advisors",
+            "period": "2025",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors (actual) at period end of 20,514 as of June 26, 2026, with average of 20,537 for the second quarter of 2026.",
+            "quote": "Financial advisors (actual): At period end 20,514 20,309 1% ... Average 20,537 20,316 1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors at period end of 20,550 as of March 27, 2026, with average of 20,506 for the first quarter of 2026.",
+            "quote": "Financial advisors: At period end 20,550 20,288 1% Average 20,506 20,221 1%",
+            "value": "20,550",
+            "unit": "financial advisors",
+            "period": "2026-03-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#61"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors (actual) at period end of 20,429 as of September 26, 2025, with average of 20,368 for the third quarter of 2025.",
+            "quote": "Financial advisors (actual): At period end 20,429 19,885 3% Average 20,368 19,749 3%",
+            "value": "20,429",
+            "unit": "financial advisors",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#67"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors (actual) at period end of 20,309 as of June 27, 2025, with average of 20,316 for the second quarter of 2025.",
+            "quote": "Financial advisors (actual): At period end 20,309 19,589 4% Average 20,316 19,522 4%",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#64"
+            ]
+          },
+          {
+            "text": "Edward Jones reports financial advisors (actual) by segment: at year end 2025, 19,540 in the U.S. and 885 in Canada.",
+            "quote": "Financial advisors (actual): At year end 19,540 19,253 18,378 1% ... 885 872 854 1%",
+            "value": "19,540",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#148"
+            ]
+          },
+          {
+            "text": "Edward Jones states it has more than 20,000 financial advisors serving more than 9 million clients as of June 26, 2026.",
+            "quote": "The Partnership's more than 20,000 financial advisors serve more than 9 million clients with a total of $2.6 trillion in client assets under care as of June 26, 2026.",
+            "value": "more than 20,000",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#53"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages report the firm's financial advisor headcount figures (at period/year end and average, plus U.S./Canada segment breakdown and an approximate total), which is what the sub-question asks for.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

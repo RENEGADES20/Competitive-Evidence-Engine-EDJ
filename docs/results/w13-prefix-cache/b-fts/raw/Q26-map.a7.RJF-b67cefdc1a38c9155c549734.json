@@ -1,0 +1,137 @@
+{
+  "question_id": "Q26",
+  "question": "What's new on Raymond James in the last 90 days?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a7.RJF",
+  "round": 1,
+  "entity": "RJF",
+  "cells": [
+    "a7.RJF"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "RJF-TRADE-2026-09-24-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#3",
+    "RJF-TRADE-2026-11-06-IN-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#0",
+    "RJF-TRADE-2026-11-05-IN-01#0",
+    "RJF-TRADE-2026-11-05-WM-01#0",
+    "RJF-TRADE-2026-11-04-IN-01#2",
+    "RJF-TRADE-2026-10-29-WM-01#1",
+    "RJF-TRADE-2026-10-16-WM-01#0",
+    "RJF-TRADE-2026-10-16-WM-01#1",
+    "RJF-TRADE-2026-10-08-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#0",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#4",
+    "RJF-TRADE-2026-09-29-WM-01#1",
+    "RJF-TRADE-2026-09-29-IN-01#2",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-IN-01#1",
+    "RJF-TRADE-2026-09-24-IN-01#0",
+    "RJF-TRADE-2026-09-16-WM-01#0",
+    "RJF-TRADE-2026-09-02-IN-01#0",
+    "RJF-TRADE-2026-08-26-IN-01#2",
+    "RJF-TRADE-2026-08-26-IN-01#1",
+    "RJF-TRADE-2026-08-26-IN-01#0",
+    "RJF-TRADE-2026-08-21-IN-01#1",
+    "RJF-TRADE-2026-11-04-IN-01#0",
+    "RJF-TRADE-2026-09-24-IN-01#3",
+    "RJF-TRADE-2026-09-16-WM-01#1",
+    "RJF-TRADE-2026-11-06-IN-01#3",
+    "RJF-TRADE-2026-10-27-WM-01#1"
+  ],
+  "at": "2026-11-23T00:51:44.946978-06:00",
+  "prefix_group": "f6e7f82bc55e676f",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.38,
+  "leader_cached": false,
+  "prefix_chars": 75816,
+  "request_chars": 76986,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 17598,
+    "output_tokens": 4281,
+    "cache_hit_tokens": 8832,
+    "cache_miss_tokens": 8766,
+    "reasoning_tokens": 3606,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.53
+  },
+  "wall_s": 63.56,
+  "tokens_per_s": 67.35,
+  "ttft_s": 2.53,
+  "reasoning_content": "The sub-question a7.RJF asks: \"What updates or commentary has Raymond James provided on its business segments?\"\n\nI need to look at passages listed under Sub-question a7.RJF and the cited passages from other sub-questions. Let me identify what commentary Raymond James provided on its business segments.\n\nBusiness segments of Raymond James include Private Client Group (wealth management), Financial Institutions Division (FID), independent contractor channel, employee advisor channel (RJA), RIA custody channel, etc.\n\nLet me look at the relevant passages.\n\nUnder a7.RJF:\n- RJF-TRADE-2026-09-24-WM-01#0: about two teams joining (Iowa $1.25B employee channel, Rochester $500M independent channel). This is about advisor recruiting, commentary from Lobriecki.\n- RJF-TRADE-2026-09-02-IN-01#3: NewEdge Wealth Fort Lauderdale office - not Raymond James.\n\nCited passages:\n- RJF-TRADE-2026-10-29-WM-01#1: This has substantial commentary on business segments. CEO Paul Shoukry commentary about Private Client Group record results, recruiting success spread across all affiliation channels including RIA custody channel. Also M&A commentary.\n\nLet me find the key business segment commentary.\n\nRJF-TRADE-2026-10-29-WM-01#1 (chunk #1, the WealthManagement article body): \n\"Raymond James reported trailing 12-month production of $538 million... recruiting success is spread across all its affiliation channels, including its RIA custody channel. The independent contractor channel is seeing the most interest in terms of dollar volume. 'But the RIA custody division on a smaller base is growing at a high percentage rate as well...'\"\n\nThis is commentary on business segments (affiliation channels).\n\nAlso RJF-TRADE-2026-10-29-WM-01#1 (wait, there are two: #0 and #1). #1 is \"Raymond James no longer reports advisor headcount...\" which contains:\n- Private Client Group record net revenue $3.06 billion\n- Pre-tax income $458 million\n- Domestic PCG net new assets\n- M&A commentary\n\nActually the chunk ids: RJF-TRADE-2026-10-29-WM-01#0 and RJF-TRADE-2026-10-29-WM-01#1.\n\n#0 is the headline/summary with Shoukry's recruiting commentary across affiliation channels.\n\n#1 is \"Raymond James no longer reports advisor headcount... The Private Client Group had record quarterly net revenue... pre-tax income...\"\n\nBoth are relevant to business segments (Private Client Group is a segment).\n\nThe question asks \"What updates or commentary has Raymond James provided on its business segments?\"\n\nSo I should extract facts about commentary on business segments. The main segment is Private Client Group.\n\nKey items:\n1. Private Client Group record quarterly net revenue of $3.06 billion, up 15% YoY, pre-tax income $458 million up 10% YoY (RJF-TRADE-2026-10-29-WM-01#1)\n2. CEO Shoukry commentary on recruiting across affiliation channels - independent contractor channel seeing most interest, RIA custody growing at high rate (RJF-TRADE-2026-10-29-WM-01#0)\n\nAlso RJF-TRADE-2026-11-12-WM-01#0 (Financial Institutions Division expansion) - but that's under a2, not cited in the allowed list. Wait, the cited list doesn't include RJF-TRADE-2026-11-12-WM-01#0. Let me check the allowed citations.\n\nThe allowed cited passages are listed explicitly. Let me check if RJF-TRADE-2026-11-12-WM-01#0 is in the list. Looking... The list includes: RJF-TRADE-2026-11-06-IN-01#1, #0, RJF-TRADE-2026-11-05-IN-01#0, RJF-TRADE-2026-11-05-WM-01#0, RJF-TRADE-2026-11-04-IN-01#2, RJF-TRADE-2026-10-29-WM-01#1, RJF-TRADE-2026-10-16-WM-01#0, #1, RJF-TRADE-2026-10-08-WM-01#0, RJF-TRADE-2026-09-29... etc.\n\nRJF-TRADE-2026-11-12-WM-01#0 is NOT in the list. So I can't cite it. Also RJF-TRADE-2026-10-29-WM-01#0 is not in the list either? Let me check.\n\nThe list: RJF-TRADE-2026-10-29-WM-01#1 is included (yes). RJF-TRADE-2026-10-29-WM-01#0 - not explicitly listed. Let me re-read.\n\nListed: \"RJF-TRADE-2026-11-06-IN-01#1, RJF-TRADE-2026-11-06-IN-01#0, RJF-TRADE-2026-11-05-IN-01#0, RJF-TRADE-2026-11-05-WM-01#0, RJF-TRADE-2026-11-04-IN-01#2, RJF-TRADE-2026-10-29-WM-01#1, RJF-TRADE-2026-10-16-WM-01#0, RJF-TRADE-2026-10-16-WM-01#1, RJF-TRADE-2026-10-08-WM-01#0, RJF-TRADE-2026-09-29-IN-01#0, ...\"\n\nSo RJF-TRADE-2026-10-29-WM-01#1 is included but #0 is NOT. So I can only cite #1 for the segment commentary.\n\nActually wait, let me look at what #1 contains. #1 is the chunk that says \"Raymond James no longer reports advisor headcount...\" and \"Overall, the firm reported record quarter-end client assets under administration of $1.87 trillion...\" and \"The Private Client Group had record quarterly net revenue of $3.06 billion... pre-tax income of $458 million...\" and \"Domestic PCG net new assets rose 88%...\"\n\nSo #1 has the Private Client Group segment commentary. That's the key one.\n\nSo my main fact item would be about Private Client Group segment results/commentary.\n\nThe question is about \"updates or commentary on its business segments.\" The Private Client Group is a business segment. The commentary includes record net revenue, pre-tax income, net new assets.\n\nAlso, is there commentary on other segments? The FID (Financial Institutions Division) is under a2 (RJF-TRADE-2026-11-12-WM-01#0) which is not citable. \n\nRJF-TRADE-2026-11-04-IN-01#2 mentions \"The Ohio hire extends a consistent run of Raymond James & Associates recruiting from UBS throughout 2026\" - commentary about employee channel but not really a segment update.\n\nRJF-TRADE-2026-10-16-WM-01#0/#1 - about Janney team leaving Raymond James, and mentions Raymond James has about 8,900 advisors overseeing $1.92 trillion. Not really segment commentary.\n\nLet me focus on the Private Client Group commentary as the primary fact.\n\nActually, I should provide a cell with items. The question is fairly open - \"updates or commentary on business segments.\" \n\nPrimary relevant commentary: Private Client Group (PCG) segment results from fiscal Q4 earnings:\n- Record quarterly net revenue $3.06 billion, up 15% YoY\n- Pre-tax income $458 million, up 10% YoY\n- Domestic PCG net new assets rose 88% for fiscal year to record $98+ billion\n- Quarter net new assets nearly $23 billion, annualized growth 5.3%\n\nThese are all in RJF-TRADE-2026-10-29-WM-01#1.\n\nLet me also check RJF-TRADE-2026-11-05-WM-01#0 which mentions \"Raymond James reported its fiscal fourth-quarter earnings last week and said it recruited $538 million in trailing 12-month production...\" - this is about recruiting, related to advisor channels (a segment). Actually it's about advisor recruiting which spans channels.\n\nLet me construct the items. I'll focus on Private Client Group segment commentary as the core fact.\n\nActually, let me think about what's most clearly \"business segment commentary.\" The clearest is the Private Client Group results. Also Shoukry's commentary about affiliation channels (but that #0 chunk isn't citable).\n\nLet me provide items:\n\nItem 0: Private Client Group record quarterly net revenue $3.06 billion, up 15% YoY\nItem 1: Private Client Group pre-tax income $458 million, up 10% YoY\nItem 2: Domestic PCG net new assets rose 88% for fiscal year to record >$98 billion\nItem 3: Quarter net new assets nearly $23 billion, annualized growth 5.3%\n\nThese are all from #1. Also there's \"record quarter-end client assets under administration of $1.87 trillion\" (firm-wide).\n\nActually the question is about \"business segments\" - the Private Client Group is the main segment. Let me include the PCG items.\n\nAlso there's the FID commentary in #1? No. Let me check #1 again - it mentions M&A commentary from Shoukry but that's corporate not segment.\n\nActually I realize I should also consider the RIA custody / independent contractor channel commentary from #0, but #0 is not citable. However, #1 does contain: \"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors...\"\n\nHmm, let me re-read #1 fully:\n\n\"Raymond James no longer reports advisor headcount, but it had about 8,900 advisors the last time headcount was officially broken out.\n\nOverall, the firm reported record quarter-end client assets under administration of $1.87 trillion, up 1% sequentially and 12% year-over-year.\n\nThe Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\n\nDomestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion. Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.\n\nThe firm reported non-GAAP earnings per share of $3.59... on revenue of $4.74 billion, up 13% year-over-year.\n\nWhen asked about M&A, Shoukry said... 'We do acquisitions to grow revenues...'\"\n\nSo the segment commentary is Private Client Group.\n\nI'll build items around PCG.\n\nLet me write the cell with multiple items (fact).\n\nActually, I should be careful about what constitutes \"business segments\" commentary vs \"financial results.\" The financial results are a1. But a7 asks for \"updates or commentary on its business segments\" - which is essentially segment-level commentary, including segment revenue, income, net new assets by segment.\n\nI'll provide facts about the Private Client Group segment.\n\nLet me write items.\n\nItem 0: Private Client Group record quarterly net revenue $3.06 billion, up 15% year-over-year.\n- value: \"$3.06 billion\", unit: \"USD\", period: F2026Q4 (fiscal fourth quarter). Actually it's fiscal Q4 2026. Period format: \"FYYYYY\" for fiscal year, \"YYYYQn\" for calendar quarter. This is fiscal Q4. Hmm. The earnings were reported Oct 2026, fiscal fourth quarter. Fiscal year ends September 30. So F2026 Q4? I'll use \"F2026\" or note fiscal fourth quarter. The format doesn't have fiscal quarter. I'll put period as \"2026\" or leave it. Actually the guidance says \"YYYYQn\" for calendar quarter, \"FYYYYY\" for fiscal year. A fiscal quarter doesn't map cleanly. I'll use period \"\" or describe in text. Let me use period \"F2026\" for fiscal year and note it's the fourth quarter in text.\n\nActually, net revenue and pre-tax income are quarterly figures (fiscal Q4). Net new assets for the fiscal year is F2026, and for the quarter is fiscal Q4.\n\nI'll be pragmatic: put period as \"F2026Q4\" isn't in the enum. The enum for period is just a string in the schema description. Actually the period field is just a string, no enum. Let me use descriptive strings.\n\nGiven the format examples: \"YYYY-MM-DD\", \"YYYYQn\", \"FYYYYY\", \"YYYY\". I'll use \"F2026\" for fiscal year figures and \"F2026Q4\" won't fit. Hmm.\n\nI'll write period as \"2026\" for fiscal year and for the quarter use \"F2026\" with text noting fourth quarter. Actually let me just use clear text in period field like \"fiscal fourth quarter 2026\" \u2014 but better to follow format. I'll use \"F2026\" for fiscal year items and for quarterly items, I'll describe in text and put period \"F2026\" too but note in text \"fiscal fourth quarter\".\n\nActually simpler: for the quarterly net revenue, period = \"F2026\" (fiscal year 2026, fourth quarter). I'll clarify in text.\n\nLet me just do a few items and keep it clean.\n\nI'll produce the cell. Let me write concise items.\n\nItem 0 (PCG net revenue):\ntext: \"Raymond James's Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year, per the firm's fiscal fourth quarter earnings.\"\nquote: \"The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.\"\nvalue: \"$3.06 billion\", unit: \"USD\", period: \"F2026\", scope: \"Private Client Group\", definition: \"\"\nchunk_ids: [\"RJF-TRADE-2026-10-29-WM-01#1\"]\n\nItem 1 (PCG pre-tax income):\nvalue \"$458 million\", period \"F2026\", scope \"Private Client Group\".\n\nItem 2 (Domestic PCG net new assets fiscal year):\n\"Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.\"\nvalue \"$98 billion\", unit \"USD\", period \"F2026\", scope \"Domestic Private Client Group\".\n\nItem 3 (quarter net new assets):\n\"Net new assets for the quarter were nearly $23 billion, with annualized growth of 5.3%.\"\nvalue \"$23 billion\", unit \"USD\", period \"F2026\", scope \"Domestic Private Client Group\".\n\nThese are all fact items for a7 (business segment commentary on Private Client Group).\n\nActually, is this over-reaching? a7 asks \"updates or commentary on its business segments.\" The PCG results are updates on the segment. Yes, relevant.\n\nI think these are the key facts. I'll include them as items.\n\nLet me also consider whether the M&A commentary is relevant to a segment - it's corporate-level, not segment. I'll skip or maybe include as commentary? The M&A commentary is about the firm overall, not a specific segment. I'll skip it to stay focused.\n\nActually, Shoukry's M&A commentary mentions \"the wealth management business in particular\" - that's arguably commentary on the wealth management segment. But it's more about corporate strategy. I'll leave it out to keep focused on clear segment updates.\n\nLet me finalize with 4 items (or maybe combine into fewer). I'll do 4 items since they're distinct figures.\n\nActually, let me reconsider period format. \"F2026\" is for fiscal year. The quarterly figures are for fiscal Q4 2026 (July-Sept 2026). I'll note in text and use period \"F2026\" for all, or use \"2026\" for clarity. I'll use \"F2026\" and note \"fourth quarter\" in text for quarterly items.\n\nLet me write the final submission.\n\nFor scope, Private Client Group and Domestic PCG.\n\nLet me write it all out.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a7.RJF",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Raymond James's Private Client Group segment posted record quarterly net revenue of $3.06 billion in its fiscal fourth quarter, up 15% year-over-year.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.",
+            "value": "$3.06 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James's Private Client Group segment reported pre-tax income of $458 million in its fiscal fourth quarter, up 10% year-over-year.",
+            "quote": "The Private Client Group had record quarterly net revenue of $3.06 billion, up 15% year-over-year and pre-tax income of $458 million, up 10% year-over-year.",
+            "value": "$458 million",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James's Domestic Private Client Group net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "quote": "Domestic PCG net new assets rose 88% for the fiscal year to a record of more than $98 billion.",
+            "value": "$98 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          },
+          {
+            "text": "Raymond James's Domestic Private Client Group net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "quote": "Net new assets for the quarter were nearly $23 billion, with annualized growth from the beginning of the quarter of 5.3%.",
+            "value": "$23 billion",
+            "unit": "USD",
+            "period": "F2026",
+            "scope": "Domestic Private Client Group",
+            "definition": "",
+            "chunk_ids": [
+              "RJF-TRADE-2026-10-29-WM-01#1"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages under a7 and the citable pool contain commentary on Raymond James's Private Client Group segment (net revenue, pre-tax income, and net new assets) from its fiscal fourth-quarter earnings, which are segment-level updates.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a5.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a5.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#276",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10K-2025#264",
+    "EDJ-10Q-2026Q2#107",
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2025Q3#88",
+    "EDJ-10Q-2026Q2#76",
+    "EDJ-10Q-2025Q2#39",
+    "EDJ-10Q-2026Q2#84",
+    "EDJ-10Q-2025Q2#90",
+    "EDJ-10Q-2026Q1#68",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q3#96",
+    "EDJ-10K-2025#202",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2025Q2#92",
+    "EDJ-10Q-2025Q3#99",
+    "EDJ-10K-2025#29",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#19",
+    "EDJ-10K-2025#267",
+    "EDJ-10K-2025#302",
+    "EDJ-10Q-2025Q3#121"
+  ],
+  "at": "2026-11-22T23:23:36.004157-06:00",
+  "prefix_group": "7803a010e4ed7552",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.12,
+  "leader_cached": false,
+  "prefix_chars": 81708,
+  "request_chars": 82514,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16893,
+    "output_tokens": 1883,
+    "cache_hit_tokens": 8320,
+    "cache_miss_tokens": 8573,
+    "reasoning_tokens": 1248,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.27
+  },
+  "wall_s": 20.97,
+  "tokens_per_s": 89.79,
+  "ttft_s": 2.27,
+  "reasoning_content": "The sub-question a5.EDJ asks: \"How the firm reports and discloses advisor headcount.\"\n\nI need to find passages about how the firm reports/discloses advisor headcount. Looking at the passages.\n\nKey facts:\n- Financial advisors reported as \"(actual)\" - \"Financial advisors (actual)\" at period end and average.\n- Segment information breaks down U.S. and Canada.\n- Note 15 Segment Information - two operating segments, U.S. and Canada.\n- Financial advisors counted on a full-time equivalent basis? Wait, that's the \"Counted on a full-time equivalent basis\" note, but that seems to apply to other metrics (home office associates, client support team professionals). Let me check.\n\nActually in EDJ-10Q-2026Q1#62: \"Counted on a full-time equivalent basis.\" This appears to be footnote (1) for something. But the financial advisors are reported \"(actual)\".\n\nActually, in EDJ-10Q-2026Q1#61, the footnote (1) is cut off but \"Client support team professionals(1)\" and \"Home office associates(1)\" have footnote (1). So the \"(1) Counted on a full-time equivalent basis\" applies to those, not financial advisors. Financial advisors are \"(actual)\".\n\nSo for a5, how the firm reports and discloses advisor headcount:\n- Reports \"Financial advisors (actual)\" as a related metric in MD&A, at period end and average.\n- Disclosed in consolidated financial statements note \"the number of financial advisors\" - EDJ-10K-2025#202 says \"(Dollars in millions, except per unit information and the number of financial advisors)\".\n- Segment breakdown by U.S. and Canada (Note 15).\n\nLet me identify the facts.\n\nFact items:\n1. The firm reports \"Financial advisors (actual)\" as a related metric in MD&A, at period end and average. (EDJ-10Q-2026Q2#60, EDJ-10K-2025#130, etc.)\n2. Reported by segment U.S. and Canada (Note 15 Segment Information - EDJ-10K-2025#264; and segment tables).\n3. The number of financial advisors is a unit noted in financial statements (EDJ-10K-2025#202).\n\nAlso the attrition % definition mentions \"total number of financial advisors as of period end\" - that's about attrition.\n\nLet me also note that financial advisors are reported \"(actual)\" vs other metrics \"Counted on a full-time equivalent basis.\"\n\nActually the key disclosure point: the firm reports \"Financial advisors (actual)\" and separately reports client support team professionals and home office associates on a full-time equivalent basis. So financial advisors are actual count, not FTE.\n\nLet me construct the items.\n\nItem 1: The firm reports \"Financial advisors (actual)\" as a related metric in MD&A, presented at period end and average, with year-over-year percentage change.\nQuote: \"Financial advisors (actual): At period end 20,514 20,309 1% ... Average 20,537 20,316 1%\"\n\nItem 2: The firm reports financial advisor headcount broken down by its two reportable segments, U.S. and Canada (Note 15 segment information).\n\nItem 3: Financial advisors are counted on an actual basis (as opposed to full-time equivalent used for other associate categories). Actually let me check - is there a passage that explicitly contrasts? The \"Counted on a full-time equivalent basis\" footnote (1) applies to client support team professionals and home office associates. Financial advisors labeled \"(actual)\".\n\nThe label \"(actual)\" implies actual headcount. The footnote \"Counted on a full-time equivalent basis\" applies to other metrics. This is a fact about how they report financial advisors (actual) vs others (FTE).\n\nItem 4: Note to financial statements states figures are in millions \"except... and the number of financial advisors\" - indicating financial advisor count is disclosed in whole numbers.\n\nLet me write these out. I'll provide a few fact items.\n\nFor the definition of \"actual\" - the firm uses \"(actual)\" labeling, and the FTE footnote is for other categories. I can note that.\n\nLet me also consider the segment tables showing \"U.S.\" and \"Canada\" columns (EDJ-10Q-2025Q2#86, #89, etc.) and Note 15.\n\nLet me construct final answer with multiple fact items.\n\nItems:\n\n1. Reports \"Financial advisors (actual)\" at period end and average in MD&A related metrics.\nquote from EDJ-10Q-2026Q2#60: \"Financial advisors (actual): At period end 20,514 20,309 1% ... Average 20,537 20,316 1%\"\nvalue \"\", unit \"\", period \"\", scope \"\"\n\nActually for \"how reports/discloses\" I should focus on the method, not the figure values. But I can note the figure as context. The sub-question is about how it reports and discloses, so text should describe method.\n\n2. Segmented disclosure U.S. and Canada - Note 15.\nquote from EDJ-10K-2025#264: \"The Partnership has determined it has two operating and reportable segments based upon geographic location, the U.S. and Canada.\"\nvalue \"\", period \"\", scope \"\"\n\n3. FTE distinction: financial advisors labeled \"(actual)\", while client support team professionals and home office associates are \"Counted on a full-time equivalent basis.\"\nquote from EDJ-10Q-2026Q1#61 and #62.\n\n4. Number of financial advisors noted as exception in financial statements.\nquote from EDJ-10K-2025#202: \"(Dollars in millions, except per unit information and the number of financial advisors)\"\n\nThese are all facts. Let me write them.\n\nFor scope, items 1 and 3 are whole firm. Item 2 is segment disclosure.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a5.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reports financial advisor headcount as a related metric labeled \"Financial advisors (actual)\" in its MD&A, presented both at period end and as an average for the period, with year-over-year percentage changes.",
+            "quote": "Financial advisors (actual): At period end 20,514 20,309 1% ... Average 20,537 20,316 1%",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60",
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "The firm reports financial advisor headcount broken down by its two operating and reportable segments, the U.S. and Canada, in its segment information tables.",
+            "quote": "The Partnership has determined it has two operating and reportable segments based upon geographic location, the U.S. and Canada.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "U.S. and Canada segments",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#264"
+            ]
+          },
+          {
+            "text": "Financial advisors are reported on an \"(actual)\" headcount basis, whereas other related metrics (client support team professionals and home office associates) are footnoted as \"Counted on a full-time equivalent basis.\"",
+            "quote": "Financial advisors: At period end 20,550 20,288 1% Average 20,506 20,221 1% Client support team professionals(1): ... Home office associates(1): ... (1) Counted on a full-time equivalent basis.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q1#61",
+              "EDJ-10Q-2026Q1#62"
+            ]
+          },
+          {
+            "text": "The number of financial advisors is disclosed in whole numbers in the consolidated financial statements, which are otherwise presented in millions of dollars.",
+            "quote": "(Dollars in millions, except per unit information and the number of financial advisors)",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#202"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The passages describe how the firm presents and discloses advisor headcount: as an '(actual)' related metric at period end and average, segmented by U.S. and Canada, and as a whole-number count in the financial statements.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

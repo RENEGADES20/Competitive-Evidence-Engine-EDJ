@@ -9,6 +9,7 @@ mock is offline and free: it cites the top hits verbatim. Use it for development
 """
 from __future__ import annotations
 
+import contextvars
 import json
 import time
 
@@ -107,8 +108,11 @@ def request_version(provider: str, stage: str | None = None) -> str | None:
     if provider == "anthropic":
         return ANTHROPIC_REQUEST_VERSION
     if provider == "deepseek" and stage is not None:
+        # #283, MAP_PREFIX=firm only: the map request carries the shared firm prefix up to MAP_PREFIX_TOKENS (one tool
+        # schema, the cell's instruction last): "-pf<ceiling>" keeps those keys apart; off = the #272 string
+        pf = f"-pf{settings().map_prefix_tokens}" if stage == "map" and settings().map_prefix == "firm" else ""
         return (f"ds-strict-2-{stage}-{stage_effort(stage)}-c{stage_max_tokens(stage)}"
-                f"-s{1 if stage_stream(stage) else 0}")
+                f"-s{1 if stage_stream(stage) else 0}{pf}")
     if provider == "deepseek":
         on = settings().deepseek_thinking
         return (f"ds-strict-1-think-{'on' if on else 'off'}"
@@ -412,6 +416,11 @@ def stream_timeout(idle_s: float):
     return openai.Timeout(idle_s + IDLE_READ_MARGIN_S, connect=DEEPSEEK_CONNECT_S)
 
 
+# #283: a callback run once when a streamed DeepSeek call receives its first chunk with a delta (the map's
+# leader-first gate opens on it); set per call by extract.run_round in the worker's context. None: no callback.
+FIRST_CHUNK: contextvars.ContextVar = contextvars.ContextVar("cee_first_chunk", default=None)
+
+
 def deepseek_create(client, request: dict, on_delta=None):
     """Send one DeepSeek request; 401 / 402 / 429 become ProviderStop with a plain message. #272: a
     streamed request (stream=True) is read to the end and assembled into the same response shape as a
@@ -546,6 +555,9 @@ class StreamAssembler:
                     got = True
             if got and self.ttft is None:
                 self.ttft = round(time.monotonic() - self.t0, 2)
+                hook = FIRST_CHUNK.get()
+                if hook is not None:
+                    hook()
             if getattr(choice, "finish_reason", None):
                 self.finish = choice.finish_reason
                 alive = True

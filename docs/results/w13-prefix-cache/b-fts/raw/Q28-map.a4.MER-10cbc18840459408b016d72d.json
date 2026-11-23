@@ -1,0 +1,115 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a4.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a4.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "BAC-TR-2024Q4#30",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "MER-ADV1A-2026#1",
+    "BAC-TR-2026Q2#63",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2026Q1#26",
+    "BAC-PR-2026-01-14-01#12",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-TR-2025Q2#34",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2025Q4#106",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-TR-2025Q1#28",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q2#21",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2025Q2#35",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-PR-2026-09-15-01#3",
+    "MER-PR-2026-09-15-01#0"
+  ],
+  "at": "2026-11-23T01:06:12.544962-06:00",
+  "prefix_group": "9698c3d2ad278033",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.66,
+  "leader_cached": false,
+  "prefix_chars": 64544,
+  "request_chars": 65618,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15991,
+    "output_tokens": 2224,
+    "cache_hit_tokens": 7424,
+    "cache_miss_tokens": 8567,
+    "reasoning_tokens": 1842,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.39
+  },
+  "wall_s": 36.92,
+  "tokens_per_s": 60.24,
+  "ttft_s": 2.39,
+  "reasoning_content": "The sub-question a4.MER asks for the closest disclosed measure to Merrill's advisor attrition rate, metric advisor_headcount, proxy.\n\nI need to find the advisor headcount figures. Let me look at the passages.\n\nBAC-SUPP-2023Q4#2 has \"Advisors, at period end - Total wealth advisors (3) 18,916 19,273...\" This is a headcount figure.\n\nBAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\"\n\nBAC-DECK-2025-investor-day#18: \"Leading advisor force 95% recognized...\"\n\nBAC-TR-2026Q2#63: \"adviser attrition is now at near historic lows\" - this is actually about attrition, not headcount. But it's a statement about attrition (qualitative).\n\nLet me focus on advisor headcount. The proxy is advisor_headcount.\n\nBAC-SUPP-2023Q4#2 gives \"Total wealth advisors\" = 18,916 at period end, and prior periods 19,273, 19,130, 19,099, 19,243, 19,273. Note footnote (3): \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nBAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\"\n\nThese are headcount figures, which is the closest disclosed measure to attrition rate (attrition rate = advisors leaving / headcount).\n\nSo I should provide items for advisor headcount.\n\nThe total wealth advisors series from BAC-SUPP-2023Q4#2 gives quarterly figures:\n- 18,916 (period end, appears to be current quarter Q4 2023)\n- 19,273\n- etc.\n\nLet me parse the rollforward: \"Advisors, at period end - Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\"\n\nActually this looks like a series of quarter-end figures. The columns likely represent different quarters. Let me just report the figure as printed.\n\nActually, the source is BAC-SUPP-2023Q4, period 2023-12-31. So these are quarterly period-end advisor counts.\n\nThe values: 18,916, 19,273, 18,916, 19,130, 19,099, 19,243, 19,273.\n\nHmm, this is a bit confusing. Let me look at the context. It's a rollforward with multiple columns. The \"Advisors, at period end\" row shows \"Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\".\n\nThis is likely 7 columns: Q4 2023, Q3 2023, Q2 2023, Q1 2023, Q4 2022, Q3 2022, Q2 2022, Q1 2022... but hard to determine exactly.\n\nActually I should just report the figure as a single item or as a series. The key fact is that Merrill (GWIM) reports \"Total wealth advisors\" as a headcount metric.\n\nLet me report the headcount figure. The most recent is 18,916 at period end (2023-12-31).\n\nAlso BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" - this is from investor day published 2025-11-05.\n\nLet me provide these as items.\n\nFor the period of BAC-SUPP-2023Q4#2, the period is 2023-12-31 (period end). So period \"2023-12-31\".\n\nNote the scope: footnote (3) says \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" So this is a wider scope than just Merrill advisors.\n\nFor BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" - scope is \"Merrill | Private Bank\" combined. Value \">15K\", unit \"Wealth Advisors\".\n\nLet me think about what's the \"closest disclosed measure.\" The metric is advisor_headcount. So headcount figures are facts (proxy).\n\nThe attrition statement \"adviser attrition is now at near historic lows\" is qualitative about attrition, not headcount, and not a proxy for attrition rate (it's a statement about attrition itself, not a number). Actually it's a qualitative statement about attrition being near historic lows - no figure. That's not really headcount.\n\nFor the proxy metric advisor_headcount, I should report headcount figures as facts.\n\nLet me build items:\n\nItem 0: BAC-SUPP-2023Q4#2 - \"Total wealth advisors\" 18,916 at period end 2023-12-31, with note that includes advisors across all wealth management businesses in GWIM and Consumer Banking. Value \"18,916\", unit \"wealth advisors\", period \"2023-12-31\".\n\nActually, there's a series. Let me report the series properly. The row shows multiple quarter-end values. Given the supplement is 2023Q4, these are likely the last several quarters.\n\nLet me just report one item with the 18,916 figure (period end) and maybe note the series. Actually, I'll report the main figure.\n\nActually the rollforward shows 7 numbers but they repeat (19,273 appears twice, 18,916 appears twice). This is a multi-year comparison: probably 2023 quarters and 2022 quarters.\n\nLet me not overcomplicate. I'll report:\n\nItem 0: Total wealth advisors at period end 18,916 (as of 2023-12-31), unit \"wealth advisors\", scope note about GWIM + Consumer Banking.\n\nItem 1: \">15K Wealth Advisors\" (investor day, Merrill | Private Bank), value \">15K\", unit \"wealth advisors\".\n\nFor the definition, footnote (3): \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nThe definition field should capture the firm's own definition of the quantity. For headcount, the definition is the footnote.\n\nLet me write the cell.\n\ndiffers_because: \"\" (these are facts for the proxy metric).\n\nreason: The proxy metric is advisor_headcount; these passages report advisor/wealth advisor headcount figures, which are the closest disclosed measure to an attrition rate.\n\nActually, wait - should I also consider the attrition statement? The sub-question is \"Closest disclosed measure to Merrill's advisor attrition rate\" with metric advisor_headcount. So advisor headcount is the proxy. The attrition statement in BAC-TR-2026Q2#63 (\"adviser attrition is now at near historic lows\") is actually about attrition itself, qualitative, no figure. That's relevant to a3 but for a4 (headcount proxy), headcount figures are the facts.\n\nLet me finalize the items with headcount figures.\n\nFor period for the investor day deck, it's \"n/a\" (published 2025-11-05), no specific period. Period \"\" since not stated as a point in time? Actually it's a snapshot. I'll use \"\" for period since the deck is n/a period.\n\nActually let me set period for the \">15K Wealth Advisors\" as \"\" (not stated).\n\nFor BAC-SUPP-2023Q4#2, period \"2023-12-31\".\n\nLet me write items.\n\nItem 0:\ntext: Merrill (GWIM) reported total wealth advisors at period end of 18,916 as of year-end 2023.\nquote: \"Advisors, at period end Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273 (3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\nvalue: \"18,916\"\nunit: \"wealth advisors\"\nperiod: \"2023-12-31\"\nscope: \"all wealth management businesses in GWIM and Consumer Banking\"\ndefinition: \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking\"\nchunk_ids: [\"BAC-SUPP-2023Q4#2\"]\n\nItem 1:\ntext: Merrill and Private Bank have more than 15,000 wealth advisors.\nquote: \">15K Wealth Advisors\"\nvalue: \">15K\"\nunit: \"wealth advisors\"\nperiod: \"\"\nscope: \"Merrill | Private Bank\"\ndefinition: \"\"\nchunk_ids: [\"BAC-DECK-2025-investor-day#9\"]\n\nThese are facts (proxy headcount).\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.MER",
+        "label": "fact",
+        "items": [
+          {
+            "text": "GWIM reported total wealth advisors at period end of 18,916 as of year-end 2023.",
+            "quote": "Advisors, at period end Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273 (3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "value": "18,916",
+            "unit": "wealth advisors",
+            "period": "2023-12-31",
+            "scope": "all wealth management businesses in GWIM and Consumer Banking",
+            "definition": "Includes advisors across all wealth management businesses in GWIM and Consumer Banking",
+            "chunk_ids": [
+              "BAC-SUPP-2023Q4#2"
+            ]
+          },
+          {
+            "text": "Merrill and the Private Bank have more than 15,000 wealth advisors, as stated at the 2025 investor day.",
+            "quote": ">15K Wealth Advisors",
+            "value": ">15K",
+            "unit": "wealth advisors",
+            "period": "",
+            "scope": "Merrill | Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-DECK-2025-investor-day#9"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The proxy metric is advisor headcount, and these passages report wealth advisor headcount figures, which are the closest disclosed measure to an attrition rate.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

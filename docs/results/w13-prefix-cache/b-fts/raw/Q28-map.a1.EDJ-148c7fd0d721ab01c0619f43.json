@@ -1,0 +1,142 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a1.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10K-2025#71",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q1#72",
+    "EDJ-10Q-2025Q3#102",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#74",
+    "EDJ-10K-2025#22",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#27",
+    "EDJ-10K-2025#78",
+    "EDJ-10K-2025#103",
+    "EDJ-10Q-2026Q1#67",
+    "EDJ-10Q-2025Q2#95",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2026Q2#86",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2026Q1#53",
+    "EDJ-10Q-2025Q2#28",
+    "EDJ-10Q-2025Q3#30"
+  ],
+  "at": "2026-11-23T01:06:04.865457-06:00",
+  "prefix_group": "2dc99d65c734bbe1",
+  "prefix_role": "leader",
+  "gate_wait_s": 0.0,
+  "leader_cached": null,
+  "prefix_chars": 67336,
+  "request_chars": 67951,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13743,
+    "output_tokens": 2501,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 12207,
+    "reasoning_tokens": 1657,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.38
+  },
+  "wall_s": 36.84,
+  "tokens_per_s": 67.89,
+  "ttft_s": 2.38,
+  "reasoning_content": "Let me identify the attrition rates disclosed for Edward Jones.\n\nFrom EDJ-10Q-2025Q3#70: \"Financial advisor attrition was 6.1%\" - third quarter 2025 (period 2025-09-26).\n\nFrom EDJ-10Q-2025Q2#67: \"Financial advisor attrition increased to 6.4%\" - second quarter 2025 (period 2025-06-27).\n\nFrom EDJ-10Q-2025Q3#68: \"Attrition % 6.1% 4.7% 30% ... 6.0% 5.1% 18%\" - third quarter and nine months ended Sept 26, 2025 vs 2024.\n\nAlso the definition from EDJ-10Q-2025Q2#66: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nSo I should extract these facts. The attrition rate is asked. Let me provide items for each period.\n\nItems:\n1. Q3 2025: 6.1% (from #70 and #68)\n2. Q2 2025: 6.4% (from #67)\n3. From #68: Attrition % third quarter 6.1% vs 4.7%, nine months 6.0% vs 5.1%.\n\nLet me capture these. The #68 chunk shows third quarter 2025 attrition 6.1% vs 4.7% (2024), and nine months 6.0% vs 5.1% (2024).\n\nAlso the definition footnote (5).\n\nLet me build items.\n\nItem for Q3 2025 6.1% (annualized). Item for Q2 2025 6.4%.\n\nAlso nine months ended Sept 26, 2025: 6.0%.\n\nDefinition item: attrition % definition.\n\nLet me also include Q3 2024 4.7% and nine months 2024 5.1%? Those are facts too.\n\nLet me write items.\n\nPeriods: Q3 2025 = 2025Q3. Q2 2025 = 2025Q2. Nine months ended Sept 26, 2025 = period \"2025-09-26\" (point)? Nine months is a period. I'll use \"2025Q3\" for the quarter and for nine months... hmm. Nine months ended Sept 26 2025. I could use period \"2025-09-26\" but that's a point in time. Maybe \"2025Q1-Q3\"? The instructions give formats. I'll use \"2025Q3\" for the quarter and note nine months. Actually let me use period \"2025-09-26\" for the nine-month period? The guidance says point in time is YYYY-MM-DD. Nine months is not a point. I'll describe in text.\n\nActually, the attrition % for nine months is annualized number compared to period end. Let me keep it simple and provide items with text explaining.\n\nLet me provide:\n- Q3 2025 (three months ended Sept 26, 2025): 6.1%\n- Q2 2025 (three months ended June 27, 2025): 6.4%\n- Nine months ended Sept 26, 2025: 6.0%\n- Q3 2024 (three months ended Sept 27, 2024): 4.7%\n- Nine months ended Sept 27, 2024: 5.1%\n\nDefinition item.\n\nFor periods, I'll use \"2025Q3\" for Q3 2025, \"2025Q2\" for Q2 2025, and for nine months \"2025Q3\" is ambiguous. I'll note in text. Actually maybe I'll just include the quarter and nine-month in the text clearly, using period \"2025Q3\" for quarter and leave nine-month with period \"2025Q1-Q3\"? Format not specified. I'll use \"2025\" for the nine-month? No, that's calendar year.\n\nI think I'll keep period as \"2025Q3\" for the Q3 quarter, \"2025Q2\" for Q2, and for nine-month use \"2025-09-26\" is a point... \n\nLet me just be pragmatic: use period \"2025Q3\" for quarter items, \"2025Q2\" for Q2 item, and for nine-month items use period \"2025Q1-Q3\" which is descriptive. Actually the instructions specify exact formats. I'll use \"2025Q3\" with text clarifying \"nine months ended\".\n\nHmm, but a series should be one item per period. I'll provide the key facts.\n\nLet me finalize. I'll include the definition as a fact item too (the definition of attrition %). Actually the sub-question a1.EDJ is \"advisor attrition rate\" as a fact. The definition is relevant but the question asks the rate. I can include definition in each item's definition field.\n\nThe definition: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nI'll put this in definition field for each item.\n\nLet me write the cells.\n\nFor Q3 2025 (from #70 and #68): value 6.1%, unit \"financial advisor attrition rate (annualized)\" or \"%\". I'll use unit \"%\".\n\nActually value should be the figure as printed \"6.1%\". unit could be \"\" or \"%\". I'll put value \"6.1%\" and unit \"\" maybe. Let me put value \"6.1%\" and unit \"percent\".\n\nI'll keep it simple: value \"6.1%\", unit \"\".\n\nLet me draft.\n\nItem 1 (Q3 2025):\ntext: \"Edward Jones reported financial advisor attrition of 6.1% for the third quarter of 2025, compared to 4.7% in the third quarter of 2024.\"\nquote: \"Financial advisor attrition was 6.1% as a result of a variety of factors...\" and from #68 \"6.1% 4.7%\".\nActually I'll quote from #70: \"Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.\"\nvalue \"6.1%\", period \"2025Q3\".\n\nItem 2 (Q2 2025): 6.4% from #67.\nquote: \"Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.\"\nperiod \"2025Q2\".\n\nItem 3 (nine months 2025): 6.0% from #68.\nquote: \"6.0% 5.1% 18%\" \u2014 the attrition line: \"6.1% 4.7% 30% 6.0% 5.1% 18%\". Actually the format shows attrition % row: 6.1%, 4.7%, 30%, then 6.0%, 5.1%, 18%. This is three months and nine months columns.\n\nItem 4 (Q3 2024): 4.7%.\n\nItem 5 (nine months 2024): 5.1%.\n\nI'll include these as facts. But maybe keep it focused. I'll include Q3 2025, Q2 2025, nine months 2025, and also Q3 2024 and nine months 2024 for completeness.\n\nDefinition: put in each item's definition field.\n\nLet me write final.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones reported financial advisor attrition of 6.1% for the third quarter of 2025, attributing it to a variety of factors including a rise in departures of advisors with tenure of five years or less.",
+            "quote": "The Partnership ended the third quarter with 20,429 financial advisors. Financial advisor attrition was 6.1% as a result of a variety of factors, including a rise in financial advisor departures with tenure of five years or less.",
+            "value": "6.1%",
+            "unit": "percent",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#70",
+              "EDJ-10Q-2025Q2#66"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition increased to 6.4% for the second quarter of 2025, primarily due to an increase in retirements.",
+            "quote": "The Partnership ended the second quarter with 20,309 financial advisors. Financial advisor attrition increased to 6.4% primarily due to an increase in retirements, consistent with industry trends.",
+            "value": "6.4%",
+            "unit": "percent",
+            "period": "2025Q2",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67",
+              "EDJ-10Q-2025Q2#66"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 6.0% for the nine months ended September 26, 2025, versus 5.1% for the nine months ended September 27, 2024.",
+            "quote": "Attrition %(5)   6.1%   4.7%   30%   6.0%   5.1%   18%",
+            "value": "6.0%",
+            "unit": "percent",
+            "period": "2025Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68",
+              "EDJ-10Q-2025Q3#69"
+            ]
+          },
+          {
+            "text": "Edward Jones reported financial advisor attrition of 4.7% for the third quarter of 2024.",
+            "quote": "Attrition %(5)   6.1%   4.7%   30%   6.0%   5.1%   18%",
+            "value": "4.7%",
+            "unit": "percent",
+            "period": "2024Q3",
+            "scope": "",
+            "definition": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#68",
+              "EDJ-10Q-2025Q3#69"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "Passages explicitly state Edward Jones's financial advisor attrition rates for the second and third quarters of 2025 and the comparative periods.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

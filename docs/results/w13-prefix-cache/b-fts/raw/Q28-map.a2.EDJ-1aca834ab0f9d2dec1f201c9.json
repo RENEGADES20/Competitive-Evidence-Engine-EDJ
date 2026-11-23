@@ -1,0 +1,158 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a2.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a2.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#74",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10K-2025#22",
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10Q-2025Q2#86",
+    "EDJ-10Q-2025Q2#89",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2025Q3#93",
+    "EDJ-10Q-2026Q1#66",
+    "EDJ-10Q-2026Q2#79",
+    "EDJ-10Q-2026Q1#62",
+    "EDJ-10K-2025#130",
+    "EDJ-10K-2025#148",
+    "EDJ-10K-2025#29",
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2026Q2#87",
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2026Q1#71",
+    "EDJ-10K-2025#71",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10K-2025#70",
+    "EDJ-10Q-2025Q2#94",
+    "EDJ-10Q-2025Q3#101",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q1#72",
+    "EDJ-10Q-2025Q3#102",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10K-2025#27",
+    "EDJ-10K-2025#78",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10K-2025#103",
+    "EDJ-10Q-2025Q3#87",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10Q-2025Q2#95",
+    "EDJ-10Q-2025Q3#68"
+  ],
+  "at": "2026-11-23T01:06:12.248799-06:00",
+  "prefix_group": "2dc99d65c734bbe1",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.36,
+  "leader_cached": false,
+  "prefix_chars": 67336,
+  "request_chars": 68075,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13796,
+    "output_tokens": 5652,
+    "cache_hit_tokens": 5376,
+    "cache_miss_tokens": 8420,
+    "reasoning_tokens": 4947,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 3.08
+  },
+  "wall_s": 85.72,
+  "tokens_per_s": 65.94,
+  "ttft_s": 3.08,
+  "reasoning_content": "The sub-question a2.EDJ asks for the closest disclosed measure to Edward Jones's advisor attrition rate, with metric advisor_headcount, marked as [proxy]. So I need to find the closest disclosed measure - the financial advisor headcount is a proxy.\n\nWait, let me understand. The metric is advisor_headcount, proxy. The sub-question asks \"Closest disclosed measure to Edward Jones's advisor attrition rate\" - the proxy metric is advisor_headcount.\n\nActually, looking at the guidance: \"A sub-question marked [proxy] names a stand-in figure (a numerator, a denominator or the closest measure to what the question asks, such as total client assets or the firm's count of financial advisors): that named figure, as the firm reports it, is a fact.\"\n\nSo the metric advisor_headcount means I should report the firm's count of financial advisors, which is the closest disclosed measure (proxy) to attrition rate.\n\nSo I need to find financial advisor headcount figures. There are many: \"20,514 financial advisors\" (2026Q2), \"20,309\" (2025Q2), \"20,429\" (2025Q3), \"20,425 at year end 2025\", etc.\n\nLet me collect the advisor headcount figures from the passages I'm allowed to cite.\n\nFrom a2.EDJ passages:\n- EDJ-10Q-2025Q2#64: Financial advisors (actual): At period end 20,309; Average 20,316 (Q2 2025). Also 19,589 period end, 19,522 average (Q2 2024). Also six-month: 20,309 period end, 20,265 average, 19,589, 19,418.\n- EDJ-10Q-2026Q2#60: At period end 20,514; Average 20,537 (Q2 2026); 20,309, 20,316 (Q2 2025); six-month 20,514, 20,517, 20,309, 20,265.\n- EDJ-10Q-2026Q1#51: Financial advisors (actual): At period end ... (cut off). \n- EDJ-10Q-2026Q2#82: U.S./Canada: 19,647 at period end (U.S.), 867 (Canada).\n- EDJ-10Q-2025Q3#67: At period end 20,429; Average 20,368 (Q3 2025); 19,885, 19,749 (Q3 2024).\n- EDJ-10Q-2025Q2#86: U.S. 19,435 at period end, Canada 874.\n- EDJ-10K-2025#130: Financial advisors (actual): At year end 20,425; Average 20,331 (2025); 20,125, 19,650 (2024); 19,232, 18,945 (2023).\n- EDJ-10K-2025#148: U.S. 19,540 at year end, Canada 885 (2025).\n\nThis is a \"series\" sub-question with metric advisor_headcount. I should provide the advisor headcount figures as the closest disclosed measure (proxy) to attrition rate.\n\nThe metric is advisor_headcount (proxy), and it's a series. I should list multiple items for the headcount figures.\n\nLet me think about what's the best set of figures. The question asks \"Closest disclosed measure to Edward Jones's advisor attrition rate\" - the proxy metric is advisor_headcount. So the fact is the headcount figures.\n\nI'll include the headcount figures (at period end and average) from the various periods.\n\nLet me identify the key headcount figures:\n\n1. Q3 2025 (period 2025-09-26): At period end 20,429; Average 20,368 (from #67 and #70)\n2. Q2 2025 (period 2025-06-27): At period end 20,309; Average 20,316 (from #67/#70... actually #70 is Q3). #67 is Q3, #64 is Q2. Q2 2025: 20,309 at period end, average 20,316.\n3. Q2 2026 (2026-06-26): At period end 20,514; Average 20,537 (#60).\n4. Year end 2025 (2025-12-31): 20,425 at year end; Average 20,331 (#130).\n\nAlso U.S./Canada breakdowns.\n\nI think for the proxy metric advisor_headcount, I should provide the total firm financial advisor headcount (actual) figures at period end and average for the periods.\n\nLet me be thorough but focus. The sub-question is a series of advisor_headcount (proxy). I'll provide items for the key total headcount figures.\n\nActually, let me reconsider. The label should be \"fact\" since these are the named proxy figures (the firm's count of financial advisors).\n\nLet me compile items with proper periods.\n\nKey figures (total firm, \"Financial advisors (actual)\"):\n\n1. Q3 2025 (#70): \"ended the third quarter with 20,429 financial advisors\" - period 2025-09-26, value 20,429.\nAlso #67: At period end 20,429, Average 20,368 (Q3 2025).\n\n2. Q2 2025 (#67 is Q3; #67 mentions 20,429 Q3). Q2 2025 figure 20,309 from #64 and #67 (in the search pool). Actually #67 shows \"The Partnership ended the second quarter of 2025... with 20,309 financial advisors. Financial advisor attrition increased to 6.4%\".\n\n3. Q2 2026 (#61 in a5 pool, but I'm restricted to a2 pool + listed others). Wait, #61 is EDJ-10Q-2026Q2#61 listed under a5.EDJ. Is it in my allowed list? The allowed list includes: EDJ-10Q-2025Q3#70, EDJ-10Q-2026Q2#87, EDJ-10K-2025#58, EDJ-10Q-2026Q1#71, EDJ-10K-2025#71, EDJ-10Q-2025Q2#66, EDJ-10K-2025#70, EDJ-10Q-2025Q2#94, EDJ-10Q-2025Q3#101, EDJ-10Q-2025Q2#67, EDJ-10Q-2026Q1#72, EDJ-10Q-2025Q3#102, EDJ-10Q-2026Q1#60, EDJ-10K-2025#27, EDJ-10K-2025#78, EDJ-10Q-2026Q2#75, EDJ-10K-2025#103, EDJ-10Q-2025Q3#87, EDJ-10Q-2025Q2#81, EDJ-10Q-2025Q2#95, EDJ-10Q-2025Q3#68.\n\nSo #61 is not in my allowed list. I should only cite a2.EDJ passages plus the listed others.\n\nFor the headcount figures, I'll use the a2.EDJ passages primarily, plus the listed search pool passages that contain headcount (like EDJ-10Q-2025Q2#67, EDJ-10Q-2025Q3#70).\n\nLet me list headcount figures from allowed passages:\n\nFrom a2 pool:\n- #64 (Q2 2025): At period end 20,309 (2025), 19,589 (2024); Average 20,316, 19,522. Six month: 20,309, 20,265 (2025), 19,589, 19,418 (2024).\n- #60 (Q2 2026): At period end 20,514 (2026), 20,309 (2025); Average 20,537, 20,316; six month 20,514, 20,517 (2026), 20,309, 20,265 (2025).\n- #82 (Q2 2026 U.S./Canada): U.S. 19,647 at period end, Canada 867; U.S. average 19,642, Canada 875. Prior year 19,435, 874.\n- #86 (Q2 2025 U.S./Canada): U.S. 19,435, Canada 874 at period end.\n- #67 (Q3 2025): At period end 20,429 (2025), 19,885 (2024); Average 20,368, 19,749.\n- #93 (Q3 2025 U.S./Canada nine months): U.S. 19,559, Canada 870 at period end; averages.\n- #66 (Q1 2026 U.S./Canada): U.S. 19,674 at period end, Canada 876.\n- #79 (Q2 2026 U.S./Canada): U.S. 19,647, Canada 867.\n- #51 (Q1 2026): At period end ... cut off.\n- #130 (10-K 2025): At year end 20,425 (2025), 20,125 (2024), 19,232 (2023); Average 20,331, 19,650, 18,945.\n- #148 (10-K 2025 U.S./Canada): U.S. 19,540 at year end, Canada 885.\n\nThe proxy metric is \"advisor_headcount\" - the count of financial advisors. This is the closest disclosed measure to attrition rate (the denominator essentially).\n\nI should provide the financial advisor headcount figures as facts.\n\nGiven this is a \"series\", I should provide multiple items covering the periods.\n\nLet me be selective and provide the total firm financial advisor headcount (at period end and average) for the periods disclosed.\n\nI'll include:\n1. Q3 2025 at period end 20,429 (#70)\n2. Q3 2025 average 20,368 (#67)\n3. Q2 2025 at period end 20,309 (#67)\n4. Q2 2026 at period end 20,514 (#60)\n5. Year end 2025 at year end 20,425 (#130)\n\nActually, let me focus. The metric is advisor_headcount as a proxy for attrition rate. The question is \"Closest disclosed measure to Edward Jones's advisor attrition rate\". \n\nHmm, but wait - actually the attrition rate IS disclosed (6.1%, 6.4%). So why is a2.EDJ a proxy for headcount? The sub-question a1.EDJ asks for attrition rate (fact). a2.EDJ asks for \"closest disclosed measure to advisor attrition rate\" with metric advisor_headcount.\n\nSo a2.EDJ wants the advisor headcount (the denominator used in attrition calc), which is the closest disclosed measure/proxy.\n\nThe proxy metric is advisor_headcount. So I report the headcount figures.\n\nI'll provide the key headcount figures. Let me provide a reasonable series.\n\nI'll provide items for the total firm financial advisor headcount at period end and average across the disclosed periods. To keep it manageable, I'll include the main periods.\n\nActually, given it's a \"series\" and \"proxy\", I think providing the headcount figures (at period end, and maybe average) for each period disclosed is appropriate.\n\nLet me include:\n- Year end 2025: 20,425 (#130)\n- Q3 2025: 20,429 at period end (#70)\n- Q2 2025: 20,309 (#67)\n- Q2 2026: 20,514 (#60)\n\nAnd maybe averages. But to keep it focused, I'll include at period end figures as the primary headcount, plus averages where clearly stated.\n\nActually, let me just provide a comprehensive set of the advisor headcount figures. The definition from #66 note: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\" So the denominator is \"total number of financial advisors as of period end.\"\n\nSo the closest disclosed measure (proxy) to attrition rate is the total number of financial advisors at period end.\n\nI'll report the period-end headcount figures.\n\nLet me compile:\n\n1. Q2 2025 (2025-06-27): 20,309 (#67, #64)\n2. Q3 2025 (2025-09-26): 20,429 (#70, #67)\n3. Q2 2026 (2026-06-26): 20,514 (#60)\n4. Year end 2025 (2025-12-31): 20,425 (#130)\n\nAlso prior year comparatives: 19,589 (Q2 2024), 19,885 (Q3 2024), 20,125 (2024 year end), 19,232 (2023).\n\nI think I'll include the main current-period figures plus the note definition. Let me include the definition as part of the fact.\n\nActually, the definition is a separate concept. The proxy sub-question asks for the closest disclosed measure - the headcount. I can note the definition in the definition field or as an item.\n\nLet me structure this. I'll produce one cell with label \"fact\" and multiple items for the headcount figures.\n\nItems:\n1. Q3 2025 period end 20,429 - quote \"The Partnership ended the third quarter with 20,429 financial advisors\"\n2. Q2 2025 period end 20,309 - quote \"The Partnership ended the second quarter with 20,309 financial advisors\"\n3. Q2 2026 period end 20,514 - quote \"The Partnership ended the second quarter with 20,514 financial advisors\"\n4. Year end 2025 20,425 - quote \"At year end 20,425\"\n\nLet me get exact quotes.\n\n#70: \"The Partnership ended the third quarter with 20,429 financial advisors. Financial advisor attrition was 6.1%...\"\n#67: \"The Partnership ended the second quarter with 20,309 financial advisors. Financial advisor attrition increased to 6.4%...\"\n#60: \"At period end 20,514 ...\" and #61 (not allowed) says \"ended the second quarter with 20,514 financial advisors\". But #60 shows \"At period end 20,514\". Let me use #60: \"At period end 20,514 20,309 1%\".\n#130: \"At year end 20,425 20,125 19,232 1%\"\n\nLet me also include the definition note from #66 (allowed): \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\n\nThis definition is important as it ties headcount to attrition. But the sub-question a2.EDJ is a proxy metric. I could include the definition in the definition field of items.\n\nActually, I'll include the definition in the \"definition\" field of the items where relevant, or as a separate note. The definition field is \"the firm's own definition of the quantity when a passage gives one.\"\n\nThe definition of \"financial advisors\" isn't clearly given, but the definition of attrition % is given (which shows headcount is the denominator). I'll put the attrition definition in the definition field.\n\nLet me now write the items.\n\nFor periods, I'll use YYYY-MM-DD for period-end dates (point in time) since these are \"at period end\" figures. Actually, period-end headcount is a point in time, so \"2025-09-26\" etc.\n\nLet me set:\n- Q2 2025: period \"2025-06-27\"\n- Q3 2025: period \"2025-09-26\"\n- Q2 2026: period \"2026-06-26\"\n- Year end 2025: period \"2025-12-31\"\n\nValue/unit: \"20,309\" / \"financial advisors\" etc.\n\nNow let me write it all out.\n\nFor the reason: These are the firm's disclosed financial advisor headcount figures, which is the proxy metric (advisor_headcount) and closest disclosed measure to the attrition rate (the denominator in the attrition % formula).\n\ndiffers_because: \"\" (since it's a fact, not different_quantity).\n\nActually wait - is headcount a \"fact\" or \"different_quantity\"? The guidance says a proxy sub-question names a stand-in figure, and that named figure as the firm reports it is a fact. The metric is advisor_headcount, so headcount is the named figure, and it's a fact.\n\nderivation: operation \"\", inputs [].\n\nLet me write the final answer.\n\nI'll include the definition item too. Actually, let me include the definition within items or as a separate item. I'll add one item capturing the definition.\n\nLet me structure items:\n\nItem 0: Q3 2025 headcount 20,429\nItem 1: Q2 2025 headcount 20,309\nItem 2: Q2 2026 headcount 20,514\nItem 3: Year end 2025 headcount 20,425\n\nAlso maybe include averages? The metric is advisor_headcount, and headcount can be at period end or average. The attrition denominator is \"total number of financial advisors as of period end\", so period end is most relevant. I'll focus on period-end, but I could also add average.\n\nI'll include period-end figures primarily, plus the definition.\n\nLet me also consider: should I include the average headcount figures? The sub-question is \"series, metric advisor_headcount, proxy\". I'll provide both period-end and average to be thorough, but keep it focused on period-end since that's the attrition denominator.\n\nActually, I'll provide a good set. Let me finalize with period-end figures for the four main periods plus the definition note.\n\nLet me write concise text and quotes.\n\nItem 0:\ntext: \"Edward Jones ended the third quarter of 2025 with 20,429 financial advisors.\"\nquote: \"The Partnership ended the third quarter with 20,429 financial advisors.\"\nvalue: \"20,429\", unit: \"financial advisors\", period: \"2025-09-26\", scope: \"\", definition: \"\", chunk_ids: [\"EDJ-10Q-2025Q3#70\"]\n\nItem 1:\ntext: \"Edward Jones ended the second quarter of 2025 with 20,309 financial advisors.\"\nquote: \"The Partnership ended the second quarter with 20,309 financial advisors.\"\nvalue: \"20,309\", period \"2025-06-27\", chunk_ids [\"EDJ-10Q-2025Q2#67\"]\n\nItem 2:\ntext: \"Edward Jones ended the second quarter of 2026 with 20,514 financial advisors.\"\nquote from #60: \"At period end 20,514 20,309 1%\"\nHmm, that quote is a bit awkward. Let me use #60's \"Financial advisors (actual): At period end 20,514 20,309 1%\".\n\nActually #61 (not allowed) has the clean sentence. #60 shows the table. I'll quote the table portion: \"At period end                                                              20,514                         20,309                      1%\". That's fine.\n\nvalue \"20,514\", period \"2026-06-26\", chunk_ids [\"EDJ-10Q-2026Q2#60\"]\n\nItem 3:\ntext: \"Edward Jones ended fiscal year 2025 with 20,425 financial advisors at year end.\"\nquote: \"At year end                                                                            20,425                20,125                19,232                         1%\"\nvalue \"20,425\", period \"2025-12-31\", chunk_ids [\"EDJ-10K-2025#130\"]\n\nItem 4 (definition):\ntext: \"Edward Jones defines Attrition % as the annualized number of financial advisors that left or retired during the period compared to the total number of financial advisors as of period end.\"\nquote: \"Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.\"\nvalue \"\", unit \"\", period \"\", scope \"\", definition \"the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end\", chunk_ids [\"EDJ-10Q-2025Q2#66\"]\n\nHmm, but this definition item is really about attrition %, not headcount. The sub-question a2.EDJ is about advisor_headcount proxy. The definition of attrition is more relevant to a1. But it helps explain why headcount is the proxy. I'll include it as it shows the headcount is the denominator.\n\nActually, let me reconsider whether to include the definition. The sub-question asks for \"closest disclosed measure to advisor attrition rate\" with metric advisor_headcount. The answer is the headcount. The definition of attrition isn't strictly the headcount definition.\n\nI'll include the definition in the definition field of the headcount items where it's relevant, or just include it as a note item. I think including it as an item with the definition is fine and helpful, since it establishes the relationship.\n\nActually, I'll keep it simpler. I'll include the definition as a fact item since it's the firm's own definition that connects headcount to attrition. But it's a definition, not a headcount figure. The definition field is meant for \"the firm's own definition of the quantity\" - the quantity here is headcount (or attrition). \n\nLet me put the attrition definition into the \"definition\" field of the headcount items, and also have a separate note.\n\nI think I'll keep it clean: provide headcount figures as the fact items, and include the definition in one item's definition field or as a standalone item.\n\nLet me just do 5 items: 4 headcount figures + 1 definition. Actually the definition is more naturally associated with the attrition metric. Since a2.EDJ is the proxy for headcount, and the definition explains the denominator, I'll include it.\n\nLet me finalize. I'll write it out now.\n\nActually, I realize I should double check: is the \"average\" headcount also part of the series? The metric \"advisor_headcount\" - I'll include period-end as primary since that's the attrition denominator. I could add averages but I'll keep to period-end for clarity, plus maybe mention averages. I'll keep period-end only for the main figures to avoid clutter, but actually a \"series\" suggests multiple periods which I have.\n\nLet me write final answer.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.EDJ",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Edward Jones ended the third quarter of 2025 with 20,429 financial advisors.",
+            "quote": "The Partnership ended the third quarter with 20,429 financial advisors.",
+            "value": "20,429",
+            "unit": "financial advisors",
+            "period": "2025-09-26",
+            "scope": "",
+            "definition": "the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q3#70"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2025 with 20,309 financial advisors.",
+            "quote": "The Partnership ended the second quarter with 20,309 financial advisors.",
+            "value": "20,309",
+            "unit": "financial advisors",
+            "period": "2025-06-27",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#67"
+            ]
+          },
+          {
+            "text": "Edward Jones ended the second quarter of 2026 with 20,514 financial advisors at period end.",
+            "quote": "Financial advisors (actual): At period end 20,514 20,309 1%",
+            "value": "20,514",
+            "unit": "financial advisors",
+            "period": "2026-06-26",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10Q-2026Q2#60"
+            ]
+          },
+          {
+            "text": "Edward Jones ended fiscal year 2025 with 20,425 financial advisors at year end.",
+            "quote": "Financial advisors (actual): At year end 20,425 20,125 19,232 1%",
+            "value": "20,425",
+            "unit": "financial advisors",
+            "period": "2025-12-31",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#130"
+            ]
+          },
+          {
+            "text": "Edward Jones defines Attrition % as the annualized number of financial advisors that left or retired during the period compared to the total number of financial advisors as of period end.",
+            "quote": "Attrition % represents the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "the annualized number of financial advisors that left or retired from the Partnership during the period compared to the total number of financial advisors as of period end",
+            "chunk_ids": [
+              "EDJ-10Q-2025Q2#66"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The named proxy metric advisor_headcount is the firm's count of financial advisors, which is the denominator of its disclosed attrition rate; the passages report these headcount figures and the definition tying headcount to attrition.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

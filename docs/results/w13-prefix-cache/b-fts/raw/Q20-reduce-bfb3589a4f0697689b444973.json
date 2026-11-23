@@ -1,0 +1,536 @@
+{
+  "question_id": "Q20",
+  "question": "What evidence is there about how clients under 40 choose a financial advisor?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "CERULLI-GWT-2025#23",
+    "CERULLI-GWT-2025#1",
+    "BOFA-PB-STUDY-2026#15",
+    "SCHW-TR-2025Q3#11",
+    "SCHW-TR-2025Q3#12",
+    "CFPB-MISINFO-2025#9",
+    "BOFA-PB-STUDY-2026#5",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#8",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#9",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#5",
+    "CFPB-MISINFO-2025#5",
+    "FINRAF-FINFLUENCERS-2026#29",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#49",
+    "UBS-NEXTGEN-2026#83",
+    "CERULLI-GWT-2025#22",
+    "GSAM-ALTERNATIVES-2025#31",
+    "GSAM-RETIREMENT-2025#36",
+    "GSAM-RETIREMENT-2025#35",
+    "BOFA-PB-STUDY-2026#4",
+    "SCHW-TR-2025Q3#40",
+    "BOFA-PB-STUDY-2026#14",
+    "BOFA-PB-STUDY-2024#0",
+    "GSAM-RETIREMENT-2025#47",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#51",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#23",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#62",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#15",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#39",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#21",
+    "UBS-NEXTGEN-2026#84",
+    "UBS-NEXTGEN-2026#76",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#57",
+    "SCHW-TR-2026Q2#9",
+    "WEALTHTENDER-ADVISOR-SEARCH-2025#0",
+    "FIDELITY-III-2025#0",
+    "CERULLI-MASS-AFFLUENT-2026#0"
+  ],
+  "schema_fallback": [],
+  "enum_values": 130,
+  "at": "2026-11-23T00:11:11.290830-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15718,
+    "output_tokens": 14342,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 14054,
+    "reasoning_tokens": 8444,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.31
+  },
+  "wall_s": 155.59,
+  "tokens_per_s": 92.18,
+  "ttft_s": 2.31,
+  "reasoning_content": "Let me work through this systematically. I need to write the answer following the evidence matrix.\n\nThe behavior is \"answer\" with reason covering a1, a2, a3, a4, a6, a7, a8, a9 (note a5 is gap/adjacent).\n\nLet me write claims for each aspect. Each claim needs part_id and chunk_ids. For multi-firm answers, firms in order listed, each claim starting \"<Firm>: \". But actually the aspects here don't seem to be organized by firm; they're thematic. The instruction says \"Several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '\". But these aspects are thematic across sources. There's no firm ordering given. Let me just write claims aspect by aspect.\n\nActually, looking at the items, they're from various sources (Cerulli, BofA, Schwab, CFPB, Wealthtender, UBS, GSAM, Fidelity, FINRA). There's no \"firms in order listed\" list. So I'll just write each item as a claim, not prefixing firm names since there's no firm list. The instructions about firms apply when firms are listed. Here it seems each item is a claim.\n\nLet me go aspect by aspect.\n\na1.all: fact - items 1-7. All are facts, claim them with part_id \"a1\".\n\nWait, part_id enum includes \"a1\" and \"a1.all\". The instruction says \"the cell id is the part_id of what you write from it\". Cell id for a1 is \"a1.all\". Actually the instruction says \"a cell id is the part_id of what you write from it\" \u2014 so for a1.all items, part_id = \"a1.all\".\n\nLet me check: \"A fact cell is a claim\". Each item in a fact aspect is a claim. part_id = cell id = \"a1.all\".\n\nFor comparison aspects, part_id = aspect id. a1 is not marked comparison. So a1 items use part_id \"a1.all\".\n\nLet me also note the \"also under another aspect\" note - not relevant here.\n\nLet me write each claim.\n\nFor a9 (recency), every item needs a why-line.\n\nLet me carefully write each.\n\na1.all:\nitem 1: Cerulli - younger investors comfortable directing own investing through online brokerages, advisors must articulate benefits outside investing realm (financial planning, lending, tax services). cite CERULLI-GWT-2025#23\nitem 2: Cerulli - older more advisor-reliant, younger prefer retain control. cite CERULLI-GWT-2025#1\nitem 3: BofA 2026 - 65% young investors prefer human advice, 87% comfortable with AI. cite BOFA-PB-STUDY-2026#15\nitem 4: Schwab - younger clients turn to firm because meets channels, learn finances via social media and family. period 2025-09-30. cite SCHW-TR-2025Q3#11\nitem 5: Schwab - YouTube top online resource, Schwab #1 by followers. period 2025-09-30. cite SCHW-TR-2025Q3#12\nitem 6: CFPB - Millennials/Gen Z more likely act without validation; aged 25-45 more trusting of genAI and social media. quote not verbatim. cite CFPB-MISINFO-2025#9\nitem 7: BofA 2026 - 65% young investors prefer human advice even as embrace AI. scope Gen Z/Millennials ages 21-45. cite BOFA-PB-STUDY-2026#5\n\nThese are all \"fact\" cells, each is a claim. part_id \"a1.all\".\n\nNo recency marked for a1, so no why-lines needed.\n\na2.all: items 1-8, all fact claims.\nitem 1: Wealthtender - top resources: referrals friends/family 62%, search engines 49.80%, financial institutions 49%, referrals professionals 49.20%. cite #8, #9. quote not verbatim.\nitem 2: Wealthtender - 25% AI tools, 32% online directories, 22% social media. cite #5. quote not verbatim.\nitem 3: Wealthtender - 96% still research even if recommended. cite #9.\nitem 4: CFPB - younger embrace social media, podcasts, genAI. cite #5.\nitem 5: Schwab CEO - Gen Z (13-28) learn via social media and family. cite #11.\nitem 6: Schwab CEO - younger top online resource YouTube. cite #12.\nitem 7: FINRA - 36% social media users, 41% finfluencer followers check background vs 14%/13%. cite #29.\nitem 8: CFPB - Millennials/Gen Z more likely act without validation. cite #9.\n\na3.all: items 1-12. But item 11 is \"figure not found in its passage\" - so do not state figure. Actually item 11 says the figure is \"3 times\" but marked \"figure not found in its passage: do not state this figure\". So I need to write a claim about Millennials/Gen Z allocating three times more... but figure not found. Hmm.\n\nWait, item 11: \"The BofA Private Bank study reports Millennials and Gen Z allocate three times more of their investment portfolios to alternative investments than older generations.\" with \"figure not found in its passage: do not state this figure\".\n\nThe instruction: \"An item marked 'figure not found in its passage' keeps its figure out of your text.\" So I should state the claim without the figure. But the claim is essentially about the figure. Hmm. Actually the quote is the heading \"Millennials and Gen Z Allocate Three Times More...\" So the figure \"3\" is the value. The item's substantive content is that they allocate three times more. But the figure not found in passage means I can't state \"three times\".\n\nActually let me re-read: \"figure not found in its passage\" \u2014 the \"value 3 | unit times more allocation\". So the figure is \"3\". The passage doesn't actually contain \"3 times\". So I should state that the BofA study reports Millennials and Gen Z allocate more of their portfolios to alternatives than older generations, without the \"three times\" figure.\n\nHmm, but actually the quote is the heading text which does say \"Three Times More\". This is confusing. The flag says figure not found, keep figure out. So I'll write a claim that BofA reports Millennials and Gen Z allocate a larger share of their portfolios to alternative investments than older generations, without quantifying.\n\nActually, wait - let me reconsider. The value \"3\" is not found in the passage (the passage says \"Three Times\" as words, not the numeral, or perhaps the passage is just a heading). The safest is to not state the numeric figure \"3\" or \"three times\". But the qualitative statement (allocate more to alternatives than older generations) is the claim.\n\nLet me write: \"The BofA Private Bank study reports that Millennials and Gen Z allocate more of their investment portfolios to alternative investments than older generations.\" cite BOFA-PB-STUDY-2024#0. part_id a3.all.\n\nHmm but this is awkward. Actually, I think the intent of \"figure not found\" is just don't state the specific number 3. The qualitative \"allocate more... than older generations\" is fine and is literally what the passage says.\n\nActually, let me reconsider. The quote is verbatim in the item: \"Millennials and Gen Z Allocate Three Times More of Their Investment Portfolios to Alternative Investments Than Older Generations\". That quote contains \"Three Times\". But the flag says figure not found in its passage. The \"figure\" being 3. Since \"Three Times\" is in the quote which is verbatim (not marked quote-not-verbatim), but the flag says don't state the figure.\n\nI'll write the qualitative claim without \"three times\": \"The BofA Private Bank study reports that Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\"\n\nLet me continue with a3 items.\n\nitem 1: Wealthtender Voice of Client - top goals. All respondents not age-specific. cite #49. quote not verbatim.\nitem 2: UBS next gen - experience/expertise 79%, 56% cross-generation relationships, 41% understand needs. cite #83. quote not verbatim.\nitem 3: Cerulli - Millennials student debt, mortgage rates, delayed milestones. cite #22. quote not verbatim.\nitem 4: GSAM - Millennials top 3 goals. cite #31. quote not verbatim.\nitem 5: GSAM - competing priorities constrain retirement: 30% Boomers, 50% Gen X, 75% Millennials, 70% Gen Z. cite #36.\nitem 6: GSAM - competing priorities list, younger generations more impacted. cite #35.\nitem 7: BofA - younger investors redefine diversification, crypto #1 wealth-creation 29%. cite #4. quote not verbatim.\nitem 8: Cerulli - younger comfortable online brokerages. cite #23.\nitem 9: Schwab CEO - consolidate loans PAL, student debt, buy house. cite #40.\nitem 10: BofA - 67% younger investors believe traditional stocks/bonds can't deliver. cite #14.\nitem 11: (figure not found) cite #0.\nitem 12: GSAM - 66% Gen Z, 59% Millennials major life event. cite #47. quote not verbatim.\n\na4.all: items 1-5.\nitem 1: Wealthtender guidance - research via search engines, directories, AI. scope not age-restricted. cite #51.\nitem 2: one-third prefer online exclusively. cite #23. quote not verbatim.\nitem 3: tech integration accelerated, digital-first. cite #62.\nitem 4: CFPB - younger embrace social media, podcasts, genAI. cite #5.\nitem 5: 49.8% search engines, 62% referrals. cite #8. quote not verbatim.\n\na5.all: adjacent only. Items 1-2 go to adjacent with differs_because.\n\na6.all: items 1-8.\nitem 1: 53% pushy sales tactics red flag. cite #39.\nitem 2: 73% transparency crucial. cite #15. quote not verbatim.\nitem 3: online reviews 61% third most important. cite #21.\nitem 4: UBS 67% personal connection. cite #84.\nitem 5: UBS - rapport, communicate. cite #76.\nitem 6: 63% credentials. cite #57.\nitem 7: 63.40% certifications. cite #23.\nitem 8: trust instincts. cite #51.\n\na7.all: items 1-7.\nitem 1: BofA 65% human. cite #15.\nitem 2: Cerulli - younger retain control. cite #1.\nitem 3: Schwab 61% affluent 25-44 consolidate. period 2026-06-30. cite #9.\nitem 4: Wealthtender 500 households. cite #0. period not stated usable.\nitem 5: BofA 65% human, 87% AI comfortable. scope 21-45. cite #5.\nitem 6: Cerulli - online brokerages. cite #23.\nitem 7: CFPB 44% vs 26%, 44% vs 24%. cite #9.\n\na8.all: basis break. State each basis with own periods.\nbasis: whole firm 2026, 2026-06-30; Millennials and Gen Z (25-45) 2025.\n\nItems:\nitem 1: BofA 47% use AI. period 2026. cite #15.\nitem 2: Cerulli - younger retain control. period 2025. cite #1.\nitem 3: Fidelity - next-gen seek transparency. period 2025. cite #0.\nitem 4: BofA 65% human. period 2026. cite #5.\nitem 5: CFPB 44% vs 26% genAI. period 2025. cite #9. quote not verbatim.\nitem 6: Schwab 61% consolidate. period 2026-06-30. cite #9.\n\na8 is not marked recency, so no why-lines. But it has basis break, so I state each basis.\n\nActually the a8 comparability note says \"unverified: not in metric definitions file; never compared across firms\". And basis break. So I just state each item with its periods, not joining.\n\na9.all: recency, every item needs why-line. Items 1-9.\n\nEach item needs \"Why it might matter: ...\" sentence from context or related.\n\nLet me write these carefully with why-lines.\n\nitem 1: BofA 65% human, period 2026, scope Gen Z/Millennials. cite #15.\nwhy-line: from context or related. Context: 47% use AI, 87% comfortable, yet 65% prefer human. Related BOFA-PB-STUDY-2026#5 (same finding). I can use context: the source notes this preference persists even as 87% are comfortable with AI, and 47% use AI to research. \n\nActually the why-line should be one sentence on why it might matter, from what the passage says (context: a reason/purpose, first, record, change, consequence) or factual background from related lines.\n\nFor item 1, context shows \"even as 87% comfortable with advisors using AI\" - so why it matters: the human preference persists despite AI comfort. I can write: \"Why it might matter: the study finds this human-advisor preference persists even as 87% of young investors are comfortable with advisors using AI and 47% use AI to research companies or markets.\" cite #15 (already).\n\nWait, but I need to add the passage's chunk id to claim's chunk_ids. The context/related already cites #15. Let me pick a related chunk for why-line that adds a new chunk id, or just use the context from #15.\n\nActually the instruction: \"then add that passage's chunk id to the claim's chunk_ids.\" So if I use a related passage, I add that chunk id.\n\nFor item 1, I can use the context (from #15 itself) about AI. That's within the same chunk #15. Or use related #14 (67% believe stocks/bonds can't deliver above-average returns). \n\nLet me use context for most, and related where helpful.\n\nLet me write why-lines:\n\nitem 1 (65% human, #15): context notes 47% use AI, 87% comfortable yet 65% human. Why: \"the preference for human advice persists even as young investors adopt AI, with 87% comfortable with advisors using AI and 47% using AI to research.\" cite #15 (already cited). No new chunk needed but I could add related. Actually to be safe I'll keep chunk_ids as #15 only for this claim? The instruction says add the passage's chunk id. Since context is from #15, that's already cited. Fine.\n\nHmm, but maybe better to add a related chunk. Let me use related BOFA-PB-STUDY-2026#14: \"67% of younger investors believe traditional stocks and bonds can no longer deliver above-average returns.\" Why it matters: this helps explain why younger investors still seek human guidance despite comfort with AI. Actually that's a stretch.\n\nLet me just be simple and faithful. For each item, I'll craft a why-line from context or related, citing appropriately.\n\nitem 1: why from context (47% AI, 87% comfortable). cite #15.\nitem 2: Cerulli younger retain control. context: \"$47 trillion wealth transfer\". Why: younger investors are positioned to inherit $47 trillion, making their preference for control significant. cite #1.\nActually context mentions \"to receive $47 trillion of the wealth to be transferred intergenerationally.\" So why it matters: younger investors stand to receive $47 trillion in intergenerational wealth transfer. cite #1.\n\nitem 3: Schwab younger learn via social media/family, period 2025Q3. context: Gen Z 13-28, turning to Schwab. related CFPB #5 (younger embrace social media), SCHW #40. Why: context notes they're Gen Zers ages 13-28 and that Schwab meets them in channels where they seek info. cite #11.\n\nitem 4: Schwab YouTube top resource, 2025Q3. context: one-third of retail households creating financial plan in last two years are under 40; average age getting younger. Why: one-third of households creating a financial plan recently are under 40. cite #12.\n\nitem 5: Cerulli mass-affluent younger, less advised, seeks involved. period 2026. context: $25 trillion market, 46.9 million households. Why: the $25 trillion mass-affluent market (46.9 million households) is younger and less advised. cite #0 (CERULLI-MASS-AFFLUENT-2026#0).\n\nitem 6: Cerulli younger comfortable online brokerages. context: began saving for retirement earlier than any preceding generation. Why: these investors began saving for retirement earlier than any preceding generation. cite #23.\n\nitem 7: CFPB Millennials/Gen Z act without validation, 44% vs 26%. context: respondents less comfortable acting on online info (47% news, 38% genAI, 37% social media). Why: survey respondents overall are less comfortable acting on financial info from many online resources, making younger Americans' greater trust notable. cite #9.\n\nitem 8: BofA 47% AI, 87% comfortable, 65% human. quote not verbatim. context: 42% own art, 32% stocks allocation. related #15, #23, #51. Why: younger investors allocate 32% of portfolio to stocks vs 58% for older. cite #5.\n\nitem 9: Fidelity Gen X/Y/Z reshaping, 2025. context: largest wealth transfer, seek transparency, holistic planning, non-traditional. Why: as largest wealth transfer unfolds, these households seek transparency in advisor compensation and broader life guidance. cite #0 (FIDELITY-III-2025#0).\n\nNow let me also handle a5 adjacent items.\n\na5.all: adjacent. Items 1-2 with differs_because as given in the aspect header: \"The figures cover survey participants generally (500 U.S. $100K+ households seeking financial advice), not specifically clients under 40, so they are a wider population than the under-40 segment asked about.\"\n\nitem 1: 73% transparency. cite #15. adjacent, part_id \"a5.all\".\nitem 2: 38% lack transparency red flag. cite #39. adjacent.\n\nBoth adjacent items carry differs_because from the cell. part_id \"a5.all\".\n\nWait, adjacent items part_id: enum includes \"a5.all\". Yes.\n\nGaps: code added gaps for a5.all and a5. I should not repeat them. So I don't add gaps for a5. Are there any gaps I should add? The instruction says \"Add a gap of your own only for something those gaps do not name.\" The code gaps cover a5 (fees sensitivity not published). I don't think I need additional gaps.\n\nActually wait, let me check - the a5 gap already covers the fee sensitivity. Do I need to add anything? No.\n\nNow, the \"comparison aspects\" - none of a1-a9 are marked \"comparison\". a8 has comparability note but it's a fact aspect with basis break. So no comparison claims.\n\nLet me now also double check the \"recency\" note: \"For every item of an aspect marked recency, and every item when the question has a time window\". a9 is marked recency. Also \"every item when the question has a time window\" - does the question have a time window? The question is \"What evidence is there about how clients under 40 choose a financial advisor?\" - no explicit time window. So only a9 items need why-lines.\n\nNow let me also check ordering: \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window, so no special ordering. I'll just go aspect by aspect.\n\nLet me now write out all claims.\n\nFor claims, each has text, chunk_ids, part_id.\n\nLet me write carefully, dating claims where period available.\n\nFor items without period, I note source is published date. Actually the instruction says \"Date every claim from its source line\". The source line gives \"period n/a, published ...\". So I should date by published date when period is n/a.\n\nLet me use published dates where period not usable.\n\nLet me be careful about which items have periods. Many items have \"period n/a\". So I date them by publication.\n\nActually, re-reading: \"Date every claim from its source line, e.g. 'The 2Q26 10-Q (period ended June 26, 2026) states ...'\". The source line has \"period n/a, published 2025-10-29\". So I should mention published date.\n\nLet me write claims with attribution like \"Cerulli (published 2025-10-29) reports...\".\n\nActually, this is getting very detailed. Let me be reasonable and concise while following rules.\n\nLet me now compose the full answer.\n\nI'll write claims. For attribution I'll use source names and published dates.\n\nLet me draft each claim text.\n\nGiven the volume, let me be efficient but complete.\n\na1.all (part_id \"a1.all\"):\n\n1. \"Cerulli (published 2025-10-29) states that younger investors typically are more comfortable directing their own investing through online brokerages (e.g., E*TRADE, Fidelity), meaning financial advisors looking to connect with these prospective clients must be able to articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.\" [CERULLI-GWT-2025#23]\n\n2. \"Cerulli (published 2025-10-29) states that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.\" [CERULLI-GWT-2025#1]\n\n3. \"Bank of America Private Bank's 2026 Study of Wealthy Americans (published 2026-06-17) finds that 65% of young investors still prefer to receive investment advice from a human advisor, even as 87% are comfortable with advisors using AI.\" [BOFA-PB-STUDY-2026#15]\n\n4. \"Schwab (period ended 2025-09-30) states that younger clients turn to the firm because it meets them in the channels where they seek investing information, noting they learn about finances primarily through social media and family.\" [SCHW-TR-2025Q3#11]\n\n5. \"Schwab (period ended 2025-09-30) states that younger investors' top online resource is YouTube, where Schwab is the number one financial services firm by followers.\" [SCHW-TR-2025Q3#12]\n\n6. \"The CFPB (published 2025-06-06) finds that Millennials and Gen Z are more likely than older adults to act on financial information without further validation, especially from online sources, and that those aged 25-45 are more trusting than older Americans aged 46-64 of financial information from generative AI tools (44% vs. 26%) and social media (44% vs. 24%).\" [CFPB-MISINFO-2025#9] (quote not verbatim, so no quotes)\n\n7. \"Bank of America Private Bank's 2026 Study of Wealthy Americans (published 2026-06-17) reports that 65% of young investors (Gen Z and Millennials, ages 21 to 45) still prefer to receive investment advice from a human advisor, even as they embrace AI.\" [BOFA-PB-STUDY-2026#5]\n\na2.all:\n\n1. \"In the Wealthtender advisor-search survey (published 2025-08-13), the top resources consumers plan to use to find a financial advisor are referrals from friends or family (62.00%), search engines (49.80%), financial institutions such as a bank or credit union (49.00%), and referrals from professionals such as an accountant or attorney (49.20%).\" [WEALTHTENDER-ADVISOR-SEARCH-2025#8, WEALTHTENDER-ADVISOR-SEARCH-2025#9] (quote not verbatim)\n\n2. \"In the Wealthtender survey, 25% of people plan to use AI tools such as ChatGPT or Gemini to start their advisor search, about one-third (32%) will use online advisor directories like Wealthtender, and about 22% will be influenced by social media platforms like LinkedIn, Reddit, and Facebook.\" [WEALTHTENDER-ADVISOR-SEARCH-2025#5]\n\n3. \"In the Wealthtender survey, 96% of people said they would still research an advisor even if that advisor came highly recommended.\" [WEALTHTENDER-ADVISOR-SEARCH-2025#9]\n\n4. \"The CFPB (published 2025-06-06) reports that younger Americans are far more likely to embrace social media, podcasts, and generative AI to meet their financial information needs.\" [CFPB-MISINFO-2025#5]\n\n5. \"Schwab's CEO states that Gen Z clients (investors between the ages of 13 and 28) learn about finances primarily through social media and family.\" [SCHW-TR-2025Q3#11]\n\n6. \"Schwab's CEO states that younger investors' top online resource is YouTube.\" [SCHW-TR-2025Q3#12]\n\n7. \"FINRA research (published 2026-04-01) reports that 36 percent of social media users and 41 percent of finfluencer followers check the background, registration, or license of a financial professional with a state or federal regulator, versus 14 percent of non-users and 13 percent of non-followers.\" [FINRAF-FINFLUENCERS-2026#29]\n\n8. \"According to CFPB research, Millennials and Gen Z are more likely than older adults to act on financial information they encounter without further validation, especially from online sources.\" [CFPB-MISINFO-2025#9]\n\na3.all: items 1-12.\n\n1. Wealthtender goals. [WEALTHTENDER-ADVISOR-SEARCH-2025#49]\n2. UBS 79%/56%/41%. [UBS-NEXTGEN-2026#83]\n3. Cerulli Millennials student debt. [CERULLI-GWT-2025#22]\n4. GSAM Millennials top 3 goals. [GSAM-ALTERNATIVES-2025#31]\n5. GSAM competing priorities. [GSAM-RETIREMENT-2025#36]\n6. GSAM list of priorities. [GSAM-RETIREMENT-2025#35]\n7. BofA redefine diversification. [BOFA-PB-STUDY-2026#4]\n8. Cerulli online brokerages. [CERULLI-GWT-2025#23]\n9. Schwab PAL/student debt/house. [SCHW-TR-2025Q3#40]\n10. BofA 67% traditional stocks/bonds. [BOFA-PB-STUDY-2026#14]\n11. BofA alternatives (no figure). [BOFA-PB-STUDY-2024#0]\n12. GSAM major life events 66%/59%. [GSAM-RETIREMENT-2025#47]\n\na4.all: items 1-5.\n\na5.all: adjacent (2 items).\n\na6.all: items 1-8.\n\na7.all: items 1-7.\n\na8.all: basis break, items 1-6.\n\na9.all: recency, items 1-9 with why-lines.\n\nLet me now write out the full answer text.\n\nFor a3 item 11, the figure not found. I'll write: \"The BofA Private Bank study reports that Millennials and Gen Z allocate a greater portion of their investment portfolios to alternative investments than older generations.\" Actually the quote is a heading. Let me just state qualitatively. cite BOFA-PB-STUDY-2024#0.\n\nActually, wait - re-reading item 11: it's marked \"figure not found in its passage: do not state this figure\". The value is 3 (times). So I state the claim without \"three times\". The qualitative claim: Millennials and Gen Z allocate more to alternatives than older generations. That's fine.\n\nLet me write it as: \"The BofA Private Bank study reports that Millennials and Gen Z allocate a greater share of their investment portfolios to alternative investments than older generations.\" [BOFA-PB-STUDY-2024#0]\n\nNow for a5 adjacent, the differs_because text from the aspect header.\n\nNow let me write everything out in the submit_answer call.\n\nLet me carefully write each claim with proper text.\n\nI'll now produce the final answer.\n\nFor recency items (a9), each claim ends with \"Why it might matter: ...\".\n\nLet me write a9 items:\n\n1. \"Bank of America Private Bank's 2026 Study of Wealthy Americans (period 2026) reports that 65% of younger investors (Gen Z and Millennials, ages 21 to 45) still prefer to receive investment advice from a human advisor. Why it might matter: the study finds this human-advisor preference persists even as 87% of young investors are comfortable with advisors using AI and 47% use AI to research companies or markets.\" [BOFA-PB-STUDY-2026#15]\n\n2. \"Cerulli (published 2025-10-29) reports that younger investors prefer to retain a greater degree of control over at least part of their investing lives, while older investors tend to be more advisor-reliant. Why it might matter: these younger investors are positioned to receive $47 trillion of the wealth to be transferred intergenerationally.\" [CERULLI-GWT-2025#1]\n\n3. \"Schwab's CEO (period 2025Q3) states that younger clients learn about finances primarily through social media and family. Why it might matter: the source notes these are Gen Zers (investors ages 13 to 28) and that Schwab is meeting them in the channels where they turn for investing information.\" [SCHW-TR-2025Q3#11]\n\n4. \"Schwab's CEO (period 2025Q3) states that younger investors' top online resource is YouTube, where Schwab is the number one financial services firm by followers. Why it might matter: one-third of retail households who created a financial plan within the last two years are under age 40, and the average age of Schwab's clients continues to get younger.\" [SCHW-TR-2025Q3#12]\n\n5. \"Cerulli (published 2026-03-25) reports that the mass-affluent segment (households with $100,000 to $2 million in financial assets) is typically younger and less advised and seeks involved advisor relationships. Why it might matter: this $25 trillion market comprises 46.9 million households, which will benefit providers that can offer streamlined advisory services at scale.\" [CERULLI-MASS-AFFLUENT-2026#0]\n\n6. \"Cerulli (published 2025-10-29) states that younger investors are typically more comfortable directing their own investing through online brokerages, so financial advisors looking to connect with these prospective clients must articulate benefits outside of the investing realm, such as financial planning, lending, and tax services. Why it might matter: the source notes these investors began saving for retirement earlier than any preceding generation.\" [CERULLI-GWT-2025#23]\n\n7. \"The CFPB (published 2025-06-06) reports that Millennials and Gen Z are more likely than older adults to act on financial information without further validation, especially from online sources; those aged 25-45 are more trusting than older Americans aged 46-64 of financial information from generative AI tools (44% vs. 26%) and social media (44% vs. 24%). Why it might matter: survey respondents overall are less comfortable acting on financial information from many online resources (news outlets 47%, a generative AI tool 38%, social media 37%), making younger Americans' higher trust notable.\" [CFPB-MISINFO-2025#9]\n\n8. \"Among young investors, 47% use AI to research companies or markets, 87% are comfortable with advisors using AI to help manage portfolios, yet 65% still prefer to receive investment advice from a human advisor. Why it might matter: the source shows younger investors allocate 32% of their portfolio to stocks versus 58% for older investors.\" [BOFA-PB-STUDY-2026#5] (quote not verbatim)\n\n9. \"Fidelity's 2025 Investor Insights Study (published 2025-10-09) finds that generation X, Y, and Z investors are reshaping the advisor-client relationship, with a focus on holistic financial planning, life goal achievement, and non-traditional investment strategies. Why it might matter: as the largest wealth transfer in history unfolds, these high-net-worth households seek transparency in advisor compensation and broader life guidance beyond investment management.\" [FIDELITY-III-2025#0]\n\nGood.\n\nNow let me also make sure about a8 basis break. I need to \"state each basis with its own periods; never join them into one series.\"\n\nSo for a8, I write claims noting the periods. I'll write each item with its period, and maybe note the basis break by grouping. Actually the instruction: \"A cell with a 'basis break' line: state each basis with its own periods; never join them into one series or compare across the break.\"\n\nSo I just state each item with its period. The code caveat already flags the break. I don't repeat caveats. So I just write claims with periods.\n\na8 items:\n1. BofA 47% AI, period 2026. [BOFA-PB-STUDY-2026#15]\n2. Cerulli retain control, period 2025. [CERULLI-GWT-2025#1]\n3. Fidelity next-gen transparency, period 2025, scope Gen X/Y/Z. [FIDELITY-III-2025#0]\n4. BofA 65% human, period 2026. [BOFA-PB-STUDY-2026#5]\n5. CFPB 44% vs 26%, period 2025, scope 25-45. [CFPB-MISINFO-2025#9] quote not verbatim\n6. Schwab 61% consolidate, period 2026-06-30. [SCHW-TR-2026Q2#9]\n\nFor a8, the comparability note says unverified, never compared. No comparison claim needed (it's not marked comparison). I just state facts.\n\nNow, is a8 marked \"comparison\"? No. It says \"Comparability (code): unverified\". That's context, not a comparison aspect. So no comparison claim.\n\nNow let me finalize and write everything.\n\nLet me also double-check part_id usage. The enum has \"a1.all\" ... \"a9.all\" and \"a1\"...\"a9\" and \"\". \n\nThe instruction says \"a cell id is the part_id of what you write from it\". Cell ids in matrix are \"a1.all\", \"a2.all\", etc. So part_id = \"a1.all\", etc.\n\nFor comparison aspects, part_id = aspect id (a1, a2...). But none here are comparison.\n\nSo all claims use part_id \"aX.all\".\n\nAdjacent a5 items use part_id \"a5.all\".\n\nLet me write it all out now.\n\nActually, wait - I should double check: the a5 items are \"different quantity (adjacent only)\". So they go in adjacent array with differs_because. part_id \"a5.all\".\n\nNow let me finalize.\n\nFor the claims text, I need to be careful about quote marks. Items marked \"quote not verbatim\" - never put in quotation marks. Items not marked can use quotes.\n\nLet me check which items are marked quote not verbatim:\n- a1 item 6 (CFPB) - quote not verbatim\n- a2 item 1 - quote not verbatim\n- a2 item 2 - quote not verbatim\n- a3 item 1, 2, 3, 4, 7, 12 - quote not verbatim\n- a4 item 2, 5 - quote not verbatim\n- a5 item 1, 2 - quote not verbatim\n- a6 item 2 - quote not verbatim\n- a7 item... item 7? Let me check. a7 item 7 CFPB - no \"quote not verbatim\" flag listed. Actually the quote has a typo \"4664\" in matrix but not flagged. Hmm wait a7 item 7 quote: \"Those aged 25-45 are more trusting than older Americans aged 4664...\" - no flag. But a8 item 5 CFPB is flagged \"quote not verbatim\". a9 item 7 not flagged (but has \"4664\"). a9 item 8 flagged \"quote not verbatim\".\n\nThis is a lot of detail. Since I'm mostly paraphrasing (writing in my own words as claims), I don't need to worry about quotes much. I'll paraphrase everything and not use quotation marks for paraphrase. Actually I can paraphrase all claims in my own words, which is safer.\n\nThe rule: \"quote not verbatim: never put in quotation marks\" and for others I could quote. But since I'm paraphrasing claims (which is what the \"fact cell is a claim\" means), I'll write claims in my own words without quotes throughout. That's acceptable and safe.\n\nActually, the instruction says a fact cell is a claim. The claim can restate the content. I'll paraphrase.\n\nFor claims where the quote is verbatim and important (like exact figures), I'll just state the figure.\n\nOK let me finalize the full answer now.\n\nLet me write out all text concisely.\n\nI'll now produce the submit_answer call.\n\nLet me count claims and write them all.\n\nFinal answer structure:\n- claims array with all a1-a9 items (except a5 which is adjacent)\n- adjacent array with a5 items\n- gaps: none added (code gaps already cover a5)\n\nanswerable: true.\n\nLet me write it all.",
+  "first_claim_s": 108.88,
+  "stream_items": {
+    "first_claim_s": 108.88,
+    "shown": 57,
+    "held": 7
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Cerulli (published 2025-10-29) states that younger investors typically are more comfortable directing their own investing through online brokerages (e.g., E*TRADE, Fidelity), meaning financial advisors looking to connect with these prospective clients must be able to articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Cerulli (published 2025-10-29) states that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#1"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 Study of Wealthy Americans (published 2026-06-17) finds that 65% of young investors still prefer to receive investment advice from a human advisor, even as 87% are comfortable with advisors using AI.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#15"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Schwab (period ended 2025-09-30) states that younger clients turn to the firm because it meets them in the channels where they seek investing information, noting they learn about finances primarily through social media and family.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Schwab (period ended 2025-09-30) states that younger investors' top online resource is YouTube, where Schwab is the number one financial services firm by followers.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "The CFPB (published 2025-06-06) finds that Millennials and Gen Z are more likely than older adults to act on financial information without further validation, especially from online sources, and that those aged 25-45 are more trusting than older Americans aged 46-64 of financial information obtained from generative AI tools (44% vs. 26%) and social media (44% vs. 24%).",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#9"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 Study of Wealthy Americans (published 2026-06-17) reports that 65% of young investors (Gen Z and Millennials, ages 21 to 45) still prefer to receive investment advice from a human advisor, even as they embrace AI.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5"
+        ],
+        "part_id": "a1.all"
+      },
+      {
+        "text": "In the Wealthtender advisor-search survey (published 2025-08-13), the top resources consumers plan to use to find a financial advisor are referrals from friends or family (62.00%), search engines (49.80%), financial institutions such as a bank or credit union (49.00%), and referrals from professionals such as an accountant or attorney (49.20%).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#8",
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#9"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "In the Wealthtender survey, 25% of people plan to use AI tools such as ChatGPT or Gemini to start their advisor search, about one-third (32%) will use online advisor directories like Wealthtender, and about 22% will be influenced by social media platforms like LinkedIn, Reddit, and Facebook.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#5"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "In the Wealthtender survey, 96% of people said they would still research an advisor even if that advisor came highly recommended.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#9"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "The CFPB (published 2025-06-06) reports that younger Americans are far more likely to embrace social media, podcasts, and generative AI to meet their financial information needs.",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#5"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Schwab's CEO states that Gen Z clients (investors between the ages of 13 and 28) learn about finances primarily through social media and family.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "Schwab's CEO states that younger investors' top online resource is YouTube.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "FINRA research (published 2026-04-01) reports that 36 percent of social media users and 41 percent of finfluencer followers check the background, registration, or license of a financial professional with a state or federal regulator, versus 14 percent of non-users and 13 percent of non-followers.",
+        "chunk_ids": [
+          "FINRAF-FINFLUENCERS-2026#29"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "According to CFPB research, Millennials and Gen Z are more likely than older adults to act on financial information they encounter without further validation, especially from online sources.",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#9"
+        ],
+        "part_id": "a2.all"
+      },
+      {
+        "text": "In the 2025 Wealthtender Voice of the Client study (all survey respondents, not age-specific), the top financial goals or needs respondents would seek a financial advisor's help with are retirement planning and income strategies (63%), investment management and portfolio growth (53%), tax planning and optimization (29%), estate planning and wealth transfer (26%), debt management and reduction (16%), budgeting and cash flow management (14%), saving for a major purchase such as a home or business (13%), insurance needs and risk management (11%), and saving for children's education (10%).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#49"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "For the next generation (UBS, published 2026-04-22), experience and expertise sit at the top of the wish list when choosing a wealth manager (79%), and more than half (56%) want advisors who can build trusted relationships across generations, while 41% value an advisor's ability to fully understand the next generation's needs.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#83"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Cerulli (published 2025-10-29) notes that Millennials have contended with heightened student debt and economic upheaval, and recent higher mortgage rates have put the goal of home ownership further out of reach for some; as a result, some Millennials have delayed traditional milestones such as getting married, buying a home, and having children.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#22"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "By generation (GSAM, published 2025-10-17), the top three most important investment goals for Millennials are to grow wealth over time, plan for comfortable or early retirement, and achieve financial independence.",
+        "chunk_ids": [
+          "GSAM-ALTERNATIVES-2025#31"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "GSAM (published 2025-10-01) reports that competing financial priorities materially constrain retirement saving for approximately 30% of working Baby Boomers, rising to more than 50% for Gen X, exceeding 75% for Millennials, and remaining above 70% for Gen Z.",
+        "chunk_ids": [
+          "GSAM-RETIREMENT-2025#36"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "GSAM (published 2025-10-01) reports that the competing priorities affecting respondents' ability to save for retirement include credit card debt, paying down existing loans (student loans, etc.), saving for college, caring for and financially supporting family members, time out of the workforce, financial hardship, and too many monthly financial expenses; younger generations (Gen X, Millennials, Gen Z) report a significantly higher impact from these challenges than Baby Boomers, with Millennials the most impacted.",
+        "chunk_ids": [
+          "GSAM-RETIREMENT-2025#35"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 study (published 2026-06-17) reports that younger investors (Gen Z and Millennials, ages 21 to 45) are redefining diversification, allocating nearly half as much to stocks as older generations while allocating more to alternatives (15%) and crypto (13%); crypto ranks as the number one wealth-creation opportunity for young wealthy (29% rank it number one).",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#4"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Cerulli (published 2025-10-29) reports that younger investors are typically more comfortable directing their own investing through online brokerages, so financial advisors looking to connect with these prospective clients must articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "Schwab's CEO states that younger clients come in wanting to consolidate loans into a Pledged Asset Line balance so they can pay off their student debt, and to discuss how to buy a house in the future.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#40"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "The BofA Private Bank study (published 2026-06-17) reports that 67% of younger investors (Gen Z and Millennials, ages 21 to 45) believe traditional stocks and bonds can no longer deliver above-average returns.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#14"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "The BofA Private Bank study (published 2024-06-18) reports that Millennials and Gen Z allocate a greater portion of their investment portfolios to alternative investments than older generations.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2024#0"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "GSAM (published 2025-10-01) reports that major life events such as having a child, buying a home, funding college, or managing a significant financial hardship are especially common among younger cohorts, with 66% of Gen Z and 59% of Millennials (working respondents) experiencing at least one in the past 24 months.",
+        "chunk_ids": [
+          "GSAM-RETIREMENT-2025#47"
+        ],
+        "part_id": "a3.all"
+      },
+      {
+        "text": "The Wealthtender advisor-search guidance (published 2025-08-13) states that consumers researching/selecting a financial advisor (not age-restricted) use search engines like Google, advisor directories like Wealthtender, and AI tools like ChatGPT.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#51"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "One-third of survey participants (not age-restricted to under 40) said an advisor's physical location doesn't matter because they prefer to meet exclusively online, a shift toward online/virtual advisor relationships.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#23"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "The integration of technology into advisor search and service delivery has accelerated, with consumers (not age-restricted) now expecting digital-first experiences even for traditional services like financial advice, and continued growth in AI tool usage for advisor searches is anticipated.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#62"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "According to a CFPB research report (published 2025-06-06), younger Americans are far more likely to embrace social media, podcasts and generative AI tools to meet their financial information and advice needs.",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#5"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "In a survey asking consumers which resources they plan to use to find a financial advisor (all consumers, not age-specific), 49.8% cited search engines (e.g., Google, Bing), alongside 62.0% citing referrals from friends or family.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#8"
+        ],
+        "part_id": "a4.all"
+      },
+      {
+        "text": "The Wealthtender survey (published 2025-08-13) found that pushy or aggressive sales tactics top the list of red flags that send people looking elsewhere, mentioned by 53% of participants as a major red flag.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#39"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Nearly three-quarters (73%) of survey participants said transparency in fees and services is crucial for establishing an advisor's credibility.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Online reviews rank as the third most important trust factor, with a 61% importance rating.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#21"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "Two-thirds (67%) of the next generation (UBS, published 2026-04-22) say a strong personal connection with their advisor is important.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#84"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "The next generation (UBS, published 2026-04-22) want advisors with not just technical know-how, but the ability to build a rapport with the family and communicate clearly with every generation.",
+        "chunk_ids": [
+          "UBS-NEXTGEN-2026#76"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "A consumer survey (not age-segmented to under 40) found that 63% of people consider professional credentials (such as CFP or CFA) a key factor in determining an advisor's trustworthiness.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#57"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "63.40% of survey respondents (general consumer survey, not age-segmented) listed professional certifications/credentials (e.g., CFP, CFA) as a factor in selecting a financial advisor.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#23"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "The research advises trusting one's instincts about communication style and personal comfort level when choosing an advisor (general consumer guidance, not age-segmented).",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#51"
+        ],
+        "part_id": "a6.all"
+      },
+      {
+        "text": "According to the 2026 Bank of America Private Bank Study of Wealthy Americans (period 2026), 65% of young investors (Gen Z/Millennials) still prefer to receive investment advice from a human advisor rather than an AI or automated source.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#15"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Cerulli Associates research (published 2025-10-29) finds that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#1"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Charles Schwab (period ended 2026-06-30) reported that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships with a single financial services firm.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Wealthtender (published 2025-08-13) published a study of 500 U.S. households with $100K+ in assets about how Americans will choose financial advisors in 2026 and beyond.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#0"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 Study of Wealthy Americans finds that 65% of younger investors (Gen Z and Millennials, ages 21 to 45) still prefer to receive investment advice from a human advisor, even as 87% are comfortable with advisors using AI to help manage portfolios.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Cerulli research (published 2025-10-29) finds younger investors are typically more comfortable directing their own investing through online brokerages, meaning financial advisors looking to connect with these prospective clients must be able to articulate benefits outside of the investing realm, such as financial planning, lending, and tax services.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "A CFPB study finds those aged 25-45 are more trusting than older Americans aged 46-64 of financial information obtained from generative AI tools (44% vs. 26%) and social media (44% vs. 24%), while Millennials and Gen Z are more likely than older adults to act on financial information they encounter without further validation.",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#9"
+        ],
+        "part_id": "a7.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 Study of Wealthy Americans (period 2026) reports that 47% of young investors (Gen Z and Millennials) use AI to research companies or markets.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#15"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "Cerulli (period 2025) reports that while older investors tend to be more advisor-reliant, younger investors prefer to retain a greater degree of control of at least part of their investing lives.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#1"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "Fidelity's 2025 Investor Insights Study (period 2025) reports that wealthy next-generation households (Gen X, Y, and Z, a broader group than under-40) seek transparency in advisor compensation and broader life guidance beyond investment management.",
+        "chunk_ids": [
+          "FIDELITY-III-2025#0"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "In Bank of America Private Bank's 2026 Study of Wealthy Americans (period 2026), 65% of young investors (Gen Z and Millennials) still prefer to receive investment advice from a human advisor, even as they are comfortable with advisors using AI.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "In a 2025 CFPB report (period 2025), those aged 25-45 (Millennials and Gen Z) are more trusting than older Americans aged 46-64 of financial information obtained from generative AI tools (44% vs. 26%).",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#9"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "Schwab's CEO (period ended 2026-06-30) stated that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a8.all"
+      },
+      {
+        "text": "Bank of America Private Bank's 2026 Study of Wealthy Americans (period 2026) reports that 65% of younger investors (Gen Z and Millennials, ages 21 to 45) still prefer to receive investment advice from a human advisor. Why it might matter: the study finds this human-advisor preference persists even as 87% of young investors are comfortable with advisors using AI and 47% use AI to research companies or markets.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#15"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Cerulli (published 2025-10-29) reports that younger investors prefer to retain a greater degree of control over at least part of their investing lives, while older investors tend to be more advisor-reliant. Why it might matter: these younger investors are positioned to receive $47 trillion of the wealth to be transferred intergenerationally.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#1"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Schwab's CEO (period 2025Q3) states that younger clients learn about finances primarily through social media and family. Why it might matter: the source notes these are Gen Zers (investors between ages 13 and 28) and that Schwab is meeting them in the channels where they turn for information about investing.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#11"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Schwab's CEO (period 2025Q3) states that younger investors' top online resource is YouTube, where Schwab is the number one financial services firm by followers. Why it might matter: one-third of retail households who created a financial plan within the last two years are under age 40, and the average age of Schwab's clients continues to get younger.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#12"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Cerulli (published 2026-03-25) reports that the mass-affluent segment (households with $100,000 to $2 million in financial assets) is typically younger and less advised and seeks involved advisor relationships. Why it might matter: this $25 trillion market comprises 46.9 million households and will benefit providers that can best offer streamlined advisory services at scale.",
+        "chunk_ids": [
+          "CERULLI-MASS-AFFLUENT-2026#0"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Cerulli (published 2025-10-29) states that younger investors are typically more comfortable directing their own investing through online brokerages, so financial advisors looking to connect with these prospective clients must articulate benefits outside of the investing realm, such as financial planning, lending, and tax services. Why it might matter: the source notes these investors began saving for retirement earlier than any preceding generation.",
+        "chunk_ids": [
+          "CERULLI-GWT-2025#23"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "The CFPB (published 2025-06-06) reports that Millennials and Gen Z are more likely than older adults to act on financial information they encounter without further validation, especially from online sources; those aged 25-45 are more trusting than older Americans aged 46-64 of financial information obtained from generative AI tools (44% vs. 26%) and social media (44% vs. 24%). Why it might matter: survey respondents overall are less comfortable acting on financial information from many online resources (news outlets 47%, a generative AI tool 38%, social media 37%), making younger Americans' higher trust notable.",
+        "chunk_ids": [
+          "CFPB-MISINFO-2025#9"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Among young investors, 47% use AI to research companies or markets, 87% are comfortable with advisors using AI to help manage portfolios, yet 65% still prefer to receive investment advice from a human advisor. Why it might matter: the source shows younger investors allocate 32% of their portfolio to stocks versus 58% for older investors.",
+        "chunk_ids": [
+          "BOFA-PB-STUDY-2026#5"
+        ],
+        "part_id": "a9.all"
+      },
+      {
+        "text": "Fidelity's 2025 Investor Insights Study (published 2025-10-09) finds that generation X, Y, and Z investors (wealthy next-generation households) are reshaping the advisor-client relationship, with a focus on holistic financial planning, life goal achievement, and non-traditional investment strategies. Why it might matter: as the largest wealth transfer in history unfolds, these high-net-worth households seek transparency in advisor compensation and broader life guidance beyond investment management.",
+        "chunk_ids": [
+          "FIDELITY-III-2025#0"
+        ],
+        "part_id": "a9.all"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "In a Wealthtender survey of 500 U.S. households with $100K+ seeking financial advice, 73% of participants said transparency in fees and services is crucial for establishing an advisor's credibility, making fee transparency the top trust factor.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#15"
+        ],
+        "part_id": "a5.all",
+        "differs_because": "The figures cover survey participants generally (500 U.S. $100K+ households seeking financial advice), not specifically clients under 40, so they are a wider population than the under-40 segment asked about."
+      },
+      {
+        "text": "The same survey found that just over 38% of people consider lack of transparency about fees or commissions a major red flag when evaluating advisors.",
+        "chunk_ids": [
+          "WEALTHTENDER-ADVISOR-SEARCH-2025#39"
+        ],
+        "part_id": "a5.all",
+        "differs_because": "The figures cover survey participants generally (500 U.S. $100K+ households seeking financial advice), not specifically clients under 40, so they are a wider population than the under-40 segment asked about."
+      }
+    ],
+    "gaps": []
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "KITCES-WELLBEING-2023#23",
+    "KITCES-WELLBEING-2023#17",
+    "MCK-ADVISOR-SHORTAGE-2025#25",
+    "MCK-SIGNAL-SELLOFF-2026#9"
+  ],
+  "at": "2026-11-23T01:06:04.872446-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 3067,
+    "output_tokens": 607,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 1403,
+    "reasoning_tokens": 248,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.2
+  },
+  "wall_s": 7.86,
+  "tokens_per_s": 77.23,
+  "ttft_s": 1.2,
+  "reasoning_content": "Let me analyze the passages. The question asks about Edward Jones's advisor attrition rate compared to Merrill's. But the passages are all industry research (KITCES-WELLBEING, MCK-ADVISOR-SHORTAGE, MCK-SIGNAL-SELLOFF). None mention Edward Jones or Merrill specifically.\n\nLet me check each sub-question:\n\na1.research: Edward Jones's advisor attrition rate - no passage mentions Edward Jones. not_found.\n\na2.research [series, metric advisor_headcount, proxy]: Closest disclosed measure to Edward Jones's advisor attrition rate - no passage mentions Edward Jones headcount. not_found.\n\na3.research: Merrill's advisor attrition rate - no passage mentions Merrill. not_found.\n\na4.research [series, metric advisor_headcount, proxy]: Closest disclosed measure to Merrill's advisor attrition rate - no passage mentions Merrill. not_found.\n\na5.research [comparison]: Whether Edward Jones's advisor attrition rate can be compared to Merrill's - the passages say nothing about this comparison. not_found.\n\nAll not_found. None of the passages contain attrition rates for these firms, nor headcounts.\n\nLet me write the cells.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention Edward Jones or any attrition rate for it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages disclose Edward Jones advisor headcount or any proxy measure for it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages mention Merrill or any attrition rate for it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "None of the passages disclose Merrill advisor headcount or any proxy measure for it.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages say nothing about whether Edward Jones's and Merrill's attrition rates can be compared.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

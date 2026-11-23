@@ -1,0 +1,142 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a4.EDJ",
+  "round": 1,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#26",
+    "EDJ-10Q-2026Q1#24",
+    "EDJ-10K-2025#56",
+    "EDJ-10Q-2026Q2#55",
+    "EDJ-10K-2025#208",
+    "EDJ-10Q-2025Q3#38",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q2#35",
+    "EDJ-10Q-2026Q1#28",
+    "EDJ-10Q-2026Q2#35",
+    "EDJ-10Q-2025Q2#110",
+    "EDJ-10Q-2025Q3#37",
+    "EDJ-10Q-2026Q2#34",
+    "EDJ-10Q-2026Q1#55",
+    "EDJ-10Q-2025Q3#76",
+    "EDJ-TRADE-2026-08-18-IN-01#4",
+    "EDJ-10K-2025#88",
+    "EDJ-TRADE-2026-11-12-IN-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#1",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-TRADE-2026-08-18-IN-01#0",
+    "EDJ-TRADE-2026-11-12-IN-01#1",
+    "EDJ-TRADE-2026-11-12-IN-01#2",
+    "EDJ-10K-2025#204",
+    "EDJ-10K-2025#9",
+    "EDJ-10K-2025#16",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-08-18-IN-01#2",
+    "EDJ-TRADE-2026-08-18-IN-01#6",
+    "EDJ-TRADE-2026-08-18-IN-01#5",
+    "EDJ-TRADE-2026-09-30-WM-01#2",
+    "EDJ-10K-2025#33",
+    "EDJ-10Q-2026Q2#28",
+    "EDJ-TRADE-2026-09-24-IN-01#1",
+    "EDJ-10Q-2025Q2#91"
+  ],
+  "at": "2026-11-22T22:42:53.820466-06:00",
+  "prefix_group": "276ac8dc73816bd5",
+  "prefix_role": "follower",
+  "gate_wait_s": 7.55,
+  "leader_cached": false,
+  "prefix_chars": 119231,
+  "request_chars": 120066,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 25648,
+    "output_tokens": 2623,
+    "cache_hit_tokens": 17152,
+    "cache_miss_tokens": 8496,
+    "reasoning_tokens": 1852,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.69
+  },
+  "wall_s": 29.55,
+  "tokens_per_s": 88.76,
+  "ttft_s": 2.69,
+  "reasoning_content": "Let me analyze the question. The sub-question a4.EDJ asks: \"The specific products, services, platforms, or fee levels each firm says it offers mass-affluent clients.\"\n\nI need to determine whether Edward Jones has said anything about products/services/platforms/fee levels specifically for mass-affluent clients.\n\nLooking at the passages, none of them mention \"mass-affluent\" specifically. The firm mentions \"individual investors,\" \"high net worth,\" \"Next Generation investors,\" etc. But no mention of mass-affluent clients specifically.\n\nSo the question is about products/services offered to mass-affluent clients specifically. Since Edward Jones never names mass-affluent as a segment (from a1 passages, they name High Net Worth, Workplace, Next Generation), there's no statement about products/services for mass-affluent clients specifically.\n\nSo the answer is not_found - the passages say nothing about products/services offered to mass-affluent clients.\n\nWait, let me check more carefully. The firm does describe products and services in general (investment advisory, account services, mutual funds, insurance products, securities, trust services, money market fund, Bridge Builder trust). But these are not tied to \"mass-affluent\" clients.\n\nThe question asks specifically about what each firm says it offers mass-affluent clients. Since there's no mention of mass-affluent as a segment, there's no specific statement about products for mass-affluent clients.\n\nCould the general product descriptions be considered \"different_quantity\"? No - different_quantity is about a wider/narrower group. The general products offered to all \"individual investors\" could be considered a different (wider) group than mass-affluent.\n\nActually, let me think. The instruction says different_quantity is: \"no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\"\n\nThe asked quantity is: products/services/platforms/fee levels offered to mass-affluent clients.\n\nThe firm describes products/services offered to \"individual investors\" generally (a wider group that contains mass-affluent). That could be considered different_quantity.\n\nHmm, but actually the key issue is the firm doesn't use \"mass-affluent\" term at all. The products it offers are to \"individual investors\" which is a wider group. So it could be different_quantity: wider unit (all individual investors) that contains mass-affluent.\n\nLet me consider. The firm states it \"primarily serves individual investors\" and offers \"investment advisory and other account services,\" \"fees for assets held by clients,\" \"commissions for distribution of mutual fund shares and insurance products and purchase/sale of securities.\" Also trust services, money market fund, Bridge Builder trust, advisory programs.\n\nThese are products/services offered to individual investors broadly, not specifically to mass-affluent. So this is a \"wider unit that contains the asked one.\"\n\nI think this warrants different_quantity label, with the differs_because explaining that it describes products/services for individual investors broadly rather than mass-affluent specifically.\n\nActually, let me reconsider. The mass-affluent segment is a subset of individual investors. The firm offers these products to all individual investors. So this is a wider group. different_quantity with differs_because = \"describes products/services for individual investors broadly, not mass-affluent specifically.\"\n\nBut wait, is this too much of a stretch? The question is specifically about mass-affluent clients, and the firm never mentions mass-affluent. The products are general.\n\nI think the most defensible answer is different_quantity, because the firm does state the products/services it offers (to individual investors), which is a wider unit containing mass-affluent. The differs_because would explain it's for individual investors broadly.\n\nActually, let me reconsider whether it should be not_found. The instruction says \"not_found: the passages say nothing about it.\" The passages do say something about products/services, but not tied to mass-affluent.\n\nThe distinction: different_quantity is \"a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure...\"\n\nThe examples are about quantities (numbers). Here it's about products/services offered to a segment. The products/services offered to \"individual investors\" is a related thing - the firm's offerings to a wider group.\n\nI think different_quantity is appropriate: the firm describes products and services it offers to individual investors broadly (which includes mass-affluent), but not specifically to mass-affluent.\n\nLet me identify the specific products/services mentioned:\n\nFrom EDJ-10K-2025#204 (and #9, #28): \"primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities. Trust services... Edward Jones Trust Company. Olive Street Investment Advisers provides investment advisory services to Edward Jones Money Market Fund and the twelve sub-advised mutual funds comprising Bridge Builder Trust.\"\n\nFrom EDJ-10K-2025#16: \"planning, advice, products and services... broad range of quality products, solutions and tools.\"\n\nFrom EDJ-10K-2025#88: Financial Planning Services, High Net Worth initiative, Workplace, digital platform for Next Generation investors.\n\nThese are all general or targeted at other segments (High Net Worth, Next Generation, Workplace).\n\nSo the products offered are to individual investors broadly, with specific initiatives targeting High Net Worth and Next Generation (not mass-affluent).\n\nI'll create items as different_quantity.\n\nActually, let me think about whether I should include the High Net Worth / Next Generation initiatives as different_quantity too. Those are targeting different segments (high net worth, next generation), not mass-affluent. They're a \"different measure\" - targeting a different segment. But the question asks what the firm offers mass-affluent clients. The firm's products offered to individual investors generally is the closest.\n\nI think I'll make one cell with label different_quantity, with items describing the products/services offered to individual investors broadly, and differs_because noting it's for individual investors broadly, not mass-affluent specifically.\n\nLet me craft the items. I should keep it focused.\n\nItem 1: The firm primarily serves individual investors and derives revenue from investment advisory and other account services, asset-based fees, and commissions for distribution of mutual fund shares and insurance products and purchase/sale of securities.\n\nQuote from EDJ-10K-2025#204: \"Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.\"\n\nItem 2: Trust services through Edward Jones Trust Company; investment advisory services for Money Market Fund and Bridge Builder Trust.\n\nItem 3: From #88: Financial Planning Services (personalized experience with additional planning capabilities), targeting High Net Worth, Workplace, Next Generation digital platform.\n\nItem 4: From #16: planning, advice, products and services, broad range of quality products, solutions and tools.\n\nHmm, this is getting complex. Let me simplify and focus on the key facts.\n\nActually, the main point is: the firm doesn't say anything specific about mass-affluent clients, so nothing is a fact. The products/services are described for \"individual investors\" broadly. This is different_quantity.\n\nI'll provide a few items capturing the general product/service descriptions.\n\nLet me finalize with a single cell, different_quantity, differs_because explaining the products/services are described for individual investors broadly (and for other named segments like High Net Worth and Next Generation), not for mass-affluent clients specifically.\n\nLet me write the items:\n\nItem 0 (from #204/#9): advisory and account services, asset-based fees, mutual fund/insurance distribution, securities.\n\nItem 1 (from #88): Financial Planning Services and new client targeting initiatives (High Net Worth, Workplace, Next Generation digital platform).\n\nItem 2 (from #16): planning, advice, products, services, broad range of products/solutions/tools.\n\nItem 3 (from #204): Trust services, Money Market Fund, Bridge Builder Trust.\n\nActually, I'll keep it reasonably concise. Let me write 3-4 items.\n\nLet me determine chunk IDs. For #204 quote, chunk is EDJ-10K-2025#204.\n\nFor products description, I can cite EDJ-10K-2025#204, EDJ-10K-2025#9, EDJ-10K-2025#16, EDJ-10K-2025#88.\n\nLet me write the final answer.\n\nFor value/unit/period/scope/definition - these are all \"\" mostly since no figures.\n\nLet me write concise items.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Edward Jones primarily serves individual investors in the U.S. and Canada and derives revenues from investment advisory and other account services, fees for assets held by clients, and commissions for distributing mutual fund shares and insurance products and for buying or selling securities.",
+            "quote": "Through these retail brokerage entities, the Partnership primarily serves individual investors in the U.S. and Canada and primarily derives revenues from fees for providing investment advisory and other account services to its clients, fees for assets held by clients and commissions for the distribution of mutual fund shares and insurance products and the purchase or sale of securities.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#204"
+            ]
+          },
+          {
+            "text": "Edward Jones also offers trust services through Edward Jones Trust Company and investment advisory services for the Edward Jones Money Market Fund and the twelve sub-advised Bridge Builder Trust mutual funds.",
+            "quote": "Trust services are offered to Edward Jones' U.S. clients through Edward Jones Trust Company... Olive Street Investment Advisers, LLC, a wholly-owned subsidiary of the Partnership, provides investment advisory services to the Edward Jones Money Market Fund (the \"Money Market Fund\") and the twelve sub-advised mutual funds comprising the Bridge Builder\u00ae Trust.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "U.S.",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#204"
+            ]
+          },
+          {
+            "text": "Edward Jones describes recent initiatives including Financial Planning Services (a more personalized experience with additional planning capabilities) and client-targeting initiatives for High Net Worth, Workplace, and a digital platform for Next Generation investors.",
+            "quote": "recently launched products and solutions such as Financial Planning Services, where clients receive a more personalized experience with additional planning capabilities. These initiatives also include targeting new clients: High Net Worth... Workplace... and a new digital platform, focused on attracting and retaining Next Generation investors.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#88"
+            ]
+          },
+          {
+            "text": "Edward Jones states it offers a broad range of quality products, solutions and tools, and planning, advice, products and services, to help clients achieve their financial goals.",
+            "quote": "focusing on helping clients achieve their financial goals through planning, advice, products and services... offer a broad range of quality products, solutions and tools that enable branch teams to successfully deliver tailored advice to meet client needs.",
+            "value": "",
+            "unit": "",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "EDJ-10K-2025#16"
+            ]
+          }
+        ],
+        "differs_because": "Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients.",
+        "reason": "The passages describe the firm's general product and service offerings to individual investors (a wider group that contains mass-affluent clients) and to other named segments, but never mention mass-affluent clients specifically.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,440 @@
+{
+  "question_id": "Q22",
+  "question": "Net new assets by quarter for each of the five, with each firm's own definition of the metric.",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-SUPP-2026Q3#16",
+    "MS-SUPP-2026Q2#16",
+    "MS-SUPP-2026Q1#14",
+    "MS-SUPP-2025Q4#14",
+    "MS-SUPP-2020Q4#1",
+    "MS-PR-2026-10-14-01#13",
+    "MS-DECK-2026-strategic-update#30",
+    "MS-10Q-2026Q2#58",
+    "SCHW-10K-2025#136",
+    "SCHW-TR-2025Q1#3",
+    "SCHW-TR-2025Q2#6",
+    "SCHW-10Q-2025Q3#22",
+    "SCHW-PR-2026-01-21-01#2",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-PR-2026-10-15-01#1",
+    "SCHW-10K-2025#122",
+    "SCHW-10K-2025#119",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2025Q3#67",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q2#66",
+    "BAC-SUPP-2026Q3#54",
+    "BAC-SUPP-2026Q1#46",
+    "BAC-SUPP-2025Q4#57",
+    "BAC-10K-2025#249",
+    "RJF-SUPP-2025Q3#9",
+    "RJF-SUPP-2026Q2#9",
+    "RJF-10K-2025#224",
+    "RJF-SUPP-2026Q2#43",
+    "RJF-SUPP-2026Q1#43"
+  ],
+  "schema_fallback": [],
+  "enum_values": 108,
+  "at": "2026-11-23T00:26:55.699122-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 12276,
+    "output_tokens": 11085,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 10612,
+    "reasoning_tokens": 6335,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.77
+  },
+  "wall_s": 122.34,
+  "tokens_per_s": 90.61,
+  "ttft_s": 2.77,
+  "reasoning_content": "Let me analyze the structure. The answer needs to cover two aspects (a1 and a2) for five firms.\n\nAspect a1: Net new assets by quarter. This is marked comparison? No, a1 is [series, metric net_new_assets], not marked comparison. Wait, let me check. The comparison aspects are those marked \"comparison\". Neither a1 nor a2 is marked \"comparison\" in the aspect list. Let me check.\n\nActually a1 and a2 are not marked comparison. They have \"Comparability (code): different_basis\" noted but that's a caveat.\n\nWait, let me re-read. The instructions mention \"Comparison aspects\" \u2014 aspects marked comparison. Neither a1 nor a2 has \"comparison\" marker in the aspect header. They just have comparability notes which are caveats added by code.\n\nSo a1 and a2 are regular aspects. For each, I write claims per firm.\n\nFor a1:\n- a1.MS: fact, items 1-11. Write claims for each item.\n- a1.SCHW: fact, items 1-8.\n- a1.EDJ: fact, items 1-7.\n- a1.MER: different quantity (adjacent only). So no claim, adjacent items with differs_because.\n- a1.RJF: fact, items 1-8.\n\nFor a2: fact for all five firms, write claims.\n\nNow the recency rule: \"For every item of an aspect marked recency\". Neither aspect is marked recency. So no why-lines.\n\nTime window: question asks \"by quarter\" \u2014 no explicit time window? The question is \"Net new assets by quarter for each of the five\". No time window specified. So no ordering requirement and no why-lines.\n\nSo I just write claims for each item, aspect by aspect, firm by firm.\n\nLet me determine what part_id to use for claims. For a1, individual firm claims use a1.MS, a1.SCHW, etc. For a2, a2.MS, etc.\n\nWait, the part_id enum includes a1.MS, a2.MS, a1.SCHW, a2.SCHW, a1.EDJ, a2.EDJ, a1.MER, a2.MER, a1.RJF, a2.RJF, a1, a2, \"\".\n\nSo for each claim, I use the cell id as part_id. The cell ids are like \"a1.MS\" (for the firm's a1 cell). Each item within a cell gets the same part_id? Actually the instructions say \"Every claim, adjacent item and gap carries the part_id of the cell it comes from.\"\n\nSo for a1.MS, all 11 items get part_id \"a1.MS\".\n\nFor a1.MER, adjacent items get part_id \"a1.MER\" with differs_because.\n\nLet me write the claims.\n\nFor a1.MS, items with quotes. Some items have \"quote not verbatim\" - never put in quotes. Items 4, 5, 8 marked quote not verbatim.\n\nLet me write claims. Date every claim from source line.\n\na1.MS:\nItem 1: MS reported Wealth Management net new assets of $232.4 billion for quarter ended Sept 30, 2026. cite MS-SUPP-2026Q3#16. Period 2026Q3. quote \"Net new assets | $ 232.4 | $ 148.1 | $ 81.0\"\n\nActually I should just write the claim with the figure. Let me write in a natural way.\n\nThe instructions: \"A fact cell is a claim, also when it is partial... say what it covers (period, scope, sample). State only the periods an item has.\"\n\nLet me write claims concisely but completely.\n\nFor each item, cite the chunk ids. For quote verbatim items, I can include the quote in quotes. For \"quote not verbatim\" items, don't quote.\n\nLet me draft all claims.\n\na1.MS (part_id \"a1.MS\"):\n1. \"Morgan Stanley reported Wealth Management net new assets of $232.4 billion for the quarter ended September 30, 2026 (per its 3Q26 supplement, published October 14, 2026).\" cite MS-SUPP-2026Q3#16\n2. $148.1 billion, quarter ended June 30, 2026. cite MS-SUPP-2026Q2#16\n3. $118.4 billion, quarter ended March 31, 2026. cite MS-SUPP-2026Q1#14\n4. $122.3 billion, quarter ended December 31, 2025. cite MS-SUPP-2025Q4#14 (quote not verbatim)\n5. $81.0 billion, quarter ended September 30, 2025. cite MS-SUPP-2025Q4#14 (quote not verbatim)\n6. $59.2 billion, quarter ended June 30, 2025. cite MS-SUPP-2026Q2#16\n7. $93.8 billion, quarter ended March 31, 2025. cite MS-SUPP-2026Q1#14\n8. $56.5 billion, quarter ended December 31, 2024. cite MS-SUPP-2025Q4#14 (quote not verbatim)\n9. $66.1 billion, quarter ended December 31, 2020. cite MS-SUPP-2020Q4#1\n10. $51.8 billion, quarter ended September 30, 2020. cite MS-SUPP-2020Q4#1\n11. $27.1 billion, quarter ended December 31, 2019. cite MS-SUPP-2020Q4#1\n\nWait, item 9 value 66.1 period 2020Q4, item 10 value 51.8 period 2020Q3, item 11 value 27.1 period 2019Q4. Note item 11 says \"quarter ended December 31, 2019\" but value 27.1, and quote has three numbers \"$ 66.1 $ 51.8 $ 27.1\". Hmm. The quote \"Net new assets $ 66.1 $ 51.8 $ 27.1\" - so these are three periods. Item 11 period 2019Q4 with 27.1. That's odd but I'll state as given.\n\nActually wait, these are odd because item 9 = 2020Q4 = 66.1, item 10 = 2020Q3 = 51.8, item 11 = 2019Q4 = 27.1. These are separate earlier segment. I'll just state them as given.\n\nThe source line for MS-SUPP-2020Q4#1 is \"MS supplement, period 2020-12-31, published 2021-01-20\".\n\nLet me date these claims. \"per its 4Q20 supplement, published January 20, 2021.\"\n\nNow for the earlier items, they come from supplements. I'll write each claim.\n\nLet me now write a2 definitions.\n\na2.MS: \"Morgan Stanley defines net new assets (NNA) as client asset inflows, including interest, dividends and asset acquisitions, less client asset outflows, and excluding the impact of business combinations/divestitures and the impact of fees and commissions.\" cite MS-PR-2026-10-14-01#13, MS-DECK-2026-strategic-update#30, MS-10Q-2026Q2#58\n\na2.SCHW: two items.\nItem 1: defines net new client assets. cite SCHW-10K-2025#122\nItem 2: defines core net new client assets. cite SCHW-10K-2025#119\n\na2.EDJ: two items.\nItem 1: cite EDJ-10Q-2026Q2#60, EDJ-10Q-2026Q1#52\nItem 2: cite EDJ-10K-2025#130, EDJ-10Q-2025Q2#66\n\na2.MER: item 1, cite BAC-10K-2025#249, quote not verbatim.\n\na2.RJF: item 1, cite RJF-10K-2025#224, RJF-SUPP-2026Q2#43, RJF-SUPP-2026Q1#43\n\nNow for the adjacent item for a1.MER: 8 items, each adjacent with differs_because. The differs_because for a1.MER is the text given: \"Bank of America reports 'net client flows'...\".\n\nActually the cell a1.MER is \"different quantity (adjacent only)\" with differs_because text. Each item should carry differs_because. Let me use the differs_because text from the cell.\n\nThe differs_because: \"Bank of America reports 'net client flows' (also called 'AUM flows') for the GWIM segment, not 'net new assets' for Merrill. The figure is net flows into assets under management only (not total net new assets across all client balances), and it covers the entire GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone.\"\n\nI'll write a condensed version preserving meaning for each item's differs_because. Actually the instructions say \"each with differs_because from the cell, in your words with the same meaning.\" So I can use the same text or my words.\n\nFor adjacent items, each item is a claim with part_id \"a1.MER\" and differs_because.\n\nLet me write 8 adjacent items for MER with values.\n\na1.MER adjacent items:\n1. $19,980 million, 2026Q3. cite BAC-SUPP-2026Q3#54\n2. $13,673 million, 2026Q2. cite BAC-SUPP-2026Q3#54\n3. $20,372 million, 2026Q1. cite BAC-SUPP-2026Q3#54\n4. $20,209 million, 2025Q4. cite BAC-SUPP-2026Q3#54\n5. $23,517 million, 2025Q3. cite BAC-SUPP-2026Q3#54\n6. $14,314 million, 2025Q2. cite BAC-SUPP-2026Q1#46\n7. $23,957 million, 2025Q1. cite BAC-SUPP-2026Q1#46\n8. $22,493 million, 2024Q4. cite BAC-SUPP-2025Q4#57\n\nEach in USD (value unit USD, so millions? value 19,980 unit USD \u2014 actually \"value 19,980 | unit USD\" \u2014 hmm the numbers like 19,980 seem to be in millions. The quote shows \"$54,025\" etc. Let me just state \"$19,980 million\" as the item text says \"of $19,980 million\". Actually the item text says \"GWIM net client flows (AUM flows) of $19,980 million\". So I'll write \"$19,980 million\".\n\nWait unit is \"USD\" but item text says \"$19,980 million\". I'll follow the item text.\n\nLet me write them.\n\nNow for gaps: The gaps added by code are already listed and I should not repeat them. But I need to include gaps in my output? The instructions say \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo I should NOT add the code gaps. But should I include them in my submit_answer gaps field? The instruction says code adds those gaps. Hmm. Actually the gaps field in submit_answer \u2014 I need to include the gaps. Let me re-read.\n\n\"Caveats are added by code; do not repeat them.\" So caveats not repeated.\n\n\"Cells with code gaps get no claim; code adds those gaps.\" This suggests code will add the gaps automatically, and I don't need to add them.\n\nActually, let me think about what the submit_answer gaps field should contain. The instructions say \"Add a gap of your own only for something those gaps do not name.\" So the gaps field should contain only MY OWN gaps (if any), not the code gaps.\n\nDo I have any gaps of my own? The code gaps cover:\n- a1.MER: Merrill net new assets not published; closest is GWIM net client flows (adjacent).\n- a1.EDJ: not found for 2024Q4, 2025Q4.\n\nThese are already named. I don't think I need to add more gaps.\n\nSo my gaps field would be empty. Actually, wait \u2014 let me reconsider. The submit_answer requires \"gaps\" as a required field. I can pass an empty array.\n\nActually, let me reconsider whether the gaps field should include the code gaps. The instruction \"code adds those gaps\" strongly implies code handles them. I'll pass empty array for gaps.\n\nHmm, but actually the guidance for the answer_with_boundary and other behaviors... this is just \"answer\" behavior. So I write the answer.\n\nLet me also reconsider: for a1, is it a \"comparison\" aspect? The header says \"Aspect a1: Net new assets by quarter for each firm\" with \"[series, metric net_new_assets]\". No \"comparison\" marker. So not a comparison aspect. Good, no comparison claim needed.\n\nNow, about \"several firms: aspect by aspect in the order listed, firms in the order listed, each claim starting '<Firm>: '\".\n\nSo within a1, I write MS first, then SCHW, then EDJ, then MER (adjacent), then RJF. Each claim starts with firm name.\n\nLet me write the full claims now.\n\nFor a1, firm MS, 11 items. I'll start each with \"Morgan Stanley: \".\n\nLet me write concisely.\n\nActually, let me be careful about the quote not verbatim items - items 4, 5, 8 in a1.MS. Just don't quote.\n\nLet me also note: the claims should date each claim from source line.\n\nLet me write.\n\na1.MS claims (part_id a1.MS):\n\n1. \"Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026, published October 14, 2026) states Wealth Management net new assets of $232.4 billion for the quarter ended September 30, 2026.\" cite MS-SUPP-2026Q3#16\n\nActually I'll keep a consistent style. Let me write each.\n\nLet me draft the text for all claims now, being efficient.\n\nFor a1.MS:\n- Item 1: $232.4B, 2026Q3, cite MS-SUPP-2026Q3#16\n- Item 2: $148.1B, 2026Q2, cite MS-SUPP-2026Q2#16\n- Item 3: $118.4B, 2026Q1, cite MS-SUPP-2026Q1#14\n- Item 4: $122.3B, 2025Q4, cite MS-SUPP-2025Q4#14 (not verbatim)\n- Item 5: $81.0B, 2025Q3, cite MS-SUPP-2025Q4#14 (not verbatim)\n- Item 6: $59.2B, 2025Q2, cite MS-SUPP-2026Q2#16\n- Item 7: $93.8B, 2025Q1, cite MS-SUPP-2026Q1#14\n- Item 8: $56.5B, 2024Q4, cite MS-SUPP-2025Q4#14 (not verbatim)\n- Item 9: $66.1B, 2020Q4, cite MS-SUPP-2020Q4#1\n- Item 10: $51.8B, 2020Q3, cite MS-SUPP-2020Q4#1\n- Item 11: $27.1B, 2019Q4, cite MS-SUPP-2020Q4#1\n\nLet me write these claims.\n\nI'll write text with period and figure and source.\n\nNow let me produce the final answer JSON via submit_answer.\n\nLet me carefully compose all claim texts.\n\nFor dates, I'll use the source \"from\" lines to date.\n\nMS supplements:\n- MS-SUPP-2026Q3#16: period 2026-09-30, published 2026-10-14\n- MS-SUPP-2026Q2#16: period 2026-06-30, published 2026-07-15\n- MS-SUPP-2026Q1#14: period 2026-03-31, published 2026-04-15\n- MS-SUPP-2025Q4#14: period 2025-12-31, published 2026-01-15\n- MS-SUPP-2020Q4#1: period 2020-12-31, published 2021-01-20\n\nSCHW sources:\n- SCHW-10K-2025#136: period 2025-12-31, published 2026-02-25 (2024Q4)\n- SCHW-TR-2025Q1#3: 2025Q1, published 2025-04-17\n- SCHW-TR-2025Q2#6: 2025Q2, published 2025-07-18\n- SCHW-10Q-2025Q3#22: 2025Q3, published 2025-11-07\n- SCHW-PR-2026-01-21-01#2: 2025Q4, published 2026-01-21\n- SCHW-10Q-2026Q1#19: 2026Q1, published 2026-05-08\n- SCHW-10Q-2026Q2#22: 2026Q2, published 2026-08-07\n- SCHW-PR-2026-10-15-01#1: 2026Q3, published 2026-10-15\n\nEDJ sources:\n- EDJ-10Q-2025Q2#64: period 2025-06-27, published 2025-08-08\n- EDJ-10Q-2025Q3#67: period 2025-09-26, published 2025-11-07\n- EDJ-10Q-2026Q1#51: period 2026-03-27, published 2026-05-07\n- EDJ-10Q-2026Q2#60: period 2026-06-26, published 2026-08-07\n- EDJ-10Q-2026Q1#52: period 2026-03-27, published 2026-05-07\n- EDJ-10K-2025#130: period 2025-12-31, published 2026-03-13\n- EDJ-10Q-2025Q2#66: period 2025-06-27, published 2025-08-08\n\nBAC sources:\n- BAC-SUPP-2026Q3#54: period 2026-09-30, published 2026-10-14\n- BAC-SUPP-2026Q1#46: period 2026-03-31, published 2026-04-15\n- BAC-SUPP-2025Q4#57: period 2025-12-31, published 2026-01-14\n- BAC-10K-2025#249: period 2025-12-31, published 2026-02-25\n\nRJF sources:\n- RJF-SUPP-2025Q3#9: period 2025-09-30, published 2025-10-22\n- RJF-SUPP-2026Q2#9: period 2026-06-30, published 2026-07-22\n- RJF-10K-2025#224: period 2025-09-30, published 2025-11-25\n- RJF-SUPP-2026Q2#43: period 2026-06-30, published 2026-07-22\n- RJF-SUPP-2026Q1#43: period 2026-03-31, published 2026-04-22\n\nNote EDJ items are fiscal-year based? EDJ periods: 2025-06-27 is \"second quarter of 2024\"? Wait, item 1 says period 2024Q2 but source EDJ-10Q-2025Q2#64 has period 2025-06-27. Hmm. Edward Jones has a fiscal year. The item text says \"Net new assets of $19 billion for the second quarter of 2024\" but cite is EDJ-10Q-2025Q2. The quote shows \"$ 17 $ 19 -10%\".\n\nActually there's some confusion about Edward Jones fiscal periods. The item text says period 2024Q2, 2024Q3, 2025Q1, 2025Q2, 2025Q3, 2026Q1, 2026Q2. But sources are labeled with fiscal year ending dates.\n\nI'll just state the period as the item says, and date from source line. The item's \"period\" field is what I state. Let me state period as item gives: 2024Q2, 2024Q3, etc.\n\nBut wait, there might be a mapping issue. Let me just faithfully report what the item says: \"Edward Jones reported net new assets of $19 billion for the second quarter of 2024\" etc. And date it from source.\n\nActually the item text itself says \"for the second quarter of 2024\". So I'll write that. The source line gives the document period/publish date.\n\nFor EDJ, the fiscal quarters: EDJ 10-Q \"period 2025-06-27\" corresponds to their fiscal Q2 2025. But item says 2024Q2. Hmm, this is confusing. Let me just use the item's stated period text.\n\nActually, looking more carefully: item 1 says period 2024Q2, \"Net new assets of $19 billion for the second quarter of 2024\". cite EDJ-10Q-2025Q2#64. The quote \"$ 17 $ 19 -10%\" \u2014 this shows current year $17 vs prior year $19, -10%. So the $19 is the PRIOR year (2024 Q2), and $17 is current (2025 Q2). \n\nSo the items are mixing current and prior year figures. Item 1 = 2024Q2 ($19, prior year), item 4 = 2025Q2 ($17, current). Both from EDJ-10Q-2025Q2#64.\n\nOK I'll just report each item faithfully with its stated period and value.\n\nLet me write the EDJ items:\n1. $19B, 2024Q2, cite EDJ-10Q-2025Q2#64\n2. $16B, 2024Q3, cite EDJ-10Q-2025Q3#67\n3. $17B, 2025Q1, cite EDJ-10Q-2026Q1#51\n4. $17B, 2025Q2, cite EDJ-10Q-2025Q2#64\n5. $17B, 2025Q3, cite EDJ-10Q-2025Q3#67\n6. $18B, 2026Q1, cite EDJ-10Q-2026Q1#51\n7. $18B, 2026Q2, cite EDJ-10Q-2026Q2#60\n\nThese are all fact claims, part_id a1.EDJ.\n\nNow writing everything. Let me be efficient and produce the final answer.\n\nFor the a1.MER adjacent, I'll write 8 adjacent items with differs_because.\n\ndiffers_because text (in my words, same meaning): \"Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only (not total net new assets across all client balances) and covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone.\"\n\nLet me write all claims now.\n\nFor claims I'll write concise text. Let me finalize.\n\nI need to be careful with chunk_ids arrays matching the enum.\n\nLet me write out everything.\n\nFor a2 claims, I'll include the definition. These are fact cells, so claims.\n\na2.MS: definition, cite three sources.\n\na2.SCHW: two items (net new client assets, and core net new client assets).\n\na2.EDJ: two items.\n\na2.MER: one item (quote not verbatim, don't quote).\n\na2.RJF: one item.\n\nLet me write final text.\n\nI'll now produce the submit_answer call.\n\nFor the \"why it might matter\" \u2014 no recency and no time window, so none.\n\nOrder: aspect a1 first (firms in order MS, SCHW, EDJ, MER, RJF), then aspect a2.\n\nLet me write each claim text carefully with firm prefix.\n\nActually, wait \u2014 should I prefix each claim with \"<Firm>: \"? Yes for multi-firm. \"each claim starting '<Firm>: '\".\n\nLet me write.\n\na1.MS:\n1. \"Morgan Stanley: The 3Q26 supplement (period ended September 30, 2026, published October 14, 2026) reports Wealth Management net new assets of $232.4 billion for the quarter ended September 30, 2026.\"\n\nHmm, \"The 3Q26 supplement\" \u2014 I should date from source line. The source line says \"period 2026-09-30, published 2026-10-14\". I'll write \"per its quarterly supplement (period ended September 30, 2026, published October 14, 2026)\".\n\nLet me simplify: \"Morgan Stanley reported Wealth Management net new assets of $232.4 billion for the quarter ended September 30, 2026 (quarterly supplement, period ended September 30, 2026, published October 14, 2026).\"\n\nI'll use a consistent but concise style.\n\nLet me finalize and just write it all out.\n\nI'll write the claims in a fairly direct manner.\n\nGiven the volume, I'll produce the answer now.\n\nFor part_id of a1 claims: \"a1.MS\", \"a1.SCHW\", \"a1.EDJ\", \"a1.MER\" (adjacent), \"a1.RJF\".\n\nFor a2 claims: \"a2.MS\", etc.\n\nLet me write all.\n\nFor adjacent items, the text and differs_because and part_id.\n\nLet me now compose the final tool call.\n\nI need to also consider: should claims include the quote? The instruction says for fact cells, \"A fact cell is a claim\". It doesn't require including quotes unless I want. The \"quote\" field is for reference; I can paraphrase. But for definitions (a2), the definition IS the content, so I'll state the definition. I should not put in quotes the ones marked \"quote not verbatim\".\n\nFor a2.MER, quote not verbatim \u2014 I'll paraphrase the definition without quotes.\n\nFor a1 items, I'll just state figures, not quote (quotes are for my reference to avoid fabrication). Actually I can include short quotes if verbatim. But simpler to just state. The instruction doesn't mandate quoting; it says never quote \"quote not verbatim\" items.\n\nI'll keep it clean: state figure, period, scope, cite.\n\nLet me write final answer now.\n\nActually, let me double-check the a2.SCHW item 2 definition includes \"These flows may span multiple reporting periods.\" The definition field ends at \"CSB.\" but quote continues with \"These flows may span multiple reporting periods.\" I'll use the definition as given in the \"definition\" field for the claim, which is what I should state. Actually the item's definition and quote both listed. I'll state the definition content.\n\nLet me write the a2.SCHW item 2: \"Schwab defines core net new client assets as net new client assets before significant one-time inflows or outflows, such as acquisitions/divestitures or extraordinary flows (generally greater than $25 billion, $10 billion prior to 2025) relating to a specific client, and activity from off-platform brokered CDs issued by CSB.\"\n\nI'll write full definitions.\n\nOK, finalizing now.\n\nLet me write the complete JSON.\n\nI'll write text strings. Let me go.",
+  "first_claim_s": 84.83,
+  "stream_items": {
+    "first_claim_s": 84.83,
+    "shown": 35,
+    "held": 14
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended September 30, 2026, published October 14, 2026) reports Wealth Management net new assets of $232.4 billion for the quarter ended September 30, 2026.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended June 30, 2026, published July 15, 2026) reports Wealth Management net new assets of $148.1 billion for the quarter ended June 30, 2026.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q2#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended March 31, 2026, published April 15, 2026) reports Wealth Management net new assets of $118.4 billion for the quarter ended March 31, 2026.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q1#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2025, published January 15, 2026) reports Wealth Management net new assets of $122.3 billion for the quarter ended December 31, 2025.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2025, published January 15, 2026) reports Wealth Management net new assets of $81.0 billion for the quarter ended September 30, 2025.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended June 30, 2026, published July 15, 2026) reports Wealth Management net new assets of $59.2 billion for the quarter ended June 30, 2025.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q2#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended March 31, 2026, published April 15, 2026) reports Wealth Management net new assets of $93.8 billion for the quarter ended March 31, 2025.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q1#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2025, published January 15, 2026) reports Wealth Management net new assets of $56.5 billion for the quarter ended December 31, 2024.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#14"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2020, published January 20, 2021) reports Wealth Management net new assets of $66.1 billion for the quarter ended December 31, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2020, published January 20, 2021) reports Wealth Management net new assets of $51.8 billion for the quarter ended September 30, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley: The quarterly supplement (period ended December 31, 2020, published January 20, 2021) reports Wealth Management net new assets of $27.1 billion for the quarter ended December 31, 2019.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The 2025 Form 10-K (period ended December 31, 2025, published February 25, 2026) reports core net new assets of $114.8 billion for the fourth quarter of 2024.",
+        "chunk_ids": [
+          "SCHW-10K-2025#136"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the first-quarter 2025 earnings call (April 2025), management said investors entrusted Schwab with $138 billion in core net new assets in the first quarter of 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#3"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: On the second-quarter 2025 earnings call (July 2025), management said Schwab attracted $80.3 billion in core net new assets in the second quarter of 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q2#6"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The third-quarter 2025 Form 10-Q (period ended September 30, 2025, published November 7, 2025) reports core net new assets of $137.5 billion in the third quarter of 2025.",
+        "chunk_ids": [
+          "SCHW-10Q-2025Q3#22"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The press release (period ended December 31, 2025, published January 21, 2026) reports record fourth-quarter core net new assets of $163.9 billion.",
+        "chunk_ids": [
+          "SCHW-PR-2026-01-21-01#2"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The first-quarter 2026 Form 10-Q (period ended March 31, 2026, published May 8, 2026) reports core net new assets of $140.0 billion in the first quarter of 2026, which included a $17.5 billion outflow from a planned mutual fund clearing client deconversion.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#19"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The second-quarter 2026 Form 10-Q (period ended June 30, 2026, published August 7, 2026) reports core net new assets of $119.8 billion in the second quarter of 2026.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: The press release (period ended September 30, 2026, published October 15, 2026) reports core net new assets of $190.4 billion in the third quarter of 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#1"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended June 27, 2025, published August 8, 2025) reports net new assets of $19 billion for the second quarter of 2024.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#64"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended September 26, 2025, published November 7, 2025) reports net new assets of $16 billion for the third quarter of 2024.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#67"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended March 27, 2026, published May 7, 2026) reports net new assets of $17 billion for the first quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#51"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended June 27, 2025, published August 8, 2025) reports net new assets of $17 billion for the second quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#64"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended September 26, 2025, published November 7, 2025) reports net new assets of $17 billion for the third quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#67"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended March 27, 2026, published May 7, 2026) reports net new assets of $18 billion for the first quarter of 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#51"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones: The Form 10-Q (period ended June 26, 2026, published August 7, 2026) reports net new assets of $18 billion for the second quarter of 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended September 30, 2025, published October 22, 2025) reports Domestic Private Client Group net new assets of $12,969 million for the three months ended September 30, 2024.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended September 30, 2025, published October 22, 2025) reports Domestic Private Client Group net new assets of $14,020 million for the three months ended December 31, 2024.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended September 30, 2025, published October 22, 2025) reports Domestic Private Client Group net new assets of $8,830 million for the three months ended March 31, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended September 30, 2025, published October 22, 2025) reports Domestic Private Client Group net new assets of $11,651 million for the three months ended June 30, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended September 30, 2025, published October 22, 2025) reports Domestic Private Client Group net new assets of $17,930 million for the three months ended September 30, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended June 30, 2026, published July 22, 2026) reports Domestic Private Client Group net new assets of $30,828 million for the three months ended December 31, 2025.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended June 30, 2026, published July 22, 2026) reports Domestic Private Client Group net new assets of $22,954 million for the three months ended March 31, 2026.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James Financial: The quarterly supplement (period ended June 30, 2026, published July 22, 2026) reports Domestic Private Client Group net new assets of $21,692 million for the three months ended June 30, 2026.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#9"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Morgan Stanley: Net new assets (NNA) represent client asset inflows, inclusive of interest, dividends and asset acquisitions, less client asset outflows, and exclude the impact of business combinations/divestitures and the impact of fees and commissions.",
+        "chunk_ids": [
+          "MS-PR-2026-10-14-01#13",
+          "MS-DECK-2026-strategic-update#30",
+          "MS-10Q-2026Q2#58"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The Charles Schwab Corporation: Net new client assets are total inflows of client cash and securities to Schwab less client outflows; inflows include dividends and interest, outflows include commissions and fees, and capital gains distributions are excluded.",
+        "chunk_ids": [
+          "SCHW-10K-2025#122"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "The Charles Schwab Corporation: Core net new client assets are net new client assets before significant one-time inflows or outflows, such as acquisitions/divestitures or extraordinary flows (generally greater than $25 billion, $10 billion prior to 2025) relating to a specific client, and activity from off-platform brokered CDs issued by CSB.",
+        "chunk_ids": [
+          "SCHW-10K-2025#119"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Edward Jones: Net new assets represents cash and securities inflows and outflows, including fees and commissions and excluding mutual fund capital gain distributions received by U.S. clients.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60",
+          "EDJ-10Q-2026Q1#52"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Edward Jones (in its 2025 annual report): Net new assets represents cash and securities inflows and outflows, excluding mutual fund capital gain distributions received by U.S. clients.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130",
+          "EDJ-10Q-2025Q2#66"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Merrill: Within Bank of America's Global Wealth & Investment Management segment, net new assets (its net client AUM flows) are defined as the net change in clients' AUM balances over a specified period of time, excluding market appreciation/depreciation and other adjustments.",
+        "chunk_ids": [
+          "BAC-10K-2025#249"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Raymond James Financial: Domestic Private Client Group net new assets represents domestic PCG client inflows, including dividends and interest, less domestic PCG client outflows, including commissions, advisory fees, and other fees.",
+        "chunk_ids": [
+          "RJF-10K-2025#224",
+          "RJF-SUPP-2026Q2#43",
+          "RJF-SUPP-2026Q1#43"
+        ],
+        "part_id": "a2.RJF"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $19,980 million in the third quarter of 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#54"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $13,673 million in the second quarter of 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#54"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $20,372 million in the first quarter of 2026.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#54"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $20,209 million in the fourth quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#54"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $23,517 million in the third quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q3#54"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $14,314 million in the second quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#46"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $23,957 million in the first quarter of 2025.",
+        "chunk_ids": [
+          "BAC-SUPP-2026Q1#46"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      },
+      {
+        "text": "Merrill: GWIM net client flows (AUM flows) of $22,493 million in the fourth quarter of 2024.",
+        "chunk_ids": [
+          "BAC-SUPP-2025Q4#57"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Bank of America reports net client flows (also called AUM flows) for the GWIM segment rather than net new assets for Merrill; the figure is net flows into assets under management only, not total net new assets across all client balances, and it covers the whole GWIM segment (Merrill Wealth Management plus Bank of America Private Bank), not Merrill alone."
+      }
+    ],
+    "gaps": []
+  }
+}

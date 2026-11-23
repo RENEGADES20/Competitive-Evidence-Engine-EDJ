@@ -1,0 +1,70 @@
+{
+  "question_id": "Q19",
+  "question": "How should the preferences of younger investors shape Edward Jones's offerings?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a4.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a4.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10Q-2026Q2#82",
+    "EDJ-10K-2025#247",
+    "EDJ-10Q-2025Q3#137",
+    "EDJ-10K-2025#328",
+    "EDJ-10Q-2025Q2#91",
+    "EDJ-10K-2025#147",
+    "EDJ-10Q-2026Q2#67",
+    "EDJ-10Q-2026Q2#116",
+    "EDJ-10Q-2025Q2#73",
+    "EDJ-10Q-2025Q2#126",
+    "EDJ-10Q-2025Q3#130",
+    "EDJ-10Q-2025Q3#98"
+  ],
+  "at": "2026-11-23T00:04:14.246511-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5669,
+    "output_tokens": 291,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 4133,
+    "reasoning_tokens": 164,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.86
+  },
+  "wall_s": 5.64,
+  "tokens_per_s": 51.6,
+  "ttft_s": 1.86,
+  "reasoning_content": "Let me analyze this. The sub-question asks: \"What growth in younger investors and clients under 40 do firms report?\"\n\nI need to check the passages for any mention of younger investors or clients under 40 growth. Looking through the passages, none of them mention younger investors or clients under 40. They discuss financial advisors, net new assets, revenue, partnership loans, client assets, etc.\n\nSo the label should be not_found - the passages say nothing about it.\n\nLet me verify - none of the chunks mention \"under 40\", \"younger investors\", \"young investors\", \"millennial\", \"Gen Z\", etc. So not_found.\n\nThe passages mention financial advisors count, client assets, revenue, etc. - nothing about age of clients.\n\nSo return a not_found cell.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a4.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages discuss financial advisor counts, net new assets, revenue, partnership loans, and client assets, but none mention growth in younger investors or clients under 40.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.research",
+  "round": 1,
+  "entity": null,
+  "cells": [
+    "a1.research",
+    "a2.research",
+    "a3.research",
+    "a4.research",
+    "a5.research",
+    "a6.research"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "CERULLI-MASS-AFFLUENT-2026#0",
+    "CERULLI-MASS-AFFLUENT-2026#1"
+  ],
+  "at": "2026-11-22T22:42:46.235689-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 2701,
+    "output_tokens": 2609,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 2701,
+    "reasoning_tokens": 1912,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.55
+  },
+  "wall_s": 29.16,
+  "tokens_per_s": 89.47,
+  "ttft_s": 1.55,
+  "reasoning_content": "This is industry research, not firm-specific documents. The passages describe the mass-affluent segment in general, not what each firm has said. So for each sub-question, there's no firm-specific information.\n\nLet me think about what I can extract.\n\nThe research passages:\n- Define mass-affluent segment: households with between $100,000 and $2 million in financial assets, $25 trillion market, 46.9 million households.\n- Mention firms' traditional strategy: prefer to begin relationships only after prospects reach $250,000 to $1 million+ asset minimums.\n- Quote Scott Smith about strategies.\n\nFor sub-question a5.research (how firms define mass-affluent segment in terms of asset levels/income): the research defines it as $100,000-$2 million in financial assets. But that's an industry definition, not a firm's own. For a research sub-question, a research figure is a fact for an aspect about the industry. So the definition of mass-affluent ($100k-$2 million) is a fact about the industry/segment definition.\n\nFor a1.research [comparison]: whether each firm names mass-affluent segment. The research doesn't name any specific firm's statements. It mentions \"wealth management firms\" generally, \"providers.\" No named firm. So not_found for firm-specific.\n\nActually the sub-question says \"each firm\" but the firm is \"Industry research (no firm)\". The passages are research, no firm names mentioned. So for a1, a2, a3, a4, a6, there's no firm-specific info. \n\nFor a5, the research does define the mass-affluent segment: $100,000 to $2 million. This is an industry/research definition. Is it a fact? The sub-question asks \"how each firm defines or describes the mass-affluent segment.\" Since no firm is named, and the research defines the segment in general, that could be a fact about the segment definition (the research defines it).\n\nActually, the instructions say: \"A research figure is a fact for an aspect about the industry, clients or advisors in general; for an aspect about a named firm's own figure it is a different_quantity.\"\n\nThe sub-question a5 asks how firms define the segment. The research gives a segment definition ($100k-$2 million). This is about the industry/clients in general, so it's a fact for a5 (describing the mass-affluent segment definition in the research).\n\nLet me be careful. a5 asks \"How each firm defines or describes the mass-affluent segment.\" The research doesn't report any firm's definition. But it does define the segment itself. I think this is a fact about the segment definition in general (the research's own definition). Actually the sub-question is about firms' definitions, and no firm is named. Hmm.\n\nGiven the research passages, the most relevant fact is the Cerulli definition of mass-affluent: $100,000-$2 million in financial assets. This is a fact for a5 as a description of the mass-affluent segment.\n\nLet me construct cells.\n\nFor a1.research [comparison]: whether and how explicitly each firm names the mass-affluent client segment. The research doesn't name any firm. not_found.\n\nFor a2.research [fact]: what each firm has said about serving mass-affluent clients. No firm named. But there's a general statement: \"providers must define for clients and prospects what a premium experience entails.\" This is about providers in general, not a firm. Could be a fact about the industry. But the sub-question asks what each firm has said. No firm. not_found.\n\nFor a3.research: how each firm describes targeting/attracting. General statements about \"engage with prospects earlier.\" Not firm-specific. not_found.\n\nFor a4.research: specific products/services/platforms/fees each firm says offers. Research mentions \"streamlined advisory services at scale.\" That's a general provider thing, not a specific firm. not_found.\n\nFor a5.research: definition. The research defines mass-affluent as $100,000-$2 million financial assets. This is a fact about the segment (industry/research definition). I'll mark it as fact with the definition.\n\nActually wait - the sub-question is \"How each firm defines or describes the mass-affluent segment in terms of asset levels or income.\" The research's definition is the research's, not a firm's. But since the firm column is \"Industry research (no firm)\", and the instruction says research figures are facts for aspects about the industry/clients in general, the segment definition ($100k-$2 million) is a fact about the industry/segment in general.\n\nI'll provide a5 as fact with the definition: mass-affluent households with between $100,000 and $2 million in financial assets, $25 trillion, 46.9 million households.\n\nFor a6.research [recency]: what is new/most recent. The research is published 2026-03-25, discusses 2026 report and year-end 2025 data. Not firm-specific. not_found (or maybe the general finding about engaging earlier). I think not_found for firm statements, but there could be a fact about the research recency. The sub-question asks \"what is new or most recent in each firm's statements.\" No firm statements. not_found.\n\nActually, let me reconsider. All sub-questions ask \"each firm\" but there's no firm. The passages are industry research. I should probably mark most as not_found since no firm is named, except where the research provides general segment info that maps to the sub-question's aspect (a5 definition).\n\nLet me also consider whether the general statements (like \"providers must define premium experience\", \"engage with prospects earlier\") could be facts for a2/a3 as industry-level statements. But these sub-questions are about \"each firm\" specifically. Since no firm is named, and the question is about comparing firms, I think these are not_found.\n\nActually, re-reading: \"the research passages are listed under the first sub-question; they apply to every one.\" So the same research passages apply. The research is about the industry, not specific firms.\n\nFor a5, the definition of mass-affluent is a fact (industry definition). Let me include it.\n\nI'll write the cells now.\n\nFor a5 fact item:\n- text: Cerulli defines mass-affluent (and middle-market) households as those with between $100,000 and $2 million in financial assets, a $25 trillion market comprising 46.9 million households.\n- quote: \"middle-market and mass-affluent households with between $100,000 and $2 million in financial assets\"\n- value: \"$100,000 and $2 million\"\n- unit: \"financial assets\" \n- period: \"\" (or 2025)\n- scope: \"\"\n- definition: \"households with between $100,000 and $2 million in financial assets\"\n\nActually value should be the figure as printed. \"$100,000 and $2 million\" - hmm, two figures. I'll put \"$100,000\u2013$2 million\" or just \"$100,000 to $2 million\". Let me use value \"$100,000\u2013$2 million\", unit \"financial assets per household\".\n\nAlso there's the $25 trillion and 46.9 million households. Could be a second item but they're related to the same definition. I'll maybe add a second item for the market size. Actually the sub-question asks about asset levels/income, so the definition $100,000-$2 million is the key fact. I could add the $25 trillion as additional context but it's the aggregate market, not asset level definition per household. I'll keep one item focused on the asset-level definition, maybe add a second for the aggregate.\n\nLet me also note: the passage mentions \"addressable asset minimums ranging from $250,000 to more than $1 million\" that firms traditionally use. This is about firms' asset minimums, but not specifically mass-affluent definition. Could relate to a5? It's about how firms traditionally set minimums, not how they define mass-affluent. I'll skip or could include as different_quantity? Actually it's a description of firms' traditional minimums, not mass-affluent definition. I'll leave it out of a5, or maybe note it.\n\nI'll keep it simple.\n\nFor a1, a2, a3, a4, a6: not_found, with reason that passages name no firm.\n\nLet me write reasons clearly.\n\nFor a1: \"The passages discuss wealth management providers in general and name no firm, so no comparison of how each firm names mass-affluent is possible.\"\n\nActually, maybe for a1 I should note there's an industry-level statement: \"Traditionally, wealth management firms have preferred to begin client relationships only after prospects have reached addressable asset minimums ranging from $250,000 to more than $1 million.\" This is about firms generally but doesn't name mass-affluent segment. Not firm-specific. not_found.\n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The research passages name no individual firm and only discuss wealth-management providers in general, so there is no basis for comparing how each named firm explicitly names the mass-affluent segment.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a2.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage attributes any statement about serving mass-affluent clients to a specific named firm; only general provider-level advice is given.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a3.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages describe general provider strategies (engaging prospects earlier) without naming any firm's targeting or attraction approach for mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a4.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages mention only a general need for 'streamlined advisory services at scale' and no firm-specific products, services, platforms, or fee levels for mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a5.research",
+        "label": "fact",
+        "items": [
+          {
+            "text": "Cerulli defines middle-market and mass-affluent households as those with between $100,000 and $2 million in financial assets, a segment whose wealth grew from $14 trillion to $25 trillion from 2013 to 2025 and that comprises 46.9 million households.",
+            "quote": "middle-market and mass-affluent households with between $100,000 and $2 million in financial assets have seen their wealth grow from $14 trillion to $25 trillion in that same period... this $25 trillion market comprising 46.9 million households",
+            "value": "$100,000 and $2 million",
+            "unit": "financial assets per household",
+            "period": "2025",
+            "scope": "",
+            "definition": "households with between $100,000 and $2 million in financial assets",
+            "chunk_ids": [
+              "CERULLI-MASS-AFFLUENT-2026#0"
+            ]
+          }
+        ],
+        "differs_because": "",
+        "reason": "The research itself defines the mass-affluent segment by asset level, which is an industry-level definition and thus a fact for this research row.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      },
+      {
+        "subquestion_id": "a6.research",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "The passages contain no firm-specific statements, so there is nothing 'new or most recent' attributable to any named firm about mass-affluent clients.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

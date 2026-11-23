@@ -1,0 +1,151 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a2.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a2.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#2",
+    "BAC-TR-2025Q1#28",
+    "BAC-DECK-2025-investor-day#9",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-TR-2024Q4#30",
+    "MER-PR-2026-09-15-01#2",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "BAC-TR-2025Q4#106",
+    "MER-PR-web-advisor-development-program#0",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#1",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-PR-2026-09-15-01#3",
+    "MER-PR-2026-09-15-01#0",
+    "MER-ADV1A-2026#1",
+    "BAC-TR-2026Q3#19",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-10K-2025#246",
+    "BAC-TR-2026Q1#26",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2025Q2#34",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "BAC-TR-2026Q2#63",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2026Q2#21",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-TR-2025Q2#35",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-01-14-01#12",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#4",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5"
+  ],
+  "at": "2026-11-23T00:36:36.032756-06:00",
+  "prefix_group": "f2da4839e4d1c4a0",
+  "prefix_role": "follower",
+  "gate_wait_s": 9.0,
+  "leader_cached": false,
+  "prefix_chars": 140189,
+  "request_chars": 140940,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 35741,
+    "output_tokens": 5899,
+    "cache_hit_tokens": 32768,
+    "cache_miss_tokens": 2973,
+    "reasoning_tokens": 5121,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.3
+  },
+  "wall_s": 77.91,
+  "tokens_per_s": 75.72,
+  "ttft_s": 2.3,
+  "reasoning_content": "The sub-question is a2.MER: Advisor headcount for the firm (Merrill).\n\nI need to find advisor headcount figures for Merrill. Let me look at the passages.\n\nKey passages for advisor headcount:\n- BAC-SUPP-2023Q4#2: \"Advisors, at period end: Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\" - this is total wealth advisors across GWIM and Consumer Banking. Note (3): \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" This is a different quantity - it's total wealth advisors across GWIM and Consumer Banking, not specifically Merrill.\n\n- BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" - this is for Merrill | Private Bank, so GWIM. \">15K Wealth Advisors\" - this is a different quantity (includes Private Bank).\n\n- MER-ADV1A-2026#1: employees 32960, investment advisory functions 25721, registered representatives 26599, IAR 25721. These are all employees, not financial advisors. This is a different quantity (all employees / registered representatives).\n\nWait, but this MER-ADV1A is under a2.MER passages. Let me check. Yes, MER-ADV1A-2026#1 is listed under Sub-question a2.MER. But the instructions say \"Cite only the passages listed under Sub-question a2.MER and these passages...\" - so I can cite MER-ADV1A-2026#1.\n\nThe MER-ADV1A shows: approximately 32960 employees, 25721 investment advisory functions, 26599 registered representatives. These are employees of the investment adviser (Merrill Lynch, Pierce, Fenner & Smith or similar). But this is \"employees\", not \"financial advisors\" per se.\n\nActually, the question is \"Advisor headcount for the firm\". The metric is \"advisor_headcount\".\n\nLet me look for the specific advisor headcount for Merrill.\n\nThe passages don't seem to have a direct \"Merrill financial advisors\" count. The closest:\n- BAC-SUPP-2023Q4#2: \"Total wealth advisors\" = 18,916 at period end 2023 (year ended Dec 31 2023), 19,273 for 2022. But this \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" So it's GWIM + Consumer Banking, broader than Merrill.\n\nActually wait, let me re-read. This is from 2023Q4 supplement. \"Advisors, at period end: Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\". The columns are Year Ended Dec 31 2023, Year Ended Dec 31 2022, Fourth Quarter 2023, Third Quarter 2023, Second Quarter 2023, First Quarter 2023, Fourth Quarter 2022. So 18,916 is year-end 2023, 19,273 year-end 2022.\n\nNote (3): \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" So this includes Consumer Banking too, broader than Merrill. This is a different quantity.\n\n- BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" for Merrill | Private Bank (GWIM). This is also a different quantity because it's GWIM (Merrill + Private Bank), not just Merrill.\n\nActually, wait - the firm here is \"Merrill (MER)\". The sub-question is \"Advisor headcount for the firm\". So we want Merrill's advisor count.\n\nBut many figures are for GWIM (Merrill + Private Bank) or broader.\n\nLet me consider what counts as \"fact\" vs \"different_quantity\".\n\nThe metric is \"advisor_headcount\" - advisor headcount for the firm (Merrill).\n\nOptions:\n1. BAC-SUPP-2023Q4#2: \"Total wealth advisors\" 18,916 (2023), 19,273 (2022) - but includes GWIM and Consumer Banking. This is broader than Merrill, so different_quantity.\n\n2. BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" - for Merrill | Private Bank (GWIM). Broader than Merrill (includes Private Bank). Different quantity.\n\n3. MER-ADV1A-2026#1: 32960 employees, 25721 investment advisory functions, 26599 registered representatives. These are \"employees\" not \"financial advisors\". Different quantity (all employees).\n\nActually, the MER-ADV1A is the ADV for Merrill (the investment adviser). The question asks \"advisor headcount\". The ADV Item 5.B(1) is \"employees who perform investment advisory functions\" = 25721. But this is employees, not advisors. \n\nHmm, is there any direct \"Merrill financial advisors\" or \"Merrill advisors\" count?\n\nLet me look at the \">15K Wealth Advisors\" - this is the only \"wealth advisors\" count in the pool besides the 2023 supplement.\n\nActually, the investor day deck says \"Leading advisor force\" and \">15K Wealth Advisors\". This is GWIM (Merrill | Private Bank). \n\nAlso \">15K Wealth Advisors\" is ambiguous but it's the closest.\n\nAlso, there's the \"Merrill had 446 advisors named...\" and \"2,112 advisors named...\" but those are rankings recognitions, not headcount.\n\nLet me also check BAC-TR-2026Q3#19: \"Merrill added about 4,200 net new households... the Private Bank added 470...\" - no advisor count.\n\nBAC-PR-2026-10-14-01#11: \"19 Merrill advisors on Barron's 2026 Top 100 Women Financial Advisors\" - rankings, not headcount.\n\nBAC-TR-2026Q1#26: \"We continue to attract talent across both new and experienced advisers.\" - no number.\n\nBAC-TR-2026Q2#34: \"we also continued to add financial advisors to the sales force...\" - no number.\n\nBAC-TR-2026Q2#63: \"adviser attrition is now at near historic lows\" - no number.\n\nSo the advisor headcount for Merrill specifically is not disclosed in these passages. The closest figures are:\n- Total wealth advisors (GWIM + Consumer Banking) = 18,916 (2023), 19,273 (2022)\n- >15K Wealth Advisors (GWIM = Merrill + Private Bank)\n- Employees (ADV) = 32,960 total, 25,721 advisory functions, 26,599 registered reps\n\nNone of these are \"Merrill advisor headcount\" exactly.\n\nSo the answer should be: not_found? Or different_quantity?\n\nThe instruction says: different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one (a parent company, a segment that also holds other businesses), a different measure (all employees...).\n\nSo \"Total wealth advisors\" (GWIM + Consumer Banking) is a wider unit containing Merrill. \">15K Wealth Advisors\" (GWIM) is a wider unit. \"Employees\" in ADV is a different measure.\n\nSince there are related quantities (different measures and wider units), the label should be different_quantity, not not_found.\n\nActually, wait - let me reconsider. The question asks \"Advisor headcount for the firm.\" The firm is Merrill. \n\nThe \">15K Wealth Advisors\" is for Merrill | Private Bank (GWIM), which is a wider unit (includes Private Bank). This is the closest to \"advisor headcount\" but it's GWIM not Merrill specifically.\n\nThe \"Total wealth advisors\" 18,916 is GWIM + Consumer Banking.\n\nThe ADV \"employees\" is a different measure.\n\nI think the most relevant different_quantity items:\n1. BAC-DECK-2025-investor-day#9: \">15K Wealth Advisors\" - GWIM (Merrill + Private Bank), wider unit\n2. BAC-SUPP-2023Q4#2: \"Total wealth advisors\" 18,916 (2023), 19,273 (2022) - GWIM + Consumer Banking, wider unit\n3. MER-ADV1A-2026#1: employees 32,960 / advisory functions 25,721 - different measure (employees, not advisors)\n\nActually, I need to decide. The sub-question is [fact, metric advisor_headcount]. The metric is advisor_headcount. So we want a fact about advisor headcount.\n\nNone of these are Merrill's advisor headcount exactly. So it's different_quantity.\n\nLet me think about what's the most relevant and provide multiple items.\n\nActually, I should be careful. The \">15K Wealth Advisors\" in the investor day deck is clearly about \"Wealth Advisors\" which is the advisor headcount metric, but for GWIM (Merrill + Private Bank). This is a wider unit. Different quantity, differs_because \"covers Merrill and Private Bank (GWIM) combined, not Merrill alone.\"\n\nThe \"Total wealth advisors\" 18,916 in the 2023 supplement: \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" Wider unit.\n\nThe MER-ADV1A: employees - different measure.\n\nLet me provide these as different_quantity items.\n\nActually, I want to think more carefully. The label is different_quantity for the cell. Let me include the relevant items.\n\nLet me construct:\n\nCell: a2.MER, label = different_quantity\n\nItems:\n1. Text: \"As of the 2025 investor day, Merrill and Private Bank (GWIM) had more than 15,000 wealth advisors.\" \n   Quote: \">15K Wealth Advisors\"\n   value: \"15,000\" (approx, \">15K\"), unit: \"wealth advisors\", period: \"\" (n/a), scope: \"Merrill | Private Bank (GWIM)\"\n\nActually the value should be \">15,000\" or \"15,000+\". The printed figure is \">15K\". Let me use value \">15,000\" or just \">15K\"? The instruction says \"the figure as printed\". So value = \">15K\"? Actually let me keep it as printed: \">15K\" but unit \"wealth advisors\". Hmm, \">15K\" is printed. But I'll write value as \">15,000\" to be clearer? The instruction says \"the figure as printed ('20,425', '$1.2 billion')\". So I should use \">15,000\" as normalized? Actually \">15K\" printed. I'll use \">15,000\".\n\nHmm, let me just put value \">15,000\" and unit \"wealth advisors\".\n\nActually, to be faithful, the printed text is \">15K\". I'll put value \">15,000\".\n\n2. Text: \"At December 31, 2023, total wealth advisors (across GWIM and Consumer Banking) were 18,916; at year-end 2022, 19,273.\"\n   Quote: \"Total wealth advisors (3) 18,916 19,273\"\n   value: \"18,916\", unit: \"wealth advisors\", period \"2023-12-31\"\n   \n3. Text: \"The investment adviser (Merrill) reported approximately 32,960 employees, of whom 25,721 perform investment advisory functions.\"\n   Quote: \"Approximately how many employees do you have? ... 32960 ... Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 25721\"\n   value: \"32,960\", unit: \"employees\", period \"\"\n\nThese are all different_quantity.\n\ndiffers_because: \"The firm does not report a Merrill-specific financial advisor headcount; figures are for GWIM (Merrill + Private Bank), or GWIM + Consumer Banking, or total employees of the investment adviser.\"\n\nActually, I should think about whether to include all three or just the most relevant. The instructions say items: one per figure. I'll include the relevant ones.\n\nLet me also reconsider: is there any direct Merrill advisor count? \n\nBAC-DECK-2025-investor-day#18: \"Leading advisor force 95% recognized by clients and industry\" - no number.\n\nActually, I don't think there's a direct Merrill advisor headcount. So different_quantity is right.\n\nLet me finalize the items. I'll include:\n1. \">15K Wealth Advisors\" (GWIM - Merrill + Private Bank)\n2. \"Total wealth advisors\" 18,916 / 19,273 (GWIM + Consumer Banking)\n3. Employees 32,960 / advisory functions 25,721 (ADV - all employees)\n\nFor item 2, I could split into two periods (2023 and 2022), but the instruction says \"a series is one item per period\". So I should have separate items for 2023 (18,916) and 2022 (19,273).\n\nActually, let me be thorough but not overdo it. The main point is the advisor headcount isn't disclosed for Merrill specifically.\n\nLet me write items:\n1. GWIM wealth advisors >15K (investor day 2025)\n2. Total wealth advisors 18,916 at 2023-12-31 (GWIM + Consumer Banking)\n3. Total wealth advisors 19,273 at 2022-12-31 (GWIM + Consumer Banking)\n4. Employees 32,960 (ADV, all employees)\n\nActually, maybe I should keep it simpler. The different_quantity items should focus on the closest to \"advisor headcount\".\n\nThe closest to \"advisor headcount\" are:\n- \">15K Wealth Advisors\" (GWIM)\n- \"Total wealth advisors\" 18,916/19,273\n\nThe ADV \"employees\" is a different measure but also relevant since it shows the firm reports employees, not advisors specifically. Actually, the ADV has \"25,721 perform investment advisory functions\" which is closer to advisors than total employees. But it's still \"employees\" not \"financial advisors.\"\n\nI'll include all as different_quantity items.\n\nLet me write the reason and differs_because.\n\nreason: \"Merrill does not report a Merrill-specific financial advisor headcount in these passages; the closest figures are for broader units (GWIM, or GWIM plus Consumer Banking) or total employees of the adviser.\"\n\ndiffers_because: \"Figures are for a wider unit (GWIM = Merrill + Private Bank; or GWIM + Consumer Banking) or a different measure (total employees / advisory-function employees of the investment adviser), not Merrill's own financial advisor count.\"\n\nNow let me write out the items properly with quotes.\n\nItem 1:\ntext: \"As presented at the 2025 investor day, Merrill and the Private Bank together (GWIM) had more than 15,000 wealth advisors.\"\nquote: \">15K Wealth Advisors\"\nvalue: \">15,000\"\nunit: \"wealth advisors\"\nperiod: \"\" (n/a, deck)\nscope: \"Merrill and Private Bank (GWIM)\"\ndefinition: \"\"\nchunk_ids: [\"BAC-DECK-2025-investor-day#9\"]\n\nItem 2:\ntext: \"At December 31, 2023, total wealth advisors (including Consumer Banking) were 18,916.\"\nquote: \"Advisors, at period end / Total wealth advisors (3) 18,916\"\nvalue: \"18,916\"\nunit: \"wealth advisors\"\nperiod: \"2023-12-31\"\nscope: \"all wealth management businesses in GWIM and Consumer Banking\"\ndefinition: \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\nchunk_ids: [\"BAC-SUPP-2023Q4#2\"]\n\nItem 3:\ntext: \"At December 31, 2022, total wealth advisors (including Consumer Banking) were 19,273.\"\nquote: \"Total wealth advisors (3) 18,916 19,273\"\nvalue: \"19,273\"\nunit: \"wealth advisors\"\nperiod: \"2022-12-31\"\nscope: \"all wealth management businesses in GWIM and Consumer Banking\"\ndefinition: \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\nchunk_ids: [\"BAC-SUPP-2023Q4#2\"]\n\nItem 4:\ntext: \"The investment adviser (Merrill) reported approximately 32,960 employees, of whom approximately 25,721 perform investment advisory functions.\"\nquote: \"Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 32960 ... Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 25721\"\nvalue: \"32,960\"\nunit: \"employees\"\nperiod: \"\"\nscope: \"\"\ndefinition: \"\"\nchunk_ids: [\"MER-ADV1A-2026#1\"]\n\nHmm, wait, for item 4, the \"employees\" is a different measure. But maybe I should focus. Actually the 25,721 \"perform investment advisory functions\" might be more relevant as an advisor proxy. But it's still \"employees\", not \"advisors.\"\n\nI'll include the total employees 32,960 as one item, and maybe mention 25,721 advisory functions. Actually, let me just include the key figure. I could add both 32,960 and 25,721 as separate items, but that might be overkill. Let me include both since they're distinct figures, but actually the 25,721 \"perform investment advisory functions\" is closer to advisors.\n\nLet me include two items from the ADV: total employees (32,960) and advisory-function employees (25,721). Actually, to keep it manageable, I'll include:\n- 32,960 employees (different measure)\n- 25,721 perform investment advisory functions (closer proxy)\n\nActually, I'll just include the most relevant ones. Let me include 4-5 items.\n\nActually, let me reconsider the whole thing. The core question: does Merrill disclose advisor headcount? No, not in these passages for Merrill specifically.\n\nI'll provide different_quantity with the items.\n\nLet me finalize. I'll include:\n1. >15K Wealth Advisors (GWIM)\n2. 18,916 total wealth advisors (2023, GWIM + Consumer Banking)\n3. 19,273 total wealth advisors (2022, GWIM + Consumer Banking)\n4. 32,960 employees (ADV)\n5. 25,721 perform investment advisory functions (ADV)\n\nThat's 5 items. Reasonable.\n\nLet me write the quotes accurately.\n\nFor item 1, quote: \">15K Wealth Advisors\" - but there's also \"Industry leading advisor force\" nearby. The quote is \">15K\" and \"Wealth Advisors\". Let me quote \">15K Wealth Advisors\".\n\nActually looking at the deck text: \">15K\\n\\nWealth Advisors\\n\\n$23B\\n\\nRevenue 1\". So \">15K Wealth Advisors\".\n\nFor item 2 and 3, quote: \"Advisors, at period end / Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\"\n\nFor item 4: \"Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 32960\"\n\nFor item 5: \"Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 25721\"\n\nGood.\n\nNow, the derivation field: operation \"\" and inputs [].\n\nLet me write the final answer.\n\nActually, let me reconsider whether \"not_found\" vs \"different_quantity\". The passages clearly show related quantities (wealth advisors for broader units, employees). So different_quantity is appropriate.\n\ndiffers_because: I'll write a clear statement.\n\nLet me also double check the chunk_ids I'm allowed to cite. The instruction says: \"Cite only the passages listed under Sub-question a2.MER and these passages of its search pool listed under another sub-question: BAC-TR-2026Q3#19, BAC-PR-2026-10-14-01#11, BAC-10K-2025#246, BAC-TR-2026Q1#26, BAC-DECK-2025-investor-day#18, BAC-TR-2025Q2#34, MER-PR-web-becoming-a-merrill-lynch-advisor#3, BAC-TR-2026Q2#63, BAC-SUPP-2023Q4#2, BAC-TR-2026Q2#21, BAC-DECK-2025-investor-day#8, BAC-TR-2025Q2#35, BAC-PR-2026-04-15-01#10, BAC-PR-2026-07-14-01#10, BAC-PR-2026-01-14-01#12, MER-PR-web-becoming-a-merrill-lynch-advisor#4, MER-PR-web-becoming-a-merrill-lynch-advisor#5.\"\n\nSo the allowed chunks include:\n- From a2.MER: MER-PR-web-becoming-a-merrill-lynch-advisor#2, BAC-TR-2025Q1#28, BAC-DECK-2025-investor-day#9, MER-PR-web-advisor-development-program#2, BAC-TR-2024Q4#30, MER-PR-2026-09-15-01#2, BAC-TR-2026Q2#20, MER-PR-web-becoming-a-merrill-lynch-advisor#0, BAC-TR-2025Q4#106, MER-PR-web-advisor-development-program#0, MER-PR-web-becoming-a-merrill-lynch-advisor#1, MER-PR-web-advisor-development-program#1, MER-PR-2026-09-15-01#3, MER-PR-2026-09-15-01#0, MER-ADV1A-2026#1\n\nWait, let me check which chunks are under a2.MER:\n- MER-PR-web-becoming-a-merrill-lynch-advisor#2\n- BAC-TR-2025Q1#28\n- BAC-DECK-2025-investor-day#9\n- MER-PR-web-advisor-development-program#2\n- BAC-TR-2024Q4#30\n- MER-PR-2026-09-15-01#2\n- BAC-TR-2026Q2#20\n- MER-PR-web-becoming-a-merrill-lynch-advisor#0\n- BAC-TR-2025Q4#106\n- MER-PR-web-advisor-development-program#0\n- MER-PR-web-becoming-a-merrill-lynch-advisor#1\n- MER-PR-web-advisor-development-program#1\n- MER-PR-2026-09-15-01#3\n- MER-PR-2026-09-15-01#0\n- MER-ADV1A-2026#1\n\nSo BAC-DECK-2025-investor-day#9 is under a2.MER. Good.\nBAC-SUPP-2023Q4#2 is in the search pool (listed in \"these passages of its search pool\"). Good.\nMER-ADV1A-2026#1 is under a2.MER. Good.\n\nAll my chunks are allowed. \n\nLet me finalize.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a2.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "At the 2025 investor day, Merrill and the Private Bank together (GWIM) were presented as having more than 15,000 wealth advisors.",
+            "quote": ">15K\n\nWealth Advisors",
+            "value": ">15,000",
+            "unit": "wealth advisors",
+            "period": "",
+            "scope": "Merrill and Private Bank (GWIM)",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-DECK-2025-investor-day#9"
+            ]
+          },
+          {
+            "text": "At December 31, 2023, total wealth advisors (including Consumer Banking) were 18,916.",
+            "quote": "Advisors, at period end\nTotal wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273",
+            "value": "18,916",
+            "unit": "wealth advisors",
+            "period": "2023-12-31",
+            "scope": "all wealth management businesses in GWIM and Consumer Banking",
+            "definition": "Includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "chunk_ids": [
+              "BAC-SUPP-2023Q4#2"
+            ]
+          },
+          {
+            "text": "At December 31, 2022, total wealth advisors (including Consumer Banking) were 19,273.",
+            "quote": "Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273",
+            "value": "19,273",
+            "unit": "wealth advisors",
+            "period": "2022-12-31",
+            "scope": "all wealth management businesses in GWIM and Consumer Banking",
+            "definition": "Includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "chunk_ids": [
+              "BAC-SUPP-2023Q4#2"
+            ]
+          },
+          {
+            "text": "The investment adviser (Merrill) reported approximately 32,960 employees.",
+            "quote": "Approximately how many employees do you have? Include full- and part-time employees but do not include any clerical workers. 32960",
+            "value": "32,960",
+            "unit": "employees",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MER-ADV1A-2026#1"
+            ]
+          },
+          {
+            "text": "Of those employees, approximately 25,721 perform investment advisory functions (including research).",
+            "quote": "Approximately how many of the employees reported in 5.A. perform investment advisory functions (including research)? 25721",
+            "value": "25,721",
+            "unit": "employees performing investment advisory functions",
+            "period": "",
+            "scope": "",
+            "definition": "",
+            "chunk_ids": [
+              "MER-ADV1A-2026#1"
+            ]
+          }
+        ],
+        "differs_because": "No passage states a Merrill-specific financial advisor headcount; the disclosed figures are for wider units (GWIM = Merrill plus Private Bank, or GWIM plus Consumer Banking) or are different measures (total employees, or employees performing investment advisory functions, of the investment adviser).",
+        "reason": "Merrill does not report its own financial advisor headcount in these passages; only related figures for broader units or a different employee measure are disclosed.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

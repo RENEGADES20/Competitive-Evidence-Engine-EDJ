@@ -1,0 +1,68 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "extract_version": "extract-v1.3",
+  "call_id": "remap.a3.EDJ",
+  "round": 2,
+  "entity": "EDJ",
+  "cells": [
+    "a3.EDJ"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "EDJ-10K-2025#58",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10K-2025#67",
+    "EDJ-10Q-2026Q2#36",
+    "EDJ-10K-2025#8",
+    "EDJ-10Q-2026Q1#29",
+    "EDJ-10Q-2025Q2#82",
+    "EDJ-10Q-2025Q2#34",
+    "EDJ-10Q-2025Q2#81",
+    "EDJ-10Q-2026Q1#62"
+  ],
+  "at": "2026-11-22T22:44:18.914994-06:00",
+  "prefix_group": null,
+  "prefix_role": "cell",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": null,
+  "request_chars": null,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4737,
+    "output_tokens": 1079,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 4737,
+    "reasoning_tokens": 945,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.66
+  },
+  "wall_s": 12.11,
+  "tokens_per_s": 89.1,
+  "ttft_s": 1.66,
+  "reasoning_content": "Let me analyze the sub-question: \"How each firm describes targeting or attracting mass-affluent clients\" for Edward Jones.\n\nLooking at the passages, none of them mention \"mass-affluent\" clients specifically. The passages talk about:\n- serving individual investors in the U.S. and Canada\n- helping tens of millions of investors achieve financial fulfillment\n- \"Attract and serve new client segments\"\n\nNone specifically mention mass-affluent. There's no mention of \"mass-affluent\" at all.\n\nThe closest is \"Attract and serve new client segments\" which is about new client segments generally, not specifically mass-affluent.\n\nSo this should be not_found - the passages say nothing about mass-affluent clients specifically.\n\nActually, let me consider whether \"individual investors\" or \"help tens of millions of investors\" could be a different_quantity. \"Individual investors\" is a broader group than \"mass-affluent clients.\" The question asks about \"mass-affluent clients\" - a specific wealth segment. \"Individual investors\" is broader.\n\n\"Attract and serve new client segments\" - this is about client segments but doesn't specifically say mass-affluent.\n\nI think the answer is not_found, since no passage specifically mentions mass-affluent clients. \"Individual investors\" is a broader category, but it's about who they serve generally, not about targeting mass-affluent specifically.\n\nActually, let me reconsider. Is \"individual investors\" a different_quantity? The question is \"How each firm describes targeting or attracting mass-affluent clients.\" \"Individual investors\" is a broader client category that could include mass-affluent but isn't specific to it.\n\nThe instruction says: \"different_quantity: no passage states the asked quantity, but one states a different, related quantity: a wider unit that contains the asked one...\"\n\n\"Individual investors\" is a wider unit that contains mass-affluent. But is it describing targeting/attracting? The passage says \"primarily serves individual investors\" - that's about who they serve, not specifically targeting mass-affluent.\n\nHmm, but actually the question is about \"targeting or attracting mass-affluent clients.\" The passage about \"Attract and serve new client segments\" is about attracting clients but doesn't specify mass-affluent.\n\nI think not_found is the most accurate, since there's no mention of mass-affluent specifically and the \"individual investors\" statement is a general description of who they serve, not a targeting description.\n\nActually, let me reconsider more carefully. The different_quantity label is for \"a different measure\" or \"a wider unit that contains the asked one.\" \"Individual investors\" is a wider unit. But the question isn't just about a quantity/measure - it's about how the firm describes targeting mass-affluent clients.\n\nThe passage \"primarily serves individual investors in the U.S. and Canada\" - this describes who they serve (individual investors), which is a wider category than mass-affluent. This could be a different_quantity.\n\nBut actually, I think the cleanest answer is not_found because nothing addresses mass-affluent specifically, and \"individual investors\" is too general to be a meaningful \"different quantity\" related to mass-affluent targeting.\n\nLet me think about what's most defensible. The question asks about mass-affluent clients. No passage mentions mass-affluent. The passages mention:\n1. \"individual investors\" - general\n2. \"tens of millions of investors\" - general\n3. \"Attract and serve new client segments\" - general\n\nNone of these specifically target mass-affluent. I'll go with not_found.\n\nActually, let me reconsider \"Attract and serve new client segments\" from chunk EDJ-10K-2025#8. This is about attracting clients generally/new segments. This is not specifically mass-affluent.\n\nI'll go with not_found, reason: no passage mentions mass-affluent clients specifically.\n\nWait, but should I consider \"individual investors\" as different_quantity? The instruction says a wider unit that contains the asked one. \"Individual investors\" contains \"mass-affluent clients.\" But \"mass-affluent\" is a wealth segment, not just any individual investor. \n\nI think not_found is most accurate here. The passages don't describe targeting mass-affluent clients.\n\nLet me write the cell.\n\nsubquestion_id: a3.EDJ\nlabel: not_found\nitems: []\ndiffers_because: \"\"\nreason: \"No passage mentions mass-affluent clients; passages only describe serving 'individual investors' generally and attracting 'new client segments' without specifying mass-affluent.\"\nderivation: operation \"\", inputs []",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a3.EDJ",
+        "label": "not_found",
+        "items": [],
+        "differs_because": "",
+        "reason": "No passage mentions mass-affluent clients or describes targeting them; passages only refer to serving 'individual investors' generally and aspiring to 'attract and serve new client segments' without specifying mass-affluent.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

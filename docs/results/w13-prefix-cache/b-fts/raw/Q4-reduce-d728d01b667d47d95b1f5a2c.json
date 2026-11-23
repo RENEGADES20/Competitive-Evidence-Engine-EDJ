@@ -1,0 +1,294 @@
+{
+  "question_id": "Q4",
+  "question": "What is Merrill's advisor growth strategy, and how has it changed?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "BAC-TR-2025Q2#34",
+    "BAC-TR-2025Q4#106",
+    "MER-PR-web-advisor-development-program#1",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-TR-2026Q2#63",
+    "BAC-TR-2026Q1#26",
+    "MER-TRADE-2026-11-16-AH-01#1",
+    "BAC-TR-2025Q1#28",
+    "BAC-TR-2026Q3#19",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9",
+    "MER-ADV1A-2026#1"
+  ],
+  "schema_fallback": [],
+  "enum_values": 70,
+  "at": "2026-11-22T23:01:43.826524-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 7929,
+    "output_tokens": 11797,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 6265,
+    "reasoning_tokens": 7742,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.06
+  },
+  "wall_s": 99.69,
+  "tokens_per_s": 118.34,
+  "ttft_s": 2.06,
+  "reasoning_content": "Let me work through this carefully. The question is about Merrill's advisor growth strategy and how it has changed.\n\nFirms: Merrill (MER) only.\n\nAspects a1-a7. I need to write claims for each aspect.\n\nLet me go aspect by aspect.\n\na1 [fact]: What is the advisor growth strategy?\n- Items 1-8 are fact cells. Each claim starts \"Merrill: \".\n\na2 [fact]: How does management describe?\n- Items 1-6.\n\na3 [fact]: What priorities?\n- Items 1-6.\n\na4: not found (code gap) - no claim, just gap (code already adds gaps, so I don't repeat them). Actually the gap is added by code. So for a4, nothing to write? The gaps added by code list a4.MER and a4. So I don't add gaps. But do I need to write anything? No - \"Cells with code gaps get no claim.\" So a4 has no claim.\n\nWait, but there's also the \"Gaps added by code\" section. I should not repeat them. So a4 no claim, no gap (already covered).\n\nActually, let me re-read: \"gap_with_adjacent: no cell holds the asked quantity, so write no claim for it.\" For a4, the cell is \"not found (code gap)\". So no claim.\n\na5: different quantity (adjacent only). Items 1-8 are adjacent items. Each goes in adjacent with differs_because.\n\nThe adjacent differs_because is given in a5.MER: \"No Merrill-only advisor headcount is reported...\"\n\nActually wait, each adjacent item needs a differs_because. The cell says: \"differs because 'No Merrill-only advisor headcount is reported: the 'Total wealth advisors' series covers all wealth management businesses in GWIM and Consumer Banking, the '>15K Wealth Advisors' figure covers Merrill and the Private Bank combined, and the ADV reports total employees and broker-dealer registered representatives rather than financial advisor headcount.'\"\n\nSo I write adjacent items with this differs_because (or a version of it). Each adjacent item carries part_id a5.MER.\n\nLet me write adjacent items for a5.MER items 1-8.\n\na6 [comparison]: needs exactly one comparison claim, part_id a6.\n\nBut wait - the aspect a6 is marked \"fact\" not \"comparison\" in the matrix? Let me look. Aspect a6 says \"How has the advisor growth strategy changed? -> needs exactly one comparison claim, part_id a6\".\n\nThe matrix shows a6.MER Merrill: fact with items 1-3. But the instruction says \"needs exactly one comparison claim, part_id a6\".\n\nHmm. Let me re-read the comparison aspects instruction:\n\n\"For each aspect marked comparison, write exactly one claim with that aspect's id as part_id that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why...\"\n\nSo a6 is marked comparison. I write one comparison claim with part_id a6.\n\nThe comparison: How has the advisor growth strategy changed? The facts: pulled back from veteran recruiting in 2017, returned in 2023 with more aggressive offer, recruited assets doubled YoY.\n\nIs the comparison valid? It's comparing the strategy over time. The facts from MER-TRADE-2026-11-16-AH-01#1 describe a change: pulled back in 2017, returned in 2023. This is a single source (trade press). \n\nActually, the comparison is about how the strategy changed. The evidence shows a change from 2017 (pulled back from veteran recruiting) to 2023 (returned to veteran recruiting with more aggressive offer). This is valid.\n\nI need to write one claim with part_id a6 that answers whether the comparison can be made and why, citing items.\n\nNote: trade press items - item 1 and 2 are \"fact\" cells (not marked adjacent-only), so they're claims. Item 3 also fact.\n\nLet me write the comparison claim for a6. The comparison: the strategy changed from largely pulling back from veteran broker recruiting (end of 2017) to returning to it (2023), with a more aggressive offer. This is based on a single trade-press source.\n\nActually, I need to be careful about what \"comparison\" claim means. Let me write: whether it can be made and why.\n\nThe comparison can be made: the trade press reports the change. So valid.\n\nLet me draft the a6 claim:\n\n\"Merrill: The advisor growth strategy changed: according to trade press, the firm largely pulled back from veteran broker recruiting at the end of 2017, then returned to it after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023, restoring a focus on hiring and a more aggressive offer (MER-TRADE-2026-11-16-AH-01#1). This comparison of the change in strategy is valid on the trade-press evidence, which names both the earlier pullback (2017) and the later return (2023); no quantitative series spans the two periods.\"\n\nActually, I should keep it focused. The comparison claim answers whether it can be made and why.\n\nLet me write more carefully following the rules.\n\nAlso need to determine: is it a \"same_basis\" comparison? The instruction says \"Compare or rank figures across firms only when the aspect is marked same_basis\". This is a single-firm comparison over time, not across firms. So it's about comparing the strategy at different times. The basis is consistent (veteran broker recruiting). I think it's valid.\n\nLet me now write everything.\n\na7 [recency]: every item needs a why-line. Items 1-3.\n\nItem 1: trade press, pulled back 2017, returned 2023. Why-line from context or related.\n\nItem 1 context: \"Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.\" This is a consequence/reason.\n\nWhy it might matter: from context, the recruited assets doubled YoY as the firm returned to veteran recruiting.\n\nRelated lines available: BAC-TR-2026Q2#63 (Borthwick says management driving growth by continuing to grow sales force), BAC-SUPP-2023Q4#2 (Total wealth advisors), BAC-TR-2025Q1#28 (cost of hiring to add experienced advisors).\n\nItem 2: recruited assets doubled YoY. Context mentions specific advisor additions. Related: BAC-TR-2025Q4#106, BAC-DECK-2025-investor-day#9, BAC-SUPP-2023Q4#2.\n\nItem 3: management picking up experienced recruiting but not enormous part; training program primary. Context: Borthwick quote. Related: BAC-TR-2025Q2#34, BAC-SUPP-2023Q4#2, BAC-TR-2025Q1#28.\n\nFor the why-line, I use either the item's own passage context OR related lines, and add that chunk id to chunk_ids.\n\nLet me write each item with why-line.\n\nNow, ordering: with time window? The question doesn't specify a time window explicitly. But \"how has it changed\" implies recency. Actually the question has no explicit time window. Let me check: \"How have recruiting and training programs changed?\" - a7 is recency.\n\nThe \"Recency and order\" instruction: \"For every item of an aspect marked recency... end the claim with 'Why it might matter'.\"\n\nAnd ordering: \"With a time window, order claims and adjacent items newest first across the whole answer.\" No time window given, so I order aspect by aspect.\n\nLet me now write all claims.\n\nFor each claim I need text, chunk_ids, part_id.\n\nLet me start.\n\na1.MER claims (items 1-8):\n\nItem 1: Merrill: Merrill's advisor growth strategy centers on adding financial advisors to the sales force through its extensive training program and through experienced hiring of advisors, with about one-third of net new households added by newly trained advisors. Period 2025-06-30, scope Merrill and the Private Bank. cite BAC-TR-2025Q2#34.\n\nItem 2: Management describes experienced advisor recruiting as \"not an enormous part\" of the strategy... cite BAC-TR-2025Q4#106, period 2025-12-31.\n\nItem 3: Merrill's Advisor Development Program... cite MER-PR-web-advisor-development-program#1.\n\nItem 4: Merrill states foundational belief... cite BAC-DECK-2025-investor-day#8.\n\nItem 5: objective to keep growing sales force, attrition near historic lows. period 2026-06-30. cite BAC-TR-2026Q2#63.\n\nItem 6: continues to attract talent... period 2026-03-31. cite BAC-TR-2026Q1#26.\n\nItem 7: returned to veteran recruiting after 2017 pullback... cite MER-TRADE-2026-11-16-AH-01#1. This is trade press - it's a fact cell, so claim attributed \"trade press reports\".\n\nItem 8: incurs cost of hiring to add experienced advisors. period 2025-03-31, scope Merrill and Private Bank. cite BAC-TR-2025Q1#28.\n\na2.MER claims (items 1-6):\n\nItem 1: CFO Alastair Borthwick describes... cite BAC-TR-2025Q4#106.\n\nItem 2: Borthwick says management... cite BAC-TR-2026Q2#63.\n\nItem 3: Borthwick says Merrill continues to add... cite BAC-TR-2025Q2#34.\n\nItem 4: Borthwick says... cite BAC-TR-2026Q1#26.\n\nItem 5: Merrill states foundational belief... cite BAC-DECK-2025-investor-day#8.\n\nItem 6: Merrill executives described return to veteran broker recruiting... cite MER-TRADE-2026-11-16-AH-01#1.\n\na3.MER claims (items 1-6):\n\nItem 1: priority keep growing sales force... cite BAC-TR-2026Q2#63.\n\nItem 2: core training program... cite BAC-TR-2025Q4#106.\n\nItem 3: continues to add advisors... cite BAC-TR-2025Q2#34.\n\nItem 4: driving productivity higher... cite BAC-TR-2026Q1#26.\n\nItem 5: advisor productivity, disciplined pricing, digital engagement and AI tools... cite BAC-TR-2026Q3#19.\n\nItem 6: invested in technology and hiring... cite BAC-TR-2025Q1#28.\n\na4: nothing (code gap).\n\na5.MER adjacent (items 1-8): each with differs_because.\n\na6: one comparison claim.\n\na7.MER claims (items 1-3) with why-lines.\n\nLet me write out each.\n\nNow for the why-lines in a7:\n\nItem 1 (trade press, pulled back 2017, returned 2023). Why-line: from context \"recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.\" That's a consequence the source names. So: \"Why it might matter: the same trade-press passage reports that Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.\" Add MER-TRADE-2026-11-16-AH-01#1 (already cited). Actually the context is from the same source chunk. I add that chunk id (already there). Hmm, \"then add that passage's chunk id to the claim's chunk_ids.\" The context is from the same passage (MER-TRADE...). It's already cited. So chunk_ids stays [MER-TRADE-2026-11-16-AH-01#1].\n\nActually, I could use the related line too. Let me use the context (consequence). That's fine.\n\nItem 2 (recruited assets doubled YoY). Why-line: context mentions specific advisor additions (\"added an advisor managing $205 million at Morgan Stanley... another overseeing $150 million at Edward D. Jones...\"). Or related. Let me use context: the trade-press passage also reports the firm added advisors managing $205 million at Morgan Stanley and $150 million at Edward D. Jones, and returned to veteran broker recruiting. Hmm.\n\nActually let me use a related line. Related lines for item 2: BAC-TR-2025Q4#106 (management describes experienced recruiting as not enormous part), BAC-DECK-2025-investor-day#9 (>15K wealth advisors), BAC-SUPP-2023Q4#2 (Total wealth advisors 19,273).\n\nI'll use context: \"recruited assets doubled year-over-year as the firm returned to veteran broker recruiting, after pulling back in 2017\" - that's restating the item. Need something else.\n\nLet me use related: BAC-TR-2025Q4#106 - management describes experienced advisor recruiting as not an enormous part of the strategy, with the core being a training program. That's a relevant contrast.\n\nActually the why-line should be \"one sentence on why it might matter\". Let me pick: \"Why it might matter: management separately described experienced advisor recruiting as 'not an enormous part' of the strategy, with the core being a training program, indicating the doubling of recruited assets sits alongside a training-centric approach.\" Add BAC-TR-2025Q4#106.\n\nHmm, that's a bit interpretive but it's drawing from the related line. Let me be careful - I should state what the related line says.\n\nLet me phrase: \"Why it might matter: management elsewhere said experienced-advisor recruiting is 'not an enormous part' of the strategy, with the core a training program, so the doubling of recruited assets reflects one component of the strategy.\" Add BAC-TR-2025Q4#106.\n\nActually, simpler. Let me use the context line for item 2. The context is: \"... UBS, and it this month added an advisor managing $205 million at Morgan Stanley in California and another overseeing $150 million at Edward D. Jones & Co. in Texas, according to the spokesperson. Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year...\"\n\nSo why it might matter: the passage reports the firm this month added advisors managing $205 million at Morgan Stanley and $150 million at Edward D. Jones, showing the veteran recruiting in action. That's a consequence/example the source names.\n\nI'll write: \"Why it might matter: the same passage reports Merrill this month added an advisor managing $205 million at Morgan Stanley and another overseeing $150 million at Edward D. Jones & Co., examples of the veteran recruiting driving the doubled recruited assets.\" Add MER-TRADE-2026-11-16-AH-01#1 (already cited).\n\nItem 3 (management picking up experienced recruiting but not enormous; training program primary). period 2025-12-31. Context: Borthwick quote about Merrill FA seeing value of franchise. Related: BAC-TR-2025Q2#34, BAC-SUPP-2023Q4#2, BAC-TR-2025Q1#28.\n\nWhy-line from context: \"the same passage has Borthwick noting the Merrill FA see the value of our franchise and how they can help their own clients over a long period of time, as the reason for picking up experienced-advisor recruiting.\" Add BAC-TR-2025Q4#106 (already cited).\n\nOr use related: BAC-TR-2025Q2#34 - about one-third of net new households added by newly trained advisors. That's relevant: shows training program impact.\n\nLet me use related BAC-TR-2025Q2#34: \"Why it might matter: in 2Q25 Merrill reported approximately one-third of net new households were added by newly trained advisors, reflecting the training program that management calls the core of the strategy.\" Add BAC-TR-2025Q2#34.\n\nThat's good - it adds a new chunk id.\n\nLet me finalize.\n\nNow the a6 comparison claim.\n\n\"How has the advisor growth strategy changed?\" \n\nComparison claim: valid. The change is from pulling back from veteran broker recruiting (end of 2017) to returning to it (2023) with a more aggressive offer.\n\nWrite: \"Merrill: The change in advisor growth strategy can be identified on this evidence: according to trade press, Merrill largely pulled back from veteran broker recruiting at the end of 2017 and then returned to it after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023, restoring a focus on hiring and a more aggressive offer; the same passage reports recruited assets to the wealth unit doubled year-over-year with the return to veteran recruiting. The comparison is valid for this single qualitative change (2017 pullback versus 2023 return), as both points come from the same trade-press passage, but no quantitative series spans the two periods.\"\n\nCite MER-TRADE-2026-11-16-AH-01#1.\n\npart_id a6.\n\nNow let me also make sure about attribution and dates. Every claim should date from source line.\n\nFor a1 items, I need to include dates/periods.\n\nLet me write final claims carefully.\n\nAlso note: for a1 item 7 and a2 item 6 and a6 items - these are trade press. \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\"\n\nSo item 7 a1: \"trade press reports Merrill returned to veteran (experienced) broker recruiting after largely pulling back at end of 2017...\"\n\nItem 6 a2: attributed to Merrill executives but source is trade press. The cell says \"Merrill executives described a return to veteran broker recruiting...\" - the quote. Actually the cell says \"Merrill executives described a return to veteran broker recruiting after pulling back in 2017\". This is trade-press reporting. Hmm. The cell doesn't mark it as adjacent-only, so it's a claim. But it's from MER-TRADE source. Should attribute as trade press reports.\n\nActually a2 item 6 quote is the same \"The firm largely pulled back...\" quote. The cell description says \"Merrill executives described a return to veteran broker recruiting after pulling back in 2017\". I'll attribute as trade press reports Merrill executives described...\n\nLet me write.\n\nNow, for a5 adjacent items, I need to write them as adjacent with differs_because.\n\nEach adjacent item text + differs_because + part_id a5.MER + chunk_ids.\n\nThe differs_because from the cell: \"No Merrill-only advisor headcount is reported: the 'Total wealth advisors' series covers all wealth management businesses in GWIM and Consumer Banking, the '>15K Wealth Advisors' figure covers Merrill and the Private Bank combined, and the ADV reports total employees and broker-dealer registered representatives rather than financial advisor headcount.\"\n\nI'll apply a suitable version to each. For items 1-5 (Total wealth advisors), differs_because \"The 'Total wealth advisors' series covers all wealth management businesses in GWIM and Consumer Banking, not Merrill alone.\" For item 6 (>15K), \"covers Merrill and the Private Bank combined, not Merrill alone.\" For items 7-8 (ADV), \"ADV reports total employees / registered representatives rather than financial advisor headcount.\"\n\nActually the instruction says each adjacent item carries differs_because. I can use the full differs_because string or a tailored one. Let me use the full one for clarity, or tailored. The standard is \"differs_because\" from the cell. Let me use the full cell-level differs_because for each, or tailor. I'll tailor slightly but keep meaning.\n\nActually, simplest and safest: use the full differs_because string from the cell for each item. But it's a bit redundant. Let me tailor minimally while preserving meaning.\n\nLet me write each adjacent item.\n\nItem 1: \"Merrill: Bank of America reported 'Total wealth advisors' of 19,273 at period end (fourth quarter 2022), including advisors across all wealth management businesses in GWIM and Consumer Banking.\" differs_because: \"This is a Bank of America total, not Merrill: the series covers all wealth management businesses in GWIM and Consumer Banking, so it is not Merrill's advisor headcount.\"\n\nActually, I'll use the full cell differs_because for consistency. But the cell's differs_because is a general statement covering all items. Let me use a tailored version per item group.\n\nI'll do:\n- Items 1-5: differs_because \"The 'Total wealth advisors' series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount.\"\n- Item 6: differs_because \"The '>15K Wealth Advisors' figure covers Merrill and the Private Bank combined, not Merrill alone.\"\n- Item 7: differs_because \"The Form ADV reports total employees (full- and part-time, excluding clerical), not financial advisor headcount.\"\n- Item 8: differs_because \"The Form ADV reports broker-dealer registered representatives, not financial advisor headcount.\"\n\nThese preserve the meaning of the cell's differs_because.\n\nNow let me write all of this out.\n\nFor a5, since it's \"different quantity (adjacent only)\", there's no claim - only adjacent items. Correct.\n\nLet me also double check: the part_id enum includes \"a5.MER\" and \"a6\", \"a7.MER\" etc. Yes.\n\nAlso the chunk_ids enum: includes all source ids listed.\n\nNow let me carefully write the full answer.\n\nLet me also handle dating. For each claim, date from source line.\n\nSource dates:\n- BAC-TR-2025Q2#34: period 2025-06-30, published 2025-07-16\n- BAC-TR-2025Q4#106: period 2025-12-31, published 2026-01-14\n- MER-PR-web-advisor-development-program#1: page content as of 2026-11-03\n- BAC-DECK-2025-investor-day#8: published 2025-11-05\n- BAC-TR-2026Q2#63: period 2026-06-30, published 2026-07-14\n- BAC-TR-2026Q1#26: period 2026-03-31, published 2026-04-15\n- MER-TRADE-2026-11-16-AH-01#1: published 2026-11-16\n- BAC-TR-2025Q1#28: period 2025-03-31, published 2025-04-15\n- BAC-TR-2026Q3#19: period 2026-09-30, published 2026-10-14\n- BAC-SUPP-2023Q4#2: period 2023-12-31, published 2024-01-12\n- BAC-DECK-2025-investor-day#9: published 2025-11-05\n- MER-ADV1A-2026#1: published 2026-11-11\n\nNow writing.\n\nFor the a1 items, I'll write concise claims with period and attribution.\n\nLet me write final answer JSON.\n\nI need to be careful with the quote marks - I should include quotes verbatim where the cell has a \"quote\" and not marked \"quote not verbatim\". All quotes appear verbatim.\n\nLet me write the claims now.\n\nFor a1:\n\n1. Merrill: Merrill's advisor growth strategy centers on adding financial advisors to the sales force through its extensive training program and through experienced hiring of advisors, with about one-third of net new households added by newly trained advisors. The 2Q25 earnings call (period ended June 30, 2025), speaking of Merrill and the Private Bank, states: \"We also continued to add financial advisors to the sales force in Merrill and the Private Bank through our extensive training program and experienced hiring of advisors. Approximately one-third of net new households in Q2 were added by our newly trained advisors.\"\n\nchunk BAC-TR-2025Q2#34, part a1.MER.\n\n2. Merrill: On the 4Q25 earnings call (period ended December 31, 2025), management describes experienced advisor recruiting as \"not an enormous part\" of the strategy, with the core being a training program that trains people in wealth management at Bank of America and Merrill to keep driving net new flows.\n\n3. Merrill: Merrill's Advisor Development Program progresses advisors through roles\u2014ADP Client Associate, ADP Financial Solutions Advisor, then ADP Financial Advisor\u2014until they graduate to Merrill Core Advisor (company web page, content as of November 3, 2026).\n\n4. Merrill: Merrill states a foundational belief that having the best advisors enables it to deliver exceptional client outcomes (investor day deck, published November 5, 2025).\n\n5. Merrill: Management's stated objective is to keep growing the sales force, noting advisor attrition is now at near historic lows. The 2Q26 earnings call (period ended June 30, 2026) states: \"what Lindsay and Eric are trying to drive there, what Katy is trying to drive there is just keep growing the sales force. Well, adviser attrition is now at near historic lows.\"\n\n6. Merrill: Merrill continues to attract talent across both new and experienced advisers and is driving productivity higher on both newer and existing advisers. The 1Q26 earnings call (period ended March 31, 2026) states: \"We're driving productivity higher on both newer and existing members of our financial advisers team, and we continue to attract talent across both new and experienced advisers.\"\n\n7. Merrill: Trade press (November 16, 2026) reports Merrill returned to veteran (experienced) broker recruiting after largely pulling back from it at the end of 2017, restoring a focus on hiring with a more aggressive offer under Co-Presidents who took over in 2023.\n\n8. Merrill: Merrill incurs the cost of hiring to add experienced advisors to the platform in Merrill and the Private Bank. The 1Q25 earnings call (period ended March 31, 2025), speaking of Merrill and the Private Bank, states: \"investment in technology and the cost of hiring to add experienced advisors to the platform in Merrill and the private bank.\"\n\na2:\n\n1. Merrill: CFO Alastair Borthwick describes the advisor growth strategy as centered on a training program, with experienced-advisor recruiting as a smaller component (4Q25 earnings call, period ended December 31, 2025): \"we're picking up the recruiting of experienced advisors. That isn't an enormous part of our strategy, but it's a training program so that we're training people in wealth management, Bank of America, and Merrill.\"\n\n2. Merrill: Borthwick says management (Lindsay, Eric, Katy) is driving growth by continuing to grow the sales force (2Q26 earnings call, period ended June 30, 2026).\n\n3. Merrill: Borthwick says Merrill continues to add financial advisors to the sales force through its extensive training program and experienced hiring of advisors (2Q25 earnings call, period ended June 30, 2025).\n\n4. Merrill: Borthwick says Merrill attracts talent across both new and experienced advisers while driving productivity higher on newer and existing team members (1Q26 earnings call, period ended March 31, 2026).\n\n5. Merrill: Merrill states a foundational belief that having the best advisors enables the firm to deliver exceptional client outcomes (investor day deck, published November 5, 2025).\n\n6. Merrill: Trade press (November 16, 2026) reports Merrill executives described a return to veteran broker recruiting after pulling back in 2017, with Co-Presidents Hans and Schimpf restoring a focus on hiring and a more aggressive offer.\n\na3:\n\n1. Merrill: Merrill management's stated priority is to keep growing the sales force, with adviser attrition now at near historic lows (2Q26 earnings call, period ended June 30, 2026).\n\n2. Merrill: Management describes the core of its advisor strategy as a training program in wealth management (rather than heavy reliance on experienced recruiting), driven to improve net new flows (4Q25 earnings call, period ended December 31, 2025).\n\n3. Merrill: Management states it continues to add financial advisors through its extensive training program and experienced hiring of advisors, in Merrill and the Private Bank (2Q25 earnings call, period ended June 30, 2025).\n\n4. Merrill: Management states it is driving productivity higher on both newer and existing financial advisors and continuing to attract talent across both new and experienced advisers (1Q26 earnings call, period ended March 31, 2026).\n\n5. Merrill: Management highlights advisor productivity, along with disciplined pricing, digital engagement and AI tools, as expanding capacity to deliver personalized advice at scale (3Q26 earnings call, period ended September 30, 2026).\n\n6. Merrill: Management invested in technology and in hiring to add experienced advisors to the Merrill and Private Bank platform (1Q25 earnings call, period ended March 31, 2025).\n\na4: no claim, no gap (code gap).\n\na5: adjacent items.\n\na6: one comparison claim.\n\na7: items with why-lines.\n\nLet me write the a6 claim.\n\na6: \"Merrill: The advisor growth strategy changed from a pullback from veteran broker recruiting to a return to it: trade press (November 16, 2026) reports the firm largely pulled back from veteran broker recruiting at the end of 2017, then returned after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023, restoring a focus on hiring and a more aggressive offer, with recruited assets to the wealth unit doubling year-over-year. This comparison of the change is valid on this evidence because both the 2017 pullback and the 2023 return come from the same trade-press passage and describe the same recruiting dimension; however, it rests on a single trade-press source and no quantitative recruiting series spans the two periods.\"\n\npart_id a6, chunk MER-TRADE-2026-11-16-AH-01#1.\n\nNow a7 items:\n\nItem 1: Merrill: According to trade press (November 16, 2026), Merrill largely pulled back from veteran broker recruiting at the end of 2017, but returned to it after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023 and restored a focus on hiring and a more aggressive offer. Why it might matter: the same passage reports that Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.\n\nchunk MER-TRADE-2026-11-16-AH-01#1, part a7.MER.\n\nItem 2: Merrill: Merrill executives in October 2026 stated that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting (trade press, November 16, 2026). Why it might matter: the same passage reports Merrill this month added an advisor managing $205 million at Morgan Stanley in California and another overseeing $150 million at Edward D. Jones & Co. in Texas, examples of the veteran recruiting driving the growth.\n\nchunk MER-TRADE-2026-11-16-AH-01#1, part a7.MER.\n\nItem 3: Merrill: Management describes the firm as picking up recruiting of experienced advisors, but says that is not an enormous part of its strategy; the primary approach is a training program that trains people in wealth management at Bank of America and Merrill (4Q25 earnings call, period ended December 31, 2025). Why it might matter: in 2Q25 Merrill reported approximately one-third of net new households were added by newly trained advisors, reflecting the training program management calls the core of the strategy.\n\nchunks MER... no, BAC-TR-2025Q4#106 and BAC-TR-2025Q2#34. part a7.MER.\n\nWait, item 3 cite is BAC-TR-2025Q4#106, and the why-line adds BAC-TR-2025Q2#34.\n\nLet me finalize all chunk_ids.\n\nNow let me also reconsider the \"order\" - no time window specified in question, so aspect by aspect order, firms in order (just Merrill).\n\nActually, wait - is there a time window? The question \"How has it changed?\" and \"How have recruiting and training programs changed?\" implies recent. But the code didn't mark a time window. The \"Behavior\" says \"Why: 1a: the asked quantity in a1.MER, a2.MER, a3.MER, a7.MER\". No time window mentioned. So no reordering needed.\n\nNow, the a5 adjacent items - do they need ordering? No time window. Just list them.\n\nLet me now also verify: for a5, should I write a claim at all? No - \"different quantity (adjacent only)\". So only adjacent items. And there's a code gap for a5.MER and a5, which I don't repeat.\n\nLet me finalize everything.\n\nActually, let me reconsider the a6 comparison. The instruction says comparison claims should state \"whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\nMy claim says \"valid on this evidence because both the 2017 pullback and the 2023 return come from the same trade-press passage and describe the same recruiting dimension; however, it rests on a single trade-press source and no quantitative recruiting series spans the two periods.\"\n\nThat's fine.\n\nNow, let me write the JSON.\n\nI'll include answerable: true, behavior: \"answer\".\n\nLet me count chunk_ids carefully.\n\nFor the why-line in item 1 of a7, I'm using the context (same passage), so chunk_ids stays [MER-TRADE-2026-11-16-AH-01#1].\n\nFor item 2, context same passage, chunk [MER-TRADE-2026-11-16-AH-01#1].\n\nFor item 3, why-line uses related BAC-TR-2025Q2#34, so chunk_ids = [BAC-TR-2025Q4#106, BAC-TR-2025Q2#34].\n\nNow write final.\n\nLet me make sure quotes are verbatim. I'll include the quotes where cells provide them.\n\nActually, I don't need to include full quotes in every claim; I can paraphrase and mention. But the instruction says cite chunk ids and date. Quotes are optional to include. I'll include key quotes where helpful.\n\nLet me write it all out now in the submit_answer tool.\n\nLet me be concise but complete.\n\nFor gaps, I should NOT repeat code gaps. The only gaps added by code are a4.MER, a4, a5.MER, a5. I don't add any new gaps (no need). So gaps = [].\n\nActually wait - should I add a gap of my own? \"Add a gap of your own only for something those gaps do not name.\" I don't think I need any new gap. So gaps = [].\n\nLet me finalize.\n\nFor adjacent items, I need text, chunk_ids, part_id, differs_because.\n\nLet me write all 8 adjacent items.\n\nNow, one more consideration: the a5.MER adjacent items - the \"period\" for item 1 is 2022-12-31, etc. These are \"Total wealth advisors\" figures. I'll include periods.\n\nItem 6: >15K Wealth Advisors, scope Merrill and Private Bank, no period (deck published 2025-11-05).\n\nItem 7: 32,960 employees.\n\nItem 8: 26,599 registered representatives.\n\nLet me write.\n\nFinal answer construction.\n\nI'll write the claims array, adjacent array, gaps empty array.\n\nLet me carefully write each text.\n\nDone thinking; now produce the tool call.",
+  "first_claim_s": 75.94,
+  "stream_items": {
+    "first_claim_s": 75.94,
+    "shown": 24,
+    "held": 8
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Merrill: Merrill's advisor growth strategy centers on adding financial advisors to the sales force through its extensive training program and through experienced hiring of advisors, with about one-third of net new households added by newly trained advisors. The 2Q25 earnings call (period ended June 30, 2025), speaking of Merrill and the Private Bank, states: \"We also continued to add financial advisors to the sales force in Merrill and the Private Bank through our extensive training program and experienced hiring of advisors. Approximately one-third of net new households in Q2 were added by our newly trained advisors.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q2#34"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: On the 4Q25 earnings call (period ended December 31, 2025), management describes experienced advisor recruiting as \"not an enormous part\" of the strategy, with the core being a training program that trains people in wealth management at Bank of America and Merrill to keep driving net new flows: \"we're picking up the recruiting of experienced advisors. That isn't an enormous part of our strategy, but it's a training program so that we're training people in wealth management, Bank of America, and Merrill, and that's ultimately what we believe we can just keep driving in order to improve the net new flows.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q4#106"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Merrill's Advisor Development Program progresses advisors through roles\u2014ADP Client Associate, ADP Financial Solutions Advisor, then ADP Financial Advisor\u2014until they graduate to Merrill Core Advisor (company web page, content as of November 3, 2026): \"After mastering key objectives and pre-determined targets, progress through three roles until you graduate to Merrill Core Advisor.\"",
+        "chunk_ids": [
+          "MER-PR-web-advisor-development-program#1"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Merrill states a foundational belief that having the best advisors enables it to deliver exceptional client outcomes (investor day deck, published November 5, 2025): \"having the best advisors enables us to deliver exceptional client outcomes.\"",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#8"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Management's stated objective is to keep growing the sales force, noting advisor attrition is now at near historic lows. The 2Q26 earnings call (period ended June 30, 2026) states: \"what Lindsay and Eric are trying to drive there, what Katy is trying to drive there is just keep growing the sales force. Well, adviser attrition is now at near historic lows.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Merrill continues to attract talent across both new and experienced advisers and is driving productivity higher on both newer and existing advisers. The 1Q26 earnings call (period ended March 31, 2026) states: \"We're driving productivity higher on both newer and existing members of our financial advisers team, and we continue to attract talent across both new and experienced advisers.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q1#26"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Trade press (November 16, 2026) reports Merrill returned to veteran (experienced) broker recruiting after largely pulling back from it at the end of 2017, restoring a focus on hiring with a more aggressive offer under Co-Presidents who took over in 2023: \"The firm largely pulled back from veteran broker recruiting at the end of 2017 but returned after Co-Presidents Lindsay Hans and Eric Schimpf, who took over in 2023, restored a focus on hiring and a more aggressive offer.\"",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: Merrill incurs the cost of hiring to add experienced advisors to the platform in Merrill and the Private Bank. The 1Q25 earnings call (period ended March 31, 2025), speaking of Merrill and the Private Bank, states: \"investment in technology and the cost of hiring to add experienced advisors to the platform in Merrill and the private bank.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q1#28"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill: CFO Alastair Borthwick describes the advisor growth strategy as centered on a training program, with experienced-advisor recruiting as a smaller component (4Q25 earnings call, period ended December 31, 2025): \"we're picking up the recruiting of experienced advisors. That isn't an enormous part of our strategy, but it's a training program so that we're training people in wealth management, Bank of America, and Merrill.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q4#106"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Borthwick says management (Lindsay, Eric, Katy) is driving growth by continuing to grow the sales force (2Q26 earnings call, period ended June 30, 2026): \"what Lindsay and Eric are trying to drive there, what Katy is trying to drive there is just keep growing the sales force.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Borthwick says Merrill continues to add financial advisors to the sales force through its extensive training program and experienced hiring of advisors (2Q25 earnings call, period ended June 30, 2025): \"We also continued to add financial advisors to the sales force in Merrill and the Private Bank through our extensive training program and experienced hiring of advisors.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q2#34"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Borthwick says Merrill attracts talent across both new and experienced advisers while driving productivity higher on newer and existing team members (1Q26 earnings call, period ended March 31, 2026): \"we continue to attract talent across both new and experienced advisers.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q1#26"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill states a foundational belief that having the best advisors enables the firm to deliver exceptional client outcomes (investor day deck, published November 5, 2025): \"having the best advisors enables us to deliver exceptional client outcomes.\"",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#8"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Trade press (November 16, 2026) reports Merrill executives described a return to veteran broker recruiting after pulling back in 2017, with Co-Presidents Hans and Schimpf restoring a focus on hiring and a more aggressive offer: \"The firm largely pulled back from veteran broker recruiting at the end of 2017 but returned after Co-Presidents Lindsay Hans and Eric Schimpf, who took over in 2023, restored a focus on hiring and a more aggressive offer.\"",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill management's stated priority is to keep growing the sales force, with adviser attrition now at near historic lows (2Q26 earnings call, period ended June 30, 2026): \"what Lindsay and Eric are trying to drive there, what Katy is trying to drive there is just keep growing the sales force. Well, adviser attrition is now at near historic lows.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Management describes the core of its advisor strategy as a training program in wealth management (rather than heavy reliance on experienced recruiting), driven to improve net new flows (4Q25 earnings call, period ended December 31, 2025): \"That isn't an enormous part of our strategy, but it's a training program so that we're training people in wealth management, Bank of America, and Merrill, and that's ultimately what we believe we can just keep driving in order to improve the net new flows.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q4#106"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Management states it continues to add financial advisors through its extensive training program and experienced hiring of advisors, in Merrill and the Private Bank (2Q25 earnings call, period ended June 30, 2025): \"We also continued to add financial advisors to the sales force in Merrill and the Private Bank through our extensive training program and experienced hiring of advisors.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q2#34"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Management states it is driving productivity higher on both newer and existing financial advisors and continuing to attract talent across both new and experienced advisers (1Q26 earnings call, period ended March 31, 2026): \"We're driving productivity higher on both newer and existing members of our financial advisers team, and we continue to attract talent across both new and experienced advisers.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q1#26"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Management highlights advisor productivity, along with disciplined pricing, digital engagement and AI tools, as expanding capacity to deliver personalized advice at scale (3Q26 earnings call, period ended September 30, 2026): \"Advisor productivity, disciplined pricing, digital engagement and AI tools continue to expand our capacity to deliver personalized advice at scale.\"",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Management invested in technology and in hiring to add experienced advisors to the Merrill and Private Bank platform (1Q25 earnings call, period ended March 31, 2025): \"investment in technology and the cost of hiring to add experienced advisors to the platform in Merrill and the private bank.\"",
+        "chunk_ids": [
+          "BAC-TR-2025Q1#28"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: The advisor growth strategy changed from a pullback from veteran broker recruiting to a return to it. Trade press (November 16, 2026) reports the firm largely pulled back from veteran broker recruiting at the end of 2017, then returned after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023, restoring a focus on hiring and a more aggressive offer, with recruited assets to the wealth unit doubling year-over-year. This comparison of the change is valid on this evidence because both the 2017 pullback and the 2023 return come from the same trade-press passage and describe the same recruiting dimension; however, it rests on a single trade-press source and no quantitative recruiting series spans the two periods.",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a6"
+      },
+      {
+        "text": "Merrill: According to trade press (November 16, 2026), Merrill largely pulled back from veteran broker recruiting at the end of 2017, but returned to it after Co-Presidents Lindsay Hans and Eric Schimpf took over in 2023 and restored a focus on hiring and a more aggressive offer: \"The firm largely pulled back from veteran broker recruiting at the end of 2017 but returned after Co-Presidents Lindsay Hans and Eric Schimpf, who took over in 2023, restored a focus on hiring and a more aggressive offer.\" Why it might matter: the same passage reports that Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a7.MER"
+      },
+      {
+        "text": "Merrill: Merrill executives in October 2026 stated that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting (trade press, November 16, 2026): \"Merrill executives in October touted that recruited assets to the wealth unit doubled year-over-year as the firm has returned to veteran broker recruiting.\" Why it might matter: the same passage reports Merrill this month added an advisor managing $205 million at Morgan Stanley in California and another overseeing $150 million at Edward D. Jones & Co. in Texas, examples of the veteran recruiting driving the growth.",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a7.MER"
+      },
+      {
+        "text": "Merrill: Management describes the firm as picking up recruiting of experienced advisors, but says that is not an enormous part of its strategy; the primary approach is a training program that trains people in wealth management at Bank of America and Merrill (4Q25 earnings call, period ended December 31, 2025): \"we're picking up the recruiting of experienced advisors. That isn't an enormous part of our strategy, but it's a training program so that we're training people in wealth management, Bank of America, and Merrill.\" Why it might matter: in 2Q25 Merrill reported approximately one-third of net new households were added by newly trained advisors, reflecting the training program that management calls the core of the strategy.",
+        "chunk_ids": [
+          "BAC-TR-2025Q4#106",
+          "BAC-TR-2025Q2#34"
+        ],
+        "part_id": "a7.MER"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Merrill: Bank of America reported \"Total wealth advisors\" of 19,273 at period end (fourth quarter 2022), which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \"Total wealth advisors\" series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America reported \"Total wealth advisors\" of 19,243 at period end (first quarter 2023), which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \"Total wealth advisors\" series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America reported \"Total wealth advisors\" of 19,099 at period end (second quarter 2023), which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \"Total wealth advisors\" series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America reported \"Total wealth advisors\" of 19,130 at period end (third quarter 2023), which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \"Total wealth advisors\" series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America reported \"Total wealth advisors\" of 18,916 at period end (fourth quarter 2023), which includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \"Total wealth advisors\" series covers all wealth management businesses in GWIM and Consumer Banking, so these are Bank of America figures, not Merrill-only advisor headcount."
+      },
+      {
+        "text": "Merrill: Bank of America's investor day deck (published November 5, 2025) reported \">15K Wealth Advisors\" for Merrill and the Private Bank combined.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The \">15K Wealth Advisors\" figure covers Merrill and the Private Bank combined, not Merrill alone."
+      },
+      {
+        "text": "Merrill: Merrill's Form ADV (published November 11, 2026) reported approximately 32,960 employees (full- and part-time, excluding clerical workers).",
+        "chunk_ids": [
+          "MER-ADV1A-2026#1"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The Form ADV reports total employees (full- and part-time, excluding clerical workers), not financial advisor headcount."
+      },
+      {
+        "text": "Merrill: Merrill's Form ADV (published November 11, 2026) reported approximately 26,599 employees who are registered representatives of a broker-dealer.",
+        "chunk_ids": [
+          "MER-ADV1A-2026#1"
+        ],
+        "part_id": "a5.MER",
+        "differs_because": "The Form ADV reports broker-dealer registered representatives, not financial advisor headcount."
+      }
+    ],
+    "gaps": []
+  }
+}

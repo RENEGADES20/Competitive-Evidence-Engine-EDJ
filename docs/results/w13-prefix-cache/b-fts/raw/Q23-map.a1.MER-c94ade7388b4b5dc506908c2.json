@@ -1,0 +1,132 @@
+{
+  "question_id": "Q23",
+  "question": "Advisor headcount over the last eight quarters across the five.",
+  "extract_version": "extract-v1.3",
+  "call_id": "map.a1.MER",
+  "round": 1,
+  "entity": "MER",
+  "cells": [
+    "a1.MER"
+  ],
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-map-low-c128000-s1-pf150000",
+  "chunk_ids": [
+    "BAC-TR-2026Q2#63",
+    "BAC-DECK-2025-investor-day#18",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#5",
+    "BAC-10K-2025#246",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-TR-2025Q2#34",
+    "BAC-DECK-2025-investor-day#9",
+    "MER-PR-2026-09-15-01#3",
+    "BAC-10K-2025#249",
+    "BAC-TR-2026Q3#19",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-SUPP-2026Q3#54",
+    "BAC-TR-2026Q1#26",
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-SUPP-2026Q2#56",
+    "BAC-TR-2025Q1#28",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-SUPP-2026Q1#46",
+    "BAC-TR-2024Q4#30",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-SUPP-2025Q4#57",
+    "BAC-TR-2025Q2#35",
+    "BAC-PR-2026-01-14-01#12",
+    "BAC-TR-2026Q2#20",
+    "MER-PR-web-advisor-development-program#2",
+    "BAC-TR-2026Q2#21",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#3",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-web-advisor-development-program#0",
+    "BAC-10Q-2025Q2#91",
+    "BAC-10Q-2025Q2#92",
+    "BAC-10Q-2025Q2#89",
+    "BAC-10Q-2025Q3#93",
+    "BAC-10Q-2025Q3#91",
+    "BAC-10Q-2025Q3#89",
+    "BAC-TR-2025Q4#106",
+    "BAC-10K-2025#245",
+    "BAC-SUPP-2025Q4#54",
+    "BAC-DECK-2026Q1#27",
+    "BAC-SUPP-2026Q1#44",
+    "BAC-10Q-2026Q1#70",
+    "BAC-DECK-2026Q2#20",
+    "BAC-SUPP-2026Q2#53",
+    "BAC-10Q-2026Q2#86",
+    "BAC-DECK-2026Q3#31",
+    "BAC-SUPP-2026Q3#52",
+    "BAC-PR-2026-10-14-01#13",
+    "MER-ADV1A-2026#1"
+  ],
+  "at": "2026-11-23T00:29:13.173823-06:00",
+  "prefix_group": "f77df42b35a83dff",
+  "prefix_role": "solo",
+  "gate_wait_s": null,
+  "leader_cached": null,
+  "prefix_chars": 67513,
+  "request_chars": 67763,
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16629,
+    "output_tokens": 3742,
+    "cache_hit_tokens": 1536,
+    "cache_miss_tokens": 15093,
+    "reasoning_tokens": 3255,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.12
+  },
+  "wall_s": 54.7,
+  "tokens_per_s": 68.41,
+  "ttft_s": 1.12,
+  "reasoning_content": "Let me analyze the passages for advisor headcount over the last eight quarters for Merrill.\n\nLooking for \"advisor headcount\" - the number of financial advisors / wealth advisors.\n\nKey passages:\n1. BAC-SUPP-2023Q4#2 - \"Advisors, at period end / Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\" - this is from 2023 Q4 supplement, showing advisors at period end for 2023 quarters. But \"last eight quarters\" - this is dated 2023-12-31, so it covers 2023 quarters, not the last eight quarters relative to the question (which is likely through 2026).\n\nWait, the question is \"advisor headcount over the last eight quarters.\" The last eight quarters - given the data available through 2026Q3. But this passage is from 2023Q4.\n\nActually, let me look more carefully. The note (3) says \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" This is a wider unit (includes Consumer Banking), not just Merrill.\n\nThe BAC-SUPP-2023Q4#2 data is for \"Total wealth advisors\" which includes advisors across all wealth management businesses in GWIM and Consumer Banking. This is a wider scope than just Merrill advisors, and also a different period (2023).\n\n2. BAC-DECK-2025-investor-day#9 - \">15K Wealth Advisors\" - this is Merrill | Private Bank combined, not just Merrill. And it's a point estimate \">15K\".\n\n3. BAC-DECK-2025-investor-day#18 - \"Leading advisor force 95% recognized...\" - no headcount figure.\n\nSo for advisor headcount specifically for Merrill over the last eight quarters, the passages don't have a clean quarterly series for Merrill advisors alone.\n\nThe BAC-SUPP-2023Q4#2 gives \"Total wealth advisors\" but that includes advisors across all wealth management businesses in GWIM AND Consumer Banking - which is wider than Merrill. Also it's for 2023 quarters (period 2023-12-31), not the last eight quarters.\n\nThe BAC-DECK-2025-investor-day#9 gives \">15K Wealth Advisors\" for Merrill | Private Bank combined (not just Merrill).\n\nMER-ADV1A-2026#1 gives employees counts from Form ADV - but those are \"employees\" (32,960) and \"investment advisory functions\" (25,721), not advisors, and it's a different measure.\n\nSo what do I have?\n\nThe sub-question asks for advisor headcount over the last eight quarters (a series of 8 quarterly figures) for Merrill.\n\nThere's no quarterly advisor headcount series for Merrill in the passages. The only advisor headcount series is the 2023Q4 supplement showing \"Total wealth advisors\" for 2023 quarters (which is a different period and wider scope).\n\nLet me think about what's the best label.\n\nThe metric is \"advisor_headcount\" for Merrill. The passages provide:\n- \"Total wealth advisors\" series (2023 quarters) - wider scope (all GWIM + Consumer Banking), different period\n- \">15K Wealth Advisors\" for Merrill | Private Bank (2025 investor day, undated/2025-11-05)\n\nThe closest to advisor headcount would be the \"Total wealth advisors\" figure but it's a different scope (includes Consumer Banking) and different period (2023).\n\nActually, the question is a series over the last eight quarters. No passage gives a quarterly series of Merrill advisor headcount over the last eight quarters.\n\nThe BAC-SUPP-2023Q4#2 is dated 2023-12-31, so its quarters are 2023Q1-Q4. \"Last eight quarters\" relative to latest available data (2026Q3) would be 2024Q4 through 2026Q3 roughly. So the 2023 data is not \"last eight quarters.\"\n\nSo I should label this as different_quantity or not_found.\n\nThere IS a related quantity stated: \"Total wealth advisors\" which is advisor headcount but for a wider scope (all wealth management businesses in GWIM and Consumer Banking) and for 2023 quarters. This is a different quantity (wider unit) and different period.\n\nAlso \">15K Wealth Advisors\" for Merrill | Private Bank combined (wider unit, point in time, ~2025).\n\nLet me decide. The instruction says:\n- fact: passage states what sub-question asks for, in full or part\n- different_quantity: passage states a different related quantity (wider unit, different measure, etc.). A different period is NOT a different quantity.\n\nThe \"Total wealth advisors\" is advisor headcount but for a wider scope (GWIM + Consumer Banking). That's a different_quantity (wider unit). The period being 2023 is different from \"last eight quarters\" but that alone isn't a different quantity - it's the scope that makes it different.\n\nActually, I think the cleanest is different_quantity for the \"Total wealth advisors\" series, with differs_because noting it includes advisors across all wealth management businesses in GWIM and Consumer Banking (wider than Merrill), and is for 2023 quarters (different period).\n\nBut wait - is \"last eight quarters\" clearly defined? The latest data is 2026Q3. So \"last eight quarters\" = 2024Q4 to 2026Q3 (8 quarters).\n\nThe 2023Q4 supplement data covers 2023 quarters (not last eight quarters). And the \">15K Wealth Advisors\" is a point-in-time for Merrill | Private Bank (wider than Merrill alone).\n\nLet me provide different_quantity items.\n\nActually, let me reconsider. The most relevant data points:\n1. \"Total wealth advisors\" series from 2023Q4 supplement (2023 quarters): 18,916 / 19,273 / 18,916 / 19,130 / 19,099 / 19,243 / 19,273 - this is advisor headcount but wider scope (GWIM + Consumer Banking).\n2. \">15K Wealth Advisors\" for Merrill | Private Bank (from investor day deck).\n\nBoth are wider scopes than Merrill alone.\n\nI'll label different_quantity and provide items.\n\nActually, let me reconsider the \">15K Wealth Advisors\" - this is from BAC-DECK-2025-investor-day#9, segment GWIM, \"Merrill | Private Bank\". This is a combined Merrill + Private Bank figure. Wider than Merrill alone. Value \">15K\" or \"15K\"? It says \">15K Wealth Advisors\" so value is \"15,000\" or \">15,000\". I'll put \">15,000\" and unit \"wealth advisors\".\n\nFor the \"Total wealth advisors\" series, the scope note says \"Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n\nLet me structure the items. For a series, one item per period. But the \"Total wealth advisors\" has 7 columns (7 values). Let me look:\n\n\"Advisors, at period end\nTotal wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\"\n\nThis is 7 columns. The column headers above are missing from the extract but based on the AUM rollforward columns. Actually the AUM rollforward has columns for various quarters. The advisors row seems to have a different set of columns.\n\nLooking at the AUM rollforward header: \"$ 1,401,474 $ 1,638,782 $ 1,496,601 $ 1,531,042 $ 1,467,242 $ 1,401,474 $ 1,329,557\" for beginning balance, and ending balance \"$ 1,617,740 $ 1,401,474 $ 1,617,740 $ 1,496,601 $ 1,531,042 $ 1,467,242 $ 1,401,474\".\n\nThis is confusing without the header. But the \"Total wealth advisors\" has 7 values. Given it's a 2023Q4 supplement, the columns are likely: 4Q23, 3Q23, 2Q23, 1Q23, 4Q22, 3Q22, 2Q22, or similar. Actually the values are 18,916 19,273 18,916 19,130 19,099 19,243 19,273.\n\nThis is getting complicated. The key point is this is 2023 data (different period) and wider scope.\n\nI think for simplicity, I should present this as different_quantity with a clear explanation. I could present one item summarizing the series, or list items per period. But since I don't have clear period labels for each column, I'll present it more carefully.\n\nActually, let me re-read the instruction about series: \"a series is one item per period.\"\n\nBut the periods here aren't clearly labeled in the extract. The chunk shows a table fragment. The advisors row: \"Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\".\n\nGiven the ambiguity, I'll present the \"Total wealth advisors\" as items but I need to know the period for each value. This is difficult.\n\nHmm, given the complexity and that this data is 2023 (not last eight quarters), and the scope is wider, maybe I should present it more simply.\n\nActually, let me reconsider the whole thing. The question asks for advisor headcount over the last eight quarters. The passages simply don't provide Merrill advisor headcount as a quarterly series for the last eight quarters.\n\nThe related quantities are:\n1. \"Total wealth advisors\" (2023, wider scope)\n2. \">15K Wealth Advisors\" (Merrill | Private Bank, ~2025)\n\nBoth are different_quantity.\n\nFor the series, I'll list:\n- Item 0: \">15K Wealth Advisors\" for Merrill | Private Bank (period ~2025-11-05 investor day, but the figure could be as of some date). Period is n/a per deck. I'll leave period \"\".\n- Item 1: Total wealth advisors series (2023 quarters).\n\nActually, let me just be careful and provide the items with what I can determine.\n\nFor the \"Total wealth advisors\", I'll describe it as a series for 2023. The period for the chunk is 2023-12-31. The values go across multiple quarters ending 2023. I'll present it as one item with text describing the series, or attempt per-period.\n\nGiven the difficulty of mapping columns to periods, and that the key issue is the different scope and period, I think I'll present it as a couple of items.\n\nLet me decide on a clean approach:\n\nCell: different_quantity\ndiffers_because: \"Passages state 'Total wealth advisors' which includes advisors across all wealth management businesses in GWIM and Consumer Banking (wider than Merrill), for 2023 quarters; and a '>15K Wealth Advisors' figure for Merrill and Private Bank combined (wider than Merrill alone). Neither is Merrill-only advisor headcount for the last eight quarters.\"\n\nItems:\n1. text: \"Merrill and Private Bank combined have more than 15,000 wealth advisors (investor day deck).\" quote: \">15K Wealth Advisors\" value \">15,000\" unit \"wealth advisors\" period \"\" scope \"Merrill | Private Bank\"\n2. text: \"Total wealth advisors (across all wealth management businesses in GWIM and Consumer Banking) at period end were 18,916 in one 2023 quarter (series ranging 18,916 to 19,273 across 2023 quarters).\" \n\nActually, let me present the Total wealth advisors series. The values in order: 18,916 19,273 18,916 19,130 19,099 19,243 19,273.\n\nHmm, I'll present it as a single item describing the series with period 2023, value covering the range.\n\nActually, I think for cleanliness I'll do two items.\n\nLet me finalize.\n\nItem 0 (investor day >15K):\n- text: \"Merrill and the Private Bank together have more than 15,000 wealth advisors.\"\n- quote: \">15K\\n\\nWealth Advisors\"\n- value: \">15,000\"\n- unit: \"wealth advisors\"\n- period: \"\" (deck is n/a)\n- scope: \"Merrill and Private Bank\"\n- definition: \"\"\n- chunk_ids: [\"BAC-DECK-2025-investor-day#9\"]\n\nItem 1 (2023Q4 supplement Total wealth advisors):\n- text: \"At period end, total wealth advisors (which includes advisors across all wealth management businesses in GWIM and Consumer Banking) ranged from 18,916 to 19,273 across 2023 quarters.\"\n- quote: \"Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\" plus \"(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.\"\n- value: \"18,916\u201319,273\"\n- unit: \"wealth advisors\"\n- period: \"2023\" (or 2023Q4? The chunk period is 2023-12-31)\n- scope: \"all wealth management businesses in GWIM and Consumer Banking\"\n- definition: \"\"\n- chunk_ids: [\"BAC-SUPP-2023Q4#2\"]\n\nActually, for period, the supplement is 2023Q4, so the \"at period end\" would be 2023-12-31 for the latest. But it shows a series. I'll say period \"2023\" and note the series covers multiple 2023 quarters. Hmm, but format requires specific. I'll use \"2023\" for the year, since I can't determine exact quarters.\n\nActually wait, let me reconsider whether this should be a fact. The metric is \"advisor_headcount\". The \"Total wealth advisors\" IS an advisor headcount figure, but the scope is wider (all GWIM + Consumer Banking). Per instructions, \"a wider unit that contains the asked one (a parent company, a segment that also holds other businesses)\" is a different_quantity. So yes, different_quantity.\n\nThe \">15K Wealth Advisors\" for Merrill | Private Bank is also a wider unit (contains Private Bank in addition to Merrill).\n\nSo different_quantity is correct.\n\nLet me also consider: is there any not_disclosed or not_found? No passage says Merrill doesn't report advisor headcount. So different_quantity is the best fit.\n\nLet me write the reason and differs_because.\n\nNow let me construct the final answer.\n\nI'll write items carefully. For the investor day figure, period is n/a (deck published 2025-11-05, but no specific as-of date given for the >15K figure). I'll put period \"\".\n\nActually, the deck's period is \"n/a\". I'll leave \"\".\n\nLet me write it up.",
+  "raw": {
+    "cells": [
+      {
+        "subquestion_id": "a1.MER",
+        "label": "different_quantity",
+        "items": [
+          {
+            "text": "Merrill and the Private Bank together have more than 15,000 wealth advisors.",
+            "quote": ">15K\n\nWealth Advisors",
+            "value": ">15,000",
+            "unit": "wealth advisors",
+            "period": "",
+            "scope": "Merrill | Private Bank",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-DECK-2025-investor-day#9"
+            ]
+          },
+          {
+            "text": "At period end, total wealth advisors (which includes advisors across all wealth management businesses in GWIM and Consumer Banking) were reported as 18,916, 19,273, 18,916, 19,130, 19,099, 19,243 and 19,273 across 2023 quarters.",
+            "quote": "Total wealth advisors (3) 18,916 19,273 18,916 19,130 19,099 19,243 19,273\n(3) Includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+            "value": "18,916 - 19,273",
+            "unit": "wealth advisors",
+            "period": "2023",
+            "scope": "all wealth management businesses in GWIM and Consumer Banking",
+            "definition": "",
+            "chunk_ids": [
+              "BAC-SUPP-2023Q4#2"
+            ]
+          }
+        ],
+        "differs_because": "Passages state advisor counts for wider units than Merrill alone (Merrill and Private Bank combined; all wealth management businesses in GWIM plus Consumer Banking) and, for the quarterly series, for 2023 quarters rather than the last eight quarters. No Merrill-only advisor headcount series for the last eight quarters is reported.",
+        "reason": "The passages give advisor counts but only for wider scopes (Merrill+Private Bank, or all GWIM+Consumer Banking) and older 2023 periods, not Merrill-only advisor headcount for the last eight quarters.",
+        "derivation": {
+          "operation": "",
+          "inputs": []
+        }
+      }
+    ]
+  }
+}

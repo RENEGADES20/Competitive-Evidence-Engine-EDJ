@@ -357,6 +357,28 @@ WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
 WT=<worktree> OUT=r1-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> EFFORT_REDUCE=off REDUCE_PROMPT=v5.2 IDLE_S=120 EV=<evidence dir> bash docs/results/w12-latency/run-latency.sh
 ```
 
+**Map prefix cache** (#283, `plans/0283-prefix-cache.md`; **off by default, not adopted**:
+`docs/results/w13-prefix-cache.md`). `MAP_PREFIX` is `off` (default: the #272 extraction request, unchanged) or
+`firm` (for experiments only; it cost answer quality in the #283 run). With `firm`, the extraction calls of one firm
+send the same beginning (system prompt, one tool schema, the question, the firm, the window and all of the firm's passages) and
+name the sub-question to answer only at the end, so DeepSeek can reuse that beginning from its cache (a hit costs
+1/30 of a miss). `MAP_PREFIX_TOKENS` (default 150000) is the largest firm block sent this way; a bigger firm keeps
+one message per sub-question. `MAP_PREFIX_GATE` (`first_chunk | done | off`) sends one leader call per firm first
+and lets the firm's other calls start when the leader's first streamed chunk arrives (`first_chunk`) or when it ends
+(`done`), then after `MAP_PREFIX_WAIT_S` seconds (default 5); `off` sends them all at once. Leave them empty for the
+defaults. `latency_report.py` adds the cache-hit share per stage and per role (leader, follower) and counts the
+wait in the critical path. The #283 runs use `docs/results/w13-prefix-cache/run-prefix.*` (phases `count | run`,
+every setting pinned; `-MapPrefix` / `MAP_PREFIX`, default `off`; the #283 runs equal `firm`) and `cmp_cells.py`
+(0 calls: cell labels and citation flags against the #272 run):
+```powershell
+powershell -File docs\results\w13-prefix-cache\run-prefix.ps1 -Wt <worktree> -Out probe-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -Questions Q10 -ReusePlans -PlanVersion ds-strict-2-plan-off-c8000-s1 -MapPrefix firm -PrefixGate first_chunk
+.\.venv\Scripts\python.exe docs\results\w13-prefix-cache\cmp_cells.py <run folder>\report.json
+```
+```bash
+WT=<worktree> OUT=probe-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q10 REUSE_PLANS=1 PLAN_VERSION=ds-strict-2-plan-off-c8000-s1 MAP_PREFIX=firm PREFIX_GATE=first_chunk bash docs/results/w13-prefix-cache/run-prefix.sh
+.venv/bin/python docs/results/w13-prefix-cache/cmp_cells.py <run folder>/report.json
+```
+
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).
 `--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,
 the sub-questions (firm x aspect) and how many tokens the answer call would read:
