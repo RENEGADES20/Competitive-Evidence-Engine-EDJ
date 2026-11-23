@@ -1040,8 +1040,7 @@ comments 7037522138 and 7037650142; prompt v5.1):
 
 
 ## ADR-022: Facts table: metric figures extracted once at ingest by a model, stored as data, served by SQL
-Status: Proposed (#285; the tech lead asked for this work on 2026-11-22, so the amendment of ADR-011 is approved in
-substance; Accepted when the #285 PR merges). Amends ADR-011 (branch rule) and ADR-021 rules 6-7 (map calls).
+Status: Proposed (#285; the tech lead's mandate of 2026-11-22 covers it; Accepted when the #285 PR merges). Amends ADR-011 (branch rule) and ADR-021 rules 6-7 (map calls).
 Context: the corpus is fixed (snapshot `corpus-2026-11-19`), yet every question has the LLM map re-read raw passages
 to pull out the same figures again: #272 made 454 map calls for 30 questions (p50 34 s each) and nothing carried over
 between questions. `config/metric_definitions.yaml` already holds hand-checked definitions, but the figures are
@@ -1060,21 +1059,26 @@ Decision:
   extraction version, with the model named per row); `cee.facts load` fills the `facts` table from it (run by
   `sync-db` and `ingest`, so the next snapshot carries it). Query time is SQL plus code. The mock provider, tests and
   CI read the same rows; with no table or no rows every cell takes the LLM map as before.
-- **Serving rule.** A map cell is built from facts, with no LLM call, only when it is a firm row, its aspect is kind
-  fact, series or recency and not a proxy, the aspect text names a target metric's figure and no non-figure word
-  (`config/facts.yaml`), and the lookup returns rows (series: at least two periods). An empty lookup never becomes
-  "not disclosed": the cell goes to the LLM map, so the gap and closest-figure paths are unchanged. Target metrics come
-  from the data: the registered metrics plus any figure asked in at least two questions of the latest scored run.
+- **Serving rule** (`config/facts.yaml`, #285 TL conditions). A map cell is built from facts, with no LLM call, only
+  when all hold: a firm row; the planner tagged the aspect with a registered metric whose registry status for that firm
+  is `quoted`; kind fact, series or recency, not a proxy; no non-figure word (why, how, define, growth, change,
+  guidance, ...) in the aspect text, the sub-question text or the question; the rows match the registered basis (its
+  label phrases, whole basis, no part scope); a series has a row for every asked period; and no document in the
+  sub-question's own filtered pool that mentions the metric is newer than the newest served row's document. Otherwise,
+  and whenever the lookup is empty, the cell goes to the LLM map, so "not disclosed", closest-figure and gap paths are
+  unchanged. Rows of other target metrics (client assets) are stored but not served until the metric is registered.
 - **The lookup is a retrieval pass.** It applies the sub-question's own hard filters with the `fts` SQL builders
-  (entity and Merrill segment, time window on `published_at`, Ask-page filters, document-type scope). Its chunks join
-  that sub-question's retrieved set, so every served item cites a retrieved chunk (citation invariant). Facts-served
-  cells are removed after the map fan-out: the LLM cells' requests are byte-identical with facts on or off, and no
-  facts chunk enters a map message.
+  (entity and Merrill segment, time window on `published_at`, Ask-page filters, document-type scope). It runs after the
+  map fan-out; its chunks join that sub-question's retrieved set only in the finished matrix (never the map's inputs,
+  the corrective search's exclusions or the plan's pools), so every served item cites a retrieved chunk and the LLM
+  cells' requests, round 1 and re-maps, are byte-identical with facts on or off. Each served item is re-checked by SQL
+  through the same filters and against the chunk text.
 - **Calls (ADR-021 rule 7).** Map calls follow the decomposition minus the facts-served cells; the run log records
   facts-served and LLM cells per question.
-- **Branch rule (ADR-011), amended.** Model work at query time (embeddings, rerankers, any local or hosted model in
-  retrieval or validation) stays on a branch. An offline ingest extraction whose output is stored, code-checked data
-  may land on `main`, because `main` then needs no model beyond the answer LLM calls.
+- **Branch rule (ADR-011), lifted for the facts table only.** The facts extraction may land on `main` because its
+  output is stored, code-checked data and `main` needs no model beyond the answer LLM calls. Every other model work
+  (embeddings, rerankers, any model in retrieval or validation, other ingest-time model work) stays on a branch until
+  its own ADR. `FACTS` ships on only when the #285 go/no-go gate and Gate 3 pass; otherwise off by default.
 Consequences: metric cells cost no call and no wait; the saving grows with how often questions ask registered figures.
 The facts must be re-extracted (planned, paid) when the corpus or the target metrics change, and a stale file is
 visible by its snapshot and version. Wrong rows would repeat in every answer that uses them, hence the checks and the

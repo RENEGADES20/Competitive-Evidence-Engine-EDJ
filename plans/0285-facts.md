@@ -38,6 +38,41 @@ off-peak, p50 184 s, 454 map calls).
   or off (test). Facts chunks are never put into any map message.
 - **Log**: cells get `source=facts`; `counts()` and the run report give facts-served vs LLM cells per question.
 
+## TL conditions (review round 1, issuecomment-7098594448 + TL rulings; binding, override the Design above)
+- **B1 complete, not stale.** Series: served only if every asked period (`asked_periods`) is among the rows, else
+  the whole cell -> map. Every served cell (series, fact, recency): no document in the sub-question's own SQL-filtered
+  pool whose chunk matches the metric prefilter is newer (`published_at`) than the newest served row's document.
+  Gate 5c per cell: the #272 map's newest-period figure and full period set must be among the served items; misses listed.
+- **B2 registry.** Served only when the (entity, metric) registry status is `quoted` and the row's basis matches the
+  registered basis (`config/facts.yaml`: label phrases per registered basis, scope empty). So SCHW headcount and NNA,
+  BAC NNA are never served (test); client_assets (unregistered) is extracted but not served. 5b compares labels with #272.
+- **B3 positive rule.** The planner's `a.metric` in the target set AND kind fact/series/recency AND not proxy AND no
+  non-figure word in the aspect text, `sq.text` or the question (list extended: growth, change, trend, driver, reason,
+  because, outlook, guidance, target, goal, expect, forecast, explain, impact, organic, acquisition, commentary, ...).
+  Adversarial tests expect the map. The results doc lists every metric-named cell not served, with the reason.
+- **B4 placement.** The lookup runs after `fan_out`; facts chunks go only into `by_id` (after round 2), `m.hits`,
+  `m.pools`, never into `hits`, `used` or `plan.pools`. Byte-identical test + 5b replay: round-1 cell requests,
+  shared-prefix messages and remap requests, FACTS on vs off, on the stage-1 questions plus Q3 and Q26.
+- **B5 item fields.** `Item.scope` = "" (only whole-basis rows are served); `definition` = ""; `population` set by
+  `tag_populations` as for map items; `text` = label + value + unit + period. 5b diffs `m.caveats`, `gaps`, `breaks`,
+  cell flags and comparability marks between matrices from the saved #272 map outputs and the facts-served ones;
+  every difference explained before any paid answer call.
+- **B6 independent check.** Every served item is re-verified by SQL through the `fts` filters (chunk exists; entity +
+  Merrill segment via `entity_filter`, never `facts.entity`; `published_at` in window; doc type in scope) and its value
+  and quote again against the chunk text. Report the share of served chunks already in the plan's retrieved set. Tests:
+  a Merrill cell never gets a non-GWIM BAC row; an EDJ cell never gets another firm's row.
+- **B7 pass rule (TL, reinterprets the issue's "$ and p50 not higher").** Expected effect is within provider drift.
+  Pass for cost/speed: map calls per question strictly lower, and map-stage $ (off-peak) lower. Total $/q and
+  critical-path p50 are reported against #272 with drift explained by the speed leg. S3 / S4 read map-stage $ and wall.
+- **G0 go/no-go (TL).** After the extraction and all 0-call gates, before any paid answer call: recompute coverage on the
+  #272 records under these rules. Map calls saved over Q1-Q30 < 15 -> STOP: ship `FACTS=off` by default with table,
+  loader and code merged, record the finding; no stage 1 or 2. >= 15 -> stages 1 and 2 (list re-derived at count phase).
+- **Non-blocking, accepted.** CLAUDE.md: only the facts table lands on `main` as ingest extraction; S1 and S6 apply in
+  stage 2 too; extraction stops at > 10% failed / invalid calls or $3; period end not after `published_at` (and equal to
+  the document's `period_end` when set for a point/quarter row of that period type) and a unit word in the chunk or
+  prefix; estimate labelled an upper bound with per-item membership; input tokens reported; `FACTS` default stated
+  (on only if G0 and Gate 3 pass), mock/CI read `config/facts.jsonl`, RUN.md blocks for both OSes; ADR-022 Accepted at merge.
+
 ## Files to change
 - `db/schema.sql`, `db/upgrade.sql`, `config/facts.yaml` (metrics, phrases, words, doc types), `config/facts.jsonl`.
 - `src/cee/facts.py` (extract prompt/schema/checks, load, lookup, serving rule), `src/cee/answer/extract.py` (`run_map`),
@@ -60,8 +95,10 @@ from candidate chunks) found among the served items >= 90%, misses read and list
 - [ ] pytest green (CI); mock Q1-Q30 not worse than baseline; uncovered map requests byte-identical (test + replay).
 - [ ] 100% of stored rows pass the checks; audit 50 rows >= 48 correct (coordinator's auditor).
 - [ ] Coverage of #272 metric cells reported with gaps explained (estimate 28/95, 28 of the 33 servable).
-- [ ] Real fts Q1-Q30: mean map calls/q and $/q (off-peak) below #272; critical-path p50 <= 184 s; adjudicated >= 24/30.
-- [ ] Rule checks: every served item cites a chunk of the cell's retrieved set; caveats and comparability code unchanged.
+- [ ] G0: map calls saved on #272 under the TL rules >= 15, else stop with `FACTS=off` default (finding recorded).
+- [ ] If G0 passes - real fts Q1-Q30: map calls/q strictly lower, map-stage $ lower (B7); total $/q and p50 reported
+  with the speed leg; adjudicated >= 24/30.
+- [ ] B6 SQL re-check passes for every served item; 5b caveat/gap/break/flag/mark diff explained.
 - [ ] verify-cee mock: ask-answer and open-citation PASS on a facts-served answer. ADR-022 Accepted; CLAUDE.md updated.
 
 ## Paid calls (TL go-ahead 2026-11-22, incl. Gate 3). deepseek-v4-pro, map stage settings, off-peak only
@@ -83,3 +120,5 @@ from candidate chunks) found among the served items >= 90%, misses read and list
 
 ## Progress log
 - 2026-11-23 04:45 - plan written; worktree `wt-285` on `tl/285-facts` from origin/main cda5ebf (#287 merged). 0 calls.
+- 2026-11-23 - review round 1 CHANGES REQUESTED; TL rulings folded in as "TL conditions" (B1-B7, G0, non-blocking).
+  Build starts. Expectation, 0 calls: the question-text words leave few servable cells (Q23, Q26), so G0 may stop.
