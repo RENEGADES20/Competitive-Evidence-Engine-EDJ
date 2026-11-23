@@ -221,8 +221,9 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
 
 #284 (plans/0284-reduce-short.md): **reduce prompt v6, item refs rendered by code** (`REDUCE_PROMPT=v6`; default
 see `docs/results/w13-reduce-short.md`).
-- The message numbers each counting item `item <cell id>/<n>` (n = its index in the cell + 1); an item flagged
-  `number_not_found` is listed `(no ref)`; an accepted derived cell offers `ref <cell id>/derived`.
+- The message numbers each counting item `item <cell id>/<n>` (n = its index in the cell + 1); an item code may not
+  render is listed `(no ref)`: flagged `number_not_found` by the map, or its rendered text fails the claim number check
+  against its own chunks (`reduce.referable`); an accepted derived cell offers `ref <cell id>/derived`.
 - Tool output: a claim / adjacent item is `{part_id, items: [ref], text, chunk_ids, why}` (+ `differs_because`);
   gaps unchanged. Enums from the matrix (refs too), under the same limits; over them chunk ids, then refs, then part
   ids fall back to plain strings.

@@ -383,3 +383,20 @@ def test_eval_saves_the_raw_v6_output_and_renders_it_again_on_reuse(monkeypatch,
     a2, how2, info2 = again.reduce(qd, qry, plan_of(m), list(m.hits.values()), m)
     assert how2 == "cached" and again.made == 0
     assert [c["text"] for c in a2["claims"]] == [c["text"] for c in a1["claims"]] and info2["render"] == info["render"]
+
+
+def test_item_whose_text_figure_is_not_in_its_chunk_has_no_ref_even_without_the_map_flag():
+    """Step 5 (#272 matrices): map items such as "more than 15,000 advisors" citing a "15K+" passage carry no
+    number_not_found flag; code never renders them, the model may only state them in its own text."""
+    m = firms_matrix()
+    m.cells["a1.MS"].items[0].text = "Morgan Stanley had 16,500 advisors at year end."   # chunk says 15,000
+    assert "a1.MS/1" not in R.item_refs(m)
+    assert "item a1.MS/1 (no ref): Morgan Stanley had 16,500" in R.reduce_message(m.question, m, None)
+
+
+def test_value_is_rendered_only_when_its_figures_are_not_in_the_text():
+    m = firms_matrix()
+    c = m.cells["a1.MS"]
+    i = c.items[0]
+    i.value = "15K advisors"   # the same number as "15,000" in the text: not repeated
+    assert "value" not in R.render_item(m, c, i)

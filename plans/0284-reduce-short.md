@@ -117,3 +117,9 @@ Order: Q5, Q10, Q19, Q21, Q24, Q26 first (6 calls); continue only under rule B1 
 ## Progress log
 - 2026-11-23 - plan written on `tl/284-reduce-short` (from main b32d1f2, after #286 merged); worktree `wt-284`.
 - 2026-11-23 - plan review round 1 CHANGES REQUESTED; TL rulings folded in as "TL conditions"; build starts.
+- 2026-11-23 - built d9d621f; pytest 1219; mock v5.2 30/30 identical to main (rule and #272 plans), v6 30/30 equal
+  (part, chunk ids), fidelity 0 problems; count phase 515 reused, 30 new reduce keys, Q21 reused; verify-cee 3/3.
+- 2026-11-23 - step 5 on the #272 matrices found 4 rendered `number_not_found` (map items whose text figure is not
+  verbatim in the passage, no map flag: "more than 15,000" for a deck's "15K+"; one from the value rendering). Fix
+  (0 calls): such items get no ref (`referable`, a stricter B2 enum) and the value is rendered only when its figures
+  are not in the text. All 0-call checks re-run at the new gate.

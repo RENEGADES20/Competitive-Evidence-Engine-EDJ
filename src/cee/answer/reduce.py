@@ -319,8 +319,8 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
             for n, i in enumerate(c.items):
                 if i.counts:
                     ref = None
-                    if v6():   # #284: the item's ref; an item whose figure was not found in its passage has none
-                        ref = f"{c.id}/{n + 1}" + (" (no ref)" if "number_not_found" in i.flags else "")
+                    if v6():   # #284: the item's ref; an item code cannot render with a checked figure has none
+                        ref = f"{c.id}/{n + 1}" + ("" if referable(m, c, i) else " (no ref)")
                     line = _item_line(n, i, ref)
                     first = seen.setdefault((_flat(i.text).lower(), tuple(sorted(i.chunk_ids))), c.aspect_id)
                     if first != c.aspect_id:
@@ -488,15 +488,24 @@ def input_limit(provider: str) -> int | None:
 
 # --- v6: item refs rendered by code (#284, plans/0284-reduce-short.md) ----------------------------------------
 
+def referable(m: EvidenceMatrix, c, i) -> bool:
+    """#284 (TL B2): an item code may render: it cites a chunk, is not flagged number_not_found by the map check, and
+    its rendered text passes the claim number check against its own chunks (step 5 found map items whose text figure
+    is not verbatim in the passage although the map's value check passed, e.g. "more than 15,000" for "15K+"); so a
+    rendered claim never carries an unchecked figure. The model may state such an item only in its own text."""
+    return bool(i.counts) and "number_not_found" not in i.flags and not number_missing(render_item(m, c, i), m,
+                                                                                         i.chunk_ids)
+
+
 def item_refs(m: EvidenceMatrix) -> dict:
-    """#284: ref -> (cell, item); "<cell id>/<n>" for each counting item without number_not_found, n as numbered in
+    """#284: ref -> (cell, item); "<cell id>/<n>" for each referable counting item (`referable`), n as numbered in
     the message (index in c.items + 1), and "<cell id>/derived" -> (cell, None) for an accepted derivation."""
     out: dict = {}
     for c in m.cells.values():
         if c.label == "derived" and (c.derivation or {}).get("ok"):
             out[f"{c.id}/derived"] = (c, None)
         for n, i in enumerate(c.items):
-            if i.counts and "number_not_found" not in i.flags:
+            if referable(m, c, i):
                 out[f"{c.id}/{n + 1}"] = (c, i)
     return out
 
@@ -532,10 +541,18 @@ def render_item(m: EvidenceMatrix, c, i) -> str:
         extra.append(f"scope: {_q(i.scope)}")
     if i.period and _q(i.period).lower() not in low:
         extra.append(f"period {_q(i.period)}")
-    if i.value and _q(i.value) not in body:
+    if i.value and _q(i.value) not in body and not _figures_in(i.value, body):
         extra.append(f"value {_q(i.value)}" + (f" {_q(i.unit)}" if i.unit else ""))
     tail = f" ({'; '.join(extra)})" if extra else ""
     return (render_source(h) if h is not None else "") + body + tail + "."
+
+
+def _figures_in(value: str, body: str) -> bool:
+    """Every figure of `value` (validate.figures) is already in `body` (validate.number_matches)."""
+    from cee.answer.validate import figures, number_matches
+    have = [f.value for f in figures(body)]
+    figs = figures(value)
+    return all(any(number_matches(f, v) for v in have) for f in figs)   # no checkable figure: nothing to add
 
 
 def _figure_values(texts: list[str]) -> list[float]:
