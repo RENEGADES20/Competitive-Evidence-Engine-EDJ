@@ -22,6 +22,12 @@ A user types a question and gets an answer whose claims each link to a stored pa
   incomplete, an evidence-free boundary answer), the comparison claim, the why-lines and the
   newest-first order need a model or a failed extraction; proven by `tests/test_reduce.py`, not
   driven here. The "Incomplete" header and its warning are rendered in `tests/test_reduce.py`.
+- `ask-rendered` (#284): with `REDUCE_PROMPT=v6` the model names evidence items by reference and code writes each
+  claim ("Per the <source>, published <date>: <item text> ..."). The newest `query_log` row has
+  `filters.reduce.version` v6, `filters.reduce.render.refs` >= 1, `unknown_ref` 0 and `ref_part_mismatch` 0, and a
+  claim on the page starts "Per the". Driven only when the verify app runs with `REDUCE_PROMPT=v6` (set it in the
+  shell before `verify_cee.py run`); the guards (unknown ref, out-of-part ref, number_not_found items) need a model's
+  mistakes and are proven by `tests/test_reduce_v6.py`.
 - `ask-part-gap`: every part of the question's plan has a cited claim, an adjacent item or a gap
   (since #247 the matrix's code gaps name every cell that holds nothing); a part with none of
   them gets a gap built by code, flagged `part_gap` (chip on the gap box) (#215). Its wording
@@ -53,6 +59,9 @@ Preconditions: baseline.
   (or the documented re-judge), `filters.reduce.outside_matrix` is 0, no cited id is missing
   from `chunk_ids`, and the page shows no "not in the retrieved set" chip. The verify app runs
   with `MAP=on` set by the driver.
+- **Rendered claims (#284, only with `REDUCE_PROMPT=v6`).** The newest `query_log` row reads reduce version v6,
+  refs >= 1, 0 unknown_ref, 0 ref_part_mismatch, at least one claim containing "Per the ", and "Per the " is on the
+  page.
 - **Part gaps.** After the EDJ question (one sub-question) and after the two-firm question
   "How do Morgan Stanley and Raymond James approach advisor recruiting?" (rule plan, #245:
   sub-questions a1.MS, a1.RJF), read the newest `query_log` row: the gaps flagged `part_gap` are exactly one per plan

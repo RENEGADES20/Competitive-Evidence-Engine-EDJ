@@ -393,6 +393,21 @@ def feature_ask_answer(page, base, rec, ctx):
              "shown behavior = filters.map.behavior, 0 outside the matrix, 0 cited ids outside the logged "
              "chunk ids, no unlinked chip",
              same and parts[3] == "0" and parts[4] == "0" and not unlinked, f"{row}; unlinked chip={unlinked}")
+    if os.environ.get("REDUCE_PROMPT", "").strip() == "v6":   # #284: claims rendered by code from item refs
+        log = psql(VERIFY_DB,
+                   "SELECT coalesce(filters->'reduce'->>'version', '') || '|' || "
+                   "coalesce(filters->'reduce'->'render'->>'refs', 'none') || '|' || "
+                   "coalesce(filters->'reduce'->'render'->>'unknown_ref', 'none') || '|' || "
+                   "coalesce(filters->'reduce'->'render'->>'ref_part_mismatch', 'none') || '|' || "
+                   "(SELECT count(*) FROM jsonb_array_elements(answer->'claims') c "
+                   " WHERE c->>'text' LIKE '%Per the %') "
+                   "FROM query_log q WHERE q.answer IS NOT NULL ORDER BY query_id DESC LIMIT 1").split("|")
+        shown = "Per the " in page.locator("body").inner_text()
+        rec.step("Read the rendered claims (#284, REDUCE_PROMPT=v6)",
+                 "query_log reduce version v6, refs >= 1, 0 unknown_ref, 0 ref_part_mismatch, a claim on the page "
+                 "starts 'Per the <source>'",
+                 len(log) == 5 and log[0] == "v6" and log[1] not in ("none", "0") and log[2] == "0" and log[3] == "0"
+                 and int(log[4] or 0) >= 1 and shown, f"{'|'.join(log)}; 'Per the' on page={shown}")
     check_part_gaps(rec, page, "the EDJ advisors question (one sub-question)")
     ask(page, base, TWO_FIRM_Q)
     check_part_gaps(rec, page, "the two-firm question (two sub-questions)")

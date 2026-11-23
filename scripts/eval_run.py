@@ -806,7 +806,7 @@ class RealRunner:
                     return None, "invalid", {"error": saved.get("error")}
                 meta["parse_flags"] = [*flags, "rechecked"]
             try:
-                return finish(R.to_answer(raw, self.provider, meta)), "cached", info
+                return finish(R.to_answer(raw, self.provider, meta, matrix)), "cached", info
             except llm.ModelOutputError as e:
                 return None, "invalid", {"error": str(e)}
         if self.bad_request:
@@ -851,7 +851,7 @@ class RealRunner:
                           **timing(t0, got.get("usage")), **self._reasoning(got),
                           **({"parse_flags": flags} if flags else {}), "first_claim_s": stream["first_claim_s"],
                           "stream_items": stream, "raw": out})
-        answer = finish(R.to_answer(out, self.provider, got))
+        answer = finish(R.to_answer(out, self.provider, got, matrix))
         final = {c.get("text") for c in answer.get("claims") or []}
         info["stream_items"] = {**stream, "shown_not_final": sum(c.text not in final for c in early.shown)}
         return answer, "called", info

@@ -1,0 +1,754 @@
+{
+  "question_id": "Q24",
+  "question": "Client assets per advisor across the five -- and is that comparison even valid?",
+  "reduce_version": "v6",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2026Q3#18",
+    "MS-TR-2026Q3#2",
+    "MS-TR-2026Q2#2",
+    "MS-TR-2026Q2#19",
+    "MS-TR-2026Q1#3",
+    "MS-TR-2025Q4#25",
+    "MS-PR-2026-01-15-01#0",
+    "MS-TR-2025Q4#4",
+    "MS-TR-2025Q3#17",
+    "MS-TR-2025Q3#3",
+    "MS-TR-2025Q2#18",
+    "MS-TR-2024Q4#14",
+    "MS-DECK-2026-strategic-update#28",
+    "MS-SUPP-2020Q4#1",
+    "MS-SUPP-2026Q3#16",
+    "MS-SUPP-2025Q4#14",
+    "MS-10K-2025#166",
+    "MS-SUPP-2025Q4#36",
+    "MS-SUPP-2026Q1#42",
+    "SCHW-PR-2026-10-15-01#2",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-10K-2025#129",
+    "SCHW-10K-2025#136",
+    "SCHW-MONTHLY-2026-08#1",
+    "SCHW-MONTHLY-2026-07#2",
+    "SCHW-MONTHLY-2026-05#1",
+    "SCHW-MONTHLY-2026-04#2",
+    "SCHW-MONTHLY-2026-02#2",
+    "SCHW-MONTHLY-2026-01#2",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10K-2025#49",
+    "SCHW-PR-2026-07-21-01#11",
+    "SCHW-PR-2026-01-21-01#9",
+    "SCHW-PR-2026-10-15-01#41",
+    "SCHW-TR-2026Q3#10",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-10K-2025#26",
+    "SCHW-PR-2026-01-21-01#40",
+    "EDJ-10K-2025#131",
+    "EDJ-10Q-2025Q2#63",
+    "EDJ-10Q-2025Q3#66",
+    "EDJ-10Q-2026Q1#51",
+    "EDJ-10Q-2026Q2#59",
+    "EDJ-10Q-2026Q2#61",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10Q-2026Q1#46",
+    "EDJ-10Q-2026Q1#52",
+    "EDJ-10Q-2026Q2#75",
+    "EDJ-10K-2025#59",
+    "BAC-PR-2026-01-14-01#13",
+    "BAC-PR-2026-04-15-01#11",
+    "BAC-PR-2026-07-14-01#11",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-SUPP-2026Q3#54",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-SUPP-2023Q4#2",
+    "MER-ADV1A-2026#1",
+    "BAC-SUPP-2025Q4#56",
+    "BAC-SUPP-2026Q3#53",
+    "BAC-10Q-2026Q2#92",
+    "BAC-PR-2026-10-14-01#13",
+    "BAC-10K-2025#246",
+    "RJF-SUPP-2025Q3#9",
+    "RJF-SUPP-2025Q4#8",
+    "RJF-SUPP-2026Q1#9",
+    "RJF-SUPP-2026Q2#9",
+    "RJF-10K-2025#227",
+    "RJF-TR-2025Q3#4",
+    "RJF-DECK-2025-investor-day#30",
+    "RJF-DECK-2025-investor-day#43",
+    "RJF-10K-2025#9",
+    "RJF-10K-2025#12",
+    "RJF-PR-web-bank-and-credit-union-advisors#0",
+    "RJF-10K-2025#228"
+  ],
+  "schema_fallback": [],
+  "enum_values": 502,
+  "at": "2026-11-23T04:20:27.217210-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 27725,
+    "output_tokens": 27468,
+    "cache_hit_tokens": 1920,
+    "cache_miss_tokens": 25805,
+    "reasoning_tokens": 23823,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.67
+  },
+  "wall_s": 308.09,
+  "tokens_per_s": 89.16,
+  "ttft_s": 1.67,
+  "reasoning_content": "Let me work through this carefully.\n\nThe question: \"Client assets per advisor across the five -- and is that comparison even valid?\"\n\nBehavior: answer. Why: 1a: the asked quantity in a1.MS, a2.MS, a1.SCHW, a1.EDJ, a2.EDJ, a1.MER, a1.RJF, a2.RJF.\n\nWait, let me re-read. The \"Why\" line says the asked quantity is in a1.MS, a2.MS, a1.SCHW, a1.EDJ, a2.EDJ, a1.MER, a1.RJF, a2.RJF.\n\nHmm, but the question is \"client assets per advisor\". So the numerator (client assets, aspect a1) and denominator (advisor headcount, aspect a2). The actual \"client assets per advisor\" figure would be in a3 (stand-in figure, adjacent only) - computed or disclosed, closest disclosed figure.\n\nActually the question asks for \"client assets per advisor across the five\" and \"is that comparison even valid?\".\n\nSo I need to provide:\n- a1 (client assets) fact cells for each firm\n- a2 (advisor headcount) fact cells for each firm\n- a3 (client assets per advisor) - adjacent only (stand-in figures)\n- a4 (comparison claim) - whether valid to compare side by side\n\nLet me think about what claims to write.\n\nFor aspect a1 (fact): client assets for each firm. I should give item claims for each firm's fact cell.\n\nFor aspect a2 (fact): advisor headcount. MS has items (2020, 2019 counts). EDJ has items. RJF has items (with basis break). SCHW is \"different quantity (adjacent only)\". MER is \"different quantity (adjacent only)\".\n\nFor aspect a3 (proxy, adjacent only): stand-in figures. All firms have a3 items that go in adjacent.\n\nFor aspect a4 (comparison): exactly one comparison claim with part_id a4.\n\nLet me structure.\n\nFirms order: MS, SCHW, EDJ, MER, RJF.\n\nAspects order: a1, a2, a3, a4.\n\nSo the answer structure is aspect by aspect, firms in order within each aspect.\n\nAspect a1 (client assets, fact):\n- a1.MS: item claims. I should pick items that answer the cell. The most recent is $10.5 trillion (2026-09-30). Also $10T (2026Q2), $9T (2026Q1), $9.3T (2025 year end). I'll include the recent ones. Let me pick a reasonable set: the latest (a1.MS/1 and /2 both say $10.5T), plus /3 ($10T Q2), /5 ($9T Q1), /7 ($9.3T FY2025). Actually to avoid repetition, pick one per period. a1.MS/1 or /2 for Q3 2026, /3 for Q2, /5 for Q1, /7 for FY2025. Maybe also the definition item /13.\n\nActually, let me be efficient. The question is about \"client assets per advisor\" comparison. The key fact cells are a1 (numerator) and a2 (denominator). \n\nLet me decide how many items to include. I'll include a reasonable set of the most recent figures.\n\nFor a1.MS: items /1 (Q3 2026 $10.5T), /3 (Q2 $10T), /5 (Q1 $9T), /7 (FY2025 $9.3T). Maybe also /13 definition. I'll include /1, /3, /5, /7.\n\nActually, let me think about the overall goal - answer the question \"client assets per advisor across the five - and is that comparison even valid?\"\n\nThe answer needs client assets (a1) and advisor headcount (a2) for each firm, plus the adjacent stand-in figures (a3), plus the comparison claim (a4).\n\nLet me now write claims.\n\nFor a1 (fact cells), I write item claims with refs.\n\na1.MS: I'll pick the latest and a few recent. Let me use:\n- a1.MS/1 ($10.5T, Q3 2026)\n- a1.MS/3 ($10T, Q2 2026)\n- a1.MS/5 ($9T, Q1 2026)\n- a1.MS/7 ($9.3T, FY2025)\n\nActually, maybe I should also include the definition. But the definition is already in a1.MS/13. Let me include /13 as an item claim too (it's the definition). Actually the definition item may be useful for the comparison. But it's a \"fact\" for the a1.MS cell. I could include it. I'll keep it simpler and include the main figures plus maybe definition.\n\nHmm, let me reconsider. To answer the question well, I need enough to show client assets. I'll include the recent trajectory.\n\nLet me write each claim. For item claims, text empty, items list refs.\n\na1.MS claim 1: items [\"a1.MS/1\"], text \"\", chunk_ids [], why \"\".\nActually /1 and /2 both say $10.5T. I'll use just /1 (CFO). Or use /2 (CEO) too. They say same thing. Per instructions, \"put two refs in one claim only when they say the same thing from two sources.\" These are from different sources (MS-TR-2026Q3#18 and #2). Both same document type (transcript). I'll just use one.\n\nLet me be thorough but not excessive. I'll include:\n- a1.MS/1\n- a1.MS/3\n- a1.MS/5\n- a1.MS/7\n\nActually, I realize I should think about whether to include the full history. The question doesn't have a time window (no recency required, no time window). So why lines should be empty.\n\nLet me just include a good set.\n\nActually, let me reconsider the scope. This is a comparison question across 5 firms. The answer should give each firm's client assets, advisor headcount, and then the \"per advisor\" stand-in figures (adjacent), and then the comparison claim.\n\nLet me write it out.\n\n**Aspect a1 (client assets):**\n\na1.MS (fact): item claims\n- a1.MS/1 ($10.5T Q3 2026)\n- a1.MS/3 ($10T Q2 2026)\n- a1.MS/5 ($9T Q1 2026)\n- a1.MS/7 ($9.3T FY2025)\n\nMaybe include /13 definition? It's helpful context. I'll include it as a claim too. Actually, the definition is captured elsewhere (a4.MS/2 defines client assets). I'll skip /13 to avoid redundancy, or include it. I'll include /13 since it's part of a1.MS cell and defines the measure. Hmm, but a4.MS/2 already covers the definition. Let me not over-include.\n\nActually, I'll keep a1.MS to the main figures.\n\na1.SCHW (fact): item claims. Latest is Q3 2026 $13.33T (/1), Q2 $13.08T (/2), Q1 $11.77T (/3), FY2025 $11.90T (/4). I'll include /1, /2, /3, /4.\n\na1.EDJ (fact): item claims. FY2025 $2.5T (/1), Q2 2026 $2.647B or $2.6T (/9, /11), Q1 2026 $2.417B (/7). Note period \"not stated in usable form\" for /1 and /2. I'll include /11 ($2.6T Q2 2026), /7 ($2.417B Q1 2026), /1 ($2.5T FY2025), maybe /5 ($2.421B Q3 2025).\n\nLet me pick: /11 (Q2 2026 $2.6T), /9 or /7 (Q1 2026), /1 (FY2025 $2.5T). Actually /9 is Q2 2026 $2.647B with \"quote not verbatim\". /11 is cleaner ($2.6T). I'll use /11 for Q2 2026, /7 for Q1 2026 (but /7 quote not verbatim - actually /7 has quote \"Total: At period end $ 2,417...\" and it's marked? No, /7 is a1.EDJ/7 with quote \"Total: At period end $ 2,417 $ 2,159 ... Advisory programs: At period end $ 1,064 $ 860\" and marked \"quote not verbatim: never put it in quotation marks\". That's fine for an item claim since text is empty and code renders the item.\n\nWait, but for item claims, code renders the item's text. The \"quote not verbatim\" note means don't put it in quotes - but the code handles rendering. Actually the instruction says \"An item marked 'quote not verbatim' is never put in quotation marks.\" That's about how I write it. Since item claims have empty text and code renders, I think code handles it. But to be safe, the item claim just references the ref.\n\nLet me pick items for a1.EDJ: /11 ($2.6T Q2 2026), /7 ($2.417B Q1 2026), /1 ($2.5T FY2025), /5 ($2.421B Q3 2025). Hmm.\n\nActually let me simplify and just give the most recent couple plus FY2025. I'll include /11, /7, /1.\n\nActually, let me reconsider - maybe include advisory programs AUC too? The question is \"client assets per advisor\" so total client assets is the numerator. I'll focus on total.\n\na1.MER (fact): item claims. /1 ($1.7T FY2025), /2 ($1.7T Q1 2026), /3 ($1.8T Q2 2026), /4 ($1.9T Q3 2026). These are AUM balances. I'll include /4, /3, /1 (latest + year end). Maybe /2 too. Also /6 (definition). \n\nNote: a1.MER is \"fact\" cell but the items are AUM balances, scope Merrill Wealth Management. There's a nuance: GWIM includes Private Bank, but these are \"Merrill Wealth Management\" AUM. So they're Merrill-specific. Good.\n\nAlso a1.MER/5 is \"no ref\" (figure not found). I should not state its figure. I can skip it entirely.\n\nI'll include /4, /3, /2, /1 and /6 (definition).\n\nActually /6 defines AUM. Useful. I'll include it.\n\na1.RJF (fact): item claims. These are client assets under administration. Latest /8 ($1,922.4B June 30 2026), /7 ($1,762.9B Mar 2026), /6 ($1,773.1B Dec 2025), /5 ($1,730.6B Sep 2025), /4 ($1,637.1B Jun 2025), /3, /2, /1.\n\nI'll include /8, /7, /6, /5. Or maybe just a few. Since the question is about comparison, the numerator is AUA. I'll include /8 (latest), /6 (Dec 2025), /4 (Jun 2025).\n\nHmm, actually let me keep it moderate. I'll include /8, /7, /6, /5.\n\nLet me reconsider the whole approach. This is a lot of items. I should be reasonably comprehensive but focus on what answers the question.\n\nActually, I think I should give each firm's client assets at the most recent comparable point, and note the advisor headcount. The comparison claim (a4) will explain validity.\n\nLet me now think about a2 (advisor headcount).\n\na2.MS (fact): items /1, /2, /3 - all from 2020/2019. Latest is 2020. These are the only MS advisor counts. I'll include all three? Or just /1 (latest 2020). The caveat already says \"latest count found 2020-12-31\". I'll include /1, /2, /3 (they're all old). Actually maybe just include /1 (Dec 2020) and /2 (Sep 2020) and /3 (Dec 2019). Let me include all three as they're the only data.\n\nActually, for efficiency I'll include all three since they're the complete set.\n\na2.SCHW: different quantity (adjacent only). Items /1 (4,127), /2 (6,584), /3 (30,690), /4 (33,000). These go in adjacent with differs_because from the cell text.\n\na2.EDJ (fact): items /1 (20,514 Q2 2026), /2 (avg 20,537), /3 (20,309 Q2 2025), /4 (avg), /5 (20,425 FY2025), /6 (avg 20,331), /7, /8, /9, /10. I'll include the actual headcount items: /1 (20,514 Q2 2026), /5 (20,425 FY2025), /3 (20,309 Q2 2025). Maybe also /7 (20,125 FY2024), /9 (19,232 FY2023). I'll include /1, /5, /3.\n\nActually the question asks \"per advisor\", denominator is advisor count. I'll give the recent actual counts: /1 (20,514 Q2 2026), /5 (20,425 FY2025).\n\na2.MER: different quantity (adjacent only). Items /1 (no ref, >15K), /2 (18,916), /3 (26,599 reg reps), /4 (32,960 employees). Go in adjacent.\n\na2.RJF (fact): basis break. Items /1 (8,943 total Sep 2025), /2 (3,878 employees), /3 (5,065 contractors), /4 (8,787), /5, /6, /7 (8,712), /8, /9, /10 (8,731 PCG Mar 2025).\n\nBasis break: whole firm (2023-09-30, 2024-09-30, 2025-09-30) and PCG (2025-03-31). I need to state each basis separately, never join.\n\nWhole firm: /1 (8,943 Sep 2025), /2 (3,878 employees), /3 (5,065 contractors), /4 (8,787 Sep 2024), /5, /6, /7 (8,712 Sep 2023), /8, /9.\n\nPCG: /10 (8,731 Mar 2025).\n\nI'll include /1, /4, /7 for total (whole firm), and /10 for PCG. Also maybe /2, /3 for the employee/contractor breakdown.\n\nI'll include /1, /4, /7 (totals) and /10 (PCG). And /2, /3 as breakdown.\n\nNow a3 (stand-in figures, adjacent only):\n\na3.MS: items /1 (WM client assets $8,433B Sep 2026), /2 ($7,381B Dec 2025), /3 (advisor-led $6,631B Sep 2026), /4 ($5,715B Dec 2025), /5 (15,950 reps Dec 2020). All adjacent with differs_because. The differs_because for a3 should explain that these are stand-in figures (not a disclosed per-advisor figure).\n\nThe cell a3.MS is \"stand-in figure (adjacent only)\". So I give the adjacent items with differs_because. The differs_because should say why it's a stand-in, i.e., not the actual per-advisor figure.\n\na3.SCHW: items /1, /2, /3 (client assets + account counts), /4 (Advisor Services segment client assets). Adjacent.\n\na3.EDJ: items /1, /2, /3, /4 (AUC numerator), /5, /6, /7, /8 (advisor denominator). Adjacent.\n\na3.MER: items /1, /2 (client balances), /3 (GWIM client balances), /4 (no ref >15K), /5 (18,916 advisors). Adjacent.\n\na3.RJF: items /1 ($1.67T PCG AUA), /2 (8,943), /3 (breakdown), /4 (RCS note), /5 ($166M AUM per advisor - FID), /6 (PCG AUA $1,856.5B Jun 2026). Adjacent.\n\nNow a4 (comparison): exactly one text claim with part_id a4.\n\nThe comparison claim needs to answer: whether the per-advisor figures across the five firms can be validly compared side by side, given differences in definitions, advisor counts, and client asset measures.\n\nGiven the evidence, the answer is clearly \"not valid\" - because:\n- Each firm defines client assets differently (MS \"total client assets\" = WM + IM, but for per-advisor it's WM client assets; SCHW \"total client assets\" includes retail + RIA custodial; EDJ \"assets under care\"; Merrill \"AUM\" for Merrill Wealth Management; RJF \"assets under administration\").\n- Advisor headcount defined differently (MS \"Wealth Management representatives\" last reported 2020; SCHW has no advisor count, only RIA firms count; EDJ \"financial advisors (actual)\"; Merrill \"total wealth advisors\" broader than Merrill; RJF excludes RCS advisors).\n- MS has no current advisor count (2020).\n- SCHW has no advisor count at all (only Form ADV counts).\n\nSo the comparison is not valid.\n\nThe comparison claim should cite the items it rests on (chunk_ids). I need to cite the key definition items.\n\nLet me write the comparison claim text (whole claim in text, no refs), citing chunk_ids.\n\nKey chunks for the comparison:\n- MS: MS-SUPP-2020Q4#1 (15,950 reps 2020), MS-SUPP-2025Q4#36 / MS-SUPP-2026Q1#42 (client assets definition), MS-SUPP-2026Q3#16 (WM client assets).\n- SCHW: SCHW-ADV1A-2026#1 (Form ADV counts), SCHW-TR-2026Q3#10 (16,000 firms), SCHW-10K-2025#49 (33,000 FTE).\n- EDJ: EDJ-10K-2025#130 (financial advisors), EDJ-10Q-2026Q2#61 (AUC).\n- MER: BAC-SUPP-2023Q4#2 (total wealth advisors GWIM+Consumer), BAC-SUPP-2026Q3#54 (AUM definition), BAC-PR-2026-10-14-01#12 (Merrill AUM).\n- RJF: RJF-10K-2025#227 (advisors), RJF-10K-2025#228 (RCS excluded), RJF-10K-2025#9 (PCG AUA).\n\nThe comparison claim should state that the figures are NOT validly comparable, and why.\n\nLet me write it:\n\n\"The client assets per advisor figures are not validly comparable side by side. Each firm measures its client asset base differently: Morgan Stanley's per-advisor numerator is Wealth Management client assets (which include self-directed and workplace assets) and its advisor count is 'Wealth Management representatives,' last reported at 15,950 as of December 31, 2020 with no current figure; Schwab reports total client assets across retail Investor Services and Advisor Services (RIA custodial) segments and does not publish an advisor headcount at all, only Form ADV counts (e.g., 4,127 employees performing investment advisory functions) and a count of 16,000 advisory firms; Edward Jones measures 'assets under care' and counts 'financial advisors (actual)'; Merrill's client assets are Merrill Wealth Management AUM while its 'total wealth advisors' figure spans all GWIM and Consumer Banking wealth businesses, not Merrill alone; and Raymond James reports 'assets under administration' for its Private Client Group while its advisor count excludes advisors in its RCS division. Because the asset measures (AUM vs. AUA vs. AUC vs. total client assets) and the advisor counts (representatives vs. financial advisors vs. wealth advisors across different scopes) differ, and Morgan Stanley and Schwab lack current comparable advisor counts, a side-by-side per-advisor comparison is not valid on this evidence.\"\n\nI need to cite chunk_ids. Let me list the chunks:\n- MS-SUPP-2020Q4#1 (MS advisor count)\n- MS-SUPP-2026Q1#42 (MS client assets definition) \u2014 or MS-SUPP-2025Q4#36\n- SCHW-ADV1A-2026#1 (Schwab Form ADV)\n- SCHW-TR-2026Q3#10 (16,000 firms)\n- EDJ-10K-2025#130 (EDJ advisors)\n- EDJ-10Q-2026Q2#61 (EDJ AUC)\n- BAC-SUPP-2023Q4#2 (Merrill total wealth advisors)\n- BAC-SUPP-2026Q3#54 (Merrill AUM definition)\n- RJF-10K-2025#228 (RJF RCS excluded)\n- RJF-10K-2025#227 (RJF advisors)\n- RJF-10K-2025#9 (RJF PCG AUA)\n\nThat's a lot of chunk_ids but they're all valid.\n\nActually, let me also think about whether I should reference the specific definition items. The comparison claim cites the items it rests on. I'll cite a comprehensive set.\n\nLet me finalize chunk_ids for the comparison claim:\n[\"MS-SUPP-2020Q4#1\", \"MS-SUPP-2026Q1#42\", \"SCHW-ADV1A-2026#1\", \"SCHW-TR-2026Q3#10\", \"SCHW-10K-2025#49\", \"EDJ-10K-2025#130\", \"EDJ-10Q-2026Q2#61\", \"BAC-SUPP-2023Q4#2\", \"BAC-SUPP-2026Q3#54\", \"RJF-10K-2025#227\", \"RJF-10K-2025#228\", \"RJF-10K-2025#9\"]\n\nAll these are in the allowed chunk_ids enum. Let me verify each is in the enum list.\n\nMS-SUPP-2020Q4#1 \u2713\nMS-SUPP-2026Q1#42 \u2713\nSCHW-ADV1A-2026#1 \u2713\nSCHW-TR-2026Q3#10 \u2713\nSCHW-10K-2025#49 \u2713\nEDJ-10K-2025#130 \u2713\nEDJ-10Q-2026Q2#61 \u2713\nBAC-SUPP-2023Q4#2 \u2713\nBAC-SUPP-2026Q3#54 \u2713\nRJF-10K-2025#227 \u2713\nRJF-10K-2025#228 \u2713\nRJF-10K-2025#9 \u2713\n\nGood.\n\nNow let me think about the gaps. The code gaps already cover:\n- a2.SCHW advisor headcount not published\n- a2.MER advisor headcount not published\n\nDo I need to add any gaps? The question asks \"client assets per advisor\". The a3 aspect is \"stand-in figure, adjacent only\" - meaning no direct per-advisor figure is disclosed (except RJF's FID $166M per advisor, which is a specific division, not whole firm).\n\nActually, should I add a gap saying \"Client assets per advisor is not directly disclosed by any of the five firms\"? The a3 cell is \"proxy: a stand-in figure, adjacent only\". The code gap list doesn't mention this. Hmm.\n\nWait, let me re-read. The gaps added by code are only:\n- a2.SCHW advisor headcount not published\n- a2.MER advisor headcount not published\n\nAnd there's a note about a3 being \"unverified: not in the metric definitions file; never compared across firms\" (Comparability code).\n\nI think I should add a gap for the asked quantity \"client assets per advisor\" not being directly disclosed. Actually, let me think. The question is \"Client assets per advisor across the five\". The database doesn't directly have a per-advisor figure for most firms (only RJF FID has $166M per advisor for a sub-division). \n\nBut wait, the a3 aspect is described as \"Client assets per advisor computed or disclosed, and the closest disclosed figure if not directly disclosed\". So a3 is where per-advisor would go, and it's \"adjacent only\" (stand-in figures).\n\nI think I should add a gap noting that \"client assets per advisor\" is not directly disclosed for the five firms. Let me add a gap.\n\nActually, let me reconsider. The instructions say \"Add a gap of your own only for something those gaps do not name.\" The code gaps name a2.SCHW and a2.MER (advisor headcount not published). \n\nThe asked quantity is \"client assets per advisor\". None of the firms directly disclose a firm-wide client assets per advisor figure (RJF discloses $166M per advisor but only for its FID division). So there's a gap: \"Client assets per advisor is not directly disclosed for the five firms.\"\n\nI'll add this gap with part_id \"a3\" (the aspect for per-advisor). Suggested source: I could suggest something. Let me think about what to put.\n\nActually, the a3 cell is a \"proxy\" and \"adjacent only\". The gap should capture that no direct per-advisor figure exists.\n\nLet me add a gap:\n- what: \"Client assets per advisor (firm-wide) is not directly disclosed for any of the five firms; only stand-in figures (client assets and advisor counts separately) are available.\"\n- suggested_source: something\n- part_id: \"a3\"\n\nFor suggested_source, I'll write something generic like \"Firm financial supplements / 10-K disclosures of client assets and advisor headcount.\"\n\nActually, let me think about whether adding a gap is necessary or if it's redundant with the a4 comparison claim. The comparison claim already says the comparison is not valid. But the gap is about the direct disclosure.\n\nHmm. Let me add a gap for the directly-disclosed per-advisor figure. Actually, I'll add one gap.\n\nWait, actually, re-reading more carefully: the \"gap_with_adjacent\" pattern is about a cell that doesn't hold the asked quantity. Here a3 is \"adjacent only\" which means it's stand-in figures. The adjacent items are the stand-ins. So the adjacent section already conveys \"here are the closest figures\". \n\nI think adding a gap is reasonable but let me be careful not to over-do. I'll add one gap:\n\ngap: part_id \"a3\", what \"Client assets per advisor is not directly disclosed for any of the five firms; the database holds only separate client-asset and advisor-headcount figures (stand-ins).\", suggested_source \"No single source; compute from firm client-asset and advisor-headcount disclosures.\"\n\nActually, I'll keep it simpler and aligned.\n\nNow let me also reconsider: is there a \"recency\" requirement? The question has no time window mentioned, and aspects are not marked \"recency\". So why lines empty throughout. Good.\n\nLet me now also handle the \"no ref\" items:\n- a1.MER/5 (no ref): figure not found in passage. Skip it (don't state figure).\n- a2.MER/1 (no ref): quote not verbatim, >15K wealth advisors Merrill+Private Bank. This goes in adjacent (a2.MER is adjacent only). But it's \"no ref\" with \"quote not verbatim\". I can state it in adjacent with differs_because? Actually adjacent items can have refs. But this item has \"no ref\" meaning... wait, it says \"(no ref)\" and \"quote not verbatim: never put it in quotation marks\".\n\nLet me re-read a2.MER/1: \"item a2.MER/1 (no ref): Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank. | ... | cite BAC-DECK-2025-investor-day#9 [quote not verbatim: never put it in quotation marks]\"\n\nHmm, \"no ref\" but it has a cite. Wait, \"no ref\" here might mean the figure isn't directly found? No, actually \"no ref\" for a1.MER/5 says \"figure not found in its passage: do not state this figure\". For a2.MER/1, it says \"(no ref)\" but doesn't say \"figure not found\". Let me look again.\n\na2.MER/1: \"item a2.MER/1 (no ref): Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank. | value >15K | unit wealth advisors | scope Merrill | Private Bank | quote '>15K Wealth Advisors' | cite BAC-DECK-2025-investor-day#9 [quote not verbatim: never put it in quotation marks]\"\n\nSo \"(no ref)\" here is ambiguous. But a2.MER/1 has a cite (BAC-DECK-2025-investor-day#9). So it does have a ref. The \"(no ref)\" label might be a mistake, or it means \"no ref\" as in no separate reference beyond the cite.\n\nActually wait, comparing to a2.MER/2 which also says \"[quote not verbatim]\". And a4.MER/6 \"(no ref)\". Let me look at a4.MER/6: \"item a4.MER/6 (no ref): Merrill describes its advisor force as more than 15,000 wealth advisors. | value >15K | unit wealth advisors | quote '>15K Wealth Advisors' | cite BAC-DECK-2025-investor-day#9\". This one has no \"quote not verbatim\" note but is \"(no ref)\".\n\nHmm. This is confusing. The \"(no ref)\" items still have cite chunk ids. Let me check the \"no ref\" meaning from the rules:\n\n\"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nWait, but that's specifically for \"figure not found in its passage\". a1.MER/5 explicitly says \"figure not found in its passage: do not state this figure\". \n\nFor a2.MER/1 and a4.MER/6, they say \"(no ref)\" but have values and quotes and cites. Let me think.\n\nActually, looking more carefully at a1.MER/5: \"item a1.MER/5 (no ref): Merrill reported $1.7 trillion in AUM (undated investor-day material). | ... | cite BAC-DECK-2025-investor-day#18 [figure not found in its passage: do not state this figure]\"\n\nSo \"no ref\" = the figure/quote is not found in the cited passage. For a1.MER/5, do NOT state this figure.\n\nFor a2.MER/1: \"(no ref)\" but no \"[figure not found]\" note, just \"[quote not verbatim]\". So what does \"no ref\" mean here?\n\nHmm, actually maybe \"(no ref)\" means the item has no standalone reference (i.e., it's derived/adjacent context). But it has a cite...\n\nThis is getting complicated. Let me focus on what I need to write.\n\nFor a2.MER (adjacent only, different quantity), I write adjacent items with differs_because. The items a2.MER/1, /2, /3, /4 are the adjacent items.\n\na2.MER/1 is \"(no ref)\". Given the rules about \"no ref\" items being stated in text claims without figure... but this is in an adjacent cell. Hmm.\n\nActually, let me re-read the \"no ref\" rule more carefully:\n\n\"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nThe parenthetical clarifies \"(figure not found in its passage)\". So \"no ref\" specifically means the figure is not found in its passage. For a1.MER/5, this is explicit.\n\nFor a2.MER/1, there's no \"[figure not found]\" note, only \"[quote not verbatim]\". So maybe \"(no ref)\" here is different, or it's an error.\n\nActually, wait. Let me reconsider. In the adjacent cells, the items are listed with refs normally. a2.MER/1 has \"(no ref)\" in its label. But it also has a cite. \n\nLet me look at a3.MER/4: \"item a3.MER/4 (no ref): Merrill and Private Bank together had more than 15,000 wealth advisors... cite BAC-DECK-2025-investor-day#9\". No note at all.\n\nAnd a4.MER/6: \"(no ref)\" no note.\n\nSo these \"(no ref)\" items don't have the \"figure not found\" note. This suggests \"(no ref)\" might just mean \"no separate reference number\" or it's a labeling quirk. But the rule about \"no ref\" says \"figure not found in its passage\".\n\nGiven ambiguity, let me be safe: For a2.MER/1, a3.MER/4, a4.MER/6 (the \"(no ref)\" items without explicit \"figure not found\" note), they have quotes/values and cites. Since they're marked \"(no ref)\", I'll follow the conservative approach.\n\nActually, wait. Let me reconsider. The rule says: \"An item marked 'quote not verbatim' is never put in quotation marks.\" and separately \"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nThe key insight: \"no ref\" with the parenthetical \"(figure not found in its passage)\" is about a1.MER/5 specifically. The other \"(no ref)\" items don't have that parenthetical.\n\nHmm, but actually the instruction in the prompt says literally: \"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nI think the safest interpretation: items labeled \"(no ref)\" should not be given as item claims with refs. Instead they should be in text claims (for fact cells) or... but these are in adjacent cells.\n\nActually, let me step back. The adjacent items in a2.MER cell: a2.MER/1, /2, /3, /4. These go in adjacent with differs_because. The \"no ref\" item a2.MER/1 - I can still include it in adjacent with its ref (it has cite BAC-DECK-2025-investor-day#9).\n\nWait, but \"(no ref)\" might mean I shouldn't use its ref. Let me check: does \"no ref\" mean \"no reference available\" or \"figure not found in passage\"?\n\nGiven a1.MER/5 has BOTH \"(no ref)\" AND \"[figure not found in its passage: do not state this figure]\", while a2.MER/1, a3.MER/4, a4.MER/6 have \"(no ref)\" but no \"figure not found\" note, I think there might be a distinction.\n\nActually, I realize I'm overcomplicating. Let me just handle each:\n\n1. a1.MER/5: \"(no ref)\" + \"figure not found\" \u2192 do NOT state figure. Skip it.\n\n2. a2.MER/1: \"(no ref)\" + \"quote not verbatim\" \u2192 it has a value >15K and quote \">15K Wealth Advisors\" and cite. This is in adjacent cell a2.MER. I'll include it in adjacent. The \"quote not verbatim\" means don't quote it, but I can state it as an adjacent item (code renders it). Actually for adjacent items, the text is what I write? No wait.\n\nLet me re-read how adjacent works. \"An adjacent item\" - the adjacent array has items (refs), text, chunk_ids, why, differs_because.\n\nWait, looking at the adjacent schema: it has part_id, items (refs), text, chunk_ids, why, differs_because.\n\nSo adjacent items are similar to claims but with differs_because. The \"text\" field - for adjacent items, do I write text or leave empty like item claims?\n\nThe instruction says: \"A cell marked 'adjacent only' ... goes in adjacent with its refs, never in claims, each with differs_because from the cell.\"\n\nSo adjacent items go with refs and differs_because. The text field - probably leave empty (code renders the item text), same as claims.\n\nActually, looking at the standard wording for adjacent items, they're written like item claims but with differs_because added. The text is empty, refs in items, and differs_because explains the difference.\n\nSo for a2.MER/1 (no ref item), I'd put items [\"a2.MER/1\"] with differs_because \"Merrill's advisor count is only disclosed for wider units than Merrill alone (Merrill combined with the Private Bank), not Merrill's own advisor headcount.\"\n\nBut wait, a2.MER/1 has \"(no ref)\". If \"no ref\" means I can't cite it... but it has a cite chunk id. Ugh.\n\nLet me reconsider. I think \"(no ref)\" in these cases is actually inconsistent labeling in the matrix, and the important signals are:\n- \"figure not found in its passage: do not state this figure\" \u2192 don't state figure\n- \"quote not verbatim: never put it in quotation marks\" \u2192 don't quote\n\nFor a2.MER/1, a3.MER/4, a4.MER/6, they have values and quotes, and only a4.MER/6 lacks any note. a2.MER/1 has \"quote not verbatim\". a3.MER/4 has \"(no ref)\" and no note (wait, let me check a3.MER/4 again).\n\na3.MER/4: \"item a3.MER/4 (no ref): Merrill and Private Bank together had more than 15,000 wealth advisors, per the investor day presentation. | value >15K | unit wealth advisors | scope Merrill and Private Bank | quote '>15K Wealth Advisors' | cite BAC-DECK-2025-investor-day#9\"\n\nNo note. So a3.MER/4 is \"(no ref)\" with no additional note, but has value and quote.\n\nOK here's my interpretation: \"(no ref)\" items are items where the figure is not directly found verbatim in the passage (the quote is not verbatim, or the figure is an approximation). For these, I should be careful.\n\nActually, you know what, I think the cleanest interpretation given the rules:\n\nRule: \"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nThis rule applies to items where the figure is NOT found in the passage. Only a1.MER/5 has the explicit \"figure not found\" note. But the \"(no ref)\" label appears on multiple items.\n\nGiven the explicit rule text, I'll treat \"(no ref)\" items conservatively: they can only be stated in a text claim without the figure. But for adjacent cells, there's no \"text claim\" concept - it's all adjacent items.\n\nHmm, this is getting too deep. Let me make a practical decision:\n\nFor the \"(no ref)\" items:\n- a1.MER/5: skip entirely (explicit \"do not state this figure\").\n- a2.MER/1: This is in a2.MER adjacent cell. It has value >15K. The \"quote not verbatim\" note applies. I'll include it in adjacent but... actually the \"(no ref)\" concerns me. \n\nActually, let me reconsider what \"(no ref)\" means in context. Look at a2.MER cell: items /1 (no ref), /2, /3, /4. And a2.SCHW cell items /1, /2, /3, /4 (no \"(no ref)\").\n\nAnd a3.MER: /1, /2, /3, /4 (no ref), /5.\n\nAnd a4.MER: /1, /2, /3, /4, /5, /6 (no ref).\n\nI think \"(no ref)\" here means the item text was written by the analyst (not a direct quote) but still has a source cite. Actually no.\n\nLet me just go with: the \"(no ref)\" items that have a \"[figure not found...]\" note \u2192 skip the figure. The \"(no ref)\" items without that note but with \"[quote not verbatim]\" \u2192 include but don't quote.\n\nActually, I realize the more I think, the key actionable rules are:\n1. \"quote not verbatim\" \u2192 never in quotation marks (but can still be an item claim, code renders text).\n2. \"figure not found in its passage: do not state this figure\" \u2192 skip.\n\nFor \"no ref\" without these notes, it's ambiguous but likely means \"the item is a derived/no-direct-source item\".\n\nI'll make decisions:\n- a2.MER/1 (no ref, >15K, quote not verbatim): I'll skip this one too, because the value >15K is the same as a2.MER... actually no. Let me just include the items that have clear verbatim quotes and clean cites.\n\nActually, let me simplify my life. For a2.MER (adjacent), I'll include:\n- a2.MER/2 (18,916 total wealth advisors GWIM+Consumer) - quote not verbatim but has clear data\n- a2.MER/3 (26,599 registered representatives)\n- a2.MER/4 (32,960 employees)\n\nSkip a2.MER/1 (no ref, >15K, quote not verbatim) - actually this is the same figure as a3.MER/4 and a4.MER/6.\n\nHmm wait, but the code gap says: \"Merrill - Advisor headcount for the firm: not published... closest disclosed figure is Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank (adjacent).\"\n\nSo the \">15K wealth advisors\" IS the key adjacent figure for Merrill's advisor count. I should include it.\n\nLet me include a2.MER/1 in adjacent. The \"(no ref)\" with \"quote not verbatim\" - I'll include it as an adjacent item. Code renders the item's text (which is already written as \"Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank.\").\n\nActually, I need to decide: does \"no ref\" mean I can't put it in items (refs)? Let me look at the item claim rule again: \"An item claim lists one or more refs\". And \"(no ref)\" items \"may be stated only in a text claim, without its figure.\"\n\nOK so for \"(no ref)\" items, I should NOT put them in items with refs. Instead they go in text claims (for fact cells) or... for adjacent cells?\n\nThis is really getting complicated. Let me take a step back and make pragmatic choices, prioritizing correctness of the overall answer.\n\nKey items I must handle:\n1. a2.MER/1 (>15K wealth advisors Merrill+PB) - this is THE closest figure for Merrill advisor count per the code gap. I need to convey it.\n2. a3.MER/4 (>15K, no ref) - same figure.\n3. a4.MER/6 (>15K, no ref) - same figure.\n4. a1.MER/5 ($1.7T AUM, no ref, figure not found) - skip.\n\nFor the \"no ref\" >15K items, since the code gap itself references \"more than 15,000 wealth advisors for Merrill combined with the Private Bank\", and these have cite BAC-DECK-2025-investor-day#9, I think I can include them as adjacent items with the ref.\n\nActually, the instruction says: \"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure.\"\n\nThe parenthetical \"(figure not found in its passage)\" is the definition of \"no ref\" here. So \"no ref\" = figure not found in passage. For a1.MER/5, explicit. For a2.MER/1, a3.MER/4, a4.MER/6, the value >15K - is it found in the passage? The quote is \">15K Wealth Advisors\" from BAC-DECK-2025-investor-day#9. So >15K IS found in the passage (it's a direct quote from the deck).\n\nWait, but then why \"(no ref)\"? Because it's a deck (investor day slide) without a document reference number? No...\n\nI think \"(no ref)\" might mean \"no reference document number\" but it clearly has a cite chunk id. This is just confusing labeling.\n\nLet me make a final decision and move on:\n\nFor \"(no ref)\" items:\n- a1.MER/5: has \"[figure not found in its passage: do not state this figure]\" \u2192 SKIP entirely.\n- a2.MER/1: \"(no ref)\" + \"quote not verbatim\" \u2192 include as adjacent item (it's the key figure). The \"quote not verbatim\" means code won't put quotes. Actually, since code renders the item text, and the item text already says \"reports more than 15,000 wealth advisors\", I'll just reference it.\n\nActually, I'll treat a2.MER/1 as a normal adjacent item with items [\"a2.MER/1\"] and differs_because. Same for a3.MER/4 and a4.MER/6.\n\nWait, but the rule is explicit. Let me re-read one more time:\n\n\"An item listed 'no ref' (figure not found in its passage) may be stated only in a text claim, without its figure. An item marked 'quote not verbatim' is never put in quotation marks.\"\n\nSo there are TWO different flags:\n1. \"no ref\" \u2192 figure not found in passage \u2192 text claim only, no figure.\n2. \"quote not verbatim\" \u2192 don't use quotation marks.\n\na1.MER/5 has \"no ref\" AND \"figure not found\" \u2192 clearly skip figure.\n\na2.MER/1 has \"no ref\" AND \"quote not verbatim\". So \"no ref\" means figure not found? But it has value >15K and quote \">15K Wealth Advisors\"...\n\nUgh. Actually, wait, let me look at a2.MER/1 more carefully in the matrix:\n\n\"item a2.MER/1 (no ref): Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank. | value >15K | unit wealth advisors | scope Merrill | Private Bank | quote '>15K Wealth Advisors' | cite BAC-DECK-2025-investor-day#9 [quote not verbatim: never put it in quotation marks]\"\n\nSo the quote \">15K Wealth Advisors\" is marked \"not verbatim\" - meaning the actual deck text differs. So I shouldn't quote it verbatim. But the value >15K is stated.\n\nThe \"(no ref)\" here - hmm. Maybe \"(no ref)\" means the item has no \"definition\" or no additional reference beyond the cite?\n\nI'll stop agonizing. My final approach:\n\nTreat \"(no ref)\" items as items I can still cite via their chunk id (since they have a \"cite\" field), BUT:\n- If \"figure not found\" note \u2192 skip figure (a1.MER/5).\n- If \"quote not verbatim\" note \u2192 don't quote, but I can reference the item (code renders text without quotes).\n\nActually, for item claims, I don't write quotes anyway - code renders. So \"quote not verbatim\" is automatically handled by code. And \"no ref\" items, I'll just include them as items in claims/adjacent since they have cites.\n\nBut wait, there's a specific concern: the rule \"may be stated only in a text claim, without its figure\" for \"no ref\" items. This suggests for a fact cell, a \"no ref\" item goes in a text claim (not an item claim). But for adjacent cells, there's no text claim option.\n\nHmm, but a1.MER/5 is in a fact cell (a1.MER). Its \"no ref\" means figure not found. So I skip it.\n\nFor a2.MER/1, a3.MER/4, a4.MER/6 - these are in adjacent cells (a2.MER) or fact cells (a3.MER, a4.MER).\n\nActually a3.MER is \"stand-in figure (adjacent only)\". a4.MER is \"fact\".\n\nLet me reconsider a4.MER/6 and a3.MER/4.\n\nThis is getting too detailed. Let me make executive decisions:\n\n1. a1.MER/5: SKIP (figure not found, do not state).\n\n2. For the \">15K wealth advisors\" figure (appears as a2.MER/1, a3.MER/4, a4.MER/6, and referenced in code gap): This is a real disclosed figure (\">15K Wealth Advisors\" from investor day deck). I'll include it in adjacent for a2.MER (the most relevant place, since it's the closest advisor count). And for a4.MER, it's a fact item, but \"(no ref)\". \n\nActually, the code gap already says the closest figure for a2.MER is \">15,000 wealth advisors for Merrill combined with the Private Bank\". So I should definitely include a2.MER/1 in adjacent.\n\nFor a4.MER/6 \"(no ref)\" - it's in the a4.MER fact cell. The a4 comparison claim will reference the broader advisor count issue. I don't necessarily need a4.MER/6 as a separate claim since a2.MER/1 and BAC-SUPP-2023Q4#2 already cover it. Actually, a4.MER/1 (total wealth advisors 18,916, includes GWIM + Consumer) is the key fact for the comparison.\n\nLet me now think about what fact claims to write for a4. Wait - a4 is a comparison aspect. It says \"needs exactly one comparison claim, part_id a4\". So a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF are fact cells, but the a4 aspect overall needs exactly ONE comparison claim with part_id \"a4\".\n\nWait, let me re-read: \"a4 [comparison]: ... -> needs exactly one comparison claim, part_id a4\".\n\nAnd there are also a4.MS, a4.SCHW, etc. fact cells with items.\n\nSo do I write item claims for a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF (the fact cells), AND one comparison claim for a4?\n\nThe instruction: \"For each aspect marked comparison, write exactly one text claim with that aspect's id as part_id.\"\n\nAnd the fact cells a4.MS etc. have items. So I think I should:\n- Write item claims for a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF (fact cells with items).\n- Write one comparison text claim with part_id \"a4\".\n\nHmm wait, but actually let me reconsider. The a4 aspect is \"comparison\". The fact cells a4.MS, a4.SCHW, etc. contain the definitional evidence for each firm. These support the comparison claim.\n\nActually, re-reading the comparison aspect rule: \"For each aspect marked comparison, write exactly one text claim with that aspect's id as part_id that answers the comparison itself.\"\n\nSo for a4, I write exactly one text claim with part_id \"a4\". \n\nBut then what about a4.MS, a4.SCHW, etc.? These are fact cells (a4.MS \"Morgan Stanley: fact\"). So they're fact cells under the a4 aspect. I should write item claims for them?\n\nThe rule says \"A fact cell gets at least one item claim\". a4.MS is \"fact\". So yes, I write item claims for a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF.\n\nBut wait, the comparison rule says \"write exactly one text claim with that aspect's id as part_id\". This doesn't preclude also writing item claims for the sub-cells (a4.MS etc.).\n\nHmm, but that seems like a lot. Let me think about what's most useful.\n\nActually, I think the intent is:\n- a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF are fact cells providing the definitional evidence.\n- I write item claims for these (the key definitional facts).\n- Then ONE comparison claim (part_id a4) synthesizing whether the comparison is valid.\n\nLet me write item claims for the a4 sub-cells focusing on the definitional facts.\n\nActually, this is a huge answer. Let me be systematic and efficient.\n\nLet me enumerate all claims I'll write.\n\n**Aspect a1 (fact cells):** item claims for each firm.\n\na1.MS: items /1, /3, /5, /7 (recent client assets). Actually let me include /1 (latest Q3 2026), /3 (Q2), /5 (Q1), /7 (FY2025).\n\nHmm, but is there value in all four? For the comparison, I mainly need the latest client assets. But the cell is \"fact\" and I should \"pick the items that answer the cell\". The cell is \"client assets for the firm\". I'll give a few recent data points.\n\nLet me include for a1.MS: /1, /3, /7. Maybe /5 too. I'll do /1, /3, /5, /7.\n\nActually, to keep this manageable, I'll give 2-4 items per firm for a1.\n\na1.MS: /1, /3, /7 (skip /5 to reduce redundancy; /3 and /7 cover Q2 and FY2025). Actually /1 and /3 and /7 give Q3 2026, Q2 2026, FY2025. That's a good span. I'll do /1, /3, /7.\n\nWait, but /7 is FY2025 $9.3T and /5 is Q1 2026 $9T. Let me do /1, /3, /5, /7 for a fuller picture. Actually I'll just do /1, /3, /7 to keep it moderate, plus maybe /5.\n\nLet me finalize: a1.MS \u2192 /1, /3, /5, /7.\n\na1.SCHW: /1, /2, /3, /4 (Q3, Q2, Q1 2026, FY2025).\n\na1.EDJ: /11 (Q2 2026 $2.6T), /7 (Q1 2026 $2.417B), /1 (FY2025 $2.5T). Maybe /5 (Q3 2025 $2.421B). I'll do /11, /7, /1.\n\nActually, EDJ's fiscal year is different (ends ~June). So \"FY2025\" = ended June 2025, and Q2 2026 = December 2025 quarter. This complicates period alignment but I don't need to explain that; code renders items.\n\na1.MER: /4 (Q3 2026 $1.9T), /3 (Q2 2026 $1.8T), /1 (FY2025 $1.7T), /6 (definition). I'll do /4, /3, /1, /6.\n\na1.RJF: /8 (Jun 2026 $1,922.4B), /7 (Mar 2026 $1,762.9B), /6 (Dec 2025 $1,773.1B), /5 (Sep 2025 $1,730.6B). I'll do /8, /6, /5.\n\nActually, RJF's items are AUA (assets under administration). I'll give a few. /8 (latest), /6 (Dec 2025), /4 (Jun 2025). I'll do /8, /6, /4.\n\nHmm, let me simplify. For a1.RJF: /8, /6, /5.\n\n**Aspect a2 (advisor headcount):**\n\na2.MS: /1, /2, /3 (all old, 2020/2019). Include all three.\n\na2.SCHW: adjacent only. Items /1, /2, /3, /4 with differs_because.\n\na2.EDJ: /1 (20,514 Q2 2026), /5 (20,425 FY2025), /3 (20,309 Q2 2025). I'll do /1, /5.\n\nActually include /1, /5, /3 for a small trend. I'll do /1, /5.\n\na2.MER: adjacent only. Items /1 (no ref, >15K), /2 (18,916), /3 (26,599 reg reps), /4 (32,960 employees). With differs_because.\n\na2.RJF: basis break. Whole firm: /1 (8,943 Sep 2025), /4 (8,787 Sep 2024), /7 (8,712 Sep 2023). Plus /2, /3 (breakdown). PCG: /10 (8,731 Mar 2025).\n\nI need to state each basis separately. I'll write claims for whole firm and PCG separately.\n\n**Aspect a3 (stand-in figures, adjacent only):** adjacent items for each firm with differs_because.\n\na3.MS: /1, /2 (WM client assets), /3, /4 (advisor-led), /5 (15,950 reps). Adjacent.\n\na3.SCHW: /1, /2, /3 (client assets + accounts), /4 (Advisor Services). Adjacent.\n\na3.EDJ: /1, /2, /3, /4 (AUC numerator), /5, /6, /7, /8 (advisor denominator). Adjacent.\n\na3.MER: /1, /2 (client balances), /3 (GWIM balances), /5 (18,916 advisors). Skip /4 (no ref). Adjacent.\n\na3.RJF: /1 (PCG AUA $1.67T), /2 (8,943), /3 (breakdown), /4 (RCS), /5 ($166M FID), /6 (PCG AUA Jun 2026). Adjacent.\n\n**Aspect a4 (comparison):** item claims for a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF + one comparison claim.\n\nActually, do I need item claims for a4 sub-cells? Let me reconsider. The a4 sub-cells contain definitional facts. These are important evidence for the comparison. But maybe I can fold them into the comparison claim's chunk_ids.\n\nThe rule: \"A fact cell gets at least one item claim.\" So a4.MS (fact) needs at least one item claim. Similarly a4.SCHW, a4.EDJ, a4.MER, a4.RJF.\n\nSo yes, I need item claims for these fact cells.\n\na4.MS: /1 (advisor-led definition), /2 (client assets definition), /3 (self-directed), /4 (15,950 reps 2020), /5 (fee-based 48%). I'll include key ones: /1, /2, /4.\n\na4.SCHW: /1 (16,000 firms), /3 (custodian, no custody fee), /4 (total client assets split), /5 (33,000 FTE). Include /1, /4, /5.\n\na4.EDJ: /1 (actual headcount basis), /3 (AUC definition), /6 (20,514 advisors). Include /1, /3.\n\na4.MER: /1 (total wealth advisors def, 18,916), /2 (AUM def). Include /1, /2.\n\na4.RJF: /1 (RCS excluded), /3 (8,943 breakdown), /4 (PCG AUA $1.67T). Include /1, /3.\n\nThen one comparison claim (part_id a4).\n\nOK this is a massive answer but let me write it all out.\n\nLet me also decide on the gap(s).\n\nGap to add: \"Client assets per advisor\" not directly disclosed firm-wide. part_id \"a3\".\n\nActually, let me reconsider. The question is \"client assets per advisor across the five - and is that comparison even valid?\".\n\nThe a3 aspect is the \"client assets per advisor computed or disclosed, closest disclosed figure\". It's \"adjacent only\" meaning stand-in figures. So the answer for a3 is all adjacent items (stand-ins), no claims.\n\nThe gap: I think the code gaps already cover the missing advisor headcounts (a2.SCHW, a2.MER). But there's no gap explicitly saying \"client assets per advisor is not directly disclosed\".\n\nI'll add a gap:\n- part_id: \"a3\"\n- what: \"Client assets per advisor (firm-wide) is not directly disclosed by any of the five firms; only the component figures (client assets and advisor headcount) and stand-in figures are available.\"\n- suggested_source: \"Compute from each firm's client-asset and advisor-headcount disclosures; RJF discloses a per-advisor AUM figure only for its Financial Institutions Division.\"\n\nActually, I should be careful about the suggested_source. It's \"suggested source\" for where to find the info. I'll write something reasonable.\n\nHmm, actually, maybe I'm overcomplicating the gaps. Let me reconsider whether to add a gap at all.\n\nThe code gaps cover a2.SCHW and a2.MER (advisor headcount not published). These are the \"denominator\" gaps. For the \"per advisor\" figure itself, it's not disclosed by anyone (as a firm-wide metric). The a3 aspect being \"adjacent only\" already signals this.\n\nI'll add one gap for clarity, with part_id \"a3\".\n\nActually, wait - I want to reconsider. Is there any firm that directly discloses \"client assets per advisor\"? Looking at a3 items:\n- RJF: a3.RJF/5 = \"$166 million in average assets under management per advisor\" for FID (Financial Institutions Division, 940 advisors). This IS a disclosed per-advisor figure, but only for one division, not firm-wide.\n\nSo no firm discloses a firm-wide client assets per advisor figure. I'll add a gap.\n\nNow, let me also think about whether the a4 comparison should mention that RJF discloses $166M per advisor for FID (not comparable). Actually, the FID figure is a3.RJF/5 in adjacent. The comparison claim can mention it briefly, but I'll focus on the main point.\n\nLet me now also decide: for the \"no ref\" items in fact cells (a4.MER/6), I'll skip them and use the clean items (a4.MER/1 with 18,916, or a2.MER/2).\n\nOK let me also reconsider the a2.MER/1 (no ref, >15K) inclusion. The code gap says the closest figure is \">15,000 wealth advisors for Merrill combined with the Private Bank\". So this IS important. I'll include a2.MER/1 in adjacent.\n\nBut a2.MER/1 is \"(no ref)\". Given the rule \"no ref items may be stated only in a text claim without its figure\"... but this is an adjacent cell, not a fact cell.\n\nHmm. Let me look at the adjacent instructions again: \"A cell marked 'adjacent only' ... goes in adjacent with its refs, never in claims, each with differs_because.\"\n\nSo adjacent items have refs. a2.MER/1 has a cite (BAC-DECK-2025-investor-day#9). So I can put it in adjacent with items [\"a2.MER/1\"].\n\nThe \"(no ref)\" label - I'll interpret as a flag that the quote is not verbatim (since a2.MER/1 has \"quote not verbatim\" note). For a2.MER/1, I'll include it in adjacent. The code will render the item's text (which is already written without relying on verbatim quote).\n\nActually, I realize for a2.MER/1, the item text is \"Merrill's investor day deck reports more than 15,000 wealth advisors for Merrill combined with the Private Bank.\" - this is a paraphrase, appropriate for \"quote not verbatim\".\n\nOK, I'll include a2.MER/1 in adjacent.\n\nSimilarly a3.MER/4 (no ref, >15K) and a4.MER/6 (no ref, >15K) - these are duplicates of a2.MER/1. Per \"also under\" rule: \"An item marked 'also under' another aspect: use it once.\" These aren't marked \"also under\" but they're the same fact. I'll use the >15K figure once, in a2.MER (adjacent, most relevant as advisor count). Skip a3.MER/4 and a4.MER/6 to avoid duplication.\n\nActually, a3.MER/4 is the \"advisor denominator\" for computing per-advisor. And a4.MER/6 is definitional. But they're all the same \">15K wealth advisors\" fact. I'll use it in a2.MER (advisor headcount, the primary place) and reference BAC-DECK in the comparison.\n\nFor a3.MER (stand-in), the advisor denominator is actually a3.MER/5 (18,916 total wealth advisors, GWIM+Consumer) and a3.MER/4 (>15K). I'll include a3.MER/5 (18,916) as the advisor count stand-in, and skip a3.MER/4.\n\nLet me finalize a3.MER adjacent items: /1, /2 (client balances), /3 (GWIM balances), /5 (18,916 advisors).\n\nNow let me write everything out.\n\nLet me carefully draft each claim.\n\n---\n\n### Aspect a1 claims (item claims, text empty)\n\nFor each, part_id = the cell, items = refs, text = \"\", chunk_ids = [], why = \"\".\n\na1.MS:\n1. items [\"a1.MS/1\"]\n2. items [\"a1.MS/3\"]\n3. items [\"a1.MS/5\"]\n4. items [\"a1.MS/7\"]\n\nActually, should I combine /1 and /2 (both $10.5T Q3 2026)? They're from different sources (CFO and CEO). I'll just use /1.\n\na1.SCHW:\n1. [\"a1.SCHW/1\"]\n2. [\"a1.SCHW/2\"]\n3. [\"a1.SCHW/3\"]\n4. [\"a1.SCHW/4\"]\n\na1.EDJ:\n1. [\"a1.EDJ/11\"]\n2. [\"a1.EDJ/7\"]\n3. [\"a1.EDJ/1\"]\n\na1.MER:\n1. [\"a1.MER/4\"]\n2. [\"a1.MER/3\"]\n3. [\"a1.MER/1\"]\n4. [\"a1.MER/6\"] (definition)\n\na1.RJF:\n1. [\"a1.RJF/8\"]\n2. [\"a1.RJF/6\"]\n3. [\"a1.RJF/5\"]\n\n### Aspect a2 claims\n\na2.MS (fact):\n1. [\"a2.MS/1\"]\n2. [\"a2.MS/2\"]\n3. [\"a2.MS/3\"]\n\na2.SCHW (adjacent): items go in adjacent, not claims.\nAdjacent items:\n- [\"a2.SCHW/1\"] differs_because \"No passage states a single 'advisor headcount' for the firm; this is a Form ADV count of employees performing investment advisory functions (including research), not a count of financial advisors.\"\n- [\"a2.SCHW/2\"] differs_because \"...investment adviser representatives...\"\n- [\"a2.SCHW/3\"] differs_because \"...total employees...\"\n- [\"a2.SCHW/4\"] differs_because \"...full-time equivalent employees...\"\n\nActually, the cell's differs_because text is given: 'No passage states a single advisor headcount for the firm. The passages only give regulatory Form ADV counts... none of these equals the firm's own financial consultants and wealth advisors count.'\n\nI should write differs_because in my own words with same meaning, specific to each item. But actually, the differs_because should explain how each item differs from the cell (advisor headcount).\n\nLet me write per-item differs_because:\n- a2.SCHW/1 (4,127 advisory functions): \"This is a Form ADV count of employees performing investment advisory functions, not a headcount of financial consultants and wealth advisors.\"\n- a2.SCHW/2 (6,584 IARs): \"This is a Form ADV count of investment adviser representatives, not a financial advisor headcount.\"\n- a2.SCHW/3 (30,690 employees): \"This is a count of total employees, not a financial advisor headcount.\"\n- a2.SCHW/4 (33,000 FTE): \"This is a full-time-equivalent employee count, not a financial advisor headcount.\"\n\na2.EDJ (fact):\n1. [\"a2.EDJ/1\"]\n2. [\"a2.EDJ/5\"]\n\na2.MER (adjacent):\n- [\"a2.MER/1\"] (>15K) differs_because \"This is more than 15,000 wealth advisors for Merrill combined with the Private Bank, broader than Merrill's own advisor headcount.\"\n- [\"a2.MER/2\"] (18,916) differs_because \"This total wealth advisors figure includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill alone.\"\n- [\"a2.MER/3\"] (26,599 reg reps) differs_because \"This is a Form ADV count of registered representatives, not Merrill's financial advisor headcount.\"\n- [\"a2.MER/4\"] (32,960 employees) differs_because \"This is a count of total employees, not Merrill's financial advisor headcount.\"\n\na2.RJF (fact, basis break):\nWhole firm:\n1. [\"a2.RJF/1\"] (8,943 Sep 2025)\n2. [\"a2.RJF/4\"] (8,787 Sep 2024)\n3. [\"a2.RJF/7\"] (8,712 Sep 2023)\n4. [\"a2.RJF/2\"] (3,878 employees)\n5. [\"a2.RJF/3\"] (5,065 contractors)\n\nPCG:\n6. [\"a2.RJF/10\"] (8,731 Mar 2025)\n\nI need to state each basis separately. The basis break says \"state each basis with its own periods; never join them.\"\n\nSo I'll write the whole-firm claims and the PCG claim. Since code renders firm names and items, I need to make clear they're different bases. I can use text lead to label. Actually, for item claims, text is empty. But I can add a short lead to label the basis.\n\nHmm, \"a short lead of a few words is allowed only to label a position or group items\". So I can add text like \"Whole firm\" and \"Private Client Group\" to label the basis groups.\n\nActually, let me use text to label: \n- Claim with text \"Whole firm (excludes RCS advisors)\" and items /1, /4, /7 (totals).\n- Claim with text \"Whole firm, by affiliation\" and items /2, /3.\n- Claim with text \"Private Client Group\" and item /10.\n\nWait, but the lead \"never repeats the item\". \"Whole firm\" and \"Private Client Group\" are labels, not repeating items. OK.\n\nActually, simpler: I'll write separate claims. Let me think about how to handle the basis break cleanly.\n\nThe basis break note: \"whole firm (rjf_advisors_excl_rcs): 2023-09-30, 2024-09-30, 2025-09-30; Private Client Group (rjf_advisors_excl_rcs): 2025-03-31\".\n\nSo whole firm covers fiscal year ends (Sep 30): 2023, 2024, 2025. PCG is a point-in-time 2025-03-31.\n\nI'll write:\n- Claim: text \"Whole firm\" lead, items [\"a2.RJF/1\", \"a2.RJF/4\", \"a2.RJF/7\"]. Hmm, but multiple items in one claim should \"say the same thing\". /1, /4, /7 are different years (8,943 / 8,787 / 8,712). They don't say the same thing.\n\nWait, the rule: \"Usually one ref per claim; put two refs in one claim only when they say the same thing from two sources.\"\n\nSo I can't put /1, /4, /7 in one claim because they're different periods/values.\n\nSo each item gets its own claim. I'll write:\n1. items [\"a2.RJF/1\"] (8,943, whole firm, Sep 2025)\n2. items [\"a2.RJF/4\"] (8,787, whole firm, Sep 2024)\n3. items [\"a2.RJF/7\"] (8,712, whole firm, Sep 2023)\n4. items [\"a2.RJF/2\"] (3,878 employees)\n5. items [\"a2.RJF/3\"] (5,065 contractors)\n6. items [\"a2.RJF/10\"] (8,731 PCG)\n\nFor the basis labeling, I can use a short text lead on each to indicate the basis. E.g., text \"Whole firm:\" for /1, /4, /7; text \"Private Client Group:\" for /10.\n\nActually, the code caveat already flags the basis break. And code renders each item. I think I can add minimal text leads to distinguish.\n\nLet me add text leads:\n- For whole-firm items: text \"Whole firm\"\n- For PCG: text \"Private Client Group\"\n\nActually, re-reading: \"text: leave it empty for an item claim. With refs, a short lead of a few words is allowed only to label a position... or group items.\"\n\nSo I can add \"Whole firm\" as a lead. Let me do that to make the basis clear.\n\nHmm, but actually, I worry about over-complicating. The basis break is already flagged by code (caveat). And each item is self-describing (e.g., \"Raymond James reported total financial advisors of 8,943 as of September 30, 2025\"). The PCG item says \"8,731 PCG advisors\". So the items themselves are distinguishable.\n\nI'll add minimal leads where helpful. Actually, I'll just write them as separate item claims with empty text, and the items themselves convey the basis (code starts each item with firm name; the item text mentions \"total financial advisors\" vs \"PCG advisors\").\n\nLet me keep text empty for most, but for /10 (PCG), the item text already says \"PCG advisors\" so it's clear.\n\nOK, I'll write all as separate claims with empty text.\n\nActually wait, I want to reconsider including /2, /3 (employee/contractor breakdown). These are helpful but optional. I'll include them for completeness of the whole-firm basis.\n\n### Aspect a3 (adjacent only)\n\nAll adjacent items with differs_because.\n\na3.MS (stand-in):\n- [\"a3.MS/1\"] ($8,433B WM client assets Sep 2026) differs_because \"This is total Wealth Management client assets (which include self-directed and workplace assets), not client assets per advisor.\"\n- [\"a3.MS/3\"] ($6,631B advisor-led Sep 2026) differs_because \"This is advisor-led client assets (assets in accounts with a Wealth Management representative assigned), not a per-advisor figure.\"\n- [\"a3.MS/5\"] (15,950 reps Dec 2020) differs_because \"This is the Wealth Management representative count, last reported in 2020, not a per-advisor asset figure.\"\n\nI'll include /1, /3, /5. Maybe /2 and /4 too. I'll include /1, /3, /5 to keep it focused (numerator + denominator stand-ins).\n\nActually, let me include /1, /3, /5. /1 and /3 are numerator stand-ins, /5 is denominator stand-in.\n\na3.SCHW (stand-in):\n- [\"a3.SCHW/1\"] ($13.08T + 39.8M accounts) differs_because \"This is total client assets alongside active brokerage accounts, not client assets per advisor; Schwab does not disclose an advisor headcount.\"\n- [\"a3.SCHW/4\"] ($5,845.9B Advisor Services) differs_because \"This is Advisor Services segment client assets (RIA custodial assets), not client assets per advisor.\"\n\nI'll include /1, /4.\n\na3.EDJ (stand-in):\n- [\"a3.EDJ/3\"] ($2.6T AUC, Q2 2026) differs_because \"This is total client assets under care (the numerator), not a per-advisor figure.\"\n- [\"a3.EDJ/7\"] (20,514 advisors Q2 2026) differs_because \"This is the financial advisor count (the denominator), not a per-advisor asset figure.\"\n\nI'll include /3, /7 (matching period Q2 2026). Maybe also /1, /5 (FY2025 pair).\n\nActually, let me include the matching pairs. For Q2 2026: /3 (AUC $2.6T) and /7 (20,514 advisors). For FY2025: /1 (AUC $2.5T) and /5 (20,425 advisors).\n\nI'll include /3, /7, /1, /5. Actually that's a lot. Let me just do /3, /7 (Q2 2026 pair) and /1, /5 (FY2025 pair). Or simplify to /3, /7.\n\nI'll include /3, /7 (Q2 2026) and /1, /5 (FY2025).\n\na3.MER (stand-in):\n- [\"a3.MER/2\"] ($4,240,601M client balances Sep 2026) differs_because \"This is Merrill Wealth Management client balances (a broader measure than AUM), not client assets per advisor.\"\n- [\"a3.MER/1\"] ($3,992,312M Dec 2025) differs_because \"...\"\n- [\"a3.MER/5\"] (18,916 total wealth advisors) differs_because \"This is total wealth advisors across GWIM and Consumer Banking, not Merrill's own advisor count and not a per-advisor figure.\"\n\nI'll include /2, /1, /5.\n\na3.RJF (stand-in):\n- [\"a3.RJF/1\"] ($1.67T PCG AUA) differs_because \"This is Private Client Group assets under administration, not client assets per advisor.\"\n- [\"a3.RJF/2\"] (8,943 advisors) differs_because \"This is the financial advisor count, not a per-advisor asset figure.\"\n- [\"a3.RJF/5\"] ($166M AUM per advisor FID) differs_because \"This per-advisor AUM figure is for Raymond James's Financial Institutions Division only (940 advisors), not firm-wide.\"\n\nI'll include /1, /2, /5. Maybe /6 (PCG AUA Jun 2026) too. I'll include /1, /2, /5.\n\n### Aspect a4 (fact cells + one comparison claim)\n\nItem claims for a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF.\n\na4.MS:\n1. [\"a4.MS/1\"] (advisor-led definition)\n2. [\"a4.MS/2\"] (client assets definition)\n3. [\"a4.MS/4\"] (15,950 reps 2020)\n\na4.SCHW:\n1. [\"a4.SCHW/1\"] (16,000 firms)\n2. [\"a4.SCHW/4\"] (total client assets split)\n3. [\"a4.SCHW/5\"] (33,000 FTE)\n\na4.EDJ:\n1. [\"a4.EDJ/1\"] (actual headcount basis)\n2. [\"a4.EDJ/3\"] (AUC definition)\n\na4.MER:\n1. [\"a4.MER/1\"] (total wealth advisors def)\n2. [\"a4.MER/2\"] (AUM def)\n\na4.RJF:\n1. [\"a4.RJF/1\"] (RCS excluded)\n2. [\"a4.RJF/3\"] (8,943 breakdown)\n\nThen comparison claim (part_id a4, text).\n\nLet me write the comparison claim text carefully.\n\nComparison claim text (whole in text, no refs, chunk_ids cites the items):\n\n\"The five firms' client-assets-per-advisor figures cannot be validly compared side by side. The numerator differs: Morgan Stanley's wealth client assets include self-directed and workplace assets and its 'advisor-led' subset is assets in accounts with a Wealth Management representative assigned; Schwab's total client assets span both retail Investor Services and Advisor Services (RIA custodial) segments; Edward Jones measures 'assets under care' (AUC); Merrill's figure is Merrill Wealth Management AUM; and Raymond James reports 'assets under administration' (AUA) for its Private Client Group. The denominator also differs: Morgan Stanley counts 'Wealth Management representatives' (last reported 15,950 as of December 31, 2020, with no current figure), Schwab publishes no advisor headcount (only Form ADV counts and a count of 16,000 advisory firms), Edward Jones counts 'financial advisors (actual)', Merrill's 'total wealth advisors' spans all GWIM and Consumer Banking wealth businesses rather than Merrill alone, and Raymond James excludes advisors in its RCS division while their assets remain in AUA. Because neither the asset measure nor the advisor count is defined consistently \u2014 and Morgan Stanley and Schwab lack current comparable advisor counts \u2014 a side-by-side per-advisor comparison is not valid on this evidence.\"\n\nchunk_ids: I'll cite the key chunks.\n\nLet me list: MS-SUPP-2025Q4#36 (advisor-led def), MS-SUPP-2026Q1#42 (client assets def), MS-SUPP-2020Q4#1 (15,950), SCHW-PR-2026-01-21-01#40 (total client assets split), SCHW-10K-2025#26 (custodian RIA), SCHW-TR-2026Q3#10 (16,000 firms), SCHW-10K-2025#49 (33,000 FTE), EDJ-10Q-2026Q2#61 (AUC), EDJ-10K-2025#130 (advisors), BAC-SUPP-2023Q4#2 (total wealth advisors), BAC-SUPP-2026Q3#54 (AUM def), RJF-10K-2025#228 (RCS), RJF-10K-2025#227 (advisors), RJF-10K-2025#9 (PCG AUA).\n\nThat's a lot. Let me trim to the essential ones. Actually, chunk_ids for the comparison claim should cite \"the items it rests on\". I'll include a comprehensive but not exhaustive set.\n\nLet me finalize:\n[\"MS-SUPP-2025Q4#36\", \"MS-SUPP-2026Q1#42\", \"MS-SUPP-2020Q4#1\", \"SCHW-TR-2026Q3#10\", \"SCHW-10K-2025#49\", \"SCHW-PR-2026-01-21-01#40\", \"EDJ-10Q-2026Q2#61\", \"EDJ-10K-2025#130\", \"BAC-SUPP-2023Q4#2\", \"BAC-SUPP-2026Q3#54\", \"RJF-10K-2025#228\", \"RJF-10K-2025#227\", \"RJF-10K-2025#9\"]\n\nAll valid chunk ids. Good.\n\nNow, the comparison claim has part_id \"a4\", items empty (text claim), text = the comparison text, chunk_ids = above, why = \"\".\n\nNow let me also reconsider: do I need a \"computation\" line? No, a3 is \"stand-in figure (adjacent only)\", not a \"computation\". So no computation claims.\n\nAlso, the a3 aspect has \"Comparability (code): unverified: not in the metric definitions file; never compared across firms\". So I should NOT compare across firms in a3 (they're adjacent, never compared). Good, my a3 adjacent items don't compare.\n\nNow the gaps. Let me finalize:\n\nGap 1 (from code, don't repeat): a2.SCHW, a2.MER - these are code gaps, I should NOT repeat them.\n\nMy own gap: \n- part_id \"a3\", what \"Client assets per advisor (firm-wide) is not directly disclosed for any of the five firms; only the component figures (client assets and advisor headcount) and stand-in figures are available.\", suggested_source \"Compute from each firm's client-asset and advisor-headcount disclosures; Raymond James discloses a per-advisor AUM figure only for its Financial Institutions Division.\"\n\nHmm, actually, let me reconsider whether this gap is necessary or redundant. The a3 aspect is \"proxy: stand-in figure, adjacent only\". The adjacent items already convey that these are stand-ins, not direct per-advisor figures. And the comparison claim explains validity.\n\nBut I think a gap is still useful to explicitly note that no firm discloses the direct figure. The instructions say \"Add a gap of your own only for something those gaps do not name.\" The code gaps name a2.SCHW and a2.MER (advisor headcount missing). They don't name \"client assets per advisor not disclosed\".\n\nI'll add the gap. Actually, I'll add it under part_id \"a3\".\n\nWait, but also MS doesn't have a current advisor count (only 2020). The code caveat mentions this but not as a gap. Should I add a gap for a2.MS? The caveat says \"latest count found 2020-12-31; no count found in supplements since.\" This is in the caveats (code-added), so I shouldn't repeat it. But is it a \"gap\"? The code didn't list it as a gap, just a caveat. \n\nHmm, the a2.MS cell is a \"fact\" cell with items (2020, 2019 counts). So it's not \"adjacent only\" or \"gap\". The items are just old. I'll present them as item claims (fact), and the caveat handles the staleness.\n\nActually, for the comparison claim, I mention \"Morgan Stanley ... no current figure\". That's fine.\n\nOK, let me also reconsider: should I add a gap for a2.MS (no current advisor count)? The code caveat covers it. I think I'll leave it as the caveat handles it. But actually, a gap might be more appropriate for \"no current count\". \n\nHmm, but a2.MS is a \"fact\" cell with items. It's not \"adjacent only\" or \"gap\" cell. So I present the items as fact claims. The staleness is a caveat. I won't add a gap for a2.MS.\n\nLet me finalize with just one added gap (a3 - client assets per advisor not disclosed).\n\nActually, wait. Let me reconsider the whole gap question. Let me re-read:\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nThe code gaps are a2.SCHW and a2.MER. These are the advisor headcount gaps.\n\nFor the asked quantity \"client assets per advisor\", there's no direct disclosure. This is a meaningful gap I should add. part_id \"a3\".\n\nOK, let me also double-check: is there anything about the \"answer_with_boundary\" or \"gap_with_adjacent\" shape? The behavior is \"answer\" (not answer_with_boundary). So normal.\n\nNow let me write the final submit_answer.\n\nLet me also reconsider the number of items and keep it reasonable but complete.\n\nLet me also reconsider: for a1 (client assets), the question is really about the numerator for \"per advisor\". So the most relevant client assets are:\n- MS: WM client assets (not total client assets across WM+IM). But a1.MS is \"total client assets\" (WM + IM). Hmm. The a1.MS cell items are \"Total Client Assets\" = WM + IM (e.g., $10.5T). But for per-advisor, the numerator should be WM client assets ($8.4T), which is in a3.MS/1.\n\nActually, this is a nuance. a1 is \"Client assets (total client assets under management/advisement) for the firm\". For MS, this is \"Total Client Assets\" = WM + IM = $10.5T. But that includes Investment Management AUM (institutional), which isn't advisor-driven. So for \"per advisor\", the relevant figure is WM client assets ($8.4T) in a3.\n\nBut a1 is just the fact cell for \"client assets\". I present the total client assets as the fact, and the a3 adjacent items give the WM-specific figures.\n\nThis is fine. The comparison claim will note these nuances.\n\nOK let me write everything out now. This is a big answer. Let me carefully construct the JSON.\n\nFor claims array, each claim: part_id, items, text, chunk_ids, why.\n\nLet me write them in order: a1 (MS, SCHW, EDJ, MER, RJF), a2 (MS, SCHW[adjacent], EDJ, MER[adjacent], RJF), a3 (all adjacent), a4 (MS, SCHW, EDJ, MER, RJF fact + comparison).\n\nWait, order: \"Several firms: aspect by aspect in the order listed, firms in the order listed.\"\n\nSo order: a1, then a2, then a3, then a4. Within each, firms in order MS, SCHW, EDJ, MER, RJF.\n\nClaims go in the \"claims\" array, adjacent in \"adjacent\" array, gaps in \"gaps\" array.\n\nActually, the claims array and adjacent array are separate. But the order within each array matters? The instruction says \"order claims and adjacent items newest first across the whole answer\" only for time window (which we don't have). And \"Several firms: aspect by aspect... firms in order\".\n\nI'll order claims array aspect-by-aspect, firm-by-firm. And adjacent array similarly.\n\nLet me write the claims now.\n\nClaims (part_id, items, text, chunk_ids, why):\n\na1.MS (4 claims):\n1. part_id \"a1.MS\", items [\"a1.MS/1\"], text \"\", chunk_ids [], why \"\"\n2. part_id \"a1.MS\", items [\"a1.MS/3\"], ...\n3. part_id \"a1.MS\", items [\"a1.MS/5\"]\n4. part_id \"a1.MS\", items [\"a1.MS/7\"]\n\na1.SCHW (4):\n[\"a1.SCHW/1\"], [\"a1.SCHW/2\"], [\"a1.SCHW/3\"], [\"a1.SCHW/4\"]\n\na1.EDJ (3):\n[\"a1.EDJ/11\"], [\"a1.EDJ/7\"], [\"a1.EDJ/1\"]\n\na1.MER (4):\n[\"a1.MER/4\"], [\"a1.MER/3\"], [\"a1.MER/1\"], [\"a1.MER/6\"]\n\na1.RJF (3):\n[\"a1.RJF/8\"], [\"a1.RJF/6\"], [\"a1.RJF/5\"]\n\na2.MS (3):\n[\"a2.MS/1\"], [\"a2.MS/2\"], [\"a2.MS/3\"]\n\na2.EDJ (2):\n[\"a2.EDJ/1\"], [\"a2.EDJ/5\"]\n\na2.RJF (6):\n[\"a2.RJF/1\"], [\"a2.RJF/4\"], [\"a2.RJF/7\"], [\"a2.RJF/2\"], [\"a2.RJF/3\"], [\"a2.RJF/10\"]\n\na4.MS (3):\n[\"a4.MS/1\"], [\"a4.MS/2\"], [\"a4.MS/4\"]\n\na4.SCHW (3):\n[\"a4.SCHW/1\"], [\"a4.SCHW/4\"], [\"a4.SCHW/5\"]\n\na4.EDJ (2):\n[\"a4.EDJ/1\"], [\"a4.EDJ/3\"]\n\na4.MER (2):\n[\"a4.MER/1\"], [\"a4.MER/2\"]\n\na4.RJF (2):\n[\"a4.RJF/1\"], [\"a4.RJF/3\"]\n\nComparison claim:\npart_id \"a4\", items [], text (comparison), chunk_ids [...], why \"\"\n\nAdjacent array:\n\na2.SCHW (4 adjacent items):\n- part_id \"a2.SCHW\", items [\"a2.SCHW/1\"], differs_because \"This is a Form ADV count of employees performing investment advisory functions (including research), not a headcount of Schwab's financial consultants and wealth advisors.\"\n- [\"a2.SCHW/2\"] \"This is a Form ADV count of investment adviser representatives, not a financial advisor headcount.\"\n- [\"a2.SCHW/3\"] \"This is a count of total employees, not a financial advisor headcount.\"\n- [\"a2.SCHW/4\"] \"This is a full-time-equivalent employee count, not a financial advisor headcount.\"\n\na2.MER (4 adjacent items):\n- [\"a2.MER/1\"] \"More than 15,000 wealth advisors for Merrill combined with the Private Bank is broader than Merrill's own advisor headcount.\"\n- [\"a2.MER/2\"] \"This total wealth advisors figure includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill alone.\"\n- [\"a2.MER/3\"] \"This is a Form ADV count of registered representatives, not Merrill's financial advisor headcount.\"\n- [\"a2.MER/4\"] \"This is a count of total employees, not Merrill's financial advisor headcount.\"\n\na3.MS (3):\n- [\"a3.MS/1\"] \"This is total Wealth Management client assets (including self-directed and workplace assets), not client assets per advisor.\"\n- [\"a3.MS/3\"] \"This is advisor-led client assets (assets in accounts with a Wealth Management representative assigned), not a per-advisor figure.\"\n- [\"a3.MS/5\"] \"This is the Wealth Management representative count, last reported as of December 31, 2020, not a per-advisor asset figure.\"\n\na3.SCHW (2):\n- [\"a3.SCHW/1\"] \"This is total client assets alongside active brokerage accounts, not client assets per advisor; Schwab discloses no advisor headcount.\"\n- [\"a3.SCHW/4\"] \"This is Advisor Services segment client assets (RIA custodial assets), not client assets per advisor.\"\n\na3.EDJ (4):\n- [\"a3.EDJ/3\"] \"This is total client assets under care (the numerator), not a per-advisor figure.\"\n- [\"a3.EDJ/7\"] \"This is the financial advisor count (the denominator), not a per-advisor asset figure.\"\n- [\"a3.EDJ/1\"] \"This is total client assets under care (the numerator), not a per-advisor figure.\"\n- [\"a3.EDJ/5\"] \"This is the financial advisor count (the denominator), not a per-advisor asset figure.\"\n\na3.MER (3):\n- [\"a3.MER/2\"] \"This is Merrill Wealth Management client balances (a broader measure than AUM), not client assets per advisor.\"\n- [\"a3.MER/1\"] \"This is Merrill Wealth Management client balances, not client assets per advisor.\"\n- [\"a3.MER/5\"] \"This is total wealth advisors across GWIM and Consumer Banking, not Merrill's own advisor count and not a per-advisor figure.\"\n\na3.RJF (3):\n- [\"a3.RJF/1\"] \"This is Private Client Group assets under administration, not client assets per advisor.\"\n- [\"a3.RJF/2\"] \"This is the financial advisor count, not a per-advisor asset figure.\"\n- [\"a3.RJF/5\"] \"This per-advisor AUM figure is for Raymond James's Financial Institutions Division only, not the firm as a whole.\"\n\nGaps array:\n1. part_id \"a3\", what \"Client assets per advisor (firm-wide) is not directly disclosed for any of the five firms; only the component figures (client assets and advisor headcount) and stand-in figures are available.\", suggested_source \"Compute from each firm's client-asset and advisor-headcount disclosures; Raymond James discloses a per-advisor AUM figure only for its Financial Institutions Division.\"\n\nHmm wait, should the gap's part_id be \"a3\"? The gap is about the per-advisor figure not being disclosed. a3 is the \"client assets per advisor\" aspect. Yes, \"a3\".\n\nActually, let me reconsider the suggested_source. It should suggest where to find the info. Since it's \"not directly disclosed\", the suggested source could be \"no public source; would need to be computed from client-asset and advisor-headcount disclosures.\" Let me phrase it.\n\nLet me also double check the \"why\" field for all claims is empty (no recency, no time window). Yes, empty.\n\nAnd chunk_ids for item claims are empty (beyond refs).\n\nNow, one more consideration: for the a4 comparison claim, I need to make sure I don't repeat code caveats. The comparison claim should answer \"is the comparison valid?\" - answer: not valid, with reasons. This doesn't repeat caveats verbatim; it synthesizes.\n\nLet me also make sure the comparison claim doesn't \"estimate, convert, round or combine figures\" or \"compute a figure\". It doesn't - it just states definitions and counts as disclosed.\n\nLet me also verify: \"attribute strategy, priorities and intent to the firm\" - not relevant here (definitions, not strategy).\n\nLet me finalize the comparison text. I want it concise but complete.\n\nFinal comparison text:\n\n\"The client-assets-per-advisor figures are not validly comparable side by side. The numerators measure different things: Morgan Stanley's Wealth Management client assets include self-directed and workplace assets (its 'advisor-led' subset is assets in accounts with a Wealth Management representative assigned), Schwab's total client assets span both the retail Investor Services and Advisor Services (RIA custodial) segments, Edward Jones measures 'assets under care' (AUC), Merrill's figure is Merrill Wealth Management AUM, and Raymond James reports 'assets under administration' (AUA) for its Private Client Group. The denominators also differ: Morgan Stanley counts 'Wealth Management representatives' and has published no current count (last reported 15,950 as of December 31, 2020), Schwab publishes no advisor headcount (only Form ADV employee counts and a count of 16,000 advisory firms), Edward Jones counts 'financial advisors (actual)', Merrill's 'total wealth advisors' spans all GWIM and Consumer Banking wealth businesses rather than Merrill alone, and Raymond James excludes advisors in its RCS division even though their client assets remain in AUA. Because neither the asset measure nor the advisor count is defined consistently across the five firms \u2014 and two of them lack a current comparable advisor count \u2014 the per-advisor comparison is not valid on this evidence.\"\n\nGood.\n\nNow let me write the full JSON.\n\nLet me double check all item refs are valid (in the items enum). Let me verify each ref I'm using exists in the enum.\n\na1.MS/1 \u2713, /3 \u2713, /5 \u2713, /7 \u2713\na1.SCHW/1 \u2713, /2 \u2713, /3 \u2713, /4 \u2713\na1.EDJ/11 \u2713, /7 \u2713, /1 \u2713\na1.MER/4 \u2713, /3 \u2713, /1 \u2713, /6 \u2713\na1.RJF/8 \u2713, /6 \u2713, /5 \u2713\na2.MS/1 \u2713, /2 \u2713, /3 \u2713\na2.EDJ/1 \u2713, /5 \u2713\na2.RJF/1 \u2713, /4 \u2713, /7 \u2713, /2 \u2713, /3 \u2713, /10 \u2713\na4.MS/1 \u2713, /2 \u2713, /4 \u2713\na4.SCHW/1 \u2713, /4 \u2713, /5 \u2713\na4.EDJ/1 \u2713, /3 \u2713\na4.MER/1 \u2713, /2 \u2713\na4.RJF/1 \u2713, /3 \u2713\na2.SCHW/1 \u2713, /2 \u2713, /3 \u2713, /4 \u2713\na2.MER/1 \u2713, /2 \u2713, /3 \u2713, /4 \u2713\na3.MS/1 \u2713, /3 \u2713, /5 \u2713\na3.SCHW/1 \u2713, /4 \u2713\na3.EDJ/3 \u2713, /7 \u2713, /1 \u2713, /5 \u2713\na3.MER/2 \u2713, /1 \u2713, /5 \u2713\na3.RJF/1 \u2713, /2 \u2713, /5 \u2713\n\nAll valid.\n\nNow, part_id enum includes \"a1.MS\", \"a2.MS\", ..., \"a1\", \"a2\", \"a3\", \"a4\", \"\". My part_ids are all valid.\n\nFor the comparison claim part_id \"a4\" - valid.\n\nFor the gap part_id \"a3\" - valid.\n\nLet me now also double check chunk_ids for comparison claim are all in the enum. I listed:\nMS-SUPP-2025Q4#36 \u2713 (in enum)\nMS-SUPP-2026Q1#42 \u2713\nMS-SUPP-2020Q4#1 \u2713\nSCHW-TR-2026Q3#10 \u2713\nSCHW-10K-2025#49 \u2713\nSCHW-PR-2026-01-21-01#40 \u2713\nEDJ-10Q-2026Q2#61 \u2713\nEDJ-10K-2025#130 \u2713\nBAC-SUPP-2023Q4#2 \u2713\nBAC-SUPP-2026Q3#54 \u2713\nRJF-10K-2025#228 \u2713\nRJF-10K-2025#227 \u2713\nRJF-10K-2025#9 \u2713\n\nAll valid.\n\nNow let me write the answer. I'll produce the submit_answer tool call.\n\nActually, let me reconsider one thing about the a2.MS items. They're from 2020/2019, quite old. But they're the only MS advisor counts. I'll present them as fact. The comparison claim and caveat note the staleness. Fine.\n\nAlso, I should double-check: a2.MS/1 is \"15,950 as of December 31, 2020\", /2 is \"15,469 as of September 30, 2020\", /3 is \"15,468 as of December 31, 2019\". I'll include all three.\n\nActually, wait - should I include /2 and /3? They're older. The most relevant is /1 (15,950, latest). I'll include all three since they're the complete set of MS advisor counts, but it's fine to just include /1. Let me include /1, /2, /3 for completeness.\n\nHmm, actually, let me reconsider. Including very old data (2019, 2020) might be noise. But it's the only data. The caveat already flags \"latest count found 2020-12-31\". I'll include /1 only (the latest), plus maybe /2, /3. I'll include all three to show the complete picture but it's borderline.\n\nI'll include /1, /2, /3.\n\nLet me also reconsider a1.RJF items. I chose /8 (Jun 2026), /6 (Dec 2025), /5 (Sep 2025). These are AUA. Fine.\n\nActually, for a1.RJF, the most recent is /8 ($1,922.4B Jun 30 2026). Let me include /8, /7 (Mar 2026), /6 (Dec 2025). I'll do /8, /6, /5. Fine.\n\nLet me finalize and write.\n\nFor the adjacent array, each item needs: part_id, items, text (empty), chunk_ids (empty), why (empty), differs_because.\n\nFor claims, each needs: part_id, items, text, chunk_ids, why.\n\nLet me write the full tool call now.\n\nI'll order:\n- claims: a1.MS(4), a1.SCHW(4), a1.EDJ(3), a1.MER(4), a1.RJF(3), a2.MS(3), a2.EDJ(2), a2.RJF(6), a4.MS(3), a4.SCHW(3), a4.EDJ(2), a4.MER(2), a4.RJF(2), a4 comparison(1).\n\nWait, order should be aspect by aspect. So a1 first (all firms), then a2 (all firms), then a3 (all adjacent, in adjacent array), then a4 (all firms + comparison).\n\nBut a3 is entirely in adjacent array. And a2 has some in adjacent (SCHW, MER). So the claims array will have a1 (all 5 firms), a2 (MS, EDJ, RJF), then a4 (all 5 firms + comparison). And adjacent array will have a2.SCHW, a2.MER, a3 (all 5 firms).\n\nThe order within claims array: a1.MS, a1.SCHW, a1.EDJ, a1.MER, a1.RJF, a2.MS, a2.EDJ, a2.RJF, a4.MS, a4.SCHW, a4.EDJ, a4.MER, a4.RJF, a4 comparison.\n\nThat's fine. The adjacent items are separate.\n\nLet me write it all now.\n\nActually, I realize I should double check the a4 comparison claim goes at the end (after a4 fact cells). Yes.\n\nLet me write out the complete JSON now.\n\nFor text of item claims - all empty strings.\n\nLet me be careful with the comparison claim's chunk_ids array order and content.\n\nFinal answer construction below.\n\nOne more thing: the \"why\" field in adjacent items - should be empty (no recency). Yes.\n\nLet me also reconsider: should I include a3.MS/2 and a3.MS/4? I'll keep just /1, /3, /5. Fine.\n\nAlso for a3.EDJ, I included /3, /7, /1, /5. Let me make sure the differs_because is distinct. /3 and /1 are both AUC numerator. /7 and /5 are both advisor denominator. That's fine.\n\nLet me write it.\n\nActually, I want to reconsider whether to reduce the a1 items. The answer is quite large. But it's a comparison across 5 firms, so comprehensiveness is appropriate. I'll keep as planned.\n\nLet me finalize.",
+  "first_claim_s": 282.62,
+  "stream_items": {
+    "first_claim_s": 282.62,
+    "shown": 38,
+    "held": 27
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.EDJ",
+        "items": [
+          "a1.EDJ/11"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.EDJ",
+        "items": [
+          "a1.EDJ/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.EDJ",
+        "items": [
+          "a1.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MS",
+        "items": [
+          "a2.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MS",
+        "items": [
+          "a2.MS/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MS",
+        "items": [
+          "a2.MS/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/10"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MS",
+        "items": [
+          "a4.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MS",
+        "items": [
+          "a4.MS/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MS",
+        "items": [
+          "a4.MS/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MER",
+        "items": [
+          "a4.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MER",
+        "items": [
+          "a4.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4",
+        "items": [],
+        "text": "The client-assets-per-advisor figures are not validly comparable side by side. The numerators measure different things: Morgan Stanley's Wealth Management client assets include self-directed and workplace assets (its 'advisor-led' subset is assets in accounts with a Wealth Management representative assigned); Schwab's total client assets span both the retail Investor Services and Advisor Services (RIA custodial) segments; Edward Jones measures 'assets under care' (AUC); Merrill's figure is Merrill Wealth Management AUM; and Raymond James reports 'assets under administration' (AUA) for its Private Client Group. The denominators also differ: Morgan Stanley counts 'Wealth Management representatives' and has published no current count (last reported 15,950 as of December 31, 2020); Schwab publishes no advisor headcount (only Form ADV employee counts and a count of 16,000 advisory firms); Edward Jones counts 'financial advisors (actual)'; Merrill's 'total wealth advisors' spans all GWIM and Consumer Banking wealth businesses rather than Merrill alone; and Raymond James excludes advisors in its RCS division even though their client assets remain in AUA. Because neither the asset measure nor the advisor count is defined consistently across the five firms \u2014 and two of them lack a current comparable advisor count \u2014 the per-advisor comparison is not valid on this evidence.",
+        "chunk_ids": [
+          "MS-SUPP-2025Q4#36",
+          "MS-SUPP-2026Q1#42",
+          "MS-SUPP-2020Q4#1",
+          "SCHW-TR-2026Q3#10",
+          "SCHW-10K-2025#49",
+          "SCHW-PR-2026-01-21-01#40",
+          "EDJ-10Q-2026Q2#61",
+          "EDJ-10K-2025#130",
+          "BAC-SUPP-2023Q4#2",
+          "BAC-SUPP-2026Q3#54",
+          "RJF-10K-2025#228",
+          "RJF-10K-2025#227",
+          "RJF-10K-2025#9"
+        ],
+        "why": ""
+      }
+    ],
+    "adjacent": [
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a Form ADV count of employees performing investment advisory functions (including research), not a headcount of Schwab's financial consultants and wealth advisors."
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a Form ADV count of investment adviser representatives, not a financial advisor headcount."
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a count of total employees, not a financial advisor headcount."
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a full-time-equivalent employee count, not a financial advisor headcount."
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "More than 15,000 wealth advisors for Merrill combined with the Private Bank is broader than Merrill's own advisor headcount."
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This total wealth advisors figure includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill alone."
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a Form ADV count of registered representatives, not Merrill's financial advisor headcount."
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is a count of total employees, not Merrill's financial advisor headcount."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is total Wealth Management client assets (including self-directed and workplace assets), not client assets per advisor."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is advisor-led client assets (assets in accounts with a Wealth Management representative assigned), not a per-advisor figure."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is the Wealth Management representative count, last reported as of December 31, 2020, not a per-advisor asset figure."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is total client assets alongside active brokerage accounts, not client assets per advisor; Schwab discloses no advisor headcount."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is Advisor Services segment client assets (RIA custodial assets), not client assets per advisor."
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is total client assets under care (the numerator), not a per-advisor figure."
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is the financial advisor count (the denominator), not a per-advisor asset figure."
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is total client assets under care (the numerator), not a per-advisor figure."
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is the financial advisor count (the denominator), not a per-advisor asset figure."
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is Merrill Wealth Management client balances (a broader measure than AUM), not client assets per advisor."
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is Merrill Wealth Management client balances, not client assets per advisor."
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is total wealth advisors across GWIM and Consumer Banking, not Merrill's own advisor count and not a per-advisor figure."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is Private Client Group assets under administration, not client assets per advisor."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This is the financial advisor count, not a per-advisor asset figure."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "This per-advisor AUM figure is for Raymond James's Financial Institutions Division only, not the firm as a whole."
+      }
+    ],
+    "gaps": [
+      {
+        "part_id": "a3",
+        "what": "Client assets per advisor (firm-wide) is not directly disclosed for any of the five firms; only the component figures (client assets and advisor headcount) and stand-in figures are available.",
+        "suggested_source": "Compute from each firm's client-asset and advisor-headcount disclosures; Raymond James discloses a per-advisor AUM figure only for its Financial Institutions Division."
+      }
+    ]
+  }
+}

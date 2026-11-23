@@ -1,0 +1,982 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "reduce_version": "v6",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10K-2025#125",
+    "MS-10K-2025#190",
+    "MS-TRADE-2026-10-21-IN-01#3",
+    "MS-TR-2025Q1#56",
+    "MS-TR-2024Q4#50",
+    "MS-TR-2026Q1#9",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2025Q2#15",
+    "MS-TR-2025Q4#23",
+    "SCHW-TR-2026Q2#9",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-DECK-2026-investor-day#180",
+    "SCHW-TRADE-2026-10-27-IN-01#0",
+    "SCHW-DECK-2026Q2#16",
+    "SCHW-TR-2025Q3#14",
+    "SCHW-10K-2025#18",
+    "SCHW-TRADE-2026-10-28-WM-01#1",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-TR-2025Q4#13",
+    "SCHW-DECK-2026Q2#22",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2026Q1#48",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2026Q3#19",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-DECK-2026Q3#31",
+    "BAC-DECK-2026Q2#20",
+    "BAC-PR-2026-04-15-01#11",
+    "RJF-PR-web-independent-ria-custody-services#2",
+    "RJF-DECK-2025-investor-day#57",
+    "RJF-10K-2025#52",
+    "RJF-TR-2025Q4#5",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TR-2025Q1#61",
+    "RJF-10K-2025#216",
+    "RJF-10Q-2025Q2#295",
+    "RJF-10Q-2025Q4#238",
+    "RJF-10Q-2025Q2#259"
+  ],
+  "schema_fallback": [],
+  "enum_values": 406,
+  "at": "2026-11-23T04:02:04.359062-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 24251,
+    "output_tokens": 22555,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 24251,
+    "reasoning_tokens": 15409,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.88
+  },
+  "wall_s": 254.48,
+  "tokens_per_s": 88.63,
+  "ttft_s": 2.88,
+  "reasoning_content": "Let me analyze this carefully.\n\nThe question: \"Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?\"\n\nThe behavior is \"answer\". I need to write claims, adjacent items, and gaps.\n\nThe key aspects:\n- a1 [comparison]: needs exactly one comparison claim, part_id a1\n- a2 [fact]: What each firm has said about serving mass-affluent clients (SCHW, MER are facts; MS, EDJ, RJF are adjacent)\n- a3 [fact]: How each firm describes targeting/attracting (only MER is fact; MS, SCHW, EDJ, RJF are adjacent)\n- a4 [fact]: specific products/services (only MER is fact; SCHW, EDJ, RJF adjacent; MS not found)\n- a5 [fact]: definitions (SCHW, MER facts; RJF adjacent; MS, EDJ not found)\n- a6 [recency]: every item needs a why-line (SCHW, MER facts; MS adjacent; EDJ, RJF not found)\n\nLet me identify which firm is most explicit about mass-affluent: Merrill clearly names \"Mass Affluent ($500K - $1MM)\" explicitly. That's the answer to the question.\n\nThe a1 comparison claim should answer whether and how explicitly each firm names the mass-affluent segment. Merrill is the only one that explicitly names it.\n\nLet me structure.\n\nFirst, the comparison claim (a1, part_id \"a1\"):\nA text claim with no refs, but chunk_ids citing the items it rests on. It should say Merrill is the most explicit, naming \"Mass Affluent ($500K - $1MM)\" explicitly, while others use adjacent terms.\n\nLet me write it.\n\nNow let me go aspect by aspect.\n\n**a1 [comparison]**: one comparison claim, part_id \"a1\".\n\nText: Merrill (within Bank of America's GWIM) is the only firm that explicitly names the mass-affluent segment, using the label \"Mass Affluent ($500K - $1MM)\" in its Wealth Continuum. The other firms use different terms: Morgan Stanley names \"high and ultra-high net worth individuals\"; Schwab uses \"affluent\" and wealth-tier labels; Raymond James names \"high-net-worth\" and \"ultra-high-net-worth\"; Edward Jones has no mass-affluent naming found.\n\nchunk_ids: cite BAC-DECK-2025-investor-day#12, BAC-DECK-2025-investor-day#9, MS-10K-2025#125, SCHW-TR-2025Q4#11, RJF-TRADE-2026-09-29-IN-01#3, EDJ-10K-2025#88? \n\nWait, EDJ a1 is \"not found (code gap)\". So I shouldn't cite EDJ for a1. Actually for the comparison claim, I need to answer whether the comparison can be made. Let me cite the relevant items.\n\nActually the comparison claim rests on: Merrill's explicit naming (BAC-DECK-2025-investor-day#12, #9), Morgan Stanley's adjacent (MS-10K-2025#125), Schwab's adjacent (SCHW-TR-2025Q4#11), RJF's adjacent (RJF-TRADE-2026-09-29-IN-01#3).\n\nFor EDJ, not found. So I'll say Edward Jones has no mass-affluent naming found.\n\nLet me write the comparison claim text carefully.\n\n**a1.MS** adjacent (MS): items a1.MS/1, a1.MS/2, a1.MS/3 with differs_because given.\n\nActually the adjacent items for a1.MS are a1.MS/1, /2, /3. But these are \"adjacent only\" cells. So I put them in adjacent with differs_because.\n\nWait, let me re-read. a1.MS is \"different quantity (adjacent only)\". So I list the items in adjacent with the differs_because.\n\nThe differs_because text is given: 'Morgan Stanley names 'high and ultra-high net worth individuals' ... '\n\nActually I should use my own words but same meaning. Let me use the given text essentially.\n\nLet me plan all parts.\n\nLet me enumerate all cells and their treatment:\n\na1 (comparison): 1 text claim, part_id \"a1\"\na1.MS: adjacent only - items a1.MS/1, /2, /3\na1.SCHW: adjacent only - items a1.SCHW/1, /2, /3, /4\na1.EDJ: not found (code gap) - no claim\na1.MER: fact - items a1.MER/1, /2\na1.RJF: adjacent only - items a1.RJF/1, /2, /3, /4, /5, /6\na1.research: not found (code gap)\n\na2.MS: adjacent only - a2.MS/1, /2\na2.SCHW: fact - a2.SCHW/1..9\na2.EDJ: adjacent only - a2.EDJ/1, /2, /3\na2.MER: fact - a2.MER/1..4\na2.RJF: adjacent only - a2.RJF/1, /2, /3\na2.research: code gap\n\na3.MS: adjacent only - a3.MS/1..4\na3.SCHW: adjacent only - a3.SCHW/1..7\na3.EDJ: adjacent only - a3.EDJ/1\na3.MER: fact - a3.MER/1..5\na3.RJF: adjacent only - a3.RJF/1..5\na3.research: code gap\n\na4.MS: not found (code gap)\na4.SCHW: adjacent only - a4.SCHW/1\na4.EDJ: adjacent only - a4.EDJ/1..4\na4.MER: fact - a4.MER/1, /2\na4.RJF: adjacent only - a4.RJF/1..5\na4.research: code gap\n\na5.MS: not found (code gap)\na5.SCHW: fact - a5.SCHW/1..4\na5.EDJ: not found (code gap)\na5.MER: fact - a5.MER/1, /2\na5.RJF: adjacent only - a5.RJF/1\na5.research: code gap\n\na6.MS: adjacent only - a6.MS/1 (with why)\na6.SCHW: fact - a6.SCHW/1..5 (with why)\na6.EDJ: not found (code gap)\na6.MER: fact - a6.MER/1..7 (with why)\na6.RJF: not found (code gap)\na6.research: code gap\n\nNow for ordering: aspects in order a1..a6, firms in order MS, SCHW, EDJ, MER, RJF.\n\nFor recency aspect a6, each item needs a why-line.\n\nAlso, the \"answer_with_boundary\" - no, this is just \"answer\" behavior.\n\nThe question has no time window explicitly, so recency only applies to a6 aspect (marked recency).\n\nLet me now think about how many claims I need to write.\n\nClaims (part of claims array):\n1. a1 comparison claim (text)\n2. a1.MER items a1.MER/1, /2 (item claims)\n3. a2.SCHW items (9 items) - item claims\n4. a2.MER items (4 items)\n5. a3.MER items (5 items)\n6. a4.MER items (2 items)\n7. a5.SCHW items (4 items)\n8. a5.MER items (2 items)\n9. a6.SCHW items (5 items, with why)\n10. a6.MER items (7 items, with why)\n\nAdjacent items:\n- a1.MS (3), a1.SCHW (4), a1.RJF (6)\n- a2.MS (2), a2.EDJ (3), a2.RJF (3)\n- a3.MS (4), a3.SCHW (7), a3.EDJ (1), a3.RJF (5)\n- a4.SCHW (1), a4.EDJ (4), a4.RJF (5)\n- a5.RJF (1)\n- a6.MS (1)\n\nGaps: the code gaps are already listed, I shouldn't repeat. But I can add gaps of my own only for things not named. Actually the instructions say \"Add a gap of your own only for something those gaps do not name.\" The code gaps cover everything. I think I don't need to add gaps. Actually, let me check - the gaps parameter. Do I need to include anything?\n\nThe code gaps are \"added by code\" so they're presumably already added. I should not repeat them. I likely provide empty gaps array unless I have something new.\n\nActually wait - let me reconsider. The instructions say gaps are added by code. I add a gap only for something not named. I don't think there's anything additional.\n\nNow let me think about the item claims vs adjacent.\n\nFor fact cells, I write item claims with refs. For adjacent cells, I write adjacent items with refs and differs_because.\n\nLet me write everything out.\n\nLet me start with the comparison claim for a1.\n\nThe a1 comparison: \"Whether and how explicitly each firm names the mass-affluent client segment.\"\n\nComparison claim text (no refs, part_id \"a1\", chunk_ids citing items):\n\n\"Merrill is the only one of the five firms that explicitly names the mass-affluent segment, using the label 'Mass Affluent ($500K - $1MM)' in its Wealth Continuum alongside 'High Net Worth ($1MM - $10MM)'. Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) and uses 'mass-affluent' only in reference to a third-party Cerulli Associates report. Schwab uses 'affluent' and higher wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but not the term 'mass-affluent'. Raymond James names 'high-net-worth' and 'ultra-high-net-worth' clients (defined as at least $5 million in investable assets). Edward Jones names no mass-affluent segment in the documents searched. The comparison can be made at the level of explicitness of naming: Merrill is the most explicit.\"\n\nchunk_ids: BAC-DECK-2025-investor-day#12, BAC-DECK-2025-investor-day#9, MS-10K-2025#125, MS-TRADE-2026-10-21-IN-01#3, SCHW-TR-2025Q4#11, SCHW-TR-2026Q3#11, RJF-TRADE-2026-09-29-IN-01#3.\n\nWait, for EDJ a1 there's no fact. I can mention \"Edward Jones names no mass-affluent segment\" but there's no source to cite for EDJ specifically. Actually the comparison claim can still mention that. I don't need to cite EDJ.\n\nLet me also make sure the a1 comparison uses same_basis logic. The aspect is not marked same_basis. So I should say they're not directly comparable in terms of a single shared metric, but the comparison of explicitness can be made. Actually the aspect is about \"whether and how explicitly each firm names\" - this is qualitative. Let me just answer it directly.\n\nLet me write the comparison claim without \"valid/not valid\" language over-complicated. The instructions say: \"write exactly one text claim ... that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\nSo I should state: the comparison can be made (valid), and Merrill is most explicit.\n\nLet me write.\n\nNow let me carefully write each item claim and adjacent item.\n\nFor item claims, I list items (refs) and leave text empty. Code renders each ref.\n\nFor a fact cell with multiple items, I write multiple claims (one per item) OR one claim with multiple refs? The instructions: \"An item claim lists one or more refs and leaves text empty... Usually one ref per claim; put two refs in one claim only when they say the same thing from two sources.\"\n\nSo typically one claim per item ref.\n\nLet me write one claim per item.\n\nFor adjacent items, similar - one per item, with differs_because.\n\nLet me now go through systematically and write out the full answer.\n\nActually, let me think about how many total entries. This is a lot but let me be thorough.\n\nLet me write out claims first.\n\n**Claims:**\n\na1 comparison (text claim):\n- part_id \"a1\"\n- items []\n- text: as above\n- chunk_ids: the items\n- why \"\"\n\nActually wait, for a comparison claim, does it need why? The aspect a1 is not marked recency. So why empty.\n\nLet me write it.\n\nNow a1.MER fact items:\n- a1.MER/1: item claim with ref \"a1.MER/1\", part_id \"a1.MER\"\n- a1.MER/2: item claim with ref \"a1.MER/2\"\n\na2.SCHW fact (9 items):\n- a2.SCHW/1 through /9\n\na2.MER fact (4 items):\n- a2.MER/1 through /4\n\na3.MER fact (5 items):\n- a3.MER/1 through /5\n\na4.MER fact (2 items):\n- a4.MER/1, /2\n\na5.SCHW fact (4 items):\n- a5.SCHW/1 through /4\n\na5.MER fact (2 items):\n- a5.MER/1, /2\n\na6.SCHW fact (5 items) - with why\na6.MER fact (7 items) - with why\n\n**Adjacent items:**\n\na1.MS: a1.MS/1, /2, /3\na1.SCHW: a1.SCHW/1..4\na1.RJF: a1.RJF/1..6\na2.MS: a2.MS/1, /2\na2.EDJ: a2.EDJ/1..3\na2.RJF: a2.RJF/1..3\na3.MS: a3.MS/1..4\na3.SCHW: a3.SCHW/1..7\na3.EDJ: a3.EDJ/1\na3.RJF: a3.RJF/1..5\na4.SCHW: a4.SCHW/1\na4.EDJ: a4.EDJ/1..4\na4.RJF: a4.RJF/1..5\na5.RJF: a5.RJF/1\na6.MS: a6.MS/1 (adjacent, but needs why? a6 is recency, every item needs why-line. But a6.MS is adjacent. Does adjacent item need why? The instruction: \"For every item of an aspect marked recency... fill why\". This includes adjacent items of that aspect.)\n\nActually let me check: \"For every item of an aspect marked recency, and every item when the question has a time window, fill why with one sentence...\"\n\nSo a6.MS/1 (adjacent) needs a why-line too.\n\nLet me write the why for a6.MS/1. Context: the passage context is about innovation commitment. The why-line should be from the item's own passage context or related lines.\n\na6.MS/1 context: \"... expanded partnership with Carta, and collaboration with Zero Hash all reflect our commitment to innovation. Together, they lay the foundation for sustainable growth to widen our competitive moats. Our intentional strategy to introduce and educate retail clients to the value of advice...\"\n\nThe why could be: the firm frames this strategy as laying the foundation for sustainable growth and widening its competitive moats.\n\nLet me write: \"The source frames the strategy as laying the foundation for sustainable growth and widening the firm's competitive moats.\" with chunk_id MS-TR-2025Q4#23 (already the item's own cite, but the why-line context is from the same passage).\n\nActually the instruction: chunk_ids \"only ids beyond the refs' own\". For the why-line, I add the passage's chunk id to chunk_ids. But the item's own ref is already MS-TR-2025Q4#23. The context is from the same chunk. Hmm.\n\n\"then add that passage's chunk id to chunk_ids\" - the passage whose context/related I use. If it's the item's own passage, that chunk is already cited by the ref. Do I add it again? \n\nActually, for adjacent items, the \"ref\" is rendered and cites its own chunk ids. The why-line chunk goes into chunk_ids. If the why is drawn from the item's own context (same chunk), it's already cited. But the instruction says \"add that passage's chunk id to chunk_ids\". \n\nLet me look at the a6.MS/1 related lines: related cite MS-TR-2025Q1#56, MS-TR-2026Q1#9, MS-10K-2025#125. These are other passages.\n\nFor the why-line, I can use the context (which is the same passage, MS-TR-2025Q4#23) or a related passage.\n\nThe why should be about why it matters - a reason stated, a first, a record, a change, a consequence.\n\nThe context says \"lay the foundation for sustainable growth to widen our competitive moats\" - that's a stated purpose/consequence. I can use that.\n\nLet me write why: \"The source frames this as part of a strategy laying the foundation for sustainable growth and widening the firm's competitive moats.\"\n\nSince this is from the item's own context (same chunk MS-TR-2025Q4#23), and the ref already cites it... Actually the why chunk id should be added. But it's already cited by the ref. Hmm, I think it's fine to leave chunk_ids empty in that case, OR add the related passage.\n\nActually let me reconsider. The instruction says \"from what the item's own passage says (its 'context' line...) or from factual background in another passage listed under Sources (its 'related' lines...)\".\n\nSo I can use either. If I use the context (own passage), the chunk is already cited. If I use related, I add that chunk id.\n\nTo be safe and follow \"add that passage's chunk id to chunk_ids\", I'll use related passages where possible and add their chunk ids, or use context and add the own chunk id (which is already there but adding again is harmless? no, could be redundant).\n\nActually, let me think simpler. For a6.MS/1, the item's ref is a6.MS/1 which cites MS-TR-2025Q4#23. The why can draw from context (MS-TR-2025Q4#23 itself) - then no new chunk needed. But instruction says add passage chunk id to chunk_ids. \n\nI'll draw the why from a related passage to have a clean chunk id to add. Related: MS-TR-2025Q1#56 (democratized offering to retail), MS-TR-2026Q1#9 (retail clients engaged), MS-10K-2025#125.\n\nHmm, but the why should explain why the item matters. The item is \"strategy to introduce and educate retail clients to the value of advice... positions us to continue to outperform.\" Why it might matter: this is the firm's most recent statement and frames its retail strategy.\n\nActually, let me just use the context and note the \"positions us to continue to outperform\" as the consequence. The why: \"The source ties this retail-advice strategy to the firm's ability to continue to outperform.\" That's from the context (own passage).\n\nFor chunk_ids, since the why is drawn from the item's own context, and that chunk is already cited by the ref, I could leave chunk_ids empty. But the instruction is explicit about adding the passage chunk id. Given ambiguity, I'll add the own chunk id MS-TR-2025Q4#23... but wait, that's already in the ref's cite. Adding it to chunk_ids would be redundant but not harmful? Actually it might double-render.\n\nLet me instead draw why from related passages where possible.\n\nActually, this is getting complicated. Let me simplify: for each a6 item, I'll write a why-line drawing from context (own passage) or related, and add the appropriate chunk id.\n\nFor a6.SCHW items and a6.MER items (fact claims), same logic.\n\nLet me now carefully draft the why-lines.\n\nFor fact items (a6.SCHW, a6.MER), the why and chunk_ids: the ref already cites the item's chunk. The why draws from context (own chunk) or related (other chunks). If related, add that chunk to chunk_ids.\n\nLet me go through each a6 item:\n\n**a6.MS/1** (adjacent): \n- context: strategy lays foundation for sustainable growth, widen competitive moats, positions to outperform.\n- why: \"The source frames this as part of a strategy that lays the foundation for sustainable growth and widening the firm's competitive moats.\"\n- chunk_ids: The context is the same chunk MS-TR-2025Q4#23. Hmm. I'll add a related chunk instead. Actually, let me use the context but I realize the context is part of MS-TR-2025Q4#23 which is the item's own cite. \n\nLet me reconsider the rule: \"fill why with one sentence... from what the item's own passage says (its 'context' line...) or from factual background in another passage listed under Sources (its 'related' lines...); then add that passage's chunk id to chunk_ids.\"\n\nSo if I use context (own passage), I add MS-TR-2025Q4#23 to chunk_ids. But the item already cites it via ref. Actually the \"chunk_ids\" field for a claim/adjacent is \"only ids beyond the refs' own\". So if the why uses the own passage, there's no \"beyond\" id to add \u2014 chunk_ids would be empty.\n\nBut if I use a related passage, I add that related chunk id.\n\nI think the cleaner approach: use related passages for the why to have a distinct chunk id. Or use own context and leave chunk_ids empty (which is acceptable per \"only ids beyond the refs' own\").\n\nLet me just do the why-line drawing from context or related, and add chunk ids appropriately.\n\nLet me draft each:\n\n**a6.MS/1**: why from context \"positions us to continue to outperform\" and \"lay the foundation for sustainable growth\". Own passage. chunk_ids: empty (since own passage already cited). Actually, I could add a related. But let me keep it simple and use own context, chunk_ids empty.\n\nHmm, but actually the instruction \"then add that passage's chunk id to chunk_ids\" suggests they want the chunk id added. But for the item's own context, the chunk is already cited by the ref. The \"chunk_ids: only ids beyond the refs' own\" rule clarifies this. So for own-context why, no additional chunk.\n\nI'll draw why from own context when it's clear, leaving chunk_ids empty; draw from related when it's clearer, adding that chunk.\n\nLet me finalize each why-line:\n\n**a6.MS/1** (adjacent, MS):\nwhy: \"The source ties this strategy to laying the foundation for sustainable growth and positioning the firm to continue to outperform.\"\nActually context says \"lay the foundation for sustainable growth to widen our competitive moats\" and \"positions us to continue to outperform.\"\nwhy: \"The source frames this as part of a strategy that lays the foundation for sustainable growth and positions the firm to continue to outperform.\"\nchunk_ids: [] (own passage)\n\n**a6.SCHW/1** (fact):\ncontext: \"The bull market for convenience is driving investors to increasingly consolidate their financial lives.\"\nwhy: \"The source ties this to a 'bull market for convenience' that is driving investors to consolidate their financial lives.\"\nchunk_ids: [] (own passage SCHW-TR-2026Q2#9, already cited)\n\n**a6.SCHW/2** (fact):\ncontext: \"we expect this to grow as more investors seek the convenience of one-stop shopping\"\nwhy: \"The source expects the trend to keep growing as more investors seek one-stop shopping.\"\nchunk_ids: [] (own passage)\n\n**a6.SCHW/3** (fact):\ncontext: \"There is a bull market for advice in our country right now\"\nwhy: \"The source frames this as part of a 'bull market for advice' and calls it the market opportunity.\"\nchunk_ids: [] (own passage SCHW-TRADE-2026-10-27-IN-01#0)\n\n**a6.SCHW/4** (fact, deck):\ncontext: \"Schwab has a tremendous opportunity to grow share with new & existing clients in advice & lending.\"\nwhy: \"The source frames this amid a 'tremendous opportunity to grow share' in advice and lending.\"\nchunk_ids: [] (own passage SCHW-DECK-2026-investor-day#180)\n\n**a6.SCHW/5** (fact, deck):\ncontext: \"Investors increasingly want to consolidate their financial lives\"\nwhy: \"The source ties this to investors increasingly wanting to consolidate their financial lives.\"\nchunk_ids: [] (own passage SCHW-DECK-2026Q2#16)\n\n**a6.MER/1** (fact):\ncontext: \"Wealth Continuum Mass Affluent ($500K - $1MM) High Net Worth ($1MM - $10MM)\"\nThis is just the definition. The why-line needs a reason/purpose/change. Related: BAC-DECK-2025-investor-day#9 (\"Serving the wealth continuum of clients\"), BAC-DECK-2025-investor-day#8 (\"engine for lasting growth\"), BAC-DECK-2025-investor-day#18, BAC-10K-2025#246.\n\nwhy: \"The source frames the Wealth Continuum as the firm's engine for lasting growth.\" - from BAC-DECK-2025-investor-day#8.\nchunk_ids: [BAC-DECK-2025-investor-day#8]\n\nActually wait, the related line for a6.MER/1 includes BAC-DECK-2025-investor-day#8? Let me check. The related lines for a6.MER/1:\n- BAC-DECK-2025-investor-day#9 (Serving the wealth continuum)\n- BAC-DECK-2025-investor-day#18 (750K households)\n- BAC-10K-2025#246 (advisory business)\n\nHmm, BAC-DECK-2025-investor-day#8 is not in the related lines for a6.MER/1. But BAC-DECK-2025-investor-day#8 IS a source (it's in Sources list). But the why should draw from \"another passage listed under Sources (its 'related' lines, or any item of the same firm or theme)\".\n\nActually the instruction says \"or from factual background in another passage listed under Sources (its 'related' lines, or any item of the same firm or theme)\". So I can use any passage of the same firm/theme. BAC-DECK-2025-investor-day#8 is \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth\".\n\nSo why for a6.MER/1: \"The source describes the Wealth Continuum as the firm's engine for lasting growth.\" chunk_ids: [BAC-DECK-2025-investor-day#8].\n\nActually, let me reconsider. The \"related\" lines are the ones specifically listed. But the instruction allows \"any item of the same firm or theme\". So I have latitude.\n\nLet me use related lines where listed, for cleanliness.\n\nFor a6.MER/1, related lines are #9, #18, #246. \n\nwhy: \"The source frames this Wealth Continuum positioning as allowing the firm to 'deliver as one company'.\" - from #9 \"Serving the wealth continuum of clients\".\n\nHmm #9 is \"Serving the wealth continuum of clients\". #8 is \"engine for lasting growth\".\n\nLet me use #9: \"Serving the wealth continuum of clients\". \n\nActually, let me use a cleaner why. The item is about defining Mass Affluent segment. Why it matters: it's the firm's explicit segmentation. Related #9: \"Serving the wealth continuum of clients\" shows it's central to positioning.\n\nwhy: \"The source frames serving across the wealth continuum as the firm's core positioning.\" chunk_ids: [BAC-DECK-2025-investor-day#9].\n\n**a6.MER/2** (fact):\ncontext: \"Merrill added about 4,200 net new households with at least $500,000 in assets, up 17%.\"\nRelated: BAC-DECK-2026Q2#20, BAC-PR-2026-04-15-01#11, BAC-PR-2026-10-14-01#12.\nwhy: \"The source frames these results as reflecting strong demand for advice and the firm's ability to attract clients and experienced advisers.\"\nActually the context continues: \"These results reflect strong demand for advice, and our ability to attract clients and experienced advisers to the platform.\"\n\nLet me check the context: \"...And the Private Bank added 470 net new relationships with at least $3 million under management. These results reflect strong demand for advice, and our ability to attract clients and experienced advisers to the platform.\"\n\nSo why: \"The source frames these results as reflecting strong demand for advice and the firm's ability to attract clients and advisers.\"\nchunk_ids: [] (own passage BAC-TR-2026Q3#19)\n\n**a6.MER/3** (fact):\ncontext: this is from BAC-PR-2026-10-14-01#12, a press release. Related: BAC-DECK-2026Q2#20, BAC-PR-2026-04-15-01#11, BAC-TR-2026Q3#19.\nwhy: \"This is the most recent quarterly disclosure of Merrill's $500K+ household additions, per the firm's 3Q26 highlights.\"\nHmm, need a reason/purpose/change. The context shows it's a \"Highlight\". \nActually, related BAC-TR-2026Q3#19: \"Merrill's most recent statement (3Q26)... added about 4,200 net new households... up 17%.\"\nwhy: \"The source reports this as the most recent quarterly figure, up 17% versus the prior year.\"\nchunk_ids: [BAC-TR-2026Q3#19]\n\nHmm wait, but a6.MER/3 says \"~4.2K net new $500K+ households added in 3Q26\" from press release. The related BAC-TR-2026Q3#19 gives \"about 4,200... up 17%\".\n\nwhy: \"The firm's transcript reports this as up 17% versus the prior year, the most recent quarterly figure.\"\nchunk_ids: [BAC-TR-2026Q3#19]\n\n**a6.MER/4** (fact):\ncontext: BAC-DECK-2026Q3#31, \"Added ~5K net new $500K+ relationships across Merrill and Private Bank in 3Q26\"\nRelated: BAC-DECK-2026Q2#20, BAC-PR-2026-04-15-01#11, BAC-PR-2026-10-14-01#12.\nwhy: \"The source reports this as the most recent quarterly addition of $500K+ relationships across Merrill and Private Bank.\"\nHmm need something more substantive. Let me use related: BAC-DECK-2026Q2#20 shows 2Q26 was ~6K, so 3Q26 ~5K is a change.\n\nActually, I should be careful not to compute/combine. I can note the related shows prior quarters.\n\nwhy: \"This reflects the most recent quarter's additions, following ~6K in 2Q26 per the firm's deck.\"\nHmm, that's using related BAC-DECK-2026Q2#20 which says \"~6K net new $500K+ relationships in 2Q26\". So it's a change vs prior quarter.\n\nwhy: \"The source shows this as the latest quarter, following ~6K net new $500K+ relationships in 2Q26.\"\nchunk_ids: [BAC-DECK-2026Q2#20]\n\nActually, let me keep why-lines simple and factual, not over-engineered.\n\n**a6.MER/5** (fact, 2Q26):\ncontext: BAC-DECK-2026Q2#20.\nRelated: BAC-PR-2026-04-15-01#11, BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#12.\nwhy: \"The source reports this as a step up from 1Q26's ~3.3K households and ~4K relationships.\"\nActually related BAC-PR-2026-04-15-01#11: \"In 1Q26 Merrill added ~3.3K net new $500K+ households, and Merrill and the Private Bank together added ~4K net new $500K+ relationships.\"\n\nwhy: \"The source reports this as growth from 1Q26's ~3.3K households and ~4K relationships.\"\nchunk_ids: [BAC-PR-2026-04-15-01#11]\n\n**a6.MER/6** (fact, 1Q26):\ncontext: BAC-PR-2026-04-15-01#11.\nRelated: BAC-DECK-2026Q2#20, BAC-DECK-2026Q3#31, BAC-PR-2026-10-14-01#12.\nwhy: \"The source reports this as the first quarter of 2026, the earliest in the series disclosed.\"\nHmm. Or use related: this is a change/beginning.\n\nActually let me think about the recency aspect differently. The why-line should be a genuine \"why it might matter\" from the passage.\n\nFor a6.MER/6 (1Q26): It's the earliest of the quarterly figures. Related BAC-DECK-2026Q2#20 shows 2Q26 was higher.\n\nwhy: \"The source shows this as the first of a series of quarterly $500K+ household additions that rose in subsequent quarters.\"\nchunk_ids: [BAC-DECK-2026Q2#20]\n\nHmm, this is getting complicated. Let me just write reasonable why-lines.\n\n**a6.MER/7** (fact, 10-K):\ncontext: BAC-10K-2025#246.\nRelated: BAC-DECK-2025-investor-day#12, BAC-DECK-2025-investor-day#9, BAC-TR-2026Q3#19.\nwhy: \"The source describes this focus as part of Merrill's advisory business providing a high-touch client experience.\"\nActually context: \"provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets.\"\n\nwhy: \"The source ties this to Merrill's advisory business providing a high-touch client experience.\"\nchunk_ids: [] (own passage)\n\nOK let me also reconsider: is the why-line for a6.MER/7 needed to distinguish recency? The item period is 2025-12-31 (10-K). It's not \"most recent\" but it's in the a6 recency aspect. The why should still be filled.\n\nAlright. Let me also reconsider whether I'm overcomplicating. Let me just produce a clean answer.\n\nActually, I realize I should double check: for the a6 aspect, are ALL items in a6 fact cells, or do I also need to handle a6.SCHW and a6.MER item claims with why, and a6.MS adjacent with why?\n\nYes: a6.MS is adjacent (a6.MS/1), a6.SCHW fact (5 items), a6.MER fact (7 items).\n\nNow let me also verify the a6.MS adjacent item needs why. The instruction: \"For every item of an aspect marked recency... fill why\". Yes.\n\nNow, let me write everything. This is a large answer.\n\nLet me also double-check the ordering within the answer. \"Several firms: aspect by aspect in the order listed, firms in the order listed.\"\n\nSo order: a1 (comparison first? The comparison aspect a1 is listed first). Then a2, a3, a4, a5, a6.\n\nWithin each aspect, firms in order MS, SCHW, EDJ, MER, RJF.\n\nBut wait - the comparison claim for a1 is a single claim with part_id \"a1\". Where does it go relative to the other a1 items?\n\nThe comparison claim should be written. The other a1 cells (a1.MS adjacent, a1.SCHW adjacent, a1.MER fact, a1.RJF adjacent) also belong to aspect a1.\n\nSo order: a1 comparison claim first, then a1.MS adjacent, a1.SCHW adjacent, a1.EDJ (nothing, code gap), a1.MER fact items, a1.RJF adjacent.\n\nThen a2: a2.MS adjacent, a2.SCHW fact, a2.EDJ adjacent, a2.MER fact, a2.RJF adjacent, a2.research (gap).\n\netc.\n\nNow, the claims array contains all claims (comparison + item claims). The adjacent array contains all adjacent items. The gaps array contains my own gaps (probably empty).\n\nThe order in the claims array and adjacent array matters for final rendering. But since claims and adjacent are separate arrays, how is the combined order determined? Probably claims are rendered in order, and adjacent items are rendered in order, and they might be interleaved by part_id? \n\nActually, I'm not sure how the rendering interleaves claims and adjacent. The instructions say \"aspect by aspect in the order listed, firms in the order listed\". I'll order both arrays consistently. The code likely renders claims first then adjacent, or merges by part_id. I'll just order each array properly.\n\nLet me just produce all entries in proper order.\n\nNow let me write out the full structure.\n\nLet me carefully compose each entry.\n\n### Claims array (in order):\n\n1. **a1 comparison** (part_id \"a1\"):\n```\n{\n  part_id: \"a1\",\n  items: [],\n  text: \"Merrill is the only one of the five firms that explicitly names the mass-affluent segment, labeling it 'Mass Affluent ($500K - $1MM)' in its Wealth Continuum. Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) and mentions 'mass-affluent' only in a third-party Cerulli Associates figure. Schwab uses 'affluent' and higher wealth-tier labels but not 'mass-affluent'. Raymond James names 'high-net-worth' and 'ultra-high-net-worth' (at least $5 million in investable assets). Edward Jones names no mass-affluent segment. The comparison can be made: Merrill is the most explicit.\",\n  chunk_ids: [\"BAC-DECK-2025-investor-day#12\", \"BAC-DECK-2025-investor-day#9\", \"MS-10K-2025#125\", \"MS-TRADE-2026-10-21-IN-01#3\", \"SCHW-TR-2025Q4#11\", \"SCHW-TR-2026Q3#11\", \"RJF-TRADE-2026-09-29-IN-01#3\"],\n  why: \"\"\n}\n```\n\n2. **a1.MER/1** (fact):\n```\n{ part_id: \"a1.MER\", items: [\"a1.MER/1\"], text: \"\", chunk_ids: [], why: \"\" }\n```\n\n3. **a1.MER/2**:\n```\n{ part_id: \"a1.MER\", items: [\"a1.MER/2\"], text: \"\", chunk_ids: [], why: \"\" }\n```\n\n4. **a2.SCHW/1** through **a2.SCHW/9** (9 claims):\n```\n{ part_id: \"a2.SCHW\", items: [\"a2.SCHW/1\"], ... }\n...\n```\n\n5. **a2.MER/1** through **a2.MER/4** (4 claims)\n\n6. **a3.MER/1** through **a3.MER/5** (5 claims)\n\n7. **a4.MER/1**, **a4.MER/2** (2 claims)\n\n8. **a5.SCHW/1** through **a5.SCHW/4** (4 claims)\n\n9. **a5.MER/1**, **a5.MER/2** (2 claims)\n\n10. **a6.SCHW/1** through **a6.SCHW/5** (5 claims, with why)\n\n11. **a6.MER/1** through **a6.MER/7** (7 claims, with why)\n\n### Adjacent array (in order):\n\n1. a1.MS/1, /2, /3 (part_id \"a1.MS\")\n2. a1.SCHW/1..4 (part_id \"a1.SCHW\")\n3. a1.RJF/1..6 (part_id \"a1.RJF\")\n4. a2.MS/1, /2 (part_id \"a2.MS\")\n5. a2.EDJ/1..3 (part_id \"a2.EDJ\")\n6. a2.RJF/1..3 (part_id \"a2.RJF\")\n7. a3.MS/1..4 (part_id \"a3.MS\")\n8. a3.SCHW/1..7 (part_id \"a3.SCHW\")\n9. a3.EDJ/1 (part_id \"a3.EDJ\")\n10. a3.RJF/1..5 (part_id \"a3.RJF\")\n11. a4.SCHW/1 (part_id \"a4.SCHW\")\n12. a4.EDJ/1..4 (part_id \"a4.EDJ\")\n13. a4.RJF/1..5 (part_id \"a4.RJF\")\n14. a5.RJF/1 (part_id \"a5.RJF\")\n15. a6.MS/1 (part_id \"a6.MS\", with why)\n\nNow the differs_because for each adjacent cell. I should use the given text (in my own words, same meaning).\n\nLet me write differs_because for each:\n\na1.MS: \"Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment, and uses 'ultra-high net worth' for its lending/institutional clients; it does not name a 'mass-affluent' segment. The only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants, not Morgan Stanley's own segment.\"\n\na1.SCHW: \"Schwab uses the terms 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name.\"\n\na1.RJF: \"RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment.\"\n\na2.MS: \"The firm describes serving 'individual investors' (specifically 'high and ultra-high net worth individuals') and 'retail' clients, but does not use the term 'mass-affluent'; these are different (wealthier or broader) client segments. The only 'mass-affluent' mention in the passages is a third-party Cerulli Associates report finding, not Morgan Stanley's own statement.\"\n\na2.EDJ: \"No passage uses the term 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader client categories that encompass but are not limited to mass-affluent) and explicitly targets 'high net worth' clients (a wealthier segment), rather than naming mass-affluent clients.\"\n\na2.RJF: \"The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally defined as $5M+ in investable assets), not mass-affluent clients; no passage contains any statement about mass-affluent clients specifically.\"\n\na3.MS: \"Morgan Stanley describes targeting and serving a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace channels) rather than using 'mass-affluent' terminology or naming a mass-affluent segment specifically; these are wider segments that contain mass-affluent clients.\"\n\na3.SCHW: \"Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'.\"\n\na3.EDJ: \"The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients; mass-affluent is not mentioned anywhere.\"\n\na3.RJF: \"Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients.\"\n\na4.SCHW: \"These offerings are described for 'affluent' clients and high-net-worth tiers ($1 million to $10 million and above $10 million in qualifying assets), which is a different (higher/broader) segment than 'mass-affluent' (typically roughly $100,000 to $1 million); no passage uses the term 'mass-affluent' or describes a mass-affluent-specific product, service, platform, or fee level.\"\n\na4.EDJ: \"No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about.\"\n\na4.RJF: \"The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients.\"\n\na5.RJF: \"Defines the high-net-worth client segment (at least $5 million in investable assets), not the mass-affluent segment the sub-question asks about.\"\n\na6.MS: \"The passage refers to 'retail clients' broadly, not specifically 'mass-affluent' clients; retail is a broader category that includes mass-affluent and other client tiers.\"\n\nNow for adjacent items, the \"text\" field should be empty (with refs). The \"why\" field is empty except for a6.MS/1.\n\nWait, for adjacent items, the schema requires: part_id, items, text, chunk_ids, why, differs_because.\n\nFor a6.MS/1, why is filled, and chunk_ids may have the related passage.\n\nLet me write a6.MS/1:\n```\n{\n  part_id: \"a6.MS\",\n  items: [\"a6.MS/1\"],\n  text: \"\",\n  chunk_ids: [],\n  why: \"The source ties this strategy to laying the foundation for sustainable growth and positioning the firm to continue to outperform.\",\n  differs_because: \"The passage refers to 'retail clients' broadly, not specifically 'mass-affluent' clients; retail is a broader category that includes mass-affluent and other client tiers.\"\n}\n```\n\nFor the why, I used the context (own passage MS-TR-2025Q4#23). chunk_ids empty.\n\nNow let me also reconsider: for the a6 fact items (SCHW and MER), the why and chunk_ids.\n\nLet me finalize why-lines and chunk_ids for each a6 item.\n\na6.SCHW/1: \nwhy: \"The source ties this to a 'bull market for convenience' driving investors to consolidate their financial lives.\"\nchunk_ids: [] (own passage)\n\na6.SCHW/2:\nwhy: \"The source expects this to keep growing as more investors seek one-stop shopping.\"\nchunk_ids: []\n\na6.SCHW/3:\nwhy: \"The source frames this as part of a 'bull market for advice' and calls it the market opportunity.\"\nchunk_ids: []\n\na6.SCHW/4:\nwhy: \"The source frames this amid what it calls a 'tremendous opportunity to grow share' in advice and lending.\"\nchunk_ids: []\n\na6.SCHW/5:\nwhy: \"The source ties this to investors increasingly wanting to consolidate their financial lives.\"\nchunk_ids: []\n\na6.MER/1:\nwhy: \"The source frames serving across the wealth continuum as the firm's core positioning.\"\nchunk_ids: [\"BAC-DECK-2025-investor-day#9\"]\n\na6.MER/2:\nwhy: \"The source frames these results as reflecting strong demand for advice and the firm's ability to attract clients and advisers.\"\nchunk_ids: []\n\na6.MER/3:\nwhy: \"The firm's transcript reports this as up 17% versus the prior year, the most recent quarterly figure.\"\nchunk_ids: [\"BAC-TR-2026Q3#19\"]\n\na6.MER/4:\nwhy: \"The source reports this as the latest quarter, following ~6K net new $500K+ relationships in 2Q26.\"\nchunk_ids: [\"BAC-DECK-2026Q2#20\"]\n\na6.MER/5:\nwhy: \"The source reports this as growth from 1Q26's ~3.3K households and ~4K relationships.\"\nchunk_ids: [\"BAC-PR-2026-04-15-01#11\"]\n\na6.MER/6:\nwhy: \"The source reports this as the first quarter of 2026, the earliest in the series of $500K+ household additions disclosed.\"\nchunk_ids: []\n\nActually, for a6.MER/6, is there a \"change\" I can point to? It's the earliest (1Q26). The related shows 2Q26 was higher. So:\n\nwhy: \"The source reports this as the first in a series of quarterly $500K+ household additions that rose in subsequent quarters.\"\nchunk_ids: [\"BAC-DECK-2026Q2#20\"]\n\nHmm, but I need to be careful. The why should be factual from the passage, not my own analysis. \"rose in subsequent quarters\" is a factual observation from comparing related items (2Q26 ~5.4K > 1Q26 ~3.3K). That's a change. I think it's OK but let me keep it simpler.\n\nActually, let me simplify a6.MER/6 why using context:\ncontext: \"~3.3K net new $500K+ households added in 1Q26\" (just a stat, no context reason).\n\nThe related lines show later quarters. Let me use:\nwhy: \"The source reports this as the first of the three quarters of 2026 disclosures of net new $500K+ households.\"\nchunk_ids: []\n\nHmm, \"first of three quarters\" is my own synthesis. Let me just point to a related fact.\n\nActually, I think a cleaner approach for why-lines that lack clear context: point to the related item that gives a sense of trend.\n\nFor a6.MER/6, related BAC-DECK-2026Q2#20 says 2Q26 added ~5.4K. So:\nwhy: \"This is the earliest of the 2026 quarterly disclosures; the firm's 2Q26 deck shows ~5.4K net new $500K+ households.\"\nchunk_ids: [\"BAC-DECK-2026Q2#20\"]\n\nThis states a change (2Q26 was ~5.4K vs 1Q26 ~3.3K). OK.\n\nActually, I'm overthinking. The why just needs to be one sentence on why it might matter. Let me write reasonable ones.\n\nLet me also reconsider: for fact claims (a6.SCHW, a6.MER), does the why go in the claims array? Yes, the claim object has a \"why\" field.\n\nLet me now also double-check: the a6 fact items \u2014 should I put each as a separate claim (one ref each)? Yes.\n\nNow, one more consideration: the a2.SCHW items. There are 9 items, all fact. Each should be a separate item claim. Some might be duplicative (a2.SCHW/2 and a2.SCHW/6 both say 61% affluent clients prefer to consolidate). But they're from different sources (transcript vs deck). The instruction says \"skip an item that only repeats an item you already used.\" But these are distinct sources. I'll include all.\n\nActually, let me reconsider a2.SCHW items: many are similar. a2.SCHW/2 (61% of affluent 25-44 consolidate, transcript) vs a2.SCHW/6 (61% affluent clients prefer to consolidate, deck) vs a2.SCHW/4 (68% affluent investors want advice, deck) vs a2.SCHW/5 (68% affluent Americans willing to pay, trade).\n\nThese are all distinct enough (different figures/sources). I'll include all 9.\n\nActually wait, should I be more selective? The cell is \"What each firm has said about serving mass-affluent clients\". The items answer the cell. Some items are about affluent clients (not mass-affluent). But the cell a2.SCHW is marked \"fact\", meaning these items ARE the answer (the firm talks about \"affluent\" clients, which is the closest it gets to mass-affluent).\n\nI'll include all items as listed. The instructions say \"Pick the items that answer the cell; skip an item that only repeats an item you already used.\"\n\na2.SCHW/2 and a2.SCHW/6: both 61% affluent consolidate. a2.SCHW/2 is from transcript (ages 25-44), a2.SCHW/6 from deck (just \"affluent clients\"). Slightly different. I'll keep both since they're distinct sources with slightly different wording.\n\nActually, a2.SCHW/1 (one-third new clients affluent), a2.SCHW/3 (22% $1M-$5M single firm), a2.SCHW/4 (68% want advice deck), a2.SCHW/5 (68% willing to pay trade), a2.SCHW/6 (61% consolidate deck), a2.SCHW/7 (expanding branches for higher net worth), a2.SCHW/8 (Private Client Services $1M-$10M), a2.SCHW/9 (retail below $5M well served).\n\nThese are all distinct. I'll include all 9.\n\nOK. Similarly a3.SCHW has 7 adjacent items, I'll include all.\n\nLet me now also handle the a2.MER items (4): all fact. Include all.\n\na2.MER/4: \"focused on clients with over $250,000 in total investable assets\" - quote not verbatim, so no quotation marks (code handles that).\n\nNow, let me write out the full JSON.\n\nActually, I need to be very careful about the chunk_ids enum - I can only use the ids listed in Sources. Let me verify all chunk_ids I use are in the enum.\n\nFor the comparison claim chunk_ids:\n- BAC-DECK-2025-investor-day#12 \u2713\n- BAC-DECK-2025-investor-day#9 \u2713\n- MS-10K-2025#125 \u2713\n- MS-TRADE-2026-10-21-IN-01#3 \u2713\n- SCHW-TR-2025Q4#11 \u2713\n- SCHW-TR-2026Q3#11 \u2713\n- RJF-TRADE-2026-09-29-IN-01#3 \u2713\n\nAll good.\n\nFor why chunk_ids:\n- BAC-DECK-2025-investor-day#9 \u2713\n- BAC-TR-2026Q3#19 \u2713\n- BAC-DECK-2026Q2#20 \u2713\n- BAC-PR-2026-04-15-01#11 \u2713\n\nAll good.\n\nNow, the gaps array. Code gaps are added by code. I should provide empty gaps array, or add my own gaps only if something is not named.\n\nLooking at the code gaps, they cover everything. I don't think I need to add anything. So gaps = [].\n\nActually wait, let me re-read: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nSo gaps = [] (empty array). I'll provide empty gaps.\n\nActually, do I even need to provide gaps? The schema requires \"gaps\" as required field. So I provide empty array.\n\nNow let me also reconsider the comparison claim text. I should not put figures/quotes in a claim that has refs \u2014 but the comparison claim has no refs (text only), so I CAN put figures/quotes. Actually, re-reading: \"Write a whole claim in text (with no refs) only for: a comparison claim...\". And \"Never write a figure, date or quote in a claim that has refs.\" So for a text-only comparison claim, I can include figures/quotes.\n\nBut actually, I should be careful. The comparison claim should state the comparison result. Let me include the key figure (Mass Affluent $500K-$1MM) to be specific.\n\nLet me finalize the comparison claim text:\n\n\"Merrill is the only one of the five that explicitly names the mass-affluent segment, defining 'Mass Affluent ($500K - $1MM)' in its Wealth Continuum. Morgan Stanley names 'high and ultra-high net worth individuals' and uses 'mass-affluent' only in a third-party Cerulli Associates figure. Schwab uses 'affluent' and higher wealth-tier labels (e.g., 'high net worth', households with $1 million to $5 million) but not 'mass-affluent'. Raymond James names 'high-net-worth' and 'ultra-high-net-worth' clients (defined as at least $5 million in investable assets). Edward Jones names no mass-affluent segment. On this evidence, Merrill is the most explicit about serving mass-affluent clients.\"\n\nGood.\n\nNow let me also reconsider whether the comparison needs \"same_basis\" treatment. The aspect a1 is not marked same_basis. The instruction: \"Compare or rank figures across firms only when the aspect is marked same_basis... otherwise say they are not comparable and why.\"\n\nBut a1 isn't about figures; it's about whether/how explicitly each firm names the segment. This is a qualitative comparison. I've answered it directly. The \"not comparable\" concern applies to figures. Since there are no shared figures, I just describe each firm's naming. That's fine.\n\nActually, let me reconsider. The comparison claim should answer \"whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why.\"\n\nSo I should state validity. The comparison of \"explicitness of naming\" can be made (valid). Merrill is most explicit.\n\nMy text already says \"On this evidence, Merrill is the most explicit.\" That implicitly says valid. I could add \"The comparison can be made (valid)\". Let me add a clause.\n\nFinal comparison text:\n\n\"The comparison can be made on this evidence. Merrill is the only one of the five that explicitly names the mass-affluent segment, defining 'Mass Affluent ($500K - $1MM)' in its Wealth Continuum. Morgan Stanley names 'high and ultra-high net worth individuals' and uses 'mass-affluent' only in a third-party Cerulli Associates figure. Schwab uses 'affluent' and higher wealth-tier labels but not 'mass-affluent'. Raymond James names 'high-net-worth' and 'ultra-high-net-worth' clients (defined as at least $5 million in investable assets). Edward Jones names no mass-affluent segment. Merrill is therefore the most explicit about serving mass-affluent clients.\"\n\nGood.\n\nNow let me write everything out in the tool call.\n\nLet me carefully list all claims and adjacent items.\n\nActually, this is a very large answer. Let me be systematic and produce the JSON.\n\nLet me write out all claims:\n\nClaims (in order):\n1. a1 comparison\n2. a1.MER/1\n3. a1.MER/2\n4. a2.SCHW/1\n5. a2.SCHW/2\n6. a2.SCHW/3\n7. a2.SCHW/4\n8. a2.SCHW/5\n9. a2.SCHW/6\n10. a2.SCHW/7\n11. a2.SCHW/8\n12. a2.SCHW/9\n13. a2.MER/1\n14. a2.MER/2\n15. a2.MER/3\n16. a2.MER/4\n17. a3.MER/1\n18. a3.MER/2\n19. a3.MER/3\n20. a3.MER/4\n21. a3.MER/5\n22. a4.MER/1\n23. a4.MER/2\n24. a5.SCHW/1\n25. a5.SCHW/2\n26. a5.SCHW/3\n27. a5.SCHW/4\n28. a5.MER/1\n29. a5.MER/2\n30. a6.SCHW/1 (why)\n31. a6.SCHW/2 (why)\n32. a6.SCHW/3 (why)\n33. a6.SCHW/4 (why)\n34. a6.SCHW/5 (why)\n35. a6.MER/1 (why)\n36. a6.MER/2 (why)\n37. a6.MER/3 (why)\n38. a6.MER/4 (why)\n39. a6.MER/5 (why)\n40. a6.MER/6 (why)\n41. a6.MER/7 (why)\n\nAdjacent (in order):\n1. a1.MS/1\n2. a1.MS/2\n3. a1.MS/3\n4. a1.SCHW/1\n5. a1.SCHW/2\n6. a1.SCHW/3\n7. a1.SCHW/4\n8. a1.RJF/1\n9. a1.RJF/2\n10. a1.RJF/3\n11. a1.RJF/4\n12. a1.RJF/5\n13. a1.RJF/6\n14. a2.MS/1\n15. a2.MS/2\n16. a2.EDJ/1\n17. a2.EDJ/2\n18. a2.EDJ/3\n19. a2.RJF/1\n20. a2.RJF/2\n21. a2.RJF/3\n22. a3.MS/1\n23. a3.MS/2\n24. a3.MS/3\n25. a3.MS/4\n26. a3.SCHW/1\n27. a3.SCHW/2\n28. a3.SCHW/3\n29. a3.SCHW/4\n30. a3.SCHW/5\n31. a3.SCHW/6\n32. a3.SCHW/7\n33. a3.EDJ/1\n34. a3.RJF/1\n35. a3.RJF/2\n36. a3.RJF/3\n37. a3.RJF/4\n38. a3.RJF/5\n39. a4.SCHW/1\n40. a4.EDJ/1\n41. a4.EDJ/2\n42. a4.EDJ/3\n43. a4.EDJ/4\n44. a4.RJF/1\n45. a4.RJF/2\n46. a4.RJF/3\n47. a4.RJF/4\n48. a4.RJF/5\n49. a5.RJF/1\n50. a6.MS/1 (why)\n\nNow let me write the final JSON. This is going to be long.\n\nFor the answerable field: true (behavior is \"answer\", we can answer).\n\nLet me write it all out now.\n\nFor each claim, the required fields: part_id, items, text, chunk_ids, why.\n\nFor the a1 comparison claim, items is empty [], text is the full text, chunk_ids has the list, why \"\".\n\nFor item claims, items has the ref, text \"\", chunk_ids [], why \"\" (except a6 items which have why and possibly chunk_ids).\n\nLet me write.\n\nFor a6.SCHW/4, why from context \"Schwab has a tremendous opportunity to grow share with new & existing clients in advice & lending.\" chunk_ids [] (own passage).\n\nActually let me double check a6.SCHW/4's own chunk is SCHW-DECK-2026-investor-day#180, which is cited by the ref a6.SCHW/4. So context is own passage, chunk_ids empty.\n\nOK writing now.\n\nLet me finalize all why-lines:\n\na6.SCHW/1: why \"The source ties this to a 'bull market for convenience' that is driving investors to consolidate their financial lives.\" chunk_ids []\n\na6.SCHW/2: why \"The source expects this to keep growing as more investors seek one-stop shopping.\" chunk_ids []\n\na6.SCHW/3: why \"The source frames this as part of a 'bull market for advice' and calls it the market opportunity.\" chunk_ids []\n\na6.SCHW/4: why \"The source frames this amid what it describes as a 'tremendous opportunity to grow share' in advice and lending.\" chunk_ids []\n\na6.SCHW/5: why \"The source ties this to investors increasingly wanting to consolidate their financial lives.\" chunk_ids []\n\na6.MER/1: why \"The source frames serving across the wealth continuum as the firm's core positioning.\" chunk_ids [\"BAC-DECK-2025-investor-day#9\"]\n\na6.MER/2: why \"The source frames these results as reflecting strong demand for advice and the firm's ability to attract clients and advisers.\" chunk_ids []\n\na6.MER/3: why \"The firm's transcript reports this as up 17% versus the prior year, the most recent quarterly figure.\" chunk_ids [\"BAC-TR-2026Q3#19\"]\n\na6.MER/4: why \"The source reports this as the latest quarter, following ~6K net new $500K+ relationships in 2Q26.\" chunk_ids [\"BAC-DECK-2026Q2#20\"]\n\na6.MER/5: why \"The source reports this as growth from 1Q26's ~3.3K households and ~4K relationships.\" chunk_ids [\"BAC-PR-2026-04-15-01#11\"]\n\na6.MER/6: why \"This is the earliest of the 2026 quarterly disclosures; the firm's 2Q26 deck reports ~5.4K net new $500K+ households.\" chunk_ids [\"BAC-DECK-2026Q2#20\"]\n\na6.MER/7: why \"The source ties this focus to Merrill's advisory business providing a high-touch client experience.\" chunk_ids []\n\na6.MS/1 (adjacent): why \"The source ties this strategy to laying the foundation for sustainable growth and positioning the firm to continue to outperform.\" chunk_ids []\n\nGood.\n\nNow, one concern: for a6.MER/6, \"the earliest of the 2026 quarterly disclosures\" - is this my own synthesis? It's describing recency order, which is factual from the data (1Q26 < 2Q26 < 3Q26). I think it's acceptable as a \"change against an earlier period\" type framing. Actually, let me reconsider - it's pointing out that later quarters had higher figures, which is a change. This is fine.\n\nActually, simpler: I'll keep it factual by referencing the related deck.\n\nLet me finalize and write.\n\nAlso I need to double check: the a6.MS/1 adjacent item - does the \"why\" also need a chunk id? I said chunk_ids []. The why is from own context. That's fine.\n\nNow let me also verify the \"quote not verbatim\" items - I should NOT put quotes in quotation marks for those. But for item claims, I leave text empty and code renders the item's text. The code handles the quote rendering. So I don't need to worry about quotation marks for item claims - code does it. The \"quote not verbatim\" note means code won't put quotation marks around it. I just pass the ref.\n\nFor adjacent items too, I pass the ref and code renders.\n\nOK so I don't write any quotes myself (text empty). Good.\n\nNow, the only text I write is the comparison claim, which I should write carefully (no cell ids, aspect ids, part ids, refs in text).\n\nLet me finalize everything and produce the tool call.\n\nLet me write the complete JSON now.\n\nFor gaps, empty array [].\n\nLet me now write it all.\n\nActually, I realize I should double-check: does the comparison claim need \"why\"? No, a1 is not recency. Leave \"\".\n\nAlso, for the comparison claim, is \"items\" empty? Yes, comparison claims are text-only with chunk_ids.\n\nLet me write.\n\nOne more check on the a2.MER items - a2.MER/4 has \"quote not verbatim\" and \"period not stated\" but it's a fact cell item, so it's a normal item claim. Fine.\n\nAlso a2.SCHW/8 has \"period not stated in a usable form\" - still a fact item claim. Fine.\n\na4.MER/1 has \"period not stated; quote not verbatim\". Fine.\n\nNow writing the final answer.\n\nLet me carefully produce the tool call with all entries.\n\nI'll write claims and adjacent in order.\n\nFor brevity in this reasoning, I'll now just produce the final tool call.",
+  "first_claim_s": 201.72,
+  "stream_items": {
+    "first_claim_s": 201.72,
+    "shown": 40,
+    "held": 51
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "part_id": "a1",
+        "items": [],
+        "text": "The comparison can be made on this evidence. Merrill is the only one of the five firms that explicitly names the mass-affluent segment, defining 'Mass Affluent ($500K - $1MM)' in its Wealth Continuum. Morgan Stanley names 'high and ultra-high net worth individuals' and uses 'mass-affluent' only in a third-party Cerulli Associates figure. Schwab uses 'affluent' and higher wealth-tier labels but not 'mass-affluent'. Raymond James names 'high-net-worth' and 'ultra-high-net-worth' clients (defined as at least $5 million in investable assets). Edward Jones names no mass-affluent segment. Merrill is therefore the most explicit about serving mass-affluent clients.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12",
+          "BAC-DECK-2025-investor-day#9",
+          "MS-10K-2025#125",
+          "MS-TRADE-2026-10-21-IN-01#3",
+          "SCHW-TR-2025Q4#11",
+          "SCHW-TR-2026Q3#11",
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a1.MER",
+        "items": [
+          "a1.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/8"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.SCHW",
+        "items": [
+          "a2.SCHW/9"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a2.MER",
+        "items": [
+          "a2.MER/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a3.MER",
+        "items": [
+          "a3.MER/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MER",
+        "items": [
+          "a4.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a4.MER",
+        "items": [
+          "a4.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.SCHW",
+        "items": [
+          "a5.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.SCHW",
+        "items": [
+          "a5.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.SCHW",
+        "items": [
+          "a5.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.SCHW",
+        "items": [
+          "a5.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.MER",
+        "items": [
+          "a5.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a5.MER",
+        "items": [
+          "a5.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": ""
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source ties this to a 'bull market for convenience' that is driving investors to consolidate their financial lives."
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source expects this to keep growing as more investors seek one-stop shopping."
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source frames this as part of a 'bull market for advice' and calls it the market opportunity."
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source frames this amid what it describes as a 'tremendous opportunity to grow share' in advice and lending."
+      },
+      {
+        "part_id": "a6.SCHW",
+        "items": [
+          "a6.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source ties this to investors increasingly wanting to consolidate their financial lives."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/1"
+        ],
+        "text": "",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "why": "The source frames serving across the wealth continuum as the firm's core positioning."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source frames these results as reflecting strong demand for advice and the firm's ability to attract clients and advisers."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/3"
+        ],
+        "text": "",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "why": "The firm's transcript reports this as up 17% versus the prior year, the most recent quarterly figure."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/4"
+        ],
+        "text": "",
+        "chunk_ids": [
+          "BAC-DECK-2026Q2#20"
+        ],
+        "why": "The source reports this as the latest quarter, following ~6K net new $500K+ relationships in 2Q26."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/5"
+        ],
+        "text": "",
+        "chunk_ids": [
+          "BAC-PR-2026-04-15-01#11"
+        ],
+        "why": "The source reports this as growth from 1Q26's ~3.3K households and ~4K relationships."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/6"
+        ],
+        "text": "",
+        "chunk_ids": [
+          "BAC-DECK-2026Q2#20"
+        ],
+        "why": "This is the earliest of the 2026 quarterly disclosures; the firm's 2Q26 deck reports ~5.4K net new $500K+ households."
+      },
+      {
+        "part_id": "a6.MER",
+        "items": [
+          "a6.MER/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source ties this focus to Merrill's advisory business providing a high-touch client experience."
+      }
+    ],
+    "adjacent": [
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment, and uses 'ultra-high net worth' for its lending/institutional clients; it does not name a 'mass-affluent' segment. The only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants, not Morgan Stanley's own segment."
+      },
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment, and uses 'ultra-high net worth' for its lending/institutional clients; it does not name a 'mass-affluent' segment. The only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants, not Morgan Stanley's own segment."
+      },
+      {
+        "part_id": "a1.MS",
+        "items": [
+          "a1.MS/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment, and uses 'ultra-high net worth' for its lending/institutional clients; it does not name a 'mass-affluent' segment. The only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants, not Morgan Stanley's own segment."
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab uses the terms 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name."
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab uses the terms 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name."
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab uses the terms 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name."
+      },
+      {
+        "part_id": "a1.SCHW",
+        "items": [
+          "a1.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab uses the terms 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a1.RJF",
+        "items": [
+          "a1.RJF/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment. No passage names the mass-affluent segment."
+      },
+      {
+        "part_id": "a2.MS",
+        "items": [
+          "a2.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The firm describes serving 'individual investors' (specifically 'high and ultra-high net worth individuals') and 'retail' clients, but does not use the term 'mass-affluent'; these are different (wealthier or broader) client segments. The only 'mass-affluent' mention in the passages is a third-party Cerulli Associates report finding, not Morgan Stanley's own statement."
+      },
+      {
+        "part_id": "a2.MS",
+        "items": [
+          "a2.MS/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The firm describes serving 'individual investors' (specifically 'high and ultra-high net worth individuals') and 'retail' clients, but does not use the term 'mass-affluent'; these are different (wealthier or broader) client segments. The only 'mass-affluent' mention in the passages is a third-party Cerulli Associates report finding, not Morgan Stanley's own statement."
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage uses the term 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader client categories that encompass but are not limited to mass-affluent) and explicitly targets 'high net worth' clients (a wealthier segment), rather than naming mass-affluent clients."
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage uses the term 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader client categories that encompass but are not limited to mass-affluent) and explicitly targets 'high net worth' clients (a wealthier segment), rather than naming mass-affluent clients."
+      },
+      {
+        "part_id": "a2.EDJ",
+        "items": [
+          "a2.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage uses the term 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader client categories that encompass but are not limited to mass-affluent) and explicitly targets 'high net worth' clients (a wealthier segment), rather than naming mass-affluent clients."
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally defined as $5M+ in investable assets), not mass-affluent clients; no passage contains any statement about mass-affluent clients specifically."
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally defined as $5M+ in investable assets), not mass-affluent clients; no passage contains any statement about mass-affluent clients specifically."
+      },
+      {
+        "part_id": "a2.RJF",
+        "items": [
+          "a2.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally defined as $5M+ in investable assets), not mass-affluent clients; no passage contains any statement about mass-affluent clients specifically."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley describes targeting and serving a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace channels) rather than using 'mass-affluent' terminology or naming a mass-affluent segment specifically; these are wider segments that contain mass-affluent clients."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley describes targeting and serving a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace channels) rather than using 'mass-affluent' terminology or naming a mass-affluent segment specifically; these are wider segments that contain mass-affluent clients."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley describes targeting and serving a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace channels) rather than using 'mass-affluent' terminology or naming a mass-affluent segment specifically; these are wider segments that contain mass-affluent clients."
+      },
+      {
+        "part_id": "a3.MS",
+        "items": [
+          "a3.MS/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Morgan Stanley describes targeting and serving a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace channels) rather than using 'mass-affluent' terminology or naming a mass-affluent segment specifically; these are wider segments that contain mass-affluent clients."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/6"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.SCHW",
+        "items": [
+          "a3.SCHW/7"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (including households with $1 million to $5 million in assets), which are wealth tiers above the mass-affluent segment; the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "part_id": "a3.EDJ",
+        "items": [
+          "a3.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients; mass-affluent is not mentioned anywhere."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients."
+      },
+      {
+        "part_id": "a3.RJF",
+        "items": [
+          "a3.RJF/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (e.g., at least $5 million or $50 million in investable assets), a wealthier segment than mass-affluent clients; no passage mentions mass-affluent clients."
+      },
+      {
+        "part_id": "a4.SCHW",
+        "items": [
+          "a4.SCHW/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "These offerings are described for 'affluent' clients and high-net-worth tiers ($1 million to $10 million and above $10 million in qualifying assets), which is a different (higher/broader) segment than 'mass-affluent' (typically roughly $100,000 to $1 million); no passage uses the term 'mass-affluent' or describes a mass-affluent-specific product, service, platform, or fee level."
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about."
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about."
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about."
+      },
+      {
+        "part_id": "a4.EDJ",
+        "items": [
+          "a4.EDJ/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "No passage mentions 'mass-affluent' clients; the products, services, and fee structures described are offered to the firm's clients/individual investors generally, which is a broader group than the mass-affluent segment asked about."
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/2"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/3"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/4"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "part_id": "a4.RJF",
+        "items": [
+          "a4.RJF/5"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "The passages describe products, services, platforms, and fee structures offered to the firm's clients generally (e.g., Private Client Group clients), a wider group than mass-affluent clients specifically; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "part_id": "a5.RJF",
+        "items": [
+          "a5.RJF/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "",
+        "differs_because": "Defines the high-net-worth client segment (at least $5 million in investable assets), not the mass-affluent segment the sub-question asks about."
+      },
+      {
+        "part_id": "a6.MS",
+        "items": [
+          "a6.MS/1"
+        ],
+        "text": "",
+        "chunk_ids": [],
+        "why": "The source ties this strategy to laying the foundation for sustainable growth and positioning the firm to continue to outperform.",
+        "differs_because": "The passage refers to 'retail clients' broadly, not specifically 'mass-affluent' clients; retail is a broader category that includes mass-affluent and other client tiers."
+      }
+    ],
+    "gaps": []
+  }
+}
