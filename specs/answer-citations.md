@@ -204,6 +204,29 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   answer is output. `REDUCE_PROMPT` = `v5.2` | `v5.3`; v5.3 adds "state each fact once ... every cell that
   holds a fact keeps at least one claim of its own". The version and system text join the reduce cache key.
 
+#277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
+- Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call
+  checks it first (planner, map, reduce, legacy answer, `llm.deepseek_create`), `ask()` checks it at each stage
+  boundary and `run_map` before the re-search and round 2. `extract.run_round` runs each call in its own copy of
+  the context, starts no call once it is set, cancels the queued ones (no wait for them) and lets running ones end;
+  the DeepSeek stream watchdog closes an open stream when it is set. A stop raises `cancel.Cancelled`, a
+  `BaseException`, so no generic error handler turns it into a failed call, a failed stage (the trace marks the
+  running stage "stopped") or the planner's rule-plan fallback. Not cut: non-streamed requests and the wait for a
+  stream's first byte; they end, are billed, and a valid output is kept. User-stop map records read
+  `cancelled: stopped by the user` (`CallResult.cancelled`), apart from a ProviderStop's "cancelled after the
+  provider stopped the run".
+- Run cache (`cee.answer.runcache`, Ask page only, in the session): every call of a question's attempts with a
+  status `ok | invalid | cut | failed | idle | cancelled | skipped | reused`. Only `ok` is ever served: a valid map
+  extraction, a usable model plan, a reduce output that passed `finish_answer`. A valid output that lands after
+  the stop is still `ok`. Keys as the eval's (no snapshot). The eval keeps its own never-re-call cache.
+- Run log: with the cache, every attempt writes a `query_log` row. A finished one adds `filters.run` (attempt,
+  retry_of, status `done`, reused / made counts by stage, status counts, records). A stopped or failed one writes
+  `answer` NULL with `filters.run` (also `stage`, `reason` stop | page, `error`, `stop_s` from the click to the
+  worker's end) and `filters.cost` of the calls it sent; a cut stream has no usage (`no_usage`, cost unknown).
+- `MOCK_FAIL_FILE` (verify-cee only): while that file names `map` or `reduce`, the mock call of that stage fails.
+  The mock map call k waits `MOCK_DELAY_S x min(k + 1, 3)` (evidence lands card by card); every mock wait is cut by
+  a stop.
+
 Plan: `plans/0247-reduce.md`. Code: `src/cee/answer/reduce.py`; prompt `prompt.SYSTEM_PROMPT_V5`
 (`REDUCE_VERSION = "v5"`). One synthesis call writes the Answer from the evidence matrix only, for the
 behavior code decided; it cannot change it.

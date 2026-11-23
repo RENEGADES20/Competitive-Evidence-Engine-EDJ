@@ -16,7 +16,9 @@ The mock provider extracts deterministically (0 calls). Tests and CI make 0 real
 """
 from __future__ import annotations
 
+import contextvars
 import datetime as dt
+import itertools
 import json
 import re
 import time
@@ -468,7 +470,8 @@ def call_extract(question: str, spec: MapSpec, provider: str, window=None, firms
     be trusted (no tool call, cut at the cap, refusal, a DeepSeek finish_reason other than
     tool_calls / stop, not JSON, not a valid extraction, no cells). `meta` gets stop_reason, usage
     and (deepseek) reasoning_content. ProviderStop and any other exception propagate."""
-    from cee.answer import llm
+    from cee.answer import cancel, llm
+    cancel.check()   # #277: no new call after Stop
     meta = {} if meta is None else meta
     if provider == "anthropic":
         client = client or llm.anthropic_client()
@@ -618,11 +621,13 @@ def failed_cells(spec: MapSpec, error: str) -> list[Cell]:
 
 # --- mock -------------------------------------------------------------------------------------
 
-def mock_extract(spec: MapSpec) -> dict:
+def mock_extract(spec: MapSpec, wait: float | None = None) -> dict:
     """Deterministic, 0 calls: each cell with passages listed under it is a fact with one item from
     its top passage (the quote verbatim, so the quote check passes); none -> not_found. Research:
-    every aspect reads the research passages."""
-    time.sleep(settings().mock_delay_s)
+    every aspect reads the research passages. Waits `wait` s (default MOCK_DELAY_S) through cancel.sleep,
+    so a Stop cuts the wait (#277)."""
+    from cee.answer import cancel
+    cancel.sleep(settings().mock_delay_s if wait is None else wait)
     research = spec.groups.get(spec.cells[0].id, []) if spec.research else []
     cells = []
     for c in spec.cells:
@@ -704,6 +709,25 @@ class CallResult:
     bad_request: bool = False
     flags: list = field(default_factory=list)   # e.g. trailing_braces (#246 TL decision on Q24)
     finished_at: str | None = None   # #248: when this call ended, offset-aware, stamped in the worker
+    cancelled: bool = False   # #277: not made or cut because the user pressed Stop (not a ProviderStop)
+
+
+STOPPED_ERROR = "cancelled: stopped by the user"   # #277; a ProviderStop keeps its own "cancelled after ..." text
+MOCK_STAGGER_MAX = 3   # #277: the mock map call k waits MOCK_DELAY_S x min(k + 1, 3)
+
+
+def mock_failure(stage: str) -> str | None:
+    """#277 verify-cee only: while the file MOCK_FAIL_FILE names `stage` (map | reduce), the mock call of that
+    stage fails with an injected error. Unset (the default): None. Never read for a real provider."""
+    path = settings().mock_fail_file
+    if not path:
+        return None
+    try:
+        from pathlib import Path
+        named = Path(path).read_text(encoding="utf-8").split()
+    except OSError:
+        return None
+    return f"RuntimeError: injected {stage} failure (MOCK_FAIL_FILE)" if stage in named else None
 
 
 CallFn = Callable[[MapSpec, str, object, list], CallResult]
@@ -713,10 +737,18 @@ def provider_call(provider: str) -> CallFn:
     """The default call: the mock (0 calls) or one real provider call. An invalid output is a
     CallResult with invalid; any other error except ProviderStop is a failed call (B3)."""
     from cee.answer.llm import ModelOutputError, ProviderStop
+    order = itertools.count()   # #277: the mock's stagger, in submission order within one run_map
 
     def call(spec: MapSpec, question: str, window, firms) -> CallResult:
         if provider == "mock":
-            return CallResult(raw=mock_extract(spec))
+            k = next(order)
+            wait = settings().mock_delay_s * min(k + 1, MOCK_STAGGER_MAX)
+            injected = mock_failure("map")
+            if injected:
+                from cee.answer import cancel
+                cancel.sleep(wait)
+                return CallResult(failed_call=True, error=injected)
+            return CallResult(raw=mock_extract(spec, wait))
         meta: dict = {}
         t0 = time.monotonic()
         try:
@@ -771,7 +803,12 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
     `allow` (the eval's --max-calls reservation, made here in the calling thread) are skipped.
     A ProviderStop cancels the calls not yet started, lets running ones finish, then propagates.
     #272: `on_result(i, result)` is called in the calling thread as each call lands (the Ask page draws
-    from it; Streamlit cannot draw from a worker thread)."""
+    from it; Streamlit cannot draw from a worker thread).
+    #277: each call runs in its own copy of the caller's context (the cancel token travels in a context
+    variable). Once the token is set (Stop), no further call starts, queued calls are cancelled, running ones
+    end (an open stream is closed; a valid result that lands is kept), and cancel.Cancelled propagates with
+    `not_started` (spec ids never started) and `results`. The executor never waits for queued calls."""
+    from cee.answer import cancel
     from cee.answer.llm import ProviderStop
     results: list[CallResult | None] = [None] * len(specs)
     todo = []
@@ -787,31 +824,58 @@ def run_round(specs: list[MapSpec], call: CallFn, question: str, window, firms, 
                 results[i] = CallResult(skipped=True, error=ok if isinstance(ok, str) and ok
                                         else "not run: --max-calls reached")
     stop: Exception | None = None
+    cut = False   # #277: the user pressed Stop during this round
+    not_started: list[str] = []
     if todo:
         def timed(spec, *args) -> CallResult:
+            if cancel.is_set():   # #277: queued behind the Stop click: never started
+                return CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
             # #248: each call's own completion time (pricing by period), not one time for the round
             r = call(spec, *args)
             if r is not None and r.finished_at is None and not r.cached:
                 r.finished_at = dt.datetime.now().astimezone().isoformat()
             return r
 
-        with ThreadPoolExecutor(max_workers=max(1, concurrency)) as ex:
-            futures = {ex.submit(timed, specs[i], question, window, firms): i for i in todo}
+        ex = ThreadPoolExecutor(max_workers=max(1, concurrency))
+        try:   # #277: no `with` block: its exit waits for every queued call
+            futures = {ex.submit(contextvars.copy_context().run, timed, specs[i], question, window, firms): i
+                       for i in todo}
             for f in as_completed(futures):
                 i = futures[f]
                 try:
                     results[i] = f.result()
-                    if on_result is not None and results[i] is not None:
+                    if results[i] is not None and results[i].cancelled:
+                        cut = True
+                        not_started.append(specs[i].id)
+                    elif on_result is not None and results[i] is not None:
                         on_result(i, results[i])
                 except CancelledError:
-                    results[i] = CallResult(skipped=True, error="cancelled after the provider stopped the run")
+                    if cut:
+                        results[i] = CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
+                        not_started.append(specs[i].id)
+                    else:
+                        results[i] = CallResult(skipped=True, error="cancelled after the provider stopped the run")
+                except cancel.Cancelled:   # a call cut by Stop (its stream closed, or the mock's wait cut)
+                    cut = True
+                    results[i] = CallResult(skipped=True, cancelled=True, error=STOPPED_ERROR)
                 except ProviderStop as e:
                     stop = stop or e
                     results[i] = CallResult(skipped=True, error=str(e))
                     for g in futures:
                         g.cancel()
+                if not cut and cancel.is_set():
+                    cut = True
+                if cut:
+                    for g in futures:
+                        g.cancel()
+        finally:
+            ex.shutdown(wait=False, cancel_futures=True)
     if stop is not None:
         raise stop
+    if cut:
+        e = cancel.Cancelled("stopped by the user during the map")
+        e.not_started, e.results = not_started, results   # type: ignore[attr-defined]
+        raise e
     return [r for r in results]   # type: ignore[misc]
 
 
@@ -823,6 +887,7 @@ def _call_log(spec: MapSpec, r: CallResult, provider: str, est: int | None = Non
             "stop_reason": r.stop_reason, "usage": r.usage, "wall_s": r.wall_s, "error": r.error,
             "invalid": r.invalid, "failed_call": r.failed_call, "skipped": r.skipped, "cached": r.cached,
             "bad_request": r.bad_request, "flags": list(r.flags), "finished_at": r.finished_at,
+            "cancelled": r.cancelled,
             "passages": len(spec.hits), "input_tokens_est": est}   # #247 part 2: per-call size before the run
 
 
@@ -887,6 +952,8 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
     # Corrective re-search (CRAG): once per not_found sub-question, every used chunk excluded.
     research_log: list[dict] = []
     new_hits: dict[str, list[Hit]] = {}
+    from cee.answer import cancel
+    cancel.check()   # #277: Stop after round 1: no re-search, no round 2
     if on_research is not None:
         on_research()
     if fts.searchable(q) and fts.budget_tokens(q) is not None:
@@ -895,6 +962,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
             cell = cells.get(sq.id)
             if cell is None or not eligible_for_research(cell, aspects[cell.aspect_id]):
                 continue
+            cancel.check()
             words = widen_words(q, sq, as_of)
             found = planner.corrective_search(q, plan, sq.id, words, exclude=set(used), search_fn=search_fn)
             used |= {h.chunk_id for h in found}
@@ -919,6 +987,7 @@ def run_map(q: Query, plan, hits: list[Hit], provider: str | None = None, call: 
                 extra.append(replace(h, part_id=h.part_id or sq_id, origin="corrective"))
     by_id.update({h.chunk_id: h for h in extra})
     if remaps:
+        cancel.check()
         results2 = run_round(remaps, call, q.question, window, firms, concurrency, allow, provider,
                              land(remaps, "reextract"))
         parts2: dict[str, list[Cell]] = {}

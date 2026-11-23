@@ -10,12 +10,14 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 
 from psycopg.types.json import Jsonb
 
+from cee.answer import cancel
 from cee.answer.llm import generate
 from cee.answer.schema import Answer
 from cee.answer.validate import (check_citations, check_parts, coverage_note, empty_retrieval_answer,
@@ -37,6 +39,7 @@ class Result:
     matrix: object = None             # #246: the evidence matrix (MAP=on), else None
     reduce: dict = field(default_factory=dict)   # #247: what the reduce step did (log_filters.reduce)
     retrieval_mode: str = "fts"       # exp/hybrid (#125, #126, #249): the mode that searched
+    run: dict | None = None   # #277: the attempt (Ask page run cache): attempt, retry_of, reused / made calls
 
 
 def union_hits(hits: list[Hit], matrix) -> list[Hit]:
@@ -62,13 +65,30 @@ Event = Callable[[str, dict], None]
 STAGES = ("resolve", "decompose", "search", "extract", "research", "synthesize", "check", "caveats", "log")
 
 
+STOPPED_STATE = "stopped"   # #277: a stage cut by Stop (not failed)
+
+
 class _Trace:
     def __init__(self, progress: Progress | None):
-        self.report = progress or (lambda stage, state, text: None)
+        self._report = progress or (lambda stage, state, text: None)
+        self.current: str | None = None   # #277: the stage running now (the stopped run's stage)
+        self.texts: dict[str, str] = {}
+
+    def report(self, stage: str, state: str, text: str) -> None:
+        if state == "running":
+            self.current = stage
+            self.texts[stage] = text
+        self._report(stage, state, text)
+
+    def stopped(self) -> None:
+        """#277: mark the running stage stopped (Stop), not failed."""
+        if self.current is not None:
+            self._report(self.current, STOPPED_STATE, f"{self.texts.get(self.current, self.current)}: stopped")
 
     @contextmanager
     def stage(self, stage: str, running: str) -> Iterator[None]:
-        """Report the stage as running; if it raises, report it failed with the error, re-raise."""
+        """Report the stage as running; if it raises, report it failed with the error, re-raise.
+        #277: cancel.Cancelled (Stop) is not caught here (a BaseException); ask() marks the stage stopped."""
         self.report(stage, "running", running)
         try:
             yield
@@ -97,41 +117,187 @@ def describe_query(q: Query) -> str:
 
 def ask(question: str, provider: str | None = None, log: bool = True,
         progress: Progress | None = None, filters: dict | None = None,
-        mode: str | None = None, on_event: Event | None = None) -> Result:
+        mode: str | None = None, on_event: Event | None = None,
+        token: cancel.CancelToken | None = None, cache=None) -> Result:
     """filters: optional Ask page filters (#63), keys firms, date_range, keywords; applied in SQL.
     mode: retrieval mode, "fts" | "hybrid" | "hybrid-norerank" (#125, #126); None -> RETRIEVAL_MODE (default fts).
     Every mode plans the question the same way; the hybrid modes search its sub-questions through main's
     loop with hybrid.search, and the map's re-search uses the same search (cee.retrieve.modes, #249).
     on_event (#272): the plan, then each map call's cited evidence, as they are ready; #275: then each checked
-    claim of the reduce as it streams."""
+    claim of the reduce as it streams.
+    #277: `token` (cancel.CancelToken, the Ask page's Stop) is checked before every call and at each stage
+    boundary; a stop raises cancel.Cancelled. `cache` (runcache.RunCache, the Ask page) serves every call that
+    finished with a valid output in an earlier attempt of the same question (Retry) and records this attempt's
+    calls; with a cache, a stopped or failed attempt is logged too (answer NULL, filters.run)."""
     provider = provider or settings().llm_provider
     mode = resolve_mode(mode)
     t = _Trace(progress)
-    with t.stage("resolve", "Reading the question"):
-        query = apply_filters(resolve(question), **(filters or {}))
-    t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
-    with t.stage("decompose", "Decomposing the question"):
-        plan = plan_question(query, provider)
-    t.report("decompose", "done", plan_text(plan))
-    if on_event is not None:
-        on_event("plan", {"text": plan_text(plan), "plan": plan})
-    searching = f"Searching {_n(len(plan.subquestions), 'sub-question')}"
-    with t.stage("search", searching):
-        hits = search(query, mode=mode, plan=plan, as_of=dt.date.today())
-    docs = len({h.doc_id for h in hits})
-    t.report("search", "done", f"{searching}: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
-                               + ("" if mode == "fts" else f" ({mode})"))
-    matrix = map_step(query, plan, hits, provider, t, mode, on_event)
-    every = union_hits(hits, matrix)
-    info: dict = {}
-    answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix, info=info,
-                              on_event=on_event)
-    result = Result(query, every, answer, plan=plan, matrix=matrix, reduce=info, retrieval_mode=mode)
-    if log:
-        with t.stage("log", "Saving the query"):
-            result.query_id = _log(result, provider)
-        t.report("log", "done", f"Saving the query: query #{result.query_id}")
-    return result
+    attempt = cache.new_attempt() if cache is not None else None
+    retry_of = cache.last_query_id() if cache is not None and attempt and attempt > 1 else None
+    state: dict = {"query": None, "plan": None}
+    with cancel.use(token if token is not None else cancel.current()):
+        try:
+            with t.stage("resolve", "Reading the question"):
+                query = apply_filters(resolve(question), **(filters or {}))
+            state["query"] = query
+            t.report("resolve", "done", f"Reading the question: {describe_query(query)}")
+            cancel.check()
+            with t.stage("decompose", "Decomposing the question"):
+                plan = _plan_for(query, provider, cache, attempt)
+            state["plan"] = plan
+            t.report("decompose", "done", plan_text(plan))
+            if on_event is not None:
+                on_event("plan", {"text": plan_text(plan), "plan": plan})
+            cancel.check()
+            searching = f"Searching {_n(len(plan.subquestions), 'sub-question')}"
+            with t.stage("search", searching):
+                hits = search(query, mode=mode, plan=plan, as_of=dt.date.today())
+            docs = len({h.doc_id for h in hits})
+            t.report("search", "done", f"{searching}: {_n(len(hits), 'passage')} from {_n(docs, 'document')}"
+                                       + ("" if mode == "fts" else f" ({mode})"))
+            cancel.check()
+            matrix = map_step(query, plan, hits, provider, t, mode, on_event, cache=cache,
+                              attempt=attempt)
+            cancel.check()
+            every = union_hits(hits, matrix)
+            info: dict = {}
+            answer, _raw = answer_for(question, query, every, provider, trace=t, plan=plan, matrix=matrix,
+                                      info=info, on_event=on_event, cache=cache, attempt=attempt)
+            cancel.check()
+            result = Result(query, every, answer, plan=plan, matrix=matrix, reduce=info,
+                            retrieval_mode=mode)
+            if cache is not None:
+                result.run = {**cache.summary(attempt), "status": "done", "retry_of": retry_of}
+            if log:
+                with t.stage("log", "Saving the query"):
+                    result.query_id = _log(result, provider)
+                t.report("log", "done", f"Saving the query: query #{result.query_id}")
+                if cache is not None:
+                    cache.query_ids.append(result.query_id)
+            return result
+        except cancel.Cancelled as e:
+            t.stopped()
+            if cache is not None:
+                for sid in getattr(e, "not_started", []) or []:   # queued map calls never sent
+                    cache.record("remap" if sid.startswith("remap.") else "map", sid, "", "cancelled",
+                                 attempt=attempt, provider=provider, error="cancelled: stopped by the user",
+                                 started=False)
+                if log:
+                    _log_attempt(question, state, provider, cache, attempt, retry_of, "stopped", t.current,
+                                 token if token is not None else cancel.current(), None)
+            raise
+        except Exception as e:
+            if cache is not None and log:
+                _log_attempt(question, state, provider, cache, attempt, retry_of, "failed", t.current, None,
+                             f"{type(e).__name__}: {e}")
+            raise
+
+
+def _plan_for(query: Query, provider: str, cache, attempt) -> Plan:
+    """#277: the plan, from the run cache when an earlier attempt's planner call returned a usable plan (no new
+    call: calls 0, no usage), else plan_question. A planner call is recorded ok (a model plan) or failed
+    (the rule-plan fallback after a failed or unusable call; the retry calls again)."""
+    if cache is None:
+        return plan_question(query, provider)
+    import copy
+
+    from cee.answer import runcache as RC
+    key = RC.plan_key(query, provider)
+    saved = cache.get(key)
+    if saved is not None:
+        saved.calls, saved.usage, saved.finished_at = 0, None, None
+        cache.record("plan", "plan", key, RC.REUSED, attempt=attempt, provider=provider)
+        return saved
+    plan = plan_question(query, provider)
+    if plan.calls:
+        ok = plan.source == "model" and not plan.error
+        cache.record("plan", "plan", key, RC.OK if ok else "failed", output=copy.deepcopy(plan) if ok else None,
+                     attempt=attempt, provider=plan.provider, model=plan.model, usage=plan.usage,
+                     finished_at=plan.finished_at, error=plan.error)
+    return plan
+
+
+def cached_map_call(provider: str, cache, attempt):
+    """#277: the map's call function with the run cache: a valid output of an earlier attempt is reused
+    (CallResult cached, no call, no cost); every call made is recorded (ok, invalid, cut, failed, cancelled)."""
+    from cee.answer import runcache as RC
+    from cee.answer.extract import STOPPED_ERROR, CallResult, provider_call
+    from cee.answer.llm import CUT_REASONS, ProviderStop
+    from cee.retrieve.planner import model_for
+    base = provider_call(provider)
+    model = "mock" if provider == "mock" else model_for(provider, "map")
+
+    def call(spec, question, window, firms) -> CallResult:
+        stage = "map" if spec.round == 1 else "remap"
+        key = RC.map_key(question, spec, provider, window)
+        saved = cache.get(key)
+        if saved is not None:
+            cache.record(stage, spec.id, key, RC.REUSED, attempt=attempt, provider=provider)
+            return CallResult(raw=saved["raw"], stop_reason=saved["stop_reason"], usage=saved["usage"], cached=True,
+                              flags=list(saved["flags"]))
+        info = {"attempt": attempt, "provider": provider, "model": model}
+        try:
+            r = base(spec, question, window, firms)
+        except cancel.Cancelled:
+            cache.record(stage, spec.id, key, "cancelled", error=STOPPED_ERROR, **info)
+            raise
+        except ProviderStop as e:
+            cache.record(stage, spec.id, key, "failed", error=f"ProviderStop: {e}", **info)
+            raise
+        if r.raw is not None and not (r.invalid or r.failed_call or r.skipped):
+            status = RC.OK   # recorded before any token check: a valid late result is kept and reused
+        elif r.invalid:
+            status = "cut" if r.stop_reason in CUT_REASONS else "invalid"
+        else:
+            status = "skipped" if r.skipped else "failed"
+        cache.record(stage, spec.id, key, status,
+                     output={"raw": r.raw, "stop_reason": r.stop_reason, "usage": r.usage, "flags": list(r.flags)},
+                     usage=r.usage, finished_at=r.finished_at or dt.datetime.now().astimezone().isoformat(),
+                     error=r.error, **info)
+        return r
+
+    return call
+
+
+def _log_attempt(question: str, state: dict, provider: str, cache, attempt, retry_of, status: str,
+                 stage: str | None, token, error: str | None) -> int | None:
+    """#277: one query_log row for a stopped or failed attempt: answer NULL; filters.run (attempt, retry_of,
+    status, stage, reason, error, stop_s, reused / made counts, records) and filters.cost from the calls this
+    attempt sent (a cut stream has no usage: status no_usage, "cost unknown", never 0)."""
+    from cee.answer import cost as C
+    run = {**cache.summary(attempt), "status": status, "stage": stage, "retry_of": retry_of}
+    if error:
+        run["error"] = error[:500]
+    if token is not None:
+        run["reason"] = token.reason
+        if token.set_at is not None:
+            run["stop_s"] = round(time.monotonic() - token.set_at, 2)
+    rows = []
+    for r in cache.made_records(attempt):
+        if r.provider in (None, "mock", "rules"):
+            continue
+        try:
+            c = C.price_call(r.provider, r.model, r.usage, finished_at=r.finished_at)
+        except C.CostError as e:
+            c = {**C.price_call(r.provider, r.model, None), "status": "error", "error": str(e)}
+        rows.append({"type": r.stage, "new": True, "cost": c})
+    query, plan = state.get("query"), state.get("plan")
+    filters = {**(asdict(query) if query is not None else {"question": question}), "run": run,
+               "cost": {**C.summarize(rows), "rows": [{"type": x["type"], **x["cost"]} for x in rows]}}
+    if plan is not None:
+        filters["plan"] = plan.to_log()
+    try:
+        with connect() as conn:
+            snap = conn.execute("SELECT obj_description('public.documents'::regclass) AS s").fetchone()["s"]
+            row = conn.execute(
+                """INSERT INTO query_log (question, mode, filters, chunk_ids, answer, snapshot, model)
+                   VALUES (%s, %s, %s, %s, NULL, %s, %s) RETURNING query_id""",
+                (question, getattr(query, "mode", None), Jsonb(filters, dumps=lambda o: json.dumps(o, default=str)),
+                 [], snap, model_name(provider))).fetchone()
+    except Exception:   # noqa: BLE001 - the log must never hide the stop or the failure itself
+        return None
+    cache.query_ids.append(row["query_id"])
+    return row["query_id"]
 
 
 def _firms(matrix) -> int:
@@ -190,7 +356,7 @@ def evidence_lines(spec, cells) -> list[dict]:
 
 
 def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace, mode: str = "fts",
-             on_event: Event | None = None):
+             on_event: Event | None = None, cache=None, attempt=None):
     """#246: the map step (on by default since #247): extraction per firm, corrective re-search, the
     evidence matrix the reduce step writes the answer from. MAP=off: the legacy single answer call.
     #248: two trace stages, extract (round 1) and research (corrective re-search and round 2)."""
@@ -222,8 +388,11 @@ def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace
 
         # exp/hybrid (#249): the re-search searches as the mode does; fts passes nothing (main's default)
         fn = search_fn(mode)
+        extra = {"call": cached_map_call(provider, cache, attempt)} if cache is not None else {}   # #277
+        if fn is not None:
+            extra["search_fn"] = fn
         matrix = run_map(query, plan, hits, provider, as_of=dt.date.today(), on_research=on_research,
-                         on_call=on_call, **({"search_fn": fn} if fn is not None else {}))
+                         on_call=on_call, **extra)
     except Exception as e:
         stage = state["stage"]
         text = running if stage == "extract" else RESEARCH_RUNNING
@@ -237,7 +406,7 @@ def map_step(query: Query, plan: Plan, hits: list[Hit], provider: str, t: _Trace
 def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
                raw: Answer | None = None, trace: _Trace | None = None,
                plan: Plan | None = None, matrix=None, info: dict | None = None,
-               on_event: Event | None = None) -> tuple[Answer, Answer | None]:
+               on_event: Event | None = None, cache=None, attempt=None) -> tuple[Answer, Answer | None]:
     """(checked answer, the model's output before checks). No hits: answered in code, no call.
     Pass a saved `raw` to reuse it instead of calling the model (scripts/eval_run.py, #43).
     `matrix` (#247): the reduce step writes the answer from the evidence matrix (one call, or an
@@ -254,7 +423,7 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
         t.report("caveats", "done", _caveats_text(answer))
         return answer, None
     if matrix is not None:
-        return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event)
+        return _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event, cache, attempt)
     if raw is None:
         with t.stage("synthesize", f"Writing the answer ({provider}, one legacy call)"):
             raw = generate(question, hits, provider, plan=plan, window=answer_window(query))
@@ -279,13 +448,30 @@ def answer_for(question: str, query: Query, hits: list[Hit], provider: str,
 REDUCE_RUNNING = "Synthesizing the answer from the evidence matrix"
 
 
-def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event=None):
+def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_event=None, cache=None,
+                attempt=None):
     """#247: the reduce step and every code check after it (cee.answer.reduce). #275: with on_event, each claim
-    that passes the per-claim checks is sent as ("claim", ...) while the reduce streams (DeepSeek and the mock)."""
+    that passes the per-claim checks is sent as ("claim", ...) while the reduce streams (DeepSeek and the mock).
+    #277: with a run cache, a reduce output of an earlier attempt that passed every check is reused (no call);
+    this attempt's call is recorded ok only after finish_answer succeeds, else invalid / cut / idle / failed /
+    cancelled (the retry calls again)."""
     from cee.answer import reduce as R
     code_built = not R.needs_call(matrix)
     finished_at = None
     early = None
+    rkey = None
+    rinfo: dict = {}
+    if cache is not None and not code_built and raw is None:
+        from cee.answer import runcache as RC
+        rkey = RC.reduce_key(question, matrix, query, provider)
+        saved = cache.get(rkey)
+        if saved is not None:
+            raw = saved
+            cache.record("reduce", "reduce", rkey, RC.REUSED, attempt=attempt, provider=provider)
+            rkey = None   # nothing new to record
+        else:
+            rinfo = {"attempt": attempt, "provider": provider,
+                     "model": model_name(provider) if provider != "mock" else "mock"}
     if on_event is not None and not code_built and raw is None:
         by_id = {h.chunk_id: h for h in hits}
 
@@ -298,21 +484,38 @@ def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_
         t.report("synthesize", "skipped", f"No model call: the answer is built by code "
                                           f"({matrix.behavior or 'incomplete'})")
     elif raw is None:
-        with t.stage("synthesize", f"{REDUCE_RUNNING} ({provider}, one call)"):
-            if provider == "mock":
-                raw = R.raw_answer(matrix, query, provider, on_item=early)
-            else:
-                meta: dict = {}
-                out = R.call_reduce(question, matrix, query, provider, meta=meta, on_item=early)
-                finished_at = dt.datetime.now().astimezone().isoformat()   # #248: for the cost
-                raw = R.to_answer(out, provider, meta)
+        try:
+            with t.stage("synthesize", f"{REDUCE_RUNNING} ({provider}, one call)"):
+                if provider == "mock":
+                    raw = R.raw_answer(matrix, query, provider, on_item=early)
+                else:
+                    meta: dict = {}
+                    out = R.call_reduce(question, matrix, query, provider, meta=meta, on_item=early)
+                    finished_at = dt.datetime.now().astimezone().isoformat()   # #248: for the cost
+                    raw = R.to_answer(out, provider, meta)
+        except BaseException as e:   # #277: record the failed (or stopped) reduce, never reused; re-raise
+            if rkey is not None:
+                cache.record("reduce", "reduce", rkey, _reduce_status(e), error=f"{type(e).__name__}: {e}",
+                             usage=getattr(e, "usage", None), finished_at=dt.datetime.now().astimezone().isoformat(),
+                             **rinfo)
+            raise
         t.report("synthesize", "done", f"{REDUCE_RUNNING} ({provider}, one call): "
                                        f"{_n(len(raw.claims) + len(raw.adjacent), 'claim')}")
     else:
         t.report("synthesize", "skipped", "Reusing the saved model output: no model call")
-    with t.stage("check", "Checking citations"):
-        answer, done = R.finish_answer(raw.model_copy(deep=True), matrix, query, plan, hits, question,
-                                       code_built=code_built)
+    try:
+        with t.stage("check", "Checking citations"):
+            answer, done = R.finish_answer(raw.model_copy(deep=True), matrix, query, plan, hits, question,
+                                           code_built=code_built)
+    except Exception as e:   # #277: an output the checks cannot finish is never reused
+        if rkey is not None:
+            cache.record("reduce", "reduce", rkey, "invalid", error=f"{type(e).__name__}: {e}",
+                         usage=getattr(raw, "usage", None), finished_at=finished_at, **rinfo)
+        raise
+    if rkey is not None:
+        from cee.answer import runcache as RC
+        cache.record("reduce", "reduce", rkey, RC.OK, output=raw, usage=getattr(raw, "usage", None),
+                     finished_at=finished_at or dt.datetime.now().astimezone().isoformat(), **rinfo)
     if info is not None:
         info.update(done, provider=provider, model=model_name(provider) if provider != "mock" else "mock")
         if early is not None:   # #275: first checked claim, shown / held, early claims not in the final answer
@@ -322,6 +525,18 @@ def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_
     t.report("check", "done", _check_text(answer, hits))
     t.report("caveats", "done", _caveats_text(answer))
     return answer, (None if code_built else raw)
+
+def _reduce_status(e: BaseException) -> str:
+    """#277: the run-cache status of a reduce call that raised."""
+    from cee.answer import llm
+    if isinstance(e, cancel.Cancelled):
+        return "cancelled"
+    if isinstance(e, llm.StreamIdle):
+        return "idle"
+    if isinstance(e, llm.ModelOutputError):
+        return "cut" if e.stop_reason in llm.CUT_REASONS else "invalid"
+    return "failed"
+
 
 def answer_window(query: Query):
     """(from, to) the answer call is told about (prompt v4.1, #230): the question's time window and
@@ -382,6 +597,8 @@ def log_filters(r: Result) -> dict:
            "retrieval_mode": r.retrieval_mode}
     if r.reduce:   # #247: what the reduce step did (code checks, flags, stop_reason, usage; rule 7)
         out["reduce"] = r.reduce
+    if r.run:   # #277: the Ask page attempt: attempt, retry_of, reused / made calls, records
+        out["run"] = r.run
     out["cost"] = question_cost(r, plan, made)
     if m is not None and getattr(m, "corrective", None):   # #247 B1: where each re-search chunk came from
         out["chunk_origin"] = {h.chunk_id: {"origin": "corrective", "subquestion": h.part_id} for h in m.corrective}

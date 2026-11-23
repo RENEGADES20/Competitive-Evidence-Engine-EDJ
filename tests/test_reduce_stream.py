@@ -193,7 +193,7 @@ def test_the_page_shows_early_claims_then_replaces_them(monkeypatch):
     assert "CLAIM (CHECKING)" not in texts and "in progress" not in texts   # emptied once the answer is ready
 
 
-def test_a_stall_shows_an_error_and_try_again(monkeypatch):
+def test_a_stall_shows_an_error_and_retry(monkeypatch):
     from streamlit.testing.v1 import AppTest
 
     from tests.test_ask_page_trace import page
@@ -204,9 +204,10 @@ def test_a_stall_shows_an_error_and_try_again(monkeypatch):
     def stalled(*a, **k):
         raise llm.StreamIdle("stream idle", {}, False, None, 120.0)
     monkeypatch.setattr(R, "raw_answer", stalled)
+    monkeypatch.setattr(pipeline, "_log_attempt", lambda *a, **k: None)   # #277: no row in the local database
     at = AppTest.from_function(page).run()
     assert "no output for 120 s" in at.error[0].value
-    assert [b.label for b in at.button] == ["Try again"]
+    assert [b.label for b in at.button] == ["Retry"]   # #277: Retry replaces "Try again"
 
 
 def test_eval_saves_a_stalled_reduce_as_failed_with_its_partial_output(monkeypatch, tmp_path):
