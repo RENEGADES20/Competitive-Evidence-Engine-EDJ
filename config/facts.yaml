@@ -1,0 +1,63 @@
+# Facts table (#285, ADR-022): what the one-time extraction reads and when a map cell is served from it.
+# Read by src/cee/facts.py. The rows themselves are config/facts.jsonl (written by scripts/extract_facts.py,
+# loaded into the `facts` table by `python -m cee.facts load`).
+
+extract_version: facts-v1
+
+# Extraction scope: the firms' own tier 2-3 documents (no trade press, transcripts or Form ADV brochures).
+entities: [EDJ, MS, SCHW, BAC, MER, RJF]
+doc_types: ["10-K", "10-Q", supplement, press, monthly, deck]
+
+# Target metrics (plan "Target metrics from the data"): registered metrics plus any figure asked in >= 2 questions
+# of the #272 run. `prefilter`: a candidate chunk matches the pattern AND `number` (Postgres regex, any case for
+# the pattern). The same prefilter marks a newer document in a sub-question's pool (TL condition B1).
+metrics:
+  advisor_headcount:
+    what: >-
+      a count of the firm's financial advisors (also called wealth advisors, Wealth Management representatives,
+      financial consultants or advisors) at a date: people who advise clients. Not employees in general, not branch
+      or support staff, not trainees counted apart, not clients, accounts or households, not Form ADV labels.
+    prefilter: "(financial|wealth) advisors|advisors|representatives"
+    number: "[0-9],[0-9]{3}|[0-9]+(\\.[0-9])? ?[Kk]\\M"
+  net_new_assets:
+    what: >-
+      the firm's net new assets (net new client assets, core net new assets, net client asset or AUM flows) over a
+      period (a quarter or a fiscal year), as the firm labels it. Not market moves, not one fund's flows, not deposits.
+    prefilter: "net new (client )?assets|net client (aum )?flows|\\mNNA\\M"
+    number: "[0-9]"
+  client_assets:
+    what: >-
+      the firm's total client assets (client assets under care, client assets under administration, total client
+      assets, client balances) at a date, as the firm labels it. Not one product's assets, not assets of a fund.
+    prefilter: "client assets|assets under (care|administration|management)|client balances"
+    number: "[0-9]"
+
+# Serving rule (ADR-022, plan TL conditions B2-B3). A map cell is built from facts only when every test passes.
+serve:
+  metrics: [advisor_headcount, net_new_assets]   # registered; client_assets is stored, not served (unregistered)
+  kinds: [fact, series, recency]
+  # Non-figure words: one in the aspect text, the sub-question text or the question sends the cell to the map.
+  # Matched as word starts (case-insensitive), so "defin" matches define / definition / defined.
+  non_figure_words: [defin, includ, exclud, disclos, how, why, what drives, driver, reason, because, strateg,
+                     attribut, recruit, retention, retain, attrition, project, prepare, source, channel, mix, per,
+                     revenue, fee, rate, "across the affiliation", "across channels", "across models", "across segments", "by affiliation", "by channel", "by model", "by segment", growth,
+                     grow, change, trend, outlook, guidance, target, goal, expect, forecast, explain, impact,
+                     organic, acquisition, acquir, commentary, comment, compar, versus, " vs", plan, future, will,
+                     should, could, would, estimate, valid, quality, mean, split, breakdown, team, net loss,
+                     decline, fell, fall, rose, rise, increase, decrease]
+  # Registered bases (registry status `quoted` only, config/metric_definitions.yaml): the label phrases a row's own
+  # label must contain (case-insensitive, whitespace squashed) to be on that basis, with an empty scope. Keyed by the
+  # registry's entity (MER reads BAC).
+  bases:
+    EDJ:
+      advisor_headcount: ["financial advisors"]
+      net_new_assets: ["net new assets"]
+    MS:
+      advisor_headcount: ["wealth management representatives"]
+      net_new_assets: ["net new assets"]
+    BAC:
+      advisor_headcount: ["total wealth advisors"]
+    RJF:
+      advisor_headcount: ["total advisors", "financial advisors"]
+      net_new_assets: ["domestic pcg net new assets", "domestic private client group net new assets"]
+  series_last: 8   # a series with no asked periods serves its last N periods
