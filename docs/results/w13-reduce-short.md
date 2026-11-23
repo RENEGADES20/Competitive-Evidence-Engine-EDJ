@@ -41,7 +41,7 @@ for later experiments; the default is v5.2.
 | Count phase at gate 1c9aca2 | 515 records reused (30 plan, 454 map, 31 re-map), 0 new; 30 new reduce keys; Q21 plan and maps reused (NB4) | `g-v6-count.head-log.txt` |
 | verify-cee, mock, `REDUCE_PROMPT=v6` | ask-answer, ask-progress, ask-stop-retry PASS; "Read the rendered claims (#284)" `v6|1|0|0|1`; the streamed card reads "Per the EDJ 10-K ..." before the final answer (ask-progress "Look while the answer streams (#275)") | `ev284\verify\20261123-022132-1c9aca2` |
 
-**Step 5 finding, fixed before any call.** The first render check (gate d9d621f) found 4 rendered claims flagged
+**Step 5 finding, fixed before any call (a deviation from the plan's B2 enum, confirmed by the TL).** The first render check (gate d9d621f) found 4 rendered claims flagged
 `number_not_found` on the #272 matrices (Q9, Q21, Q23, Q24): map items whose text states a figure the passage writes
 another way ("more than 15,000" for a deck's "15K+", "$37 Trillion"), with no map flag, and one value rendered in a
 form the checker cannot parse. Fix: such items get no ref (`reduce.referable`, a stricter B2 enum) and a value is
@@ -139,16 +139,24 @@ the v6 prompt forbids the figure in model text).
 The only paid calls were these 6 `deepseek-v4-pro` reduce calls: none failed or were retried, and there were no
 plan, map or re-map calls. The 24 stage-2 calls were not made, because rule B1 stopped the run.
 
-## Open for the TL
-1. **The reasoning is the lever.** Item refs cut the written answer by about half but not the thinking. What is left:
-   - a cheaper why-line (most of the reasoning in recency-heavy questions);
-   - v5.3's "state each fact once" on top of v6;
-   - the split design (one call per part).
+## Decision (TL, 2026-11-23)
+The stage-1 stop stands: v6 is not adopted, the default stays v5.2, and no more paid calls are made under #284. v6
+ships behind `REDUCE_PROMPT=v6`, off by default. The default request is unchanged: mock v5.2 is 30/30 identical to
+main, and the test asserts the v5.2 system prompt and schema.
 
-   Each is its own issue. Thinking off failed quality in #275.
-2. **Strict enum leak, again.** Q24 returned a ref outside its enum with no fallback (#275 saw a chunk id). Code
-   catches it either way.
-3. **Service speed.** This Monday off-peak run decoded at half the #272 Saturday rate. Any future latency comparison
-   should pin the day and hour, or report tokens/s next to wall time.
-4. **No blind scoring.** The run stopped before the 30-question run, so there are no blind scoring inputs and no
-   score.
+## Findings
+- The reasoning grew while the answer tokens halved.
+- Why-line drafting drives the reasoning in recency-heavy questions.
+- The strict enum leaked twice, with code catching it both times: #275 returned a chunk id, and here Q24 returned a
+  ref.
+- The provider ran at about 88 tokens/s against about 180 in #272, so wall-time comparisons need the day and hour, or
+  tokens/s, next to them.
+- Quality was not scored: the run stopped before the 30-question run.
+
+## Next levers
+Three levers remain, all aimed at the reasoning:
+- a cheaper why-line;
+- v5.3's "state each fact once" on top of v6;
+- the split design (a short planning step plus parallel per-part writers).
+
+These six questions do not rank them. No issue is opened here.

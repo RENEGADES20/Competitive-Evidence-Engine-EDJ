@@ -67,6 +67,11 @@ writes its text (source, date, item text, scope) from the matrix. Reduce output 
   `ref_part_mismatch`, and every adjacent item, is held; the saved-raw reuse path in `ask.py` goes through
   `render_output`. verify-cee ask-progress: the check that reads claims arriving before the final answer is named
   in the evidence.
+- **B2 deviation, TL-confirmed (2026-11-23).** The step-5 render check (0 calls) found map items whose text figure fails
+  the claim number check without a map flag; `reduce.referable` makes them unreferable too (stricter than B2), and a
+  value is rendered only when its figures are not in the text.
+- **TL ruling after stage 1 (2026-11-23).** The B1 stop stands: v6 is not adopted, the default stays v5.2, no more paid
+  calls under #284; v6 ships behind `REDUCE_PROMPT=v6`, off by default.
 - **NB1** period / value / unit rendered when the item text lacks them (test). **NB2** the doc says what a miss means
   (e.g. 15,000 tokens / 90 s -> v5.3 at `low` or the split option). **NB3** #272 records, not #283's: like for like
   with the baseline, and #283 ships off by default. **NB4** the count phase asserts Q21's plan / map records reuse.
