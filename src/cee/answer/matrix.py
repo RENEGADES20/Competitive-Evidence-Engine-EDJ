@@ -76,7 +76,7 @@ class Cell:
     aspect_id: str
     role: str                    # named | competitor | all | research
     label: str                   # a model label, or derived / failed (code)
-    source: str = "model"        # model | code | mock | reextract
+    source: str = "model"        # model | code | mock | reextract | facts (#285)
     items: list[Item] = field(default_factory=list)
     differs_because: str = ""
     reason: str = ""
@@ -134,6 +134,8 @@ class EvidenceMatrix:
     # tagging rule "only a population chunk in the input cell's pool"; not logged
     pools: dict = field(default_factory=dict, repr=False)
     breaks: list[dict] = field(default_factory=list)   # basis breaks inside one firm's series (code)
+    # #285 (ADR-022): the facts decision of every metric-tagged map cell (served, or why it went to the map)
+    facts: list[dict] = field(default_factory=list)
 
     def aspect(self, aspect_id: str):
         return next(a for a in self.aspects if a.id == aspect_id)
@@ -159,7 +161,11 @@ class EvidenceMatrix:
                 continue
             key = "remap" if call.get("round") == 2 else "map"
             rounds[key] = rounds.get(key, 0) + 1
-        return {"cells": len(self.cells), "labels": labels, "calls": rounds}
+        sources: dict[str, int] = {}
+        for c in self.cells.values():
+            sources[c.source] = sources.get(c.source, 0) + 1
+        return {"cells": len(self.cells), "labels": labels, "calls": rounds, "sources": sources,
+                "facts_cells": sources.get("facts", 0)}
 
     def grid(self) -> list[str]:
         """One line per row: 'EDJ: a1 fact, a2 not_disclosed, ...' (logs, reports)."""
@@ -176,7 +182,7 @@ class EvidenceMatrix:
                 "marks": {k: asdict(m) for k, m in self.marks.items()},
                 "behavior": self.behavior, "behavior_reason": self.behavior_reason,
                 "incomplete_note": self.incomplete_note, "gaps": self.gaps, "caveats": self.caveats,
-                "breaks": self.breaks,
+                "breaks": self.breaks, "facts": self.facts,
                 "calls": self.calls, "research": self.research, "counts": self.counts(), "grid": self.grid()}
 
 

@@ -127,6 +127,13 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   whose inputs name a cell outside the call is dropped (`unknown_ref`). On DeepSeek one leader call per firm runs
   first; the firm's other calls start when its first streamed chunk arrives (`MAP_PREFIX_GATE=first_chunk`) or
   when it ends (`done`), plus `MAP_PREFIX_WAIT_S`; the map request version ends in `-pf<ceiling>`.
+  **#285 facts table: off by default, ADR-022 Deferred, no rows** (G0 stop: at most 5 of 485 #272 map calls
+  servable; `docs/results/w13-facts.md`). `FACTS=off` (default) leaves the map untouched. With `FACTS=on`, after the
+  fan-out, a cell that passes `config/facts.yaml`'s rule (registered metric tag, kind fact / series / recency, not
+  proxy, no non-figure word in the aspect, sub-question or question text, registry status `quoted`, rows on the
+  registered basis, every asked period present, no newer metric document in the sub-question's pool, an SQL
+  re-check through the `fts` filters) is built by code as a `fact` cell (`source=facts`) with no call; its chunks join
+  the retrieved set only in the finished matrix, so every other request is byte-identical.
   `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
   those asked is a fact for the periods it covers, never `different_quantity`); tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
   required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
