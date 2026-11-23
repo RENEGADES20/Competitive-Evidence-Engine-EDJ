@@ -8,7 +8,8 @@ Closes #
 <!-- e.g. specs/retrieval.md - which acceptance items this covers -->
 
 ## ExecPlan
-<!-- plans/NNNN-slug.md, or "skipped: config/data-only" -->
+<!-- plans/NNNN-slug.md, or "skipped: config/data-only", or "experiment: docs/results/<slug>.md".
+Link the plan and any results doc; do not copy their tables here. -->
 
 ## Verification
 <!-- What you actually ran and what happened. One bullet per check, e.g.
@@ -22,7 +23,7 @@ Say how strong each claim is: 1 said so, 2 pointed at the line, 3 reasoned it th
 - [ ] Spec acceptance items met (listed above)
 - [ ] ExecPlan progress log updated
 - [ ] Linked questions run; results below
-- [ ] verify-cee run (or "docs only, skipped"); screenshot or log / row counts attached
+- [ ] verify-cee run on the final head (evidence folder + head named), or not run with the reason (docs only, or the app cannot show this change)
 - [ ] No `.env`, raw data or `*.dump` committed
 - [ ] New documents in `data/manifest.csv` with `published_at`
 - [ ] Progress line filled in below; `docs/PROGRESS.md` not edited

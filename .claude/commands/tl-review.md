@@ -26,7 +26,7 @@ Ask: "If this merges as it is, is something wrong or unchecked?" Yes -> blocking
 - An issue acceptance item has no concrete check, or is not met.
 - A CLAUDE.md rule or architecture invariant is broken (includes `.env`, `*.dump`, `data/raw/` in
   the diff, and `Closes #N` while an acceptance item is open).
-- A required check (pytest, verify-cee, eval, as step 3 of PR mode requires) fails or was skipped: see "Check rule".
+- A required check (pytest via CI, verify-cee, eval, as step 3 of PR mode requires) fails, was skipped without a valid reason, or its evidence does not hold: see "Check rule".
 - pytest, verify-cee or eval regress against `main` or the baseline.
 - A Windows/Mac twin is missing (`.ps1` without `.sh`, a RUN.md PowerShell block without a bash block).
 - A plan fails plan-mode check 1-6.
@@ -55,15 +55,31 @@ Worked examples (from #132 and #134):
 - #134 round 1, note - CLAUDE.md still says only the TL merges: **non-blocking** (outside the PR's scope).
 
 ## Check rule
-A required check the reviewer can run itself (pytest, verify-cee, eval, a grep or diff from the
-plan) and that fails or was skipped is **blocking**; the reviewer runs every such check on the
-reviewed head, whatever the PR says. A check the reviewer cannot run (it needs a paid call, a
-teammate's machine, a Mac when the reviewer is on Windows, or access the reviewer does not have)
-is an **escalation** to the tech lead, not a return. Every check falls in exactly one of the two.
+Each check has one owner (CLAUDE.md "Verification"); the reviewer confirms it, and re-runs only
+when there is a reason to:
+- **pytest:** owned by CI. `gh pr checks <PR#>` must be green on the reviewed head (blocking if red,
+  missing or pending). Run pytest locally only when CI did not run on that head.
+- **Mock eval** (retrieval or answer change): the reviewer runs it (`python scripts/eval_run.py
+  --as-of <date in PR> --baseline <latest baseline>`); it is fast and catches regressions.
+- **verify-cee:** owned by the implementer. Read the evidence folder named in the PR (report and
+  screenshots): it ran on the reviewed head, or no app-visible file changed after the head it ran
+  on, and every feature it needed passed. Re-run it only when the evidence is missing, failed,
+  stale (app-visible files changed since), or the screenshots do not show what the PR claims. When
+  the PR says verify-cee was not run, check that the app really cannot show the change.
+- **Greps or diffs from the plan:** cheap; run them.
+
+A required check that is missing, failed, or whose evidence does not hold is **blocking**. A check
+the reviewer cannot run (it needs a paid call, a Mac when the reviewer is on Windows, or access the
+reviewer does not have) is an **escalation** to the tech lead, not a return.
+
+**Docs-only PRs** (an experiment's results doc, plans, docs): no pytest, eval or verify-cee
+beyond CI. Check that every number traces to a saved raw output or table in the evidence folder,
+that the paid-call count matches the experiment note, and that the decision follows the note's
+decision rule.
 
 ## Paid API calls
 CLAUDE.md "Paid API calls (money)" decides. For review that means:
-- **Allowed without the tech lead** when the approved ExecPlan planned them: question IDs, why the
+- **Allowed without the tech lead** when the approved ExecPlan (or, for an experiment, the experiment note) planned them: question IDs, why the
   mock cannot show it, and how many runs of each. One run of a question goes once through the full
   answer flow (every call the flow makes, ADR-021); a second run of the same question must be in the plan.
   No per-task total. They run last, after every mock check passed, with the planned questions
@@ -93,18 +109,21 @@ When a plan or PR comes back after a return, do not review it from scratch:
 - Re-check each blocking item from the earlier verdicts: fixed or not.
 - Review only what changed since the last reviewed commit, the `Reviewed <sha>` line of the last
   verdict (`git diff <that sha>..HEAD`),
-  and re-run the checks (pytest etc.) on the new head.
+  and confirm the checks on the new head per "Check rule".
 - Do not raise new findings on unchanged lines unless they are blocking.
 
 ## Mode `plan <issue#>`
 The plan is `plans/<NNNN>-*.md` on branch `tl/<issue#>-*` (`git fetch origin`, then read it from that branch).
 Each of these that does not hold is a blocking finding:
 1. Every Acceptance item of the issue maps to a plan Acceptance item with a concrete check (command -> expected result, question ID -> behavior).
-2. "Files to change" stays inside the issue's scope; nothing from "Out of scope"; no teammate-owned file without naming the owner as reviewer (CLAUDE.md spec table).
+2. "Files to change" stays inside the issue's scope; nothing from "Out of scope".
 3. No invariant is bent (hard filters in SQL for every part, LLM calls follow the decomposition, the expected count is stated in the plan, every call logged (ADR-021), citations only to retrieved chunks, caveats by code, question bank append-only).
 4. Windows and Mac: any script or setup step has both versions.
 5. Paid calls: 0, or planned per CLAUDE.md (question IDs, why the mock cannot show it, how many runs of each question, a re-run of a question listed before the first call, run last after the mock checks; no 30-question scored run (Gate 3) without a tech-lead go-ahead); see "Paid API calls".
 6. Steps are small and testable; risks named.
+7. One page (about 80 lines; `PLANS.md`): design material is in a linked results doc or ADR, not
+   pasted into the plan. Over-length alone is non-blocking; a plan whose checks cannot be found
+   for the bulk is blocking.
 
 Verdict: post on the issue with `gh issue comment <issue#> --body "..."`. The body starts with the
 branch head you read and always ends with both lists:
@@ -120,10 +139,10 @@ Non-blocking: <numbered notes (and follow-up issue links), or "none">
 ## Mode `pr <PR#>`
 1. `gh pr view <PR#>`, `gh pr diff <PR#>`; `gh pr checkout <PR#>`.
 2. Check the diff against the approved plan and the issue: no file outside the plan, no leftover debug, `.ps1` and `.sh` twins match.
-3. **Re-run the evidence yourself; never trust the PR text.**
-   - `pytest -q` (venv Python for this OS).
-   - Change touches `src/`, `config/`, the database, scripts or the corpus: `python scripts/verify_cee.py run`.
-   - Retrieval or answer change: `python scripts/eval_run.py --as-of <date in PR> --baseline <latest baseline>`; no PASS -> FAIL, refusal accuracy not lower.
+3. **Check the evidence; never trust the PR text** ("Check rule" says who owns which check).
+   - CI green on the reviewed head (`gh pr checks <PR#>`).
+   - Retrieval or answer change: run `python scripts/eval_run.py --as-of <date in PR> --baseline <latest baseline>`; no PASS -> FAIL, refusal accuracy not lower.
+   - App-visible change: read the verify-cee evidence; re-run `python scripts/verify_cee.py run` only for the reasons in "Check rule".
    - Mock only. Never make a paid API call during review. Planned real calls: check the saved raw
      outputs in the evidence folder and the count in the PR against the plan; do not re-run them.
 4. Proof of work honest: every ticked box is true; `Closes #N` only if every acceptance item is done, else `Part of #N` with the open items; the ExecPlan Progress log is current; no `.env`, `*.dump`, `data/raw/` in the diff; `docs/PROGRESS.md` untouched.
@@ -140,6 +159,5 @@ Non-blocking: <numbered notes (and follow-up issue links), or "none">
 - A new or changed ADR, or a change to CLAUDE.md ground rules or invariants.
 - Paid API calls: not in the approved plan (including an unplanned re-run of a question), ones the reviewer would need to make, or a 30-question scored run (Gate 3) without a tech-lead go-ahead (see "Paid API calls").
 - Deleting data, documents, snapshots or questions from `evals/questions.yaml`.
-- A teammate-owned file changed without that teammate's review on the PR.
 - A check the reviewer cannot run (see "Check rule"), or one that fails on `main` too and the PR does not say so.
 Post "ESCALATED TO TL (reviewer agent): <reason>" on the PR and stop.

@@ -10,19 +10,31 @@ in one line when each stage starts and ends.
 Only for issues labelled `role:tl`. Check first: `gh issue view $ARGUMENTS` (label, Depends on
 merged). If not, stop and say why.
 
+## Experiment issues (`type:experiment`)
+No plan review, no verify-cee, no PR review of the branch (CLAUDE.md "Two tracks"). One implementer:
+"Write the experiment note for #$ARGUMENTS (`PLANS.md`) on branch `exp/$ARGUMENTS-<slug>`, make the
+setup changes there, run the planned calls once (raw outputs saved), fill in Results, and open a
+docs-only PR with just `docs/results/<slug>.md` (and its tables) against `main`." Then a new reviewer:
+"Run `.claude/commands/tl-review.md` with `pr <PR#>`" (docs-only mode: numbers trace to the saved
+raw outputs, call count matches the note). Report the decision; if adopted, propose the delivery
+issue. Stop here; the stages below are for delivery issues.
+
 ## Stages
 1. **Plan.** Start an **implementer** agent: "Do steps 1-6 of `.claude/commands/start-task.md` for
    #$ARGUMENTS: read the issue and spec, draft the ExecPlan from the `PLANS.md` template (Acceptance lists
    question IDs or concrete checks), branch `tl/$ARGUMENTS-<slug>` from fresh `main`, save the plan as
    `plans/<NNNN>-<slug>.md`, commit and push it. In step 4 the reviewer agent approves the plan instead of
    the user: do not wait for the user, and do not change any other file. Report the branch."
-2. **Plan review.** Start a **new reviewer** agent (never reuse one, never pass the implementer's
-   report): "Run `.claude/commands/tl-review.md` with `plan $ARGUMENTS`."
+2. **Plan review, only when the plan carries risk:** it plans paid calls, changes an ADR, a ground
+   rule or an invariant, changes the schema, corpus or a snapshot, or deletes data. Otherwise skip
+   to stage 3 and tell the tech lead in one line ("plan review skipped: no risk item"); the PR review
+   is the one review. When it applies: start a **new reviewer** agent (never reuse one, never pass the
+   implementer's report): "Run `.claude/commands/tl-review.md` with `plan $ARGUMENTS`."
    - CHANGES REQUESTED (at least one blocking finding): send the issue comment's numbered blocking
      fixes to the implementer (same agent, it keeps context), then a new reviewer again. At most
      **2 blocking returns**; a third escalates.
    - APPROVED with non-blocking notes: not a return. Pass the notes to the implementer with stage 3.
-3. **Build.** Implementer: "The plan is approved (issue comment). Implement it on the branch, keep
+3. **Build.** Implementer: "The plan is approved (issue comment), or plan review was skipped. Implement it on the branch, keep
    the Progress log current, then do every step of `.claude/commands/finish-task.md`. Report the PR number."
    If the plan planned real calls (CLAUDE.md "Paid API calls"), they run last, together, after every mock
    check passes, with every raw output saved in the run's evidence folder and the count in the PR.
@@ -38,7 +50,7 @@ merged). If not, stop and say why.
 
 ## Stop and ask the tech lead
 - A third blocking return at either review stage.
-- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned (including an unplanned re-run of a question), needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead, deleted data, ground rules, teammate file, a check it cannot run).
+- The reviewer posts ESCALATED TO TL (ADR, paid calls that are unplanned (including an unplanned re-run of a question), needed by the reviewer or a Gate 3 scored run without a tech-lead go-ahead, deleted data, ground rules, a check it cannot run).
 - The implementer is blocked or the issue is unclear.
 
 ## Rules

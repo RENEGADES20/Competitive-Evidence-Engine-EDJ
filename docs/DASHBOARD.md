@@ -66,25 +66,29 @@ the replies. Re-running it never duplicates anything.
 TL issues (`role:tl`) have no week slot; the tech lead takes them in dependency order.
 Each one runs through `/tl-run <issue#>` (`.claude/commands/tl-run.md`):
 
-1. Implementer agent: `/start-task` steps, ExecPlan committed on `tl/<issue#>-<slug>`.
-2. Reviewer agent (new, independent; sees only the issue, plan and repo): `/tl-review plan <issue#>`,
-   verdict as an issue comment. Up to 2 blocking returns.
-3. Implementer: build, `/finish-task`, PR.
-4. New reviewer agent: `/tl-review pr <PR#>` re-runs pytest / verify-cee / eval itself, posts the
+1. Implementer agent: `/start-task` steps, one-page ExecPlan committed on `tl/<issue#>-<slug>`.
+2. Only when the plan carries risk (paid calls, ADR / ground rule / invariant, schema, corpus or
+   snapshot, deleted data): reviewer agent (new, independent; sees only the issue, plan and repo):
+   `/tl-review plan <issue#>`, verdict as an issue comment. Up to 2 blocking returns.
+3. Implementer: build, `/finish-task` (verify-cee when the app can show the change), PR.
+4. New reviewer agent: `/tl-review pr <PR#>` checks CI, runs the mock eval for retrieval or answer
+   changes, reads the verify-cee evidence (re-runs it only when missing, failed or stale), posts the
    verdict on the PR, and squash-merges on approval. Up to 2 blocking returns.
+
+Experiment issues (`type:experiment`) take the short path in `tl-run.md`: experiment note and runs
+on `exp/<issue#>-<slug>` (never merged), then a docs-only PR with the results doc.
 
 The tech lead is asked only when a reviewer escalates: a third blocking return, an ADR or ground-rule
 change, paid API calls that are unplanned (including an unplanned re-run of a question) or ones the reviewer would need to make,
 the 30-question scored run (Gate 3) without a tech-lead go-ahead,
-deleted data or snapshots, a teammate-owned file without their review,
-or a check the reviewer cannot run. Teammate PRs are still reviewed by the tech lead.
+deleted data or snapshots, or a check the reviewer cannot run. Teammate PRs are still reviewed by the tech lead.
 `/tl-review pr <PR#>` also works alone, e.g. for a TL PR opened by hand.
 
 ## 4. Labels (repo -> Issues -> Labels)
 
 - `role:c1` `role:c2` `role:c3` `role:s1` `role:s2` `role:u1` `role:tl`
 - `firm:ms` `firm:schw` `firm:edj` `firm:mer` `firm:rjf` `firm:theme`
-- `type:feature` `type:bug` `type:corpus` `type:eval` `type:docs`
+- `type:feature` `type:bug` `type:corpus` `type:eval` `type:docs` `type:experiment`
 - `blocked`
 
 ## 5. Built-in workflows (Project -> ... -> Workflows)
