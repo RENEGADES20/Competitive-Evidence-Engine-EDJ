@@ -418,12 +418,28 @@ def check_footnote_click(rec, page) -> None:
              target == href[1:], f"location target={target}")
 
 
+def check_reduce_version(rec, page, qid: str, want_list: bool) -> None:
+    """#292: the reduce version the newest query_log row used: with REDUCE_PROMPT=v7 a list-form question keeps v5.2
+    and any other gets v7, its paragraph opening with the mock's direct sentence ("In short: "); else the configured
+    version (default v5.2)."""
+    configured = os.environ.get("REDUCE_PROMPT", "").strip() or "v5.2"
+    want = "v5.2" if (configured == "v7" and want_list) else configured
+    got = psql(VERIFY_DB, "SELECT coalesce(filters->'reduce'->>'version', 'none') FROM query_log ORDER BY query_id DESC LIMIT 1")
+    first = page.evaluate("() => { const e = document.querySelector('.cee-answer p, .cee-answer li');"
+                          " return e ? e.innerText.slice(0, 60) : ''; }")
+    direct = (not (configured == "v7" and not want_list)) or first.startswith("In short: ")
+    rec.step(f"{qid}: read the reduce version of the newest query_log row (REDUCE_PROMPT={configured})",
+             f"version {want}" + ("; the paragraph opens with the direct sentence" if want == "v7" else ""),
+             got == want and direct, f"version={got}; answer starts {first!r}")
+
+
 def feature_ask_layout(page, base, rec, ctx):
     """#291: answer above the evidence for Q5, Q8, Q24, Q26; footnotes resolve; a Coverage -> Ask round trip keeps
     the answer and the evidence (drawn from session state, no new run)."""
     for qid, want_list in LAYOUT_QS:
         ask(page, base, question_text(qid))
         lay = check_layout(rec, page, f"Ask {qid}; read the layout", want_list)
+        check_reduce_version(rec, page, qid, want_list)
         if qid == "Q5":
             check_footnote_click(rec, page)
         before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))

@@ -219,6 +219,27 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   answer is output. `REDUCE_PROMPT` = `v5.2` | `v5.3`; v5.3 adds "state each fact once ... every cell that
   holds a fact keeps at least one claim of its own". The version and system text join the reduce cache key.
 
+#292 (plans/0292-reduce-synthesis.md, results `docs/results/w13-reduce-synthesis.md`): **prompt v7, a direct
+answer plus a short cited synthesis.** `REDUCE_PROMPT` = `v5.2` | `v5.3` | `v7`.
+- Form, decided by code (`reduce.list_form(aspects, query, version)`, also read by the Ask page for the streamed
+  and the final answer): list when the question has its own window, or, under v5.2 / v5.3, any recency aspect,
+  or, under v7, only recency aspects. A list-form question under v7 is answered by v5.2 exactly (prompt, message,
+  mock, version label `v5.2`, cache key). Otherwise synthesis form, prompt v7: claim 1 answers the question
+  directly; then 2-4 synthesis sentences (comparison, pattern, tension or gap), never a restatement item by item;
+  one claim = one sentence and it may cite several cells; every cell holding a fact is cited by some sentence
+  (more sentences only for that); asked figures are kept (one sentence per firm at most for a series); no
+  why-lines. The message drops the why-line notes and the `context` / `related` lines.
+- Checks in the synthesis form: a claim whose part_id is an aspect id covers each cell of that aspect whose
+  counting-item or derivation-input chunk it cites (`part_coverage` state `aspect`); a computation claim with the
+  aspect id counts (a code computability claim goes after the aspect's last claim); `dedupe_claims` never removes
+  claim 1; an aspect-id claim citing only chunks of adjacent-only cells gets `claim_from_adjacent`; why-lines are
+  removed (`why_line_removed`), the why-line check and the newest-first re-sort do not run. Citation,
+  outside-matrix, number, date, normative, comparison, gap and caveat checks are unchanged.
+- The mock in the synthesis form: claim 1 "In short: <first holding item>." (part_id its aspect), then per
+  non-proxy, non-comparison aspect one sentence joining the first item of every holding cell (part_id the
+  aspect), skipped when it cites the same chunks as claim 1; derived cells, comparison claims and adjacent items
+  as in v5.2.
+
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call
   checks it first (planner, map, reduce, legacy answer, `llm.deepseek_create`), `ask()` checks it at each stage

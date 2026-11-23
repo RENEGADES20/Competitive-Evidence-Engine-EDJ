@@ -1038,6 +1038,14 @@ comments 7037522138 and 7037650142; prompt v5.1):
   metric, a definition-wording change across one firm's documents, and where each firm's disclosed series
   starts and stops; a firm with only a different quantity has a gap naming that closest figure.
 
+Amendment (#292, reduce prompt v7; plan `plans/0292-reduce-synthesis.md`, approved in issue #292 comment
+7117074418; needs TL sign-off on the PR): **rule 5 applies to list-form answers.** Code picks the answer's form
+(`reduce.list_form`, one rule for the reduce and the Ask page). Under a synthesis version (`REDUCE_PROMPT=v7`) the
+list form is a question with its own window or with only recency aspects, and it keeps v5.2 unchanged
+(one claim per item, a why-line on each, newest first). Every other question gets a direct first sentence and a
+short cited synthesis: a recency aspect's items are dated in their sentences, with no why-line and no re-sort.
+Under v5.2 / v5.3 the #291 rule stands (own window or any recency aspect -> list) and rule 5 is unchanged.
+
 
 ## ADR-022: Facts table: metric figures extracted once at ingest by a model, stored as data, served by SQL
 Status: Deferred (#285, TL ruling 2026-11-23 at the go/no-go gate G0). The decision below is recorded; the path is
