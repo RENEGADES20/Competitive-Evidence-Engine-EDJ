@@ -251,11 +251,82 @@ ONCE_RULE = ("- State each fact once in the whole answer. When an item gives a f
 _ALSO_UNDER = '- An item marked "also under" another aspect: write it once, under the first aspect where it appears.\n'
 SYSTEM_PROMPT_V53 = (SYSTEM_PROMPT_V5.replace(f"Prompt version: {REDUCE_VERSION}.", "Prompt version: v5.3.")
                      .replace(_ALSO_UNDER, _ALSO_UNDER + ONCE_RULE))
-REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53}
+
+# #292 (plans/0292-reduce-synthesis.md): v7 writes a direct answer plus a short cited synthesis instead of one
+# claim per matrix item. Only for the synthesis form (cee.answer.reduce.list_form): a question with its own window,
+# or whose aspects are all recency, keeps v5.2 (prompt, message, mock and label), so its outputs and keys stand.
+SYNTHESIS_VERSIONS = ("v7",)
+LIST_VERSION = "v5.2"   # what a synthesis version uses for a list-form question
+SYSTEM_PROMPT_V7 = f"""You write the answer to a question about wealth-management firms from an evidence matrix that
+code built from stored documents. Code has already decided the behavior; write the answer for it.
+Prompt version: v7.
+
+Evidence only
+- Every sentence states what cited items say, a figure code computed (a derived cell), or the comparison an
+  aspect asks for. Cite only chunk ids listed under Sources, the ids of the items you use. Never use what you know
+  from elsewhere; never estimate, convert, round or combine figures; never compute a figure yourself. Write nothing
+  about what any firm should or could do.
+- Date what you state from its source line (e.g. "in the 2Q26 10-Q", "on the 3Q26 earnings call"). Attribute
+  strategy, priorities and intent to the firm or its management in their own words. Use each firm's own terms;
+  never merge two firms' business models into one statement.
+- Never write cell ids, aspect ids, part ids or item numbers in the text.
+- An item marked "figure not found in its passage" keeps its figure out of your text. An item marked "quote not
+  verbatim" is never put in quotation marks.
+
+Shape: a direct answer, then a short synthesis
+- Each claim is ONE sentence. A sentence may draw on several cells and cites every chunk id it rests on.
+- Claim 1 answers the question directly: the headline fact, the asked figure or the verdict, for the firms asked,
+  in one sentence. Do not open with background or with what the evidence is.
+- Then 2 to 4 sentences of synthesis: what the items show together (a comparison across firms, a pattern, a
+  change over time, a tension or a gap between pieces of evidence). Do not restate the items one by one: the
+  reader sees every item in the evidence list below the answer.
+- Coverage: every cell that holds a fact (or a derived figure) is cited by at least one sentence. Write more than
+  4 synthesis sentences only when that is needed to cite every such cell.
+- Asked figures are never dropped: when an aspect asks for a figure or a series, state each firm's figures with
+  their periods (at most one sentence per firm for that aspect); a partial figure says what it covers.
+- part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells of one
+  aspect; for claim 1, the aspect it mainly answers.
+- No "Why it might matter" lines and no lists inside a sentence.
+
+What else goes where (as before)
+- A cell marked "adjacent only" (a different quantity, or a stand-in figure) goes in adjacent, never in claims,
+  one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.
+- A derived cell is stated with its formula as shown in the cell, citing both inputs; say the definition is
+  unverified when the cell is marked so.
+- A cell with a "computation" line: one sentence for that firm, with the cell's id as part_id, saying whether the
+  figure is computable on this evidence and why, citing both inputs and every population source shown on the line,
+  and quoting each source's own words in quotation marks exactly as shown. When the line is dated ("population
+  statement dated ..."), say so.
+- A cell with a "basis break" line: state each basis with its own periods; never join them into one series.
+- For each aspect marked comparison, exactly one sentence with that aspect's id as part_id answers the comparison
+  itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and
+  why, citing the items it rests on. Compare or rank figures across firms only when the aspect is marked
+  same_basis, and only at its shared periods; otherwise say they are not comparable and why. This sentence counts
+  as a synthesis sentence.
+- Cells with code gaps get no claim; code adds those gaps (listed under "Gaps added by code"). Add a gap of your
+  own only for something those gaps do not name. Caveats are added by code; do not repeat them.
+- Positions about the future that others hold: attributed and dated; two sources that disagree are reported as
+  disagreeing; no forecast of your own.
+- answer_with_boundary: the evidence half only; code adds the hand-off sentence.
+- gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items, each
+  with differs_because; the code gaps say what the database does not support.
+
+Standard wording (use verbatim when the case applies)
+- Bank of America GWIM figures for Merrill go in adjacent with differs_because "{GWIM_DIFFERS}"
+- Net advisor headcount change for attrition goes in adjacent with differs_because "{HEADCOUNT_DIFFERS}"
+- Advisor pay: a firm whose cited items state payout percentages or ranges gets them in a claim, dated with the
+  "page content as of" date, and the gap "{PAYOUT_RANGES_PUBLISHED}" with <date> filled in; a firm with nothing
+  published gets "{PAYOUT_GAP}" (name the firm first in a multi-firm answer).
+  Aggregate compensation expense goes in adjacent with differs_because "{COMPENSATION_DIFFERS}"
+- A trade-press item is stated attributed ("trade press reports ..."); adjacent trade-press items carry
+  differs_because "{TRADE_PRESS_NOTE}"
+Return the answer by calling the submit_answer tool; do not answer in plain text."""
+REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53, "v7": SYSTEM_PROMPT_V7}
 
 
 def reduce_prompt() -> tuple[str, str]:
-    """(version, system prompt) of the reduce call, from REDUCE_PROMPT (#275)."""
+    """(version, system prompt) of the reduce call, from REDUCE_PROMPT (#275). The configured version; a synthesis
+    version answers a list-form question with LIST_VERSION (cee.answer.reduce.prompt_version)."""
     from cee.config import settings
     v = settings().reduce_prompt
     return v, REDUCE_PROMPTS[v]

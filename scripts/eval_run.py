@@ -590,8 +590,9 @@ def reduce_cache_key(q: dict, snapshot: str, provider: str, model: str, max_toke
 
     schema, _ = R.reduce_schema(matrix)
     # #275: the prompt version and system text in use (REDUCE_PROMPT); v5.2 gives the #272 keys unchanged
-    parts = [q["id"], q["text"], R.prompt_version(), snapshot, provider, model, max_tokens, request,
-             sha(R.system_prompt()), sha(R.reduce_message(q["text"], matrix, query)),
+    # #292: the version and prompt this question's call uses (v7 answers a list-form question with v5.2)
+    parts = [q["id"], q["text"], R.prompt_version(matrix, query), snapshot, provider, model, max_tokens, request,
+             sha(R.system_prompt(matrix, query)), sha(R.reduce_message(q["text"], matrix, query)),
              sha(json.dumps(schema, sort_keys=True))]
     return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
 
@@ -816,7 +817,7 @@ class RealRunner:
         self.calls += 1   # reserved and counted before the call: a failed call still cost money
         self.made += 1
         schema, fallback = R.reduce_schema(matrix)
-        meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.prompt_version(),
+        meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.prompt_version(matrix, query),
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
                 "max_tokens": R.max_tokens(self.provider), "request_version": self.reduce_version,
                 "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
@@ -1419,8 +1420,10 @@ def main(argv: list[str] | None = None) -> int:
                 r["reduce"] = {**info, "how": how}
             if answer is not None and plan is not None:   # #215: how each part was covered (on the union)
                 from cee.answer.schema import Answer
+                from cee.answer import reduce as R
                 from cee.answer.validate import part_coverage
-                r["part_coverage"] = part_coverage(Answer(**answer), plan, every, matrix)
+                r["part_coverage"] = part_coverage(Answer(**answer), plan, every, matrix,
+                                                   R.synthesis(matrix, query) if matrix is not None else False)
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid", "failed"))
             r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
             if real.bad_request:   # #247: a 400 on the reduce call: the run stops, every record saved
@@ -1435,10 +1438,11 @@ def main(argv: list[str] | None = None) -> int:
             info: dict = {}
             every = union_hits(hits, matrix)
             a, _ = answer_for(q["text"], query, every, "mock", plan=plan, matrix=matrix, info=info)
+            from cee.answer import reduce as R
             from cee.answer.validate import part_coverage
             r["reduce"] = {**info, "how": "code_built" if info.get("code_built") else "mock"}
             r["answer"], r["answer_behavior"] = a.model_dump(), a.behavior
-            r["part_coverage"] = part_coverage(a, plan, every, matrix)
+            r["part_coverage"] = part_coverage(a, plan, every, matrix, R.synthesis(matrix, query))
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         r["cost"] = question_cost(price_rows(real.ledger[start:], args.naive_tz) if real else [])

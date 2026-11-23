@@ -29,13 +29,37 @@ from cee.config import settings
 REDUCE_VERSION = P.REDUCE_VERSION   # v5.2; the version a call uses is prompt_version() (REDUCE_PROMPT, #275)
 
 
-def prompt_version() -> str:
-    """The reduce prompt version in use (REDUCE_PROMPT: v5.2 | v5.3, #275)."""
-    return P.reduce_prompt()[0]
+def list_form(aspects, query, version: str | None = None) -> bool:
+    """#292: the ONE rule for the answer's form, read by the reduce (prompt, message, mock, checks) and by the Ask
+    page (streamed and final answer). List form (one claim per item, why-lines, a numbered list on the page): the
+    question's own window, or (v5.2 / v5.3, #291) any recency aspect, or (a synthesis version, v7) every aspect
+    recency. Else synthesis form (a paragraph)."""
+    if own_window(query):
+        return True
+    kinds = [getattr(a, "kind", "") for a in aspects or []]
+    v = version or settings().reduce_prompt
+    if v in P.SYNTHESIS_VERSIONS:
+        return bool(kinds) and all(k == "recency" for k in kinds)
+    return "recency" in kinds
 
 
-def system_prompt() -> str:
-    return P.reduce_prompt()[1]
+def synthesis(m: EvidenceMatrix | None, query) -> bool:
+    """#292: this answer is written in the synthesis form (a synthesis version configured, not a list-form question)."""
+    v = settings().reduce_prompt
+    return v in P.SYNTHESIS_VERSIONS and m is not None and not list_form(m.aspects, query, v)
+
+
+def prompt_version(m: EvidenceMatrix | None = None, query=None) -> str:
+    """The reduce prompt version in use (REDUCE_PROMPT: v5.2 | v5.3 | v7, #275, #292). With a matrix: the version
+    this question's call uses (a synthesis version answers a list-form question with v5.2)."""
+    v = P.reduce_prompt()[0]
+    if m is not None and v in P.SYNTHESIS_VERSIONS and not synthesis(m, query):
+        return P.LIST_VERSION
+    return v
+
+
+def system_prompt(m: EvidenceMatrix | None = None, query=None) -> str:
+    return P.REDUCE_PROMPTS[prompt_version(m, query)]
 TOOL = "submit_answer"
 CALLING = ("answer", "answer_with_boundary", "gap_with_adjacent")
 # Enum limits (review note 5): OpenAI structured outputs allow at most 1000 enum values across the
@@ -69,6 +93,11 @@ def own_window(query):
 
 def _recency_aspects(m: EvidenceMatrix) -> set[str]:
     return {a.id for a in m.aspects if a.kind == "recency"}
+
+
+def _why_aspects(m: EvidenceMatrix, query) -> set[str]:
+    """The aspects whose items need a why-line: the recency aspects, none in the synthesis form (#292)."""
+    return set() if synthesis(m, query) else _recency_aspects(m)
 
 
 def _proxy(m: EvidenceMatrix, aspect_id: str) -> bool:
@@ -263,6 +292,7 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
              f"Behavior (decided by code; write the answer for it): {m.behavior}",
              f"  Why: {m.behavior_reason}"]
     w = own_window(query)
+    synth = synthesis(m, query)   # #292: no why-line notes, context or related lines
     if w:
         lines.append(f"Time window: {w[0]} to {w[1]} (only passages published in it were searched). "
                      "Order newest first.")
@@ -278,7 +308,7 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
         if getattr(a, "proxy", False):
             tags.append("proxy: a stand-in figure, adjacent only")
         note = {"comparison": " -> needs exactly one comparison claim, part_id " + a.id,
-                "recency": " -> every item needs a why-line"}.get(a.kind, "")
+                "recency": "" if synth else " -> every item needs a why-line"}.get(a.kind, "")
         lines.append(f"- {a.id} [{', '.join(tags)}]: {_q(a.text)}{note}")
     lines += ["", "Evidence matrix, aspect by aspect (a cell id is the part_id of what you write from it):"]
     seen: dict = {}
@@ -299,7 +329,7 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
                 if d and d.get("quote"):
                     lines.append(f"  Registered definition, {row_name(f)}: \"{_q(d['quote'])[:160]}\" "
                                  f"({d.get('chunk_id', '')}; context, cite only if under Sources)")
-        why_items = bool(w) or a.kind == "recency"
+        why_items = not synth and (bool(w) or a.kind == "recency")
         for c in m.cells.values():
             if c.aspect_id != a.id:
                 continue
@@ -396,25 +426,25 @@ def requests(question: str, m: EvidenceMatrix, query, provider: str) -> dict:
     schema, _ = reduce_schema(m)
     user = reduce_message(question, m, query)
     if provider == "anthropic":
-        return {"model": settings().llm_model, "max_tokens": max_tokens(provider), "system": system_prompt(),
+        return {"model": settings().llm_model, "max_tokens": max_tokens(provider), "system": system_prompt(m, query),
                 "tools": [{"name": TOOL, "description": "Submit the cited answer.", "strict": True,
                            "input_schema": schema}],
                 "tool_choice": {"type": "auto"}, "messages": [{"role": "user", "content": user}]}
     if provider == "openai":
         return {"model": settings().openai_model,
-                "messages": [{"role": "system", "content": system_prompt() + "\nReturn JSON matching the schema."},
+                "messages": [{"role": "system", "content": system_prompt(m, query) + "\nReturn JSON matching the schema."},
                              {"role": "user", "content": user}],
                 "response_format": {"type": "json_schema",
                                     "json_schema": {"name": "answer", "strict": True, "schema": schema}}}
     if provider == "deepseek":
-        return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, system_prompt(), user,
+        return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, system_prompt(m, query), user,
                                          max_tokens(provider), stage="reduce")
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
 def input_tokens(question: str, m: EvidenceMatrix, query=None) -> int:
     schema, _ = reduce_schema(m)
-    return round((len(system_prompt()) + len(json.dumps(schema)) + len(reduce_message(question, m, query))) / 4)
+    return round((len(system_prompt(m, query)) + len(json.dumps(schema)) + len(reduce_message(question, m, query))) / 4)
 
 
 def input_limit(provider: str) -> int | None:
@@ -546,7 +576,7 @@ def _firm_prefix(m: EvidenceMatrix, c) -> str:
 
 
 def _why(m: EvidenceMatrix, query, aspect_id: str) -> str:
-    return (" " + P.WHY_UNSAID) if (own_window(query) or aspect_id in _recency_aspects(m)) else ""
+    return (" " + P.WHY_UNSAID) if (own_window(query) or aspect_id in _why_aspects(m, query)) else ""
 
 
 def _adjacent_items(m: EvidenceMatrix, query=None) -> list[dict]:
@@ -572,6 +602,8 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
     cancel.sleep (a Stop cuts it)."""
     from cee.answer import cancel
     cancel.sleep(settings().mock_delay_s)
+    if synthesis(m, query):
+        return mock_synthesis(m, query)
     claims = []
     for a in m.aspects:
         cells = [c for c in m.cells.values() if c.aspect_id == a.id]
@@ -595,6 +627,46 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
             i = c.counting_items[0]
             claims.append({"text": _firm_prefix(m, c) + _q(i.text) + _why(m, query, a.id),
                            "chunk_ids": list(i.chunk_ids), "part_id": c.id})
+    return {"answerable": m.behavior in ("answer", "answer_with_boundary"), "behavior": m.behavior,
+            "claims": claims, "adjacent": _adjacent_items(m, query), "gaps": []}
+
+
+def mock_synthesis(m: EvidenceMatrix, query=None) -> dict:
+    """#292, the mock in the synthesis form (v7), deterministic, 0 calls: claim 1 = the question's direct answer from
+    the first holding cell's first counting item (part_id its aspect); then per non-proxy, non-comparison aspect one
+    sentence citing the first counting item of every holding cell (part_id the aspect), skipped when its chunk set is
+    claim 1's; derived cells, comparison claims and adjacent items as in v5.2 (no why-lines)."""
+    claims: list[dict] = []
+    for a in m.aspects:
+        cells = [c for c in m.cells.values() if c.aspect_id == a.id]
+        if a.kind == "comparison":
+            ids = list(dict.fromkeys(x for c in cells if holds(c) for i in c.counting_items for x in i.chunk_ids))
+            if ids:
+                mk = m.marks.get(a.id)
+                claims.append({"text": f"{_q(a.text).rstrip('.')}: compared only on the same basis; code marks it "
+                                       f"{mk.status if mk else 'none'}.", "chunk_ids": ids, "part_id": a.id})
+            continue
+        if getattr(a, "proxy", False):
+            continue
+        texts, ids = [], []
+        for c in cells:
+            if not holds(c):
+                continue
+            d = c.derivation or {}
+            if c.label == "derived" and d.get("ok"):
+                claims.append({"text": f"{_firm_prefix(m, c)}{_q(a.text).rstrip('.')}: {d.get('formula_text')}.",
+                               "chunk_ids": list(d.get("input_chunk_ids") or []), "part_id": c.id})
+                continue
+            i = c.counting_items[0]
+            if not claims or claims[0].get("direct") is None:
+                claims.insert(0, {"text": f"In short: {_q(i.text).rstrip('.')}.", "chunk_ids": list(i.chunk_ids),
+                                  "part_id": a.id, "direct": True})
+            texts.append(_firm_prefix(m, c) + _q(i.text).rstrip("."))
+            ids += [x for x in i.chunk_ids if x not in ids]
+        if texts and set(ids) != set(claims[0]["chunk_ids"]):
+            claims.append({"text": "; ".join(texts) + ".", "chunk_ids": ids, "part_id": a.id})
+    for c in claims:
+        c.pop("direct", None)
     return {"answerable": m.behavior in ("answer", "answer_with_boundary"), "behavior": m.behavior,
             "claims": claims, "adjacent": _adjacent_items(m, query), "gaps": []}
 
@@ -626,7 +698,7 @@ def derived_values(m: EvidenceMatrix) -> list[tuple[float, set[str]]]:
             for c in m.cells.values() if c.label == "derived" and (c.derivation or {}).get("ok")]
 
 
-def check_adjacent(answer: Answer, m: EvidenceMatrix) -> None:
+def check_adjacent(answer: Answer, m: EvidenceMatrix, synth: bool = False) -> None:
     """Rule 3: an adjacent item on a holding cell of a non-proxy aspect -> adjacent_is_fact; a claim on
     a different-quantity or proxy cell -> claim_from_adjacent (flagged, never moved)."""
     for x in answer.adjacent:
@@ -638,6 +710,23 @@ def check_adjacent(answer: Answer, m: EvidenceMatrix) -> None:
         if c is not None and (c.effective_label == "different_quantity" or _proxy(m, c.aspect_id)) \
                 and "claim_from_adjacent" not in x.flags:
             x.flags.append("claim_from_adjacent")
+        elif synth and c is None and x.chunk_ids and "claim_from_adjacent" not in x.flags:
+            # #292: a sentence with an aspect part_id whose every cited chunk is in adjacent-only cells only
+            adj, held = _cell_chunks(m, adjacent=True), _cell_chunks(m, adjacent=False)
+            if all(k in adj and k not in held for k in x.chunk_ids):
+                x.flags.append("claim_from_adjacent")
+
+
+def _cell_chunks(m: EvidenceMatrix, adjacent: bool) -> set[str]:
+    """#292: chunk ids of the counting items (and derivation inputs) of the adjacent-only cells (different quantity
+    or proxy aspect) or of the other cells."""
+    out: set[str] = set()
+    for c in m.cells.values():
+        if (c.effective_label == "different_quantity" or _proxy(m, c.aspect_id)) != adjacent:
+            continue
+        out |= {k for i in c.counting_items for k in i.chunk_ids}
+        out |= set((c.derivation or {}).get("input_chunk_ids") or [])
+    return out
 
 
 def _aspect_ids(m: EvidenceMatrix, aspect_id: str) -> set[str]:
@@ -678,7 +767,7 @@ def _normative_handoff(answer: Answer, a) -> bool:
 def _why_scope(m: EvidenceMatrix, query, x) -> bool:
     c = m.cells.get(x.part_id)
     aspect = c.aspect_id if c is not None else x.part_id
-    return bool(own_window(query)) or aspect in _recency_aspects(m)
+    return bool(own_window(query)) or aspect in _why_aspects(m, query)
 
 
 _STOP = set("""a an the and or of to in on at for by with from as is are was were be been it its this that these those
@@ -746,7 +835,7 @@ def _cites_background(m: EvidenceMatrix, x) -> bool:
     return bool(items) and not any(cited <= set(i.chunk_ids) for i in items)
 
 
-def check_computability(answer: Answer, m: EvidenceMatrix) -> list[str]:
+def check_computability(answer: Answer, m: EvidenceMatrix, synth: bool = False) -> list[str]:
     """TL D5 / condition 1: for each derivation proposal with cited inputs, a claim on that cell citing
     every input and population source chunk; missing -> code adds it (COMPUTED / NOT_COMPUTED, the
     sources quoted), flag code_computability. Returns the cells it added a claim for."""
@@ -758,8 +847,9 @@ def check_computability(answer: Answer, m: EvidenceMatrix) -> list[str]:
             continue
         d = c.derivation
         need = set(d.get("input_chunk_ids") or []) | set(d.get("population_chunk_ids") or [])
-        if any(x.part_id == c.id and need <= set(x.chunk_ids) for x in answer.claims):
-            continue
+        own = (c.id, c.aspect_id) if synth else (c.id,)
+        if any(x.part_id in own and need <= set(x.chunk_ids) for x in answer.claims):
+            continue   # #292: a synthesis sentence with the aspect id counts too
         a = m.aspect(c.aspect_id)
         firm = f"{row_name(c)}: "
         srcs = _sources_text(population_sources(m, d))
@@ -772,7 +862,7 @@ def check_computability(answer: Answer, m: EvidenceMatrix) -> list[str]:
         ids = list(dict.fromkeys([*(d.get("input_chunk_ids") or []), *(d.get("population_chunk_ids") or [])]))
         claim = Claim(text=text, chunk_ids=ids, part_id=c.id, flags=["code_computability"])
         same = [n for n, x in enumerate(answer.claims)
-                if x.part_id in m.cells and m.cells[x.part_id].aspect_id == c.aspect_id]
+                if (synth and x.part_id == c.aspect_id) or (x.part_id in m.cells and m.cells[x.part_id].aspect_id == c.aspect_id)]
         answer.claims.insert((max(same) + 1) if same else len(answer.claims), claim)
         added.append(c.id)
     return added
@@ -808,12 +898,13 @@ def _stated_periods(text: str) -> set:
             | {("fy" if m.group(1) else "") + m.group(2) for m in _YEAR.finditer(text)})
 
 
-def dedupe_claims(answer: Answer) -> list[dict]:
+def dedupe_claims(answer: Answer, keep_first: bool = False) -> list[dict]:
     """#247 part 2: claims citing the same chunk set are duplicates when their texts (no why-line, no
     "<Firm>: " prefix) are equal, or when the shorter is held in the longer: outside quoted text, every
     figure and every stated period (dates, quarter labels) of it in the longer (PR #261 review blocking 1:
     one table row quoted by claims about different periods), and >= SUBSUMED of its content words (stop
-    words and firm names removed) too. The longer is kept (ties: the first). Returns the removed."""
+    words and firm names removed) too. The longer is kept (ties: the first). #292 keep_first (synthesis form): the
+    first claim, the direct answer, is never removed (its twin is). Returns the removed."""
     from cee.answer.validate import figures
     claims = answer.claims
     drop: dict[int, int] = {}
@@ -835,7 +926,10 @@ def dedupe_claims(answer: Answer) -> list[dict]:
             fs, fl = {str(f.value) for f in figures(os_)}, {str(f.value) for f in figures(ol)}
             ws, wl = _content(short), _content(long_)
             if fs <= fl and _stated_periods(os_) <= _stated_periods(ol) and ws and len(ws & wl) >= SUBSUMED * len(ws):
-                drop[si] = li
+                if keep_first and si == 0:
+                    drop[li] = si
+                else:
+                    drop[si] = li
     removed = [{"text": claims[k].text, "part_id": claims[k].part_id, "kept": v} for k, v in sorted(drop.items())]
     answer.claims = [x for n, x in enumerate(claims) if n not in drop]
     return removed
@@ -844,7 +938,7 @@ def dedupe_claims(answer: Answer) -> list[dict]:
 def check_why_lines(answer: Answer, m: EvidenceMatrix, query) -> int:
     """Rule 5: with the question's own window every item, else every item of a recency aspect, needs
     "Why it might matter: " and text after it; missing -> why_line_missing. Returns the count."""
-    rec = _recency_aspects(m)
+    rec = _why_aspects(m, query)
     every = bool(own_window(query))
     n = 0
     for x in [*answer.claims, *answer.adjacent]:
@@ -866,9 +960,9 @@ def order_newest_first(answer: Answer, m: EvidenceMatrix, query, by_id: dict) ->
     """D4: with the question's own window or a recency aspect, claims and adjacent items are re-sorted
     newest first by the latest published date of their cited documents (stable; the hand-off last).
     Returns how many items moved."""
-    if not (own_window(query) or _recency_aspects(m)):
+    if not (own_window(query) or _why_aspects(m, query)):
         return 0
-    rec = _recency_aspects(m)
+    rec = _why_aspects(m, query)
 
     def key(x):
         dates = [str(by_id[c].published_at) for c in x.chunk_ids if c in by_id and by_id[c].published_at]
@@ -964,7 +1058,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     """Every code step after the reduce (plan section 4), in order. Returns (answer, info for the log)."""
     from cee.answer.validate import (check_citations, check_parts, coverage_note, fill_suggested_sources,
                                      insert_caveats)
-    info: dict = {"version": prompt_version(), "code_built": code_built, "model_behavior": answer.behavior}
+    info: dict = {"version": prompt_version(m, query), "code_built": code_built, "model_behavior": answer.behavior}
     decided = m.behavior if m.behavior is not None else "incomplete"
     answer.behavior = decided
     answer.answerable = decided in ("answer", "answer_with_boundary") and bool(citable(m))
@@ -973,7 +1067,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     allowed = [by_id[c] for c in citable(m) if c in by_id]
     # #247 part 2: code computability claims and the why-line clean-up come before the citation check,
     # so the citation, number and date checks run on them like on the model's claims (TL condition 1)
-    info["code_computability"] = check_computability(answer, m)
+    info["code_computability"] = check_computability(answer, m, synthesis(m, query))
     why_log = clean_why_lines(answer, m, query)
     info["why_line_removed"], info["why_line_restated"] = len(why_log["removed"]), len(why_log["restated"])
     info["why_line_unsaid"] = len(why_log["unsaid"])
@@ -988,7 +1082,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
             if "outside_matrix" not in x.flags:
                 x.flags.append("outside_matrix")
     info["outside_matrix"] = outside
-    check_adjacent(answer, m)
+    check_adjacent(answer, m, synthesis(m, query))
     info["comparison_missing"] = check_comparisons(answer, m)
     info["why_line_missing"] = check_why_lines(answer, m, query)
     info["reordered"] = order_newest_first(answer, m, query, by_id)
@@ -997,14 +1091,15 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
         info["gaps_merged"] = place_gaps(answer, m, info["gaps_contradicting"])
     answer.caveats = list(dict.fromkeys([*answer.caveats, *m.caveats]))
     union = list(by_id.values())
-    answer = check_parts(answer, plan, union, question, matrix=m)
+    synth = synthesis(m, query)
+    answer = check_parts(answer, plan, union, question, matrix=m, synthesis=synth)
     # #247 part 2: duplicates removed after the part check; then the comparison and computability
     # checks run again on the reduced list (round-1 note 6), new code claims citation-checked
-    info["duplicates_removed"] = dedupe_claims(answer)
+    info["duplicates_removed"] = dedupe_claims(answer, keep_first=synth)
     if info["duplicates_removed"]:
         info["comparison_missing"] = sorted(set(info["comparison_missing"]) | set(check_comparisons(answer, m)))
         before = {id(x) for x in answer.claims}
-        late = check_computability(answer, m)
+        late = check_computability(answer, m, synth)
         if late:
             fresh = Answer(answerable=answer.answerable, behavior=answer.behavior,
                            claims=[x for x in answer.claims if id(x) not in before])
@@ -1129,7 +1224,7 @@ def check_item(raw: dict, m: EvidenceMatrix, query):
     ok_ids = set(citable(m))
     if any(c not in ok_ids for c in x.chunk_ids) and "outside_matrix" not in x.flags:
         x.flags.append("outside_matrix")
-    check_adjacent(a, m)
+    check_adjacent(a, m, synthesis(m, query))
     check_why_lines(a, m, query)
     shown = (len(a.claims) == 1 and a.claims[0] is x and x.text == text and not a.withheld and not a.gaps
              and bool(x.chunk_ids) and x.text.strip() != P.BOUNDARY_HANDOFF and x.flags == [])

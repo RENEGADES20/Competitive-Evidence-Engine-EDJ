@@ -136,10 +136,10 @@ def evidence_label(line: dict) -> str:
 
 
 def list_form(query, aspects) -> bool:
-    """#291: a window / recency answer (the question's own time window, or a recency aspect: the why-line items,
-    reduce.own_window / check_why_lines) is drawn as a numbered list; any other answer as one paragraph."""
-    from cee.answer.reduce import own_window
-    return bool(own_window(query)) or any(getattr(a, "kind", "") == "recency" for a in aspects or [])
+    """#291: a list-form answer (one item per claim, with why-lines) is drawn as a numbered list; any other answer as
+    one paragraph. #292: the rule is reduce.list_form, the one the reduce wrote the answer by (streamed and final)."""
+    from cee.answer.reduce import list_form as form
+    return form(aspects, query)
 
 
 def answer_aspects(r: Result) -> list:

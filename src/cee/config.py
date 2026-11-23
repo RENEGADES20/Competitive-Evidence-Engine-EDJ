@@ -156,7 +156,7 @@ def _nonneg_float(name: str, default: float) -> float:
 
 
 DEEPSEEK_IDLE_S_DEFAULT = 120.0   # #275: seconds without a streamed chunk before a call is aborted
-REDUCE_PROMPTS = ("v5.2", "v5.3")
+REDUCE_PROMPTS = ("v5.2", "v5.3", "v7")   # #292: v7 = direct answer plus cited synthesis
 REDUCE_PROMPT_DEFAULT = "v5.2"
 
 
