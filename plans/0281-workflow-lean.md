@@ -30,13 +30,35 @@ and verify-cee only where they prove something, one-page plans, and a short path
 4. Run the grep check below; `/finish-task`; PR; `/tl-review pr`.
 
 ## Acceptance
-- [ ] Each issue Acceptance item about file content: read the diff of that file -> item present.
-- [ ] `grep -rn -E "teammate-owned|re-runs pytest|any change to .src/" --include=*.md .` excluding
-      `plans/`, `docs/results/`, `.dispatch/` -> no hits.
-- [ ] `git diff origin/main --stat` lists only the 8 files above plus this plan.
-- [ ] `gh label list` -> `type:experiment` present.
+Each line: command -> expected result (run on the PR head; `git grep -c` prints `file:count`).
+- [ ] CLAUDE.md: `git grep -c -E "\*\*Two tracks\.\*\*|A plan is one page|carries risk|any change a user could see|\*\*Each check has one owner\.\*\*|or the experiment note" -- CLAUDE.md` -> `CLAUDE.md:6`.
+- [ ] CLAUDE.md scope: `git diff origin/main -- CLAUDE.md | grep "^@@"` -> hunks only in "Branch and PR
+      rules", "Verification" and paid-call step 2; `git diff origin/main -- CLAUDE.md | grep -E "^-" | grep -c -E "Every claim cites|Never compose|No evidence|No figure|traceable to where|Nothing normative|Hard filters|Time windows|Citations point|Caveats are inserted|question bank"` -> `0`.
+- [ ] PLANS.md: `git grep -c -E "## Keep it to one page|^- \[ \] verify-cee:|^## Paid calls|^## Experiment note" -- PLANS.md` -> `PLANS.md:5` (Paid calls appears in both templates).
+- [ ] tl-run.md: `git grep -c -E "## Experiment issues|only when the plan carries risk" -- .claude/commands/tl-run.md` -> `2`.
+- [ ] tl-review.md: `git grep -c -E "Each check has one owner|\*\*Docs-only PRs\*\*|^7\. One page" -- .claude/commands/tl-review.md` -> `3`; `git grep -c -i "teammate" -- .claude/commands/tl-review.md .claude/commands/tl-run.md` -> no `teammate-owned` / `teammate file` (only "Teammate PRs" lines remain).
+- [ ] finish-task.md: `git grep -c -E "If a user could see the change|rather than copying" -- .claude/commands/finish-task.md` -> `2`.
+- [ ] start-task.md: `git grep -c -E "one page|type:experiment" -- .claude/commands/start-task.md` -> `2`.
+- [ ] DASHBOARD.md: `git grep -c -E "Only when the plan carries risk|Experiment issues|type:experiment" -- docs/DASHBOARD.md` -> `3`.
+- [ ] PR template: `git grep -c -E "experiment: docs/results|verify-cee run on the final head" -- .github/pull_request_template.md` -> `2`.
+- [ ] Stale wording: `git grep -n -E "teammate-owned|re-runs pytest|any change to .src/" -- '*.md' ':!plans' ':!docs/results' ':!.dispatch'` -> no hits.
+- [ ] `git diff origin/main --stat` -> only the 8 files above plus this plan.
+- [ ] `gh label list --search experiment` -> `type:experiment`.
 - [ ] `gh pr checks` green.
 - [ ] verify-cee: not run - docs and workflow files only; the app cannot show this change.
+
+## Merge
+CLAUDE.md changes only Branch and PR rules, Verification and one paid-call sentence (checked above);
+no ground rule, invariant or ADR changes, so per `tl-review.md` it is not an escalation item. The PR
+reviewer merges on approval; the tech lead asked for this issue and PR in this session.
+
+## Risks
+- This PR is reviewed under the old rules (main), so its review still re-runs evidence in full; the
+  new rules apply from the next issue.
+- Old-flow wording outside the 8 files: `git grep` over `docs/WORKFLOW-SETUP.md` and
+  `.claude/skills/verify-cee/SKILL.md` finds only "use before /finish-task" and "/finish-task checks
+  the work in the app" (line 146), both still true for app-visible changes. No change, no follow-up.
+- `type:experiment` does not exist yet: step 3 creates it before the PR, and nothing uses it before then.
 
 ## Paid calls
 0.
@@ -44,3 +66,6 @@ and verify-cee only where they prove something, one-page plans, and a short path
 ## Progress log
 - 2026-11-22 21:56 - plan written; the 8-file edit was drafted before the issue (branch first named
   `tl/workflow-lean`) and is committed after plan review.
+- 2026-11-22 22:05 - plan review round 1 (issuecomment-7091163469): CHANGES REQUESTED, 3 blocking.
+  TL ruling (one review round): fixed in place - one command per acceptance item, a Merge section
+  (CLAUDE.md scope check, no escalation), a Risks section. Non-blocking 3 (git grep form) taken.
