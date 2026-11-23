@@ -399,7 +399,7 @@ makes one DeepSeek call per document (paid; plan it first), keeps only rows that
 `config/facts.jsonl`; `python -m cee.facts load` fills the `facts` table from that file; `FACTS=on` then serves the
 cells the rule allows. `--count`, `--write`, `--verify` and `--audit` make no call:
 ```powershell
-powershell -File docsesults\w13-factsun-extract.ps1 -Wt <worktree> -Phase count -GateSha <commit>
+powershell -File docs\results\w13-facts\run-extract.ps1 -Wt <worktree> -Phase count -GateSha <commit>
 .\.venv\Scripts\python.exe scripts\extract_facts.py --verify
 .\.venv\Scripts\python.exe -m cee.facts load
 ```
