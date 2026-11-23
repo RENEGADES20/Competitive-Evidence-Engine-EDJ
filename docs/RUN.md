@@ -392,6 +392,23 @@ WT=<worktree> OUT=probe-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=
 .venv/bin/python docs/results/w13-prefix-cache/cmp_cells.py <run folder>/report.json
 ```
 
+**Facts table** (#285, `plans/0285-facts.md`; ADR-022 **Deferred**, `FACTS` **off by default**, no rows yet:
+`docs/results/w13-facts.md`). The code is in place for a later decision: `scripts/extract_facts.py` reads the
+candidate chunks of the firms' filings, supplements, press releases, monthly reports and decks (`config/facts.yaml`),
+makes one DeepSeek call per document (paid; plan it first), keeps only rows that pass the code checks and writes
+`config/facts.jsonl`; `python -m cee.facts load` fills the `facts` table from that file; `FACTS=on` then serves the
+cells the rule allows. `--count`, `--write`, `--verify` and `--audit` make no call:
+```powershell
+powershell -File docsesults\w13-factsun-extract.ps1 -Wt <worktree> -Phase count -GateSha <commit>
+.\.venv\Scripts\python.exe scripts\extract_facts.py --verify
+.\.venv\Scripts\python.exe -m cee.facts load
+```
+```bash
+bash docs/results/w13-facts/run-extract.sh <worktree> count <commit>
+.venv/bin/python scripts/extract_facts.py --verify
+.venv/bin/python -m cee.facts load
+```
+
 **Check only the question planner** (#245; paid: one planner call per question, no answer call).
 `--plan-only` makes the planner calls, then searches each plan for free and reports the aspects,
 the sub-questions (firm x aspect) and how many tokens the answer call would read:

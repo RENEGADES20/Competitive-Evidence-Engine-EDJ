@@ -1,10 +1,97 @@
 # W13 facts table (#285): metric figures extracted once, served by SQL
 
-Plan `plans/0285-facts.md`; decision ADR-022 (`docs/DECISIONS.md`). Baseline: #272 test B fts
-(`docs/results/w12-latency.md`): adjudicated 24/30, $0.519 per question off-peak, critical-path p50 184 s, 454 map calls.
-Results are filled in after the run; this first section is the 0-call estimate the plan rests on.
+**Outcome: G0 STOP (TL ruling 2026-11-23). Under the tightened serving rule, at most 5 of the 485 map and re-map calls of
+the #272 test-B run would be saved (Q23 EDJ, MER, MS, RJF; Q26 RJF), below the gate's 15, even with a perfect
+extraction. The extraction was not run; 0 paid calls. `FACTS` ships off by default with the facts module, the
+extraction script and its checks, the serving hook, the `facts` table (schema and upgrade) and the loader;
+`config/facts.jsonl` is not created. ADR-022 is Deferred; CLAUDE.md is unchanged.**
 
-## Estimate from the #272 records (0 calls)
+Plan `plans/0285-facts.md` (TL conditions B1-B7 and G0 of review round 1); decision ADR-022 (`docs/DECISIONS.md`).
+Baseline: #272 test B fts (`docs/results/w12-latency.md`): adjudicated 24/30, $0.519 per question off-peak,
+critical-path p50 184 s, 454 map calls.
+
+## What happened
+- Built at `576e992` (facts module, extraction, checks, setting, hook, schema) and `dbba1ea` (serving and hook tests,
+  G0 script); pytest green.
+- The extraction run (`w13-facts/run-extract.ps1 -Phase run -GateSha 576e992`, 76 planned calls, off-peak) stopped on
+  its first call at 11:02 UTC on 2026-11-23: DeepSeek 402, insufficient balance. Nothing was billed or saved
+  (`D:\ALLPROJECTS\EDJ\cache\ev285\extract-run.log`, `extract.head-log.txt`). Count phase (0 calls): 76 documents,
+  721 candidate chunks, about 254k estimated input tokens.
+- The TL then ruled to decide G0 at 0 calls on the #272 records instead of waiting for a top-up: STOP.
+
+## G0: upper bound on the #272 records (0 calls)
+Script `w13-facts/g0_upper_bound.py`, output `w13-facts/g0.json`. Every #272 map / re-map cell is passed through the
+shipped rule (`cee.facts.eligible` and `registered_basis`: metric tag registered and served, kind fact / series /
+recency, not proxy, no non-figure word in the aspect text, the sub-question text or the question, registry status
+`quoted`), and every eligible cell is assumed fully covered.
+
+| | Count |
+|---|---|
+| Map + re-map calls in #272 test B | 485 |
+| Cells with a metric tag | 89 |
+| Eligible cells | 5 (Q23 a1 EDJ, MER, MS, RJF; Q26 a4 RJF) |
+| **Map calls saved, upper bound** | **5** (threshold 15) -> **STOP** |
+
+The five would still face the later tests (registered basis rows, every asked period present, no newer document in
+the pool, SQL re-check), so the real number could only be lower. Why the other 84 metric-tagged cells are not served
+(the issue's "metric cells not served, and why"): 67 carry a non-figure word in the aspect, sub-question or question
+text (Q11 "define ... include or exclude", Q22 "definition", Q24 "per advisor", Q4 "strategy ... changed", Q7
+"recruiting and retention", Q27 "changed"), 8 are proxies, 8 are research rows, 1 is a registry `closest_metric`
+(Q23 SCHW).
+
+| Q | Aspect (firms) | Metric | Kind | Reason |
+|---|---|---|---|---|
+| Q1 | a1 (MS) | net_new_assets | fact | non-figure word 'strateg' |
+| Q2 | a4 (RJF) | advisor_headcount | series | non-figure word 'recruit' |
+| Q3 | a5 (SCHW) | advisor_headcount | series | non-figure word 'strateg' |
+| Q4 | a5 (MER) | advisor_headcount | series | non-figure word 'how' |
+| Q6 | a7 (RJF) | advisor_headcount | series | proxy aspect |
+| Q7 | a6 (MER, MS, RJF) | advisor_headcount | series | non-figure word 'how' |
+| Q7 | a6 (research) | advisor_headcount | series | not a firm row |
+| Q7 | a7 (MER, MS, RJF) | net_new_assets | series | non-figure word 'attribut' |
+| Q7 | a7 (research) | net_new_assets | series | not a firm row |
+| Q11 | a1 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'defin' |
+| Q11 | a2 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'defin' |
+| Q11 | a3 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'defin' |
+| Q11 | a4 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'defin' |
+| Q11 | a5 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'disclos' |
+| Q12 | a3 (SCHW) | net_new_assets | fact | non-figure word 'source' |
+| Q12 | a4 (SCHW) | net_new_assets | series | non-figure word 'growth' |
+| Q14 | a3 (RJF) | advisor_headcount | series | non-figure word 'recruit' |
+| Q14 | a4 (RJF) | net_new_assets | series | non-figure word 'across the affiliation' |
+| Q16 | a8 (all) | advisor_headcount | fact | not a firm row |
+| Q21 | a3 (EDJ, MER, MS, RJF, SCHW) | net_new_assets | fact | non-figure word 'how' |
+| Q21 | a3 (research) | net_new_assets | fact | not a firm row |
+| Q21 | a4 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'how' |
+| Q21 | a4 (research) | advisor_headcount | fact | not a firm row |
+| Q21 | a8 (EDJ, MER, MS, RJF, SCHW) | net_new_assets | series | proxy aspect |
+| Q21 | a8 (research) | net_new_assets | series | not a firm row |
+| Q22 | a1 (EDJ, MER, MS, RJF, SCHW) | net_new_assets | series | non-figure word 'defin' |
+| Q22 | a2 (EDJ, MER, MS, RJF, SCHW) | net_new_assets | fact | non-figure word 'defin' |
+| Q23 | a1 (SCHW) | advisor_headcount | series | registry status closest_metric |
+| Q24 | a2 (EDJ, MER, MS, RJF, SCHW) | advisor_headcount | fact | non-figure word 'per' |
+| Q26 | a3 (RJF) | advisor_headcount | recency | non-figure word 'recruit' |
+| Q27 | a3 (MER) | advisor_headcount | series | non-figure word 'change' |
+| Q27 | a5 (MER) | net_new_assets | series | non-figure word 'change' |
+| Q28 | a2 (EDJ) | advisor_headcount | series | proxy aspect |
+| Q28 | a2 (research) | advisor_headcount | series | not a firm row |
+| Q28 | a4 (MER) | advisor_headcount | series | proxy aspect |
+| Q28 | a4 (research) | advisor_headcount | series | not a firm row |
+
+## Acceptance against issue #285 (findings)
+- Met: the ADR is written (Deferred, with the G0 finding); schema, upgrade and loader; the extraction script with
+  code checks (Windows and Mac run scripts); the query-time path behind `FACTS` with facts-served vs LLM cells in the
+  matrix log; tests with 0 real calls; the coverage of #272 metric cells is reported with the gaps explained (above).
+- Not met, by the G0 ruling: no extraction run, so no row count, check pass rate, audit sample or 50-fact audit; no
+  real Q1-Q30 run, so no map calls, $, latency or quality against #272; verify-cee not run (FACTS off shows nothing
+  new in the app; the mock compare below proves the default path is unchanged).
+- `FACTS=off` (default): the mock compare against clean `main` is in the next section.
+
+## Mock compare, FACTS off vs clean main (0 calls)
+
+PENDING
+
+## Plan-time estimate from the #272 records (0 calls; an upper bound, superseded by G0)
 
 Source: the 485 C1 map and re-map records of #272 test B in `D:\ALLPROJECTS\EDJ\cache\ev272\cache-a`
 (`deepseek-v4-pro`, `ds-strict-2-map-low-c128000-s1`), the 30 reused plans, and the extraction candidate chunks
@@ -15,13 +102,14 @@ BAC, MER, RJF that mention a target metric next to a number). Script `w13-facts/
 - 422 map cells; **95 metric cells** (the aspect names a target metric, by the registry tag or its text, and the map
   gave a figure). Most are narrative or definitional (Q11 "how the firm defines", Q21 "how firms prepare"), proxies
   (Q21 a8, Q24 a3, Q28) or splits (Q14 "across the affiliation-choice model"); the serving rule leaves them to the map.
-- **33 servable cells** (serving rule of ADR-022 on the reused plans). **28 are estimated covered**: the map's figure
-  cites a candidate chunk. The other 5 took their figure from trade press, transcripts or Form ADV (SCHW headcount,
+- **33 servable cells** (the plan's first serving rule, aspect text only). **28 counted as covered** when ANY of the
+  map's items cites a candidate chunk; only **21 of 33 have ALL items in candidates** (plan review, item 1), so 28 is an
+  upper bound of prefilter recall, not of rows the extraction would yield. The other 5 took their figure from trade press, transcripts or Form ADV (SCHW headcount,
   Q26 RJF NNA in the window, Q27 Merrill since January); at run time they are covered only if the lookup finds rows.
 - Coverage estimate: 28/95 metric cells (29%), 28/33 servable (85%). Calls saved: 29 of 485 map + re-map calls (6%).
-  Map $ saved: $0.85 of $13.97 off-peak, so about $0.519 -> $0.49 per question.
+  Map $ saved: at most $0.85 of $13.97 off-peak, so at best about $0.519 -> $0.49 per question.
 - Critical path, if only the covered map calls disappear: Q4 197 -> 156 s, Q22 208 -> 150 s, Q23 144 -> 71 s (less if
-  SCHW stays a model cell); p50 184 -> about 175 s. The reduce (p50 126 s) stays the long pole.
+  SCHW stays a model cell); p50 184 -> at best about 175 s. The reduce (p50 126 s) stays the long pole.
 - Target metrics: advisor_headcount and net_new_assets (registered) and client_assets (asked as a figure in Q14, Q21,
   Q24). Not targeted: revenue lines (Q15 only), attrition (Q28 only), compensation (Q25, Q29: not a firm figure series).
 

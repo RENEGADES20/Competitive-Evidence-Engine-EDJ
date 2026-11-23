@@ -1,6 +1,6 @@
 # 0285 - Facts table: metric figures extracted once at ingest, served by SQL at query time
 
-Issue: #285    Role: TL    Spec: specs/filings.md, specs/answer-citations.md    Design: ADR-022 (`docs/DECISIONS.md`, Proposed), `docs/results/w13-facts.md`
+Issue: #285    Role: TL    Spec: specs/filings.md, specs/answer-citations.md    Design: ADR-022 (`docs/DECISIONS.md`, Deferred), `docs/results/w13-facts.md`
 
 ## Goal
 Advisor headcount, net new assets and client assets are extracted once from the corpus by a model, code-checked, and
@@ -92,14 +92,14 @@ from candidate chunks) found among the served items >= 90%, misses read and list
 `/finish-task`. I do not score or audit.
 
 ## Acceptance
-- [ ] pytest green (CI); mock Q1-Q30 not worse than baseline; uncovered map requests byte-identical (test + replay).
-- [ ] 100% of stored rows pass the checks; audit 50 rows >= 48 correct (coordinator's auditor).
-- [ ] Coverage of #272 metric cells reported with gaps explained (estimate 28/95, 28 of the 33 servable).
-- [ ] G0: map calls saved on #272 under the TL rules >= 15, else stop with `FACTS=off` default (finding recorded).
+- [x] pytest green (CI); FACTS off: mock Q1-Q30 identical to clean main (rule + #272 plans); byte-identical test.
+- [ ] 100% of stored rows pass the checks; audit 50 rows >= 48 correct. Not run: no extraction (G0 STOP).
+- [x] Coverage of #272 metric cells reported with gaps explained (G0: 5 eligible of 89 metric-tagged cells).
+- [x] G0: upper bound 5 < 15 -> STOP, `FACTS=off` default, finding recorded (results doc, ADR-022 Deferred).
 - [ ] If G0 passes - real fts Q1-Q30: map calls/q strictly lower, map-stage $ lower (B7); total $/q and p50 reported
   with the speed leg; adjudicated >= 24/30.
 - [ ] B6 SQL re-check passes for every served item; 5b caveat/gap/break/flag/mark diff explained.
-- [ ] verify-cee mock: ask-answer and open-citation PASS on a facts-served answer. ADR-022 Accepted; CLAUDE.md updated.
+- [ ] verify-cee: not run (FACTS off shows nothing new in the app). ADR-022 Deferred; CLAUDE.md unchanged (TL).
 
 ## Paid calls (TL go-ahead 2026-11-22, incl. Gate 3). deepseek-v4-pro, map stage settings, off-peak only
 - **Extraction**: 76 calls, one per document holding candidate chunks (719 chunks of 10-K, 10-Q, supplement, press,
@@ -122,3 +122,7 @@ from candidate chunks) found among the served items >= 90%, misses read and list
 - 2026-11-23 04:45 - plan written; worktree `wt-285` on `tl/285-facts` from origin/main cda5ebf (#287 merged). 0 calls.
 - 2026-11-23 - review round 1 CHANGES REQUESTED; TL rulings folded in as "TL conditions" (B1-B7, G0, non-blocking).
   Build starts. Expectation, 0 calls: the question-text words leave few servable cells (Q23, Q26), so G0 may stop.
+- 2026-11-23 05:03 - built (576e992, pytest 1221 + 22 new); extraction count 76 docs / 721 chunks; the run stopped on
+  its first call: DeepSeek 402 (balance), 0 billed, nothing saved. Reported.
+- 2026-11-23 - TL ruling: decide G0 at 0 calls. G0 upper bound on #272 = 5 saved calls (Q23 x4, Q26 x1) < 15 -> STOP.
+  Ship FACTS off, no rows; ADR-022 Deferred; CLAUDE.md reverted. Mock compare FACTS off vs clean main cda5ebf: see doc.

@@ -35,8 +35,6 @@ These do not bend. Breaking one produces a prototype the reader cannot trust.
 - **Model-based work is developed on a branch, not `main`.** Anything that needs a model
   besides the answer LLM calls (embeddings, rerankers, any local or hosted model in
   retrieval or validation) is built and tested there (today `exp/hybrid`). See ADR-011.
-  Only the facts table (ADR-022) may land on `main` as offline ingest extraction (stored,
-  code-checked data; no model at query time); other ingest-time model work needs its own ADR.
 - **Chunks never cross a section boundary.** PDFs keep page numbers.
 - **Citations point only at `chunk_id`s** that were in the retrieved set; unmatched
   citations are flagged, never silently dropped.
