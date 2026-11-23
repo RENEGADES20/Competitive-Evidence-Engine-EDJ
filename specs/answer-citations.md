@@ -127,13 +127,6 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   whose inputs name a cell outside the call is dropped (`unknown_ref`). On DeepSeek one leader call per firm runs
   first; the firm's other calls start when its first streamed chunk arrives (`MAP_PREFIX_GATE=first_chunk`) or
   when it ends (`done`), plus `MAP_PREFIX_WAIT_S`; the map request version ends in `-pf<ceiling>`.
-  **#285 facts table: off by default, ADR-022 Deferred, no rows** (G0 stop: at most 5 of 485 #272 map calls
-  servable; `docs/results/w13-facts.md`). `FACTS=off` (default) leaves the map untouched. With `FACTS=on`, after the
-  fan-out, a cell that passes `config/facts.yaml`'s rule (registered metric tag, kind fact / series / recency, not
-  proxy, no non-figure word in the aspect, sub-question or question text, registry status `quoted`, rows on the
-  registered basis, every asked period present, no newer metric document in the sub-question's pool, an SQL
-  re-check through the `fts` filters) is built by code as a `fact` cell (`source=facts`) with no call; its chunks join
-  the retrieved set only in the finished matrix, so every other request is byte-identical.
   `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
   those asked is a fact for the periods it covers, never `different_quantity`); tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
   required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
@@ -225,26 +218,6 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
 - Reduce effort `off` with streaming has a 64000-token cap (`ds-strict-2-reduce-off-c64000-s1`): the whole
   answer is output. `REDUCE_PROMPT` = `v5.2` | `v5.3`; v5.3 adds "state each fact once ... every cell that
   holds a fact keeps at least one claim of its own". The version and system text join the reduce cache key.
-
-#284 (plans/0284-reduce-short.md): **reduce prompt v6, item refs rendered by code** (`REDUCE_PROMPT=v6`; default
-see `docs/results/w13-reduce-short.md`).
-- The message numbers each counting item `item <cell id>/<n>` (n = its index in the cell + 1); an item code may not
-  render is listed `(no ref)`: flagged `number_not_found` by the map, or its rendered text fails the claim number check
-  against its own chunks (`reduce.referable`); an accepted derived cell offers `ref <cell id>/derived`.
-- Tool output: a claim / adjacent item is `{part_id, items: [ref], text, chunk_ids, why}` (+ `differs_because`);
-  gaps unchanged. Enums from the matrix (refs too), under the same limits; over them chunk ids, then refs, then part
-  ids fall back to plain strings.
-- `reduce.render_output` (in `to_answer`, so every later check is unchanged) writes each claim: `[<Firm>: ][<lead>: ]`
-  + per ref `Per the <source label without tier>, published <date>: <item text> (scope; period; value when the text
-  lacks them).` + ` Why it might matter: <why>`; chunk ids = the refs' ids + `chunk_ids`. The firm prefix comes from
-  the ref's own cell. **Quotes are not rendered** (claims carry no verbatim quote unless the model writes a text
-  claim, e.g. a computation claim). A derived ref renders the cell's formula and cites its inputs.
-- Guards: an unknown ref is dropped (flag `unknown_ref`); a ref whose cell is not the part's cell (cell part) or not
-  in its aspect (aspect part) is dropped (flag `ref_part_mismatch`); a claim whose refs were all dropped is removed
-  (logged `dropped`), so the part check names its cell as a gap. A text claim with no ids keeps the uncited path.
-- The render log (`info["render"]`: counts of refs, unknown_ref, ref_part_mismatch, dropped, uncited, text claims,
-  and figures outside the matrix split into rendered and model text) is in the eval report and the query log.
-- Streamed claims are rendered by the same code before `check_item`; a run-cache reuse keeps the rendered Answer.
 
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call

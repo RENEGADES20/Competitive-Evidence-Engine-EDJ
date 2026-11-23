@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 # #284 (plans/0284-reduce-short.md): copy of w13-prefix-cache/run-prefix.sh with REDUCE_PROMPT=v6 allowed, EV ev284. #283: macOS / Linux twin of run-prefix.ps1 (copied from w12-latency/run-latency.sh, #272,
 # plus PREFIX_TOKENS=150000, PREFIX_GATE=first_chunk|done|off pinned from the Q10 probe, WAIT_S=5). One phase (plan | count | run) of a W12 latency
 # run on DeepSeek, every setting pinned. Test A: C1 = EFFORT_PLAN=off EFFORT_MAP=low EFFORT_REDUCE=low; C2 = C1 with

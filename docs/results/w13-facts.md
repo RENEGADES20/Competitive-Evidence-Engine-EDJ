@@ -1,5 +1,7 @@
 # W13 facts table (#285): metric figures extracted once, served by SQL
 
+**Code removed by #289 (2026-11-23):** the facts module, `FACTS` setting, extraction script, config, tests and the `facts` table are no longer on `main` (`db/upgrade.sql` drops the table); this doc, its evidence, `plans/0285-facts.md` and ADR-022 (Deferred) stay as the record. The scripts here that drive or import that code (`run-extract.*`, `g0_upper_bound.py`) no longer run.
+
 **Outcome: G0 STOP (TL ruling 2026-11-23). Under the tightened serving rule, at most 5 of the 485 map and re-map calls of
 the #272 test-B run would be saved (Q23 EDJ, MER, MS, RJF; Q26 RJF), below the gate's 15, even with a perfect
 extraction. The extraction was not run; 0 paid calls. `FACTS` ships off by default with the facts module, the

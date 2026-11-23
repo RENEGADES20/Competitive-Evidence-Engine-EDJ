@@ -1,3 +1,4 @@
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 """#284 (plans/0284-reduce-short.md steps 4-5, TL B4): render-fidelity and rule checks for reduce v6, 0 calls.
 
 Runs scripts/eval_run.py in this process with two hooks, then writes a summary JSON:

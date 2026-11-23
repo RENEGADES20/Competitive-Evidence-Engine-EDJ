@@ -64,9 +64,6 @@ class Settings:
     # #277 verify-cee only: while this file names a stage (map | reduce), the mock call of that stage fails
     # (extract.mock_failure). Empty (the default): never. Never read for a real provider.
     mock_fail_file: str = ""
-    # #285 (ADR-022): map cells that ask a registered metric figure are built from the facts table (config/facts.jsonl,
-    # loaded by `python -m cee.facts load`) with no LLM call. off (default until the #285 gates pass) | on.
-    facts: str = "off"
 
 
 # DEEPSEEK_THINKING default (#242): on, chosen by the plan's fixed rule from the real check on Q1, Q22,
@@ -159,10 +156,8 @@ def _nonneg_float(name: str, default: float) -> float:
 
 
 DEEPSEEK_IDLE_S_DEFAULT = 120.0   # #275: seconds without a streamed chunk before a call is aborted
-REDUCE_PROMPTS = ("v5.2", "v5.3", "v6")   # #284: v6 item refs rendered by code
+REDUCE_PROMPTS = ("v5.2", "v5.3")
 REDUCE_PROMPT_DEFAULT = "v5.2"
-FACTS_MODES = ("off", "on")   # #285
-FACTS_DEFAULT = "off"         # #285: on only if the go/no-go gate G0 and Gate 3 pass (plans/0285-facts.md)
 
 
 def _positive_float(name: str, default: float) -> float:
@@ -208,7 +203,6 @@ def settings() -> Settings:
         deepseek_idle_s=_positive_float("DEEPSEEK_IDLE_S", DEEPSEEK_IDLE_S_DEFAULT),
         reduce_prompt=_choice("REDUCE_PROMPT", REDUCE_PROMPTS, REDUCE_PROMPT_DEFAULT),
         mock_fail_file=os.getenv("MOCK_FAIL_FILE", "").strip(),
-        facts=_choice("FACTS", FACTS_MODES, FACTS_DEFAULT),
     )
 
 

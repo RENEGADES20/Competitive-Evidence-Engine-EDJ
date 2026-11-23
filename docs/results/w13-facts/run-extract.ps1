@@ -1,3 +1,4 @@
+# Not runnable after #289: the code it drives or imports was removed; kept as the record of how the evidence was made.
 # #285 (plans/0285-facts.md): the facts extraction on DeepSeek (map-stage settings pinned), one phase: count (0 calls) |
 # run (paid, planned) | write (0 calls: saved records -> config/facts.jsonl). The key comes from -EnvFile (the main repo's
 # .env), copied into the worktree inside try and removed in finally; never read or printed here. Run from a clean

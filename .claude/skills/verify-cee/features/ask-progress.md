@@ -58,8 +58,6 @@ Preconditions: baseline.
 - **Streamed answer (#275).** After "Synthesizing the answer" shows, "Answer (in progress: checks running)"
   appears with at least one "CLAIM (CHECKING)" card carrying a citation chip, and "LLM called:" is not on the
   page (screenshot); once "LLM called:" shows, the in-progress block and its cards are gone.
-  With `REDUCE_PROMPT=v6` (#284) this same step proves the rendered claims stream: the cards' text is written by code
-  from the item refs before the final answer (the step that reads claims arriving before the answer).
 - **Early.** Still on the answerable question. As soon as "Synthesizing the answer" shows, the progress
   bar (`stProgress`) and the line "Reading the question: ..." are on the page and the meta
   line "LLM called:" is not (screenshot of the trace mid-run).

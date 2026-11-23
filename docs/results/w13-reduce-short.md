@@ -1,5 +1,7 @@
 # W13 shorter reduce output: item refs rendered by code (#284)
 
+**Code removed by #289 (2026-11-23):** the v6 path (`REDUCE_PROMPT=v6`, rendering, mock, tests) is no longer in `src/`; this doc, its evidence and `plans/0284-reduce-short.md` stay as the record. The scripts here that drive or import the v6 code (`run-short.*`, `render_check.py`) no longer run.
+
 Plan: `plans/0284-reduce-short.md` (TL conditions B1-B5 after plan review round 1). Evidence:
 `docs/results/w13-reduce-short/` (committed copies) and `D:\ALLPROJECTS\EDJ\cache\ev284\` (working copies).
 
