@@ -313,7 +313,8 @@ extraction call's cited evidence as it lands, then (#275) each claim of the answ
 passed its citation, figure and date checks ("Answer (in progress: checks running)"), then the full answer.
 `DEEPSEEK_IDLE_S` (default 120) stops a streamed call that sends nothing for that long: the call fails fast
 (saved with its partial output in an eval run), and the Ask page shows an error with a "Try again" button;
-nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3`) picks the reduce prompt version.
+nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3 | v6`) picks the reduce prompt version; with `v6`
+(#284) the model names evidence items by reference and code writes each claim's source, date and text.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```
@@ -355,6 +356,18 @@ powershell -File docs\results\w12-latency\run-latency.ps1 -Wt <worktree> -Out r1
 WT=<worktree> OUT=a-c1 CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> QUESTIONS=Q5,Q10 EFFORT_PLAN=off EFFORT_MAP=low EFFORT_REDUCE=low ENV_FILE=<repo>/.env bash docs/results/w12-latency/run-latency.sh
 WT=<worktree> OUT=mock-fts bash docs/results/w12-latency/run-mock.sh
 WT=<worktree> OUT=r1-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> EFFORT_REDUCE=off REDUCE_PROMPT=v5.2 IDLE_S=120 EV=<evidence dir> bash docs/results/w12-latency/run-latency.sh
+```
+
+The #284 reduce-only run uses `docs/results/w13-reduce-short/run-short.*` (the #283 script with `-ReducePrompt v6`
+allowed and the evidence folder `ev284`), and `render_check.py` checks the v6 rendering on the mock and on a count
+phase's real matrices (0 calls):
+```powershell
+powershell -File docs\results\w13-reduce-short\run-short.ps1 -Wt <worktree> -Out b-v6-count -Cache <cache dir> -MaxCalls 0 -Phase count -GateSha <commit> -ReducePrompt v6 -EvDir <evidence dir>
+$env:REDUCE_PROMPT="v6"; $env:PYTHONPATH="<worktree>\src"; .\.venv\Scripts\python.exe docs\results\w13-reduce-short\render_check.py <summary.json> --as-of 2026-11-17 --out <run folder>
+```
+```bash
+WT=<worktree> OUT=b-v6-count CACHE=<cache dir> MAXCALLS=0 PHASE=count GATE_SHA=<commit> REDUCE_PROMPT=v6 EV=<evidence dir> bash docs/results/w13-reduce-short/run-short.sh
+REDUCE_PROMPT=v6 PYTHONPATH=<worktree>/src .venv/bin/python docs/results/w13-reduce-short/render_check.py <summary.json> --as-of 2026-11-17 --out <run folder>
 ```
 
 **Map prefix cache** (#283, `plans/0283-prefix-cache.md`; **off by default, not adopted**:

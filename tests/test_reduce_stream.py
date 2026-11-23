@@ -266,6 +266,6 @@ def test_prompt_v53_changes_only_the_reduce_key(monkeypatch):
                                                 "gaps": [], "claims": [_claim("x", ["MS-10K#5"], "a4")]}))))
     R.call_reduce(m.question, m, None, "deepseek", client=client)
     assert client.kwargs["messages"][0]["content"] == P.SYSTEM_PROMPT_V53
-    monkeypatch.setenv("REDUCE_PROMPT", "v6")
+    monkeypatch.setenv("REDUCE_PROMPT", "v9")   # #284: v6 is a real version now
     with pytest.raises(ValueError, match="REDUCE_PROMPT"):
         R.prompt_version()

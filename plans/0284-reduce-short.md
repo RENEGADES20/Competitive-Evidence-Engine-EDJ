@@ -74,9 +74,10 @@ writes its text (source, date, item text, scope) from the matrix. Reduce output 
 
 ## Files to change
 - `src/cee/answer/reduce.py` - v6 message lines, schema, `render_output`, mock v6, `EarlyClaims` render. `prompt.py` - `SYSTEM_PROMPT_V6`.
-- `src/cee/config.py` (`REDUCE_PROMPT` choice), `scripts/eval_run.py` (raw v6 output + rendered output in the record).
+- `src/cee/config.py` (`REDUCE_PROMPT` choice), `scripts/eval_run.py` and `src/cee/ask.py` (pass the matrix to
+  `to_answer`), `src/cee/answer/schema.py` (the render log as a private attribute).
 - Tests (fake clients only): `tests/test_reduce*.py`, `tests/test_eval_run.py`, the Ask streaming tests.
-- `specs/answer-citations.md`, `.env.example`, `docs/RUN.md` (both OS blocks); verify-cee recipe + `scripts/verify_cee.py` only if a check reads claim text.
+- `specs/answer-citations.md`, `.env.example`, `docs/RUN.md` (both OS blocks); verify-cee recipes `ask-answer` / `ask-progress` + `scripts/verify_cee.py` (a v6 step).
 - `docs/results/w13-reduce-short.md` + `docs/results/w13-reduce-short/` (`run-short.ps1` / `.sh` copied from `w13-prefix-cache/run-prefix.*` with `-ReducePrompt v6`, checks, tables, verdicts).
 
 ## Steps

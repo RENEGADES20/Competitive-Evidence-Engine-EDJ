@@ -478,7 +478,7 @@ def _reduce_for(question, query, hits, provider, raw, t, plan, matrix, info, on_
                     meta: dict = {}
                     out = R.call_reduce(question, matrix, query, provider, meta=meta, on_item=early)
                     finished_at = dt.datetime.now().astimezone().isoformat()   # #248: for the cost
-                    raw = R.to_answer(out, provider, meta)
+                    raw = R.to_answer(out, provider, meta, matrix)
         except BaseException as e:   # #277: record the failed (or stopped) reduce, never reused; re-raise
             if rkey is not None:
                 cache.record("reduce", "reduce", rkey, _reduce_status(e), error=f"{type(e).__name__}: {e}",

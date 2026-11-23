@@ -219,6 +219,25 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   answer is output. `REDUCE_PROMPT` = `v5.2` | `v5.3`; v5.3 adds "state each fact once ... every cell that
   holds a fact keeps at least one claim of its own". The version and system text join the reduce cache key.
 
+#284 (plans/0284-reduce-short.md): **reduce prompt v6, item refs rendered by code** (`REDUCE_PROMPT=v6`; default
+see `docs/results/w13-reduce-short.md`).
+- The message numbers each counting item `item <cell id>/<n>` (n = its index in the cell + 1); an item flagged
+  `number_not_found` is listed `(no ref)`; an accepted derived cell offers `ref <cell id>/derived`.
+- Tool output: a claim / adjacent item is `{part_id, items: [ref], text, chunk_ids, why}` (+ `differs_because`);
+  gaps unchanged. Enums from the matrix (refs too), under the same limits; over them chunk ids, then refs, then part
+  ids fall back to plain strings.
+- `reduce.render_output` (in `to_answer`, so every later check is unchanged) writes each claim: `[<Firm>: ][<lead>: ]`
+  + per ref `Per the <source label without tier>, published <date>: <item text> (scope; period; value when the text
+  lacks them).` + ` Why it might matter: <why>`; chunk ids = the refs' ids + `chunk_ids`. The firm prefix comes from
+  the ref's own cell. **Quotes are not rendered** (claims carry no verbatim quote unless the model writes a text
+  claim, e.g. a computation claim). A derived ref renders the cell's formula and cites its inputs.
+- Guards: an unknown ref is dropped (flag `unknown_ref`); a ref whose cell is not the part's cell (cell part) or not
+  in its aspect (aspect part) is dropped (flag `ref_part_mismatch`); a claim whose refs were all dropped is removed
+  (logged `dropped`), so the part check names its cell as a gap. A text claim with no ids keeps the uncited path.
+- The render log (`info["render"]`: counts of refs, unknown_ref, ref_part_mismatch, dropped, uncited, text claims,
+  and figures outside the matrix split into rendered and model text) is in the eval report and the query log.
+- Streamed claims are rendered by the same code before `check_item`; a run-cache reuse keeps the rendered Answer.
+
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call
   checks it first (planner, map, reduce, legacy answer, `llm.deepseek_create`), `ask()` checks it at each stage

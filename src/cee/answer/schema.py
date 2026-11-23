@@ -61,6 +61,8 @@ class Answer(BaseModel):
     # Not a field (#242): the provider message (DeepSeek reasoning_content, content) for the eval's
     # saved record only. Never dumped, so query_log and the UI never see it.
     _provider_payload: dict | None = PrivateAttr(default=None)
+    # Not a field (#284): the v6 render log (reduce.render_output), for finish_answer's info only.
+    _render: dict | None = PrivateAttr(default=None)
 
     @model_validator(mode="before")
     @classmethod

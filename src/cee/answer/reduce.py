@@ -36,6 +36,11 @@ def prompt_version() -> str:
 
 def system_prompt() -> str:
     return P.reduce_prompt()[1]
+
+
+def v6() -> bool:
+    """#284: prompt v6 (item refs rendered by code) is in use."""
+    return prompt_version() == "v6"
 TOOL = "submit_answer"
 CALLING = ("answer", "answer_with_boundary", "gap_with_adjacent")
 # Enum limits (review note 5): OpenAI structured outputs allow at most 1000 enum values across the
@@ -93,7 +98,7 @@ def _q(text: str) -> str:
     return " ".join(str(text or "").split()).replace('"', "'")
 
 
-def _item_line(n: int, i) -> str:
+def _item_line(n: int, i, ref: str | None = None) -> str:
     parts = [_q(i.text)]
     for k in ("value", "unit", "period", "scope"):
         v = getattr(i, k)
@@ -105,7 +110,7 @@ def _item_line(n: int, i) -> str:
         parts.append(f'quote "{_q(i.quote)}"')
     parts.append("cite " + ", ".join(i.chunk_ids))
     flags = [FLAG_WORDS[f] for f in i.flags if f in FLAG_WORDS]
-    return f"    item {n + 1}: " + " | ".join(parts) + (f" [{'; '.join(flags)}]" if flags else "")
+    return f"    item {ref or n + 1}: " + " | ".join(parts) + (f" [{'; '.join(flags)}]" if flags else "")
 
 
 def _cell_head(m: EvidenceMatrix, c) -> str:
@@ -114,9 +119,10 @@ def _cell_head(m: EvidenceMatrix, c) -> str:
     d = c.derivation or {}
     if c.label == "derived" and d.get("ok"):
         unver = "; definition unverified" if "definition_unverified" in c.flags else ""
+        ref = f"; ref {c.id}/derived" if v6() else ""   # #284
         return (f"  {c.id} {firm}: derived (computed by code): {d.get('formula_text') or d.get('value_text')}; "
                 f"period {d.get('period') or 'n/a'}; scope {d.get('scope') or 'whole firm'}{unver}; "
-                f"cite {', '.join(d.get('input_chunk_ids') or [])}")
+                f"cite {', '.join(d.get('input_chunk_ids') or [])}{ref}")
     label = c.effective_label if c.label != "failed" else "failed"
     if label == "fact" and getattr(a, "proxy", False):
         head = "stand-in figure (adjacent only)"
@@ -312,7 +318,10 @@ def reduce_message(question: str, m: EvidenceMatrix, query=None) -> str:
                                  + " -> state each basis with its own periods; never join them")
             for n, i in enumerate(c.items):
                 if i.counts:
-                    line = _item_line(n, i)
+                    ref = None
+                    if v6():   # #284: the item's ref; an item whose figure was not found in its passage has none
+                        ref = f"{c.id}/{n + 1}" + (" (no ref)" if "number_not_found" in i.flags else "")
+                    line = _item_line(n, i, ref)
                     first = seen.setdefault((_flat(i.text).lower(), tuple(sorted(i.chunk_ids))), c.aspect_id)
                     if first != c.aspect_id:
                         line += f" [also under {first}: write it once]"
@@ -344,6 +353,8 @@ def reduce_schema(m: EvidenceMatrix) -> tuple[dict, list[str]]:
     """(schema, fields that fell back to plain strings). Strict on every provider (every property
     required, no extra properties, no array limits), with enums from the matrix."""
     s = copy.deepcopy(llm_output_schema())
+    if v6():
+        return reduce_schema_v6(m)
     ids, parts = citable(m), part_ids(m)
     behavior = [m.behavior] if m.behavior in CALLING else list(CALLING)
     fallback: list[str] = []
@@ -369,6 +380,58 @@ def reduce_schema(m: EvidenceMatrix) -> tuple[dict, list[str]]:
             props["part_id"] = {"type": "string", "enum": parts}
         if key != "gaps" and use_ids:
             props["chunk_ids"] = {"type": "array", "items": {"type": "string", "enum": ids}}
+    return s, fallback
+
+
+def output_schema_v6() -> dict:
+    """#284: the v6 tool schema without enums: claims and adjacent items name matrix items by ref (`items`), with a
+    short `text`, extra `chunk_ids` and a `why` sentence; gaps as before."""
+    base = llm_output_schema()
+    claim = {"type": "object", "additionalProperties": False,
+             "properties": {"part_id": {"type": "string"}, "items": {"type": "array", "items": {"type": "string"}},
+                            "text": {"type": "string"}, "chunk_ids": {"type": "array", "items": {"type": "string"}},
+                            "why": {"type": "string"}},
+             "required": ["part_id", "items", "text", "chunk_ids", "why"]}
+    adjacent = copy.deepcopy(claim)
+    adjacent["properties"]["differs_because"] = {"type": "string"}
+    adjacent["required"].append("differs_because")
+    s = copy.deepcopy(base)
+    s["properties"]["claims"]["items"] = claim
+    s["properties"]["adjacent"]["items"] = adjacent
+    return s
+
+
+def reduce_schema_v6(m: EvidenceMatrix) -> tuple[dict, list[str]]:
+    """#284: the v6 schema with enums from the matrix (behavior, part ids, chunk ids, refs), under the same limits
+    as v5.2; over them a field falls back to a plain string, chunk ids first, then refs, then part ids (the code
+    checks are the guard there: unknown_ref, ref_part_mismatch, unmatched_citation)."""
+    s = output_schema_v6()
+    ids, parts, refs = citable(m), part_ids(m), list(item_refs(m))
+    behavior = [m.behavior] if m.behavior in CALLING else list(CALLING)
+    on = {"chunk_ids": bool(ids), "items": bool(refs), "part_id": True}
+    size = {"chunk_ids": (2, ids), "items": (2, refs), "part_id": (3, parts)}
+
+    def total() -> int:
+        return len(behavior) + sum(k * len(v) for f, (k, v) in size.items() if on[f])
+
+    def too_long(values: list[str]) -> bool:
+        return len(values) > ENUM_BIG and sum(len(v) for v in values) > ENUM_BIG_CHARS
+
+    fallback: list[str] = []
+    for f in ("chunk_ids", "items", "part_id"):
+        if on[f] and (too_long(size[f][1]) or total() > ENUM_TOTAL_MAX):
+            on[f] = False
+            fallback.append(f)
+    s["properties"]["behavior"]["enum"] = behavior
+    for key in ("claims", "adjacent", "gaps"):
+        props = s["properties"][key]["items"]["properties"]
+        if on["part_id"]:
+            props["part_id"] = {"type": "string", "enum": parts}
+        if key != "gaps":
+            if on["chunk_ids"]:
+                props["chunk_ids"] = {"type": "array", "items": {"type": "string", "enum": ids}}
+            if on["items"]:
+                props["items"] = {"type": "array", "items": {"type": "string", "enum": refs}}
     return s, fallback
 
 
@@ -421,6 +484,183 @@ def input_limit(provider: str) -> int | None:
     from cee.answer import llm
     window = llm.CONTEXT_WINDOW.get(provider)
     return None if window is None else window - max_tokens(provider)
+
+
+# --- v6: item refs rendered by code (#284, plans/0284-reduce-short.md) ----------------------------------------
+
+def item_refs(m: EvidenceMatrix) -> dict:
+    """#284: ref -> (cell, item); "<cell id>/<n>" for each counting item without number_not_found, n as numbered in
+    the message (index in c.items + 1), and "<cell id>/derived" -> (cell, None) for an accepted derivation."""
+    out: dict = {}
+    for c in m.cells.values():
+        if c.label == "derived" and (c.derivation or {}).get("ok"):
+            out[f"{c.id}/derived"] = (c, None)
+        for n, i in enumerate(c.items):
+            if i.counts and "number_not_found" not in i.flags:
+                out[f"{c.id}/{n + 1}"] = (c, i)
+    return out
+
+
+def is_v6(raw) -> bool:
+    """A v6 output: a claim or adjacent item carries `items` (refs)."""
+    if not isinstance(raw, dict):
+        return False
+    return any(isinstance(x, dict) and "items" in x
+               for f in STREAMED if isinstance(raw.get(f), list) for x in raw[f])
+
+
+def render_source(h) -> str:
+    """#284: "Per the <source label without tier>, published <date>: " (a retrieved web page's label already says
+    "page content as of ...")."""
+    from cee.answer.validate import _retrieved, source_label
+    label = source_label(h).rsplit(" [", 1)[0]
+    pub = "" if _retrieved(h) or not h.published_at else f", published {_date_words(h.published_at)}"
+    return f"Per the {label}{pub}: "
+
+
+def render_item(m: EvidenceMatrix, c, i) -> str:
+    """#284: one ref's text: the source of the item's first chunk id, the item's own text, then scope, period and
+    value when the text lacks them (TL NB1); a derived ref -> the cell's formula, as mock_reduce writes it."""
+    if i is None:
+        a = m.aspect(c.aspect_id)
+        return f"{_q(a.text).rstrip('.')}: {(c.derivation or {}).get('formula_text')}."
+    h = next((m.hits.get(x) for x in i.chunk_ids[:1] if m.hits.get(x) is not None), None)
+    body = _q(i.text).rstrip().rstrip(".")
+    low = body.lower()
+    extra = []
+    if i.scope and _q(i.scope).lower() not in low:
+        extra.append(f"scope: {_q(i.scope)}")
+    if i.period and _q(i.period).lower() not in low:
+        extra.append(f"period {_q(i.period)}")
+    if i.value and _q(i.value) not in body:
+        extra.append(f"value {_q(i.value)}" + (f" {_q(i.unit)}" if i.unit else ""))
+    tail = f" ({'; '.join(extra)})" if extra else ""
+    return (render_source(h) if h is not None else "") + body + tail + "."
+
+
+def _figure_values(texts: list[str]) -> list[float]:
+    from cee.answer.validate import _chunk_values
+    return [v for t in texts if t for v in _chunk_values(t) + _chunk_values(t, unscaled=True)]
+
+
+def _matrix_texts(m: EvidenceMatrix, ids: set) -> tuple[list[str], list[float]]:
+    """#284 (TL B3): the matrix strings a figure may come from for a claim citing `ids`: value / text / quote /
+    definition of every item citing one of them, and every accepted derived value whose inputs it all cites."""
+    texts = [s for c in m.cells.values() for i in c.items if set(i.chunk_ids) & ids
+             for s in (f"{i.value} {i.unit}".strip(), i.text, i.quote, i.definition)]
+    derived = [v for v, inputs in derived_values(m) if inputs and inputs <= ids]
+    return texts, derived
+
+
+def outside_figures(text: str, m: EvidenceMatrix, ids: set) -> list[str]:
+    """#284 (TL B3): figures of `text` (validate.figures) found in no matrix string of the cited cells nor in a
+    derived value whose inputs are cited (matrix provenance; rule 4)."""
+    from cee.answer.validate import figures, number_matches
+    texts, derived = _matrix_texts(m, ids)
+    values = _figure_values(texts) + derived
+    return [str(f.shown) for f in figures(text) if not any(number_matches(f, v) for v in values)]
+
+
+def number_missing(text: str, m: EvidenceMatrix, ids) -> bool:
+    """#284 (TL B1): validate.check_numbers on `text` alone, citing `ids` (the matrix's hits and derived values):
+    True when a figure of it is in none of the cited chunks (number_not_found)."""
+    from cee.answer.schema import Claim
+    from cee.answer.validate import check_numbers
+    if not text or not ids:
+        return False
+    a = Answer(answerable=True, behavior="answer", claims=[Claim(text=text, chunk_ids=list(ids))])
+    check_numbers(a, [h for h in m.hits.values()], derived=derived_values(m))
+    return "number_not_found" in a.claims[0].flags
+
+
+def _ref_ok(c, part_id: str) -> bool:
+    return c.id == part_id or c.aspect_id == part_id
+
+
+def _ref_ids(c, i) -> list[str]:
+    return list((c.derivation or {}).get("input_chunk_ids") or []) if i is None else list(i.chunk_ids)
+
+
+def render_one(x: dict, m: EvidenceMatrix, refs: dict | None = None, log: dict | None = None) -> dict:
+    """#284: one v6 claim or adjacent item -> the v5 shape (text, chunk_ids, part_id [, differs_because], flags).
+    Text = [<Firm>: ][<lead>: ]<rendered refs> (the firm prefix from the ref's own cell: once when every ref has one
+    cell, else before each ref) + " Why it might matter: <why>"; a claim with no ref keeps its text. Chunk ids = the
+    refs' ids + `chunk_ids`. An unknown ref is dropped (flag unknown_ref); a ref outside the part (not its cell, not a
+    cell of its aspect) is dropped (flag ref_part_mismatch). A claim left with no ids keeps today's uncited path
+    (no_citation); render_output drops a claim whose refs were all dropped (logged under `dropped`), so the part
+    check names the cell as a gap. `log` collects the counts (render_output)."""
+    refs = item_refs(m) if refs is None else refs
+    log = {} if log is None else log
+    part = str(x.get("part_id") or "")
+    flags: list[str] = []
+    picked = []
+    for r in x.get("items") or []:
+        got = refs.get(str(r))
+        if got is None:
+            flags.append("unknown_ref")
+            log.setdefault("unknown_ref", []).append({"part_id": part, "ref": r})
+        elif not _ref_ok(got[0], part):
+            flags.append("ref_part_mismatch")
+            log.setdefault("ref_part_mismatch", []).append({"part_id": part, "ref": r})
+        else:
+            picked.append(got)
+    lead = " ".join(str(x.get("text") or "").split())
+    why = " ".join(str(x.get("why") or "").split())
+    if why.startswith(P.WHY_LINE.strip()):
+        why = why[len(P.WHY_LINE.strip()):].strip()
+    ids = list(dict.fromkeys([*(k for c, i in picked for k in _ref_ids(c, i)),
+                              *(str(k) for k in x.get("chunk_ids") or [])]))
+    segs = [(c, i, render_item(m, c, i)) for c, i in picked]
+    head = f"{lead.rstrip(':.')}: " if lead else ""
+    if not segs:
+        text = lead
+    elif len({c.id for c, _, _ in segs}) == 1:
+        text = _firm_prefix(m, segs[0][0]) + head + " ".join(s for _, _, s in segs)
+    else:
+        text = head + " ".join(_firm_prefix(m, c) + s for c, _, s in segs)
+    if why:
+        text = f"{text} {P.WHY_LINE}{why}" if text else f"{P.WHY_LINE}{why}"
+    out = {"text": text, "chunk_ids": ids, "part_id": part, "flags": list(dict.fromkeys(flags))}
+    if "differs_because" in x:
+        out["differs_because"] = str(x.get("differs_because") or "")
+    if x.get("items") and not segs:   # every ref dropped: not a claim (its extra ids alone carry no text)
+        out["dropped"] = True
+        log.setdefault("dropped", []).append({"part_id": part, "refs": list(x.get("items") or []), "text": lead})
+    log["refs"] = log.get("refs", 0) + len(x.get("items") or [])
+    if not segs:
+        log["text_claims"] = log.get("text_claims", 0) + 1
+    if not ids and not out.get("dropped") and text.strip() != P.BOUNDARY_HANDOFF:
+        log["uncited"] = log.get("uncited", 0) + 1
+    for c, i, s in segs:   # TL B3: rendered text only from the matrix (0 required); TL B1: and from its chunks
+        for f in outside_figures(s, m, set(_ref_ids(c, i))):
+            log.setdefault("rendered_outside", []).append({"part_id": part, "figure": f})
+        if number_missing(s, m, _ref_ids(c, i)):
+            log.setdefault("rendered_number_not_found", []).append({"part_id": part, "text": s[:200]})
+    model_text = " ".join(t for t in (lead, why) if t)
+    for f in (outside_figures(model_text, m, set(ids)) if model_text else []):
+        log.setdefault("model_outside", []).append({"part_id": part, "figure": f, "text": model_text[:200]})
+    if model_text and number_missing(model_text, m, ids):
+        log.setdefault("model_number_not_found", []).append({"part_id": part, "text": model_text[:200]})
+    return out
+
+
+RENDER_COUNTS = ("refs", "unknown_ref", "ref_part_mismatch", "dropped", "uncited", "text_claims",
+                 "rendered_outside", "model_outside", "rendered_number_not_found", "model_number_not_found")
+
+
+def render_output(raw: dict, m: EvidenceMatrix) -> tuple[dict, dict]:
+    """#284: a v6 tool output -> the v5 Answer shape (claims / adjacent rendered by render_one; gaps and the rest
+    unchanged) and the render log: counts, plus the lists behind unknown_ref, ref_part_mismatch and the figures
+    outside the matrix (rendered vs model text). Runs in to_answer, so every check after it is the same as v5.2's."""
+    refs, log = item_refs(m), {}
+    out = dict(raw)
+    for f in STREAMED:
+        if isinstance(raw.get(f), list):
+            done = [render_one(x, m, refs, log) if isinstance(x, dict) else x for x in raw[f]]
+            out[f] = [x for x in done if not (isinstance(x, dict) and x.pop("dropped", False))]
+    counts = {k: (len(v) if isinstance(v, list) else v) for k, v in log.items()}
+    return out, {**{k: 0 for k in RENDER_COUNTS}, **counts,
+                 "lists": {k: v for k, v in log.items() if isinstance(v, list)}}
 
 
 # --- the call ------------------------------------------------------------------------------------
@@ -511,20 +751,26 @@ def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=N
             meta["parse_flags"] = flags
     else:
         raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
-    to_answer(raw, provider, meta)   # validates (ModelOutputError when not a valid, non-empty Answer)
+    to_answer(raw, provider, meta, m)   # validates (ModelOutputError when not a valid, non-empty Answer)
     return raw
 
 
 ARGUMENT_ERRORS = ("Model arguments are not a JSON object", "Model output is not JSON")
 
 
-def to_answer(raw, provider: str, meta: dict | None = None) -> Answer:
-    """A raw tool input as a checked Answer (llm.check_output), else ModelOutputError."""
+def to_answer(raw, provider: str, meta: dict | None = None, m: EvidenceMatrix | None = None) -> Answer:
+    """A raw tool input as a checked Answer (llm.check_output), else ModelOutputError. #284: a v6 output (refs) is
+    rendered first (render_output, needs the matrix `m`); the render log rides on the Answer (`_render`)."""
     from cee.answer import llm
     meta = meta or {}
     stop, usage = meta.get("stop_reason"), dict(meta.get("usage") or {})
     if meta.get("parse_flags"):
         usage["parse_flags"] = list(meta["parse_flags"])
+    render = None
+    if is_v6(raw):
+        if m is None:
+            raise llm.ModelOutputError("A v6 output (item refs) needs the matrix to render", raw, provider, stop, usage)
+        raw, render = render_output(raw, m)
     try:
         answer = Answer(**raw) if isinstance(raw, dict) else None
     except (ValueError, TypeError) as e:
@@ -533,6 +779,7 @@ def to_answer(raw, provider: str, meta: dict | None = None) -> Answer:
         raise llm.ModelOutputError("Model output is not a JSON object", raw, provider, stop, usage)
     answer.llm_called = provider != "mock"
     answer.stop_reason, answer.usage = stop or "", usage
+    answer._render = render
     if meta.get("reasoning_content") is not None:
         answer._provider_payload = {"reasoning_content": meta.get("reasoning_content")}
     return llm.check_output(answer, raw, provider)
@@ -597,6 +844,36 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
                            "chunk_ids": list(i.chunk_ids), "part_id": c.id})
     return {"answerable": m.behavior in ("answer", "answer_with_boundary"), "behavior": m.behavior,
             "claims": claims, "adjacent": _adjacent_items(m, query), "gaps": []}
+
+
+def mock_reduce_v6(m: EvidenceMatrix, query=None) -> dict:
+    """#284: mock_reduce's output as v6 refs (0 calls): an item claim -> its first counting item's ref (a text claim
+    with that item's text when it has no ref), a derived claim -> "<cell>/derived", the comparison claim -> a text
+    claim, recency items -> why "the source does not say."; the same chunk ids as v5.2's mock."""
+    base = mock_reduce(m, query)
+    refs = {id(i): r for r, (c, i) in item_refs(m).items() if i is not None}
+    unsaid = P.WHY_UNSAID[len(P.WHY_LINE):]
+
+    def conv(x: dict, adjacent: bool) -> dict:
+        c = m.cells.get(x["part_id"])
+        why = unsaid if x["text"].endswith(P.WHY_UNSAID) else ""
+        out = {"part_id": x["part_id"], "items": [], "text": "", "chunk_ids": [], "why": why}
+        d = (c.derivation or {}) if c is not None else {}
+        if c is not None and c.label == "derived" and d.get("ok") and not adjacent:
+            out["items"] = [f"{c.id}/derived"]
+        elif c is not None and c.counting_items:
+            i = c.counting_items[0]
+            if id(i) in refs:
+                out["items"] = [refs[id(i)]]
+            else:
+                out.update(text=x["text"].split(P.WHY_LINE, 1)[0].rstrip(), chunk_ids=list(x["chunk_ids"]))
+        else:
+            out.update(text=x["text"], chunk_ids=list(x["chunk_ids"]))
+        if adjacent:
+            out["differs_because"] = x["differs_because"]
+        return out
+    return {**base, "claims": [conv(x, False) for x in base["claims"]],
+            "adjacent": [conv(x, True) for x in base["adjacent"]]}
 
 
 def code_answer(m: EvidenceMatrix, query=None) -> Answer:
@@ -965,6 +1242,8 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     from cee.answer.validate import (check_citations, check_parts, coverage_note, fill_suggested_sources,
                                      insert_caveats)
     info: dict = {"version": prompt_version(), "code_built": code_built, "model_behavior": answer.behavior}
+    if getattr(answer, "_render", None) is not None:   # #284: the v6 render log (counts and lists)
+        info["render"] = answer._render
     decided = m.behavior if m.behavior is not None else "incomplete"
     answer.behavior = decided
     answer.answerable = decided in ("answer", "answer_with_boundary") and bool(citable(m))
@@ -1031,7 +1310,7 @@ def raw_answer(m: EvidenceMatrix, query, provider: str, on_item=None) -> Answer:
     from cee.answer import cancel
     from cee.answer.extract import mock_failure
     cancel.check()
-    out = mock_reduce(m, query)
+    out = mock_reduce_v6(m, query) if v6() else mock_reduce(m, query)
     injected = mock_failure("reduce")
     if injected:
         raise RuntimeError(injected.split(": ", 1)[1])
@@ -1044,7 +1323,7 @@ def raw_answer(m: EvidenceMatrix, query, provider: str, on_item=None) -> Answer:
                 on_item(kind, obj)
                 if pause:
                     cancel.sleep(pause)
-    return to_answer(out, "mock")
+    return to_answer(out, "mock", m=m)
 
 
 # --- streamed claims (#275) ------------------------------------------------------------------------
@@ -1118,6 +1397,8 @@ def check_item(raw: dict, m: EvidenceMatrix, query):
     from cee.answer.validate import check_citations
     if not isinstance(raw, dict):
         return None
+    if "items" in raw:   # #284: a v6 claim is rendered first; an unknown or out-of-part ref holds it (flags)
+        raw = render_one(raw, m)
     try:
         a = Answer(answerable=True, behavior="answer", claims=[Claim(**raw)])
     except (ValueError, TypeError):
